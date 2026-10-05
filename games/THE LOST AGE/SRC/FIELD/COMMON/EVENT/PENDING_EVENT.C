@@ -1,10 +1,10 @@
 #include "TYPES.H"
 #include "EVENTWRK.H"
+#include "text/MSG_IDS.H"
 
 s32 GameFlag_Test(s32 flag);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 position);
 
-extern char MsgNothingHappens;
 
 s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode, s32 target)
 {
@@ -21,7 +21,7 @@ s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode, s32 targe
         }
         if (GameFlag_Test(0x142)) {
             EventRuntime_Begin();
-            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
             EventRuntime_End();
         }
     }

@@ -2,11 +2,9 @@
 #include "BATTLE_RUNTIME.H"
 #include "ITEM.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
 extern struct ShopRuntime *gMenuWork;
-extern u8 MsgItemName[];
-extern u8 MsgShopCannotEquip[];
-extern u8 MsgShopStatLabel[];
 
 void RenderOutput_PrepareForRedrawFar(s32 window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);

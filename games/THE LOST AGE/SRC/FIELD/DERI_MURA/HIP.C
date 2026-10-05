@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgDeriHurtHip[];
 
 void DeriMura_TalkHip(void)
 {

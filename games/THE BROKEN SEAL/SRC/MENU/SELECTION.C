@@ -4,7 +4,6 @@
 #include "SAVE_STATE.H"
 extern u8 gTitleExtraOptionEnabled[];
 
-extern u8 MsgPasswordLevel[];
 
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 {
@@ -27,6 +26,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 }
 
 #include "TBS_EDITION.H"
+#include "text/MSG_IDS.H"
 
 extern s8 Menu_TopEntryPositionByCommand[];
 extern s8 Menu_TopEntryCommandByPosition[];
@@ -222,8 +222,6 @@ done:
 void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 
-extern u8 MsgPasswordTransferHelp;
-extern u8 MsgCableTransferHelp;
 
 #if EDITION_INTERNATIONAL
 #define PASSWORD_HELP_X 16
@@ -241,13 +239,13 @@ void Menu_DrawModeIndicator(void)
     if (state->previous_mode != state->selection) {
         if (state->selection == 0) {
             RenderOutput_ClearList(state->lower_window);
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp, (s32)state->lower_window, 16, 4);
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1, (s32)state->lower_window, 16, 16);
+            UiText_DrawResource((s32)MsgPasswordTransferHelp, (s32)state->lower_window, 16, 4);
+            UiText_DrawResource((s32)MsgPasswordTransferHelp + 1, (s32)state->lower_window, 16, 16);
         } else if (state->previous_mode == 0) {
             RenderOutput_ClearList(state->lower_window);
-            UiText_DrawResource((s32)&MsgCableTransferHelp, (s32)state->lower_window, 0, 4);
-            UiText_DrawResource((s32)&MsgCableTransferHelp + 1, (s32)state->lower_window, 0, 16);
-            UiText_DrawResource((s32)&MsgCableTransferHelp + 2, (s32)state->lower_window, 0, 28);
+            UiText_DrawResource((s32)MsgCableTransferHelp, (s32)state->lower_window, 0, 4);
+            UiText_DrawResource((s32)MsgCableTransferHelp + 1, (s32)state->lower_window, 0, 16);
+            UiText_DrawResource((s32)MsgCableTransferHelp + 2, (s32)state->lower_window, 0, 28);
         }
         state->previous_mode = state->selection;
     }
@@ -264,30 +262,30 @@ void Menu_DrawModeIndicator(void)
         RenderOutput_PrepareForRedraw(state->lower_window);
         if (*current == 0) {
 #if defined(TBS_EDITION_DE)
-            UiText_DrawCharacterAtOffset((s32)&MsgPasswordTransferHelp,
+            UiText_DrawCharacterAtOffset((s32)MsgPasswordTransferHelp,
                 state->lower_window, 32, 8);
-            UiText_DrawCharacterAtOffset((s32)&MsgPasswordTransferHelp + 1,
+            UiText_DrawCharacterAtOffset((s32)MsgPasswordTransferHelp + 1,
                 state->lower_window, 32, 24);
 #else
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp,
+            UiText_DrawResource((s32)MsgPasswordTransferHelp,
                 state->lower_window, PASSWORD_HELP_X, 4);
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1,
+            UiText_DrawResource((s32)MsgPasswordTransferHelp + 1,
                 state->lower_window, PASSWORD_HELP_X, 16);
 #endif
         } else {
 #if defined(TBS_EDITION_DE)
-            UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp,
+            UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp,
                 state->lower_window, 0, 0);
-            UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp + 1,
+            UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 1,
                 state->lower_window, 0, 16);
-            UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp + 2,
+            UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 2,
                 state->lower_window, 0, 32);
 #else
-            UiText_DrawResource((s32)&MsgCableTransferHelp,
+            UiText_DrawResource((s32)MsgCableTransferHelp,
                 state->lower_window, 0, 4);
-            UiText_DrawResource((s32)&MsgCableTransferHelp + 1,
+            UiText_DrawResource((s32)MsgCableTransferHelp + 1,
                 state->lower_window, 0, 16);
-            UiText_DrawResource((s32)&MsgCableTransferHelp + 2,
+            UiText_DrawResource((s32)MsgCableTransferHelp + 2,
                 state->lower_window, 0, 28);
 #endif
         }

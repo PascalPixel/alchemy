@@ -4,6 +4,7 @@
 #include "INVENTORY_MENU.H"
 #include "BATTLE_RUNTIME.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
 #if EDITION_INTERNATIONAL
 #define SHOP_PAGE_ICONS_X 119
@@ -15,9 +16,6 @@
 #define SHOP_STAT_X       72
 #endif
 
-extern u8 MsgItemName[];
-extern u8 MsgStatLabel[];
-extern char MsgItemMenuEmpty;
 extern struct InventoryMenuState *gMenuWork;
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
@@ -45,9 +43,9 @@ s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
     Menu_DrawPageIndicator(window, state->entry_count, PAGE_ROWS, state->page, 28);
     if (menu->item_count == 0) {
 #if defined(TBS_EDITION_DE)
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, window, 112, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgItemMenuEmpty, window, 112, 8);
 #else
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, window, 120, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgItemMenuEmpty, window, 120, 8);
 #endif
     } else {
         row = 0;

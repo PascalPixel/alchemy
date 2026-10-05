@@ -3,6 +3,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gArutinYamaEntrancesOther[];
 extern const struct SceneEntrance gArutinYamaEntrances1[];
@@ -34,7 +35,6 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading);
 void Battle_ResetEffectCounter(void);
 void BattleFx_PlayQueuedSound(void);
 
-extern u8 MsgFieldFlippedSwitch[];
 
 void SceneState_SetValue14Mode23(void)
 {

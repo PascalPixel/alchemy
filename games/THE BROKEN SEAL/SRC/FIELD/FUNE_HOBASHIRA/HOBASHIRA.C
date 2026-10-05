@@ -3,6 +3,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 struct Other {
     u8 filler00[30];
@@ -38,8 +39,6 @@ void Scene_RunFourActorStagingSequence(void);
 void FieldScene_RunActorNinePresentationCycles(void);
 void FieldScene_RunPrimarySequence(void);
 void FieldScene_RunSevenActorEnsemble(void);
-extern u8 MsgFuneShipsCourseClear[];
-extern u8 MsgFuneAvast[];
 
 struct FieldGlobals {
     s32 **map;
@@ -47,8 +46,6 @@ struct FieldGlobals {
     struct EventWork *event;
 };
 
-extern u8 MsgFuneMonsters2[];
-extern u8 MsgFuneLandHo[];
 
 extern u8 FuneHobashira_EnsembleWalk9[];
 extern u8 FuneHobashira_EnsembleWalk10[];

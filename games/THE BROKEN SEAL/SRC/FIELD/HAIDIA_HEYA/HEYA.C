@@ -2,26 +2,10 @@
 #include "CALL.H"
 #include "FXBLEND.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgHaidiaDidYouHearAboutDora[];
-extern u8 MsgHaidiaLetsScareSukuretasVisitors[];
-extern u8 MsgHaidiaSukuretaCameToStudyMt[];
-extern u8 MsgHaidiaTheCulpritsHadStrangePowers[];
-extern u8 MsgHaidiaThisIsMyFarewellGift[];
-extern u8 MsgHaidiaYouMustSaveJasmine[];
 
-extern u8 MsgHaidiaHopeDidntGet[];
 
-extern u8 MsgHaidiaAWiseManFleesWhen[];
-extern u8 MsgHaidiaGoodArmorDrawsOutStrength[];
-extern u8 MsgHaidiaGoodWeaponsDrawOutStrength[];
-extern u8 MsgHaidiaHey2[];
-extern u8 MsgHaidiaImNotSadJustGo[];
-extern u8 MsgHaidiaTheRumorWasTrue[];
-extern u8 MsgHaidiaValeFeelsEmpty[];
-extern u8 MsgHaidiaWhenDidYouComeBack[];
-extern u8 MsgHaidiaYouCameBack[];
-extern u8 MsgHaidiaYoureLeavingAgainSoon[];
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {

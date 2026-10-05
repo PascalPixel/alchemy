@@ -2,16 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgShianDoPlanCrossDesertWarrior[];
-extern u8 MsgShianHsusInjuryTaughtGoodLesson[];
-extern u8 MsgShianKungFuMakesQuickDoes[];
-extern u8 MsgShianMartialArtistsCantUseHeavy[];
-extern u8 MsgShianSomethingWrongOnSilkRoad[];
-extern u8 MsgShianWarriorsShouldLearnAboutTowns[];
-extern u8 MsgShianWeHaveFewCustomersThese[];
-extern u8 MsgShianXianHasMartialArtsBut[];
-extern u8 MsgShianXiansSpecialArmorNotSuited[];
 #define NULL ((void *)0)
 
 union Slot {
@@ -26,9 +18,7 @@ extern u8 ShianHeya_SceneTable2Entrance8[];
 extern u8 ShianHeya_SceneTable2[];
 void SceneTable_Prepare(void *);
 
-extern u8 MsgShianDidMonstersInAltinSpit[];
 
-extern u8 MsgShianWarriorWelcome[];
 
 extern u8 ShianHeya_SceneTable3[];
 extern u8 ShianHeya_SceneTable3Entrance8[];

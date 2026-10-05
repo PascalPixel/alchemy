@@ -8,6 +8,7 @@
 #include "FIXED_POINT_POSITION.H"
 #include "TBS_EDITION.H"
 #include "BATTLE_PARTY.H"
+#include "text/MSG_IDS.H"
 
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
@@ -108,19 +109,7 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-extern u8 MsgKuupuappuMasterHammetIsntOnlyOne[];
-extern u8 MsgKuupuappuWeFoundOurStolenWeapons[];
 
-extern u8 MsgKuupuappuButChestWasEmpty[];
-extern u8 MsgKuupuappuButDidntFindAnything[];
-extern u8 MsgKuupuappuEveryoneThinksOurGuestsThieves[];
-extern u8 MsgKuupuappuIfYoureGonnaHeadInto[];
-extern u8 MsgKuupuappuRobinCheckedBarrel[];
-extern u8 MsgKuupuappuRobinCheckedChest[];
-extern u8 MsgKuupuappuTheyHidThoseStolenGoods[];
-extern u8 MsgKuupuappuThievesDidntHitOurHouse[];
-extern u8 MsgKuupuappuWeDontHaveTimeFor[];
-extern u8 MsgKuupuappuWowHaveManyThingsArent[];
 
 extern s32 KuupuappuHeya_StepActions[];
 extern s32 KuupuappuHeya_IdleActions[];
@@ -131,19 +120,6 @@ extern const struct SceneEvent gKuupuappuHeyaEventsEntrances15To17[];
 extern const struct SceneEvent gKuupuappuHeyaEventsFlag855[];
 extern const struct SceneEvent gKuupuappuHeyaEvents[];
 
-extern u8 MsgKuupuappuCouldSomeonePleaseHelpIvan[];
-extern u8 MsgKuupuappuDidJustArriveInTown[];
-extern u8 MsgKuupuappuIfOnlyTheseRocksWere[];
-extern u8 MsgKuupuappuIvanHasGreatPowersWouldnt[];
-extern u8 MsgKuupuappuJustMeOrAmMissing[];
-extern u8 MsgKuupuappuMisterFunSeeStrangeNew[];
-extern u8 MsgKuupuappuOwStop[];
-extern u8 MsgKuupuappuPleaseLookAfterIvan[];
-extern u8 MsgKuupuappuThankGoodnessThoseThievesWere[];
-extern u8 MsgKuupuappuThievesHidStolenTreasureIn[];
-extern u8 MsgKuupuappuThoseThreeStrangersSureHave[];
-extern u8 MsgKuupuappuWithBridgeOutWillQuite[];
-extern u8 MsgKuupuappuYoureGoingHelpIvan[];
 
 u8 *SceneData_GetScriptTable(void)
 {

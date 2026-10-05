@@ -7,6 +7,7 @@
 #include "CALL.H"
 #include "SCENE_IDS.H"
 #include "FIELD_SERVICE.H"
+#include "text/MSG_IDS.H"
 
 union Slot {
     s32 w;
@@ -39,13 +40,6 @@ extern u8 gFuneKanpanEventsFlag8a0[];
 extern u8 gFuneKanpanEventsFlag928[];
 extern u8 gFuneKanpanEvents[];
 
-extern u8 MsgFuneHaveMakeThemPromiseHelp[];
-extern u8 MsgFuneIfWeDontLeaveSoon[];
-extern u8 MsgFuneNowWeHaveProtectShip[];
-extern u8 MsgFuneSomebodyStopThem[];
-extern u8 MsgFuneTheyCantPlanningMutiny[];
-extern u8 MsgFuneToldWereLeavingSoonSet[];
-extern u8 MsgFuneHeadedColosso[];
 extern u8 FuneKanpan_RandomActorActions[];
 
 extern struct EventWork *gEventWork;
@@ -58,15 +52,12 @@ void ObjectMotion_CenterOnColumn();
 void Event_SetExitRequest();
 void AudioCommand_Play();
 
-extern u8 MsgFuneTheresNothingWeCanDo[];
-extern u8 MsgFuneWonderCouldHaveHappened[];
 extern u8 FuneKanpan_PresentationActionsA[];
 extern u8 FuneKanpan_PresentationActionsB[];
 void Battle_ResetEffectCounter();
 void FuneKanpan_OpenSecondDoor(void);
 void FieldScene_RunStepThen10(s32 a);
 
-extern u8 MsgFuneDidntDoAnything[];
 
 extern s32 FuneKanpan_WaveAngleX;
 extern s32 FuneKanpan_WaveAngleY;
@@ -118,14 +109,10 @@ void Engine_ActorDestroy();
 void FuneKanpan_RunRobinTalk();
 void Engine_EventEnd();
 
-extern u8 MsgFuneAyeCaptainSeaMonsters[];
-extern u8 MsgFunePreparationsReady[];
 void FuneKanpan_AnnouncePreparationsReady();
 void FieldScene_CallPairWith10();
 void FuneKanpan_OpenFirstDoor(void);
 
-extern u8 MsgFuneArrgh[];
-extern u8 MsgFuneNoUseLate[];
 void FieldScene_RunStepThen10();
 void WaitFrames();
 void ObjectDispatch_SetSingleChildFlags(void *, s32);
@@ -191,18 +178,8 @@ void Engine_ActorFaceDirection();
 void Engine_ActorWalkTo();
 void Engine_ActorSetAttachedEffect();
 
-extern u8 MsgFuneCanSeeLand[];
-extern u8 MsgFuneThankRobinDidGoodAgainst[];
 #define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0))
 
-extern u8 MsgFuneDontRowAnymore[];
-extern u8 MsgFuneMadeFinallyLucky[];
-extern u8 MsgFuneMakeOldMan[];
-extern u8 MsgFuneOhhhHaventWorkout[];
-extern u8 MsgFuneOtherPassengersAlready[];
-extern u8 MsgFuneRowingShipMore[];
-extern u8 MsgFuneThanksHardWork[];
-extern u8 MsgFuneTotallyLostOcean[];
 void FieldScene_RunStepThen10(s32 actor);
 void Engine_ActorStartAction(s32 actor);
 extern const u8 FuneKanpan_RosterActions[];

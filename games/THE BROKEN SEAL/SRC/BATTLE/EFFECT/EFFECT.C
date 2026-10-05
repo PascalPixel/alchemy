@@ -8,6 +8,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 s32 BattleEffect_SelectNearbyTargetObject(s32 obj_id, s32 battle_mode);
 s32 BattleFx_FindDescriptorWithOverride(s32 obj_id);
@@ -56,7 +57,6 @@ void BattleFx_FinishAction();
 void _call_via_r3(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 void Battle_Reset();
-extern char MsgNothingHappens;
 
 extern volatile s32 gFrameCount;
 
@@ -262,7 +262,7 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
         }
         if (GameFlag_TestFar(0x142) != 0) {
             Battle_Reset();
-            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
             BattleFx_FinishAction();
         }
     }

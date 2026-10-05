@@ -6,6 +6,7 @@
 #include "FIELD_SCENE.H"
 #include "FACING_OBJECT.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 extern const s32 ShindenHeya_PlacementSequenceB[];
 void ShindenHeya_SpawnOwnerEffect();
@@ -17,15 +18,6 @@ struct FieldActor *GetActorState(s32 actor_id);
 extern s16 Data_02000240[];
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
-extern u8 MsgShindenAreYouSure[];
-extern u8 MsgShindenChildHasAwakenedOurTeachings[];
-extern u8 MsgShindenDirtyGoldenStatueCleanedUp[];
-extern u8 MsgShindenDoFeelAnyChangeIn[];
-extern u8 MsgShindenHealerMustWorriedAboutNever[];
-extern u8 MsgShindenPolishedGoldStatueReturnedUs[];
-extern u8 MsgShindenRobinYourNewFriendsAdepts[];
-extern u8 MsgShindenWhenStrayFromYourWorldly[];
-extern u8 MsgShindenWonderIfEverSeeOur[];
 extern u8 ShindenHeya_TableA;
 extern u8 ShindenHeya_TableB;
 extern u8 ShindenHeya_PlacementA[];
@@ -48,9 +40,7 @@ void FieldScene_RunActorUpdateSequence(void);
 void SceneState_ApplyTwoRects(void);
 void FieldScene_RunScriptedSceneSequence(void);
 
-extern u8 MsgShindenOnceStepOutsideVillageCannot[];
 
-extern u8 MsgShindenWorldBeganDrifting[];
 extern struct BattleEffectBuffers *Data_03001ed0;
 
 struct ShrineWork {
@@ -68,9 +58,6 @@ void ShindenHeya_CopyActorPose();
 void FieldScene_RunPairedActorChoreography();
 void ObjectMotion_WaitForAnimationChange();
 void ShindenHeya_SpawnActorSpark();
-extern u8 MsgShindenAcceptRobinCantMean[];
-extern u8 MsgShindenRobinWillAcceptResponsibilityFor[];
-extern u8 MsgShindenWeHadIdeaTrueSanctum[];
 void ShindenHeya_ResetActorUpdate(void);
 
 void ShindenHeya_FollowLeaderOffset();

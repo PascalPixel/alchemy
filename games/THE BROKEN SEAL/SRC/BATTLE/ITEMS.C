@@ -11,13 +11,11 @@
 #include "BATTLE_UNIT.H"
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
+#include "text/MSG_IDS.H"
 
 extern u32 gFrameCount;
 extern u8 Animation_ChildPaletteCycle[];
 
-extern char MsgNothingHappens;
-extern char MsgActorUsesItem;
-extern char MsgUseItemQuestion;
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
 void *ObjectTable_Get(u32);
 s32 BattleEffect_SelectNearbyObject(u32 object_id);
@@ -206,7 +204,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         }
 
         if (best == 0) {
-            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
             return -1;
         }
     }
@@ -218,7 +216,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         if (!(event->trigger & 0x400)) {
             UiWork_PushValueSlotFar(actor, 1);
             UiWork_PushValueSlotFar(item_id, 2);
-            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)MsgActorUsesItem, 1);
         }
         if ((s32)event->value < 0x10000) {
             s32 objref = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
@@ -246,7 +244,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
             if (action_id == 149 && !GameFlag_TestFar(0x144)) {
                 UiWork_PushValueSlotFar(item_id, 2);
-                UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseItemQuestion, 13);
+                UiText_ShowPositionedMessageAndWaitFar((s32)MsgUseItemQuestion, 13);
                 /* FAKEMATCH: the owner index doubles as the declined flag, which ranks it above best in global allocation (r6, best r7). */
                 i = Object_CallSpawnRoutineAtOrigin(1);
                 UiWork_FinalizePendingCoreFar();
@@ -266,7 +264,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
             UiWork_PushValueSlotFar(actor, 1);
             UiWork_PushValueSlotFar(item_id, 2);
-            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)MsgActorUsesItem, 1);
             BattleFx_LoadActionEffectResources(action_id, 0);
             runtime->resolving_action = 1;
             BattleFx_Run();
@@ -279,7 +277,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     }
 
     if (GameFlag_TestFar(0x142))
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
+        UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
     if (GameFlag_TestFar(0x143))
         Inventory_RemoveFar(actor, slot);
     return result;

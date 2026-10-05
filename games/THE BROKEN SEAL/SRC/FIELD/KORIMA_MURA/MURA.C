@@ -4,6 +4,7 @@
 #include "KORIMA_MURA.H"
 #include "OBJECT_RUNTIME.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 void SceneData_InitRecordTable(u8 *o);
 
@@ -94,14 +95,12 @@ extern const u32 gKorimaMuraExits[];
 extern const struct ScenePlacement gKorimaMuraPlacements[];
 extern const struct ScenePlacement gKorimaMuraPlacements1[];
 extern const struct ScenePlacement gKorimaMuraPlacements3[];
-extern u8 MsgKorimaToldHolyTrees[];
 extern const struct SceneEvent gKorimaMuraEvents[];
 extern const struct SceneEvent gKorimaMuraEvents3[];
 extern u8 *gWork;
 
 extern u8 KorimaMura_SwitchCells[];
 void FieldScene_ConfigureActor0ThenRun();
-extern u8 MsgKorimaGoingCrossBridge[];
 
 extern u8 KorimaMura_Actor8Path[];
 extern u8 KorimaMura_DebrisScript[];
@@ -119,14 +118,6 @@ extern u8 KorimaMura_EntryScript[];
 void FieldScene_RunFlag845And847Branches(void);
 void FieldScene_RunExtendedActorSequence(void);
 void Event_CallWithLastActiveObjectId(u8 *script);
-extern u8 MsgKorimaHesAsStumpedAsWe[];
-extern u8 MsgKorimaKnowThoseFieldsWere[];
-extern u8 MsgKorimaQuiet[];
-extern u8 MsgKorimaThatsReliefRobinThoughtYoud[];
-extern u8 MsgKorimaWasOurPsynergy[];
-extern u8 MsgKorimaWatchOutItsHappeningAgain[];
-extern u8 MsgKorimaWhatIsIt[];
-extern u8 MsgKorimaYoureRobinThereIsntMuch[];
 extern s32 KorimaMura_PendingPose;
 extern s32 KorimaMura_LayoutFlag;
 

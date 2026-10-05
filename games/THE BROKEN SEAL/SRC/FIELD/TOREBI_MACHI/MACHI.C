@@ -2,36 +2,13 @@
 #include "IWRAM_CALL.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgTorebiFaceAwayTolbi[];
-extern u8 MsgTorebiTossLuckyMedal[];
 
-extern u8 MsgTorebiBrotherMeanDuring[];
-extern u8 MsgTorebiHaHaHa[];
-extern u8 MsgTorebiHoorayFinalsSeven[];
-extern u8 MsgTorebiMainStreetTolbi[];
-extern u8 MsgTorebiMamaToldShare[];
-extern u8 MsgTorebiMamaWhyListen[];
-extern u8 MsgTorebiOldestShouldntShare[];
-extern u8 MsgTorebiWaahBigBrother[];
-extern u8 MsgTorebiWaahSaidMoney[];
-extern u8 MsgTorebiWheeFestivalColosso[];
-extern u8 MsgTorebiWinBigUsed[];
-extern u8 MsgTorebiYayEasyRun[];
 
-extern u8 MsgTorebiChildrenLoveSouvenirs[];
-extern u8 MsgTorebiSomeoneLiveMore[];
 
-extern u8 MsgTorebiPatientLittleGuy[];
 
-extern u8 MsgTorebiFestivalLongerUsual[];
-extern u8 MsgTorebiFinalsWerent[];
-extern u8 MsgTorebiInnsFullStaying[];
-extern u8 MsgTorebiLeftovers[];
-extern u8 MsgTorebiWaahBuySweets[];
-extern u8 MsgTorebiWantTestLuck[];
 
-extern u8 MsgTorebiSeenAnyoneWho[];
 
 void SceneState_SetValues31_2_4(void)
 {

@@ -4,8 +4,8 @@
 #include "FIELD_EFFECT.H"
 #include "ITEM_IDS.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgRariberoOhhTheyTookShebaHeaded[];
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
 extern u8 Placement_Scripts[];
@@ -15,14 +15,7 @@ extern u8 Placement_Actors9a7[];
 
 extern const u8 RariberoMachi_LamentActions[];
 
-extern u8 MsgRariberoLeavingLalivero[];
 
-extern u8 MsgRariberoBabiToldMeShipAncients[];
-extern u8 MsgRariberoMoreTolbisSoldiersLayDefeated[];
-extern u8 MsgRariberoThoughtShipWeSawAt[];
-extern u8 MsgRariberoWasToldLetInIf[];
-extern u8 MsgRariberoWhereGoingArentWeTaking[];
-extern u8 MsgRariberoWhereGoingRobinIodemAsked[];
 #define NULL ((void *)0)
 
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))

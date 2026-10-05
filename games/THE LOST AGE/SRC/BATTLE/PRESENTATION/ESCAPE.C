@@ -3,9 +3,8 @@
 #include "SYSTEM.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_PRESENTATION.H"
+#include "text/MSG_IDS.H"
 
-extern char MsgActorDefends;
-extern char MsgCannotEscape;
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
@@ -34,7 +33,7 @@ s32 BattleEscape_PlayRun(void *action)
         WaitFrames(22);
         return 1;
     }
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgCannotEscape);
+    UiText_ShowMessageAndWaitCoreFar((s32)MsgCannotEscape);
     return 0;
 }
 
@@ -55,6 +54,6 @@ s32 BattlePres_ShowDefendMessage(s16 *script)
     }
     UiWork_ClearValueNameTablesFar();
     UiText_DrawQuantity(object_id, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+    UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
     return 0;
 }

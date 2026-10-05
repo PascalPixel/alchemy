@@ -4,13 +4,8 @@
 #include "IO_REG.H"
 #include "MENU_LIST.H"
 #include "ITEM.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
-extern u8 MsgBattleItemUnavailable[];
-extern u8 MsgBattleNoItems[];
-extern u8 MsgBattleItemBroken[];
-extern u8 MsgBattleItemNoEffect[];
 
 s32 Item_ClassifyUseAbility(s32 owner, s32 entry);
 

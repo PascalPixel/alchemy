@@ -7,6 +7,7 @@
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
 #include "LAYOUT_GUARD.H"
+#include "text/MSG_IDS.H"
 
 #define SELECTION_FIXED 999
 
@@ -29,7 +30,6 @@ void WaitFrames(s32 frames);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
 
-extern u8 MsgCommandName;
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 void Menu_LoadSelectedResource(void);
 void BattlePres_SetActorModesFar(u16 *, s32);
@@ -316,7 +316,7 @@ void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index)
         node = node->next;
     }
     if (node->kind == 1 || node->kind == 6) {
-        u32 first = node->message - (u32)&MsgCommandName;
+        u32 first = node->message - (u32)MsgCommandName;
 
         value = node->slot;
         Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
@@ -334,7 +334,7 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index)
         node = node->next;
     }
     if (node->kind == 1 || node->kind == 6) {
-        u32 id = node->message - (u32)&MsgCommandName;
+        u32 id = node->message - (u32)MsgCommandName;
 
         value = node->slot;
         Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);

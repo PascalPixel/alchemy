@@ -1,9 +1,6 @@
 #include "TYPES.H"
 #include "GAME_STATE.H"
-extern u8 MsgLobbyLooksLikeFirst[];
-extern u8 MsgLobbyLooksLikeFirstTime[];
-extern u8 MsgLobbyTellConsecutiveWins[];
-extern u8 MsgLobbyTellTotalWins[];
+#include "text/MSG_IDS.H"
 
 struct LobbyActor {
     u8 unknown_00[6];

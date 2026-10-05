@@ -7,14 +7,13 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "NODE_CHAIN.H"
+#include "text/MSG_IDS.H"
 
 extern u32 gFrameTick;
 extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
 
 extern struct SelectionScreen *gResQueueWork;
-extern u8 MsgItemNotHeld[];
-extern u8 MsgAbilityNotKnown[];
 void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
 

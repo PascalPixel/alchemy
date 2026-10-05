@@ -8,8 +8,8 @@
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
 #include "TBS_EDITION.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgPairJoinedParty[];
 
 void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Party_LookupCharacterValueByFlag32(s32);

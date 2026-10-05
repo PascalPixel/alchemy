@@ -3,7 +3,7 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
-extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
+#include "text/MSG_IDS.H"
 
 typedef struct Ctl {
     s16 f0;

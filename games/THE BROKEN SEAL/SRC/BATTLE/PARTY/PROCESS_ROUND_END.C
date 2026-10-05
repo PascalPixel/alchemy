@@ -77,7 +77,7 @@ s32 Battle_ProcessRoundEnd(void)
                         BattleEv_Push(BATTLE_EVENT_ACTION, expired_entry->element * 20 + expired_entry->index + 300);
                         BattleEv_Push(BATTLE_EVENT_SOUND, 175);
                         BattleEv_Push(BATTLE_EVENT_REFRESH, 0);
-                        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDjinnSet);
+                        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgDjinnSet);
                         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                         Audio_PlayCue(212);
                         Object_SetMode(GetBattleObjectSlot(id)->object, 3);
@@ -130,9 +130,9 @@ s32 Battle_ProcessRoundEnd(void)
                     UiWork_PushValueSlotFar(id, 1);
                     UiWork_PushValueSlotFar(hp_amount, 5);
                     if (unit->hp == unit->max_hp) {
-                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgHpFull);
+                        UiText_ShowMessageAndWaitCoreFar((s32)MsgHpFull);
                     } else {
-                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgHpRecover);
+                        UiText_ShowMessageAndWaitCoreFar((s32)MsgHpRecover);
                     }
                     Audio_PlayCue(175);
                     BattlePresentation_WaitForAdvance();
@@ -146,9 +146,9 @@ s32 Battle_ProcessRoundEnd(void)
                     UiWork_PushValueSlotFar(id, 1);
                     UiWork_PushValueSlotFar(pp_amount, 5);
                     if (unit->pp == unit->max_pp) {
-                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPpFull);
+                        UiText_ShowMessageAndWaitCoreFar((s32)MsgPpFull);
                     } else {
-                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPpRecover);
+                        UiText_ShowMessageAndWaitCoreFar((s32)MsgPpRecover);
                     }
                     Audio_PlayCue(175);
                     BattlePresentation_WaitForAdvance();
@@ -157,75 +157,75 @@ s32 Battle_ProcessRoundEnd(void)
             if (BattleUnit_TickAgilityModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgAgiNormal);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgAgiNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickAttackModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgAtkNormal);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgAtkNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickDefenseModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgDefNormal);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgDefNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickResistanceModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgResNormal);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgResNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickDelusion(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureDelusion);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgCureDelusion);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickConfusion(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgConscious);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgConscious);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCharm(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgConscious2);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgConscious2);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickStun(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureStun);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgCureStun);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickSleep(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgWakes);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgWakes);
                 BattlePresentation_WaitForAdvance();
             }
             if (Battle_AdvanceCounterAndCheckChance(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureSeal);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgCureSeal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickRefrain(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgRefrainEnd);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgRefrainEnd);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickReflect(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgReflectEnd);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgReflectEnd);
                 BattlePresentation_WaitForAdvance();
             }
         }
@@ -329,7 +329,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 BattleEv_Push(BATTLE_EVENT_VALUE, order);
                 BattleEv_Push(BATTLE_EVENT_SOUND, 175);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgEarthPowerUp + i);
+                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgEarthPowerUp + i);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                 Audio_PlayCue(212);
                 Object_SetMode(GetBattleObjectSlot(id)->object, 3);
@@ -347,15 +347,15 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurseDamage);
+            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgCurseDamage);
             if (Owner_AdjustFirstValueFar(id, -plan->pending_amount_60) == 0) {
                 s32 text;
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if (id >= 0 && id <= 7) {
-                    text = (s32)&MsgGoesDown;
+                    text = (s32)MsgGoesDown;
                 } else {
-                    text = (s32)&MsgStrengthExhausted;
+                    text = (s32)MsgStrengthExhausted;
                 }
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             } else {
@@ -371,7 +371,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, damage);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPoisonDamage);
+            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgPoisonDamage);
             if (*poison != 0) {
                 state->events.pending_cue = 134;
             } else {
@@ -382,9 +382,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if (id >= 0 && id <= 7) {
-                    text = (s32)&MsgGoesDown;
+                    text = (s32)MsgGoesDown;
                 } else {
-                    text = (s32)&MsgStrengthExhausted;
+                    text = (s32)MsgStrengthExhausted;
                 }
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             } else {
@@ -396,14 +396,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         if (unit->death_count != 0) {
             if (--unit->death_count == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls);
+                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgReaperCalls);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if (id >= 0 && id <= 7) {
-                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls - 3);
+                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgReaperCalls - 3);
                 } else {
-                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls + 3);
+                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgReaperCalls + 3);
                 }
             }
         }

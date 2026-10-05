@@ -3,6 +3,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gSuharaGateEntrances2[];
 extern const struct SceneEntrance gSuharaGateEntrances3[];
@@ -19,10 +20,6 @@ extern const struct SceneEvent gSuharaGateEvents2[];
 extern const struct SceneEvent gSuharaGateEvents3[];
 extern const struct SceneEvent gSuharaGateEventsOther[];
 
-extern u8 MsgFieldVenusLighthouseWasAttackedBy[];
-extern u8 MsgSuharaMeaning[];
-extern u8 MsgSuharaPityColossoVictor[];
-extern u8 MsgSuharaWantGoBabi[];
 
 void Scene_SetActor13Value1A(void)
 {

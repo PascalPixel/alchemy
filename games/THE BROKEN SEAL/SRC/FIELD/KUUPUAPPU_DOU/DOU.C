@@ -28,8 +28,6 @@ struct Actor {
 
 extern void KuupuappuDou_RaiseActorPriorities(void);
 
-TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
-TEXT_MESSAGE_ENUM(MsgFieldFlippedSwitch);
 
 extern
 
@@ -238,7 +236,7 @@ void SceneState_ApplyFlag300(void)
 
 void KuupuappuDou_ShowLockedDoorMessage(void)
 {
-    Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
+    Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
@@ -601,7 +599,7 @@ void FieldScene_RunScene3a7SequenceB(void)
     s32 v6;
 
     if (GameFlag_IsSet(0x9a8) == 0) {
-        Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
+        Engine_MessageShowCentered(MSGNO(MsgFieldFlippedSwitch), 1);
         GameFlag_Set(0x9a8);
         v5 = 27;
         v6 = 92;

@@ -9,20 +9,8 @@
 #include "SCENE_IDS.H"
 #include "DMA.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgArutamiraBabi[];
-extern u8 MsgArutamiraCameBackPleaseDraughtQuickly[];
-extern u8 MsgArutamiraDontLetMeDownLike[];
-extern u8 MsgArutamiraDontWantEitherDo[];
-extern u8 MsgArutamiraEitherWayWereStuckHere[];
-extern u8 MsgArutamiraForgotSukuretaSaidAlchemyCould[];
-extern u8 MsgArutamiraGreatItsDecidedJustHave[];
-extern u8 MsgArutamiraHowDidBecomeParalyzedWhile[];
-extern u8 MsgArutamiraMustTraveledIndeedIfDidnt[];
-extern u8 MsgArutamiraSoWellDoIt[];
-extern u8 MsgArutamiraThatsSukuretaSaidAlchemyCould[];
-extern u8 MsgArutamiraWhatWasThat[];
-extern u8 MsgArutamiraWouldHaveRevealedMyselfSooner[];
 extern u8 gDisplayTransition[];
 s32 Engine_PartyRemoveItem(s32 item);
 void Battle_ResetEffectCounter(void);
@@ -43,14 +31,8 @@ static inline void Actor_StepOutFromLeader(s32 actor, s32 dx, s32 dz, s32 facing
     Motion_LaunchFromFocusedObject(actor, dx, dz, facing);
 }
 
-extern u8 MsgArutamiraDontTrustAnyone[];
-extern u8 MsgArutamiraKiddingHaventActually[];
-extern u8 MsgArutamiraSaidCouldntMove[];
-extern u8 MsgArutamiraSee[];
 
-extern u8 MsgArutamiraForgetOrderRock[];
 
-extern u8 MsgArutamiraWait[];
 
 extern const struct SceneEvent gArutamiraDouEvents2[];
 extern const struct SceneEvent gArutamiraDouEvents3[];

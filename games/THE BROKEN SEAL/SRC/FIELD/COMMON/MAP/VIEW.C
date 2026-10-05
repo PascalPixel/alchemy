@@ -15,11 +15,11 @@
 #include "OBJECT_RUNTIME.H"
 #include "ANIMSPR.H"
 #include "HEAP_STATE.H"
+#include "text/MSG_IDS.H"
 
 void Map_UpdateWorldMapMarkers(void);
 extern u8 gMapCellBuffer[];
 
-extern u8 MsgNotOnMap[];
 extern u32 gKeysRepeat;
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);

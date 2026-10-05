@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KANPAN.H"
+#include "text/MSG_IDS.H"
 
 u32 FuneKanpan_SlotMode[8];
 s32 SceneState_FindFirstSetFlagOfGroup(u32 group);
@@ -33,18 +34,13 @@ void OverlayObject_ActivateSlotWithMode3(s32 actor);
 extern s32 FuneKanpan_LayerScroll[];
 extern s32 FuneKanpan_LayerSpeed[];
 extern u8 FuneKanpan_CrewScript[];
-extern u8 MsgFuneFinallyReachedTolbi[];
 void Event_CallWithLastActiveObjectId(u8 *script);
 void FieldScene_RunStepThen10(s32 step);
 void FieldScene_CallPairWith10(s32 actor, s32 facing);
-extern u8 MsgFuneRobinDontTalkLikeShouldnt[];
-extern u8 MsgFuneRobinTalkedPassengersDidntTour[];
-extern u8 MsgFuneSeeYoureGoingGoFor[];
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, s32 b);
 extern u8 FuneKanpan_ClosingCrewScript[];
 extern u8 FuneKanpan_LeaveActions[];
-extern u8 MsgFuneHowWasRobinDidExplore[];
 void FuneKanpan_OpenFirstDoor(void);
 
 void FuneKanpan_ChooseSlotModes(void)

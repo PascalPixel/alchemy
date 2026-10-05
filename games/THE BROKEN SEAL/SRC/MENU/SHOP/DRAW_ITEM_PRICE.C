@@ -2,12 +2,9 @@
 #include "FAR_RUNTIME.H"
 #include "SHOP.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
-extern u8 MsgItemName;
-extern u8 MsgCannotBuyThat[];
-extern u8 MsgNotBroken[];
-extern u8 MsgPrice[];
 
 void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
 {
@@ -44,7 +41,7 @@ show_price:
     goto done;
 draw:
     RenderOutput_RedrawSavedRectFar(window);
-    UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
     if (price != 0)
         goto show_price;
     switch (price_mode) {

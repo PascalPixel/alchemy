@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "SHOP.H"
 #include "FIXED_POINT_POSITION.H"
+#include "text/MSG_IDS.H"
 
 s32 Shop_CanServe(s32, s32);
 s32 Shop_ServicePrice(s32 selection, s32 variant);
@@ -13,8 +14,6 @@ s32 Shop_MsgByMode(s32 msg);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 extern struct ShopRuntime *gMenuWork;
 
-extern u8 MsgReviveCost;
-extern u8 MsgNoHealingNeeded;
 void UiWindow_Clear(s32 target);
 void UiText_DrawResourceFar(s32 message, s32 target, s32 arg2, s32 arg3);
 void UiWork_PushValueSlotFar(s32 message, s32 style);
@@ -80,9 +79,9 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
     if (target != 0) {
         UiWindow_Clear(target);
         if (Shop_CanServe(selection, variant) != 0) {
-            variant = (s32)&MsgReviveCost;
+            variant = (s32)MsgReviveCost;
         } else {
-            variant = (s32)&MsgNoHealingNeeded;
+            variant = (s32)MsgNoHealingNeeded;
         }
         variant = Shop_MsgByMode(variant);
         UiWork_PushValueSlotFar(message, 5);

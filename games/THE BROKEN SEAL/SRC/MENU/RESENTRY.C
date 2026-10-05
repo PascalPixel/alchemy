@@ -6,9 +6,9 @@
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 #include "RESOURCE_IDS.H"
+#include "text/MSG_IDS.H"
 
 extern u8 Menu_SelectionStepDelays[];
-extern u8 MsgCommandName;
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
 void Audio_PlayCue(s32 sound_id);
@@ -49,7 +49,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         if (resource_base != 0) {
             resource_id = resource_base + state->selection;
         } else {
-            resource_id = state->resource_ids[state->selection] + (s32)&MsgCommandName;
+            resource_id = state->resource_ids[state->selection] + (s32)MsgCommandName;
         }
         UiText_DrawCharacterAtOffset(resource_id, state->window, 0, 0);
 

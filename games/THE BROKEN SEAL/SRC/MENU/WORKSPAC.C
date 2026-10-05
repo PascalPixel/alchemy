@@ -7,6 +7,7 @@
 #include "SYSTEM.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 #define FLAG_WORKSPACE_SETTINGS_ONLY 0x17e
 #define WORKSPACE_ROWS 3
@@ -18,7 +19,6 @@
 extern u8 gDebugMode;
 extern const s8 Menu_WorkspaceIconFrames[];
 extern const u8 Resource_FixedBlockBTiles[];
-extern u8 MsgWorkspaceSaveQuest, MsgWorkspaceChangeSettings, MsgWorkspaceRoughMenu;
 
 void ShopCursor_AdvanceFar(void *);
 void Ui_ApplyTableScaleToObject(void *object);
@@ -92,16 +92,16 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
         UiWindow_DrawDividerLine(win, 0, i * 3, 19, i * 3);
     y = 4;
     if (settings_only == 0) {
-        msg = (s32)&MsgWorkspaceSaveQuest;
+        msg = (s32)MsgWorkspaceSaveQuest;
         UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4);
         msg++;
         UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4 + WORKSPACE_ROW_HEIGHT);
         y = 4 + 2 * WORKSPACE_ROW_HEIGHT;
     }
-    UiText_DrawResource((s32)&MsgWorkspaceChangeSettings, win, WORKSPACE_TEXT_X, y);
+    UiText_DrawResource((s32)MsgWorkspaceChangeSettings, win, WORKSPACE_TEXT_X, y);
     y += WORKSPACE_ROW_HEIGHT;
     if (gDebugMode != 0) {
-        msg = (s32)&MsgWorkspaceRoughMenu;
+        msg = (s32)MsgWorkspaceRoughMenu;
         UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, y);
         y += WORKSPACE_ROW_HEIGHT;
         UiText_DrawResource(msg + 1, win, WORKSPACE_TEXT_X, y);

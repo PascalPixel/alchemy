@@ -7,23 +7,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "IWRAM_CALL.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgHaidiaDoYouNeedToGo[];
-extern u8 MsgHaidiaDontGoBeyondSukuretasCottage[];
-extern u8 MsgHaidiaIFeltAnotherOne[];
-extern u8 MsgHaidiaIToldGeraldItWas[];
-extern u8 MsgHaidiaIllGetYouForMy[];
-extern u8 MsgHaidiaIsJasmineBackYet[];
-extern u8 MsgHaidiaItWontRainForSome[];
-extern u8 MsgHaidiaNoTravelersSinceTheEruption[];
-extern u8 MsgHaidiaSukuretaHasntComeBack[];
-extern u8 MsgHaidiaSukuretaIsWaitingForUs[];
-extern u8 MsgHaidiaTheGroundStillShakes[];
-extern u8 MsgHaidiaYouCantBeRobin[];
-extern u8 MsgHaidiaYouMakeMeSoMad[];
-extern u8 MsgHaidiaYourGrandpaIsTheMayor[];
-extern u8 MsgHaidiaPuppiesPlayingOver[];
-extern u8 MsgHaidiaRrruffRrrruff[];
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
 void Battle_WaitMode0();
@@ -35,12 +20,7 @@ void Engine_EventEnd();
 void Engine_EventSetMessage();
 void Engine_EventShowMessageAndWait();
 void Engine_ActorWalkToAndWait();
-extern u8 MsgHaidiaNotSneakingUpMtAleph[];
 
-extern u8 MsgHaidiaAsStubbornAsYourFather[];
-extern u8 MsgHaidiaDevastatedWhenKyle[];
-extern u8 MsgHaidiaGoodJob[];
-extern u8 MsgHaidiaWorkingYourselvesBone[];
 
 enum HouseActor {
     ACTOR_BOARD = 23,
@@ -66,10 +46,6 @@ void FieldScene_RunScene373SequenceB(void);
 s32 SceneActor_RunStep18WhenTargetSet();
 extern u8 gHaidiaMuraActor22Actions[];
 
-extern u8 MsgHaidiaAh[];
-extern u8 MsgHaidiaEverProtectFamily[];
-extern u8 MsgHaidiaHowHaveYouBeen[];
-extern u8 MsgHaidiaIUsedToPlayHere[];
 void Engine_ActorSetSpeed();
 void Engine_ActorFaceDirection();
 void Engine_ActorSetAnimation();
@@ -86,12 +62,10 @@ struct Flags85 {
     u8 flags;
 };
 
-extern u8 MsgHaidiaRepairCaption[];
 
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
 s32 ArcTan2(s32 z, s32 x);
 
-extern u8 MsgHaidiaDoorWontOpen[];
 
 s32 MapStagedScene_SelectPrimaryData(void)
 {

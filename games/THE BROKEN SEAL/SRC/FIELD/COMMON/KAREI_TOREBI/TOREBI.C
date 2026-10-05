@@ -2,8 +2,6 @@
 #include "TBS_EDITION.H"
 #include "KAREI.H"
 #include "text/MSG_IDS.H"
-TEXT_MESSAGE_ENUM(MsgYourCoins);
-TEXT_MESSAGE_ENUM(MsgCoins);
 #include "SCENE_IDS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -32,23 +30,8 @@ extern const struct SceneEvent gKareiTorebiEvents3[];
 extern const struct SceneEvent gKareiTorebiEvents3Flag950[];
 extern const struct SceneEvent gKareiTorebiEventsOther[];
 
-extern u8 MsgKareiFinishedOutHereBoardShip[];
-extern u8 MsgKareiGoingTakeShip[];
-extern u8 MsgKareiPassMessageDaughter[];
-extern u8 MsgKareiWantGoToTolbi[];
 
-extern u8 MsgKareiWantGoAshore[];
-extern u8 MsgKareiTicketsPlease[];
 
-extern u8 MsgKareiAfterHandingOverTicket[];
-extern u8 MsgKareiBoardWaitSetSail[];
-extern u8 MsgKareiHandInTicketPlank[];
-extern u8 MsgKareiHaveTicketsGiveHim[];
-extern u8 MsgKareiHearScaryTrip[];
-extern u8 MsgKareiLookingForTickets[];
-extern u8 MsgKareiSilkRoadBlocked[];
-extern u8 MsgKareiThanksMessageParents[];
-extern u8 MsgKareiTouristsLookUpset[];
 
 extern const u16 KareiTorebi_LeaveCells1[];
 extern const u16 KareiTorebi_LeaveCells3[];
@@ -75,8 +58,6 @@ struct SpriteBytes {
 };
 
 extern u8 KareiTorebi_ActorSixteenScript[];
-extern u8 MsgKareiIncredibleOcean[];
-extern u8 MsgKareiReturnedTicketCost[];
 
 void SceneState_ApplyValues14And0And5(void)
 {
@@ -348,14 +329,14 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Event_OpenMessage(8, 0);
             rec7 = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
 #if EDITION_INTERNATIONAL
-            UiText_DrawCharacterAtOffset(MsgYourCoins, rec7, 0, 0);
+            UiText_DrawCharacterAtOffset(MSGNO(MsgYourCoins), rec7, 0, 0);
 #else
-            msg = MsgYourCoins;
+            msg = MSGNO(MsgYourCoins);
             UiText_DrawCharacterAtOffset(msg, rec7, 0, 0);
 #endif
             base6_2000240 = (s32)Data_02000240;
 #if !EDITION_INTERNATIONAL
-            msg += MsgCoins - MsgYourCoins;
+            msg += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif
             UiText_DrawNumberInWindow(*(s32 *)(base6_2000240 + 16), 6, rec7, TICKET_COUNTER_X, 8);
 #if !EDITION_INTERNATIONAL

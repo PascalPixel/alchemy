@@ -7,33 +7,11 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
 
-TEXT_MESSAGE_ENUM(MsgHaidiaWhysEveryoneHanging);
-TEXT_MESSAGE_ENUM(MsgHaidiaFarewell);
 
-extern u8 MsgHaidiaADifficultTimeThreeYears[];
-extern u8 MsgHaidiaCheckedThePsynergyStone[];
-extern u8 MsgHaidiaDidTheTravelersMeetThe[];
-extern u8 MsgHaidiaMeditateOnMtAlephDaily[];
-extern u8 MsgHaidiaPartyPpRestored[];
 
-extern u8 MsgHaidiaArentWorriedCrossing[];
-extern u8 MsgHaidiaBeholdPowerPsynergy[];
-extern u8 MsgHaidiaShownNewAbility[];
 
-extern u8 MsgHaidiaAnythingInterestingOnYourTrip[];
-extern u8 MsgHaidiaCanIUsePsynergy[];
-extern u8 MsgHaidiaIHaveSomePsynergyLeft[];
-extern u8 MsgHaidiaTheStoneFellOnThe[];
-extern u8 MsgHaidiaYouSawTheWiseOne[];
 
-extern u8 MsgHaidiaSureHelp[];
-extern u8 MsgHaidiaWentOffWay[];
 
-extern u8 MsgHaidiaGoAidElders[];
-extern u8 MsgHaidiaOnlyTwoSurvived[];
-extern u8 MsgHaidiaThePsynergyStoneIsGone[];
-extern u8 MsgHaidiaThisIsVale[];
-extern u8 MsgHaidiaYouCameBackHome[];
 
 extern u8 HaidiaIe_Actor23Actions[];
 extern u8 HaidiaIe_Actor24Actions[];
@@ -1009,7 +987,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventWait(80);
     Actor_ShowEmote(12, 0x101, 40);
     SceneActor_SetPairZeroAndValue(12, 0x7000, 20);
-    Event_SetMessage(MsgHaidiaWhysEveryoneHanging);
+    Event_SetMessage(MSGNO(MsgHaidiaWhysEveryoneHanging));
     Event_SayThenWait(12, 10);
     Actor_ShowEmote(11, 0x102, 20);
     SceneActor_SetPairZeroAndValue(11, 0x1000, 10);
@@ -1259,7 +1237,7 @@ void Scene_RunExtendedActorSequence(void)
     ObjectMotion_Launch(22, 4, 0);
     ObjectMotion_Launch(25, 4, 0);
     ObjectMotion_Launch(28, 4, 0);
-    Engine_MessageShowCentered(MsgHaidiaFarewell, 1);
+    Engine_MessageShowCentered(MSGNO(MsgHaidiaFarewell), 1);
     v5 = 1;
     Engine_EventWait(80);
     Object_GetById(0)->priority_flags |= v5;

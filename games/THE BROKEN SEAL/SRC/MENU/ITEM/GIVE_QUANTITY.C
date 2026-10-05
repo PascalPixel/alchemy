@@ -9,18 +9,16 @@
 #include "RENDER_INPUT.H"
 #include "UI.H"
 #include "MENU_LIST.H"
+#include "text/MSG_IDS.H"
 extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;
 extern const u8 Data_080af08c[];
-extern u8 MsgItemName;
-extern u8 MsgGiveHowMany;
 
 #if EDITION_INTERNATIONAL
 #define GIVE_CURSOR_X 128
 #define GIVE_ASK_X    32
 #define GIVE_ASK_Y    0
 #else
-extern u8 MsgItemCounter;
 #define GIVE_CURSOR_X 88
 #define GIVE_ASK_X    0
 #define GIVE_ASK_Y    32
@@ -66,7 +64,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                 changed = 0;
                 quantity = (range + quantity) % range;
                 RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgGiveHowMany, window, GIVE_ASK_X, GIVE_ASK_Y);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgGiveHowMany, window, GIVE_ASK_X, GIVE_ASK_Y);
                 Dma_Set(Data_080af08c, tiles, 0x84000040, REG_DMA3);
                 Shop_FillSelectorFar(30, 14, tiles);
                 Shop_FillSelectorFar(range + base, 0, tiles);
@@ -74,17 +72,17 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                 Shop_FillSelectorFar(base, 2, tiles);
                 VramBlock_LoadCached(slot, 256, tiles);
                 UiNumber_DrawAt(quantity + 1, 2, window, 32, 32);
-                UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & 0x1ff) + (s32)&MsgItemName,
+                UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & 0x1ff) + (s32)MsgItemName,
                     window, 16, 8);
                 UiNumber_DrawAt(count - quantity - 1, 2, window, 16, 24);
 #if EDITION_INTERNATIONAL
                 if (single == 0)
                     UiNumber_DrawAt(other_count + quantity + 1, 2, window, 80, 24);
 #else
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgItemCounter, window, 32, 24);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgItemCounter, window, 32, 24);
                 if (single == 0) {
                     UiNumber_DrawAt(other_count + quantity + 1, 2, window, 80, 24);
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgItemCounter, window, 96, 24);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgItemCounter, window, 96, 24);
                 }
 #endif
                 UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[0])->name, window, 16, 16);

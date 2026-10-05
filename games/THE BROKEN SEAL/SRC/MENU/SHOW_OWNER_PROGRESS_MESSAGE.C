@@ -5,6 +5,7 @@
 #include "BATTLE_RUNTIME.H"
 
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 
 extern struct CharacterMenuState *gMenuWork;
 u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
@@ -12,7 +13,6 @@ void UiWork_PushValueSlotFar(u32 quantity, s32 style);
 void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_RenderWideStringAtOffsetFar(void *buffer, struct UiWindow *destination, s32 offset, s32 terminator);
 
-extern u8 MsgProgressHelp;
 
 #if EDITION_INTERNATIONAL
 #define PROGRESS_TEXT_MAX 0x80
@@ -49,7 +49,7 @@ void StatusMenu_ShowOwnerProgressMessage(
     }
 
     buffer = Runtime_BumpAllocate(PROGRESS_TEXT_MAX * 2);
-    UiText_CopyMessageStringFar(message_variant + (s32)&MsgProgressHelp, buffer, PROGRESS_TEXT_MAX);
+    UiText_CopyMessageStringFar(message_variant + (s32)MsgProgressHelp, buffer, PROGRESS_TEXT_MAX);
     UiText_RenderWideStringAtOffsetFar(buffer, destination, 0, -1);
     Runtime_BumpFree(buffer);
 }

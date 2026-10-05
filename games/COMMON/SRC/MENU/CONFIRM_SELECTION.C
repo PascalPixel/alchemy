@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 void *AffineEffect_InitializeWork(void);
 void Menu_EndResourceSelection(void);
 s32 Menu_RunResourceSelectionLoop(s32);
@@ -73,12 +74,11 @@ s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     return arg3;
 }
 
-extern u8 MsgCommandYes;
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h);
 
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 sel)
 {
-    s32 msg = (s32)&MsgCommandYes;
+    s32 msg = (s32)MsgCommandYes;
 
     AffineEffect_InitializeWork();
     Menu_AppendResourceEntry(5);

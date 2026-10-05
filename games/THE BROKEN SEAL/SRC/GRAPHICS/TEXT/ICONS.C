@@ -4,10 +4,8 @@
 #include "RENDER_INPUT.H"
 #include "BATTLE_UNIT.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgAgilityLabel[];
-extern u8 MsgPanelStatLabel[];
-extern u8 MsgPanelDefenseLabel[];
 void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();
 

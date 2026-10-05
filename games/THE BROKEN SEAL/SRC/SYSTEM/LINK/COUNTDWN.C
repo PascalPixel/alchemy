@@ -11,6 +11,7 @@
 #include "GAME_STATE.H"
 #include "BATTLE_WORK.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
 void Camera_ConfigureSceneFar(s32 offset);
 void Link_DrawShiftedTilePair(s32 destination);
@@ -52,7 +53,6 @@ void Audio_PlayCue(s32 soundId);
 unsigned char Ui_FillVramBlockPattern(void);
 void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
-extern char MsgNoTimeToRun;
 
 void UpdateLinkSessionCountdown(void)
 {
@@ -197,9 +197,9 @@ active:
         work = UiWindow_Create(0, 7, 30, 4, 42);
         Ui_FillVramBlockPattern();
 #if EDITION_INTERNATIONAL
-        UiText_CopyMessageString((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
+        UiText_CopyMessageString((s32)MsgNoTimeToRun, buffer, TEXT_COUNT);
 #else
-        UiText_DecodeMessage((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
+        UiText_DecodeMessage((s32)MsgNoTimeToRun, buffer, TEXT_COUNT);
 #endif
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {

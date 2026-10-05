@@ -11,6 +11,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "FAR_RUNTIME.H"
 #include "BATTLE_CALC.H"
+#include "text/MSG_IDS.H"
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
@@ -114,14 +115,6 @@ s32 Menu_OpenConfirmPrompt(void)
     return result;
 }
 
-extern char MsgShortcutSetL;
-extern char MsgShortcutSetR;
-extern char MsgPsynergyChooseOwner;
-extern char MsgPsynergyChooseAbility;
-extern char MsgPsynergyChooseTarget;
-extern char MsgPsynergyChooseForR;
-extern char MsgPsynergyChooseForL;
-extern char MsgItemUseResult;
 
 void WaitFrames(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
@@ -162,7 +155,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
             s32 chosen;
 
             work->pane_row[0] = 0;
-            ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseOwner);
+            ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseOwner);
             chosen = PsynergyMenu_SelectPartySlot(0);
             cancelled = -1;
             if (chosen == cancelled) {
@@ -183,13 +176,13 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 asm("" : : : "r2");
                 switch (work->mode) {
                 case 0:
-                    ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseAbility);
+                    ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseAbility);
                     break;
                 case 1:
-                    ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseForL);
+                    ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseForL);
                     break;
                 case 2:
-                    ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseForR);
+                    ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseForR);
                     break;
                 }
                 ItemMenu_PosCategory();
@@ -204,7 +197,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                                 work->owner_ids[0], selection, 0);
                             RenderOutput_ClearListFar((s32)work->info_window);
                             InventoryMenu_ShowModalMessage(
-                                (s32)&MsgShortcutSetL, -1, -1);
+                                (s32)MsgShortcutSetL, -1, -1);
 #if !EDITION_INTERNATIONAL
                             RenderOutput_RedrawSavedRectFar(work->info_window);
 #endif
@@ -213,7 +206,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                                 work->owner_ids[0], selection, 1);
                             RenderOutput_ClearListFar((s32)work->info_window);
                             InventoryMenu_ShowModalMessage(
-                                (s32)&MsgShortcutSetR, -1, -1);
+                                (s32)MsgShortcutSetR, -1, -1);
 #if !EDITION_INTERNATIONAL
                             RenderOutput_RedrawSavedRectFar(work->info_window);
 #endif
@@ -225,7 +218,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
             break;
 
         case 3:
-            ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseTarget);
+            ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseTarget);
             self_flag = PsynergyMenu_SelectTarget(0);
             state = 4;
             if (self_flag == -1) {
@@ -270,12 +263,12 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 Ability_PlayUseAnimation(work->pane_action[0] & 0x3fff);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    work->use_result + (s32)&MsgItemUseResult, 0, -1);
+                    work->use_result + (s32)MsgItemUseResult, 0, -1);
             } else {
                 Audio_PlayCue(114);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    work->use_result + (s32)&MsgItemUseResult,
+                    work->use_result + (s32)MsgItemUseResult,
                     result,
                     result);
             }

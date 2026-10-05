@@ -5,6 +5,7 @@
 #include "FIELD_SCENE.H"
 #include "RESOURCE_3A8_EFFECT.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 #define NULL ((void *)0)
 
@@ -143,8 +144,6 @@ extern const struct ScenePlacement gKareiMachiPlacements3[];
 extern const struct ScenePlacement gKareiMachiPlacements6[];
 extern const struct ScenePlacement gKareiMachiPlacementsOther[];
 
-extern u8 MsgFieldPeeredWell[];
-extern u8 MsgKareiVeryCleanMaintained[];
 
 extern const struct SceneEvent gKareiMachiEvents1[];
 extern const struct SceneEvent gKareiMachiEvents2[];
@@ -154,12 +153,6 @@ extern const struct SceneEvent gKareiMachiEvents5[];
 extern const struct SceneEvent gKareiMachiEvents6[];
 extern const struct SceneEvent gKareiMachiEventsOther[];
 
-extern u8 MsgKareiCameKalayBecauseDidntLike[];
-extern u8 MsgKareiDidFindNeededInWeapon[];
-extern u8 MsgKareiDoWantGoCaveUp[];
-extern u8 MsgKareiLadyLayanaSharedInLord[];
-extern u8 MsgKareiLayanaWasVeryHardOn[];
-extern u8 MsgKareiLordHammetSellsHisBest[];
 
 struct DoorCells {
     const u16 *steps;
@@ -171,11 +164,6 @@ extern struct DoorCells KareiMachi_DoorCells[];
 
 struct FieldActor *Object_GetByIdFar(s32 actor);
 
-extern u8 MsgKareiOkListeningLets[];
-extern u8 MsgKareiDecideEnteringColosso[];
-extern u8 MsgKareiShortOnePerson[];
-extern u8 MsgKareiThatsWeCantWaitAny[];
-extern u8 MsgKareiWhyWeStoppingAtPlace[];
 extern const u32 SceneAction_GroupMotion[];
 extern const u32 SceneAction_GroupOffsetMotion[];
 extern u8 KareiMachi_StagedGroupScript[];
@@ -235,8 +223,6 @@ static __inline__ void ClearStep(u8 *a)
     *(u16 *)(a + 100) = z;
 }
 
-extern u8 MsgKareiLordHammetsPalaceLordAway[];
-extern u8 MsgKareiWeveArrivedHammet[];
 extern const s32 KareiMachi_ActionScript01[];
 extern const s32 KareiMachi_Script02[];
 extern s32 KareiMachi_Data01[];

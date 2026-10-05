@@ -8,6 +8,7 @@
 #include "FACING_OBJECT.H"
 #include "CALL.H"
 #include "OBJECT_DISPATCH.H"
+#include "text/MSG_IDS.H"
 
 void ShindenHeya_RaiseItemIcon(s32 item);
 
@@ -62,17 +63,6 @@ s32 Math_RemainderUnsigned();
 void ShindenHeya_UpdateRisingSpark(union FieldObject *object);
 
 extern s16 Data_02000240[];
-extern u8 MsgShindenAmStartingFeelOnlyBeginning[];
-extern u8 MsgShindenCameXianFromVeryDistant[];
-extern u8 MsgShindenCurseMayOverButWe[];
-extern u8 MsgShindenMayWrongButLatelyThere[];
-extern u8 MsgShindenMyControlOverPsynergyHas[];
-extern u8 MsgShindenPathSolSanctumStillClosed[];
-extern u8 MsgShindenSavedAltinFromMonstersClearly[];
-extern u8 MsgShindenWasAfterEerieNightWhen[];
-extern u8 MsgShindenWasHandFateReturnedGold[];
-extern u8 MsgShindenWeWillHelpAnytimeAs[];
-extern u8 MsgShindenWieldersPsynergyCalledAdeptsAdepts[];
 void FieldScene_RunSupplementalSequenceOne(void);
 
 void FieldScene_RunPairedActorChoreography(void)

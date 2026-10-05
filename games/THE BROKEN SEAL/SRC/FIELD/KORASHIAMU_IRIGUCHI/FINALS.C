@@ -1,18 +1,12 @@
 #include "STATUS.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorashiamuHaveMakeThroughCountlessMatches[];
-extern u8 MsgKorashiamuHavePerfectTechniquesLikeThose[];
-extern u8 MsgKorashiamuSilence[];
 void SceneState_ForwardMaskedHalfwordWith10();
 
 void FieldScene_DispatchBySelector(void);
 void SceneState_ApplyRectsByFlatla384And962(void);
 
-extern u8 MsgKorashiamuPrepareYourselvesContestantsFinalsWill[];
-extern u8 MsgKorashiamuRobinOnlyOneEnteringFinals[];
-extern u8 MsgKorashiamuSeeYouveMadeThroughYour[];
-extern u8 MsgKorashiamuWonBothMatches[];
 
 void SceneState_ApplyFlags565And564(void)
 {

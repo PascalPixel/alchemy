@@ -2,8 +2,7 @@
 #include "CALL.H"
 #include "FIELDOBJ.H"
 #include "GAME_FLAGS.H"
-extern u8 MsgKorosseoCheering[];
-extern u8 MsgKorosseoCheeringChoices[];
+#include "text/MSG_IDS.H"
 extern struct EventWork *gEventWork;
 
 u8 *Object_GetById();

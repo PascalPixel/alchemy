@@ -7,6 +7,7 @@
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
 #if EDITION_INTERNATIONAL
 #define STATUS_X 32
@@ -16,10 +17,6 @@
 
 extern u8 IwramCopyWords[];
 extern u8 Ui_LvString[];
-extern u8 MsgClassName[], MsgAbilityName[];
-extern u8 MsgPoisonLabel[], MsgVenomLabel[], MsgCurseLabel[], MsgHauntLabel[];
-extern u8 MsgExpLabel[], MsgCannotEquip[], MsgWillLearn[], MsgLearned[];
-extern u8 MsgPanelStatLabel[];
 
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void WaitFrames(s32 frames);

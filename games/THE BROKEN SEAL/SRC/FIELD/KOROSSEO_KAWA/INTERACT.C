@@ -4,9 +4,8 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorosseoRobinDidGetGoodLook[];
-extern u8 MsgKorosseoWaitShouldntDecideWhereBest[];
 
 typedef struct Ctl {
     s16 f0;
@@ -57,19 +56,10 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-extern u8 MsgKorosseoStageFirstFinalsMatch[];
-extern u8 MsgKorosseoStageSecondFinalsMatch[];
-extern u8 MsgKorosseoStageThirdFinalsMatch[];
-extern u8 MsgKorosseoWouldYouLikeHearDescription[];
 void Battle_ResetEffectCounter(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
 s32 PartyTalkMenu_Choose(s32 menu);
 
-extern u8 MsgKorosseoDoYourBest[];
-extern u8 MsgKorosseoIfKnowWhoWantCheer[];
-extern u8 MsgKorosseoRobinWillCheerForWay[];
-extern u8 MsgKorosseoUnfortunatelyWeHaveFullHouse[];
-extern u8 MsgKorosseoWouldLikeFriendCheerFor[];
 s32 Party_CountActiveOwnersFar();
 void Party_RemoveActiveOwner();
 void Party_AddActiveOwner();

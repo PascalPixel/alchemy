@@ -2,9 +2,8 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgTransferMethod[];
-extern u8 MsgPasswordSelection[];
 void *AffineEffect_InitializeWork(void);
 void Menu_AppendResourceEntry(s32);
 void Menu_CenterResourceEntries(s32, s32, s32);

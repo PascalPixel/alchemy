@@ -4,11 +4,8 @@
 #include "FIELD_SCENE.H"
 #include "TBS_EDITION.H"
 #include "INVENTORY.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKuupuappuRumorsThievesLunpa[];
-extern u8 MsgKuupuappuTalkingMayorStrong[];
-extern u8 MsgKuupuappuVolcanoStaysCalm[];
-extern u8 MsgKuupuappuWarriorsWhoCaptured[];
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -129,19 +126,11 @@ s32 UpdateActorProximity(u8 *actor);
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 extern u8 *Data_03001e8c[];
 
-extern u8 MsgKuupuappuWarriorGuy[];
 
-extern u8 MsgKuupuappuGreatEverythingSolved[];
-extern u8 MsgKuupuappuGuysCheckJail[];
-extern u8 MsgKuupuappuOnceDodonpaTook[];
-extern u8 MsgKuupuappuWishVaultsElders[];
 
-extern u8 MsgKuupuappuWatchingGuysMakes[];
 void ActorPresentation_RunActorModeOneThenZero(s32 actor);
 void SceneDialogue_RunActorFourteenFlagDialogue(void);
 
-extern u8 MsgKuupuappuGrownUpsAlways[];
-extern u8 MsgKuupuappuNotLikeEasy[];
 
 s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
 {

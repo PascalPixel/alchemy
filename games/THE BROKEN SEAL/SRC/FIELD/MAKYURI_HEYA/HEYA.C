@@ -2,8 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "PROBE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgMakyuriHeyaStrangeForcesBlockWay[];
 
 extern const struct SceneEntrance gMakyuriHeyaEntrances4[];
 extern const struct SceneEntrance gMakyuriHeyaEntrances3[];

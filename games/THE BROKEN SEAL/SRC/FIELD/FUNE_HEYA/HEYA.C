@@ -5,6 +5,7 @@
 #include "HEYA.H"
 #include "CALL.H"
 #include "FIELD_SERVICE.H"
+#include "text/MSG_IDS.H"
 
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -79,22 +80,6 @@ extern u8 FuneHeya_StepScriptB[];
 extern u8 FuneHeya_StepScriptA[];
 extern u8 Data_02000240[];
 
-extern u8 MsgFuneBadLuckLosingMyLucky[];
-extern u8 MsgFuneButWeCantSendShip[];
-extern u8 MsgFuneHaHaHaChosenOarsman[];
-extern u8 MsgFuneIfShipFromTolbiHad[];
-extern u8 MsgFuneItsTooLateHireMercenaries[];
-extern u8 MsgFuneJokingWantRow[];
-extern u8 MsgFuneLongerWeSitHereMore[];
-extern u8 MsgFuneLooksLikeYouveBeenChosen[];
-extern u8 MsgFuneNoooooNotGoing[];
-extern u8 MsgFuneNowWantSeeCaptainToo[];
-extern u8 MsgFuneOarsmanWasInjured[];
-extern u8 MsgFuneTheresWholeBunchReallyMuscular[];
-extern u8 MsgFuneTheseProudWarriorsNotGoing[];
-extern u8 MsgFuneWeDontKnowMightHappen[];
-extern u8 MsgFuneYouCameAskCaptainSet[];
-extern u8 MsgFuneYouGoingRow[];
 extern u8 FuneHeya_SceneTable04[];
 extern u8 FuneHeya_SceneTable05[];
 extern u8 FuneHeya_SceneTable06[];
@@ -109,26 +94,11 @@ extern u8 FuneHeya_SceneTable14[];
 void Battle_ResetEffectCounterFar();
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
-extern u8 MsgFuneDontFeelDontTalkMe[];
-extern u8 MsgFuneDontTellGoing[];
-extern u8 MsgFuneYouFinallyPickedSomeoneDidnt[];
 s32 SceneState_ApplyLevelFromFlags(void);
 void FuneHeya_TurnActorToOpenSide(s32 actor);
 void FieldScene_RunStepThen10(s32 actor);
 void FieldScene_RunPrimarySequence(s32 actor, s32 message, s32 flag);
 
-extern u8 MsgFuneGivesMeChillsThinkCould[];
-extern u8 MsgFuneHaHaHaRowingFeel[];
-extern u8 MsgFuneHoHoPersonGoingGet[];
-extern u8 MsgFuneIfYouveChosenOarsmanLets[];
-extern u8 MsgFuneNotThinkingMaking[];
-extern u8 MsgFuneOarsmanGiveBreak[];
-extern u8 MsgFuneOhhhhNooooGoingMakeMe[];
-extern u8 MsgFunePeopleAskingFrail[];
-extern u8 MsgFunePoorOarsmanFeel[];
-extern u8 MsgFuneRobinYouveGotGoodEye[];
-extern u8 MsgFuneThatsWhoYouPickedOarsman[];
-extern u8 MsgFuneYouveBeenChosenAsOarsman[];
 s32 SceneState_ApplyLevelFromFlags();
 
 s32 SceneActor_CheckBucketOffsetPoint();

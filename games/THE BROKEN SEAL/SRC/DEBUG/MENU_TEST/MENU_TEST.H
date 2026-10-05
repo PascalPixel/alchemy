@@ -7,11 +7,9 @@
 #include "GAME_STATE.H"
 #include "FX_SCENE.H"
 #include "FIELDOBJ.H"
+#include "text/MSG_IDS.H"
 
 extern volatile s32 gKeysHeld;
-extern u8 MsgWeaponShopWelcome[];
-extern u8 MsgArmorShopWelcome[];
-extern u8 MsgItemShopWelcome[];
 extern struct BattleFxScene *gEffectWork;
 extern u8 MenuTest_Events[];
 extern u8 MenuTest_Entrances[];

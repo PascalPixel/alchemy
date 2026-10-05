@@ -2,8 +2,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgFieldFlippedSwitch[];
 
 extern u16 gBgScroll[];
 

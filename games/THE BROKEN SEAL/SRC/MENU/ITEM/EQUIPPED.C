@@ -9,11 +9,10 @@
 #include "LAYOUT_GUARD.H"
 #include "A9_MOTION.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgEquipSlotLabels;
 extern void ItemMenu_PosCategory(void);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
-extern u8 MsgItemName;
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
 void ItemMenu_PosCategory(void);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
@@ -31,10 +30,10 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     Owner_GetStateFar(owner_id);
     ItemMenu_PosCategory();
     ItemMenu_HideAllIcons();
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels, window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels + 1, window, 0, 32);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels + 2, window, 0, 16);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels + 3, window, 0, 48);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgEquipSlotLabels, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgEquipSlotLabels + 1, window, 0, 32);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgEquipSlotLabels + 2, window, 0, 16);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgEquipSlotLabels + 3, window, 0, 48);
     items = menu->items;
     ItemMenu_DrawEquippedItemNames(window, items);
     if (mode == 0) {
@@ -60,16 +59,16 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)
             item = items[i] & ITEM_ID_MASK;
             switch (Item_Get(item)->type) {
             case 1:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 8);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, NAME_X, 8);
                 break;
             case 2:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 56);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, NAME_X, 56);
                 break;
             case 3:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 40);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, NAME_X, 40);
                 break;
             case 4:
-                UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 24);
+                UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, NAME_X, 24);
                 break;
             }
         }

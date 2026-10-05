@@ -3,6 +3,7 @@
 #include "FIELD_SCENE.H"
 #include "ARUTIN.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gArutinMuraEntrances1[];
 extern const struct SceneEntrance gArutinMuraEntrances2[];
@@ -19,26 +20,6 @@ extern const struct SceneEvent gArutinMuraEvents1[];
 extern const struct SceneEvent gArutinMuraEvents2[];
 extern const struct SceneEvent gArutinMuraEventsOther[];
 
-extern u8 MsgArutinDefeatedThoseMonstersDidnt[];
-extern u8 MsgArutinDidSeeWaterGushingOut[];
-extern u8 MsgArutinDoWantWeapons[];
-extern u8 MsgArutinGirlFromXianBoughtLot[];
-extern u8 MsgArutinGirlFromXianWasAsking[];
-extern u8 MsgArutinHowAboutArentImpressedBy[];
-extern u8 MsgArutinItsGreatCanSellArmor[];
-extern u8 MsgArutinMyStoreSubmergedWantSell[];
-extern u8 MsgArutinNoneMyGoodsWereDamaged[];
-extern u8 MsgArutinOnesWhoDefeatedWaterBeasts[];
-extern u8 MsgArutinThankGoodnessWaterHasReceded[];
-extern u8 MsgArutinThereFewBeastsInMine[];
-extern u8 MsgArutinThereSmallTempleWestAltin[];
-extern u8 MsgArutinTrueFoundAncientRuinsIn[];
-extern u8 MsgArutinTryingFindYourWayWest[];
-extern u8 MsgArutinWeCantDrinkWaterMonsters[];
-extern u8 MsgArutinWeGotLittleDampBut[];
-extern u8 MsgArutinWillDoIfMyMerchandise[];
-extern u8 MsgArutinYoullHaveFindPassageIn[];
-extern u8 MsgArutinYourFirstTimeVisitAltin[];
 void FieldScene_RunMiddleSequence(void);
 void FieldScene_RunScene3a3SequenceD(void);
 

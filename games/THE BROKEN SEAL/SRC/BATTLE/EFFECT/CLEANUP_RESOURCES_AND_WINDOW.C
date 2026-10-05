@@ -8,6 +8,7 @@
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 extern u8 gMapCellBuffer[];
 
@@ -87,8 +88,6 @@ extern u32 gKeysHeld;
 extern const u8 WorldMap_MarkerBlendCycle[];
 extern const u16 WorldMap_CursorDirectionAngles[];
 extern const s32 WorldMap_PlaceMarkers[];
-extern u8 MsgDebugEntryName[];
-extern u8 MsgPresentLocation[];
 
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);

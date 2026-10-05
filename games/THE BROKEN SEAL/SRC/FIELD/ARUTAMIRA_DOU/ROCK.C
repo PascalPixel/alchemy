@@ -2,8 +2,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgArutamiraRotatedRock[];
 
 void SceneActor_SetPositionFromTransformedBase(s32 actor, s32 reach, s32 angle);
 void ArutamiraDou_SpinActorWheel(void);

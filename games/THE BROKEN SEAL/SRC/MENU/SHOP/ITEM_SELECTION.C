@@ -9,8 +9,6 @@ void UiWindow_Commit(s32);
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern u8 MsgCannotDropIt[];
-extern u8 MsgCannotRemoveIt[];
 
 void UiWork_FinalizeFar(s32 window, s32 style);
 void PsynergyMenu_InitializeEntryObjectsFar();
@@ -116,13 +114,13 @@ done:
 #include "BATTLE_CALC.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
 s32 Ability_GetAvailability(s32);
 s32 Inventory_CheckDiscardFar(s32, s32);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 void UiWork_FinalizePendingCoreFar(void);
 
-extern u8 MsgItemPlainName;
 
 s32 Shop_SelUse(s32 actor)
 {
@@ -169,7 +167,7 @@ s32 Shop_SelUse(s32 actor)
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
             Shop_DrawUseItem(win1, actor, selection);
-            Shop_DrawMsg(win2, flags + (s32)&MsgItemPlainName);
+            Shop_DrawMsg(win2, flags + (s32)MsgItemPlainName);
         }
 
         WaitFrames(1);
@@ -237,10 +235,6 @@ exit_loop:
     return result;
 }
 
-extern u8 MsgItemName;
-extern u8 MsgCannotDrop;
-extern u8 MsgCannotRemove;
-extern u8 MsgPriceHeading;
 
 void RenderOutput_RedrawSavedRectFar(s32);
 s32 Shop_SalePrice(s32);
@@ -257,20 +251,20 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         s32 result;
 
         UiWindow_Commit(window);
-        UiText_DrawCharacterAtOffsetFar(masked + (s32)&MsgItemName, window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar(masked + (s32)MsgItemName, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
         if (result == -4) {
 #if EDITION_INTERNATIONAL
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 0, 8);
 #else
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 8, 8);
 #endif
         } else if (result == -3) {
 #if EDITION_INTERNATIONAL
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 0, 8);
 #else
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 8, 8);
 #endif
         } else {
             s32 qty;
@@ -280,25 +274,25 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             total = mult *qty;
 
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 80, 8);
 #elif defined(TBS_EDITION_DE)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 0, 8);
             UiNumber_DrawAt(total, 5, window, 32, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 72, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
 #elif defined(TBS_EDITION_ES)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 88, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 88, 8);
 #elif defined(TBS_EDITION_FR)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 32, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 72, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
 #else
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 1, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 1, window, 80, 8);
 #endif
         }
     }

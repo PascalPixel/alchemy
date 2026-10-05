@@ -9,6 +9,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "IO_REG.H"
 #include "BATTLE_CALC.H"
+#include "text/MSG_IDS.H"
 
 struct BattleCommandRuntime {
     u8 pad000[0x170]; s16 result_code; u8 pad172[0x2c]; s16 battle_mode;
@@ -16,10 +17,6 @@ struct BattleCommandRuntime {
 };
 
 extern struct BattleRuntime *gEventWork;
-extern u8 MsgUseAbilityConfirm;
-extern u8 MsgNothingHappened[];
-extern u8 MsgDoesNotWorkHere[];
-extern u8 MsgNotEnoughPp[];
 
 void *ObjectTable_Get(s32);
 void Battle_InitializeRenderObject(void);
@@ -124,7 +121,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
             return 0;
         }
         UiWork_PushValueSlotFar(0x95, 4);
-        UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseAbilityConfirm, 13);
+        UiText_ShowPositionedMessageAndWaitFar((s32)MsgUseAbilityConfirm, 13);
         status = Object_CallSpawnRoutineAtOrigin(1);
         UiWork_FinalizePendingCoreFar();
         if (status != 0)

@@ -17,11 +17,10 @@
 #include "RESOURCE.H"
 #include "UI.H"
 #include "SHOP.H"
+#include "text/MSG_IDS.H"
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern u8 MsgCoins[];
-extern u8 MsgPiece[];
 
 void Audio_PlayCue(s32 cue);
 void Shop_FillSelector(s32 value, s32 x, void *buffer);

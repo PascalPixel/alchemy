@@ -1,5 +1,5 @@
 #include "LOG_ROLLING.H"
-extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
+#include "text/MSG_IDS.H"
 
 void ColossoLogRollingStage_MarkSceneProgress(void)
 {

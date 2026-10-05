@@ -5,6 +5,7 @@
 #include "STAGED_ACTOR.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
 void Effect_AdvanceMotion(struct MotionEffect *effect);
 void OverlayObject_WaitUntilIdle(s32 *obj);
@@ -18,11 +19,6 @@ extern const struct ScenePlacement gBabiIriguchiPlacements2[];
 extern const struct ScenePlacement gBabiIriguchiPlacements1[];
 extern const struct ScenePlacement gBabiIriguchiPlacementsOther[];
 void SceneState_ApplyRectsAtActors8And9();
-extern u8 MsgBabiSeemsLocked[];
-extern u8 MsgBabiTheDoor[];
-extern u8 MsgBabiYoureSureTheyWentThrough[];
-extern u8 MsgBabiTruthDoorOpenThoseSeeing[];
-extern u8 MsgFieldFlippedSwitch[];
 void FieldScene_RunActorEventSequence(void);
 
 extern s32 StagedActor_DirectionSteps[];

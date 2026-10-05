@@ -8,6 +8,7 @@
 #include "INVENTORY_MENU.H"
 #include "GLOBAL_CELLS.H"
 #include "MENU_LIST.H"
+#include "text/MSG_IDS.H"
 #if EDITION_INTERNATIONAL
 #define MODAL_SHORT_X   14
 #define MODAL_REMOVED_X 14
@@ -26,20 +27,6 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
     return copy(dst, src, size);
 }
 
-extern char MsgWhoseItem;
-extern char MsgWhichItem;
-extern char MsgUseOnWhom;
-extern char MsgGiveToWhom;
-extern char MsgSwapForWhat;
-extern char MsgEquippedIt;
-extern char MsgDroppedIt;
-extern char MsgGiven;
-extern char MsgRemoved;
-extern char MsgTraded;
-extern char MsgCannotRemoveItem;
-extern char MsgCannotTrade;
-extern char MsgCannotHoldMore;
-extern char MsgItemUseResult;
 
 void WaitFrames(s32 frames);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
@@ -118,7 +105,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->active = 13;
-            ItemMenu_DrawMsg(0, (s32)&MsgWhoseItem);
+            ItemMenu_DrawMsg(0, (s32)MsgWhoseItem);
 #if EDITION_INTERNATIONAL
             RenderOutput_RedrawSavedRectFar(menu->info_window);
             UiText_DrawWorkValueWithLabel((s32)menu->info_window);
@@ -151,7 +138,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->active = 13;
             menu->pane_icons[0]->active = 1;
-            ItemMenu_DrawMsg(0, (s32)&MsgWhichItem);
+            ItemMenu_DrawMsg(0, (s32)MsgWhichItem);
             sel = ItemMenu_RunList(0);
             state = ITEM_STEP_OWNER;
             if (sel == -1) {
@@ -191,7 +178,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     ItemMenu_Use();
                     RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
-                        menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
+                        menu->message_offset + (s32)MsgItemUseResult, 0, -1);
 #if !EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
@@ -233,7 +220,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
-                (s32)&MsgUseOnWhom, (s32)menu->message_window, 16, 16);
+                (s32)MsgUseOnWhom, (s32)menu->message_window, 16, 16);
 #if EDITION_INTERNATIONAL
             if (ItemMenu_SelectTarget(0) != -1) {
 #else
@@ -251,7 +238,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 if (result != -1) {
                     RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
-                        menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
+                        menu->message_offset + (s32)MsgItemUseResult, 0, -1);
 #if !EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
@@ -274,7 +261,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
-                (s32)&MsgGiveToWhom, (s32)menu->message_window, 16, 16);
+                (s32)MsgGiveToWhom, (s32)menu->message_window, 16, 16);
 #if EDITION_INTERNATIONAL
             n = ItemMenu_SelectTarget(1);
             state = ITEM_STEP_GIVE;
@@ -341,7 +328,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->pane_icons[0]->active = 13;
                 WaitFrames(1);
                 RenderOutput_ClearListFar(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&MsgDroppedIt, MODAL_SHORT_X, 13);
+                InventoryMenu_ShowModalMessage((s32)MsgDroppedIt, MODAL_SHORT_X, 13);
                 menu->completion_flag = 1;
                 state = ITEM_STEP_ITEM;
             } else {
@@ -432,23 +419,23 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             WaitFrames(1);
             if (aborted == 1) {
                 RenderOutput_ClearListFar(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&MsgCannotHoldMore, 15, 14);
+                InventoryMenu_ShowModalMessage((s32)MsgCannotHoldMore, 15, 14);
             } else {
                 RenderOutput_ClearListFar(menu->info_window);
                 if (result == 1) {
                     InventoryMenu_ShowModalMessage(
-                        (s32)&MsgGiven, 15, 14);
+                        (s32)MsgGiven, 15, 14);
                 } else {
                     ItemMenu_DrawEquipPreview(
                         menu->pane_owner[1], menu->selected_slots[1], 0, menu->pane_owner[1]);
                     InventoryMenu_ShowModalMessage(
-                        (s32)&MsgEquippedIt, 15, 14);
+                        (s32)MsgEquippedIt, 15, 14);
                     item = Item_Get(menu->selected_items[0]);
                     if ((item->flags & ITEM_CURSED) != 0) {
                         Audio_PlayCue(0x67);
                         RenderOutput_ClearListFar(menu->info_window);
                         InventoryMenu_ShowModalMessage(
-                            (s32)&MsgEquippedIt + 7, MODAL_SHORT_X, 14);
+                            (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 14);
                     }
                 }
             }
@@ -460,7 +447,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             aborted = 0;
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
-            ItemMenu_DrawMsg(0, (s32)&MsgSwapForWhat);
+            ItemMenu_DrawMsg(0, (s32)MsgSwapForWhat);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
             if (ItemMenu_RunList(1) == -1) {
 #else
@@ -535,10 +522,10 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 CopyWords(IWRAM_COPY_WORDS, target, target_copy, BATTLE_UNIT_SIZE);
                 RenderOutput_ClearListFar(menu->info_window);
 #if defined(TBS_EDITION_FR)
-                InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 11, 14);
+                InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, 11, 14);
                 RenderOutput_RedrawSavedRectFar(menu->status_window);
 #else
-                InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 15, 14);
+                InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, 15, 14);
 #endif
             } else {
                 Owner_RecalculateStatsFar(menu->pane_owner[0]);
@@ -563,21 +550,21 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         ItemMenu_DrawEquipPreview(
                             menu->pane_owner[1], menu->selected_slots[1], 0, menu->pane_owner[1]);
                         InventoryMenu_ShowModalMessage(
-                            (s32)&MsgEquippedIt, 15, 14);
+                            (s32)MsgEquippedIt, 15, 14);
                         item = Item_Get(menu->selected_items[0]);
                         if ((item->flags & ITEM_CURSED) != 0) {
                             Audio_PlayCue(0x67);
                             RenderOutput_ClearListFar(menu->info_window);
                             InventoryMenu_ShowModalMessage(
-                                (s32)&MsgEquippedIt + 7, MODAL_SHORT_X, 14);
+                                (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 14);
                         }
                     } else {
 #if defined(TBS_EDITION_IT)
                         InventoryMenu_ShowModalMessage(
-                            (s32)&MsgTraded, 13, 14);
+                            (s32)MsgTraded, 13, 14);
 #else
                         InventoryMenu_ShowModalMessage(
-                            (s32)&MsgTraded, 15, 14);
+                            (s32)MsgTraded, 15, 14);
 #endif
                     }
                 }
@@ -596,7 +583,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             if (result == -2) {
                 RenderOutput_ClearListFar(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&MsgCannotRemoveItem, 0, -1);
+                InventoryMenu_ShowModalMessage((s32)MsgCannotRemoveItem, 0, -1);
 #if !EDITION_INTERNATIONAL
                 RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
@@ -613,13 +600,13 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawEquipPreview(
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
             RenderOutput_ClearListFar(menu->info_window);
-            InventoryMenu_ShowModalMessage((s32)&MsgEquippedIt, 15, 8);
+            InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 8);
             item = Item_Get(menu->selected_items[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
                 Audio_PlayCue(0x67);
                 RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage(
-                    (s32)&MsgEquippedIt + 7, MODAL_SHORT_X, 8);
+                    (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 8);
             }
             state = ITEM_STEP_ITEM;
             break;
@@ -639,7 +626,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
             menu->equip_preview = 0;
             RenderOutput_ClearListFar(menu->info_window);
-            InventoryMenu_ShowModalMessage((s32)&MsgRemoved, MODAL_REMOVED_X, 8);
+            InventoryMenu_ShowModalMessage((s32)MsgRemoved, MODAL_REMOVED_X, 8);
             Event_ClearInvalidPackedValuesFar();
             state = ITEM_STEP_ITEM;
             break;

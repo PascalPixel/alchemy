@@ -3,6 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gBiribinoMuraEntrances1[];
 extern const struct SceneEntrance gBiribinoMuraEntrances2[];
@@ -13,24 +14,10 @@ extern const struct ScenePlacement gBiribinoMuraPlacements1[];
 extern const struct ScenePlacement gBiribinoMuraPlacements2[];
 extern const struct ScenePlacement gBiribinoMuraPlacements3[];
 extern const struct ScenePlacement gBiribinoMuraPlacementsOther[];
-extern u8 MsgBiribinoBottomNotVisibleLooksVery[];
-extern u8 MsgFieldPeeredWell[];
 extern const struct SceneEvent gBiribinoMuraEvents1[];
 extern const struct SceneEvent gBiribinoMuraEvents2[];
 extern const struct SceneEvent gBiribinoMuraEvents3[];
 extern const struct SceneEvent gBiribinoMuraEventsOther[];
-extern u8 MsgBiribinoAreaOffLimitsThoseWithout[];
-extern u8 MsgBiribinoCurseWasBrokenThanksEfforts[];
-extern u8 MsgBiribinoDidSeeTreeAtEntrance[];
-extern u8 MsgBiribinoHaveEverBeenVillageImil[];
-extern u8 MsgBiribinoHaveTriedHeadingSoutheastFrom[];
-extern u8 MsgBiribinoItsTreeButAlmostLooks[];
-extern u8 MsgBiribinoJillGaveRobinSpecialGift[];
-extern u8 MsgBiribinoMccoysHiddenWarehouseDoNot[];
-extern u8 MsgBiribinoThankSavedMeFromBeing[];
-extern u8 MsgBiribinoThereTreeLooksLikePerson[];
-extern u8 MsgBiribinoWasTurnedIntoTreeFor[];
-extern u8 MsgBiribinoYoureGuy[];
 void BiribinoMura_RestoreVillageActors(void);
 void FieldScene_RunScene38bSequenceA(void);
 void BiribinoMura_RestoreRaisedEntrance(void);

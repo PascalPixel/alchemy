@@ -6,10 +6,8 @@
 #include "ANIMSPR.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgHaidiaBigBoyWhy[];
-extern u8 MsgHaidiaKnowWayGo[];
-extern u8 MsgHaidiaKyleAbleStop[];
 void BattleFx_SetBlock30Values12Zero(void);
 void BattleFx_PlayQueuedSound();
 void HaidiaArashi_SetStormCellAttributes();
@@ -29,31 +27,15 @@ struct Flags9 {
 void ActorPresentation_SetEightSceneCells();
 void ObjectMotion_SetActionVariant();
 void FieldScene_DrawFiveTileBlocks();
-extern u8 MsgHaidiaHuh[];
-extern u8 MsgHaidiaDontLeaveMeHere[];
-extern u8 MsgHaidiaUghHrnghhh[];
-extern u8 MsgHaidiaBoulderNeedGet[];
-extern u8 MsgHaidiaWantDumpStuff[];
-extern u8 MsgHaidiaKnowRightOk[];
-extern u8 MsgHaidiaRightDitchStuff[];
-extern u8 MsgHaidiaRockHitsLose[];
-extern u8 MsgHaidiaThinkForgetThings[];
 void Event_PrepareObjectAndApplyValue();
-extern u8 MsgHaidiaHey[];
 extern u8 HaidiaArashi_ActorTwentyTwoScriptA[];
 extern u8 HaidiaArashi_ActorTwentyTwoScriptB[];
 
-extern u8 MsgHaidiaCantGetAroundThisRock[];
-extern u8 MsgHaidiaNorthLeadsToMtAleph[];
-extern u8 MsgHaidiaTheBoulderIsFalling[];
 
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
 
-extern u8 MsgHaidiaNoBrother[];
 void HaidiaArashi_RunRiverSearch(void);
-extern u8 MsgHaidiaDontSupposeTwo[];
-extern u8 MsgHaidiaGoLookNorth[];
 extern u8 HaidiaArashi_ActorNineScriptA[];
 extern u8 HaidiaArashi_ActorNineScriptB[];
 extern u8 HaidiaArashi_ActorNineScriptC[];
@@ -63,9 +45,6 @@ extern u8 HaidiaArashi_ActorTwentySixScriptB[];
 extern u8 HaidiaArashi_ActorTwentySixScriptC[];
 extern u8 HaidiaArashi_CellSteps4[];
 extern u8 HaidiaArashi_CellSteps5[];
-extern u8 MsgHaidiaOh[];
-extern u8 MsgHaidiaTwoDontEnough[];
-extern u8 MsgHaidiaMomDadBack[];
 
 extern u8 HaidiaArashi_StormRunActions[];
 void Scene_RunActorGroupDepartureSequence();

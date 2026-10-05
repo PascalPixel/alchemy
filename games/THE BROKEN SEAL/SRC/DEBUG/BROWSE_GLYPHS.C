@@ -3,6 +3,7 @@
 #include "RENDER_INPUT.H"
 #include "TBS_EDITION.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
@@ -16,11 +17,9 @@ extern volatile u32 gKeysRepeat;
 extern s16 SideObject_CharacterIdMap[][2], SideObject_ActorKindIdMap[][2];
 
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
-extern u8 MsgDebugGlyphName;
-#define DEBUG_GLYPH_NAME ((s32)&MsgDebugGlyphName)
+#define DEBUG_GLYPH_NAME ((s32)MsgDebugGlyphName)
 #else
-extern u8 MsgDebugSecondForm;
-#define DEBUG_GLYPH_NAME ((s32)&MsgDebugSecondForm)
+#define DEBUG_GLYPH_NAME ((s32)MsgDebugSecondForm)
 #endif
 
 struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);

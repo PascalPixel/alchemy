@@ -181,37 +181,6 @@ enum {
     GATE_RETREAT_ENTRANCE = 10
 };
 
-TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerESealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerASealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerESealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerAReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerEReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerAReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerEReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageEastGuardReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardReopenedThoughts);
 
 enum CatchLine {
     CATCH_LEFT_GUARD_CHALLENGES,

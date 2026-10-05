@@ -5,9 +5,8 @@
 #include "RAM_BUFFER.H"
 #include "SCENE.H"
 #include "SELECT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgItemNotHeld[];
-extern u8 MsgAbilityNotKnown[];
 
 struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
 

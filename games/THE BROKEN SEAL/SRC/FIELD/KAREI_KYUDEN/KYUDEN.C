@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gKareiKyudenEntrances[];
 extern const struct SceneEntrance gKareiKyudenEntrancesOther[];
@@ -34,14 +35,9 @@ void FieldScene_PrepareActors(u8 *placements);
 extern const struct SceneEvent gKareiKyudenEvents[];
 extern const struct SceneEvent gKareiKyudenEventsOther[];
 
-extern u8 MsgKareiHasLegacyLordHammetsSilk[];
-extern u8 MsgKareiLordHammetWillReleasedSoon[];
-extern u8 MsgKareiRobinSneakedIntoLunpaThats[];
 
 void FieldScene_DispatchSceneByIndex(void);
 
-extern u8 MsgKareiItsIvanHisCompanionsPerfect[];
-extern u8 MsgKareiWhenHeardWereBackIvan[];
 extern u8 KareiKyuden_PartyActions[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)

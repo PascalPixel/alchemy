@@ -6,11 +6,8 @@
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 #include "FIELD_EFFECT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgSoruIKnowItsARock[];
-extern u8 MsgSoruJasmineWhatHappened[];
-extern u8 MsgSoruSomeoneIsLiftingIt[];
-extern u8 MsgSoruSukuretaCouldThatBeThe[];
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
@@ -45,15 +42,6 @@ extern const s32 Funka_EmberScript[];
 extern s32 gEmberTimer;
 extern s32 gEmberState[16];
 extern s32 gEmberMask;
-extern u8 MsgSoruCannotResist[];
-extern u8 MsgSoruFriendsGone[];
-extern u8 MsgSoruOverHere[];
-extern u8 MsgSoruQuitActingTough[];
-extern u8 MsgSoruReturnStarToBag[];
-extern u8 MsgSoruThanksALot[];
-extern u8 MsgSoruTheyllBeSafe[];
-extern u8 MsgSoruThisIsTerrible[];
-extern u8 MsgSoruWellTurnedBadly[];
 
 enum {
     ACTOR_WISE_ONE = 15,

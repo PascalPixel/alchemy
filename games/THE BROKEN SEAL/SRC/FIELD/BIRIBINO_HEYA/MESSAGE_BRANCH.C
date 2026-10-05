@@ -2,26 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
-extern u8 MsgBiribinoCurseOnKolimaScaryDevelopment[];
-extern u8 MsgBiribinoDoBelieveTreeSpiritCan[];
-extern u8 MsgBiribinoDoKnowIfHolyTree[];
-extern u8 MsgBiribinoDoKnowSilk[];
-extern u8 MsgBiribinoEvenFrozenImilMustFeel[];
-extern u8 MsgBiribinoForSomeReasonOceanFills[];
-extern u8 MsgBiribinoGrrr[];
-extern u8 MsgBiribinoHaveEverHeardOcean[];
-extern u8 MsgBiribinoIfWantMealSpeakWaitress[];
-extern u8 MsgBiribinoImReallyWorriedAboutKolima[];
-extern u8 MsgBiribinoLetsSeeServeThemWater[];
-extern u8 MsgBiribinoMustUsedTypesDangerBeing[];
-extern u8 MsgBiribinoOurWeaponsBestCanFind[];
-extern u8 MsgBiribinoReallyThinkHeadChefHas[];
-extern u8 MsgBiribinoThereWasAbleHealerIn[];
-extern u8 MsgBiribinoTurnedOutWarriorsHiredBy[];
-extern u8 MsgBiribinoTwoSpecialsOneDinnerOne[];
-extern u8 MsgBiribinoWasSomeMealDontJust[];
-extern u8 MsgBiribinoWasntCurseInKolimaHorrifying[];
-extern u8 MsgBiribinoWhenSpringComesWantGo[];
+#include "text/MSG_IDS.H"
 
 extern u8 gBiribinoHeyaPlacements[];
 extern u8 BiribinoHeya_PrimaryTable[];

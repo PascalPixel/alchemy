@@ -6,12 +6,11 @@
 #include "GAME_STATE.H"
 #include "FX_SCENE.H"
 #include "ANIMSPR.H"
+#include "text/MSG_IDS.H"
 
 extern u32 gFrameCount;
 void BattleFx_SpawnDescendingArcParticles(void *);
 
-extern char MsgAbilityWoreOff;
-extern char MsgItemWoreOff;
 void UiText_DrawQuantity(s32 arg0, s32 arg1);
 void UiText_DrawMessage(void *arg0, s32 arg1);
 
@@ -60,9 +59,9 @@ void FieldEvent_ShowStatusMessage(void)
     gGameState.avoid_distance = 0;
     if (gGameState.avoid_by_item == 0) {
         UiText_DrawQuantity(0x96, 4);
-        UiText_DrawMessage(&MsgAbilityWoreOff, 1);
+        UiText_DrawMessage(MsgAbilityWoreOff, 1);
         return;
     }
     UiText_DrawQuantity(0xEC, 2);
-    UiText_DrawMessage(&MsgItemWoreOff, 1);
+    UiText_DrawMessage(MsgItemWoreOff, 1);
 }

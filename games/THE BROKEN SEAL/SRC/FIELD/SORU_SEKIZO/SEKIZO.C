@@ -7,18 +7,14 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgSoruSukuretaYouFoundIt[];
 
 enum StatueHallActor {
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED
 };
 
 void Event_SayThenWait(s32 speaker, s32 frames);
-extern u8 MsgSoruHmphWellTold[];
-extern u8 MsgSoruHonestlyDoubtUnderstand[];
-extern u8 MsgSoruTryFindSolution[];
-extern u8 MsgSoruWait[];
 void Event_SayThenWait();
 void ObjectMotion_ResetAndSetPositionInMode2();
 s32 Inventory_PromptAndSetObjectMode();
@@ -37,7 +33,6 @@ struct FocusWork {
 struct Ent SoruSekizo_SpriteRows[27];
 
 void SetMapCellCollision();
-extern u8 MsgSoruSomethingClicked[];
 void Engine_MapCopyCellAttributes();
 
 u8 *SceneEventRuntime_GetScriptData(void)

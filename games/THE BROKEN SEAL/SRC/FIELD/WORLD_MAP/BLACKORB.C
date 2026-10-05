@@ -7,9 +7,8 @@
 #include "TBS_EDITION.H"
 #include "FIELD_EVENT.H"
 #include "INVENTORY.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgWorldMapLook[];
-extern u8 MsgWorldMapNowUseOnShip[];
 void WorldMap_ActivateSite138(s32 actor);
 void Battle_SetObjectFlag5bWhenMode3(void);
 void Battle_ClearObjectFlag5bWhenMode3(void);
@@ -19,8 +18,6 @@ extern const u8 gBlackOrbLeaderScript[];
 
 void WorldMap_StopLeaderLeavingShip(void);
 
-extern u8 MsgWorldMapRobinWhereGoingSaidUse[];
-extern u8 MsgWorldMapWreckageShipScuttledOffCoast[];
 
 s32 gWorldMapTriggerActor;
 
@@ -241,7 +238,6 @@ void StoryScene_ShowRewardDialogue(void)
     Engine_EventEnd();
 }
 
-extern u8 MsgWorldMapMatter[];
 void ObjectDispatch_InitFromTable6(struct FieldActor *object);
 void StoryActor_ConfigureSpawnedObject(u8 *actor);
 

@@ -12,8 +12,8 @@
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
 #include "WINDOW.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgVinasuPairDefeated[];
 void SceneEffect_SpawnParticlesAboveActor(void);
 
 extern u8 VinasuChojo_BeamOpenAction[];
@@ -29,7 +29,6 @@ void Object_SetActionCallbackAndRefreshById();
 void Event_SetDestination();
 void ObjectTable_Snapshot();
 
-extern u8 MsgVinasuNoooo[];
 
 enum {
     PARTICLE_SOURCE_ACTOR = 23
@@ -37,8 +36,6 @@ enum {
 
 void SceneEffect_SpawnParticlesBesideActor(void);
 
-extern u8 MsgVinasuDespiteLongTiring[];
-extern u8 MsgVinasuWhyHappeningProtectVenusLighthouse[];
 
 void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);
 extern u8 VinasuChojo_StepBackAction[];

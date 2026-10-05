@@ -11,24 +11,11 @@
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
-TEXT_MESSAGE_ENUM(MsgBattleAdditionalPsynergyHelp);
-TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
 
 void Event_SetMessageId(s16 message);
 void BattleEv_RunWait(s32 mode, s32 frames);
 
-extern u8 MsgSanctumWelcome[];
-extern u8 MsgWarriorShopWelcome[];
-extern u8 MsgWarriorArmorShopWelcome[];
-extern u8 MsgWarriorItemShopWelcome[];
-extern u8 MsgDebugBodyTornApart[];
-extern u8 MsgDebugGotDjinni[];
-extern u8 MsgDebugGotItem[];
-extern u8 MsgDebugGotSturdyEquipment[];
-extern u8 MsgDebugWentLevel[];
 
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void Engine_AudioPlayCue(s32 cue);
 extern u8 gDebugItemPrompt[];
@@ -44,7 +31,6 @@ void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window
 void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
-extern u8 MsgDebugGotTreasure[];
 
 enum { ROBIN, JERARD, IWAN, MEARI };
 
@@ -164,8 +150,8 @@ void SceneState_ApplyBlockDa2(void)
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_RunMessageTest(void)
 {
-    Event_SetMessageId(MsgBattleAdditionalPsynergyHelp);
-    Event_SetMessageId(MsgHaidiaComeOnHurry);
+    Event_SetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
+    Event_SetMessageId(MSGNO(MsgHaidiaComeOnHurry));
     BattleEv_RunWait(-1, 0);
 }
 #endif

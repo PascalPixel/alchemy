@@ -11,10 +11,6 @@
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 
-TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
-TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksRobinSoulYe);
-TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksAfterAnswer);
-TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSeemsSpeakYourSoul);
 
 struct Vec {
     s32 x;

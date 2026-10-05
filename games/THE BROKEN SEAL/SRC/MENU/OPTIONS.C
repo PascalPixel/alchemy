@@ -8,19 +8,16 @@
 #include "WORKSPACE_OPTIONS.H"
 #include "TBS_EDITION.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 extern const u8 Resource_FixedBlockBTiles[];
 extern const u8 WorkspaceOptions_SliderTiles[];
 extern const u16 WorkspaceOptions_SliderPalette[];
-extern u8 MsgWindowColorLabel;
-extern u8 MsgMessageSpeedLabel;
 extern s8 OptionMenu_SpeedFrames[];
 extern s8 OptionMenu_SpeechFrames[];
 extern s8 OptionMenu_SleepFrames[];
-extern u8 MsgSpeechLabel[];
-extern u8 MsgAutoSleepLabel[];
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
@@ -32,10 +29,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
-extern u8 MsgMessageSpeedSetting;
-extern u8 MsgSpeechSetting;
-extern u8 MsgAutoSleepSetting;
-extern u8 MsgOptionHelp;
 extern u8 OptionMenu_FirstColorPresets[];
 extern u8 OptionMenu_SecondColorPresets[];
 void OptionMenu_InitializeWork(void);
@@ -68,17 +61,17 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     UiWindow_DrawDividerLine(win, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
     UiWindow_DrawDividerLine(win, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
     UiWindow_DrawDividerLine(win, 0, 10, OPTION_WINDOW_WIDTH - 1, 10);
-    msg = (s32)&MsgWindowColorLabel;
+    msg = (s32)MsgWindowColorLabel;
     UiText_DrawCharacterAtOffset(msg, win, 8, 0);
     msg++;
     UiText_DrawCharacterAtOffset(msg, win, 8, 16);
 #if EDITION_INTERNATIONAL
-    msg = (s32)&MsgMessageSpeedLabel;
+    msg = (s32)MsgMessageSpeedLabel;
     UiText_DrawCharacterAtOffset(msg, win, 8, 32);
     msg++;
     UiText_DrawCharacterAtOffset(msg, win, 32, 40);
 #else
-    UiText_DrawCharacterAtOffset((s32)&MsgMessageSpeedLabel, win, 8, 40);
+    UiText_DrawCharacterAtOffset((s32)MsgMessageSpeedLabel, win, 8, 40);
 #endif
     UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
     UiText_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);
@@ -228,13 +221,13 @@ s32 Menu_RunWorkspaceOptions(void)
             y = icon->y * 8 + 20;
             Shop_SetCursorFar(&work->marker[1], x, y, 1);
 
-            x = work->option[2] + (s32)&MsgMessageSpeedSetting;
+            x = work->option[2] + (s32)MsgMessageSpeedSetting;
             UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 40, OPTION_SPEED_END, 48);
             UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 40);
-            x = work->option[3] + (s32)&MsgSpeechSetting;
+            x = work->option[3] + (s32)MsgSpeechSetting;
             UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 64, OPTION_SETTING_END, 72);
             UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 64);
-            x = work->option[4] + (s32)&MsgAutoSleepSetting;
+            x = work->option[4] + (s32)MsgAutoSleepSetting;
             UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 88, OPTION_SETTING_END, 96);
             UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 88);
             PaletteGlow_Update(*pA, *pB);
@@ -245,7 +238,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 y += 8;
             Shop_SetCursorFar(&work->cursor, x, y, 3);
             RenderOutput_ClearList(win);
-            UiText_DrawResource(page + (s32)&MsgOptionHelp, win, 0, 0);
+            UiText_DrawResource(page + (s32)MsgOptionHelp, win, 0, 0);
         }
         Ui_ApplyTableOffsetToPair(pair);
         WaitFrames(1);

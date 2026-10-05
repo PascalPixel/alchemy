@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "RESOURCE_3A9.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gKareiHeyaEntrances1[];
 extern const struct SceneEntrance gKareiHeyaEntrances2[];
@@ -25,11 +26,6 @@ extern const struct SceneEvent gKareiHeyaEvents2[];
 extern const struct SceneEvent gKareiHeyaEventsOther[];
 void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
-extern u8 MsgKareiCanLiveInPeaceIn[];
-extern u8 MsgKareiDoKnowAboutContinentSouth[];
-extern u8 MsgKareiGoingTolbiAlso[];
-extern u8 MsgKareiOurInnFeelsEmptyNow[];
-extern u8 MsgKareiPleaseFinishEatingIfTaking[];
 extern Placement KareiHeya_ArrivalPlacements[];
 
 void SceneState_ClearSlotsBySubState(void);

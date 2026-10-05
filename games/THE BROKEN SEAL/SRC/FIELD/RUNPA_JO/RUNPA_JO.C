@@ -8,6 +8,7 @@
 #include "SCENE_IDS.H"
 #include "TBS_EDITION.H"
 #include "MAP_SCROLL.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gRunpaJoEntrances1[];
 extern const struct SceneEntrance gRunpaJoEntrances2[];
@@ -32,62 +33,17 @@ extern const struct SceneEvent gRunpaJoEventsOther[];
 
 extern s32 gRunpaJoSupportPairs[];
 
-extern u8 MsgFieldDoorTightlyLocked[];
 
-extern u8 MsgRunpaWho2[];
 
-extern u8 MsgRunpaGuardWhosThat[];
-extern u8 MsgRunpaIntruder[];
-extern u8 MsgRunpaScoundrel[];
-extern u8 MsgRunpaShiftAlready[];
 
-extern u8 MsgRunpaWho3[];
 
-extern u8 MsgFieldFlippedSwitch[];
-extern u8 MsgRunpaPrepareBecomeMonster[];
 
-extern u8 MsgRunpaBackMoreGuess[];
-extern u8 MsgRunpaDodonpaPulledLever[];
-extern u8 MsgRunpaTimeEat[];
 
-extern u8 MsgRunpaAbleGet[];
-extern u8 MsgRunpaDad[];
-extern u8 MsgRunpaUhnnGetOff[];
 
-extern u8 MsgRunpaDodonpasOrdersAbsolute[];
-extern u8 MsgRunpaHammetGreatMerchant[];
-extern u8 MsgRunpaLeftGuardHearsSomeone[];
-extern u8 MsgRunpaSighBadCouldnt[];
-extern u8 MsgRunpaStrangeSwearSomeone[];
-extern u8 MsgRunpaTakeCareAnybody[];
-extern u8 MsgRunpaToldStandGuard[];
-extern u8 MsgRunpaWhoDisruptingSleep[];
-extern u8 MsgRunpaZZZ[];
 
-extern u8 MsgRunpaDifficultDonpaRight[];
-extern u8 MsgRunpaDonpaGrateful[];
-extern u8 MsgRunpaDonpaKnowsCoddled[];
-extern u8 MsgRunpaFatherSorryDodonpa[];
-extern u8 MsgRunpaFatherStayAngry[];
-extern u8 MsgRunpaMaybeDodonpasEyes[];
-extern u8 MsgRunpaOwwwDontHurt[];
-extern u8 MsgRunpaShhhPleaseDont[];
-extern u8 MsgRunpaSomeonePunishDodonpa[];
-extern u8 MsgRunpaThankHelpDodonpa[];
-extern u8 MsgRunpaWellWorriedDodonpa[];
-extern u8 MsgRunpaZZZZ[];
 
-extern u8 MsgRunpaGuysTougherThought[];
-extern u8 MsgRunpaKnowWhereDodonpa[];
-extern u8 MsgRunpaRightRightGive[];
 
-extern u8 MsgRunpaDontLookNearly[];
-extern u8 MsgRunpaMaybeMerchantReason[];
-extern u8 MsgRunpaWhWhWho[];
-extern u8 MsgRunpaWontTellAnyone[];
 
-extern u8 MsgRunpaCantBelieveWhen[];
-extern u8 MsgRunpaWrongTurnOver[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

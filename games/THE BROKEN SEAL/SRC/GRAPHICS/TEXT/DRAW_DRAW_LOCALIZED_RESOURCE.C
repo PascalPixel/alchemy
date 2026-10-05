@@ -3,9 +3,9 @@
 #include "SCENE.H"
 #include "MENU_LIST.H"
 #include "WINDOW.H"
+#include "text/MSG_IDS.H"
 struct UiWindow;
 void UiText_RenderWideStringAtOffset(u16 *, struct UiWindow *, s32, s32);
-extern u8 MsgWaitingForOpponent[];
 struct MessageContext {
     u8 unknown_00[0x44];
     struct UiWindow *window;

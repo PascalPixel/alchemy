@@ -29,12 +29,7 @@ void PsynergyMenu_DrawRange(
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 
-extern u8 MsgAbilityDescription;
-extern u8 MsgUsableInBattle;
-extern u8 MsgUsableInField;
-extern u8 MsgUsableAnywhere;
 #if !EDITION_INTERNATIONAL
-extern u8 MsgCanBeUsed;
 #endif
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
@@ -68,7 +63,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
         UiText_DrawResourceFar(
 #endif
             (menu->psynergies[state->selected_index] & ACTION_ID_MASK)
-                + (s32)&MsgAbilityDescription,
+                + (s32)MsgAbilityDescription,
             (s32)menu->info_window, 0, 0);
         ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
 #if EDITION_INTERNATIONAL
@@ -81,24 +76,24 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
             row |= 1;
         }
         if (row == 3) {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableAnywhere, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableAnywhere, window, 0, 96);
         } else if (row == 2) {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInField, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInField, window, 0, 96);
         } else if (row == 1) {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInBattle, window, 0, 96);
         }
 #else
         UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInField, window, 0, 72);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInField, window, 0, 72);
             row = 1;
         }
         if ((ability->target_flags & 0x80) != 0) {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, row * 8 + 72);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInBattle, window, 0, row * 8 + 72);
             row++;
         }
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgCanBeUsed, window, 0, row * 8 + 72);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgCanBeUsed, window, 0, row * 8 + 72);
 #endif
     }
 
@@ -131,11 +126,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgPsynergyPp;
-extern u8 MsgNoPsynergy;
-extern u8 MsgAbilityName;
-extern u8 MsgClassName;
 extern u8 Menu_LvString;
 
 #define ACT_ID_MASK 0x3fff
@@ -174,7 +166,7 @@ s32 PsynergyMenu_DrawListPage(
     Menu_SetPageIcons(PAGE_ROWS, first, window, LIST_ICONS_X, LIST_ICONS_Y);
     Menu_DrawPageIndicator(window, res->entry_count, PAGE_ROWS, res->page, 28);
 
-    UiText_DrawAt((s32)&MsgPsynergyPp, window, LIST_PP_X, 0);
+    UiText_DrawAt((s32)MsgPsynergyPp, window, LIST_PP_X, 0);
 
     row = 0;
     if (rows > row) {
@@ -187,7 +179,7 @@ s32 PsynergyMenu_DrawListPage(
             act = Ability_GetData(
                 ACT_ID_MASK & menu->psynergies[ofs]);
             msg = (menu->psynergies[ofs] & ACT_ID_MASK) +
-                (s32)&MsgAbilityName;
+                (s32)MsgAbilityName;
             y = row * 16 + LIST_FIRST_ROW * 8;
 
             UiText_DrawAt(msg, window, LIST_NAME_X, y);
@@ -207,12 +199,12 @@ s32 PsynergyMenu_DrawListPage(
     }
 
     if (menu->psynergy_count == 0) {
-        UiText_DrawAt((s32)&MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
+        UiText_DrawAt((s32)MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
     }
 
     UiText_DrawStringAtOffsetFar(owner->name, (void *)window, 40, 0);
     UiText_DrawAt(
-        owner->class_index + (s32)&MsgClassName, window, 0, 32);
+        owner->class_index + (s32)MsgClassName, window, 0, 32);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
     UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);
 #else

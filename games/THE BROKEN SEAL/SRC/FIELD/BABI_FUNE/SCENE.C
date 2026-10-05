@@ -7,13 +7,13 @@
 #include "MAP_SCROLL.H"
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
 extern s32 BabiFune_StoredSlot0;
 extern s32 BabiFune_StoredRecord1;
 extern s32 BabiFune_StoredSlot3;
 extern s32 BabiFune_StoredRecord2;
 
-extern u8 MsgFieldLooksLikeFinally[];
 extern const s32 BabiFune_ActionScriptA[];
 extern const s32 BabiFune_ActionScriptB[];
 extern const s32 BabiFune_ActionScriptC[];

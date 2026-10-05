@@ -131,7 +131,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             plan->target_count = count;
             if (count <= 0) {
                 UiText_DrawQuantity(command->unit_id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
                 if (actor->guard_level == 0)
                     actor->guard_level = 1;
                 return -1;
@@ -178,22 +178,22 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
     if (actor->cannot_move) {
         actor->cannot_move = 0;
         UiText_DrawQuantity(command->unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgUnableToMove);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgUnableToMove);
         return -1;
     }
     if (actor->sleep) {
         UiText_DrawQuantity(command->unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsAsleep);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgIsAsleep);
         return -1;
     }
     if (actor->stun) {
         UiText_DrawQuantity(command->unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsParalyzed);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgIsParalyzed);
         return -1;
     }
     if ((actor->restraint & 1) && command->command != 3 && (BattleRandom16Far() & 3) == 0) {
         UiText_DrawQuantity(command->unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsBound);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgIsBound);
         return -1;
     }
     if (command->command == 8)
@@ -210,10 +210,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
     switch (command->command) {
     case 99:
         if ((u16)command->unit_id <= 7) {
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyFlees);
         } else {
             UiText_DrawQuantity(command->unit_id, 1);
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorRuns);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgActorRuns);
         }
         BattlePresentation_WaitForAdvance();
         plan->outcome = 7;
@@ -225,10 +225,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         if (action != 1) {
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(Inventory_GetEquippedItemFar(actor, 1), 2);
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgWeaponHowls);
             BattleEv_MarkDisplay();
             UiText_DrawQuantity(action, 4);
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls + 1);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgWeaponHowls + 1);
         }
         break;
     case 1:
@@ -242,7 +242,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 return -1;
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorCasts);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgActorCasts);
             if (actor->pp < ability->pp_cost) {
                 plan->failure = 2;
                 ok = 0;
@@ -268,14 +268,14 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
 
             if (command->parameter < 0) {
                 UiText_DrawQuantity(command->unit_id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgItemAlreadyUsed);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgItemAlreadyUsed);
                 return -1;
             }
             item = Item_Get(actor->inventory[command->parameter]);
             action = item->action_id;
             if (action == 0 || (actor->inventory[command->parameter] & 0x400)) {
                 UiText_DrawQuantity(command->unit_id, 1);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
                 if (actor->guard_level == 0)
                     actor->guard_level = 1;
                 return -1;
@@ -291,21 +291,21 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 case 6:
                 case 7:
                 case 8:
-                    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorRaisesItem);
+                    UiText_ShowMessageAndWaitCoreFar((s32)MsgActorRaisesItem);
                     break;
                 default:
-                    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
+                    UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUsesBattleItem);
                     break;
                 }
             } else {
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUsesBattleItem);
             }
         }
         break;
     case 3:
     case 7:
         UiText_DrawQuantity(command->unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
         return -1;
     case 8:
         return -2;
@@ -319,61 +319,61 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             if ((Ability_GetData(action)->target_flags & 15) == 6)
-                message = (s32)&MsgActorUnleashesAbility;
+                message = (s32)MsgActorUnleashesAbility;
             else
-                message = (s32)&MsgActorUsesAbility;
+                message = (s32)MsgActorUsesAbility;
             switch (action) {
             case 435:
             case 436:
-                message = (s32)&MsgEmitsUltrasonicWaves;
+                message = (s32)MsgEmitsUltrasonicWaves;
                 break;
             case 224:
-                message = (s32)&MsgActorCasts;
+                message = (s32)MsgActorCasts;
                 break;
             case 500:
-                message = (s32)&MsgGlowersFerociously;
+                message = (s32)MsgGlowersFerociously;
                 break;
             case 501:
-                message = (s32)&MsgIsIntimidated;
+                message = (s32)MsgIsIntimidated;
                 break;
             case 499:
-                message = (s32)&MsgBalefulGaze;
+                message = (s32)MsgBalefulGaze;
                 break;
             case 494:
-                message = (s32)&MsgEatsWorms;
+                message = (s32)MsgEatsWorms;
                 break;
             case 437:
             case 438:
             case 439:
             case 440:
             case 441:
-                message = (s32)&MsgLetsOutAbility;
+                message = (s32)MsgLetsOutAbility;
                 break;
             case 442:
             case 443:
             case 444:
-                message = (s32)&MsgActorUsesAbility;
+                message = (s32)MsgActorUsesAbility;
                 break;
             case 472:
-                message = (s32)&MsgEnemyUnleashesAbility;
+                message = (s32)MsgEnemyUnleashesAbility;
                 break;
             case 488:
-                message = (s32)&MsgGlowersMiserably;
+                message = (s32)MsgGlowersMiserably;
                 break;
             case 492:
-                message = (s32)&MsgSmellOfDecay;
+                message = (s32)MsgSmellOfDecay;
                 break;
             case 495:
-                message = (s32)&MsgFuriousRage;
+                message = (s32)MsgFuriousRage;
                 break;
             case 503:
-                message = (s32)&MsgAttemptsToDivide;
+                message = (s32)MsgAttemptsToDivide;
                 break;
             case 504:
-                message = (s32)&MsgLooksForAllies;
+                message = (s32)MsgLooksForAllies;
                 break;
             case 508:
-                message = (s32)&MsgLooksForHelp;
+                message = (s32)MsgLooksForHelp;
                 break;
             }
             UiText_ShowMessageAndWaitCoreFar(message);
@@ -394,7 +394,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 BattleEv_Push(BATTLE_EVENT_ACTION, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
                 BattleEv_Push(BATTLE_EVENT_SOUND, 175);
                 BattleEv_Push(BATTLE_EVENT_REFRESH, 0);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDjinnSet);
+                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgDjinnSet);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, command->unit_id);
                 AudioCommand_PlayFar(212);
                 Object_SetMode(GetBattleObjectSlot(command->unit_id)->object, 3);
@@ -406,7 +406,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             AudioCommand_PlayFar(114);
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgDjinnInRecovery);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgDjinnInRecovery);
             WaitFrames(60);
             return -1;
         }
@@ -419,7 +419,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             ability = Ability_GetData(action);
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUnleashesDjinn);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUnleashesDjinn);
             plan->range_index = ability->damage_class;
         }
         break;
@@ -447,12 +447,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             if (i != 4) {
                 UiText_DrawQuantity(command->unit_id, 1);
                 UiText_DrawQuantity(action, 4);
-                UiText_ShowMessageAndWaitCoreFar((s32)&MsgSummonLacksDjinn);
+                UiText_ShowMessageAndWaitCoreFar((s32)MsgSummonLacksDjinn);
                 return -1;
             }
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorSummons);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgActorSummons);
             for (i = 0; i != list->count; i++) {
                 struct DjinnRecoveryEntry *entry = &list->entries[i];
 
@@ -493,7 +493,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             }
         }
         UiText_DrawQuantity(command->unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
         /* FAKEMATCH: the one-pass block keeps the native test order; the same tests as one if condition change 44 instructions. */
         do {
             if (defender->hp == 0 || defender->sleep != 0 || defender->stun != 0

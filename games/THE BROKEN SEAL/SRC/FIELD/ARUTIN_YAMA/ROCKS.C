@@ -4,8 +4,8 @@
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgArutinWatchFallingRocks[];
 
 extern const struct SceneEvent gArutinYamaEventsOther[];
 extern const struct SceneEvent gArutinYamaEvents1[];

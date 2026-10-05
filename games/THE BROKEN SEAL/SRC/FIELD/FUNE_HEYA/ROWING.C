@@ -7,22 +7,8 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 #include "INVENTORY.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgFuneAnotherMonsterIsntFirstClass[];
-extern u8 MsgFuneBoatsRockingMuchImCertain[];
-extern u8 MsgFuneDontCareTakesJustHurry[];
-extern u8 MsgFuneGoodShipHasArrivedSafely[];
-extern u8 MsgFuneHadIdeaThereWereMany[];
-extern u8 MsgFuneHateArguing[];
-extern u8 MsgFuneHowManyMonstersOutThere[];
-extern u8 MsgFuneIfThoseMonstersComeBack[];
-extern u8 MsgFuneImSpreadingGoodwillWhereverTravel[];
-extern u8 MsgFuneMonstersEverywhereImStuckRowing[];
-extern u8 MsgFuneShipStartingListIfWe[];
-extern u8 MsgFuneShipsCrewReadyAnything[];
-extern u8 MsgFuneShipsCrewReadyForAnything[];
-extern u8 MsgFuneThingHasKajaHisMen[];
-extern u8 MsgFuneWereSurroundedByMonstersStill[];
 
 struct SceneActor {
     u8 pad00[99];
@@ -49,11 +35,6 @@ void Func_02008004();
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
 
-extern u8 MsgFuneIfWeArentGoingSet[];
-extern u8 MsgFuneItsMyLuckyAnchor[];
-extern u8 MsgFuneWhereGoingSlay[];
-extern u8 MsgFuneWonderCouldHaveHappened[];
-extern u8 MsgFuneYoureTryingLaunchShip[];
 extern u8 FuneHeya_ActionScriptA[];
 extern u8 FuneHeya_ActionScriptB[];
 void UiText_ShowCenteredMessage();
@@ -151,21 +132,13 @@ void Scene_RunConditionalActorPresentation();
 s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate);
 
 extern const s32 FuneHeya_Script01[];
-extern u8 MsgFuneCastOff[];
-extern u8 MsgFuneOurReplacementNeverArrivedBut[];
-extern u8 MsgFuneRowThoseOars[];
-extern u8 MsgFuneWereOff[];
 void SceneState_ApplyActor8FourFlags();
 
-extern u8 MsgFuneMonsters[];
 void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt);
 
-extern u8 MsgFuneImTurning[];
 void FieldScene_RunPositionTransferPresentation();
 void SceneActor_SetFlagBit3ForActors28To35(void);
 
-extern u8 MsgFuneBack[];
-extern u8 MsgFuneBackBroughtOarsman[];
 void FuneHeya_PlaceFoundActors();
 void FieldScene_RunStepThen10();
 
@@ -193,14 +166,11 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
     ((struct FieldActor *)rec)->facing = pose;
 }
 
-extern u8 MsgFuneMonstersBelowdecks[];
 extern u8 FuneHeya_ProgressTableA[];
 void Object_SetActionCallbackAndRefreshById();
 void FieldScene_RunStepThen10(s32 a);
 void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags);
 
-extern u8 MsgFuneHeyAreYouOk[];
-extern u8 MsgFuneWonderWhatsWrongShipShouldnt[];
 extern u8 FuneHeya_ActionScriptC[];
 extern u8 FuneHeya_ActionScriptD[];
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
@@ -208,15 +178,12 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src);
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
 void FieldScene_RunPositionTransferPresentation(void);
 
-extern u8 MsgFuneReachedIslandRowers[];
-extern u8 MsgFuneShipWentOff[];
 extern struct EventWork *gEventWork;
 extern u8 FuneHeya_ProgressTableB;
 extern u8 FuneHeya_ProgressTableC;
 void SceneActor_SetFlagBit3ForActors28To35();
 void FieldScene_InstallFlaggedActors10To17();
 
-extern u8 MsgFuneSorryEveryoneButWeNeed[];
 void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b);
 
 struct FieldActor *FuneHeya_PlaceAnchorCharm(void);

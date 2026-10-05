@@ -1,5 +1,6 @@
 #include "STATUS.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gKorashiamuIriguchiEntrances1[];
 extern const struct SceneEntrance gKorashiamuIriguchiEntrances3[];
@@ -23,22 +24,6 @@ extern const struct SceneEvent gKorashiamuIriguchiEvents1[];
 extern const struct SceneEvent gKorashiamuIriguchiEvents3[];
 extern const struct SceneEvent gKorashiamuIriguchiEventsOther[];
 
-extern u8 MsgKorashiamuAmNavampaGondowanSixthRanked[];
-extern u8 MsgKorashiamuColosseumAlreadyFullIfReally[];
-extern u8 MsgKorashiamuColossosLuckyGuessMakesBattles[];
-extern u8 MsgKorashiamuDekkaMustWinFinalsDekka[];
-extern u8 MsgKorashiamuDoKnowLuckyGuess[];
-extern u8 MsgKorashiamuHoldOnSecond[];
-extern u8 MsgKorashiamuHopingGetInSeeColosso[];
-extern u8 MsgKorashiamuImBufordSeventhSeed[];
-extern u8 MsgKorashiamuImRatedAsSecondBest[];
-extern u8 MsgKorashiamuLookImSorryButWe[];
-extern u8 MsgKorashiamuWaahDontFrightenMe[];
-extern u8 MsgKorashiamuWantTryOutLuckyGuess[];
-extern u8 MsgKorashiamuWantWatchFinalsFromGood[];
-extern u8 MsgKorashiamuWantWinBigPutOn[];
-extern u8 MsgKorashiamuWhoHaveComeQuestionMe[];
-extern u8 MsgKorashiamuYouReadyForFinals[];
 void SceneState_ForwardMaskedHalfwordWith10();
 
 const struct SceneEntrance *Scene_GetEntrances(void)

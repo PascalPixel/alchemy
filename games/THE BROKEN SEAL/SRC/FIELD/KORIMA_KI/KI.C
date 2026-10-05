@@ -7,25 +7,10 @@
 #include "PALETTE_SCENE.H"
 #include "IO_REG.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorimaWho[];
-extern u8 MsgKorimaForestKolimaAlive[];
-extern u8 MsgKorimaLeaveBeforeForest[];
 void KorimaKi_PlayGesture(s32 actor, s32 gesture);
 
-extern u8 MsgKorimaControlTretsHeartShallNot[];
-extern u8 MsgKorimaFeelGreatPowerSpreadingThrough[];
-extern u8 MsgKorimaHealingWatersMercuryLighthouseMight[];
-extern u8 MsgKorimaKnowCannotStopButPlease[];
-extern u8 MsgKorimaMustHorribleBeyondRiverAm[];
-extern u8 MsgKorimaNowHaveSuchPowerAxe[];
-extern u8 MsgKorimaOweGreatDebtHaveSaved[];
-extern u8 MsgKorimaPeopleKolimaForgiveMe[];
-extern u8 MsgKorimaShouldDoPeopleKolimaCursed[];
-extern u8 MsgKorimaSilence[];
-extern u8 MsgKorimaSilence2[];
-extern u8 MsgKorimaWasIndeedAngryPeopleHad[];
-extern u8 MsgKorimaWaterHermesSeepedIntoTret[];
 s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
 s32 gKorimaKiSparkCount __attribute__((section(".bss")));
 s32 gKorimaKiSparkSound __attribute__((section(".bss")));

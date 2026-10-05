@@ -44,8 +44,8 @@ void ColossoLogRollingStage_SceneTask(void)
 #include "FIELD_EVENT.H"
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
 #include "FLAG_IDS.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorosseoDidntThinkBattles[];
 
 void ColossoLogRollingStage_NoopSceneHook(void);
 s32 ColossoLogRollingStage_PositionActiveActor(s32 slot, s32 frames);
@@ -87,10 +87,7 @@ void ColossoLogRollingStage_ShowActorPositionMessage(void);
 void ColossoLogRollingStage_MarkSceneProgress(void);
 void ColossoLogRollingStage_SceneTask(void);
 
-extern u8 MsgKorosseoRobin[];
-extern u8 MsgKorosseoRobinFellAsleep[];
 
-extern u8 MsgKorosseoSiteThirdFinals[];
 void Engine_EventBegin();
 void Engine_ActorSetSpeed();
 void Engine_CameraFollowActor();
@@ -106,18 +103,12 @@ void Engine_ActorWalkToAndWait();
 void Engine_ActorFaceDirection();
 void Engine_EventEnd();
 
-extern u8 MsgKorosseoObjectiveGetAcross[];
-extern u8 MsgKorosseoStageCalledScales[];
 void Korosseo_FinishSoloRound();
 s32 FieldScene_RunMiddleSequence();
 void Object_SetPosition();
 void Object_CommitPosition();
 
-extern u8 MsgKorosseoSteppingStoneStage[];
-extern u8 MsgKorosseoYourGoalInStageSimple[];
 
-extern u8 MsgKorosseoOperatorWallsCheer[];
-extern u8 MsgKorosseoPlaceCalledWall[];
 void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Korosseo_RestoreCompetitor();
 

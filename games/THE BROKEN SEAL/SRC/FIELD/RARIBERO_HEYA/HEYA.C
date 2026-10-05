@@ -3,29 +3,19 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgRariberoTakenHostageFaran[];
-extern u8 MsgRariberoWentOceanLook[];
 void Shop_Run(s32, s32);
 
-extern u8 MsgRariberoWantedSendShips[];
-extern u8 MsgRariberoWarriorRightPlease[];
 s32 Engine_GameFlagIsSet(s32);
 void Engine_EventSetMessage(s32);
 void Engine_EventShowMessage(s32, s32);
 
-extern u8 MsgRariberoGuessPeopleAngara[];
-extern u8 MsgRariberoImpossibleGoOcean[];
 
-extern u8 MsgRariberoBabiIsntBuilding[];
-extern u8 MsgRariberoBabiLighthouseStruck[];
 void Shop_ConfirmAct(s32);
 
-extern u8 MsgRariberoDidntKnowTime[];
-extern u8 MsgRariberoWantStayLet[];
 void Inn_CheckIn(s32, s32);
 
-extern u8 MsgRariberoImSorry[];
 extern const u8 gRariberoPoseAction[];
 void Engine_ResetSceneEffectCounter(void);
 void Engine_ActorSetAnimationAndWait(s32 actor, s32 mode);
@@ -33,12 +23,8 @@ void Engine_ActorRunRepeatedMotion(s32 actor, s32 mode);
 void Engine_ActorWalkByAndWait(s32 actor, s32 x, s32 z);
 void Engine_ActorFaceDirection(s32 actor, s32 angle, s32 value);
 
-extern u8 MsgRariberoPleaseWaitForMeOutside[];
 
-extern u8 MsgRariberoDoNotWorryAboutSheba[];
-extern u8 MsgRariberoHowDidSearchForSheba[];
 
-extern u8 MsgRariberoTellOthers[];
 
 enum {
     ENTRANCE_SANCTUM_RETURN = 12,

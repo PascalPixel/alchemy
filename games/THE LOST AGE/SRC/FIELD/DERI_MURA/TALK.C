@@ -1,10 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgDeriBeenBefore[];
-extern u8 MsgDeriWaveNoInjuries[];
-extern u8 MsgDeriIndraMoved[];
-extern u8 MsgDeriWantBoat[];
 
 void DeriMura_TalkBeenBefore(void)
 {

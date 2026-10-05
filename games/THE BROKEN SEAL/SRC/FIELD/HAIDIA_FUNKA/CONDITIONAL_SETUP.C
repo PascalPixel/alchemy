@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-extern u8 MsgHaidiaMtAlephWasInactive[];
+#include "text/MSG_IDS.H"
 
 extern u8 HaidiaFunka_ActionScript[];
 extern u8 HaidiaFunka_SceneTable0[];

@@ -1,40 +1,16 @@
 #include "TOREBI.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgTorebiHeWontSailShipEven[];
-extern u8 MsgTorebiHeyWhatsThis[];
 
-extern u8 MsgTorebiColossoFinalsFinally[];
-extern u8 MsgTorebiComeWayKalay[];
-extern u8 MsgTorebiFirstTimeTolbi[];
-extern u8 MsgTorebiLookStrongGo[];
-extern u8 MsgTorebiRequireLotHealing[];
-extern u8 MsgTorebiRightOneWell[];
 
-extern u8 MsgTorebiIfCanMakeNameFor[];
-extern u8 MsgTorebiMaybeCloseShop[];
-extern u8 MsgTorebiWasntAbleWatch[];
 
-extern u8 MsgTorebiLookLikeWarrior[];
 
-extern u8 MsgTorebiGrrrChefInBadMood[];
 
-extern u8 MsgTorebiHeeHeeLook[];
-extern u8 MsgTorebiHello[];
-extern u8 MsgTorebiHoHumFine[];
-extern u8 MsgTorebiWantStay[];
 
-extern u8 MsgTorebiGrrrScamWhyWontThey[];
-extern u8 MsgTorebiHehHehSheJustHid[];
-extern u8 MsgTorebiThingFoundDefinitelySameAs[];
 
-extern u8 MsgTorebiWarriorRemember[];
 
-extern u8 MsgTorebiMissFinalsTolbis[];
-extern u8 MsgTorebiShipsArentGoing[];
-extern u8 MsgTorebiWasteStuckHereWhenSuch[];
-extern u8 MsgTorebiHeyaBabiShowedHimselfAtFinals[];
 
 u8 *TorebiHeya_GetEntrances(void)
 {

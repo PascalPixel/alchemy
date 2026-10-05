@@ -6,16 +6,14 @@
 #include "IO_REG.H"
 #include "IWRAM_CALL.H"
 #include "ITEM.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgItemName;
 extern void UiIcon_PrepareObject(struct RenderOutput *icon);
 extern void UiText_DrawStringAtOffsetFar(u8 *text, void *window, s32 x, s32 y);
 extern void UiText_DrawCharacterAtOffsetFar(s32, void *, s32, s32);
 
 extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;
-extern u8 MsgConfirmDrop[];
-extern u8 MsgYes[];
 s32 __modsi3(s32, s32);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
@@ -43,7 +41,7 @@ void ItemMenu_DrawItemHead(void)
         0);
     UiText_DrawCharacterAtOffsetFar(
         (menu->selected_items[0] & ITEM_ID_MASK) +
-            (s32)&MsgItemName,
+            (s32)MsgItemName,
         (void *)menu->message_window,
         16,
         8);
@@ -62,7 +60,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
     slot = a0 & ITEM_ID_MASK;
     Item_Get(slot);
-    UiText_DrawAt(slot + (s32)((u8 *)&MsgItemName), win, 24, 0);
+    UiText_DrawAt(slot + (s32)((u8 *)MsgItemName), win, 24, 0);
     text = (s32)MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
     UiText_DrawAt(text, win, 0, 16);
@@ -127,7 +125,6 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     return sel;
 }
 
-extern u8 MsgEquipThisItem[];
 s32 Inventory_EquipFar(s32 owner, s32 item);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void Owner_RecalculateStatsFar(s32 owner);

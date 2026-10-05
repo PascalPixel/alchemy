@@ -3,6 +3,7 @@
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gShianJiinEntrances1[];
 extern const struct SceneEntrance gShianJiinEntrancesOther[];
@@ -12,59 +13,27 @@ extern const struct ScenePlacement gShianJiinPlacements1[];
 extern const struct ScenePlacement gShianJiinPlacementsEntrance3[];
 extern struct ScenePlacement gShianJiinPlacements[];
 
-extern u8 MsgShianHowDidGetHereBridge[];
-extern u8 MsgShianIsntNobleHimTrySave[];
-extern u8 MsgShianNowHeTrulyBeyondWorlds[];
 
-extern u8 MsgShianAlreadyHeardTest[];
 void Effect_Spawn();
 void BattleFx_PlayQueuedSoundFar();
 void Engine_MapCopyCellAttributes();
 
-extern u8 MsgShianDoNotWorryWillPermitted[];
-extern u8 MsgShianEnjoyReadingMindsOthersDo[];
-extern u8 MsgShianFlexibilityJumpingVeryImportantIn[];
-extern u8 MsgShianFollowThemDoNot[];
-extern u8 MsgShianHsuDidNotPracticeJumping[];
-extern u8 MsgShianLamaTempleFarWestIn[];
-extern u8 MsgShianMasterFehVeryBusyDo[];
-extern u8 MsgShianMasterFehsSchoolCameWatch[];
-extern u8 MsgShianMmmmWhoWhoSpeaksMy[];
-extern u8 MsgShianMustSurviveTestGrottoBefore[];
-extern u8 MsgShianThenCannotTellGiveUp[];
-extern u8 MsgShianYoungMasterDidCompleteTest[];
 
 union SceneWord {
     s32 word;
     u16 half[2];
 };
 
-extern u8 MsgShianCannotPushHands[];
-extern u8 MsgShianGreatWarriorTrain[];
-extern u8 MsgShianWarriorsCannotUse[];
 void ShianJiin_WalkByFacing(void);
 
-extern u8 MsgShianLookTreeFell[];
 void ShianJiin_WalkByFacing();
 
-extern u8 MsgShianDidDoWarrior[];
-extern u8 MsgShianImTravelingAroundWorldSpread[];
-extern u8 MsgShianItIsLocked[];
-extern u8 MsgShianRobinAmCountingOnBring[];
-extern u8 MsgShianWarriorWillShowMeYour[];
-extern u8 MsgShianWaterMonstersFloodedAltinDid[];
-extern u8 MsgShianYaTreeFell[];
 
 extern const struct SceneEvent gShianJiinEvents1[];
 extern const struct SceneEvent gShianJiinEventsEntrance3[];
 extern const struct SceneEvent gShianJiinEvents[];
 
-extern u8 MsgShianCanReadMindsKnowCurious[];
-extern u8 MsgShianExcellentRobin[];
-extern u8 MsgShianMonstersWaitInHidingWould[];
-extern u8 MsgShianDontTryHard[];
 
-extern u8 MsgShianMasterHamaMeditatingPleaseExtremely[];
 
 void ShianJiin_AskIfCurious(void);
 void FieldScene_RunRoofEnsembleSequence(void);

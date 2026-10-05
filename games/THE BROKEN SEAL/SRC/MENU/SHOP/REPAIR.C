@@ -8,6 +8,7 @@
 #include "PARTY_STATE.H"
 #include "TYPES.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 extern struct ShopRuntime *gMenuWork;
 extern volatile u32 gKeyState;
@@ -17,13 +18,6 @@ s32 Inventory_CountFar(s32);
 void Audio_PlayCue(s32);
 void UiMessage_ShowAndWait(s32);
 void Shop_RepairItem(s32, s32);
-extern u8 MsgItemPlainName;
-extern u8 MsgRepairAnythingElse;
-extern u8 MsgShopRepairConfirm[];
-extern u8 MsgCannotRepairKind[];
-extern u8 MsgNotDamaged[];
-extern u8 MsgCursedWontComeOff[];
-extern u8 MsgNotEnoughMoney[];
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiMessage_ShowAndRestoreState(s32 message);
@@ -36,11 +30,6 @@ void Party_AdjustCoinsFar(s32 amount);
 #define SPECIAL_ITEM 228
 
 extern const s16 Shop_SpecialItemPrices[];
-extern u8 MsgTokenGift[];
-extern u8 MsgPackFull[];
-extern u8 MsgCannotCarryItem[];
-extern u8 MsgHereYouGo[];
-extern u8 MsgDontWantIt[];
 void UiMessage_ShowAndWait(s32 message);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
@@ -101,7 +90,7 @@ s32 Shop_SelRepair(s32 unit_id)
                 price = Shop_RepairPrice(unit->inventory[selection]);
                 Shop_DrawItemPrice(list_window, item_id, price, 2);
                 Shop_DrawMsg(
-                    price_window, item_id + (s32)&MsgItemPlainName);
+                    price_window, item_id + (s32)MsgItemPlainName);
             }
             if ((gKeyState & KEY_A) != 0) {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
@@ -153,7 +142,7 @@ done:
             break;
 
         Shop_RepairItem(unit_id, selection);
-        UiMessage_ShowAndWait((s32)&MsgRepairAnythingElse);
+        UiMessage_ShowAndWait((s32)MsgRepairAnythingElse);
         if (Inventory_CountFar(unit_id) == 0)
             break;
     }

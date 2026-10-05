@@ -8,6 +8,7 @@
 #include "GAME_STATE.H"
 #include "INVENTORY.H"
 #include "MENU_LIST.H"
+#include "text/MSG_IDS.H"
 
 struct Workspace {
     u8 unknown_000[356];
@@ -16,19 +17,11 @@ struct Workspace {
 
 extern const u16 TorebiIzumi_AlphaSteps[];
 
-extern u8 MsgTorebiBadComeBack[];
-extern u8 MsgTorebiBadLikeUse[];
-extern u8 MsgTorebiComeAgain[];
-extern u8 MsgTorebiGetRidItems[];
-extern u8 MsgTorebiStepRightEnjoy[];
-extern u8 MsgTorebiStepRightTry[];
 void ObjectTable_Snapshot(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
 void Event_RequestDestination(s32 a, s32 b);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 
-extern u8 MsgTorebiBuddyWannaTry[];
-extern u8 MsgTorebiYaDontEnough[];
 s32 Party_GetAverageLevel(void);
 void Event_RequestDestination(s32 value, s32 mode);
 
@@ -151,10 +144,6 @@ void TorebiIzumi_PayToPlay(void)
 }
 
 #if EDITION_INTERNATIONAL
-extern u8 MsgTorebiCoins[];
-extern u8 MsgTorebiThrow[];
-extern u8 MsgTorebiToss[];
-extern u8 MsgTorebiWonNumberCoin[];
 extern u16 Data_0200200c[];
 extern s32 Data_02001fd0[];
 

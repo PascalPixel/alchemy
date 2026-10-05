@@ -10,13 +10,10 @@
 #include "ITEM.H"
 #include "EDITION.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgDebugWontStopYou[];
-extern u8 MsgDebugRaiseEveryonesLevel[];
 extern volatile u32 gKeyState;
 
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void Engine_AudioPlayCue(s32 cue);
 void Engine_TaskWait(s32 frames);
@@ -30,8 +27,6 @@ void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 
 void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
 void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 #define ITEM_COUNT 270
-extern u8 MsgAbilityName[];
-extern u8 MsgAbilityDescription[];
 u8 *Engine_DebugGetAbility(s32 ability);
 extern u8 gItemLevelPsyPrompt[];
 extern u8 gItemLevelPsyHelp[];

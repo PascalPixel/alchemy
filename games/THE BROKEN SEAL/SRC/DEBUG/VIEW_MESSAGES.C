@@ -4,6 +4,7 @@
 #include "BATTLE_UNIT.H"
 #include "GAME_STATE.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
@@ -15,20 +16,15 @@
 
 extern volatile s32 gKeysRepeat;
 extern u8 *gWindowWork;
-extern u8 MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
-extern u8 MsgRariberoHowDidSearchForSheba;
 
 #if defined(TBS_EDITION_EN)
-extern u8 MsgBecameCursed;
-#define DEBUG_SECOND_FORM ((s32)&MsgBecameCursed)
+#define DEBUG_SECOND_FORM ((s32)MsgBecameCursed)
 #else
-extern u8 MsgDebugSecondForm;
-#define DEBUG_SECOND_FORM ((s32)&MsgDebugSecondForm)
+#define DEBUG_SECOND_FORM ((s32)MsgDebugSecondForm)
 #endif
-extern u8 MsgDebugSampleName;
 
 #define DEBUG_VIEW_LIMIT \
-    ((s32)&MsgRariberoHowDidSearchForSheba - (s32)&MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5)
+    ((s32)MsgRariberoHowDidSearchForSheba - (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5)
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void FarCall_WindowTable(void);
@@ -51,7 +47,7 @@ void DebugBattle_ViewMessages(void)
     s32 window;
     s32 message;
 
-    Ui_AdjustValueWithoutLimitFar((s32)&MsgDebugSampleName, text);
+    Ui_AdjustValueWithoutLimitFar((s32)MsgDebugSampleName, text);
     for (i = 0; i <= 13; i++) {
         unit->name[i] = text[i];
         if (text[i] == 0)
@@ -76,7 +72,7 @@ void DebugBattle_ViewMessages(void)
             UiText_DrawQuantity(1, 2);
             UiText_DrawQuantity(2, 4);
             if (second == 0) {
-                message = (s32)&MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
+                message = (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
                 window = UiText_OpenMessageWindowFar(index + message, 2, 10, 4);
             } else {
                 message = DEBUG_SECOND_FORM;

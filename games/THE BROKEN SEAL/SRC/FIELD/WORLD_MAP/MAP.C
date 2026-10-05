@@ -6,6 +6,7 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 
@@ -44,9 +45,6 @@ void StoryScene_UpdateSelectedActorProgress(void);
 s32 StoryActor_ApplyMapRotation(struct FieldActor *actor);
 extern s32 gWorldMapTriggerActor;
 
-extern u8 MsgWorldMapAfterBringingDjinniIntoYour[];
-extern u8 MsgWorldMapNextIllShowHowCan[];
-extern u8 MsgWorldMapWeCantStayAnotherMinute[];
 
 void StoryProgress_TriggerEvent0808(void)
 {
@@ -1100,15 +1098,6 @@ void WorldMap_ShowDjinnTutorial(void)
     Engine_EventWait(30);
     BattleFx_SetWeightedResult(12, 6);
 }
-extern u8 MsgWorldMapOh[];
-extern u8 MsgWorldMapComePromiseWont[];
-extern u8 MsgWorldMapMeanieDontCare[];
-extern u8 MsgWorldMapSeeWontRegret[];
-extern u8 MsgWorldMapAbilityVenusDjinni[];
-extern u8 MsgWorldMapSeeDjinnUseful[];
-extern u8 MsgWorldMapGoSetStandby[];
-extern u8 MsgWorldMapHmmmmExplainAgain[];
-extern u8 MsgWorldMapYeahWantLearn[];
 
 void Owner_RefreshActiveRatios(s32 owner);
 s32 Djinn_AddToOwner();

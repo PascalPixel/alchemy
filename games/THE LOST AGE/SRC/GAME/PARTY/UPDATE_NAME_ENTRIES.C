@@ -4,11 +4,11 @@
 #include "OWNER_STATE.H"
 #include "SERIAL_RUNTIME.H"
 #include "TLA_EDITION.H"
+#include "text/MSG_IDS.H"
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void *Resource_FarCall005(s32);
 
-extern char MsgEnemyLabel;
 
 s32 UpdateNameEntries(void)
 {
@@ -33,7 +33,7 @@ s32 UpdateNameEntries(void)
             named_count += 1;
         }
         WaitFrames(2);
-        Ui_AdjustValueWithoutLimitFar((s32)&MsgEnemyLabel, name_text);
+        Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
         i = 0;
         if (name_text[i] != 0) {
             do {

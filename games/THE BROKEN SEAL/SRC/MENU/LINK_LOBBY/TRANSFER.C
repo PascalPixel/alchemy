@@ -7,14 +7,12 @@
 #include "CALL.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgLobbyWantParticipatePlease[];
 
 u32 gLinkLobbyCallFrames;
 
-extern u8 MsgLobbyLinkDisconnected[];
 
-extern u8 MsgEnemyLabel[];
 extern volatile u16 gLinkStatus;
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);

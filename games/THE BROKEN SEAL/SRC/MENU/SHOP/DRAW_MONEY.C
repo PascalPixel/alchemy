@@ -2,8 +2,8 @@
 #include "SHOP.H"
 #include "PARTY_STATE.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 extern struct ShopRuntime *gMenuWork;
-extern u8 MsgYourCoins[];
 
 s32 UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 void Shop_DrawMoney(void)

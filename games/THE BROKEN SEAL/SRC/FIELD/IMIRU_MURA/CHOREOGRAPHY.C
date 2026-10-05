@@ -238,7 +238,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_ActorStartRepeatedMotion(19, 2);
     Engine_ActorRunRepeatedMotion(20, 2);
     Engine_EventWait(40);
-    Engine_EventSetMessage(MsgImiruMary);
+    Engine_EventSetMessage(MSGNO(MsgImiruMary));
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xe000, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);

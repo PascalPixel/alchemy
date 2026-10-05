@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
 void SceneState_RunActor13AtColumn42Setup(void)
 {
@@ -26,8 +27,6 @@ void SceneState_RunActor13AtColumn42Setup(void)
     Engine_EventEnd();
 }
 
-extern u8 MsgVinasuChojoReliefWords[];
-extern u8 MsgVinasuChojoTrueHeart[];
 
 void VinasuChojo_ReadRelief(void)
 {

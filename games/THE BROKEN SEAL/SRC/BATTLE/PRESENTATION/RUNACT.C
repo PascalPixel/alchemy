@@ -141,7 +141,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
 
     switch (action->command) {
     case 99:
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyFlees);
         if (BattleEscape_PlayRun(action)!= 0)
             return 1;
         break;
@@ -206,7 +206,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action)
         WaitFrames(22);
         return 1;
     }
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgCannotEscape);
+    UiText_ShowMessageAndWaitCoreFar((s32)MsgCannotEscape);
     return 0;
 }
 
@@ -227,7 +227,7 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action)
     }
     UiWork_ClearValueNameTablesFar();
     UiWork_PushValueSlotFar(object_id, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
+    UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
     return 0;
 }
 
@@ -362,7 +362,7 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
     Owner_GetStateFar(work.actors[0]);
     Random16();
     UiWork_PushValueSlotFar(work.actor, 1);
-    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
+    UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
     BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
     ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.actor)->object, 16);
     GetBattleObjectSlot(work.actors[0]);

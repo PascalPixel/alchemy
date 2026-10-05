@@ -6,8 +6,8 @@
 #include "FIELD_SERVICE.H"
 #include "WINDOW.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgShindenGreatHealer[];
 
 struct TextCursor {
     u8 storage[12];

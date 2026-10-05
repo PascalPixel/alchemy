@@ -6,14 +6,7 @@
 #include "KORIMA_MURA.H"
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
-extern u8 MsgKorimaHesAsStumpedAsWe[];
-extern u8 MsgKorimaKnowThoseFieldsWere[];
-extern u8 MsgKorimaMatterIvan[];
-extern u8 MsgKorimaSparklyStuffOnGround[];
-extern u8 MsgKorimaThatsReliefRobinThoughtYoud[];
-extern u8 MsgKorimaWasOurPsynergy[];
-extern u8 MsgKorimaWatchOutItsHappeningAgain[];
-extern u8 MsgKorimaYoureRobinThereIsntMuch[];
+#include "text/MSG_IDS.H"
 
 struct Struct3848 {
     u8 pad00[8];

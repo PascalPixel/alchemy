@@ -7,6 +7,7 @@
 #include "KAWA.H"
 #include "CALL.H"
 #include "RESOURCE_IDS.H"
+#include "text/MSG_IDS.H"
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -105,12 +106,6 @@ void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void SceneState_RaiseTriggerOnPsynergyTarget(void);
 
-extern u8 MsgKorosseoAskAttendantsForExplanationsStages[];
-extern u8 MsgKorosseoRobinYoureContestantInFinals[];
-extern u8 MsgKorosseoSiteFirstFinalsBattle[];
-extern u8 MsgKorosseoWarriorsEnterFinalsWithoutAny[];
-extern u8 MsgKorosseoCallRockChallenge[];
-extern u8 MsgKorosseoObjectiveStageClear[];
 void Korosseo_FinishSoloRound();
 void Engine_EventBegin();
 s32 SceneDialogue_RunFlagGatedPromptInteraction();
@@ -133,16 +128,10 @@ void Engine_CameraFollowActor();
 void Engine_ActorSetPosition();
 void SceneState_SendIdBySceneId();
 void Engine_EventEnd();
-extern u8 MsgKorosseoAreaCalledPipeworks[];
-extern u8 MsgKorosseoObjectiveMakeGood[];
 void SceneState_InitTableWordsAndLoad3200();
 void KorosseoKawa_ReleaseMarker();
 void Engine_ObjectSetPosition();
 
-extern u8 MsgKorosseoLogsKeyClearingStage[];
-extern u8 MsgKorosseoOperatorBridgeWillAlsoCheer[];
-extern u8 MsgKorosseoPlaceNormallyCalledLumberWater[];
-extern u8 MsgKorosseoTheyCallBrokenBridge[];
 s32 GameFlag_GetByteFar(s32);
 void SceneState_ResetCounterAndStartTask(void);
 void SceneState_SetMode66AndPassOpeningSequence(void);

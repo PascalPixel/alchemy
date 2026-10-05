@@ -3,6 +3,7 @@
 #include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gTorebiKyudenEntrances2[];
 extern const struct SceneEntrance gTorebiKyudenEntrancesOther[];
@@ -12,35 +13,13 @@ extern const struct ScenePlacement gTorebiKyudenPlacementsAfterColosso[];
 extern const struct ScenePlacement gTorebiKyudenPlacementsColosso[];
 extern const struct ScenePlacement gTorebiKyudenPlacementsOther[];
 
-extern u8 MsgTorebiTiredFeelFreeRest[];
-extern u8 MsgTorebiCameRestBefore[];
-extern u8 MsgTorebiPlanningEnterColosso[];
-extern u8 MsgTorebiRunBabisSoldiers[];
-extern u8 MsgTorebiUseFourBeds[];
-extern u8 MsgTorebiWeHaveJustEnoughExtra[];
 
-extern u8 MsgTorebiCantFightBecauseLittleIndigestion[];
-extern u8 MsgTorebiEvenIfEscapedBabiPalace[];
 
-extern u8 MsgTorebiGetUp[];
-extern u8 MsgTorebiEasternShoresKaragol[];
-extern u8 MsgTorebiFoundCloakBall[];
-extern u8 MsgTorebiMeetBabi[];
 
 extern const u16 TorebiKyuden_CellSteps[];
-extern u8 MsgTorebiCallsName[];
-extern u8 MsgTorebiIodemIodem[];
-extern u8 MsgTorebiLikeSleep[];
-extern u8 MsgTorebiWaitingCompanions[];
 
-extern u8 MsgTorebiArent[];
 
-extern u8 MsgTorebiBabiWaitingForAtColosseum[];
-extern u8 MsgTorebiRobinIdReallyLikeThank[];
-extern u8 MsgTorebiWarriorsWhoStayed[];
 
-extern u8 MsgFieldPeeredWell[];
-extern u8 MsgTorebiItsFilledWithFreshClean[];
 
 extern const struct SceneEvent gTorebiKyudenEvents2AfterColosso[];
 extern const struct SceneEvent gTorebiKyudenEvents2Colosso[];

@@ -5,8 +5,8 @@
 #include "PSYNERGY_MENU.H"
 #include "MENU_LIST.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgAbilityDescription;
 
 void GameFlag_ClearBitFar(s32 flag);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -41,7 +41,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 
         combined = state->selected_index;
         if (menu->psynergies[combined] != 0) {
-            s32 masked = (menu->psynergies[combined] & 0x1ff) + (s32)&MsgAbilityDescription;
+            s32 masked = (menu->psynergies[combined] & 0x1ff) + (s32)MsgAbilityDescription;
 #if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->info_window, 0, 0);
 #else

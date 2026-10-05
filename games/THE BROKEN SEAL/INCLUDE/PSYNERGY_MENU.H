@@ -4,6 +4,7 @@
 #include "LAYOUT_GUARD.H"
 #include "MENU_RESULT.H"
 #include "RENDER_INPUT.H"
+#include "text/MSG_IDS.H"
 
 struct AnimationObject;
 
@@ -132,7 +133,6 @@ LAYOUT_OFFSET_GUARD(PsynergyMenuState_TabObjects, struct PsynergyMenuState, tab_
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerScale, struct PsynergyMenuState, owner_scale, 0x154);
 
 extern struct PsynergyMenuState *gMenuWork;
-extern char MsgPsynergyMenuEmpty;
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot);

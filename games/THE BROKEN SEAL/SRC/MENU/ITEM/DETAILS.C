@@ -7,6 +7,7 @@
 #include "UI.H"
 #include "BATTLE_RUNTIME.H"
 #include "ITEM.H"
+#include "text/MSG_IDS.H"
 
 extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
@@ -17,10 +18,6 @@ void UiWork_FinalizeFar(s32, s32);
 void Palette_LightenBankHighlight(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
-extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[], MsgEquipEffectName[];
-extern u8 MsgItemCursed[], MsgBestowsPsynergy[], MsgUsesHeading[], MsgSingleUse[];
-extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[], MsgEffectRateSuffix[];
-extern u8 MsgRareItem[], MsgImportantItem[], MsgDetailsUnknown[];
 extern u8 Menu_TimesString[], Menu_PointString[];
 void UiText_DrawStringInWindowFar(u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);

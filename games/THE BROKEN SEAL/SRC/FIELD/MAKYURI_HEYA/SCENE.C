@@ -12,13 +12,6 @@
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
 
-TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
-TEXT_MESSAGE_ENUM(MsgImiruHermesHealingWaterFountain);
-extern u8 MsgImiruSomebodyHere[];
-TEXT_MESSAGE_ENUM(MsgImiruStatueBlocksEntrance);
-TEXT_MESSAGE_ENUM(MsgMakyuriHeyaFountainFlowsWithWater);
-TEXT_MESSAGE_ENUM(MsgMakyuriHeyaFountainSeemsDry);
-TEXT_MESSAGE_ENUM(MsgMakyuriHeyaRobinGot);
 
 extern const u8 MakyuriHeya_PushScriptA[];
 extern const u8 MakyuriHeya_PushScriptB[];
@@ -40,7 +33,6 @@ void Engine_ActorStartAction(s32 actor);
 void Engine_EventBegin();
 void Engine_GameFlagClear();
 void Engine_EventEnd();
-extern u8 MsgMakyuriDidThat[];
 void SetEffectRecordMode();
 void MakyuriHeya_FadePaletteToWhite();
 void MakyuriHeya_CastPsynergyAtActor11(void);
@@ -59,7 +51,6 @@ void BattleFx_RunRisingObjectSequence();
 
 void Engine_MapCopyCellsTo(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h);
 void Battle_WaitMode0(s32 frames);
-extern u8 MsgMakyuriHonorsGoddessRainbows[];
 void Makyuri_SpawnLightObjects(s32 count, s32 base);
 void Makyuri_ClearPalette(void);
 void Makyuri_CyclePalette(void);
@@ -76,9 +67,6 @@ void FieldScene_RunSupplementalSequenceOne(s32 mode);
 void MakyuriHeya_ArriveWithSparks(void);
 void Engine_ColorBufferInterpolate(s32 frames);
 
-extern u8 MsgMakyuriSavedMeAgain[];
-extern u8 MsgMakyuriDontHideTruth[];
-extern u8 MsgMakyuriThoughtSo[];
 void Event_PrepareObjectAndApplyValue();
 s32 Djinn_AddToOwner();
 void Djinn_Activate();
@@ -416,7 +404,7 @@ void SceneDialogue_RunActor3TimedLine(void)
     Engine_EventBegin();
     Engine_ActorSetAnimationAndWait(3, 4);
     Battle_WaitMode0(20);
-    Engine_EventSetMessage(MsgImiruStatueBlocksEntrance);
+    Engine_EventSetMessage(MSGNO(MsgImiruStatueBlocksEntrance));
     Engine_EventShowMessageAndWait(3, 0, 20);
     Engine_EventEnd();
 }
@@ -911,7 +899,7 @@ void FieldScene_RunScriptedSteps0And1576(void)
 {
     Engine_EventBegin();
     Object_SetModeById(0, 1);
-    Engine_MessageShowCentered(MsgImiruHermesHealingWaterFountain, 1);
+    Engine_MessageShowCentered(MSGNO(MsgImiruHermesHealingWaterFountain), 1);
     Engine_EventEnd();
 }
 
@@ -919,7 +907,7 @@ void FieldScene_RunScriptedSteps0And953(void)
 {
     Engine_EventBegin();
     Object_SetModeById(0, 1);
-    Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
+    Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
     Engine_EventEnd();
 }
 
@@ -929,9 +917,9 @@ void FieldScene_RunFlag881Dialogue(void)
     Engine_EventBegin();
     Object_SetModeById(0, 1);
     if (Engine_GameFlagIsSet(0x881) == 0)
-        Engine_MessageShowCentered(MsgMakyuriHeyaFountainSeemsDry, 1);
+        Engine_MessageShowCentered(MSGNO(MsgMakyuriHeyaFountainSeemsDry), 1);
     else
-        Engine_MessageShowCentered(MsgMakyuriHeyaFountainFlowsWithWater, 1);
+        Engine_MessageShowCentered(MSGNO(MsgMakyuriHeyaFountainFlowsWithWater), 1);
     if (PartyInventory_FindOwner(0xb9) != -1) {
         s16 *slot = (s16 *)gEventWork + 185;
         s32 one = 1;
@@ -949,7 +937,7 @@ void FieldScene_RunActor184Sequence(void)
     SceneState_SetRecordTableValue(0xb9, 0xb8);
     UiWork_PushValueSlot(PartyInventory_FindOwner(0xb8), 1);
     UiWork_PushValueSlot(0xb8, 2);
-    Engine_MessageShowCentered(MsgMakyuriHeyaRobinGot, 1);
+    Engine_MessageShowCentered(MSGNO(MsgMakyuriHeyaRobinGot), 1);
     Engine_GameFlagSet(512);
     Engine_EventEnd();
 }

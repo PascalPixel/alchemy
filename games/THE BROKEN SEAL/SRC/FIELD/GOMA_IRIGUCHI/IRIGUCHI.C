@@ -7,6 +7,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "ITEM.H"
 #include "INVENTORY.H"
+#include "text/MSG_IDS.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -47,7 +48,6 @@ struct Flags35 {
     u8 flags;
 };
 
-extern u8 MsgGomaNoUsePsynergy[];
 void GomaIriguchi_RunSpinningLeap();
 void GomaIriguchi_SetEntranceFlag();
 void GomaIriguchi_GiveShamansRod();

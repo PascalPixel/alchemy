@@ -5,6 +5,7 @@
 #include "INVENTORY.H"
 #include "BATTLE_UNIT.H"
 #include "ITEM.H"
+#include "text/MSG_IDS.H"
 
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
@@ -107,7 +108,6 @@ s32 Owner_RefreshClassActions(s32 owner)
 }
 
 extern s32 Character_StartingEquipOwnerIds[];
-extern u8 MsgCharacterName;
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 
 extern u32 Character_LevelExpTable[];
@@ -191,7 +191,7 @@ void Owner_InitRecords(void)
 
     for (owner = 0; owner <= 7; owner++) {
         state = (struct BattleUnit *)Owner_GetState(owner);
-        Ui_AdjustValueWithoutLimitFar(owner + (s32)&MsgCharacterName, name_buf);
+        Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, name_buf);
         name = state->name;
         name[0] = name_buf[0];
         i = 0;

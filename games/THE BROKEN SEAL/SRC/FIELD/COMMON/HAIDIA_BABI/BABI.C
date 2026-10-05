@@ -3,13 +3,11 @@
 #include "HAIDIA_BABI.H"
 #include "RAM_BUFFER.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
 s32 FieldScene_PrepareActors(s32);
 
-extern u8 MsgHaidiaFolksSeemKnow[];
 
-extern u8 MsgHaidiaHeyBoy[];
-extern u8 MsgHaidiaTheMaskedManWasGarcia[];
 void BattleFx_SetBlock30ValuesMaxZero(void);
 
 void Map_ClearLayerEntryFlag();
@@ -291,7 +289,6 @@ s32 HaidiaBabi_RestoreEntryState(void)
     return 0;
 }
 
-extern u8 MsgHaidiaWake[];
 
 extern const u8 gHaidiaBabiSharedAction[];
 extern const u8 gHaidiaBabiActorExitAction[];

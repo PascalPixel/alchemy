@@ -5,11 +5,11 @@
 #include "TBS_EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
 s32 BattleFx_HasTriggerFar(s32 item);
-extern char MsgItemCommandUse;
 
 void ItemMenu_BuildCmd(s8 *command_states)
 {
@@ -88,7 +88,7 @@ void ItemMenu_DrawCmd(const s8 *command_states, s32 window)
     if (value == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
-    message = (u32)&MsgItemCommandUse;
+    message = (u32)MsgItemCommandUse;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 0x18);
     UiWork_SetParamNibbleFar(0xf);
     if (command_states[ITEM_COMMAND_EQUIP] == disabled)

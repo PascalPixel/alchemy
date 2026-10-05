@@ -1,5 +1,5 @@
 #include "TASK.H"
-extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
+#include "text/MSG_IDS.H"
 
 void KorosseoKabe_MarkSceneProgress(void)
 {

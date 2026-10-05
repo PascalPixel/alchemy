@@ -1,13 +1,13 @@
 #include "TYPES.H"
 #include "TLA_EDITION.H"
 #include "PARTY_STATE.H"
+#include "text/MSG_IDS.H"
 
 void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 #if !EDITION_INTERNATIONAL
 void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 #endif
-extern u8 MsgCoinsLabel[];
 
 void UiText_DrawWorkValueWithLabel(s32 work)
 {

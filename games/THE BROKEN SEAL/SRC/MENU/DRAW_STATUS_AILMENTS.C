@@ -3,9 +3,8 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgPowerLabel[];
-extern u8 MsgNormalLabel, MsgDownLabel, MsgPoisonLabel, MsgVenomLabel, MsgCurseLabel, MsgHauntLabel, MsgDjinnLabel;
 
 extern struct CharacterMenuState *gMenuWork;
 extern const u8 Menu_LvString[];
@@ -54,27 +53,27 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
         UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
     i = 0;
     if (ailments[CHARACTER_DOWN] != 0) {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgDownLabel, window, 16, 40);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDownLabel, window, 16, 40);
         i = 1;
     }
     if (ailments[CHARACTER_POISON] != 0) {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgPoisonLabel, window, 16, i * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgPoisonLabel, window, 16, i * 16 + 40);
         i++;
     }
     if (ailments[CHARACTER_VENOM] != 0) {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgVenomLabel, window, 16, i * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgVenomLabel, window, 16, i * 16 + 40);
         i++;
     }
     if (ailments[CHARACTER_CURSE] != 0) {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgCurseLabel, window, 16, i * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgCurseLabel, window, 16, i * 16 + 40);
         i++;
     }
     if (ailments[CHARACTER_HAUNT] != 0) {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgHauntLabel, window, 16, i * 16 + 40);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgHauntLabel, window, 16, i * 16 + 40);
         i++;
     }
     if (i == 0)
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgNormalLabel, window, 0, 40);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgNormalLabel, window, 0, 40);
     CharacterMenu_UpdateSelectionIcons(ailments);
     ItemMenu_ApplyFlags(ailments);
     if (state->page == 3)
@@ -91,7 +90,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
         UiWindow_SetTilemapEntryFar(window, 4, 27, row, 4);
     }
     if (has_djinn)
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnLabel, window, 64, row * 8 + 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnLabel, window, 64, row * 8 + 8);
     if (mode == 1) {
         if (!has_djinn)
             row--;

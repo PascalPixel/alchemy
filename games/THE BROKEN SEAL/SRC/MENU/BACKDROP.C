@@ -10,6 +10,7 @@
 #include "UI.H"
 #include "DJINN_MENU.H"
 #include "HEAP_STATE.H"
+#include "text/MSG_IDS.H"
 
 #define FRAME_TILE 150
 extern u8 gMenuWork[];
@@ -40,8 +41,6 @@ void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 djinn);
 s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 djinn);
-extern u8 MsgUnleashEffect[];
-extern u8 MsgDjinnName[];
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000

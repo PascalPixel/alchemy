@@ -3,9 +3,9 @@
 #include "FIELD_EVENT.H"
 #include "RAM_BUFFER.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 extern const u8 Idejima_ActorDepartureScript[];
-extern const u8 MsgIdejimaWhereHasAlexGone;
 void GameFlag_SetBit();
 void Battle_WaitMode0();
 s32 Inventory_PromptAndSetObjectMode();
@@ -46,7 +46,7 @@ void Idejima_RunAlexDeparture(void)
     Call3(ObjectMotion_SetPositionAndReset, 8, 104, 0x2c8);
     ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 0);
     Call3(ObjectMotion_ArmCallback, 8, 0x8000, 20);
-    Call1(Engine_EventSetMessage, (s32)&MsgIdejimaWhereHasAlexGone);
+    Call1(Engine_EventSetMessage, (s32)MsgIdejimaWhereHasAlexGone);
     Call2(Engine_EventShowMessage, 0x2008, 0);
     ObjectMotion_ArmCallback(8, 0, 40);
     Call3(ObjectMotion_ArmCallback, 8, 0x5000, 20);

@@ -5,6 +5,7 @@
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
@@ -14,8 +15,6 @@ void RenderOutput_PrepareForRedraw();
 void UiText_DrawNumber(s32 n, s32 digits, s32 work, s32 x, s32 y);
 void UiText_DrawString(u8 *str, s32 work, s32 x, s32 y);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
-extern u8 MsgDebugEntryName[];
-extern u8 MsgDebugCategoryName[];
 extern u8 Menu_ColonString[];
 
 struct MenuDefaults {

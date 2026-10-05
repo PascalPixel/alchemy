@@ -4,6 +4,7 @@
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
 #include "OBJECT_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 extern const s32 KorosseoKawa_ApproachScript[];
 
@@ -69,7 +70,6 @@ s32 SceneActor_ApplyValueAndMatchingSlots();
 void UiWork_PushValueSlot();
 void ObjectDispatch_WaitForValue16();
 
-extern u8 MsgKorosseoRobinGotItem[];
 
 void Text_WriteU32AsHex(u8 *buf, u32 value)
 {

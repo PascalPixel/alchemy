@@ -6,13 +6,10 @@
 #include "CALL.H"
 #include "SCENE_IDS.H"
 #include "SERIAL_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 s32 SaveState_ProcessSelectedSlot(void);
 
-extern u8 MsgLobbyChooseParameters[];
-extern u8 MsgLobbyNoParameterAsk[];
-extern u8 MsgLobbySettingsMadeRest[];
-extern u8 MsgLobbyTease[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 s32 Engine_DebugCreateWindow();
@@ -23,38 +20,14 @@ s32 DebugParty_LoadPreset();
 
 s32 Party_CountActiveOwners(void);
 
-extern u8 MsgLobbyTryingGetAway[];
-extern u8 MsgLobbyCantWaitLets[];
-extern u8 MsgLobbyGoingFightAlone[];
-extern u8 MsgLobbyKnewLostBecause[];
-extern u8 MsgLobbyNotFaultLost[];
-extern u8 MsgLobbyWonWithoutWell[];
-extern u8 MsgLobbyWonToldCountOn[];
 s32 LinkLobby_PartyContains(s32 actor);
 void SerialRuntime_RemoveIrqHandlers(void);
 s32 Sound_LoadPresetParameters(s32 preset);
 s32 Event_SetDestination(s32 scene, s32 entrance);
-extern u8 MsgLobbyBattleArenaOld[];
-extern u8 MsgLobbyChangeOrderParty[];
-extern u8 MsgLobbyThreeAlliesFight[];
-extern u8 MsgLobbyThreeAlliesFightLinked[];
-extern u8 MsgLobbyThreeAlliesFightLinkedFinals[];
-extern u8 MsgLobbyTravelingWarrior[];
-extern u8 MsgLobbyCantWaitSee[];
-extern u8 MsgLobbyWonNumberConsecutive[];
 void UiText_DrawQuantity();
-extern u8 MsgLobbySavingBattleResults[];
-extern u8 MsgLobbyBattleResultsSaved[];
-extern u8 MsgLobbySavingMonsterBattle[];
-extern u8 MsgLobbyMonsterBattleResults[];
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 s32 UiWork_IsComplete(void);
 
-extern u8 MsgLobbyNotBadNextMonster[];
-extern u8 MsgLobbyNoteCantUse[];
-extern u8 MsgLobbyWonNumberBattle[];
-extern u8 MsgLobbyWonNumberBattleBroke[];
-extern u8 MsgLobbyWonNumberBattleTold[];
 extern u8 gOptionMirror;
 s32 LinkLobby_DrawThreeDigitValue(s32 value);
 s32 LinkLobby_SaveBattleResults(void);

@@ -7,6 +7,7 @@
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 void ArutinYama_ApplyEntryState(void);
 void ArutinYama_PlaceFlaggedActors(void);
@@ -22,8 +23,6 @@ extern u8 Data_02000240[];
 
 extern s32 ArutinYama_LeafMode;
 
-extern u8 MsgArutinGuardianStatuesWereCreatedLong[];
-extern u8 MsgArutinWeDidRobinWeBeat[];
 
 void ResourceMetadata_ClearRecord(s32 handle);
 struct FieldActor *ObjectTable_Get(s32 actor);

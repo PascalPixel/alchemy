@@ -8,6 +8,7 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 #include "ITEM.H"
+#include "text/MSG_IDS.H"
 
 extern struct ShopRuntime *gMenuWork;
 extern volatile u32 gKeyState;
@@ -18,7 +19,6 @@ s32 Party_AdjustCoinsFar(s32);
 s32 Party_AdjustSixDigitCounterBFar(s16);
 void UiMessage_ShowAndRestoreState(s32 message);
 void Audio_PlayCue(s32);
-extern char MsgHereYouGo;
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void Inventory_EquipFar(s32 unit_id, s32 slot);
 void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
@@ -28,9 +28,6 @@ void Shop_DrawUnitGrid(s32 value, s32 unit_id);
 void Audio_PlayCue(s32 cue);
 void UiWork_FinalizePendingCoreFar(void);
 s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
-extern char MsgEquipNowPrompt;
-extern char MsgLookBolder;
-extern u8 MsgBecameCursed[];
 void Shop_SellItem(s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
 s32 Inventory_CountFar(s32);
@@ -38,9 +35,6 @@ void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 s32 Shop_SelSell(s32);
 void UiMessage_ShowAndWait(s32);
-extern u8 MsgItemPlainName;
-extern u8 MsgSellAnythingElse;
-extern u8 MsgNoItems;
 void UiWindow_Clear(s32 window);
 s32 Inventory_CountFar(s32 unit_id);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -48,11 +42,7 @@ struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 s32 Shop_GetSelectionState(s32, s32);
 s32 Shop_SelectQuantity(s32, s32, s32);
 void UiIcon_PrepareObjectFar(void *);
-extern char MsgHowManyToSell;
 
-extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
-extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
-extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];
 void Inventory_DiscardFar(s32 unit_id, s32 slot);
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
@@ -76,7 +66,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
             Shop_DrawMoney();
         } while (remaining != 0);
     }
-    UiMessage_ShowAndRestoreState((s32)&MsgHereYouGo);
+    UiMessage_ShowAndRestoreState((s32)MsgHereYouGo);
     if (Shop_ConfirmEquip(unit_id, added_slot) != 0) {
         Shop_SellOld(unit_id, replaced_slot);
     }
@@ -106,7 +96,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     }
 
     UiWork_PushValueSlotFar(unit_id, 1);
-    UiMessage_ShowAndWait((s32)&MsgEquipNowPrompt);
+    UiMessage_ShowAndWait((s32)MsgEquipNowPrompt);
     if (UiMessage_ShowChoice(0) != 0)
         return 0;
 
@@ -124,7 +114,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
         }
     }
 
-    UiMessage_ShowAndRestoreState((s32)&MsgLookBolder);
+    UiMessage_ShowAndRestoreState((s32)MsgLookBolder);
     return 1;
 }
 
@@ -287,7 +277,7 @@ s32 Shop_SelSell(s32 unit_id)
                     item_id,
                     Shop_SalePrice(unit->inventory[selection]),
                     1);
-                Shop_DrawMsg(price_window, item_id + (s32)&MsgItemPlainName);
+                Shop_DrawMsg(price_window, item_id + (s32)MsgItemPlainName);
             }
 
             if ((gKeyState & KEY_A) != 0) {
@@ -341,7 +331,7 @@ done:
         quantity = Shop_SelSellNum(unit_id, selection);
         if (quantity != -1)
             Shop_SellItem(unit_id, selection, quantity);
-        UiMessage_ShowAndWait((s32)&MsgSellAnythingElse);
+        UiMessage_ShowAndWait((s32)MsgSellAnythingElse);
         if (Inventory_CountFar(unit_id) == 0)
             break;
     }
@@ -365,9 +355,9 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
         UiWindow_Clear(window);
         if (Inventory_CountFar(unit_id) == 0) {
 #if defined(TBS_EDITION_IT)
-            UiText_DrawResourceFar((s32)&MsgNoItems, window, 20, 12);
+            UiText_DrawResourceFar((s32)MsgNoItems, window, 20, 12);
 #else
-            UiText_DrawResourceFar((s32)&MsgNoItems, window, 8, 20);
+            UiText_DrawResourceFar((s32)MsgNoItems, window, 8, 20);
 #endif
         } else {
             slot = 0;
@@ -419,7 +409,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     state = Shop_GetSelectionState(unit_id, slot);
     selection = state;
     if ((item->flags & 0x10) && state > 1) {
-        UiMessage_ShowAndWait((s32)&MsgHowManyToSell);
+        UiMessage_ShowAndWait((s32)MsgHowManyToSell);
         saved_x = shop->cursor.target_x;
         saved_y = shop->cursor.target_y;
         shop->cursor.anchor->active = 4;

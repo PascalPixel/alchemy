@@ -4,29 +4,15 @@
 #include "FIELD_SCENE.H"
 #include "TYPES.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gSoruNichigetsuEntrances[];
 extern const u32 gSoruNichigetsuExits[];
 extern const struct ScenePlacement gSoruNichigetsuPlacements[];
 extern const struct SceneEvent gSoruNichigetsuEvents[];
 
-extern u8 MsgSoruWayLeadsOutSanctum[];
-extern u8 MsgSoruThank[];
-extern u8 MsgSoruFound[];
-extern u8 MsgSoruGoBackVillage[];
-extern u8 MsgSoruLunaSolRooms[];
-extern u8 MsgSoruMeanLookFarther[];
-extern u8 MsgSoruPutWayDont[];
-extern u8 MsgSoruRoomLunaOne[];
-extern u8 MsgSoruWhRoom[];
 
-extern u8 MsgSoruLookSymbolFloor[];
-extern u8 MsgSoruThePictureOfLunaChanged[];
-extern u8 MsgSoruWhatsHappening[];
-extern u8 MsgSoruWhatsHappeningAtTheTrap[];
-extern u8 MsgSoruYouFoundIt[];
 
-extern u8 MsgSoruHa[];
 void SetSolShindenActorStep();
 void Map_ClearLayerEntryFlag();
 void Object_LinkPair();
@@ -44,7 +30,6 @@ void InitializeSceneRecordBuffer();
 extern u8 Data_02000240[];
 extern s16 gCell[][1];
 
-extern u8 MsgSoruFloatingEyeThing[];
 void InitializeSceneRecordBuffer(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
@@ -57,8 +42,6 @@ struct EventGlobals {
 
 extern struct EventGlobals Data_03001ebc;
 
-extern u8 MsgSoruSukuretaJustWaitOverThere[];
-extern u8 MsgSoruSukuretaLetMeKnowWhat[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

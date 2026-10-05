@@ -9,13 +9,8 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TARGET.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgBitterBlow[];
-extern u8 MsgDmgP[];
-extern u8 MsgCritical[];
-extern u8 MsgDmgE[];
-extern u8 MsgGoesDown[];
-extern u8 MsgDowned[];
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32 value, s32 mode);

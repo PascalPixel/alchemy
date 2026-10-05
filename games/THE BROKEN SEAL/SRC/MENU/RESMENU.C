@@ -9,6 +9,7 @@
 #include "GLOBAL_CELLS.H"
 #include "AFFINE.H"
 #include "VRAM_TAB.H"
+#include "text/MSG_IDS.H"
 
 struct WindowLine {
     u16 left;
@@ -191,7 +192,6 @@ void Menu_EndResourceSelection(void)
     WaitFrames(1U);
 }
 
-extern u8 MsgCommandName;
 
 extern volatile u32 gKeyState, gKeysRepeat;
 
@@ -212,7 +212,7 @@ redraw:
     if (work->resource_base != 0)
         resource = work->resource_base + work->selection;
     else
-        resource = work->resource_ids[work->selection] + (s32)&MsgCommandName;
+        resource = work->resource_ids[work->selection] + (s32)MsgCommandName;
     UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
     for (;;) {
         WaitFrames(1);

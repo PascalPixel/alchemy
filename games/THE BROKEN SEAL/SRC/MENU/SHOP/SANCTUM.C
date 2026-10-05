@@ -9,20 +9,14 @@
 #include "SOUND_IDS.H"
 #include "BATTLE_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 extern struct ShopRuntime *gMenuWork;
 s32 Shop_CanServe(s32 selection, s32 variant);
-extern u8 MsgReviveService;
-extern u8 MsgCurePoisonService;
-extern u8 MsgExorcismService;
-extern u8 MsgRemoveCurseService;
 s32 BattleFx_GetResourceIdFar(u16);
 void UiWork_FinalizePendingCoreFar(void);
 s32 Shop_MsgByMode(s32 value);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern u8 MsgSanctumWelcome[];
-extern u8 MsgSanctumMoreAid[];
-extern u8 MsgSanctumFarewell[];
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
@@ -47,8 +41,6 @@ void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Party_AdjustCoinsFar(s32 amount);
 void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
-extern char MsgReviveDonation;
-extern u8 MsgWhoToRevive[];
 
 s32 Sanctum_RunPartyService(void);
 
@@ -102,13 +94,13 @@ s32 Shop_MsgByMode(s32 value)
     s8 mode = gMenuWork->party_action;
 
     if (mode == 1) {
-        value += (u32)&MsgCurePoisonService - (u32)&MsgReviveService;
+        value += (u32)MsgCurePoisonService - (u32)MsgReviveService;
     }
     if (mode == 2) {
-        value += (u32)&MsgExorcismService - (u32)&MsgReviveService;
+        value += (u32)MsgExorcismService - (u32)MsgReviveService;
     }
     if (mode == 3) {
-        value += (u32)&MsgRemoveCurseService - (u32)&MsgReviveService;
+        value += (u32)MsgRemoveCurseService - (u32)MsgReviveService;
     }
     return value;
 }
@@ -200,7 +192,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
             break;
 
         {
-            s32 base = (s32)&MsgReviveService;
+            s32 base = (s32)MsgReviveService;
             s32 message = base;
 
             base = 0;
@@ -297,7 +289,7 @@ s32 Sanctum_RunPartyService(void)
             }
             UiWork_PushValueSlotFar(unit_id, 1);
             UiWork_PushValueSlotFar(price, 5);
-            message = (s32)&MsgReviveDonation;
+            message = (s32)MsgReviveDonation;
             UiMessage_ShowResolvedAndWait(message);
             if (UiMessage_ShowChoiceVariant(0) != 0) {
                 UiMessage_ShowResolvedAndRestoreState(message + 2);

@@ -13,6 +13,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "EVENT_RUNTIME.H"
 #include "FIXED_POINT_POSITION.H"
+#include "text/MSG_IDS.H"
 
 void EffectSlot_UpdateFar(s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, u32);
@@ -53,7 +54,6 @@ enum InnMessageId {
     INN_MESSAGE_REST_COMPLETE,
 };
 
-extern char MsgInnWelcome;
 void Shop_InitializeCursorWork(void);
 void Inn_Cleanup(void);
 void UiMessage_ShowAndWait(s32 message_id);
@@ -209,7 +209,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 
     amount = Inn_RoomPrice(mode);
     UiWork_PushValueSlotFar(amount, 5);
-    message_base = (s32)&MsgInnWelcome;
+    message_base = (s32)MsgInnWelcome;
     UiMessage_ShowAndWait(message_base);
     state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
     Shop_DrawMoney();

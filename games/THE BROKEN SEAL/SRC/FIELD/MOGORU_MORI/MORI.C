@@ -9,7 +9,6 @@
 #include "SCENE_IDS.H"
 #include "text/MSG_IDS.H"
 
-TEXT_MESSAGE_ENUM(MsgMogoruMoriBrokenSign);
 
 struct Vec {
     s32 x;
@@ -281,7 +280,7 @@ void FieldScene_RunScriptedSteps0And17E6(void)
 {
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
-    Engine_MessageShowCentered(MsgMogoruMoriBrokenSign, 1);
+    Engine_MessageShowCentered(MSGNO(MsgMogoruMoriBrokenSign), 1);
     Engine_EventEnd();
 }
 

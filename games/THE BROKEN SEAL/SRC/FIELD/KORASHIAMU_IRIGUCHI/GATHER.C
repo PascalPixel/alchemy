@@ -3,8 +3,8 @@
 #include "FIELDOBJ.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorashiamuHeyYouRe[];
 extern u8 KorashiamuIriguchi_ActionTable1[];
 extern u8 KorashiamuIriguchi_ActionTable2[];
 extern u8 KorashiamuIriguchi_ActionTable4[];
@@ -13,8 +13,6 @@ void FieldScene_CallPairWith10();
 void SceneState_ForwardMaskedHalfwordWith10();
 void Object_SetActionCallbackAndRefreshById();
 
-extern u8 MsgKorashiamuDayTiredWaiting[];
-extern u8 MsgKorashiamuYouReadyForFinals[];
 extern u8 KorashiamuIriguchi_ActionTable5[];
 extern u8 KorashiamuIriguchi_ActionTable6[];
 extern u8 KorashiamuIriguchi_ActionTable7[];

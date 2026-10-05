@@ -1,6 +1,6 @@
 #include "LOG_ROLLING.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorosseoRobinGotItem[];
 
 extern const s32 KorosseoMaruta_PlaceScript[];
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);

@@ -7,12 +7,9 @@
 #include "text/MSG_IDS.H"
 #include "BATTLE_RUNTIME.H"
 
-TEXT_MESSAGE_ENUM(MsgBattleNoPsynergy);
 
 #define ACTION_ID_MASK 0x3fff
 
-extern u8 MsgAbilityName;
-extern u8 MsgAbilityDescription;
 
 void Ability_LoadGlyph(s32 action, s32 base, s32 *source, s32 *tile, s32 reuse);
 void UiWindow_DrawThreeTileColumn(
@@ -99,21 +96,21 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 #if EDITION_INTERNATIONAL
                 UiText_CopyMessageString(
                     (actions[page + row] & ACTION_ID_MASK) +
-                        (s32)&MsgAbilityDescription,
+                        (s32)MsgAbilityDescription,
                     buffer,
                     52);
 #else
                 UiText_DecodeMessage(
                     (actions[page + row] & ACTION_ID_MASK) +
-                        (s32)&MsgAbilityDescription,
+                        (s32)MsgAbilityDescription,
                     buffer,
                     32);
 #endif
             } else {
 #if EDITION_INTERNATIONAL
-                UiText_CopyMessageString(MsgBattleNoPsynergy, buffer, 52);
+                UiText_CopyMessageString(MSGNO(MsgBattleNoPsynergy), buffer, 52);
 #else
-                UiText_DecodeMessage(MsgBattleNoPsynergy, buffer, 32);
+                UiText_DecodeMessage(MSGNO(MsgBattleNoPsynergy), buffer, 32);
 #endif
             }
             UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
@@ -149,7 +146,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
                     render->level = 5;
                     UiText_DrawCharacterAtOffset(
-                        entry + (s32)&MsgAbilityName,
+                        entry + (s32)MsgAbilityName,
                         (struct RenderInput *)window, 16, i * 16);
                     UiText_DrawNumberAtOffset(
                         action->pp_cost, 2, (struct RenderInput *)window,

@@ -20,6 +20,7 @@
 #include "BATTLE_CALC.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DISPTRAN.H"
+#include "text/MSG_IDS.H"
 
 s32 Party_CountActiveOwnersFar(void);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
@@ -268,9 +269,6 @@ extern u8 ResourceBlockOwners[];
 extern volatile u32 gKeysHeld;
 extern struct MenuCtrl *gMenuCtrlWork;
 extern volatile u8 gDebugMode;
-extern u8 MsgFieldStrengthExhausted[];
-extern u8 MsgFieldPartyAnnihilated[];
-extern u8 MsgFieldPauseUnavailable[];
 
 static __inline__ s32 Vitals_Clamp(s32 ratio)
 {

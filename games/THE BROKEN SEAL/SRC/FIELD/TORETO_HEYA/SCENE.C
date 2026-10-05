@@ -7,6 +7,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gToretoHeyaEntrances[];
 extern const struct SceneRegion gToretoHeyaRegions[];
@@ -17,7 +18,6 @@ void Event_SetDestination(s32 scene, s32 entrance);
 
 extern const struct SceneEvent gToretoHeyaEvents[];
 
-extern u8 MsgToretoHmHrooom[];
 
 extern const u8 ToretoHeya_TableActions0[];
 extern const u8 ToretoHeya_TableActions1[];
@@ -26,9 +26,6 @@ extern const u8 ToretoHeya_TableActions3[];
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
 
-extern u8 MsgToretoDoingNowsNot[];
-extern u8 MsgToretoMmmmm[];
-extern u8 MsgToretoTurnedPeopleKolima[];
 
 void ToretoPalette_CaptureBank(void);
 void ToretoHeya_ApplyFlaggedMapPatches(void);

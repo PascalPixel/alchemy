@@ -19,6 +19,7 @@
 #include "AUDIO_ENGINE_SYMBOLS.H"
 #include "UI.H"
 #include "BATTLE_CALC.H"
+#include "text/MSG_IDS.H"
 
 #define DMA_FILL32 0x85000000
 
@@ -40,11 +41,6 @@ extern s32 gBattleRandomSeed;
         gBattleRandomSeed = 0;                                                \
     } while (0)
 
-extern u8 MsgDowned;
-extern u8 MsgPartyDefeated;
-extern u8 MsgGoesDownInDefeat;
-extern u8 MsgTutorialUnleashed;
-extern u8 MsgTutorialStandby;
 extern volatile u16 gLinkStatus;
 extern u8 *gBattleOwnerStates;
 extern u8 gActorSpriteSlots[];
@@ -301,12 +297,12 @@ s32 Battle_RunEncounter(s32 enemy_group)
         if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) == 0)
             continue;
 
-        handle = UiText_OpenMessageWindowFar((s32)&MsgTutorialUnleashed, 0, 4, 1);
+        handle = UiText_OpenMessageWindowFar((s32)MsgTutorialUnleashed, 0, 4, 1);
         while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
-        handle = UiText_OpenMessageWindowFar((s32)&MsgTutorialStandby, 10, 4, 1);
+        handle = UiText_OpenMessageWindowFar((s32)MsgTutorialStandby, 10, 4, 1);
         BattlePresentation_WaitForPromptAt(92, 24);
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
@@ -323,7 +319,7 @@ resolved:
                 BattleUnit_AssignFar(128, battle->enemy_classes[battle->first_defeated], 26);
                 UiWork_ClearValueNameTablesFar();
                 UiWork_PushValueSlotFar(128, 1);
-                UiText_ShowMessageAndWaitCoreFar(battle->defeat_state + (s32)&MsgDowned);
+                UiText_ShowMessageAndWaitCoreFar(battle->defeat_state + (s32)MsgDowned);
                 BattlePresentation_WaitForAdvance();
             }
         }
@@ -349,9 +345,9 @@ party_lost:
     UiWork_ClearValueNameTablesFar();
     UiWork_PushValueSlotFar(gGameState.active_owners[0], 1);
     if (BattleParty_PrepareActiveOwners(0) == 1)
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgGoesDownInDefeat);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDownInDefeat);
     else
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyDefeated);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyDefeated);
     BattlePresentation_WaitForAdvance();
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);

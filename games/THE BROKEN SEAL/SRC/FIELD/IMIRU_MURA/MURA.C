@@ -4,6 +4,7 @@
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "IWRAM_CALL.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gImiruMuraEntrances2[];
 extern const struct SceneEntrance gImiruMuraEntrancesOther[];
@@ -16,24 +17,14 @@ void FieldScene_PrepareActors(u8 *placements);
 extern const struct SceneEvent gImiruMuraEvents2[];
 extern const struct SceneEvent gImiruMuraEventsOther[];
 
-extern u8 MsgMakyuriReallySayDie[];
-extern u8 MsgMakyuriFeelMuchBetter[];
-extern u8 MsgMakyuriOoohHelpMe[];
 
 extern const u16 *ImiruMura_ExitCellSteps[];
 extern s16 ImiruMura_ExitCellPoints[][2];
 
-extern u8 MsgMakyuriCatchUpLostOpportunity[];
-extern u8 MsgMakyuriStoreClosedUntilWell[];
 extern u8 ImiruMura_TurnScript[];
 void Object_SetActionCallbackAndRefreshById();
 
-extern u8 MsgMakyuriShameStoreClosed[];
-extern u8 MsgMakyuriTooSickBusiness[];
 
-extern u8 MsgMakyuriRecoveredThanksFountain[];
-extern u8 MsgMakyuriMomsSickGetWhatever[];
-extern u8 MsgMakyuriDadLumberjack[];
 
 void SceneState_UpdateActor11WithFlag203(void);
 void RunEventScript02(void);
@@ -153,9 +144,9 @@ void SceneDialogue_RunActorEightFlagGatedDialogue(void)
 {
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(3) != 0) {
-        Engine_EventSetMessage(MsgImiruEvenIfMaryHealsUs);
+        Engine_EventSetMessage(MSGNO(MsgImiruEvenIfMaryHealsUs));
     } else {
-        Engine_EventSetMessage(MsgImiruBrrrrrChooImFreezingMary);
+        Engine_EventSetMessage(MSGNO(MsgImiruBrrrrrChooImFreezingMary));
     }
     {
         s32 val = 0;
@@ -169,9 +160,9 @@ void SceneDialogue_ShowLine1571Or152F(void)
 {
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(3) != 0) {
-        Engine_EventSetMessage(MsgImiruCantUnderstandWhyAnyOne);
+        Engine_EventSetMessage(MSGNO(MsgImiruCantUnderstandWhyAnyOne));
     } else {
-        Engine_EventSetMessage(MsgImiruMaryShouldHereByNow);
+        Engine_EventSetMessage(MSGNO(MsgImiruMaryShouldHereByNow));
     }
     Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
@@ -181,7 +172,7 @@ void SceneDialogue_RunActor9Line(void)
 {
     Engine_EventBegin();
     Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 10);
-    Engine_EventSetMessage(MsgImiruHiNewInImil);
+    Engine_EventSetMessage(MSGNO(MsgImiruHiNewInImil));
     Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
@@ -191,7 +182,7 @@ void SceneDialogue_RunActorTenFlag881Dialogue(void)
     Engine_EventBegin();
 
     if (GameFlag_IsSet(0x881) != 0) {
-        Engine_EventSetMessage(MsgImiruCountingAfterDeparture);
+        Engine_EventSetMessage(MSGNO(MsgImiruCountingAfterDeparture));
         Event_ShowMessage(10, 0);
         Actor_SetAttachedEffect(10, 258);
         Engine_EventWait(40);
@@ -202,7 +193,7 @@ void SceneDialogue_RunActorTenFlag881Dialogue(void)
         Actor_FaceDirection(10, 0x3000, 10);
         Engine_ActorSetAnimation(10, 9);
     } else {
-        Engine_EventSetMessage(MsgImiruOneTwoThreeFour);
+        Engine_EventSetMessage(MSGNO(MsgImiruOneTwoThreeFour));
         Event_ShowMessage(10, 0);
         Actor_SetAttachedEffect(10, 258);
         Engine_EventWait(40);
@@ -275,7 +266,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 void SceneDialogue_RunActor12Line(void)
 {
     Engine_EventBegin();
-    Engine_EventSetMessage(MsgImiruDoWantWeapons);
+    Engine_EventSetMessage(MSGNO(MsgImiruDoWantWeapons));
     Engine_EventAskYesNo(12, 0);
     Engine_EventEnd();
 }
@@ -283,7 +274,7 @@ void SceneDialogue_RunActor12Line(void)
 void SceneDialogue_RunActor18Line(void)
 {
     Engine_EventBegin();
-    Engine_EventSetMessage(MsgImiruDoWantSeeRestaurantMenu);
+    Engine_EventSetMessage(MSGNO(MsgImiruDoWantSeeRestaurantMenu));
     Engine_EventAskYesNo(18, 0);
     Engine_EventEnd();
 }
@@ -292,7 +283,7 @@ void SceneDialogue_RunActor20BranchScene(void)
 {
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(3) != 0) {
-        Engine_EventSetMessage(MsgImiruEveryoneCountsOnMaryThats);
+        Engine_EventSetMessage(MSGNO(MsgImiruEveryoneCountsOnMaryThats));
         Engine_EventShowMessage(20, 0);
     } else {
         Engine_EventSetMessage((s32)MsgImiruHaveVisitedOldCoupleWho);
@@ -307,9 +298,9 @@ void SceneDialogue_RunActor20FlaggedLine(void)
 {
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(3) != 0) {
-        Engine_EventSetMessage(MsgImiruWeHaveDoWhateverWe);
+        Engine_EventSetMessage(MSGNO(MsgImiruWeHaveDoWhateverWe));
     } else {
-        Engine_EventSetMessage(MsgImiruMaryWasSayingSheHas);
+        Engine_EventSetMessage(MSGNO(MsgImiruMaryWasSayingSheHas));
     }
     Engine_EventShowMessage(20, 0);
     Engine_EventEnd();
@@ -321,7 +312,7 @@ void ImiruMura_TalkAboutLighthouse(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_EventSetMessage(MsgImiruHappenedInLighthouseNortheast);
+    Engine_EventSetMessage(MSGNO(MsgImiruHappenedInLighthouseNortheast));
     Event_ShowMessage(8, 0);
     Actor_FaceDirection(8, 0x3000, 10);
     Engine_EventEnd();
@@ -331,11 +322,11 @@ void SceneDialogue_RunActorEightBranchedDialogue(void)
 {
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x82b) != 0) {
-        Engine_EventSetMessage(MsgImiruMaryClanOnceLivedHere);
+        Engine_EventSetMessage(MSGNO(MsgImiruMaryClanOnceLivedHere));
     } else if (Engine_GameFlagIsSet(0x82c) != 0) {
-        Engine_EventSetMessage(MsgImiruHesAlwaysExaggeratingThingsBut);
+        Engine_EventSetMessage(MSGNO(MsgImiruHesAlwaysExaggeratingThingsBut));
     } else {
-        Engine_EventSetMessage(MsgImiruMaryRunningAroundTownCaring);
+        Engine_EventSetMessage(MSGNO(MsgImiruMaryRunningAroundTownCaring));
     }
     Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
@@ -349,7 +340,7 @@ void FieldScene_RunSingleStep(void)
 void SceneDialogue_ShowLine156E(void)
 {
     Engine_EventBegin();
-    Engine_EventSetMessage(MsgImiruMuraMaryIsAGoodGirlI);
+    Engine_EventSetMessage(MSGNO(MsgImiruMuraMaryIsAGoodGirlI));
     Engine_EventShowMessage(10, 0);
     Engine_EventEnd();
 }
@@ -358,9 +349,9 @@ void SceneDialogue_ShowLine1573Or155A(void)
 {
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(3) != 0) {
-        Engine_EventSetMessage(MsgImiruFeelLikeGrownUpWhen);
+        Engine_EventSetMessage(MSGNO(MsgImiruFeelLikeGrownUpWhen));
     } else {
-        Engine_EventSetMessage(MsgImiruTheseFolkOkayTheyDont);
+        Engine_EventSetMessage(MSGNO(MsgImiruTheseFolkOkayTheyDont));
     }
     Engine_EventShowMessage(19, 0);
     Engine_EventEnd();
@@ -520,10 +511,10 @@ void ImiruMura_OpenInn(void)
         Engine_EventBegin();
         Actor_FaceActor(16, ACTOR_PARTY_LEADER, 10);
         if (GameFlag_IsSet(0x881) != 0) {
-            Engine_EventSetMessage(MsgImiruItsAlmostTimeForLeave);
+            Engine_EventSetMessage(MSGNO(MsgImiruItsAlmostTimeForLeave));
             Event_AskYesNo(16, 0);
         } else {
-            Engine_EventSetMessage(MsgImiruWhyHaveTwoGroupsTravelers);
+            Engine_EventSetMessage(MSGNO(MsgImiruWhyHaveTwoGroupsTravelers));
             Event_ShowMessage(16, 0);
         }
         Actor_FaceDirection(16, 0x3000, 10);
@@ -539,7 +530,7 @@ void ImiruMura_OpenSanctum(void)
     if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Engine_EventBegin();
         if (GameFlag_IsSet(0x82d) == 0) {
-            Engine_EventSetMessage(MsgImiruMayOnlyStudentButCan);
+            Engine_EventSetMessage(MSGNO(MsgImiruMayOnlyStudentButCan));
             Event_ShowMessage(19, 0);
             GameFlag_Set(0x82d);
         }
@@ -548,13 +539,13 @@ void ImiruMura_OpenSanctum(void)
     } else {
         Engine_EventBegin();
         if (GameFlag_IsSet(0x881) != 0) {
-            Engine_EventSetMessage(MsgImiruMaryGoingOnJourneyWith);
+            Engine_EventSetMessage(MSGNO(MsgImiruMaryGoingOnJourneyWith));
             Event_ShowMessage(19, 0);
         } else if (GameFlag_IsSet(3) != 0) {
-            Engine_EventSetMessage(MsgImiruAmHealerWhileMaryOut);
+            Engine_EventSetMessage(MSGNO(MsgImiruAmHealerWhileMaryOut));
             Event_ShowMessage(19, 0);
         } else {
-            Engine_EventSetMessage(MsgImiruLookingForMary);
+            Engine_EventSetMessage(MSGNO(MsgImiruLookingForMary));
             (void)Event_AskYesNo(19, 0);
             Actor_FaceDirection(19, 0x3000, 10);
         }
@@ -722,7 +713,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
-    Engine_EventSetMessage(MsgImiruHowFeeling);
+    Engine_EventSetMessage(MSGNO(MsgImiruHowFeeling));
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     Engine_ActorEnableActionCallback(9, tbl);
     Event_ShowMessageAndWait(9, 0, 20);

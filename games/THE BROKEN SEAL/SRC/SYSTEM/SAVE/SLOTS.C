@@ -8,30 +8,22 @@
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+#include "text/MSG_IDS.H"
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 extern s16 gSaveSlot;
 extern u8 gSaveBuffer[];
 extern u8 gSaveStamp[];
-extern u8 MsgNoBackupMemory;
-extern u8 MsgSaveFailed;
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 Menu_RunConfirmSelection(s32, s32, s32, s32);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 
-extern u8 MsgOverwriteConfirm;
-extern u8 MsgGameSaved;
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 void Audio_PlayCue(s32);
-extern u8 MsgLoadFailed;
-extern u8 MsgEraseFailed;
-extern u8 MsgFileCopied;
 
-extern u8 MsgEraseConfirm;
-extern u8 MsgFileErased;
 
 s32 SaveState_ProcessSelectedSlot(void)
 {
@@ -49,7 +41,7 @@ s32 SaveState_ProcessSelectedSlot(void)
         found = SaveState_InitializeWorkspace();
         if (found != 0) {
             error = 9;
-            UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+            UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
             goto negate;
 
         } else {
@@ -57,7 +49,7 @@ s32 SaveState_ProcessSelectedSlot(void)
 
             found = SaveState_ReadRecordPayload(gSaveSlot, buffer);
             if (found != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
                 result = -2;
             }
             dst = (u8 *)buffer + (s32)gSaveStamp;
@@ -65,7 +57,7 @@ s32 SaveState_ProcessSelectedSlot(void)
             ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))(dst, gSaveStamp, 16);
             found = SaveState_WriteRecord(gSaveSlot, buffer);
             if (found != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
                 error = 3;
 negate:
                 result = -error;
@@ -82,7 +74,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
 {
     s32 result;
 
-    UiText_OpenMessageWindow((s32)&MsgOverwriteConfirm, 8, 12, 2);
+    UiText_OpenMessageWindow((s32)MsgOverwriteConfirm, 8, 12, 2);
     while (UiWork_IsComplete() == 0) {
         WaitFrames(1);
     }
@@ -93,7 +85,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
         Audio_PlayCue(85);
         result = SaveState_ProcessSelectedSlot();
         if (result >= 0) {
-            UiText_ShowPositionedMessageAndWait((s32)&MsgGameSaved, 1);
+            UiText_ShowPositionedMessageAndWait((s32)MsgGameSaved, 1);
         }
     }
     return result;
@@ -108,7 +100,7 @@ s32 SaveState_CopySlotPair(void)
     result = 0;
     found = SaveState_InitializeWorkspace();
     if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
@@ -123,21 +115,21 @@ s32 SaveState_CopySlotPair(void)
             upper = (u8 *)lower + 0x1000;
             found |= SaveState_ReadRecordPayload(value + 3, upper);
             if (found != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
+                UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);
                 result = -2;
             } else {
                 value = SaveState_FindFreeSummarySlot();
                 if (value == 999) {
-                    UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
+                    UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
                     result = -5;
                 } else {
                     found = SaveState_WriteRecord(value, lower);
                     found |= SaveState_WriteRecord(value + 3, upper);
                     if (found != 0) {
-                        UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
+                        UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
                         result = -3;
                     } else {
-                        UiText_ShowPositionedMessageAndWait((s32)&MsgFileCopied, 1);
+                        UiText_ShowPositionedMessageAndWait((s32)MsgFileCopied, 1);
                     }
                 }
             }
@@ -156,7 +148,7 @@ s32 SaveState_DeleteSelectedSlot(void)
 
     found = SaveState_InitializeWorkspace();
     if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
@@ -164,7 +156,7 @@ s32 SaveState_DeleteSelectedSlot(void)
         if (value == -1) {
             result = value;
         } else {
-            UiText_OpenMessageWindow((s32)&MsgEraseConfirm, 8, 1, 2);
+            UiText_OpenMessageWindow((s32)MsgEraseConfirm, 8, 1, 2);
             while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);
             }
@@ -175,10 +167,10 @@ s32 SaveState_DeleteSelectedSlot(void)
                 found = SaveState_DeleteRecord(value);
                 found |= SaveState_DeleteRecord(value + 3);
                 if (found != 0) {
-                    UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
+                    UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
                     result = -4;
                 } else {
-                    UiText_ShowPositionedMessageAndWait((s32)&MsgFileErased, 1);
+                    UiText_ShowPositionedMessageAndWait((s32)MsgFileErased, 1);
                 }
             }
         }

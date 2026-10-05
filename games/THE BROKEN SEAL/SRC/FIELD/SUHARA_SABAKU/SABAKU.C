@@ -9,6 +9,7 @@
 #include "CALL.H"
 #include "FIELD_EFFECT.H"
 #include "SCENE_IDS.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gSuharaSabakuEntrances1[];
 extern const struct SceneEntrance gSuharaSabakuEntrances2[];
@@ -20,9 +21,7 @@ extern const struct ScenePlacement gSuharaSabakuPlacements2[];
 extern const struct ScenePlacement gSuharaSabakuPlacements3[];
 extern const struct ScenePlacement gSuharaSabakuPlacementsOther[];
 
-extern u8 MsgSuharaSandstorm[];
 
-extern u8 MsgSuharaNowhereFound[];
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);
 

@@ -3,16 +3,14 @@
 #include "PARTY_STATE.H"
 #include "TBS_EDITION.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgYouHave;
-extern u8 MsgShopNoneInStock;
 void UiWindow_Clear(s32 window);
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
 void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
 struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 extern struct ShopRuntime *gMenuWork;
-extern u8 MsgHowManyToBuy;
 extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Item_AdjustCounterFar(s32, s32);
@@ -40,9 +38,9 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
         if (slot != -1) {
             off = slot * 2 + 216;
             UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgYouHave, window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
         } else {
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgShopNoneInStock, window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
         }
         item_index = 0;
         first_offset = 216;
@@ -94,7 +92,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {
-        UiMessage_ShowAndWait((s32)&MsgHowManyToBuy);
+        UiMessage_ShowAndWait((s32)MsgHowManyToBuy);
         slot = Item_FindSlot(unit_id, item_id);
         if (slot != -1) {
             quantity = (unit->inventory[slot] >> 11) + 1;

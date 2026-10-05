@@ -75,7 +75,7 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     ItemMenu_DrawIcons(items, 0);
     if (ItemMenu_Count(owner_id) == 0)
         UiText_DrawCharacterAtOffsetFar(
-            (s32)&MsgItemMenuEmpty, (s32)menu->item_window, 8, 24);
+            (s32)MsgItemMenuEmpty, (s32)menu->item_window, 8, 24);
 }
 
 void InventoryMenu_NoOp(void)

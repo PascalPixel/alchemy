@@ -5,28 +5,19 @@
 #include "CALL.H"
 #include "SCENE_IDS.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 extern const struct ScenePlacement gTorebiIzumiPlacements2[];
 extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
 
-extern u8 MsgTorebiLuckyMedal[];
-extern u8 MsgTorebiYerFirstTime[];
 
 void TorebiIzumi_RiseAndFadeIn();
 void TorebiIzumi_RunSpringGame();
 
-extern u8 MsgTorebiLuckyWheelsPrizesPrizesDetermined[];
-extern u8 MsgTorebiLuckyWheelsRulesPullLever[];
 
 extern const struct SceneEvent gTorebiIzumiEvents2[];
 extern const struct SceneEvent gTorebiIzumiEventsOther[];
 
-extern u8 MsgTorebiComeAgain[];
-extern u8 MsgTorebiCongratulations[];
-extern u8 MsgTorebiWonItemGo[];
-extern u8 MsgTorebiWonItemGo2[];
-extern u8 MsgTorebiYaLostNumber[];
-extern u8 MsgTorebiYaWonNumber[];
 extern u8 gOamCopyEnabled;
 void SceneState_InitFourActorRecordsAndInstallTask(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);

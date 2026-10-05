@@ -10,6 +10,7 @@
 #include "M7_INTERFACES.H"
 #include "BATTLE_RUNTIME.H"
 #include "EQUIPMENT_MENU.H"
+#include "text/MSG_IDS.H"
 
 struct TargetMarkerAttributes {
     u16 y : 8;
@@ -34,10 +35,6 @@ struct TargetMarker {
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern char MsgItemPlainName;
-extern char MsgInStock;
-extern char MsgTradeForWhat;
-extern char MsgNoneInStock;
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
@@ -93,25 +90,25 @@ s32 ItemMenu_SelectTarget(s32 mode)
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
                     if (ItemMenu_Count(menu->owner_ids[selection]) == 15 && quantity == 0)
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgTradeForWhat, window, 0, 72);
                     else if (quantity != 0) {
                         UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, STOCK_LABEL_X, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgInStock, window, STOCK_LABEL_X, 72);
                     } else {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgNoneInStock, window, 16, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgNoneInStock, window, 16, 72);
                     }
 #else
                     if (quantity != 0) {
                         UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, STOCK_LABEL_X, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgInStock, window, STOCK_LABEL_X, 72);
                     } else {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgNoneInStock, window, 16, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgNoneInStock, window, 16, 72);
                     }
                     if (ItemMenu_Count(menu->owner_ids[selection]) == 15 && quantity == 0)
 #if EDITION_INTERNATIONAL
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgTradeForWhat, window, 0, 72);
 #else
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 16, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgTradeForWhat, window, 16, 72);
 #endif
 #endif
                 }
@@ -129,9 +126,9 @@ s32 ItemMenu_SelectTarget(s32 mode)
                     RenderOutput_ClearListFar((s32)menu->info_window);
 #endif
 #if EDITION_INTERNATIONAL
-                    UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #else
-                    UiText_DrawResourceFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
+                    UiText_DrawResourceFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #endif
                     shown = 1;
                 } else {

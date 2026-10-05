@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
+#include "text/MSG_IDS.H"
 
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1)
 {
@@ -26,12 +27,10 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
 }
 
 s32 GameFlag_Test(s32 flag);
-extern char MsgDjinnGiveTutorialA;
-extern char MsgDjinnGiveTutorialB;
 
 s32 Menu_GetDjinnGiveMessage(void)
 {
     if (GameFlag_Test(0x175))
-        return (s32)&MsgDjinnGiveTutorialB;
-    return (s32)&MsgDjinnGiveTutorialA;
+        return (s32)MsgDjinnGiveTutorialB;
+    return (s32)MsgDjinnGiveTutorialA;
 }

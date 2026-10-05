@@ -9,6 +9,7 @@
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 struct PsynergyMenuIcon {
     u8 unknown_00[5];
@@ -24,7 +25,6 @@ struct PsynergyMenuIcon {
 struct BattleUnit;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern u8 MsgSwitchCharacterHelp;
 void Menu_BuildPatternTiles(void);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
@@ -74,8 +74,8 @@ s32 PsynergyMenu_SelectAction(void)
     }
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
     Menu_SpawnIconEntries(menu, menu->message_window);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->status_window, SWITCH_HELP_X, -24);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 2, menu->status_window, 0, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgSwitchCharacterHelp, menu->status_window, SWITCH_HELP_X, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgSwitchCharacterHelp + 2, menu->status_window, 0, -24);
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         ItemMenu_PosCategory();

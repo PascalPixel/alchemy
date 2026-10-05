@@ -37,10 +37,15 @@ fn c_imports(names: &[(String, usize)]) -> String {
         "/* Message numbers from the edition's editable PO catalog. */\n\
          #ifndef ALCHEMY_MESSAGE_IDS_H\n\
          #define ALCHEMY_MESSAGE_IDS_H\n\
-         #define TEXT_MESSAGE_ENUM(name) enum { name = TEXT_MESSAGE_NUMBER_ ## name }\n",
+         #include \"TYPES.H\"\n\
+         #define TEXT_MESSAGE_ENUM(name) enum { name = TEXT_MESSAGE_NUMBER_ ## name }\n\
+         #define MSGNO(name) TEXT_MESSAGE_NUMBER_ ## name\n",
     );
     for (name, number) in names {
         header.push_str(&format!("#define TEXT_MESSAGE_NUMBER_{name} {number}\n"));
+    }
+    for (name, _) in names {
+        header.push_str(&format!("extern u8 {name}[];\n"));
     }
     header.push_str("#endif\n");
     header

@@ -7,6 +7,7 @@
 #include "TBS_EDITION.H"
 #include "B5_CONTEXT.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
 struct Pulse {
     u8 unknown_00[0x64];
@@ -14,9 +15,6 @@ struct Pulse {
     s16 beat;
 };
 
-extern u8 MsgHaidiaICantMoveGetHelp[];
-extern u8 MsgHaidiaIllGo[];
-extern u8 MsgHaidiaRobin[];
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -62,8 +60,6 @@ struct WorldMapOam {
     u16 size : 2;
 };
 
-extern u8 MsgHaidiaDoorWontOpen[];
-extern u8 MsgHaidiaSChestValuables[];
 
 void HaidiaArashi_FlashLightning(void)
 {

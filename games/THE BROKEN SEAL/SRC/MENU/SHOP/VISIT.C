@@ -14,6 +14,7 @@
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
 extern struct ShopRuntime *gMenuWork;
 
@@ -23,14 +24,6 @@ void Shop_StepCursor(void);
 void Battle_ResetEffectCounterFar(void);
 u8 Party_ListActiveOwnersFar(void *);
 s32 UiWork_FinalizePendingCoreFar();
-extern u8 MsgWeaponShopWelcome[];
-extern u8 MsgWhatWouldYouLike[];
-extern u8 MsgWhatToSell[];
-extern u8 MsgConnoisseur[];
-extern u8 MsgOutOfStock[];
-extern u8 MsgFixDamaged[];
-extern u8 MsgAnythingElse[];
-extern u8 MsgShopFarewell[];
 
 s32 EventTable_GetRowLimit(void);
 void EventTable_ApplyRowAbilities(s32 row);

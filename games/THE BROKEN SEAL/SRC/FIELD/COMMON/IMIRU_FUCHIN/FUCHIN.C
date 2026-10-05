@@ -5,14 +5,10 @@
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "BATTLE_PARTY.H"
-extern u8 MsgFuchinDragonFlameShowsPath[];
-extern u8 MsgFuchinSecretKiRevealed[];
-extern u8 MsgFuchinLightRevealsShadows[];
-extern u8 MsgFuchinEyelessDragon[];
-extern u8 MsgFuchinDragonRedEyes[];
 #include "FIELD_EFFECT.H"
 #include "SCENE.H"
 #include "FIELDRUN.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gImiruFuchinEntrances1[];
 extern const struct SceneEntrance gImiruFuchinEntrances2[];

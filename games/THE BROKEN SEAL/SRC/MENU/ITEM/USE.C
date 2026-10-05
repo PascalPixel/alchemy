@@ -4,8 +4,8 @@
 #include "SOUND_IDS.H"
 #include "TBS_EDITION.H"
 #include "MENU_LIST.H"
+#include "text/MSG_IDS.H"
 
-extern char MsgItemUseResult;
 s32 Audio_PlayCue(s32);
 s32 Item_Use(s32 slot, s32 owner, s32 target);
 void Item_PlayUseAnimation(u32 item);
@@ -25,7 +25,7 @@ s32 ItemMenu_Use(void)
         Audio_PlayCue(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar(menu->info_window);
         InventoryMenu_ShowModalMessage(
-            menu->message_offset + (s32)&MsgItemUseResult, result, result);
+            menu->message_offset + (s32)MsgItemUseResult, result, result);
 #if !EDITION_INTERNATIONAL
         RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif

@@ -11,34 +11,6 @@
 extern u8 gEffectWork[];
 extern u8 gKeysHeld[];
 
-TEXT_MESSAGE_ENUM(MsgImiruBrrrrrChooImFreezingMary);
-TEXT_MESSAGE_ENUM(MsgImiruHiNewInImil);
-TEXT_MESSAGE_ENUM(MsgImiruOneTwoThreeFour);
-TEXT_MESSAGE_ENUM(MsgImiruMaryShouldHereByNow);
-TEXT_MESSAGE_ENUM(MsgImiruMaryRunningAroundTownCaring);
-TEXT_MESSAGE_ENUM(MsgImiruHesAlwaysExaggeratingThingsBut);
-TEXT_MESSAGE_ENUM(MsgImiruDoWantWeapons);
-TEXT_MESSAGE_ENUM(MsgImiruWhyHaveTwoGroupsTravelers);
-TEXT_MESSAGE_ENUM(MsgImiruDoWantSeeRestaurantMenu);
-TEXT_MESSAGE_ENUM(MsgImiruMayOnlyStudentButCan);
-TEXT_MESSAGE_ENUM(MsgImiruLookingForMary);
-extern u8 MsgImiruHaveVisitedOldCoupleWho[];
-TEXT_MESSAGE_ENUM(MsgImiruTheseFolkOkayTheyDont);
-TEXT_MESSAGE_ENUM(MsgImiruMaryWasSayingSheHas);
-TEXT_MESSAGE_ENUM(MsgImiruHowFeeling);
-TEXT_MESSAGE_ENUM(MsgImiruHappenedInLighthouseNortheast);
-TEXT_MESSAGE_ENUM(MsgImiruMuraMaryIsAGoodGirlI);
-TEXT_MESSAGE_ENUM(MsgImiruMaryClanOnceLivedHere);
-TEXT_MESSAGE_ENUM(MsgImiruEvenIfMaryHealsUs);
-TEXT_MESSAGE_ENUM(MsgImiruCantUnderstandWhyAnyOne);
-TEXT_MESSAGE_ENUM(MsgImiruAmHealerWhileMaryOut);
-TEXT_MESSAGE_ENUM(MsgImiruFeelLikeGrownUpWhen);
-TEXT_MESSAGE_ENUM(MsgImiruEveryoneCountsOnMaryThats);
-TEXT_MESSAGE_ENUM(MsgImiruWeHaveDoWhateverWe);
-TEXT_MESSAGE_ENUM(MsgImiruCountingAfterDeparture);
-TEXT_MESSAGE_ENUM(MsgImiruItsAlmostTimeForLeave);
-TEXT_MESSAGE_ENUM(MsgImiruMaryGoingOnJourneyWith);
-TEXT_MESSAGE_ENUM(MsgImiruMary);
 
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))

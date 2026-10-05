@@ -5,9 +5,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
-extern u8 MsgFieldPeeredWell[];
-extern u8 MsgKuupuappuCanHearWaterRumblingDown[];
-extern u8 MsgKuupuappuRuffRrruff2[];
+#include "text/MSG_IDS.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))

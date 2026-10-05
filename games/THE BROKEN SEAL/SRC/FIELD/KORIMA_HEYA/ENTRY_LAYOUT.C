@@ -4,10 +4,7 @@
 
 #include "RESOURCE_390.H"
 #include "RESOURCE_390_TABLE.H"
-extern u8 MsgKorimaFuchinTempleOnOtherSide[];
-extern u8 MsgKorimaGrandBridgeAcrossRiverPride[];
-extern u8 MsgKorimaTheySayMccoyHaltedConstruction[];
-extern u8 MsgKorimaWhenWasTreeLearnedAppreciate[];
+#include "text/MSG_IDS.H"
 
 struct Approach390Subject {
     u16 unknown_00[3];

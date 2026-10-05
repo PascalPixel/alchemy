@@ -4,6 +4,7 @@
 #include "SORU.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
+#include "text/MSG_IDS.H"
 
 void Scene_RunActorFormation(s32 a0);
 
@@ -22,9 +23,6 @@ extern const struct SceneEvent gSoruIriguchiEvents1Entrances11To13[];
 extern const struct SceneEvent gSoruIriguchiEvents1Entrances14To16[];
 extern const struct SceneEvent gSoruIriguchiEvents2[];
 void FieldScene_PrepareActors(s32 placements);
-extern u8 MsgSoruMinotaurReliefBothEyes[];
-extern u8 MsgSoruMinotaurReliefOneEye[];
-extern u8 MsgSoruSetSmallGem[];
 
 extern s32 gSoruPushSteps[];
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
@@ -47,14 +45,8 @@ void Scene_RunTransitionCue();
 void Scene_EnterSolSanctum();
 void Scene_SukuretaSuspectsHiddenPassage();
 
-extern u8 MsgSoruSukuretaFirstTimeAtSol[];
 
-extern u8 MsgSoruCantSeriouslyWant[];
-extern u8 MsgSoruDangerousSplitStay[];
-extern u8 MsgSoruWrongSukureta[];
 
-extern u8 MsgFieldDoorTightlyLocked[];
-extern u8 MsgSoruMoreStatuesOutOfReach[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

@@ -4,11 +4,11 @@
 #include "IO_REG.H"
 #include "INVENTORY_MENU.H"
 #include "SYSTEM.H"
+#include "text/MSG_IDS.H"
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
-extern char MsgArrangeItemsHelp;
 
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(
@@ -52,13 +52,13 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
         menu->selected_item_icon->active = 13;
     }
 #if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, (s32)menu->help_window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp + 1, (s32)menu->help_window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp, (s32)menu->help_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 1, (s32)menu->help_window, 0, 8);
 #else
     UiText_DrawStringInWindowFar(ItemMenu_ArrangeKeysString, (s32)menu->help_window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, (s32)menu->help_window, 32, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp, (s32)menu->help_window, 32, 0);
     UiText_DrawStringInWindowFar(ItemMenu_EquipmentKeyString, (s32)menu->help_window, 16, 8);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp + 1, (s32)menu->help_window, 32, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 1, (s32)menu->help_window, 32, 8);
 #endif
     menu->pane_icons[0]->active = pending;
     while (!GameFlag_TestFar(0x150)) {

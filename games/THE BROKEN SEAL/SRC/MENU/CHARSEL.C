@@ -9,11 +9,10 @@
 #include "GLOBAL_CELLS.H"
 #include "UI.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 struct InventoryMenuState;
-extern u8 MsgRearrangeHelp[], MsgDjinnListHelp[], MsgChooseCharacter;
-extern u8 MsgSwitchCharacterHelp, MsgStatusNormal[];
-extern u8 MsgStatusAdvice[][2], CharacterMenu_CursorWidths[];
+extern u8 CharacterMenu_CursorWidths[];
 extern volatile u32 gKeyState, gKeysRepeat;
 void Palette_LightenBankHighlight(s32 bank);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
@@ -159,8 +158,8 @@ s32 PsynergyMenu_SelectOwner(void)
 
     Owner_GetStateFar(menu->owner_table[selection]);
     RenderOutput_RedrawSavedRectFar(menu->message_window);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgChooseCharacter, menu->message_window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgChooseCharacter + 1, menu->message_window, 0, 16);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter, menu->message_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1, menu->message_window, 0, 16);
     for (;;) {
         if (pending) {
             pending = 0;
@@ -361,9 +360,9 @@ s32 CharacterMenu_SelectCommand(void)
                     selected = (selected + limit) % limit;
                     RenderOutput_RedrawSavedRectFar((s32)menu->help_window);
                     if (has_ailments == 0) {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp,
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgSwitchCharacterHelp,
                             (s32)menu->status_window, SWITCH_HELP_X, -24);
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 1,
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgSwitchCharacterHelp + 1,
                             (s32)menu->status_window, 0, -24);
                     }
                 } else {
@@ -501,7 +500,7 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     do {
         if (entries[index] != 0) {
             if (selected == count) {
-                s32 message = (s32)MsgStatusAdvice[index];
+                s32 message = (s32)(MsgStatusAdvice + index * 2);
                 UiText_DrawResourceFar(message, target, 0, -1);
                 UiText_DrawResourceFar(message + 1, target, 0, 15);
             }

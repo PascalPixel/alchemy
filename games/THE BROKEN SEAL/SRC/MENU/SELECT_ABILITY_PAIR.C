@@ -6,6 +6,7 @@
 #include "BATTLE_TYPES.H"
 #include "GAME_STATE.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
 struct ShortcutListEntry {
     u16 owner;
@@ -15,8 +16,6 @@ struct ShortcutListEntry {
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeyState;
 extern const u8 Resource_FixedBlockBTiles[];
-extern u8 MsgPanelHpMaxLabel[], MsgPanelStatusLabel[], MsgPsynergyNeedMorePp[];
-extern u8 MsgAbilityName[], MsgCharacterName[], MsgAbilityDescription[];
 
 s32 OwnerAction_AddFar(s32 owner, s32 action);
 s32 Object_CollectResources(struct ShortcutListEntry *output);

@@ -1,13 +1,12 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
 extern u8 SuharaMura_Scripts[];
 extern u8 SuharaMura_Messages[];
 extern u8 SuharaMura_Actors[];
 extern u8 SuharaMura_ActorsFlag96f[];
 
-extern u8 MsgSuharaTryingGetLalivero[];
-extern u8 MsgSuharaBroughtSuhallaSandstorm[];
 
 extern s16 SuharaMura_CellAnimationOrigins[];
 extern const u16 SuharaMura_CellSteps0[];

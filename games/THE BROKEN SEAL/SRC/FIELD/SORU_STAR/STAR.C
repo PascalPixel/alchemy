@@ -4,20 +4,16 @@
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgSoruVenusStarBagged[];
 extern u16 SoruStar_StarCells[];
 extern struct EventWork *gEventWork;
 void Event_SayThenWait();
 void Engine_MapCopyCellAttributes();
 void UiWork_PushValueSlotFar();
 
-extern u8 MsgSoruPutMercuryStar[];
 
-extern u8 MsgSoruJupiterStarBagged[];
 
-extern u8 MsgSoruLooksLikeTheyveSpottedUs[];
-extern u8 MsgSoruWhyDenyDont[];
 struct ObjectRuntime;
 void BattlePres_RunActionThenWaitIfModeZero();
 
@@ -26,17 +22,8 @@ static __inline__ void SkipMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-extern u8 MsgSoruMenardiDontYouWantThem[];
 
-extern u8 MsgSoruDontHandOver[];
-extern u8 MsgSoruGuessTakeElemental[];
-extern u8 MsgSoruRightTake[];
-extern u8 MsgSoruWontLetGo[];
 
-extern u8 MsgSoruDontWantAnything[];
-extern u8 MsgSoruDoubtHowFeel[];
-extern u8 MsgSoruPermitRelieveElemental[];
-extern u8 MsgSoruThankCooperation[];
 
 /* FAKEMATCH: the flag byte's or-assign goes through this helper, which keeps the reference's register for the byte. */
 s32 UpdateOverlayObjectAngle(struct OverlayObject *object)

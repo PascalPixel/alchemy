@@ -7,12 +7,10 @@
 
 extern struct DjinnMenuWork *gMenuWork;
 #include "TBS_EDITION.H"
+#include "text/MSG_IDS.H"
 
 extern struct UiWork *gWindowWork;
 extern volatile u32 gKeyState;
-extern u8 MsgReturnHelp[];
-extern u8 MsgCurrentDjinn[];
-extern u8 MsgDjinnName[];
 
 void ItemMenu_ResetCategory(void);
 void Audio_PlayCue(s32 cue);

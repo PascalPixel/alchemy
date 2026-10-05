@@ -4,6 +4,7 @@
 #include "LAYOUT_GUARD.H"
 #include "MENU_RESULT.H"
 #include "RENDER_INPUT.H"
+#include "text/MSG_IDS.H"
 
 struct AnimationObject;
 
@@ -95,7 +96,6 @@ LAYOUT_OFFSET_GUARD(InventoryMenuState_ResourceSlots, struct InventoryMenuState,
 LAYOUT_SIZE_GUARD(InventoryMenuState_Size, struct InventoryMenuState, 0x398);
 
 extern struct InventoryMenuState *gMenuWork;
-extern char MsgItemMenuEmpty;
 
 enum ItemMenuCommand {
     ITEM_COMMAND_USE,

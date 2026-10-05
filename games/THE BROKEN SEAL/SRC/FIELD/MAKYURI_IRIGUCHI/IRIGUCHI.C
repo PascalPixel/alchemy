@@ -7,8 +7,8 @@
 #include "FIELD_EFFECT.H"
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgMakyuriWhoHonorsHeart[];
 
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);

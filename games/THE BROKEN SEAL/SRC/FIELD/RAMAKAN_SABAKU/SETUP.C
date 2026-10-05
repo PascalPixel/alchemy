@@ -1,6 +1,5 @@
 #include "RAMAKAN.H"
 #include "text/MSG_IDS.H"
-TEXT_MESSAGE_ENUM(MsgShianJiinIDoNotThinkMasterHama);
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -336,7 +335,7 @@ void RamakanSabaku_ShowRandomPartyLine(s32 a0)
         }
     }
     Engine_EventBegin();
-    Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + MsgShianJiinIDoNotThinkMasterHama);
+    Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + MSGNO(MsgShianJiinIDoNotThinkMasterHama));
     Engine_EventShowMessage((v6 + 1), 0);
     Engine_EventEnd();
 }

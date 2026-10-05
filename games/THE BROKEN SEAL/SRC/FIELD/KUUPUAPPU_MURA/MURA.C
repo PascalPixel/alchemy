@@ -3,6 +3,7 @@
 #include "FIELD_SCENE.H"
 #include "TBS_EDITION.H"
 #include "BATTLE_PARTY.H"
+#include "text/MSG_IDS.H"
 
 struct EffectRecord {
     u8 pad[9];
@@ -97,46 +98,8 @@ void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 void SceneActor_RunActorCommandWithFlag91(s32 x);
 
-extern u8 MsgFieldPeeredWell[];
-extern u8 MsgKuupuappuAccusingUsStealingHammetsTreasured[];
-extern u8 MsgKuupuappuCanHearWaterRumblingDown[];
-extern u8 MsgKuupuappuGuessFolksGot[];
-extern u8 MsgKuupuappuLeavingImStillWorriedAbout[];
-extern u8 MsgKuupuappuMasterHammetsCaravan[];
-extern u8 MsgKuupuappuNobodysStealingAnything[];
-extern u8 MsgKuupuappuOffOnAdventure[];
-extern u8 MsgKuupuappuPoorGuyLeft[];
-extern u8 MsgKuupuappuRuffRrruff[];
-extern u8 MsgKuupuappuThoseTravelersLeftInBig[];
-extern u8 MsgKuupuappuWaitDontWantTakeYour[];
-extern u8 MsgKuupuappuWasntEruptionMtAlephIncredible[];
 
-extern u8 MsgKuupuappuFixingRoofCant[];
 
-extern u8 MsgKuupuappuBetWasThoseThreeCreeps[];
-extern u8 MsgKuupuappuCarefulSearchWillRevealPassage[];
-extern u8 MsgKuupuappuDidntGoLunpa[];
-extern u8 MsgKuupuappuEruptionDevastatedRoads[];
-extern u8 MsgKuupuappuEveryoneGratefulCaptured[];
-extern u8 MsgKuupuappuEveryoneKnowsThoseThreeAt[];
-extern u8 MsgKuupuappuFeelMuchBetter[];
-extern u8 MsgKuupuappuGreatCaughtThieves[];
-extern u8 MsgKuupuappuGroupTravelersWasStrangeBunch[];
-extern u8 MsgKuupuappuHowPunishPrisoners[];
-extern u8 MsgKuupuappuIfBringMeBoneIll[];
-extern u8 MsgKuupuappuManShouldStealFromAnother[];
-extern u8 MsgKuupuappuMustStrongerThanLookHave[];
-extern u8 MsgKuupuappuOnesWhoCapturedThieves[];
-extern u8 MsgKuupuappuRuffRrruff2[];
-extern u8 MsgKuupuappuSneakWastingTime[];
-extern u8 MsgKuupuappuStealingInMidstVolcanicEruption[];
-extern u8 MsgKuupuappuSupposeDoesntMatterHowRich[];
-extern u8 MsgKuupuappuTalkingAboutHammetsServantIvan[];
-extern u8 MsgKuupuappuThankForOtherDayLeaving[];
-extern u8 MsgKuupuappuThoseMenCapturedTheyreIn[];
-extern u8 MsgKuupuappuWhereDidIvanGoBy[];
-extern u8 MsgKuupuappuWithRoadOutOnlyWay[];
-extern u8 MsgKuupuappuYoureHittingRoadAgain[];
 
 s32 SceneActor_UpdateProximityToLeader(u8 *self)
 {

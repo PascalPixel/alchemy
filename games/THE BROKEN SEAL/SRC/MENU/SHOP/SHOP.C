@@ -13,6 +13,7 @@
 #include "SOUND_IDS.H"
 #include "TBS_EDITION.H"
 #include "ITEM.H"
+#include "text/MSG_IDS.H"
 
 s32 BattleFx_GetResourceIdFar(s32);
 void UiIcon_PrepareObjectFar(void *);
@@ -20,10 +21,6 @@ s32 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
 
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern u8 MsgWeaponShopWelcome[];
-extern u8 MsgArmorShopWelcome[];
-extern u8 MsgItemShopWelcome[];
-extern u8 MsgWarriorShopWelcome[];
 extern u16 RomBytes_080b413c[];
 
 struct Record_080b06c0 {
@@ -404,13 +401,6 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern u8 MsgItemPlainName[];
-extern u8 MsgBuyNotEnoughMoney[];
-extern u8 MsgWhoGetsThis[];
-extern u8 MsgPackFull[];
-extern u8 MsgCannotEquipStillWant[];
-extern u8 MsgCannotCarryItem[];
-extern u8 MsgBuyAnythingElse[];
 void UiWork_FinalizeFar(s32 window, s32 style);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);

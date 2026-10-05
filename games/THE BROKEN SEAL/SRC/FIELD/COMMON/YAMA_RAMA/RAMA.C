@@ -3,6 +3,7 @@
 #include "FIELD_SCENE.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 s32 ArcTan2(s32, s32);
 
@@ -14,17 +15,6 @@ extern const u32 YamaRama_Exits[];
 extern const struct ScenePlacement YamaRama_TemplePlacements[];
 extern const struct ScenePlacement YamaRama_Placements[];
 
-extern u8 MsgYamaAdeptsLetMeThankAgain[];
-extern u8 MsgYamaAmTravelingAroundWorldSpread[];
-extern u8 MsgYamaDidKnowMasterHamaGreatest[];
-extern u8 MsgYamaDoDoWarriorShouldReturn[];
-extern u8 MsgYamaDoKnowMeditation[];
-extern u8 MsgYamaHeWhoHasPowerSee[];
-extern u8 MsgYamaHsuOkay[];
-extern u8 MsgYamaNorthAltinMineWestLama[];
-extern u8 MsgYamaRobinDidLiftBoulder[];
-extern u8 MsgYamaYahhSilkRoadBouldersBlock[];
-extern u8 MsgYamaYoungWarriorsDoComeFrom[];
 
 extern const u16 YamaRama_BoulderCells[];
 extern const u16 YamaRama_BoulderCellsBack[];

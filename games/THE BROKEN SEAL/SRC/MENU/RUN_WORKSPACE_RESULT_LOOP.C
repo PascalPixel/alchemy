@@ -5,11 +5,11 @@
 #include "RENDER_INPUT.H"
 #include "IO_REG.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 s32 Menu_RunWorkspaceSelectionLoop(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 s32 Menu_RunWorkspaceOptions(void);
 
-extern char MsgSleepMode;
 extern u8 gSleepRequested;
 
 s32 Menu_RunWorkspaceResultLoop(void)
@@ -26,7 +26,7 @@ retry:
             goto retry;
         }
     } else if (result == 1) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgSleepMode, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgSleepMode, 1);
         gSleepRequested = result;
     } else if (result == 2) {
         if (Menu_RunWorkspaceOptions() == -1) {

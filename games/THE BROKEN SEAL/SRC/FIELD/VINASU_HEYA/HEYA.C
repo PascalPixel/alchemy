@@ -7,7 +7,6 @@
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "text/MSG_IDS.H"
-TEXT_MESSAGE_ENUM(MsgVinasuThereWordsCarvedIntoRelief);
 
 extern u8 *gActorEffectWork;
 
@@ -29,13 +28,7 @@ void FieldScene_PrepareActors(u8 *placements);
 
 extern u8 gVinasuLeaderApproachScript[];
 s32 SceneEffect_SpawnRandomEveryEightFramesB();
-extern u8 MsgFieldDoorTightlyLocked[];
-extern u8 MsgFieldVenusLighthouseWasAttackedBy[];
-extern u8 MsgVinasuHmmmWeCantPushBlock[];
-extern u8 MsgVinasuIveWaitedLongSeeIts[];
-extern u8 MsgVinasuStatueSpeaksRobinSoulYe[];
 
-extern u8 MsgVinasuThoughtIdExploreAfterDoor[];
 
 void OverlayObject_WaitUntilIdle();
 void Engine_MapCopyCellAttributes();
@@ -736,7 +729,7 @@ void SceneDialogue_ReadRelief(void)
 #if defined(TBS_EDITION_EN)
     Engine_EventBegin();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    Engine_MessageShowCentered((s32)MsgVinasuThereWordsCarvedIntoRelief, 1);
+    Engine_MessageShowCentered((s32)MSGNO(MsgVinasuThereWordsCarvedIntoRelief), 1);
     Engine_EventEnd();
 #else
     struct EventWork *work = gEventWork;
@@ -744,7 +737,7 @@ void SceneDialogue_ReadRelief(void)
     Engine_EventBegin();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_MessageShowCentered(work->facing_trigger +
-        MsgVinasuThereWordsCarvedIntoRelief - 35, 1);
+        MSGNO(MsgVinasuThereWordsCarvedIntoRelief) - 35, 1);
     Engine_EventEnd();
 #endif
 }

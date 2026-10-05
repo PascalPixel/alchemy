@@ -4,6 +4,7 @@
 #include "STAGED_ACTOR_PAIR_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "FIELD_EFFECT.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gKaragoruDouEntrances1[];
 extern const struct SceneEntrance gKaragoruDouEntrances2[];
@@ -26,10 +27,7 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Object_SetModeById(s32 actor, s32 animation);
-extern u8 MsgKaragoruWhyGoingBackRobinDo[];
 
-extern u8 MsgKaragoruIveBeenWaitingForRobin[];
-extern u8 MsgKaragoruDoYouWishCrossInto[];
 
 struct EffectRecord {
     u8 pad[9];
@@ -48,8 +46,6 @@ struct HeightTrackedObject {
     s32 height;
 };
 
-extern u8 MsgKaragoruWarriorsHaveBeenFightingWhile[];
-extern u8 MsgKaragoruWeMissedColossoBecauseWe[];
 
 union SpinningActor {
     union FieldObject object;

@@ -401,9 +401,9 @@ void SceneDialogue_RunFlag982Or983Dialogue(void)
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     if (Engine_GameFlagIsSet(0x982) != 0 || Engine_GameFlagIsSet(0x983) != 0) {
-        Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksAfterAnswer, 1);
+        Engine_MessageShowCentered(MSGNO(MsgBabiChikaStatueSpeaksAfterAnswer), 1);
     } else {
-        Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksRobinSoulYe, 1);
+        Engine_MessageShowCentered(MSGNO(MsgBabiChikaStatueSpeaksRobinSoulYe), 1);
     }
     Engine_EventEnd();
 }
@@ -800,14 +800,14 @@ void SceneState_SetValue268bInScene(void)
 {
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
-    Engine_MessageShowCentered(MsgBabiChikaStatueSeemsSpeakYourSoul, 1);
+    Engine_MessageShowCentered(MSGNO(MsgBabiChikaStatueSeemsSpeakYourSoul), 1);
     Engine_EventEnd();
 }
 
 void FieldScene_RunScriptedStep953(void)
 {
     Engine_EventBegin();
-    Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
+    Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
     Engine_EventEnd();
 }
 

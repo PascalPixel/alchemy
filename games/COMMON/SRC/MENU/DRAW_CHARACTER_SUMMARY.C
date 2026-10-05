@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 
 void RenderOutput_PrepareForRedraw(void);
 void UiWindow_DrawDividerLine(s32, s32, s32, s32, s32);
@@ -9,11 +10,7 @@ void UiText_DrawNumberAtOffset(s32, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32, s32, s32, s32);
 void *Text_FormatPlayTime(s32, u8 *);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
-extern u8 MsgStatusLabel;
-extern u8 MsgClassName;
 extern u8 StatusMenu_LevelLetterString[];
-extern u8 MsgCoins[];
-extern u8 MsgPiece[];
 
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
 #define SUMMARY_LEVEL_X 64
@@ -43,15 +40,15 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
         UiText_DrawStringInWindow((s32)StatusMenu_LevelLetterString, surface, 72, 0);
 #endif
         UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
-        UiText_DrawCharacterAtOffset(st[29] + (s32)&MsgClassName, surface, 0, 16);
+        UiText_DrawCharacterAtOffset(st[29] + (s32)MsgClassName, surface, 0, 16);
 #if !EDITION_INTERNATIONAL
         extra = 32;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 24, extra);
         UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 72, 32);
-        UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 48);
+        UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, surface, 0, 48);
         UiText_DrawStringInWindow((s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48, 48);
 #else
-        UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 32);
+        UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, surface, 0, 32);
         UiText_DrawStringInWindow((s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48, 40);
         extra = 48;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);

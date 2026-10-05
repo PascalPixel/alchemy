@@ -6,6 +6,7 @@
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
 #include "B5_CONTEXT.H"
+#include "text/MSG_IDS.H"
 
 struct Presentation {
     u8 reserved_00[9];
@@ -25,7 +26,6 @@ extern const u16 KuupuappuMura_Scene12Cells[];
 
 s32 ActorPresentation_UpdateEntityFromLeader();
 s32 SceneActor_UpdateProximityToLeader();
-extern u8 MsgKuupuappuWelcomeBackTwo[];
 void Engine_MapCopyCellAttributes();
 void OverlayObject_CreateConfiguredObject();
 void Event_PrepareObjectAndApplyValue();

@@ -4,21 +4,7 @@
 #include "FIELD_SCENE.H"
 #include "RESOURCE_386_STATE.H"
 #include "INVENTORY.H"
-extern u8 MsgKuupuappuDidSomeCookingNowIve[];
-extern u8 MsgKuupuappuDodonpasHenchmenNeverAttackedUs[];
-extern u8 MsgKuupuappuGeeAlwaysGetHungryWhen[];
-extern u8 MsgKuupuappuHaveLotLeftoverBonesFrom[];
-extern u8 MsgKuupuappuHeReallyLikesBonesWonder[];
-extern u8 MsgKuupuappuItsNearTimeForColosso[];
-extern u8 MsgKuupuappuMmmmNothingDoNothingDo[];
-extern u8 MsgKuupuappuRobinYouveComeBackVault[];
-extern u8 MsgKuupuappuTheresRiverFireOnOther[];
-extern u8 MsgKuupuappuTheySayVolcanoOnMt[];
-extern u8 MsgKuupuappuThoseGuysReallyWantedRevenge[];
-extern u8 MsgKuupuappuThoughtSawCatGetUp[];
-extern u8 MsgKuupuappuWantMoreBones[];
-extern u8 MsgKuupuappuWeHaventBeenGettingMany[];
-extern u8 MsgKuupuappuWowHaveManyThingsArent[];
+#include "text/MSG_IDS.H"
 
 enum {
     ITEM_BONE = 231

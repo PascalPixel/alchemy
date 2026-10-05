@@ -8,10 +8,8 @@
 #include "EVENT_RUNTIME.H"
 #include "EDITION.H"
 #include "BATTLE_PARTY.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKuupuappuDidThoseThievesComeFrom[];
-extern u8 MsgKuupuappuHeardDefeatedThoseThieves[];
-extern u8 MsgKuupuappuMyFatherWorriedAboutThose[];
 void Owner_RecalculateStats();
 s32 PartyInventory_HasSpace(void);
 void Battle_InitializeRenderObject(void);
@@ -45,30 +43,11 @@ void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
 void SceneDialogue_PromptAndCountSkip(s32 x);
 
-extern u8 MsgKuupuappuHeadingOutBeyondGomaRange[];
-extern u8 MsgKuupuappuYouWereSuchGreatHelp[];
 
-extern u8 MsgKuupuappuCaveInGomaRangeDangerous[];
-extern u8 MsgKuupuappuCouldTheyThievesGoodDont[];
-extern u8 MsgKuupuappuDoPossessStrangePowers[];
-extern u8 MsgKuupuappuFatherLooksSadWorryingLike[];
-extern u8 MsgKuupuappuGeeAlwaysGetHungryWhen[];
-extern u8 MsgKuupuappuGuessNothingInOurHouse[];
-extern u8 MsgKuupuappuHaveLotLeftoverBonesFrom[];
-extern u8 MsgKuupuappuHeReallyLikesBonesWonder[];
-extern u8 MsgKuupuappuIfRockWorthlessMaybeThats[];
-extern u8 MsgKuupuappuMasterHisWifeBlindedBy[];
-extern u8 MsgKuupuappuOkMisterLetMeSee[];
-extern u8 MsgKuupuappuTicklesBeingTickledByBoy[];
-extern u8 MsgKuupuappuWantMoreBones[];
-extern u8 MsgKuupuappuWonderOutsideWorldLike[];
-extern u8 MsgKuupuappuWouldReallyWouldHelpMe[];
-extern u8 MsgKuupuappuWowHaveManyThingsArent[];
 void SceneState_RunGuardedActorStep(s32 x);
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
 void SceneState_SetValue2ThenFinish(void);
-extern u8 MsgKuupuappuThankHelpBelieve[];
 void Engine_MessageShowCentered();
 void Engine_EventWait();
 void Event_PrepareObjectAndApplyValue();
@@ -85,8 +64,6 @@ s32 Engine_EventOpenMessage();
 void Engine_EventShowMessage();
 void Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
-extern u8 MsgKuupuappuVaultCutFree[];
-extern u8 MsgKuupuappuVaultThievesCaught[];
 void Party_SetFields1ceAnd1d0();
 void Event_SetDefeatDestination();
 void BattleFx_SetWeightedResult();
@@ -148,29 +125,19 @@ extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
-extern u8 MsgKuupuappuUhnnUhnn[];
-extern u8 MsgKuupuappuWant[];
 #define RATIO_HI 52428
 #define RATIO_LO 26214
 void SceneActor_FaceActors24And25TowardActorZero(void);
 extern u8 KuupuappuHeya_PairScriptB[];
 extern u8 KuupuappuHeya_PairScriptO[];
-extern u8 MsgKuupuappuRobinTakeLead[];
-extern u8 MsgKuupuappuTheyreActingSuspiciousSomethingsNot[];
 extern u8 KuupuappuHeya_PairScriptF[];
 extern u8 KuupuappuHeya_PairScriptG[];
 extern u8 KuupuappuHeya_PairScriptK[];
 void KuupuappuHeya_StartActorStops(void);
-extern u8 MsgKuupuappuTheyreBack[];
 
-extern u8 MsgKuupuappuImSurrounded[];
-extern u8 MsgKuupuappuNowIvan[];
-extern u8 MsgKuupuappuTheresNowhereRun[];
 void KuupuappuHeya_RunBranchingDialogueScene();
 void KuupuappuHeya_UpdateActorStops(void);
 
-extern u8 MsgKuupuappuLearn[];
-extern u8 MsgKuupuappuLeave[];
 extern struct EventWork *gEventWork;
 void Engine_AudioPlaySceneCue();
 void Engine_ActorSetSpritePriority();
@@ -224,10 +191,8 @@ struct ActorFlags {
     u8 flags;
 };
 
-extern u8 MsgKuupuappuTheseKidsNothingWorryAbout[];
 void KuupuappuHeya_OpenWindowTransition(void);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
-extern u8 MsgKuupuappuWontGoAway[];
 void SceneActor_SetModeZeroAndValue(s32 actor, s32 frames);
 void SceneActor_SetPairZeroAndValue(s32 actor, s32 other, s32 frames);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 actor, s32 animation, s32 frames);
@@ -240,13 +205,8 @@ void Djinn_Transfer(s32 owner, s32 djinn, s32 element, s32 flags);
 void Owner_RecalculateStats(s32 owner);
 void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc);
 
-extern u8 MsgKuupuappuSeeThatsHappened[];
-extern u8 MsgKuupuappuTheyTheyGotUs[];
 s32 BattleFx_PlayCueAndStartEmitterOnTarget();
 void Party_RemoveOwnerRestored();
-extern u8 MsgKuupuappuIvanGotShamansRod[];
-extern u8 MsgKuupuappuWaitDontWantTakeYour[];
-extern u8 MsgKuupuappuYouRobinRightWontForget[];
 extern u8 KuupuappuHeya_Villager11ExitScript[];
 extern u8 KuupuappuHeya_Villager12ExitScript[];
 extern u8 KuupuappuHeya_VaultScriptA[];

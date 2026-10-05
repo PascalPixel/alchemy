@@ -2,13 +2,11 @@
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
 #include "BATTLE_UNIT.H"
+#include "text/MSG_IDS.H"
 
 void VramBlock_LoadResourceFar(s32 entry_no, s32 mode, s32 resource_id);
 extern char ResourceId_UiIconTiles;
 
-extern u8 MsgAgilityLabel[];
-extern u8 MsgPanelStatLabel[];
-extern u8 MsgPanelDefenseLabel[];
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();

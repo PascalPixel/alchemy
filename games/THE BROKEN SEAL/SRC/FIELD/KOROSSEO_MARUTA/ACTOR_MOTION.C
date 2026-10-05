@@ -1,11 +1,6 @@
 #include "LOG_ROLLING.H"
 #include "CALL.H"
-extern u8 MsgKorosseoAnotherLogRollingArea[];
-extern u8 MsgKorosseoCalledMovingSidewalkStage[];
-extern u8 MsgKorosseoClearStageMustAbleChange[];
-extern u8 MsgKorosseoHereMustFigureOutHow[];
-extern u8 MsgKorosseoInStageMustTryOutpace[];
-extern u8 MsgKorosseoPlaceNormallyCalledFreeClimb[];
+#include "text/MSG_IDS.H"
 
 void FieldScene_RunFourStepActorMotion(s32 event)
 {

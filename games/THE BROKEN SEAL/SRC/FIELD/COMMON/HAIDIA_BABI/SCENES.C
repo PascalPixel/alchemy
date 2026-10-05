@@ -10,8 +10,8 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "FXBLEND.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgHaidiaDoraHurryBoulder[];
 void DisplayBlend_EnableRunScript();
 void Object_RefreshSelectorById(s32 actor);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
@@ -40,22 +40,11 @@ extern const s32 gHaidiaBabiRampFinalAction[];
 extern const s32 gHaidiaBabiRampActor10Action[];
 extern const s32 gHaidiaBabiRampActor10ActionB[];
 
-extern u8 MsgHaidiaCameBack2[];
-extern u8 MsgHaidiaDoraWasStruckWithIllness[];
-extern u8 MsgHaidiaDoraWouldntLetHimStay[];
-extern u8 MsgHaidiaHomeJustToStay[];
-extern u8 MsgHaidiaTheThreeTravelersSeemOdd[];
-extern u8 MsgHaidiaTheVisitorsCausedTheEruption[];
-extern u8 MsgHaidiaYouveGrownSoMuch[];
 
-extern u8 MsgHaidiaCoughCoughWho[];
-extern u8 MsgHaidiaWhoToldIll[];
 extern struct EventWork *gEventWork;
 void Map_SetLayerEntryFlag();
 void Map_ClearLayerEntryFlag();
 
-extern u8 MsgHaidiaDontWorryBest[];
-extern u8 MsgHaidiaUnnOhhKyle[];
 void Object_SetTargetAndCallback();
 
 extern s32 gHaidiaBabiActor8Departure[];

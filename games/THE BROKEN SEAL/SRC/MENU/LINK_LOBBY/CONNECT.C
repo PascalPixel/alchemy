@@ -5,13 +5,12 @@
 #include "SERIAL_RUNTIME.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 s32 LinkLobby_SendPartyRecords(void);
 s32 LinkLobby_ReceivePartyRecords(void);
 void GameFlag_SetByte(s32 flag, s32 value);
 
-extern u8 MsgLobbyAwaitingOpponent[];
-extern u8 MsgLobbyGoodLuck[];
 extern u8 gMapCellBuffer[];
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
@@ -29,8 +28,6 @@ struct PacketHalf {
     u16 value;
 };
 
-extern u8 MsgLobbyOpponentArrived[];
-extern u8 MsgLobbyPleaseSpeakWhen[];
 s32 LinkLobby_InitializeSerial(void);
 
 s32 LinkLobby_ExchangePartyRecords(void)

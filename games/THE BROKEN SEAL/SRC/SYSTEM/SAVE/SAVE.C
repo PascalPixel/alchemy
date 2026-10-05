@@ -9,17 +9,8 @@
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgNoBackupMemory[];
-extern u8 MsgSaveFailed[];
-extern u8 MsgOverwriteConfirm[];
-extern u8 MsgGameSaved[];
-extern u8 MsgSaving[];
-extern u8 MsgSaveNoData[];
-extern u8 MsgSaveContinue[];
-extern u8 MsgSaveNotCleared[];
-extern u8 MsgSaveCorrupted[];
-extern u8 MsgDebugEntryName[];
 extern s16 gSaveSlot;
 extern u8 gSaveBuffer[];
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
@@ -29,7 +20,6 @@ void UiWork_FinalizePendingCore(void);
 void Audio_PlayCue(u8 mode);
 void SaveState_CaptureObjectTableFar(void);
 
-extern char MsgLoadFailed;
 extern s32 gLoadedStateWord;
 extern u8 gOptionMirror;
 extern s16 gPostLoadCounter;
@@ -303,7 +293,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
     s32 err = SaveState_InitializeWorkspace();
 
     if (err != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
         ret = -9;
     } else {
         s32 value;
@@ -319,7 +309,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
             base = (char *)base + 0x1000;
             err |= SaveState_ReadRecordPayload(value + 3, base);
             if (err != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
+                UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);
                 ret = -2;
             } else {
                 gLoadedStateWord = gGameState.play_time;

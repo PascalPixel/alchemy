@@ -10,6 +10,7 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "TBS_EDITION.H"
+#include "text/MSG_IDS.H"
 
 struct InventoryMenuIcon {
     struct InventoryMenuIcon *next;
@@ -26,7 +27,6 @@ struct InventoryMenuIcon {
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-extern u8 MsgSwitchCharacterHelp;
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void ItemMenu_PosCategory(void);
 void Menu_UpdateEntryObjectTransforms(void);
@@ -76,8 +76,8 @@ s32 ItemMenu_SelectItem(void)
     }
 
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, (s32)menu->status_window, 64, -24);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 3, (s32)menu->status_window, 0, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgSwitchCharacterHelp, (s32)menu->status_window, 64, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgSwitchCharacterHelp + 3, (s32)menu->status_window, 0, -24);
     ItemMenu_PosCategory();
     WaitFrames(1);
     Menu_SpawnIconEntries(menu, (s32)menu->message_window);

@@ -2,24 +2,16 @@
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
 extern u8 gBiribinoNiwaPlacements[];
 extern const struct ScenePlacement gBiribinoNiwaPlacementsOther[];
 
-extern u8 MsgBiribinoUponCloserInspectionSeemsDried[];
-extern u8 MsgFieldPeeredWell[];
 
 extern const struct SceneEvent gBiribinoNiwaEvents[];
 extern const struct SceneEvent gBiribinoNiwaEventsOther[];
 
-extern u8 MsgBiribinoDoThinkCanBecomeAs[];
-extern u8 MsgBiribinoTellingMeImResponsibleFor[];
-extern u8 MsgBiribinoHaveYouSeenBarricadeWe[];
 
-extern u8 MsgBiribinoLordMccoyDifficult[];
-extern u8 MsgBiribinoLordOnlyMeet[];
-extern u8 MsgBiribinoMasterQuiteCranky[];
-extern u8 MsgBiribinoWhere[];
 extern struct EventWork *gEventWork;
 
 void Engine_ObjectSetTargetAndCallback();
@@ -32,9 +24,6 @@ void BiribinoNiwa_ApplyEntryState(void);
 void InitializeOrbitingSceneEntity();
 void BiribinoNiwa_RunGardenScene();
 
-extern u8 MsgBiribinoNotTrueWitnesses[];
-extern u8 MsgBiribinoOhItS[];
-extern u8 MsgBiribinoUnderArrest[];
 
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {

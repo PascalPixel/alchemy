@@ -1,26 +1,11 @@
 #include "CAVE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgFieldFlippedSwitch[];
 
-extern u8 MsgRunpaBunza[];
-extern u8 MsgRunpaDodonpaNeverIntention[];
-extern u8 MsgRunpaMoment[];
-extern u8 MsgRunpaThinkSawSomeone[];
 
-extern u8 MsgRunpaBunzaAsksAboutUnfinishedBusiness[];
-extern u8 MsgRunpaGeraldAsksAboutUnfinishedBusiness[];
-extern u8 MsgRunpaGeraldAsksIfNotRiding[];
-extern u8 MsgRunpaGeraldChecksNothingLeft[];
-extern u8 MsgRunpaLetsTakeWagon[];
-extern u8 MsgRunpaMiaAsksIfRidingAfter[];
-extern u8 MsgRunpaTotallyConfusedChanged[];
 
-extern u8 MsgRunpaMeaningWontRide[];
 
-extern u8 MsgRunpaGeraldAsksAboutThingsTo[];
 
-extern u8 MsgRunpaDontUnfinishedBusiness[];
-extern u8 MsgRunpaInsistStick[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

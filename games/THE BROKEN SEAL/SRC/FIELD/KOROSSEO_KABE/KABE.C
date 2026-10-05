@@ -9,6 +9,7 @@
 #include "RESOURCE_IDS.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_SERVICE.H"
+#include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gKorosseoKabeEntrances[];
 extern const u32 gKorosseoKabeExits[];
@@ -41,25 +42,14 @@ void FieldScene_RunSupplementalSequenceOne(void);
 void KorosseoKabe_MarkSceneProgress(void);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
-extern u8 MsgKorosseoSiteSecondFinals[];
 
-extern u8 MsgKorosseoMainThingStage[];
-extern u8 MsgKorosseoStageDubbedMini[];
 void Korosseo_FinishSoloRound();
 s32 KorosseoKabe_RunStateInteraction();
 void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Korosseo_RestoreCompetitor();
 void KorosseoKabe_ShowFollowUpPrompt();
-extern u8 MsgKorosseoHereYourObjectiveRideLogs[];
-extern u8 MsgKorosseoLogRollingStage[];
-extern u8 MsgKorosseoOperatorLiftsWillCheerFor[];
-extern u8 MsgKorosseoShiftingFloorStage[];
-extern u8 MsgKorosseoFansJustCallWall[];
-extern u8 MsgKorosseoScalingWallQuickly[];
 void BattleFx_RunRisingObjectSequence();
 void battle_owner_69();
-extern u8 MsgKorosseoFocusRollingLogs[];
-extern u8 MsgKorosseoPlaceCalledBoard[];
 void Korosseo_FinishSoloRound(void);
 s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
 void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);

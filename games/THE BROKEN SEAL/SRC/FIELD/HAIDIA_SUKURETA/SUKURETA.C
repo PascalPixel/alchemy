@@ -3,30 +3,14 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgHaidiaFineIfTheyDontSee[];
-extern u8 MsgHaidiaGeraldIllTakeOverIf[];
-extern u8 MsgHaidiaGeraldYouCanHandleThe[];
-extern u8 MsgHaidiaHearAwfulGrowls[];
-extern u8 MsgHaidiaIllClimbTheFenceSomeday[];
-extern u8 MsgHaidiaJasmineOurSecret[];
-extern u8 MsgHaidiaJasmineTheyMightBeThieves[];
-extern u8 MsgHaidiaSukuretaIWaitedYearsFor[];
-extern u8 MsgHaidiaSukuretaOhRobin[];
-extern u8 MsgHaidiaSukuretaWeOnlyCheckMt[];
-extern u8 MsgHaidiaSukuretaWeOnlyCheckThe[];
-extern u8 MsgHaidiaYouCannotEnterMtAleph[];
 
-extern u8 MsgHaidiaSukuretaOurBestBet[];
 
 extern u8 Sukureta_StrangerActions[];
 void Object_SetTargetAndCallback();
 void Audio_PlayCueFromEventWork(void);
-extern u8 MsgHaidiaSaturosGo[];
-extern u8 MsgHaidiaTheyKnowLittleOfThe[];
-extern u8 MsgHaidiaYoureTheOnesSneakingAround[];
 
-extern u8 MsgHaidiaWho[];
 
 extern u8 Sukureta_Actor11Actions[];
 s32 Effect_SoundAndFlash();
@@ -36,12 +20,9 @@ void Scene_LeaveForMtAleph();
 struct GameState;
 extern struct GameState gGameState;
 
-extern u8 MsgHaidiaRockslideDestroyedFence[];
-extern u8 MsgHaidiaSaveYourselves[];
 extern u8 Sukureta_Actor11RockslideActions[];
 void Object_SetActionCallbackAndRefreshById();
 
-extern u8 MsgHaidiaMemoriesOfThisCottage[];
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 {

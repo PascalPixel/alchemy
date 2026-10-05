@@ -7,9 +7,9 @@
 #include "WINDOW.H"
 #include "UIFLOW.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 extern s16 Data_080371fe[];
-extern u8 MsgVenusDjinnJoined[];
 
 struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
@@ -94,7 +94,6 @@ s32 Party_LookupCharacterValueByFlag32(u32 index)
     return Party_CharacterValuesFlag32[index];
 }
 
-extern u8 MsgJoinedParty[];
 void AudioCommand_PlayFar(s32);
 
 void Party_ShowJoinedMessage(s32 member)

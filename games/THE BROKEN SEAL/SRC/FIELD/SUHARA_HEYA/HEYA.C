@@ -1,15 +1,8 @@
 #include "SUHARA.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgSuharaArentSurprisedFind[];
-extern u8 MsgSuharaBusyEverSince[];
-extern u8 MsgSuharaGetSickThinkingAboutLalivero[];
-extern u8 MsgSuharaOursOnlyStore[];
-extern u8 MsgSuharaSighNothinMaybe[];
-extern u8 MsgSuharaWonderWhySandstorms[];
 
-extern u8 MsgSuharaSupposeFolkBlown[];
 
-extern u8 MsgSuharaIodem[];
 
 u8 *SuharaHeya_GetEntrances(void)
 {

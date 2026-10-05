@@ -10,8 +10,8 @@
 #include "DMA.H"
 #include "IO_REG.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
-extern char MsgMonstersAttackLess;
 
 extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_ArcSparkTiles[];
@@ -90,7 +90,7 @@ void RunBattleEffect16(void)
         ObjectDispatch_SetSingleChildFlagsFar(object, 1);
     Animation_ApplyChildValuesFar(object, 0);
     Resource_ResetEntry(scene->arc_tile_slot);
-    UiText_DrawMessage((s32)&MsgMonstersAttackLess, 1);
+    UiText_DrawMessage((s32)MsgMonstersAttackLess, 1);
 }
 
 void EffectSlot_Update(struct EffectSlot *effect)

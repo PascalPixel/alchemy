@@ -9,8 +9,8 @@
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 #include "EVENT_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgWorldMapSukuretaHowLongWillIsland[];
 extern u8 gPresentGuide9[];
 extern u8 gPresentGuide8[];
 extern u8 gPresentGuide5[];

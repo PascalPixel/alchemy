@@ -1,6 +1,6 @@
 #include "TASK.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorosseoRobinGotItem[];
 
 extern s32 gCell[];
 

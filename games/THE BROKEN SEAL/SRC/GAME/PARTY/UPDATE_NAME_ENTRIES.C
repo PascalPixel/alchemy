@@ -8,6 +8,7 @@
 #include "BATTLE_PARTY.H"
 #include "SERIAL_RUNTIME.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 void Party_Apply(s32, u16 *);
 void Party_Do(void *);
 
@@ -24,7 +25,6 @@ void WaitFrames(s32);
 struct BattleUnit *Runtime_GetObject(s32);
 void *Trade_GetOfferStateFar(s32);
 
-extern char MsgEnemyLabel;
 
 enum LinkPartyPacketSize {
     LINK_PARTY_UNIT_BYTES = 340,
@@ -54,7 +54,7 @@ s32 UpdateNameEntries(void)
             named_count += 1;
         }
         WaitFrames(2);
-        Party_Apply((s32)&MsgEnemyLabel, name_text);
+        Party_Apply((s32)MsgEnemyLabel, name_text);
         i = 0;
         if (name_text[i] != 0) {
             do {

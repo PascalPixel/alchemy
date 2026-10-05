@@ -7,6 +7,7 @@
 #include "DJINN_PREVIEW.H"
 #include "BATTLE_RUNTIME.H"
 #include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
 struct AbilityData {
     u8 field_00[2];
@@ -36,13 +37,6 @@ void UiWindow_SetTilemapEntry(
     struct RenderInput *win, s32 tile, s32 x, s32 y, s32 flags);
 s32 UiWindow_DrawThreeTileColumn(
     struct RenderInput *win, s32 x, s32 y, s32 tile, s32 flags);
-extern u8 MsgAbilityName[];
-extern u8 MsgPreviewStatLabel[];
-extern u8 MsgBattleAdditionalPsynergyHelp[];
-extern u8 MsgPsynergyGained[];
-extern u8 MsgPsynergyLost[];
-extern u8 MsgPsynergyUnchanged[];
-extern u8 MsgClassName[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost);
 s32 Djinn_IsActiveFar(s32 owner, s32 col, s32 row);

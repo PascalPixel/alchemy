@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
 extern u8 gBiribinoKyudenPlacements[];
 extern const struct ScenePlacement gBiribinoKyudenPlacementsOther[];
@@ -20,47 +21,15 @@ struct SceneRecord {
     u8 field_238;
 };
 
-extern u8 MsgBiribinoYouWillingGoKolimaForest[];
 
-extern u8 MsgBiribinoAaaah[];
-extern u8 MsgBiribinoDoThinkTheseBilibinsGreat[];
-extern u8 MsgBiribinoFineWarrior[];
-extern u8 MsgBiribinoGoodTreasureIfGetTurned[];
-extern u8 MsgBiribinoGotPrettyNiceRewardBut[];
-extern u8 MsgBiribinoItsVeryRecklessForSuch[];
-extern u8 MsgBiribinoLookedVeryCourageousWalkingToward[];
-extern u8 MsgBiribinoMayChooseOnlyOneItem[];
-extern u8 MsgBiribinoNonethelessIfYourLuckSour[];
-extern u8 MsgBiribinoRewardReceivedWasIndeedGreatest[];
-extern u8 MsgBiribinoSometimesWeNeedChildrenRemind[];
-extern u8 MsgBiribinoWasWatchingFromHereAfter[];
-extern u8 MsgBiribinoWeReallyGivingOurTreasure[];
 
 extern struct EventWork *gEventWork;
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
 
-extern u8 MsgBiribinoAlwaysWelcomeInPalaceLord[];
-extern u8 MsgBiribinoPleaseTakeYourRewardBefore[];
-extern u8 MsgBiribinoRobinCheckedChestButWas[];
-extern u8 MsgBiribinoTreasureChestLocked[];
 
-extern u8 MsgBiribinoComeSaidYoud[];
-extern u8 MsgBiribinoHmmmWellGrant[];
-extern u8 MsgBiribinoMatter[];
-extern u8 MsgBiribinoSeriousDoesntBother[];
-extern u8 MsgBiribinoTooYoungForTheJob[];
-extern u8 MsgBiribinoWellDontLet[];
-extern u8 MsgBiribinoWellSGoing[];
-extern u8 MsgBiribinoYehveChangeHeart[];
 
-extern u8 MsgBiribinoHumblyThank[];
-extern u8 MsgBiribinoNaeYehDinnaeNeedTae[];
-extern u8 MsgBiribinoNameSorryRejected[];
-extern u8 MsgBiribinoWasButWorriedYehMight[];
-extern u8 MsgBiribinoWeveBroughtWarriorsMilord[];
 
-extern u8 MsgBiribinoLordMccoyOrdered[];
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {

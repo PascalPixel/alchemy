@@ -8,6 +8,7 @@
 #include "UI.H"
 #include "TBS_EDITION.H"
 #include "MENU_LIST.H"
+#include "text/MSG_IDS.H"
 
 #if EDITION_INTERNATIONAL
 #define EQUIP_SLOT_X     1
@@ -17,7 +18,6 @@
 #define EQUIP_SLOT_WIDTH 9
 #endif
 
-extern u8 MsgItemPlainName;
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -47,11 +47,11 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     if (menu->items[state->selected_index] != 0) {
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)
-                + (s32)&MsgItemPlainName,
+                + (s32)MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
 #else
         UiText_DrawResourceFar((menu->items[state->selected_index] & ITEM_ID_MASK)
-                + (s32)&MsgItemPlainName,
+                + (s32)MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
 #endif
     }

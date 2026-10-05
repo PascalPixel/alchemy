@@ -1,11 +1,10 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
+#include "text/MSG_IDS.H"
 
 extern u8 CharacterMenu_CursorWidths[];
 void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
 void UiText_DrawResourceFar(s32 message, s32 target, s32 x, s32 y);
-extern u8 MsgStatusAdvice[][2];
-extern u8 MsgStatusNormal[];
 
 struct CursorMenuState {
     u8 padding[40];
@@ -64,7 +63,7 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     do {
         if (entries[index] != 0) {
             if (selected == count) {
-                s32 message = (s32)MsgStatusAdvice[index];
+                s32 message = (s32)(MsgStatusAdvice + index * 2);
                 UiText_DrawResourceFar(message, target, 0, -1);
                 UiText_DrawResourceFar(message + 1, target, 0, 15);
             }

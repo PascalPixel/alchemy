@@ -10,6 +10,7 @@
 #include "RUNTIME_INTERFACES.H"
 #include "WINDOW.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 
@@ -27,8 +28,6 @@ void Party_ListActiveOwnersFar(u16 *owners);
 
 extern s16 gSaveSlot;
 void UiText_ShowPositionedMessageAndWait(s32, s32);
-extern char MsgNoBackupMemory;
-extern char MsgSaveFailed;
 
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
@@ -275,7 +274,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
     if (value != -1) {
         found = SaveState_InitializeWorkspace();
         if (found != 0) {
-            UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+            UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
             error = 9;
             goto set_error;
         }
@@ -289,7 +288,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
             base = (char *)base + 0x1000;
             found |= SaveState_WriteRecord(next + 3, base);
             if (found != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
                 error = 3;
 set_error:
                 result = 0 - error;
@@ -308,7 +307,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
 
     found = SaveState_InitializeWorkspace();
     if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
         result = -9;
     } else {
         void *base = &gSaveBuffer;
@@ -317,7 +316,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
         base = (char *)base + 0x1000;
         found |= SaveState_WriteRecord(arg0 + 3, base);
         if (found != 0) {
-            UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+            UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
             result = -3;
         }
     }

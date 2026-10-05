@@ -34,7 +34,7 @@ static __inline__ void Goma_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, 
 
 #include "TYPES.H"
 #include "CALL.H"
-extern u8 MsgGomaGotWowThatsPrettyImpressive[];
+#include "text/MSG_IDS.H"
 
 void FieldScene_RunActor13Departure(void)
 {

@@ -10,6 +10,7 @@
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 #include "B5_CONTEXT.H"
+#include "text/MSG_IDS.H"
 
 extern u8 VinasuChojo_PairActionScript[];
 void VinasuChojo_ShowMessage();
@@ -48,9 +49,6 @@ void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 void Engine_AudioPlayCue();
 
-extern u8 MsgVinasuRobin[];
-extern u8 MsgVinasuRobinHandedOverShamansRod[];
-extern u8 MsgVinasuLongLastTime[];
 extern const s32 SceneAction_EntryGroup[];
 extern const s32 SceneAction_EntryPair[];
 void BattleFx_SetWeightedResult();
@@ -1263,7 +1261,6 @@ void FieldScene_RunStep6(void)
     SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
 }
 
-extern u8 MsgVinasuBeatEm[];
 extern const u8 VinasuChojo_ScaleStepAction[];
 extern const u8 VinasuChojo_BeamOpenAction[];
 extern const u8 Data_020060ac[];

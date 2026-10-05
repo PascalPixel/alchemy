@@ -7,7 +7,7 @@
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
 #include "MENU_LIST.H"
-extern u8 MsgItemBroke[];
+#include "text/MSG_IDS.H"
 
 s32 InventoryMenu_ShowModalMessage(s32, s32, s32);
 s32 Audio_PlayCue(s32);

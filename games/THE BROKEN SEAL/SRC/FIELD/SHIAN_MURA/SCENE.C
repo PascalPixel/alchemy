@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
 #define FLAG_SHIAN_WATER_SPILLED 0x200
 
@@ -23,12 +24,7 @@ struct MapActor {
 
 s32 ArcTan2(s32 z_delta, s32 x_delta);
 
-extern u8 MsgShianDoingMadeMeSpillMy[];
-extern u8 MsgShianNowMustGetWaterAgain[];
-extern u8 MsgShianYoungWarriorsVeryGallantCame[];
 
-extern u8 MsgShianHooWhaaaHachaaa[];
-extern u8 MsgShianKungFuStrong[];
 void Engine_EventBegin();
 s32 Engine_GameFlagIsSet();
 void Engine_ActorFaceActor();
@@ -64,12 +60,10 @@ void SceneEffect_AdvanceRotatingSprite();
 extern const s32 ShianMura_Actor19Motion[];
 extern const s32 ShianMura_EffectScript[];
 
-extern u8 MsgShianWarriorsFromSchoolStrongWarriors[];
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
-extern u8 MsgShianWhaWhaHappened[];
 
 void BattleFx_SetQueuedSoundAndPlay(s32 music);
 void Actor_UpdatePresentationFlag(void);

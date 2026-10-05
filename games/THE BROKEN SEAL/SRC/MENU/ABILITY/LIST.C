@@ -10,6 +10,7 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
@@ -18,10 +19,6 @@ void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y)
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
-extern u8 MsgAbilityName;
-extern u8 MsgShortcutHelp[];
-extern u8 MsgChangeCharacterHelp[];
-extern u8 MsgPsynergyPp[];
 
 s32 GameFlag_IsSet(s32 message);
 struct AnimationObject;
@@ -104,7 +101,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             }
 
             UiText_DrawCharacterAtOffsetFar(
-                (0x3fff & menu->psynergies[cursor]) + (s32)&MsgAbilityName,
+                (0x3fff & menu->psynergies[cursor]) + (s32)MsgAbilityName,
 #if EDITION_INTERNATIONAL
                 window, 16, row * 16 + 8);
 #else

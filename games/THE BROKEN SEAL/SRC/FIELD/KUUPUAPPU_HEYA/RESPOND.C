@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKuupuappuNoLeaveAlone[];
 extern const u8 KuupuappuHeya_PairScriptR[];
 extern const u8 KuupuappuHeya_PairScriptP[];
 extern const u8 *KuupuappuHeya_ResponseScripts[2][4];

@@ -1,9 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "PARTY_STATE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgDeriHeyaScamps[];
-extern u8 MsgDeriHeyaMazeTreasure[];
 
 s32 DeriHeya_TalkScamps(void)
 {

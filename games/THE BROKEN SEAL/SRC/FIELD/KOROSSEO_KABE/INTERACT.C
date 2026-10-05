@@ -1,21 +1,11 @@
 #include "BATTLE_UNIT.H"
 #include "TASK.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgKorosseoRobinDidGetGoodLook[];
-extern u8 MsgKorosseoWaitShouldntDecideWhereBest[];
 
-extern u8 MsgKorosseoStageFirstFinalsMatch[];
-extern u8 MsgKorosseoStageSecondFinalsMatch[];
-extern u8 MsgKorosseoStageThirdFinalsMatch[];
-extern u8 MsgKorosseoWouldYouLikeHearDescription[];
 void Battle_ResetEffectCounter(void);
 s32 PartyTalkMenu_Choose(s32 mode);
 
-extern u8 MsgKorosseoDoYourBest[];
-extern u8 MsgKorosseoIfKnowWhoWantCheer[];
-extern u8 MsgKorosseoRobinWillCheerForWay[];
-extern u8 MsgKorosseoUnfortunatelyWeHaveFullHouse[];
-extern u8 MsgKorosseoWouldLikeFriendCheerFor[];
 
 extern u8 gCell[];
 

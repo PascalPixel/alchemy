@@ -9,6 +9,7 @@
 #include "FIXED_MATH.H"
 #include "OWNER_STATE.H"
 #include "IWRAM_CALL.H"
+#include "text/MSG_IDS.H"
 
 s32 GameFlag_SetBit(s32);
 void GameFlag_ClearBit(s32);
@@ -51,7 +52,6 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn);
 #endif
 
 extern const struct EnemyDefinition Enemy_Definitions[];
-extern u8 MsgEnemyName;
 
 void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
 
@@ -101,7 +101,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->base_action_count = enemy->turns;
     unit->base_hp_regen = enemy->hp_regen;
     unit->base_pp_regen = enemy->pp_regen;
-    UiText_DecodeMessageFar(index + (s32)&MsgEnemyName, name, 15);
+    UiText_DecodeMessageFar(index + (s32)MsgEnemyName, name, 15);
     for (i = 0; i < 14 && name[i] != 0; i++)
         unit->name[i] = name[i];
     if (suffix <= ENEMY_SUFFIX_LAST) {

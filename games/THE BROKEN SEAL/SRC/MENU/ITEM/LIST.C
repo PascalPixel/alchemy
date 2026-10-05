@@ -14,16 +14,15 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_RUNTIME.H"
 #include "MENU_RESULT.H"
+#include "text/MSG_IDS.H"
 
 extern u8 Data_080aebcc[];
 extern u8 Data_080aeb4c[];
 
-extern u8 MsgItemPlainName;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 void UiText_DrawResourceFar(s32, s32, s32, s32);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
-extern u8 MsgItemName;
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
@@ -41,7 +40,6 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 extern u32 gFrameCount;
-extern u8 MsgChangeCharacterHelp;
 
 #define LIST_PAGE_SIZE 5
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
@@ -111,7 +109,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state)
 
     combined = state->selected_index;
     if (menu->items[combined] != 0) {
-        s32 masked = (menu->items[combined] & ITEM_ID_MASK) + (s32)&MsgItemPlainName;
+        s32 masked = (menu->items[combined] & ITEM_ID_MASK) + (s32)MsgItemPlainName;
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->info_window, 0, 0);
 #else
@@ -174,7 +172,7 @@ s32 ItemMenu_DrawNamePage(
         item_id = &menu->items[first_entry];
         do {
             UiText_DrawCharacterAtOffsetFar(
-                (item_id[0] & ITEM_ID_MASK) + (s32)&MsgItemName,
+                (item_id[0] & ITEM_ID_MASK) + (s32)MsgItemName,
                 (s32)menu->item_window,
                 ENTRY_X,
                 row * 16 + 8
@@ -244,7 +242,7 @@ s32 ItemMenu_RunList(s32 pane)
                     WaitFrames(1);
                     ItemMenu_DrawNamePage(window, 0, &state);
                     if (pane == 0) {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
+                        UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
                     }
                     redraw = 0;
                 }

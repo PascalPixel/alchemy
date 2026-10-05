@@ -5,14 +5,7 @@
 #include "FLAG_IDS.H"
 #include "ITEM_IDS.H"
 #include "SOUND_IDS.H"
-extern u8 MsgKuupuappuLeftThiefRegretsEscape[];
-extern u8 MsgKuupuappuLeftThiefThoughts[];
-extern u8 MsgKuupuappuRightThiefRegretsStaying[];
-extern u8 MsgKuupuappuRightThiefThoughts[];
-extern u8 MsgKuupuappuThiefLeaderSilencesThieves[];
-extern u8 MsgKuupuappuThiefLeaderThoughts[];
-extern u8 MsgKuupuappuPrisonerRegretsFight[];
-extern u8 MsgKuupuappuPrisonerThoughts[];
+#include "text/MSG_IDS.H"
 
 enum JailEntrance {
     JAIL_ENTRANCE_FROM_VAULT = 1,

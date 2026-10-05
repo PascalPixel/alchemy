@@ -190,7 +190,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
         }
 
         if (!party_mode) {
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgNoEscape);
+            UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
             BattlePresentation_WaitForAdvance();
         } else {
             s16 unit_ids[14];
@@ -218,7 +218,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
         BattleActor_RemoveFromLists(plan->actor_id);
         ActivateBattleObjectSlot(plan->actor_id);
     } else {
-        UiText_ShowMessageAndWaitCoreFar((s32)&MsgNoEscape);
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
         BattlePresentation_WaitForAdvance();
     }
 
@@ -298,9 +298,9 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
     if (plan->failure != 0) {
         if (plan->failure == 1) {
             BattleEv_Push(0, plan->actor_id);
-            BattleEv_Push(4, (s32)&MsgPsynergyBlocked);
+            BattleEv_Push(4, (s32)MsgPsynergyBlocked);
         } else {
-            BattleEv_Push(4, (s32)&MsgCastLacksPp);
+            BattleEv_Push(4, (s32)MsgCastLacksPp);
         }
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();

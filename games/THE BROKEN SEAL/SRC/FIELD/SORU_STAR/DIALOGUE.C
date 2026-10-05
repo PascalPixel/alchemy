@@ -4,26 +4,8 @@
 #include "FIELD_EVENT.H"
 #include "GLYPH.H"
 #include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgSoruAlexOnlyOneLeft[];
-extern u8 MsgSoruGarciaSilence[];
-extern u8 MsgSoruJasmineBeCareful[];
-extern u8 MsgSoruJasmineMyBrotherIsAlive[];
-extern u8 MsgSoruJasmineSukuretaIsGiddy[];
-extern u8 MsgSoruJasmineThankYou[];
-extern u8 MsgSoruJasmineWontYouPlease[];
-extern u8 MsgSoruMarsStarBagged[];
-extern u8 MsgSoruMenardiBringTheFinalGem[];
-extern u8 MsgSoruNoStarsOutThere[];
-extern u8 MsgSoruSaturosBringTheFinalStar[];
-extern u8 MsgSoruSukuretaBringTheStarsHere[];
-extern u8 MsgSoruSukuretaFetchTheOthers[];
-extern u8 MsgSoruSukuretaIAmResponsible[];
-extern u8 MsgSoruSukuretaTheElementsAreThe[];
-extern u8 MsgSoruSukuretaTheWisdomStone[];
-extern u8 MsgSoruSukuretaWhereAreWe[];
-extern u8 MsgSoruTheBagsAreFromSukuretas[];
-extern u8 MsgSoruTheStarsHaveEnormousPower[];
 
 void SoruStar_SetupElementalRings();
 void Scene_EnterStarRoom();
@@ -38,8 +20,6 @@ void Inventory_AddItem(s32 owner, s32 item);
 void Engine_ActorSetAnimation(s32 actor, s32 animation);
 extern const s32 SoruStar_PresentItemScript[];
 
-extern u8 MsgSoruGotFourMythrilBags[];
-extern u8 MsgSoruTooManyItems[];
 
 void Engine_ActorSetChildValue();
 void Engine_EventWait(s32 frames);

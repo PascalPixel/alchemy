@@ -8,6 +8,7 @@
 #include "MAP.H"
 #include "IO_REG.H"
 #include "IRQ.H"
+#include "text/MSG_IDS.H"
 
 struct TileRun {
     s16 id;
@@ -39,7 +40,6 @@ void State_ApplyRectByLayoutSelector(void);
 extern u8 gBgScroll[];
 extern u32 KorimaMagari_ShakeScroll[];
 extern u32 KorimaMagari_ShakeChance;
-extern u8 MsgFieldFlippedSwitch[];
 void KorimaMagari_CaptureShakeScroll(void);
 void State_UpdateScrollRegistersWithPreset(void);
 void Scene_RepaintBoardRecords();

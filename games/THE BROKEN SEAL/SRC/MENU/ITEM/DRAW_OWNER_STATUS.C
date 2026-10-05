@@ -4,9 +4,8 @@
 #include "BATTLE_TYPES.H"
 #include "UI.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgExpLabel[];
-extern u8 MsgClassName;
 
 extern const u8 Menu_LvString[];
 extern const u8 Menu_SlashString[];
@@ -41,7 +40,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
         UiWindow_ClearInteriorTilesFar(window, 0, 0, 128, 40);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
-    UiText_DrawCharacterAtOffsetFar(unit->class_index + (s32)&MsgClassName, window, 0, 32);
+    UiText_DrawCharacterAtOffsetFar(unit->class_index + (s32)MsgClassName, window, 0, 32);
 #if EDITION_INTERNATIONAL
     UiText_DrawStringAtOffsetFar(Menu_LvString, window, 104, 0);
 #else

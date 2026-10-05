@@ -8,6 +8,7 @@
 #include "IO_REG.H"
 #include "SYSTEM.H"
 #include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 
@@ -156,7 +157,6 @@ struct PsynergyTargetMarker {
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-extern char MsgAbilityDescription;
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
@@ -183,7 +183,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     PsynergyMenu_DrawPsynergyIcons(psynergies);
     if (menu->psynergy_count == 0) {
         UiText_DrawCharacterAtOffsetFar(
-            (s32)&MsgPsynergyMenuEmpty,
+            (s32)MsgPsynergyMenuEmpty,
             (s32 *)menu->psynergy_window,
             0,
             0x18);
@@ -235,12 +235,12 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
 #if EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
                     UiText_DrawCharacterAtOffsetFar(
-                        (menu->pane_action[0] & 0x3fff) + (s32)&MsgAbilityDescription,
+                        (menu->pane_action[0] & 0x3fff) + (s32)MsgAbilityDescription,
                         (s32)menu->info_window, 0, 0);
 #else
                     RenderOutput_ClearListFar((s32)menu->info_window);
                     UiText_DrawResourceFar(
-                        (menu->pane_action[0] & 0x3fff) + (s32)&MsgAbilityDescription,
+                        (menu->pane_action[0] & 0x3fff) + (s32)MsgAbilityDescription,
                         menu->info_window, 0, 0);
 #endif
                     shown = 1;
@@ -297,19 +297,12 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
     return 1;
 }
 
-extern char MsgShortcutLabel;
-extern char MsgShortcutChangeHelp;
-extern char MsgShortcutEmptyL;
-extern char MsgShortcutEmptyR;
-extern char MsgAbilityName;
 
 s32 UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
 void UiText_DrawStringAtOffsetFar(void *text, s32 *window, s32 x, s32 y);
 void UiWork_SetParamNibbleFar(s32 value);
 
 #if EDITION_INTERNATIONAL
-extern char MsgShortcutNameL;
-extern char MsgShortcutNameR;
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 
@@ -323,12 +316,12 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 
     if (gGameState.first_shortcut != 0 &&
         gGameState.second_shortcut != 0)
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutChangeHelp, (s32 *)window, 0, -8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutChangeHelp, (s32 *)window, 0, -8);
     else
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutLabel, (s32 *)window, 0, -8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutLabel, (s32 *)window, 0, -8);
 
     UiText_GetResourceDimensionsFar(
-        (gGameState.first_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+        (gGameState.first_shortcut & 0x3ff) + (s32)MsgAbilityName,
         &left, &top, &width, &height);
     if (width < 0 || width > 10)
         wide = 1;
@@ -336,17 +329,17 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
         wide = 0;
     if (gGameState.first_shortcut != 0) {
         UiWork_PushValueSlotFar(gGameState.first_shortcut & 0x3ff, 4);
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutNameL, (s32 *)window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutNameL, (s32 *)window, 0, 0);
         if (wide == 0)
             UiText_DrawStringAtOffsetFar(
                 Owner_GetStateFar(gGameState.first_shortcut >> 10),
                 (s32 *)window, 80, 0);
     } else {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyL, (s32 *)window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyL, (s32 *)window, 0, 0);
     }
 
     UiText_GetResourceDimensionsFar(
-        (gGameState.second_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+        (gGameState.second_shortcut & 0x3ff) + (s32)MsgAbilityName,
         &left, &top, &width, &height);
     if (width < 0 || width > 10)
         wide = 1;
@@ -354,14 +347,14 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
         wide = 0;
     if (gGameState.second_shortcut != 0) {
         UiWork_PushValueSlotFar(gGameState.second_shortcut & 0x3ff, 4);
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutNameR, (s32 *)window, 0, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutNameR, (s32 *)window, 0, 8);
         if (wide == 0)
             UiText_DrawStringAtOffsetFar(
                 Owner_GetStateFar(gGameState.second_shortcut >> 10),
                 (s32 *)window, 80, 8);
         UiWork_SetParamNibbleFar(15);
     } else {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyR, (s32 *)window, 0, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyR, (s32 *)window, 0, 8);
     }
     return 1;
 }
@@ -383,12 +376,12 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 
     if (gGameState.first_shortcut != 0 &&
         gGameState.second_shortcut != 0)
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutChangeHelp, (s32 *)window, 0, -8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutChangeHelp, (s32 *)window, 0, -8);
     else
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutLabel, (s32 *)window, 0, -8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutLabel, (s32 *)window, 0, -8);
 
     UiText_GetResourceDimensionsFar(
-        (gGameState.first_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+        (gGameState.first_shortcut & 0x3ff) + (s32)MsgAbilityName,
         &left, &top, &width, &height);
     if (width < 0 || width > 11)
         wide = 1;
@@ -401,21 +394,21 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     if (gGameState.first_shortcut != 0) {
         if (wide)
             UiText_DrawCharacterAtOffsetFar(
-                (gGameState.first_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+                (gGameState.first_shortcut & 0x3ff) + (s32)MsgAbilityName,
                 (s32 *)window, 8, 0);
         else
             UiText_DrawCharacterAtOffsetFar(
-                (gGameState.first_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+                (gGameState.first_shortcut & 0x3ff) + (s32)MsgAbilityName,
                 (s32 *)window, 16, 0);
         UiText_DrawStringAtOffsetFar(
             Owner_GetStateFar(gGameState.first_shortcut >> 10),
             (s32 *)window, 80, 0);
     } else {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyL, (s32 *)window, 24, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyL, (s32 *)window, 24, 0);
     }
 
     UiText_GetResourceDimensionsFar(
-        (gGameState.second_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+        (gGameState.second_shortcut & 0x3ff) + (s32)MsgAbilityName,
         &left, &top, &width, &height);
     if (width < 0 || width > 11)
         wide = 1;
@@ -428,18 +421,18 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     if (gGameState.second_shortcut != 0) {
         if (wide)
             UiText_DrawCharacterAtOffsetFar(
-                (gGameState.second_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+                (gGameState.second_shortcut & 0x3ff) + (s32)MsgAbilityName,
                 (s32 *)window, 8, 8);
         else
             UiText_DrawCharacterAtOffsetFar(
-                (gGameState.second_shortcut & 0x3ff) + (s32)&MsgAbilityName,
+                (gGameState.second_shortcut & 0x3ff) + (s32)MsgAbilityName,
                 (s32 *)window, 16, 8);
         UiText_DrawStringAtOffsetFar(
             Owner_GetStateFar(gGameState.second_shortcut >> 10),
             (s32 *)window, 80, 8);
         UiWork_SetParamNibbleFar(15);
     } else {
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyR, (s32 *)window, 24, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyR, (s32 *)window, 24, 8);
     }
     return 1;
 }

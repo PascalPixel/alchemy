@@ -8,15 +8,13 @@
 #include "UI.H"
 #include "DJINN_MENU.H"
 #include "HEAP_STATE.H"
+#include "text/MSG_IDS.H"
 
 void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 
 extern struct DjinnMenuWork *gMenuWork;
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeyState;
-extern char MsgDjinnInfoPrompt;
-extern char MsgDjinnInfoTopic;
-extern char MsgDjinnInfoText;
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_Clear(s32 window);
 void UiWindow_MarkVisibleTileAttributesFar(void);
@@ -111,7 +109,7 @@ s32 DjinnMenu_ShowHelp(void)
     RenderOutput_ClearListFar(menu->list_window);
     WaitFrames(1);
     UiWindow_Clear(menu->help_window);
-    message = (s32)&MsgDjinnInfoPrompt;
+    message = (s32)MsgDjinnInfoPrompt;
     UiText_DrawCharacterAtOffsetFar(message, menu->help_window, 0, 0);
     message++;
     UiText_DrawCharacterAtOffsetFar(message, menu->help_window, 0, 16);
@@ -122,15 +120,15 @@ s32 DjinnMenu_ShowHelp(void)
     win_a = UiWindow_CreateFar(8, 9, 22, 3, 2);
     UiWindow_MarkVisibleTileAttributesFar();
     cnt = 0;
-    list_message = (s32)&MsgDjinnInfoTopic;
+    list_message = (s32)MsgDjinnInfoTopic;
     do {
         UiText_DrawCharacterAtOffsetFar(cnt + list_message, list, 0, cnt * 8);
         cnt++;
     } while (cnt <= 6);
     do {
         UiWindow_Clear(win_a);
-        UiText_DrawResourceFar(selection + (s32)&MsgDjinnInfoTopic, win_a, 0, 0);
-        channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(win_b, selection + (s32)&MsgDjinnInfoText);
+        UiText_DrawResourceFar(selection + (s32)MsgDjinnInfoTopic, win_a, 0, 0);
+        channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(win_b, selection + (s32)MsgDjinnInfoText);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
         Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
         previous = selection;

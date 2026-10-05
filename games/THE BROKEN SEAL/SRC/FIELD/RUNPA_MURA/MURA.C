@@ -1,38 +1,11 @@
 #include "EDITION.H"
 #include "VILLAGE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgFieldPeeredWell[];
-extern u8 MsgRunpaWellFrogs[];
 
-extern u8 MsgRunpaEastGuardAsksIfFrom[];
-extern u8 MsgRunpaEastGuardDemandsAuthorization[];
-extern u8 MsgRunpaEastGuardFearsBlame[];
-extern u8 MsgRunpaEastGuardThinksMerchantHarmless[];
-extern u8 MsgRunpaEastGuardTrustsCaveGate[];
-extern u8 MsgRunpaVillagerAAsksHowLong[];
-extern u8 MsgRunpaVillagerBShivers[];
-extern u8 MsgRunpaVillagerCAsksAboutKidnapping[];
-extern u8 MsgRunpaVillagerDAsksAboutCommotion[];
-extern u8 MsgRunpaVillagerGAsksAboutDonpa[];
-extern u8 MsgRunpaWestGuardAsksAboutEntering[];
-extern u8 MsgRunpaLeftGuardHearsSomeone[];
-extern u8 MsgRunpaLeftGuardRecognizesHammet[];
-extern u8 MsgRunpaLeftGuardResentsDodonpa[];
 
-extern u8 MsgRunpaLeftGuardGlimpsedMerchant[];
-extern u8 MsgRunpaLeftGuardDismissesThought[];
-extern u8 MsgRunpaLeftGuardThoughts[];
-extern u8 MsgRunpaRightGuardBoasts[];
-extern u8 MsgRunpaRightGuardFeelsCreepy[];
-extern u8 MsgRunpaRightGuardWondersHow[];
-extern u8 MsgRunpaYoudShadowSneak[];
-extern u8 MsgRunpaRightGuardReopenedThoughts[];
 
-extern u8 MsgRunpaGeraldRefusesToReturn[];
-extern u8 MsgRunpaGuardsWarnPartyAway[];
-extern u8 MsgRunpaGuardsCatchParty[];
 
-extern u8 MsgRunpaGuardForbidsReturn[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

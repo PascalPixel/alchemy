@@ -9,6 +9,7 @@
 #include "RUNTIME_MEM.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
+#include "text/MSG_IDS.H"
 
 extern struct DjinnMenuWork *gMenuWork;
 
@@ -20,13 +21,6 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
 extern struct UiWork *gWindowWork;
 extern const char DjinnMenu_TextLevel[];
 extern const char DjinnMenu_TextSlash[];
-extern u8 MsgPreviewStatLabel[];
-extern u8 MsgClassName[];
-extern u8 MsgAbilityName[];
-extern u8 MsgPsynergyPp[];
-extern u8 MsgPsynergyGained[];
-extern u8 MsgPsynergyLost[];
-extern u8 MsgPsynergyUnchanged[];
 
 void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x, s32 y);

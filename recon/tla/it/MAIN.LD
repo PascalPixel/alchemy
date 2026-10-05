@@ -774,6 +774,8 @@
     "*/recon/tla/it/rom.o"(.rom.000ceba8)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_WIDE_SPRITE.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000cee80)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/EVENT_POSE.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000cf050)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT28.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000cf158)
     "*/recon/tla/it/rom.o"(.rom.000cf17c)

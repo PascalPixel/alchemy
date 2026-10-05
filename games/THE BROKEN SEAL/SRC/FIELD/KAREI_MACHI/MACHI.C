@@ -229,8 +229,6 @@ extern s32 KareiMachi_DanceStep;
 
 extern u8 KareiMachi_DanceScriptA[];
 
-/* Each clear builds its own zero; a shared zero variable would live in r5
- * across the calls. */
 static __inline__ void ClearStep(u8 *a)
 {
     s32 z = 0;
@@ -548,7 +546,6 @@ void KareiMachi_RunExitDoor(void)
     Engine_EventEnd();
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
 void RunSceneArrivalSetup(void)
 {
     s32 two = 2;

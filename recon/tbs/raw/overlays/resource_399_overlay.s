@@ -618,7 +618,7 @@ gImiruMuraEventsOther:
 	.4byte SceneActor_SetActorZeroFacingC000AndRun
 	.4byte 0x00000002
 	.4byte 0xffff005a
-	.4byte FieldScene_Forward2188
+	.4byte ImiruMura_RunHeadingProbe
 	.4byte 0x00000000
 	.4byte 0x08810008
 	.4byte SceneDialogue_RunActorEightFlagGatedDialogue

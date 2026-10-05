@@ -5,7 +5,7 @@
 
 s32 __umodsi3();
 
-void ActorPresentation_ApplyTableA5ecToActorNine(void)
+void ImiruMura_ShowActorNineTurnMessage(void)
 {
     extern s32 ImiruMura_TurnScript[];
 
@@ -13,14 +13,14 @@ void ActorPresentation_ApplyTableA5ecToActorNine(void)
     Engine_EventShowMessage(9, 0);
 }
 
-void SceneState_StoreTable96adToWork(void)
+void ImiruMura_CastPsynergyAtActorNine(void)
 {
     u8 *work;
 
     Engine_PsynergyBegin(93, 1);
     work = *(u8 **)gEffectWork;
     Engine_PsynergySetTarget(3, 9);
-    *(s32 *)(work + 36) = (s32)ActorPresentation_ApplyTableA5ecToActorNine;
+    *(s32 *)(work + 36) = (s32)ImiruMura_ShowActorNineTurnMessage;
     Engine_PsynergyRaiseHands();
     Engine_PsynergyPlayEffect(1);
     Engine_PsynergyLowerHands();

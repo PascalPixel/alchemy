@@ -54,17 +54,8 @@ void FieldScene_RunScene3b3_02001fd4(void)
         Object_GetById(0)->priority_flags &= 254;
         StagedActor_AdvancePair();
         TakaraHashira_UpdatePillarActors();
-        {
-            u8 bits = 1;
-            u8 *flags = (u8 *)Object_GetById(ACTOR_PARTY_LEADER) + 85;
-            u8 value = *flags;
-
-            value |= bits;
-            *flags = value;
-            flags = (u8 *)Object_GetById(ACTOR_PARTY_LEADER) + 35;
-            bits |= *flags;
-            *flags = bits;
-        }
+        Object_GetById(ACTOR_PARTY_LEADER)->motion_flags |= ACTOR_FOLLOWS_TERRAIN;
+        Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     }
     Engine_EventEnd();
 }
@@ -86,7 +77,7 @@ void TakaraHashira_RunStagedCellScene(void)
     p[0] = leader->x.fixed;
     p[1] = leader->y.fixed;
     p[2] = leader->z.fixed + 0x100000;
-    if ((s32)StagedActor_FindAtTile(p, leader) != 0) {
+    if (StagedActor_FindAtTile(p, leader) != NULL) {
         FieldScene_RunScene3b3_02001fd4();
     } else if (FieldScene_RunScene3b3SequenceD() == 0) {
         FieldEffect_UpdateGridPlacement();
@@ -97,20 +88,16 @@ void TakaraHashira_RunStagedCellScene(void)
 void SceneState_LinkActorZeroToWork24(void)
 {
     struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
-    *(u8 **)(PILLAR_WORK + 24) = obj;
+    PILLAR_WORK->rider = obj;
     obj->rise_counter = 1;
 }
 
-/*
- * Clears PILLAR_WORK[+24] and one flag byte on the object returned by
- * Object_GetById. The 28-byte owner at 0x0200209c includes its one pool
- * word, the PILLAR_WORK pointer.
- */
+/* The leader steps off the pillar it rode. */
 void SceneState_ClearWord24AndObjectByte62(void)
 {
     struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 
-    *(s32 *)(PILLAR_WORK + 24) = 0;
+    PILLAR_WORK->rider = NULL;
     obj->rise_counter = 0;
 }
 
@@ -135,26 +122,24 @@ s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
     struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
     if (actor->z.fixed > ref->z.fixed) {
-        actor->priority_flags = (u8)(actor->priority_flags & 0xfd);
+        actor->priority_flags &= ~ACTOR_PRIORITY_UNDERFOOT;
         if (actor->y.fixed < ref->y.fixed)
-            actor->priority_flags = (u8)(actor->priority_flags | 2);
+            actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     }
 
     return 0;
 }
 
-void TakaraHashira_RunActorAction(s32 a0)
+void TakaraHashira_RunActorAction(s32 id)
 {
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
+    struct FieldActor *actor;
 
-    rec7 = Object_GetById(a0);
+    actor = Object_GetById(id);
     Engine_EventBegin();
-    rec7->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
-    Map_CopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
-    GameFlag_Set((a0 + 0x1f5));
-    Engine_ActorEnableActionCallback(a0, (s32)TakaraHashira_ActionTable);
+    actor->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
+    Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+    GameFlag_Set(id + 0x1f5);
+    Engine_ActorEnableActionCallback(id, TakaraHashira_ActionTable);
     Engine_EventEnd();
 }
 
@@ -174,22 +159,17 @@ void FieldScene_RunActor12Step(void)
 
 void FieldScene_RunScene3b3_0200215c(void)
 {
-    u32 i;
-    struct FieldActor *rec7;
-    struct FieldActor *record;
-    u8 *p6;
+    struct FieldActor *leader;
+    struct FieldActor *pillar;
+    u8 *effects;
 
-    rec7 = Object_GetById(ACTOR_PARTY_LEADER);
-    record = Object_GetById(13);
-    p6 = *(s32 *)gEffectWork;
-    if ((record->x.fixed >> 20) == (rec7->x.fixed >> 20)) {
-        if ((record->z.fixed >> 20) != (rec7->z.fixed >> 20)) {
-            goto L_02002198;
-        }
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    pillar = Object_GetById(13);
+    effects = gEffectWork;
+    if (pillar->x.fixed >> 20 == leader->x.fixed >> 20 && pillar->z.fixed >> 20 == leader->z.fixed >> 20) {
         Engine_GameFlagSet(0x203);
-        p6[53] = 1;
+        effects[53] = 1;
     } else {
-        L_02002198:;
         Engine_GameFlagClear(0x203);
     }
 }
@@ -198,30 +178,24 @@ void FieldScene_RunScene3b3_0200215c(void)
  * 14 and raise actor 14 before copying the map cells. */
 void TakaraHashira_RaiseActorFourteen(void)
 {
-    s32 rec8;
-    s32 record;
-    s32 v5;
+    struct FieldActor *pillar;
 
-    rec8 = (s32)Object_GetById(14);
-    v5 = 128;
-    record = (s32)Object_GetById(13);
-    *(s32 *)(record + 24) = (v5 << 9);
-    record = (s32)Object_GetById(13);
-    *(s32 *)(record + 28) = (v5 << 9);
-    record = (s32)Object_GetById(13);
-    { s8 *p = *(s8 **)(record + 80); p[9] = (p[9] & -13) | 8; }
-    { s8 *p = *(s8 **)(rec8 + 80); p[9] = (p[9] & -13) | 8; }
-    *(s32 *)(rec8 + 52) = 0x6666;
-    *(s32 *)(rec8 + 48) = 0xcccc;
-    Call4(Engine_ObjectSetPosition, rec8, *(s32 *)(rec8 + 8), 0x200000, *(s32 *)(rec8 + 16));
+    pillar = Object_GetById(14);
+    Object_GetById(13)->scale_x = 0x10000;
+    Object_GetById(13)->scale_y = 0x10000;
+    ((Handle *)Object_GetById(13)->sprite)->mode = 2;
+    ((Handle *)pillar->sprite)->mode = 2;
+    pillar->acceleration = 0x6666;
+    pillar->speed = 0xcccc;
+    Call4(Engine_ObjectSetPosition, pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
     Engine_ActorWaitForMove(14);
     Call6(Engine_MapCopyCellAttributes, 20, 14, 1, 1, 22, 16);
 }
 
 void SceneEffect_SpawnRandomizedParticle(void)
 {
-    u8 descriptor[40];
-    u8 *d;
+    struct EffectOptions options;
+    struct EffectOptions *d;
     s32 spread;
     s32 secondary;
     u32 draw;
@@ -232,17 +206,17 @@ void SceneEffect_SpawnRandomizedParticle(void)
     if ((gFrameCount & 7) == 0)
         Engine_AudioPlayCue(136);
 
-    d = descriptor;
-    *(s32 *)(d + 4) = 10;
-    *(s32 *)(d + 8) = 0x8000;
-    *(s32 *)(d + 12) = 0x8000;
-    *(s32 *)(d + 16) = 0x19999;
-    *(s32 *)(d + 20) = 0x19999;
-    draw = (u32)Engine_RandomNext();
+    d = &options;
+    d->palette = 10;
+    d->start_scale_x = 0x8000;
+    d->start_scale_y = 0x8000;
+    d->target_scale_x = 0x19999;
+    d->target_scale_y = 0x19999;
+    draw = Engine_RandomNext();
     mask = 0x0ffff000;
     mask &= draw;
-    *(u16 *)(d + 32) = (u16)mask;
-    *(s32 *)(d + 36) = (s32)FieldScene_RunScene3b3SequenceE;
+    d->rotation = mask;
+    d->update = FieldScene_RunScene3b3SequenceE;
 
     draw = (u32)Engine_RandomNext();
     spread = -((s32)((draw * 5) >> 16) * 0x10000 + 0x60000);
@@ -250,14 +224,16 @@ void SceneEffect_SpawnRandomizedParticle(void)
     draw = (u32)Engine_RandomNext();
     secondary = -((s32)((draw * 5) >> 16) * 0x10000 + 0x50000);
 
-    Effect_Spawn(0x01440000, 0x00300000, 0x00e40000, spread,
-                  secondary, 0, 0x014d0000, d);
+    Effect_Spawn(PIXELS(324), PIXELS(48), PIXELS(228), spread, secondary, 0,
+                 EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE
+                     | EFFECT_SCALE_TO_TARGET | EFFECT_USE_PALETTE,
+                 d);
 }
 
 s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
 {
-    u8 desc[40];
-    u8 *p;
+    struct EffectOptions options;
+    struct EffectOptions *p;
     u32 phase = gFrameCount & 7;
     s32 x;
     s32 y;
@@ -267,17 +243,17 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
     if (phase != 0)
         return 0;
 
-    p = desc;
-    *(s32 *)(p + 4) = 7;
-    *(s32 *)(p + 8) = 0xb333;
-    *(s32 *)(p + 12) = 0xb333;
+    p = &options;
+    p->palette = 7;
+    p->start_scale_x = 0xb333;
+    p->start_scale_y = 0xb333;
 
     x = actor->x.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
     y = actor->y.fixed + ((s32)(((u32)Engine_RandomNext() * 17) >> 16) << 16);
     z = actor->z.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
     scale = Math_Divide((s32)(((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
 
-    Effect_Spawn(x, y, z, 0, scale, (s32)phase, 0x00090001, p);
+    Effect_Spawn(x, y, z, 0, scale, phase, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, p);
     return 0;
 }
 
@@ -286,12 +262,10 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
  * 0x201, actor 12 plays its part and the cells at (17, 13) are copied. */
 void TakaraHashira_RunMapShiftScene(void)
 {
-    u32 i;
-    s32 rec7;
-    s32 record;
+    s32 set;
 
-    rec7 = Engine_GameFlagIsSet(0x203);
-    if (rec7 == 0) {
+    set = Engine_GameFlagIsSet(0x203);
+    if (set == 0) {
         Engine_GameFlagSet(0x202);
         Engine_EventBegin();
         Engine_CameraSetSpeed(0x9999, 0x1333);
@@ -303,12 +277,10 @@ void TakaraHashira_RunMapShiftScene(void)
         Engine_TaskAddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
         Engine_EventWait(40);
         if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
-            record = (s32)Object_GetById(12);
-            *(s32 *)(record + 108) = (s32)SceneEffect_SpawnRandomEffectEveryEightFrames;
+            Object_GetById(12)->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEffectEveryEightFrames;
             Engine_ActorSetAnimation(12, 6);
             ObjectMotion_WaitForAnimationChange(12);
-            record = (s32)Object_GetById(12);
-            *(s32 *)(record + 108) = rec7;
+            Object_GetById(12)->update = (void (*)(union FieldObject *))set;
             Call6(Engine_MapCopyCellAttributes, 17, 13, 1, 1, 18, 13);
             Engine_GameFlagClear(0x201);
             Engine_ActorSetChildValue(12, 0);
@@ -421,72 +393,46 @@ void TakaraHashira_PrepLoweredActor(s32 id)
 
 void FieldScene_RunScene3b3_0200263c(s32 a0)
 {
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
+    struct FieldActor *actor;
 
-    rec7 = Object_GetById(a0);
-    if (GameFlag_IsSet((a0 + 0x1f5)) != 0) {
-        Object_SetMode(rec7, 5);
-        *(s32 *)((u8 *)rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
-        Map_CopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
+    actor = Object_GetById(a0);
+    if (GameFlag_IsSet(a0 + 0x1f5) != 0) {
+        Object_SetMode(actor, 5);
+        actor->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
+        Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
         Engine_ActorEnableActionCallback(a0, TakaraHashira_ActionTable);
     }
 }
 
 void OverlayObject_SetCallbackAndMode2(s32 id)
 {
-    u8 *obj = (u8 *)Object_GetById(id);
-    u8 *base = obj;
-    u8 zero = 0;
+    struct FieldActor *actor = Object_GetById(id);
 
-    obj += 0x22;
-    *obj = 2;
-    base[0x55] = zero;
-    *(u32 *)(base + 0x6c) = (u32)TakaraHashira_UpdateActorPriority;
+    actor->terrain_id = 2;
+    actor->motion_flags = 0;
+    actor->update = (void (*)(union FieldObject *))TakaraHashira_UpdateActorPriority;
 }
 
 void SceneActor_CheckActors8To11NearSlotZero(void)
 {
     struct FieldActor *hero = Object_GetById(ACTOR_PARTY_LEADER);
-    u32 selector = 8;
-    u8 *actor;
+    u32 selector;
+    struct FieldActor *actor;
 
-loop:
-    actor = Object_GetById(selector);
-
-    if (hero->y.fixed / 0x10000 != *(s32 *)(actor + 12) / 0x10000)
-        goto mark_and_continue;
-
-    if (hero->z.fixed > *(s32 *)(actor + 16) - 0x80000
-        || hero->z.fixed <= *(s32 *)(actor + 16) - 0x180000)
-        goto mark_and_continue;
-
-    if (hero->x.fixed - 0x100000 > *(s32 *)(actor + 8)
-        || *(s32 *)(actor + 8) >= hero->x.fixed + 0x100000)
-        goto continue_loop;
-
-    {
-        Handle *handle = *(Handle **)(actor + 80);
-        Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, handle->mode);
+    for (selector = 8; selector <= 11; selector++) {
+        actor = Object_GetById(selector);
+        if (hero->y.fixed / 0x10000 == actor->y.fixed / 0x10000
+            && hero->z.fixed <= actor->z.fixed - 0x80000
+            && hero->z.fixed > actor->z.fixed - 0x180000) {
+            if (hero->x.fixed - 0x100000 <= actor->x.fixed
+                && actor->x.fixed < hero->x.fixed + 0x100000) {
+                Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, ((Handle *)actor->sprite)->mode);
+                return;
+            }
+        } else {
+            Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+        }
     }
-    goto done;
-
-mark_and_continue:
-    {
-        u8 *mark = (u8 *)Object_GetById(0) + 35;
-        u8 bit = 1;
-        bit |= *mark;
-        *mark = bit;
-    }
-
-continue_loop:
-    selector++;
-    if (selector <= 11)
-        goto loop;
-
-done:
-    return;
 }
 
 /* The pillar rooms' setup: redraw the pillars' footprints, restore the map

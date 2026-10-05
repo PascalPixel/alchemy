@@ -10,9 +10,16 @@
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"
 
-/* The engine work slots; slot 36 holds the pillar scene's record. */
-extern u8 gWorkSlot[];
-#define PILLAR_WORK (*(u8 **)(gWorkSlot + 36 * 4))
+/* The engine work slots. */
+extern void *gWorkSlot[];
+
+/* The pillar scene's record, in work slot 36: the actor riding a pillar. */
+struct PillarWork {
+    u8 unknown_00[24];
+    struct FieldActor *rider;
+};
+
+#define PILLAR_WORK (*(struct PillarWork **)&gWorkSlot[36])
 
 /* The stage's tables in the overlay's read-only data. */
 extern u8 TakaraHashira_ActionTable[];
@@ -34,7 +41,7 @@ void WaitFrames(s32 frames);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 
 extern u8 TakaraHashira_ShakenScroll[];
-extern u8 gEffectWork[];
+extern u8 *gEffectWork;
 
 typedef struct {
     s32 v[6];

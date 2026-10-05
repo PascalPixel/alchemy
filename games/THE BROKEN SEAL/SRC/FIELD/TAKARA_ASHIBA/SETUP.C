@@ -64,7 +64,7 @@ void SceneActor_MarkSlot13AndSetFlag200(void);
 void SceneActor_RunWhenActor9AtTile45x43(void);
 void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
 void FieldScene_RunSingleStep(void);
-void FieldScene_CallHelper3c70(void);
+void TakaraAshiba_RepaintActorCells(void);
 
 void TakaraAshiba_InitializeScene1(void);
 void TakaraAshiba_InitializeScene2(void);
@@ -153,7 +153,7 @@ void TakaraAshiba_InitializeScene3(void)
     SceneActor_RunWhenActor9AtTile45x43();
     TakaraAshiba_UpdateBlockRects();
     FieldScene_RunSingleStep();
-    FieldScene_CallHelper3c70();
+    TakaraAshiba_RepaintActorCells();
 #if EDITION_INTERNATIONAL
     Engine_ActorSetSpritePriority(8, 3);
 #endif

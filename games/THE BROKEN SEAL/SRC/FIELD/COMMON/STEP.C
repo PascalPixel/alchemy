@@ -90,14 +90,12 @@ u8 GetFocusedObjectCollision(void)
     struct MapState *map;
     struct FieldPosition position;
     u8 *tile;
-    u32 offset;
     s32 x;
     s32 y;
 
     runtime_slot_address = (u32)&gEventWork;
     runtime = gEventWork;
-    offset = ((u32)gGameState.selected_actor * 4) + 0x14;
-    object = *(struct ObjectRuntime **)((u8 *)runtime + offset);
+    object = ((struct FieldStepWork *)runtime)->actors[gGameState.selected_actor];
 
     map = *(struct MapState **)(runtime_slot_address - 76);
 

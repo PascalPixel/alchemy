@@ -1,3 +1,4 @@
+#include "FX_SCENE.H"
 #include "RUNTIME_MEM.H"
 #include "TASK.H"
 #include "TYPES.H"
@@ -155,7 +156,7 @@ void KorosseoKabe_EnableEffectChildMode(void)
 {
     u8 *record = *(u8 **)gEffectWork;
 
-    record[53] = 1;
+    ((struct BattleFxScene *)record)->child_mode = 1;
 }
 
 void KorosseoKabe_SpinActorAway(void)

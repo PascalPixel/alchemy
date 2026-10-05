@@ -554,38 +554,6 @@ Func_02000510:
 .L_02008568:
 	.4byte gMapCellBuffer
 	.4byte 0x00004770
-	.section .text.x02008570,"ax",%progbits
-	.global Func_02000570
-	.thumb_func
-Func_02000570:
-	push {lr}
-	ldr r3, .L_020085a4
-	movs r2, #3
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02008586
-	movs r1, #7
-	bl Object_SetPartAttribute
-	b .L_0200858c
-.L_02008586:
-	movs r1, #0
-	bl Object_SetPartAttribute
-.L_0200858c:
-	ldr r3, .L_020085a4
-	movs r2, #7
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_0200859e
-	movs r0, #138
-	bl Engine_AudioPlayCue
-.L_0200859e:
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_020085a4:
-	.4byte gFrameCount
 	.section .text.x020085a8,"ax",%progbits
 	.global Func_020005a8
 	.thumb_func
@@ -2634,7 +2602,7 @@ Data_02001dd8:
 	.4byte 0x0000000c
 	.4byte 0x00000016
 	.4byte 0x00000026
-	.4byte Func_02000570
+	.4byte OverlayObject_UpdateEveryFourFrames
 	.4byte 0x80010000
 	.4byte 0x00000016
 	.4byte 0x00000009

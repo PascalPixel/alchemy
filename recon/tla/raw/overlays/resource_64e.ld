@@ -14,7 +14,7 @@ SECTIONS
         "*/resource_64e_overlay.o"(.text.x0200834c)
         "*/resource_64e_overlay.o"(.text.x0200838c)
         "*/resource_64e_overlay.o"(.text.x02008510)
-        "*/resource_64e_overlay.o"(.text.x02008570)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/FLICKER.o"(.text)
         "*/resource_64e_overlay.o"(.text.x020085a8)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/SCENE_TABLES.o"(.text)
         "*/resource_64e_overlay.o"(.text.x020086ac)

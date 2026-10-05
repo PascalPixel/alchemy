@@ -14,7 +14,7 @@ SECTIONS
         "*/resource_695_overlay.o"(.text.x02008184)
         "*/resource_695_overlay.o"(.text.x0200830c)
         "*/resource_695_overlay.o"(.text.x0200832c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_695/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_695/PLACES.o"(.text)
         "*/resource_695_overlay.o"(.text.x02008358)
         "*/resource_695_overlay.o"(.text.x02008364)
         "*/resource_695_overlay.o"(.text.x02008374)

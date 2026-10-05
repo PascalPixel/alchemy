@@ -53,7 +53,7 @@ extern const struct SceneEvent gTakaraHashiraEventsOther[];
 extern u8 TakaraHashira_PillarSlots[];
 void SceneActor_ApplyPlacementQueryAndTag();
 void BattleFx_StartFadeOverlay();
-void SceneState_ClearWord24AndObjectByte62();
+void TakaraHashira_ReleasePillarRider();
 void OverlayObject_SetCallbackAndMode2();
 void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
@@ -115,7 +115,7 @@ s32 TakaraHashira_SetupArea(void)
             }
             BattleFx_StartFadeOverlay(0);
             if (*((u8 *)Object_GetById(0) + 98) == 0) {
-                SceneState_ClearWord24AndObjectByte62();
+                TakaraHashira_ReleasePillarRider();
             }
             OverlayObject_SetCallbackAndMode2(8);
             OverlayObject_SetCallbackAndMode2(9);

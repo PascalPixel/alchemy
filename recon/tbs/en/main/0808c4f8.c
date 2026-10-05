@@ -3,8 +3,8 @@
    and serving the requests the field work block's slots post, until one
    posts an exit code.
 
-   2026-10-05 deep finisher 14: alchemy diff 10 (965 listing instructions,
-   965 here).  What moved it from 106:
+   2026-10-05 deep finisher 14: alchemy diff 0 (965 instructions).  What
+   moved it from 106:
    - the two "spilled halfword constants" were link-time ids, loaded from
      the literal pool as every id is: Map_ShowWorldMap is passed
      ResourceId_WorldMapPicture (resource row 27; its body ignores it and
@@ -23,11 +23,14 @@
      inline evaluates max_hp before the shift), the clamp written out in
      place (29, 87: the compare then uses the shift's register), the
      inline taking field pointers (38).
-   Remaining:
-   (1) the map is loaded into r2 here, r0 in the reference (cmp r2, r3).
-   (2) sched2 order after Owner_GetStateFar: here movs r1, #1 and the
-       shift come before the hp store and the numerator copy after the
-       max_hp load; the reference stores hp first, then shifts, then copies.
+   - Map_LoadLayeredSceneFar takes the map number (Map_LoadLayeredScene's
+     index), which keeps the map in r0: 10 -> 6.
+   - FAKEMATCH: a one-pass block around the hp gauge, a scheduling barrier
+     (sched2 otherwise lifts the reloaded 1 above the hp store): 6 -> 0.
+     Tried without it: the gauges as an inline over the vitals, a local
+     alias, the numerator as (1 << 14) (10, 10, 12); the block around the
+     ratio assignment alone (2), around the store (43), around both
+     gauges (0, larger than needed).
 
    Earlier history (deep finisher 12, 724 -> 106): result starts at 0; plain
    game state field accesses (no cell macros); the loop's exit check uses its
@@ -129,7 +132,7 @@ void ObjectDispatch_InitFromTable2Far(struct FieldActor *actor);
 void ObjectDispatch_InitFromTable3Far(struct FieldActor *actor);
 void ObjectDispatch_InitFromTable1Far(struct FieldActor *actor);
 void ObjectDispatch_InitFromTable0Far(struct FieldActor *actor);
-void Map_LoadLayeredSceneFar(void);
+s32 Map_LoadLayeredSceneFar(s32 index);
 void Map_InitializePerspectiveSceneFar(void);
 void Map_ApplyWorkOriginAndSpanFar(void);
 void Map_UpdateCurrentTileBlockFar(void);
@@ -235,7 +238,7 @@ s32 Func_0808c4f8(void)
         mode = 3;
         BattleFx_SelectLocationRule(0);
     } else {
-        Map_LoadLayeredSceneFar();
+        Map_LoadLayeredSceneFar((s16)gGameState.map);
         mode = 2;
         BattleFx_SelectLocationRule(1);
     }
@@ -358,9 +361,13 @@ s32 Func_0808c4f8(void)
                         UiText_ShowPositionedMessageAndWaitFar(0x91b, 1);
                         vitals = Owner_GetStateFar(gGameState.selected_actor);
                         vitals->hp = 1;
-                        vitals->hp_ratio = Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
-                        if (vitals->hp_ratio == 0 && vitals->hp != 0)
-                            vitals->hp_ratio = 1;
+                        /* FAKEMATCH: the one-pass block around the hp gauge keeps sched2 from
+                           lifting the shift's reloaded 1 above the hp store, as the ROM orders them. */
+                        do {
+                            vitals->hp_ratio = Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
+                            if (vitals->hp_ratio == 0 && vitals->hp != 0)
+                                vitals->hp_ratio = 1;
+                        } while (0);
                         vitals->pp_ratio = Vitals_Clamp((vitals->pp << 14) / vitals->max_pp);
                         if (vitals->pp_ratio == 0 && vitals->pp != 0)
                             vitals->pp_ratio = 1;

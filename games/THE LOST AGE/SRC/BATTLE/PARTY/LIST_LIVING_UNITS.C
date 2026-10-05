@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 /* Lists the enemy units still present (six, or three when flag 0x16c is
    set) into unit_ids, ending the list with 0xff, and returns how many. */

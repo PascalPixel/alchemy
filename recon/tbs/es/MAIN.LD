@@ -292,7 +292,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/BATTLE_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/LIST.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.00025168)
-    "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK2.o"(.text)
+    "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/COUNTDWN.o"(.text)
     "*/games/COMMON/SRC/BATTLE/CLASSIFY_ENTRY_KIND.o"(.text)
     "*/games/COMMON/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.o"(.text)

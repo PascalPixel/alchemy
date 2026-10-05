@@ -268,6 +268,6 @@ render:
     }
     queue = &gIoWriteQueue;
     ime = &REG_IME;
-    QueueRegister(0x04000050, 0x3f00)
-    QueueRegister(0x04000052, ((16 - blend) << 8) | blend)
+    QueueRegister((u32)&REG_BLDCNT, 0x3f00)
+    QueueRegister((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend)
 }

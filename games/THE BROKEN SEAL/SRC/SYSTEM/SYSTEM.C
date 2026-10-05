@@ -141,8 +141,7 @@ void WaitFrames(s32 frames)
         if (gDebugMode) {
             for (;;) {
                 if (gDebugPaused) {
-                    /* FAKEMATCH: a volatile read keeps the measured reread of the repeated keys. */
-                    if ((*(volatile u32 *)&gKeysRepeat) & (KEY_A | KEY_B | KEY_SELECT))
+                    if ((*(u32 *)&gKeysRepeat) & (KEY_A | KEY_B | KEY_SELECT))
                         break;
                     if (gKeysHeld & KEYS_DPAD)
                         break;

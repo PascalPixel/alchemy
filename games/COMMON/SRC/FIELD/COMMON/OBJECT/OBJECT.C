@@ -219,8 +219,6 @@ void *ObjectDispatch_FindFreeObject(void)
     s32 index = 0;
 
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    /* FAKEMATCH: the entry/result boundary initializes the zero result before the first script load without adding an access. */
-    asm("" : "+r"(entry), "+r"(ret));
 #endif
     while (index <= 63) {
         if (entry->script == 0) {

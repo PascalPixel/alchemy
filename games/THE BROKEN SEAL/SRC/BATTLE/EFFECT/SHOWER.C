@@ -1,7 +1,4 @@
 #include "TYPES.H"
-/* FAKEMATCH: this file reads ParticleStreams_CellOffsets through its own declaration; the shop's changes its code. */
-#define OWN_ParticleStreams_CellOffsets
-extern const u16 ParticleStreams_CellOffsets[];
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

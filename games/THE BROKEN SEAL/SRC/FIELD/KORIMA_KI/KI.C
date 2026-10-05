@@ -6,6 +6,7 @@
 #include "SCENE_IDS.H"
 #include "PALETTE_SCENE.H"
 #include "IO_REG.H"
+#include "FIELD_SCENE.H"
 
 extern u8 MsgKorimaWho[];
 extern u8 MsgKorimaForestKolimaAlive[];
@@ -195,7 +196,7 @@ void RunEventScript01(void)
     struct FieldActor *rec8;
 
     rec8 = Actor_Get(ACTOR_PARTY_LEADER);
-    Engine_ActorFaceDirection(0, 0xc000, 0);
+    Engine_ActorFaceDirection(0, FACING_NORTH, 0);
     ColorBuffer_ApplyTarget(0x406218, 1);
     Engine_ColorBufferInterpolate(20);
     Engine_TaskWait(40);
@@ -268,7 +269,7 @@ void PaletteScene_RunActorTransitionSequence(void)
 
     actorThreeEnabled = GameFlag_IsSet(3);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 212);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Audio_PlayCue(17);
     Engine_MessageShowCentered((s32)MsgKorimaWaterHermesSeepedIntoTret, 1);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
@@ -300,19 +301,19 @@ void PaletteScene_RunActorTransitionSequence(void)
     *transitionState = 0;
     Engine_TaskAddCallback(PaletteScene_AdvanceTransition, 0xc80);
     Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 20);
     Camera_SetSpeed(0x33333, 0x6666);
     Camera_MoveTo(0x1000000, -1, 0xfe0000, 1);
     Engine_CameraWaitForMove();
     Audio_PlayCue(246);
     Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 20);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 20);
     Camera_MoveTo(0x19d0000, -1, 0x1050000, 1);
     Engine_CameraWaitForMove();
     Audio_PlayCue(246);
     Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0x4000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
     Camera_MoveTo(0x1460000, -1, 0x1800000, 1);
     Engine_CameraWaitForMove();
     Audio_PlayCue(246);
@@ -348,10 +349,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
     KorimaKi_PlayGesture(10, 2);
     Engine_EventWait(20);
     KorimaKi_PlayGesture(10, 3);
@@ -373,10 +374,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_ShowMessageAndWait(0x4009, 0, 20);
     KorimaKi_PlayGesture(11, 2);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0x6000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 20);
     KorimaKi_PlayGesture(11, 3);
     Engine_EventWait(20);
     KorimaKi_PlayGesture(11, 2);
@@ -389,10 +390,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 1);
     Engine_EventWait(20);
     Event_OpenMessage(0x8008, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
@@ -457,8 +458,8 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_ShowMessage(0x4009, 0);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 10);
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
@@ -471,8 +472,8 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgKorimaWasIndeedAngryPeopleHad);
     Event_ShowMessage(0x8008, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
     Event_ShowMessage(0x8008, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
@@ -506,15 +507,15 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4008, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 10);
     Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     Event_ShowMessage(0x8002, 0);
     KorimaKi_PlayGesture(11, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4009, 0, 20);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 10);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     KorimaKi_PlayGesture(10, 1);
     Event_ShowMessageAndWait(0x8008, 0, 10);
@@ -537,35 +538,35 @@ void PaletteScene_RunActorTransitionSequence(void)
     gKorimaKiSparkOrigin[2] = 0x1020000;
     Engine_TaskAddCallback(effectCallback, 0xc80);
     Engine_EventWait(100);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 20);
     Event_ShowMessageAndWait(0x8002, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     KorimaKi_PlayGesture(10, 4);
     Engine_EventWait(20);
     Event_ShowMessage(0x8008, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
     Event_ShowMessageAndWait(0x8002, 0, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 20);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     Engine_ActorSetAnimation(ACTOR_MIA, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 120);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 120);
     Engine_TaskRemoveCallback(effectCallback);
     Engine_EventWait(60);
     KorimaPalette_Restore(0);
@@ -585,10 +586,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     KorimaKi_PlayGesture(10, 1);
     Event_OpenMessage(0x8008, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         gEventWork->message += 1;
     }
@@ -600,10 +601,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 1);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x8008, 0, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     Engine_ActorSetAnimation(ACTOR_MIA, 3);

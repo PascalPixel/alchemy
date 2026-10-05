@@ -878,7 +878,7 @@ gMogoruMoriEvents2:
 	.4byte FieldScene_RunActorThirteenPresentationBeat
 	.4byte 0x00008e15
 	.4byte 0x03050011
-	.4byte FieldScene_RunScene39f_02001818
+	.4byte MogoruMori_TransferActorFourteen
 	.4byte 0x00008e15
 	.4byte 0x03060011
 	.4byte SceneActor_RunActorFourteenFourWaypointMotion
@@ -940,7 +940,7 @@ gMogoruMoriEvents3:
 	.4byte SceneActor_BobActorZeroWhenTargetClear
 	.4byte 0x00000002
 	.4byte 0x089d0016
-	.4byte FieldScene_RunScene39f_020021b0
+	.4byte MogoruMori_RunActorEighteenEscape
 	.4byte 0x00000002
 	.4byte 0x089e0017
 	.4byte MogoruMori_RunClosingChoreography
@@ -961,7 +961,7 @@ gMogoruMoriEvents3:
 	.4byte FieldScene_RunActor17CameraSequence
 	.4byte 0x00008e15
 	.4byte 0x030a0016
-	.4byte FieldScene_RunScene39f_02002004
+	.4byte MogoruMori_TransferActorEighteen
 	.4byte 0x00008e15
 	.4byte 0x030b0016
 	.4byte FieldScene_RunActorEighteenEffectSequence

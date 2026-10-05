@@ -17,16 +17,12 @@ typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
 
 extern u32 gFrameTick;
 
-/* Load character set `resource` into the background (or, when alternate, the
-   second) character block and its palette into the matching bank; resource
-   0 clears them instead. The packed decoder is copied from ROM into heap
-   block 49 and run there; the palette load is queued for the next frame.
-
-   FAKEMATCH: the queued palette load is QueueIoWriteDelay-style inline code
-   with the odd constructs of SYSTEM/IO_WRITE_QUEUE.C (a one-pass loop around
-   the IME read, and the count stored through an explicit u16 pointer). */
+/* Load the background character block and its palette, or the second
+ * block/bank when alternate is set; resource 0 clears them. Copy the packed
+ * decoder to heap block 49 and run it there; queue the palette for next frame. */
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 {
+    /* FAKEMATCH: the inline queue write keeps the one-pass IME read and u16 count-store scheduling. */
     u8 *data;
     u32 palette;
     u32 fill;
@@ -130,9 +126,7 @@ void Ui_LoadWindowGraphics(void);
 void Bg0_ClearTilemap(void);
 void WaitFrames(s32 frames);
 
-/* FAKEMATCH: the write goes through its own int, which loads each value as a
-   word, and the do/while (0) ends a scheduling region after it; together
-   they give the reference's register order and single literal pool. */
+/* FAKEMATCH: the int temporary and one-pass write keep word-value construction, register order and a single literal pool. */
 #define Io_Write16(reg, value) \
     do { \
         /* FAKEMATCH: the one-pass register-write boundary preserves measured instruction scheduling. */ \

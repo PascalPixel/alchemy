@@ -72,8 +72,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
                 p++;
             }
             ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
-            /* FAKEMATCH: a do-while(0) around the row count decrement keeps the
-               reference register order */
+            /* FAKEMATCH: a do-while(0) around the row count decrement keeps the reference register order */
             do {
                 height--;
             } while (0);
@@ -87,8 +86,6 @@ void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 he
     UiWindow_SetRectPalette(((struct UiWindow *)obj)->x + x + 1,
         ((struct UiWindow *)obj)->y + y + 1, width, height, palette);
 }
-
-/* The other editions keep their code here in their scaffolds for now. */
 
 /* The Djinn help screen: seven topics, each with its explanation. Up and
    down or A step through them; B or Select returns -1 and Start -2, which
@@ -109,8 +106,7 @@ s32 DjinnMenu_ShowHelp(void)
     s32 cnt;
     s32 list_message;
 
-    /* FAKEMATCH: retain the existing menu/render heap-cell slice. Separate
-       named-cell loads add 4 bytes and change the native pool order. */
+    /* FAKEMATCH: the menu/render heap-cell slice avoids four bytes and changed literal order from separate named cells. */
     slot_cells = (void **)&gMenuWork;
     menu = slot_cells[0];
     work = slot_cells[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU];

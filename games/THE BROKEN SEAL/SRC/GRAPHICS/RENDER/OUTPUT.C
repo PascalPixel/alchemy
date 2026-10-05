@@ -5,7 +5,6 @@
 #include "VRAM_BLOCK.H"
 #include "RESOURCE.H"
 
-
 struct RenderOutput *RenderOutput_Create(
     s32 slot,
     s32 flags,
@@ -13,11 +12,7 @@ struct RenderOutput *RenderOutput_Create(
     s32 offset_x,
     s32 offset_y)
 {
-    /* FAKEMATCH: the list helper is void; its existing ignored scalar-return
-       view keeps one mov after the stores. Direct cast, named window output
-       and local list forms reorder that mov in all six editions. Empty
-       pointer/register barriers also change earlier arithmetic scheduling.
-       Keep this view only at the call; the maintained declaration is truthful. */
+    /* FAKEMATCH: the ignored scalar-return call keeps mov after the stores; direct void-call forms reorder it. */
     s32 x;
     struct RenderOutput *output;
     s32 y;

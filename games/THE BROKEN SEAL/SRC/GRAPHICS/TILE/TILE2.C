@@ -48,8 +48,7 @@ void Tilemap_ConvertBuffer(void)
     u32 size;
 
     size = 0x8000;
-    /* FAKEMATCH: the two do-while blocks keep each allocation next to the
-       transfer that uses it */
+    /* FAKEMATCH: the two do-while blocks keep each allocation next to the transfer that uses it */
     do {
         saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
         CopyWords(saved, Ram_MapCellBuffer, size);

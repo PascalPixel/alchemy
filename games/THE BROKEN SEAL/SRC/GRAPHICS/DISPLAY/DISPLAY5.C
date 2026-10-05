@@ -42,9 +42,7 @@ void Display_ApplyBg2Reference(void)
 
 void Palette_StepFadeTransfer(void)
 {
-    /* FAKEMATCH: keep the existing relative pointer-cell bank transport.
-       Named globals and full HeapState indexing add
-       address instructions. These are slots 9 and 39 of the real heap owner. */
+    /* FAKEMATCH: relative heap cells 9 and 39 avoid address instructions added by named globals or full heap indexing. */
     void **slots = (void **)((u8 *)gWorkSlot + 9 * sizeof(void *));
     struct BattleEffectWork *work = slots[39 - 9];
     struct BattleSession *battle = slots[0];

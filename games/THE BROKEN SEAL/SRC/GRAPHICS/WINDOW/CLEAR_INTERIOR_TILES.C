@@ -3,7 +3,6 @@
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
 
-
 s32 UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 /* Blanks the tiles inside a window's frame over a rectangle given in pixels
@@ -35,9 +34,7 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     top = y + 1;
     width = right - x;
     height = bottom - y;
-    /* FAKEMATCH: retain the existing ignored scalar call declaration; the
-       actual helper is void. Its void declaration loads r0 before r1/r2
-       instead of after them, at the same 150-byte extent in all editions. */
+    /* FAKEMATCH: the ignored scalar call loads r0 after r1/r2; the void helper declaration loads r0 first. */
     UiWindow_ClearTileAttributesInRect(left, top, width, height);
     tiles = work->tilemap + top * 32 + left;
     for (row = 0; row < height; row++) {

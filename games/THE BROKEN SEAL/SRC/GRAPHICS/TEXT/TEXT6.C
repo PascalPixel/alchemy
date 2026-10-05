@@ -5,7 +5,6 @@
 #include "BATTLE_UNIT.H"
 #include "UI.H"
 
-/* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 MsgAgilityLabel[];
 extern u8 MsgPanelStatLabel[];
 extern u8 MsgPanelDefenseLabel[];

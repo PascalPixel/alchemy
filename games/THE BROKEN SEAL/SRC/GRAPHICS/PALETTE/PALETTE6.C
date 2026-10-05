@@ -225,9 +225,7 @@ void BattleFx_RunGatheringBurstFar(struct EffectLaunch *launch);
 void BattlePresentation_PrepareSceneFar(s32 kind);
 void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
 
-/* FAKEMATCH: the write goes through its own int, which loads each value as a
-   word, and the do/while (0) ends a scheduling region after it, as in the
-   slideshow's register writes. */
+/* FAKEMATCH: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
 #define Io_Write16(reg, value) \
     do { \
         /* FAKEMATCH: the one-pass register-write boundary preserves measured instruction scheduling. */ \
@@ -279,9 +277,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
     struct EffectPosition position2;
     struct EffectLaunch launch;
     struct EffectLaunch launch2;
-    /* FAKEMATCH: the reference holds the address of slot 12 in the register
-       that later holds the IME address; only a variable assigned twice does
-       that. The session is slot 9, read three words below it. */
+    /* FAKEMATCH: the reference holds the address of slot 12 in the register that later holds the IME address; only a variable assigned twice does that. The session is slot 9, read three words below it. */
     volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
     struct BattleSession *session = *(struct BattleSession **)((u8 *)ime - 12);
     struct Bg2OriginWork *work;
@@ -310,8 +306,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
             if (frame <= 24)
                 Graphics_ScaleRgb555Clamped(session->palette, (u16 *)0x050000c0, *brightness = 0x10000 - frame * 1092, 128);
             {
-                /* The reference loads the second argument before the first;
-                   a variable in r1 is loaded where it is assigned. */
+
                 /* FAKEMATCH: the second argument is pinned to r1 to load it first. */
                 register struct EffectPosition *out __asm__("r1");
 

@@ -70,8 +70,7 @@ void DisplayTransition_UpdateScanlineTable(void)
     s32 hi;
     s32 cx;
     s32 cy;
-    /* As a pseudo ax also gets r5, but it hands the view pointer's r2 on
-       to the cx temporary as a preference; the native keeps that in r3. */
+
     /* FAKEMATCH: pins ax to r5, as the native allocates it. */
     register s32 ax asm("r5");
     s32 ay;

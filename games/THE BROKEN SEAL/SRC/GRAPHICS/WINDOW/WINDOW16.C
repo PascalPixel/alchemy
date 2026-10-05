@@ -181,9 +181,7 @@ s32 Menu_BuildLocalizedPatternTiles(void)
 /* ui/window/draw_three_tile_column.c */
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    /* FAKEMATCH: retain the existing C89 integer/no-return convention; all
-       callers ignore the result. A void definition changes only the return
-       address pop from r1 to r0 at the same native function extent. */
+    /* FAKEMATCH: the ignored integer result keeps the return-address pop in r1; void selects r0. */
     s32 tile_offset = arg3 * 2;
     s32 tile = tile_offset + 0xF315;
 

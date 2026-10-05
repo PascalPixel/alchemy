@@ -39,8 +39,7 @@ extern const u8 DisplayScroll_Font[];
    still being drawn. */
 void DisplayScroll_UpdateObjects(void)
 {
-    /* FAKEMATCH: keep the existing two-word OAM walk over the real records;
-       named field stores in f4f9d28 reverse stores and register allocation. */
+    /* FAKEMATCH: the two-word OAM walk preserves stores and registers reversed by named fields. */
     u32 frame = gScratchWord;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
@@ -91,8 +90,7 @@ void DisplayScroll_RenderEnteringLine(void)
    group, schedule the step and group callbacks, and load the 32 tile groups. */
 void DisplayScroll_InitObjectTable(void)
 {
-    /* FAKEMATCH: retain the existing pointer-cell and postincrement word
-       stores; direct typed stores in f4f9d28 change the 376-byte body to 368. */
+    /* FAKEMATCH: pointer-cell and postincrement stores retain 376 bytes; direct typed stores produce 368. */
     volatile u32 fill;
     u32 *entry;
     u32 i;
@@ -154,8 +152,7 @@ void DisplayScroll_InitObjectTable(void)
 
 static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, s32 size)
 {
-    /* FAKEMATCH: a direct call keeps the size in r5 for the fill that follows
-       and puts the row total in r6; through this the size is built in r2. */
+    /* FAKEMATCH: a direct call keeps the size in r5 for the fill that follows and puts the row total in r6; through this the size is built in r2. */
     Iwram_CopyWords(destination, source, size);
 }
 
@@ -184,8 +181,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
     s32 bit;
     u32 bits;
     u32 mask;
-    /* Declared and never used: the frame keeps these 32 bytes above the
-       three values the routine spills, and nothing reads or writes them. */
+
     u32 unused[8];
 
     if (text == NULL)
@@ -209,9 +205,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
     else if (align == 1)
         x = (width - pos) / 2;
 
-    /* FAKEMATCH: nothing reads this pointer before the glyph row sets it;
-       without the assignment the first character is fetched through r2 and
-       the text pointer stepped with a constant in r3. */
+    /* FAKEMATCH: nothing reads this pointer before the glyph row sets it; without the assignment the first character is fetched through r2 and the text pointer stepped with a constant in r3. */
     p = text;
     pos = 0;
     while ((c = *text++) != 0) {

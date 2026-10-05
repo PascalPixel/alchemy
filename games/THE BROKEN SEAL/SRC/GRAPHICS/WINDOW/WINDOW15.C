@@ -193,9 +193,7 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
    the bar palette. */
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
-    /* FAKEMATCH: retain the existing C89 integer/no-return convention; all
-       callers ignore the result. A void definition changes only the return
-       address pop from r1 to r0 at the same native function extent. */
+    /* FAKEMATCH: the ignored integer result keeps the return-address pop in r1; void selects r0. */
     s32 i;
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
     s32 filled = value;

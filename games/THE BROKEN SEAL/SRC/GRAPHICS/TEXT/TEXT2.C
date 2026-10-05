@@ -31,8 +31,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
     work = (struct UiRenderWork *)gWindowWork[0];
     x = 8;
     y = 8;
-    /* FAKEMATCH: the null window also supplies the zero style argument,
-       retaining one register across the message and dimension lookups. */
+    /* FAKEMATCH: the null window also supplies the zero style argument, retaining one register across the message and dimension lookups. */
     window = NULL;
     entry = UiText_BuildRenderEntries(message, 1);
     if (work->entries[entry] != 0) {

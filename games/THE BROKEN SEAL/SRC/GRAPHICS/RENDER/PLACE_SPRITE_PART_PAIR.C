@@ -1,8 +1,6 @@
-/* Places both 12-byte sprite parts from fixed-point screen coordinates,
-   object/ground heights and a two-word scale. Unsigned dimensions and a
-   signed vertical offset share the exact projected-sprite family layout.
-   Complete body and own pools: [0800b074,0800b166), 242 exact bytes.
-   Inter-function alignment at b166 is retained separately and uncredited. */
+/* Place both 12-byte sprite parts from fixed-point screen coordinates,
+ * object and ground heights, and a two-word scale. Dimensions are unsigned;
+ * the vertical offset is signed. */
 #include "TYPES.H"
 #include "ANIMSPR.H"
 

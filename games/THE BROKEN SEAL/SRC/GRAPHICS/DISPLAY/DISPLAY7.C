@@ -19,9 +19,8 @@ void BattleFx_StartBufferInterpolation(s32 frames);
 
 extern volatile u32 gFrameCount;
 
-/* QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C) written out: the display
-   control write for the next frame, its value read only once a queue entry
-   is free. */
+/* Queue a display-control write for the next frame; read the value only
+ * after a queue entry is free. */
 #define QUEUE_DISPLAY_CONTROL(value)                                        \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -57,12 +56,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     s32 value;
     s32 kind;
 
-    /* FAKEMATCH: the one-pass IME scopes and count-store spelling in
-       QUEUE_DISPLAY_CONTROL keep the saved IME move before disabling IME
-       and the final queue/IME loads in native order. The ordinary block
-       and member store keep 708 bytes but change 24 instruction bytes in EN;
-       both spellings store the count as a halfword. The word prefix of
-       the map-work view preserves its existing load/address ordering. */
+    /* FAKEMATCH: one-pass IME scopes and count stores preserve saved-IME and queue load order; the map-work word prefix preserves address order. */
     kind = (mode >> 8) & 0xff;
     work = Ram_MapWork;
     display = *(struct DisplayTransitionWindow **)work;

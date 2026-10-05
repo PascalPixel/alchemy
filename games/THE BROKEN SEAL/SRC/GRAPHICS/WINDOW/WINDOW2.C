@@ -8,7 +8,6 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWork_DrawByAttributes(struct UiWindow *window);
 
-/* The opaque interpolation boundary reads the window as scalar halfwords. */
 #define WINDOW_HALF(window, type, field) \
     (*(type *)((u8 *)(window) + (u32)&(((struct UiWindow *)0)->field)))
 
@@ -78,9 +77,7 @@ loop:
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
 {
-    /* FAKEMATCH: the existing opaque halfword window view keeps geometry
-       reads ahead of scratch stores; direct typed fields change their
-       measured native scheduling at the same 192-byte extent. */
+    /* FAKEMATCH: the halfword window view keeps geometry reads before scratch stores; direct fields reorder them. */
     struct UiWindowInterpolationScratch scratch;
     s32 frame;
     s32 duration;

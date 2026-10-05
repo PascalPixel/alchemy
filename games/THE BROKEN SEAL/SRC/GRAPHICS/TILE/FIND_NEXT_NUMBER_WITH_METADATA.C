@@ -1,17 +1,11 @@
-/*
- * Ui_RunIconMonitor: a debug viewer for animation metadata. It never
- * returns: four editable columns (metadata number, animation, draw priority
- * and draw parameter) are shown on ten sprite objects over the probe ring.
- * With Start held the direction keys move the ring; otherwise up/down pick
- * the column and left/right the field, L and R step the field, A applies or
- * toggles a column, Start toggles the objects' flags byte and Select
- * restarts through the resource far-call table (B picks the other row).
- *
- * Ui_SetGridColumnByte5 and Ui_SetGridColumnByte6 are named for the grid
- * record field they write: this owner hands column offset 5 (priority) to
- * Byte6 and offset 6 (param) to Byte5. The first DMA fill clears one word of
- * the 160-byte work block (control word 0x85000001), as the ROM does.
- */
+/* Debug animation viewer: ten sprites show four editable columns of
+ * metadata, animation, priority and draw parameters. With Start held,
+ * directions move the probe ring; otherwise up/down pick a column and
+ * left/right pick its field. L/R step a field, A applies or toggles it,
+ * Start toggles object flags, and Select restarts through the far-call
+ * table, with B choosing the alternate row.
+ * The Byte6 setter receives priority at offset 5; Byte5 receives param at
+ * offset 6. The initial DMA fill clears one word of the 160-byte work block. */
 
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -33,8 +27,7 @@ extern u8 gDecodeFillByte;
 extern struct AnimationObject *gSpriteObjects;
 extern const u8 FarCall_ResourceTable[];
 
-/* One editable column of the icon grid.  Eight bytes: the reference indexes
- * the array with slot << 3 and reads offsets 0, 2, 4, 5 and 6 only. */
+/* One eight-byte editable column of the icon grid. */
 struct IconColumn {
     s16 no;  /* metadata number displayed in this column */
     s16 animation; /* 0..99 script index */
@@ -124,8 +117,7 @@ restart:
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
-        /* FAKEMATCH: the native adds the flags offset to the object's own
-           register (r5) in place; a separate address takes a copy. */
+        /* FAKEMATCH: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. */
         alt = (s32)&((struct AnimationObject *)alt)->flags;
         *(u8 *)alt = flag;
     }
@@ -342,9 +334,7 @@ next:
 /* ui/icon/find_next_number_with_metadata.c */
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 {
-    /* FAKEMATCH: the plain step initializer reverses the two incoming
-       argument moves in the complete 52-byte native function; keep the
-       existing cancellation that orders those moves. */
+    /* FAKEMATCH: the cancelling step initializer preserves the incoming argument moves; a plain initializer reverses them. */
     s32 value = start;
     s32 delta = step + value - value;
 

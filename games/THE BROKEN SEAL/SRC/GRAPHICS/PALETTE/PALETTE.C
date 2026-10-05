@@ -196,9 +196,7 @@ void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work)
 
 void GraphicsPalette_DecrementSelectedCounter(s32 work)
 {
-    /* FAKEMATCH: retain the existing byte-lane address calculation. Direct
-       field addresses in f4f9d28 fold the offsets into pools and remove
-       address adds; the source offsets still come from the actual fields. */
+    /* FAKEMATCH: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
     u8 *p;
     u16 sel;
     s32 off;
@@ -227,9 +225,7 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
 
 void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
 {
-    /* FAKEMATCH: retain the existing byte-lane address calculation. Direct
-       field addresses in f4f9d28 fold the offsets into pools and remove
-       address adds; the source offsets still come from the actual fields. */
+    /* FAKEMATCH: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
     u8 *sp;
     u16 sel;
     s32 off;

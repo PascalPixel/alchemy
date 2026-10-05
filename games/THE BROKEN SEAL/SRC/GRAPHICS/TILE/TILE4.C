@@ -158,8 +158,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 
     object = gSpriteObjects;
     count = 0;
-    /* FAKEMATCH: typed indexing moves the slot offset addition into
-       the loop; the native loop uses this existing precomputed lane. */
+    /* FAKEMATCH: the precomputed slot lane keeps the offset addition outside the loop; typed indexing moves it inside. */
     offset = (3 & slot) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
     index = 0;
     do {
@@ -212,11 +211,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 i;
 
     scale = Battle_FormationPlacementScale;
-    /* FAKEMATCH: naming heap slot9 independently adds a second RAM-base
-       load and eight native bytes. The monitor stores this 160-byte block
-       in slot9; gSpriteObjects is the slot4 cell in the same heap bank.
-       Preserve the existing relative pointer-cell load without a false
-       record spanning the intervening allocations. */
+    /* FAKEMATCH: loading heap slot 9 relative to slot 4 avoids a second RAM-base load and eight bytes. */
     table = *(struct AnimationPosition **)((u8 *)&gSpriteObjects + (9 - 4) * sizeof(((union HeapState *)0)->slots[0]));
 
     switch (kind) {

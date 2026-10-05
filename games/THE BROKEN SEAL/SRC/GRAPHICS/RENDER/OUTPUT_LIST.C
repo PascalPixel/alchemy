@@ -21,9 +21,7 @@ void UiWork_UpdateListTail(struct RenderOutputList *list)
 
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node)
 {
-    /* FAKEMATCH: retain the existing first-word pointer store at the tail
-       cell. Assigning the typed tail-link field reverses the two stores in
-       all six editions; the tail still names the next cell, including NULL. */
+    /* FAKEMATCH: the first-word tail store preserves the two stores in order; the typed tail-link field reverses them. */
     if (list != NULL) {
         *list->tail_link = node;
         *(struct RenderOutput **)&list->tail_link = node;

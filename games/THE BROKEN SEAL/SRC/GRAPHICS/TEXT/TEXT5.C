@@ -17,7 +17,6 @@ struct GlyphPalette {
     s32 count;
 };
 
-
 typedef struct
 {
     u16 code : 10;
@@ -91,8 +90,7 @@ void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
     ((s32 (*)())UiText_LoadRemappedGlyph)(base, value, index * 16, index * 16);
     store_offset = offset + 0x11C;
     *(u32 *)(base + store_offset) = value;
-    /* FAKEMATCH: the empty do-while around this store only moves the
-       scheduler; the reference sets the constant after the value store. */
+    /* FAKEMATCH: the empty do-while around this store only moves the scheduler; the reference sets the constant after the value store. */
     do { *(u32 *)(entry + 4) = 0x80002000; } while (0);
     *(u32 *)(entry + 8) = 0;
     load_offset = offset + 0x110;

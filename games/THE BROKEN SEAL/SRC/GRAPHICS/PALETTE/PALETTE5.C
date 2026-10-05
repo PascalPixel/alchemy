@@ -15,9 +15,7 @@ extern struct DisplayTransitionState *gDisplayTransition;
 s32 GameFlag_IsSet(s32 flag);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
-/* FAKEMATCH: SYSTEM/IO_WRITE_QUEUE.C's queue idiom, for that file's reasons:
-   the loop that runs once around the IME read, and the count stored through
-   a u16 pointer before the entry is written. */
+/* FAKEMATCH: SYSTEM/IO_WRITE_QUEUE.C's queue idiom, for that file's reasons: the loop that runs once around the IME read, and the count stored through a u16 pointer before the entry is written. */
 #define QUEUE_WRITE(value, address, control) {                             \
         u32 saved;                                                          \
         s32 count;                                                          \
@@ -96,13 +94,10 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
    BattleEffect_InitializeBuffers has set it up: add the step table into the
    working colours (on the last step, copy the targets in and stop), pack them
    into the back palette buffer, flip buffers and queue both halves.
-   The packing loop follows GRAPHICS/PALETTE/TITLE_UPDATE_FADE.C. */
+ */
 void BattlePalette_UpdateBlend(void)
 {
-    /* FAKEMATCH: retain the existing one-pass IME scopes and halfword
-       queue-count stores used by the other palette queue writers.
-       Directly selecting the packed bank swaps the queue/IME registers
-       in all six editions; retain the existing byte-address boundary. */
+    /* FAKEMATCH: IME scopes and halfword count stores preserve queue order; direct packed-bank selection swaps queue/IME registers. */
     struct BattleEffectBuffers *work = Data_03001ed0;
     u16 *add = work->delta;
     volatile u16 *ime;

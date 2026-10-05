@@ -6,7 +6,6 @@
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
 
-
 #define QUEUE_PALETTE(source, destination) {                                \
         u32 saved;                                                          \
                                                                             \
@@ -31,10 +30,7 @@
 /* Step the title palette channels toward the target and queue both banks. */
 void TitlePalette_UpdateFade(void)
 {
-    /* FAKEMATCH: retain the existing one-pass IME scopes, halfword queue
-       count stores, front-bank block and packing-loop pointer lifetime.
-       The existing byte-slot read also avoids the extra add#128 emitted
-       for the typed heap array in all six editions. */
+    /* FAKEMATCH: IME scopes, count stores and pointer lifetime preserve queue order; the byte-slot read avoids an extra add #128. */
     struct TitlePaletteWork *work = *(struct TitlePaletteWork **)((u8 *)gWorkSlot + 32 * sizeof(void *));
     u16 *delta = work->delta;
     u16 *current;
@@ -74,7 +70,6 @@ void TitlePalette_UpdateFade(void)
     QUEUE_PALETTE(bank + 256, 0x05000200);
 }
 
-
 /* Expands a 512-entry (or 256-entry half) BGR555 palette into the engine's
  * three-halfword-per-entry working buffer, applying one of several colour
  * treatments selected by `mode`.
@@ -97,7 +92,6 @@ void TitlePalette_UpdateFade(void)
 
 s32 Graphics_ClampRgb555Channel(s32 val);
 s32 Graphics_ClampRgb555Component(s32 val);
-
 
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {

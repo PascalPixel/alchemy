@@ -287,10 +287,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
     struct Bg2OriginWork *work;
     s32 frame;
     s32 *brightness;
-    /* Left to the allocator the IME address takes r6 and the position r7,
-       which exchanges the two registers in 14 instructions. */
-    /* FAKEMATCH: the position pointer is pinned to r6, as the reference keeps it. */
-    register struct EffectPosition *pos __asm__("r6");
+    struct EffectPosition *pos;
 
     WaitFrames(1);
     BattlePresentation_ConfigurePaletteFade(1, session->background, 0);

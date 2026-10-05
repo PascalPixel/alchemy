@@ -109,8 +109,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
     register s32 depth asm("r3");
     s32 bit;
     u32 index;
-    /* FAKEMATCH: half pinned to r2, as the native allocates it (4 differ without it). */
-    register u32 half asm("r2");
+    u32 half;
 
     code = reader->previous_code;
     text = (const u8 *)reader->words;

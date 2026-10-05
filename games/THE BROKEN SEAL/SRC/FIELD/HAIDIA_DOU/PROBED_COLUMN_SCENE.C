@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
+#include "FIELDOBJ.H"
 
 void Engine_EventBegin();
 void Object_SetModeById();
@@ -15,7 +16,7 @@ void Audio_PlayCue();
  * 240. */
 void HaidiaDou_RunProbedColumnScene(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 v6;
     s32 v5;
     s32 two;
@@ -28,8 +29,8 @@ void HaidiaDou_RunProbedColumnScene(void)
             Object_SetModeById(probe.actor_slot, 3);
             v6 = 0;
             *(u8 *)((s32)Object_GetById(probe.actor_slot) + 85) = v6;
-            record = (s32)Object_GetById(probe.actor_slot);
-            *(s32 *)(record + 68) = v6;
+            record = Object_GetById(probe.actor_slot);
+            record->bounce = v6;
             ObjectMotion_OffsetPositionAndResetMotion(probe.actor_slot, -12, 0);
             ObjectMotion_CommitCurrentPositionAndActivate(probe.actor_slot);
             Object_SetModeById(probe.actor_slot, 3);
@@ -39,10 +40,10 @@ void HaidiaDou_RunProbedColumnScene(void)
             SceneActor_WaitActorDescent(Object_GetById(probe.actor_slot));
             Object_SetModeById(probe.actor_slot, 8);
             {
-                u8 *obj = (u8 *)Object_GetById(probe.actor_slot);
+                struct FieldActor *obj = Object_GetById(probe.actor_slot);
 
                 two = 2;
-                obj[35] = two;
+                obj->priority_flags = two;
             }
             v5 = 4;
             StagedActor_FillGridAttributeRectangle(0, (probe.position_x >> 20), ((probe.position_z >> 20) - 2), 1, v5, v6);

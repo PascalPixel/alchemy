@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "CALL.H"
+#include "FIELDOBJ.H"
 extern u8 MsgKorosseoCheering[];
 extern u8 MsgKorosseoCheeringChoices[];
 extern struct EventWork *gEventWork;
@@ -29,13 +30,13 @@ extern s32 gGameState[];
  * each of the three Colosso trial overlays. */
 void Korosseo_FinishSoloRound(s32 id)
 {
-    s32 work;
+    struct EventWork *work;
     s32 slot;
-    u8 *obj;
+    struct FieldActor *obj;
     s32 msg;
     s32 res;
 
-    work = (s32)gEventWork;
+    work = gEventWork;
     /* FAKEMATCH: the reference looks the speaker up twice here and drops
      * both results; no use of them is recovered. */
     Object_GetById(id);
@@ -65,12 +66,12 @@ void Korosseo_FinishSoloRound(s32 id)
     if (res == 0) {
         Engine_EventSetMessage(msg + 1);
         Engine_EventShowMessage(id, 0);
-        *(s32 *)(work + 0x1c0) = 0x200;
-        *(s32 *)(work + 0x1c8) = 15;
+        work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+        work->transition_frames = 15;
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
-        Call2(GameFlag_SetByte, (slot << 4) + 0x370, *(s32 *)(obj + 8) >> 20);
-        Call2(GameFlag_SetByte, (slot << 4) + 0x378, *(s32 *)(obj + 16) >> 20);
+        Call2(GameFlag_SetByte, (slot << 4) + 0x370, obj->x.fixed >> 20);
+        Call2(GameFlag_SetByte, (slot << 4) + 0x378, obj->z.fixed >> 20);
         slot++;
         if (slot > 3) {
             Engine_EventRequestExit(10);
@@ -79,7 +80,7 @@ void Korosseo_FinishSoloRound(s32 id)
             Korosseo_SelectSoloCompetitor(slot);
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            *(s32 *)(work + 0x1c0) = 0;
+            work->start_transition = 0;
         }
     } else {
         Engine_EventSetMessage(msg + 2);

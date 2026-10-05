@@ -524,7 +524,7 @@ u8 *FuneKanpan_GetEvents(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
     s32 shown;
 
@@ -537,10 +537,10 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Engine_ActorRunRepeatedMotion(21, 2);
             Engine_EventSetMessage((s32)MsgFuneSomebodyStopThem);
             Event_ShowMessage(21, 0);
-            rec7 = (s32)Object_GetById(21);
+            rec7 = Object_GetById(21);
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
-            *(u16 *)(rec7 + 100) = shown;
+            rec7->unknown_64 = shown;
             Engine_ActorEnableActionCallback(21, (u32)FuneKanpan_RandomActorActions);
         } else {
             Actor_ShowEmote(21, 0x103, 0);
@@ -554,7 +554,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void FieldScene_RunScene3afSequenceA(void)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
     s32 shown;
 
@@ -567,10 +567,10 @@ void FieldScene_RunScene3afSequenceA(void)
             Engine_ActorRunRepeatedMotion(24, 2);
             Engine_EventSetMessage((s32)MsgFuneTheyCantPlanningMutiny);
             Event_ShowMessage(24, 0);
-            rec7 = (s32)Object_GetById(24);
+            rec7 = Object_GetById(24);
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
-            *(u16 *)(rec7 + 100) = shown;
+            rec7->unknown_64 = shown;
             Engine_ActorEnableActionCallback(24, (u32)FuneKanpan_RandomActorActions);
         } else {
             Actor_ShowEmote(24, 0x103, 0);

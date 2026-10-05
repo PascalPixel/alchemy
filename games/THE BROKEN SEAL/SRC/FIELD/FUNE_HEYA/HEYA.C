@@ -621,16 +621,16 @@ void FieldScene_RunActor11FlagDialogue(void)
         Engine_EventEnd();
     } else if (Engine_GameFlagIsSet(0x300) != 0) {
         s32 actor = SceneState_ApplyLevelFromFlags();
-        u8 *leader;
+        struct FieldActor *leader;
 
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(actor);
         Engine_EventSetMessage((s32)MsgFuneYouFinallyPickedSomeoneDidnt);
         FieldScene_RunStepThen10(11);
         Engine_ActorSetAnimation(actor, 2);
-        leader = (u8 *)Object_GetById(0);
+        leader = Object_GetById(0);
         if (leader != 0) {
-            Engine_ActorSetDestination(actor, *(s16 *)(leader + 10), *(s16 *)(leader + 18));
+            Engine_ActorSetDestination(actor, leader->x.part.pixel, leader->z.part.pixel);
         }
         Engine_ActorWaitForMove(actor);
         Engine_ActorSetPosition(actor, 0, 0);
@@ -917,7 +917,7 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
 {
     s32 p10;
     struct FieldActor *rec4;
-    u8 *record;
+    struct FieldActor *record;
     s32 none;
     s32 v8;
     s32 v6;
@@ -929,7 +929,7 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
         u8 *record = (u8 *)Object_GetById(a0);
         /* FAKEMATCH: the flag byte is read through a volatile access. */
         u8 value = *(volatile u8 *)&record[35];
-    
+
         record[35] = (u8)(value | 1);
     }
     v6 = (((rec4->facing + 0x4000) & 0xf000) >> 12);
@@ -947,9 +947,9 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
             v6 = (((rec4->facing + 0x8000) & 0xf000) >> 12);
         }
     }
-    record = (s32)Object_GetById(0);
-    if ((s32)record != 0) {
-        Engine_ActorSetPosition(a0, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+    record = Object_GetById(0);
+    if (record != 0) {
+        Engine_ActorSetPosition(a0, record->x.fixed, record->z.fixed);
     }
     Call3(Engine_ActorSetSpeed, a0, 0x19999, 0xcccc);
     Engine_ActorSetAnimation(a0, 2);

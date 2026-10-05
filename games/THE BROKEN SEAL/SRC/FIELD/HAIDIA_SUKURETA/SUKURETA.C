@@ -742,7 +742,7 @@ void HaidiaSukureta_RunArrivalScene(void)
 s32 HaidiaSukureta_RestoreEntryState(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
     s32 v5;
     s32 stranger_actions;
     s16 *room;
@@ -772,17 +772,17 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         {
             u8 *record = (u8 *)Object_GetById(8);
             u8 value = *(volatile u8 *)&record[89];
-        
+
             record[89] = (u8)(value | 8);
         }
         Call3(Engine_ActorSetPosition, 11, 0x530000, 0x1090000);
         Engine_ActorWalkToAndWait(11, 83, 0x111);
         Engine_ActorSetAnimation(11, 5);
-        record = (u8 *)Object_GetById(11);
+        record = Object_GetById(11);
         {
             s32 shown = 12;
         
-            *(u16 *)((s32)record + 32) = shown;
+            record->radius = shown;
         }
         Engine_ActorEnableActionCallback(11, (s32)Sukureta_Actor11Actions);
         if (Engine_GameFlagIsSet(0x839) != 0) {

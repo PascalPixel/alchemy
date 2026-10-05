@@ -1,3 +1,4 @@
+#include "FX_SCENE.H"
 #include "GLOBAL_CELLS.H"
 /* The Suhara desert: the phase request and two object toggles. */
 #include "SABAKU.H"
@@ -80,13 +81,13 @@ void SceneState_SendRequest15With45(void)
 s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj)
 {
     Engine_ActorSetSpriteFlags(obj, 0);
-    obj[89] = 0;
+    ((struct FieldActor *)obj)->collision_flags = 0;
     return 0;
 }
 
 s32 SuharaSabaku_ToggleActorActive(u8 *obj)
 {
-    obj[84] ^= 1;
+    ((struct FieldActor *)obj)->active ^= 1;
     return 1;
 }
 
@@ -450,7 +451,7 @@ void PlaceActorTwelveWhenFlagClear(void)
 void SuharaSabaku_EnableEffectChildOption(void)
 {
     u8 *state = *(u8 **)gEffectWork;
-    state[52] = 1;
+    ((struct BattleFxScene *)state)->child_option = 1;
 }
 
 /* The Suhara desert: meeting one of the stranded actors 8 to 12. */

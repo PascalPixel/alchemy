@@ -70,7 +70,7 @@
  *    loads MsgTorebiToss into r5 (a separate toss variable or the literal
  *    symbols drop text's priority below the mark's: 30, 32); (2) loop.c
  *    moves the A-button exit block of the key loop to the barrier after
- *    Party_AdjustSixDigitCounterA(-1) instead of after the prompt's back
+ *    Party_AdjustCoins(-1) instead of after the prompt's back
  *    jump, because that barrier is now inside the prompt loop's notes
  *    (the localized finding that forces the goto loop there);
  *  - without the message device: 42 (as for (;;)).
@@ -89,7 +89,7 @@
  *    constant into the jumps after cse, so reload materialises the -1 in r3 at
  *    each test and no later -1 argument reuses it. With a literal -1 cse keeps the
  *    compare's -1 in a pseudo and every later -1 argument (ShowMessage,
- *    OpenMessage, Party_AdjustSixDigitCounterA) reuses it;
+ *    OpenMessage, Party_AdjustCoins) reuses it;
  *  - one text variable for both windows: text is then global and local-alloc does
  *    not tie text + 1 to it, so the add goes straight into r0 at the call;
  *  - the weight sum is if (i < n) do { ... } while (i < n): i counts up against
@@ -162,7 +162,7 @@ void Battle_ResetEffectCounter(void);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
 s32 Menu_SelectEntry20To21(s32 choice);
 void UiWork_FinalizePendingCore(void);
-s32 Party_AdjustSixDigitCounterA(s32 amount);
+s32 Party_AdjustCoins(s32 amount);
 void UiWork_PushValueSlot(s32 value, s32 digits);
 s32 TorebiIzumi_RunSpringRide(s32 side);
 void TorebiIzumi_RevealPrize(s32 item);
@@ -273,14 +273,14 @@ s32 TorebiIzumi_RunSpringGame(void)
         goto end;
     }
     if (choice == 0) {
-        Party_AdjustSixDigitCounterA(-1);
+        Party_AdjustCoins(-1);
     } else if (choice == 1) {
         PartyInventory_Remove(229);
     }
     result = TorebiIzumi_RunSpringRide(choice);
     if (choice == 0) {
         if (result != 4) {
-            Party_AdjustSixDigitCounterA(Data_0200200c[result]);
+            Party_AdjustCoins(Data_0200200c[result]);
             Audio_PlayCue(91);
             UiWork_PushValueSlot(Data_0200200c[result], 5);
             Event_SetMessage((s32)MsgTorebiWonNumberCoin);

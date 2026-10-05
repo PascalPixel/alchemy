@@ -220,7 +220,7 @@ s32 Party_ListActiveOwners(s16 *owners)
     return count;
 }
 
-s32 Party_AdjustSixDigitCounterA(s32 amount)
+s32 Party_AdjustCoins(s32 amount)
 {
     s32 value;
     struct GameState *work;

@@ -17,7 +17,7 @@ void UiMessage_ShowAndRestoreState(s32 message);
 s32 UiMessage_ShowChoice(s32 value);
 void Audio_PlayCue(s32 cue);
 void Func_080772b0(s32 unit_id, s32 slot);
-void Party_AdjustSixDigitCounterAFar(s32 amount);
+void Party_AdjustCoinsFar(s32 amount);
 
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
@@ -70,7 +70,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     Audio_PlayCue(102);
     for (i = 0; i < count; i++)
         Func_080772b0(unit_id, slot);
-    Party_AdjustSixDigitCounterAFar(total);
+    Party_AdjustCoinsFar(total);
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->item_window, unit_id);
     if (rare || all)

@@ -333,10 +333,10 @@ Item_IsCompatibleWithOwnerFar:
 	.thumb_func
 Inventory_FindEquippedFar:
 	overlay_veneer Inventory_FindEquipped
-	.global Party_AdjustSixDigitCounterAFar
+	.global Party_AdjustCoinsFar
 	.thumb_func
-Party_AdjustSixDigitCounterAFar:
-	overlay_veneer Party_AdjustSixDigitCounterA
+Party_AdjustCoinsFar:
+	overlay_veneer Party_AdjustCoins
 	.global Item_GetEquipmentGroupFar
 	.thumb_func
 Item_GetEquipmentGroupFar:

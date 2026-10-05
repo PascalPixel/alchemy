@@ -160,7 +160,7 @@ Func_0810a108:
 	mov r0, r8
 	bl Owner_RecalculateStatsFar
 	mov r0, r10
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	bl Func_08109188
 	ldr r2, [sp, #12]
 	mov r1, r8

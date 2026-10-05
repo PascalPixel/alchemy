@@ -39,7 +39,7 @@ MusicCommand_SetPitchAndUpdateFrequencyFar:
 	overlay_veneer MusicCommand_SetPitch
 	overlay_veneer Audio_SetWorkPairB
 	overlay_veneer MusicCommand_SetVolume
-	overlay_veneer Audio_SetWorkPairA
+	overlay_veneer Audio_SetMusicVolumeTargetAndStep
 	.global AudioCommand_GetStateByteFar
 	.global Func_080f9048
 	.thumb_func

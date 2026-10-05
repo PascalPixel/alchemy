@@ -34,7 +34,7 @@ s32 PartyInventory_AddFar(s32 item);
 s32 GameFlag_IsSet(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-void Party_AdjustSixDigitCounterAFar(s32 coins);
+void Party_AdjustCoinsFar(s32 coins);
 s32 BattleFx_GetWeightedResult(s32 weight, s32 group);
 void BattleFx_SelectBattleCue(s32 weight, s32 group);
 void BattleParty_ApplyDrain(s32 amount, s32 mode);
@@ -164,7 +164,7 @@ s32 Field_RunTileAction(s32 tile)
                             AudioCommand_PlayFar(83);
                             UiText_DrawQuantity((*(const u16 *)&descriptor->value), 5);
                             UiText_ShowPositionedMessageAndWaitFar((s32)&MsgGotCoins, 3);
-                            Party_AdjustSixDigitCounterAFar((*(const u16 *)&descriptor->value));
+                            Party_AdjustCoinsFar((*(const u16 *)&descriptor->value));
                             if (condition != -1)
                                 GameFlag_SetBitFar(condition);
                             ObjectDispatch_ReleaseFar(object);

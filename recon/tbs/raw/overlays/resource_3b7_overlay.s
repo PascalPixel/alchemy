@@ -196,7 +196,7 @@ TorebiIzumi_RunSpringGame:
 	bne .L_02008c5c
 	movs r0, #1
 	negs r0, r0
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 	b .L_02008c68
 .L_02008c5c:
 	mov r3, r8
@@ -216,7 +216,7 @@ TorebiIzumi_RunSpringGame:
 	ldr r6, .L_02008d60
 	lsls r5, r5, #1
 	ldrh r0, [r6, r5]
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 	movs r0, #91
 	bl Engine_AudioPlayCue
 	movs r1, #5

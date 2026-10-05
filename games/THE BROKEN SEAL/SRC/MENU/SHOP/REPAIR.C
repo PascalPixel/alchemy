@@ -32,7 +32,7 @@ void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Inventory_RepairFar(s32 unit_id, s32 slot);
-void Party_AdjustSixDigitCounterAFar(s32 amount);
+void Party_AdjustCoinsFar(s32 amount);
 #define SPECIAL_ITEM 228
 
 extern const s16 Shop_SpecialItemPrices[];
@@ -229,7 +229,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     WaitFrames(20);
     unit->inventory[slot] = saved;
     Inventory_RepairFar(unit_id, slot);
-    Party_AdjustSixDigitCounterAFar(-price);
+    Party_AdjustCoinsFar(-price);
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->item_window, unit_id);
     UiWork_PushValueSlotFar(item_id, 2);

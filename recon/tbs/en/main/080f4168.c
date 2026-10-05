@@ -114,7 +114,7 @@ u32 __umodsi3(u32 numerator, u32 denominator);
 void FarCall_WindowTable(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_FinalizeFar(s32 window, s32 mode);
-void Party_AdjustSixDigitCounterAFar(s32 amount);
+void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
 void Audio_PlayCue(s32 cue);
 
@@ -342,7 +342,7 @@ void LuckyDice_Run(void)
 
         if (state == 2) {
             if (timer == 20 && winnings > 0) {
-                Party_AdjustSixDigitCounterAFar(winnings);
+                Party_AdjustCoinsFar(winnings);
                 digits = 1;
                 if (winnings > 9) {
                     digits = 2;
@@ -439,7 +439,7 @@ void LuckyDice_Run(void)
                 if ((u32)bet > gGameState.coins) {
                     bet = gGameState.coins;
                 }
-                Party_AdjustSixDigitCounterAFar(-bet);
+                Party_AdjustCoinsFar(-bet);
                 UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
                 die = work->die;
                 for (i = 0; i != 2; i++) {

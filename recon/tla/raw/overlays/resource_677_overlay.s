@@ -958,7 +958,7 @@ Func_0200077c:
 	bl Func_02000a88
 	mov r3, r8
 	negs r0, r3
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 	b .L_02008850
 .L_02008842:
 	ldr r0, .L_02008868

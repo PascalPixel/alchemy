@@ -54,7 +54,7 @@ void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
 s32 Owner_GetValueIfLevelThresholdReachedFar(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
-void Party_AdjustSixDigitCounterAFar(s32 amount);
+void Party_AdjustCoinsFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
 s32 PartyInventory_AddFar(s32 item);
 
@@ -244,7 +244,7 @@ void Battle_AwardSpoils(void)
     if (spoils->coins != 0) {
         UiWork_PushValueSlotFar(spoils->coins, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgCoinsGained);
-        Party_AdjustSixDigitCounterAFar(spoils->coins);
+        Party_AdjustCoinsFar(spoils->coins);
         BattlePresentation_WaitForAdvance();
     }
     found = &gOverflowItem;

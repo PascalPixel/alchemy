@@ -403,7 +403,7 @@ Func_020002a8:
 	bl Func_02000e68
 	mov r3, r8
 	negs r0, r3
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 	b .L_0200837a
 .L_0200836c:
 	ldr r0, .L_02008390

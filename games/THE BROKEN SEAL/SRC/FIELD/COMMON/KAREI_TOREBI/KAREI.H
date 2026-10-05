@@ -29,7 +29,7 @@ void UiText_DrawNumberInWindow();
 void UiWork_Finalize();
 void UiWork_Finalize();
 void UiWork_Finalize();
-void Party_AdjustSixDigitCounterA();
+void Party_AdjustCoins();
 void Battle_ResetEffectCounter();
 void Motion_LaunchFromFocusedObject();
 void Battle_ResetEffectCounter();

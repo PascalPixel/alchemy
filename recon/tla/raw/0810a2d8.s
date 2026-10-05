@@ -151,7 +151,7 @@ Func_0810a2d8:
 	bl Inventory_RepairFar
 	mov r3, r9
 	negs r0, r3
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	bl Func_08109188
 	ldr r2, [sp, #8]
 	adds r1, r7, #0

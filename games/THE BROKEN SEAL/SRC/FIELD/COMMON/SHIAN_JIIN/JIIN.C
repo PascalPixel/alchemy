@@ -131,7 +131,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gShianJiinPlacements;
 }
 
-void FieldScene_RunScene39e_02000414(void)
+void ShianJiin_AskBridgeCrossing(void)
 {
     u32 i;
     s32 record;
@@ -1446,7 +1446,7 @@ void FieldScene_PlaySound123AndEnable(void)
     Engine_EventRequestExit(1);
 }
 
-void FieldScene_RunScene39e_02002778(void)
+void ShianJiin_RunExitTransition(void)
 {
     u32 i;
     s32 record;

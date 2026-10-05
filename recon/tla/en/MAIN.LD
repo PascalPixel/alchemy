@@ -785,8 +785,6 @@
         "*/recon/tla/raw/08044348.o"(.text)
         "*/recon/tla/raw/080443d8.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FIXED_BLOCK.o"(.text)
-        "*/recon/tla/raw/08044498.o"(.text)
-        "*/recon/tla/raw/080444e8.o"(.text)
         "*/recon/tla/raw/08044558.o"(.text)
         "*/recon/tla/raw/08044a54.o"(.text)
         "*/recon/tla/raw/08044a58.o"(.text)

@@ -547,7 +547,6 @@
     "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00043d40)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FIXED_BLOCK.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00044500)
     "*/recon/tla/fr/rom.o"(.rom.000445c0)
     "*/recon/tla/fr/rom.o"(.rom.00044adc)
     "*/recon/tla/fr/rom.o"(.rom.00044ae0)

@@ -201,7 +201,7 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     Engine_ActorJump(31, 4, 30);
     Engine_EventShowMessage(31, 0);
     Engine_EventWait(10);
-    /* r1 = 129 << 1 = 0x102. Argument registers are set r1, r2, r0. */
+
     Engine_ActorShowEmote(32, 0x102, 50);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(32, 3);
@@ -223,7 +223,6 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     Engine_EventEnd();
 }
 
-/* Keep the first byte store and zero initialization as one assignment. */
 s32 Scene_InitFacingActors(void)
 {
     u8 *record;

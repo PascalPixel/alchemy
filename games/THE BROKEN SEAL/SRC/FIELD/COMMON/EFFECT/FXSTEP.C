@@ -105,7 +105,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
     return 0;
 }
 
-void ObjectGroup_ProbeKeysWhenField24High(void)
+void BattleFx_ProbeKeysForExtendedActor(void)
 {
     struct BattleEffectWork *work = gBattleFxWork;
     struct BattleEffectArgument *effect = work->effect;

@@ -4569,7 +4569,9 @@ Func_0811c314:
 	.type BattleMotion_SetMode5AndActivateSlot, %function
 	.thumb_func
 BattleMotion_SetMode5AndActivateSlot:
-	.incbin "baserom.gba", 0x0011cd08, 0x0000008c
+	.incbin "baserom.gba", 0x0011cd08, 0x00000040
+	.section .rom.0011cd92, "ax"
+	.incbin "baserom.gba", 0x0011cd92, 0x00000002
 	.section .rom.0011cd94, "ax"
 	.global Camera_ConfigureScene
 	.type Camera_ConfigureScene, %function

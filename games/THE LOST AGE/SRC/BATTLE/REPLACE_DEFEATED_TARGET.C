@@ -1,6 +1,3 @@
-/* Near miss: score 60 beyond the listing's trailing pad. ⚓️ schedules sub
-   sp, #28 before copying the target id into r0 for Owner_GetState; this
-   draft copies first. 40 s of permuting found nothing. */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
@@ -9,6 +6,8 @@
 #include "SYSTEM.H"
 #include "OWNER_STATE.H"
 
+/* An action's target, or when that unit is down a random living unit on
+   its side; 0x100 when none lives. */
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
     s16 living_units[14];

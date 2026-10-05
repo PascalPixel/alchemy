@@ -56,31 +56,22 @@ void ObjectMotion_SetActionVariant(u32 object_id, s32 priority)
     }
 }
 
+/* Gives the target object the source's frames: its VRAM block and tile.
+   One pointer holds each object and then its sprite, as in ☀️; separate
+   locals load the sprite into another register. */
 void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
 {
-    void *p;
+    struct FieldSprite *sprite;
     u8 block;
     u32 tile;
-    u32 attr;
-    u32 merged;
 
-    /* One pointer holds the object and then its sprite, as in ☀️; separate
-       object and sprite locals load the sprite into another register. The
-       tile number is the low ten bits of the third attribute word at +8,
-       which the sprite struct keeps as bytes. */
-    p = Object_GetById(source_id);
-    p = ((struct ObjectRuntime *)p)->animation;
-    block = ((struct FieldSprite *)p)->vram_block;
-    tile = *(u16 *)((u8 *)p + 8);
+    sprite = (struct FieldSprite *)Object_GetById(source_id);
+    sprite = ((struct ObjectRuntime *)sprite)->animation;
+    block = sprite->vram_block;
+    tile = sprite->tile;
 
-    p = Object_GetById(target_id);
-    p = ((struct ObjectRuntime *)p)->animation;
-    attr = *(u16 *)((u8 *)p + 8);
-    ((struct FieldSprite *)p)->vram_block = block;
-    tile <<= 22;
-    tile >>= 22;
-    merged = 0xfffffc00;
-    merged &= attr;
-    merged |= tile;
-    *(u16 *)((u8 *)p + 8) = merged;
+    sprite = (struct FieldSprite *)Object_GetById(target_id);
+    sprite = ((struct ObjectRuntime *)sprite)->animation;
+    sprite->vram_block = block;
+    sprite->tile = tile;
 }

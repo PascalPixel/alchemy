@@ -45,7 +45,7 @@ void FieldScene_SetActor13Value41(void)
     BattleFx_SetPhaseRequest(13, 0x41);
 }
 
-u8 *SceneData_GetTablebf70(void)
+u8 *ArutamiraDou_GetEntrances(void)
 {
     return ArutamiraDou_SceneTableA;
 }
@@ -55,7 +55,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTablec138(void)
+u8 *ArutamiraDou_GetExits(void)
 {
     return ArutamiraDou_SceneTableB;
 }

@@ -9,6 +9,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
 #include "FIELD_SPRITE.H"
+#include "FIELDCOO.H"
 #include "FIELDRUN.H"
 
 extern struct FieldStepWork *gEventWork;
@@ -79,7 +80,7 @@ again:
     leader->velocity_y = 0x40000;
     *flags &= 0x7e;
     ObjectDispatch_SetSingleChildField26Far(leader, child_mode & 0xfe);
-    ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, *(s16 *)((u8 *)&pos->x + 2), *(s16 *)((u8 *)&pos->z + 2));
+    ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, ((union FieldCoordinate *)&pos->x)->part.pixel, ((union FieldCoordinate *)&pos->z)->part.pixel);
     Object_SetMode(leader, 6);
     ObjectDispatch_SetSingleChildField26Far(leader, child_mode);
     if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
@@ -118,8 +119,8 @@ done:
 s32 FieldEffect_UpdateGridPlacement(void)
 {
     struct ObjectRuntime *object = Object_GetById(gGameState.selected_actor);
-    s32 grid_x = 8 + ((*(s16 *)((u8 *)&object->x + 2)) & 0xfff0);
-    s32 grid_z = 8 + ((*(s16 *)((u8 *)&object->z + 2)) & 0xfff0);
+    s32 grid_x = 8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
+    s32 grid_z = 8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
     s32 tile_x = grid_x - 8;
     s32 tile_z = grid_z - 8;
     s32 result;
@@ -185,8 +186,8 @@ s32 battle_owner_69(void)
 {
     struct ObjectRuntime *object = Object_GetById(gGameState.selected_actor);
     s16 child_mode = 1;
-    s32 grid_x = 8 + ((*(s16 *)((u8 *)&object->x + 2)) & 0xfff0);
-    s32 grid_z = 8 + ((*(s16 *)((u8 *)&object->z + 2)) & 0xfff0);
+    s32 grid_x = 8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
+    s32 grid_z = 8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
     s32 tile_x = grid_x - 8;
     s32 tile_z = grid_z - 8;
     s32 result;

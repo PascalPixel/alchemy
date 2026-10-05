@@ -79,14 +79,7 @@ enum SceneTransitionStyle {
 
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 
-/* A 16.16 fixed-point map coordinate; its high half is the whole pixel. */
-union FieldCoordinate {
-    s32 fixed;
-    struct {
-        u16 fraction;
-        s16 pixel;
-    } part;
-};
+#include "FIELDCOO.H"
 
 #include "FIELD_SPRITE.H"
 

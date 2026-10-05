@@ -28,13 +28,25 @@
  *   (235 with one test, 214 with "i = 0" first, 155 per branch).
  * - zero is volatile u32 (as in EFFECT32.C): the ROM stores it through r0
  *   after forming &zero (151).
- * Remaining (151): register choice r1/r2 around the list loop's setup and
- * step, the order of the pool loads at the area and flag stores, the main
- * loop's first block (ROM "movs r3, #0; mov r1, r8; ldr r2"), glow[1] read
- * as [save + (slot*64 + 0x1074)] + 1 in the ROM (here 0x105c + 25 from the
- * level constant; F1-F11 spellings of the pair in a probe all differ), the
- * up/down searches' tail polarity (ROM "bne check; b top", here "beq top"
- * as a long branch then "b check"), and gKeyState read through r2.
+ * - The up/down searches are "do { step; if (mode == 0) break; } while
+ *   (wanted)": the ROM's tail is "bne check; b top" (125).
+ * - gKeyState and gKeysRepeat are volatile s32 (as MENU_LIST.H has them):
+ *   the ROM reads gKeyState twice (117).
+ * - "y = 0" after "summary = save->summary", and save declared after list
+ *   (105, found by devsearch, plain).
+ * - The ROM reads the second glow byte as [save + (slot*64 + 0x1074)] + 1,
+ *   the shape extract_bit_field gives a byte bit-field (a probe of eleven
+ *   array and pointer spellings never gave it). SaveSummary's two glow
+ *   bytes are u16 bit-fields palette_glow and palette_glow_sub here, and
+ *   SAVE2.C writes them by those names; all twelve editions still match
+ *   (98). The render work is struct UiRenderWork, render->dirty.
+ * Remaining (98): reload register choice. Reload hands out spill registers
+ * round robin (reload1.c allocate_reload_reg), and from the dirty store on
+ * the list loop (ROM: constant r1, render r3) and the main loop's tests
+ * and constants are rotated by one against the ROM, so one reload more or
+ * fewer happens somewhere before that store. devsearch seed 93 reached 60
+ * with a "+r" lifetime device on status in the B-press branch (which puts
+ * result in r2, not r5) and plain declaration swaps; not adopted.
  * The Japanese extent is 0x5f8 bytes against 0x580 in the other five
  * editions.
  */
@@ -48,8 +60,8 @@
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 
-extern u32 gKeyState;
-extern u32 gKeysRepeat;
+extern volatile s32 gKeyState;
+extern volatile s32 gKeysRepeat;
 extern char MsgSaveNoData;
 extern char MsgSaveContinue;
 extern char MsgSaveNotCleared;
@@ -77,15 +89,15 @@ void RenderOutput_RedrawSavedRect(void *win);
 
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
-    struct SaveWorkspace *save;
     struct UiWindow *list;
+    struct SaveWorkspace *save;
     struct UiWindow *status;
     struct UiWindow *djinn;
     struct UiWindow *counts;
     struct SaveSummary *summary;
     struct RenderOutput *cursor;
     s32 redraw;
-    u8 *render;
+    struct UiRenderWork *render;
     u32 stamp;
     void *work;
     volatile u32 zero;
@@ -149,8 +161,8 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     Dma_Set(&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
     Scheduler_ScheduleCallbackAAfterFrames();
     list = UiWindow_Create(1, 2, 28, 7, 2);
-    y = 0;
     summary = save->summary;
+    y = 0;
     for (i = 2; i >= 0; i--, y += 16, summary++) {
         if (summary->level == 0) {
             UiText_DrawResource((s32)&MsgSaveNoData, list, 10, y);
@@ -163,7 +175,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
         } else {
             UiText_DrawString(summary->name, list, 12, y);
             UiText_DrawResource(summary->area + RENDER_RESOURCE_BASE, list, 62, y);
-            render[RENDER_DIRTY_OFS] = 1;
+            render->dirty = 1;
         }
     }
     UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
@@ -174,7 +186,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
         if (redraw != 0) {
             redraw = 0;
             if (save->summary[slot].level != 0) {
-                PaletteGlow_Update(save->summary[slot].palette_glow[0], save->summary[slot].palette_glow[1]);
+                PaletteGlow_Update(save->summary[slot].palette_glow, save->summary[slot].palette_glow_sub);
                 if (status == NULL)
                     status = UiWindow_Create(1, 10, 14, 9, 2);
                 StatusMenu_DrawCharacterSummary(status, &save->summary[slot]);
@@ -219,7 +231,9 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
             redraw = 1;
             do {
                 slot = (slot + 2) % 3;
-            } while (mode != 0 && (save->summary[slot].level == 0
+                if (mode == 0)
+                    break;
+            } while ((save->summary[slot].level == 0
                 || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
                 || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
                 || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
@@ -228,7 +242,9 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
             redraw = 1;
             do {
                 slot = (slot + 4) % 3;
-            } while (mode != 0 && (save->summary[slot].level == 0
+                if (mode == 0)
+                    break;
+            } while ((save->summary[slot].level == 0
                 || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
                 || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
                 || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));

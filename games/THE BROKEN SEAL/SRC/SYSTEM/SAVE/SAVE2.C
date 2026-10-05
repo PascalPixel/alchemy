@@ -234,8 +234,8 @@ u32 SaveState_BuildSummaryHeader(void)
     for (i = 0; i <= 3 && owners[i] != 255; i++)
         summary->party[i] = owners[i];
     summary->party[i] = -1;
-    summary->palette_glow[0] = gGameState.palette_glow[0];
-    summary->palette_glow[1] = gGameState.palette_glow[1];
+    summary->palette_glow = gGameState.palette_glow[0];
+    summary->palette_glow_sub = gGameState.palette_glow[1];
     summary->send_flag = gGameState.unknown_20f;
     summary->flag_count = 0;
     for (i = 48; i <= 127; i++) {

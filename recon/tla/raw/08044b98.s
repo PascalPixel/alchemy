@@ -61,7 +61,7 @@ Func_08044b98:
 	mov r0, r10
 	bl UiWork_PushValueSlot
 	ldr r0, .L_08044c78
-	bl Func_0803cf60
+	bl UiText_BuildRenderEntriesMode1
 	movs r2, #36
 	adds r1, r0, #0
 	movs r3, #2

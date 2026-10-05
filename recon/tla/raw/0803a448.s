@@ -52,4 +52,4 @@ Func_0803a448:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0803a4ac:
-	.4byte Func_0803a8c8
+	.4byte UiWork_ProcessAll

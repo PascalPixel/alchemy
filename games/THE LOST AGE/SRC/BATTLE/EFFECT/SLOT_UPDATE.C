@@ -1,15 +1,11 @@
-/* Near miss: score 60. ⚓️ loads the callback delay (ldrh r2, [r5, #58])
-   before storing the incremented age and decrements that copy; this draft
-   reloads it after the store. A u16 copy or u16 pointer changes the code
-   more; so does a u16 copy loaded ahead of an asm barrier (score 955, the
-   decrement gains a zero-extension). */
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 
-/* battle/effects/runtime/update_slot.c */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void BattleFx_DrawScaledObject(struct EffectSlot *effect);
 
+/* One frame of an effect slot: its age, its delayed callback, then its
+   motion and drawing while it stays active. */
 void EffectSlot_Update(struct EffectSlot *effect)
 {
     if (effect->active != 0) {

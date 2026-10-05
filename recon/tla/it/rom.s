@@ -1128,7 +1128,17 @@ RenderOutput_Release:
 Ui_ClearVramBlock:
 	.incbin "baserom.gba", 0x000396a0, 0x0000003c
 	.section .rom.0003972a, "ax"
-	.incbin "baserom.gba", 0x0003972a, 0x0000090e
+	.incbin "baserom.gba", 0x0003972a, 0x000000b6
+	.global UiWork_ProcessRenderChannels
+	.type UiWork_ProcessRenderChannels, %function
+	.thumb_func
+UiWork_ProcessRenderChannels:
+	.incbin "baserom.gba", 0x000397e0, 0x000006d4
+	.global UiWork_ProcessDirectWork
+	.type UiWork_ProcessDirectWork, %function
+	.thumb_func
+UiWork_ProcessDirectWork:
+	.incbin "baserom.gba", 0x00039eb4, 0x00000184
 	.section .rom.0003a066, "ax"
 	.incbin "baserom.gba", 0x0003a066, 0x00000002
 	.section .rom.0003a068, "ax"
@@ -1179,7 +1189,9 @@ UiText_OpenMessageWindow:
 	.type UiText_ShowPositionedMessageAndWait, %function
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
-	.incbin "baserom.gba", 0x0003a790, 0x000002f8
+	.incbin "baserom.gba", 0x0003a790, 0x0000011c
+	.section .rom.0003a8bc, "ax"
+	.incbin "baserom.gba", 0x0003a8bc, 0x000001cc
 	.section .rom.0003aaae, "ax"
 	.incbin "baserom.gba", 0x0003aaae, 0x00000002
 	.section .rom.0003aab0, "ax"
@@ -1245,7 +1257,12 @@ Func_0803c198:
 	.type UiWindow_SetTilemapEntry, %function
 	.thumb_func
 UiWindow_SetTilemapEntry:
-	.incbin "baserom.gba", 0x0003c378, 0x00000634
+	.incbin "baserom.gba", 0x0003c378, 0x000001d0
+	.global UiWork_AnimateSpriteSlots
+	.type UiWork_AnimateSpriteSlots, %function
+	.thumb_func
+UiWork_AnimateSpriteSlots:
+	.incbin "baserom.gba", 0x0003c548, 0x00000464
 	.section .rom.0003c9bc, "ax"
 	.global UiText_CopyMessageString
 	.type UiText_CopyMessageString, %function
@@ -1276,7 +1293,10 @@ Func_0803ce1c:
 	.type Func_0803ce64, %function
 	.thumb_func
 Func_0803ce64:
-	.incbin "baserom.gba", 0x0003cebc, 0x000001bc
+	.incbin "baserom.gba", 0x0003cebc, 0x000000fc
+	.section .rom.0003cfc4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003cfc4, 0x000000b4
 	.section .rom.0003d078, "ax"
 	.global Func_0803d020
 	.type Func_0803d020, %function
@@ -2453,8 +2473,8 @@ Owner_RefreshClassActions:
 	.thumb_func
 Curve_LookupScaledValue:
 	.incbin "baserom.gba", 0x000b02e8, 0x0000009c
-	.section .rom.000b04c6, "ax"
-	.incbin "baserom.gba", 0x000b04c6, 0x000001ee
+	.section .rom.000b0520, "ax"
+	.incbin "baserom.gba", 0x000b0520, 0x00000194
 	.section .rom.000b0768, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000b0768, 0x00000338
@@ -4306,19 +4326,28 @@ Func_080cd91c:
 Func_080e035c:
 	.incbin "baserom.gba", 0x000e0350, 0x00000050
 	.section .rom.000e03b6, "ax"
-	.incbin "baserom.gba", 0x000e03b6, 0x00000fba
+	.incbin "baserom.gba", 0x000e03b6, 0x000008c2
+	.section .rom.000e0ca0, "ax"
+	.incbin "baserom.gba", 0x000e0ca0, 0x000006d0
 	.section .rom.000e1370, "ax"
 	.global Func_080e15fc
 	.type Func_080e15fc, %function
 	.thumb_func
 Func_080e15fc:
-	.incbin "baserom.gba", 0x000e1370, 0x000000a4
+	.incbin "baserom.gba", 0x000e1370, 0x00000034
+	.section .rom.000e13dc, "ax"
+	.incbin "baserom.gba", 0x000e13dc, 0x00000038
 	.section .rom.000e1414, "ax"
 	.global Func_080e1650
 	.type Func_080e1650, %function
 	.thumb_func
 Func_080e1650:
-	.incbin "baserom.gba", 0x000e1414, 0x000001dc
+	.incbin "baserom.gba", 0x000e1414, 0x00000028
+	.global BattleFx_SpawnScaledArcObjects
+	.type BattleFx_SpawnScaledArcObjects, %function
+	.thumb_func
+BattleFx_SpawnScaledArcObjects:
+	.incbin "baserom.gba", 0x000e143c, 0x000001b4
 	.section .rom.000e15f0, "ax"
 	.global Func_080dc1b0
 	.type Func_080dc1b0, %function
@@ -4469,12 +4498,17 @@ Func_080eb298:
 	.thumb_func
 Func_080db0b0:
 	.incbin "baserom.gba", 0x000eb954, 0x000002d0
-	.section .rom.000ebc24, "ax"
-	.global EffectSlot_Update
-	.type EffectSlot_Update, %function
+	.section .rom.000ebc88, "ax"
+	.global BattleFx_DrawScaledObject
+	.type BattleFx_DrawScaledObject, %function
 	.thumb_func
-EffectSlot_Update:
-	.incbin "baserom.gba", 0x000ebc24, 0x00000240
+BattleFx_DrawScaledObject:
+	.incbin "baserom.gba", 0x000ebc88, 0x00000090
+	.global EffectSlot_UpdateMotion
+	.type EffectSlot_UpdateMotion, %function
+	.thumb_func
+EffectSlot_UpdateMotion:
+	.incbin "baserom.gba", 0x000ebd18, 0x0000014c
 	.section .rom.000ebea8, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000ebea8, 0x000000b4
@@ -4649,7 +4683,10 @@ ItemMenu_ArrangeCategoryItemIcons:
 	.type ItemMenu_PosCategory, %function
 	.thumb_func
 ItemMenu_PosCategory:
-	.incbin "baserom.gba", 0x0010081c, 0x0000077c
+	.incbin "baserom.gba", 0x0010081c, 0x00000728
+	.section .rom.00100f78, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00100f78, 0x00000020
 	.section .rom.00100f98, "ax"
 	.global Func_08100e7c
 	.type Func_08100e7c, %function

@@ -133,7 +133,7 @@ Func_08102008:
 	add r11, r0
 	mov r0, r11
 	ldrb r1, [r5]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	mov r11, r0
 .L_0810210c:
 	movs r1, #1
@@ -1786,7 +1786,7 @@ Func_08102008:
 	str r1, [sp, #52]
 	ldr r0, [sp, #52]
 	ldrsb r1, [r2, r5]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	movs r3, #2
 	str r0, [sp, #52]
 	str r0, [sp, #48]
@@ -1828,7 +1828,7 @@ Func_08102008:
 	str r2, [sp, #52]
 	adds r0, r2, #0
 	ldrsb r1, [r3, r5]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	mov r4, r11
 	str r0, [sp, #52]
 	ldrb r2, [r7, r4]
@@ -1972,7 +1972,7 @@ Func_08102008:
 .L_08102f9e:
 	ldr r0, [sp, #52]
 	adds r1, r5, #0
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	movs r1, #2
 	mov r3, r8
 	str r0, [sp, #52]

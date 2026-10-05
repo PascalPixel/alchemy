@@ -48,7 +48,7 @@ Party_ListActiveOwnersFar:
 	.global Func_080ad108
 	.thumb_func
 Func_080ad108:
-	overlay_veneer Func_080b04bc
+	overlay_veneer RollWeaponUnleash
 	.global Party_RemoveActiveOwnerFar
 	.thumb_func
 Party_RemoveActiveOwnerFar:

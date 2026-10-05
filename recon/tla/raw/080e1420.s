@@ -23,6 +23,6 @@ Func_080e1420:
 	pop {pc}
 	.2byte 0x0000
 .L_080e1440:
-	.4byte Func_080e13b0
+	.4byte BattleFx_FlickerObjectAndTick
 .L_080e1444:
 	.4byte Func_080e13e8

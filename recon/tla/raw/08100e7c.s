@@ -116,7 +116,7 @@ Func_08100e7c:
 	movs r0, #0
 	bl Func_080fa368
 	movs r0, #0
-	bl Func_08100e34
+	bl Menu_SetFirstObjectRowCoordinates
 	movs r0, #14
 	bl Palette_LightenBankHighlight
 	movs r3, #2

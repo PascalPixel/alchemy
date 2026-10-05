@@ -24,7 +24,7 @@ Func_080e13e8:
 	cmp r3, #0
 	bne .L_080e1418
 	adds r0, r5, #0
-	bl Func_080e1448
+	bl BattleFx_SpawnScaledArcObjects
 .L_080e1418:
 	pop {r5, r6, pc}
 	.2byte 0x0000

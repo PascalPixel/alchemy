@@ -1,18 +1,19 @@
 #include "TYPES.H"
-#include "SCENE.H"
-void Audio_PlayCueReturnOne(s32);
+#include "RAM_BUFFER.H"
 
-/* ability/play_use_animation.c */
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1)
+{
+    return (arg0 + arg1) % arg1;
+}
 
-void *BattleAction_Get();
-
+/* Places the first row's four objects 56 pixels apart from x 32, at the
+   given row's y plus 61, and returns that y. */
 s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
 {
     u8 *current;
     s32 value;
     s32 count;
-    current = gMenuWork + 0x134;
+    current = (u8 *)Ram_HeapSlots->menu_runtime + 0x118;
     arg0 += 0x3D;
     value = 0x20;
     count = 3;

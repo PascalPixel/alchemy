@@ -87,7 +87,7 @@ Func_080e0dd4:
 .L_080e0e94:
 	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080e0e98:
-	.4byte Func_080e0c84
+	.4byte BattleFx_AdvanceObjectField6WithRamp
 .L_080e0e9c:
 	.4byte Func_080e0cac
 .L_080e0ea0:

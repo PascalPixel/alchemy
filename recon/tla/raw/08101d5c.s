@@ -143,7 +143,7 @@ Func_08101d5c:
 	subs r6, #1
 	adds r0, r6, #0
 	movs r1, #7
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	adds r6, r0, #0
 	movs r0, #111
 	bl Audio_PlayCue
@@ -184,7 +184,7 @@ Func_08101d5c:
 	adds r6, #1
 	adds r0, r6, #0
 	movs r1, #7
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	adds r6, r0, #0
 	movs r0, #112
 	bl Audio_PlayCue
@@ -212,7 +212,7 @@ Func_08101d5c:
 	adds r6, #1
 	adds r0, r6, #0
 	movs r1, #7
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	adds r6, r0, #0
 	movs r0, #111
 	bl Audio_PlayCue

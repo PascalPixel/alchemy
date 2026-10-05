@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08039ed0
+	.global UiWork_ProcessDirectWork
 	.thumb_func
-Func_08039ed0:
+UiWork_ProcessDirectWork:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

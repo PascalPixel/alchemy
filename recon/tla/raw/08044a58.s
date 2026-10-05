@@ -88,7 +88,7 @@ Func_08044a58:
 	ldr r0, .L_08044b78
 	movs r5, #129
 	adds r0, r6, r0
-	bl Func_0803cf60
+	bl UiText_BuildRenderEntriesMode1
 	mov r2, r10
 	adds r1, r0, #0
 	str r2, [sp, #0]

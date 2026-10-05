@@ -177,7 +177,7 @@ void HaidiaArashi_RequestBackdropExit(u8 *o)
     Engine_EventRequestExit(o);
 }
 
-void FieldScene_SetupDescriptorD774(void)
+void HaidiaArashi_OpenBackdropExit11(void)
 {
     Engine_AudioPlayCue(0x9E);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps0, 45, 11);
@@ -217,7 +217,7 @@ void FieldScene_RunStep7BAndCheckFlags841And842(void)
     HaidiaArashi_RequestBackdropExit(2);
 }
 
-void FieldScene_SetupDescriptorD78a(void)
+void HaidiaArashi_OpenBackdropExit5(void)
 {
     Engine_AudioPlayCue(0x9E);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
@@ -250,7 +250,7 @@ void HaidiaArashi_OpenGateRoute(void)
     }
 }
 
-void FieldScene_SetupDescriptorD78aIfFlag205Clear(void)
+void HaidiaArashi_OpenBackdropExit7(void)
 {
     if (Engine_GameFlagIsSet(0x205) == 0) {
         Engine_AudioPlayCue(0x9E);
@@ -261,7 +261,7 @@ void FieldScene_SetupDescriptorD78aIfFlag205Clear(void)
     HaidiaArashi_RequestBackdropExit(7);
 }
 
-void FieldScene_SetupWithDescriptorD7A0(void)
+void HaidiaArashi_OpenBackdropExit8(void)
 {
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
@@ -270,7 +270,7 @@ void FieldScene_SetupWithDescriptorD7A0(void)
     HaidiaArashi_RequestBackdropExit(8);
 }
 
-void FieldScene_SetupDescriptorD7b6(void)
+void HaidiaArashi_OpenBackdropExit9(void)
 {
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
@@ -645,7 +645,7 @@ void Scene_DoraSendsRobinToThePlaza(void)
     Engine_EventEnd();
 }
 
-void HaidiaArashi_RunScene00D5C(void)
+void HaidiaArashi_RunStormTriggerScene(void)
 {
     u32 i;
     struct FieldActor *rec7;
@@ -1823,7 +1823,7 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
     Engine_EventEnd();
 }
 
-void HaidiaArashi_RunScene02DEC(void)
+void HaidiaArashi_RunReunionAndDeparture(void)
 {
     u32 i;
     struct FieldActor *rec;

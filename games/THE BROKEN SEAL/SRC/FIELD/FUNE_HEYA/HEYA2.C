@@ -189,9 +189,6 @@ void Event_CallWithLastActiveObjectId();
 u8 *Battle_GetWorkObject1e0();
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
-/* The halfword field at +6 of a scene record is written from an int-sized
- * value; storing a plain constant through the cast would make the compiler
- * fetch a halfword literal from the pool instead. */
 static __inline__ void SetPose(u8 *rec, s32 pose)
 {
     *(u16 *)(rec + 6) = pose;
@@ -234,13 +231,7 @@ void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
 
 /* Bucket offsets, packed as {s16 hi; s16 lo} per entry. */
 
-/*
- * Offset obj+10 and obj+18 by the bucket's packed hi/lo pair, test the
- * candidate point, and on success pack {x << 16, obj+12, z << 16} into a
- * stack struct for a second check.  Returns 1 only if both checks pass.  The
- * owner includes its one pool word, the bucket table base.  Callees are named
- * by the address their call site computes, not by a runtime address.
- */
+/* Offset the actor's position by the bucket's packed pair and accept it only if both placement checks pass. */
 s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
     struct FieldActor *obj = Object_GetByIdFar(0);
@@ -508,24 +499,6 @@ void FuneHeya_RunFlagBranchSequence(void)
     Engine_EventEnd();
 }
 
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
 void FieldScene_RunScene3b1SequenceD(void)
 {
     u32 i;
@@ -542,11 +515,7 @@ void FieldScene_RunScene3b1SequenceD(void)
     }
 }
 
-/*
- * Gated on flag 0x922.  Every callee slot has its own local call stub;
- * ConfigureSceneMotionFlags and FieldScene_CallPairWith10 are the same stub declared twice without
- * a prototype, because the two call sites pass different argument counts.
- */
+/* Run this scene only when flag 0x922 is set. */
 void FieldScene_RunFlagGatedThreeActorSetup(void)
 {
     if (Engine_GameFlagIsSet(0x922) == 0)
@@ -1344,7 +1313,6 @@ s32 FuneHeya_ApplyEntryState(void)
     return 0;
 }
 
-/* The zero is a one-halfword struct, so its pool load has a short reach and the pool lands mid-function as in the ROM. */
 void FuneHeya_ApplyFlaggedLayout(void)
 {
     struct FieldActor *actor;
@@ -1544,24 +1512,6 @@ void FuneHeya_PlaceFoundActors(s32 gated)
 
 /* Message ids. */
 
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
 void FieldScene_RunFourActorCoordinatePresentation(void)
 {
     struct FieldActor *record;
@@ -1987,8 +1937,7 @@ void Scene_RunConditionalActorPresentation(s32 a0)
     Engine_EventSetMessage((s32)MsgFuneBack);
     Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
     Engine_ActorShowEmote(27, 0x101, 60);
-    /* FAKEMATCH: start the saved speaker at repeated dialogue; the initial
-     * call must retain its independent load from the same literal word. */
+    /* FAKEMATCH: start the saved speaker at repeated dialogue; the initial call must retain its independent load from the same literal word. */
     base5_a01b = CabinSpeakerRequest;
     FieldScene_RunStepThen10(base5_a01b);
     Engine_ActorSetAttachedEffect(0, 0x102);
@@ -2115,29 +2064,6 @@ void FuneHeya_PoseSceneActor(s32 id)
     }
 }
 
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
-
-/*
- * Both callees live inside this overlay and are declared without a prototype,
- * so each call site fixes its own arity.
- */
 void FieldScene_RunStepThen10(s32 a)
 {
     Engine_EventShowMessage(a, 0);
@@ -2168,6 +2094,7 @@ void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
     Engine_EventWait(selected);
 }
 
+/* Dispatches 26 scene steps; step 18 continues with step 14, and each step assigns its own roles to the two parameters. */
 void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 {
     extern const s32 FuneHeya_ActionScriptE[];
@@ -2472,24 +2399,6 @@ s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate)
     return 0;
 }
 
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
 void SceneState_ApplyActor8FourFlags(void)
 {
     SceneActor_RunFirstMatchingSlot(8, 0x92c);
@@ -2611,24 +2520,6 @@ void FieldScene_RunPositionTransferPresentation(void)
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 }
 
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
 void FieldScene_RunFormationAndEffectPresentation(void)
 {
     s32 action;
@@ -2914,7 +2805,6 @@ void FieldScene_RunExtendedFormationPresentation(void)
  * to 80.
  */
 
-/* Same argument forwarding used by the byte-exact timer sibling. */
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
     s32 value;
@@ -3072,24 +2962,6 @@ void Scene_RunFourActorProgressPresentation(void)
     Engine_EventEnd();
 }
 
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
 void FieldScene_RunScene3b1_02006110(void)
 {
     s32 rec2;
@@ -3164,14 +3036,7 @@ void FieldScene_RunScene3b1_02006110(void)
     Engine_EventRequestExit(10);
 }
 
-/*
- * Runs two first-match linear scans over indices 0 to 8, each breaking on its
- * first hit and calling a per-element handler, then cross-pairs the miss
- * counts: the count from scanning `a` indexes into `b`, and the count from
- * scanning `b` indexes into `a`.  Each callee is named for its own call site,
- * because every call reaches its target through its own local veneer and two
- * of the sites share one veneer.
- */
+/* Scan a and b for the first matching entries, then use each scan's miss count to index the other list. */
 void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 {
     s32 cnt_a = 0;

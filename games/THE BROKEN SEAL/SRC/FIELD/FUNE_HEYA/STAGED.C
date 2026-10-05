@@ -64,9 +64,6 @@ struct EffectRecord {
 
 s32 Random16(u8 *o);
 
-          /* site 0x10ac; returns the actor record */
-
-/* Contiguous unnamed state-owner run for resource_3b1. */
 s32 ResetStagedActorState(struct StagedActor *actor)
 {
     Object_SetMode(actor, 1);

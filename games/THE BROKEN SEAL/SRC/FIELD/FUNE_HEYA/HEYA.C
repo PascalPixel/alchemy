@@ -370,24 +370,6 @@ s32 FuneHeya_GetStepScript(void)
 
 /* Message ids. */
 
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
 u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 {
     s16 *tbl = ((s16 *)Data_02000240);
@@ -539,13 +521,6 @@ void SceneDialogue_ShowLine1E19Or1D50(void)
 
 /* Scene setup for resource_3b1: installs actors 10 through 17. */
 
-/* The pool word, referenced by address so that it is emitted. */
-
-/*
- * Actors 24 and 25 setup for overlay resource_3b1. Each callee slot uses
- * its own local veneer, so the names are per call site and not the shared
- * main-image symbol.
- */
 void SceneState_RunFlagBranchedActor8Setup(void)
 {
     if (Engine_GameFlagIsSet(0x300) != 0) {

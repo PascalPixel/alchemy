@@ -685,10 +685,7 @@ void FieldScene_RunThreeActorPresentation(void)
         Engine_EventWait(1);
         {
             struct FieldActor *record = Object_GetByIdFar(0);
-            u32 flag = 1;
-
-            flag = flag | record->steering_flags;
-            record->steering_flags = (u8)flag;
+            record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
         }
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);

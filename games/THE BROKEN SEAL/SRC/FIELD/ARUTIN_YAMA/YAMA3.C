@@ -309,7 +309,7 @@ void FieldScene_RunScene3a4_020026c0(void)
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     record = Actor_Get(9);
     Engine_ActorSetSpriteFlags((s32)record, 0);
@@ -319,10 +319,8 @@ void FieldScene_RunScene3a4_020026c0(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(0, 0, 1, 1, 26, 26);
         {
-            u8 *record = Actor_Get(9);
-            u8 flags = record[35] | 2;
-
-            record[35] = flags;
+            struct FieldActor *record = Actor_Get(9);
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(11);
@@ -330,10 +328,8 @@ void FieldScene_RunScene3a4_020026c0(void)
         Engine_ActorSetAnimation(11, 5);
         Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
         {
-            u8 *record = Actor_Get(11);
-            u8 flags = record[35] | 2;
-
-            record[35] = flags;
+            struct FieldActor *record = Actor_Get(11);
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(12);
@@ -341,10 +337,8 @@ void FieldScene_RunScene3a4_020026c0(void)
         Engine_ActorSetAnimation(12, 5);
         Map_CopyCellAttributes(1, 0, 1, 1, 26, 15);
         {
-            u8 *record = Actor_Get(12);
-            u8 flags = record[35] | 2;
-
-            record[35] = flags;
+            struct FieldActor *record = Actor_Get(12);
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     Engine_TaskAddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);

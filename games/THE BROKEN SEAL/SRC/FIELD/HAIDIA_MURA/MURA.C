@@ -115,7 +115,7 @@ s32 MapStagedScene_SelectSecondaryData(void)
 s32 MapStagedScene_SelectTertiaryData(void)
 {
     u8 *scene_state = (u8 *)&gGameState;
-    if (*(s16 *)(scene_state + 0x1c2) == 16)
+    if (((struct GameState *)scene_state)->entrance == 16)
         return (s32)gHaidiaMuraPlacements4;
     if (Engine_GameFlagIsSet(0x87a) != 0)
         return (s32)gHaidiaMuraPlacements3;
@@ -618,7 +618,7 @@ void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
     Engine_EventSetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
-    *(s32 *)((u8 *)record + 108) = (s32)SceneActor_RunStep18WhenTargetSet;
+    ((struct FieldActor *)record)->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
     Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
     Engine_EventEnd();
 }
@@ -1628,30 +1628,30 @@ void FieldScene_RunLargeStagingSequence(void)
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    *((u8 *)Engine_EventGetViewCenter() + 85) = 0;
+    ((struct FieldActor *)Engine_EventGetViewCenter())->motion_flags = 0;
     Engine_TaskWait(1);
     Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
     Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
     Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
     rec = Object_GetById(11);
-    *(u8 *)(rec + 85) = 0;
+    ((struct FieldActor *)rec)->motion_flags = 0;
     k = 0x1840000;
-    *(s32 *)(rec + 12) = 0xa00000;
-    *(s32 *)(rec + 16) = 0x3480000;
-    *(s32 *)(rec + 8) = k;
+    ((struct FieldActor *)rec)->y.fixed = 0xa00000;
+    ((struct FieldActor *)rec)->z.fixed = 0x3480000;
+    ((struct FieldActor *)rec)->x.fixed = k;
     Engine_ActorSetSpriteFlags(rec, 0);
     rec = Object_GetById(12);
-    *(u8 *)(rec + 85) = 0;
-    *(s32 *)(rec + 12) = 0xa00000;
-    *(s32 *)(rec + 16) = 0x34c0000;
-    *(s32 *)(rec + 8) = k;
+    ((struct FieldActor *)rec)->motion_flags = 0;
+    ((struct FieldActor *)rec)->y.fixed = 0xa00000;
+    ((struct FieldActor *)rec)->z.fixed = 0x34c0000;
+    ((struct FieldActor *)rec)->x.fixed = k;
     Engine_ActorSetSpriteFlags(rec, 0);
     rec = Object_GetById(13);
-    *(u8 *)(rec + 85) = 0;
-    *(s32 *)(rec + 16) = 0x3500000;
-    *(s32 *)(rec + 12) = 0xa00000;
-    *(s32 *)(rec + 8) = k;
+    ((struct FieldActor *)rec)->motion_flags = 0;
+    ((struct FieldActor *)rec)->z.fixed = 0x3500000;
+    ((struct FieldActor *)rec)->y.fixed = 0xa00000;
+    ((struct FieldActor *)rec)->x.fixed = k;
     Engine_ActorSetSpriteFlags(rec, 0);
     record = Object_GetById(11);
     Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
@@ -1766,7 +1766,7 @@ void FieldScene_RunLargeStagingSequence(void)
     rec8->z.fixed = 0x2480000;
     facing = 0x8000;
     rec8->facing = facing;
-    *(s32 *)((u8 *)rec8 + 108) = (s32)Effect_ConfigureSpawnedParticle;
+    rec8->update = (void (*)(union FieldObject *))Effect_ConfigureSpawnedParticle;
     Engine_EventWait(4);
     Actor_SetSpeed(14, 0x20000, 0x20000);
     Call4(Object_SetPosition, (s32)rec8, 0x1980000, 0xd00000, 0x2480000);
@@ -1779,7 +1779,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Actor_MoveToAndWait(9, 0x17a, 0x248);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x2005, 0, 10);
-    *(s32 *)((u8 *)rec8 + 108) = none2;
+    rec8->update = (void (*)(union FieldObject *))none2;
     Engine_ActorSetSpritePriority(ACTOR_GERALD, 2);
     Actor_Get(ACTOR_GERALD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Scheduler_RemoveCallback((s32)SceneState_SetValue1ThenCall);
@@ -2331,7 +2331,7 @@ void Scene_RepairTheHouse(void)
     {
         u8 value = *(volatile u8 *)&rec->steering_flags;
 
-        *(u8 *)(*(s32 *)((u8 *)rec + 80) + 38) = none;
+        rec->sprite->flags = none;
         rec->steering_flags = (u8)(value & 0xfe);
     }
     Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);

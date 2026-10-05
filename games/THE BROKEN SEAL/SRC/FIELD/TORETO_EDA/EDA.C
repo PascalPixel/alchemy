@@ -65,10 +65,6 @@ void State_SetActorEightValue3d(void)
     BattleFx_SetPhaseRequest(8, 0x3D);
 }
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
 u8 *SceneData_GetTable835c(void)
 {
     return ToretoEda_SceneTable0;
@@ -80,13 +76,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable844c(void)
 {
     return ToretoEda_SceneTable1;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable8474(void)
 {
     return ToretoEda_SceneTable2;
@@ -192,7 +186,6 @@ void Effect_SetAlphaBlendForScene9(void)
     }
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable84a4(void)
 {
     return ToretoEda_SceneTable3;
@@ -204,10 +197,7 @@ void Scene_RunTwoCallSequence(void)
     BattleFx_FinishAction();
 }
 
-/*
- * Two scene hooks that do nothing. Each is the two-byte return alone; the
- * zero halfwords after them align the entry that follows.
- */
+/* Two scene hooks that do nothing. */
 void State_RunEmptyHookFirst(void)
 {
 }
@@ -280,19 +270,7 @@ void Effect_UpdateBg3HofsByVcount(void)
     REG_BG3HOFS = value;
 }
 
-/*
- * Prepares the three values that Effect_UpdateBg3HofsByVcount consumes: a
- * VCOUNT threshold and the two BG3HOFS values selected above and below it.
- * 192 is the screen height, so the threshold is a scanline derived from a
- * coordinate in the scene work record.
- *
- * The record cell is read as a union, not as bare halfwords. The word store to
- * the threshold and the halfword reads are only ordered against each other
- * when they can alias, and the reference schedules the address load of the
- * value above ahead of the halfword read on exactly that dependence. Reading
- * the cell through a halfword-only pointer disambiguates the two accesses and
- * loses that order.
- */
+/* Set the VCOUNT threshold and the BG3 horizontal offsets above and below it; set the split line to 192 minus the scene coordinate. */
 void Effect_SetBg3HofsSplit(void)
 {
     union SceneCell *work = (union SceneCell *)(((u8 *)gMapWork[0]) + 260);

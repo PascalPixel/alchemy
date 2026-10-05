@@ -7,7 +7,7 @@
    mode 1 or 2, and mode 3 runs with the object's action, as the projectile
    volley's mode 6 does. */
 
-s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
+s32 ObjectDispatch_ApplyValueToChildrenFar(struct FieldActor *, s32);
 void Func_0818f620(void *effect, s32 mode);
 
 void BattleFx_RunCanvasModeByCount(s32 *effect)
@@ -25,9 +25,9 @@ void BattleFx_RunCanvasMode0(struct BattleEffectArgument *effect)
 
 void BattleFx_RunCanvasMode3WithAction(struct BattleEffectArgument *effect)
 {
-    s32 object;
+    struct FieldActor *object;
 
-    object = (s32)GetBattleObjectSlotFar(effect->actor)->object;
+    object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
     ObjectDispatch_ApplyValueToChildrenFar(object, 0x1c);
     Func_0818f620(effect, 3);

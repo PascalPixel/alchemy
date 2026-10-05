@@ -6,7 +6,7 @@
 /* Mode entries of ⚓️'s second projectile volley, a copy of the first with
    its own runner and mode numbering. */
 
-s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
+s32 ObjectDispatch_ApplyValueToChildrenFar(struct FieldActor *, s32);
 s32 BattleFx_RunProjectileVolleyB(void *effect, s32 mode);
 
 void BattleFx_RunVolleyBMode0(struct BattleEffectArgument *effect)
@@ -121,9 +121,9 @@ void BattleFx_RunVolleyBMode20(struct BattleEffectArgument *effect)
 
 void BattleFx_RunVolleyBMode10WithAction(struct BattleEffectArgument *effect)
 {
-    s32 object;
+    struct FieldActor *object;
 
-    object = (s32)GetBattleObjectSlotFar(effect->actor)->object;
+    object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
     ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
     BattleFx_RunProjectileVolleyB(effect, 10);
@@ -132,9 +132,9 @@ void BattleFx_RunVolleyBMode10WithAction(struct BattleEffectArgument *effect)
 
 void BattleFx_RunVolleyBMode11WithAction(struct BattleEffectArgument *effect)
 {
-    s32 object;
+    struct FieldActor *object;
 
-    object = (s32)GetBattleObjectSlotFar(effect->actor)->object;
+    object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
     ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
     BattleFx_RunProjectileVolleyB(effect, 11);

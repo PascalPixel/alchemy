@@ -485,7 +485,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 {
     extern u8 Data_02000240[];
     extern u8 HaidiaIe_FaceTargetActions[];
-    void HaidiaIe_RunScene015B4();
+    void HaidiaIe_RunActorPairEffectScene();
     void SceneState_SetValues352_365_2116_2117_40();
     void Scene_RunExtendedActorSequence();
 
@@ -511,7 +511,7 @@ s32 HaidiaIe_RestoreEntryState(void)
         SceneState_SetValues352_365_2116_2117_40();
         return 0;
     case 97:
-        HaidiaIe_RunScene015B4();
+        HaidiaIe_RunActorPairEffectScene();
         return 0;
     }
     v5 = 192;
@@ -573,7 +573,7 @@ s32 HaidiaIe_RestoreEntryState(void)
                 Engine_ActorSetPosition(22, 0, 0);
             }
             if (gGameState.entrance == 19) {
-                HaidiaIe_RunScene015B4();
+                HaidiaIe_RunActorPairEffectScene();
             } else {
                 if (Engine_GameFlagIsSet(0x834) != 0) {
                     record = Engine_GameFlagIsSet(0x842);
@@ -910,7 +910,7 @@ void FieldScene_RunGroupChoreography(void)
 }
 
 /* Scripted scenes and the paired effects they spawn. */
-void HaidiaIe_RunScene015B4(void)
+void HaidiaIe_RunActorPairEffectScene(void)
 {
 
     u32 i;

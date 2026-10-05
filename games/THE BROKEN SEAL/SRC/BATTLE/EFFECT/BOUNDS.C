@@ -18,7 +18,6 @@ struct SceneRegionEntry {
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 
-extern struct EventWork *gEventWork;
 void ObjectDispatch_ReleaseFar(struct FieldActor *object);
 
 struct EffectSprite {

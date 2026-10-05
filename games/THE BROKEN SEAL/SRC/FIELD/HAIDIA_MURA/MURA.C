@@ -38,7 +38,6 @@ void PaletteGlow_Update(s32 a, s32 b);
 void HaidiaMura_OpenVillagerLane(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 s32 SceneActor_RunStep18WhenTargetSet();
-extern u8 gHaidiaMuraActor22Actions[];
 
 void Engine_ActorSetSpeed();
 void Engine_ActorFaceDirection();

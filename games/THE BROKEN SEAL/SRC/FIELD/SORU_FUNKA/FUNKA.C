@@ -39,9 +39,6 @@ struct Ember {
     u8 motion_flags;
 };
 
-extern s32 gEmberTimer;
-extern s32 gEmberState[16];
-extern s32 gEmberMask;
 
 enum {
     ACTOR_WISE_ONE = 15,

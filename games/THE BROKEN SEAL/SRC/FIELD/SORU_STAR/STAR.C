@@ -7,7 +7,6 @@
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
-extern u16 SoruStar_StarCells[];
 extern struct EventWork *gEventWork;
 void Event_SayThenWait();
 void Engine_MapCopyCellAttributes();

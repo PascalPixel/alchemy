@@ -17,7 +17,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "B5_CONTEXT.H"
 
-extern struct BattleFormationRecord BattleFormation_Records[];
 
 s32 GameFlag_IsSet(s32 flag);
 

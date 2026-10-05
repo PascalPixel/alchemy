@@ -29,7 +29,6 @@ void FieldScene_RunPrimaryScriptChoreography(void);
 void FieldScene_RunThreeActorChoreography(void);
 void FieldScene_RunScene399SequenceA(void);
 void SceneState_UpdateZoneFlagsFromActorZero(void);
-extern u8 ImiruMura_ActorScriptA[];
 
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
 {

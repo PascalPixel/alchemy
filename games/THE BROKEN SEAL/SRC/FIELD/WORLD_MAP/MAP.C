@@ -26,7 +26,6 @@ void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 s32 GameFlag_GetByte(s32 flag);
 void RunEventScript01(void);
 void StoryScene_UpdateSelectedActorProgress(void);
-extern s32 gWorldMapTriggerActor;
 
 
 void StoryProgress_TriggerEvent0808(void)

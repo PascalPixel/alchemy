@@ -3,7 +3,6 @@
 #include "FIELDOBJ.H"
 #include "GAME_FLAGS.H"
 #include "text/MSG_IDS.H"
-extern struct EventWork *gEventWork;
 
 u8 *Object_GetById();
 void Engine_EventBegin();

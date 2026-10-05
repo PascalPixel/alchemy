@@ -50,7 +50,6 @@ struct Sub {
     u8 f26;
 };
 
-extern u8 KorimaMura_Object26Script[];
 
 s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
@@ -64,13 +63,6 @@ void FieldScene_RunPairedStepB();
 void Object_SetActionCallbackAndRefreshById();
 void Audio_PlayCueFromEventWork();
 
-extern u8 KorimaMura_ActionTable1[];
-extern u8 KorimaMura_ActionTable2[];
-extern u8 KorimaMura_ActionTable3[];
-extern u8 KorimaMura_ActionTable4[];
-extern u8 KorimaMura_ActionTable5[];
-extern u8 KorimaMura_ActionTable6[];
-extern u8 KorimaMura_ActionTable7[];
 
 void FieldScene_RunFlag845And847Branches(void)
 {

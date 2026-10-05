@@ -23,7 +23,6 @@ struct SceneRecord {
 
 
 
-extern struct EventWork *gEventWork;
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
 

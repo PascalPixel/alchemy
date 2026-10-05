@@ -20,7 +20,6 @@ void SceneActor_ClearCollisionFlagAndPlaceMarker();
 void SceneState_ForwardByRuntimeSelector();
 extern u8 Data_02000240[];
 
-extern s32 ArutinYama_LeafMode;
 
 
 void ResourceMetadata_ClearRecord(s32 handle);

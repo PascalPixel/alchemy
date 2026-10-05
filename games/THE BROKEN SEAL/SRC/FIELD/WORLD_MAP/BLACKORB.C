@@ -14,7 +14,6 @@
 void Battle_SetObjectFlag5bWhenMode3(void);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 void BattleFx_ScheduleRatioTransition(s32 speed, s32 frames);
-extern s32 gWorldMapTriggerActor;
 
 
 

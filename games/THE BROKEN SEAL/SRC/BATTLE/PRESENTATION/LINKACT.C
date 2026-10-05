@@ -11,7 +11,6 @@
 #define gRandomSeed (*(s32 *)&gRandomSeed)
 
 extern volatile u16 gLinkStatus;
-extern volatile u16 gSerialReceivedSize;
 
 struct BattleLinkedActionState {
     s32 count;

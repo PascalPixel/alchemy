@@ -11,7 +11,6 @@ extern const struct SceneEntrance gHaidiaDouEntrances2[];
 extern const struct SceneEntrance gHaidiaDouEntrances3[];
 extern const struct SceneEntrance gHaidiaDouEntrancesOther[];
 
-extern const u32 HaidiaDou_Exits[];
 
 extern const struct ScenePlacement gHaidiaDouPlacements1[];
 extern const struct ScenePlacement gHaidiaDouPlacements2[];

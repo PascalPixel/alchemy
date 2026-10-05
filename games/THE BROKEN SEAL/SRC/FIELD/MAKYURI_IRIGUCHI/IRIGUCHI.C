@@ -43,9 +43,6 @@ void Engine_CameraWaitForMove();
 void Engine_EventEnd();
 s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
 
-extern const u8 MakyuriIriguchi_Actor8Path1[];
-extern const u8 MakyuriIriguchi_Actor8Path2[];
-extern const u8 MakyuriIriguchi_Actor8Path3[];
 
 void MakyuriIriguchi_TickSpawnTimer(void)
 {

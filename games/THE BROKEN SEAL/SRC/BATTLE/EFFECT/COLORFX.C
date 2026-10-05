@@ -12,7 +12,6 @@
 #define gBattleFxWork ((u8 *(*))&gBattleFxWork)
 
 
-extern struct GameState gGameState;
 
 s32 Audio_PlayCue(s32);
 

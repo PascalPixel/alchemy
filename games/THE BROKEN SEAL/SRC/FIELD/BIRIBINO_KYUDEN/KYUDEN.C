@@ -79,7 +79,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -617,10 +617,7 @@ void Kyuden_RunKolimaRequest(void)
         Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
         Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
-            /* FAKEMATCH: the first offer and the change of heart share one
-             * refusal and one acceptance by jumping into each other's
-             * blocks, which keeps the reference's single copy of each in
-             * this order. */
+            /* FAKEMATCH: the first offer and the change of heart share one refusal and one acceptance by jumping into each other's blocks, which keeps the reference's single copy of each in this order. */
             goto accepted;
         }
     declined:
@@ -996,10 +993,9 @@ void ConfigureSecondarySceneChannels(void)
     Actor_FaceDirection(3, 0xa000, 0);
 }
 
-/* FAKEMATCH: The cleared motion byte keeps its own zero local so the
- * following call reloads its separate zero argument. */
 void RunEventScript02(void)
 {
+    /* FAKEMATCH: The cleared motion byte keeps its own zero local so the following call reloads its separate zero argument. */
     struct FieldActor *buf;
     struct FieldActor *actor;
     s32 flag;

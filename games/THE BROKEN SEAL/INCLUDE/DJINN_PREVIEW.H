@@ -18,7 +18,7 @@ struct PreviewSprite {
     union RenderTableValue tile;
 };
 
-extern u8 Data_080313a4[];
-extern u8 Data_08031424[];
+extern u8 DjinnMenu_ArrowUpTiles[];
+extern u8 DjinnMenu_ArrowDownTiles[];
 
 #endif

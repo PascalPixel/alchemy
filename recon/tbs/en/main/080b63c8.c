@@ -2,6 +2,16 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
+ * 2026-10-05 sun w5 finisher 1 (alchemy diff 76, was 86): item 3's copy
+ *    is solved. src now holds the 12-byte block allocated at the top and
+ *    dst the leader-byte pointer at the defeat line (either swap alone
+ *    scores 250-264), which gives the copy dst in r2; and the copy reads
+ *    gActorSpriteSlots[pos], so loop.c makes the source pointer (r1) after
+ *    it hoists the 0x7c7 bound, as listed (with a src pointer sched2 put the
+ *    src load first: 80). The defeat line's gCell + off is still added into
+ *    a fresh register (dst is global); spelling it gCell[off],
+ *    *(gCell + off), through src or a block-local pointer moves the top's
+ *    allocation and the pool (248-253). Items 1 and 2 remain.
  * 2026-10-04 sun w3 finisher 6 (alchemy diff 86 for this body): the
  *    listing stores timer field_18 before field_1c and then DISPCNT, but
  *    that order here scores 111 (one fewer timer reload, allocation moves).
@@ -228,8 +238,8 @@ s32 Battle_RunEncounter(s32 arg)
     Dma3Fill(fill, work, 0x82c);
     work->field_54 = -1;
     work->field_00 = arg;
-    dst = (u8 *)Runtime_AllocateBlock(37, 12);
-    Dma3Fill(fill, dst, 12);
+    src = (u8 *)Runtime_AllocateBlock(37, 12);
+    Dma3Fill(fill, src, 12);
     work->field_648 = (u16)Event_GetSpecialValueFar();
     Runtime_AllocateBlock(4, 0xe00);
     Runtime_AllocateBlock(3, 0x600);
@@ -269,10 +279,9 @@ s32 Battle_RunEncounter(s32 arg)
             }
         }
         work->field_50 = (u8)((*(u32 *)0x04000128 << 26) >> 30);
-        src = gActorSpriteSlots;
         dst = gBattleOwnerStates;
         for (pos = 0; pos <= 0x7c7; pos++)
-            *dst++ = *src++;
+            *dst++ = gActorSpriteSlots[pos];
         object = GameFlag_GetByteFar(0x3f0);
         BattleParty_AssignMemberSlots();
         work->field_42 = 0;
@@ -438,8 +447,8 @@ party_lost:
     AudioCommand_PlayFar(59);
     UiWork_ClearValueNameTablesFar();
     off = 504;
-    src = gCell + off;
-    UiWork_PushValueSlotFar(*src, 1);
+    dst = gCell + off;
+    UiWork_PushValueSlotFar(*dst, 1);
     if (BattleParty_PrepareActiveOwners(0) == 1)
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgGoesDownInDefeat);
     else

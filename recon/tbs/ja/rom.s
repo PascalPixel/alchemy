@@ -252,8 +252,8 @@ NameEntry_EditOwnerName:
 	.incbin "baserom.gba", 0x00020af0, 0x000005e0
 	.section .rom.00021ece, "ax"
 	.incbin "baserom.gba", 0x00021ece, 0x00000902
-	.section .rom.00022ae2, "ax"
-	.incbin "baserom.gba", 0x00022ae2, 0x000026fa
+	.section .rom.000231dc, "ax"
+	.incbin "baserom.gba", 0x000231dc, 0x00002000
 	.section .rom.000260dc, "ax"
 	.incbin "baserom.gba", 0x000260dc, 0x00000e00
 	.section .rom.00027170, "ax"
@@ -299,7 +299,13 @@ UiIcon_MiscIconPointers:
 	.global RomBytes_080310a4
 Resource_FixedBlockBTiles:
 RomBytes_080310a4:
-	.incbin "baserom.gba", 0x000310f0, 0x00000740
+	.incbin "baserom.gba", 0x000310f0, 0x00000300
+	.global DjinnMenu_ArrowUpTiles
+DjinnMenu_ArrowUpTiles:
+	.incbin "baserom.gba", 0x000313f0, 0x00000080
+	.global DjinnMenu_ArrowDownTiles
+DjinnMenu_ArrowDownTiles:
+	.incbin "baserom.gba", 0x00031470, 0x000003c0
 	.global RomBytes_080317e4
 RomBytes_080317e4:
 	.incbin "baserom.gba", 0x00031830, 0x00000080

@@ -29,7 +29,7 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
     /* Request 98, 0 sets the next battle's backdrop (game state halfword
        235) to the storm-lit Venus Lighthouse aerie. */
     if (first == 98 && second == 0)
-        gGameState.special = (u16)(s32)&ResourceId_VinasuChojoStormBackdrop;
+        gGameState.special = (s32)&ResourceId_VinasuChojoStormBackdrop;
     if (runtime->mode_19e == 3)
         BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.object_id) + 8);
     BattleFx_SelectBattleCue(first, second);

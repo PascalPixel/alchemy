@@ -29,7 +29,7 @@ void Graphics_RenumberFillerEntries(void)
         u32 idx = value & mask;
 
         if (idx == mask) {
-            if (no != (s32)idx) {
+            if (no != idx) {
                 no++;
             }
             value = value + no - idx;
@@ -58,7 +58,7 @@ void Tilemap_ConvertBuffer(void)
         u32 code_size = (u32)Tile_ConvertMapCodeSize;
 
         do {
-            routine = (ConvertFn)Runtime_BumpAllocate((s32)code_size);
+            routine = (ConvertFn)Runtime_BumpAllocate(code_size);
             Dma_Set((void *)Tile_ConvertMap, routine, 0x84000000 | (code_size >> 2),
                     REG_DMA3);
         } while (0);

@@ -4,9 +4,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-
-s32 UiText_BuildRenderEntries(s32 character, s32 count);
-u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y);
 
@@ -45,7 +42,7 @@ void UiText_DrawCharacterAtOffset(
     UiText_BuildRenderEntries(character, 1);
 
     canvas->entries[*counter] = zero;
-    *counter = (u16)((*counter + 1) & RENDER_ENTRY_MASK);
+    *counter = (*counter + 1) & RENDER_ENTRY_MASK;
 
     cell = ((position->y + (offset_y >> 3) + 1) << 5)
         + (position->x + (offset_x >> 3)) + 1;
@@ -72,7 +69,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
     output = buffer;
     if (*input != 0) {
         do {
-            *output = (s16)*input;
+            *output = *input;
             input++;
             output++;
         } while (*input != 0);

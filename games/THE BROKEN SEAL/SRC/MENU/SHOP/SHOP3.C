@@ -2,13 +2,13 @@
 #include "BATTLE_RUNTIME.H"
 #include "PARTY_STATE.H"
 #include "TBS_EDITION.H"
+#include "UI.H"
 
 extern u8 MsgYouHave;
 extern u8 MsgShopNoneInStock;
 void UiWindow_Clear(s32 window);
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
 void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 extern struct ShopRuntime *gMenuWork;
@@ -16,7 +16,6 @@ extern u8 MsgHowManyToBuy;
 extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Item_AdjustCounterFar(s32, s32);
-extern s32 Shop_SelectQuantity(s32, s32, s32);
 
 /* Draw the member's inventory in three rows of five icons, with the
    number already owned above them when the chosen item is in the bag. */

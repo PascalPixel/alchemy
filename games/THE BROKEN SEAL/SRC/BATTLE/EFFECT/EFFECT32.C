@@ -41,12 +41,12 @@ void Djinn_ResolvePendingEvent(s32 capture)
     struct GameState *st = &gGameState;
     s16 *pending = &st->pending_djinn_event;
     s32 kind = *pending & 0xf000;
-    s32 flag = (u16)*pending & 0xfff;
+    s32 flag = *pending & 0xfff;
 
     if (capture == 0) {
         if (kind == 0) {
             flag &= 0x7ff;
-            if ((u32)(flag - 300) > 80)
+            if (flag < 300 || flag > 380)
                 return;
             if (st->scene_change_reason > 0 && st->scene_change_reason != 999)
                 return;
@@ -61,7 +61,7 @@ void Djinn_ResolvePendingEvent(s32 capture)
     }
     if (kind == 0) {
         flag &= 0x7ff;
-        if ((u32)(flag - 300) <= 80) {
+        if (flag >= 300 && flag <= 380) {
             flag &= 0x7ff;
             if (st->scene_change_reason > 0) {
                 s32 djinn = flag - 300;
@@ -104,7 +104,7 @@ void BattleFx_InitializeSlots(void)
     work = Runtime_AllocateHeapBlock(56, sizeof(struct BattleFxScene));
     zero = 0;
     Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), REG_DMA3);
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateAllSlots, 3200);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
 }
 
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
@@ -113,7 +113,7 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
     struct EffectSlot *slot;
     s32 i;
 
-    Scheduler_RemoveCallback((u32)BattleFx_UpdateAllSlots);
+    Scheduler_RemoveCallback(BattleFx_UpdateAllSlots);
     for (i = 0; i < 24; i++) {
         slot = &scene->slots[i];
         if (slot->active != 0)

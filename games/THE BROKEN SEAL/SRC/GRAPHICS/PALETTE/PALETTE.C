@@ -56,7 +56,7 @@ void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work)
 
     phase = (gGameState.palette_glow[0] + 12) % 24 * 4;
     bias = gGameState.palette_glow[1] - 7;
-    red = PaletteGlow_WaveTable[(s16)(phase % 96)];
+    red = PaletteGlow_WaveTable[(phase % 96)];
     green = PaletteGlow_WaveTable[(phase + 32) % 96];
     blue = PaletteGlow_WaveTable[(phase + 64) % 96];
     red += bias;
@@ -153,7 +153,7 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
 
     step = ((phase + 12) % 24) * 4;
     offset = brightness - 7;
-    red = PaletteGlow_WaveTable[(s16)(step % 96)] + offset;
+    red = PaletteGlow_WaveTable[(step % 96)] + offset;
     green = PaletteGlow_WaveTable[(step + 32) % 96] + offset;
     blue = PaletteGlow_WaveTable[(step + 64) % 96] + offset;
     if (red < 0)

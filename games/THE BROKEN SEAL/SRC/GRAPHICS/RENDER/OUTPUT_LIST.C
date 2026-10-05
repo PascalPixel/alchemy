@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
+#include "OUTPUT.H"
 
-void RenderOutput_ReleaseFree(struct RenderOutput *entry);
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 extern u8 *gWindowWork[];
@@ -37,7 +37,7 @@ void RenderOutput_Release(struct RenderOutput *entry)
         Resource_ResetEntry((u8)entry->index);
         if ((u8)entry->kind == 2) {
             u8 *dst = gWindowWork[0];
-            s32 idx = ((u32)((u8 *)&entry->table)[1] >> 4) * 2 + RENDER_PALETTE_TBL_OFS;
+            s32 idx = (((u8 *)&entry->table)[1] >> 4) * 2 + RENDER_PALETTE_TBL_OFS;
             *(u16 *)(dst + idx) = 0x3E7;
         }
     }

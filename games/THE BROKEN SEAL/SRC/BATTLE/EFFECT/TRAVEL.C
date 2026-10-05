@@ -19,7 +19,6 @@ extern u8 gBattleFxWork[];
 
 
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -43,7 +42,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 member;
-    void *sheet;
+    u8 *sheet;
     DrawRectangle *draw;
     struct MotionObject *actor;
     struct MotionObject *goal;
@@ -65,7 +64,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
     actor = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -85,7 +84,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     position[0] = actor->x;
     position[1] = 0;
     position[2] = actor->z;
@@ -102,7 +101,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
         if (frame == 80)
             Audio_PlayCue(142);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= 30 && frame < 70) {
             position[0] += delta[0];
             position[1] += delta[1];
@@ -141,7 +140,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
                 if (screen.depth > 634)
                     screen.depth = 634;
                 size = 9 - (screen.depth - 250) / 64;
-                callbacks[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                callbacks[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     screen.x - size / 2, screen.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(spark, 60, 0);
                 if (frame > i + 30) {
@@ -177,7 +176,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     for (frame = 0; frame != work->effect->count * 8 + 72; frame++) {
         struct BattleCamera *camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= work->effect->count * 8 + 40)
             target[1] += 0x40000;
         point[0] = target[0];
@@ -190,7 +189,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
             struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             s32 start = member * 8;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             position[0] = object->x;
             position[1] = 160 << 14;
             position[2] = object->z;
@@ -228,7 +227,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
                             cel = 3 - (view.depth - 314) / 128;
                             cel = (i * 4 + frame) % 9;
                             {
-                                u8 *cell = (u8 *)sheet + BattleFx_PuffCells[cel];
+                                u8 *cell = sheet + BattleFx_PuffCells[cel];
                                 u32 edge = BattleFx_PuffSizes[cel];
                                 u32 half = edge >> 1;
 
@@ -246,7 +245,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

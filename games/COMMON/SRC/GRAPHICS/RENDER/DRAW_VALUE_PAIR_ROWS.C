@@ -28,7 +28,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 layer)
     val = unit->max_hp;
     UiText_DrawNumberRightAlignedFar(val, layer, 88, 40);
     val = unit->hp;
-    if (val < ((s32)(u16)unit->max_hp << 16) >> 18) {
+    if (val < ((u16)unit->max_hp << 16) >> 18) {
         UiWork_SetParamNibbleFar(4);
     }
     if (val == 0) {
@@ -49,7 +49,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 layer)
     val = unit->max_hp;
     UiText_DrawNumberInWindowFar(val, 4, layer, 56, 40);
     val = unit->hp;
-    if (val < ((s32)(u16)unit->max_hp << 16) >> 18) {
+    if (val < ((u16)unit->max_hp << 16) >> 18) {
         UiWork_SetParamNibbleFar(4);
     }
     if (val == 0) {

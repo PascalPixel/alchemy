@@ -27,7 +27,7 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
 
     Engine_EventBegin();
     Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
-    if ((u32)(facing - 0xa001) <= 0x3ffe) {
+    if ((facing - 0xa001) <= 0x3ffe) {
         base = (s32)MsgLobbyLooksLikeFirst;
         count = &gGameState.link_tallies[4];
         if (*count == 0) {

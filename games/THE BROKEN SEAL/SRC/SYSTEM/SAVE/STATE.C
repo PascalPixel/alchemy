@@ -77,7 +77,7 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
     u32 checksum;
 
     work = gSaveWorkspace;
-    ReadFlash((u16)index, 0, work->slot.bytes, sizeof(work->slot));
+    ReadFlash(index, 0, work->slot.bytes, sizeof(work->slot));
     Dma_Set(&work->slot, &header, 0x84000004, REG_DMA3);
     WAIT_DMA();
     checksum = SaveState_ChecksumWorkspace();
@@ -290,12 +290,12 @@ s32 SaveState_LoadSummaryRecords(void)
         START_DMA(&zero, summary, 0x85000010);
         index = SaveState_FindLatestSlot(group);
         if (index <= 15) {
-            ReadFlash((u16)index, 0, (u8 *)summary, sizeof(*summary));
+            ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
             count++;
         }
         index = SaveState_FindLatestSlot(group + 3);
         if (index <= 15)
-            ReadFlash((u16)index, 0x110, summary->unknown_38, sizeof(summary->unknown_38));
+            ReadFlash(index, 0x110, summary->unknown_38, sizeof(summary->unknown_38));
         else
             *(u32 *)summary->unknown_38 = 0;
         group++;

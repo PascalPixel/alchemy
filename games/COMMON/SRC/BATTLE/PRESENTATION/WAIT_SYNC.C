@@ -4,7 +4,7 @@
 #include "SERIAL_RUNTIME.H"
 #include "BATTLE_WORK.H"
 
-extern u8 gLinkStatus[];
+extern volatile u16 gLinkStatus;
 /* Each peer's received payload, past its four-byte serial state. */
 extern u16 gLinkPeerSignatures[][12];
 
@@ -33,7 +33,7 @@ s32 BattlePres_WaitSync(void)
             sync[3] = 'C';
 
             for (i = 0; i <= 29; i++) {
-                if ((*(u16 *)gLinkStatus & 3) != 3) {
+                if ((gLinkStatus & 3) != 3) {
                     miss++;
                     if (miss > 24) {
                         return -1;
@@ -82,7 +82,7 @@ s32 BattlePres_SyncTurn(void)
         sync[5] = 'U';
         WaitFrames(1);
         for (;;) {
-            if ((*(u16 *)gLinkStatus & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++miss > 24) {
                     return -1;
                 }
@@ -101,7 +101,7 @@ s32 BattlePres_SyncTurn(void)
         sync[6] = 'r';
         sync[7] = 'n';
         for (;;) {
-            if ((*(u16 *)gLinkStatus & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++miss > 24) {
                     return -1;
                 }
@@ -122,7 +122,7 @@ s32 BattlePres_SyncTurn(void)
         sync[2] = 'E';
         sync[3] = 'C';
         for (;;) {
-            if ((*(u16 *)gLinkStatus & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++miss > 24) {
                     return -1;
                 }
@@ -141,7 +141,7 @@ s32 BattlePres_SyncTurn(void)
         sync[4] = 't';
         sync[5] = 'u';
         for (;;) {
-            if ((*(u16 *)gLinkStatus & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++miss > 24) {
                     return -1;
                 }
@@ -161,7 +161,7 @@ s32 BattlePres_SyncTurn(void)
         sync[6] = 'R';
         sync[7] = 'N';
         for (;;) {
-            if ((*(u16 *)gLinkStatus & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++miss > 24) {
                     return -1;
                 }

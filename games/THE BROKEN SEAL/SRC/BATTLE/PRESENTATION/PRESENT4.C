@@ -12,9 +12,8 @@
 #include "BATTLE_WORK.H"
 #include "IO_REG.H"
 
-extern u8 gLinkStatus[];
+extern volatile u16 gLinkStatus;
 
-#define LINK_STAT (*(u16 *)gLinkStatus)
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
@@ -40,7 +39,7 @@ void BattlePresentation_UpdateCamera(void)
     u32 id;
 
     if (work->two_sided != 0) {
-        if ((LINK_STAT & 3) != 3) {
+        if ((gLinkStatus & 3) != 3) {
             work->link_misses++;
             if (work->link_misses > 24) {
                 work->link_paused = 1;
@@ -136,7 +135,7 @@ void BattleParty_CollectUnitList(void)
     battle->party_units[count] = 0xff;
 
     count = BattleParty_ListPresentEnemies(buf);
-    kind = battle->unknown_042;
+    kind = battle->battle_type;
     /* Removing the original lower-bound test reduced the extent from
        200 to 196 bytes. Its source-level purpose remains unresolved. */
     if (kind >= 0) {

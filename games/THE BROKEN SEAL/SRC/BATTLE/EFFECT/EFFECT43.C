@@ -14,18 +14,6 @@ extern char MsgMonstersAttackLess;
 
 
 
-struct ArcEffectObject {
-    u8 unknown_00[6];
-    u16 angle;
-    u8 unknown_08[0x48];
-    struct AnimationObject *records;
-    u8 unknown_54[0x10];
-    s16 phase;
-    s16 step;
-    u8 unknown_68[4];
-    void *callback;
-};
-
 extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
@@ -64,7 +52,6 @@ void RunBattleEffect16(void)
     u32 angle;
     s32 slot;
     s32 count;
-    s32 index;
 
     scene = gEffectWork;
     object = scene->main_object;
@@ -79,7 +66,7 @@ void RunBattleEffect16(void)
         *tile_slot = slot;
         VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
         gGameState.avoid_distance = 0x09600000;
-        gGameState.unknown_248 = GameFlag_TestFar(0x145);
+        gGameState.avoid_by_item = GameFlag_TestFar(0x145);
         Animation_ApplyChildValuesFar(object, zero);
         object->callback = BattleFx_UpdatePairedArcSpawner;
         object->phase = zero;
@@ -100,13 +87,12 @@ void RunBattleEffect16(void)
     }
     object->callback = NULL;
     object->angle = angle;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateEffect16State), 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
     WaitFrames(15);
     Audio_PlayCue(0xae);
     WaitFrames(55);
-    Scheduler_RemoveCallback((u32)(BattleFx_UpdateEffect16State));
-    index = 147;
-    if (*(s16 *)((u8 *)&gGameState + index * sizeof(s32)) != 0)
+    Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
+    if (gGameState.cloaked != 0)
         ObjectDispatch_SetSingleChildField26Far(object, 2);
     else
         ObjectDispatch_SetSingleChildField26Far(object, 1);
@@ -206,7 +192,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect)
     speed = effect->speed + effect->acceleration;
     if (speed > effect->max_speed)
         speed = effect->max_speed;
-    angle = (s16)facing;
+    angle = facing;
     effect->speed = speed;
     effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
     effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
@@ -219,7 +205,7 @@ u32 BattleFx_HasReachedTarget(struct EffectSlot *effect)
     if (effect->stop_at_target == 0) {
         return 0;
     }
-    value = (u32)effect->target_x ^ 0x80000000;
+    value = effect->target_x ^ 0x80000000;
     return ((0u - value) | value) >> 31;
 }
 

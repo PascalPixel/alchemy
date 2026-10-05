@@ -85,7 +85,7 @@ s32 BattlePlacement_UpdateEntries(void)
         for (element = 0; element <= 3; element++) {
             for (index = 0; index <= 19; index++) {
                 if (Trade_CanOfferDjinnFar(owner, element, index) != 0) {
-                    struct DjinnRecoveryList *list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
+                    struct DjinnRecoveryList *list = &Trade_GetOfferStateFar((owner < 0 || owner > 7) ? 1 : 0)->list;
                     s32 j;
 
                     for (j = 0; j < list->count; j++) {

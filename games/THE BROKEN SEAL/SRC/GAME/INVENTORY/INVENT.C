@@ -7,9 +7,11 @@
 #include "EVENT_RUNTIME.H"
 #include "WINDOW.H"
 #include "FIELD_SCENE.H"
+#include "FIELD_EVENT.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-void Object_SetModeById(u32, s32);
 void Object_WaitUntilChildValueDiffers(s32, s32);
 
 /* The field event allocation also holds the confirmation menu's parameters. */
@@ -19,10 +21,6 @@ struct EventPromptWork {
     s16 resource_base;
     s16 width;
 };
-
-LAYOUT_SIZE_GUARD(EventPromptBase_Size, struct EventRuntime, 0x200);
-LAYOUT_OFFSET_GUARD(EventPromptWork_ResourceBase, struct EventPromptWork, resource_base, 0xcc2);
-LAYOUT_OFFSET_GUARD(EventPromptWork_Width, struct EventPromptWork, width, 0xcc4);
 
 extern volatile s32 gKeyState;
 struct ActionDescriptor;

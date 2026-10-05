@@ -63,18 +63,18 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     BattleFx_BeginCanvasLayer(0);
     REG_BLDCNT = 0;
     if (variant == 0) {
-        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->sheet, 1, 0);
         Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, gMapCellBuffer, 1, 1);
     } else if (variant == 1) {
-        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->sheet, 1, 0);
         Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, gMapCellBuffer, 1, 1);
     } else {
-        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->sheet, 1, 0);
         Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, gMapCellBuffer, 1, 1);
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (variant == 1)
         BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0x80000);
     else
@@ -90,7 +90,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         if (frame <= 3)
             draw[0](canvas, work, 0, 0, 120, 120);
         else if (frame <= 7)
-            draw[0](canvas, (u8 *)work + 0x3840, 0, 0, 120, 120);
+            draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
         else if (frame <= 11)
             draw[0](canvas, gMapCellBuffer, 0, 0, 120, 120);
         else if (frame <= 15)
@@ -109,7 +109,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         WaitFrames(1);
     }
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 
@@ -151,12 +151,12 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, (u8 *)work + 0x460, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet + 0x460, 1, 0);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &position);
     REG_BG2X = (64 - position.x) << 8;
     for (i = 0, spark = work->particles; i != 16; i++) {
@@ -211,7 +211,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
                 py = HI(p->y);
                 if (cell > 6)
                     cell = 6;
-                source = (u8 *)work + RisingBurst_SparkCells[cell] + 0x460;
+                source = work->sheet + RisingBurst_SparkCells[cell] + 0x460;
                 size = RisingBurst_SparkSizes[cell];
                 draw[0](canvas, source, px - size / 2, py - size / 2, size, size);
                 p->variant++;
@@ -229,6 +229,6 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

@@ -84,7 +84,7 @@ void Unnamed_08094820(void)
         frame = &FieldFx_GroundParticleFrames[5 * particle->timer];
         x = (particle->pos_x - camera_x) / 0x10000 + *frame++;
         y = (particle->pos_z - particle->pos_y - camera_z) / 0x10000 + *frame++;
-        if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
+        if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
             particle->priority = 1;
             particle->x = x;
             particle->y = y;
@@ -202,5 +202,5 @@ void Unnamed_08094ac8(void)
         *++blend = value;
         *++blend = 0;
     } while (0);
-    Scheduler_AddOrUpdateCallback((s32)Unnamed_08094820, 0xc80);
+    Scheduler_AddOrUpdateCallback(Unnamed_08094820, 0xc80);
 }

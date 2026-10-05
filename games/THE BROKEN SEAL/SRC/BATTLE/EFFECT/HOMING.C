@@ -13,12 +13,13 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
+#include "BATTLE_PRESENTATION.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 
 void Camera_ApplyPhasedDelta(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
@@ -45,8 +46,8 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
-    s32 facing;
-    void *sheet;
+    struct BattleCamera *camera;
+    u8 *sheet;
     s32 top;
     struct EffectPosition screen;
     DrawRectangle draw[2];
@@ -57,14 +58,14 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + 12 * 4);
     sheet = heap_cache[2];
     work->effect = effect;
     if (effect->side == 1)
         BattleFx_BeginCanvasLayer(1);
     else
         BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
     draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
@@ -92,10 +93,10 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 
     work->camera_delta = 0;
     work->camera_phase = 0;
-    Scheduler_AddOrUpdateCallback((s32)Camera_ApplyPhasedDelta, 0x480);
+    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != (HomingEmbers_Counts[work->effect->variant] >> 1) + 132; frame++) {
         if (frame > 16 && frame < 80)
@@ -106,7 +107,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
             BattleEventRuntime_BeginPhaseFar(133);
         BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 
         for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++) {
             struct EffectStep *ember = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -123,7 +124,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
                 if (screen.depth > 799)
                     screen.depth = 799;
                 size = 10 - (screen.depth - 160) / 64;
-                draw[frame < start + 48 ? 1 : 0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[frame < start + 48 ? 1 : 0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     screen.x - size / 2, screen.y - size, size, size * 2);
                 ember->x += ember->velocity_x;
                 ember->y += ember->velocity_y;
@@ -161,12 +162,12 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
         for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++) {
             struct EffectStep *ember = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
-            if ((u32)ember->variant < 12) {
+            if (ember->variant >= 0 && ember->variant < 12) {
                 s32 cel;
                 u32 width;
 
                 cel = ember->variant / 2;
-                draw[1](canvas, (u8 *)work + HomingEmbers_FlareCells[cel],
+                draw[1](canvas, work->sheet + HomingEmbers_FlareCells[cel],
                     ember->x - ((width = HomingEmbers_FlareWidths[cel]) >> 1),
                     ember->y + HomingEmbers_FlareBiasY[cel] - 56,
                     width, HomingEmbers_FlareHeights[cel]);
@@ -182,8 +183,8 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Scheduler_RemoveCallback((u32)Camera_ApplyPhasedDelta);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

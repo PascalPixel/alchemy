@@ -84,7 +84,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
     BattlePresentation_BuildTilemap((void *)0x0600f800);
     Iwram_ClearWords((void *)0x0600ffc0, 64);
     if (view->mode == 0)
-        Scheduler_AddOrUpdateCallback((s32)BattlePres_UpdateHBlankScroll, 0x4ff);
+        Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
     view->mode = mode;
     if (mode == 1)
         REG_BG1CNT = 0x1f83;

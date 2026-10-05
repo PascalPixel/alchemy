@@ -8,7 +8,7 @@
 #include "SYSTEM.H"
 
 
-extern const u8 BattleFx_CommonParticleScript[];
+extern const s32 BattleFx_CommonParticleScript[];
 
 struct OrbitEffect {
     u8 unknown_00[6];
@@ -95,7 +95,7 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
         effect->pause = ((Random16() << 4) >> 16) + 8;
     }
     if (++effect->timer == 101)
-        ObjectDispatch_InitializeFar((struct DispatchObject *)effect, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)effect, BattleFx_CommonParticleScript);
 }
 
 /* Circles the anchor for 121 frames, then hands over to a random wander. */

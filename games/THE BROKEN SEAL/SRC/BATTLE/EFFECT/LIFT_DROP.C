@@ -40,8 +40,8 @@ struct FxObject {
 };
 
 extern struct BattleFxScene *gEffectWork;
-extern const u8 BattleFx_SourceHoldScript[];
-extern const u8 BattleFx_FragmentScript[];
+extern const s32 BattleFx_SourceHoldScript[];
+extern const s32 BattleFx_FragmentScript[];
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
@@ -108,7 +108,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         return;
     BattleEffect_InitializeSharedScene();
     source->linked = target;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)BattleFx_SourceHoldScript);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)source, BattleFx_SourceHoldScript);
     /* FAKEMATCH: the position is reached through this pointer everywhere but
        in the steering loop's first part, which names the position itself;
        that keeps the pointer in r10 and gives the loop its own copy. */
@@ -245,7 +245,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
             object = Object_Spawn(0x11d, p->x, p->y, p->z);
             *walk++ = object;
             if (object != NULL) {
-                ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_FragmentScript);
+                ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_FragmentScript);
                 object->speed = Random16() + 0x20000;
                 object->lift = 0x20000;
                 object->flag = 0;
@@ -258,7 +258,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     ObjectDispatch_ReleaseFar(anchors[0]);
     ObjectDispatch_ReleaseFar(anchors[1]);
     Animation_ApplyChildValuesFar(target, work->saved_palette);
-    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->saved_script));
+    ObjectDispatch_InitializeFar((struct DispatchObject *)target, work->saved_script);
     target->callback = work->saved_callback;
     target->flag = 3;
     target->velocity_y = 0xa0000;
@@ -266,7 +266,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     target->mode = 0;
     source->callback = 0;
     Animation_ApplyChildValuesFar(source, 0);
-    if ((s8)work->child_option != 0) {
+    if (work->child_option != 0) {
         for (i = 0; i < 90 && target->velocity_y >= 0; i++)
             WaitFrames(1);
         WaitFrames(1);

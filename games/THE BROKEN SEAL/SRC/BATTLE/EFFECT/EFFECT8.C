@@ -123,7 +123,7 @@ void BattleFx_BuildWindowEdgeTable(void)
     line = (u16 *)(Ram_MapCellBuffer + 0x82);
     inset = Ram_MapCellBuffer + 2;
     for (i = 0; i != 160; i++) {
-        if ((u32)(i - 8) <= 127) {
+        if (i >= 8 && i <= 135) {
             right = *edge - inset[i - 8];
             if (right < 0)
                 right = 0;

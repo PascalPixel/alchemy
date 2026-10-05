@@ -158,7 +158,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
             }
         }
 
-        Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
         if (work.kind != 0) {
             if (plan->presentation_flags & 0x4000)
                 BattleFx_DispatchByIdRangeFar(&work);
@@ -294,7 +294,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
             work.params[i][j] = animation->entries[j]->param;
     }
 
-    Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
     if (work.kind != 0) {
         s32 fade;
 

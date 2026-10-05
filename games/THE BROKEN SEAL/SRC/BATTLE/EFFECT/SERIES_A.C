@@ -15,6 +15,7 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -22,7 +23,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -134,7 +134,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         narrow = 1;
     }
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work->sheet, 0, 0);
     if (mode <= 1 || mode == 3 || mode == 4 || mode == 5) {
         if (work->effect->variant == 0)
             palette = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
@@ -226,7 +226,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         limit = 128;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != total; frame++) {
         struct BattleCamera *camera = gCameraWork;
@@ -261,7 +261,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
             s32 start = member * 8;
 
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = object->x;
             point[1] = 160 << 14;
             point[2] = object->z;
@@ -342,7 +342,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

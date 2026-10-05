@@ -8,13 +8,9 @@
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "IO_REG.H"
-
-s32 Trig_Sin(s32);
-s32 Trig_Cos(s32);
-
+#include "FIXED_MATH.H"
 
 /* camera/scene/set_angle_parameters.c */
-
 
 extern const u8 Resource_DecodeHalfwordLz[];
 
@@ -50,18 +46,18 @@ extern u8 ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
 extern u8 ColorBuffer_BackupAndHalveNonzeroCodeSize[];
 
 /* graphics/prepare_transfer_in_iwram_work.c */
-void Graphics_PrepareTransferInIwramWork(s32 src, s32 dst)
+void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target)
 {
-    Graphics_PrepareTransfer((void *)src, (void *)dst, gTransform);
+    Graphics_PrepareTransfer(eye, target, gTransform);
 }
 
 /* graphics/prepare_transfer_and_run.c */
-void Graphics_PrepareTransferAndRun(void *src, void *dst)
+void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target)
 {
-    u8 work[48];
+    s32 work[12];
 
-    Graphics_PrepareTransfer(src, dst, (s32 *)work);
-    Iwram_TransformMatrix((s32 *)work);
+    Graphics_PrepareTransfer(eye, target, work);
+    Iwram_TransformMatrix(work);
 }
 
 /* camera/scene/set_angle_parameters.c */

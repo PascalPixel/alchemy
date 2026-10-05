@@ -12,12 +12,12 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 
 /*
  * Battle effect: a burst of six particles over each affected unit in turn.
@@ -31,7 +31,6 @@ void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 /* Resource ids the reference loads from its literal pool. */
 
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 
 void BattleFx_RunTargetBursts(void *object)
@@ -55,8 +54,8 @@ void BattleFx_RunTargetBursts(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, (u8 *)work + 0x1b00, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, work->sheet + 0x1b00, 0, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
@@ -87,7 +86,7 @@ void BattleFx_RunTargetBursts(void *object)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != 96; frame++) {
         s32 member;
@@ -99,7 +98,7 @@ void BattleFx_RunTargetBursts(void *object)
 
             member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             record[0] = member_object->x;
             record[1] = 160 << 13;
             record[2] = member_object->z;
@@ -119,12 +118,12 @@ void BattleFx_RunTargetBursts(void *object)
                     if (i == 5) {
                         EffectStep_AdvanceWithGravity3D(p, 62, 0x800);
                         ((DrawRectangleFn)rectangle_a)(canvas,
-                            (u8 *)work + cel * 0x480 + 0x1b00,
+                            work->sheet + cel * 0x480 + 0x1b00,
                             screen.x - 12, screen.y - 36, 24, 48);
                     } else {
                         EffectStep_AdvanceWithGravity3D(p, 60, 0x200);
                         ((DrawRectangleFn)rectangle_b)(canvas,
-                            (u8 *)work + cel * 0x480,
+                            work->sheet + cel * 0x480,
                             screen.x - 12, screen.y - 36, 24, 48);
                     }
                     p->variant += 1;
@@ -134,7 +133,7 @@ void BattleFx_RunTargetBursts(void *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

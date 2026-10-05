@@ -137,7 +137,7 @@ void BattleFx_StartFadeOverlay(void *object)
     Dma_Set((const void *)&fill, tiles, 0x85000080, REG_DMA3);
     VramBlock_LoadCached(94, 0x200, tiles);
     Runtime_ReleaseHeapBlock(14);
-    Scheduler_AddOrUpdateCallback((s32)(Object_EffectSpawnCallback), 0xc80);
+    Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
     /* FAKEMATCH: the blend values pass through an int and one register
        pointer so GCC builds them with mov and steps the address. */
     value = 0x3f9e;

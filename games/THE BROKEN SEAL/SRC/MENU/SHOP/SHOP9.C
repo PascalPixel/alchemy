@@ -115,7 +115,7 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
         effect->max_speed = 0x20000;
         effect->acceleration = 0x6666;
         effect->flag42 = state;
-        *state_pointer = (u8)*state_pointer + 1;
+        *state_pointer = *state_pointer + 1;
     } else if (state == 1) {
         result = BattleFx_HasReachedTargetFar(effect);
         if (result == 0)

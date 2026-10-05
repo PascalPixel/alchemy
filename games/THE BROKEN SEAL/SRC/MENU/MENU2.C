@@ -29,8 +29,6 @@ void Audio_PlayCue(u32);
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
 
-#define MENU_BASE_X(state) (*(u16 *)((u8 *)(state) + 0x396))
-#define MENU_BASE_Y(state) (*(u16 *)((u8 *)(state) + 0x398))
 void WaitFrames(s32 frames);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
@@ -199,13 +197,13 @@ void Menu_StepRight(struct SelectionScreen *state)
             node = state->head;
             state->records[0].kind = 0;
             while (node->next != NULL) {
-                node->target_x = MENU_BASE_X(state);
-                node->target_y = MENU_BASE_Y(state);
+                node->target_x = state->base_x;
+                node->target_y = state->base_y;
                 node->dx = 0xfff4;
                 node = node->next;
             }
-            node->target_x = MENU_BASE_X(state);
-            node->target_y = MENU_BASE_Y(state);
+            node->target_x = state->base_x;
+            node->target_y = state->base_y;
             node->dx = 0xfff4;
             while (node->target_x != node->x)
                 WaitFrames(1);
@@ -361,7 +359,7 @@ void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index)
         node = node->next;
     }
     if (node->kind == 1 || node->kind == 6) {
-        u32 first = (u16)node->message - (u32)&MsgCommandName;
+        u32 first = node->message - (u32)&MsgCommandName;
 
         value = node->slot;
         Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
@@ -379,7 +377,7 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index)
         node = node->next;
     }
     if (node->kind == 1 || node->kind == 6) {
-        u32 id = (u16)node->message - (u32)&MsgCommandName;
+        u32 id = node->message - (u32)&MsgCommandName;
 
         value = node->slot;
         Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);

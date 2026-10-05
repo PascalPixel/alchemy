@@ -18,6 +18,7 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -36,7 +37,6 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 anchor, s32 *out_x, s32 *out_y);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void SceneTransform_ApplyPosition(s32 *position);
 
@@ -124,7 +124,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
     REG_BG2X = offset << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != work->effect->count * 16 + 116; frame++) {
         struct BattleCamera *camera = gCameraWork;
@@ -157,7 +157,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
             s32 start = k * 16;
 
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = target->x;
             point[1] = 0;
             point[2] = target->z;
@@ -192,7 +192,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
                 struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 if (frame == start + 72)
                     ObjectGroup_UpdateMembers(work->effect->actors[i], 1, -1, -1, 0);
                 if (frame == start + 88)
@@ -233,6 +233,6 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

@@ -7,6 +7,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "INVENTORY_MENU.H"
 #include "GLOBAL_CELLS.H"
+#include "MENU_LIST.H"
 /* Where the shorter modal lines start: the Japanese ones a column or three
    further right. */
 #if EDITION_INTERNATIONAL
@@ -49,8 +50,6 @@ extern char MsgItemUseResult;
 void WaitFrames(s32 frames);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void Audio_PlayCue(s32 cue);
 void Owner_RecalculateStatsFar(s32 owner);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
@@ -141,7 +140,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             menu->selected_item_icon->active = 13;
             ItemMenu_DrawMsg(0, (s32)&MsgWhoseItem);
 #if EDITION_INTERNATIONAL
-            RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+            RenderOutput_RedrawSavedRectFar(menu->info_window);
             UiText_DrawWorkValueWithLabel((s32)menu->info_window);
             command = ItemMenu_PrepOwner(0);
             if (command == -1) {
@@ -160,7 +159,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 done = 1;
             }
 #endif
-            RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+            RenderOutput_RedrawSavedRectFar(menu->info_window);
             ItemMenu_HideAllIcons();
             state = ITEM_STEP_ITEM;
             break;
@@ -212,11 +211,11 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 }
                 if (result == 2) {
                     ItemMenu_Use();
-                    RenderOutput_ClearListFar((s32)menu->info_window);
+                    RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
                         menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
 #if !EDITION_INTERNATIONAL
-                    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+                    RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
                     menu->pane_icons[0]->active = 13;
                     menu->item_count = ItemMenu_Collect(
@@ -253,7 +252,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_HideAllIcons();
             ItemMenu_SetMsgWin5();
             ItemMenu_SetItemWin5();
-            RenderOutput_RedrawSavedRectFar((s32)menu->message_window);
+            RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
                 (s32)&MsgUseOnWhom, (s32)menu->message_window, 16, 16);
@@ -272,11 +271,11 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 Menu_DrawOwnerStatusPanel(
                     (s32)menu->status_window, menu->pane_owner[1], 0, command);
                 if (result != -1) {
-                    RenderOutput_ClearListFar((s32)menu->info_window);
+                    RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
                         menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
 #if !EDITION_INTERNATIONAL
-                    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+                    RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
                     menu->pane_icons[0]->active = 13;
                     ItemMenu_TryBreak();
@@ -294,7 +293,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
         case ITEM_STEP_TARGET:
             ItemMenu_SetMsgWin5();
             ItemMenu_SetItemWin5();
-            RenderOutput_RedrawSavedRectFar((s32)menu->message_window);
+            RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
                 (s32)&MsgGiveToWhom, (s32)menu->message_window, 16, 16);
@@ -339,7 +338,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             menu->selected_item_icon->y = 28;
             UiIcon_PrepareObject(menu->selected_item_icon);
             UiWindow_ClearInteriorTilesFar((s32)menu->list_window, 0, 72, 120, 96);
-            RenderOutput_RedrawSavedRectFar((s32)menu->message_window);
+            RenderOutput_RedrawSavedRectFar(menu->message_window);
             if (ItemMenu_ConfirmDrop(sel) == 0) {
 #if EDITION_INTERNATIONAL
                 command = menu->pane_owner[0];
@@ -363,7 +362,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->selected_item_icon->active = 13;
                 menu->pane_icons[0]->active = 13;
                 WaitFrames(1);
-                RenderOutput_ClearListFar((s32)menu->info_window);
+                RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage((s32)&MsgDroppedIt, MODAL_SHORT_X, 13);
                 menu->completion_flag = 1;
                 state = ITEM_STEP_ITEM;
@@ -444,7 +443,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 #if EDITION_INTERNATIONAL
                 ItemMenu_SetMsgWin6();
 #endif
-                RenderOutput_RedrawSavedRectFar((s32)menu->message_window);
+                RenderOutput_RedrawSavedRectFar(menu->message_window);
                 ItemMenu_DrawItemHead();
                 result = Unnamed_080a5388(0);
             }
@@ -455,10 +454,10 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             menu->pane_icons[0]->active = 13;
             WaitFrames(1);
             if (aborted == 1) {
-                RenderOutput_ClearListFar((s32)menu->info_window);
+                RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotHoldMore, 15, 14);
             } else {
-                RenderOutput_ClearListFar((s32)menu->info_window);
+                RenderOutput_ClearListFar(menu->info_window);
                 if (result == 1) {
                     InventoryMenu_ShowModalMessage(
                         (s32)&MsgGiven, 15, 14);
@@ -470,7 +469,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     item = Item_Get(menu->selected_items[0]);
                     if ((item->flags & ITEM_CURSED) != 0) {
                         Audio_PlayCue(0x67);
-                        RenderOutput_ClearListFar((s32)menu->info_window);
+                        RenderOutput_ClearListFar(menu->info_window);
                         InventoryMenu_ShowModalMessage(
                             (s32)&MsgEquippedIt + 7, MODAL_SHORT_X, 14);
                     }
@@ -559,12 +558,12 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             if (aborted == 1) {
                 CopyWords(IWRAM_COPY_WORDS, source, source_copy, BATTLE_UNIT_SIZE);
                 CopyWords(IWRAM_COPY_WORDS, target, target_copy, BATTLE_UNIT_SIZE);
-                RenderOutput_ClearListFar((s32)menu->info_window);
+                RenderOutput_ClearListFar(menu->info_window);
 #if defined(TBS_EDITION_FR)
                 /* The longer French line starts further left, and the status
                    window is redrawn after it. */
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 11, 14);
-                RenderOutput_RedrawSavedRectFar((s32)menu->status_window);
+                RenderOutput_RedrawSavedRectFar(menu->status_window);
 #else
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 15, 14);
 #endif
@@ -578,13 +577,13 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 ItemMenu_SetMsgWin6();
                 ItemMenu_HidePageIcons();
 #endif
-                RenderOutput_RedrawSavedRectFar((s32)menu->message_window);
+                RenderOutput_RedrawSavedRectFar(menu->message_window);
                 menu->pane_owner[0] = menu->pane_owner[1];
                 menu->selected_items[0] &= ITEM_ID_MASK;
                 ItemMenu_DrawItemHead();
                 result = Unnamed_080a5388(0);
                 if (GameFlag_TestFar(0x150) == 0) {
-                    RenderOutput_ClearListFar((s32)menu->info_window);
+                    RenderOutput_ClearListFar(menu->info_window);
                     ItemMenu_SetItemWin5();
                     ItemMenu_RefreshOwner(menu->pane_owner[1], 1);
                     if (result == 0) {
@@ -595,7 +594,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         item = Item_Get(menu->selected_items[0]);
                         if ((item->flags & ITEM_CURSED) != 0) {
                             Audio_PlayCue(0x67);
-                            RenderOutput_ClearListFar((s32)menu->info_window);
+                            RenderOutput_ClearListFar(menu->info_window);
                             InventoryMenu_ShowModalMessage(
                                 (s32)&MsgEquippedIt + 7, MODAL_SHORT_X, 14);
                         }
@@ -624,10 +623,10 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 break;
             }
             if (result == -2) {
-                RenderOutput_ClearListFar((s32)menu->info_window);
+                RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotRemoveItem, 0, -1);
 #if !EDITION_INTERNATIONAL
-                RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+                RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
                 state = ITEM_STEP_ITEM;
                 break;
@@ -641,12 +640,12 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             WaitFrames(1);
             ItemMenu_DrawEquipPreview(
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
-            RenderOutput_ClearListFar((s32)menu->info_window);
+            RenderOutput_ClearListFar(menu->info_window);
             InventoryMenu_ShowModalMessage((s32)&MsgEquippedIt, 15, 8);
             item = Item_Get(menu->selected_items[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
                 Audio_PlayCue(0x67);
-                RenderOutput_ClearListFar((s32)menu->info_window);
+                RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage(
                     (s32)&MsgEquippedIt + 7, MODAL_SHORT_X, 8);
             }
@@ -667,7 +666,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawEquipPreview(
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
             menu->equip_preview = 0;
-            RenderOutput_ClearListFar((s32)menu->info_window);
+            RenderOutput_ClearListFar(menu->info_window);
             InventoryMenu_ShowModalMessage((s32)&MsgRemoved, MODAL_REMOVED_X, 8);
             Event_ClearInvalidPackedValuesFar();
             state = ITEM_STEP_ITEM;
@@ -676,7 +675,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
         case ITEM_STEP_INSPECT:
             menu->pane_icons[0]->active = 13;
             Menu_SelectQuantity(menu->selected_items[0]);
-            RenderOutput_RedrawSavedRectFar((s32)menu->status_window);
+            RenderOutput_RedrawSavedRectFar(menu->status_window);
             ItemMenu_DrawEquipPreview(
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
             menu->pane_icons[0]->active = 1;

@@ -7,6 +7,7 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "TBS_EDITION.H"
+#include "MENU_LIST.H"
 
 /* The equipment slots' highlight: the Japanese slot names are narrower. */
 #if EDITION_INTERNATIONAL
@@ -19,9 +20,7 @@
 
 extern u8 MsgItemPlainName;
 
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void RenderOutput_ClearListFar(void *window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);

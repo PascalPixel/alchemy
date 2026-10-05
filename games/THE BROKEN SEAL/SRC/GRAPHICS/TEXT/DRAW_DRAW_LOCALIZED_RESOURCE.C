@@ -20,8 +20,8 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
-s32 UiText_CopyMessageString(s32,u16*,u32);
-void UiText_DecodeMessage(s32,u16*,s32);
+#include "MENU_LIST.H"
+#include "WINDOW.H"
 struct UiWindow;
 void UiText_RenderWideStringAtOffset(u16 *, struct UiWindow *, s32, s32);
 extern u8 MsgWaitingForOpponent[];
@@ -70,7 +70,7 @@ s32 UiText_DrawWaitingForOpponent(void)
     frame = captured - 1;
     /* FAKEMATCH: The international message load follows the frame adjustment; the prior shape swapped that pair. */
     __asm__("" : "+r"(frame) : : "r0");
-    UiText_CopyMessageString((s32)MsgWaitingForOpponent, arg_buf, (u32)arg_size);
+    UiText_CopyMessageString((s32)MsgWaitingForOpponent, arg_buf, arg_size);
 #else
     {
         s32 message = (s32)MsgWaitingForOpponent;

@@ -12,6 +12,7 @@
 #include "DMA.H"
 #include "FIELD_SPRITE.H"
 #include "WORKSPACE_OPTIONS.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 Resource_FixedBlockBTiles[];
 
@@ -54,7 +55,7 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
 {
     const u8 *range;
 
-    if ((u32)(mark - 0xde) > 1)
+    if (mark < 0xde || mark > 223)
         return 1;
     if (mark == 0xde)
         range = NameEntry_DakutenRanges;
@@ -138,7 +139,7 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
         y <<= 6;
         x = y + (x << 1);
         do {
-            u16 *cell = (u16 *)((u32)x + (u32)base);
+            u16 *cell = (u16 *)(x + (u32)base);
             s32 remaining = width;
             while (remaining != 0) {
                 u32 value = *cell;
@@ -163,7 +164,7 @@ void Resource_CopyFixedBlockB(s32 arg0)
 
 void Resource_CopyFixedBlockA(s32 arg0)
 {
-    VramBlock_LoadCached(arg0, 0x80, (s32)RomBytes_080317e4);
+    VramBlock_LoadCached(arg0, 0x80, RomBytes_080317e4);
 }
 
 /* The Japanese edition has neither of the two text helpers that follow. */
@@ -257,7 +258,6 @@ extern u32 gFrameTick;
 extern volatile u32 gKeysRepeat;
 extern u32 gKeyState;
 
-void *Owner_GetStateFar(s32 owner);
 void Ui_LoadWindowGraphics(void);
 s32 Localization_LookupEntryId(s32 entry);
 s32 UiWindow_CreateWithSideObject(s32 entry, s32 side, s32 x, s32 y);
@@ -399,7 +399,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             column--;
             if (column == -1) {
                 column = 18;
-                if ((u32)(row - 4) > 1)
+                if (row < 4 || row > 5)
                     column = 16;
             } else if (column == 5 || column == 11 || column == 17) {
                 column--;
@@ -413,7 +413,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
                 column = 0;
             else if (column == 5 || column == 11 || column == 17)
                 column++;
-            if (column == 18 && (u32)(row - 4) > 1)
+            if (column == 18 && (row < 4 || row > 5))
                 column = 0;
         }
         if (gKeyState & KEY_START) {

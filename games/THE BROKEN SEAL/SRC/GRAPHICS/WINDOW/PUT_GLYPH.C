@@ -118,15 +118,15 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
                 break;
             case 4:
                 output->active = 6;
-                output->unknown_0c = 8;
+                output->anim_step = 8;
                 break;
             case 5:
                 output->active = 7;
-                output->unknown_0c = 0;
+                output->anim_step = 0;
                 break;
             case 2:
                 output->active = 4;
-                output->unknown_0c = 0;
+                output->anim_step = 0;
                 break;
             }
 #if !EDITION_INTERNATIONAL
@@ -236,9 +236,9 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     u32 pos;
     u16 row;
 
-    if (y > (u32)(win->height - 2))
+    if (y > (win->height - 2))
         return;
-    if (x > (u32)(win->width - 2))
+    if (x > (win->width - 2))
         return;
     if (mode == 1) {
         s32 column;
@@ -296,9 +296,9 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     u32 pos;
     u16 row;
 
-    if (y > (u32)(win->height - 2))
+    if (y > (win->height - 2))
         return;
-    if (x > (u32)(win->width - 2))
+    if (x > (win->width - 2))
         return;
     if (mode == 1) {
         s32 column;

@@ -159,7 +159,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
         address = (u32)work->heap.next_ewram;
         aligned_size = (((u32)size + 3) >> 2) * 4;
         next = address + aligned_size;
-        if (next >= (u32)(129 << 18)) {
+        if (next >= (129 << 18)) {
             address = (u32)work->heap.next_iwram;
             next_address = address + aligned_size;
             if (next_address >= (u32)Ram_IwramHeapEnd) {
@@ -185,11 +185,11 @@ void *Runtime_BumpAllocate(s32 size)
     u32 aligned_words = ((u32)size + 3) >> 2;
 
     allocation_address = (u32)work->heap.next_iwram;
-    size = (s32)(aligned_words << 2);
-    next = allocation_address + (u32)size;
+    size = aligned_words << 2;
+    next = allocation_address + size;
     if (next >= (u32)Ram_IwramHeapEnd) {
         allocation_address = (u32)work->heap.next_ewram;
-        next_address = allocation_address + (u32)size;
+        next_address = allocation_address + size;
         if (next_address >= 0x02040000U) {
             return NULL;
         }
@@ -210,11 +210,11 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
     u32 aligned_words = ((u32)size + 3) >> 2;
 
     allocation_address = (u32)work->heap.next_ewram;
-    size = (s32)(aligned_words << 2);
-    primary_next_address = allocation_address + (u32)size;
+    size = aligned_words << 2;
+    primary_next_address = allocation_address + size;
     if (primary_next_address >= 0x02040000U) {
         allocation_address = (u32)work->heap.next_iwram;
-        alternate_next_address = allocation_address + (u32)size;
+        alternate_next_address = allocation_address + size;
         if (alternate_next_address >= (u32)Ram_IwramHeapEnd) {
             return NULL;
         }

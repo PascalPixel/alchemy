@@ -78,7 +78,7 @@ s32 PsynergyMenu_SelectAction(void)
                 icon->sentinel = priority;
         }
     }
-    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
     Menu_SpawnIconEntries(menu, menu->message_window);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->status_window, SWITCH_HELP_X, -24);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 2, menu->status_window, 0, -24);
@@ -86,7 +86,7 @@ s32 PsynergyMenu_SelectAction(void)
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         ItemMenu_PosCategory();
         RenderOutput_RedrawSavedRectFar(menu->status_window);
-        menu->psynergy_count = (u8)PsynergyMenu_CollectActions(
+        menu->psynergy_count = PsynergyMenu_CollectActions(
             (struct BattleUnit *)Owner_GetStateFar(menu->owner_ids[0]), menu->psynergies, 0);
         WaitFrames(1);
         Menu_BuildPageResult(&state, 0);
@@ -130,7 +130,7 @@ s32 PsynergyMenu_SelectAction(void)
                 Audio_PlayCue(113);
                 result = -1;
                 done = 1;
-                Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
+                Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
                 break;
             }
             if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {

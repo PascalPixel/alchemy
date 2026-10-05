@@ -20,7 +20,7 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
     if (object == 0)
         return -1;
     object->kind = 0;
-    object->unknown_0c = 0;
+    object->anim_step = 0;
     object->active = 1;
     return 1;
 }
@@ -46,7 +46,7 @@ s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s
     if (object == 0)
         return -1;
     object->kind = 0;
-    object->unknown_0c = 0;
+    object->anim_step = 0;
     object->active = 1;
     return 1;
 }

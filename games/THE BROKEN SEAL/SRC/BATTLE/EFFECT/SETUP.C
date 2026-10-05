@@ -10,14 +10,14 @@ void Object_EffectSpawnCallback(void);
 
 void Object_EnableEffectSpawnCallback(void)
 {
-    Scheduler_EnableCallbacks((u32)Object_EffectSpawnCallback);
+    Scheduler_EnableCallbacks(Object_EffectSpawnCallback);
 }
 
 void Object_EffectSpawnCallback(void);
 
 void Object_DisableEffectSpawnCallback(void)
 {
-    Scheduler_DisableCallbacks((u32)Object_EffectSpawnCallback);
+    Scheduler_DisableCallbacks(Object_EffectSpawnCallback);
 }
 
 extern struct BattleEffectEntry BattleFx_DefinitionTable[];
@@ -136,7 +136,7 @@ void Battle_Reset(void)
         runtime->unknown_1da = 0xFFFF;
         runtime->unknown_1dc = -1;
         runtime->unknown_1de = -1;
-        Scheduler_AddOrUpdateCallback((s32)((const void *)Battle_UpdateModeFromShoulderButtons), 0xC80);
+        Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
         GameFlag_ClearBitFar(0x132);
         runtime->object_id = gGameState.selected_actor;
         runtime->unknown_1f8 = zero;
@@ -148,7 +148,7 @@ void Object_AttachWorkTargetToObject(s32 value, s32 enabled);
 
 void BattleFx_FinishAction(void)
 {
-    Scheduler_RemoveCallback((u32)Battle_UpdateModeFromShoulderButtons);
+    Scheduler_RemoveCallback(Battle_UpdateModeFromShoulderButtons);
     Object_AttachWorkTargetToObject(gGameState.selected_actor, 1);
     GameFlag_RefreshLureCapFar();
 }

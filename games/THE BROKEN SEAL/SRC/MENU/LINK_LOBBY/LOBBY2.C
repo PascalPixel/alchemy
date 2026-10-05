@@ -18,8 +18,7 @@ u32 gLinkLobbyCallFrames;
 extern u8 MsgLobbyLinkDisconnected[];
 
 extern u8 MsgEnemyLabel[];
-extern u8 gLinkStatus[];
-s32 SerialRuntime_GetActiveTransfers(void);
+extern volatile u16 gLinkStatus;
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
 
@@ -78,7 +77,7 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
          */
         u16 *p = (u16 *)((u32)work + 386);
         s32 val = 0;
-        *p = (u16)val;
+        *p = val;
     }
 
     Engine_EventSetMessage((s32)MsgLobbyLinkDisconnected);
@@ -107,7 +106,7 @@ s32 LinkLobby_ReceivePartyRecords(void)
     s32 i;
 
     size = 0x154;
-    heap = (s32)Runtime_BumpAllocateAlternatePool((s32)size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     result = 0;
     timeout = 900;
     slot = 0;
@@ -118,7 +117,7 @@ wait1:
         goto done;
     }
     Engine_TaskWait(1);
-    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
         if (++tries > 24) {
                 result = -1;
                 goto done;
@@ -178,7 +177,7 @@ wait2:
         goto done;
     }
     Engine_TaskWait(1);
-    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
         if (++tries > 24) {
             result = -1;
         goto done;
@@ -197,7 +196,7 @@ test2:
 second:
     Runtime_BumpFree(heap);
     size = 0x140;
-    heap = (s32)Runtime_BumpAllocateAlternatePool((s32)size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     tries = 0;
     if ((ret = SerialRuntime_BeginTransferB(Trade_GetOfferState(1))) != -1) {
         goto test2;
@@ -223,7 +222,7 @@ s32 SceneData_CopyUpToThreeEntries(u16 *dest)
         n = cnt;
         do {
             u8 c = *src++;
-            if (dest != 0) { *dest = (u16)c; dest++; }
+            if (dest != 0) { *dest = c; dest++; }
             n--;
         } while (n != 0);
     }
@@ -294,7 +293,7 @@ s32 LinkLobby_SendPartyRecords(void)
         } while (0);
         while (SerialRuntime_GetActiveTransfers() != 0) {
             Engine_TaskWait(1);
-            if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+            if (--timeout < 0 || (gLinkStatus & 3) != 3) {
                 /* FAKEMATCH: a one-pass boundary keeps this failure inline,
                    so its -1 is reloaded here and jump2 merges it into the
                    offer's; moved out of the loop, it shifts every later
@@ -312,7 +311,7 @@ s32 LinkLobby_SendPartyRecords(void)
     goto next;
 wait:
     Engine_TaskWait(1);
-    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
         if (++tries > 24) {
             result = -1;
             goto done;
@@ -350,7 +349,7 @@ next:
         timeout = 600;
         for (j = 0; j < list->count; j++) {
             list->entries[j].owner = slots[list->entries[j].owner];
-            if ((s8)list->entries[j].owner == 0) {
+            if (list->entries[j].owner == 0) {
                 for (k = j; k < list->count - 1; k++) {
                     list->entries[k] = list->entries[k + 1];
                 }
@@ -365,7 +364,7 @@ next:
         goto test3;
     wait3:
         Engine_TaskWait(1);
-        if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+        if (--timeout < 0 || (gLinkStatus & 3) != 3) {
             if (++tries > 24) {
                 result = -1;
                 goto done;

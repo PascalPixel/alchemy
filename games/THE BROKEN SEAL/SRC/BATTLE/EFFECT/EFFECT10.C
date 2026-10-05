@@ -118,10 +118,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     BattlePres_ConfigureEffectDisplay();
     PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
-    Scheduler_AddOrUpdateCallback((s32)Graphics_ResetBg2Pa, 0x480);
+    Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0x480);
     Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     REG_WININ = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
     REG_WIN0H = 0xf0f0;
@@ -131,7 +131,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + 0x4e20, 0, 0);
     REG_DISPCNT = 0x7741;
     REG_BG2PA = 0x80;
@@ -198,12 +198,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     noise[k] = Random16() & 63;
                 }
                 *phase = 0;
-                Scheduler_AddOrUpdateCallback((s32)BattleFx_BuildWindowEdgeTable, 0x480);
+                Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0x480);
             }
             *phase += step;
             step += 3;
             if (frame == 15) {
-                Scheduler_RemoveCallback((s32)BattleFx_BuildWindowEdgeTable);
+                Scheduler_RemoveCallback(BattleFx_BuildWindowEdgeTable);
             }
         }
 
@@ -424,7 +424,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     spot[4] = 0;
     Runtime_SetIrqHandler(2, 0, 0);
     BattleEffect_SetupBlendedDisplay();
-    Scheduler_RemoveCallback((s32)Graphics_ResetBg2Pa);
+    Scheduler_RemoveCallback(Graphics_ResetBg2Pa);
     REG_WIN0H = 0xf0;
     work->transfer_mode = 2;
     work->transfer_value = 75;
@@ -440,7 +440,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], (struct EffectPosition *)seat);
         work->particles[i].x = seat[0] / 2;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1, 1);
     Audio_PlayCue(0x121);
     REG_BG2PA = 0x80;
     REG_BLDALPHA = 0x1010;
@@ -521,7 +521,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     for (i = 0; i != 8; i++) {
         ResourceObject_ReleaseFar(work->objects[i]);
     }
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

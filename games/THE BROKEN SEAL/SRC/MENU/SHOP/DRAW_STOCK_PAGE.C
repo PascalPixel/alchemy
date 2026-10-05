@@ -35,7 +35,7 @@ void Shop_DrawStock(s32 window, s32 selected)
             clear = 0;
             icon->kind = clear;
             icon->active = 17;
-            icon->unknown_0c = clear;
+            icon->anim_step = clear;
         }
         if (first + 7 < item_count) {
             icon = RenderOutput_CreateFar(shop->next_page_icon, 0x40000000,
@@ -43,13 +43,13 @@ void Shop_DrawStock(s32 window, s32 selected)
             clear = 0;
             icon->kind = clear;
             icon->active = 15;
-            icon->unknown_0c = clear;
+            icon->anim_step = clear;
         }
         slot = 0;
-        if ((u32)first < (u32)item_count) {
-            item_id = (s16 *)((u32)(first * 2) + (u32)item_ids);
+        if (first < (u32)item_count) {
+            item_id = (s16 *)((first * 2) + (u32)item_ids);
             x = 16;
-            for (; (u32)slot <= 6 && (u32)first < (u32)item_count;
+            for (; (u32)slot <= 6 && first < (u32)item_count;
                  x += 32, slot++, item_id++, first++) {
                 stock_item = *item_id;
                 definition = Item_Get(stock_item);
@@ -59,7 +59,7 @@ void Shop_DrawStock(s32 window, s32 selected)
                 if (first == selected) {
                     icon->active = 9;
                     highlight = 10;
-                    icon->unknown_0c = highlight;
+                    icon->anim_step = highlight;
                     icon->sentinel = 253;
                 }
                 icon = Shop_CreatePriceSprite(definition->price, window, x, 0);

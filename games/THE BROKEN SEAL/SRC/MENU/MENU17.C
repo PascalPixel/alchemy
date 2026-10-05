@@ -167,7 +167,7 @@ void *AffineEffect_InitializeWork(void)
     work = Runtime_AllocateBlock(58, 152);
     zero = 0;
     Dma_Set(&zero, work, 0x85000026, REG_DMA3);
-    Scheduler_AddOrUpdateCallback((s32)(AffineEffect_UpdateFrame), 0xc76);
+    Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 0xc76);
     return work;
 }
 
@@ -178,7 +178,7 @@ void Menu_EndResourceSelection(void)
     struct ResourceMenuWork *work;
 
     work = gMenuSelectWork;
-    Scheduler_RemoveCallback((u32)(AffineEffect_UpdateFrame));
+    Scheduler_RemoveCallback(AffineEffect_UpdateFrame);
     child = work->window;
     if (child != 0) {
         UiWork_Finalize(child, 2);

@@ -7,6 +7,9 @@
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 #include "ANIMSPR.H"
+#include "UI.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "MENU_LIST.H"
 
 /* Where the accepted selection is published. */
 struct AssetSelectionResult {
@@ -39,19 +42,13 @@ void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32);
 s32 Party_ListActiveOwnersFar(void *session);
-void Resource_LoadPairedBlocks(void);
 void Palette_LightenBankHighlight(s32);
 void Link_DrawShiftedTilePairFar(void *address);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
 void UiWork_SetAltFlagAndClearTableFar(s32);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
-void RenderOutput_ClearListFar(s32);
-void ItemMenu_Close(void);
 void Menu_ResetTwoResourceEntries(void);
 void UiWindow_MarkVisibleTileAttributesFar(void);
-s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(void);
 
@@ -106,7 +103,7 @@ s32 RunAssetSelectionScreen(void)
         selection->unknown_180 = (category << 10) | (index & ITEM_ID_MASK);
         selection->unknown_19a = screen->selected_slots[0];
     }
-    RenderOutput_ClearListFar((s32)screen->status_window);
+    RenderOutput_ClearListFar(screen->status_window);
     process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL];
     ((struct UiRenderWork *)*process)->menu_busy = 1;
     ItemMenu_Close();

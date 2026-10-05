@@ -179,7 +179,7 @@ s32 DjinnMenu_ShowHelp(void)
             Resource_ResetEntry(work->glyph_resource);
             work->glyph_resource = 99;
         }
-        ((struct UiRenderWork *)gWindowWork[0])->unknown_after_result = 0;
+        ((struct UiRenderWork *)gWindowWork[0])->page_arrow_shown = 0;
         UiWindow_Clear(win_b);
         {
             struct UiWindow *window = channel->work;
@@ -204,6 +204,6 @@ s32 DjinnMenu_ShowHelp(void)
         UiWindow_Clear(*(s32 *)(menu->unknown_000 + 0x10));
         ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
     }
-    Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
     return result;
 }

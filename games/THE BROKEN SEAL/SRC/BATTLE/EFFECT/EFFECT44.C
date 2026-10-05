@@ -74,10 +74,10 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
     first.x += (last.x - first.x) / 2;
     REG_BG2X = (64 - first.x) << 8;
-    Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(143);
     frame = 0;
     step = 1;
@@ -110,7 +110,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
         WaitFrames(1);
         frame++;
     } while (frame != 63);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 
@@ -190,7 +190,7 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 
     if (work->transfer_pending == 1) {
         source = heap_cache[1];
-        switch ((u32)work->transfer_mode) {
+        switch (work->transfer_mode) {
         case 0:
             CopyWords((void *)0x06004000, source, 0x4000);
             break;

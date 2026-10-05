@@ -60,12 +60,12 @@ void MenuSelection_DrawFrame(void);
 
 void Resource_ScheduleOwnerResetDelayed(void)
 {
-    Scheduler_AddOrUpdateCallback((s32)MenuSelection_DrawFrame, 0xC80);
+    Scheduler_AddOrUpdateCallback(MenuSelection_DrawFrame, 0xC80);
 }
 
 /* resource/Resource_ScheduleOwnerReset.c */
 
 void Resource_ScheduleOwnerReset(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)MenuSelection_DrawFrame));
+    Scheduler_RemoveCallback(MenuSelection_DrawFrame);
 }

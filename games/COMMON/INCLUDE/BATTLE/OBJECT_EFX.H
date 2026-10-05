@@ -3,7 +3,8 @@
 
 #include "TYPES.H"
 
-extern u8 BattleFx_CommonParticleScript[];
-extern u8 BattleFx_FragmentScript;
+/* Word-coded motion scripts for the object dispatcher. */
+extern const s32 BattleFx_CommonParticleScript[];
+extern const s32 BattleFx_FragmentScript[];
 
 #endif

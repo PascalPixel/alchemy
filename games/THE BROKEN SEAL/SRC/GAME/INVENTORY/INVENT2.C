@@ -5,7 +5,6 @@
 #include "SCENE.H"
 
 void Owner_RefreshClassActions(s32 owner);
-void Owner_RecalculateStats(s32 owner);
 void Event_ClearInvalidPackedValuesFar(s32);
 
 extern u8 gItemCounters[128];

@@ -26,7 +26,6 @@ extern u8 MsgSanctumFarewell[];
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowResolvedAndWait(s32 message);
 void Shop_InitializeCursorWork(void);
 void Inn_Cleanup(void);
@@ -79,7 +78,7 @@ s32 Shop_CanServe(s32 entry_no, s32 kind)
     if ((kind == 0 && entry->hp <= 0)
         || (kind == 1 && entry->poison != 0)
         || (kind == 2 && entry->evil_spirit != 0)
-        || (kind == 3 && (s8)entry->restraint != 0)) {
+        || (kind == 3 && entry->restraint != 0)) {
         result = 1;
     }
     return result;
@@ -313,7 +312,7 @@ s32 Sanctum_RunPartyService(void)
                 retry = 1;
                 continue;
             }
-            if ((u32)price > (u32)gGameState.coins) {
+            if (price > (u32)gGameState.coins) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 UiMessage_ShowResolvedAndRestoreState(message + 1);
                 retry = 1;

@@ -50,7 +50,7 @@ void BattleFx_AdvanceScrollOnInterval(void)
     u32 *counter = (u32 *)&work->scroll_timer;
 
     (*counter)++;
-    if (*counter == (u32)work->scroll_interval) {
+    if (*counter == work->scroll_interval) {
         gBgScroll[1].x += work->scroll_step_x;
         gBgScroll[1].y += work->scroll_step_y;
         *counter = 0;
@@ -124,7 +124,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2001);
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
     BattlePres_ConfigureEffectDisplay();
     REG_BLDCNT = 0x3f44;
@@ -164,7 +164,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     if (work->effect->side == 0) {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 95)
+            if (i >= 8 && i <= 103)
                 line[i] = (0xf0 - i) | ((0x70 - i) << 8);
             else if (i <= 135)
                 line[i] = 0x888;
@@ -174,7 +174,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     } else {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 87)
+            if (i >= 8 && i <= 95)
                 line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
             else if (i <= 135)
                 line[i] = 0x78f8;
@@ -183,13 +183,13 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
         }
     }
 
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmWin0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
     work->transfer_mode = 2;
     if (work->effect->variant == 1)
         work->transfer_value = 75;
     else
         work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != FallingShards_Counts[work->effect->variant * 2 + 1]; frame++) {
         if (frame == FallingShards_Counts[work->effect->variant * 2 + 1] - 16)
@@ -220,11 +220,11 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
                 s32 x = shard->x / 8;
                 s32 y = shard->y / 8;
 
-                if ((u32)(shard->variant - 1) <= 13) {
+                if (shard->variant >= 1 && shard->variant <= 14) {
                     draw[work->effect->variant == 2 ? 1 : 0](canvas,
-                        (u8 *)work + 0x400 + ((shard->variant / 3) << 10), x, y, 32, 32);
+                        work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y, 32, 32);
                 }
-                if ((u32)(shard->variant - 9) <= 2) {
+                if (shard->variant >= 9 && shard->variant <= 11) {
                     for (k = 0; k != 32; k++) {
                         puff = &work->particles[32 + k];
                         if (puff->variant == -1) {
@@ -261,8 +261,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Scheduler_RemoveCallback((u32)BattleFx_ArmWin0HBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -313,8 +313,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2001);
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, (u8 *)work + 0x604, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
     BattlePres_ConfigureEffectDisplay();
     REG_BLDCNT = 0x3f44;
     REG_WININ = 0x3337;
@@ -346,7 +346,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     if (work->effect->side == 0) {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 95)
+            if (i >= 8 && i <= 103)
                 line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
             else if (i <= 135)
                 line[i] = 0x80;
@@ -356,7 +356,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     } else {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 95)
+            if (i >= 8 && i <= 103)
                 line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
             else if (i <= 135)
                 line[i] = 0x70f0;
@@ -365,7 +365,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
         }
     }
 
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmWin0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
     if (work->effect->variant == 0) {
         work->transfer_mode = 1;
         work->transfer_value = 0;
@@ -376,7 +376,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
         work->transfer_mode = 2;
         work->transfer_value = 75;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != FallingBolts_Counts[work->effect->variant * 4 + 3]; frame++) {
         if (frame == FallingBolts_Counts[work->effect->variant * 4 + 3] - 64)
@@ -389,7 +389,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
             x = bolt->x / 8;
             y = bolt->y / 8;
             if (bolt->variant == -1) {
-                draw_bolt(canvas, (u8 *)work + 0x604, x, y, 24, 24);
+                draw_bolt(canvas, work->sheet + 0x604, x, y, 24, 24);
                 if (bolt->y <= 0x27f) {
                     if (work->effect->side == 0)
                         bolt->x -= 32;
@@ -416,10 +416,10 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
                         ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 2);
                 }
             } else {
-                if ((u32)bolt->variant <= 3)
-                    draw_bolt(canvas, (u8 *)work + 0x844, x, y, 24, 24);
+                if (bolt->variant >= 0 && bolt->variant <= 3)
+                    draw_bolt(canvas, work->sheet + 0x844, x, y, 24, 24);
                 else if (bolt->variant <= 7)
-                    draw_bolt(canvas, (u8 *)work + 0xa84, x - 9, y - 9, 42, 42);
+                    draw_bolt(canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);
                 if (bolt->variant <= 14)
                     bolt->variant++;
             }
@@ -431,7 +431,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 
                 if (size > 6)
                     size = 6;
-                draw_spark(canvas, (u8 *)work + BattleFx6_FlareCells[size - 1],
+                draw_spark(canvas, work->sheet + BattleFx6_FlareCells[size - 1],
                     ((s16 *)&spark->x)[1] - size, ((s16 *)&spark->y)[1] - size,
                     size * 2, size * 2);
                 EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
@@ -443,8 +443,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattleFx_ArmWin0HBlankDma);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

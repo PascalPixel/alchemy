@@ -10,11 +10,11 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern void *gBattleFxWork[];
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -51,7 +51,7 @@ void BattleFx_RunBouncingSheep(void *object)
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw_a = (DrawRectangleFn)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 15, 1);
@@ -68,7 +68,7 @@ void BattleFx_RunBouncingSheep(void *object)
         REG_BG2X = -0x7000;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
     for (frame = 0; frame != 148; frame++) {
         struct BattleCamera *camera;
@@ -81,7 +81,7 @@ void BattleFx_RunBouncingSheep(void *object)
 
             member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             record[0] = *(s32 *)((u8 *)member_object + 8);
             record[1] = 160 << 14;
             record[2] = *(s32 *)((u8 *)member_object + 16);
@@ -96,10 +96,10 @@ void BattleFx_RunBouncingSheep(void *object)
 
                 cel = (one->variant / 16) & 7;
                 if (cel < 4)
-                    draw_a(canvas, (u8 *)work + (cel << 10),
+                    draw_a(canvas, work->sheet + (cel << 10),
                         (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
                 else
-                    draw_b(canvas, (u8 *)work + (cel << 10) - 0x1000,
+                    draw_b(canvas, work->sheet + (cel << 10) - 0x1000,
                         (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
                 one->y += one->velocity_y;
                 one->velocity_y += 0x2000;
@@ -115,7 +115,7 @@ void BattleFx_RunBouncingSheep(void *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -151,7 +151,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1, 1);
     if (work->effect->side == 1) {
         REG_BG2X = -0x7000;
     }
@@ -159,7 +159,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     draw[0] = (DrawRectangle)slot[6];
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     for (i = 0; i != work->effect->count; i++) {
         work->particles[i].variant = Random16() & 63;
     }
@@ -188,12 +188,12 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
                 }
                 y = pos.y;
                 pos.y = y - 16;
-                draw[0](canvas, (u8 *)work + 1728, pos.x - 8, y - 20, 16, 20);
+                draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
                 if (frame < start) {
                     goto next;
                 }
                 cel = ((frame - start) + marker->variant) / 6 % 9;
-                draw[0](canvas, (u8 *)work + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
+                draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
             next:
                 marker++;
                 i++;
@@ -203,7 +203,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
         WaitFrames(1);
         frame += 1;
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

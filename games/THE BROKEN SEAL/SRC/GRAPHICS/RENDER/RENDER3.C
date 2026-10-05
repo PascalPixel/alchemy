@@ -9,8 +9,8 @@ s32 Ui_ClearVramBlock(void);
 
 /* Claims the first of the window work's three text render slots for a
    built entry list, placing it at x, y (whole pixels) in window with the
-   given colours (or colour 0) and flags. Returns the slot, or NULL. */
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *colours, s32 flags)
+   given line spacing (or none) and flags. Returns the slot, or NULL. */
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags)
 {
     struct UiChannelSlot *render = ((struct UiRenderWork *)gWindowWork[0])->channels;
     struct UiChannelSlot *found = NULL;
@@ -32,16 +32,16 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 ent
         found->line_spacing = 10;
         found->countdown = 0;
         found->outline = 0;
-        found->unknown_20 = 0;
+        found->ended = 0;
         found->flags = flags;
-        if (colours != NULL) {
+        if (spacing != NULL) {
             for (i = 0; i < 4; i++)
-                found->colours[i] = *colours++;
+                found->spacing[i] = *spacing++;
         } else {
             for (i = 0; i < 4; i++)
-                found->colours[i] = 0;
+                found->spacing[i] = 0;
         }
-        found->unknown_10 = 0;
+        found->line = 0;
     }
     return found;
 }
@@ -74,7 +74,7 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s
         if (preserve == 0) {
             if (selected->y == 0) {
                 selected->y = 0xA00;
-            } else if ((u32)selected->y < 0xD00) {
+            } else if (selected->y < 0xD00) {
                 selected->y += 0xD00;
             } else {
                 UiWork_ResetChannelTransition(selected);
@@ -92,10 +92,10 @@ reset_x:
         selected->entry = value;
         selected->countdown = zero;
         selected->outline = zero;
-        selected->unknown_10 = zero;
-        selected->unknown_20 = zero;
+        selected->line = zero;
+        selected->ended = zero;
         index = 0;
-        destination = selected->colours;
+        destination = selected->spacing;
         do {
             index++;
             *destination++ = zero;

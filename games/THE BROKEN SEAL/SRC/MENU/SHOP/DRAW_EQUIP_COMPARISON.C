@@ -1,5 +1,7 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
+#include "ITEM.H"
+#include "UI.H"
 
 extern struct ShopRuntime *gMenuWork;
 extern u8 MsgItemName[];
@@ -8,11 +10,9 @@ extern u8 MsgShopStatLabel[];
 
 void RenderOutput_PrepareForRedrawFar(s32 window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
-s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
 s32 Inventory_FindEquippedFar(s32 unit_id, s32 kind);
 void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Owner_RecalculateStatsFar(s32 unit_id);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 
 /* Draws how equipping an item would change a member's attack, defense and

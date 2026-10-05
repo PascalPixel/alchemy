@@ -57,7 +57,6 @@ extern const struct EnemyDefinition Enemy_Definitions[];
 extern u8 MsgEnemyName;
 
 void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
-void Owner_RecalculateStats(s32 owner);
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
@@ -229,7 +228,7 @@ s32 Party_AdjustSixDigitCounterA(s32 amount)
 
     work = &gGameState;
     value = work->coins;
-    value = (s32)((u32)value + (u32)amount);
+    value = value + amount;
     store = work;
     if (value > 0xF423F) {
         value = 0xF423F;
@@ -270,7 +269,7 @@ s32 Party_AdjustCounterCappedAt28(s32 amount)
         value = 28;
     if (value < 0)
         value = 0;
-    progress->shop_gifts = (s8)value;
+    progress->shop_gifts = value;
     return value;
 }
 
@@ -359,7 +358,7 @@ s32 Owner_GetDefaultElement(struct BattleUnit *state)
         (const struct EnemyDefinition *)Owner_GetRecord(state->class_id);
     u8 value = record->element_preset;
 
-    if ((u32)value > 43)
+    if (value > 43)
         value = 0;
     return Enemy_ElementPresetTable[value].first;
 }

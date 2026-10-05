@@ -174,7 +174,7 @@ s32 LinkLobby_RunConnectionSequence(void)
                 LinkLobby_WriteSlotValue(0);
                 LinkLobby_WriteSlotValue(4);
                 Engine_TaskAddCallback(LinkLobby_PollPeerReady, 0xc80);
-                Scheduler_SetCallbackMask((u32)(LinkLobby_PollPeerReady), 1);
+                Scheduler_SetCallbackMask(LinkLobby_PollPeerReady, 1);
                 Engine_GameFlagClear(0x201);
                 Engine_GameFlagClear(0x202);
                 Engine_GameFlagClear(0x303);

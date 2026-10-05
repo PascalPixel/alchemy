@@ -31,7 +31,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     u32 value;
 
     work = (struct UiRenderWork *)gWindowWork[0];
-    second_index = (s32)((u32)code << 8) >> 16;
+    second_index = (code << 8) >> 16;
     code &= 255;
     Iwram_ClearWords(buf, 384);
     if (work->mode != 0) {
@@ -66,7 +66,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
             Iwram_ExpandBitRuns(input, dst + 32, colour);
             Iwram_ExpandBitRuns(input, dst + 33, colour);
             /* FAKEMATCH: the signed halfword width grows through its shifted form. */
-            second_width = (s32)(((u32)second_width << 16) + 0x10000) >> 16;
+            second_width = ((second_width << 16) + 0x10000) >> 16;
         } else {
             u8 *dst = buf + length;
             u8 *p;

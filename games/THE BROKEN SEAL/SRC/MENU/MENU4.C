@@ -70,7 +70,7 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
 
     duration = 200;
     duration <<= 4;
-    Scheduler_AddOrUpdateCallback((s32)Menu_UpdateFirstObjectRowPositions, duration);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateFirstObjectRowPositions, duration);
 }
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
@@ -78,7 +78,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
     struct PlacementState *state = Data_03001f2c_a;
     s32 i;
 
-    Scheduler_RemoveCallback((u32)Menu_UpdateFirstObjectRowPositions);
+    Scheduler_RemoveCallback(Menu_UpdateFirstObjectRowPositions);
     for (i = 0; i < 4; i++) {
         if (state->objects[i] != 0) {
             ResourceObject_ReleaseFar(state->objects[i]);
@@ -133,7 +133,7 @@ void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y)
             state->positions_y[i] = (origin->y + y) * 8 + 0x10;
         }
 
-        Scheduler_AddOrUpdateCallback((s32)Menu_UpdateSecondObjectRowPositions, 200 << 4);
+        Scheduler_AddOrUpdateCallback(Menu_UpdateSecondObjectRowPositions, 200 << 4);
     }
 }
 
@@ -142,7 +142,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
     struct FourObjectMotionState *state = gMenuWork;
     s32 i;
 
-    Scheduler_RemoveCallback((u32)Menu_UpdateSecondObjectRowPositions);
+    Scheduler_RemoveCallback(Menu_UpdateSecondObjectRowPositions);
     for (i = 0; i < 4; i++) {
         if (state->objects[i] != 0) {
             ResourceObject_ReleaseFar(state->objects[i]);

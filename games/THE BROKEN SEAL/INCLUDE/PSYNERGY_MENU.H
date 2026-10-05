@@ -25,7 +25,7 @@ struct PsynergyMenuState {
     s32 psynergy_window;            /* 0x020 */
     s32 status_window;              /* 0x024 */
     s32 shortcut_window;            /* 0x028 */
-    void *info_window;              /* 0x02c */
+    struct UiWindow *info_window;   /* 0x02c */
     u8 unknown_030[4];
     s32 list_window;                /* 0x034 */
     u8 unknown_038[0x0c];
@@ -54,7 +54,10 @@ struct PsynergyMenuState {
     u16 skip_slide;                /* 0x222, skip the next cursor slide */
     u8 unknown_224[0x18];
     s16 slot_y[4];                 /* 0x23c */
-    u8 unknown_244[0x1c];
+    u8 unknown_244[0x16];
+    /* Which of the use result messages the Psynergy's use shows. */
+    s16 use_result;                /* 0x25a */
+    u8 unknown_25c[4];
     s8 selected_index_by_owner[8]; /* 0x260 */
     u8 mode;                      /* 0x268 */
 };

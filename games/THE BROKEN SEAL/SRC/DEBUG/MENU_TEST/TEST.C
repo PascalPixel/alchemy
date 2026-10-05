@@ -128,37 +128,37 @@ end:
 
 void SceneState_ApplyBlockC9b(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWeaponShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWeaponShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockCc6(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgArmorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockCf1(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgItemShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockD21(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgSanctumWelcome, (s32)MsgWarriorShopWelcome - (s32)MsgSanctumWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
 void SceneState_ApplyBlockD4c(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWarriorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockD77(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWarriorArmorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockDa2(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWarriorItemShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 #endif
 
@@ -217,7 +217,7 @@ void FieldScene_ApplyTable9684ValueToFourSlots(void)
 {
     s32 *p;
 
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugWentLevel, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugWentLevel, 1);
     p = (s32 *)MenuTest_SlotOffsets;
     Party_AdvanceOwnerCountToTarget(0, *p);
     Party_AdvanceOwnerCountToTarget(1, *p);
@@ -235,7 +235,7 @@ void FieldScene_GrantItemListToSlots(void)
     u32 tmp;
     s32 slot;
 
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotItem, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
     Inventory_AddItem(0, 187);
     Inventory_AddItem(0, 187);
     Inventory_AddItem(0, 187);
@@ -457,7 +457,7 @@ void CommandTable_ConfigureCommandGroups(void)
         }
     }
 #endif
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotDjinni, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotDjinni, 1);
     Djinn_AddToOwner(0, 0, 0);
     Djinn_AddToOwner(0, 0, 1);
     Djinn_AddToOwner(0, 0, 2);
@@ -523,7 +523,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     u32 i;
     u8 *record;
 
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugBodyTornApart, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
     Value2(Owner_AdjustFirstValue, 0, -100);
     Value2(Owner_AdjustFirstValue, 1, -100);
     Owner_AdjustFirstValue(2, -33);
@@ -547,7 +547,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
 
 void FieldScene_AssignCodeSetAToSlots(void)
 {
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotSturdyEquipment, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
     Inventory_AddItem(0, 85);
     Inventory_AddItem(0, 84);
     Inventory_AddItem(0, 124);
@@ -686,7 +686,7 @@ void SceneState_RunCall1c00(void)
 
 void FieldScene_AssignCodeSetBToSlots(void)
 {
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotTreasure, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
     Inventory_AddItem(ROBIN, 0xb8);
     Inventory_AddItem(ROBIN, 0xcc);
     Inventory_AddItem(ROBIN, 0xdc);

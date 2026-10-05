@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "BATTLE_RUNTIME.H"
 /* The detail panel of the item menu: whether the item does anything, its
    attack and defense bonuses, one row per effect (stat changes, element
    power and resistance, critical rates, special effects), then use,
@@ -15,7 +16,6 @@ extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
 void Palette_CopyObjectBankToBackground14(void);
-s32 GameFlag_TestFar(s32);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
 void Palette_LightenBankHighlight(s32);
@@ -26,12 +26,10 @@ extern u8 MsgItemCursed[], MsgBestowsPsynergy[], MsgUsesHeading[], MsgSingleUse[
 extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[], MsgEffectRateSuffix[];
 extern u8 MsgRareItem[], MsgImportantItem[], MsgDetailsUnknown[];
 extern u8 Menu_TimesString[], Menu_PointString[];
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 palette);
 void UiWork_PushValueSlotFar(u32 value, u32 slot);
-void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
 
 s32 Menu_SelectQuantity(s32 value)
 {
@@ -53,7 +51,7 @@ s32 Menu_SelectQuantity(s32 value)
     /* The Japanese window covers only the left of the screen. */
     window = UiWindow_CreateFar(0, 0, 13, 10, 2);
 #endif
-    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
     {
         struct RenderOutput *iconState = menu->cursor;
@@ -110,7 +108,7 @@ done:
     {
         s32 delay = 0xc80;
 
-        Scheduler_AddOrUpdateCallback((s32)((const void *)Menu_UpdateEntryObjectTransforms), delay);
+        Scheduler_AddOrUpdateCallback((const void *)Menu_UpdateEntryObjectTransforms, delay);
     }
 
     {

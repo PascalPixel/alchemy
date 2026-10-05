@@ -3,6 +3,12 @@
 
 /* Game flags shared by more than one scene. */
 enum GameFlagId {
+    /* Every unit attacks without orders, enemies at a random member. */
+    FLAG_AUTO_BATTLE = 0x16a,
+    /* The battle is fought over the link cable. */
+    FLAG_LINK_BATTLE = 0x16c,
+    /* The battle that teaches unleashing and summoning Djinn. */
+    FLAG_DJINN_TUTORIAL = 0x16e,
     /*
      * Set while the party keeps its position across a scene load: the loader
      * skips the entrance's position and facing, and scenes skip their

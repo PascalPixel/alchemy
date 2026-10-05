@@ -63,7 +63,7 @@ u8 *ItemLevel_GetPlacements(void)
 #if EDITION_INTERNATIONAL
 void FieldScene_RunActor13Mode102Step(void)
 {
-    Engine_EventSetMessage((s32)MsgDebugWontStopYou);
+    Engine_EventSetMessage(MsgDebugWontStopYou);
     Call3(Engine_ActorShowEmote, 13, 0x102, 0);
     Engine_EventShowMessage(13, 0);
 }
@@ -71,7 +71,7 @@ void FieldScene_RunActor13Mode102Step(void)
 void FieldScene_RunActor13Mode105Step(void)
 {
     Engine_ActorShowEmote(13, 0x105, 0);
-    Engine_EventSetMessage((s32)MsgDebugWontStopYou);
+    Engine_EventSetMessage(MsgDebugWontStopYou);
     Engine_EventShowMessage(13, 0);
 }
 #endif

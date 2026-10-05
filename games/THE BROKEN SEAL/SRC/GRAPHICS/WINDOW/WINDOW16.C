@@ -10,7 +10,8 @@
 #include "RESOURCE_IDS.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
-
+#include "B5_CONTEXT.H"
+#include "BATTLE_RUNTIME.H"
 
 /* Byte lanes used by the bobbing sprite pair. */
 struct UiBobPairOutput {
@@ -20,9 +21,6 @@ struct UiBobPairOutput {
     u8 unknown_09[11];
     u8 destination;
 };
-
-LAYOUT_OFFSET_GUARD(UiBobPairOutput_Source, struct UiBobPairOutput, source, 8);
-LAYOUT_OFFSET_GUARD(UiBobPairOutput_Destination, struct UiBobPairOutput, destination, 0x14);
 
 /* Frame counter advanced by the vertical-blank interrupt. */
 extern volatile u32 gFrameTick;
@@ -70,7 +68,6 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 
 extern const struct TileMask Data_08037250[];
 
-
 /* link/draw_shifted_tile_pair.c */
 extern u8 gRomShiftedTilePair[];
 
@@ -81,7 +78,6 @@ void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 ItemIcon_Compose(s32, s32);
 void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
-s32 GameFlag_TestFar(s32);
 
 void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj)
 {

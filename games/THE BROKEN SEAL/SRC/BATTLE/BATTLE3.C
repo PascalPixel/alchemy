@@ -138,7 +138,7 @@ read_saved_selection:
         break;
     }
 
-    item_available = ((s32)*availability >> selected) & 1;
+    item_available = (*availability >> selected) & 1;
     item_available &= allow_item;
     action_id = profile->actions[selected];
     request->command = 4;
@@ -233,7 +233,7 @@ disable_item:
         target = BattleTarget_SelectForAction(request->unit_id, action);
         if (target == -2) {
             side = 0;
-            if ((u32)(u16)request->unit_id <= 7U)
+            if (request->unit_id <= 7U)
                 side = 1;
             target = BattleTarget_SelectRandomPosition(side);
         }
@@ -247,7 +247,7 @@ disable_item:
             BattleTarget_SelectForAction(request->unit_id, action);
         if (alternate_target == -2) {
             alternate_side = 0;
-            if ((u32)(u16)request->unit_id <= 7U)
+            if (request->unit_id <= 7U)
                 alternate_side = 1;
             alternate_target = BattleTarget_SelectRandomPosition(alternate_side);
         }
@@ -319,7 +319,7 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
     events->timer = frames;
     events->phase = BATTLE_PLAYBACK_DISPATCH;
     gBattleWork->plan.target_count = 0;
-    return Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+    return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
 }
 
 extern volatile u32 gFrameCount;
@@ -543,7 +543,7 @@ void BattleEvent_Playback(void)
                 s32 frame = 6;
 
                 if (state->timer == 0 && state->flags != 0) {
-                    s32 kind = (s32)Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
 
                     if (kind >= 0) {
                         kind--;
@@ -556,7 +556,7 @@ void BattleEvent_Playback(void)
                 if (state->timer > 0x41d)
                     state->timer = 0;
                 if (state->timer == 0) {
-                    s32 kind = (s32)Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
 
                     if (kind >= 0)
                         AudioCommand_PlayFar(kind + 146);

@@ -51,7 +51,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
     for (row = 0;; row++) {
         owner = Debug_PartyPresets[row].owner;
-        if ((u32)row > 332) {
+        if (row < 0 || row > 332) {
             done = 1;
             break;
         }

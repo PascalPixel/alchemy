@@ -81,7 +81,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 
     work = *(void **)((u32)&gBattleBgFxWork);
     Ui_SetBank15PaletteAndClearRenderMode();
-    Scheduler_RemoveCallback((u32)BattleFx_UpdateWaveScene);
+    Scheduler_RemoveCallback(BattleFx_UpdateWaveScene);
     Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16, 0x290)), 1);
     BattleFx_PrepareBufferInterpolation();
     Runtime_ReleaseHeapBlock(0x16);

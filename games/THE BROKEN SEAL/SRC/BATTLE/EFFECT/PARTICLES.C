@@ -54,12 +54,12 @@ void BattleFx_SpawnFallingParticles(void)
 
     source = gEffectWork->source;
     position.x = source->x;
-    position.y = (s32)((u32)source->y -
-        Random16() * 16 + 0x180000);
+    position.y = source->y -
+        Random16() * 16 + 0x180000;
     position.z = source->z;
 
     angle = Random16() * 3;
-    Vector_AddPolarOffset((s32)(angle * 16), Random16(), &position);
+    Vector_AddPolarOffset(angle * 16, Random16(), &position);
 
     object = Object_Spawn(
         0x11d,
@@ -73,6 +73,6 @@ void BattleFx_SpawnFallingParticles(void)
         timer = (u16 *)(object + 94);
         timer_value = 12;
         *timer = timer_value;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
     }
 }

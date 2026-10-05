@@ -40,12 +40,10 @@ s32 EventTable_CopyRowHeader(s32 row, s16 *items);
 void Shop_InitializeCursorWork(void);
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowAndWait(s32 message);
 s32 Menu_SelectEntry11To14Far(s32 choice);
 s32 AbilityMenu_BuildAvailableList(void);
 s32 Shop_SelBuy(void);
-s32 Shop_PickUnit(void);
 void UiWork_FinalizeFar(s32 window, s32 style);
 void Inn_Cleanup(void);
 void WaitFrames(s32 frames);
@@ -70,7 +68,7 @@ s32 AbilityMenu_BuildAvailableList(void)
     index = 0;
     output = state->stock_item_ids;
     do {
-        mode = (s8)state->shop_type;
+        mode = state->shop_type;
         if (mode == Item_GetEquipmentGroupFar(index) &&
             Item_AdjustCounterFar(index, 0) != 0) {
             *output = index;
@@ -122,7 +120,7 @@ void Shop_InitializeCursorWork(void)
     slot = Resource_FindFreeEntry();
     work->stat_up_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_SmallUpArrowTiles);
-    Scheduler_AddOrUpdateCallback((s32)Shop_StepCursor, 0xc80);
+    Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
 
 void Inn_Cleanup(void)
@@ -130,7 +128,7 @@ void Inn_Cleanup(void)
     struct ShopRuntime *state;
 
     state = gMenuWork;
-    Scheduler_RemoveCallback((s32)Shop_StepCursor);
+    Scheduler_RemoveCallback(Shop_StepCursor);
     UiWork_FinalizePendingCoreFar();
     Resource_ResetEntry(state->cursor_icon);
     Resource_ResetEntry(state->previous_page_icon);
@@ -163,7 +161,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
         shop->warrior_shop = 1;
     if (row == 18)
         shop->warrior_shop = 1;
-    shop->keeper_resource = (u16)((struct AnimationObject *)Object_GetByIdFar(keeper_id)->animation)->entries[0]->anim_id;
+    shop->keeper_resource = ((struct AnimationObject *)Object_GetByIdFar(keeper_id)->animation)->entries[0]->anim_id;
     window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
     if (window == 0)
         window = UiWindow_CreateFar(-5, 0, 5, 5, 2);

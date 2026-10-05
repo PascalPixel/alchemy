@@ -26,7 +26,7 @@ s32 BattleParty_AssignMemberSlots(void)
 
     for (member_slot = 0; member_slot < party_size; member_slot++) {
         unit_id = active_members[member_slot];
-        battle_state->owner_slots[unit_id] = (s8)(member_slot - 128);
+        battle_state->owner_slots[unit_id] = member_slot - 128;
     }
 }
 

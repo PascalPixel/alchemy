@@ -5,8 +5,15 @@
 #include "LAYOUT_GUARD.H"
 
 /* The engine's event work. */
+struct ScenePlacement;
+struct SceneEvent;
+
 struct EventWork {
-    u8 unknown_000[0x34];
+    /* The scene's registered placement streams, then its event stream. */
+    struct ScenePlacement *tables[4];
+    struct SceneEvent *events;
+    /* Actors 0 through 7. */
+    struct FieldActor *actors[8];
     /* Actors placed by the scene, with ids 8 through 65. */
     struct FieldActor *placed_actors[58];
     u8 unknown_11c[0x50];

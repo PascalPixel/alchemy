@@ -6,7 +6,6 @@
 #include "WINDOW.H"
 #include "IO_REG.H"
 
-s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 s32 UiText_GetResourceDimensions(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry,
     s32 x, s32 y, u16 *colours, s32 flags);
@@ -85,7 +84,6 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
     Sys_Free(routine);
 }
 
-
 /* Per previous character: the code tree's bits, with the leaf values packed
    as 12-bit entries just before them, and the offsets of each tree. */
 extern const void *const Text_MessageContexts[][2];
@@ -111,8 +109,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
     register s32 depth asm("r3");
     s32 bit;
     u32 index;
-    /* FAKEMATCH: half pinned to r2, as the native allocates it (4 differ without it). */
-    register u32 half asm("r2");
+    u32 half;
 
     code = reader->previous_code;
     text = (const u8 *)reader->words;

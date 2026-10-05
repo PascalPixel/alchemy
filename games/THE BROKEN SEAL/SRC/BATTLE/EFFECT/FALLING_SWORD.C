@@ -48,7 +48,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle routine[2];
-    void *sheet;
+    u8 *sheet;
     struct EffectPosition pos;
     s32 frame;
     s32 half;
@@ -75,14 +75,14 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 1);
     routine[1] = heap[8];
 
-    Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet, (u8 *)work + 20000, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, (u8 *)work + (221 << 4), 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet, work->sheet + 20000, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet + (221 << 4), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     /* Thirty-two flash records are seeded; sixteen are drawn. */
     i = 0;
@@ -169,7 +169,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
                 y = HI(flash->y);
                 x = HI(flash->x) + half;
                 life = flash->variant;
-                if ((u32)life <= 17) {
+                if (life >= 0 && life <= 17) {
                     routine[0](canvas,
                         (u8 *)work
                             + (FallingSword_FlashCells[life / 3] << 11)
@@ -206,7 +206,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
         /* Frames 32..63 scan all 684 and seed at most sixteen more each. */
         step = frame - 32;
-        if ((u32)step <= 31) {
+        if (step >= 0 && step <= 31) {
             s32 cnt;
 
             cnt = 0;
@@ -236,7 +236,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
         /* The same guard again: the 34x104 fire column, wrapping through
            its 104 rows. */
-        if ((u32)step <= 31) {
+        if (step >= 0 && step <= 31) {
             s32 phase = frame * 16;
             s32 x = half - 17;
             s32 width = 34;
@@ -275,7 +275,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
                     if (frame > 76) {
                         size = 10;
                     }
-                    routine[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    routine[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(dust->x) - size / 2,
                         HI(dust->y) - size,
                         size, size * 2);
@@ -321,7 +321,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
                 high = high - top - 12;
             }
             if (high > 0) {
-                routine[1](canvas, (u8 *)work + 20000, x, top, 36, high);
+                routine[1](canvas, work->sheet + 20000, x, top, 36, high);
             }
         }
 
@@ -342,11 +342,11 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
                         spark->velocity_y = -spark->velocity_y / 2;
                     } else {
                         x = spark->x;
-                        if ((u32)x <= 0x007EFFFF && y >= 0) {
+                        if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                             u8 *cell;
 
                             size = spark->variant / 5 + 1;
-                            cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
+                            cell = sheet + ParticleStreams_CellOffsets[size - 1];
                             x >>= 16;
                             y >>= 16;
                             x -= size / 2;
@@ -380,7 +380,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
         frame++;
     } while (frame != 102);
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

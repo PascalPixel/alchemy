@@ -45,7 +45,7 @@ struct FieldActor *Object_CreateFar(
 void Object_SetMode(struct FieldActor *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);
-extern const u8 BattleFx_LinkedObjectScript[];
+extern const s32 BattleFx_LinkedObjectScript[];
 s32 BattleFx_CopyLinkedObjectPosition(void *obj);
 
 void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
@@ -85,7 +85,7 @@ s32 BattleFx_StepRatioTransition(void)
     *(u32 *)gScanlinePitch = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {
         *duration = 0;
-        Scheduler_RemoveCallback((u32)(BattleFx_StepRatioTransition));
+        Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
     }
 }
 
@@ -112,7 +112,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     state->current = result;
     state->kind = arg1;
     state->flags = 0;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_StepRatioTransition), 0xc94);
+    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 0xc94);
 }
 
 /* Wait (at most 300 frames) for the display work's pending flag at +0x358 to clear. */
@@ -168,7 +168,7 @@ void BattleFx_SpawnLinked(
             Object_CreateFar(21, resource->x.fixed, resource->y.fixed, resource->z.fixed);
 
         if (object != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_LinkedObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_LinkedObjectScript);
             Object_SetMode(object, flags & 15);
             object->motion_flags = 0;
             object->unknown_64 = 0;

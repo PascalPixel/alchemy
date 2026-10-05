@@ -16,6 +16,7 @@
 #include "RAM_BUFFER.H"
 #include "MENU_LIST.H"
 #include "FIELD_EVENT.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -27,7 +28,6 @@ extern u8 gBattleFxWork[];
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
@@ -50,7 +50,6 @@ struct Chip {
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -94,7 +93,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
     draw[1] = heap_cache[8];
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 1024; i++)
         gChips[i].life = 0;
@@ -109,14 +108,14 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
         struct BattleCamera *camera = gCameraWork;
 
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame > 17 || frame == 0) {
             EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &position);
             position.x /= 2;
         }
-        if ((u32)(frame - 2) <= 1)
+        if (frame >= 2 && frame <= 3)
             draw[0](canvas, work, position.x - 16, position.y - 64, 32, 64);
-        if ((u32)(frame - 4) <= 11) {
+        if (frame >= 4 && frame <= 15) {
             for (i = 0; i != 16; i++) {
                 s32 x = position.x + (frame * Trig_Sin(i << 12) >> 16);
                 s32 y = position.y + (frame * Trig_Cos(i << 12) >> 16) - frame;
@@ -194,7 +193,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
                 chip->velocity_y = chip->velocity_y * 56 / 64 + 0x2000;
                 if (chip->y > 0x700000) {
                     chip->velocity_y = -chip->velocity_y / 2;
-                } else if ((u32)chip->x <= 0x7effff && chip->y >= 0) {
+                } else if ((chip->x >= 0 && chip->x <= 0x7effff) && chip->y >= 0) {
                     s32 size = chip->life / 8 + 1;
 
                     draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
@@ -208,7 +207,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -218,7 +217,6 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void SceneTransform_ApplyPosition(s32 *position);
@@ -272,10 +270,10 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
     draw.upper = heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
     draw.lower = heap_cache[8];
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 512; i++) {
         gSkulls[i].x = ((Random16() & 255) - 127) << 15;
@@ -302,7 +300,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
             struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = target->x;
             point[1] = 0x140000;
             point[2] = target->z;
@@ -339,8 +337,8 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -405,12 +403,12 @@ void BattleFx_RunMemberOrbit(void *object)
             frame != (work->effect->count
                 * 16) + 48;
             frame++) {
-        s32 facing;
+        struct BattleCamera *view;
         s32 *scanline;
         s32 i;
         s32 id_ofs;
 
-        facing = (s32)gCameraWork;
+        view = gCameraWork;
         scanline = work->bg2_x;
         if (work->effect->side == 0) {
             s32 angle;
@@ -430,7 +428,7 @@ void BattleFx_RunMemberOrbit(void *object)
             }
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(view->eye, view->pos);
         member = 0;
         if (work->effect->count != 0) {
             record_slot = record;
@@ -465,7 +463,7 @@ void BattleFx_RunMemberOrbit(void *object)
                         slot = frame / 16;
                         ((DrawRectangleFn)rectangle_slot[slot & 1])(
                             canvas,
-                            (u8 *)work + (((frame / 4) - (slot * 4)) << 10),
+                            work->sheet + (((frame / 4) - (slot * 4)) << 10),
                             x - 16, y - 16, 32, 32);
                     }
                 }
@@ -560,10 +558,10 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
         }
     }
 
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     AudioCommand_PlayFar(146);
 
     for (frame = 0; frame != MemberBurst_Counts[mode * 2 + 1] + work->effect->count * 20; frame++) {
@@ -576,7 +574,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
                 BattleEventRuntime_BeginPhaseFar(133);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         row = work->bg2_x;
         for (i = 0; i != 160; i++)
             *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
@@ -610,7 +608,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
                             mote->velocity_x += dx;
                             mote->velocity_y += dy;
                             mote->velocity_z += dz;
-                            if ((u32)(dx + 0xfff) <= 0x1ffe && (u32)(dz + 0xfff) <= 0x1ffe)
+                            if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
                                 mote->variant = -1;
                         }
                     }
@@ -622,9 +620,9 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     BattleFx_EndCanvasLayer();
 }

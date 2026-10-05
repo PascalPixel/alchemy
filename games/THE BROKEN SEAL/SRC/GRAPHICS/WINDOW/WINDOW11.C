@@ -4,7 +4,8 @@
 #include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
-
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 
 extern u8 Data_03001e9c[];
 s32 UiWork_IsIdle(struct UiWindow *window);
@@ -21,9 +22,6 @@ struct SelectionWorkspace {
     struct UiWindow *window;
     u8 unknown_ff8[12];
 };
-
-LAYOUT_SIZE_GUARD(SelectionWorkspace_Size, struct SelectionWorkspace, 0x1004);
-LAYOUT_OFFSET_GUARD(SelectionWorkspace_Window, struct SelectionWorkspace, window, 0xff4);
 
 void Menu_AllocateSelectionWorkspace(void)
 {

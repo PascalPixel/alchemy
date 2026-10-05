@@ -135,7 +135,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
     state = *(u8 **)state;
     work->transfer_value = 50;
     draw_b = (DrawRectangle)state;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     if (mode == 2) {
         work->shake_frames = 0;
@@ -164,13 +164,13 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
                 cell = (cell & 1) + 1;
             if (frame <= 27) {
                 draw_a(canvas,
-                    (u8 *)work + EarthWall_CellSourceOffsets[cell],
+                    work->sheet + EarthWall_CellSourceOffsets[cell],
                     64 - EarthWall_CellWidths[cell],
                     (pos.y - EarthWall_CellHeights[cell]) + 8,
                     EarthWall_CellWidths[cell],
                     EarthWall_CellHeights[cell]);
                 draw_b(canvas,
-                    (u8 *)work + EarthWall_CellSourceOffsets[cell],
+                    work->sheet + EarthWall_CellSourceOffsets[cell],
                     64,
                     (pos.y - EarthWall_CellHeights[cell]) + 8,
                     EarthWall_CellWidths[cell],
@@ -186,7 +186,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

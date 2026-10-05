@@ -17,6 +17,10 @@ void Graphics_SaveTransferWorkOnce(void);
 void Graphics_SaveTransferWork(void *destination);
 void Graphics_LoadTransferWork(const void *source);
 void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out);
+/* Builds the look-at transform from eye to target into the current one. */
+void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+/* Builds the look-at transform and applies it to the current one. */
+void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target);
 
 /* Loads the identity into the 12-word transform: coefficients 0, 4 and 8
    are 0x10000; all other coefficients and the three translations are zero.

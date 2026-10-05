@@ -67,7 +67,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (y = 0; y != 64; y++) {
         for (x = 0; x != 64; x++) {
@@ -116,7 +116,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 
     draw[0](canvas, work, 0, 0, 128, 128);
     work->transfer_pending = 1;
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
 
     for (frame = 0; frame != 96; frame++) {
         if (frame <= 8) {
@@ -167,8 +167,8 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattleFx_ArmBg2AffineHBlankDma);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -184,10 +184,10 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
     u8 slot12[4];
     u8 slot8[4];
 
-    p5 = *(s32 *)((u32)gBattleFxWork);
-    *(s32 *)(((s32)p5 + 0x7828)) = a0;
+    p5 = *(s32 *)(gBattleFxWork);
+    *(s32 *)((p5 + 0x7828)) = a0;
     BattleFx_BeginCanvasLayer(0);
-    BattleFx_PrepareCanvasEffect(a0, 7, (*(s32 *)(*(s32 *)(((s32)p5 + 0x7828)) + 4) ^ 1), 0, slot12, slot8);
+    BattleFx_PrepareCanvasEffect(a0, 7, (*(s32 *)(*(s32 *)((p5 + 0x7828)) + 4) ^ 1), 0, slot12, slot8);
     BattleFx_EndCanvasLayer();
 }
 
@@ -240,12 +240,12 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet, (u8 *)work + 0x3e80, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet, work->sheet + 0x3e80, 1, 0);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     life = &((struct EffectStep *)gMapCellBuffer)->variant;
     for (i = 0; i != 1024; i++) {
@@ -286,18 +286,18 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
     for (frame = 0; frame != 70; frame++) {
         EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &position);
         REG_BG2X = (80 - position.x) << 8;
-        if ((u32)(frame - 8) <= 15) {
+        if (frame >= 8 && frame <= 23) {
             s32 cell = (frame - 8) / 2;
 
             if (cell > 6)
                 cell = 6;
             if (work->effect->side == 0) {
-                draw[0](canvas, (u8 *)work + FireSwirl_CellSourceOffsets[cell],
+                draw[0](canvas, work->sheet + FireSwirl_CellSourceOffsets[cell],
                     FireSwirl_CellBiasX[cell] + 30,
                     FireSwirl_CellBiasY[cell] + position.y - 60,
                     FireSwirl_CellWidths[cell], FireSwirl_CellHeights[cell]);
             } else {
-                draw[0](canvas, (u8 *)work + FireSwirl_CellSourceOffsets[cell],
+                draw[0](canvas, work->sheet + FireSwirl_CellSourceOffsets[cell],
                     -FireSwirl_CellBiasX[cell] - FireSwirl_CellWidths[cell] + 108,
                     FireSwirl_CellBiasY[cell] + position.y - 60,
                     FireSwirl_CellWidths[cell], FireSwirl_CellHeights[cell]);
@@ -327,11 +327,11 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
                 EffectStep_AdvanceWithGravity2D(spark, 60, 0);
                 if (spark->y > 0x680000) {
                     spark->velocity_y = -spark->velocity_y / 2;
-                } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
+                } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
                     s32 sx = spark->x >> 16;
                     s32 sy = spark->y >> 16;
 
-                    draw[0](canvas, (u8 *)work + 0x3e80 + (((frame + i) / 4 % 6) << 8),
+                    draw[0](canvas, work->sheet + 0x3e80 + (((frame + i) / 4 % 6) << 8),
                         sx - 8, sy - 8, 16, 16);
                 }
             }
@@ -342,7 +342,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

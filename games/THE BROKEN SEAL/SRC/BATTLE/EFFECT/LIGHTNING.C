@@ -74,7 +74,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     draw[0] = (DrawRectangle)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 7, 2);
     draw[1] = (DrawRectangle)heap_cache[8];
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
     if (work->effect->variant != 2) {
         void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
@@ -93,7 +93,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     sparks = (struct EffectStep *)gMapCellBuffer;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     count = LightningPillar_Counts[work->effect->variant];
 
     for (frame = 0; frame != count * 8 - count + 48; frame++) {
@@ -123,7 +123,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
                     draw[0](canvas, work,
                         LightningPillar_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
                 if (frame >= start + 2 && frame < start + 4)
-                    draw[0](canvas, (u8 *)work + 0x1500,
+                    draw[0](canvas, work->sheet + 0x1500,
                         LightningPillar_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
                 if (frame == start + 2) {
                     s32 spawned = 0;
@@ -184,7 +184,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

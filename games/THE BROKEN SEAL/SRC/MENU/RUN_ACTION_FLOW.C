@@ -1,5 +1,6 @@
 #include "CHARACTER_MENU.H"
 #include "TYPES.H"
+#include "MENU_LIST.H"
 
 extern struct CharacterMenuState *gMenuWork;
 
@@ -43,7 +44,7 @@ s32 Menu_RunActionFlow(void)
             state->owner_cursors[0]->active = 13;
             result = ItemMenu_SelectItem();
             /* Collapse every non-cancellation result to one. */
-            changed = (u32)~result;
+            changed = ~result;
             step = (-changed | changed) >> 31;
             break;
         default:
@@ -58,7 +59,6 @@ s32 Menu_RunActionFlow(void)
     return result;
 }
 
-void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 GameFlag_IsSet(s32 flag);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiMenu_SlideCursor(s32 x, s32 y);
@@ -82,8 +82,8 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     result = 0;
     cursor = menu->owner_cursors[slot];
     cursor->active = 1;
-    cursor->unknown_0c = 0;
-    RenderOutput_RedrawSavedRectFar((s32)menu->owner_window);
+    cursor->anim_step = 0;
+    RenderOutput_RedrawSavedRectFar(menu->owner_window);
     if (GameFlag_IsSet(0x172))
         UiWindow_DrawDividerLineFar((s32)menu->owner_window, 9, 1, 9, 3);
     if (index == -1)

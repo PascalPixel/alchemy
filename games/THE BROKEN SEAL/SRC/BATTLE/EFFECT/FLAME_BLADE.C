@@ -49,7 +49,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 n;
-    void *sheet;
+    u8 *sheet;
     struct MotionObject *object;
     DrawRectangle routine[2];
     s32 frame;
@@ -72,8 +72,8 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     Object_SetMode(object, 2);
     ObjectDispatch_ApplyValueToChildrenFar(object, 48);
 
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, (u8 *)work + (128 << 6), 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet + (128 << 6), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
     n = 0;
@@ -117,7 +117,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     frame = 0;
     do {
@@ -185,7 +185,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
             }
             if (frame >= start) {
                 if (frame < start + 2) {
-                    routine[0](canvas, (u8 *)work + (128 << 6),
+                    routine[0](canvas, work->sheet + (128 << 6),
                         FlameBlade_StrikeColumns[n + work->effect->side * 3] - 16, 56, 32, 64);
                 }
                 i = 0;
@@ -199,9 +199,9 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
                     y = HI(flash->y);
                     x = HI(flash->x) + FlameBlade_StrikeColumns[n + work->effect->side * 3];
                     life = flash->variant;
-                    if ((u32)life <= 17) {
+                    if (life >= 0 && life <= 17) {
                         routine[0](canvas,
-                            (u8 *)work + (FlameBlade_FlashCells[life / 3] << 11) + (128 << 6),
+                            work->sheet + (FlameBlade_FlashCells[life / 3] << 11) + (128 << 6),
                             x - 16, y + 56, 32, 64);
                     }
                     life = flash->variant;
@@ -227,7 +227,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
                             spark->velocity_y = -spark->velocity_y / 2;
                         } else {
                             x = spark->x;
-                            if ((u32)x <= 0x007EFFFF && y >= 0) {
+                            if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                                 u8 *cell;
                                 s32 lane;
                                 s32 py = y >> 16;
@@ -235,7 +235,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
                                 size = spark->variant / 5 + 1;
                                 lane = i & 1;
-                                cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
+                                cell = sheet + ParticleStreams_CellOffsets[size - 1];
                                 px -= size / 2;
                                 py -= size;
                                 routine[lane](canvas, cell, px, py, size, size * 2);
@@ -263,7 +263,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     } while (frame != 80);
 
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

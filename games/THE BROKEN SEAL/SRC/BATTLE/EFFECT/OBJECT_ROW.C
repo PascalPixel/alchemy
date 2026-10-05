@@ -110,7 +110,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     REG16(0x05000000) = 0;
     REG16(0x05000002) = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(1, 0);
     BattleFx_SpawnObjects(9, 0x175, 1);
     gProjection.center_y = 240;
@@ -121,7 +121,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
     BattleEffect_WipeCanvas(1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
     REG16(0x04000000) = 0x7741;
     REG16(0x04000020) = 0x80;
     REG16(0x04000052) = 0x100e;
@@ -143,7 +143,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         fire->x = (Random16() & 31) + 16;
         fire->y = ((Random16() & 31) + 48) << 16;
         fire->velocity_y = ((Random16() & 31) - 16) << 16;
-        fire->variant = (u32)Random16() % 48 + 2;
+        fire->variant = Random16() % 48 + 2;
         i++;
     } while (i != 64);
 
@@ -172,7 +172,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             break;
         }
 
-        if ((u32)(frame - 24) <= 31) {
+        if (frame >= 24 && frame <= 55) {
             shift++;
         }
         if (shift > 24) {
@@ -191,7 +191,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             if (frame > 103) {
                 lift = frame * 16 - 1664;
             }
-            if ((u32)(frame - 8) <= 23) {
+            if (frame >= 8 && frame <= 31) {
                 base_x = base_x + shift - 8;
             }
             if (frame > 7) {
@@ -286,7 +286,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             i = 0;
             y = 0;
             do {
-                blit(canvas, (u8 *)work + (Random16() & 3) * 0x600, 120 - rise, y, 48, 32);
+                blit(canvas, work->sheet + (Random16() & 3) * 0x600, 120 - rise, y, 48, 32);
                 i++;
                 y += 18;
             } while (i != 6);
@@ -444,7 +444,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             i = 0;
             y = -8;
             do {
-                blit(canvas, (u8 *)work + (Random16() & 3) * 0x600,
+                blit(canvas, work->sheet + (Random16() & 3) * 0x600,
                     jitter[i] - slide + 120, y, 48, 32);
                 i++;
                 y += 8;
@@ -473,7 +473,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         ResourceObject_ReleaseFar(work->objects[i]);
         i++;
     } while (i != 9);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

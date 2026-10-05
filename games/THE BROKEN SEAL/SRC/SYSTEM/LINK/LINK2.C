@@ -8,6 +8,8 @@
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 #include "KEYSTATE.H"
+#include "GAME_STATE.H"
+#include "BATTLE_WORK.H"
 
 void Camera_ConfigureSceneFar(s32 offset);
 void Link_DrawShiftedTilePair(s32 destination);
@@ -41,15 +43,7 @@ struct LinkCountdownState {
     s32 enabled;
 };
 
-struct LinkRuntimeState {
-    u8 padding_000[80];
-    u8 side;
-    u8 padding_051;
-    u8 paused;
-};
-
 extern struct LinkCountdownState *gLinkCountdownWork;
-extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gLinkPeerSignatures[];
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
 void Audio_PlayCue(s32 soundId);
@@ -58,13 +52,12 @@ unsigned char Ui_FillVramBlockPattern(void);
 void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWork_Finalize(struct Work *work, s32 release);
-extern u8 gGameState[];
 extern char MsgNoTimeToRun;
 
 void UpdateLinkSessionCountdown(void)
 {
     struct LinkCountdownState *state = gLinkCountdownWork;
-    struct LinkRuntimeState *runtime;
+    struct BattleSession *runtime;
     struct CountdownDisplayEntry *entry;
     u8 *active;
     struct LinkSignature *signature;
@@ -109,7 +102,7 @@ void UpdateLinkSessionCountdown(void)
             goto done;
 
         runtime = gBattleWork;
-        if (runtime->paused == 0)
+        if (runtime->link_paused == 0)
             goto load_timer;
         state->timer = 0;
         goto done;
@@ -127,7 +120,7 @@ load_timer:
         timer = state->timer;
         if (timer >= 0)
             goto timer_ready;
-        signature = &gLinkPeerSignatures[runtime->side ^ 1];
+        signature = &gLinkPeerSignatures[runtime->link_side ^ 1];
         if (signature->e != 'E')
             goto signature_done;
         if (signature->d == 'D')
@@ -185,16 +178,16 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     s16 buffer[64];
     s32 work;
     s32 result;
-    void *state;
+    struct BattleSession *battle;
     s32 mode;
 
-    state = gBattleWork;
-    mode = gGameState[0x22B];
-    if (gGameState[0x22B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
+    battle = gBattleWork;
+    mode = gGameState.battle_start;
+    if (gGameState.battle_start == 2 || mode <= 2 || (result = 1, mode > 4)) {
         result = 0;
     }
     if (result == 0) {
-        if (*(s8 *)((u8 *)state + 0x43) != 0) {
+        if ((s8)battle->flags_043 != 0) {
             result = 1;
         }
         if (result != 0) {
@@ -214,7 +207,7 @@ active:
         do {
             WaitFrames(1);
         } while ((*(volatile u32 *)&gKeyState & (KEY_A | KEY_B)) == 0 &&
-                 *(s32 *)((u8 *)gLinkCountdownWork + 0x4C) != 0);
+                 gLinkCountdownWork->timer != 0);
         UiWork_Finalize(work, 1);
     }
     return result;

@@ -11,6 +11,8 @@
 #include "UI.H"
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
+#include "INVENTORY_MENU.H"
+#include "MENU_LIST.H"
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
@@ -28,7 +30,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 }
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
-
 
 /* The bytes of BG character block 1 the menu saves and restores: the
    Japanese menu keeps 0x800 and leaves the block as it was. */
@@ -50,11 +51,8 @@ s32 Party_SumDjinnCountsFar(s32);
 void FourObjectMotion_InitializeTopRow();
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Menu_CancelSoundReset(void);
-s32 Menu_RunActionFlow(void);
 void Menu_EnsureCancelSound(void);
-void RenderOutput_ClearListFar(s32);
 void FourObjectMotion_ClearSlotsAndSchedule(void);
-void ItemMenu_Close(void);
 
 /* Open the action menu: save palette bank 0-1 and BG character block 1, tint
    the highlight bank, blank the block, lay out the selector window, row anchors
@@ -96,7 +94,7 @@ s32 ActionMenu_Open(void)
     for (index = 0; index < MENU_ROW_COUNT; index++)
         state->owner_y[index] = 30;
     if (Party_SumDjinnCountsFar(-1) != 0)
-        FourObjectMotion_InitializeTopRow((s32)state->selector_window, 0);
+        FourObjectMotion_InitializeTopRow(state->selector_window, 0);
     for (index = 0; index < 4; index++) {
         state->row_x[index] = 130 + index * 32;
         state->row_y[index] = 0x80;
@@ -108,7 +106,7 @@ s32 ActionMenu_Open(void)
     result = Menu_RunActionFlow();
 
     Menu_EnsureCancelSound();
-    RenderOutput_ClearListFar((s32)state->status_window);
+    RenderOutput_ClearListFar(state->status_window);
     FourObjectMotion_ClearSlotsAndSchedule();
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_DrawFrameFar(0, 0, 30, 20);

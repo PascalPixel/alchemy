@@ -4,6 +4,7 @@
 #include "BATTLE_UNIT.H"
 #include "RESOURCE.H"
 #include "SCENE.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 UiIcon_ItemIconPointersEnd[];
 extern u8 UiIcon_ItemIconPointers[];
@@ -11,18 +12,16 @@ extern u8 UiIcon_ItemIconPointers[];
 extern u8 UiIcon_PsynergyIconPointersEnd[];
 extern u8 UiIcon_PsynergyIconPointers[];
 
-
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 extern u8 *UiIcon_FramePointerTable[];
 extern u8 *UiIcon_OverlayPointerTable[];
 
 void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
-struct BattleAction *BattleAction_Get(s32);
 
 /* 2つの境界アドレス間を4バイト単位で数える。 */
 s32 Ui_CountIconTableEntries(void)
 {
-    return (s32)((u32)UiIcon_ItemIconPointersEnd - (u32)UiIcon_ItemIconPointers) >> 2;
+    return (UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers) >> 2;
 }
 
 s32 Ui_CountSecondTableEntries(void)

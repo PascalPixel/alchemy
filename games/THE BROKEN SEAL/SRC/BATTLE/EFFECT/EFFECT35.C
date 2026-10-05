@@ -227,16 +227,16 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     work->saved_x = origin->x;
     work->saved_y = origin->y;
     work->saved_z = origin->z;
-    if ((s16)gGameState.map == (s32)&SceneId_MakyuriIriguchi)
+    if (gGameState.map == (s32)&SceneId_MakyuriIriguchi)
         work->lit = 1;
-    if ((s16)gGameState.map == (s32)&SceneId_MakyuriHeya2)
+    if (gGameState.map == (s32)&SceneId_MakyuriHeya2)
         work->lit = 1;
     BattleFx_SetupObjectPair(gGameState.selected_actor, -1);
     if (work->animation != 8)
         scene->unknown_cc0 = running;
     work->tile_slot = Resource_FindFreeEntry();
     VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateAllEffectSlots), 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)

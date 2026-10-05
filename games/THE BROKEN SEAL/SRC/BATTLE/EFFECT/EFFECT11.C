@@ -181,7 +181,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
         if (distance >= bestDistance)
             continue;
 
-        angle = (u16)ArcTan2(candidate->z - source->z,
+        angle = ArcTan2(candidate->z - source->z,
                                    candidate->x - source->x);
         angleTolerance = 0x1800;
         if (distance > 19)

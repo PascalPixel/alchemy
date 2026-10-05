@@ -2,6 +2,10 @@
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
 #include "AFFINE.H"
+#include "BATTLE_PARTY.H"
+#include "RESOURCE.H"
+#include "FIXED_MATH.H"
+#include "CALLBACK_SCHEDULER.H"
 
 enum {
     TILEMAP_ENTRY_PLAIN,
@@ -24,9 +28,9 @@ void UiWindow_SetTilemapEntry(
 
     y += 1;
     x += 1;
-    if ((u32)y > (u32)(window->height - 1))
+    if (y > (u32)(window->height - 1))
         return;
-    if ((u32)x > (u32)(window->width - 1))
+    if (x > (u32)(window->width - 1))
         return;
 
     switch (mode) {
@@ -101,25 +105,25 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 
     switch ((u8)output->active) {
     case 9:
-        scale = Ui_BounceScales[output->unknown_0c++ & 31];
+        scale = Ui_BounceScales[output->anim_step++ & 31];
         break;
     case 10:
-        scale = Ui_BounceScales[output->unknown_0c++ & 31] >> 1;
+        scale = Ui_BounceScales[output->anim_step++ & 31] >> 1;
         break;
     case 11:
-        if (output->unknown_0c <= 7)
-            scale = Ui_BounceScales[output->unknown_0c++ * 2 + 16];
+        if (output->anim_step <= 7)
+            scale = Ui_BounceScales[output->anim_step++ * 2 + 16];
         break;
     case 12:
-        if (output->unknown_0c <= 7)
-            scale = Ui_BounceScales[output->unknown_0c++ * 2 + 16] >> 1;
+        if (output->anim_step <= 7)
+            scale = Ui_BounceScales[output->anim_step++ * 2 + 16] >> 1;
         break;
     }
     if (scale == 256) {
         sprite->affine_index = 0;
         sprite->affine = 0;
-        sprite->x = (u16)output->x;
-        sprite->y = (u16)output->y;
+        sprite->x = output->x;
+        sprite->y = output->y;
     } else {
         effect.scale_x = scale;
         effect.scale_y = scale;
@@ -134,8 +138,8 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
             sprite->y = (u16)output->y - 8;
         } else {
             sprite->affine = 1;
-            sprite->x = (u16)output->x;
-            sprite->y = (u16)output->y;
+            sprite->x = output->x;
+            sprite->y = output->y;
         }
     }
 }
@@ -154,7 +158,6 @@ struct SpriteOutput {
     u8 priority;
     struct OutputSprite sprite;
 };
-LAYOUT_SIZE_GUARD(SpriteOutput_Size, struct SpriteOutput, sizeof(struct RenderOutput));
 
 extern u32 gFrameTick;
 extern const u8 UiSprite_CursorFrameTiles[];
@@ -163,10 +166,6 @@ extern const s8 UiSprite_WobbleOffsets[][2];
 extern const s8 UiSprite_BounceOffsets[];
 
 u32 Random16(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void Runtime_PushSlotEntry(void *entry, s32 priority);
 
 /* Animates the sprites of every open window whose bit 0 is set and queues
    them for drawing. Kinds: 2 a cycling glyph cursor, 4 a wobble, 5 a
@@ -190,7 +189,7 @@ void UiWork_AnimateSpriteSlots(void)
         while (output != NULL) {
             struct OutputSprite *sprite = &output->sprite;
 
-            if (window->unknown_12 == 4) {
+            if (window->effect == 4) {
                 output->frame = 2;
                 output->mode = 8;
             }

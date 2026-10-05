@@ -5,6 +5,22 @@
 #include "LAYOUT_GUARD.H"
 #include "EFFECT_SLOT.H"
 
+struct AnimationObject;
+
+/* The paired arc effect's main object: its spin angle, its animation
+   records, and the phase and step its update counts through. */
+struct ArcEffectObject {
+    u8 unknown_00[6];
+    u16 angle;
+    u8 unknown_08[0x48];
+    struct AnimationObject *records;
+    u8 unknown_54[0x10];
+    s16 phase;
+    s16 step;
+    u8 unknown_68[4];
+    void *callback;
+};
+
 /* Heap slot 56: the active field/battle effect keeps its object pair,
    saved target state and 24 screen-space slots in this 0x720-byte block. */
 struct BattleFxScene {

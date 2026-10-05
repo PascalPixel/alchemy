@@ -16,13 +16,13 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -113,7 +113,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
         BattleEffect_LoadWork(47, 7, 7, 7, 2);
         draw_lower = heap_cache[8];
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
     switch (mode) {
     case 0:
         resource = (s32)&ResourceId_EmberStreakSheet;
@@ -135,7 +135,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     {
@@ -164,7 +164,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
             if (frame > total - 16)
                 REG_BLDALPHA = (total - frame) | 0x1000;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (k = 0; k != work->effect->count; k++) {
                 if (frame >= k * 32) {
                     for (j = 0; j != streaks; j++) {
@@ -228,7 +228,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
         }
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

@@ -345,7 +345,7 @@ s32 CharacterMenu_SelectCommand(void)
     /* FAKEMATCH: retain the family's neg/orr/lsr boolean conversion. */
     has_djinn = (u32)(-total | total) >> 31;
     UiWindow_UpdateOrCreate((s32 *)&menu->help_window, 0, 0, 30, 5, 2);
-    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
     for (i = 3; i >= 0; i--)
         menu->row_y[i] = 104;
     done = 0;
@@ -454,7 +454,7 @@ s32 CharacterMenu_SelectCommand(void)
     RenderOutput_ClearListFar((s32)menu->help_window);
     RenderOutput_RedrawSavedRectFar((s32)menu->help_window);
     UiWindow_ClearInteriorTilesFar((s32)menu->status_window, 64, 56, 224, 96);
-    Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
     for (i = 3; i >= 0; i--)
         menu->row_y[i] = 128;
     ItemMenu_ResetCategory();
@@ -499,7 +499,7 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
         width = 20;
     }
 
-    different = 1 ^ (u32)invert;
+    different = 1 ^ invert;
     last = 15 - (((0u - different) | different) >> 31);
     Render_SetTilemapFlagRect(state->status_window, x, y, width, 1, last);
 }

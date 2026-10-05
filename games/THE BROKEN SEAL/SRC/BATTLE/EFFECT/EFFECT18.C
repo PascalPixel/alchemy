@@ -50,7 +50,7 @@ typedef struct Spark {
 } Spark;
 
 #define WORK_EFX ((Efx *)work->effect)
-#define SHEET ((u8 *)work + 0xC56)
+#define SHEET (work->sheet + 0xC56)
 #define SPARKS ((Spark *)work->particles)
 
 static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
@@ -63,7 +63,6 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
 /* Resource id the reference loads from its literal pool. */
 extern const u16 ParticleStreams_CellOffsets[];
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *eye, void *target);
 void SceneTransform_ApplyPosition(s32 *position);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -144,10 +143,10 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     s32 width;
     s32 height;
 
-    cache = (u32 *)(void **)((u8 *)&gBattleFxWork + sizeof(void *));
-    dst = (void *)cache[40 - 40];
-    work = (struct BattleEffectWork *)cache[39 - 40];
-    aux = (u8 *)cache[41 - 40];
+    cache = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+    dst = (void *)cache[0];
+    work = (struct BattleEffectWork *)cache[-1];
+    aux = (u8 *)cache[1];
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
     REG_BLDALPHA = 0x1010;
@@ -161,7 +160,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         BattleFx_FetchRectangleBlitters(WORK_EFX->side, blit);
     }
 
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
     if (mode == 5) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA, SHEET, 1, 1);
     } else if (mode == 7) {
@@ -172,7 +171,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         if (mode == 6) {
             for (i = 0, pal = (u16 *)0x05000000; i != 64; i++) {
                 lum = i / 4;
-                *pal = (u16)(((lum << 10) | (lum << 5)) | lum);
+                *pal = ((lum << 10) | (lum << 5)) | lum;
                 pal++;
             }
             REG_BLDCNT = 0;
@@ -206,7 +205,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         work->transfer_mode = 2;
         work->transfer_value = 75;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 64; i++) {
         SPARKS[i].tick = -1;
@@ -357,7 +356,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         frame += 1;
     } while (frame != 64);
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -390,7 +389,7 @@ void BattleFx_RunSwirlingStars(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
     BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw);
     for (i = 0; i != 256; i++) {
         star = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -404,7 +403,7 @@ void BattleFx_RunSwirlingStars(void *object)
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     record[0] = 0;
     record[1] = 160 << 15;
     record[2] = 0;
@@ -413,7 +412,7 @@ void BattleFx_RunSwirlingStars(void *object)
 
         camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         SceneTransform_ApplyPosition(record);
         star = (struct EffectStep *)Ram_MapCellBuffer;
         for (i = 0; i != 64; i++, star++) {
@@ -445,7 +444,7 @@ void BattleFx_RunSwirlingStars(void *object)
                     pos.depth = 0x27a;
                 size = 9 - (pos.depth - 250) / 64;
                 draw[0](canvas,
-                    (u8 *)work + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),
+                    work->sheet + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),
                     pos.x - size / 2, pos.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(star, 60, 0);
                 if (frame > i / 4 + 30) {
@@ -462,7 +461,7 @@ void BattleFx_RunSwirlingStars(void *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -506,7 +505,7 @@ void BattleFx_RunOrbitingSparks(void)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = (DrawRectangleFn)heap_cache[7];
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (work->effect->side == 0)
         x_offset = 0;
     else
@@ -537,7 +536,7 @@ void BattleFx_RunOrbitingSparks(void)
                 register s32 *rec asm("r0");
 
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 rec = record;
                 rec[0] = member_object->x;
                 rec[1] = member_object->y;
@@ -555,14 +554,14 @@ void BattleFx_RunOrbitingSparks(void)
                     x = pos.x + ((Trig_Sin(spark->velocity_x + i * 0x5555) << 3) >> 16);
                     y = pos.y + ((Trig_Cos(spark->velocity_x + i * 0x5555) << 3) >> 16);
                     spark->velocity_x += 0x200;
-                    draw[0](canvas, (u8 *)work + i * 0x240, x - 12, y - 28, 24, 24);
+                    draw[0](canvas, work->sheet + i * 0x240, x - 12, y - 28, 24, 24);
                 }
             }
         }
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

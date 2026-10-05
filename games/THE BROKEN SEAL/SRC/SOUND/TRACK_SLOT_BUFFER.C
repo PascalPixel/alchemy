@@ -88,14 +88,14 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 {
     s32 limit = count;
     s32 current = 0;
-    u32 base = (u32)start;
+    u32 base = start;
 
     if (current < limit) {
         u32 mask = 0x3ff;
         u32 removal = base + 0x124;
 
         do {
-            u32 slot = base + (u32)current;
+            u32 slot = base + current;
             struct AudioTrackSlotWork *state;
             u32 read_offset;
             u32 next_offset;
@@ -126,7 +126,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
         s32 empty = -1;
 
         do {
-            u32 slot = (base + (u32)current) & mask;
+            u32 slot = (base + current) & mask;
             struct AudioTrackSlotWork *state;
 
             AudioTrack_RemoveSlotNode(slot);

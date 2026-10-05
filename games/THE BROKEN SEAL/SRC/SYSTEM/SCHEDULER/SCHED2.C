@@ -99,7 +99,7 @@ finish_pass:
         goto next_pass;
 }
 
-s32 Scheduler_FindCallback(u32 callback)
+s32 Scheduler_FindCallback(SchedulerCallback callback)
 {
     s32 result;
     struct SchedulerTask *task;
@@ -115,11 +115,11 @@ s32 Scheduler_FindCallback(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == callback) {
+                if (task->callback == (u32)callback) {
                     result = i;
                     break;
                 }
@@ -130,7 +130,7 @@ s32 Scheduler_FindCallback(u32 callback)
     return result;
 }
 
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
+s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
 {
     u32 saved_interrupt_state;
     s32 index;
@@ -146,7 +146,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
@@ -160,7 +160,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
             if (index == -1) {
                 for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                     if (task->callback == 0) {
-                        task->callback = callback;
+                        task->callback = (u32)callback;
                         task->state = order;
                         task->mask = 0;
                         index = i;
@@ -179,7 +179,7 @@ void Scheduler_Idle(void) {}
 
 void Scheduler_EmptyCallback(void) {}
 
-s32 Scheduler_RemoveCallback(u32 callback)
+s32 Scheduler_RemoveCallback(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -194,11 +194,11 @@ s32 Scheduler_RemoveCallback(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == callback) {
+                if (task->callback == (u32)callback) {
                     task->callback = 0;
                     task->state = 0x7fff;
                     result = i;
@@ -211,7 +211,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
     return result;
 }
 
-s32 Scheduler_EnableCallbacks(u32 callback)
+s32 Scheduler_EnableCallbacks(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -226,12 +226,12 @@ s32 Scheduler_EnableCallbacks(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if (callback != 0) {
-                    if (task->callback != callback)
+                    if (task->callback != (u32)callback)
                         continue;
                 }
                 TASK_STATE_HIGH(task) |= 1;
@@ -258,7 +258,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
@@ -273,7 +273,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
     return result;
 }
 
-s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
+s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -288,11 +288,11 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == callback) {
+                if (task->callback == (u32)callback) {
                     task->mask = mask;
                     result = i;
                     break;
@@ -304,7 +304,7 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
     return result;
 }
 
-s32 Scheduler_DisableCallbacks(u32 callback)
+s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -319,12 +319,12 @@ s32 Scheduler_DisableCallbacks(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (callback == 0 || task->callback == callback) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
+                if (callback == 0 || task->callback == (u32)callback) {
+                    TASK_STATE_HIGH(task)&= ~1;
                     result = i;
                 }
             }
@@ -349,12 +349,12 @@ s32 Scheduler_DisableOverlayCallbacks(void)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if ((task->callback >> 24) == 2) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
+                    TASK_STATE_HIGH(task)&= ~1;
                     result = i;
                 }
             }
@@ -514,7 +514,7 @@ s32 FixedSqrt(s32 value)
 {
     s32 (*root)(s32) = Iwram_Sqrt;
 
-    return (s32)((u32)root(value) << 8);
+    return root(value) << 8;
 }
 
 s32 Runtime_GetLowTableAddress(void)
@@ -561,20 +561,20 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     }
     word = *tbl++;
     count = 9;
-    if ((u32) val < word) {
+    if (val < word) {
         do {
             count -= 1;
             *out++ = 0x20;
             if (count == 0) break;
             word = *tbl++;
-        } while ((u32) val < word);
+        } while (val < word);
     }
     *out++ = sign;
     tbl -= 1;
     if (count != 0) {
         do {
             word = *tbl++;
-            result = (u32) val / word;
+            result = val / word;
             *out++ = result + 0x30;
             val -= result * word;
             count -= 1;

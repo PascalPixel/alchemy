@@ -79,7 +79,7 @@ s32 Menu_OpenConfirmPrompt(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
-    state->owner_count = (u8)Party_ListActiveOwnersFar(state->owner_table);
+    state->owner_count = Party_ListActiveOwnersFar(state->owner_table);
     ItemMenu_Init(0, 3, 0, 7);
     state->message_window = UiWindow_CreateFar(13, 0, 17, 3, 2);
     Palette_LightenBankHighlight(14);
@@ -98,7 +98,7 @@ s32 Menu_OpenConfirmPrompt(void)
         void *target = ((void **)&gMenuCtrlWork)[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
         u16 flags;
         BattleAction_Get(0x3fff & state->pane_action[0]);
-        flags = (u16)(low | (high << 10));
+        flags = low | (high << 10);
         FIELD(target, u16, 0x17e) = flags;
     }
     RenderOutput_ClearListFar(state->status_window);
@@ -190,7 +190,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 done = 1;
                 result = cancelled;
             }
-            RenderOutput_RedrawSavedRectFar((s32)work->info_window);
+            RenderOutput_RedrawSavedRectFar(work->info_window);
             state = 1;
             break;
         }
@@ -227,7 +227,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                             InventoryMenu_ShowModalMessage(
                                 (s32)&MsgShortcutSetL, -1, -1);
 #if !EDITION_INTERNATIONAL
-                            RenderOutput_RedrawSavedRectFar((s32)work->info_window);
+                            RenderOutput_RedrawSavedRectFar(work->info_window);
 #endif
                         } else {
                             PsynergyMenu_SetShortcut(
@@ -236,7 +236,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                             InventoryMenu_ShowModalMessage(
                                 (s32)&MsgShortcutSetR, -1, -1);
 #if !EDITION_INTERNATIONAL
-                            RenderOutput_RedrawSavedRectFar((s32)work->info_window);
+                            RenderOutput_RedrawSavedRectFar(work->info_window);
 #endif
                         }
                         state = 0;
@@ -291,12 +291,12 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 Ability_PlayUseAnimation(work->pane_action[0] & 0x3fff);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    *(s16 *)((u8 *)work + 0x25a) + (s32)&MsgItemUseResult, 0, -1);
+                    work->use_result + (s32)&MsgItemUseResult, 0, -1);
             } else {
                 Audio_PlayCue(114);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    *(s16 *)((u8 *)work + 0x25a) + (s32)&MsgItemUseResult,
+                    work->use_result + (s32)&MsgItemUseResult,
                     result,
                     result);
             }

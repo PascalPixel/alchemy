@@ -12,12 +12,12 @@ void PaletteGlow_UpdateSine(void);
 
 void Scheduler_ScheduleCallbackAAfterFrames(void)
 {
-    Scheduler_AddOrUpdateCallback((s32)PaletteGlow_UpdateSine, 0xC80);
+    Scheduler_AddOrUpdateCallback(PaletteGlow_UpdateSine, 0xC80);
 }
 
 void Scheduler_ScheduleCallbackA(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)PaletteGlow_UpdateSine));
+    Scheduler_RemoveCallback(PaletteGlow_UpdateSine);
 }
 
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height)

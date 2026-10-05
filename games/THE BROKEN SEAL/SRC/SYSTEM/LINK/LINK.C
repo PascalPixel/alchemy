@@ -136,7 +136,7 @@ void SerialRuntime_StepBlockTransfer(void)
                 }
                 if (gSerialSendSize != 0) {
                     Dma_Set((void *)*send, own->payload, 0x84000005, (volatile u32 *)0x040000d4);
-                    gSerialSendSize += (u16)-20;
+                    gSerialSendSize += -20;
                     if (gSerialSendSize != 0) {
                         own->peer_flags = 1;
                         own->active = gSerialBlockSequence & 0x7f;

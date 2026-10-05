@@ -15,6 +15,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 /* The camera sway the phased-delta callback reads: its strength at 0x77ac
    and its running flag at 0x77b0. */
@@ -33,7 +34,6 @@ extern u8 BattleFx_GlintCellHeights[];
 void Camera_ApplyPhasedDelta(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -100,10 +100,10 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     }
     WORK_FIELD(work, 0x77ac) = 0;
     WORK_FIELD(work, 0x77b0) = 0;
-    Scheduler_AddOrUpdateCallback((s32)Camera_ApplyPhasedDelta, 0x480);
+    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     AudioCommand_PlayFar(164);
 
     for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++) {
@@ -115,7 +115,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
         if (frame == VortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
             BattleEventRuntime_BeginPhaseFar(132);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != VortexMotes_Counts[work->effect->variant * 2]; i++) {
             point = &work->particles[i];
             if (frame > i * 2 && flags[i] == 0) {
@@ -125,7 +125,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
                     pos.depth = 160;
                 if (pos.depth > 0x31f)
                     pos.depth = 0x31f;
-                draw[0](canvas, (u8 *)work + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
+                draw[0](canvas, work->sheet + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
                 point->x += point->velocity_x;
                 point->y += point->velocity_y;
                 point->z += point->velocity_z;
@@ -152,10 +152,10 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
                     AudioCommand_PlayFar(132);
                 }
             }
-            if ((u32)point->variant < 16) {
-                draw[0](canvas, (u8 *)work + ((point->variant / 2) % 3 << 10),
+            if (point->variant >= 0 && point->variant < 16) {
+                draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
                     point->x - 16, point->y - 56, 16, 64);
-                draw[1](canvas, (u8 *)work + ((point->variant / 2) % 3 << 10),
+                draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
                     point->x, point->y - 56, 16, 64);
                 point->variant++;
             }
@@ -168,8 +168,8 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)Camera_ApplyPhasedDelta);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -217,11 +217,11 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
         point = &work->particles[j];
         point->x = Random16() & 31;
         point->y = (Random16() & 63) + 16;
-        point->variant = -(s32)(Random16() & 15);
+        point->variant = -(Random16() & 15);
     }
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     REG_BLDALPHA = 0x1000;
     WaitFrames(1);
     AudioCommand_PlayFar(141);
@@ -247,14 +247,14 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
                     * Trig_Sin((frame << 11) + i * 0x4000) + wave) >> 16) + 40;
             y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
             segment = (frame / 2) % 3;
-            draw[0](canvas, (u8 *)work + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
-            draw[0](canvas, (u8 *)work + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
-            draw[0](canvas, (u8 *)work + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
+            draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
+            draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
+            draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
             for (j = 0; j != 4; j++) {
                 point = &work->particles[i * 4 + j];
                 if (point->variant >= 0) {
                     cell = point->variant / 2 + (j / 2) * 3;
-                    draw[j & 1](canvas, (u8 *)work + BattleFx_GlintCellOffsets[cell],
+                    draw[j & 1](canvas, work->sheet + BattleFx_GlintCellOffsets[cell],
                         point->x + x, point->y + y,
                         BattleFx_GlintCellWidths[cell], BattleFx_GlintCellHeights[cell]);
                 }
@@ -284,6 +284,6 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

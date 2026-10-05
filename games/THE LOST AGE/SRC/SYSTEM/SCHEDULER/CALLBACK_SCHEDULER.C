@@ -65,7 +65,7 @@ finish_pass:
         goto next_pass;
 }
 
-s32 Scheduler_FindCallback(u32 callback)
+s32 Scheduler_FindCallback(SchedulerCallback callback)
 {
     s32 result;
     struct SchedulerTask *task;
@@ -85,7 +85,7 @@ s32 Scheduler_FindCallback(u32 callback)
         }
         do {
             for (i = 0; i <= 23; i++, task++) {
-                if (task->callback == callback) {
+                if (task->callback == (u32)callback) {
                     result = i;
                     break;
                 }
@@ -96,7 +96,7 @@ s32 Scheduler_FindCallback(u32 callback)
     return result;
 }
 
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
+s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
 {
     u32 saved_interrupt_state;
     s32 index;
@@ -118,7 +118,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
         }
         do {
             i = 0;
-            if (task->callback == callback) {
+            if (task->callback == (u32)callback) {
                 task->state = order;
                 index = 0;
             } else {
@@ -126,7 +126,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
                 i++;
                 task++;
                 if (i <= 23) {
-                    if (task->callback == callback) {
+                    if (task->callback == (u32)callback) {
                         task->state = order;
                         index = i;
                     } else {
@@ -138,7 +138,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
             if (index == -1) {
                 i = 0;
                 if (task->callback == 0) {
-                    task->callback = callback;
+                    task->callback = (u32)callback;
                     task->state = order;
                     task->mask = 0;
                     index = 0;
@@ -148,7 +148,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
                     task++;
                     if (i <= 23) {
                         if (task->callback == 0) {
-                            task->callback = callback;
+                            task->callback = (u32)callback;
                             task->state = order;
                             task->mask = 0;
                             index = i;
@@ -169,7 +169,7 @@ void Scheduler_Idle(void) {}
 
 void Scheduler_EmptyCallback(void) {}
 
-s32 Scheduler_RemoveCallback(u32 callback)
+s32 Scheduler_RemoveCallback(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -188,7 +188,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
         }
         do {
             for (i = 0; i <= 23; i++, task++) {
-                if (task->callback == callback) {
+                if (task->callback == (u32)callback) {
                     task->callback = 0;
                     task->state = 0x7fff;
                     result = i;
@@ -201,7 +201,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
     return result;
 }
 
-s32 Scheduler_EnableCallbacks(u32 callback)
+s32 Scheduler_EnableCallbacks(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -222,7 +222,7 @@ s32 Scheduler_EnableCallbacks(u32 callback)
         }
         for (i = 0; i <= 23; i++, task++) {
             if (callback != 0) {
-                if (task->callback != callback)
+                if (task->callback != (u32)callback)
                     continue;
             }
             TASK_STATE_HIGH(task) |= 1;

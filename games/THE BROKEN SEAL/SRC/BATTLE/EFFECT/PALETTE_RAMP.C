@@ -14,12 +14,12 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
@@ -83,9 +83,9 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     if (mode == 0)
-        Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
     else
-        Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
     if (mode == 0)
         palette = (s32)&ResourceId_PinkBurstSheet;
     else if (mode == 1)
@@ -93,17 +93,17 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
     else
         palette = (s32)&ResourceId_PinkBurstSheet;
     Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
-    Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage, (u8 *)work + RAMP_IMAGE, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage, work->sheet + RAMP_IMAGE, 0, 0);
 
     for (i = 1; i != 8; i++) {
         for (j = 0; j != RAMP_SIZE; j++) {
-            s32 level = ((u8 *)work + RAMP_IMAGE)[j];
+            s32 level = work->sheet[RAMP_IMAGE + j];
 
             if (level > 64 - i * 7)
                 level = 64 - i * 7;
             if (level < 0)
                 level = 0;
-            ((u8 *)work + RAMP_IMAGE)[i * RAMP_SIZE + j] = level;
+            work->sheet[RAMP_IMAGE + i * RAMP_SIZE + j] = level;
         }
     }
 
@@ -141,7 +141,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw = callbacks);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != work->effect->count * 4 + 64; frame++) {
         camera = gCameraWork;
@@ -157,12 +157,12 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
             object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
             if (time > 0) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 point[0] = object->x;
                 point[1] = 160 << 13;
                 point[2] = object->z;
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 SceneTransform_ApplyPosition(point);
                 origin[0] = 0;
                 origin[1] = 0;
@@ -172,11 +172,11 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
                 y = screen.y;
                 if (mode == 0) {
                     if (time <= 26)
-                        callbacks[0](canvas, (u8 *)work + time / 4 % 7 * 960,
+                        callbacks[0](canvas, work->sheet + time / 4 % 7 * 960,
                             x - 12, y - 20, 24, 40);
                 } else {
                     if (time <= 23)
-                        draw[1](canvas, (u8 *)work + time / 4 % 6 * 1600,
+                        draw[1](canvas, work->sheet + time / 4 % 6 * 1600,
                             x - 20, y - 20, 40, 40);
                 }
                 if (time == 24)
@@ -200,7 +200,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
                         x = screen.x + x_offset;
                         y = screen.y;
                         callbacks[0](canvas,
-                            (u8 *)work + (level * RAMP_SIZE + PaletteRamp_ShardCells[cell]) + RAMP_IMAGE,
+                            work->sheet + (level * RAMP_SIZE + PaletteRamp_ShardCells[cell]) + RAMP_IMAGE,
                             x, y, PaletteRamp_ShardWidths[cell], PaletteRamp_ShardHeights[cell]);
                         EffectStep_AdvanceWithGravity3D(shard, 60, 0);
                     }
@@ -211,7 +211,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

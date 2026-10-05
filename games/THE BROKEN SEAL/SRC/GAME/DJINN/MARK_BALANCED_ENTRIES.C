@@ -3,6 +3,7 @@
 #include "GLOBAL_CELLS.H"
 #include "DJINN_MENU.H"
 #include "BATTLE_UNIT.H"
+#include "BATTLE_RUNTIME.H"
 extern struct DjinnMenuWork *gMenuWork;
 s32 Djinn_CheckTurnBalance(s32, s32);
 void Djinn_CountTurns(u8 *);
@@ -19,7 +20,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
     state = gMenuWork;
     cnt = 0;
     i = 0;
-    if (cnt < (s32)state->owner_count) {
+    if (cnt < state->owner_count) {
         p = tbl;
         do {
             *p = 0;
@@ -32,7 +33,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
             }
             i += 1;
             p += 1;
-        } while (i < (s32)state->owner_count);
+        } while (i < state->owner_count);
     }
     return cnt;
 }
@@ -72,8 +73,6 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 }
 
 /* djinn/count_turns.c */
-struct BattleUnit *Owner_GetStateFar(s32);
-
 
 void Djinn_CountTurns(u8 *counts)
 {

@@ -20,12 +20,12 @@ void Resource_LoadPairedBlocksIfAvailable(void)
 
     active_state = gMenuWork;
     first_slot = Resource_FindFreeEntry();
-    active_state->resource_slots[0] = (s16)first_slot;
+    active_state->resource_slots[0] = first_slot;
     if (first_slot != -1) {
         VramBlock_LoadCached(first_slot, 0x80, Data_080aed4c);
     }
     second_slot = Resource_FindFreeEntry();
-    active_state->resource_slots[1] = (s16)second_slot;
+    active_state->resource_slots[1] = second_slot;
     if (second_slot != -1) {
         VramBlock_LoadCached(second_slot, 0x80, Data_080aedcc);
     }

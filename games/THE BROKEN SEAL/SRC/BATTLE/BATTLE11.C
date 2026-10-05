@@ -33,6 +33,6 @@ s32 BattleEventRuntime_WaitForReady(void)
             WaitFrames(1U);
         } while (events->phase != BATTLE_PLAYBACK_READY);
     }
-    Scheduler_RemoveCallback((u32)BattleEvent_Playback);
+    Scheduler_RemoveCallback(BattleEvent_Playback);
     return BattleEventRuntime_Reset();
 }

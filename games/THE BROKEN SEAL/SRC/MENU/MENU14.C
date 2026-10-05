@@ -36,7 +36,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     VramBlock_LoadCached(
         (u8)work->marker[0].output->index,
         0x100,
-        (s32)Resource_GetTableEntry(src0));
+        Resource_GetTableEntry(src0));
 
     if (sel == 1) {
         src1 = (work->cursor_frame & 7) +
@@ -47,7 +47,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     VramBlock_LoadCached(
         (u8)work->marker[1].output->index,
         0x100,
-        (s32)Resource_GetTableEntry(src1));
+        Resource_GetTableEntry(src1));
 
     if (sel > 1) {
         /* FAKEMATCH: keep the existing scalar table address. The shared
@@ -86,11 +86,11 @@ void OptionMenu_InitializeWork(void)
     work->option_count[3] = 2;
     work->option[4] = gGameState.saved_options;
     work->option_count[4] = 2;
-    Scheduler_AddOrUpdateCallback((s32)(GraphicsPalette_LoadSelectionResourcesAndAdvance), 0xc80);
+    Scheduler_AddOrUpdateCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance, 0xc80);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)GraphicsPalette_LoadSelectionResourcesAndAdvance));
+    Scheduler_RemoveCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance);
     Runtime_ReleaseHeapBlock(0x14);
 }

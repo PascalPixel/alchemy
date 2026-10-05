@@ -46,7 +46,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
     state->count = 0;
     size = 200;
     size <<= 4;
-    Scheduler_AddOrUpdateCallback((s32)((void *)UiWork_ProcessAll), size);
+    Scheduler_AddOrUpdateCallback((void *)UiWork_ProcessAll, size);
 }
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
@@ -63,7 +63,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
     state->count = 0;
     size = 200;
     size <<= 4;
-    Scheduler_AddOrUpdateCallback((s32)(UiWork_ProcessAll), size);
+    Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, size);
 }
 
 void UiWork_FinalizeSharedSlot(void)

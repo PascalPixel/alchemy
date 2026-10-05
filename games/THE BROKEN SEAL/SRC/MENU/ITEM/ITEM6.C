@@ -8,10 +8,10 @@
 #include "FIXED_MATH.H"
 #include "LAYOUT_GUARD.H"
 #include "A9_MOTION.H"
+#include "UI.H"
 
 extern u8 MsgEquipSlotLabels;
 extern void ItemMenu_PosCategory(void);
-extern void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 extern u8 MsgItemName;
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
@@ -107,9 +107,9 @@ void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
         no = 0;
     }
     obj->y =
-        (s16)((no / phase * 0x10) + origin_y);
+        (no / phase * 0x10) + origin_y;
     obj->x =
-        (s16)((no % phase * 0x10) + origin_x);
+        (no % phase * 0x10) + origin_x;
     UiIcon_PrepareObject(obj);
 }
 

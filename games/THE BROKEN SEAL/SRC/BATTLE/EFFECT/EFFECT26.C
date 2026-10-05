@@ -33,7 +33,7 @@ struct EffectSprite {
 
 void ObjectDispatch_ReleaseFar(struct FieldActor *object);
 s32 ObjectTable_FindLastActiveId(void);
-void Event_SpawnObjectTable(s32 event_id, s32 last_id);
+void Event_SpawnObjectTable(struct ScenePlacement *table, s32 last_id);
 
 /* Give every entry without a flag of its own one of two fixed flags: 0x164,
    kept clear, when its position lies inside the camera's bounds, and 0x165,
@@ -122,14 +122,14 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
     }
 }
 
-/* Hides and releases every live effect object, then clears the pending
-   event and respawns its object table if one was set. */
+/* Hides and releases every live effect object, then clears the extra
+   placement streams and spawns the first again if one was set. */
 void BattleEffect_ClearAllObjects(void)
 {
     /* FAKEMATCH: the original one-bit display flag clear keeps the signed
        mask and saved loop registers; a full-byte owner mask changes the frame. */
     struct EventWork *runtime = gEventWork;
-    s32 event_id;
+    struct ScenePlacement *table;
     s32 i;
 
     for (i = 0; i < 58; i++) {
@@ -142,10 +142,10 @@ void BattleEffect_ClearAllObjects(void)
             runtime->placed_actors[i] = 0;
         }
     }
-    event_id = *(s32 *)&runtime->unknown_000[4];
-    *(s32 *)&runtime->unknown_000[4] = 0;
-    *(s32 *)&runtime->unknown_000[8] = 0;
-    *(s32 *)&runtime->unknown_000[12] = 0;
-    if (event_id != 0)
-        Event_SpawnObjectTable(event_id, ObjectTable_FindLastActiveId());
+    table = runtime->tables[1];
+    runtime->tables[1] = 0;
+    runtime->tables[2] = 0;
+    runtime->tables[3] = 0;
+    if (table != 0)
+        Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }

@@ -39,7 +39,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     state = gMenuSelectWork;
     step = 1;
     delay = 12;
-    state->selection = (s16)start;
+    state->selection = start;
     if (goal < start)
         step = -1;
     pos = start;
@@ -63,7 +63,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         if (pos == goal)
             break;
 
-        state->selection = (s16)((u16)state->selection + step);
+        state->selection = state->selection + step;
         Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
         delay = 0;
         pos += step;
@@ -97,7 +97,7 @@ void Menu_AppendResourceEntry(s32 no)
     work = gMenuSelectWork;
     index = work->count;
     if (index <= 5) {
-        work->count = (u16)work->count + 1;
+        work->count = work->count + 1;
         entry = &work->entries[index];
         slot = Resource_FindFreeEntry();
         Menu_LoadResourceSlot(slot, no);

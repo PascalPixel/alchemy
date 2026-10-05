@@ -165,7 +165,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     }
 
     /* 攻撃力。元素武器でなければ 100。 */
-    if ((u32)plan->range_index <= 3) {
+    if (plan->range_index >= 0 && plan->range_index <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
             power = actor->elements[plan->range_index].power;
@@ -176,7 +176,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     power = 100;
 after_power:
 
-    if (plan->command == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
+    if (plan->command == 5 && (plan->range_index >= 0 && plan->range_index <= 3) && affinity > 0) {
         s32 chance;
 
         chance = power - target->elements[plan->range_index].resist;
@@ -338,7 +338,7 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                    dmg += (u8)(target->level / 5) + 6;
+                    dmg += (target->level / 5) + 6;
                     if (pass == 0) {
                         BattleEv_Push(BATTLE_EVENT_MARK, 0);
                         {
@@ -512,7 +512,7 @@ after_power:
                     s32 item;
 
                     item = action_id - 380;
-                    if ((u32)item <= 21) {
+                    if (item >= 0 && item <= 21) {
                         switch (item) {
                         case 0:
                         case 6:
@@ -917,7 +917,7 @@ after_power:
             if (target->hp != 0)
                 break;
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-            target->hp = (s16)(target->max_hp / 2);
+            target->hp = target->max_hp / 2;
             Owner_RecalculateRatiosFar(target_id);
             break;
 
@@ -925,7 +925,7 @@ after_power:
             if (target->hp != 0)
                 break;
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-            target->hp = (s16)(target->max_hp * 8 / 10);
+            target->hp = target->max_hp * 8 / 10;
             Owner_RecalculateRatiosFar(target_id);
             break;
 
@@ -1178,7 +1178,7 @@ after_power:
             break;
 
         case EFX_TEXT_NONE:
-            BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
+            BattleEv_Push(BATTLE_EVENT_TEXT, -1);
             break;
 
         default:

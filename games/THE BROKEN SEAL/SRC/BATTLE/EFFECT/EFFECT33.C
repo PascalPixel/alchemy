@@ -83,7 +83,7 @@ struct SpreadPosition {
 void Audio_PlayCue(s32);
 
 void BattleFx_AdvanceSpinAngle(void);
-extern const u8 BattleFx_CommonParticleScript[];
+extern const s32 BattleFx_CommonParticleScript[];
 
 struct CaptureObject {
     u8 unknown_00[8];
@@ -158,9 +158,9 @@ void BattleFx_AdvanceObjectField6WithRamp(void *obj)
     u32 step;
 
     step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
-    ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + step + 0x1000);
+    ((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + step + 0x1000;
     if (step < 0x1000U) {
-        FIELD_AT_OFFSET(obj, s16 *, 0x64) = (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);
+        FIELD_AT_OFFSET(obj, s16 *, 0x64) = FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1;
     }
 }
 
@@ -169,8 +169,8 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
     s32 scale;
 
     scale = ((struct MotionObject *)obj)->scale_x + 0xFFFFFE40;
-    ((struct MotionObject *)obj)->scale_y = (s32)(((struct MotionObject *)obj)->scale_y + 0xFFFFFE40);
-    ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + 0x2000);
+    ((struct MotionObject *)obj)->scale_y = ((struct MotionObject *)obj)->scale_y + 0xFFFFFE40;
+    ((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + 0x2000;
     ((struct MotionObject *)obj)->scale_x = scale;
     if (scale < 0x3000) {
         ObjectDispatch_ReleaseFar();
@@ -376,8 +376,8 @@ void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
     s32 scale;
 
     scale = ((struct MotionObject *)obj)->scale_x + 0xFFFFFC00;
-    ((struct MotionObject *)obj)->scale_y = (s32)(((struct MotionObject *)obj)->scale_y + 0xFFFFFC00);
-    ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + 0x2000);
+    ((struct MotionObject *)obj)->scale_y = ((struct MotionObject *)obj)->scale_y + 0xFFFFFC00;
+    ((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + 0x2000;
     ((struct MotionObject *)obj)->scale_x = scale;
     if (scale < 0x3000) {
         ObjectDispatch_ReleaseFar();
@@ -578,7 +578,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
         Animation_ApplyChildValuesFar(djinni, 11);
         djinni->lifetime = 8;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, BattleFx_CommonParticleScript);
     }
 
     WaitFrames(15);

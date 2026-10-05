@@ -7,6 +7,8 @@
 #include "DMA.H"
 #include "INVENTORY_MENU.H"
 #include "RENDER_INPUT.H"
+#include "UI.H"
+#include "MENU_LIST.H"
 extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;
 extern const u8 Data_080af08c[];
@@ -26,15 +28,11 @@ extern u8 MsgItemCounter;
 #define GIVE_ASK_Y    32
 #endif
 
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void RenderOutput_ClearListFar(void *window);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
-void AudioCommand_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 s32 GameFlag_IsSet(s32 flag);
 

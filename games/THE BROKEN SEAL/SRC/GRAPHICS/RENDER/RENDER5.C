@@ -55,7 +55,7 @@ void UiWork_InitializeWithResourceCounters(void)
 #endif
     UiWork_InitFreeList();
     UiWork_SetTwoEntriesTo999();
-    Scheduler_AddOrUpdateCallback((s32)(UiWork_UploadDirtyBlocks), 0x480);
+    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
     UiWork_InitCountersWithResourceAndScheduleRefresh();
 }
 
@@ -101,7 +101,7 @@ void UiWork_Initialize(s32 kind)
     FillWords(Iwram_FillWords, work, 0x500, 0xf000f000);
 #endif
     UiWork_InitFreeList();
-    Scheduler_AddOrUpdateCallback((s32)(UiWork_UploadDirtyBlocks), 0x480);
+    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
     UiWork_InitCountersAndScheduleRefresh(kind);
     UiWork_CopyTileTail(0xf013, 128);
     UiWork_CopyTileTail(0xf014, 129);

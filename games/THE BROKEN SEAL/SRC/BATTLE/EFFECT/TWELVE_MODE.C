@@ -18,6 +18,7 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -54,7 +55,6 @@ extern const u8 TwelveMode_GlintDrawFlags[];
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -169,7 +169,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
         BattleFx_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
     if (TwelveMode_Records[mode * 7] == 0)
         Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
     else
@@ -250,7 +250,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_position);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &alternate);
     target_position.y += (alternate.y - target_position.y) / 2;
@@ -309,7 +309,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                     }
                 }
             }
-            if ((u32)(frame - 12) <= 19)
+            if (frame >= 12 && frame <= 31)
                 glint = 1;
         } else if (frame < length + 4) {
             s32 stage;
@@ -376,7 +376,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
         }
 
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
         draw[0] = gBlitters[46];
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
@@ -387,7 +387,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                 for (i = 0; i != 64; i++) {
                     struct EffectStep *step = &work->particles[i];
 
-                    if ((u32)step->variant <= 23) {
+                    if (step->variant >= 0 && step->variant <= 23) {
                         s32 picture = step->variant / 4;
 
                         draw[i & 1](canvas, work->sheet + picture * 1152 + wisp_sheet,
@@ -424,7 +424,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                             step->velocity_x += dx;
                             step->velocity_y += dy;
                             step->velocity_z += dz;
-                            if ((u32)(dx + 0xfff) <= 0x1ffe && (u32)(dz + 0xfff) <= 0x1ffe)
+                            if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
                                 step->variant = -1;
                         }
                     }
@@ -459,6 +459,6 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

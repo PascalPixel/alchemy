@@ -5,7 +5,7 @@
 #include "GLYPH.H"
 #include "ITEM.H"
 #include "BATTLE_UNIT.H"
-
+#include "BATTLE_RUNTIME.H"
 
 extern u8 RenderResource_PairSourceTable;
 
@@ -13,7 +13,6 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *, s32);
 extern GlyphTransfer *gGlyphWork;
 extern u8 *UiIcon_ItemIconPointers[];
 void UiIcon_BuildAbilityIconTiles(u32, s32, s32 *, s32 *, s32);
-struct BattleAction *BattleAction_Get(s32);
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {

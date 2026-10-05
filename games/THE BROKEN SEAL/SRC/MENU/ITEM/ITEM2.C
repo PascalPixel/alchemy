@@ -147,7 +147,7 @@ s32 ItemMenu_ChooseCmd(void)
                 menu->equip_preview = 1;
                 ItemMenu_DrawEquipPreview(menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
                 if (index == 3) {
-                    Scheduler_AddOrUpdateCallback((s32)&EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
+                    Scheduler_AddOrUpdateCallback(&EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
                 }
             } else if (index != 0) {
                 menu->equip_preview = 0;

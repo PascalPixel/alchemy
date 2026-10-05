@@ -17,6 +17,7 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -27,7 +28,6 @@ extern u16 ParticleStreams_CellOffsets[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
@@ -90,7 +90,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     for (i = 0; i != 256; i++) {
@@ -118,7 +118,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 
     for (frame = 0; frame != 128; frame++) {
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != 128; i++) {
             mote = &gMotes[i];
             if (frame >= i / 32 * 8 && mote->variant >= 0) {
@@ -167,7 +167,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

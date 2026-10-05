@@ -99,7 +99,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     void *canvas;
     DrawRectangle spark;
     DrawRectangle flare;
-    void *sheet;
+    u8 *sheet;
     s32 origin_x;
     struct EffectStep *step;
     s32 frame;
@@ -121,11 +121,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     spark = heap_cache[8];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, (u8 *)work + 0x59d8, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + 0x59d8, 0, 0);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 64; i++) {
         s32 speed = (Random16() & 255) + 256;
@@ -168,7 +168,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
             if (cell < 0)
                 cell = 0;
-            flare(canvas, (u8 *)work + ImpactBurst_CellSourceOffsets[cell],
+            flare(canvas, work->sheet + ImpactBurst_CellSourceOffsets[cell],
                 (x >> 16) - ((width = ImpactBurst_CellWidths[cell]) >> 1),
                 (y >> 16) - ((height = ImpactBurst_CellHeights[cell]) >> 1),
                 width, height);
@@ -185,7 +185,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
                 size = step->variant / 16 + 3;
                 px = HI(step->x);
                 py = HI(step->y);
-                spark(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     px - size / 2, py - size, size, size * 2);
             }
         }
@@ -201,7 +201,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
                 size = step->variant / 16 + 1;
                 px = HI(step->x);
                 py = HI(step->y);
-                spark(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     px - size / 2, py - size, size, size * 2);
             }
         }
@@ -218,7 +218,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
                 cell = (frame - 36) / 7;
                 px = HI(shard->x);
                 py = HI(shard->y);
-                flare(canvas, (u8 *)work + cell * 0x120 + 0x59d8,
+                flare(canvas, work->sheet + cell * 0x120 + 0x59d8,
                     px - 6, py - 12, 12, 24);
             }
         }
@@ -229,7 +229,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     {
         /* FAKEMATCH: the routine's address is loaded before the size, as a
            call through a local makes it. */

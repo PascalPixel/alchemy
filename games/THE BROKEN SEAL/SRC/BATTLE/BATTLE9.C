@@ -71,7 +71,7 @@ void Ui_SetRenderResultFromObject(s32 arg0)
     u8 value;
     s32 ret;
 
-    if (arg0 == (s32)0x80000000) {
+    if (arg0 == 0x80000000) {
         *(s16 *)&state->result[0] = (value = 0);
         *(s16 *)&state->result[1] = value;
     } else {

@@ -542,7 +542,7 @@ s32 LinkLobby_RunRoundResult(void)
     }
     callback = LinkLobby_PollPeerReady;
     Engine_TaskAddCallback(callback, 0xc80);
-    Scheduler_SetCallbackMask((u32)(callback), 1);
+    Scheduler_SetCallbackMask(callback, 1);
     if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {
         Owner_RefreshActiveRatios(1);
         BattlePlacement_UpdateTimedEntriesTwentyTimes();

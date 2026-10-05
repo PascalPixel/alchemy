@@ -16,12 +16,12 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -63,12 +63,12 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = heap_cache[7];
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     first = GetBattleObjectSlotFar(work->effect->actor);
     second = GetBattleObjectSlotFar(work->effect->actors[0]);
     object = first->object;
@@ -91,7 +91,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 
         camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 0) {
             target->velocity_y = 0xf0000;
             target->vertical_motion_strength = 0x91eb;
@@ -117,7 +117,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
             Object_SetPosition(object, 0, 0, object->z);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         record[0] = object->x;
         record[1] = object->y;
         record[2] = object->z;
@@ -136,7 +136,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
                 angle = i << 12;
                 rx = screen.x + ((Trig_Sin(angle) * (frame - 46)) >> 16);
                 ry = ((Trig_Cos(angle) * (frame - 46)) >> 16) - frame + 100;
-                draw[0](canvas, (u8 *)work + (((frame - 56) / 2) << 11), rx - 16, ry, 32, 64);
+                draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry, 32, 64);
             }
         }
         if (frame == 64) {
@@ -158,7 +158,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }
@@ -167,7 +167,6 @@ extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -215,10 +214,10 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
     draw[1] = (DrawRectangle)heap_cache[47 - 39];
     blit = draw;
-    Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
     REG_BG2X = (64 - position.x) << 8;
     for (i = 0; i != 64; i++) {
@@ -276,7 +275,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
                 speed = -drift;
             cell = speed >> 17;
             if (frame < i * 4 + 25) {
-                blit[(u32)drift >> 31](canvas, (u8 *)work + BladeRain_CellSourceOffsets[cell],
+                blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
                     (blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
                     (blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1),
                     wide, high);
@@ -285,7 +284,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
                     blade->y += blade->velocity_y;
                 }
             } else {
-                blit[(u32)drift >> 31](canvas, (u8 *)work + BladeRain_CellSourceOffsets[cell],
+                blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
                     (blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
                     (blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1),
                     wide, high -= 4);
@@ -302,7 +301,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -325,7 +324,6 @@ extern u16 BattleFx6_FlareCells[];
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
@@ -362,7 +360,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     work->fade_step = 0;
     REG_BLDALPHA = 0x100c;
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
     switch (work->effect->kind) {
     case 0:
@@ -397,7 +395,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     __asm__("");
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw.upper = gWorkSlot[46];
     work->effect->variant++;
@@ -436,7 +434,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
         }
         GetBattleObjectSlotFar(work->effect->actor);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != 32; i++) {
             struct EffectStep *fleck = &gFlecks[i];
 
@@ -463,7 +461,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     }
 
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
     Runtime_ReleaseHeapBlock(41);
     Runtime_ReleaseHeapBlock(40);

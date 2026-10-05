@@ -72,7 +72,7 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
                 tmp12 = x & 15;
                 tmp6 = tmp12;
                 dst += 1;
-                tmp3 = (u32)(y & 15);
+                tmp3 = y & 15;
                 tmp13 = tmp3 << 5;
                 pos = tile;
                 tmp12 = tmp13;
@@ -83,7 +83,7 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
                 tmp6 = tmp13;
                 offset = tmp6;
                 for (; i < 3; i += 1) {
-                    if (pos->x <= (s32)x && 16 + (*pos).x > x && pos->y <= y && pos->y + 12 > y) {
+                    if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y && pos->y + 12 > y) {
                         u32 *tmp;
                         u32 tmp2;
                         u32 tmp4;
@@ -131,7 +131,7 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
             src = src + (128 - width);
             dst = 128 - width + dst;
             y++;
-        } while (y < (s32)dst_y + height);
+        } while (y < dst_y + height);
     }
 }
 
@@ -211,7 +211,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
                 tmp12 = x & 15;
                 tmp6 = tmp12;
                 dst += 1;
-                tmp3 = (u32)(y & 15);
+                tmp3 = y & 15;
                 tmp13 = tmp3 << 5;
                 pos = tile;
                 i = 0;
@@ -222,7 +222,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
                 tmp6 = tmp13;
                 offset = tmp6;
                 for (; i < 3; i += 1) {
-                    if (pos->x <= (s32)x && 16 + (*pos).x > x && pos->y <= y && pos->y + 12 > y) {
+                    if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y && pos->y + 12 > y) {
                         u32 *tmp;
                         u32 tmp2;
                         u32 tmp4;
@@ -264,7 +264,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
                         tmp4 = tmp14;
                         tmp7 = (u32 *)tmp4;
                         dest = tmp7;
-                        (s32)(*dest = tmp2);
+                        *dest = tmp2;
                         break;
                     }
                     n = 0x800;
@@ -275,7 +275,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
             src = src + (128 - width);
             dst = 128 - width + dst;
             y++;
-        } while (y < (s32)dst_y + height);
+        } while (y < dst_y + height);
     }
 }
 #endif

@@ -220,7 +220,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                 if (menu->psynergies[state.selected_index] != 0) {
                     icon = menu->entry_icons[state.selected_index];
                     icon->active = 9;
-                    icon->unknown_0c = 0;
+                    icon->anim_step = 0;
                     icon->sentinel = 250;
                 }
                 for (i = 0; i < menu->owner_count; i++) {

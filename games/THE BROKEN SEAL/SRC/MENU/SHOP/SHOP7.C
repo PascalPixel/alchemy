@@ -107,12 +107,12 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     AnimationObjects_SetField15OnActiveFar(shop->party_member_icons[member], 0);
     WaitFrames(20);
     callback_flags = 0xc80;
-    Scheduler_AddOrUpdateCallback((s32)(Shop_ResetEffects), callback_flags);
+    Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
 
     /* FAKEMATCH: the x store goes through a union with a halfword view so it
        may alias the member_z load, which keeps the reference schedule. */
-    ((union PositionWord *)&position.x)->w = (s32)shop->party_member_x[member] << 16;
-    position.z = ((s32)shop->party_member_y[member] << 16) + (s32)0xfff40000;
+    ((union PositionWord *)&position.x)->w = shop->party_member_x[member] << 16;
+    position.z = (shop->party_member_y[member] << 16) + 0xfff40000;
 
     i = 0;
     effect = shop->effects;
@@ -127,7 +127,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         effect->scale_x = 0xb333;
         WaitFrames(3);
         if (i == 5) {
-            shop->burst_member = (u8)member;
+            shop->burst_member = member;
         }
         i++;
         effect++;
@@ -168,7 +168,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         }
     }
 
-    Scheduler_RemoveCallback((u32)(Shop_ResetEffects));
+    Scheduler_RemoveCallback(Shop_ResetEffects);
     AnimationObjects_SetField15OnActiveFar(shop->party_member_icons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);
@@ -210,7 +210,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         state->special_active = 1;
 
     object = Object_GetByIdFar(object_id);
-    state->resource_id = (u16)((struct AnimationObject *)object->animation)->entries[0]->anim_id;
+    state->resource_id = ((struct AnimationObject *)object->animation)->entries[0]->anim_id;
     win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
 
     amount = Inn_RoomPrice(mode);
@@ -224,7 +224,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
         UiWork_FinalizeFar(state->window, 2);
-    } else if ((u32)amount > (u32)gGameState.coins) {
+    } else if (amount > (u32)gGameState.coins) {
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
         UiWork_FinalizeFar(state->window, 2);
@@ -236,7 +236,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         Inn_PlaySleep(amount);
 
         object = Object_GetByIdFar(object_id);
-        state->resource_id = (u16)((struct AnimationObject *)object->animation)->entries[0]->anim_id;
+        state->resource_id = ((struct AnimationObject *)object->animation)->entries[0]->anim_id;
         win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));

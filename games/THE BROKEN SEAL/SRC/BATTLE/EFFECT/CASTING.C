@@ -20,6 +20,7 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
@@ -29,7 +30,6 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
-void Graphics_PrepareTransferInIwramWork(void *eye, void *target);
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 s32 Battle_GetObjectTableValueFar(s32 actor_id);
@@ -265,7 +265,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     } else {
         work->transfer_value = 50;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     /* FAKEMATCH: Retain each output pointer while preparing its call. */
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], target_screen = &target_pos);
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, caster_screen = &caster_pos);
@@ -342,7 +342,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             active_cnt = cnt;
             if (active_cnt <= 63) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
                 orb_x = spark_screen.x;
                 /* FAKEMATCH: Keep signed halving in the loaded coordinate register. */
@@ -403,8 +403,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->prelude = 0;
-        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         Object_SetMode(caster_actor, 3);
@@ -430,8 +430,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->prelude = 0;
-        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         command->variant = 3;
@@ -505,11 +505,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
     }
     kind_from_two = kind - 2;
-    if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 29 || kind == 28) {
-        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    if ((kind_from_two >= 0 && kind_from_two <= 1) || kind == 12 || kind == 22 || kind == 29 || kind == 28) {
+        Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     }
     kind_from_four = kind - 4;
-    if ((u32)kind_from_four <= 2 || kind == 23 || kind == 30 || kind == 27 || kind == 33 || kind == 34 || kind == 100) {
+    if ((kind_from_four >= 0 && kind_from_four <= 2) || kind == 23 || kind == 30 || kind == 27 || kind == 33 || kind == 34 || kind == 100) {
         duration = 32;
     } else if (kind >= 0 && kind <= 3 || kind == 8 || kind == 9 || kind == 10 || kind == 22 || kind == 25 || kind == 29 || kind == 31 || kind == 14) {
         duration = 48;
@@ -607,7 +607,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 draw_pair[1](canvas, work->sheet + (frame - 4) / 2 * 960 + 0x5100, target_screen->x / 2 - 8, caster_screen->y - 24, 20, 48);
             }
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             if (frame > 3) {
                 for (i = 0; i != 128; i++) {
                     s32 index = i / 2;
@@ -665,7 +665,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                             step->velocity_x += dx;
                             step->velocity_y += dy;
                             step->velocity_z += dz;
-                            if ((u32)(dx + 0xfff) <= 0x1ffe && (u32)(dz + 0xfff) <= 0x1ffe)
+                            if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
                                 step->variant = -1;
                         }
                     }
@@ -712,7 +712,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             s32 scroll;
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
-            if ((u32)frame <= 23) {
+            if (frame >= 0 && frame <= 23) {
                 /* The rising column: two scrolling pieces over a wider base. */
                 RectangleBlit *draw;
                 s32 width;
@@ -844,7 +844,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         } else if (kind == 32) {
             scroll_pos = scroll_pos + scroll_speed;
             if (frame > 6) {
-                scroll_speed = (s32)((u32)scroll_speed * 48) / 64;
+                scroll_speed = (scroll_speed * 48) / 64;
             }
             {
                 s32 x = scroll_pos;
@@ -1073,16 +1073,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->prelude = 0;
-        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleFx_RunPaletteRampMode1(command);
     } else {
         if (kind == 2 || kind == 3 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
-            Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+            Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
         }
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleFx_EndCanvasLayer();

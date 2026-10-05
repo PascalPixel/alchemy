@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "BATTLE_UNIT.H"
+#include "GAME_STATE.H"
 
 /* The German and French viewers start their second form one past the last
  * message of their catalogues, which has no name, and stay on scaffold. */
@@ -17,7 +18,6 @@
 
 extern volatile s32 gKeysRepeat;
 extern u8 *gWindowWork;
-extern u8 gCell[];
 extern u8 MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
 extern u8 MsgRariberoHowDidSearchForSheba;
 
@@ -80,7 +80,7 @@ void DebugBattle_ViewMessages(void)
 
             REG_DISPCNT = control;
         }
-        gCell[0x20c] = 2;
+        gGameState.message_speed = 2;
         for (;;) {
             UiWork_ClearValueNameTablesFar();
             UiText_DrawQuantity(999, 5);
@@ -119,7 +119,7 @@ void DebugBattle_ViewMessages(void)
                     index -= 10;
                 if (index < 0)
                     index = 0;
-                if ((u32)index >= (u32)DEBUG_VIEW_LIMIT)
+                if (index >= (u32)DEBUG_VIEW_LIMIT)
                     index = DEBUG_VIEW_LIMIT;
                 if (gKeysRepeat & (KEY_B | KEYS_DPAD | KEYS_SHOULDERS))
                     break;

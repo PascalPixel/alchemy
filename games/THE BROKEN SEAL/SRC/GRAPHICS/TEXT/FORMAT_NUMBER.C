@@ -17,7 +17,7 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
     if (value < 0) {
         if (width == 0)
             negative = 1;
-        value = (s32)(0U - (u32)value);
+        value = 0U - value;
     }
 
     buffer[0] = ' ';
@@ -56,7 +56,7 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
         return buffer + offset;
     }
 
-    if ((u32)width > 12)
+    if (width < 0 || width > 12)
         width = 12;
     return buffer + 13 - width;
 }
@@ -161,7 +161,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     }
     while (*name != 0) {
         c = *name++;
-        entry[pos] = (s16)c;
+        entry[pos] = c;
         pos = (pos + 1) & 0x1ff;
 #if defined(TBS_EDITION_DE)
         if (c == 's' || c == 'S' || c == 'z' || c == 'Z')
@@ -240,7 +240,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     }
     while (*name != 0) {
         c = *name++;
-        entry[pos] = (s16)c;
+        entry[pos] = c;
         pos = (pos + 1) & 0x1ff;
         if (c == 'S' || c == 's')
             *suffix = 1;

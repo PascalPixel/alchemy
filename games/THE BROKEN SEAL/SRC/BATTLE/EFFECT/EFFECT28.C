@@ -42,7 +42,7 @@ typedef char ParticleEffectObject_child_offset[
 ];
 extern void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 extern void Object_SetMode(struct ObjectRuntime *, s32);
-extern const u8 BattleFx_ParticleScript[];
+extern const s32 BattleFx_ParticleScript[];
 
 struct EfxSrc {
     u8 pad0[6];
@@ -87,7 +87,7 @@ struct EfxObj {
 };
 
 extern u8 *gEventWork;
-extern const u8 BattleFx_ParticleEmitterScript[];
+extern const s32 BattleFx_ParticleEmitterScript[];
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_ReleaseFar(void *object);
 void ItemIcon_LoadTilesFar(s32 item);
@@ -100,7 +100,7 @@ struct EffectObject_0808f1c0;
 
 
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-extern const u8 RomBytes_0809e75c[];
+extern const s32 RomBytes_0809e75c[];
 
 /* effect_runtime/Effect_RunRisingObjectSequence.c */
 void ObjectDispatch_SetSingleChildField26Far(void *, s32);
@@ -150,7 +150,7 @@ struct Source_0808f28c {
 
 extern struct ObjectRuntime *Object_Spawn(s32, u32, u32, u32);
 
-extern const u8 BattleFx_MarkerParticleScript[];
+extern const s32 BattleFx_MarkerParticleScript[];
 
 
 /* One 12-byte map event record; the table ends at flags == -1. */
@@ -214,7 +214,7 @@ void BattleFx_EmitRandomParticle(void)
             dx = x - cx - 0x80000;
             cz = cell->z << 20;
             dz = z - cz - 0x80000;
-            if ((u32)(dx + 0xfffff) <= 0x1ffffe && (u32)(dz + 0xfffff) <= 0x1ffffe) {
+            if ((dx >= -0xfffff && dx <= 0xfffff) && (dz >= -0xfffff && dz <= 0xfffff)) {
                 object->x = cx + 0x80000;
                 object->z = cz + 0x80000;
                 Vector_AddPolarOffset(0x140000, (u16)ArcTan2(dz, dx), (struct ParticlePosition *)&object->x);
@@ -254,7 +254,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
         s32 mask;
         u8 flags;
 
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = ((u8 *)&((struct AnimationObject *)object->animation)->part[0])[9];
@@ -313,7 +313,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
     if (obj == 0)
         return 0;
 
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_ParticleEmitterScript);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleEmitterScript);
     {
         struct EfxVisual *vis = obj->vis;
         void *buf;
@@ -370,7 +370,7 @@ void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object)
     Object_SetPosition(object, entity->x, entity->y + 0x240000, entity->z);
     WaitFrames(3);
     Object_SetMode(entity, 28);
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)RomBytes_0809e75c);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, RomBytes_0809e75c);
     entity->angle = 0x4000;
 }
 
@@ -382,7 +382,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
         other = ObjectTable_Get(gGameState.selected_actor);
         if (flags & 1) {
             ObjectDispatch_SetSingleChildField26Far(object, 0);
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleEmitterScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_ParticleEmitterScript);
             FIELD_AT_OFFSET(object, u32 *, 0x28) = 0x20000;
             FIELD_AT_OFFSET(object, u32 *, 0x48) = 0x4000;
             FIELD_AT_OFFSET(object, s32 *, 0x6C) = (s32)&BattleFx_EmitRandomParticleFromEmitter;
@@ -509,7 +509,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
         s32 mask;
         u8 flags;
 
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = ((u8 *)&((struct AnimationObject *)object->animation)->part[0])[9];
@@ -528,7 +528,7 @@ u32 EffectRuntime_IsActive(void)
 
     if (runtime != NULL) {
         count = *(s16 *)((u8 *)runtime + 0xcb8);
-        active = (u32)((0 - count) | count);
+        active = (0 - count) | count;
         active >>= 31;
     }
     return active;
@@ -557,7 +557,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
             id = *list++;
             if (EffectRuntime_GetCurrentObject(id) != 0)
                 continue;
-            if ((u32)(id - 100) > 139)
+            if (id < 100 || id > 239)
                 continue;
             if (actor_x - x >= 0) {
                 if (actor_x - x > 8)
@@ -585,8 +585,8 @@ void FieldEffect_SpawnNearbyMarkers(void)
                                variable, which keeps both in r5. */
                             actor = (struct ObjectRuntime *)Object_CreateFar(22, (x << 20) + 0x80000, 0, (z << 20) + 0x80000);
                             if (actor != 0) {
-                                ObjectDispatch_InitializeFar((struct DispatchObject *)actor, (u32)BattleFx_MarkerParticleScript);
-                                ObjectDispatch_SetSingleChildField26Far((s32)actor, 0);
+                                ObjectDispatch_InitializeFar((struct DispatchObject *)actor, BattleFx_MarkerParticleScript);
+                                ObjectDispatch_SetSingleChildField26Far(actor, 0);
                                 *(s32 *)((u8 *)actor + 108) = (s32)BattleFx_SpawnRandomParticleAtPosition;
                             }
                         }

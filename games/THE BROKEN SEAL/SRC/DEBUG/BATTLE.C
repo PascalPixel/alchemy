@@ -89,7 +89,7 @@ restart:
             if (gKeysHeld & KEY_DOWN)
                 GameFlag_SetBitFar(364);
             Owner_RecalculateStatsFar(0);
-            gGameState.special = (u16)(s32)&ResourceId_SuharaGateBackdrop;
+            gGameState.special = (s32)&ResourceId_SuharaGateBackdrop;
             if (encounter == 28)
                 GameFlag_SetBitFar(366);
             GameFlag_SetBitFar(354);

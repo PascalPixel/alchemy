@@ -20,7 +20,6 @@ u32 GameFlag_SetBit(u32 flag);
 u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 s32 Trade_CanOfferDjinn(s32, s32, s32);
-void Owner_RefreshDerivedData(s32 owner);
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit);
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit);
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit);
@@ -306,13 +305,13 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
     if ((state->djinn_active[index] & (1 << bit)) != 0)
         return 0;
 
-    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((u32)owner > 7))->list;
+    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((owner < 0 || owner > 7)))->list;
     for (i = 0; i < table->count; i++) {
         if (index == table->entries[i].element && bit == table->entries[i].index)
             break;
     }
     if (i == table->count ||
-        ((status = (s8)table->entries[i].turns) <= 0 && status != -2))
+        ((status = table->entries[i].turns) <= 0 && status != -2))
         return 1;
     return 0;
 }
@@ -364,7 +363,7 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit)
     s32 found = 0;
     s32 i;
 
-    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((u32)owner > 7))->list;
+    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((owner < 0 || owner > 7)))->list;
     for (i = 0; i < table->count; i++) {
         if (index == table->entries[i].element && bit == table->entries[i].index) {
             table->count--;
@@ -450,7 +449,7 @@ s32 Trade_CountPendingOffers(u8 *counts)
             }
             index++;
             entry++;
-        } while (index != (s32)base->list.count);
+        } while (index != base->list.count);
     }
     return found;
 }

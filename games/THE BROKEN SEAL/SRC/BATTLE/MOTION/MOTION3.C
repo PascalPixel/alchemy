@@ -75,7 +75,7 @@ u32 Battle_GetObjectTableValue(s32 id)
     u8 no;
 
     no = Owner_GetStateFar(id)->class_id;
-    value = (u32)(u8)Summon_GetEntryByte4(no) << 16;
+    value = (u8)Summon_GetEntryByte4(no) << 16;
     if (value == 0) {
         no = Owner_GetStateFar(id)->class_id;
         if (Summon_IsEntryFlagged(no) != 0) {

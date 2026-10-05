@@ -23,19 +23,19 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
     second = second_slot->object;
 
     x1 = first->target_x;
-    if (x1 == (s32)0x80000000) {
+    if (x1 == 0x80000000) {
         x1 = first->x;
     }
     z1 = first->target_z;
-    if (z1 == (s32)0x80000000) {
+    if (z1 == 0x80000000) {
         z1 = first->z;
     }
     x2 = second->target_x;
-    if (x2 == (s32)0x80000000) {
+    if (x2 == 0x80000000) {
         x2 = second->x;
     }
     z2 = second->target_z;
-    if (z2 == (s32)0x80000000) {
+    if (z2 == 0x80000000) {
         z2 = second->z;
     }
 

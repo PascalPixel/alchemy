@@ -29,7 +29,7 @@ struct DispatchObject {
     u8 unknown_6c[4];
 };
 
-void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value);
+void ObjectDispatch_Initialize(struct DispatchObject *object, const s32 *script);
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 value);
 void ObjectGroup_SetChildValueUnlessFifteen(void *parent, u32 value);
 

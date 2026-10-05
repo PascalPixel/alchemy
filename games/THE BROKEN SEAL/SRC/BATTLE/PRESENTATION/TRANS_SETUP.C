@@ -3,9 +3,9 @@
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "BATTLE_PRESENTATION.H"
+#include "TRANSFORM.H"
 
 
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 {
@@ -44,7 +44,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
     gProjection.center_x = 120;
     gProjection.center_y = 120;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork((s32)scene, (s32)pos);
+    Graphics_PrepareTransferInIwramWork(scene->eye, pos);
     Render_ProjectPoint(source_bounds, measured_bounds);
 
     BattleCamera_SetRange(

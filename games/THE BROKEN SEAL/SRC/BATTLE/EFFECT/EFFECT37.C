@@ -16,7 +16,7 @@ s32 BattleFx_HueChannelRamp(s32, s32, s32);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
 s32 Fixed_Remainder(s32 value, s32 divisor);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-extern const u8 BattleFx_UntargetedObjectScript[];
+extern const s32 BattleFx_UntargetedObjectScript[];
 
 
 void BattleFx_ArmBg0HBlankDma(void);
@@ -47,17 +47,17 @@ void BattleFx_AdvanceHueCycle(void)
     u8 *p1;
     u8 *p2;
 
-    BattleFx_ComputeHueChannels((s32)(*(u16 *)(base + 0x28E)) << 16, &out1, &out2, &out3);
+    BattleFx_ComputeHueChannels((*(u16 *)(base + 0x28E)) << 16, &out1, &out2, &out3);
 
     offset = 0x28B;
     p0 = base + offset;
-    *p0 = (u8)((out1 >> 18) + 4);
+    *p0 = (out1 >> 18) + 4;
     offset += 1;
     p1 = base + offset;
-    *p1 = (u8)((out2 >> 18) + 4);
+    *p1 = (out2 >> 18) + 4;
     offset += 1;
     p2 = base + offset;
-    *p2 = (u8)((out3 >> 18) + 4);
+    *p2 = (out3 >> 18) + 4;
 
     *(u16 *)(base + 0x28E) += 4;
 
@@ -127,7 +127,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target)
     if (tx == 0x80000000) {
         ty = target->target_y;
         if ((ty == tx) && (target->target_z == ty)) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)BattleFx_UntargetedObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)target, BattleFx_UntargetedObjectScript);
         }
     }
 }
@@ -159,7 +159,7 @@ void Ui_FillBank15PaletteGrey(void)
     *p = 0x739C;
     p += 1;
     *p = 0x739C;
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
 }
 
 void Ui_SetBank15PaletteAndClearRenderMode(void)
@@ -167,7 +167,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
     void *work;
 
     work = gWindowWork[0];
-    Scheduler_RemoveCallback((u32)((s32)BattleFx_ArmBg0HBlankDma));
+    Scheduler_RemoveCallback(BattleFx_ArmBg0HBlankDma);
     *(volatile s16 *)0x050001E2 = 0x7FFF;
     *(s16 *)0x050001E6 = 0;
     *(volatile s16 *)0x050001F6 = 0x294A;

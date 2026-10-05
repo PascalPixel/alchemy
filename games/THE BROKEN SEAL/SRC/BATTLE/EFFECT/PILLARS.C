@@ -15,13 +15,13 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *a, void *b);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
@@ -48,7 +48,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
     void *canvas;
     s32 frame;
     s32 pillar;
-    void *sheet;
+    u8 *sheet;
     struct EffectPosition screen;
     DrawRectangle draw[2];
     struct MotionObject *object;
@@ -63,7 +63,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
-    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     /* FAKEMATCH: forwarded through Call3, each palette copy loads its routine
        before it shifts the destination, as the reference does. */
@@ -96,20 +96,20 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != 96; frame++) {
         camera = gCameraWork;
         if (work->effect->variant == 2 && frame < 64) {
             if (work->effect->side == 0)
-                camera->yaw = (s16)camera->yaw + 192;
+                camera->yaw = camera->yaw + 192;
             else
                 camera->yaw = (s16)camera->yaw - 192;
         }
         if (frame == 16)
             BattleEventRuntime_BeginPhaseFar(134);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 
         if (frame < 64) {
             for (pillar = 0; pillar != FirePillars_Counts[work->effect->variant]; pillar++) {
@@ -126,14 +126,14 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
                     draw[pillar & 1](canvas, work, screen.x - 17,
                         screen.y - scroll, 34, scroll);
                     if (frame & 1) {
-                        draw[0](canvas, (u8 *)work + 0xdd0, screen.x - 20,
+                        draw[0](canvas, work->sheet + 0xdd0, screen.x - 20,
                             screen.y - 24, 20, 37);
-                        draw[1](canvas, (u8 *)work + 0xdd0, screen.x,
+                        draw[1](canvas, work->sheet + 0xdd0, screen.x,
                             screen.y - 24, 20, 37);
                     } else {
-                        draw[0](canvas, (u8 *)work + 0x10b4, screen.x - 20,
+                        draw[0](canvas, work->sheet + 0x10b4, screen.x - 20,
                             screen.y - 24, 20, 37);
-                        draw[1](canvas, (u8 *)work + 0x10b4, screen.x,
+                        draw[1](canvas, work->sheet + 0x10b4, screen.x,
                             screen.y - 24, 20, 37);
                     }
                 }
@@ -199,7 +199,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
                     if (size <= 0)
                         size = 1;
-                    draw[i & 1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         px - size / 2, py - size, size, size * 2);
                 }
             }
@@ -212,6 +212,6 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

@@ -78,7 +78,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     unit = Owner_GetStateFar(unit_id);
     formation = gBattleWork;
     spoils = &formation->spoils;
-    if ((u32)unit_id < 8)
+    if (unit_id >= 0 && unit_id < 8)
         return -1;
     if (unit->class_index != 0)
         return -2;
@@ -128,7 +128,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
         chance -= 2;
     if (chance < 0)
         chance = 0;
-    if ((0x20000 >> chance) > (s32)(BattleRandom16Far() & 0xffff)) {
+    if ((0x20000 >> chance) > (BattleRandom16Far() & 0xffff)) {
         lowest_slot = -1;
         lowest = 0x40000000;
         for (i = 0; i <= 3; i++) {

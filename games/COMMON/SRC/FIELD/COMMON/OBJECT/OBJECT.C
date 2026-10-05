@@ -81,15 +81,15 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     count = (sprite->width * sprite->height) / 64;
     row = 0;
 
-    if (row < (u32)count) {
+    if (row < count) {
         table = Map_TileDissolveOrder;
         high_mask = 0xFF00;
         index_mask = 0x3F;
         offset_mask = 0x3E;
 
         /* 1行ごとに32セル進める。 */
-        for (; row < (u32)count; row++, destination += 32, position++) {
-            if ((u32)(position - 0x40) <= 0x3F) {
+        for (; row < count; row++, destination += 32, position++) {
+            if ((position - 0x40) <= 0x3F) {
                 u8 entry;
                 u16 *cell;
                 u32 parity;
@@ -167,7 +167,7 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
     b = org[1] & 0xffff0000;
     x = obj->x - a;
     y = obj->z - b;
-    if ((u32)(x + 0x001fffff) <= 0x012ffffe && y > 0 && y < 0xe00000) {
+    if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000) {
         *out++ = x >> 16;
         *out = y >> 16;
         return 0;
@@ -194,13 +194,13 @@ void ObjectSystem_Initialize(s32 mode)
     fill = 0;
     Dma_Set((const void *)&fill, state, 0x85000017, (volatile u32 *)0x040000d4);
     if (mode == 4)
-        Scheduler_AddOrUpdateCallback((s32)(Object_UpdateAllMotion), 0xc8a);
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
     else
-        Scheduler_AddOrUpdateCallback((s32)(Object_UpdateAllThumb), 0xc8a);
-    if ((u32)(mode - 3) <= 1) {
-        Scheduler_AddOrUpdateCallback((s32)(ObjectSystem_UpdateCameraFixed), 0xc80);
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
+    if (mode >= 3 && mode <= 4) {
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
     } else {
-        Scheduler_AddOrUpdateCallback((s32)(ObjectSystem_UpdateCamera), 0xc80);
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
         Data_03001d1c = 0;
         Data_03001cc0 = 0;
     }
@@ -356,11 +356,12 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
     return object;
 }
 
-void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
+/* Starts the object on a word-coded motion script from its first word. */
+void ObjectDispatch_Initialize(struct DispatchObject *object, const s32 *script)
 {
     if (object != 0) {
         object->value_04 = 0;
-        object->value_00 = value;
+        object->value_00 = (u32)script;
         object->value_5b = 0;
         object->value_5d = 0;
         object->value_57 = 0;
@@ -477,38 +478,38 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 val
 
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *object, s32 argument)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table5Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table5Script);
     object->argument = argument;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table0Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table1Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table2Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table3Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table6Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s32 argument)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table4Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table4Script);
     if (argument != 0) {
         object->value_34 = 0x8000;
         object->value_30 = 0x40000;
@@ -569,19 +570,19 @@ void Animation_ApplyChildValues(struct DispatchObject *obj, u32 value)
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {
-    Scheduler_EnableCallbacks((u32)ObjectSystem_UpdateCamera);
-    Scheduler_EnableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
+    Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
+    Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
     BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
     BattleFx_StartBufferInterpolationFar(1);
     WaitFrames(1);
-    *(u16 *)0x04000000 = (0xF1FF & *(u16 *)0x04000000) | 0x1000;
+    REG_DISPCNT = (REG_DISPCNT & 0xF1FF) | DISPCNT_OBJ_ON;
 }
 
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
-    Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCamera);
-    Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
-    *(u16 *)0x04000000 &= 0xE1FF;
+    Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
+    Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
+    REG_DISPCNT &= 0xE1FF;
 }
 
 /* A routine that only reports success, after the object dispatcher;
@@ -720,11 +721,11 @@ void ObjectSystem_UpdateCamera(void)
     s32 height;
     u32 bits_val;
 
-    state = *(struct CameraState **)((u32)((u8 *)&gObjectSlots) + 12);
+    state = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
     cam = &state->x;
     cam_x = cam[0] & 0xffff0000;
     cam_z = cam[1] & 0xffff0000;
-    sync = *(struct CameraSync **)((u32)((u8 *)&gObjectSlots) + 4);
+    sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
     /* FAKEMATCH: the do-while keeps the copy between the runtime loads and the count reset. */
     do {
         size = (u32)Render_DecodeFrameCodeSize;
@@ -732,7 +733,7 @@ void ObjectSystem_UpdateCamera(void)
             (volatile u32 *)0x040000d4);
     } while (0);
     sync->count = 0;
-    obj = *(struct CameraObject **)(u32)((u8 *)&gObjectSlots);
+    obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
     for (cnt = 0; cnt < 64; cnt++, obj++) {
         if (obj->active == 0)
             continue;
@@ -834,8 +835,8 @@ void ObjectSystem_UpdateCameraFixed(void)
     /* FAKEMATCH: unused; the native frame keeps room for two points above the scales. */
     struct CameraPoint spare[2];
 
-    camera = *(struct FixedCamera **)((u32)((u8 *)&gObjectSlots) + 0x1c);
-    sync = *(struct CameraSync **)((u32)((u8 *)&gObjectSlots) + 4);
+    camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
+    sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
     /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
     do { size = (u32)Render_DecodeFrameCodeSize; } while (0);
     Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
@@ -856,7 +857,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     } else {
         Graphics_PrepareTransferInIwramWork(eye, target);
     }
-    obj = *(struct CameraObject **)(u32)((u8 *)&gObjectSlots);
+    obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
     obj += 63;
     unit = 0x10000;
     for (cnt = 63; cnt >= 0; cnt--, obj--) {

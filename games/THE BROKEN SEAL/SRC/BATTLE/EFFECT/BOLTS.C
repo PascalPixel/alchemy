@@ -40,7 +40,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
-    void *sheet;
+    u8 *sheet;
     s32 bolt;
     s32 count;
     DrawRectangle draw[2];
@@ -61,7 +61,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
     draw[0] = (DrawRectangle)gWorkSlot[46];
     BattleEffect_LoadWork(47, 7, 7, 7, 3);
     draw[1] = (DrawRectangle)gWorkSlot[47];
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, (u8 *)work + 0x60e, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 0x60e, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (work->effect->variant == 2) {
         if (work->effect->side == 1)
@@ -89,7 +89,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(138);
 
     for (frame = 0; frame != 64; frame++) {
@@ -108,10 +108,10 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
                 x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
                 y = -((Trig_Cos(angle) << 3) >> 16) - 8;
                 if (work->effect->variant == 0)
-                    draw[0](canvas, (u8 *)work + (Random16() & 3) * 2880 + 0x60e,
+                    draw[0](canvas, work->sheet + (Random16() & 3) * 2880 + 0x60e,
                         x + (Random16() & 7) - 16, y, 24, 120);
                 else
-                    draw[bolt & 1](canvas, (u8 *)work + (Random16() & 3) * 2880 + 0x60e,
+                    draw[bolt & 1](canvas, work->sheet + (Random16() & 3) * 2880 + 0x60e,
                         x + (Random16() & 7) - 16, y, 24, 120);
                 for (i = 0; i != SPARK_COUNT; i++) {
                     struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -149,7 +149,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
                     s32 y = spark->y >> 16;
                     s32 size = spark->variant / 8 + 1;
 
-                    draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         x - size / 2, y - size, size, size * 2);
                 }
             }
@@ -167,7 +167,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

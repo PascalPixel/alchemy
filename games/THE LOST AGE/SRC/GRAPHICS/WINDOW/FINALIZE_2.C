@@ -30,7 +30,7 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
         work->x = zero;
         work->y = zero;
         work->unknown_10 = zero;
-        work->unknown_12 = zero;
+        work->effect = zero;
         work->state = zero;
         work->flags = zero;
         work->frame = zero;

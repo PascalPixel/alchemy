@@ -54,7 +54,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
-    void *sheet;
+    u8 *sheet;
     void *cells;
     DrawRectangleFn rectangle[2];
     struct MotionObject *member_object;
@@ -79,20 +79,20 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     REG_BLDALPHA = 0x1010;
     sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
     Iwram_CopyWords(BG_PLTT, sheet, 128);
-    sheet = (u8 *)sheet + 128;
+    sheet = sheet + 128;
     Resource_DecodeType01(sheet, work);
     cells = Ram_MapCellBuffer;
     sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
-    sheet = (u8 *)sheet + 128;
+    sheet = sheet + 128;
     Resource_DecodeType01(sheet, cells);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     rectangle[0] = (DrawRectangleFn)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
     rectangle[1] = (DrawRectangleFn)heap_cache[8];
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     work->transfer_mode = 1;
     work->transfer_value = zero_val;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     draw_enabled = 1;
     if (work->effect->side == 1) {
         curve[0] = -0x500000;
@@ -151,13 +151,13 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
             if (frame > 15) {
                 amp = (frame * 2) - 32;
                 REG_BLDALPHA =
-                    (s16)((31 - frame) | 0x1000);
+                    (31 - frame) | 0x1000;
             }
         } else if (frame <= 63) {
             if (frame > 47) {
                 amp = (frame * 2) - 96;
                 REG_BLDALPHA =
-                    (s16)((63 - frame) | 0x1000);
+                    (63 - frame) | 0x1000;
             }
         }
         if (amp < 0) {
@@ -195,34 +195,34 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
                 rectangle[work->effect->side](
                     canvas, work->sheet + 0x15d2, CounterReveal_PanelX[idx_a * 7 + 1],
                     CounterReveal_PanelY[idx_b * 7 + 1] + screen_y, 99, 69);
-                if ((u32)(frame - 88) <= 1U) {
+                if ((frame - 88) <= 1U) {
                     Iwram_FillWords(canvas, 0x4000, 0x3F3F3F3F);
                 }
-                if ((u32)(frame - 90) <= 1U) {
+                if ((frame - 90) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, work->sheet + 0x3081,
                         CounterReveal_PanelX[idx_a * 7 + 2],
                         CounterReveal_PanelY[idx_b * 7 + 2] + screen_y, 128, 91);
                 }
-                if ((u32)(frame - 92) <= 1U) {
+                if ((frame - 92) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, (void *)gMapCellBuffer,
                         CounterReveal_PanelX[idx_a * 7 + 3],
                         CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
                 }
-                if ((u32)(frame - 94) <= 1U) {
+                if ((frame - 94) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, gMapCellBuffer + 0x2d80,
                         CounterReveal_PanelX[idx_a * 7 + 4],
                         CounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
                 }
-                if ((u32)(frame - 96) <= 1U) {
+                if ((frame - 96) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, gMapCellBuffer + 0x4b00,
                         CounterReveal_PanelX[idx_a * 7 + 5],
                         CounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
                 }
-                if ((u32)(frame - 98) <= 1U) {
+                if ((frame - 98) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, gMapCellBuffer + 0x58d2,
                         CounterReveal_PanelX[idx_a * 7 + 6],
@@ -251,8 +251,8 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     BattleBackground_LoadFar(1, gBattleWork->background, 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);

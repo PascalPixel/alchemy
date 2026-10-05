@@ -123,8 +123,8 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         QueueIoWriteDelay2(0x04000000, 0x7741);
         BattlePres_SetupTransitionScene(0, 0, 0, 180);
         *timer = start;
-        Scheduler_AddOrUpdateCallback((s32)BattlePres_AdvanceTransitionTimer, 3200);
-        Scheduler_AddOrUpdateCallback((s32)BattlePres_DrawTransitionRows, 0x480);
+        Scheduler_AddOrUpdateCallback(BattlePres_AdvanceTransitionTimer, 3200);
+        Scheduler_AddOrUpdateCallback(BattlePres_DrawTransitionRows, 0x480);
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         gBgScroll[0].y = 32;
         WaitFrames(1);
@@ -133,8 +133,8 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         QueueIoWriteDelay10(0x04000008, 2);
         QueueIoWriteDelay6(0x04000008, 0);
         BattleIntro_AnnounceEncounter(enemy_count);
-        Scheduler_RemoveCallback((u32)BattlePres_AdvanceTransitionTimer);
-        Scheduler_RemoveCallback((u32)BattlePres_DrawTransitionRows);
+        Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
+        Scheduler_RemoveCallback(BattlePres_DrawTransitionRows);
         gBgScroll[0].y = start;
         Runtime_SetIrqHandler(2, 0, 0);
         }
@@ -156,7 +156,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         {
         s32 start = 0;
 
-        session->background = (u16)(u32)&ResourceId_VinasuChojoStormBackdrop;
+        session->background = (u32)&ResourceId_VinasuChojoStormBackdrop;
         list.count = BattleParty_ListActorIds(2, list.ids);
         list.ids[list.count] = 0xff;
         BattleActor_SpawnObjectsForList(list.ids, 0);
@@ -265,7 +265,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
     struct BattleBackgroundView *transition = *(struct BattleBackgroundView **)gTransitionWork;
 
     if (transition->mode == 0) {
-        Scheduler_AddOrUpdateCallback((s32)(BattlePres_UpdateHBlankScroll), 0x4ff);
+        Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
     }
     transition->mode = mode;
 

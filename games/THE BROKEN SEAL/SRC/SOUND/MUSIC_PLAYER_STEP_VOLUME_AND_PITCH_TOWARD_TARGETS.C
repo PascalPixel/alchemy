@@ -54,7 +54,7 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
             gMusicPitch = gMusicPitchTarget;
         }
         MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gMusicPitch);
-        MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)((s16)gMusicPitch * 12 - 3072));
+        MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)gMusicPitch * 12 - 3072);
     }
     Sound_TickDmaRestartTimer();
 }

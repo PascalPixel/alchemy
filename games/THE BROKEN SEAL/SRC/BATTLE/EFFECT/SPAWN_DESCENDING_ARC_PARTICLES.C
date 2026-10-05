@@ -4,6 +4,7 @@
    the source object, one for each of the descending-arc update callbacks. */
 #include "TYPES.H"
 #include "SCENE_IDS.H"
+#include "FX_SCENE.H"
 
 /* A falling particle: a 16.16 position, the height it vanishes at, its
    sprite scale, and the object it drifts down beside. */
@@ -146,15 +147,15 @@ struct ArcObject {
     void *callback;
 };
 
-extern u8 *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
 
 void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
 {
-    u8 *work = gEffectWork;
-    struct ArcObject *leader = *(struct ArcObject **)(work + 16);
+    struct BattleFxScene *scene = gEffectWork;
+    struct ArcObject *leader = scene->main_object;
     struct ArcObject *objects[2];
     struct ArcObject *object;
     struct ArcSprite *sprite;
@@ -179,7 +180,7 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
         AnimationObjects_SelectAnimationFar(sprite, 0);
         sprite->animation = zero;
         Resource_ResetEntry(sprite->resource);
-        sprite->resource = *(u16 *)(work + 0x71a);
+        sprite->resource = scene->arc_tile_slot;
         sprite->active = 1;
         sprite->attr.half.tile = gVramBlockCache[sprite->resource].offset >> 5;
         sprite->flags05_5 = 0;

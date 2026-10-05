@@ -8,15 +8,12 @@
 #include "CHARACTER.H"
 
 /* party/set_flag32_and_refresh_members.c */
-void Owner_RefreshDerivedData(s32 arg0);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
 /* party/apply_state_preset.c */
-s32 OwnerAction_Add(s32 id, s32 value);
 
 /* owner/Owner_RefreshActiveRatios.c */
-s32 Party_CountActiveOwners();
 
 extern const u8 Character_ElementGroupTable[];
 void *Owner_GetState(s32);
@@ -136,10 +133,10 @@ void Owner_RefreshActiveRatios(s32 arg0)
                 v14 = t;
             }
         }
-        obj->hp_gauge = (s16)v14;
+        obj->hp_gauge = v14;
         if (((v14 << 16) == 0) && (obj->hp != 0)) {
             one = 1;
-            obj->hp_gauge = (s16)one;
+            obj->hp_gauge = one;
         }
 
         t = (obj->pp << 14) / (obj->max_pp);
@@ -150,10 +147,10 @@ void Owner_RefreshActiveRatios(s32 arg0)
                 v16 = t;
             }
         }
-        obj->pp_gauge = (s16)v16;
+        obj->pp_gauge = v16;
         if (((v16 << 16) == 0) && (obj->pp != 0)) {
             one = 1;
-            obj->pp_gauge = (s16)one;
+            obj->pp_gauge = one;
         }
 
         if (arg0 == 1) {
@@ -215,10 +212,10 @@ void Owner_RefreshRatiosOnFlag(void)
                 v14 = t;
             }
         }
-        obj->hp_gauge = (s16)v14;
+        obj->hp_gauge = v14;
         if (((v14 << 16) == 0) && (obj->hp != 0)) {
             one = 1;
-            obj->hp_gauge = (s16)one;
+            obj->hp_gauge = one;
         }
 
         v3A = obj->pp;
@@ -231,10 +228,10 @@ void Owner_RefreshRatiosOnFlag(void)
                 v16 = t;
             }
         }
-        obj->pp_gauge = (s16)v16;
+        obj->pp_gauge = v16;
         if (((v16 << 16) == 0) && (obj->pp != 0)) {
             one = 1;
-            obj->pp_gauge = (s16)one;
+            obj->pp_gauge = one;
         }
     }
 }
@@ -252,7 +249,7 @@ void Owner_RecalculateRatios(s32 owner_no)
     struct BattleUnit *owner;
 
     owner = Owner_GetState(owner_no);
-    first = (s32)((u32)(s32)owner->hp << 14) / owner->max_hp;
+    first = (owner->hp << 14) / owner->max_hp;
     first_value = 0x4000;
     if (first <= 0x4000) {
         first_value = 0;
@@ -261,11 +258,11 @@ void Owner_RecalculateRatios(s32 owner_no)
         }
     }
     owner->hp_gauge = first_value;
-    if ((((u32)first_value << 16) == 0) && (owner->hp != 0)) {
+    if (((first_value << 16) == 0) && (owner->hp != 0)) {
         first_value = 1;
         owner->hp_gauge = first_value;
     }
-    second = (s32)((u32)(s32)owner->pp << 14) / owner->max_pp;
+    second = (owner->pp << 14) / owner->max_pp;
     second_value = 0x4000;
     if (second <= 0x4000) {
         second_value = 0;
@@ -274,7 +271,7 @@ void Owner_RecalculateRatios(s32 owner_no)
         }
     }
     owner->pp_gauge = second_value;
-    if ((((u32)second_value << 16) == 0) && (owner->pp != 0)) {
+    if (((second_value << 16) == 0) && (owner->pp != 0)) {
         second_value = 1;
         owner->pp_gauge = second_value;
     }

@@ -114,7 +114,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
             cell = base + (((pos.x / 0x100000) + ((pos.z / 0x100000) << 7)) << 2);
         }
         kind = cell[2];
-        if ((u32)(kind - 242) <= 5) {
+        if (kind >= 242 && kind <= 247) {
             height = Map_GetTerrainHeightFar(obj->kind, pos.x, pos.z);
             if (height >= obj->pos.y && height <= obj->pos.y + 0x400000) {
                 result = kind;

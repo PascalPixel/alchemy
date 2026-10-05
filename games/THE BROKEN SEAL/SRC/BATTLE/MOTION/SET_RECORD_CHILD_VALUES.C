@@ -77,7 +77,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
         transition->frames = 60;
     } else {
         struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
-        s32 angle = (u16)ArcTan2(actor->x, actor->z);
+        s32 angle = ArcTan2(actor->x, actor->z);
         s32 current;
 
         if (plan->actor_id <= 7)
@@ -134,7 +134,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();
     } else {
-        Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
         if (work.kind) {
             if (plan->presentation_flags & 0x4000)
                 BattleFx_DispatchByIdRangeFar((s32 *)&work);

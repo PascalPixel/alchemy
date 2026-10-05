@@ -8,7 +8,7 @@
 #include "FIELD_EVENT.H"
 #include "GLOBAL_CELLS.H"
 #include "GAME_STATE.H"
-
+#include "B5_CONTEXT.H"
 
 s32 UiGlyph_ResetWorkState();
 void Resource_ClearOwnerListAndCounters(void);
@@ -31,9 +31,6 @@ struct TimedNoticeWork {
     struct UiWindow *window;
     u16 countdown;
 };
-
-LAYOUT_OFFSET_GUARD(TimedNoticeWork_Window, struct TimedNoticeWork, window, 0x230);
-LAYOUT_OFFSET_GUARD(TimedNoticeWork_Countdown, struct TimedNoticeWork, countdown, 0x234);
 
 void Ui_ClearWorkStateAndWaitFrame(void)
 {
@@ -87,7 +84,7 @@ void UiTimedNotice_Create(void)
     timer = &work->countdown;
     frames = 90; /* FAKEMATCH: a word temporary keeps 90 out of the HImode pool. */
     *timer = frames;
-    Scheduler_AddOrUpdateCallback((s32)(UiTimedNotice_Tick), 0xc80);
+    Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }
 
 void UiTimedNotice_Tick(void)
@@ -97,9 +94,9 @@ void UiTimedNotice_Tick(void)
 
     work = (struct TimedNoticeWork *)gEventWork;
     work->countdown = (count = work->countdown + 0xffff);
-    if (((u32)count << 16) == 0) {
+    if ((count << 16) == 0) {
         UiWork_Finalize(work->window, 2);
-        Scheduler_RemoveCallback((u32)UiTimedNotice_Tick);
+        Scheduler_RemoveCallback(UiTimedNotice_Tick);
     }
 }
 
@@ -110,7 +107,7 @@ void UiTimedNotice_CloseIfActive(void)
     window = ((struct TimedNoticeWork *)gEventWork)->window;
     if (window != NULL && window->flags != 0) {
         UiWork_Finalize(window, 2);
-        Scheduler_RemoveCallback((u32)UiTimedNotice_Tick);
+        Scheduler_RemoveCallback(UiTimedNotice_Tick);
     }
 }
 

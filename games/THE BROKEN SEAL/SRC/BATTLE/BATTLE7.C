@@ -181,7 +181,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     GameFlag_SetBitFar(FLAG_EFFECT_DISPATCH);
     if (primary || secondary || tertiary) {
         targetId = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, targetMode);
-        if (secondary && ((u16)secondary->trigger & 0x400)) {
+        if (secondary && (secondary->trigger & 0x400)) {
             GameFlag_ClearBitFar(FLAG_EFFECT_RUN);
             GameFlag_ClearBitFar(FLAG_EFFECT_DISPATCH);
         }

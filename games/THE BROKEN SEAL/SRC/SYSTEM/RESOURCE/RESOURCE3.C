@@ -246,7 +246,7 @@ void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
                     count++;
             }
             if (count == 0)
-                state->count = (s8)slot;
+                state->count = slot;
         }
     }
 }
@@ -268,7 +268,7 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
                     cnt++;
             }
             if (cnt == 0)
-                group->count = (s8)no;
+                group->count = no;
         }
     }
 }
@@ -282,14 +282,14 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
     hi = 0x80 & no;
     if (work->scripts != 0) {
         info = Resource_GetMetadataRecordFar(work->anim_id);
-        if (no < (s32)info->animation_count) {
+        if (no < info->animation_count) {
             value = (s32)work->scripts[no];
             work->kind = info->draw_kind;
             work->script = (u8 *)value;
             work->step = 0x10;
             if (hi == 0) {
                 work->pos = hi;
-                work->timer = (s16)hi;
+                work->timer = hi;
             }
         }
     }
@@ -343,7 +343,7 @@ next_entry:
 test_entry:
         if (index < state->count)
             goto entry_loop;
-        state->last_no = (u8)flags;
+        state->last_no = flags;
     }
     return 0;
 }
@@ -355,7 +355,7 @@ s32 AnimationObjects_SetHalfword02OnActive(struct AnimationObject *group, s32 va
     s32 cnt;
 
     if (n != 0) {
-        val = (s32)((u32)val << 4);
+        val = val << 4;
         p = group->entries;
         cnt = n;
         do {
@@ -443,7 +443,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
         if (found != NULL) {
             frames = metadata->frames;
             object = found;
-            object->anim_id = (s16)id;
+            object->anim_id = id;
             if (frames == 0)
                 frames = Animation_LookupValueByKey(id);
             /* FAKEMATCH: the original address-word boundary keeps the two

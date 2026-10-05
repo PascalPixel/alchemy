@@ -75,7 +75,7 @@ void DisplayTransition_UpdateFrame(void)
         if (state->step >= state->duration) {
             volatile u16 *dma0;
             state->duration = 0;
-            Scheduler_RemoveCallback((u32)DisplayTransition_UpdateFrame);
+            Scheduler_RemoveCallback(DisplayTransition_UpdateFrame);
             dma0 = REG_DMA0;
             dma0[5] &= 0xc5ff;
             dma0[5] &= 0x7fff;
@@ -114,7 +114,7 @@ void DisplayTransition_UpdateFrame(void)
         do {
             savedIme = *ime;
         } while (0);
-        *ime = (u16)(u32)ime;
+        *ime = (u32)ime;
         if ((count = queue->count) <= 31) {
             u32 *destination = queue->entries[count];
             /* FAKEMATCH: storing the count through a plain u16 pointer keeps it out of the entry stores' alias set, so sched2 finishes the entry address first. */

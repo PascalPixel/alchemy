@@ -14,6 +14,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -24,7 +25,6 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
 void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 mode);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
@@ -101,9 +101,9 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
     rectangle[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     rectangle[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
     Graphics_PackTileRows(work, cells, 40, 288);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1, 1);
     switch (variant) {
     case 0:
         palette = (s32)&ResourceId_FirePillarSheetB;
@@ -121,7 +121,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(palette), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)(BattlePresentation_ProcessPendingGraphicsTransfer), 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
     actor = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (cnt = 0; cnt != 64; cnt++) {
@@ -150,13 +150,13 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
             work->shake_frames = 8;
         }
         offset = frame - 8;
-        if ((u32)offset <= 11) {
+        if (offset >= 0 && offset <= 11) {
             s32 ring = offset / 2;
             rectangle[0](canvas, cells + ring * 0x3c0, origin.x / 2 - 16, screen.y - 40, 20, 48);
         }
-        if ((u32)offset <= 55) {
+        if (offset >= 0 && offset <= 55) {
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (cnt = 0; cnt != 64; cnt++) {
                 particle = &work->particles[cnt];
                 size = particle->variant;
@@ -176,7 +176,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)(BattlePresentation_ProcessPendingGraphicsTransfer));
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

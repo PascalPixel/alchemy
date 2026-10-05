@@ -124,7 +124,7 @@ void BattleEffect_CleanupSceneObjects(void)
         } while (active != 0 && waited <= 29);
 
         runtime->teardown_state = 0;
-        Scheduler_RemoveCallback((s32)BattleFx_UpdateAllEffectSlots);
+        Scheduler_RemoveCallback(BattleFx_UpdateAllEffectSlots);
         Resource_ResetEntry((s16)scene->tile_slot);
         position->x = scene->saved_x;
         position->y = scene->saved_y;
@@ -152,28 +152,28 @@ void EventObject_Initialize(void)
     event_value = (s16)event_state->action;
     event_index = event_value;
     Object_SetMode(event_object, 0x14);
-    FIELD_AT_OFFSET(event_object, u32 *, 0x38) = (s32)*(s32 *)((u8 *)(event_object) + 8);
-    FIELD_AT_OFFSET(event_object, s32 *, 0x3C) = (s32)FIELD_AT_OFFSET(event_object, s32 *, 0xC);
-    FIELD_AT_OFFSET(event_object, s32 *, 0x40) = (s32)FIELD_AT_OFFSET(event_object, s32 *, 0x10);
+    FIELD_AT_OFFSET(event_object, u32 *, 0x38) = *(s32 *)((u8 *)(event_object) + 8);
+    FIELD_AT_OFFSET(event_object, s32 *, 0x3C) = FIELD_AT_OFFSET(event_object, s32 *, 0xC);
+    FIELD_AT_OFFSET(event_object, s32 *, 0x40) = FIELD_AT_OFFSET(event_object, s32 *, 0x10);
     FIELD_AT_OFFSET(event_object, u32 *, 0x24) = 0;
     FIELD_AT_OFFSET(event_object, u32 *, 0x28) = 0;
     *(s32 *)((u8 *)(event_object) + 0x2C) = 0;
-    if ((s8)event_state->visible != 0) {
+    if (event_state->visible != 0) {
         Audio_PlayCue(212);
         FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_1;
     }
-    if ((s8)event_state->active != 0) {
+    if (event_state->active != 0) {
         ObjectGroup_SetActionForOthers(event_object, 1, 0);
-        UiWork_PushValueSlotFar((s32)event_index, 4);
+        UiWork_PushValueSlotFar(event_index, 4);
         if ((s8)event_state->mode != 0) {
-            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)event_state->message_mode);
+            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, event_state->message_mode);
         } else {
-            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)event_state->message_mode);
+            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, event_state->message_mode);
         }
         ObjectGroup_SetActionForOthers(event_object, 0, 0x10);
     }
     if (GameFlag_TestFar(0x140) != 0) {
-        if ((s8)event_state->visible != 0) {
+        if (event_state->visible != 0) {
             FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_2;
         }
         Object_SetMode(event_object, 0x15);

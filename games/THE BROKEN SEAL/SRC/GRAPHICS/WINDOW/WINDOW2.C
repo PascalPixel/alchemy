@@ -58,7 +58,7 @@ loop:
             work->x = 0;
             work->y = 0;
             work->unknown_10 = 0;
-            work->unknown_12 = 0;
+            work->effect = 0;
             work->state = 0;
             work->flags = 0;
             work->frame = 0;
@@ -94,30 +94,30 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
     duration = WINDOW_HALF(window, s16, duration);
     remaining = duration - frame;
     scratch.scaled_part =
-        (s32)((u32)(frame *WINDOW_HALF(window, u16, width)) << 16);
-    scratch.scaled_duration = (s32)((u32)duration << 17);
+        (frame *WINDOW_HALF(window, u16, width)) << 16;
+    scratch.scaled_duration = duration << 17;
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     x = (scratch.result >> 16) + WINDOW_HALF(window, u16, x);
 
     scratch.scaled_part =
-        (s32)(((u32)remaining *WINDOW_HALF(window, u16, width)) << 16);
+        (remaining *WINDOW_HALF(window, u16, width)) << 16;
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     width = scratch.result >> 15;
 
     scratch.scaled_part =
-        (s32)((u32)(frame *WINDOW_HALF(window, u16, height)) << 16);
-    scratch.scaled_duration = (s32)((u32)WINDOW_HALF(window, s16, duration) << 17);
+        (frame *WINDOW_HALF(window, u16, height)) << 16;
+    scratch.scaled_duration = WINDOW_HALF(window, s16, duration) << 17;
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     y = (scratch.result >> 16) + WINDOW_HALF(window, u16, y);
 
     scratch.scaled_part =
-        (s32)(((u32)remaining *WINDOW_HALF(window, u16, height)) << 16);
+        (remaining *WINDOW_HALF(window, u16, height)) << 16;
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);

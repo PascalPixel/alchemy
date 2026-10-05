@@ -97,7 +97,7 @@ void Battle_ResetEffectCounter(void)
   void **cell;
   u8 *counter;
   int zero;
-  cell = (void **)((u32)&Data_03001ebc);
+  cell = (void **)&Data_03001ebc;
   runtime = *cell;
   counter = (u8 *)&((struct BattleRuntime *)runtime)->unknown_cb6;
   zero = 0;
@@ -123,9 +123,9 @@ s32 Event_FindFacingTrigger(s32 source)
     collision = GetFocusedObjectCollision();
 
     while (trigger->control != -1) {
-        s32 high_value = (s16)(u16)trigger->trigger & 0xf000;
-        s16 has_facing = (u16)trigger->trigger & 0x0800;
-        s32 low_value = (u16)trigger->trigger & 0xff;
+        s32 high_value = trigger->trigger & 0xf000;
+        s16 has_facing = trigger->trigger & 0x0800;
+        s32 low_value = trigger->trigger & 0xff;
 
         if ((trigger->control & 0x0f) == 4 &&
             GameFlag_IsConditionActive(trigger->condition) != 0 &&
@@ -214,11 +214,11 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         }
     }
 
-    event = (const struct SceneEvent *)Event_FindFacingTrigger((u16)item_id);
-    if (event != 0 && (s32)event->value != 0) {
+    event = (const struct SceneEvent *)Event_FindFacingTrigger(item_id);
+    if (event != 0 && event->value != 0) {
         GameFlag_ClearBitFar(0x143);
         GameFlag_ClearBitFar(0x142);
-        if (!((u16)event->trigger & 0x400)) {
+        if (!(event->trigger & 0x400)) {
             UiWork_PushValueSlotFar(actor, 1);
             UiWork_PushValueSlotFar(item_id, 2);
             UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
@@ -226,7 +226,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         if ((s32)event->value < 0x10000) {
             s32 objref = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
             Battle_Reset();
-            Event_SetValue1d8((s32)event->value);
+            Event_SetValue1d8(event->value);
             BattleEv_RunWait(objref, 0);
             BattleFx_FinishAction();
         } else {
@@ -307,9 +307,9 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
         ignore_flags = 1;
 
     while (event->control != -1) {
-        s32 high_value = (s16)(u16)event->trigger & 0xf000;
-        s16 has_reference = (u16)event->trigger & 0x0800;
-        s32 low_value = (u16)event->trigger & 0xff;
+        s32 high_value = event->trigger & 0xf000;
+        s16 has_reference = event->trigger & 0x0800;
+        s32 low_value = event->trigger & 0xff;
 
         if ((event->control & 0x0f) == 5 &&
             GameFlag_IsConditionActive(event->condition) != 0 &&

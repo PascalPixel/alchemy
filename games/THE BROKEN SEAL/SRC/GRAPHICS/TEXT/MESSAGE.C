@@ -23,7 +23,6 @@ LAYOUT_OFFSET_GUARD(BattleMessageSlotRange_HeapEndpoint, union HeapState,
 typedef char BattleMessageSlotRange_InBank[
     HEAP_SLOT_BATTLE_DISPLAY < sizeof(((union HeapState *)0)->slots) / sizeof(void *) ? 1 : -1];
 
-s32 UiText_BuildRenderEntries(s32, s32);
 void UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
 struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *, s32, s32);
 
@@ -83,18 +82,12 @@ s32 UiWork_IsComplete(void);
 void UiText_ShowMessageAndWaitCore(s32 argument)
 {
     UiText_PrepareMessageWork(argument);
-    goto check;
-again:
-    WaitFrames(1);
-check:
-    if (UiWork_IsComplete() == 0) {
-        goto again;
-    }
+    while (UiWork_IsComplete() == 0)
+        WaitFrames(1);
     WaitFrames(1);
 }
 
-s32 UiText_BuildRenderEntries(s32, s32);
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *spacing, s32 flags);
 
 s32 UiText_OpenEntryMessage(s32 window, s32 argument)
 {

@@ -10,7 +10,7 @@ s32 GameFlag_TestFar();
 extern u8 gOverlayArea[];
 extern char MsgPonderEllipsis;
 extern const u8 ObjectMotion_LinkedActionScript[];
-extern const u8 ObjectMotion_StepAngleScript[];
+extern const s32 ObjectMotion_StepAngleScript[];
 
 struct EffectDescriptor {
     s32 flags;
@@ -145,7 +145,7 @@ u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
   result = 0;
   if (kind != 3)
   {
-    tmp = ((u32)value & 0xFFF00000) ^ 0x500000;
+    tmp = (value & 0xFFF00000) ^ 0x500000;
     result = tmp | (0U - tmp);
     result = result >> 0x1F;
   }
@@ -305,7 +305,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                     ObjectMotion_SetActionCallback(object, (void *)ObjectMotion_LinkedActionScript);
                 } else if (action->mode == 1) {
                     object->saved_value = saved_value;
-                    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
+                    ObjectDispatch_InitializeFar((struct DispatchObject *)object, ObjectMotion_StepAngleScript);
                 }
             }
             object->busy_5b = 0;
@@ -381,7 +381,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             case 32: Audio_PlayCue(0x80); ObjectEffect_BeginContextEffect26(); break;
             case 48: Audio_PlayCue(0x81); ObjectEffect_BeginContextEffect25(); break;
             }
-            work->queued_result = (s16)desc2->result;
+            work->queued_result = desc2->result;
 block_17:
             ret = 0;
         }

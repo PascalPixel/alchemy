@@ -40,15 +40,15 @@ s32 BattlePres_BuildOpponentEntries(
     }
 
     for (i = 31; i >= 0; i--) {
-        u32 first = (u32)(unit_count *Random16()) >> 16;
-        u32 second = (u32)(unit_count *Random16()) >> 16;
+        u32 first = (unit_count *Random16()) >> 16;
+        u32 second = (unit_count *Random16()) >> 16;
         s32 swap = unit_ids[first];
         unit_ids[first] = unit_ids[second];
         unit_ids[second] = swap;
     }
 
     if (battle->encounter_mode == 2) {
-        s32 limit = ((u32)(Random16() * 5) >> 16) + 1;
+        s32 limit = ((Random16() * 5) >> 16) + 1;
 
         if (limit <= 1) {
             limit = 2;
@@ -108,7 +108,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 
             Owner_GetStateFar(entry->unit_id);
             action = BattleAction_Get(Djinn_GetDefinitionHeaderFar(
-                (s16)((u16)entry->parameter) >> 8 & 15, ((u16)entry->parameter) & 0xff));
+                (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
                 entry->priority += 10000;
             }

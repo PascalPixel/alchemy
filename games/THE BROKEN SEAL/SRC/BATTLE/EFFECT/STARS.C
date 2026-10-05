@@ -33,7 +33,6 @@ extern u8 gMapCellBuffer[];
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(void *position);
 void SceneTransform_ApplyRoll(s32 angle);
@@ -93,7 +92,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -134,7 +133,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
                 if (size > 10)
                     size = 10;
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 SceneTransform_ApplyPosition(step);
                 peak = 0;
                 for (j = 0; j != 10; j++) {
@@ -205,7 +204,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -248,7 +247,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 50;
     draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -261,7 +260,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
         point->velocity_x = (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
         point->velocity_y = (target->y - point->y + 0x140000) / 12;
         point->velocity_z = (target->z - point->z) / 12;
-        point->variant = (s32)(Random16() & 15) + delay;
+        point->variant = (Random16() & 15) + delay;
         point++;
     }
 
@@ -275,7 +274,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
             step = &work->particles[i];
             if (frame >= step->variant) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 EffectPosition_ApplyBaseAndYOffset((s32 *)step, &pos);
                 pos.x >>= 1;
                 if (pos.x >= -8 && pos.x <= 127) {
@@ -325,7 +324,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

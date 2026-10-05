@@ -4,14 +4,12 @@
 #include "ITEM.H"
 #include "TBS_EDITION.H"
 #include "BATTLE_RUNTIME.H"
+#include "UI.H"
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
-s32 Item_ClassifyUseMode(s32 owner, s32 item);
 s32 BattleFx_HasTriggerFar(s32 item);
-void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 extern char MsgItemCommandUse;
-
 
 void ItemMenu_BuildCmd(s8 *command_states)
 {

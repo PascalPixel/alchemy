@@ -96,7 +96,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
     draw[0] = (DrawRectangle)gWorkSlot[46];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
     draw[1] = (DrawRectangle)gWorkSlot[47];
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
     if (kind == 1) {
         CopyPalette(Iwram_CopyWords, (void *)0x05000000,
@@ -138,7 +138,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != SparkGroups_Shapes[work->effect->variant * 5 + 1] * 8 + 56; frame++) {
         struct CameraWork *camera = *(struct CameraWork **)(gWorkSlot + 12);
@@ -189,7 +189,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
                             + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28;
                     if (point->variant >= 0 && point->variant < 18)
                         draw[0](canvas,
-                            (u8 *)work + (SparkGroups_FlashCells[point->variant / 3] << 11),
+                            work->sheet + (SparkGroups_FlashCells[point->variant / 3] << 11),
                             x - 16, y - 32, 32, 64);
                     if (point->variant > 0)
                         point->variant--;
@@ -235,7 +235,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

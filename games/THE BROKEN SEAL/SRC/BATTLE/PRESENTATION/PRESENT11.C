@@ -7,6 +7,7 @@
 #include "BATTLE_RUNTIME.H"
 
 #include "MAP_SCROLL.H"
+#include "TRANSFORM.H"
 
 /* Inline, so the arguments are computed before the routine's address. */
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
@@ -20,7 +21,6 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 s32 Render_ProjectPoint();
 
 /* Zoom the battle floor about (cx, cy) by scale (16.16): set the BG2 affine
@@ -77,9 +77,9 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
     if (count > 136)
         count = 136;
     for (; i < count; i++)
-        *line++ = (u16)wrap | 0x478a;
+        *line++ = wrap | 0x478a;
     for (; i < 136; i++)
-        *line++ = (u16)wrap | 0x478e;
+        *line++ = wrap | 0x478e;
     for (; i < 160; i++)
         *line++ = 0x3f8e;
     work->page ^= 1;
@@ -126,7 +126,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     gProjection.center_x = 120;
     gProjection.center_y = 120;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork((s32)scene, (s32)pos);
+    Graphics_PrepareTransferInIwramWork(scene->eye, pos);
     Render_ProjectPoint(source_bounds, measured_bounds);
 
     BattleCamera_SetRange(

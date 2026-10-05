@@ -29,6 +29,6 @@ void DisplayScroll_InitializeHBlankDma(
     work->amp_y = amp_y;
     work->step_x = step_x;
     work->step_y = step_y;
-    Scheduler_AddOrUpdateCallback((s32)(DisplayScroll_BuildAndSwapHBlankPage), 3200);
-    Scheduler_AddOrUpdateCallback((s32)(DisplayScroll_ArmHBlankDma), 1152);
+    Scheduler_AddOrUpdateCallback(DisplayScroll_BuildAndSwapHBlankPage, 3200);
+    Scheduler_AddOrUpdateCallback(DisplayScroll_ArmHBlankDma, 1152);
 }

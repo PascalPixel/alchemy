@@ -193,7 +193,7 @@ void Render_SetTilemapFlagRect(
         y <<= 6;
         x = y + (x << 1);
         do {
-            u16 *pixel = (u16 *)((u32)x + (u32)base);
+            u16 *pixel = (u16 *)(x + (u32)base);
             s32 remaining = width;
             while (remaining != 0) {
                 u32 value = *pixel;

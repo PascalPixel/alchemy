@@ -71,7 +71,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
         i = unit_count;
         do {
-            u8 level = Owner_GetStateFar((s32)*p)->level;
+            u8 level = Owner_GetStateFar(*p)->level;
 
             i--;
             p++;
@@ -109,8 +109,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
             }
 
             if (min_index >= 0) {
-                pool[min_index].score = (s16)score;
-                pool[min_index].record_id = (s16)i;
+                pool[min_index].score = score;
+                pool[min_index].record_id = i;
                 match_count++;
             }
         }

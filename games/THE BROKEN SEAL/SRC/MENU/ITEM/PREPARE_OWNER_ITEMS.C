@@ -1,8 +1,8 @@
 #include "INVENTORY_MENU.H"
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
+#include "MENU_LIST.H"
 
-void RenderOutput_ClearListFar(void *window);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
 

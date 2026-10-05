@@ -3,14 +3,13 @@
 #include "INVENTORY_MENU.H"
 #include "SOUND_IDS.H"
 #include "TBS_EDITION.H"
+#include "MENU_LIST.H"
 
 /* menu/item_menu/use.c */
 extern char MsgItemUseResult;
 s32 Audio_PlayCue(s32);
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 s32 Item_Use(s32 slot, s32 owner, s32 target);
 void Item_PlayUseAnimation(u32 item);
-void RenderOutput_ClearListFar(void *window);
 s32 InventoryMenu_ShowModalMessage(s32 message, s32 a, s32 b);
 void Owner_RecalculateStatsFar(s32 owner);
 

@@ -92,6 +92,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         object->field_48 = 0x1999;
         Object_SetMode(object, 0);
         object->field_5e = 12;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
     }
 }

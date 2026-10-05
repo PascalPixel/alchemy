@@ -93,7 +93,7 @@ directTest:
 void UiWork_AdvanceChannelTransition(struct UiChannelSlot *channel)
 {
     struct UiWindow *work = channel->work;
-    s32 transition = work->unknown_12;
+    s32 transition = work->effect;
     s32 x = work->x;
     s32 y = work->y;
     s32 width = work->width;
@@ -107,7 +107,7 @@ void UiWork_AdvanceChannelTransition(struct UiChannelSlot *channel)
     if (channel->countdown != 0)
         return;
 
-    channel->work->unknown_12 = 0;
+    channel->work->effect = 0;
     UiWindow_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
     UiWindow_DrawFrame(x, y, width, height);
 }
@@ -238,7 +238,7 @@ void UiWork_FinalizePendingCore(void)
             && work->flags != 0
             && work->state != 0) {
             UiWork_Finalize(work,
-                (s32)(u16)(2 & work->flags));
+                2 & work->flags);
         }
         slot_index++;
         slot++;

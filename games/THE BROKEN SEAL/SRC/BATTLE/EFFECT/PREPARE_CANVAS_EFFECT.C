@@ -23,7 +23,6 @@ extern u8 gBattleFxWork[];
 
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -55,7 +54,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw[2];
-    void *sheet;
+    u8 *sheet;
     s32 total;
     struct MotionObject *target;
     struct MotionObject *actor;
@@ -128,7 +127,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     base[0] = actor->x;
     base[1] = 0;
     base[2] = actor->z;
@@ -170,7 +169,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         if (frame == 8)
             Audio_PlayCue(212);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= 6 && frame <= 45) {
             base[0] += step[0];
             base[1] += step[1];
@@ -211,7 +210,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
                 if (position.depth > 634)
                     position.depth = 634;
                 size = 8 - (position.depth - 250) / 64;
-                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(spark, 60, 0);
                 if (frame >= i / 8 + 24) {
@@ -260,7 +259,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
                 if (mote->variant >= 0) {
                     s32 size = (mote->variant >> 3) + 2;
 
-                    draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                     EffectStep_AdvanceWithGravity2D(mote, 60, 0);
                     mote->variant--;
@@ -270,10 +269,10 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     Iwram_ClearWords((void *)0x06004000, size);
     Iwram_ClearWords(canvas, size);
     REG_BLDALPHA = 0x1010;

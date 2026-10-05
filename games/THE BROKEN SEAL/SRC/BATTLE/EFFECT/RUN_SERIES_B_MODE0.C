@@ -16,6 +16,7 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
+#include "TRANSFORM.H"
 
 /* One slot of the cache, addressed whole. */
 #define WORK_SLOT(kind) (*(void **)((u8 *)gWorkSlot + (kind) * 4))
@@ -26,7 +27,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -186,7 +186,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     REG_BG2X = shift << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (work->effect->side == 1)
         flags = 7;
     else
@@ -224,7 +224,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
             if (frame == member * 8 + 80)
                 Audio_PlayCue(212);
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = object->x;
             point[1] = height;
             point[2] = object->z;
@@ -342,6 +342,6 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

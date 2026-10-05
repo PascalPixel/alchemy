@@ -14,13 +14,13 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
@@ -42,7 +42,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw;
-    void *sheet;
+    u8 *sheet;
     struct BattleCamera *camera;
     struct EffectPosition screen;
     s32 alternate;
@@ -94,7 +94,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     draw = (DrawRectangle)gWorkSlot[46];
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
 
     for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
@@ -106,7 +106,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         if (frame == 64)
             BattleEventRuntime_BeginPhaseFar(133);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 40)
             ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
         if (frame == work->effect->count * 20 + 52)
@@ -125,7 +125,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
                         EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
                         screen.x >>= 1;
                         size = 6;
-                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                        draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                             screen.x - size / 2, screen.y - size, size, size * 2);
                         EffectStep_AdvanceWithGravity3D(mote, 62, 0);
                         if (frame > member * 20 + i + 10) {
@@ -151,7 +151,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

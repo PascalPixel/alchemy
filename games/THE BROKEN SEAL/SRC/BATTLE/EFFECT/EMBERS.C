@@ -14,6 +14,7 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
+#include "TRANSFORM.H"
 
 struct Point2D {
     s32 x;
@@ -55,7 +56,6 @@ extern u16 PaletteParticles_StreakOffsets[];
 
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void Object_InitializeMode(void *object, s32 mode);
@@ -124,7 +124,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
         CopyPalette(Iwram_CopyWords, (void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (mode == 0)
         direction = 1;
     else if (work->effect->side == 1)
@@ -152,7 +152,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
         else
             streak->x = (Random16() & 127) - 128;
         streak->y = (Random16() & 7) - 72;
-        streak->variant = -(s32)(Random16() & 31);
+        streak->variant = -(Random16() & 31);
     }
     for (i = 0; i != 512; i++)
         gDrops[i].variant = -1;
@@ -177,7 +177,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             frame = 160;
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 178)
             BattleEventRuntime_BeginPhaseFar(134);
         if (frame == 128)
@@ -187,14 +187,14 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             work->transfer_value = 0x02020202;
             palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
             Iwram_CopyWords((void *)0x05000000, palette, 128);
-        } else if ((u32)(frame - 160) <= 15) {
+        } else if (frame >= 160 && frame <= 175) {
             work->transfer_mode = 1;
             work->transfer_value = 0x10101010;
             if (frame > 173)
                 work->transfer_value = 0x3f3f3f3f;
             Palette_BrightenBgEntries(2, 2, 2);
         }
-        if ((u32)(frame - 33) <= 142) {
+        if (frame >= 33 && frame <= 175) {
             s32 spawned = 0;
             s32 limit = 1;
 
@@ -215,7 +215,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
                 }
             }
         }
-        if ((u32)(frame - 41) <= 86) {
+        if (frame >= 41 && frame <= 127) {
             s32 spawned = 0;
 
             if (frame & 1) {
@@ -247,7 +247,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             AudioCommand_PlayFar(141);
         if (frame == 128)
             AudioCommand_PlayFar(145);
-        if ((u32)(frame - 129) <= 46) {
+        if (frame >= 129 && frame <= 175) {
             s32 spawned = 0;
 
             for (i = 0; i != 24; i++) {
@@ -333,7 +333,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             work->shake_frames = 48;
         if (mode == 0 && frame == 48)
             work->shake_frames = 8;
-        if ((u32)(frame - 40) <= 7) {
+        if (frame >= 40 && frame <= 47) {
             focus.x += -0x80000;
             focus.y += 0x100000;
         }
@@ -363,7 +363,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
                 struct EffectStep *streak = &work->particles[24 + i];
 
                 if (streak->y > 55) {
-                    if ((u32)streak->variant <= 11) {
+                    if (streak->variant >= 0 && streak->variant <= 11) {
                         s32 picture = streak->variant / 2;
 
                         draw.upper(canvas, work->sheet + PaletteParticles_StreakOffsets[picture] + 0x3000,
@@ -394,7 +394,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     if (mode == 0) {
@@ -436,11 +436,11 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
     Resource_DecodeType01(palette, work);
     palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
     palette += 128;
-    Resource_DecodeType01(palette, (u8 *)work + 0x6e4);
+    Resource_DecodeType01(palette, work->sheet + 0x6e4);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     {
         struct Point2D focus;
         struct Point2D velocity;
@@ -463,7 +463,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
             point = &work->particles[24 + k];
             point->x = Random16() & 127;
             point->y = (Random16() & 7) + 56;
-            point->variant = -(s32)(Random16() & 15);
+            point->variant = -(Random16() & 15);
         }
         life = &((struct EffectStep *)gMapCellBuffer)->variant;
         for (k = 0; k != 1024; k++) {
@@ -500,8 +500,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 
                         spark->x = ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                         spark->y = ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
-                        spark->velocity_x = ((s32)(Random16() & 63) - 32) << 14;
-                        spark->velocity_y = (-(s32)(Random16() & 63) - 8) << 13;
+                        spark->velocity_x = ((Random16() & 63) - 32) << 14;
+                        spark->velocity_y = (-(Random16() & 63) - 8) << 13;
                         spark->variant = 0;
                     }
                 }
@@ -517,8 +517,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 
                         spark->x = ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                         spark->y = ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
-                        spark->velocity_x = ((s32)(Random16() & 63) - 32) << 14;
-                        spark->velocity_y = (-(s32)(Random16() & 63) - 8) << 13;
+                        spark->velocity_x = ((Random16() & 63) - 32) << 14;
+                        spark->velocity_y = (-(Random16() & 63) - 8) << 13;
                         spark->variant = 0;
                         spawned++;
                         if (spawned == 16)
@@ -536,9 +536,9 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
                 for (k = 0; k != 3; k++) {
                     s32 span = (frame * 16 - 256 + k * 25) % 104;
 
-                    draw[0](canvas, (u8 *)work + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+                    draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
                         EmberColumns_Columns[k * 2 + 1] - span - 104, 34, 104);
-                    draw[0](canvas, (u8 *)work + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+                    draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
                         EmberColumns_Columns[k * 2 + 1] - span, 34, span);
                 }
             }
@@ -599,12 +599,12 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
             WaitFrames(1);
         }
 
-        Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleEffect_RunImpactBurst(1, focus.x, focus.y);
         for (k = 0; k != 12; k++)
-            ResourceObject_ReleaseFar((struct ResourceObjectWork *)((void **)((u8 *)work + 0x77d8))[k]);
+            ResourceObject_ReleaseFar((struct ResourceObjectWork *)((void **)(work->sheet + 0x77d8))[k]);
     }
     BattleFx_EndCanvasLayer();
 }

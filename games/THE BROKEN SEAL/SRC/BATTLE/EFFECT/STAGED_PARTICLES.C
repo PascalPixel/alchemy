@@ -100,7 +100,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     s32 i;
     s32 j;
     s32 frame;
-    void *sheet;
+    u8 *sheet;
     s32 scroll_x;
     s32 path_x;
     s32 path_y;
@@ -120,11 +120,11 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     BG_PLTT[0] = 0;
     BG_PLTT[1] = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 370, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -143,7 +143,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     work->scroll_interval = 4;
     work->scroll_step_x = -1;
     work->scroll_step_y = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_AdvanceScrollOnInterval, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
     presentation->busy = 1;
     BattleEffect_WipeCanvas(0, 1);
     REG_DISPCNT = 0x7741;
@@ -264,7 +264,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
                             screen.y = screen.y + y + 16;
 #endif
                             trail->x -= 4;
-                            draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[4],
+                            draw[1](canvas, sheet + ParticleStreams_CellOffsets[4],
                                 screen.x - 2, screen.y - 5, 5, 10);
                         }
                     }
@@ -274,7 +274,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattleFx_AdvanceScrollOnInterval);
+    Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
     presentation->busy = 0;
     gBgScroll[1].x = scroll_x;
     BattleEffect_SetupBlendedDisplay();
@@ -348,7 +348,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

@@ -325,16 +325,16 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
 {
     s32 val;
     s32 ret;
-    void *p;
+    struct EffectDescriptor *p;
 
     p = BattleFx_FindDescriptor(6, arg0);
     ret = -1;
     if (p != NULL) {
-        val = *(s32 **)((u8 *)p + 8);
+        val = p->result;
         if (val != 0) {
             if (val < 0x10000) {
                 Battle_Reset();
-                Event_SetMessageId(*(s32 **)((u8 *)p + 8));
+                Event_SetMessageId(p->result);
                 BattleEv_RunWait(-1, 0);
                 ret = 0;
                 BattleFx_FinishAction();

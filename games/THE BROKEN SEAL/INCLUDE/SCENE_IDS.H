@@ -1,16 +1,11 @@
 #ifndef ALCHEMY_SCENE_IDS_H
 #define ALCHEMY_SCENE_IDS_H
 
-/*
- * Scene numbers are rows of the scene table (FIELD/SCENES.S), which names
- * each row after the area whose code it loads. A name's value is its row
- * number, so it is a link-time value: take its address, and the compiler
- * loads the number from the literal pool as the game does. A switch cannot
- * use one as a case label.
- */
+/* Scene numbers are rows of FIELD/SCENES.S, named for the area they load.
+ * Each symbol has its row index as a link-time value, read by taking its
+ * address. These values cannot be used as switch case labels. */
 extern char SceneId_Clear;
 extern char SceneId_Title;
-
 
 extern char SceneId_WorldMap;
 extern char SceneId_HaidiaMura;
@@ -162,6 +157,5 @@ extern char SceneId_VinasuHeya6;
 extern char SceneId_TorebiIzumi2;
 extern char SceneId_LinkLobby;
 extern char SceneId_VinasuChojo;
-
 
 #endif

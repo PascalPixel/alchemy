@@ -1,11 +1,6 @@
 #ifndef FIELD_SERVICE_H
 #define FIELD_SERVICE_H
 
-/*
- * Inline calls retained where direct engine calls change GCC 2.96 scheduling.
- * Other scene calls use the imports declared in FIELD_EVENT.H directly.
- */
-
 #include "FIELD_EVENT.H"
 
 static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)

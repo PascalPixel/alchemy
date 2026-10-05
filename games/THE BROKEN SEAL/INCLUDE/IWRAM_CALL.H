@@ -3,13 +3,8 @@
 
 #include "TYPES.H"
 
-/* The IWRAM routines return through ip, so callers establish that link in
- * Thumb before entering their ARM bodies. The routine is the last argument:
- * GCC evaluates arguments right to left, so its address is loaded before the
- * operands are computed, as every call site in the ROM shows. The routine
- * may overwrite r1 like any call, so the ROM sets r1 again before a second
- * call sharing a factor; the template ends in a line break so GCC also counts
- * the halfword .align may insert when it places literal pools. */
+/* IWRAM routines take their operands in r0/r1 and return their result in r0
+ * through the ip link established here before entering ARM code. */
 static __inline__ s32 Iwram_Call2(s32 left, s32 right, void *routine)
 {
     register s32 result __asm__("r0") = left;
@@ -31,11 +26,7 @@ extern u8 IwramMulQ16ReturnIp[];
 
 #define Iwram_MulQ16(left, right) Iwram_Call2((left), (right), IwramMulQ16ReturnIp)
 
-/* The resident runtime's entries that ROM code calls. They run in IWRAM,
- * beyond a ROM bl's reach, and ROM code reaches them as Camelot's did:
- * through their fixed entry addresses, loaded before the arguments. A call
- * through a label compiles to a direct bl instead. The build checks each
- * entry against the routine named beside it. */
+/* Resident runtime entries in IWRAM, beyond direct Thumb branch range. */
 #define Iwram_RatioMulQ14 ((s32 (*)(s32 divisor, s32 value))0x0300013c) /* IwramRatioMulQ14 */
 #define Iwram_ClearWords ((s32 (*)(void *destination, s32 size))0x03000164) /* IwramClearWords */
 #define Iwram_FillWords ((s32 (*)(void *destination, s32 size, u32 value))0x03000168) /* IwramFillWords */
@@ -50,9 +41,7 @@ extern u8 IwramMulQ16ReturnIp[];
 #define Iwram_Sqrt ((s32 (*)(s32 value))0x030001d8) /* IwramSqrt */
 #define Iwram_RatioMulQ14 ((s32 (*)(s32 divisor, s32 value))0x0300013c) /* IwramRatioMulQ14 */
 
-/* The item menu reaches the copier from the bank's first routine instead,
- * its label plus the copier's offset, which GCC schedules as a symbol:
- * after the arguments. The build checks the offset against both labels. */
+/* The item menu addresses the copier from the runtime bank's first routine. */
 #define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords - IwramIrqMain */
 
 #endif

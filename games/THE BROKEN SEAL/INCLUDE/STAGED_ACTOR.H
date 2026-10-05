@@ -4,7 +4,7 @@
 #include "TYPES.H"
 #include "ANIMSPR.H"
 
-/* Shared actor layout proved by the staged probe/move/redraw overlay family. */
+/* Actor state shared by staged probing, movement and redraw. */
 union StagedActorCoordinate {
     s32 value;
     struct {
@@ -77,11 +77,8 @@ typedef char StagedActor_movement_callback_offset[
 ];
 #undef STAGED_ACTOR_OFFSET
 
-/* Six-word record exchanged by the staged-actor target finder and sweep:
-   StagedActor_FindClearPosition fills it with the square an actor can move
-   to, and SceneActor_MoveAndRedraw moves the actor there and runs the
-   callback. Passed by value, its first four words go in r0-r3 and the last
-   two are copied to the outgoing stack area by an `ldmia`/`stmia` pair. */
+/* Six-word record passed by value from StagedActor_FindClearPosition to
+ * SceneActor_MoveAndRedraw: the destination square and movement callback. */
 struct StagedActorProbe {
     s32 footprint_index;
     s32 actor_slot;

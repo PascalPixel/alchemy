@@ -144,7 +144,7 @@ LAYOUT_OFFSET_GUARD(BattleEventState_Flags, struct BattleEventState, flags, 0x16
 
 extern struct BattleSession *gBattleWork;
 
-/* Reset hands on the value left in r0; callers retain its integer return. */
+/* Reset passes on the value left in r0; callers retain its integer return. */
 s32 BattleUnit_TickCounter13e(s32 unit_id);
 u32 BattleEventRuntime_Reset(void);
 s32 BattleEventRuntime_WaitForReady(void);

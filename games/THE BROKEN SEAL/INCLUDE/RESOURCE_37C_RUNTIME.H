@@ -16,11 +16,8 @@ LAYOUT_OFFSET_GUARD(
     setup_request_1c0,
     0x1c0);
 
-/* Keep the existing pointer-load form while exposing the observed field. */
 #define RESOURCE37C_RUNTIME \
     ((struct Resource37cRuntime *)*(void **)&gEventWork)
-
-/* Address-stable overlay ABI declarations. */
 
 /* Observed setup operations; their wider interfaces remain local and opaque. */
 

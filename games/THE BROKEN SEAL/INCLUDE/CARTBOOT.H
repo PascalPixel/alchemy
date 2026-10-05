@@ -3,8 +3,7 @@
 
 #include "TYPES.H"
 
-/* The hardware cartridge entry restarts in ARM state. The build checks
-   this constant against the physical label at the cartridge header. */
+/* The hardware cartridge entry restarts in ARM state. */
 #define Cart_Restart ((u32)0x08000000) /* Rom_Start */
 
 #endif

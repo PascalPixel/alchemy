@@ -24,7 +24,7 @@ void SceneState_EmptyHook(void)
 }
 
 /* Mark the stage's control record finished. */
-void SceneState_SetHalfword1000To9(void)
+void KorosseoKabe_MarkStageReady(void)
 {
     ((struct StageControl *)gSceneState)->status = 9;
 }

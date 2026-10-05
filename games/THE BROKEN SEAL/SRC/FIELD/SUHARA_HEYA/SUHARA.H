@@ -6,8 +6,6 @@
 #include "FIELD_SCENE.H"
 #include "SCENE.H"
 
-
-
 #define STEP_COUNTER (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))
 
 struct SceneRecord {
@@ -19,11 +17,6 @@ struct SceneRecord {
     u8 field_26;
 };
 
-/*
- * Byte and field views of one actor share this union so that stores through
- * the linked record do not make the pointer read disappear through alias
- * analysis.
- */
 union SceneActor {
     struct {
         u8 unk_00[12];
@@ -48,8 +41,7 @@ extern u8 gSuharaHeyaPlacements96f[];
 extern u8 gSuharaHeyaEvents[];
 extern u8 gSuharaHeyaEvents96f[];
 
-/* The imports only this room calls, by their own names; the launch keeps an
- * inline because its direct call changes the room's bytes. */
+/* Services used by this room. */
 void Engine_AudioPlayCueFromEventWork(void);
 void Engine_InnCheckIn(s32 first, s32 second);
 void Engine_MotionLaunchFromFocusedObject(s32 first, s32 second, s32 third, s32 fourth);

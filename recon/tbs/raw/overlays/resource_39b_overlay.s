@@ -505,7 +505,7 @@ MakyuriIriguchi_SceneTableD:
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x18750015
-	.4byte FieldScene_Forward31d4
+	.4byte MakyuriIriguchi_TickSpawnTimer
 	.4byte 0x00000202
 	.4byte 0x1875000b
 	.4byte FieldScene_RunSingleStep
@@ -517,10 +517,10 @@ MakyuriIriguchi_SceneTableD:
 	.4byte FieldScene_RunIndexedStep63
 	.4byte 0x00000002
 	.4byte 0x12050028
-	.4byte FieldScene_RunActor8StepWithTableA820
+	.4byte MakyuriIriguchi_InstallActorEightPath
 	.4byte 0x00000002
 	.4byte 0x1205002a
-	.4byte FieldScene_RunActor8StepWithTableA820
+	.4byte MakyuriIriguchi_InstallActorEightPath
 	.4byte 0x00000002
 	.4byte 0x02050029
 	.4byte MakyuriIriguchi_SendActor8ByLeaderColumn

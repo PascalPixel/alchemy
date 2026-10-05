@@ -76,7 +76,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0);
 s32 SceneAudio_PlayCue118AndReturnZero(void);
 s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
-void FieldScene_Forward31d4(void);
+void MakyuriIriguchi_TickSpawnTimer(void);
 void FieldScene_CallHelper2e58(void);
 void FieldScene_RunSingleStep(void);
 void FieldScene_CallHelper2d50(void);
@@ -87,7 +87,7 @@ void FieldScene_RunIndexedStep18(void);
 void FieldScene_RunIndexedStep19(void);
 void FieldScene_RunSupplementalSequenceTwo(void);
 void FieldScene_RunIndexedStep63(void);
-void FieldScene_RunActor8StepWithTableA820(void);
+void MakyuriIriguchi_InstallActorEightPath(void);
 void MakyuriIriguchi_SendActor8ByLeaderColumn(void);
 void MakyuriIriguchi_ArriveWithSparks(void);
 void MakyuriIriguchi_RunDoorScene(void);

@@ -47,7 +47,7 @@ extern const u8 MakyuriIriguchi_Actor8Path1[];
 extern const u8 MakyuriIriguchi_Actor8Path2[];
 extern const u8 MakyuriIriguchi_Actor8Path3[];
 
-void FieldScene_Forward31d4(void)
+void MakyuriIriguchi_TickSpawnTimer(void)
 {
     Makyuri_TickSpawnTimer();
 }
@@ -200,7 +200,7 @@ void FieldScene_RunIndexedStep63(void)
     Engine_EventRequestExit(63);
 }
 
-void FieldScene_RunActor8StepWithTableA820(void)
+void MakyuriIriguchi_InstallActorEightPath(void)
 {
     Engine_GameFlagClear(0x205);
     Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path1);

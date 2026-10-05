@@ -546,13 +546,13 @@ gTakaraAshibaEvents3:
 	.4byte SceneState_BranchOnActorZeroFacing
 	.4byte 0x00000002
 	.4byte 0x00360014
-	.4byte FieldScene_RunScene3b4_02000ad0
+	.4byte TakaraAshiba_StartActorFifteenJump
 	.4byte 0x00000002
 	.4byte 0x00360015
-	.4byte FieldScene_RunScene3b4_02000b68
+	.4byte TakaraAshiba_RunActorFifteenSprint
 	.4byte 0x00000002
 	.4byte 0x00360016
-	.4byte FieldScene_RunScene3b4_02000ccc
+	.4byte TakaraAshiba_ReturnActorFifteen
 	.4byte 0x00000002
 	.4byte 0x0036001e
 	.4byte FieldScene_CopyActorPosition

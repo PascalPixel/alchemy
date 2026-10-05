@@ -188,7 +188,7 @@ s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
     return 0;
 }
 
-void FieldScene_RunScene3b4_02000ad0(void)
+void TakaraAshiba_StartActorFifteenJump(void)
 {
     struct FieldActor *record;
 
@@ -212,7 +212,7 @@ void FieldScene_RunScene3b4_02000ad0(void)
     }
 }
 
-void FieldScene_RunScene3b4_02000b68(void)
+void TakaraAshiba_RunActorFifteenSprint(void)
 {
     struct FieldActor *rec7;
     s32 rec8;
@@ -259,7 +259,7 @@ void FieldScene_RunScene3b4_02000b68(void)
     }
 }
 
-void FieldScene_RunScene3b4_02000ccc(void)
+void TakaraAshiba_ReturnActorFifteen(void)
 {
     struct FieldActor *record;
 
@@ -379,7 +379,7 @@ void TakaraAshiba_OpenPassage(s32 arg)
     Engine_MapCopyCellAttributes(column, 40, 1, 1, column, 42);
 }
 
-void FieldScene_RunScene3b4_02000fdc(s32 a0)
+void TakaraAshiba_OpenPlatformPassage(s32 a0)
 {
     u32 i;
     s32 record;
@@ -406,7 +406,7 @@ void FieldScene_RunScene3b4SequenceC(void)
         if (GameFlag_IsSet(0x9c4) == 0) {
             if (PartyInventory_FindOwnerFar(243) != -1) {
                 GameFlag_Set(0x9c4);
-                FieldScene_RunScene3b4_02000fdc(0x100);
+                TakaraAshiba_OpenPlatformPassage(0x100);
                 PartyInventory_RemoveFar(243);
             }
         }
@@ -965,7 +965,7 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
     TakaraAshiba_DispatchByActorEightColumn();
 }
 
-void FieldScene_RunScene3b4_02001bc4(void)
+void TakaraAshiba_ReleaseActorNinePlatform(void)
 {
     u32 i;
     s32 record;
@@ -988,7 +988,7 @@ void SceneActor_RunWhenActor9AtTile45x43(void)
     s32 z = slot[4] / 0x100000;
 
     if (x == 45 && z == 43) {
-        FieldScene_RunScene3b4_02001bc4();
+        TakaraAshiba_ReleaseActorNinePlatform();
     }
 }
 

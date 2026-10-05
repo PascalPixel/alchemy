@@ -51,7 +51,7 @@ void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
 
-void FieldScene_RunScene3b4_02000fdc(s32 a0);
+void TakaraAshiba_OpenPlatformPassage(s32 a0);
 
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
@@ -106,7 +106,7 @@ void TakaraAshiba_InitializeScene1(void)
         TakaraAshiba_OpenPassage(3);
     }
     if (GameFlag_IsSet(0x9c4) != 0) {
-        FieldScene_RunScene3b4_02000fdc(0);
+        TakaraAshiba_OpenPlatformPassage(0);
     }
 }
 

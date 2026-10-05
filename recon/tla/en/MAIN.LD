@@ -941,7 +941,6 @@
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS.o"(.text)
         "*/recon/tla/raw/080aed6a.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS_2.o"(.text)
-        "*/recon/tla/raw/080aee40.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aee98.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/FIND.o"(.text)
         "*/recon/tla/raw/080aef34.o"(.text .rodata .data .padding)

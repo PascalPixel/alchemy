@@ -68,3 +68,24 @@ s32 PartyInventory_Add(s32 item_id)
     }
     return -1;
 }
+
+/* The first active party member with room for the item, found by adding it
+   and taking it straight back out; -1 when nobody has room. */
+s32 PartyInventory_FindRoom(s32 item_id)
+{
+    s16 owners[10];
+    s32 owner_count;
+    s32 owner_index;
+
+    owner_count = Party_ListActiveOwners(owners);
+    for (owner_index = 0; owner_index < owner_count; owner_index++) {
+        s16 owner_id = owners[owner_index];
+        s32 slot = Inventory_AddItem(owner_id, item_id);
+
+        if (slot >= 0) {
+            Inventory_Remove(owner_id, slot);
+            return owner_id;
+        }
+    }
+    return -1;
+}

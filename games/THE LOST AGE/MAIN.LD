@@ -688,7 +688,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000a9c64)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS_2.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000a9e3c)
     "*/recon/tla/ja/rom.o"(.rom.000a9e94)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/FIND.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000a9f30)

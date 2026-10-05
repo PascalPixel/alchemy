@@ -655,7 +655,6 @@
     "*/recon/tla/fr/rom.o"(.rom.000b3c68)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS_2.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b3e40)
     "*/recon/tla/fr/rom.o"(.rom.000b3e98)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/FIND.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b3f34)

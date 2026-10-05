@@ -2280,13 +2280,8 @@ Func_080ae868:
 	.thumb_func
 Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000a9c64, 0x0000003c
-	.section .rom.000a9e3c, "ax"
-	.global Func_080aee40
-	.type Func_080aee40, %function
-	.thumb_func
-Func_080aee40:
-	.incbin "baserom.gba", 0x000a9e3c, 0x00000058
 	.section .rom.000a9e94, "ax"
+	.balign 4
 	.global Inventory_Find
 	.type Inventory_Find, %function
 	.thumb_func

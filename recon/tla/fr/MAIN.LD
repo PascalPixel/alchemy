@@ -564,7 +564,6 @@
     "*/recon/tla/fr/rom.o"(.rom.00044e50)
     "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000450a0)
-    "*/recon/tla/fr/rom.o"(.rom.000450d0)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW16.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00045184)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/APPLY_TABLE_SCALE_TO_OBJECT.o"(.text)

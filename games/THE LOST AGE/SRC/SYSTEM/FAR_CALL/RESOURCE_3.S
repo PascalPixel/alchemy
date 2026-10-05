@@ -25,9 +25,9 @@ Func_080202c0:
 	.thumb_func
 Animation_ApplyChildValueFar:
 	overlay_veneer Animation_ApplyChildValue
-	.global Func_080202d0
+	.global Runtime_RemapBytesByTableFar
 	.thumb_func
-Func_080202d0:
+Runtime_RemapBytesByTableFar:
 	overlay_veneer Runtime_RemapBytesByTable
 	.global Map_EnableUpdateCallbackFar
 	.thumb_func

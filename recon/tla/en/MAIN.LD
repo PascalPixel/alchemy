@@ -819,7 +819,6 @@
         "*/recon/tla/raw/08044dc8.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)
         "*/recon/tla/raw/08045018.o"(.text)
-        "*/recon/tla/raw/08045048.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW16.o"(.text)
         "*/recon/tla/raw/080450fc.o"(.text)
         "*/recon/tla/raw/0804519c.o"(.text)

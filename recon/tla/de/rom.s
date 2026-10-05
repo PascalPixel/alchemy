@@ -1749,12 +1749,6 @@ Func_08044dc8:
 	.section .rom.0004508c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0004508c, 0x00000030
-	.section .rom.000450bc, "ax"
-	.global RenderResource_LoadFrame
-	.type RenderResource_LoadFrame, %function
-	.thumb_func
-RenderResource_LoadFrame:
-	.incbin "baserom.gba", 0x000450bc, 0x00000064
 	.section .rom.00045170, "ax"
 	.incbin "baserom.gba", 0x00045170, 0x00000150
 	.section .rom.0004532e, "ax"

@@ -598,7 +598,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00044fc4)
     "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00045214)
-    "*/recon/tla/ja/rom.o"(.rom.00045244)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW16.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000452f8)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/APPLY_TABLE_SCALE_TO_OBJECT.o"(.text)

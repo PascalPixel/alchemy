@@ -130,8 +130,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         struct BattleActionRecord *action = &actions[index];
 
         action->slot = battle->owner_slots[action->unit_id];
-        /* The side is read through a byte pointer each pass, as the
-         * reference reads it. */
+
         if (battle->link_side == 0) {
             if (action->priority & 1)
                 action->priority++;
@@ -147,10 +146,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 
             state->count = count;
             state->check = BattleRandom16Far();
-            /* FAKEMATCH: the interrupt master is saved and cleared inside
-             * a one-pass loop, as QueueTransfer and the serial runtime do:
-             * its notes keep the seed copy between the two writes and make
-             * the state pointer reload after the first. */
+            /* FAKEMATCH: the one-pass IME scope keeps the seed copy between writes and reloads state after the first write. */
             do {
                 ime = &REG_IME;
                 saved = *ime;

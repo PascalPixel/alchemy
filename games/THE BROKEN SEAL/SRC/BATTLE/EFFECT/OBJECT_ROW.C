@@ -26,9 +26,6 @@ extern void *gBattleFxWork[];
 /* 320 burst records fill the map cell buffer, 32 for each affected unit. */
 #define BURST ((struct EffectStep *)Ram_MapCellBuffer)
 
-/* A spawned object: two words, then a byte and its flags. The flags are set
-   through a byte pointer below, the plain byte store the native code has. */
-
 /* The effect's work block: the shared layout with the nine spawned objects
    named. */
 

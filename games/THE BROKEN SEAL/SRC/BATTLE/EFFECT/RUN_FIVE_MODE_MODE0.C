@@ -72,10 +72,8 @@ extern s8 FiveMode_Records[];
 /* How far a trembling target moves on each of eight frames. */
 extern s8 FiveMode_Tremble[];
 
-/* Battle effect: three streaks fly from the actor to each target in turn,
-   one target every 32 frames, while the background ripples. The streak count
-   and the height the streaks fly at are variables, as Camelot had them: the
-   compiler multiplies by the one and adds the other from a register. */
+/* Three streaks fly from the actor to each target in turn, one target
+ * every 32 frames, while the background ripples. */
 void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 {
     struct EffectPosition position;

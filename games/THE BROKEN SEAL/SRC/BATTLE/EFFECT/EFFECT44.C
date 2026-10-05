@@ -18,7 +18,6 @@ extern u8 gBattleFxWork[];
 
 u32 Random16(void);
 
-
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
     /* FAKEMATCH: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from push {r5, r6, lr} to push {r5, r6, r7, lr} (122/122 assembly lines). */
@@ -53,15 +52,12 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     struct BattleEffectWork *work;
     s32 size;
     s32 step;
-    /* Left to the allocator the frame takes r10 and the step r9, which
-       exchanges the two registers in 15 instructions. */
+
     /* FAKEMATCH: the frame counter is pinned to r9, as the reference keeps it. */
     register s32 frame __asm__("r9");
     s32 i;
 
-    /* FAKEMATCH: the reference holds the slot table address in the register
-       that later holds the size, and the blend register address in the one
-       that later holds the step; only variables assigned twice do that. */
+    /* FAKEMATCH: the reference holds the slot table address in the register that later holds the size, and the blend register address in the one that later holds the step; only variables assigned twice do that. */
     size = (s32)&Ram_WorkSlot[40];
     canvas = *(void **)size;
     work = *(struct BattleEffectWork **)(size - 4);

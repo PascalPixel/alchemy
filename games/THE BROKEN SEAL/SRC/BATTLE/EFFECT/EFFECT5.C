@@ -69,9 +69,7 @@ void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *arg0)
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: the three palette copies share the routine's address but
-       build the palette address again at each call, which only an inlined
-       constant argument compiles to; a direct call keeps it in a register. */
+    /* FAKEMATCH: the three palette copies share the routine's address but build the palette address again at each call, which only an inlined constant argument compiles to; a direct call keeps it in a register. */
     copy(destination, source, size);
 }
 
@@ -128,9 +126,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
     draw_a = *(DrawRectangle *)(state + 184);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
     work->transfer_mode = 2;
-    /* FAKEMATCH: reading the second blitter through the slot pointer's own
-       variable keeps it in that register between the two transfer stores;
-       a direct assignment only orders three instructions differently. */
+    /* FAKEMATCH: reading the second blitter through the slot pointer's own variable keeps it in that register between the two transfer stores; a direct assignment only orders three instructions differently. */
     state += 188;
     state = *(u8 **)state;
     work->transfer_value = 50;

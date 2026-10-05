@@ -38,9 +38,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: forwarding the copy through this helper loads the routine's
-       address before the palette address is shifted into place; a direct
-       call swaps those two instructions at both palette copies. */
+    /* FAKEMATCH: forwarding the copy through this helper loads the routine's address before the palette address is shifted into place; a direct call swaps those two instructions at both palette copies. */
     copy(destination, source, size);
 }
 

@@ -112,16 +112,7 @@ void BattleFx_RunDualTableMode1(struct BattleEffectArgument *effect)
    height; four frames after it starts the targets react, and on that frame
    and four frames later a puff of dust rises at its foot. The puffs live in
    a 512-slot pool in the map cell buffer, age -1 marking a free slot.
-
-   Shape notes, measured against the ROM:
-   - One i serves every loop, which gives it a live range long enough to put
-     work in fp.
-   - The column cursor is recomputed from i at the top of the column loop
-     (loop.c reduces it after the start frame i * 4 + 8), and the cue loop
-     derives the target id offset from its index the same way, so both
-     inductions are seeded after the hoisted invariants as in the ROM.
-   - The spawn scan is a while loop whose free-slot case breaks out.
-   - The puff blits halve a signed table byte with a plain / 2. */
+ */
 void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 {
     void **heap_cache;
@@ -438,11 +429,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
    while the targets flinch; the screen fades back over the last 16 frames.
    Kinds 0 and 1 are tall columns that slide outwards as they grow, kinds 2
    and 3 short stumps; odd kinds slide left.
-
-   The pillar loop keeps the reference's inductions: the start frame is its
-   own variable (the frame tests are start, start + 1, start + 3 and
-   start + 4), the pillar's age is computed before the start test, and the
-   kind is read from its table at each test. */
+ */
 void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
 {
     void *dst;

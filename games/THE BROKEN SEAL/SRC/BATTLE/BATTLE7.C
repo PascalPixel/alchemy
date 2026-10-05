@@ -15,11 +15,6 @@ struct BattleCommandRuntime {
     u8 pad1a0[0xb26]; u8 resolving_action;
 };
 
-/*
- * Declared struct BattleRuntime * to match the shared extern in
- * battle_effect_runtime.h; the local view of the same storage is obtained by
- * a cast below.
- */
 extern struct BattleRuntime *gEventWork;
 extern u8 MsgUseAbilityConfirm;
 extern u8 MsgNothingHappened[];
@@ -34,7 +29,6 @@ void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 s32 Object_CallSpawnRoutineAtOrigin(s32);
 void UiWork_FinalizePendingCoreFar(void);
 
-/* Takes an s32 to match the definition of the packed effect argument. */
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
 
 /*
@@ -49,10 +43,7 @@ void BattleFx_LoadActionEffectResources(s32, s32);
 void BattleFx_SetupObjectPair(s32, s32);
 void EventObject_Initialize(void);
 
-/*
- * Returns s32 to match the shared prototype, although every call site
- * discards the value.
- */
+/* All callers discard the result. */
 s32 BattleFx_RunEventAction(void *, s32, s32);
 void BattleFx_DispatchRequestKind(void);
 void BattleFx_Run(void);

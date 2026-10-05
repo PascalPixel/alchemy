@@ -245,23 +245,10 @@ void BattlePresentation_DrawStreaks(void)
 }
 
 /* battle/presentation/misc/prepare.c */
-/*
- * Battle presentation setup at 0x080ccaec.  Allocate the kind-39 and kind-40
- * work blocks, reset the presentation, write the BG2PA identity scale and the
- * blend coefficients, stream the palette selected by the caller's kind into
- * palette RAM through the IWRAM word-copy kernel, seed three work-block
- * fields, then schedule two frame callbacks.  The allocated block is the shared
- * canvas and particle work used by both frame callbacks.
- */
+/* Allocate the canvas and particle work blocks, reset presentation and
+ * set BG2PA and blend coefficients. Copy the selected palette to palette
+ * RAM, initialize the shared work and schedule its two frame callbacks. */
 
-/*
- * ResourceId_ rows are small resource numbers the reference loads from its
- * literal pool rather than materializing, so they must not be folded into
- * constants.  Battle_Apply is declared as returning s32 although the result
- * is unused: the value-returning call form keeps the call the last setter of
- * r0, which is what places each callback's pool load after the order
- * argument's shift.
- */
 void BattlePresentation_PrepareScene(s32 kind)
 {
     struct BattleEffectWork *work;

@@ -34,12 +34,8 @@ struct BattleAutomaticState {
     unsigned remaining : 28;
 };
 
-/*
- * Choose a legal automatic command for one combatant.  The class profile at
- * Owner_GetRecordFar supplies a strategy byte at +0x36, availability bits at
- * +0x37, and the candidate action IDs beginning at +0x38.  The weighted
- * selector is a GCC nested function: each call passes the frame in r9.
- */
+/* Choose a legal automatic command using the class strategy, availability
+ * bits and candidate action ids. The weighted selector shares this frame. */
 s32 BattleCommand_SelectAutomatic(
     struct BattleActionRecord *request,
     s32 retry)
@@ -281,7 +277,7 @@ done:
     return;
 }
 
-/* The container-built _call_via_r0 veneer: it calls the routine in r0. */
+/* Call the routine supplied in r0. */
 void _call_via_r0(u32 routine);
 
 void BattleEvent_Playback(void);

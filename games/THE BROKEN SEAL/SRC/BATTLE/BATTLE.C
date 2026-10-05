@@ -7,13 +7,9 @@
 #include "BATTLE_PRESENTATION.H"
 #include "FIELD_EVENT.H"
 
-/* A battle callback: cycle the units' status icons, give each unit's
- * effect entry priority 9 while the unit is off the ground and 0 otherwise
- * (marking its record dirty on a change), then give the party's and the
- * enemies' sprites hardware priorities 1 and 2, swapped when the camera
- * yaw is negative. One object, record and list variable serve the whole
- * function, which keeps the object in r5 and every record in r0; the
- * priorities are read from their array inside each loop. */
+/* Cycle status icons and set effect priority to 9 while a unit is airborne,
+ * or 0 otherwise, marking changed records dirty. Party and enemy sprites
+ * use hardware priorities 1 and 2, swapped when camera yaw is negative. */
 void BattleActor_UpdateSpritePriorities(void)
 {
     u16 ids[14];
@@ -26,8 +22,7 @@ void BattleActor_UpdateSpritePriorities(void)
     struct AnimationObject **list;
 
     BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
-    /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop
-     * pass off it; as a for loop it becomes a pointer walk. */
+    /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop pass off it; as a for loop it becomes a pointer walk. */
     i = 0;
     if (ids[i] != BATTLE_UNIT_LIST_END) {
 again:
@@ -163,12 +158,7 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
     output->active_conditions = flags;
 }
 
-/*
- * The reference preserves r0 in its epilogue (pop {r1}; bx r1), matching GCC's
- * scalar-return convention. No path establishes a meaningful result, and the
- * sole caller discards it; C99 6.9.1p12 only makes this fallthrough undefined
- * when the caller uses the value.
- */
+/* The return value is unspecified and ignored by the caller. */
 s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
 {
     struct AnimationEntry *old_effect;
@@ -234,8 +224,7 @@ update:
     }
 
     if (effect_id >= 0 && changed != 0) {
-        /* FAKEMATCH: storing the handle before the failure test preserves the
-           existing store order; testing first adds an unconditional branch. */
+        /* FAKEMATCH: storing the handle before testing failure avoids an extra unconditional branch. */
         entry_handle = ResourceMetadata_RegisterFar(context, effect_id);
         record->animation_entry = (struct SpriteEntry *)entry_handle;
         if (entry_handle == -1)

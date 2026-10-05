@@ -108,9 +108,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     BattleEffect_InitializeSharedScene();
     source->linked = target;
     ObjectDispatch_InitializeFar((struct DispatchObject *)source, BattleFx_SourceHoldScript);
-    /* FAKEMATCH: the position is reached through this pointer everywhere but
-       in the steering loop's first part, which names the position itself;
-       that keeps the pointer in r10 and gives the loop its own copy. */
+    /* FAKEMATCH: the position is reached through this pointer everywhere but in the steering loop's first part, which names the position itself; that keeps the pointer in r10 and gives the loop its own copy. */
     p = &position;
     p->x = work->x;
     p->y = work->y + 0x100000;
@@ -184,8 +182,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         position.z = target->z;
         Vector_AddPolarOffset(0x100000, angle, &position);
         i = ScriptObject_CheckOverlapFar(target, &position);
-        /* FAKEMATCH: entering the blocked path from both tests keeps it ahead
-           of the drop path, as the ROM lays them out. */
+        /* FAKEMATCH: entering the blocked path from both tests keeps it ahead of the drop path, as the ROM lays them out. */
         if (i != 0)
             goto blocked;
         if (Object_ProbeRaised(target, p) > 0) {

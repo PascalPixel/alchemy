@@ -19,11 +19,9 @@
 
 extern u8 gBattleFxWork[];
 
-
 void WaitFrames(s32);
 
-/* The resident word copy, handed to the palette copy and reached through
-   the r3 bx bank. */
+/* Resident word copier passed to the palette copy routine. */
 typedef s32 (*CopyWords)(void *, const void *, s32);
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
@@ -59,8 +57,6 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
     copy(destination, source, size);
 }
 
-
-/* Resource id the reference loads from its literal pool. */
 extern const u16 ParticleStreams_CellOffsets[];
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
@@ -81,12 +77,7 @@ void BattleFx_ArmBg2AffineHBlankDma(void)
     Dma_Set(work->bg2_x, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
 }
 
-/* Six drawn arguments: destination, source cell, x, y, width, height.
-   Called through the r4 bx bank, so it is an indirect call through a
-   cached blitter entry rather than a fixed callee. */
-
-/* Resource numbers are ResourceId_ rows, which the reference loads from its
-   pool rather than materializing with a mov. */
+/* Cached rectangle blitter: destination, source cell, x, y, width, height. */
 
 /* Mode entries of the burst shower (effect series I). */
 void BattleFx_RunSeriesIMode0(struct BattleEffectArgument *effect)
@@ -471,7 +462,7 @@ void BattleFx_RunSwirlingStars(void *object)
    drawn through the single loaded blitter. */
 void BattleFx_RunOrbitingSparks(void)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
+    /* FAKEMATCH: relative heap-cell loads preserve load and literal order; independent typed slots change both. */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;

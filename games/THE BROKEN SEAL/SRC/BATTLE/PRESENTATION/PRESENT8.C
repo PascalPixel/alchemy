@@ -310,13 +310,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
     ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattlePres_ActorObjectScript);
 }
 
-/*
- * Read one (x, y) pair from the step table.  Entries are pairs, so the index
- * is doubled and the second component read at index + 1.  A leaf with no
- * prologue; the owner includes the single pool word holding the table base.
- * No call site is known -- the address is reached by a computed value, or by
- * nothing at all.
- */
+/* Read an (x, y) pair from the step table. */
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 {
     index *= 2;

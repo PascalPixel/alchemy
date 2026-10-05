@@ -9,7 +9,6 @@
 #include "MAP_SCROLL.H"
 #include "TRANSFORM.H"
 
-/* Inline, so the arguments are computed before the routine's address. */
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
     /* FAKEMATCH: a direct call finishes the value shift before the divisor load; the reference loads the divisor first. */

@@ -122,8 +122,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     REG_BG2PA = 0xcc;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + SERIES_B_FLARES, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + SERIES_B_BURST, 1, 1);
-    /* FAKEMATCH: forwarded through Call3, each palette copy loads its routine
-       before it shifts the destination, as the reference does. */
+    /* FAKEMATCH: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does. */
     if (mode == 3 || mode == 5) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
             work->sheet + SERIES_B_PICTURE, 1, 1);

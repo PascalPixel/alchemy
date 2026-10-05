@@ -20,7 +20,6 @@
 
 extern u8 gBattleFxWork[];
 
-
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
@@ -205,9 +204,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
             step->x += 32;
         step->variant = -(member * 2);
         i = 0;
-        /* FAKEMATCH: the two random masks sit in locals set in this order,
-           ahead of the mote pointer; that order gives 0xffff r9 and 127 fp
-           and keeps the reload registers of the reference. */
+        /* FAKEMATCH: the two random masks sit in locals set in this order, ahead of the mote pointer; that order gives 0xffff r9 and 127 fp and keeps the reload registers of the reference. */
         speed_mask = 127; /* FAKEMATCH: mask local, see above */
         angle_mask = 0xffff; /* FAKEMATCH: mask local, see above */
         mote = (struct EffectStep *)(Ram_MapCellBuffer + burst_offset);

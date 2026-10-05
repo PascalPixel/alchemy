@@ -80,8 +80,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + 0x1e00, 1, 1);
-    /* FAKEMATCH: forwarded through Call3, the copy loads the buffer address
-       straight into r0, so the loop below loads its own after the call. */
+    /* FAKEMATCH: forwarded through Call3, the copy loads the buffer address straight into r0, so the loop below loads its own after the call. */
     Call3((void (*)())Iwram_CopyWords, (s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
     for (row = 0; row != 16; row++) {
         y = row + 96;

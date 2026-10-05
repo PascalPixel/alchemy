@@ -87,8 +87,7 @@ s32 ActivateBattleObjectSlot(s32 object_id)
 
 void *BattleMotion_DestroyAllSlotObjects(void)
 {
-    /* FAKEMATCH: retain the existing ignored-result boundary. No caller
-       consumes a pointer; void changes the return-address pop from r1 to r0. */
+    /* FAKEMATCH: the ignored-result signature keeps the return-address pop in r1; void selects r0. */
     s32 no;
     s32 i;
     struct BattleObjectSlot *slot;

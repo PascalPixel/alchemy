@@ -60,11 +60,7 @@ void QueueIoWriteDelay2(u32 first, u32 second);
 
 void BattleFx_BeginCanvasLayer(s32 bg_control)
 {
-    /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
-     * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
-     * constructs, the one-pass loop around the IME read and the count stored
-     * through an explicit u16 pointer; the queue and IME pointers are held for
-     * the whole function as the ROM keeps them. */
+    /* FAKEMATCH: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes. */
 
     struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
     struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
@@ -163,11 +159,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
    buffers. */
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
-    /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
-     * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
-     * constructs, the one-pass loop around the IME read and the count stored
-     * through an explicit u16 pointer; the queue and IME pointers are held for
-     * the whole function as the ROM keeps them. */
+    /* FAKEMATCH: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes. */
 
     struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
     struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
@@ -297,12 +289,7 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
    frames. */
 void BattleFx_EndCanvasLayer(void)
 {
-    /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
-     * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
-     * constructs, the one-pass loop around the IME read and the count stored
-     * through an explicit u16 pointer, plus a one-pass loop around everything
-     * after the queue pointer so the queue literal loads ahead of the store
-     * before it. */
+    /* FAKEMATCH: the one-pass IME/queue scopes and u16 count store preserve scheduling, loading the queue before the preceding store. */
 
     struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
     struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);

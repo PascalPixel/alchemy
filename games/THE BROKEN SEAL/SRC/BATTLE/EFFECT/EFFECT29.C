@@ -30,12 +30,8 @@ struct Work_080936a0 {
     u16 flags;
 };
 
-
 s32 WaitFrames(s32 frames);
 s16 *BattleAction_FindDescriptor(s16 action);
-
-
-
 
 struct FieldActor *Object_CreateFar(
     s32 kind,
@@ -58,9 +54,8 @@ void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
     work->fourth = fourth;
 }
 
-/* Eases the ratio at work + 0x34c from the start to the end value over the
-   transition's duration, one step per frame, then unschedules itself.
-   Declared int: the reference returns through r1, with no value. */
+/* Ease the ratio from its start to end value over the transition duration,
+ * one step per frame, then unschedule this callback. Its result is unspecified. */
 s32 BattleFx_StepRatioTransition(void)
 {
     u8 *work;

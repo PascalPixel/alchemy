@@ -25,7 +25,6 @@
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
 
-
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -98,8 +97,7 @@ static __inline__ void DrawImage(void *canvas, const void *pixels, s32 x, s32 y,
 static __inline__ void DrawTallImage(void *canvas, const void *pixels,
     s32 x, s32 y, s32 width, RectangleBlit *draw)
 {
-    /* FAKEMATCH: Derive height inside the inline scope so the dimension stores
-     * reuse one register instead of keeping two argument temporaries alive. */
+    /* FAKEMATCH: Derive height inside the inline scope so the dimension stores reuse one register instead of keeping two argument temporaries alive. */
     (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
@@ -356,8 +354,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         WaitFrames(1);
         frame++;
     } while (frame != 32);
-    /* FAKEMATCH: Restart the pointer's lifetime after gathering so the
-       * projection above uses the stack position directly. */
+    /* FAKEMATCH: Restart the pointer's lifetime after gathering so the projection above uses the stack position directly. */
     position = &moving_pos;
     if (kind == 11) {
         REG_BG2PA = 0x100;
@@ -971,8 +968,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             s32 image_x;
             s32 image_y;
             if (frame <= 5) {
-                /* FAKEMATCH: Calculate each center before the shared centered draw;
-                   * spell signed halving as an in-place rounding bias and shift. */
+                /* FAKEMATCH: Calculate each center before the shared centered draw; spell signed halving as an in-place rounding bias and shift. */
                 if (work->effect->side == 0) {
                     image_x = target_screen->x;
                     image_x += (u32)image_x >> 31;

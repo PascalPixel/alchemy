@@ -74,9 +74,7 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
 
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 {
-    /* FAKEMATCH: retain the existing unsigned arc-counter/link view here;
-       canonical mixed views move the link load after the counter store
-       and sign extension in all six editions. */
+    /* FAKEMATCH: the unsigned arc/link view keeps the link load before the counter store and sign extension. */
     struct ArcObject *arc = (struct ArcObject *)obj;
     struct FieldActor *link;
     s32 v;
@@ -97,9 +95,7 @@ void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 
 void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj)
 {
-    /* FAKEMATCH: retain the existing unsigned arc-counter/link view here;
-       canonical mixed views move the link load after the counter store
-       and sign extension in all six editions. */
+    /* FAKEMATCH: the unsigned arc/link view keeps the link load before the counter store and sign extension. */
     struct ArcObject *arc = (struct ArcObject *)obj;
     struct FieldActor *link;
     s32 v;

@@ -234,7 +234,7 @@ void BattleEvent_Playback(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void Object_SetMode(void *object, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
-/* Declared with a result, as PROCESS_ROUND_END.C declares it. */
+
 s32 BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
 void BattlePres_RunWithZeroArguments(void);
 void BattleActor_SpawnObjectsForList(s16 *actors, s32 mode);

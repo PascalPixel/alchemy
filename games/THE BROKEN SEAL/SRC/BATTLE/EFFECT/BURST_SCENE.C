@@ -18,9 +18,7 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-
 extern u8 gBattleFxWork[];
-
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
@@ -254,10 +252,7 @@ extern const struct WallScale RisingWall_UnitScale;
    wall stands for seventy-two frames while dust falls in front of it, and
    eleven rocks drop along it one after another, each respawning until the
    wall goes. Every affected unit reacts while the wall stands.
-
-   The wall sheet is repacked into work->sheet a byte at a time, the palette
-   destination and the wall's width are named once in locals, and the mound
-   cell is its own variable: each is what the code's register use shows. */
+ */
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

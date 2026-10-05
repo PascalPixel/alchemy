@@ -754,9 +754,7 @@ after_power:
             s32 heal;
             u16 *stat_ptr;
 
-            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each
-               stat twice, unsigned and signed, as the ROM does; plain field
-               reads share one load. */
+            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain field reads share one load. */
             stat_ptr = (u16 *)&target->hp;
             old = *stat_ptr--;
             heal = *(s16 *)(stat_ptr + 1);

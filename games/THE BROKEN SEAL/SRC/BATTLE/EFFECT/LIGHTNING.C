@@ -78,9 +78,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
     if (work->effect->variant != 2) {
         void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
-        /* FAKEMATCH: calling through a local copy of the routine's address
-           loads that address before the palette address is shifted into
-           place; the direct call swaps those two instructions. */
+        /* FAKEMATCH: calling through a local copy of the routine's address loads that address before the palette address is shifted into place; the direct call swaps those two instructions. */
         WordCopy copy = Iwram_CopyWords;
 
         copy((void *)0x05000000, palette, 128);

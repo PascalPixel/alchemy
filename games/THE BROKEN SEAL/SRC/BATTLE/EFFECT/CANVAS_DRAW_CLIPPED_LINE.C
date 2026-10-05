@@ -1,6 +1,5 @@
-/* Draw a line into the effect canvas (8bpp tiles, 16 tiles to a row, rows
-   clamped to 0..127) keeping the larger colour; the shape of
-   CANVAS_DRAW_LINE.C, which psynergy similar found. */
+/* Draw a line in the 8bpp effect canvas, 16 tiles per row, clamping rows
+ * to 0..127 and keeping the larger colour. */
 #include "TYPES.H"
 
 extern u8 gBattleFxWork[];

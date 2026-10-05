@@ -3,7 +3,6 @@
 #include "SCENE.H"
 #include "IO_REG.H"
 
-
 struct BattleTransitionEntry {
     u32 value;
     u32 sum;
@@ -11,10 +10,7 @@ struct BattleTransitionEntry {
     u32 fieldc;
 };
 
-/*
- * Blend control setup.  The eight-byte owner at 0x080c0ea8 includes its two
- * trailing pool words, 0x000000bf and 0x04000050.
- */
+/* Set blend control. */
 
 /* Set the blend control bits to 0xbf.  No arguments, no result. */
 void Graphics_SetBlendControl(void)

@@ -128,13 +128,10 @@ void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect)
    says. Each hit shakes the target and wakes sparks; wisps rise from the
    ground, motes gather on the actor and glints flash around the target, each
    only in the modes whose record asks for it.
-
-   The second blitter's slot address and the wisp sheet's place are kept in
-   variables: the code loads both afresh at every use, as it does a value it
-   holds in a variable and has no register for. */
+ */
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
+    /* FAKEMATCH: relative heap-cell loads preserve load and literal order; independent typed slots change both. */
     struct EffectPosition ground;
     struct EffectPosition target_position;
     struct EffectPosition alternate;

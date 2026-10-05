@@ -112,9 +112,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
         s32 mag;
         s32 ang;
 
-        /* FAKEMATCH: the mask is loaded into the magnitude before the
-           random word is taken in, as the native code does; masking the
-           call's result keeps the mask in a scratch register. */
+        /* FAKEMATCH: the mask is loaded into the magnitude before the random word is taken in, as the native code does; masking the call's result keeps the mask in a scratch register. */
         mag = 0x1FF;
         mag &= Random16();
         ang = Random16() & 0xFFFF;

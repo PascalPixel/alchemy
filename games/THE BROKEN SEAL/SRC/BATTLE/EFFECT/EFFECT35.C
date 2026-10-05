@@ -112,9 +112,7 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *link);
 
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked)
 {
-    /* FAKEMATCH: the existing scalar-coordinate and packed OAM constructor
-       view preserves the native alias ordering and 312-byte extent; the
-       shared coordinate/part views change register allocation and add four bytes. */
+    /* FAKEMATCH: scalar coordinates and packed OAM preserve alias order and registers; shared views add four bytes. */
     struct ArcObject *link = (struct ArcObject *)linked;
     struct BattleFxScene *scene = gEffectWork;
     struct ArcObject *source = (struct ArcObject *)scene->main_object;

@@ -58,7 +58,6 @@ extern u16 ThornVines_EmberSizes[];
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-
 /* Battle effect: vines grow up through the ground under the enemy side,
    thorns scatter, the picture dissolves through a shuffled dither, and
    rings burst on every affected unit. */
@@ -662,8 +661,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
     Audio_PlayCue(141);
 
-    /* FAKEMATCH: the rock count resets inside the loop test, after the
-       frame limit and before the skip keys are tested. */
+    /* FAKEMATCH: the rock count resets inside the loop test, after the frame limit and before the skip keys are tested. */
     for (frame = 0; frame != 288 && (count = 16, !(gKeysRepeat & (KEY_A | KEY_B)) || frame <= 16); frame++) {
         if (frame >= 0 && frame < 16) {
             u16 *phase = (u16 *)gMapCellBuffer;

@@ -12,7 +12,6 @@
 #include "BATTLE_WORK.H"
 #include "MENU_LIST.H"
 
-
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
     struct BattleUnit *state;
@@ -100,9 +99,7 @@ loop:
     offset = gBattleDisplayWork->offset;
     QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
     QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-    /* FAKEMATCH: a one-pass loop with a block-local s32 temporary around the
-       BLDALPHA write; the temporary makes 16 a movs (a u16 constant is a pool
-       halfword) and the loop notes keep it ahead of the register address. */
+    /* FAKEMATCH: the one-pass loop and s32 temporary build 16 with movs before loading the BLDALPHA address. */
     do { /* FAKEMATCH: one-pass loop and forced temporary, see above */
         s32 blend = 16;
         REG_BLDALPHA = blend;
@@ -149,10 +146,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
     while (1) {
         QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
         QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-        /* FAKEMATCH: the same one-pass loop and block-local s32 temporary
-           as BattlePresentation_WaitForAdvance's BLDALPHA write: the
-           temporary makes 16 a movs and the loop notes keep it ahead of
-           the register address. */
+        /* FAKEMATCH: the one-pass loop and s32 temporary build 16 with movs before loading the BLDALPHA address. */
         do { /* FAKEMATCH: one-pass loop and forced temporary, see above */
             s32 blend = 16;
             REG_BLDALPHA = blend;

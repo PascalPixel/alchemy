@@ -10,7 +10,6 @@ struct BattleLocationRule {
     s16 result;
 };
 
-
 extern const struct BattleLocationRule Battle_LocationRules[];
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
@@ -56,19 +55,14 @@ s32 Party_GetAverageLevelFar(void);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
 
-/* Battle effect: pick the location rule for the current map and room from
-   Battle_LocationRules (a room of -1 matches any room; a flag of -1
-   always applies, otherwise the rule applies while the flag is clear), then
-   write a zero and seven consecutive results from the rule's base into
-   work + 0x1a0 (all zero when nothing applies). A rule with the shift bit
-   moves the first result down a slot. Finally clear the two words after
-   them and apply the special.
-
-   FAKEMATCH: the shift reads the second slot and takes the first slot's
-   address before the zero, each in its own temporary, which orders the
-   zero between the two stores as the ROM does. */
+/* Pick the current map/room rule; room -1 matches any room, and flag -1
+ * always applies. Other rules apply while their flag is clear. Write zero
+ * and seven consecutive results from the rule base, or all zero if none
+ * applies. The shift bit moves the first result down one slot. Clear the
+ * next two words and apply the special. */
 void BattleFx_SelectLocationRule(s32 check)
 {
+    /* FAKEMATCH: the shift temporaries order the zero between the two stores. */
     u8 *work;
     s32 map;
     s32 room;

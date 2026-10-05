@@ -18,9 +18,7 @@
 extern u8 gMapCellBuffer[];
 extern u8 gBattleFxWork[];
 
-/* The two seven-byte-stride rectangle tables are plain, non-const arrays:
- * their element loads are ordered against the outgoing-argument stores at
- * each blit call site, which a const spelling would let float away. */
+/* Two rectangle tables with a seven-byte stride. */
 extern u8 CounterReveal_PanelX[];
 extern u8 CounterReveal_PanelY[];
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -162,8 +160,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
         if (amp < 0) {
             amp = 0;
         }
-        /* The counter is live from here, so it shares no register with
-         * screen_x, which dies in the row-base expression below. */
+
         i = 0;
         row_base = (6 - screen_x) << 8;
         angle = frame << 11;

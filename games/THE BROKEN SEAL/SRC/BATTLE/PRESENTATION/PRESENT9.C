@@ -72,8 +72,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
     timer = Runtime_AllocateHeapBlock(42, 4);
     if (kind != 0x15b) {
         {
-            /* The reference reaches the display control from the DMA
-               channel address still in r3 after the last copy. */
+
             /* FAKEMATCH: the channel address is pinned to r3 so the display control can be addressed from it. */
             register volatile u32 *dma __asm__("r3") = REG_DMA3;
 
@@ -217,11 +216,7 @@ void BattlePresentation_BuildTilemap(void *);
 
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
-    /* FAKEMATCH: the IME save sits in a
-     * one-pass loop around a pointer to its stack slot (taken before the IME
-     * register address), and the scale is assigned inside the call's argument
-     * list; the u32 restore temporary loads the saved word before the IME
-     * address. */
+    /* FAKEMATCH: the one-pass IME save orders its stack address first; argument assignment and a u32 restore preserve load order. */
 
     struct BattleSession *screen = gBattleWork;
     u16 *palette = screen->palette;
@@ -258,9 +253,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
    rebuild the tile table and tilemap. */
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
-    /* FAKEMATCH: the IME save sits in one-pass loops, as in the IO write
-     * queue, and the green and blue mask is a one-halfword struct, which keeps
-     * it a pool constant held across the fade loop as in the ROM. */
+    /* FAKEMATCH: the IME save sits in one-pass loops, as in the IO write queue, and the green and blue mask is a one-halfword struct, which keeps it a pool constant held across the fade loop as in the ROM. */
 
     struct BattleBackgroundView *transition = *(struct BattleBackgroundView **)gTransitionWork;
 

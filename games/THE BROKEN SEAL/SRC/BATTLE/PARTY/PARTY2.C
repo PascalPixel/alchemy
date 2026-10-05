@@ -1,5 +1,5 @@
-/* Battle: clear the active party members' status bytes and stat modifiers.
-   Returns int: its epilogue returns through r1. */
+/* Clear active party members' status bytes and stat modifiers.
+ * The integer result is unspecified. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "SCENE.H"

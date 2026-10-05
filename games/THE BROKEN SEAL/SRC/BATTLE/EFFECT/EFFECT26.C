@@ -21,9 +21,6 @@ void GameFlag_ClearBitFar(s32 flag);
 extern struct EventWork *gEventWork;
 void ObjectDispatch_ReleaseFar(struct FieldActor *object);
 
-
-
-
 /* Existing packed display-flag lane; the owner is AnimationObject. */
 struct EffectSprite {
     u8 unknown_00[29];
@@ -45,9 +42,7 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
     GameFlag_ClearBitFar(0x164);
     GameFlag_SetBitFar(0x165);
     while (entry->id != -1) {
-        /* FAKEMATCH: reading the flag through a u16 adds one loop
-           instruction, which keeps loop-invariant motion to the reference's
-           single hoisted bound address. */
+        /* FAKEMATCH: reading the flag through a u16 adds one loop instruction, which keeps loop-invariant motion to the reference's single hoisted bound address. */
         u16 raw = entry->flag;
         s16 flag = raw;
 
@@ -126,8 +121,7 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
    placement streams and spawns the first again if one was set. */
 void BattleEffect_ClearAllObjects(void)
 {
-    /* FAKEMATCH: the original one-bit display flag clear keeps the signed
-       mask and saved loop registers; a full-byte owner mask changes the frame. */
+    /* FAKEMATCH: the original one-bit display flag clear keeps the signed mask and saved loop registers; a full-byte owner mask changes the frame. */
     struct EventWork *runtime = gEventWork;
     struct ScenePlacement *table;
     s32 i;

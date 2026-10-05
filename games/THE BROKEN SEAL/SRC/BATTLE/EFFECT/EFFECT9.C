@@ -49,26 +49,12 @@ typedef struct {
     s16 values[1];
 } BattleEffectIndexWindow;
 
-/* Six drawn arguments: destination, source cell, x, y, width, height.
-   The reference calls it through the r4 bx bank, so it is an indirect
-   call through the cached kind-46 entry rather than a fixed callee. */
+/* Cached kind-46 rectangle blitter: destination, source cell, x, y, width, height. */
 
-/* Resource numbers are ResourceId_ rows, which the reference loads from its
-   pool rather than materializing with a mov. */
-
-/*
- * Effect sequence at 0x080d9fc8.
- *
- * Nine puffs are laid out along one sine/cosine arc across the top of the
- * screen, then animated for eighty frames.  Each puff plays a six-cell
- * sequence, four frames per cell, staggered four frames apart, and is drawn
- * once, twice or three times depending on the layer count the caller set.
- * The rectangle blitter is the kind-46 block BattleEffect_LoadWork loads, so every
- * draw goes through the entry cached in gWorkSlot[46].
- *
- * Aggregate names remain provisional; byte offsets into the kind-39 work
- * block are retained where no evidence-backed structure exists yet.
- */
+/* Nine puffs arranged on a sine/cosine arc animate over eighty frames.
+ * Each plays six cells, four frames per cell, staggered four frames apart,
+ * with one to three draws according to the layer count.
+ * The rectangle blitter is cached in work slot 46. */
 void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 {
     u32 *cache;
@@ -134,8 +120,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
         i = 0;
         cur = (Puff *)(work->sheet + 0x7080);
         do {
-            /* Negative ticks stagger the puffs; the folded range test is
-               what the reference's single unsigned compare came from. */
+            /* Negative ticks stagger the puffs. */
             if ((cur->tick >= 0) && (cur->tick <= 23)) {
                 cell = cur->tick / 4;
                 /* wide is loaded once and reused for the centring shift and

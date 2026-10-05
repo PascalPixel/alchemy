@@ -65,9 +65,6 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
         u32 offset = 0x100;
         void *vram;
 
-        /* Dma_Set is a volatile statement, which the scheduler counts as one
-           more dependent of the tile address: written plainly, the address
-           is added before the VRAM address loads, the reverse of the ROM. */
         /* FAKEMATCH: the empty statement keeps the tile offset a load of its own, ahead of the VRAM address. */
         __asm__("" : "+r"(offset));
         vram = (void *)0x06008000;

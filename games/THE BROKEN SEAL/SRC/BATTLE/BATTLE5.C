@@ -135,8 +135,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 }
 
 /* Raise an owner by levels: each stat grows by a fixed tenth-step per level,
-   never below 70% of its value before the change and never past its cap.
-   Declared s32 without a return statement, as the ROM keeps r0 live. */
+ * never below 70% of its value before the change or beyond its cap.
+ * The integer result is unspecified. */
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
     struct BattleBaseStats *base;

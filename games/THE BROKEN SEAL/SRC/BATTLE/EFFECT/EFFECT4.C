@@ -226,9 +226,7 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: the two palette copies share the routine's address but
-       build the palette address again at each call, which only an inlined
-       constant argument compiles to; a direct call keeps it in a register. */
+    /* FAKEMATCH: the two palette copies share the routine's address but build the palette address again at each call, which only an inlined constant argument compiles to; a direct call keeps it in a register. */
     copy(destination, source, size);
 }
 
@@ -344,17 +342,10 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* A small absolute link-time constant.  The resource id must be built from a
- * literal pool word, which an ordinary integer literal cannot produce. */
-
-/*
- * Sets the BG2 affine scale, loads the palette and the 32x32 sprite frames
- * into the work block, prepares the two rectangle-blit routines, and runs
- * member_count * 16 + 48 frames of a sine-swept scanline table with four
- * sprites orbiting each member whose window is open.  Binding each callee's
- * result to `status` is load-bearing: it makes the call a set of r0 and so
- * fixes the order of the following argument setup.
- */
+/* Set the BG2 affine scale, load the palette and 32x32 sprite frames,
+ * and prepare two rectangle blitters. Run member_count * 16 + 48 frames
+ * of a sine-swept scanline table with four sprites orbiting each member
+ * whose window is open. */
 void BattleFx_RunMemberOrbit(void *object)
 {
     void **heap_cache;

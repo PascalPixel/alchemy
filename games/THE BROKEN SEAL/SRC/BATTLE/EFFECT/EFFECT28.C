@@ -261,10 +261,10 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
 {
     struct EfxObj *obj;
-    /* GCC shape: work holds the state base, then the pool count. */
+
     s32 work = (s32)gEventWork;
     u32 off = (obj_id * 4) + 0x14;
-    /* GCC shape: src_z holds the source pointer, then the spawn Z. */
+
     s32 src_z = (s32)*(struct EfxSrc **)(work + off);
     struct EfxPos pos;
     s32 x;
@@ -574,8 +574,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
                     case 0x300000:
                     case 0x500000:
                         if (entry->flag != -1 && GameFlag_TestFar(entry->flag) == 0) {
-                            /* FAKEMATCH: the spawned object reuses the actor
-                               variable, which keeps both in r5. */
+                            /* FAKEMATCH: the spawned object reuses the actor variable, which keeps both in r5. */
                             actor = (struct ObjectRuntime *)Object_CreateFar(22, (x << 20) + 0x80000, 0, (z << 20) + 0x80000);
                             if (actor != 0) {
                                 ObjectDispatch_InitializeFar((struct DispatchObject *)actor, BattleFx_MarkerParticleScript);
@@ -604,8 +603,7 @@ void BattleFx_StartWindowHBlankDma(void)
     channel[5] &= 0x7fff;
     (void)channel[5];
     REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-    /* FAKEMATCH: a do-while(0) around the WININ copy makes the reference load
-       the value before the WININ address */
+    /* FAKEMATCH: a do-while(0) around the WININ copy makes the reference load the value before the WININ address */
     do {
         value = *source++;
         REG_WININ = value;

@@ -102,7 +102,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         blend_y = &REG_BLDY;
         *blend_y = zero;
         sixteen = 16;
-        /* Preserve the volatile register-store scheduling used by agbcc. */
+
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             blend_y[-1] = sixteen;
@@ -132,10 +132,9 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
     }
 }
 
-/* FAKEMATCH: the scheduler ignores the result; a non-void signature keeps
-   the reference's return-address pop into r1. */
 s32 BattleFx_UpdateStarField(void)
 {
+    /* FAKEMATCH: the ignored non-void result keeps the return-address pop in r1. */
     s32 j;
     s32 frame;
     u32 size;

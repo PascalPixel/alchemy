@@ -506,8 +506,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         }
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
-        /* FAKEMATCH: the one-pass block keeps the native test order; the
-           same tests as one if condition change 44 instructions. */
+        /* FAKEMATCH: the one-pass block keeps the native test order; the same tests as one if condition change 44 instructions. */
         do {
             if (defender->hp == 0 || defender->sleep != 0 || defender->stun != 0
                 || defender->cannot_move != 0 || defender->charm != 0)

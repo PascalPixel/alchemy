@@ -159,10 +159,7 @@ void Unnamed_08094ac8(void)
     u32 i;
     s32 value;
 
-    /* FAKEMATCH: one cursor holds the fill value, then the tile buffer, then
-       each particle's first words, which gives the reference its register;
-       the blend writes are a block that runs once, which keeps the callback's
-       arguments behind them. */
+    /* FAKEMATCH: reusing the cursor preserves its register; one-pass blend writes keep callback argument setup after them. */
     work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
     leader = ((struct MapScrollWork *)gMapWork[0])->origin;
     BattleFx_SetQueuedSoundAndPlay(170);

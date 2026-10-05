@@ -98,8 +98,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
         s32 angle;
 
         mote = &gMotes[i];
-        /* The range is set first and the random number masks it: the code
-           loads the range into the speed's own register. */
+
         speed = 0x3ff;
         speed &= Random16();
         angle = Random16() & 0xffff;

@@ -15,7 +15,6 @@
 
 extern u8 gBattleFxWork[];
 
-
 struct Scale { s32 x; s32 y; };
 struct Placement { s32 x; s32 y; s32 z; s32 w; };
 
@@ -27,7 +26,6 @@ extern const u8 Formation_RightEightX[];
 extern const u8 Formation_RightEightZ[];
 extern const u8 Formation_SmallEightX[];
 extern const u8 Formation_SmallEightZ[];
-
 
 void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
 
@@ -231,8 +229,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     {
-        /* FAKEMATCH: the routine's address is loaded before the size, as a
-           call through a local makes it. */
+        /* FAKEMATCH: the routine's address is loaded before the size, as a call through a local makes it. */
         s32 (*clear)(void *, s32) = Iwram_ClearWords;
 
         clear(BG_CHAR_BLOCK(1), 0x4000);

@@ -17,7 +17,6 @@
 
 extern u8 gBattleFxWork[];
 
-
 void Render_ResetTransformState(void);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
@@ -220,10 +219,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
                                 view.depth = 314;
                             if (view.depth > 634)
                                 view.depth = 634;
-                            /* FAKEMATCH: the size series A draws its sparks at, kept
-                               from that effect and never used here; without it
-                               the loop is short enough for the view's address
-                               to leave it, and 268 instructions differ. */
+                            /* FAKEMATCH: the size series A draws its sparks at, kept from that effect and never used here; without it the loop is short enough for the view's address to leave it, and 268 instructions differ. */
                             cel = 3 - (view.depth - 314) / 128;
                             cel = (i * 4 + frame) % 9;
                             {

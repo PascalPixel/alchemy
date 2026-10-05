@@ -449,8 +449,7 @@ s32 Field_RunScene(s32 entrance)
                         UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldPartyAnnihilated, 1);
                         vitals = Owner_GetStateFar(gGameState.selected_actor);
                         vitals->hp = 1;
-                        /* FAKEMATCH: the one-pass block around the hp gauge keeps sched2 from
-                           lifting the shift's reloaded 1 above the hp store, as the ROM orders them. */
+                        /* FAKEMATCH: the one-pass block around the hp gauge keeps sched2 from lifting the shift's reloaded 1 above the hp store, as the ROM orders them. */
                         do {
                             vitals->hp_gauge = Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
                             if (vitals->hp_gauge == 0 && vitals->hp != 0)

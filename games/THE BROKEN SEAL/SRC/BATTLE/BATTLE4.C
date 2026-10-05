@@ -12,13 +12,11 @@
 #include "CHARACTER.H"
 #include "ANIMSPR.H"
 
-/* The native scan reads the session through its original halfword view. */
 struct SlotArray { s16 items[64]; };
 
 s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 {
-    /* The named party/enemy arrays changed this scan's instruction order
-       and extent; retain its existing halfword view. */
+
     u16 positions[6];
     struct SlotArray *order;
     s16 *entry;

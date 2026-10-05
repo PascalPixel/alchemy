@@ -58,9 +58,7 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
 /* Draw the target's two panels, then a 64-particle burst and expanding rings. */
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant)
 {
-    /* FAKEMATCH: the existing blitter-pair and camera declaration order,
-       and the ordering of two independent stores, retain the measured
-       spill slots and loop preheader order. */
+    /* FAKEMATCH: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order. */
     void **cache;
     void **cursor;
     struct BattleEffectWork *work;

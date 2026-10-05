@@ -16,7 +16,6 @@
 
 extern u8 gBattleFxWork[];
 
-
 void Render_ResetTransformState(void);
 
 /*
@@ -27,8 +26,6 @@ void Render_ResetTransformState(void);
  * sheet under light gravity and the sixth from the second sheet under
  * heavier gravity, each cel advancing every six frames.
  */
-
-/* Resource ids the reference loads from its literal pool. */
 
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);

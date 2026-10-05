@@ -1,6 +1,6 @@
 #include "SCRIPT.H"
 
-void Script_SetOrCompareWord08(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation, s32 value)
 {
     s8 result;
 
@@ -19,7 +19,7 @@ void Script_SetOrCompareWord08(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = result;
 }
 
-void Script_SetOrCompareWord0c(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation, s32 value)
 {
     s8 result;
 
@@ -38,7 +38,7 @@ void Script_SetOrCompareWord0c(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = result;
 }
 
-void Script_SetOrCompareWord10(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation, s32 value)
 {
     s8 result;
 
@@ -57,7 +57,7 @@ void Script_SetOrCompareWord10(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = result;
 }
 
-void Script_SetOrCompareHalfword20(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value)
 {
     s8 result;
     u32 current;

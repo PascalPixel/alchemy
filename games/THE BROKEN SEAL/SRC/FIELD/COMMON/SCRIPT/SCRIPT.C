@@ -266,7 +266,7 @@ void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state, s32 opera
     }
 }
 
-void Script_SetOrCompareWord08(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_08 = value;
@@ -279,7 +279,7 @@ void Script_SetOrCompareWord08(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_08 == value;
 }
 
-void Script_SetOrCompareWord0c(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_0c = value;
@@ -292,7 +292,7 @@ void Script_SetOrCompareWord0c(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_0c == value;
 }
 
-void Script_SetOrCompareWord10(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_10 = value;
@@ -305,7 +305,7 @@ void Script_SetOrCompareWord10(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_10 == value;
 }
 
-void Script_SetOrCompareHalfword20(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->halfword_20 = value;
@@ -318,7 +318,7 @@ void Script_SetOrCompareHalfword20(struct ScriptOperands *state, s32 operation, 
     state->comparison_result = state->halfword_20 == (s16)value;
 }
 
-void Script_SetOrCompareWord18(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_18 = value;
@@ -331,7 +331,7 @@ void Script_SetOrCompareWord18(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_18 == value;
 }
 
-void Script_SetOrCompareWord1c(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_1c = value;
@@ -344,7 +344,7 @@ void Script_SetOrCompareWord1c(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_1c == value;
 }
 
-void Script_SetOrCompareWord24(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_24 = value;
@@ -357,7 +357,7 @@ void Script_SetOrCompareWord24(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_24 == value;
 }
 
-void Script_SetOrCompareWord28(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_28 = value;
@@ -370,7 +370,7 @@ void Script_SetOrCompareWord28(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_28 == value;
 }
 
-void Script_SetOrCompareWord2c(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_2c = value;
@@ -383,7 +383,7 @@ void Script_SetOrCompareWord2c(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_2c == value;
 }
 
-void Script_SetOrCompareWord30(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_30 = value;
@@ -396,7 +396,7 @@ void Script_SetOrCompareWord30(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_30 == value;
 }
 
-void Script_SetOrCompareWord34(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareAcceleration(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_34 = value;
@@ -409,7 +409,7 @@ void Script_SetOrCompareWord34(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_34 == value;
 }
 
-void Script_SetOrCompareWord38(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_38 = value;
@@ -422,7 +422,7 @@ void Script_SetOrCompareWord38(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_38 == value;
 }
 
-void Script_SetOrCompareWord3c(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_3c = value;
@@ -435,7 +435,7 @@ void Script_SetOrCompareWord3c(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_3c == value;
 }
 
-void Script_SetOrCompareWord40(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_40 = value;
@@ -448,7 +448,7 @@ void Script_SetOrCompareWord40(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_40 == value;
 }
 
-void Script_SetOrCompareWord44(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_44 = value;
@@ -461,7 +461,7 @@ void Script_SetOrCompareWord44(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_44 == value;
 }
 
-void Script_SetOrCompareWord48(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_48 = value;
@@ -474,7 +474,7 @@ void Script_SetOrCompareWord48(struct ScriptOperands *state, s32 operation, s32 
     state->comparison_result = state->word_48 == value;
 }
 
-void Script_SetOrCompareWord14(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->word_14 = value;
@@ -524,7 +524,7 @@ void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte55(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_55 = value;
@@ -535,7 +535,7 @@ void Script_SetOrCompareByte55(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte56(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_56 = value;
@@ -558,7 +558,7 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 opera
     }
 }
 
-void Script_SetOrCompareByte58(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_58 = value;
@@ -569,7 +569,7 @@ void Script_SetOrCompareByte58(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte59(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_59 = value;
@@ -580,7 +580,7 @@ void Script_SetOrCompareByte59(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte5a(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_5a = value;
@@ -591,7 +591,7 @@ void Script_SetOrCompareByte5a(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte5b(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_5b = value;
@@ -602,7 +602,7 @@ void Script_SetOrCompareByte5b(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte5d(struct ScriptOperands *work, s32 operation, s32 value)
+void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         work->byte_5d = value;
@@ -663,7 +663,7 @@ void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 v
     work->comparison_result = work->word_68 == (u32)value;
 }
 
-void Script_SetOrCompareWord6c(struct ScriptOperands *work, s32 operation, s32 value)
+void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation, s32 value)
 {
     if (operation == SCRIPT_OPERAND_SET) {
         work->word_6c = value;

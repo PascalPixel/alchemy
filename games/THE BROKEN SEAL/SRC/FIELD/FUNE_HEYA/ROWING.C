@@ -2346,7 +2346,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         Camera_MoveTo(-1, -1, -1, 0);
         Engine_TaskWait(1);
         if (arg != 0) {
-            *(u8 *)(Battle_GetWorkObject1e0() + 0x55) = 0;
+            ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
         }
         break;
     case 25:

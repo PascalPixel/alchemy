@@ -92,7 +92,7 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 
 s32 MogoruMori_CopyTimerToChild(s32 a)
 {
-    ObjectGroup_SetChildValue(a, *(s16 *)(a + 100));
+    ObjectGroup_SetChildValue(a, *(s16 *)&((struct FieldActor *)a)->timer);
     return 0;
 }
 
@@ -501,9 +501,9 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     if (x == 36 && z == 24) {
         u8 *p = (u8 *)Object_GetById(11);
 
-        p[85] = 0;
-        *(s32 *)(p + 20) = (s32)0xfffe0000;
-        *(s32 *)(p + 12) = (s32)0xfffe0000;
+        ((struct FieldActor *)p)->motion_flags = 0;
+        ((struct FieldActor *)p)->terrain_height = (s32)0xfffe0000;
+        ((struct FieldActor *)p)->y.fixed = (s32)0xfffe0000;
     }
 
     Engine_EventEnd();
@@ -777,9 +777,9 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
     if (x == 45 && z == 6) {
         u8 *record = (u8 *)Object_GetById(13);
 
-        record[85] = 0;
-        *(s32 *)(record + 20) = (s32)0xfffe0000;
-        *(s32 *)(record + 12) = (s32)0xfffe0000;
+        ((struct FieldActor *)record)->motion_flags = 0;
+        ((struct FieldActor *)record)->terrain_height = (s32)0xfffe0000;
+        ((struct FieldActor *)record)->y.fixed = (s32)0xfffe0000;
     }
 
     Engine_EventEnd();

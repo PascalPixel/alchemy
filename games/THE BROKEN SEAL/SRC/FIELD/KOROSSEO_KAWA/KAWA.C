@@ -102,7 +102,7 @@ void SceneActor_PlaceSlots1To3FromWork(void);
 void FieldScene_RunTwoArmSequence(s32 arm);
 void FieldScene_RunCommandSequence(s32 actor);
 void FieldScene_RunSixSteps380To3A8(void);
-void FieldScene_RunScene3ba_02000974(s32 direction);
+void KorosseoKawa_RunPostMatchScene(s32 direction);
 void SceneState_InitControlWhenFlag109Clear(s32 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
@@ -311,7 +311,7 @@ void SceneState_ApplyRectAndSend303(void)
     Engine_GameFlagSet(0x303);
 }
 
-void FieldScene_RunScene3ba_02000270(void)
+void KorosseoKawa_RaisePlatformPair(void)
 {
     extern u8 KorosseoKawa_Countdown[];
 
@@ -600,7 +600,7 @@ u8 *SceneData_GetTablec420(void)
     return KorosseoKawa_SceneTableD;
 }
 
-void FieldScene_RunScene3ba_02000974(s32 a0)
+void KorosseoKawa_RunPostMatchScene(s32 a0)
 {
 
     u32 i;
@@ -756,11 +756,11 @@ s32 KorosseoKawa_ApplyEntryState(void)
         }
         break;
     case 4:
-        FieldScene_RunScene3ba_02000974(1);
+        KorosseoKawa_RunPostMatchScene(1);
         Engine_EventRequestExit(4);
         break;
     case 5:
-        FieldScene_RunScene3ba_02000974(-1);
+        KorosseoKawa_RunPostMatchScene(-1);
         Engine_EventRequestExit(5);
         break;
     }

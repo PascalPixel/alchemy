@@ -17,8 +17,6 @@ extern u8 RomBytes_08029e00[];
 extern u8 RomBytes_0802de88[];
 extern u8 RomBytes_0802e108[];
 
-/* ui/render/drain_pending.c */
-
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
@@ -123,8 +121,7 @@ void UiWork_ClearValueNameTables(void)
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
-    /* The native code loads the work pointer before the table offsets. */
-    /* FAKEMATCH: scheduling barrier; otherwise the offset comes first. */
+    /* FAKEMATCH: the barrier keeps the work-pointer load before the table offsets. */
     __asm__("");
 #else
     work = (struct UiRenderWork *)gWindowWork[0];

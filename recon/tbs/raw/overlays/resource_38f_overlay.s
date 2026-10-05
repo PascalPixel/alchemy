@@ -117,7 +117,7 @@ KorimaMura_ActionTable6:
 	.4byte 0x00000046
 	.4byte 0xc0010000
 	.4byte 0x00000022
-	.4byte SceneState_FlushPendingWordB698
+	.4byte KorimaMura_ApplyPendingPose
 	.4byte 0x00000010
 	.global KorimaMura_ActionTable7
 KorimaMura_ActionTable7:

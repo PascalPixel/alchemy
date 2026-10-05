@@ -23,7 +23,6 @@ void BattleFx_SetWeightedResult();
 extern u8 MsgMakyuriGot[];
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
-
 struct EffectParams {
     s32 count;
     s32 kind;
@@ -801,8 +800,7 @@ void RunScene58Sequence(void)
     Event_ShowMessageAndWait(0x16, 0, 20);
     Actor_WalkToAndWait(0x16, 0x150, 0xD8);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriChojo1, 2);
-    /* FAKEMATCH: the do/while loads the game state's base before the 0x22b
-       offset, which fixes their registers and literal-pool order. */
+    /* FAKEMATCH: the do/while loads the game state's base before the 0x22b offset, which fixes their registers and literal-pool order. */
     do {
         gGameState.battle_start = 3;
     } while (0);
@@ -812,8 +810,6 @@ void RunScene58Sequence(void)
 
 void RunScene59Sequence(void)
 {
-
-
 
     Engine_EventBegin();
     Actor_Get(9)->motion_flags = 0;
@@ -832,7 +828,7 @@ void RunScene59Sequence(void)
     Engine_TaskWait(1);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    /* The ROM loads this IWRAM pointer cell before the request store. */
+
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -1040,8 +1036,7 @@ void RunScene59Sequence(void)
         gEventWork->message++;
     } else {
         Engine_EventWait(30);
-        /* This branch needs its own workspace load; stale register contents
-         * are not a valid C dependency. */
+
         gEventWork->message++;
         Event_ShowMessage(0x18, 0);
     }
@@ -1623,7 +1618,6 @@ void SceneEffect_UpdateArcPosition(struct OverlayObject *object)
     object->coordinate_40 = object->coordinate_10;
     object->angle_64 -= 0x200;
 }
-
 
 /* A lamp spark's object record, as this overlay fills it. */
 struct LampSpark {

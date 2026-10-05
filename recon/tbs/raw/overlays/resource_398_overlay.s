@@ -417,10 +417,10 @@ gBiribinoDouEvents1:
 	.4byte 0x00000005
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte SceneState_SetGlobalByte17
+	.4byte BiribinoDou_SetMapWorkFlag
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte SceneState_ClearRuntimeByte17
+	.4byte BiribinoDou_ClearMapWorkFlag
 	.4byte 0x00002115
 	.4byte 0x08830008
 	.4byte FieldScene_RunScene398SequenceA

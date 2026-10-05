@@ -22,7 +22,7 @@ extern const struct SceneEvent gBiribinoDouEvents1[];
 extern const struct SceneEvent gBiribinoDouEventsOther[];
 
 void RunGuardedSceneSetup(void);
-void SceneState_SetRuntimeWord448To516(void);
+void BiribinoDou_PrepareWindowTransition(void);
 void FieldScene_RunScene398SequenceC(void);
 
 /* Moving a pushed statue: the collision probe, the move target and the
@@ -280,12 +280,12 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
     Engine_GameFlagSet(0x305);
 }
 
-void SceneState_SetGlobalByte17(void)
+void BiribinoDou_SetMapWorkFlag(void)
 {
     FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 1;
 }
 
-void SceneState_ClearRuntimeByte17(void)
+void BiribinoDou_ClearMapWorkFlag(void)
 {
     FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 0;
 }
@@ -298,7 +298,7 @@ s32 Scene_Initialize(void)
     if (variant == (s32)&SceneId_BiribinoDou3) {
         RunGuardedSceneSetup();
     } else if (variant == (s32)&SceneId_BiribinoDou2) {
-        SceneState_SetRuntimeWord448To516();
+        BiribinoDou_PrepareWindowTransition();
     } else if (variant == (s32)&SceneId_BiribinoDou1) {
         FieldScene_RunScene398SequenceC();
     }
@@ -318,7 +318,7 @@ void RunGuardedSceneSetup(void)
     }
 }
 
-void SceneState_SetRuntimeWord448To516(void)
+void BiribinoDou_PrepareWindowTransition(void)
 {
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

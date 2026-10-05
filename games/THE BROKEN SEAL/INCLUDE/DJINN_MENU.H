@@ -37,7 +37,8 @@ struct DjinnMenuWork {
     s8 selected_column[2];
     u8 unknown_01e[6];
     s32 window;
-    u8 unknown_028[0x08];
+    s32 unknown_window_028;
+    u8 unknown_02c[4];
     s32 list_window;
     s32 second_window;
     u8 unknown_038[0xd4];

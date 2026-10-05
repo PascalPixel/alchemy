@@ -11951,7 +11951,7 @@ msgctxt "message"
 msgid "02985"
 msgstr "{button_icon:3}:Char. Status"
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "02986"
 msgstr "Current status"
 

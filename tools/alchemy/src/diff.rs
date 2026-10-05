@@ -1,27 +1,29 @@
 use crate::build_rom::c_steps;
 use crate::compiler::routing::root;
 use crate::process::run as command;
-use crate::targets::decomp_target;
+use crate::targets::{decomp_target, DecompTarget};
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--show]
-       alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--show]
-Compiles DRAFT.c for the game's English edition with the build's own
-compiler and options, then compares its instructions with the English raw
-listing objects out/<game>-en/obj/recon/<game>/raw/ADDRESS.o (build the
+const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--show]
+       alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--show]
+Compiles DRAFT.c for --edition (default: the game's English edition) with
+the build's own compiler and options, then compares its instructions with
+listing objects out/EDITION/obj/recon/<game>/raw/ADDRESS.o (build the
 edition first). ADDRESS defaults to the draft's file name; give several,
 comma-separated, when the draft holds a nested function and its parent.
 The game defaults from the draft's path. Prints the instruction counts and
 how many differ; --show prints the comparison, - for the listing and + for
 the draft. "differ 0" means the code matches instruction for instruction.
 An overlay draft (a path under overlays/) compares with the function of
-the same name, or --symbol, in out/<game>-en/overlays/OVERLAY_overlay.o;
-the overlay defaults from the path (resource_XXX)."#;
+the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
+the overlay defaults from the path (resource_XXX). Main-image scaffolds
+without a separate listing object are not supported."#;
 
 struct Options {
     draft: PathBuf,
     addresses: Vec<String>,
     game: &'static str,
+    target: DecompTarget,
     show: bool,
     overlay: Option<String>,
     symbol: Option<String>,
@@ -31,6 +33,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut draft = None;
     let mut addresses = Vec::new();
     let mut game = None;
+    let mut target = None;
     let mut show = false;
     let mut overlay = None;
     let mut symbol = None;
@@ -45,6 +48,10 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
             "--symbol" => {
                 i += 1;
                 symbol = Some(arguments.get(i).ok_or_else(|| USAGE.to_string())?.clone());
+            }
+            "--edition" => {
+                i += 1;
+                target = Some(decomp_target(Some(arguments.get(i).ok_or_else(|| USAGE.to_string())?))?);
             }
             "--game" => {
                 i += 1;
@@ -79,12 +86,17 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         addresses.push(stem);
     }
     let text = draft.to_string_lossy();
-    let game = game.unwrap_or(if text.contains("/tla/") || text.contains("THE LOST AGE") {
+    let edition_game = target.map(|target| if target.id.as_str().starts_with("tla-") { "tla" } else { "tbs" });
+    if matches!((game, edition_game), (Some(game), Some(edition_game)) if game != edition_game) {
+        return Err("--game and --edition name different games".into());
+    }
+    let game = game.or(edition_game).unwrap_or(if text.contains("/tla/") || text.contains("THE LOST AGE") {
         "tla"
     } else {
         "tbs"
     });
-    Ok(Options { draft, addresses, game, show, overlay, symbol })
+    let target = target.unwrap_or(decomp_target(Some(&format!("{game}-en")))?);
+    Ok(Options { draft, addresses, game, target, show, overlay, symbol })
 }
 
 pub(crate) fn normalize(objdump: &str) -> Vec<String> {
@@ -199,7 +211,7 @@ fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let options = parse(arguments)?;
     let root = root();
-    let target = decomp_target(Some(&format!("{}-en", options.game)))?;
+    let target = options.target;
     let stem = options
         .draft
         .file_stem()
@@ -230,7 +242,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if let Some(overlay) = &options.overlay {
         let reference = root.join(target.output_dir).join(format!("overlays/{overlay}_overlay.o"));
         if !reference.exists() {
-            return Err(format!("{}: no overlay listing object; build {}-en first", reference.display(), options.game));
+            return Err(format!("{}: no overlay listing object; build {} first", reference.display(), target.id));
         }
         let symbol = match &options.symbol {
             Some(s) => s.clone(),
@@ -257,9 +269,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             .join(format!("obj/recon/{}/raw/{address}.o", options.game));
         if !reference.exists() {
             return Err(format!(
-                "{}: no listing object; build {}-en first",
+                "{}: no listing object for {}; build that edition first (main-image scaffolds without a separate listing are unsupported)",
                 reference.display(),
-                options.game
+                target.id
             ));
         }
         listing.extend(disassemble(&reference, None)?);
@@ -283,6 +295,22 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn editions_select_the_existing_build_target() {
+        let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
+        let default = parse(&args(&["recon/tla/en/main/08123456.c"])).unwrap();
+        assert_eq!(default.target.id.as_str(), "tla-en");
+        let japanese = parse(&args(&[
+            "recon/tbs/ja/overlays/resource_3b7_c_02000ac8.c", "--edition", "tbs-ja",
+        ])).unwrap();
+        assert_eq!(japanese.target.id.as_str(), "tbs-ja");
+        assert_eq!(japanese.target.edition_define, "TBS_EDITION_JA");
+        assert_eq!(japanese.target.output_dir, "out/tbs-ja");
+        assert_eq!(japanese.overlay.as_deref(), Some("resource_3b7"));
+        assert!(parse(&args(&["08123456.c", "--game", "tla", "--edition", "tbs-ja"])).is_err());
+        assert!(parse(&args(&["08123456.c", "--edition", "tbs-xx"])).is_err());
+    }
 
     #[test]
     fn overlay_comes_from_the_draft_path() {

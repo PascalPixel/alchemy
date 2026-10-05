@@ -1,6 +1,7 @@
 
 use crate::deps::{self, Blocker, Image, Index, Key, Symbol, Target};
 use crate::elf::Elf;
+use crate::ld_map::{self, Map};
 use crate::similar::{self, Origin};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
@@ -18,7 +19,50 @@ GAME-LANG. Writes deps-BUILD-VIEW.tsv into the output directory, one per view:\n
   references pool words and ids of not-yet-C functions, classified\n\
   blockers   unresolved names by not-yet-C bytes blocked\n\
   frontier   not-yet-C functions with nothing left to name\n\
-  drafts     drafts with their score and what is left";
+  drafts     drafts with their score and what is left\n\
+ARM listings are inventoried with their full extent and an explicit blocker;\n\
+their calls and references are not yet decoded.";
+
+// ARM listings are still work even though the dependency decoder is Thumb-only.
+// A raw ARM object is one listing/run: retain its complete linked extent,
+// including literal pools and a possible Thumb entry veneer, without decoding
+// its ARM words as Thumb instructions or claiming it has no dependencies.
+fn inventory_arm(
+    image: &similar::Image,
+    classify: &dyn Fn(&str) -> (Origin, String),
+    functions: &mut Vec<(similar::Function, Vec<crate::decode::Ins>)>,
+) -> BTreeSet<u32> {
+    let mut undecoded = BTreeSet::new();
+    for section in Map::parse(image.map).placed {
+        if section.size == 0 || !(section.name == ".text" || section.name.starts_with(".text.")) {
+            continue;
+        }
+        let (origin, source) = classify(&section.path);
+        if origin != Origin::NotYetC || !image.elf.symbols.iter().any(|symbol| {
+            symbol.section != 0 && symbol.section != 0xfff1
+                && (symbol.name == "$a" || symbol.name.starts_with("$a."))
+                && (section.address..section.end()).contains(&symbol.value)
+        }) {
+            continue;
+        }
+        let Some(name) = ld_map::preferred(&section.symbols, section.address) else {
+            continue;
+        };
+        functions.retain(|(function, _)| !(section.address..section.end()).contains(&function.address));
+        functions.push((similar::Function {
+            build: image.build.to_string(),
+            image: image.name.to_string(),
+            name: name.to_string(),
+            address: section.address,
+            bytes: section.size,
+            origin,
+            source,
+            tokens: Vec::new(),
+        }, Vec::new()));
+        undecoded.insert(section.address);
+    }
+    undecoded
+}
 
 struct Options {
     builds: Vec<PathBuf>,
@@ -73,6 +117,7 @@ fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
             map: &map,
         };
         let mut functions = similar::decoded(&image, &|o| classify(root, o), &|_| true);
+        let undecoded_arm = inventory_arm(&image, &|o| classify(root, o), &mut functions);
         functions.sort_by_key(|(f, _)| f.address);
         functions.dedup_by_key(|(f, _)| f.address);
         let symbols = elf
@@ -97,6 +142,7 @@ fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
             name: stem,
             functions,
             symbols,
+            undecoded_arm,
         });
     }
     Ok(images)
@@ -432,9 +478,10 @@ fn report(o: &Options, build: &Path, out_dir: &Path) -> Result<String, String> {
     write(out_dir, &format!("deps-{name}-frontier.tsv"), &frontier)?;
     write(out_dir, &format!("deps-{name}-drafts.tsv"), &draft_rows)?;
     let not_yet_c = index.blockers.len();
+    let undecoded_arm: usize = images.iter().map(|image| image.undecoded_arm.len()).sum();
     let blocking = ranked.iter().filter(|(b, _, _)| b.blocks()).count();
     Ok(format!(
-        "{name}: {} functions, {} calls, {not_yet_c} not yet C, {blocking} blockers, {} on the frontier, {} drafts; {}\n",
+        "{name}: {} functions, {} calls, {not_yet_c} not yet C, {blocking} blockers, {} on the frontier, {} drafts; {undecoded_arm} ARM listings await dependency decoding; {}\n",
         images.iter().map(|i| i.functions.len()).sum::<usize>(),
         index.calls.len(),
         frontier_keys.len(),
@@ -518,5 +565,103 @@ pub fn entry(rest: &[String]) -> std::process::ExitCode {
             eprintln!("{error}");
             std::process::ExitCode::from(2)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::elf::{Section, Symbol as ElfSymbol};
+
+    fn symbol(name: &str, value: u32, kind: u8) -> ElfSymbol {
+        ElfSymbol { name: name.into(), value, size: 0, kind, section: 1 }
+    }
+
+    #[test]
+    fn arm_inventory_keeps_pools_and_aliases_without_inventing_edges_or_frontier_work() {
+        let base = 0x0800_0100;
+        let mut bytes = vec![0; 0x30];
+        // The real Thumb call reaches ThumbCallee. The same halfwords in the
+        // ARM routine must never become a second, invented Thumb call.
+        for offset in [0, 0x20] {
+            bytes[offset..offset + 8].copy_from_slice(&[0x00, 0xf0, 0x06, 0xf8, 0x70, 0x47, 0xc0, 0x46]);
+        }
+        bytes[0x10..0x14].copy_from_slice(&[0x70, 0x47, 0xc0, 0x46]);
+        let elf = Elf {
+            sections: vec![Section { address: base, bytes }],
+            symbols: vec![
+                symbol("ThumbCaller", base + 1, 2),
+                symbol("ThumbCallee", base + 0x11, 2),
+                symbol("Func_08000120", base + 0x20, 0),
+                symbol("ArmWorker", base + 0x20, 0),
+                symbol("Data_08000120", base + 0x20, 0),
+                symbol("ArmWorkerEnd", base + 0x2c, 0),
+                symbol("PoolOnly", base + 0x2c, 0),
+                symbol("$a.1", base + 0x20, 0),
+                symbol("$d", base + 0x28, 0),
+                symbol("$d.1", base + 0x2c, 0),
+            ],
+        };
+        let map = "Linker script and memory map\n\
+            .text 0x08000100 0x30\n\
+            \x20.text 0x08000100 0x8 /out/obj/recon/tbs/raw/08000100.o\n\
+            \x20                0x08000100 ThumbCaller\n\
+            \x20.text 0x08000110 0x4 /out/obj/games/X/THUMB.o\n\
+            \x20                0x08000110 ThumbCallee\n\
+            \x20.text 0x08000120 0xc /out/obj/recon/tbs/raw/08000120.o\n\
+            \x20                0x08000120 Func_08000120\n\
+            \x20                0x08000120 ArmWorker\n\
+            \x20                0x08000120 Data_08000120\n\
+            \x20                0x0800012c ArmWorkerEnd\n\
+            \x20.text 0x0800012c 0x4 /out/obj/recon/tbs/raw/0800012c.o\n\
+            \x20                0x0800012c PoolOnly\n";
+        let image = similar::Image { build: "tbs-en", name: "tbs-en", elf: &elf, map };
+        let classify = |object: &str| {
+            (if object.contains("/raw/") { Origin::NotYetC } else { Origin::C }, object.to_string())
+        };
+        let mut functions = similar::decoded(&image, &classify, &|_| true);
+        let original = functions.clone();
+        let undecoded_arm = inventory_arm(&image, &classify, &mut functions);
+        let arm = functions.iter().find(|(function, _)| function.name == "ArmWorker").unwrap();
+        assert_eq!((arm.0.address, arm.0.bytes), (base + 0x20, 12));
+        assert!(arm.1.is_empty());
+        assert_eq!(functions.len(), original.len() + 1);
+        assert!(!functions.iter().any(|(function, _)| function.name == "PoolOnly"));
+        let images = vec![Image { name: "tbs-en".into(), main: true, functions, symbols: vec![], undecoded_arm }];
+        let index = Index::build(&images, &BTreeMap::new());
+        assert_eq!(index.calls.len(), 1);
+        let call = &index.calls[0];
+        assert_eq!(index.function(call.caller).name, "ThumbCaller");
+        let Target::Function(callee) = call.callee else { panic!("the Thumb target must resolve") };
+        assert_eq!(index.function(callee).name, "ThumbCallee");
+        let arm_key = (0, original.len());
+        assert_eq!(index.blockers[&arm_key].iter().next().unwrap().kind, "arm-dependencies-not-decoded");
+        assert!(!index.frontier().contains(&arm_key));
+    }
+
+    #[test]
+    fn a_thumb_entry_into_arm_is_one_undecoded_listing() {
+        let base = 0x0800_0100;
+        let elf = Elf {
+            sections: vec![Section { address: base, bytes: vec![0x78, 0x47, 0x00, 0x02, 0x00, 0xf0, 0x00, 0xf8] }],
+            symbols: vec![
+                symbol("ArmKernel", base + 1, 2),
+                symbol("$t", base, 0),
+                symbol("$a", base + 4, 0),
+            ],
+        };
+        let map = "Linker script and memory map\n\
+            .text 0x08000100 0x8\n\
+            \x20.text 0x08000100 0x8 /out/obj/recon/tla/raw/08000100.o\n\
+            \x20                0x08000100 ArmKernel\n";
+        let image = similar::Image { build: "tla-en", name: "tla-en", elf: &elf, map };
+        let classify = |object: &str| (Origin::NotYetC, object.to_string());
+        let mut functions = similar::decoded(&image, &classify, &|_| true);
+        assert!(!functions[0].1.is_empty());
+        let undecoded = inventory_arm(&image, &classify, &mut functions);
+        assert_eq!(undecoded, BTreeSet::from([base]));
+        assert_eq!(functions.len(), 1);
+        assert_eq!((functions[0].0.name.as_str(), functions[0].0.bytes), ("ArmKernel", 8));
+        assert!(functions[0].1.is_empty());
     }
 }

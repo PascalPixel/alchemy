@@ -19,6 +19,11 @@ pub struct Function {
     pub callers: u64,
 }
 
+fn listing_stem(source: &str) -> &str {
+    let file = source.rsplit('/').next().unwrap_or(source);
+    [".s", ".S", ".o"].iter().find_map(|suffix| file.strip_suffix(suffix)).unwrap_or(file)
+}
+
 pub(crate) fn runs(script: &str, game: &str) -> BTreeMap<String, usize> {
     let mut run = 0;
     let mut in_raw = false;
@@ -104,7 +109,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             continue;
         }
         let source = c[cs].to_string();
-        let listing = source.rsplit('/').next().unwrap_or("").trim_end_matches(".s").trim_end_matches(".o").to_string();
+        let listing = listing_stem(&source).to_string();
         if main && taken.contains(&listing) {
             continue;
         }
@@ -151,6 +156,20 @@ mod tests {
         let r = runs(script, "tbs");
         assert_eq!(r["08000100"], r["08000200"]);
         assert_ne!(r["08000200"], r["08000300"]);
+    }
+
+    #[test]
+    fn arm_listings_use_the_same_module_run_and_adoption_key() {
+        let script = "\"*/recon/tbs/raw/080155d0.o\"(.text)\n\"*/recon/tbs/raw/080158e8.o\"(.text)\n";
+        let run_of = runs(script, "tbs");
+        let arm = listing_stem("recon/tbs/raw/080155d0.S");
+        let next = listing_stem("recon/tbs/raw/080158e8.S");
+        assert_eq!(arm, "080155d0");
+        assert_eq!(run_of[arm], run_of[next]);
+        let adopted = BTreeSet::from(["080155d0".to_string()]);
+        assert!(adopted.contains(arm));
+        assert_eq!(listing_stem("recon/tbs/raw/08000100.s"), "08000100");
+        assert_eq!(listing_stem("resource_370_overlay.o"), "resource_370_overlay");
     }
 
     #[test]

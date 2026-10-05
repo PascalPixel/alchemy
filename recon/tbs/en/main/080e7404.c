@@ -1,4 +1,8 @@
 /* 080e7404: differ 222 of 1632. Left: in the first effect loop the reference keeps heat (work->frame / 4) in r4 and saves it at sp+8 around AudioCommand_PlayFar(141); here it lands in r6, which shifts registers, pools and stack slots in that loop. Writing the second loop's size as (frame + 0x1d0) << 8 matches its grow giv but needs that sp+8 slot, so it waits. direction = mode still folds to 1. */
+/* Trials: const/register heat, outer heat, declaration order and a sheet-field
+ * pointer leave differ 222. Keeping the undivided frame until palette use gives
+ * 231. Moving heat before angle gives 606. Forcing r4 omits its required call
+ * spill; clobber barriers did not improve the draft and were removed. */
 /* 080e7338 and 080e73a0 are nested functions of this one; score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -15,20 +19,9 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
-
-struct Projection {
-    s32 unknown_00[4];
-    s32 depth;
-};
-
-struct SceneObject {
-    u8 reserved_00[9];
-    u8 flags09_0 : 2;
-    u8 variant : 2;
-    u8 flags09_4 : 4;
-    u8 reserved_0a[28];
-    u8 enabled;
-};
+#include "PROJECT.H"
+#include "ANIMSPR.H"
+#include "TRANSFORM.H"
 
 struct Scale {
     s32 x;
@@ -38,7 +31,6 @@ struct Scale {
 extern void *gBattleFxWork[];
 extern void *gTransitionWork[];
 extern DrawRectangle gWorkSlot[];
-extern struct Projection gProjection;
 extern struct BattleCamera *gCameraWork;
 extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
@@ -59,8 +51,8 @@ void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
 void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleEffect_SetupBlendedDisplay(void);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
-struct SceneObject *GetBattleEffectObject(s32 kind);
-void Object_InitializeMode(struct SceneObject *object, s32 animation);
+struct AnimationObject *GetBattleEffectObject(s32 kind);
+void Object_InitializeMode(struct AnimationObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void AudioCommand_PlayFar(s32 cue);
@@ -71,7 +63,6 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
@@ -170,13 +161,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     if (mode == 1) {
         for (i = 0; i != 2; i++) {
-            struct SceneObject *object = GetBattleEffectObject(483 + i * 0x2001);
+            struct AnimationObject *object = GetBattleEffectObject(483 + i * 0x2001);
 
             work->objects[i] = object;
             if (object != 0) {
-                object->enabled = 0;
+                object->flags = 0;
                 Object_InitializeMode(object, 2);
-                ((struct SceneObject *)work->objects[i])->variant = 3;
+                ((struct AnimationObject *)work->objects[i])->part[0].priority = 3;
             }
         }
     } else {
@@ -210,7 +201,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
     }
     CopyWords((void *)0x06004000, canvas, 0x4000);
-    gProjection.depth = 240;
+    gProjection.center_y = 240;
     BattleFx_SelectLivingTargets(work->effect);
     work->bg2x = 0;
     work->bg2y = 0;
@@ -456,7 +447,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             BattleEventRuntime_BeginPhaseFar(134);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != 64; i++) {
             struct EffectStep *ember = &EMBERS[i];
 

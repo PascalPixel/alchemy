@@ -705,11 +705,6 @@ DjinnMenu_SelectDjinn:
 	.thumb_func
 OwnerAction_RunCompareLoop:
 	.incbin "baserom.gba", 0x000ad74c, 0x00000c20
-	.global Unnamed_080ae2f4
-	.type Unnamed_080ae2f4, %function
-	.thumb_func
-Unnamed_080ae2f4:
-	.incbin "baserom.gba", 0x000ae36c, 0x00000420
 	.section .rom.000aeac4, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:

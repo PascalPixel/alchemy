@@ -140,8 +140,6 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 void ReelGame_RunFrame(void);
 void BattlePres_ProcessPendingTileTransfer(void);
 
-
-
 /* The sparks live at the start of the map cell buffer. */
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -242,9 +240,7 @@ void ReelGame_Run(void)
     REG_WIN0V = 0xa0;
     REG_WIN1H = 0xf0;
     REG_WIN1V = 0xa0;
-    /* The saved sprite palette and the canvas size are declared here, once
-       the display is set: the stack shows them made after the bet's
-       address and before the state's. */
+
     {
         u16 *shade = (u16 *)(work->sheet + 0x200);
         s32 size = 0x8000;

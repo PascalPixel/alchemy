@@ -284,7 +284,7 @@ void FieldScene_RunScene3a4_020025c0(void)
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     if (gGameState.entrance == 2) {
@@ -298,9 +298,9 @@ void FieldScene_RunScene3a4_020025c0(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
         {
-            u8 flags = rec7[35] | 2;
+            u8 flags = rec7->priority_flags | 2;
 
-            rec7[35] = flags;
+            rec7->priority_flags = flags;
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {
@@ -948,12 +948,12 @@ void SceneActor_SetActor12ModeByActorZeroHeight(void)
 
 void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
 {
-    u8 *record;
+    struct FieldActor *record;
 
     record = Object_GetById(no);
-    record[89] &= 0xfe;
+    record->collision_flags &= 0xfe;
 
-    SetMapCellCollision(0, *(s32 *)(record + 8), *(s32 *)(record + 16), 255);
+    SetMapCellCollision(0, record->x.fixed, record->z.fixed, 255);
 }
 
 /* Settles the pushed object on the centre of its cell, then lifts the leader

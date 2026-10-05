@@ -703,7 +703,7 @@ s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     s32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 flag;
     s32 index;
 
@@ -715,20 +715,20 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         index = KuupuappuDou_ScheduleIndex;
         if (KuupuappuDou_ScheduleFrames[index] == KuupuappuDou_ScheduleTimer) {
             rec7 = Actor_Get((index + 11));
-            *(s32 *)(rec7 + 72) = 0xa3d;
+            rec7->gravity = 0xa3d;
             if (++KuupuappuDou_ScheduleIndex > 3) {
                 KuupuappuDou_ScheduleIndex = 0;
             }
         }
         for (i = 0; i <= 3; i++) {
             rec7 = Actor_Get((i + 11));
-            if (*(s32 *)(rec7 + 40) >= 0) {
-                if (*(s32 *)(rec7 + 12) <= 0xffff) {
+            if (rec7->velocity_y >= 0) {
+                if (rec7->y.fixed <= 0xffff) {
                     KuupuappuDou_SpawnPuffs();
-                    *(s32 *)(rec7 + 12) = 0xff0000;
-                    *(s32 *)(rec7 + 72) = 0;
-                    *(s32 *)(rec7 + 40) = 0;
-                    rec7[91] = 0;
+                    rec7->y.fixed = 0xff0000;
+                    rec7->gravity = 0;
+                    rec7->velocity_y = 0;
+                    rec7->unknown_5b = 0;
                     Audio_PlayCue(106);
                 }
             }
@@ -752,42 +752,42 @@ void FieldScene_RunScene3a7SequenceD(void)
 {
 
     s32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 record;
     s32 *selected;
 
-    rec7 = (u8 *)Object_GetById(10);
-    if (rec7[91] == 0) {
+    rec7 = Object_GetById(10);
+    if (rec7->unknown_5b == 0) {
         if ((++KuupuappuDou_TickCounter & 63) == 0) {
             selected = &KuupuappuDou_TickValue;
             record = Engine_RandomNext();
             record = Math_RemainderUnsigned(record, 6);
             *selected = record;
             rec7 = Object_GetById((record + 10));
-            *(s32 *)(rec7 + 72) = 0xa3d;
+            rec7->gravity = 0xa3d;
         }
         for (i = 0; i <= 5; i++) {
             rec7 = Object_GetById((i + 10));
             record = Engine_GameFlagIsSet((i + 0x200));
             if (record != 0) {
-                if (*(s32 *)(rec7 + 40) <= 0) {
-                    if (*(s32 *)(rec7 + 12) > 0x20ffff) {
+                if (rec7->velocity_y <= 0) {
+                    if (rec7->y.fixed > 0x20ffff) {
                         continue;
                     }
                 }
-                *(s32 *)(rec7 + 12) = 0xff0000;
-                *(s32 *)(rec7 + 72) = 0;
-                *(s32 *)(rec7 + 40) = 0;
+                rec7->y.fixed = 0xff0000;
+                rec7->gravity = 0;
+                rec7->velocity_y = 0;
                 Engine_AudioPlayCue(106);
             } else {
-                if (*(s32 *)(rec7 + 40) <= 0) {
-                    if (*(s32 *)(rec7 + 12) > 0xffff) {
+                if (rec7->velocity_y <= 0) {
+                    if (rec7->y.fixed > 0xffff) {
                         continue;
                     }
                 }
-                *(s32 *)(rec7 + 72) = record;
-                *(s32 *)(rec7 + 40) = record;
-                *(s32 *)(rec7 + 12) = 0xff0000;
+                rec7->gravity = record;
+                rec7->velocity_y = record;
+                rec7->y.fixed = 0xff0000;
                 Engine_AudioPlayCue(106);
             }
         }

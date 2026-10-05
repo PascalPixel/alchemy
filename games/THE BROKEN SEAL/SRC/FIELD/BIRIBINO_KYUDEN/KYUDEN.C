@@ -1010,7 +1010,7 @@ void ConfigureSecondarySceneChannels(void)
  * following call reloads its separate zero argument. */
 void RunEventScript02(void)
 {
-    u8 *buf;
+    struct FieldActor *buf;
     struct FieldActor *actor;
     s32 flag;
     u8 clear = 0;
@@ -1018,8 +1018,8 @@ void RunEventScript02(void)
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    buf = (u8 *)Engine_EventGetViewCenter();
-    buf[85] = clear;
+    buf = Engine_EventGetViewCenter();
+    buf->motion_flags = clear;
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);

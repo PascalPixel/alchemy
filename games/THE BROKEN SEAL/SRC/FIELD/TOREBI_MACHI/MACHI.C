@@ -161,11 +161,11 @@ void FieldScene_RunScene3b5_02000224(void)
 {
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     record = Object_GetById(8);
     if ((s32)record != 0) {
-        record[89] = 0;
+        record->collision_flags = 0;
     }
     record = Object_GetById(8);
     Engine_ActorSetSpriteFlags((s32)record, 0);

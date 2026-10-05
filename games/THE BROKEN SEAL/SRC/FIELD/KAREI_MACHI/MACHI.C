@@ -1225,7 +1225,7 @@ void FieldScene_RunMiddleSequence(void)
 
     u32 i;
     s32 rec7;
-    u8 *record;
+    struct FieldActor *record;
     s32 r0;
     s32 v5;
     u8 *p5;
@@ -1291,7 +1291,7 @@ void FieldScene_RunMiddleSequence(void)
         {
             s32 shown = 0x5000;
 
-            *(u16 *)((s32)record + 6) = shown;
+            record->facing = shown;
         }
         Map_CopyCellsTo(88, 48, 88, 45, 2, 3);
         Map_CopyCellsTo(24, 49, 24, 48, 2, 1);

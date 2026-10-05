@@ -68,7 +68,7 @@ void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
  */
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
 {
-    u8 *obj = (u8 *)Engine_ActorLookup(no);
+    struct FieldActor *obj = Engine_ActorLookup(no);
 
     if (obj == 0) {
         return;
@@ -78,15 +78,15 @@ void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
         s32 scale = 0x14000;
         u8 *p = obj;
         u8 zero = 0;
-        *(s32 *)(obj + 0x30) = scale;
-        *(s32 *)(obj + 0x34) = scale >> 1;
+        obj->speed = scale;
+        obj->acceleration = scale >> 1;
         p += 0x5b;
         *p = zero;
     }
 
     ObjectDispatch_InitFromTable6();
     Object_SetMode(obj, 5);
-    Engine_ObjectSetPosition(obj, x << 16, *(s32 *)(obj + 12), z << 16);
+    Engine_ObjectSetPosition(obj, x << 16, obj->y.fixed, z << 16);
     Object_CommitPosition(obj);
     Object_SetMode(obj, 1);
 }

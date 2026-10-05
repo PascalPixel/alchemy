@@ -939,7 +939,7 @@ void Scene_UnmaskGarcia(void)
 void Scene_AlexTakesStars(void)
 {
     u32 i;
-    u8 *rec;
+    struct FieldActor *rec;
     s32 record;
     s32 none;
 
@@ -975,13 +975,13 @@ void Scene_AlexTakesStars(void)
     UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Object_GetById(ACTOR_GERALD);
-    rec[90] &= 254;
+    rec->unknown_5a &= 254;
     /* FAKEMATCH: the zero is parked here, well before its one store, which
      * keeps it in the register the reference holds it in. */
     none = 0;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_EventWait(30);
-    SetFlagBits(&rec[90], 1);
+    SetFlagBits(&rec->unknown_5a, 1);
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgSoruPermitRelieveElemental + 5);
@@ -997,13 +997,13 @@ void Scene_AlexTakesStars(void)
     record = Actor_Get(ACTOR_ALEX);
     Engine_ActorSetSpriteFlags(record, 0);
     rec = Object_GetById(ACTOR_ALEX);
-    rec[85] = none;
+    rec->motion_flags = none;
     Audio_PlayCue(220);
     for (i = 0; i != 30; i++) {
-        *(s32 *)(rec + 12) += 0x10000;
+        rec->y.fixed += 0x10000;
         Engine_EventWait(1);
     }
-    rec[85] = 5;
+    rec->motion_flags = 5;
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     Event_SayThenWait(1, 10);
     Actor_ShowEmote(ACTOR_ALEX, 0x101, 60);
@@ -1056,7 +1056,7 @@ void Scene_AlexTakesStars(void)
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
     Engine_EventWait(10);
     Event_SayThenWait(14, 30);
-    rec[85] = 0;
+    rec->motion_flags = 0;
     Actor_SetSpeed(ACTOR_ALEX, 0x26666, 0x13333);
     Call4(Object_SetMoveTarget, (s32)rec, 0x1cc0000, 0, 0x1680000);
     Engine_ActorWaitForMove(ACTOR_ALEX);
@@ -1071,23 +1071,23 @@ void Scene_AlexTakesStars(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Engine_EventWait(20);
     rec = Object_GetById(ACTOR_GERALD);
-    SetFlagBits(&rec[90], 1);
-    *(s32 *)(rec + 48) = 0x30000;
-    *(s32 *)(rec + 52) = 0x20000;
+    SetFlagBits(&rec->unknown_5a, 1);
+    rec->speed = 0x30000;
+    rec->acceleration = 0x20000;
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = 0x60000;
+    rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x156, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = 0x60000;
+    rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x138, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = 0x60000;
+    rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x116, 0x1e0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);

@@ -469,7 +469,7 @@ void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
 
 void Scene_OverhearSaturosAndMenardi(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 x, z;
     s32 evt;
     s32 evt2;
@@ -491,9 +491,9 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x148);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 
-    record = (u8 *)Object_GetById(0);
-    x = *(s16 *)(record + 10);
-    z = *(s16 *)(record + 18);
+    record = Object_GetById(0);
+    x = record->x.part.pixel;
+    z = record->z.part.pixel;
     Actor_SetPosition(ACTOR_JASMINE, x << 16, z << 16);
     Actor_SetPosition(ACTOR_GERALD, x << 16, z << 16);
 
@@ -632,26 +632,26 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_SetSpeed(ACTOR_MENARDI, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_SATUROS, 0x8000, 0x4000);
 
-    record = (u8 *)Object_GetById(14);
-    *(record + 90) &= 0xfe;
-    record = (u8 *)Object_GetById(15);
-    *(record + 90) &= 0xfe;
+    record = Object_GetById(14);
+    record->unknown_5a &= 0xfe;
+    record = Object_GetById(15);
+    record->unknown_5a &= 0xfe;
 
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x178);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x178);
     Engine_EventWait(6);
 
-    record = (u8 *)Object_GetById(14);
-    *(record + 90) |= 1;
-    record = (u8 *)Object_GetById(15);
+    record = Object_GetById(14);
+    record->unknown_5a |= 1;
+    record = Object_GetById(15);
     {
         /* FAKEMATCH: a result temporary, not the compound or-assign the
          * first occurrence above uses: the reference merges the byte into
          * the mask's register, which the two-address ORR does only when
          * the result is its own object. */
-        u8 merged = (u8)(*(record + 90) | 1);
+        u8 merged = (u8)(record->unknown_5a | 1);
 
-        *(record + 90) = merged;
+        record->unknown_5a = merged;
     }
 
     Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
@@ -665,17 +665,17 @@ void Scene_OverhearSaturosAndMenardi(void)
     Audio_PlayCue(17);
 
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    record = (u8 *)Object_GetById(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
 
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
-    record = (u8 *)Object_GetById(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_JASMINE, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_JASMINE);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);

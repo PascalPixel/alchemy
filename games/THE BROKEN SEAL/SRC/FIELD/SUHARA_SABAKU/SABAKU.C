@@ -167,7 +167,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 {
     s32 p10;
     s32 rec2;
-    u8 *rec7;
+    struct FieldActor *rec7;
     struct FieldActor *record;
     u8 *p6;
     u8 *base;
@@ -189,11 +189,11 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         Engine_ActorWaitForMove((s32)p6);
         Audio_PlayCue(244);
         Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
-        rec7[85] = rec2;
-        Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12) + 0x200000, *(s32 *)(rec7 + 16));
+        rec7->motion_flags = rec2;
+        Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000, rec7->z.fixed);
         Engine_ActorWaitForMove((s32)p6);
-        *(s32 *)(rec7 + 40) = rec2;
-        rec7[85] = 4;
+        rec7->velocity_y = rec2;
+        rec7->motion_flags = 4;
         *(u8 *)(base + 498) = 2;
         GameFlag_Set(0x20f);
         GameFlag_SetByte(0x218, p10);

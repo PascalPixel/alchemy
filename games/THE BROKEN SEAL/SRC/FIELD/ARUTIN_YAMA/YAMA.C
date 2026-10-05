@@ -677,7 +677,7 @@ void SceneActor_SetActor10Byte23To1(void)
     Object_GetById(10)->priority_flags = 1;
 }
 
-void FieldScene_RunScene3a4_02000c9c(void)
+void ArutinYama_PushMovableObject(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 

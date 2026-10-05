@@ -89,7 +89,7 @@ void FieldScene_RunScene3a4SequenceC(void);
 void FieldScene_RunScene3a4SequenceD(void);
 void SceneActor_SetActor10Byte23To3(void);
 void SceneActor_SetActor10Byte23To1(void);
-void FieldScene_RunScene3a4_02000c9c(void);
+void ArutinYama_PushMovableObject(void);
 void ArutinYama_RestoreAreaThree(void);
 void ArutinYama_UpdateDriftingLeaf(union FieldObject *object);
 void ArutinYama_RestoreAreaFour(void);

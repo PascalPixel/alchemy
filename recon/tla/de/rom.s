@@ -2684,28 +2684,28 @@ Func_080d3070:
 	.section .rom.000e0116, "ax"
 	.incbin "baserom.gba", 0x000e0116, 0x00000002
 	.section .rom.000e0118, "ax"
-	.global Func_080d3118
-	.type Func_080d3118, %function
+	.global ObjectMotion_SetHorizontalPositionWithTerrain
+	.type ObjectMotion_SetHorizontalPositionWithTerrain, %function
 	.thumb_func
-Func_080d3118:
+ObjectMotion_SetHorizontalPositionWithTerrain:
 	.incbin "baserom.gba", 0x000e0118, 0x0000004c
 	.section .rom.000e0164, "ax"
-	.global Func_080d3164
-	.type Func_080d3164, %function
+	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
+	.type ObjectMotion_SetHorizontalPositionAndAngleWithTerrain, %function
 	.thumb_func
-Func_080d3164:
+ObjectMotion_SetHorizontalPositionAndAngleWithTerrain:
 	.incbin "baserom.gba", 0x000e0164, 0x0000005c
 	.section .rom.000e01c0, "ax"
-	.global Func_080d31c0
-	.type Func_080d31c0, %function
+	.global ObjectMotion_SetPositionWithTerrain
+	.type ObjectMotion_SetPositionWithTerrain, %function
 	.thumb_func
-Func_080d31c0:
+ObjectMotion_SetPositionWithTerrain:
 	.incbin "baserom.gba", 0x000e01c0, 0x00000054
 	.section .rom.000e0214, "ax"
-	.global Func_080d3214
-	.type Func_080d3214, %function
+	.global ObjectMotion_MoveToObject
+	.type ObjectMotion_MoveToObject, %function
 	.thumb_func
-Func_080d3214:
+ObjectMotion_MoveToObject:
 	.incbin "baserom.gba", 0x000e0214, 0x0000002c
 	.section .rom.000e0268, "ax"
 	.global ObjectMotion_WaitForAnimationChange

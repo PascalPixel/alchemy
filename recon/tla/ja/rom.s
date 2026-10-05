@@ -3496,28 +3496,6 @@ ObjectMotion_CenterOnColumn:
 	.thumb_func
 Func_080d3070:
 	.incbin "baserom.gba", 0x000d3050, 0x0000008c
-	.section .rom.000d30f6, "ax"
-	.incbin "baserom.gba", 0x000d30f6, 0x00000002
-	.global Func_080d3118
-	.type Func_080d3118, %function
-	.thumb_func
-Func_080d3118:
-	.incbin "baserom.gba", 0x000d30f8, 0x0000004c
-	.global Func_080d3164
-	.type Func_080d3164, %function
-	.thumb_func
-Func_080d3164:
-	.incbin "baserom.gba", 0x000d3144, 0x0000005c
-	.global Func_080d31c0
-	.type Func_080d31c0, %function
-	.thumb_func
-Func_080d31c0:
-	.incbin "baserom.gba", 0x000d31a0, 0x00000054
-	.global Func_080d3214
-	.type Func_080d3214, %function
-	.thumb_func
-Func_080d3214:
-	.incbin "baserom.gba", 0x000d31f4, 0x0000002c
 	.section .rom.000d3248, "ax"
 	.global ObjectMotion_WaitForAnimationChange
 	.type ObjectMotion_WaitForAnimationChange, %function

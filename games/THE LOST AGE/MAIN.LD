@@ -848,7 +848,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID_3.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d3050)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID_5.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000d30f6)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/TERRAIN_POSITION.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID_6.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_ACTION_BY_ID.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d3248)

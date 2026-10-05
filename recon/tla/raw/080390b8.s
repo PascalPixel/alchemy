@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080390b8
+	.global UiWork_UploadDirtyBlocks
 	.thumb_func
-Func_080390b8:
+UiWork_UploadDirtyBlocks:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803d2d0
+	.global UiWork_SetTwoEntriesTo999
 	.thumb_func
-Func_0803d2d0:
+UiWork_SetTwoEntriesTo999:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #60]

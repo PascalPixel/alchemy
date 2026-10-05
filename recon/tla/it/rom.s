@@ -976,19 +976,12 @@ Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f2dc, 0x00008d24
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000534
-	.section .rom.00038f40, "ax"
-	.balign 4
-	.global UiWork_InitializeWithResourceCounters
-	.type UiWork_InitializeWithResourceCounters, %function
+	.section .rom.000390b8, "ax"
+	.global UiWork_UploadDirtyBlocks
+	.type UiWork_UploadDirtyBlocks, %function
 	.thumb_func
-UiWork_InitializeWithResourceCounters:
-	.incbin "baserom.gba", 0x00038f40, 0x000000c4
-	.section .rom.00039004, "ax"
-	.global UiWork_Initialize
-	.type UiWork_Initialize, %function
-	.thumb_func
-UiWork_Initialize:
-	.incbin "baserom.gba", 0x00039004, 0x00000118
+UiWork_UploadDirtyBlocks:
+	.incbin "baserom.gba", 0x000390b8, 0x00000064
 	.section .rom.0003911c, "ax"
 	.global UiWindow_EraseBorderRect
 	.type UiWindow_EraseBorderRect, %function
@@ -1045,7 +1038,17 @@ UiWork_ProcessDirectWork:
 UiWindow_DrawFrame:
 	.incbin "baserom.gba", 0x0003a068, 0x00000334
 	.section .rom.0003a42a, "ax"
-	.incbin "baserom.gba", 0x0003a42a, 0x000000ea
+	.incbin "baserom.gba", 0x0003a42a, 0x00000002
+	.global UiWork_InitCountersWithResourceAndScheduleRefresh
+	.type UiWork_InitCountersWithResourceAndScheduleRefresh, %function
+	.thumb_func
+UiWork_InitCountersWithResourceAndScheduleRefresh:
+	.incbin "baserom.gba", 0x0003a42c, 0x00000068
+	.global UiWork_InitCountersAndScheduleRefresh
+	.type UiWork_InitCountersAndScheduleRefresh, %function
+	.thumb_func
+UiWork_InitCountersAndScheduleRefresh:
+	.incbin "baserom.gba", 0x0003a494, 0x00000080
 	.section .rom.0003a514, "ax"
 	.global Func_0803a530
 	.type Func_0803a530, %function
@@ -1192,7 +1195,12 @@ Func_0803ce64:
 Func_0803d020:
 	.incbin "baserom.gba", 0x0003d078, 0x00000158
 	.section .rom.0003d21c, "ax"
-	.incbin "baserom.gba", 0x0003d21c, 0x0000012c
+	.incbin "baserom.gba", 0x0003d21c, 0x0000010c
+	.global UiWork_SetTwoEntriesTo999
+	.type UiWork_SetTwoEntriesTo999, %function
+	.thumb_func
+UiWork_SetTwoEntriesTo999:
+	.incbin "baserom.gba", 0x0003d328, 0x00000020
 	.section .rom.0003d348, "ax"
 	.global Localization_LookupEntryId
 	.type Localization_LookupEntryId, %function

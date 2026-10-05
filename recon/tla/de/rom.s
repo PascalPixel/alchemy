@@ -3813,20 +3813,8 @@ UiIcon_PrepareObject:
 	.incbin "baserom.gba", 0x00102ce6, 0x0000025a
 	.section .rom.00102f9c, "ax"
 	.incbin "baserom.gba", 0x00102f9c, 0x000001d4
-	.section .rom.00103222, "ax"
-	.incbin "baserom.gba", 0x00103222, 0x00000002
-	.section .rom.00103224, "ax"
-	.global Render_SetTilemapFlagRect
-	.type Render_SetTilemapFlagRect, %function
-	.thumb_func
-Render_SetTilemapFlagRect:
-	.incbin "baserom.gba", 0x00103224, 0x00000088
-	.section .rom.001032ac, "ax"
-	.global Palette_CopyObjectBankToBackground14
-	.type Palette_CopyObjectBankToBackground14, %function
-	.thumb_func
-Palette_CopyObjectBankToBackground14:
-	.incbin "baserom.gba", 0x001032ac, 0x000000c8
+	.section .rom.001032dc, "ax"
+	.incbin "baserom.gba", 0x001032dc, 0x00000098
 	.section .rom.001033b6, "ax"
 	.incbin "baserom.gba", 0x001033b6, 0x00000002
 	.section .rom.001034a2, "ax"

@@ -21,7 +21,8 @@ struct UiRenderWork {
     /* Set when the tilemap needs copying to VRAM. */
     u8 dirty;
     u8 unknown_04[4];
-    u16 tilemap[640];
+    /* Twenty rows of 32 cells: the screen's 30 columns and two spare. */
+    u16 tilemap[20][32];
     struct UiWindow windows[UI_WINDOW_COUNT];
     struct UiChannelSlot channels[3];
     struct RenderOutput outputs[UI_OUTPUT_COUNT];

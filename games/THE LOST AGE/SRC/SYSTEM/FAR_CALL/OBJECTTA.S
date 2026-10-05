@@ -72,7 +72,7 @@ Object_SetWideSpriteFar:
 	.global Func_080c8428
 	.thumb_func
 Func_080c8428:
-	overlay_veneer Func_080ceec8
+	overlay_veneer Object_ReturnHome
 	.global Func_080c8430
 	.thumb_func
 Func_080c8430:

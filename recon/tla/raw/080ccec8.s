@@ -369,7 +369,7 @@ Func_080ccec8:
 	bl UiText_ShowPositionedMessageAndWaitFar
 .L_080cd1ca:
 	mov r0, r10
-	bl Func_080ceeac
+	bl Object_GetSpriteShape
 	cmp r0, #0
 	beq .L_080cd1fe
 	movs r1, #1

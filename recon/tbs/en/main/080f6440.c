@@ -1,14 +1,16 @@
-/* 2026-10-05 (deep finisher 16, later): alchemy diff 120. The spin's
- * pos update loop works through a row pointer and adds 8 in two places,
- * if (row->stop != 0) row->pos += 8; else if ((row->pos & 15) != 8)
- * row->pos += 8; (jump2 merges the two adds): GCSE then moves the pos
- * load onto the stop != 0 edge, keeps pos in a register for the 336 test,
- * and leaves 15 and 336 in the loop, as listed. One || condition with the
- * pointer gave 165-223 (15 hoisted, the edge block placed before the add).
- * Remaining: state 0's prize branch (the listing sets r8 = &work->spins
- * inline before its far jump to build_objects, this draft shares the join
- * stub; the reload registers of the prize store differ), and state 11's
- * &work->window, computed before the phase store in the listing.
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 110. The prompt
+ * field is an enum: its stores no longer share an alias set with the
+ * window reads, so sched2 computes &work->window before the prompt store
+ * in states 5 and 11, as listed (the window fields as pointers or long
+ * do the same; plain int does not). Everything from build_objects on now
+ * matches; the rest is state 0. There the listing puts the r8 =
+ * &work->spins edge insertion inline in the prize branch (its constant
+ * reloaded in r3) where this draft's matches the pressed & 1 join stub
+ * (r0) and jump2 merges the two; the prize store's save + 0x120 is summed
+ * into save's own reload register in the listing (adds r2, r2, r1), here
+ * into a third register, which shifts the reload rotation for the rest of
+ * state 0. Tried: prize before the state store (162), won_prizes[n] (190),
+ * -2 (110), a prize pointer (135), save set after work (160).
  */
 /* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
  * Use the existing ReelGame_Run saved-game view from GameState+12 instead
@@ -96,6 +98,17 @@ struct ReelObject {
     volatile u32 attr2;
 };
 
+/* The prompt the main window shows, by where the cursor is when it was
+   drawn; the settle prompt of state 11 reuses the first value. */
+enum ReelPrompt {
+    REEL_PROMPT_NONE,
+    REEL_PROMPT_ALL_HELD,   /* lever, every row held: first line */
+    REEL_PROMPT_ALL_HELD_2, /* lever, every row held: second line */
+    REEL_PROMPT_LEVER,      /* lever, some row free */
+    REEL_PROMPT_FREE_ROW,
+    REEL_PROMPT_HELD_ROW
+};
+
 struct ReelWork {
     struct ReelRow row[5];
     s32 state;
@@ -114,7 +127,7 @@ struct ReelWork {
     s32 sub_window;
     u8 unknown_4d0[8];
     u16 scanline_offsets[160];
-    s32 phase;        /* which prompt the window currently shows */
+    enum ReelPrompt phase;
 };
 
 struct ReelSave {

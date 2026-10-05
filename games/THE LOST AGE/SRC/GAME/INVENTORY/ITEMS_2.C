@@ -24,8 +24,7 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id)
             if (count > 29)
                 return -1;
             {
-                /* FAKEMATCH: the mask gets its own temporary before the
-                   and; the one-expression store allocates other registers. */
+                /* FAKEMATCH: a separate mask temporary preserves the and/store registers. */
                 s32 value = INVENTORY_ENTRY_MASK;
 
                 value &= entry;

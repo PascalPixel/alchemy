@@ -22,9 +22,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
     }
 
     if (found < 0) {
-        /* FAKEMATCH: typed indexing advances a running offset and swaps
-           the halfword operands, shortening the existing free-slot loop
-           by four native bytes. Retain its scalar member-address walk. */
+        /* FAKEMATCH: the scalar member-address walk preserves halfword operands and the four-byte-longer free-slot loop. */
         for (index = 0; index <= 30; index++) {
             s32 offset = index * (s32)sizeof(state->action_slots[0]) +
                 (s32)&((struct OwnerActionState *)0)->action_slots;

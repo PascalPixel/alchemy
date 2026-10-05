@@ -14,8 +14,7 @@ u32 *Trade_AddOffer(u32 owner, u32 element, u32 djinn)
     entries = (u8 *)state->offers;
     count_p = &state->count;
     count = *count_p;
-    /* FAKEMATCH: five typed append forms and a pointer handoff changed the
-       first store or its registers. Byte strides preserve the 60-byte order. */
+    /* FAKEMATCH: byte strides preserve the first store's order and registers. */
     offset = count * sizeof(struct TradeOffer);
     entries[offset] = element;
     count++;

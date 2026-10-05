@@ -87,7 +87,10 @@ struct HeapSlots {
     /* The resource selection menu's work, which The Broken Seal keeps as
        gMenuSelectWork. */
     void *menu_select_work;
-    void *unknown_ec[5];
+    void *unknown_ec[3];
+    /* Heap block 62, the arc effect's work. */
+    void *block_62;
+    void *unknown_fc[1];
 };
 
 #define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */

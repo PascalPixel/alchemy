@@ -326,7 +326,7 @@ Func_080dfd00:
 	mov r3, r10
 	movs r1, #0
 	ldr r0, [r3, #16]
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	bl BattleFx_PrepareBufferInterpolation
 	adds r2, r7, #0
 	adds r2, #100

@@ -4338,37 +4338,19 @@ Func_080e035c:
 	.incbin "baserom.gba", 0x000e03b6, 0x000008c2
 	.section .rom.000e0ca0, "ax"
 	.incbin "baserom.gba", 0x000e0ca0, 0x000006d0
-	.section .rom.000e1370, "ax"
-	.global Func_080e15fc
-	.type Func_080e15fc, %function
-	.thumb_func
-Func_080e15fc:
-	.incbin "baserom.gba", 0x000e1370, 0x00000034
-	.section .rom.000e13dc, "ax"
-	.incbin "baserom.gba", 0x000e13dc, 0x00000038
-	.section .rom.000e1414, "ax"
-	.global Func_080e1650
-	.type Func_080e1650, %function
-	.thumb_func
-Func_080e1650:
-	.incbin "baserom.gba", 0x000e1414, 0x00000028
+	.section .rom.000e143c, "ax"
 	.global BattleFx_SpawnScaledArcObjects
 	.type BattleFx_SpawnScaledArcObjects, %function
 	.thumb_func
 BattleFx_SpawnScaledArcObjects:
-	.incbin "baserom.gba", 0x000e143c, 0x000001b4
-	.section .rom.000e15f0, "ax"
-	.global Func_080dc1b0
-	.type Func_080dc1b0, %function
+	.incbin "baserom.gba", 0x000e143c, 0x000000c4
+	.global BattleFx_UpdateArcEffect
+	.type BattleFx_UpdateArcEffect, %function
 	.thumb_func
-Func_080dc1b0:
-	.incbin "baserom.gba", 0x000e15f0, 0x00000054
-	.section .rom.000e1644, "ax"
-	.global Field_EndActorSpriteEffect
-	.type Field_EndActorSpriteEffect, %function
-	.thumb_func
-Field_EndActorSpriteEffect:
-	.incbin "baserom.gba", 0x000e1644, 0x00000f98
+BattleFx_UpdateArcEffect:
+	.incbin "baserom.gba", 0x000e1500, 0x000000f0
+	.section .rom.000e166c, "ax"
+	.incbin "baserom.gba", 0x000e166c, 0x00000f70
 	.section .rom.000e25dc, "ax"
 	.global Func_080eaeb4
 	.type Func_080eaeb4, %function
@@ -4530,7 +4512,10 @@ EffectSlot_UpdateMotion:
 	.type Func_080d9ab0, %function
 	.thumb_func
 Func_080d9ab0:
-	.incbin "baserom.gba", 0x000ed7f8, 0x000002c8
+	.incbin "baserom.gba", 0x000ed7f8, 0x00000008
+	.global BattleFx_ArcTiles
+BattleFx_ArcTiles:
+	.incbin "baserom.gba", 0x000ed800, 0x000002c0
 	.global Encounter_EnemyGroupTable
 Encounter_EnemyGroupTable:
 	.incbin "baserom.gba", 0x000edac0, 0x00001488

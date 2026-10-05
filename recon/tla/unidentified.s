@@ -537,8 +537,8 @@ Djinn_Definitions:
 	.section .unidentified.080c89cc,"a"
 	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .unidentified.080ed80c,"a"
-	.global Data_080ed80c
-Data_080ed80c:
+	.global BattleFx_ArcTiles
+BattleFx_ArcTiles:
 	.incbin "baserom.gba", 0x000ed80c, 0x00000100
 	.global Data_080ed90c
 Data_080ed90c:

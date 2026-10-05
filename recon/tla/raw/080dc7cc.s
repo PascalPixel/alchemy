@@ -10,7 +10,7 @@ Func_080dc7cc:
 	ldr r3, [r3]
 	movs r1, #0
 	ldr r0, [r3, #16]
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	movs r0, #1
 	bl WaitFrames
 	pop {pc}

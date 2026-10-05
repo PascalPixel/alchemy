@@ -63,8 +63,6 @@ s32 Equipment_HasValue(s32 owner, s32 value)
         s32 current = entry->encoded_action;
 
         entry++;
-        /* FAKEMATCH: the native masks the slot after stepping to the next. */
-        __asm__("");
         if ((current & mask) == value)
             return 1;
         index++;

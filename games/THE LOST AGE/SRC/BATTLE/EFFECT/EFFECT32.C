@@ -24,8 +24,6 @@ void BattleFx_UpdateAllSlots(void)
 
     scene = Ram_HeapSlots->effect_work;
     remaining_slots = 0x17;
-    /* FAKEMATCH: keeps the count between the work load and its first slot. */
-    __asm__("");
     slot = scene->slots;
     do {
         remaining_slots -= 1;

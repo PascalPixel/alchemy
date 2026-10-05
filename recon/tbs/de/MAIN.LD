@@ -160,6 +160,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_SET_CHILD_VALUE_UNLESS_FIFTEEN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/OBJECT.o"(.text)
+    "*/recon/tbs/de/rom.o"(.rom.0000b470)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/OBJECT.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/SCRIPT/SCRIPT.o"(.text)

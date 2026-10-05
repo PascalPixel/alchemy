@@ -34,7 +34,7 @@ Func_0803a1c0:
 	cmp r3, #30
 	bhi .L_0803a2a0
 	adds r2, r7, #0
-	bl Func_08041abc
+	bl UiWindow_ClearTileAttributesInRect
 	ldr r3, .L_0803a234
 	subs r2, r7, #2
 	strh r3, [r5]

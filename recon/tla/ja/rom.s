@@ -986,18 +986,9 @@ Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f258, 0x00008da8
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000528
-	.section .rom.000390ac, "ax"
-	.global UiWork_UploadDirtyBlocks
-	.type UiWork_UploadDirtyBlocks, %function
-	.thumb_func
-UiWork_UploadDirtyBlocks:
-	.incbin "baserom.gba", 0x000390ac, 0x00000064
-	.section .rom.00039110, "ax"
-	.global UiWindow_EraseBorderRect
-	.type UiWindow_EraseBorderRect, %function
-	.thumb_func
-UiWindow_EraseBorderRect:
-	.incbin "baserom.gba", 0x00039110, 0x00000144
+	.section .rom.000391b8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000391b8, 0x0000009c
 	.section .rom.00039254, "ax"
 	.global UiWindow_Create
 	.type UiWindow_Create, %function
@@ -1415,7 +1406,12 @@ Func_080400e8:
 	.type UiText_RenderStringTiles, %function
 	.thumb_func
 UiText_RenderStringTiles:
-	.incbin "baserom.gba", 0x000417f0, 0x000004bc
+	.incbin "baserom.gba", 0x000417f0, 0x00000410
+	.global UiWindow_ClearTileAttributesInRect
+	.type UiWindow_ClearTileAttributesInRect, %function
+	.thumb_func
+UiWindow_ClearTileAttributesInRect:
+	.incbin "baserom.gba", 0x00041c00, 0x000000ac
 	.section .rom.00041cac, "ax"
 	.global Func_08041b68
 	.type Func_08041b68, %function

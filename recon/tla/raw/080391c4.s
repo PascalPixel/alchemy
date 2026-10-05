@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiWork_DrawByAttributes
 	.thumb_func
 UiWork_DrawByAttributes:

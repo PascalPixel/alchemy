@@ -74,7 +74,24 @@
  * declared after heat 572; level = (i - 16) / 4 + heat without the green
  * temporary 202; !count for count == 0 190. The palette loop still ties the
  * quotient to level in local-alloc (ours adds r3, r3, r6; native adds r2, r3,
- * r4), so the native quotient or level is not a local quantity there. */
+ * r4), so the native quotient or level is not a local quantity there.
+ * 2026-10-06 session 3 (worktree wf_550f1aeb-bae-34): differ 89 of 1632
+ * (draft 1633, common 1588). The 141 cue tests frame (fp) as the native
+ * does, with heat = work->frame / 4 and no count local: the extra reload
+ * of fp puts the reload-register rotation back in step after the cue, so
+ * the zero loops' increments and the position stores now match (183 ->
+ * 89). Rotation in the native from the loop top: r4 (sp+60), r1 (0x778c;
+ * r0 is skipped because work lives in r0), r2 (0x1f80), r3 (mode), r0
+ * (frame > 16), r1 (frame > 4), r2 (frame == 0), r3 (i = 0, which then
+ * shares its zero with the first loop's store, no pool load). Ours puts
+ * work in r2, so 0x778c reloads into r0 and every later reload is one
+ * register early: i = 0 takes r2 and the first zero loop loads its zero
+ * from a pool placed after that loop (cause (a)). Global must give work
+ * r0: r1, r2 and r3 conflict with it in the native (load r2, copy r3).
+ * Trials on 89: line computed between the load and the division 95;
+ * keep's asm between the load and the division 95 (load and copy stay
+ * apart through lreg, but global gives the copy the load's register);
+ * count loaded before angle 89. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -328,8 +345,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         work->frame = 0;
         for (frame = 0; frame != 192; frame++, work->frame++) {
             s32 angle = frame << 8;
-            s32 count = work->frame;
-            s32 heat = count / 4;
+            s32 heat = work->frame / 4;
             u16 *line = (u16 *)((u8 *)work + 0x1f80);
             s32 size;
             s32 x;
@@ -345,7 +361,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 if ((gKeysRepeat & 3) && frame > 4)
                     goto skipped;
             }
-            if (count == 0)
+            if (frame == 0)
                 AudioCommand_PlayFar(141);
             /* FAKEMATCH: ends keep's life and clobbers r6 while heat is live, so heat finds no call-saved low register and takes r4 (190 -> 183); without it heat takes r6. */
             __asm__ __volatile__("" : : "l" (keep), "l" (keep) : "r6");

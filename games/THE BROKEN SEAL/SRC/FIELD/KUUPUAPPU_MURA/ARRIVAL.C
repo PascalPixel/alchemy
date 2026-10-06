@@ -321,7 +321,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     struct FieldSprite *sprite;
     s32 x;
     s32 z;
-    s32 zero;
+    u8 zero;
 
     leader = (union DriftingObject *)Object_GetById(19);
     if (leader == NULL)

@@ -932,7 +932,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         Engine_ActorSetPosition(21, 0x1080000, 0x2be0000);
         record = (s32)Object_GetById(21);
         {
-            s32 shown = 0x5000;
+            u16 shown = 0x5000;
 
             *(u16 *)(record + 6) = shown;
         }

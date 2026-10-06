@@ -167,7 +167,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         do {
             *(s32 *)(slot) = 1;
             {
-                s32 shown = 0x11e;
+                u16 shown = 0x11e;
 
                 *(u16 *)(slot + 24) = shown;
             }

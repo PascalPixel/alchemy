@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1406, common 807, differ 1184.
+ * Native 1392 instructions, draft 1411, common 816, differ 1171.
  * Remaining: native 352-byte frame versus 348, redraw/copy register choices,
  * spill slots, sprite load order, and consequent branches/literal pools.
  *
@@ -8,6 +8,9 @@
  * as well gave 1196 and reduced the frame difference from 8 to 4 bytes.
  * Ordinary direct MenuSprite accesses give 1184. Keeping the redraw binding
  * with direct copies gave 1197; direct handle/code arrays gave 1267.
+ * Indexed cursor initialization gives 1178, indexed handle initialization
+ * 1177, together 1171. Unsigned redraw and block-local saved-unit variables
+ * leave 1184 unchanged. The indexed loops preserve the native store bounds.
  * No register bindings or other steering devices remain in this draft.
  */
 #include "IO_REG.H"
@@ -108,9 +111,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     }
     AudioCommand_PlayFar(0x70);
 
-    out = &cur.pos[4];
     for (i = 4; i >= 0; i--) {
-        *out-- = 0;
+        cur.pos[i] = 0;
     }
     cur.entry = 0;
     cur.lastEntry = 0;
@@ -119,11 +121,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     handleCursor = Resource_LoadIntoFreeSlot(0x80);
     handles = tbl;
     codes = sel;
-    q = handles;
-    out = codes;
-    for (i = 10; i >= 0; i--) {
-        *q++ = Resource_LoadIntoFreeSlot(0x80);
-        *out++ = -1;
+    for (i = 0; i <= 10; i++) {
+        handles[i] = Resource_LoadIntoFreeSlot(0x80);
+        codes[i] = -1;
     }
 
     if (listCount != 0) {

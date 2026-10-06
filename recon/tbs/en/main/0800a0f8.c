@@ -18,7 +18,9 @@
    - Also b = -k * (v->v << 8): 150; b from out->b: 150; a from out->a: 136.
    - s16 t and u: 145; s16 t only: 137; center_x inline, no k: 145.
    - Arctan arguments inline: 146; separate dx, dz block locals: 140.
-   - Operand order (s16)t << 8 * k, or (s16)u << 8 * -k: no change.
+   - Operand order (s16)t << 8 * k, or (s16)u << 8 * -k: no change. With
+     a from v->u, (v->u << 8) * k and ((s16)u << 8) * -k put k and -k in
+     Rm as the listing's two muls do: still 124, --arm 188; kept.
    - A pointer, center = &gProjection.center_x, k = *center, gives the
      listing pool word gProjection + 0xc and [rN]: still 124, --arm 198.
    - With center: (s16)t << 8 again: 138; t = v->u = ...: 135; center set
@@ -119,8 +121,8 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
             v->v = u;
             out->b = u;
             k = gProjection.center_x;
-            a = k * (v->u << 8);
-            b = -k * ((s16)u << 8);
+            a = (v->u << 8) * k;
+            b = ((s16)u << 8) * -k;
             v->dx = -(a + FIXED_MUL(z, -sn));
             v->dz = b + FIXED_MUL(z, cs);
             out->x = (ox + v->dx) >> 8;

@@ -29,12 +29,12 @@
 
 extern u32 gFrameCount;
 
-static __inline__ void Io_Set16(s32 value, u16 *reg)
+static __inline__ void Io_Set16(s32 value, volatile u16 *reg)
 {
     *reg = value;
 }
 
-static __inline__ void Io_Put16(u16 *reg, s32 value)
+static __inline__ void Io_Put16(volatile u16 *reg, s32 value)
 {
     *reg = value;
 }
@@ -140,31 +140,31 @@ s32 Map_InitializePerspectiveScene(void)
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
     MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
-    Io_Set16(0x3f9e, (u16 *)&REG_BLDCNT);
-    Io_Set16(0x1010, (u16 *)&REG_BLDALPHA);
+    Io_Set16(0x3f9e, &REG_BLDCNT);
+    Io_Set16(0x1010, &REG_BLDALPHA);
     REG_BLDY = 0;
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
     work->fade = 0x1f00;
     work->fade_step = 0x80;
-    Io_Set16(0xa80a, (u16 *)&REG_BG3CNT);
-    Io_Set16(0xaa0e, (u16 *)&REG_BG2CNT);
-    Io_Set16(0x0501, (u16 *)&REG_BG1CNT);
+    Io_Set16(0xa80a, &REG_BG3CNT);
+    Io_Set16(0xaa0e, &REG_BG2CNT);
+    Io_Set16(0x0501, &REG_BG1CNT);
     /* FAKEMATCH: loop note keeps BG2PA's constant after its address */
     do {
-        Io_Put16((u16 *)&REG_BG2PA, 0x100);
+        Io_Put16(&REG_BG2PA, 0x100);
         REG_BG2PB = 0;
         REG_BG2PC = 0;
     } while (0);
     /* FAKEMATCH: loop notes keep BG2PD's constant late and r0 first below */
     do {
-        Io_Put16((u16 *)&REG_BG2PD, 0x100);
+        Io_Put16(&REG_BG2PD, 0x100);
         REG_BG2X = 0;
         REG_BG2Y = 0;
-        Io_Put16((u16 *)&REG_BG3PA, 0x100);
+        Io_Put16(&REG_BG3PA, 0x100);
         REG_BG3PB = 0;
         REG_BG3PC = 0;
-        Io_Put16((u16 *)&REG_BG3PD, 0x100);
+        Io_Put16(&REG_BG3PD, 0x100);
         REG_BG3X = 0;
         REG_BG3Y = 0;
     } while (0);
@@ -230,7 +230,7 @@ s32 Map_InitializePerspectiveScene(void)
     REG_MOSAIC = 0;
     /* FAKEMATCH: loop notes keep the display writes in source order */
     do {
-        Io_Put16((u16 *)&REG_DISPCNT, 0x42);
+        Io_Put16(&REG_DISPCNT, 0x42);
     } while (0);
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;

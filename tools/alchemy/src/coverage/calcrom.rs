@@ -123,6 +123,9 @@ pub(crate) struct Measurement {
     /// Every function's ARM instruction bytes, from the images' mapping
     /// symbols: a breakdown of this measurement that changes no total.
     pub arm: Vec<super::arm::ArmRow>,
+    /// Data words in not-yet-C listings that are likely ARM code: listed
+    /// apart, never in `arm`'s tally, any total or any credit.
+    pub arm_likely: Vec<super::arm::ArmRow>,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -865,13 +868,41 @@ pub(crate) fn measure(
             std::fs::read(&elf).map_err(|error| format!("{}: {error}", elf.display()))?;
         let image = super::arm::Image::parse(&bytes)
             .map_err(|error| format!("{}: {error}", elf.display()))?;
-        measurement.arm.extend(super::arm::inventory(
+        // A label names code only in the object that defines it: read from
+        // the object file itself, or for an archive member from the globals
+        // the map lists under that input section.
+        let globals = super::arm::map_globals(&map.text);
+        let defined = |placed: &Placed<'_>| -> Result<Vec<super::arm::Label>, String> {
+            let start = placed.address as u32;
+            if !placed.object.ends_with(')') {
+                if let Ok(bytes) = std::fs::read(root.join(placed.object)) {
+                    return super::arm::object_labels(&bytes, placed.name, start)
+                        .map_err(|error| format!("{}: {error}", placed.object));
+                }
+            }
+            let key = (placed.name.to_owned(), placed.address, placed.object.to_owned());
+            Ok(globals
+                .get(&key)
+                .into_iter()
+                .flatten()
+                .map(|(address, name)| super::arm::Label {
+                    address: *address,
+                    name: name.clone(),
+                    global: true,
+                    function: false,
+                })
+                .collect())
+        };
+        let (arm, likely) = super::arm::inventory(
             &image,
             &map.image,
             &sections(&map.text),
             &spans,
             &describe,
-        )?);
+            &defined,
+        )?;
+        measurement.arm.extend(arm);
+        measurement.arm_likely.extend(likely);
     }
     measurement.done.game_asm -= measurement.stray.min(measurement.done.game_asm);
     for (object, bytes) in &measurement.other {

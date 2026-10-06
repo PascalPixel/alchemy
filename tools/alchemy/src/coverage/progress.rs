@@ -59,6 +59,7 @@ fn done_line(mark: &str, game: &str, status: &Result<Game, String>) -> String {
                 line.push_str(&format!(" + unclassified {} ({object})", commas(*bytes)));
             }
             line.push_str(&arm_part(&super::arm::ArmTally::of(&english.arm)));
+            line.push_str(&likely_part(&english.arm_likely));
             line
         }
         Err(reason) => format!("{mark} {game} DONE: {reason}"),
@@ -82,17 +83,37 @@ fn arm_part(t: &super::arm::ArmTally) -> String {
     part
 }
 
-/// out/reports/arm-GAME.tsv: every function's ARM bytes in the English
-/// build, in image and address order, with what its instructions show.
-fn write_arm(root: &std::path::Path, id: &str, english: &super::calcrom::Measurement) -> Result<(), String> {
-    let mut text = format!("{}\n", super::arm::TSV_HEADER);
-    for row in &english.arm {
-        text.push_str(&row.tsv());
-        text.push('\n');
+/// Data words in the English build's not-yet-C listings that read as ARM
+/// code: apart from the ARM part, never added to it or to any total.
+fn likely_part(rows: &[super::arm::ArmRow]) -> String {
+    let bytes: i64 = rows.iter().map(|row| row.bytes).sum();
+    if bytes == 0 {
+        return String::new();
     }
-    let path = root.join(format!("out/reports/arm-{id}.tsv"));
-    std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
-    std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))
+    let listings = rows.iter().map(|row| row.object.as_str()).collect::<std::collections::BTreeSet<_>>();
+    format!(
+        "; likely ARM written as data in {} not-yet-C listings {} (not in the ARM part)",
+        listings.len(),
+        commas(bytes)
+    )
+}
+
+/// out/reports/arm-GAME.tsv: every function's ARM bytes in the English
+/// build, in image and address order, with what its instructions show;
+/// arm-likely-GAME.tsv: the same for data words in not-yet-C listings that
+/// are likely ARM.
+fn write_arm(root: &std::path::Path, id: &str, english: &super::calcrom::Measurement) -> Result<(), String> {
+    for (file, rows) in [(format!("arm-{id}.tsv"), &english.arm), (format!("arm-likely-{id}.tsv"), &english.arm_likely)] {
+        let mut text = format!("{}\n", super::arm::TSV_HEADER);
+        for row in rows {
+            text.push_str(&row.tsv());
+            text.push('\n');
+        }
+        let path = root.join("out/reports").join(file);
+        std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
+        std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))?;
+    }
+    Ok(())
 }
 
 fn edition_lines(mark: &str, status: &Result<Game, String>) -> Vec<String> {

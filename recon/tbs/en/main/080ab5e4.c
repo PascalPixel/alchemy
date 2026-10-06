@@ -57,9 +57,32 @@
    Trade_RemoveOfferFar, u32 for Djinn_DeactivateFar, u32 * for
    Trade_AddOfferFar, void for UiMenu_SlideCursor (194 -> 182; the call
    then sets r0, and the zero arguments after it load r0 last).
-   UiWork_FinalizeFar returning s32 gives 186.
+   UiWork_FinalizeFar returning s32 gives 186; Djinn_IsActiveFar returning
+   s32 (the header's type), u32 parameters for Trade_AddOfferFar and
+   UiWindow_ClearInteriorTilesFar change nothing.
    Remaining (182): the balance loop's column pointer, the select handlers'
    flag slot and djinn field registers, the cursor-move constants.
+   Measured at 182 (2026-10-06, session 2), not kept: i as the A handler's
+   flag 170 (still not credible source; as the R handler's flag 1276); ok
+   declared anywhere else, or as u8 or u32, unchanged; the R handler's
+   test as if/else-if 566, the A handler's 337; djinn as s32 208, as u16
+   823; pressed, repeat, count, result, sel, groupMode, setAll, redraw and
+   window signed or unsigned unchanged; the final block through
+   state->pair_entries[mode] 223, with entry initialized at declaration
+   311, through djinn 357, as s32 184, constants first 182; the unleash
+   text's 0x666 first or in the middle 182, number first 210; the column
+   pointer as an s32 value 1325, &selected_column[0] 182, the |= 4 store
+   through buf 1373, = 7 1322, Djinn_MarkBalancedEntries's result kept
+   1325; savedY = y before the count loop 214. Lreg priorities in the R
+   handler: element (9 refs, 11 insns) before owner (9, 13) before
+   number (15, 24), giving r5, r6, r7; the
+   native gives number r6 and owner r7. In the cursor blocks the 1
+   (14 refs, 32 insns) outranks the 4 (15, 40); the native ranks the 4
+   first. Permuter runs from 261 (6 min, random, seed 4242: the same
+   sel and savedY moves, 238), restricted to the handlers and cursor
+   blocks (4 min, seed 99: nothing) and from 194 (7 min, seed 7: nothing).
+   The other editions' builds do not declare the English message symbols
+   this draft uses, so their copies are not yet scored.
    The native keeps ok in i's stack slot (sp+68) in both select handlers,
    as when reload spills two pseudos from one hard register; the draft
    gives ok r8. Reusing i as the A handler's flag gives 249, in both
@@ -89,7 +112,7 @@ extern const char DjinnMenu_TextLevel[];
 
 void Owner_RecalculateStatsFar(s32 owner);
 s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 number);
-u32 Djinn_IsActiveFar(s32 owner, s32 element, s32 number);
+s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 number);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 number);
 u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 number);
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);

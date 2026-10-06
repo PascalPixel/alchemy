@@ -165,24 +165,47 @@ fn is_cast_end(tokens: &[Token], close: usize) -> bool {
     false
 }
 
-/// `(x)` around one name or number, where it is neither a call nor a cast.
+/// `(x)` around a name, number or member chain (`(a->b)`, `(a[i].c)`),
+/// where it is neither a call nor a cast.
 fn parentheses(text: &str, tokens: &[Token], found: &mut Vec<Edit>) {
     for open in 0..tokens.len().saturating_sub(2) {
+        if punct(&tokens[open]) != Some("(") {
+            continue;
+        }
         let after_cast = open > 0 && is_cast_end(tokens, open - 1);
-        if punct(&tokens[open]) != Some("(") || punct(&tokens[open + 2]) != Some(")") || (after_callee(tokens, open) && !after_cast) {
+        if after_callee(tokens, open) && !after_cast {
             continue;
         }
-        let inner = &tokens[open + 1];
-        if !matches!(inner.tok, Tok::Number(_) | Tok::Ident(_)) {
+        let Some(close) = chain_end(tokens, open + 1).filter(|&k| punct(&tokens[k]) == Some(")")) else {
             continue;
-        }
-        if tokens.get(open + 3).is_some_and(|t| operand_start(t) && !matches!(punct(t), Some("-" | "+" | "*" | "&"))) {
+        };
+        if tokens.get(close + 1).is_some_and(|t| operand_start(t) && !matches!(punct(t), Some("-" | "+" | "*" | "&"))) {
             continue;
         }
         if open > 0 && ident(&tokens[open - 1]).is_some_and(|n| n == "sizeof") {
             continue;
         }
-        found.push(Edit { start: tokens[open].start, end: tokens[open + 2].end, text: text[inner.start..inner.end].to_string() });
+        let inner = &text[tokens[open + 1].start..tokens[close - 1].end];
+        found.push(Edit { start: tokens[open].start, end: tokens[close].end, text: inner.to_string() });
+    }
+}
+
+/// The index just past a name or number with its `->` / `.` members and
+/// `[...]` indexes, starting at `from`, which binds tighter than any operator
+/// around it.
+fn chain_end(tokens: &[Token], from: usize) -> Option<usize> {
+    let first = tokens.get(from)?;
+    if matches!(first.tok, Tok::Number(_)) {
+        return Some(from + 1);
+    }
+    ident(first)?;
+    let mut k = from + 1;
+    loop {
+        match tokens.get(k).and_then(punct) {
+            Some("->" | ".") if tokens.get(k + 1).and_then(ident).is_some() => k += 2,
+            Some("[") => k = closing(tokens, k)? + 1,
+            _ => return Some(k),
+        }
     }
 }
 
@@ -244,6 +267,9 @@ mod tests {
     #[test]
     fn negated_comparisons_and_single_parentheses() {
         assert_eq!(rewritten("if (!(a == b) && c) {}\nr = (x) + (3);\n"), "if (a != b && c) {}\nr = x + 3;\n");
+        assert_eq!(rewritten("(s->sprite)->n = -(a[i + 1].b);\n"), "s->sprite->n = -a[i + 1].b;\n");
+        let calls = "f(a->b);\nif (p->q) {}\nr = (a->b + 1);\n";
+        assert_eq!(rewritten(calls), calls);
         let text = "n = !(a == b) + 1;\ny = f(x);\nz = (u8)(w);\ns = sizeof(v);\n";
         assert_eq!(rewritten(text), "n = !(a == b) + 1;\ny = f(x);\nz = (u8)w;\ns = sizeof(v);\n");
     }

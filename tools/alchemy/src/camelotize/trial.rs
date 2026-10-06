@@ -1,12 +1,13 @@
 //! Source edits proved one file at a time: each set of edits is compiled with
 //! the English build's compiler and flags and kept only when the file's
 //! assembly (code, data and every relocation it names) is identical and the
-//! compiler says nothing new. Sets are tried together and bisected when one
-//! fails, so a file costs a handful of compiles, not one per edit.
+//! compiler says nothing new. An edit inside an `#if` block is compiled for
+//! every edition of the game instead. Sets are tried together and bisected
+//! when one fails, so a file costs a handful of compiles, not one per edit.
 
 use crate::compiler::bundle::compiler_command_for_target;
 use crate::compiler::routing::cflags_for_target_source;
-use crate::targets::{target_for, DecompTarget, DecompTargetId};
+use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::path::Path;
 use std::process::Command;
 
@@ -62,8 +63,8 @@ pub(crate) fn apply(text: &str, edits: &[Edit]) -> String {
     out
 }
 
-/// The byte ranges inside `#if` ... `#endif` blocks. One build compiles only
-/// one branch, so an edit there is never proved by it and is not offered.
+/// The byte ranges inside `#if` ... `#endif` blocks, where one build
+/// compiles only one branch.
 pub(crate) fn conditional(text: &str) -> Vec<std::ops::Range<usize>> {
     let mut ranges = Vec::new();
     let mut depth = 0usize;
@@ -147,21 +148,29 @@ impl Build {
     }
 }
 
-/// The edits that leave the file's English assembly and messages unchanged
-/// in every game it builds in, applied, and how many there were.
+/// The edits that leave the file's assembly and messages unchanged in every
+/// game it builds in, applied, and how many there were.
 pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget], found: Vec<Edit>) -> Result<(String, usize), String> {
-    let blocks = conditional(text);
-    let found: Vec<Edit> = found
-        .into_iter()
-        .filter(|e| !blocks.iter().any(|b| b.start < e.end && e.start < b.end))
-        .collect();
     let found = disjoint(found);
     if found.is_empty() {
         return Ok((text.to_string(), 0));
     }
+    // An edit inside an #if block is proved by every edition of the game,
+    // since one build compiles only one branch; otherwise English suffices.
+    let blocks = conditional(text);
+    let branched = found.iter().any(|e| blocks.iter().any(|b| b.start < e.end && e.start < b.end));
+    let targets: Vec<DecompTarget> = games
+        .iter()
+        .flat_map(|&game| {
+            if branched {
+                TARGET_IDS.iter().map(|&id| target_for(id)).filter(|t| t.compiler == game.compiler).collect()
+            } else {
+                vec![english(game)]
+            }
+        })
+        .collect();
     let mut builds = Vec::new();
-    for &game in games {
-        let target = english(game);
+    for target in targets {
         let imports = crate::build_text::fresh_c_imports(root, target)?;
         let directory = tempfile::Builder::new().prefix("alchemy-trial-").tempdir().map_err(|e| e.to_string())?;
         let build = Build { target, imports, directory };

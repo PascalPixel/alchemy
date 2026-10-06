@@ -25,9 +25,10 @@ many places changed in each file. REWRITE is one of:
   barriers      FAKEMATCH-tagged empty asm barriers, with their tag
   numbers       hex literals that are quantities, in decimal; masks, bit
                 operands, addresses and fixed-point constants stay hex
-  casts         value casts and pointer casts the English build does not
-                need: each removal is compiled, and kept only when the
-                file's assembly is identical and no warning is new
+  casts         value casts and pointer casts the compiler does not need:
+                each removal is compiled for English (for every edition
+                inside an #if block), and kept only when the file's
+                assembly is identical and no warning is new
   idioms        x = x + 1 as x++, x = x | n as x |= n, !(a == b) as
                 a != b, parentheses around one name or number, empty
                 statements; each proved the same way as casts

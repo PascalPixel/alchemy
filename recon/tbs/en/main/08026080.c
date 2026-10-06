@@ -1,4 +1,4 @@
-/* 08026080: listing 1585, draft 1587, differ 1094 (common 1039); both
+/* 08026080: listing 1585, draft 1585, differ 1084 (common 1043); both
  * frames are 324 bytes. The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
@@ -18,6 +18,10 @@
  *   r4: 1379 -> 1101.
  * - sel as the parameter: 1104, with sel r10 and mode r8 as native.
  * - cnt = 0 before redraw = 0xFFFF: 1094, the prologue matches.
+ * - the main loop's neighbour index and name character use n, so j lives
+ *   only in the mode 2 search: 1084, instruction counts now equal. Still
+ *   j sits in r7 and found in r1 (caller-saved at sp+8) against native j
+ *   r5, found r7 and the 0xFFFF mask caller-saved at sp+8.
  * Trials this session: gWorkSlot indices 1338; while loop for the party
  * list 1347; (u16) sleep mask, no change (the native keeps ldrh then ands
  * with 0xFFFF hoisted to r4 and caller-saved at sp+8; not reproduced);
@@ -101,6 +105,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     s32 count;
     s32 i;
     s32 j;
+    s32 n;
     s32 nx;
     s32 ny;
     s32 pressed;
@@ -274,9 +279,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         i = 0;
         if ((u32)i < spread) {
             do {
-                j = cursor + i;
-                if (j < total && ids[j] != 0xFE) {
-                    selIds[cnt] = ids[j];
+                n = cursor + i;
+                if (n < total && ids[n] != 0xFE) {
+                    selIds[cnt] = ids[n];
                     tbl[i].flags |= 2;
                     if (tbl[i].index != i) {
                         tbl[i].flags &= (u8)~1;
@@ -285,11 +290,11 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     selSlot[cnt] = (u8)i;
                     cnt++;
                 }
-                if (i != 0 && (j = cursor - i) >= 0 && ids[j] != 0xFE) {
+                if (i != 0 && (n = cursor - i) >= 0 && ids[n] != 0xFE) {
                     /* FAKEMATCH: schedule this consumed side-marker index
                        before the slot writes; folding it differs 1445 versus 1400 here. */
                     u8 mark;
-                    selIds[cnt] = ids[j];
+                    selIds[cnt] = ids[n];
                     mark = (u8)(6 - i);
                     slot = &tbl[6 - i];
                     selSlot[cnt] = mark;
@@ -496,8 +501,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiText_CopyMessageString(width, name, 14);
         } else {
             for (i = 0; i <= 13; i++) {
-                name[i] = j = unit->name[i];
-                if (!j)
+                name[i] = n = unit->name[i];
+                if (!n)
                     break;
             }
             name[i] = 0;

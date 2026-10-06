@@ -69,7 +69,7 @@ Resource_FindFreeEntry:
 	.global Func_0200571c
 	.thumb_func
 Func_0200571c:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global Owner_GetState
 	.thumb_func
 Owner_GetState:

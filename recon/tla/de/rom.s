@@ -3975,10 +3975,10 @@ BattleParty_ListActorIdsFar:
 	.thumb_func
 GetBattleObjectSlotFar:
 	.incbin "baserom.gba", 0x00118098, 0x00000008
-	.global Func_081180a0
-	.type Func_081180a0, %function
+	.global Battle_RunEncounterFar
+	.type Battle_RunEncounterFar, %function
 	.thumb_func
-Func_081180a0:
+Battle_RunEncounterFar:
 	.incbin "baserom.gba", 0x001180a0, 0x00000008
 	.global BattleMotion_ProjectPositionFar
 	.type BattleMotion_ProjectPositionFar, %function

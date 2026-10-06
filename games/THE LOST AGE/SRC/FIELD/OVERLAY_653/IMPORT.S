@@ -389,7 +389,7 @@ Func_02005370:
 	.global Func_02005378
 	.thumb_func
 Func_02005378:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:

@@ -2696,10 +2696,10 @@ BattleFx_GetResourceIdFar:
 	.thumb_func
 Event_ClearInvalidPackedValuesFar:
 	.incbin "baserom.gba", 0x000c85d0, 0x00000018
-	.global Func_080c85e8
-	.type Func_080c85e8, %function
+	.global Motion_LaunchFromFocusedObjectFar
+	.type Motion_LaunchFromFocusedObjectFar, %function
 	.thumb_func
-Func_080c85e8:
+Motion_LaunchFromFocusedObjectFar:
 	.incbin "baserom.gba", 0x000c85e8, 0x00000008
 	.global ObjectMotion_OffsetPositionAndResetFar
 	.type ObjectMotion_OffsetPositionAndResetFar, %function

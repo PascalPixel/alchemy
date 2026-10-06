@@ -194,10 +194,10 @@ Func_02000d9c:
 	.thumb_func
 Func_02000da4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83c8
+	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83c8
+	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
 	.else
 	overlay_veneer Func_080c83d8
 	.endif

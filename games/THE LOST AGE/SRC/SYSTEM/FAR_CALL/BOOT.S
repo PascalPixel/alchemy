@@ -149,9 +149,9 @@ Func_080001d8:
 	.thumb_func
 AffineMatrix_BuildForEffectFar:
 	overlay_veneer AffineMatrix_BuildForEffect
-	.global Func_080001e8
+	.global Runtime_PushSlotEntryFar
 	.thumb_func
-Func_080001e8:
+Runtime_PushSlotEntryFar:
 	overlay_veneer Func_080140d8
 	.global Ui_LoadWindowGraphicsFar
 	.thumb_func

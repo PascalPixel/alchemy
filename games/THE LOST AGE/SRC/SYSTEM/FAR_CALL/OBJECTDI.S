@@ -5,9 +5,9 @@
 	.thumb_func
 Animation_SetWorkEntryFar:
 	overlay_veneer Animation_SetWorkEntry
-	.global Func_08020088
+	.global ObjectSystem_InitializeFar
 	.thumb_func
-Func_08020088:
+ObjectSystem_InitializeFar:
 	overlay_veneer Func_080230e0
 	.global Object_SetMode
 	.thumb_func

@@ -17,9 +17,9 @@ BattleFx_InitializeSlotsFar:
 	.thumb_func
 BattleFx_ClearActiveSlotsAndScheduleUpdatesFar:
 	overlay_veneer BattleFx_ClearActiveSlotsAndScheduleUpdates
-	.global Func_080c85e8
+	.global Motion_LaunchFromFocusedObjectFar
 	.thumb_func
-Func_080c85e8:
+Motion_LaunchFromFocusedObjectFar:
 	overlay_veneer Func_080d3070
 	.global ObjectMotion_OffsetPositionAndResetFar
 	.thumb_func

@@ -123,7 +123,7 @@ Func_080cb91c:
 .L_080cba12:
 	bl UiWork_InitializeWithResourceCountersFar
 	adds r0, r7, #0
-	bl Func_08020088
+	bl ObjectSystem_InitializeFar
 	bl BattleFx_ResetCounters
 	ldr r6, .L_080cba94
 	ldr r0, [r6, #36]

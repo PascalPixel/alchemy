@@ -269,7 +269,7 @@ BattleFx_GetResourceId:
 	.global Func_02002b74
 	.thumb_func
 Func_02002b74:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global ObjectMotion_OffsetPositionAndReset
 	.thumb_func
 ObjectMotion_OffsetPositionAndReset:

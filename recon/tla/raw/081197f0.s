@@ -107,7 +107,7 @@ Func_081197f0:
 	movs r0, #12
 	bl Runtime_AllocateBlock
 	movs r0, #4
-	bl Func_08020088
+	bl ObjectSystem_InitializeFar
 	movs r0, #183
 	lsls r0, r0, #1
 	bl GameFlag_Test

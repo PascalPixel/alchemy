@@ -69,7 +69,7 @@ Resource_FindFreeEntry:
 	.global Func_020029c0
 	.thumb_func
 Func_020029c0:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:

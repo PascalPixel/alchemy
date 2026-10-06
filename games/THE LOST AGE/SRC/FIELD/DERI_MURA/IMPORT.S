@@ -205,7 +205,7 @@ Engine_EventResolvePendingActions:
 	.global Func_02000d48
 	.thumb_func
 Func_02000d48:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Func_02000d50
 	.thumb_func
 Func_02000d50:

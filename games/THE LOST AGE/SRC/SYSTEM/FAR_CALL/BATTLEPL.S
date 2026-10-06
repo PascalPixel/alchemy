@@ -13,9 +13,9 @@ BattleParty_ListActorIdsFar:
 	.thumb_func
 GetBattleObjectSlotFar:
 	overlay_veneer GetBattleObjectSlot
-	.global Func_081180a0
+	.global Battle_RunEncounterFar
 	.thumb_func
-Func_081180a0:
+Battle_RunEncounterFar:
 	overlay_veneer Func_081197f0
 	.global BattleMotion_ProjectPositionFar
 	.thumb_func

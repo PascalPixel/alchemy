@@ -233,7 +233,7 @@ Func_02001a04:
 	.global Func_02001a0c
 	.thumb_func
 Func_02001a0c:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global ObjectMotion_OffsetPositionAndReset
 	.thumb_func
 ObjectMotion_OffsetPositionAndReset:

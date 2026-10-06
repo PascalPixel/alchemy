@@ -257,7 +257,7 @@ Func_02001d04:
 	.global Func_02001d0c
 	.thumb_func
 Func_02001d0c:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:

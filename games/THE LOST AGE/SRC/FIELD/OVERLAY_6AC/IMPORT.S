@@ -309,7 +309,7 @@ Event_WaitTransitionFrames:
 	.global Func_02003270
 	.thumb_func
 Func_02003270:
-	overlay_veneer Func_080c83c0
+	overlay_veneer DisplayScroll_InitializeHBlankDmaFar
 	.global Func_02003278
 	.thumb_func
 Func_02003278:

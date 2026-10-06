@@ -13,13 +13,13 @@ Event_FinishScreenTransitionFar:
 	.thumb_func
 Event_WaitTransitionFramesFar:
 	overlay_veneer EventRuntime_WaitDelay
-	.global Func_080c83c0
+	.global DisplayScroll_InitializeHBlankDmaFar
 	.thumb_func
-Func_080c83c0:
+DisplayScroll_InitializeHBlankDmaFar:
 	overlay_veneer Func_080d6408
-	.global Func_080c83c8
+	.global DisplayScroll_DisarmHBlankDmaFar
 	.thumb_func
-Func_080c83c8:
+DisplayScroll_DisarmHBlankDmaFar:
 	overlay_veneer Func_080d64b8
 	.global BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.thumb_func

@@ -65,7 +65,7 @@ Func_02004ac8:
 	.global Func_02004ad0
 	.thumb_func
 Func_02004ad0:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global Func_02004ad8
 	.thumb_func
 Func_02004ad8:
@@ -557,7 +557,7 @@ Func_02004dd0:
 	.global Func_02004dd8
 	.thumb_func
 Func_02004dd8:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global ObjectMotion_OffsetPositionAndReset
 	.thumb_func
 ObjectMotion_OffsetPositionAndReset:

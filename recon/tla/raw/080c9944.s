@@ -198,7 +198,7 @@ Game_ResetForNewGame:
 	cmp r3, r2
 	bne .L_080c9b7a
 	adds r0, r6, #0
-	bl Func_081180a0
+	bl Battle_RunEncounterFar
 	adds r6, r0, #0
 	b .L_080c9b7a
 .L_080c9ad8:

@@ -2822,15 +2822,15 @@ Event_FinishScreenTransitionFar:
 	.thumb_func
 Event_WaitTransitionFramesFar:
 	.incbin "baserom.gba", 0x000d13c8, 0x00000008
-	.global Func_080c83c0
-	.type Func_080c83c0, %function
+	.global DisplayScroll_InitializeHBlankDmaFar
+	.type DisplayScroll_InitializeHBlankDmaFar, %function
 	.thumb_func
-Func_080c83c0:
+DisplayScroll_InitializeHBlankDmaFar:
 	.incbin "baserom.gba", 0x000d13d0, 0x00000008
-	.global Func_080c83c8
-	.type Func_080c83c8, %function
+	.global DisplayScroll_DisarmHBlankDmaFar
+	.type DisplayScroll_DisarmHBlankDmaFar, %function
 	.thumb_func
-Func_080c83c8:
+DisplayScroll_DisarmHBlankDmaFar:
 	.incbin "baserom.gba", 0x000d13d8, 0x00000008
 	.global BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.type BattleFx_PlayCueAndStartEmitterOnTargetFar, %function

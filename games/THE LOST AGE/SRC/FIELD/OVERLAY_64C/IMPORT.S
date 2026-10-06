@@ -73,7 +73,7 @@ Func_02001f74:
 	.global Func_02001f7c
 	.thumb_func
 Func_02001f7c:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global Render_ProjectPoint
 	.thumb_func
 Render_ProjectPoint:

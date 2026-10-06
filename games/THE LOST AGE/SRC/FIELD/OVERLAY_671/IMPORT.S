@@ -81,7 +81,7 @@ AffineMatrix_BuildForEffect:
 	.global Func_020055ec
 	.thumb_func
 Func_020055ec:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:

@@ -225,7 +225,7 @@ Func_020020d4:
 	.global Func_020020dc
 	.thumb_func
 Func_020020dc:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global ObjectMotion_OffsetPositionAndReset
 	.thumb_func
 ObjectMotion_OffsetPositionAndReset:

@@ -57,7 +57,7 @@ Resource_FindFreeEntry:
 	.global Func_0200218c
 	.thumb_func
 Func_0200218c:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

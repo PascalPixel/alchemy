@@ -91,7 +91,25 @@
  * Trials on 89: line computed between the load and the division 95;
  * keep's asm between the load and the division 95 (load and copy stay
  * apart through lreg, but global gives the copy the load's register);
- * count loaded before angle 89. */
+ * count loaded before angle 89; line computed before angle and heat 89.
+ * Palette loop (c): local-alloc ties level to the quotient whenever both
+ * are local quantities (combine_regs, local-alloc.c 1636-1729), so the
+ * native level is not local. The native's asrs r2, r1, #1 writes
+ * green >> 1 into level's register, so level is likely one variable
+ * that later takes green >> 1: written red = green / 4 + heat; blue =
+ * red - 32; green = red - 80; clamps; red = green >> 1; colour (blue <<
+ * 10) | (green << 5) | red, the tie goes (level adds r1, r3, r4) but
+ * global then puts green (30 refs over 15 insns) in r2 before red (15
+ * over 8) and red in r1, the reverse of the native: 101. The same with
+ * red declared first 101; blue holding the quotient (blue = green / 4;
+ * red = blue + heat) 101; red = (i - 16) / 4 + heat without the green
+ * temporary 105 (the i - 13 fold goes); level = green / 4 then level +=
+ * heat 89 (unchanged); level = heat then level += (i - 16) / 4 101.
+ * Loop top on 89: heat = work->frame, then heat /= 4 after keep's asm
+ * 94 (load and copy stay apart, but the compare and the +3 read the load,
+ * which is heat itself and lives on). The native load must die at the
+ * copy, the copy must be cse's first_reg (it is compared), and an insn
+ * must sit between them through cse2 so the copy is not retargeted. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"

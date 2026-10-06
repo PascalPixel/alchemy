@@ -1,3 +1,4 @@
+/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 1129 (listing 1037, draft 1002, common 455). Not first-try; parked. */
 /* 08021e6a: two zero bytes before this function are alignment, not code: DISPLAY.o ends at 0x08021e6a and a C object aligns .text to 4, so the linker fills them, as it already does at 0x08021dfa. */
 /* Shared UiRenderWork, MenuCell, GlyphPalette, BgScroll and MenuSprite replace
  * private views. Original draft: listing 1037, draft 998, differ 1173; shared

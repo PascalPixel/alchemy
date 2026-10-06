@@ -1,3 +1,4 @@
+/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 1400 (listing 1585, draft 1599, common 892). Not first-try; parked. */
 /* 08026080: listing 1585, draft 1599, differ 1400; both frames are 324 bytes.
  * Recheck after shared work areas: ordinary infoWin differs 1464; removing
  * the enemy temporary 1493/1604, marker temporary 1445/1598, coordinate

@@ -1,5 +1,5 @@
 /* Japanese NameEntry_EditOwnerName draft; native extent 0x5e0.
-   alchemy diff --edition tbs-ja: native663/draft663/common554/differ218.
+   alchemy diff --edition tbs-ja: native663/draft663/common555/differ216.
    The108-byte local frame matches. Remaining differences are register
    allocation (cursor flag, caret control, last-letter pointer), argument
    arithmetic and scheduling; this draft is not linked.
@@ -22,7 +22,12 @@
    native subtracts first, so it is not kept; indexed save copy222;
    register keyword on cursor flag218; cursor flag pinned to fp219 (the
    pointer still takes r9 and caret control spills), and with the caret r5
-   device removed227; while (1) loop218; label-and-goto loop506.
+   device removed227; while (1) loop218; label-and-goto loop506; caret
+   x as 72+10*count, count*10+70+2218, an s16 cast407.
+   Kept: the save copy declares its source before its destination
+   (differ216, source now r2 as native; destination r0 and count r1 still
+   swap the native r1 and r0). The count declared first or between,
+   counted before the copy, or a for loop also216; destination first218.
    UiText_DrawPaddedLabel, UiText_SetRenderString and Resource_ReturnTrue
    are not in the Japanese map: Japanese NAME.C links NameEntry_AcceptsMark
    and NameEntry_CountLetters, and this function draws with
@@ -287,8 +292,8 @@ remove_character:
                     UiText_DrawString(saved, (s32)label, 0, 0);
                     WaitFrames(10);
                 } else {
-                    u8 *dst = saved;
                     u8 *src = input;
+                    u8 *dst = saved;
                     s32 i = 0;
 
                     while (i < 15) {

@@ -1,6 +1,6 @@
 /* Draft: Japanese SaveMenu_SelectSlot, 2026-10-06. Native 0x5f8 bytes.
-   Thumb scaffold diff: 663 native instructions, 664 draft, common 631,
-   differ 65 (was 450, 474, 593); see the 20:00 session at the end. Japanese eligibility scans are independent; its
+   Thumb scaffold diff: 663 native instructions, 664 draft, common 632,
+   differ 63 (was 450, 474, 593); see the 20:00 session at the end. Japanese eligibility scans are independent; its
    cursor is a ShopCursor local and it does not install the international
    scheduler callbacks. The slot list now indexes save->summary[i] and sets
    y = i * 16: the counter stays ascending in r4 with the native caller-save
@@ -110,12 +110,15 @@
    3) + slot * 16 + 12 (stops fold distributing the two products): 67;
    cursor as the RenderOutput_Create temporary: 145; a new anchor local
    set, then ->active = 1, then marker.anchor = anchor (native stores
-   active first): 65. Remaining: the reload rotation is one register off
-   from the first constant reload (native 0 and 1 in r1 and r2 with work
-   still in r0; draft r0 and r1, so work's copy moves up), which leaves
-   counts = NULL in the djinn-zero branch in r3 and uncross-jumped (one
-   extra instruction, the branch offsets), the kind load before
-   Shop_SetCursorFar and the key test registers. */
+   active first): 65; i = 0, summary = save->summary as the for
+   initialiser (native sets i before adding save): 63. Remaining (all
+   after reload): counts = NULL in the djinn-zero branch reloads 0 into
+   r3 (greg: find_reg picks r3, the first of REG_ALLOC_ORDER at zero
+   spill cost) where native uses r1, so jump2 does not cross-jump it
+   into the level == 0 branch's mov fp, r1 (one extra instruction and
+   every later branch offset); the kind load before Shop_SetCursorFar is
+   scheduled first; the key tests keep &gKeyState in r1 and the masks in
+   r2 (native the reverse). */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -252,8 +255,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
     list = UiWindow_Create(1, 2, 28, 7, 2);
 
-    summary = save->summary;
-    for (i = 0; i < 3; i++, summary++) {
+    for (i = 0, summary = save->summary; i < 3; i++, summary++) {
         if (save->summary[i].level == 0) {
             UiText_DrawResource((s32)MsgSaveNoData, list, 10, i * 16);
         } else if (save->summary[i].frames < stamp) {

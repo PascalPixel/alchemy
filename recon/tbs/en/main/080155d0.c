@@ -1,7 +1,7 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4). Analysis-only ARM study; no route admitted, no credit.
  * agbcc_arm control (library setting -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4):
- *   listing 196, draft 198, common 90, differ 214
- * agscc control (alchemy diff --arm): listing 196, draft 221, common 17, differ 383
+ *   listing 196, draft 198, common 115, differ 164
+ * agscc control (alchemy diff --arm): listing 196, draft 223, common 24, differ 371
  * Trials, differ as agbcc_arm / agscc --arm:
  *   previous draft (inline plot function, do-while rows): 314 / 357
  *   plot as a block with its own VRAM pointer; inlining had folded the base into the add,
@@ -11,11 +11,23 @@
  *   glyph rows as a while loop that breaks at row 12 before loading the next row: 245 / 385
  *   font rows as for (row < 8 && y + row < 32): 226 / 383
  *   (px >> 3) * (width - 2), as native mla's operand order: 214 / 383
- *   rejected: literal colour constants instead of two locals 221; width read before rows 217
- * Remaining: win is spilled and reloaded for its width (native reads r0 before the spill), frame
- * 48 against 44, the wide glyph offset is folded into the symbol (native recomputes ch - 32),
- * the narrow path loads UiText_Glyphs + 2 (native keeps the symbol and adds 2), spill order of
- * the colour constants, and register choice throughout. agscc ARM adds an APCS frame native lacks. */
+ *   rows, ret, width declared first and src, c1, c3, w in that order: spill slots follow
+ *     pseudo order, now win 40, rows 36, ret 32, width 28, src 24, c1 20, c3 16, w 12 as native: 192 / 389
+ *   next declared in the pass loop, after w: slot 8 as native: 180 / 387
+ *   nibble as if (col & 1) b >>= 4; else b = *src++; interblock scheduling hoists the shift
+ *     above the test, giving native's tst, lsr, ldreq order: 178 / 387
+ *   glyph and wide pointers, then rows and width through them: 177 / 379
+ *   wide glyph indexed by idx (one pool word for UiText_Glyphs, as native): 164 / 373
+ *   row declared before pass: 164 / 371
+ *   rejected: literal colour constants instead of c1, c3 221 (at 214); width read before rows
+ *     217 (at 214) and 164 (at 164); width read before idx no change; UiSprite_CursorFrameTiles
+ *     [0x800 + idx] 190; byte offset (ch - 32) * 32 for the wide glyph 169, though it gives
+ *     native's sub r3, r1, #32 shape; byte offset idx * 26 for the narrow glyph too 169
+ * Remaining: win is spilled and reloaded for its width (native reads r0 before the spill, idx
+ * takes r0 here and ip in native); the narrow glyph's width load is scheduled before rows, so
+ * the two arms do not share their last ldrh as native's do; native recomputes ch - 32 for the
+ * wide glyph; x and the VRAM base swap r9 and sl; pass and row swap r1 and r2; colour constant
+ * initialisation order. agscc ARM adds an APCS frame native lacks. */
 #include "TYPES.H"
 
 struct UiTextWindow {
@@ -50,18 +62,19 @@ extern struct UiTextGlyph UiText_Glyphs[];
 
 s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font)
 {
-    u32 b;
+    u16 *rows;
+    s32 ret;
     u32 width;
+    u32 b;
     u32 gw;
     s32 bits;
-    u16 *rows;
     u32 idx;
-    u32 pass;
-    u32 code;
     u32 row;
-    s32 ret;
-    u16 *next;
+    u32 code;
+    u32 pass;
     u32 col;
+    struct UiTextGlyph *glyph;
+    struct UiTextWideGlyph *wide;
 
     idx = ch - 32;
     width = win->width;
@@ -69,9 +82,9 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
         return 1;
     if (ch < 256 || (font != 0 && ch - 222 < 2)) {
         if (font != 0) {
-            u32 c3 = 0x3333;
-            u32 c1 = 0x1111;
             u8 *src = font + ch * 32;
+            u32 c1 = 0x1111;
+            u32 c3 = 0x3333;
             s32 w = (UiSprite_CursorFrameTiles + 0x800)[idx];
             u32 px;
             u32 sub;
@@ -82,8 +95,9 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
                 ty = (y + row) >> 3;
                 sub = ((y + row) & 7) * 2;
                 for (col = 0; col < 8; col++) {
-                    b >>= 4;
-                    if (!(col & 1))
+                    if (col & 1)
+                        b >>= 4;
+                    else
                         b = *src++;
                     if ((b & 13) == 1) {
                         color = (b & 15) == 1 ? c1 : c3;
@@ -96,12 +110,14 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             return w;
         }
         code = ch - 222;
-        rows = UiText_Glyphs[idx].rows;
-        gw = UiText_Glyphs[idx].width;
+        glyph = &UiText_Glyphs[idx];
+        rows = glyph->rows;
+        gw = glyph->width;
     } else {
         code = ch - 222;
-        rows = ((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32].rows;
-        gw = ((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32].width;
+        wide = &((struct UiTextWideGlyph *)UiText_Glyphs)[idx];
+        rows = wide->rows;
+        gw = wide->width;
     }
     if (code < 2) {
         x -= 3;
@@ -111,6 +127,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
         ret = gw;
     }
     for (pass = 0; pass < 4; pass++) {
+        u16 *next;
         u32 ty;
         u32 color;
         u32 px;

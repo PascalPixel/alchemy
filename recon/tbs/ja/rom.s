@@ -184,12 +184,6 @@ Tile_BuildMetatiles:
 	.incbin "baserom.gba", 0x000158dc, 0x000001f4
 	.global Tile_BuildMetatilesEnd
 Tile_BuildMetatilesEnd:
-	.section .rom.00020144, "ax"
-	.global SaveMenu_SelectSlot
-	.type SaveMenu_SelectSlot, %function
-	.thumb_func
-SaveMenu_SelectSlot:
-	.incbin "baserom.gba", 0x00020144, 0x000005f8
 	.section .rom.00020af0, "ax"
 	.global NameEntry_EditOwnerName
 	.type NameEntry_EditOwnerName, %function

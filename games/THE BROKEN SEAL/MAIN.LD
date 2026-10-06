@@ -283,7 +283,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/MENU/OBJROWS.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_FOUR_NUMBERS_IN_ROW.o"(.text)
     "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.00020144)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/NAME.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.00020af0)

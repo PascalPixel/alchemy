@@ -47,7 +47,10 @@ struct BattleSession {
     s8 queue_count;
     u8 unknown_56c[0x178];
     struct BattleEventState events;
-    u8 unknown_854[0x14];
+    u8 unknown_854[4];
+    s32 unknown_858;
+    s32 unknown_85c;
+    u8 unknown_860[8];
     u8 unknown_868;
 };
 

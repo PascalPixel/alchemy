@@ -4,6 +4,14 @@
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
+extern u32 gKeysHeld;
+void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void UiWork_FinalizePendingCore(void);
+s32 Scene_GetModeMask(void);
+s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u8 MsgNoBackupMemory[];
 extern u8 MsgSaveAdventureQuestion[];
 extern u8 MsgSaveDataCorrupted[];
@@ -250,26 +258,24 @@ s32 SaveMenu_Run(void)
     Func_020094ac();
     Func_020018c0();
     if (Data_02000240.location.entrance == 2) {
-        do {
-            Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
-            rec = Value1(Func_020094c4, 1);
-            Func_020017ee();
-            if (rec != 0) {
-                break;
-            }
+    L_ask:
+        Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
+        v7 = Value1(Func_020094c4, 1);
+        Func_020017ee();
+        if (v7 == 0) {
             Func_020017ca(((s32)MsgSaveAdventureQuestion + 1), 1);
-            base3_2000240 = (s32)&Data_02000240;
             Data_02000240.record.value_20f = 1;
-            rec = Func_02001830();
-            v5 = 0x7;
-            v7 = rec;
-        } while (v7 == -1);
+            v7 = Func_02001830();
+            if (v7 == -1) {
+                goto L_ask;
+            }
+        }
         Func_02009494(60);
         Func_0200190c();
         Func_0200192a(17);
         Call1(Func_020018fa, 0x12c);
-        Func_02001912(0x2, 72);
-        goto L_Return;
+        Func_02001912((s32)&SceneId_WorldMap, 72);
+        return 0;
         L_02000474:;
         Func_02001944(112);
         Engine_RenderOutputPrepareForRedraw(page_window);
@@ -281,48 +287,44 @@ s32 SaveMenu_Run(void)
         *(u8 *)0x03001ca0 = started;
     }
     L_020004a8:;
-    do {
-        v6 = Value0(Func_020018b6);
-        if (v6 < 0) {
-            if (*(u8 *)0x03001f54 != 0) {
-                base3_2000240 = (s32)&Data_02000240;
-                Data_02000240.record.value_22a = 1;
-                *(u8 *)0x03001d08 = 1;
-                Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
-            }
+    v6 = Value0(Func_020018b6);
+    if (v6 < 0) {
+        if (*(u8 *)0x03001f54 != 0) {
+            Data_02000240.record.value_22a = 1;
+            *(u8 *)0x03001d08 = 1;
+            Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
         }
-        if (v6 == 0) {
-            if (started == 0) {
-                Func_02001804(30);
-                Value2(Func_02001816, 0x2008155, 0xc80);
-                Func_02001814(1);
-                started = 1;
-            }
+    }
+    if (v6 == 0) {
+        if (started == 0) {
+            Func_02001804(30);
+            Value2(Func_02001816, 0x2008155, 0xc80);
+            Func_02001814(1);
+            started = 1;
         }
-        if (v6 > 0) {
-            v6 = Value0(Func_020018c8);
-        } else {
-            v6 = 0;
+    }
+    if (v6 > 0) {
+        v6 = Value0(Func_020018c8);
+    } else {
+        v6 = 0;
+    }
+    if (v6 != 0) {
+        goto L_0200057a;
+    }
+    Func_02001956();
+    Func_02001938(Data_02000240.record.value_205, Data_02000240.record.value_206);
+    v5 = 1;
+    v7 = 0;
+    L_02000522:;
+    Func_0200184a(6);
+    v6 = Func_02001940(v7);
+    if (v6 == -1) {
+        if (v7 == 0) {
+            goto L_020004a8;
         }
-        if (v6 != 0) {
-            goto L_0200057a;
-        }
-        Func_02001956();
-        base3_2000240 = (s32)&Data_02000240;
-        base2_2000240 = (s32)&Data_02000240;
-        Func_02001938(Data_02000240.record.value_205, Data_02000240.record.value_206);
-        v7 = 0;
-        v5 = 1;
-        L_02000522:;
-        Func_0200184a(6);
-        v6 = Func_02001940(v7);
-        if (v6 != -1) {
-            goto L_02000540;
-        }
-    } while (v7 == 0);
-    v7 = (v7 - 1);
-    goto L_02000522;
-    L_02000540:;
+        v7--;
+        goto L_02000522;
+    }
     if (*(s16 *)(0x20096b2) != 0) {
         v5 = 4;
     }
@@ -344,53 +346,46 @@ s32 SaveMenu_Run(void)
     L_0200057a:;
     if (v6 != 1) {
     } else {
-        v6 = Value1(Func_02001978, 1);
+        union SaveMenuState *state;
+
+        v6 = Func_02001978(1);
         if (v6 == -1) {
             goto L_020004a8;
         }
-        Call1(Func_020019f0, 0x109);
-        base5_2000240 = (s32)&Data_02000240;
-        v5 = base5_2000240;
-        v5 = base5_2000240;
-        base3_2000240 = (s32)&Data_02000240;
-        base3_2000240 = (s32)&Data_02000240;
-        Func_020019c2(Data_02000240.record.value_205, Data_02000240.record.value_206);
-        record = Func_02001a2e();
-        if (Data_02000240.record.word_00 != record) {
-            Data_02000240.location.scene = Data_02000240.location.saved_scene;
-            Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
-            Call1(Func_02001a38, 0x109);
-        } else {
-            if ((*(s32 *)0x03001ae8 & 0x208) == 0x208) {
-                if (Value0(Func_0200096c) != 0) {
-                    goto L_02000664;
-                }
-                Data_02000240.location.scene = Data_02000240.location.saved_scene;
-                Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
-                Func_02009464(0x109);
-                Func_0200945c(0x13e);
-            } else {
-                if (Data_02000240.record.word_04 != *(s32 *)Data_02001100) {
-                    Value2(Func_020019ca, (s32)MsgSaveDataCorrupted, 9);
-                    Func_020019d2(((s32)MsgSaveDataCorrupted + 1), 13);
-                    if (Value4(Func_02001a6e, 1, 0, 0, 0) != 0) {
-                        Func_02001a16();
-                        goto L_020004a8;
-                    }
-                    Func_02001a1c();
-                    if (Value0(Func_020009e0) != 0) {
-                        L_02000664:;
-                        Func_020019fc(0x6, 9);
-                        goto L_020004a8;
-                    }
-                    Data_02000240.location.scene = Data_02000240.location.saved_scene;
-                    Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
-                    Call1(Func_02001af2, 0x109);
-                    Call1(Func_02001af0, 0x13f);
-                }
+        GameFlag_SetBit(0x109);
+        state = &Data_02000240;
+        Func_020019c2(state->record.value_205, state->record.value_206);
+        if (state->record.word_00 != Func_02001a2e()) {
+            state->location.scene = state->location.saved_scene;
+            state->location.entrance = state->location.saved_entrance;
+            GameFlag_ClearBit(0x109);
+        } else if ((gKeysHeld & 0x208) == 0x208) {
+            if (Scene_GetModeMask() != 0) {
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
+                goto L_020004a8;
             }
+            state->location.scene = state->location.saved_scene;
+            state->location.entrance = state->location.saved_entrance;
+            GameFlag_ClearBit(0x109);
+            GameFlag_SetBit(0x13e);
+        } else if (state->record.word_04 != *(s32 *)(gSceneState + 0x100)) {
+            UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted, 9);
+            UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 1, 13);
+            if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0) {
+                UiWork_FinalizePendingCore();
+                goto L_020004a8;
+            }
+            UiWork_FinalizePendingCore();
+            if (Scene_GetModeMask() != 0) {
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
+                goto L_020004a8;
+            }
+            state->location.scene = state->location.saved_scene;
+            state->location.entrance = state->location.saved_entrance;
+            GameFlag_ClearBit(0x109);
+            GameFlag_SetBit(0x13f);
         }
-        Call1(Func_02001b00, 0x106);
+        GameFlag_ClearBit(0x106);
         goto L_02000c96;
     }
     if (v6 == 2) {

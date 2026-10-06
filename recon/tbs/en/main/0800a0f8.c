@@ -5,8 +5,10 @@
    Control 2, agbcc_arm -O2 -mthumb-interwork -fomit-frame-pointer
    -fcall-used-r4 (library setting, analysis only): listing 157, draft 157,
    differ 124. Remaining: prologue order, x in r0 not r2, (s16)t reloaded
-   by ldrsh, gProjection+0xc split as base [rN, #12], and load delay slots
-   the listing fills (ldrh; subs; strh) that agbcc_arm never fills.
+   by ldrsh where the listing extends it into lr, gProjection + 0xc split
+   as gProjection, [rN, #12], and load delay slots the listing fills
+   (ldrh; subs; strh) that agbcc_arm never fills, even with
+   -mcpu=strongarm.
    Trials (control 2 unless noted):
    - Early-clobber smull outputs: --arm 216 to 214; agbcc_arm 144.
    - k = gProjection.center_x: the pool word is gProjection + 0xc (was focal).
@@ -16,7 +18,12 @@
    - Also b = -k * (v->v << 8): 150; b from out->b: 150; a from out->a: 136.
    - s16 t and u: 145; s16 t only: 137; center_x inline, no k: 145.
    - Arctan arguments inline: 146; separate dx, dz block locals: 140.
-   - Operand order (s16)t << 8 * k, or (s16)u << 8 * -k: no change. */
+   - Operand order (s16)t << 8 * k, or (s16)u << 8 * -k: no change.
+   - A pointer, center = &gProjection.center_x, k = *center, gives the
+     listing pool word gProjection + 0xc and [rN]: still 124, --arm 198.
+   - With center: (s16)t << 8 again: 138; t = v->u = ...: 135; center set
+     after the trig calls: 124; x inline at the top, z before x in the
+     loop, or out[1] = out[0] before v++: 124. */
 #include "PROJECT.H"
 
 struct FarCallStub {

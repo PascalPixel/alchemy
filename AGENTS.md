@@ -286,8 +286,8 @@ never a file or a function.
   command line. New tooling solves a demonstrated recurring blocker and
   carries a test; tooling nothing needs is removed. Pret builds its games with
   about 15,000 lines of tools. _Check: language-check._
-- **W2** Work on your own branch; `main` is the only long-lived branch, and a
-  worktree is removed when its branch lands. Land on main with `make land`,
+- **W2** Work on your own branch; `staging` is the only long-lived branch, and
+  a worktree is removed when its branch lands. Land on staging with `make land`,
   which builds and compares all twelve editions and runs the tests.
   _Check: land._
 - **W3** Alchemy owns compilation, linking, verification, reading and analysis,
@@ -363,7 +363,7 @@ make compare-editions  # all twelve editions (W5)
 make build-rom TARGET=tbs-en  # build a changed game without comparing
 make test
 make verify
-make land              # on main, before committing a landing
+make land              # on staging, before committing a landing
 ```
 
 The `alchemy` binary is `tools/out/cargo-target/release/alchemy`; it acts on

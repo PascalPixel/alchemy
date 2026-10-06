@@ -42,7 +42,7 @@ help:
 	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
 	  'make test            the Rust tests' \
 	  'make verify          every check, the tests and all twelve editions compared' \
-	  'make land            on main, before committing a landing: make verify, then the measurement the push uploads' \
+	  'make land            on staging, before committing a landing: make verify, then the measurement the push uploads' \
 	  'make coverage-report measure both games for the push; CI draws the published figures' \
 	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
 	  'make figure          redraw PROGRESS.png and PROGRESS_CHART.png from the verified count' \

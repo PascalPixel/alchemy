@@ -7,7 +7,7 @@ use std::time::Instant;
 const USAGE: &str = "usage: alchemy verify [--pre-commit | --land | --pre-push]\n\
   (none)        every gate, all twelve editions built and compared, publishing nothing\n\
   --pre-commit  the staged checks every commit runs; they build and publish nothing\n\
-  --land        on main, before committing a landing: every gate, then one count writes\n\
+  --land        on staging, before committing a landing: every gate, then one count writes\n\
                 the measurement and decomp.dev report the push uploads for CI\n\
   --pre-push    checks outgoing commits; a push of main uploads its tip's measurement";
 
@@ -53,7 +53,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     }
 }
 
-pub(crate) fn is_main(root: &Path) -> Result<bool, String> {
+pub(crate) fn is_staging(root: &Path) -> Result<bool, String> {
     let output = Command::new("git")
         .args(["symbolic-ref", "--quiet", "HEAD"])
         .current_dir(root)
@@ -68,7 +68,7 @@ pub(crate) fn is_main(root: &Path) -> Result<bool, String> {
             String::from_utf8_lossy(&output.stderr).trim()
         ));
     }
-    Ok(output.stdout == b"refs/heads/main\n")
+    Ok(output.stdout == b"refs/heads/staging\n")
 }
 
 fn outgoing_main(updates: &str) -> Result<Option<&str>, String> {
@@ -127,8 +127,8 @@ fn pre_push(root: &Path) -> Result<(), String> {
 }
 
 fn land(root: &Path) -> Result<bool, String> {
-    if !is_main(root)? {
-        return Err("make land publishes main's progress: run it on main".into());
+    if !is_staging(root)? {
+        return Err("make land: run it on staging".into());
     }
     if !run(root, GATES, None)? {
         return Ok(false);
@@ -272,23 +272,23 @@ mod tests {
     }
 
     #[test]
-    fn only_the_main_ref_selects_the_landing_gate() {
+    fn only_the_staging_ref_selects_the_landing_gate() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
         assert!(Command::new("git")
-            .args(["init", "--quiet", "--initial-branch=main"])
+            .args(["init", "--quiet", "--initial-branch=staging"])
             .arg(root)
             .status()
             .unwrap()
             .success());
-        assert!(is_main(root).unwrap());
+        assert!(is_staging(root).unwrap());
         assert!(Command::new("git")
-            .args(["symbolic-ref", "HEAD", "refs/heads/wf/main-draft"])
+            .args(["symbolic-ref", "HEAD", "refs/heads/wf/staging-draft"])
             .current_dir(root)
             .status()
             .unwrap()
             .success());
-        assert!(!is_main(root).unwrap());
+        assert!(!is_staging(root).unwrap());
         assert!(land(root).is_err());
     }
 

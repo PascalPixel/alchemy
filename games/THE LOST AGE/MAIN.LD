@@ -368,7 +368,6 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/ALLOCATE_AND_CLEAR_QUEUE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002ce8c)
     "*/games/THE LOST AGE/SRC/LIB/CURVE.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0002d22c)
     "*/games/THE LOST AGE/SRC/LIB/SAMPLE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002d2ea)
     "*/games/THE LOST AGE/SRC/LIB/STEP.o"(.text)

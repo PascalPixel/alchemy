@@ -445,8 +445,6 @@
         "*/recon/tla/raw/0802cfa4.o"(.text)
         "*/recon/tla/raw/0802d088.o"(.text)
         "*/games/THE LOST AGE/SRC/LIB/CURVE.o"(.text)
-        "*/recon/tla/raw/0802d2b0.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/0802d2e0.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/LIB/SAMPLE.o"(.text)
         "*/recon/tla/raw/0802d36e.o"(.text)
         "*/recon/tla/raw/0802d370.o"(.text)

@@ -28,7 +28,8 @@
  * draft: best 750 through temporaries only (noise, not carried).
  * Open: native loads each (s8) modifier twice with ldrb and sign-extends the
  * first with lsl/asr; the draft uses ldrsb and reloads after the store
- * (about 12 rows at each of the four modifier tests). Pixel offsets assigned only when the
+ * (about 12 rows at each of the four modifier tests); reading them as
+ * (s8)(u8) leaves 769. Pixel offsets assigned only when the
  * entry changes (wrong semantics, diagnostic only): 1028, frame still 348.
  *
  * Trials 2026-10-06: searched declaration order alone 1171 -> 1127. The

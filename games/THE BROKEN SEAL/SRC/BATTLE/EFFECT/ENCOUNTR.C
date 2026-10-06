@@ -101,7 +101,7 @@ void BattleFx_SelectLocationRule(s32 check)
     if (fade != 0) {
         u8 v = work->encounter_groups[1];
         u8 *d = &work->encounter_groups[0];
-        s32 zero = 0;
+        u8 zero = 0;
 
         *d = v;
         work->encounter_groups[1] = zero;

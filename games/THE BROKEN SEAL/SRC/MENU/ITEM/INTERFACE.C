@@ -29,7 +29,7 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
         menu->owner_y[index] = 30;
 
     {
-        s32 zero = 0;
+        u8 zero = 0;
         s32 style;
         menu->help_window = NULL;
         menu->status_window = NULL;

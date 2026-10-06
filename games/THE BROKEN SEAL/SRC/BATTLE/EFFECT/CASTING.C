@@ -356,7 +356,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         {
-            s32 shown = 0;
+            u16 shown = 0;
             REG_BLDCNT = shown;
         }
     }

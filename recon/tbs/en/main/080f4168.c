@@ -1,4 +1,4 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1974, differ 1966.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1979, differ 1945.
  * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
  * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
  * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
@@ -21,6 +21,42 @@
  * Trial: tile loop as [i++] = j + row * 30: differ 1966, unchanged.
  * Trial: sprites as a volatile pointer: differ 2099, worse.
  * Trial: affine loop through x = i * 4 and obj[x + k]: differ 1966, unchanged.
+ * Session 2026-10-06 (T14): opcode-level LCS (registers and offsets ignored)
+ * now matches 1774 of 2046; the rest of the differ is allocation and frame.
+ * Trial: the kind loop counts with i, as native's r11 does for every loop
+ * that holds no other i: 1966 -> 1964.
+ * Trial: locals declared frame, state, bet, timer, kind, winnings, counter,
+ * digits, count, then die/other: spill slots take native's order (each at
+ * native minus 12): 1964, unchanged.
+ * Trial: messages as numbers (MSGNO): 1964 -> 1959. Native loads one pool
+ * constant and derives the others (Coins = Winnings - 1, Throw + 1 = Quit,
+ * Coins + 10, Coins + 11): CSE's related-value reuse of one base symbol, so
+ * all four are written MsgLuckyDiceCoins + 0/1/10/11: 1959 -> 1941.
+ * Trial: the two discarded gKeysRepeat loads native makes before the KEY_UP
+ * test restored as key = gKeysRepeat twice: 1941 -> 1945; the dead loads get
+ * r0 (native r3), so sched2 cannot hoist the gKeysHeld address load above
+ * them. Kept: the loads are in the bytes. key = gKeysHeld as a third: 1945.
+ * Trial: tile loop inner counter x instead of j: 1990, worse.
+ * Trial: tile loop as *(u16 *)(0x06003000 + i) with i += 2: fp holds i as
+ * native, but j moves to sl and the store becomes reg+reg: 2056, worse.
+ * Spills (greg): both spill the 13 locals obj_palette..count first; the draft
+ * then spills stopped, a hoisted 0, &help_window, &flash, &faces, &spin,
+ * render+12 and copies; native has three more slots, render+12 between &flash
+ * and &faces, two unknown slots between &help_window and &flash.
+ * Open, likely the main cause: in every obj loop (faces, results, kind,
+ * shadows, clear, affine) native keeps offset givs (count * 8 + 200 ...) and
+ * addresses sprites (reloaded from its slot) + giv, reg+reg; the draft folds
+ * sprites into one pointer giv with immediate offsets. Native's faces loop
+ * reloads sprites inside the loop and keeps separate attr01/attr2 offset givs
+ * (240, 244), so for native's loop pass sprites was not an invariant pseudo.
+ * Trial: sprites address taken ((void)&sprites): load still hoisted, pointer
+ * giv kept: 2038, worse. Same as u32 spr cast at each use: 2061, worse.
+ * Native keeps stopped at sp+56, three slots below count (68), after
+ * &help_window (64) and one more temporary: its pseudo is made after the
+ * init code, as a block-scoped local would be. Trial: s32 stopped declared
+ * inside if (state == 1): the draft's slot moves to count - 12 as native's,
+ * differ 1947 (+2). Trial: dx, dy, dz, dist inside if (i != j): 1947, same.
+ * Trial: die/other declared after render, or j before i: 1945, unchanged.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -99,17 +135,17 @@ void LuckyDice_Run(void)
     struct BattleEffectWork *work;
     struct LuckyDiceSprites *sprites;
     struct BattleCamera *render;
-    struct EffectStep *die;
-    struct EffectStep *other;
-    s32 state;
     s32 frame;
+    s32 state;
+    s32 bet;
     s32 timer;
     s32 kind;
     s32 winnings;
     s32 counter;
-    s32 bet;
     s32 digits;
     s32 count;
+    struct EffectStep *die;
+    struct EffectStep *other;
     s32 stopped;
     s32 reset;
     s32 window;
@@ -217,12 +253,12 @@ void LuckyDice_Run(void)
     FarCall_WindowTable();
     window = UiWindow_CreateFar(18, 0, 12, 3, 6);
     sprites->coins_window = window;
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins, window, 48, 0);
     UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
     sprites->help_window = window;
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 10, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
 
     frame = 0;
     for (;;) {
@@ -272,7 +308,7 @@ void LuckyDice_Run(void)
                 if (n != 0) {
                     tile = Data_080f5400[kind] * 8 + 152;
                     x = 0x278 - n * 16;
-                    for (j = 0; j != n; j++) {
+                    for (i = 0; i != n; i++) {
                         sprites->obj[count].attr01 = (((x & 0x1ff) << 16) | 96) | 0x80002000;
                         sprites->obj[count].attr2 = tile;
                         count++;
@@ -301,8 +337,8 @@ void LuckyDice_Run(void)
                 }
                 window = UiWindow_CreateFar(9 - digits / 2, 16, digits + 12, 3, 6);
                 sprites->winnings_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, sprites->winnings_window, digits * 8 + 48, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 1, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins, sprites->winnings_window, digits * 8 + 48, 0);
                 UiText_DrawNumberInWindowFar(winnings, digits, sprites->winnings_window, 48, 0);
             }
             if (counter > 0) {
@@ -317,8 +353,8 @@ void LuckyDice_Run(void)
                     state = 0;
                     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                     sprites->help_window = window;
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 10, window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                     reset = 1;
                 }
             }
@@ -334,12 +370,14 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->winnings_window, 1);
                 window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                 sprites->help_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 10, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                 reset = 1;
             }
             counter++;
         } else if (state == 0 && frame > 17) {
+            key = gKeysRepeat;
+            key = gKeysRepeat;
             if (gKeysHeld & KEY_UP) {
                 work->particles[0].y += 0x40000;
                 work->particles[1].y += 0x40000;

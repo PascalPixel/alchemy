@@ -51,7 +51,7 @@ void DisplayScroll_UpdateObjects(void)
                 tile = 0;
         }
     }
-    Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, REG_DMA3);
+    Dma_Set(gFlashNumRemainingBytes, OAM, 0x84000100, REG_DMA3);
     if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
         gScratchWord++;
 }

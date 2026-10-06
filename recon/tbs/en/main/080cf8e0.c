@@ -39,7 +39,8 @@
  * temporary as noise); with k * 8 inline instead of delay 331.
  * With the guarded do-while: group = k * 4 inside the burst loop 267;
  * delay = 0 inside the count test 273; a function-scope burst pointer
- * shared with the draw loop 267; without the volatile re-read 338;
+ * shared with the draw loop 267; a separate burst counter j 267; without
+ * the volatile re-read 338;
  * permuter on the burst block (5 minutes) 255 with s8 *tmp =
  * SevenMode_Records for the count test, a forced temporary not adopted
  * while the burst address still differs. Native's first literal pool sits

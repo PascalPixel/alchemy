@@ -303,7 +303,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     state = (struct PerspectiveWork *)gMapWork[0];
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;
-    resources = Data_080132cc[variant];
+    resources = WorldMap_GraphicsResources[variant];
     state->resources = resources;
     value = BG_PALETTE[0];
     Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);

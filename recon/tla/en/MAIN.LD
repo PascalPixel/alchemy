@@ -1218,7 +1218,6 @@
         "*/recon/tla/raw/080d3a10.o"(.text)
         "*/recon/tla/raw/080d3b28.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ACTIVE.o"(.text)
-        "*/recon/tla/raw/080d3c2c.o"(.text)
         "*/recon/tla/raw/080d3c88.o"(.text)
         "*/recon/tla/raw/080d3fb0.o"(.text)
         "*/recon/tla/raw/080d406c.o"(.text)

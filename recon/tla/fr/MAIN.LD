@@ -880,7 +880,6 @@
     "*/recon/tla/fr/rom.o"(.rom.000d8a04)
     "*/recon/tla/fr/rom.o"(.rom.000d8b1c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ACTIVE.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000d8c20)
     "*/recon/tla/fr/rom.o"(.rom.000d8c7c)
     "*/recon/tla/fr/rom.o"(.rom.000d8fa4)
     "*/recon/tla/fr/rom.o"(.rom.000d9060)

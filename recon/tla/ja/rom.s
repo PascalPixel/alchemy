@@ -3503,12 +3503,8 @@ Func_080d3a10:
 	.thumb_func
 Func_080d3b28:
 	.incbin "baserom.gba", 0x000d3b08, 0x000000c0
-	.section .rom.000d3c0c, "ax"
-	.global Func_080d3c2c
-	.type Func_080d3c2c, %function
-	.thumb_func
-Func_080d3c2c:
-	.incbin "baserom.gba", 0x000d3c0c, 0x0000005c
+	.section .rom.000d3c68, "ax"
+	.balign 4
 	.global UiText_OpenMessageAtObject
 	.type UiText_OpenMessageAtObject, %function
 	.thumb_func

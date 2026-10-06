@@ -865,7 +865,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/VISUAL_ATTRIBUTES.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d38ec)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ACTIVE.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000d3c0c)
+    "*/recon/tla/ja/rom.o"(.rom.000d3c68)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/SHOW_COUNTER_AT_POSITION.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d41c6)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/TABLE_RUN_IF_ACTIVE.o"(.text)

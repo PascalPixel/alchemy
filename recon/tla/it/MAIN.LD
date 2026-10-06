@@ -850,7 +850,7 @@
     "*/recon/tla/it/rom.o"(.rom.000d3a04)
     "*/recon/tla/it/rom.o"(.rom.000d3b1c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ACTIVE.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000d3c20)
+    "*/recon/tla/it/rom.o"(.rom.000d3c7c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/SHOW_COUNTER_AT_POSITION.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000d41da)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/TABLE_RUN_IF_ACTIVE.o"(.text)

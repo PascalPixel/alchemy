@@ -1,6 +1,6 @@
 /* Draft: Japanese SaveMenu_SelectSlot, 2026-10-06. Native 0x5f8 bytes.
-   Thumb scaffold diff: 663 native instructions, 655 draft, common 434,
-   differ 450 (was 474, 593). Japanese eligibility scans are independent; its
+   Thumb scaffold diff: 663 native instructions, 664 draft, common 631,
+   differ 65 (was 450, 474, 593); see the 20:00 session at the end. Japanese eligibility scans are independent; its
    cursor is a ShopCursor local and it does not install the international
    scheduler callbacks. The slot list now indexes save->summary[i] and sets
    y = i * 16: the counter stays ascending in r4 with the native caller-save
@@ -89,7 +89,33 @@
    message calls and y = i * 16 in the else branch after y = 0, reversed,
    593; save->summary[i].name with i * 16 in calls, 585, with y at the
    top, 483; save->summary[i].area, 587 as above; summary only for the
-   name and save->summary[i] for every other field, 593. */
+   name and save->summary[i] for every other field, 593.
+   Session 2026-10-06 20:00: mechanism (b) found. The four message calls
+   take i * 16 (temporaries combined into one giv reduced in pass 1, the
+   loop-made y slot at sp+8), and the else branch sets y = i * 16 for its
+   two calls. y is reused after the loop (y = slot * 16 + 4 for
+   RenderOutput_Create, and the cursor y), so it is not replaceable: its
+   insn y = i << 4 stays beside the copy y = y_new, names i in pass 2 so i
+   stays ascending, and flow deletes it; y gets r5 in the else branch and
+   after the loop as native. Trials: y = 0 before the loop and y = (i +
+   1) * 16 at the body end, not replaceable, benefit 4 - 6, never
+   reduced, 527; i * 16 in the calls plus a dead tile = i at the top:
+   ascending, but i in r6 and calls cross-jumped, 579 (tile = i at the
+   end let CSE rewrite i++ from tile, 501); with the summary pointer,
+   571; else-branch y reused after the loop: 407; kind = 1 just before
+   RenderResource_CreatePair: 405; declarations status, save, djinn,
+   counts, summary, cursor (native slots 44, 40, 36, 32): 379; x and y
+   locals for both cursor calls (native keeps -12 and list->x * 8 - 4
+   in r4, y in r5): 70; y = list->y * 8 + 12 + slot * 16: 70; (list->y <<
+   3) + slot * 16 + 12 (stops fold distributing the two products): 67;
+   cursor as the RenderOutput_Create temporary: 145; a new anchor local
+   set, then ->active = 1, then marker.anchor = anchor (native stores
+   active first): 65. Remaining: the reload rotation is one register off
+   from the first constant reload (native 0 and 1 in r1 and r2 with work
+   still in r0; draft r0 and r1, so work's copy moves up), which leaves
+   counts = NULL in the djinn-zero branch in r3 and uncross-jumped (one
+   extra instruction, the branch offsets), the kind load before
+   Shop_SetCursorFar and the key test registers. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -147,11 +173,12 @@ void UiText_DrawString(void *text, void *win, s32 x, s32 y);
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
     struct UiWindow *list;
-    struct UiWindow *djinn;
-    struct SaveWorkspace *save;
     struct UiWindow *status;
-    struct RenderOutput *cursor;
+    struct SaveWorkspace *save;
+    struct UiWindow *djinn;
     struct UiWindow *counts;
+    struct SaveSummary *summary;
+    struct RenderOutput *cursor;
     s32 kind;
     s32 redraw;
     struct UiRenderWork *render;
@@ -161,8 +188,10 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     volatile u32 zero;
     s32 result;
     s32 i;
+    s32 x;
     s32 y;
     s32 tile;
+    struct RenderOutput *anchor;
 
     work = Runtime_AllocateHeapBlock(55, 0xa70);
     save = *(gWorkSlot + HEAP_SLOT_SAVE);
@@ -219,23 +248,23 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
         }
     }
 
-    kind = 1;
     zero = 0;
     Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
     list = UiWindow_Create(1, 2, 28, 7, 2);
 
-    for (i = 0; i < 3; i++) {
-        y = i * 16;
+    summary = save->summary;
+    for (i = 0; i < 3; i++, summary++) {
         if (save->summary[i].level == 0) {
-            UiText_DrawResource((s32)MsgSaveNoData, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveNoData, list, 10, i * 16);
         } else if (save->summary[i].frames < stamp) {
-            UiText_DrawResource((s32)MsgSaveContinue, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveContinue, list, 10, i * 16);
         } else if (save->summary[i].play_time != *(u32 *)save->summary[i].unknown_38) {
-            UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, i * 16);
         } else if (mode == 5 && (s8)save->summary[i].send_flag == 0) {
-            UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, i * 16);
         } else {
-            UiText_DrawString(save->summary[i].name, list, SAVE_SLOT_NAME_X, y);
+            y = i * 16;
+            UiText_DrawString(summary->name, list, SAVE_SLOT_NAME_X, y);
             UiText_DrawResource(save->summary[i].area + (s32)MsgDebugEntryName, list, 72, y);
             render->dirty = 1;
         }
@@ -245,9 +274,13 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     tile = Resource_FindFreeEntry();
     if (tile < 96) {
         VramBlock_LoadCached(tile, 128, Resource_FixedBlockBTiles);
-        marker.anchor = RenderOutput_Create(tile, 0x40000000, (struct RenderInput *)list, -12, slot * 16 + 4);
-        marker.anchor->active = 1;
+        x = -12;
+        y = slot * 16 + 4;
+        anchor = RenderOutput_Create(tile, 0x40000000, (struct RenderInput *)list, x, y);
+        anchor->active = 1;
+        marker.anchor = anchor;
     }
+    kind = 1;
     cursor = RenderResource_CreatePair(mode, list, 72, -24);
 
     while (1) {
@@ -287,7 +320,9 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
                 djinn = NULL;
                 status = NULL;
             }
-            Shop_SetCursorFar(&marker, list->x * 8 - 4, list->y * 8 + slot * 16 + 12, kind);
+            x = list->x * 8 - 4;
+            y = (list->y << 3) + slot * 16 + 12;
+            Shop_SetCursorFar(&marker, x, y, kind);
             kind = 3;
         }
         ShopCursor_AdvanceFar(&marker);

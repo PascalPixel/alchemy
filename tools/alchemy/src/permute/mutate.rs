@@ -104,8 +104,14 @@ pub struct Step {
 }
 
 /// Apply one random mutation; `None` when no kind has a site.
+#[cfg(test)]
 pub fn mutate(function: &mut Function, env: &mut Env, rng: &mut Rng) -> Option<Step> {
-    let mut kinds: Vec<(Kind, u64)> = Kind::ALL.to_vec();
+    mutate_with(function, env, rng, &Kind::ALL)
+}
+
+/// Apply one random mutation, choosing its kind by `kinds`' weights.
+pub fn mutate_with(function: &mut Function, env: &mut Env, rng: &mut Rng, kinds: &[(Kind, u64)]) -> Option<Step> {
+    let mut kinds: Vec<(Kind, u64)> = kinds.iter().copied().filter(|(_, weight)| *weight > 0).collect();
     while !kinds.is_empty() {
         let total: u64 = kinds.iter().map(|(_, weight)| weight).sum();
         let mut pick = rng.next() % total;

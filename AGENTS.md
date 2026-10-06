@@ -378,6 +378,7 @@ alchemy similar                        # nearest C twins in either game
 alchemy similar --editions             # each ☀️ listing's copies in all twelve builds
 # Match one function
 alchemy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
+alchemy diff DRAFT.c --heat            # differing instructions per line, first divergence marked; permute --heat aims there
 alchemy permute DRAFT.c [ADDR] [--minutes N]   # rewrites and PERM_* choices toward differ 0, in out/permute
 alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a frame gap
 alchemy show EDITION FUNCTION          # a built function beside the ROM

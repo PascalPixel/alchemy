@@ -24,7 +24,12 @@
  * for the condition loops only 1152; search value in j 762, x 1072, n 750
  * (no change); djinn tile code as if/else either way, ?:, 8 + !extended,
  * (extended == 0) + 8 or a 0/1 flag plus 8: 815 to 1134, each folded to
- * 9 - (extended != 0) or hoisted. Rejected earlier: owner search on list[n] without
+ * 9 - (extended != 0) or hoisted. code = 0 before the allocation 760,
+ * after the first copy 750 (native keeps that 0 in r4 for the modifier
+ * stores and 332 in r8 across Runtime_BumpAllocate). A 5-minute permuter
+ * run (--heat, 2 jobs) reached 700 by random rewrites; its minimization
+ * did not finish, so none is carried over.
+ * Rejected earlier: owner search on list[n] without
  * code 868; n as the setup loop counter 1298; pixel ints in spill order
  * without the struct 1219.
  *

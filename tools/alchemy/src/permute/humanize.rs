@@ -26,7 +26,8 @@ it (editions whose preprocessed file is the same are compiled once), and
 kept only when each object file is byte-identical to the current
 spelling's and alchemy worst's score of the function falls (then hex
 numbers, narrow locals, lines and characters break ties). Rewrites: drop a
-value or pointer cast, fold a single-use temporary into its use, merge a
+value cast (not one of an address or string) or a pointer cast, fold a
+single-use temporary into its use, merge a
 declaration with its first assignment, widen a u8, s8, u16 or s16 local to
 s32, compound assignment, ++ and --, a negated comparison, a
 do { } while (0) block back to plain statements, a goto over statements to
@@ -495,7 +496,10 @@ fn expr_rewrite(kind: Rewrite, expr: &mut Expr, cursor: &mut Cursor) {
         Rewrite::ValueCast | Rewrite::PointerCast => {
             if let Expr::Cast(ty, inner) = expr {
                 let pointer = ty.tokens.iter().any(|t| t == "*");
-                let fits = if kind == Rewrite::PointerCast { pointer } else { !pointer && is_value_type(&ty.tokens) };
+                // An address or a string made a number keeps its cast: without
+                // it the conversion is implicit, which C89 does not allow.
+                let address = matches!(**inner, Expr::Unary(UnOp::AddrOf, _) | Expr::Str(_));
+                let fits = if kind == Rewrite::PointerCast { pointer } else { !pointer && !address && is_value_type(&ty.tokens) };
                 if fits && cursor.hit() {
                     *expr = (**inner).clone();
                 }
@@ -1530,6 +1534,21 @@ void Work_Flags(struct Work *work)
             assert!(printed.contains("work->d + 291"), "{printed}");
             assert!(printed.contains("\n#define LIMIT 0x123\n"), "{printed}");
         }
+    }
+
+    #[test]
+    fn an_address_made_a_number_keeps_its_cast() {
+        // Demonstration on PLAY.C: (s32)&SceneId_TorebiIzumi1 lost its cast.
+        let printed = humanized(
+            "\
+void Work_Scene(struct Work *work)
+{
+    Party_Set((s32)&Scene_Id, (s32)work->a);
+}
+",
+            1,
+        );
+        assert!(printed.contains("Party_Set((s32)&Scene_Id, work->a);"), "{printed}");
     }
 
     #[test]

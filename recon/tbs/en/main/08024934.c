@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 926, common 521, differ 830.
+ * Native 946 instructions, draft 928, common 539, differ 796.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * The scan of available and the compaction into ordered now match apart from
@@ -18,7 +18,16 @@
  * block-local need/have/n in the scan 881, plus its own id 862; indexed
  * compaction loop 867, with its own id 848; indexed scan countdown from last
  * 830. Block-local check in the draw loop 839; for-with-break draw loop and y
- * beside the tile store both 830 unchanged.
+ * beside the tile store both 830 unchanged. drawn_row = row before mask = 0
+ * 825. Indexed display loop (visible[index], &sprites[index]) 796: native's
+ * index counts up there, not reversed; index still takes r7 where native
+ * leaves it r4 with caller-saves at 4. From 825: used = 0 before the list call
+ * 830; counted columns (n * 2 + 13) 827; all-indexed sprite init 825, all
+ * through sprite 870, pointer traversal 884; indexed handle and tile loop
+ * 878 (native's shape there, offset r5 from 8 and stmia handles, but its
+ * base pseudo takes a call-saved register and drawn_page loses r9).
+ * Native's draw block uses r9 for a hoisted 0 and r8 for y; drawn_page is
+ * dead there.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
  * drawn_row 68 (drawn_page r9, row r10, page r11), cursor_handle 64,
  * description 60, counts 56, mask 52, preferred 48, cursor_position 40-47,
@@ -84,7 +93,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     const struct SummonDefinition *summon;
     struct MenuSprite *sprite;
     const u8 *required, *supply;
-    u8 *src;
     s32 *handle;
     s32 drawn_row, drawn_page, row, page, preferred;
     s32 cursor_handle, count, last, used, mask, element;
@@ -169,8 +177,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             summon = SummonDefinition_Get(ordered[page + row]);
             UiText_CopyMessageString(summon->name_message_id + (s32)&MsgAbilityDescription, text, 52);
             UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
-            mask = 0;
             drawn_row = row;
+            mask = 0;
             {
                 s32 element;
 
@@ -249,12 +257,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             render->dirty = 1;
             render->menu_busy = 0;
         }
-        sprite = sprites;
-        src = visible;
         for (index = 0; index <= 3; index++) {
-            if (*src++ != 0)
-                Runtime_PushSlotEntry((s32 *)sprite, 240);
-            sprite++;
+            if (visible[index] != 0)
+                Runtime_PushSlotEntry((s32 *)&sprites[index], 240);
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;

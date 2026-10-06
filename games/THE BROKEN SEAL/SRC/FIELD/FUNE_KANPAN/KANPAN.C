@@ -1041,7 +1041,7 @@ void FuneKanpan_SetupDeckCrewman(void)
     Actor_SetPosition(22, 0x10c0000, 0x2a60000);
     record = Object_GetById(22);
     {
-        s32 shown = 0;
+        u16 shown = 0;
 
         record->facing = shown;
     }

@@ -67,12 +67,12 @@ void VinasuChojo_UpdateBeamActors(void)
     }
     if (stopped != 0) {
         {
-            s32 shown = 0;
+            u16 shown = 0;
 
             first->facing = shown;
         }
         {
-            s32 shown = 0;
+            u16 shown = 0;
 
             second->facing = shown;
         }

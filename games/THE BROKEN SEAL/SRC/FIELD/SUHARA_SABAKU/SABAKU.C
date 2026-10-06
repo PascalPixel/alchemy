@@ -447,7 +447,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
     if (gEventWork->raised_trigger == 99) {
         {
             u16 *target = (u16 *)&gEventWork->raised_trigger;
-            s32 shown = 0;
+            u16 shown = 0;
 
             *target = shown;
         }

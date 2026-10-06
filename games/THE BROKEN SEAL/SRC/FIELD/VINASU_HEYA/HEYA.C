@@ -1012,7 +1012,7 @@ void FieldScene_SetupActorTenCamera(void)
     u8 *state = *(u8 **)&gEventWork;
     {
         u16 *target = (u16 *)(state + 0xcba);
-        s32 shown = 0;
+        u16 shown = 0;
 
         *target = shown;
     }
@@ -1059,7 +1059,7 @@ void Scene_RunActorLeapSequence(void)
     record = (s32)Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     {
-        s32 shown = 0x4000;
+        u16 shown = 0x4000;
 
         rec7->facing = shown;
     }

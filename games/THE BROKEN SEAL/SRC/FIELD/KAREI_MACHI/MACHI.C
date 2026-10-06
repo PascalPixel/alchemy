@@ -1212,7 +1212,7 @@ void FieldScene_RunMiddleSequence(void)
         Actor_SetPosition(10, 0x1aa0000, 0x2da0000);
         record = Actor_Get(10);
         {
-            s32 shown = 0x5000;
+            u16 shown = 0x5000;
 
             record->facing = shown;
         }

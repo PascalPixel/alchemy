@@ -189,16 +189,6 @@ Tile_BuildMetatiles:
 	.incbin "baserom.gba", 0x000148c4, 0x00000214
 	.global Tile_BuildMetatilesEnd
 Tile_BuildMetatilesEnd:
-	.section .rom.00016fde, "ax"
-	.incbin "baserom.gba", 0x00016fde, 0x00000002
-	.section .rom.00016fe0, "ax"
-	.global Func_08018038
-	.global UiText_BuildRenderEntries
-	.type UiText_BuildRenderEntries, %function
-	.thumb_func
-Func_08018038:
-UiText_BuildRenderEntries:
-	.incbin "baserom.gba", 0x00016fe0, 0x00000660
 	.section .rom.00020ea6, "ax"
 	.incbin "baserom.gba", 0x00020ea6, 0x000008fe
 	.section .rom.000221b4, "ax"

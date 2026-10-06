@@ -3439,13 +3439,20 @@ ObjectGroup_ApplyRandomChildValues:
 	.incbin "baserom.gba", 0x000e099a, 0x00000002
 	.section .rom.000e0a50, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000e0a50, 0x0000011c
+	.incbin "baserom.gba", 0x000e0a50, 0x000000e4
+	.section .rom.000e0b6c, "ax"
+	.balign 4
 	.global Func_080dbb78
 Func_080dbb78:
-	.incbin "baserom.gba", 0x000e0b6c, 0x00000130
+	.incbin "baserom.gba", 0x000e0b6c, 0x0000008c
+	.global Func_080dbc04
+Func_080dbc04:
+	.incbin "baserom.gba", 0x000e0bf8, 0x000000a4
+	.section .rom.000e0c9c, "ax"
 	.global Func_080dbca8
 Func_080dbca8:
 	.incbin "baserom.gba", 0x000e0c9c, 0x00000018
+	.section .rom.000e0cb4, "ax"
 	.global Func_080dbcc0
 Func_080dbcc0:
 	.incbin "baserom.gba", 0x000e0cb4, 0x00000018

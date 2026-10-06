@@ -3857,19 +3857,16 @@ ObjectGroup_ApplyRandomChildValues:
 	.incbin "baserom.gba", 0x000db8d8, 0x00000058
 	.section .rom.000db962, "ax"
 	.incbin "baserom.gba", 0x000db962, 0x00000002
-	.section .rom.000dba00, "ax"
+	.section .rom.000dba18, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000dba00, 0x00000134
+	.incbin "baserom.gba", 0x000dba18, 0x000000e4
+	.section .rom.000dbb34, "ax"
+	.balign 4
 	.global Func_080dbb78
 Func_080dbb78:
-	.incbin "baserom.gba", 0x000dbb34, 0x00000130
-	.global Func_080dbca8
-Func_080dbca8:
-	.incbin "baserom.gba", 0x000dbc64, 0x00000018
-	.global Func_080dbcc0
-Func_080dbcc0:
-	.incbin "baserom.gba", 0x000dbc7c, 0x00000018
+	.incbin "baserom.gba", 0x000dbb34, 0x0000008c
 	.section .rom.000dbc94, "ax"
+	.balign 4
 	.global Func_080dbcd8
 	.type Func_080dbcd8, %function
 	.thumb_func
@@ -3877,6 +3874,8 @@ Func_080dbcd8:
 	.incbin "baserom.gba", 0x000dbc94, 0x00000070
 	.section .rom.000dbd18, "ax"
 	.balign 4
+	.global Func_080dbd5c
+Func_080dbd5c:
 	.incbin "baserom.gba", 0x000dbd18, 0x0000004c
 	.section .rom.000dbe8c, "ax"
 	.balign 4
@@ -4101,7 +4100,10 @@ Func_080e74d8:
 	.type Func_080e7804, %function
 	.thumb_func
 Func_080e7804:
-	.incbin "baserom.gba", 0x000e77c0, 0x00003a4c
+	.incbin "baserom.gba", 0x000e77c0, 0x000037a0
+	.global Func_080eb01c
+Func_080eb01c:
+	.incbin "baserom.gba", 0x000eaf60, 0x000002ac
 	.section .rom.000eb21c, "ax"
 	.incbin "baserom.gba", 0x000eb21c, 0x00000018
 	.section .rom.000eb25c, "ax"

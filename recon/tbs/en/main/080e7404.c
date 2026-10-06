@@ -8,7 +8,13 @@
  * r4 quotient copied back to an ordinary local gives 221 with an extra move.
  * Reusing size/x/y for heat gives 573/681/223; initializing direction before
  * its branch gives 445. Mode read/write barriers with the second loop's
- * factored size give 414 (register) or 513 (memory). All were removed. */
+ * factored size give 414 (register) or 513 (memory). All were removed.
+ * 2026-10-06 rescore on sun100 51bbf7161e: still differ 222 (listing 1632,
+ * draft 1634, common 1522). break for goto skipped 569; size from frame << 8
+ * without angle 574; second loop size (frame + 0x1d0) << 8 alone 403; heat
+ * loaded whole then heat /= 4 227; a count local divided into heat 222. The
+ * reference also copies the loaded work->frame (r2) to the division temp (r3)
+ * and computes the second loop's grow from fp without a giv; ours folds both. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"

@@ -137,6 +137,12 @@
    MsgDjinnEffect in all six PO files. As a symbol its address is a
    constant the native loads into a pseudo after the sum, which local-alloc
    gives r3, not a reload (49 -> 10, 2105 instructions).
+   Remaining at 10: the single-djinn help branch ends its SetSlotPhase
+   with a jump back 1172 bytes where the native jumps forward 206 to the
+   list redraw (cross-jumping picked another identical tail); the final
+   element's and is scheduled after the address add; the final owner's
+   and ties entry (r2) where the native ties 0xf00 (r3). A fifth permuter
+   run from 49 (6 min, 2 jobs, seed 23, heat) found nothing.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"

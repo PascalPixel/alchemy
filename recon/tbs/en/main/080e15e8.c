@@ -1,27 +1,31 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1632, common 1301, differ 670 (native frame 336,
-   draft 328: two fewer spill slots, so most stack offsets read 8 low;
-   the smoke block now matches but for offsets).
-   The native's extra slots, in its frame order (sx now has its slot):
+   listing 1640, draft 1643, common 1341, differ 601 (frame 336 as
+   native; the slots line up but for count and sc, swapped).
+   The native's frame-loop slots and how the draft reaches them:
+   - sp+24, frame * 4 as its own reduced giv: matched by a reach =
+     frame * 4 local set every iteration at the loop top, used for n.
+     Set there, its lifetime spans the loop and loop.c reduces it
+     (inside the frame <= 149 block it is a user var that is not
+     replaceable and costs copy_cost). It is still a user var: the
+     draft keeps a copy in r8 (mov r8 at the loop top, mov r1, r8 in
+     the three-streams preheader) where the native reads sp+24
+     directly, so the native's giv is likely not a user variable;
    - sp+96, &scale held through the frame loop, just below count
-     (sp+100) and size (sp+104). A user sc = scale pointer spills, but
-     below size and above count (882): user pseudos are numbered in
-     declaration order (size 40, count 41, sc 42 in the rtl dump) and
-     global gives count a hard register that reload later takes back
-     into a shared slot, while the native spills count from the start;
+     (sp+100) and size (sp+104): matched by a user sc = scale set
+     before the frame loop, but sc spills at sp+100 and count at
+     sp+96. Declaration order of size, count, reach and sc does not
+     swap them (global gives count a hard register that reload later
+     takes back; the native spills count from the start). As a
+     movable, the branch's scale address (life 8, savings 2) is "not
+     desirable" against threshold 15 in a 484-insn loop, and GCSE's
+     PRE gives the call its own reaching register set in both
+     branches, so it cannot match the stores' movables;
    - sp+60, sx in the smoke burst: matched by writing work->sheet +
      0x6000 in each smoke call, no smoke pointer (812 to 670). With the
      pointer, loop.c hoisted the constant 12 out of the frame loop:
      its movable threshold is 15, less 3 per earlier move, and 12 lived
      50 insns against 24's 49 in a 653-insn loop (15 * 50 >= 653), so
-     12 took no register and sx took fp;
-   - sp+24, frame * 4 as its own reduced giv. The loop dump says why the
-     draft has none: GCSE's PRE hoists frame << 2 to the three-streams
-     loop's preheader, lifetime 4, and loop.c rejects it, "not worth
-     while, 170 vs 479"; it needs lifetime * benefit * 17 >= the frame
-     loop's insn count, so the native's frame * 4 lives longer or is
-     not a user variable (a reach local is a user var and costs copy_cost:
-     -1938).
+     12 took no register and sx took fp.
    Trials:
    - unscored first draft: differ 938 (frame 332).
    - pts[].y as (y >> 16) + 60, not a halfword cast: 929.
@@ -68,7 +72,24 @@
      literal 10000 for rings in the ring address, or the burst's draw
      assigned after its declaration: 670; sc = scale pointer set before
      the frame loop for the three stores and the ApplyScale call: 738,
-     for the call only: 744. */
+     for the call only: 744.
+   - on 670: n split as n = frame * 4 - 256; n -= i * 48: 621, and
+     other two-statement forms 633 to 638, but frame * 4 becomes an
+     inner-loop invariant in a fourth inner slot, not the native's
+     outer giv; reach = frame * 4 at the loop top: 701 (outer giv as
+     native, but in r8); reach = frame * 4 - 256 at the top with
+     n = reach - i * 48: 595, but reach takes &scale's slot at sp+100;
+     sc set in the frame > 128 block, before the yaw call, at the loop
+     top or before the if: 668 to 684 (never hoisted: a user var used
+     outside its block is not a safe movable in a bottom-tested loop);
+     reach at the loop top plus sc before the loop: 601, adopted (all
+     24 declaration orders of size, count, reach and sc: 601 or 613).
+   - on 601: reach before size or count, sc before the 0x784 store:
+     603; sc before the ramp loop: 628; reach after the palette call,
+     after Render_ResetTransformState or before the points block: 745
+     to 763; count passed to the palette call: 601.
+   - permuter, 6 minutes on 670, restricted to the loop top, the scale
+     stores and the three-streams loop: no gain. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -150,6 +171,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     DrawRectangle blit[2];
     s32 size;
     s32 count;
+    s32 reach;
+    s32 *sc;
     s32 i;
     s32 j;
     s32 n;
@@ -226,10 +249,12 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         }
     }
     *(u16 *)0x0400000c = 0x784;
+    sc = scale;
 
     for (frame = 0; frame != 170; frame++) {
         size = 2;
         count = frame * 2;
+        reach = frame * 4;
         if (frame == 16) {
             AudioCommand_PlayFar(140);
         }
@@ -271,17 +296,17 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             SceneTransform_ApplyYaw(a << 12);
             if (frame > 150) {
                 s32 s = frame * 0x1800 - 0xd9400;
-                scale[0] = s;
-                scale[1] = s;
-                scale[2] = s;
+                sc[0] = s;
+                sc[1] = s;
+                sc[2] = s;
                 size = 5;
             } else {
                 s32 s = 0x10000 - a * 3 * 0x400;
-                scale[0] = s;
-                scale[1] = s;
-                scale[2] = s;
+                sc[0] = s;
+                sc[1] = s;
+                sc[2] = s;
             }
-            SceneTransform_ApplyScale(scale);
+            SceneTransform_ApplyScale(sc);
         } else {
             pos[0] = 0;
             pos[1] = 0;
@@ -302,7 +327,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 pts[i].y = (pts[i].y >> 16) + 60;
             }
             for (i = 0; i != 3; i++) {
-                n = frame * 4 - i * 48 - 256;
+                n = reach - i * 48 - 256;
                 if (n > 48) {
                     n = 48;
                 }

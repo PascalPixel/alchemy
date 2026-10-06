@@ -50,6 +50,14 @@
    Remaining (261, one instruction over): reload choices in the opening
    loops (the native reloads mode into r7 and reuses it as the 0 for i),
    and scattered lo-register swaps.
+   The native keeps ok in i's stack slot (sp+68) in both select handlers,
+   as when reload spills two pseudos from one hard register; the draft
+   gives ok r8. Reusing i as the A handler's flag gives 249, in both
+   handlers 1264 (the frame slots shift); a separate flag per handler 437.
+   Without the column pointer the draft falls back to 1308. The constants
+   4 and 1 in the cursor-move blocks take r6 and r5 where the native has
+   r5 and r6. A third permuter run from 261 (7 min, 2 jobs) found only the
+   same sel = -1 and savedY moves again (238), and ids[i] + j for ids[i][j].
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"

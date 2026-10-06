@@ -95,8 +95,7 @@ void Resource3ba_NoOpCallback(void)
 void KorosseoKawa_MarkStageReady(void)
 {
     s16 *ready = (s16 *)gSceneState;
-    /* FAKEMATCH: a word temporary; a halfword constant stored into the byte buffer is loaded from the literal pool instead. */
-    s32 nine = 9;
+    u16 nine = 9;
 
     *ready = nine;
 }

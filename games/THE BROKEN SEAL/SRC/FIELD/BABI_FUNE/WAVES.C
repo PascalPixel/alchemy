@@ -160,8 +160,7 @@ void BabiFune_RunDeparture(void)
     Task_Wait(1);
     Audio_PlayCue(145);
     {
-        /* FAKEMATCH: a word temporary in a one-pass block loads the value before the register's address. */
-        s32 blend = 191;
+        u16 blend = 191;
 
         do {
             REG_BLDCNT = blend;

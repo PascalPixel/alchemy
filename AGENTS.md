@@ -81,7 +81,9 @@ camelotizes what remains.
   Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
   library, handwritten and veneer assembly counts as assembly. Whole aligned
   8-byte far-call stubs count as veneers. Padding a source marks as carrying
-  no credit does not count. _Check: coverage-report._
+  no credit does not count. It is outside the total, as the linker's fill
+  is; a span may hold only padding, data and nop.
+  _Check: coverage-report, publication._
 - **C3** Every push to main carries its measurement: `make land` compares all
   twelve editions and measures both games, and the pre-push hook uploads that
   count by commit. CI records it on the `progress` branch, draws README's two

@@ -18,7 +18,7 @@ void Korosseo_SelectSoloCompetitor();
 void Engine_EventOpenScreen();
 void Engine_EventEnd();
 
-extern s32 gGameState[];
+#include "GAME_STATE.H"
 
 void Korosseo_FinishSoloRound(s32 id)
 {
@@ -32,7 +32,7 @@ void Korosseo_FinishSoloRound(s32 id)
     /* FAKEMATCH: the speaker lookup is retained twice with both results unused. */
     Object_GetById(id);
     Object_GetById(id);
-    slot = gGameState[125];
+    slot = gGameState.selected_actor;
     obj = Object_GetById(slot);
     Engine_EventBegin();
     msg = (s32)MsgKorosseoCheering;

@@ -1,9 +1,28 @@
-/* 080d1714: differ 1477 of 1481 instructions (1498 before the shared
- * types; now 1502 generated). BattleEffectWork, BattleEffectArgument,
- * MotionObject and EffectStep replace local partial layouts. Baseline
- * differ was 1479; types alone give 1475, approved IWRAM calls give 1477.
+/* 080d1714: differ 1320 of 1481 instructions (1471 generated, common
+ * 816). BattleEffectWork, BattleEffectArgument, MotionObject and
+ * EffectStep replace local partial layouts. The control flow already
+ * follows the listing; what remains is register allocation and spill
+ * slots: the native frame is 356 bytes and keeps index in r9 and frame
+ * at sp+80; it strength-reduces frame - threshold into its own slot and
+ * hoists (wave_x >> 17) + 32 out of the threshold loop. Loops the native
+ * addresses from a literal or runtime + constant base are written by
+ * index; loops it walks with a pointer keep one.
  * The native writes the random z velocity over velocity_y and uses that
- * value for both y and z advancement; preserve this behavior. */
+ * value for both y and z advancement; preserve this behavior.
+ * Trials:
+ * - baseline 1479; types 1475; approved IWRAM calls 1477.
+ * - AudioCommand_PlayFar, the listing's callee, for the cues: 1477.
+ * - threshold as index * 12 + 330, no biv: 1490.
+ * - mark pointer for particles[60 + index] outside the inner loop: 1486
+ *   (frame 352); also inside it: 1473 (frame 336).
+ * - if (frame - threshold >= 0): 1494.
+ * - particles[step + 32].variant = 4 indexed, as the native's
+ *   runtime + 0x7418 shows: 1471.
+ * - map cell buffer cleared by index, the native's literal base: 1404.
+ * - first particle loop by index: 1348; burst setup loop by index: 1338;
+ *   distance loop by index: 1324; spark spawn loop by index: 1320.
+ * - first-phase particle loop by index: 1581; spark update loop by
+ *   index: 1370 (both kept as pointers). */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -67,7 +86,7 @@ void Graphics_PrepareTransferInIwramWork(void *source, void *destination);
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyRoll(s32 pitch);
 void SceneTransform_ApplyPosition(struct Vector3 *position);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, s32, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
@@ -96,6 +115,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     struct BattleObjectSlot *context;
     struct EffectStep *point;
     struct EffectStep *spark;
+    struct EffectStep *mark;
     u8 *tbl;
     u8 *src;
     s32 index;
@@ -165,17 +185,15 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         } while (index != runtime->effect->count);
     }
 
-    point = runtime->particles;
     index = 0;
     do {
-        point->z = 120;
-        point->y = 0;
+        runtime->particles[index].z = 120;
+        runtime->particles[index].y = 0;
         Random16();
-        point->velocity_y = 0;
-        point->velocity_x = 0;
-        point->variant = Random16() & 63;
+        runtime->particles[index].velocity_y = 0;
+        runtime->particles[index].velocity_x = 0;
+        runtime->particles[index].variant = Random16() & 63;
         index++;
-        point++;
     } while (index != 64);
 
     frame = 0;
@@ -191,17 +209,17 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         Graphics_PrepareTransferInIwramWork(view, (u8 *)view + 12);
 
         if (frame == 16)
-            Audio_PlayCue(141);
+            AudioCommand_PlayFar(141);
         if (frame == 256)
-            Audio_PlayCue(140);
+            AudioCommand_PlayFar(140);
         if (frame == 334)
-            Audio_PlayCue(212);
+            AudioCommand_PlayFar(212);
         if (frame == 347)
-            Audio_PlayCue(212);
+            AudioCommand_PlayFar(212);
         if (frame == 359)
-            Audio_PlayCue(212);
+            AudioCommand_PlayFar(212);
         if (frame == 372)
-            Audio_PlayCue(212);
+            AudioCommand_PlayFar(212);
 
         index = 0;
         if (runtime->effect->count != 0) {
@@ -345,12 +363,10 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             tbl += 0x80;
             Resource_DecodeType01(tbl, (u8 *)runtime + 0x3600);
 
-            spark = ((struct EffectStep *)Ram_MapCellBuffer);
             index = 0;
             do {
-                spark->variant = 0;
+                ((struct EffectStep *)Ram_MapCellBuffer)[index].variant = 0;
                 index++;
-                spark++;
             } while (index != 512);
 
             index = 0;
@@ -366,18 +382,16 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
             gProjection.center_x = 72;
 
-            point = runtime->particles;
             index = 0;
             do {
                 speed = Random16() & 127;
                 angle = (Random16() & 0x7fff) + 0x9fff;
-                point->x = speed * Trig_Sin(angle);
-                point->y = speed * Trig_Cos(angle);
-                point->variant = 0;
-                point->z =
+                runtime->particles[index].x = speed * Trig_Sin(angle);
+                runtime->particles[index].y = speed * Trig_Cos(angle);
+                runtime->particles[index].variant = 0;
+                runtime->particles[index].z =
                     (__umodsi3(Random16(), 200) - 100) << 16;
                 index++;
-                point++;
             } while (index != 32);
 
             index = 0;
@@ -425,17 +439,16 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
                 alive = 0;
                 if (frame <= 329) {
-                    point = runtime->particles;
                     index = 0;
                     do {
                         dist = Iwram_Sqrt(
-                            (point->x >> 8) * (point->x >> 8)
-                                + (point->y >> 8)
-                                    * (point->y >> 8)
-                                + (point->z >> 8)
-                                    * (point->z >> 8)) >> 9;
+                            (runtime->particles[index].x >> 8) * (runtime->particles[index].x >> 8)
+                                + (runtime->particles[index].y >> 8)
+                                    * (runtime->particles[index].y >> 8)
+                                + (runtime->particles[index].z >> 8)
+                                    * (runtime->particles[index].z >> 8)) >> 9;
                         if (dist != 0) {
-                            EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
+                            EffectPosition_ApplyBaseAndYOffset(&runtime->particles[index].x, &screen);
                             screen.x =
                                 (screen.x >> 17) + (wave_x >> 17) + 32;
                             screen.y = ((s16 *)&screen)[3]
@@ -453,17 +466,16 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 screen.y - span,
                                 span,
                                 span * 2);
-                            point->x -=
-                                __divsi3(point->x, dist);
-                            point->y -=
-                                __divsi3(point->y, dist);
-                            point->z -=
-                                __divsi3(point->z, dist);
+                            runtime->particles[index].x -=
+                                __divsi3(runtime->particles[index].x, dist);
+                            runtime->particles[index].y -=
+                                __divsi3(runtime->particles[index].y, dist);
+                            runtime->particles[index].z -=
+                                __divsi3(runtime->particles[index].z, dist);
                         } else {
                             alive++;
                         }
                         index++;
-                        point++;
                     } while (index != 32);
 
                     if (alive > 0) {
@@ -481,23 +493,21 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 slot = 0;
                 do {
                     if (frame == Data_080ee16c[slot]) {
-                        spark = &((struct EffectStep *)Ram_MapCellBuffer)[slot * 128];
                         index = 0;
                         do {
                             speed = (Random16() & 127) + 16;
                             angle = Random16() & 0xffff;
-                            spark->velocity_x =
+                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].velocity_x =
                                 (Trig_Sin(angle) * speed) >> 6;
-                            spark->velocity_y =
+                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].velocity_y =
                                 -(Trig_Cos(angle) * speed) >> 6;
-                            spark->velocity_y =
+                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].velocity_y =
                                 ((Random16() & 255) - 128) << 10;
-                            spark->x = 0;
-                            spark->y = 0;
-                            spark->z = 0;
-                            spark->variant = (Random16() & 15) + 64;
+                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].x = 0;
+                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].y = 0;
+                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].z = 0;
+                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].variant = (Random16() & 15) + 64;
                             index++;
-                            spark++;
                         } while (index != 96);
                     }
 
@@ -535,21 +545,20 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                     slot++;
                 } while (slot != 4);
 
+                mark = &runtime->particles[60];
                 index = 0;
                 threshold = 330;
                 do {
                     if (frame == threshold) {
-                        runtime->particles[index + 60].y = (wave_y >> 16) - 4;
-                        runtime->particles[index + 60].velocity_y = (wave_y >> 16) - 4;
-                        runtime->particles[index + 60].x = (wave_x >> 17) + 32;
-                        runtime->particles[index + 60].velocity_x = (wave_x >> 17) + 32;
+                        mark->y = (wave_y >> 16) - 4;
+                        mark->velocity_y = (wave_y >> 16) - 4;
+                        mark->x = (wave_x >> 17) + 32;
+                        mark->velocity_x = (wave_x >> 17) + 32;
 
-                        spark = &runtime->particles[32];
                         step = 0;
                         do {
-                            spark->variant = 4;
+                            runtime->particles[step + 32].variant = 4;
                             step++;
-                            spark++;
                         } while (step != 28);
 
                         runtime->shake_frames = 8;
@@ -564,12 +573,12 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         draw_rectangle_alt(
                             draw_destination,
                             (u8 *)runtime + Data_080ee17e[size],
-                            runtime->particles[index + 60].x,
-                            runtime->particles[index + 60].y - Data_080ee17a[size],
+                            mark->x,
+                            mark->y - Data_080ee17a[size],
                             Data_080ee174[size],
                             Data_080ee177[size]);
-                        runtime->particles[index + 60].x -= 8;
-                        runtime->particles[index + 60].y += 2;
+                        mark->x -= 8;
+                        mark->y += 2;
 
                         if (frame < threshold + 8) {
                             SceneTransform_ApplyRoll(-2048);
@@ -587,9 +596,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 spark->variant += 2;
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
-                                    (screen.x >> 17) + runtime->particles[index + 60].velocity_x;
+                                    (screen.x >> 17) + mark->velocity_x;
                                 screen.y = ((s16 *)&screen)[3]
-                                    + runtime->particles[index + 60].velocity_y;
+                                    + mark->velocity_y;
                                 screen.depth = ((s16 *)&screen)[5];
                                 if (screen.depth <= 169)
                                     screen.depth = 170;
@@ -611,6 +620,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         }
                     }
                     index++;
+                    mark++;
                     threshold += 12;
                 } while (index != 4);
             }

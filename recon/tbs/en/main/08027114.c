@@ -1,5 +1,5 @@
-/* 08027114: differ 1616 against the 1727-line parent listing (draft 1803,
- * common 957; was 2131).
+/* 08027114: differ 1601 against the 1727-line parent listing (draft 1804,
+ * common 965; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -43,7 +43,11 @@
  * own -1 where the draft's reload move2add derives it from the zero in r3.
  * The native jump table sends 0, 1, 2, 3, 15 and 16 to bodies laid out as
  * 0, 1, 16, 15, 2, 3, then commit: the case bodies in that source order
- * give 1616 (from 1802). */
+ * give 1616 (from 1802). In that order the psynergy and item cases' own
+ * block-local handles give 1601. Still worse on 1616/1601: every
+ * entries[0].x pair written directly 1678; the mode-7 party counts kept in
+ * sel 1610. Next: djinn's register (frame 104), the round end at
+ * next_round, and the djinn and summon loops. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -404,7 +408,9 @@ mark_visible:
                 ent->range = 1;
                 goto commit;
 
-            case 1:
+            case 1: {
+                s32 handle;
+
                 Audio_PlayCue(112);
 psynergy_menu:
                 COUNTDOWN->unk_34 = 0;
@@ -482,6 +488,8 @@ psynergy_menu:
                 }
                 kind = 1;
                 goto store_target;
+
+            }
 
             case 16:
                 Audio_PlayCue(112);
@@ -620,7 +628,9 @@ summon_menu:
                     goto store_target;
                 }
 
-            case 2:
+            case 2: {
+                s32 handle;
+
                 Audio_PlayCue(112);
 item_menu:
                 COUNTDOWN->unk_34 = 0;
@@ -698,6 +708,8 @@ item_menu:
                 }
                 kind = 2;
                 goto store_target;
+
+            }
 
             case 3:
                 kind = 3;

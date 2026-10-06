@@ -1,5 +1,5 @@
-/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 507 of 920 (draft 923, common 668) with --symbol Func_020003cc.
- * Remaining: the frame keeps one spill slot too many (started at [sp, #24], native [sp, #20]; heading window at [sp, #20], native [sp, #12]); the page window sits in r9, native r10; the link wait loop allocates its mask, miss count and result to r5, r2 and r10 where the native uses r1, r5 and r4; the new-game scene (row 8 of the scene table, unnamed) is stored as an immediate where the native loads its id from the pool.
+/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 463 of 920 (draft 919, common 688) with --symbol Func_020003cc.
+ * Remaining: the frame keeps one spill slot too many (started at [sp, #24], native [sp, #20]; heading window at [sp, #20], native [sp, #12]); the encoded size sits in r11 and the page window in r9, native r9 and r10; the then-arm of the one-page help test jumps back 1556 bytes where the native jumps forward over the else; the link wait loop allocates its mask, miss count and result to r5, r2 and r10 where the native uses r1, r5 and r4; the new-game scene (row 8 of the scene table, unnamed) is stored as an immediate where the native loads its id from the pool.
  * Trials (2026-10-06):
  * - 873 -> 757: the record prompt as a goto loop; the native reloads every invariant in it, as goto loops do.
  * - 757 -> 711: SceneId_WorldMap from the scene table; one callee name per function, so the case-1 tails cross-jump through one message call; a state pointer kept in r5.
@@ -9,6 +9,9 @@
  * - 598 -> 573: SceneId_LinkLobby (+4 alone, from the pool shift); the scene state's word at 0x100 as a struct member, which keeps the base and offset apart as the native does and moves the literal pool to after case 3.
  * - 573 -> 522: the 0x109 flag set through the Call1 wrapper (FAKEMATCH): direct, CSE keeps 0x109 in r7 for the later clears, which the native derives from 0x1c2.
  * - 522 -> 507: the link wait loop written test-first with gotos; the native reloads its status and source addresses each pass.
+ * - 507 -> 503: the checksum as an s16 stored with two post-increments.
+ * - 503 -> 475: the checksum's high byte through (u16), stored at n and n + 1 before n += 2; the two help messages as the password label's id minus 2 and minus 1, which the native derives from the label's register.
+ * - 475 -> 463: page = 0 right after the page window is made, where the native zeroes r11.
  * - no gain: the 0x100 word through a (u32) cast (602); the state pointer set before the flag call (575); the adventure block in an if (0) arm (711); the first link loop testing its mask variable instead of 3 (604); dropping the glyph loop's slot4 copies (507, kept as simpler). */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -253,7 +256,6 @@ s32 SaveMenu_Run(void)
     s32 v4;
     s32 missing_link_frames;
     s32 base7_3001c94;
-    s32 none;
     s32 page_message;
     s32 page;
     s32 x;
@@ -558,14 +560,18 @@ s32 SaveMenu_Run(void)
             goto L_020007dc;
         }
         encoded_size = Value3(Func_020017d2, 0, v6, save_data);
-        value = Func_02001cbe(encoded_size, save_data);
-        *(u8 *)(save_data + encoded_size) = ((u32)(value << 16) >> 24);
-        *(u8 *)(save_data + (encoded_size + 1)) = ((value << 16) >> 16);
-        encoded_size = Value3(Func_02001bf8, save_data, (encoded_size + 2), password);
+        {
+            s16 sum = Func_02001cbe(encoded_size, save_data);
+
+            save_data[encoded_size] = (u16)sum >> 8;
+            save_data[encoded_size + 1] = sum;
+            encoded_size += 2;
+        }
+        encoded_size = Value3(Func_02001bf8, save_data, encoded_size, password);
         v6 = 2;
         Func_02001d6e();
         page_window = Func_02001dae(5, 4, 20, 12, v6);
-        none = 0;
+        page = 0;
         page_count = (Func_02009314(encoded_size, 50) + 1);
         record = Func_02001dce(10, 0, 10, 4, v6);
         page_message = (s32)MsgClearPasswordLabel;
@@ -575,15 +581,14 @@ s32 SaveMenu_Run(void)
         if (page_count == 1) {
             record = Func_02001df4(5, 16, 20, 3, v6);
             help_window = record;
-            Call4(Func_02001e32, 0xc80, help_window, 80, 0);
+            Call4(Func_02001e32, page_message - 2, help_window, 80, 0);
         } else {
             record = Func_02001e12(1, 16, 28, 3, v6);
             help_window = record;
-            Call4(Func_02001e50, 0xc81, help_window, 0, 0);
+            Call4(Func_02001e50, page_message - 1, help_window, 0, 0);
         }
         Call1(Func_02001ece, 0x6006000);
         Engine_RenderOutputPrepareForRedraw(page_window);
-        page = none;
         for (;;) {
         Call1(Func_02001ee2, 0x6002500);
         if ((gKeyState & KEY_B) != 0) {

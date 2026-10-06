@@ -1,13 +1,28 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1407, common 856, differ 1087.
- * Remaining: native 352-byte frame versus 348, redraw/copy register choices,
- * spill slots, sprite load order, and consequent branches/literal pools.
- * Native keeps redraw in r10 and the cursor pixel offsets in stack slots
- * (sp+56, sp+60) whose zero initialization survives; the icon loop's x is
- * its own register there. The local declaration order below was found by
- * searching orders against differ and is not yet a readable order.
+ * Native 1392 instructions, draft 1406, common 992, differ 814.
+ * Frame now 352 bytes, as native. Remaining: redraw in r11 where native
+ * has r10, the setup loop counter in r4 (caller-saved, sp+4) where native
+ * has r6 and the -1 store value in r8, the search value in r7 where native
+ * has r3, then register choices through the loop body.
  *
- * Trials 2026-10-06: searched declaration order alone 1171 -> 1127. The
+ * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
+ * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,
+ * sel 272, tbl 284, objCursor 328, objFace 340: declaration order, frame
+ * growing down). Spill slots follow pseudo (declaration) order downward:
+ * list, listCount, owner, base, winMain, winDesc, idx, handleCursor, the
+ * cursor pixel pair, handleFrame, cnt, extended, keys, text, iconIdx, then
+ * the array addresses. The cursor pixel offsets' zero stores survive flow
+ * only if their sets are partial: one 8-byte {x, y} struct held in a DImode
+ * pseudo, spilled to sp+56/sp+60. That gave the 4 missing frame bytes.
+ *
+ * Trials 2026-10-06: pixel pair as struct StatusPixel 1087 ->
+ * 1007; declarations in native spill order 859; searched single moves 857;
+ * owner search indexed by i 817; tbl/sel/objIcon used directly instead of
+ * handles/codes/icons aliases 814. Rejected: owner search on list[n] without
+ * code 868; n as the setup loop counter 1298; pixel ints in spill order
+ * without the struct 1219.
+ *
+ * Earlier trials 2026-10-06: searched declaration order alone 1171 -> 1127. The
  * closing busy flag addressed from the battle work slot, as RESOLVE.C does,
  * reuses the native literal (gBattleWork, then +192): 1162 alone, 1118 with
  * the searched order. Cursor tables indexed by cur.pos[cur.mode] (native
@@ -16,7 +31,7 @@
  * A separate icon-loop x: 1354 (1330 after search). A separate index for
  * the condition code: 1179. Declarations in native spill-slot order: 1250.
  *
- * Current compiler ablation: three old register bindings gave differ 1280.
+ * Earlier compiler ablation: three old register bindings gave differ 1280.
  * Removing only the redraw binding gave 1331; removing both copier bindings
  * as well gave 1196 and reduced the frame difference from 8 to 4 bytes.
  * Ordinary direct MenuSprite accesses give 1184. Keeping the redraw binding
@@ -38,6 +53,11 @@
 #include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"
 #include "HEAP_STATE.H"
+
+struct StatusPixel {
+    s32 x;
+    s32 y;
+};
 
 struct StatusCursor {
     s8 pos[5];
@@ -78,36 +98,33 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     struct MenuSprite objIcon[11];
     struct MenuSprite objName;
     struct StatusCursor cur;
-    s32 *q;
+    struct UiRenderWork *base;
     struct UiWindow *winMain;
+    struct UiWindow *winDesc;
+    s32 idx;
+    s32 handleCursor;
+    struct StatusPixel pix;
+    s32 handleFrame;
+    s32 cnt;
+    s32 extended;
+    s32 keys;
+    u16 *text;
+    s32 iconIdx;
+    s32 *q;
     s32 defDelta;
     s32 i;
-    s32 rowPixels;
-    struct UiWindow *winDesc;
-    struct UiRenderWork *base;
-    s32 handleCursor;
     s8 *out;
-    u16 *text;
     s32 code;
-    s32 idx;
-    s32 handleFrame;
     s32 atkDelta;
     s32 redraw;
     struct BattleUnit *object;
     struct BattleUnit *saved;
     const struct OwnerStatusStatCursor *stat;
-    s32 extended;
     struct MenuSprite *p;
     s32 agiDelta;
-    s32 keys;
-    s32 cnt;
     s32 n;
-    s32 iconIdx;
-    struct MenuSprite *icons;
     struct MenuCell *screen;
-    s32 *handles;
-    s8 *codes;
-    s32 colPixels;
+    s32 x;
 
     base = (struct UiRenderWork *)gWindowWork[0];
     idx = -1;
@@ -132,35 +149,32 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     cur.mode = 0;
 
     handleCursor = Resource_LoadIntoFreeSlot(0x80);
-    handles = tbl;
-    codes = sel;
     for (i = 0; i <= 10; i++) {
-        handles[i] = Resource_LoadIntoFreeSlot(0x80);
-        codes[i] = -1;
+        tbl[i] = Resource_LoadIntoFreeSlot(0x80);
+        sel[i] = -1;
     }
 
     if (listCount != 0) {
-        for (n = 0; n <= 5; n++) {
-            code = list[n];
+        for (i = 0; i <= 5; i++) {
+            code = list[i];
             if (code == 0xFF) {
                 break;
             }
             if (code != 0xFE) {
                 if (code == owner) {
-                    idx = n;
+                    idx = i;
                     break;
                 }
             }
         }
     }
 
-    colPixels = 0;
-    rowPixels = 0;
+    pix.x = 0;
+    pix.y = 0;
     winMain = UiWindow_Create(0, 0, 30, 20, 6);
     winDesc = UiWindow_Create(0, 14, 30, 6, 10);
     UiWindow_MarkVisibleTileAttributes();
 
-    icons = objIcon;
     for (;;) {
         keys = gKeysRepeat;
 
@@ -311,8 +325,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             cur.lastEntry = cur.entry;
             redraw = 2;
         }
-        colPixels = cur.col * 8;
-        rowPixels = cur.row * 8;
+        pix.x = cur.col * 8;
+        pix.y = cur.row * 8;
 
         objFace.oam.word.attr01 = 0xC0002400;
         objFace.oam.word.attr23 = 0;
@@ -325,10 +339,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         objCursor.oam.word.attr23 = 0;
         objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles)
             & 0x3FF;
-        objCursor.oam.f.x = (colPixels + winMain->x * 8
+        objCursor.oam.f.x = (pix.x + winMain->x * 8
                           - ((gFrameCount & 4) >> 2))
             + 16;
-        objCursor.oam.f.y = (u8)((rowPixels + winMain->y * 8
+        objCursor.oam.f.y = (u8)((pix.y + winMain->y * 8
                                - ((gFrameCount & 4) >> 2))
             + 16);
         objCursor.oam.f.affine_index = 8;
@@ -414,10 +428,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 n = 0;
                 if (object->hp == 0) {
-                    codes[0] = 16;
+                    sel[0] = 16;
                     n = 1;
                 }
-                out = &codes[n];
+                out = &sel[n];
                 do {
                     if (object->restraint != 0) {
                         *out++ = 15;
@@ -533,8 +547,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 if (n > 0) {
                     i = n;
-                    out = codes;
-                    q = handles;
+                    out = sel;
+                    q = tbl;
                     do {
                         Resource_LoadTableEntryToBuffer(*out, *q++);
                         i--;
@@ -542,16 +556,16 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     } while (i != 0);
                 }
                 if (n == 0) {
-                    codes[0] = 0;
+                    sel[0] = 0;
                     n = 1;
                 }
                 if (n <= 10) {
                     for (i = n; i < 11; i++) {
-                        codes[i] = -1;
+                        sel[i] = -1;
                     }
                 }
                 cnt = n;
-                if (codes[0] == 0) {
+                if (sel[0] == 0) {
                     if (object->hp != 0) {
                         code = (s32)&MsgOwnerStatusNormal;
                     } else {
@@ -563,7 +577,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
             text = (u16 *)Runtime_BumpAllocate(0x100);
             if ((u32)cur.entry > 13) {
-                iconIdx = codes[cur.entry - 14];
+                iconIdx = sel[cur.entry - 14];
                 if (iconIdx == 0 && object->hp == 0) {
                     iconIdx = 16;
                 }
@@ -632,19 +646,19 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             redraw = 0;
         }
 
-        q = handles;
-        p = icons;
-        colPixels = 112;
+        q = tbl;
+        p = objIcon;
+        x = 112;
         for (i = 0; i <= 10; i++) {
             p->oam.word.attr01 = 0x40000400;
             p->oam.word.attr23 = 0;
             p->oam.f.tile = gVramBlockCache[*q++].offset >> 5;
-            p->oam.f.x = colPixels;
+            p->oam.f.x = x;
             p->oam.f.y = (u8)(winMain->y * 8 + 8);
-            if (codes[i] > 0) {
+            if (sel[i] > 0) {
                 Runtime_PushSlotEntry((s32 *)p, 240);
             }
-            colPixels += 15;
+            x += 15;
             p++;
         }
 
@@ -677,7 +691,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         WaitFrames(1);
     }
 
-    q = handles;
+    q = tbl;
     for (i = 10; i >= 0; i--) {
         Resource_ResetEntry(*q++);
     }

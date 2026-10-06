@@ -1,6 +1,8 @@
 /* Draft: native 670 instructions, draft 654, common 441, differ 442.
  * Stubborn (2026-10-06): register allocation drifts from the mode chain on
- * (native reload rotates r0-r3 only; the draft also spills through r4).
+ * (native mode-test reloads rotate through r4, the draft's through r0-r3
+ * only). Native recomputes each burst address from k * 4 hoisted to a stack
+ * slot; the draft strength-reduces it to a pointer stepped by 28.
  * Shared heap slots and hardware declarations preserve the original 484 score.
  * An explicit per-target delay (8 frames) improves 484 -> 444 and restores
  * the native 80-byte frame; no unused local or new FAKEMATCH device is needed.
@@ -9,7 +11,9 @@
  * need native-pool labels before adoption.
  * Trials: direct palette calls 550; pointer/array burst forms 484/495;
  * an explicit burst-group index 486 (442 with the per-target delay);
- * burst pointer stepping 446; i + k * 32 444; draw-pair shape 484; draw cursor 473.
+ * burst pointer stepping 446; i + k * 32 444;
+ * (k * 4) * 8 and k << 2 << 3 444; a k * 4 local 581; draw-pair shape 484;
+ * draw cursor 473.
  */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"

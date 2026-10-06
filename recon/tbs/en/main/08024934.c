@@ -1,6 +1,11 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 917, common 552, differ 759; frame 372
+ * Native 946 instructions, draft 917, common 564, differ 735; frame 372
  * as native's.
+ * Both affordability scans as plain indexed for loops with a break
+ * (for (n = 0; n <= 3; n++) if (s->djinn_required[n] > standby[n]) break;)
+ * compile to native's pointer loops: the first scan now matches exactly
+ * (no reload through ip), 759 -> 735; the draw loop's scan is unchanged
+ * from the if/do-while indexed form. Indexed column loop 1036 (frame 368).
  * The draw loop's affordability scan indexed (summon->djinn_required[element]
  * <= standby[element]) lets loop.c make the pointers, so GCSE no longer
  * shares summon + 4 with the column loop: 766 -> 759. Native still keeps
@@ -176,21 +181,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         s32 i;
 
         for (i = last; i >= 0; i--) {
-            const u8 *need, *have;
+            const struct SummonDefinition *s;
             s32 n, k;
 
             k = available[i];
-            need = SummonDefinition_Get(k)->djinn_required;
-            have = standby;
-            n = 0;
-            if (*need <= *have) {
-                do {
-                    n++;
-                    if (n > 3)
-                        break;
-                    need++;
-                    have++;
-                } while (*need <= *have);
+            s = SummonDefinition_Get(k);
+            for (n = 0; n <= 3; n++) {
+                if (s->djinn_required[n] > standby[n])
+                    break;
             }
             if (n == 4) {
                 ordered[used++] = k;
@@ -249,13 +247,9 @@ loop:
                     if ((id = ordered[page + index]) != 32) {
                     next:
                         summon = SummonDefinition_Get(id);
-                        element = 0;
-                        if (summon->djinn_required[element] <= standby[element]) {
-                            do {
-                                element++;
-                                if (element > 3)
-                                    break;
-                            } while (summon->djinn_required[element] <= standby[element]);
+                        for (element = 0; element <= 3; element++) {
+                            if (summon->djinn_required[element] > standby[element])
+                                break;
                         }
                         affordable = element == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);

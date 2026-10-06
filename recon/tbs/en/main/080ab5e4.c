@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2107, common 2042, differ 128.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 2047, differ 117.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -83,7 +83,24 @@
    slot, sp+68, and with it the whole handler matches but for the owner,
    element and number registers. The R handler keeps its own ok, still in
    r8 where the native has sp+68: i there gives 1267, both 1255; j 635,
-   count 617, step 177, result 329, message 194.
+   count 617, step 177, result 329, message 194, refresh 161, window 629;
+   its type (u32, u8, s8, u16) changes nothing.
+   Remaining at 128 (2107 instructions, two over): the redraw block's
+   unleash text loads its 0x666 into r1 before the sum where the native
+   loads it into r3 after, and the cursor-box draw that follows reloads x
+   (+1); the R handler's ok in r8; owner, element and number permuted
+   among r5-r7 in both handlers; the constants 4 and 1 swapped between r5
+   and r6 in the cursor moves; the final entry's & 31 copied entry first
+   (+1, the other extra instruction).
+   The final pair index is entry % 32 (128 -> 117, 2106 instructions):
+   the native builds 31 in the result register and ands entry into it, as
+   GCC expands an unsigned modulo; the & 31 form ties entry instead. The
+   owner store still ties entry where the native ties 0xf00. Not kept:
+   s32 entry 130; the three fields read back from pair_entries 179. A
+   fourth permuter run from 140 (5 min, 2 jobs, seed 11) found nothing.
+   The Japanese copy needs #if branches for message symbols its edition
+   lacks (MsgDjinnNowRecovering is undeclared there) before it can be
+   scored.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -701,7 +718,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     if (sel != -1) {
         u32 entry;
         state->pair_entries[mode] = entry = lists->list.ids[x][sel];
-        state->pair_index[mode] = DJINN_NUMBER(entry);
+        state->pair_index[mode] = entry % 32;
         state->pair_element[mode] = DJINN_ELEMENT(entry);
         state->pair_owner[mode] = DJINN_OWNER(entry);
     }

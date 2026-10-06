@@ -1,5 +1,5 @@
-/* 080d1714: differ 909 of 1481 instructions (1466 generated, common
- * 1019). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 892 of 1481 instructions (1471 generated, common
+ * 1030). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
@@ -44,10 +44,18 @@
  * - distance loop through point = &particles[index] each iteration,
  *   one giv as the native's r6: 909. The same in the burst setup loop
  *   and spark spawn loop: 909 (spawn kept for reading).
- * Allocation: index (158 refs over ~1490 insns) gets fp, not the
- * native's r9. In the threshold loop the native also reduces
- * frame - threshold to a giv (sp+20) and hoists (wave_x >> 17) + 32
- * (sp+52); the step counter is fp there. */
+ * - threshold = index * 12 + 330 each iteration, no biv: 1095 (frame
+ *   364, threshold + 8 its own giv).
+ * - burst angle as step * 2340 again on 909: 1080, but index now
+ *   gets r9 as the native: angle no longer holds r8 there, so &work
+ *   takes r8 and &screen sl. The frame was 352: the native's missing
+ *   slot is the hoisted (wave_x >> 17) + 32. center_x assigned before
+ *   the threshold loop: 1085 (gcse reuses the earlier wave_x >> 17,
+ *   frame 360); center_x = (wave_x >> 17) + 32 as the loop body's
+ *   first statement, which loop hoists as the native: 892, frame 356.
+ * Remaining: threshold's slot is sp+56 where the native has sp+16 (a
+ * later pseudo, as if declared or made later); frame - threshold is
+ * not reduced to a giv (native sp+20). */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -150,6 +158,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     s32 speed;
     s32 angle;
     s32 threshold;
+    s32 center_x;
     s32 heading[8];
     s32 radius[8];
     s32 spin[8];
@@ -571,11 +580,12 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 index = 0;
                 threshold = 330;
                 do {
+                    center_x = (wave_x >> 17) + 32;
                     if (frame == threshold) {
                         mark->y = (wave_y >> 16) - 4;
                         mark->velocity_y = (wave_y >> 16) - 4;
-                        mark->x = (wave_x >> 17) + 32;
-                        mark->velocity_x = (wave_x >> 17) + 32;
+                        mark->x = center_x;
+                        mark->velocity_x = center_x;
 
                         step = 0;
                         do {
@@ -606,15 +616,14 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             SceneTransform_ApplyRoll(-2048);
                             SceneTransform_ApplyYaw(-4096);
 
-                            angle = 0;
                             spark = &runtime->particles[32];
                             step = 0;
                             do {
                                 work.x = 0;
                                 work.y = spark->variant
-                                    * Trig_Cos(angle);
+                                    * Trig_Cos(step * 2340);
                                 work.z = spark->variant
-                                    * Trig_Sin(angle);
+                                    * Trig_Sin(step * 2340);
                                 spark->variant += 2;
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
@@ -635,7 +644,6 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                     screen.y - span,
                                     span,
                                     span * 2);
-                                angle += 2340;
                                 step++;
                                 spark++;
                             } while (step != 28);

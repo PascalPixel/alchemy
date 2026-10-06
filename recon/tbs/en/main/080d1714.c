@@ -1,5 +1,5 @@
-/* 080d1714: differ 1182 of 1481 instructions (1449 generated, common
- * 874). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 992 of 1481 instructions (1471 generated, common
+ * 980). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
@@ -31,9 +31,13 @@
  *   native does; ((s16 *)&screen)[3] made loop-invariant address
  *   pseudos that took r9-r11 before index: 1182.
  * - register s32 index asm("r9"): 1718 (a hard register is no biv).
- * Allocation: index (158 refs over ~1490 insns) now gets fp; the
- * native's r9 is taken by &screen and &work, hoisted in the threshold
- * loop, and r8 by &radius in the frame-160 setup loop. */
+ * - the burst loop reads particles[index + 60].velocity_x and _y by
+ *   index, as the native's two runtime-relative givs of 28 per mark
+ *   show (it keeps mark for x and y): 992, frame 356 as the native.
+ * Allocation: index (158 refs over ~1490 insns) gets fp, not the
+ * native's r9. In the threshold loop the native also reduces
+ * frame - threshold to a giv (sp+20) and hoists (wave_x >> 17) + 32
+ * (sp+52); the step counter is fp there. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -608,9 +612,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 spark->variant += 2;
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
-                                    (screen.x >> 17) + mark->velocity_x;
+                                    (screen.x >> 17) + runtime->particles[index + 60].velocity_x;
                                 screen.y = (screen.y >> 16)
-                                    + mark->velocity_y;
+                                    + runtime->particles[index + 60].velocity_y;
                                 screen.depth >>= 16;
                                 if (screen.depth <= 169)
                                     screen.depth = 170;

@@ -88,7 +88,8 @@
    after y = 0, final_value replaceable, reversed, 593; i * 16 in the
    message calls and y = i * 16 in the else branch after y = 0, reversed,
    593; save->summary[i].name with i * 16 in calls, 585, with y at the
-   top, 483; save->summary[i].area, 587 as above. */
+   top, 483; save->summary[i].area, 587 as above; summary only for the
+   name and save->summary[i] for every other field, 593. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

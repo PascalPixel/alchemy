@@ -80,13 +80,13 @@ void Map_ShowWorldMap(s32 picture)
         REG_DISPCNT = v;
     }
     BattleFx_SetupResourcesAndWindow();
-    Scheduler_AddOrUpdateCallback((s32)Map_UpdateWorldMapMarkers, 0xc80);
+    Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
     if (GameFlag_TestFar(284))
         UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
     do {
         WaitFrames(1);
     } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
-    Scheduler_RemoveCallback((u32)Map_UpdateWorldMapMarkers);
+    Scheduler_RemoveCallback(Map_UpdateWorldMapMarkers);
     BattleFx_CleanupResourcesAndWindow();
     {
         s32 v;
@@ -177,21 +177,19 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
 
 void BattleFx_RunVisibilityTransition(void)
 {
-  if (((struct EventRuntime *)Runtime_AllocateBlock(27, 0xccc))->mode_19e == 3)
-  {
-    Scheduler_EnableUnmaskedOverlayCallbacks();
-    BattleFx_UpdateObjectVisibilityBounds();
-    Battle_InitializeRenderObject();
-    BattleFx_ScheduleRatioTransition(0x9D89, 6);
-    if (gKeysHeld & KEY_L)
-    {
-      do
-      {
-        WaitFrames(1);
-      }
-      while (gKeysHeld & KEY_L);
+    struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
+
+    if (field->mode == 3) {
+        Scheduler_EnableUnmaskedOverlayCallbacks();
+        BattleFx_UpdateObjectVisibilityBounds();
+        Battle_InitializeRenderObject();
+        BattleFx_ScheduleRatioTransition(0x9d89, 6);
+        if (gKeysHeld & KEY_L) {
+            do {
+                WaitFrames(1);
+            } while (gKeysHeld & KEY_L);
+        }
+        BattleFx_ScheduleRatioTransition(0x10000, 6);
+        Scheduler_DisableOverlayCallbacks();
     }
-    BattleFx_ScheduleRatioTransition(0x10000, 6);
-    Scheduler_DisableOverlayCallbacks();
-  }
 }

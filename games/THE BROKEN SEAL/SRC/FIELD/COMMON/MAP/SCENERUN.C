@@ -17,6 +17,7 @@
 #include "IRQ.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_RUNTIME.H"
+#include "FLAG_IDS.H"
 
 #define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
 
@@ -123,9 +124,9 @@ start:
             Party_SetReturnPoint(entrance);
             continue;
         }
-        Scene_ResetFlagsOnEnter(gGameState.scene, GameFlag_TestFar(0x109));
+        Scene_ResetFlagsOnEnter(gGameState.scene, GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
         Scene_ResolveInteractionResult();
-        if (!GameFlag_TestFar(0x109)) {
+        if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
             if (GameFlag_TestFar(0x11a) || GameFlag_TestFar(0x11b))
                 GameFlag_ClearBitFar(0x11a);
             else

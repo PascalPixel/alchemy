@@ -1,7 +1,24 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 933, common 489, differ 901.
+ * Native 946 instructions, draft 926, common 521, differ 830.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
+ * The scan of available and the compaction into ordered now match apart from
+ * slot offsets and one reload through ip for the first *have load.
+ * Diagnosed: stmt.c's expand_end_loop rolls every exit test within 30 insns
+ * of a while loop's top to its bottom, so `while (*need <= *have) { n++;
+ * if (n > 3) break; ... }` also moved the n > 3 exit; native keeps only the
+ * comparison at the bottom, as `if (c) do { ... } while (c)` gives. Shared
+ * function-wide required/supply/element/id/src pseudos crossed calls
+ * elsewhere, so the scan's need could not take r0 and id lost a call-saved
+ * register; the scan wants its own block locals and an indexed countdown
+ * (biv elimination gives native's cmp src, available). In the draw loop,
+ * loop.c reduces the tile-store giv index * 12 + 8 (lifetime 10, benefit 11,
+ * 124 insns) into slot 8 with a sprites copy at 40; native recomputes it.
+ * From 901: if/do-while affordability checks 894 (scan) and 887 (both);
+ * block-local need/have/n in the scan 881, plus its own id 862; indexed
+ * compaction loop 867, with its own id 848; indexed scan countdown from last
+ * 830. Block-local check in the draw loop 839; for-with-break draw loop and y
+ * beside the tile store both 830 unchanged.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
  * drawn_row 68 (drawn_page r9, row r10, page r11), cursor_handle 64,
  * description 60, counts 56, mask 52, preferred 48, cursor_position 40-47,
@@ -67,7 +84,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     const struct SummonDefinition *summon;
     struct MenuSprite *sprite;
     const u8 *required, *supply;
-    u8 *src, *dst;
+    u8 *src;
     s32 *handle;
     s32 drawn_row, drawn_page, row, page, preferred;
     s32 cursor_handle, count, last, used, mask, element;
@@ -106,34 +123,39 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     count = Trade_ListFlaggedEntriesFar(available);
     used = 0;
     last = count - 1;
-    if (last >= 0) {
-        src = available + last;
-        do {
-            id = *src;
-            required = SummonDefinition_Get(id)->djinn_required;
-            supply = standby;
-            element = 0;
-            while (*required <= *supply) {
-                element++;
-                if (element > 3)
-                    break;
-                required++;
-                supply++;
+    {
+        s32 i;
+
+        for (i = last; i >= 0; i--) {
+            const u8 *need, *have;
+            s32 n, k;
+
+            k = available[i];
+            need = SummonDefinition_Get(k)->djinn_required;
+            have = standby;
+            n = 0;
+            if (*need <= *have) {
+                do {
+                    n++;
+                    if (n > 3)
+                        break;
+                    need++;
+                    have++;
+                } while (*need <= *have);
             }
-            if (element == 4) {
-                ordered[used++] = id;
-                *src = 32;
+            if (n == 4) {
+                ordered[used++] = k;
+                available[i] = 32;
             }
-            src--;
-        } while ((s32)src >= (s32)available);
+        }
     }
-    dst = ordered + used;
-    src = available;
-    for (index = count; index > 0; index--) {
-        id = *src++;
-        if (id != 32) {
-            *dst++ = id;
-            used++;
+    {
+        s32 i, k;
+
+        for (i = 0; i < count; i++) {
+            k = available[i];
+            if (k != 32)
+                ordered[used++] = k;
         }
     }
     ordered[used] = 32;
@@ -179,12 +201,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                         required = summon->djinn_required;
                         supply = standby;
                         element = 0;
-                        while (*required <= *supply) {
-                            element++;
-                            if (element > 3)
-                                break;
-                            required++;
-                            supply++;
+                        if (*required <= *supply) {
+                            do {
+                                element++;
+                                if (element > 3)
+                                    break;
+                                required++;
+                                supply++;
+                            } while (*required <= *supply);
                         }
                         affordable = element == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);

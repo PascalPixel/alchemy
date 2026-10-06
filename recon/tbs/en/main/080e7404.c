@@ -42,7 +42,15 @@
  * level = heat + green / 4 222 (operands canonicalized); do { } while (0)
  * around the 145 cue 475, mode still folds (cse2 ignores loop-end notes).
  * The remaining mode fold (direction = mode -> movs #1) needs a CODE_LABEL
- * with uses between the mode test and the direction store. */
+ * with uses between the mode test and the direction store.
+ * Native copy is compared (cmp r3) and adjusted (adds r3, #3), so the copy is
+ * cse's first_reg there yet the load was not retargeted: some insn must sit
+ * between the load and the copy through cse2 and vanish afterwards. On 190:
+ * a dead heat = 0 with heat = count / 4 after the declarations 226; angle
+ * declared after heat 572; level = (i - 16) / 4 + heat without the green
+ * temporary 202; !count for count == 0 190. The palette loop still ties the
+ * quotient to level in local-alloc (ours adds r3, r3, r6; native adds r2, r3,
+ * r4), so the native quotient or level is not a local quantity there. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"

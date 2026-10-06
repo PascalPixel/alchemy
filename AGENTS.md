@@ -79,7 +79,13 @@ camelotizes what remains.
   and code an edition's own source leaves out, with no symbol in any of its
   images, is outside that edition's total.
   Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
-  library, handwritten and veneer assembly counts as assembly. Whole aligned
+  library, handwritten and veneer assembly counts as assembly. ARM is proven
+  handwritten only by r11 used as a register, CPSR/SPSR, swi, a computed pc
+  write that is no compiler switch table, stores into code, linkage outside
+  the procedure call standard (ip or a built lr as return address, values in
+  callee-saved registers, a caller-saved value live across bl), smull/umull
+  halves no compiler pairs, unrolled ldm/stm runs, or a Thumb/ARM switch
+  inside the function; anything else is not-yet-C. Whole aligned
   8-byte far-call stubs count as veneers. Padding a source marks as carrying
   no credit does not count. _Check: coverage-report._
 - **C3** Every push to main carries its measurement: `make land` compares all

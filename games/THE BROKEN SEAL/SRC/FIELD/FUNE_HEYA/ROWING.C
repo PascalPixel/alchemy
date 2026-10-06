@@ -36,9 +36,6 @@ struct EffectRecord {
 s32 Object_CheckMovementCollision();
 
 void Battle_ResetEffectCounter();
-void Func_02007fcc();
-void Func_02007fe8();
-void Func_02008004();
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
 

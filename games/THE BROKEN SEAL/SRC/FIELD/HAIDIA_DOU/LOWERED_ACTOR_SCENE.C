@@ -10,7 +10,6 @@ void Engine_EventBegin();
 void Battle_WaitMode0();
 void ObjectMotion_SetSpeedParameters();
 void Engine_GameFlagSet();
-void Func_020032f6();
 void ObjectMotion_OffsetPositionAndResetMotion();
 void Engine_EventEnd();
 void Audio_PlayCue();

@@ -141,7 +141,6 @@ extern s16 ImiruMura_SwayHeadings[];
 extern u32 Data_03001ae8;
 s32 ArcTan2(s32, s32);
 void ObjectDispatch_ApplyValueToChildren(T *, s32);
-void Func_020023c6();
 void Object_SetActionCallbackAndRefreshById();
 s32 Battle_GetWorkObject1e0();
 void Engine_ColorBufferApplySource();

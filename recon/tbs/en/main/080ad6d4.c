@@ -22,6 +22,7 @@
  * Trial (2026-10-06, session 3): the prologue assignments as anim, dirty, frame, cursor[0], page, then state->cursor->active = 13 and cursor[1] (permuter hint, 5 minutes over the prologue): gMenuWork is loaded into r3 before the stack adjustment and state->cursor is reached through mov r4, r9 as native, and cursor[0] takes a fresh 0: 127 -> 105. All 24 orders of anim, dirty, page and frame alone: 127 to 135; frame = anim and state loaded last: 127; all 240 orders of the five with cursor[1] last or right after cursor[0]: 105 at best (also anim, frame, dirty, cursor[0], page); cursor[0] = cursor[1] = 0 or cursor[1] = cursor[0] = 0 in any of 120 orders each: 119 at best.
  * Trial (2026-10-06, session 4): expand_call loads a call argument into its pseudo before the function address when the argument is a constant costing more than 2 (0x060052c0, 0x44444444, 0x200), but loads a variable's register after it; native loads all three after the IWRAM address. A tile variable for 0x060052c0 shared by the copy and the fill: 105 -> 103; a fill variable for 0x44444444 as well: both calls match, 97. A size variable for the tutorial buffer's 0x200 in both copies of each case: 93 (the allocation through size or with 0x200, and size set before or after it: 93). Cursor[] zeroed through an empty asm output (none) after the four scalars: CSE gives the asm anim's register as input, 127.
  * Trial (2026-10-06, session 4): the cursor[] zero through a variable fixed in r7 (as native) after frame, or after active = 13: both stores take r7 as native, but gMenuWork is no longer loaded before the stack adjustment and frame still inherits anim's r0: 109 either way. A bracket variable for 0xf128 and 0xf129 after the tile loop: 93, unchanged. Reload's find_equiv_reg (reload.c) gives frame anim's r0 because anim's own insn, rewritten in place to (set r0 0), is the nearest earlier set of 0; native's frame would need that set hidden (an intervening r0 set or a label).
+ * Trial (2026-10-06, session 4): the same cause explains the swap preview's 332: a size local (sizeof(*unit_copy)) for the allocation and the four copies, called directly, compiles identically to the copy routine fixed in r5, so that FAKEMATCH is gone (93). A 5-minute permuter run (2 jobs, 253 candidates on a shared machine) randomizing tutorial case 10 found nothing below 93; one work local shared by both tutorial cases, or size set right before each first copy: 93.
  * Open (2026-10-06, session 4): 93 instructions remain, all register choice or instruction order. Prologue: native gives anim, dirty, page and frame the registers r0, r1, r3, r2 and zeroes both cursor[] entries from its own 0 in r7; here frame's reload inherits anim's 0 in r0 and cursor[1] stores anim's 0 reloaded from its slot (CSE puts anim's register in for the constant). 0xba0: native loads it from the pool, which a K constant reaches only when the movsi split does not run on it; this splits it to 186<<4. Order only: the tutorial's work = UiText_OpenMessageWindowFar copy (native right after the call), the tutorial copies' argument moves (native mov r1 before the address load and the size's shift last), the tile loop's list->width - count[page] - 3 and the two SetSlotPhase(x, 0) after the loop (native sets r1 first: arguments load in order, so r1 first means its argument was precomputed, a value costing more than 2 that later folds to 0, or the scheduler had a reason this source does not give it). */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -137,11 +138,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         s32 second_flag;
         s32 out_a;
         s32 out_b;
-        /* FAKEMATCH: the routine's address and the size 332 tie for r5 (4 refs over 90 insns each) and the size, made first as the argument, wins by pseudo number; native keeps the address in r5 and builds 332 at each call. A plain local is propagated away by gcse. */
-        register s32 (*copy)(void *, const void *, s32) asm("r5");
+        s32 size;
 
         diff_work = Runtime_BumpAllocateAlternatePool(96);
-        unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
+        size = sizeof(*unit_copy);
+        unit_copy = Runtime_BumpAllocateAlternatePool(size);
         second_element = 0;
         second_index = 0;
         id = state->shown_owner[0];
@@ -150,7 +151,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         first_flag = (u16)(state->pair_entries[0] & 0x8000);
 
         unit = Owner_GetStateFar(id);
-        Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
+        Iwram_CopyWords(unit_copy, unit, size);
         Djinn_DeactivateFar(id, first_element, first_index);
         if (mode == 0) {
             second_element = state->pair_element[1];
@@ -164,12 +165,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Owner_RecalculateStatsFar(id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
-        copy = Iwram_CopyWords;
-        copy(unit, unit_copy, sizeof(*unit_copy));
+        Iwram_CopyWords(unit, unit_copy, size);
 
         id = state->shown_owner[1];
         unit = Owner_GetStateFar(id);
-        copy(unit_copy, unit, sizeof(*unit_copy));
+        Iwram_CopyWords(unit_copy, unit, size);
         if (mode == 0) {
             Djinn_DeactivateFar(id, second_element, second_index);
         }
@@ -180,7 +180,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Owner_RecalculateStatsFar(id);
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
-        copy(unit, unit_copy, sizeof(*unit_copy));
+        Iwram_CopyWords(unit, unit_copy, size);
         Runtime_BumpFree(unit_copy);
         Runtime_BumpFree(diff_work);
     } else if (mode - 2 <= 1) {

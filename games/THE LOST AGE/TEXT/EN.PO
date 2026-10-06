@@ -18743,7 +18743,7 @@ msgctxt "message"
 msgid "04683"
 msgstr "Rusted"
 
-msgctxt "message"
+msgctxt "MsgWeaponShopWelcome"
 msgid "04684"
 msgstr "Come in! Welcome!{line_break}Take a look at our{line_break}fine weapons.{end_now}"
 
@@ -18915,7 +18915,7 @@ msgctxt "message"
 msgid "04726"
 msgstr "What! You don't want it?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgArmorShopWelcome"
 msgid "04727"
 msgstr "Ask me anything{line_break}about armor.{end_now}"
 
@@ -19087,7 +19087,7 @@ msgctxt "message"
 msgid "04769"
 msgstr "Oh! You don't need it?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgItemShopWelcome"
 msgid "04770"
 msgstr "Welcome! We have just{line_break}the gear you need.{end_now}"
 
@@ -19555,7 +19555,7 @@ msgctxt "message"
 msgid "04886"
 msgstr "Man, Sunshine would be{line_break}rich if he worked more.{line_break}What a waste...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGeneralStoreWelcome"
 msgid "04887"
 msgstr "Welcome, welcome! If you{line_break}need it, we've got it!{line_break}See anything you need?{end_now}"
 

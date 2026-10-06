@@ -17,7 +17,7 @@ enum { UI_TEXT_ENTRY_COUNT = 256 };
 struct UiRenderWork {
     u8 unknown_00[3];
     u8 dirty;
-    u8 unknown_04;
+    u8 mode;
     u8 menu_state;
     u8 menu_busy;
     u8 level;
@@ -41,7 +41,10 @@ struct UiRenderWork {
     u32 values[8];
     u16 names[8];
     u16 resource_ids[2];
-    u8 unknown_after_resource_ids[0x10];
+    u16 output_ids[2];
+    u8 unknown_1384[8];
+    s8 text_mode;
+    u8 unknown_138d[3];
 };
 
 LAYOUT_OFFSET_GUARD(UiRenderWork_Tilemap, struct UiRenderWork, tilemap, 8);

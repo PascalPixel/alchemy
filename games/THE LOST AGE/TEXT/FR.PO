@@ -20583,7 +20583,7 @@ msgctxt "message"
 msgid "05143"
 msgstr "Rouillé"
 
-msgctxt "message"
+msgctxt "MsgWeaponShopWelcome"
 msgid "05144"
 msgstr "Bienvenue!{line_break}Jetez un coup d'¾il{line_break}sur nos armes.{end_now}"
 
@@ -20755,7 +20755,7 @@ msgctxt "message"
 msgid "05186"
 msgstr "Vous n'en voulez pas???{page_break}"
 
-msgctxt "message"
+msgctxt "MsgArmorShopWelcome"
 msgid "05187"
 msgstr "Je vous dirai tout{line_break}sur les armures.{end_now}"
 
@@ -20927,7 +20927,7 @@ msgctxt "message"
 msgid "05229"
 msgstr "Vous n'en voulez pas?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgItemShopWelcome"
 msgid "05230"
 msgstr "Bienvenue! Nous avons{line_break}tout ce qu'il vous faut.{end_now}"
 
@@ -21395,7 +21395,7 @@ msgctxt "message"
 msgid "05346"
 msgstr "Si Solario travaillait{line_break}plus, il serait riche!{line_break}Quel gâchis...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGeneralStoreWelcome"
 msgid "05347"
 msgstr "Bienvenue! Nous avons{line_break}tout ce qu'il vous faut!{line_break}Que désirez-vous?{end_now}"
 

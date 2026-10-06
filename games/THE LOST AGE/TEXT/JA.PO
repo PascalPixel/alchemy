@@ -18687,7 +18687,7 @@ msgctxt "message"
 msgid "04669"
 msgstr "さびてます"
 
-msgctxt "message"
+msgctxt "MsgWeaponShopWelcome"
 msgid "04670"
 msgstr "おう いらっしゃい!{line_break}ウチの武器を 見てってくれよ。{end_now}"
 
@@ -18859,7 +18859,7 @@ msgctxt "message"
 msgid "04712"
 msgstr "なんだよ! いらないのかい {page_break}"
 
-msgctxt "message"
+msgctxt "MsgArmorShopWelcome"
 msgid "04713"
 msgstr "防具のことなら なんなりと{line_break}わたしに おもうしつけ下さい。{end_now}"
 
@@ -19031,7 +19031,7 @@ msgctxt "message"
 msgid "04755"
 msgstr "おや! ひつようないのですね{page_break}"
 
-msgctxt "message"
+msgctxt "MsgItemShopWelcome"
 msgid "04756"
 msgstr "いらっしゃいませ!{line_break}道具のごようは こちらでどうぞ。{end_now}"
 
@@ -19499,7 +19499,7 @@ msgctxt "message"
 msgid "04872"
 msgstr "うちの人 もっとやる気なら{line_break}お金もちにだってなれるのに{line_break}もったいないはなしだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGeneralStoreWelcome"
 msgid "04873"
 msgstr "いらっしゃい! ウチは{line_break}なんでもそろう よろずやよ{line_break}じっくり 見てってちょうだいね。{end_now}"
 

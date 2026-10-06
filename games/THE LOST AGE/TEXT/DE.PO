@@ -20755,7 +20755,7 @@ msgctxt "message"
 msgid "05186"
 msgstr "Verrostet"
 
-msgctxt "message"
+msgctxt "MsgWeaponShopWelcome"
 msgid "05187"
 msgstr "Hereinspaziert!{line_break}Sieh dir nur unsere{line_break}guten Waffen an!{end_now}"
 
@@ -20927,7 +20927,7 @@ msgctxt "message"
 msgid "05229"
 msgstr "Was? Du willst es nicht?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgArmorShopWelcome"
 msgid "05230"
 msgstr "Ich kann euch alles{line_break}über Rüstungen sagen.{end_now}"
 
@@ -21099,7 +21099,7 @@ msgctxt "message"
 msgid "05272"
 msgstr "Oh! Du brauchst es nicht?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgItemShopWelcome"
 msgid "05273"
 msgstr "Willkommen! Wir haben{line_break}genau, was du brauchst!{end_now}"
 
@@ -21567,7 +21567,7 @@ msgctxt "message"
 msgid "05389"
 msgstr "Sonnenschein wäre ein{line_break}reicher Mann, würde er{line_break}nur etwas mehr arbeiten.{page_break}Was für eine{line_break}Verschwendung...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGeneralStoreWelcome"
 msgid "05390"
 msgstr "Willkommen! Willkommen!{line_break}Wir haben alles, was das{line_break}Herz begehrt!{page_break}Hat euer Auge an etwas{line_break}Gefallen gefunden?{end_wait}"
 

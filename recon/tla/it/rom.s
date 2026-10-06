@@ -1163,24 +1163,6 @@ Func_0803d020:
 	.thumb_func
 UiWork_SetTwoEntriesTo999:
 	.incbin "baserom.gba", 0x0003d328, 0x00000020
-	.section .rom.0003d348, "ax"
-	.global Localization_LookupEntryId
-	.type Localization_LookupEntryId, %function
-	.thumb_func
-Localization_LookupEntryId:
-	.incbin "baserom.gba", 0x0003d348, 0x000000d0
-	.section .rom.0003d418, "ax"
-	.global Func_0803d3c0
-	.type Func_0803d3c0, %function
-	.thumb_func
-Func_0803d3c0:
-	.incbin "baserom.gba", 0x0003d418, 0x00000090
-	.section .rom.0003d4a8, "ax"
-	.global Func_0803d450
-	.type Func_0803d450, %function
-	.thumb_func
-Func_0803d450:
-	.incbin "baserom.gba", 0x0003d4a8, 0x0000006c
 	.section .rom.0003d53c, "ax"
 	.global Ui_BuildPairedPatternsToSlot
 	.type Ui_BuildPairedPatternsToSlot, %function
@@ -1752,7 +1734,13 @@ UiIcon_MiscIconPointers:
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059b40, 0x00000ba4
 	.section .rom.0005c2e4, "ax"
-	.incbin "baserom.gba", 0x0005c2e4, 0x000035a4
+	.incbin "baserom.gba", 0x0005c2e4, 0x00002abc
+	.global Data_0805eb58
+Data_0805eb58:
+	.incbin "baserom.gba", 0x0005eda0, 0x00000024
+	.global Data_0805eb7c
+Data_0805eb7c:
+	.incbin "baserom.gba", 0x0005edc4, 0x00000ac4
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
 	.incbin "baserom.gba", 0x0005f888, 0x000000f0
@@ -4661,7 +4649,10 @@ Inn_PlaySleepFar:
 	.section .rom.001080a8, "ax"
 	.incbin "baserom.gba", 0x001080a8, 0x00000438
 	.section .rom.001084f4, "ax"
-	.incbin "baserom.gba", 0x001084f4, 0x00000268
+	.incbin "baserom.gba", 0x001084f4, 0x0000013c
+	.section .rom.00108690, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00108690, 0x000000cc
 	.section .rom.00108948, "ax"
 	.balign 4
 	.global Func_08108948

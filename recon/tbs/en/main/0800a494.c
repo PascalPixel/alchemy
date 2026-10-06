@@ -1,9 +1,12 @@
 /* 0800a494: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
-   alchemy diff --camelot-arm: listing 307, draft 291, common 213, differ
-   172 (stock agbcc_arm 199). 195 to 172 (2026-10-06, session 2): the
+   alchemy diff --camelot-arm: listing 307, draft 292, common 219, differ
+   161 (stock agbcc_arm 199). 195 to 172 (2026-10-06, session 2): the
    smull's constraints as two alternatives, the high word tied to the
    second input or early-clobbered ("=&r,&r"(lo), "=r,&r"(hi), "r,r"(a),
-   "1,r"(b)), as Transform_UpdateVertices takes them.
+   "1,r"(b)), as Transform_UpdateVertices takes them. 172 to 161: case
+   17's sign test as (y - target_y) ^ (obj->y - target_y), found by alchemy
+   permute --camelot-arm (5 minutes, nothing else below 172); the same
+   order in case 16: 169, in case 18: 171.
    Stock agscc --arm: listing 307, draft 294, common 55, differ 491.
    Fixed agbcc_arm -O2 library setting: 307/296/common202/differ199.
    Shared ScriptMotionObject layout and separate ratio/velocity values come
@@ -169,7 +172,7 @@ void Object_UpdateAll(void)
             break;
         case 17:
             if (y == obj->target_y ||
-                ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
+                ((y - obj->target_y) ^ (obj->y - obj->target_y)) < 0)
                 reached = 1;
             break;
         case 18:

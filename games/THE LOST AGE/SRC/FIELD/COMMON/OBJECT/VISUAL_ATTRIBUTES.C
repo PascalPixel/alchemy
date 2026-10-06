@@ -77,3 +77,23 @@ void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
     sprite->vram_block = block;
     sprite->tile = tile;
 }
+
+void Func_080d390c(u32 id)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+
+    object->motion_flags = 0;
+    object->collision_flags = 0;
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
+}
+
+#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
+void Func_080d3928(u32 id, s32 rotation)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+    struct FieldSprite *sprite = object->animation;
+
+    if (object != NULL && sprite != NULL)
+        sprite->rotation = rotation;
+}
+#endif

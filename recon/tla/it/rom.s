@@ -1700,12 +1700,6 @@ Menu_RunSelection:
 	.thumb_func
 Menu_DrawFlagBitTable:
 	.incbin "baserom.gba", 0x0004e06c, 0x000000c4
-	.section .rom.0004e130, "ax"
-	.global Menu_HandleFlagGridInput
-	.type Menu_HandleFlagGridInput, %function
-	.thumb_func
-Menu_HandleFlagGridInput:
-	.incbin "baserom.gba", 0x0004e130, 0x00000140
 	.section .rom.0004e29a, "ax"
 	.incbin "baserom.gba", 0x0004e29a, 0x00000002
 	.section .rom.0004e29c, "ax"
@@ -3490,12 +3484,6 @@ Menu_RunDefaultConfirmation:
 	.align 2, 0
 Func_080d2b4c:
 	.incbin "baserom.gba", 0x000d2b40, 0x000000b8
-	.section .rom.000d2c58, "ax"
-	.global Func_080d2c64
-	.type Func_080d2c64, %function
-	.thumb_func
-Func_080d2c64:
-	.incbin "baserom.gba", 0x000d2c58, 0x00000034
 	.section .rom.000d2c90, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000d2c90, 0x00000028
@@ -3574,13 +3562,8 @@ BattleFx_RunRisingObjectSequence:
 	.thumb_func
 Func_080d3780:
 	.incbin "baserom.gba", 0x000d3774, 0x00000054
-	.section .rom.000d3900, "ax"
-	.global Func_080d390c
-	.type Func_080d390c, %function
-	.thumb_func
-Func_080d390c:
-	.incbin "baserom.gba", 0x000d3900, 0x0000001c
 	.section .rom.000d391c, "ax"
+	.balign 4
 	.global Func_080d5d70
 	.type Func_080d5d70, %function
 	.thumb_func
@@ -5442,12 +5425,6 @@ Func_081c0f3c:
 	.thumb_func
 Func_081c0f44:
 	.incbin "baserom.gba", 0x001c0f44, 0x00000014
-	.section .rom.001c0f70, "ax"
-	.global Func_081c0f70
-	.type Func_081c0f70, %function
-	.thumb_func
-Func_081c0f70:
-	.incbin "baserom.gba", 0x001c0f70, 0x00000014
 	.section .rom.001c1000, "ax"
 	.global AudioEngine_SuspendDirectSoundWrapper
 	.type AudioEngine_SuspendDirectSoundWrapper, %function

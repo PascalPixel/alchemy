@@ -534,6 +534,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     draw1 = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
+    /* FAKEMATCH: the copy and fill operands set here, before the piece loop, so CSE does not share them and the pair reloads both as the native does; written at the calls they leave 45/1051. */
     cell_size = 0x7800;
     cells = Ram_MapCellBuffer;
     cell_fill = 0x01010101;

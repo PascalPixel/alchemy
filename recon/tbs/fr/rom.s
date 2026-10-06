@@ -489,12 +489,6 @@ Element_PowerResistCurve:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008e26c, 0x00000d94
-	.section .rom.00095ac8, "ax"
-	.global BattleFx_BuildBuffer
-	.type BattleFx_BuildBuffer, %function
-	.thumb_func
-BattleFx_BuildBuffer:
-	.incbin "baserom.gba", 0x00095ac8, 0x00000718
 	.section .rom.000a1568, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -561,7 +555,16 @@ DisplayTransition_EdgeOffsets:
 	.incbin "baserom.gba", 0x000a3a26, 0x00000020
 	.global DisplayTransition_DitherTable
 DisplayTransition_DitherTable:
-	.incbin "baserom.gba", 0x000a3a46, 0x00000102
+	.incbin "baserom.gba", 0x000a3a46, 0x00000040
+	.global Data_0809e92e
+Data_0809e92e:
+	.incbin "baserom.gba", 0x000a3a86, 0x00000040
+	.global Data_0809e96e
+Data_0809e96e:
+	.incbin "baserom.gba", 0x000a3ac6, 0x00000040
+	.global Data_0809e9ae
+Data_0809e9ae:
+	.incbin "baserom.gba", 0x000a3b06, 0x00000042
 	.global BattleFx_DefinitionTable
 BattleFx_DefinitionTable:
 	.incbin "baserom.gba", 0x000a3b48, 0x0000020c

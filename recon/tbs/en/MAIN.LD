@@ -358,7 +358,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_UPDATE_SCANLINE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/BLEND.o"(.text)
-        "*/recon/tbs/raw/08090a5c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BUFCOLOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/START_FADE_OVERLAY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP.o"(.text)

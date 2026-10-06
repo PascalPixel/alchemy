@@ -1007,7 +1007,7 @@ s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 s16 *BattleAction_FindDescriptor(s16 action);
 s32 BattleActor_RemoveFromLists(s32);
 void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
-void BattleFx_BuildBuffer(s32 mode, struct BattleEffectBuffers *source, u16 *destination, s32 half);
+void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
 void BattleFx_CallEffect14(void);
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
 s32 BattleFx_HasMatchingEvent5(s32 effectId);

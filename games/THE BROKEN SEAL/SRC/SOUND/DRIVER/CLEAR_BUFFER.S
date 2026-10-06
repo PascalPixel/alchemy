@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080f9a18
+	.global SoundDriver_ClearBuffer
 	.thumb_func
-Func_080f9a18:
+SoundDriver_ClearBuffer:
 	mov	ip, r4
 	movs	r1, #0
 	movs	r2, #0

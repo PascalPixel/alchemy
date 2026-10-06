@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080f9f3c
+	.global SoundDriver_CalculateStereoVolume
 	.thumb_func
-Func_080f9f3c:
+SoundDriver_CalculateStereoVolume:
 	ldrb	r1, [r4, #18]
 	movs	r0, #20
 	ldrsb	r2, [r4, r0]

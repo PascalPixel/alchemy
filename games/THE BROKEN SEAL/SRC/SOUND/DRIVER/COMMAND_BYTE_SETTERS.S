@@ -5,7 +5,7 @@
 	.thumb_func
 MusicTrack_SetLfoSpeedFromCommand:
 	mov	ip, lr
-	bl	Func_080fa1c8
+	bl	MusicTrack_ReadCommandByte
 	strb	r3, [r1, #25]
 	cmp	r3, #0
 	bne.n	.L_080fa1d4_0
@@ -20,7 +20,7 @@ AlchemyUncreditedEnd_080fa1e6:
 	.thumb_func
 MusicTrack_SetModulationFromCommand:
 	mov	ip, lr
-	bl	Func_080fa1c8
+	bl	MusicTrack_ReadCommandByte
 	strb	r3, [r1, #23]
 	cmp	r3, #0
 	bne.n	.L_080fa1e8_0

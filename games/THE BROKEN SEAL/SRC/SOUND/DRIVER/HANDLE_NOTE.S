@@ -222,7 +222,7 @@ MusicTrack_HandleNote:
 	str	r0, [r4, #4]
 	ldrh	r0, [r5, #30]
 	strh	r0, [r4, #12]
-	bl	Func_080f9f3c
+	bl	SoundDriver_CalculateStereoVolume
 	ldrb	r1, [r4, #8]
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]

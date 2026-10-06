@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 
-.global Func_080fa1c8
+.global MusicTrack_ReadCommandByte
 .thumb_func
-Func_080fa1c8:
+MusicTrack_ReadCommandByte:
 	ldr	r2, [r1, #64]
 	adds	r3, r2, #1
 	str	r3, [r1, #64]

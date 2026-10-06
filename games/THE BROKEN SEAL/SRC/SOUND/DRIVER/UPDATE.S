@@ -314,7 +314,7 @@ MusicPlayer_Tick:
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L33
-	bl	Func_080f9f3c
+	bl	SoundDriver_CalculateStereoVolume
 	cmp	r6, #0
 	beq.n	.L33
 	ldrb	r0, [r4, #29]

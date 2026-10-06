@@ -1,5 +1,5 @@
 /* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): parent differ 322 (listing 1532, draft 1634, common 1422), above the ~50 first-try bar; AddFlame/AddMote stay locked. Not first-try; parked. */
-/* 080e7404 BattleEffect_RunParticleStreams: differ 38 of 1632 (draft 1632, common 1613). heat now sits in r4 with its sp+8 caller-save (FAKEMATCH hold/clobber around the 141 call), the second loop's size is (frame + 0x1d0) << 8 so every stack slot matches, and an asm read of count after heat and line keeps the work->frame load apart from the division temp, which also fixes the reload rotation through the line loops and the instruction count. Left: at the first effect loop's top the reference holds work in r0, the 0x778c offset in r1, count in r2 and the temp in r3; ours has work r1, offset r0, count r3, temp r2. The palette's level is r3 instead of r2 (a swap of the same kind), and direction = mode still folds to 1 (movs r4, #1 for ldr r4, [sp, #76]).
+/* 080e7404 BattleEffect_RunParticleStreams: differ 2 of 1632 (draft 1632, common 1631), session 3. The loop top and the palette now match through fixed registers (count r2, work's copy r0, quarter r3, level r2) and a non-volatile asm through base that reads count. Only left: direction = side == 1 ? mode : -1 folds mode to 1 (movs r4, #1 for ldr r4, [sp, #76]); cse1 records mode == 1 at the if and the reference keeps the load. Earlier state (differ 38): heat now sits in r4 with its sp+8 caller-save (FAKEMATCH hold/clobber around the 141 call), the second loop's size is (frame + 0x1d0) << 8 so every stack slot matches, and an asm read of count after heat and line keeps the work->frame load apart from the division temp, which also fixes the reload rotation through the line loops and the instruction count. Left: at the first effect loop's top the reference holds work in r0, the 0x778c offset in r1, count in r2 and the temp in r3; ours has work r1, offset r0, count r3, temp r2. The palette's level is r3 instead of r2 (a swap of the same kind), and direction = mode still folds to 1 (movs r4, #1 for ldr r4, [sp, #76]).
  * Stubborn (2026-10-06): parent remains differ 222 after prior trials; not first-try. Nested AddFlame (080e7338) and AddMote (080e73a0) match byte-exact as the draft's leading 100 instructions (alchemy diff THIS 080e7338,080e73a0 → common 100 of 100) but adopt only with this parent (W notes). Score+parked from sun100 queue-3. */
 /* Trials: const/register heat, outer heat, declaration order and a sheet-field
  * pointer leave differ 222. Keeping the undivided frame until palette use gives
@@ -55,7 +55,29 @@
  * asm "+r" before the division, 89, the load still folds; an asm read of
  * count after the division with line computed after the asm 54; the same
  * read before the division 57; line in its declaration before the read 38
- * (kept). */
+ * (kept).
+ * 2026-10-06 session 3 (on 5d63ee8208), 38 -> 2. Palette: local-alloc ties
+ * level to the quotient (both local, the quotient dies in the add), so level
+ * took r3 and red r2; quotient fixed r3 and level fixed r2 gives 20 (level
+ * alone 30, quotient alone 38). Loop top: as a hard register count leaves the
+ * division temp canonical in cse (make_regs_eqv puts the pseudo first), so the
+ * compare and +3 use the temp as in the reference; count in r2 with the
+ * volatile read before line and work copied to base before it 12; base fixed
+ * r0 4 (the 0x778c reload then takes r1); the volatile read was a sched2
+ * barrier after which the mode reload (true dependence, latency 1, class 3)
+ * beat movs r2, #252 (anti dependence on the read of r2, class 2); passing base
+ * through a non-volatile asm that also reads count 2 (kept). Also tried:
+ * switch (mode) for if (mode == 1) 38, still folds; (void)&mode 100, mode
+ * moves to a local slot and still folds; count r2 alone 176; count r2 without
+ * any read 89 (combine merges the load into the temp); "=r"(count) : "0"(count)
+ * before the division 89, after it 13; volatile read before the division 19
+ * (the temp takes r2 by copy preference); level = heat + green / 4 38 (same
+ * RTL); r3 clobber on the read 4. Mode fold: an asm copy of mode ("=l", "0")
+ * for the ternary's arm leaves 8 (copy r2, the 0x778c offset r4; reference r4
+ * and r2), with the copy fixed r4 212, with side loaded first 218, inside the
+ * arm as a statement expression 134; the first mode == 1 test on an asm copy
+ * of mode ("=l", "0") 260. Left: direction = mode folds to movs r4,
+ * #1 in cse1 (record_jump_equiv of mode == 1); the reference reloads mode. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -309,15 +331,25 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         work->frame = 0;
         for (frame = 0; frame != 192; frame++, work->frame++) {
             s32 angle = frame << 8;
-            s32 count = work->frame;
+            /* As a hard register count leaves the division temp canonical in
+               cse, so the compare and +3 use the temp as in the reference. */
+            /* FAKEMATCH: count fixed in r2, as in the reference. */
+            register s32 count asm("r2") = work->frame;
+            /* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1. */
+            register u8 *base asm("r0") = (u8 *)work;
             s32 heat = count / 4;
-            u16 *line = (u16 *)((u8 *)work + 0x1f80);
+            u16 *line;
             s32 size;
             s32 x;
             s32 y;
 
-            /* FAKEMATCH: count read after heat and line keeps its load apart from the division temp, as in the reference (89 -> 38). */
-            asm("" : : "r"(count));
+            /* Reading count after the division keeps its load apart from the
+               division temp (no combine); through base the asm is not
+               volatile, so no sched2 barrier, and the mode reload lands after
+               movs r2, #252 as in the reference (38 -> 2). */
+            /* FAKEMATCH: count read and base passed through, see above. */
+            asm("" : "=r"(base) : "0"(base), "r"(count));
+            line = (u16 *)(base + 0x1f80);
             if (mode == 1) {
                 if ((gKeysRepeat & 3) && frame > 16)
                     goto skipped;
@@ -345,7 +377,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 *line++ = 0;
             for (; i != 135; i++) {
                 s32 green = i - 16;
-                s32 level = green / 4 + heat;
+                /* Local-alloc otherwise ties level to the quotient and swaps
+                   level and red (16 lines). */
+                /* FAKEMATCH: the quotient in r3, as in the reference. */
+                register s32 quarter asm("r3") = green / 4;
+                /* FAKEMATCH: level in r2, see quarter. */
+                register s32 level asm("r2") = quarter + heat;
                 s32 red = level - 32;
 
                 green = level - 80;

@@ -28,7 +28,6 @@ void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode)
 
 void Owner_RecalculateStats();
 
-
 s32 PartyInventory_HasSpace(void);
 void BattleEffect_CleanupSceneObjects(void);
 s32 PartyInventory_HasSpace();
@@ -48,12 +47,11 @@ void Ui_SetBank15PaletteAndClearRenderMode();
 void Map_SetViewBounds();
 u8 *Owner_GetState(s32);
 void Djinn_Transfer(s32, s32, s32, s32);
-u8 *Object_CreateFar(s32);
+
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-
 
 enum PromptMessage {
     MSG_ROBIN_CHECKED_CHEST = 0x929,
@@ -106,12 +104,8 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-
-
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
-
-
 
 u8 *SceneData_GetScriptTable(void)
 {

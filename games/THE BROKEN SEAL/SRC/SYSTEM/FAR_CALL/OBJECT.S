@@ -63,11 +63,8 @@ Inventory_PromptAndSetObjectModeFar:
 Func_0808a078:
 	overlay_veneer UiText_DrawQuantityPairWithCue
 	.global Object_GetByIdFar
-	.global Func_0808a080
 	.thumb_func
 Object_GetByIdFar:
-	.thumb_func
-Func_0808a080:
 	overlay_veneer Object_GetById
 	.global ObjectTable_DestroyByIdFar
 	.thumb_func

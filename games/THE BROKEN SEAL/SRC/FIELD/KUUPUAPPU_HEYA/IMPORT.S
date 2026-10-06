@@ -45,10 +45,10 @@ Engine_VramLoad:
 	.thumb_func
 ObjectDispatch_ApplyArgumentToChildren:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
-	.global Object_CreateFar
+	.global Engine_ObjectCreate
 	.thumb_func
-Object_CreateFar:
-	overlay_veneer Func_080090c8
+Engine_ObjectCreate:
+	overlay_veneer Object_CreateFar
 	.global Engine_ObjectDispatchRelease
 	.thumb_func
 Engine_ObjectDispatchRelease:

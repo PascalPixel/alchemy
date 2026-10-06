@@ -15,7 +15,6 @@
 #include "OBJECT_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -66,7 +65,7 @@ typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 void Vector_AddPolarOffset(s32, s32, s32 *);
-struct FieldActor *Object_CreateFar(s32, s32, s32, s32);
+
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
@@ -74,7 +73,6 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 s32 SceneActor_ApplyValueAndMatchingSlots();
 void UiWork_PushValueSlot();
 void ObjectDispatch_WaitForValue16();
-
 
 void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
@@ -137,7 +135,7 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
             s32 y = t[1];
             s32 z = t[2];
 
-            o = Object_CreateFar(285, x, y, z);
+            o = Engine_ObjectCreate(285, x, y, z);
         }
         if (o != 0) {
             o->motion_flags = 0;

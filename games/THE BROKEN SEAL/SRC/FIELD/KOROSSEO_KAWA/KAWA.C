@@ -74,8 +74,8 @@ extern u8 HexDigits[];
 void Map_UpdateCellRect();
 void Script_WaitForEventTimeout();
 typedef void(*SceneTask)(void);
-void Scheduler_RemoveCallbackFar(SceneTask);
-s32 Map_GetTerrainHeightFar(s32, s32, s32);
+
+s32 Map_GetTerrainHeight(s32, s32, s32);
 void GameFlag_SetByte(s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
@@ -94,7 +94,7 @@ s32 Party_SetFields1ceAnd1d0();
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Owner_RefreshActiveRatios();
 void FieldScene_RunLateSequence(s32 a0);
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 void Korosseo_SelectSoloCompetitor(s32 index);
@@ -192,7 +192,7 @@ void SceneState_ResetCounterAndStartTask(void)
 
     KorosseoKawa_Countdown = 0;
     task = (SceneTask)FieldScene_RunOpeningAuxiliarySequence;
-    Scheduler_RemoveCallbackFar(task);
+    Engine_TaskRemoveCallback(task);
     task();
 }
 
@@ -239,7 +239,7 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
         Engine_MapCopyCellAttributes(27, 13, 3, 1, x, y);
     }
     actor = Object_GetById(9);
-    blocked = Map_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+    blocked = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
     if (actor->y.fixed == 0 && blocked == 0) {
         actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         actor->motion_flags = 0;
@@ -628,13 +628,13 @@ s32 KorosseoKawa_ApplyEntryState(void)
     gEventWork->start_transition = 0;
     GameFlag_Set(0x144);
     actor = Object_GetById(9);
-    hit = Map_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+    hit = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
     if (actor->y.fixed == 0 && hit == 0) {
         actor->priority_flags = 2;
         actor->motion_flags = hit;
         Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
     }
-    x = GameFlag_GetByteFar(0x310);
+    x = GameFlag_GetByte(0x310);
     if (x == 0) {
         x = 25;
     }
@@ -1114,8 +1114,8 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 void SceneActor_PlaceSlots1To3FromWork(void)
 {
     {
-        s32 x = GameFlag_GetByteFar(896);
-        s32 y = GameFlag_GetByteFar(904);
+        s32 x = GameFlag_GetByte(896);
+        s32 y = GameFlag_GetByte(904);
 
         x <<= 20;
         x += 0x80000;
@@ -1124,8 +1124,8 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         Engine_ActorSetPosition(ACTOR_GERALD, x, y);
     }
     {
-        s32 x = GameFlag_GetByteFar(912);
-        s32 y = GameFlag_GetByteFar(920);
+        s32 x = GameFlag_GetByte(912);
+        s32 y = GameFlag_GetByte(920);
 
         x <<= 20;
         x += 0x80000;
@@ -1134,8 +1134,8 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         Engine_ActorSetPosition(ACTOR_IVAN, x, y);
     }
     {
-        s32 x = GameFlag_GetByteFar(928);
-        s32 y = GameFlag_GetByteFar(936);
+        s32 x = GameFlag_GetByte(928);
+        s32 y = GameFlag_GetByte(936);
 
         x <<= 20;
         x += 0x80000;

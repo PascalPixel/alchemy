@@ -49,10 +49,10 @@ Object_SetMode:
 	.thumb_func
 Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Object_CreateFar
+	.global Engine_ObjectCreate
 	.thumb_func
-Object_CreateFar:
-	overlay_veneer Func_080090c8
+Engine_ObjectCreate:
+	overlay_veneer Object_CreateFar
 	.global Object_Destroy
 	.thumb_func
 Object_Destroy:
@@ -140,10 +140,7 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:

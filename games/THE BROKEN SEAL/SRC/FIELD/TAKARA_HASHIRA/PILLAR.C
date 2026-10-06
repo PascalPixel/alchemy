@@ -40,13 +40,13 @@ void OverlayObject_SetCallbackAndMode2();
 void TakaraHashira_PrepLoweredActor();
 void TakaraHashira_RestoreFlaggedPillar();
 
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void TakaraHashira_PushPillar(void)
 {
     Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    Object_GetById(0)->y.fixed = Map_GetTerrainHeightFar(
+    Object_GetById(0)->y.fixed = Map_GetTerrainHeight(
         Object_GetById(0)->terrain_id,
         Object_GetById(0)->x.fixed,
         Object_GetById(0)->z.fixed);

@@ -68,10 +68,10 @@ Item_Get:
 	.thumb_func
 Inventory_AddItemFar:
 	overlay_veneer Func_08077028
-	.global Inventory_EquipFar
+	.global Inventory_Equip
 	.thumb_func
-Inventory_EquipFar:
-	overlay_veneer Func_08077050
+Inventory_Equip:
+	overlay_veneer Inventory_EquipFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:

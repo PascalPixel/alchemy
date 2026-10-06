@@ -114,10 +114,7 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:

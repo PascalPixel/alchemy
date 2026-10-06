@@ -19,8 +19,6 @@
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
 
-
-
 struct SceneActor {
     u8 pad00[99];
     u8 mode;
@@ -48,15 +46,13 @@ void UiText_ShowCenteredMessage();
 void Ui_SetRenderResultFromObject();
 void ConfigureSceneMotionFlags();
 void Object_RefreshSelectorById();
-u8 *Object_GetByIdFar();
-void Audio_PlayCueFromEventWork();
 
+void Audio_PlayCueFromEventWork();
 
 union GameStateRows {
     u8 bytes[512][2];
     s16 halves[512][1];
 };
-
 
 void FuneHeya_RunWalkerStep();
 void UpdateActorNineEffectMode();
@@ -64,7 +60,6 @@ void UpdateActorNineEffectMode();
 struct Half {
     u16 v;
 };
-
 
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -112,9 +107,7 @@ enum ExtendedChoreographyMessage {
 
 void Scene_RunConditionalActorPresentation();
 
-
 void SceneState_ApplyActor8FourFlags();
-
 
 void FieldScene_RunPositionTransferPresentation();
 void SceneActor_SetFlagBit3ForActors28To35(void);
@@ -123,7 +116,6 @@ void FuneHeya_PlaceFoundActors();
 void FieldScene_RunStepThen10();
 
 enum { CabinSpeakerRequest = 0xa01b };
-
 
 void Object_SetActionById();
 
@@ -153,13 +145,12 @@ extern struct EventWork *gEventWork;
 void SceneActor_SetFlagBit3ForActors28To35();
 void FieldScene_InstallFlaggedActors10To17();
 
-
 void FieldScene_CallPairWith10(s32 a, u16 b);
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 
 s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
-    struct FieldActor *obj = Object_GetByIdFar(0);
+    struct FieldActor *obj = Object_GetById(0);
     u32 ofs = FuneHeya_TurnSteps[bucket];
     s32 x = obj->x.part.pixel + ((s32)ofs >> 16);
     s32 z = obj->z.part.pixel + (s32)(s16)ofs;
@@ -348,7 +339,7 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         FieldScene_RunStepThen10(a0);
         Engine_ActorSetAnimation(a0, 2);
-        record = Object_GetByIdFar(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Engine_ActorSetDestination(a0, record->x.part.pixel, record->z.part.pixel);
         }
@@ -367,7 +358,7 @@ void FieldScene_RunScene3b1SequenceC(void)
 {
     struct FieldActor *leader;
 
-    leader = (struct FieldActor *)Object_GetByIdFar(0);
+    leader = (struct FieldActor *)Object_GetById(0);
     if ((u16)(leader->facing - 0x2000) > 0xc000) {
         if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
             Engine_SanctumOpen(17);
@@ -572,11 +563,11 @@ void FieldScene_RunThreeActorPresentation(void)
         Engine_EventWait(20);
         Actor_FaceDirection(12, FACING_SOUTH, 0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x26666, 0x13333);
-        ((struct FieldActor *)Object_GetByIdFar(0))->steering_flags &= 254;
+        ((struct FieldActor *)Object_GetById(0))->steering_flags &= 254;
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 0x208);
         Engine_EventWait(1);
         {
-            struct FieldActor *record = Object_GetByIdFar(0);
+            struct FieldActor *record = Object_GetById(0);
             record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
         }
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
@@ -929,21 +920,21 @@ void FieldScene_RunBranchingActorPresentation(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e6, 0x260);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    record = Object_GetByIdFar(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x1e6, 0x270);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 0);
-    record = Object_GetByIdFar(1);
+    record = Object_GetById(1);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_IVAN, 0x1e6, 0x280);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
-    record = Object_GetByIdFar(2);
+    record = Object_GetById(2);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
     }
@@ -1051,21 +1042,21 @@ void FieldScene_RunBranchingActorPresentation(void)
     Engine_EventWait(4);
     Engine_ActorEnableActionCallback(9, action);
     Engine_ActorSetAnimation(ACTOR_MIA, 2);
-    record = Object_GetByIdFar(2);
+    record = Object_GetById(2);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Engine_ActorSetAnimation(ACTOR_IVAN, 2);
-    record = Object_GetByIdFar(1);
+    record = Object_GetById(1);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    record = Object_GetByIdFar(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
@@ -1391,7 +1382,7 @@ void SceneActor_SetFlagBit3ForActors28To35(void)
     bit = 8;
     zero = 0;
     for (; i <= 35; i++) {
-        struct FieldActor *obj = Object_GetByIdFar(i);
+        struct FieldActor *obj = Object_GetById(i);
         u32 v = obj->collision_flags;
         obj->collision_flags = (u8)((v | bit) | zero);
     }
@@ -1461,21 +1452,21 @@ void FieldScene_RunFourActorCoordinatePresentation(void)
     Engine_ActorSetAnimationAndWait(27, 3);
     FieldScene_RunStepThen10(27);
     FieldScene_CallPairWith10(27, 0xd000);
-    record = Object_GetByIdFar(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x1b8, 148);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
-    record = Object_GetByIdFar(1);
+    record = Object_GetById(1);
     if (record != 0) {
         Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_IVAN, 0x1c8, 148);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
-    record = Object_GetByIdFar(2);
+    record = Object_GetById(2);
     if (record != 0) {
         Actor_SetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
     }
@@ -1911,7 +1902,7 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
     if (Engine_GameFlagIsSet(0x929) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(1, 0);
         Engine_ActorSetPosition(obj, 0xeb << 17, 0xac << 16);
-        ((struct FieldActor *)Object_GetByIdFar(obj))->scale_x = 0xffff0000;
+        ((struct FieldActor *)Object_GetById(obj))->scale_x = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
         Engine_ActorSetPosition(11, 0, 0);
     } else {
@@ -1930,7 +1921,7 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
     if (Engine_GameFlagIsSet(0x92b) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(3, 0);
         Engine_ActorSetPosition(obj, 0xeb << 17, 0xcc << 16);
-        ((struct FieldActor *)Object_GetByIdFar(obj))->scale_x = 0xffff0000;
+        ((struct FieldActor *)Object_GetById(obj))->scale_x = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
         Engine_ActorSetPosition(13, 0, 0);
     } else {
@@ -1990,7 +1981,7 @@ void FieldScene_CallPairWith10(s32 a, u16 b)
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
     ObjectMotion_SetHorizontalPositionWithTerrain(a, b << 16, c << 16, d);
-    ((struct FieldActor *)Object_GetByIdFar(a))->facing = d;
+    ((struct FieldActor *)Object_GetById(a))->facing = d;
 }
 
 void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
@@ -2054,7 +2045,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         {
             struct FieldActor *rec;
 
-            rec = Object_GetByIdFar(arg);
+            rec = Object_GetById(arg);
             SetPose(rec, 0x5000);
         }
         Engine_ActorSetAnimation(arg, 5);
@@ -2064,7 +2055,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         {
             struct FieldActor *rec;
 
-            rec = Object_GetByIdFar(arg);
+            rec = Object_GetById(arg);
             SetPose(rec, 0x5000);
             rec->scale_x = -0x10000;
         }
@@ -2075,7 +2066,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         {
             struct FieldActor *rec;
 
-            rec = Object_GetByIdFar(arg);
+            rec = Object_GetById(arg);
             SetPose(rec, 0x5000);
         }
         FuneHeya_PoseSceneActor(arg);
@@ -2113,29 +2104,29 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
             struct FieldActor *rec;
 
             Engine_ActorSetAnimation(13, 1);
-            rec = Object_GetByIdFar(13);
+            rec = Object_GetById(13);
             SetPose(rec, 0x3000);
-            rec = Object_GetByIdFar(13);
+            rec = Object_GetById(13);
             rec->scale_x = 0x10000;
         }
         {
             struct FieldActor *rec;
 
             Engine_ActorSetAnimation(14, 1);
-            rec = Object_GetByIdFar(14);
+            rec = Object_GetById(14);
             SetPose(rec, 0x5000);
             Engine_ActorSetAnimation(15, 1);
-            rec = Object_GetByIdFar(15);
+            rec = Object_GetById(15);
             SetPose(rec, 0x3000);
-            rec = Object_GetByIdFar(15);
+            rec = Object_GetById(15);
             rec->scale_x = 0x10000;
             Engine_ActorSetAnimation(16, 1);
-            rec = Object_GetByIdFar(16);
+            rec = Object_GetById(16);
             SetPose(rec, 0x5000);
             Object_SetModeById(17, 1);
-            rec = Object_GetByIdFar(17);
+            rec = Object_GetById(17);
             SetPose(rec, 0x3000);
-            rec = Object_GetByIdFar(17);
+            rec = Object_GetById(17);
             rec->scale_x = 0x10000;
         }
         Actor_SetPosition(28, 0x19a0000, 0xae0000);
@@ -2159,7 +2150,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         {
             struct FieldActor *rec;
 
-            rec = Object_GetByIdFar(arg);
+            rec = Object_GetById(arg);
             Engine_ActorSetAnimation(arg, 1);
             if (opt != 0) {
                 SetPose(rec, 0x3000);
@@ -2591,7 +2582,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Engine_ActorSetAnimation(9, 5);
     Actor_SetPosition(27, 0x1b80000, 0x860000);
     Actor_SetChildValue(27, 15);
-    record = Object_GetByIdFar(27);
+    record = Object_GetById(27);
     Engine_ActorSetSpriteFlags(record, 0);
     FieldScene_InstallFlaggedActors10To17(16);
     ConfigureSceneMotionFlags(0x1b60000, -1, 0xae0000, 0x1000001);
@@ -2636,7 +2627,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
     Actor_SetChildValue(27, 0);
-    record = Object_GetByIdFar(27);
+    record = Object_GetById(27);
     Engine_ActorSetSpriteFlags(record, 1);
     Actor_SetSpeed(27, 0x10000, 0x8000);
     Actor_WalkToAndWait(27, 0x1ae, 134);

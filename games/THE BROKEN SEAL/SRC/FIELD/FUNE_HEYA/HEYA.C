@@ -76,8 +76,6 @@ struct EffectRecord {
     u8 active;
 };
 
-struct SceneActor *Object_GetByIdFar(s32 actor_id);
-
 extern u8 Data_02000240[];
 
 void Battle_ResetEffectCounterFar();
@@ -92,8 +90,6 @@ s32 SceneState_ApplyLevelFromFlags();
 s32 SceneActor_CheckBucketOffsetPoint();
 void FieldScene_CallPairWith10();
 void ObjectMotion_SetActionVariant();
-
-
 
 struct Walker {
     u8 unknown_00[0x4c];
@@ -175,7 +171,7 @@ void UpdateActorNineEffectMode(struct EffectRecord *record)
 {
     struct SceneActor *actor;
 
-    actor = Object_GetByIdFar(9);
+    actor = Object_GetById(9);
     if (record->state != 0)
         return;
     if (actor->mode == 1) {
@@ -477,7 +473,7 @@ void SceneState_RunFlagBranchedActor8Setup(void)
         Engine_EventSetMessage((s32)MsgFuneLooksLikeYouveBeenChosen);
         FieldScene_RunStepThen10(8);
         Engine_ActorSetAnimation(obj, 2);
-        p = Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
             Engine_ActorSetDestination(obj, p->x.part.pixel, p->z.part.pixel);
         }
@@ -506,7 +502,7 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
         Engine_EventSetMessage((s32)MsgFuneHaHaHaChosenOarsman);
         FieldScene_RunStepThen10(10);
         Engine_ActorSetAnimation(o, 2);
-        p = Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
             Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
@@ -573,7 +569,7 @@ void FieldScene_RunScene3b1SequenceA(void)
         Engine_EventSetMessage((s32)MsgFuneGivesMeChillsThinkCould);
         FieldScene_RunStepThen10(12);
         Engine_ActorSetAnimation(rec7, 2);
-        record = Object_GetByIdFar(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Actor_SetDestination(rec7, record->x.part.pixel, record->z.part.pixel);
         }
@@ -587,7 +583,7 @@ void FieldScene_RunScene3b1SequenceA(void)
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(12);
             Engine_ActorSetAnimation(12, 2);
-            record = Object_GetByIdFar(0);
+            record = Object_GetById(0);
             if (record != 0) {
                 Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
             }
@@ -629,7 +625,7 @@ void FieldScene_RunScene3b1SequenceB(void)
         Engine_EventSetMessage((s32)MsgFuneRobinYouveGotGoodEye);
         FieldScene_RunStepThen10(9);
         Engine_ActorSetAnimation(rec7, 2);
-        record = Object_GetByIdFar(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Actor_SetDestination(rec7, record->x.part.pixel, record->z.part.pixel);
         }
@@ -643,7 +639,7 @@ void FieldScene_RunScene3b1SequenceB(void)
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(9);
             Engine_ActorSetAnimation(9, 2);
-            record = Object_GetByIdFar(0);
+            record = Object_GetById(0);
             if (record != 0) {
                 Actor_SetDestination(9, record->x.part.pixel, record->z.part.pixel);
             }
@@ -683,7 +679,7 @@ void SceneDialogue_RunActorThirteenFlag300Branch(void)
         Engine_EventSetMessage((s32)MsgFuneThatsWhoYouPickedOarsman);
         FieldScene_RunStepThen10(13);
         Engine_ActorSetAnimation(o, 2);
-        p = Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
             Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
@@ -712,7 +708,7 @@ void FieldScene_RunFlag300BranchDialogue(void)
         Engine_EventSetMessage((s32)MsgFuneIfYouveChosenOarsmanLets);
         FieldScene_RunStepThen10(14);
         Engine_ActorSetAnimation(o, 2);
-        p = Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
             Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
@@ -741,7 +737,7 @@ void FieldScene_RunActor15FlagDialogue(void)
         Engine_EventSetMessage((s32)MsgFuneYouveBeenChosenAsOarsman);
         FieldScene_RunStepThen10(15);
         Engine_ActorSetAnimation(o, 2);
-        p = Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
             Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
@@ -772,7 +768,7 @@ void FieldScene_RunActor16FlagDialogue(void)
         FieldScene_RunStepThen10(16);
         Engine_ActorSetAnimation(obj, 2);
 
-        actor = Object_GetByIdFar(0);
+        actor = Object_GetById(0);
         if (actor != 0) {
             Engine_ActorSetDestination(obj, actor->x.part.pixel,
                           actor->z.part.pixel);

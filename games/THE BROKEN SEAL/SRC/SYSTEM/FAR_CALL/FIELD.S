@@ -43,11 +43,8 @@ ResourceMetadata_UnregisterFar:
 	overlay_veneer ResourceMetadata_Unregister
 	overlay_veneer ResourceMetadata_ReleaseSlot
 	.global ResourceMetadata_ClearRecordFar
-	.global Func_08009060
 	.thumb_func
 ResourceMetadata_ClearRecordFar:
-	.thumb_func
-Func_08009060:
 	overlay_veneer ResourceMetadata_ClearRecord
 	overlay_veneer Animation_InitWorkFromMetadata
 	.global Animation_SetWorkEntryFar
@@ -92,11 +89,8 @@ ObjectDispatch_InitFromTable0Far:
 	overlay_veneer ObjectDispatch_InitFromTable0
 	overlay_veneer ObjectDispatch_FindFreeObject
 	.global Object_CreateFar
-	.global Func_080090c8
 	.thumb_func
 Object_CreateFar:
-	.thumb_func
-Func_080090c8:
 	overlay_veneer FieldObject_Create
 	.global Object_Destroy
 	.thumb_func
@@ -210,11 +204,8 @@ DisplayBlend_DisableRunScriptFar:
 DisplayBlend_EnableRunScriptFar:
 	overlay_veneer DisplayBlend_EnableRunScript
 	.global Map_GetTerrainHeightFar
-	.global Func_080091a8
 	.thumb_func
 Map_GetTerrainHeightFar:
-	.thumb_func
-Func_080091a8:
 	overlay_veneer Map_GetTerrainHeight
 	.global GetMapCellCollisionFar
 	.thumb_func

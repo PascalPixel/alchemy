@@ -76,7 +76,7 @@ typedef struct ActiveSubjectSlot {
 extern s16 Korosseo_MarkerSlot;
 extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
-void Scheduler_RemoveCallbackFar(u8 *);
+
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 void ObjectDispatch_InitFromTable6(struct FieldActor *);
@@ -112,7 +112,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
 void KorosseoKawa_ReleaseMarker(void)
 {
 
-    Scheduler_RemoveCallbackFar(Korosseo_UpdateMarker);
+    Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
     Resource_ResetEntry(Korosseo_MarkerSlot);
     Korosseo_MarkerSlot = -1;
 }

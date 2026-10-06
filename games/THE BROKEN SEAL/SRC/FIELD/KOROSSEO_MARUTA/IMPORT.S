@@ -34,10 +34,10 @@ Math_Atan2:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	.global Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_AllocateBlock
 	.thumb_func
 Runtime_AllocateBlock:
@@ -89,10 +89,10 @@ Runtime_PushSlotEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global ResourceMetadata_ClearRecordFar
+	.global ResourceMetadata_ClearRecord
 	.thumb_func
-ResourceMetadata_ClearRecordFar:
-	overlay_veneer Func_08009060
+ResourceMetadata_ClearRecord:
+	overlay_veneer ResourceMetadata_ClearRecordFar
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -261,13 +261,10 @@ Engine_EventEnd:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:

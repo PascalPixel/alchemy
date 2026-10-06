@@ -18,8 +18,6 @@
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
 
-#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
-#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -599,7 +597,7 @@ void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
     Inventory_AddItemFar(group, value);
     for (i = 0; i < 15; i++) {
         if (*(u16 *)(work + 216 + i * 2) == value)
-            Inventory_EquipFar(group, i);
+            Inventory_Equip(group, i);
     }
 }
 
@@ -647,6 +645,6 @@ retry:
     }
     for (i = 0; i <= 14; i++) {
         if (member->items[i] == id)
-            Inventory_EquipFar(2, i);
+            Inventory_Equip(2, i);
     }
 }

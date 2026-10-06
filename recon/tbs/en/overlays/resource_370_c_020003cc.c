@@ -1,4 +1,34 @@
+/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 463 of 920 (draft 919, common 688) with --symbol Func_020003cc.
+ * Remaining: the frame keeps one spill slot too many (started at [sp, #24], native [sp, #20]; heading window at [sp, #20], native [sp, #12]); the encoded size sits in r11 and the page window in r9, native r9 and r10; the then-arm of the one-page help test jumps back 1556 bytes where the native jumps forward over the else; the link wait loop allocates its mask, miss count and result to r5, r2 and r10 where the native uses r1, r5 and r4; the new-game scene (row 8 of the scene table, unnamed) is stored as an immediate where the native loads its id from the pool.
+ * Trials (2026-10-06):
+ * - 873 -> 757: the record prompt as a goto loop; the native reloads every invariant in it, as goto loops do.
+ * - 757 -> 711: SceneId_WorldMap from the scene table; one callee name per function, so the case-1 tails cross-jump through one message call; a state pointer kept in r5.
+ * - 711 -> 703: the menu head and the owner-name loop as goto loops; return 0 from the adventure branch.
+ * - 703 -> 607: the password page loop as a real loop with its A and B exits inline: loop.c moves each exit back to the barrier before its target, where the native has them.
+ * - 607 -> 598: the link exits (matched greeting, ten missed frames) inline in their loops; the record-select prompt as a goto loop.
+ * - 598 -> 573: SceneId_LinkLobby (+4 alone, from the pool shift); the scene state's word at 0x100 as a struct member, which keeps the base and offset apart as the native does and moves the literal pool to after case 3.
+ * - 573 -> 522: the 0x109 flag set through the Call1 wrapper (FAKEMATCH): direct, CSE keeps 0x109 in r7 for the later clears, which the native derives from 0x1c2.
+ * - 522 -> 507: the link wait loop written test-first with gotos; the native reloads its status and source addresses each pass.
+ * - 507 -> 503: the checksum as an s16 stored with two post-increments.
+ * - 503 -> 475: the checksum's high byte through (u16), stored at n and n + 1 before n += 2; the two help messages as the password label's id minus 2 and minus 1, which the native derives from the label's register.
+ * - 475 -> 463: page = 0 right after the page window is made, where the native zeroes r11.
+ * - no gain: the 0x100 word through a (u32) cast (602); the state pointer set before the flag call (575); the adventure block in an if (0) arm (711); the first link loop testing its mask variable instead of 3 (604); dropping the glyph loop's slot4 copies (507, kept as simpler); one UiWindow_Create and UiText_DrawCharacterAtOffset for both help arms (463). */
 #include "TYPES.H"
+#include "IO_REG.H"
+#include "SERIAL_RUNTIME.H"
+#include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
+extern u32 gKeysHeld;
+struct SaveMenuSceneState {
+    u8 unknown_000[0x100];
+    s32 word_100;
+};
+void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void UiWork_FinalizePendingCore(void);
+s32 Scene_GetModeMask(void);
+s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u8 MsgNoBackupMemory[];
 extern u8 MsgSaveAdventureQuestion[];
 extern u8 MsgSaveDataCorrupted[];
@@ -7,15 +37,42 @@ extern u8 MsgClearSendingData[];
 extern u8 MsgClearPasswordLabel[];
 extern u8 MsgClearSaveLabel[];
 
+extern volatile u32 gKeyState;
+void Engine_UiWorkFinalize(s32 window, s32 mode);
+void Engine_RenderOutputPrepareForRedraw(s32 window);
+
 extern u8 gSaveBuffer[];
-extern u8 gGameState[];
+struct SaveMenuRecord {
+    s32 word_00;
+    s32 word_04;
+    u8 unknown_08[0x1fd];
+    u8 value_205;
+    u8 value_206;
+    u8 unknown_207[8];
+    u8 value_20f;
+    u8 unknown_210[0x1a];
+    u8 value_22a;
+};
+
+union SaveMenuState {
+    struct GameState location;
+    struct SaveMenuRecord record;
+};
+
+LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value205, struct SaveMenuRecord, value_205, 0x205);
+LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value20f, struct SaveMenuRecord, value_20f, 0x20f);
+LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value22a, struct SaveMenuRecord, value_22a, 0x22a);
+
+extern union SaveMenuState Data_02000240;
 extern u8 Data_02001100[];
-extern u8 gSerialSendSource[];
-extern u8 Data_02002224[];
-extern u8 Data_02002226[];
-extern u8 Data_02002228[];
-extern u8 Data_0200222a[];
-extern u8 gEventWork[];
+struct SaveLinkGreeting {
+    u16 code[4];
+    u8 reserved[16];
+};
+
+extern struct SaveLinkGreeting Data_02002224;
+extern struct SaveLinkGreeting gLinkPeerSignatures[4];
+extern u8 Data_03001ebc[];
 void Func_02000438();
 s32 Func_0200096c();
 s32 Func_020009e0();
@@ -27,12 +84,10 @@ void Func_020017ca();
 s32 Func_020017d2();
 void Func_020017ee();
 void Func_02001804();
-void Func_02001812();
 void Func_02001814();
 s32 Func_02001816();
 void Func_0200939c();
 s32 Func_0200938c(s32, s32);
-s32 Func_02001822();
 s32 Func_02001830();
 void Func_0200184a();
 void Func_020094ac(void);
@@ -108,9 +163,7 @@ void Func_02009374();
 void Func_02001d1e();
 void Func_02001d2e();
 void Func_02001d36();
-void Func_02001d44();
 s32 Func_02009314(s32, s32);
-void Func_02001d54();
 void Func_02001d6e();
 void Func_020094cc(s32);
 s32 Func_020093d4(s32);
@@ -120,13 +173,11 @@ s32 Func_02001df4();
 void Func_02001e06();
 s32 Func_02001e12();
 void Func_02001e32();
-void Func_02001e44();
 void Func_02001e50();
 s32 Func_02001e6e();
 void Func_02001e76();
 void Func_02001ece();
 void Func_02001ee2();
-void Func_02001efe();
 void Func_02001f1a();
 s32 Func_02001f3c();
 s32 Func_02001f4a();
@@ -190,7 +241,6 @@ s32 SaveMenu_Run(void)
     s32 page_window;
     s32 rec5;
     s32 rec7;
-    s32 rec8;
     s32 record;
     s32 value;
     s32 base3_2000240;
@@ -206,12 +256,10 @@ s32 SaveMenu_Run(void)
     s32 v4;
     s32 missing_link_frames;
     s32 base7_3001c94;
-    s32 none;
     s32 page_message;
     s32 page;
     s32 x;
     s32 started;
-    s32 slot4;
     s32 heading_window;
     s32 help_window;
     u8 save_data[200];
@@ -221,83 +269,70 @@ s32 SaveMenu_Run(void)
     started = 0;
     Func_02000438();
     Value2(Func_0200171a, 0x20081fd, 0xc80);
-    *(s32 *)((*(u8 **)gEventWork + 0x1c0)) = started;
+    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = started;
     Func_020094ac();
     Func_020018c0();
-    if (*(s16 *)(gGameState + 0x1c2) == 2) {
-        do {
-            Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
-            rec = Value1(Func_020094c4, 1);
-            Func_020017ee();
-            if (rec != 0) {
-                break;
-            }
+    if (Data_02000240.location.entrance == 2) {
+    L_ask:
+        Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
+        v7 = Value1(Func_020094c4, 1);
+        Func_020017ee();
+        if (v7 == 0) {
             Func_020017ca(((s32)MsgSaveAdventureQuestion + 1), 1);
-            base3_2000240 = (s32)gGameState;
-            *(u8 *)((base3_2000240 + 0x20f)) = 1;
-            rec = Func_02001830();
-            v5 = 0x7;
-            v7 = rec;
-        } while (v7 == -1);
+            Data_02000240.record.value_20f = 1;
+            v7 = Func_02001830();
+            if (v7 == -1) {
+                goto L_ask;
+            }
+        }
         Func_02009494(60);
         Func_0200190c();
         Func_0200192a(17);
         Call1(Func_020018fa, 0x12c);
-        Func_02001912(0x2, 72);
-        goto L_Return;
-        L_02000474:;
-        Func_02001944(112);
-        Func_0200939c(page_window);
-        Func_02001812(page_window, 2);
-        Value2(Func_0200938c, help_window, 2);
-        Value2(Func_02001822, heading_window, 2);
-        Func_020017c0(1);
+        Func_02001912((s32)&SceneId_WorldMap, 72);
+        return 0;
     } else {
         *(u8 *)0x03001ca0 = started;
     }
     L_020004a8:;
-    do {
-        rec8 = Value0(Func_020018b6);
-        if (rec8 < 0) {
-            if (*(u8 *)0x03001f54 != 0) {
-                base3_2000240 = (s32)gGameState;
-                *(u8 *)((base3_2000240 + 0x22a)) = 1;
-                *(u8 *)0x03001d08 = 1;
-                Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
-            }
+    v6 = Value0(Func_020018b6);
+    if (v6 < 0) {
+        if (*(u8 *)0x03001f54 != 0) {
+            Data_02000240.record.value_22a = 1;
+            *(u8 *)0x03001d08 = 1;
+            Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
         }
-        if (rec8 == 0) {
-            if (started == 0) {
-                Func_02001804(30);
-                Value2(Func_02001816, 0x2008155, 0xc80);
-                Func_02001814(1);
-                started = 1;
-            }
+    }
+    if (v6 == 0) {
+        if (started == 0) {
+            Func_02001804(30);
+            Value2(Func_02001816, 0x2008155, 0xc80);
+            Func_02001814(1);
+            started = 1;
         }
-        if (rec8 > 0) {
-            rec8 = Value0(Func_020018c8);
-        } else {
-            rec8 = 0;
+    }
+    if (v6 > 0) {
+        v6 = Value0(Func_020018c8);
+    } else {
+        v6 = 0;
+    }
+    if (v6 != 0) {
+        goto L_0200057a;
+    }
+    Func_02001956();
+    Func_02001938(Data_02000240.record.value_205, Data_02000240.record.value_206);
+    v5 = 1;
+    v7 = 0;
+    L_02000522:;
+    Func_0200184a(6);
+    v6 = Func_02001940(v7);
+    if (v6 == -1) {
+        if (v7 == 0) {
+            goto L_020004a8;
         }
-        if (rec8 != 0) {
-            goto L_0200057a;
-        }
-        Func_02001956();
-        base3_2000240 = (s32)gGameState;
-        base2_2000240 = (s32)gGameState;
-        Func_02001938(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base2_2000240 + 0x206)));
-        v7 = 0;
-        v5 = 1;
-        L_02000522:;
-        Func_0200184a(6);
-        rec8 = Func_02001940(v7);
-        if (rec8 != -1) {
-            goto L_02000540;
-        }
-    } while (v7 == 0);
-    v7 = (v7 - 1);
-    goto L_02000522;
-    L_02000540:;
+        v7--;
+        goto L_02000522;
+    }
     if (*(s16 *)(0x20096b2) != 0) {
         v5 = 4;
     }
@@ -309,82 +344,76 @@ s32 SaveMenu_Run(void)
         goto L_02000522;
     }
     Func_020019dc();
-    *(u16 *)(gGameState + 0x1c0) = 0x8;
+    Data_02000240.location.scene = 0x8;
     {
         s32 shown = 20;
 
-        *(u16 *)(gGameState + 0x1c2) = shown;
+        Data_02000240.location.entrance = shown;
     }
     goto L_02000c96;
     L_0200057a:;
-    if (rec8 != 1) {
+    if (v6 != 1) {
     } else {
-        rec8 = Value1(Func_02001978, 1);
-        if (rec8 == -1) {
+        union SaveMenuState *state;
+
+        v6 = Func_02001978(1);
+        if (v6 == -1) {
             goto L_020004a8;
         }
-        Call1(Func_020019f0, 0x109);
-        base5_2000240 = (s32)gGameState;
-        v5 = base5_2000240;
-        v5 = base5_2000240;
-        base3_2000240 = (s32)gGameState;
-        base3_2000240 = (s32)gGameState;
-        Func_020019c2(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base3_2000240 + 0x206)));
-        record = Func_02001a2e();
-        if (*(s32 *)base5_2000240 != record) {
-            *(u16 *)(gGameState + 0x1c0) = *(u16 *)(gGameState + 0x1c4);
-            *(u16 *)(gGameState + 0x1c2) = *(u16 *)(gGameState + 0x1c6);
-            Call1(Func_02001a38, 0x109);
-        } else {
-            if ((*(s32 *)0x03001ae8 & 0x208) == 0x208) {
-                if (Value0(Func_0200096c) != 0) {
-                    goto L_02000664;
-                }
-                *(u16 *)(gGameState + 0x1c0) = *(u16 *)(gGameState + 0x1c4);
-                *(u16 *)(gGameState + 0x1c2) = *(u16 *)(gGameState + 0x1c6);
-                Func_02009464(0x109);
-                Func_0200945c(0x13e);
-            } else {
-                if (*(s32 *)(base5_2000240 + 4) != *(s32 *)Data_02001100) {
-                    Value2(Func_020019ca, (s32)MsgSaveDataCorrupted, 9);
-                    Func_020019d2(((s32)MsgSaveDataCorrupted + 1), 13);
-                    if (Value4(Func_02001a6e, 1, 0, 0, 0) != 0) {
-                        Func_02001a16();
-                        goto L_020004a8;
-                    }
-                    Func_02001a1c();
-                    if (Value0(Func_020009e0) != 0) {
-                        L_02000664:;
-                        Func_020019fc(0x6, 9);
-                        goto L_020004a8;
-                    }
-                    *(u16 *)(gGameState + 0x1c0) = *(u16 *)(gGameState + 0x1c4);
-                    *(u16 *)(gGameState + 0x1c2) = *(u16 *)(gGameState + 0x1c6);
-                    Call1(Func_02001af2, 0x109);
-                    Call1(Func_02001af0, 0x13f);
-                }
+        /* FAKEMATCH: called directly, CSE keeps 0x109 in r7 for the later clears; the native derives them from 0x1c2 (522 vs 573). */
+        Call1((void (*)())GameFlag_SetBit, 0x109);
+        state = &Data_02000240;
+        Func_020019c2(state->record.value_205, state->record.value_206);
+        if (state->record.word_00 != Func_02001a2e()) {
+            state->location.scene = state->location.saved_scene;
+            state->location.entrance = state->location.saved_entrance;
+            GameFlag_ClearBit(0x109);
+        } else if ((gKeysHeld & 0x208) == 0x208) {
+            if (Scene_GetModeMask() != 0) {
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
+                goto L_020004a8;
             }
+            state->location.scene = state->location.saved_scene;
+            state->location.entrance = state->location.saved_entrance;
+            GameFlag_ClearBit(0x109);
+            GameFlag_SetBit(0x13e);
+        } else if (state->record.word_04 != ((struct SaveMenuSceneState *)gSceneState)->word_100) {
+            UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted, 9);
+            UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 1, 13);
+            if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0) {
+                UiWork_FinalizePendingCore();
+                goto L_020004a8;
+            }
+            UiWork_FinalizePendingCore();
+            if (Scene_GetModeMask() != 0) {
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
+                goto L_020004a8;
+            }
+            state->location.scene = state->location.saved_scene;
+            state->location.entrance = state->location.saved_entrance;
+            GameFlag_ClearBit(0x109);
+            GameFlag_SetBit(0x13f);
         }
-        Call1(Func_02001b00, 0x106);
+        GameFlag_ClearBit(0x106);
         goto L_02000c96;
     }
-    if (rec8 == 2) {
+    if (v6 == 2) {
         Func_02001aa2();
         goto L_020004a8;
     }
-    if (rec8 == 3) {
+    if (v6 == 3) {
         Func_02001ab4();
         goto L_020004a8;
     }
-    if (rec8 == 4) {
-        rec8 = Func_02001b10(4);
-        if (rec8 == -1) {
+    if (v6 == 4) {
+        v6 = Func_02001b10(4);
+        if (v6 == -1) {
             goto L_020004a8;
         }
         v5 = 0x2000240;
         v5 = 0x2000240;
         v5 = 0x2000240;
-        *(s32 *)(gGameState + 0x1f4) = 0;
+        Data_02000240.location.selected_actor = 0;
         if (Value1(Func_02001b8e, 0x952) != 0) {
             Func_0200948c();
             Func_02009474(0);
@@ -396,76 +425,72 @@ s32 SaveMenu_Run(void)
             Func_02001bd8(2);
             Func_02001bde(3);
         }
-        base3_2000240 = (s32)gGameState;
-        base3_2000240 = (s32)gGameState;
-        Func_02001b9e(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base3_2000240 + 0x206)));
+        base3_2000240 = (s32)&Data_02000240;
+        base3_2000240 = (s32)&Data_02000240;
+        Func_02001b9e(Data_02000240.record.value_205, Data_02000240.record.value_206);
         Call1(Func_02001bec, 0x109);
         Func_02009464(0x106);
         Func_0200945c(0x17e);
         *(u8 *)0x03001ca0 = 1;
-        Func_02001c4a(0xbe, 1);
+        Func_02001c4a((s32)&SceneId_LinkLobby, 1);
         goto L_02000c96;
-        v6 = rec8;
-        v7 = 1;
-        L_020007aa:;
-        v7 = 1;
-        goto L_020008e0;
-        L_020007ae:;
-        v4 = 0;
-        goto L_0200095e;
     } else {
-        if (rec8 != 5) {
+        if (v6 != 5) {
             goto L_020004a8;
         }
-        do {
-            rec8 = Func_02001bb0(5);
-            if (rec8 == -1) {
-                goto L_020004a8;
-            }
-            base3_2000240 = (s32)gGameState;
-            base2_2000240 = (s32)gGameState;
-            Func_02001bf6(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base2_2000240 + 0x206)));
-            L_020007dc:;
-            rec8 = Func_02001bb4(0);
-            v6 = rec8;
-        } while (v6 == -1);
+        L_020007b8:;
+        v6 = Func_02001bb0(5);
+        if (v6 == -1) {
+            goto L_020004a8;
+        }
+        Func_02001bf6(Data_02000240.record.value_205, Data_02000240.record.value_206);
+        L_020007dc:;
+        v6 = Func_02001bb4(0);
+        if (v6 == -1) {
+            goto L_020007b8;
+        }
         if (v6 != 1) {
             goto L_020009cc;
         }
-        rec8 = Func_02001b84(6, 5, 18, 8, 2);
+        v6 = Func_02001b84(6, 5, 18, 8, 2);
         link_message = (s32)MsgClearSaveLabel;
-        v6 = rec8;
+
         Func_020093ac(link_message, v6, 0, 4);
         Func_02001bca((link_message + 1), v6, 0, 16);
         Func_02001bd6((link_message + 3), v6, 0, 36);
         Func_02001b9a();
         Func_02001b58(10);
-        *(u16 *)Data_02002224 = 0x30;
-        *(u16 *)Data_02002226 = 0x30;
-        *(u16 *)Data_02002228 = 0x30;
-        *(u16 *)Data_0200222a = 0x30;
+        Data_02002224.code[0] = 0x30;
+        Data_02002224.code[1] = 0x30;
+        Data_02002224.code[2] = 0x30;
+        Data_02002224.code[3] = 0x30;
         v5 = 3;
         v7 = 0;
         v1 = 0;
-        v3 = 0x2002024;
-        do {
-            v1 = (v1 + 1);
-            *(u16 *)(v3) = 0x30;
-            *(u16 *)(v3 + 2) = 0x30;
-            *(u16 *)(v3 + 4) = 0x30;
-            *(u16 *)(v3 + 6) = 0x30;
-            v3 = (v3 + 24);
-        } while (v1 != 4);
+        {
+            struct SaveLinkGreeting *greeting = gLinkPeerSignatures;
+
+            do {
+                v1 = (v1 + 1);
+                greeting->code[0] = 0x30;
+                greeting->code[1] = 0x30;
+                greeting->code[2] = 0x30;
+                greeting->code[3] = 0x30;
+                greeting++;
+            } while (v1 != 4);
+        }
         while ((*(s32 *)0x03001c94 & 2) == 0) {
             if ((3 & *(u16 *)0x03001f64) == 3) {
-                u32 peer = ((*(volatile u32 *)0x04000128 >> 4) & 3) ^ 1;
-                u16 *received = (u16 *)(0x02002024 + peer * 24);
+                u32 control = REG_SIOCNT;
+                u32 peer = ((control << 26) >> 30) ^ 1;
+                u16 *received = gLinkPeerSignatures[peer].code;
 
                 if (received[0] == 85) {
                     if (received[1] == 86) {
                         if (received[2] == 84) {
                             if (received[3] == 83) {
-                                goto L_020007aa;
+                                v7 = 1;
+                                goto L_020008e0;
                             }
                         }
                     }
@@ -479,32 +504,33 @@ s32 SaveMenu_Run(void)
         if (v7 == 0) {
             goto L_020007dc;
         }
-        rec8 = Func_02001c80(5, 10, 20, 4, 2);
-        v6 = rec8;
+        v6 = Func_02001c80(5, 10, 20, 4, 2);
+
         Call4(Func_02001cb6, (s32)MsgClearSendingData, v6, 0, 4);
         Func_02001c34(10);
         Value2(Func_02001c94, (s32)gSaveBuffer, 0x1004);
         Func_02001c42(10);
         missing_link_frames = 0;
-        count = 0;
         v1 = 3;
         v4 = 1;
-        for (;;) {
-            if (count > 0x927bf) {
-                break;
-            }
+        count = 0;
+        goto L_wait_test;
+    L_wait:
+        Func_02001c56(1);
+        count = (count + 1);
+    L_wait_test:
+        if (count <= 0x927bf) {
             missing_link_frames = (missing_link_frames + 1);
             if ((v1 & *(u16 *)0x03001f64) == v1) {
                 missing_link_frames = 0;
             }
             if (missing_link_frames == 10) {
-                goto L_020007ae;
+                v4 = 0;
+                goto L_0200095e;
             }
-            if (*(s32 *)gSerialSendSource == 0) {
-                break;
+            if (gSerialSendSource != 0) {
+                goto L_wait;
             }
-            Func_02001c56(1);
-            count = (count + 1);
         }
     }
     L_0200095e:;
@@ -524,31 +550,28 @@ s32 SaveMenu_Run(void)
     Func_02001d36(v6);
     Func_02001d2e(v6, 2);
     goto L_020004a8;
-    L_020009a6:;
-    Func_02001e76(113);
-    Func_0200939c(page_window);
-    Func_02001d44(page_window, 2);
-    Func_0200938c(help_window, 2);
-    Func_02001d54(heading_window, 2);
-    goto L_020009d2;
     L_020009cc:;
     if (v6 != 0) {
     } else {
         L_020009d2:;
-        rec8 = Value1(Func_020093d4, 1);
-        v6 = rec8;
+        v6 = Value1(Func_020093d4, 1);
+
         if (v6 == -1) {
             goto L_020007dc;
         }
         encoded_size = Value3(Func_020017d2, 0, v6, save_data);
-        value = Func_02001cbe(encoded_size, save_data);
-        *(u8 *)(save_data + encoded_size) = ((u32)(value << 16) >> 24);
-        *(u8 *)(save_data + (encoded_size + 1)) = ((value << 16) >> 16);
-        encoded_size = Value3(Func_02001bf8, save_data, (encoded_size + 2), password);
+        {
+            s16 sum = Func_02001cbe(encoded_size, save_data);
+
+            save_data[encoded_size] = (u16)sum >> 8;
+            save_data[encoded_size + 1] = sum;
+            encoded_size += 2;
+        }
+        encoded_size = Value3(Func_02001bf8, save_data, encoded_size, password);
         v6 = 2;
         Func_02001d6e();
         page_window = Func_02001dae(5, 4, 20, 12, v6);
-        none = 0;
+        page = 0;
         page_count = (Func_02009314(encoded_size, 50) + 1);
         record = Func_02001dce(10, 0, 10, 4, v6);
         page_message = (s32)MsgClearPasswordLabel;
@@ -558,29 +581,39 @@ s32 SaveMenu_Run(void)
         if (page_count == 1) {
             record = Func_02001df4(5, 16, 20, 3, v6);
             help_window = record;
-            Call4(Func_02001e32, 0xc80, help_window, 80, 0);
+            Call4(Func_02001e32, page_message - 2, help_window, 80, 0);
         } else {
             record = Func_02001e12(1, 16, 28, 3, v6);
             help_window = record;
-            Call4(Func_02001e50, 0xc81, help_window, 0, 0);
+            Call4(Func_02001e50, page_message - 1, help_window, 0, 0);
         }
         Call1(Func_02001ece, 0x6006000);
-        Func_02001e44(page_window);
-        page = none;
-        L_02000aaa:;
+        Engine_RenderOutputPrepareForRedraw(page_window);
+        for (;;) {
         Call1(Func_02001ee2, 0x6002500);
-        if ((*(s32 *)0x03001c94 & 2) != 0) {
-            goto L_020009a6;
+        if ((gKeyState & KEY_B) != 0) {
+            Func_02001e76(113);
+            Engine_RenderOutputPrepareForRedraw(page_window);
+            Engine_UiWorkFinalize(page_window, 2);
+            Engine_UiWorkFinalize(help_window, 2);
+            Engine_UiWorkFinalize(heading_window, 2);
+            goto L_020009d2;
         }
-        if ((*(s32 *)0x03001c94 & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             page = (page + 1);
             v7 = 1;
             if (page == page_count) {
-                goto L_02000474;
+                Func_02001944(112);
+                Engine_RenderOutputPrepareForRedraw(page_window);
+                Engine_UiWorkFinalize(page_window, 2);
+                Engine_UiWorkFinalize(help_window, 2);
+                Engine_UiWorkFinalize(heading_window, 2);
+                Func_020017c0(1);
+                goto L_020004a8;
             }
             Func_02001fa2(111);
         } else {
-            if ((*(s32 *)0x03001c94 & 32) != 0) {
+            if ((gKeyState & KEY_LEFT) != 0) {
                 if (page_count <= 1) {
                     goto L_02000b30;
                 }
@@ -588,7 +621,7 @@ s32 SaveMenu_Run(void)
                 rec5 = Func_02001e6e(((page + page_count) - 1), page_count);
             } else {
                 L_02000b30:;
-                if ((*(s32 *)0x03001c94 & 16) == 0) {
+                if ((gKeyState & KEY_RIGHT) == 0) {
                     goto L_02000b58;
                 }
                 if (page_count <= 1) {
@@ -606,7 +639,7 @@ s32 SaveMenu_Run(void)
         } else {
             v7 = 0;
             v5 = 2;
-            Func_02001efe(page_window);
+            Engine_RenderOutputPrepareForRedraw(page_window);
             do {
                 Func_02001f1a(page_window, 0, v5, 18, v5);
                 v5 = (v5 + 2);
@@ -644,21 +677,16 @@ s32 SaveMenu_Run(void)
                 do {
                     v3 = password;
                     v3 = *(u8 *)(v3 + v7);
-                    slot4 = v4;
                     Func_02000f0c((63 & v3), glyph);
                     record = Func_02001f3c(v7, 10);
-                    v4 = slot4;
                     if (record > 4) {
                         rec7 = Func_02001f4a(v4, 10);
-                        v4 = slot4;
                         record = Func_02001f4e(v4, 10);
                         x = rec7 * 12 + 18;
                         v3 = record;
                         v3 = (v3 << 4);
                     } else {
-                        slot4 = v4;
                         rec7 = Func_02001f6e(v4, 10);
-                        v4 = slot4;
                         record = Func_02001f72(v4, 10);
                         x = rec7 * 12 + 8;
                         v3 = record;
@@ -666,7 +694,6 @@ s32 SaveMenu_Run(void)
                     }
                     v3 = (v3 + 2);
                     Func_02002030(glyph, page_window, x, v3);
-                    v4 = slot4;
                     v7 = (v7 + 1);
                     v4 = (v4 + 1);
                 } while (v7 != v6);
@@ -674,12 +701,12 @@ s32 SaveMenu_Run(void)
             v7 = 0;
         }
         Func_02001faa(1);
-        goto L_02000aaa;
+        }
     }
     Call1(Func_02001fb4, 0x12c);
     goto L_020004a8;
     L_02000c96:;
-    *(u16 *)((*(u8 **)gEventWork + 0x170)) = 0x3e7;
+    *(u16 *)((*(u8 **)Data_03001ebc + 0x170)) = 0x3e7;
     Func_0200213c(30);
     Func_0200217a(17);
     Func_02002166();

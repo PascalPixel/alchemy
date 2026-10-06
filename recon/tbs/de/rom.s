@@ -198,12 +198,7 @@ Tile_BuildMetatilesEnd:
 	.thumb_func
 Battle_CollectPartyCommands:
 	.incbin "baserom.gba", 0x00025dd8, 0x00001080
-	.section .rom.00028440, "ax"
-	.global DebugMenu_BrowseEntryGlyphs
-	.type DebugMenu_BrowseEntryGlyphs, %function
-	.thumb_func
-DebugMenu_BrowseEntryGlyphs:
-	.incbin "baserom.gba", 0x00028440, 0x00000194
+	.section .rom.000285d4, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:
 	.incbin "baserom.gba", 0x000285d4, 0x00000100
@@ -497,12 +492,6 @@ Element_PowerResistCurve:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008d06c, 0x00000594
-	.section .rom.000940c8, "ax"
-	.global BattleFx_BuildBuffer
-	.type BattleFx_BuildBuffer, %function
-	.thumb_func
-BattleFx_BuildBuffer:
-	.incbin "baserom.gba", 0x000940c8, 0x00000718
 	.section .rom.0009fb78, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -569,7 +558,16 @@ DisplayTransition_EdgeOffsets:
 	.incbin "baserom.gba", 0x000a2036, 0x00000020
 	.global DisplayTransition_DitherTable
 DisplayTransition_DitherTable:
-	.incbin "baserom.gba", 0x000a2056, 0x00000102
+	.incbin "baserom.gba", 0x000a2056, 0x00000040
+	.global Data_0809e92e
+Data_0809e92e:
+	.incbin "baserom.gba", 0x000a2096, 0x00000040
+	.global Data_0809e96e
+Data_0809e96e:
+	.incbin "baserom.gba", 0x000a20d6, 0x00000040
+	.global Data_0809e9ae
+Data_0809e9ae:
+	.incbin "baserom.gba", 0x000a2116, 0x00000042
 	.global BattleFx_DefinitionTable
 BattleFx_DefinitionTable:
 	.incbin "baserom.gba", 0x000a2158, 0x0000020c
@@ -850,12 +848,6 @@ Inn_PriceMultipliers:
 	.incbin "baserom.gba", 0x000b7804, 0x00000008
 	.section .rom.000b7818, "ax"
 	.incbin "baserom.gba", 0x000b7818, 0x00000040
-	.section .rom.000b7b34, "ax"
-	.global DebugBattle_ViewMessages
-	.type DebugBattle_ViewMessages, %function
-	.thumb_func
-DebugBattle_ViewMessages:
-	.incbin "baserom.gba", 0x000b7b34, 0x000001ac
 	.section .rom.000c5022, "ax"
 	.incbin "baserom.gba", 0x000c5022, 0x00000006
 	.global BattleParty_CenterOrderOffsets

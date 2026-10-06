@@ -19,16 +19,15 @@
 #define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
 
-#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
-
 struct GlyphWork {
     u8 unknown_00[RENDER_SLOT_VALUE_OFS + 2];
     u16 slot;
 };
 
-
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
 #define DEBUG_GLYPH_NAME ((s32)MsgDebugGlyphName)
+#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#define DEBUG_GLYPH_NAME ((s32)MsgEnd)
 #else
 #define DEBUG_GLYPH_NAME ((s32)MsgDebugSecondForm)
 #endif
@@ -113,5 +112,3 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     WaitFrames(1);
     return 0;
 }
-
-#endif

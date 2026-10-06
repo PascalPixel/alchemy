@@ -1,5 +1,10 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 927 of 1276 (1295 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here, mode stays in fp rather than a spill, and the copy/preview paths allocate registers differently. Hoisting the two output pairs leaves 927 unchanged. No function counts yet.
- * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3. */
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 709 of 1276 (1283 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here (native keeps three more spill slots: input_edge at sp+36 and input_held at sp+32 among them), mode stays in fp rather than a spill, render sits in sl rather than fp, and the copy/preview paths allocate registers differently. Native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+ * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
+ * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
+ * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
+ * Trial (2026-10-06): swap = 1 as the first statement of the dirty block, where native sets r8 before the mode test: 892 -> 814.
+ * Trial (2026-10-06): attr as u32 loads pair_entries with ldrh where u16 gave ldrsh and a zero-extend: 814 -> 709 (s32 gives 721).
+ * Trial (2026-10-06): input_edge and input_held as u32 leave 709 unchanged. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -62,7 +67,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     s32 cursor[2];
     s32 page;
     s32 frame;
-    s32 dirty;
+    u32 dirty;
     s32 anim;
     s32 entry;
     s32 swap;
@@ -70,7 +75,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     s32 result;
     s32 input_edge;
     s32 input_held;
-    u16 attr;
+    u32 attr;
     s32 i;
 
     state = gMenuWork;
@@ -332,6 +337,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         }
 
         if (dirty != 0) {
+            swap = 1;
             if (mode <= 1) {
                 UiWindow_ClearInteriorTilesFar(state->help_window, 128, 16, 224, 24);
                 if (page == 1) {
@@ -349,7 +355,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 WaitFrames(1);
             }
 
-            swap = 1;
             if (mode == 3) {
                 entry = 0;
                 swap = 0;
@@ -360,7 +365,21 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 entry = 2;
             }
 
-            if (page == 0) {
+            switch (page) {
+            default:
+                Menu_RunPairedEntryAction(mode, 0);
+                break;
+            case 1:
+                if (mode == 1) {
+                    entry = 4;
+                }
+                DjinnMenu_DrawStatPreview(state->window, 0, 0,
+                    state->shown_owner[1], page, 0, entry, 0, 0);
+                DjinnMenu_DrawStatPreview(state->second_window, 0, 0,
+                    state->shown_owner[1], page, 0, entry,
+                    cursor[1] + 1, 0);
+                break;
+            case 0:
                 if (mode == 1) {
                     entry = 1;
                     swap = 0;
@@ -370,17 +389,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 DjinnMenu_DrawStatPreview(state->second_window, 0, 0,
                     state->pair_owner[0], page, swap, entry,
                     cursor[0] + 1, 1);
-            } else if (page == 1) {
-                if (mode == 1) {
-                    entry = 4;
-                }
-                DjinnMenu_DrawStatPreview(state->window, 0, 0,
-                    state->shown_owner[1], page, 0, entry, 0, 0);
-                DjinnMenu_DrawStatPreview(state->second_window, 0, 0,
-                    state->shown_owner[1], page, 0, entry,
-                    cursor[1] + 1, 0);
-            } else {
-                Menu_RunPairedEntryAction(mode, 0);
+                break;
             }
             render->menu_busy = 0;
         }

@@ -1,4 +1,4 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1947, differ 1977.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1974, differ 1966.
  * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
  * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
  * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
@@ -7,6 +7,20 @@
  * key reads rather than retaining unproven steering. The natural frame is 716
  * bytes; native is 768. Loop/register allocation and frame layout remain open.
  * Stubborn (2026-10-06): re-scored differ 1977; not first-try. Score+parked from sun100 queue-3.
+ * Native locals, top down: palette 256, depth 240, results 224, point 212,
+ * proj 200, 32 unused bytes 168..200, affine halfwords a..d at 166..160
+ * (each strh then reloaded with ldrh), spin 152, flash 144, faces 136,
+ * order 128, matches 120; spills begin at 116 (obj_palette, work, sprites,
+ * render at 116..104). The ldr of 0 for affine_b/affine_c is a pool load.
+ * Trial (2026-10-06): volatile affine_a..d plus unused s32[8] after proj,
+ * both FAKEMATCH-tagged: differ 1977 -> 1966, frame 716 -> 756. All locals
+ * now sit at native offsets minus 12; the 12 bytes are most likely three
+ * more spill slots below the four pointer spills (register allocation).
+ * Native's affine loop keeps four offset givs (204, 212, 220, 228, +32 each)
+ * and reloads sprites per access; the draft forms one sprites+204 pointer.
+ * Trial: tile loop as [i++] = j + row * 30: differ 1966, unchanged.
+ * Trial: sprites as a volatile pointer: differ 2099, worse.
+ * Trial: affine loop through x = i * 4 and obj[x + k]: differ 1966, unchanged.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -69,10 +83,13 @@ void LuckyDice_Run(void)
     s32 results[4];
     s32 point[3];
     s32 proj[3];
-    u16 affine_a;
-    u16 affine_b;
-    u16 affine_c;
-    u16 affine_d;
+    /* FAKEMATCH: native frame keeps 32 unused bytes at sp+168..200, between proj and the affine halfwords */
+    s32 unused[8];
+    /* FAKEMATCH: native stores the four halfwords to sp+166..160 and reloads each with ldrh */
+    volatile u16 affine_a;
+    volatile u16 affine_b;
+    volatile u16 affine_c;
+    volatile u16 affine_d;
     s32 spin[2];
     s32 flash[2];
     s32 faces[2];

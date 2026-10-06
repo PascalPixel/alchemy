@@ -29,6 +29,10 @@ impl std::ops::AddAssign for Counted {
 pub(crate) struct Game {
     pub english: Measurement,
     pub editions: Vec<(&'static str, Counted)>,
+    /// Each other edition's English-credited units that it does not link
+    /// as credit, with their English bytes and whether the edition has
+    /// them at all (false: absent, outside that edition's total).
+    pub missing: Vec<(&'static str, Vec<(Unit, i64, bool)>)>,
 }
 impl Game {
     pub fn combined(&self) -> Counted {
@@ -53,9 +57,29 @@ pub(crate) fn share(english: &Measurement, linked: &BTreeSet<Unit>) -> Counted {
     counted
 }
 
+/// An English-credited function is absent from an edition when that
+/// edition links the function's object yet none of its images has a symbol
+/// of that name: the edition's own source leaves it out, and no scaffold
+/// labels it. Absent code is outside that edition's total (C2).
+fn absent(english: &Measurement, edition: &Measurement, unit: &Unit) -> bool {
+    let (_, object, Some(function)) = unit else {
+        return false;
+    };
+    !edition.credits.contains_key(unit)
+        && edition.objects.contains(object)
+        && !edition.symbols.contains(function)
+        && english.credits.contains_key(unit)
+}
+
 fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
     let linked = edition.credits.keys().cloned().collect();
     let mut counted = share(english, &linked);
+    counted.done.executable -= english
+        .credits
+        .iter()
+        .filter(|(unit, _)| absent(english, edition, unit))
+        .map(|(_, credit)| credit.done.bytes())
+        .sum::<i64>();
     counted.steered = english
         .credits
         .iter()
@@ -70,6 +94,15 @@ fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
     counted
 }
 
+fn unlinked(english: &Measurement, edition: &Measurement) -> Vec<(Unit, i64, bool)> {
+    english
+        .credits
+        .iter()
+        .filter(|(unit, credit)| !edition.credits.contains_key(*unit) && credit.done.bytes() > 0)
+        .map(|(unit, credit)| (unit.clone(), credit.done.bytes(), !absent(english, edition, unit)))
+        .collect()
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Measurement {
     pub done: GameDone,
@@ -81,6 +114,10 @@ pub(crate) struct Measurement {
     pub uncredited: i64,
     pub stray: i64,
     pub credits: BTreeMap<Unit, Counted>,
+    /// Every symbol name in the edition's images, and every object its
+    /// linker maps place text from (empty sections included).
+    pub symbols: BTreeSet<String>,
+    pub objects: BTreeSet<String>,
     /// Each steered function with its bytes and the tags that steer it.
     pub steered_units: Vec<(Unit, i64, BTreeSet<String>)>,
 }
@@ -528,6 +565,11 @@ fn tally(
     let mut credited = Vec::new();
     for placed in sections(map) {
         let Placed { size, object, .. } = placed;
+        if placed.name.contains("text") && !is_data(placed.name) {
+            if let Some(name) = unit_object(object, output, overlay) {
+                measurement.objects.insert(name);
+            }
+        }
         if !is_text(&placed) {
             continue;
         }
@@ -791,6 +833,12 @@ pub(crate) fn measure(
             ));
         }
         let listed = String::from_utf8_lossy(&nm.stdout);
+        measurement.symbols.extend(
+            listed
+                .lines()
+                .filter_map(|line| line.split_whitespace().nth(2))
+                .map(str::to_owned),
+        );
         discredit(&mut measurement, &placed, &uncredited_spans(&listed));
     }
     measurement.done.game_asm -= measurement.stray.min(measurement.done.game_asm);
@@ -822,12 +870,16 @@ pub(crate) fn measure_game(
         Err(reason) => return Ok(Err(reason)),
     };
     let mut editions = Vec::with_capacity(6);
+    let mut missing = Vec::new();
     for (edition, measurement) in measured {
         let earned = if edition.id == target.id {
             share_edition(&english, &english)
         } else {
             match measurement? {
-                Ok(measurement) => share_edition(&english, &measurement),
+                Ok(measurement) => {
+                    missing.push((edition.language(), unlinked(&english, &measurement)));
+                    share_edition(&english, &measurement)
+                }
                 Err(reason) => return Ok(Err(reason)),
             }
         };
@@ -841,5 +893,48 @@ pub(crate) fn measure_game(
         }
         editions.push((edition.language(), earned));
     }
-    Ok(Ok(Game { english, editions }))
+    Ok(Ok(Game {
+        english,
+        editions,
+        missing,
+    }))
+}
+
+#[cfg(test)]
+mod absent_tests {
+    use super::*;
+
+    fn unit(object: &str, function: &str) -> Unit {
+        (MAIN_IMAGE.to_owned(), object.to_owned(), Some(function.to_owned()))
+    }
+
+    #[test]
+    fn only_code_the_edition_leaves_out_leaves_its_total() {
+        let mut english = Measurement::default();
+        for (name, bytes) in [("Kept", 40), ("Scaffold", 30), ("Absent", 20), ("Unlinked", 10)] {
+            let mut credit = Counted::default();
+            credit.done.game_c = bytes;
+            english.credits.insert(unit("A.o", name), credit);
+            english.done += credit.done;
+        }
+        english.credits.insert(unit("B.o", "Elsewhere"), {
+            let mut credit = Counted::default();
+            credit.done.game_c = 5;
+            credit
+        });
+        english.done.game_c += 5;
+        english.done.executable = 105;
+        let mut edition = Measurement::default();
+        edition.credits.insert(unit("A.o", "Kept"), english.credits[&unit("A.o", "Kept")]);
+        edition.objects.insert("A.o".to_owned());
+        edition.symbols.insert("Scaffold".to_owned());
+        // Absent: A.o is linked, no symbol. Elsewhere: B.o is not linked here.
+        assert!(absent(&english, &edition, &unit("A.o", "Absent")));
+        assert!(!absent(&english, &edition, &unit("A.o", "Scaffold")));
+        assert!(!absent(&english, &edition, &unit("A.o", "Kept")));
+        assert!(!absent(&english, &edition, &unit("B.o", "Elsewhere")));
+        let counted = share_edition(&english, &edition);
+        assert_eq!(counted.done.executable, 105 - 20 - 10);
+        assert_eq!(counted.done.bytes(), 40);
+    }
 }

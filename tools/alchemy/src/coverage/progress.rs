@@ -97,6 +97,7 @@ fn run(argv: &[String]) -> Result<String, String> {
     for (id, game) in ["tbs", "tla"].iter().zip(&games) {
         if let Ok(game) = game {
             write_steered(&root, id, &game.english)?;
+            write_missing(&root, id, game)?;
         }
     }
     let mut lines = Vec::new();
@@ -127,6 +128,27 @@ fn write_steered(root: &std::path::Path, id: &str, english: &super::calcrom::Mea
         ));
     }
     let path = root.join(format!("out/reports/steered-{id}.tsv"));
+    std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
+    std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))
+}
+
+/// out/reports/missing-GAME.tsv: each edition's English-credited functions
+/// that edition does not link as credit, largest first: "scaffold" when the
+/// edition still has them to write, "absent" when its source leaves them out.
+fn write_missing(root: &std::path::Path, id: &str, game: &Game) -> Result<(), String> {
+    let mut text = String::from("edition\tstate\tbytes\tobject\tfunction\n");
+    for (language, units) in &game.missing {
+        let mut rows = units.clone();
+        rows.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| b.1.cmp(&a.1)).then_with(|| a.0.cmp(&b.0)));
+        for ((_, object, function), bytes, present) in rows {
+            let state = if present { "scaffold" } else { "absent" };
+            text.push_str(&format!(
+                "{language}\t{state}\t{bytes}\t{object}\t{}\n",
+                function.unwrap_or_default()
+            ));
+        }
+    }
+    let path = root.join(format!("out/reports/missing-{id}.tsv"));
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
     std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))
 }

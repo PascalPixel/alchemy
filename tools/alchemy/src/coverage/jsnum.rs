@@ -13,16 +13,10 @@ pub fn commas(value: i64) -> String {
     }
     out
 }
-pub fn floor_percent(n: i64, d: i64) -> f64 {
-    if d == 0 {
-        0.0
-    } else {
-        (n as i128 * 10_000 / d as i128) as f64 / 100.0
-    }
-}
 #[cfg(test)]
 mod done_tests {
     use super::*;
+    use crate::coverage::floor_percent;
     #[test]
     fn shares_round_down_to_hundredths() {
         assert_eq!(floor_percent(500, 1000), 50.0);

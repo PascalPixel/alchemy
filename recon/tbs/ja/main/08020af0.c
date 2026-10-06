@@ -1,5 +1,5 @@
 /* Japanese NameEntry_EditOwnerName draft; native extent 0x5e0.
-   alchemy diff --edition tbs-ja: native663/draft663/common554/differ218.
+   alchemy diff --edition tbs-ja: native663/draft663/common555/differ216.
    The108-byte local frame matches. Remaining differences are register
    allocation (cursor flag, caret control, last-letter pointer), argument
    arithmetic and scheduling; this draft is not linked.
@@ -9,6 +9,30 @@
    caret control430 or both343 was reverted; integer last-pointer218 and
    volatile last-pointer383 were also reverted. All scores are normalized
    instruction differences, not complete-byte proof.
+   2026-10-06 allocation map: native row r7, column r8, caret control r9,
+   window sl, cursor flag fp, last-letter pointer [sp,#12], cursor control
+   [sp,#16]; the draft gives the last-letter pointer r9, caret control fp
+   and spills the cursor flag to [sp,#16], so the pointer outranks three
+   loop-wide values it falls below natively. Trials, all reverted: dirty
+   flags swapped226; last pointer declared first or beside cursor flag218;
+   input+bytes-1 and &input[bytes-1]222; count*10+72218; row shifted or
+   multiplied in a second statement224, ternary or 8*(...)218, row-=7
+   first225; read-then-post-decrement removal211 (both halves213, second
+   half alone259) but it moves the decrement after the read where the
+   native subtracts first, so it is not kept; indexed save copy222;
+   register keyword on cursor flag218; cursor flag pinned to fp219 (the
+   pointer still takes r9 and caret control spills), and with the caret r5
+   device removed227; while (1) loop218; label-and-goto loop506; caret
+   x as 72+10*count, count*10+70+2218, an s16 cast407.
+   Kept: the save copy declares its source before its destination
+   (differ216, source now r2 as native; destination r0 and count r1 still
+   swap the native r1 and r0). The count declared first or between,
+   counted before the copy, or a for loop also216; destination first218;
+   do-while copy218; split increments or a byte temporary216.
+   UiText_DrawPaddedLabel, UiText_SetRenderString and Resource_ReturnTrue
+   are not in the Japanese map: Japanese NAME.C links NameEntry_AcceptsMark
+   and NameEntry_CountLetters, and this function draws with
+   UiText_DrawString and measures with NameEntry_CountLetters.
    JA physical labels for both keyboard tilemaps and the caret wave are
    still needed before an adoption; the source uses semantic symbols. */
 #include "BATTLE.H"
@@ -154,7 +178,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_MoveTowardTargetFar(&caret);
         {
             u32 frame = (gFrameTick >> 1) & 7;
-            /* FAKEMATCH: native/international caret r5 gives differ218; natural r4 gives228. */
+            /* FAKEMATCH: native/international caret r5 gives differ216; natural r4 gives226. */
             register struct RenderOutput *o asm("r5") = caret.output;
 
             ((struct FieldSprite *)o->unknown_10)->x = o->x + NameEntry_CaretWave[frame];
@@ -269,8 +293,8 @@ remove_character:
                     UiText_DrawString(saved, (s32)label, 0, 0);
                     WaitFrames(10);
                 } else {
-                    u8 *dst = saved;
                     u8 *src = input;
+                    u8 *dst = saved;
                     s32 i = 0;
 
                     while (i < 15) {

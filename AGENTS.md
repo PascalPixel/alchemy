@@ -75,7 +75,9 @@ camelotizes what remains.
 - **C2** DONE is pret's calcrom over the linker maps of byte-identical builds:
   the code the linker places from `games/`, counted once for each of the
   game's six editions whose build links it, out of six; sizes are the English
-  build's, so code that exists only in another edition is outside the total.
+  build's, so code that exists only in another edition is outside the total,
+  and code an edition's own source leaves out, with no symbol in any of its
+  images, is outside that edition's total.
   Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
   library, handwritten and veneer assembly counts as assembly. Whole aligned
   8-byte far-call stubs count as veneers. Padding a source marks as carrying

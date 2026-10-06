@@ -1,7 +1,10 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1638, common 1437, differ 404 (frame 336 as
+   listing 1640, draft 1638, common 1450, differ 378 (frame 336 as
    native; the frame-loop preheader now matches the native's exactly
    but for the sp+24 store).
+   The ramp's two smoke calls take (frame - 151) * 20 - 12 for y, not
+   h - 56: the native reloads the h giv from its slot for it (h - 56
+   kept h in r8 through the ramp block).
    The native's frame-loop slots and how the draft reaches them:
    - sp+96, &scale held through the frame loop: matched by writing
      each scale branch as scale[0] = value; scale[1] = scale[0];
@@ -105,7 +108,10 @@
      n -= i * 48 + 256 or n = n - i * 48 - 256: 414; n = frame * 4 -
      i * 48; n -= 256 or three steps: 419; one expression, no reach,
      or count * 2: 659; reach = frame * 4 - 256: 740; reach first at
-     the loop top: 484; n = reach - 256; n -= i * 48: 691. */
+     the loop top: 484; n = reach - 256; n -= i * 48: 691.
+   - on 404: ramp smoke y as (frame - 151) * 20 - 12 (or + 44 - 56):
+     378, adopted; the ramp loop bound written out: 845; h assigned
+     just before its loop: 428. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -405,10 +411,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 blit[0](dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            SLOT(47)(dst, work, 32, h - 56, 32, 96);
+            SLOT(47)(dst, work, 32, (frame - 151) * 20 - 12, 32, 96);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            SLOT(47)(dst, work, 64, h - 56, 32, 96);
+            SLOT(47)(dst, work, 64, (frame - 151) * 20 - 12, 32, 96);
             Runtime_ReleaseHeapBlock(47);
         }
         work->transfer_pending = 1;

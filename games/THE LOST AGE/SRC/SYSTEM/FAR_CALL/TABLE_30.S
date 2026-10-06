@@ -12,4 +12,4 @@ BattleFx_HasTriggerFar:
 	.global Func_080c8518
 	.thumb_func
 Func_080c8518:
-	overlay_veneer Func_080dc0d8
+	overlay_veneer Object_ReplaceResourceEntry

@@ -79,3 +79,17 @@ s32 Summon_IsEntrySecondaryFlagged(s32 index)
     return ((u32)Summon_EntryTable[index].layout_flags << 31) >> 31;
 }
 
+u32 Summon_GetEntryByte4(u32 index)
+{
+    u8 *table;
+    u32 offset;
+
+    if (index > 386)
+        return 0;
+    table = (u8 *)Summon_EntryTable;
+    /* FAKEMATCH: ⚓️ loads the table before scaling the index */
+    asm volatile("");
+    offset = index * 8;
+    offset += 4;
+    return table[offset];
+}

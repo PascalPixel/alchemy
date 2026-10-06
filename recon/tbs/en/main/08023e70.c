@@ -1,4 +1,4 @@
-/* 08023e70: differ 145 of 1201. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
+/* 08023e70: differ 137 of 1201 (2026-10-06, third pass: the page wrap writes page = 0 before row = saved_row, from the permuter's best-1; its other rewrites are noise). Earlier: differ 145. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
 /* MenuCell now includes its automatic-mode word at 0xe0; remove the unused duplicate tail word so selected remains at 0xe4 and total size at 0x104. */
 /* Shared PartyStatusWindow from the verified STATUS.C corpus leaves differ 145. Further search trials: combined initialization, is_used as index, while-loop and memory clobber remain 145; do-while 166; index-first initialization 155; initialization before the clear call 148. Redraw memory/output constraints range 447-722. Clobbering r1 reaches 120 but emits mov-zero rather than the native reload, so it was removed. */
 /* Stubborn (2026-10-06): CSE seeds the native search index from redraw's spilled zero (ldr r1, [sp, #28]); the draft keeps a fresh zero, and the reload rotation after the 0x8ef branch follows from it. */
@@ -383,8 +383,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                 Runtime_SetMainState19();
                 if (page + 5 >= cnt) {
                     if (page != 0) {
-                        row = saved_row;
                         page = 0;
+                        row = saved_row;
                     }
                 } else {
                     page = page + 5;

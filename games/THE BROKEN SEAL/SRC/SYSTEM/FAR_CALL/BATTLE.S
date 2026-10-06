@@ -3,16 +3,14 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_BattleTable
 FarCall_BattleTable:
-	.global Func_080b5000
+	.global DebugBattle_RunMenuFar
 	.thumb_func
-Func_080b5000:
+DebugBattle_RunMenuFar:
 	overlay_veneer DebugBattle_RunMenu
 	overlay_veneer BattlePres_RunMosaicFadeOut
 	.global BattleActor_SpawnObjectsForListFar
-	.global Func_080b5010
 	.thumb_func
 BattleActor_SpawnObjectsForListFar:
-Func_080b5010:
 	overlay_veneer BattleActor_SpawnObjectsForList
 	overlay_veneer Graphics_FadeAlphaOut
 	overlay_veneer Graphics_FadeAlphaIn
@@ -37,9 +35,6 @@ BattleBackground_LoadFar:
 BattlePresentation_SetPaletteLevelFar:
 	overlay_veneer BattlePresentation_SetPaletteLevel
 	overlay_veneer Summon_GetEntryByte4
-	.global Func_080b5058
-	.thumb_func
-Func_080b5058:
 	.global Summon_IsEntrySecondaryFlaggedFar
 	.thumb_func
 Summon_IsEntrySecondaryFlaggedFar:
@@ -47,10 +42,8 @@ Summon_IsEntrySecondaryFlaggedFar:
 	overlay_veneer Battle_GetSpriteFlagHighBits
 	overlay_veneer Summon_IsEntryFlagged
 	.global Battle_GetObjectTableValueFar
-	.global Func_080b5070
 	.thumb_func
 Battle_GetObjectTableValueFar:
-Func_080b5070:
 	overlay_veneer Battle_GetObjectTableValue
 	.global BattleMotion_ApproachTargetFar
 	.thumb_func
@@ -58,10 +51,8 @@ BattleMotion_ApproachTargetFar:
 	overlay_veneer BattleMotion_ApproachTarget
 	overlay_veneer BattleMotion_InitializeObject
 	.global BattleMotion_ApplyVariantMotionFar
-	.global Func_080b5088
 	.thumb_func
 BattleMotion_ApplyVariantMotionFar:
-Func_080b5088:
 	overlay_veneer BattleMotion_ApplyVariantMotion
 	.global BattleParty_ListActorIdsFar
 	.thumb_func
@@ -89,10 +80,8 @@ BattleMotion_ProjectConditionalPositionFar:
 	overlay_veneer BattleMotion_ProjectConditionalPosition
 	overlay_veneer BattleParty_ListLivingUnits
 	.global BattleParty_PrepareActiveOwnersFar
-	.global Func_080b50c8
 	.thumb_func
 BattleParty_PrepareActiveOwnersFar:
-Func_080b50c8:
 	overlay_veneer BattleParty_PrepareActiveOwners
 	.global Camera_ConfigureSceneFar
 	.thumb_func
@@ -109,17 +98,11 @@ BattlePres_SetActorModesFar:
 	.global BattleEventRuntime_BeginPhaseFar
 	.thumb_func
 BattleEventRuntime_BeginPhaseFar:
-	.global Func_080b50e8
-	.thumb_func
-Func_080b50e8:
 	overlay_veneer BattleEventRuntime_BeginPhase
 	.global Graphics_ScaleRgb555ClampedFar
 	.thumb_func
 Graphics_ScaleRgb555ClampedFar:
 	overlay_veneer Graphics_ScaleRgb555Clamped
-	.global Func_080b50f8
-	.thumb_func
-Func_080b50f8:
 	.global BattlePlacement_UpdateTimedEntriesFar
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesFar:
@@ -137,10 +120,8 @@ BattlePlacement_UpdateTimedEntriesTwentyTimesFar:
 DebugParty_LoadPresetFar:
 	overlay_veneer DebugParty_LoadPreset
 	.global BattleActor_CommitPlacementFar
-	.global Func_080b5118
 	.thumb_func
 BattleActor_CommitPlacementFar:
-Func_080b5118:
 	overlay_veneer BattleActor_CommitPlacement
 	overlay_veneer ReleaseBattleObjectRecords
 	.global BattlePresentation_WaitForPromptAtFar

@@ -75,7 +75,7 @@ Engine_VramLoad:
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
-	overlay_veneer Func_080001d0
+	overlay_veneer Resource_FindFreeEntryFar
 	.global AffineMatrix_BuildForEffect
 	.thumb_func
 AffineMatrix_BuildForEffect:
@@ -142,11 +142,11 @@ Engine_MapCopyCellAttributes:
 	.global Map_UpdateCellRect
 	.thumb_func
 Map_UpdateCellRect:
-	overlay_veneer Func_080091c8
+	overlay_veneer Map_CopyCellIndexRectFar
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
@@ -201,7 +201,7 @@ GameFlag_GetByteFar:
 	.global GameFlag_SetByte
 	.thumb_func
 GameFlag_SetByte:
-	overlay_veneer Func_080770e8
+	overlay_veneer GameFlag_SetByteFar
 	.global Party_CountActiveOwnersFar
 	.thumb_func
 Party_CountActiveOwnersFar:
@@ -391,7 +391,7 @@ Engine_EventWaitForScreen:
 	.global Engine_ActorLookup
 	.thumb_func
 Engine_ActorLookup:
-	overlay_veneer Func_0808a400
+	overlay_veneer ObjectTable_GetFar
 	.global Battle_ResetEffectCounter
 	.thumb_func
 Battle_ResetEffectCounter:

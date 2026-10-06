@@ -25,7 +25,7 @@ Engine_MapCopyCellAttributes:
 	.global Engine_MapCopyCellsTo
 	.thumb_func
 Engine_MapCopyCellsTo:
-	overlay_veneer Func_080091c8
+	overlay_veneer Map_CopyCellIndexRectFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:

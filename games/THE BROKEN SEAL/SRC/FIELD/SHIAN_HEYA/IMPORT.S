@@ -49,7 +49,7 @@ Engine_EventEnd:
 	.global SceneTable_Prepare
 	.thumb_func
 SceneTable_Prepare:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

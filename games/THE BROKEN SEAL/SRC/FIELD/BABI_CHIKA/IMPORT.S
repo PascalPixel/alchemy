@@ -77,7 +77,7 @@ Map_CopyCellAttributeRect:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
@@ -125,7 +125,7 @@ Engine_EventEnd:
 	.global Func_0808b868
 	.thumb_func
 Func_0808b868:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

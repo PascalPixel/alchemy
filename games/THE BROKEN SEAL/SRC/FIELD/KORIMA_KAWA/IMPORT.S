@@ -29,7 +29,7 @@ Map_CopyCellAttributeRect:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

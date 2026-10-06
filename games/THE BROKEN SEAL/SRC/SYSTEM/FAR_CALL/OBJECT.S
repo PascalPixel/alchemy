@@ -4,15 +4,13 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_ObjectTable
 FarCall_ObjectTable:
-	.global Func_0808a000
+	.global Field_RunSceneFar
 	.thumb_func
-Func_0808a000:
+Field_RunSceneFar:
 	overlay_veneer Field_RunScene
 	.global Game_ResetForNewGameFar
-	.global Func_0808a008
 	.thumb_func
 Game_ResetForNewGameFar:
-Func_0808a008:
 	overlay_veneer Game_ResetForNewGame
 	.global Battle_WaitMode0Far
 	.thumb_func
@@ -31,13 +29,13 @@ BattleFx_FinishActionFar:
 	.thumb_func
 Event_CallWithLastActiveObjectIdFar:
 	overlay_veneer Event_CallWithLastActiveObjectId
-	.global Func_0808a038
+	.global Scene_AssignViewFlagsFar
 	.thumb_func
-Func_0808a038:
+Scene_AssignViewFlagsFar:
 	overlay_veneer Scene_AssignViewFlags
-	.global Func_0808a040
+	.global Event_SetSceneEventsFar
 	.thumb_func
-Func_0808a040:
+Event_SetSceneEventsFar:
 	overlay_veneer Event_SetSceneEvents
 	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
@@ -305,10 +303,8 @@ Event_SetDefeatDestinationFar:
 Event_RequestDestinationFar:
 	overlay_veneer Event_RequestDestination
 	.global Object_GetScreenPositionFar
-	.global Func_0808a278
 	.thumb_func
 Object_GetScreenPositionFar:
-Func_0808a278:
 	overlay_veneer Object_GetScreenPosition
 	.global Object_GetTriggerTileAheadOfCurrentFar
 	.thumb_func
@@ -336,9 +332,9 @@ battle_owner_69Far:
 	.thumb_func
 Battle_InitializeRenderObjectFar:
 	overlay_veneer Battle_InitializeRenderObject
-	.global Func_0808a2c0
+	.global FieldFx_StartGroundParticlesFar
 	.thumb_func
-Func_0808a2c0:
+FieldFx_StartGroundParticlesFar:
 	overlay_veneer FieldFx_StartGroundParticles
 	.global BattleFx_StartTwelveFrameBlendFar
 	.thumb_func
@@ -378,10 +374,8 @@ Func_0808a300:
 	overlay_veneer DisplayState_ClearFlags
 	overlay_veneer BattleEffect_InitializeBuffers
 	.global BattleFx_ApplyColorToTargetBufferFar
-	.global Func_0808a330
 	.thumb_func
 BattleFx_ApplyColorToTargetBufferFar:
-Func_0808a330:
 	overlay_veneer BattleFx_ApplyColorToTargetBuffer
 	.global BattleFx_ApplyColorToSourceBufferFar
 	.thumb_func
@@ -389,10 +383,8 @@ BattleFx_ApplyColorToSourceBufferFar:
 	overlay_veneer BattleFx_ApplyColorToSourceBuffer
 	overlay_veneer BattleFx_InterpolateBuffers
 	.global BattleFx_StartBufferInterpolationFar
-	.global Func_0808a348
 	.thumb_func
 BattleFx_StartBufferInterpolationFar:
-Func_0808a348:
 	overlay_veneer BattleFx_StartBufferInterpolation
 	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32B
 	overlay_veneer BattleFx_SetPrimaryBufferValue
@@ -464,9 +456,6 @@ Battle_ClearObjectFlag5bWhenMode3Far:
 	.global ObjectTable_GetFar
 	.thumb_func
 ObjectTable_GetFar:
-	.global Func_0808a400
-	.thumb_func
-Func_0808a400:
 	overlay_veneer ObjectTable_Get
 	.global BattleFx_StartFadeOverlayFar
 	.thumb_func
@@ -521,10 +510,8 @@ BattleFx_FinishSceneAndReleaseHeapBlockFar:
 Ui_SetBank15PaletteAndClearRenderModeFar:
 	overlay_veneer Ui_SetBank15PaletteAndClearRenderMode
 	.global BattleFx_HasMatchingEvent5Far
-	.global Func_0808a488
 	.thumb_func
 BattleFx_HasMatchingEvent5Far:
-Func_0808a488:
 	overlay_veneer BattleFx_HasMatchingEvent5
 	.global BattleFx_HasTriggerFar
 	.thumb_func
@@ -534,9 +521,6 @@ BattleFx_HasTriggerFar:
 	.thumb_func
 Object_ReplaceResourceEntryFar:
 	overlay_veneer Object_ReplaceResourceEntry
-	.global Func_0808a4a0
-	.thumb_func
-Func_0808a4a0:
 	.global Event_GetSpecialValueFar
 	.thumb_func
 Event_GetSpecialValueFar:
@@ -565,10 +549,8 @@ Audio_PlayCueFromEventWorkFar:
 BattleFx_RunPageEffectForSlotFar:
 	overlay_veneer BattleFx_RunPageEffectForSlot
 	.global EffectSlot_UpdateFar
-	.global Func_0808a500
 	.thumb_func
 EffectSlot_UpdateFar:
-Func_0808a500:
 	overlay_veneer EffectSlot_Update
 	.global BattleFx_HasReachedTargetFar
 	.thumb_func
@@ -578,23 +560,14 @@ BattleFx_HasReachedTargetFar:
 	.thumb_func
 EffectSlot_SetPositionFar:
 	overlay_veneer EffectSlot_SetPosition
-	.global Func_0808a518
-	.thumb_func
-Func_0808a518:
 	.global EffectSlot_SetObjectModeFar
 	.thumb_func
 EffectSlot_SetObjectModeFar:
 	overlay_veneer EffectSlot_SetObjectMode
-	.global Func_0808a520
-	.thumb_func
-Func_0808a520:
 	.global EffectSlot_SetCallbackFar
 	.thumb_func
 EffectSlot_SetCallbackFar:
 	overlay_veneer EffectSlot_SetCallback
-	.global Func_0808a528
-	.thumb_func
-Func_0808a528:
 	.global EffectSlot_InitializeFar
 	.thumb_func
 EffectSlot_InitializeFar:
@@ -602,19 +575,14 @@ EffectSlot_InitializeFar:
 	.global BattleFx_ClearOwnedSlotFar
 	.thumb_func
 BattleFx_ClearOwnedSlotFar:
-	.global Func_0808a530
-	.thumb_func
-Func_0808a530:
 	overlay_veneer BattleFx_ClearOwnedSlot
 	.global Camera_WorldToScreenFar
 	.thumb_func
 Camera_WorldToScreenFar:
 	overlay_veneer Camera_WorldToScreen
 	.global BattleFx_GetResourceIdFar
-	.global Func_0808a540
 	.thumb_func
 BattleFx_GetResourceIdFar:
-Func_0808a540:
 	overlay_veneer BattleFx_GetResourceId
 	.global Event_ClearInvalidPackedValuesFar
 	.thumb_func
@@ -660,10 +628,8 @@ BattleEffect_PauseObjectFar:
 	overlay_veneer ObjectTable_FindActiveByValue
 	overlay_veneer ObjectTable_ReadActiveValue
 	.global SaveState_CaptureObjectTableFar
-	.global Func_0808a5b0
 	.thumb_func
 SaveState_CaptureObjectTableFar:
-Func_0808a5b0:
 	overlay_veneer ObjectTable_Snapshot
 	.global ObjectTable_RestoreFar
 	.thumb_func

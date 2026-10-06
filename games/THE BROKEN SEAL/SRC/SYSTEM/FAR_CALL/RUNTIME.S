@@ -1,9 +1,6 @@
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080000c0
-	.thumb_func
-Func_080000c0:
 	.global WaitFramesFar
 	.thumb_func
 WaitFramesFar:
@@ -116,9 +113,6 @@ VramBlock_LoadCachedFar:
 	.global Resource_FindFreeEntryFar
 	.thumb_func
 Resource_FindFreeEntryFar:
-	.global Func_080001d0
-	.thumb_func
-Func_080001d0:
 	overlay_veneer Resource_FindFreeEntry
 	overlay_veneer Bg0_ClearTilemap
 	.global AffineMatrix_BuildForEffectFar

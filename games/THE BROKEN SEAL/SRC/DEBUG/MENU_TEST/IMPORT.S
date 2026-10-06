@@ -92,7 +92,7 @@ Owner_RecalculateStats:
 	.global Engine_DebugGetItem
 	.thumb_func
 Engine_DebugGetItem:
-	overlay_veneer Func_08077018
+	overlay_veneer Item_GetDirectFar
 	.global Inventory_AddItem
 	.thumb_func
 Inventory_AddItem:

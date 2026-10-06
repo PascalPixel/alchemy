@@ -3,9 +3,9 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_EffectTable
 FarCall_EffectTable:
-	.global Func_080c9000
+	.global BattleEffect_LoadWorkFar
 	.thumb_func
-Func_080c9000:
+BattleEffect_LoadWorkFar:
 	overlay_veneer BattleEffect_LoadWork
 	.global BattleFx_DispatchByIdRangeFar
 	.thumb_func

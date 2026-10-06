@@ -81,11 +81,11 @@ Engine_EventWaitForScreen:
 	.global ScrollFar_Entry00
 	.thumb_func
 ScrollFar_Entry00:
-	overlay_veneer Func_080f0000
+	overlay_veneer DisplayScroll_RunSlideshowFar
 	.global PaletteFar_Entry00
 	.thumb_func
 PaletteFar_Entry00:
-	overlay_veneer Func_080f2000
+	overlay_veneer Title_ShowIntroFar
 	.global Title_ShowSplashScreen
 	.thumb_func
 Title_ShowSplashScreen:

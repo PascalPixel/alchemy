@@ -63,7 +63,7 @@ Owner_GetStateFar:
 	.global Item_Get
 	.thumb_func
 Item_Get:
-	overlay_veneer Func_08077018
+	overlay_veneer Item_GetDirectFar
 	.global Inventory_AddItemFar
 	.thumb_func
 Inventory_AddItemFar:

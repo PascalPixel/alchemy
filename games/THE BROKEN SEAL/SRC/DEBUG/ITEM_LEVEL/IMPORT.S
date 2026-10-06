@@ -70,7 +70,7 @@ Owner_RecalculateStats:
 	.global Engine_DebugGetItem
 	.thumb_func
 Engine_DebugGetItem:
-	overlay_veneer Func_08077018
+	overlay_veneer Item_GetDirectFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:
@@ -79,7 +79,7 @@ PartyInventory_Add:
 	.global Engine_DebugGetAbility
 	.thumb_func
 Engine_DebugGetAbility:
-	overlay_veneer Func_08077080
+	overlay_veneer BattleAction_GetDirectFar
 	.endif
 	.global Party_ListActiveOwners
 	.thumb_func

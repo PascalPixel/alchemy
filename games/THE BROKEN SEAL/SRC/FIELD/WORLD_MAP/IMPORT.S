@@ -409,7 +409,7 @@ Event_WaitForZoomTransition:
 	.global ItemMenu_Open
 	.thumb_func
 ItemMenu_Open:
-	overlay_veneer Func_080a1040
+	overlay_veneer ItemMenu_RunFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

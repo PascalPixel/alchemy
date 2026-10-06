@@ -3,7 +3,7 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_BlankLoadTable
 FarCall_BlankLoadTable:
-	.global Func_080f6000
+	.global Runtime_BlankDisplayLoadValueAndRunFar
 	.thumb_func
-Func_080f6000:
+Runtime_BlankDisplayLoadValueAndRunFar:
 	overlay_veneer Runtime_BlankDisplayLoadValueAndRun

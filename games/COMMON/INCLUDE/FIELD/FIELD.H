@@ -1505,7 +1505,7 @@ void FourObjectMotion_InitializeBottomRow(void);
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 void FourObjectMotion_UpdateAllPositions(void);
 void FourObjectMotion_UpdateBottomRow(void);
-s32 Func_080091b0(s32 layer, s32 x, s32 z);
+s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 void FuneHeya_AdvanceWalkerAfterRise(u8 *o);
 void FuneHeya_AnnounceDeparture(void);
 void FuneHeya_AnnounceTurn(void);

@@ -273,7 +273,7 @@ BattleFx_SetWeightedResult:
 	.global Effect_SoundAndFlash
 	.thumb_func
 Effect_SoundAndFlash:
-	overlay_veneer Func_0808a2c0
+	overlay_veneer FieldFx_StartGroundParticlesFar
 	.global BattleFx_StartTwelveFrameBlend
 	.thumb_func
 BattleFx_StartTwelveFrameBlend:

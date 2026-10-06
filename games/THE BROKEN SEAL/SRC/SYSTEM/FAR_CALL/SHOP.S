@@ -3,9 +3,6 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_ShopTable
 FarCall_ShopTable:
-	.global Func_080b0000
-	.thumb_func
-Func_080b0000:
 	.global Battle_ApplyPresetItemsAndFlagsFar
 	.thumb_func
 Battle_ApplyPresetItemsAndFlagsFar:

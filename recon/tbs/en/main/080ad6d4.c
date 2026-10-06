@@ -1,8 +1,10 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 814 of 1276 (1298 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here (native keeps three more spill slots: input_edge at sp+36 and input_held at sp+32 among them), mode stays in fp rather than a spill, render sits in sl rather than fp, and the copy/preview paths allocate registers differently. Native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 709 of 1276 (1283 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here (native keeps three more spill slots: input_edge at sp+36 and input_held at sp+32 among them), mode stays in fp rather than a spill, render sits in sl rather than fp, and the copy/preview paths allocate registers differently. Native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
- * Trial (2026-10-06): swap = 1 as the first statement of the dirty block, where native sets r8 before the mode test: 892 -> 814. */
+ * Trial (2026-10-06): swap = 1 as the first statement of the dirty block, where native sets r8 before the mode test: 892 -> 814.
+ * Trial (2026-10-06): attr as u32 loads pair_entries with ldrh where u16 gave ldrsh and a zero-extend: 814 -> 709 (s32 gives 721).
+ * Trial (2026-10-06): input_edge and input_held as u32 leave 709 unchanged. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -73,7 +75,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     s32 result;
     s32 input_edge;
     s32 input_held;
-    u16 attr;
+    u32 attr;
     s32 i;
 
     state = gMenuWork;

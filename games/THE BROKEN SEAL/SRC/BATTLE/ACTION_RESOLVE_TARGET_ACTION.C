@@ -737,7 +737,10 @@ after_power:
                     case 406: case 388: case 396: case 380:
                         rate = 3;
                         break;
-                    case 409: case 401: case 399: case 391: case 383:
+                    case 409: case 399: case 391: case 383:
+                        rate = 12;
+                        break;
+                    case 401:
                         rate = 12;
                         break;
                     case 683:

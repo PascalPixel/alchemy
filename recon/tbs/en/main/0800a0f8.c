@@ -34,6 +34,17 @@
      scheduling pass (-fno-schedule-insns, study only) the k load still
      rises above u's stores, so in the listing something the k load
      depends on, not the scheduler's choice, holds it there.
+   - Why: gcc_arm turns on -fstrict-aliasing at -O2, and the k load (alias
+     set of int) and u's strh (short) get different alias sets, so sched
+     moves the load up to the barrier of u's asm volatile smull. Study
+     only, with -fno-strict-aliasing added to the camelot_arm setting:
+     the k load, lsl #8, mul, lsl/asr #8, rsb and mul follow both u stores
+     exactly as listed (a <<= 8; a *= k form: 63, the loop's x then loaded
+     by two ldr into ip), but the else loop, which matches under the
+     current setting, reorders its ldr r1, [r7, #12]; this draft 100,
+     Object_UpdateAll 161 and UiText_DrawGlyphArm 165 unchanged. An
+     option for all of ☀️'s game ARM C, so a K3 question, not settled
+     here.
    camelot_arm trials (2026-10-06, session 2), from 104:
    - smull with two alternatives, "=&r,&r"(lo), "=r,&r"(hi), "r,r"(a),
      "1,r"(b): RdHi takes Rs when b dies, as the listing's ldr r3; smull

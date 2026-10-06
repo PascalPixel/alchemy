@@ -62,7 +62,7 @@ void Korosseo_LoadPortrait(s32 id)
     u8 *buf;
     s32 off;
 
-    buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x1c00 + KOROSSEO_PALETTE_BYTES);
+    buf = Runtime_BumpAllocateAlternatePool(0x1c00 + KOROSSEO_PALETTE_BYTES);
     if (Korosseo_PortraitSlot == -1)
         Korosseo_PortraitSlot = Resource_FindFreeEntry();
     off = Korosseo_PortraitPaletteOffsets[id];

@@ -4,7 +4,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-extern u8 gKeysHeld[];
+extern u32 gKeysHeld;
 
 enum {
 

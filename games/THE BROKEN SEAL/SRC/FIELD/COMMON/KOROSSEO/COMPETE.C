@@ -16,7 +16,6 @@
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
 
-#define gMenuCtrlWork ((u8 (*))&gMenuCtrlWork)
 
 
 
@@ -58,7 +57,7 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     struct AnimationObject *sprite;
     s32 i;
 
-    state = *(struct CompetitorState **)gMenuCtrlWork;
+    state = (struct CompetitorState *)gMenuCtrlWork;
     actor = Object_GetById(id);
     state->mode = 1;
     state->stage = 4;
@@ -107,7 +106,7 @@ void Korosseo_RestoreCompetitor(s32 id)
     /* FAKEMATCH: the halfword zero preserves the earlier stage and later word registers. */
     struct { u16 value; } layer;
 
-    state = *(struct CompetitorState **)gMenuCtrlWork;
+    state = (struct CompetitorState *)gMenuCtrlWork;
     actor = Object_GetById(id);
     if (gGameState.movement_mode == 1) {
         gGameState.movement_mode = 0;

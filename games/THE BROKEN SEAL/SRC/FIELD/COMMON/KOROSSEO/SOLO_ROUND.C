@@ -3,22 +3,10 @@
 #include "FIELDOBJ.H"
 #include "GAME_FLAGS.H"
 #include "text/MSG_IDS.H"
+#include "FIELD_EVENT.H"
+#include "GAME_STATE.H"
 
-u8 *Object_GetById();
-void Engine_EventBegin();
-void Engine_EventSetMessage();
-void Engine_EventOpenMessage();
-s32 Engine_EventChooseYesNo();
-void Engine_EventShowMessage();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
-void Engine_EventRequestExit();
-void Engine_GameFlagSet();
-void Korosseo_SelectSoloCompetitor();
-void Engine_EventOpenScreen();
-void Engine_EventEnd();
-
-extern s32 gGameState[];
+void Korosseo_SelectSoloCompetitor(s32 id);
 
 void Korosseo_FinishSoloRound(s32 id)
 {
@@ -32,12 +20,12 @@ void Korosseo_FinishSoloRound(s32 id)
     /* FAKEMATCH: the speaker lookup is retained twice with both results unused. */
     Object_GetById(id);
     Object_GetById(id);
-    slot = gGameState[125];
+    slot = gGameState.selected_actor;
     obj = Object_GetById(slot);
     Engine_EventBegin();
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
-    ((s32 (*)())Engine_EventOpenMessage)(id, 0);
+    Engine_EventOpenMessage(id, 0);
     /* FAKEMATCH: one work pointer and word locals preserve the pool-load and halfword-store order. */
     {
         u8 *w = *(u8 **)&gEventWork;

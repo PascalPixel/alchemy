@@ -73,6 +73,6 @@ void Korosseo_UpdateMarker(void)
         *dst = tile | 0x400;
         Runtime_PushSlotEntry(oam, 255);
     } else if (Korosseo_MarkerBlink > 19) {
-        *(u16 *)&Korosseo_MarkerBlink = 0;
+        Korosseo_MarkerBlink = 0;
     }
 }

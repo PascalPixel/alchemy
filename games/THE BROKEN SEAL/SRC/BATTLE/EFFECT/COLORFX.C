@@ -33,15 +33,8 @@ static __inline__ void FillWords(void *dst, s32 size, s32 value)
 
 s32 Runtime_BlankDisplayLoadValueAndRun(void)
 {
-  s32 *p;
-  u8 *src;
-  if (1)
-  {
-    *((s16 *) 0x04000000) = 0x40;
-    src = (u8 *)((void *) &gGameState);
-    p = (s32 *)((u32)&gRandomSeed);
-    *p = *((s32 *)(src + 4));
-  }
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
+  gRandomSeed = gGameState.play_time;
   Audio_PlayCue(9);
   ReelGame_Run();
   return 0;
@@ -96,7 +89,7 @@ void BattlePres_ProcessPendingTileTransfer(void)
         buffer = gBattleFxWork[1];
         switch (work->transfer_mode) {
         case 1:
-            Dma_Set(buffer, (void *)0x06003500, 0x84002000, REG_DMA3);
+            Dma_Set(buffer, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x2000, REG_DMA3);
             FillWords(buffer, 0x8000, work->transfer_value);
             break;
         case 2:

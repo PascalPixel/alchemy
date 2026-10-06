@@ -51,7 +51,7 @@ void Audio_PlayCue(s32);
             u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
             *(u16 *)&q->count = count + 1;                                  \
             *destination++ = (control);                                     \
-            *destination++ = 0x04000000;                                    \
+            *destination++ = (u32)&REG_DISPCNT;                             \
             *destination = 0x20000;                                         \
         }                                                                   \
         *ime = saved;                                                       \
@@ -84,10 +84,10 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     work->fade_frames = 0;
     work->fade_step = 0;
     Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
-    QUEUE_DISPLAY_CONTROL(0x7341);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     WaitFrames(1);
     REG_BG2CNT = bg_control | 0x784;
-    QUEUE_DISPLAY_CONTROL(0x7341);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
     display->second_mode = 0;
     WaitFrames(1);
@@ -121,34 +121,12 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     }
 
     ClearWords(Iwram_ClearWords, canvas, 0x4000);
-    ClearWords(Iwram_ClearWords, (void *)0x06004000, 0x4000);
+    ClearWords(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
     work->shake_frames = 0;
     work->saved_bg1_x = gBgScroll[1].x;
     work->saved_bg1_y = gBgScroll[1].y;
     WaitFrames(1);
 }
-
-#undef QUEUE_DISPLAY_CONTROL
-#define QUEUE_DISPLAY_CONTROL(control) do { \
-    /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (control);                                     \
-            *destination++ = 0x04000000;                                    \
-            *destination = 0x20000;                                         \
-        }                                                                   \
-        *ime = saved;                                                       \
-    } while (0)
 
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
@@ -210,12 +188,12 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 
             tile = row * 16 + col * 2;
             pair = ((tile + 1) << 8) | tile;
-            *(volatile s16 *)(0x06003800 + offset) = pair;
+            *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
         }
     }
 
     ClearWords(Iwram_ClearWords, canvas, 0x4000);
-    ClearWords(Iwram_ClearWords, (void *)0x06004000, 0x4000);
+    ClearWords(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
     WaitFrames(1);
 }
 
@@ -237,40 +215,13 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
 
             tile = row * 16 + col * 2;
             pair = ((tile + 1) << 8) | tile;
-            *(volatile s16 *)(0x06003800 + offset) = pair;
+            *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
         }
         for (col = 0; col != 8; col++, offset += 2) {
-            *(volatile u16 *)(0x06003800 + offset) = 0;
+            *(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
         }
     }
 }
-
-#define QUEUE_DISPLAY_CONTROL(control) {                                    \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        q = &gIoWriteQueue;                                                 \
-        do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-            do { \
-                /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-                ime = &REG_IME;                                             \
-                saved = *ime;                                               \
-            } while (0);                                                    \
-            *ime = (u16)ime;                                                \
-            count = q->count;                                               \
-            if (count <= 31) {                                              \
-                u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);       \
-                *(u16 *)&q->count = count + 1;                              \
-                *destination++ = (control);                                 \
-                *destination++ = 0x04000000;                                \
-                *destination = 0x20000;                                     \
-            }                                                               \
-            *ime = saved;                                                   \
-        } while (0);                                                        \
-    }
 
 void BattleFx_EndCanvasLayer(void)
 {
@@ -286,10 +237,10 @@ void BattleFx_EndCanvasLayer(void)
     gProjection.center_x = 120;
     gProjection.center_y = 120;
     REG_BG2CNT = 0x787;
-    Iwram_ClearWords((void *)0x06004000, 0x4000);
+    Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     gBgScroll[1].y = 32;
-    QUEUE_DISPLAY_CONTROL(0x7341);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;
     WaitFrames(1);
 
@@ -300,11 +251,9 @@ void BattleFx_EndCanvasLayer(void)
         WaitFrames(1);
     }
 
-    QUEUE_DISPLAY_CONTROL(0x7541);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
     WaitFrames(1);
 }
-
-#undef QUEUE_DISPLAY_CONTROL
 
 void BattleFx_SetTransitionFlagAndDisplay(void)
 {
@@ -313,11 +262,11 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
   s32 transfer;
   s32 *flag;
 
-  flag = &((struct BattleBackgroundView *)Ram_WorkSlot[44])->second_mode;
-  state = Ram_WorkSlot[9];
+  flag = &((struct BattleBackgroundView *)Ram_WorkSlot[HEAP_SLOT_BATTLE_BACKGROUND])->second_mode;
+  state = Ram_WorkSlot[HEAP_SLOT_BATTLE];
   *flag = 1;
   transfer = 0x1541;
-  QueueIoWriteDelay2(0x04000000, transfer);
+  QueueIoWriteDelay2((u32)&REG_DISPCNT, transfer);
   one = 1;
   WaitFrames(one);
   BattlePresentation_ConfigurePaletteFadeFar(2, state->background, 0);

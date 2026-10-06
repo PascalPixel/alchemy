@@ -24,12 +24,12 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "TRANSFORM.H"
+#include "HEAP_STATE.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(void*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define BattleFx_RenderMode5 ((void (*)(void*))BattleFx_RenderMode5)
 
 typedef BattleEffectDrawRectangle RectangleBlit;
-extern u8 gWorkSlot[];
 
 void Object_SetMode(void *object, s32 mode);
 void Graphics_PackTileRows();
@@ -135,11 +135,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     RectangleBlit blitters[2];
     struct EffectPosition projected;
 
-    slots = (void **)gWorkSlot + 39;
+    slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
     slot = slots;
     work = (struct BattleEffectWork *)*slot++;
     canvas = *slot;
-    camera = ((struct BattleCamera **)gWorkSlot)[12];
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     sprites = (u8 *)slots[2];
     work->effect = command;
     if (kind == 11 || kind == 8 || kind == 32) {
@@ -372,8 +372,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         work->effect->prelude = 0;
         Scheduler_RemoveCallback(Palette_StepFadeTransfer);
         Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         Object_SetMode(caster_actor, 3);
         if (kind == 15) {
             BattleFx_RunProjectileVolley(command, 9);
@@ -399,8 +399,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         work->effect->prelude = 0;
         Scheduler_RemoveCallback(Palette_StepFadeTransfer);
         Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         command->variant = 3;
         BattleFx_RunSparkGroups(command, 2);
         return;
@@ -662,20 +662,20 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     image_y <<= 5;
                     image_y >>= 16;
                     image_y -= BattleFx_GlintCellHeights[image] / 2;
-                    Runtime_ReleaseHeapBlock(47);
-                    Runtime_ReleaseHeapBlock(46);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                     draw_flags = Random16();
-                    BattleEffect_LoadWork(47, 7, 7, CastingImpact_GlintDrawFlags[draw_flags & 3] | 3, 2);
-                    ((RectangleBlit *)gWorkSlot)[47](canvas, Ram_MapCellBuffer + BattleFx_GlintCellOffsets[image], image_x, image_y + 56, BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
-                    Runtime_ReleaseHeapBlock(47);
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CastingImpact_GlintDrawFlags[draw_flags & 3] | 3, 2);
+                    ((RectangleBlit *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](canvas, Ram_MapCellBuffer + BattleFx_GlintCellOffsets[image], image_x, image_y + 56, BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                     BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
                 }
             }
         } else if (kind == 14) {
             s32 rise;
             s32 scroll;
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             if (frame >= 0 && frame <= 23) {
                 RectangleBlit *draw;
                 s32 width;
@@ -690,9 +690,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     rise = 0;
                 while (scroll > 104)
                     scroll -= 104;
-                BattleEffect_LoadWork(47, 7, 7, 3, 2);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
                 draw = (RectangleBlit *)gWorkSlot;
-                draw += 47;
+                draw += HEAP_SLOT_BLITTER_ALTERNATE;
                 column_x = origin_x - 8;
                 column_y = rise + scroll;
                 top = column_y - 104;
@@ -701,7 +701,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 DrawImage(canvas, Ram_MapCellBuffer, column_x, top, width, tile_height, draw);
                 DrawScrolledImage(canvas, Ram_MapCellBuffer, column_x, column_y, width, tile_height, scroll, draw);
                 (*draw)(canvas, Ram_MapCellBuffer + 0x6e8, origin_x - width, rise + 47, width * 2, 65);
-                Runtime_ReleaseHeapBlock(47);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                 if (frame == 8) {
                     work->shake_frames = frame;
                 }
@@ -727,18 +727,18 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
         } else if (kind == 31) {
             s32 height;
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             if (frame >= 4 && frame <= 23) {
                 pair_x = target_screen->x / 2;
                 height = 48;
-                BattleEffect_LoadWork(47, 7, 7, 3, 2);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
                 work_blitters = (RectangleBlit *)gWorkSlot;
-                DrawImage(canvas, Ram_MapCellBuffer, pair_x - 24, 48, 24, height, work_blitters + 47);
-                Runtime_ReleaseHeapBlock(47);
-                BattleEffect_LoadWork(47, 7, 7, 7, 2);
-                DrawImage(canvas, Ram_MapCellBuffer, pair_x, 48, 24, height, work_blitters + 47);
-                Runtime_ReleaseHeapBlock(47);
+                DrawImage(canvas, Ram_MapCellBuffer, pair_x - 24, 48, 24, height, work_blitters + HEAP_SLOT_BLITTER_ALTERNATE);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+                DrawImage(canvas, Ram_MapCellBuffer, pair_x, 48, 24, height, work_blitters + HEAP_SLOT_BLITTER_ALTERNATE);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
         } else if (kind == 30) {
@@ -1036,16 +1036,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         work->effect->prelude = 0;
         Scheduler_RemoveCallback(Palette_StepFadeTransfer);
         Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         BattleFx_RunPaletteRampMode1(command);
     } else {
         if (kind == 2 || kind == 3 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
             Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
         }
         Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         BattleFx_EndCanvasLayer();
     }
 }

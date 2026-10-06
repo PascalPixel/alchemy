@@ -45,9 +45,10 @@ PERM macros in the draft are expanded only here, as pret's are:
 Without PERM macros the whole function is rewritten at random; with them,
 only PERM_RANDOMIZE regions are. Writes out/permute/STEM/best-N.c (best
 first) and best-N.diff against the draft, and prints the score trajectory.
-Defaults: --minutes 10, --jobs cores - 2, --seed 1. --function names the
-definition to rewrite when the draft has several; --iterations bounds each
-job instead of the clock, so a run repeats exactly."#;
+The diff is against the draft as the permuter prints it, PERM macros at
+their first choice. Defaults: --minutes 10, --jobs cores - 2, --seed 1.
+--function names the definition to rewrite when the draft has several;
+--iterations bounds each job instead of the clock, so a run repeats exactly."#;
 
 struct Options {
     draft: PathBuf,
@@ -321,7 +322,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     };
     // The written spelling first: its preprocessed unit gives the parser
     // its declarations, and its score is where the search starts.
-    let setup = Job::new(&problem, &output.join("setup"))?;
+    // This run's own scratch, so two runs on one draft never share files.
+    let scratch = output.join(format!("run-{}", std::process::id()));
+    let setup = Job::new(&problem, &scratch.join("setup"))?;
     let original = perm::expand(&problem.nodes, None);
     setup.compile(&original.restore(&original.text))?;
     if let Some(name) = scaffold {
@@ -368,8 +371,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     );
     let started = Instant::now();
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
-    let found = search(&problem, &base_state, &base, random, &options, deadline, &output, started)?;
-    write_best(&problem, &base, &found, &output)
+    let found = search(&problem, &base_state, &base, random, &options, deadline, &scratch, started);
+    let _ = std::fs::remove_dir_all(&scratch);
+    write_best(&problem, &base, &found?, &output)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -387,14 +391,31 @@ fn search(
     let global = Mutex::new((base.score.weighted, base.score.differ));
     let found = Mutex::new(Vec::new());
     let failures = Mutex::new(Vec::new());
+    let compiled = std::sync::atomic::AtomicU64::new(0);
+    let running = std::sync::atomic::AtomicUsize::new(options.jobs);
     std::thread::scope(|scope| {
+        // Each minute, the trajectory notes where the search stands.
+        let (global_ref, compiled_ref, running_ref) = (&global, &compiled, &running);
+        scope.spawn(move || {
+            let mut minute = 1u64;
+            while running_ref.load(Ordering::Relaxed) > 0 {
+                std::thread::sleep(Duration::from_millis(200));
+                if started.elapsed() >= Duration::from_secs(60 * minute) {
+                    let (weighted, differ) = *global_ref.lock().unwrap();
+                    println!("{:>8.1}s  {} candidates compiled; best weighted {weighted}, differ {differ}", started.elapsed().as_secs_f64(), compiled_ref.load(Ordering::Relaxed));
+                    minute += 1;
+                }
+            }
+        });
         for job_index in 0..options.jobs {
             let (stop, global, found, failures) = (&stop, &global, &found, &failures);
+            let (compiled, running) = (&compiled, &running);
             scope.spawn(move || {
                 let job = match Job::new(problem, &output.join(format!("job-{job_index:02}"))) {
                     Ok(job) => job,
                     Err(error) => {
                         failures.lock().unwrap().push(error);
+                        running.fetch_sub(1, Ordering::Relaxed);
                         return;
                     }
                 };
@@ -440,6 +461,7 @@ fn search(
                         Some(result) => result.clone(),
                         None => {
                             let result = problem.evaluate(&job, &text).ok();
+                            compiled.fetch_add(1, Ordering::Relaxed);
                             cache.insert(key, result.clone());
                             result
                         }
@@ -482,6 +504,7 @@ fn search(
                 }
                 let failed = cache.values().filter(|result| result.is_none()).count();
                 println!("job {job_index:>2}: {iteration} iterations, {} distinct candidates, {failed} did not compile", cache.len());
+                running.fetch_sub(1, Ordering::Relaxed);
             });
         }
     });
@@ -570,7 +593,9 @@ fn write_best(problem: &Problem, base: &Found, found: &[Found], output: &Path) -
             rewrites(&best.kinds)
         );
         std::fs::write(&path, format!("{header}{}", best.text)).map_err(|e| format!("{}: {e}", path.display()))?;
-        let diff = line_diff(&problem.text, &best.text);
+        // Against the draft as the permuter prints it (PERM macros at their
+        // first choice), so the diff shows rewrites, not the printer's layout.
+        let diff = line_diff(&base.text, &best.text);
         std::fs::write(path.with_extension("diff"), &diff).map_err(|e| format!("{}: {e}", path.display()))?;
         println!("best-{}: {}  {}", index + 1, best.score.summary(), path.strip_prefix(root()).unwrap_or(&path).display());
         if index == 0 {

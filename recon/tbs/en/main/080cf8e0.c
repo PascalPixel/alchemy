@@ -1,3 +1,16 @@
+/* Draft: native 670 instructions, draft 654, common 441, differ 442.
+ * Stubborn (2026-10-06): register allocation drifts from the mode chain on
+ * (native reload rotates r0-r3 only; the draft also spills through r4).
+ * Shared heap slots and hardware declarations preserve the original 484 score.
+ * An explicit per-target delay (8 frames) improves 484 -> 444 and restores
+ * the native 80-byte frame; no unused local or new FAKEMATCH device is needed.
+ * Remaining: loader branch merging, burst-index strength reduction, and
+ * allocation/reloads while drawing shards. The four SevenMode tables still
+ * need native-pool labels before adoption.
+ * Trials: direct palette calls 550; pointer/array burst forms 484/495;
+ * an explicit burst-group index 486 (442 with the per-target delay);
+ * burst pointer stepping 446; i + k * 32 444; draw-pair shape 484; draw cursor 473.
+ */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -15,9 +28,8 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
-
-extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
+#include "HEAP_STATE.H"
+#include "IO_REG.H"
 
 extern s8 SevenMode_Records[];
 extern u8 SevenMode_ShardWidths[];
@@ -33,7 +45,7 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
+void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -62,21 +74,23 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     u8 *palette;
     s32 i;
     s32 height;
+    s32 delay;
+    s32 group;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    camera = heap_cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
-    CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+    CopyPalette(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
     palette += 128;
     Resource_DecodeType01(palette, work);
     palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
-    CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+    CopyPalette(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
     palette += 128;
     Resource_DecodeType01(palette, work->sheet + 0x3e80);
     if (mode == 0)
@@ -93,7 +107,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
         palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
         palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
-    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
     for (i = 0; i != 1024; i++)
         gShots[i].variant = -1;
@@ -118,24 +132,24 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
         gBursts[i].variant = -1;
 
     if (effect->side == 0) {
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        draw[0] = gWorkSlot[46];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+        draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
         if (SevenMode_Records[mode * 2] == 0) {
-            BattleEffect_LoadWork(47, 7, 7, 3, 3);
-            draw[1] = gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         } else {
-            BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            draw[1] = gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         }
     } else {
-        BattleEffect_LoadWork(46, 7, 7, 7, 2);
-        draw[0] = gWorkSlot[46];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+        draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
         if (SevenMode_Records[mode * 2] == 0) {
-            BattleEffect_LoadWork(47, 7, 7, 3, 3);
-            draw[1] = gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         } else {
-            BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            draw[1] = gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         }
     }
     work->transfer_mode = 2;
@@ -149,17 +163,17 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 
     for (frame = 0; frame != total; frame++) {
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
-        for (k = 0; k != work->effect->count; k++) {
-            if (frame >= k * 8) {
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+        for (k = 0, delay = 0, group = 0; k != work->effect->count; k++, delay += 8, group += 32) {
+            if (frame >= delay) {
                 struct EffectStep *shot = &gShots[k * 16];
 
-                if (frame == k * 8 + 17) {
+                if (frame == delay + 17) {
                     ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
                     BattleEventRuntime_BeginPhaseFar(133);
                 }
                 if (shot->variant >= 0) {
-                    s32 step = (frame - k * 8) / 3;
+                    s32 step = (frame - delay) / 3;
 
                     if (step > 9)
                         step = 9;
@@ -180,7 +194,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                         if (SevenMode_Records[mode * 2] != 0)
                             count = 16;
                         for (i = 0; i != count; i++) {
-                            struct EffectStep *burst = &gBursts[k * 32 + i];
+                            struct EffectStep *burst = &gBursts[i + group];
 
                             burst->x = shot->x;
                             burst->y = shot->y;
@@ -237,7 +251,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     }
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

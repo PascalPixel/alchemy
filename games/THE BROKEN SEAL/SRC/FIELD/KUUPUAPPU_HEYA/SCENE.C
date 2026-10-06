@@ -2082,8 +2082,7 @@ void RunDialoguePromptScene(void)
     obj = Object_GetById(14);
     {
         u8 *target = &obj->paused;
-        /* FAKEMATCH: the flag goes through a word-sized local and a pointer temporary, which keeps the reference's registers. */
-        s32 shown = 1;
+        u8 shown = 1;
 
         *target = shown;
     }

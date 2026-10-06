@@ -12,7 +12,9 @@
    smull alternative tying RdHi to Rm (the bounce site's smull r2, r3,
    r3, r2), with or without RdLo tied to Rs: 117, not kept; the asm
    volatile, holding each velocity store before the next smull as
-   listed: 131 from 140, not kept (an ordering device). What remains:
+   listed: 131 from 140, not kept (an ordering device); alchemy permute
+   --camelot-arm --heat, 6 minutes, 8 jobs, 13,345 candidates: none
+   beat 117 (weighted 1970). What remains:
    those stores sunk past the next smull (rows 125-150 and the speed
    limit's shared tail), register choices for the reached flag, the
    script cursor and the target branch's calls, and the six veneer

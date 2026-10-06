@@ -1,6 +1,12 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4); camelot_arm is an analysis-only study (K1, K3).
- * alchemy diff --camelot-arm, upstream's whole arm_adjust_cost (2026-10-06, session 5):
- *   listing 196, draft 197, common 114, differ 165, as under the anti/output half alone (stock agbcc_arm 164).
+ * alchemy diff --camelot-arm, upstream's whole arm_adjust_cost (2026-10-06, session 6):
+ *   listing 196, draft 198, common 119, differ 156; the same draft under stock agbcc_arm:
+ *   draft 199, common 109, differ 177. 165 to 156 (session 6, aimed by --heat):
+ *   the wide branch indexes by ch - 32 again rather than idx, as the listing's sub r3, r1, #32
+ *   inside that branch. Trial (session 6): code = ch - 222 once, before the test, used there
+ *   and by both branches (the listing's cmp lr, #1 after both): 159.
+ * Earlier (session 5): listing 196, draft 197, common 114, differ 165, as under the
+ *   anti/output half alone (stock agbcc_arm 164).
  * agbcc_arm control (library setting -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4):
  *   listing 196, draft 198, common 115, differ 164
  * agscc control (alchemy diff --arm): listing 196, draft 223, common 24, differ 371
@@ -123,7 +129,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
         gw = glyph->width;
     } else {
         code = ch - 222;
-        wide = &((struct UiTextWideGlyph *)UiText_Glyphs)[idx];
+        wide = &((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32];
         rows = wide->rows;
         gw = wide->width;
     }

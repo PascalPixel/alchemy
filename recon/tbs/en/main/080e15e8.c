@@ -2,8 +2,12 @@
    listing 1640, draft 1634, common 1231, differ 812 (native frame 336,
    draft 324: three fewer spill slots, so most stack offsets read 12 low).
    The native's extra slots, in its frame order:
-   - sp+96, &scale hoisted out of the frame loop as a compiler temporary
-     (a user sc = scale pointer spills in the wrong place: 882);
+   - sp+96, &scale held through the frame loop, just below count
+     (sp+100) and size (sp+104). A user sc = scale pointer spills, but
+     below size and above count (882): user pseudos are numbered in
+     declaration order (size 40, count 41, sc 42 in the rtl dump) and
+     global gives count a hard register that reload later takes back
+     into a shared slot, while the native spills count from the start;
    - sp+60, sx in the smoke burst (the draft keeps it in fp and reloads
      the constant 12 that the native keeps in r6);
    - sp+24, frame * 4 as its own reduced giv. The loop dump says why the
@@ -32,7 +36,22 @@
      frame * 4 - (i * 48 + 256): 812, no change; reach = frame * 4 before
      the points loop (on 914): 921, user var rejected as above; blit[0] =
      SLOT(46) without cache: 817; sx after oy: 858; declaration order:
-     no change. */
+     no change.
+   - on 812: literal 10000 for rings in both addresses: 816 to 834;
+     ring store as (sheet + offset)[rings + j], (sheet + offset +
+     rings)[j] or other orders: 812 to 816; ox += 60 before the smoke
+     calls: 814; smoke set before or after the first LoadWork: 812;
+     ApplyPosition before the size clamp: 902; count passed to the
+     palette call: 812; count clamped and looped on directly, no n:
+     840; sc pointer with count set before size, after the key test, in
+     the palette call or clamped directly: 881 to 912.
+   - on 812, rejected: count = frame * 2 just before the palette call:
+     796, but the frame shrinks to 320 and the loop top no longer stores
+     count first as the native does; n = 0 between the third smoke call
+     and its release (permuter): 791, a register-allocation accident
+     that moves the store away from the native's.
+   - permuter, 5 minutes from 812: 638, all from temporaries, swapped
+     compares and casts; no single rewrite carries over. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

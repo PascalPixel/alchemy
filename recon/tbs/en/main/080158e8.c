@@ -8,12 +8,16 @@
    store lower than native. sched1 decides it (-fno-schedule-insns2 is
    unchanged): its backward list scheduler places cmp right above bls
    because the jump's anti-dependence on the last post-increment store
-   costs 2, so the fillers start one stall slot too low.
+   costs 2, so the fillers start one stall slot too low. Native has
+   strh directly above bls and f+d directly below the store before it,
+   as if a store cost 1 there; no reshaping tried moves cmp off T-2.
    Trials: one packed-value local v set three times, each value computed
    before its dst++ (not a birthing insn, so f+d no longer launches next
    to the last store) 10->6; for-loop row counter instead of an explicit
    next = row + 1 gives the same r9 and 6 (do/while with next: --arm 18);
-   while (++row < 20) 6; src += 2 after the last store 6; earlier:
+   while (++row < 20) 6; src += 2 after the last store 6, before the
+   first 6; u32 v 6; a row pointer p with dst = p at the end 6;
+   for (col = 0; ...) without the zero chain 8; earlier:
    moving packed-value calculation or row update alone 10; u16 packed
    value 14; indexed stores worsen register allocation.
    No compiler route follows from these scores. */

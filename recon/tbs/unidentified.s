@@ -6,9 +6,6 @@ Rom_Start:
 Rom_LanguageCode:
 	.incbin "baserom.gba", 0x000000af, 0x00000011
 	.section .unidentified.08007320,"a"
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x00007320, 0x00000038
 	.incbin "baserom.gba", 0x00007358, 0x0000031e
 	.global Math_ArcTanTable
 Math_ArcTanTable:

@@ -8,9 +8,7 @@ Rom_LanguageCode:
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
 	.section .rom.00007380, "ax"
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x00007380, 0x00000356
+	.incbin "baserom.gba", 0x000073b8, 0x0000031e
 	.global Math_ArcTanTable
 Math_ArcTanTable:
 	.incbin "baserom.gba", 0x000076d6, 0x00000106

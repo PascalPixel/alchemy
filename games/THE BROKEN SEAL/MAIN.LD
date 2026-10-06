@@ -118,6 +118,7 @@ SECTIONS
     "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_SECTOR.o"(.text)
     "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_BLOCK.o"(.text)
     "*libgcc.a:_call_via_rX.o"(.text)
+    "*/games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME_IRQ_TABLE.o"(.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail)
     "*/recon/tbs/ja/rom.o"(.rom.00007320)
     "*/games/THE BROKEN SEAL/SRC/LIB/Q16_DOT_PRODUCT.o"(.text .rodata .data .padding)
     "*/recon/tbs/ja/rom.o"(.rom.000079b0)

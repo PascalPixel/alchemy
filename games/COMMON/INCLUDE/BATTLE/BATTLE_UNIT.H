@@ -78,7 +78,11 @@ struct BattleUnit {
     u8 class_id;
     u8 class_index;
     u8 status_12a;
+#if GAME_TLA
+    u8 guard_level;
+#else
     s8 guard_level;
+#endif
     s8 element_modifier[4];
     s8 restraint;
     s8 poison;

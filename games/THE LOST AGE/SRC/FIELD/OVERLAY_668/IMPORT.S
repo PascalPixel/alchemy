@@ -93,7 +93,7 @@ Func_02004a3c:
 	.global Func_02004a44
 	.thumb_func
 Func_02004a44:
-	overlay_veneer Func_08020170
+	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global Func_02004a4c
 	.thumb_func
 Func_02004a4c:

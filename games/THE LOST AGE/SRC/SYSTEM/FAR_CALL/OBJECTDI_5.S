@@ -29,21 +29,21 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeout
-	.global Func_08020158
+	.global Map_GetScreenRelativePositionFar
 	.thumb_func
-Func_08020158:
+Map_GetScreenRelativePositionFar:
 	overlay_veneer Func_08023088
-	.global Func_08020160
+	.global WorldMap_UpdateViewFar
 	.thumb_func
-Func_08020160:
+WorldMap_UpdateViewFar:
 	overlay_veneer Func_0802c240
-	.global Func_08020168
+	.global Map_LoadDefaultCellsAndUpdateBlockFar
 	.thumb_func
-Func_08020168:
+Map_LoadDefaultCellsAndUpdateBlockFar:
 	overlay_veneer Func_0802cb08
-	.global Func_08020170
+	.global Map_PlayMetatileCopySequenceFar
 	.thumb_func
-Func_08020170:
+Map_PlayMetatileCopySequenceFar:
 	overlay_veneer Func_0802b2d4
 	.global Map_CopyMetatileIndicesRectFar
 	.thumb_func

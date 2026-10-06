@@ -65,7 +65,7 @@ Func_02002c20:
 	.global Func_02002c28
 	.thumb_func
 Func_02002c28:
-	overlay_veneer Func_08020170
+	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global Func_02002c30
 	.thumb_func
 Func_02002c30:

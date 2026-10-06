@@ -69,7 +69,7 @@ Func_02001fac:
 	.global Func_02001fb4
 	.thumb_func
 Func_02001fb4:
-	overlay_veneer Func_08020170
+	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:

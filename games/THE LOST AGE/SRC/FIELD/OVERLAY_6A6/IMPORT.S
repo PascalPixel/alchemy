@@ -69,7 +69,7 @@ GameFlag_ClearBit:
 	.global Func_020012a0
 	.thumb_func
 Func_020012a0:
-	overlay_veneer Func_08020170
+	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global Func_020012a8
 	.thumb_func
 Func_020012a8:

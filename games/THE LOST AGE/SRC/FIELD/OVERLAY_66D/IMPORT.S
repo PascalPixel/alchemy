@@ -13,7 +13,7 @@ GameFlag_SetBit:
 	.global Func_02000534
 	.thumb_func
 Func_02000534:
-	overlay_veneer Func_08020170
+	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

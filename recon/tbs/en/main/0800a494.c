@@ -1,17 +1,28 @@
 /* 0800a494: ARM draft; no admitted game ARM build route.
-   Stock agscc --arm: listing 307, draft 397, common 48, differ 608.
-   Fixed agbcc_arm -O2 library setting: 307/328/common72/differ491.
+   Stock agscc --arm: listing 307, draft 294, common 55, differ 491.
+   Fixed agbcc_arm -O2 library setting: 307/296/common202/differ199.
    Shared ScriptMotionObject layout and separate ratio/velocity values come
    from the exact Thumb counterpart; ARM still updates only eight objects
    and keeps its own horizontal motion, deceleration and frozen behavior.
    Natural source trials, agscc/agbcc differences: baseline621/517;
    separate ratio/vx/vz609/499; ordinary for loop608/491; ground local same.
-   Explicit high/low product expression591/547 was reverted. Remaining
-   differences include multiplication allocation, fixed-call formation,
-   stack use and scheduling; this draft does not identify its compiler. */
+   Explicit high/low product expression591/547 was reverted.
+   2026-10-06 trials, agscc/agbcc: IwramSqrt and IwramRatioMulQ14 called
+   by name (the listing's bl veneers and register calls) 596/480; command
+   loop as do/while around a while 596/479, inner for form 597/480;
+   smull into separately allocated low and high words 514/278 (the native
+   never pairs them, as a 64-bit product would); low shift first in the
+   OR 494/208; fixed-address calls in the target branch only 500/269,
+   reverted; falling and bouncing as two tests of y against the ground,
+   the second reloading velocity_y, 491/199; one command loop with the
+   cursor step in an else 483/346, reverted. Remaining: the target branch
+   calls IwramSqrt and IwramRatioMulQ14 through a register, the native
+   reloads obj->script for each command and enters the cursor loop by a
+   jump to its test, the arrival cases 16 and 18 share one tail, and the
+   three ldr r4/bx r4 call veneers after the function (six instructions)
+   have no source form. This draft does not identify its compiler. */
 #include "TYPES.H"
 #include "SCRIPT_MOTION.H"
-#include "IWRAM_CALL.H"
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -21,10 +32,19 @@ extern struct ScriptMotionObject *gObjectSlots;
 extern ScriptCommandFn ScriptObject_CommandTable[];
 
 s32 ArcTan2(s32, s32);
+s32 IwramSqrt(s32);
+s32 IwramRatioMulQ14(s32, s32);
 
 static __inline__ s32 MulQ16(s32 a, s32 b)
 {
-    return (s32)(((s64)a * b) >> 16);
+    s32 lo;
+    s32 hi;
+
+    /* The native smull writes its low and high words to unpaired registers
+       (r1/r3, r2/r0); a 64-bit product takes a register pair. */
+    /* FAKEMATCH: unpaired smull halves; agbcc_arm differ 479 as s64, 278 */
+    __asm__("smull %0, %1, %2, %3" : "=&r"(lo), "=&r"(hi) : "r"(a), "r"(b));
+    return ((u32)lo >> 16) | (hi << 16);
 }
 
 void Object_UpdateAll(void)
@@ -59,15 +79,10 @@ void Object_UpdateAll(void)
         if (obj->wait != 0) {
             obj->wait--;
         } else {
-            for (;;) {
-                cmd = (u32)obj->script->word[(s16)obj->script_cursor];
-                if (cmd > 63) {
+            do {
+                while ((cmd = (u32)obj->script->word[(s16)obj->script_cursor]) > 63)
                     obj->script_cursor++;
-                    continue;
-                }
-                if (ScriptObject_CommandTable[cmd](obj) == 0)
-                    break;
-            }
+            } while (ScriptObject_CommandTable[cmd](obj) != 0);
             if (obj->script == NULL)
                 continue;
         }
@@ -81,24 +96,24 @@ void Object_UpdateAll(void)
             if (obj->target_x != TARGET_UNSET) {
                 dx = (obj->target_x - x) / 65536;
                 dz = (obj->target_z - z) / 65536;
-                len = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+                len = IwramSqrt(dx * dx + dz * dz) << 16;
                 if (len < 0x01000000) {
                     dx = obj->target_x - x;
                     dz = obj->target_z - z;
-                    len = Iwram_Sqrt(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
+                    len = IwramSqrt(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
                 }
                 if (len == 0) {
                     x = obj->target_x;
                     z = obj->target_z;
                 } else {
-                    ratio = Iwram_RatioMulQ14(len, obj->acceleration);
+                    ratio = IwramRatioMulQ14(len, obj->acceleration);
                     obj->velocity_x += MulQ16(ratio, dx);
                     obj->velocity_z += MulQ16(ratio, dz);
                     vx = obj->velocity_x;
                     vz = obj->velocity_z;
-                    len = Iwram_Sqrt(MulQ16(vx, vx) + MulQ16(vz, vz)) << 8;
+                    len = IwramSqrt(MulQ16(vx, vx) + MulQ16(vz, vz)) << 8;
                     if (len > obj->speed_limit) {
-                        ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
+                        ratio = IwramRatioMulQ14(len, obj->speed_limit);
                         obj->velocity_x = MulQ16(ratio, vx);
                         obj->velocity_z = MulQ16(ratio, vz);
                     }
@@ -106,14 +121,14 @@ void Object_UpdateAll(void)
             } else {
                 dx = obj->velocity_x;
                 dz = obj->velocity_z;
-                len = Iwram_Sqrt(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
+                len = IwramSqrt(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
                 if (len != 0) {
                     rem = len - obj->acceleration;
                     if (rem < 0) {
                         obj->velocity_x = reached;
                         obj->velocity_z = reached;
                     } else {
-                        ratio = Iwram_RatioMulQ14(len, rem);
+                        ratio = IwramRatioMulQ14(len, rem);
                         obj->velocity_x = MulQ16(ratio, dx);
                         obj->velocity_z = MulQ16(ratio, dz);
                     }
@@ -125,9 +140,9 @@ void Object_UpdateAll(void)
 
             if ((obj->motion_flags & 2) != 0) {
                 ground = obj->terrain_height;
-                if (y > ground) {
+                if (y > ground)
                     obj->velocity_y -= obj->gravity;
-                } else if (obj->velocity_y < 0) {
+                if (y <= ground && obj->velocity_y < 0) {
                     y = ground;
                     obj->velocity_y = -MulQ16(obj->vertical.bounce, obj->velocity_y);
                     if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)

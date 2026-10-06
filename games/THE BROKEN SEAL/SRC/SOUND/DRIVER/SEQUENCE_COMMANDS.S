@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-.global Func_080f9a80
-	.thumb_func
-Func_080f9a80:
 	.global Sound_LoadCommandTable
 	.thumb_func
 Sound_LoadCommandTable:

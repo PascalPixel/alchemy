@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080f95e0
-	.thumb_func
-Func_080f95e0:
 	.global Audio_UmulHigh32
 	.thumb_func
 Audio_UmulHigh32:

@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080f95f0
-	.thumb_func
-Func_080f95f0:
 	.global AudioEngine_RunMixerTick
 	.thumb_func
 AudioEngine_RunMixerTick:

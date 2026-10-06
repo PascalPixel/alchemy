@@ -1,10 +1,8 @@
 .syntax unified
 	.thumb
 	.global SoundNote_Detach
-	.global Func_080f9a30
 	.thumb_func
 SoundNote_Detach:
-Func_080f9a30:
 	ldr	r3, [r0, #44]
 	cmp	r3, #0
 	beq.n	.L_080f9a4e
@@ -43,7 +41,7 @@ Func_080f9a50:
 	strb	r1, [r4, #0]
 .L_080f9a68:
 	adds	r0, r4, #0
-	bl	Func_080f9a30
+	bl	SoundNote_Detach
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
 	bne.n	.L_080f9a5a

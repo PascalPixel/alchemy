@@ -1,9 +1,7 @@
 .syntax unified
 .text
 	.arm
-	.global Func_08000404
 	.global IwramCodeRecords
-Func_08000404:
 IwramCodeRecords:
 	asrs	r1, fp, #20
 	bicpl	r1, r1, #31

@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080f9c44
-	.thumb_func
-Func_080f9c44:
 	.global Sound_TickDmaRestartTimer
 	.thumb_func
 Sound_TickDmaRestartTimer:
@@ -51,9 +48,6 @@ AlchemyUncreditedEnd_080f9c86:
 	.4byte 0x84400004
 .syntax unified
 	.thumb
-	.global Func_080f9c90
-	.thumb_func
-Func_080f9c90:
 	.global MusicPlayer_Tick
 	.thumb_func
 MusicPlayer_Tick:

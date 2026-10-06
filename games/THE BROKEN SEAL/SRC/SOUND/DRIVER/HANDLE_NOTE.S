@@ -200,7 +200,7 @@ MusicTrack_HandleNote:
 	cmp	r0, r1
 	beq.n	.L_080fa0d2
 	adds	r1, r5, #0
-	bl	Func_080fa1ac
+	bl	MusicTrack_ClearModulationState
 .L_080fa0d2:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0

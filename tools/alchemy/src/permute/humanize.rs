@@ -2,12 +2,13 @@
 //! around. For a function that already matches, it tries readability
 //! rewrites and keeps one only when the whole object compiles to exactly the
 //! same bytes as the current spelling (code, literal pools, data, relocations
-//! and symbols) and `alchemy worst`'s score of the function falls. No listing
-//! and nothing from the ROM is read: the current source's own object is the
-//! reference. FAKEMATCH-tagged statements, asm, volatile and register
-//! variables are never touched. The file is written once, at the end, in its
-//! own lines where the rewrites carry into them; then `alchemy keep` judges
-//! all twelve editions.
+//! and symbols) in every edition that compiles the file, and `alchemy
+//! worst`'s score of the function falls. No listing and nothing from the ROM
+//! is read: the current source's own objects are the reference.
+//! FAKEMATCH-tagged statements, asm, volatile and register variables are
+//! never touched. The file is written once, at the end, in its own lines
+//! where the rewrites carry into them; then a bare `alchemy keep` judges all
+//! twelve editions.
 
 use super::ast::{BinOp, Decl, Expr, Function, Init, Stmt, UnOp};
 use super::mutate::Rng;
@@ -17,25 +18,30 @@ use crate::targets::{decomp_target, DecompTarget};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
-const USAGE: &str = r#"usage: alchemy humanize FILE.C [--function NAME] [--minutes N] [--jobs J] [--seed S] [--edition EDITION] [--dry-run]
+const USAGE: &str = r#"usage: alchemy humanize FILE.C [--function NAME] [--minutes N] [--jobs J] [--seed S] [--dry-run]
 Rewrites a matching function toward plainer C without changing one byte of
 its object: each candidate is one rewrite of the current best, compiled with
-alchemy diff's steps for FILE.C, and kept only when the object file is
-byte-identical to the current spelling's and alchemy worst's score of the
-function falls (then hex numbers, narrow locals, lines and characters break
-ties). Rewrites: drop a value or pointer cast, fold a single-use temporary
-into its use, merge a declaration with its first assignment, widen a u8, s8,
-u16 or s16 local to s32, compound assignment, ++ and --, a negated
-comparison, a do { } while (0) block back to plain statements, a goto
-over statements to an if, a goto back to its label to a do-while, a hex
-quantity outside bit operations to decimal. Statements after a FAKEMATCH
-comment, and any with asm, volatile or register, are left as written.
+alchemy diff's steps for FILE.C in every edition of every game that compiles
+it (editions whose preprocessed file is the same are compiled once), and
+kept only when each object file is byte-identical to the current
+spelling's and alchemy worst's score of the function falls (then hex
+numbers, narrow locals, lines and characters break ties). Rewrites: drop a
+value or pointer cast, fold a single-use temporary into its use, merge a
+declaration with its first assignment, widen a u8, s8, u16 or s16 local to
+s32, compound assignment, ++ and --, a negated comparison, a
+do { } while (0) block back to plain statements, a goto over statements to
+an if, a goto back to its label to a do-while, a hex quantity below 0x1000
+outside bit operations and flag arguments to decimal. Left as written: the
+statement after a FAKEMATCH comment on its own line, the statement a
+FAKEMATCH comment ends the line of, a whole block whose opening line carries
+one, any statement with asm, volatile or register, statements inside #if,
+#define bodies, and a function defined more than once across #if branches.
 Candidates are tried in an order drawn from --seed, J at a time; the first
 in that order that passes is kept, so a seed repeats exactly. Without
 --function every function in FILE.C is humanized in turn. FILE.C is written
-once at the end (not with --dry-run); run alchemy keep FILE.C next.
-Defaults: --minutes 5 per function, --jobs cores - 2, --seed 1, the English
-edition of the file's game."#;
+once at the end (not with --dry-run); run a bare alchemy keep next, which
+checks all twelve editions.
+Defaults: --minutes 5 per function, --jobs cores - 2, --seed 1."#;
 
 struct Options {
     file: PathBuf,
@@ -43,12 +49,11 @@ struct Options {
     minutes: f64,
     jobs: usize,
     seed: u64,
-    target: DecompTarget,
     dry_run: bool,
 }
 
 fn parse_options(arguments: &[String]) -> Result<Options, String> {
-    let (mut file, mut function, mut target) = (None, None, None);
+    let (mut file, mut function) = (None, None);
     let mut minutes = 5.0;
     let mut jobs = std::thread::available_parallelism().map_or(1, |n| n.get().saturating_sub(2).max(1));
     let (mut seed, mut dry_run) = (1, false);
@@ -73,10 +78,6 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 index += 1;
                 seed = value(index)?.parse().map_err(|_| format!("--seed: a number\n{USAGE}"))?;
             }
-            "--edition" => {
-                index += 1;
-                target = Some(decomp_target(Some(&value(index)?))?);
-            }
             "--dry-run" => dry_run = true,
             other if other.starts_with('-') => return Err(format!("unknown humanize option: {other}\n{USAGE}")),
             other if file.is_none() => file = Some(PathBuf::from(other)),
@@ -85,13 +86,31 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         index += 1;
     }
     let file = file.ok_or_else(|| USAGE.to_string())?;
-    let text = file.to_string_lossy().into_owned();
-    let target = match target {
-        Some(target) => target,
-        None if text.contains("THE LOST AGE") || text.contains("/tla/") => decomp_target(Some("tla-en"))?,
-        None => decomp_target(Some("tbs-en"))?,
-    };
-    Ok(Options { file, function, minutes, jobs, seed, target, dry_run })
+    Ok(Options { file, function, minutes, jobs, seed, dry_run })
+}
+
+/// Every edition that may compile `file`: all six of its game's, both
+/// games' twelve for shared or unplaced files.
+fn editions_for(file: &Path) -> Vec<DecompTarget> {
+    let text = file.to_string_lossy();
+    let game = |id: &str| decomp_target(Some(id)).map(|t| t.editions().to_vec()).unwrap_or_default();
+    if text.contains("THE BROKEN SEAL") || text.contains("/tbs/") {
+        game("tbs-ja")
+    } else if text.contains("THE LOST AGE") || text.contains("/tla/") {
+        game("tla-ja")
+    } else {
+        [game("tbs-ja"), game("tla-ja")].concat()
+    }
+}
+
+/// How many top-level definitions of `name` the text holds; each edition's
+/// #if branch counts.
+fn definitions(text: &str, name: &str) -> usize {
+    super::lex::lex(text).map_or(0, |tokens| super::parse::scan_definitions(&tokens).iter().filter(|entry| entry.0 == name).count())
+}
+
+fn next_step(file: &Path) -> String {
+    format!("wrote {}; next: a bare alchemy keep, which checks all twelve editions", file.display())
 }
 
 // ---------------------------------------------------------------- rewrites
@@ -185,34 +204,110 @@ fn guarded(stmt: &Stmt) -> bool {
     found
 }
 
-/// Which statements of a block are open to rewriting: not guarded, and not
-/// the statement a FAKEMATCH comment stands before.
+/// Where a FAKEMATCH comment stands on its line, which the parser's comment
+/// statements do not keep: `Mask::new` writes it into the comment as one of
+/// these markers, and `unmask` takes it out again. A comment alone on its
+/// line leads the next statement and carries no marker.
+const TAG_TRAIL: &str = "__humanize_tag_trail__";
+const TAG_OPEN: &str = "__humanize_tag_open__";
+const TAG_INNER: &str = "__humanize_tag_inner__";
+
+/// Which statements of a block are open to rewriting: not guarded, not the
+/// statement a FAKEMATCH comment on its own line stands before, not the
+/// statement a FAKEMATCH comment ends the line of, and nothing in a block
+/// whose opening line carries one. A comment inside a statement shields
+/// both its neighbours, as the parser may put it before or after.
 fn open_mask(stmts: &[Stmt]) -> Vec<bool> {
-    let mut mask = Vec::with_capacity(stmts.len());
-    let (mut tagged, mut depth) = (false, 0);
-    for stmt in stmts {
+    let mut mask = vec![true; stmts.len()];
+    let (mut leading, mut depth, mut previous) = (false, 0, None::<usize>);
+    for (i, stmt) in stmts.iter().enumerate() {
         if let Some(step) = directive_step(stmt) {
             depth += step;
-            mask.push(false);
+            mask[i] = false;
             continue;
         }
         if depth > 0 {
             // Inside an edition's #if: only one branch compiles here.
-            mask.push(false);
+            mask[i] = false;
             continue;
         }
         match stmt {
             Stmt::Comment(text) => {
-                tagged |= text.contains("FAKEMATCH");
-                mask.push(false);
+                mask[i] = false;
+                if !text.contains("FAKEMATCH") {
+                    continue;
+                }
+                if text.contains(TAG_OPEN) || (text.contains(TAG_TRAIL) && previous.is_none()) {
+                    return vec![false; stmts.len()];
+                }
+                if text.contains(TAG_TRAIL) || text.contains(TAG_INNER) {
+                    if let Some(p) = previous {
+                        mask[p] = false;
+                    }
+                }
+                if !text.contains(TAG_TRAIL) {
+                    leading = true;
+                }
             }
             other => {
-                mask.push(!tagged && !guarded(other));
-                tagged = false;
+                if leading || guarded(other) {
+                    mask[i] = false;
+                }
+                leading = false;
+                previous = Some(i);
             }
         }
     }
     mask
+}
+
+/// Marks each FAKEMATCH comment by where it stands on its line: after a
+/// statement's end (`;` or `}`), after a block's `{`, or inside a statement.
+fn tag_comments(text: &str) -> String {
+    let bytes = text.as_bytes();
+    let (mut out, mut i, mut last) = (String::new(), 0, 0);
+    while i < bytes.len() {
+        match bytes[i] {
+            b'/' if matches!(bytes.get(i + 1), Some(b'*') | Some(b'/')) => {
+                let block = bytes[i + 1] == b'*';
+                let end = if block { text[i + 2..].find("*/").map_or(bytes.len(), |e| i + 4 + e) } else { text[i..].find('\n').map_or(bytes.len(), |e| i + e) };
+                if text[i..end].contains("FAKEMATCH") {
+                    let line_start = text[..i].rfind('\n').map_or(0, |at| at + 1);
+                    let before = text[line_start..i].trim();
+                    let line_end = text[end..].find('\n').map_or(bytes.len(), |at| end + at);
+                    let after = text[end..line_end].trim();
+                    // `} /* tag */` then `else` or `while` on the next line
+                    // is still inside the if or do, and the parser puts the
+                    // comment before that statement.
+                    let continues = before.ends_with('}') && {
+                        let next = text[line_end..].trim_start();
+                        next.starts_with("else") || next.starts_with("while")
+                    };
+                    let marker = if before.is_empty() {
+                        None
+                    } else if !after.is_empty() || continues {
+                        Some(TAG_INNER)
+                    } else if before.ends_with([';', '}']) {
+                        Some(TAG_TRAIL)
+                    } else if before.ends_with('{') {
+                        Some(TAG_OPEN)
+                    } else {
+                        Some(TAG_INNER)
+                    };
+                    if let Some(marker) = marker {
+                        out.push_str(&text[last..i + 2]);
+                        out.push_str(marker);
+                        last = i + 2;
+                    }
+                }
+                i = end;
+            }
+            b'"' | b'\'' => i = skip_quoted(bytes, i),
+            _ => i += 1,
+        }
+    }
+    out.push_str(&text[last..]);
+    out
 }
 
 fn children_mut(expr: &mut Expr) -> Vec<&mut Expr> {
@@ -278,7 +373,7 @@ fn nested_mut(stmt: &mut Stmt) -> Vec<&mut Vec<Stmt>> {
 }
 
 /// Pre-order walk of every expression in open statements.
-fn walk_exprs(stmts: &mut [Stmt], visit: &mut dyn FnMut(&mut Expr), cursor: &Cursor) {
+fn walk_exprs(stmts: &mut [Stmt], visit: &mut dyn FnMut(&mut Expr) -> bool, cursor: &Cursor) {
     let mask = open_mask(stmts);
     for (stmt, open) in stmts.iter_mut().zip(mask) {
         if cursor.done() {
@@ -316,11 +411,13 @@ fn walk_exprs(stmts: &mut [Stmt], visit: &mut dyn FnMut(&mut Expr), cursor: &Cur
     }
 }
 
-fn walk_expr(expr: &mut Expr, visit: &mut dyn FnMut(&mut Expr), cursor: &Cursor) {
+fn walk_expr(expr: &mut Expr, visit: &mut dyn FnMut(&mut Expr) -> bool, cursor: &Cursor) {
     if cursor.done() {
         return;
     }
-    visit(expr);
+    if !visit(expr) {
+        return;
+    }
     for child in children_mut(expr) {
         walk_expr(child, visit, cursor);
     }
@@ -357,13 +454,19 @@ fn hex_value(text: &str) -> Option<u64> {
 }
 
 /// A hex number that reads as a quantity: not a mask (all ones), not a
-/// single bit, not an address, and not round in hex (three trailing zero
-/// digits, as 16.16 fixed point 0x18000 and angles 0x3000 are), whose unit
-/// the hex spelling shows.
+/// single bit, and below 0x1000, as camelotize's numbers rule draws it:
+/// fixed point (0x18000), angles (0x3000), addresses and ids that large
+/// keep the hex spelling that shows their unit.
 fn hex_quantity(expr: &Expr) -> bool {
     let Expr::Number(text) = expr else { return false };
     let Some(value) = hex_value(text) else { return false };
-    value >= 10 && value < 0x0200_0000 && (value + 1) & value != 0 && value & (value - 1) != 0 && value & 0xfff != 0
+    (10..0x1000).contains(&value) && (value + 1) & value != 0 && value & (value - 1) != 0
+}
+
+/// A call of a FLAG or Flag function or macro: its arguments are flag
+/// numbers, which stay hex.
+fn flag_call(expr: &Expr) -> bool {
+    matches!(expr, Expr::Call(callee, _) if matches!(&**callee, Expr::Ident(name) if name.contains("FLAG") || name.contains("Flag") || name.contains("flag")))
 }
 
 /// A hardware register takes fields, not quantities.
@@ -480,12 +583,18 @@ fn scalar(decl: &Decl, index: usize) -> bool {
     item.after.is_empty() && !item.before.iter().any(|t| t != "*") && !decl.specs.iter().any(|s| ["static", "extern", "register", "volatile", "struct", "union"].contains(&s.as_str()))
 }
 
-/// Remove the declarator of `name` wherever it is declared without an
-/// initializer; drop its declaration when nothing is left in it.
+/// Remove the declarator of `name` wherever an open statement declares it
+/// without an initializer; drop its declaration when nothing is left in it.
+/// A declaration a FAKEMATCH tag or a guard protects is never touched: the
+/// result is false, and the caller must not fold.
 fn remove_declarator(stmts: &mut Vec<Stmt>, name: &str) -> bool {
+    let mask = open_mask(stmts);
     for i in 0..stmts.len() {
         if let Stmt::Decl(decl) = &mut stmts[i] {
-            if let Some(at) = decl.items.iter().position(|item| item.name == name && item.init.is_none()) {
+            if let Some(at) = decl.items.iter().position(|item| item.name == name) {
+                if !mask[i] || decl.items[at].init.is_some() {
+                    return false;
+                }
                 decl.items.remove(at);
                 if decl.items.is_empty() {
                     stmts.remove(i);
@@ -494,14 +603,22 @@ fn remove_declarator(stmts: &mut Vec<Stmt>, name: &str) -> bool {
             }
         }
     }
-    for stmt in stmts.iter_mut() {
+    for (stmt, open) in stmts.iter_mut().zip(mask) {
         for block in nested_mut(stmt) {
-            if remove_declarator(block, name) {
-                return true;
+            if declares(block, name) {
+                return open && remove_declarator(block, name);
             }
         }
     }
     false
+}
+
+fn declares(stmts: &[Stmt], name: &str) -> bool {
+    stmts.iter().any(|stmt| {
+        let mut found = false;
+        stmt.each(&mut |s| found |= matches!(s, Stmt::Decl(decl) if decl.items.iter().any(|item| item.name == name)));
+        found
+    })
 }
 
 fn breaks_out(stmt: &Stmt) -> bool {
@@ -539,6 +656,11 @@ fn block_rewrite(kind: Rewrite, stmts: &mut Vec<Stmt>, mask: &[bool], body: &[St
                 let total = mentions(body, &name);
                 let wanted = if from_decl { 1 } else { 2 };
                 if total != wanted || mentions(std::slice::from_ref(&stmts[i + 1]), &name) != 1 {
+                    continue;
+                }
+                // The temporary's declaration must go with it, and may be
+                // one a FAKEMATCH tag protects.
+                if !from_decl && declares(body, &name) && !remove_declarator(&mut body.to_vec(), &name) {
                     continue;
                 }
                 if cursor.hit() {
@@ -702,10 +824,15 @@ pub fn apply(kind: Rewrite, function: &mut Function, target: usize) -> usize {
         walk_exprs(
             &mut function.body,
             &mut |expr| {
+                // A flag's number stays hex, however it is built.
+                if kind == Rewrite::HexQuantity && flag_call(expr) {
+                    return false;
+                }
                 let mut cursor = cell.borrow_mut();
                 if !cursor.done() {
                     expr_rewrite(kind, expr, &mut cursor);
                 }
+                true
             },
             &Cursor { target: usize::MAX, seen: 0 },
         );
@@ -792,7 +919,7 @@ impl Mask {
 
     pub fn new(text: &str) -> (String, Mask) {
         let mut mask = Mask::default();
-        let text = &Mask::directives(text, &mut mask);
+        let text = &tag_comments(&Mask::directives(text, &mut mask));
         let bytes = text.as_bytes();
         let (mut out, mut i, mut last) = (String::new(), 0, 0);
         while i < bytes.len() {
@@ -845,6 +972,8 @@ impl Mask {
     }
 
     pub fn unmask(&self, text: &str) -> String {
+        let untagged = text.replace(TAG_TRAIL, "").replace(TAG_OPEN, "").replace(TAG_INNER, "");
+        let text = untagged.as_str();
         if self.pieces.is_empty() {
             return text.to_string();
         }
@@ -1006,6 +1135,47 @@ impl Job {
     }
 }
 
+/// One worker's judge: the file compiled for each distinct edition build, so
+/// a function only one edition compiles (inside its #if) is checked there.
+struct Check {
+    jobs: Vec<Job>,
+}
+
+impl Check {
+    fn same(&self, text: &str) -> bool {
+        self.jobs.iter().all(|job| job.same(text))
+    }
+
+    fn rebase(&mut self, text: &str) -> Result<(), String> {
+        for job in &mut self.jobs {
+            job.reference = job.compile(text)?;
+        }
+        Ok(())
+    }
+}
+
+/// The editions whose builds of `file` differ: each edition that compiles
+/// it, less those whose preprocessed file and compiler repeat an earlier
+/// one's (the same unit compiles to the same object, whatever the rewrite).
+fn distinct_editions(file: &Path, directory: &Path, text: &str) -> Result<(Vec<DecompTarget>, String), String> {
+    let (mut kept, mut seen, mut first) = (Vec::new(), Vec::new(), None);
+    for target in editions_for(file) {
+        // An edition that cannot compile the file cannot judge a rewrite:
+        // nothing is humanized rather than leave it unchecked.
+        let job = Job::new(target, file, &directory.join(target.id.as_str()), text).map_err(|error| format!("{}: {}: {error}; left as written", file.display(), target.id))?;
+        let unit = job.preprocess()?;
+        let key: String = unit.lines().filter(|line| !line.starts_with('#')).collect::<Vec<_>>().join("\n");
+        first.get_or_insert_with(|| unit.clone());
+        let key = (target.compiler, key);
+        if !seen.contains(&key) {
+            seen.push(key);
+            kept.push(target);
+        }
+    }
+    let unit = first.ok_or_else(|| format!("{}: no edition compiles it", file.display()))?;
+    Ok((kept, unit))
+}
+
 struct Scratch(PathBuf);
 
 impl Drop for Scratch {
@@ -1020,9 +1190,12 @@ fn splice(text: &str, start: usize, end: usize, function: &Function) -> String {
 
 /// Humanize one function of `text`; returns the new file text and the
 /// readings before and after.
-fn humanize_function(options: &Options, jobs: &[Job], unit: &Unit, text: &str, name: &str) -> Result<(String, Reading, Reading, Vec<Rewrite>), String> {
+fn humanize_function(options: &Options, jobs: &[Check], unit: &Unit, text: &str, name: &str) -> Result<(String, Reading, Reading, Vec<Rewrite>), String> {
     let typedefs = unit.typedef_names();
     let (masked, mask) = Mask::new(text);
+    if definitions(&masked, name) > 1 {
+        return Err(format!("{name}: defined more than once across #if branches; left as written"));
+    }
     let located = locate(&masked, Some(name), &typedefs).map_err(|e| format!("{name}: {e}"))?;
     let (start, end) = (located.start, located.end);
     let base = located.function.clone();
@@ -1106,15 +1279,28 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut text = std::fs::read_to_string(&file).map_err(|e| format!("{}: {e}", file.display()))?;
     let stem = file.file_stem().unwrap_or_default().to_string_lossy().into_owned();
     let scratch = Scratch(root().join("out/humanize").join(format!("{stem}-{}", std::process::id())));
+    let (editions, preprocessed) = distinct_editions(&file, &scratch.0.join("editions"), &text)?;
+    println!(
+        "{}: judged in {} ({} distinct edition build(s))",
+        options.file.display(),
+        editions.iter().map(|t| t.id.as_str()).collect::<Vec<_>>().join(", "),
+        editions.len()
+    );
     let mut jobs = Vec::new();
     for index in 0..options.jobs {
-        jobs.push(Job::new(options.target, &file, &scratch.0.join(format!("job-{index:02}")), &text)?);
+        let mut check = Check { jobs: Vec::new() };
+        for target in &editions {
+            check.jobs.push(Job::new(*target, &file, &scratch.0.join(format!("job-{index:02}-{}", target.id)), &text)?);
+        }
+        jobs.push(check);
     }
-    let unit = scan_unit(&jobs[0].preprocess()?)?;
-    let names: Vec<String> = match &options.function {
+    let unit = scan_unit(&preprocessed)?;
+    let mut names: Vec<String> = match &options.function {
         Some(name) => vec![name.clone()],
         None => crate::worst::rank_source("", &text).into_iter().map(|r| r.name).collect(),
     };
+    let mut seen = std::collections::BTreeSet::new();
+    names.retain(|name| seen.insert(name.clone()));
     let mut changed = false;
     for name in &names {
         match humanize_function(&options, &jobs, &unit, &text, name) {
@@ -1127,8 +1313,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 if out != text {
                     // Later functions are judged against the new text.
                     text = out;
-                    for job in &mut jobs {
-                        job.reference = job.compile(&text)?;
+                    for check in &mut jobs {
+                        check.rebase(&text)?;
                     }
                     changed = true;
                 }
@@ -1138,7 +1324,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     if changed && !options.dry_run {
         std::fs::write(&file, &text).map_err(|e| format!("{}: {e}", file.display()))?;
-        println!("wrote {}; next: alchemy keep {}", options.file.display(), options.file.display());
+        println!("{}", next_step(&options.file));
     }
     Ok(())
 }
@@ -1208,6 +1394,182 @@ void Work_Low(struct Work *work)
         let (best, kept) = climb(&function, 1, &|candidate| candidate.print().contains("(u8)"));
         assert!(best.print().contains("(u8)work->value"), "{}", best.print());
         assert!(kept.is_empty());
+    }
+
+    /// The whole path a file takes: masked, parsed, climbed with every
+    /// rewrite accepted, printed and unmasked.
+    fn humanized(text: &str, seed: u64) -> String {
+        let (masked, mask) = Mask::new(text);
+        let (best, _) = climb(&parse(&masked), seed, &|_| true);
+        mask.unmask(&best.print())
+    }
+
+    #[test]
+    fn a_trailing_fakematch_tag_protects_its_own_statement() {
+        // Reviewers' probe: the tagged line lost its cast and the next,
+        // untagged line was shielded instead.
+        for seed in 1..6 {
+            let printed = humanized(
+                "\
+void Work_Pin(struct Work *work)
+{
+    work->low = (u8)work->value; /* FAKEMATCH: the native keeps the cast. */
+    work->high = (u8)work->other;
+}
+",
+                seed,
+            );
+            assert!(printed.contains("work->low = (u8)work->value;"), "{printed}");
+            assert!(printed.contains("work->high = work->other;"), "{printed}");
+            assert!(!printed.contains("__humanize"), "{printed}");
+        }
+    }
+
+    #[test]
+    fn a_trailing_fakematch_tag_keeps_a_one_pass_block() {
+        // Reviewers' probe: the tagged do { } while (0) was unwrapped.
+        for seed in 1..6 {
+            let printed = humanized(
+                "\
+void Work_Once(struct Work *work)
+{
+    do {
+        work->a = 1;
+    } while (0); /* FAKEMATCH: the block orders the store. */
+    work->b = (u8)work->c;
+}
+",
+                seed,
+            );
+            assert!(printed.contains("} while (0);"), "{printed}");
+            assert!(printed.contains("work->b = work->c;"), "{printed}");
+        }
+    }
+
+    #[test]
+    fn a_tag_on_a_block_opening_or_inside_a_statement_protects_it() {
+        for seed in 1..6 {
+            let printed = humanized(
+                "\
+void Work_Block(struct Work *work)
+{
+    if (work->a) { /* FAKEMATCH: the whole branch. */
+        work->b = (u8)work->c;
+        work->d = (u8)work->e;
+    }
+    Work_Set(work, /* FAKEMATCH: the argument's cast. */
+             (u8)work->f);
+    if (work->x) {
+        work->y = (u8)work->z;
+    } /* FAKEMATCH: the branch. */
+    else {
+        work->w = (u8)work->v;
+    }
+    work->g = (u8)work->h;
+}
+",
+                seed,
+            );
+            assert!(printed.contains("work->b = (u8)work->c;") && printed.contains("work->d = (u8)work->e;"), "{printed}");
+            assert!(printed.contains("(u8)work->f"), "{printed}");
+            assert!(printed.contains("work->y = (u8)work->z;") && printed.contains("work->w = (u8)work->v;"), "{printed}");
+            assert!(printed.contains("work->g = work->h;"), "{printed}");
+        }
+    }
+
+    #[test]
+    fn a_fold_never_removes_a_protected_declaration() {
+        // remove_declarator ignored the mask and took a tagged local.
+        for text in [
+            "\
+void Work_Frame(struct Work *work)
+{
+    s32 t; /* FAKEMATCH: the native frame. */
+    t = work->a;
+    work->b = t;
+}
+",
+            "\
+void Work_Frame(struct Work *work)
+{
+    /* FAKEMATCH: the native frame. */
+    s32 t;
+    t = work->a;
+    work->b = t;
+}
+",
+        ] {
+            for seed in 1..6 {
+                let printed = humanized(text, seed);
+                assert!(printed.contains("s32 t;"), "{printed}");
+                assert!(printed.contains("t = work->a;") && printed.contains("work->b = t;"), "{printed}");
+            }
+        }
+    }
+
+    #[test]
+    fn flags_large_hex_and_defines_keep_their_spelling() {
+        for seed in 1..6 {
+            let printed = humanized(
+                "\
+void Work_Flags(struct Work *work)
+{
+    FLAG_SET(0x123);
+    Flag_Check(work, 0x120 + 0x3);
+    work->a = work->b + 0x1234;
+    work->c = work->d + 0x123;
+#define LIMIT 0x123
+    work->e = LIMIT;
+}
+",
+                seed,
+            );
+            assert!(printed.contains("FLAG_SET(0x123);"), "{printed}");
+            assert!(printed.contains("Flag_Check(work, 0x120 + 0x3);"), "{printed}");
+            assert!(printed.contains("0x1234"), "{printed}");
+            assert!(printed.contains("work->d + 291"), "{printed}");
+            assert!(printed.contains("\n#define LIMIT 0x123\n"), "{printed}");
+        }
+    }
+
+    #[test]
+    fn a_function_defined_in_several_editions_is_counted() {
+        let text = "\
+#if TBS_EDITION_JA
+void NameEntry_Count(u8 *name)
+{
+    name[0] = (u8)(name[1] - 0xde);
+}
+#else
+void NameEntry_Count(u8 *name)
+{
+    name[0] = 0;
+}
+#endif
+void NameEntry_Other(void)
+{
+}
+";
+        let (masked, _) = Mask::new(text);
+        assert_eq!(definitions(&masked, "NameEntry_Count"), 2);
+        assert_eq!(definitions(&masked, "NameEntry_Other"), 1);
+    }
+
+    #[test]
+    fn every_edition_of_the_files_game_judges() {
+        // NAME.C's NameEntry_CountLetters exists only in the Japanese build;
+        // an English-only check passed a change of its behaviour.
+        let tbs: Vec<_> = editions_for(Path::new("games/THE BROKEN SEAL/SRC/MENU/NAME.C")).iter().map(|t| t.id.as_str()).collect();
+        assert_eq!(tbs, ["tbs-ja", "tbs-en", "tbs-de", "tbs-es", "tbs-fr", "tbs-it"]);
+        assert_eq!(editions_for(Path::new("games/THE LOST AGE/SRC/X.C")).len(), 6);
+        assert_eq!(editions_for(Path::new("games/COMMON/SRC/SOUND/TAIL.C")).len(), 12);
+    }
+
+    #[test]
+    fn the_next_step_is_a_bare_keep() {
+        let message = next_step(Path::new("games/THE BROKEN SEAL/SRC/MENU/NAME.C"));
+        assert!(message.contains("next: a bare alchemy keep"), "{message}");
+        assert!(!message.contains("alchemy keep games"), "{message}");
     }
 
     #[test]

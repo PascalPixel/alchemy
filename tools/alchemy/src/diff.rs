@@ -357,10 +357,56 @@ pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>
     }
     arguments.push(&object);
     let in_draft = |file: &str| Path::new(file).file_name().is_some_and(|name| name == file_name);
-    Ok(normalize_located(&command(&arguments, root())?)
+    let mut rows = normalize_located(&command(&arguments, root())?);
+    if rows.iter().all(|(_, at)| at.is_none()) {
+        // objdump -l rejects gcc_arm's table as mangled: its unit length is
+        // one byte short of its last end_sequence. The DWARF dumper still
+        // reads every row, so place the instructions by address instead.
+        let mut plain = vec!["arm-none-eabi-objdump", "-d", "-r", "--no-show-raw-insn"];
+        if let Some(only) = only.as_deref() {
+            plain.push(only);
+        }
+        plain.push(&object);
+        let table = decoded_lines(&command(&["arm-none-eabi-objdump", "--wide", "--dwarf=decodedline", &object], root())?);
+        rows = located_by_address(&command(&plain, root())?, &table);
+    }
+    Ok(rows
         .into_iter()
         .map(|(row, at)| (row, at.filter(|(file, _)| in_draft(file)).map(|(_, line)| line)))
         .collect())
+}
+
+/// The rows of objdump's decoded line table: (address, file, line).
+fn decoded_lines(dump: &str) -> Vec<(u32, String, u32)> {
+    let mut rows = Vec::new();
+    for line in dump.lines() {
+        // File name (which may hold spaces), line, address, then optional
+        // view and stmt columns.
+        let words: Vec<&str> = line.split_whitespace().collect();
+        let found = (1..words.len()).rev().find_map(|i| {
+            let address = words[i];
+            let address = if address == "0" { Some(0) } else { u32::from_str_radix(address.strip_prefix("0x")?, 16).ok() }?;
+            let number: u32 = words[i - 1].parse().ok()?;
+            let file = words[..i - 1].join(" ");
+            (!file.is_empty() && !file.ends_with(':')).then_some((address, file, number))
+        });
+        rows.extend(found);
+    }
+    rows
+}
+
+/// Each instruction of a plain disassembly, normalized, with the line of
+/// the last table row at or before its address.
+fn located_by_address(objdump: &str, table: &[(u32, String, u32)]) -> Vec<(String, Option<(String, u32)>)> {
+    let mut out = Vec::new();
+    for line in objdump.lines() {
+        let Some(at) = line.trim_start().split_once(":\t").and_then(|(address, _)| u32::from_str_radix(address, 16).ok()) else {
+            continue;
+        };
+        let place = table.iter().filter(|(address, _, _)| *address <= at).max_by_key(|(address, _, _)| *address).map(|(_, file, number)| (file.clone(), *number));
+        out.extend(normalize(line).into_iter().map(|row| (row, place.clone())));
+    }
+    out
 }
 
 /// A compile step with -g added: the driver's (-S) or a direct cc1's
@@ -944,6 +990,22 @@ int study(void) { return 17; }
         // A row from a header goes to the next row in the draft.
         let found = heat(&["push {lr}".to_string()], &[("push {lr}".into(), Some(3)), ("bl".into(), None), ("movs r0, #1".into(), Some(9))]);
         assert_eq!((found.lines.into_iter().collect::<Vec<_>>(), found.first), (vec![(9, 2)], Some(9)));
+    }
+
+    #[test]
+    fn located_rows_follow_the_decoded_table_when_objdump_l_cannot() {
+        let dump = "CU: /w/0800a494.c:\nFile name    Line number    Starting address    View    Stmt\n/w/0800a494.c    84    0    x\n/w/0800a494.c    105    0x4    x\n/w/THE BROKEN SEAL/X.H    12    0x8    1    x\n/w/0800a494.c    104    0xc    x\n";
+        let table = decoded_lines(dump);
+        assert_eq!(table, [
+            (0, "/w/0800a494.c".to_string(), 84),
+            (4, "/w/0800a494.c".to_string(), 105),
+            (8, "/w/THE BROKEN SEAL/X.H".to_string(), 12),
+            (12, "/w/0800a494.c".to_string(), 104),
+        ]);
+        let objdump = "00000000 <f>:\n   0:\tpush\t{r4, lr}\n   4:\tmov\tr4, r0\n   8:\tldr\tr0, [r4]\n   c:\tadd\tr0, r0, #1\n  10:\tpop\t{r4, pc}\n";
+        let rows = located_by_address(objdump, &table);
+        let lines: Vec<Option<u32>> = rows.iter().map(|(_, at)| at.as_ref().map(|(_, line)| *line)).collect();
+        assert_eq!(lines, [Some(84), Some(105), Some(12), Some(104), Some(104)]);
     }
 
     #[test]

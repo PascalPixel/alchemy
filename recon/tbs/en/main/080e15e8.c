@@ -1,7 +1,40 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1638, common 1182, differ 914 (native frame 336,
-   draft 328: two fewer spill slots; native keeps frame * 4 as its own
-   induction variable beside frame * 2, which the draft does not).
+   listing 1640, draft 1638, common 1450, differ 378 (frame 336 as
+   native; the frame-loop preheader now matches the native's exactly
+   but for the sp+24 store).
+   The ramp's two smoke calls take (frame - 151) * 20 - 12 for y, not
+   h - 56: the native reloads the h giv from its slot for it (h - 56
+   kept h in r8 through the ramp block).
+   The native's frame-loop slots and how the draft reaches them:
+   - sp+96, &scale held through the frame loop: matched by writing
+     each scale branch as scale[0] = value; scale[1] = scale[0];
+     scale[2] = scale[0]. Expanded that way, each branch sets its
+     address before computing the value, so the two matching
+     movables live long enough (threshold 15 * savings 2 * lifetime
+     against the 484-insn loop) and loop.c hoists &scale to the
+     preheader, where it spills just below count as in the native.
+     The same 482 comes from scale[0] = s = value or a reversed chain
+     scale[2] = scale[1] = scale[0] = value; a forward chain gives 490,
+     an s local stored three times 701, a user sc = scale pointer 601
+     (it spills above count, not below);
+   - sp+24, frame * 4 as its own reduced giv of the frame loop, read
+     by the three-streams preheader: not matched. n = frame * 4 - 256;
+     n -= i * 48 (404) makes frame * 4 an invariant of the
+     three-streams loop with a fourth inner slot (sp+44) instead.
+     A reach = frame * 4 local set at the loop top gives the native's
+     outer giv at sp+24 (482), but as a user variable it is not
+     replaceable and keeps a copy in r8 through the loop, so the
+     native's giv is likely not a user variable. In one expression,
+     n = frame * 4 - i * 48 - 256, GCSE's PRE hoists frame << 2 to the
+     three-streams preheader with lifetime 4 and loop.c rejects it
+     ("not worth while, 170 vs 479": lifetime * benefit * 17 must reach
+     the frame loop's insn count);
+   - sp+60, sx in the smoke burst: matched by writing work->sheet +
+     0x6000 in each smoke call, no smoke pointer (812 to 670). With the
+     pointer, loop.c hoisted the constant 12 out of the frame loop:
+     its movable threshold is 15, less 3 per earlier move, and 12 lived
+     50 insns against 24's 49 in a 653-insn loop (15 * 50 >= 653), so
+     12 took no register and sx took fp.
    Trials:
    - unscored first draft: differ 938 (frame 332).
    - pts[].y as (y >> 16) + 60, not a halfword cast: 929.
@@ -10,7 +43,86 @@
    - n = count * 2 - i * 48 - 256: 916, no change.
    - ring store as sheet[offset + rings + j]: 914 (native adds offset to
      work, then rings); (sheet + rings)[offset + j]: 976;
-     sheet[offset + j + rings]: 916. */
+     sheet[offset + j + rings]: 916.
+   - scale used directly, no sc pointer: 844.
+   - ring cell address as sheet + (lvl * 0x302 + cell) + rings: 812 (the
+     native adds lvl * 0x302 to the cell offset, then work, then rings,
+     inside the loop); (rings + lvl * 0x302 + cell): 832;
+     &sheet[lvl * 0x302 + cell + rings]: 816; rings + (lvl * 0x302 +
+     cell): 828.
+   - on 812: n from count * 2, frame << 2, (frame - i * 12) * 4 or
+     frame * 4 - (i * 48 + 256): 812, no change; reach = frame * 4 before
+     the points loop (on 914): 921, user var rejected as above; blit[0] =
+     SLOT(46) without cache: 817; sx after oy: 858; declaration order:
+     no change.
+   - on 812: literal 10000 for rings in both addresses: 816 to 834;
+     ring store as (sheet + offset)[rings + j], (sheet + offset +
+     rings)[j] or other orders: 812 to 816; ox += 60 before the smoke
+     calls: 814; smoke set before or after the first LoadWork: 812;
+     ApplyPosition before the size clamp: 902; count passed to the
+     palette call: 812; count clamped and looped on directly, no n:
+     840; sc pointer with count set before size, after the key test, in
+     the palette call or clamped directly: 881 to 912.
+   - on 812, rejected: count = frame * 2 just before the palette call:
+     796, but the frame shrinks to 320 and the loop top no longer stores
+     count first as the native does; n = 0 between the third smoke call
+     and its release (permuter): 791, a register-allocation accident
+     that moves the store away from the native's.
+   - permuter, 5 minutes from 812: 638, all from temporaries, swapped
+     compares and casts; no single rewrite carries over.
+   - on 812: smoke pointer set after the first LoadWork: 812; a w = 12
+     local for the smoke widths: 812; n as (frame - 64) * 4 - i * 48,
+     (frame - 64 - i * 12) * 4, frame * 4 - 256 - i * 48 or
+     frame * 4 - (i * 48 + 256): 812; (frame - i * 12 - 64) << 2: 841.
+   - permuter restricted to the n line and the smoke block, 6 minutes
+     from 812: 670, from smoke assigned inside the first call's
+     arguments; the same 670 without any smoke pointer, adopted.
+   - on 670: blit[0] = SLOT(46) without cache: 675; sx = 72 + ox,
+     literal 10000 for rings in the ring address, or the burst's draw
+     assigned after its declaration: 670; sc = scale pointer set before
+     the frame loop for the three stores and the ApplyScale call: 738,
+     for the call only: 744.
+   - on 670: n split as n = frame * 4 - 256; n -= i * 48: 621, and
+     other two-statement forms 633 to 638, but frame * 4 becomes an
+     inner-loop invariant in a fourth inner slot, not the native's
+     outer giv; reach = frame * 4 at the loop top: 701 (outer giv as
+     native, but in r8); reach = frame * 4 - 256 at the top with
+     n = reach - i * 48: 595, but reach takes &scale's slot at sp+100;
+     sc set in the frame > 128 block, before the yaw call, at the loop
+     top or before the if: 668 to 684 (never hoisted: a user var used
+     outside its block is not a safe movable in a bottom-tested loop);
+     reach at the loop top plus sc before the loop: 601, adopted (all
+     24 declaration orders of size, count, reach and sc: 601 or 613).
+   - on 601: reach before size or count, sc before the 0x784 store:
+     603; sc before the ramp loop: 628; reach after the palette call,
+     after Render_ResetTransformState or before the points block: 745
+     to 763; count passed to the palette call: 601.
+   - permuter, 6 minutes on 670, restricted to the loop top, the scale
+     stores and the three-streams loop: no gain.
+   - on 601: scale[0] = value; scale[1] = scale[0]; scale[2] =
+     scale[0] in both branches, no sc pointer: 482 (&scale hoisted
+     as native); only the first branch: 697; reversed chain or
+     scale[0] = s = value: 482; forward chain: 490.
+   - on 482: no reach, n = frame * 4 - 256; n -= i * 48 (or n = frame
+     * 4; n -= 256; n -= i * 48): 404, adopted; n = frame * 4 then
+     n -= i * 48 + 256 or n = n - i * 48 - 256: 414; n = frame * 4 -
+     i * 48; n -= 256 or three steps: 419; one expression, no reach,
+     or count * 2: 659; reach = frame * 4 - 256: 740; reach first at
+     the loop top: 484; n = reach - 256; n -= i * 48: 691.
+   - on 404: ramp smoke y as (frame - 151) * 20 - 12 (or + 44 - 56):
+     378, adopted; the ramp loop bound written out: 845; h assigned
+     just before its loop: 428.
+   - on 378: n in one expression, as (frame - 64) * 4 - i * 48,
+     (frame - i * 12) * 4 - 256, (frame - i * 12 - 64) * 4 or
+     frame * 2 * 2 - i * 48 - 256: 633; n = (frame - 64) * 4;
+     n -= i * 48: 378; n = (frame - i * 12) * 4; n -= 256: 670;
+     n = frame - i * 12 - 64; n *= 4: 660; reach = frame * 4 at the
+     loop top: 454 (outer giv as native, copy in r8), with n split:
+     663 to 681; no count local (n = frame * 2 in the ring block,
+     from the permuter on 601): 563; ring store as
+     sheet[offset + (rings + j)]: 378.
+   - permuter, 5 minutes on 601 over the whole function: 422, from
+     the same scale rewrite this draft carries; nothing else held. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -92,7 +204,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     DrawRectangle blit[2];
     s32 size;
     s32 count;
-    s32 *sc;
     s32 i;
     s32 j;
     s32 n;
@@ -169,7 +280,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         }
     }
     *(u16 *)0x0400000c = 0x784;
-    sc = scale;
 
     for (frame = 0; frame != 170; frame++) {
         size = 2;
@@ -214,18 +324,16 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             SceneTransform_ApplyPitch(0x8000);
             SceneTransform_ApplyYaw(a << 12);
             if (frame > 150) {
-                s32 s = frame * 0x1800 - 0xd9400;
-                sc[0] = s;
-                sc[1] = s;
-                sc[2] = s;
+                scale[0] = frame * 0x1800 - 0xd9400;
+                scale[1] = scale[0];
+                scale[2] = scale[0];
                 size = 5;
             } else {
-                s32 s = 0x10000 - a * 3 * 0x400;
-                sc[0] = s;
-                sc[1] = s;
-                sc[2] = s;
+                scale[0] = 0x10000 - a * 3 * 0x400;
+                scale[1] = scale[0];
+                scale[2] = scale[0];
             }
-            SceneTransform_ApplyScale(sc);
+            SceneTransform_ApplyScale(scale);
         } else {
             pos[0] = 0;
             pos[1] = 0;
@@ -246,7 +354,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 pts[i].y = (pts[i].y >> 16) + 60;
             }
             for (i = 0; i != 3; i++) {
-                n = frame * 4 - i * 48 - 256;
+                n = frame * 4 - 256;
+                n -= i * 48;
                 if (n > 48) {
                     n = 48;
                 }
@@ -289,7 +398,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 pts[0].x = (pts[0].x >> 17) + 64;
                 pts[0].y = (pts[0].y >> 16) + 60;
                 s = size + 1;
-                blit47(dst, work->sheet + rings + lvl * 0x302 + ParticleStreams_CellOffsets[s - 1],
+                blit47(dst, work->sheet + (lvl * 0x302 + ParticleStreams_CellOffsets[s - 1]) + rings,
                     pts[0].x - s / 2, pts[0].y - s, s, s * 2);
             }
             Runtime_ReleaseHeapBlock(47);
@@ -313,10 +422,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 blit[0](dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            SLOT(47)(dst, work, 32, h - 56, 32, 96);
+            SLOT(47)(dst, work, 32, (frame - 151) * 20 - 12, 32, 96);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            SLOT(47)(dst, work, 64, h - 56, 32, 96);
+            SLOT(47)(dst, work, 64, (frame - 151) * 20 - 12, 32, 96);
             Runtime_ReleaseHeapBlock(47);
         }
         work->transfer_pending = 1;
@@ -414,7 +523,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             s32 ox;
             s32 oy;
             s32 sx;
-            u8 *smoke;
             for (i = 0; i != 6; i++) {
                 if (frame == i * 8 + 80) {
                     Iwram_FillWords(dst, 0x4000, 0x10101010);
@@ -466,18 +574,17 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 sx = ox + 72;
                 oy = 32 - ((Trig_Cos(angle) * (r + 8)) >> 16);
             }
-            smoke = work->sheet + 0x6000;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            SLOT(47)(dst, smoke, ox + 60, oy - 24, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, ox + 60, oy - 24, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            SLOT(47)(dst, smoke, sx, oy - 24, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, sx, oy - 24, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            SLOT(47)(dst, smoke, ox + 60, oy, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, ox + 60, oy, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            SLOT(47)(dst, smoke, sx, oy, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, sx, oy, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             n = 0;
             for (i = 0, p = PARTICLES; i != 910; i++, p++) {

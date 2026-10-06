@@ -1,29 +1,125 @@
-/* Draft: native 670 instructions, draft 654, common 441, differ 442.
- * Stubborn (2026-10-06): register allocation drifts from the mode chain on
- * (native mode-test reloads rotate through r4, the draft's through r0-r3
- * only). Native recomputes each burst address from k * 4 hoisted to a stack
- * slot; the draft strength-reduces it to a pointer stepped by 28.
- * Shared heap slots and hardware declarations preserve the original 484 score.
- * An explicit per-target delay (8 frames) improves 484 -> 444 and restores
- * the native 80-byte frame; no unused local or new FAKEMATCH device is needed.
- * Remaining: loader branch merging, burst-index strength reduction, and
- * allocation/reloads while drawing shards. The four SevenMode tables still
- * need native-pool labels before adoption.
+/* Draft: native 670 instructions, draft 671, common 555, differ 231.
+ * Fifth pass (2026-10-06): delay += 8 before k++ (232 -> 231, and 273 ->
+ * 269 without the asm; native's tail updates the shot pointer, then delay,
+ * then k). The burst address
+ * still needs the diagnostic asm, which must not be adopted: no plain
+ * source form found yet. Without the asm the draft scores 273; the CSE dump confirms insn 1076
+ * (group << 3) becomes (ashift k 5): fold_rtx finds (ashift k 2) in
+ * group's class through lookup_as_function, which only fails when k has
+ * been set again since group's set (exp_equiv_p validates reg ticks) or
+ * when the two sit in different extended blocks (a CODE_LABEL ends one).
+ * Fifth-pass trials, all without the asm unless marked: a row view
+ * gBurstRows[group][i] (struct EffectStep (*)[8]) 301, [k * 4][i] 301,
+ * with the asm 299; for (i = 0, group = k * 4; ...) 273; i + group * 8
+ * 273; k << 2 with (group << 3) + i 273; n = group * 8 then n += i 291;
+ * &gBursts[group * 8] then burst += i 506 (504 with the asm); delay as a
+ * s32 delay = k * 8 local in the target loop 467 with the asm (335
+ * without; the frame shrinks to 76 and fp loses the sheet base); delay = 0
+ * before the count test 287; shard draw as DrawRectangle *p = &draw[flip]
+ * then (*p)(...) 410, draw + flip 410, direct draw[flip](...) 410 (r4
+ * returns to reload's rotation and the mode chain shifts again);
+ * delay declared in the frame loop block 232; a user shot pointer
+ * (shot = gShots with delay = 0 after the guard, shot += 16 at the tail)
+ * 344, with k++ first 350.
+ * Permuter without the asm (5 minutes, PERM_GENERAL over k * 4 / k << 2
+ * and the four index orders, PERM_RANDOMIZE over the burst loop): no
+ * candidate beat 273.
+ * Frame slot lead (delay): native's delay is not a reduced giv of k. With
+ * k * 8 inline or as a s32 delay = k * 8 local, CSE leaves one k * 8 reg
+ * (giv benefit 2, lifetime 35) that loop.c rejects ("not worth while,
+ * 0 vs 167"), and k * 8 + 17 (DEST_REG) cannot combine into it, so k * 8
+ * is recomputed each pass. In the draft, global leaves the user var delay
+ * (reg 47, 17 refs over 314 insns, crosses 12 calls) in memory, so it
+ * takes a slot in pseudo order (sp+32) beside frame, k, total and camera.
+ * Native's delay slot comes last (sp+12), after the loop-made pseudos;
+ * this fits a pseudo that global gave a hard register and reload then
+ * spilled (reload numbers those slots after the ones global left), so the
+ * next trial is a delay that global allocates (more references or a
+ * shorter life).
+ * Fourth pass (2026-10-06): the burst loop's cause is found, but only a
+ * diagnostic device reproduces it; the device is NOT admissible as is
+ * (S2: it changes instruction selection, not only order or registers).
+ * - Native's inner loop holds group = k << 2 and group << 3 apart. GCSE's
+ *   PRE (pass 07) hoists the invariant k << 2 to the loop entry (spilled
+ *   to sp+24); group << 3 stays in the loop because group is set in the
+ *   loop, so loop.c finds no invariant add for the address, no giv, and
+ *   no strength reduction: exactly native's per-iteration address and
+ *   in-loop gBursts pool load.
+ * - Written plainly (group = k * 4 in the loop body), CSE pass 1 folds
+ *   group << 3 into k << 5 (fold_rtx's shift association through
+ *   lookup_as_function), and with group set before the loop PRE hoists
+ *   group << 3 itself; either way the address becomes a giv (benefit 14,
+ *   life 55) and is reduced to a pointer stepped by 28.
+ * - The draft separates them with __asm__ __volatile__("" ::), an
+ *   ASM_OPERANDS that flushes CSE's table (asm("") is an ASM_INPUT and
+ *   flushes nothing). The burst loop then matches native instruction for
+ *   instruction apart from frame slots and reload's register rotation.
+ *   Next step: the source form in which CSE pass 1 cannot see
+ *   group = k << 2 from group * 8 while both stay in the loop body.
+ * - With the burst address right, delay = 0 inside the count test now
+ *   helps (287 -> 232; 273 without the device, as before).
+ * - Remaining at 232: frame slot order. Native (high to low address):
+ *   camera 36, &draw 32, records index (mode * 2) 28, k << 2 24,
+ *   camera->pos 20, shot pointer 16, delay 12; the draft puts delay at 32
+ *   (a user pseudo, low number) and k << 2 below camera->pos. Native's
+ *   delay looks like a loop-made pseudo (k * 8 reduced as a giv), but
+ *   k * 8 inline with the device gives 467 (the frame loses a slot and
+ *   fp no longer holds work).
+ * Fourth-pass trials: group = k * 4 before the burst loop 267 (PRE hoists
+ * group << 3); with asm("") 267 (no flush); group in the loop with
+ * asm("") 267 (folded to k << 5); group also re-set at the loop tail 303
+ * (address unreduced, k << 2 before the guard); group in the loop with the
+ * flushing asm 287; then delay = 0 inside the count test 232; delay += 8
+ * before k++ 296 (from 287); k * 8 inline 467; delay declared in the count
+ * block 232; direct draw[flip](...) call 417 (loads at the call as native
+ * does, but flip << 2 is scheduled late into flip's own register); the
+ * same direct call on the 232 draft 410.
+ * Third pass (2026-10-06): the mode-test reload rotation now matches
+ * (r2, r3, r4, r0, r1, r2). Two shard-draw causes kept r4 out of reload's
+ * spill registers for the whole function:
+ * - the chosen drawer is loaded into its own local (shard_draw) before the
+ *   arguments; native computes flip << 2 into r7 right after the flip test
+ *   and loads the pointer at the call (442 -> 367 alone);
+ * - native re-reads position.x from [r6] after __divsi3; CSE (pass 1, insn
+ *   1461) carried x >> 1 across the const libcall into r4, caller-saved at
+ *   sp+8. A FAKEMATCH volatile re-read restores it (367 -> 327).
+ * The target loop is a do-while guarded by the count test (a permuter
+ * hint, 326 -> 267; a while loop or a for with the step in the body stays
+ * 326): the loop-top registers and loads now match native.
+ * Remaining: (1) the burst loop. Native never strength-reduces the burst
+ * address: each iteration recomputes ((k << 2) * 8 + i) * 28 + gBursts
+ * (pool load in the loop), with k << 2 hoisted to the loop pre-header and
+ * spilled to sp+24; the draft's inner loop reduces it to a pointer stepped
+ * by 28 (loop dump: giv 1080 combined, benefit 184), whose k * 896 start
+ * the outer loop then reduces to sp+12 where native keeps delay (k * 8).
+ * That shifts every frame slot (records index sp+24 vs 28, draw base sp+28
+ * vs 32). (2) Native keeps flip << 2 live in r7 to a load at the call
+ * (shard_draw unallocated, REG_EQUIV to draw[flip]); the draft allocates
+ * shard_draw to r6 and loads early. (3) literal pool offsets.
+ * The four SevenMode tables still need native-pool labels before adoption.
  * Trials: direct palette calls 550; pointer/array burst forms 484/495;
  * an explicit burst-group index 486 (442 with the per-target delay);
  * burst pointer stepping 446; i + k * 32 444;
  * (k * 4) * 8 and k << 2 << 3 444; a k * 4 local 581; draw-pair shape 484;
- * draw cursor 473.
- * Measured (2026-10-06, second pass): native's delay (sp+12) is k * 8
- * strength-reduced, set after the count test; its k << 2 is hoisted only
- * into the burst loop's pre-header and the burst address is never reduced.
- * r4 joins native's reload rotation in the shard draw: native re-reads
- * position.x from [r6] after __divsi3, the draft keeps x >> 1 in r4 across
- * the call (caller-saved at sp+8), so r2 stays free and r4 never spills.
- * Trials: group = k * 4 before the burst loop 444; k * 8 inline with
- * k * 32 + i 484 (reduces the burst group, not k * 8); records as two-byte
- * structs 442; group += 4 with group * 8 + i 442; explicit delay with
- * (k << 2 << 3) + i 444.
+ * draw cursor 473; group = k * 4 before the burst loop 444; k * 8 inline
+ * with k * 32 + i 484; records as two-byte structs 442; group += 4 with
+ * group * 8 + i 442; explicit delay with (k << 2 << 3) + i 444.
+ * Third-pass trials (from 442): volatile position.x re-read alone 412;
+ * shard_draw = draw[flip] alone 367, with the re-read 327; then
+ * k * 32 + i (no group biv) 326, group = k * 4 before or inside the burst
+ * loop 326, k * 4 * 8 + i 326; k * 8 inline 358; gMapCellBuffer as a
+ * symbol for gBursts 545 (both buffers 533; the burst address is still
+ * reduced); DrawRectangle *shard_draw = &draw[flip] 414; guarded do-while for the
+ * target loop 267 (permuter, 5 minutes: 263 with two casts and a
+ * temporary as noise); with k * 8 inline instead of delay 331.
+ * With the guarded do-while: group = k * 4 inside the burst loop 267;
+ * delay = 0 inside the count test 273; a function-scope burst pointer
+ * shared with the draw loop 267; a separate burst counter j 267; without
+ * the volatile re-read 338;
+ * permuter on the burst block (5 minutes) 255 with s8 *tmp =
+ * SevenMode_Records for the count test, a forced temporary not adopted
+ * while the burst address still differs. Native's first literal pool sits
+ * after the step > 4 draw; the draft's lands 152 bytes later.
  */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -89,7 +185,6 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     s32 i;
     s32 height;
     s32 delay;
-    s32 group;
 
     heap_cache = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
     cursor = heap_cache;
@@ -178,55 +273,68 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     for (frame = 0; frame != total; frame++) {
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-        for (k = 0, delay = 0, group = 0; k != work->effect->count; k++, delay += 8, group += 32) {
-            if (frame >= delay) {
-                struct EffectStep *shot = &gShots[k * 16];
+        k = 0;
+        if (work->effect->count != 0) {
+            delay = 0;
+            do {
+                if (frame >= delay) {
+                    struct EffectStep *shot = &gShots[k * 16];
 
-                if (frame == delay + 17) {
-                    ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
-                    BattleEventRuntime_BeginPhaseFar(133);
-                }
-                if (shot->variant >= 0) {
-                    s32 step = (frame - delay) / 3;
+                    if (frame == delay + 17) {
+                        ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
+                        BattleEventRuntime_BeginPhaseFar(133);
+                    }
+                    if (shot->variant >= 0) {
+                        s32 step = (frame - delay) / 3;
 
-                    if (step > 9)
-                        step = 9;
-                    EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
-                    position.x >>= 1;
-                    if (step > 4)
-                        draw[0](canvas, work->sheet + step * 768, position.x - 16, position.y - 12, 32, 24);
-                    else
-                        draw[0](canvas, work->sheet + step * 768, position.x - 12, position.y - 16, 24, 32);
-                    if (shot->variant == 0)
-                        EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
-                    if (shot->y < 0) {
-                        s32 count;
+                        if (step > 9)
+                            step = 9;
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
+                        position.x >>= 1;
+                        if (step > 4)
+                            draw[0](canvas, work->sheet + step * 768, position.x - 16, position.y - 12, 32, 24);
+                        else
+                            draw[0](canvas, work->sheet + step * 768, position.x - 12, position.y - 16, 24, 32);
+                        if (shot->variant == 0)
+                            EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
+                        if (shot->y < 0) {
+                            s32 count;
 
-                        shot->y = 0;
-                        shot->variant = 1;
-                        count = 4;
-                        if (SevenMode_Records[mode * 2] != 0)
-                            count = 16;
-                        for (i = 0; i != count; i++) {
-                            struct EffectStep *burst = &gBursts[i + group];
+                            shot->y = 0;
+                            shot->variant = 1;
+                            count = 4;
+                            if (SevenMode_Records[mode * 2] != 0)
+                                count = 16;
+                            for (i = 0; i != count; i++) {
+                                struct EffectStep *burst;
+                                s32 group = k * 4;
 
-                            burst->x = shot->x;
-                            burst->y = shot->y;
-                            burst->z = shot->z;
-                            if (SevenMode_Records[mode * 2] == 0) {
-                                burst->velocity_x = ((Random16() & 63) - 32) << 11;
-                                burst->velocity_y = 0;
-                                burst->velocity_z = ((Random16() & 63) - 32) << 11;
-                            } else {
-                                burst->velocity_x = ((Random16() & 63) - 32) << 13;
-                                burst->velocity_y = ((Random16() & 31) + 32) << 12;
-                                burst->velocity_z = ((Random16() & 63) - 32) << 13;
+                                /* Diagnostic, not admissible as is (see header): native keeps
+                                   group = k << 2 and group << 3 apart and leaves the address
+                                   unreduced (287 -> 232 with delay = 0 in the count test). */
+                                __asm__ __volatile__("" ::); /* FAKEMATCH: flushes CSE so group << 3 is not folded into k << 5 */
+                                burst = &gBursts[group * 8 + i];
+
+                                burst->x = shot->x;
+                                burst->y = shot->y;
+                                burst->z = shot->z;
+                                if (SevenMode_Records[mode * 2] == 0) {
+                                    burst->velocity_x = ((Random16() & 63) - 32) << 11;
+                                    burst->velocity_y = 0;
+                                    burst->velocity_z = ((Random16() & 63) - 32) << 11;
+                                } else {
+                                    burst->velocity_x = ((Random16() & 63) - 32) << 13;
+                                    burst->velocity_y = ((Random16() & 31) + 32) << 12;
+                                    burst->velocity_z = ((Random16() & 63) - 32) << 13;
+                                }
+                                burst->variant = 0;
                             }
-                            burst->variant = 0;
                         }
                     }
                 }
-            }
+                delay += 8;
+                k++;
+            } while (k != work->effect->count);
         }
         for (i = 0; i != 256; i++) {
             struct EffectStep *burst = &gBursts[i];
@@ -240,14 +348,20 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                 } else {
                     s32 picture = burst->variant / 5;
                     s32 flip;
+                    DrawRectangle shard_draw;
 
                     if (i & 1)
                         picture += 9;
                     flip = effect->side;
                     if (burst->velocity_x > 0)
                         flip ^= 1;
-                    draw[flip](canvas, work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
-                        position.x - SevenMode_ShardWidths[picture] / 2,
+                    /* FAKEMATCH: native re-reads position.x after __divsi3; kept in a
+                       register (r4, caller-saved) it keeps r4 out of reload's
+                       rotation for the whole function (412 -> 326 with the
+                       shard_draw load, 367 without the re-read). */
+                    shard_draw = draw[flip];
+                    shard_draw(canvas, work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
+                        ((volatile struct EffectPosition *)&position)->x - SevenMode_ShardWidths[picture] / 2,
                         position.y - SevenMode_ShardHeights[picture] / 2,
                         SevenMode_ShardWidths[picture], SevenMode_ShardHeights[picture]);
                 }

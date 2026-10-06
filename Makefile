@@ -69,7 +69,7 @@ merge-drivers:
 
 MAIN_CHECKOUT = $(shell git rev-parse --path-format=absolute --git-common-dir)/..
 worktree:
-	bun "$(TOOLS)/alchemy/worktree.ts" "$(MAIN_CHECKOUT)"
+	"$(MAIN_CHECKOUT)/tools/out/cargo-target/release/alchemy" worktree "$(MAIN_CHECKOUT)"
 
 toolchain-check:
 	$(ALCHEMY) bootstrap --check
@@ -154,8 +154,8 @@ lint-staged:
 	$(CHECK) no-asm --target tbs-ja --target tla-ja --target tbs-en --target tla-en
 
 language-check:
-	@set -eu; scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(js|mjs|cjs|py|sh)$$' || true); \
-	test -z "$$scripts" || { printf 'Use Rust or Bun TypeScript for tooling:\n%s\n' "$$scripts"; exit 1; }
+	@set -eu; scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|tsx|js|mjs|cjs|py|sh)$$' || true); \
+	test -z "$$scripts" || { printf 'Tooling is Rust (W1):\n%s\n' "$$scripts"; exit 1; }
 
 test:
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml

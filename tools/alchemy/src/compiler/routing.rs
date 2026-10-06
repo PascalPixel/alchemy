@@ -48,6 +48,17 @@ pub fn agbcc_driver() -> PathBuf {
 pub fn agbcc_arm_driver() -> PathBuf {
     bundle().join("agbcc").join("agbcc_arm")
 }
+pub fn camelot_arm_driver() -> PathBuf {
+    bundle().join("agbcc").join("camelot_arm")
+}
+pub fn driver_for_family(family: CompilerFamily) -> Option<PathBuf> {
+    match family {
+        CompilerFamily::Game => None,
+        CompilerFamily::Agbcc | CompilerFamily::AgbccFlash => Some(agbcc_driver()),
+        CompilerFamily::AgbccArm => Some(agbcc_arm_driver()),
+        CompilerFamily::CamelotArm => Some(camelot_arm_driver()),
+    }
+}
 pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
     [
         "arm-none-eabi-as",
@@ -106,6 +117,16 @@ pub enum CompilerFamily {
     Agbcc,
     AgbccFlash,
     AgbccArm,
+    /// ☀️ game ARM C: agbcc/camelot_arm at the library ARM setting.
+    CamelotArm,
+}
+impl CompilerFamily {
+    pub fn is_arm(self) -> bool {
+        matches!(self, CompilerFamily::AgbccArm | CompilerFamily::CamelotArm)
+    }
+    pub fn uses_agbcc_driver(self) -> bool {
+        self != CompilerFamily::Game
+    }
 }
 pub(crate) fn include_flag(target: CompilerTarget) -> String {
     format!(
@@ -127,6 +148,15 @@ fn common_include_flags() -> impl Iterator<Item = String> {
             root().join("games/COMMON/INCLUDE").join(module).display()
         )
     })
+}
+/// Include paths an agbcc-driver family searches after the game's own tree:
+/// ☀️ game ARM C reads the same shared modules as the rest of the game's C.
+pub(crate) fn family_include_flags(family: CompilerFamily) -> Vec<String> {
+    if family == CompilerFamily::CamelotArm {
+        common_include_flags().collect()
+    } else {
+        Vec::new()
+    }
 }
 fn interworks(target: CompilerTarget) -> bool {
     match target {
@@ -230,22 +260,25 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
     if has(AGBCC_ARM_SOURCES, &source) {
         return CompilerFamily::AgbccArm;
     }
+    if target == CompilerTarget::Tbs && has(CAMELOT_ARM_SOURCES, &source) {
+        return CompilerFamily::CamelotArm;
+    }
     CompilerFamily::Game
 }
 pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
-    matches!(
-        family_for_source(target, source),
-        CompilerFamily::Agbcc | CompilerFamily::AgbccFlash | CompilerFamily::AgbccArm
-    )
+    family_for_source(target, source).uses_agbcc_driver()
 }
 pub fn is_arm(target: CompilerTarget, source: &str) -> bool {
-    family_for_source(target, source) == CompilerFamily::AgbccArm
+    family_for_source(target, source).is_arm()
 }
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
-    match (family_for_source(target, source), target) {
+    cflags_for_family(target, family_for_source(target, source))
+}
+pub fn cflags_for_family(target: CompilerTarget, family: CompilerFamily) -> Vec<String> {
+    match (family, target) {
         (CompilerFamily::Agbcc, _) => agbcc_cflags(),
         (CompilerFamily::AgbccFlash, _) => agbcc_flash_cflags(),
-        (CompilerFamily::AgbccArm, _) => agbcc_arm_cflags(),
+        (CompilerFamily::AgbccArm | CompilerFamily::CamelotArm, _) => agbcc_arm_cflags(),
         (CompilerFamily::Game, CompilerTarget::Tbs) => cflags(),
         (CompilerFamily::Game, CompilerTarget::Tla) => base_cflags(CompilerTarget::Tla),
     }
@@ -587,6 +620,51 @@ mod target_tests {
                 CompilerFamily::AgbccArm
             );
         }
+    }
+    #[test]
+    fn camelot_arm_compiles_only_tbs_game_arm_files_with_one_option_set() {
+        assert!(camelot_arm_driver().ends_with("agbcc/camelot_arm"));
+        assert_ne!(camelot_arm_driver(), agbcc_arm_driver());
+        assert_eq!(
+            driver_for_family(CompilerFamily::CamelotArm),
+            Some(camelot_arm_driver())
+        );
+        assert_eq!(
+            cflags_for_family(CompilerTarget::Tbs, CompilerFamily::CamelotArm),
+            agbcc_arm_cflags()
+        );
+        assert!(CompilerFamily::CamelotArm.is_arm());
+        assert!(
+            CAMELOT_ARM_SOURCES.is_empty(),
+            "camelot_arm is an unadmitted study (AGENTS.md K1, K3): no source is routed through it"
+        );
+        let mut files = std::collections::BTreeSet::new();
+        for entry in CAMELOT_ARM_SOURCES {
+            assert!(
+                entry.starts_with("games/THE BROKEN SEAL/SRC/") && entry.ends_with(".C"),
+                "{entry} is not ☀️ game C"
+            );
+            assert!(!entry.contains("/SRC/SOUND/") && !entry.contains("/SRC/SYSTEM/SAVE/"));
+            assert!(root().join(entry).is_file(), "missing routed source {entry}");
+            assert!(files.insert(*entry), "duplicate route for {entry}");
+            for table in [AGBCC_SOURCES, AGBCC_FLASH_SOURCES, AGBCC_ARM_SOURCES] {
+                assert!(!table.contains(entry), "{entry} has two routes");
+            }
+            assert_eq!(
+                family_for_source(CompilerTarget::Tbs, entry),
+                CompilerFamily::CamelotArm
+            );
+            assert_eq!(family_for_source(CompilerTarget::Tla, entry), CompilerFamily::Game);
+            assert!(is_arm(CompilerTarget::Tbs, entry));
+            assert_eq!(
+                cflags_for_target_source(CompilerTarget::Tbs, entry),
+                agbcc_arm_cflags()
+            );
+        }
+        assert_eq!(
+            family_for_source(CompilerTarget::Tbs, "GRAPHICS/ANY_FILE.C"),
+            CompilerFamily::Game
+        );
     }
     #[test]
     fn agbcc_families_keep_their_flag_sets() {

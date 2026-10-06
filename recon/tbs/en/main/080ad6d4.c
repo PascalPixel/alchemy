@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 293 of 1276 (1281 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 276 of 1276 (1280 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -17,7 +17,9 @@
  * Trial (2026-10-06): the routine address held in r5 from the second copy on (fixed-register pointer, FAKEMATCH): the swap preview allocates as native, 332 rematerialized at each call: 408 -> 293. A plain function-pointer local set before the call (or inside the call expression) is set before the 332 and lives 92 insns against 88, so 332 still wins: 408.
  * Trial (2026-10-06): 0x8000 fixed in r8 for the help line: 293 -> 291 (not kept: 224 then takes sl and the shape is unchanged); with the shared 0 also fixed in sl, 224 is rematerialized as native but the pools move: 374. An empty volatile asm between the two help-line statements (flushing CSE): 494. frame = 0 before page = 2: 293, identical code. ((attr >> 5) & 7) for the element: 272, but only because the pools shift; native ands 224 before the shift, so not kept.
  * Trial (2026-10-06): the zeros. Native stores anim, dirty, page, frame from r0, r1, r3, r2 (frame does not reuse anim's 0) and the cursor pair from a fresh r7; here frame reuses r0 and the cursor pair reloads anim's slot. cursor[1] = cursor[0] = 0: 293; anim = 0 last: 297; s32 cursor[2] = { 0, 0 }: 593. A 4-minute permuter run over the order of the eight entry statements: best 286 (cursor[0] first, anim after the cursor write), whose store order is further from native's; not kept.
- * Open (2026-10-06): the help line. Native ties each mask to its AND (movs r3, #224; ands r3, r2 and movs r3, #31; ands r3, r2), so in native every 224 and 31 is a local pseudo that dies there, while 0x8000 (r8) and the argument 0 (sl) are shared across the three blocks. Here CSE shares 224 (one pseudo, 7 refs over 172 insns, priority 814) and 31 (4 refs over 114) across all three blocks, so 224 outranks 0x8000 and 0 (4 refs over 100, 800) and takes r8, and regmove copies attr instead of tying the mask. The source form that keeps the masks unshared is not found yet. Smaller: native loads 0xba0 from the pool where this builds 186<<4; native zeroes frame and the cursor pair from fresh registers (r2, r7) where this reuses anim's zero; sched2 order around the tutorial copies (lsls of 0x200 after the address load in native). */
+ * Trial (2026-10-06): the page label 0xba0 (message 2976) as the linker symbol MsgDjinnPsynergyPage, named in the six catalogs, as the project writes message ids: native's pool load of a shiftable constant is a symbol address, not 186<<4: 293 -> 276.
+ * Trial (2026-10-06): help line. 0x8000 fixed in r8 and the 0 in sl again: 376; 224 then goes unallocated, but regmove has already copied attr at every AND because the shared 224 never dies there, so it is still not native. Regmove's backward pass ties the operand that dies after scanning back to its set; native's tie of 224 and 31 needs both to die at their ANDs, so they were never shared when regmove ran. Passing 0 for mode in block 2: 295. (attr >> 5) & 7: 272 again, the 7 shared in r8 instead. The tile statements reading pair_entries directly, without attr: 347. Block 3 testing the attr of block 1 without its reload: 422. attr declared in each block: 293, identical code. Within block 1 both 224s sit in one basic block, so CSE always shares them unless the constant differs in mode or value; none of the source forms tried changes that.
+ * Open (2026-10-06): the help line. Native ties each mask to its AND (movs r3, #224; ands r3, r2 and movs r3, #31; ands r3, r2), so in native every 224 and 31 is a local pseudo that dies there, while 0x8000 (r8) and the argument 0 (sl) are shared across the three blocks. Here CSE shares 224 (one pseudo, 7 refs over 172 insns, priority 814) and 31 (4 refs over 114) across all three blocks, so 224 outranks 0x8000 and 0 (4 refs over 100, 800) and takes r8, and regmove copies attr instead of tying the mask. The source form that keeps the masks unshared is not found yet. Smaller: native zeroes frame and the cursor pair from fresh registers (r2, r7) where this reuses anim's zero; sched2 order around the tutorial copies (lsls of 0x200 after the address load in native). */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -27,6 +29,7 @@
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
+#include "text/MSG_IDS.H"
 extern struct DjinnMenuWork *gMenuWork;
 
 extern u8 Menu_BackdropFrameTile[];
@@ -370,7 +373,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
                 } else {
                     UiText_DrawQuantity(
                         state->shown_owner[page != 2], 1);
-                    UiText_DrawCharacterAtOffsetFar(0xba0, state->help_window, 128, 16);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnPsynergyPage, state->help_window, 128, 16);
                 }
             }
             render->menu_busy = 1;

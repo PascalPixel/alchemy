@@ -11911,7 +11911,7 @@ msgctxt "message"
 msgid "02975"
 msgstr "{actor_name:5} お前が{line_break}さからっているから{line_break}こんなことになるのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnPsynergyPage"
 msgid "02976"
 msgstr "オレは{actor_name:1}たちの{line_break}たすけなど いらない!{end_wait}"
 

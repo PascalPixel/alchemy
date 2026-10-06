@@ -11911,7 +11911,7 @@ msgctxt "message"
 msgid "02975"
 msgstr "Dalla Forza dipende il danno{line_break}che puoi fare con ogni elemento."
 
-msgctxt "message"
+msgctxt "MsgDjinnPsynergyPage"
 msgid "02976"
 msgstr "La Resistenza è la forza{line_break}difensiva contro ogni elemento."
 

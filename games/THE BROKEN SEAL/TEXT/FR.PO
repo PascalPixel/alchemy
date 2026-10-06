@@ -11911,7 +11911,7 @@ msgctxt "message"
 msgid "02975"
 msgstr "La Puissance montre les dégâts{line_break}que vous infligez par élément."
 
-msgctxt "message"
+msgctxt "MsgDjinnPsynergyPage"
 msgid "02976"
 msgstr "La Rés. montre le pouvoir{line_break}défensif face à chaque élément."
 

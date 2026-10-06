@@ -11911,7 +11911,7 @@ msgctxt "message"
 msgid "02975"
 msgstr "El poder refleja el daño que{line_break}puede infligir con cada elemento."
 
-msgctxt "message"
+msgctxt "MsgDjinnPsynergyPage"
 msgid "02976"
 msgstr "La resistencia refleja la{line_break}defensa ante los elementos."
 

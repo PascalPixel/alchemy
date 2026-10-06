@@ -11911,7 +11911,7 @@ msgctxt "message"
 msgid "02975"
 msgstr "Kraft gibt an, wie viel Schaden du{line_break}mit Elementen verursachst."
 
-msgctxt "message"
+msgctxt "MsgDjinnPsynergyPage"
 msgid "02976"
 msgstr "Widerstand gibt die Abwehrkraft{line_break}gegenüber den Elementen an."
 

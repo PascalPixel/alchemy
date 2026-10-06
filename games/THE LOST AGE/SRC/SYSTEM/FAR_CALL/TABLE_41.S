@@ -12,7 +12,7 @@ Func_08108038:
 	.global Func_08108040
 	.thumb_func
 Func_08108040:
-	overlay_veneer Func_08108a88
+	overlay_veneer Shop_SetCursor
 	.global Func_08108048
 	.thumb_func
 Func_08108048:

@@ -15,7 +15,7 @@ Func_0811c314:
 	bl GetMotionRecord
 	adds r5, #8
 	adds r6, r0, #0
-	bl Func_0811bd10
+	bl Camera_ApplyTransformByFlag
 	adds r0, r5, #0
 	adds r1, r7, #0
 	bl Render_ProjectPoint

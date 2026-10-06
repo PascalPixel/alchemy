@@ -123,7 +123,7 @@ Func_0810b7b4:
 	subs r1, #12
 	mov r0, r10
 	movs r2, #0
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	movs r3, #3
 	mov r1, r8
 	strb r3, [r5]

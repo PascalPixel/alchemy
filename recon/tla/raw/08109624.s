@@ -92,7 +92,7 @@ Func_08109624:
 	movs r0, #0
 	movs r1, #128
 	movs r2, #48
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	mov r3, r8
 	ldrh r2, [r3]
 	adds r0, r7, #0

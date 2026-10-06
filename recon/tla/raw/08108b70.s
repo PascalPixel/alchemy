@@ -101,7 +101,7 @@ Func_08108b70:
 	ldr r0, [sp, #28]
 	subs r1, #8
 	movs r2, #8
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #5
@@ -313,7 +313,7 @@ Func_08108b70:
 	movs r2, #0
 	subs r1, #12
 	adds r0, r7, #0
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #5

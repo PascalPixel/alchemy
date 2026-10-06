@@ -2317,17 +2317,6 @@ Owner_CalculateBaseElements:
 	.thumb_func
 Owner_DetermineClass:
 	.incbin "baserom.gba", 0x000ab140, 0x00000144
-	.section .rom.000ab2d0, "ax"
-	.global Owner_RefreshClassActions
-	.type Owner_RefreshClassActions, %function
-	.thumb_func
-Owner_RefreshClassActions:
-	.incbin "baserom.gba", 0x000ab2d0, 0x00000008
-	.global Curve_LookupScaledValue
-	.type Curve_LookupScaledValue, %function
-	.thumb_func
-Curve_LookupScaledValue:
-	.incbin "baserom.gba", 0x000ab2d8, 0x0000009c
 	.section .rom.000ab510, "ax"
 	.incbin "baserom.gba", 0x000ab510, 0x00000194
 	.section .rom.000ab758, "ax"
@@ -2380,7 +2369,10 @@ Summon_DefinitionTable:
 	.section .rom.000bc5c4, "ax"
 	.global Class_DefinitionTable
 Class_DefinitionTable:
-	.incbin "baserom.gba", 0x000bc5c4, 0x00005524
+	.incbin "baserom.gba", 0x000bc5c4, 0x00005510
+	.global Data_080c6b04
+Data_080c6b04:
+	.incbin "baserom.gba", 0x000c1ad4, 0x00000014
 	.global Battle_Effect90Classes
 Battle_Effect90Classes:
 	.incbin "baserom.gba", 0x000c1ae8, 0x0000005e
@@ -4498,18 +4490,13 @@ Func_08108948:
 	.thumb_func
 Func_081089e4:
 	.incbin "baserom.gba", 0x001089e4, 0x000000a4
-	.section .rom.00108a88, "ax"
-	.global Func_08108a88
-	.type Func_08108a88, %function
-	.thumb_func
-Func_08108a88:
-	.incbin "baserom.gba", 0x00108a88, 0x00000020
 	.section .rom.00108aa8, "ax"
+	.balign 4
 	.global Func_08108aa8
 	.type Func_08108aa8, %function
 	.thumb_func
 Func_08108aa8:
-	.incbin "baserom.gba", 0x00108aa8, 0x0000008c
+	.incbin "baserom.gba", 0x00108aa8, 0x00000048
 	.section .rom.00108b70, "ax"
 	.incbin "baserom.gba", 0x00108b70, 0x000006f8
 	.section .rom.0010928a, "ax"
@@ -4671,7 +4658,7 @@ Func_0811b75c:
 	.incbin "baserom.gba", 0x0011b9f8, 0x00000230
 	.section .rom.0011bce8, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011bce8, 0x00000064
+	.incbin "baserom.gba", 0x0011bce8, 0x00000024
 	.section .rom.0011bd4c, "ax"
 	.global Func_0811bd50
 	.type Func_0811bd50, %function
@@ -4886,7 +4873,10 @@ Summon_GetEntryByte4:
 	.incbin "baserom.gba", 0x001281e6, 0x0000065a
 	.global BattlePlacement_StepPairs
 BattlePlacement_StepPairs:
-	.incbin "baserom.gba", 0x00128840, 0x0000428c
+	.incbin "baserom.gba", 0x00128840, 0x00000024
+	.global Data_08128868
+Data_08128868:
+	.incbin "baserom.gba", 0x00128864, 0x00004268
 	.global Resource_SlotAssignments
 Resource_SlotAssignments:
 	.incbin "baserom.gba", 0x0012cacc, 0x000003ac
@@ -5011,7 +5001,9 @@ BattleFx_RunSeriesA:
 	.incbin "baserom.gba", 0x001504d6, 0x00000002
 	.global SummonFx_RunCanvasEffect
 SummonFx_RunCanvasEffect:
-	.incbin "baserom.gba", 0x001504d8, 0x00001b00
+	.incbin "baserom.gba", 0x001504d8, 0x00000740
+	.section .rom.00150c74, "ax"
+	.incbin "baserom.gba", 0x00150c74, 0x00001364
 	.section .rom.00151ff0, "ax"
 	.balign 4
 	.global Func_08151ff0

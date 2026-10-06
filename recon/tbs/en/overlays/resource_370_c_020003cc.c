@@ -12,7 +12,7 @@
  * - 507 -> 503: the checksum as an s16 stored with two post-increments.
  * - 503 -> 475: the checksum's high byte through (u16), stored at n and n + 1 before n += 2; the two help messages as the password label's id minus 2 and minus 1, which the native derives from the label's register.
  * - 475 -> 463: page = 0 right after the page window is made, where the native zeroes r11.
- * - no gain: the 0x100 word through a (u32) cast (602); the state pointer set before the flag call (575); the adventure block in an if (0) arm (711); the first link loop testing its mask variable instead of 3 (604); dropping the glyph loop's slot4 copies (507, kept as simpler). */
+ * - no gain: the 0x100 word through a (u32) cast (602); the state pointer set before the flag call (575); the adventure block in an if (0) arm (711); the first link loop testing its mask variable instead of 3 (604); dropping the glyph loop's slot4 copies (507, kept as simpler); one UiWindow_Create and UiText_DrawCharacterAtOffset for both help arms (463). */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"

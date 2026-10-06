@@ -20,7 +20,8 @@
  * 716), while loops for the affinity scans, plain hp/max_hp reads in the
  * heal (557: one ldrh shared by both; 445 with the signed read first),
  * the heal branches reading through stat_ptr (808), the HP drain's amount in a block-local amt or with the
- * new HP held in dmg (605 both). No change: target_id s32 instead of u8,
+ * new HP held in dmg (605 both), rate set to 0 in the switch's default
+ * instead of before it (665). No change: target_id s32 instead of u8,
  * case 401 last, apwr's place among the declarations, BattleEv_Push
  * without a prototype, heal += dmg instead of heal += apwr (kept: one line
  * shared with ☀️), plain max_hp reads and value casts in place of the

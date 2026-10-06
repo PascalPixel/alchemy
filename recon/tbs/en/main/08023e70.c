@@ -1,4 +1,4 @@
-/* 08023e70: differ 65 of 1201 (2026-10-06, third pass). Cause found: in the native, the message-id bases 0x666 (both arms) and 0x45f sit in local-alloc pseudos and take r3, first in the allocation order. The draft adds them inline, so they become rotation reloads, and every detail_win and zero reload after them shifts. Tagged asm-held temporaries (base) do this: 137 to 71. The 0x666 arm then resets detail_win before sub_sel as the native stores do (69), and entry is an integer sum page * 4 + tbl (65). Before that, the page wrap setting page = 0 before row = saved_row took 145 to 137 (from the permuter's best-1; its other rewrites are noise). Remaining: the held constant takes r2 where the native has r3, because its life still overlaps the 255 mask; a statement expression, =r/0 or +l constraints all stay at 69. Also left: the start-of-function schedule (movs r6, #0; mov r9, r0) and the k = redraw search-index load. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
+/* 08023e70: differ 55 of 1201 (2026-10-06, fourth pass). The page list loop reads its code in the while condition, code = tbl[page + j], with no entry pointer: loop strength reduction then makes the pointer a giv set after the copied exit test (native mov r8, r3 after beq), and the first 0x80000000 test takes r1 as the native does (65 to 55). Trials this pass: a function-scope base asm("r3") 202, 138 without the barriers; block-scoped asm("r3") holds at all three sites 202, and with the sum computed first 104; at the first 0x666 site alone 67 (r3 is right, but its literal load is scheduled after adds r0, r0, r5 where the native loads it before lsls r0, r0, #2), the same with asm("" : "=r"(hold) : "0"(0x666)) 67, and without the barrier combine folds it back (207). Earlier, third pass at 65: Cause found: in the native, the message-id bases 0x666 (both arms) and 0x45f sit in local-alloc pseudos and take r3, first in the allocation order. The draft adds them inline, so they become rotation reloads, and every detail_win and zero reload after them shifts. Tagged asm-held temporaries (base) do this: 137 to 71. The 0x666 arm then resets detail_win before sub_sel as the native stores do (69), and entry is an integer sum page * 4 + tbl (65). Before that, the page wrap setting page = 0 before row = saved_row took 145 to 137 (from the permuter's best-1; its other rewrites are noise). Remaining: the held constant takes r2 where the native has r3, because its life still overlaps the 255 mask; a statement expression, =r/0 or +l constraints all stay at 69. Also left: the start-of-function schedule (movs r6, #0; mov r9, r0) and the k = redraw search-index load. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
 /* MenuCell now includes its automatic-mode word at 0xe0; remove the unused duplicate tail word so selected remains at 0xe4 and total size at 0x104. */
 /* Shared PartyStatusWindow from the verified STATUS.C corpus leaves differ 145. Further search trials: combined initialization, is_used as index, while-loop and memory clobber remain 145; do-while 166; index-first initialization 155; initialization before the clear call 148. Redraw memory/output constraints range 447-722. Clobbering r1 reaches 120 but emits mov-zero rather than the native reload, so it was removed. */
 /* Stubborn (2026-10-06): CSE seeds the native search index from redraw's spilled zero (ldr r1, [sp, #28]); the draft keeps a fresh zero, and the reload rotation after the 0x8ef branch follows from it. */
@@ -65,7 +65,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     struct UiWindow *icon_win;
     struct PartyStatusWindow *cursor;
     u32 *pos;
-    u32 *entry;
     u32 cur;
     u32 blink;
     s32 page;
@@ -207,10 +206,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             prev_row = row;
             if (page != prev_page) {
                 RenderOutput_RedrawSavedRect(list_win);
-                entry = (u32 *)((page << 2) + (u32)tbl);
-                code = *entry;
                 j = 0;
-                while (code != 0x80000000) {
+                while ((code = tbl[page + j]) != 0x80000000) {
                     UiWindow_SetTilemapEntry(list_win, (s32)((code & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
                     if (code & 0x3e0000) {
                         UiWork_SetParamNibble(4);
@@ -230,8 +227,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     if (j > 4) {
                         break;
                     }
-                    entry++;
-                    code = *entry;
                 }
                 prev_page = page;
             }

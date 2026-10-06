@@ -622,7 +622,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     s32 hit;
     s32 x;
     s32 z;
-    s32 zero;
+    u8 zero;
     s32 col;
 
     gEventWork->start_transition = 0;

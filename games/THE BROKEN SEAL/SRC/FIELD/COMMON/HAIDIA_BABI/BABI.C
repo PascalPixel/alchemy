@@ -278,7 +278,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
                             {
                                 struct FieldBlendWork *blend = *(struct FieldBlendWork **)((u8 *)control + 12);
                                 u16 *target = (u16 *)&blend->loud;
-                                s32 shown = 1;
+                                u16 shown = 1;
 
                                 *target = shown;
                             }

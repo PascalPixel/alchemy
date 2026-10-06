@@ -897,7 +897,7 @@ void HaidiaIe_RunActorPairEffectScene(void)
     record = Object_GetById(25);
     {
         u8 *motion = (u8 *)record->sprite;
-        s32 shown = 0x1555;
+        u16 shown = 0x1555;
 
         *(u16 *)(motion + 30) = shown;
     }

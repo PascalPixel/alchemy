@@ -140,9 +140,8 @@ void VinasuHeya_RunCellPushScene(void)
                 block->motion_flags = set;
                 block->y.fixed = -0x100000;
                 Engine_ActorSetSpritePriority(9, 3);
-                /* FAKEMATCH: a block-local word temporary keeps the 2 from being shared with the later |= 2 */
                 {
-                    s32 two = 2;
+                    u8 two = 2;
 
                     *flags = two;
                 }

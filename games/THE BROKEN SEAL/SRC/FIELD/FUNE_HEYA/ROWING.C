@@ -1189,9 +1189,8 @@ s32 FuneHeya_ApplyEntryState(void)
     case 21:
         if (Engine_GameFlagIsSet(0x109) != 0) {
             if (Engine_GameFlagIsSet(0x302) != 0) {
-                /* FAKEMATCH: the held zero loads the timer address first. */
                 {
-                    s32 zero = 0;
+                    u16 zero = 0;
 
                     FuneHeya_CueTimer = zero;
                 }

@@ -455,11 +455,10 @@ void FieldScene_RunScene3b2SequenceA(void)
 
 void FieldScene_HandleEscapeColumn(void)
 {
-    /* FAKEMATCH: the block-local two preserves the sprite-flag registers; Japanese reuses a zero automatic across the waits and sprite reset. Literal zero clears make its complete function 12 bytes shorter. */
     struct FieldActor *entity;
     s16 *slot;
     s32 column;
-    s32 zero;
+    u8 zero;
 
     entity = Object_GetById(8);
     column = entity->x.fixed >> 20;

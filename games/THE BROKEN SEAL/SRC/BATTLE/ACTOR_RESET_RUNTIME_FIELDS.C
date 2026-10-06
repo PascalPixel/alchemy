@@ -103,9 +103,9 @@ loop:
     offset = gBattleDisplayWork->offset;
     QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
     QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-    /* FAKEMATCH: the one-pass loop and s32 temporary build 16 with movs before loading the BLDALPHA address. */
-    do { /* FAKEMATCH: one-pass loop and forced temporary, see above */
-        s32 blend = 16;
+    /* FAKEMATCH: the one-pass loop keeps the BLDALPHA address load after the value. */
+    do {
+        u16 blend = 16;
         REG_BLDALPHA = blend;
     } while (0);
     *(u32 *)&spr->attr0 = 0xa400;
@@ -147,9 +147,9 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
     while (1) {
         QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
         QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-        /* FAKEMATCH: the one-pass loop and s32 temporary build 16 with movs before loading the BLDALPHA address. */
-        do { /* FAKEMATCH: one-pass loop and forced temporary, see above */
-            s32 blend = 16;
+        /* FAKEMATCH: the one-pass loop keeps the BLDALPHA address load after the value. */
+        do {
+            u16 blend = 16;
             REG_BLDALPHA = blend;
         } while (0);
         ((s32 *)spr)[1] = MENU_SPRITE_SIZE_16;

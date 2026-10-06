@@ -114,8 +114,7 @@ done:
 #if EDITION_INTERNATIONAL
         iconState->active = 1;
 #else
-        /* FAKEMATCH: one register carries the 1 both stores write. */
-        s32 one = 1;
+        u8 one = 1;
 
         iconState->active = one;
         menu->flags = one;

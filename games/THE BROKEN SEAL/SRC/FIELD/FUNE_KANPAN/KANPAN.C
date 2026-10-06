@@ -932,7 +932,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         Engine_ActorSetPosition(21, 0x1080000, 0x2be0000);
         record = (s32)Object_GetById(21);
         {
-            s32 shown = 0x5000;
+            u16 shown = 0x5000;
 
             *(u16 *)(record + 6) = shown;
         }
@@ -1041,7 +1041,7 @@ void FuneKanpan_SetupDeckCrewman(void)
     Actor_SetPosition(22, 0x10c0000, 0x2a60000);
     record = Object_GetById(22);
     {
-        s32 shown = 0;
+        u16 shown = 0;
 
         record->facing = shown;
     }
@@ -1118,7 +1118,7 @@ void FuneKanpan_SetupHiddenLeaderDeparture(void)
     Actor_SetPosition(23, 0, 0);
     record = Object_GetById(23);
     {
-        s32 shown = 0x3000;
+        u16 shown = 0x3000;
 
         record->facing = shown;
     }
@@ -1158,7 +1158,7 @@ void FuneKanpan_SetupVisibleLeaderDeparture(void)
     Actor_SetPosition(20, 0, 0);
     record = Object_GetById(20);
     {
-        s32 shown = 0x3000;
+        u16 shown = 0x3000;
 
         record->facing = shown;
     }
@@ -1454,7 +1454,7 @@ void FieldScene_RunActorSequence(void)
     rec8->y.fixed = 0x500000;
     rec8->z.fixed = 0x2820000;
     {
-        s32 shown = 0x5000;
+        u16 shown = 0x5000;
 
         rec8->facing = shown;
     }
@@ -1630,7 +1630,7 @@ void FieldScene_ConfigureLeadActors(void)
     Actor_SetPosition(22, 0x10c0000, 0x2a60000);
     record = Object_GetById(22);
     {
-        s32 shown = 0;
+        u16 shown = 0;
 
         record->facing = shown;
     }

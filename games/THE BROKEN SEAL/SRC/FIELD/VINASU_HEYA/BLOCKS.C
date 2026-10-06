@@ -99,7 +99,7 @@ void VinasuHeya_SettlePushedBlocks(void)
         block->y.fixed = -0x100000;
         Engine_ActorSetSpritePriority(id, 3);
         {
-            s32 two = 2; /* FAKEMATCH: a block-local word keeps the 2 from being held for the later & 2 */
+            u8 two = 2;
 
             *flags = two;
         }

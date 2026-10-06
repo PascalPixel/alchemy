@@ -203,13 +203,13 @@ void KorashiamuIriguchi_IntroduceSecondSeed(void)
     Engine_EventShowMessage(13, 0);
     {
         u16 *target = (u16 *)&rec7->timer;
-        s32 shown = 0x2d0;
+        u16 shown = 0x2d0;
 
         *target = shown;
     }
     {
         u16 *target = (u16 *)&rec7->work;
-        s32 shown = 112;
+        u16 shown = 112;
 
         *target = shown;
     }

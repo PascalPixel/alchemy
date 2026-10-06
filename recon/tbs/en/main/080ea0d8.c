@@ -1,3 +1,12 @@
+/* 080ea0d8: differ 2324 of 2455, unchanged by the shared-layout cleanup.
+ * The parent frame is 184 bytes in both. Register allocation, stack slots and
+ * branch layout still differ widely; the BattleFx9 data names remain draft
+ * declarations pending labels at their native bytes. BattleEffectWork, camera,
+ * presentation, scroll and animation layouts now come from the shared headers.
+ * RAM buffers, IWRAM entries, heap cells, callbacks and resources use existing
+ * source names. The local IO queue macro is replaced by its common definition.
+ * Trial: the named animation priority bitfield adds one instruction (2325);
+ * its byte store is retained until the remaining allocation is understood. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -6,6 +15,14 @@
 #include "IO_REG.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "HEAP_STATE.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
+#include "RESOURCE_IDS.H"
+#include "IO_WRITE_QUEUE.H"
+#include "MAP_SCROLL.H"
+#include "ANIMSPR.H"
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
@@ -29,28 +46,9 @@ void BattleEffect_SetupBlendedDisplay(void);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 
-extern u8 gWorkSlot[];
+extern void *gBattleFxWork[];
+extern void *gTransitionWork[];
 extern volatile u32 gKeysRepeat;
-
-struct Cells03001ad0 {
-    u16 unk00;
-    u16 unk02;
-    u16 unk04;
-    u16 unk06;
-};
-extern struct Cells03001ad0 gBgScroll;
-
-extern u8 Value_0000003b;
-extern u8 Value_0000003e;
-extern u8 Value_00000036;
-extern u8 Value_0000003a;
-extern u8 Value_00000064;
-extern u8 Value_00000065;
-extern u8 Value_00000067;
-extern u8 Value_00000070;
-extern u8 Value_00000073;
-extern u8 Value_000000bb;
-extern u8 Value_000000ce;
 
 typedef struct Scale {
     s32 x;
@@ -65,62 +63,8 @@ extern const u16 BattleFx9_ShardCells[];
 extern const u8 BattleFx9_ShardWidths[];
 extern const u8 BattleFx9_ShardHeights[];
 
-struct Mode9Work {
-    u8 sheet[0x7080];
-    struct EffectStep rain[16];
-    u8 unknown_7240[0x540];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unknown_7788[0x2c];
-    s32 unknown_77b4;
-    s32 unknown_77b8;
-    u8 unknown_77bc[0x1c];
-    void *objects[16];
-    u8 unknown_7818[0xc];
-    s32 transfer_pending;
-    struct BattleEffectArgument *effect;
-};
-
-#define DUST ((struct EffectStep *)0x02010000)
-#define SPARKS ((struct EffectStep *)0x02010e00)
-
-typedef void (*WordFill)(void *, s32, u32);
-typedef void (*WordCopy)(void *, const void *, s32);
-
-struct IoWriteQueue {
-    u16 count;
-    u16 pad;
-    u32 entries[32][3];
-};
-extern struct IoWriteQueue gIoWriteQueue;
-
-#define REG_IME (*(volatile u16 *)0x04000208)
-
-/* FAKEMATCH: Preserve the verified queue helper's one-pass IME scopes. */
-#define QUEUE_IO_WRITE(address, value, delay)                               \
-    {                                                                       \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-        q = &gIoWriteQueue;                                                 \
-        do {                                                                \
-            do {                                                            \
-                ime = &REG_IME;                                             \
-                saved = *ime;                                               \
-            } while (0);                                                    \
-            *ime = (u16)ime;                                                \
-            count = q->count;                                               \
-        if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
-            *destination++ = (address);                                     \
-            *destination = (delay);                                         \
-        }                                                                   \
-            *ime = saved;                                                   \
-        } while (0);                                                        \
-    }
+#define DUST ((struct EffectStep *)Ram_MapCellBuffer)
+#define SPARKS (&DUST[128])
 
 void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 {
@@ -132,18 +76,18 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     Scale pair;
     Scale scale;
     void *canvas;
-    struct Mode9Work *work;
-    s32 *ctrl;
+    struct BattleEffectWork *work;
+    struct BattlePresentationWork *ctrl;
     DrawRectangle draw2;
     DrawRectangle draw;
     s32 frame;
     u8 *ramp;
-    void *iwram;
+    struct BattleCamera *camera;
     s32 depth;
     s32 zoom;
     s32 near;
     s32 far;
-    u32 *cache;
+    void **cache;
     DrawRectangle *slots;
     s32 cx;
     s32 cy;
@@ -191,12 +135,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 z;
     s32 amp;
 
-    cache = (u32 *)0x03001ef0;
-    canvas = (void *)cache[40 - 40];
-    work = (struct Mode9Work *)cache[39 - 40];
-    ctrl = (s32 *)cache[44 - 40];
-    ramp = (u8 *)cache[41 - 40];
-    iwram = (void *)cache[12 - 40];
+    cache = &gBattleFxWork[1];
+    canvas = cache[0];
+    work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+    ctrl = cache[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
+    ramp = cache[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+    camera = cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0x2000);
     *(u16 *)0x04000020 = 0x100;
@@ -204,17 +148,17 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     *(u16 *)0x05000000 = 0;
     *(u16 *)0x05000002 = 0;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    draw = (DrawRectangle)cache[46 - 40];
+    draw = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(16, 0x17e, 1);
     gProjection.center_y = 240;
     WaitFrames(1);
-    BattleBackground_LoadFar(1, (s32)&Value_0000003b, 0);
-    ctrl[4] = 1;
-    gBgScroll.unk04 = 0;
+    BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+    ctrl->initial_value = 1;
+    gBgScroll[1].x = 0;
     BattleEffect_WipeCanvas(0, 1);
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
@@ -224,10 +168,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     zoom = 0x80000;
     near = 0xffff;
     far = 0;
-    Resource_LoadAndDecompress((s32)&Value_000000bb, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000067, work->sheet + 0x600, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_000000ce, work->sheet + 0x95c, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000073, ramp, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB, work->sheet + 0x600, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
     for (i1 = 0, pos = 0, lim = 64; i1 != 8; i1++, pos += 770, lim -= 7) {
         u8 *src = ramp;
@@ -244,7 +188,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
     }
 
-    ((WordCopy)0x03001388)((void *)0x05000000, Resource_GetTableEntry((s32)&Value_00000064), 128);
+    Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
 
     for (i2 = 0; i2 != 128; i2++) {
         DUST[i2].x = (Random16() & 15) + 72;
@@ -272,7 +216,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     slots = (DrawRectangle *)gWorkSlot;
     for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B))); frame++) {
         if (frame == 143) {
-            ((WordFill)0x03000168)(canvas, 0x4000, 0x2a2a2a2a);
+            Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
             Audio_PlayCue(145);
         }
         if (frame == 80) {
@@ -281,7 +225,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame < 0) {
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(iwram, (u8 *)iwram + 12);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (i4 = 0; i4 != 128; i4++) {
                 EffectStep_AdvanceWithGravity3D(&SPARKS[i4], 60, -0x400);
                 EffectPosition_ApplyBaseAndYOffset(&SPARKS[i4], (struct EffectPosition *)scene);
@@ -312,8 +256,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame == 72) {
-            work->unknown_77b4 = 24;
-            work->unknown_77b8 = 0;
+            work->fade_frames = 24;
+            work->fade_step = 0;
         }
 
         anchor[2] = 0;
@@ -389,16 +333,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             cell = work->sheet + BattleFx9_BurstCells[n] + 0x600;
 
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
+            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60, 80 - high * 2, high, high * 2);
+            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60 - high, 80, high, high * 2);
+            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60 - high, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60, 80, high, high * 2);
+            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
 
             for (i9 = 0; i9 != 6; i9++) {
@@ -415,10 +359,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             s32 top = (frame << 4) - 2272;
             s32 n;
             BattleEffect_LoadWork(47, 7, 7, 3, 3);
-            (slots[47])(canvas, work, 36, top, 24, 64);
+            (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 36, top, 24, 64);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 3);
-            (slots[47])(canvas, work, 60, top, 24, 64);
+            (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 60, top, 24, 64);
             Runtime_ReleaseHeapBlock(47);
 
             n = (frame - 144) / 2;
@@ -427,7 +371,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 u8 *cell = work->sheet + n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
                 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                blit = slots[47];
+                blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
                 for (i10 = 0; i10 != 128; i10++) {
                     s32 angle = i10 << 9;
                     x = (((frame * 10 - 1424) * Trig_Sin(angle)) >> 16) - high / 2;
@@ -442,17 +386,17 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         WaitFrames(1);
     }
 
-    ((WordFill)0x03000168)(canvas, 0x4000, 0);
+    Iwram_FillWords(canvas, 0x4000, 0);
 
     for (i11 = 0; i11 != 16; i11++) {
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i11]);
     }
 
     for (i12 = 0; i12 != 16; i12++) {
-        u8 *obj = (u8 *)ResourceObject_CreateFar(0x186);
+        struct AnimationObject *obj = (struct AnimationObject *)ResourceObject_CreateFar(0x186);
         work->objects[i12] = obj;
         if (obj != 0) {
-            obj[38] = 0;
+            obj->flags = 0;
             AnimationObjects_SelectAnimationFar(obj, __modsi3(i12, 3));
             ((u8 *)work->objects[i12])[9] &= ~12;
         }
@@ -460,8 +404,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     Runtime_ReleaseHeapBlock(46);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw = ((DrawRectangle *)gWorkSlot)[46];
-    Resource_LoadAndDecompress((s32)&Value_00000064, work->sheet + 0x4000, 1, 1);
+    draw = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER];
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet, work->sheet + 0x4000, 1, 1);
 
     {
         u8 *c = ramp;
@@ -474,9 +418,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
     }
 
-    work->unknown_77b4 = 0;
-    work->unknown_77b8 = 0;
-    BattleBackground_LoadFar(1, (s32)&Value_0000003e, 0);
+    work->fade_frames = 0;
+    work->fade_step = 0;
+    BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
     *(u16 *)0x04000020 = 0x100;
     *(u32 *)0x04000028 = -0x3c00;
     *(u16 *)0x0400000c = 0x784;
@@ -518,9 +462,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (gKeysRepeat & (KEY_A | KEY_B)) {
             if (frame >= 5 && frame < 150) {
                 frame = 150;
-                QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);
-                QUEUE_IO_WRITE(0x04000028, 0, 0x30000);
-                Resource_LoadAndDecompress((s32)&Value_00000070, work->sheet + 0x4000, 1, 0);
+                IO_WRITE_QUEUE_PUSH(0x04000020, 0x80, 0x20000);
+                IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
+                Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
             } else if (frame >= 155 && frame < 214) {
                 frame = 214;
             } else if (frame >= 219 && frame < 280) {
@@ -529,12 +473,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame == 64) {
-            QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);
-            QUEUE_IO_WRITE(0x04000028, 0, 0x30000);
+            IO_WRITE_QUEUE_PUSH(0x04000020, 0x80, 0x20000);
+            IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
             fill = 0;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
-            Resource_LoadAndDecompress((s32)&Value_00000070, work->sheet + 0x4000, 1, 0);
-            Resource_LoadAndDecompress((s32)&Value_00000065, work->sheet + 0x6000, 0, 0);
+            Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
+            Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA, work->sheet + 0x6000, 0, 0);
         }
 
         if (frame == 66) {
@@ -550,7 +494,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame == 70) {
-            BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&Value_0000003e, 7);
+            BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
         }
 
         if (frame == 150) {
@@ -563,7 +507,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Dma_Set(&fill, work, 0x85000e10, (volatile u32 *)0x040000d4);
             fill = 0x3f3f3f3f;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
-            BattleBackground_LoadFar(1, (s32)&Value_00000036, 0);
+            BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
         }
 
         if (frame == 214) {
@@ -571,9 +515,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Dma_Set(&fill, work, 0x85000e10, (volatile u32 *)0x040000d4);
             fill = 0x3f3f3f3f;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
-            BattleBackground_LoadFar(1, (s32)&Value_0000003a, 0);
+            BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
             for (i15 = 0; i15 != 16; i15++) {
-                p = &work->rain[i15];
+                p = &work->particles[i15];
                 p->x = ((Random16() & 63) + 32) << 16;
                 p->y = ((Random16() & 31) + 96) << 16;
                 p->velocity_y = ((Random16() & 15) + 16) << 15;
@@ -589,9 +533,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             fill = 0x01010101;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
             *(u16 *)0x04000052 = 0x1010;
-            ctrl[4] = 0;
+            ctrl->initial_value = 0;
             for (i16 = 0; i16 != 16; i16++) {
-                p = &work->rain[i16];
+                p = &work->particles[i16];
                 p->x = ((Random16() & 63) + 256) << 16;
                 p->y = ((Random16() & 31) + 96) << 16;
                 p->velocity_y = ((Random16() & 15) + 16) << 15;
@@ -634,16 +578,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 sheet = work->sheet + 0x4240;
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 36, top - 24 + 24, 24, 24);
+            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 36, top - 24 + 24, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 59, top, 24, 24);
+            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 59, top, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 36, top + 23, 24, 24);
+            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 36, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 59, top + 23, 24, 24);
+            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 59, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
         }
 
@@ -809,7 +753,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame >= 214 && frame < 280) {
-            gBgScroll.unk04 += 8;
+            gBgScroll[1].x += 8;
         }
 
         if (frame >= 246 && frame < 280) {
@@ -822,7 +766,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             place2[3] = 0;
             place2[1] = 0;
             for (i22 = 0; i22 != 16; i22++) {
-                p = &work->rain[i22];
+                p = &work->particles[i22];
                 if (p->variant != 0) {
                     scale.x = p->z + (p->y >> 7);
                     if (scale.x < 0x800) {
@@ -869,7 +813,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         Runtime_ReleaseHeapBlock(47);
 
         if (frame > 63) {
-            gBgScroll.unk06 = (Random16() & 3) + 30;
+            gBgScroll[1].y = (Random16() & 3) + 30;
         }
 
         work->transfer_pending = 1;
@@ -880,7 +824,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i25]);
     }
 
-    Scheduler_RemoveCallback(0x080CD261);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

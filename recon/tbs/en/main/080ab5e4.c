@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 2081, differ 49.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 2100, differ 10.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -120,7 +120,23 @@
    native has r3, and the cursor-box draw after it reloads x (+1
    instruction, and the pool offsets after it); the final owner store
    ties entry where the native ties 0xf00. Not kept: the 0x666 written
-   first or between the terms (49, fold reassociates).
+   first or between the terms (49, fold reassociates); the owner alone
+   read back from pair_entries 1258; the final entry through djinn 123.
+   The owner tie: local-alloc ties an and's result to its first operand
+   when that dies and is local to the block, and only otherwise to the
+   constant, so the native's entry is likely not local to that block.
+   The 0x666: reload's find_reg prefers r3, r2, r1 at equal cost, so in
+   the draft r3 and r2 are taken at that add and in the native they are
+   free. With the window loaded first into a block-local temporary
+   (s32 w = state->list_window), w takes r1 and the 0x666 then r2 (47,
+   the native needs r1 and r2 both live there for r3); through the
+   function's window variable 42 but 2107 instructions (window in r6 and
+   copied); the unleash message through message 57.
+   The 0x666 is a message: 1638 (01885 in the European editions) is
+   Flint's unleash text, the first of the djinn effect texts, now named
+   MsgDjinnEffect in all six PO files. As a symbol its address is a
+   constant the native loads into a pseudo after the sum, which local-alloc
+   gives r3, not a reload (49 -> 10, 2105 instructions).
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -346,7 +362,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             if (sel != -1) {
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgUnleashEffect, state->list_window, 0, 80);
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 96, 224, 104);
-                UiText_DrawCharacterAtOffsetFar(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + 0x666, state->list_window, 0, 96);
+                UiText_DrawCharacterAtOffsetFar(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + (s32)MsgDjinnEffect, state->list_window, 0, 96);
             }
             if (!(buf[x] & 1))
                 Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 14);

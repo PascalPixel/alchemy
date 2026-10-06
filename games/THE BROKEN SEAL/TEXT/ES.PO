@@ -7547,7 +7547,7 @@ msgctxt "message"
 msgid "01884"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDjinnEffect"
 msgid "01885"
 msgstr "Golpe que puede cortar la roca."
 

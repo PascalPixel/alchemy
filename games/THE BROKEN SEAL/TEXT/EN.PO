@@ -6559,7 +6559,7 @@ msgctxt "message"
 msgid "01637"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDjinnEffect"
 msgid "01638"
 msgstr "Strike a blow that can cleave stone."
 

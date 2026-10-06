@@ -1,5 +1,30 @@
-/* Stubborn (2026-10-06, sun100 T10 on 51bbf7161e): differ 1332 (listing 1585, draft 1599, common 926). Not first-try; parked. */
-/* 08026080: listing 1585, draft 1599, differ 1332; both frames are 324 bytes.
+/* Stubborn (2026-10-06, sun100 T10 session 1 on 8b95cd7680): differ 1335 (listing 1585, draft 1604, common 927). Not first-try; parked. */
+/* 08026080: listing 1585, draft 1604, differ 1335; both frames are 324 bytes.
+ * 2026-10-06 session 1 (was 1332/1599): two structural fixes kept although
+ * the count moved +3 in the register cascade. The kind switch of the
+ * preferred-target scan lists case 5 first: the native lays its body out
+ * right after the dispatch, before 3, 4 and 6 (GCC keeps source order).
+ * The two slide_offset stores at the top go through slots = &gBattleWork
+ * (RESOLVE.C's pattern) only there: the native then loads gBattleWork once
+ * and reaches slot 57 as base + 192; the loop and the end keep the direct
+ * gLinkCountdownWork literal, as the native does. With these, the first
+ * difference is allocation: native preferred r10 and mode r8, draft r6/r10.
+ * Native sel is not one pseudo for the whole function: r10 is reused in
+ * the main loop and the A-press search holds the id in r4, so the press
+ * branch probably reads a separate block variable, but measured worse.
+ * Native ANDs the sleep/psy_seal halfword (ldrh) with 0xFFFF hoisted into
+ * r4 before the scan loop; agscc's Thumb andsi3 turns a constant 0xFFFF
+ * mask into extzv (no ands), so the native mask was not a CONST_INT at
+ * expand time; the source form is still unknown.
+ * Session 1 trials (base 1335 unless noted): (u16) cast of the sleep word
+ * 1335; sel r10 device 1363; head declared after matrix or last 1335,
+ * after window 1401, first 1409; no head (entries directly) 1438; ids/tbl
+ * as pointer locals over buffers 1432-1442; gWorkSlot[9]/[57] at the top
+ * 1341, everywhere 1352; &gWorkSlot[9] base 1335; slots + sel parameter
+ * 1342; slots + mode r8 1335; slots + mode r8 + sel r10 1361; press search
+ * through j 1377, block-local id 1361, nx 1377, width 1393; permuter
+ * 5 min seed 11 --heat: weighted 29540 -> 24980 but differ 1455.
+ * Earlier header follows.
  * Spill slots follow declaration order: the native keeps runtime 76,
  * window 72, cursor 68, cnt 64, redraw 56, slotId 52, pending 48, matrix 44,
  * so they are declared in that order (was 1400). Still differing: ids, tbl
@@ -16,7 +41,8 @@
  * current draft and its measured devices; no new device or credit.
  * The exact RESOLVE.C relative heap-cell pattern differs 1417/1600; moving
  * sel initialization before the first call with it differs 1475/1596.
- * Neither reproduces the native reuse of the gBattleWork cell base.
+ * Neither reproduced the native reuse of the gBattleWork cell base then;
+ * the top-only slots form above (session 1) does.
  */
 #include "AFFINE.H"
 #include "SELECT.H"
@@ -29,6 +55,7 @@
 #include "MENU_LIST.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "HEAP_STATE.H"
 
 struct CursorSlot {
     u8 x;
@@ -90,8 +117,10 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     u8 *pl;
     u8 *pp;
     u8 *pc;
+    void **slots;
 
-    runtime = gBattleWork;
+    slots = (void **)&gBattleWork;
+    runtime = slots[0];
     redraw = 0xFFFF;
     cnt = 0;
     slotId = Resource_LoadIntoFreeSlot(256);
@@ -99,9 +128,9 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     if (spread == 0)
         spread = 1;
     if (mode == 2 || mode == 4)
-        gLinkCountdownWork->slide_offset = -2;
+        ((struct MenuCell *)slots[57 - HEAP_SLOT_BATTLE])->slide_offset = -2;
     else
-        gLinkCountdownWork->slide_offset = 16;
+        ((struct MenuCell *)slots[57 - HEAP_SLOT_BATTLE])->slide_offset = 16;
     i = 5;
     while (i >= 0) {
         tbl[i].flags = 0;
@@ -149,6 +178,12 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                     continue;
                 unit = Owner_GetStateFar(ids[i]);
                 switch (kind) {
+                case 5:
+                    if (unit->hp == 0) {
+                        sel = ids[i];
+                        found = 1;
+                    }
+                    break;
                 case 3:
                     if (unit->poison != 0)
                         found = 1;
@@ -160,12 +195,6 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                         found = 1;
                     else if (unit->death_count != 0)
                         found = 1;
-                    break;
-                case 5:
-                    if (unit->hp == 0) {
-                        sel = ids[i];
-                        found = 1;
-                    }
                     break;
                 case 6:
                     if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)

@@ -1,13 +1,20 @@
-/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 2324 (listing 2455, draft 2439, common 1285). Not first-try; parked. */
-/* 080ea0d8: differ 2324 of 2455, unchanged by the shared-layout cleanup.
- * The parent frame is 184 bytes in both. Register allocation, stack slots and
+/* 080ea0d8: differ 2257 of 2455 (listing 2455, draft 2440, common 1319).
+ * Locals: the native fill word sits at sp+140, between place and place2, so
+ * it is a declared volatile word, not an addressed scalar (that put it at
+ * sp+116 after pair). The local arrays now sit where the native's do, but
+ * the frame is 180 against 184: the native also spills draw2 (sp+92, loaded
+ * once per frame, reloaded before each call), where ours keeps it in fp; in
+ * the petal blocks the native keeps draw in sl and spills petal (sp+28).
+ * Register allocation, remaining stack slots and
  * branch layout still differ widely; the BattleFx9 data names remain draft
  * declarations pending labels at their native bytes. BattleEffectWork, camera,
  * presentation, scroll and animation layouts now come from the shared headers.
  * RAM buffers, IWRAM entries, heap cells, callbacks and resources use existing
  * source names. The local IO queue macro is replaced by its common definition.
  * Trial: the named animation priority bitfield adds one instruction (2325);
- * its byte store is retained until the remaining allocation is understood. */
+ * its byte store is retained until the remaining allocation is understood.
+ * Trial: a plain u32 fill (2324); volatile u32 fill (2257, kept).
+ * Trial: draw2 declared last instead of after ctrl (2257, no change). */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -72,7 +79,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 anchor[3];
     s32 scene[3];
     s32 place[4];
-    u32 fill;
+    volatile u32 fill;
     s32 place2[4];
     Scale pair;
     Scale scale;

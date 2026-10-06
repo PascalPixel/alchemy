@@ -1,9 +1,11 @@
 /* UiText_BuildRenderEntries, Italian 0x08017f44.
- * Native extent 0x688, frame 144. Initial shared reconstruction: extent 0x678;
+ * Native extent 0x688, frame 144. Current reconstruction: extent 0x674;
  * initialization, grammatical-ending tail merging and copy-loop registers differ.
- * Normalized scaffold comparison: 733 native / 727 draft, differ 464.
+ * Normalized scaffold comparison: 733 native / 725 draft, differ 458.
  * Direct ending-code comparison and a separate copy counter: unchanged.
- * Moving entry initialization earlier shortened it to 0x674 then 0x670.
+ * Initial shared reconstruction: 727 draft, differ 464, extent 0x678.
+ * Earlier entry initialization: differ 458, extent 0x674; earlier again: 0x670.
+ * Shared i copy counter: differ 486. Dedicated ending code and else-if: unchanged.
  */
 #include "BATTLE.H"
 #include "DEBUG.H"
@@ -65,6 +67,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #endif
     s32 quote = 0;
     u32 start = work->count;
+    u16 *entry = work->entries;
     u32 cnt = 0;
     s32 plural = 0;
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_IT)
@@ -84,7 +87,6 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
     u32 n;
     u32 pos = start;
 #endif
-    u16 *entry = work->entries;
     s32 overflow = 0;
     s32 (*decode)(struct TextReader *);
     u32 next;
@@ -93,6 +95,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
     u32 i;
     s32 value;
     s32 tmp;
+    s32 ending;
     s32 mag;
     u8 *num;
     u8 *src;
@@ -394,18 +397,16 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #endif
 #if defined(TBS_EDITION_IT)
                     case 13:
-                        tmp = decode(&st) - 1;
-                        if (tmp == 0) {
+                        ending = decode(&st) - 1;
+                        if (ending == 0) {
                             if (plural == 0)
                                 entry[pos] = 'o';
                             else
                                 entry[pos] = 'i';
-                        } else {
-                            if (plural == 0)
-                                entry[pos] = 'a';
-                            else
-                                entry[pos] = 'e';
-                        }
+                        } else if (plural == 0)
+                            entry[pos] = 'a';
+                        else
+                            entry[pos] = 'e';
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
 #elif defined(TBS_EDITION_FR)

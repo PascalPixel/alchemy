@@ -63,7 +63,12 @@
      frame * 4 - (i * 48 + 256): 812; (frame - i * 12 - 64) << 2: 841.
    - permuter restricted to the n line and the smoke block, 6 minutes
      from 812: 670, from smoke assigned inside the first call's
-     arguments; the same 670 without any smoke pointer, adopted. */
+     arguments; the same 670 without any smoke pointer, adopted.
+   - on 670: blit[0] = SLOT(46) without cache: 675; sx = 72 + ox,
+     literal 10000 for rings in the ring address, or the burst's draw
+     assigned after its declaration: 670; sc = scale pointer set before
+     the frame loop for the three stores and the ApplyScale call: 738,
+     for the call only: 744. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

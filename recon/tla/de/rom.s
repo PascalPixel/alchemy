@@ -297,10 +297,10 @@ Func_08015714:
 Render_ProjectPoint:
 	.incbin "baserom.gba", 0x000157a4, 0x00000104
 	.section .rom.00015998, "ax"
-	.incbin "baserom.gba", 0x00015998, 0x000005a0
-	.global SaveState_FindLatestSlot
-SaveState_FindLatestSlot:
-	.incbin "baserom.gba", 0x00015f38, 0x000000f0
+	.incbin "baserom.gba", 0x00015998, 0x000001b8
+	.section .rom.00015cd0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00015cd0, 0x000001a0
 	.section .rom.00016048, "ax"
 	.incbin "baserom.gba", 0x00016048, 0x000000b8
 	.section .rom.000161ac, "ax"
@@ -423,7 +423,10 @@ Ui_WindowPalette:
 System_BasicColorPalette:
 	.incbin "baserom.gba", 0x00017b3c, 0x000001d8
 	.section .rom.00017d34, "ax"
-	.incbin "baserom.gba", 0x00017d34, 0x0000005c
+	.incbin "baserom.gba", 0x00017d34, 0x00000008
+	.global Data_08017d10
+Data_08017d10:
+	.incbin "baserom.gba", 0x00017d3c, 0x00000054
 	.global Flash_Chips
 Flash_Chips:
 	.incbin "baserom.gba", 0x00017d90, 0x00000014

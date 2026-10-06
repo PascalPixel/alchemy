@@ -32,7 +32,7 @@ Func_0804380c:
 	adds r0, r6, #0
 	mov r8, r3
 	mov r1, r8
-	bl Func_08015e44
+	bl SaveState_ReadRecordPayload
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_0804385c

@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_08015ca4
 	.thumb_func
 Func_08015ca4:
@@ -90,7 +91,7 @@ Func_08015ca4:
 	add r5, sp, #4
 	mov r2, r10
 	strb r2, [r5, #7]
-	bl Func_08015ec8
+	bl SaveState_ChecksumWorkspace
 	strh r0, [r5, #8]
 	mov r0, r10
 	bl Func_0801601c
@@ -133,7 +134,7 @@ Func_08015ca4:
 	strh r3, [r2]
 .L_08015da2:
 	adds r0, r6, #0
-	bl Func_08015b24
+	bl SaveState_WriteWorkspaceSlot
 	cmp r0, #0
 	beq .L_08015db0
 	movs r0, #2
@@ -143,7 +144,7 @@ Func_08015ca4:
 	cmp r2, #14
 	bhi .L_08015dc4
 	mov r0, r8
-	bl Func_08015f48
+	bl SaveState_InvalidateSlot
 	cmp r0, #0
 	beq .L_08015dc4
 	movs r0, #3
@@ -178,14 +179,14 @@ Func_08015ca4:
 	cmp r3, #0
 	bne .L_08015df2
 	mov r0, r8
-	bl Func_08015b24
+	bl SaveState_WriteWorkspaceSlot
 	cmp r0, #0
 	beq .L_08015e08
 	movs r0, #4
 	b .L_08015e2c
 .L_08015e08:
 	adds r0, r6, #0
-	bl Func_08015f48
+	bl SaveState_InvalidateSlot
 	cmp r0, #0
 	beq .L_08015e16
 	movs r0, #5

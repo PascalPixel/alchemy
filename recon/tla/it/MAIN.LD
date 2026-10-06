@@ -281,7 +281,6 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00024c6e)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.00024d14)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/JUMP.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/LOAD_MAIN_SCRIPT.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/TESTFLAG.o"(.text)

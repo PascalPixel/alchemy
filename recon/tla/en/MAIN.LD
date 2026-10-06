@@ -339,7 +339,6 @@
         "*/recon/tla/raw/08024c6e.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08024c70.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER.o"(.text)
-        "*/recon/tla/raw/08024d14.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/JUMP.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/LOAD_MAIN_SCRIPT.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/TESTFLAG.o"(.text)

@@ -41,7 +41,11 @@
    index gave 544 but loses the native caller-save stores; rejected.
    Session 2026-10-06 19:00: permuter best-1 (420) declaration order
    list, djinn, save, status, cursor, counts: 466; kind = 1 set before
-   zero: 450 (kept). From the same candidate, register i, while forms of
+   zero: 450 (kept, but a side effect: native stores kind = 1 at sp+28
+   just before RenderResource_CreatePair, and its slots keep status above
+   djinn, so the native-consistent form is the 474 order plus a summary
+   pointer between counts and cursor; the kind move alone in the 474
+   order: 458). From the same candidate, register i, while forms of
    the slot loop and first scan, (save->summary + i)->name and djinn =
    NULL after redraw: each unchanged. summary++ with y = i; y *= 16 or
    y = i * 2; y *= 8: 495 (consecutive-set giv, benefit negative). y +=
@@ -49,7 +53,11 @@
    asm input of i at the body end: ascending i in r6, y in r9, message
    calls cross-jumped, 593; y = i * 16 step plus that barrier: 586; i * 16
    in each call plus that barrier: 586. i = 0 moved before zero = 0: init
-   still found, reversed, 597. No device retained. */
+   still found, reversed, 597. (tile = Resource_FindFreeEntry()) < 96 as
+   the test: unchanged. A 5-minute permuter run on this draft: 433, only
+   by forced temporaries in the redraw block (level, djinn[2],
+   &save->summary[slot] for the counts call, slot * 16 inside the cursor
+   y); noise, not adopted. No device retained. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

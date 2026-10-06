@@ -1,4 +1,14 @@
 #include "RENDER_INPUT.H"
+#include "OUTPUT.H"
+#include "RESOURCE.H"
+#include "RAM_BUFFER.H"
+#include "EDITION.H"
+
+#if EDITION_INTERNATIONAL
+#define UI_PALETTE_OWNER_OFS 0x1360
+#else
+#define UI_PALETTE_OWNER_OFS 0x1160
+#endif
 
 void UiWork_UpdateListTail(struct RenderOutputList *list)
 {
@@ -19,4 +29,18 @@ void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutpu
         *list->tail_link = node;
         *(struct RenderOutput **)&list->tail_link = node;
     }
+}
+
+void RenderOutput_Release(struct RenderOutput *entry)
+{
+    RenderOutput_ReleaseFree(entry);
+    if ((u8)entry->kind != 0) {
+        Resource_ResetEntry((u8)entry->index);
+        if ((u8)entry->kind == 2) {
+            u8 *dst = (u8 *)Ram_HeapSlots->window_tiles;
+            s32 idx = (((u8 *)&entry->table)[1] >> 4) * 2 + UI_PALETTE_OWNER_OFS;
+            *(u16 *)(dst + idx) = 0x3E7;
+        }
+    }
+    entry->active = 0;
 }

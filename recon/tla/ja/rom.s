@@ -652,8 +652,6 @@ Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00024ec6, 0x0000000e
 	.section .rom.00024fde, "ax"
 	.incbin "baserom.gba", 0x00024fde, 0x00000002
-	.section .rom.00024fe0, "ax"
-	.incbin "baserom.gba", 0x00024fe0, 0x000000e0
 	.section .rom.000250f2, "ax"
 	.incbin "baserom.gba", 0x000250f2, 0x00000042
 	.section .rom.00025160, "ax"
@@ -988,19 +986,9 @@ UiWindow_Create:
 	.thumb_func
 UiWindow_ClearInteriorTiles:
 	.incbin "baserom.gba", 0x00039448, 0x00000094
-	.section .rom.00039502, "ax"
-	.incbin "baserom.gba", 0x00039502, 0x00000002
-	.section .rom.00039504, "ax"
-	.global RenderOutput_Release
-	.type RenderOutput_Release, %function
-	.thumb_func
-RenderOutput_Release:
-	.incbin "baserom.gba", 0x00039504, 0x00000190
-	.global Ui_ClearVramBlock
-	.type Ui_ClearVramBlock, %function
-	.thumb_func
-Ui_ClearVramBlock:
-	.incbin "baserom.gba", 0x00039694, 0x0000003c
+	.section .rom.00039540, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00039540, 0x00000154
 	.section .rom.0003971e, "ax"
 	.incbin "baserom.gba", 0x0003971e, 0x000000b6
 	.global UiWork_ProcessRenderChannels

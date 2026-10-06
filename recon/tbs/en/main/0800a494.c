@@ -1,6 +1,14 @@
 /* 0800a494: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
-   alchemy diff --camelot-arm: listing 307, draft 289, common 225, differ
-   146 (stock agbcc_arm 199). 161 to 146 (2026-10-06, session 4): the
+   alchemy diff --camelot-arm: listing 307, draft 299, common 241, differ
+   124 (stock agbcc_arm 199). 146 to 124 (2026-10-06, session 4): the
+   target branch calls IwramSqrt and IwramRatioMulQ14 through two locals,
+   sq = IwramSqrt; rm = IwramRatioMulQ14, at the branch's start: the
+   listing's five ldr rN, =fn; mov lr, pc; bx rN (gcc_arm defines
+   NO_FUNCTION_CSE, so a direct call is always a bl), while the else
+   branch's two calls and ArcTan2 stay direct bl to the three veneers, as
+   listed. What remains near them: the ldr's register (r3 for r1) at two
+   calls, and the velocity stores at 36 and 44 scheduled after their
+   loads (MulQ16's asm made volatile to hold them: 131). 161 to 146 (2026-10-06, session 4): the
    command skip loop as goto test; do { cursor++; test: n = cursor; cmd =
    word[n]; } while (cmd > 63), with s16 n: the listing's b to the test,
    no copied exit test, obj->script reloaded after each strh of the
@@ -82,6 +90,8 @@ void Object_UpdateAll(void)
     s32 ground;
     s32 reached;
     u32 cmd;
+    s32 (*sq)(s32);
+    s32 (*rm)(s32, s32);
     s16 n;
 
     obj = gObjectSlots;
@@ -118,26 +128,28 @@ void Object_UpdateAll(void)
         if (obj->frozen == 0) {
             reached = 0;
             if (obj->target_x != TARGET_UNSET) {
+                sq = IwramSqrt;
+                rm = IwramRatioMulQ14;
                 dx = (obj->target_x - x) / 65536;
                 dz = (obj->target_z - z) / 65536;
-                len = IwramSqrt(dx * dx + dz * dz) << 16;
+                len = sq(dx * dx + dz * dz) << 16;
                 if (len < 0x01000000) {
                     dx = obj->target_x - x;
                     dz = obj->target_z - z;
-                    len = IwramSqrt(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
+                    len = sq(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
                 }
                 if (len == 0) {
                     x = obj->target_x;
                     z = obj->target_z;
                 } else {
-                    ratio = IwramRatioMulQ14(len, obj->acceleration);
+                    ratio = rm(len, obj->acceleration);
                     obj->velocity_x += MulQ16(ratio, dx);
                     obj->velocity_z += MulQ16(ratio, dz);
                     vx = obj->velocity_x;
                     vz = obj->velocity_z;
-                    len = IwramSqrt(MulQ16(vx, vx) + MulQ16(vz, vz)) << 8;
+                    len = sq(MulQ16(vx, vx) + MulQ16(vz, vz)) << 8;
                     if (len > obj->speed_limit) {
-                        ratio = IwramRatioMulQ14(len, obj->speed_limit);
+                        ratio = rm(len, obj->speed_limit);
                         obj->velocity_x = MulQ16(ratio, vx);
                         obj->velocity_z = MulQ16(ratio, vz);
                     }

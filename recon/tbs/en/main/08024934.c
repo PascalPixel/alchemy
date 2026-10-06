@@ -1,6 +1,16 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 916, common 548, differ 766; frame 372
+ * Native 946 instructions, draft 917, common 552, differ 759; frame 372
  * as native's.
+ * The draw loop's affordability scan indexed (summon->djinn_required[element]
+ * <= standby[element]) lets loop.c make the pointers, so GCSE no longer
+ * shares summon + 4 with the column loop: 766 -> 759. Native still keeps
+ * summon itself in slot 36 and recomputes summon + 4 for the columns, where
+ * the draft keeps summon + 4 in slot 32. Indexed scan with [0] for the first
+ * test 884, indexed through a required pointer 881 (both frame 368).
+ * The allocation order (greg dump) puts drawn_page last among the
+ * function-wide scalars, so row takes r9 and drawn_page r10, swapped against
+ * native; declaration order of drawn_row, drawn_page, row, page does not
+ * change it (five orders, all 766).
  * Session 2: the draw loop written as a rotated goto loop (no loop notes)
  * gives native's 372-byte frame: loop.c no longer hoists the sprites copy
  * (insn 935, life 13, 17 * 13 >= 123 insns) nor reduces the tile-store giv
@@ -239,17 +249,13 @@ loop:
                     if ((id = ordered[page + index]) != 32) {
                     next:
                         summon = SummonDefinition_Get(id);
-                        required = summon->djinn_required;
-                        supply = standby;
                         element = 0;
-                        if (*required <= *supply) {
+                        if (summon->djinn_required[element] <= standby[element]) {
                             do {
                                 element++;
                                 if (element > 3)
                                     break;
-                                required++;
-                                supply++;
-                            } while (*required <= *supply);
+                            } while (summon->djinn_required[element] <= standby[element]);
                         }
                         affordable = element == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);

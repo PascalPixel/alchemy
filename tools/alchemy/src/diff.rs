@@ -132,7 +132,7 @@ fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
     output.join(directory).join(format!("{stem}.o"))
 }
 
-fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm_study: bool) -> Result<Vec<Vec<String>>, String> {
+pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm_study: bool) -> Result<Vec<Vec<String>>, String> {
     if arm_study && family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
         return Err("--arm studies the pinned game compiler only; library compiler routes are unchanged".into());
     }
@@ -256,7 +256,7 @@ pub(crate) fn compare(listing: &[String], draft: &[String]) -> (usize, Vec<Strin
     (table[0][0] as usize, script)
 }
 
-fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, String> {
+pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, String> {
     let object = object.to_string_lossy();
     let only = symbol.map(|s| format!("--disassemble={s}"));
     let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-r", "--no-show-raw-insn"];
@@ -320,7 +320,7 @@ fn thumb_reference(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -
     Ok(normalize(&code))
 }
 
-fn scaffold_reference(target: DecompTarget, wanted: &str) -> Result<(Vec<String>, String), String> {
+pub(crate) fn scaffold_reference(target: DecompTarget, wanted: &str) -> Result<(Vec<String>, String), String> {
     let output = root().join(target.output_dir);
     let read = |name: &str| std::fs::read(output.join(name))
         .map_err(|error| format!("{}: {error}; build {} first", output.join(name).display(), target.id));
@@ -340,7 +340,7 @@ fn resource_name(path: &str) -> Option<String> {
     id.chars().all(|c| c.is_ascii_hexdigit()).then(|| format!("resource_{id}"))
 }
 
-fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
+pub(crate) fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
     let listing = command(&["arm-none-eabi-nm", "--defined-only", &object.to_string_lossy()], root())?;
     Ok(listing
         .lines()
@@ -351,6 +351,19 @@ fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
         })
         .filter(|n| !n.starts_with('$') && !n.starts_with(".L"))
         .collect())
+}
+
+/// PERM macros are the permuter's notation, not C: diff compares only a
+/// draft the build could compile.
+fn refuse_perm_macros(draft: &Path) -> Result<(), String> {
+    let text = std::fs::read_to_string(draft).map_err(|e| format!("{}: {e}", draft.display()))?;
+    if crate::permute::perm::has_macros(&text) {
+        return Err(format!(
+            "{}: the draft uses PERM macros (PERM_GENERAL, PERM_ONEOF, PERM_LINESWAP, PERM_RANDOMIZE or PERM_IGNORE), which only alchemy permute expands; diff a best-N.c it wrote, or remove the macros",
+            draft.display()
+        ));
+    }
+    Ok(())
 }
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
@@ -369,6 +382,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     std::fs::create_dir_all(object.parent().unwrap()).map_err(|e| e.to_string())?;
     let draft = std::fs::canonicalize(&options.draft)
         .map_err(|e| format!("{}: {e}", options.draft.display()))?;
+    refuse_perm_macros(&draft)?;
     let mut steps = draft_steps(target, &draft, &object, options.arm_study)?;
     if options.rtl {
         steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
@@ -637,6 +651,17 @@ int study(void) { return 17; }
         assert_eq!(japanese.overlay.as_deref(), Some("resource_3b7"));
         assert!(parse(&args(&["08123456.c", "--game", "tla", "--edition", "tbs-ja"])).is_err());
         assert!(parse(&args(&["08123456.c", "--edition", "tbs-xx"])).is_err());
+    }
+
+    #[test]
+    fn drafts_with_perm_macros_are_refused() {
+        let work = tempfile::tempdir().unwrap();
+        let draft = work.path().join("08000000.c");
+        std::fs::write(&draft, "int f(void) { return PERM_ONEOF(1, 2); }\n").unwrap();
+        let error = run(&[draft.to_string_lossy().into_owned()]).unwrap_err();
+        assert!(error.contains("PERM macros") && error.contains("alchemy permute"), "{error}");
+        std::fs::write(&draft, "/* PERM_ONEOF(1, 2) was tried */\nint f(void) { return 1; }\n").unwrap();
+        assert!(refuse_perm_macros(&draft).is_ok());
     }
 
     #[test]

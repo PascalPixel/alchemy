@@ -377,6 +377,7 @@ make deps                              # what unblocks the most (W4)
 alchemy similar                        # nearest C twins in either game
 # Match one function
 alchemy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
+alchemy permute DRAFT.c [ADDR] [--minutes N]   # rewrites and PERM_* choices toward differ 0, in out/permute
 alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a frame gap
 alchemy show EDITION FUNCTION          # a built function beside the ROM
 alchemy adopt ADDR LABEL NAME [--into MODULE.C]   # into its module, out of all scaffolding

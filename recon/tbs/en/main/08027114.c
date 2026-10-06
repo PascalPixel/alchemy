@@ -1,5 +1,5 @@
-/* 08027114: differ 1574 against the 1727-line parent listing (draft 1821,
- * common 987; was 2131).
+/* 08027114: differ 1563 against the 1727-line parent listing (draft 1822,
+ * common 993; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -48,7 +48,9 @@
  * entries[0].x pair written directly 1678; the mode-7 party counts kept in
  * sel 1610. In the djinn case the summon id stays in res (native r6) for
  * the second SummonDefinition_Get, the icon tile stored straight from the
- * loader: 1574 (it was 1943 in the old case order). Next: djinn's register
+ * loader: 1574 (it was 1943 in the old case order). mode and the
+ * selection results as one variable, as native keeps both in r6: 1563
+ * (1887 in the old order). Next: djinn's register
  * (frame 104), the round end at next_round, and the djinn and summon
  * loops. */
 #include "RESOURCE.H"
@@ -178,7 +180,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 k;
     s32 cur;
     s32 order;
-    s32 res;
 
     void DrawPartyPanels(void)
     {
@@ -342,8 +343,8 @@ handshake_done:
             slot = &COUNTDOWN->entries[2];
             slot->oam.word.attr01 = 0x80000400;
             slot->oam.word.attr23 = 0;
-            res = Ui_LoadEntryForKind(actor->class_id, res512);
-            slot->oam.f.tile = res;
+            mode = Ui_LoadEntryForKind(actor->class_id, res512);
+            slot->oam.f.tile = mode;
             slot->oam.f.x = 0;
             slot->oam.f.y = 0x80;
             slot->oam.f.palette = 14;
@@ -385,8 +386,8 @@ mark_visible:
             slot = &COUNTDOWN->entries[0];
             slot->oam.word.attr23 = 0;
             slot->oam.word.attr01 = 0x80002400;
-            res = Resource_LoadIndexedIntoBuffer(res1024, mode);
-            slot->oam.f.tile = res;
+            mode = Resource_LoadIndexedIntoBuffer(res1024, mode);
+            slot->oam.f.tile = mode;
             if (mode == 15) {
                 slot->oam.f.x = 128;
             } else {
@@ -401,13 +402,13 @@ mark_visible:
                 slot = &state->entries[0];
                 slot->oam.f.x = 64;
                 Audio_PlayCue(112);
-                res = BattleTarget_RunSelection(actorId, 1, 1, 0);
+                mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
                 UiWork_Finalize(win, 1);
-                if (res == -1) {
+                if (mode == -1) {
                     goto mark_visible;
                 }
                 kind = 0;
-                aux = res;
+                aux = mode;
                 ent->range = 1;
                 goto commit;
 
@@ -443,11 +444,11 @@ psynergy_menu:
                 }
                 state->pick[cnt] = 0;
                 state->list[cnt] = 0;
-                res = BattleMenu_RunActionSelection(actorId, state->list, cnt);
-                if (res == -1) {
+                mode = BattleMenu_RunActionSelection(actorId, state->list, cnt);
+                if (mode == -1) {
                     goto mark_visible;
                 }
-                sel = state->pick[res];
+                sel = state->pick[mode];
                 param = actor->action_slots[sel].encoded_action & 0x3fff;
                 ability = Ability_GetData(param);
                 cost = ability->range;
@@ -461,8 +462,8 @@ psynergy_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                res = Resource_LoadIndexedEntryToBuffer(param, handle);
-                slot->oam.f.tile = res;
+                mode = Resource_LoadIndexedEntryToBuffer(param, handle);
+                slot->oam.f.tile = mode;
                 state->entryActive[1] = 1;
                 ui->level = 5;
                 if ((s32)ability->pp_cost > (s32)actor->pp) {
@@ -481,12 +482,12 @@ psynergy_menu:
                 }
                 ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
+                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
-                if (res == -1) {
+                if (mode == -1) {
                     goto psynergy_menu;
                 }
                 kind = 1;
@@ -503,16 +504,16 @@ djinn_menu:
                 slot = &state->entries[0];
                 slot->oam.f.x = 80;
                 BattleLayout_HighlightPartyPanels(hdr);
-                res = SummonMenu_SelectSummon(0, 0, state->cost[i]);
+                mode = SummonMenu_SelectSummon(0, 0, state->cost[i]);
                 BattleLayout_HighlightPartyPanels(hdr);
-                if (res == -1) {
+                if (mode == -1) {
                     goto mark_visible;
                 }
                 kind = 6;
-                param = res;
+                param = mode;
                 WaitFrames(1);
                 slot = &state->entries[1];
-                djinn = SummonDefinition_Get(res);
+                djinn = SummonDefinition_Get(mode);
                 ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(10, 17, 17, 3, 6);
@@ -532,7 +533,7 @@ djinn_menu:
                 if (ok == 0) {
                     UiWork_SetParamNibble(2);
                 }
-                UiText_DrawCharacterAtOffset(SummonDefinition_Get(res)->name_message_id + 819,
+                UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + 819,
                                              win, 16, 0);
                 for (k = 0; k <= 3; k++) {
                     if (djinn->djinn_required[k] != 0) {
@@ -545,13 +546,13 @@ djinn_menu:
                 } else {
                     Audio_PlayCue(114);
                 }
-                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                res = BattleTarget_RunSelection(actorId, ability->target_mode, ability->range, res);
+                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = BattleTarget_RunSelection(actorId, ability->target_mode, ability->range, mode);
                 ent->range = ability->range;
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
-                if (res == -1) {
+                if (mode == -1) {
                     goto djinn_menu;
                 }
                 for (k = 0; k <= 3; k++) {
@@ -572,16 +573,16 @@ summon_menu:
                 slot = &state->entries[0];
                 slot->oam.f.x = 144;
                 COUNTDOWN->result[i] = 0x80000000;
-                res = Battle_SelectAbility(actorId, 1);
+                mode = Battle_SelectAbility(actorId, 1);
                 ent->range = 0;
-                if (res == -1) {
+                if (mode == -1) {
                     goto mark_visible;
                 }
                 kind = 5;
-                param = res;
-                COUNTDOWN->result[i] = res;
-                element = (res >> 8) & 15;
-                index = res & 255;
+                param = mode;
+                COUNTDOWN->result[i] = mode;
+                element = (mode >> 8) & 15;
+                index = mode & 255;
                 if (Djinn_IsActiveFar(actorId, element, index) != 0) {
                     ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
                     cost = ability->range;
@@ -594,8 +595,8 @@ summon_menu:
                     ent->range = (u16)cost;
                     WaitFrames(1);
                     Audio_PlayCue(112);
-                    res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                    res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
+                    mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                    mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                     if (state->hintCount != 0) {
                         hint = UiText_ShowMessageAndWaitComplete(3150, 15, 8);
                         while (UiWork_IsComplete() == 0) {
@@ -606,7 +607,7 @@ summon_menu:
                         state->hintTimer = 45;
                     }
                     UiWork_Finalize(win, 1);
-                    if (res == -1) {
+                    if (mode == -1) {
                         goto summon_menu;
                     }
                     goto store_target;
@@ -622,9 +623,9 @@ summon_menu:
                     ent->range = 1;
                     WaitFrames(1);
                     Audio_PlayCue(112);
-                    res = BattleTarget_RunSelection(actorId, 4, 0, 7);
+                    mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
                     UiWork_Finalize(win, 1);
-                    if (res == -1) {
+                    if (mode == -1) {
                         goto summon_menu;
                     }
                     goto store_target;
@@ -676,11 +677,11 @@ item_menu:
                     } while (cur != 0);
                 }
                 state->list[cnt] = 0;
-                res = ItemList_SelectEntry(actorId, state->list, cnt);
-                if (res == -1) {
+                mode = ItemList_SelectEntry(actorId, state->list, cnt);
+                if (mode == -1) {
                     goto mark_visible;
                 }
-                sel = state->pick[res];
+                sel = state->pick[mode];
                 param = sel;
                 ability = Ability_GetData(Item_GetData(actor->inventory[sel])->action_id);
                 cost = ability->range;
@@ -693,19 +694,19 @@ item_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                res = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
-                slot->oam.f.tile = res;
+                mode = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
+                slot->oam.f.tile = mode;
                 state->entryActive[1] = 1;
                 UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + 386,
                                              win, 24, 0);
                 ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
+                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
-                if (res == -1) {
+                if (mode == -1) {
                     goto item_menu;
                 }
                 kind = 2;
@@ -722,15 +723,15 @@ item_menu:
             }
 
 store_target:
-            aux = res;
+            aux = mode;
 
 commit:
             Audio_PlayCue(110);
             ent->unit_id = (u16)actorId;
             order = actor->agility;
             if (order != 0) {
-                res = Random16();
-                order += (s32)((u32)(actor->agility * res) >> 20);
+                mode = Random16();
+                order += (s32)((u32)(actor->agility * mode) >> 20);
             }
             ent->priority = (u16)order;
             if (i != 0) {

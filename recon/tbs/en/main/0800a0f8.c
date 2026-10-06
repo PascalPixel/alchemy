@@ -1,6 +1,8 @@
-/* 0800a0f8: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
-   alchemy diff --camelot-arm: listing 157, draft 157, common 133, differ
-   48 (stock agbcc_arm 124). What remains: the shared 0x8000 lands in r2
+/* 0800a0f8: ARM draft; camelot_arm is an analysis-only study (K1, K3).
+   alchemy diff --camelot-arm, upstream's whole arm_adjust_cost
+   (2026-10-06, session 5): listing 157, draft 157, common 133, differ
+   48, as under the anti/output half alone; stock agbcc_arm 76. The
+   trials below were scored under that half. What remains: the shared 0x8000 lands in r2
    where the listing has r1, and the second smull is scheduled before the
    gScanlineAngle pool load; z's load in r4 where the listing has ip; x in
    r1, not r2, so no ldm r7, {r2, r4} and the second loop smull copies its

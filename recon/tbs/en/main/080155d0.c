@@ -1,4 +1,5 @@
-/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4). Analysis-only ARM study; no route admitted, no credit.
+/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4); draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
+ * alchemy diff --camelot-arm: listing 196, draft 197, common 114, differ 165 (stock agbcc_arm 164).
  * agbcc_arm control (library setting -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4):
  *   listing 196, draft 198, common 115, differ 164
  * agscc control (alchemy diff --arm): listing 196, draft 223, common 24, differ 371

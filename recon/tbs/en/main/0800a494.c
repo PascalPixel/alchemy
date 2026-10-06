@@ -1,4 +1,6 @@
-/* 0800a494: ARM draft; no admitted game ARM build route.
+/* 0800a494: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
+   alchemy diff --camelot-arm: listing 307, draft 296, common 204, differ
+   195 (stock agbcc_arm 199).
    Stock agscc --arm: listing 307, draft 294, common 55, differ 491.
    Fixed agbcc_arm -O2 library setting: 307/296/common202/differ199.
    Shared ScriptMotionObject layout and separate ratio/velocity values come

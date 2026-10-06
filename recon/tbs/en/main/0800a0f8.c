@@ -1,4 +1,7 @@
-/* 0800a0f8: ARM draft; no admitted game ARM build route.
+/* 0800a0f8: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
+   alchemy diff --camelot-arm: listing 157, draft 157, common 105, differ
+   104 (stock agbcc_arm 124). What remains is register choice around the
+   smull pairs and the ldrsh of the stored halfword (native keeps it in lr).
    Control 1, alchemy diff --arm (agscc, -marm): listing 157, draft 157,
    differ 188. Its APCS frame (mov ip, sp; fp; ldmea) and asr #31 / lsr #24
    division never appear in the listing, so it cannot reach 0.

@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 937, common 562, differ 759.
+ * Native 946 instructions, draft 935, common 586, differ 709.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
@@ -81,6 +81,9 @@
  * movs #1, lsls, ands, as the unsigned mask does. Native loads counts once
  * there; the draft still loads it twice. From 760: the test as
  * !(mask & (1 << element)) 760; as if/else 764.
+ * 759 -> 709: tile is a block local in each of its three loops (both page
+ * loops and the highlight loop). As one function-wide variable it was a
+ * global pseudo in r4; native has it in r1 and r2 in those loops.
  * The extra frame slots are loop.c's: in the draw loop it strength-reduces
  * index * 12 + 8 (giv 942, combined with the two tile-address givs) and
  * hoists a sprites copy; native recomputes both each pass, so loop.c did
@@ -137,7 +140,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     s32 drawn_row, drawn_page, row, page, preferred;
     s32 cursor_handle, count, used, element;
     u32 mask;
-    s32 id, tile, affordable, blink;
+    s32 id, affordable, blink;
     struct MenuPoint cursor_position;
     s32 pressed, repeated, result;
     s32 index;
@@ -271,6 +274,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 drawn_page = page;
             }
             if (count > 4) {
+                s32 tile;
+
                 for (index = 0; index < (count + 3) / 4; index++) {
                     tile = index + SUMMON_PAGE_TILE;
                     if (index == page / 4)
@@ -297,7 +302,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         Runtime_PushSlotEntry((s32 *)&cursor, 242);
         blink = gFrameCount & 8;
         {
-            s32 element;
+            s32 element, tile;
 
             for (element = 0; element <= 3; element++) {
                 tile = 15 - (blink != 0);
@@ -307,6 +312,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             }
         }
         if (count > 4) {
+            s32 tile;
+
             for (index = 0; index < (count + 3) / 4; index++) {
                 tile = index + SUMMON_PAGE_TILE;
                 if ((gFrameCount & 15) <= 11 && index == page / 4)

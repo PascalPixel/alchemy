@@ -16,7 +16,6 @@
 #include "FIELDRUN.H"
 #include "HEAP_STATE.H"
 
-#define gKeyState (*(u32 *)&gKeyState)
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
@@ -25,7 +24,7 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *actor);
 void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 extern const s32 Makyuri_ScaleCounterScript[];
-extern u32 gKeysHeld;
+#include "KEYSTATE.H"
 
 struct PushState {
     s32 count;

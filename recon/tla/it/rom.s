@@ -3463,10 +3463,10 @@ Func_080d1eac:
 BattleFx_GetFlags:
 	.incbin "baserom.gba", 0x000d1ed8, 0x00000010
 	.section .rom.000d1ee8, "ax"
-	.global Func_080d4714
-	.type Func_080d4714, %function
+	.global Func_080d1ee8
+	.type Func_080d1ee8, %function
 	.thumb_func
-Func_080d4714:
+Func_080d1ee8:
 	.incbin "baserom.gba", 0x000d1ee8, 0x0000030c
 	.global EventRuntime_UpdateWaitMode
 	.type EventRuntime_UpdateWaitMode, %function
@@ -3687,54 +3687,13 @@ Func_080d41fc:
 	.thumb_func
 Func_080d4330:
 	.incbin "baserom.gba", 0x000d4324, 0x00000054
-	.section .rom.000d43e0, "ax"
-	.global ObjectTable_AllocateAndSetObjectSpeed
-	.type ObjectTable_AllocateAndSetObjectSpeed, %function
-	.thumb_func
-ObjectTable_AllocateAndSetObjectSpeed:
-	.incbin "baserom.gba", 0x000d43e0, 0x00000020
+	.section .rom.000d4400, "ax"
+	.balign 4
 	.global Motion_CamBounds
 	.type Motion_CamBounds, %function
 	.thumb_func
 Motion_CamBounds:
 	.incbin "baserom.gba", 0x000d4400, 0x00000100
-	.global Func_080d450c
-	.type Func_080d450c, %function
-	.thumb_func
-Func_080d450c:
-	.incbin "baserom.gba", 0x000d4500, 0x00000020
-	.global Func_080d452c
-	.type Func_080d452c, %function
-	.thumb_func
-Func_080d452c:
-	.incbin "baserom.gba", 0x000d4520, 0x0000001c
-	.global Func_080d4548
-	.type Func_080d4548, %function
-	.thumb_func
-Func_080d4548:
-	.incbin "baserom.gba", 0x000d453c, 0x00000020
-	.global Func_080d4568
-	.type Func_080d4568, %function
-	.thumb_func
-Func_080d4568:
-	.incbin "baserom.gba", 0x000d455c, 0x00000050
-	.global Func_080d45b8
-	.type Func_080d45b8, %function
-	.thumb_func
-Func_080d45b8:
-	.incbin "baserom.gba", 0x000d45ac, 0x000000ec
-	.section .rom.000d4698, "ax"
-	.global Func_080d4698
-	.type Func_080d4698, %function
-	.thumb_func
-Func_080d4698:
-	.incbin "baserom.gba", 0x000d4698, 0x00000070
-	.section .rom.000d4708, "ax"
-	.global Func_080cae5c
-	.type Func_080cae5c, %function
-	.thumb_func
-Func_080cae5c:
-	.incbin "baserom.gba", 0x000d4708, 0x00000058
 	.section .rom.000d47a8, "ax"
 	.incbin "baserom.gba", 0x000d47a8, 0x000001d8
 	.section .rom.000d4a9c, "ax"

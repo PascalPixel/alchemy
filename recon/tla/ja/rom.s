@@ -3549,60 +3549,13 @@ Func_080d41fc:
 	.thumb_func
 Func_080d4330:
 	.incbin "baserom.gba", 0x000d4310, 0x00000054
-	.section .rom.000d43cc, "ax"
-	.global ObjectTable_AllocateAndSetObjectSpeed
-	.type ObjectTable_AllocateAndSetObjectSpeed, %function
-	.thumb_func
-ObjectTable_AllocateAndSetObjectSpeed:
-	.incbin "baserom.gba", 0x000d43cc, 0x00000020
 	.section .rom.000d43ec, "ax"
+	.balign 4
 	.global Motion_CamBounds
 	.type Motion_CamBounds, %function
 	.thumb_func
 Motion_CamBounds:
 	.incbin "baserom.gba", 0x000d43ec, 0x00000100
-	.section .rom.000d44ec, "ax"
-	.global Func_080d450c
-	.type Func_080d450c, %function
-	.thumb_func
-Func_080d450c:
-	.incbin "baserom.gba", 0x000d44ec, 0x00000020
-	.section .rom.000d450c, "ax"
-	.global Func_080d452c
-	.type Func_080d452c, %function
-	.thumb_func
-Func_080d452c:
-	.incbin "baserom.gba", 0x000d450c, 0x0000001c
-	.section .rom.000d4528, "ax"
-	.global Func_080d4548
-	.type Func_080d4548, %function
-	.thumb_func
-Func_080d4548:
-	.incbin "baserom.gba", 0x000d4528, 0x00000020
-	.section .rom.000d4548, "ax"
-	.global Func_080d4568
-	.type Func_080d4568, %function
-	.thumb_func
-Func_080d4568:
-	.incbin "baserom.gba", 0x000d4548, 0x00000050
-	.section .rom.000d4598, "ax"
-	.global Func_080d45b8
-	.type Func_080d45b8, %function
-	.thumb_func
-Func_080d45b8:
-	.incbin "baserom.gba", 0x000d4598, 0x000000ec
-	.section .rom.000d4684, "ax"
-	.global Func_080d46a4
-	.type Func_080d46a4, %function
-	.thumb_func
-Func_080d46a4:
-	.incbin "baserom.gba", 0x000d4684, 0x00000070
-	.section .rom.000d46f4, "ax"
-	.global Func_080d4714
-	.type Func_080d4714, %function
-	.thumb_func
-Func_080d4714:
-	.incbin "baserom.gba", 0x000d46f4, 0x00000058
 	.section .rom.000d4794, "ax"
 	.global Func_080d47b4
 	.type Func_080d47b4, %function

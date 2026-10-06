@@ -3455,7 +3455,12 @@ Func_080d1d54:
 	.type Func_080d1dac, %function
 	.thumb_func
 Func_080d1dac:
-	.incbin "baserom.gba", 0x000dae18, 0x0000006c
+	.incbin "baserom.gba", 0x000dae18, 0x00000048
+	.global Func_080d1e60
+	.type Func_080d1e60, %function
+	.thumb_func
+Func_080d1e60:
+	.incbin "baserom.gba", 0x000dae60, 0x00000024
 	.section .rom.000daeaa, "ax"
 	.incbin "baserom.gba", 0x000daeaa, 0x00000002
 	.section .rom.000daeac, "ax"
@@ -3464,18 +3469,21 @@ Func_080d1dac:
 	.thumb_func
 Func_080d1eac:
 	.incbin "baserom.gba", 0x000daeac, 0x0000002c
-	.section .rom.000daed8, "ax"
-	.global BattleFx_GetFlags
-	.type BattleFx_GetFlags, %function
-	.thumb_func
-BattleFx_GetFlags:
-	.incbin "baserom.gba", 0x000daed8, 0x00000010
 	.section .rom.000daee8, "ax"
+	.balign 4
 	.global Func_080d4714
 	.type Func_080d4714, %function
 	.thumb_func
 Func_080d4714:
-	.incbin "baserom.gba", 0x000daee8, 0x0000030c
+	.global Func_080d1ee8
+	.type Func_080d1ee8, %function
+	.thumb_func
+Func_080d1ee8:
+	.incbin "baserom.gba", 0x000daee8, 0x00000024
+	.section .rom.000daf20, "ax"
+	.incbin "baserom.gba", 0x000daf20, 0x00000164
+	.section .rom.000db0a4, "ax"
+	.incbin "baserom.gba", 0x000db0a4, 0x00000150
 	.global EventRuntime_UpdateWaitMode
 	.type EventRuntime_UpdateWaitMode, %function
 	.thumb_func
@@ -4152,7 +4160,15 @@ BattleFx_SnapScaleToFull:
 	.type UpdateRisingParticleBurst, %function
 	.thumb_func
 UpdateRisingParticleBurst:
-	.incbin "baserom.gba", 0x000e665c, 0x00000ee8
+	.incbin "baserom.gba", 0x000e665c, 0x000000e0
+	.section .rom.000e6748, "ax"
+	.incbin "baserom.gba", 0x000e6748, 0x00000ac0
+	.section .rom.000e7210, "ax"
+	.global Func_080de21c
+	.type Func_080de21c, %function
+	.thumb_func
+Func_080de21c:
+	.incbin "baserom.gba", 0x000e7210, 0x00000334
 	.section .rom.000e767c, "ax"
 	.global BattleFx_RunOrbitingParticles
 	.type BattleFx_RunOrbitingParticles, %function

@@ -1,3 +1,4 @@
+pub(crate) mod arm;
 pub(crate) mod boxtree;
 pub(crate) mod calcrom;
 pub(crate) mod decomp;

@@ -58,10 +58,41 @@ fn done_line(mark: &str, game: &str, status: &Result<Game, String>) -> String {
             for (object, bytes) in &english.other {
                 line.push_str(&format!(" + unclassified {} ({object})", commas(*bytes)));
             }
+            line.push_str(&arm_part(&super::arm::ArmTally::of(&english.arm)));
             line
         }
         Err(reason) => format!("{mark} {game} DONE: {reason}"),
     }
+}
+
+/// The English build's ARM bytes inside the line: a breakdown of the
+/// totals before it, which it leaves unchanged.
+fn arm_part(t: &super::arm::ArmTally) -> String {
+    let mut part = format!(
+        "; ARM in the English build {} = credited {} (assembly {} + compiler library {} + C {}) + not yet {} (disassembly {} + overlay listings {}) + uncredited padding {}",
+        commas(t.total), commas(t.credited()), commas(t.assembly), commas(t.library), commas(t.c),
+        commas(t.disassembly + t.listings), commas(t.disassembly), commas(t.listings), commas(t.padding)
+    );
+    if t.outside > 0 {
+        part.push_str(&format!(" + outside the executable total {}", commas(t.outside)));
+    }
+    if t.other > 0 {
+        part.push_str(&format!(" + unclassified {}", commas(t.other)));
+    }
+    part
+}
+
+/// out/reports/arm-GAME.tsv: every function's ARM bytes in the English
+/// build, in image and address order, with what its instructions show.
+fn write_arm(root: &std::path::Path, id: &str, english: &super::calcrom::Measurement) -> Result<(), String> {
+    let mut text = format!("{}\n", super::arm::TSV_HEADER);
+    for row in &english.arm {
+        text.push_str(&row.tsv());
+        text.push('\n');
+    }
+    let path = root.join(format!("out/reports/arm-{id}.tsv"));
+    std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
+    std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))
 }
 
 fn edition_lines(mark: &str, status: &Result<Game, String>) -> Vec<String> {
@@ -98,6 +129,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         if let Ok(game) = game {
             write_steered(&root, id, &game.english)?;
             write_missing(&root, id, game)?;
+            write_arm(&root, id, &game.english)?;
         }
     }
     let mut lines = Vec::new();

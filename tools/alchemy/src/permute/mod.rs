@@ -348,10 +348,50 @@ impl Drop for Scratch {
     }
 }
 
+/// Set by the first SIGINT or SIGTERM: the search and the minimizer stop
+/// where they stand, the best so far is written and the scratch removed.
+/// A second signal ends the process at once; the next run sweeps its scratch.
+static INTERRUPTED: AtomicBool = AtomicBool::new(false);
+
+extern "C" fn interrupted(_: libc::c_int) {
+    INTERRUPTED.store(true, Ordering::Relaxed);
+}
+
+fn stop_on_signals() {
+    for signal in [libc::SIGINT, libc::SIGTERM] {
+        // SAFETY: the handler only stores to an atomic, which is
+        // async-signal-safe; SA_RESETHAND restores the default for a second.
+        unsafe {
+            let mut action: libc::sigaction = std::mem::zeroed();
+            action.sa_sigaction = interrupted as *const () as libc::sighandler_t;
+            action.sa_flags = libc::SA_RESETHAND;
+            libc::sigemptyset(&mut action.sa_mask);
+            libc::sigaction(signal, &action, std::ptr::null_mut());
+        }
+    }
+}
+
+/// Remove the scratch of earlier runs on this draft whose process has gone
+/// (killed before its guard could run); a live run's scratch stays.
+fn sweep(output: &Path) {
+    let Ok(entries) = std::fs::read_dir(output) else { return };
+    for entry in entries.flatten() {
+        let name = entry.file_name().to_string_lossy().into_owned();
+        let Some(pid) = name.strip_prefix("run-").and_then(|pid| pid.parse::<libc::pid_t>().ok()) else { continue };
+        // SAFETY: signal 0 only asks whether the process exists.
+        let gone = unsafe { libc::kill(pid, 0) } != 0 && std::io::Error::last_os_error().raw_os_error() == Some(libc::ESRCH);
+        if gone {
+            let _ = std::fs::remove_dir_all(entry.path());
+        }
+    }
+}
+
 fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, output: &Path) -> Result<(), String> {
     // The written spelling first: its preprocessed unit gives the parser
     // its declarations, and its score is where the search starts.
     // This run's own scratch, so two runs on one draft never share files.
+    sweep(output);
+    stop_on_signals();
     let guard = Scratch(output.join(format!("run-{}", std::process::id())));
     let scratch = guard.0.clone();
     let setup = Job::new(&problem, &scratch.join("setup"))?;
@@ -456,6 +496,7 @@ fn search(
                 let (mut best, mut current) = ((base_state.clone(), base.clone()), (base_state.clone(), base.clone()));
                 let mut iteration = 0u64;
                 while !stop.load(Ordering::Relaxed)
+                    && !INTERRUPTED.load(Ordering::Relaxed)
                     && options.iterations.is_none_or(|limit| iteration < limit)
                     && deadline.is_none_or(|deadline| Instant::now() < deadline)
                 {
@@ -618,6 +659,9 @@ fn minimize(problem: &Problem, job: &Job, base: &Found, best: &Found, cache: &mu
         let mut removed = false;
         let mut index = current.steps.len();
         while index > 0 {
+            if INTERRUPTED.load(Ordering::Relaxed) {
+                return current;
+            }
             index -= 1;
             let mut trial = current.steps.clone();
             trial.remove(index);
@@ -850,6 +894,9 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
         if name.starts_with("best-") {
             let _ = std::fs::remove_file(entry.path());
         }
+    }
+    if INTERRUPTED.load(Ordering::Relaxed) {
+        println!("interrupted: the best so far, minimized as far as it got");
     }
     println!("draft:  {}", base.score.summary());
     if found.is_empty() {
@@ -1123,6 +1170,16 @@ mod tests {
             assert!(execute(problem, &options(&draft, function), None, &output).is_err());
             assert!(!output.exists(), "{:?}", std::fs::read_dir(&output).map(|d| d.flatten().map(|e| e.file_name()).collect::<Vec<_>>()));
         }
+        // A killed run's scratch goes at the next run; a live one's stays.
+        let mut child = std::process::Command::new("true").spawn().unwrap();
+        child.wait().unwrap();
+        let (dead, live) = (output.join(format!("run-{}", child.id())), output.join(format!("run-{}", std::process::id())));
+        for directory in [&dead, &live] {
+            std::fs::create_dir_all(directory.join("job-00")).unwrap();
+        }
+        sweep(&output);
+        assert!(!dead.exists() && live.exists());
+        std::fs::remove_dir_all(&output).unwrap();
         // A panic unwinding through a run removes its scratch too.
         let scratch = work.path().join("out/permute/x/run-1");
         std::fs::create_dir_all(scratch.join("job-00")).unwrap();

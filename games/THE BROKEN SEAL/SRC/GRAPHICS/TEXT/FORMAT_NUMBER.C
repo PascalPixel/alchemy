@@ -258,7 +258,8 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 }
 #endif
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || \
+    defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
 #include "RUNTIME_MEM.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
@@ -282,13 +283,17 @@ extern char MsgItemName;
 extern char MsgAbilityName;
 extern char MsgClassName;
 extern char MsgDebugEntryName;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
 extern char MsgItemPluralName;
 #if defined(TBS_EDITION_FR)
 extern s8 UiText_ItemPronoun[];
 #else
 struct ItemPossessiveTable {
+#if defined(TBS_EDITION_ES)
+    s8 *text[2];
+#else
     s8 *text[4];
+#endif
 };
 extern const struct ItemPossessiveTable UiText_ItemPossessives;
 extern const s8 UiText_ItemGenders[];
@@ -315,6 +320,10 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
     u32 prev;
     s32 suffix = 0;
 #else
+#if defined(TBS_EDITION_ES)
+    struct ItemPossessiveTable possessives;
+    s32 form;
+#endif
     s32 suffix = 2;
 #if defined(TBS_EDITION_DE)
     s32 running = 1;
@@ -466,7 +475,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #if defined(TBS_EDITION_EN)
                     head = 0;
 #else
-                    if (ch != ' ') {
+                    if (ch != ' '
+#if defined(TBS_EDITION_ES)
+                        && ch != 161 && ch != 191
+#endif
+                    ) {
                         suffix = 0;
                         if (ch == '.' || ch == '!' || ch == '?')
                             suffix = 2;
@@ -518,10 +531,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 20:
                         no = decode(&st) - 1;
+#if defined(TBS_EDITION_ES)
+                        form = no & 7;
+#endif
                         tmp = UiRender_LookupNamedValue(2, clear);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
                         tmp &= RENDER_ENTRY_MASK;
+#if defined(TBS_EDITION_ES)
+                        if (form == 2 || (form == 3 && plural != 0) || form == 4)
+#else
                         if (no == 2 || (no == 3 && plural != 0) || no == 4)
+#endif
                             UiText_DecodeMessage(tmp + (s32)&MsgItemPluralName, name, 24);
                         else
                             UiText_DecodeMessage(tmp + (s32)&MsgItemName, name, 24);
@@ -608,7 +628,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 24:
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
                         entry[pos] = ' ';
 #else
                         entry[pos] = 143;
@@ -616,7 +636,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = '-';
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
                         entry[pos] = ' ';
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
 #endif
@@ -631,7 +651,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         }
                         break;
 #endif
-#if defined(TBS_EDITION_FR)
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
                     case 13:
 #elif defined(TBS_EDITION_EN)
                     case 25:
@@ -644,6 +664,29 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                             }
                             entry[pos] = 's';
                             pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        }
+                        break;
+#endif
+#if defined(TBS_EDITION_ES)
+                    case 25:
+                        UiRender_LookupNamedValue(2, 0);
+                        possessives = UiText_ItemPossessives;
+                        word = possessives.text[plural];
+                        {
+                            /* FAKEMATCH: as a plain local the counter takes r4, the text r0 and the character r1; native holds the counter in r1, the character in r0 and the text in r4 (16 lines). */
+                            register u32 n asm("r1");
+
+                            n = 0;
+                            for (;;) {
+                                if ((c8 = *word++) == 0)
+                                    break;
+                                if (n == 0 && suffix == 2)
+                                    c8 -= 0x20;
+                                entry[pos] = c8;
+                                pos = (pos + 1) & RENDER_ENTRY_MASK;
+                                if (++n >= 16)
+                                    break;
+                            }
                         }
                         break;
 #endif

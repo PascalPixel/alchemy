@@ -57,6 +57,11 @@
  * inside if (state == 1): the draft's slot moves to count - 12 as native's,
  * differ 1947 (+2). Trial: dx, dy, dz, dist inside if (i != j): 1947, same.
  * Trial: die/other declared after render, or j before i: 1945, unchanged.
+ * Lead to test (loop.c, simplify_giv_expr): a register made by the loop pass
+ * itself (>= max_reg_before_loop), or one not invariant in the inner loop,
+ * cannot enter a giv. The draft's loop dump processes loops last first, inner
+ * before outer, so a copy hoisted from the main loop would come too late;
+ * look for what makes sprites variant or new at the obj loops.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

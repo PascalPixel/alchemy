@@ -4,7 +4,10 @@
    140; stock agbcc_arm 130. Upstream's call rule (a true dependence into
    a CALL_INSN costs 1) costs this draft 16: under the anti/output half
    alone, which the trials below were scored with, it was common 241,
-   differ 124. 146 to 124 (2026-10-06, session 4): the
+   differ 124. Trial (session 5): alchemy permute --camelot-arm
+   --function Object_UpdateAll, 4 minutes, 8 jobs, random rewrites: no
+   candidate beat 140 (weighted 2370; 52 register, 13 reordered, 1
+   inserted, 9 deleted). 146 to 124 (2026-10-06, session 4): the
    target branch calls IwramSqrt and IwramRatioMulQ14 through two locals,
    sq = IwramSqrt; rm = IwramRatioMulQ14, at the branch's start: the
    listing's five ldr rN, =fn; mov lr, pc; bx rN (gcc_arm defines

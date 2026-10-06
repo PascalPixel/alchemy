@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2107, common 1852, differ 508.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 1975, differ 261.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -31,6 +31,25 @@
    the native's -1 store at sp+60; the first count loop through an s8
    temporary 481 alone, 500 with that; redraw = 0 after the status redraw
    583; the permuter's help-text nesting 514; the move loops as do-while 521.
+   The set-all loop indexes ids[i][j]: the native's induction is i * 10
+   halfwords and a strength-reduced pointer, as GCC makes from the index,
+   not an explicit u16 *p (461). Tutorial step 27 sets pressed after repeat:
+   the native has no store or caller-save of pressed there, its tail is
+   shared (2105 instructions, 504). The final entry is a u32 assigned
+   through state->pair_entries[mode] = entry = ids[x][sel]: the native loads
+   it with ldrh and never re-extends (350). A second permuter run (8 min,
+   2 jobs) confirmed step 27 and found step 3 setting repeat before pressed
+   (261). Not kept: its sel = -1 after the status clear and savedY = y
+   before the first list draw give 238, but the native stores -1 before
+   the clear and savedY after the count loop; its count assignment inside
+   the test changes nothing.
+   Up to 350 register allocation was a tie: lists (520 refs, 1589 insns)
+   and the set-all pointer giv (43 refs, 73 insns) both scored 29452 in
+   global.c's allocno_compare, so lists, the lower allocno, took sl; at 261
+   lists is in r9 and the giv and refresh in sl, as the native has them.
+   Remaining (261, one instruction over): reload choices in the opening
+   loops (the native reloads mode into r7 and reuses it as the 0 for i),
+   and scattered lo-register swaps.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -312,10 +331,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     BattlePlacement_UpdateTimedEntriesFar();
                     BattlePlacement_UpdateTimedEntriesFar();
                     Djinn_DeactivateFar(0, 0, 0);
-                    pressed = 2;
                     Trade_AddOfferFar(0, 0, 0);
                     Owner_RecalculateStatsFar(0);
                     repeat = 2;
+                    pressed = 2;
                 }
                 break;
             case 1:
@@ -344,9 +363,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 break;
             case 3:
                 if (lists->tutorial_timer == 90) {
+                    repeat = 16;
                     pressed = 16;
                     lists->tutorial_timer = 0;
-                    repeat = 16;
                     lists->tutorial_step = 4;
                 }
                 break;
@@ -535,9 +554,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 else
                     AudioCommand_PlayFar(175);
                 for (i = 0; i < state->owner_count; i++) {
-                    u16 *p = lists->list.ids[i];
                     for (j = 0; j < lists->list.counts[i]; j++) {
-                        u32 entry = *p++;
+                        u32 entry = lists->list.ids[i][j];
                         s32 usable;
                         usable = 0;
                         if (Trade_CanOfferDjinnFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry)) || Djinn_IsActiveFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry)))
@@ -649,8 +667,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     }
     state->selected_column[mode] = x;
     if (sel != -1) {
-        u16 entry = lists->list.ids[x][sel];
-        state->pair_entries[mode] = entry;
+        u32 entry;
+        state->pair_entries[mode] = entry = lists->list.ids[x][sel];
         state->pair_index[mode] = DJINN_NUMBER(entry);
         state->pair_element[mode] = DJINN_ELEMENT(entry);
         state->pair_owner[mode] = DJINN_OWNER(entry);

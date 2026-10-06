@@ -16775,7 +16775,7 @@ msgctxt "message"
 msgid "04191"
 msgstr "こ"
 
-msgctxt "message"
+msgctxt "MsgItemCommandUse"
 msgid "04192"
 msgstr "つかう"
 

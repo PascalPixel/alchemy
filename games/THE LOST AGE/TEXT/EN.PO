@@ -16787,7 +16787,7 @@ msgctxt "message"
 msgid "04194"
 msgstr "‚±"
 
-msgctxt "message"
+msgctxt "MsgItemCommandUse"
 msgid "04195"
 msgstr "Use"
 

@@ -18627,7 +18627,7 @@ msgctxt "message"
 msgid "04654"
 msgstr "No puedes dártelo a ti mismo."
 
-msgctxt "message"
+msgctxt "MsgItemCommandUse"
 msgid "04655"
 msgstr "Usar"
 

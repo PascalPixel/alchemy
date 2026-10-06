@@ -18627,7 +18627,7 @@ msgctxt "message"
 msgid "04654"
 msgstr "Imposs. scambio con se stessi"
 
-msgctxt "message"
+msgctxt "MsgItemCommandUse"
 msgid "04655"
 msgstr "Usa"
 

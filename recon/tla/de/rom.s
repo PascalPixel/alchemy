@@ -1887,13 +1887,6 @@ Func_080ae868:
 	.thumb_func
 Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000bbc68, 0x0000003c
-	.section .rom.000bbe98, "ax"
-	.balign 4
-	.global Inventory_Find
-	.type Inventory_Find, %function
-	.thumb_func
-Inventory_Find:
-	.incbin "baserom.gba", 0x000bbe98, 0x00000030
 	.section .rom.000bbf34, "ax"
 	.global Inventory_Equip
 	.type Inventory_Equip, %function
@@ -2614,12 +2607,6 @@ Func_080d2d70:
 	.thumb_func
 ObjectMotion_ResetTargetsAndVelocity:
 	.incbin "baserom.gba", 0x000dfde4, 0x00000038
-	.section .rom.000dff48, "ax"
-	.global ObjectMotion_CenterOnColumn
-	.type ObjectMotion_CenterOnColumn, %function
-	.thumb_func
-ObjectMotion_CenterOnColumn:
-	.incbin "baserom.gba", 0x000dff48, 0x00000080
 	.section .rom.000e0070, "ax"
 	.global Func_080d3070
 	.type Func_080d3070, %function

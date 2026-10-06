@@ -17,8 +17,6 @@
 
 #define gWindowWork (*(u8 * *)&gWindowWork)
 
-#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
-
 #if EDITION_INTERNATIONAL
 #define WINDOW_WORK_MESSAGE_BUSY 0x12f8
 #else
@@ -29,6 +27,8 @@ extern volatile s32 gKeysRepeat;
 
 #if defined(TBS_EDITION_EN)
 #define DEBUG_SECOND_FORM ((s32)MsgBecameCursed)
+#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#define DEBUG_SECOND_FORM ((s32)MsgEnd)
 #else
 #define DEBUG_SECOND_FORM ((s32)MsgDebugSecondForm)
 #endif
@@ -122,5 +122,3 @@ void DebugBattle_ViewMessages(void)
         }
     }
 }
-
-#endif

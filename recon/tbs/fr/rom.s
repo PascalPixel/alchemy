@@ -196,12 +196,7 @@ Tile_BuildMetatilesEnd:
 	.thumb_func
 Battle_CollectPartyCommands:
 	.incbin "baserom.gba", 0x000260b8, 0x00001080
-	.section .rom.00028734, "ax"
-	.global DebugMenu_BrowseEntryGlyphs
-	.type DebugMenu_BrowseEntryGlyphs, %function
-	.thumb_func
-DebugMenu_BrowseEntryGlyphs:
-	.incbin "baserom.gba", 0x00028734, 0x00000194
+	.section .rom.000288c8, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:
 	.incbin "baserom.gba", 0x000288c8, 0x00000100
@@ -845,12 +840,6 @@ Inn_PriceMultipliers:
 	.incbin "baserom.gba", 0x000b9204, 0x00000008
 	.section .rom.000b9218, "ax"
 	.incbin "baserom.gba", 0x000b9218, 0x00000040
-	.section .rom.000b9534, "ax"
-	.global DebugBattle_ViewMessages
-	.type DebugBattle_ViewMessages, %function
-	.thumb_func
-DebugBattle_ViewMessages:
-	.incbin "baserom.gba", 0x000b9534, 0x000001ac
 	.section .rom.000c6a22, "ax"
 	.incbin "baserom.gba", 0x000c6a22, 0x00000006
 	.global BattleParty_CenterOrderOffsets

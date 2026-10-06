@@ -307,7 +307,8 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/MENU/FLAGGRID.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/SET_FOUND_FLAG_AND_ADD.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_RESULT_LOOP.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00028440)
+    "*/games/THE BROKEN SEAL/SRC/DEBUG/BROWSE_GLYPHS.o"(.text)
+    "*/recon/tbs/de/rom.o"(.rom.000285d4)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/recon/tbs/de/rom.o"(.rom.00032bd4)
     "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
@@ -540,7 +541,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
     BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000b7b34)
+    "*/games/THE BROKEN SEAL/SRC/DEBUG/VIEW_MESSAGES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/INTRO.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/TILE_PATTERN.o"(.text)

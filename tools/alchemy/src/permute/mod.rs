@@ -28,7 +28,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use types::Env;
 
-const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--iterations N]
+const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--iterations N] [--camelot-arm]
 Searches semantics-preserving rewrites of DRAFT.c until its code matches the
 listing alchemy diff compares it with (ADDRESS defaults to the file name;
 build the edition first). Each candidate compiles with alchemy diff's steps
@@ -54,7 +54,9 @@ draft lines they change (or the whole function as printed, when they do not
 carry over with the same score). The run's scratch is removed however it
 ends. Defaults: --minutes 10, --jobs cores - 2, --seed 1.
 --function names the definition to rewrite when the draft has several;
---iterations bounds each job instead of the clock, so a run repeats exactly."#;
+--iterations bounds each job instead of the clock, so a run repeats exactly.
+--camelot-arm compiles each candidate as alchemy diff --camelot-arm does: a
+☀️ game ARM draft through agbcc/camelot_arm (CAMELOT_ARM_SOURCES, K1)."#;
 
 struct Options {
     draft: PathBuf,
@@ -66,6 +68,7 @@ struct Options {
     seed: u64,
     function: Option<String>,
     iterations: Option<u64>,
+    camelot_arm: bool,
 }
 
 fn parse_options(arguments: &[String]) -> Result<Options, String> {
@@ -77,6 +80,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut seed = 1;
     let mut function = None;
     let mut iterations = None;
+    let mut camelot_arm = false;
     let mut index = 0;
     let value = |index: usize| arguments.get(index).cloned().ok_or_else(|| USAGE.to_string());
     while index < arguments.len() {
@@ -106,6 +110,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 index += 1;
                 function = Some(value(index)?);
             }
+            "--camelot-arm" => camelot_arm = true,
             other if other.starts_with('-') => return Err(format!("unknown permute option: {other}\n{USAGE}")),
             other if draft.is_none() => draft = Some(PathBuf::from(other)),
             other if addresses.is_empty() => addresses = other.split(',').map(str::to_string).collect(),
@@ -135,7 +140,10 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         Some(target) => target,
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
-    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations })
+    if camelot_arm && game != "tbs" {
+        return Err(format!("--camelot-arm compiles ☀️ game ARM C only\n{USAGE}"));
+    }
+    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, camelot_arm })
 }
 
 /// One job's scratch: its candidate file and alchemy diff's steps for it.
@@ -152,7 +160,11 @@ impl Job {
         let candidate = directory.join(problem.draft.file_name().unwrap_or_default());
         // The draft's own steps (its routing and options), aimed at the
         // job's copy and the edition's generated imports.
-        let mut steps = crate::diff::draft_steps(problem.target, &problem.draft, &object, false)?;
+        let mut steps = if problem.camelot_arm {
+            crate::diff::camelot_arm_steps(problem.target, &problem.draft, &object)?
+        } else {
+            crate::diff::draft_steps(problem.target, &problem.draft, &object, false)?
+        };
         let draft = problem.draft.to_string_lossy().into_owned();
         let candidate_text = candidate.to_string_lossy().into_owned();
         let import_from = format!("-I{}", directory.display());
@@ -221,6 +233,7 @@ struct Problem {
     symbol: Option<String>,
     unit: Unit,
     function: Option<String>,
+    camelot_arm: bool,
 }
 
 impl Problem {
@@ -330,6 +343,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         symbol: None,
         unit: Unit::default(),
         function: options.function.clone(),
+        camelot_arm: options.camelot_arm,
     };
     execute(problem, &options, scaffold, &output)
 }
@@ -962,6 +976,22 @@ mod tests {
         assert!(parse_options(&args(&["x.c"])).is_err());
         assert!(parse_options(&args(&["recon/tbs/en/overlays/resource_383_c_020048c8.c"])).is_err());
         assert!(parse_options(&args(&["08000000.c", "--bogus"])).is_err());
+        assert!(!parse_options(&args(&["08000000.c"])).unwrap().camelot_arm);
+        assert!(parse_options(&args(&["recon/tbs/en/main/0800a0f8.c", "--camelot-arm"])).unwrap().camelot_arm);
+        assert!(parse_options(&args(&["08000000.c", "--edition", "tla-en", "--camelot-arm"])).is_err());
+    }
+
+    #[test]
+    fn camelot_arm_jobs_compile_with_the_camelot_arm_route() {
+        let work = tempfile::tempdir().unwrap();
+        let draft = PathBuf::from("recon/tbs/en/main/0800a0f8.c");
+        let mut problem = test_problem(&draft, "void F(void)\n{\n}\n", Vec::new(), None);
+        let thumb = Job::new(&problem, work.path()).unwrap();
+        problem.camelot_arm = true;
+        let arm = Job::new(&problem, work.path()).unwrap();
+        let compiler = |job: &Job| job.steps.iter().flatten().any(|argument| argument.ends_with("agbcc/camelot_arm"));
+        assert!(!compiler(&thumb));
+        assert!(compiler(&arm));
     }
 
     #[test]
@@ -1020,6 +1050,7 @@ mod tests {
             symbol: None,
             unit: scan_unit(text).unwrap_or_default(),
             function: function.map(str::to_string),
+            camelot_arm: false,
         }
     }
 
@@ -1155,6 +1186,7 @@ mod tests {
             jobs: 1,
             seed: 1,
             function: function.map(str::to_string),
+            camelot_arm: false,
             iterations: Some(1),
         };
         let draft = work.path().join("draft/08000000.c");
@@ -1271,6 +1303,7 @@ mod tests {
             symbol: None,
             unit: scan_unit(draft).unwrap_or_default(),
             function: None,
+            camelot_arm: false,
         };
         let state = problem.state(perm::expand(&problem.nodes, None));
         assert!(state.parsed.is_some());
@@ -1326,6 +1359,7 @@ mod tests {
             symbol: None,
             unit: Unit::default(),
             function: None,
+            camelot_arm: false,
         };
         let base_state = problem.state(perm::expand(&problem.nodes, None));
         let setup = Job::new(&problem, &work.path().join("run/setup")).unwrap();
@@ -1346,6 +1380,7 @@ mod tests {
             jobs: 2,
             seed: 1,
             function: None,
+            camelot_arm: false,
             iterations: Some(8),
         };
         let found = search(&problem, &base_state, &base, false, &options, None, &work.path().join("run"), Instant::now()).unwrap();

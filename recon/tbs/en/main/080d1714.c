@@ -34,6 +34,10 @@
  *   the loop matches but for index on the stack.
  * - register on mark, step and alive (the permuter's hint): 1184, no
  *   change; index fixed in r9: 1729, discarded.
+ * - permuter, 4 minutes, PERM_RANDOMIZE over the frame loop's actor
+ *   loop: 20 candidates, none below 1184.
+ * - mark x and velocity_x stored before y: 1182, but the native stores
+ *   y first and still does not hoist the x sum; kept native order.
  * Diagnosis of the index spill (greg dump): index (pseudo 52, 158 refs
  * over 1512 insns) is allocated after about 60 shorter allocnos and
  * finds r5-r11 all taken by conflicts. In the frame loop's actor loop

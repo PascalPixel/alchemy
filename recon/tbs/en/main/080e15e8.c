@@ -1,5 +1,5 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1638, common 1181, differ 916 (native frame 336,
+   listing 1640, draft 1638, common 1182, differ 914 (native frame 336,
    draft 328: two fewer spill slots; native keeps frame * 4 as its own
    induction variable beside frame * 2, which the draft does not).
    Trials:
@@ -7,7 +7,10 @@
    - pts[].y as (y >> 16) + 60, not a halfword cast: 929.
    - size = 5 after the three scale stores: 923.
    - n = frame * 4 - i * 48 - 256 without the reach local: 916.
-   - n = count * 2 - i * 48 - 256: 916, no change. */
+   - n = count * 2 - i * 48 - 256: 916, no change.
+   - ring store as sheet[offset + rings + j]: 914 (native adds offset to
+     work, then rings); (sheet + rings)[offset + j]: 976;
+     sheet[offset + j + rings]: 916. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -122,7 +125,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             if (v < 0) {
                 v = 0;
             }
-            (work->sheet + offset)[rings + j] = v;
+            work->sheet[offset + rings + j] = v;
         }
         offset += j;
     }

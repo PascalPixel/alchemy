@@ -35,8 +35,6 @@ struct PlacementState {
     s32 scale[4];
 };
 
-extern struct PlacementState *Data_03001f2c_a;
-
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 extern struct FourObjectMotionState *gMenuWork;
@@ -44,7 +42,7 @@ extern struct FourObjectMotionState *gMenuWork;
 void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
                                  struct PlacementDescriptor *descriptor)
 {
-    struct PlacementState *state = Data_03001f2c_a;
+    struct PlacementState *state = (struct PlacementState *)gMenuWork;
     s32 i;
     s32 duration;
 
@@ -72,7 +70,7 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 {
-    struct PlacementState *state = Data_03001f2c_a;
+    struct PlacementState *state = (struct PlacementState *)gMenuWork;
     s32 i;
 
     Scheduler_RemoveCallback(Menu_UpdateFirstObjectRowPositions);
@@ -86,7 +84,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 
 void Menu_UpdateFirstObjectRowPositions(void)
 {
-    struct PlacementState *state = Data_03001f2c_a;
+    struct PlacementState *state = (struct PlacementState *)gMenuWork;
     s32 source[2];
     s32 request[4];
     s32 index = 0;

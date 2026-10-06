@@ -30,7 +30,8 @@ union RenderTableValue {
     u32 value;
     struct {
         unsigned short index : 10;
-        unsigned short reserved : 6;
+        unsigned short priority : 2;
+        unsigned short palette : 4;
         u16 high;
     } bits;
     struct {

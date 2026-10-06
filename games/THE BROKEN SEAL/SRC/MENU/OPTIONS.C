@@ -89,16 +89,16 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         VramBlock_LoadCached(x, 256, WorkspaceOptions_SliderTiles);
         y = 0;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-        ((u8 *)&out->table)[1] = (((u8 *)&out->table)[1] & 15) | 224;
+        out->table.bits.palette = SLIDER_PALETTE;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
         out->table.bits.index += 4;
-        ((u8 *)&out->table)[1] = (((u8 *)&out->table)[1] & 15) | 224;
+        out->table.bits.palette = SLIDER_PALETTE;
         y = 16;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-        ((u8 *)&out->table)[1] |= 240;
+        out->table.bits.palette = 15;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
         out->table.bits.index += 4;
-        ((u8 *)&out->table)[1] |= 240;
+        out->table.bits.palette = 15;
     }
 
     x = Resource_FindFreeEntry();

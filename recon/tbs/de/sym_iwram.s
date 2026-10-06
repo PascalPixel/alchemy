@@ -279,8 +279,6 @@ gBattleOwnerStates:
 gMenuWork:
 	.global Data_03001f2c
 Data_03001f2c:
-	.global Data_03001f2c_a
-Data_03001f2c_a:
 	.space 0x00000004
 	.global Data_03001f30
 Data_03001f30:

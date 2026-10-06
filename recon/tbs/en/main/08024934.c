@@ -1,7 +1,97 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 933, common 489, differ 901.
- * Remaining: native 372-byte frame versus 380, spill/register allocation,
+ * Native 946 instructions, draft 918, common 587, differ 690; frame 372
+ * as native's.
+ * Remaining, in order: (a) the draw loop's affordability scan has its
+ * first test duplicated by jump.c before loop.c runs, so CSE folds element
+ * 0 into summon + 4 (insn 2490), GCSE shares it with the column loop's
+ * required (copy 619) and summon + 4 lives in slot 36; native keeps summon
+ * there and recomputes summon + 4 for the columns, its first test using
+ * loop.c's reduced pointers, which suggests the exit test was duplicated
+ * only after loop.c (jump.c copies at most 20 insns). (b) index takes a
+ * call-saved register (r7) where native gives it r4 with caller-saves at
+ * sp+4, so the loops' r4-r7 differ throughout. (c) row r9 and drawn_page
+ * r10 are swapped against native. (d) the compiler temporaries' slots come
+ * in a different order (see below). (e) dirty = 1 then menu_busy = 0 load
+ * two pool constants where native adds 3 to the first.
+ * The draw loop's scan with its own counter n (not the column loop's
+ * element) 696 -> 690; as u8 770, s16 764, u16 949 (frame 368); while
+ * (element <= 3 && ...) element++ 696. The final reset loop as an indexed
+ * for over handles compiles the same (696), so the handle pointer is gone.
+ * dirty and menu_busy stores swapped 696.
+ * No last variable: count - 1 written inline in the scan's start and the
+ * page arithmetic, so it becomes a compiler temporary as native's slot 20
+ * suggested, 735 -> 696. Keeping last only for the keys 741; last set after
+ * used = 0 735. The remaining slot order of compiler temporaries differs:
+ * draft summon + 4 36, row * 2 32, count - 1 28, cursor 24,
+ * cursor_handle << 16 20, &glyph 16, ordered 12, sprites 8; native summon
+ * 36, ordered 32, sprites 28, cursor 24, count - 1 20, row * 2 16,
+ * cursor_handle << 16 12, &glyph 8. Moving the row, drawn_page or page
+ * declaration through ten positions changed nothing (696, one 698).
+ * Both affordability scans as plain indexed for loops with a break
+ * (for (n = 0; n <= 3; n++) if (s->djinn_required[n] > standby[n]) break;)
+ * compile to native's pointer loops: the first scan now matches exactly
+ * (no reload through ip), 759 -> 735; the draw loop's scan is unchanged
+ * from the if/do-while indexed form. Indexed column loop 1036 (frame 368).
+ * The draw loop's affordability scan indexed (summon->djinn_required[element]
+ * <= standby[element]) lets loop.c make the pointers, so GCSE no longer
+ * shares summon + 4 with the column loop: 766 -> 759. Native still keeps
+ * summon itself in slot 36 and recomputes summon + 4 for the columns, where
+ * the draft keeps summon + 4 in slot 32. Indexed scan with [0] for the first
+ * test 884, indexed through a required pointer 881 (both frame 368).
+ * The allocation order (greg dump) puts drawn_page last among the
+ * function-wide scalars, so row takes r9 and drawn_page r10, swapped against
+ * native; declaration order of drawn_row, drawn_page, row, page does not
+ * change it (five orders, all 766).
+ * Session 2: the draw loop written as a rotated goto loop (no loop notes)
+ * gives native's 372-byte frame: loop.c no longer hoists the sprites copy
+ * (insn 935, life 13, 17 * 13 >= 123 insns) nor reduces the tile-store giv
+ * index * 12 + 8, so the base is reloaded from its slot twice and the offset
+ * recomputed each pass, as native does. With that frame, scalars declared
+ * in native slot order (count, window, render, drawn_row, cursor_handle,
+ * description, counts, mask, preferred, cursor_position, summon) put every
+ * user spill slot at native's offset: 796 -> 766. Trials from 796: y set
+ * beside the tile store 796 unchanged; unrotated goto draw loop 803, frame
+ * 368; rotated goto loop alone 880, frame 372.
+ * Session 1 remaining: spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
+ * The scan of available and the compaction into ordered now match apart from
+ * slot offsets and one reload through ip for the first *have load.
+ * Diagnosed: stmt.c's expand_end_loop rolls every exit test within 30 insns
+ * of a while loop's top to its bottom, so `while (*need <= *have) { n++;
+ * if (n > 3) break; ... }` also moved the n > 3 exit; native keeps only the
+ * comparison at the bottom, as `if (c) do { ... } while (c)` gives. Shared
+ * function-wide required/supply/element/id/src pseudos crossed calls
+ * elsewhere, so the scan's need could not take r0 and id lost a call-saved
+ * register; the scan wants its own block locals and an indexed countdown
+ * (biv elimination gives native's cmp src, available). In the draw loop,
+ * loop.c reduces the tile-store giv index * 12 + 8 (lifetime 10, benefit 11,
+ * 124 insns) into slot 8 with a sprites copy at 40; native recomputes it.
+ * From 901: if/do-while affordability checks 894 (scan) and 887 (both);
+ * block-local need/have/n in the scan 881, plus its own id 862; indexed
+ * compaction loop 867, with its own id 848; indexed scan countdown from last
+ * 830. Block-local check in the draw loop 839; for-with-break draw loop and y
+ * beside the tile store both 830 unchanged. drawn_row = row before mask = 0
+ * 825. Indexed display loop (visible[index], &sprites[index]) 796: native's
+ * index counts up there, not reversed; index still takes r7 where native
+ * leaves it r4 with caller-saves at 4. From 825: used = 0 before the list call
+ * 830; counted columns (n * 2 + 13) 827; all-indexed sprite init 825, all
+ * through sprite 870, pointer traversal 884; indexed handle and tile loop
+ * 878 (native's shape there, offset r5 from 8 and stmia handles, but its
+ * base pseudo takes a call-saved register and drawn_page loses r9).
+ * Native's draw block uses r9 for a hoisted 0 and r8 for y; drawn_page is
+ * dead there. From 796: do { } while (1) main loop 796 unchanged; scalars
+ * declared in native slot order (count, window, render, drawn_row,
+ * cursor_handle, description, counts, mask, preferred, cursor_position,
+ * summon) 838, though every spill slot then sits exactly 8 above native's:
+ * reload numbers slots by pseudo, so that order is right once the two
+ * draw-loop giv slots go. In a for (;;) loop, loop.c's find_and_verify_loops
+ * moves the `result = ordered[page + row]; break;` block out of the loop to
+ * the barrier after the scan (b.n -1254 and back); native keeps it inline
+ * with result in r6, which a goto main loop (no loop notes) gives: kept at
+ * 796 (draft 924 instructions), the -1 tilemap row then takes r6 where
+ * native has r5 and native stores a fresh 0 per call. The tile-store giv would stay
+ * unreduced at lifetime 1 (119 vs 124, like giv 938), so native's ldrh and
+ * strh addresses were probably separate givs at loop time.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
  * drawn_row 68 (drawn_page r9, row r10, page r11), cursor_handle 64,
  * description 60, counts 56, mask 52, preferred 48, cursor_position 40-47,
@@ -61,18 +151,20 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     s32 handles[4];
     u8 visible[4];
     s32 glyph;
+    s32 count;
+    struct UiWindow *window;
     struct UiRenderWork *render;
-    struct UiWindow *description, *counts, *window;
-    struct MenuCell *nav;
+    s32 drawn_row, drawn_page, row, page;
+    s32 cursor_handle;
+    struct UiWindow *description, *counts;
+    s32 mask, preferred;
+    struct MenuPoint cursor_position;
     const struct SummonDefinition *summon;
+    struct MenuCell *nav;
     struct MenuSprite *sprite;
     const u8 *required, *supply;
-    u8 *src, *dst;
-    s32 *handle;
-    s32 drawn_row, drawn_page, row, page, preferred;
-    s32 cursor_handle, count, last, used, mask, element;
+    s32 used, element;
     s32 id, tile, affordable;
-    struct MenuPoint cursor_position;
     s32 pressed, repeated, result;
     s32 index;
 
@@ -105,40 +197,38 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     count = Trade_ListFlaggedEntriesFar(available);
     used = 0;
-    last = count - 1;
-    if (last >= 0) {
-        src = available + last;
-        do {
-            id = *src;
-            required = SummonDefinition_Get(id)->djinn_required;
-            supply = standby;
-            element = 0;
-            while (*required <= *supply) {
-                element++;
-                if (element > 3)
+    {
+        s32 i;
+
+        for (i = count - 1; i >= 0; i--) {
+            const struct SummonDefinition *s;
+            s32 n, k;
+
+            k = available[i];
+            s = SummonDefinition_Get(k);
+            for (n = 0; n <= 3; n++) {
+                if (s->djinn_required[n] > standby[n])
                     break;
-                required++;
-                supply++;
             }
-            if (element == 4) {
-                ordered[used++] = id;
-                *src = 32;
+            if (n == 4) {
+                ordered[used++] = k;
+                available[i] = 32;
             }
-            src--;
-        } while ((s32)src >= (s32)available);
+        }
     }
-    dst = ordered + used;
-    src = available;
-    for (index = count; index > 0; index--) {
-        id = *src++;
-        if (id != 32) {
-            *dst++ = id;
-            used++;
+    {
+        s32 i, k;
+
+        for (i = 0; i < count; i++) {
+            k = available[i];
+            if (k != 32)
+                ordered[used++] = k;
         }
     }
     ordered[used] = 32;
 
-    for (;;) {
+loop:
+    {
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
@@ -147,8 +237,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             summon = SummonDefinition_Get(ordered[page + row]);
             UiText_CopyMessageString(summon->name_message_id + (s32)&MsgAbilityDescription, text, 52);
             UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
-            mask = 0;
             drawn_row = row;
+            mask = 0;
             {
                 s32 element;
 
@@ -172,21 +262,17 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 }
                 {
                     s32 element, col, y;
+                    s32 n;
 
                     index = 0;
-                    while (index <= 3 && (id = ordered[page + index]) != 32) {
+                    if ((id = ordered[page + index]) != 32) {
+                    next:
                         summon = SummonDefinition_Get(id);
-                        required = summon->djinn_required;
-                        supply = standby;
-                        element = 0;
-                        while (*required <= *supply) {
-                            element++;
-                            if (element > 3)
+                        for (n = 0; n <= 3; n++) {
+                            if (summon->djinn_required[n] > standby[n])
                                 break;
-                            required++;
-                            supply++;
                         }
-                        affordable = element == 4;
+                        affordable = n == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
                         sprites[index].oam.f.tile = glyph;
                         if (!affordable)
@@ -206,6 +292,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                         }
                         UiWork_SetParamNibble(15);
                         visible[index++] = 1;
+                        if (index <= 3 && (id = ordered[page + index]) != 32)
+                            goto next;
                     }
                     while (index <= 3)
                         visible[index++] = 0;
@@ -225,12 +313,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             render->dirty = 1;
             render->menu_busy = 0;
         }
-        sprite = sprites;
-        src = visible;
         for (index = 0; index <= 3; index++) {
-            if (*src++ != 0)
-                Runtime_PushSlotEntry((s32 *)sprite, 240);
-            sprite++;
+            if (visible[index] != 0)
+                Runtime_PushSlotEntry((s32 *)&sprites[index], 240);
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;
@@ -281,12 +366,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         if (pressed & 1) {
             result = ordered[page + row];
-            break;
+            goto done;
         }
         if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
             AudioCommand_PlayFar(113);
             result = -1;
-            break;
+            goto done;
         }
         if (repeated & 128) {
             AudioCommand_PlayFar(111);
@@ -298,7 +383,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             AudioCommand_PlayFar(111);
             row--;
             if (row < 0) {
-                if (page == (last / 4) * 4)
+                if (page == ((count - 1) / 4) * 4)
                     row = count - page - 1;
                 else
                     row = 3;
@@ -315,7 +400,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             } else {
                 page += 4;
                 row = preferred;
-                if (page == (last / 4) * 4) {
+                if (page == ((count - 1) / 4) * 4) {
                     row = count - page - 1;
                     if (row > preferred)
                         row = preferred;
@@ -328,7 +413,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 row = preferred;
                 page -= 4;
             } else {
-                page = (last / 4) * 4;
+                page = ((count - 1) / 4) * 4;
                 row = preferred;
                 if (page != 0) {
                     row = count - page - 1;
@@ -339,12 +424,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         WaitFrames(1);
     }
+    goto loop;
+done:
     WaitFrames(1);
-    handle = handles;
-    index = 3;
-    do {
-        Resource_ResetEntry(*handle++);
-    } while (--index >= 0);
+    for (index = 0; index < 4; index++)
+        Resource_ResetEntry(handles[index]);
     Resource_ResetEntry((u16)cursor_handle);
     UiWork_Finalize(counts, 1);
     UiWork_Finalize(description, 1);

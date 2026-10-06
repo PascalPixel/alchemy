@@ -197,12 +197,16 @@ or functions is exactly this cheating.
     (`EV08_KAGI` 鍵, `EV52_IDO` 井戸, `EV99_ROUYA` 牢屋), or a terse English
     verb of the period where the code does not show the subject (`EV12_SET`,
     `EV20_MAIN`, `EV94_MAIN`). It is `static` once the table that reaches it
-    lives in the same object. Engine functions keep our `Subsystem_VerbObject`
-    names; short locals; named struct fields.
+    lives in the same object. Engine functions take terse English
+    abbreviations in the register of the event commands, compact CamelCase
+    (`BtlTgtSet`), with romaji only for nouns of the game world; until the
+    final pass reaches them they keep our `Subsystem_VerbObject` names.
+    Short locals; named struct fields.
   - The bytes prove layers, units and calls; the ROM keeps no names (only
     credits text and ⚓️'s build stamp `020610172024`). Names, numbering and
     comments are reconstruction: never present them as recovered.
-  - The showcase is `games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO`, ルンパ城.
+  - The showcase is `Battle_ResolveTargetAction` in
+    `games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in
@@ -247,7 +251,16 @@ never a file or a function.
   file, as pret names its library files: pret's agbcc for MusicPlayer2000
   (`-O2`) and the flash library (`-O`, except two helper files whose bytes
   show `-O2`), and agbcc_arm for RAM-executed ARM code
-  (`-fomit-frame-pointer`). No other routing: never a per-file or
+  (`-fomit-frame-pointer`). ☀️'s seven compiler-shaped game ARM functions
+  are a study, not a route: the hypothesis is that Camelot compiled them with
+  `agbcc/camelot_arm`, agbcc_arm's pinned gcc_arm with upstream GCC's whole
+  `arm_adjust_cost` (agscc's `arm.c`) built by bootstrap, at that library ARM
+  setting. What is proven: the setting's habits (no frame, saves from r5, no
+  r11, interworking returns) run through all seven, and the upstream rules
+  fill load/store slots stock gcc_arm leaves empty, but only
+  Tile_BuildMetatiles, 92 of their 851 instructions, matches under it.
+  `CAMELOT_ARM_SOURCES` stays empty and `--camelot-arm` earns no credit
+  until the study meets K3's bar. No other routing: never a per-file or
   per-function compiler, option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
@@ -293,8 +306,8 @@ never a file or a function.
 
 ### Work
 
-- **W1** Scripts are TypeScript on Bun or Rust; no Python, no shell beyond a
-  command line. New tooling solves a demonstrated recurring blocker and
+- **W1** Tooling is Rust: no TypeScript, JavaScript, Python or shell beyond
+  a command line. New tooling solves a demonstrated recurring blocker and
   carries a test; tooling nothing needs is removed. Pret builds its games with
   about 15,000 lines of tools. _Check: language-check._
 - **W2** Work on your own branch; `main` is the only long-lived branch, and a
@@ -359,8 +372,8 @@ Not rules; what earlier work measured.
 
 ## Commands
 
-Setup needs Apple Silicon macOS with Xcode's command-line tools, Rust with
-Cargo, and Bun. Put your own ROMs under `roms/` as `tbs-en.gba`,
+Setup needs Apple Silicon macOS with Xcode's command-line tools, and Rust
+with Cargo. Put your own ROMs under `roms/` as `tbs-en.gba`,
 `tla-ja.gba` and so on; each is checked before use and none is ever
 committed (L1).
 

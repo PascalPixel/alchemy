@@ -7,7 +7,7 @@ use crate::ld_map::{Map, Placed, ROM};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm] [--rtl] [--heat] [--show]
+const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm | --camelot-arm] [--rtl] [--heat] [--show]
        alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--arm] [--rtl] [--show]
 Compiles DRAFT.c for --edition (default: the game's English edition) with
 the build's own compiler and options, then compares its instructions with
@@ -29,6 +29,11 @@ the full twelve-edition ROM comparison remains the matching authority.
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
 Study output stays in obj/drafts/arm-study; no build routing is changed.
+--camelot-arm is an analysis-only study of a ☀️ draft with agbcc/camelot_arm
+(pinned gcc_arm with upstream GCC's whole arm_adjust_cost) at the library
+ARM setting, assembled as ARM. CAMELOT_ARM_SOURCES is empty: this is not an
+admitted build route and earns no credit, even at differ 0. Study output
+stays in obj/drafts/camelot-arm.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in
 out/EDITION/obj/drafts/rtl/, named DRAFT.c.PASS, to find the pass where the
 draft's allocation or scheduling first leaves the listing's. The lreg and greg
@@ -42,6 +47,8 @@ scheduling cascade from early differences, so start there."#;
 
 const ARM_STUDY_NOTICE: &str = "ARM study only: pinned game compiler, -mthumb replaced by -marm; all other game options unchanged.\nNot an admitted build route; this comparison earns no credit.";
 
+pub(crate) const CAMELOT_ARM_STUDY_NOTICE: &str = "camelot_arm study only: pinned gcc_arm with upstream GCC's whole arm_adjust_cost, library ARM setting.\nNot an admitted build route; this comparison earns no credit.";
+
 struct Options {
     draft: PathBuf,
     addresses: Vec<String>,
@@ -49,6 +56,7 @@ struct Options {
     target: DecompTarget,
     show: bool,
     arm_study: bool,
+    camelot_arm: bool,
     rtl: bool,
     heat: bool,
     overlay: Option<String>,
@@ -62,6 +70,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut target = None;
     let mut show = false;
     let mut arm_study = false;
+    let mut camelot_arm = false;
     let mut rtl = false;
     let mut heat = false;
     let mut overlay = None;
@@ -71,6 +80,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         match arguments[i].as_str() {
             "--show" => show = true,
             "--arm" => arm_study = true,
+            "--camelot-arm" => camelot_arm = true,
             "--rtl" => rtl = true,
             "--heat" => heat = true,
             "--overlay" => {
@@ -132,10 +142,13 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         "tbs"
     });
     let target = target.unwrap_or(decomp_target(Some(&format!("{game}-en")))?);
-    if heat && arm_study {
-        return Err("--heat maps the game route's code; it does not combine with --arm".into());
+    if camelot_arm && (arm_study || game != "tbs") {
+        return Err("--camelot-arm compiles ☀️ game ARM C only, and not with --arm".into());
     }
-    Ok(Options { draft, addresses, game, target, show, arm_study, rtl, heat, overlay, symbol })
+    if heat && arm_study {
+        return Err("--heat maps the game route's or camelot_arm's code; it does not combine with --arm".into());
+    }
+    Ok(Options { draft, addresses, game, target, show, arm_study, camelot_arm, rtl, heat, overlay, symbol })
 }
 
 fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
@@ -143,12 +156,18 @@ fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
     output.join(directory).join(format!("{stem}.o"))
 }
 
+fn camelot_arm_object(output: &Path, stem: &str) -> PathBuf {
+    let directory = "obj/drafts/camelot-arm";
+    output.join(directory).join(format!("{stem}.o"))
+}
+
 pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm_study: bool) -> Result<Vec<Vec<String>>, String> {
     if arm_study && family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
         return Err("--arm studies the pinned game compiler only; library compiler routes are unchanged".into());
     }
-    let mut steps = c_steps(target, draft, object)?;
-    steps.pop();
+    let steps = c_steps(target, draft, object)?;
+    let mut steps = with_draft_assembly(target, object, steps);
+    let assemble = steps.pop().expect("draft plan ends with assembly");
     if arm_study {
         // This command-local experiment never changes the production plan or routing.
         if steps.len() != 1 || steps[0].iter().filter(|flag| *flag == "-mthumb").count() != 1 {
@@ -160,6 +179,25 @@ pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm
             }
         }
     }
+    steps.push(assemble);
+    Ok(steps)
+}
+
+/// A ☀️ draft compiled as a CAMELOT_ARM_SOURCES file is compiled by the build.
+pub(crate) fn camelot_arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
+    if target.compiler != crate::compiler::routing::CompilerTarget::Tbs {
+        return Err("--camelot-arm compiles ☀️ game ARM C only".into());
+    }
+    if family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
+        return Err("--camelot-arm compiles game C only; library compiler routes are unchanged".into());
+    }
+    let steps = crate::build_rom::c_steps_routed(target, draft, object, Some(CompilerFamily::CamelotArm))?;
+    Ok(with_draft_assembly(target, object, steps))
+}
+
+/// Replaces the build's assembly step with the comparison's own assembler.
+fn with_draft_assembly(target: DecompTarget, object: &Path, mut steps: Vec<Vec<String>>) -> Vec<Vec<String>> {
+    steps.pop();
     let mut assemble = vec!["arm-none-eabi-as".to_string(), "-mcpu=arm7tdmi".into()];
     if target.compiler == crate::compiler::routing::CompilerTarget::Tbs {
         assemble.push("-mthumb-interwork".into());
@@ -169,7 +207,7 @@ pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm
         object.with_extension("s").to_string_lossy().into_owned(),
     ]);
     steps.push(assemble);
-    Ok(steps)
+    steps
 }
 
 fn study_assembly(step: &[String], root: &Path) -> Result<String, String> {
@@ -309,11 +347,7 @@ fn source_location(line: &str) -> Option<(String, u32)> {
 /// None for code from another file (a header's inline helper).
 pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>, file_name: &str) -> Result<Vec<(String, Option<u32>)>, String> {
     for step in steps {
-        let mut step = step.clone();
-        if step.iter().any(|argument| argument == "-S") {
-            step.push("-g".into());
-        }
-        command(&step, root())?;
+        command(&with_line_table(step), root())?;
     }
     let object = object.to_string_lossy();
     let only = symbol.map(|s| format!("--disassemble={s}"));
@@ -323,10 +357,66 @@ pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>
     }
     arguments.push(&object);
     let in_draft = |file: &str| Path::new(file).file_name().is_some_and(|name| name == file_name);
-    Ok(normalize_located(&command(&arguments, root())?)
+    let mut rows = normalize_located(&command(&arguments, root())?);
+    if rows.iter().all(|(_, at)| at.is_none()) {
+        // objdump -l rejects gcc_arm's table as mangled: its unit length is
+        // one byte short of its last end_sequence. The DWARF dumper still
+        // reads every row, so place the instructions by address instead.
+        let mut plain = vec!["arm-none-eabi-objdump", "-d", "-r", "--no-show-raw-insn"];
+        if let Some(only) = only.as_deref() {
+            plain.push(only);
+        }
+        plain.push(&object);
+        let table = decoded_lines(&command(&["arm-none-eabi-objdump", "--wide", "--dwarf=decodedline", &object], root())?);
+        rows = located_by_address(&command(&plain, root())?, &table);
+    }
+    Ok(rows
         .into_iter()
         .map(|(row, at)| (row, at.filter(|(file, _)| in_draft(file)).map(|(_, line)| line)))
         .collect())
+}
+
+/// The rows of objdump's decoded line table: (address, file, line).
+fn decoded_lines(dump: &str) -> Vec<(u32, String, u32)> {
+    let mut rows = Vec::new();
+    for line in dump.lines() {
+        // File name (which may hold spaces), line, address, then optional
+        // view and stmt columns.
+        let words: Vec<&str> = line.split_whitespace().collect();
+        let found = (1..words.len()).rev().find_map(|i| {
+            let address = words[i];
+            let address = if address == "0" { Some(0) } else { u32::from_str_radix(address.strip_prefix("0x")?, 16).ok() }?;
+            let number: u32 = words[i - 1].parse().ok()?;
+            let file = words[..i - 1].join(" ");
+            (!file.is_empty() && !file.ends_with(':')).then_some((address, file, number))
+        });
+        rows.extend(found);
+    }
+    rows
+}
+
+/// Each instruction of a plain disassembly, normalized, with the line of
+/// the last table row at or before its address.
+fn located_by_address(objdump: &str, table: &[(u32, String, u32)]) -> Vec<(String, Option<(String, u32)>)> {
+    let mut out = Vec::new();
+    for line in objdump.lines() {
+        let Some(at) = line.trim_start().split_once(":\t").and_then(|(address, _)| u32::from_str_radix(address, 16).ok()) else {
+            continue;
+        };
+        let place = table.iter().filter(|(address, _, _)| *address <= at).max_by_key(|(address, _, _)| *address).map(|(_, file, number)| (file.clone(), *number));
+        out.extend(normalize(line).into_iter().map(|row| (row, place.clone())));
+    }
+    out
+}
+
+/// A compile step with -g added: the driver's (-S) or a direct cc1's
+/// (-dumpbase, the library and camelot_arm routes); other steps unchanged.
+fn with_line_table(step: &[String]) -> Vec<String> {
+    let mut step = step.to_vec();
+    if step.iter().any(|argument| argument == "-S" || argument == "-dumpbase") {
+        step.push("-g".into());
+    }
+    step
 }
 
 /// Where a draft's code differs from its listing, by source line.
@@ -495,6 +585,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if options.arm_study {
         println!("{ARM_STUDY_NOTICE}");
     }
+    if options.camelot_arm {
+        println!("{CAMELOT_ARM_STUDY_NOTICE}");
+    }
     let root = root();
     let target = options.target;
     let stem = options
@@ -502,12 +595,20 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_default();
-    let object = draft_object(&root.join(target.output_dir), &stem, options.arm_study);
+    let object = if options.camelot_arm {
+        camelot_arm_object(&root.join(target.output_dir), &stem)
+    } else {
+        draft_object(&root.join(target.output_dir), &stem, options.arm_study)
+    };
     std::fs::create_dir_all(object.parent().unwrap()).map_err(|e| e.to_string())?;
     let draft = std::fs::canonicalize(&options.draft)
         .map_err(|e| format!("{}: {e}", options.draft.display()))?;
     refuse_perm_macros(&draft)?;
-    let mut steps = draft_steps(target, &draft, &object, options.arm_study)?;
+    let mut steps = if options.camelot_arm {
+        camelot_arm_steps(target, &draft, &object)?
+    } else {
+        draft_steps(target, &draft, &object, options.arm_study)?
+    };
     if options.rtl {
         steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
     }
@@ -565,8 +666,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             .join(target.output_dir)
             .join(format!("obj/recon/{}/raw/{address}.o", options.game));
         if !reference.exists() {
-            if options.arm_study {
-                return Err("--arm needs a separate listing object; ARM main-image scaffold comparison is unsupported".into());
+            if options.arm_study || options.camelot_arm {
+                return Err("--arm and --camelot-arm need a separate listing object; ARM main-image scaffold comparison is unsupported".into());
             }
             let wanted = options.symbol.as_deref().unwrap_or(address);
             let (tokens, name) = scaffold_reference(target, wanted)?;
@@ -592,8 +693,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         }
     }
     if options.heat {
-        let heat_object = draft_object(&root.join(target.output_dir), &format!("{stem}-heat"), false);
-        let steps = draft_steps(target, &draft, &heat_object, false)?;
+        let heat_object = if options.camelot_arm {
+            camelot_arm_object(&root.join(target.output_dir), &format!("{stem}-heat"))
+        } else {
+            draft_object(&root.join(target.output_dir), &format!("{stem}-heat"), false)
+        };
+        let steps = if options.camelot_arm {
+            camelot_arm_steps(target, &draft, &heat_object)?
+        } else {
+            draft_steps(target, &draft, &heat_object, false)?
+        };
         let name = draft.file_name().unwrap_or_default().to_string_lossy().into_owned();
         let located = located(&steps, &heat_object, draft_symbol.as_deref(), &name)?;
         if located.iter().map(|(row, _)| row).ne(compiled.iter()) {
@@ -691,6 +800,28 @@ mod tests {
         assert_eq!(draft_object(output, "0800a0f8", false), output.join("obj/drafts/0800a0f8.o"));
         assert_eq!(draft_object(output, "0800a0f8", true), output.join("obj/drafts/arm-study/0800a0f8.o"));
         assert!(ARM_STUDY_NOTICE.contains("Not an admitted build route"));
+    }
+
+    #[test]
+    fn camelot_arm_is_the_tbs_game_arm_route_and_assembles_as_arm() {
+        let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
+        assert!(parse(&args(&["recon/tbs/en/main/080158e8.c", "--camelot-arm"])).unwrap().camelot_arm);
+        assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--arm"])).is_err());
+        assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--game", "tla"])).is_err());
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let source = root().join("recon/tbs/en/main/08000000.c");
+        let object = root().join(target.output_dir).join("obj/drafts/camelot-arm/test.o");
+        let steps = camelot_arm_steps(target, &source, &object).unwrap();
+        assert_eq!(steps.len(), 3);
+        assert!(steps[1][0].ends_with("agbcc/camelot_arm"));
+        for flag in crate::compiler::routing::agbcc_arm_cflags() {
+            assert!(steps[1].contains(&flag), "{flag}");
+        }
+        assert!(!steps[2].iter().any(|flag| flag == "-mthumb"));
+        let library = root().join("games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C");
+        assert!(camelot_arm_steps(target, &library, &object).is_err());
+        let tla = decomp_target(Some("tla-en")).unwrap();
+        assert!(camelot_arm_steps(tla, &source, &object).is_err());
     }
 
     #[test]
@@ -835,6 +966,19 @@ int study(void) { return 17; }
     }
 
     #[test]
+    fn line_tables_reach_the_driver_and_direct_cc1_compile_steps() {
+        let words = |text: &str| text.split(' ').map(String::from).collect::<Vec<_>>();
+        let cpp = words("cpp0 -lang-c probe.c probe.i");
+        let cc1 = words("agbcc/camelot_arm probe.i -dumpbase probe.c -O2 -o probe.s");
+        let driver = words("xgcc -O2 -S -o probe.s probe.c");
+        let assemble = words("arm-none-eabi-as -o probe.o probe.s");
+        assert_eq!(with_line_table(&cpp), cpp);
+        assert_eq!(with_line_table(&assemble), assemble);
+        assert_eq!(with_line_table(&cc1).last().map(String::as_str), Some("-g"));
+        assert_eq!(with_line_table(&driver).last().map(String::as_str), Some("-g"));
+    }
+
+    #[test]
     fn located_rows_follow_objdump_line_markers() {
         let objdump = "00000000 <f>:\nf():\n/work/probe.c:3\n   0:\tpush\t{lr}\n/work/probe.c:4 (discriminator 1)\n   2:\tmovs\tr0, #1\n/work/EVENT.H:12\n   4:\tbl\t0 <Use>\n";
         let rows = normalize_located(objdump);
@@ -846,6 +990,22 @@ int study(void) { return 17; }
         // A row from a header goes to the next row in the draft.
         let found = heat(&["push {lr}".to_string()], &[("push {lr}".into(), Some(3)), ("bl".into(), None), ("movs r0, #1".into(), Some(9))]);
         assert_eq!((found.lines.into_iter().collect::<Vec<_>>(), found.first), (vec![(9, 2)], Some(9)));
+    }
+
+    #[test]
+    fn located_rows_follow_the_decoded_table_when_objdump_l_cannot() {
+        let dump = "CU: /w/0800a494.c:\nFile name    Line number    Starting address    View    Stmt\n/w/0800a494.c    84    0    x\n/w/0800a494.c    105    0x4    x\n/w/THE BROKEN SEAL/X.H    12    0x8    1    x\n/w/0800a494.c    104    0xc    x\n";
+        let table = decoded_lines(dump);
+        assert_eq!(table, [
+            (0, "/w/0800a494.c".to_string(), 84),
+            (4, "/w/0800a494.c".to_string(), 105),
+            (8, "/w/THE BROKEN SEAL/X.H".to_string(), 12),
+            (12, "/w/0800a494.c".to_string(), 104),
+        ]);
+        let objdump = "00000000 <f>:\n   0:\tpush\t{r4, lr}\n   4:\tmov\tr4, r0\n   8:\tldr\tr0, [r4]\n   c:\tadd\tr0, r0, #1\n  10:\tpop\t{r4, pc}\n";
+        let rows = located_by_address(objdump, &table);
+        let lines: Vec<Option<u32>> = rows.iter().map(|(_, at)| at.as_ref().map(|(_, line)| *line)).collect();
+        assert_eq!(lines, [Some(84), Some(105), Some(12), Some(104), Some(104)]);
     }
 
     #[test]

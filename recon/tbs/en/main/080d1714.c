@@ -1,5 +1,5 @@
-/* 080d1714: differ 892 of 1481 instructions (1471 generated, common
- * 1030). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 888 of 1481 instructions (1471 generated, common
+ * 1032). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
@@ -53,9 +53,10 @@
  *   the threshold loop: 1085 (gcse reuses the earlier wave_x >> 17,
  *   frame 360); center_x = (wave_x >> 17) + 32 as the loop body's
  *   first statement, which loop hoists as the native: 892, frame 356.
- * Remaining: threshold's slot is sp+56 where the native has sp+16 (a
- * later pseudo, as if declared or made later); frame - threshold is
- * not reduced to a giv (native sp+20). */
+ * - threshold declared in the frame > 255 block, a later pseudo as
+ *   the native's low slot suggests: 888; center_x there too: 888.
+ * Remaining: frame - threshold is not reduced to a giv (native
+ * sp+20); the sqrt sums take r4/r5 where the native uses r2/r1. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -157,8 +158,6 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     s32 alive;
     s32 speed;
     s32 angle;
-    s32 threshold;
-    s32 center_x;
     s32 heading[8];
     s32 radius[8];
     s32 spin[8];
@@ -463,6 +462,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             } while (slot != 9);
 
             if (frame > 255) {
+                s32 threshold;
+                s32 center_x;
+
                 shake.z = 0x1000000;
                 shake.x = 0;
                 shake.y = 0;

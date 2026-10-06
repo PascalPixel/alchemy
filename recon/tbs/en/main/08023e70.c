@@ -1,4 +1,5 @@
-/* 08023e70: differ 57 of 1201 (2026-10-06, fourth pass). The id sum now computes n into a block-local first and holds the base in a block-local asm temporary after it: the base is born after the 255 mask dies and takes r3 at all three sites, as in the native (65 to 57). Trials: n and base at function scope 89 (global-alloc gives base r0); base block-local but held before n 383; asm on n with the constant inline 138 (reload, cross-jumped, 1189 insns); =r/"0" form 57 (same); a fixed register asm("r3") with no barrier 138 (combine folds it back inline). Remaining at those sites: sched2 puts ldr r3, =base after lsls, where the native puts it first: the asm insn costs the load 0 cycles (prio 37 against lsls 38). */
+/* 08023e70: differ 47 of 1201 (2026-10-06, fourth pass). The list draw loop indexes the table, while ((code = tbl[page + j]) != 0x80000000): loop.c then reduces &tbl[page + j] to a pointer initialized after the duplicated exit test (native: mov r8, r3 after beq, 0x80000000 in r1), 57 to 47. Trials of the head: code = tbl[page] then entry = &tbl[page] 57; for (entry = &tbl[page]; (code = *entry) ...; entry++) 61; tbl[page + j] reloaded at the loop end 47 (same code); for (; ...; code = *++entry) 57; j = 0 first 57. */
+/* Fourth pass, first step (57). The id sum now computes n into a block-local first and holds the base in a block-local asm temporary after it: the base is born after the 255 mask dies and takes r3 at all three sites, as in the native (65 to 57). Trials: n and base at function scope 89 (global-alloc gives base r0); base block-local but held before n 383; asm on n with the constant inline 138 (reload, cross-jumped, 1189 insns); =r/"0" form 57 (same); a fixed register asm("r3") with no barrier 138 (combine folds it back inline). Remaining at those sites: sched2 puts ldr r3, =base after lsls, where the native puts it first: the asm insn costs the load 0 cycles (prio 37 against lsls 38). */
 /* Third pass (65). Cause found: in the native, the message-id bases 0x666 (both arms) and 0x45f sit in local-alloc pseudos and take r3, first in the allocation order. The draft adds them inline, so they become rotation reloads, and every detail_win and zero reload after them shifts. Tagged asm-held temporaries (base) do this: 137 to 71. The 0x666 arm then resets detail_win before sub_sel as the native stores do (69), and entry is an integer sum page * 4 + tbl (65). Before that, the page wrap setting page = 0 before row = saved_row took 145 to 137 (from the permuter's best-1; its other rewrites are noise). Remaining: the held constant takes r2 where the native has r3, because its life still overlaps the 255 mask; a statement expression, =r/0 or +l constraints all stay at 69. Also left: the start-of-function schedule (movs r6, #0; mov r9, r0) and the k = redraw search-index load. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
 /* MenuCell now includes its automatic-mode word at 0xe0; remove the unused duplicate tail word so selected remains at 0xe4 and total size at 0x104. */
 /* Shared PartyStatusWindow from the verified STATUS.C corpus leaves differ 145. Further search trials: combined initialization, is_used as index, while-loop and memory clobber remain 145; do-while 166; index-first initialization 155; initialization before the clear call 148. Redraw memory/output constraints range 447-722. Clobbering r1 reaches 120 but emits mov-zero rather than the native reload, so it was removed. */
@@ -66,7 +67,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     struct UiWindow *icon_win;
     struct PartyStatusWindow *cursor;
     u32 *pos;
-    u32 *entry;
     u32 cur;
     u32 blink;
     s32 page;
@@ -211,10 +211,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             prev_row = row;
             if (page != prev_page) {
                 RenderOutput_RedrawSavedRect(list_win);
-                entry = (u32 *)((page << 2) + (u32)tbl);
-                code = *entry;
                 j = 0;
-                while (code != 0x80000000) {
+                while ((code = tbl[page + j]) != 0x80000000) {
                     UiWindow_SetTilemapEntry(list_win, (s32)((code & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
                     if (code & 0x3e0000) {
                         UiWork_SetParamNibble(4);
@@ -236,8 +234,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     if (j > 4) {
                         break;
                     }
-                    entry++;
-                    code = *entry;
                 }
                 prev_page = page;
             }

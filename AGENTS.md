@@ -293,8 +293,8 @@ never a file or a function.
 
 ### Work
 
-- **W1** Scripts are TypeScript on Bun or Rust; no Python, no shell beyond a
-  command line. New tooling solves a demonstrated recurring blocker and
+- **W1** Tooling is Rust: no TypeScript, JavaScript, Python or shell beyond
+  a command line. New tooling solves a demonstrated recurring blocker and
   carries a test; tooling nothing needs is removed. Pret builds its games with
   about 15,000 lines of tools. _Check: language-check._
 - **W2** Work on your own branch; `main` is the only long-lived branch, and a
@@ -359,8 +359,8 @@ Not rules; what earlier work measured.
 
 ## Commands
 
-Setup needs Apple Silicon macOS with Xcode's command-line tools, Rust with
-Cargo, and Bun. Put your own ROMs under `roms/` as `tbs-en.gba`,
+Setup needs Apple Silicon macOS with Xcode's command-line tools, and Rust
+with Cargo. Put your own ROMs under `roms/` as `tbs-en.gba`,
 `tla-ja.gba` and so on; each is checked before use and none is ever
 committed (L1).
 

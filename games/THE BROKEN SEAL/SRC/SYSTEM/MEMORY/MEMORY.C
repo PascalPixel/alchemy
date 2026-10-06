@@ -48,7 +48,7 @@ void Ui_LoadWindowGraphics(void)
             REG_DMA3);
     /* FAKEMATCH: the two do-while blocks keep the value-before-address order of the palette stores */
     do {
-        s32 black = 0;
+        u16 black = 0;
         PLTT_BACKDROP = black;
     } while (0);
     do {

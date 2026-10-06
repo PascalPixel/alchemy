@@ -5122,7 +5122,30 @@ Summon_EntryTable:
 	.section .rom.001380ac, "ax"
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"
-	.incbin "baserom.gba", 0x0013ba50, 0x00002980
+	.incbin "baserom.gba", 0x0013ba50, 0x00000b5c
+	.section .rom.0013c5f4, "ax"
+	.balign 4
+	.global Func_0813c5f4
+	.type Func_0813c5f4, %function
+	.thumb_func
+Func_0813c5f4:
+	.incbin "baserom.gba", 0x0013c5f4, 0x0000051c
+	.section .rom.0013cb34, "ax"
+	.balign 4
+	.global Func_0813cb34
+	.type Func_0813cb34, %function
+	.thumb_func
+Func_0813cb34:
+	.incbin "baserom.gba", 0x0013cb34, 0x0000044c
+	.section .rom.0013d098, "ax"
+	.balign 4
+	.global Func_0813d098
+	.type Func_0813d098, %function
+	.thumb_func
+Func_0813d098:
+	.incbin "baserom.gba", 0x0013d098, 0x0000107c
+	.section .rom.0013e114, "ax"
+	.incbin "baserom.gba", 0x0013e114, 0x000002bc
 	.section .rom.0013e3d0, "ax"
 	.global Func_0813e3d0
 	.type Func_0813e3d0, %function
@@ -5219,7 +5242,16 @@ BattleFx_RunNoEffect:
 	.type BattleFx_RunProjectileVolleyB, %function
 	.thumb_func
 BattleFx_RunProjectileVolleyB:
-	.incbin "baserom.gba", 0x0015265c, 0x00003934
+	.incbin "baserom.gba", 0x0015265c, 0x0000225c
+	.section .rom.001548d0, "ax"
+	.balign 4
+	.global Func_081548d0
+	.type Func_081548d0, %function
+	.thumb_func
+Func_081548d0:
+	.incbin "baserom.gba", 0x001548d0, 0x0000048c
+	.section .rom.00154d5c, "ax"
+	.incbin "baserom.gba", 0x00154d5c, 0x00001234
 	.section .rom.0015613e, "ax"
 	.incbin "baserom.gba", 0x0015613e, 0x00000002
 	.section .rom.00156140, "ax"
@@ -5229,6 +5261,10 @@ BattleFx_RunProjectileVolleyB:
 BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x00156140, 0x000013a0
 	.section .rom.00157530, "ax"
+	.global Func_08157530
+	.type Func_08157530, %function
+	.thumb_func
+Func_08157530:
 	.incbin "baserom.gba", 0x00157530, 0x000000bc
 	.section .rom.00157636, "ax"
 	.incbin "baserom.gba", 0x00157636, 0x000006be
@@ -5241,7 +5277,16 @@ BattleFx_RunProjectileVolley:
 	.type BattlePres_RunBurstScene, %function
 	.thumb_func
 BattlePres_RunBurstScene:
-	.incbin "baserom.gba", 0x0015a110, 0x00004060
+	.incbin "baserom.gba", 0x0015a110, 0x00002848
+	.section .rom.0015c970, "ax"
+	.balign 4
+	.global Func_0815c970
+	.type Func_0815c970, %function
+	.thumb_func
+Func_0815c970:
+	.incbin "baserom.gba", 0x0015c970, 0x00000260
+	.section .rom.0015cbd0, "ax"
+	.incbin "baserom.gba", 0x0015cbd0, 0x000015a0
 	.section .rom.0015e22c, "ax"
 	.incbin "baserom.gba", 0x0015e22c, 0x0000005c
 	.global BattleUnit_ProjectToScreen

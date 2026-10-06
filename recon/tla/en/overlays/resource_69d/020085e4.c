@@ -107,3 +107,92 @@ void Func_02000724(s32 id)
     Func_02001e28(object->x, object->z, 0, (height >> 19) + 6);
     Func_02001ef8(object->x, object->z, 0, 128);
 }
+
+extern u8 Data_020026f8[];
+extern s32 Data_02002718;
+void ObjectDispatch_ApplyValueToChildren();
+s32 Func_02001ee8();
+void Func_02001ed8();
+void Func_02001db8();
+s32 Math_Cosine();
+s32 Math_Sine();
+
+s32 Func_02000964(s32 *a, s32 *b)
+{
+    s32 dx = (a[0] - b[0]) >> 16;
+    s32 dz = (a[2] - b[2]) >> 16;
+
+    return Iwram_Sqrt(dx * dx + dz * dz);
+}
+
+struct EventHold {
+    u8 unknown_000[362];
+    u16 hold;
+};
+
+static inline s32 MapAttr(s32 x, s32 z, s32 layer)
+{
+    /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep the argument order */
+    return Func_02001ee8(x, z, layer);
+}
+
+void Func_02000990(struct FieldActor *ball)
+{
+    u8 *work;
+    struct FieldActor *leader;
+    s32 pos[3];
+    s32 d;
+    s32 near;
+    s32 t;
+
+    work = Ram_HeapSlots->event_work;
+    leader = Object_GetById(gPartyState.current_owner);
+    if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 || *(s16 *)(work + 350) != 0
+        || *(s16 *)(work + 360) != 0) {
+        ObjectDispatch_ApplyValueToChildren(ball, 0);
+        return;
+    }
+    ObjectDispatch_ApplyValueToChildren(ball, 16);
+    t = ball->timer + 1;
+    ball->timer = t;
+    if ((t & 31) == 31)
+        Func_02001f08(231);
+    ball->sprite->priority = leader->sprite->priority;
+    if (MapAttr(ball->x, ball->z, 2) == 255)
+        goto stop;
+    pos[0] = ball->x;
+    pos[1] = ball->y;
+    pos[2] = ball->z;
+    Func_02001ed8(pos);
+    d = pos[0];
+    if (d > 0x1100000)
+        goto stop;
+    if (d < -0x200000)
+        goto stop;
+    if (BYTE_AT(ball, 98) == 0) {
+        d = leader->y - ball->y;
+        if (d < 0)
+            d = ball->y - leader->y;
+        near = 0;
+        if (Func_02000964(&leader->x, &ball->x) <= 12 && d < 0xc0000)
+            near = 1;
+        if (near && !GameFlag_Test(260)) {
+            WORD_AT(leader, 104) = (s32)ball;
+            leader->facing = ball->facing;
+            leader->priority_flags &= 254;
+            ((struct EventHold *)work)->hold = 200;
+            gPartyState.render_mode = 0;
+            BYTE_AT(ball, 98) = 1;
+            BYTE_AT(ball, 99) = 1;
+        }
+    }
+    ball->x += Iwram_MulQ16(Math_Cosine(ball->facing), ball->speed);
+    ball->z += Iwram_MulQ16(Math_Sine(ball->facing), ball->speed);
+    return;
+stop:
+    BYTE_AT(ball, 99) = 0;
+    WORD_AT(ball, 108) = 0;
+    Func_02001db8(ball, Data_020026f8);
+    Func_02001f08(228);
+    Data_02002718 = 0;
+}

@@ -485,8 +485,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(10);
     Object_GetById(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
     {
-        /* FAKEMATCH: the facing held in a block temporary keeps the pool where the reference has it; a plain store moves it (measured 2026-10-04). */
-        s32 shown = FACING_SOUTH;
+        u16 shown = FACING_SOUTH;
 
         leader->y.fixed = -PIXELS(32);
         leader->facing = shown;

@@ -1001,16 +1001,15 @@ void FieldScene_ConfigurePairedActors(void)
     ((s32 (*)())Engine_ActorEnableActionCallback)(25, (s32)KuupuappuHeya_PairScriptO);
     Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
-    /* FAKEMATCH: each shown state is parked in a word-sized local before its halfword store, which keeps the constants' loads where the reference has them. */
     {
         u8 *record = (u8 *)Object_GetById(24);
-        s32 shown = 1;
+        u16 shown = 1;
 
         ((struct FieldActor *)record)->timer = shown;
     }
     {
         u8 *record = (u8 *)Object_GetById(25);
-        s32 shown = 3;
+        u16 shown = 3;
 
         ((struct FieldActor *)record)->timer = shown;
     }

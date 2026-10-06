@@ -110,15 +110,13 @@ void BabiFune_RunDeparture(void)
         Event_Wait(10);
     }
     {
-        /* FAKEMATCH: a word temporary builds the colour by a shift, not from the pool. */
-        s32 color = 0x7e00;
+        u16 color = 0x7e00;
 
         PLTT_BACKDROP = color;
     }
     {
-        /* FAKEMATCH: word temporaries keep both blend values in registers across the loop. */
-        s32 bright = 0x1010;
-        s32 dim = 0x810;
+        u16 bright = 0x1010;
+        u16 dim = 0x810;
 
         for (flash = 0; flash < 3; flash++) {
             Audio_PlayCue(212);

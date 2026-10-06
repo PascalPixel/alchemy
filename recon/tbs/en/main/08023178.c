@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1409, common 978, differ 845.
+ * Native 1392 instructions, draft 1409, common 1016, differ 769.
  * The frame now matches (352 bytes). The cursor pixel offsets are one
  * 8-byte struct {x, y}: GCC gives it a DImode pseudo, a field store does not
  * kill it, so the zero initialization survives and the pair spills to one
@@ -8,14 +8,18 @@
  * handleCursor, pix, handleFrame, cnt, extended, keys, text, iconIdx, name,
  * icons, codes, handles. The icon loop's x is its own variable.
  * Remaining: redraw sits in fp where native has r10, and the high-register
- * choices that follow; reload register choices (listCount reuse).
+ * choices that follow; the shared loop index i gets r4 (caller-saved at
+ * sp+4) where native gives it r6; the codes fill keeps -1 in r7 where
+ * native has r8; reload register choices (listCount reuse).
  *
  * Trials session 2 (2026-10-06): face sprite tile read through a pointer
  * fetched before the attribute stores (native order): 1087 -> 1085.
  * Pixel offsets as a struct {x, y} with a separate icon-loop x: 1007 and
  * frame 352. Native pseudo order for the declarations: 873. The name sprite
  * through a pointer declared before icons (native keeps &objName at sp+28
- * above icons/codes/handles): 845. Pixel offsets assigned only when the
+ * above icons/codes/handles): 845. The cursor movement index as its own
+ * variable k, not the shared count n (native keeps it in r5, &cur in r6):
+ * 769. Pixel offsets assigned only when the
  * entry changes (wrong semantics, diagnostic only): 1028, frame still 348.
  *
  * Trials 2026-10-06: searched declaration order alone 1171 -> 1127. The
@@ -118,6 +122,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 keys;
     u16 *text;
     s32 n;
+    s32 k;
     s32 iconIdx;
     struct MenuSprite *name;
     struct MenuSprite *icons;
@@ -233,27 +238,27 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         if (cnt != 0) {
             if ((u32)cur.mode <= 1) {
-                n = cur.pos[cur.mode];
+                k = cur.pos[cur.mode];
                 if ((keys & 0x80) != 0) {
                     keys = 0;
                     AudioCommand_PlayFar(0x6F);
-                    n++;
-                    if (n >= cur.limit) {
-                        n = 0;
+                    k++;
+                    if (k >= cur.limit) {
+                        k = 0;
                         if (cur.mode == 1) {
                             cur.mode = 2;
-                            n = cur.pos[2];
+                            k = cur.pos[2];
                         }
                     }
                 } else if ((keys & 0x40) != 0) {
                     keys = 0;
-                    n--;
+                    k--;
                     AudioCommand_PlayFar(0x6F);
-                    if (n < 0) {
-                        n = cur.limit - 1;
+                    if (k < 0) {
+                        k = cur.limit - 1;
                         if (cur.mode == 1) {
                             cur.mode = 2;
-                            n = cur.pos[2];
+                            k = cur.pos[2];
                         }
                     }
                 } else if ((keys & 0x31) != 0) {
@@ -261,45 +266,45 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     AudioCommand_PlayFar(0x6F);
                     cur.mode ^= 2;
                     if ((gKeysRepeat & KEY_A) != 0) {
-                        n = cur.pos[cur.mode];
+                        k = cur.pos[cur.mode];
                     } else if ((gKeysRepeat & KEY_LEFT) != 0) {
-                        n = cnt - 1;
+                        k = cnt - 1;
                     } else {
-                        n = 0;
+                        k = 0;
                     }
                 }
-                cur.pos[cur.mode] = (s8)n;
+                cur.pos[cur.mode] = (s8)k;
             } else if (cur.mode == 2) {
-                n = cur.pos[2];
-                if (n >= cur.limit) {
-                    n = cur.limit - 1;
+                k = cur.pos[2];
+                if (k >= cur.limit) {
+                    k = cur.limit - 1;
                 }
-                if (n < 0) {
+                if (k < 0) {
                     cur.mode = 0;
-                    n = cur.pos[0];
+                    k = cur.pos[0];
                 } else if ((keys & 0x10) != 0) {
                     keys = 0;
-                    n++;
-                    if (n >= cur.limit) {
+                    k++;
+                    if (k >= cur.limit) {
                         cur.mode = 0;
-                        n = cur.pos[0];
+                        k = cur.pos[0];
                     }
                     AudioCommand_PlayFar(0x6F);
                 } else if ((keys & 0x20) != 0) {
                     keys = 0;
-                    n--;
-                    if (n < 0) {
+                    k--;
+                    if (k < 0) {
                         cur.mode = 0;
-                        n = cur.pos[0];
+                        k = cur.pos[0];
                     }
                     AudioCommand_PlayFar(0x6F);
                 } else if ((keys & 0xC1) != 0) {
                     keys = 0;
                     cur.mode = 0;
-                    n = cur.pos[0];
+                    k = cur.pos[0];
                     AudioCommand_PlayFar(0x6F);
                 }
-                cur.pos[cur.mode] = (s8)n;
+                cur.pos[cur.mode] = (s8)k;
             }
         }
 

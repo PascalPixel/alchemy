@@ -724,6 +724,64 @@ mod tests {
     }
 
     #[test]
+    fn search_reaches_differ_zero_through_diffs_own_compile() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        // The listing: one spelling, compiled as alchemy diff compiles drafts.
+        let reference = work.path().join("reference/08000000.c");
+        let object = work.path().join("reference/obj/08000000.o");
+        std::fs::create_dir_all(object.parent().unwrap()).unwrap();
+        std::fs::write(&reference, "int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return a - b;\n}\n").unwrap();
+        for step in crate::diff::draft_steps(target, &reference, &object, false).unwrap() {
+            crate::process::run(&step, root()).unwrap();
+        }
+        let listing = crate::diff::disassemble(&object, None).unwrap();
+        // The draft offers that spelling only as its second choice.
+        let draft = work.path().join("draft/08000000.c");
+        std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
+        let text = "int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return PERM_ONEOF(b - a, a - b);\n}\n";
+        std::fs::write(&draft, text).unwrap();
+        let nodes = perm::parse(text).unwrap();
+        let problem = Problem {
+            draft: draft.clone(),
+            text: text.into(),
+            stem: "08000000".into(),
+            target,
+            choices: perm::has_choices(&nodes),
+            nodes,
+            listing,
+            symbol: None,
+            unit: Unit::default(),
+            function: None,
+        };
+        let base_state = problem.state(perm::expand(&problem.nodes, None));
+        let setup = Job::new(&problem, &work.path().join("run/setup")).unwrap();
+        let base_text = problem.source(&base_state);
+        let score = problem.evaluate(&setup, &base_text).unwrap();
+        assert!(score.weighted > 0 && score.differ > 0, "{score:?}");
+        // diff's own comparison of the same objects gives the same differ.
+        let compiled = crate::diff::disassemble(&setup.object, None).unwrap();
+        let (common, _) = crate::diff::compare(&problem.listing, &compiled);
+        assert_eq!(score.differ, problem.listing.len() + compiled.len() - 2 * common);
+        let base = Found { score, unnatural: 0, text: base_text, kinds: Vec::new(), job: 0, iteration: 0 };
+        let options = Options {
+            draft,
+            addresses: Vec::new(),
+            game: "tbs",
+            target,
+            minutes: 0.0,
+            jobs: 2,
+            seed: 1,
+            function: None,
+            iterations: Some(8),
+        };
+        let found = search(&problem, &base_state, &base, false, &options, None, &work.path().join("run"), Instant::now()).unwrap();
+        assert_eq!(found[0].score, Score::default());
+        assert!(found[0].text.contains("return a - b;") && !perm::has_macros(&found[0].text));
+    }
+
+    #[test]
     fn rewrites_count_kinds_and_name_perm_only_runs() {
         assert_eq!(rewrites(&[]), "PERM choices only");
     }

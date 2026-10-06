@@ -121,7 +121,7 @@ Func_02004b38:
 	.global Func_02004b40
 	.thumb_func
 Func_02004b40:
-	overlay_veneer Func_08020128
+	overlay_veneer Map_UpdateCurrentTileBlockFar
 	.global Func_02004b48
 	.thumb_func
 Func_02004b48:

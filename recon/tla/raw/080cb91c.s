@@ -164,7 +164,7 @@ Func_080cb91c:
 	strh r3, [r2]
 	cmp r7, #3
 	bne .L_080cba9c
-	bl Func_08020128
+	bl Map_UpdateCurrentTileBlockFar
 	movs r0, #254
 	lsls r0, r0, #1
 	movs r1, #129
@@ -173,7 +173,7 @@ Func_080cb91c:
 	ldr r0, [r3]
 	adds r3, r5, r1
 	ldr r1, [r3]
-	bl Func_08020130
+	bl WorldMap_LoadGraphicsFar
 	b .L_080cbaaa
 .L_080cba90:
 	.4byte Data_02001000

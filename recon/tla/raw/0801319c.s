@@ -67,7 +67,7 @@ Func_0801319c:
 	lsls r2, r2, #8
 	adds r2, #15
 	strh r2, [r3]
-	bl Func_081c0008
+	bl Audio_InitializeRuntimeDefaultsFar
 	bl Func_08014368
 	bl Scheduler_ResetTaskTable
 	ldr r3, .L_08013268

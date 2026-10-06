@@ -5,13 +5,13 @@
 	.thumb_func
 Map_ApplyWorkOriginAndSpanFar:
 	overlay_veneer Func_0802aa74
-	.global Func_08020128
+	.global Map_UpdateCurrentTileBlockFar
 	.thumb_func
-Func_08020128:
+Map_UpdateCurrentTileBlockFar:
 	overlay_veneer Func_0802c4d8
-	.global Func_08020130
+	.global WorldMap_LoadGraphicsFar
 	.thumb_func
-Func_08020130:
+WorldMap_LoadGraphicsFar:
 	overlay_veneer Func_0802be4c
 	.global Object_ResetMotion
 	.thumb_func

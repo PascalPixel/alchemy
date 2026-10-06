@@ -7,9 +7,9 @@ Resource_FarCall010:
 	.thumb_func
 AudioEngine_RunMixerFar:
 	overlay_veneer AudioEngine_RunMixer
-	.global Func_081c0008
+	.global Audio_InitializeRuntimeDefaultsFar
 	.thumb_func
-Func_081c0008:
+Audio_InitializeRuntimeDefaultsFar:
 	overlay_veneer Func_081c0c1c
 	.global Audio_PlayCue
 	.thumb_func

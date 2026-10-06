@@ -121,7 +121,7 @@ Func_02001fd4:
 	.global Func_02001fdc
 	.thumb_func
 Func_02001fdc:
-	overlay_veneer Func_08020128
+	overlay_veneer Map_UpdateCurrentTileBlockFar
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

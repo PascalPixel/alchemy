@@ -1,4 +1,21 @@
-/* 080cbc0c: differ 45 of 1051. Trials: copy wrapper differs 173; fill wrapper stays 45; consumed opaque destination/count operands differ 175; clobbering r5/r6 after copy differs 65. Further trials: empty barriers and a callback pair/array stay 45; a lone r5 clobber lowers the textual diff to 30 but adds two instructions and still caches both operands. Remaining: CSE keeps 0x7800 and gMapCellBuffer in r5/r6 across the Iwram_CopyWords/Iwram_FillWords pair after the piece loop; the native rematerializes both (fill routine in r5), and the rest is that register shift plus literal-pool offsets. Variables for the size or buffer move the shift elsewhere (157-173). */
+/* 080cbc0c: differ 45 of 1051. Trials: copy wrapper differs 173; fill wrapper stays 45; consumed opaque destination/count operands differ 175; clobbering r5/r6 after copy differs 65. Further trials: empty barriers and a callback pair/array stay 45; a lone r5 clobber lowers the textual diff to 30 but adds two instructions and still caches both operands. Consumed copy/fill targets differ 47 together or 45 separately, both with three extra instructions, so neither is retained. A persistent fill callback used for all later fills differs 119/1052. Fixing the existing view lifetime to r9 differs 257/1054 and is rejected. Remaining: CSE keeps 0x7800 and gMapCellBuffer in r5/r6 across the Iwram_CopyWords/Iwram_FillWords pair after the piece loop; the native rematerializes both (fill routine in r5), and the rest is that register shift plus literal-pool offsets. Variables for the size or buffer move the shift elsewhere (157-173). */
+/* Fresh pass: HEAP_STATE.H's existing slot array and names replace the local
+ * u32 declaration and indexing past the gBattleWork pointer object. Starting
+ * at gWorkSlot + HEAP_SLOT_BATTLE keeps differ 45 (1052 draft instructions),
+ * as does sizeof(*work) for its allocation. Separate slot-base loads give 49.
+ * No new register or ordering device is retained.
+ *
+ * Const call arguments, void return signatures, comma expressions and nested
+ * argument sequencing all stay 45. A one-pass pair block gives 43/1052;
+ * individual call blocks give 47/1052. Moving radius initialization gives
+ * 98-102/1053, or 50/1051 before the frame loop, still with cached arguments.
+ * Using the linked map-buffer name throughout gives 684/1037.
+ * All 63 nonempty clobber subsets of r5-r8/r10/r11 were rejected: best 30/1053,
+ * with both arguments still cached; none has the native instruction count.
+ * Adding a copy-result dependency does not improve those results. Clobbering
+ * every saved register gives 140/1051 but spills the native view and grows the
+ * frame. A scoped consumed r9 view plus the other clobbers gives 47/1052.
+ */
 #include "RUNTIME_MEM.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
@@ -11,8 +28,8 @@
 #include "MAP_SCROLL.H"
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
+#include "HEAP_STATE.H"
 
-extern u32 gWorkSlot[];
 
 extern u8 BattlePieceStartX[];
 extern u8 BattlePieceStartY[];
@@ -70,13 +87,13 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     s32 cx;
     s32 cy;
 
-    work = Runtime_AllocateHeapBlock(39, 0x782c);
+    work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
     size = 0x4000;
-    canvas = Runtime_AllocateHeapBlock(40, size);
-    Runtime_AllocateHeapBlock(41, 0x302);
-    slots = (void **)&gBattleWork;
+    canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, size);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+    slots = gWorkSlot + HEAP_SLOT_BATTLE;
     battle = slots[0];
-    view = slots[35];
+    view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
     work->effect = effect;
     BattleFx_ClearActorTimers();
     view->second_mode = 1;
@@ -117,11 +134,11 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    BattleEffect_LoadWork(46, 7, 7, 3, 1);
-    cache = (void **)gWorkSlot;
-    draw0 = cache[46];
-    BattleEffect_LoadWork(47, 7, 7, 3, 2);
-    draw1 = cache[47];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
+    cache = gWorkSlot;
+    draw0 = cache[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+    draw1 = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
     start_y = BattlePieceStartY;
     start_x = BattlePieceStartX;
@@ -343,8 +360,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
         WaitFrames(1);
     }
 
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 1, -1, 0);
     gBgScroll[1].x = work->saved_bg1_x;
@@ -352,7 +369,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-    Runtime_ReleaseHeapBlock(41);
-    Runtime_ReleaseHeapBlock(40);
-    Runtime_ReleaseHeapBlock(39);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }

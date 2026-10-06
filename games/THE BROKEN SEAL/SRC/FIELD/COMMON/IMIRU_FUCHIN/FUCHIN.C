@@ -1203,8 +1203,7 @@ void ImiruFuchin_PlaceDragonsEye(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
-    /* FAKEMATCH: the shared zero keeps r5 instead of r1. */
-    s32 clear = 0;
+    u8 clear = 0;
 
     actor = Object_Create(22, 0xf80000, 0x80000, 0x980000);
     if (actor != NULL) {

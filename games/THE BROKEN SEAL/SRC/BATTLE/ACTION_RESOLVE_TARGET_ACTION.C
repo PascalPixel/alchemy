@@ -129,6 +129,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     u32 n;
     s32 value;
     s32 dmg;
+    s32 apwr;
     s8 *am;
     s32 guard;
     s16 saved[8];
@@ -466,7 +467,9 @@ after_power:
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
+#if !GAME_TLA
         s32 apwr;
+#endif
 
         switch (nibble) {
         case BATTLE_DAMAGE_WEAPON:
@@ -1438,23 +1441,19 @@ after_power:
         case EFX_DRAIN_HP_HALF:
         {
             s32 heal;
-#if GAME_TLA
-            s32 amt;
-#endif
 
             heal = actor->hp;
 #if GAME_TLA
-            amt = dealt;
+            apwr = dealt;
             if (action->effect == EFX_DRAIN_HP_HALF)
-                amt /= 2;
-            dmg = amt;
-            heal += amt;
+                apwr /= 2;
+            dmg = apwr;
 #else
             dmg = dealt;
             if (action->effect == EFX_DRAIN_HP_HALF)
                 dmg /= 2;
-            heal += dmg;
 #endif
+            heal += dmg;
             if (heal > actor->max_hp) {
                 heal = actor->max_hp;
                 dmg = heal - actor->hp;

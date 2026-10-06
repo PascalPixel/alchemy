@@ -8,14 +8,19 @@
  * every damage case moved it from differ 2590 to 779, the additive case's
  * own loop counter to 657, ⚓️'s unsigned guard_level to 552, case 401 as a
  * case of its own in the rate switch (rate 12 set before the test, as the
- * listing does) to 510 (draft 3448, common 3194); ☀️ stays exact. Tried and
- * worse: a while loop
+ * listing does) to 510, the HP drain halving dealt in apwr (declared for
+ * the whole function under GAME_TLA, so it keeps r7 as in the listing) to
+ * 428 (draft 3450, common 3236); ☀️ stays exact. Tried and worse: a while loop
  * for the immobilize scan (832), tmp or one shared amt for the drains (708,
  * 716), while loops for the affinity scans, plain hp/max_hp reads in the
  * heal (557: one ldrh shared by both), the heal branches reading through
- * stat_ptr (808). No change: target_id s32 instead of u8, case 401 last.
- * Still to bring over: the immobilize scan (the listing tests entry 0
- * before the loop), the rate switch's 409 test (the listing derives it from
+ * stat_ptr (808), the HP drain's amount in a block-local amt or with the
+ * new HP held in dmg (605 both). No change: target_id s32 instead of u8,
+ * case 401 last, apwr's place among the declarations, BattleEv_Push
+ * without a prototype, heal += dmg instead of heal += apwr (kept: one line
+ * shared with ☀️).
+ * The enemy-slot scan after a summon now matches. Still to bring over: the
+ * rate switch's 409 test (the listing derives it from
  * 411 in r3; ours loads it fresh in r2), the summon message tail, the heal's
  * target copy (the listing copies r8 again in each branch; ours keeps one
  * copy in r4), argument order at BattleEv_Push calls (the listing sets r0

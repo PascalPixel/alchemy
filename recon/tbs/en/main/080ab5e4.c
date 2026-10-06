@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 1807, differ 596.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2107, common 1852, differ 508.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -23,7 +23,14 @@
    the pointer before the loop: 1503-1512. Its 24 declaration reorders and
    register keywords change nothing; sel = -1 after the cursor goes active
    gives 1422 alone but 610 with the column pointer; redraw = 0 after the
-   status redraw 1443 alone.
+   status redraw 1443 alone. Statement order the native shows, from the
+   same run: tutorial step 28 sets pressed before repeat, step 13 advances
+   the step after pressed (529); the B result is stored before its sound
+   (594 alone); the mode 1 result tests the column flag first (508).
+   Measured and not kept: dropping the opening sel = -1 gives 479 but loses
+   the native's -1 store at sp+60; the first count loop through an s8
+   temporary 481 alone, 500 with that; redraw = 0 after the status redraw
+   583; the permuter's help-text nesting 514; the move loops as do-while 521.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -282,8 +289,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     UiMenu_PositionCursor(150, 26);
                     WaitFrames(1);
                 }
-                repeat = 2;
                 pressed = 2;
+                repeat = 2;
                 break;
             case 27:
                 if (lists->tutorial_timer == 60) {
@@ -359,9 +366,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             case 13:
                 if (lists->tutorial_timer == 40) {
                     lists->tutorial_timer = 0;
-                    lists->tutorial_step++;
                     repeat = 2;
                     pressed = 2;
+                    lists->tutorial_step++;
                 }
                 break;
             case 14:
@@ -469,8 +476,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             redraw = 1;
         }
         if (mode == 0 && (pressed & 0x200)) {
-            AudioCommand_PlayFar(112);
             result = 7;
+            AudioCommand_PlayFar(112);
             break;
         }
         if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
@@ -492,14 +499,18 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 continue;
             }
             if (mode == 1) {
-                if (!(buf[x] & 1))
+                if (buf[x] & 1) {
+                    if (x == state->selected_column[0]) {
+                        if (state->pair_entries[0] & 0x8000)
+                            result = 2;
+                        else
+                            result = 1;
+                    } else {
+                        result = 3;
+                    }
+                } else {
                     result = 4;
-                else if (x != state->selected_column[0])
-                    result = 3;
-                else if (state->pair_entries[0] & 0x8000)
-                    result = 2;
-                else
-                    result = 1;
+                }
             } else {
                 result = 1;
             }

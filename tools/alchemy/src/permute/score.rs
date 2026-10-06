@@ -36,6 +36,11 @@ impl Score {
         (std::cmp::Reverse(if prefix { self.prefix } else { 0 }), self.weighted)
     }
 
+    /// The summary, with the matched prefix when the search ranks by it.
+    pub fn summary_with(&self, prefix: bool) -> String {
+        if prefix { format!("prefix {}, {}", self.prefix, self.summary()) } else { self.summary() }
+    }
+
     pub fn summary(&self) -> String {
         let mut parts = Vec::new();
         for (count, name) in [
@@ -174,6 +179,8 @@ mod tests {
         // Equal prefixes fall back to the weighted score.
         let other = score(&listing, &rows(&["push {r5, lr}", "movs r3, #1", "adds r1, #2", "bx lr"]));
         assert!(early.key(true) < other.key(true));
+        assert_eq!(late.summary_with(true), format!("prefix 3, {}", late.summary()));
+        assert_eq!(late.summary_with(false), late.summary());
     }
 
     #[test]

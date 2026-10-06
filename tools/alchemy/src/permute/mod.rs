@@ -450,7 +450,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
         "{}: listing {} instructions; draft {}; {} job(s), {}, seed {}; rewrites: {}",
         problem.stem,
         problem.listing.len(),
-        base.score.summary(),
+        base.score.summary_with(problem.prefix),
         options.jobs,
         match options.iterations {
             Some(count) => format!("{count} iterations each"),
@@ -613,10 +613,9 @@ fn search(
                         if (candidate.score.key(problem.prefix), candidate.score.differ) < *global {
                             *global = (candidate.score.key(problem.prefix), candidate.score.differ);
                             println!(
-                                "{:>8.1}s  job {job_index:>2}  iteration {iteration:>6}  {}{}",
+                                "{:>8.1}s  job {job_index:>2}  iteration {iteration:>6}  {}",
                                 started.elapsed().as_secs_f64(),
-                                candidate.score.summary(),
-                                if problem.prefix { format!(", prefix {}", candidate.score.prefix) } else { String::new() }
+                                candidate.score.summary_with(problem.prefix)
                             );
                         }
                         if candidate.score.weighted == 0 && candidate.unnatural <= base.unnatural && options.iterations.is_none() {
@@ -960,7 +959,7 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
     if INTERRUPTED.load(Ordering::Relaxed) {
         println!("interrupted: the best so far, minimized as far as it got");
     }
-    println!("draft:  {}", base.score.summary());
+    println!("draft:  {}", base.score.summary_with(problem.prefix));
     if found.is_empty() {
         println!("no candidate beat the draft");
         return Ok(());
@@ -979,8 +978,8 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
         let header = format!(
             "/* alchemy permute {}: {}; draft {}.\n   Job {}, iteration {}; rewrites: {} (minimized from {}: {}).{spelling}{fakematch} */\n",
             problem.stem,
-            best.score.summary(),
-            base.score.summary(),
+            best.score.summary_with(problem.prefix),
+            base.score.summary_with(problem.prefix),
             best.job,
             best.iteration,
             rewrites(&kinds),
@@ -995,7 +994,7 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
         println!(
             "best-{}: {}  {}\n        rewrites {} -> {}: {}",
             index + 1,
-            best.score.summary(),
+            best.score.summary_with(problem.prefix),
             path.strip_prefix(root()).unwrap_or(&path).display(),
             entry.searched.len(),
             kinds.len(),

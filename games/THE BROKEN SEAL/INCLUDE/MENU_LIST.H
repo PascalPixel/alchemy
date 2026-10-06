@@ -79,22 +79,25 @@ struct MenuCell {
     s32 row;
     s32 page;
     s32 preferred_row;
-    u8 unknown_3c[8];
+    s32 command_selection[2];
     void *work;
     s32 busy;
     s32 active;
     u8 unknown_50[0x88];
     s32 auto_enabled;
     s32 auto_delay;
+    s32 auto_mode;
 };
 
 LAYOUT_OFFSET_GUARD(MenuCell_Slide, struct MenuCell, slide_offset, 0x28);
 LAYOUT_OFFSET_GUARD(MenuCell_Row, struct MenuCell, row, 0x30);
+LAYOUT_OFFSET_GUARD(MenuCell_CommandSelection, struct MenuCell, command_selection, 0x3c);
 LAYOUT_OFFSET_GUARD(MenuCell_Work, struct MenuCell, work, 0x44);
 LAYOUT_OFFSET_GUARD(MenuCell_Busy, struct MenuCell, busy, 0x48);
 LAYOUT_OFFSET_GUARD(MenuCell_Active, struct MenuCell, active, 0x4c);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoEnabled, struct MenuCell, auto_enabled, 0xd8);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, auto_delay, 0xdc);
+LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 
 extern struct MenuCell *gLinkCountdownWork;
 extern volatile s32 gKeyState;

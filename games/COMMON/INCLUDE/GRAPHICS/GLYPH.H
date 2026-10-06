@@ -11,6 +11,14 @@ enum { FONT_GLYPH_ROWS = 15 };
 enum { FONT_GLYPH_ROWS = 12 };
 #endif
 
+struct GlyphPalette {
+    u8 slot[256];
+    s32 count;
+};
+
+LAYOUT_SIZE_GUARD(GlyphPalette_Size, struct GlyphPalette, 0x104);
+LAYOUT_OFFSET_GUARD(GlyphPalette_Count, struct GlyphPalette, count, 0x100);
+
 struct FontGlyph {
     u16 width;
     u16 rows[FONT_GLYPH_ROWS];

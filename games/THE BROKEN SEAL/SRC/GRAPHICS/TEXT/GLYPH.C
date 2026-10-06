@@ -19,11 +19,6 @@
 
 u32 Resource_DecodeByteLz(const void *, void *);
 
-struct GlyphPalette {
-    u8 slot[256];
-    s32 count;
-};
-
 typedef struct
 {
     u16 code : 10;

@@ -3528,17 +3528,17 @@ Func_080eb960:
 EffectSlot_UpdateMotion:
 	.incbin "baserom.gba", 0x000f8d24, 0x0000014c
 	.section .rom.000f8eb4, "ax"
-	.global Func_080ebeb4
-	.type Func_080ebeb4, %function
+	.global EffectSlot_SetCallback
+	.type EffectSlot_SetCallback, %function
 	.thumb_func
 	.align 2, 0
-Func_080ebeb4:
+EffectSlot_SetCallback:
 	.incbin "baserom.gba", 0x000f8eb4, 0x00000014
 	.section .rom.000f8ec8, "ax"
-	.global Func_080ebec8
-	.type Func_080ebec8, %function
+	.global EffectSlot_Initialize
+	.type EffectSlot_Initialize, %function
 	.thumb_func
-Func_080ebec8:
+EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000f8ec8, 0x000000a0
 	.section .rom.000f8f94, "ax"
 	.incbin "baserom.gba", 0x000f8f94, 0x000001b8

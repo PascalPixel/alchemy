@@ -89,10 +89,10 @@ Func_0810b1b4:
 	ldr r2, [r6]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl Func_080c85b0
+	bl EffectSlot_InitializeFar
 	adds r0, r5, #0
 	ldr r1, .L_0810b374
-	bl Func_080c85a8
+	bl EffectSlot_SetCallbackFar
 	movs r1, #7
 	adds r0, r5, #0
 	bl EffectSlot_SetObjectModeFar

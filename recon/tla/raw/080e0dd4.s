@@ -96,10 +96,10 @@ Func_080e0dd4:
 	ldr r3, [r5, #8]
 	adds r0, r6, #0
 	lsls r1, r1, #2
-	bl Func_080ebec8
+	bl EffectSlot_Initialize
 	adds r0, r6, #0
 	ldr r1, .L_080e0f38
-	bl Func_080ebeb4
+	bl EffectSlot_SetCallback
 	adds r0, r6, #0
 	movs r1, #7
 	bl EffectSlot_SetObjectMode

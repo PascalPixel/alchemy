@@ -3034,10 +3034,10 @@ EffectSlot_SetPositionFar:
 	.thumb_func
 EffectSlot_SetObjectModeFar:
 	.incbin "baserom.gba", 0x000c85b0, 0x00000008
-	.global Func_080c85a8
-	.type Func_080c85a8, %function
+	.global EffectSlot_SetCallbackFar
+	.type EffectSlot_SetCallbackFar, %function
 	.thumb_func
-Func_080c85a8:
+EffectSlot_SetCallbackFar:
 	.incbin "baserom.gba", 0x000c85b8, 0x00000008
 	.global Camera_WorldToScreenFar
 	.type Camera_WorldToScreenFar, %function

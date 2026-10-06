@@ -17,14 +17,14 @@ EffectSlot_SetPositionFar:
 	.thumb_func
 EffectSlot_SetObjectModeFar:
 	overlay_veneer EffectSlot_SetObjectMode
-	.global Func_080c85a8
+	.global EffectSlot_SetCallbackFar
 	.thumb_func
-Func_080c85a8:
-	overlay_veneer Func_080ebeb4
-	.global Func_080c85b0
+EffectSlot_SetCallbackFar:
+	overlay_veneer EffectSlot_SetCallback
+	.global EffectSlot_InitializeFar
 	.thumb_func
-Func_080c85b0:
-	overlay_veneer Func_080ebec8
+EffectSlot_InitializeFar:
+	overlay_veneer EffectSlot_Initialize
 	.global BattleFx_ClearOwnedSlotFar
 	.thumb_func
 BattleFx_ClearOwnedSlotFar:

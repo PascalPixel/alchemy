@@ -18,6 +18,7 @@
 #include "FIELD_EFFECT.H"
 #include "SCENE.H"
 #include "FIELDRUN.H"
+#include "DISPTRAN.H"
 #include "text/MSG_IDS.H"
 
 
@@ -452,35 +453,35 @@ void FieldScene_PlaceActorTenByFlags(void)
 
 void FieldScene_RunFlag308DialogueBranch(void)
 {
-    Engine_AudioPlayCue((s32)0xf1);
+    Engine_AudioPlayCue(0xf1);
 
-    if (Engine_GameFlagIsSet((s32)0x308) != 0) {
+    if (Engine_GameFlagIsSet(0x308) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 16);
-        Engine_GameFlagClear((s32)0x30b);
-        Engine_GameFlagSet((s32)0x30c);
-        Engine_GameFlagClear((s32)0x30d);
-        Engine_GameFlagClear((s32)0x30e);
+        Engine_GameFlagClear(0x30b);
+        Engine_GameFlagSet(0x30c);
+        Engine_GameFlagClear(0x30d);
+        Engine_GameFlagClear(0x30e);
 
-    } else if (Engine_GameFlagIsSet((s32)0x310) != 0) {
+    } else if (Engine_GameFlagIsSet(0x310) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 16);
-        Engine_GameFlagClear((s32)0x30b);
-        Engine_GameFlagSet((s32)0x30c);
-        Engine_GameFlagClear((s32)0x30d);
-        Engine_GameFlagClear((s32)0x30e);
-    } else if (Engine_GameFlagIsSet((s32)0x311) != 0) {
+        Engine_GameFlagClear(0x30b);
+        Engine_GameFlagSet(0x30c);
+        Engine_GameFlagClear(0x30d);
+        Engine_GameFlagClear(0x30e);
+    } else if (Engine_GameFlagIsSet(0x311) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 64);
-        Engine_GameFlagClear((s32)0x30b);
-        Engine_GameFlagClear((s32)0x30c);
-        Engine_GameFlagSet((s32)0x30d);
-        Engine_GameFlagClear((s32)0x30e);
+        Engine_GameFlagClear(0x30b);
+        Engine_GameFlagClear(0x30c);
+        Engine_GameFlagSet(0x30d);
+        Engine_GameFlagClear(0x30e);
     } else {
         SceneActor_PlacePairAtOffset(10, 0, 128);
-        Engine_GameFlagClear((s32)0x30b);
-        Engine_GameFlagClear((s32)0x30c);
-        Engine_GameFlagClear((s32)0x30d);
-        Engine_GameFlagClear((s32)0x30e);
+        Engine_GameFlagClear(0x30b);
+        Engine_GameFlagClear(0x30c);
+        Engine_GameFlagClear(0x30d);
+        Engine_GameFlagClear(0x30e);
     }
-    Engine_AudioPlayCue((s32)0x121);
+    Engine_AudioPlayCue(0x121);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -500,29 +501,29 @@ void FieldScene_RunActor10Transition30BTo30E(void)
 
 void FieldScene_RunFlag311DialogueBranch(void)
 {
-    Engine_AudioPlayCue((s32)0xf1);
-    if (Engine_GameFlagIsSet((s32)0x311) != 0) {
+    Engine_AudioPlayCue(0xf1);
+    if (Engine_GameFlagIsSet(0x311) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 48);
-        Engine_GameFlagClear((s32)0x30b);
+        Engine_GameFlagClear(0x30b);
 
-        Engine_GameFlagClear((s32)0x30c);
-        Engine_GameFlagSet((s32)0x30d);
-        Engine_GameFlagClear((s32)0x30e);
+        Engine_GameFlagClear(0x30c);
+        Engine_GameFlagSet(0x30d);
+        Engine_GameFlagClear(0x30e);
 
-    } else if (Engine_GameFlagIsSet((s32)0x310) != 0) {
+    } else if (Engine_GameFlagIsSet(0x310) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 32);
-        Engine_GameFlagClear((s32)0x30b);
-        Engine_GameFlagSet((s32)0x30c);
-        Engine_GameFlagClear((s32)0x30d);
-        Engine_GameFlagClear((s32)0x30e);
+        Engine_GameFlagClear(0x30b);
+        Engine_GameFlagSet(0x30c);
+        Engine_GameFlagClear(0x30d);
+        Engine_GameFlagClear(0x30e);
     } else {
         SceneActor_PlacePairAtOffset(10, 0, 112);
-        Engine_GameFlagClear((s32)0x30b);
-        Engine_GameFlagClear((s32)0x30c);
-        Engine_GameFlagClear((s32)0x30d);
-        Engine_GameFlagClear((s32)0x30e);
+        Engine_GameFlagClear(0x30b);
+        Engine_GameFlagClear(0x30c);
+        Engine_GameFlagClear(0x30d);
+        Engine_GameFlagClear(0x30e);
     }
-    Engine_AudioPlayCue((s32)0x121);
+    Engine_AudioPlayCue(0x121);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -581,29 +582,29 @@ void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 
 void FieldScene_RunActorElevenFlaggedSteps(void)
 {
-    Engine_AudioPlayCue((s32)0xf1);
+    Engine_AudioPlayCue(0xf1);
 
-    if (Engine_GameFlagIsSet((s32)0x308) != 0 || Engine_GameFlagIsSet((s32)0x30d) != 0) {
+    if (Engine_GameFlagIsSet(0x308) != 0 || Engine_GameFlagIsSet(0x30d) != 0) {
         SceneActor_PlacePairAtOffset(11, 0, -64);
-        Engine_GameFlagClear((s32)0x30f);
-        Engine_GameFlagClear((s32)0x310);
-        Engine_GameFlagSet((s32)0x311);
-        Engine_GameFlagClear((s32)0x312);
+        Engine_GameFlagClear(0x30f);
+        Engine_GameFlagClear(0x310);
+        Engine_GameFlagSet(0x311);
+        Engine_GameFlagClear(0x312);
 
-    } else if (Engine_GameFlagIsSet((s32)0x30c) != 0) {
+    } else if (Engine_GameFlagIsSet(0x30c) != 0) {
         SceneActor_PlacePairAtOffset(11, 0, -112);
-        Engine_GameFlagClear((s32)0x30f);
-        Engine_GameFlagSet((s32)0x310);
-        Engine_GameFlagClear((s32)0x311);
-        Engine_GameFlagClear((s32)0x312);
+        Engine_GameFlagClear(0x30f);
+        Engine_GameFlagSet(0x310);
+        Engine_GameFlagClear(0x311);
+        Engine_GameFlagClear(0x312);
     } else {
         SceneActor_PlacePairAtOffset(11, 0, -128);
-        Engine_GameFlagSet((s32)0x30f);
-        Engine_GameFlagClear((s32)0x310);
-        Engine_GameFlagClear((s32)0x311);
-        Engine_GameFlagClear((s32)0x312);
+        Engine_GameFlagSet(0x30f);
+        Engine_GameFlagClear(0x310);
+        Engine_GameFlagClear(0x311);
+        Engine_GameFlagClear(0x312);
     }
-    Engine_AudioPlayCue((s32)0x121);
+    Engine_AudioPlayCue(0x121);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -859,7 +860,7 @@ void DialogueLayout_ConfigureGroupOne(void)
 {
     { s32 x = 8; s32 y = 29; Engine_MapCopyCellAttributes(8, 42, 15, 5,  x, y); }
 
-    if (Engine_GameFlagIsSet((s32)0x301) != 0) {
+    if (Engine_GameFlagIsSet(0x301) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 22, 31);
         { s32 x = 8; s32 y = 30; Engine_MapCopyCellAttributes(9, 30, 1, 3,  x, y); }
     } else {
@@ -867,7 +868,7 @@ void DialogueLayout_ConfigureGroupOne(void)
         { s32 x = 22; s32 y = 30; Engine_MapCopyCellAttributes(9, 30, 1, 3,  x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x302) != 0) {
+    if (Engine_GameFlagIsSet(0x302) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 12, 29);
         { s32 x = 11; s32 y = 33; Engine_MapCopyCellAttributes(14, 33, 3, 1,  x, y); }
     } else {
@@ -875,7 +876,7 @@ void DialogueLayout_ConfigureGroupOne(void)
         { s32 x = 11; s32 y = 29; Engine_MapCopyCellAttributes(14, 29, 3, 1,  x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x303) != 0) {
+    if (Engine_GameFlagIsSet(0x303) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 18, 29);
         { s32 x = 17; s32 y = 33; Engine_MapCopyCellAttributes(14, 33, 3, 1,  x, y); }
     } else {
@@ -888,7 +889,7 @@ void DialogueLayout_ConfigureGroupTwo(void)
 {
     { s32 x = 12; s32 y = 8; Engine_MapCopyCellAttributes(0, 28, 10, 18,  x, y); }
 
-    if (Engine_GameFlagIsSet((s32)0x304) != 0) {
+    if (Engine_GameFlagIsSet(0x304) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 21, 20);
         { s32 x = 13; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
     } else {
@@ -896,18 +897,18 @@ void DialogueLayout_ConfigureGroupTwo(void)
         { s32 x = 21; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x305) != 0) {
+    if (Engine_GameFlagIsSet(0x305) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 12, 20);
         { s32 x = 12; s32 y = 19; Engine_MapCopyCellAttributes(5, 19, 1, 3,  x, y); }
         { s32 x = 13; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
-        if (Engine_GameFlagIsSet((s32)0x304) != 0) {
+        if (Engine_GameFlagIsSet(0x304) != 0) {
             SceneActor_PlaceAtTileAndMark(8, 21, 20);
             { s32 x = 13; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
             { s32 x = 12; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
         }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x306) != 0) {
+    if (Engine_GameFlagIsSet(0x306) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 15, 21);
         { s32 x = 14; s32 y = 17; Engine_MapCopyCellAttributes(14, 18, 3, 1,  x, y); }
     } else {
@@ -915,7 +916,7 @@ void DialogueLayout_ConfigureGroupTwo(void)
         { s32 x = 14; s32 y = 21; Engine_MapCopyCellAttributes(14, 18, 3, 1,  x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x307) != 0) {
+    if (Engine_GameFlagIsSet(0x307) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 19, 8);
         { s32 x = 18; s32 y = 25; Engine_MapCopyCellAttributes(14, 18, 3, 1,  x, y); }
     } else {
@@ -928,10 +929,10 @@ void DialogueLayout_ConfigureGroupThree(void)
 {
     { s32 x = 12, y = 21; Engine_MapCopyCellAttributes(12, 3, 9, 16, x, y); }
 
-    if (Engine_GameFlagIsSet((s32)0x308) != 0) {
+    if (Engine_GameFlagIsSet(0x308) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 14, 25);
         { s32 x = 20, y = 24; Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y); }
-    } else if (Engine_GameFlagIsSet((s32)0x309) != 0) {
+    } else if (Engine_GameFlagIsSet(0x309) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 17, 25);
         { s32 y = 24;
           Engine_MapCopyCellAttributes(18, 24, 1, 3, 20, y);
@@ -943,7 +944,7 @@ void DialogueLayout_ConfigureGroupThree(void)
         { s32 x = 14, y = 24; Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x30a) != 0) {
+    if (Engine_GameFlagIsSet(0x30a) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 13, 35);
         { s32 x = 15, y = 34; Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y); }
     } else {
@@ -951,27 +952,27 @@ void DialogueLayout_ConfigureGroupThree(void)
         { s32 x = 13, y = 34; Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x30b) != 0) {
+    if (Engine_GameFlagIsSet(0x30b) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 22);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
           Engine_MapCopyCellAttributes(5, 41, 3, 1, x, 22);
         }
-    } else if (Engine_GameFlagIsSet((s32)0x30c) != 0) {
+    } else if (Engine_GameFlagIsSet(0x30c) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 23);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(5, 42, 3, 1, x, 23);
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
           Engine_MapCopyCellAttributes(10, 44, 3, 1, x, 21);
         }
-    } else if (Engine_GameFlagIsSet((s32)0x30d) != 0) {
+    } else if (Engine_GameFlagIsSet(0x30d) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 26);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
           Engine_MapCopyCellAttributes(5, 43, 3, 1, x, 26);
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
         }
-    } else if (Engine_GameFlagIsSet((s32)0x30e) != 0) {
+    } else if (Engine_GameFlagIsSet(0x30e) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 27);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
@@ -982,25 +983,25 @@ void DialogueLayout_ConfigureGroupThree(void)
         SceneActor_PlaceAtTileAndMark(10, 15, 30);
     }
 
-    if (Engine_GameFlagIsSet((s32)0x30f) != 0) {
+    if (Engine_GameFlagIsSet(0x30f) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 23);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
           Engine_MapCopyCellAttributes(10, 40, 3, 1, x, 23);
         }
-    } else if (Engine_GameFlagIsSet((s32)0x310) != 0) {
+    } else if (Engine_GameFlagIsSet(0x310) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 24);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
           Engine_MapCopyCellAttributes(10, 41, 3, 1, x, 24);
         }
-    } else if (Engine_GameFlagIsSet((s32)0x311) != 0) {
+    } else if (Engine_GameFlagIsSet(0x311) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 27);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
           Engine_MapCopyCellAttributes(10, 42, 3, 1, x, 27);
         }
-    } else if (Engine_GameFlagIsSet((s32)0x312) != 0) {
+    } else if (Engine_GameFlagIsSet(0x312) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 28);
         { s32 x = 14;
           Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
@@ -1020,7 +1021,7 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
         { s32 x = 7; s32 y = 45; Engine_MapCopyCellAttributes(20, 45, 11, 4,  x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x313) != 0) {
+    if (Engine_GameFlagIsSet(0x313) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 20, 17);
         { s32 x = 19; s32 y = 10; Engine_MapCopyCellAttributes(19, 11, 3, 1,  x, y); }
     } else {
@@ -1028,7 +1029,7 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
         { s32 x = 19; s32 y = 17; Engine_MapCopyCellAttributes(19, 11, 3, 1,  x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x314) != 0) {
+    if (Engine_GameFlagIsSet(0x314) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 14, 16);
         { s32 x = 22; s32 y = 15; Engine_MapCopyCellAttributes(16, 15, 1, 3,  x, y); }
     } else {
@@ -1036,7 +1037,7 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
         { s32 x = 14; s32 y = 15; Engine_MapCopyCellAttributes(16, 15, 1, 3,  x, y); }
     }
 
-    if (Engine_GameFlagIsSet((s32)0x315) != 0) {
+    if (Engine_GameFlagIsSet(0x315) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 17, 46);
         { s32 x = 7; s32 y = 45; Engine_MapCopyCellAttributes(15, 15, 1, 3,  x, y); }
     } else {
@@ -1107,8 +1108,8 @@ void ImiruFuchin_ApplyEntrySetup(void)
         value = 0;
         actor = Actor_Get(8);
         ImiruFuchin_TrackLeader = value;
-        *(u8 *)&actor->motion_flags = value;
-        *(s32 *)&actor->y.fixed = value;
+        actor->motion_flags = value;
+        actor->y.fixed = value;
         Engine_ActorSetSpritePriority(8, 1);
         Actor_SetChildValue(8, 15);
         switch (gGameState.entrance) {
@@ -1339,14 +1340,14 @@ void FieldScene_RunFourPassCallbackSequence(void)
     Battle_ResetEffectCounter();
 
     for (pass = 0; pass < 4; pass++) {
-        Engine_ColorBufferApplyTarget((s32)0x204318, 1);
+        Engine_ColorBufferApplyTarget(0x204318, 1);
         Engine_ColorBufferInterpolate(1);
         Engine_TaskWait(2);
         if (pass == 0) {
             Map_CopyCellsTo(30, 8, 12, 8, 8, 7);
             Map_CopyCellsTo(30, 57, 19, 57, 1, 1);
         }
-        Engine_ColorBufferApplyTarget((s32)0x203108, 1);
+        Engine_ColorBufferApplyTarget(0x203108, 1);
         Engine_ColorBufferInterpolate(1);
         Engine_TaskWait(2);
     }
@@ -1355,18 +1356,18 @@ void FieldScene_RunFourPassCallbackSequence(void)
 
     Engine_TaskAddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
     Engine_TaskWait(40);
-    Engine_ColorBufferApplyTarget((s32)0x201090, 1);
+    Engine_ColorBufferApplyTarget(0x201090, 1);
     Engine_ColorBufferInterpolate(40);
     Engine_TaskWait(80);
     Engine_TaskRemoveCallback(ImiruFuchin_BlowCaveMouthDust);
     Engine_TaskWait(20);
 
-    Engine_ColorBufferApplyTarget((s32)0x10000, 1);
+    Engine_ColorBufferApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(80);
 
     Engine_TaskWait(80);
 
-    Engine_GameFlagSet((s32)0x820);
+    Engine_GameFlagSet(0x820);
     PartyInventory_Discard(230);
     Audio_PlayCueFromEventWork();
 
@@ -1399,11 +1400,11 @@ void SceneState_SetWorkspace370ByFlag820(void)
 
     Engine_EventBegin();
 
-    if (Engine_GameFlagIsSet((s32)0x820) != 0) {
+    if (Engine_GameFlagIsSet(0x820) != 0) {
         Engine_MessageShowCentered((s32)MsgFuchinDragonRedEyes, 1);
     } else {
         Engine_MessageShowCentered((s32)MsgFuchinEyelessDragon, 1);
-        if (PartyInventory_FindOwner((s32)0xe6) != -1) {
+        if (PartyInventory_FindOwner(0xe6) != -1) {
             gEventWork->unknown_172 = 1;
         }
     }
@@ -1413,15 +1414,15 @@ void SceneState_SetWorkspace370ByFlag820(void)
 void ImiruFuchin_StartFadeIn(void)
 {
     struct FadeWork *fade;
-    u8 *work;
+    struct DisplayTransitionState *transition;
 
     if (gGameState.entrance <= 6) {
         fade = *(gWorkSlot + 56);
-        work = *(gWorkSlot + 31);
+        transition = *(gWorkSlot + 31);
         fade->active = 1;
-        work[0x53e] = 0;
-        work[0x53c] = 1;
-        work[0x53d] = 1;
+        transition->next_mode = 0;
+        transition->duration = 1;
+        transition->step = 1;
         Engine_ColorBufferApplySource(0, 1);
         Engine_ColorBufferApplyTarget(0x203108, 1);
         Engine_ColorBufferInterpolate(16);
@@ -1442,7 +1443,7 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
         return;
     }
     actor->steering_flags = 0;
-    direction = gImiruFuchinKeyHeadings[(*(u32 *)gKeysHeld >> 4) & 15];
+    direction = gImiruFuchinKeyHeadings[(gKeysHeld >> 4) & 15];
     if (direction == -1) {
         Object_SetMode(actor, 9);
         return;
@@ -1472,7 +1473,7 @@ void SceneActor_StepSubjectAlongHeading(void)
     subject = ObjectTable_Get(gGameState.selected_actor);
 
     for (;;) {
-        heading = gImiruFuchinHeadings[(*(u32 *)gKeysHeld >> 4) & 15];
+        heading = gImiruFuchinHeadings[(gKeysHeld >> 4) & 15];
         if ((heading << 16) == -0x10000) {
             return;
         }

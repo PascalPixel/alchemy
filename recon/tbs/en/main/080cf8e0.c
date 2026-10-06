@@ -14,6 +14,16 @@
  * burst pointer stepping 446; i + k * 32 444;
  * (k * 4) * 8 and k << 2 << 3 444; a k * 4 local 581; draw-pair shape 484;
  * draw cursor 473.
+ * Measured (2026-10-06, second pass): native's delay (sp+12) is k * 8
+ * strength-reduced, set after the count test; its k << 2 is hoisted only
+ * into the burst loop's pre-header and the burst address is never reduced.
+ * r4 joins native's reload rotation in the shard draw: native re-reads
+ * position.x from [r6] after __divsi3, the draft keeps x >> 1 in r4 across
+ * the call (caller-saved at sp+8), so r2 stays free and r4 never spills.
+ * Trials: group = k * 4 before the burst loop 444; k * 8 inline with
+ * k * 32 + i 484 (reduces the burst group, not k * 8); records as two-byte
+ * structs 442; group += 4 with group * 8 + i 442; explicit delay with
+ * (k << 2 << 3) + i 444.
  */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"

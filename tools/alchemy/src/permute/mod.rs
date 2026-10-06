@@ -5,6 +5,7 @@
 //! candidates; nothing derived from it is written into one, and the permuter
 //! writes only under out/permute/.
 
+mod aim;
 mod ast;
 mod effects;
 mod lex;
@@ -17,7 +18,9 @@ mod types;
 use crate::compiler::routing::root;
 use crate::targets::{decomp_target, DecompTarget};
 use ast::Function;
-use mutate::{mutate, unnatural, Kind, Rng, Step};
+#[cfg(test)]
+use mutate::mutate;
+use mutate::{mutate_with, unnatural, Kind, Rng, Step};
 use parse::{locate, parse_body, scan_unit, Unit};
 use perm::{Expanded, Node};
 use score::Score;
@@ -28,7 +31,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use types::Env;
 
-const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--iterations N] [--camelot-arm]
+const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--iterations N] [--heat] [--prefix] [--camelot-arm]
 Searches semantics-preserving rewrites of DRAFT.c until its code matches the
 listing alchemy diff compares it with (ADDRESS defaults to the file name;
 build the edition first). Each candidate compiles with alchemy diff's steps
@@ -55,8 +58,16 @@ carry over with the same score). The run's scratch is removed however it
 ends. Defaults: --minutes 10, --jobs cores - 2, --seed 1.
 --function names the definition to rewrite when the draft has several;
 --iterations bounds each job instead of the clock, so a run repeats exactly.
---camelot-arm compiles each candidate as alchemy diff --camelot-arm does: a
-☀️ game ARM draft through agbcc/camelot_arm (CAMELOT_ARM_SOURCES, K1)."#;
+Each job tries the kinds of rewrite that have improved its best more often
+(up to 8 times their usual weight). --heat aims the rewrites as alchemy
+diff --heat shows: the draft's printing is compiled once with -g, and each
+rewrite's site is drawn in proportion to 1 plus the heat of the lines it
+changes (4 per differing instruction, 24 at the first divergence, 8 on each
+of the 3 lines before it). --prefix ranks candidates by how many
+instructions match from the start first, then by weighted score.
+--camelot-arm compiles each candidate as alchemy diff --camelot-arm does: an
+analysis-only study of a ☀️ ARM draft with agbcc/camelot_arm. It is not an
+admitted build route and earns no credit, even at score 0."#;
 
 struct Options {
     draft: PathBuf,
@@ -69,6 +80,8 @@ struct Options {
     function: Option<String>,
     iterations: Option<u64>,
     camelot_arm: bool,
+    heat: bool,
+    prefix: bool,
 }
 
 fn parse_options(arguments: &[String]) -> Result<Options, String> {
@@ -81,6 +94,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut function = None;
     let mut iterations = None;
     let mut camelot_arm = false;
+    let (mut heat, mut prefix) = (false, false);
     let mut index = 0;
     let value = |index: usize| arguments.get(index).cloned().ok_or_else(|| USAGE.to_string());
     while index < arguments.len() {
@@ -111,6 +125,8 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 function = Some(value(index)?);
             }
             "--camelot-arm" => camelot_arm = true,
+            "--heat" => heat = true,
+            "--prefix" => prefix = true,
             other if other.starts_with('-') => return Err(format!("unknown permute option: {other}\n{USAGE}")),
             other if draft.is_none() => draft = Some(PathBuf::from(other)),
             other if addresses.is_empty() => addresses = other.split(',').map(str::to_string).collect(),
@@ -143,7 +159,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     if camelot_arm && game != "tbs" {
         return Err(format!("--camelot-arm compiles ☀️ game ARM C only\n{USAGE}"));
     }
-    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, camelot_arm })
+    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, camelot_arm, heat, prefix })
 }
 
 /// One job's scratch: its candidate file and alchemy diff's steps for it.
@@ -234,6 +250,10 @@ struct Problem {
     unit: Unit,
     function: Option<String>,
     camelot_arm: bool,
+    /// --prefix: a longer matched prefix ranks first.
+    prefix: bool,
+    /// --heat: where rewrites are aimed.
+    aim: Option<aim::Aim>,
 }
 
 impl Problem {
@@ -299,8 +319,8 @@ struct Found {
 }
 
 impl Found {
-    fn rank(&self, base_unnatural: usize) -> (u64, usize, usize, usize) {
-        (self.score.weighted, self.score.differ, self.unnatural.saturating_sub(base_unnatural), self.steps.len())
+    fn rank(&self, base_unnatural: usize, prefix: bool) -> ((std::cmp::Reverse<usize>, u64), usize, usize, usize) {
+        (self.score.key(prefix), self.score.differ, self.unnatural.saturating_sub(base_unnatural), self.steps.len())
     }
 }
 
@@ -326,6 +346,9 @@ fn reference(options: &Options) -> Result<(Vec<String>, Option<String>), String>
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let options = parse_options(arguments)?;
+    if options.camelot_arm {
+        println!("{}", crate::diff::CAMELOT_ARM_STUDY_NOTICE);
+    }
     let draft = std::fs::canonicalize(&options.draft).map_err(|e| format!("{}: {e}", options.draft.display()))?;
     let text = std::fs::read_to_string(&draft).map_err(|e| format!("{}: {e}", draft.display()))?;
     let stem = draft.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
@@ -341,6 +364,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         nodes,
         listing,
         symbol: None,
+        prefix: options.prefix,
+        aim: None,
         unit: Unit::default(),
         function: options.function.clone(),
         camelot_arm: options.camelot_arm,
@@ -431,6 +456,9 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     }
     let base_text = problem.source(&base_state);
     let base_score = problem.evaluate(&setup, &base_text)?;
+    if options.heat && random {
+        problem.aim = aim_at(&problem, &setup, &base_state, &base_text)?;
+    }
     let base_unnatural = match &base_state.parsed {
         Some((_, _, function)) => unnatural(function, &Env::new(&problem.unit, function)),
         None => 0,
@@ -440,7 +468,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
         "{}: listing {} instructions; draft {}; {} job(s), {}, seed {}; rewrites: {}",
         problem.stem,
         problem.listing.len(),
-        base.score.summary(),
+        base.score.summary_with(problem.prefix),
         options.jobs,
         match options.iterations {
             Some(count) => format!("{count} iterations each"),
@@ -460,6 +488,30 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     write_best(&problem, &base, &best, output)
 }
 
+/// The base's heat on its printed function: its text compiled once more
+/// with -g, its rows charged to lines as `alchemy diff --heat` charges them.
+fn aim_at(problem: &Problem, setup: &Job, base_state: &State, base_text: &str) -> Result<Option<aim::Aim>, String> {
+    let Some((_, _, function)) = &base_state.parsed else { return Ok(None) };
+    let printed = function.print();
+    let Some(at) = base_text.find(printed.trim_end()) else {
+        println!("heat: the printed function is not in the compiled text; rewrites are not aimed");
+        return Ok(None);
+    };
+    std::fs::write(&setup.candidate, base_text).map_err(|e| format!("{}: {e}", setup.candidate.display()))?;
+    let name = setup.candidate.file_name().unwrap_or_default().to_string_lossy().into_owned();
+    let located = crate::diff::located(&setup.steps, &setup.object, problem.symbol.as_deref(), &name)?;
+    let heat = crate::diff::heat(&problem.listing, &located);
+    let first_line = base_text[..at].matches('\n').count() as u32 + 1;
+    let aim = aim::Aim::new(&printed, first_line, &heat);
+    println!(
+        "heat: {} differing rows on {} lines; first divergence at printed line {}",
+        heat.lines.values().sum::<usize>(),
+        heat.lines.len(),
+        heat.first.map_or("none".into(), |line| (i64::from(line) + 1 - i64::from(first_line)).to_string())
+    );
+    Ok(aim.aims().then_some(aim))
+}
+
 #[allow(clippy::too_many_arguments)]
 fn search(
     problem: &Problem,
@@ -472,7 +524,7 @@ fn search(
     started: Instant,
 ) -> Result<Vec<Found>, String> {
     let stop = AtomicBool::new(false);
-    let global = Mutex::new((base.score.weighted, base.score.differ));
+    let global = Mutex::new((base.score.key(problem.prefix), base.score.differ));
     let found = Mutex::new(Vec::new());
     let failures = Mutex::new(Vec::new());
     let compiled = std::sync::atomic::AtomicU64::new(0);
@@ -485,8 +537,9 @@ fn search(
             while running_ref.load(Ordering::Relaxed) > 0 {
                 std::thread::sleep(Duration::from_millis(200));
                 if started.elapsed() >= Duration::from_secs(60 * minute) {
-                    let (weighted, differ) = *global_ref.lock().unwrap();
-                    println!("{:>8.1}s  {} candidates compiled; best weighted {weighted}, differ {differ}", started.elapsed().as_secs_f64(), compiled_ref.load(Ordering::Relaxed));
+                    let ((std::cmp::Reverse(prefix), weighted), differ) = *global_ref.lock().unwrap();
+                    let prefix = if problem.prefix { format!("prefix {prefix}, ") } else { String::new() };
+                    println!("{:>8.1}s  {} candidates compiled; best {prefix}weighted {weighted}, differ {differ}", started.elapsed().as_secs_f64(), compiled_ref.load(Ordering::Relaxed));
                     minute += 1;
                 }
             }
@@ -508,6 +561,7 @@ fn search(
                 // Keyed by a hash of the text: a long run sees many thousands.
                 let mut cache: HashMap<u64, Option<Score>> = HashMap::new();
                 let (mut best, mut current) = ((base_state.clone(), base.clone()), (base_state.clone(), base.clone()));
+                let mut bandit = aim::Bandit::default();
                 let mut iteration = 0u64;
                 while !stop.load(Ordering::Relaxed)
                     && !INTERRUPTED.load(Ordering::Relaxed)
@@ -520,17 +574,24 @@ fn search(
                         1 | 2 => (&best.0, &best.1),
                         _ => (&current.0, &current.1),
                     };
+                    let start_key = start.1.score.key(problem.prefix);
                     let mut state = if problem.choices && (!random || rng.chance(1, 3)) {
                         problem.state(perm::expand(&problem.nodes, Some(&mut rng)))
                     } else {
                         start.0.clone()
                     };
+                    let fresh = state.steps.len();
                     if random {
                         if let (Some((_, _, function)), Some(env)) = (state.parsed.as_mut(), env.as_mut()) {
                             env.refresh(function);
                             env.focus = problem.focus(&state.expanded);
+                            let kinds = bandit.kinds();
                             for _ in 0..if rng.chance(1, 3) { 2 } else { 1 } {
-                                if let Some(step) = mutate(function, env, &mut rng) {
+                                let step = match &problem.aim {
+                                    Some(aim) => aim::aimed(function, env, &mut rng, &kinds, aim),
+                                    None => mutate_with(function, env, &mut rng, &kinds),
+                                };
+                                if let Some(step) = step {
                                     state.steps.push(step);
                                 }
                             }
@@ -563,24 +624,28 @@ fn search(
                         job: job_index,
                         iteration,
                     };
-                    if candidate.rank(base.unnatural) < best.1.rank(base.unnatural) {
+                    if candidate.rank(base.unnatural, problem.prefix) < best.1.rank(base.unnatural, problem.prefix) {
                         best = (state.clone(), candidate.clone());
                         found.lock().unwrap().push(candidate.clone());
                         let mut global = global.lock().unwrap();
-                        if (candidate.score.weighted, candidate.score.differ) < *global {
-                            *global = (candidate.score.weighted, candidate.score.differ);
+                        if (candidate.score.key(problem.prefix), candidate.score.differ) < *global {
+                            *global = (candidate.score.key(problem.prefix), candidate.score.differ);
                             println!(
                                 "{:>8.1}s  job {job_index:>2}  iteration {iteration:>6}  {}",
                                 started.elapsed().as_secs_f64(),
-                                candidate.score.summary()
+                                candidate.score.summary_with(problem.prefix)
                             );
                         }
                         if candidate.score.weighted == 0 && candidate.unnatural <= base.unnatural && options.iterations.is_none() {
                             stop.store(true, Ordering::Relaxed);
                         }
                     }
+                    // The kinds that improved on where this walk started.
+                    if candidate.score.key(problem.prefix) < start_key {
+                        bandit.credit(candidate.steps[fresh.min(candidate.steps.len())..].iter().map(|step| step.kind));
+                    }
                     // Climb, with some freedom to cross worse ground.
-                    if candidate.score.weighted <= current.1.score.weighted || rng.chance(1, 4) {
+                    if candidate.score.key(problem.prefix) <= current.1.score.key(problem.prefix) || rng.chance(1, 4) {
                         current = (state, candidate);
                     }
                 }
@@ -596,7 +661,7 @@ fn search(
     }
     let mut all = found.into_inner().unwrap();
     all.sort_by(|a, b| {
-        a.rank(base.unnatural).cmp(&b.rank(base.unnatural)).then(a.job.cmp(&b.job)).then(a.iteration.cmp(&b.iteration))
+        a.rank(base.unnatural, problem.prefix).cmp(&b.rank(base.unnatural, problem.prefix)).then(a.job.cmp(&b.job)).then(a.iteration.cmp(&b.iteration))
     });
     let mut distinct: Vec<Found> = Vec::new();
     for candidate in all {
@@ -667,7 +732,7 @@ fn minimize(problem: &Problem, job: &Job, base: &Found, best: &Found, cache: &mu
     if replayed.steps.len() != best.steps.len() || problem.source(&replayed) != best.text {
         return best.clone();
     }
-    let measure = |found: &Found| (found.score.weighted, found.score.differ, found.unnatural.saturating_sub(base.unnatural));
+    let measure = |found: &Found| (found.score.key(problem.prefix), found.score.differ, found.unnatural.saturating_sub(base.unnatural));
     let mut current = best.clone();
     loop {
         let mut removed = false;
@@ -897,7 +962,7 @@ fn minimize_best(problem: &Problem, base: &Found, found: &[Found], directory: &P
     }
     best.sort_by(|a, b| {
         let (a, b) = (&a.found, &b.found);
-        a.rank(base.unnatural).cmp(&b.rank(base.unnatural)).then(a.job.cmp(&b.job)).then(a.iteration.cmp(&b.iteration))
+        a.rank(base.unnatural, problem.prefix).cmp(&b.rank(base.unnatural, problem.prefix)).then(a.job.cmp(&b.job)).then(a.iteration.cmp(&b.iteration))
     });
     Ok(best)
 }
@@ -912,7 +977,7 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
     if INTERRUPTED.load(Ordering::Relaxed) {
         println!("interrupted: the best so far, minimized as far as it got");
     }
-    println!("draft:  {}", base.score.summary());
+    println!("draft:  {}", base.score.summary_with(problem.prefix));
     if found.is_empty() {
         println!("no candidate beat the draft");
         return Ok(());
@@ -931,8 +996,8 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
         let header = format!(
             "/* alchemy permute {}: {}; draft {}.\n   Job {}, iteration {}; rewrites: {} (minimized from {}: {}).{spelling}{fakematch} */\n",
             problem.stem,
-            best.score.summary(),
-            base.score.summary(),
+            best.score.summary_with(problem.prefix),
+            base.score.summary_with(problem.prefix),
             best.job,
             best.iteration,
             rewrites(&kinds),
@@ -947,7 +1012,7 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
         println!(
             "best-{}: {}  {}\n        rewrites {} -> {}: {}",
             index + 1,
-            best.score.summary(),
+            best.score.summary_with(problem.prefix),
             path.strip_prefix(root()).unwrap_or(&path).display(),
             entry.searched.len(),
             kinds.len(),
@@ -1048,6 +1113,8 @@ mod tests {
             nodes,
             listing,
             symbol: None,
+            prefix: false,
+            aim: None,
             unit: scan_unit(text).unwrap_or_default(),
             function: function.map(str::to_string),
             camelot_arm: false,
@@ -1188,6 +1255,8 @@ mod tests {
             function: function.map(str::to_string),
             camelot_arm: false,
             iterations: Some(1),
+            heat: false,
+            prefix: false,
         };
         let draft = work.path().join("draft/08000000.c");
         std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
@@ -1301,6 +1370,8 @@ mod tests {
             nodes,
             listing: Vec::new(),
             symbol: None,
+            prefix: false,
+            aim: None,
             unit: scan_unit(draft).unwrap_or_default(),
             function: None,
             camelot_arm: false,
@@ -1357,6 +1428,8 @@ mod tests {
             nodes,
             listing,
             symbol: None,
+            prefix: false,
+            aim: None,
             unit: Unit::default(),
             function: None,
             camelot_arm: false,
@@ -1382,9 +1455,11 @@ mod tests {
             function: None,
             camelot_arm: false,
             iterations: Some(8),
+            heat: false,
+            prefix: false,
         };
         let found = search(&problem, &base_state, &base, false, &options, None, &work.path().join("run"), Instant::now()).unwrap();
-        assert_eq!(found[0].score, Score::default());
+        assert_eq!((found[0].score.weighted, found[0].score.differ), (0, 0));
         assert!(found[0].text.contains("return a - b;") && !perm::has_macros(&found[0].text));
     }
 

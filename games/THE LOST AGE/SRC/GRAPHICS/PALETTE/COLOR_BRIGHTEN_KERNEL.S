@@ -3,11 +3,11 @@
 	.global ColorBuffer_BrightenKernelCode
 ColorBuffer_BrightenKernelCode:
 .L_08001c08:
-AlchemyUncredited_08001c08:
 	bx	pc
+AlchemyUncredited_08001c0a:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001c08:
+AlchemyUncreditedEnd_08001c0a:
 	push	{r5, r6, r7, r8, r9}
 	mov	r8, #64
 	orr	r8, r8, r8, lsl #8

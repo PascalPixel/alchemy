@@ -5,11 +5,11 @@ Resource_PatchThumbBranchCode:
 	.global Resource_PatchThumbBranch
 	.thumb_func
 Resource_PatchThumbBranch:
-AlchemyUncredited_080130cc:
 	bx	pc
+AlchemyUncredited_080130ce:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080130cc:
+AlchemyUncreditedEnd_080130ce:
 	push	{r5, r6}
 	add	r1, r1, r1
 	add	r2, r0, r1

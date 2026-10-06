@@ -5,11 +5,11 @@ Render_CopyStridedCode:
 	.global Render_CopyStrided
 	.thumb_func
 Render_CopyStrided:
-AlchemyUncredited_080217a4:
 	bx	pc
+AlchemyUncredited_080217a6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080217a4:
+AlchemyUncreditedEnd_080217a6:
 	bics	r1, r1, #7
 	bicsne	r2, r2, #7
 	bxeq	lr

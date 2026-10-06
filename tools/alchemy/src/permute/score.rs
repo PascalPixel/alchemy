@@ -24,9 +24,23 @@ pub struct Score {
     pub reordered: usize,
     pub inserted: usize,
     pub deleted: usize,
+    /// Rows that match from the start before diff's alignment first
+    /// diverges.
+    pub prefix: usize,
 }
 
 impl Score {
+    /// What the search lowers: with `prefix`, a longer matched prefix
+    /// first, then the weighted score.
+    pub fn key(&self, prefix: bool) -> (std::cmp::Reverse<usize>, u64) {
+        (std::cmp::Reverse(if prefix { self.prefix } else { 0 }), self.weighted)
+    }
+
+    /// The summary, with the matched prefix when the search ranks by it.
+    pub fn summary_with(&self, prefix: bool) -> String {
+        if prefix { format!("prefix {}, {}", self.prefix, self.summary()) } else { self.summary() }
+    }
+
     pub fn summary(&self) -> String {
         let mut parts = Vec::new();
         for (count, name) in [
@@ -57,7 +71,8 @@ fn masked(text: &str) -> String {
 
 pub fn score(listing: &[String], draft: &[String]) -> Score {
     let (common, script) = crate::diff::compare(listing, draft);
-    let mut result = Score { differ: listing.len() + draft.len() - 2 * common, ..Score::default() };
+    let prefix = script.iter().take_while(|line| line.starts_with("  ")).count();
+    let mut result = Score { differ: listing.len() + draft.len() - 2 * common, prefix, ..Score::default() };
     // Runs of changed rows between common rows: pair a deleted and an
     // inserted row in the same run that differ only in registers.
     let mut deleted: Vec<String> = Vec::new();
@@ -129,7 +144,7 @@ mod tests {
     #[test]
     fn identical_code_scores_zero_and_registers_cost_least() {
         let listing = rows(&["push {r5, lr}", "ldrh r3, [r0, r1]", "lsrs r0, r3, #9", "bx r1"]);
-        assert_eq!(score(&listing, &listing), Score::default());
+        assert_eq!(score(&listing, &listing), Score { prefix: 4, ..Score::default() });
         let renamed = score(&listing, &rows(&["push {r5, lr}", "ldrh r2, [r0, r1]", "lsrs r0, r2, #9", "bx r1"]));
         assert_eq!((renamed.weighted, renamed.regalloc, renamed.differ), (2 * REGALLOC, 2, 4));
         let pool = score(&rows(&["ldr r0, [pc, #4]", "bx lr"]), &rows(&["ldr r0, [pc, #8]", "bx lr"]));
@@ -148,6 +163,24 @@ mod tests {
         let missing = score(&listing, &rows(&["movs r0, #1", "str r0, [r2]", "bx lr"]));
         assert_eq!((missing.weighted, missing.deleted), (DELETE, 1));
         assert!(REGALLOC < REORDER && REORDER < INSERT);
+    }
+
+    #[test]
+    fn prefix_ranking_puts_a_longer_matched_start_first() {
+        let listing = rows(&["push {r5, lr}", "movs r0, #1", "adds r1, #2", "str r0, [r2]", "bx lr"]);
+        // Early difference, otherwise close: weighted 10, prefix 1.
+        let early = score(&listing, &rows(&["push {r5, lr}", "movs r3, #1", "adds r1, #2", "str r0, [r2]", "bx lr"]));
+        // Late difference, costlier: weighted 100, prefix 3.
+        let late = score(&listing, &rows(&["push {r5, lr}", "movs r0, #1", "adds r1, #2", "bx lr"]));
+        assert_eq!((early.prefix, early.weighted), (1, REGALLOC));
+        assert_eq!((late.prefix, late.weighted), (3, DELETE));
+        assert!(early.key(false) < late.key(false));
+        assert!(late.key(true) < early.key(true));
+        // Equal prefixes fall back to the weighted score.
+        let other = score(&listing, &rows(&["push {r5, lr}", "movs r3, #1", "adds r1, #2", "bx lr"]));
+        assert!(early.key(true) < other.key(true));
+        assert_eq!(late.summary_with(true), format!("prefix 3, {}", late.summary()));
+        assert_eq!(late.summary_with(false), late.summary());
     }
 
     #[test]

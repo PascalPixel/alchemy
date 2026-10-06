@@ -79,9 +79,18 @@ camelotizes what remains.
   and code an edition's own source leaves out, with no symbol in any of its
   images, is outside that edition's total.
   Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
-  library, handwritten and veneer assembly counts as assembly. Whole aligned
-  8-byte far-call stubs count as veneers. Padding a source marks as carrying
-  no credit does not count. _Check: coverage-report._
+  library, handwritten and veneer assembly counts as assembly. Assembly
+  counts as handwritten only with an instruction, frame or pattern Camelot's
+  compilers cannot emit (rrx; a branch, adc or sbc on a shift's carry; r11 as
+  an ordinary register; a callee-saved register save without lr; CPSR/SPSR;
+  swi; computed pc into code; stores into code; unpaired multiply halves; a
+  pc-relative block load of data; a mode switch inside a function) or a
+  linkage no procedure-call standard produces; anything else is not-yet-C
+  until it matches as C. Whole aligned 8-byte far-call stubs count as veneers.
+  Padding a source marks as carrying no credit does not count. It is
+  outside the total, as the linker's fill is; a span may hold only padding,
+  data and nop.
+  _Check: coverage-report, publication._
 - **C3** Every push to main carries its measurement: `make land` compares all
   twelve editions and measures both games, and the pre-push hook uploads that
   count by commit. CI records it on the `progress` branch, draws README's two
@@ -238,17 +247,17 @@ never a file or a function.
   file, as pret names its library files: pret's agbcc for MusicPlayer2000
   (`-O2`) and the flash library (`-O`, except two helper files whose bytes
   show `-O2`), and agbcc_arm for RAM-executed ARM code
-  (`-fomit-frame-pointer`). ☀️'s own game ARM C, every file in
-  `CAMELOT_ARM_SOURCES`, compiles with `agbcc/camelot_arm` at that same ARM
-  setting: agbcc_arm's pinned gcc_arm with one change bootstrap makes, which
-  gives `arm_adjust_cost` GCC's own rule (agscc's 2000-07-31 `arm.c`
-  has it) that anti and output dependences cost nothing. The setting explains
-  the native ARM habits (no frame, saves from r5, no r11, loop and division
-  shapes); stock gcc_arm charges those dependences full latency and leaves the
-  load/store slots unfilled that the native fills. Over ☀️'s four game ARM
-  functions the rule moves differ 6→0, 124→104, 199→195 and 164→165
-  (Pascal's delegated decision, 2026-10-06; K3). No other routing: never a
-  per-file or per-function compiler, option or flag for game code.
+  (`-fomit-frame-pointer`). ☀️'s seven compiler-shaped game ARM functions
+  are a study, not a route: the hypothesis is that Camelot compiled them with
+  `agbcc/camelot_arm`, agbcc_arm's pinned gcc_arm with upstream GCC's whole
+  `arm_adjust_cost` (agscc's `arm.c`) built by bootstrap, at that library ARM
+  setting. What is proven: the setting's habits (no frame, saves from r5, no
+  r11, interworking returns) run through all seven, and the upstream rules
+  fill load/store slots stock gcc_arm leaves empty, but only
+  Tile_BuildMetatiles, 92 of their 851 instructions, matches under it.
+  `CAMELOT_ARM_SOURCES` stays empty and `--camelot-arm` earns no credit
+  until the study meets K3's bar. No other routing: never a per-file or
+  per-function compiler, option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
   GCC's Thumb backend between the games, rebuilt as options in GCC's own
@@ -387,6 +396,7 @@ alchemy similar                        # nearest C twins in either game
 alchemy similar --editions             # each ☀️ listing's copies in all twelve builds
 # Match one function
 alchemy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
+alchemy diff DRAFT.c --heat            # differing instructions per line, first divergence marked; permute --heat aims there
 alchemy permute DRAFT.c [ADDR] [--minutes N]   # rewrites and PERM_* choices toward differ 0, in out/permute
 alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a frame gap
 alchemy show EDITION FUNCTION          # a built function beside the ROM

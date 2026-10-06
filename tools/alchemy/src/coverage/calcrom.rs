@@ -51,8 +51,6 @@ pub(crate) fn share(english: &Measurement, linked: &BTreeSet<Unit>) -> Counted {
             counted += *credit;
         }
     }
-    counted.done.game_asm -= english.stray.min(counted.done.game_asm);
-    counted.uncredited += english.stray;
     counted.done.executable = english.done.executable;
     counted
 }
@@ -112,7 +110,6 @@ pub(crate) struct Measurement {
     pub other: Vec<(String, i64)>,
     pub steered: i64,
     pub uncredited: i64,
-    pub stray: i64,
     pub credits: BTreeMap<Unit, Counted>,
     /// Every symbol name in the edition's images, and every object its
     /// linker maps place text from (empty sections included).
@@ -358,10 +355,11 @@ pub(crate) fn uncredited_spans(nm: &str) -> Vec<(i64, i64)> {
     spans
 }
 
+/// A span inside credited source is padding: it leaves the credit and the
+/// executable total, as the linker's own fill does (C2). A span anywhere
+/// else, such as a raw listing, stays in the total as not-yet-C code.
 fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: &[(i64, i64)]) {
     for (start, bytes) in spans {
-        measurement.uncredited += bytes;
-        let mut stray = *bytes;
         for (address, size, unit) in placed {
             let overlap = (start + bytes).min(address + size) - start.max(address);
             if overlap <= 0 {
@@ -370,7 +368,8 @@ fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: 
             let Some(credit) = measurement.credits.get_mut(unit) else {
                 continue;
             };
-            stray -= overlap;
+            measurement.uncredited += overlap;
+            measurement.done.executable -= overlap;
             credit.uncredited += overlap;
             let mut left = overlap;
             let done = &mut measurement.done;
@@ -389,7 +388,6 @@ fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: 
             credit.steered -= steered;
             measurement.steered -= steered;
         }
-        measurement.stray += stray;
     }
 }
 
@@ -904,7 +902,6 @@ pub(crate) fn measure(
         measurement.arm.extend(arm);
         measurement.arm_likely.extend(likely);
     }
-    measurement.done.game_asm -= measurement.stray.min(measurement.done.game_asm);
     for (object, bytes) in &measurement.other {
         eprintln!(
             "{}: {bytes} text bytes from unclassified {object}",
@@ -999,5 +996,27 @@ mod absent_tests {
         let counted = share_edition(&english, &edition);
         assert_eq!(counted.done.executable, 105 - 20 - 10);
         assert_eq!(counted.done.bytes(), 40);
+    }
+}
+
+#[cfg(test)]
+mod padding_tests {
+    use super::*;
+
+    #[test]
+    fn only_padding_inside_credited_source_leaves_the_total() {
+        let unit = (MAIN_IMAGE.to_owned(), "games/X.o".to_owned(), None);
+        let mut measurement = Measurement::default();
+        let mut credit = Counted::default();
+        credit.done.game_asm = 32;
+        measurement.credits.insert(unit.clone(), credit);
+        measurement.done.game_asm = 32;
+        measurement.done.executable = 32 + 16;
+        // A 4-byte span inside the credited object, and one in a raw listing.
+        discredit(&mut measurement, &[(0x100, 32, unit.clone())], &[(0x110, 4), (0x200, 4)]);
+        assert_eq!(measurement.done.executable, 32 + 16 - 4);
+        assert_eq!(measurement.done.game_asm, 28);
+        assert_eq!(measurement.uncredited, 4);
+        assert_eq!(measurement.credits[&unit].uncredited, 4);
     }
 }

@@ -634,6 +634,10 @@ mod target_tests {
             agbcc_arm_cflags()
         );
         assert!(CompilerFamily::CamelotArm.is_arm());
+        assert!(
+            CAMELOT_ARM_SOURCES.is_empty(),
+            "camelot_arm is an unadmitted study (AGENTS.md K1, K3): no source is routed through it"
+        );
         let mut files = std::collections::BTreeSet::new();
         for entry in CAMELOT_ARM_SOURCES {
             assert!(

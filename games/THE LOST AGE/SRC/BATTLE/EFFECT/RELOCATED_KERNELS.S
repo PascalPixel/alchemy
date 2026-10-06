@@ -5,11 +5,11 @@ Data_08138fc8:
 	.global Func_08138fc8
 	.thumb_func
 Func_08138fc8:
-AlchemyUncredited_08138fc8:
 	bx	pc
+AlchemyUncredited_08138fca:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08138fc8:
+AlchemyUncreditedEnd_08138fca:
 	push	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	ldr	fp, [pc, #484]
 	bic	fp, fp, #1
@@ -144,10 +144,8 @@ AlchemyUncreditedEnd_08138fc8:
 	bne	.L_081390d8
 	pop	{r0, r1, r9}
 	b	.L_08138ff4
-AlchemyUncredited_081391bc:
 	.4byte	Runtime_ReciprocalTable + 1
 .L_081391c0:
-AlchemyUncreditedEnd_081391bc:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
 	.thumb
@@ -156,11 +154,11 @@ Data_081391c8:
 	.global Func_081391c8
 	.thumb_func
 Func_081391c8:
-AlchemyUncredited_081391c8:
 	bx	pc
+AlchemyUncredited_081391ca:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081391c8:
+AlchemyUncreditedEnd_081391ca:
 	push	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	ldr	fp, [pc, #500]
 	bic	fp, fp, #1
@@ -299,10 +297,8 @@ AlchemyUncreditedEnd_081391c8:
 	bne	.L_081392d8
 	pop	{r0, r1, r9}
 	b	.L_081391f4
-AlchemyUncredited_081393cc:
 	.4byte	Runtime_ReciprocalTable + 1
 .L_081393d0:
-AlchemyUncreditedEnd_081393cc:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
 	.thumb
@@ -311,11 +307,11 @@ Data_081393d8:
 	.global Func_081393d8
 	.thumb_func
 Func_081393d8:
-AlchemyUncredited_081393d8:
 	bx	pc
+AlchemyUncredited_081393da:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081393d8:
+AlchemyUncreditedEnd_081393da:
 	push	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	ldr	fp, [pc, #516]
 	bic	fp, fp, #1
@@ -458,9 +454,7 @@ AlchemyUncreditedEnd_081393d8:
 	bne	.L_081394e8
 	pop	{r0, r1, r9}
 	b	.L_08139404
-AlchemyUncredited_081395ec:
 	.4byte	Runtime_ReciprocalTable + 1
 .L_081395f0:
-AlchemyUncreditedEnd_081395ec:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr

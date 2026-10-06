@@ -5,11 +5,11 @@ Text_DecodeSymbolCode:
 	.global Text_DecodeSymbol
 	.thumb_func
 Text_DecodeSymbol:
-AlchemyUncredited_08038438:
 	bx	pc
+AlchemyUncredited_0803843a:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08038438:
+AlchemyUncreditedEnd_0803843a:
 	push	{r5, r6}
 	ldm	r0, {r1, r2, r3}
 	ldr	ip, [pc, #300]

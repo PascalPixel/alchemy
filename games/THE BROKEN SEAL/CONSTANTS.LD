@@ -5,6 +5,6 @@ Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMasked;
 Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaque;
 SentouKouka_TenkaiCodeSize = SentouKouka_TenkaiEnd - SentouKouka_Tenkai;
 Object_UpdateAllCodeSize = Object_UpdateAllEnd - Object_UpdateAll;
-Tile_BuildMetatilesCodeSize = Tile_Decompress4bpp - Tile_BuildMetatiles;
+Tile_BuildMetatilesCodeSize = Tile_BuildMetatilesEnd - Tile_BuildMetatiles;
 Transform_UpdateVerticesSize = Transform_UpdateVerticesEnd - Transform_UpdateVertices;
 UiText_DrawGlyphCodeSize = Tile_BuildMetatiles - UiText_DrawGlyphArm;

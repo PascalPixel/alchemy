@@ -5,11 +5,11 @@ Render_DrawMapCode:
 	.global Render_DrawMap
 	.thumb_func
 Render_DrawMap:
-AlchemyUncredited_08021070:
 	bx	pc
+AlchemyUncredited_08021072:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08021070:
+AlchemyUncreditedEnd_08021072:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	r4, #0xa00000
 	orr	r4, r4, #56

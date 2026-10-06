@@ -5,11 +5,11 @@ Resource_ExecuteTransferCode:
 	.global Resource_ExecuteTransfer
 	.thumb_func
 Resource_ExecuteTransfer:
-AlchemyUncredited_08013060:
 	bx	pc
+AlchemyUncredited_08013062:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08013060:
+AlchemyUncreditedEnd_08013062:
 	stmfd	sp!, {r5}
 	add	r0, r0, #4
 .L_0801306c:

@@ -5,11 +5,11 @@ Tile_ExpandOpaqueCode:
 	.global Tile_ExpandOpaque
 	.thumb_func
 Tile_ExpandOpaque:
-AlchemyUncredited_08038e30:
 	bx	pc
+AlchemyUncredited_08038e32:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08038e30:
+AlchemyUncreditedEnd_08038e32:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	sl, pc, #100
 	ldm	sl, {r4, r6, r7}

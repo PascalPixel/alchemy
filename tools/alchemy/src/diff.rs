@@ -4,10 +4,10 @@ use crate::process::run as command;
 use crate::targets::{decomp_target, DecompTarget};
 use crate::elf::Elf;
 use crate::ld_map::{Map, Placed, ROM};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm | --camelot-arm] [--rtl] [--show]
+const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm | --camelot-arm] [--rtl] [--heat] [--show]
        alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--arm] [--rtl] [--show]
 Compiles DRAFT.c for --edition (default: the game's English edition) with
 the build's own compiler and options, then compares its instructions with
@@ -29,16 +29,25 @@ the full twelve-edition ROM comparison remains the matching authority.
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
 Study output stays in obj/drafts/arm-study; no build routing is changed.
---camelot-arm compiles a ☀️ draft as the build compiles a file listed in
-CAMELOT_ARM_SOURCES: Camelot's ARM compiler (agbcc/camelot_arm) at the
-library ARM setting, assembled as ARM. Output stays in obj/drafts/camelot-arm.
+--camelot-arm is an analysis-only study of a ☀️ draft with agbcc/camelot_arm
+(pinned gcc_arm with upstream GCC's whole arm_adjust_cost) at the library
+ARM setting, assembled as ARM. CAMELOT_ARM_SOURCES is empty: this is not an
+admitted build route and earns no credit, even at differ 0. Study output
+stays in obj/drafts/camelot-arm.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in
 out/EDITION/obj/drafts/rtl/, named DRAFT.c.PASS, to find the pass where the
 draft's allocation or scheduling first leaves the listing's. The lreg and greg
 dumps give each pseudo's allocation priority; with -fsched-verbose=5 the sched
-and sched2 dumps say in words why each instruction was scheduled where it is."#;
+and sched2 dumps say in words why each instruction was scheduled where it is.
+--heat compiles the draft once more with -g (analysis only) and prints its
+function's lines, each with its count of differing instructions in diff's
+own alignment (a listing row counts on the draft line it falls before), and
+marks the line where the comparison first diverges with >. Allocation and
+scheduling cascade from early differences, so start there."#;
 
 const ARM_STUDY_NOTICE: &str = "ARM study only: pinned game compiler, -mthumb replaced by -marm; all other game options unchanged.\nNot an admitted build route; this comparison earns no credit.";
+
+pub(crate) const CAMELOT_ARM_STUDY_NOTICE: &str = "camelot_arm study only: pinned gcc_arm with upstream GCC's whole arm_adjust_cost, library ARM setting.\nNot an admitted build route; this comparison earns no credit.";
 
 struct Options {
     draft: PathBuf,
@@ -49,6 +58,7 @@ struct Options {
     arm_study: bool,
     camelot_arm: bool,
     rtl: bool,
+    heat: bool,
     overlay: Option<String>,
     symbol: Option<String>,
 }
@@ -62,6 +72,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut arm_study = false;
     let mut camelot_arm = false;
     let mut rtl = false;
+    let mut heat = false;
     let mut overlay = None;
     let mut symbol = None;
     let mut i = 0;
@@ -71,6 +82,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
             "--arm" => arm_study = true,
             "--camelot-arm" => camelot_arm = true,
             "--rtl" => rtl = true,
+            "--heat" => heat = true,
             "--overlay" => {
                 i += 1;
                 overlay = Some(arguments.get(i).ok_or_else(|| USAGE.to_string())?.clone());
@@ -133,7 +145,10 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     if camelot_arm && (arm_study || game != "tbs") {
         return Err("--camelot-arm compiles ☀️ game ARM C only, and not with --arm".into());
     }
-    Ok(Options { draft, addresses, game, target, show, arm_study, camelot_arm, rtl, overlay, symbol })
+    if heat && (arm_study || camelot_arm) {
+        return Err("--heat maps the game route's code; it does not combine with --arm or --camelot-arm".into());
+    }
+    Ok(Options { draft, addresses, game, target, show, arm_study, camelot_arm, rtl, heat, overlay, symbol })
 }
 
 fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
@@ -301,6 +316,119 @@ pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<Str
     Ok(normalize(&command(&arguments, root())?))
 }
 
+/// Each compiled instruction, normalized as `normalize` does, with the
+/// source line (file, line) objdump -l prints before it from the line table.
+pub(crate) fn normalize_located(objdump: &str) -> Vec<(String, Option<(String, u32)>)> {
+    let mut at: Option<(String, u32)> = None;
+    let mut out = Vec::new();
+    for line in objdump.lines() {
+        if let Some(location) = source_location(line) {
+            at = Some(location);
+            continue;
+        }
+        out.extend(normalize(line).into_iter().map(|row| (row, at.clone())));
+    }
+    out
+}
+
+fn source_location(line: &str) -> Option<(String, u32)> {
+    if line.starts_with([' ', '\t']) {
+        return None;
+    }
+    let line = line.split(" (discriminator").next()?.trim_end();
+    let (file, number) = line.rsplit_once(':')?;
+    let number = number.parse().ok()?;
+    (!file.is_empty()).then(|| (file.to_string(), number))
+}
+
+/// Run a draft plan (ending in assembly) once more with -g on its compile
+/// step, for analysis only, and disassemble with agscc's DWARF 2 line
+/// table: each instruction and its line in the file named `file_name`, or
+/// None for code from another file (a header's inline helper).
+pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>, file_name: &str) -> Result<Vec<(String, Option<u32>)>, String> {
+    for step in steps {
+        let mut step = step.clone();
+        if step.iter().any(|argument| argument == "-S") {
+            step.push("-g".into());
+        }
+        command(&step, root())?;
+    }
+    let object = object.to_string_lossy();
+    let only = symbol.map(|s| format!("--disassemble={s}"));
+    let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-l", "-r", "--no-show-raw-insn"];
+    if let Some(only) = only.as_deref() {
+        arguments.push(only);
+    }
+    arguments.push(&object);
+    let in_draft = |file: &str| Path::new(file).file_name().is_some_and(|name| name == file_name);
+    Ok(normalize_located(&command(&arguments, root())?)
+        .into_iter()
+        .map(|(row, at)| (row, at.filter(|(file, _)| in_draft(file)).map(|(_, line)| line)))
+        .collect())
+}
+
+/// Where a draft's code differs from its listing, by source line.
+#[derive(Debug, Default, PartialEq, Eq)]
+pub(crate) struct Heat {
+    /// Differing rows (inserted or deleted, as differ counts them) by line.
+    pub lines: BTreeMap<u32, usize>,
+    /// The line where the comparison first diverges.
+    pub first: Option<u32>,
+}
+
+/// Charge each differing row of diff's own alignment to a draft line: a
+/// draft row to its own line, a listing row to the draft row it falls
+/// before (the last one at the end). A row with no line in the draft (a
+/// header's inline code) goes to the nearest following row that has one.
+pub(crate) fn heat(listing: &[String], draft: &[(String, Option<u32>)]) -> Heat {
+    let rows: Vec<String> = draft.iter().map(|(row, _)| row.clone()).collect();
+    let line_at = |j: usize| -> Option<u32> {
+        let j = j.min(draft.len());
+        draft[j..].iter().find_map(|(_, line)| *line).or_else(|| draft[..j].iter().rev().find_map(|(_, line)| *line))
+    };
+    let (_, script) = compare(listing, &rows);
+    let mut result = Heat::default();
+    let mut j = 0;
+    for entry in &script {
+        let tag = entry.as_bytes()[0];
+        if tag == b' ' {
+            j += 1;
+            continue;
+        }
+        let line = line_at(j);
+        if tag == b'+' {
+            j += 1;
+        }
+        if let Some(line) = line {
+            *result.lines.entry(line).or_default() += 1;
+            result.first.get_or_insert(line);
+        }
+    }
+    result
+}
+
+/// The draft's function, each line with its count of differing rows and
+/// the first divergence marked `>`.
+fn print_heat(text: &str, heat: &Heat, located: &[(String, Option<u32>)]) {
+    let lines: Vec<&str> = text.lines().collect();
+    let mapped: Vec<u32> = located.iter().filter_map(|(_, line)| *line).collect();
+    let (Some(&low), Some(&high)) = (mapped.iter().min(), mapped.iter().max()) else {
+        println!("heat: no instruction carries a line of the draft");
+        return;
+    };
+    // Back to the definition's header: the line before the opening brace.
+    let mut start = low as usize;
+    while start > 1 && !lines.get(start - 2).is_some_and(|line| line.trim().is_empty() || line.trim_end().ends_with(';') || line.trim_end().ends_with("*/")) {
+        start -= 1;
+    }
+    for number in start..=(high as usize).min(lines.len()) {
+        let count = heat.lines.get(&(number as u32)).copied().unwrap_or(0);
+        let mark = if heat.first == Some(number as u32) { '>' } else { ' ' };
+        let shown = if count > 0 { count.to_string() } else { String::new() };
+        println!("{shown:>4} {mark}{number:>5}  {}", lines[number - 1]);
+    }
+}
+
 fn scaffold_extent(map: &Map, elf: &Elf, wanted: &str) -> Result<(u32, u32, u32, String), String> {
     // STT_ARM_TFUNC (15) is the old assembler's Thumb function alias type.
     let functions: Vec<(u32, String)> = elf.symbols.iter()
@@ -405,6 +533,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if options.arm_study {
         println!("{ARM_STUDY_NOTICE}");
     }
+    if options.camelot_arm {
+        println!("{CAMELOT_ARM_STUDY_NOTICE}");
+    }
     let root = root();
     let target = options.target;
     let stem = options
@@ -508,6 +639,17 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         for line in script {
             println!("{line}");
         }
+    }
+    if options.heat {
+        let heat_object = draft_object(&root.join(target.output_dir), &format!("{stem}-heat"), false);
+        let steps = draft_steps(target, &draft, &heat_object, false)?;
+        let name = draft.file_name().unwrap_or_default().to_string_lossy().into_owned();
+        let located = located(&steps, &heat_object, draft_symbol.as_deref(), &name)?;
+        if located.iter().map(|(row, _)| row).ne(compiled.iter()) {
+            println!("heat: -g changed the code; the lines below are approximate");
+        }
+        let text = std::fs::read_to_string(&draft).map_err(|e| format!("{}: {e}", draft.display()))?;
+        print_heat(&text, &heat(&listing, &located), &located);
     }
     Ok(())
 }
@@ -726,6 +868,55 @@ int study(void) { return 17; }
         assert!(error.contains("PERM macros") && error.contains("alchemy permute"), "{error}");
         std::fs::write(&draft, "/* PERM_ONEOF(1, 2) was tried */\nint f(void) { return 1; }\n").unwrap();
         assert!(refuse_perm_macros(&draft).is_ok());
+    }
+
+    #[test]
+    fn heat_maps_instructions_to_draft_lines_through_the_line_table() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("probe.c");
+        std::fs::write(&source, "int g;\nint probe(int a, int b)\n{\n    int c = a * 3;\n    if (b)\n        c += g;\n    return c + b;\n}\n").unwrap();
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let object = draft_object(&work.path().join("tbs-en"), "probe", false);
+        std::fs::create_dir_all(object.parent().unwrap()).unwrap();
+        let steps = draft_steps(target, &source, &object, false).unwrap();
+        for step in &steps {
+            command(step, root()).unwrap();
+        }
+        let plain = disassemble(&object, None).unwrap();
+        let located = located(&steps, &object, None, "probe.c").unwrap();
+        // -g is analysis only: the code is the same instruction for instruction.
+        assert_eq!(located.iter().map(|(row, _)| row.clone()).collect::<Vec<_>>(), plain);
+        let line = |text: &str| located.iter().find(|(row, _)| row == text).unwrap_or_else(|| panic!("{text}: {located:?}")).1;
+        assert_eq!(line("cmp r1, #0"), Some(5));
+        assert_eq!(line("ldr r3, [r3, #0]"), Some(6));
+        assert_eq!(line("adds r0, r0, r1"), Some(7));
+        assert!(located.iter().all(|(_, line)| line.is_some_and(|line| (3..=8).contains(&line))), "{located:?}");
+        // A listing that loads g differently differs on line 6 alone.
+        let listing: Vec<String> = plain.iter().map(|row| if row == "ldr r3, [r3, #0]" { "ldrh r3, [r3, #0]".into() } else { row.clone() }).collect();
+        let found = heat(&listing, &located);
+        assert_eq!((found.lines.into_iter().collect::<Vec<_>>(), found.first), (vec![(6, 2)], Some(6)));
+        // A listing row missing from the draft counts on the line it falls before.
+        let mut longer = plain.clone();
+        let at = plain.iter().position(|row| row == "adds r0, r0, r1").unwrap();
+        longer.insert(at, "movs r2, #0".into());
+        let found = heat(&longer, &located);
+        assert_eq!((found.lines.into_iter().collect::<Vec<_>>(), found.first), (vec![(7, 1)], Some(7)));
+        assert_eq!(heat(&plain, &located), Heat::default());
+    }
+
+    #[test]
+    fn located_rows_follow_objdump_line_markers() {
+        let objdump = "00000000 <f>:\nf():\n/work/probe.c:3\n   0:\tpush\t{lr}\n/work/probe.c:4 (discriminator 1)\n   2:\tmovs\tr0, #1\n/work/EVENT.H:12\n   4:\tbl\t0 <Use>\n";
+        let rows = normalize_located(objdump);
+        assert_eq!(rows, [
+            ("push {lr}".to_string(), Some(("/work/probe.c".to_string(), 3))),
+            ("movs r0, #1".to_string(), Some(("/work/probe.c".to_string(), 4))),
+            ("bl".to_string(), Some(("/work/EVENT.H".to_string(), 12))),
+        ]);
+        // A row from a header goes to the next row in the draft.
+        let found = heat(&["push {lr}".to_string()], &[("push {lr}".into(), Some(3)), ("bl".into(), None), ("movs r0, #1".into(), Some(9))]);
+        assert_eq!((found.lines.into_iter().collect::<Vec<_>>(), found.first), (vec![(9, 2)], Some(9)));
     }
 
     #[test]

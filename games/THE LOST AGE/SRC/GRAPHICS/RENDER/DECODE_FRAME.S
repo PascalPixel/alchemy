@@ -5,11 +5,11 @@ Render_DecodeFrameCode:
 	.global Render_DecodeFrame
 	.thumb_func
 Render_DecodeFrame:
-AlchemyUncredited_08020da8:
 	bx	pc
+AlchemyUncredited_08020daa:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08020da8:
+AlchemyUncreditedEnd_08020daa:
 	cmp	r2, #0
 	bne	.L_08020ec4
 	mov	r4, #255

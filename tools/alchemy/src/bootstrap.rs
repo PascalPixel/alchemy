@@ -240,12 +240,17 @@ fn build_from_sources() -> Result<(), String> {
     })
 }
 
-/// Camelot's ARM compiler for ☀️ game ARM C (AGENTS.md K1, K3): the pinned
-/// agbcc gcc_arm with one change in GCC's own style, the anti and output
-/// dependence rule of GCC's own arm_adjust_cost (agscc's 2000-07-31 arm.c).
+/// Camelot's ARM compiler study for ☀️ game ARM C (AGENTS.md K1, K3; not
+/// admitted, no source routed): the pinned agbcc gcc_arm with upstream GCC's
+/// whole arm_adjust_cost rule set as agscc's 2000-07-31 arm.c has it, never a
+/// subset chosen by scores. Anti and output dependences cost nothing, and a
+/// call waits one cycle on a true dependence, even after a load.
 const CAMELOT_ARM_CHANGELOG: &str = "";
 const CAMELOT_ARM_ANCHOR: &str = "";
-const CAMELOT_ARM_RULE: &str = "";
+/// Upstream's rules, verbatim, in upstream's order before the load-after-store
+/// rule both compilers share.
+const CAMELOT_ARM_RULES: &str = "";
+const CAMELOT_ARM_HEAD: &str = "";
 
 fn camelot_arm_source(arm_c: &[u8]) -> Result<Vec<u8>, String> {
     let anchor = CAMELOT_ARM_ANCHOR.as_bytes();
@@ -257,9 +262,10 @@ fn camelot_arm_source(arm_c: &[u8]) -> Result<Vec<u8>, String> {
     let [at] = found[..] else {
         return Err("gcc_arm arm_adjust_cost is not the pinned source".into());
     };
-    let mut out = arm_c[..at].to_vec();
-    out.extend_from_slice(CAMELOT_ARM_RULE.as_bytes());
-    out.extend_from_slice(&arm_c[at + anchor.len()..]);
+    let split = at + CAMELOT_ARM_HEAD.len();
+    let mut out = arm_c[..split].to_vec();
+    out.extend_from_slice(CAMELOT_ARM_RULES.as_bytes());
+    out.extend_from_slice(&arm_c[split..]);
     Ok(out)
 }
 
@@ -313,15 +319,19 @@ fn build_camelot_arm(toolchain: &Path, log: &fs::File) -> Result<(), String> {
 mod camelot_arm_tests {
     use super::*;
     #[test]
-    fn camelot_arm_adds_only_the_upstream_dependence_rule_to_the_pinned_source() {
+    fn camelot_arm_adds_upstreams_whole_rule_set_to_the_pinned_source() {
+        assert!(CAMELOT_ARM_ANCHOR.starts_with(CAMELOT_ARM_HEAD));
         let pinned = fs::read(root().join("agbcc/gcc_arm/config/arm/arm.c")).unwrap();
         let changed = camelot_arm_source(&pinned).unwrap();
-        let added = CAMELOT_ARM_RULE.len() - CAMELOT_ARM_ANCHOR.len();
-        assert_eq!(changed.len(), pinned.len() + added);
+        assert_eq!(changed.len(), pinned.len() + CAMELOT_ARM_RULES.len());
+        // Every rule upstream's arm_adjust_cost has before the shared
+        // load-after-store rule, verbatim and in its order: the whole set.
         let upstream = fs::read_to_string(root().join("agscc/gcc/config/arm/arm.c")).unwrap();
-        assert!(upstream.contains(
-            "  if (REG_NOTE_KIND (link) == REG_DEP_ANTI\n      || REG_NOTE_KIND (link) == REG_DEP_OUTPUT)\n    return 0;"
-        ));
+        let body = &upstream[upstream.find("\narm_adjust_cost (").unwrap()..];
+        let rules = &body[body.find(CAMELOT_ARM_HEAD).unwrap() + CAMELOT_ARM_HEAD.len()..];
+        let shared = rules.find("  if ((i_pat = single_set (insn)) != NULL").unwrap();
+        assert_eq!(&rules[..shared], CAMELOT_ARM_RULES);
+        assert!(String::from_utf8(changed.clone()).unwrap().contains(&format!("{CAMELOT_ARM_HEAD}{CAMELOT_ARM_RULES}  if ((i_pat")));
         assert!(camelot_arm_source(&changed).is_err());
     }
 }

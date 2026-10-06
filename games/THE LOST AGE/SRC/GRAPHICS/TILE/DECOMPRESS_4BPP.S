@@ -5,11 +5,11 @@ Tile_Decompress4bppCode:
 	.global Tile_Decompress4bpp
 	.thumb_func
 Tile_Decompress4bpp:
-AlchemyUncredited_08038b14:
 	bx	pc
+AlchemyUncredited_08038b16:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08038b14:
+AlchemyUncreditedEnd_08038b16:
 	push	{r5, r6}
 	add	r5, pc, #40
 	ldm	r5, {r2, r3}

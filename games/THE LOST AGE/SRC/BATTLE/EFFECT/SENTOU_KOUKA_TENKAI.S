@@ -5,11 +5,11 @@ SentouKouka_TenkaiCode:
 	.global SentouKouka_Tenkai
 	.thumb_func
 SentouKouka_Tenkai:
-AlchemyUncredited_081a004c:
 	bx	pc
+AlchemyUncredited_081a004e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081a004c:
+AlchemyUncreditedEnd_081a004e:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]

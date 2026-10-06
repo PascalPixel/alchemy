@@ -1,10 +1,20 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 709 of 1276 (1283 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here (native keeps three more spill slots: input_edge at sp+36 and input_held at sp+32 among them), mode stays in fp rather than a spill, render sits in sl rather than fp, and the copy/preview paths allocate registers differently. Native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 408 of 1276 (1282 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
  * Trial (2026-10-06): swap = 1 as the first statement of the dirty block, where native sets r8 before the mode test: 892 -> 814.
  * Trial (2026-10-06): attr as u32 loads pair_entries with ldrh where u16 gave ldrsh and a zero-extend: 814 -> 709 (s32 gives 721).
- * Trial (2026-10-06): input_edge and input_held as u32 leave 709 unchanged. */
+ * Trial (2026-10-06): input_edge and input_held as u32 leave 709 unchanged.
+ * Trial (2026-10-06): mode fixed in fp (FAKEMATCH) gives the native 136-byte frame and array offsets: 709 -> 716; with anim, dirty, frame, page declared in that order (spill slots 100, 96, 92, 88 as native): 662.
+ * Trial (2026-10-06): input_edge and input_held declared in the loop block take the lowest spill slots (36, 32) as native: 662 -> 608.
+ * Trial (2026-10-06): first_flag declared after second_index (native slots 80, 76, 72, 68): 608 -> 590.
+ * Trial (2026-10-06): a work local in each tutorial case instead of one shared: scene takes r6 as native: 590 -> 588.
+ * Trial (2026-10-06): row for the help line, apart from the loop's step: row takes r5 as native: 588 -> 568.
+ * Trial (2026-10-06): the two stores to menu_busy after the loop through gWindowWork[0] directly, leaving 0 in sl as native: 568 -> 549.
+ * Trial (2026-10-06): y = row * 8 computed before the help-line draw (permuter hint, as a temporary): the loop allocates as native: 549 -> 458.
+ * Trial (2026-10-06): j for the owner_y loop apart from the tile loop's i: the counter takes r2 as native: 458 -> 446. Cursor zeroed before anim, dirty, page and frame shares one zero everywhere (444), unlike native; page, frame, dirty, anim order gives 453.
+ * Trial (2026-10-06): one id for both owners in the swap preview, where first_id and second_id were two: id keeps r6 and unit r7 as native: 446 -> 408. Reloading attr once after the first 0x8000 test instead of inside it gives 411; row and y declared last leave 408.
+ * Open (2026-10-06): 224 (the element mask, 7 refs over 172 insns, priority 814) outranks 0x8000 and the shared 0 (4 refs over 100 insns, 800 each) and takes r8; it would need 176 insns or 6 refs to fall behind them; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Iwram_CopyWords' 332 and its address tie (4 refs over 90 insns) and 332, created first as an argument, wins by pseudo number; native keeps the address in r5. A permuter run over the help-line section (4 minutes) found nothing below 458 before the id and j changes. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -57,26 +67,29 @@ void Menu_UpdateEntryObjectTransforms(void);
 void UiMenu_SlideCursor(s32, s32);
 s32 DjinnMenu_DrawStatPreview(s32, s32, s32, s32, s32, s32, s32, s32, s32);
 
-s32 OwnerAction_RunCompareLoop(u32 mode)
+s32 OwnerAction_RunCompareLoop(u32 mode_arg)
 {
+    /* FAKEMATCH: as a pseudo mode ranks below the pointers in r5-r10 and is spilled; native keeps it in fp. */
+    register u32 mode asm("r11") = mode_arg;
     struct DjinnMenuWork *state;
     struct DjinnMenuBackdrop *scene;
     struct UiRenderWork *render;
     struct UiWindow *list;
     s32 count[2];
     s32 cursor[2];
-    s32 page;
-    s32 frame;
-    u32 dirty;
     s32 anim;
+    u32 dirty;
+    s32 frame;
+    s32 page;
     s32 entry;
     s32 swap;
     s32 step;
+    s32 row;
+    s32 y;
     s32 result;
-    s32 input_edge;
-    s32 input_held;
     u32 attr;
     s32 i;
+    s32 j;
 
     state = gMenuWork;
     anim = 0;
@@ -89,8 +102,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     cursor[0] = 0;
     cursor[1] = 0;
 
-    for (i = 3; i >= 0; i--) {
-        state->owner_y[i] = 0xc8;
+    for (j = 3; j >= 0; j--) {
+        state->owner_y[j] = 0xc8;
     }
     state->owner_x[state->selected_column[1]] = 0x78;
     state->owner_y[state->selected_column[1]] = 0x20;
@@ -109,13 +122,12 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         u16 *diff_work;
         struct BattleUnit *unit_copy;
         struct BattleUnit *unit;
-        s32 first_id;
-        s32 second_id;
+        s32 id;
         s32 first_element;
         s32 first_index;
-        s32 first_flag;
         s32 second_element;
         s32 second_index;
+        s32 first_flag;
         s32 second_flag;
         s32 out_a;
         s32 out_b;
@@ -124,39 +136,39 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
         second_element = 0;
         second_index = 0;
-        first_id = state->shown_owner[0];
+        id = state->shown_owner[0];
         first_element = state->pair_element[0];
         first_index = state->pair_index[0] & 31;
         first_flag = (u16)(state->pair_entries[0] & 0x8000);
 
-        unit = Owner_GetStateFar(first_id);
+        unit = Owner_GetStateFar(id);
         Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
-        Djinn_DeactivateFar(first_id, first_element, first_index);
+        Djinn_DeactivateFar(id, first_element, first_index);
         if (mode == 0) {
             second_element = state->pair_element[1];
             second_index = state->pair_index[1] & 31;
             second_flag = (u16)(state->pair_entries[1] & 0x8000);
-            Djinn_AddToOwnerFar(first_id, second_element, second_index);
+            Djinn_AddToOwnerFar(id, second_element, second_index);
             if (second_flag != 0) {
-                Djinn_ActivateFar(first_id, second_element, second_index);
+                Djinn_ActivateFar(id, second_element, second_index);
             }
         }
-        Owner_RecalculateStatsFar(first_id);
+        Owner_RecalculateStatsFar(id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
 
-        second_id = state->shown_owner[1];
-        unit = Owner_GetStateFar(second_id);
+        id = state->shown_owner[1];
+        unit = Owner_GetStateFar(id);
         Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
         if (mode == 0) {
-            Djinn_DeactivateFar(second_id, second_element, second_index);
+            Djinn_DeactivateFar(id, second_element, second_index);
         }
-        Djinn_AddToOwnerFar(second_id, first_element, first_index);
+        Djinn_AddToOwnerFar(id, first_element, first_index);
         if (first_flag != 0) {
-            Djinn_ActivateFar(second_id, first_element, first_index);
+            Djinn_ActivateFar(id, first_element, first_index);
         }
-        Owner_RecalculateStatsFar(second_id);
+        Owner_RecalculateStatsFar(id);
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
@@ -223,17 +235,18 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 128, 8);
     }
 
-    step = (mode == 1);
+    row = (mode == 1);
     attr = state->pair_entries[0];
     if ((attr & 0x8000) == 0) {
         UiWork_SetParamNibbleFar(2);
         attr = state->pair_entries[0];
     }
+    y = row * 8;
     UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-        state->help_window, 48, step * 8);
+        state->help_window, 48, y);
     attr = state->pair_entries[0];
     UiWindow_SetTilemapEntryFar(
-        state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, step, 0);
+        state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, row, 0);
     UiWork_SetParamNibbleFar(15);
 
     if (mode == 0) {
@@ -264,6 +277,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     }
 
     for (;;) {
+        s32 input_edge;
+        s32 input_held;
+
         render = (struct UiRenderWork *)gWindowWork[0];
         scene = state->backdrop;
         input_edge = gKeyState;
@@ -271,7 +287,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         if (scene->tutorial_step != 0) {
             s16 *saved;
-            s32 work;
 
             saved = Runtime_BumpAllocateAlternatePool(0x200);
             input_edge = 0;
@@ -291,6 +306,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 break;
             case 10:
                 if (scene->tutorial_timer == 60) {
+                    s32 work;
+
                     Iwram_CopyWords(saved, render, 0x200);
                     work = UiText_OpenMessageWindowFar(0xc43, 8, 0, 1);
                     state->cursor->active = 1;
@@ -311,6 +328,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 break;
             case 11:
                 if (scene->tutorial_timer == 60) {
+                    s32 work;
+
                     Iwram_CopyWords(saved, render, 0x200);
                     work = UiText_OpenMessageWindowFar(0xc42, 8, 0, 1);
                     state->cursor->active = 1;
@@ -510,8 +529,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     FourObjectMotion_SetSlotPhase(1, 0);
     Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
 
-    render = (struct UiRenderWork *)gWindowWork[0];
-    render->menu_busy = 1;
+    ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;
     UiWindow_CloseIfOpen(&state->help_window, 1);
     WaitFrames(1);
     UiWindow_UpdateOrCreate(&state->help_window, 13, 0, 17, 5, 2);
@@ -520,8 +538,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     RenderOutput_RedrawSavedRectFar(state->list_window);
     RenderOutput_RedrawSavedRectFar(state->unknown_window_028);
     RenderOutput_RedrawSavedRectFar(state->status_window);
-    render = (struct UiRenderWork *)gWindowWork[0];
-    render->menu_busy = 0;
+    ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
     WaitFrames(1);
     return result;
 }

@@ -26,6 +26,10 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "TRANSFORM.H"
+#include "BATTLE_WORK.H"
+#include "IO_WRITE_QUEUE.H"
+#include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
 
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
@@ -287,8 +291,6 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
     BattleFx_EndCanvasLayer();
 }
 
-extern DrawRectangle gWorkSlot[];
-
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
 void AudioCommand_PlayFar(s32 value);
@@ -432,4 +434,344 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     __asm__("");
     /* FAKEMATCH: a scheduling barrier the native order needs. */
     __asm__("");
+}
+
+extern u8 BattlePieceStartX[];
+extern u8 BattlePieceStartY[];
+extern u8 BattlePieceWidth[];
+extern u8 BattlePieceHeight[];
+extern u16 BattlePieceOffset[];
+
+#define PLOT(x, y) (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 + (y) / 8 * 2048) = 2)
+
+void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
+{
+    /* FAKEMATCH: never read; the native frame keeps 12 unused bytes at sp+44..55, exactly this struct. */
+    struct EffectPosition position;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 frame;
+    DrawRectangle draw1;
+    DrawRectangle draw0;
+    struct BattleSession *battle;
+    struct BattleBackgroundView *view;
+    void **slots;
+    void **cache;
+    s32 rmax;
+    struct EffectStep *piece;
+    s32 r;
+    s32 i;
+    s32 px;
+    s32 j;
+    s32 k;
+    s32 d;
+    s32 py;
+    s32 x1;
+    s32 size;
+    s32 left;
+    s32 left2;
+    s32 y1;
+    s32 x2;
+    s32 y2;
+    u8 *start_y;
+    u8 *start_x;
+    s32 cx;
+    s32 cy;
+    s32 cell_size;
+    u8 *cells;
+    u32 cell_fill;
+
+    work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
+    size = 0x4000;
+    canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, size);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+    slots = gWorkSlot + HEAP_SLOT_BATTLE;
+    battle = slots[0];
+    view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+    work->effect = effect;
+    BattleFx_ClearActorTimers();
+    view->second_mode = 1;
+    gBgScroll[1].y = 32;
+    BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
+    REG_BG2CNT = 0x784;
+    BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+    view->second_mode = 0;
+    REG_BG2X = 0;
+    REG_BG2Y = 0xfffff000;
+    REG_BG2PA = 0x80;
+    REG_BG2PB = 0;
+    REG_BG2PC = 0;
+    REG_BG2PD = 0x100;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0x1088;
+    REG_WININ = 0x3537;
+    REG_WINOUT = 0x3f21;
+
+    i = 0;
+    for (k = 0; k != 16; k++) {
+        for (j = 0; j != 8; j++, i += 2) {
+            s16 entry;
+
+            entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
+            *(volatile s16 *)(0x06003800 + i) = entry;
+        }
+    }
+
+    Iwram_ClearWords(canvas, size);
+    Iwram_ClearWords((void *)0x06004000, size);
+    IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0;
+    Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work, 1, 1);
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
+    cache = gWorkSlot;
+    draw0 = cache[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+    draw1 = cache[HEAP_SLOT_BLITTER_ALTERNATE];
+
+    /* FAKEMATCH: the copy and fill operands set here, before the piece loop, so CSE does not share them and the pair reloads both as the native does; written at the calls they leave 45/1051. */
+    cell_size = 0x7800;
+    cells = Ram_MapCellBuffer;
+    cell_fill = 0x01010101;
+    start_y = BattlePieceStartY;
+    start_x = BattlePieceStartX;
+    r = 0;
+    piece = work->particles;
+    for (i = 0; i != 33; i++) {
+        s32 x, y, vx, vy;
+
+        x = *start_x++ << 16;
+        y = *start_y++ << 16;
+        piece->x = x;
+        piece->y = y;
+        vx = (x - 0x200000) >> 2;
+        vy = (y - 0x3c0000) >> 2;
+        piece->velocity_x = vx;
+        piece->velocity_y = vy;
+        piece++;
+    }
+
+    Iwram_CopyWords(cells, (void *)0x06008000, cell_size);
+    Iwram_FillWords(cells, cell_size, cell_fill);
+    view->busy = 1;
+    work->saved_bg1_x = gBgScroll[1].x;
+    work->saved_bg1_y = gBgScroll[1].y;
+    gBgScroll[1].x = 0;
+    IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
+    Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
+    /* FAKEMATCH: r5 clobber prunes draw1's r5 preference (its load address is in r5); without it the piece constants swap r5/r7 and the fill routine takes r6, 173/1052. */
+    asm volatile("" ::: "r5");
+    Audio_PlayCue(212);
+    ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 3, 0, 30);
+
+    for (frame = 0; frame != 128; frame++) {
+        if (frame == 2)
+            Audio_PlayCue(212);
+        if (frame == 3)
+            Audio_PlayCue(212);
+        if (frame == 28)
+            ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
+        if (frame == 32)
+            Audio_PlayCue(149);
+        if (frame == 5) {
+            Audio_PlayCue(145);
+            /* FAKEMATCH: barrier; sched2 otherwise loads 0x77a0 before reloading work, 2/1051. */
+            asm("");
+            gBgScroll[1].x = work->saved_bg1_x;
+            BattleBackground_LoadFar(1, battle->background, -1);
+        }
+
+        if (frame > 7) {
+            u16 *pal;
+
+            pal = (u16 *)0x050000c0;
+            for (i = 0; i != 128; i++) {
+                s32 red = *pal & 0x1f;
+                s32 green = (*pal >> 5) & 0x1f;
+                s32 blue = (*pal >> 10) & 0x1f;
+                s32 goal_red = battle->palette[i] & 0x1f;
+                s32 goal_green = (battle->palette[i] >> 5) & 0x1f;
+                s32 goal_blue = (battle->palette[i] >> 10) & 0x1f;
+
+                if (red < goal_red)
+                    red++;
+                else if (red > goal_red)
+                    red--;
+                if (green < goal_green)
+                    green++;
+                else if (green > goal_green)
+                    green--;
+                if (blue < goal_blue)
+                    blue++;
+                else if (blue > goal_blue)
+                    blue--;
+                *pal++ = (blue << 10) | (green << 5) | red;
+            }
+        }
+
+        if (frame == 4)
+            Iwram_FillWords((void *)0x06008000, 0x7800, 0x02020202);
+
+        if (frame <= 3) {
+            s32 v;
+
+            v = frame * 4 + 8;
+            rmax = frame * 32;
+            BG_PLTT[2] = (v << 10) | (v << 5) | v;
+            cx = 96;
+            cy = 60;
+            for (; r != rmax; r++) {
+                px = r;
+                py = 0;
+                d = r;
+                while (px >= py) {
+                    x2 = px + cx;
+                    x1 = cx - px;
+                    left = x1;
+                    y1 = cy - py;
+                    y2 = py + cy;
+                    if (y1 < 0)
+                        y1 = 0;
+                    if (y2 > 119)
+                        y2 = 119;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
+                    x1 = left + 1;
+                    x2 = px + 97;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
+
+                    x2 = py + cx;
+                    x1 = cx - py;
+                    left2 = x1;
+                    y2 = px + cy;
+                    y1 = cy - px;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    if (y1 < 0)
+                        y1 = 0;
+                    if (y2 > 119)
+                        y2 = 119;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
+                    x1 = left2 + 1;
+                    x2 = py + 97;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
+
+                    d -= py * 2 + 1;
+                    if (d < 0) {
+                        d += px * 2 - 2;
+                        px--;
+                    }
+                    py++;
+                }
+            }
+            Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+        }
+
+        if (frame <= 50) {
+            for (i = 0; i != 33; i++) {
+                piece = &work->particles[i];
+                draw0(canvas, (u8 *)work + BattlePieceOffset[i],
+                      ((s16 *)&piece->x)[1], ((s16 *)&piece->y)[1],
+                      BattlePieceWidth[i], BattlePieceHeight[i]);
+                if (frame > 3)
+                    EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
+            }
+        }
+
+        if (frame >= 8 && frame <= 50) {
+            s32 v;
+
+            v = frame - 8;
+            if (v > 31)
+                v = 31;
+            BG_PLTT[1] = (v << 10) | (v << 5) | v;
+        }
+
+        if (frame == 51) {
+            Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
+            for (i = 1; i != 64; i++) {
+                s32 v;
+
+                v = i / 2;
+                if (v < 0)
+                    v = 0;
+                BG_PLTT[i] = (v << 10) | ((v / 2) << 5) | v;
+            }
+            REG_BLDCNT = 0x3f44;
+            for (i = 0; i != 32; i++) {
+                piece = &work->particles[i];
+                piece->x = ((Random16() & 31) + 32) << 16;
+                piece->y = ((Random16() & 31) + 80) << 16;
+                piece->velocity_x = ((Random16() & 0x1ff) - 0x100) << 12;
+                piece->velocity_y = 0;
+                piece->variant = 0;
+            }
+            work->transfer_mode = 2;
+            work->transfer_value = 50;
+        }
+
+        if (frame > 52) {
+            for (i = 0; i != 32; i++) {
+                piece = &work->particles[i];
+                if (frame >= i / 4 + 52 && piece->variant <= 39) {
+                    s32 cell;
+
+                    cell = piece->variant / 4;
+                    if (cell > 5)
+                        cell = 5;
+                    draw1(canvas, (u8 *)work + (cell << 11),
+                          ((s16 *)&piece->x)[1] - 16, ((s16 *)&piece->y)[1] - 32, 32, 64);
+                    EffectStep_AdvanceWithGravity2D(piece, 60, -0x1000);
+                    piece->variant++;
+                }
+            }
+        }
+
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 1, -1, 0);
+    gBgScroll[1].x = work->saved_bg1_x;
+    gBgScroll[1].y = 32;
+    BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
+    WaitFrames(1);
+    IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }

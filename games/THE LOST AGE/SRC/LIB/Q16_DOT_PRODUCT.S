@@ -5,11 +5,11 @@ Math_DotProductQ16Code:
 	.global Math_DotProductQ16
 	.thumb_func
 Math_DotProductQ16:
-AlchemyUncredited_08017ce8:
 	bx	pc
+AlchemyUncredited_08017cea:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08017ce8:
+AlchemyUncreditedEnd_08017cea:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}

@@ -5,11 +5,11 @@ Data_08139aac:
 	.global Func_08139aac
 	.thumb_func
 Func_08139aac:
-AlchemyUncredited_08139aac:
 	bx	pc
+AlchemyUncredited_08139aae:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08139aac:
+AlchemyUncreditedEnd_08139aae:
 	b	.L_08139e94
 AlchemyUncredited_08139ab4:
 	.4byte	0
@@ -318,9 +318,7 @@ AlchemyUncreditedEnd_08139df4:
 	stm	r9, {r3, r4, r5}
 	ldr	r0, [r0, #8]
 	b	.L_08139ac4
-AlchemyUncredited_08139f54:
 	.4byte	Runtime_ReciprocalTable + 1
-AlchemyUncreditedEnd_08139f54:
 AlchemyUncredited_08139f58:
 	.4byte	0x00000000
 	.4byte	0x00000000

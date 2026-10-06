@@ -26,8 +26,6 @@
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
 
-#define gKeysRepeat (*(u32 *)&gKeysRepeat)
-
 extern u8 gMapCellBuffer[];
 
 void Event_FinishScreenTransition(void);
@@ -185,13 +183,13 @@ void BattleFx_RunVisibilityTransition(void)
     BattleFx_UpdateObjectVisibilityBounds();
     Battle_InitializeRenderObject();
     BattleFx_ScheduleRatioTransition(0x9D89, 6);
-    if ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L)
+    if (gKeysHeld & KEY_L)
     {
       do
       {
         WaitFrames(1);
       }
-      while ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L);
+      while (gKeysHeld & KEY_L);
     }
     BattleFx_ScheduleRatioTransition(0x10000, 6);
     Scheduler_DisableOverlayCallbacks();

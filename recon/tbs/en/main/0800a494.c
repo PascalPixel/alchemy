@@ -1,4 +1,14 @@
-/* 0800a494: ARM, compiled C (push starts at r5: -fcall-used-r4). Score in ARM mode: listing 307, draft 398, differ 633 */
+/* 0800a494: ARM draft; no admitted game ARM build route.
+   Stock agscc --arm: listing 307, draft 397, common 48, differ 608.
+   Fixed agbcc_arm -O2 library setting: 307/328/common72/differ491.
+   Shared ScriptMotionObject layout and separate ratio/velocity values come
+   from the exact Thumb counterpart; ARM still updates only eight objects
+   and keeps its own horizontal motion, deceleration and frozen behavior.
+   Natural source trials, agscc/agbcc differences: baseline621/517;
+   separate ratio/vx/vz609/499; ordinary for loop608/491; ground local same.
+   Explicit high/low product expression591/547 was reverted. Remaining
+   differences include multiplication allocation, fixed-call formation,
+   stack use and scheduling; this draft does not identify its compiler. */
 #include "TYPES.H"
 #include "SCRIPT_MOTION.H"
 #include "IWRAM_CALL.H"
@@ -20,7 +30,6 @@ static __inline__ s32 MulQ16(s32 a, s32 b)
 void Object_UpdateAll(void)
 {
     struct ScriptMotionObject *obj;
-    struct ScriptMotionObject *next;
     s32 i;
     s32 x;
     s32 y;
@@ -28,25 +37,24 @@ void Object_UpdateAll(void)
     s32 dx;
     s32 dz;
     s32 vx;
+    s32 vz;
     s32 len;
+    s32 ratio;
     s32 rem;
+    s32 ground;
     s32 reached;
     u32 cmd;
 
-    i = 0;
     obj = gObjectSlots;
-loop:
-    i++;
-    next = obj + 1;
-    {
+    for (i = 0; i < 8; i++, obj++) {
         if (obj->script == NULL)
-            goto skip;
+            continue;
         if (obj->hook != NULL)
             obj->hook(obj);
         if (obj->script == NULL)
-            goto skip;
+            continue;
         if (obj->paused != 0)
-            goto skip;
+            continue;
 
         if (obj->wait != 0) {
             obj->wait--;
@@ -61,7 +69,7 @@ loop:
                     break;
             }
             if (obj->script == NULL)
-                goto skip;
+                continue;
         }
 
         x = obj->x;
@@ -83,14 +91,16 @@ loop:
                     x = obj->target_x;
                     z = obj->target_z;
                 } else {
-                    len = Iwram_RatioMulQ14(len, obj->acceleration);
-                    vx = obj->velocity_x += MulQ16(len, dx);
-                    dz = obj->velocity_z += MulQ16(len, dz);
-                    len = Iwram_Sqrt(MulQ16(vx, vx) + MulQ16(dz, dz)) << 8;
+                    ratio = Iwram_RatioMulQ14(len, obj->acceleration);
+                    obj->velocity_x += MulQ16(ratio, dx);
+                    obj->velocity_z += MulQ16(ratio, dz);
+                    vx = obj->velocity_x;
+                    vz = obj->velocity_z;
+                    len = Iwram_Sqrt(MulQ16(vx, vx) + MulQ16(vz, vz)) << 8;
                     if (len > obj->speed_limit) {
-                        len = Iwram_RatioMulQ14(len, obj->speed_limit);
-                        obj->velocity_x = MulQ16(len, vx);
-                        obj->velocity_z = MulQ16(len, dz);
+                        ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
+                        obj->velocity_x = MulQ16(ratio, vx);
+                        obj->velocity_z = MulQ16(ratio, vz);
                     }
                 }
             } else {
@@ -103,9 +113,9 @@ loop:
                         obj->velocity_x = reached;
                         obj->velocity_z = reached;
                     } else {
-                        len = Iwram_RatioMulQ14(len, rem);
-                        obj->velocity_x = MulQ16(len, dx);
-                        obj->velocity_z = MulQ16(len, dz);
+                        ratio = Iwram_RatioMulQ14(len, rem);
+                        obj->velocity_x = MulQ16(ratio, dx);
+                        obj->velocity_z = MulQ16(ratio, dz);
                     }
                 } else {
                     obj->velocity_x = reached;
@@ -114,10 +124,11 @@ loop:
             }
 
             if ((obj->motion_flags & 2) != 0) {
-                if (y > obj->terrain_height) {
+                ground = obj->terrain_height;
+                if (y > ground) {
                     obj->velocity_y -= obj->gravity;
                 } else if (obj->velocity_y < 0) {
-                    y = obj->terrain_height;
+                    y = ground;
                     obj->velocity_y = -MulQ16(obj->vertical.bounce, obj->velocity_y);
                     if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
                         obj->velocity_y = 0;
@@ -181,8 +192,4 @@ loop:
             }
         }
     }
-skip:
-    obj = next;
-    if (i <= 7)
-        goto loop;
 }

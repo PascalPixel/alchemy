@@ -1,7 +1,8 @@
-/* 08023e70: differ 137 of 1201 (2026-10-06, third pass: the page wrap writes page = 0 before row = saved_row, from the permuter's best-1; its other rewrites are noise). Earlier: differ 145. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
+/* 08023e70: differ 65 of 1201 (2026-10-06, third pass). Cause found: in the native, the message-id bases 0x666 (both arms) and 0x45f sit in local-alloc pseudos and take r3, first in the allocation order. The draft adds them inline, so they become rotation reloads, and every detail_win and zero reload after them shifts. Tagged asm-held temporaries (base) do this: 137 to 71. The 0x666 arm then resets detail_win before sub_sel as the native stores do (69), and entry is an integer sum page * 4 + tbl (65). Before that, the page wrap setting page = 0 before row = saved_row took 145 to 137 (from the permuter's best-1; its other rewrites are noise). Remaining: the held constant takes r2 where the native has r3, because its life still overlaps the 255 mask; a statement expression, =r/0 or +l constraints all stay at 69. Also left: the start-of-function schedule (movs r6, #0; mov r9, r0) and the k = redraw search-index load. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
 /* MenuCell now includes its automatic-mode word at 0xe0; remove the unused duplicate tail word so selected remains at 0xe4 and total size at 0x104. */
 /* Shared PartyStatusWindow from the verified STATUS.C corpus leaves differ 145. Further search trials: combined initialization, is_used as index, while-loop and memory clobber remain 145; do-while 166; index-first initialization 155; initialization before the clear call 148. Redraw memory/output constraints range 447-722. Clobbering r1 reaches 120 but emits mov-zero rather than the native reload, so it was removed. */
 /* Stubborn (2026-10-06): CSE seeds the native search index from redraw's spilled zero (ldr r1, [sp, #28]); the draft keeps a fresh zero, and the reload rotation after the 0x8ef branch follows from it. */
+/* Third pass (2026-10-06), measured against the 137 draft. Correction: the missing search-index load does not shift the reload rotation. Reload regs from is_used = 0 through the 0x8ef branch (r1, r2, r3, r1, r2, r3) match the native, and an asm tie that does reload redraw into r1 leaves the later swaps unchanged (141). The first divergence is the 0x666 constant reload in the cur & 0x3e0000 branch: native r3, draft r1. After it, detail_win and its zero come in rotation order (native r1/r2, draft r2/r3). Cause still unknown: some reload or local-alloc choice between the 0x8ef zero and insn 676. cse.c sets COST(pseudo) 1 against const 0 at 0, so CSE always folds k = redraw while redraw = 0 is known. The native copy survives only if CSE does not know redraw there, yet the native's first unrolled probe still folds k to 0 (movs r2, #228). No source form found that does both. Trials: asm("" : "=r"(k) : "0"(redraw)) 141 (CSE canonicalises redraw to mask, so it loads [sp, #40] and the first probe keeps cmp/lsls); k = redraw then +r k 149; asm use of redraw before the loop 160, before is_used 175; explicit first probe plus while (++k <= 7) 169 (strength-reduced); do-while from k 166/294; redraw = 0 in both arms of the sub_sel block 207 (cprop still makes k = 0, now movs r1, #0); detail_win = 0 before sub_sel = 0 in the 0x666 arm 142 (cross-jumps with the 0x8ef arm, 1189 insns); 0x666 written first or summed in u32 137; index-first sum 159; code = 0 before cnt = 0 or before the pool allocation 136 but 1199 insns (cnt's zero folds into r6, the native keeps movs r1, #0); prev_page before cnt 145; code = 0 last 147; the permuter's declaration swap, j = 0 hoist and PushValueSlot temporary each leave the count unchanged. */
 /* Trials (2026-10-06, second pass): pos as cnt + tbl or as an integer sum 145 (same code); k < 8 145; function-scope j as the index 145 (it gets its own movs r7, #0); redraw = 0 moved before the sub_sel block with k = redraw 155 (CSE still folds it through the skipped block). The -da dumps keep k = (const_int 0) through cse, gcse, loop and combine, and reload_cse then drops it because r1 already holds is_used's zero; the native needs k = (reg redraw) alive at reload. The r1/r2/r3 swaps on the later 0x666 and 0x45f constant reloads follow from the reload register rotation that one missing reload shifts. */
 
 #include "CALLBACK_SCHEDULER.H"
@@ -80,6 +81,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     s32 y;
     s32 i;
     s32 j;
+    s32 base;
     struct CursorSprite *cur_spr;
 
     ctx = (struct UiRenderWork *)gWindowWork[0];
@@ -168,12 +170,15 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                 } else if (cur & 0x10000) {
                     if (cur & 0x3e0000) {
                         UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
-                        UiText_CopyMessageString((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + 0x666,
+                        base = 0x666;
+                        /* FAKEMATCH: the native holds 0x666 in a local-alloc pseudo (r3); inline it is a reload in rotation (r1) and shifts every later reload */
+                        asm("" : "+r"(base));
+                        UiText_CopyMessageString((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + base,
                                       buf, 52);
                         if (detail_win != 0) {
                             UiWork_Finalize(detail_win, 1);
-                            sub_sel = 0;
                             detail_win = 0;
+                            sub_sel = 0;
                         }
                     } else {
                         detail_win = DjinnMenu_ShowChangePreview(detail_win, owner, cur, sub_sel, &sub_cnt);
@@ -182,7 +187,10 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     }
                 } else {
                     detail_win = DjinnMenu_ShowChangePreview(detail_win, owner, cur, sub_sel, &sub_cnt);
-                    UiText_CopyMessageString((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + 0x666,
+                    base = 0x666;
+                    /* FAKEMATCH: 0x666 in a pseudo (native r3), not a rotation reload */
+                    asm("" : "+r"(base));
+                    UiText_CopyMessageString((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + base,
                                   buf, 52);
                 }
             } else {
@@ -199,7 +207,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             prev_row = row;
             if (page != prev_page) {
                 RenderOutput_RedrawSavedRect(list_win);
-                entry = &tbl[page];
+                entry = (u32 *)((page << 2) + (u32)tbl);
                 code = *entry;
                 j = 0;
                 while (code != 0x80000000) {
@@ -209,7 +217,10 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     } else if (code & 0x10000) {
                         UiWork_SetParamNibble(2);
                     }
-                    UiText_DrawCharacterAtOffset((s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + 0x45f,
+                    base = 0x45f;
+                    /* FAKEMATCH: 0x45f in a pseudo (native r3), not a rotation reload */
+                    asm("" : "+r"(base));
+                    UiText_DrawCharacterAtOffset((s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + base,
                                   (struct RenderInput *)list_win, 8, j * 16);
                     if (code & 0x3e0000) {
                         UiText_DrawNumberAtOffset((s32)((code & 0x3e0000) >> 17), 1, (struct RenderInput *)list_win, 48, j * 16);

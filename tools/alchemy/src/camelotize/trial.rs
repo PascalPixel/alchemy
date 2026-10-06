@@ -147,6 +147,16 @@ pub(crate) fn object_contents(bytes: &[u8]) -> Result<String, String> {
     Ok(out)
 }
 
+/// The compiler's messages without their line numbers, sorted, so an edit
+/// that moves lines (an else flattened) leaves them the same unless a
+/// message is new.
+pub(crate) fn unnumbered(messages: &str) -> String {
+    let number = regex::Regex::new(r":\d+:").expect("pattern");
+    let mut lines: Vec<String> = messages.lines().map(|line| number.replace(line, ":").into_owned()).collect();
+    lines.sort();
+    lines.join("\n")
+}
+
 /// Candidates that overlap an earlier one are dropped.
 pub(crate) fn disjoint(mut edits: Vec<Edit>) -> Vec<Edit> {
     edits.sort_by_key(|e| e.start);
@@ -205,7 +215,7 @@ impl Build {
             return Err(messages);
         }
         let bytes = std::fs::read(&object).map_err(|e| e.to_string())?;
-        Ok((object_contents(&bytes)?, messages))
+        Ok((object_contents(&bytes)?, unnumbered(&messages)))
     }
 }
 
@@ -273,6 +283,14 @@ mod tests {
         let ranges = conditional(text);
         assert_eq!(ranges.len(), 1);
         assert_eq!(&text[ranges[0].clone()], "#if X\nb;\n#  ifdef Y\nc;\n#endif\n#else\nd;\n#endif\n");
+    }
+
+    #[test]
+    fn messages_compare_without_line_numbers() {
+        let before = "A.C: In function `F':\nA.C:12: warning: unused variable `x'\n";
+        let after = "A.C: In function `F':\nA.C:11: warning: unused variable `x'\n";
+        assert_eq!(unnumbered(before), unnumbered(after));
+        assert_ne!(unnumbered(before), unnumbered("A.C: In function `F':\nA.C:11: warning: unused variable `y'\n"));
     }
 
     #[test]

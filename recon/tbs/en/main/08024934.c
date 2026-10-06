@@ -1,6 +1,23 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 920, common 585, differ 696; frame 372
+ * Native 946 instructions, draft 918, common 587, differ 690; frame 372
  * as native's.
+ * Remaining, in order: (a) the draw loop's affordability scan has its
+ * first test duplicated by jump.c before loop.c runs, so CSE folds element
+ * 0 into summon + 4 (insn 2490), GCSE shares it with the column loop's
+ * required (copy 619) and summon + 4 lives in slot 36; native keeps summon
+ * there and recomputes summon + 4 for the columns, its first test using
+ * loop.c's reduced pointers, which suggests the exit test was duplicated
+ * only after loop.c (jump.c copies at most 20 insns). (b) index takes a
+ * call-saved register (r7) where native gives it r4 with caller-saves at
+ * sp+4, so the loops' r4-r7 differ throughout. (c) row r9 and drawn_page
+ * r10 are swapped against native. (d) the compiler temporaries' slots come
+ * in a different order (see below). (e) dirty = 1 then menu_busy = 0 load
+ * two pool constants where native adds 3 to the first.
+ * The draw loop's scan with its own counter n (not the column loop's
+ * element) 696 -> 690; as u8 770, s16 764, u16 949 (frame 368); while
+ * (element <= 3 && ...) element++ 696. The final reset loop as an indexed
+ * for over handles compiles the same (696), so the handle pointer is gone.
+ * dirty and menu_busy stores swapped 696.
  * No last variable: count - 1 written inline in the scan's start and the
  * page arithmetic, so it becomes a compiler temporary as native's slot 20
  * suggested, 735 -> 696. Keeping last only for the keys 741; last set after
@@ -35,11 +52,7 @@
  * user spill slot at native's offset: 796 -> 766. Trials from 796: y set
  * beside the tile store 796 unchanged; unrotated goto draw loop 803, frame
  * 368; rotated goto loop alone 880, frame 372.
- * Remaining: index takes r7 in the init and handle loops where native gives
- * it r4 with caller-saves at sp+4; row r9 and drawn_page r10 are swapped
- * against native; GCSE address slots (sprites 8 vs native 28, ordered 12 vs
- * 32, count - 1 36 vs 20) are numbered in a different order.
- * Earlier remaining: spill/register allocation,
+ * Session 1 remaining: spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * The scan of available and the compaction into ordered now match apart from
  * slot offsets and one reload through ip for the first *have load.
@@ -150,7 +163,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     struct MenuCell *nav;
     struct MenuSprite *sprite;
     const u8 *required, *supply;
-    s32 *handle;
     s32 used, element;
     s32 id, tile, affordable;
     s32 pressed, repeated, result;
@@ -250,16 +262,17 @@ loop:
                 }
                 {
                     s32 element, col, y;
+                    s32 n;
 
                     index = 0;
                     if ((id = ordered[page + index]) != 32) {
                     next:
                         summon = SummonDefinition_Get(id);
-                        for (element = 0; element <= 3; element++) {
-                            if (summon->djinn_required[element] > standby[element])
+                        for (n = 0; n <= 3; n++) {
+                            if (summon->djinn_required[n] > standby[n])
                                 break;
                         }
-                        affordable = element == 4;
+                        affordable = n == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
                         sprites[index].oam.f.tile = glyph;
                         if (!affordable)
@@ -414,11 +427,8 @@ loop:
     goto loop;
 done:
     WaitFrames(1);
-    handle = handles;
-    index = 3;
-    do {
-        Resource_ResetEntry(*handle++);
-    } while (--index >= 0);
+    for (index = 0; index < 4; index++)
+        Resource_ResetEntry(handles[index]);
     Resource_ResetEntry((u16)cursor_handle);
     UiWork_Finalize(counts, 1);
     UiWork_Finalize(description, 1);

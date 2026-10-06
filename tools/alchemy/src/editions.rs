@@ -70,10 +70,16 @@ fn is_function(kind: u8) -> bool {
     matches!(kind, 2 | 13 | 15)
 }
 
+/// Function starts in a placed section: the ELF's function symbols, and each
+/// Thumb mapping symbol whose first instruction pushes lr, as a function after
+/// a literal pool begins in an assembled listing.
 fn starts_in(elf: &Elf, placed: &Placed) -> Vec<u32> {
+    let pushes = |address: u32| {
+        elf.section_at(address).and_then(|(section, at)| section.bytes.get(at + 1)).is_some_and(|&high| high == 0xb5)
+    };
     elf.symbols
         .iter()
-        .filter(|s| is_function(s.kind) && !s.name.starts_with('$'))
+        .filter(|s| (is_function(s.kind) && !s.name.starts_with('$')) || (s.name == "$t" && pushes(s.value)))
         .map(|s| s.value & !1)
         .filter(|&a| a >= placed.address && a < placed.end())
         .collect()
@@ -270,7 +276,11 @@ fn units(edition: &Edition, root: &Path) -> Vec<Unit> {
             let starts: BTreeSet<u32> = std::iter::once(placed.address).chain(starts_in(&image.elf, placed)).collect();
             for &start in &starts {
                 let names = names_at(&image.elf, placed, start);
-                let Some(name) = names.first().cloned() else { continue };
+                let name = match names.first() {
+                    Some(name) => name.clone(),
+                    None if start != placed.address => format!("sub_{start:08x}"),
+                    None => continue,
+                };
                 let (_, bytes) = extent(&image.elf, placed, start, Some(&name), 0);
                 if bytes.is_empty() {
                     continue;
@@ -693,6 +703,20 @@ mod tests {
         let found = units(&english(), Path::new("/nonexistent"));
         let named: Vec<(&str, u32, usize, bool)> = found.iter().map(|u| (u.name.as_str(), u.address, u.bytes.len(), u.arm)).collect();
         assert_eq!(named, [("Foo_Run", 0x0800_0000, 0x20, false)]);
+
+        let code: Vec<u8> = foo(0xf802, 0x2001, 0x0300_1234).into_iter().chain(bar()).collect();
+        let run = edition(
+            "tbs-en",
+            ".rom_main       0x0000000008000000       0x28\n \
+             .text          0x0000000008000000       0x28 /x/out/tbs-en/obj/recon/tbs/raw/08000000.o\n                \
+             0x0000000008000000                Foo_Run\n",
+            0x0800_0000,
+            &code,
+            &[("$t", 0x0800_0000, 0), ("$d", 0x0800_001c, 0), ("$t", 0x0800_0020, 0)],
+        );
+        let found = units(&run, Path::new("/nonexistent"));
+        let named: Vec<(&str, usize)> = found.iter().map(|u| (u.name.as_str(), u.bytes.len())).collect();
+        assert_eq!(named, [("Foo_Run", 0x20), ("sub_08000020", 8)]);
     }
 
     #[test]

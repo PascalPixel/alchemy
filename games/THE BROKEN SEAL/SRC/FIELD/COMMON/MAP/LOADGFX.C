@@ -26,7 +26,6 @@ extern u8 gDecodeBuffer[];
 
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
-#define BG_PALETTE ((s16 *)0x05000000)
 
 void MapAnimation_PresentFrame(void)
 {
@@ -48,7 +47,7 @@ void MapAnimation_Start(void)
     s32 one = 1;
 
     work->animation_active = one;
-    Scheduler_EnableCallbacks((u32)(MapAnimation_Update));
+    Scheduler_EnableCallbacks(MapAnimation_Update);
     Dma_Set(BG_CHAR_BLOCK(1), (void *)gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     WaitFrames(1);
     Resource_RunCopiedDecoder((s32)pages->pages[*(u32 *)&gFrameCount & one], (s32)gMapCellBuffer);
@@ -75,26 +74,26 @@ void Map_LoadAreaGraphics(void)
     s16 value;
 
     state = gMapWork[0];
-    buffer = (u8 *)gMapCellBuffer;
+    buffer = gMapCellBuffer;
     resources = state->resources;
-    value = BG_PALETTE[0];
-    Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);
+    value = *(s16 *)BG_PLTT;
+    Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
-    Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), (void *)gBgTileBuffer);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
+    Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[1]), gBgTileBuffer);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
     Data_03001cfc = Map_ShowBg1FromBuffer;
     state->window_top = 0;
     state->window_bottom = 159;
     WaitFrames(1);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
+    Resource_DecodeType01(Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
     /* FAKEMATCH: the halfword local keeps zero in r5 and the short-range pool before the epilogue. */
     value = 0;
     Map_UpdateCurrentTileBlock();
     state->animation_active = value;
-    Scheduler_DisableCallbacks((u32)(MapAnimation_Update));
+    Scheduler_DisableCallbacks(MapAnimation_Update);
     WaitFrames(1);
 }
 
@@ -104,9 +103,9 @@ void Map_LoadDefaultCellsAndUpdateBlock(void)
     Data_03001cfc = Map_ShowBg1FromBuffer;
     work->window_top = 0;
     work->window_bottom = 0x9f;
-    WaitFrames(1U);
+    WaitFrames(1);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
     Map_UpdateCurrentTileBlock();
-    Scheduler_DisableCallbacks((u32)MapAnimation_Update);
-    WaitFrames(1U);
+    Scheduler_DisableCallbacks(MapAnimation_Update);
+    WaitFrames(1);
 }

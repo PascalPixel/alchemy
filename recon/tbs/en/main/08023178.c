@@ -1,9 +1,9 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1406, common 992, differ 814.
- * Frame now 352 bytes, as native. Remaining: redraw in r11 where native
- * has r10, the setup loop counter in r4 (caller-saved, sp+4) where native
- * has r6 and the -1 store value in r8, the search value in r7 where native
- * has r3, then register choices through the loop body.
+ * Native 1392 instructions, draft 1402, common 1022, differ 750.
+ * Frame now 352 bytes, as native, and the setup loops match. Remaining:
+ * redraw in r11 where native has r10, the search value in r7 where native
+ * has r3, the djinn tile code (native: (extended == 0) by branch, then
+ * + 8, inside the loop), then register choices through the loop body.
  *
  * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
  * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,
@@ -18,7 +18,13 @@
  * Trials 2026-10-06: pixel pair as struct StatusPixel 1087 ->
  * 1007; declarations in native spill order 859; searched single moves 857;
  * owner search indexed by i 817; tbl/sel/objIcon used directly instead of
- * handles/codes/icons aliases 814. Rejected: owner search on list[n] without
+ * handles/codes/icons aliases 814; j for the redraw block's loops (djinn
+ * rows, condition loads and fill: native r4 there, r6 for the others) 750.
+ * Rejected: j also for the stat cursor 782; j for the djinn loop only 1154,
+ * for the condition loops only 1152; search value in j 762, x 1072, n 750
+ * (no change); djinn tile code as if/else either way, ?:, 8 + !extended,
+ * (extended == 0) + 8 or a 0/1 flag plus 8: 815 to 1134, each folded to
+ * 9 - (extended != 0) or hoisted. Rejected earlier: owner search on list[n] without
  * code 868; n as the setup loop counter 1298; pixel ints in spill order
  * without the struct 1219.
  *
@@ -113,6 +119,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 *q;
     s32 defDelta;
     s32 i;
+    s32 j;
     s8 *out;
     s32 code;
     s32 atkDelta;
@@ -400,30 +407,30 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 4, (struct RenderInput *)winMain, 0, 88);
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 3, (struct RenderInput *)winMain, 0, 96);
 
-                for (i = 0; i <= 3; i++) {
+                for (j = 0; j <= 3; j++) {
                     if (extended != 0) {
                         code = 8;
                     } else {
                         code = 9;
                     }
                     UiWindow_SetTilemapEntry(
-                        winMain, 0x5001 + i, 7 + i * 4, code, 0);
+                        winMain, 0x5001 + j, 7 + j * 4, code, 0);
                     if (extended != 0) {
-                        UiText_DrawNumberInWindow(object->djinn_active_counts[i], 1,
-                            (s32)winMain, 40 + i * 32, 72);
+                        UiText_DrawNumberInWindow(object->djinn_active_counts[j], 1,
+                            (s32)winMain, 40 + j * 32, 72);
                         UiText_DrawStringAtOffset(
-                            (u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 48 + i * 32, 72);
-                        UiText_DrawNumberInWindow(object->djinn_owned_counts[i], 1,
-                            (s32)winMain, 48 + i * 32 + 8, 72);
+                            (u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 48 + j * 32, 72);
+                        UiText_DrawNumberInWindow(object->djinn_owned_counts[j], 1,
+                            (s32)winMain, 48 + j * 32 + 8, 72);
                     }
-                    UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, i), 2,
-                        (s32)winMain, 48 + i * 32, 80);
+                    UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, j), 2,
+                        (s32)winMain, 48 + j * 32, 80);
                     UiText_DrawNumberInWindow(
-                        object->elements[i].power, 3, (s32)winMain,
-                        40 + i * 32, 88);
+                        object->elements[j].power, 3, (s32)winMain,
+                        40 + j * 32, 88);
                     UiText_DrawNumberInWindow(
-                        object->elements[i].resist, 3, (s32)winMain,
-                        40 + i * 32, 96);
+                        object->elements[j].resist, 3, (s32)winMain,
+                        40 + j * 32, 96);
                 }
 
                 n = 0;
@@ -546,22 +553,22 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 } while (0);
 
                 if (n > 0) {
-                    i = n;
+                    j = n;
                     out = sel;
                     q = tbl;
                     do {
                         Resource_LoadTableEntryToBuffer(*out, *q++);
-                        i--;
+                        j--;
                         out++;
-                    } while (i != 0);
+                    } while (j != 0);
                 }
                 if (n == 0) {
                     sel[0] = 0;
                     n = 1;
                 }
                 if (n <= 10) {
-                    for (i = n; i < 11; i++) {
-                        sel[i] = -1;
+                    for (j = n; j < 11; j++) {
+                        sel[j] = -1;
                     }
                 }
                 cnt = n;

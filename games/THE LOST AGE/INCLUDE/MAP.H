@@ -44,6 +44,21 @@ struct MapWork {
     struct MapLayer layers[4];
 };
 
+struct MapViewWork {
+    u8 unknown_000[0x100];
+    s8 animation_active;
+    u8 unknown_101[3];
+    u16 window_top;
+    u16 window_bottom;
+    u8 unknown_108[0x18];
+    u32 *resources;
+    u8 unknown_124[0x84c];
+    s8 extra_tiles;
+    u8 frame_shown;
+    u8 frame_pending;
+    s8 area;
+};
+
 struct WorldPosition {
     s32 x;
     u8 unknown_04[4];

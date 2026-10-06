@@ -28,11 +28,11 @@ Runtime_RemapBytesByTableFar:
 	.global Map_EnableUpdateCallbackFar
 	.thumb_func
 Map_EnableUpdateCallbackFar:
-	overlay_veneer Func_0802cd4c
+	overlay_veneer Map_EnableUpdateCallback
 	.global Map_DisableUpdateCallbackFar
 	.thumb_func
 Map_DisableUpdateCallbackFar:
-	overlay_veneer Func_0802cd70
+	overlay_veneer Map_DisableUpdateCallback
 	.global ScriptObject_FindOverlappingEntryFar
 	.thumb_func
 ScriptObject_FindOverlappingEntryFar:

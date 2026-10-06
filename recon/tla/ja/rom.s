@@ -728,30 +728,6 @@ Func_0802b450:
 	.thumb_func
 Func_0802b590:
 	.incbin "baserom.gba", 0x0002b50c, 0x00000090
-	.section .rom.0002b59c, "ax"
-	.global Func_0802b620
-	.type Func_0802b620, %function
-	.thumb_func
-Func_0802b620:
-	.incbin "baserom.gba", 0x0002b59c, 0x0000001c
-	.section .rom.0002b5b8, "ax"
-	.global Func_0802b63c
-	.type Func_0802b63c, %function
-	.thumb_func
-Func_0802b63c:
-	.incbin "baserom.gba", 0x0002b5b8, 0x000000c4
-	.section .rom.0002b67c, "ax"
-	.global Func_0802b700
-	.type Func_0802b700, %function
-	.thumb_func
-Func_0802b700:
-	.incbin "baserom.gba", 0x0002b67c, 0x0000001c
-	.section .rom.0002b698, "ax"
-	.global Func_0802b71c
-	.type Func_0802b71c, %function
-	.thumb_func
-Func_0802b71c:
-	.incbin "baserom.gba", 0x0002b698, 0x000000c4
 	.section .rom.0002b75c, "ax"
 	.global Func_0802b7e0
 	.type Func_0802b7e0, %function
@@ -763,20 +739,20 @@ Func_0802b7e0:
 	.type Func_0802b828, %function
 	.thumb_func
 Func_0802b828:
-	.incbin "baserom.gba", 0x0002b7a4, 0x00000170
+	.incbin "baserom.gba", 0x0002b7a4, 0x00000050
+	.global Map_WriteLayerCellTile
+	.type Map_WriteLayerCellTile, %function
+	.thumb_func
+Map_WriteLayerCellTile:
+	.incbin "baserom.gba", 0x0002b7f4, 0x00000120
 	.section .rom.0002b914, "ax"
 	.global Func_0802b998
 	.type Func_0802b998, %function
 	.thumb_func
 Func_0802b998:
 	.incbin "baserom.gba", 0x0002b914, 0x00000370
-	.section .rom.0002bc84, "ax"
-	.global Func_0802bd08
-	.type Func_0802bd08, %function
-	.thumb_func
-Func_0802bd08:
-	.incbin "baserom.gba", 0x0002bc84, 0x000000c8
 	.section .rom.0002bd4c, "ax"
+	.balign 4
 	.global Func_0802bdd0
 	.type Func_0802bdd0, %function
 	.thumb_func
@@ -795,53 +771,25 @@ Func_0802be4c:
 Func_0802c240:
 	.incbin "baserom.gba", 0x0002c1bc, 0x00000298
 	.section .rom.0002c454, "ax"
-	.global Func_0802c4d8
-	.type Func_0802c4d8, %function
+	.global Map_UpdateCurrentTileBlock
+	.type Map_UpdateCurrentTileBlock, %function
 	.thumb_func
-Func_0802c4d8:
-	.incbin "baserom.gba", 0x0002c454, 0x000003c8
-	.section .rom.0002c81c, "ax"
-	.global Func_0802c8a0
-	.type Func_0802c8a0, %function
-	.thumb_func
-Func_0802c8a0:
-	.incbin "baserom.gba", 0x0002c81c, 0x00000128
+Map_UpdateCurrentTileBlock:
+	.incbin "baserom.gba", 0x0002c454, 0x0000038c
 	.section .rom.0002c944, "ax"
 	.global Func_0802c9c8
 	.type Func_0802c9c8, %function
 	.thumb_func
 Func_0802c9c8:
 	.incbin "baserom.gba", 0x0002c944, 0x00000140
-	.section .rom.0002ca84, "ax"
-	.global Func_0802cb08
-	.type Func_0802cb08, %function
+	.section .rom.0002cae0, "ax"
+	.global MapAnimation_Update
+	.type MapAnimation_Update, %function
 	.thumb_func
-Func_0802cb08:
-	.incbin "baserom.gba", 0x0002ca84, 0x0000016c
-	.section .rom.0002cbf0, "ax"
-	.global Func_0802cc74
-	.type Func_0802cc74, %function
-	.thumb_func
-Func_0802cc74:
-	.incbin "baserom.gba", 0x0002cbf0, 0x00000014
-	.section .rom.0002cc04, "ax"
-	.global Func_0802cc88
-	.type Func_0802cc88, %function
-	.thumb_func
-Func_0802cc88:
-	.incbin "baserom.gba", 0x0002cc04, 0x000000c4
-	.section .rom.0002ccc8, "ax"
-	.global Func_0802cd4c
-	.type Func_0802cd4c, %function
-	.thumb_func
-Func_0802cd4c:
-	.incbin "baserom.gba", 0x0002ccc8, 0x00000024
-	.section .rom.0002ccec, "ax"
-	.global Func_0802cd70
-	.type Func_0802cd70, %function
-	.thumb_func
-Func_0802cd70:
-	.incbin "baserom.gba", 0x0002ccec, 0x00000024
+MapAnimation_Update:
+	.incbin "baserom.gba", 0x0002cae0, 0x00000110
+	.section .rom.0002cc18, "ax"
+	.incbin "baserom.gba", 0x0002cc18, 0x000000b0
 	.section .rom.0002ce8c, "ax"
 	.incbin "baserom.gba", 0x0002ce8c, 0x0000032c
 	.section .rom.0002d2ea, "ax"
@@ -933,7 +881,12 @@ Func_0802db88:
 	.type Func_0802dcd8, %function
 	.thumb_func
 Func_0802dcd8:
-	.incbin "baserom.gba", 0x0002dc54, 0x000001b4
+	.incbin "baserom.gba", 0x0002dc54, 0x00000030
+	.global Func_0802dd08
+	.type Func_0802dd08, %function
+	.thumb_func
+Func_0802dd08:
+	.incbin "baserom.gba", 0x0002dc84, 0x00000184
 	.section .rom.0002de08, "ax"
 	.global Func_0802de8c
 	.type Func_0802de8c, %function

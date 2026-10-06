@@ -276,6 +276,9 @@ pub struct SourceCatalog {
 }
 
 const UNNAMED: &str = "message";
+/// The catalogue's end: one past its last message number. It names no row
+/// and encodes nothing; code that bounds a walk over the messages uses it.
+pub const END: &str = "MsgEnd";
 
 pub fn message_name(name: &str) -> bool {
     name.strip_prefix("Msg").is_some_and(|rest| {
@@ -303,6 +306,13 @@ pub fn catalog_names(catalog: &Catalog) -> Result<Vec<(String, usize)>, String> 
             .map_err(|_| format!("PO message key {} is invalid", entry.id))?;
         names.push((context.to_owned(), number));
     }
+    let end = catalog
+        .entries
+        .iter()
+        .filter_map(|entry| entry.id.parse::<usize>().ok())
+        .max()
+        .map_or(0, |last| last + 1);
+    names.push((END.to_owned(), end));
     let mut sorted: Vec<&str> = names.iter().map(|(name, _)| name.as_str()).collect();
     sorted.sort_unstable();
     if let Some(pair) = sorted.windows(2).find(|pair| pair[0] == pair[1]) {
@@ -438,4 +448,30 @@ pub fn messages_include(
         writeln!(assembly, "\t.global {name}\n\t.set {name}, {number}").unwrap();
     }
     Ok(assembly)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::assets::po::Entry;
+
+    fn entry(id: usize, context: &str) -> Entry {
+        Entry {
+            comments: Vec::new(),
+            flags: Vec::new(),
+            context: Some(context.to_owned()),
+            id: id.to_string(),
+            value: String::new(),
+        }
+    }
+
+    #[test]
+    fn the_catalogue_end_is_one_past_its_last_message() {
+        let mut catalog = Catalog::default();
+        catalog.entries = vec![entry(0, UNNAMED), entry(1, "MsgFirst"), entry(2, UNNAMED)];
+        let names = catalog_names(&catalog).unwrap();
+        assert_eq!(names, vec![("MsgFirst".to_owned(), 1), (END.to_owned(), 3)]);
+        catalog.entries.push(entry(3, END));
+        assert!(catalog_names(&catalog).unwrap_err().contains("names two messages"));
+    }
 }

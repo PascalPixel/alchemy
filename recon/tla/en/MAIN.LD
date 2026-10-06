@@ -1778,8 +1778,6 @@
         "*/recon/tla/raw/08104928.o"(.text)
         "*/recon/tla/raw/0810498c.o"(.text)
         "*/recon/tla/raw/081049c8.o"(.text)
-        "*/recon/tla/raw/08104a58.o"(.text)
-        "*/recon/tla/raw/08104aa4.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_LOADED_RESOURCE.o"(.text)
         "*/recon/tla/raw/08104b56.o"(.text)
         "*/recon/tla/raw/08104b58.o"(.text)

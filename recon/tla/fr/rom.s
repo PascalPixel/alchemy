@@ -4049,7 +4049,7 @@ Func_08100e7c:
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x00103c38, 0x00000144
 	.section .rom.00103db0, "ax"
-	.incbin "baserom.gba", 0x00103db0, 0x00002e74
+	.incbin "baserom.gba", 0x00103db0, 0x00002e00
 	.section .rom.00106cae, "ax"
 	.incbin "baserom.gba", 0x00106cae, 0x00000002
 	.section .rom.00106cb0, "ax"

@@ -3732,7 +3732,7 @@ Func_08100e7c:
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x0010bc94, 0x00000144
 	.section .rom.0010be0c, "ax"
-	.incbin "baserom.gba", 0x0010be0c, 0x00002e8c
+	.incbin "baserom.gba", 0x0010be0c, 0x00002e18
 	.section .rom.0010ed22, "ax"
 	.incbin "baserom.gba", 0x0010ed22, 0x00000002
 	.global UiIcon_CreateStatChangeArrow

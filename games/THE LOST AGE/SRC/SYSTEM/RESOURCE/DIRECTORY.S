@@ -522,8 +522,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data1FD
 	resource , Resource_Data1FE
 	resource , Resource_Data1FF
-	resource , Resource_Data200
-	resource , Resource_Data201
+	resource ItemMenuTilesA, Resource_Data200
+	resource ItemMenuTilesB, Resource_Data201
 	resource UiFixedBlockATiles, Resource_Data202
 	resource , Monster_BlueDevilSprites
 	resource , Monster_PinkBruteSprites

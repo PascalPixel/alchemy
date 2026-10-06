@@ -46,7 +46,7 @@ void UiWork_SetParamNibbleFar(s32 value);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x0, s32 y0, s32 x1, s32 y1);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#if EDITION_INTERNATIONAL
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
@@ -168,11 +168,18 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 djinn = lists->list.ids[x][sel];
             RenderOutput_RedrawSavedRectFar(state->help_window);
             if (mode == 1) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+                UiWindow_SetTilemapEntryFar(state->help_window, DJINN_ELEMENT(state->pair_entries[0]) + 0x5001, 0, 0, 0);
+                UiText_DrawQuantity(state->shown_owner[0], 1);
+                UiText_DrawQuantity(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel, state->help_window, 8, 0);
+#else
                 UiText_DrawQuantity(state->shown_owner[0], 1);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel, state->help_window, 0, 0);
                 UiText_DrawQuantity(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
                 UiWindow_SetTilemapEntryFar(state->help_window, DJINN_ELEMENT(state->pair_entries[0]) + 0x5001, 6, 0, 0);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel + 1, state->help_window, 56, 0);
+#endif
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel + 2, state->help_window, 0, 8);
             }
             if (sel == -1) {

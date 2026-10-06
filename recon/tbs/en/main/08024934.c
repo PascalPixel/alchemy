@@ -14,7 +14,12 @@
  * giv: 914 -> 901. Declaring scalars in native slot order (count, window,
  * render, drawn_row, cursor_handle, description, counts, mask, preferred,
  * cursor_position) gave 956; count and window first alone gave 946. Counting
- * columns (col * 2 + 13) compiled the same as col += 2.
+ * columns (col * 2 + 13) compiled the same as col += 2, with or without y.
+ * From 901: y set at the top of the draw loop 1002; y set beside the sprite
+ * store 901; indexed summon->djinn_required[element] columns 1116; a sprite
+ * pointer for the tile store 924; the tile store after the nibble call 900
+ * (against native order, not kept); a counted first pass over available with
+ * count - 1 inline instead of last 913, frame 384.
  *
  * Natural trials: early cursor pointer removal 979 -> 969; indexed sprite
  * initialization and handles 977; shared index 963; pointer sprite traversal

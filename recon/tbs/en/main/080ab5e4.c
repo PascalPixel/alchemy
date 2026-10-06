@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2108, common 1360, differ 1493.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 2047, differ 117.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -15,6 +15,92 @@
    help address caller-saved in r4. The balance loop's native keeps a second
    status induction pointer for the |= 4 store and indexes balanced by i.
    Remaining: control flow, register allocation and the four-byte frame gap.
+   Permuter (2026-10-06, best 539): nearly all of its gain is one rewrite,
+   a temporary for the selected column inside the balance loop. As a
+   block-local `s8 *column = state->selected_column` it gives 596 (tagged
+   FAKEMATCH); the inverted if (i != column) with it gives 1503, the
+   permuter's inverted while (1) form with *(balanced + i) 577. Hoisting
+   the pointer before the loop: 1503-1512. Its 24 declaration reorders and
+   register keywords change nothing; sel = -1 after the cursor goes active
+   gives 1422 alone but 610 with the column pointer; redraw = 0 after the
+   status redraw 1443 alone. Statement order the native shows, from the
+   same run: tutorial step 28 sets pressed before repeat, step 13 advances
+   the step after pressed (529); the B result is stored before its sound
+   (594 alone); the mode 1 result tests the column flag first (508).
+   Measured and not kept: dropping the opening sel = -1 gives 479 but loses
+   the native's -1 store at sp+60; the first count loop through an s8
+   temporary 481 alone, 500 with that; redraw = 0 after the status redraw
+   583; the permuter's help-text nesting 514; the move loops as do-while 521.
+   The set-all loop indexes ids[i][j]: the native's induction is i * 10
+   halfwords and a strength-reduced pointer, as GCC makes from the index,
+   not an explicit u16 *p (461). Tutorial step 27 sets pressed after repeat:
+   the native has no store or caller-save of pressed there, its tail is
+   shared (2105 instructions, 504). The final entry is a u32 assigned
+   through state->pair_entries[mode] = entry = ids[x][sel]: the native loads
+   it with ldrh and never re-extends (350). A second permuter run (8 min,
+   2 jobs) confirmed step 27 and found step 3 setting repeat before pressed
+   (261). Not kept: its sel = -1 after the status clear and savedY = y
+   before the first list draw give 238, but the native stores -1 before
+   the clear and savedY after the count loop; its count assignment inside
+   the test changes nothing.
+   Up to 350 register allocation was a tie: lists (520 refs, 1589 insns)
+   and the set-all pointer giv (43 refs, 73 insns) both scored 29452 in
+   global.c's allocno_compare, so lists, the lower allocno, took sl; at 261
+   lists is in r9 and the giv and refresh in sl, as the native has them.
+   Remaining (261, one instruction over): reload choices in the opening
+   loops (the native reloads mode into r7 and reuses it as the 0 for i),
+   and scattered lo-register swaps.
+   The native keeps ok in i's stack slot (sp+68) in both select handlers,
+   as when reload spills two pseudos from one hard register; the draft
+   gives ok r8. Reusing i as the A handler's flag gives 249, in both
+   handlers 1264 (the frame slots shift); a separate flag per handler 437.
+   Without the column pointer the draft fell back to 1308. The constants
+   4 and 1 in the cursor-move blocks take r6 and r5 where the native has
+   r5 and r6. A third permuter run from 261 (7 min, 2 jobs) found only the
+   same sel = -1 and savedY moves again (238), and ids[i] + j for ids[i][j].
+   The status pointer is assigned after sel = -1, not in its declaration
+   (261 -> 194, 2105 instructions): the native's reloads show the order.
+   Its -1 takes r1 and the status pointer r2 before the hoisted zero for
+   the clear loop reuses r2, so the loop-end copy reloads status into r5;
+   then mode is reloaded into r7 across the list draw and the count
+   loop's i++ is reloaded once. Assigned before sel = -1: 261.
+   The column pointer device is gone (194 -> 152, no devices): the native
+   balance loop keeps two status induction pointers, one for the 7, 0 and
+   3 stores and one for the |= 4 store, and reloads state for the column
+   test. The 7, 0 and 3 stores go through buf and the flag store through
+   status, reading buf: status[i] = buf[i] | 4, which CSE folds to 7 while
+   the loop keeps its own pointer. Device removed with all stores through
+   status: 1325; buf for 7 and 0 only, status[i] |= 4: 168; buf for 3 too
+   with status[i] |= 4 or = 7: 1318-1360; buf[i] = 7 alone: 215.
+   The far calls return what the headers declare (152 -> 140): Djinn_
+   DeactivateFar u32, Trade_AddOfferFar u32 *, Djinn_ActivateFar and
+   Trade_RemoveOfferFar s32, BattlePlacement_UpdateTimedEntriesFar s32.
+   A returned r0 delays the next call's first argument, as in tutorial
+   step 27, where the native sets r1 and r2 before r0. UiMenu_SlideCursor
+   is void as declared (no change); UiWork_FinalizeFar as s32 gives 144,
+   FourObjectMotion_ReplaceSlot as void 146: not kept.
+   The A handler's flag is i (140 -> 128): the native keeps it in i's
+   slot, sp+68, and with it the whole handler matches but for the owner,
+   element and number registers. The R handler keeps its own ok, still in
+   r8 where the native has sp+68: i there gives 1267, both 1255; j 635,
+   count 617, step 177, result 329, message 194, refresh 161, window 629;
+   its type (u32, u8, s8, u16) changes nothing.
+   Remaining at 128 (2107 instructions, two over): the redraw block's
+   unleash text loads its 0x666 into r1 before the sum where the native
+   loads it into r3 after, and the cursor-box draw that follows reloads x
+   (+1); the R handler's ok in r8; owner, element and number permuted
+   among r5-r7 in both handlers; the constants 4 and 1 swapped between r5
+   and r6 in the cursor moves; the final entry's & 31 copied entry first
+   (+1, the other extra instruction).
+   The final pair index is entry % 32 (128 -> 117, 2106 instructions):
+   the native builds 31 in the result register and ands entry into it, as
+   GCC expands an unsigned modulo; the & 31 form ties entry instead. The
+   owner store still ties entry where the native ties 0xf00. Not kept:
+   s32 entry 130; the three fields read back from pair_entries 179. A
+   fourth permuter run from 140 (5 min, 2 jobs, seed 11) found nothing.
+   The Japanese copy needs #if branches for message symbols its edition
+   lacks (MsgDjinnNowRecovering is undeclared there) before it can be
+   scored.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -37,10 +123,10 @@ extern const char DjinnMenu_TextLevel[];
 void Owner_RecalculateStatsFar(s32 owner);
 s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 number);
 u32 Djinn_IsActiveFar(s32 owner, s32 element, s32 number);
-void Djinn_ActivateFar(s32 owner, s32 element, s32 number);
-void Djinn_DeactivateFar(s32 owner, s32 element, s32 number);
-void Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
-void Trade_AddOfferFar(s32 owner, s32 element, s32 number);
+s32 Djinn_ActivateFar(s32 owner, s32 element, s32 number);
+u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 number);
+s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
+u32 *Trade_AddOfferFar(s32 owner, s32 element, s32 number);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -55,7 +141,7 @@ void UiWork_FinalizeFar(struct UiWindow *work, s32 mode);
 void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 UiMenu_SlideCursor(s32 x, s32 y);
+void UiMenu_SlideCursor(s32 x, s32 y);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
 s32 Menu_DrawAtWindowOffset(s32 window, s32 x, s32 y, s32 width, s32 kind, s32 tile);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 kind);
@@ -64,7 +150,7 @@ s32 Djinn_MarkBalancedEntries(s8 *balanced, s32 self);
 s32 FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
 void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
 s32 FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
-void BattlePlacement_UpdateTimedEntriesFar(void);
+s32 BattlePlacement_UpdateTimedEntriesFar(void);
 
 u32 __umodsi3(u32, u32);
 u32 __udivsi3(u32, u32);
@@ -96,9 +182,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     u32 repeat;
     struct UiWindow *work;
     s32 step;
-    s8 *status = buf;
+    s8 *status;
 
     sel = -1;
+    status = buf;
     for (i = 7; i >= 0; i--)
         status[i] = 0;
     if (mode == 0) {
@@ -118,13 +205,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         Djinn_MarkBalancedEntries((s8 *)balanced, state->selected_column[0]);
         for (i = 0; i < state->owner_count; i++) {
             if (i == state->selected_column[0]) {
-                status[i] = 7;
+                buf[i] = 7;
             } else if (balanced[i] != 0) {
-                status[i] = 0;
+                buf[i] = 0;
             } else {
-                status[i] = 3;
+                buf[i] = 3;
                 if (lists->list.counts[i] == 0)
-                    status[i] |= 4;
+                    status[i] = buf[i] | 4;
             }
         }
     }
@@ -270,8 +357,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     UiMenu_PositionCursor(150, 26);
                     WaitFrames(1);
                 }
-                repeat = 2;
                 pressed = 2;
+                repeat = 2;
                 break;
             case 27:
                 if (lists->tutorial_timer == 60) {
@@ -293,10 +380,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     BattlePlacement_UpdateTimedEntriesFar();
                     BattlePlacement_UpdateTimedEntriesFar();
                     Djinn_DeactivateFar(0, 0, 0);
-                    pressed = 2;
                     Trade_AddOfferFar(0, 0, 0);
                     Owner_RecalculateStatsFar(0);
                     repeat = 2;
+                    pressed = 2;
                 }
                 break;
             case 1:
@@ -325,9 +412,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 break;
             case 3:
                 if (lists->tutorial_timer == 90) {
+                    repeat = 16;
                     pressed = 16;
                     lists->tutorial_timer = 0;
-                    repeat = 16;
                     lists->tutorial_step = 4;
                 }
                 break;
@@ -347,9 +434,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             case 13:
                 if (lists->tutorial_timer == 40) {
                     lists->tutorial_timer = 0;
-                    lists->tutorial_step++;
                     repeat = 2;
                     pressed = 2;
+                    lists->tutorial_step++;
                 }
                 break;
             case 14:
@@ -457,22 +544,22 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             redraw = 1;
         }
         if (mode == 0 && (pressed & 0x200)) {
-            AudioCommand_PlayFar(112);
             result = 7;
+            AudioCommand_PlayFar(112);
             break;
         }
         if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
-            ok = 1;
+            i = 1;
             if (!(buf[x] & 1)) {
                 if (sel == -1) {
                     AudioCommand_PlayFar(114);
                     continue;
                 }
-                ok = 0;
+                i = 0;
                 if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
-                    ok = 1;
+                    i = 1;
             }
-            if (ok == 0) {
+            if (i == 0) {
                 AudioCommand_PlayFar(114);
                 RenderOutput_ClearListFar(state->list_window);
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 80, 216, 104);
@@ -480,14 +567,18 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 continue;
             }
             if (mode == 1) {
-                if (!(buf[x] & 1))
+                if (buf[x] & 1) {
+                    if (x == state->selected_column[0]) {
+                        if (state->pair_entries[0] & 0x8000)
+                            result = 2;
+                        else
+                            result = 1;
+                    } else {
+                        result = 3;
+                    }
+                } else {
                     result = 4;
-                else if (x != state->selected_column[0])
-                    result = 3;
-                else if (state->pair_entries[0] & 0x8000)
-                    result = 2;
-                else
-                    result = 1;
+                }
             } else {
                 result = 1;
             }
@@ -512,9 +603,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 else
                     AudioCommand_PlayFar(175);
                 for (i = 0; i < state->owner_count; i++) {
-                    u16 *p = lists->list.ids[i];
                     for (j = 0; j < lists->list.counts[i]; j++) {
-                        u32 entry = *p++;
+                        u32 entry = lists->list.ids[i][j];
                         s32 usable;
                         usable = 0;
                         if (Trade_CanOfferDjinnFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry)) || Djinn_IsActiveFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry)))
@@ -626,9 +716,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     }
     state->selected_column[mode] = x;
     if (sel != -1) {
-        u16 entry = lists->list.ids[x][sel];
-        state->pair_entries[mode] = entry;
-        state->pair_index[mode] = DJINN_NUMBER(entry);
+        u32 entry;
+        state->pair_entries[mode] = entry = lists->list.ids[x][sel];
+        state->pair_index[mode] = entry % 32;
         state->pair_element[mode] = DJINN_ELEMENT(entry);
         state->pair_owner[mode] = DJINN_OWNER(entry);
     }

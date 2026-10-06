@@ -56,7 +56,6 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, target_scal
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scale_y,
     (u32)&((struct EffectOptions *)0)->target_scale_y);
 
-extern u32 gFrameCount;
 void Effect_Spawn();
 
 void SceneState_ApplyValues8And2And1(void)

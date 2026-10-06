@@ -50,7 +50,7 @@ void MapAnimation_Start(void)
     Scheduler_EnableCallbacks(MapAnimation_Update);
     Dma_Set(BG_CHAR_BLOCK(1), (void *)gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     WaitFrames(1);
-    Resource_RunCopiedDecoder((s32)pages->pages[*(u32 *)&gFrameCount & one], (s32)gMapCellBuffer);
+    Resource_RunCopiedDecoder((s32)pages->pages[gFrameCount & one], (s32)gMapCellBuffer);
     work->window_top = 200;
     work->window_bottom = 255;
     Data_03001cfc = MapAnimation_PresentFrame;

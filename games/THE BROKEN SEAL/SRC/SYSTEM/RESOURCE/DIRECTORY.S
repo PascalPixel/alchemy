@@ -72,7 +72,7 @@ Resource_DirectoryTable:
 	resource VioletSkyBackdrop, Battle_VioletSkyBackdrop
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
-	resource , Battle_AerialViewBackdrop
+	resource AerialViewBackdrop, Battle_AerialViewBackdrop
 	resource SlotsFramePicture, Slots_FramePicture
 	resource SlotsIcons, Slots_Icons
 	resource SlotsJackpot, Slots_Jackpot

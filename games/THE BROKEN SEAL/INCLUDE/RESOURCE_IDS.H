@@ -23,6 +23,7 @@ extern char ResourceId_ForestBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_DesertBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
+extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_SlotsFramePicture;
 extern char ResourceId_SlotsIcons;
 extern char ResourceId_SlotsJackpot;

@@ -86,7 +86,11 @@
    user giv (first set or a use outside its loop iteration) with positive
    benefit. Probes: y = 0 before the loop (y not replaceable) with i * 16
    in the four message calls: gcse merges them into y, benefit 2 less 2,
-   450. tile = i * 2; y = tile * 8: folded to i << 4, 454. Next: a
+   450. tile = i * 2; y = tile * 8: folded to i << 4, 454. Summary
+   pointer form with for (i = 0, y = 0; i < 3; i++, y = i * 16): y is
+   non-replaceable and reduced in pass 1, but its insn is a copy from an
+   i << 4 temporary, so no use of i survives; reversed in pass 2, 583.
+   The surviving insn must compute y from i itself. Next: a
    non-replaceable y whose giv gains benefit (a second i * 16 that gcse
    cannot merge) with the summary-pointer form, where pass 1 can
    eliminate i and so charges no copy cost. */

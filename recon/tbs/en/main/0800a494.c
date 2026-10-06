@@ -14,7 +14,8 @@
    never pairs them, as a 64-bit product would); low shift first in the
    OR 494/208; fixed-address calls in the target branch only 500/269,
    reverted; falling and bouncing as two tests of y against the ground,
-   the second reloading velocity_y, 491/199. Remaining: the target branch
+   the second reloading velocity_y, 491/199; one command loop with the
+   cursor step in an else 483/346, reverted. Remaining: the target branch
    calls IwramSqrt and IwramRatioMulQ14 through a register, the native
    reloads obj->script for each command and enters the cursor loop by a
    jump to its test, the arrival cases 16 and 18 share one tail, and the

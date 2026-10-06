@@ -79,7 +79,13 @@ camelotizes what remains.
   and code an edition's own source leaves out, with no symbol in any of its
   images, is outside that edition's total.
   Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
-  library, handwritten and veneer assembly counts as assembly. Whole aligned
+  library, handwritten and veneer assembly counts as assembly. Assembly is
+  proven handwritten only by an instruction or pattern Camelot's compilers
+  cannot emit (rrx; a branch, adc or sbc on a shift's carry; r11 as an
+  ordinary register; CPSR or SPSR; swi; a computed pc into code; stores
+  into code; unpaired multiply halves; a literal block inside a function; a
+  mode switch inside a function) or by a linkage no procedure call standard
+  produces; anything else is not-yet-C until it matches as C. Whole aligned
   8-byte far-call stubs count as veneers. Padding a source marks as carrying
   no credit does not count. It is outside the total, as the linker's fill
   is; a span may hold only padding, data and nop.

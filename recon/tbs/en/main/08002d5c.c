@@ -1,4 +1,5 @@
-/* ARM compiler study only; Resource_PatchThumbBranch remains permanent assembly.
+/* ARM compiler study for Resource_PatchThumbBranch, the not-yet-C listing
+ * recon/tbs/raw/08002d5c.S.
  * Native: 124 bytes, 31 ARM instructions, no literal pool.
  * Fixed stock agscc control: normal TBS options with -mthumb replaced by -marm;
  * listing 31, draft 30, common 1, differ 59. No assembler diagnostics.

@@ -133,15 +133,17 @@ fn write_steered(root: &std::path::Path, id: &str, english: &super::calcrom::Mea
 }
 
 /// out/reports/missing-GAME.tsv: each edition's English-credited functions
-/// that edition does not yet link as credit, largest first.
+/// that edition does not link as credit, largest first: "scaffold" when the
+/// edition still has them to write, "absent" when its source leaves them out.
 fn write_missing(root: &std::path::Path, id: &str, game: &Game) -> Result<(), String> {
-    let mut text = String::from("edition\tbytes\tobject\tfunction\n");
+    let mut text = String::from("edition\tstate\tbytes\tobject\tfunction\n");
     for (language, units) in &game.missing {
         let mut rows = units.clone();
-        rows.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
-        for ((_, object, function), bytes) in rows {
+        rows.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| b.1.cmp(&a.1)).then_with(|| a.0.cmp(&b.0)));
+        for ((_, object, function), bytes, present) in rows {
+            let state = if present { "scaffold" } else { "absent" };
             text.push_str(&format!(
-                "{language}\t{bytes}\t{object}\t{}\n",
+                "{language}\t{state}\t{bytes}\t{object}\t{}\n",
                 function.unwrap_or_default()
             ));
         }

@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 936, common 554, differ 774.
+ * Native 946 instructions, draft 936, common 561, differ 760.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
@@ -72,6 +72,25 @@
  * summon spilled (slot 36), y in r8 sharing index << 1 with index * 12, and
  * no index * 12 + 8 giv (the draft's sp 8 giv and sprites copy are the two
  * extra frame slots).
+ * 774 -> 760: the page changes set page before row (page = 0; row =
+ * preferred and page -= 4; row = preferred); the navigation code now
+ * differs only in stack slot offsets. From 760: scalar declarations with
+ * cursor_handle..element first 762.
+ * The extra frame slots are loop.c's: in the draw loop it strength-reduces
+ * index * 12 + 8 (giv 942, combined with the two tile-address givs) and
+ * hoists a sprites copy; native recomputes both each pass, so loop.c did
+ * not optimize native's draw loop at all. Written with a label and goto
+ * (no loop notes), the frame is native's 372 and the tile store is native's
+ * sequence, but the loop is no longer rotated (889). A loop is skipped when
+ * GCSE inserts an insn between NOTE_INSN_LOOP_BEG and its label ("phony",
+ * as the two page loops here are from count + 3); in this draft PRE's &glyph
+ * insertion lands before the note on a split edge instead.
+ * Other trials from 774: the first pass's required, supply and element as
+ * block locals give native's test registers there (required r0, element r4,
+ * supply r1) but 786; the draw loop's test pointers as block locals as well
+ * 803; a block-local summon and required for the description 846; the
+ * setup loop as a sprite pointer walk with the handle loop indexed (native's
+ * address forms in both loops) 854, frame 384.
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -339,8 +358,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             Runtime_SetMainState19();
             if (page + 4 >= count) {
                 if (page != 0) {
-                    row = preferred;
                     page = 0;
+                    row = preferred;
                 }
             } else {
                 page += 4;
@@ -355,8 +374,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             AudioCommand_PlayFar(111);
             Runtime_SetMainState19();
             if (page != 0) {
-                row = preferred;
                 page -= 4;
+                row = preferred;
             } else {
                 page = ((count - 1) / 4) * 4;
                 row = preferred;

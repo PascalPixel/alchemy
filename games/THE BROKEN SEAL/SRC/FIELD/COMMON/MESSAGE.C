@@ -1,11 +1,10 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "EVENT_RUNTIME.H"
+#include "FIELD.H"
 
 extern struct EventRuntime *gEventWork;
 void *ObjectTable_Get(s32 id);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
-s32 UiWork_IsIdleFar(s32 window);
 
 s32 Event_ShowMessageAtPosition();
 

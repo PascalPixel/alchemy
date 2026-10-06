@@ -25,15 +25,12 @@
 
 #define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
 
-
 extern volatile u32 gKeysHeld;
 
 extern u8 gSceneState[];
 extern u32 gLoadedStateWord;
 extern u8 gOptionMirror;
 extern u32 GameFlagBytes[];
-u8 Party_SumDjinnCountsFar(s32 element);
-void Party_ListActiveOwnersFar(u16 *owners);
 
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 

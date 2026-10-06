@@ -22,7 +22,6 @@
 #include "IO_REG.H"
 
 void Resource_DecodeByteLz(const void *src, void *dst);
-s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 struct Mote {
     s32 state;
@@ -42,7 +41,6 @@ struct MoteWork {
     struct Mote motes[32];
     u8 unknown_408[8];
 };
-
 
 struct Sparkle {
     u8 padding00[4];
@@ -83,8 +81,6 @@ struct SparkleFrame {
 extern struct SparkleWork *gParticleWork;
 #define SparkleMap (*(struct MapScrollWork **)((u8 *)&gParticleWork - 84))
 
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-
 union DustWord {
     u32 value;
     void *link;
@@ -120,8 +116,6 @@ static __inline__ void ClearDustWork(struct DustWork *work)
     zero = value;
     Dma_Set(&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
 }
-
-s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mode);
 
 void FieldMotes_Update(void)
 {

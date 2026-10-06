@@ -19,7 +19,6 @@
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 
-extern void UiText_DrawStringAtOffsetFar(u8 *text, void *window, s32 x, s32 y);
 extern void UiText_DrawCharacterAtOffsetFar(s32, void *, s32, s32);
 
 extern volatile s32 gKeysRepeat;
@@ -130,7 +129,6 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     UiWork_FinalizeFar(win, 1);
     return sel;
 }
-
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 

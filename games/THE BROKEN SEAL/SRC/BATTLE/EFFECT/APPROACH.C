@@ -16,6 +16,10 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
+#include "BATTLE.H"
+#include "GRAPHICS.H"
+#include "TRANSFORM.H"
+#include "FIELD.H"
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
@@ -38,16 +42,7 @@ extern u16 Volley_PelletOffsets[];
 #define SLOT47 ((DrawRectangle)gWorkSlot[47])
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 mode, s32 *x, s32 *y);
-s32 Battle_GetObjectTableValueFar(s32 unit);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void AudioCommand_PlayFar(s32 value);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
-void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
 struct BlitterPair {
     DrawRectangle upper;

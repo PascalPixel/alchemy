@@ -26,8 +26,6 @@
 
 #define BattlePresentation_SpawnActorObject ((void (*)(void*,s32,s32,s32))BattlePresentation_SpawnActorObject)
 
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-
 #define CLAMP_MOD(v)                                                           \
     {                                                                          \
         if ((v) < -4)                                                          \

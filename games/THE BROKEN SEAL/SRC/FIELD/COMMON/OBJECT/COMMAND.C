@@ -24,18 +24,13 @@
 
 #define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
 
-
-
 #define TARGET_UNSET ((s32)0x80000000)
 
 s32 ArcTan2(s32, s32);
 
-s32 GameFlag_SetBitFar(s32);
-void GameFlag_ClearBitFar(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
 s32 Audio_PlayCue(s32);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
-
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {

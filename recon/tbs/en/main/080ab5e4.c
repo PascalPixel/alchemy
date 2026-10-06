@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2108, common 1360, differ 1493.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 1807, differ 596.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -15,6 +15,15 @@
    help address caller-saved in r4. The balance loop's native keeps a second
    status induction pointer for the |= 4 store and indexes balanced by i.
    Remaining: control flow, register allocation and the four-byte frame gap.
+   Permuter (2026-10-06, best 539): nearly all of its gain is one rewrite,
+   a temporary for the selected column inside the balance loop. As a
+   block-local `s8 *column = state->selected_column` it gives 596 (tagged
+   FAKEMATCH); the inverted if (i != column) with it gives 1503, the
+   permuter's inverted while (1) form with *(balanced + i) 577. Hoisting
+   the pointer before the loop: 1503-1512. Its 24 declaration reorders and
+   register keywords change nothing; sel = -1 after the cursor goes active
+   gives 1422 alone but 610 with the column pointer; redraw = 0 after the
+   status redraw 1443 alone.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -117,7 +126,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     } else {
         Djinn_MarkBalancedEntries((s8 *)balanced, state->selected_column[0]);
         for (i = 0; i < state->owner_count; i++) {
-            if (i == state->selected_column[0]) {
+            /* FAKEMATCH: a block-local column pointer reorders global
+               allocation throughout the function (1493 -> 596) */
+            s8 *column = state->selected_column;
+            if (i == column[0]) {
                 status[i] = 7;
             } else if (balanced[i] != 0) {
                 status[i] = 0;

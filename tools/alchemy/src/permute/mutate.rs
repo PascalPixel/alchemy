@@ -10,7 +10,7 @@ use super::effects::{before_store, escapes, expr_effects, has_continue, stmt_eff
 use super::types::{root_name, CType, Env};
 
 /// A deterministic generator (SplitMix64), so a seed names a search.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Rng(u64);
 
 impl Rng {
@@ -94,8 +94,17 @@ impl Kind {
     }
 }
 
+/// One applied rewrite, replayable: its kind and the generator as it stood
+/// when the rewrite chose its site, so `apply` repeats it exactly on the same
+/// function, and the minimizer can replay a trail with steps left out.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Step {
+    pub kind: Kind,
+    pub rng: Rng,
+}
+
 /// Apply one random mutation; `None` when no kind has a site.
-pub fn mutate(function: &mut Function, env: &mut Env, rng: &mut Rng) -> Option<Kind> {
+pub fn mutate(function: &mut Function, env: &mut Env, rng: &mut Rng) -> Option<Step> {
     let mut kinds: Vec<(Kind, u64)> = Kind::ALL.to_vec();
     while !kinds.is_empty() {
         let total: u64 = kinds.iter().map(|(_, weight)| weight).sum();
@@ -112,9 +121,10 @@ pub fn mutate(function: &mut Function, env: &mut Env, rng: &mut Rng) -> Option<K
             })
             .expect("a weighted pick");
         let (kind, _) = kinds.remove(index);
+        let before = rng.clone();
         if apply(kind, function, env, rng) {
             env.refresh(function);
-            return Some(kind);
+            return Some(Step { kind, rng: before });
         }
     }
     None
@@ -2327,7 +2337,7 @@ mod tests {
             let mut env = Env::new(&scan_unit(HEADER).unwrap(), &candidate);
             let mut rng = Rng::new(seed);
             let kinds: Vec<Kind> = (0..6)
-                .filter_map(|_| mutate(&mut candidate, &mut env, &mut rng))
+                .filter_map(|_| mutate(&mut candidate, &mut env, &mut rng).map(|step| step.kind))
                 .collect();
             (body(&candidate), kinds)
         };

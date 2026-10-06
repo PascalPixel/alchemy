@@ -17,7 +17,7 @@ mod types;
 use crate::compiler::routing::root;
 use crate::targets::{decomp_target, DecompTarget};
 use ast::Function;
-use mutate::{mutate, unnatural, Kind, Rng};
+use mutate::{mutate, unnatural, Kind, Rng, Step};
 use parse::{locate, parse_body, scan_unit, Unit};
 use perm::{Expanded, Node};
 use score::Score;
@@ -43,10 +43,16 @@ PERM macros in the draft are expanded only here, as pret's are:
   PERM_RANDOMIZE(code)       random rewrites only in these statements
   PERM_IGNORE(code)          passed through, never parsed or rewritten
 Without PERM macros the whole function is rewritten at random; with them,
-only PERM_RANDOMIZE regions are. Writes out/permute/STEM/best-N.c (best
-first) and best-N.diff against the draft, and prints the score trajectory.
-The diff is against the draft as the permuter prints it, PERM macros at
-their first choice. Defaults: --minutes 10, --jobs cores - 2, --seed 1.
+only PERM_RANDOMIZE regions are. After the search, each best candidate is
+minimized: its rewrites are undone one at a time, last first, and each
+removal that leaves the weighted score no higher is kept. Writes
+out/permute/STEM/best-N.c (best first), its remaining rewrites in its
+header, and best-N.diff, a unified diff against the draft file that
+`patch -p0` applies from the checkout: PERM macros become their chosen
+alternatives as the draft writes them, and the rewrites replace only the
+draft lines they change (or the whole function as printed, when they do not
+carry over with the same score). The run's scratch is removed however it
+ends. Defaults: --minutes 10, --jobs cores - 2, --seed 1.
 --function names the definition to rewrite when the draft has several;
 --iterations bounds each job instead of the clock, so a run repeats exactly."#;
 
@@ -201,7 +207,7 @@ impl Job {
 struct State {
     expanded: Arc<Expanded>,
     parsed: Option<(usize, usize, Function)>,
-    kinds: Vec<Kind>,
+    steps: Vec<Step>,
 }
 
 struct Problem {
@@ -219,10 +225,14 @@ struct Problem {
 
 impl Problem {
     fn state(&self, expanded: Expanded) -> State {
+        self.state_of(Arc::new(expanded))
+    }
+
+    fn state_of(&self, expanded: Arc<Expanded>) -> State {
         let parsed = locate(&expanded.text, self.function.as_deref(), &self.unit.typedef_names())
             .ok()
             .map(|located| (located.start, located.end, located.function));
-        State { expanded: Arc::new(expanded), parsed, kinds: Vec::new() }
+        State { expanded, parsed, steps: Vec::new() }
     }
 
     fn source(&self, state: &State) -> String {
@@ -269,14 +279,15 @@ struct Found {
     score: Score,
     unnatural: usize,
     text: String,
-    kinds: Vec<Kind>,
+    steps: Vec<Step>,
+    expanded: Arc<Expanded>,
     job: usize,
     iteration: u64,
 }
 
 impl Found {
     fn rank(&self, base_unnatural: usize) -> (u64, usize, usize, usize) {
-        (self.score.weighted, self.score.differ, self.unnatural.saturating_sub(base_unnatural), self.kinds.len())
+        (self.score.weighted, self.score.differ, self.unnatural.saturating_sub(base_unnatural), self.steps.len())
     }
 }
 
@@ -308,7 +319,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let output = root().join("out/permute").join(&stem);
     let nodes = perm::parse(&text)?;
     let (listing, scaffold) = reference(&options)?;
-    let mut problem = Problem {
+    let problem = Problem {
         draft,
         text,
         stem,
@@ -320,10 +331,29 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         unit: Unit::default(),
         function: options.function.clone(),
     };
+    execute(problem, &options, scaffold, &output)
+}
+
+/// A run's own scratch, removed however the run ends: an error, a panic
+/// unwinding through the search, or success.
+struct Scratch(PathBuf);
+
+impl Drop for Scratch {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+        // The draft's folder too, when a failed first run left it empty.
+        if let Some(parent) = self.0.parent() {
+            let _ = std::fs::remove_dir(parent);
+        }
+    }
+}
+
+fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, output: &Path) -> Result<(), String> {
     // The written spelling first: its preprocessed unit gives the parser
     // its declarations, and its score is where the search starts.
     // This run's own scratch, so two runs on one draft never share files.
-    let scratch = output.join(format!("run-{}", std::process::id()));
+    let guard = Scratch(output.join(format!("run-{}", std::process::id())));
+    let scratch = guard.0.clone();
     let setup = Job::new(&problem, &scratch.join("setup"))?;
     let original = perm::expand(&problem.nodes, None);
     setup.compile(&original.restore(&original.text))?;
@@ -351,7 +381,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         Some((_, _, function)) => unnatural(function, &Env::new(&problem.unit, function)),
         None => 0,
     };
-    let base = Found { score: base_score, unnatural: base_unnatural, text: base_text, kinds: Vec::new(), job: 0, iteration: 0 };
+    let base = Found { score: base_score, unnatural: base_unnatural, text: base_text, steps: Vec::new(), expanded: base_state.expanded.clone(), job: 0, iteration: 0 };
     println!(
         "{}: listing {} instructions; draft {}; {} job(s), {}, seed {}; rewrites: {}",
         problem.stem,
@@ -371,9 +401,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     );
     let started = Instant::now();
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
-    let found = search(&problem, &base_state, &base, random, &options, deadline, &scratch, started);
-    let _ = std::fs::remove_dir_all(&scratch);
-    write_best(&problem, &base, &found?, &output)
+    let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started)?;
+    let best = minimize_best(&problem, &base, &found, &scratch.join("minimize"))?;
+    write_best(&problem, &base, &best, output)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -445,18 +475,14 @@ fn search(
                             env.refresh(function);
                             env.focus = problem.focus(&state.expanded);
                             for _ in 0..if rng.chance(1, 3) { 2 } else { 1 } {
-                                if let Some(kind) = mutate(function, env, &mut rng) {
-                                    state.kinds.push(kind);
+                                if let Some(step) = mutate(function, env, &mut rng) {
+                                    state.steps.push(step);
                                 }
                             }
                         }
                     }
                     let text = problem.source(&state);
-                    let key = {
-                        let mut hasher = std::collections::hash_map::DefaultHasher::new();
-                        std::hash::Hash::hash(&text, &mut hasher);
-                        std::hash::Hasher::finish(&hasher)
-                        };
+                    let key = text_key(&text);
                     let result = match cache.get(&key) {
                         Some(result) => result.clone(),
                         None => {
@@ -477,7 +503,8 @@ fn search(
                         },
                         score,
                         text,
-                        kinds: state.kinds.clone(),
+                        steps: state.steps.clone(),
+                        expanded: state.expanded.clone(),
                         job: job_index,
                         iteration,
                     };
@@ -539,32 +566,285 @@ fn rewrites(kinds: &[Kind]) -> String {
     if text.is_empty() { "PERM choices only".into() } else { text.join(", ") }
 }
 
-/// A line diff, `-` for the draft and `+` for the candidate, with two lines
-/// of context and `@@` between distant changes.
-fn line_diff(before: &str, after: &str) -> String {
-    let old: Vec<String> = before.lines().map(str::to_string).collect();
-    let new: Vec<String> = after.lines().map(str::to_string).collect();
-    let (_, script) = crate::diff::compare(&old, &new);
-    let changed: Vec<bool> = script.iter().map(|line| !line.starts_with("  ")).collect();
-    let mut out = String::from("--- draft\n+++ candidate\n");
-    let mut last: Option<usize> = None;
-    for (index, line) in script.iter().enumerate() {
-        if !(index.saturating_sub(2)..(index + 3).min(script.len())).any(|at| changed[at]) {
-            continue;
+fn text_key(text: &str) -> u64 {
+    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    std::hash::Hash::hash(text, &mut hasher);
+    std::hash::Hasher::finish(&hasher)
+}
+
+/// A score from the cache, or from one compile.
+fn scored(problem: &Problem, job: &Job, text: &str, cache: &mut HashMap<u64, Option<Score>>) -> Option<Score> {
+    cache.entry(text_key(text)).or_insert_with(|| problem.evaluate(job, text).ok()).clone()
+}
+
+impl Problem {
+    /// One expansion's function with `steps` applied in order, each at the
+    /// site its generator chose; a step whose site is gone is dropped.
+    fn replay(&self, expanded: &Arc<Expanded>, steps: &[Step]) -> State {
+        let mut state = self.state_of(expanded.clone());
+        if let Some((_, _, function)) = state.parsed.as_mut() {
+            let mut env = Env::new(&self.unit, function);
+            env.focus = self.focus(&state.expanded);
+            for step in steps {
+                env.refresh(function);
+                if mutate::apply(step.kind, function, &env, &mut step.rng.clone()) {
+                    state.steps.push(step.clone());
+                }
+            }
         }
-        if last.map_or(index > 0, |last| index > last + 1) {
-            out.push_str("@@\n");
+        state
+    }
+
+    fn unnatural(&self, state: &State) -> usize {
+        match &state.parsed {
+            Some((_, _, function)) => unnatural(function, &Env::new(&self.unit, function)),
+            None => 0,
         }
-        let (tag, text) = line.split_at(2);
-        out.push(tag.chars().next().unwrap_or(' '));
-        out.push_str(text);
-        out.push('\n');
-        last = Some(index);
+    }
+}
+
+/// Undo a candidate's rewrites one at a time, last first, keeping each
+/// removal that leaves its weighted score (then differ, then its unnatural
+/// spellings) no higher, until a whole pass removes nothing. A trail that
+/// does not replay to the candidate's own text is left as found.
+fn minimize(problem: &Problem, job: &Job, base: &Found, best: &Found, cache: &mut HashMap<u64, Option<Score>>) -> Found {
+    let replayed = problem.replay(&best.expanded, &best.steps);
+    if replayed.steps.len() != best.steps.len() || problem.source(&replayed) != best.text {
+        return best.clone();
+    }
+    let measure = |found: &Found| (found.score.weighted, found.score.differ, found.unnatural.saturating_sub(base.unnatural));
+    let mut current = best.clone();
+    loop {
+        let mut removed = false;
+        let mut index = current.steps.len();
+        while index > 0 {
+            index -= 1;
+            let mut trial = current.steps.clone();
+            trial.remove(index);
+            let state = problem.replay(&current.expanded, &trial);
+            let text = problem.source(&state);
+            // A rewrite that changes no text costs no compile.
+            let score = if text == current.text { Some(current.score.clone()) } else { scored(problem, job, &text, cache) };
+            let Some(score) = score else { continue };
+            let candidate = Found { score, unnatural: problem.unnatural(&state), text, steps: state.steps, ..current.clone() };
+            if measure(&candidate) <= measure(&current) {
+                current = candidate;
+                removed = true;
+                index = index.min(current.steps.len());
+            }
+        }
+        if !removed {
+            return current;
+        }
+    }
+}
+
+/// Which line of `to` each line of `from` is, by their longest common
+/// subsequence.
+fn align(from: &[String], to: &[String]) -> Vec<Option<usize>> {
+    let (_, script) = crate::diff::compare(from, to);
+    let (mut out, mut j) = (Vec::with_capacity(from.len()), 0);
+    for line in &script {
+        match line.as_bytes()[0] {
+            b' ' => {
+                out.push(Some(j));
+                j += 1;
+            }
+            b'+' => j += 1,
+            _ => out.push(None),
+        }
     }
     out
 }
 
-fn write_best(problem: &Problem, base: &Found, found: &[Found], output: &Path) -> Result<(), String> {
+fn lines(text: &str) -> Vec<String> {
+    text.split_inclusive('\n').map(str::to_string).collect()
+}
+
+/// Carry the rewrites between two printings of one function (`before`,
+/// with none, and `after`) into the draft's own lines: each changed run of
+/// printed lines replaces the draft lines it aligns with, and every other
+/// draft line keeps its spelling. `None` when a change touches a line the
+/// printer spelled differently from the draft.
+fn transplant(draft: &str, before: &str, after: &str) -> Option<String> {
+    let squeeze = |lines: &[String]| -> Vec<String> { lines.iter().map(|line| line.split_whitespace().collect()).collect() };
+    let (d, p0, p1) = (lines(draft), lines(before), lines(after));
+    let at = align(&squeeze(&p0), &squeeze(&d));
+    let (_, script) = crate::diff::compare(&p0, &p1);
+    // Runs of changes: (first printed line, lines removed, lines inserted).
+    let mut edits: Vec<(usize, usize, Vec<String>)> = Vec::new();
+    let (mut i, mut open) = (0, false);
+    for line in &script {
+        let (tag, text) = (line.as_bytes()[0], &line[2..]);
+        if tag == b' ' {
+            i += 1;
+            open = false;
+            continue;
+        }
+        if !open {
+            edits.push((i, 0, Vec::new()));
+            open = true;
+        }
+        let edit = edits.last_mut().unwrap();
+        if tag == b'-' {
+            edit.1 += 1;
+            i += 1;
+        } else {
+            edit.2.push(text.to_string());
+        }
+    }
+    let (mut out, mut next) = (String::new(), 0);
+    for (start, removed, inserted) in edits {
+        let (from, to) = if removed > 0 {
+            let first = at[start]?;
+            if (0..removed).any(|k| at[start + k] != Some(first + k)) {
+                return None;
+            }
+            (first, first + removed)
+        } else if start > 0 {
+            let after = at[start - 1]? + 1;
+            (after, after)
+        } else {
+            let first = at.first().copied().flatten()?;
+            (first, first)
+        };
+        if from < next {
+            return None;
+        }
+        out.extend(d[next..from].iter().map(String::as_str));
+        out.extend(inserted.iter().map(String::as_str));
+        next = to;
+    }
+    out.extend(d[next..].iter().map(String::as_str));
+    Some(out)
+}
+
+/// A unified diff from `old` to `new` with three lines of context, both
+/// named `name`, which `patch` applies.
+fn unified(old: &str, new: &str, name: &str) -> String {
+    let (a, b) = (lines(old), lines(new));
+    let (_, script) = crate::diff::compare(&a, &b);
+    // (tag, text, old lines before it, new lines before it)
+    let mut entries = Vec::with_capacity(script.len());
+    let (mut i, mut j) = (0, 0);
+    for line in &script {
+        let tag = line.as_bytes()[0];
+        entries.push((tag, &line[2..], i, j));
+        match tag {
+            b' ' => (i, j) = (i + 1, j + 1),
+            b'+' => j += 1,
+            _ => i += 1,
+        }
+    }
+    let changed: Vec<usize> = (0..entries.len()).filter(|&at| entries[at].0 != b' ').collect();
+    if changed.is_empty() {
+        return String::new();
+    }
+    let push = |out: &mut String, tag: char, text: &str| {
+        out.push(tag);
+        out.push_str(text);
+        if !text.ends_with('\n') {
+            out.push_str("\n\\ No newline at end of file\n");
+        }
+    };
+    const CONTEXT: usize = 3;
+    let mut out = format!("--- {name}\n+++ {name}\n");
+    let mut k = 0;
+    while k < changed.len() {
+        let start = changed[k].saturating_sub(CONTEXT);
+        let mut end = changed[k] + 1;
+        k += 1;
+        while k < changed.len() && changed[k] - end <= 2 * CONTEXT {
+            end = changed[k] + 1;
+            k += 1;
+        }
+        let range = &entries[start..(end + CONTEXT).min(entries.len())];
+        let old_count = range.iter().filter(|entry| entry.0 != b'+').count();
+        let new_count = range.iter().filter(|entry| entry.0 != b'-').count();
+        out.push_str(&format!(
+            "@@ -{},{old_count} +{},{new_count} @@\n",
+            range[0].2 + usize::from(old_count > 0),
+            range[0].3 + usize::from(new_count > 0)
+        ));
+        let mut r = 0;
+        while r < range.len() {
+            if range[r].0 == b' ' {
+                push(&mut out, ' ', range[r].1);
+                r += 1;
+                continue;
+            }
+            // Each run of changes: its removals, then its insertions.
+            let run = r + range[r..].iter().take_while(|entry| entry.0 != b' ').count();
+            for tag in [b'-', b'+'] {
+                for entry in range[r..run].iter().filter(|entry| entry.0 == tag) {
+                    push(&mut out, tag as char, entry.1);
+                }
+            }
+            r = run;
+        }
+    }
+    out
+}
+
+/// One written candidate: minimized, then spelled as the draft spells it.
+struct Best {
+    found: Found,
+    /// The rewrites the search applied, before minimizing.
+    searched: Vec<Kind>,
+    /// The candidate in the draft's own lines, or as the permuter prints
+    /// its function when the rewrites do not carry into them.
+    text: String,
+    respelled: bool,
+}
+
+/// The candidate in the draft's spelling: PERM macros at its choices as the
+/// draft writes them, and its rewrites carried into the draft's lines, kept
+/// only when that text scores exactly as the printed candidate does.
+fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<u64, Option<Score>>) -> (String, bool) {
+    let draft = found.expanded.restore(&found.expanded.text);
+    let plain = problem.source(&problem.state_of(found.expanded.clone()));
+    let text = if found.text == plain { Some(draft) } else { transplant(&draft, &plain, &found.text) };
+    let printed = |text: &str| locate(text, problem.function.as_deref(), &problem.unit.typedef_names()).ok().map(|located| located.function.print());
+    match text {
+        Some(text) if text == found.text => (text, true),
+        Some(text)
+            if printed(&text).zip(printed(&found.text)).is_none_or(|(a, b)| a == b)
+                && scored(problem, job, &text, cache).as_ref() == Some(&found.score) =>
+        {
+            (text, true)
+        }
+        _ => (found.text.clone(), false),
+    }
+}
+
+/// Minimize and respell the search's best, until three distinct remain.
+fn minimize_best(problem: &Problem, base: &Found, found: &[Found], directory: &Path) -> Result<Vec<Best>, String> {
+    if found.is_empty() {
+        return Ok(Vec::new());
+    }
+    let job = Job::new(problem, directory)?;
+    let mut cache = HashMap::new();
+    let mut best: Vec<Best> = Vec::new();
+    for candidate in found {
+        if best.len() == 3 {
+            break;
+        }
+        let minimized = minimize(problem, &job, base, candidate, &mut cache);
+        let (text, respelled) = respell(problem, &job, &minimized, &mut cache);
+        if best.iter().any(|seen| seen.text == text) {
+            continue;
+        }
+        let searched = candidate.steps.iter().map(|step| step.kind).collect();
+        best.push(Best { found: minimized, searched, text, respelled });
+    }
+    best.sort_by(|a, b| {
+        let (a, b) = (&a.found, &b.found);
+        a.rank(base.unnatural).cmp(&b.rank(base.unnatural)).then(a.job.cmp(&b.job)).then(a.iteration.cmp(&b.iteration))
+    });
+    Ok(best)
+}
+
+fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) -> Result<(), String> {
     for entry in std::fs::read_dir(output).map_err(|e| format!("{}: {e}", output.display()))?.flatten() {
         let name = entry.file_name().to_string_lossy().into_owned();
         if name.starts_with("best-") {
@@ -576,28 +856,42 @@ fn write_best(problem: &Problem, base: &Found, found: &[Found], output: &Path) -
         println!("no candidate beat the draft");
         return Ok(());
     }
-    for (index, best) in found.iter().take(3).enumerate() {
+    let name = problem.draft.strip_prefix(root()).unwrap_or(&problem.draft).to_string_lossy().into_owned();
+    for (index, entry) in found.iter().take(3).enumerate() {
+        let best = &entry.found;
         let path = output.join(format!("best-{}.c", index + 1));
         let fakematch = if best.unnatural > base.unnatural {
             "\n   It relies on a cast to an operand's own type, a cast of a cast or (*p).member: tag it FAKEMATCH (S2) or reshape it."
         } else {
             ""
         };
+        let kinds: Vec<Kind> = best.steps.iter().map(|step| step.kind).collect();
+        let spelling = if entry.respelled { "" } else { "\n   Its rewrites do not carry into the draft's lines: the function is as the permuter prints it." };
         let header = format!(
-            "/* alchemy permute {}: {}; draft {}.\n   Job {}, iteration {}; rewrites: {}.{fakematch} */\n",
+            "/* alchemy permute {}: {}; draft {}.\n   Job {}, iteration {}; rewrites: {} (minimized from {}: {}).{spelling}{fakematch} */\n",
             problem.stem,
             best.score.summary(),
             base.score.summary(),
             best.job,
             best.iteration,
-            rewrites(&best.kinds)
+            rewrites(&kinds),
+            entry.searched.len(),
+            rewrites(&entry.searched)
         );
-        std::fs::write(&path, format!("{header}{}", best.text)).map_err(|e| format!("{}: {e}", path.display()))?;
-        // Against the draft as the permuter prints it (PERM macros at their
-        // first choice), so the diff shows rewrites, not the printer's layout.
-        let diff = line_diff(&base.text, &best.text);
+        std::fs::write(&path, format!("{header}{}", entry.text)).map_err(|e| format!("{}: {e}", path.display()))?;
+        // Against the draft file itself, so `patch -p0` from the checkout
+        // applies it; the header comment stays in best-N.c only.
+        let diff = unified(&problem.text, &entry.text, &name);
         std::fs::write(path.with_extension("diff"), &diff).map_err(|e| format!("{}: {e}", path.display()))?;
-        println!("best-{}: {}  {}", index + 1, best.score.summary(), path.strip_prefix(root()).unwrap_or(&path).display());
+        println!(
+            "best-{}: {}  {}\n        rewrites {} -> {}: {}",
+            index + 1,
+            best.score.summary(),
+            path.strip_prefix(root()).unwrap_or(&path).display(),
+            entry.searched.len(),
+            kinds.len(),
+            rewrites(&kinds)
+        );
         if index == 0 {
             print!("{diff}");
         }
@@ -624,9 +918,230 @@ mod tests {
     }
 
     #[test]
-    fn line_diff_marks_changed_lines_with_context() {
-        let diff = line_diff("a\nb\nc\nd\ne\nf\ng\n", "a\nb\nc\nD\ne\nf\ng\n");
-        assert_eq!(diff, "--- draft\n+++ candidate\n@@\n b\n c\n+D\n-d\n e\n f\n");
+    fn unified_diff_has_numbered_hunks_with_removals_first() {
+        let diff = unified("a\nb\nc\nd\ne\nf\ng\n", "a\nb\nc\nD\ne\nf\ng\n", "x.c");
+        assert_eq!(diff, "--- x.c\n+++ x.c\n@@ -1,7 +1,7 @@\n a\n b\n c\n-d\n+D\n e\n f\n g\n");
+        let old: String = (1..=20).map(|n| format!("{n}\n")).collect();
+        let new = old.replace("\n2\n", "\ntwo\n").replace("\n18\n", "\n18\neighteen\n");
+        let diff = unified(&old, &new, "x.c");
+        assert_eq!(diff.matches("@@ -").count(), 2, "{diff}");
+        assert!(diff.contains("@@ -1,5 +1,5 @@\n 1\n-2\n+two\n") && diff.contains("@@ -16,5 +16,6 @@\n"), "{diff}");
+        assert_eq!(apply_unified(&old, &diff), new);
+        assert_eq!(unified(&old, &old, "x.c"), "");
+    }
+
+    /// What `patch` does with one of our diffs, for texts that end in a
+    /// newline: copy, check context and removals, insert.
+    fn apply_unified(old: &str, diff: &str) -> String {
+        let old = lines(old);
+        let (mut out, mut at) = (String::new(), 0);
+        for line in diff.split_inclusive('\n').skip(2) {
+            if let Some(header) = line.strip_prefix("@@ -") {
+                let (start, count) = header.split(' ').next().unwrap().split_once(',').unwrap();
+                let (start, count): (usize, usize) = (start.parse().unwrap(), count.parse().unwrap());
+                let begin = if count == 0 { start } else { start - 1 };
+                out.extend(old[at..begin].iter().map(String::as_str));
+                at = begin;
+                continue;
+            }
+            let (tag, text) = line.split_at(1);
+            match tag {
+                " " | "-" => {
+                    assert_eq!(old[at], text, "context or removal at line {}", at + 1);
+                    if tag == " " {
+                        out.push_str(text);
+                    }
+                    at += 1;
+                }
+                _ => out.push_str(text),
+            }
+        }
+        out.extend(old[at..].iter().map(String::as_str));
+        out
+    }
+
+    fn test_problem(draft: &Path, text: &str, listing: Vec<String>, function: Option<&str>) -> Problem {
+        let nodes = perm::parse(text).unwrap();
+        Problem {
+            draft: draft.to_path_buf(),
+            text: text.into(),
+            stem: "08000000".into(),
+            target: decomp_target(Some("tbs-en")).unwrap(),
+            choices: perm::has_choices(&nodes),
+            nodes,
+            listing,
+            symbol: None,
+            unit: scan_unit(text).unwrap_or_default(),
+            function: function.map(str::to_string),
+        }
+    }
+
+    #[test]
+    fn rewrites_carry_into_the_draft_lines_and_the_diff_patches_the_draft() {
+        // The draft's own layout: a comment, odd spacing and a PERM choice.
+        let draft = "extern int gX;\nextern int gY;\n\n/* kept as written */\nvoid Set(int a, int b)\n{\n    gX   =   a;   /* x */\n    gY = PERM_ONEOF(b, b + 1);\n    if (a)\n        gX = b;\n}\n";
+        let problem = test_problem(Path::new("recon/tbs/en/main/08000000.c"), draft, Vec::new(), None);
+        let mut rng = Rng::new(2);
+        let expanded = Arc::new(perm::expand(&problem.nodes, Some(&mut rng)));
+        let plain = problem.source(&problem.state_of(expanded.clone()));
+        // Some seed's rewrite touches one statement only.
+        let (text, respelled) = (1..200u64)
+            .find_map(|seed| {
+                let mut state = problem.state_of(expanded.clone());
+                let (_, _, function) = state.parsed.as_mut().unwrap();
+                let mut env = Env::new(&problem.unit, function);
+                let step = mutate(function, &mut env, &mut Rng::new(seed))?;
+                state.steps.push(step);
+                let after = problem.source(&state);
+                let spelled = transplant(&expanded.restore(&expanded.text), &plain, &after)?;
+                (after != plain && spelled.contains("gX   =   a;   /* x */")).then_some((spelled, after))
+            })
+            .expect("a rewrite that leaves the first statement alone");
+        assert!(text.contains("/* kept as written */") && !perm::has_macros(&text), "{text}");
+        // The respelled text holds the rewritten function exactly.
+        let printed = |text: &str| locate(text, None, &problem.unit.typedef_names()).unwrap().function.print();
+        assert_eq!(printed(&text), printed(&respelled));
+        let diff = unified(draft, &text, "recon/tbs/en/main/08000000.c");
+        assert_eq!(apply_unified(draft, &diff), text);
+        // And `patch` itself, where the system has it.
+        let work = tempfile::tempdir().unwrap();
+        let file = work.path().join("08000000.c");
+        std::fs::write(&file, draft).unwrap();
+        std::fs::write(work.path().join("best.diff"), &diff).unwrap();
+        let patched = std::process::Command::new("patch")
+            .args(["-s", "08000000.c", "best.diff"])
+            .current_dir(work.path())
+            .status();
+        if let Ok(status) = patched {
+            assert!(status.success());
+            assert_eq!(std::fs::read_to_string(&file).unwrap(), text);
+        }
+        // A change on a line the printer spells differently does not carry.
+        assert_eq!(transplant("int a;\nx  =  1 ;\n", "int a;\nx = 1;\n", "int a;\nx = 2;\n"), Some("int a;\nx = 2;\n".into()));
+        assert_eq!(transplant("int a; x = 1;\n", "int a;\nx = 1;\n", "int a;\nx = 2;\n"), None);
+    }
+
+    /// A compiled reference for `listing`, as alchemy diff compiles drafts.
+    fn listing_of(work: &Path, source: &str) -> Vec<String> {
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let reference = work.join("reference/08000000.c");
+        let object = work.join("reference/obj/08000000.o");
+        std::fs::create_dir_all(object.parent().unwrap()).unwrap();
+        std::fs::write(&reference, source).unwrap();
+        for step in crate::diff::draft_steps(target, &reference, &object, false).unwrap() {
+            crate::process::run(&step, root()).unwrap();
+        }
+        crate::diff::disassemble(&object, None).unwrap()
+    }
+
+    #[test]
+    fn minimizing_drops_rewrites_the_score_does_not_need() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        // The listing stores gY first; the draft stores gX first.
+        let listing = listing_of(work.path(), "int gX;\nint gY;\nvoid Set(int a, int b)\n{\n    gY = b;\n    gX = a;\n}\n");
+        let draft = work.path().join("draft/08000000.c");
+        std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
+        let text = "int gX;\nint gY;\nvoid Set(int a, int b)\n{\n    gX = a;\n    gY = b;\n}\n";
+        std::fs::write(&draft, text).unwrap();
+        let problem = test_problem(&draft, text, listing, None);
+        let job = Job::new(&problem, &work.path().join("run/minimize")).unwrap();
+        let base_state = problem.state(perm::expand(&problem.nodes, None));
+        let base_text = problem.source(&base_state);
+        let mut cache = HashMap::new();
+        let base_score = scored(&problem, &job, &base_text, &mut cache).unwrap();
+        assert!(base_score.weighted > 0);
+        let base = Found { score: base_score, unnatural: 0, text: base_text, steps: Vec::new(), expanded: base_state.expanded.clone(), job: 0, iteration: 0 };
+        // A long walk under a fixed seed that ends with gY stored first.
+        let walk = (1..500u64)
+            .find_map(|seed| {
+                let mut state = base_state.clone();
+                let (_, _, function) = state.parsed.as_mut().unwrap();
+                let mut env = Env::new(&problem.unit, function);
+                let mut rng = Rng::new(seed);
+                for _ in 0..8 {
+                    env.refresh(function);
+                    if let Some(step) = mutate(function, &mut env, &mut rng) {
+                        state.steps.push(step);
+                    }
+                }
+                let text = problem.source(&state);
+                (state.steps.len() >= 6 && text.find("gY =") < text.find("gX =")).then_some((state, text))
+            })
+            .expect("a walk that reorders the stores");
+        let (state, walked) = walk;
+        let score = scored(&problem, &job, &walked, &mut cache).unwrap();
+        let found = Found { score, unnatural: problem.unnatural(&state), text: walked, steps: state.steps.clone(), expanded: state.expanded.clone(), job: 0, iteration: 1 };
+        let minimized = minimize(&problem, &job, &base, &found, &mut cache);
+        assert!(minimized.steps.len() < found.steps.len(), "{} of {} rewrites remain", minimized.steps.len(), found.steps.len());
+        assert!((minimized.score.weighted, minimized.score.differ) <= (found.score.weighted, found.score.differ));
+        // The minimized trail replays to its text, and that text scores as recorded.
+        assert_eq!(problem.source(&problem.replay(&minimized.expanded, &minimized.steps)), minimized.text);
+        assert_eq!(problem.evaluate(&job, &minimized.text).unwrap(), minimized.score);
+        // Every remaining rewrite is needed: dropping any one raises the score.
+        for index in 0..minimized.steps.len() {
+            let mut fewer = minimized.steps.clone();
+            fewer.remove(index);
+            let state = problem.replay(&minimized.expanded, &fewer);
+            let text = problem.source(&state);
+            assert_ne!(text, minimized.text, "rewrite {index} changes nothing");
+            if let Ok(score) = problem.evaluate(&job, &text) {
+                let measure = (score.weighted, score.differ, problem.unnatural(&state));
+                assert!(measure > (minimized.score.weighted, minimized.score.differ, minimized.unnatural), "rewrite {index} is not needed");
+            }
+        }
+        // The same minimization twice is the same.
+        assert_eq!(minimize(&problem, &job, &base, &found, &mut cache).text, minimized.text);
+    }
+
+    #[test]
+    fn failed_runs_leave_no_scratch() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let listing = listing_of(work.path(), "int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return a - b;\n}\n");
+        let options = |draft: &Path, function: Option<&str>| Options {
+            draft: draft.to_path_buf(),
+            addresses: Vec::new(),
+            game: "tbs",
+            target: decomp_target(Some("tbs-en")).unwrap(),
+            minutes: 0.0,
+            jobs: 1,
+            seed: 1,
+            function: function.map(str::to_string),
+            iterations: Some(1),
+        };
+        let draft = work.path().join("draft/08000000.c");
+        std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
+        let output = work.path().join("out/permute/08000000");
+        let cases = [
+            ("int gX;\nint Sub(int a, int b)\n{\n    gX = a\n    return a - b;\n}\n", None),
+            ("int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return a - b;\n}\n", Some("Missing")),
+        ];
+        for (text, function) in cases {
+            std::fs::write(&draft, text).unwrap();
+            let problem = test_problem(&draft, text, listing.clone(), function);
+            assert!(execute(problem, &options(&draft, function), None, &output).is_err());
+            assert!(!output.exists(), "{:?}", std::fs::read_dir(&output).map(|d| d.flatten().map(|e| e.file_name()).collect::<Vec<_>>()));
+        }
+        // A panic unwinding through a run removes its scratch too.
+        let scratch = work.path().join("out/permute/x/run-1");
+        std::fs::create_dir_all(scratch.join("job-00")).unwrap();
+        let caught = std::panic::catch_unwind(|| {
+            let _guard = Scratch(scratch.clone());
+            panic!("search failed");
+        });
+        assert!(caught.is_err() && !scratch.exists() && !scratch.parent().unwrap().exists());
+        // A finished run keeps its results beside the removed scratch.
+        let text = "int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return PERM_ONEOF(b - a, a - b);\n}\n";
+        std::fs::write(&draft, text).unwrap();
+        let problem = test_problem(&draft, text, listing, None);
+        execute(problem, &options(&draft, None), None, &output).unwrap();
+        let names: Vec<String> = std::fs::read_dir(&output).unwrap().flatten().map(|entry| entry.file_name().to_string_lossy().into_owned()).collect();
+        assert!(names.iter().all(|name| name.starts_with("best-")) && names.contains(&"best-1.diff".to_string()), "{names:?}");
+        // PERM choices only: the diff resolves the macro in the draft's spelling.
+        let diff = std::fs::read_to_string(output.join("best-1.diff")).unwrap();
+        assert!(diff.contains("-    return PERM_ONEOF(b - a, a - b);\n+    return a - b;\n"), "{diff}");
+        assert_eq!(apply_unified(text, &diff), "int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return a - b;\n}\n");
     }
 
     #[test]
@@ -764,7 +1279,7 @@ mod tests {
         let compiled = crate::diff::disassemble(&setup.object, None).unwrap();
         let (common, _) = crate::diff::compare(&problem.listing, &compiled);
         assert_eq!(score.differ, problem.listing.len() + compiled.len() - 2 * common);
-        let base = Found { score, unnatural: 0, text: base_text, kinds: Vec::new(), job: 0, iteration: 0 };
+        let base = Found { score, unnatural: 0, text: base_text, steps: Vec::new(), expanded: base_state.expanded.clone(), job: 0, iteration: 0 };
         let options = Options {
             draft,
             addresses: Vec::new(),

@@ -1,3 +1,12 @@
+/* 08026080: listing 1585, draft 1599, differ 1400; both frames are 324 bytes.
+ * Recheck after shared work areas: ordinary infoWin differs 1464; removing
+ * the enemy temporary 1493/1604, marker temporary 1445/1598, coordinate
+ * temporary 1410/1599; removing all three temporaries 1523/1600. Keep the
+ * current draft and its measured devices; no new device or credit.
+ * The exact RESOLVE.C relative heap-cell pattern differs 1417/1600; moving
+ * sel initialization before the first call with it differs 1475/1596.
+ * Neither reproduces the native reuse of the gBattleWork cell base.
+ */
 #include "AFFINE.H"
 #include "SELECT.H"
 #include "EFFECT_STEP.H"
@@ -45,7 +54,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     s32 sel;
     s32 slotId;
     struct UiWindow *window;
-    register struct UiWindow *infoWin asm("r9"); /* FAKEMATCH: after H11/H12 ordinary shapes, live window r9 lowers 13137 to 12967 by register choice only. */
+    register struct UiWindow *infoWin asm("r9"); /* FAKEMATCH: the ordinary window lifetime differs 1464; native r9 reduces it to 1400 without changing instruction count. */
     s32 matrix;
     s32 cursor;
     s32 cnt;
@@ -108,7 +117,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
         if (runtime->enemy_units[0] != 0xFF) {
             do {
                 /* FAKEMATCH: keep the consumed enemy-id load separate;
-                   folding it raised the H11 score13267 to14358. */
+                   folding it differs 1493 and adds five instructions, versus 1400 here. */
                 s16 enemy;
                 enemy = runtime->enemy_units[i];
                 ids[cnt] = enemy;
@@ -258,7 +267,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                 }
                 if (i != 0 && (j = cursor - i) >= 0 && ids[j] != 0xFE) {
                     /* FAKEMATCH: schedule this consumed side-marker index
-                       before the slot writes; folding it raised13267 to19019. */
+                       before the slot writes; folding it differs 1445 versus 1400 here. */
                     u8 mark;
                     selIds[cnt] = ids[j];
                     mark = (u8)(6 - i);
@@ -292,7 +301,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
             UiWork_Finalize(infoWin, 1);
         switch (kind) {
             /* FAKEMATCH: share the consumed coordinate temporary between
-               these cases; ordinary direct expressions score13267, this13137. */
+               these cases; ordinary direct expressions differ 1410 versus 1400 here. */
             s32 anchor;
         case 7:
             column = pos.x / 8 - 4;

@@ -17,10 +17,11 @@ use std::path::{Path, PathBuf};
 pub const USAGE: &str = "usage: alchemy similar --editions [--root DIR] [--out FILE] [--top N]\n\
 For every ☀️ function that is not yet C in out/tbs-en (recon/tbs/raw listings and\n\
 overlay listings), finds its copy in each of the twelve builds under out/: by\n\
-symbol name in the six ☀️ editions, by name or by `alchemy similar`'s nearest\n\
-twin in the six ⚓️ editions. Each copy is identical, relocated (only literal-pool\n\
+symbol name, by unchanged runs of bytes (placed at the entry of the function that\n\
+holds them), or as `alchemy similar`'s nearest twin, in the six ☀️ and the six ⚓️\n\
+editions. Each copy is identical, relocated (only literal-pool or jump-table\n\
 words or call targets differ), differs in N instructions (normalised as alchemy\n\
-diff normalises), or absent. Also lists the nearest already-C twins in tbs-en\n\
+diff normalises), or not found. Also lists the nearest already-C twins in tbs-en\n\
 and tla-en. Writes one TSV row per function and edition, and prints a summary.\n\
   --root DIR   checkout whose out/ is read (default .)\n\
   --out FILE   default out/reports/editions-tbs.tsv\n\
@@ -40,6 +41,18 @@ struct Loaded {
 struct Edition {
     id: String,
     images: Vec<Loaded>,
+}
+
+impl Edition {
+    /// Every name the build defines, in its maps or its ELF symbols.
+    fn names(&self) -> BTreeSet<String> {
+        let mut names = BTreeSet::new();
+        for image in &self.images {
+            names.extend(image.map.placed.iter().flat_map(|p| p.symbols.iter().map(|(_, n)| n.clone())));
+            names.extend(image.elf.symbols.iter().filter(|s| !s.name.is_empty() && !s.name.starts_with('$')).map(|s| s.name.clone()));
+        }
+        names
+    }
 }
 
 fn load(build: &Path) -> Result<Edition, String> {
@@ -157,6 +170,31 @@ fn extent(elf: &Elf, placed: &Placed, start: u32, name: Option<&str>, from: usiz
     (start + bytes.len() as u32, bytes)
 }
 
+/// A named copy of a reference `length` bytes long. The reference is one unit
+/// with no label inside, so a label the edition holds inside that extent under
+/// a name the reference build does not define (`known`) names part of the same
+/// code: the copy runs across it toward the reference's length (within its
+/// section), then ends as `extent` ends a function. A label the reference
+/// defines elsewhere is a function of its own and still ends the copy.
+fn extent_over(elf: &Elf, placed: &Placed, start: u32, name: Option<&str>, length: usize, known: &BTreeSet<String>) -> (u32, Vec<u8>) {
+    let natural = extent(elf, placed, start, name, length * 3 / 4);
+    if natural.1.len() >= length {
+        return natural;
+    }
+    let reach = start + length as u32;
+    let labels: BTreeSet<u32> = placed.symbols.iter().map(|(a, _)| *a).chain(starts_in(elf, placed)).filter(|&a| a > start).collect();
+    let stop = labels
+        .into_iter()
+        .find(|&a| a >= reach || names_at(elf, placed, a).iter().any(|n| known.contains(n)))
+        .unwrap_or(placed.end());
+    let end = stop.min(placed.end()).min(start + (length as u32) * 5 / 4 + 16);
+    let mut bytes = read(elf, start, end);
+    if !is_arm(elf, placed, start) {
+        bytes.truncate(thumb_length(&bytes, start, length * 3 / 4));
+    }
+    (start + bytes.len() as u32, bytes)
+}
+
 fn origin_of(root: &Path, placed: &Placed) -> &'static str {
     if placed.path.ends_with("/rom.o") || placed.name.starts_with(".rom.") {
         return "scaffold";
@@ -177,10 +215,10 @@ pub fn anchors(reference: &[u8], base: u32, arm: bool) -> Vec<(usize, Vec<u8>)> 
         }
     };
     if arm {
-        let (_, pool) = arm_tokens(reference);
+        let (_, pool, table) = arm_tokens(reference, base);
         for i in 0..reference.len() / 4 {
             let w = arm_word(reference, i);
-            if pool.contains(&i) || w & 0x0f00_0000 == 0x0b00_0000 {
+            if pool.contains(&i) || table.contains(&i) || w & 0x0f00_0000 == 0x0b00_0000 {
                 close(&mut open, i * 4, &mut runs);
             } else if open.is_none() {
                 open = Some(i * 4);
@@ -205,6 +243,77 @@ pub fn anchors(reference: &[u8], base: u32, arm: bool) -> Vec<(usize, Vec<u8>)> 
     (0..runs.len()).map(|i| (runs[i].0, reference[runs[i].0..runs[i].1].to_vec())).collect()
 }
 
+fn arm_return(w: u32) -> bool {
+    w & 0x0fff_fff0 == 0x012f_ff10 || w & 0x0fff_8000 == 0x08bd_8000
+}
+
+fn arm_push_lr(w: u32) -> bool {
+    w & 0x0fff_4000 == 0x092d_4000
+}
+
+/// The entry of the function that holds `hit` in `image`: the last symbol or
+/// push of lr after a return at or before it, or `guess` when a return precedes
+/// it (a function that pushes nothing), looking back at most `window` bytes. A
+/// copy placed by an anchor's offset alone lands inside a function when the
+/// edition grew or shrank before the anchor.
+fn entry_before(image: &Loaded, hit: u32, window: u32, arm: bool, guess: Option<u32>) -> Option<u32> {
+    let (section, _) = image.elf.section_at(hit)?;
+    let placed = image.map.at_address(hit);
+    let floor = placed.map_or(section.address, |p| p.address).max(hit.saturating_sub(window));
+    let mut best: Option<u32> = None;
+    if let Some(p) = placed {
+        let labels = p.symbols.iter().map(|(a, _)| *a).chain(starts_in(&image.elf, p)).chain([p.address]);
+        best = labels.filter(|&a| a >= floor && a <= hit).max();
+    }
+    let from = best.unwrap_or(floor);
+    if arm {
+        let mut after_return = false;
+        let mut at = (from + 3) & !3;
+        while at <= hit {
+            let Some(w) = section.bytes.get((at - section.address) as usize..(at - section.address) as usize + 4) else { break };
+            let w = u32::from_le_bytes([w[0], w[1], w[2], w[3]]);
+            if after_return && at > from && (guess == Some(at) || arm_push_lr(w)) {
+                best = Some(at);
+            }
+            after_return = arm_return(w) || (after_return && w == 0);
+            at += 4;
+        }
+    } else {
+        let mut after_return = false;
+        let base = section.address;
+        let end = (hit + 2).min(base + section.bytes.len() as u32);
+        for ins in similar::sweep(&section.bytes, base, from, end) {
+            if ins.addr > hit {
+                break;
+            }
+            if after_return && ins.addr > from && (guess == Some(ins.addr) || matches!(ins.kind, Kind::Push { lr: true, .. })) {
+                best = Some(ins.addr);
+            }
+            let at = (ins.addr - base) as usize;
+            let padding = section.bytes.get(at..at + 2) == Some(&[0, 0]);
+            after_return = matches!(ins.kind, Kind::Bx(_) | Kind::Pop { pc: true, .. }) || (after_return && padding);
+        }
+    }
+    // A section or label can open with the alignment padding before the code.
+    let step = if arm { 4 } else { 2 };
+    let zero = |at: u32| section.bytes.get((at - section.address) as usize..(at - section.address) as usize + step).is_some_and(|b| b.iter().all(|&x| x == 0));
+    best.map(|mut entry| {
+        while entry + step as u32 <= hit && zero(entry) {
+            entry += step as u32;
+        }
+        entry
+    })
+}
+
+fn pushes_lr(bytes: &[u8], base: u32, arm: bool) -> bool {
+    if arm {
+        return bytes.len() >= 4 && arm_push_lr(arm_word(bytes, 0));
+    }
+    similar::sweep(bytes, base, base, base + bytes.len().min(4) as u32)
+        .first()
+        .is_some_and(|i| i.addr == base && matches!(i.kind, Kind::Push { lr: true, .. }))
+}
+
 fn rank(verdict: &Verdict) -> usize {
     match verdict.class {
         "identical" => 0,
@@ -214,9 +323,11 @@ fn rank(verdict: &Verdict) -> usize {
 }
 
 /// Finds a copy of `reference` in an edition by its unchanged runs of bytes,
-/// keeping the start whose comparison is closest.
+/// each placed at the entry of the function that holds the run, keeping the
+/// start whose comparison is closest.
 fn by_bytes(edition: &Edition, reference: &Unit, root: &Path) -> Option<(Unit, &'static str)> {
     let mut best: Option<(usize, Unit, &'static str)> = None;
+    let leaf = !pushes_lr(&reference.bytes, reference.address, reference.arm);
     for (offset, run) in anchors(&reference.bytes, reference.address, reference.arm) {
         for image in &edition.images {
             for section in &image.elf.sections {
@@ -228,10 +339,12 @@ fn by_bytes(edition: &Edition, reference: &Unit, root: &Path) -> Option<(Unit, &
                     if found > 4 {
                         break;
                     }
-                    if at < offset {
+                    let hit = section.address + at as u32;
+                    let guess = (at >= offset).then(|| hit - offset as u32);
+                    let window = (offset as u32) * 2 + 0x100;
+                    let Some(start) = entry_before(image, hit, window, reference.arm, guess.filter(|_| leaf)).or(guess) else {
                         continue;
-                    }
-                    let start = section.address + (at - offset) as u32;
+                    };
                     if (start & 1) != 0 || best.as_ref().is_some_and(|(_, b, _)| b.address == start && b.image == image.name) {
                         continue;
                     }
@@ -292,13 +405,14 @@ fn units(edition: &Edition, root: &Path) -> Vec<Unit> {
     out
 }
 
-fn by_name(edition: &Edition, unit: &Unit, placeholders: bool, root: &Path) -> Option<(Unit, &'static str)> {
+/// The copy named as `unit` is; `known` holds the names of `unit`'s own build.
+fn by_name(edition: &Edition, unit: &Unit, placeholders: bool, root: &Path, known: &BTreeSet<String>) -> Option<(Unit, &'static str)> {
     let mut images: Vec<&Loaded> = edition.images.iter().collect();
     images.sort_by_key(|i| i.name != unit.image);
     for name in unit.names.iter().filter(|n| placeholders || !is_placeholder(n)) {
         for image in &images {
             if let Some((placed, address)) = image.map.symbol(name) {
-                let (_, bytes) = extent(&image.elf, placed, address, Some(name), unit.bytes.len() * 3 / 4);
+                let (_, bytes) = extent_over(&image.elf, placed, address, Some(name), unit.bytes.len(), known);
                 if bytes.is_empty() {
                     continue;
                 }
@@ -320,8 +434,8 @@ fn by_name(edition: &Edition, unit: &Unit, placeholders: bool, root: &Path) -> O
 /// A copy found in one edition: the unit, how it was found, and its origin.
 type Found = (Unit, &'static str, &'static str);
 
-fn locate(edition: &Edition, reference: &Unit, placeholders: bool, root: &Path) -> Option<Found> {
-    by_name(edition, reference, placeholders, root)
+fn locate(edition: &Edition, reference: &Unit, placeholders: bool, root: &Path, known: &BTreeSet<String>) -> Option<Found> {
+    by_name(edition, reference, placeholders, root, known)
         .map(|(u, origin)| (u, "name", origin))
         .or_else(|| by_bytes(edition, reference, root).map(|(u, origin)| (u, "bytes", origin)))
 }
@@ -350,9 +464,32 @@ fn arm_word(bytes: &[u8], i: usize) -> u32 {
     u32::from_le_bytes([bytes[i * 4], bytes[i * 4 + 1], bytes[i * 4 + 2], bytes[i * 4 + 3]])
 }
 
+/// Jump-table words of ARM code at `base`: after `ldr pc, [pc, rN, lsl #2]` or
+/// `add pc, pc, rN, lsl #2` (any condition), the words from pc + 8 on whose
+/// value is an address inside the function. They move with the function, so
+/// they compare as relocations, not instructions.
+fn arm_tables(bytes: &[u8], base: u32) -> BTreeSet<usize> {
+    let count = bytes.len() / 4;
+    let inside = |w: u32| w >= base && w < base + bytes.len() as u32;
+    let mut table = BTreeSet::new();
+    for i in 0..count {
+        let w = arm_word(bytes, i);
+        if w & 0x0fff_fff0 != 0x079f_f100 && w & 0x0fff_fff0 != 0x008f_f100 {
+            continue;
+        }
+        let mut j = i + 2;
+        while j < count && inside(arm_word(bytes, j)) {
+            table.insert(j);
+            j += 1;
+        }
+    }
+    table
+}
+
 /// ARM code compares word by word: pool words a pc-relative load reads are
-/// dropped and calls lose their targets; branches inside stay relative.
-fn arm_tokens(bytes: &[u8]) -> (Vec<String>, BTreeSet<usize>) {
+/// dropped, jump-table words become `table`, and calls lose their targets;
+/// branches inside stay relative.
+fn arm_tokens(bytes: &[u8], base: u32) -> (Vec<String>, BTreeSet<usize>, BTreeSet<usize>) {
     let count = bytes.len() / 4;
     let mut pool = BTreeSet::new();
     for i in 0..count {
@@ -365,18 +502,21 @@ fn arm_tokens(bytes: &[u8]) -> (Vec<String>, BTreeSet<usize>) {
             }
         }
     }
+    let table = arm_tables(bytes, base);
     let tokens = (0..count)
         .filter(|i| !pool.contains(i))
         .map(|i| {
             let w = arm_word(bytes, i);
-            if w & 0x0f00_0000 == 0x0b00_0000 {
+            if table.contains(&i) {
+                "table".to_string()
+            } else if w & 0x0f00_0000 == 0x0b00_0000 {
                 format!("bl{:x}", w >> 28)
             } else {
                 format!("{w:08x}")
             }
         })
         .collect();
-    (tokens, pool)
+    (tokens, pool, table)
 }
 
 pub fn compare(english: &[u8], english_base: u32, other: &[u8], other_base: u32, arm: bool) -> Verdict {
@@ -384,19 +524,21 @@ pub fn compare(english: &[u8], english_base: u32, other: &[u8], other_base: u32,
         return Verdict { class: "identical", instructions: 0, detail: String::new() };
     }
     let (a, b, detail) = if arm {
-        let (a, a_pool) = arm_tokens(english);
-        let (b, _) = arm_tokens(other);
-        let (mut pool, mut calls) = (0, 0);
+        let (a, a_pool, a_table) = arm_tokens(english, english_base);
+        let (b, _, _) = arm_tokens(other, other_base);
+        let (mut pool, mut tables, mut calls) = (0, 0, 0);
         for i in 0..english.len().min(other.len()) / 4 {
             if arm_word(english, i) != arm_word(other, i) {
                 if a_pool.contains(&i) {
                     pool += 1;
+                } else if a_table.contains(&i) {
+                    tables += 1;
                 } else {
                     calls += 1;
                 }
             }
         }
-        (a, b, format!("arm words; pool {pool}, other words {calls}"))
+        (a, b, format!("arm words; pool {pool}, table {tables}, other words {calls}"))
     } else {
         let (a, a_lines) = thumb_tokens(english, english_base);
         let (b, b_lines) = thumb_tokens(other, other_base);
@@ -446,13 +588,50 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     Ok(o)
 }
 
-fn index(edition: &Edition, root: &Path, interner: &mut Interner, wanted: &dyn Fn(Origin) -> bool) -> Vec<Function> {
+const SCAFFOLD: &str = "scaffold";
+
+/// A map in which each scaffold section (`.rom.*` from rom.o) reads as text, so
+/// `similar` splits the copied code it holds into functions too.
+fn scaffold_as_text(map: &str) -> String {
+    let mut out = String::with_capacity(map.len());
+    for line in map.lines() {
+        match line.strip_prefix(" .rom.").and_then(|rest| rest.split_once(char::is_whitespace)) {
+            Some((_, fields)) if fields.trim_end().ends_with("/rom.o") => {
+                let _ = writeln!(out, " .text {}", fields.trim_start());
+            }
+            _ => {
+                out.push_str(line);
+                out.push('\n');
+            }
+        }
+    }
+    out
+}
+
+fn index(edition: &Edition, root: &Path, interner: &mut Interner, wanted: &dyn Fn(Origin) -> bool, scaffolds: bool) -> Vec<Function> {
     let mut all = Vec::new();
+    let sort = |object: &str| if scaffolds && object.ends_with("/rom.o") { (Origin::NotYetC, SCAFFOLD.to_string()) } else { classify(root, object) };
     for image in &edition.images {
-        let view = Image { build: &edition.id, name: &image.name, elf: &image.elf, map: &image.text };
-        all.extend(similar::functions(&view, interner, &|object| classify(root, object), wanted));
+        let text = if scaffolds { scaffold_as_text(&image.text) } else { image.text.clone() };
+        let view = Image { build: &edition.id, name: &image.name, elf: &image.elf, map: &text };
+        all.extend(similar::functions(&view, interner, &sort, wanted));
     }
     all
+}
+
+/// A failed search: no copy by name, unchanged bytes or nearest twin. It is
+/// never "absent", which only the edition's own source could show.
+const NOT_FOUND: &str = "not found";
+
+/// The nearest function to `query` among `candidates` (one edition's), within
+/// MAX_RATIO, as a copy in that edition.
+fn nearest_copy(query: &Function, corpus: &[Function], sorted: &[Vec<u32>], candidates: &[usize], edition: &Edition) -> Option<Found> {
+    let best = similar::nearest(query, corpus, sorted, candidates, 1, MAX_RATIO).into_iter().next()?;
+    let f = &corpus[best.index];
+    let bytes = twin_bytes(edition, f);
+    let names = vec![f.name.clone()];
+    let origin = if f.source == SCAFFOLD { SCAFFOLD } else { f.origin.label() };
+    Some((Unit { image: f.image.clone(), name: f.name.clone(), names, address: f.address, bytes, arm: false }, "twin", origin))
 }
 
 fn twin_bytes(edition: &Edition, f: &Function) -> Vec<u8> {
@@ -500,9 +679,12 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     let english = &tbs[1];
     let queries = units(english, &o.root);
     let mut interner = Interner::default();
-    let mut corpus: Vec<Function> = index(english, &o.root, &mut interner, &|origin| origin == Origin::C);
+    let mut corpus: Vec<Function> = index(english, &o.root, &mut interner, &|origin| origin == Origin::C, false);
+    for edition in tbs.iter().filter(|e| e.id != english.id) {
+        corpus.extend(index(edition, &o.root, &mut interner, &|origin| origin != Origin::Other, true));
+    }
     for edition in &tla {
-        corpus.extend(index(edition, &o.root, &mut interner, &|origin| origin != Origin::Other));
+        corpus.extend(index(edition, &o.root, &mut interner, &|origin| origin != Origin::Other, false));
     }
     let sorted: Vec<Vec<u32>> = corpus
         .iter()
@@ -517,34 +699,35 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
             .filter(|&i| corpus[i].build == build && corpus[i].tokens.len() >= MIN_INSNS && (!c_only || corpus[i].origin == Origin::C))
             .collect()
     };
+    let tbs_candidates: Vec<Vec<usize>> = tbs.iter().map(|e| if e.id == english.id { Vec::new() } else { candidates(&e.id, false) }).collect();
     let tla_candidates: Vec<Vec<usize>> = tla.iter().map(|e| candidates(&e.id, false)).collect();
     let c_candidates: Vec<usize> = candidates(&english.id, true).into_iter().chain(candidates(&tla[1].id, true)).collect();
 
     let mut tsv = String::from(HEADER);
     let mut summary = String::new();
+    let (sun_names, anchor_names) = (english.names(), tla[1].names());
     for unit in &queries {
         let _ = writeln!(summary, "{} {} {:08x} {:#x} bytes {}", unit.name, unit.image, unit.address, unit.bytes.len(), if unit.arm { "arm" } else { "thumb" });
+        let query = unit_function(unit, &mut interner);
+        let twin_in = |edition: &Edition, candidates: &[usize]| -> Option<Found> { nearest_copy(query.as_ref()?, &corpus, &sorted, candidates, edition) };
         let mut line = String::from("  ☀️ ");
-        for edition in &tbs {
-            let found = locate(edition, unit, true, &o.root);
+        for (edition, candidates) in tbs.iter().zip(&tbs_candidates) {
+            let found = locate(edition, unit, true, &o.root, &sun_names).or_else(|| twin_in(edition, candidates));
             let verdict = report(unit, edition, found.as_ref(), &mut tsv);
             let _ = write!(line, " {} {}", &edition.id[4..], short(&verdict));
-            if let Some((f, "bytes", _)) = &found {
-                let _ = write!(line, " (at {:08x})", f.address);
+            match &found {
+                Some((f, "bytes", _)) => {
+                    let _ = write!(line, " (at {:08x})", f.address);
+                }
+                Some((f, "twin", _)) => {
+                    let _ = write!(line, " (twin {} at {:08x})", f.name, f.address);
+                }
+                _ => {}
             }
             let _ = write!(line, ";");
         }
         let _ = writeln!(summary, "{line}");
-        let query = unit_function(unit, &mut interner);
-        let twin_in = |edition: &Edition, candidates: &[usize]| -> Option<Found> {
-            let query = query.as_ref()?;
-            let best = similar::nearest(query, &corpus, &sorted, candidates, 1, MAX_RATIO).into_iter().next()?;
-            let f = &corpus[best.index];
-            let bytes = twin_bytes(edition, f);
-            let names = vec![f.name.clone()];
-            Some((Unit { image: f.image.clone(), name: f.name.clone(), names, address: f.address, bytes, arm: false }, "twin", f.origin.label()))
-        };
-        let english_tla = by_name(&tla[1], unit, false, &o.root)
+        let english_tla = by_name(&tla[1], unit, false, &o.root, &sun_names)
             .map(|(u, origin)| (u, "name", origin))
             .or_else(|| twin_in(&tla[1], &tla_candidates[1]))
             .or_else(|| by_bytes(&tla[1], unit, &o.root).map(|(u, origin)| (u, "bytes", origin)));
@@ -553,11 +736,11 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
             let found = if edition.id == tla[1].id {
                 english_tla.clone()
             } else {
-                by_name(edition, unit, false, &o.root)
+                by_name(edition, unit, false, &o.root, &sun_names)
                     .map(|(u, origin)| (u, "name", origin))
                     .or_else(|| {
                         let (twin, _, _) = english_tla.as_ref()?;
-                        locate(edition, twin, true, &o.root).map(|(u, how, origin)| (u, if how == "name" { "twin-name" } else { "twin-bytes" }, origin))
+                        locate(edition, twin, true, &o.root, &anchor_names).map(|(u, how, origin)| (u, if how == "name" { "twin-name" } else { "twin-bytes" }, origin))
                     })
                     .or_else(|| twin_in(edition, candidates))
                     .or_else(|| by_bytes(edition, unit, &o.root).map(|(u, origin)| (u, "bytes", origin)))
@@ -568,7 +751,7 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
                     let _ = write!(line, " {} {how} {} {origin} {};", &edition.id[4..], f.name, short(&verdict));
                 }
                 None => {
-                    let _ = write!(line, " {} absent;", &edition.id[4..]);
+                    let _ = write!(line, " {} {NOT_FOUND};", &edition.id[4..]);
                 }
             }
         }
@@ -603,7 +786,7 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
 fn report(unit: &Unit, edition: &Edition, found: Option<&Found>, tsv: &mut String) -> Verdict {
     let verdict = match found {
         Some((f, _, _)) => compare(&unit.bytes, unit.address, &f.bytes, f.address, unit.arm),
-        None => Verdict { class: "absent", instructions: 0, detail: String::new() },
+        None => Verdict { class: NOT_FOUND, instructions: 0, detail: String::new() },
     };
     let relation = found.map_or("none", |(_, how, _)| how);
     tsv.push_str(&row(unit, &edition.id, relation, found.map(|(f, _, origin)| (f, *origin)), &verdict));
@@ -733,7 +916,8 @@ mod tests {
             &german_code,
             &[("Foo_Run", 0x0800_0040, 0)],
         );
-        let (found, how, origin) = locate(&german, &unit, true, root).unwrap();
+        let known = english().names();
+        let (found, how, origin) = locate(&german, &unit, true, root, &known).unwrap();
         assert_eq!((found.address, found.bytes.len(), how, origin), (0x0800_0040, 0x20, "name", "scaffold"));
         let verdict = compare(&unit.bytes, unit.address, &found.bytes, found.address, false);
         assert_eq!((verdict.class, verdict.detail.as_str()), ("relocated", "pool words 1, calls 1, other lines 0"));
@@ -747,13 +931,13 @@ mod tests {
             &japanese_code,
             &[],
         );
-        let (found, how, origin) = locate(&japanese, &unit, true, root).unwrap();
+        let (found, how, origin) = locate(&japanese, &unit, true, root, &known).unwrap();
         assert_eq!((found.name.as_str(), found.address, found.bytes.len(), how, origin), ("@08000104", 0x0800_0104, 0x20, "bytes", "scaffold"));
         let verdict = compare(&unit.bytes, unit.address, &found.bytes, found.address, false);
         assert_eq!((verdict.class, verdict.instructions), ("differs", 1));
 
         let elsewhere = edition("tla-en", ".rom_main       0x0000000008000000        0x8\n", 0x0800_0000, &bar(), &[]);
-        assert!(locate(&elsewhere, &unit, false, root).is_none());
+        assert!(locate(&elsewhere, &unit, false, root, &known).is_none());
     }
 
     #[test]
@@ -773,11 +957,124 @@ mod tests {
         let a = words(&[0xe59f_0004, 0xeb00_0010, 0xe12f_ff1e, 0x0300_1234]);
         let b = words(&[0xe59f_0004, 0xeb00_0020, 0xe12f_ff1e, 0x0300_5678]);
         let verdict = compare(&a, 0x0300_0000, &b, 0x0300_0100, true);
-        assert_eq!((verdict.class, verdict.detail.as_str()), ("relocated", "arm words; pool 1, other words 1"));
+        assert_eq!((verdict.class, verdict.detail.as_str()), ("relocated", "arm words; pool 1, table 0, other words 1"));
         let c = words(&[0xe59f_0004, 0xeb00_0010, 0xe1a0_0000, 0x0300_1234]);
         let verdict = compare(&a, 0x0300_0000, &c, 0x0300_0000, true);
         assert_eq!((verdict.class, verdict.instructions), ("differs", 1));
         assert!(anchors(&a, 0, true).is_empty());
+    }
+
+    fn scaffold(id: &str, address: u32, code: &[u8], labels: &[(u32, &str)]) -> Edition {
+        let mut map = format!(
+            ".rom_main       0x{address:016x}       0x{:x}\n .rom.{:08x}  0x{address:016x}       0x{:x} /x/out/{id}/obj/recon/tbs/{}/rom.o\n",
+            code.len(),
+            address & 0x00ff_ffff,
+            code.len(),
+            &id[4..]
+        );
+        for (at, name) in labels {
+            map.push_str(&format!("                0x{at:016x}                {name}\n"));
+        }
+        edition(id, &map, address, code, &[])
+    }
+
+    fn reference(bytes: Vec<u8>, address: u32) -> Unit {
+        Unit { image: "tbs-en".into(), name: "Foo_Run".into(), names: vec!["Foo_Run".into()], address, bytes, arm: false }
+    }
+
+    #[test]
+    fn a_copy_found_by_bytes_starts_at_the_entry_of_the_function_that_holds_them() {
+        let root = Path::new("/nonexistent");
+        // push; eight moves; a call; twelve moves; pop. The longest unchanged run
+        // is the twelve moves after the call, at offset 22.
+        let body = |a: &[u16]| -> Vec<u8> {
+            let tail = [0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2101, 0x2102, 0x2103, 0x2104, 0x2105, 0xbd10];
+            halves(&[0xb510]).into_iter().chain(halves(a)).chain(halves(&[0xf000, 0xf802])).chain(halves(&tail)).collect()
+        };
+        let english = reference(body(&[0x2001, 0x2102, 0x2203, 0x2304, 0x2405, 0x2506, 0x2607, 0x2708]), 0x0800_0000);
+        // The edition changes one move before the call and inserts another, so
+        // the run after the call sits two bytes later than its offset says.
+        let copy = body(&[0x2001, 0x2102, 0x2203, 0x2304, 0x2405, 0x2506, 0x2607, 0x2709, 0x2000]);
+        let code: Vec<u8> = bar().into_iter().chain(copy.iter().copied()).collect();
+        let spanish = scaffold("tbs-es", 0x0800_0040, &code, &[]);
+        let (found, origin) = by_bytes(&spanish, &english, root).unwrap();
+        assert_eq!((found.address, found.bytes.len(), origin), (0x0800_0048, copy.len(), "scaffold"));
+        let verdict = compare(&english.bytes, english.address, &found.bytes, found.address, false);
+        assert_eq!((verdict.class, verdict.instructions), ("differs", 2));
+        // A section that opens with alignment padding: the entry is the push after it.
+        let padded: Vec<u8> = halves(&[0x0000]).into_iter().chain(copy.iter().copied()).collect();
+        let french = scaffold("tbs-fr", 0x0800_0100, &padded, &[]);
+        assert_eq!(by_bytes(&french, &english, root).unwrap().0.address, 0x0800_0102);
+    }
+
+    #[test]
+    fn a_copy_no_run_survives_in_is_the_nearest_scaffold_function_or_not_found() {
+        let root = Path::new("/nonexistent");
+        let english = reference(foo(0xf802, 0x2001, 0x0300_1234), 0x0800_0000);
+        // One changed move breaks the only unchanged run, so only the nearest
+        // function of the scaffold finds the copy.
+        let mut copy = foo(0xf802, 0x2001, 0x0300_1234);
+        copy[10] = 0x09;
+        let code: Vec<u8> = copy.into_iter().chain(bar()).collect();
+        let italian = scaffold("tbs-it", 0x0800_0080, &code, &[]);
+        assert!(by_bytes(&italian, &english, root).is_none());
+        let mut interner = Interner::default();
+        let corpus = index(&italian, root, &mut interner, &|origin| origin != Origin::Other, true);
+        let sorted: Vec<Vec<u32>> = corpus
+            .iter()
+            .map(|f| {
+                let mut t = f.tokens.clone();
+                t.sort_unstable();
+                t
+            })
+            .collect();
+        let query = unit_function(&english, &mut interner).unwrap();
+        let candidates: Vec<usize> = (0..corpus.len()).collect();
+        let (found, how, origin) = nearest_copy(&query, &corpus, &sorted, &candidates, &italian).unwrap();
+        assert_eq!((found.address, found.bytes.len(), how, origin), (0x0800_0080, 0x20, "twin", "scaffold"));
+
+        let mut tsv = String::new();
+        let nothing = edition("tbs-ja", ".rom_main       0x0000000008000000        0x8\n", 0x0800_0000, &bar(), &[]);
+        assert_eq!(report(&english, &nothing, None, &mut tsv).class, "not found");
+        assert!(tsv.contains("\tnone\t") && tsv.contains("\tnot found\t") && !tsv.contains("absent"));
+    }
+
+    #[test]
+    fn a_named_copy_runs_across_labels_the_reference_does_not_have() {
+        let root = Path::new("/nonexistent");
+        let unit = units(&english(), root).remove(0);
+        let code: Vec<u8> = foo(0xf804, 0x2001, 0x0300_5678).into_iter().chain(bar()).collect();
+        let japanese = scaffold("tbs-ja", 0x0800_0040, &code, &[(0x0800_0040, "Foo_Run"), (0x0800_0050, "Foo_Inner"), (0x0800_0060, "Bar_Run")]);
+        let known = english().names();
+        let (found, origin) = by_name(&japanese, &unit, true, root, &known).unwrap();
+        assert_eq!((found.address, found.bytes.len(), origin), (0x0800_0040, 0x20, "scaffold"));
+        assert_eq!(compare(&unit.bytes, unit.address, &found.bytes, found.address, false).class, "relocated");
+        // Without the inner label the copy already reaches the next function.
+        let plain = scaffold("tbs-de", 0x0800_0040, &code, &[(0x0800_0040, "Foo_Run"), (0x0800_0060, "Bar_Run")]);
+        assert_eq!(by_name(&plain, &unit, true, root, &known).unwrap().0.bytes.len(), 0x20);
+        // A label the reference build defines is a function of its own: a
+        // shorter copy ends there.
+        let short = scaffold("tbs-fr", 0x0800_0040, &code, &[(0x0800_0040, "Foo_Run"), (0x0800_0050, "Bar_Run")]);
+        assert_eq!(by_name(&short, &unit, true, root, &known).unwrap().0.bytes.len(), 0x10);
+    }
+
+    #[test]
+    fn arm_jump_table_words_that_point_inside_the_function_are_relocations() {
+        let words = |w: &[u32]| -> Vec<u8> { w.iter().flat_map(|w| w.to_le_bytes()).collect() };
+        // cmp r0, #2; ldrls pc, [pc, r0, lsl #2]; b default; three cases; bx lr.
+        let switch = |base: u32, last: u32| {
+            words(&[0xe350_0002, 0x979f_f100, 0xea00_0002, base + 0x18, base + 0x1c, last, 0xe3a0_0001, 0xe3a0_0002, 0xe3a0_0003, 0xe12f_ff1e])
+        };
+        let english = switch(0x0801_0000, 0x0801_0020);
+        let german = switch(0x0800_f000, 0x0800_f020);
+        let verdict = compare(&english, 0x0801_0000, &german, 0x0800_f000, true);
+        assert_eq!((verdict.class, verdict.detail.as_str()), ("relocated", "arm words; pool 0, table 3, other words 0"));
+        assert_eq!(arm_tables(&english, 0x0801_0000), BTreeSet::from([3, 4, 5]));
+        // add pc, pc, r0, lsl #2 jumps into a table of branches: nothing to relocate.
+        assert!(arm_tables(&words(&[0x908f_f100, 0xea00_0002, 0xea00_0003]), 0x0801_0000).is_empty());
+        // A table word that leaves the function is a real difference.
+        let outside = switch(0x0800_f000, 0x0800_f400);
+        assert_eq!(compare(&english, 0x0801_0000, &outside, 0x0800_f000, true).class, "differs");
     }
 
     #[test]

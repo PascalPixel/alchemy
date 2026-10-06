@@ -57,7 +57,39 @@
    the test: unchanged. A 5-minute permuter run on this draft: 433, only
    by forced temporaries in the redraw block (level, djinn[2],
    &save->summary[slot] for the counts call, slot * 16 inside the cursor
-   y); noise, not adopted. No device retained. */
+   y); noise, not adopted. No device retained.
+   Session 2026-10-06 21:20, diagnosis: native y (sp+8) and the &marker
+   pseudo (sp+12) sit below the first batch of stack slots because reload
+   spilled them together from one hard register (they never overlap; the
+   r5 reloads of y in the name branch reuse it), and y's slot below
+   &marker's means y's pseudo is newer: y is a giv reduced by loop.c, not a
+   user biv, while the pointer at sp+36 is a user summary pointer that
+   global left on the stack. check_dbra_loop runs after giv discovery in
+   each pass, so i stays ascending only while some giv of i still exists
+   in pass 2. A user y = i * 16 lives 73 to 93 luids, so any positive
+   benefit reduces it in pass 1; reduction in pass 2 only needs lifetime
+   x 17 x benefit in [pass-2 count, pass-1 count), which only a short
+   combined giv reaches (two combined i * 16 givs of lifetime 1: 68).
+   Trials: summary = &save->summary[i] with summary-> fields and y =
+   i * 16: 450 again (pass counts 68 and 61, so that window is empty).
+   i * 16 in each call: the name-branch giv (used twice) combines the
+   other four, lifetime 31, reduced in pass 1, reversed in pass 2: 580.
+   English summary/y bivs with the exit written if (++i >= 3) break;:
+   jump rotates it into an ordinary loop first; reversed, calls merged,
+   578. This i-indexed draft with y += 16 in the for step: reversed in
+   pass 2, 583; plus an empty asm input of i at the body top or end: i
+   ascending but in r6, y in r9, message calls cross-jumped, 583.
+   A way out read from loop.c: a reduced DEST_REG giv that is not
+   replaceable keeps its original insn (loop.c only adds y = reduced
+   after it), so y = i << 4 survives to pass 2 and keeps i from reversal
+   until flow deletes it as dead. So native y may be a non-replaceable
+   user giv (first set or a use outside its loop iteration) with positive
+   benefit. Probes: y = 0 before the loop (y not replaceable) with i * 16
+   in the four message calls: gcse merges them into y, benefit 2 less 2,
+   450. tile = i * 2; y = tile * 8: folded to i << 4, 454. Next: a
+   non-replaceable y whose giv gains benefit (a second i * 16 that gcse
+   cannot merge) with the summary-pointer form, where pass 1 can
+   eliminate i and so charges no copy cost. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

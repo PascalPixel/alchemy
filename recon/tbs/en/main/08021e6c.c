@@ -1,8 +1,10 @@
-/* Stubborn (2026-10-06, T08-08021e6c session 1): differ 956 (listing 1037, draft 995, common 538). Not matched. */
+/* Stubborn (2026-10-06, T08-08021e6c session 1): differ 930 (listing 1037, draft 993, common 550). Not matched. */
 /* Trial (session 1): message declared after scale (native spills it to sp+20, below scale's sp+36): 1050 -> 1046. */
 /* Trial (session 1): every kinds store through num++, num = 0 inside each branch (native addresses kinds[] as [work, offset] with offsets 456+4n, the shape of a CSE-known index): 1046 -> 1009. */
 /* Trial (session 1): repeat = keys = 16 before auto_delay = 40, and the same for 200 (native cross-jumps their auto_delay stores into the decrement's): 1009 -> 992. */
 /* Trial (session 1): keys = repeat = N rather than repeat = keys = N (native sets repeat first, keys r5, auto_delay pointer r6): 992 -> 956. */
+/* Trial (session 1): cnt as the row counter of all five tile loops (native rows in r8, and WaitFrames(1) after the closing loop reuses the r0 = 1 of add r8, r0): 956 -> 930. The draft still puts cnt in r7 there. */
+/* Trial (session 1): register struct SelectionWork *work asm("r9"): 930 -> 1122, reverted. */
 /* Trial (session 1): s32 repeat, keys declaration order: no change. pattern + col + 0x100: no change. *(tile_row + (col & 3) - count * 3 + 0x236) = 0 in both tile loops (gives native's separate count*6 and unhoisted 3, but 1009 -> 1017 overall): reverted. */
 /* Trial: indexed fill, party sum and draw loops (for (cnt = 0; cnt <= 5; cnt++) with the -1 test after the resource store), one (cnt - count) * 24 shared by both pos_x stores: differ 1129 -> 1097. */
 /* Trial: scale read from Ui_BounceScales into its own variable, then rescaled: differ 1097 -> 1086. */
@@ -153,21 +155,19 @@ s32 Ui_RunSelectionScreen(s32 mode)
             if (mode != 0) {
                 s32 panel;
                 for (panel = 0; panel < 6 - work->count; panel++) {
-                    s32 row;
                     u16 *tile_row = &render->tilemap[panel * 3];
-                    for (row = 0; row <= 2; row++, tile_row += 32) {
+                    for (cnt = 0; cnt <= 2; cnt++, tile_row += 32) {
                         s32 col;
                         for (col = 0; col <= 2; col++)
                             tile_row[0x224 + (col & 3)] = 0xf07f;
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
-                    s32 row;
                     s32 count = work->count;
                     s32 tile_index = panel * 3;
                     s32 pattern = panel * 16;
                     u16 *tile_row = &render->tilemap[tile_index];
-                    for (row = 0; row <= 2; row++, tile_row += 32, tile_index += 32, pattern += 4) {
+                    for (cnt = 0; cnt <= 2; cnt++, tile_row += 32, tile_index += 32, pattern += 4) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
                             ((u16 *)0x0600fd6c)[tile_index + (col & 3) - count * 3] = 0x100 + pattern + col;
@@ -178,21 +178,19 @@ s32 Ui_RunSelectionScreen(s32 mode)
             } else {
                 s32 panel;
                 for (panel = 0; panel < 6 - work->count; panel++) {
-                    s32 row;
                     u16 *tile_row = &render->tilemap[panel * 3];
-                    for (row = 0; row <= 2; row++, tile_row += 32) {
+                    for (cnt = 0; cnt <= 2; cnt++, tile_row += 32) {
                         s32 col;
                         for (col = 0; col <= 2; col++)
                             tile_row[0x222 + (col & 3)] = 0xf07f;
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
-                    s32 row;
                     s32 count = work->count;
                     s32 tile_index = panel * 3;
                     s32 pattern = panel * 16;
                     u16 *tile_row = &render->tilemap[tile_index];
-                    for (row = 0; row <= 2; row++, tile_row += 32, tile_index += 32, pattern += 4) {
+                    for (cnt = 0; cnt <= 2; cnt++, tile_row += 32, tile_index += 32, pattern += 4) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
                             ((u16 *)0x0600fd68)[tile_index + (col & 3) - count * 3] = 0x100 + pattern + col;
@@ -303,9 +301,8 @@ s32 Ui_RunSelectionScreen(s32 mode)
     {
         s32 panel;
         for (panel = 0; panel <= 6; panel++) {
-            s32 row;
             u16 *tile_row = &render->tilemap[panel * 3];
-            for (row = 0; row <= 2; row++, tile_row += 32) {
+            for (cnt = 0; cnt <= 2; cnt++, tile_row += 32) {
                 s32 col;
                 for (col = 0; col <= 2; col++)
                     tile_row[0x225 + (col & 3)] = 0xf07f;

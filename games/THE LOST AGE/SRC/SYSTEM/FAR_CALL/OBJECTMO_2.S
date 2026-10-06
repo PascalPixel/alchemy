@@ -37,13 +37,13 @@ Object_LinkObjectAndSetCallbackFar:
 	.thumb_func
 BattleEffect_PauseObjectFar:
 	overlay_veneer BattleEffect_PauseObject
-	.global Func_080c8610
+	.global BattleFx_ResumeObjectFar
 	.thumb_func
-Func_080c8610:
+BattleFx_ResumeObjectFar:
 	overlay_veneer Func_080e035c
-	.global Func_080c8618
+	.global ObjectTable_FindActiveByValueFar
 	.thumb_func
-Func_080c8618:
+ObjectTable_FindActiveByValueFar:
 	overlay_veneer Func_080d3c2c
 	.global ObjectTable_ReadActiveValueFar
 	.thumb_func

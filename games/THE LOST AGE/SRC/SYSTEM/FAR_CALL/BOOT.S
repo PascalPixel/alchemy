@@ -121,9 +121,9 @@ Resource_DecodeByteLzInRamFar:
 	.thumb_func
 Resource_DecodeType01Far:
 	overlay_veneer Resource_DecodeType01
-	.global Func_080001b0
+	.global Resource_InitializeTableFar
 	.thumb_func
-Func_080001b0:
+Resource_InitializeTableFar:
 	overlay_veneer Func_08014368
 	.global Resource_ResetEntryFar
 	.thumb_func
@@ -141,9 +141,9 @@ VramBlock_LoadCachedFar:
 	.thumb_func
 Resource_FindFreeEntryFar:
 	overlay_veneer Resource_FindFreeEntry
-	.global Func_080001d8
+	.global Bg0_ClearTilemapFar
 	.thumb_func
-Func_080001d8:
+Bg0_ClearTilemapFar:
 	overlay_veneer Func_08014b70
 	.global AffineMatrix_BuildForEffectFar
 	.thumb_func
@@ -165,9 +165,9 @@ PaletteDma_LoadBlockFar:
 	.thumb_func
 Render_ResetTransformStateFar:
 	overlay_veneer Render_ResetTransformState
-	.global Func_08000208
+	.global SceneTransform_ResetMatrixFar
 	.thumb_func
-Func_08000208:
+SceneTransform_ResetMatrixFar:
 	overlay_veneer Func_08014ee0
 	.global Graphics_SaveTransferWorkOnceFar
 	.thumb_func
@@ -177,9 +177,9 @@ Graphics_SaveTransferWorkOnceFar:
 	.thumb_func
 Graphics_RestoreTransferWorkFar:
 	overlay_veneer Graphics_RestoreTransferWork
-	.global Func_08000220
+	.global SceneTransform_ApplyRotationFar
 	.thumb_func
-Func_08000220:
+SceneTransform_ApplyRotationFar:
 	overlay_veneer Func_08014efc
 	.global SceneTransform_ApplyPitchFar
 	.thumb_func
@@ -189,25 +189,25 @@ SceneTransform_ApplyPitchFar:
 	.thumb_func
 SceneTransform_ApplyYawFar:
 	overlay_veneer SceneTransform_ApplyYaw
-	.global Func_08000238
+	.global SceneTransform_ApplyRollFar
 	.thumb_func
-Func_08000238:
+SceneTransform_ApplyRollFar:
 	overlay_veneer Func_080150e4
 	.global SceneTransform_ApplyPositionFar
 	.thumb_func
 SceneTransform_ApplyPositionFar:
 	overlay_veneer SceneTransform_ApplyPosition
-	.global Func_08000248
+	.global SceneTransform_ApplyScaleFar
 	.thumb_func
-Func_08000248:
+SceneTransform_ApplyScaleFar:
 	overlay_veneer Func_080151ac
-	.global Func_08000250
+	.global SceneTransform_ApplyRotationTranslationFar
 	.thumb_func
-Func_08000250:
+SceneTransform_ApplyRotationTranslationFar:
 	overlay_veneer Func_0801524c
-	.global Func_08000258
+	.global SceneTransform_ApplyScaledRotationFar
 	.thumb_func
-Func_08000258:
+SceneTransform_ApplyScaledRotationFar:
 	overlay_veneer Func_08015384
 	.global Graphics_PrepareTransferInIwramWorkFar
 	.thumb_func
@@ -217,9 +217,9 @@ Graphics_PrepareTransferInIwramWorkFar:
 	.thumb_func
 Render_ProjectPointFar:
 	overlay_veneer Render_ProjectPoint
-	.global Func_08000270
+	.global Camera_SetAngleParametersFar
 	.thumb_func
-Func_08000270:
+Camera_SetAngleParametersFar:
 	overlay_veneer Func_08015714
 	.global Camera_StoreSceneParametersFar
 	.thumb_func
@@ -401,9 +401,9 @@ GameFlag_SetBitFar:
 	.thumb_func
 GameFlag_ClearBitFar:
 	overlay_veneer GameFlag_ClearBit
-	.global Func_080003e0
+	.global GameFlag_ToggleFar
 	.thumb_func
-Func_080003e0:
+GameFlag_ToggleFar:
 	overlay_veneer Func_08016d34
 	.global GameFlag_GetByteFar
 	.thumb_func
@@ -413,13 +413,13 @@ GameFlag_GetByteFar:
 	.thumb_func
 GameFlag_SetByteFar:
 	overlay_veneer GameFlag_SetByte
-	.global Func_080003f8
+	.global GameFlag_IncrementByteFar
 	.thumb_func
-Func_080003f8:
+GameFlag_IncrementByteFar:
 	overlay_veneer Func_08016d7c
-	.global Func_08000400
+	.global GameFlag_DecrementByteFar
 	.thumb_func
-Func_08000400:
+GameFlag_DecrementByteFar:
 	overlay_veneer Func_08016d98
 	.global GameFlag_GetNibbleFar
 	.thumb_func

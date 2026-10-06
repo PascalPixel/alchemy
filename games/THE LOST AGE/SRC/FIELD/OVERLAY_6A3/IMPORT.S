@@ -53,7 +53,7 @@ Resource_FindFreeEntry:
 	.global Func_020046a4
 	.thumb_func
 Func_020046a4:
-	overlay_veneer Func_080001d8
+	overlay_veneer Bg0_ClearTilemapFar
 	.global Func_020046ac
 	.thumb_func
 Func_020046ac:

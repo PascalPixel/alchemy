@@ -45,21 +45,21 @@ UiWork_FinalizePendingCoreFar:
 	.thumb_func
 UiWork_DrainPendingFar:
 	overlay_veneer UiWork_DrainPending
-	.global Func_08038150
+	.global UiGlyph_ResetWorkStateFar
 	.thumb_func
-Func_08038150:
+UiGlyph_ResetWorkStateFar:
 	overlay_veneer Func_0803dc1c
-	.global Func_08038158
+	.global Resource_ClearOwnerListAndCountersFar
 	.thumb_func
-Func_08038158:
+Resource_ClearOwnerListAndCountersFar:
 	overlay_veneer Func_0803dd24
-	.global Func_08038160
+	.global Resource_PushPendingPairFar
 	.thumb_func
-Func_08038160:
+Resource_PushPendingPairFar:
 	overlay_veneer Func_0803dd68
-	.global Func_08038168
+	.global Resource_ScheduleOwnerResetDelayedFar
 	.thumb_func
-Func_08038168:
+Resource_ScheduleOwnerResetDelayedFar:
 	overlay_veneer Func_0803df00
 	.global Resource_ScheduleOwnerResetFar
 	.thumb_func

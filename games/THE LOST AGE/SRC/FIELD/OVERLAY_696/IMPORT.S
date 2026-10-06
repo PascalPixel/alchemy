@@ -73,7 +73,7 @@ Resource_FindFreeEntry:
 	.global Func_020047bc
 	.thumb_func
 Func_020047bc:
-	overlay_veneer Func_080001d8
+	overlay_veneer Bg0_ClearTilemapFar
 	.global AffineMatrix_BuildForEffect
 	.thumb_func
 AffineMatrix_BuildForEffect:

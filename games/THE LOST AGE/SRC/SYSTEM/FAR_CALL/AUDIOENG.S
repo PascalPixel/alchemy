@@ -27,9 +27,9 @@ Func_081c0020:
 	.thumb_func
 MusicCommand_SetPitchFar:
 	overlay_veneer MusicCommand_SetPitch
-	.global Func_081c0030
+	.global Audio_SetWorkPairBFar
 	.thumb_func
-Func_081c0030:
+Audio_SetWorkPairBFar:
 	overlay_veneer Func_081c0f70
 	.global MusicCommand_SetVolumeFar
 	.thumb_func

@@ -2912,10 +2912,10 @@ Func_080c8440:
 	.thumb_func
 Event_SpawnObjectTableFar:
 	.incbin "baserom.gba", 0x000d1458, 0x00000008
-	.global Func_080c8450
-	.type Func_080c8450, %function
+	.global ObjectTable_DestroyAtIndexFar
+	.type ObjectTable_DestroyAtIndexFar, %function
 	.thumb_func
-Func_080c8450:
+ObjectTable_DestroyAtIndexFar:
 	.incbin "baserom.gba", 0x000d1460, 0x00000008
 	.global ObjectTable_GetFar
 	.type ObjectTable_GetFar, %function

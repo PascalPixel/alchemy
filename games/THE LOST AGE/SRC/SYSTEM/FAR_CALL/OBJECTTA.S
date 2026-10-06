@@ -85,9 +85,9 @@ Func_080c8440:
 	.thumb_func
 Event_SpawnObjectTableFar:
 	overlay_veneer Event_SpawnObjectTable
-	.global Func_080c8450
+	.global ObjectTable_DestroyAtIndexFar
 	.thumb_func
-Func_080c8450:
+ObjectTable_DestroyAtIndexFar:
 	overlay_veneer Func_080caa2c
 	.global ObjectTable_GetFar
 	.thumb_func

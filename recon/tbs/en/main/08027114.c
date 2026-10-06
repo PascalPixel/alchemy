@@ -1,14 +1,23 @@
-/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 2131 (listing 1727, draft 1784, common 690). Not first-try; parked. */
-/* 08027114: differ 2131 against the 1727-line parent listing (was 2292).
- * The draft also emits the two preceding nested helpers, 080270ac/080270d8.
+/* 08027114: differ 1892 against the 1727-line parent listing (draft 1805,
+ * common 820; was 2131).
+ * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
+ * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
+ * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
  * Shared battle, action, summon, item, window and OAM layouts replace private
- * copies; serial payloads use their existing linker names. The 100-byte parent
- * frame matches, but variable allocation and branch layout still differ widely.
+ * copies; serial payloads use their existing linker names. The parent frame is
+ * 104 bytes against the native 100: one extra spill slot shifts every slot
+ * from sp+64 upward, and variable allocation still differs widely.
  * Trials: scalar command fields unchanged; a structured handshake loop gives
  * 2245 before scoped initialization. Scoped counters give 2207; local ordering
- * 2187; ordinary record indexing 2172; command switch 2131. Halfword pointer
- * signature stores load the native constants but move the base by 8, giving
- * 2145; those pointer-store trials were removed. */
+ * 2187; ordinary record indexing 2172; command switch 2131.
+ * 2026-10-06 T15: signatures as u16 rows (gLinkPeerSignatures[][12] and the
+ * payload as u16, as WAIT_SYNC.C reads them) load the native pool constants
+ * from the native base and keep each halfword compare separate: 2044. The
+ * opening handshake as while, for(;;) with break, or for with WaitFrames as
+ * its step all give 2044: GCC copies the exit test in front of the loop. A
+ * goto loop entered at its peer test keeps the single test and the native
+ * known-zero store: 1969. In the djinn case, taking &entries[1] before
+ * SummonDefinition_Get and writing entries[0].x directly: 1892. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -21,16 +30,9 @@
 #include "SERIAL_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-#define LINK_LOCAL ((struct LinkPacket *)gSerialTransfer.payload)
 #define COUNTDOWN ((struct LinkRoundState *)gLinkCountdownWork)
 
-struct LinkPacket {
-    u16 tag[4];
-    u16 code[4];
-    u8 unk_10[8];
-};
-
-extern struct LinkPacket gLinkPeerSignatures[];
+extern u16 gLinkPeerSignatures[][12];
 
 struct LinkRoundState {
     struct MenuSprite entries[3];
@@ -110,7 +112,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 {
     struct LinkRoundState *state;
     struct BattleSession *link;
-    struct LinkPacket *peer;
+    u16 *peer;
+    u16 *sync;
     struct BattleActionRecord *ent;
     struct BattleUnit *actor;
     struct UiWindow *win;
@@ -197,44 +200,43 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     state->timer = -1;
     if (link->two_sided != 0) {
         state->enabled = 1;
-        LINK_LOCAL->code[0] = 'V';
-        LINK_LOCAL->code[1] = 'S';
-        LINK_LOCAL->code[2] = 'S';
-        LINK_LOCAL->code[3] = 'T';
+        sync = (u16 *)gSerialTransfer.payload;
+        sync[4] = 'V';
+        sync[5] = 'S';
+        sync[6] = 'S';
+        sync[7] = 'T';
         miss = 0;
-        for (;;) {
-            peer = &gLinkPeerSignatures[link->link_side ^ 1];
-            if (link->link_paused != 0) {
-                goto handshake_failed;
-            }
+        goto handshake_check;
+handshake_loop:
+        {
             if ((gLinkStatus & 3) != 3) {
-                miss++;
-                if (miss > 24) {
-                    goto handshake_failed;
+                if (++miss > 24) {
+                    count = -1;
+                    state->enabled = 0;
+                    goto handshake_done;
                 }
             } else {
                 miss = 0;
-                switch (peer->code[0]) {
-                case 'V':
-                    if (peer->code[1] == 'S' && peer->code[2] == 'S' &&
-                        peer->code[3] == 'T')
-                        goto handshake_done;
-                    break;
-                case 'E':
-                    if (peer->code[1] == 'D' && peer->code[2] == 'V' &&
-                        peer->code[3] == 'S')
-                        goto handshake_done;
-                    break;
+                if (peer[4] == 'V' && peer[5] == 'S' && peer[6] == 'S' && peer[7] == 'T') {
+                    goto handshake_done;
                 }
-                if (!(peer->tag[0] == 'E' && peer->tag[1] == 'X' &&
-                      peer->tag[2] == 'E' && peer->tag[3] == 'C')) {
+                if (peer[4] == 'E' && peer[5] == 'D' && peer[6] == 'V' && peer[7] == 'S') {
+                    goto handshake_done;
+                }
+                if (!(peer[0] == 'E' && peer[1] == 'X' && peer[2] == 'E' && peer[3] == 'C')) {
+                    count = -1;
                     goto handshake_failed;
                 }
             }
             WaitFrames(1);
         }
-handshake_failed:
+handshake_check:
+        peer = gLinkPeerSignatures[link->link_side ^ 1];
+        if (link->link_paused == 0) {
+            goto handshake_loop;
+        }
         count = -1;
+handshake_failed:
         state->enabled = 0;
     }
 handshake_done:
@@ -621,6 +623,7 @@ djinn_menu:
                 kind = 6;
                 param = res;
                 WaitFrames(1);
+                slot = &state->entries[1];
                 djinn = SummonDefinition_Get(res);
                 ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
@@ -631,9 +634,7 @@ djinn_menu:
                     }
                 }
                 ok = (k == 4);
-                slot = &state->entries[0];
-                slot->oam.f.x = 56;
-                slot = &state->entries[1];
+                state->entries[0].oam.f.x = 56;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
@@ -719,10 +720,11 @@ next_round:
 
 finish:
     if (state->enabled != 0) {
-        LINK_LOCAL->code[0] = 'E';
-        LINK_LOCAL->code[1] = 'D';
-        LINK_LOCAL->code[2] = 'V';
-        LINK_LOCAL->code[3] = 'S';
+        sync = (u16 *)gSerialTransfer.payload;
+        sync[4] = 'E';
+        sync[5] = 'D';
+        sync[6] = 'V';
+        sync[7] = 'S';
     }
     if (state->displayHandle != 0) {
         UiWork_Finalize((struct UiWindow *)state->displayHandle, 1);
@@ -741,7 +743,7 @@ finish:
             state->displayHandle = 0;
         }
         for (;;) {
-            peer = &gLinkPeerSignatures[link->link_side ^ 1];
+            peer = gLinkPeerSignatures[link->link_side ^ 1];
             if (link->link_paused != 0) {
                 count = -1;
                 break;
@@ -754,12 +756,10 @@ finish:
                 }
             } else {
                 miss = 0;
-                if (peer->code[0] == 'E' && peer->code[1] == 'D' &&
-                    peer->code[2] == 'V' && peer->code[3] == 'S') {
+                if (peer[4] == 'E' && peer[5] == 'D' && peer[6] == 'V' && peer[7] == 'S') {
                     break;
                 }
-                if (!(peer->code[0] == 'V' && peer->code[1] == 'S' &&
-                      peer->code[2] == 'S' && peer->code[3] == 'T')) {
+                if (!(peer[4] == 'V' && peer[5] == 'S' && peer[6] == 'S' && peer[7] == 'T')) {
                     miss = 1;
                 }
             }

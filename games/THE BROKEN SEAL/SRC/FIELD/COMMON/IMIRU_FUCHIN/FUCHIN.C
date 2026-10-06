@@ -19,6 +19,7 @@
 #include "SCENE.H"
 #include "FIELDRUN.H"
 #include "DISPTRAN.H"
+#include "FX_SCENE.H"
 #include "text/MSG_IDS.H"
 
 
@@ -57,11 +58,6 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scal
 
 extern u32 gFrameCount;
 void Effect_Spawn();
-
-struct FadeWork {
-    u8 unknown_00[52];
-    u8 active;
-};
 
 void SceneState_ApplyValues8And2And1(void)
 {
@@ -1413,13 +1409,13 @@ void SceneState_SetWorkspace370ByFlag820(void)
 
 void ImiruFuchin_StartFadeIn(void)
 {
-    struct FadeWork *fade;
+    struct BattleFxScene *scene;
     struct DisplayTransitionState *transition;
 
     if (gGameState.entrance <= 6) {
-        fade = *(gWorkSlot + 56);
+        scene = *(gWorkSlot + 56);
         transition = *(gWorkSlot + 31);
-        fade->active = 1;
+        scene->child_option = 1;
         transition->next_mode = 0;
         transition->duration = 1;
         transition->step = 1;

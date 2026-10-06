@@ -9,6 +9,7 @@
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 #include "FIELDOBJ.H"
+#include "FIELD_EVENT.H"
 #include "ANIMSPR.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
@@ -24,7 +25,7 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
     s32 none;
     volatile u32 zero;
 
-    obj = (struct FieldActor *)Object_GetById(id);
+    obj = Object_GetById(id);
     if (obj != 0) {
         one = obj->active;
         if (one == 1) {

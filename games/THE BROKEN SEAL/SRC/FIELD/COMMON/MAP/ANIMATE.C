@@ -112,17 +112,17 @@ void MapAnimation_StartChannels(const u16 *script)
         command = *script++;
     }
     if (count != 0)
-        Scheduler_AddOrUpdateCallback((s32)(MapAnimation_Update), 0xc80);
+        Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
 }
 
 void Map_EnableUpdateCallback(void)
 {
     if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
-        Scheduler_EnableCallbacks((u32)MapAnimation_Update);
+        Scheduler_EnableCallbacks(MapAnimation_Update);
 }
 
 void Map_DisableUpdateCallback(void)
 {
     if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
-        Scheduler_DisableCallbacks((u32)MapAnimation_Update);
+        Scheduler_DisableCallbacks(MapAnimation_Update);
 }

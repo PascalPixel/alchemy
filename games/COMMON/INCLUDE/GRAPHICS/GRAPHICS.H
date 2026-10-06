@@ -126,6 +126,7 @@ extern struct AnimationObject *gSpriteObjects;
 #ifndef OWN_Menu_CursorObjectTiles
 extern const u8 Menu_CursorObjectTiles[];
 #endif
+extern const u8 NameEntry_AlternateKeyboardTilemap[];
 extern s8 NameEntry_CaretWave[];
 extern const u8 NameEntry_DakutenRanges[];
 extern u8 NameEntry_DeleteKeyLabel[];

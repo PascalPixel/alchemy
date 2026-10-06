@@ -21,7 +21,6 @@
 #define ObjectTable_Get ((struct FieldActor * (*)(s32))ObjectTable_Get)
 #define Data_03001ed0 (*(u16 * *)&Data_03001ed0)
 
-
 void FieldScene_RunOpeningAuxiliarySequence();
 void ArutinYama_StartPaletteAnim();
 void Engine_MapCopyCellAttributes();
@@ -30,14 +29,9 @@ void SceneActor_ClearCollisionFlagAndPlaceMarker();
 void SceneState_ForwardByRuntimeSelector();
 extern u8 Data_02000240[];
 
-
-
-void ResourceMetadata_ClearRecord(s32 handle);
-
 void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void ResourceMetadata_Register(struct FieldSprite *sprite, s32 mode);
@@ -50,11 +44,6 @@ struct Byte {
 struct Half {
     u16 v;
 };
-
-
-
-
-
 
 s32 ArutinYama_RunAreaScene(void)
 {

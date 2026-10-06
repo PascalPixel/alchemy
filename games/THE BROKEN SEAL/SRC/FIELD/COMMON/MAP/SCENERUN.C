@@ -33,7 +33,6 @@ enum {
 
 extern u8 gDebugMode;
 
-void GameFlag_ClearBitFar(s32 flag);
 void Audio_PlayCueFromEventWork(void);
 void Audio_PlayCue(s32 cue);
 

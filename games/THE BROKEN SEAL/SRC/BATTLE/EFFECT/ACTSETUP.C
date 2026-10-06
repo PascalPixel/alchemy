@@ -83,7 +83,6 @@ struct ArcObject {
 
 extern struct BattleFxScene *gEffectWork;
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *sprite, s32 animation);
 
 extern volatile u32 gFrameCount;
 void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 value);
@@ -103,8 +102,6 @@ struct BattleSceneState {
 };
 
 extern u8 gWorkSlot[];
-
-void BattleFx_SetupObjectPair(s32 first, s32 second);
 
 void Vector_AddPolarOffset(s32, s32, void *);
 

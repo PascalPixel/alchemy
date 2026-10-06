@@ -34,10 +34,6 @@
 
 extern u8 Resource_FixedBlockBTiles[];
 
-
-
-void UiText_DrawString(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
-
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
 {
     s32 slot;

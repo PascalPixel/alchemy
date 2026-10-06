@@ -27,8 +27,6 @@ struct MapActor {
     s16 event;
 };
 
-void GameFlag_SetBitFar(s32);
-struct MapActor *BattleAction_FindDescriptor(s32 id);
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 element, s32 index);
 
 extern struct BattleFxScene *gEffectWork;

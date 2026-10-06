@@ -19,13 +19,11 @@
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
-
 void Engine_MapCopyCellAttributes();
 void Motion_LaunchFromFocusedObject();
 s32 UiText_OpenMessageAtObject();
 s32 Inventory_PromptAndSetObjectMode();
 void Object_RefreshSelectorById();
-void ObjectMotion_CommitPositionAndActivate();
 void MusicCommand_SetPitchAndUpdateFrequency();
 void BabiFune_ScheduleFade();
 void Event_SetDestination();

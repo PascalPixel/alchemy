@@ -20,9 +20,7 @@
 
 #define UiText_GetResourceDimensionsFar ((void (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensionsFar)
 
-
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void GameFlag_SetBitFar(s32 flag);
 void UiWindow_CloseIfOpen();
 
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)

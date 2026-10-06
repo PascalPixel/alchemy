@@ -15,8 +15,6 @@
 #include "ANIMSPR.H"
 #include "RESOURCE.H"
 
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-
 void FourObjectMotion_InitializeBottomRow(void)
 {
     struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;

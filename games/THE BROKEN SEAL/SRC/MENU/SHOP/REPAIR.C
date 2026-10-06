@@ -32,13 +32,7 @@ void Audio_PlayCue(s32);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_FinalizePendingCoreFar(void);
 void Audio_PlayCue(s32 cue);
-void Party_AdjustCoinsFar(s32 amount);
 #define SPECIAL_ITEM 228
-
-s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
-void Inventory_RemoveFar(s32 unit_id, s32 slot);
-
-s32 GameFlag_SetBitFar(s32);
 
 s32 Shop_SelUnit(void)
 {

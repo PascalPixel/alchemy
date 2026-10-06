@@ -16,8 +16,6 @@
 #include "OBJECT_RUNTIME.H"
 #include "MAP_SCROLL.H"
 #include "EVENT_RUNTIME.H"
-void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
-
 
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {
@@ -118,7 +116,6 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
         Object_SetPosition(object, position_x, position_y, position_z);
     }
 }
-
 
 void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 {

@@ -19,7 +19,6 @@
 
 extern struct CharacterMenuState *gMenuWork;
 void ItemMenu_Close(void);
-s32 Party_ListActiveOwnersFar(u16 *);
 
 #if EDITION_INTERNATIONAL
 #define ROW_CNT 8

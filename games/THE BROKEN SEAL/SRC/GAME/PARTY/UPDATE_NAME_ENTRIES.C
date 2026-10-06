@@ -29,8 +29,6 @@
 #endif
 
 void WaitFrames(s32);
-void *Trade_GetOfferStateFar(s32);
-
 
 enum LinkPartyPacketSize {
     LINK_PARTY_UNIT_BYTES = 340,

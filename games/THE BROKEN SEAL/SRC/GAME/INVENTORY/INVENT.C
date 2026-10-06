@@ -31,9 +31,7 @@ struct EventPromptWork {
 
 extern volatile s32 gKeyState;
 struct ActionDescriptor;
-struct ActionDescriptor *BattleAction_FindDescriptor(s32);
 void UiWork_FinalizePendingCoreFar(void);
-
 
 void Inventory_ReservedNoOp(void)
 {

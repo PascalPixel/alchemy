@@ -16,9 +16,6 @@
 
 #define gFrameCount (*(s32 *)&gFrameCount)
 
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-
-
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
 {
     struct InventoryMenuState *menu;

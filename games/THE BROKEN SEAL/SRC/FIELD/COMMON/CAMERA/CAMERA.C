@@ -17,9 +17,7 @@
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
 
-s32 LuckyDice_Run();
 s32 Audio_PlayCue(s32);
-
 
 s32 Runtime_BlankDisplayAndRun(void)
 {

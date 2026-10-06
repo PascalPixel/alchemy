@@ -19,9 +19,6 @@
 void RenderOutput_PrepareForRedraw(void);
 void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 
-void GameFlag_SetBitFar(s32);
-void GameFlag_ClearBitFar(s32);
-
 void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 {
     s32 row;

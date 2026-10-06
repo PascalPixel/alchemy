@@ -13,7 +13,6 @@
 
 #define Ability_GetData ((void * (*)(s32))Ability_GetData)
 
-s32 Party_ListActiveOwnersFar(u16 *objects);
 #define ACTION_ID_MASK 0x3FFF
 
 struct AbilityListEntry {
@@ -21,13 +20,11 @@ struct AbilityListEntry {
     u16 ability;
 };
 
-
 struct ShortcutState {
     u32 unknown_000[0x220 / 4];
     volatile u16 first;
     u16 second;
 };
-
 
 s32 Object_CollectResources(struct AbilityListEntry *output)
 {

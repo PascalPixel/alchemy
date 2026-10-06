@@ -23,13 +23,6 @@ struct DebugPartyEntry {
 
 extern struct DebugPartyEntry Debug_PartyPresets[];
 
-void Party_RemoveActiveOwnerFar(s32 owner);
-void Party_AddActiveOwnerFar(s32 owner);
-void OwnerAction_AddFar(s32 owner, s32 action);
-void Djinn_ActivateFar(s32 owner, s32 element, s32 djinn);
-s32 Inventory_RemoveFar(s32 owner, s32 slot);
-s32 Inventory_AddItemFar(s32 owner, s32 item);
-
 s32 DebugParty_LoadPreset(s32 preset)
 {
     s32 next_djinn[4];

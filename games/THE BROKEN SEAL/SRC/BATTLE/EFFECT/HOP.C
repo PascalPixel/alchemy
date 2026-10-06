@@ -61,7 +61,6 @@ struct HopActor *Object_GetById(s32 id);
 void Battle_Reset(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Object_CommitPosition(struct HopActor *actor);
@@ -80,7 +79,6 @@ struct MenuState {
     s16 mode;
 };
 
-void GameFlag_SetBitFar(void *);
 void Battle_SetObjectFlag5bWhenMode3(void);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 
@@ -92,9 +90,6 @@ struct ActorDescriptor {
     s32 y;
     s32 z;
 };
-
-struct ActorDescriptor *BattleAction_FindDescriptor(s32 action);
-
 
 void EventActor_RunHopAndLeapSequence(s32 arg)
 {

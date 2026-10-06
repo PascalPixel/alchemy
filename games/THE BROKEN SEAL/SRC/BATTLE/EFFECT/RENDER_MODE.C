@@ -30,10 +30,7 @@
 #define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-
-void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void Audio_PlayCue(s32 cue);
-
 
 #define CONVERGES(mode) \
     ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)

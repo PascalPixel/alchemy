@@ -39,7 +39,6 @@ typedef struct {
 void *Object_Spawn(s32, s32, s32, s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-
 void CheckObjectMapTile(void)
 {
     u32 runtime_slot_address;
@@ -276,7 +275,6 @@ struct Effect05State {
 extern struct Effect05State *gEffectWork;
 void Vector_AddPolarOffset(s32, s32, struct Effect05Point *);
 void ObjectDispatch_ReleaseFar(struct Effect05Object *);
-s32 Map_GetTerrainHeightFar(s32, s32, s32);
 void Animation_ApplyChildValuesFar(struct Effect05Object *, s32);
 void AudioCommand_PlayFar(s32);
 

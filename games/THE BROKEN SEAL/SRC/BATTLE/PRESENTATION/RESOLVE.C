@@ -30,10 +30,6 @@
 #define BattleUnit_ProcessTurnEnd ((void (*)(struct BattlePlan*))BattleUnit_ProcessTurnEnd)
 #define BattleFx_PlayUnitElementEffect ((s32 (*)(s32,s32,s32,s32))BattleFx_PlayUnitElementEffect)
 
-void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
-void BattlePresentation_WaitForAdvance(void);
-void BattleMotion_DestroyAllSlotObjects(void);
-
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
     /* FAKEMATCH: a direct call keeps the divisor in r5 for the camera call; the reference builds it twice. */
@@ -224,10 +220,8 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
     return completed;
 }
 
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void Object_SetMode(void *object, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
-
 
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
 {

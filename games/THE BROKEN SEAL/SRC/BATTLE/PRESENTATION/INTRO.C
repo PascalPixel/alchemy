@@ -25,11 +25,7 @@
 
 extern volatile u16 gLinkStatus;
 
-
 void UiWork_PushValueSlotFar(s32, s32);
-void UiText_ShowMessageAndWaitCoreFar(s32);
-void BattlePresentation_WaitForAdvance(void);
-
 
 void BattlePresentation_UpdateCamera(void)
 {

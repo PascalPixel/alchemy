@@ -118,13 +118,10 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
     }
 }
 
-void Render_ApplyProjectedPlacement(struct AnimationObject *object, s32 *position, s32 *scale, s32 mode);
-
 struct Vec2 {
     s32 x;
     s32 y;
 };
-
 
 void Ui_SetGridColumnParameter(s32 slot, s32 value)
 {

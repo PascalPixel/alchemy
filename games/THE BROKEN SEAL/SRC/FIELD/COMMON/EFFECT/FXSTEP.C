@@ -36,14 +36,7 @@
 
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
-s32 Render_ProjectPoint(s32 *, s32 *);
-void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
-
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
-
 extern u8 gKeysHeld[];
-
-
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
@@ -143,7 +136,6 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
 }
 
 extern DrawRectangle gWorkSlot[];
-
 
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 {

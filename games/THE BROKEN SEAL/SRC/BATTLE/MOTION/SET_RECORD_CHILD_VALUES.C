@@ -50,7 +50,6 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 }
 
 u16 ArcTan2(s32 x, s32 y);
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
 {

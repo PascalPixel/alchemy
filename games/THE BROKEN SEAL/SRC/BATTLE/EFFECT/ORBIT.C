@@ -39,7 +39,6 @@ extern struct BattleFxScene *gEffectWork;
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct BurstPosition *pos);
 void Animation_ApplyChildValuesFar(struct FieldActor *object, s32 value);
-s32 BattleFx_FindMatchingEvent(s32 flags, s32 group, s32 *context);
 struct FieldActor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Audio_PlayCue(s32 cue);
 
@@ -49,7 +48,6 @@ static __inline__ void RaisedPosition(struct FieldActor *object, struct BurstPos
     pos->y = object->y.fixed + 0x100000;
     pos->z = object->z.fixed;
 }
-
 
 struct SparkObject {
     u8 unknown_00[8];
@@ -72,7 +70,6 @@ struct SparkObject {
     u8 unknown_66[6];
     void (*update)(struct SparkObject *);
 };
-
 
 void RunBattleEffect04(void)
 {

@@ -49,7 +49,6 @@ enum StepTileEvent {
 #define STEP_NO_TARGET ((s32)0x80000000)
 #define STEP_FLAG_DOUBLE_SPEED 0x167
 #define STEP_CUE_EFFECT 139
-s32 Party_CountActiveOwnersFar(void);
 void BattleParty_ApplyDrain(s32 steps, s32 unused);
 void Audio_PlayCue(s32 cue);
 

@@ -13,8 +13,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y);
-
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];

@@ -12,9 +12,6 @@
 
 #define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
 
-
-void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
-
 void ItemMenu_DrawStat(
     s32 delta, s32 unused, s32 window, s32 x, s32 y)
 {

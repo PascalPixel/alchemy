@@ -33,12 +33,8 @@
 
 #define gBattleFxWork ((void *(*))&gBattleFxWork)
 
-
-
-void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 speed, s32 mode);
 void Audio_PlayCue(s32 cue);
 void AudioCommand_PlayFar(s32 cue);
-
 
 struct Scale {
     s32 x;
@@ -47,7 +43,6 @@ struct Scale {
 
 extern const struct Scale CirclingScene_UnitScale;
 
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)

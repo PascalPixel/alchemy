@@ -13,11 +13,6 @@
 #include "CHARACTER.H"
 #include "SCENE.H"
 
-void Owner_RefreshClassActions(s32 owner);
-void Event_ClearInvalidPackedValuesFar(s32);
-
-
-
 s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {
     s32 item_id;

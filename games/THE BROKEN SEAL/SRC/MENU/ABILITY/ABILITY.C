@@ -27,11 +27,8 @@
 #define UiText_GetResourceDimensionsFar ((s32 (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensionsFar)
 #define UiText_DrawStringInWindowFar ((void (*)(const u8*,s32*,s32,s32))UiText_DrawStringInWindowFar)
 
-
-
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
-void GameFlag_ClearBitFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
@@ -162,7 +159,6 @@ struct PsynergyTargetMarker {
 };
 
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
-void GameFlag_ClearBitFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
@@ -295,10 +291,6 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
     return 1;
 }
 
-
-void UiText_DrawStringAtOffsetFar(void *text, s32 *window, s32 x, s32 y);
-void UiWork_SetParamNibbleFar(s32 value);
-
 #if EDITION_INTERNATIONAL
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
@@ -356,7 +348,6 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     return 1;
 }
 #else
-
 
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 {

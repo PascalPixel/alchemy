@@ -32,8 +32,6 @@ extern volatile s32 gKeyState;
 #define GIVE_ASK_Y    32
 #endif
 
-void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
-
 s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 {
     s32 quantity = base;

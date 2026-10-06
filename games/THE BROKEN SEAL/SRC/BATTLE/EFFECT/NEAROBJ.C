@@ -19,11 +19,7 @@
 #include "OBJECT_EFFECT.H"
 #include "SYSTEM.H"
 
-
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
-
-
-s32 BattleFx_StartRandomParticleEmitter(s32, s32);
 
 extern void Object_SetMode(struct ParticleEffectObject *, s32);
 s32 Object_GetById(u32);

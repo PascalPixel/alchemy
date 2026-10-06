@@ -11,8 +11,6 @@
 
 #define Item_IsCompatibleWithOwnerFar ((s32 (*)(s16,s32))Item_IsCompatibleWithOwnerFar)
 
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-
 extern struct ShopRuntime *gMenuWork;
 
 void Shop_DrawParty(s32 window, s32 selected, s32 requirement)

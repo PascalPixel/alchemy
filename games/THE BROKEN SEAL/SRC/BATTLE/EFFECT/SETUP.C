@@ -15,18 +15,15 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "FIELD_EVENT.H"
 
-
 void Object_EnableEffectSpawnCallback(void)
 {
     Scheduler_EnableCallbacks(Object_EffectSpawnCallback);
 }
 
-
 void Object_DisableEffectSpawnCallback(void)
 {
     Scheduler_DisableCallbacks(Object_EffectSpawnCallback);
 }
-
 
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
 {
@@ -115,7 +112,6 @@ void Battle_InitializeRenderObject(void)
 }
 
 void Battle_ResetEffectCounter(void);
-u32 GameFlag_ClearBitFar(s32);
 
 void Battle_Reset(void)
 {
@@ -141,7 +137,6 @@ void Battle_Reset(void)
         runtime->unknown_1f8 = zero;
     }
 }
-
 
 void BattleFx_FinishAction(void)
 {

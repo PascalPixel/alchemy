@@ -1,8 +1,7 @@
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
-
-struct BattleSummonState *Trade_GetOfferStateFar(s32 side);
+#include "BATTLE.H"
 
 struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 {

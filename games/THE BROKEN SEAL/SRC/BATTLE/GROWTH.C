@@ -24,15 +24,10 @@
 #include "BATTLE_RUNTIME.H"
 #include "B5_CONTEXT.H"
 
-
-
-s32 GameFlag_ClearBitFar(s32 id);
-
 struct FormationCandidate {
     s16 record_id;
     s16 score;
 };
-
 
 struct BattleBaseStats {
     s16 base_hp;
@@ -49,7 +44,6 @@ struct BattleBaseStats {
     u8 unknown_12[2];
     struct BattleElementStats elements[4];
 };
-
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {

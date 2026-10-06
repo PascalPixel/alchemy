@@ -60,9 +60,7 @@ s32 ObjectTable_FindActiveByValue(s32 value)
     return result;
 }
 
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
 void WaitFrames(s32 frames);
-struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);
 
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {

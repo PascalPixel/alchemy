@@ -32,22 +32,18 @@
 #define BattleFx_ResumeObject ((void (*)(s32))BattleFx_ResumeObject)
 
 void BattleEffect_RunFallbackObjectTransition(void);
-void BattleFx_CallEffect14(s32);
 
 extern struct BattleFxScene *gEffectWork;
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect04(void);
 void RunBattleEffect14(void);
-void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
 void BattleEffect_PauseObject(s32 obj_id);
-
 
 void Event_SetMessageId(s32);
 void BattleFx_FinishAction();
 void _call_via_r3(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 void Battle_Reset();
-
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);

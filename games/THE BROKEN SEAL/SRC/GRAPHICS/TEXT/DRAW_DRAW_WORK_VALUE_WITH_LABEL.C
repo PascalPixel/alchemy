@@ -6,8 +6,7 @@
 #include "GAME_STATE.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
-
-void UiWindow_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
+#include "GRAPHICS.H"
 
 void UiText_DrawWorkValueWithLabel(s32 work)
 {

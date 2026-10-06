@@ -16,9 +16,6 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "IO_REG.H"
 
-void BattleFx_BuildBuffer(s32, s32, s32, s32);
-
-
 void BattleEffect_InitializeBuffers(void)
 {
     volatile s32 zero;

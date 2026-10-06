@@ -33,8 +33,6 @@ struct ShortcutListEntry {
     u16 ability;
 };
 
-
-s32 OwnerAction_AddFar(s32 owner, s32 action);
 void UiText_DrawNumberAtOffset(s32 value, s32 digits, struct RenderInput *window, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x, s32 y, s32 width, s32 style);
 void WaitFrames(s32 frames);

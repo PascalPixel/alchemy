@@ -19,11 +19,7 @@
 #include "ANIMSPR.H"
 #include "FIELD_EVENT.H"
 
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
-void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
-
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {

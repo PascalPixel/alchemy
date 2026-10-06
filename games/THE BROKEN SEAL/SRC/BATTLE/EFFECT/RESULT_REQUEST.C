@@ -24,8 +24,6 @@ struct ResultWork {
 };
 
 extern struct ResultWork gGameState;
-u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
-s32 BattleFx_SelectBattleCue(s32, s32);
 
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 {

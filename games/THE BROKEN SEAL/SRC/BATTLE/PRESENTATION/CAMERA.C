@@ -27,8 +27,6 @@ static __inline__ s32 DivQ16(s32 divisor, s32 value)
     return Iwram_RatioMulQ14(divisor, value);
 }
 
-s32 Render_ProjectPoint();
-
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
     struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);

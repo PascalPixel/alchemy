@@ -58,9 +58,7 @@ struct GroundParticleWork {
 };
 
 void Resource_DecodeByteLz(const void *source, void *destination);
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
-
 
 void FieldFx_UpdateGroundParticles(void)
 {

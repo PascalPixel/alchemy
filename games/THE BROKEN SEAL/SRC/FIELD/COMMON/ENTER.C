@@ -12,8 +12,6 @@
 #include "FIELDRUN.H"
 #include "GAME_STATE.H"
 
-void GameFlag_ClearBitFar(s32 flag);
-void GameFlag_SetBitFar(s32 flag);
 #define SCENE_RECORD(id) (&Field_SceneTable[id])
 
 extern void Audio_PlayCue(s16 arg0);

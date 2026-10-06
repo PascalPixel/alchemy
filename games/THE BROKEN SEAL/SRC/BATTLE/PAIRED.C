@@ -21,11 +21,8 @@
 
 extern struct EventRuntime *gEventWork;
 s32 ObjectTable_ReadActiveValue(s32);
-s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-s32 UiWork_IsIdleFar(s32);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 void UiWork_FinalizePendingCoreFar(void);
-
 
 s32 ObjectTable_ReadActiveValue(s32 key);
 

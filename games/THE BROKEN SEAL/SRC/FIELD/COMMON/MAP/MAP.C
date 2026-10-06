@@ -24,7 +24,6 @@
 #define Tilemap_DecodeStagedBuffer ((void (*)(void))Tilemap_DecodeStagedBuffer)
 #define DisplayBlend_StartScript ((void (*)(void*))DisplayBlend_StartScript)
 
-
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
     /* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime. */
@@ -55,7 +54,6 @@ static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32
     colors += index;
     *(u16 *)(destination + 64) = *colors;
 }
-
 
 static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
@@ -103,8 +101,6 @@ struct SceneHeader {
 };
 
 extern u8 gMapLayerData[];
-
-void GameFlag_ClearBitFar(s32 flag);
 
 static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
 {

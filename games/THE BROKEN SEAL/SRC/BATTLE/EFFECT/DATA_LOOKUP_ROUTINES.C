@@ -40,7 +40,6 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
     return Encounter_EnemyGroupTable[(arg0 * 14) + arg1 + 2];
 }
 
-u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
 unsigned char BattleFx_GetPhaseResult(s32 phase_index)
 {
   s32 entry_offset;
@@ -66,7 +65,6 @@ struct SceneInteractionEntry {
     s16 condition;
     s16 result;
 };
-
 
 void Scene_ResolveInteractionResult(void)
 {
@@ -113,8 +111,6 @@ struct SceneAreaNameRule {
     u16 use_scene_id : 1;
     s32 area_name_index;
 };
-
-
 
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {

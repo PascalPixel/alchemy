@@ -24,11 +24,9 @@
 void Audio_PlayCue(s32 cue);
 void Runtime_SetMainState19(void);
 
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
 #define PAGE_LABEL_FIRST 49
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
-
 
 s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *page)
 {

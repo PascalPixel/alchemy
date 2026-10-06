@@ -29,17 +29,11 @@
 
 extern struct ShopRuntime *gMenuWork;
 
-
 void Battle_ResetEffectCounterFar(void);
-u8 Party_ListActiveOwnersFar(void *);
 s32 UiWork_FinalizePendingCoreFar();
 
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
 void UiWork_FinalizeFar(s32 window, s32 style);
-
-s32 Inventory_AddItemFar(s32, s32);
-
-
 
 s32 AbilityMenu_BuildAvailableList(void)
 {

@@ -64,8 +64,6 @@ s32 Menu_RunActionFlow(void)
     return result;
 }
 
-void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-
 s32 CharacterMenu_SelectOwner(s32 slot)
 {
     struct CharacterMenuState *menu;

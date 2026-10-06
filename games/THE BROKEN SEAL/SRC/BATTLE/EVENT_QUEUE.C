@@ -48,11 +48,8 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 }
 
 void UiWork_PushValueSlotFar(u32, u32);
-void UiText_ShowMessageAndWaitCoreFar(u32);
-void BattlePresentation_WaitForAdvance(void);
 void Audio_PlayCue(u32);
 void BattleMotion_RunValueSequence();
-void UiWindow_DrawPartyStatusContentsFar(u32);
 
 u32 BattleEv_DispatchQueued(void)
 {

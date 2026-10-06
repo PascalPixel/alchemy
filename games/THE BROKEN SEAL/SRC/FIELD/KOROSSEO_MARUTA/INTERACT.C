@@ -13,10 +13,7 @@
 
 #define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
 
-
 void Battle_ResetEffectCounter(void);
-void UiText_DrawQuantity(s32 value, s32 digits);
-
 
 void RunPartyCountInteractionCopyB(s32 actorId)
 {

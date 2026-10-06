@@ -20,7 +20,6 @@
 
 extern struct BattleFxScene *gEffectWork;
 
-
 struct CaptureSprite {
     u8 unknown_00[40];
     s16 *resource;
@@ -57,7 +56,6 @@ struct CaptureResource {
 struct CaptureObject *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);

@@ -36,7 +36,6 @@ struct Object {
 };
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
-s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 struct EntranceView {
     s16 entrance;

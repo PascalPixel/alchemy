@@ -17,7 +17,6 @@ extern volatile u32 gKeysHeld;
 
 struct UiWindow;
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor_and_flags);
-s32 UiWork_IsIdleFar(struct UiWindow *window);
 
 void Battle_WaitMode0(s32 mode);
 extern struct EventRuntime *gEventWork;

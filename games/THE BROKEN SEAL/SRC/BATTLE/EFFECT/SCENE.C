@@ -59,10 +59,6 @@ void BattleFx_CycleObjectValueByCounter();
 #define CALLBACK_1      (u32)BattleFx_FlickerObjectAndTick
 #define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 
-
-
-s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *result);
-
 s32 __umodsi3(s32, s32);
 
 void BattleEffect_CleanupSceneObjects(void)

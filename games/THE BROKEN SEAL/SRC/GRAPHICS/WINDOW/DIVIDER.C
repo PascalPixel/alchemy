@@ -3,8 +3,7 @@
 #include "RENDER_INPUT.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
-
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+#include "GRAPHICS.H"
 
 void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u32 y2)
 {

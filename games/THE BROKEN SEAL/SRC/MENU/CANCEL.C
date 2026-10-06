@@ -22,12 +22,6 @@ void Audio_PlayCue(s32 cue);
 
 #define gWindowWork (*(u8 *volatile *)&gWindowWork)
 
-s32 GameFlag_SetBitFar(s32);
-
-s32 GameFlag_ClearBitFar(s32);
-
-s32 UiWork_SetParamNibbleFar(s32);
-
 void UiWork_SetMenuBusy(void)
 {
     u8 *base = gWindowWork;

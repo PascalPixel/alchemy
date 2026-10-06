@@ -26,7 +26,6 @@
 
 #define UiWindow_CreateWithSideObjectFar ((s32 (*)(u16,s32,s32,s32))UiWindow_CreateWithSideObjectFar)
 
-
 union PositionWord { s32 w; s16 h[2]; };
 
 void Audio_PlayCue(s32 sound_id);
@@ -35,9 +34,6 @@ void EffectSlot_SetCallbackFar(
     void (*callback)(struct EffectSlot *));
 
 extern struct EventRuntime *gEventWork;
-s32 Party_ListActiveOwnersFar(s16 *);
-void Party_AdjustCoinsFar(s32);
-void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
 void Event_StartScreenTransitionFar(void);

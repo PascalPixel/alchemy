@@ -21,8 +21,6 @@
 
 extern volatile u32 gKeysHeld;
 
-void GameFlag_SetBitFar(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
 s32 DebugParty_LoadPreset(s32 preset);
 
 void DebugBattle_RunMenu(void)

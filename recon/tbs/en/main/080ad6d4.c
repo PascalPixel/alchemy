@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 289 of 1276 (1281 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp (now as the plain parameter), render in sl, the row computation and the swap preview now match. Remaining: in the help line the constant 224 wins a hi register from 0x8000 and 0 (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 127 of 1276 (1275 draft instructions); was 289 at session 3's start, 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp (as the plain parameter), render in sl, the row computation, the swap preview and the whole help line now match. Remaining: the prologue (native loads gMenuWork before the stack adjustment and zeroes anim, frame and cursor[] with three separate constants), native loads 0xba0 from the pool where this builds it as 186<<4, and instruction order at a few calls (see Open). No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -18,6 +18,7 @@
  * Trial (2026-10-06, session 2): 0 for the mode-0 tilemap entry instead of mode: 295. 0x8000 fixed in r8 and the shared 0 in sl (two FAKEMATCH variables): 224 is rebuilt at each use as native, but attr moves to r1 and the copies around each and change: 369 (mask & attr: 369; zero assigned inside the argument: 376). The row computation differs because mode, a hard register here, is copied where native ties it: native eors r2 (mode copy) with 1, this copies 1 and eors with a copy of fp.
  * Trial (2026-10-06, session 2): y = row * 8 before the attr load: 546. row = mode, then row = (row == 1): 426. row = (1 == mode): 293, folded to the same tree. A 5-minute permuter run (2 jobs, 5,445 candidates) randomizing only the help line from row to the 0xf296 entry found nothing below 293.
  * Trial (2026-10-06, session 2): with the copy routine in r5, mode as the plain parameter wins fp by itself, so its fixed-fp FAKEMATCH is gone, and the row computation ties mode as native: 293 -> 289. On top of that, 0x8000 fixed in r8 and 0 in sl give 285 (the pools then line up) but attr still takes r1 and the copies stay wrong; not kept for 4. cursor[0] = cursor[1] = 0 leaves 289 and still reloads anim's 0 where native has its own zero in r7.
+ * Trial (2026-10-06, session 3): the help line's ands copied attr where native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31). In regmove the first commutative operand that stays live is copied into the result, so the copy goes to the constant only when attr is a hard register: attr fixed in r2 (FAKEMATCH) gives 289 -> 187. Constant-first source order (0xe0 & attr) folds back: 289. The tilemap entries read state->pair_entries[x] directly, where native loads it into r3 and not attr's r2: 175. row * 8 as the argument, not a y temporary: 172. 224 and the shared 0 then tie at priority 769 (7 refs over 182 insns, 4 over 104) and 224 wins by pseudo number; 0 fixed in sl (FAKEMATCH) and set inside the first tilemap call's argument as native: 127 (zero = 0 as a statement before the call: 139, before the draw: 154, at the row computation: 172). The 0x8000 test through state->pair_entries[0] directly, without attr: 259 against 289 (the no-call path then reloads).
  * Open (2026-10-06): 224 (the element mask, 7 refs over 172 insns, priority 814) outranks 0x8000 and the shared 0 (4 refs over 100 insns, 800 each) and takes r8; it would need 176 insns or 6 refs to fall behind them; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Fixing them in r8 and sl (369, then 285 with mode as a pseudo) shows the second cause: attr takes r1 where native has r2, and with a hard register as one operand of a two-address and, the other operand is copied, where native copies the constant (mov r3, r8; ands r3, r2); the right answer is a source shape that drops 224 below 800, not fixed registers. Smaller: native loads 0xba0 from the pool (this splits it to 186<<4); scheduling differs at the tutorial work = UiText_OpenMessageWindowFar result, the 0x060052c0 copy's argument loads (native r1, r3, r0) and the two SetSlotPhase(x, 0) after the loop (native sets r1 first). */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -87,9 +88,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     s32 swap;
     s32 step;
     s32 row;
-    s32 y;
     s32 result;
-    u32 attr;
+    /* FAKEMATCH: regmove copies a live pseudo operand of each help-line and into its result (adds r3, r1, #0); native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31), which regmove leaves to reload only when the other operand is a hard register. attr in r2 as native. */
+    register u32 attr asm("r2");
+    /* FAKEMATCH: the shared 0 and the element mask 224 tie at allocation priority 769 (4 refs over 104 insns, 7 over 182) and 224 wins by pseudo number; native keeps 0 in sl and rebuilds 224 at each use. */
+    register s32 zero asm("sl");
     s32 i;
     s32 j;
 
@@ -246,12 +249,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         UiWork_SetParamNibbleFar(2);
         attr = state->pair_entries[0];
     }
-    y = row * 8;
     UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-        state->help_window, 48, y);
-    attr = state->pair_entries[0];
+        state->help_window, 48, row * 8);
     UiWindow_SetTilemapEntryFar(
-        state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, row, 0);
+        state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, row, zero = 0);
     UiWork_SetParamNibbleFar(15);
 
     if (mode == 0) {
@@ -262,9 +263,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         }
         UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
             state->help_window, 48, 16);
-        attr = state->pair_entries[1];
         UiWindow_SetTilemapEntryFar(
-            state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, 2, mode);
+            state->help_window, ((state->pair_entries[1] & 0xe0) >> 5) + 0x5001, 5, 2, mode);
         UiWork_SetParamNibbleFar(15);
     } else if (mode - 2 <= 1) {
         attr = state->pair_entries[0];
@@ -274,11 +274,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         }
         UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
             state->help_window, 48, 16);
-        attr = state->pair_entries[0];
         UiWindow_SetTilemapEntryFar(
-            state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, 2, 0);
+            state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, 2, zero);
         UiWork_SetParamNibbleFar(15);
-        UiWindow_SetTilemapEntryFar(state->help_window, 0xf296, 7, 1, 0);
+        UiWindow_SetTilemapEntryFar(state->help_window, 0xf296, 7, 1, zero);
     }
 
     for (;;) {

@@ -6,6 +6,7 @@
 #include "MENU.H"
 #include "MINIGAME.H"
 #include "SOUND.H"
+#include "SOUND_IDS.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "OWNERVAL.H"
@@ -27,6 +28,8 @@
 #define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)
 #define BattlePresentation_ConfigurePaletteFade ((void (*)(s32,s32,s32))BattlePresentation_ConfigurePaletteFade)
 #define BattleFx_PlayUnitElementEffect ((s32 (*)(s32,s32,s32,s32))BattleFx_PlayUnitElementEffect)
+
+#define MES_PUSH(m) BattleEv_Push(BATTLE_EVENT_TEXT, (u32)(m))
 
 struct BattleGroupOrder {
     s32 group[2];
@@ -84,7 +87,7 @@ s32 Battle_ProcessRoundEnd(void)
                         BattleEv_Push(BATTLE_EVENT_ACTION, expired_entry->element * 20 + expired_entry->index + 300);
                         BattleEv_Push(BATTLE_EVENT_SOUND, 175);
                         BattleEv_Push(BATTLE_EVENT_REFRESH, 0);
-                        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgDjinnSet);
+                        MES_PUSH(MsgDjinnSet);
                         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                         Audio_PlayCue(212);
                         Object_SetMode(GetBattleObjectSlot(id)->object, 3);
@@ -335,7 +338,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 BattleEv_Push(BATTLE_EVENT_VALUE, order);
                 BattleEv_Push(BATTLE_EVENT_SOUND, 175);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgEarthPowerUp + i);
+                MES_PUSH(MsgEarthPowerUp + i);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                 Audio_PlayCue(212);
                 Object_SetMode(GetBattleObjectSlot(id)->object, 3);
@@ -353,7 +356,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgCurseDamage);
+            MES_PUSH(MsgCurseDamage);
             if (Owner_AdjustFirstValueFar(id, -plan->pending_amount_60) == 0) {
                 s32 text;
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
@@ -363,7 +366,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 } else {
                     text = (s32)MsgStrengthExhausted;
                 }
-                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                MES_PUSH(text);
             } else {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
             }
@@ -377,9 +380,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, damage);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgPoisonDamage);
+            MES_PUSH(MsgPoisonDamage);
             if (*poison != 0) {
-                state->events.pending_cue = 134;
+                state->events.pending_cue = SOUND_HEAVY_IMPACT;
             } else {
                 state->events.pending_cue = 133;
             }
@@ -392,7 +395,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 } else {
                     text = (s32)MsgStrengthExhausted;
                 }
-                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                MES_PUSH(text);
             } else {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
             }
@@ -402,14 +405,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         if (unit->death_count != 0) {
             if (--unit->death_count == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgReaperCalls);
+                MES_PUSH(MsgReaperCalls);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if (id >= 0 && id <= 7) {
-                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgReaperCalls - 3);
+                    MES_PUSH(MsgReaperCalls - 3);
                 } else {
-                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgReaperCalls + 3);
+                    MES_PUSH(MsgReaperCalls + 3);
                 }
             }
         }

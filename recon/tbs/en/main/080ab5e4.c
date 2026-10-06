@@ -764,7 +764,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     }
     state->selected_column[mode] = x;
     if (sel != -1) {
-        u32 entry;
+        /* FAKEMATCH: entry fixed in r2 keeps regmove from tying the owner mask's and to entry where it dies; the native ties it to the 0xf00 register r3 (differ 10 -> 0) */
+        register u32 entry asm("r2");
         state->pair_entries[mode] = entry = lists->list.ids[x][sel];
         state->pair_index[mode] = entry % 32;
         state->pair_element[mode] = DJINN_ELEMENT(entry);

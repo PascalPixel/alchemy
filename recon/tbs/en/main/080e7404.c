@@ -14,7 +14,21 @@
  * without angle 574; second loop size (frame + 0x1d0) << 8 alone 403; heat
  * loaded whole then heat /= 4 227; a count local divided into heat 222. The
  * reference also copies the loaded work->frame (r2) to the division temp (r3)
- * and computes the second loop's grow from fp without a giv; ours folds both. */
+ * and computes the second loop's grow from fp without a giv; ours folds both.
+ * 2026-10-06 session (sun100 b666ade248), RTL: heat is pseudo 393 (5 refs, 50
+ * insns, 1 call, LO_REGS), 89th of 115 in global's order; line (402) has r5,
+ * and size (407, r6) and x (408, r7) never overlap heat, so it takes r6. The
+ * native r4 + sp+8 is caller-save, which global.c picks only when r5-r7 are all
+ * unavailable to heat; nothing visible in the native holds r6/r7 there, so look
+ * for a pseudo live only from the loop top to the palette loop, or a reload
+ * eviction. The frame size is equal because our second-loop grow giv (sp+16)
+ * fills heat's slot. Combine folds the loaded frame (400) into the division
+ * temp (401); the native keeps 400, so 400 must stay live past the copy.
+ * Trials: volatile read of work->frame 222 (still folded); asm clobber of
+ * r1/r6/r7 at the loop top or before the palette loop 222, heat moves to r7 and
+ * its division vanishes; frame == 0 test as work->frame == 0 206 but compares
+ * the field where the native compares fp; direction after the join as
+ * mode == 1 && side == 1 ? mode : -1 247, still folds. All removed. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"

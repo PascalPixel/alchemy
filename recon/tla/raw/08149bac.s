@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global BattleFx_RunSparkGroups
 	.thumb_func
 BattleFx_RunSparkGroups:

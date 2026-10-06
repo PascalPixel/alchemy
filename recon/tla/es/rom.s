@@ -5143,8 +5143,37 @@ Func_08142944:
 BattleFx_BeginCanvasLayer:
 	.incbin "baserom.gba", 0x001435e0, 0x000004a8
 	.section .rom.00143bb6, "ax"
-	.incbin "baserom.gba", 0x00143bb6, 0x00005ff6
+	.incbin "baserom.gba", 0x00143bb6, 0x00000a42
+	.section .rom.00144628, "ax"
+	.balign 4
+	.global Func_08144628
+	.type Func_08144628, %function
+	.thumb_func
+Func_08144628:
+	.incbin "baserom.gba", 0x00144628, 0x000004c8
+	.section .rom.00144b14, "ax"
+	.balign 4
+	.global Func_08144b14
+	.type Func_08144b14, %function
+	.thumb_func
+Func_08144b14:
+	.incbin "baserom.gba", 0x00144b14, 0x000005a0
+	.section .rom.0014512c, "ax"
+	.balign 4
+	.global Func_0814512c
+	.type Func_0814512c, %function
+	.thumb_func
+Func_0814512c:
+	.incbin "baserom.gba", 0x0014512c, 0x000029a8
+	.section .rom.00147aec, "ax"
+	.balign 4
+	.global Func_08147aec
+	.type Func_08147aec, %function
+	.thumb_func
+Func_08147aec:
+	.incbin "baserom.gba", 0x00147aec, 0x000020a8
 	.section .rom.00149bac, "ax"
+	.balign 4
 	.global BattleFx_RunSparkGroups
 	.type BattleFx_RunSparkGroups, %function
 	.thumb_func
@@ -5182,7 +5211,14 @@ BattleFx_RunSeriesA:
 	.incbin "baserom.gba", 0x001504d6, 0x00000002
 	.global SummonFx_RunCanvasEffect
 SummonFx_RunCanvasEffect:
-	.incbin "baserom.gba", 0x001504d8, 0x00001f98
+	.incbin "baserom.gba", 0x001504d8, 0x00001b00
+	.section .rom.00151ff0, "ax"
+	.balign 4
+	.global Func_08151ff0
+	.type Func_08151ff0, %function
+	.thumb_func
+Func_08151ff0:
+	.incbin "baserom.gba", 0x00151ff0, 0x00000480
 	.section .rom.00152470, "ax"
 	.global BattleFx_RunNoEffect
 	.type BattleFx_RunNoEffect, %function
@@ -5234,7 +5270,14 @@ Func_0815e320:
 	.incbin "baserom.gba", 0x00164c0a, 0x000000ba
 	.global BattleEffect_RunParticleStreams
 BattleEffect_RunParticleStreams:
-	.incbin "baserom.gba", 0x00164cc4, 0x00005554
+	.incbin "baserom.gba", 0x00164cc4, 0x00001e34
+	.section .rom.00166b10, "ax"
+	.balign 4
+	.global Func_08166b10
+	.type Func_08166b10, %function
+	.thumb_func
+Func_08166b10:
+	.incbin "baserom.gba", 0x00166b10, 0x00003708
 	.section .rom.0016a29c, "ax"
 	.incbin "baserom.gba", 0x0016a29c, 0x00014778
 	.section .rom.0017ea58, "ax"

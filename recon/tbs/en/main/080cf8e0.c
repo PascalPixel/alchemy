@@ -1,4 +1,42 @@
-/* Draft: native 670 instructions, draft 669, common 536, differ 267.
+/* Draft: native 670 instructions, draft 672, common 555, differ 232.
+ * Fourth pass (2026-10-06): the burst loop's cause is found, but only a
+ * diagnostic device reproduces it; the device is NOT admissible as is
+ * (S2: it changes instruction selection, not only order or registers).
+ * - Native's inner loop holds group = k << 2 and group << 3 apart. GCSE's
+ *   PRE (pass 07) hoists the invariant k << 2 to the loop entry (spilled
+ *   to sp+24); group << 3 stays in the loop because group is set in the
+ *   loop, so loop.c finds no invariant add for the address, no giv, and
+ *   no strength reduction: exactly native's per-iteration address and
+ *   in-loop gBursts pool load.
+ * - Written plainly (group = k * 4 in the loop body), CSE pass 1 folds
+ *   group << 3 into k << 5 (fold_rtx's shift association through
+ *   lookup_as_function), and with group set before the loop PRE hoists
+ *   group << 3 itself; either way the address becomes a giv (benefit 14,
+ *   life 55) and is reduced to a pointer stepped by 28.
+ * - The draft separates them with __asm__ __volatile__("" ::), an
+ *   ASM_OPERANDS that flushes CSE's table (asm("") is an ASM_INPUT and
+ *   flushes nothing). The burst loop then matches native instruction for
+ *   instruction apart from frame slots and reload's register rotation.
+ *   Next step: the source form in which CSE pass 1 cannot see
+ *   group = k << 2 from group * 8 while both stay in the loop body.
+ * - With the burst address right, delay = 0 inside the count test now
+ *   helps (287 -> 232; 273 without the device, as before).
+ * - Remaining at 232: frame slot order. Native (high to low address):
+ *   camera 36, &draw 32, records index (mode * 2) 28, k << 2 24,
+ *   camera->pos 20, shot pointer 16, delay 12; the draft puts delay at 32
+ *   (a user pseudo, low number) and k << 2 below camera->pos. Native's
+ *   delay looks like a loop-made pseudo (k * 8 reduced as a giv), but
+ *   k * 8 inline with the device gives 467 (the frame loses a slot and
+ *   fp no longer holds work).
+ * Fourth-pass trials: group = k * 4 before the burst loop 267 (PRE hoists
+ * group << 3); with asm("") 267 (no flush); group in the loop with
+ * asm("") 267 (folded to k << 5); group also re-set at the loop tail 303
+ * (address unreduced, k << 2 before the guard); group in the loop with the
+ * flushing asm 287; then delay = 0 inside the count test 232; delay += 8
+ * before k++ 296 (from 287); k * 8 inline 467; delay declared in the count
+ * block 232; direct draw[flip](...) call 417 (loads at the call as native
+ * does, but flip << 2 is scheduled late into flip's own register); the
+ * same direct call on the 232 draft 410.
  * Third pass (2026-10-06): the mode-test reload rotation now matches
  * (r2, r3, r4, r0, r1, r2). Two shard-draw causes kept r4 out of reload's
  * spill registers for the whole function:
@@ -199,8 +237,8 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         k = 0;
-        delay = 0;
         if (work->effect->count != 0) {
+            delay = 0;
             do {
                 if (frame >= delay) {
                     struct EffectStep *shot = &gShots[k * 16];
@@ -231,7 +269,14 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                             if (SevenMode_Records[mode * 2] != 0)
                                 count = 16;
                             for (i = 0; i != count; i++) {
-                                struct EffectStep *burst = &gBursts[k * 32 + i];
+                                struct EffectStep *burst;
+                                s32 group = k * 4;
+
+                                /* Diagnostic, not admissible as is (see header): native keeps
+                                   group = k << 2 and group << 3 apart and leaves the address
+                                   unreduced (287 -> 232 with delay = 0 in the count test). */
+                                __asm__ __volatile__("" ::); /* FAKEMATCH: flushes CSE so group << 3 is not folded into k << 5 */
+                                burst = &gBursts[group * 8 + i];
 
                                 burst->x = shot->x;
                                 burst->y = shot->y;

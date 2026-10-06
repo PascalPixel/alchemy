@@ -11883,11 +11883,11 @@ msgctxt "MsgDjinnSetAll"
 msgid "02968"
 msgstr "{button_icon:6}:Set All"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "02969"
 msgstr "{button_icon:6}:All Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "02970"
 msgstr "Choose a Djinni."
 
@@ -11895,15 +11895,15 @@ msgctxt "message"
 msgid "02971"
 msgstr "Is this OK?"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyHelp"
 msgid "02972"
 msgstr "{button_icon:4}:Standby {button_icon:6}:Help"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetHelp"
 msgid "02973"
 msgstr "{button_icon:4}:Set {button_icon:6}:Help"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "02974"
 msgstr "It's recovering"
 
@@ -11947,7 +11947,7 @@ msgctxt "MsgPsynergyUnchanged"
 msgid "02984"
 msgstr "* No change"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "02985"
 msgstr "{button_icon:3}:Char. Status"
 
@@ -11967,31 +11967,31 @@ msgctxt "MsgUnleashEffect"
 msgid "02989"
 msgstr "Effect of unleashing in battle:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "02990"
 msgstr "Give"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "02991"
 msgstr "Set"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "02992"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "02993"
 msgstr "Trade"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "02994"
 msgstr "{argument_actor_name:1}'s"
 
-msgctxt "message"
+msgctxt "MsgDjinnAbilityName"
 msgid "02995"
 msgstr "{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgDjinnChooseAction"
 msgid "02996"
 msgstr "What will you do?"
 
@@ -12031,7 +12031,7 @@ msgctxt "message"
 msgid "03005"
 msgstr "Cancelled"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "03006"
 msgstr "Now recovering"
 
@@ -12555,7 +12555,7 @@ msgctxt "MsgDjinnTutorialGive"
 msgid "03136"
 msgstr "To give your Djinni to{line_break}someone else, move it{line_break}like this.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03137"
 msgstr "After choosing who will{line_break}take the Djinni, you{line_break}can set it.{end_wait}"
 
@@ -12567,15 +12567,15 @@ msgctxt "message"
 msgid "03139"
 msgstr "Setting a Djinni changes{line_break}your attributes and{line_break}maybe even your class.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialPowers"
 msgid "03140"
 msgstr "Each Djinni has{line_break}different powers.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleash"
 msgid "03141"
 msgstr "Once we are set, you{line_break}can unleash us to{line_break}use our powers.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialDemonstrate"
 msgid "03142"
 msgstr "So, let me demonstrate{line_break}the power of my attack,{line_break}{actor_name:1}.{end_now}"
 
@@ -12587,11 +12587,11 @@ msgctxt "MsgTutorialStandby"
 msgid "03144"
 msgstr "After being unleashed,{line_break}we Djinn will then{line_break}stand by to be summoned...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSummon"
 msgid "03145"
 msgstr "If you have standby{line_break}Djinn, you can summon{line_break}even greater powers!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleashCommand"
 msgid "03146"
 msgstr "Choose this command{line_break}to unleash me in{line_break}battle, OK?{end_now}"
 
@@ -12599,11 +12599,11 @@ msgctxt "message"
 msgid "03147"
 msgstr "Then you can summon{line_break}even greater powers!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialRecovery"
 msgid "03148"
 msgstr "After a Djinni has been{line_break}used to summon, it must{line_break}spend time in recovery.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03149"
 msgstr "And after we recover, we{line_break}will set ourselves again{line_break}and be ready to attack.{end_wait}"
 

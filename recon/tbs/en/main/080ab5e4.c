@@ -1,8 +1,11 @@
-/* Draft: alchemy diff 2026-10-05: listing 2105, draft 2109, common 1352,
-   differ 1510. Use the message shop's linker symbols and MENU_LIST.H's
-   render-output prototypes; obsolete enum declarations no longer compile.
-   Remaining: control-flow/register allocation and whole message symbols
-   for the table-relative menu/tutorial references before adoption. */
+/* Draft: listing 2105 instructions, draft 2108, common 1312, differ 1589.
+   Whole message symbols replace the menu/tutorial base-plus-offset enums.
+   The earlier offset version differed 1510 (draft 2109); it is not retained.
+   Native frame 108, draft 104. Declaring the status array before the balance
+   array puts them in native relative order, with the same score. Unsigned
+   redraw and block-local refresh are unchanged; initializing redraw after
+   the cursor gives 1595; direct status-array access gives 1657. No devices.
+   Remaining: control flow, register allocation and the four-byte frame gap. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "TBS_EDITION.H"
@@ -17,38 +20,6 @@
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
-
-enum DjinnMenuMessage {
-    DJINN_MSG_SET_ALL = 0x00,
-    DJINN_MSG_ALL_STANDBY = 0x01,
-    DJINN_MSG_CHOOSE = 0x02,
-    DJINN_MSG_STANDBY_HELP = 0x04,
-    DJINN_MSG_SET_HELP = 0x05,
-    DJINN_MSG_RECOVERING = 0x06,
-    DJINN_MSG_CHARACTER_STATUS = 0x11,
-    DJINN_MSG_UNLEASH_EFFECT = 0x15,
-    DJINN_MSG_GIVE = 0x16,
-    DJINN_MSG_SET = 0x17,
-    DJINN_MSG_STANDBY = 0x18,
-    DJINN_MSG_TRADE = 0x19,
-    DJINN_MSG_OWNER = 0x1a,
-    DJINN_MSG_ABILITY = 0x1b,
-    DJINN_MSG_WHAT_WILL_YOU_DO = 0x1c,
-    DJINN_MSG_NOW_RECOVERING = 0x26
-};
-
-enum DjinnTutorialMessage {
-    TUTORIAL_MSG_GIVE = 0x0,
-    TUTORIAL_MSG_SET_AFTER_GIVE = 0x1,
-    TUTORIAL_MSG_POWERS = 0x4,
-    TUTORIAL_MSG_UNLEASH = 0x5,
-    TUTORIAL_MSG_DEMONSTRATE = 0x6,
-    TUTORIAL_MSG_RECOVERY = 0xc,
-    TUTORIAL_MSG_SET_AGAIN = 0xd
-};
-
-#define DJINN_MESSAGE(n) ((s32)MsgDjinnSetAll + (n))
-#define TUTORIAL_MESSAGE(n) ((s32)MsgDjinnTutorialGive + (n))
 
 extern struct DjinnMenuWork *gMenuWork;
 extern const char DjinnMenu_TextLevel[];
@@ -90,8 +61,8 @@ u32 __udivsi3(u32, u32);
 
 s32 DjinnMenu_SelectDjinn(s32 mode)
 {
-    s8 balanced[16];
     s8 buf[8];
+    s8 balanced[16];
     struct DjinnMenuWork *state = gMenuWork;
     struct DjinnMenuBackdrop *lists = state->backdrop;
     struct BattleUnit *owner;
@@ -160,13 +131,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         for (n = 0; n < state->owner_count; n++) {
             if (n == state->selected_column[0]) {
                 if (state->pair_entries[0] & 0x8000)
-                    message = DJINN_MESSAGE(DJINN_MSG_STANDBY);
+                    message = (s32)&MsgDjinnStandbyAction;
                 else
-                    message = DJINN_MESSAGE(DJINN_MSG_SET);
+                    message = (s32)&MsgDjinnSetAction;
             } else if (buf[n] & 2) {
-                message = DJINN_MESSAGE(DJINN_MSG_GIVE);
+                message = (s32)&MsgDjinnGiveAction;
             } else {
-                message = DJINN_MESSAGE(DJINN_MSG_TRADE);
+                message = (s32)&MsgDjinnTradeAction;
             }
             UiText_DrawCharacterAtOffsetFar(message, state->list_window, n * 56 + 8, 8);
         }
@@ -188,26 +159,26 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             UiText_DrawStringAtOffsetFar(DjinnMenu_TextLevel, window, 48, 0);
             UiNumber_DrawAt(owner->level, 2, window, 72, 0);
             if (mode == 0)
-                UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_CHARACTER_STATUS), window, 0, 16);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnCharacterStatus, window, 0, 16);
             if (sel != -1)
                 djinn = lists->list.ids[x][sel];
             RenderOutput_RedrawSavedRectFar(state->help_window);
             if (mode == 1) {
                 UiText_DrawQuantity(state->shown_owner[0], 1);
-                UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_OWNER), state->help_window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel, state->help_window, 0, 0);
                 UiText_DrawQuantity(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
                 UiWindow_SetTilemapEntryFar(state->help_window, DJINN_ELEMENT(state->pair_entries[0]) + 0x5001, 6, 0, 0);
-                UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_ABILITY), state->help_window, 56, 0);
-                UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_WHAT_WILL_YOU_DO), state->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnAbilityName, state->help_window, 56, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnChooseAction, state->help_window, 0, 8);
             }
             if (sel == -1) {
                 FourObjectMotion_SetSlotPosition(mode, 0, 200, 0);
             } else if (mode == 0) {
                 if (groupMode) {
                     if (setAll != 0) {
-                        UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_ALL_STANDBY), state->help_window, 0, 0);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnAllStandby, state->help_window, 0, 0);
                     } else {
-                        UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_SET_ALL), state->help_window, 0, 0);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnSetAll, state->help_window, 0, 0);
                     }
                     if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
                         if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
@@ -216,25 +187,25 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
                         FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 0);
                     } else {
-                        UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_RECOVERING), state->help_window, 0, 16);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnRecovering, state->help_window, 0, 16);
                         FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                         FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 1);
                     }
                     if (refresh & 2)
                         FourObjectMotion_SetSlotPhase(mode, 0);
                 } else {
-                    UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_CHOOSE), state->help_window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnChoose, state->help_window, 0, 0);
                     if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
                         if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
-                            UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_SET_HELP), state->help_window, 0, 16);
+                            UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnSetHelp, state->help_window, 0, 16);
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                         } else {
-                            UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_STANDBY_HELP), state->help_window, 0, 16);
+                            UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnStandbyHelp, state->help_window, 0, 16);
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
                         }
                         FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 0);
                     } else {
-                        UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_RECOVERING), state->help_window, 0, 16);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnRecovering, state->help_window, 0, 16);
                         FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                         FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 1);
                     }
@@ -257,7 +228,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             }
             RenderOutput_ClearListFar(state->list_window);
             if (sel != -1) {
-                UiText_DrawCharacterAtOffsetFar(DJINN_MESSAGE(DJINN_MSG_UNLEASH_EFFECT), state->list_window, 0, 80);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgUnleashEffect, state->list_window, 0, 80);
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 96, 224, 104);
                 UiText_DrawCharacterAtOffsetFar(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + 0x666, state->list_window, 0, 96);
             }
@@ -294,14 +265,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 break;
             case 27:
                 if (lists->tutorial_timer == 60) {
-                    work = UiText_OpenMessageWindowFar(TUTORIAL_MESSAGE(TUTORIAL_MSG_RECOVERY), 9, 9, 1);
+                    work = UiText_OpenMessageWindowFar((s32)&MsgDjinnTutorialRecovery, 9, 9, 1);
                     gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
                     UiWork_FinalizeFar(work, 1);
                     DjinnMenu_DrawElementList(&lists->list);
                     WaitFrames(1);
-                    work = UiText_OpenMessageWindowFar(TUTORIAL_MESSAGE(TUTORIAL_MSG_SET_AGAIN), 9, 9, 1);
+                    work = UiText_OpenMessageWindowFar((s32)&MsgDjinnTutorialSetAgain, 9, 9, 1);
                     gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
@@ -320,7 +291,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 break;
             case 1:
                 if (lists->tutorial_timer == 60) {
-                    work = UiText_OpenMessageWindowFar(TUTORIAL_MESSAGE(TUTORIAL_MSG_GIVE), 9, 9, 1);
+                    work = UiText_OpenMessageWindowFar((s32)&MsgDjinnTutorialGive, 9, 9, 1);
                     gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
@@ -353,7 +324,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             case 6:
             case 7:
                 if (lists->tutorial_timer == 60) {
-                    work = UiText_OpenMessageWindowFar(TUTORIAL_MESSAGE(TUTORIAL_MSG_SET_AFTER_GIVE), 9, 9, 1);
+                    work = UiText_OpenMessageWindowFar((s32)&MsgDjinnTutorialSetAfterGive, 9, 9, 1);
                     gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
@@ -382,7 +353,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             case 15:
                 if (lists->tutorial_timer == 60) {
                     gGameState.message_speed = 1;
-                    work = UiText_OpenMessageWindowFar(TUTORIAL_MESSAGE(TUTORIAL_MSG_POWERS), 9, 9, 1);
+                    work = UiText_OpenMessageWindowFar((s32)&MsgDjinnTutorialPowers, 9, 9, 1);
                     UiMenu_SlideCursor(2, 146);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
@@ -393,7 +364,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     UiWork_FinalizeFar(work, 1);
                     DjinnMenu_DrawElementList(&lists->list);
                     WaitFrames(1);
-                    work = UiText_OpenMessageWindowFar(TUTORIAL_MESSAGE(TUTORIAL_MSG_UNLEASH), 9, 9, 1);
+                    work = UiText_OpenMessageWindowFar((s32)&MsgDjinnTutorialUnleash, 9, 9, 1);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
                     while (!(gKeyState & KEY_A)) {
@@ -403,7 +374,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     UiWork_FinalizeFar(work, 1);
                     DjinnMenu_DrawElementList(&lists->list);
                     WaitFrames(1);
-                    work = UiText_OpenMessageWindowFar(TUTORIAL_MESSAGE(TUTORIAL_MSG_DEMONSTRATE), 9, 9, 1);
+                    work = UiText_OpenMessageWindowFar((s32)&MsgDjinnTutorialDemonstrate, 9, 9, 1);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
                     while (!(gKeyState & KEY_A)) {
@@ -458,7 +429,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 AudioCommand_PlayFar(114);
                 RenderOutput_ClearListFar(state->list_window);
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 80, 216, 104);
-                UiText_DrawResourceFar(DJINN_MESSAGE(DJINN_MSG_NOW_RECOVERING), state->list_window, 0, 96);
+                UiText_DrawResourceFar((s32)&MsgDjinnNowRecovering, state->list_window, 0, 96);
                 redraw = 1;
                 continue;
             }
@@ -495,7 +466,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 AudioCommand_PlayFar(114);
                 RenderOutput_ClearListFar(state->list_window);
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 80, 216, 104);
-                UiText_DrawResourceFar(DJINN_MESSAGE(DJINN_MSG_NOW_RECOVERING), state->list_window, 0, 96);
+                UiText_DrawResourceFar((s32)&MsgDjinnNowRecovering, state->list_window, 0, 96);
                 continue;
             }
             if (mode == 1) {

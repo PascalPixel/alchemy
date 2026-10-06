@@ -3,7 +3,8 @@
  * private views. Original draft: listing 1037, draft 998, differ 1173; shared
  * views preserve that result, then genuine sprite bitfields improve it to
  * draft 1002, differ 1129. Native frame is 60 bytes; draft is 44. Remaining
- * work is loop/spill layout and whole tutorial message names; no new devices.
+ * work is loop/spill layout. Whole tutorial message symbols leave the score
+ * unchanged; no new devices.
  */
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -235,9 +236,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     if (kind == 16 || (trade_count == 0 && kind == 15)) {
                         if (runtime->auto_enabled == 1) {
                             if (kind == 15)
-                                message = UiText_ShowMessageAndWaitComplete(0xc4a, 15, 8);
+                                message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialUnleashCommand, 15, 8);
                             else if (kind == 16)
-                                message = UiText_ShowMessageAndWaitComplete(0xc49, 15, 8);
+                                message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialSummon, 15, 8);
                             BattlePresentation_WaitForPromptAtFar(102, 155);
                             UiWork_Finalize(message, 1);
                             runtime->auto_enabled++;

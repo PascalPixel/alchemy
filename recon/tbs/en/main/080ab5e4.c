@@ -1,10 +1,19 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2108, common 1312, differ 1589.
-   Whole message symbols replace the menu/tutorial base-plus-offset enums.
-   The earlier offset version differed 1510 (draft 2109); it is not retained.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2108, common 1360, differ 1493.
+   Message symbols are whole, except where the native adds to one pool base:
+   the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
+   help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
+   are unsigned bytes: the native tests them with ldrb, indexed by i (1495).
+   The set-all help tests setAll == 0 first, as the native's pool order and
+   fall-through show (1493).
    Native frame 108, draft 104. Declaring the status array before the balance
    array puts them in native relative order, with the same score. Unsigned
    redraw and block-local refresh are unchanged; initializing redraw after
    the cursor gives 1595; direct status-array access gives 1657. No devices.
+   Register map, native: r9 lists, r10 refresh, r11 repeat, r8 the help
+   window address (CSE), r4 the message base (caller-saved at sp+8), redraw
+   spilled to sp+72 (the frame gap). Draft: sl lists, r9 redraw, r8 refresh,
+   help address caller-saved in r4. The balance loop's native keeps a second
+   status induction pointer for the |= 4 store and indexes balanced by i.
    Remaining: control flow, register allocation and the four-byte frame gap.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
@@ -63,7 +72,7 @@ u32 __udivsi3(u32, u32);
 s32 DjinnMenu_SelectDjinn(s32 mode)
 {
     s8 buf[8];
-    s8 balanced[16];
+    u8 balanced[16];
     struct DjinnMenuWork *state = gMenuWork;
     struct DjinnMenuBackdrop *lists = state->backdrop;
     struct BattleUnit *owner;
@@ -106,7 +115,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             }
         }
     } else {
-        Djinn_MarkBalancedEntries(balanced, state->selected_column[0]);
+        Djinn_MarkBalancedEntries((s8 *)balanced, state->selected_column[0]);
         for (i = 0; i < state->owner_count; i++) {
             if (i == state->selected_column[0]) {
                 status[i] = 7;
@@ -169,17 +178,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel, state->help_window, 0, 0);
                 UiText_DrawQuantity(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
                 UiWindow_SetTilemapEntryFar(state->help_window, DJINN_ELEMENT(state->pair_entries[0]) + 0x5001, 6, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnAbilityName, state->help_window, 56, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnChooseAction, state->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel + 1, state->help_window, 56, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel + 2, state->help_window, 0, 8);
             }
             if (sel == -1) {
                 FourObjectMotion_SetSlotPosition(mode, 0, 200, 0);
             } else if (mode == 0) {
                 if (groupMode) {
-                    if (setAll != 0) {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnAllStandby, state->help_window, 0, 0);
-                    } else {
+                    if (setAll == 0) {
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnSetAll, state->help_window, 0, 0);
+                    } else {
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnAllStandby, state->help_window, 0, 0);
                     }
                     if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
                         if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
@@ -198,15 +207,15 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnChoose, state->help_window, 0, 0);
                     if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
                         if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
-                            UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnSetHelp, state->help_window, 0, 16);
+                            UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnChoose + 3, state->help_window, 0, 16);
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                         } else {
-                            UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnStandbyHelp, state->help_window, 0, 16);
+                            UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnChoose + 2, state->help_window, 0, 16);
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
                         }
                         FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 0);
                     } else {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnRecovering, state->help_window, 0, 16);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnChoose + 4, state->help_window, 0, 16);
                         FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                         FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 1);
                     }

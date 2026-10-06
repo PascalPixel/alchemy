@@ -1,6 +1,22 @@
 /* 0800a494: ARM draft; camelot_arm is an analysis-only study (K1, K3).
    alchemy diff --camelot-arm, upstream's whole arm_adjust_cost
-   (2026-10-06, session 5): listing 307, draft 299, common 233, differ
+   (2026-10-06, session 6): listing 307, draft 300, common 245, differ
+   117; the same draft under stock agbcc_arm: common 250, differ 107
+   (stock still fits this function better). 140 to 117 (session 6, aimed by --heat): the steering test as
+   x != 0 || z != 0 (136; the listing compares sl, then cmpeq r9); the
+   angle kept in a u16 local, angle = ArcTan2(z, x), so the listing's
+   lsl #16 and rsb ..., lsr #16 zero-extension survives (129); the turn
+   in its own local rather than dx, which takes r0 as listed (117; ratio
+   reused: 117). Trials (session 6): case 17's natural order (obj->y -
+   target) ^ (y - target), as the listing computes it: 138; a third
+   smull alternative tying RdHi to Rm (the bounce site's smull r2, r3,
+   r3, r2), with or without RdLo tied to Rs: 117, not kept; the asm
+   volatile, holding each velocity store before the next smull as
+   listed: 131 from 140, not kept (an ordering device). What remains:
+   those stores sunk past the next smull (rows 125-150 and the speed
+   limit's shared tail), register choices for the reached flag, the
+   script cursor and the target branch's calls, and the six veneer
+   instructions. Earlier: listing 307, draft 299, common 233, differ
    140; stock agbcc_arm 130. Upstream's call rule (a true dependence into
    a CALL_INSN costs 1) costs this draft 16: under the anti/output half
    alone, which the trials below were scored with, it was common 241,
@@ -100,6 +116,8 @@ void Object_UpdateAll(void)
     s32 (*sq)(s32);
     s32 (*rm)(s32, s32);
     s16 n;
+    u16 angle;
+    s32 turn;
 
     obj = gObjectSlots;
     for (i = 0; i < 8; i++, obj++) {
@@ -240,13 +258,14 @@ void Object_UpdateAll(void)
         if ((obj->steering_flags & 1) != 0) {
             x = obj->velocity_x;
             z = obj->velocity_z;
-            if (z != 0 || x != 0) {
-                dx = (s16)((u16)ArcTan2(z, x) - obj->facing);
-                if (dx >= 0x1000)
-                    dx = 0x1000;
-                if (dx < -0x1000)
-                    dx = -0x1000;
-                obj->facing += dx;
+            if (x != 0 || z != 0) {
+                angle = ArcTan2(z, x);
+                turn = (s16)(angle - obj->facing);
+                if (turn >= 0x1000)
+                    turn = 0x1000;
+                if (turn < -0x1000)
+                    turn = -0x1000;
+                obj->facing += turn;
             }
         }
     }

@@ -1018,7 +1018,7 @@ void FieldScene_SetupActorTenCamera(void)
     }
     {
         u16 *target = (u16 *)(state + 0xcb6);
-        s32 shown = 1;
+        u16 shown = 1;
 
         *target = shown;
     }

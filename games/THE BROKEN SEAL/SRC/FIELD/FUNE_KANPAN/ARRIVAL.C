@@ -525,7 +525,7 @@ void FuneKanpan_PlaceLeaderOnDeck(void)
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x2a40000);
     record = Object_GetById(0);
     {
-        s32 shown = 0x4000;
+        u16 shown = 0x4000;
 
         record->facing = shown;
     }

@@ -1050,7 +1050,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
     record = Object_GetById(0);
     {
-        s32 shown = 0;
+        u16 shown = 0;
 
         record->facing = shown;
     }
@@ -1064,19 +1064,19 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Actor_SetPosition(ACTOR_MIA, 0x5a80000, 0xc00000);
     record = Object_GetById(1);
     {
-        s32 shown = 0;
+        u16 shown = 0;
 
         record->facing = shown;
     }
     record = Object_GetById(2);
     {
-        s32 shown = 0;
+        u16 shown = 0;
 
         record->facing = shown;
     }
     record = Object_GetById(3);
     {
-        s32 shown = 0;
+        u16 shown = 0;
 
         record->facing = shown;
     }

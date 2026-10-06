@@ -95,7 +95,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
         break;
     }
     palette = Resource_GetTableEntry(resource);
-    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
     WaitFrames(1);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_position);
     work->transfer_mode = 2;
@@ -237,7 +237,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     s32 position[4];
     u8 *source;
     u16 *palette;
-    void *colors = (void *)0x05000000;
+    void *colors = (void *)BG_PLTT;
     s32 written;
     s32 frame;
     s32 i;
@@ -271,7 +271,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         RisingWall_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
     Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer, 1, 0);
     Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
-    palette = (u16 *)0x05000002;
+    palette = (u16 *)&BG_PLTT[1];
     for (i = 0; i != 63; i++) {
         s32 color = *palette;
         s32 blue = ((u16)color >> 10) & 31;

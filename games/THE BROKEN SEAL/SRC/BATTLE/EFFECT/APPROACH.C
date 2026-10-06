@@ -39,7 +39,6 @@ extern u16 Volley_PelletOffsets[];
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 #define HI(v) (((s16 *)&(v))[1])
 #define ABS(v) ((v) < 0 ? -(v) : (v))
-#define SLOT47 ((DrawRectangle)gWorkSlot[47])
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 mode, s32 *x, s32 *y);
 void AudioCommand_PlayFar(s32 value);
@@ -92,14 +91,14 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
         BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screen_x, &screen_y);
     if (mode == 5) {
         if (work->effect->side == 1)
-            BattleEffect_LoadWork(46, 7, 7, 7, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
         else
-            BattleEffect_LoadWork(46, 7, 7, 3, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     } else {
         if (work->effect->side == 1)
-            BattleEffect_LoadWork(46, 7, 7, 7, 3);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
         else
-            BattleEffect_LoadWork(46, 7, 7, 3, 3);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
     }
     draw.upper = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -246,14 +245,14 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                 if (frame > 69)
                     y = y - frame * 2 + 138;
                 if (work->effect->side == 1)
-                    BattleEffect_LoadWork(47, 7, 7, 7, 3);
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 3);
                 else
-                    BattleEffect_LoadWork(47, 7, 7, 3, 3);
-                draw.lower = (DrawRectangle)gWorkSlot[47];
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+                draw.lower = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
                 if (frame <= 3)
                     draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
                 draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
-                Runtime_ReleaseHeapBlock(47);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
@@ -356,19 +355,19 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 draw_shot:
                         if (mode == 0 || mode == 5 || mode == 8) {
                             if (work->effect->side == 1)
-                                BattleEffect_LoadWork(47, 7, 7, 7, 2);
+                                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
                             else
-                                BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                            SLOT47(canvas, work->sheet + 0x1000, pos->x - 16,
+                                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+                            ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + 0x1000, pos->x - 16,
                                 pos->y - Volley_CometHeights[kind], 32, Volley_CometHeights[kind]);
-                            Runtime_ReleaseHeapBlock(47);
+                            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                             if (work->effect->side == 1)
-                                BattleEffect_LoadWork(47, 7, 7, 15, 2);
+                                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
                             else
-                                BattleEffect_LoadWork(47, 7, 7, 11, 2);
-                            SLOT47(canvas, work->sheet + 0x1000, pos->x - 16,
+                                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
+                            ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + 0x1000, pos->x - 16,
                                 pos->y, 32, Volley_CometHeights[kind]);
-                            Runtime_ReleaseHeapBlock(47);
+                            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                         } else if (mode == 1) {
                             if (ABS(shot->x) <= ABS(target->x))
                                 draw.upper(canvas, work->sheet + frame % 6 * 768,
@@ -399,27 +398,27 @@ draw_shot:
                         s32 step = flash->z / 2;
 
                         if (!(i & 1)) {
-                            BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                            SLOT47(canvas, work->sheet + Volley_FlashOffsets[step],
+                            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+                            ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + Volley_FlashOffsets[step],
                                 flash->x - Volley_FlashWidths[step], flash->y - Volley_FlashRises[step],
                                 Volley_FlashWidths[step], Volley_FlashHeights[step]);
-                            Runtime_ReleaseHeapBlock(47);
-                            BattleEffect_LoadWork(47, 7, 7, 15, 2);
-                            SLOT47(canvas, work->sheet + Volley_FlashOffsets[step],
+                            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+                            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
+                            ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + Volley_FlashOffsets[step],
                                 flash->x, flash->y + Volley_FlashSteps[step] - Volley_FlashRises[step],
                                 Volley_FlashWidths[step], Volley_FlashHeights[step]);
-                            Runtime_ReleaseHeapBlock(47);
+                            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                         } else {
-                            BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                            SLOT47(canvas, work->sheet + Volley_FlashOffsets[step] + 0x128a,
+                            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+                            ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + Volley_FlashOffsets[step] + 0x128a,
                                 flash->x - Volley_FlashRises[step], flash->y - Volley_FlashWidths[step],
                                 Volley_FlashHeights[step], Volley_FlashWidths[step]);
-                            Runtime_ReleaseHeapBlock(47);
-                            BattleEffect_LoadWork(47, 7, 7, 15, 2);
-                            SLOT47(canvas, work->sheet + Volley_FlashOffsets[step] + 0x128a,
+                            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+                            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
+                            ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + Volley_FlashOffsets[step] + 0x128a,
                                 flash->x + Volley_FlashSteps[step] - Volley_FlashRises[step], flash->y,
                                 Volley_FlashHeights[step], Volley_FlashWidths[step]);
-                            Runtime_ReleaseHeapBlock(47);
+                            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                         }
                         flash->z++;
                         if (flash->z == 12)
@@ -461,7 +460,7 @@ draw_shot:
     }
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
 

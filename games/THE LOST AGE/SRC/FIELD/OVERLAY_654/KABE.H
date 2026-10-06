@@ -6,7 +6,8 @@
 #include "RAM_BUFFER.H"
 
 struct KabeObject {
-    u8 unknown_00[8];
+    u8 unknown_00[6];
+    u16 facing;
     s32 x;
     s32 y;
     s32 z;
@@ -77,6 +78,136 @@ static inline void Kabe_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
     /* FAKEMATCH: the blend start reaches the engine through one inline layer. */
     Func_020039a8(a, b, c, d, e, f);
+}
+
+void Func_02003a30(s32 actor, s32 x, s32 z);
+void Func_02003a38(s32 actor, s32 x, s32 z, s32 angle);
+void Func_02003a70(s32 message);
+void Func_02003a78(s32 actor, s32 a, s32 b);
+void Func_02003a80(s32 speaker, s32 flags);
+void Func_02003aa8(s32 actor, s32 height, s32 frames);
+void Func_02003ab0(s32 actor, s32 emote);
+void Func_02003ab8(s32 speed, s32 acceleration);
+void Func_02003ac8(void);
+struct KabeObject *Func_02003ad0(void);
+void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void ObjectMotion_EnableActionAndResetMotion(s32 actor);
+void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
+void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
+void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void ObjectDispatch_SetSingleChildFlags(struct KabeObject *object, u32 value);
+
+static inline void Kabe_Jump(s32 actor, s32 height, s32 frames)
+{
+    /* FAKEMATCH: the native loads the actor after the height and frames. */
+    register s32 h __asm__("r1") = height;
+    /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
+    register s32 f __asm__("r2") = frames;
+
+    Func_02003aa8(actor, h, f);
+}
+
+static inline void Kabe_ObjSpeed(s32 actor, s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+}
+
+static inline void Kabe_ObjWalk(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetPositionAndReset(actor, x, z);
+}
+
+static inline void Kabe_ObjTurn(s32 actor, s32 angle, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_ArmCallback(actor, angle, frames);
+}
+
+static inline void Kabe_ObjPlace(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02003a30(actor, x, z);
+}
+
+static inline void Kabe_CamSpeed(s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02003ab8(speed, acceleration);
+}
+
+static inline void Kabe_CamMove(s32 x, s32 y, s32 z, s32 mode)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Motion_CamBounds(x, y, z, mode);
+}
+
+static inline void Kabe_ObjLaunch(s32 actor, s32 speed, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_Launch(actor, speed, frames);
+}
+
+static inline void Kabe_MesPut(s32 speaker, s32 flags)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02003a80(speaker, flags);
+}
+
+static inline void Kabe_ObjModeWait(s32 actor, s32 mode)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Motion_SetModeAndWaitAnimation(actor, mode);
+}
+
+static inline void Kabe_Wait(s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Battle_WaitMode0(frames);
+}
+
+static inline void Kabe_ObjVar(s32 actor, s32 value)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Motion_SetVarCbAndRefresh(actor, value);
+}
+
+static inline void Kabe_ObjMode(s32 actor, s32 mode)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Object_SetModeById(actor, mode);
+}
+
+static inline void Kabe_ObjEmote(s32 actor, s32 emote)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02003ab0(actor, emote);
+}
+
+static inline s32 Kabe_FlagChk(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    return GameFlag_Test(flag);
+}
+
+static inline void Kabe_FlagSet(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    GameFlag_SetBit(flag);
+}
+
+static inline void Kabe_ObjPlaceTurn(s32 actor, s32 x, s32 z, s32 angle)
+{
+    /* FAKEMATCH: the native loads the angle before the position. */
+    register s32 g __asm__("r3") = angle;
+
+    Func_02003a38(actor, x, z, g);
 }
 
 #endif

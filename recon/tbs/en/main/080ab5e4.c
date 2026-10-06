@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 2008, differ 194.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 2014, differ 182.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -52,7 +52,13 @@
    the native does, and the opening and its count loops match (261 -> 194,
    2105 instructions). As `for (status = buf, i = 7; ...)` it is the same;
    `s32 sel = -1` at its declaration 269, declared beside status 430-525.
-   Remaining (194): the balance loop's column pointer, the select handlers'
+   The far-call prototypes return what the headers declare: s32 for
+   BattlePlacement_UpdateTimedEntriesFar, Djinn_ActivateFar and
+   Trade_RemoveOfferFar, u32 for Djinn_DeactivateFar, u32 * for
+   Trade_AddOfferFar, void for UiMenu_SlideCursor (194 -> 182; the call
+   then sets r0, and the zero arguments after it load r0 last).
+   UiWork_FinalizeFar returning s32 gives 186.
+   Remaining (182): the balance loop's column pointer, the select handlers'
    flag slot and djinn field registers, the cursor-move constants.
    The native keeps ok in i's stack slot (sp+68) in both select handlers,
    as when reload spills two pseudos from one hard register; the draft
@@ -84,10 +90,10 @@ extern const char DjinnMenu_TextLevel[];
 void Owner_RecalculateStatsFar(s32 owner);
 s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 number);
 u32 Djinn_IsActiveFar(s32 owner, s32 element, s32 number);
-void Djinn_ActivateFar(s32 owner, s32 element, s32 number);
-void Djinn_DeactivateFar(s32 owner, s32 element, s32 number);
-void Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
-void Trade_AddOfferFar(s32 owner, s32 element, s32 number);
+s32 Djinn_ActivateFar(s32 owner, s32 element, s32 number);
+u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 number);
+s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
+u32 *Trade_AddOfferFar(s32 owner, s32 element, s32 number);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -102,7 +108,7 @@ void UiWork_FinalizeFar(struct UiWindow *work, s32 mode);
 void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 UiMenu_SlideCursor(s32 x, s32 y);
+void UiMenu_SlideCursor(s32 x, s32 y);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
 s32 Menu_DrawAtWindowOffset(s32 window, s32 x, s32 y, s32 width, s32 kind, s32 tile);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 kind);
@@ -111,7 +117,7 @@ s32 Djinn_MarkBalancedEntries(s8 *balanced, s32 self);
 s32 FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
 void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
 s32 FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
-void BattlePlacement_UpdateTimedEntriesFar(void);
+s32 BattlePlacement_UpdateTimedEntriesFar(void);
 
 u32 __umodsi3(u32, u32);
 u32 __udivsi3(u32, u32);

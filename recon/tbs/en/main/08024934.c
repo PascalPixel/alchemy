@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 936, common 561, differ 760.
+ * Native 946 instructions, draft 937, common 562, differ 759.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
@@ -76,6 +76,11 @@
  * preferred and page -= 4; row = preferred); the navigation code now
  * differs only in stack slot offsets. From 760: scalar declarations with
  * cursor_handle..element first 762.
+ * 760 -> 759: mask is u32. As s32, combine rewrote the highlight test
+ * mask & (1 << element) into (mask >> element) & 1 (asrs); native keeps
+ * movs #1, lsls, ands, as the unsigned mask does. Native loads counts once
+ * there; the draft still loads it twice. From 760: the test as
+ * !(mask & (1 << element)) 760; as if/else 764.
  * The extra frame slots are loop.c's: in the draw loop it strength-reduces
  * index * 12 + 8 (giv 942, combined with the two tile-address givs) and
  * hoists a sprites copy; native recomputes both each pass, so loop.c did
@@ -130,7 +135,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     struct MenuSprite *sprite;
     const u8 *required, *supply;
     s32 drawn_row, drawn_page, row, page, preferred;
-    s32 cursor_handle, count, used, mask, element;
+    s32 cursor_handle, count, used, element;
+    u32 mask;
     s32 id, tile, affordable, blink;
     struct MenuPoint cursor_position;
     s32 pressed, repeated, result;

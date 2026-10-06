@@ -32,6 +32,7 @@
    two redraw tails, but on the remove tail's r4 constant, and the add
    path's increments reorder; the native merged tail keeps r1, so both
    tails must reload into r1 while the result path takes r4 after them.
+   The empty-name exit tested first (result -1 before the removal)96.
    Natural trials: pointer copy loop323; indexed loop320; one shared
    character local254; count order and side-key navigation228. The existing
    international caret-r5 device gives218. Pinning cursor flag alone333,

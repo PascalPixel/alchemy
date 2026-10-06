@@ -76,7 +76,11 @@
  * for the ternary's arm leaves 8 (copy r2, the 0x778c offset r4; reference r4
  * and r2), with the copy fixed r4 212, with side loaded first 218, inside the
  * arm as a statement expression 134; the first mode == 1 test on an asm copy
- * of mode ("=l", "0") 260. Left: direction = mode folds to movs r4,
+ * of mode ("=l", "0") 260; direction set by an asm from mode then
+ * if (side != 1) direction = -1 144 (an extra copy, reloads before the
+ * effect load); the asm copy after loading work->effect into a local 220.
+ * Next: in the 8 variant the copy and the 0x778c offset swap r2/r4 in
+ * local-alloc; a fixed r4 copy shifts reload rotation after the join. Left: direction = mode folds to movs r4,
  * #1 in cse1 (record_jump_equiv of mode == 1); the reference reloads mode. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"

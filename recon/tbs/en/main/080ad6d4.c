@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 408 of 1276 (1282 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 293 of 1276 (1281 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -14,6 +14,7 @@
  * Trial (2026-10-06): y = row * 8 computed before the help-line draw (permuter hint, as a temporary): the loop allocates as native: 549 -> 458.
  * Trial (2026-10-06): j for the owner_y loop apart from the tile loop's i: the counter takes r2 as native: 458 -> 446. Cursor zeroed before anim, dirty, page and frame shares one zero everywhere (444), unlike native; page, frame, dirty, anim order gives 453.
  * Trial (2026-10-06): one id for both owners in the swap preview, where first_id and second_id were two: id keeps r6 and unit r7 as native: 446 -> 408. Reloading attr once after the first 0x8000 test instead of inside it gives 411; row and y declared last leave 408.
+ * Trial (2026-10-06): the routine address held in r5 from the second copy on (fixed-register pointer, FAKEMATCH): the swap preview allocates as native, 332 rematerialized at each call: 408 -> 293. A plain function-pointer local set before the call (or inside the call expression) is set before the 332 and lives 92 insns against 88, so 332 still wins: 408.
  * Open (2026-10-06): 224 (the element mask, 7 refs over 172 insns, priority 814) outranks 0x8000 and the shared 0 (4 refs over 100 insns, 800 each) and takes r8; it would need 176 insns or 6 refs to fall behind them; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Iwram_CopyWords' 332 and its address tie (4 refs over 90 insns) and 332, created first as an argument, wins by pseudo number; native keeps the address in r5. A permuter run over the help-line section (4 minutes) found nothing below 458 before the id and j changes. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -131,6 +132,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
         s32 second_flag;
         s32 out_a;
         s32 out_b;
+        /* FAKEMATCH: as a constant the routine address ties the size 332 (4 refs over 90 insns) and loses by pseudo number; native keeps it in r5 for the last three copies. */
+        register s32 (*copy)(void *, const void *, s32) asm("r5");
 
         diff_work = Runtime_BumpAllocateAlternatePool(96);
         unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
@@ -156,11 +159,12 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
         Owner_RecalculateStatsFar(id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
-        Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
+        copy = Iwram_CopyWords;
+        copy(unit, unit_copy, sizeof(*unit_copy));
 
         id = state->shown_owner[1];
         unit = Owner_GetStateFar(id);
-        Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
+        copy(unit_copy, unit, sizeof(*unit_copy));
         if (mode == 0) {
             Djinn_DeactivateFar(id, second_element, second_index);
         }
@@ -171,7 +175,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
         Owner_RecalculateStatsFar(id);
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
-        Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
+        copy(unit, unit_copy, sizeof(*unit_copy));
         Runtime_BumpFree(unit_copy);
         Runtime_BumpFree(diff_work);
     } else if (mode - 2 <= 1) {

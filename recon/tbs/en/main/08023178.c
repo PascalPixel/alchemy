@@ -19,7 +19,16 @@
  * through a pointer declared before icons (native keeps &objName at sp+28
  * above icons/codes/handles): 845. The cursor movement index as its own
  * variable k, not the shared count n (native keeps it in r5, &cur in r6):
- * 769. Pixel offsets assigned only when the
+ * 769. The list search reading list[n] directly instead of code: 780 (native
+ * keeps the value in r3, the draft in r7). A separate djinn-loop index j
+ * (native's djinn loop index sits in r4, caller-saved at sp+4, while i is r6
+ * elsewhere): 1148, frame 356. The pixel zero stores after the first
+ * window call or inside its arguments: 769, the store register still r3
+ * where native reuses the argument's r1. Permuter, 6 minutes on the 769
+ * draft: best 750 through temporaries only (noise, not carried).
+ * Open: native loads each (s8) modifier twice with ldrb and sign-extends the
+ * first with lsl/asr; the draft uses ldrsb and reloads after the store
+ * (about 12 rows at each of the four modifier tests). Pixel offsets assigned only when the
  * entry changes (wrong semantics, diagnostic only): 1028, frame still 348.
  *
  * Trials 2026-10-06: searched declaration order alone 1171 -> 1127. The

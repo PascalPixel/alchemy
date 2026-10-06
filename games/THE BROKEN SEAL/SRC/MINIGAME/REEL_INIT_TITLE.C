@@ -694,18 +694,18 @@ void ReelGame_Run(void)
     for (k = 0; k != 20; k++) {
         for (i = 0; i != 32; i++, j += 2) {
             if (i >= 5 && i <= 24 && k > 2 && k <= 13) {
-                *(volatile u16 *)(0x06002800 + j) = 0xa1a6;
+                *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0xa1a6;
             } else if (i > 29) {
-                *(volatile u16 *)(0x06002800 + j) = 0;
+                *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0;
             } else {
-                *(volatile u16 *)(0x06002800 + j) = 0xa1a8 + count;
+                *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0xa1a8 + count;
                 count++;
             }
         }
     }
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsFramePicture);
-    Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
+    Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
     entry += 32;
     Resource_DecodeType01(entry, tiles);
     j = 0;
@@ -713,23 +713,23 @@ void ReelGame_Run(void)
         for (i = 0; i != 30; i++) {
             if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
                 Dma_Set(tiles + (k * 30 + i) * 32,
-                    (void *)(0x0600b500 + j), 0x84000008, REG_DMA3);
+                    (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
                 j += 32;
             }
         }
     }
-    Iwram_ClearWords((void *)0x06002d00, 0x300);
+    Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 0x500, 0x300);
     j = 0;
     for (k = 0; k != 20; k++) {
         for (i = 0; i != 32; i++, j += 2) {
             if (k < 2 || k > 16)
-                *(volatile u16 *)(0x06003000 + j) = 0xbf;
+                *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = 0xbf;
             else
-                *(volatile u16 *)(0x06003000 + j) = k * 32 + i + 148;
+                *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = k * 32 + i + 148;
         }
     }
-    REG_BG1CNT = 0x509;
-    REG_BG2CNT = 0x680;
+    REG_BG1CNT = BGCNT_SCREEN_BASE(5) | BGCNT_CHAR_BASE(2) | 1;
+    REG_BG2CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
     gBgScroll[0].x = 0;
     gBgScroll[0].y = 0;
     gBgScroll[1].x = 0;
@@ -761,16 +761,16 @@ void ReelGame_Run(void)
         work->frame = 0;
         state->timer = 0;
         Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
-            (void *)0x05000000, 0x84000020, REG_DMA3);
+            (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
         BG_PLTT_COLOR(4, 0) = 0x2f8b;
         BG_PLTT_COLOR(4, 1) = 0x5bf6;
         entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
-        Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
+        Dma_Set(entry, (void *)OBJ_PLTT, DMA_ENABLE32 | DMA_32BIT | 480 / 4, REG_DMA3);
         entry += 480;
         Resource_DecodeType01(entry, tiles);
-        Dma_Set(tiles, (void *)0x06010000, 0x84001b30, REG_DMA3);
+        Dma_Set(tiles, (void *)0x06010000, DMA_ENABLE32 | DMA_32BIT | 0x1b30, REG_DMA3);
         entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpot);
-        Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
+        Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
         entry += 32;
         Resource_DecodeType01(entry, tiles);
         Dma_Set(tiles, (void *)REEL_JACKPOT_TILES, REEL_JACKPOT_COPY, REG_DMA3);
@@ -812,12 +812,13 @@ void ReelGame_Run(void)
         FarCall_EffectTable(47, 8, 7, 3, 3);
         draw[1] = gWorkSlot[47];
         Iwram_FillWords(canvas, size, 0);
-        Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
-        Dma_Set((void *)0x05000000, work, 0x84000080, REG_DMA3);
-        Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
-        Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
-        Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, 0, 0x100);
-        REG_DISPCNT = 0x3740;
+        Dma_Set(canvas, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x8000 / 4, REG_DMA3);
+        Dma_Set((void *)BG_PLTT, work, DMA_ENABLE32 | DMA_32BIT | 0x80, REG_DMA3);
+        Dma_Set((void *)OBJ_PLTT, shade, DMA_ENABLE32 | DMA_32BIT | 0x80, REG_DMA3);
+        Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
+        Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
+        REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON
+        | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
         if (PartyInventory_CountItemFar(228) == 1) {
             struct UiWindow *window = UiWindow_CreateFar(6, 16, 18, 3, 6);
 
@@ -838,8 +839,8 @@ void ReelGame_Run(void)
 
         for (frame = 0; state->state != 10; frame++) {
             if (frame <= 16) {
-                Graphics_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
-                Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, frame << 12, 0x100);
+                Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
+                Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12, 0x100);
             }
             if (state->state == 3) {
                 s32 phase = frame % 80;
@@ -951,8 +952,8 @@ void ReelGame_Run(void)
         }
 
         for (j = 0; j != 17; j++) {
-            Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12), 0x100);
-            Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, 0x10000 - (j << 12), 0x100);
+            Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0x10000 - (j << 12), 0x100);
+            Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0x10000 - (j << 12), 0x100);
             WaitFrames(1);
         }
         Runtime_ReleaseHeapBlock(47);

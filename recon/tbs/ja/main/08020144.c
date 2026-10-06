@@ -1,6 +1,6 @@
 /* Draft: Japanese SaveMenu_SelectSlot, 2026-10-06. Native 0x5f8 bytes.
-   Thumb scaffold diff: 663 native instructions, 653 draft, common 421,
-   differ 474 (was 593). Japanese eligibility scans are independent; its
+   Thumb scaffold diff: 663 native instructions, 655 draft, common 434,
+   differ 450 (was 474, 593). Japanese eligibility scans are independent; its
    cursor is a ShopCursor local and it does not install the international
    scheduler callbacks. The slot list now indexes save->summary[i] and sets
    y = i * 16: the counter stays ascending in r4 with the native caller-save
@@ -15,6 +15,18 @@
    just above cursor as native, and only the y giv's slot (and so the
    4-byte shift) is then missing. Next: find the form whose y GCC reduces
    while the counter stays ascending; none of these trials does.
+   Why (loop dumps, alchemy diff --rtl): loop.c runs twice (rerun-loop-opt)
+   and check_dbra_loop reverses i whenever, at that pass, i has no giv and
+   only counts. y = i * 16 is a giv of benefit 2 less add_cost 2, so it is
+   never worth reducing (0 vs 84, then 0 vs 61) and i stays ascending. Any
+   form that reduces y in the first pass (i * 16 in each call, y = i * 16
+   as the for step, y = j * 8 from j = i * 2) leaves i giv-free and the
+   second pass reverses it. The native y slot below &marker fits a pseudo
+   made by the second loop pass: y must be a giv of i still unreduced
+   after pass 1 and reduced in pass 2 (lifetime x 17 x benefit between the
+   two passes' insn counts), or i must keep a non-counting use; LE exit
+   tests do not reverse when the biv's initial value is not found (a label
+   between i = 0 and the loop), but no natural label sits there.
    Trials: the shared MenuCursor union emitted the same 0x5c8-byte body.
    summary pointer plus y += 16 (old draft): descending counter, 593.
    summary = &save->summary[i] plus y += 16: still descending, 588.
@@ -26,8 +38,18 @@
    declaration of y or i to the top or the end: unchanged (480 before the
    kind move). y = ++i * 16 as the loop step: descending, 588. kind moved
    with summary++ and y += 16: descending, 593. A fixed r4
-   index gave 544 but loses the native caller-save stores; rejected. No
-   device retained. */
+   index gave 544 but loses the native caller-save stores; rejected.
+   Session 2026-10-06 19:00: permuter best-1 (420) declaration order
+   list, djinn, save, status, cursor, counts: 466; kind = 1 set before
+   zero: 450 (kept). From the same candidate, register i, while forms of
+   the slot loop and first scan, (save->summary + i)->name and djinn =
+   NULL after redraw: each unchanged. summary++ with y = i; y *= 16 or
+   y = i * 2; y *= 8: 495 (consecutive-set giv, benefit negative). y +=
+   16 at the body end: reversed in pass 1, 593. English form plus an empty
+   asm input of i at the body end: ascending i in r6, y in r9, message
+   calls cross-jumped, 593; y = i * 16 step plus that barrier: 586; i * 16
+   in each call plus that barrier: 586. i = 0 moved before zero = 0: init
+   still found, reversed, 597. No device retained. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -85,11 +107,11 @@ void UiText_DrawString(void *text, void *win, s32 x, s32 y);
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
     struct UiWindow *list;
+    struct UiWindow *djinn;
     struct SaveWorkspace *save;
     struct UiWindow *status;
-    struct UiWindow *djinn;
-    struct UiWindow *counts;
     struct RenderOutput *cursor;
+    struct UiWindow *counts;
     s32 kind;
     s32 redraw;
     struct UiRenderWork *render;
@@ -157,6 +179,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
         }
     }
 
+    kind = 1;
     zero = 0;
     Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
     list = UiWindow_Create(1, 2, 28, 7, 2);
@@ -185,7 +208,6 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
         marker.anchor = RenderOutput_Create(tile, 0x40000000, (struct RenderInput *)list, -12, slot * 16 + 4);
         marker.anchor->active = 1;
     }
-    kind = 1;
     cursor = RenderResource_CreatePair(mode, list, 72, -24);
 
     while (1) {

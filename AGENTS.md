@@ -238,8 +238,17 @@ never a file or a function.
   file, as pret names its library files: pret's agbcc for MusicPlayer2000
   (`-O2`) and the flash library (`-O`, except two helper files whose bytes
   show `-O2`), and agbcc_arm for RAM-executed ARM code
-  (`-fomit-frame-pointer`). No other routing: never a per-file or
-  per-function compiler, option or flag for game code.
+  (`-fomit-frame-pointer`). ☀️'s own game ARM C, every file in
+  `CAMELOT_ARM_SOURCES`, compiles with `agbcc/camelot_arm` at that same ARM
+  setting: agbcc_arm's pinned gcc_arm with one change bootstrap makes, which
+  gives `arm_adjust_cost` GCC's own rule (agscc's 2000-07-31 `arm.c`
+  has it) that anti and output dependences cost nothing. The setting explains
+  the native ARM habits (no frame, saves from r5, no r11, loop and division
+  shapes); stock gcc_arm charges those dependences full latency and leaves the
+  load/store slots unfilled that the native fills. Over ☀️'s four game ARM
+  functions the rule moves differ 6→0, 124→104, 199→195 and 164→165
+  (Pascal's delegated decision, 2026-10-06; K3). No other routing: never a
+  per-file or per-function compiler, option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
   GCC's Thumb backend between the games, rebuilt as options in GCC's own

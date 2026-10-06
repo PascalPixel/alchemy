@@ -7,7 +7,7 @@ use crate::ld_map::{Map, Placed, ROM};
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm] [--rtl] [--show]
+const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm | --camelot-arm] [--rtl] [--show]
        alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--arm] [--rtl] [--show]
 Compiles DRAFT.c for --edition (default: the game's English edition) with
 the build's own compiler and options, then compares its instructions with
@@ -29,6 +29,9 @@ the full twelve-edition ROM comparison remains the matching authority.
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
 Study output stays in obj/drafts/arm-study; no build routing is changed.
+--camelot-arm compiles a ☀️ draft as the build compiles a file listed in
+CAMELOT_ARM_SOURCES: Camelot's ARM compiler (agbcc/camelot_arm) at the
+library ARM setting, assembled as ARM. Output stays in obj/drafts/camelot-arm.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in
 out/EDITION/obj/drafts/rtl/, named DRAFT.c.PASS, to find the pass where the
 draft's allocation or scheduling first leaves the listing's. The lreg and greg
@@ -44,6 +47,7 @@ struct Options {
     target: DecompTarget,
     show: bool,
     arm_study: bool,
+    camelot_arm: bool,
     rtl: bool,
     overlay: Option<String>,
     symbol: Option<String>,
@@ -56,6 +60,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut target = None;
     let mut show = false;
     let mut arm_study = false;
+    let mut camelot_arm = false;
     let mut rtl = false;
     let mut overlay = None;
     let mut symbol = None;
@@ -64,6 +69,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         match arguments[i].as_str() {
             "--show" => show = true,
             "--arm" => arm_study = true,
+            "--camelot-arm" => camelot_arm = true,
             "--rtl" => rtl = true,
             "--overlay" => {
                 i += 1;
@@ -124,7 +130,10 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         "tbs"
     });
     let target = target.unwrap_or(decomp_target(Some(&format!("{game}-en")))?);
-    Ok(Options { draft, addresses, game, target, show, arm_study, rtl, overlay, symbol })
+    if camelot_arm && (arm_study || game != "tbs") {
+        return Err("--camelot-arm compiles ☀️ game ARM C only, and not with --arm".into());
+    }
+    Ok(Options { draft, addresses, game, target, show, arm_study, camelot_arm, rtl, overlay, symbol })
 }
 
 fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
@@ -132,12 +141,18 @@ fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
     output.join(directory).join(format!("{stem}.o"))
 }
 
+fn camelot_arm_object(output: &Path, stem: &str) -> PathBuf {
+    let directory = "obj/drafts/camelot-arm";
+    output.join(directory).join(format!("{stem}.o"))
+}
+
 pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm_study: bool) -> Result<Vec<Vec<String>>, String> {
     if arm_study && family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
         return Err("--arm studies the pinned game compiler only; library compiler routes are unchanged".into());
     }
-    let mut steps = c_steps(target, draft, object)?;
-    steps.pop();
+    let steps = c_steps(target, draft, object)?;
+    let mut steps = with_draft_assembly(target, object, steps);
+    let assemble = steps.pop().expect("draft plan ends with assembly");
     if arm_study {
         // This command-local experiment never changes the production plan or routing.
         if steps.len() != 1 || steps[0].iter().filter(|flag| *flag == "-mthumb").count() != 1 {
@@ -149,6 +164,25 @@ pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm
             }
         }
     }
+    steps.push(assemble);
+    Ok(steps)
+}
+
+/// A ☀️ draft compiled as a CAMELOT_ARM_SOURCES file is compiled by the build.
+pub(crate) fn camelot_arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
+    if target.compiler != crate::compiler::routing::CompilerTarget::Tbs {
+        return Err("--camelot-arm compiles ☀️ game ARM C only".into());
+    }
+    if family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
+        return Err("--camelot-arm compiles game C only; library compiler routes are unchanged".into());
+    }
+    let steps = crate::build_rom::c_steps_routed(target, draft, object, Some(CompilerFamily::CamelotArm))?;
+    Ok(with_draft_assembly(target, object, steps))
+}
+
+/// Replaces the build's assembly step with the comparison's own assembler.
+fn with_draft_assembly(target: DecompTarget, object: &Path, mut steps: Vec<Vec<String>>) -> Vec<Vec<String>> {
+    steps.pop();
     let mut assemble = vec!["arm-none-eabi-as".to_string(), "-mcpu=arm7tdmi".into()];
     if target.compiler == crate::compiler::routing::CompilerTarget::Tbs {
         assemble.push("-mthumb-interwork".into());
@@ -158,7 +192,7 @@ pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm
         object.with_extension("s").to_string_lossy().into_owned(),
     ]);
     steps.push(assemble);
-    Ok(steps)
+    steps
 }
 
 fn study_assembly(step: &[String], root: &Path) -> Result<String, String> {
@@ -378,12 +412,20 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_default();
-    let object = draft_object(&root.join(target.output_dir), &stem, options.arm_study);
+    let object = if options.camelot_arm {
+        camelot_arm_object(&root.join(target.output_dir), &stem)
+    } else {
+        draft_object(&root.join(target.output_dir), &stem, options.arm_study)
+    };
     std::fs::create_dir_all(object.parent().unwrap()).map_err(|e| e.to_string())?;
     let draft = std::fs::canonicalize(&options.draft)
         .map_err(|e| format!("{}: {e}", options.draft.display()))?;
     refuse_perm_macros(&draft)?;
-    let mut steps = draft_steps(target, &draft, &object, options.arm_study)?;
+    let mut steps = if options.camelot_arm {
+        camelot_arm_steps(target, &draft, &object)?
+    } else {
+        draft_steps(target, &draft, &object, options.arm_study)?
+    };
     if options.rtl {
         steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
     }
@@ -441,8 +483,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             .join(target.output_dir)
             .join(format!("obj/recon/{}/raw/{address}.o", options.game));
         if !reference.exists() {
-            if options.arm_study {
-                return Err("--arm needs a separate listing object; ARM main-image scaffold comparison is unsupported".into());
+            if options.arm_study || options.camelot_arm {
+                return Err("--arm and --camelot-arm need a separate listing object; ARM main-image scaffold comparison is unsupported".into());
             }
             let wanted = options.symbol.as_deref().unwrap_or(address);
             let (tokens, name) = scaffold_reference(target, wanted)?;
@@ -556,6 +598,28 @@ mod tests {
         assert_eq!(draft_object(output, "0800a0f8", false), output.join("obj/drafts/0800a0f8.o"));
         assert_eq!(draft_object(output, "0800a0f8", true), output.join("obj/drafts/arm-study/0800a0f8.o"));
         assert!(ARM_STUDY_NOTICE.contains("Not an admitted build route"));
+    }
+
+    #[test]
+    fn camelot_arm_is_the_tbs_game_arm_route_and_assembles_as_arm() {
+        let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
+        assert!(parse(&args(&["recon/tbs/en/main/080158e8.c", "--camelot-arm"])).unwrap().camelot_arm);
+        assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--arm"])).is_err());
+        assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--game", "tla"])).is_err());
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let source = root().join("recon/tbs/en/main/08000000.c");
+        let object = root().join(target.output_dir).join("obj/drafts/camelot-arm/test.o");
+        let steps = camelot_arm_steps(target, &source, &object).unwrap();
+        assert_eq!(steps.len(), 3);
+        assert!(steps[1][0].ends_with("agbcc/camelot_arm"));
+        for flag in crate::compiler::routing::agbcc_arm_cflags() {
+            assert!(steps[1].contains(&flag), "{flag}");
+        }
+        assert!(!steps[2].iter().any(|flag| flag == "-mthumb"));
+        let library = root().join("games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C");
+        assert!(camelot_arm_steps(target, &library, &object).is_err());
+        let tla = decomp_target(Some("tla-en")).unwrap();
+        assert!(camelot_arm_steps(tla, &source, &object).is_err());
     }
 
     #[test]

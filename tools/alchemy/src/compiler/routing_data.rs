@@ -46,3 +46,7 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
 ];
 
 pub static AGBCC_ARM_SOURCES: &[&str] = &[];
+
+/// The Broken Seal's game ARM C: Camelot's ARM compiler (agbcc/camelot_arm,
+/// gcc_arm with GCC's anti/output dependence rule) at the library ARM setting.
+pub static CAMELOT_ARM_SOURCES: &[&str] = &[];

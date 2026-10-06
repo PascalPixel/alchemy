@@ -908,6 +908,17 @@ fn remove_scratch(paths: &[PathBuf]) {
 }
 
 pub(crate) fn c_steps(target: DecompTarget, source: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
+    c_steps_routed(target, source, object, None)
+}
+
+/// c_steps, optionally through a named compiler family instead of the source's
+/// own route; diff uses this for its analysis-only studies.
+pub(crate) fn c_steps_routed(
+    target: DecompTarget,
+    source: &Path,
+    object: &Path,
+    family: Option<crate::compiler::routing::CompilerFamily>,
+) -> Result<Vec<Vec<String>>, String> {
     let source_text = source.to_string_lossy().into_owned();
     let assembly = object.with_extension("s");
     let mut options = SourceToAssemblyPlanOptions::new(
@@ -921,11 +932,12 @@ pub(crate) fn c_steps(target: DecompTarget, source: &Path, object: &Path) -> Res
         format!("-I{}", c_import_directory(object)?.display()),
     ];
     options.preprocessed_output = Some(object.with_extension("i").to_string_lossy().into_owned());
+    options.family = family;
     let mut steps = source_to_assembly_plan(&options)?;
     steps.push(compiler_assembly_command(
         &assembly.to_string_lossy(),
         &object.to_string_lossy(),
-        is_arm(target.compiler, &source_text),
+        family.map_or_else(|| is_arm(target.compiler, &source_text), |family| family.is_arm()),
     ));
     Ok(steps)
 }

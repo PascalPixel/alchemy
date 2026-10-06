@@ -5,7 +5,7 @@ use crate::compiler::{
 use fs2::FileExt;
 use std::{fs, path::Path, process::Command};
 
-const FILES: [&str; 8] = [
+const FILES: [&str; 9] = [
     crate::compiler::bundle_data::SOURCE_RECORD,
     "xgcc",
     "cpp0",
@@ -14,6 +14,7 @@ const FILES: [&str; 8] = [
     "as",
     "agbcc/old_agbcc",
     "agbcc/agbcc_arm",
+    "agbcc/camelot_arm",
 ];
 const BINUTILS_SHA256: &str = "fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15";
 const MODERN_BINUTILS_VERSION: &str = "2.33.1";
@@ -222,6 +223,12 @@ fn build_from_sources() -> Result<(), String> {
             stage.path().join("agbcc/agbcc_arm"),
         )
         .map_err(|e| e.to_string())?;
+        build_camelot_arm(&toolchain, &log)?;
+        fs::copy(
+            toolchain.join("camelot_arm/gcc_arm/cc1"),
+            stage.path().join("agbcc/camelot_arm"),
+        )
+        .map_err(|e| e.to_string())?;
         fs::write(
             stage
                 .path()
@@ -231,6 +238,92 @@ fn build_from_sources() -> Result<(), String> {
         .map_err(|e| e.to_string())?;
         install(stage.path(), &bundle(), validate_installation)
     })
+}
+
+/// Camelot's ARM compiler for ☀️ game ARM C (AGENTS.md K1, K3): the pinned
+/// agbcc gcc_arm with one change in GCC's own style, the anti and output
+/// dependence rule of GCC's own arm_adjust_cost (agscc's 2000-07-31 arm.c).
+const CAMELOT_ARM_CHANGELOG: &str = "";
+const CAMELOT_ARM_ANCHOR: &str = "";
+const CAMELOT_ARM_RULE: &str = "";
+
+fn camelot_arm_source(arm_c: &[u8]) -> Result<Vec<u8>, String> {
+    let anchor = CAMELOT_ARM_ANCHOR.as_bytes();
+    let found: Vec<usize> = arm_c
+        .windows(anchor.len())
+        .enumerate()
+        .filter_map(|(at, window)| (window == anchor).then_some(at))
+        .collect();
+    let [at] = found[..] else {
+        return Err("gcc_arm arm_adjust_cost is not the pinned source".into());
+    };
+    let mut out = arm_c[..at].to_vec();
+    out.extend_from_slice(CAMELOT_ARM_RULE.as_bytes());
+    out.extend_from_slice(&arm_c[at + anchor.len()..]);
+    Ok(out)
+}
+
+fn build_camelot_arm(toolchain: &Path, log: &fs::File) -> Result<(), String> {
+    let work = toolchain.join("camelot_arm");
+    if work.exists() {
+        fs::remove_dir_all(&work).map_err(|e| e.to_string())?;
+    }
+    fs::create_dir_all(&work).map_err(|e| e.to_string())?;
+    let archive = toolchain.join("camelot_arm.tar");
+    execute(
+        Command::new("git")
+            .env_remove("GIT_DIR")
+            .env_remove("GIT_WORK_TREE")
+            .env_remove("GIT_INDEX_FILE")
+            .arg("-C")
+            .arg(root().join("agbcc"))
+            .args(["archive", "-o"])
+            .arg(&archive)
+            .args(["HEAD", "gcc_arm", "libiberty", "include", "config.if", "config.sub", "install.sh"]),
+        log,
+        "agbcc source export",
+    )?;
+    execute(
+        Command::new("tar").arg("-xf").arg(&archive).arg("-C").arg(&work),
+        log,
+        "agbcc source extraction",
+    )?;
+    let arm_c = work.join("gcc_arm/config/arm/arm.c");
+    let text = fs::read(&arm_c).map_err(|e| e.to_string())?;
+    fs::write(&arm_c, camelot_arm_source(&text)?).map_err(|e| e.to_string())?;
+    let changelog = work.join("gcc_arm/ChangeLog");
+    let mut entry = format!("Camelot ARM compiler (AGENTS.md K1)\n\n{CAMELOT_ARM_CHANGELOG}\n").into_bytes();
+    entry.extend(fs::read(&changelog).map_err(|e| e.to_string())?);
+    fs::write(&changelog, entry).map_err(|e| e.to_string())?;
+    execute(
+        Command::new("./configure")
+            .args(["--target=arm-elf", "--host=i386-linux-gnu"])
+            .current_dir(work.join("gcc_arm")),
+        log,
+        "camelot_arm configure",
+    )?;
+    execute(
+        Command::new("make").arg("cc1").current_dir(work.join("gcc_arm")),
+        log,
+        "camelot_arm build",
+    )
+}
+
+#[cfg(test)]
+mod camelot_arm_tests {
+    use super::*;
+    #[test]
+    fn camelot_arm_adds_only_the_upstream_dependence_rule_to_the_pinned_source() {
+        let pinned = fs::read(root().join("agbcc/gcc_arm/config/arm/arm.c")).unwrap();
+        let changed = camelot_arm_source(&pinned).unwrap();
+        let added = CAMELOT_ARM_RULE.len() - CAMELOT_ARM_ANCHOR.len();
+        assert_eq!(changed.len(), pinned.len() + added);
+        let upstream = fs::read_to_string(root().join("agscc/gcc/config/arm/arm.c")).unwrap();
+        assert!(upstream.contains(
+            "  if (REG_NOTE_KIND (link) == REG_DEP_ANTI\n      || REG_NOTE_KIND (link) == REG_DEP_OUTPUT)\n    return 0;"
+        ));
+        assert!(camelot_arm_source(&changed).is_err());
+    }
 }
 
 fn ensure_binutils() -> Result<(), String> {

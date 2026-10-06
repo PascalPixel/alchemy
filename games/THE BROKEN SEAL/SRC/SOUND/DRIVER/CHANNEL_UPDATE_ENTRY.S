@@ -9,7 +9,7 @@ SoundDriver_EnterMixer:
 	ldr	r2, [pc, #100]
 	ldr	r3, [r0, #0]
 	cmp	r2, r3
-	beq Func_0800070c
+	beq SoundDriver_StartMixFrame
 	bx	lr
 	.global MusicDriver_CallHook
 	.thumb_func
@@ -17,9 +17,9 @@ MusicDriver_CallHook:
 	bx	r3
 .syntax unified
 	.thumb
-	.global Func_0800070c
+	.global SoundDriver_StartMixFrame
 	.thumb_func
-Func_0800070c:
+SoundDriver_StartMixFrame:
 	push	{r5, r6, r7, lr}
 	mov	r1, r8
 	mov	r2, r9

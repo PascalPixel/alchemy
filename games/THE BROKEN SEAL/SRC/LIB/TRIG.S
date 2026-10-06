@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0800230c
+	.global Trig_SinOnAxis
 	.thumb_func
-Func_0800230c:
+Trig_SinOnAxis:
 	lsrs	r2, r0, #14
 	movs	r0, #1
 	ands	r0, r2
@@ -24,7 +24,7 @@ Trig_Sin:
 	adds	r0, #32
 	lsls	r1, r0, #18
 	lsrs	r1, r1, #24
-	beq.n	Func_0800230c
+	beq.n	Trig_SinOnAxis
 	lsrs	r2, r0, #15
 	bcc.n	.L_index
 	movs	r3, #128

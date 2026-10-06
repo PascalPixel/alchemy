@@ -1,19 +1,26 @@
 /* Draft: Japanese SaveMenu_SelectSlot, 2026-10-06. Native 0x5f8 bytes.
-   Thumb scaffold diff: 663 native instructions, 653 draft, common 418,
-   differ 480 (was 593). Japanese eligibility scans are independent; its
+   Thumb scaffold diff: 663 native instructions, 653 draft, common 421,
+   differ 474 (was 593). Japanese eligibility scans are independent; its
    cursor is a ShopCursor local and it does not install the international
    scheduler callbacks. The slot list now indexes save->summary[i] and sets
    y = i * 16: the counter stays ascending in r4 with the native caller-save
    stores and unmerged message calls, and marker sits above zero as native.
+   With kind declared before redraw, stamp, render, redraw, kind, cursor
+   and &marker take their native slots (16, 20, 24, 28, 32, 12).
    Remaining: native reduces y to its own stack giv (sp+8, the missing 4 of
-   the 64-byte frame versus 68), so locals shift by 4 and the loop/redraw
-   registers differ (redraw sp+24, kind sp+28, &marker sp+12, counts fp).
+   the 64-byte frame versus 68) and keeps a summary pointer at sp+36, so
+   djinn and status sit 4 lower and the loop registers differ. Native slot
+   order suggests a summary pointer declared between counts and cursor.
    Trials: the shared MenuCursor union emitted the same 0x5c8-byte body.
    summary pointer plus y += 16 (old draft): descending counter, 593.
    summary = &save->summary[i] plus y += 16: still descending, 588.
    summary pointer plus y = i * 16: 489. i * 16 written in each call: the
    counter descends again, 585. y = i << 4: 489. Declaring marker before
-   zero moves zero below marker as native, differ unchanged. A fixed r4
+   zero moves zero below marker as native, differ unchanged. kind declared
+   before redraw: 474. Adding that summary pointer, set from
+   &save->summary[i] each pass: 474; stepped with summary++: 495. Moving the
+   declaration of y or i to the top or the end: unchanged (480 before the
+   kind move). y = ++i * 16 as the loop step: descending, 588. A fixed r4
    index gave 544 but loses the native caller-save stores; rejected. No
    device retained. */
 #include "BATTLE.H"
@@ -78,6 +85,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     struct UiWindow *djinn;
     struct UiWindow *counts;
     struct RenderOutput *cursor;
+    s32 kind;
     s32 redraw;
     struct UiRenderWork *render;
     u32 stamp;
@@ -87,7 +95,6 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     s32 result;
     s32 i;
     s32 y;
-    s32 kind;
     s32 tile;
 
     work = Runtime_AllocateHeapBlock(55, 0xa70);

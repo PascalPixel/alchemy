@@ -98,7 +98,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
 
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position)
 {
-    if ((u32)(GetWorldMapCollision(position)- 5) <= 7U) {
+    if ((u32)(GetWorldMapCollision(position) - 5) <= 7U) {
         return 0;
     }
     return -1;

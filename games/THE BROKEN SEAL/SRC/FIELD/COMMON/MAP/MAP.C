@@ -240,21 +240,22 @@ s32 Map_LoadLayeredScene(s32 index)
 
 void Map_ApplyWorkOriginAndSpan(void)
 {
-    s32 first;
-    s32 third;
-    s32 second;
+    struct MapScrollWork *work = gMapWork[0];
+    s32 x;
+    s32 y;
+    s32 height;
     s32 *p;
 
-    p = ((struct MapScrollWork *)gMapWork[0])->origin;
-    first = 0;
-    second = 0;
-    third = 0;
+    p = work->origin;
+    x = 0;
+    height = 0;
+    y = 0;
     if (p != NULL) {
-        first = *p++;
-        second = *p++;
-        third = *p;
+        x = *p++;
+        height = *p++;
+        y = *p;
     }
-    Map_SetCameraCenter(first, (s32)((u32)third - (u32)second));
+    Map_SetCameraCenter(x, y - height);
     Map_UpdateLayerScroll();
 }
 

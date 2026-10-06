@@ -70,8 +70,8 @@ void Map_ShowWorldMap(s32 picture)
     graphics = Resource_GetTableEntry(resource);
     Dma_Set(graphics, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (448 / 4), REG_DMA3);
     BG_PLTT[0] = 0;
-    Resource_DecodeType01(graphics + 448, (void *)gMapCellBuffer);
-    Dma_Set((void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
+    Resource_DecodeType01(graphics + 448, gMapCellBuffer);
+    Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
     {
         /* FAKEMATCH: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
         s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;

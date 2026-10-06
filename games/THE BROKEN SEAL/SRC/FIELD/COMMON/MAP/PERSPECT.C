@@ -58,7 +58,7 @@ struct WorldCell {
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
 {
-    struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork[0];
+    struct PerspectiveWork *work = gMapWork[0];
     u32 *graphics = work->tiles;
     u16 *shown;
     u16 *buffer;
@@ -75,7 +75,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
     if (update == 0 && tile == *shown)
         return 0;
     *shown = tile;
-    buffer = (u16 *)Runtime_AllocateHeapBlock(14, 0x400);
+    buffer = Runtime_AllocateHeapBlock(14, 0x400);
     Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
 
     source = buffer;
@@ -127,7 +127,7 @@ s32 Map_InitializePerspectiveScene(void)
 
     REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
     Blend_SetDarkenTarget0(0);
-    work = (struct PerspectiveWork *)Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
+    work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
     fill = 0;
     Dma_Set(&fill, work, DMA_ENABLE32 | DMA_SRC_FIXED32 | DMA_32BIT | (sizeof(struct PerspectiveWork) / 4), REG_DMA3);
     work->view_x = 0;
@@ -170,7 +170,7 @@ s32 Map_InitializePerspectiveScene(void)
     } while (0);
 
     camera = Runtime_AllocateBlock(12, sizeof(struct BattleCamera));
-    tiles = (struct MapFrameWork *)Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
+    tiles = Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
     position = camera->pos;
     lines = tiles->pages;
     far_plane = 0x1fe0000;
@@ -204,7 +204,7 @@ s32 Map_InitializePerspectiveScene(void)
     /* FAKEMATCH: loop note orders the transform call's r1, routine, r0 */
     do {
         size = (s32)&Transform_UpdateVerticesSize;
-        Dma_Set((void *)Transform_UpdateVertices, (void *)Runtime_AllocateHeapBlock(46, size),
+        Dma_Set((void *)Transform_UpdateVertices, Runtime_AllocateHeapBlock(46, size),
                 DMA_ENABLE32 | DMA_32BIT | (size >> 2), REG_DMA3);
     } while (0);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
@@ -293,26 +293,26 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     volatile u32 fill;
 
     variant = 0;
-    buffer = (u8 *)Runtime_BumpAllocate(0x200);
-    state = (struct PerspectiveWork *)gMapWork[0];
+    buffer = Runtime_BumpAllocate(0x200);
+    state = gMapWork[0];
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;
     resources = WorldMap_GraphicsResources[variant];
     state->resources = resources;
     value = BG_PALETTE[0];
-    Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);
+    Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
     Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
     tiles = gBgTileBuffer;
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), tiles);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[1]), tiles);
     Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
     Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
     Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
     Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[5]), (void *)gMapLayerData);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
     fill = 0xf07ff07f;
     Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(5), DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
     cursor = (u32 *)BG_SCREEN_BLOCK(6);

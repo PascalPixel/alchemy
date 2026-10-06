@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 458 of 1276 (1282 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 446 of 1276 (1282 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -12,6 +12,7 @@
  * Trial (2026-10-06): row for the help line, apart from the loop's step: row takes r5 as native: 588 -> 568.
  * Trial (2026-10-06): the two stores to menu_busy after the loop through gWindowWork[0] directly, leaving 0 in sl as native: 568 -> 549.
  * Trial (2026-10-06): y = row * 8 computed before the help-line draw (permuter hint, as a temporary): the loop allocates as native: 549 -> 458.
+ * Trial (2026-10-06): j for the owner_y loop apart from the tile loop's i: the counter takes r2 as native: 458 -> 446. Cursor zeroed before anim, dirty, page and frame shares one zero everywhere (444), unlike native; page, frame, dirty, anim order gives 453.
  * Open (2026-10-06): 224 (the element mask, 7 refs over 174 insns, priority 804) outranks 0x8000 and the shared 0 (800 each) and takes r8; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Iwram_CopyWords' 332 and its address tie (4 refs over 90 insns) and 332 wins by pseudo number; native keeps the address in r5. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -87,6 +88,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
     s32 result;
     u32 attr;
     s32 i;
+    s32 j;
 
     state = gMenuWork;
     anim = 0;
@@ -99,8 +101,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
     cursor[0] = 0;
     cursor[1] = 0;
 
-    for (i = 3; i >= 0; i--) {
-        state->owner_y[i] = 0xc8;
+    for (j = 3; j >= 0; j--) {
+        state->owner_y[j] = 0xc8;
     }
     state->owner_x[state->selected_column[1]] = 0x78;
     state->owner_y[state->selected_column[1]] = 0x20;

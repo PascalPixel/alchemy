@@ -707,8 +707,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/HBLANK.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/PARTICLE_STREAM_MODES.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000de338)
-    "*/recon/tbs/ja/rom.o"(.rom.000de404)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SCENEFX.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLAME_BLADE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)

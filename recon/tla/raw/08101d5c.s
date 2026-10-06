@@ -60,7 +60,7 @@ Func_08101d5c:
 	movs r2, #0
 	movs r3, #28
 	str r5, [sp, #4]
-	bl Func_08101d34
+	bl UiPanel_SetRectPalette
 	movs r1, #9
 	movs r2, #8
 	movs r3, #10

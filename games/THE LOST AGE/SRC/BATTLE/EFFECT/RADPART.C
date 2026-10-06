@@ -1,15 +1,8 @@
 #include "TYPES.H"
-#include "PARTY_STATE.H"
-#include "FIXED_MATH.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-extern u32 gFrameTick;
-extern u32 BattleFx_PulseScales[];
-
-void Object_Destroy();
-
-void BattleFx_AdvanceAngleWithRamp(void *obj)
+void BattleFx_SpinUpAngle(void *obj)
 {
     u32 step;
 

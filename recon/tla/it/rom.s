@@ -604,12 +604,6 @@ ResourceObject_Create:
 	.incbin "baserom.gba", 0x00022d40, 0x00000150
 	.section .rom.00022f22, "ax"
 	.incbin "baserom.gba", 0x00022f22, 0x00000002
-	.section .rom.00023088, "ax"
-	.global Func_08023088
-	.type Func_08023088, %function
-	.thumb_func
-Func_08023088:
-	.incbin "baserom.gba", 0x00023088, 0x00000058
 	.section .rom.000230e0, "ax"
 	.global Func_080230e0
 	.type Func_080230e0, %function
@@ -1354,9 +1348,6 @@ UiTextResource_SetPosition:
 	.thumb_func
 Menu_RunTopSelection:
 	.incbin "baserom.gba", 0x0003f7d0, 0x00000098
-	.section .rom.0003f884, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0003f884, 0x00000040
 	.section .rom.0003f8c4, "ax"
 	.global Func_0803f86c
 	.type Func_0803f86c, %function
@@ -3858,7 +3849,9 @@ Func_080d73e0:
 Func_080c9dc8:
 	.incbin "baserom.gba", 0x000d777c, 0x000002d0
 	.section .rom.000d7af8, "ax"
-	.incbin "baserom.gba", 0x000d7af8, 0x00000c08
+	.incbin "baserom.gba", 0x000d7af8, 0x00000264
+	.section .rom.000d7d84, "ax"
+	.incbin "baserom.gba", 0x000d7d84, 0x0000097c
 	.section .rom.000d8734, "ax"
 	.incbin "baserom.gba", 0x000d8734, 0x0000023c
 	.section .rom.000d8970, "ax"
@@ -4529,7 +4522,15 @@ Func_08100e7c:
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x00101be4, 0x00000148
 	.section .rom.00101d60, "ax"
-	.incbin "baserom.gba", 0x00101d60, 0x00002e0c
+	.incbin "baserom.gba", 0x00101d60, 0x0000003c
+	.section .rom.00101d9c, "ax"
+	.global Func_08101c7c
+	.type Func_08101c7c, %function
+	.thumb_func
+Func_08101c7c:
+	.incbin "baserom.gba", 0x00101d9c, 0x000000b8
+	.section .rom.00101e7c, "ax"
+	.incbin "baserom.gba", 0x00101e7c, 0x00002cf0
 	.section .rom.00104c6a, "ax"
 	.incbin "baserom.gba", 0x00104c6a, 0x00000002
 	.section .rom.00104c6c, "ax"
@@ -4905,12 +4906,6 @@ Func_0811b75c:
 	.thumb_func
 Func_0811bd50:
 	.incbin "baserom.gba", 0x0011bd68, 0x00000060
-	.section .rom.0011bdf4, "ax"
-	.global Camera_InitDefaultTransform
-	.type Camera_InitDefaultTransform, %function
-	.thumb_func
-Camera_InitDefaultTransform:
-	.incbin "baserom.gba", 0x0011bdf4, 0x00000060
 	.section .rom.0011bf30, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011bf30, 0x00000088

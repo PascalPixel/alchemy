@@ -32,7 +32,7 @@ Object_CommitPosition:
 	.global Map_GetScreenRelativePositionFar
 	.thumb_func
 Map_GetScreenRelativePositionFar:
-	overlay_veneer Func_08023088
+	overlay_veneer Map_GetScreenRelativePosition
 	.global WorldMap_UpdateViewFar
 	.thumb_func
 WorldMap_UpdateViewFar:

@@ -320,7 +320,7 @@ Func_08102008:
 	movs r2, #2
 	str r3, [sp, #4]
 	str r5, [sp, #0]
-	bl Func_08101d34
+	bl UiPanel_SetRectPalette
 	ldr r0, [sp, #80]
 	movs r1, #142
 	lsls r1, r1, #2

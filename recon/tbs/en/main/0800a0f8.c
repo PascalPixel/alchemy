@@ -6,6 +6,35 @@
    r1, not r2, so no ldm r7, {r2, r4} and the second loop smull copies its
    low word; (s16)t read back by ldrsh where the listing extends it into lr
    at once.
+   camelot_arm trials (2026-10-06, session 4), from 48:
+   - The k load's place is an alias conflict, not an option: needs no
+     -fno-strict-aliasing. Read k in alias set 0 (union Word { s32 i; };
+     k = ((union Word *)center)->i) and, under the current setting, the
+     pool and k loads stay after both u stores (strh v->v, strh out->b)
+     as listed, and the else loop still matches. On the session 3 form
+     (block-local loop x; x = to->x - from->x; z = to->z - from->z;
+     a = (s16)t before out->a = v->u = t; a <<= 8; a *= k): 57, and the
+     first loop then has the listing's order; only registers differ.
+     With b = ((s16)u << 8) * -k moved before a <<= 8 (or before v->dx):
+     54 and draft 157, the ldm r7 as listed, but x in r0 for r2, the
+     first smull's low word r2 for r1, a in ip for lr, b in lr for ip, k
+     in r3 for r0, and the prologue's half in r2 for r1. On this draft
+     as it stands (out->a read back by ldrsh after the k load): 96.
+   - That 54 is stable under z read first, b declared before a, k
+     block-local, -k * ((s16)u << 8), k * a: all 54. A second FixedMul
+     tying RdHi to b ("=&r", "=r", "r", "1") for u's smull: x stays in
+     r0 and is copied to r2 (mov r2, r0): 59; on the 57 form: 56.
+   - The other side instead: out's a, unk2, b, unk6 as s32 : 16 bitfields
+     (bitfields take their declared type's alias set) or out through a
+     union: 63; v's u, v as s32 : 16 too: the else loop's ldrsh of v->u
+     then waits for the str of out->x, which the listing's does not, so
+     v->u and v->v are not read in int's alias set. What fits the listing
+     is a k load that conflicts with the short stores of v and out alike,
+     as an alias-set-0 load does; whatever Camelot's declaration of k's
+     source was, it is not yet known, and the union is a FAKEMATCH
+     device until it is.
+   - Union k on other forms: prologue x = to->x; z = to->z; ...: 61;
+     no block-local x: 71; z block-local too: 71; a = (a << 8) * k: 104.
    camelot_arm trials (2026-10-06, session 3), from 51:
    - One half = 0x8000 in a block around ox and oz, as the listing's one
      mov r1, #32768 feeds both smulls: 51 to 48 (k reused for it: 104).

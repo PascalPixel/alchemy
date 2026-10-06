@@ -1,6 +1,15 @@
 /* 0800a494: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
-   alchemy diff --camelot-arm: listing 307, draft 292, common 219, differ
-   161 (stock agbcc_arm 199). 195 to 172 (2026-10-06, session 2): the
+   alchemy diff --camelot-arm: listing 307, draft 289, common 225, differ
+   146 (stock agbcc_arm 199). 161 to 146 (2026-10-06, session 4): the
+   command skip loop as goto test; do { cursor++; test: n = cursor; cmd =
+   word[n]; } while (cmd > 63), with s16 n: the listing's b to the test,
+   no copied exit test, obj->script reloaded after each strh of the
+   cursor, ldrsh r2 before ldr r3 and cmd in r3, all as listed. The
+   same goto form with the index inline: 162; cmd reused for the index:
+   152; the index unextended: 315; for (;;) with n and a break, while
+   with n in a comma expression, or for (; test; cursor++): 161 to 162,
+   each with the exit test copied above the loop and obj->script
+   hoisted. 195 to 172 (2026-10-06, session 2): the
    smull's constraints as two alternatives, the high word tied to the
    second input or early-clobbered ("=&r,&r"(lo), "=r,&r"(hi), "r,r"(a),
    "1,r"(b)), as Transform_UpdateVertices takes them. 172 to 161: case
@@ -73,6 +82,7 @@ void Object_UpdateAll(void)
     s32 ground;
     s32 reached;
     u32 cmd;
+    s16 n;
 
     obj = gObjectSlots;
     for (i = 0; i < 8; i++, obj++) {
@@ -89,8 +99,13 @@ void Object_UpdateAll(void)
             obj->wait--;
         } else {
             do {
-                while ((cmd = (u32)obj->script->word[(s16)obj->script_cursor]) > 63)
+                goto test;
+                do {
                     obj->script_cursor++;
+                test:
+                    n = obj->script_cursor;
+                    cmd = (u32)obj->script->word[n];
+                } while (cmd > 63);
             } while (ScriptObject_CommandTable[cmd](obj) != 0);
             if (obj->script == NULL)
                 continue;

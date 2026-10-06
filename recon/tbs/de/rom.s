@@ -5,9 +5,7 @@ Rom_Start:
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
 	.section .rom.00007350, "ax"
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x00007350, 0x00000356
+	.incbin "baserom.gba", 0x00007388, 0x0000031e
 	.global Math_ArcTanTable
 Math_ArcTanTable:
 	.incbin "baserom.gba", 0x000076a6, 0x00000106

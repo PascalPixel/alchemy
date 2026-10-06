@@ -42,3 +42,28 @@ IwramIrqKeypad:
 	.4byte 0
 IwramIrqGamePak:
 	.4byte 0
+
+	.section .rodata.irq_head,"a",%progbits
+	.balign 4
+	.global Runtime_IrqHandlers
+Runtime_IrqHandlers:
+	.rept 10
+	.4byte Runtime_IgnoreInterrupt
+	.endr
+	.ifndef TBS_EDITION_EN
+	.if EDITION_INTERNATIONAL
+	.section .text.irq_halt,"ax",%progbits
+	.arm
+.L_irq_halt:
+	svc	0x00030000
+	b	.L_irq_halt
+	.else
+	.section .rodata.irq_middle,"a",%progbits
+	.4byte Runtime_IgnoreInterrupt, Runtime_IgnoreInterrupt
+	.endif
+	.else
+	.section .rodata.irq_middle,"a",%progbits
+	.4byte Runtime_IgnoreInterrupt, Runtime_IgnoreInterrupt
+	.endif
+	.section .rodata.irq_tail,"a",%progbits
+	.4byte Input_HandleKeyInterrupt, Runtime_IgnoreInterrupt

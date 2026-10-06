@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 2008, differ 194.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2107, common 2030, differ 152.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -54,7 +54,7 @@
    as when reload spills two pseudos from one hard register; the draft
    gives ok r8. Reusing i as the A handler's flag gives 249, in both
    handlers 1264 (the frame slots shift); a separate flag per handler 437.
-   Without the column pointer the draft falls back to 1308. The constants
+   Without the column pointer the draft fell back to 1308. The constants
    4 and 1 in the cursor-move blocks take r6 and r5 where the native has
    r5 and r6. A third permuter run from 261 (7 min, 2 jobs) found only the
    same sel = -1 and savedY moves again (238), and ids[i] + j for ids[i][j].
@@ -64,6 +64,14 @@
    the clear loop reuses r2, so the loop-end copy reloads status into r5;
    then mode is reloaded into r7 across the list draw and the count
    loop's i++ is reloaded once. Assigned before sel = -1: 261.
+   The column pointer device is gone (194 -> 152, no devices): the native
+   balance loop keeps two status induction pointers, one for the 7, 0 and
+   3 stores and one for the |= 4 store, and reloads state for the column
+   test. The 7, 0 and 3 stores go through buf and the flag store through
+   status, reading buf: status[i] = buf[i] | 4, which CSE folds to 7 while
+   the loop keeps its own pointer. Device removed with all stores through
+   status: 1325; buf for 7 and 0 only, status[i] |= 4: 168; buf for 3 too
+   with status[i] |= 4 or = 7: 1318-1360; buf[i] = 7 alone: 215.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -167,17 +175,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     } else {
         Djinn_MarkBalancedEntries((s8 *)balanced, state->selected_column[0]);
         for (i = 0; i < state->owner_count; i++) {
-            /* FAKEMATCH: a block-local column pointer reorders global
-               allocation throughout the function (1493 -> 596) */
-            s8 *column = state->selected_column;
-            if (i == column[0]) {
-                status[i] = 7;
+            if (i == state->selected_column[0]) {
+                buf[i] = 7;
             } else if (balanced[i] != 0) {
-                status[i] = 0;
+                buf[i] = 0;
             } else {
-                status[i] = 3;
+                buf[i] = 3;
                 if (lists->list.counts[i] == 0)
-                    status[i] |= 4;
+                    status[i] = buf[i] | 4;
             }
         }
     }

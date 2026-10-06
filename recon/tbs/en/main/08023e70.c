@@ -2,6 +2,7 @@
 /* MenuCell now includes its automatic-mode word at 0xe0; remove the unused duplicate tail word so selected remains at 0xe4 and total size at 0x104. */
 /* Shared PartyStatusWindow from the verified STATUS.C corpus leaves differ 145. Further search trials: combined initialization, is_used as index, while-loop and memory clobber remain 145; do-while 166; index-first initialization 155; initialization before the clear call 148. Redraw memory/output constraints range 447-722. Clobbering r1 reaches 120 but emits mov-zero rather than the native reload, so it was removed. */
 /* Stubborn (2026-10-06): CSE seeds the native search index from redraw's spilled zero (ldr r1, [sp, #28]); the draft keeps a fresh zero, and the reload rotation after the 0x8ef branch follows from it. */
+/* Trials (2026-10-06, second pass): pos as cnt + tbl or as an integer sum 145 (same code); k < 8 145; function-scope j as the index 145 (it gets its own movs r7, #0); redraw = 0 moved before the sub_sel block with k = redraw 155 (CSE still folds it through the skipped block). The -da dumps keep k = (const_int 0) through cse, gcse, loop and combine, and reload_cse then drops it because r1 already holds is_used's zero; the native needs k = (reg redraw) alive at reload. The r1/r2/r3 swaps on the later 0x666 and 0x45f constant reloads follow from the reload register rotation that one missing reload shifts. */
 
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"

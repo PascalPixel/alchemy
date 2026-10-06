@@ -626,8 +626,7 @@ void VinasuChojo_RunActorTransition(void)
     ObjectTable_Snapshot();
     Event_SetDestination((s32)&SceneId_WorldMap, 91);
     {
-        /* FAKEMATCH: storing 0x7fff directly reuses the colour's earlier pool entry and moves the literal pool; measured 2026-10-04. */
-        s32 white = 0x7fff;
+        u16 white = 0x7fff;
 
         PLTT_BACKDROP = white;
     }

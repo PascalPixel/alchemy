@@ -1143,16 +1143,13 @@ after_power:
             s32 heal;
 #if GAME_TLA
             s32 maxu;
-            s32 effect;
 
-            effect = action->effect;
             heal = target->pp;
             old = *(u16 *)&target->pp;
-            if (effect == 77) {
-                maxv = *(s16 *)&target->max_pp;
+            if (action->effect == 77) {
+                heal += (s16)(target->max_pp / 10);
                 maxu = *(u16 *)&target->max_pp;
-                heal += (s16)(maxv / 10);
-            } else if (effect == 78) {
+            } else if (action->effect == 78) {
                 maxv = target->max_pp;
                 maxu = *(u16 *)&target->max_pp;
                 heal += maxv * 3 / 10;

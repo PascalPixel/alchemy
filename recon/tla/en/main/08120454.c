@@ -10,7 +10,12 @@
  * case of its own in the rate switch (rate 12 set before the test, as the
  * listing does) to 510, the HP drain halving dealt in apwr (declared for
  * the whole function under GAME_TLA, so it keeps r7 as in the listing) to
- * 428 (draft 3450, common 3236); ☀️ stays exact. Tried and worse: a while loop
+ * 428, the PP restore reading action->effect directly (the listing loads
+ * it again) and adding max_pp / 10 before reading maxu in case 77 to 424
+ * (draft 3454, common 3240); ☀️ stays exact. The listing reads maxu before
+ * the division call and shares the add after it with 78 and 7%: reading
+ * maxu first instead merges both loads (723); direct reads with maxv as
+ * before give 435. Tried and worse: a while loop
  * for the immobilize scan (832), tmp or one shared amt for the drains (708,
  * 716), while loops for the affinity scans, plain hp/max_hp reads in the
  * heal (557: one ldrh shared by both), the heal branches reading through

@@ -297,7 +297,7 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     struct FieldSprite *spr;
     u8 *buf;
     u32 i;
-    s32 zero;
+    u8 zero;
     s32 z;
     u8 *flag;
 

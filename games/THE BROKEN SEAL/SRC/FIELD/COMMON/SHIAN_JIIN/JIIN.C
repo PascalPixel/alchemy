@@ -456,7 +456,7 @@ void FieldScene_RunDescentBurst(void)
     struct FieldActor *actor = Object_GetById(19);
     u32 i = 0;
     s32 step = 8;
-    s32 zero;
+    u8 zero;
     do {
         Engine_TaskWait(step);
         actor->z.fixed += 0xffff0000;

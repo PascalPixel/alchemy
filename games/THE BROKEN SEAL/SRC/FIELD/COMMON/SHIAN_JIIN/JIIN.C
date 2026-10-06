@@ -1394,7 +1394,7 @@ void FieldScene_RunScene39eSequenceA(void)
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_ActorSetSpriteFlags(record, 0);
-    Scheduler_RemoveCallbackFar(base5_200a5b9);
+    Scheduler_RemoveCallback(base5_200a5b9);
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(3);
     Engine_EventEnd();

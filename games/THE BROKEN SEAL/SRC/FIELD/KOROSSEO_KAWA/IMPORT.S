@@ -17,10 +17,7 @@ Scheduler_AddOrUpdateCallback:
 	.global Engine_TaskRemoveCallback
 	.thumb_func
 Engine_TaskRemoveCallback:
-	.global Scheduler_RemoveCallbackFar
-	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
 Engine_RandomNext:
@@ -33,10 +30,10 @@ Math_Atan2:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	.global Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_AllocateBlock
 	.thumb_func
 Runtime_AllocateBlock:
@@ -88,10 +85,10 @@ Runtime_PushSlotEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global ResourceMetadata_ClearRecordFar
+	.global ResourceMetadata_ClearRecord
 	.thumb_func
-ResourceMetadata_ClearRecordFar:
-	overlay_veneer Func_08009060
+ResourceMetadata_ClearRecord:
+	overlay_veneer ResourceMetadata_ClearRecordFar
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -100,10 +97,10 @@ Object_SetMode:
 	.thumb_func
 Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Object_CreateFar
+	.global Engine_ObjectCreate
 	.thumb_func
-Object_CreateFar:
-	overlay_veneer Func_080090c8
+Engine_ObjectCreate:
+	overlay_veneer Object_CreateFar
 	.global ObjectDispatch_InitFromTable4WithArgument
 	.thumb_func
 ObjectDispatch_InitFromTable4WithArgument:
@@ -127,10 +124,10 @@ Object_SetMoveTarget:
 	.thumb_func
 Script_WaitForEventTimeout:
 	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Map_GetTerrainHeightFar
+	.global Map_GetTerrainHeight
 	.thumb_func
-Map_GetTerrainHeightFar:
-	overlay_veneer Func_080091a8
+Map_GetTerrainHeight:
+	overlay_veneer Map_GetTerrainHeightFar
 	.global Engine_MapCopyCells
 	.thumb_func
 Engine_MapCopyCells:
@@ -182,10 +179,10 @@ Owner_GetState:
 	.thumb_func
 Inventory_AddItem:
 	overlay_veneer Inventory_AddItemFar
-	.global Inventory_EquipFar
+	.global Inventory_Equip
 	.thumb_func
-Inventory_EquipFar:
-	overlay_veneer Func_08077050
+Inventory_Equip:
+	overlay_veneer Inventory_EquipFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:
@@ -194,21 +191,18 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_GetByteFar
+	.global GameFlag_GetByte
 	.thumb_func
-GameFlag_GetByteFar:
-	overlay_veneer Func_080770e0
+GameFlag_GetByte:
+	overlay_veneer GameFlag_GetByteFar
 	.global GameFlag_SetByte
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Party_CountActiveOwnersFar
-	.thumb_func
-Party_CountActiveOwnersFar:
 	.global GetPartyMemberCount
 	.thumb_func
 GetPartyMemberCount:
-	overlay_veneer Func_08077148
+	overlay_veneer Party_CountActiveOwnersFar
 	.global Engine_PartyAddActiveOwner
 	.thumb_func
 Engine_PartyAddActiveOwner:
@@ -246,13 +240,10 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
 	.global GetPartyInteractionRecord
 	.thumb_func
 GetPartyInteractionRecord:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:

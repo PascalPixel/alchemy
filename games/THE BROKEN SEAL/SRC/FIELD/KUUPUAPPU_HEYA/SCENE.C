@@ -45,13 +45,11 @@ void Ui_SetBank15PaletteAndClearRenderMode();
 void Map_SetViewBounds();
 u8 *Owner_GetState(s32);
 void Djinn_Transfer(s32, s32, s32, s32);
-u8 *Object_CreateFar(s32);
+
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-
-
 
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
@@ -196,7 +194,6 @@ static __inline__ void bump_halfword(s32 off, s32 amount)
     *slot = next;
 }
 
-
 struct Stop {
     u8 id;
     u8 pos;
@@ -222,7 +219,6 @@ struct Rec_383b {
     u8 pad3c[4];
     s32 f64;
 };
-
 
 void SceneDialogue_RunActor10Line(void)
 {
@@ -2302,7 +2298,7 @@ void OverlayObject_ConfigureObject22WithResource17(s32 a)
     s32 m;
 
     z = 0;
-    o = Object_CreateFar(22);
+    o = ((u8 *(*)(s32))Engine_ObjectCreate)(22);
     if (o != 0) {
         q = (u8 *)((struct FieldActor *)o)->sprite;
         p = q + 38;

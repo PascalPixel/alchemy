@@ -58,10 +58,10 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Map_GetTerrainHeightFar
+	.global Map_GetTerrainHeight
 	.thumb_func
-Map_GetTerrainHeightFar:
-	overlay_veneer Func_080091a8
+Map_GetTerrainHeight:
+	overlay_veneer Map_GetTerrainHeightFar
 	.global Engine_MapCopyCells
 	.thumb_func
 Engine_MapCopyCells:

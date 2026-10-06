@@ -72,10 +72,10 @@ Engine_MapAnimateCells:
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Map_GetTerrainHeightFar
+	.global Map_GetTerrainHeight
 	.thumb_func
-Map_GetTerrainHeightFar:
-	overlay_veneer Func_080091a8
+Map_GetTerrainHeight:
+	overlay_veneer Map_GetTerrainHeightFar
 	.global GetMapCellCollision
 	.thumb_func
 GetMapCellCollision:

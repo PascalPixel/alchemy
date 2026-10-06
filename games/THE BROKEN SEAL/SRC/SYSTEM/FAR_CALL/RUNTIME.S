@@ -13,9 +13,6 @@ Scheduler_AddOrUpdateCallbackFar:
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
-	.global Func_080000d8
-	.thumb_func
-Func_080000d8:
 	overlay_veneer Scheduler_RemoveCallback
 	overlay_veneer Scheduler_EnableCallbacks
 	overlay_veneer Scheduler_DisableCallbacks
@@ -59,9 +56,6 @@ Runtime_SetIrqHandlerFar:
 	.global Runtime_AllocateHeapBlockFar
 	.thumb_func
 Runtime_AllocateHeapBlockFar:
-	.global Func_08000140
-	.thumb_func
-Func_08000140:
 	overlay_veneer Runtime_AllocateHeapBlock
 	.global Runtime_AllocateBlockFar
 	.thumb_func

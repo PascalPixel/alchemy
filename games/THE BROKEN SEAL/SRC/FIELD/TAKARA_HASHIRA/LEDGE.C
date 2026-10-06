@@ -37,7 +37,7 @@ struct MapState {
     struct MapLayer layers[1];
 };
 
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 
 
@@ -79,7 +79,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
     found = 0;
     object = found;
     Engine_ActorSetSpriteFlags(actor, found);
-    height = Map_GetTerrainHeightFar(2, actor->x.fixed, actor->z.fixed);
+    height = Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed);
     level = height / 0x100000;
     rows = level;
     if (level < 0) {
@@ -87,7 +87,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
     }
     rows++;
     for (row = 0; row <= rows; row++) {
-        top = Map_GetTerrainHeightFar(actor->terrain_id, actor->x.fixed, (row << 20) + actor->z.fixed);
+        top = Map_GetTerrainHeight(actor->terrain_id, actor->x.fixed, (row << 20) + actor->z.fixed);
         top /= 0x100000;
         if (level < top) {
             x = ((actor->x.fixed >> 20) << 20) + 0x80000;

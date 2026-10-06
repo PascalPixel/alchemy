@@ -70,9 +70,6 @@ Func_08077048:
 	.global Inventory_EquipFar
 	.thumb_func
 Inventory_EquipFar:
-	.global Func_08077050
-	.thumb_func
-Func_08077050:
 	overlay_veneer Inventory_Equip
 	.global Inventory_RemoveFar
 	.thumb_func
@@ -137,11 +134,8 @@ GameFlag_ClearBitFar:
 	overlay_veneer GameFlag_ClearBit
 	overlay_veneer GameFlag_Toggle
 	.global GameFlag_GetByteFar
-	.global Func_080770e0
 	.thumb_func
 GameFlag_GetByteFar:
-	.thumb_func
-Func_080770e0:
 	overlay_veneer GameFlag_GetByte
 	.global GameFlag_SetByteFar
 	.thumb_func
@@ -176,9 +170,6 @@ BattleUnit_AssignFar:
 	.global Party_CountActiveOwnersFar
 	.thumb_func
 Party_CountActiveOwnersFar:
-	.global Func_08077148
-	.thumb_func
-Func_08077148:
 	overlay_veneer Party_CountActiveOwners
 	.global Party_AddActiveOwnerFar
 	.thumb_func

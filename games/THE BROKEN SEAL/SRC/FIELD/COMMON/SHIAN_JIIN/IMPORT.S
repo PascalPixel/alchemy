@@ -14,10 +14,10 @@ Engine_TaskWait:
 	.thumb_func
 Engine_ScheduleCallbackFar:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
 Engine_RandomNext:

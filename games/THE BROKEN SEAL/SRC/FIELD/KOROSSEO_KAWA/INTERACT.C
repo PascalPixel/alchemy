@@ -15,9 +15,8 @@
 #include "KAWA.H"
 #include "text/MSG_IDS.H"
 
-#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
-#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
 
+#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
 
 typedef struct Ctl {
     s16 f0;
@@ -71,7 +70,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 void Battle_ResetEffectCounter(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
 
-s32 Party_CountActiveOwnersFar();
 void Party_RemoveActiveOwner();
 void Party_AddActiveOwner();
 void UiWork_PushValueSlot();
@@ -200,7 +198,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     p9 = rec->x.part.pixel;
     p11 = rec->z.part.pixel;
     if (mode != 3) {
-        count = Party_CountActiveOwnersFar();
+        count = GetPartyMemberCount();
         for (i = 0; i < count; i++) {
             buf[i] = Data_02000240[504 + i];
         }
@@ -293,7 +291,7 @@ void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
     Inventory_AddItem(a, b);
     for (i = 0; i <= 14; i++) {
         if (t->inventory[i] == b) {
-            Inventory_EquipFar(a, i);
+            Inventory_Equip(a, i);
         }
     }
 }

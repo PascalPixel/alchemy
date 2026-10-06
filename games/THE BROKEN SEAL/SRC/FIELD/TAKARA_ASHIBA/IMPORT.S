@@ -13,18 +13,18 @@ Engine_TaskWait:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global ArcTan2
 	.thumb_func
 ArcTan2:
 	overlay_veneer ArcTan2Far
-	.global Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func
 Runtime_ReleaseHeapBlock:
@@ -33,10 +33,10 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 VramBlock_LoadCached:
 	overlay_veneer VramBlock_LoadCachedFar
-	.global ResourceMetadata_ClearRecordFar
+	.global ResourceMetadata_ClearRecord
 	.thumb_func
-ResourceMetadata_ClearRecordFar:
-	overlay_veneer Func_08009060
+ResourceMetadata_ClearRecord:
+	overlay_veneer ResourceMetadata_ClearRecordFar
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -137,13 +137,7 @@ Engine_PartyGiveItem:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func
 ObjectMotion_SetSpeedParameters:

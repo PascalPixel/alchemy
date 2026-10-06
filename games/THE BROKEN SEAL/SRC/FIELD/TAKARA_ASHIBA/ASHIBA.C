@@ -47,9 +47,6 @@ static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
     *field = step;
 }
 
-
-
-
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 
 s32 PartyInventory_FindOwnerFar();
@@ -76,7 +73,6 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
     Object_GetById(8)->y.fixed = 0x200000;
 }
 
-void Scheduler_RemoveCallbackFar();
 void TakaraAshiba_DispatchByActorEightColumn();
 
 void TakaraAshiba_UpdateBlockRects(void);
@@ -909,7 +905,7 @@ void TakaraAshiba_ReleaseActorNinePlatform(void)
     u32 i;
     s32 record;
 
-    Scheduler_RemoveCallbackFar((s32)ActorPresentation_PlaceActorFourteenOnActorNine);
+    Scheduler_RemoveCallback((s32)ActorPresentation_PlaceActorFourteenOnActorNine);
     Actor_SetPosition(14, 0, 0);
     if (GameFlag_IsSet(0x207) != 0) {
         Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);

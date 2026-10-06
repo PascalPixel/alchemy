@@ -147,13 +147,11 @@ extern const struct SceneEntrance gKareiMachiEntrances5[];
 extern const struct SceneEntrance gKareiMachiEntrances6[];
 extern const struct SceneEntrance gKareiMachiEntrancesOther[];
 
-
 extern const struct ScenePlacement gKareiMachiPlacements1[];
 extern const struct ScenePlacement gKareiMachiPlacements2[];
 extern const struct ScenePlacement gKareiMachiPlacements3[];
 extern const struct ScenePlacement gKareiMachiPlacements6[];
 extern const struct ScenePlacement gKareiMachiPlacementsOther[];
-
 
 extern const struct SceneEvent gKareiMachiEvents1[];
 extern const struct SceneEvent gKareiMachiEvents2[];
@@ -163,7 +161,6 @@ extern const struct SceneEvent gKareiMachiEvents5[];
 extern const struct SceneEvent gKareiMachiEvents6[];
 extern const struct SceneEvent gKareiMachiEventsOther[];
 
-
 struct DoorCells {
     const u16 *steps;
     u16 x;
@@ -171,8 +168,6 @@ struct DoorCells {
 };
 
 extern struct DoorCells KareiMachi_DoorCells[];
-
-struct FieldActor *Object_GetByIdFar(s32 actor);
 
 void KareiMachi_AlternateDance();
 void Event_CallWithLastActiveObjectId();
@@ -198,7 +193,6 @@ struct SpriteBits {
     u8 b9_hi : 4;
 };
 
-
 union GameStateRows {
     s16 halves[512][1];
 };
@@ -208,7 +202,6 @@ void BattleFx_StartFadeOverlay();
 void BattleFx_SetQueuedSoundAndPlay();
 
 void KareiMachi_AlternateDance(void);
-
 
 static __inline__ void ClearStep(u8 *a)
 {
@@ -223,10 +216,8 @@ void Object_SetPosition();
 void Object_CommitPosition();
 void BattleFx_PlayQueuedSound();
 void FieldScene_RunScene3a8SequenceA();
-s32 Object_CreateFar();
+
 u8 *Battle_GetWorkObject1e0();
-
-
 
 void SceneState_ApplyValues12And2And3(void)
 {
@@ -522,7 +513,7 @@ void RunSceneArrivalSetup(void)
     Map_CopyCellsTo(39, 23, 43, 12, two, two);
     Engine_TaskWait(5);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(ACTOR_PARTY_LEADER)->motion_flags = 0;
+    Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Actor_SetDestinationOffset(0, 0, -8);
     Engine_EventWait(10);
@@ -1010,7 +1001,7 @@ void SceneActor_SetLeaderPriorityAutomatic(void)
     u8 *p;
     s32 v;
 
-    p = &Object_GetByIdFar(ACTOR_PARTY_LEADER)->priority_flags;
+    p = &Object_GetById(ACTOR_PARTY_LEADER)->priority_flags;
     v = ACTOR_PRIORITY_AUTOMATIC;
     v |= *p;
     *p = v;
@@ -1021,7 +1012,7 @@ void SceneState_ClearLeaderPriorityAutomatic(void)
     u8 *p;
     s32 v;
 
-    p = &Object_GetByIdFar(ACTOR_PARTY_LEADER)->priority_flags;
+    p = &Object_GetById(ACTOR_PARTY_LEADER)->priority_flags;
     v = (u8)~ACTOR_PRIORITY_AUTOMATIC;
     v &= *p;
     *p = v;
@@ -1204,7 +1195,7 @@ void FieldScene_RunMiddleSequence(void)
             Map_CopyCellAttributes(0, 0, 1, 1, v5, 14);
             Map_CopyCellAttributes(0, 0, 1, 1, v5, 45);
             {
-                u8 *p = &Object_GetByIdFar(11)->priority_flags;
+                u8 *p = &Object_GetById(11)->priority_flags;
                 s32 v = ACTOR_PRIORITY_UNDERFOOT;
 
                 v |= *p;
@@ -2098,7 +2089,7 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
 
     p8 = a2;
     value = Engine_RandomNext();
-    rec7 = (u8 *)Object_CreateFar(222, (a0 + -0x80000), (((((u32)(value << 3) >> 16) << 16) + a1) + 0x100000), p8);
+    rec7 = (u8 *)Engine_ObjectCreate(222, (a0 + -0x80000), (((((u32)(value << 3) >> 16) << 16) + a1) + 0x100000), p8);
     if ((s32)rec7 != 0) {
         rec7[85] = (mask = 0);
         link = (u8 *)*(s32 *)((s32)rec7 + 80);

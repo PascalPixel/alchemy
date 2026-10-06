@@ -131,10 +131,7 @@ Object_GetById:
 	.global GetOrbitingSceneObject
 	.thumb_func
 GetOrbitingSceneObject:
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func
 ObjectMotion_SetSpeedParameters:

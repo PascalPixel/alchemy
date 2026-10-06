@@ -14,8 +14,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-u8 *Object_GetByIdFar(s32 id);
-
 void Korosseo_ShowItemIcon(s32 id, s32 item)
 {
     struct FieldActor *obj;
@@ -26,12 +24,12 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
     s32 none;
     volatile u32 zero;
 
-    obj = (struct FieldActor *)Object_GetByIdFar(id);
+    obj = (struct FieldActor *)Object_GetById(id);
     if (obj != 0) {
         one = obj->active;
         if (one == 1) {
             spr = (struct AnimationObject *)obj->sprite;
-            base = (s32)Runtime_AllocateHeapBlockFar(17, 0x608);
+            base = (s32)Runtime_AllocateHeapBlock(17, 0x608);
             none = 0;
             base += 0x400;
             zero = none;
@@ -40,7 +38,7 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
             tile = VramBlock_LoadCached(spr->slot, 128, base);
             Runtime_ReleaseHeapBlock(17);
             obj->unknown_5c = one;
-            ResourceMetadata_ClearRecordFar(spr->entries[0]);
+            ResourceMetadata_ClearRecord(spr->entries[0]);
             spr->entries[0] = (void *)none;
             spr->count = none;
             spr->part[0].full_color = none;

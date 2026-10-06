@@ -419,9 +419,9 @@ remove_character:
                     UiText_DrawPaddedLabel((s32)label, saved);
                     WaitFrames(10);
                 } else {
-                    /* FAKEMATCH: the destination lives in r2, as the native allocates it. */
+                    /* FAKEMATCH: the destination lives in r2, as the native allocates it. Unpinned, saved and input die at these copies, so global allocation hands their r0 preference to dst and src, and the copy loop's 9 instructions differ. */
                     register u8 *dst asm("r2") = saved;
-                    /* FAKEMATCH: the source lives in r1, as the native allocates it. */
+                    /* FAKEMATCH: the source lives in r1, as the native allocates it; unpinned it takes the r0 preference of input (9 instructions differ). */
                     register u8 *src asm("r1") = input;
                     s32 i = 0;
 
@@ -684,9 +684,9 @@ remove_character:
                     UiText_DrawString(saved, (s32)label, 0, 0);
                     WaitFrames(10);
                 } else {
-                    /* FAKEMATCH: the destination lives in r1, as the native allocates it; unpinned the copy registers differ (differ 14). */
+                    /* FAKEMATCH: the destination lives in r1, as the native allocates it. Unpinned, saved and input die at these copies, so global allocation hands their r0 preference to dst and src, and the copy loop's 9 instructions differ. */
                     register u8 *dst asm("r1") = saved;
-                    /* FAKEMATCH: the source lives in r2, as the native allocates it; unpinned the copy registers differ (differ 14). */
+                    /* FAKEMATCH: the source lives in r2, as the native allocates it; unpinned it takes the r0 preference of input (9 instructions differ). */
                     register u8 *src asm("r2") = input;
                     s32 i = 0;
 

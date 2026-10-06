@@ -29,6 +29,9 @@ impl std::ops::AddAssign for Counted {
 pub(crate) struct Game {
     pub english: Measurement,
     pub editions: Vec<(&'static str, Counted)>,
+    /// Each other edition's English-credited units that it does not link
+    /// as credit, with their English bytes.
+    pub missing: Vec<(&'static str, Vec<(Unit, i64)>)>,
 }
 impl Game {
     pub fn combined(&self) -> Counted {
@@ -68,6 +71,15 @@ fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
         .map(|(_, credit)| credit.done.game_c + credit.done.common_c)
         .sum();
     counted
+}
+
+fn unlinked(english: &Measurement, edition: &Measurement) -> Vec<(Unit, i64)> {
+    english
+        .credits
+        .iter()
+        .filter(|(unit, credit)| !edition.credits.contains_key(*unit) && credit.done.bytes() > 0)
+        .map(|(unit, credit)| (unit.clone(), credit.done.bytes()))
+        .collect()
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -822,12 +834,16 @@ pub(crate) fn measure_game(
         Err(reason) => return Ok(Err(reason)),
     };
     let mut editions = Vec::with_capacity(6);
+    let mut missing = Vec::new();
     for (edition, measurement) in measured {
         let earned = if edition.id == target.id {
             share_edition(&english, &english)
         } else {
             match measurement? {
-                Ok(measurement) => share_edition(&english, &measurement),
+                Ok(measurement) => {
+                    missing.push((edition.language(), unlinked(&english, &measurement)));
+                    share_edition(&english, &measurement)
+                }
                 Err(reason) => return Ok(Err(reason)),
             }
         };
@@ -841,5 +857,9 @@ pub(crate) fn measure_game(
         }
         editions.push((edition.language(), earned));
     }
-    Ok(Ok(Game { english, editions }))
+    Ok(Ok(Game {
+        english,
+        editions,
+        missing,
+    }))
 }

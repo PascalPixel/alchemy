@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 935, common 538, differ 805.
+ * Native 946 instructions, draft 936, common 554, differ 774.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
@@ -58,7 +58,13 @@
  * after Ability_LoadGlyph 833, at the top of the draw body 1014.
  * 833 -> 805: the blink value gFrameCount & 8 is its own variable (native r6,
  * the djinn highlight counter r5); in affordable it took r5, in id 869, in
- * result 805 as well.
+ * result 805 as well. From 805: the outer element in the mask, count, draw
+ * or highlight loops 816/884/868/884; a separate summon for the description
+ * 887; a separate id for the first pass 876; the draw loop as a for with
+ * break, or visible[index] = 1; index++, both 805 (same code).
+ * 805 -> 774: the sprite push loop is indexed (visible[index], &sprites[index]),
+ * so index counts up as native (still in r7, native r4); pointer walks let
+ * loop.c reverse it to 3..0.
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -97,7 +103,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     const struct SummonDefinition *summon;
     struct MenuSprite *sprite;
     const u8 *required, *supply;
-    u8 *src;
     s32 drawn_row, drawn_page, row, page, preferred;
     s32 cursor_handle, count, used, mask, element;
     s32 id, tile, affordable, blink;
@@ -249,12 +254,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             render->dirty = 1;
             render->menu_busy = 0;
         }
-        sprite = sprites;
-        src = visible;
         for (index = 0; index <= 3; index++) {
-            if (*src++ != 0)
-                Runtime_PushSlotEntry((s32 *)sprite, 240);
-            sprite++;
+            if (visible[index] != 0)
+                Runtime_PushSlotEntry((s32 *)&sprites[index], 240);
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;

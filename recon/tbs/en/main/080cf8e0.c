@@ -45,6 +45,28 @@
  * SevenMode_Records for the count test, a forced temporary not adopted
  * while the burst address still differs. Native's first literal pool sits
  * after the step > 4 draw; the draft's lands 152 bytes later.
+ * Fourth pass (2026-10-06), the burst address: loop.c reduces a giv only
+ * when its add value is invariant and the reg it feeds is a biv or a giv
+ * (loop.c simplify_giv_expr). Native's burst loop has no givs at all: k << 2
+ * sits in the preheader in a pseudo whose stack slot (sp+24) lies between
+ * the records index and camera + 12, i.e. a GCSE reaching register, not a
+ * user variable or loop register (slots follow regno, higher regno lower).
+ * In the loop it is shifted by 3 (CSE never folded the two shifts, so they
+ * were in different CSE blocks or the << 2 value was unknown there) and fed
+ * into an index that is set more than once per iteration, so nothing from
+ * it is a giv; the gBursts pool load stays in the loop as "not desirable".
+ * A k * 4 the k loop sees must also stay unreduced (native recomputes it
+ * from k at sp+44). Measured (from 267): a volatile group local 463 (burst
+ * loop and pool offsets then match native, frame does not); an index n set
+ * three times in the loop (n = k * 4; n *= 8; n += i) 291, no burst givs
+ * but CSE folds to k << 5 and the k loop reduces k * 32 into sp+16; the
+ * same with group = k * 4 at the k-loop top 291, in the guard or before
+ * count 311/318, group += 4 per target 283, k * 4 * 8 into n 267; an
+ * asm("" : "+r"(n)) after n = k * 4, then n = n * 8 + i, 247 (burst body
+ * as native, but GCSE's k * 4 copy then lets the k loop reduce k * 4 into
+ * sp+16): a measuring device, not adoptable (S2: it changes which loop
+ * reduces, not only order or registers). Reused height or total as the
+ * index 267/320; k * 8 inline for delay with that device 309.
  */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"

@@ -1,5 +1,5 @@
-/* 080d1714: differ 1191 of 1481 instructions (1490 generated, common
- * 890). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 1184 of 1481 instructions (1491 generated, common
+ * 894). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the frame matches at 356 bytes, but the native keeps index in
@@ -28,7 +28,10 @@
  *   as runtime->particles[index + 60], which the native addresses from
  *   runtime plus an index * 28 offset rather than the mark pointer:
  *   1191, frame 356 (was 340).
- * - the 64-step init loop by pointer with its own counter: 1376. */
+ * - the 64-step init loop by pointer with its own counter: 1249 (base
+ *   0x7080 as native, but 120 and 63 hoisted into registers); point =
+ *   &runtime->particles[index] set at the top of each iteration: 1184,
+ *   the loop matches but for index on the stack. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -193,12 +196,13 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
     index = 0;
     do {
-        runtime->particles[index].z = 120;
-        runtime->particles[index].y = 0;
+        point = &runtime->particles[index];
+        point->z = 120;
+        point->y = 0;
         Random16();
-        runtime->particles[index].velocity_y = 0;
-        runtime->particles[index].velocity_x = 0;
-        runtime->particles[index].variant = Random16() & 63;
+        point->velocity_y = 0;
+        point->velocity_x = 0;
+        point->variant = Random16() & 63;
         index++;
     } while (index != 64);
 

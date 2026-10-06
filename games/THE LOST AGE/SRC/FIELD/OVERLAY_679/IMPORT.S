@@ -18,10 +18,10 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Func_02001bf4
 	.thumb_func
 Func_02001bf4:
@@ -30,10 +30,10 @@ Func_02001bf4:
 	.thumb_func
 Func_02001bfc:
 	overlay_veneer Scheduler_DisableCallbacksFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Func_02001c0c
 	.thumb_func
 Func_02001c0c:

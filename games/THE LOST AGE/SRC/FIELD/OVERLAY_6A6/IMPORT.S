@@ -6,10 +6,10 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Runtime_BumpAllocate
 	.thumb_func
 Runtime_BumpAllocate:
@@ -46,14 +46,14 @@ Func_02001268:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_02001278
+	.global Blend_SetBrightenTarget16
 	.thumb_func
-Func_02001278:
-	overlay_veneer Func_080002b8
-	.global Func_02001280
+Blend_SetBrightenTarget16:
+	overlay_veneer Blend_SetBrightenTarget16Far
+	.global Blend_SetBrightenTarget0
 	.thumb_func
-Func_02001280:
-	overlay_veneer Func_080002c0
+Blend_SetBrightenTarget0:
+	overlay_veneer Blend_SetBrightenTarget0Far
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

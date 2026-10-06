@@ -6,10 +6,10 @@
 	.thumb_func
 __umodsi3:
 	overlay_veneer IwramUnsignedRemainder
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Runtime_AllocateBlock
 	.thumb_func
 Runtime_AllocateBlock:

@@ -1672,7 +1672,6 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);
 #endif
 void RamakanSabaku_RaiseQuarterTriggers(void);
 void RamakanSabaku_RunSandstorm(void);
-u32 Random16Far(void);
 struct FacingObject *ResolveFacingObject(s16);
 void Resource3ba_NoOpCallback(void);
 void ResourceMetadata_ClearRecordFar(void *record);
@@ -1680,7 +1679,6 @@ s32 ResourceTable_CountFreeBlocks(void);
 void RunActorsEightAndNineMapEvent(void);
 void RunScene59Sequence(void);
 void RunSceneSelectionChain(void);
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
 struct BattleUnit *Runtime_GetObject(s32 object_id);
 #ifndef OWN_Scene_FadeColorFromWhite

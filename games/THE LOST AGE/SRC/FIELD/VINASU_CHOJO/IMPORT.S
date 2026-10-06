@@ -10,10 +10,10 @@ __divsi3:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

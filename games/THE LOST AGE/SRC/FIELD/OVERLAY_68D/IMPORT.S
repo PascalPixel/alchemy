@@ -18,10 +18,10 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Runtime_BumpAllocate
 	.thumb_func
 Runtime_BumpAllocate:

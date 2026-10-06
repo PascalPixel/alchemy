@@ -14,10 +14,10 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global ArcTan2
 	.thumb_func
 ArcTan2:
@@ -30,18 +30,18 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global Func_02001fa8
 	.thumb_func
 Func_02001fa8:
 	overlay_veneer Runtime_SetIrqHandlerFar
-	.global Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func
 Runtime_ReleaseHeapBlock:

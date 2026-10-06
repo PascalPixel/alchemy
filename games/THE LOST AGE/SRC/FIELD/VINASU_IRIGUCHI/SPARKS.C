@@ -19,13 +19,13 @@ struct SparkWork {
     s16 resource;
 };
 
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Scheduler_RemoveCallback(void (*callback)(void));
 
 void VinasuIriguchi_StopSparks(void)
 {
     struct SparkWork *work = Ram_HeapSlots->menu_runtime;
 
-    Scheduler_RemoveCallbackFar(Func_0200258c);
+    Scheduler_RemoveCallback(Func_0200258c);
     Resource_ResetEntry(work->resource);
     Runtime_ReleaseHeapBlock(220);
 }

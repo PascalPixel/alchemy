@@ -14,18 +14,18 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global Runtime_AllocateBlock
 	.thumb_func
 Runtime_AllocateBlock:

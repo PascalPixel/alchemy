@@ -10,14 +10,14 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
-	.global Vector_AddPolarOffsetFar
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

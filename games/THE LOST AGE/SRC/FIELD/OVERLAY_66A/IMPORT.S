@@ -6,10 +6,10 @@
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

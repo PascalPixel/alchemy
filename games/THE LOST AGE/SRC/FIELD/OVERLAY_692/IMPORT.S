@@ -18,14 +18,14 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
-	.global Random16Far
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
@@ -34,14 +34,14 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
-	.global Runtime_AllocateHeapBlockFar
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func
 Runtime_ReleaseHeapBlock:

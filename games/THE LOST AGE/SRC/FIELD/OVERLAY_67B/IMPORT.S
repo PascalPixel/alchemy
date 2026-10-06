@@ -14,18 +14,18 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global Runtime_AllocateBlock
 	.thumb_func
 Runtime_AllocateBlock:

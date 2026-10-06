@@ -14,18 +14,18 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
-	.global Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func
 Runtime_ReleaseHeapBlock:

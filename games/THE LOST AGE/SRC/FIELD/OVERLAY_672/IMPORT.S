@@ -6,10 +6,10 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func
 Runtime_ReleaseHeapBlock:

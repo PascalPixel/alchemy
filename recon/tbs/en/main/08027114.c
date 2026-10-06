@@ -1,5 +1,5 @@
-/* 08027114: differ 1601 against the 1727-line parent listing (draft 1804,
- * common 965; was 2131).
+/* 08027114: differ 1574 against the 1727-line parent listing (draft 1821,
+ * common 987; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -46,8 +46,11 @@
  * give 1616 (from 1802). In that order the psynergy and item cases' own
  * block-local handles give 1601. Still worse on 1616/1601: every
  * entries[0].x pair written directly 1678; the mode-7 party counts kept in
- * sel 1610. Next: djinn's register (frame 104), the round end at
- * next_round, and the djinn and summon loops. */
+ * sel 1610. In the djinn case the summon id stays in res (native r6) for
+ * the second SummonDefinition_Get, the icon tile stored straight from the
+ * loader: 1574 (it was 1943 in the old case order). Next: djinn's register
+ * (frame 104), the round end at next_round, and the djinn and summon
+ * loops. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -524,13 +527,12 @@ djinn_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                res = Resource_LoadIndexedEntryToBuffer(djinn->name_message_id & 0x3fff, handle);
-                slot->oam.f.tile = res;
+                slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(djinn->name_message_id & 0x3fff, handle);
                 state->entryActive[1] = 1;
                 if (ok == 0) {
                     UiWork_SetParamNibble(2);
                 }
-                UiText_DrawCharacterAtOffset(SummonDefinition_Get(param)->name_message_id + 819,
+                UiText_DrawCharacterAtOffset(SummonDefinition_Get(res)->name_message_id + 819,
                                              win, 16, 0);
                 for (k = 0; k <= 3; k++) {
                     if (djinn->djinn_required[k] != 0) {

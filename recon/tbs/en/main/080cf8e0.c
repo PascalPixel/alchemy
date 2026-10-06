@@ -1,4 +1,41 @@
-/* Draft: native 670 instructions, draft 672, common 555, differ 232.
+/* Draft: native 670 instructions, draft 671, common 555, differ 231.
+ * Fifth pass (2026-10-06): delay += 8 before k++ (232 -> 231, and 273 ->
+ * 269 without the asm; native's tail updates the shot pointer, then delay,
+ * then k). The burst address
+ * still needs the diagnostic asm, which must not be adopted: no plain
+ * source form found yet. Without the asm the draft scores 273; the CSE dump confirms insn 1076
+ * (group << 3) becomes (ashift k 5): fold_rtx finds (ashift k 2) in
+ * group's class through lookup_as_function, which only fails when k has
+ * been set again since group's set (exp_equiv_p validates reg ticks) or
+ * when the two sit in different extended blocks (a CODE_LABEL ends one).
+ * Fifth-pass trials, all without the asm unless marked: a row view
+ * gBurstRows[group][i] (struct EffectStep (*)[8]) 301, [k * 4][i] 301,
+ * with the asm 299; for (i = 0, group = k * 4; ...) 273; i + group * 8
+ * 273; k << 2 with (group << 3) + i 273; n = group * 8 then n += i 291;
+ * &gBursts[group * 8] then burst += i 506 (504 with the asm); delay as a
+ * s32 delay = k * 8 local in the target loop 467 with the asm (335
+ * without; the frame shrinks to 76 and fp loses the sheet base); delay = 0
+ * before the count test 287; shard draw as DrawRectangle *p = &draw[flip]
+ * then (*p)(...) 410, draw + flip 410, direct draw[flip](...) 410 (r4
+ * returns to reload's rotation and the mode chain shifts again);
+ * delay declared in the frame loop block 232; a user shot pointer
+ * (shot = gShots with delay = 0 after the guard, shot += 16 at the tail)
+ * 344, with k++ first 350.
+ * Permuter without the asm (5 minutes, PERM_GENERAL over k * 4 / k << 2
+ * and the four index orders, PERM_RANDOMIZE over the burst loop): no
+ * candidate beat 273.
+ * Frame slot lead (delay): native's delay is not a reduced giv of k. With
+ * k * 8 inline or as a s32 delay = k * 8 local, CSE leaves one k * 8 reg
+ * (giv benefit 2, lifetime 35) that loop.c rejects ("not worth while,
+ * 0 vs 167"), and k * 8 + 17 (DEST_REG) cannot combine into it, so k * 8
+ * is recomputed each pass. In the draft, global leaves the user var delay
+ * (reg 47, 17 refs over 314 insns, crosses 12 calls) in memory, so it
+ * takes a slot in pseudo order (sp+32) beside frame, k, total and camera.
+ * Native's delay slot comes last (sp+12), after the loop-made pseudos;
+ * this fits a pseudo that global gave a hard register and reload then
+ * spilled (reload numbers those slots after the ones global left), so the
+ * next trial is a delay that global allocates (more references or a
+ * shorter life).
  * Fourth pass (2026-10-06): the burst loop's cause is found, but only a
  * diagnostic device reproduces it; the device is NOT admissible as is
  * (S2: it changes instruction selection, not only order or registers).
@@ -295,8 +332,8 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                         }
                     }
                 }
-                k++;
                 delay += 8;
+                k++;
             } while (k != work->effect->count);
         }
         for (i = 0; i != 256; i++) {

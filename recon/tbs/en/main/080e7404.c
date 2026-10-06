@@ -1,4 +1,5 @@
-/* 080e7404: differ 222 of 1632. Left: in the first effect loop the reference keeps heat (work->frame / 4) in r4 and saves it at sp+8 around AudioCommand_PlayFar(141); here it lands in r6, which shifts registers, pools and stack slots in that loop. Writing the second loop's size as (frame + 0x1d0) << 8 matches its grow giv but needs that sp+8 slot, so it waits. direction = mode still folds to 1. */
+/* 080e7404 BattleEffect_RunParticleStreams: differ 222 of 1632 (draft 1634, common 1522). Left: in the first effect loop the reference keeps heat (work->frame / 4) in r4 and saves it at sp+8 around AudioCommand_PlayFar(141); here it lands in r6, which shifts registers, pools and stack slots in that loop. Writing the second loop's size as (frame + 0x1d0) << 8 matches its grow giv but needs that sp+8 slot, so it waits. direction = mode still folds to 1.
+ * Stubborn (2026-10-06): parent remains differ 222 after prior trials; not first-try. Nested AddFlame (080e7338) and AddMote (080e73a0) match byte-exact as the draft's leading 100 instructions (alchemy diff THIS 080e7338,080e73a0 → common 100 of 100) but adopt only with this parent (W notes). Score+parked from sun100 queue-3. */
 /* Trials: const/register heat, outer heat, declaration order and a sheet-field
  * pointer leave differ 222. Keeping the undivided frame until palette use gives
  * 231. Moving heat before angle gives 606. Forcing r4 omits its required call
@@ -7,7 +8,7 @@
  * Reusing size/x/y for heat gives 573/681/223; initializing direction before
  * its branch gives 445. Mode read/write barriers with the second loop's
  * factored size give 414 (register) or 513 (memory). All were removed. */
-/* 080e7338 and 080e73a0 are nested functions of this one; score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
+/* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"

@@ -1,4 +1,4 @@
-/* 080f4168: uncredited draft; listing 2046, draft 1947, differ 1977.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1947, differ 1977.
  * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
  * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
  * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
@@ -6,6 +6,7 @@
  * Remove its unsupported unused s32[8], volatile affine locals and discarded
  * key reads rather than retaining unproven steering. The natural frame is 716
  * bytes; native is 768. Loop/register allocation and frame layout remain open.
+ * Stubborn (2026-10-06): re-scored differ 1977; not first-try. Score+parked from sun100 queue-3.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

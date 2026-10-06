@@ -1,4 +1,5 @@
-/* 080ad6d4: structural draft. differ 927 of 1276 (1295 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here, mode stays in fp rather than a spill, and the copy/preview paths allocate registers differently. Hoisting the two output pairs leaves 927 unchanged. No function counts yet. */
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 927 of 1276 (1295 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here, mode stays in fp rather than a spill, and the copy/preview paths allocate registers differently. Hoisting the two output pairs leaves 927 unchanged. No function counts yet.
+ * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"

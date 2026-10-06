@@ -1,11 +1,12 @@
-/* Draft: listing 2105 instructions, draft 2108, common 1312, differ 1589.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2108, common 1312, differ 1589.
    Whole message symbols replace the menu/tutorial base-plus-offset enums.
    The earlier offset version differed 1510 (draft 2109); it is not retained.
    Native frame 108, draft 104. Declaring the status array before the balance
    array puts them in native relative order, with the same score. Unsigned
    redraw and block-local refresh are unchanged; initializing redraw after
    the cursor gives 1595; direct status-array access gives 1657. No devices.
-   Remaining: control flow, register allocation and the four-byte frame gap. */
+   Remaining: control flow, register allocation and the four-byte frame gap.
+ * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "TBS_EDITION.H"

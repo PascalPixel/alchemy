@@ -7,6 +7,7 @@
 /* Trial (session 1): register struct SelectionWork *work asm("r9"): 930 -> 1122, reverted. */
 /* Trial (session 1): s32 repeat, keys declaration order: no change. pattern + col + 0x100: no change. slot declared before cnt: no change. *(tile_row + (col & 3) - count * 3 + 0x236) = 0 in both tile loops gives native's separate count*6 and unhoisted 3: 1009 -> 1017 before the row change, 930 -> 930 (common 551) after it, kept. */
 /* Trial (session 1): the closing queue write as IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000), the shared macro: 930 -> 922. */
+/* Trial (session 1): s32 tile_index = panel * 3 in the three blank loops, tile_row = &render->tilemap[tile_index]: 922, unchanged (the giv stays panel*6). */
 /* Trial: indexed fill, party sum and draw loops (for (cnt = 0; cnt <= 5; cnt++) with the -1 test after the resource store), one (cnt - count) * 24 shared by both pos_x stores: differ 1129 -> 1097. */
 /* Trial: scale read from Ui_BounceScales into its own variable, then rescaled: differ 1097 -> 1086. */
 /* Trial: the trade kinds counted in their own num, not cnt (native keeps it in r5, cnt in r8): differ 1086 -> 1050. */

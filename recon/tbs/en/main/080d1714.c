@@ -1,5 +1,5 @@
-/* 080d1714: differ 1320 of 1481 instructions (1471 generated, common
- * 816). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 1182 of 1481 instructions (1449 generated, common
+ * 874). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
@@ -22,7 +22,18 @@
  * - first particle loop by index: 1348; burst setup loop by index: 1338;
  *   distance loop by index: 1324; spark spawn loop by index: 1320.
  * - first-phase particle loop by index: 1581; spark update loop by
- *   index: 1370 (both kept as pointers). */
+ *   index: 1370 (both kept as pointers).
+ * - 64-particle setup loop through point = &particles[index] each
+ *   iteration: the native's runtime + 0x7080 base, 1313 (a walking
+ *   pointer hoists 120 and 63 out of the loop: 1376).
+ * - screen.y >> 16 and screen.depth >>= 16 for the halfword reads:
+ *   combine narrows them to ldrsh off the &screen register as the
+ *   native does; ((s16 *)&screen)[3] made loop-invariant address
+ *   pseudos that took r9-r11 before index: 1182.
+ * - register s32 index asm("r9"): 1718 (a hard register is no biv).
+ * Allocation: index (158 refs over ~1490 insns) now gets fp; the
+ * native's r9 is taken by &screen and &work, hoisted in the threshold
+ * loop, and r8 by &radius in the frame-160 setup loop. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -187,12 +198,13 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
     index = 0;
     do {
-        runtime->particles[index].z = 120;
-        runtime->particles[index].y = 0;
+        point = &runtime->particles[index];
+        point->z = 120;
+        point->y = 0;
         Random16();
-        runtime->particles[index].velocity_y = 0;
-        runtime->particles[index].velocity_x = 0;
-        runtime->particles[index].variant = Random16() & 63;
+        point->velocity_y = 0;
+        point->velocity_x = 0;
+        point->variant = Random16() & 63;
         index++;
     } while (index != 64);
 
@@ -451,9 +463,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             EffectPosition_ApplyBaseAndYOffset(&runtime->particles[index].x, &screen);
                             screen.x =
                                 (screen.x >> 17) + (wave_x >> 17) + 32;
-                            screen.y = ((s16 *)&screen)[3]
+                            screen.y = (screen.y >> 16)
                                 + (wave_y >> 16) - 4;
-                            screen.depth = ((s16 *)&screen)[5];
+                            screen.depth >>= 16;
                             if (screen.depth <= 169)
                                 screen.depth = 170;
                             if (screen.depth > 350)
@@ -518,8 +530,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             if (spark->variant > 0) {
                                 EffectPosition_ApplyBaseAndYOffset(&spark->x, &screen);
                                 screen.x = (screen.x >> 17) + 32;
-                                screen.y = ((s16 *)&screen)[3] + 56;
-                                screen.depth = ((s16 *)&screen)[5];
+                                screen.y = (screen.y >> 16) + 56;
+                                screen.depth >>= 16;
                                 if (screen.depth <= 169)
                                     screen.depth = 170;
                                 if (screen.depth > 350)
@@ -597,9 +609,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
                                     (screen.x >> 17) + mark->velocity_x;
-                                screen.y = ((s16 *)&screen)[3]
+                                screen.y = (screen.y >> 16)
                                     + mark->velocity_y;
-                                screen.depth = ((s16 *)&screen)[5];
+                                screen.depth >>= 16;
                                 if (screen.depth <= 169)
                                     screen.depth = 170;
                                 if (screen.depth > 350)

@@ -26,6 +26,10 @@ extern u8 gPlayerObjectId[];
 extern u16 Resource_SlotAssignments[];
 extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot);
+struct BattleObjectSlot;
+#ifndef OWN_BattlePresentation_SpawnActorObject
+void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 unit, s32 x, s32 y);
+#endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
 #endif
@@ -785,9 +789,6 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
 #ifndef OWN_BattlePresentation_SetPaletteLevelFar
 void BattlePresentation_SetPaletteLevelFar(s32 unused, s32 level);
-#endif
-#ifndef OWN_BattlePresentation_SpawnActorObject
-void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 unit, s32 x, s32 y);
 #endif
 void BattlePresentation_UpdateCamera(void);
 #ifndef OWN_BattlePresentation_WaitForPromptAt

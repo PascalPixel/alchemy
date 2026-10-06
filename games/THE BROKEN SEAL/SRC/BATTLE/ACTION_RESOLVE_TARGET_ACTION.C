@@ -12,7 +12,6 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_ACTOR.H"
 #include "BATTLE_CALC.H"
-#include "BATTLE_COMMAND.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_MSG.H"
@@ -23,6 +22,9 @@
 #include "MOTION_OBJECT.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
+#if GAME_TLA
+#include "RAM_BUFFER.H"
+#endif
 
 #define BattlePresentation_SpawnActorObject ((void (*)(void*,s32,s32,s32))BattlePresentation_SpawnActorObject)
 
@@ -117,7 +119,11 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 tmp;
     s32 size;
     bonus = 0;
+#if GAME_TLA
+    work = Ram_HeapSlots->battle_work;
+#else
     work = gBattleWork;
+#endif
     half = 0;
     dealt = 0;
     crush = 0;
@@ -126,7 +132,14 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     size = sizeof(struct BattleUnit);
     copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
 
+#if GAME_TLA
+    if (action_id == 312 || action_id == 316)
+        actor_id = plan->actor_id2;
+    else
+        actor_id = plan->actor_id;
+#else
     actor_id = plan->actor_id;
+#endif
     target_id = plan->target_ids[slot];
     action_id = plan->action_id;
     range = plan->range_index;
@@ -134,9 +147,43 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     modifier = plan->target_modifiers[slot];
 
     action = BattleAction_Get(action_id);
+#if GAME_TLA
+    actor = Owner_GetState(actor_id);
+    target = Owner_GetState(target_id);
+#else
     actor = Owner_GetStateFar(actor_id);
     target = Owner_GetStateFar(target_id);
+#endif
     Iwram_CopyWords(copy, target, size);
+#if GAME_TLA
+    switch (target->class_id) {
+    case 221:
+        if (plan->command == 1 && (u32)(actor_id ^ target_id) >> 7 != 0) {
+            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            MES_PUSH(MsgDissipated);
+            goto done;
+        }
+        break;
+    case 101:
+    case 102:
+    case 103:
+        if (action_id != 573 && work->unknown_868 != 0
+            && (u32)(actor_id ^ target_id) >> 7 != 0) {
+            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            MES_PUSH(MsgFieldProtects);
+            goto done;
+        }
+        break;
+    }
+    if (target->guard_level == 4 && (u32)(actor_id ^ target_id) >> 7 != 0) {
+        BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+        BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+        MES_PUSH(MsgNoEffect);
+        goto done;
+    }
+#endif
 
     if (action->range != 255) {
         offset = plan->target_offsets[slot];
@@ -254,7 +301,11 @@ after_power:
             else
                 MES_PUSH(MsgSplitOff);
         } else if (action_id == 503) {
+#if GAME_TLA
+            MES_PUSH(MsgSplitFailed);
+#else
             MES_PUSH(MsgSplitFail);
+#endif
         } else {
             MES_PUSH(MsgNoOneCame);
         }
@@ -1005,7 +1056,12 @@ after_power:
             break;
 
         case EFX_REFRAIN:
+#if GAME_TLA
+            MES_PUSH(MsgHpRegen);
+            target->refrain = 5;
+#else
             SET_STATUS7(target->refrain, MsgRefrain);
+#endif
             break;
 
         case EFX_REFLECT:
@@ -1160,6 +1216,9 @@ after_power:
         }
     }
 
+#if GAME_TLA
+done:
+#endif
     BattleEv_Push(BATTLE_EVENT_RESET, 0);
 
     if (target->hp != 0) {
@@ -1173,7 +1232,11 @@ after_power:
     }
     Sys_Free(copy);
     Owner_RecalculateStatsFar(target_id);
+#if GAME_TLA
+    UiWindow_DrawPartyStatusContentsFar(Ram_HeapSlots->battle_work->party_status_mode);
+#else
     UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
+#endif
     if (target->hp != 0)
         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (actor->evil_spirit != 0

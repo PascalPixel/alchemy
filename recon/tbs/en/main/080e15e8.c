@@ -68,7 +68,8 @@
      662; ApplyScale in each branch: 683; s as (frame - 151) * 0x1800 +
      0x9400: 662; scale stored 2, 1, 0: 666; aux cells as &aux[...] or
      the ring cell as &sheet[...] + rings: 662; burst at literal 60 and
-     112, no cx, cy: 736.
+     112, no cx, cy: 736; no d local, (u32)(frame - 80) in place: 662;
+     no start local in the lightning test: 732.
    - on 662, rejected: count = frame * 2 set just before the palette
      call and passed to it: 648, but count's giv slot goes and the frame
      shrinks to 324 (see the 796 trial above). */

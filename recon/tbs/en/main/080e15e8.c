@@ -1,15 +1,20 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1634, common 1231, differ 812 (native frame 336,
-   draft 324: three fewer spill slots, so most stack offsets read 12 low).
-   The native's extra slots, in its frame order:
+   listing 1640, draft 1632, common 1301, differ 670 (native frame 336,
+   draft 328: two fewer spill slots, so most stack offsets read 8 low;
+   the smoke block now matches but for offsets).
+   The native's extra slots, in its frame order (sx now has its slot):
    - sp+96, &scale held through the frame loop, just below count
      (sp+100) and size (sp+104). A user sc = scale pointer spills, but
      below size and above count (882): user pseudos are numbered in
      declaration order (size 40, count 41, sc 42 in the rtl dump) and
      global gives count a hard register that reload later takes back
      into a shared slot, while the native spills count from the start;
-   - sp+60, sx in the smoke burst (the draft keeps it in fp and reloads
-     the constant 12 that the native keeps in r6);
+   - sp+60, sx in the smoke burst: matched by writing work->sheet +
+     0x6000 in each smoke call, no smoke pointer (812 to 670). With the
+     pointer, loop.c hoisted the constant 12 out of the frame loop:
+     its movable threshold is 15, less 3 per earlier move, and 12 lived
+     50 insns against 24's 49 in a 653-insn loop (15 * 50 >= 653), so
+     12 took no register and sx took fp;
    - sp+24, frame * 4 as its own reduced giv. The loop dump says why the
      draft has none: GCSE's PRE hoists frame << 2 to the three-streams
      loop's preheader, lifetime 4, and loop.c rejects it, "not worth
@@ -51,7 +56,14 @@
      and its release (permuter): 791, a register-allocation accident
      that moves the store away from the native's.
    - permuter, 5 minutes from 812: 638, all from temporaries, swapped
-     compares and casts; no single rewrite carries over. */
+     compares and casts; no single rewrite carries over.
+   - on 812: smoke pointer set after the first LoadWork: 812; a w = 12
+     local for the smoke widths: 812; n as (frame - 64) * 4 - i * 48,
+     (frame - 64 - i * 12) * 4, frame * 4 - 256 - i * 48 or
+     frame * 4 - (i * 48 + 256): 812; (frame - i * 12 - 64) << 2: 841.
+   - permuter restricted to the n line and the smoke block, 6 minutes
+     from 812: 670, from smoke assigned inside the first call's
+     arguments; the same 670 without any smoke pointer, adopted. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -453,7 +465,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             s32 ox;
             s32 oy;
             s32 sx;
-            u8 *smoke;
             for (i = 0; i != 6; i++) {
                 if (frame == i * 8 + 80) {
                     Iwram_FillWords(dst, 0x4000, 0x10101010);
@@ -505,18 +516,17 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 sx = ox + 72;
                 oy = 32 - ((Trig_Cos(angle) * (r + 8)) >> 16);
             }
-            smoke = work->sheet + 0x6000;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            SLOT(47)(dst, smoke, ox + 60, oy - 24, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, ox + 60, oy - 24, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            SLOT(47)(dst, smoke, sx, oy - 24, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, sx, oy - 24, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            SLOT(47)(dst, smoke, ox + 60, oy, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, ox + 60, oy, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            SLOT(47)(dst, smoke, sx, oy, 12, 24);
+            SLOT(47)(dst, work->sheet + 0x6000, sx, oy, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             n = 0;
             for (i = 0, p = PARTICLES; i != 910; i++, p++) {

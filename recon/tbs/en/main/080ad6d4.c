@@ -13,8 +13,8 @@
  * Trial (2026-10-06): the two stores to menu_busy after the loop through gWindowWork[0] directly, leaving 0 in sl as native: 568 -> 549.
  * Trial (2026-10-06): y = row * 8 computed before the help-line draw (permuter hint, as a temporary): the loop allocates as native: 549 -> 458.
  * Trial (2026-10-06): j for the owner_y loop apart from the tile loop's i: the counter takes r2 as native: 458 -> 446. Cursor zeroed before anim, dirty, page and frame shares one zero everywhere (444), unlike native; page, frame, dirty, anim order gives 453.
- * Trial (2026-10-06): one id for both owners in the swap preview, where first_id and second_id were two: id keeps r6 and unit r7 as native: 446 -> 408.
- * Open (2026-10-06): 224 (the element mask, 7 refs over 174 insns, priority 804) outranks 0x8000 and the shared 0 (800 each) and takes r8; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Iwram_CopyWords' 332 and its address tie (4 refs over 90 insns) and 332 wins by pseudo number; native keeps the address in r5. */
+ * Trial (2026-10-06): one id for both owners in the swap preview, where first_id and second_id were two: id keeps r6 and unit r7 as native: 446 -> 408. Reloading attr once after the first 0x8000 test instead of inside it gives 411; row and y declared last leave 408.
+ * Open (2026-10-06): 224 (the element mask, 7 refs over 172 insns, priority 814) outranks 0x8000 and the shared 0 (4 refs over 100 insns, 800 each) and takes r8; it would need 176 insns or 6 refs to fall behind them; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Iwram_CopyWords' 332 and its address tie (4 refs over 90 insns) and 332, created first as an argument, wins by pseudo number; native keeps the address in r5. A permuter run over the help-line section (4 minutes) found nothing below 458 before the id and j changes. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"

@@ -8255,7 +8255,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "02061"
 msgstr "あいての にゅうりょくを まっています"
 
-msgctxt "message"
+msgctxt "MsgMysteryPersonName"
 msgid "02062"
 msgstr "なぞの男"
 

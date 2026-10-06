@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	ldr r0, .L_02008060
-	bl Func_020029d0
-	pop {pc}
-	.2byte 0x0000
-.L_02008060:
-	.4byte Data_02002fb8
 	.section .text.x02008064,"ax",%progbits
 	.global Func_02000064
 	.thumb_func
@@ -62,84 +51,6 @@ Func_02000064:
 	bl Func_020029d8
 .L_020080c6:
 	pop {r5, r6, r7, pc}
-	.section .text.x020080c8,"ax",%progbits
-	.global Func_020000c8
-	.thumb_func
-Func_020000c8:
-	push {lr}
-	ldr r1, [r0, #80]
-	adds r0, #100
-	ldrh r3, [r0]
-	movs r2, #3
-	ands r2, r3
-	ldr r4, [r1, #40]
-	cmp r2, #1
-	beq .L_020080fc
-	cmp r2, #1
-	bgt .L_020080e4
-	cmp r2, #0
-	beq .L_020080ee
-	b .L_02008118
-.L_020080e4:
-	cmp r2, #2
-	beq .L_02008100
-	cmp r2, #3
-	beq .L_0200810e
-	b .L_02008118
-.L_020080ee:
-	movs r3, #7
-	strb r3, [r4, #5]
-	movs r3, #1
-	strb r3, [r1, #25]
-	movs r3, #2
-	strb r3, [r1, #26]
-	b .L_02008118
-.L_020080fc:
-	movs r3, #0
-	b .L_02008108
-.L_02008100:
-	movs r2, #7
-	movs r3, #0
-	strb r2, [r4, #5]
-	movs r2, #1
-.L_02008108:
-	strb r2, [r1, #25]
-	strb r3, [r1, #26]
-	b .L_02008118
-.L_0200810e:
-	movs r2, #0
-	movs r3, #1
-	strb r2, [r4, #5]
-	strb r3, [r1, #25]
-	strb r2, [r1, #26]
-.L_02008118:
-	ldrh r3, [r0]
-	adds r3, #1
-	strh r3, [r0]
-	pop {pc}
-	.section .text.x02008120,"ax",%progbits
-	.global Func_02000120
-	.thumb_func
-Func_02000120:
-	push {r5, lr}
-	ldr r3, .L_02008144
-	adds r5, r0, #0
-	ldr r0, [r3]
-	movs r3, #1
-	ands r3, r0
-	cmp r3, #0
-	beq .L_02008140
-	movs r1, #6
-	lsrs r0, r0, #1
-	bl __umodsi3
-	adds r1, r0, #0
-	adds r0, r5, #0
-	bl Animation_ApplyChildValues
-.L_02008140:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008144:
-	.4byte gFrameCount
 	.section .text.x02008148,"ax",%progbits
 	.global Func_02000148
 	.thumb_func
@@ -303,27 +214,6 @@ Func_020001a4:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x02008294,"ax",%progbits
-	.global Func_02000294
-	.thumb_func
-Func_02000294:
-	push {lr}
-	ldr r3, .L_020082b0
-	ldr r3, [r3]
-	cmp r3, #0
-	beq .L_020082a4
-	movs r0, #201
-	bl Func_02002a40
-.L_020082a4:
-	ldr r3, .L_020082b4
-	ldr r0, [r3]
-	bl Func_02001650
-	pop {pc}
-	.2byte 0x0000
-.L_020082b0:
-	.4byte Data_02003278
-.L_020082b4:
-	.4byte Data_02003274
 	.section .text.x020082b8,"ax",%progbits
 	.global Func_020002b8
 	.thumb_func

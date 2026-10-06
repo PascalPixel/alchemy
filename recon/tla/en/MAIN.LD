@@ -1301,7 +1301,6 @@
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SLOTS.o"(.text)
         "*/recon/tla/raw/080d7b04.o"(.text)
         "*/recon/tla/raw/080d7c04.o"(.text)
-        "*/recon/tla/raw/080d7d48.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/RADPART.o"(.text)
         "*/recon/tla/raw/080d7d90.o"(.text)
         "*/recon/tla/raw/080d7dbc.o"(.text)

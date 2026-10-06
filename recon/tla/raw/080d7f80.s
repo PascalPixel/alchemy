@@ -200,4 +200,4 @@ Func_080d7f80:
 .L_080d8140:
 	.4byte Func_080d7dbc
 .L_080d8144:
-	.4byte Func_080d7d48
+	.4byte BattleFx_SetObjectAlternatingWords

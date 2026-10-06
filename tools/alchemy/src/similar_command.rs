@@ -19,7 +19,8 @@ the best matches of every --from function as TSV.\n\
   --top N             matches per function (default 5)\n\
   --max-ratio F       largest distance / longer length to report (default 0.35)\n\
   --min-insns N       ignore functions shorter than this (default 8)\n\
-  --out FILE          write the batch TSV here";
+  --out FILE          write the batch TSV here\n\
+  --editions [...]    see alchemy similar --editions --help";
 
 struct Options {
     builds: Vec<PathBuf>,
@@ -217,6 +218,9 @@ fn row(f: &Function) -> String {
 }
 
 pub fn run(arguments: &[String]) -> Result<String, String> {
+    if arguments.first().is_some_and(|a| a == "--editions") {
+        return crate::editions::run(&arguments[1..]);
+    }
     let o = parse(arguments)?;
     let corpus = index(&o)?;
     let sorted: Vec<Vec<u32>> = corpus
@@ -363,6 +367,10 @@ mod tests {
 }
 
 pub fn entry(rest: &[String]) -> std::process::ExitCode {
+    if rest.first().is_some_and(|a| a == "--editions") && rest.iter().any(|a| a == "--help" || a == "-h") {
+        println!("{}", crate::editions::USAGE);
+        return std::process::ExitCode::SUCCESS;
+    }
     if rest == ["--help"] || rest == ["-h"] {
         println!("{USAGE}");
         return std::process::ExitCode::SUCCESS;

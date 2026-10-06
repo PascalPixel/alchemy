@@ -46,7 +46,7 @@ void UiWork_SetParamNibbleFar(s32 value);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x0, s32 y0, s32 x1, s32 y1);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 
-#if defined(TBS_EDITION_EN)
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)

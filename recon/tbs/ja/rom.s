@@ -190,12 +190,6 @@ Tile_BuildMetatilesEnd:
 	.thumb_func
 SaveMenu_SelectSlot:
 	.incbin "baserom.gba", 0x00020144, 0x000005f8
-	.section .rom.00020af0, "ax"
-	.global NameEntry_EditOwnerName
-	.type NameEntry_EditOwnerName, %function
-	.thumb_func
-NameEntry_EditOwnerName:
-	.incbin "baserom.gba", 0x00020af0, 0x000005e0
 	.section .rom.00021ece, "ax"
 	.incbin "baserom.gba", 0x00021ece, 0x00000902
 	.section .rom.000231dc, "ax"
@@ -330,7 +324,10 @@ NameEntry_DakutenRanges:
 	.incbin "baserom.gba", 0x000378ea, 0x0000000f
 	.global NameEntry_HandakutenRanges
 NameEntry_HandakutenRanges:
-	.incbin "baserom.gba", 0x000378f9, 0x0000000d
+	.incbin "baserom.gba", 0x000378f9, 0x00000005
+	.global NameEntry_CaretWave
+NameEntry_CaretWave:
+	.incbin "baserom.gba", 0x000378fe, 0x00000008
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x00037906, 0x00000008
@@ -427,7 +424,13 @@ WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x0006c1aa, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x0006c1ec, 0x000003a8
+	.incbin "baserom.gba", 0x0006c1ec, 0x00000010
+	.global NameEntry_KeyboardTilemap
+NameEntry_KeyboardTilemap:
+	.incbin "baserom.gba", 0x0006c1fc, 0x0000015a
+	.global NameEntry_AlternateKeyboardTilemap
+NameEntry_AlternateKeyboardTilemap:
+	.incbin "baserom.gba", 0x0006c356, 0x0000023e
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x0006c594, 0x00000a6c

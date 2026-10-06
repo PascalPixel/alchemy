@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 933, common 489, differ 901.
+ * Native 946 instructions, draft 935, common 538, differ 805.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
@@ -29,6 +29,36 @@
  * one outside the display loop 920; a short handle left 914 unchanged.
  * A one-pass attribute-store block moved the y shift into native order, 912,
  * but was removed while the wider source shape remains unsettled.
+ *
+ * 901 -> 887: the djinn test is `if (*required <= *supply) do { ... } while
+ * (*required <= *supply);`. Native's loop head is element++ with no folded
+ * first `element > 3` test; plain while, for(;;cond;incr) and ++element forms
+ * all fold it (901). Indexed required[element] > supply[element] gave the
+ * native loop body but an indexed pre-test (876 with the counted first pass,
+ * kept out: native pre-test is through the pointers). The first passes are
+ * counted (index = count - 1 .. 0, then 0 .. count - 1) and `(count - 1) / 4`
+ * is written inline: GCSE then keeps count - 1 in one pseudo (native slot 20)
+ * and rounds a negative one as count + 2, as native does; with last it was
+ * last + 3. Native order of spilled scalars as declarations, on this base:
+ * 891 (row/page/drawn_page beside drawn_row or after summon alike).
+ * Native slot 16 is a GCSE/PRE pseudo row * 2, stored after every row change.
+ * 887 -> 833: the two first passes count with their own i, not index. Native
+ * keeps index in r4 (caller-saved, slot 4) in every other loop, but the copy
+ * pass counts down in r2, so it is another variable; i only in the copy pass
+ * 890, only in the first pass 850. Still differing there: native keeps id in
+ * r6 and src in r5, required in r0 and element in r4; the draft has id in r4
+ * (caller-saved), src r6, required r5, element r0. The same id/index swap
+ * recurs in the draw loop (native index r4, id r6; draft index r7, id r4).
+ * In greg the draft allocates index (higher priority) before id. From 833:
+ * i also in the sprite setup loops 885, in the push loop 929, in the page
+ * loops 950 (index is one variable in all of them, as native's r4 shows);
+ * declaring index, i or id first, or id as u8, 833; the cleanup loop as
+ * for (index = 0; index < 4; index++) Resource_ResetEntry(handles[index])
+ * compiles the same as the counted pointer form and is kept; y set right
+ * after Ability_LoadGlyph 833, at the top of the draw body 1014.
+ * 833 -> 805: the blink value gFrameCount & 8 is its own variable (native r6,
+ * the djinn highlight counter r5); in affordable it took r5, in id 869, in
+ * result 805 as well.
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -67,14 +97,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     const struct SummonDefinition *summon;
     struct MenuSprite *sprite;
     const u8 *required, *supply;
-    u8 *src, *dst;
-    s32 *handle;
+    u8 *src;
     s32 drawn_row, drawn_page, row, page, preferred;
-    s32 cursor_handle, count, last, used, mask, element;
-    s32 id, tile, affordable;
+    s32 cursor_handle, count, used, mask, element;
+    s32 id, tile, affordable, blink;
     struct MenuPoint cursor_position;
     s32 pressed, repeated, result;
     s32 index;
+    s32 i;
 
     render = (struct UiRenderWork *)gWindowWork[0];
     drawn_row = -1;
@@ -105,36 +135,28 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     count = Trade_ListFlaggedEntriesFar(available);
     used = 0;
-    last = count - 1;
-    if (last >= 0) {
-        src = available + last;
-        do {
-            id = *src;
-            required = SummonDefinition_Get(id)->djinn_required;
-            supply = standby;
-            element = 0;
-            while (*required <= *supply) {
+    for (i = count - 1; i >= 0; i--) {
+        id = available[i];
+        required = SummonDefinition_Get(id)->djinn_required;
+        supply = standby;
+        element = 0;
+        if (*required <= *supply) {
+            do {
                 element++;
                 if (element > 3)
                     break;
                 required++;
                 supply++;
-            }
-            if (element == 4) {
-                ordered[used++] = id;
-                *src = 32;
-            }
-            src--;
-        } while ((s32)src >= (s32)available);
-    }
-    dst = ordered + used;
-    src = available;
-    for (index = count; index > 0; index--) {
-        id = *src++;
-        if (id != 32) {
-            *dst++ = id;
-            used++;
+            } while (*required <= *supply);
         }
+        if (element == 4) {
+            ordered[used++] = id;
+            available[i] = 32;
+        }
+    }
+    for (i = 0; i < count; i++) {
+        if (available[i] != 32)
+            ordered[used++] = available[i];
     }
     ordered[used] = 32;
 
@@ -179,12 +201,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                         required = summon->djinn_required;
                         supply = standby;
                         element = 0;
-                        while (*required <= *supply) {
-                            element++;
-                            if (element > 3)
-                                break;
-                            required++;
-                            supply++;
+                        if (*required <= *supply) {
+                            do {
+                                element++;
+                                if (element > 3)
+                                    break;
+                                required++;
+                                supply++;
+                            } while (*required <= *supply);
                         }
                         affordable = element == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
@@ -240,12 +264,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         cursor.oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
         cursor.oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
         Runtime_PushSlotEntry((s32 *)&cursor, 242);
-        affordable = gFrameCount & 8;
+        blink = gFrameCount & 8;
         {
             s32 element;
 
             for (element = 0; element <= 3; element++) {
-                tile = 15 - (affordable != 0);
+                tile = 15 - (blink != 0);
                 if ((mask & (1 << element)) == 0)
                     tile = 15;
                 Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1, tile);
@@ -298,7 +322,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             AudioCommand_PlayFar(111);
             row--;
             if (row < 0) {
-                if (page == (last / 4) * 4)
+                if (page == ((count - 1) / 4) * 4)
                     row = count - page - 1;
                 else
                     row = 3;
@@ -315,7 +339,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             } else {
                 page += 4;
                 row = preferred;
-                if (page == (last / 4) * 4) {
+                if (page == ((count - 1) / 4) * 4) {
                     row = count - page - 1;
                     if (row > preferred)
                         row = preferred;
@@ -328,7 +352,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 row = preferred;
                 page -= 4;
             } else {
-                page = (last / 4) * 4;
+                page = ((count - 1) / 4) * 4;
                 row = preferred;
                 if (page != 0) {
                     row = count - page - 1;
@@ -340,11 +364,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         WaitFrames(1);
     }
     WaitFrames(1);
-    handle = handles;
-    index = 3;
-    do {
-        Resource_ResetEntry(*handle++);
-    } while (--index >= 0);
+    for (index = 0; index < 4; index++)
+        Resource_ResetEntry(handles[index]);
     Resource_ResetEntry((u16)cursor_handle);
     UiWork_Finalize(counts, 1);
     UiWork_Finalize(description, 1);

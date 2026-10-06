@@ -61,9 +61,9 @@ ColorBuffer_ScaleFar:
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesFar:
 	overlay_veneer BattlePlacement_UpdateTimedEntries
-	.global Func_08118100
+	.global BattleMotion_GetSlotPaletteFar
 	.thumb_func
-Func_08118100:
+BattleMotion_GetSlotPaletteFar:
 	overlay_veneer BattleMotion_GetSlotPalette
 	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	.thumb_func

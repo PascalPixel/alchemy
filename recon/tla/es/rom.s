@@ -4759,20 +4759,20 @@ Shop_GlyphRowOffsets:
 Resource_FarCall009:
 	.incbin "baserom.gba", 0x00118000, 0x00000010
 	.section .rom.00118058, "ax"
-	.global Func_08118058
-	.type Func_08118058, %function
+	.global Summon_IsEntrySecondaryFlaggedFar
+	.type Summon_IsEntrySecondaryFlaggedFar, %function
 	.thumb_func
-Func_08118058:
+Summon_IsEntrySecondaryFlaggedFar:
 	.incbin "baserom.gba", 0x00118058, 0x00000008
-	.global Func_08118060
-	.type Func_08118060, %function
+	.global Battle_GetSpriteFlagHighBitsFar
+	.type Battle_GetSpriteFlagHighBitsFar, %function
 	.thumb_func
-Func_08118060:
+Battle_GetSpriteFlagHighBitsFar:
 	.incbin "baserom.gba", 0x00118060, 0x00000008
-	.global Func_08118068
-	.type Func_08118068, %function
+	.global Summon_IsEntryFlaggedFar
+	.type Summon_IsEntryFlaggedFar, %function
 	.thumb_func
-Func_08118068:
+Summon_IsEntryFlaggedFar:
 	.incbin "baserom.gba", 0x00118068, 0x00000008
 	.section .rom.00118230, "ax"
 	.incbin "baserom.gba", 0x00118230, 0x00000008

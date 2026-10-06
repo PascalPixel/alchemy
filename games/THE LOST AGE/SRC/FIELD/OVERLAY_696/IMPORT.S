@@ -549,7 +549,7 @@ Func_02004a8c:
 	.global Func_02004a94
 	.thumb_func
 Func_02004a94:
-	overlay_veneer Func_08108080
+	overlay_veneer Inn_PlaySleepFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

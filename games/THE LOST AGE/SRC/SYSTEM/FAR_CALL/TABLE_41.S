@@ -17,9 +17,9 @@ Func_08108040:
 	.thumb_func
 Func_08108048:
 	overlay_veneer Func_08108aa8
-	.global Func_08108050
+	.global Shop_FillSelectorFar
 	.thumb_func
-Func_08108050:
+Shop_FillSelectorFar:
 	overlay_veneer Shop_FillSelector
 	.global Shop_RestoreSceneTilesFar
 	.thumb_func
@@ -41,7 +41,7 @@ Func_08108070:
 	.thumb_func
 AudioCommand_WaitForStateByteClearFar:
 	overlay_veneer AudioCommand_WaitForStateByteClear
-	.global Func_08108080
+	.global Inn_PlaySleepFar
 	.thumb_func
-Func_08108080:
+Inn_PlaySleepFar:
 	overlay_veneer Inn_PlaySleep

@@ -1,15 +1,15 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08118058
+	.global Summon_IsEntrySecondaryFlaggedFar
 	.thumb_func
-Func_08118058:
+Summon_IsEntrySecondaryFlaggedFar:
 	overlay_veneer Summon_IsEntrySecondaryFlagged
-	.global Func_08118060
+	.global Battle_GetSpriteFlagHighBitsFar
 	.thumb_func
-Func_08118060:
+Battle_GetSpriteFlagHighBitsFar:
 	overlay_veneer Battle_GetSpriteFlagHighBits
-	.global Func_08118068
+	.global Summon_IsEntryFlaggedFar
 	.thumb_func
-Func_08118068:
+Summon_IsEntryFlaggedFar:
 	overlay_veneer Summon_IsEntryFlagged

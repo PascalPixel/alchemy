@@ -8,10 +8,6 @@ Owner_AdjustFirstValueFar:
 	.global Owner_AdjustSecondValueFar
 	.thumb_func
 Owner_AdjustSecondValueFar:
-	.thumb_func
-	.global Func_080ad0c8
-	.thumb_func
-Func_080ad0c8:
 	overlay_veneer Owner_AdjustSecondValue
 	.global Owner_RecalculateRatiosFar
 	.thumb_func

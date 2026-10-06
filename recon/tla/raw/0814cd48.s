@@ -69,7 +69,7 @@ Func_0814cd48:
 	ldr r0, [sp, #16]
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl Func_08118100
+	bl BattleMotion_GetSlotPaletteFar
 	strb r0, [r5, #5]
 	ldr r1, [sp, #4]
 	ldr r4, [sp, #0]

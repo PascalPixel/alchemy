@@ -1341,7 +1341,7 @@ Func_080cb91c:
 .L_080cc3f0:
 	bl EventRuntime_ResolveAllPendingActions
 	bl UiTimedNotice_CloseIfActiveFar
-	bl Func_081c0070
+	bl Audio_GetBackgroundCueFar
 	movs r2, #128
 	ldr r1, [sp, #8]
 	lsls r2, r2, #2

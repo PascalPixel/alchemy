@@ -15,7 +15,7 @@ Func_0804b8b8:
 	mov r0, sp
 	adds r0, #36
 	str r0, [sp, #24]
-	bl Func_08118138
+	bl BattleParty_PrepareReserveOwnersFar
 	movs r1, #0
 	movs r2, #1
 	str r1, [sp, #20]

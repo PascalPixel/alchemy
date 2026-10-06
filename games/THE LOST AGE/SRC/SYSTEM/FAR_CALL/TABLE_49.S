@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_081c0070
+	.global Audio_GetBackgroundCueFar
 	.thumb_func
-Func_081c0070:
+Audio_GetBackgroundCueFar:
 	overlay_veneer Audio_GetBackgroundCue
 	.global AudioCommand_WaitForCompletionFar
 	.thumb_func

@@ -4687,10 +4687,10 @@ Func_08108040:
 	.thumb_func
 Func_08108048:
 	.incbin "baserom.gba", 0x00108048, 0x00000008
-	.global Func_08108050
-	.type Func_08108050, %function
+	.global Shop_FillSelectorFar
+	.type Shop_FillSelectorFar, %function
 	.thumb_func
-Func_08108050:
+Shop_FillSelectorFar:
 	.incbin "baserom.gba", 0x00108050, 0x00000008
 	.global Shop_RestoreSceneTilesFar
 	.type Shop_RestoreSceneTilesFar, %function
@@ -4717,10 +4717,10 @@ Func_08108070:
 	.thumb_func
 AudioCommand_WaitForStateByteClearFar:
 	.incbin "baserom.gba", 0x00108078, 0x00000008
-	.global Func_08108080
-	.type Func_08108080, %function
+	.global Inn_PlaySleepFar
+	.type Inn_PlaySleepFar, %function
 	.thumb_func
-Func_08108080:
+Inn_PlaySleepFar:
 	.incbin "baserom.gba", 0x00108080, 0x00000008
 	.section .rom.001080a8, "ax"
 	.incbin "baserom.gba", 0x001080a8, 0x00000438

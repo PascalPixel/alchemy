@@ -356,7 +356,7 @@ Func_0815e3ac:
 	lsls r2, r2, #1
 	adds r3, r1, r2
 	ldrh r0, [r3]
-	bl Func_08118058
+	bl Summon_IsEntrySecondaryFlaggedFar
 	cmp r0, #0
 	beq .L_0815e69e
 	movs r0, #134

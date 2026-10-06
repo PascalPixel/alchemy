@@ -147,22 +147,22 @@ Func_080fbe6c:
 	mov r2, r10
 	movs r0, #30
 	movs r1, #14
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	ldr r0, [sp, #24]
 	movs r1, #0
 	add r0, r11
 	mov r2, r10
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	mov r0, r11
 	add r0, r8
 	adds r0, #1
 	movs r1, #10
 	mov r2, r10
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	mov r0, r11
 	movs r1, #2
 	mov r2, r10
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	movs r1, #128
 	ldr r0, [sp, #16]
 	lsls r1, r1, #1

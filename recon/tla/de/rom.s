@@ -3944,20 +3944,20 @@ Shop_GlyphRowOffsets:
 Resource_FarCall009:
 	.incbin "baserom.gba", 0x00118000, 0x00000010
 	.section .rom.00118058, "ax"
-	.global Func_08118058
-	.type Func_08118058, %function
+	.global Summon_IsEntrySecondaryFlaggedFar
+	.type Summon_IsEntrySecondaryFlaggedFar, %function
 	.thumb_func
-Func_08118058:
+Summon_IsEntrySecondaryFlaggedFar:
 	.incbin "baserom.gba", 0x00118058, 0x00000008
-	.global Func_08118060
-	.type Func_08118060, %function
+	.global Battle_GetSpriteFlagHighBitsFar
+	.type Battle_GetSpriteFlagHighBitsFar, %function
 	.thumb_func
-Func_08118060:
+Battle_GetSpriteFlagHighBitsFar:
 	.incbin "baserom.gba", 0x00118060, 0x00000008
-	.global Func_08118068
-	.type Func_08118068, %function
+	.global Summon_IsEntryFlaggedFar
+	.type Summon_IsEntryFlaggedFar, %function
 	.thumb_func
-Func_08118068:
+Summon_IsEntryFlaggedFar:
 	.incbin "baserom.gba", 0x00118068, 0x00000008
 	.section .rom.00118088, "ax"
 	.global Func_08118088
@@ -4036,10 +4036,10 @@ ColorBuffer_ScaleFar:
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesFar:
 	.incbin "baserom.gba", 0x001180f8, 0x00000008
-	.global Func_08118100
-	.type Func_08118100, %function
+	.global BattleMotion_GetSlotPaletteFar
+	.type BattleMotion_GetSlotPaletteFar, %function
 	.thumb_func
-Func_08118100:
+BattleMotion_GetSlotPaletteFar:
 	.incbin "baserom.gba", 0x00118100, 0x00000008
 	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	.type BattlePlacement_UpdateTimedEntriesTwentyTimesFar, %function
@@ -4071,10 +4071,10 @@ Func_08118128:
 	.thumb_func
 Func_08118130:
 	.incbin "baserom.gba", 0x00118130, 0x00000008
-	.global Func_08118138
-	.type Func_08118138, %function
+	.global BattleParty_PrepareReserveOwnersFar
+	.type BattleParty_PrepareReserveOwnersFar, %function
 	.thumb_func
-Func_08118138:
+BattleParty_PrepareReserveOwnersFar:
 	.incbin "baserom.gba", 0x00118138, 0x00000008
 	.global Func_08118140
 	.type Func_08118140, %function

@@ -407,7 +407,7 @@ Func_0804bc08:
 	bne .L_0804bf2e
 	lsls r0, r5, #1
 	adds r0, r7, r0
-	bl Func_08118138
+	bl BattleParty_PrepareReserveOwnersFar
 	adds r5, r5, r0
 .L_0804bf2e:
 	movs r0, #1

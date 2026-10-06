@@ -1,12 +1,21 @@
-/* 08027114: differ 1892 against the 1727-line parent listing (draft 1805,
- * common 820; was 2131).
+/* 08027114: differ 1802 against the 1727-line parent listing (draft 1801,
+ * common 863; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
  * Shared battle, action, summon, item, window and OAM layouts replace private
  * copies; serial payloads use their existing linker names. The parent frame is
- * 104 bytes against the native 100: one extra spill slot shifts every slot
- * from sp+64 upward, and variable allocation still differs widely.
+ * 104 bytes against the native 100. Spill slots go out in pseudo order, top
+ * down; native: out 88, in 84, count 80, ent 76, actor 72, aux 68, actorId 64,
+ * kind 60, param 56, res1024 52, res512 48, i 44, djinn-case handle 40,
+ * &state 36, then the i*2/i*4/i*16 givs 32/28/24, &hdr 20 and caller-save
+ * slots 16..4 (ok is a caller-saved r4 at sp+4). The draft's one extra slot
+ * is djinn: greg gives it no register (priority 5*38/158, below ok, cost and
+ * handle; r5 holds a local, r6 the k*2+13 giv, r7 res, r8 win, r9 k, r10
+ * ability, r11 ok, r4 slot). Native: r4 ok, r5/r6 the second loop's givs,
+ * r7 k, r8 &entries[1], r9 djinn, r10 ability, r11 win. Declaring djinn
+ * first leaves only out/in/count 4 bytes high. Below &state the draft makes
+ * &hdr before the givs (draft 32, native 20).
  * Trials: scalar command fields unchanged; a structured handshake loop gives
  * 2245 before scoped initialization. Scoped counters give 2207; local ordering
  * 2187; ordinary record indexing 2172; command switch 2131.
@@ -17,7 +26,19 @@
  * its step all give 2044: GCC copies the exit test in front of the loop. A
  * goto loop entered at its peer test keeps the single test and the native
  * known-zero store: 1969. In the djinn case, taking &entries[1] before
- * SummonDefinition_Get and writing entries[0].x directly: 1892. */
+ * SummonDefinition_Get and writing entries[0].x directly: 1892.
+ * 2026-10-06 T15-08027114 s1: aux declared before actorId (native slot
+ * order): 1864. handle declared after i: 1848. djinn declared first: 1824.
+ * The closing handshake's session pointer as its own variable, so the
+ * opening one crosses no call and stays in r0 as native: 1802.
+ * Worse, reverted: block-local handles in the psynergy and item cases (native
+ * keeps them in r10 and r9, the djinn one on the stack) 1867 on 1864;
+ * SummonDefinition_Get(res) with the tile stored straight from the loader
+ * 1943; every slot = &entries[0]; slot->x pair written directly 1880 (frame
+ * 96: djinn still spilled, two caller-save slots fewer); a block-local
+ * counter in the djinn case 1966; a block-local &entries[1] pointer there
+ * 1948. Native state->timer = -1 loads its own -1 where the draft's CSE
+ * derives it from the zero (subs r3, #1). */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -110,24 +131,25 @@ void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
+    const struct SummonDefinition *djinn;
     struct LinkRoundState *state;
     struct BattleSession *link;
+    struct BattleSession *session;
     u16 *peer;
     u16 *sync;
     struct BattleActionRecord *ent;
     struct BattleUnit *actor;
     struct UiWindow *win;
     struct UiWindow *hint;
-    const struct SummonDefinition *djinn;
     struct MenuSprite *slot;
     struct BattleAction *ability;
     struct UiRenderWork *ui;
     u16 *scan;
     u16 hdr[2];
     void *block;
+    s32 aux;
     s32 actorId;
     s32 mode;
-    s32 aux;
     s32 kind;
     s32 param;
     s32 res1024;
@@ -136,11 +158,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 cnt;
     s32 sel;
     s32 cost;
-    s32 handle;
     s32 element;
     s32 index;
     s32 ok;
     s32 i;
+    s32 handle;
     s32 k;
     s32 cur;
     s32 order;
@@ -733,9 +755,9 @@ finish:
     Resource_ResetEntry(res1024);
     Scheduler_RemoveCallback(UpdateLinkSessionCountdown);
     if (state->enabled != 0) {
-        link = gBattleWork;
+        session = gBattleWork;
         miss = 0;
-        if (state->displayHandle == 0 && link->link_paused == 0) {
+        if (state->displayHandle == 0 && session->link_paused == 0) {
             state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);
             Ui_FillVramBlockPattern();
             DrawLocalizedResource();
@@ -743,8 +765,8 @@ finish:
             state->displayHandle = 0;
         }
         for (;;) {
-            peer = gLinkPeerSignatures[link->link_side ^ 1];
-            if (link->link_paused != 0) {
+            peer = gLinkPeerSignatures[session->link_side ^ 1];
+            if (session->link_paused != 0) {
                 count = -1;
                 break;
             }

@@ -31,7 +31,9 @@ is not an admitted build route and earns no credit, even at differ 0.
 Study output stays in obj/drafts/arm-study; no build routing is changed.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in
 out/EDITION/obj/drafts/rtl/, named DRAFT.c.PASS, to find the pass where the
-draft's allocation or scheduling first leaves the listing's."#;
+draft's allocation or scheduling first leaves the listing's. The lreg and greg
+dumps give each pseudo's allocation priority; with -fsched-verbose=5 the sched
+and sched2 dumps say in words why each instruction was scheduled where it is."#;
 
 const ARM_STUDY_NOTICE: &str = "ARM study only: pinned game compiler, -mthumb replaced by -marm; all other game options unchanged.\nNot an admitted build route; this comparison earns no credit.";
 
@@ -369,7 +371,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .map_err(|e| format!("{}: {e}", options.draft.display()))?;
     let mut steps = draft_steps(target, &draft, &object, options.arm_study)?;
     if options.rtl {
-        steps[0].push("-da".into());
+        steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
     }
     let assemble = steps.pop().expect("draft plan ends with assembly");
     for step in steps {

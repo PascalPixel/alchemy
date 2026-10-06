@@ -8,7 +8,7 @@
 mod aim;
 mod ast;
 mod effects;
-mod lex;
+pub(crate) mod lex;
 mod mutate;
 mod parse;
 pub(crate) mod perm;

@@ -399,6 +399,7 @@ make progress                          # DONE, one line per edition (alchemy pro
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
+alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
 alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
 # Work in parallel
 alchemy queues --workers N --out-dir DIR   # work that cannot collide (W7)

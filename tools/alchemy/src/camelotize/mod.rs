@@ -1,9 +1,13 @@
 mod barriers;
+mod casts;
 mod declarations;
 mod fields;
+mod idioms;
+mod numbers;
 mod registers;
 mod source;
 mod stabs;
+mod trial;
 
 use crate::compiler::routing::{root, COMMON_INCLUDE_MODULES};
 use crate::targets::{target_for, DecompTarget, DecompTargetId};
@@ -19,6 +23,14 @@ many places changed in each file. REWRITE is one of:
   declarations  a file's own declarations of functions a header declares,
                 replaced by an include of that header
   barriers      FAKEMATCH-tagged empty asm barriers, with their tag
+  numbers       hex literals that are quantities, in decimal; masks, bit
+                operands, addresses and fixed-point constants stay hex
+  casts         value casts and pointer casts the English build does not
+                need: each removal is compiled, and kept only when the
+                file's assembly is identical and no warning is new
+  idioms        x = x + 1 as x++, x = x | n as x |= n, !(a == b) as
+                a != b, parentheses around one name or number, empty
+                statements; each proved the same way as casts
 Struct layouts and types come from the build's own compiler for each game
 the file builds in. Then run alchemy keep: it keeps only the files whose
 edits leave all twelve editions byte-identical."#;
@@ -165,6 +177,18 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 declarations::rewrite(&text, &declarations::index(root, target)?)
             }
             "barriers" => barriers::rewrite(&text),
+            "numbers" => numbers::rewrite(&text),
+            "casts" | "idioms" => match if rewrite == "casts" {
+                casts::rewrite(root, &file, &text, &games(&file))
+            } else {
+                idioms::rewrite(root, &file, &text, &games(&file))
+            } {
+                Ok(done) => done,
+                Err(error) => {
+                    eprintln!("{name}: skipped: {}", error.lines().next().unwrap_or(""));
+                    continue;
+                }
+            },
             other => return Err(format!("unknown rewrite {other}\n{USAGE}")),
         };
         if count > 0 && out != text {

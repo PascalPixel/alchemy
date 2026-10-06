@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 446 of 1276 (1282 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 408 of 1276 (1282 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp and render in sl now match. Remaining: constant pseudos win the wrong hi registers (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -13,6 +13,7 @@
  * Trial (2026-10-06): the two stores to menu_busy after the loop through gWindowWork[0] directly, leaving 0 in sl as native: 568 -> 549.
  * Trial (2026-10-06): y = row * 8 computed before the help-line draw (permuter hint, as a temporary): the loop allocates as native: 549 -> 458.
  * Trial (2026-10-06): j for the owner_y loop apart from the tile loop's i: the counter takes r2 as native: 458 -> 446. Cursor zeroed before anim, dirty, page and frame shares one zero everywhere (444), unlike native; page, frame, dirty, anim order gives 453.
+ * Trial (2026-10-06): one id for both owners in the swap preview, where first_id and second_id were two: id keeps r6 and unit r7 as native: 446 -> 408.
  * Open (2026-10-06): 224 (the element mask, 7 refs over 174 insns, priority 804) outranks 0x8000 and the shared 0 (800 each) and takes r8; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Iwram_CopyWords' 332 and its address tie (4 refs over 90 insns) and 332 wins by pseudo number; native keeps the address in r5. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -121,8 +122,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
         u16 *diff_work;
         struct BattleUnit *unit_copy;
         struct BattleUnit *unit;
-        s32 first_id;
-        s32 second_id;
+        s32 id;
         s32 first_element;
         s32 first_index;
         s32 second_element;
@@ -136,39 +136,39 @@ s32 OwnerAction_RunCompareLoop(u32 mode_arg)
         unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
         second_element = 0;
         second_index = 0;
-        first_id = state->shown_owner[0];
+        id = state->shown_owner[0];
         first_element = state->pair_element[0];
         first_index = state->pair_index[0] & 31;
         first_flag = (u16)(state->pair_entries[0] & 0x8000);
 
-        unit = Owner_GetStateFar(first_id);
+        unit = Owner_GetStateFar(id);
         Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
-        Djinn_DeactivateFar(first_id, first_element, first_index);
+        Djinn_DeactivateFar(id, first_element, first_index);
         if (mode == 0) {
             second_element = state->pair_element[1];
             second_index = state->pair_index[1] & 31;
             second_flag = (u16)(state->pair_entries[1] & 0x8000);
-            Djinn_AddToOwnerFar(first_id, second_element, second_index);
+            Djinn_AddToOwnerFar(id, second_element, second_index);
             if (second_flag != 0) {
-                Djinn_ActivateFar(first_id, second_element, second_index);
+                Djinn_ActivateFar(id, second_element, second_index);
             }
         }
-        Owner_RecalculateStatsFar(first_id);
+        Owner_RecalculateStatsFar(id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
 
-        second_id = state->shown_owner[1];
-        unit = Owner_GetStateFar(second_id);
+        id = state->shown_owner[1];
+        unit = Owner_GetStateFar(id);
         Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
         if (mode == 0) {
-            Djinn_DeactivateFar(second_id, second_element, second_index);
+            Djinn_DeactivateFar(id, second_element, second_index);
         }
-        Djinn_AddToOwnerFar(second_id, first_element, first_index);
+        Djinn_AddToOwnerFar(id, first_element, first_index);
         if (first_flag != 0) {
-            Djinn_ActivateFar(second_id, first_element, first_index);
+            Djinn_ActivateFar(id, first_element, first_index);
         }
-        Owner_RecalculateStatsFar(second_id);
+        Owner_RecalculateStatsFar(id);
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));

@@ -1,4 +1,12 @@
-/* 080158e8: ARM, compiled C (push starts at r5: -fcall-used-r4). Score in ARM mode: listing 133, draft 133, differ 154 */
+/* 080158e8: ARM draft; no admitted game ARM build route.
+   Native: 92 instructions and 41 switch-table words, 532 bytes total.
+   Stock agscc --arm: 92/92/common56/differ72.
+   Fixed agbcc_arm library setting: -O2 92/92/common87/differ10;
+   the uniform -O control gives 92/96/common39/differ110.
+   Remaining -O2 differences are in the final store/loop-test schedule.
+   Natural trials: moving packed-value calculation or row update leaves10;
+   u16 packed value gives14; indexed stores worsen register allocation.
+   Those trials were reverted. No compiler route follows from this score. */
 typedef unsigned short u16;
 typedef int s32;
 typedef unsigned int u32;

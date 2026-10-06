@@ -9,6 +9,11 @@
  * Reordered declarations, early counter init and combined loop tests: unchanged.
  * Scoped character local: unchanged.
  * Pointer r0 clobber: differ 22; loop counter barrier: differ 199.
+ * Scoped copy locals: 32; shared j counter: 44; indexed text: 179;
+ * advancing the pointer in the for clause: 35; int character: 403.
+ * Three fixed registers: 190; fixed text/count in do loop: 116;
+ * inline bounded-copy helper: 126. Text r0/r1 clobber: 22;
+ * the same clobber with the shared i counter: 62.
  * Those failed steering trials are not retained.
  */
 #include "BATTLE.H"

@@ -2,7 +2,11 @@
 /* Trials: const/register heat, outer heat, declaration order and a sheet-field
  * pointer leave differ 222. Keeping the undivided frame until palette use gives
  * 231. Moving heat before angle gives 606. Forcing r4 omits its required call
- * spill; clobber barriers did not improve the draft and were removed. */
+ * spill; clobber barriers did not improve the draft and were removed. A scoped
+ * r4 quotient copied back to an ordinary local gives 221 with an extra move.
+ * Reusing size/x/y for heat gives 573/681/223; initializing direction before
+ * its branch gives 445. Mode read/write barriers with the second loop's
+ * factored size give 414 (register) or 513 (memory). All were removed. */
 /* 080e7338 and 080e73a0 are nested functions of this one; score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"

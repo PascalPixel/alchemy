@@ -1,4 +1,21 @@
-/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4). Score in ARM mode: listing 198, draft 206, differ 366 */
+/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4). Analysis-only ARM study; no route admitted, no credit.
+ * agbcc_arm control (library setting -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4):
+ *   listing 196, draft 198, common 90, differ 214
+ * agscc control (alchemy diff --arm): listing 196, draft 221, common 17, differ 383
+ * Trials, differ as agbcc_arm / agscc --arm:
+ *   previous draft (inline plot function, do-while rows): 314 / 357
+ *   plot as a block with its own VRAM pointer; inlining had folded the base into the add,
+ *     native holds it in a register hoisted before each row loop: 285 / 369
+ *   packed 26-byte glyph struct (ARM pads it to 28 otherwise): 286 / 370
+ *   glyph width into a temporary, ret set in both arms (native branches, no conditional store): 283 / 369
+ *   glyph rows as a while loop that breaks at row 12 before loading the next row: 245 / 385
+ *   font rows as for (row < 8 && y + row < 32): 226 / 383
+ *   (px >> 3) * (width - 2), as native mla's operand order: 214 / 383
+ *   rejected: literal colour constants instead of two locals 221; width read before rows 217
+ * Remaining: win is spilled and reloaded for its width (native reads r0 before the spill), frame
+ * 48 against 44, the wide glyph offset is folded into the symbol (native recomputes ch - 32),
+ * the narrow path loads UiText_Glyphs + 2 (native keeps the symbol and adds 2), spill order of
+ * the colour constants, and register choice throughout. agscc ARM adds an APCS frame native lacks. */
 #include "TYPES.H"
 
 struct UiTextWindow {
@@ -11,30 +28,31 @@ struct UiTextWindow {
 struct UiTextGlyph {
     u16 width;
     u16 rows[12];
-};
+} __attribute__((packed, aligned(2)));
 
 struct UiTextWideGlyph {
     u16 width;
     u16 unk2[3];
     u16 rows[12];
-};
+} __attribute__((packed, aligned(2)));
 
 extern u8 UiSprite_CursorFrameTiles[];
 extern struct UiTextGlyph UiText_Glyphs[];
 
-static __inline__ void UiText_PlotPixel(u32 width, u32 px, u32 ty, u32 sub, u32 color)
-{
-    u16 *dst = (u16 *)((0x06002500 + ((width - 2) * (px >> 3) + ty) * 32) | ((sub | ((px & 7) >> 2)) << 1));
-    u32 mask = 15 << ((px & 3) * 4);
-
-    *dst = (*dst & ~mask) | (mask & color);
+#define UiText_PlotPixel(width, px, ty, sub, color) \
+{ \
+    u8 *vram = (u8 *)0x06002500; \
+    u16 *dst = (u16 *)((u32)(vram + ((px >> 3) * (width - 2) + ty) * 32) | ((sub | ((px & 7) >> 2)) << 1)); \
+    u32 mask = 15 << ((px & 3) * 4); \
+ \
+    *dst = (*dst & ~mask) | (mask & color); \
 }
 
 s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font)
 {
     u32 b;
     u32 width;
-    u32 nrow;
+    u32 gw;
     s32 bits;
     u16 *rows;
     u32 idx;
@@ -60,39 +78,37 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             u32 color;
             u32 ty;
 
-            row = 0;
-            if (y < 32) {
-                do {
-                    nrow = row + 1;
-                    ty = (y + row) >> 3;
-                    sub = ((y + row) & 7) * 2;
-                    for (col = 0; col < 8; col++) {
-                        b >>= 4;
-                        if (!(col & 1))
-                            b = *src++;
-                        if ((b & 13) == 1) {
-                            color = (b & 15) == 1 ? c1 : c3;
-                            px = x + col;
-                            if (px >> 3 < 30)
-                                UiText_PlotPixel(width, px, ty, sub, color);
-                        }
+            for (row = 0; row < 8 && y + row < 32; row++) {
+                ty = (y + row) >> 3;
+                sub = ((y + row) & 7) * 2;
+                for (col = 0; col < 8; col++) {
+                    b >>= 4;
+                    if (!(col & 1))
+                        b = *src++;
+                    if ((b & 13) == 1) {
+                        color = (b & 15) == 1 ? c1 : c3;
+                        px = x + col;
+                        if (px >> 3 < 30)
+                            UiText_PlotPixel(width, px, ty, sub, color);
                     }
-                } while ((row = nrow) < 8 && y + row < 32);
+                }
             }
             return w;
         }
         code = ch - 222;
         rows = UiText_Glyphs[idx].rows;
-        ret = UiText_Glyphs[idx].width;
+        gw = UiText_Glyphs[idx].width;
     } else {
         code = ch - 222;
         rows = ((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32].rows;
-        ret = ((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32].width;
+        gw = ((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32].width;
     }
     if (code < 2) {
         x -= 3;
         y -= 2;
         ret = 0;
+    } else {
+        ret = gw;
     }
     for (pass = 0; pass < 4; pass++) {
         u32 ty;
@@ -117,23 +133,20 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
         next = rows + 1;
         bits = rows[0] << 16;
         row = 0;
-        if (y < 32) {
-            do {
-                nrow = row + 1;
-                ty = (y + row) >> 3;
-                sub = ((y + row) & 7) * 2;
-                for (col = 0; col < 14; col++) {
-                    if (bits < 0) {
-                        px = x + col;
-                        UiText_PlotPixel(width, px, ty, sub, color);
-                    }
-                    if ((bits <<= 1) == 0)
-                        break;
+        while (y + row < 32) {
+            ty = (y + row) >> 3;
+            sub = ((y + row) & 7) * 2;
+            for (col = 0; col < 14; col++) {
+                if (bits < 0) {
+                    px = x + col;
+                    UiText_PlotPixel(width, px, ty, sub, color);
                 }
-                if ((row = nrow) >= 12)
+                if ((bits <<= 1) == 0)
                     break;
-                bits = *next++ << 16;
-            } while (y + row < 32);
+            }
+            if (++row >= 12)
+                break;
+            bits = *next++ << 16;
         }
     }
     return ret;

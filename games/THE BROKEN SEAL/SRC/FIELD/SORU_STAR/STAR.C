@@ -891,7 +891,7 @@ void Scene_AlexTakesStars(void)
     u32 i;
     struct FieldActor *rec;
     s32 record;
-    s32 none;
+    u8 none;
 
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Engine_EventWait(10);
@@ -926,7 +926,6 @@ void Scene_AlexTakesStars(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Object_GetById(ACTOR_GERALD);
     rec->steering_flags &= ~ACTOR_FACES_MOTION;
-    /* FAKEMATCH: the zero is parked here, well before its one store, which keeps it in the register the reference holds it in. */
     none = 0;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_EventWait(30);

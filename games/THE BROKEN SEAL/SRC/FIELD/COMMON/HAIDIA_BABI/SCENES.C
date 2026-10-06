@@ -399,8 +399,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
-    /* FAKEMATCH: a shared zero keeps r5 instead of r2 before the glyph allocation. */
-    s32 clear;
+    u8 clear;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);

@@ -29,6 +29,7 @@ mod label;
 mod ld_map;
 mod merge;
 mod objects;
+mod permute;
 mod process;
 mod queues;
 mod show;
@@ -58,6 +59,7 @@ Choose what to match
 Match one function
   diff          a C draft against the listing it would replace
   sizes         the structs a draft sees, and the locals that fill a frame gap
+  permute       search rewrites and PERM macro choices of a draft toward differ 0
   show          a built function beside the reference ROM
   adopt         the C into its module (--into) and out of all scaffolding
   label         name English-only scaffold data in the other editions
@@ -106,6 +108,7 @@ fn main() -> ExitCode {
         "integrate" => result(integrate::run(rest)),
         "keep" => result(keep::run(rest)),
         "diff" => result(diff::run(rest)),
+        "permute" => result(permute::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),
         "sizes" => result(sizes::run(rest)),

@@ -1,4 +1,12 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 2014, differ 182.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2104, common 2019, differ 171.
+   The final pair_index store is entry % 32 (182 -> 171): the native ands
+   the djinn number in SImode, into the register that held the 31, as
+   the far-call arguments do; & 0x1f stored to the u8 field is narrowed
+   to QImode, the 31 becomes a QImode register and the and lands in a copy
+   of entry (one extra instruction). The one instruction now missing is
+   the balance loop's (column pointer hoisted, |= 4 store shared).
+   DJINN_NUMBER as % 32 everywhere 206; with % 32, entry as u16 1366, as
+   s32 1350; the owner field as entry / 256 % 16 176.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -92,6 +100,19 @@
    4 and 1 in the cursor-move blocks take r6 and r5 where the native has
    r5 and r6. A third permuter run from 261 (7 min, 2 jobs) found only the
    same sel = -1 and savedY moves again (238), and ids[i] + j for ids[i][j].
+   Session 3 (2026-10-06), measured at 182: the permuter from 182 (5 min,
+   2 jobs, seed 31, 4598 candidates) and limited to the unleash text, the
+   draw after it and the final block (4 min, seed 77) beat nothing. In
+   global.c's order ok (pseudo 98: 53 refs over 110 insns, priority 2.41)
+   goes before i (105 over 378, 1.67), finds r5-r7 taken and gets r8; the
+   native's ok shares i's hard register and so its spill slot, which needs
+   ok allocated after i. i as the A handler's flag 170, as both 1281, both
+   without the column pointer 1455. The |= 4 store through buf with the
+   column pointer kept 1361. The cursor blocks' 4 as a block-local
+   register variable in r5: 305 as u32 (ldrsb), 272 as s8; removing the
+   constant pseudos moves lists from r9 to sl. In the redraw block reload
+   rotates the 0x666 into r1 where the native has r3. The owner field's
+   and lands in entry (it dies there); the native's in the 0xf00 register.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -712,7 +733,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     if (sel != -1) {
         u32 entry;
         state->pair_entries[mode] = entry = lists->list.ids[x][sel];
-        state->pair_index[mode] = DJINN_NUMBER(entry);
+        state->pair_index[mode] = entry % 32;
         state->pair_element[mode] = DJINN_ELEMENT(entry);
         state->pair_owner[mode] = DJINN_OWNER(entry);
     }

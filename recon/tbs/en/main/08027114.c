@@ -1,5 +1,5 @@
-/* 08027114: differ 1508 against the 1727-line parent listing (draft 1825,
- * common 1022; was 2131).
+/* 08027114: differ 1504 against the 1727-line parent listing (draft 1819,
+ * common 1021; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -52,7 +52,8 @@
  * selection results as one variable, as native keeps both in r6: 1563
  * (1887 in the old order). Every entries[0].x store written directly
  * instead of through slot: 1508 (1678 on 1616). The frame figures above
- * date from 1802; recheck them. Next: djinn's register, the round end at
+ * date from 1802; recheck them. The djinn case's own counter j: 1504
+ * (1966 in the old order). Next: djinn's register, the round end at
  * next_round, and the djinn and summon loops. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -493,7 +494,9 @@ psynergy_menu:
 
             }
 
-            case 16:
+            case 16: {
+                s32 j;
+
                 Audio_PlayCue(112);
 djinn_menu:
                 COUNTDOWN->unk_34 = 0;
@@ -514,12 +517,12 @@ djinn_menu:
                 ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(10, 17, 17, 3, 6);
-                for (k = 0; k <= 3; k++) {
-                    if (djinn->djinn_required[k] > state->cost[i][k]) {
+                for (j = 0; j <= 3; j++) {
+                    if (djinn->djinn_required[j] > state->cost[i][j]) {
                         break;
                     }
                 }
-                ok = (k == 4);
+                ok = (j == 4);
                 state->entries[0].oam.f.x = 56;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
@@ -532,10 +535,10 @@ djinn_menu:
                 }
                 UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + 819,
                                              win, 16, 0);
-                for (k = 0; k <= 3; k++) {
-                    if (djinn->djinn_required[k] != 0) {
-                        UiWindow_SetTilemapEntry(win, k + 20481, k * 2 + 13, 0, 0);
-                        UiWindow_PutGlyph(win, djinn->djinn_required[k] + 48, k * 2 + 14, 0, 0);
+                for (j = 0; j <= 3; j++) {
+                    if (djinn->djinn_required[j] != 0) {
+                        UiWindow_SetTilemapEntry(win, j + 20481, j * 2 + 13, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, j * 2 + 14, 0, 0);
                     }
                 }
                 if (ok != 0) {
@@ -552,14 +555,16 @@ djinn_menu:
                 if (mode == -1) {
                     goto djinn_menu;
                 }
-                for (k = 0; k <= 3; k++) {
-                    if (djinn->djinn_required[k] > state->cost[i][k]) {
-                        state->cost[i][k] = 0;
+                for (j = 0; j <= 3; j++) {
+                    if (djinn->djinn_required[j] > state->cost[i][j]) {
+                        state->cost[i][j] = 0;
                         break;
                     }
-                    state->cost[i][k] = (u8)(state->cost[i][k] - djinn->djinn_required[k]);
+                    state->cost[i][j] = (u8)(state->cost[i][j] - djinn->djinn_required[j]);
                 }
                 goto store_target;
+
+            }
 
             case 15:
                 Audio_PlayCue(112);

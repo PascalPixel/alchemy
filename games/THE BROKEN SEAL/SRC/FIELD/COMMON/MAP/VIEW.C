@@ -53,9 +53,9 @@ void Map_ShowWorldMap(s32 picture)
     s32 saved_status;
     s16 blend;
 
-    if (((struct EventRuntime *)field)->mode_19e != 3)
+    if (field->mode != 3)
         return;
-    ((struct ObjectRuntime *)field->view_center)->movement_state = 1;
+    field->view_center->paused = 1;
     saved_status = field->transition_frames;
     field->transition_frames = 6;
     Event_FinishScreenTransition();
@@ -134,7 +134,7 @@ void Map_ShowWorldMap(s32 picture)
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     field->transition_frames = saved_status;
-    ((struct ObjectRuntime *)field->view_center)->movement_state = 0;
+    field->view_center->paused = 0;
 }
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
@@ -152,11 +152,11 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
     Object_GetById(gGameState.selected_actor);
     object = (struct ObjectRuntime *)gEventWork->view_center;
     x = object->x;
-    left = x + 0xFEC00000;
-    right = x + 0x01400000;
+    left = x - (320 << 16);
+    right = x + (320 << 16);
     y = object->z;
-    top = y + 0xFDA80000;
-    bottom = y + 0x01900000;
+    top = y - (600 << 16);
+    bottom = y + (400 << 16);
 
     id = 8;
     do {

@@ -18,7 +18,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_RUNTIME.H"
 
-#define MapGroupTable_SelectEntry ((void (*)(void))MapGroupTable_SelectEntry)
 #define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
 
 enum {
@@ -138,7 +137,6 @@ start:
         }
         gGameState.map = record->map_index;
         BattleFx_LoadResourceGroup(0);
-        Field_RunScene(entrance);
-        MapGroupTable_SelectEntry();
+        MapGroupTable_SelectEntry(Field_RunScene(entrance));
     }
 }

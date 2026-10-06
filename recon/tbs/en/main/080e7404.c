@@ -29,6 +29,20 @@
  * its division vanishes; frame == 0 test as work->frame == 0 206 but compares
  * the field where the native compares fp; direction after the join as
  * mode == 1 && side == 1 ? mode : -1 247, still folds. All removed. */
+/* 2026-10-06 session 2 (worktree wf_550f1aeb-bae-18): differ 190 of 1632
+ * (draft 1632, common 1537). cse.c (5960-6033) turns (set 400 mem) (set 401
+ * 400) into a load straight into the division copy whenever the copy is the
+ * class's first_reg (it outlives the loaded pseudo, make_regs_eqv). The native
+ * keeps the load (r2) and copies it (r3) and compares the copy, so the loaded
+ * value must outlive the copy in reg_scan's view; reading work->frame into a
+ * count local that the frame-zero test also reads keeps the copy and gives
+ * 190, but that test then compares count (r1) where the native compares fp.
+ * Heat is still r6 with no caller-save. Trials: count loaded before angle and
+ * divided after it 222 (loop deletes angle's insn, cse2 then folds the copy);
+ * level = heat + green / 4 222 (operands canonicalized); do { } while (0)
+ * around the 145 cue 475, mode still folds (cse2 ignores loop-end notes).
+ * The remaining mode fold (direction = mode -> movs #1) needs a CODE_LABEL
+ * with uses between the mode test and the direction store. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -282,7 +296,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         work->frame = 0;
         for (frame = 0; frame != 192; frame++, work->frame++) {
             s32 angle = frame << 8;
-            s32 heat = work->frame / 4;
+            s32 count = work->frame;
+            s32 heat = count / 4;
             u16 *line = (u16 *)((u8 *)work + 0x1f80);
             s32 size;
             s32 x;
@@ -295,7 +310,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 if ((gKeysRepeat & 3) && frame > 4)
                     goto skipped;
             }
-            if (frame == 0)
+            if (count == 0)
                 AudioCommand_PlayFar(141);
             for (i = 0; i != 15; i++)
                 *line++ = 0;

@@ -26,9 +26,12 @@
  * list 1347; (u16) sleep mask, no change (the native keeps ldrh then ands
  * with 0xFFFF hoisted to r4 and caller-saved at sp+8; not reproduced);
  * on 1094: ordinary infoWin 1174, no marker temporary 1190, no coordinate
- * temporary 1104, so the three devices stay. Next divergence: spread = 1
- * reloads through r7 against native r6 (reload rotation), then the ids
- * address spill at 16 against native 28.
+ * temporary 1104, so the three devices stay. On 1084: found declared after
+ * j, no change; (s16) sleep mask, no change (fold drops every & 0xFFFF
+ * form); permuter 5 min --prefix --heat, best 1099. Next divergence:
+ * spread = 1 reloads through r7 against native r6 (reload rotation; r6 is
+ * free there in the greg dump), then the ids address spill at 16 against
+ * native 28.
  * Earlier history (differ 1400 -> 1332):
  * Spill slots follow declaration order: the native keeps runtime 76,
  * window 72, cursor 68, cnt 64, redraw 56, slotId 52, pending 48, matrix 44,

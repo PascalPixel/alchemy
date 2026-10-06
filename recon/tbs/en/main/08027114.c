@@ -1,12 +1,21 @@
-/* 08027114: differ 1892 against the 1727-line parent listing (draft 1805,
- * common 820; was 2131).
+/* 08027114: differ 1504 against the 1727-line parent listing (draft 1819,
+ * common 1021; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
  * Shared battle, action, summon, item, window and OAM layouts replace private
  * copies; serial payloads use their existing linker names. The parent frame is
- * 104 bytes against the native 100: one extra spill slot shifts every slot
- * from sp+64 upward, and variable allocation still differs widely.
+ * 104 bytes against the native 100. Spill slots go out in pseudo order, top
+ * down; native: out 88, in 84, count 80, ent 76, actor 72, aux 68, actorId 64,
+ * kind 60, param 56, res1024 52, res512 48, i 44, djinn-case handle 40,
+ * &state 36, then the i*2/i*4/i*16 givs 32/28/24, &hdr 20 and caller-save
+ * slots 16..4 (ok is a caller-saved r4 at sp+4). The draft's one extra slot
+ * is djinn: greg gives it no register (priority 5*38/158, below ok, cost and
+ * handle; r5 holds a local, r6 the k*2+13 giv, r7 res, r8 win, r9 k, r10
+ * ability, r11 ok, r4 slot). Native: r4 ok, r5/r6 the second loop's givs,
+ * r7 k, r8 &entries[1], r9 djinn, r10 ability, r11 win. Declaring djinn
+ * first leaves only out/in/count 4 bytes high. Below &state the draft makes
+ * &hdr before the givs (draft 32, native 20).
  * Trials: scalar command fields unchanged; a structured handshake loop gives
  * 2245 before scoped initialization. Scoped counters give 2207; local ordering
  * 2187; ordinary record indexing 2172; command switch 2131.
@@ -17,7 +26,35 @@
  * its step all give 2044: GCC copies the exit test in front of the loop. A
  * goto loop entered at its peer test keeps the single test and the native
  * known-zero store: 1969. In the djinn case, taking &entries[1] before
- * SummonDefinition_Get and writing entries[0].x directly: 1892. */
+ * SummonDefinition_Get and writing entries[0].x directly: 1892.
+ * 2026-10-06 T15-08027114 s1: aux declared before actorId (native slot
+ * order): 1864. handle declared after i: 1848. djinn declared first: 1824.
+ * The closing handshake's session pointer as its own variable, so the
+ * opening one crosses no call and stays in r0 as native: 1802.
+ * Worse, reverted: block-local handles in the psynergy and item cases (native
+ * keeps them in r10 and r9, the djinn one on the stack) 1867 on 1864;
+ * SummonDefinition_Get(res) with the tile stored straight from the loader
+ * 1943; every slot = &entries[0]; slot->x pair written directly 1880 (frame
+ * 96: djinn still spilled, two caller-save slots fewer); a block-local
+ * counter in the djinn case 1966; a block-local &entries[1] pointer there
+ * 1948; state->timer = -1 before the zero fields 1809; one variable for
+ * mode and the selection results 1887; block-local counters in the
+ * psynergy, item and djinn cases 1942. Native state->timer = -1 loads its
+ * own -1 where the draft's reload move2add derives it from the zero in r3.
+ * The native jump table sends 0, 1, 2, 3, 15 and 16 to bodies laid out as
+ * 0, 1, 16, 15, 2, 3, then commit: the case bodies in that source order
+ * give 1616 (from 1802). In that order the psynergy and item cases' own
+ * block-local handles give 1601. Still worse on 1616/1601: every
+ * entries[0].x pair written directly 1678; the mode-7 party counts kept in
+ * sel 1610. In the djinn case the summon id stays in res (native r6) for
+ * the second SummonDefinition_Get, the icon tile stored straight from the
+ * loader: 1574 (it was 1943 in the old case order). mode and the
+ * selection results as one variable, as native keeps both in r6: 1563
+ * (1887 in the old order). Every entries[0].x store written directly
+ * instead of through slot: 1508 (1678 on 1616). The frame figures above
+ * date from 1802; recheck them. The djinn case's own counter j: 1504
+ * (1966 in the old order). Next: djinn's register, the round end at
+ * next_round, and the djinn and summon loops. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -110,24 +147,25 @@ void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
+    const struct SummonDefinition *djinn;
     struct LinkRoundState *state;
     struct BattleSession *link;
+    struct BattleSession *session;
     u16 *peer;
     u16 *sync;
     struct BattleActionRecord *ent;
     struct BattleUnit *actor;
     struct UiWindow *win;
     struct UiWindow *hint;
-    const struct SummonDefinition *djinn;
     struct MenuSprite *slot;
     struct BattleAction *ability;
     struct UiRenderWork *ui;
     u16 *scan;
     u16 hdr[2];
     void *block;
+    s32 aux;
     s32 actorId;
     s32 mode;
-    s32 aux;
     s32 kind;
     s32 param;
     s32 res1024;
@@ -136,15 +174,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 cnt;
     s32 sel;
     s32 cost;
-    s32 handle;
     s32 element;
     s32 index;
     s32 ok;
     s32 i;
+    s32 handle;
     s32 k;
     s32 cur;
     s32 order;
-    s32 res;
 
     void DrawPartyPanels(void)
     {
@@ -308,8 +345,8 @@ handshake_done:
             slot = &COUNTDOWN->entries[2];
             slot->oam.word.attr01 = 0x80000400;
             slot->oam.word.attr23 = 0;
-            res = Ui_LoadEntryForKind(actor->class_id, res512);
-            slot->oam.f.tile = res;
+            mode = Ui_LoadEntryForKind(actor->class_id, res512);
+            slot->oam.f.tile = mode;
             slot->oam.f.x = 0;
             slot->oam.f.y = 0x80;
             slot->oam.f.palette = 14;
@@ -351,8 +388,8 @@ mark_visible:
             slot = &COUNTDOWN->entries[0];
             slot->oam.word.attr23 = 0;
             slot->oam.word.attr01 = 0x80002400;
-            res = Resource_LoadIndexedIntoBuffer(res1024, mode);
-            slot->oam.f.tile = res;
+            mode = Resource_LoadIndexedIntoBuffer(res1024, mode);
+            slot->oam.f.tile = mode;
             if (mode == 15) {
                 slot->oam.f.x = 128;
             } else {
@@ -364,27 +401,27 @@ mark_visible:
             case 0:
                 win = UiWindow_Create(11, 17, 11, 3, 6);
                 UiText_DrawCharacterAtOffset(31, (struct RenderInput *)win, 16, 0);
-                slot = &state->entries[0];
-                slot->oam.f.x = 64;
+                state->entries[0].oam.f.x = 64;
                 Audio_PlayCue(112);
-                res = BattleTarget_RunSelection(actorId, 1, 1, 0);
+                mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
                 UiWork_Finalize(win, 1);
-                if (res == -1) {
+                if (mode == -1) {
                     goto mark_visible;
                 }
                 kind = 0;
-                aux = res;
+                aux = mode;
                 ent->range = 1;
                 goto commit;
 
-            case 1:
+            case 1: {
+                s32 handle;
+
                 Audio_PlayCue(112);
 psynergy_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 48;
+                state->entries[0].oam.f.x = 48;
                 cnt = 0;
                 k = 0;
                 cur = actor->action_slots[0].encoded_action & 0x3fff;
@@ -407,26 +444,25 @@ psynergy_menu:
                 }
                 state->pick[cnt] = 0;
                 state->list[cnt] = 0;
-                res = BattleMenu_RunActionSelection(actorId, state->list, cnt);
-                if (res == -1) {
+                mode = BattleMenu_RunActionSelection(actorId, state->list, cnt);
+                if (mode == -1) {
                     goto mark_visible;
                 }
-                sel = state->pick[res];
+                sel = state->pick[mode];
                 param = actor->action_slots[sel].encoded_action & 0x3fff;
                 ability = Ability_GetData(param);
                 cost = ability->range;
                 handle = Resource_LoadIntoFreeSlot(128);
                 ui = (struct UiRenderWork *)gWindowWork[0];
                 win = UiWindow_Create(8, 17, 18, 3, 6);
-                slot = &state->entries[0];
-                slot->oam.f.x = 40;
+                state->entries[0].oam.f.x = 40;
                 slot = &state->entries[1];
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                res = Resource_LoadIndexedEntryToBuffer(param, handle);
-                slot->oam.f.tile = res;
+                mode = Resource_LoadIndexedEntryToBuffer(param, handle);
+                slot->oam.f.tile = mode;
                 state->entryActive[1] = 1;
                 ui->level = 5;
                 if ((s32)ability->pp_cost > (s32)actor->pp) {
@@ -445,25 +481,164 @@ psynergy_menu:
                 }
                 ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
+                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
-                if (res == -1) {
+                if (mode == -1) {
                     goto psynergy_menu;
                 }
                 kind = 1;
                 goto store_target;
 
-            case 2:
+            }
+
+            case 16: {
+                s32 j;
+
+                Audio_PlayCue(112);
+djinn_menu:
+                COUNTDOWN->unk_34 = 0;
+                COUNTDOWN->unk_30 = 0;
+                COUNTDOWN->unk_38 = 0;
+                state->entries[0].oam.f.x = 80;
+                BattleLayout_HighlightPartyPanels(hdr);
+                mode = SummonMenu_SelectSummon(0, 0, state->cost[i]);
+                BattleLayout_HighlightPartyPanels(hdr);
+                if (mode == -1) {
+                    goto mark_visible;
+                }
+                kind = 6;
+                param = mode;
+                WaitFrames(1);
+                slot = &state->entries[1];
+                djinn = SummonDefinition_Get(mode);
+                ability = Ability_GetData(djinn->name_message_id);
+                handle = Resource_LoadIntoFreeSlot(128);
+                win = UiWindow_Create(10, 17, 17, 3, 6);
+                for (j = 0; j <= 3; j++) {
+                    if (djinn->djinn_required[j] > state->cost[i][j]) {
+                        break;
+                    }
+                }
+                ok = (j == 4);
+                state->entries[0].oam.f.x = 56;
+                slot->oam.word.attr01 = 0x40000400;
+                slot->oam.word.attr23 = 0;
+                slot->oam.f.x = (win->x << 3) + 8;
+                slot->oam.f.y = (u8)((win->y << 3) + 4);
+                slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(djinn->name_message_id & 0x3fff, handle);
+                state->entryActive[1] = 1;
+                if (ok == 0) {
+                    UiWork_SetParamNibble(2);
+                }
+                UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + 819,
+                                             win, 16, 0);
+                for (j = 0; j <= 3; j++) {
+                    if (djinn->djinn_required[j] != 0) {
+                        UiWindow_SetTilemapEntry(win, j + 20481, j * 2 + 13, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, j * 2 + 14, 0, 0);
+                    }
+                }
+                if (ok != 0) {
+                    Audio_PlayCue(112);
+                } else {
+                    Audio_PlayCue(114);
+                }
+                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = BattleTarget_RunSelection(actorId, ability->target_mode, ability->range, mode);
+                ent->range = ability->range;
+                state->entryActive[1] = 0;
+                Resource_ResetEntry(handle);
+                UiWork_Finalize(win, 1);
+                if (mode == -1) {
+                    goto djinn_menu;
+                }
+                for (j = 0; j <= 3; j++) {
+                    if (djinn->djinn_required[j] > state->cost[i][j]) {
+                        state->cost[i][j] = 0;
+                        break;
+                    }
+                    state->cost[i][j] = (u8)(state->cost[i][j] - djinn->djinn_required[j]);
+                }
+                goto store_target;
+
+            }
+
+            case 15:
+                Audio_PlayCue(112);
+summon_menu:
+                COUNTDOWN->unk_34 = 0;
+                COUNTDOWN->unk_30 = 0;
+                COUNTDOWN->unk_38 = 0;
+                state->entries[0].oam.f.x = 144;
+                COUNTDOWN->result[i] = 0x80000000;
+                mode = Battle_SelectAbility(actorId, 1);
+                ent->range = 0;
+                if (mode == -1) {
+                    goto mark_visible;
+                }
+                kind = 5;
+                param = mode;
+                COUNTDOWN->result[i] = mode;
+                element = (mode >> 8) & 15;
+                index = mode & 255;
+                if (Djinn_IsActiveFar(actorId, element, index) != 0) {
+                    ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
+                    cost = ability->range;
+                    win = UiWindow_Create(11, 17, 10, 3, 6);
+                    state->entries[0].oam.f.x = 64;
+                    UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
+                    UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
+                                                 win, 16, 0);
+                    ent->range = (u16)cost;
+                    WaitFrames(1);
+                    Audio_PlayCue(112);
+                    mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                    mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
+                    if (state->hintCount != 0) {
+                        hint = UiText_ShowMessageAndWaitComplete(3150, 15, 8);
+                        while (UiWork_IsComplete() == 0) {
+                            WaitFrames(1);
+                        }
+                        UiWork_Finalize(hint, 1);
+                        state->hintCount = state->hintCount + 1;
+                        state->hintTimer = 45;
+                    }
+                    UiWork_Finalize(win, 1);
+                    if (mode == -1) {
+                        goto summon_menu;
+                    }
+                    goto store_target;
+                } else {
+                    win = UiWindow_Create(11, 17, 10, 3, 6);
+                    state->entries[0].oam.f.x = 64;
+                    UiWork_SetParamNibble(2);
+                    UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
+                    UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
+                                                 win, 16, 0);
+                    UiWork_SetParamNibble(15);
+                    ent->range = 1;
+                    WaitFrames(1);
+                    Audio_PlayCue(112);
+                    mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
+                    UiWork_Finalize(win, 1);
+                    if (mode == -1) {
+                        goto summon_menu;
+                    }
+                    goto store_target;
+                }
+
+            case 2: {
+                s32 handle;
+
                 Audio_PlayCue(112);
 item_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 96;
+                state->entries[0].oam.f.x = 96;
                 cnt = 0;
                 cur = actor->inventory[0];
                 k = 0;
@@ -500,196 +675,60 @@ item_menu:
                     } while (cur != 0);
                 }
                 state->list[cnt] = 0;
-                res = ItemList_SelectEntry(actorId, state->list, cnt);
-                if (res == -1) {
+                mode = ItemList_SelectEntry(actorId, state->list, cnt);
+                if (mode == -1) {
                     goto mark_visible;
                 }
-                sel = state->pick[res];
+                sel = state->pick[mode];
                 param = sel;
                 ability = Ability_GetData(Item_GetData(actor->inventory[sel])->action_id);
                 cost = ability->range;
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(9, 17, 15, 3, 6);
-                slot = &state->entries[0];
-                slot->oam.f.x = 48;
+                state->entries[0].oam.f.x = 48;
                 slot = &state->entries[1];
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                res = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
-                slot->oam.f.tile = res;
+                mode = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
+                slot->oam.f.tile = mode;
                 state->entryActive[1] = 1;
                 UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + 386,
                                              win, 24, 0);
                 ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
+                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
-                if (res == -1) {
+                if (mode == -1) {
                     goto item_menu;
                 }
                 kind = 2;
                 goto store_target;
 
+            }
+
             case 3:
                 kind = 3;
                 goto commit;
-
-            case 15:
-                Audio_PlayCue(112);
-summon_menu:
-                COUNTDOWN->unk_34 = 0;
-                COUNTDOWN->unk_30 = 0;
-                COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 144;
-                COUNTDOWN->result[i] = 0x80000000;
-                res = Battle_SelectAbility(actorId, 1);
-                ent->range = 0;
-                if (res == -1) {
-                    goto mark_visible;
-                }
-                kind = 5;
-                param = res;
-                COUNTDOWN->result[i] = res;
-                element = (res >> 8) & 15;
-                index = res & 255;
-                if (Djinn_IsActiveFar(actorId, element, index) != 0) {
-                    ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
-                    cost = ability->range;
-                    win = UiWindow_Create(11, 17, 10, 3, 6);
-                    slot = &state->entries[0];
-                    slot->oam.f.x = 64;
-                    UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
-                    UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
-                                                 win, 16, 0);
-                    ent->range = (u16)cost;
-                    WaitFrames(1);
-                    Audio_PlayCue(112);
-                    res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                    res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
-                    if (state->hintCount != 0) {
-                        hint = UiText_ShowMessageAndWaitComplete(3150, 15, 8);
-                        while (UiWork_IsComplete() == 0) {
-                            WaitFrames(1);
-                        }
-                        UiWork_Finalize(hint, 1);
-                        state->hintCount = state->hintCount + 1;
-                        state->hintTimer = 45;
-                    }
-                    UiWork_Finalize(win, 1);
-                    if (res == -1) {
-                        goto summon_menu;
-                    }
-                    goto store_target;
-                } else {
-                    win = UiWindow_Create(11, 17, 10, 3, 6);
-                    slot = &state->entries[0];
-                    slot->oam.f.x = 64;
-                    UiWork_SetParamNibble(2);
-                    UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
-                    UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
-                                                 win, 16, 0);
-                    UiWork_SetParamNibble(15);
-                    ent->range = 1;
-                    WaitFrames(1);
-                    Audio_PlayCue(112);
-                    res = BattleTarget_RunSelection(actorId, 4, 0, 7);
-                    UiWork_Finalize(win, 1);
-                    if (res == -1) {
-                        goto summon_menu;
-                    }
-                    goto store_target;
-                }
-
-            case 16:
-                Audio_PlayCue(112);
-djinn_menu:
-                COUNTDOWN->unk_34 = 0;
-                COUNTDOWN->unk_30 = 0;
-                COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 80;
-                BattleLayout_HighlightPartyPanels(hdr);
-                res = SummonMenu_SelectSummon(0, 0, state->cost[i]);
-                BattleLayout_HighlightPartyPanels(hdr);
-                if (res == -1) {
-                    goto mark_visible;
-                }
-                kind = 6;
-                param = res;
-                WaitFrames(1);
-                slot = &state->entries[1];
-                djinn = SummonDefinition_Get(res);
-                ability = Ability_GetData(djinn->name_message_id);
-                handle = Resource_LoadIntoFreeSlot(128);
-                win = UiWindow_Create(10, 17, 17, 3, 6);
-                for (k = 0; k <= 3; k++) {
-                    if (djinn->djinn_required[k] > state->cost[i][k]) {
-                        break;
-                    }
-                }
-                ok = (k == 4);
-                state->entries[0].oam.f.x = 56;
-                slot->oam.word.attr01 = 0x40000400;
-                slot->oam.word.attr23 = 0;
-                slot->oam.f.x = (win->x << 3) + 8;
-                slot->oam.f.y = (u8)((win->y << 3) + 4);
-                res = Resource_LoadIndexedEntryToBuffer(djinn->name_message_id & 0x3fff, handle);
-                slot->oam.f.tile = res;
-                state->entryActive[1] = 1;
-                if (ok == 0) {
-                    UiWork_SetParamNibble(2);
-                }
-                UiText_DrawCharacterAtOffset(SummonDefinition_Get(param)->name_message_id + 819,
-                                             win, 16, 0);
-                for (k = 0; k <= 3; k++) {
-                    if (djinn->djinn_required[k] != 0) {
-                        UiWindow_SetTilemapEntry(win, k + 20481, k * 2 + 13, 0, 0);
-                        UiWindow_PutGlyph(win, djinn->djinn_required[k] + 48, k * 2 + 14, 0, 0);
-                    }
-                }
-                if (ok != 0) {
-                    Audio_PlayCue(112);
-                } else {
-                    Audio_PlayCue(114);
-                }
-                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
-                res = BattleTarget_RunSelection(actorId, ability->target_mode, ability->range, res);
-                ent->range = ability->range;
-                state->entryActive[1] = 0;
-                Resource_ResetEntry(handle);
-                UiWork_Finalize(win, 1);
-                if (res == -1) {
-                    goto djinn_menu;
-                }
-                for (k = 0; k <= 3; k++) {
-                    if (djinn->djinn_required[k] > state->cost[i][k]) {
-                        state->cost[i][k] = 0;
-                        break;
-                    }
-                    state->cost[i][k] = (u8)(state->cost[i][k] - djinn->djinn_required[k]);
-                }
-                goto store_target;
 
             default:
                 goto commit;
             }
 
 store_target:
-            aux = res;
+            aux = mode;
 
 commit:
             Audio_PlayCue(110);
             ent->unit_id = (u16)actorId;
             order = actor->agility;
             if (order != 0) {
-                res = Random16();
-                order += (s32)((u32)(actor->agility * res) >> 20);
+                mode = Random16();
+                order += (s32)((u32)(actor->agility * mode) >> 20);
             }
             ent->priority = (u16)order;
             if (i != 0) {
@@ -733,9 +772,9 @@ finish:
     Resource_ResetEntry(res1024);
     Scheduler_RemoveCallback(UpdateLinkSessionCountdown);
     if (state->enabled != 0) {
-        link = gBattleWork;
+        session = gBattleWork;
         miss = 0;
-        if (state->displayHandle == 0 && link->link_paused == 0) {
+        if (state->displayHandle == 0 && session->link_paused == 0) {
             state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);
             Ui_FillVramBlockPattern();
             DrawLocalizedResource();
@@ -743,8 +782,8 @@ finish:
             state->displayHandle = 0;
         }
         for (;;) {
-            peer = gLinkPeerSignatures[link->link_side ^ 1];
-            if (link->link_paused != 0) {
+            peer = gLinkPeerSignatures[session->link_side ^ 1];
+            if (session->link_paused != 0) {
                 count = -1;
                 break;
             }

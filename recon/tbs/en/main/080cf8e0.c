@@ -37,6 +37,13 @@
  * reduced); DrawRectangle *shard_draw = &draw[flip] 414; guarded do-while for the
  * target loop 267 (permuter, 5 minutes: 263 with two casts and a
  * temporary as noise); with k * 8 inline instead of delay 331.
+ * With the guarded do-while: group = k * 4 inside the burst loop 267;
+ * delay = 0 inside the count test 273; a function-scope burst pointer
+ * shared with the draw loop 267; without the volatile re-read 338;
+ * permuter on the burst block (5 minutes) 255 with s8 *tmp =
+ * SevenMode_Records for the count test, a forced temporary not adopted
+ * while the burst address still differs. Native's first literal pool sits
+ * after the step > 4 draw; the draft's lands 152 bytes later.
  */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"

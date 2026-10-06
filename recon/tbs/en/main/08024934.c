@@ -1,6 +1,15 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 917, common 564, differ 735; frame 372
+ * Native 946 instructions, draft 920, common 585, differ 696; frame 372
  * as native's.
+ * No last variable: count - 1 written inline in the scan's start and the
+ * page arithmetic, so it becomes a compiler temporary as native's slot 20
+ * suggested, 735 -> 696. Keeping last only for the keys 741; last set after
+ * used = 0 735. The remaining slot order of compiler temporaries differs:
+ * draft summon + 4 36, row * 2 32, count - 1 28, cursor 24,
+ * cursor_handle << 16 20, &glyph 16, ordered 12, sprites 8; native summon
+ * 36, ordered 32, sprites 28, cursor 24, count - 1 20, row * 2 16,
+ * cursor_handle << 16 12, &glyph 8. Moving the row, drawn_page or page
+ * declaration through ten positions changed nothing (696, one 698).
  * Both affordability scans as plain indexed for loops with a break
  * (for (n = 0; n <= 3; n++) if (s->djinn_required[n] > standby[n]) break;)
  * compile to native's pointer loops: the first scan now matches exactly
@@ -142,7 +151,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     struct MenuSprite *sprite;
     const u8 *required, *supply;
     s32 *handle;
-    s32 last, used, element;
+    s32 used, element;
     s32 id, tile, affordable;
     s32 pressed, repeated, result;
     s32 index;
@@ -176,11 +185,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     count = Trade_ListFlaggedEntriesFar(available);
     used = 0;
-    last = count - 1;
     {
         s32 i;
 
-        for (i = last; i >= 0; i--) {
+        for (i = count - 1; i >= 0; i--) {
             const struct SummonDefinition *s;
             s32 n, k;
 
@@ -362,7 +370,7 @@ loop:
             AudioCommand_PlayFar(111);
             row--;
             if (row < 0) {
-                if (page == (last / 4) * 4)
+                if (page == ((count - 1) / 4) * 4)
                     row = count - page - 1;
                 else
                     row = 3;
@@ -379,7 +387,7 @@ loop:
             } else {
                 page += 4;
                 row = preferred;
-                if (page == (last / 4) * 4) {
+                if (page == ((count - 1) / 4) * 4) {
                     row = count - page - 1;
                     if (row > preferred)
                         row = preferred;
@@ -392,7 +400,7 @@ loop:
                 row = preferred;
                 page -= 4;
             } else {
-                page = (last / 4) * 4;
+                page = ((count - 1) / 4) * 4;
                 row = preferred;
                 if (page != 0) {
                     row = count - page - 1;

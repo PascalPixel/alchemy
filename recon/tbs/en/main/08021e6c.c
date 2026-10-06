@@ -1,4 +1,7 @@
-/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 1129 (listing 1037, draft 1002, common 455). Not first-try; parked. */
+/* Stubborn (2026-10-06, T08 on sun100 51bbf7161e): differ 1086 (listing 1037, draft 1001, common 476). Not matched; parked. */
+/* Trial: indexed fill, party sum and draw loops (for (cnt = 0; cnt <= 5; cnt++) with the -1 test after the resource store), one (cnt - count) * 24 shared by both pos_x stores: differ 1129 -> 1097. */
+/* Trial: scale read from Ui_BounceScales into its own variable, then rescaled: differ 1097 -> 1086. */
+/* Remaining: register allocation. Native keeps work in r9, cnt in r8, result in r10 and spills scale to sp+36 (ldrh of the slot for scale_x); the draft keeps scale in r9, work in r10 and frames 44 bytes against 60. */
 /* 08021e6a: two zero bytes before this function are alignment, not code: DISPLAY.o ends at 0x08021e6a and a C object aligns .text to 4, so the linker fills them, as it already does at 0x08021dfa. */
 /* Shared UiRenderWork, MenuCell, GlyphPalette, BgScroll and MenuSprite replace
  * private views. Original draft: listing 1037, draft 998, differ 1173; shared
@@ -71,17 +74,15 @@ s32 Ui_RunSelectionScreen(s32 mode)
     s32 cnt;
     s32 keys, repeat;
     s32 slot;
-    u8 *pos;
+    s32 i;
 
     render = (struct UiRenderWork *)gWindowWork[0];
     slot = Resource_LoadIntoFreeSlot(0x400);
     rebuild = 1;
     trade_count = 0;
     work = Runtime_BumpAllocateAlternatePool(sizeof(*work));
-    pos = &work->palette.slot[255];
-    do {
-        *pos-- = 255;
-    } while ((s32)pos >= (s32)work);
+    for (cnt = 255; cnt >= 0; cnt--)
+        work->palette.slot[cnt] = 255;
     work->palette.count = 1;
     if (mode == 0)
         work->window = UiWindow_Create(20, 17, 10, 3, 6);
@@ -101,8 +102,8 @@ s32 Ui_RunSelectionScreen(s32 mode)
         cnt = 2;
         if (Trade_GetOfferStateFar(0)->available != 0) {
             BattlePlacement_CountValidEntriesFar(0, party);
-            for (pos = party; pos <= &party[3]; pos++)
-                trade_count += *pos;
+            for (i = 0; i <= 3; i++)
+                trade_count += party[i];
             work->kinds[2] = 15;
             cnt = 3;
             if (trade_count != 0) {
@@ -114,30 +115,29 @@ s32 Ui_RunSelectionScreen(s32 mode)
         work->kinds[cnt++] = 3;
         work->kinds[cnt] = -1;
     }
-    work->entries[0].resource = slot;
-    cnt = 0;
-    while (work->kinds[cnt] != -1) {
-        UiText_DrawCharacter((u8 *)work, cnt, work->kinds[cnt]);
-        cnt++;
-        if (cnt > 5)
-            break;
+    for (cnt = 0; cnt <= 5; cnt++) {
         work->entries[cnt].resource = slot;
+        if (work->kinds[cnt] == -1)
+            break;
+        UiText_DrawCharacter((u8 *)work, cnt, work->kinds[cnt]);
     }
     work->count = cnt;
     work->affine.scale_x = 320;
     work->affine.scale_y = 304;
     work->affine.angle = 0;
     for (cnt = 0; cnt < work->count; cnt++) {
-        work->entries[cnt].pos_x = (cnt - work->count) * 24 + 155;
+        s32 x = (cnt - work->count) * 24;
+        work->entries[cnt].pos_x = x + 155;
         if (mode != 0)
-            work->entries[cnt].pos_x = (cnt - work->count) * 24 + 171;
+            work->entries[cnt].pos_x = x + 171;
         work->entries[cnt].pos_y = 136;
     }
     Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
-        scale = ((s32)Ui_BounceScales[(gFrameCount * 2) & 31] - 256) / 4 + 304;
+        scale = Ui_BounceScales[(gFrameCount * 2) & 31];
+        scale = (scale - 256) / 4 + 304;
         work->affine.scale_x = scale;
         work->affine.scale_y = scale;
         gBgScroll[1].x = 0;

@@ -113,7 +113,7 @@ Func_02002028:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
@@ -122,16 +122,16 @@ Func_02002028:
 	.thumb_func
 Func_02002030:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -165,7 +165,7 @@ Func_02002050:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020318
 	.else
-	overlay_veneer Func_08020348
+	overlay_veneer Runtime_CheckRadiusOverlapFar
 	.endif
 	.endif
 	.endif
@@ -181,11 +181,11 @@ Battle_WaitMode0:
 	.global Func_02002068
 	.thumb_func
 Func_02002068:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02002070
 	.thumb_func
 Func_02002070:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -225,7 +225,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020020c0
 	.thumb_func
 Func_020020c0:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -241,7 +241,7 @@ Object_SetPartAttribute:
 	.global Func_020020e0
 	.thumb_func
 Func_020020e0:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -249,7 +249,7 @@ UiText_OpenMessageAtObject:
 	.global Func_020020f0
 	.thumb_func
 Func_020020f0:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -269,7 +269,7 @@ Func_02002110:
 	.global Func_02002118
 	.thumb_func
 Func_02002118:
-	overlay_veneer Func_080c82f8
+	overlay_veneer EventRuntime_PrepareCurrentObjectFar
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
@@ -309,11 +309,11 @@ Func_02002140:
 	.global Func_02002148
 	.thumb_func
 Func_02002148:
-	overlay_veneer Func_080c84d8
+	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
 	.global Func_02002150
 	.thumb_func
 Func_02002150:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02002158
 	.thumb_func
 Func_02002158:
@@ -371,7 +371,7 @@ Func_020021a8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020021b0

@@ -88,7 +88,7 @@ Func_080f94a4:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #1
-	bl Func_080383c0
+	bl UiWork_SetAltFlagAndClearTableFar
 	bl Menu_CancelSoundReset
 	add r1, sp, #8
 	add r0, sp, #12
@@ -136,7 +136,7 @@ Func_080f94a4:
 	strh r3, [r2, #4]
 	bl Func_08038290
 	movs r0, #0
-	bl Func_080383c0
+	bl UiWork_SetAltFlagAndClearTableFar
 	adds r1, r6, #0
 	mov r2, r10
 	ldr r0, .L_080f95f8

@@ -11,4 +11,4 @@ Func_0804dabc:
 	pop {pc}
 	.2byte 0x0000
 .L_0804dacc:
-	.4byte Func_0804db74
+	.4byte Menu_RunSelection

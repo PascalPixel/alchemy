@@ -495,10 +495,10 @@ Map_DisableBlendScriptFar:
 	.thumb_func
 Map_GetTerrainHeightFar:
 	.incbin "baserom.gba", 0x000201f0, 0x00000008
-	.global Func_080201c8
-	.type Func_080201c8, %function
+	.global GetMapCellCollisionFar
+	.type GetMapCellCollisionFar, %function
 	.thumb_func
-Func_080201c8:
+GetMapCellCollisionFar:
 	.incbin "baserom.gba", 0x000201f8, 0x00000008
 	.global Func_080201d0
 	.type Func_080201d0, %function
@@ -1093,10 +1093,10 @@ UiText_BuildRenderEntries:
 UiText_GetResourceDimensions:
 	.incbin "baserom.gba", 0x0003b898, 0x0000004c
 	.section .rom.0003b8e4, "ax"
-	.global Func_0803b8cc
-	.type Func_0803b8cc, %function
+	.global UiText_GetResourceDimensionsAlt
+	.type UiText_GetResourceDimensionsAlt, %function
 	.thumb_func
-Func_0803b8cc:
+UiText_GetResourceDimensionsAlt:
 	.incbin "baserom.gba", 0x0003b8e4, 0x0000004c
 	.section .rom.0003b930, "ax"
 	.global UiText_MeasureEntryDimensions
@@ -1347,10 +1347,10 @@ UiTextResource_Initialize:
 UiTextResource_SetPosition:
 	.incbin "baserom.gba", 0x0003f6ec, 0x00000028
 	.section .rom.0003f7cc, "ax"
-	.global Func_0803f778
-	.type Func_0803f778, %function
+	.global Menu_RunTopSelection
+	.type Menu_RunTopSelection, %function
 	.thumb_func
-Func_0803f778:
+Menu_RunTopSelection:
 	.incbin "baserom.gba", 0x0003f7cc, 0x00000098
 	.section .rom.0003f880, "ax"
 	.balign 4
@@ -1402,10 +1402,10 @@ UiWindow_ClearTileAttributesInRect:
 Func_08041b68:
 	.incbin "baserom.gba", 0x00041bbc, 0x000000a4
 	.section .rom.00041c60, "ax"
-	.global Func_08041c0c
-	.type Func_08041c0c, %function
+	.global UiWork_SetAltFlagAndClearTable
+	.type UiWork_SetAltFlagAndClearTable, %function
 	.thumb_func
-Func_08041c0c:
+UiWork_SetAltFlagAndClearTable:
 	.incbin "baserom.gba", 0x00041c60, 0x00000048
 	.section .rom.00041ca8, "ax"
 	.global UiWindow_DrawDividerLine
@@ -1474,10 +1474,10 @@ UiText_DrawNumberInWindow:
 RenderOutput_Create:
 	.incbin "baserom.gba", 0x00042368, 0x00000088
 	.section .rom.000424a4, "ax"
-	.global Func_08042450
-	.type Func_08042450, %function
+	.global CreateSideObject
+	.type CreateSideObject, %function
 	.thumb_func
-Func_08042450:
+CreateSideObject:
 	.incbin "baserom.gba", 0x000424a4, 0x000000b8
 	.section .rom.0004255c, "ax"
 	.global Ui_LoadCharacterEntryForSlot
@@ -1494,10 +1494,10 @@ Ui_LoadCharacterEntryForSlot:
 Func_0804257c:
 	.incbin "baserom.gba", 0x000425d0, 0x0000000c
 	.section .rom.000425dc, "ax"
-	.global Func_08042588
-	.type Func_08042588, %function
+	.global UiWindow_FillFromScene
+	.type UiWindow_FillFromScene, %function
 	.thumb_func
-Func_08042588:
+UiWindow_FillFromScene:
 	.incbin "baserom.gba", 0x000425dc, 0x00000074
 	.section .rom.00042734, "ax"
 	.incbin "baserom.gba", 0x00042734, 0x0000029c
@@ -1708,10 +1708,10 @@ Func_0804d7fc:
 	.section .rom.0004dcc6, "ax"
 	.incbin "baserom.gba", 0x0004dcc6, 0x000000ba
 	.section .rom.0004dd80, "ax"
-	.global Func_0804db74
-	.type Func_0804db74, %function
+	.global Menu_RunSelection
+	.type Menu_RunSelection, %function
 	.thumb_func
-Func_0804db74:
+Menu_RunSelection:
 	.incbin "baserom.gba", 0x0004dd80, 0x00000254
 	.section .rom.0004e0ac, "ax"
 	.global Menu_DrawFlagBitTable
@@ -1992,10 +1992,10 @@ Func_080afbec:
 Party_AddActiveOwner:
 	.incbin "baserom.gba", 0x000bcdd8, 0x00000044
 	.section .rom.000bcf28, "ax"
-	.global Func_080aff28
-	.type Func_080aff28, %function
+	.global Trade_ListFlaggedEntries
+	.type Trade_ListFlaggedEntries, %function
 	.thumb_func
-Func_080aff28:
+Trade_ListFlaggedEntries:
 	.incbin "baserom.gba", 0x000bcf28, 0x00000054
 	.section .rom.000bcf94, "ax"
 	.global Func_080aff94
@@ -2665,10 +2665,10 @@ ObjectMotion_WaitForAnimationChange:
 	.section .rom.000e0378, "ax"
 	.incbin "baserom.gba", 0x000e0378, 0x000000e8
 	.section .rom.000e0460, "ax"
-	.global Func_080d3460
-	.type Func_080d3460, %function
+	.global BattleFx_RunRisingObjectSequence
+	.type BattleFx_RunRisingObjectSequence, %function
 	.thumb_func
-Func_080d3460:
+BattleFx_RunRisingObjectSequence:
 	.incbin "baserom.gba", 0x000e0460, 0x0000013c
 	.section .rom.000e05fe, "ax"
 	.incbin "baserom.gba", 0x000e05fe, 0x00000002
@@ -2679,10 +2679,10 @@ Func_080d3460:
 FacingObject_TurnPairToFaceEachOther:
 	.incbin "baserom.gba", 0x000e0600, 0x000000a8
 	.section .rom.000e06a8, "ax"
-	.global Func_080d36a8
-	.type Func_080d36a8, %function
+	.global ObjectTable_DestroyById
+	.type ObjectTable_DestroyById, %function
 	.thumb_func
-Func_080d36a8:
+ObjectTable_DestroyById:
 	.incbin "baserom.gba", 0x000e06a8, 0x00000020
 	.section .rom.000e0780, "ax"
 	.global Func_080d3780
@@ -2789,10 +2789,10 @@ Func_080d41fc:
 Func_080d4330:
 	.incbin "baserom.gba", 0x000e1330, 0x00000054
 	.section .rom.000e13ec, "ax"
-	.global Func_080d43ec
-	.type Func_080d43ec, %function
+	.global ObjectTable_AllocateAndSetObjectSpeed
+	.type ObjectTable_AllocateAndSetObjectSpeed, %function
 	.thumb_func
-Func_080d43ec:
+ObjectTable_AllocateAndSetObjectSpeed:
 	.incbin "baserom.gba", 0x000e13ec, 0x00000020
 	.section .rom.000e140c, "ax"
 	.global Motion_CamBounds
@@ -3528,17 +3528,17 @@ Func_080eb960:
 EffectSlot_UpdateMotion:
 	.incbin "baserom.gba", 0x000f8d24, 0x0000014c
 	.section .rom.000f8eb4, "ax"
-	.global Func_080ebeb4
-	.type Func_080ebeb4, %function
+	.global EffectSlot_SetCallback
+	.type EffectSlot_SetCallback, %function
 	.thumb_func
 	.align 2, 0
-Func_080ebeb4:
+EffectSlot_SetCallback:
 	.incbin "baserom.gba", 0x000f8eb4, 0x00000014
 	.section .rom.000f8ec8, "ax"
-	.global Func_080ebec8
-	.type Func_080ebec8, %function
+	.global EffectSlot_Initialize
+	.type EffectSlot_Initialize, %function
 	.thumb_func
-Func_080ebec8:
+EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000f8ec8, 0x000000a0
 	.section .rom.000f8f94, "ax"
 	.incbin "baserom.gba", 0x000f8f94, 0x000001b8

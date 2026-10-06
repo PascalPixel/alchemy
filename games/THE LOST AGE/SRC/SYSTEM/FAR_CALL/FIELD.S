@@ -5,9 +5,9 @@
 	.thumb_func
 Func_080c8770:
 	overlay_veneer Func_080dbd48
-	.global Func_080c8778
+	.global EventRuntime_GetControlledOwnerFar
 	.thumb_func
-Func_080c8778:
+EventRuntime_GetControlledOwnerFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cdf5c
 .else
@@ -77,9 +77,9 @@ Func_080c87d0:
 	overlay_veneer Func_080eb298
 .endif
 .endif
-	.global Func_080c87d8
+	.global BattleFx_StepVector2Far
 	.thumb_func
-Func_080c87d8:
+BattleFx_StepVector2Far:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080eb2c8
 .else
@@ -89,9 +89,9 @@ Func_080c87d8:
 	overlay_veneer BattleFx_StepVector2
 .endif
 .endif
-	.global Func_080c87e0
+	.global BattleFx_StepVector3Far
 	.thumb_func
-Func_080c87e0:
+BattleFx_StepVector3Far:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080eb2d0
 .else
@@ -153,9 +153,9 @@ Field_BeginPaletteTransitionFar:
 	overlay_veneer Field_BeginPaletteTransition
 	.endif
 	.endif
-	.global Func_080c8808
+	.global BattleFx_StartArcEffectFar
 	.thumb_func
-Func_080c8808:
+BattleFx_StartArcEffectFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_WaitForArcGroups
 .else
@@ -165,9 +165,9 @@ Func_080c8808:
 	overlay_veneer BattleFx_StartArcEffect
 .endif
 .endif
-	.global Func_080c8810
+	.global BattleFx_EndArcEffectFar
 	.thumb_func
-Func_080c8810:
+BattleFx_EndArcEffectFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_SetObjectTickMode
 .else
@@ -177,9 +177,9 @@ Func_080c8810:
 	overlay_veneer BattleFx_EndArcEffect
 .endif
 .endif
-	.global Func_080c8818
+	.global BattleFx_WaitForArcGroupsFar
 	.thumb_func
-Func_080c8818:
+BattleFx_WaitForArcGroupsFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080e137c
 .else
@@ -189,9 +189,9 @@ Func_080c8818:
 	overlay_veneer BattleFx_WaitForArcGroups
 .endif
 .endif
-	.global Func_080c8820
+	.global BattleFx_SetObjectTickModeFar
 	.thumb_func
-Func_080c8820:
+BattleFx_SetObjectTickModeFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080e1420
 .else

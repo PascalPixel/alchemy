@@ -37,9 +37,9 @@ BattleFx_IsReviveFar:
 	.thumb_func
 Owner_RefreshClassActionsFar:
 	overlay_veneer Owner_RefreshClassActions
-	.global Func_080ad290
+	.global Party_GetAverageLevelFar
 	.thumb_func
-Func_080ad290:
+Party_GetAverageLevelFar:
 	overlay_veneer Party_GetAverageLevel
 	.global Owner_RefreshDerivedDataFar
 	.thumb_func
@@ -53,7 +53,7 @@ Inventory_CountItemFar:
 	.thumb_func
 PartyInventory_CountItemFar:
 	overlay_veneer PartyInventory_CountItem
-	.global Func_080ad2b0
+	.global PartyInventory_DiscardFar
 	.thumb_func
-Func_080ad2b0:
+PartyInventory_DiscardFar:
 	overlay_veneer PartyInventory_Discard

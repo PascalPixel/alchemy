@@ -25,10 +25,10 @@ Ability_LoadGlyphFar:
 	.thumb_func
 Graphics_ExpandVramTilesByColorTableFar:
 	overlay_veneer Graphics_ExpandVramTilesByColorTable
-	.global Func_080383c0
+	.global UiWork_SetAltFlagAndClearTableFar
 	.thumb_func
-Func_080383c0:
-	overlay_veneer Func_08041c0c
+UiWork_SetAltFlagAndClearTableFar:
+	overlay_veneer UiWork_SetAltFlagAndClearTable
 	.global Menu_AnimateSelectionToEntryFar
 	.thumb_func
 Menu_AnimateSelectionToEntryFar:

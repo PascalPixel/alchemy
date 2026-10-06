@@ -297,11 +297,11 @@ Battle_WaitMode0:
 	.global Func_02004c20
 	.thumb_func
 Func_02004c20:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02004c28
 	.thumb_func
 Func_02004c28:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -349,15 +349,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02004c88
 	.thumb_func
 Func_02004c88:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02004c90
 	.thumb_func
 Func_02004c90:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_02004c98
 	.thumb_func
 Func_02004c98:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -389,7 +389,7 @@ Object_SetPartAttribute:
 	.global Func_02004cd8
 	.thumb_func
 Func_02004cd8:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -401,7 +401,7 @@ Func_02004ce8:
 	.global Func_02004cf0
 	.thumb_func
 Func_02004cf0:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -409,7 +409,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02004d00
 	.thumb_func
 Func_02004d00:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global Func_02004d08
 	.thumb_func
 Func_02004d08:
@@ -425,7 +425,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02004d20
 	.thumb_func
 Func_02004d20:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -477,15 +477,15 @@ Func_02004d70:
 	.global Func_02004d78
 	.thumb_func
 Func_02004d78:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02004d80
 	.thumb_func
 Func_02004d80:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02004d88
 	.thumb_func
 Func_02004d88:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -522,10 +522,10 @@ Func_02004da8:
 	.thumb_func
 Func_02004db0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	overlay_veneer Func_080c8438
 	.endif
@@ -533,23 +533,23 @@ Func_02004db0:
 	.global Func_02004db8
 	.thumb_func
 Func_02004db8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02004dc0
 	.thumb_func
 Func_02004dc0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.endif
 	.endif
 	.global Func_02004dc8
 	.thumb_func
 Func_02004dc8:
-	overlay_veneer Func_080c8578
+	overlay_veneer Scene_ResolveInteractionResultFar
 	.global Func_02004dd0
 	.thumb_func
 Func_02004dd0:
@@ -599,7 +599,7 @@ Func_02004e10:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02004e18
@@ -615,7 +615,7 @@ Func_02004e20:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8958
 	.else
-	overlay_veneer Func_080c8960
+	overlay_veneer SceneEvent_FindActiveRecordFar
 	.endif
 	.endif
 	.global Func_02004e28

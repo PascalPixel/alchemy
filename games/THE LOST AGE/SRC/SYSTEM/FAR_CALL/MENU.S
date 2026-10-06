@@ -5,10 +5,10 @@
 	.thumb_func
 Localization_LookupEntryIdFar:
 	overlay_veneer Localization_LookupEntryId
-	.global Func_080381e8
+	.global Menu_RunTopSelectionFar
 	.thumb_func
-Func_080381e8:
-	overlay_veneer Func_0803f778
+Menu_RunTopSelectionFar:
+	overlay_veneer Menu_RunTopSelection
 	.global Menu_SelectSaveSlotActionFar
 	.thumb_func
 Menu_SelectSaveSlotActionFar:

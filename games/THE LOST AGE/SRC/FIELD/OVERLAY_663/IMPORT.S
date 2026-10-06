@@ -150,16 +150,16 @@ Map_GetTerrainHeight:
 	.thumb_func
 Func_02003b80:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -201,11 +201,11 @@ Battle_WaitMode0:
 	.global Func_02003bc8
 	.thumb_func
 Func_02003bc8:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02003bd0
 	.thumb_func
 Func_02003bd0:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -225,7 +225,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02003bf8
 	.thumb_func
 Func_02003bf8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -245,7 +245,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02003c20
 	.thumb_func
 Func_02003c20:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -275,41 +275,41 @@ Func_02003c50:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Func_02003c58
 	.thumb_func
 Func_02003c58:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8370
+	overlay_veneer BattleEffect_InitializeBuffersFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8370
+	overlay_veneer BattleEffect_InitializeBuffersFar
 	.else
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.endif
 	.endif
 	.global Func_02003c60
 	.thumb_func
 Func_02003c60:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.else
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif
@@ -318,10 +318,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -359,17 +359,17 @@ Func_02003c88:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global Func_02003c90
 	.thumb_func
 Func_02003c90:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif
@@ -383,7 +383,7 @@ Func_02003c98:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Object_SetActionCallbackFar
 	.else
-	overlay_veneer Func_080c8690
+	overlay_veneer Event_NoOpFar
 	.endif
 	.endif
 	.global Func_02003ca0
@@ -455,7 +455,7 @@ Func_02003cc8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02003cd0

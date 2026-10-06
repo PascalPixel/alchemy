@@ -138,16 +138,16 @@ Map_GetTerrainHeight:
 	.thumb_func
 Func_02005810:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	overlay_veneer Map_CopyCellsRectFar
 	.endif
@@ -158,16 +158,16 @@ Func_02005810:
 	.thumb_func
 Func_02005818:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -198,16 +198,16 @@ Func_02005820:
 	.thumb_func
 Func_02005828:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	overlay_veneer Func_080201f8
 	.endif
@@ -241,7 +241,7 @@ Func_02005858:
 	.global Func_02005860
 	.thumb_func
 Func_02005860:
-	overlay_veneer Func_080ad2b0
+	overlay_veneer PartyInventory_DiscardFar
 	.global Func_02005868
 	.thumb_func
 Func_02005868:
@@ -261,11 +261,11 @@ Battle_WaitMode0:
 	.global Func_02005880
 	.thumb_func
 Func_02005880:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02005888
 	.thumb_func
 Func_02005888:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -309,15 +309,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020058e0
 	.thumb_func
 Func_020058e0:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_020058e8
 	.thumb_func
 Func_020058e8:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_020058f0
 	.thumb_func
 Func_020058f0:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -337,7 +337,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_02005918
 	.thumb_func
 Func_02005918:
-	overlay_veneer Func_080c8150
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:
@@ -353,11 +353,11 @@ Object_SetPartAttribute:
 	.global Func_02005938
 	.thumb_func
 Func_02005938:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_02005940
 	.thumb_func
 Func_02005940:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -365,7 +365,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02005950
 	.thumb_func
 Func_02005950:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global Func_02005958
 	.thumb_func
 Func_02005958:
@@ -381,7 +381,7 @@ ObjectVisual_CopyAttributes:
 	.global Func_02005970
 	.thumb_func
 Func_02005970:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -465,15 +465,15 @@ ObjectTable_Get:
 	.global Func_020059e8
 	.thumb_func
 Func_020059e8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020059f0
 	.thumb_func
 Func_020059f0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif
@@ -547,7 +547,7 @@ Func_02005a40:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02005a48

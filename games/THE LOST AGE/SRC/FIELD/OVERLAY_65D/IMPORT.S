@@ -26,16 +26,16 @@ Func_02000620:
 	.thumb_func
 Func_02000628:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	overlay_veneer Map_CopyCellsRectFar
 	.endif
@@ -46,16 +46,16 @@ Func_02000628:
 	.thumb_func
 Func_02000630:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -73,11 +73,11 @@ Battle_WaitMode0:
 	.global Func_02000648
 	.thumb_func
 Func_02000648:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02000650
 	.thumb_func
 Func_02000650:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -113,7 +113,7 @@ Object_SetModeById:
 	.global Func_02000698
 	.thumb_func
 Func_02000698:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -121,7 +121,7 @@ UiText_OpenMessageAtObject:
 	.global Func_020006a8
 	.thumb_func
 Func_020006a8:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -149,7 +149,7 @@ Event_WaitTransitionFrames:
 	.global Func_020006d0
 	.thumb_func
 Func_020006d0:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020006d8
 	.thumb_func
 Func_020006d8:
@@ -167,7 +167,7 @@ Func_020006e8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020006f0

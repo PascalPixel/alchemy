@@ -128,7 +128,7 @@ Func_080fe274:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl Func_080383c0
+	bl UiWork_SetAltFlagAndClearTableFar
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #13
@@ -184,7 +184,7 @@ Func_080fe274:
 .L_080fe408:
 	.4byte 0x06002500
 .L_080fe40c:
-	bl Func_080383c0
+	bl UiWork_SetAltFlagAndClearTableFar
 	movs r0, #160
 	mov r1, r8
 	movs r2, #64

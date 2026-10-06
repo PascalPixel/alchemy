@@ -17,9 +17,9 @@ Animation_ApplyChildValuesFar:
 	.thumb_func
 Animation_ApplyChildValuesToRecordFar:
 	overlay_veneer Animation_ApplyChildValuesToRecord
-	.global Func_08020288
+	.global Animation_ApplyChildValueToFirstFar
 	.thumb_func
-Func_08020288:
+Animation_ApplyChildValueToFirstFar:
 	overlay_veneer Animation_ApplyChildValueToFirst
 	.global ObjectDispatch_SetSpritePriorityFar
 	.thumb_func

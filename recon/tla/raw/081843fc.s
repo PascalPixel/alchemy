@@ -32,7 +32,7 @@ Func_081843fc:
 	str r6, [sp, #140]
 	ldr r0, [r6, #84]
 	bl Resource_ResetEntry
-	bl Func_08020380
+	bl VramBlock_Reset93Far
 	movs r0, #128
 	lsls r0, r0, #6
 	bl BattleFx_BeginCanvasLayer

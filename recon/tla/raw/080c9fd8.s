@@ -59,7 +59,7 @@ Encounter_SelectEnemyGroup:
 	movs r0, #0
 	cmp r7, #0
 	beq .L_080ca146
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	mov r2, r9
 	ldrh r3, [r2, #2]
 	subs r0, r0, r3

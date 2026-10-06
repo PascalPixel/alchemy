@@ -114,16 +114,16 @@ Map_GetTerrainHeight:
 	.thumb_func
 Func_02001c34:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	overlay_veneer Map_CopyCellsRectFar
 	.endif
@@ -177,11 +177,11 @@ Battle_WaitMode0:
 	.global Func_02001c84
 	.thumb_func
 Func_02001c84:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02001c8c
 	.thumb_func
 Func_02001c8c:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -197,7 +197,7 @@ ObjectMotion_SetPositionAndCommit:
 	.global Func_02001cac
 	.thumb_func
 Func_02001cac:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -253,7 +253,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001d0c
 	.thumb_func
 Func_02001d0c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001d14
 	.thumb_func
 Func_02001d14:
@@ -266,10 +266,10 @@ Func_02001d1c:
 	.thumb_func
 Func_02001d24:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

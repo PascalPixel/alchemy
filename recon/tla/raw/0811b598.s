@@ -137,7 +137,7 @@ Func_0811b598:
 	movs r3, #3
 	strb r3, [r0, #6]
 	movs r1, #0
-	bl Func_08020080
+	bl Animation_SetWorkEntryFar
 .L_0811b68c:
 	movs r3, #1
 	strb r3, [r7, #25]

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8520
+	.global Event_GetSpecialValueFar
 	.thumb_func
-Func_080c8520:
+Event_GetSpecialValueFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_SnapScaleToFull
 .else
@@ -49,9 +49,9 @@ UpdateRisingParticleBurstFar:
 	overlay_veneer UpdateRisingParticleBurst
 .endif
 .endif
-	.global Func_080c8540
+	.global BattleParty_ApplyDrainFar
 	.thumb_func
-Func_080c8540:
+BattleParty_ApplyDrainFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cb6c8
 .else
@@ -61,9 +61,9 @@ Func_080c8540:
 	overlay_veneer BattleParty_ApplyDrain
 .endif
 .endif
-	.global Func_080c8548
+	.global BattleParty_ApplyHealthDeltaFar
 	.thumb_func
-Func_080c8548:
+BattleParty_ApplyHealthDeltaFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Menu_RunDefaultConfirmation
 .else
@@ -97,9 +97,9 @@ Func_080c8558:
 	overlay_veneer Func_080d295c
 .endif
 .endif
-	.global Func_080c8560
+	.global BattleFx_GetWeightedResultFar
 	.thumb_func
-Func_080c8560:
+BattleFx_GetWeightedResultFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Party_PlaySavedMusic
 .else
@@ -109,9 +109,9 @@ Func_080c8560:
 	overlay_veneer BattleFx_GetWeightedResult
 .endif
 .endif
-	.global Func_080c8568
+	.global BattleFx_GetPhaseResultFar
 	.thumb_func
-Func_080c8568:
+BattleFx_GetPhaseResultFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Scene_ResolveInteractionResult
 .else
@@ -121,9 +121,9 @@ Func_080c8568:
 	overlay_veneer BattleFx_GetPhaseResult
 .endif
 .endif
-	.global Func_080c8570
+	.global Party_PlaySavedMusicFar
 	.thumb_func
-Func_080c8570:
+Party_PlaySavedMusicFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c9dc8
 .else
@@ -133,9 +133,9 @@ Func_080c8570:
 	overlay_veneer Party_PlaySavedMusic
 .endif
 .endif
-	.global Func_080c8578
+	.global Scene_ResolveInteractionResultFar
 	.thumb_func
-Func_080c8578:
+Scene_ResolveInteractionResultFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer EffectSlot_Update
 .else

@@ -10,7 +10,7 @@ Func_08043358:
 	ldr r5, .L_080434d4
 	sub sp, #28
 	mov r8, r0
-	bl Func_080ad2c8
+	bl Runtime_GetBuildStampTimeFar
 	ldr r2, .L_080434d8
 	ldr r3, .L_080434dc
 	str r0, [r2]
@@ -58,7 +58,7 @@ Func_08043358:
 	adds r3, r5, r2
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl Func_080c8648
+	bl Scene_GetAreaNameIndexFar
 	strh r0, [r7, #30]
 	movs r0, #42
 	adds r0, #255

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08020380
+	.global VramBlock_Reset93Far
 	.thumb_func
-Func_08020380:
+VramBlock_Reset93Far:
 .ifdef TLA_EDITION_DE
 	overlay_veneer Func_08022c78
 .else

@@ -24,7 +24,7 @@ Func_0811c274:
 	cmp r5, #0
 	beq .L_0811c2aa
 	movs r1, #1
-	bl Func_08020080
+	bl Animation_SetWorkEntryFar
 	movs r3, #3
 	strb r3, [r5, #6]
 .L_0811c2aa:

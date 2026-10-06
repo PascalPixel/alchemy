@@ -5,9 +5,9 @@
 	.thumb_func
 Func_08020340:
 	overlay_veneer Func_080237e8
-	.global Func_08020348
+	.global Runtime_CheckRadiusOverlapFar
 	.thumb_func
-Func_08020348:
+Runtime_CheckRadiusOverlapFar:
 .ifdef TLA_EDITION_DE
 	overlay_veneer Func_0802b828
 .else

@@ -54,17 +54,17 @@ Func_080201a0:
 	.else
 	overlay_veneer Func_0802cc88
 	.endif
-	.global Func_080201a8
+	.global DisplayBlend_DisableRunScriptFar
 	.thumb_func
-Func_080201a8:
+DisplayBlend_DisableRunScriptFar:
 	.if TABLE_3_EUROPE
 	overlay_veneer Func_0802d530
 	.else
 	overlay_veneer DisplayBlend_DisableRunScript
 	.endif
-	.global Func_080201b0
+	.global DisplayBlend_EnableRunScriptFar
 	.thumb_func
-Func_080201b0:
+DisplayBlend_EnableRunScriptFar:
 	.ifdef TLA_EDITION_DE
 	overlay_veneer Map_CopyCellsRect
 	.else
@@ -82,9 +82,9 @@ Func_080201b0:
 	.endif
 	.endif
 	.endif
-	.global Func_080201b8
+	.global DisplayBlend_StartScriptFar
 	.thumb_func
-Func_080201b8:
+DisplayBlend_StartScriptFar:
 	.ifdef TLA_EDITION_DE
 	overlay_veneer Map_CopyCellAttributeRect
 	.else

@@ -233,7 +233,7 @@ Owner_RefreshDerivedData:
 	.global Func_02002388
 	.thumb_func
 Func_02002388:
-	overlay_veneer Func_080ad2c8
+	overlay_veneer Runtime_GetBuildStampTimeFar
 	.global Func_02002390
 	.thumb_func
 Func_02002390:
@@ -282,10 +282,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_020023d8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	overlay_veneer Func_080c8558
 	.endif

@@ -94,16 +94,16 @@ Func_02004004:
 	.thumb_func
 Func_0200400c:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -141,7 +141,7 @@ Func_02004044:
 	.global Func_0200404c
 	.thumb_func
 Func_0200404c:
-	overlay_veneer Func_080ad290
+	overlay_veneer Party_GetAverageLevelFar
 	.global PartyInventory_CountItem
 	.thumb_func
 PartyInventory_CountItem:
@@ -157,11 +157,11 @@ Battle_WaitMode0:
 	.global Func_0200406c
 	.thumb_func
 Func_0200406c:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02004074
 	.thumb_func
 Func_02004074:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -209,15 +209,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020040d4
 	.thumb_func
 Func_020040d4:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_020040dc
 	.thumb_func
 Func_020040dc:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_020040e4
 	.thumb_func
 Func_020040e4:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -253,7 +253,7 @@ Object_SetPartAttribute:
 	.global Func_0200412c
 	.thumb_func
 Func_0200412c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -265,7 +265,7 @@ Func_0200413c:
 	.global Func_02004144
 	.thumb_func
 Func_02004144:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_0200414c
 	.thumb_func
 Func_0200414c:
@@ -277,7 +277,7 @@ ObjectMotion_ArmCallback:
 	.global Func_0200415c
 	.thumb_func
 Func_0200415c:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global Func_02004164
 	.thumb_func
 Func_02004164:
@@ -301,7 +301,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_0200418c
 	.thumb_func
 Func_0200418c:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -333,15 +333,15 @@ Field_SetDestination:
 	.global Func_020041cc
 	.thumb_func
 Func_020041cc:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_020041d4
 	.thumb_func
 Func_020041d4:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_020041dc
 	.thumb_func
 Func_020041dc:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -369,17 +369,17 @@ Func_020041fc:
 	.global Func_02004204
 	.thumb_func
 Func_02004204:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_0200420c
 	.thumb_func
 Func_0200420c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.endif
 	.endif
 	.global Func_02004214
@@ -397,7 +397,7 @@ Object_LinkObjectAndSetCallback:
 	.global Func_0200422c
 	.thumb_func
 Func_0200422c:
-	overlay_veneer Func_080c8628
+	overlay_veneer ObjectTable_SnapshotFar
 	.global Object_Spawn
 	.thumb_func
 Object_Spawn:
@@ -434,10 +434,10 @@ Func_0200424c:
 	.thumb_func
 Func_02004254:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif
@@ -446,10 +446,10 @@ Func_02004254:
 	.thumb_func
 Func_0200425c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.else
 	overlay_veneer Func_080c87f0
 	.endif
@@ -457,27 +457,27 @@ Func_0200425c:
 	.global Func_02004264
 	.thumb_func
 Func_02004264:
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.global Func_0200426c
 	.thumb_func
 Func_0200426c:
-	overlay_veneer Func_080c8810
+	overlay_veneer BattleFx_EndArcEffectFar
 	.global Func_02004274
 	.thumb_func
 Func_02004274:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
-	overlay_veneer Func_080c8818
+	overlay_veneer BattleFx_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_0200427c
 	.thumb_func
 Func_0200427c:
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.global Func_02004284
 	.thumb_func
 Func_02004284:

@@ -55,7 +55,7 @@ Func_080e716c:
 	lsls r0, r0, #1
 	ldrh r5, [r5, r0]
 	adds r0, r5, #0
-	bl Func_080ad2f0
+	bl PartyInventory_FindRoomFar
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3

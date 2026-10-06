@@ -18,7 +18,7 @@ Menu_DrawSelectionRow:
 	adds r0, r5, #0
 	sub sp, #4
 	mov r9, r2
-	bl Func_080c8648
+	bl Scene_GetAreaNameIndexFar
 	ldr r3, .L_0804db68
 	mov r10, r0
 	adds r0, r6, #0

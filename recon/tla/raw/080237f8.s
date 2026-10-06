@@ -11,9 +11,9 @@ Func_080237f8:
 	movs r0, #128
 	movs r1, #1
 	lsls r0, r0, #9
-	bl Func_080c8378
+	bl BattleFx_ApplyColorToTargetBufferFar
 	movs r0, #1
-	bl Func_080c8390
+	bl BattleFx_StartBufferInterpolationFar
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #128

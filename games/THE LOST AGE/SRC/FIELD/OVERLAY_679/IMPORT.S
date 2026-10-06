@@ -145,11 +145,11 @@ Battle_WaitMode0:
 	.global Func_02001cc4
 	.thumb_func
 Func_02001cc4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02001ccc
 	.thumb_func
 Func_02001ccc:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -177,7 +177,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02001d04
 	.thumb_func
 Func_02001d04:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -197,7 +197,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_02001d2c
 	.thumb_func
 Func_02001d2c:
-	overlay_veneer Func_080c8150
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:
@@ -209,7 +209,7 @@ Object_SetPartAttribute:
 	.global Func_02001d44
 	.thumb_func
 Func_02001d44:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -217,7 +217,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02001d54
 	.thumb_func
 Func_02001d54:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -237,7 +237,7 @@ Func_02001d74:
 	.global Func_02001d7c
 	.thumb_func
 Func_02001d7c:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -257,11 +257,11 @@ Func_02001d9c:
 	.global Func_02001da4
 	.thumb_func
 Func_02001da4:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02001dac
 	.thumb_func
 Func_02001dac:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -285,7 +285,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001dcc
 	.thumb_func
 Func_02001dcc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001dd4
 	.thumb_func
 Func_02001dd4:
@@ -297,7 +297,7 @@ ObjectMotion_CommitPositionAndActivate:
 	.global Func_02001de4
 	.thumb_func
 Func_02001de4:
-	overlay_veneer Func_080c8628
+	overlay_veneer ObjectTable_SnapshotFar
 	.global Func_02001dec
 	.thumb_func
 Func_02001dec:
@@ -319,7 +319,7 @@ Func_02001df4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Object_SetActionCallbackFar
 	.else
-	overlay_veneer Func_080c8690
+	overlay_veneer Event_NoOpFar
 	.endif
 	.endif
 	.global Func_02001dfc
@@ -343,7 +343,7 @@ Func_02001e14:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001e1c

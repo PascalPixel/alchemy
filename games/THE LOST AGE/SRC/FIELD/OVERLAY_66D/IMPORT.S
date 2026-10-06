@@ -25,11 +25,11 @@ Battle_WaitMode0:
 	.global Func_0200054c
 	.thumb_func
 Func_0200054c:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02000554
 	.thumb_func
 Func_02000554:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -45,7 +45,7 @@ ObjectMotion_SetSpeedParameters:
 	.global Func_02000574
 	.thumb_func
 Func_02000574:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -53,7 +53,7 @@ Object_SetModeById:
 	.global Func_02000584
 	.thumb_func
 Func_02000584:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -61,7 +61,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02000594
 	.thumb_func
 Func_02000594:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_0200059c
 	.thumb_func
 Func_0200059c:
@@ -89,11 +89,11 @@ Event_WaitTransitionFrames:
 	.global Func_020005bc
 	.thumb_func
 Func_020005bc:
-	overlay_veneer Func_080c8408
+	overlay_veneer ObjectEvent_PlaceOnGroundFar
 	.global Func_020005c4
 	.thumb_func
 Func_020005c4:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020005cc
 	.thumb_func
 Func_020005cc:
@@ -111,7 +111,7 @@ Func_020005dc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020005e4

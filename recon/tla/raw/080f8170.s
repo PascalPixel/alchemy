@@ -171,7 +171,7 @@ Func_080f8170:
 	adds r3, r7, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_080380d8
+	bl SideObject_CreateFar
 	movs r3, #184
 	lsls r3, r3, #1
 	add r3, r9

@@ -50,16 +50,16 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Func_02003190:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -85,11 +85,11 @@ Battle_WaitMode0:
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
 Event_PrepareObjectAndApplyValue:
@@ -141,15 +141,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02003228
 	.thumb_func
 Func_02003228:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02003230
 	.thumb_func
 Func_02003230:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Engine_ActorPlaceAtActor
 	.thumb_func
 Engine_ActorPlaceAtActor:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
@@ -189,7 +189,7 @@ Object_SetPartAttribute:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -201,7 +201,7 @@ Func_02003298:
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
@@ -225,7 +225,7 @@ Engine_ActorSetAttachedEffect:
 	.global Engine_CameraSetSpeed
 	.thumb_func
 Engine_CameraSetSpeed:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -247,17 +247,17 @@ Func_020032f0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8368
 	.else
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif
@@ -266,10 +266,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -295,7 +295,7 @@ Func_02003310:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global Object_LinkObjectAndSetCallback

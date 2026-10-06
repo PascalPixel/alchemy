@@ -8,7 +8,7 @@ Func_080d296c:
 	adds r6, r0, #0
 	adds r0, r5, #0
 	adds r7, r2, #0
-	bl Func_080ad2f0
+	bl PartyInventory_FindRoomFar
 	cmp r0, #0
 	bge .L_080d29d6
 	adds r0, r6, #0

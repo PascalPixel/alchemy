@@ -495,10 +495,10 @@ Map_DisableBlendScriptFar:
 	.thumb_func
 Map_GetTerrainHeightFar:
 	.incbin "baserom.gba", 0x000201f0, 0x00000008
-	.global Func_080201c8
-	.type Func_080201c8, %function
+	.global GetMapCellCollisionFar
+	.type GetMapCellCollisionFar, %function
 	.thumb_func
-Func_080201c8:
+GetMapCellCollisionFar:
 	.incbin "baserom.gba", 0x000201f8, 0x00000008
 	.global Func_080201d0
 	.type Func_080201d0, %function
@@ -1095,10 +1095,10 @@ UiText_BuildRenderEntries:
 UiText_GetResourceDimensions:
 	.incbin "baserom.gba", 0x0003b898, 0x0000004c
 	.section .rom.0003b8e4, "ax"
-	.global Func_0803b8cc
-	.type Func_0803b8cc, %function
+	.global UiText_GetResourceDimensionsAlt
+	.type UiText_GetResourceDimensionsAlt, %function
 	.thumb_func
-Func_0803b8cc:
+UiText_GetResourceDimensionsAlt:
 	.incbin "baserom.gba", 0x0003b8e4, 0x0000004c
 	.section .rom.0003b930, "ax"
 	.global UiText_MeasureEntryDimensions
@@ -1349,10 +1349,10 @@ UiTextResource_Initialize:
 UiTextResource_SetPosition:
 	.incbin "baserom.gba", 0x0003f6f8, 0x00000028
 	.section .rom.0003f7d8, "ax"
-	.global Func_0803f778
-	.type Func_0803f778, %function
+	.global Menu_RunTopSelection
+	.type Menu_RunTopSelection, %function
 	.thumb_func
-Func_0803f778:
+Menu_RunTopSelection:
 	.incbin "baserom.gba", 0x0003f7d8, 0x00000098
 	.section .rom.0003f88c, "ax"
 	.balign 4
@@ -1404,10 +1404,10 @@ UiWindow_ClearTileAttributesInRect:
 Func_08041b68:
 	.incbin "baserom.gba", 0x00041bd4, 0x000000a4
 	.section .rom.00041c78, "ax"
-	.global Func_08041c0c
-	.type Func_08041c0c, %function
+	.global UiWork_SetAltFlagAndClearTable
+	.type UiWork_SetAltFlagAndClearTable, %function
 	.thumb_func
-Func_08041c0c:
+UiWork_SetAltFlagAndClearTable:
 	.incbin "baserom.gba", 0x00041c78, 0x00000048
 	.section .rom.00041cc0, "ax"
 	.global UiWindow_DrawDividerLine
@@ -1476,10 +1476,10 @@ UiText_DrawNumberInWindow:
 RenderOutput_Create:
 	.incbin "baserom.gba", 0x00042380, 0x00000088
 	.section .rom.000424bc, "ax"
-	.global Func_08042450
-	.type Func_08042450, %function
+	.global CreateSideObject
+	.type CreateSideObject, %function
 	.thumb_func
-Func_08042450:
+CreateSideObject:
 	.incbin "baserom.gba", 0x000424bc, 0x000000b8
 	.section .rom.00042574, "ax"
 	.global Ui_LoadCharacterEntryForSlot
@@ -1496,10 +1496,10 @@ Ui_LoadCharacterEntryForSlot:
 Func_0804257c:
 	.incbin "baserom.gba", 0x000425e8, 0x0000000c
 	.section .rom.000425f4, "ax"
-	.global Func_08042588
-	.type Func_08042588, %function
+	.global UiWindow_FillFromScene
+	.type UiWindow_FillFromScene, %function
 	.thumb_func
-Func_08042588:
+UiWindow_FillFromScene:
 	.incbin "baserom.gba", 0x000425f4, 0x00000074
 	.section .rom.0004274c, "ax"
 	.incbin "baserom.gba", 0x0004274c, 0x0000029c
@@ -1710,10 +1710,10 @@ Func_0804d7fc:
 	.section .rom.0004dcae, "ax"
 	.incbin "baserom.gba", 0x0004dcae, 0x000000ba
 	.section .rom.0004dd68, "ax"
-	.global Func_0804db74
-	.type Func_0804db74, %function
+	.global Menu_RunSelection
+	.type Menu_RunSelection, %function
 	.thumb_func
-Func_0804db74:
+Menu_RunSelection:
 	.incbin "baserom.gba", 0x0004dd68, 0x00000254
 	.section .rom.0004e094, "ax"
 	.global Menu_DrawFlagBitTable
@@ -1887,20 +1887,20 @@ Party_AddActiveOwnerFar:
 	.thumb_func
 Party_ListActiveOwnersFar:
 	.incbin "baserom.gba", 0x000b6100, 0x00000008
-	.global Func_080ad108
-	.type Func_080ad108, %function
+	.global RollWeaponUnleashFar
+	.type RollWeaponUnleashFar, %function
 	.thumb_func
-Func_080ad108:
+RollWeaponUnleashFar:
 	.incbin "baserom.gba", 0x000b6108, 0x00000008
 	.global Party_RemoveActiveOwnerFar
 	.type Party_RemoveActiveOwnerFar, %function
 	.thumb_func
 Party_RemoveActiveOwnerFar:
 	.incbin "baserom.gba", 0x000b6110, 0x00000008
-	.global Func_080ad118
-	.type Func_080ad118, %function
+	.global Item_GetEquippedElementFar
+	.type Item_GetEquippedElementFar, %function
 	.thumb_func
-Func_080ad118:
+Item_GetEquippedElementFar:
 	.incbin "baserom.gba", 0x000b6118, 0x00000008
 	.global Battle_HitCheck
 	.type Battle_HitCheck, %function
@@ -1966,10 +1966,10 @@ Trade_AddOfferFar:
 	.thumb_func
 Djinn_TransferFar:
 	.incbin "baserom.gba", 0x000b6178, 0x00000008
-	.global Func_080ad180
-	.type Func_080ad180, %function
+	.global Trade_ListFlaggedEntriesFar
+	.type Trade_ListFlaggedEntriesFar, %function
 	.thumb_func
-Func_080ad180:
+Trade_ListFlaggedEntriesFar:
 	.incbin "baserom.gba", 0x000b6180, 0x00000008
 	.global SummonDefinition_Get
 	.type SummonDefinition_Get, %function
@@ -1986,10 +1986,10 @@ Djinn_GetDefinitionHeaderFar:
 	.thumb_func
 Party_AdvanceOwnerCountToTargetFar:
 	.incbin "baserom.gba", 0x000b6198, 0x00000008
-	.global Func_080ad1a0
-	.type Func_080ad1a0, %function
+	.global Owner_GetResistanceValueFar
+	.type Owner_GetResistanceValueFar, %function
 	.thumb_func
-Func_080ad1a0:
+Owner_GetResistanceValueFar:
 	.incbin "baserom.gba", 0x000b61a0, 0x00000008
 	.global Trade_CountPendingOffersFar
 	.type Trade_CountPendingOffersFar, %function
@@ -2062,15 +2062,15 @@ Func_080ad208:
 	.thumb_func
 Func_080ad210:
 	.incbin "baserom.gba", 0x000b6210, 0x00000008
-	.global Func_080ad218
-	.type Func_080ad218, %function
+	.global Party_SetLeaderJasmineFar
+	.type Party_SetLeaderJasmineFar, %function
 	.thumb_func
-Func_080ad218:
+Party_SetLeaderJasmineFar:
 	.incbin "baserom.gba", 0x000b6218, 0x00000008
-	.global Func_080ad220
-	.type Func_080ad220, %function
+	.global Party_SetLeaderGarciaFar
+	.type Party_SetLeaderGarciaFar, %function
 	.thumb_func
-Func_080ad220:
+Party_SetLeaderGarciaFar:
 	.incbin "baserom.gba", 0x000b6220, 0x00000008
 	.global Func_080ad228
 	.type Func_080ad228, %function
@@ -2138,10 +2138,10 @@ BattleFx_IsReviveFar:
 	.thumb_func
 Owner_RefreshClassActionsFar:
 	.incbin "baserom.gba", 0x000b6288, 0x00000008
-	.global Func_080ad290
-	.type Func_080ad290, %function
+	.global Party_GetAverageLevelFar
+	.type Party_GetAverageLevelFar, %function
 	.thumb_func
-Func_080ad290:
+Party_GetAverageLevelFar:
 	.incbin "baserom.gba", 0x000b6290, 0x00000008
 	.global Owner_RefreshDerivedDataFar
 	.type Owner_RefreshDerivedDataFar, %function
@@ -2158,10 +2158,10 @@ Inventory_CountItemFar:
 	.thumb_func
 PartyInventory_CountItemFar:
 	.incbin "baserom.gba", 0x000b62a8, 0x00000008
-	.global Func_080ad2b0
-	.type Func_080ad2b0, %function
+	.global PartyInventory_DiscardFar
+	.type PartyInventory_DiscardFar, %function
 	.thumb_func
-Func_080ad2b0:
+PartyInventory_DiscardFar:
 	.incbin "baserom.gba", 0x000b62b0, 0x00000008
 	.section .rom.000b6338, "ax"
 	.global Func_080ad338
@@ -2434,15 +2434,15 @@ Game_ResetForNewGameFar:
 	.thumb_func
 Battle_WaitMode0Far:
 	.incbin "baserom.gba", 0x000d1010, 0x00000008
-	.global Func_080c8018
-	.type Func_080c8018, %function
+	.global EventRuntime_BeginFar
+	.type EventRuntime_BeginFar, %function
 	.thumb_func
-Func_080c8018:
+EventRuntime_BeginFar:
 	.incbin "baserom.gba", 0x000d1018, 0x00000008
-	.global Func_080c8020
-	.type Func_080c8020, %function
+	.global EventRuntime_EndFar
+	.type EventRuntime_EndFar, %function
 	.thumb_func
-Func_080c8020:
+EventRuntime_EndFar:
 	.incbin "baserom.gba", 0x000d1020, 0x00000008
 	.global Event_RunObjectHookAndWaitFar
 	.type Event_RunObjectHookAndWaitFar, %function
@@ -2509,10 +2509,10 @@ UiText_DrawQuantityPairWithCueFar:
 	.thumb_func
 Object_GetByIdFar:
 	.incbin "baserom.gba", 0x000d1088, 0x00000008
-	.global Func_080c8090
-	.type Func_080c8090, %function
+	.global ObjectTable_DestroyByIdFar
+	.type ObjectTable_DestroyByIdFar, %function
 	.thumb_func
-Func_080c8090:
+ObjectTable_DestroyByIdFar:
 	.incbin "baserom.gba", 0x000d1090, 0x00000008
 	.global ObjectMotion_SetSpeedParametersFar
 	.type ObjectMotion_SetSpeedParametersFar, %function
@@ -2574,25 +2574,25 @@ ObjectMotion_OffsetPositionAndResetMotionFar:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivateFar:
 	.incbin "baserom.gba", 0x000d10f0, 0x00000008
-	.global Func_080c80f8
-	.type Func_080c80f8, %function
+	.global ObjectMotion_SetHorizontalPositionWithTerrainFar
+	.type ObjectMotion_SetHorizontalPositionWithTerrainFar, %function
 	.thumb_func
-Func_080c80f8:
+ObjectMotion_SetHorizontalPositionWithTerrainFar:
 	.incbin "baserom.gba", 0x000d10f8, 0x00000008
-	.global Func_080c8100
-	.type Func_080c8100, %function
+	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
+	.type ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar, %function
 	.thumb_func
-Func_080c8100:
+ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar:
 	.incbin "baserom.gba", 0x000d1100, 0x00000008
-	.global Func_080c8108
-	.type Func_080c8108, %function
+	.global ObjectMotion_SetPositionWithTerrainFar
+	.type ObjectMotion_SetPositionWithTerrainFar, %function
 	.thumb_func
-Func_080c8108:
+ObjectMotion_SetPositionWithTerrainFar:
 	.incbin "baserom.gba", 0x000d1108, 0x00000008
-	.global Func_080c8110
-	.type Func_080c8110, %function
+	.global ObjectMotion_MoveToObjectFar
+	.type ObjectMotion_MoveToObjectFar, %function
 	.thumb_func
-Func_080c8110:
+ObjectMotion_MoveToObjectFar:
 	.incbin "baserom.gba", 0x000d1110, 0x00000008
 	.global Object_SetModeByIdFar
 	.type Object_SetModeByIdFar, %function
@@ -2629,10 +2629,10 @@ ObjectMotion_SetVariantCallbackFar:
 	.thumb_func
 Motion_SetVarCbAndRefreshFar:
 	.incbin "baserom.gba", 0x000d1148, 0x00000008
-	.global Func_080c8150
-	.type Func_080c8150, %function
+	.global BattleFx_RunRisingObjectSequenceFar
+	.type BattleFx_RunRisingObjectSequenceFar, %function
 	.thumb_func
-Func_080c8150:
+BattleFx_RunRisingObjectSequenceFar:
 	.incbin "baserom.gba", 0x000d1150, 0x00000008
 	.global ObjectMotion_SetAngleTowardFar
 	.type ObjectMotion_SetAngleTowardFar, %function
@@ -2644,10 +2644,10 @@ ObjectMotion_SetAngleTowardFar:
 	.thumb_func
 Object_LinkPairFar:
 	.incbin "baserom.gba", 0x000d1160, 0x00000008
-	.global Func_080c8168
-	.type Func_080c8168, %function
+	.global ObjectGroup_ConfigureChildValueFar
+	.type ObjectGroup_ConfigureChildValueFar, %function
 	.thumb_func
-Func_080c8168:
+ObjectGroup_ConfigureChildValueFar:
 	.incbin "baserom.gba", 0x000d1168, 0x00000008
 	.global Object_SetPartAttributeFar
 	.type Object_SetPartAttributeFar, %function
@@ -2659,10 +2659,10 @@ Object_SetPartAttributeFar:
 	.thumb_func
 Func_080c8178:
 	.incbin "baserom.gba", 0x000d1178, 0x00000008
-	.global Func_080c8180
-	.type Func_080c8180, %function
+	.global EventRuntime_SetMessageFar
+	.type EventRuntime_SetMessageFar, %function
 	.thumb_func
-Func_080c8180:
+EventRuntime_SetMessageFar:
 	.incbin "baserom.gba", 0x000d1180, 0x00000008
 	.global UiText_OpenMessageAtObjectFar
 	.type UiText_OpenMessageAtObjectFar, %function
@@ -2679,10 +2679,10 @@ Func_080c8190:
 	.thumb_func
 Func_080c8198:
 	.incbin "baserom.gba", 0x000d1198, 0x00000008
-	.global Func_080c81a0
-	.type Func_080c81a0, %function
+	.global EventRuntime_ShowMessageAndWaitFar
+	.type EventRuntime_ShowMessageAndWaitFar, %function
 	.thumb_func
-Func_080c81a0:
+EventRuntime_ShowMessageAndWaitFar:
 	.incbin "baserom.gba", 0x000d11a0, 0x00000008
 	.global Func_080c81a8
 	.type Func_080c81a8, %function
@@ -2714,15 +2714,15 @@ Event_ShowCounterAtPositionFar:
 	.thumb_func
 ObjectMotion_ArmCallbackFar:
 	.incbin "baserom.gba", 0x000d11d0, 0x00000008
-	.global Func_080c81d8
-	.type Func_080c81d8, %function
+	.global ObjectMotion_ArmCallbackAndRefreshFar
+	.type ObjectMotion_ArmCallbackAndRefreshFar, %function
 	.thumb_func
-Func_080c81d8:
+ObjectMotion_ArmCallbackAndRefreshFar:
 	.incbin "baserom.gba", 0x000d11d8, 0x00000008
-	.global Func_080c81e0
-	.type Func_080c81e0, %function
+	.global Object_ResetTargetAndSetMode1Far
+	.type Object_ResetTargetAndSetMode1Far, %function
 	.thumb_func
-Func_080c81e0:
+Object_ResetTargetAndSetMode1Far:
 	.incbin "baserom.gba", 0x000d11e0, 0x00000008
 	.global ObjectTable_RunIfActiveFar
 	.type ObjectTable_RunIfActiveFar, %function
@@ -2769,10 +2769,10 @@ ObjectVisual_CopyAttributesFar:
 	.thumb_func
 Object_AttachWorkTargetToObjectFar:
 	.incbin "baserom.gba", 0x000d1228, 0x00000008
-	.global Func_080c8230
-	.type Func_080c8230, %function
+	.global ObjectTable_AllocateAndSetObjectSpeedFar
+	.type ObjectTable_AllocateAndSetObjectSpeedFar, %function
 	.thumb_func
-Func_080c8230:
+ObjectTable_AllocateAndSetObjectSpeedFar:
 	.incbin "baserom.gba", 0x000d1230, 0x00000008
 	.global Motion_CamBoundsFar
 	.type Motion_CamBoundsFar, %function
@@ -2847,35 +2847,35 @@ Func_080c83d8:
 	.thumb_func
 Func_080c83e0:
 	.incbin "baserom.gba", 0x000d13f0, 0x00000008
-	.global Func_080c83e8
-	.type Func_080c83e8, %function
+	.global ObjectEvent_GetObjectFar
+	.type ObjectEvent_GetObjectFar, %function
 	.thumb_func
-Func_080c83e8:
+ObjectEvent_GetObjectFar:
 	.incbin "baserom.gba", 0x000d13f8, 0x00000008
-	.global Func_080c83f0
-	.type Func_080c83f0, %function
+	.global ObjectEvent_SetMode4WithCueFar
+	.type ObjectEvent_SetMode4WithCueFar, %function
 	.thumb_func
-Func_080c83f0:
+ObjectEvent_SetMode4WithCueFar:
 	.incbin "baserom.gba", 0x000d1400, 0x00000008
-	.global Func_080c83f8
-	.type Func_080c83f8, %function
+	.global ObjectEvent_SetMode5WithCueFar
+	.type ObjectEvent_SetMode5WithCueFar, %function
 	.thumb_func
-Func_080c83f8:
+ObjectEvent_SetMode5WithCueFar:
 	.incbin "baserom.gba", 0x000d1408, 0x00000008
-	.global Func_080c8400
-	.type Func_080c8400, %function
+	.global ObjectEvent_SetMode2Far
+	.type ObjectEvent_SetMode2Far, %function
 	.thumb_func
-Func_080c8400:
+ObjectEvent_SetMode2Far:
 	.incbin "baserom.gba", 0x000d1410, 0x00000008
-	.global Func_080c8408
-	.type Func_080c8408, %function
+	.global ObjectEvent_PlaceOnGroundFar
+	.type ObjectEvent_PlaceOnGroundFar, %function
 	.thumb_func
-Func_080c8408:
+ObjectEvent_PlaceOnGroundFar:
 	.incbin "baserom.gba", 0x000d1418, 0x00000008
-	.global Func_080c8410
-	.type Func_080c8410, %function
+	.global ObjectEvent_RemoveFar
+	.type ObjectEvent_RemoveFar, %function
 	.thumb_func
-Func_080c8410:
+ObjectEvent_RemoveFar:
 	.incbin "baserom.gba", 0x000d1420, 0x00000008
 	.global Func_080c8418
 	.type Func_080c8418, %function
@@ -2887,10 +2887,10 @@ Func_080c8418:
 	.thumb_func
 Object_SetWideSpriteFar:
 	.incbin "baserom.gba", 0x000d1430, 0x00000008
-	.global Func_080c8428
-	.type Func_080c8428, %function
+	.global Object_ReturnHomeFar
+	.type Object_ReturnHomeFar, %function
 	.thumb_func
-Func_080c8428:
+Object_ReturnHomeFar:
 	.incbin "baserom.gba", 0x000d1438, 0x00000008
 	.global Func_080c8430
 	.type Func_080c8430, %function
@@ -2962,25 +2962,25 @@ Func_080c8490:
 	.thumb_func
 Field_DispatchTypeHandlerFar:
 	.incbin "baserom.gba", 0x000d14a8, 0x00000008
-	.global Func_080c84a0
-	.type Func_080c84a0, %function
+	.global BattleFx_LoadActionEffectResourcesFar
+	.type BattleFx_LoadActionEffectResourcesFar, %function
 	.thumb_func
-Func_080c84a0:
+BattleFx_LoadActionEffectResourcesFar:
 	.incbin "baserom.gba", 0x000d14b0, 0x00000008
-	.global Func_080c84a8
-	.type Func_080c84a8, %function
+	.global BattleFx_SetupObjectPairFar
+	.type BattleFx_SetupObjectPairFar, %function
 	.thumb_func
-Func_080c84a8:
+BattleFx_SetupObjectPairFar:
 	.incbin "baserom.gba", 0x000d14b8, 0x00000008
-	.global Func_080c84b0
-	.type Func_080c84b0, %function
+	.global EffectRuntime_StopCurrentObjectFar
+	.type EffectRuntime_StopCurrentObjectFar, %function
 	.thumb_func
-Func_080c84b0:
+EffectRuntime_StopCurrentObjectFar:
 	.incbin "baserom.gba", 0x000d14c0, 0x00000008
-	.global Func_080c84b8
-	.type Func_080c84b8, %function
+	.global BattleEffect_CleanupSceneObjectsFar
+	.type BattleEffect_CleanupSceneObjectsFar, %function
 	.thumb_func
-Func_080c84b8:
+BattleEffect_CleanupSceneObjectsFar:
 	.incbin "baserom.gba", 0x000d14c8, 0x00000008
 	.global Func_080c84c0
 	.type Func_080c84c0, %function
@@ -2998,10 +2998,10 @@ BattleEffect_InitializeSharedSceneFar:
 BattleEffect_ResolvePendingActionsFar:
 	.incbin "baserom.gba", 0x000d14e0, 0x00000008
 	.section .rom.000d1518, "ax"
-	.global Func_080c8508
-	.type Func_080c8508, %function
+	.global BattleFx_HasMatchingEvent5Far
+	.type BattleFx_HasMatchingEvent5Far, %function
 	.thumb_func
-Func_080c8508:
+BattleFx_HasMatchingEvent5Far:
 	.incbin "baserom.gba", 0x000d1518, 0x00000008
 	.global BattleFx_HasTriggerFar
 	.type BattleFx_HasTriggerFar, %function
@@ -3029,15 +3029,15 @@ BattleFx_HasReachedTargetFar:
 	.thumb_func
 EffectSlot_SetPositionFar:
 	.incbin "baserom.gba", 0x000d15a8, 0x00000008
-	.global Func_080c85a0
-	.type Func_080c85a0, %function
+	.global EffectSlot_SetObjectModeFar
+	.type EffectSlot_SetObjectModeFar, %function
 	.thumb_func
-Func_080c85a0:
+EffectSlot_SetObjectModeFar:
 	.incbin "baserom.gba", 0x000d15b0, 0x00000008
-	.global Func_080c85a8
-	.type Func_080c85a8, %function
+	.global EffectSlot_SetCallbackFar
+	.type EffectSlot_SetCallbackFar, %function
 	.thumb_func
-Func_080c85a8:
+EffectSlot_SetCallbackFar:
 	.incbin "baserom.gba", 0x000d15b8, 0x00000008
 	.global Camera_WorldToScreenFar
 	.type Camera_WorldToScreenFar, %function
@@ -3051,10 +3051,10 @@ Camera_WorldToScreenFar:
 Object_BuildRecordSnapshotFar:
 	.incbin "baserom.gba", 0x000d1628, 0x00000010
 	.section .rom.000d1658, "ax"
-	.global Func_080c8648
-	.type Func_080c8648, %function
+	.global Scene_GetAreaNameIndexFar
+	.type Scene_GetAreaNameIndexFar, %function
 	.thumb_func
-Func_080c8648:
+Scene_GetAreaNameIndexFar:
 	.incbin "baserom.gba", 0x000d1658, 0x00000008
 	.global Func_080c8650
 	.type Func_080c8650, %function
@@ -3096,10 +3096,10 @@ Object_SetActionCallbackFar:
 	.thumb_func
 Func_080c8688:
 	.incbin "baserom.gba", 0x000d1698, 0x00000008
-	.global Func_080c8690
-	.type Func_080c8690, %function
+	.global Event_NoOpFar
+	.type Event_NoOpFar, %function
 	.thumb_func
-Func_080c8690:
+Event_NoOpFar:
 	.incbin "baserom.gba", 0x000d16a0, 0x00000008
 	.section .rom.000d18d8, "ax"
 	.global Func_080c88c8
@@ -3145,10 +3145,10 @@ ObjectMotion_ResetTargetsAndVelocityFar:
 	.thumb_func
 ObjectEffect_BeginContextEffect26Far:
 	.incbin "baserom.gba", 0x000d1910, 0x00000008
-	.global Func_080c8908
-	.type Func_080c8908, %function
+	.global ObjectEffect_BeginContextEffect25Far
+	.type ObjectEffect_BeginContextEffect25Far, %function
 	.thumb_func
-Func_080c8908:
+ObjectEffect_BeginContextEffect25Far:
 	.incbin "baserom.gba", 0x000d1918, 0x00000008
 	.global Func_080c8910
 	.type Func_080c8910, %function
@@ -3584,10 +3584,10 @@ ObjectMotion_WaitForAnimationChange:
 	.section .rom.000dc36c, "ax"
 	.incbin "baserom.gba", 0x000dc36c, 0x000000e8
 	.section .rom.000dc454, "ax"
-	.global Func_080d3460
-	.type Func_080d3460, %function
+	.global BattleFx_RunRisingObjectSequence
+	.type BattleFx_RunRisingObjectSequence, %function
 	.thumb_func
-Func_080d3460:
+BattleFx_RunRisingObjectSequence:
 	.incbin "baserom.gba", 0x000dc454, 0x0000013c
 	.section .rom.000dc5f2, "ax"
 	.incbin "baserom.gba", 0x000dc5f2, 0x00000002
@@ -3598,10 +3598,10 @@ Func_080d3460:
 FacingObject_TurnPairToFaceEachOther:
 	.incbin "baserom.gba", 0x000dc5f4, 0x000000a8
 	.section .rom.000dc69c, "ax"
-	.global Func_080d36a8
-	.type Func_080d36a8, %function
+	.global ObjectTable_DestroyById
+	.type ObjectTable_DestroyById, %function
 	.thumb_func
-Func_080d36a8:
+ObjectTable_DestroyById:
 	.incbin "baserom.gba", 0x000dc69c, 0x00000020
 	.section .rom.000dc774, "ax"
 	.global Func_080d3780
@@ -3699,10 +3699,10 @@ Func_080d41fc:
 Func_080d4330:
 	.incbin "baserom.gba", 0x000dd324, 0x00000054
 	.section .rom.000dd3e0, "ax"
-	.global Func_080d43ec
-	.type Func_080d43ec, %function
+	.global ObjectTable_AllocateAndSetObjectSpeed
+	.type ObjectTable_AllocateAndSetObjectSpeed, %function
 	.thumb_func
-Func_080d43ec:
+ObjectTable_AllocateAndSetObjectSpeed:
 	.incbin "baserom.gba", 0x000dd3e0, 0x00000020
 	.global Motion_CamBounds
 	.type Motion_CamBounds, %function

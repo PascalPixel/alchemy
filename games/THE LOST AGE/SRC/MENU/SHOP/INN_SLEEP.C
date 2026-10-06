@@ -59,7 +59,7 @@ void Inn_PlaySleep(s32 room_price)
     state->delay = 60;
     WaitFrames(20);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    Func_080c83a0();
+    BattleFx_SetPrimaryBufferValueFar();
 #else
     Event_FinishScreenTransitionFar();
 #endif
@@ -72,7 +72,7 @@ void Inn_PlaySleep(s32 room_price)
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    Func_080c8398();
+    Runtime_ScheduleCallbackAndReleaseBlock32BFar();
 #else
     Event_StartScreenTransitionFar();
 #endif

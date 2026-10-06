@@ -89,11 +89,11 @@ Battle_WaitMode0:
 	.global Func_02001bcc
 	.thumb_func
 Func_02001bcc:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02001bd4
 	.thumb_func
 Func_02001bd4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -137,7 +137,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02001c2c
 	.thumb_func
 Func_02001c2c:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -169,7 +169,7 @@ Object_LinkPair:
 	.global Func_02001c6c
 	.thumb_func
 Func_02001c6c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -181,7 +181,7 @@ Func_02001c7c:
 	.global Func_02001c84
 	.thumb_func
 Func_02001c84:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -189,7 +189,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02001c94
 	.thumb_func
 Func_02001c94:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -245,7 +245,7 @@ Object_SetWideSprite:
 	.global Func_02001cf4
 	.thumb_func
 Func_02001cf4:
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.global Func_02001cfc
 	.thumb_func
 Func_02001cfc:
@@ -253,7 +253,7 @@ Func_02001cfc:
 	.global Func_02001d04
 	.thumb_func
 Func_02001d04:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001d0c
 	.thumb_func
 Func_02001d0c:
@@ -294,10 +294,10 @@ Func_02001d4c:
 	.thumb_func
 Func_02001d54:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

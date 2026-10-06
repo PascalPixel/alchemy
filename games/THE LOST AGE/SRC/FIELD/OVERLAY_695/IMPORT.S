@@ -22,16 +22,16 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02001060:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -53,11 +53,11 @@ Battle_WaitMode0:
 	.global Func_02001080
 	.thumb_func
 Func_02001080:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02001088
 	.thumb_func
 Func_02001088:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -105,11 +105,11 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020010e8
 	.thumb_func
 Func_020010e8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_020010f0
 	.thumb_func
 Func_020010f0:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -145,7 +145,7 @@ Object_SetPartAttribute:
 	.global Func_02001138
 	.thumb_func
 Func_02001138:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -161,7 +161,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02001158
 	.thumb_func
 Func_02001158:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global Func_02001160
 	.thumb_func
 Func_02001160:
@@ -173,7 +173,7 @@ Func_02001168:
 	.global Func_02001170
 	.thumb_func
 Func_02001170:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -237,15 +237,15 @@ Event_WaitTransitionFrames:
 	.global Func_020011e0
 	.thumb_func
 Func_020011e0:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020011e8
 	.thumb_func
 Func_020011e8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	overlay_veneer Func_080c8558
 	.endif

@@ -41,9 +41,9 @@ Func_080c82c8:
 	.thumb_func
 Func_080c82d0:
 	overlay_veneer Func_080decb8
-	.global Func_080c82d8
+	.global BattleFx_FindNearestObjectFar
 	.thumb_func
-Func_080c82d8:
+BattleFx_FindNearestObjectFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080dd054
 .else
@@ -73,9 +73,9 @@ Func_080c82e8:
 	.thumb_func
 Func_080c82f0:
 	overlay_veneer Func_080d53b8
-	.global Func_080c82f8
+	.global EventRuntime_PrepareCurrentObjectFar
 	.thumb_func
-Func_080c82f8:
+EventRuntime_PrepareCurrentObjectFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d2260
 .else
@@ -137,9 +137,9 @@ Func_080c8340:
 	overlay_veneer Func_080d00f8
 .endif
 .endif
-	.global Func_080c8348
+	.global DisplayTransition_InitializeStateFar
 	.thumb_func
-Func_080c8348:
+DisplayTransition_InitializeStateFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer DisplayTransition_Finish
 .else
@@ -149,9 +149,9 @@ Func_080c8348:
 	overlay_veneer DisplayTransition_InitializeState
 .endif
 .endif
-	.global Func_080c8350
+	.global DisplayTransition_StartFar
 	.thumb_func
-Func_080c8350:
+DisplayTransition_StartFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d01cc
 .else
@@ -161,9 +161,9 @@ Func_080c8350:
 	overlay_veneer DisplayTransition_Start
 .endif
 .endif
-	.global Func_080c8358
+	.global DisplayTransition_FinishFar
 	.thumb_func
-Func_080c8358:
+DisplayTransition_FinishFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d0520
 .else
@@ -181,9 +181,9 @@ Func_080c8360:
 	.thumb_func
 Func_080c8368:
 	overlay_veneer Func_080ccec8
-	.global Func_080c8370
+	.global BattleEffect_InitializeBuffersFar
 	.thumb_func
-Func_080c8370:
+BattleEffect_InitializeBuffersFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_ApplyColorToSourceBuffer
 .else

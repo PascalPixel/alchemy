@@ -173,7 +173,7 @@ Battle_WaitMode0:
 	.global Func_02002024
 	.thumb_func
 Func_02002024:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -181,7 +181,7 @@ Object_GetById:
 	.global Func_02002034
 	.thumb_func
 Func_02002034:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -189,7 +189,7 @@ Object_SetModeById:
 	.global Func_02002044
 	.thumb_func
 Func_02002044:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -234,10 +234,10 @@ Func_02002074:
 	.thumb_func
 Func_0200207c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	overlay_veneer Func_080c8438
 	.endif
@@ -245,7 +245,7 @@ Func_0200207c:
 	.global Func_02002084
 	.thumb_func
 Func_02002084:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_0200208c
 	.thumb_func
 Func_0200208c:
@@ -263,7 +263,7 @@ Func_0200209c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020020a4
@@ -275,7 +275,7 @@ Func_020020a4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8958
 	.else
-	overlay_veneer Func_080c8960
+	overlay_veneer SceneEvent_FindActiveRecordFar
 	.endif
 	.endif
 	.global Func_020020ac

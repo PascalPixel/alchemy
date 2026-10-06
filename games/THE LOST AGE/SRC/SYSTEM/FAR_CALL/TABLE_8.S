@@ -9,9 +9,9 @@ Func_08020328:
 	.thumb_func
 Func_08020330:
 	overlay_veneer Func_080237c8
-	.global Func_08020338
+	.global Animation_WaitForTrackEndFar
 	.thumb_func
-Func_08020338:
+Animation_WaitForTrackEndFar:
 .ifdef TLA_EDITION_JA
 	overlay_veneer Animation_WaitForTrackEnd
 .else

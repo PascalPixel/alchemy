@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d3460
+	.global BattleFx_RunRisingObjectSequence
 	.thumb_func
-Func_080d3460:
+BattleFx_RunRisingObjectSequence:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

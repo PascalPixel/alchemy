@@ -5,9 +5,9 @@
 	.thumb_func
 Party_FindOwnerWithActionFar:
 	overlay_veneer Party_FindOwnerWithAction
-	.global Func_080ad2f0
+	.global PartyInventory_FindRoomFar
 	.thumb_func
-Func_080ad2f0:
+PartyInventory_FindRoomFar:
 	overlay_veneer PartyInventory_FindRoom
 	.global Func_080ad2f8
 	.thumb_func

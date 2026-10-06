@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8648
+	.global Scene_GetAreaNameIndexFar
 	.thumb_func
-Func_080c8648:
+Scene_GetAreaNameIndexFar:
 	overlay_veneer Scene_GetAreaNameIndex
 	.global Func_080c8650
 	.thumb_func
@@ -37,7 +37,7 @@ Object_SetActionCallbackFar:
 	.thumb_func
 Func_080c8688:
 	overlay_veneer Func_080d2c64
-	.global Func_080c8690
+	.global Event_NoOpFar
 	.thumb_func
-Func_080c8690:
+Event_NoOpFar:
 	overlay_veneer Event_NoOp

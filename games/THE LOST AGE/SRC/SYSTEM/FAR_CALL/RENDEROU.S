@@ -9,10 +9,10 @@ RenderOutput_CreateFar:
 	.thumb_func
 RenderOutput_CreateFromResourceFar:
 	overlay_veneer RenderOutput_CreateFromResource
-	.global Func_080380d8
+	.global SideObject_CreateFar
 	.thumb_func
-Func_080380d8:
-	overlay_veneer Func_08042450
+SideObject_CreateFar:
+	overlay_veneer CreateSideObject
 	.global Ui_LoadCharacterEntryForSlotFar
 	.thumb_func
 Ui_LoadCharacterEntryForSlotFar:

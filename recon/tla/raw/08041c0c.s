@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08041c0c
+	.global UiWork_SetAltFlagAndClearTable
 	.thumb_func
-Func_08041c0c:
+UiWork_SetAltFlagAndClearTable:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

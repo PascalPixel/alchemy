@@ -9,10 +9,10 @@ Func_08038248:
 	.thumb_func
 UiText_RenderWideStringAtOffsetFar:
 	overlay_veneer UiText_RenderWideStringAtOffset
-	.global Func_08038258
+	.global UiWindow_FillFromSceneFar
 	.thumb_func
-Func_08038258:
-	overlay_veneer Func_08042588
+UiWindow_FillFromSceneFar:
+	overlay_veneer UiWindow_FillFromScene
 	.global RenderOutput_RedrawSavedRectFar
 	.thumb_func
 RenderOutput_RedrawSavedRectFar:
@@ -25,10 +25,10 @@ RenderOutput_ClearListFar:
 	.thumb_func
 UiWindow_SetTilemapEntryFar:
 	overlay_veneer UiWindow_SetTilemapEntry
-	.global Func_08038278
+	.global Menu_RunSelectionFar
 	.thumb_func
-Func_08038278:
-	overlay_veneer Func_0804db74
+Menu_RunSelectionFar:
+	overlay_veneer Menu_RunSelection
 	.global Menu_RunSelectionWithCursorObjectFar
 	.thumb_func
 Menu_RunSelectionWithCursorObjectFar:

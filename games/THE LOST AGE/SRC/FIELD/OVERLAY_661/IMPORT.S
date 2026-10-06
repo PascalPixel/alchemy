@@ -130,16 +130,16 @@ Map_GetTerrainHeight:
 	.thumb_func
 Func_02004000:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -177,11 +177,11 @@ Battle_WaitMode0:
 	.global Func_02004040
 	.thumb_func
 Func_02004040:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02004048
 	.thumb_func
 Func_02004048:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -217,11 +217,11 @@ ObjectMotion_SetPositionAndReset:
 	.global Func_02004090
 	.thumb_func
 Func_02004090:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02004098
 	.thumb_func
 Func_02004098:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -245,11 +245,11 @@ Object_SetPartAttribute:
 	.global Func_020040c8
 	.thumb_func
 Func_020040c8:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_020040d0
 	.thumb_func
 Func_020040d0:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_020040d8
 	.thumb_func
 Func_020040d8:
@@ -261,7 +261,7 @@ ObjectMotion_ArmCallback:
 	.global Func_020040e8
 	.thumb_func
 Func_020040e8:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -285,7 +285,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02004118
 	.thumb_func
 Func_02004118:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -341,7 +341,7 @@ Object_SetWideSprite:
 	.global Func_02004178
 	.thumb_func
 Func_02004178:
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.global Func_02004180
 	.thumb_func
 Func_02004180:
@@ -353,7 +353,7 @@ Field_DispatchTypeHandler:
 	.global Func_02004190
 	.thumb_func
 Func_02004190:
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.global Func_02004198
 	.thumb_func
 Func_02004198:
@@ -363,17 +363,17 @@ Func_02004198:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_020041a0
 	.thumb_func
 Func_020041a0:
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.global Func_020041a8
 	.thumb_func
 Func_020041a8:
-	overlay_veneer Func_080c84b8
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Func_020041b0
 	.thumb_func
 Func_020041b0:
@@ -381,7 +381,7 @@ Func_020041b0:
 	.global Func_020041b8
 	.thumb_func
 Func_020041b8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -439,7 +439,7 @@ Func_020041f0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020041f8

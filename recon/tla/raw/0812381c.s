@@ -397,7 +397,7 @@ Func_0812381c:
 .L_08123c08:
 	ldr r1, [sp, #12]
 	ldr r0, [r1]
-	bl Func_080ad108
+	bl RollWeaponUnleashFar
 	add r2, sp, #40
 	mov r9, r2
 	adds r7, r0, #0
@@ -1360,7 +1360,7 @@ Func_0812381c:
 	adds r6, r0, #0
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl Func_080ad118
+	bl Item_GetEquippedElementFar
 	mov r2, r11
 	ldr r1, [r2]
 	movs r3, #2

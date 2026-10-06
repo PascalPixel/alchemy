@@ -48,7 +48,7 @@ Func_0804868c:
 	bl UiWindow_Create
 	str r0, [sp, #44]
 	movs r0, #1
-	bl Func_08041c0c
+	bl UiWork_SetAltFlagAndClearTable
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #9
@@ -1359,7 +1359,7 @@ Func_0804868c:
 	bl UiWork_Finalize
 	bl Func_08041b68
 	movs r0, #0
-	bl Func_08041c0c
+	bl UiWork_SetAltFlagAndClearTable
 	ldr r0, [sp, #56]
 	bl Sys_Free
 	movs r0, #1

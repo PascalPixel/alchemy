@@ -54,16 +54,16 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -97,11 +97,11 @@ Engine_EventWait:
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
@@ -137,7 +137,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02001be4
 	.thumb_func
 Func_02001be4:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
@@ -165,11 +165,11 @@ Object_SetPartAttribute:
 	.global Func_02001c1c
 	.thumb_func
 Func_02001c1c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_02001c24
 	.thumb_func
 Func_02001c24:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -198,10 +198,10 @@ Func_02001c54:
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif
@@ -210,10 +210,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -251,7 +251,7 @@ Func_02001c7c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8490
 	.else
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.endif
 	.endif
 	.global Func_02001c84
@@ -263,41 +263,41 @@ Func_02001c84:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02001c8c
 	.thumb_func
 Func_02001c8c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.else
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.endif
 	.endif
 	.global Func_02001c94
 	.thumb_func
 Func_02001c94:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.else
-	overlay_veneer Func_080c84b8
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.endif
 	.endif
 	.global Func_02001c9c
 	.thumb_func
 Func_02001c9c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.else
 	overlay_veneer Func_080c84c0
 	.endif
@@ -311,7 +311,7 @@ Engine_EventResolvePendingActions:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global ObjectMotion_CommitPositionAndActivate
@@ -331,7 +331,7 @@ Func_02001cbc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Object_SetActionCallbackFar
 	.else
-	overlay_veneer Func_080c8690
+	overlay_veneer Event_NoOpFar
 	.endif
 	.endif
 	.global Engine_PartyGetLeaderActor
@@ -343,7 +343,7 @@ Engine_PartyGetLeaderActor:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001ccc

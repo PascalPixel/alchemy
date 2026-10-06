@@ -49,11 +49,11 @@ Resource_GetTableEntry:
 	.global Func_02001278
 	.thumb_func
 Func_02001278:
-	overlay_veneer Func_080002b8
+	overlay_veneer Blend_SetBrightenTarget16Far
 	.global Func_02001280
 	.thumb_func
 Func_02001280:
-	overlay_veneer Func_080002c0
+	overlay_veneer Blend_SetBrightenTarget0Far
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -78,16 +78,16 @@ Func_020012a8:
 	.thumb_func
 Func_020012b0:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -133,11 +133,11 @@ Battle_WaitMode0:
 	.global Func_020012e0
 	.thumb_func
 Func_020012e0:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020012e8
 	.thumb_func
 Func_020012e8:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -185,11 +185,11 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02001348
 	.thumb_func
 Func_02001348:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02001350
 	.thumb_func
 Func_02001350:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -213,7 +213,7 @@ Object_LinkPair:
 	.global Func_02001380
 	.thumb_func
 Func_02001380:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -221,7 +221,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02001390
 	.thumb_func
 Func_02001390:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -229,7 +229,7 @@ ObjectMotion_ArmCallback:
 	.global Func_020013a0
 	.thumb_func
 Func_020013a0:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global Func_020013a8
 	.thumb_func
 Func_020013a8:
@@ -241,7 +241,7 @@ Func_020013b0:
 	.global Func_020013b8
 	.thumb_func
 Func_020013b8:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -277,11 +277,11 @@ Object_SetWideSprite:
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.global Func_020013f8
 	.thumb_func
 Func_020013f8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001400
 	.thumb_func
 Func_02001400:
@@ -307,7 +307,7 @@ Func_02001420:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001428

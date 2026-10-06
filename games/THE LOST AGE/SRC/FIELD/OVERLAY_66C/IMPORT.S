@@ -17,11 +17,11 @@ ObjectDispatch_SetSingleChildFlags:
 	.global Func_020001b4
 	.thumb_func
 Func_020001b4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020001bc
 	.thumb_func
 Func_020001bc:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -41,11 +41,11 @@ ObjectMotion_SetAngleToward:
 	.global Func_020001e4
 	.thumb_func
 Func_020001e4:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_020001ec
 	.thumb_func
 Func_020001ec:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_020001f4
 	.thumb_func
 Func_020001f4:
@@ -57,7 +57,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02000204
 	.thumb_func
 Func_02000204:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Func_0200020c
 	.thumb_func
 Func_0200020c:
@@ -71,7 +71,7 @@ Func_02000214:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global Func_0200021c
@@ -83,6 +83,6 @@ Func_0200021c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif

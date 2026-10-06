@@ -22,16 +22,16 @@ Func_02000970:
 	.thumb_func
 Func_02000978:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -45,11 +45,11 @@ Battle_WaitMode0:
 	.global Func_02000988
 	.thumb_func
 Func_02000988:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02000990
 	.thumb_func
 Func_02000990:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -81,7 +81,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020009d0
 	.thumb_func
 Func_020009d0:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -105,7 +105,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02000a00
 	.thumb_func
 Func_02000a00:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_02000a08
 	.thumb_func
 Func_02000a08:
@@ -169,7 +169,7 @@ Event_WaitTransitionFrames:
 	.global Func_02000a70
 	.thumb_func
 Func_02000a70:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02000a78
 	.thumb_func
 Func_02000a78:

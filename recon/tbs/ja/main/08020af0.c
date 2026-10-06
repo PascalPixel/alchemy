@@ -27,7 +27,8 @@
    Kept: the save copy declares its source before its destination
    (differ216, source now r2 as native; destination r0 and count r1 still
    swap the native r1 and r0). The count declared first or between,
-   counted before the copy, or a for loop also216; destination first218.
+   counted before the copy, or a for loop also216; destination first218;
+   do-while copy218; split increments or a byte temporary216.
    UiText_DrawPaddedLabel, UiText_SetRenderString and Resource_ReturnTrue
    are not in the Japanese map: Japanese NAME.C links NameEntry_AcceptsMark
    and NameEntry_CountLetters, and this function draws with
@@ -177,7 +178,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_MoveTowardTargetFar(&caret);
         {
             u32 frame = (gFrameTick >> 1) & 7;
-            /* FAKEMATCH: native/international caret r5 gives differ218; natural r4 gives228. */
+            /* FAKEMATCH: native/international caret r5 gives differ216; natural r4 gives226. */
             register struct RenderOutput *o asm("r5") = caret.output;
 
             ((struct FieldSprite *)o->unknown_10)->x = o->x + NameEntry_CaretWave[frame];

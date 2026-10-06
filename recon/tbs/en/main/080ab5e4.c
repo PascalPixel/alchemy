@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 2072, differ 67.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 2081, differ 49.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -110,13 +110,17 @@
    both cursor moves, and the A handler's owner, element and number match.
    The R handler's flag is i as well (73 -> 67): the native keeps it in
    i's slot, sp+68.
-   Remaining at 67: the R handler's owner and number swapped between r6
-   and r7 (global priority: owner 36 refs over 13 insns beats number 60
-   over 24; a weight of 13 instead of 12, one more continue reachable from
-   it but not from the up handler, would flip it); the redraw block's
-   0x666 reload register (r1 for r3, reload's round-robin) and the reload
-   of x after it (+1 instruction); fp copied through r2 for r1 in one
-   test; the final owner store.
+   At 67 the R handler's owner and number were swapped between r6 and r7
+   (global priority: owner 36 refs over 13 insns beat number 60 over 24;
+   a weight of 13 instead of 12 flips it). The left and right moves each
+   end in their own tail and continue, as the up and down moves do, which
+   jump2 later cross-jumps into one (67 -> 49): one more continue
+   reachable from the R handler but not from inside the up handler.
+   Remaining at 49: the redraw block's 0x666 reload takes r1 where the
+   native has r3, and the cursor-box draw after it reloads x (+1
+   instruction, and the pool offsets after it); the final owner store
+   ties entry where the native ties 0xf00. Not kept: the 0x666 written
+   first or between the terms (49, fold reassociates).
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -706,7 +710,15 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     }
                 }
             }
-        } else if (repeat & 0x10) {
+            y = savedY;
+            count = lists->list.counts[x];
+            if (count == 0)
+                count = 1;
+            y = Menu_GetModuloOfSum(y, count);
+            redraw = 2;
+            continue;
+        }
+        if (repeat & 0x10) {
             AudioCommand_PlayFar(111);
             if (!(buf[x] & 4))
                 Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
@@ -720,15 +732,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     }
                 }
             }
-        } else {
-            continue;
+            y = savedY;
+            count = lists->list.counts[x];
+            if (count == 0)
+                count = 1;
+            y = Menu_GetModuloOfSum(y, count);
+            redraw = 2;
         }
-        y = savedY;
-        count = lists->list.counts[x];
-        if (count == 0)
-            count = 1;
-        y = Menu_GetModuloOfSum(y, count);
-        redraw = 2;
     }
     state->selected_column[mode] = x;
     if (sel != -1) {

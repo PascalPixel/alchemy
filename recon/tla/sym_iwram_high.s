@@ -15,5 +15,5 @@ Data_03007804:
 	.global Data_03007ff0
 Data_03007ff0:
 	.space 0x0000000c
-	.global Data_03007ffc
-Data_03007ffc:
+	.global gIrqVector
+gIrqVector:

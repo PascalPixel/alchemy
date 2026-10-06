@@ -12,7 +12,6 @@ pub(crate) mod progress;
 pub(crate) mod publish;
 pub(crate) mod raster;
 pub(crate) mod sessions;
-pub(crate) mod tree;
 
 use crate::coverage::calcrom::Game;
 use crate::coverage::progress::GameDone;

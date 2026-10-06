@@ -39,7 +39,9 @@ struct MapWork {
     u8 unknown_017;
     struct MapAnimation anim[16];
     struct BlendScriptState blend;
-    u8 unknown_0e4[0x23];
+    s32 view_x;
+    s32 view_z;
+    u8 unknown_0ec[0x1b];
     u8 blend_control;
     struct MapLayer layers[4];
 };

@@ -4709,7 +4709,42 @@ BattleEffect_RunParticleStreams:
 	.section .rom.0016a29c, "ax"
 	.incbin "baserom.gba", 0x0016a29c, 0x00014778
 	.section .rom.0017ea58, "ax"
-	.incbin "baserom.gba", 0x0017ea58, 0x00010b74
+	.incbin "baserom.gba", 0x0017ea58, 0x00003458
+	.section .rom.00181ed4, "ax"
+	.balign 4
+	.global Func_08181ed4
+Func_08181ed4:
+	.incbin "baserom.gba", 0x00181ed4, 0x000004bc
+	.section .rom.001823a8, "ax"
+	.balign 4
+	.global Func_081823a8
+Func_081823a8:
+	.incbin "baserom.gba", 0x001823a8, 0x00007e48
+	.section .rom.0018a220, "ax"
+	.balign 4
+	.global Func_0818a220
+Func_0818a220:
+	.incbin "baserom.gba", 0x0018a220, 0x00000af0
+	.section .rom.0018ad40, "ax"
+	.balign 4
+	.global Func_0818ad40
+Func_0818ad40:
+	.incbin "baserom.gba", 0x0018ad40, 0x00000f20
+	.section .rom.0018bc98, "ax"
+	.balign 4
+	.global Func_0818bc98
+Func_0818bc98:
+	.incbin "baserom.gba", 0x0018bc98, 0x00000b08
+	.section .rom.0018c7b8, "ax"
+	.balign 4
+	.global Func_0818c7b8
+Func_0818c7b8:
+	.incbin "baserom.gba", 0x0018c7b8, 0x00000dd8
+	.section .rom.0018d5a8, "ax"
+	.balign 4
+	.global Func_0818d5a8
+Func_0818d5a8:
+	.incbin "baserom.gba", 0x0018d5a8, 0x00002024
 	.section .rom.0018f620, "ax"
 	.balign 4
 	.global Func_0818f620

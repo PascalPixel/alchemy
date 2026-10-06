@@ -50,14 +50,14 @@ void MapAnimation_Update(void)
             (state->anim + i)->timer = script[1];
             if (state->wide_tiles == 0) {
                 if (op >= 0x600)
-                    Dma_Set(Ram_DecodeBuffer + op * 32, (void *)(dst * 32 + 0x06004000), DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
+                    Dma_Set(Ram_DecodeBuffer + op * 32, BG_CHAR_BLOCK(1) + dst * 32, DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
                 else
-                    Dma_Set((void *)(op * 32 + 0x06004000), (void *)(dst * 32 + 0x06004000), DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
+                    Dma_Set(BG_CHAR_BLOCK(1) + op * 32, BG_CHAR_BLOCK(1) + dst * 32, DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
             } else {
                 if (op >= 0x200)
-                    Dma_Set(Ram_MapBlocks + op * 64, (void *)(dst * 64 + 0x06008000), DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
+                    Dma_Set(Ram_MapBlocks + op * 64, BG_CHAR_BLOCK(2) + dst * 64, DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
                 else
-                    Dma_Set((void *)(op * 64 + 0x06008000), (void *)(dst * 64 + 0x06008000), DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
+                    Dma_Set(BG_CHAR_BLOCK(2) + op * 64, BG_CHAR_BLOCK(2) + dst * 64, DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
             }
             (state->anim + i)->cursor += 4;
             goto next;

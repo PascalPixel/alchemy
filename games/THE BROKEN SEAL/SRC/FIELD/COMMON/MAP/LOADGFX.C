@@ -18,11 +18,10 @@
 #include "SYSTEM.H"
 #include "MAP_SCROLL.H"
 #include "MAPFRAME.H"
+#include "FRAME.H"
 #include "IO_REG.H"
 
 extern u8 gMapCellBuffer[];
-extern u32 gFrameCount;
-extern u8 Data_03001cfc[];
 extern u8 gDecodeBuffer[];
 
 
@@ -37,7 +36,7 @@ void MapAnimation_PresentFrame(void)
     do {
         REG_BG1CNT = control;
     } while (0);
-    Dma_Set((const void *)gMapCellBuffer, (void *)0x06006a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
+    Dma_Set((const void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
 void MapAnimation_Start(void)
@@ -50,12 +49,12 @@ void MapAnimation_Start(void)
 
     work->animation_active = one;
     Scheduler_EnableCallbacks((u32)(MapAnimation_Update));
-    Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Dma_Set(BG_CHAR_BLOCK(1), (void *)gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     WaitFrames(1);
     Resource_RunCopiedDecoder((s32)pages->pages[*(u32 *)&gFrameCount & one], (s32)gMapCellBuffer);
     work->window_top = 200;
     work->window_bottom = 255;
-    *(u32 *)Data_03001cfc = (u32)MapAnimation_PresentFrame;
+    Data_03001cfc = MapAnimation_PresentFrame;
 }
 
 void Map_ShowBg1FromBuffer(void)
@@ -64,7 +63,7 @@ void Map_ShowBg1FromBuffer(void)
     u16 *bg1cnt = (u16 *)&REG_BG1CNT;
 
     do { *bg1cnt = mode; } while (0); /* FAKEMATCH: the wrap orders the store before the DMA operands. */
-    Dma_Set((const void *)gBgTileBuffer, (void *)0x06008000, 0x84002000,
+    Dma_Set((const void *)gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000,
             REG_DMA3);
 }
 
@@ -86,7 +85,7 @@ void Map_LoadAreaGraphics(void)
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
-    *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
+    Data_03001cfc = Map_ShowBg1FromBuffer;
     state->window_top = 0;
     state->window_bottom = 159;
     WaitFrames(1);
@@ -102,7 +101,7 @@ void Map_LoadAreaGraphics(void)
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
     struct PerspectiveWork *work = gMapWork[0];
-    *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
+    Data_03001cfc = Map_ShowBg1FromBuffer;
     work->window_top = 0;
     work->window_bottom = 0x9f;
     WaitFrames(1U);

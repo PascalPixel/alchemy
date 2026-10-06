@@ -183,13 +183,82 @@ fn keeps_hex(tokens: &[Token], groups: &[Option<usize>], i: usize, value: u64) -
     })
 }
 
+/// The quantities in `#define` bodies, by the same rules as code, offset to
+/// `text`. A body that holds an address or names `FIXED_ADDRESS` is left
+/// whole; so is a macro whose name says it is a flag or mask, and a body
+/// that is one bare bit (0x10, 0x8000), which as a constant is a flag.
+fn definitions(text: &str) -> Vec<(usize, usize, String)> {
+    let mut edits = Vec::new();
+    let mut at = 0;
+    let mut lines = text.split_inclusive('\n');
+    while let Some(first) = lines.next() {
+        let start = at;
+        let mut line = first.to_string();
+        at += first.len();
+        while line.trim_end_matches('\n').ends_with('\\') {
+            let Some(next) = lines.next() else {
+                break;
+            };
+            line.push_str(next);
+            at += next.len();
+        }
+        let Some(rest) = line.trim_start().strip_prefix('#').map(str::trim_start) else {
+            continue;
+        };
+        let Some(rest) = rest.strip_prefix("define").filter(|r| r.starts_with([' ', '\t'])) else {
+            continue;
+        };
+        let name_at = line.len() - rest.trim_start().len();
+        let name: String = line[name_at..].chars().take_while(|c| c.is_ascii_alphanumeric() || *c == '_').collect();
+        let mut body_at = name_at + name.len();
+        if line[body_at..].starts_with('(') {
+            let Some(close) = line[body_at..].find(')') else {
+                continue;
+            };
+            body_at += close + 1;
+        }
+        let body = &line[body_at..];
+        if flag_name(&name) || body.contains("FIXED_ADDRESS") {
+            continue;
+        }
+        let Ok(tokens) = lex(&body.replace("\\\n", "  ")) else {
+            continue;
+        };
+        let tokens = code(tokens);
+        let values: Vec<u64> = tokens
+            .iter()
+            .filter_map(|t| match &t.tok {
+                Tok::Number(n) => hex(n).map(|h| h.value),
+                _ => None,
+            })
+            .collect();
+        if values.iter().any(|&v| v >= ADDRESS) || (tokens.len() == 1 && values.first().is_some_and(|v| v.is_power_of_two() && *v >= 0x10)) {
+            continue;
+        }
+        let groups = groups(&tokens);
+        for (i, token) in tokens.iter().enumerate() {
+            let Tok::Number(number) = &token.tok else {
+                continue;
+            };
+            let Some(h) = hex(number) else {
+                continue;
+            };
+            if !keeps_hex(&tokens, &groups, i, h.value) {
+                let offset = start + body_at;
+                edits.push((offset + token.start, offset + token.end, format!("{}{}", h.value, h.suffix)));
+            }
+        }
+    }
+    edits
+}
+
 pub(crate) fn rewrite(text: &str) -> (String, usize) {
     let Ok(tokens) = lex(text) else {
         return (text.to_string(), 0);
     };
     let tokens = code(tokens);
     let groups = groups(&tokens);
-    let mut edits: Vec<(usize, usize, String)> = Vec::new();
+    let mut edits: Vec<(usize, usize, String)> = definitions(text);
     for (i, token) in tokens.iter().enumerate() {
         let Tok::Number(number) = &token.tok else {
             continue;
@@ -202,6 +271,7 @@ pub(crate) fn rewrite(text: &str) -> (String, usize) {
         }
         edits.push((token.start, token.end, format!("{}{}", h.value, h.suffix)));
     }
+    edits.sort_by_key(|e| e.0);
     let count = edits.len();
     let mut out = text.to_string();
     for (start, end, decimal) in edits.into_iter().rev() {
@@ -252,7 +322,19 @@ mod tests {
 
     #[test]
     fn directives_strings_comments_and_asm_are_untouched() {
-        same("#define REG (*(u16 *)0x10)\n#define N 0x20\nchar *s = \"0x10\";\n/* 0x10 */\nasm(\"mov r0, #0x10\" : : \"i\"(0x10));\n");
+        same("#if VERSION == 0x10\n#endif\nchar *s = \"0x10\";\n/* 0x10 */\nasm(\"mov r0, #0x10\" : : \"i\"(0x10));\n");
+    }
+
+    #[test]
+    fn definitions_convert_quantities_but_keep_addresses_flags_and_bits() {
+        let text = "#define COUNT 0x30\n#define SHEET(w) ((w)->sheet + 0xC56)\n#define LONG (0x20 + \\\n    0x8)\nx = 0x10;\n";
+        assert_eq!(
+            rewrite(text),
+            ("#define COUNT 48\n#define SHEET(w) ((w)->sheet + 3158)\n#define LONG (32 + \\\n    8)\nx = 16;\n".to_string(), 5)
+        );
+        same("#define DMA3 ((volatile u32 *)0x040000d4)\n#define BASE (Ram + 0x10, 0x03000000)\n");
+        same("#define Iwram_X FIXED_ADDRESS((u8 *), 0x30, X)\n#define ITEM_ID_MASK 0x1ff\n#define FLAG_SECOND 0x41\n");
+        same("#define EMOTE_IN_FRONT 0x100\n#define KEY(k) ((k) & 0x3ff)\n#define SPEED 0x18000\n");
     }
 
     #[test]

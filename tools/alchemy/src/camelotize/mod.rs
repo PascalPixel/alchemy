@@ -14,23 +14,26 @@ use crate::targets::{target_for, DecompTarget, DecompTargetId};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy camelotize REWRITE FILE.C...
+const USAGE: &str = r#"usage: alchemy camelotize [--dry-run] REWRITE FILE.C...
 Rewrites maintained C the way Camelot wrote it, in place, and prints how
-many places changed in each file. REWRITE is one of:
+many places changed in each file; --dry-run counts them and writes
+nothing. REWRITE is one of:
   actors        byte offsets on field actors as struct FieldActor members
   events        byte offsets on the event work as struct EventWork members
   registers     hardware register addresses by their IO_REG.H names
   declarations  a file's own declarations of functions a header declares,
                 replaced by an include of that header
   barriers      FAKEMATCH-tagged empty asm barriers, with their tag
-  numbers       hex literals that are quantities, in decimal; masks, bit
-                operands, addresses and fixed-point constants stay hex
+  numbers       hex literals that are quantities, in decimal, in code and
+                #define bodies; masks, bit operands, flags, addresses and
+                fixed-point constants stay hex
   casts         value casts and pointer casts the compiler does not need:
                 each removal is compiled for English (for every edition
                 inside an #if block), and kept only when the file's
                 assembly is identical and no warning is new
   idioms        x = x + 1 as x++, x = x | n as x |= n, !(a == b) as
-                a != b, parentheses around one name or number, empty
+                a != b, parentheses around one name or number, an else
+                after a block that returns, flattened, and empty
                 statements; each proved the same way as casts
 Struct layouts and types come from the build's own compiler for each game
 the file builds in. Then run alchemy keep: it keeps only the files whose
@@ -149,6 +152,8 @@ fn registers_in(root: &Path, file: &Path, text: &str) -> Result<(String, usize),
 }
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
+    let dry = arguments.iter().any(|a| a == "--dry-run");
+    let arguments: Vec<String> = arguments.iter().filter(|a| *a != "--dry-run").cloned().collect();
     let Some((rewrite, files)) = arguments.split_first() else {
         return Err(USAGE.into());
     };
@@ -156,48 +161,86 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         return Err(USAGE.into());
     }
     let root = root();
+    let proved = matches!(rewrite.as_str(), "casts" | "idioms");
+    // Proved rewrites compile every candidate set, so files run side by side.
+    let workers = if proved {
+        std::thread::available_parallelism().map_or(1, |n| (n.get() / 2).max(1)).min(files.len())
+    } else {
+        1
+    };
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let results: Vec<std::sync::Mutex<Option<Result<Option<(PathBuf, String, String, usize)>, String>>>> =
+        files.iter().map(|_| std::sync::Mutex::new(None)).collect();
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            scope.spawn(|| loop {
+                let k = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                let Some(name) = files.get(k) else {
+                    break;
+                };
+                let result = one(root, rewrite, name);
+                *results[k].lock().expect("result") = Some(result);
+            });
+        }
+    });
     let mut total = 0;
-    for name in files {
-        let file = std::path::absolute(name).map_err(|e| format!("{name}: {e}"))?;
-        let text = std::fs::read_to_string(&file).map_err(|e| format!("{name}: {e}"))?;
-        let (out, count) = match rewrite.as_str() {
-            "actors" | "events" => {
-                let spec = if rewrite == "actors" { &fields::ACTORS } else { &fields::EVENTS };
-                match unit(root, &file, &text, spec) {
-                    Ok(Some(unit)) => fields::rewrite(&text, spec, &unit),
-                    Ok(None) => (text.clone(), 0),
-                    Err(error) => {
-                        eprintln!("{name}: skipped: {}", error.lines().next().unwrap_or(""));
-                        continue;
-                    }
-                }
-            }
-            "registers" => registers_in(root, &file, &text)?,
-            "declarations" => {
-                let target = games(&file)[0];
-                declarations::rewrite(&text, &declarations::index(root, target)?)
-            }
-            "barriers" => barriers::rewrite(&text),
-            "numbers" => numbers::rewrite(&text),
-            "casts" | "idioms" => match if rewrite == "casts" {
-                casts::rewrite(root, &file, &text, &games(&file))
-            } else {
-                idioms::rewrite(root, &file, &text, &games(&file))
-            } {
-                Ok(done) => done,
-                Err(error) => {
-                    eprintln!("{name}: skipped: {}", error.lines().next().unwrap_or(""));
-                    continue;
-                }
-            },
-            other => return Err(format!("unknown rewrite {other}\n{USAGE}")),
+    for (name, result) in files.iter().zip(results) {
+        let Some((file, text, out, count)) = result.into_inner().expect("result").expect("every file runs")? else {
+            continue;
         };
         if count > 0 && out != text {
-            std::fs::write(&file, &out).map_err(|e| format!("{name}: {e}"))?;
+            if !dry {
+                std::fs::write(&file, &out).map_err(|e| format!("{name}: {e}"))?;
+            }
             println!("{count}\t{name}");
             total += count;
         }
     }
-    println!("{total} changes; run alchemy keep to keep only byte-identical files");
+    if dry {
+        println!("{total} changes; nothing written (--dry-run)");
+    } else {
+        println!("{total} changes; run alchemy keep to keep only byte-identical files");
+    }
     Ok(())
+}
+
+/// One file's rewrite: its path, text, rewritten text and count, or none
+/// when it was skipped.
+#[allow(clippy::type_complexity)]
+fn one(root: &Path, rewrite: &str, name: &str) -> Result<Option<(PathBuf, String, String, usize)>, String> {
+    let file = std::path::absolute(name).map_err(|e| format!("{name}: {e}"))?;
+    let text = std::fs::read_to_string(&file).map_err(|e| format!("{name}: {e}"))?;
+    let (out, count) = match rewrite {
+        "actors" | "events" => {
+            let spec = if rewrite == "actors" { &fields::ACTORS } else { &fields::EVENTS };
+            match unit(root, &file, &text, spec) {
+                Ok(Some(unit)) => fields::rewrite(&text, spec, &unit),
+                Ok(None) => (text.clone(), 0),
+                Err(error) => {
+                    eprintln!("{name}: skipped: {}", error.lines().next().unwrap_or(""));
+                    return Ok(None);
+                }
+            }
+        }
+        "registers" => registers_in(root, &file, &text)?,
+        "declarations" => {
+            let target = games(&file)[0];
+            declarations::rewrite(&text, &declarations::index(root, target)?)
+        }
+        "barriers" => barriers::rewrite(&text),
+        "numbers" => numbers::rewrite(&text),
+        "casts" | "idioms" => match if rewrite == "casts" {
+            casts::rewrite(root, &file, &text, &games(&file))
+        } else {
+            idioms::rewrite(root, &file, &text, &games(&file))
+        } {
+            Ok(done) => done,
+            Err(error) => {
+                eprintln!("{name}: skipped: {}", error.lines().next().unwrap_or(""));
+                return Ok(None);
+            }
+        },
+        other => return Err(format!("unknown rewrite {other}\n{USAGE}")),
+    };
+    Ok(Some((file, text, out, count)))
 }

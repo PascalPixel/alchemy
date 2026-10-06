@@ -209,6 +209,108 @@ fn chain_end(tokens: &[Token], from: usize) -> Option<usize> {
     }
 }
 
+/// The indentation of the line holding byte `at`.
+fn indentation(text: &str, at: usize) -> &str {
+    let line = text[..at].rfind('\n').map_or(0, |k| k + 1);
+    let width = text[line..].bytes().take_while(|b| matches!(b, b' ' | b'\t')).count();
+    &text[line..line + width]
+}
+
+/// Whether the block `{ ... }` closing at `close` ends in a statement that
+/// leaves it: `return`, `break`, `continue` or `goto`.
+fn leaves(tokens: &[Token], open: usize, close: usize) -> bool {
+    if close < open + 2 || punct(&tokens[close - 1]) != Some(";") {
+        return false;
+    }
+    let mut depth = 0;
+    let mut k = close - 1;
+    while k > open + 1 {
+        k -= 1;
+        match punct(&tokens[k]) {
+            Some(")" | "]") => depth += 1,
+            Some("(" | "[") => depth -= 1,
+            Some(";" | "{" | "}") if depth == 0 => {
+                k += 1;
+                break;
+            }
+            _ => {}
+        }
+    }
+    ident(&tokens[k]).is_some_and(|n| matches!(n, "return" | "break" | "continue" | "goto"))
+}
+
+/// Whether the block opening at `open` starts with a declaration.
+fn declares(tokens: &[Token], open: usize) -> bool {
+    const TYPES: &[&str] = &[
+        "struct", "union", "enum", "const", "volatile", "register", "static", "extern", "unsigned", "signed",
+        "int", "char", "short", "long", "void", "typedef",
+    ];
+    let first = tokens.get(open + 1);
+    let second = tokens.get(open + 2);
+    first.and_then(ident).is_some_and(|n| TYPES.contains(&n))
+        || (first.and_then(ident).is_some() && (second.and_then(ident).is_some() || second.and_then(punct) == Some("*")))
+}
+
+/// `if (x) { ...; return ...; } else { body }` as `if (x) { ...; return
+/// ...; }` followed by the body, one level less indented; `else if` the
+/// same way. Only an `if` that starts a statement, so no outer `else`
+/// claims it.
+fn flatten(text: &str, tokens: &[Token], found: &mut Vec<Edit>) {
+    for at in 0..tokens.len() {
+        if ident(&tokens[at]) != Some("if") {
+            continue;
+        }
+        if at > 0 && !matches!(punct(&tokens[at - 1]), Some(";" | "{" | "}")) {
+            continue;
+        }
+        let Some(condition) = tokens.get(at + 1).filter(|t| punct(t) == Some("(")).and_then(|_| closing(tokens, at + 1)) else {
+            continue;
+        };
+        let open = condition + 1;
+        if tokens.get(open).and_then(punct) != Some("{") {
+            continue;
+        }
+        let Some(close) = closing(tokens, open) else {
+            continue;
+        };
+        if tokens.get(close + 1).and_then(ident) != Some("else") || !leaves(tokens, open, close) {
+            continue;
+        }
+        let indent = indentation(text, tokens[close].start);
+        let after = close + 2;
+        match tokens.get(after) {
+            Some(t) if ident(t) == Some("if") => {
+                found.push(Edit { start: tokens[close].end, end: t.start, text: format!("\n{indent}") });
+            }
+            Some(t) if punct(t) == Some("{") => {
+                let Some(end) = closing(tokens, after) else {
+                    continue;
+                };
+                if declares(tokens, after) || end == after + 1 {
+                    continue;
+                }
+                let inner = text[tokens[after].end..tokens[end].start].trim_end();
+                if !inner.starts_with('\n') || indentation(text, tokens[end].start) != indent {
+                    continue;
+                }
+                let deeper = indentation(text, tokens[after + 1].start);
+                let Some(step) = deeper.strip_prefix(indent).map(str::len).filter(|&n| n > 0) else {
+                    continue;
+                };
+                let body: Vec<String> = inner
+                    .split('\n')
+                    .map(|line| {
+                        let blank = line.bytes().take_while(|b| matches!(b, b' ' | b'\t')).count();
+                        line[blank.min(step)..].to_string()
+                    })
+                    .collect();
+                found.push(Edit { start: tokens[close].end, end: tokens[end].end, text: body.join("\n") });
+            }
+            _ => {}
+        }
+    }
+}
+
 /// A second `;` after a statement, outside a `for` header.
 fn empty_statements(tokens: &[Token], found: &mut Vec<Edit>) {
     let mut depth = 0i32;
@@ -234,6 +336,7 @@ pub(crate) fn candidates(text: &str) -> Vec<Edit> {
     compound(text, &tokens, &mut found);
     negations(text, &tokens, &mut found);
     parentheses(text, &tokens, &mut found);
+    flatten(text, &tokens, &mut found);
     empty_statements(&plain, &mut found);
     found
 }
@@ -272,6 +375,29 @@ mod tests {
         assert_eq!(rewritten(calls), calls);
         let text = "n = !(a == b) + 1;\ny = f(x);\nz = (u8)(w);\ns = sizeof(v);\n";
         assert_eq!(rewritten(text), "n = !(a == b) + 1;\ny = f(x);\nz = (u8)w;\ns = sizeof(v);\n");
+    }
+
+    #[test]
+    fn else_after_a_leaving_block_is_flattened() {
+        let text = "void F(void)\n{\n    if (a) {\n        x = 1;\n        return;\n    } else {\n        y = 2;\n        if (b) {\n            z = 3;\n        }\n    }\n    w = 4;\n}\n";
+        assert_eq!(
+            rewritten(text),
+            "void F(void)\n{\n    if (a) {\n        x = 1;\n        return;\n    }\n    y = 2;\n    if (b) {\n        z = 3;\n    }\n    w = 4;\n}\n"
+        );
+        let chain = "{\n    if (a) {\n        return f(x);\n    } else if (b) {\n        g();\n    }\n}\n";
+        assert_eq!(rewritten(chain), "{\n    if (a) {\n        return f(x);\n    }\n    if (b) {\n        g();\n    }\n}\n");
+    }
+
+    #[test]
+    fn else_that_the_block_can_reach_or_that_declares_stays() {
+        let falls = "{\n    if (a) {\n        if (b) {\n            return;\n        }\n        x = 1;\n    } else {\n        y = 2;\n    }\n}\n";
+        assert_eq!(rewritten(falls), falls);
+        let declares = "{\n    if (a) {\n        return;\n    } else {\n        u8 i;\n        i = 2;\n    }\n}\n";
+        assert_eq!(rewritten(declares), declares);
+        let claimed = "{\n    if (c) {\n        n();\n    } else if (a) {\n        return;\n    } else {\n        y = 2;\n    }\n}\n";
+        assert_eq!(rewritten(claimed), claimed);
+        let leaves_inside = "{\n    if (a) {\n        while (b) {\n            return;\n        }\n    } else {\n        y = 2;\n    }\n}\n";
+        assert_eq!(rewritten(leaves_inside), leaves_inside);
     }
 
     #[test]

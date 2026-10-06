@@ -2,37 +2,7 @@
 	.thumb
 	.section .text.x0200807e,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008080,"ax",%progbits
-	.global Func_02000080
-	.thumb_func
-Func_02000080:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x020080b6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020080b8,"ax",%progbits
 	.global Func_020000b8
@@ -108,7 +78,7 @@ Func_020000b8:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008278
 	mov r1, r9
 	str r3, [r6, #108]
@@ -263,7 +233,7 @@ Func_020000b8:
 .L_02008274:
 	.4byte Data_02001650
 .L_02008278:
-	.4byte Func_02000080
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200827c:
 	.4byte 0xffff0000
 	.section .text.x020082a4,"ax",%progbits
@@ -461,7 +431,7 @@ Func_02000394:
 .L_020083e8:
 	.4byte 0x0000001f
 .L_020083ec:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020083f0:
 	cmp r4, #0
 	bge .L_020083f6
@@ -490,53 +460,7 @@ Func_02000394:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x02008420,"ax",%progbits
-	.global Func_02000420
-	.thumb_func
-Func_02000420:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	ldr r5, [r6, #68]
-	ldr r3, [r6, #8]
-	ldr r2, [r6, #72]
-	adds r3, r3, r5
-	str r3, [r6, #8]
-	ldr r3, [r6, #12]
-	ldr r7, [r6, #76]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #16]
-	adds r0, r5, #0
-	adds r3, r3, r7
-	movs r1, #18
-	str r3, [r6, #16]
-	bl __divsi3
-	subs r5, r5, r0
-	str r5, [r6, #68]
-	adds r3, r7, #0
-	cmp r7, #0
-	bge .L_02008450
-	adds r3, #15
-.L_02008450:
-	asrs r3, r3, #4
-	subs r3, r7, r3
-	str r3, [r6, #76]
-	ldr r2, [r6, #48]
-	ldr r3, [r6, #24]
-	ldr r1, [r6, #80]
-	adds r3, r3, r2
-	str r3, [r6, #24]
-	ldr r2, [r6, #52]
-	ldr r3, [r6, #28]
-	adds r3, r3, r2
-	str r3, [r6, #28]
-	adds r2, r6, #0
-	adds r2, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r2]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	pop {r5, r6, r7, pc}
+	.section .text.x02008476,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008478,"ax",%progbits
 	.global Func_02000478
@@ -651,7 +575,7 @@ Func_02000478:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008558:
-	.4byte Func_02000420
+	.4byte Effect_AdvanceMotion
 .L_0200855c:
 	.4byte 0xffffa000
 .L_02008560:
@@ -723,7 +647,7 @@ Func_02000564:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #8
 	movs r1, #12
 	bl Object_SetModeById
@@ -767,8 +691,8 @@ Func_02000564:
 	ldrh r3, [r1]
 	orrs r3, r2
 	strh r3, [r1]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #128
 	movs r1, #1
 	movs r2, #159
@@ -948,7 +872,7 @@ Func_02000564:
 .L_020087c8:
 	cmp r5, #19
 	bne .L_020087d0
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_020087d0:
 	movs r0, #8
 	bl Object_GetById
@@ -1126,8 +1050,8 @@ Func_02000564:
 .L_02008938:
 	.4byte 0x04000208
 .L_0200893c:
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #128
 	movs r1, #128
 	movs r2, #128
@@ -1185,7 +1109,7 @@ Func_02000564:
 .L_020089b8:
 	.4byte 0x00003f42
 .L_020089bc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020089c0:
 	.4byte gIoWriteQueue
 .L_020089c4:
@@ -1557,7 +1481,7 @@ Func_02000564:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #9
 	movs r1, #216
 	movs r2, #96
@@ -2252,8 +2176,8 @@ Func_02000564:
 	adds r3, r3, r1
 	movs r2, #0
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r6, #0
 	b .L_020093ae
 .L_02009394:
@@ -2262,7 +2186,7 @@ Func_02000564:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #8
 	movs r1, #12
 	bl Object_SetModeById

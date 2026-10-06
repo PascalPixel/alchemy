@@ -1,16 +1,26 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "DMA.H"
+#include "RESOURCE.H"
+#include "RENDER_INPUT.H"
+#include "RUNTIME_MEM.H"
+#include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 struct Record_080b06c0 {
     u8 filler0[4];
     u8 values[21];
 };
 
-/* The byte offset of each selector cell in the shop's tilemap. */
-extern u16 Shop_SelectorOffsets[];
 
-/* Each glyph's rows of bytes, and the byte offset of each glyph cell. */
-extern u8 Shop_GlyphBytes[];
-extern u16 Shop_GlyphRowOffsets[];
 
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
@@ -34,17 +44,11 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
     }
 }
 
-/* ☀️'s: copy a glyph's rows of bytes into a shop window cell, stopping at
-   each row's first empty byte. */
-void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
+void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
 {
-    u8 *src = Shop_GlyphBytes + ((u32)arg0 << 5);
-    u32 offset = Shop_GlyphRowOffsets[arg2];
+    u8 *src = Shop_GlyphBytes + ((u32)digit << 5);
+    u8 *dst = tiles + Shop_GlyphRowOffsets[place] + 2;
     s32 count = 3;
-    u8 *dst;
-
-    asm volatile("" : "+l"(count)); /* FAKEMATCH: ⚓️ sets the count in the offset load's delay slot */
-    dst = (u8 *)((u32)arg1 + offset + 2);
 
     do {
         if (*src != 0) {
@@ -60,4 +64,74 @@ void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
         dst += 4;
         count--;
     } while (count >= 0);
+}
+
+extern const u8 Shop_PriceTiles[];
+
+struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
+{
+    u8 *buf;
+    s32 slot;
+    struct RenderOutput *sprite;
+
+    buf = Runtime_AllocateBlock(56, 0x400);
+    sprite = 0;
+    Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
+    Shop_CopyGlyphs(value % 10, buf, 0);
+    value = value / 10;
+    if (value != 0) {
+        Shop_CopyGlyphs(value % 10, buf, 1);
+        value = value / 10;
+        if (value != 0) {
+            Shop_CopyGlyphs(value % 10, buf, 2);
+            value = value / 10;
+            if (value != 0) {
+                s32 last;
+
+                Shop_CopyGlyphs(value % 10, buf, 3);
+                last = value / 10;
+                if (last != 0)
+                    Shop_CopyGlyphs(last % 10, buf, 4);
+            }
+        }
+    }
+    slot = Resource_FindFreeEntry();
+    if (slot != 96) {
+        VramBlock_LoadCached(slot, 0x100, buf);
+        sprite = RenderOutput_CreateFar(slot, 0x80008000, (struct RenderInput *)window, x, y);
+    }
+    Runtime_ReleaseHeapBlock(56);
+    return sprite;
+}
+
+#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+#else
+#endif
+
+void Shop_RestoreSceneTiles(s32 layer)
+{
+    u8 *map = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->block_32;
+    u8 *saved = work + 0xe00;
+
+    Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
+    Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
+#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+    Func_080c8368(layer, 1);
+    BattleFx_ApplyColorToSourceBufferFar(16);
+#else
+    BattleFx_ApplyColorToTargetBufferFar(layer, 1);
+    BattleFx_StartBufferInterpolationFar(16);
+#endif
+}
+
+void Shop_InitEffect(void)
+{
+#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+    Func_080c8368((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    BattleFx_ApplyColorToSourceBufferFar(16);
+#else
+    BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    BattleFx_StartBufferInterpolationFar(16);
+#endif
 }

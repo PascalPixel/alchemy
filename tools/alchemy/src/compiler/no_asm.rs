@@ -1,4 +1,3 @@
-//! Ordinary-C policy of production verification.
 
 use regex::{Captures, Regex};
 use sha2::{Digest, Sha256};
@@ -7,9 +6,6 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
-// Reviewed shared machine-interface bodies are admitted only by exact token
-// identity, including constraints, instructions, operands and clobbers.
-// Compiler flags and ordinary caller C remain subject to the existing policy.
 const DMA_HEADER: &str = "games/COMMON/INCLUDE/SYSTEM/DMA.H";
 const DMA_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -32,23 +28,19 @@ fn source_tokens(text: &str) -> Vec<regex::Match<'_>> {
         .collect()
 }
 
-fn dma_body() -> Option<&'static [String]> {
-    static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
-    BODY.get_or_init(|| {
-        let start = DMA_SOURCE.find("static __inline__")?;
-        let end = DMA_SOURCE.rfind('}')? + 1;
-        let tokens: Vec<String> = source_tokens(&DMA_SOURCE[start..end])
-            .iter()
-            .map(|token| token.as_str().to_owned())
-            .collect();
-        let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
-        (hash == DMA_BODY_SHA256).then_some(tokens)
-    })
-    .as_deref()
+fn reviewed_body(source: &str, digest: &str) -> Option<Vec<String>> {
+    let start = source.find("static __inline__")?;
+    let end = source.rfind('}')? + 1;
+    let tokens: Vec<String> = source_tokens(&source[start..end])
+        .iter()
+        .map(|token| token.as_str().to_owned())
+        .collect();
+    let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
+    (hash == digest).then_some(tokens)
 }
 
-fn mask_dma_body(text: &str) -> String {
-    let Some(body) = dma_body() else {
+fn mask_body(text: &str, body: Option<&[String]>) -> String {
+    let Some(body) = body else {
         return text.into();
     };
     let tokens = source_tokens(text);
@@ -66,44 +58,27 @@ fn mask_dma_body(text: &str) -> String {
             }
         }
     }
-    String::from_utf8(bytes).expect("only complete DMA token spans are masked")
+    String::from_utf8(bytes).expect("only complete reviewed token spans are masked")
+}
+
+fn dma_body() -> Option<&'static [String]> {
+    static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
+    BODY.get_or_init(|| reviewed_body(DMA_SOURCE, DMA_BODY_SHA256))
+        .as_deref()
 }
 
 fn iwram_call_body() -> Option<&'static [String]> {
     static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
-    BODY.get_or_init(|| {
-        let start = IWRAM_CALL_SOURCE.find("static __inline__")?;
-        let end = IWRAM_CALL_SOURCE.rfind('}')? + 1;
-        let tokens: Vec<String> = source_tokens(&IWRAM_CALL_SOURCE[start..end])
-            .iter()
-            .map(|token| token.as_str().to_owned())
-            .collect();
-        let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
-        (hash == IWRAM_CALL_BODY_SHA256).then_some(tokens)
-    })
-    .as_deref()
+    BODY.get_or_init(|| reviewed_body(IWRAM_CALL_SOURCE, IWRAM_CALL_BODY_SHA256))
+        .as_deref()
+}
+
+fn mask_dma_body(text: &str) -> String {
+    mask_body(text, dma_body())
 }
 
 fn mask_iwram_call_body(text: &str) -> String {
-    let Some(body) = iwram_call_body() else {
-        return text.into();
-    };
-    let tokens = source_tokens(text);
-    let mut bytes = text.as_bytes().to_vec();
-    for window in tokens.windows(body.len()) {
-        if window
-            .iter()
-            .zip(body)
-            .all(|(token, expected)| token.as_str() == expected)
-        {
-            for byte in &mut bytes[window[0].start()..window[window.len() - 1].end()] {
-                if *byte != b'\n' {
-                    *byte = b' ';
-                }
-            }
-        }
-    }
-    String::from_utf8(bytes).expect("only complete fixed-math token spans are masked")
+    mask_body(text, iwram_call_body())
 }
 
 const ABI: &str = "naked interrupt interrupt_handler isr long_call short_call pcs target target_clones regparm stdcall fastcall";
@@ -150,13 +125,9 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
         .then(|| format!("ABI attribute {word}"))
 }
 
-/// Whether inline assembly on this line is admitted: a `/* CAMELOT_ASM: proof */`
-/// tag for assembly Camelot very likely wrote in their own C, or a
-/// `/* FAKEMATCH: reason */` tag for a temporary workaround until both games
-/// reach 100% (S2), on the same line or the line above.
 pub fn camelot_admitted(text: &str, line: usize) -> bool {
     static TAG: OnceLock<Regex> = OnceLock::new();
-    let tag = regex(&TAG, r"/\*\s*(?:CAMELOT_ASM|FAKEMATCH):\s*[^\s*]");
+    let tag = regex(&TAG, r#"/\*\s*FAKEMATCH:\s*[^\s*]|\bCAMELOT_ASM\("[^"]+"\)"#);
     let lines: Vec<&str> = text.lines().collect();
     [line.checked_sub(1), line.checked_sub(2)]
         .into_iter()
@@ -295,6 +266,7 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
     Ok(files)
 }
 
+#[cfg(test)]
 pub fn self_test() -> Result<(), String> {
     let source = "register int r __asm__(\"r4\"); void f(void) { __asm__(\"nop\"); __asm__ volatile(\"\" ::: \"memory\"); }\n";
     let found = find_forbidden("fixture.c", source);
@@ -394,12 +366,12 @@ mod tests {
         let bare = "void f(void) {\n    asm(\"swi 0x5\");\n}\n";
         assert_eq!(find_forbidden("fixture.c", bare).len(), 1);
         let tagged =
-            "void f(void) {\n    /* CAMELOT_ASM: VBlankIntrWait swi */\n    asm(\"swi 0x5\");\n}\n";
+            "void f(void) {\n    CAMELOT_ASM(\"VBlankIntrWait swi\")\n    asm(\"swi 0x5\");\n}\n";
         assert!(find_forbidden("fixture.c", tagged).is_empty());
         let workaround =
             "void f(void) {\n    /* FAKEMATCH: keeps r9 until the struct is known */\n    asm(\"\");\n}\n";
         assert!(find_forbidden("fixture.c", workaround).is_empty());
-        let empty = "void f(void) {\n    /* CAMELOT_ASM: */\n    asm(\"swi 0x5\");\n}\n";
+        let empty = "void f(void) {\n    CAMELOT_ASM(\"\")\n    asm(\"swi 0x5\");\n}\n";
         let bare_fake = "void f(void) {\n    /* FAKEMATCH: */\n    asm(\"\");\n}\n";
         assert_eq!(find_forbidden("fixture.c", bare_fake).len(), 1);
         assert_eq!(find_forbidden("fixture.c", empty).len(), 1);

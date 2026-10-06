@@ -3,13 +3,11 @@
 
 #include "LAYOUT_GUARD.H"
 
-/* The first accessor exposes only the signed word consumed at +0x08. */
 struct Resource386FirstView {
     u8 unknown_00[8];
     s32 sample_08;
 };
 
-/* The second accessor exposes only the signed word consumed at +0x10. */
 struct Resource386SecondView {
     u8 unknown_00[0x10];
     s32 sample_10;

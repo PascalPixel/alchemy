@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TLA_EDITION.H"
 
 #include "TYPES.H"
@@ -5,37 +14,8 @@
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
-/* ☀️'s, reaching the selection work through ⚓️'s heap slot. */
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
-{
-    u8 *state;
-    s32 i;
 
-    state = Ram_HeapSlots->menu_select_work;
-
-    *(u16 *)(state + 144) = (u16)((u32)w + 2);
-    *(u16 *)(state + 146) = (u16)h;
-    *(u16 *)(state + 148) = (u16)y;
-
-    for (i = 0; i < *(s16 *)(state + 142); i++) {
-        *(u16 *)(state + i * 20 + 14) = (u16)((u32)y << 3);
-        *(u16 *)(state + i * 20 + 12) = (u16)((u32)x << 3);
-        x = (s32)((u32)x + 3);
-    }
-
-    *(s32 *)(state + 120) =
-        UiWindow_Create(x, y, *(s16 *)(state + 144), 3, 2);
-}
-
-extern s8 Menu_TopEntryPositionByCommand[];
-extern s8 Menu_TopEntryCommandByPosition[];
-
-s32 Party_SumDjinnCountsFar(s32);
-void *AffineEffect_InitializeWork(void);
-void Menu_AppendResourceEntry(s32 arg0);
 void Menu_CenterResourceEntries(s32, s32, s32);
-s32 Menu_RunResourceSelectionLoop(s32);
-void Menu_EndResourceSelection(void);
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
 {
@@ -77,9 +57,9 @@ s32 Menu_SelectTopEntry(s32 sel)
         s8 *commands = Menu_TopEntryCommandByPosition;
         s32 index;
 
-        asm volatile("" : "+l"(commands)); /* FAKEMATCH: ⚓️ loads the table's address before forming the index */
+        /* FAKEMATCH: ⚓️ loads the table's address before forming the index */
+        asm volatile("" : "+l"(commands));
         index = ret + ofs + 1;
-        asm volatile("" : "+l"(index)); /* FAKEMATCH: and indexes it with the whole sum */
         ret = commands[index];
     }
 

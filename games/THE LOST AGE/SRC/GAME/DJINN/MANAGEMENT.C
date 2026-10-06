@@ -1,54 +1,27 @@
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 
 s32 GameFlag_Test(s32);
 void GameFlag_SetBit(s32 flag);
-u8 *Trade_GetOfferState(s32);
-void Owner_RefreshDerivedData(s32);
-
-extern const u16 Djinn_Definitions[];
-
-struct OwnerState_0807a0f4 {
-    u8 padding[280];
-    u8 values[4];
-};
-
-struct OwnerTradeState {
-    u8 unknown_000[0xf8];
-    u32 owned[4];
-    u32 pledged[4];
-    u8 owned_counts[4];
-    u8 offer_counts[4];
-};
-
-struct TradeOffer {
-    u8 index;
-    u8 bit;
-    u8 unknown_02;
-    u8 status;
-};
-
-struct TradeOfferTable {
-    struct TradeOffer offers[72];
-    s32 count;
-};
-
-s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
-
-u8 *Trade_GetOfferState(s32 which);
-u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
-s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 
 const u16 *Djinn_GetDefinition(u32 group, u32 index)
 {
     s32 entry;
 
     entry = 0;
-    if ((group <= 3U) && (index <= 0x13U)) {
-        entry = (group * 0x14) + index;
+    if (group <= 3 && index <= 19) {
+        entry = group * 20 + index;
     }
-    return (const u16 *)((u8 *)Djinn_Definitions + entry * 0xC);
+    return Djinn_Definitions[entry];
 }
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
@@ -65,15 +38,15 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
 
     result = Party_CountActiveOwners();
     if (best_no < result) {
-        s32 off = 268;
+        struct PartyState *party = &gPartyState;
 
-        owners = (u8 *)&gPartyState + off * 2;
+        owners = party->active_owners;
         count = result;
         do {
-            u8 *p = Owner_GetState(*owners);
+            struct OwnerDjinnState *state = Owner_GetState(*owners);
 
-            if (((struct OwnerState_0807a0f4 *)p)->values[index] <= 9 &&
-                (p += 280, 1)) {
+            if (state->counts.banks.owned[index] <= 9) {
+                u8 *p = state->counts.banks.owned;
                 s32 value = 0;
                 s32 i = 3;
 
@@ -98,23 +71,22 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
         return -2;
 
     Djinn_AddToOwner(best_no, index, bit);
-    Trade_AddOffer((u32)best_no, (u32)index, (u32)bit);
+    Trade_AddOffer(best_no, index, bit);
     GameFlag_SetBit(flag);
     return best_no;
 }
 
-/* ☀️'s; ⚓️ reads the owned word into a temporary before testing it. */
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerBitState *state = Owner_GetState(owner);
+    struct OwnerDjinnState *state = Owner_GetState(owner);
     u32 owned;
 
-    if (state->bit_counts[index] > 9)
+    if (state->counts.slots[index] > 9)
         return -1;
-    owned = state->bits[index];
+    owned = state->flags.slots[index];
     if ((owned & (1 << bit)) != 0)
         return -1;
-    state->bit_counts[index]++;
-    state->bits[index] |= 1 << bit;
+    state->counts.slots[index]++;
+    state->flags.slots[index] |= 1 << bit;
     return 0;
 }

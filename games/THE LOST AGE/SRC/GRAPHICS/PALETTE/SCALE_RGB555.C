@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-/* The battle bank's own copy of Graphics_ScaleRgb555Buffer, as ☀️'s. */
 s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count)
 {
     s32 remaining;

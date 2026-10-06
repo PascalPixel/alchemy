@@ -3,11 +3,6 @@
 
 #include "EFFECT_RUNTIME.H"
 
-/*
- * Views used only by resource_388's entry routine.  The names intentionally
- * record the observed setup and slot access without assigning game meaning to
- * the runtime words or byte fields.
- */
 struct Resource388Runtime {
     u8 unknown_000[0x1c0];
     s32 setup_request_1c0;

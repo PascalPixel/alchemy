@@ -490,7 +490,7 @@ Func_08171bb0:
 	cmp r1, #63
 	bne .L_08171f2c
 .L_08171f78:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #64]
 	ldr r1, [sp, #36]
 	bl Graphics_PrepareTransferInIwramWork
@@ -543,7 +543,7 @@ Func_08171bb0:
 	adds r1, r5, #0
 	str r3, [r6, #8]
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r5]
 	movs r1, #20
 	lsrs r3, r2, #31
@@ -932,7 +932,7 @@ Func_08171bb0:
 .L_081722ba:
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, .L_081724dc
 	lsls r0, r6, #1
 	subs r3, r0, #2
@@ -1275,7 +1275,7 @@ Func_08171bb0:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #44]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r4, [sp, #68]
 	cmp r4, #16
 	bne .L_0817258a
@@ -1450,7 +1450,7 @@ Func_08171bb0:
 	bne .L_081726aa
 	movs r0, #128
 	lsls r0, r0, #8
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_081726aa:
 	mov r5, r8
 	movs r1, #128
@@ -1473,7 +1473,7 @@ Func_08171bb0:
 	bl Func_08196958
 	mov r0, r11
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #1
 	add r8, r3
 	mov r4, r8
@@ -1531,7 +1531,7 @@ Func_08171bb0:
 	str r4, [r0, #20]
 	cmp r10, r1
 	ble .L_081727aa
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
 	lsrs r3, r0, #31
@@ -1558,7 +1558,7 @@ Func_08171bb0:
 	bl SceneTransform_ApplyPitch
 	ldr r4, [sp, #68]
 	lsls r0, r4, #12
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r6, #0
 	bl Func_0801521c
 	ldr r0, .L_081727e4
@@ -1610,7 +1610,7 @@ Func_08171bb0:
 	mov r10, r4
 	ldr r0, [r3, #8]
 	mov r1, r10
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r5, [sp, #68]
 	cmp r5, #8
 	bne .L_0817280a
@@ -1686,7 +1686,7 @@ Func_08171bb0:
 	mov r4, r11
 	bics r3, r5
 	strb r3, [r4, #24]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r7]
 	ldr r1, [r7, #4]
 	lsrs r3, r0, #31
@@ -1705,7 +1705,7 @@ Func_08171bb0:
 	bne .L_081728c0
 	movs r0, #128
 	lsls r0, r0, #8
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_081728c0:
 	mov r1, r8
 	lsls r0, r1, #15
@@ -1817,7 +1817,7 @@ Func_08171bb0:
 	bne .L_081729a6
 	movs r0, #128
 	lsls r0, r0, #8
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_081729a6:
 	movs r2, #192
 	mov r1, r8
@@ -1851,7 +1851,7 @@ Func_08171bb0:
 	bl Func_081969ac
 	mov r0, r11
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #1
 	movs r2, #128
 	add r8, r3

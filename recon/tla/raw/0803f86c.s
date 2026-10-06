@@ -22,7 +22,7 @@ Func_0803f86c:
 	adds r3, r2, r1
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl Func_080c8648
+	bl Scene_GetAreaNameIndexFar
 	ldr r3, .L_0803f8f8
 	adds r5, r0, #0
 	adds r5, r5, r3

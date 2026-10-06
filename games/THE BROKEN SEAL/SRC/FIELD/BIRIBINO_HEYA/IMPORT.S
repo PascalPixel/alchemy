@@ -1,7 +1,3 @@
-@ Import veneers after the BIRIBINO_HEYA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — BIRIBINO_HEYA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -29,7 +25,7 @@ Engine_EventEnd:
 	.global ScenePlacement_ClipToView
 	.thumb_func
 ScenePlacement_ClipToView:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
@@ -49,7 +45,7 @@ Engine_ActorFaceActor:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:

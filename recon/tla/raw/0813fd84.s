@@ -60,7 +60,7 @@ Func_0813fd84:
 .L_0813fdf8:
 	.4byte Func_08143000
 .L_0813fdfc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813fe00:
 	ldrh r3, [r3, #4]
 	str r3, [sp, #104]
@@ -104,7 +104,7 @@ Func_0813fd84:
 	ldr r0, [r3, #8]
 	adds r1, r7, #0
 	adds r5, #2
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	cmp r5, #96
 	ble .L_0813fe60
 	movs r5, #96
@@ -171,7 +171,7 @@ Func_0813fd84:
 	ldr r1, .L_0813ff48
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r4, [sp, #108]
 	mov r3, r10
 	str r3, [r4, #16]
@@ -222,7 +222,7 @@ Func_0813fd84:
 .L_0813ff48:
 	.4byte 0x00000071
 .L_0813ff4c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813ff50:
 	.4byte 0x00000134
 .L_0813ff54:
@@ -837,7 +837,7 @@ Func_0813fd84:
 	bhi .L_08140440
 	movs r5, #128
 	lsls r5, r5, #12
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	subs r5, r5, r7
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
@@ -853,7 +853,7 @@ Func_0813fd84:
 	mov r1, r10
 	lsls r5, r1, #1
 	ldrh r0, [r3, r5]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r3, .L_081406c0
 	ldrh r0, [r3, r5]
 	bl SceneTransform_ApplyPitch
@@ -886,7 +886,7 @@ Func_0813fd84:
 .L_08140466:
 	mov r0, r8
 	str r5, [r0, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
 	movs r2, #0
@@ -939,7 +939,7 @@ Func_0813fd84:
 	ldr r3, .L_081406cc
 	lsls r6, r6, #9
 	str r3, [r4, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r2, #0
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
@@ -990,7 +990,7 @@ Func_0813fd84:
 .L_08140542:
 	mov r1, r8
 	str r5, [r1, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
 	movs r2, #0
@@ -1053,7 +1053,7 @@ Func_0813fd84:
 	lsls r6, r6, #9
 	adds r6, #128
 .L_081405c8:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
 	movs r2, #0
@@ -1213,7 +1213,7 @@ Func_0813fd84:
 	add r3, r11
 	mov r5, r9
 	str r3, [r5, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r6]
 	ldr r1, .L_08140790
 	ldr r2, .L_08140794
@@ -1276,7 +1276,7 @@ Func_0813fd84:
 .L_08140798:
 	.4byte Data_081976e0
 .L_0814079c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081407a0:
 	movs r2, #238
 	lsls r2, r2, #7
@@ -1430,7 +1430,7 @@ Func_0813fd84:
 	ldr r1, .L_08140918
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r0, #31
 	movs r1, #31
 	movs r2, #31
@@ -1452,7 +1452,7 @@ Func_0813fd84:
 .L_081408f8:
 	.4byte 0x00000786
 .L_081408fc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08140900:
 	.4byte Data_02012000
 .L_08140904:
@@ -1999,7 +1999,7 @@ Func_0813fd84:
 	lsls r1, r1, #12
 	adds r3, r3, r1
 	str r3, [r5]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_08140edc
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
@@ -2133,7 +2133,7 @@ Func_0813fd84:
 	strb r2, [r3, #1]
 	strb r2, [r3, #2]
 .L_08140e48:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_08140ef0
 	cmp r5, #0
 	blt .L_08140e56
@@ -2444,7 +2444,7 @@ Func_0813fd84:
 .L_081410a4:
 	.4byte 0xffe00000
 .L_081410a8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081410ac:
 	.4byte 0x00ffffff
 .L_081410b0:
@@ -2503,7 +2503,7 @@ Func_0813fd84:
 	movs r0, #1
 	ldrh r1, [r3]
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r2, .L_081411e4
@@ -2526,7 +2526,7 @@ Func_0813fd84:
 	mov r3, r10
 	cmp r3, #18
 	bne .L_0814113e
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -2597,7 +2597,7 @@ Func_0813fd84:
 .L_081411dc:
 	.4byte 0x00001010
 .L_081411e0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081411e4:
 	.4byte gCameraSceneParameters
 .L_081411e8:
@@ -2899,7 +2899,7 @@ Func_0813fd84:
 	adds r3, r7, #0
 	bl Func_0818caa8
 .L_08141426:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r5, .L_0814152c
 	ldr r4, .L_08141530
 	ldr r0, [r6]
@@ -2984,7 +2984,7 @@ Func_0813fd84:
 	beq .L_081414da
 	b .L_08141248
 .L_081414da:
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r0, .L_08141538
 	bl Scheduler_RemoveCallback
 	movs r0, #104

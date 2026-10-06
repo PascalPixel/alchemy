@@ -67,7 +67,7 @@ Func_08179f18:
 	movs r0, #1
 	ldr r1, .L_0817a0f8
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r6, #238
 	ldr r5, [sp, #172]
 	lsls r6, r6, #7
@@ -228,7 +228,7 @@ Func_08179f18:
 .L_0817a0e4:
 	.4byte 0xfffffc00
 .L_0817a0e8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817a0ec:
 	.4byte Data_02014000
 .L_0817a0f0:
@@ -1220,7 +1220,7 @@ Func_08179f18:
 .L_0817a860:
 	.4byte 0xfffee000
 .L_0817a864:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817a868:
 	.4byte 0xfffa0000
 .L_0817a86c:
@@ -1935,7 +1935,7 @@ Func_08179f18:
 	str r3, [r6, #20]
 	cmp r3, r0
 	ble .L_0817ae1a
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0817b014
 	mov r1, r10
 	ldrsb r0, [r3, r1]
@@ -1960,7 +1960,7 @@ Func_08179f18:
 	bl Func_0801521c
 	ldr r5, [sp, #160]
 	lsls r0, r5, #11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, .L_0817b024
 	mov r1, r8
 	movs r2, #4
@@ -1977,13 +1977,13 @@ Func_08179f18:
 	bl Sys_Free
 	mov r0, r8
 	bl Sys_Free
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r0, #148
 	lsls r0, r0, #8
 	bl SceneTransform_ApplyPitch
 	movs r0, #208
 	lsls r0, r0, #7
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r2, [sp, #160]
 	cmp r2, #156
 	bne .L_0817ae54
@@ -2160,7 +2160,7 @@ Func_08179f18:
 	str r6, [r5, #8]
 	ldr r0, [sp, #104]
 	mov r1, r11
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r6, r11
 	ldr r2, [r6]
 	ldr r0, .L_0817b02c
@@ -2317,7 +2317,7 @@ Func_08179f18:
 	str r3, [r5, #8]
 	mov r1, r8
 	mov r0, r11
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r6, r8
 	ldr r2, [r6]
 	asrs r2, r2, #1
@@ -2444,7 +2444,7 @@ Func_08179f18:
 	str r3, [r1, #8]
 	ldr r0, [sp, #72]
 	mov r1, r11
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r3, r11
 	ldr r2, [r3]
 	ldr r1, [r3, #4]
@@ -2576,7 +2576,7 @@ Func_08179f18:
 	mov r0, r10
 	cmp r0, #44
 	bne .L_0817b2cc
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -2657,7 +2657,7 @@ Func_08179f18:
 .L_0817b37c:
 	.4byte Func_0813baec
 .L_0817b380:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817b384:
 	.4byte 0x05000200
 .L_0817b388:

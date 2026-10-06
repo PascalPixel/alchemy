@@ -1,30 +1,32 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-#include "SCENE.H"
-void BattlePres_SetActorModes(u16 *, s32);
+#include "BATTLE_EVENT.H"
+#include "BATTLE_PRESENTATION.H"
+#include "BATTLE_TYPES.H"
+#include "SYSTEM.H"
 void BattlePresentation_WaitForAdvance(void);
-s32 Battle_ResolveTargetAction(void *, s32);
-s32 BattleEv_DispatchQueued();
 
-s32 WaitFrames(s32);
-
-s32 BattlePres_RunActorEntries(void *tbl)
+s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
 {
     s32 i;
-    s8 n;
 
     BattlePres_SetActorModes(0, 0);
-    n = FIELD_AT_OFFSET(tbl, s8 *, 1);
-    if (n == 0) {
+    if (plan->target_count == 0) {
         BattlePresentation_WaitForAdvance();
     } else {
-        i = 0;
-        if (i < (s32)n) {
-            do {
-                Battle_ResolveTargetAction(tbl, i);
-                BattleEv_DispatchQueued();
-                i += 1;
-            } while (i < (s32)FIELD_AT_OFFSET(tbl, s8 *, 1));
+        for (i = 0; i < plan->target_count; i++) {
+            Battle_ResolveTargetAction(plan, i);
+            BattleEv_DispatchQueued();
         }
     }
-    return WaitFrames(1);
+    WaitFrames(1);
 }

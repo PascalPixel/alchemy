@@ -1,13 +1,3 @@
-@ ARM patch template that the battle-effect generator copies and patches
-@ before it runs (descriptor {0x081972a0, 0x08197224, 0x081973f0} at
-@ 0x0819674c). It holds placeholder instructions (and r2, r2, #0; a duplicated
-@ mov r6, #0), branches over single instructions that are overwritten, and a
-@ pop that a bne skips; it can only run once copied and patched. It is TLA's
-@ revision of the Gousei template of TBS BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI.S
-@ (0x080edcc4): after its 4-byte Thumb entry, runs of 244, 28, 36 and 24
-@ bytes match that template.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: handwritten — relocated ARM kernel, battle-effect patch template
 .syntax unified
 	.thumb
 	.global BattleFx_PatchTemplateCode

@@ -28,7 +28,7 @@ Func_081a68b4:
 	b .L_081a6a9c
 .L_081a68e0:
 	ldr r0, [r5, #28]
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	beq .L_081a68ec
 	b .L_081a69f2
@@ -131,9 +131,9 @@ Func_081a68b4:
 	lsls r0, r0, #7
 	adds r0, #255
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #10
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 .L_081a69b4:
 	mov r3, r8
 	ldrh r2, [r3, #12]
@@ -152,9 +152,9 @@ Func_081a68b4:
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #10
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 .L_081a69e0:
 	movs r0, #4
 	ldrsh r3, [r5, r0]
@@ -244,7 +244,7 @@ Func_081a68b4:
 	strh r3, [r5, #22]
 .L_081a6a80:
 	ldr r0, [r5, #28]
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a69f2
 	ldrh r3, [r5, #4]
@@ -265,7 +265,7 @@ Func_081a68b4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081a6aa8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a6aac:
 	.4byte 0x840001e0
 .L_081a6ab0:

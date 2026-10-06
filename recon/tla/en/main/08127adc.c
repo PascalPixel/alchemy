@@ -1,12 +1,3 @@
-/*
- * Draft: Summon_TakeCharge, ported from its ☀️ twin (⚓️'s 9 channels, the
- * battle work from the heap slot, % for __modsi3); it goes before
- * Summon_ReleaseCharge in SRC/BATTLE/SUMMON/CHARGE.C. Score 280, three
- * scheduling steps: the listing clears i (movs r1, #0) before loading the
- * count, stores the new channel before copying r7 for the mask offset, and
- * loads the mask before building the bit. Setting i before the count does
- * not move it.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
@@ -14,11 +5,11 @@
 
 struct SummonChargeState {
     u8 unknown_00[0x10];
-    u16 class_ids[6];   /* 0x10 */
-    u32 used_masks[6];  /* 0x1c */
-    s8 channels[6];     /* 0x34 */
+    u16 class_ids[6];
+    u32 used_masks[6];
+    s8 channels[6];
     u8 unknown_3a[6];
-    u8 count;           /* 0x40 */
+    u8 count;
 };
 
 s32 Summon_TakeCharge(s32 no, s32 n)

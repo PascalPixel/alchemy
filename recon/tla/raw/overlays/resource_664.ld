@@ -1,5 +1,3 @@
-/* resource_664: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -10,16 +8,19 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x02008128)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
         "*/resource_664_overlay.o"(.text.x02008216)
-        "*/resource_664_overlay.o"(.text.x02008218)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PREPARE_OBJECT.o"(.text)
+        "*/resource_664_overlay.o"(.text.x02008266)
         "*/resource_664_overlay.o"(.text.x02008268)
-        "*/resource_664_overlay.o"(.text.x020082bc)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_664_overlay.o"(.text.x020082f2)
         "*/resource_664_overlay.o"(.text.x020082f4)
         "*/resource_664_overlay.o"(.text.x020084d4)
         "*/resource_664_overlay.o"(.text.x02008550)
         "*/resource_664_overlay.o"(.text.x02008610)
         "*/resource_664_overlay.o"(.text.x0200861c)
         "*/resource_664_overlay.o"(.text.x0200862c)
-        "*/resource_664_overlay.o"(.text.x02008674)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/WAIT_UNTIL_IDLE.o"(.text)
+        "*/resource_664_overlay.o"(.text.x0200868e)
         "*/resource_664_overlay.o"(.text.x02008690)
         "*/resource_664_overlay.o"(.text.x020086cc)
         "*/resource_664_overlay.o"(.text.x020087b4)
@@ -84,7 +85,8 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x0200ccc8)
         "*/resource_664_overlay.o"(.text.x0200ceb0)
         "*/resource_664_overlay.o"(.text.x0200cf3c)
-        "*/resource_664_overlay.o"(.text.x0200d004)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/resource_664_overlay.o"(.text.x0200d05a)
         "*/resource_664_overlay.o"(.text.x0200d05c)
         "*/resource_664_overlay.o"(.text.x0200d1f8)
         "*/resource_664_overlay.o"(.text.x0200dcb8)

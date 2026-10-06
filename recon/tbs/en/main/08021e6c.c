@@ -1,150 +1,88 @@
+/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 1129 (listing 1037, draft 1002, common 455). Not first-try; parked. */
+/* 08021e6a: two zero bytes before this function are alignment, not code: DISPLAY.o ends at 0x08021e6a and a C object aligns .text to 4, so the linker fills them, as it already does at 0x08021dfa. */
+/* Shared UiRenderWork, MenuCell, GlyphPalette, BgScroll and MenuSprite replace
+ * private views. Original draft: listing 1037, draft 998, differ 1173; shared
+ * views preserve that result, then genuine sprite bitfields improve it to
+ * draft 1002, differ 1129. Native frame is 60 bytes; draft is 44. Remaining
+ * work is loop/spill layout. Whole tutorial message symbols leave the score
+ * unchanged; no new devices.
+ */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "IO_WRITE_QUEUE.H"
+#include "WINDOW.H"
+#include "GLYPH.H"
+#include "MENU_LIST.H"
+#include "MAP_SCROLL.H"
+#include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
-/*
- * DRAFT main:08021e6c (2300 bytes, including pools), canonical best H2; H3 preserved in history.
- * Recover the 480-byte work record and natural screen loop before register
- * tuning. Cursor entries share byte/halfword OAM views, not RenderOutput's
- * unrelated 28-byte layout. Trade availability is a word, the party result
- * is four bytes, and this owner returns the selected kind or -1/-2.
- * Residual H1: 2196/2300 bytes; 1099 differing halfwords; topology differs,
- * 1074 wrong instructions, aligned distance 774 halfword edits. Seven-entry
- * prologue prefix agrees, but frame is 44 rather than 60 bytes. Residual runs:
- * 212 (0 register-only, 0 order-only, 8 pool/immediate, 41 copy/rematerialise,
- * 0 pool-placement, 163 other). Typed indexing has not fixed broad lowering.
- * Compiler rounds a standalone halfword union to four bytes: place all four
- * OAM bytes in one word union to keep entries at 28 bytes and work at 480.
- * Residual H2: 2216/2300 bytes; 1107 differing halfwords; topology differs,
- * 1034 wrong instructions, aligned distance 737 halfword edits. Frame 40/60.
- * Runs: 218 (0 register-only, 0 order-only, 9 pool/immediate,
- * 49 copy/rematerialise, 0 pool-placement, 160 other). Row-cursor traversal
- * improves alignment but not the frame. The compiler already hoists natural
- * loop exit stubs between mode-zero and trade setup, as in the reference;
- * adding gotos there would not address the remaining layout difference.
- * Residual H3: 2204/2300 bytes; 1117 differing halfwords; topology differs,
- * 1076 wrong instructions, aligned distance 777 halfword edits. Frame 48/60.
- * Runs: 223 (0 register-only, 0 order-only, 8 pool/immediate,
- * 50 copy/rematerialise, 0 pool-placement, 165 other). Explicit count and
- * selection cursors, sprite pointer traversal and a signed/halfword scale
- * union do not close broad lowering; this is worse than H2. Three structural
- * hypotheses exhausted without adoption; do not tune registers on this form.
- * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 17,661
- * candidates; the best scored 15395 against 21273 (310 register-only, 20
- * stack-only, 82 operand, 104 reordered, 16 inserted, 40 deleted) after 254
- * rewrites (swap commutative operands, introduce a temporary, reorder
- * independent statements, reorder local declarations), none of them kept.
- * Two hundred fifty-four rewrites across the whole selection screen, search
- * artefacts that stay out of the draft; register choice is still most of
- * the difference.
- */
-struct UiWindowWork;
-
-union SelectionOam {
-    u32 word;
-    struct { u8 y, flags, low, high; } bytes;
-    struct { u16 y_flags, x; } half;
-};
+struct UiWindow;
 
 struct SelectionEntry {
-    s32 next;
-    union SelectionOam oam;
-    u32 tile;
+    struct MenuSprite sprite;
     u16 resource, unused;
     s32 pos_x, pos_y;
     s32 kind;
 };
 
-struct SelectionAffine {
-    u16 scale_x, scale_y, angle, unused;
-};
-
 struct SelectionWork {
-    u8 glyphs[256];
-    s32 state;
+    struct GlyphPalette palette;
     struct SelectionEntry entries[6];
-    struct UiWindowWork *window;
+    struct UiWindow *window;
     s32 count;
-    struct SelectionAffine affine;
+    struct AffineTransform affine;
     s32 matrix, selection, previous;
     s32 kinds[6];
 };
 
-struct SelectionRender {
-    u16 tiles[1024];
-    u8 unused[0x6a3];
-    u8 dirty, mode, menu_state, menu_busy;
-};
-
-struct SelectionRuntime {
-    u8 unused[0x3c];
-    s32 selection[2];
-    u8 unused44[8];
-    s32 enabled;
-    u8 unused50[0x88];
-    s32 auto_phase, auto_delay, auto_mode;
-};
-
-struct SelectionScroll { u16 unused[2]; s16 x, y; };
 struct TradeOfferState { u32 available; };
 
-extern struct SelectionRender *gWindowWork;
-extern struct SelectionRuntime *gLinkCountdownWork;
-extern struct SelectionScroll gBgScroll;
-extern s32 gFrameCount, gKeyState, gKeysRepeat;
-extern u16 Data_080366f8[];
-extern volatile u16 RegIme;
-extern u8 Value_0000001f[];
+extern u16 Ui_BounceScales[];
 
-extern s32 Resource_LoadIntoFreeSlot(s32 size);
-extern void *Runtime_BumpAllocateAlternatePool(s32 size);
-extern void Runtime_BumpFree(void *work);
-extern struct UiWindowWork *UiWindow_Create(s32 x, s32 y, s32 width,
+extern struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width,
                                            s32 height, s32 style);
-extern void UiWork_Finalize(struct UiWindowWork *work, s32 release);
-extern void RenderOutput_PrepareForRedraw(struct UiWindowWork *work);
+extern void UiWork_Finalize(struct UiWindow *work, s32 release);
+extern void RenderOutput_PrepareForRedraw(struct UiWindow *work);
 extern void UiText_DrawCharacter(u8 *base, s32 index, u32 kind);
-extern void UiText_DrawCharacterAtOffset(s32 kind, struct UiWindowWork *work,
-                                         s32 x, s32 y);
-extern struct UiWindowWork *UiText_ShowMessageAndWaitComplete(s32 message,
+extern struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message,
                                                            s32 x, s32 y);
-extern s32 AffineMatrix_BuildForEffect(struct SelectionAffine *effect);
-extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
-extern void Resource_ResetEntry(s32 slot);
-extern void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
-extern void Scheduler_RemoveCallback(void (*callback)(void));
 extern void Runtime_SetIrqHandler(u32 irq, s32 line, void (*handler)(void));
 extern void Graphics_SetBg1Priority3(void);
 extern void Graphics_ClearBg1ControlBit2(void);
 extern struct TradeOfferState *Trade_GetOfferStateFar(s32 index);
 extern void BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
-extern void Func_080b5128(s32 x, s32 y);
+extern void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 extern void Audio_PlayCue(s32 cue);
 
 s32 Ui_RunSelectionScreen(s32 mode)
 {
     u8 party[4];
-    struct SelectionRender *render;
+    struct UiRenderWork *render;
     struct SelectionWork *work;
-    struct SelectionRuntime *runtime;
-    struct UiWindowWork *message;
+    struct MenuCell *runtime;
+    struct UiWindow *message;
     s32 rebuild, trade_count, scale, result;
     s32 cnt;
     s32 keys, repeat;
     s32 slot;
     u8 *pos;
 
-    render = gWindowWork;
+    render = (struct UiRenderWork *)gWindowWork[0];
     slot = Resource_LoadIntoFreeSlot(0x400);
     rebuild = 1;
     trade_count = 0;
     work = Runtime_BumpAllocateAlternatePool(sizeof(*work));
-    pos = &work->glyphs[255];
+    pos = &work->palette.slot[255];
     do {
         *pos-- = 255;
     } while ((s32)pos >= (s32)work);
-    work->state = 1;
+    work->palette.count = 1;
     if (mode == 0)
         work->window = UiWindow_Create(20, 17, 10, 3, 6);
     else
@@ -155,9 +93,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
         work->kinds[1] = 4;
         work->kinds[2] = 7;
         work->kinds[3] = -1;
-        work->selection = gLinkCountdownWork->selection[0];
+        work->selection = gLinkCountdownWork->command_selection[0];
     } else {
-        work->selection = gLinkCountdownWork->selection[1];
+        work->selection = gLinkCountdownWork->command_selection[1];
         work->kinds[0] = 0;
         work->kinds[1] = 1;
         cnt = 2;
@@ -199,11 +137,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
-        scale = ((s32)Data_080366f8[(gFrameCount * 2) & 31] - 256) / 4 + 304;
+        scale = ((s32)Ui_BounceScales[(gFrameCount * 2) & 31] - 256) / 4 + 304;
         work->affine.scale_x = scale;
         work->affine.scale_y = scale;
-        gBgScroll.x = 0;
-        gBgScroll.y = 32;
+        gBgScroll[1].x = 0;
+        gBgScroll[1].y = 32;
         if (rebuild != 0) {
             rebuild = 0;
             render->menu_busy = 1;
@@ -211,7 +149,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 s32 panel;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     s32 row;
-                    u16 *tile_row = &render->tiles[panel * 3];
+                    u16 *tile_row = &render->tilemap[panel * 3];
                     for (row = 0; row <= 2; row++, tile_row += 32) {
                         s32 col;
                         for (col = 0; col <= 2; col++)
@@ -223,7 +161,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     s32 count = work->count;
                     s32 tile_index = panel * 3;
                     s32 pattern = panel * 16;
-                    u16 *tile_row = &render->tiles[tile_index];
+                    u16 *tile_row = &render->tilemap[tile_index];
                     for (row = 0; row <= 2; row++, tile_row += 32, tile_index += 32, pattern += 4) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
@@ -236,7 +174,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 s32 panel;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     s32 row;
-                    u16 *tile_row = &render->tiles[panel * 3];
+                    u16 *tile_row = &render->tilemap[panel * 3];
                     for (row = 0; row <= 2; row++, tile_row += 32) {
                         s32 col;
                         for (col = 0; col <= 2; col++)
@@ -248,7 +186,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     s32 count = work->count;
                     s32 tile_index = panel * 3;
                     s32 pattern = panel * 16;
-                    u16 *tile_row = &render->tiles[tile_index];
+                    u16 *tile_row = &render->tilemap[tile_index];
                     for (row = 0; row <= 2; row++, tile_row += 32, tile_index += 32, pattern += 4) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
@@ -261,8 +199,8 @@ s32 Ui_RunSelectionScreen(s32 mode)
         }
         if (work->previous != work->selection) {
             RenderOutput_PrepareForRedraw(work->window);
-            UiText_DrawCharacterAtOffset(work->entries[work->selection].kind + (s32)Value_0000001f,
-                                         work->window, 0, 0);
+            UiText_DrawCharacterAtOffset(work->entries[work->selection].kind + (s32)&MsgCommandName,
+                                         (struct RenderInput *)work->window, 0, 0);
             work->previous = work->selection;
             UiText_DrawCharacter((u8 *)work, work->selection, work->kinds[work->selection]);
         }
@@ -270,22 +208,22 @@ s32 Ui_RunSelectionScreen(s32 mode)
         for (cnt = 0; cnt < work->count; cnt++) {
             struct SelectionEntry *entry = &work->entries[cnt];
             if (cnt == work->selection) {
-                entry->oam.bytes.high = (entry->oam.bytes.high & ~0x3e) | (((u8)work->matrix & 31) * 2);
-                entry->oam.bytes.flags |= 3;
-                entry->oam.half.x = (entry->oam.half.x & 0xfffffe00) | ((entry->pos_x + scale * 7 / 512 - 14) & 511);
-                entry->oam.bytes.y = entry->pos_y + scale * 3 / 256 - 20;
-                Runtime_PushSlotEntry((s32 *)entry, 0xf1);
+                entry->sprite.oam.f.affine_index = work->matrix;
+                entry->sprite.oam.f.affine = 3;
+                entry->sprite.oam.f.x = entry->pos_x + scale * 7 / 512 - 14;
+                entry->sprite.oam.f.y = entry->pos_y + scale * 3 / 256 - 20;
+                Runtime_PushSlotEntry(entry, 0xf1);
             } else {
-                entry->oam.half.x = (entry->oam.half.x & 0xfffffe00) | (entry->pos_x & 511);
-                entry->oam.bytes.y = entry->pos_y;
-                entry->oam.bytes.high &= ~0x3e;
-                entry->oam.bytes.flags &= ~3;
+                entry->sprite.oam.f.x = entry->pos_x;
+                entry->sprite.oam.f.y = entry->pos_y;
+                entry->sprite.oam.f.affine_index = 0;
+                entry->sprite.oam.f.affine = 0;
             }
         }
         keys = gKeyState;
         runtime = gLinkCountdownWork;
         repeat = gKeysRepeat;
-        if (runtime->auto_phase != 0) {
+        if (runtime->auto_enabled != 0) {
             repeat = keys = 0;
             if (runtime->auto_delay == 0) {
                 if (runtime->auto_mode == 1) {
@@ -297,14 +235,14 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 } else if (runtime->auto_mode == 0) {
                     s32 kind = work->kinds[work->selection];
                     if (kind == 16 || (trade_count == 0 && kind == 15)) {
-                        if (runtime->auto_phase == 1) {
+                        if (runtime->auto_enabled == 1) {
                             if (kind == 15)
-                                message = UiText_ShowMessageAndWaitComplete(0xc4a, 15, 8);
+                                message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialUnleashCommand, 15, 8);
                             else if (kind == 16)
-                                message = UiText_ShowMessageAndWaitComplete(0xc49, 15, 8);
-                            Func_080b5128(102, 155);
+                                message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialSummon, 15, 8);
+                            BattlePresentation_WaitForPromptAtFar(102, 155);
                             UiWork_Finalize(message, 1);
-                            runtime->auto_phase++;
+                            runtime->auto_enabled++;
                             runtime->auto_delay = 45;
                         } else {
                             runtime->auto_delay = 200;
@@ -341,7 +279,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
             work->selection = __modsi3(work->selection + work->count - 1, work->count);
-        } else if (gLinkCountdownWork->enabled == 0) {
+        } else if (gLinkCountdownWork->active == 0) {
             result = work->kinds[0];
             break;
         }
@@ -350,9 +288,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
         WaitFrames(1);
     }
     if (mode != 0)
-        gLinkCountdownWork->selection[1] = work->selection;
+        gLinkCountdownWork->command_selection[1] = work->selection;
     else
-        gLinkCountdownWork->selection[0] = work->selection;
+        gLinkCountdownWork->command_selection[0] = work->selection;
     for (cnt = 0; cnt < work->count; cnt++)
         Resource_ResetEntry(work->entries[cnt].resource);
     render->menu_busy = 1;
@@ -361,7 +299,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         s32 panel;
         for (panel = 0; panel <= 6; panel++) {
             s32 row;
-            u16 *tile_row = &render->tiles[panel * 3];
+            u16 *tile_row = &render->tilemap[panel * 3];
             for (row = 0; row <= 2; row++, tile_row += 32) {
                 s32 col;
                 for (col = 0; col <= 2; col++)
@@ -375,7 +313,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 0, 0);
     {
         struct IoWriteQueue *queue = &gIoWriteQueue;
-        volatile u16 *ime = &RegIme;
+        volatile u16 *ime = &REG_IME;
         u32 saved = *ime;
         s32 count;
         *ime = (u16)ime;

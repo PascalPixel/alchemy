@@ -507,7 +507,7 @@ gShianMuraEvents:
 	.4byte SceneEffect_ActivateNearbyActor
 	.4byte 0x00001815
 	.4byte 0x02010014
-	.4byte FieldScene_RunScene3a0_02000968
+	.4byte ShianMura_ActivateActorTwentyPlatform
 	.4byte 0x00008e15
 	.4byte 0xffff0015
 	.4byte Scene_RunActorNineteenScript
@@ -582,7 +582,7 @@ gShianMuraEvents:
 	.4byte SceneEffect_RequestFixedEffect
 	.4byte 0x00000006
 	.4byte 0xffff00c8
-	.4byte FieldScene_RunScene3a0_02001060
+	.4byte ShianMura_EscortActorEighteen
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

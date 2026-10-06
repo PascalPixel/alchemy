@@ -1,7 +1,3 @@
-/*
- * Draft: Inventory_GetEquippedItem does not yet match; 64 bytes differ from +0x9.
- * Links as recon/tla/raw/080af094.s.
- */
 #include "INVENTORY.H"
 
 s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type)

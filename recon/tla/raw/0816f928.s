@@ -68,7 +68,7 @@ Func_0816f928:
 	movs r3, #36
 	ldrsh r0, [r4, r3]
 	adds r1, r5, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [r5]
 	movs r3, #64
 	subs r3, r3, r2
@@ -413,7 +413,7 @@ Func_0816f928:
 	adds r0, r6, #0
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl Func_081504b4
+	bl SummonFx_RunCanvasMode3
 	add sp, #32
 	pop {r3, r5, r6, r7}
 	mov r8, r3

@@ -1,13 +1,3 @@
-@ Guarded ROM-to-IWRAM entry of the sound mixer: after its driver ID check it
-@ saves r0 and r8-r11 through r1-r4 (push {r0-r4}) in a private frame and
-@ tail-branches into the IWRAM mixer that restores it; GCC 2.96 saves high
-@ registers only in its prologue, through low registers it has already
-@ pushed, highest first. These 132 bytes equal TBS SOUND/DRIVER/MIXER_ENTRY.S
-@ (0x080f95f0) apart from the IWRAM mixer address in its literal pool
-@ (0x03006001 for 0x03007001).
-@ The zero halfword of alignment at 0x081c12f6 never runs and carries no
-@ credit.
-@ credit: library — TBS/TLA common sound driver guarded ROM-to-IWRAM frame entry (mixer entry)
 .syntax unified
 	.thumb
 	.global AudioEngine_RunMixerTick

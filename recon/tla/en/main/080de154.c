@@ -1,11 +1,3 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six original incomplete-context compile failures remain.
- * No missing view, declaration or physical symbol was supplied.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "OBJECT_EFX.H"
@@ -36,10 +28,6 @@ void Audio_PlayCue(s32 cue);
 struct ImpactObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     struct ImpactObject *object, s32 magnitude, s32 angle);
-
-/* Plays the heavy impact cue and spawns effect object 0x11b 32 units above
- * the source, then twelve 0x11d fragments at the source, each sent a random
- * distance at a random angle. */
 
 s32 SpawnHeavyImpactEffect(struct ImpactSource *source)
 {

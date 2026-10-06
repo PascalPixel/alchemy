@@ -29,8 +29,6 @@ void WorldMap_UpdateOrbitActor(union OrbitObject *object)
     if (object->orbit.paused == 0) {
         object->object.actor.x.fixed = 0x15d00000;
         wave = Func_0200c1a4(object->orbit.angle * 8);
-        /* The reference evaluates this Q16 product in IWRAM via an ip return.
-         * This draft expresses its arithmetic, not that assembly call ABI. */
         object->object.actor.y.fixed =
             (s32)(((s64)wave * 0x40000) >> 16) + 0x100000;
         object->object.actor.z.fixed = 0x05300000;

@@ -1,7 +1,8 @@
-/*
- * Restores the map cells flags 0x845 and 0x847 have changed.
- */
 
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "MENU.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -52,23 +53,8 @@ struct Sub {
     u8 f26;
 };
 
-struct Obj_02002608 {
-    u8 pad00[0x18];
-    s32 f18;
-    u8 pad1c[7];
-    u8 f23;
-    u8 pad24[12];
-    s32 f30;
-    s32 f34;
-    u8 pad38[24];
-    struct Sub *f50;
-    u8 pad54[1];
-    u8 f55;
-};
 
-extern u8 KorimaMura_Object26Script[];
-
-u16 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 void BattleEffect_CleanupSceneObjects(void);
 
@@ -80,27 +66,20 @@ void FieldScene_RunPairedStepB();
 void Object_SetActionCallbackAndRefreshById();
 void Audio_PlayCueFromEventWork();
 
-extern u8 KorimaMura_ActionTable1[];
-extern u8 KorimaMura_ActionTable2[];
-extern u8 KorimaMura_ActionTable3[];
-extern u8 KorimaMura_ActionTable4[];
-extern u8 KorimaMura_ActionTable5[];
-extern u8 KorimaMura_ActionTable6[];
-extern u8 KorimaMura_ActionTable7[];
 
 void FieldScene_RunFlag845And847Branches(void)
 {
-    if (GameFlag_IsSet(0x845) == 0) {
-        Actor_SetPosition(8, 0, 0);
-        { s32 k5 = 9, k6 = 18; Map_CopyCellAttributes(9, 17, 5, 1, k5, k6); }
+    if (Engine_GameFlagIsSet(0x845) == 0) {
+        Engine_ActorSetPosition(8, 0, 0);
+        { s32 k5 = 9, k6 = 18; Engine_MapCopyCellAttributes(9, 17, 5, 1, k5, k6); }
         Engine_MapRedraw();
         Engine_TaskWait(1);
     } else {
-        Actor_SetPosition(9, 0, 0);
+        Engine_ActorSetPosition(9, 0, 0);
     }
-    if (GameFlag_IsSet(0x847) != 0) {
-        { s32 k5 = 5, k6 = 7; Map_CopyCellsTo(91, 19, 72, 9, k5, k6); }
-        { s32 k5 = 8, k6 = 11; Map_CopyCellAttributes(23, 11, 5, 7, k5, k6); }
+    if (Engine_GameFlagIsSet(0x847) != 0) {
+        { s32 k5 = 5, k6 = 7; Engine_MapCopyCellsTo(91, 19, 72, 9, k5, k6); }
+        { s32 k5 = 8, k6 = 11; Engine_MapCopyCellAttributes(23, 11, 5, 7, k5, k6); }
         Engine_MapRedraw();
         Engine_TaskWait(1);
     }

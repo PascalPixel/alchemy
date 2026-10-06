@@ -66,7 +66,7 @@ UiText_ShowPositionedMessageAndWait:
 	adds r3, #12
 	b .L_0803a840
 .L_0803a826:
-	bl Func_080c8778
+	bl EventRuntime_GetControlledOwnerFar
 	add r5, sp, #4
 	adds r1, r5, #0
 	bl Func_080c82a8

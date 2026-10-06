@@ -32,7 +32,7 @@ Func_081843fc:
 	str r6, [sp, #140]
 	ldr r0, [r6, #84]
 	bl Resource_ResetEntry
-	bl Func_08020380
+	bl VramBlock_Reset93Far
 	movs r0, #128
 	lsls r0, r0, #6
 	bl BattleFx_BeginCanvasLayer
@@ -70,7 +70,7 @@ Func_081843fc:
 .L_08184488:
 	.4byte 0x00000000
 .L_0818448c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08184490:
 	.4byte Func_08143000
 .L_08184494:
@@ -90,7 +90,7 @@ Func_081843fc:
 	ldr r1, .L_08184510
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r2, #31
 	negs r2, r2
 	adds r1, r2, #0

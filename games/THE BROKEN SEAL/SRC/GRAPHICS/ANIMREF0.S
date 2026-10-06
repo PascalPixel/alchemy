@@ -1,5 +1,3 @@
-@ Four unused self-pointer slots between the character animation scripts.
-@ Only its own slots reference the table.
 .syntax unified
 	.section .rodata,"a",%progbits
 	.align 2

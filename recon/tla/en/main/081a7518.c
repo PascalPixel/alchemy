@@ -1,4 +1,6 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
@@ -18,12 +20,6 @@ void Blend_SetDarkenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
-u8 *Resource_GetTableEntry(s32 index);
-s32 Resource_DecodeType01(const void *source, void *destination);
-
-/* Title: show the splash picture, fade it in and wait for A or START (or
-   time out), then fade it out. Mode 0 only waits for two seconds after the
-   fade-in. Returns -1 when a button cut it short. */
 
 s32 Title_ShowSplashScreen(s32 mode)
 {
@@ -85,7 +81,7 @@ row:
         Blend_SetDarkenTarget0(1);
         Blend_WaitForTransition();
         for (y = 0; y < 120; y++) {
-            if (gKeyState & 9) {
+            if (gKeyState & (KEY_A | KEY_START)) {
                 result = -1;
                 break;
             }
@@ -94,7 +90,7 @@ row:
         return result;
     }
     for (y = 0; y < 60; y++) {
-        if (gKeyState & 9) {
+        if (gKeyState & (KEY_A | KEY_START)) {
             result = -1;
             break;
         }
@@ -107,7 +103,7 @@ row:
     Blend_WaitForTransition();
     if (result == 0) {
         for (y = 0; y < 180; y++) {
-            if (gKeyState & 9) {
+            if (gKeyState & (KEY_A | KEY_START)) {
                 result = -1;
                 break;
             }

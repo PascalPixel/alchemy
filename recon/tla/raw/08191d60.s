@@ -733,7 +733,7 @@ Func_08191d60:
 	cmp r3, r4
 	ble .L_08192344
 	str r3, [r6, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_08192524
 	mov r0, r10
 	ldrsb r1, [r3, r0]

@@ -123,7 +123,7 @@ Func_080ccec8:
 	bne .L_080ccfae
 	movs r5, #32
 .L_080ccfae:
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	ldr r2, [sp, #24]
 	movs r3, #1
 	adds r2, #91
@@ -172,23 +172,23 @@ Func_080ccec8:
 	cmp r7, #0
 	bne .L_080cd01c
 	mov r0, r10
-	bl Func_080cefe0
+	bl ObjectEvent_SetMode6WithCue
 	b .L_080cd022
 .L_080cd01c:
 	mov r0, r10
-	bl Func_080cefb4
+	bl ObjectEvent_SetMode4WithCue
 .L_080cd022:
 	mov r1, r8
 	cmp r1, #129
 	bne .L_080cd02e
 	mov r0, r10
-	bl Func_080cefb4
+	bl ObjectEvent_SetMode4WithCue
 .L_080cd02e:
 	mov r2, r8
 	cmp r2, #130
 	bne .L_080cd0ca
 	mov r0, r10
-	bl Func_080ceffc
+	bl ObjectEvent_GetObject
 	ldr r3, .L_080cd170
 	adds r5, r0, #0
 	str r3, [r5, #108]
@@ -206,9 +206,9 @@ Func_080ccec8:
 	lsls r0, r0, #3
 	movs r1, #0
 	adds r0, #255
-	bl Func_080cb6c8
+	bl BattleParty_ApplyDrain
 	movs r0, #1
-	bl Func_08038128
+	bl UiWindow_CreateWithLayoutBoundsFar
 	movs r0, #126
 	bl Audio_PlayCue
 	bl Party_CountActiveOwnersFar
@@ -223,7 +223,7 @@ Func_080ccec8:
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
 .L_080cd08e:
-	bl Func_08038138
+	bl UiWork_FinalizeAndReleaseBlock16Far
 	movs r3, #0
 	str r3, [r5, #108]
 	movs r1, #2
@@ -232,12 +232,12 @@ Func_080ccec8:
 	movs r0, #246
 	bl Audio_PlayCue
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	ldr r0, .L_080cd178
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
 	mov r0, r10
-	bl Func_080cf004
+	bl ObjectEvent_Remove
 	movs r3, #1
 	negs r3, r3
 	cmp r9, r3
@@ -251,9 +251,9 @@ Func_080ccec8:
 	mov r1, r8
 	cmp r1, #132
 	bne .L_080cd106
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r0, #0
-	bl Func_080cded4
+	bl EventRuntime_ResolvePendingActions
 	mov r0, r10
 	bl Func_080ea14c
 	adds r0, r7, #0
@@ -261,7 +261,7 @@ Func_080ccec8:
 	adds r0, r7, #0
 	bl Func_080ad2f8
 	mov r0, r10
-	bl Func_080cf004
+	bl ObjectEvent_Remove
 	movs r2, #1
 	negs r2, r2
 	cmp r9, r2
@@ -269,7 +269,7 @@ Func_080ccec8:
 	mov r0, r9
 	bl GameFlag_SetBit
 .L_080cd100:
-	bl Func_080d2350
+	bl EventRuntime_End
 	b .L_080cd39e
 .L_080cd106:
 	mov r3, r8
@@ -279,7 +279,7 @@ Func_080ccec8:
 	lsls r3, r3, #18
 	mov r0, r10
 	ldr r5, [r3, #108]
-	bl Func_080cef84
+	bl ObjectEvent_Spring
 	movs r1, #1
 	negs r1, r1
 	cmp r9, r1
@@ -348,7 +348,7 @@ Func_080ccec8:
 	strb r3, [r2]
 	movs r0, #104
 	adds r1, r7, #0
-	bl Func_080ca5d8
+	bl BattleFx_SelectBattleCue
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, #14
@@ -369,14 +369,14 @@ Func_080ccec8:
 	bl UiText_ShowPositionedMessageAndWaitFar
 .L_080cd1ca:
 	mov r0, r10
-	bl Func_080ceeac
+	bl Object_GetSpriteShape
 	cmp r0, #0
 	beq .L_080cd1fe
 	movs r1, #1
 	ldr r0, .L_080cd4a8
 	bl UiText_ShowPositionedMessageAndWaitFar
 	movs r0, #136
-	bl Func_080ad2e8
+	bl Party_FindOwnerWithActionFar
 	movs r1, #1
 	negs r1, r1
 	cmp r0, r1
@@ -402,7 +402,7 @@ Func_080ccec8:
 	cmp r2, #131
 	bne .L_080cd21c
 	mov r0, r10
-	bl Func_080ceffc
+	bl ObjectEvent_GetObject
 	ldr r3, .L_080cd4ac
 	adds r6, r0, #0
 	str r3, [r6, #108]
@@ -418,7 +418,7 @@ Func_080ccec8:
 	cmp r3, #128
 	bne .L_080cd238
 	mov r0, r10
-	bl Func_080cefd0
+	bl ObjectEvent_SetMode2
 .L_080cd238:
 	adds r0, r6, #0
 	bl Func_080cf350
@@ -435,7 +435,7 @@ Func_080ccec8:
 	ldr r0, .L_080cd4b0
 	bl UiText_ShowPositionedMessageAndWaitFar
 	adds r0, r7, #0
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	movs r1, #1
 	negs r1, r1
 	cmp r9, r1
@@ -473,7 +473,7 @@ Func_080ccec8:
 	cmp r1, #131
 	bne .L_080cd2b8
 	mov r0, r10
-	bl Func_080ceffc
+	bl ObjectEvent_GetObject
 	ldr r3, .L_080cd4ac
 	adds r6, r0, #0
 	str r3, [r6, #108]
@@ -514,14 +514,14 @@ Func_080ccec8:
 	cmp r1, #128
 	bne .L_080cd39e
 	mov r0, r10
-	bl Func_080cef68
+	bl ObjectEvent_SetMode5WithCue
 	b .L_080cd39e
 .L_080cd30e:
 	mov r2, r8
 	cmp r2, #128
 	bne .L_080cd31a
 	mov r0, r10
-	bl Func_080cefd0
+	bl ObjectEvent_SetMode2
 .L_080cd31a:
 	adds r0, r6, #0
 	bl Func_080cf350
@@ -575,7 +575,7 @@ Func_080ccec8:
 	cmp r1, #133
 	bne .L_080cd38e
 	mov r0, r10
-	bl Func_080cf004
+	bl ObjectEvent_Remove
 .L_080cd38e:
 	movs r2, #0
 	str r2, [sp, #28]
@@ -589,7 +589,7 @@ Func_080ccec8:
 	ldr r1, [sp, #0]
 	movs r3, #0
 	strb r3, [r1]
-	bl Func_080d2350
+	bl EventRuntime_End
 	ldr r2, [sp, #28]
 	adds r0, r2, #0
 	cmp r2, #0
@@ -640,7 +640,7 @@ Func_080ccec8:
 	adds r5, r5, r3
 	mov r0, r11
 	adds r1, r5, #0
-	bl Func_080cdea8
+	bl EventRuntime_RunMessage
 	b .L_080cd546
 .L_080cd416:
 	movs r0, #0
@@ -707,7 +707,7 @@ Func_080ccec8:
 	bl UiWork_SetBusyFlagsFar
 	ldr r1, [r6, #8]
 	mov r0, r11
-	bl Func_080cdea8
+	bl EventRuntime_RunMessage
 	b .L_080cd4d4
 .L_080cd49c:
 	.4byte gPartyState
@@ -732,7 +732,7 @@ Func_080ccec8:
 .L_080cd4c4:
 	.4byte 0x0000137f
 .L_080cd4c8:
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	ldr r3, [r6, #8]
 	mov r0, r11
 	mov lr, r3

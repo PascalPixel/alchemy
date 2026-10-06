@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x08020328: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -13,7 +9,15 @@ Func_08020328:
 	.thumb_func
 Func_08020330:
 	overlay_veneer Func_080237c8
-	.global Func_08020338
+	.global Animation_WaitForTrackEndFar
 	.thumb_func
-Func_08020338:
+Animation_WaitForTrackEndFar:
+.ifdef TLA_EDITION_JA
+	overlay_veneer Animation_WaitForTrackEnd
+.else
+.ifdef TLA_EDITION_EN
+	overlay_veneer Animation_WaitForTrackEnd
+.else
 	overlay_veneer Func_08022f24
+.endif
+.endif

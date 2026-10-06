@@ -1,6 +1,3 @@
-/* resource_3a5: its entry veneers, its listing with maintained code and
-   the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -10,8 +7,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU2.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU3.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SETUP.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/TRAVEL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/STORM.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SAND_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/IMPORT.o"(.text)

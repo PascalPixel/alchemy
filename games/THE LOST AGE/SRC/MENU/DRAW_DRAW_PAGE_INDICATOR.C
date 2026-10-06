@@ -1,6 +1,40 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "DMA.H"
+#include "IO_REG.H"
 
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
+
+void Palette_LightenBankHighlight(s32 bank)
+{
+    u16 *palette = (u16 *)(0x05000000 + (bank << 5));
+    u32 red;
+    u32 green;
+    u32 blue;
+
+    Dma_Set((const void *)0x050001e0, palette, 0x80000010, REG_DMA3);
+    Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+    blue = palette[4] >> 10;
+    green = (palette[4] >> 5) & 31;
+    red = palette[4] & 31;
+    blue += 9;
+    if (blue > 31)
+        blue = 31;
+    green += 9;
+    if (green > 31)
+        green = 31;
+    red += 9;
+    if (red > 31)
+        red = 31;
+    palette[4] = (blue << 10) | (green << 5) | red;
+}
 
 #define PAGE_LABEL_FIRST 49
 #define PAGE_CAP_LEFT 0xf128

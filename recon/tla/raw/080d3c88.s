@@ -93,7 +93,7 @@ UiText_OpenMessageAtObject:
 	cmp r6, #7
 	bgt .L_080d3d82
 	str r6, [sp, #24]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldr r1, [sp, #28]
 	movs r2, #197
@@ -112,7 +112,7 @@ UiText_OpenMessageAtObject:
 	movs r7, #1
 	b .L_080d3d7c
 .L_080d3d66:
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	add r5, sp, #52
 	adds r1, r5, #0
 .L_080d3d6e:
@@ -144,7 +144,7 @@ UiText_OpenMessageAtObject:
 	str r0, [sp, #0]
 	mov r0, r8
 	str r4, [sp, #4]
-	bl Func_08038110
+	bl UiText_GetResourceDimensionsAltFar
 	ldr r3, [sp, #40]
 	ldr r4, [sp, #4]
 	lsrs r2, r3, #31
@@ -252,7 +252,7 @@ UiText_OpenMessageAtObject:
 	mov r11, r2
 	str r3, [sp, #8]
 	str r7, [sp, #0]
-	bl Func_08038110
+	bl UiText_GetResourceDimensionsAltFar
 	ldr r2, [sp, #44]
 	mov r8, r10
 	subs r1, r2, #5

@@ -78,7 +78,7 @@ Func_0817ea58:
 	movs r0, #1
 	ldr r1, .L_0817eb1c
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r4, #160
 	lsls r4, r4, #19
 	movs r3, #0
@@ -92,7 +92,7 @@ Func_0817ea58:
 .L_0817eb10:
 	.4byte Func_08143000
 .L_0817eb14:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817eb18:
 	.4byte gCameraSceneParameters
 .L_0817eb1c:
@@ -2762,7 +2762,7 @@ Func_0817ea58:
 	cmp r3, r4
 	blt .L_0817ffc0
 	str r3, [r5, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #124]
 	movs r2, #128
 	lsls r2, r2, #10
@@ -3753,7 +3753,7 @@ Func_0817ea58:
 	bl Resource_LoadIntoFreeSlot
 	ldr r7, [sp, #128]
 	str r0, [r7, #84]
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -3841,7 +3841,7 @@ Func_0817ea58:
 .L_081807dc:
 	.4byte 0xffffc000
 .L_081807e0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081807e4:
 	.4byte gCameraSceneParameters
 .L_081807e8:

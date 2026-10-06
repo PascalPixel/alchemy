@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_080cc9fc
 	.thumb_func
 Func_080cc9fc:
@@ -368,7 +369,7 @@ Func_080cc9fc:
 	ldr r4, [sp, #0]
 	b .L_080ccad6
 .L_080ccca2:
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	add sp, #12
 	pop {r3, r5, r6, r7}

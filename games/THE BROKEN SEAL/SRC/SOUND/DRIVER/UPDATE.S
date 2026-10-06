@@ -1,18 +1,5 @@
-@ Sound driver update routines. 0x080f9c44 counts down a frame counter and,
-@ when it expires, restarts the two sound DMA channels; 0x080f9c90 is the
-@ per-frame update of one music player. They branch on flags from subs across
-@ a store (0x080f9c58) and from shifts (0x080f9c64), return before building a
-@ frame, save the high registers in ascending order and unwind with one
-@ pop {r0-r7}. Neither approved compiler emits these. Every TBS and TLA
-@ edition has this code, differing only in one relocated literal.
-@ The zero halfwords of alignment at 0x080f9c86 and 0x080f9eea never run and
-@ carry no credit.
-@ credit: library — TBS/TLA common sound driver update and timer module
 .syntax unified
 	.thumb
-	.global Func_080f9c44
-	.thumb_func
-Func_080f9c44:
 	.global Sound_TickDmaRestartTimer
 	.thumb_func
 Sound_TickDmaRestartTimer:
@@ -59,13 +46,8 @@ LiteralPool_080f9c88:
 AlchemyUncreditedEnd_080f9c86:
 	.4byte 0x040000bc
 	.4byte 0x84400004
-@ 関数ポインタから到達する開始点を復元した関数。
-@ 条件成立時は従来誤認されていた途中位置へ連続して実行する。
 .syntax unified
 	.thumb
-	.global Func_080f9c90
-	.thumb_func
-Func_080f9c90:
 	.global MusicPlayer_Tick
 	.thumb_func
 MusicPlayer_Tick:
@@ -332,7 +314,7 @@ MusicPlayer_Tick:
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L33
-	bl	Func_080f9f3c
+	bl	SoundDriver_CalculateStereoVolume
 	cmp	r6, #0
 	beq.n	.L33
 	ldrb	r0, [r4, #29]

@@ -264,7 +264,7 @@ Func_0810abf0:
 	subs r0, r3, r0
 	bl Func_0810b1b4
 	negs r0, r5
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	bl Func_08109188
 	mov r0, r8
 	movs r1, #1

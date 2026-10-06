@@ -1,48 +1,58 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "CALL.H"
+#include "B5_CONTEXT.H"
 
 extern u8 *gWork;
 
-/* The game state read as halfwords: 225 is the entrance. */
 extern s16 Data_02000240[];
 
-/* Frames actor 13 has idled; ACTOR13_IDLE.C owns it. */
-extern s32 GomaHashira_Actor13Frames;
 
-/* The scene's tables, laid out after the code. */
-extern u8 GomaHashira_Scripts[];
-extern u8 GomaHashira_Messages[];
-extern u8 GomaHashira_Actors[];
 
-/* Imports this overlay shares with the staged-actor module, by its names. */
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();
-void FieldScene_RunPillarSequence(void);
-void GomaHashira_DriveActor13Idle(void);
 
 enum StagedPlacementMessage {
     MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
 };
 
-/* Sets bits in an actor's flag byte. */
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 struct ScriptTable {
     u8 *script[3];
 };
 
-/* The three scripts a pillar effect may play. */
-extern struct ScriptTable GomaHashira_PillarScripts;
-void SceneEffect_AdvancePositionByAxisMode(u8 *o);
+struct PillarEffect {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[0x1c];
+    s32 rate_first;
+    s32 rate_second;
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+    u8 unknown_44[0x22];
+    s16 plane;
+};
+
+enum PillarEffectPlane {
+    PLANE_XY = 0,
+    PLANE_XZ = 1,
+    PLANE_YZ = 2
+};
+
 
 struct Sprite389 {
     u8 pad[9];
@@ -51,9 +61,6 @@ struct Sprite389 {
     u8 hi : 4;
 };
 
-/*
- * The pillar effect's per-frame step and the small actor helpers before it.
- */
 void ConfigureActorThirteenSceneParameters(void)
 {
     Actor_ShowEmote(13, 256, 0);
@@ -61,28 +68,28 @@ void ConfigureActorThirteenSceneParameters(void)
     BattleFx_SetPhaseRequest(12, 40);
 }
 
-void SceneEffect_AdvancePositionByAxisMode(u8 *o)
+void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect)
 {
-    s16 v = *(s16 *)(o + 102);
+    s16 plane = effect->plane;
 
-    switch (v) {
-    case 0:
-        *(s32 *)(o + 8) += *(s32 *)(o + 48);
-        *(s32 *)(o + 56) = *(s32 *)(o + 8);
-        *(s32 *)(o + 12) += *(s32 *)(o + 52);
-        *(s32 *)(o + 60) = *(s32 *)(o + 12);
+    switch (plane) {
+    case PLANE_XY:
+        effect->x += effect->rate_first;
+        effect->target_x = effect->x;
+        effect->y += effect->rate_second;
+        effect->target_y = effect->y;
         break;
-    case 1:
-        *(s32 *)(o + 8) += *(s32 *)(o + 48);
-        *(s32 *)(o + 56) = *(s32 *)(o + 8);
-        *(s32 *)(o + 16) += *(s32 *)(o + 52);
-        *(s32 *)(o + 64) = *(s32 *)(o + 16);
+    case PLANE_XZ:
+        effect->x += effect->rate_first;
+        effect->target_x = effect->x;
+        effect->z += effect->rate_second;
+        effect->target_z = effect->z;
         break;
-    case 2:
-        *(s32 *)(o + 12) += *(s32 *)(o + 48);
-        *(s32 *)(o + 60) = *(s32 *)(o + 12);
-        *(s32 *)(o + 16) += *(s32 *)(o + 52);
-        *(s32 *)(o + 64) = *(s32 *)(o + 16);
+    case PLANE_YZ:
+        effect->y += effect->rate_first;
+        effect->target_y = effect->y;
+        effect->z += effect->rate_second;
+        effect->target_z = effect->z;
         break;
     }
 }
@@ -93,9 +100,6 @@ s32 OverlayObject_ApplyValue15(s32 actor)
     return 0;
 }
 
-/* Spawn a pillar effect object: flags pick the script (low nibble) and the
- * palette (bits 16-19); the high half of layer picks the sprite layer, 0 to
- * copy the leader's, and its low half is stored at +102. */
 void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
 {
     struct ScriptTable table;
@@ -133,10 +137,6 @@ void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flag
     }
 }
 
-/*
- * The scene tables, actor 8's column switch and the task that spawns
- * pillar effects while the pillar moves.
- */
 u8 *SceneData_GetScriptTable(void) { return GomaHashira_Scripts; }
 
 s32 SceneData_ReturnZero(void) { return 0; }
@@ -147,13 +147,13 @@ u8 *SceneData_GetActorTable(void) { return GomaHashira_Actors; }
 
 void ConfigureSceneForActorEightColumn(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     s32 x;
     s32 a4;
     s32 a5;
 
-    actor = (u8 *)Object_GetById(8);
-    x = *(s32 *)(actor + 8);
+    actor = Object_GetById(8);
+    x = actor->x.fixed;
     if (x < 0)
         x += 0xfffff;
     x >>= 20;
@@ -162,12 +162,12 @@ void ConfigureSceneForActorEightColumn(void)
         a4 = 18;
         a5 = 6;
         Map_CopyCellAttributeRect(18, 40, 6, 3, a4, a5);
-        GameFlag_Clear(0x302);
+        Engine_GameFlagClear(0x302);
     } else {
         a4 = 18;
         a5 = 6;
         Map_CopyCellAttributeRect(24, 40, 6, 3, a4, a5);
-        GameFlag_Set(0x302);
+        Engine_GameFlagSet(0x302);
     }
     Engine_EventEnd();
 }
@@ -178,7 +178,7 @@ void FieldScene_RunPrimarySequence(void)
     s32 flags;
     s32 a0;
     s32 a2;
-    s32 rec4;
+    struct FieldActor *rec4;
     s32 rec7a, reca, v1a, v2a, v3a, ta, ua, na;
     s32 rec7b, recb, v1b, v2b, v3b, tb, ub, nb;
 
@@ -188,7 +188,7 @@ void FieldScene_RunPrimarySequence(void)
         v1a = Engine_RandomNext();
         a0 = *(s32 *)(rec7a + 8);
         a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
-        rec4 = (u8 *)Object_GetById(9);
+        rec4 = Object_GetById(9);
         reca = (s32)Object_GetById(9);
         a2 = *(s32 *)(reca + 16);
         a2 = a2 + 0x60000;
@@ -199,16 +199,16 @@ void FieldScene_RunPrimarySequence(void)
         na = na - ua;
         na = na << 3;
         na = na + ta;
-        v3a = Random_Next();
+        v3a = Engine_RandomNext();
         na = -na;
-        Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
+        Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
             rec7b = (u8 *)Object_GetById(9);
             v1b = Engine_RandomNext();
             a0 = *(s32 *)(rec7b + 8);
             a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
-            rec4 = (u8 *)Object_GetById(9);
+            rec4 = Object_GetById(9);
             recb = (s32)Object_GetById(9);
             a2 = *(s32 *)(recb + 16);
             a2 = a2 + 0x60000;
@@ -219,9 +219,9 @@ void FieldScene_RunPrimarySequence(void)
             nb = nb - ub;
             nb = nb << 3;
             nb = nb + tb;
-            v3b = Random_Next();
+            v3b = Engine_RandomNext();
             nb = -nb;
-            Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
+            Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
         }
     }
 }

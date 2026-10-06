@@ -1,8 +1,3 @@
-/* resource_3bf: its entry veneers, its listing with maintained code and
-   the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code, then the
-   soft-float members its double arithmetic pulls in; their NaN constant
-   sits in the rodata where the ROM holds it. */
 EXTERN(_call_via_r0)
 SECTIONS
 {

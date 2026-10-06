@@ -1,4 +1,7 @@
+#include "RESOURCE.H"
+#include "VRAM_TAB.H"
 #include "IWRAM_CALL.H"
+#include "DMA.H"
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
 {
@@ -6,8 +9,8 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
     s32 offset;
     void *destination;
 
-    entry = &gVramBlockCache[slot];
-    if (slot > 95)
+    entry = &ResourceTableEntries[slot];
+    if (slot >= VRAM_CACHE_ENTRY_COUNT)
         return 0;
     if (size > 0x2000)
         return 0;

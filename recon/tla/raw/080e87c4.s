@@ -58,7 +58,7 @@ Func_080e87c4:
 	ldr r0, .L_080e8984
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	movs r2, #128
 	movs r3, #128
 	lsls r3, r3, #19
@@ -216,9 +216,9 @@ Func_080e87c4:
 .L_080e8984:
 	.4byte 0x06002000
 .L_080e8988:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080e898c:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_080e8990:
 	.4byte 0x000001ea
 .L_080e8994:

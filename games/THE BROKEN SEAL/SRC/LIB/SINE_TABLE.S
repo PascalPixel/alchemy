@@ -1,11 +1,6 @@
-@ Quarter-wave sine table of TRIG.S: 256 halfwords, entry i being
-@ sin(i / 256 of a quarter turn) * 65536, rounded (0 to 65535). TRIG.S reads
-@ it with add r3, pc, #12; ldrh r0, [r3, r1]. A data table carries no
-@ credit.
 .syntax unified
 	.section .rodata,"a",%progbits
 	.thumb
-@ 四分円正弦表。各項は正弦値を六五五三六倍して四捨五入した値。
 	.align	2
 	.global Data_08002344
 Data_08002344:

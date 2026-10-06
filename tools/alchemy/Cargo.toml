@@ -1,13 +1,11 @@
 [package]
 name = "alchemy"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
 fdeflate = "0.3"
 png = "0.17"
-zopfli = { version = "0.8", default-features = false, features = ["std", "zlib"] }
-psynergy = { path = "../psynergy" }
 ags = { path = "../ags" }
 regex = "1"
 fs2 = "0.4"

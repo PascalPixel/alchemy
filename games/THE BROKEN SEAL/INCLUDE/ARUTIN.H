@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* Timed actor state shared by the mountain scene and its update callback. */
 struct SceneMotion {
     u8 unk_00[12]; s32 y; u8 unk_10[4]; s32 ground;
     u8 unk_18[16]; s32 velocity; u8 unk_2c[47]; u8 state;

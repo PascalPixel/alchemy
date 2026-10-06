@@ -1,7 +1,3 @@
-@ Import veneers after the HAIDIA_SUKURETA overlay's code: fixed 8-byte
-@ veneers through which the overlay calls main-image code, each loading its
-@ target into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — HAIDIA_SUKURETA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -121,7 +117,7 @@ Object_SetTargetAndCallback:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -169,7 +165,7 @@ Engine_CameraWaitForMove:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -177,7 +173,7 @@ BattleFx_SetWeightedResult:
 	.global Effect_SoundAndFlash
 	.thumb_func
 Effect_SoundAndFlash:
-	overlay_veneer Func_0808a2c0
+	overlay_veneer FieldFx_StartGroundParticlesFar
 	.global BattleFx_StartTwelveFrameBlend
 	.thumb_func
 BattleFx_StartTwelveFrameBlend:
@@ -189,15 +185,15 @@ Engine_ColorBufferApplySource:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Audio_PlayCueFromEventWork
 	.thumb_func
 Audio_PlayCueFromEventWork:

@@ -353,7 +353,7 @@ Func_080457d0:
 	ldr r2, .L_08045b00
 	movs r0, #2
 	movs r1, #136
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #216
 	movs r2, #224
 	lsls r0, r0, #1
@@ -426,13 +426,13 @@ Func_080457d0:
 .L_08045b00:
 	.4byte Func_08045780
 .L_08045b04:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08045b08:
 	.4byte Data_0805e9c4
 .L_08045b0c:
 	.4byte 0xffffff00
 .L_08045b10:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08045b14:
 	ldr r0, [sp, #16]
 	movs r7, #0
@@ -1198,7 +1198,7 @@ Func_080457d0:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	ldr r1, .L_0804612c
 	ldr r0, .L_08046130
 	ldrh r3, [r0]

@@ -1,14 +1,9 @@
-@ Far-call stub table heading the blank-display runner at 0x080f4000: fixed 8-byte
-@ veneers, each loading its target into r4 and branching, which the calling
-@ convention permits. No compiler emits them; the shared overlay veneer macro
-@ builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_BlankRunTable
 FarCall_BlankRunTable:
-	.global Func_080f4000
+	.global Runtime_BlankDisplayAndRunFar
 	.thumb_func
-Func_080f4000:
+Runtime_BlankDisplayAndRunFar:
 	overlay_veneer Runtime_BlankDisplayAndRun

@@ -1,124 +1,123 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "RENDER_INPUT.H"
+#include "WINDOW.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
+#include "VRAM_BLOCK.H"
 #include "RESOURCE.H"
 
-void *RenderOutput_AcquireFree(void);
-void Resource_ResetEntry(u32);
-s32 RenderOutput_AppendToList(void *, void *);
-
-struct TableEntry {
-    u16 unused;
-    u16 value;
-};
-
 struct RenderOutput *RenderOutput_Create(
-    s32 arg0,
-    s32 arg1,
-    struct RenderInput *arg2,
-    s32 arg3,
-    s32 arg4)
+    s32 slot,
+    s32 flags,
+    struct RenderInput *input,
+    s32 offset_x,
+    s32 offset_y)
 {
+    /* FAKEMATCH: the ignored scalar-return call keeps mov after the stores; direct void-call forms reorder it. */
     s32 x;
     struct RenderOutput *output;
     s32 y;
 
     output = RenderOutput_AcquireFree();
     if (output == NULL) {
-        Resource_ResetEntry((u32)arg0);
+        Resource_ResetEntry(slot);
         return 0;
     }
-    x = arg3 + (arg2->x * 8) + 8;
-    y = arg4 + (arg2->y * 8) + 8;
+    x = offset_x + (input->x * 8) + 8;
+    y = offset_y + (input->y * 8) + 8;
     x &= 0x1ff;
     y &= 0xff;
-    /* Xをbit16～24、Yをbit0～7へ置き、arg1のフラグを重ねる。 */
-    output->packed = (x << 16) | y | arg1;
+    output->packed = (x << 16) | y | flags;
     output->table.value =
-        ((struct TableEntry *)Ram_VramBlockCache)[arg0].value >> 5;
+        ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;
     output->sentinel = 0xff;
-    output->zero = 0;
+    output->next = 0;
     output->x = x;
-    output->y = (s16)y;
-    output->index = (s8)arg0;
-    output->one4 = 1;
-    output->one5 = 1;
-    RenderOutput_AppendToList(arg2, output);
+    output->y = y;
+    output->index = slot;
+    output->kind = 1;
+    output->active = 1;
+    ((s32 (*)(struct RenderOutputList *, struct RenderOutput *))
+        RenderOutput_AppendToList)((struct RenderOutputList *)input, output);
     return output;
 }
 
-s32 Resource_LoadByMode(s32 mode, s32 value);
-void *RenderOutput_CreateFromResource(
-    s32 arg0,
-    s32 arg1,
-    struct RenderInput *arg2,
-    s32 arg3,
-    s32 arg4)
+struct RenderOutput *RenderOutput_CreateFromResource(
+    s32 mode,
+    s32 resource,
+    struct RenderInput *input,
+    s32 x,
+    s32 y)
 {
     s32 no;
 
-    no = Resource_LoadByMode(arg0, arg1);
+    no = Resource_LoadByMode(mode, resource);
     if (no < 0) {
         return NULL;
     }
-    return RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
+    return RenderOutput_Create(no, 0x40000000, input, x, y);
 }
 
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-void *RenderOutput_CreateLoaded(
-    s32 arg0,
-    s32 arg1,
-    struct RenderInput *arg2,
-    s32 arg3,
-    s32 arg4)
+struct RenderOutput *RenderOutput_CreateLoaded(
+    s32 code,
+    s32 layers,
+    struct RenderInput *input,
+    s32 x,
+    s32 y)
 {
     s32 no;
-    void *result;
+    struct RenderOutput *result;
 
     no = Resource_FindFreeEntry();
     result = NULL;
     if (no != 0x60) {
-        UiIcon_CopyResourceToSlot(arg0, arg1, no);
-        result = RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
+        UiIcon_CopyResourceToSlot(code, layers, no);
+        result = RenderOutput_Create(no, 0x40000000, input, x, y);
     }
     return result;
 }
 
-void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-void *RenderOutput_CreateWithTransform(
-    s32 arg0,
-    struct RenderInput *arg1,
-    s32 arg2,
-    s32 arg3)
+struct RenderOutput *RenderOutput_CreateWithTransform(
+    s32 icon,
+    struct RenderInput *input,
+    s32 x,
+    s32 y)
 {
     s32 count;
     s32 unused;
-    u8 *result;
+    struct RenderOutput *result;
 
     count = Resource_FindFreeEntry();
     if (count == 0x60) {
         return NULL;
     }
-    Ui_BuildPairedPatternsToSlot(arg0, 1, &count, &unused, 1);
-    result = RenderOutput_Create(count, 0x40000000, arg1, arg2, arg3);
-    result[15] = 251;
+    Ui_BuildPairedPatternsToSlot(icon, 1, &count, &unused, 1);
+    result = RenderOutput_Create(count, 0x40000000, input, x, y);
+    result->sentinel = 251;
     return result;
 }
 
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
-void *RenderOutput_CreateFromTable(
+struct RenderOutput *RenderOutput_CreateFromTable(
     s32 table_entry,
     struct RenderInput *input,
     s32 x,
     s32 y)
 {
     s32 slot;
-    void *output;
+    struct RenderOutput *output;
 
     slot = Resource_FindFreeEntry();
     output = NULL;
     if (slot != 0x60) {
-        RenderResource_LoadTableEntry(table_entry, 0, (void *)slot);
+        RenderResource_LoadTableEntry(table_entry, 0, slot);
         output = RenderOutput_Create(slot, 0x40000000, input, x, y);
     }
     return output;

@@ -47,13 +47,13 @@ Func_080de21c:
 	ldr r3, [r6, #8]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl Func_080ebec8
+	bl EffectSlot_Initialize
 	adds r0, r5, #0
 	ldr r1, .L_080de2f4
-	bl Func_080ebeb4
+	bl EffectSlot_SetCallback
 	adds r0, r5, #0
 	movs r1, #7
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	ldr r0, [r5]
 	movs r1, #9
 	bl Animation_ApplyChildValuesToRecordFar
@@ -339,7 +339,7 @@ Func_080de21c:
 	bne .L_080de4fa
 	ldr r0, [sp, #8]
 	mov r1, r10
-	bl Func_08020298
+	bl ScriptObject_CheckOverlapFar
 	cmp r0, #0
 	bne .L_080de4fa
 	ldr r4, [sp, #8]
@@ -369,7 +369,7 @@ Func_080de21c:
 	ldrsh r1, [r3, r2]
 	movs r4, #26
 	ldrsh r2, [r3, r4]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080de520:
 	movs r0, #10
 	bl WaitFrames

@@ -1,15 +1,3 @@
-/*
- * Draft: Object_SetTargetAndCallback, ported from its ☀️ twin; it goes
- * before ObjectMotion_StepAngle in SRC/FIELD/COMMON/OBJECT/VISUAL_ATTRIBUTES.C.
- * The listing loads the zero it stores at 0x59 from a literal pool
- * (ldr r1, =0) ahead of the acceleration copy and places the pool after a
- * branch; this C builds the zero with movs after the copies.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 

@@ -1,12 +1,3 @@
-@ Loaders that run the backup fade kernels and the brighten kernel from the
-@ stack. Each reads {DMA3 register base, kernel address, control} from its
-@ own PC-relative block with add r4, pc and ldmia r4, {r4, r5, r7}, reserves
-@ exactly the kernel's size on the stack, has DMA3 copy the kernel there with
-@ stmia r4!, {r5, r6, r7} and calls the copy. Neither approved compiler emits
-@ an add rd, pc address form; both load constants one ldr at a time.
-@ It stays disassembly without credit: it calls through lr with the second
-@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
-@ an instruction.
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleThreeQuarters

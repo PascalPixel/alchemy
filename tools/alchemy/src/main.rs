@@ -1,35 +1,85 @@
 use std::process::ExitCode;
 
+mod adopt;
+mod adopt_into;
+mod assembly {
+    pub mod addresses;
+}
 mod bootstrap;
 mod build;
 mod build_rom;
 mod build_text;
+mod c_items;
+mod cache;
+mod camelotize;
 mod check;
 mod compiler;
 mod coverage;
-mod disasm;
+mod decode;
+mod deps;
+mod deps_command;
+mod diff;
 mod edition;
-mod format;
+mod elf;
+mod fakematch;
 mod gate;
-mod overlay;
-mod permute;
-mod raw;
-mod recovery;
+mod integrate;
+mod keep;
+mod label;
+mod ld_map;
+mod merge;
+mod objects;
+mod process;
+mod queues;
+mod show;
+mod similar;
+mod similar_command;
+mod sizes;
 mod targets;
+mod thumb;
 mod verify;
+mod worst;
+mod worst_command;
 
-const USAGE: &str = "usage: alchemy <command> [args]\n\
-  bootstrap             install or validate the persistent compiler toolchain\n\
-  extract OWNER         extract reference bytes for psynergy decompile\n\
-  inspect OWNER         resolve calls and symbols; --asm shows annotated instructions\n\
-  build                 build compilers, maintained source, assembly and ROMs\n\
-  verify                the landing gate: every make verify gate in waves, one line each\n\
-  coverage              publish README progress and both figures from verified builds\n\
-  raw                   inspect or rebuild ROM-derived unresolved assembly\n\
-  permute DRAFT         search equivalent C for a draft function against its listing\n\
-  drafts [DRAFT...]     compile and score every draft against its listing\n\
-  check                 run repository contract checks\n\
-  format                format native game data and check uppercase filenames";
+const USAGE: &str = r#"usage: alchemy <command> [args]   (both games, all twelve editions)
+Run any command with --help for its options. The binary acts on the
+checkout it runs in.
+
+Set up and build
+  bootstrap     install or validate the pinned compiler toolchain
+  build         compilers, maintained source, assembly and ROMs
+  verify        every gate of make verify, make land and the commit hooks
+  check         one repository contract check
+
+Choose what to match
+  deps          what not-yet-C code calls and blocks: what unblocks the most
+  similar       each not-yet-C function's nearest C twins in either game
+
+Match one function
+  diff          a C draft against the listing it would replace
+  sizes         the structs a draft sees, and the locals that fill a frame gap
+  show          a built function beside the reference ROM
+  adopt         the C into its module (--into) and out of all scaffolding
+  label         name English-only scaffold data in the other editions
+
+Check the whole build
+  objects       what differs from the reference ROM, object or placement
+  progress      DONE in every edition from the verified linker maps
+
+Camelotize
+  worst         maintained C ranked by how mechanical it reads
+  fakematch     every FAKEMATCH tag by device and family, largest first
+  camelotize    mechanical rewrites: actors, events, registers,
+                declarations, barriers
+  keep          keep only the edits that leave all twelve editions identical
+
+Work in parallel
+  queues        split not-yet-C work into queues that cannot collide
+  integrate     merge branches, reconcile linker scripts, build all twelve
+  merge-driver  git merge drivers for scaffolds and linker scripts
+
+Report for people (nothing else reads it)
+  figure        PROGRESS.png and PROGRESS_CHART.png from the verified count"#;
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -43,13 +93,28 @@ fn main() -> ExitCode {
         "bootstrap" => result(bootstrap::run(rest)),
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
-        "coverage" => make_target(command, rest),
-        "raw" => result(raw::run(rest)),
-        "permute" => result(permute::run(rest)),
-        "drafts" => result(permute::drafts::run(rest)),
         "check" => check::entry(rest),
-        "format" => result(format::run(rest)),
-        "extract" | "inspect" => recovery_command(command, rest),
+        "progress" => {
+            let mut args = vec!["progress".to_string()];
+            args.extend(rest.iter().cloned());
+            check::entry(&args)
+        }
+        "deps" => deps_command::entry(rest),
+        "adopt" => result(adopt::run(rest)),
+        "label" => result(label::run(rest)),
+        "queues" => result(queues::run(rest)),
+        "integrate" => result(integrate::run(rest)),
+        "keep" => result(keep::run(rest)),
+        "diff" => result(diff::run(rest)),
+        "merge-driver" => result(merge::run(rest)),
+        "similar" => similar_command::entry(rest),
+        "sizes" => result(sizes::run(rest)),
+        "worst" => result(worst_command::run(rest)),
+        "fakematch" => result(fakematch::run(rest)),
+        "figure" => result(coverage::figures::run(rest)),
+        "camelotize" => result(camelotize::run(rest)),
+        "objects" => result(objects::run(rest)),
+        "show" => result(show::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS
@@ -59,49 +124,6 @@ fn main() -> ExitCode {
             ExitCode::from(2)
         }
     }
-}
-
-fn make_target(target: &str, arguments: &[String]) -> ExitCode {
-    if arguments == ["--help"] || arguments == ["-h"] {
-        if target == "coverage" {
-            println!(
-                "usage: alchemy coverage\nPublishes README progress and both figures from each game's six verified builds."
-            );
-        } else {
-            println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");
-        }
-        return ExitCode::SUCCESS;
-    }
-    if !arguments.is_empty() {
-        eprintln!("usage: alchemy {target}");
-        return ExitCode::from(2);
-    }
-    match std::process::Command::new("make")
-        .current_dir(crate::compiler::routing::root())
-        .arg(target)
-        .status()
-    {
-        Ok(status) if status.success() => ExitCode::SUCCESS,
-        Ok(_) => ExitCode::FAILURE,
-        Err(error) => result(Err(format!("cannot run make {target}: {error}"))),
-    }
-}
-
-fn recovery_command(command: &str, arguments: &[String]) -> ExitCode {
-    if arguments == ["--help"] || arguments == ["-h"] {
-        let usage = match command {
-            "extract" => "extract OWNER --out out/FILE [--span BYTES]",
-            "inspect" => "inspect OWNER [--span BYTES] [--asm]",
-            _ => return recovery::cli::entry(&["--help".to_string()]),
-        };
-        println!(
-            "usage: alchemy {usage}\nOWNER is a main-ROM address or resource-qualified address."
-        );
-        return ExitCode::SUCCESS;
-    }
-    let mut args = vec![command.to_string()];
-    args.extend_from_slice(arguments);
-    recovery::cli::entry(&args)
 }
 
 fn result(value: Result<(), String>) -> ExitCode {

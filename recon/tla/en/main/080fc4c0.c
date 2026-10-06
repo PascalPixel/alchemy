@@ -2,7 +2,6 @@
 #include "FIXED_MATH.H"
 extern u8 Data_03001f2c[];
 
-/* menu/item_menu/page_result.c */
 s32 Owner_GetStateFar(s32);
 s32 ItemMenu_Count(s32 owner);
 

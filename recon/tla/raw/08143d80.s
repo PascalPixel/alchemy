@@ -20,7 +20,7 @@ Func_08143d80:
 	ldrh r1, [r5]
 	movs r0, #2
 	movs r2, #0
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	ldr r2, .L_08143df0
 	movs r1, #0
 	movs r3, #32
@@ -60,7 +60,7 @@ Func_08143d80:
 .L_08143dec:
 	.4byte 0x000000ff
 .L_08143df0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08143df4:
 	.4byte IwramClearWords
 .L_08143df8:

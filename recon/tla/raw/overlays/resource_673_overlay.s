@@ -1200,7 +1200,7 @@ Func_0200094c:
 	cmp r5, #0
 	beq .L_02008998
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Func_0200114c
@@ -1222,7 +1222,7 @@ Func_0200094c:
 .L_020089b0:
 	.4byte gPartyState
 .L_020089b4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020089b8:
 	.4byte Data_0200128c
 	.section .text.x020089bc,"ax",%progbits

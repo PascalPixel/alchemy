@@ -1,3 +1,14 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -9,48 +20,23 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 extern void *gWorkSlot[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(s32 *position);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
-    s32 slot, s32 delay);
 
-extern u16 BattleFx_PuffCells[];
-extern u8 BattleFx_PuffSizes[];
-extern u8 RisingMotes_ColumnSpots[];
-extern u8 RisingMotes_Timings[];
-extern u8 RisingMotes_MoteWidths[];
-extern u8 RisingMotes_MoteHeights[];
-extern u16 RisingMotes_MoteCells[];
-extern u16 RisingMotes_ColumnCells[];
-extern u8 RisingMotes_ColumnHeights[];
-extern u8 RisingMotes_EmberWidths[];
-extern u8 RisingMotes_EmberHeights[];
-extern u16 RisingMotes_EmberCells[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Per variant: how many motes circle, how many columns rise, and the frame
-   on which the motes fly up. */
 enum {
     RISE_MOTES,
     RISE_COLUMNS,
     RISE_FRAME
 };
 
-/* Battle effect: motes circle down around the middle of the screen while
-   columns rise one by one; on the variant's frame the motes shoot upwards,
-   embers scatter, and puffs open over the band the motes and embers span. */
 void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -58,7 +44,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
-    void *sheet;
+    u8 *sheet;
     DrawRectangle *draw;
     s32 count;
     s32 ymin;
@@ -78,7 +64,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
     BattleFx_FetchRectangleBlitters(0, draw = callbacks);
 
@@ -92,7 +78,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (work->effect->side == 1)
         REG_BG2X = -0x7000;
 
@@ -136,7 +122,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                         EffectPosition_ApplyBaseAndYOffset(record, pos = &screen);
                         pos->x = (pos->x >> 17) + 64;
                         pos->y = HI(pos->y) + 60;
-                        draw[1](canvas, (u8 *)work + RisingMotes_MoteCells[slot],
+                        draw[1](canvas, work->sheet + RisingMotes_MoteCells[slot],
                             pos->x - ((width = RisingMotes_MoteWidths[slot]) >> 1),
                             pos->y - ((height = RisingMotes_MoteHeights[slot]) >> 1),
                             width, height);
@@ -170,12 +156,12 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                     u32 height;
 
                     if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] - 7) {
-                        draw[1](canvas, (u8 *)work + RisingMotes_ColumnCells[image],
+                        draw[1](canvas, work->sheet + RisingMotes_ColumnCells[image],
                             RisingMotes_ColumnSpots[i * 2],
                             RisingMotes_ColumnSpots[i * 2 + 1] - (height = RisingMotes_ColumnHeights[image]),
                             32, height);
                     } else {
-                        callbacks[0](canvas, (u8 *)work + RisingMotes_ColumnCells[image],
+                        callbacks[0](canvas, work->sheet + RisingMotes_ColumnCells[image],
                             RisingMotes_ColumnSpots[i * 2],
                             RisingMotes_ColumnSpots[i * 2 + 1] - (height = RisingMotes_ColumnHeights[image]),
                             32, height);
@@ -202,7 +188,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                 if (ember->variant >= 0) {
                     s32 slot = i % 8;
 
-                    draw[1](canvas, (u8 *)work + RisingMotes_EmberCells[slot],
+                    draw[1](canvas, work->sheet + RisingMotes_EmberCells[slot],
                         HI(ember->x), HI(ember->y),
                         RisingMotes_EmberWidths[slot], RisingMotes_EmberHeights[slot]);
                     ember->x += ember->velocity_x;
@@ -228,7 +214,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                 if (ymax == ymin)
                     puff->velocity_y = ymin << 16;
                 else
-                    puff->velocity_y = (Random16() % (u32)(ymax - ymin) + ymin) << 16;
+                    puff->velocity_y = (Random16() % (ymax - ymin) + ymin) << 16;
                 puff->variant = (Random16() & 15) + 20;
             }
         }
@@ -242,7 +228,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                     s32 image = (17 - puff->variant) / 2;
                     u32 size;
 
-                    draw[1](canvas, (u8 *)sheet + BattleFx_PuffCells[image],
+                    draw[1](canvas, sheet + BattleFx_PuffCells[image],
                         HI(puff->velocity_x) - ((size = BattleFx_PuffSizes[image]) >> 1),
                         HI(puff->velocity_y) - (size >> 1) - drop, size, size);
                 }
@@ -251,7 +237,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                     && frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35) {
                     puff->variant = 17;
                     puff->velocity_x = (Random16() & 127) << 16;
-                    puff->velocity_y = (Random16() % (u32)(ymax - ymin) + ymin) << 16;
+                    puff->velocity_y = (Random16() % (ymax - ymin) + ymin) << 16;
                 }
             }
         }
@@ -261,6 +247,6 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

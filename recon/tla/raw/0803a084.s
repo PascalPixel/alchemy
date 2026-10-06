@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a084
+	.global UiWindow_DrawFrame
 	.thumb_func
-Func_0803a084:
+UiWindow_DrawFrame:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -40,7 +40,7 @@ Func_0803a084:
 	b .L_0803a1ae
 .L_0803a0c4:
 	adds r3, r7, #0
-	bl Func_08041abc
+	bl UiWindow_ClearTileAttributesInRect
 	mov r2, r11
 	ldrb r3, [r2, #4]
 	cmp r3, #0
@@ -62,7 +62,7 @@ Func_0803a084:
 	adds r0, r5, #0
 	mov r2, r10
 	ldr r1, .L_0803a110
-	bl Func_0803a054
+	bl Memory_FillHalfwordsDma
 	mov r2, r11
 	ldrb r3, [r2, #4]
 	adds r5, r0, #0
@@ -106,7 +106,7 @@ Func_0803a084:
 	adds r0, r5, #0
 	ldr r1, .L_0803a150
 	mov r2, r10
-	bl Func_0803a054
+	bl Memory_FillHalfwordsDma
 	b .L_0803a154
 	.2byte 0x0000
 .L_0803a14c:
@@ -142,7 +142,7 @@ Func_0803a084:
 	adds r0, r5, #0
 	mov r2, r10
 	ldr r1, .L_0803a1a0
-	bl Func_0803a054
+	bl Memory_FillHalfwordsDma
 	mov r2, r11
 	ldrb r3, [r2, #4]
 	adds r5, r0, #0

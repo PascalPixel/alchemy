@@ -123,7 +123,7 @@ Func_080cb91c:
 .L_080cba12:
 	bl UiWork_InitializeWithResourceCountersFar
 	adds r0, r7, #0
-	bl Func_08020088
+	bl ObjectSystem_InitializeFar
 	bl BattleFx_ResetCounters
 	ldr r6, .L_080cba94
 	ldr r0, [r6, #36]
@@ -131,7 +131,7 @@ Func_080cb91c:
 	.2byte 0xf800
 	mov r1, r8
 	str r0, [r1, #16]
-	bl Func_080cc9c8
+	bl BattleMap_ApplySceneEntranceView
 	ldr r0, [r6, #28]
 	mov lr, r0
 	.2byte 0xf800
@@ -164,7 +164,7 @@ Func_080cb91c:
 	strh r3, [r2]
 	cmp r7, #3
 	bne .L_080cba9c
-	bl Func_08020128
+	bl Map_UpdateCurrentTileBlockFar
 	movs r0, #254
 	lsls r0, r0, #1
 	movs r1, #129
@@ -173,7 +173,7 @@ Func_080cb91c:
 	ldr r0, [r3]
 	adds r3, r5, r1
 	ldr r1, [r3]
-	bl Func_08020130
+	bl WorldMap_LoadGraphicsFar
 	b .L_080cbaaa
 .L_080cba90:
 	.4byte Data_02001000
@@ -186,16 +186,16 @@ Func_080cb91c:
 	ldr r0, [r6, #52]
 	mov lr, r0
 	.2byte 0xf800
-	bl Func_08020120
+	bl Map_ApplyWorkOriginAndSpanFar
 .L_080cbaaa:
 	movs r0, #32
 	adds r0, #255
 	bl GameFlag_ClearBit
-	bl Func_080d1684
+	bl BattleEffect_InitializeBuffers
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r2, #214
 	lsls r2, r2, #1
 	movs r3, #128
@@ -289,7 +289,7 @@ Func_080cb91c:
 	adds r3, r6, r1
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_080c9934
+	bl Field_GetSceneAttributes
 	movs r2, #208
 	adds r5, r0, #0
 	lsls r2, r2, #4
@@ -313,13 +313,13 @@ Func_080cb91c:
 	ldrsb r3, [r6, r3]
 	cmp r3, #2
 	bne .L_080cbbc8
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	str r7, [r0, #24]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 .L_080cbbc8:
 	bl Func_080cb05c
 	movs r0, #2
@@ -369,7 +369,7 @@ Func_080cb91c:
 	mov r2, r9
 	ldr r0, [r1]
 	ldr r1, [r2]
-	bl Func_080d01cc
+	bl DisplayTransition_Start
 	movs r3, #1
 	mov r4, r10
 	strh r3, [r4]
@@ -465,7 +465,7 @@ Func_080cb91c:
 	ldrsh r0, [r2, r4]
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl Func_080d2aa4
+	bl EventRuntime_SetDestination
 	b .L_080cbd14
 .L_080cbcfe:
 	movs r3, #0
@@ -615,7 +615,7 @@ Func_080cb91c:
 	beq .L_080cbe28
 	b .L_080cbf84
 .L_080cbe28:
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	bl Func_080cb82c
 	movs r3, #182
 	lsls r3, r3, #1
@@ -789,7 +789,7 @@ Func_080cb91c:
 	ldr r4, .L_080cc110
 	cmp r3, r4
 	bne .L_080cbfb4
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	movs r0, #1
 	bl Func_080ed2a4
 	ldr r2, .L_080cc114
@@ -813,7 +813,7 @@ Func_080cb91c:
 	ldr r0, .L_080cc118
 	cmp r3, r0
 	bne .L_080cbfd0
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	movs r5, #0
 	movs r6, #1
 .L_080cbfc2:
@@ -832,7 +832,7 @@ Func_080cb91c:
 	ldr r2, .L_080cc11c
 	cmp r0, r2
 	bne .L_080cbfea
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	bl Func_080ed788
 	b .L_080cc0b6
 .L_080cbfea:
@@ -1013,8 +1013,8 @@ Func_080cb91c:
 	cmp r3, #0
 	beq .L_080cc192
 	str r1, [sp, #4]
-	bl Func_080d2260
-	bl Func_080cad9c
+	bl EventRuntime_PrepareCurrentObject
+	bl ObjectTable_Snapshot
 	movs r3, #128
 	ldr r0, [sp, #8]
 	lsls r3, r3, #2
@@ -1057,7 +1057,7 @@ Func_080cb91c:
 	ldrsh r3, [r3, r4]
 	cmp r3, #0
 	beq .L_080cc238
-	bl Func_08038208
+	bl UiTimedNotice_CloseIfActiveFar
 	ldr r3, .L_080cc220
 	movs r0, #128
 	lsls r0, r0, #2
@@ -1142,8 +1142,8 @@ Func_080cb91c:
 	ldrsh r7, [r2, r1]
 	cmp r7, #0
 	beq .L_080cc2c6
-	bl Func_08038208
-	bl Func_080d2260
+	bl UiTimedNotice_CloseIfActiveFar
+	bl EventRuntime_PrepareCurrentObject
 	movs r0, #111
 	bl Audio_PlayCue
 	bl Func_080cb82c
@@ -1185,7 +1185,7 @@ Func_080cb91c:
 	adds r5, #165
 	add r5, r8
 	strb r0, [r5]
-	bl Func_080381e8
+	bl Menu_RunTopSelectionFar
 	movs r3, #1
 	strb r3, [r5]
 	bl Func_080cb05c
@@ -1194,7 +1194,7 @@ Func_080cb91c:
 	movs r0, #131
 	lsls r0, r0, #1
 	bl GameFlag_ClearBit
-	bl Func_080ad2b8
+	bl GameFlag_RefreshLureCapFar
 	mov r4, r10
 	mov r0, r11
 	strh r4, [r0]
@@ -1230,7 +1230,7 @@ Func_080cb91c:
 .L_080cc304:
 	.4byte 0x00003fff
 .L_080cc308:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080cc30c:
 	.4byte gInput
 .L_080cc310:
@@ -1246,7 +1246,7 @@ Func_080cb91c:
 	ands r3, r2
 	lsls r3, r3, #16
 	asrs r6, r3, #16
-	bl Func_08038208
+	bl UiTimedNotice_CloseIfActiveFar
 	cmp r6, #0
 	bne .L_080cc33a
 	bl Func_080cb82c
@@ -1296,7 +1296,7 @@ Func_080cb91c:
 	beq .L_080cc47e
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	bl Func_080cb82c
 	movs r0, #131
 	lsls r0, r0, #1
@@ -1311,7 +1311,7 @@ Func_080cb91c:
 	ands r3, r2
 	cmp r3, #0
 	beq .L_080cc3be
-	bl Func_08038278
+	bl Menu_RunSelectionFar
 	b .L_080cc468
 .L_080cc3be:
 	ldrb r3, [r1]
@@ -1339,9 +1339,9 @@ Func_080cb91c:
 	strh r3, [r2]
 	b .L_080cc468
 .L_080cc3f0:
-	bl Func_080cdec8
-	bl Func_08038208
-	bl Func_081c0070
+	bl EventRuntime_ResolveAllPendingActions
+	bl UiTimedNotice_CloseIfActiveFar
+	bl Audio_GetBackgroundCueFar
 	movs r2, #128
 	ldr r1, [sp, #8]
 	lsls r2, r2, #2
@@ -1387,11 +1387,11 @@ Func_080cb91c:
 .L_080cc450:
 	.4byte 0x00000001
 .L_080cc454:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080cc458:
 	.4byte gInput
 .L_080cc45c:
-	.4byte Data_02003410
+	.4byte ResourceBlockOwners
 .L_080cc460:
 	ldr r0, .L_080cc540
 	movs r1, #1
@@ -1482,7 +1482,7 @@ Func_080cb91c:
 	add r5, r8
 	ldr r0, [r3]
 	ldr r1, [r5]
-	bl Func_080d0520
+	bl DisplayTransition_Finish
 	movs r3, #0
 	strh r3, [r7]
 	ldr r0, [r5]
@@ -1505,4 +1505,4 @@ Func_080cb91c:
 .L_080cc544:
 	.4byte Data_020004ac
 .L_080cc548:
-	.4byte Data_03001238
+	.4byte gDebugMode

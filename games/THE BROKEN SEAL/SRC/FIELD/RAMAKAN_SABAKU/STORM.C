@@ -1,4 +1,15 @@
-/* The sandstorm's frame task. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "GAME_STATE.H"
@@ -7,28 +18,14 @@
 #include "MENU_LIST.H"
 #include "RAM_BUFFER.H"
 #include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
-extern s16 RamakanSabaku_SandVramSlot;
-extern s16 RamakanSabaku_SandCounter;
-extern s16 RamakanSabaku_SandPhase;
-extern s16 RamakanSabaku_SandLevel;
-extern s16 RamakanSabaku_SandFlash;
-extern const u16 RamakanSabaku_SandPalette[16];
-extern struct MenuSprite RamakanSabaku_SandWork[];
-extern u8 RamakanSabaku_SandTileBuffer[];
+#define RamakanSabaku_SandVramSlot (*(s16 *)&RamakanSabaku_SandVramSlot)
+#define RamakanSabaku_SandCounter (*(s16 *)&RamakanSabaku_SandCounter)
+#define RamakanSabaku_SandPhase (*(s16 *)&RamakanSabaku_SandPhase)
+
 extern u32 gFrameCount;
 
-void *Runtime_BumpAllocate(s32 size);
-void Sys_Free(void *block);
-void Resource_ActivateEntry(s32 slot);
-s32 Engine_VramLoad(s32 slot, s32 size, const void *data);
-
-/*
- * The sandstorm: while the storm flag is set it thins, otherwise it thickens.
- * Its strength shifts the screen's scanlines, warms three of the sand
- * palette's colours with the party's exposure, and draws the column of sand
- * sprites, emptied from the top as the exposure rises.
- */
 void RamakanSabaku_RunSandstorm(void)
 {
     u8 *buffer;
@@ -63,7 +60,7 @@ void RamakanSabaku_RunSandstorm(void)
     } else if (RamakanSabaku_SandCounter <= 1) {
         if (++RamakanSabaku_SandCounter == 1) {
             Dma_Set(RamakanSabaku_SandPalette, (void *)0x050003c0, 0x80000010,
-                    (volatile u32 *)0x040000d4);
+                    REG_DMA3);
         }
     }
     counter = RamakanSabaku_SandCounter;
@@ -84,7 +81,7 @@ void RamakanSabaku_RunSandstorm(void)
     }
 
     buffer = Runtime_BumpAllocate(0x900);
-    Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, (volatile u32 *)0x040000d4);
+    Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, REG_DMA3);
     colors = (s16 *)(buffer + 12);
     color = colors;
     for (i = 6; i < 12; i++) {
@@ -110,14 +107,13 @@ void RamakanSabaku_RunSandstorm(void)
         }
         *color++ = (blue << 10) | (green << 5) | red;
     }
-    /* Queue the three warmed colour pairs for the sprite palette. */
     palette = (u32 *)0x050003cc;
     word = (u32 *)(buffer + 12);
     QueueIoWriteDelay3((u32)palette++, *word++);
     QueueIoWriteDelay3((u32)palette++, *word++);
     QueueIoWriteDelay3((u32)palette++, *word++);
 
-    RamakanSabaku_SandLevel = gGameState.unknown_232 * 120 / (s16)gGameState.unknown_22c;
+    RamakanSabaku_SandLevel = gGameState.hazard_steps * 120 / gGameState.hazard_limit;
     if (RamakanSabaku_SandLevel > 118) {
         RamakanSabaku_SandFlash = 119;
     }
@@ -129,7 +125,7 @@ void RamakanSabaku_RunSandstorm(void)
         }
     }
 
-    Dma_Set(RamakanSabaku_SandTileBuffer, buffer, 0x84000240, (volatile u32 *)0x040000d4);
+    Dma_Set(RamakanSabaku_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
     if (RamakanSabaku_SandFlash <= 118) {
         column = (u32 *)(buffer + 80);
         fill = 0xeeeeeeee;
@@ -166,7 +162,7 @@ void RamakanSabaku_RunSandstorm(void)
         sprite->next = NULL;
         sprite->oam.word.attr01 = (y << 16) | x | attributes;
         sprite->oam.word.attr23 = 0xe400 | tile;
-        Runtime_PushSlotEntry((struct MenuSprite *)((u8 *)RamakanSabaku_SandWork + offset), 255);
+        Runtime_PushSlotEntry((s32 *)((u8 *)RamakanSabaku_SandWork + offset), 255);
         sprite++;
         tile += 8;
         offset += 12;

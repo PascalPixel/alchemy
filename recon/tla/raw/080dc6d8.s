@@ -47,7 +47,7 @@ Func_080dc6d8:
 	bl Audio_PlayCue
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 .L_080dc738:
 	adds r3, r7, #0
 	adds r3, #35
@@ -96,14 +96,14 @@ Func_080dc6d8:
 	beq .L_080dc7a2
 	adds r0, r6, #0
 	movs r1, #2
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 .L_080dc7a2:
 	adds r0, r6, #0
 	movs r1, #21
 	bl Object_SetMode
 	b .L_080dc7b0
 .L_080dc7ac:
-	bl Func_080dc7cc
+	bl EffectRuntime_StopCurrentObject
 .L_080dc7b0:
 	movs r2, #192
 	lsls r2, r2, #4

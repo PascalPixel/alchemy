@@ -1,97 +1,182 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "BATTLE_STATUS_ICON.H"
+#include "BATTLE_RUNTIME.H"
+#include "MOTION_OBJECT.H"
+#include "ANIMSPR.H"
+#include "BATTLE_PRESENTATION.H"
+#include "FIELD_EVENT.H"
 
-u8 *Owner_GetStateFar(s32);
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
-struct BattleStatusIconOwner {
-    u8 reserved[0x50];
-    void *state_pointer;
-    u8 state_flags;
-};
-
-struct EffectContext {
-    u8 reserved_000[32];
-    u8 type;
-    u8 reserved_021[4];
-    u8 dirty;
-};
-
-struct StatusIconEffect {
-    u8 reserved_000[6];
-    u8 state;
-};
-
-struct BattleStatusIconRecord {
-    struct BattleStatusIconOwner *owner;
-    u8 reserved_004[4];
-    u16 displayed_effect_id;
-    u8 reserved_00a[18];
-    u16 active_conditions;
-    u8 selected_condition;
-    s8 cycle_timer;
-    struct StatusIconEffect *icon_effect;
-    void *secondary_effect;
-};
-
-void *GetMotionRecord(struct BattleStatusIconOwner *owner, s32 entry_index);
-struct StatusIconEffect *ResourceMetadata_RegisterFar(struct EffectContext *context, s32 effect_id);
-void ResourceMetadata_UnregisterFar(struct EffectContext *context, struct StatusIconEffect *effect);
-void Animation_SetWorkEntryFar(struct StatusIconEffect *effect, s32 entry_index);
-
-s32 *GetBattleObjectSlot(s32);
-void Object_SetMode(s32, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
-
-s32 BattleUnit_BuildStatusFlags(s32 id, u8 *output)
+void BattleActor_UpdateSpritePriorities(void)
 {
-    u8 *state = Owner_GetStateFar(id);
-    s8 mode = *(s8 *)(state + 0x131);
+    u16 ids[14];
+    s32 priority[2];
+    s32 i;
+    s32 j;
+    s32 count;
+    struct MotionObject *object;
+    struct AnimationObject *record;
+    struct AnimationObject **list;
+
+    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
+    /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop pass off it; as a for loop it becomes a pointer walk. */
+    i = 0;
+    if (ids[i] != BATTLE_UNIT_LIST_END) {
+again:
+        {
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+
+            if (slot != 0) {
+                object = slot->object;
+
+                BattleStatusIcon_Cycle(slot);
+                if (slot->effect_entry != 0) {
+                    record = GetMotionRecord(object, 0);
+
+                    if (record != 0) {
+                        struct SpriteEntry *effect;
+                        s32 state = 0;
+
+                        if (object->y != 0)
+                            state = 9;
+                        effect = slot->effect_entry;
+                        if (effect->priority != state) {
+                            effect->priority = state;
+                            record->dirty = 1;
+                        }
+                    }
+                }
+            }
+        }
+        i++;
+        if (i <= 13 && ids[i] != BATTLE_UNIT_LIST_END)
+            goto again;
+    }
+    if ((s16)gCameraWork->yaw >= 0) {
+        priority[0] = 1;
+        priority[1] = 2;
+    } else {
+        priority[0] = 2;
+        priority[1] = 1;
+    }
+    {
+        count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
+        for (i = 0; i < count; i++) {
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+
+            if (slot != 0) {
+                object = slot->object;
+
+                switch (object->record_storage_kind & 15) {
+                case 1:
+                {
+                    record = object->records;
+                    record->part[0].priority = priority[0];
+                    break;
+                }
+                case 2:
+                {
+                    list = (struct AnimationObject **)object->records;
+                    for (j = 0; j < 4; j++) {
+                        record = *list++;
+                        if (record != 0)
+                            record->part[0].priority = priority[0];
+                    }
+                    break;
+                }
+                }
+            }
+        }
+    }
+    {
+        count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
+        for (i = 0; i < count; i++) {
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+
+            if (slot != 0) {
+                object = slot->object;
+
+                switch (object->record_storage_kind & 15) {
+                case 1:
+                {
+                    record = object->records;
+                    record->part[0].priority = priority[1];
+                    break;
+                }
+                case 2:
+                {
+                    list = (struct AnimationObject **)object->records;
+                    for (j = 0; j < 4; j++) {
+                        record = *list++;
+                        if (record != 0)
+                            record->part[0].priority = priority[1];
+                    }
+                    break;
+                }
+                }
+            }
+        }
+    }
+}
+
+
+
+s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
+{
+    struct BattleUnit *state = Owner_GetStateFar(id);
+    s8 mode = state->poison;
     u32 flags = 0;
 
     if (mode == 1)
         flags = 1;
     if (mode == 2)
         flags |= mode;
-    if (state[0x138] != 0)
+    if (state->delusion != 0)
         flags |= 0x20;
-    if (state[0x13B] != 0) {
+    if (state->stun != 0) {
         s32 kind;
         flags |= 4;
-        kind = state[0x128];
+        kind = state->class_id;
         if (kind == 0x79 || kind == 0x94)
             flags &= ~4;
     }
-    if (state[0x13D] != 0)
+    if (state->psy_seal != 0)
         flags |= 8;
-    if (state[0x140] != 0)
+    if (state->evil_spirit != 0)
         flags |= 0x40;
-    if (state[0x13C] != 0)
+    if (state->sleep != 0)
         flags |= 0x10;
-    if (state[0x141] != 0)
-        flags |= 1 << (state[0x141] + 6);
-    *(u16 *)(output + 0x1C) = flags;
+    if (state->death_count != 0)
+        flags |= 1 << (state->death_count + 6);
+    output->active_conditions = flags;
 }
 
-/*
- * The reference preserves r0 in its epilogue (pop {r1}; bx r1), matching GCC's
- * scalar-return convention. No path establishes a meaningful battle_result, and the
- * sole caller discards it; C99 6.9.1p12 only makes this fallthrough undefined
- * when the caller uses the battle_value.
- */
-s32 BattleStatusIcon_Cycle(struct BattleStatusIconRecord *record)
+s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
 {
-    struct StatusIconEffect *old_effect;
-    struct StatusIconEffect *effect;
-    struct EffectContext *context;
-    struct BattleStatusIconOwner *owner;
+    struct AnimationEntry *old_effect;
+    struct AnimationEntry *effect;
+    struct AnimationObject *context;
+    struct MotionObject *owner;
     s32 effect_id;
+    s32 entry_handle;
     s32 prev;
     s32 changed = 0;
 
     if (record->cycle_timer >= 0)
         record->cycle_timer--;
 
-    old_effect = record->icon_effect;
+    old_effect = (struct AnimationEntry *)record->animation_entry;
     if (old_effect == 0) {
         if ((s16)record->active_conditions == 0)
             goto cooldown_expired;
@@ -106,7 +191,7 @@ cooldown_expired:
 
 update:
     effect_id = -1;
-    owner = record->owner;
+    owner = record->object;
     if ((s16)record->active_conditions != 0) {
         prev = record->selected_condition;
         for (effect_id = prev + 1;; effect_id++) {
@@ -130,34 +215,35 @@ update:
         goto done;
 
     if (effect_id >= 0) {
-        if (context->type == 32)
+        if (context->width == 32)
             effect_id += 340;
         else
             effect_id += 355;
     }
 
-    if (record->icon_effect != 0 && changed != 0) {
-        ResourceMetadata_UnregisterFar(context, record->icon_effect);
-        record->icon_effect = 0;
+    if (record->animation_entry != 0 && changed != 0) {
+        ResourceMetadata_UnregisterFar(context, (s32)record->animation_entry);
+        record->animation_entry = 0;
     }
 
     if (effect_id >= 0 && changed != 0) {
-        effect = ResourceMetadata_RegisterFar(context, effect_id);
-        record->icon_effect = effect;
-        if (effect == (struct StatusIconEffect *)-1)
-            record->icon_effect = 0;
-        effect = record->icon_effect;
+        /* FAKEMATCH: storing the handle before testing failure avoids an extra unconditional branch. */
+        entry_handle = ResourceMetadata_RegisterFar(context, effect_id);
+        record->animation_entry = (struct SpriteEntry *)entry_handle;
+        if (entry_handle == -1)
+            record->animation_entry = 0;
+        effect = (struct AnimationEntry *)record->animation_entry;
         if (effect != 0) {
-            effect->state = 3;
+            effect->priority = 3;
             Animation_SetWorkEntryFar(effect, 0);
         }
     }
 
     context->dirty = 1;
     if (effect_id >= 0)
-        record->displayed_effect_id = effect_id;
+        record->animation = effect_id;
     else
-        record->displayed_effect_id = 0;
+        record->animation = 0;
 
 done:
 ;
@@ -165,20 +251,20 @@ done:
 
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    u8 *state;
+    struct BattleUnit *state;
     s32 value;
 
     state = Owner_GetStateFar(id);
     value = 1;
-    if (*(s16 *)(state + 56) != 0) {
-        if (state[316] != 0 || state[315] != 0 || state[325] != 0)
-            value = (state[298] != 1) * 4;
+    if (state->hp != 0) {
+        if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
+            value = (state->status_12a != BATTLE_UNIT_ENEMY) * 4;
     } else {
-        s32 changed = state[298] ^ value;
+        s32 changed = state->status_12a ^ value;
         value = (u32)(-changed | changed) >> 31;
         value = 5 - value;
     }
 
-    Object_SetMode(*GetBattleObjectSlot(id), value);
-    ObjectDispatch_ApplyValueToChildrenFar(*GetBattleObjectSlot(id), (id & 3) + 14);
+    Object_SetMode(GetBattleObjectSlot(id)->object, value);
+    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, (id & 3) + 14);
 }

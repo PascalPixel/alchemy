@@ -1,7 +1,3 @@
-@ Import veneers after the KORIMA_HEYA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — KORIMA_HEYA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -13,7 +9,7 @@ Engine_MapCopyCellsTo:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:
@@ -29,7 +25,7 @@ Engine_EventEnd:
 	.global FieldScene_PrepareActors
 	.thumb_func
 FieldScene_PrepareActors:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -41,7 +37,7 @@ Engine_ActorSetPosition:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:

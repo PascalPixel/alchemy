@@ -1,10 +1,11 @@
+#include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
 
 #if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
 
 struct MessageWindow;
 
@@ -20,16 +21,11 @@ void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
 s32 UiText_QueueRenderEntries(struct MessageWindow *, s32, s32, s32, s32);
 void Audio_PlayCue(s32);
-void Runtime_PushSlotEntry(s32 *, s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
 void UiWork_Finalize(struct MessageWindow *, s32);
-void Resource_ResetEntry(s32);
 
 extern volatile u32 gKeyState;
-
-/* Announce two characters joining the party: a window with both members'
-   glyphs and the joined line, then wait for the jingle or a key. */
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second)
 {
@@ -81,7 +77,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
             Runtime_PushSlotEntry(entry1, 250);
             Runtime_PushSlotEntry(entry2, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & 0x303) == 0);
+        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
         UiWork_Finalize(window, 2);
         WaitFrames(1);

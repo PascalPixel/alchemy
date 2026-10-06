@@ -75,7 +75,7 @@ Func_080cf554:
 	bne .L_080cf6b8
 	mov r0, r10
 	adds r0, #64
-	bl Func_080ceffc
+	bl ObjectEvent_GetObject
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080cf6b8
@@ -164,7 +164,7 @@ Func_080cf554:
 	bl ObjectDispatch_InitializeFar
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	adds r0, r5, #0
 	movs r1, #1
 	bl Object_SetMode

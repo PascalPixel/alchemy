@@ -1,15 +1,11 @@
 #ifndef RUNPA_JO_FORTRESS_H
 #define RUNPA_JO_FORTRESS_H
 
-/* The Lunpa fortress (resource_3bf): the declarations, views and call
- * helpers its scene sources share. */
-
 #include "TYPES.H"
 #include "JO.H"
 #include "FIELD_SCENE.H"
 #include "ITEM_IDS.H"
 
-#define SHARED_RECORD_FIELD_448 (*(u32 *)(*(u8 **)&gEventWork + 448))
 #define PRIMARY_ID 24
 #define DERIVED_ID 25
 
@@ -18,17 +14,17 @@
 
 typedef struct SceneActor {
     u8 pad0[8];
-    s32 x;          /* 0x08 */
-    s32 y;          /* 0x0c */
-    s32 z;          /* 0x10 */
+    s32 x;
+    s32 y;
+    s32 z;
 } SceneActor;
 
 typedef struct DirectionalSceneActor {
     u8 pad0[6];
-    u16 dir;        /* 0x06 */
-    s32 x;          /* 0x08 */
-    s32 y;          /* 0x0c */
-    s32 z;          /* 0x10 */
+    u16 dir;
+    s32 x;
+    s32 y;
+    s32 z;
 } DirectionalSceneActor;
 extern u32 gRunpaJoRandomPick;
 extern s32 gRunpaJoPairTableA[];
@@ -45,41 +41,35 @@ static __inline__ void SetSceneValue(s16 *field, s32 value)
     *field = value;
 }
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 s32 GetEmptySceneData(void);
 
 void ConfigureSceneActor12(void);
 
-void RunSceneObjectSetup(void);
+void EV70_INIT(void);
 
-void FieldScene_StartActorTwelveTransition(void);
+void EV50_START(void);
 
-void FieldScene_UpdateActorTwelveTransition(void);
+void EV12_MOVE(void);
 
 void PlaceActorTwelveAndFinishScene(void);
 
 void PlaceSceneObjectPairFromTableA(s32 table_index);
 
-void FieldScene_UpdateObjectPairA(void);
+void EV40_A(void);
 
-void FieldScene_UpdateObjectPairB(void);
+void EV40_B(void);
 
 void PlaceSceneObjectPairFromTableB(s32 table_index);
 
-void FieldScene_UpdateTableBObjectPair(void);
+void EV40_D(void);
 
 void PlaceSceneObjectPairFromTableC(s32 table_index);
 
-void FieldScene_UpdateObjectPairC(void);
+void EV40_C(void);
 
-void CellDoor_Touch(void);
+void EV99_ROUYA(void);
 
-void LockedDoor_Touch(void);
+void EV98_TOBIRA(void);
 
 void Actor8_Interact(void);
 
@@ -99,31 +89,31 @@ void NoOpSceneCallbackC(void);
 
 void NoOpSceneCallbackD(void);
 
-void CellKey_PickUp(void);
+void EV08_KAGI(void);
 
 s32 IsPlayerInAccidentTriggerArea(void);
 
 void FieldScene_UpdateActorPairInteraction(void);
 
-void ConfigureSceneActor9(void);
+void EV91_SET(void);
 
 s32 AreSceneActorsInPassingLane(void);
 
 void FieldScene_UpdateActorSeventeenInteraction(void);
 
-void ActivateSceneActor17(void);
+void EV92_ON(void);
 
 s32 IsPlayerInSecondaryTriggerArea(void);
 
 void FieldScene_UpdateActorEighteenInteraction(void);
 
-void ActivateSceneActor18(void);
+void EV93_ON(void);
 
 s32 IsPlayerOutsideSceneRectangle(void);
 
 void FieldScene_RunScene3bfSequenceA(void);
 
-void RunActor17SceneStep(void);
+void EV94_MAIN(void);
 
 void TriggerSceneStage95FromActor12(void);
 
@@ -155,23 +145,23 @@ void RunActorScriptedSequenceB(s32 handle);
 
 void RunActorScriptedSequenceC(s32 actor_id);
 
-void FieldScene_RunScene3bf_02001cf0(s32 a0);
+void RunpaJo_ActOutGuardShiftDialogue(s32 a0);
 
 void RunActorScriptedSequenceD(s32 actor_id);
 
-void InspectOrdinaryObject(void);
+void EV33_SHIRABE(void);
 
-void InspectEmptyChest(void);
+void EV30_TAKARABAKO(void);
 
-void RunpaJo_RunGuardChallenge(void);
+void EV31_BANPEI(void);
 
 void FieldScene_RunSequenceTail(void);
 
-void InspectEmptySceneObject(void);
+void EV32_KARA(void);
 
-void RunActor12InteractionSequence(void);
+void EV50_MAIN(void);
 
-void RunActors13And21InteractionSequence(void);
+void EV51_MAIN(void);
 
 void ConfigureInteractionRegionA(void);
 
@@ -179,81 +169,67 @@ void ConfigureInteractionRegionB(void);
 
 void ConfigureInteractionRegionC(void);
 
-void InspectVillageWell(void);
+void EV52_IDO(void);
 
-void RunSecondaryMapInteraction(void);
+void EV51_SUB(void);
 
-void ConfigurePrimaryInteractionRegions(void);
+void EV00_HANTEI1(void);
 
-void ConfigureSecondaryInteractionRegions(void);
+void EV00_HANTEI2(void);
 
-void InspectWardrobe(void);
+void EV08_TANSU(void);
 
-void InspectFirewood(void);
+void EV09_MAKI(void);
 
-void InspectBooks(void);
+void EV10_HON(void);
 
 void NoOpInteractionCallback(void);
 
-void FieldScene_RunScene3bf_0200252c(void);
+void RunpaJo_GatherPartyAroundActorTwelve(void);
 
-void FieldScene_RunScene3bf_020025f8(void);
+void RunpaJo_ActivateLeverTrap(void);
 
-void FieldScene_RunScene3bf_0200269c(void);
+void RunpaJo_RevealMonster(void);
 
-void FieldScene_RunScene3bf_02002718(void);
+void RunpaJo_PositionPartyForMonster(void);
 
-void PlayStoryScene(void);
+void EV20_DEMO(void);
 
 void FieldScene_RunMainScriptSequence(void);
 
-void FieldScene_SelectActorTwentyOneMessage(void);
+void EV21_MES(void);
 
-void FieldScene_RunActorTwentyOneSequence(void);
+void EV21_MAIN(void);
 
-void FieldScene_RunDonpaSleepingSequence(void);
+void EV25_DONPA(void);
 
-void SelectActor25SceneVariant(void);
+void EV25_SEL(void);
 
-void SelectActor24SceneVariant(void);
+void EV24_SEL(void);
 
-void FieldScene_RunSupplementalSequenceTwo(void);
+void EV24_MAIN(void);
 
-void ConfigureSceneActor26(void);
+void EV26_SET(void);
 
-void ConfigureSceneActor14(void);
+void EV14_SET(void);
 
-void ConfigureSceneActor13(void);
+void EV13_SET(void);
 
-void ConfigureSceneActor12Variant(void);
+void EV12_SET(void);
 
-void ConfigureSceneActor18(void);
+void EV18_SET(void);
 
-void RunActor20SceneSequence(void);
+void EV20_MAIN(void);
 
-void FinishActor20SceneSequence(void);
+void EV20_END(void);
 
 void NoOpActorCallback(void);
 
-void ConfigureActor13Interaction(void);
+void EV17_TALK(void);
 
-void ConfigureActor13SceneResource(void);
+void EV17_LOAD(void);
 
 #include "OBJECT_RUNTIME.H"
-
-struct DispatcherEventRuntime {
-    u8 unknown_000[0x1c0];
-    s32 value_1c0;
-};
-
-union DispatcherEventWork {
-    struct {
-        u8 unknown_000[0x1c0];
-        u16 first;
-        u16 second;
-    } pair;
-    u32 words[0x1c4 / 4];
-};
 
 s32 FieldScene_DispatchActorUpdate(void);
 
@@ -271,7 +247,6 @@ void FieldScene_ActivateAlternateActorGroup(void);
 
 void ActivateFiveActorGroupFromFlags(void);
 
-/* SET_POSITION_PAIRS.C */
 void FieldScene_SetPositionPairs(s32 idx);
 
 #endif

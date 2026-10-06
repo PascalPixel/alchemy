@@ -253,7 +253,7 @@ Func_020001f0:
 	movs r2, #8
 	movs r1, #2
 	negs r2, r2
-	bl ObjectMotion_SnapHeadingAndOffset
+	bl ObjectMotion_CenterOnColumn
 	b .L_02008258
 .L_0200824e:
 	movs r2, #8
@@ -265,8 +265,8 @@ Func_020001f0:
 	bl Battle_WaitMode0
 	adds r0, r7, #0
 	bl Func_02001cd4
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001bd4
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -1304,7 +1304,7 @@ Func_02000a6c:
 .L_02008aca:
 	pop {pc}
 .L_02008acc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008ad0:
 	.4byte 0x05000100
 .L_02008ad4:
@@ -1429,7 +1429,7 @@ Func_02000b28:
 .L_02008bb4:
 	.4byte Data_020025a0
 .L_02008bb8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008bbc,"ax",%progbits
 	.global Func_02000bbc
 	.thumb_func
@@ -1471,7 +1471,7 @@ Func_02000bdc:
 	movs r0, #11
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #9
 	movs r1, #3
 	bl ObjectMotion_SetActionVariant
@@ -1651,7 +1651,7 @@ Func_02000bdc:
 	movs r0, #28
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #99

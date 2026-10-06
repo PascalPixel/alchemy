@@ -120,7 +120,7 @@ Func_08109068:
 	mov r1, r9
 	movs r3, #0
 	ldrh r0, [r7]
-	bl Func_081087e0
+	bl Shop_CreatePriceSprite
 	movs r3, #251
 	movs r1, #1
 	strb r3, [r0, #15]

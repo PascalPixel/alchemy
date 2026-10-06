@@ -58,10 +58,10 @@ Func_08043690:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_0804370c
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	b .L_08043752
 .L_0804370c:
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 .L_08043710:
 	ldr r3, .L_08043760
 	movs r0, #0
@@ -69,14 +69,14 @@ Func_08043690:
 	bl Func_08042e28
 	adds r6, r0, #0
 	bl Func_08043358
-	bl Func_080c8628
+	bl ObjectTable_SnapshotFar
 	ldr r1, .L_08043768
 	adds r0, r5, #0
 	bl Func_08042f10
 	adds r5, r0, #0
 	adds r0, r6, #0
 	bl Func_08042eec
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	cmp r5, #0
 	beq .L_0804374a
 	ldr r0, .L_0804376c
@@ -90,7 +90,7 @@ Func_08043690:
 	movs r1, #9
 	bl UiText_ShowPositionedMessageAndWait
 .L_08043752:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r7, #0
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

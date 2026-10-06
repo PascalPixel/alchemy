@@ -1,15 +1,26 @@
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 
-/* The party's counters, each kept within its range as ☀️ keeps them. */
+s32 Party_AdjustCoins(s32 amount)
+{
+    s32 value;
 
-/* Adds to the party's second six-digit counter, kept within 0..999999. */
+    value = gPartyState.coins;
+    value += amount;
+    if (value > 0xf423f)
+        value = 0xf423f;
+    if (value < 0)
+        value = 0;
+    gPartyState.coins = value;
+    return value;
+}
+
 s32 Party_AdjustSixDigitCounterB(s32 amount)
 {
     s32 value;
 
     value = gPartyState.counter_b;
-    value = (s32)((u32)value + (u32)amount);
+    value += amount;
     if (value > 0xf423f)
         value = 0xf423f;
     if (value < 0)
@@ -18,13 +29,12 @@ s32 Party_AdjustSixDigitCounterB(s32 amount)
     return value;
 }
 
-/* Adds to the party's small counter, kept within 0..28. */
 s32 Party_AdjustCounterCappedAt28(s32 amount)
 {
     s32 value;
 
     value = gPartyState.counter_c;
-    value = (s32)((u32)value + (u32)amount);
+    value += amount;
     if (value > 28)
         value = 28;
     if (value < 0)

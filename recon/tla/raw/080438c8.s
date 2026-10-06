@@ -46,10 +46,10 @@ Func_080438c8:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_0804392c
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	b .L_08043960
 .L_0804392c:
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	movs r0, #1
 	bl Func_08042e28
 	adds r6, r0, #0
@@ -71,7 +71,7 @@ Func_080438c8:
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWait
 .L_08043960:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r7, #0
 	pop {r5, r6, r7, pc}
 .L_08043968:

@@ -1,5 +1,3 @@
-@ Reads byte4 of one8-byte summon entry, returning0 outside indices0..386.
-@ Its complete28-byte extent, table pointer included, matches all six editions.
 .syntax unified
 	.thumb
 	.global Summon_GetEntryByte4

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dede8
+	.global RunBattleEffect05
 	.thumb_func
-Func_080dede8:
+RunBattleEffect05:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -281,7 +281,7 @@ Func_080dede8:
 	ldrsh r1, [r2, r4]
 	movs r3, #26
 	ldrsh r2, [r2, r3]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080df028:
 	movs r4, #1
 	add r10, r4
@@ -437,7 +437,7 @@ Func_080dede8:
 .L_080df164:
 	.4byte 0xffe00000
 .L_080df168:
-	.4byte Func_080ded84
+	.4byte BattleFx_LandFallingObject
 .L_080df16c:
 	.4byte BattleFx_UpdateDriftingFallObject
 .L_080df170:

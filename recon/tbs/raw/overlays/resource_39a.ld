@@ -1,6 +1,3 @@
-/* resource_39a: its entry veneers, its listing with maintained code linked
-   in place, as pret links objects in ROM order. Its import veneers follow
-   its code. The overlay's own work follows the image. */
 SECTIONS
 {
     .text 0x2008000 :

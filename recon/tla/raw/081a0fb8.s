@@ -12,7 +12,7 @@ Func_081a0fb8:
 	ldr r0, [r7]
 	movs r2, #1
 	subs r5, #1
-	bl Func_081a101c
+	bl DisplayScroll_DrawLine
 	adds r6, #24
 	cmp r5, #0
 	bge .L_081a0fc0
@@ -43,12 +43,12 @@ Func_081a0fb8:
 	subs r3, #12
 	pop {r5, r6, r7, pc}
 .L_081a1008:
-	.4byte Data_081a20bc
+	.4byte DisplayScroll_LineTable
 .L_081a100c:
 	.4byte Func_081a0cac
 .L_081a1010:
 	.4byte Func_081a0d78
 .L_081a1014:
-	.4byte Data_02007510
+	.4byte DisplayScroll_Objects
 .L_081a1018:
 	.4byte 0x84000100

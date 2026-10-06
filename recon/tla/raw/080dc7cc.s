@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dc7cc
+	.global EffectRuntime_StopCurrentObject
 	.thumb_func
-Func_080dc7cc:
+EffectRuntime_StopCurrentObject:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -10,7 +10,7 @@ Func_080dc7cc:
 	ldr r3, [r3]
 	movs r1, #0
 	ldr r0, [r3, #16]
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	movs r0, #1
 	bl WaitFrames
 	pop {pc}

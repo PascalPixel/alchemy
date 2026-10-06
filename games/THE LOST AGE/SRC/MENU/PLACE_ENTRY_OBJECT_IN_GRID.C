@@ -1,8 +1,16 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "A9_MOTION.H"
 
-void UiIcon_PrepareObject(void *arg0);
 
-void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
+void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
     s32 origin_x, s32 origin_y, s32 phase) {
     s32 no;
 
@@ -10,9 +18,7 @@ void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
     if (no > 0x1F) {
         no = 0;
     }
-    obj->y =
-        (s16)((no / phase * 0x10) + origin_y);
-    obj->x =
-        (s16)((no % phase * 0x10) + origin_x);
+    obj->y = no / phase * 0x10 + origin_y;
+    obj->x = no % phase * 0x10 + origin_x;
     UiIcon_PrepareObject(obj);
 }

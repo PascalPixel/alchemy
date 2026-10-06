@@ -1,26 +1,28 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "VRAM_BLOCK.H"
 #include "TYPES.H"
 #include "SCENE.H"
-
-void VramBlock_LoadCached(void *, s32, void *);
+#include "GLYPH.H"
+#include "ITEM.H"
+#include "BATTLE_UNIT.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 RenderResource_PairSourceTable;
 
-void UiGlyph_DecodeWithHeapRoutines(struct State_0801a4c0 *, u32);
+void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *, s32);
+extern GlyphTransfer *gGlyphWork;
+extern u8 *UiIcon_ItemIconPointers[];
 
-struct State_0801a4c0 {
-    u8 filler0[0x600];
-    u16 first;
-    u16 second;
-    u32 value;
-};
-
-extern struct State_0801a4c0 *gGlyphWork;
-extern u32 UiIcon_ItemIconPointers[];
-void *Item_Get(s32);
-s32 UiIcon_BuildAbilityIconTiles(u8, s32, s32, s32, s32);
-void *BattleAction_Get(s32);
-
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
+s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {
     void *source;
     switch (value) {
@@ -42,7 +44,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
         asm volatile("ldr %0, .LPairSourceDefault" : "=r"(source));
         break;
     }
-    VramBlock_LoadCached(destination, 32, source);
+    VramBlock_LoadCached(slot, 32, source);
     return 1;
 }
 
@@ -54,28 +56,23 @@ asm(".align 2\n"
     ".LPairSourceDefault:\n.word RenderResource_PairSourceTable\n"
     ".size RenderResource_LoadTableEntry, .-RenderResource_LoadTableEntry");
 
-void Ui_PrepareTransferForItem(s32 arg0)
+void Ui_PrepareTransferForItem(s32 code)
 {
-    struct State_0801a4c0 *state = gGlyphWork;
-    void *result = Item_Get(0x1FF & arg0);
+    GlyphTransfer *state = gGlyphWork;
+    struct ItemDefinition *item = Item_Get(0x1ff & code);
 
-    if (arg0 != 0) {
-        state->value = UiIcon_ItemIconPointers[*(u16 *)((u8 *)result + 6)];
+    if (code != 0) {
+        state->encoded = UiIcon_ItemIconPointers[item->icon];
     } else {
-        state->value = UiIcon_ItemIconPointers[0];
+        state->encoded = UiIcon_ItemIconPointers[0];
     }
-    state->first = 2;
-    state->second = 2;
+    state->width = 2;
+    state->height = 2;
     UiGlyph_DecodeWithHeapRoutines(state, 0);
 }
 
-/* 取得項目の+4値を先頭引数として転送する。 */
-void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
 {
-    UiIcon_BuildAbilityIconTiles(
-        FIELD_AT_OFFSET(BattleAction_Get(arg0), u8 *, 4),
-        arg1,
-        arg2,
-        arg3,
-        arg4);
+    UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->unknown_04[0],
+        with_base, slot, tile, reuse);
 }

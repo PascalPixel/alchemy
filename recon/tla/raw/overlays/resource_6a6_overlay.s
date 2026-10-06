@@ -1697,8 +1697,8 @@ Func_02000e54:
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_020013d0
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_020012e8
 	pop {r5, r6, pc}
 .L_02008ee4:
@@ -1805,7 +1805,7 @@ Func_02000f38:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #4
 	movs r1, #13
 	bl Object_SetModeById
@@ -1905,7 +1905,7 @@ Func_02001080:
 	movs r0, #20
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	pop {pc}
 	.section .text.x020090a0,"ax",%progbits
 	.global Func_020010a0
@@ -1923,7 +1923,7 @@ Func_020010a0:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	pop {pc}
 	.section .text.x020090c0,"ax",%progbits
 	.global Func_020010c0

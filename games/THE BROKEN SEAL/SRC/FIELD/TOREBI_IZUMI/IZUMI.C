@@ -1,52 +1,39 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TOPIC.H"
 #include "FIELD_SCENE.H"
-/* The two yes/no questions the spring's attendants ask. Each answer is the
- * line after its question, yes first. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
+#include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
-extern const struct ScenePlacement gTorebiIzumiPlacements2[];
-extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
 
-extern u8 MsgTorebiLuckyMedal[];
-extern u8 MsgTorebiYerFirstTime[];
 
-s32 Engine_GameFlagIsSet();
 void TorebiIzumi_RiseAndFadeIn();
-void Engine_EventBegin();
-void Engine_ActorWalkToAndWait();
 void TorebiIzumi_RunSpringGame();
-void Engine_EventEnd();
 
-extern u8 MsgTorebiLuckyWheelsPrizesPrizesDetermined[];
-extern u8 MsgTorebiLuckyWheelsRulesPullLever[];
 
-extern const struct SceneEvent gTorebiIzumiEvents2[];
-extern const struct SceneEvent gTorebiIzumiEventsOther[];
 
-extern u8 MsgTorebiComeAgain[];
-extern u8 MsgTorebiCongratulations[];
-extern u8 MsgTorebiWonItemGo[];
-extern u8 MsgTorebiWonItemGo2[];
-extern u8 MsgTorebiYaLostNumber[];
-extern u8 MsgTorebiYaWonNumber[];
 extern u8 gOamCopyEnabled;
-void SceneState_InitFourActorRecordsAndInstallTask(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-void AudioCommand_WaitForStateByteClear(void);
-void TorebiIzumi_OfferLuckyWheels(s32 mode);
-s32 SceneDialogue_PickTopicVariantId(s32 topic);
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {
-    *(volatile u16 *)0x04000050 = value;
+    REG_BLDCNT = value;
 }
 
 static __inline__ void Io_SetBlendAlpha(s32 value)
 {
-    *(volatile u16 *)0x04000052 = value;
+    REG_BLDALPHA = value;
 }
 
 u8 *SceneData_GetSceneTableA(void)
@@ -64,7 +51,6 @@ u8 *SceneData_GetSceneTableB(void)
     return TorebiIzumi_SceneTableB;
 }
 
-/* The actors placed at the spring; its second row places its own. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
@@ -77,36 +63,35 @@ void TorebiIzumi_AskForLuckyMedal(s32 object)
 {
     s32 question = (s32)MsgTorebiLuckyMedal;
     Engine_EventSetMessage(question);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(question + 1);
     } else {
         Engine_EventSetMessage(question + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
 void TorebiIzumi_AskIfFirstTime(s32 object)
 {
     s32 question = (s32)MsgTorebiYerFirstTime;
     Engine_EventSetMessage(question);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(question + 1);
     } else {
         Engine_EventSetMessage(question + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
-/* The saved game as words: word 125 is the selected actor. */
 void TorebiIzumi_WalkLeaderToSpring(void)
 {
     s32 leader = gGameState.selected_actor;
 
-    if (Value1(Engine_GameFlagIsSet, 0x200) == 0) {
+    if (GameFlag_IsSet(0x200) == 0) {
         Engine_GameFlagSet(0x200);
         TorebiIzumi_RiseAndFadeIn();
     }
@@ -121,7 +106,7 @@ void SceneDialogue_RunMessage0e34(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
-    Event_OpenMessage(-1, 0);
+    Engine_EventOpenMessage(-1, 0);
     Engine_EventEnd();
 }
 
@@ -129,7 +114,7 @@ void SceneDialogue_RunMessage0e35(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
-    Event_OpenMessage(-1, 0);
+    Engine_EventOpenMessage(-1, 0);
     Engine_EventEnd();
 }
 
@@ -138,7 +123,6 @@ void FieldScene_RunIndexedStep0(void)
     TorebiIzumi_OfferLuckyWheels(0);
 }
 
-/* What the spring answers; its second row answers its own way. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
@@ -147,9 +131,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gTorebiIzumiEventsOther;
 }
 
-/* OAM buffer pending */
-
-/* Opens the Torebi spring scene: stages the blend and actors, reports the coin difference after a game, and hands out each prize item won. */
 s32 TorebiIzumi_OpenScene(void)
 {
     s32 diff;
@@ -158,7 +139,7 @@ s32 TorebiIzumi_OpenScene(void)
     s32 item;
 
     if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: each do/while loads the value before the register address */
         do { Io_SetBlendAlpha(0x80c); } while (0);
         Engine_ActorSetAnimation(24, 2);
@@ -180,7 +161,7 @@ s32 TorebiIzumi_OpenScene(void)
             Engine_ActorSetPosition(17, 0, 0);
         }
         gOamCopyEnabled = 1;
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         if (gGameState.entrance == 10) {
             Engine_ActorSetChildValue(8, 1);
             Engine_ActorSetChildValue(9, 2);
@@ -253,9 +234,6 @@ s32 TorebiIzumi_OpenScene(void)
     return 0;
 }
 
-/* The spring gives up a prize: the leader turns to it, the water parts cell
- * by cell along both rows, the item is shown and given, and the water closes
- * again the way it opened. */
 void TorebiIzumi_RevealPrize(s32 item)
 {
     Engine_EventBegin();

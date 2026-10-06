@@ -1,28 +1,36 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "PROBE.H"
 
-extern const s32 MakyuriHeya_RiseScript[];
 
-void OverlayObject_SpawnKind24AtObject(u8 *src)
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
-    u8 *obj;
-    u8 *rec;
+    struct FieldActor *obj;
+    struct FieldSprite *sprite;
 
-    obj = Object_Create(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
+    obj = Engine_ObjectCreate(24, src->x.fixed, src->y.fixed, src->z.fixed);
     if (obj == 0) {
         return;
     }
 
-    rec = *(u8 **)(obj + 0x50);
-    Object_SetScript(obj, MakyuriHeya_RiseScript);
+    sprite = obj->sprite;
+    Engine_ObjectSetScript(obj, MakyuriHeya_RiseScript);
 
-    obj[0x55] = 0;
-    obj[0x22] = 1;
-    obj[0x23] = 2;
+    obj->motion_flags = 0;
+    obj->terrain_id = 1;
+    obj->priority_flags = 2;
 
-    if (rec != 0) {
-        AnimationObjects_SelectAnimation(rec, 2);
-        rec[0x26] = 0;
-        rec[9] |= 0x0C;
+    if (sprite != 0) {
+        AnimationObjects_SelectAnimation(sprite, 2);
+        sprite->flags = 0;
+        ((struct FieldSpritePriority *)sprite)->priority = 3;
     }
 }
 
@@ -45,9 +53,9 @@ s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
     return 1;
 }
 
-s32 SceneEffect_AdvanceScaleOverSixteenFrames(u8 *o)
+s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o)
 {
-    u16 *c = (u16 *)(o + 100);
+    u16 *c = &o->timer;
     s16 n;
 
     *c = *c + 1;
@@ -55,14 +63,14 @@ s32 SceneEffect_AdvanceScaleOverSixteenFrames(u8 *o)
     if (n > 16) {
         return 0;
     }
-    *(s32 *)(o + 24) = (n * 3) << 10;
-    *(s32 *)(o + 28) = (n * 3) << 10;
+    o->scale_x = (n * 3) << 10;
+    o->scale_y = (n * 3) << 10;
     return 1;
 }
 
-s32 OverlayObject_StepScaleUpSixteenFrames(u8 *o)
+s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
 {
-    u16 *c = (u16 *)(o + 100);
+    u16 *c = &o->timer;
     s16 n;
 
     *c = *c + 1;
@@ -70,7 +78,7 @@ s32 OverlayObject_StepScaleUpSixteenFrames(u8 *o)
     if (n > 16) {
         return 0;
     }
-    *(s32 *)(o + 24) = (n << 11) + 0x10000;
-    *(s32 *)(o + 28) = (n << 11) + 0x10000;
+    o->scale_x = (n << 11) + 0x10000;
+    o->scale_y = (n << 11) + 0x10000;
     return 1;
 }

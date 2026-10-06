@@ -1,6 +1,3 @@
-/* Item menu: write the names of the equipped items into the equipment
-   window, one row per item type 1 to 4. The name message is the item id
-   plus 0x182; its pool constant is hoisted into a register for the loop. */
 #include "TYPES.H"
 #include "ITEM.H"
 

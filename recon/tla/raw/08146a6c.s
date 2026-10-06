@@ -156,7 +156,7 @@ Func_08146a6c:
 	bge .L_08146bb0
 	b .L_08146d7a
 .L_08146bb0:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #20]
 	adds r1, r0, #0
 	adds r1, #12
@@ -164,7 +164,7 @@ Func_08146a6c:
 	add r5, sp, #56
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]

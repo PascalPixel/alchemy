@@ -1,8 +1,3 @@
-/* Draft: Japanese debug command source alternative.
- * 2026-10-01: Compiled owner 668 bytes; clear/fill register allocation or scheduling differs from the 664-byte Japanese owner.
- * This reduced attempt includes its current source declaration context.
- * Ordinary TBS compiler and options; no scene placement or credit claimed.
- */
 #include "EDITION.H"
 #include "../../../../games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/MENU_TEST.H"
 #include "CALL.H"
@@ -17,7 +12,7 @@
 TEXT_MESSAGE_ENUM(MsgBattleAdditionalPsynergyHelp);
 TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
 
-void Event_SetValue1d8(s16 message);
+void Event_SetMessageId(s16 message);
 void BattleEv_RunWait(s32 mode, s32 frames);
 s32 PartyInventory_GiveItem(s32 item);
 
@@ -40,20 +35,18 @@ extern u8 gDebugItemCapacityLabel[];
 extern u8 gDebugItemFullLabel[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-struct TextRenderWork *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Engine_DebugRedrawWindow(struct TextRenderWork *window);
-void Engine_DebugClearWindow(struct TextRenderWork *window);
-void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
+struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Engine_DebugRedrawWindow(struct RenderInput *window);
+void Engine_DebugClearWindow(struct RenderInput *window);
+void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
-
 
 void CommandTable_ConfigureCommandGroups(void)
 {

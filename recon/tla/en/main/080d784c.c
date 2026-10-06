@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-/* A scene actor's descriptor: its scene number (offset by 48) and position. */
 struct ActorDescriptor {
     s16 action;
     s16 scene;
@@ -34,11 +33,6 @@ struct ActorDescriptor *BattleAction_FindDescriptor(s32 action);
 struct ActorObject *ObjectTable_Get(s32 object);
 void Object_SetPositionAndResetMotionFar(struct ActorObject *obj, s32 x, s32 y, s32 z);
 void Object_SetMode(struct ActorObject *obj, s32 mode);
-
-/* Once flag 0x109 is set and the destination is one of scenes 300-380, put
-   every actor (objects 8-65) whose descriptor names that scene at its own
-   position, or, when bit 11 of the destination is set, just below the anchor
-   object. */
 
 void FieldObject_PlaceSceneActors(void)
 {

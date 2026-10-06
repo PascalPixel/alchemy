@@ -1,7 +1,3 @@
-@ Import veneers after the BABI_CHIKA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — BABI_CHIKA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -81,15 +77,15 @@ Map_CopyCellAttributeRect:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
@@ -126,10 +122,10 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Func_0808b868
+	.global FieldScene_PrepareActors
 	.thumb_func
-Func_0808b868:
-	overlay_veneer Func_0808a038
+FieldScene_PrepareActors:
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

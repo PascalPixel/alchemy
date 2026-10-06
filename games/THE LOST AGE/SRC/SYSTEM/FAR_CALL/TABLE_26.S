@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080c82a8: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -32,15 +28,31 @@ Func_080c82c0:
 	.global Func_080c82c8
 	.thumb_func
 Func_080c82c8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_FindNearestObject
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_FindNearestObject
+.else
 	overlay_veneer Func_080dd054
+.endif
+.endif
 	.global Func_080c82d0
 	.thumb_func
 Func_080c82d0:
 	overlay_veneer Func_080decb8
-	.global Func_080c82d8
+	.global BattleFx_FindNearestObjectFar
 	.thumb_func
-Func_080c82d8:
-	overlay_veneer Func_080cdbf8
+BattleFx_FindNearestObjectFar:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080dd054
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080dd054
+.else
+	overlay_veneer BattleFx_FindNearestObject
+.endif
+.endif
 	.global Func_080c82e0
 	.thumb_func
 Func_080c82e0:
@@ -48,15 +60,31 @@ Func_080c82e0:
 	.global Func_080c82e8
 	.thumb_func
 Func_080c82e8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer EventRuntime_PrepareCurrentObject
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer EventRuntime_PrepareCurrentObject
+.else
 	overlay_veneer Func_080d50f8
+.endif
+.endif
 	.global Func_080c82f0
 	.thumb_func
 Func_080c82f0:
 	overlay_veneer Func_080d53b8
-	.global Func_080c82f8
+	.global EventRuntime_PrepareCurrentObjectFar
 	.thumb_func
-Func_080c82f8:
+EventRuntime_PrepareCurrentObjectFar:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d2260
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d2260
+.else
+	overlay_veneer EventRuntime_PrepareCurrentObject
+.endif
+.endif
 	.global Func_080c8300
 	.thumb_func
 Func_080c8300:
@@ -88,23 +116,63 @@ Func_080c8330:
 	.global Func_080c8338
 	.thumb_func
 Func_080c8338:
+.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayTransition_InitializeState
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayTransition_InitializeState
+.else
 	overlay_veneer Func_080d7240
+.endif
+.endif
 	.global Func_080c8340
 	.thumb_func
 Func_080c8340:
+.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayTransition_Start
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayTransition_Start
+.else
 	overlay_veneer Func_080d00f8
-	.global Func_080c8348
+.endif
+.endif
+	.global DisplayTransition_InitializeStateFar
 	.thumb_func
-Func_080c8348:
-	overlay_veneer Func_080d0bec
-	.global Func_080c8350
+DisplayTransition_InitializeStateFar:
+.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayTransition_Finish
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayTransition_Finish
+.else
+	overlay_veneer DisplayTransition_InitializeState
+.endif
+.endif
+	.global DisplayTransition_StartFar
 	.thumb_func
-Func_080c8350:
+DisplayTransition_StartFar:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d01cc
-	.global Func_080c8358
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d01cc
+.else
+	overlay_veneer DisplayTransition_Start
+.endif
+.endif
+	.global DisplayTransition_FinishFar
 	.thumb_func
-Func_080c8358:
+DisplayTransition_FinishFar:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d0520
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d0520
+.else
+	overlay_veneer DisplayTransition_Finish
+.endif
+.endif
 	.global Func_080c8360
 	.thumb_func
 Func_080c8360:
@@ -113,15 +181,15 @@ Func_080c8360:
 	.thumb_func
 Func_080c8368:
 	overlay_veneer Func_080ccec8
-	.global Func_080c8370
+	.global BattleEffect_InitializeBuffersFar
 	.thumb_func
-Func_080c8370:
+BattleEffect_InitializeBuffersFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_ApplyColorToSourceBuffer
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_ApplyColorToSourceBuffer
 .else
-	overlay_veneer Func_080d1684
+	overlay_veneer BattleEffect_InitializeBuffers
 .endif
 .endif

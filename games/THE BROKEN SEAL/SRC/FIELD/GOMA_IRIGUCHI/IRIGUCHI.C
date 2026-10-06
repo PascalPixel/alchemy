@@ -1,14 +1,27 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CALL.H"
+#include "BATTLE_RUNTIME.H"
+#include "ITEM.H"
+#include "INVENTORY.H"
+#include "text/MSG_IDS.H"
+
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -16,46 +29,15 @@ struct EffectRecord {
     u8 flags_hi : 4;
 };
 
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
-struct OverlayActorPosition {
-    u8 pad00[8];
-    s32 depth_fixed;
-};
-
-struct OverlayActorState {
-    u8 pad00[35];
-    u8 flags;
-};
-
 void BattleFx_PlayQueuedSound();
-extern u8 GomaIriguchi_SceneTableA[];
-extern u8 GomaIriguchi_SceneTableB[];
-extern u8 GomaIriguchi_SceneTableC[];
-extern u8 GomaIriguchi_SceneTableD[];
 
-void Engine_EventWait();
 void BattleFx_SetQueuedSoundAndPlay();
-void Engine_ActorSetAnimation();
-s32 Engine_GameFlagIsSet();
 void Engine_MapCopyCellAttributes();
-void Engine_ActorSetPosition();
-void Engine_ActorSetSpriteFlags();
 
-struct Flags35 {
-    u8 pad[35];
-    u8 flags;
-};
-
-extern u8 MsgGomaNoUsePsynergy[];
 void GomaIriguchi_RunSpinningLeap();
 void GomaIriguchi_SetEntranceFlag();
 void GomaIriguchi_GiveShamansRod();
 void Event_PrepareObjectAndApplyValue();
-void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames);
 
 extern u8 *gEffectWork;
 void BattleFx_LoadActionEffectResources();
@@ -65,18 +47,8 @@ void EventObject_Initialize();
 void EffectRuntime_StopCurrentObject();
 
 void OverlayObject_TurnStateByEighth();
-void Engine_TaskWait(s32 frames);
-s32 Engine_MathCos(s32 angle);
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestination(s32 actor, s32 x, s32 y);
-void Engine_ActorWaitForMove(s32 actor);
 void OverlayObject_WaitForHeight();
-void Engine_AudioPlayCue(s32 cue);
-void Engine_WorkSetValuesIfNonNegative();
-s32 Engine_MathSin(s32 angle);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
-void Engine_ActorSetAnimation(s32 actor, s32 anim);
-void Engine_MapWaitWorkValuesBelow256(void);
 
 struct Actor {
     u8 pad00[8];
@@ -119,11 +91,8 @@ struct EffectParams {
     u8 pad1c[12];
 };
 
-u8 *Owner_GetStateFar(s32 group);
-s32 Inventory_AddItemFar(s32 group, s32 value);
-void Inventory_EquipFar(s32 group, s32 index);
+s32 Inventory_AddItem(s32 group, s32 value);
 
-/* The party member's record: the item ids of its fifteen inventory slots. */
 struct Member_387 {
     u8 pad[216];
     u16 items[15];
@@ -136,24 +105,15 @@ struct Item_387 {
     u8 equippable;
 };
 
-s32 Inventory_AddItemFar(s32 member, s32 item);
-struct Item_387 *Item_Get();
-void Inventory_Discard(s32 member, s32 slot);
-void Inventory_EquipFar(s32 member, s32 slot);
+s32 Inventory_AddItem(s32 member, s32 item);
 
-/*
- * The owner exists for the argument shuffle: the frame count is saved before
- * the first call clobbers its register, so it survives to reach the second.
- * The twenty-two byte owner loads no literal and has no pool.
- */
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
-    Event_ShowMessage(selector, 0);
+    Engine_EventShowMessage(selector, 0);
     Engine_EventWait(frames);
 }
 
-/* Contiguous unnamed leaf-owner run for resource_387. */
-void *SceneData_GetTable92f8(void)
+void *GomaIriguchi_GetEntrances(void)
 {
     return GomaIriguchi_SceneTableA;
 }
@@ -163,23 +123,23 @@ int SceneData_ReturnZero(void)
     return 0;
 }
 
-void *SceneData_GetTable9358(void)
+void *GomaIriguchi_GetExits(void)
 {
     return GomaIriguchi_SceneTableB;
 }
 
-void *SceneData_GetTable9368(void)
+void *GomaIriguchi_GetPlacements(void)
 {
     return GomaIriguchi_SceneTableC;
 }
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 v3;
 
     record = Object_GetById(9);
-    v3 = *(s32 *)(record + 8) / 0x100000;
+    v3 = record->x.fixed / 0x100000;
     GameFlag_Clear(0x861);
     GameFlag_Clear(0x862);
     if (v3 == 15) {
@@ -198,15 +158,15 @@ void FieldScene_RunScene387SequenceC(void)
     struct FieldActor *actor;
     s32 tile_x;
 
-    actor = (struct FieldActor *)Object_GetById(10);
+    actor = Object_GetById(10);
     tile_x = actor->x.fixed / 0x100000;
     if (tile_x == 23) {
         Engine_EventWait(10);
-        Actor_Get(10)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-        Actor_Get(10)->motion_flags = 0;
-        Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
-        Map_CopyCellAttributes(54, 17, 1, 1, tile_x, 17);
-        GameFlag_Set(0x863);
+        Object_GetById(10)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        Object_GetById(10)->motion_flags = 0;
+        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+        Engine_MapCopyCellAttributes(54, 17, 1, 1, tile_x, 17);
+        Engine_GameFlagSet(0x863);
     }
 }
 
@@ -245,11 +205,11 @@ void Resource387_NoOpCallbackB(void)
 void FieldScene_RunStepWithValue866(void)
 {
     Engine_EventBegin();
-    GameFlag_Set(0x866);
+    Engine_GameFlagSet(0x866);
     Engine_EventEnd();
 }
 
-void *SceneData_GetTable9488(void)
+void *GomaIriguchi_GetEvents(void)
 {
     return GomaIriguchi_SceneTableD;
 }
@@ -264,47 +224,45 @@ s32 GomaIriguchi_RestoreEntryState(void)
     Engine_EventWait(10);
     BattleFx_SetQueuedSoundAndPlay(170);
     Engine_ActorSetAnimation(11, 2);
-    ((struct Flags35 *)Object_GetById(11))->flags = 2;
+    Object_GetById(11)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     {
-        u8 *record = (s32)Object_GetById(8);
-        u8 value = *(volatile u8 *)&record[89];
-    
-        record[89] = (u8)(value | 16);
+        struct FieldActor *record = Object_GetById(8);
+
+        record->collision_flags = 16 | record->collision_flags;
     }
     {
-        u8 *record = (s32)Object_GetById(15);
-        u8 value = *(volatile u8 *)&record[89];
-    
-        record[89] = (u8)(value | 8);
+        struct FieldActor *record = Object_GetById(15);
+
+        record->collision_flags = 8 | record->collision_flags;
     }
     if (Engine_GameFlagIsSet(0x865) != 0) {
-        Call6(Engine_MapCopyCellAttributes, 74, 11, 1, 1, 73, 11);
+        Map_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     }
     if (Engine_GameFlagIsSet(0x860) != 0) {
         Engine_ActorSetPosition(8, 0x880000, 0xc40000);
-        *(u8 *)((s32)Object_GetById(8) + 35) |= 2;
+        Object_GetById(8)->priority_flags |= 2;
         v5 = 12;
         Engine_ActorSetAnimation(8, 2);
         Engine_MapCopyCellAttributes(39, 12, 3, 1, 8, v5);
         Engine_MapCopyCellAttributes(43, 11, 3, 1, v5, 11);
     }
     if (Engine_GameFlagIsSet(0x861) != 0) {
-        Call3(Engine_ActorSetPosition, 9, 0x1080000, 0x1380000);
-        Call6(Engine_MapCopyCellAttributes, 48, 18, 1, 2, 16, 18);
+        Actor_SetPosition(9, 0x1080000, 0x1380000);
+        Map_CopyCellAttributes(48, 18, 1, 2, 16, 18);
     } else {
         if (Engine_GameFlagIsSet(0x862) != 0) {
-            Call3(Engine_ActorSetPosition, 9, 0x1180000, 0x1380000);
-            Call6(Engine_MapCopyCellAttributes, 47, 18, 1, 2, 16, 18);
+            Actor_SetPosition(9, 0x1180000, 0x1380000);
+            Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
         }
     }
     if (Engine_GameFlagIsSet(0x863) != 0) {
         Engine_ActorSetPosition(10, 0x1780000, 0x1180000);
         ((struct Flags35 *)Object_GetById(10))->flags = 2;
         v5 = 0;
-        *(u8 *)((s32)Object_GetById(10) + 85) = v5;
+        Object_GetById(10)->motion_flags = v5;
         record = (s32)Object_GetById(10);
         Engine_ActorSetSpriteFlags((s32)record, 0);
-        Call6(Engine_MapCopyCellAttributes, 54, 17, 1, 1, 23, 17);
+        Map_CopyCellAttributes(54, 17, 1, 1, 23, 17);
     }
     return 0;
 }
@@ -312,7 +270,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
 void FieldScene_RunScene387SequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
 #if EDITION_INTERNATIONAL
     BattleFx_PlayQueuedSound();
@@ -325,7 +283,7 @@ void FieldScene_RunScene387SequenceA(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 168);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
@@ -339,7 +297,7 @@ void FieldScene_RunScene387SequenceA(void)
         Engine_ActorSetAnimation(ACTOR_GERALD, 2);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(ACTOR_GERALD);
         Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -522,12 +480,12 @@ void Overlay387_ConfigureActorEightAtDepth(void)
     depth = ((struct OverlayActorPosition *)Object_GetById(8))->depth_fixed >> 20;
     if (depth == 11) {
         GomaIriguchi_RunSpinningLeap(8);
-        state = Actor_Get(8);
+        state = Object_GetById(8);
         state->flags |= 2;
         span = 12;
-        Map_CopyCellAttributes(39, 12, 3, 1, 8, span);
-        Map_CopyCellAttributes(43, 11, 3, 1, span, depth);
-        GameFlag_Set(2144);
+        Engine_MapCopyCellAttributes(39, 12, 3, 1, 8, span);
+        Engine_MapCopyCellAttributes(43, 11, 3, 1, span, depth);
+        Engine_GameFlagSet(2144);
     }
     Engine_EventEnd();
 }
@@ -552,7 +510,6 @@ void GomaIriguchi_SetEntranceFlag(void)
     EffectRuntime_StopCurrentObject();
 }
 
-/* Turn the object's attached presentation state by one eighth-turn. */
 void OverlayObject_TurnStateByEighth(u8 *obj)
 {
     u8 *state = *(u8 **)(obj + 80);
@@ -572,8 +529,6 @@ void OverlayObject_WaitForHeight(u8 *obj, s32 height)
     }
 }
 
-/* The actor spins up out of the ground, lands with a ring of dust and a
- * final burst. */
 void GomaIriguchi_RunSpinningLeap(s32 id)
 {
     struct Vec dir;
@@ -595,7 +550,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
         actor->hover = 0x80000000;
     }
     actor->callback = (s32)OverlayObject_TurnStateByEighth;
-    Call3(Engine_ActorSetSpeed, id, 0x30000, 0x18000);
+    Actor_SetSpeed(id, 0x30000, 0x18000);
     Engine_ActorSetDestination(id, 160, 192);
     actor->accel = 0xcccc;
     actor->layer = 3;
@@ -603,13 +558,12 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     Engine_ActorWaitForMove(id);
     OverlayObject_WaitForHeight((s32)actor, 0x200000);
     Engine_AudioPlayCue(188);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Engine_AudioPlayCue(141);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     for (i = 0; i <= 16; i++) {
         v = &dir;
-        /* FAKEMATCH: zero is set inside the loop (always entered) so it is
-         * materialized after the counter and the direction pointer. */
+        /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized after the counter and the direction pointer. */
         zero = 0;
         v->x = Engine_MathCos(i << 12);
         v->y = zero;
@@ -636,21 +590,17 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     Engine_MapWaitWorkValuesBelow256();
 }
 
-/* Apply a value to every matching member of a fifteen-slot group. */
 void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 {
-    u8 *work = Owner_GetStateFar(group);
+    u8 *work = Owner_GetState(group);
     s32 i;
-    Inventory_AddItemFar(group, value);
+    Inventory_AddItem(group, value);
     for (i = 0; i < 15; i++) {
         if (*(u16 *)(work + 216 + i * 2) == value)
-            Inventory_EquipFar(group, i);
+            Inventory_Equip(group, i);
     }
 }
 
-/* Give member 2 item 65, dropping an item to make room while the inventory
- * is full (the last slot is cleared after a thousand tries), then equip every
- * slot holding it. */
 void GomaIriguchi_GiveShamansRod(void)
 {
     struct Member_387 *member;
@@ -660,7 +610,7 @@ void GomaIriguchi_GiveShamansRod(void)
     s32 id;
 
     id = 65;
-    member = (struct Member_387 *)Owner_GetStateFar(2);
+    member = (struct Member_387 *)Owner_GetState(2);
     tries = 0;
 retry:
     if (++tries > 1000) {
@@ -676,7 +626,7 @@ retry:
 #endif
         member->items[14] = 0;
     }
-    if (Inventory_AddItemFar(2, id) == -1) {
+    if (Inventory_AddItem(2, id) == -1) {
         for (i = 0; i <= 14; i++) {
             item = Item_Get(member->items[i]);
             if (((u8 *)item)[2] == 1) {
@@ -695,6 +645,6 @@ retry:
     }
     for (i = 0; i <= 14; i++) {
         if (member->items[i] == id)
-            Inventory_EquipFar(2, i);
+            Inventory_Equip(2, i);
     }
 }

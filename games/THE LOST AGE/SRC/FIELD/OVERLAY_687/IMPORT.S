@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_687 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_687 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -54,9 +50,9 @@ Func_02001f4c:
 	.thumb_func
 Func_02001f54:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_02001f5c
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02001f5c:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02001f64
 	.thumb_func
@@ -69,11 +65,11 @@ Func_02001f6c:
 	.global Func_02001f74
 	.thumb_func
 Func_02001f74:
-	overlay_veneer Func_08020178
-	.global ObjectDispatch_SetSingleChildField26
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -81,7 +77,7 @@ Animation_SetStateFlags:
 	.global Func_02001f8c
 	.thumb_func
 Func_02001f8c:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02001f94
 	.thumb_func
 Func_02001f94:
@@ -97,11 +93,11 @@ Battle_WaitMode0:
 	.global Func_02001fac
 	.thumb_func
 Func_02001fac:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02001fb4
 	.thumb_func
 Func_02001fb4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -121,7 +117,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02001fdc
 	.thumb_func
 Func_02001fdc:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -129,7 +125,7 @@ Object_SetPartAttribute:
 	.global Func_02001fec
 	.thumb_func
 Func_02001fec:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -141,11 +137,11 @@ Func_02001ffc:
 	.global Func_02002004
 	.thumb_func
 Func_02002004:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_0200200c
 	.thumb_func
 Func_0200200c:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:
@@ -153,45 +149,45 @@ Party_SetFields1eeAnd1f0:
 	.global Func_0200201c
 	.thumb_func
 Func_0200201c:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02002024
 	.thumb_func
 Func_02002024:
-	overlay_veneer Func_080c8380
-	.global Event_SetStatus1c6
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_ClearStatus1c6
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
-	overlay_veneer Event_ClearStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_FinishScreenTransition:
+	overlay_veneer Event_FinishScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_02002044
 	.thumb_func
 Func_02002044:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_0200204c
 	.thumb_func
 Func_0200204c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.endif
 	.endif
 	.global Func_02002054

@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_660 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_660 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -21,11 +17,11 @@ GameFlag_ClearBit:
 	.global Func_020007bc
 	.thumb_func
 Func_020007bc:
-	overlay_veneer Func_08020120
-	.global ObjectDispatch_SetSingleChildField26
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:
@@ -49,11 +45,11 @@ Battle_WaitMode0:
 	.global Func_020007f4
 	.thumb_func
 Func_020007f4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020007fc
 	.thumb_func
 Func_020007fc:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -69,11 +65,11 @@ ObjectMotion_EnableActionAndSetCallback:
 	.global Func_0200081c
 	.thumb_func
 Func_0200081c:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02000824
 	.thumb_func
 Func_02000824:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Motion_SetModeAndWaitAnimation
 	.thumb_func
 Motion_SetModeAndWaitAnimation:
@@ -89,7 +85,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02000844
 	.thumb_func
 Func_02000844:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -101,25 +97,25 @@ Func_02000854:
 	.global Func_0200085c
 	.thumb_func
 Func_0200085c:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_0200087c
@@ -129,7 +125,7 @@ Func_0200087c:
 	.global Func_02000884
 	.thumb_func
 Func_02000884:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_0200088c
 	.thumb_func
 Func_0200088c:
@@ -139,7 +135,7 @@ Func_0200088c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02000894

@@ -29,7 +29,7 @@ Func_080d7524:
 	lsls r3, r3, #8
 	ands r1, r3
 	str r1, [sp, #8]
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #173
@@ -184,7 +184,7 @@ Func_080d7524:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r0, [r5, #80]
 	ldr r1, [sp, #12]
 	bl Func_080dc0d8
@@ -267,7 +267,7 @@ Func_080d7524:
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r7, #72]
-	bl Func_080d2350
+	bl EventRuntime_End
 	add sp, #52
 	pop {r3, r5, r6, r7}
 	mov r8, r3

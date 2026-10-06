@@ -1,4 +1,16 @@
-#include "TYPES.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "AUDIO_ENGINE_TYPES.H"
+
+extern struct SoundPlayer gMusicPlayerBgm;
+extern u8 gMusicPlayerFanfare[];
 
 extern u8 gMusicRestoreDelay;
 extern u16 gMusicVolume;
@@ -7,21 +19,16 @@ extern u16 gMusicVolumeStep;
 extern u16 gMusicPitchTarget;
 extern u16 gMusicVolumeTarget;
 extern u16 gMusicPitch;
-extern u8 gMusicPlayerFanfare[];
-extern u8 gMusicPlayerBgm[];
 
-void Sound_TickDmaRestartTimer(void);
-void MusicPlayer_SetPitchAndUpdateFrequency(u8 *, s32);
-void MusicPlayer_SetVolume(u8 *, s32, s32);
-void MusicPlayer_SetPitch(u8 *, s32, s32);
 
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 {
+    /* FAKEMATCH: the player byte prefix keeps status+4 as a byte displacement; a typed field folds it into the literal. */
     s32 delta;
 
     if (gMusicRestoreDelay != 0) {
         if (gMusicRestoreDelay == 1) {
-            if (gMusicPlayerFanfare[4] == 0) {
+            if (gMusicPlayerFanfare[(u32)&((struct SoundPlayer *)0)->status] == 0) {
                 gMusicRestoreDelay = 0;
                 gMusicVolumeTarget = 0x100;
             }
@@ -39,7 +46,7 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
         if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
             gMusicVolume = gMusicVolumeTarget;
         }
-        MusicPlayer_SetVolume(gMusicPlayerBgm, 255, gMusicVolume);
+        MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, gMusicVolume);
     }
     if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
         delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
@@ -51,8 +58,8 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
         if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0) {
             gMusicPitch = gMusicPitchTarget;
         }
-        MusicPlayer_SetPitchAndUpdateFrequency(gMusicPlayerBgm, gMusicPitch);
-        MusicPlayer_SetPitch(gMusicPlayerBgm, 255, (s16)((s16)gMusicPitch * 12 - 3072));
+        MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gMusicPitch);
+        MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)gMusicPitch * 12 - 3072);
     }
     Sound_TickDmaRestartTimer();
 }

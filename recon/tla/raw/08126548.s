@@ -182,7 +182,7 @@ BattleCamera_SetRange:
 .L_08126698:
 	.4byte 0x0000478a
 .L_0812669c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081266a0:
 	.4byte IwramRatioMulQ14
 .L_081266a4:

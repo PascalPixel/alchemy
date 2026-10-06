@@ -1,16 +1,13 @@
+#include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 
 extern u8 *gCameraWork;
 
-s32 **GetBattleObjectSlotFar(s32 unit);
 u8 *GetMotionRecordFar(s32 *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
-
-/* Projects a battle unit's position to the screen and lifts it by its
-   scaled height. */
 
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 {
@@ -22,7 +19,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
     s32 unused[3];
 
     camera = gCameraWork;
-    object = *GetBattleObjectSlotFar(unit);
+    object = GetBattleObjectSlotFar(unit)->object;
     info = GetMotionRecordFar(object, 0);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera, camera + 12);

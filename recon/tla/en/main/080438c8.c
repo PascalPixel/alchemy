@@ -15,9 +15,6 @@ u32 SaveState_WriteRecord(s32, void *);
 u32 SaveState_ReleaseWorkspace(void);
 u32 SaveState_DeleteRecord(s32);
 
-/* save/state/confirm_and_process_selected_slot.c */
-/* save/state/state_confirm_and_process_selected_slot.c */
-/* save/state/confirm_and_process_selected_slot.c */
 extern u8 MsgOverwriteConfirm;
 extern u8 MsgGameSaved;
 

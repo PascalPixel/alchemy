@@ -1,7 +1,5 @@
 #include "EDITION.H"
 #if EDITION_INTERNATIONAL
-/* Japanese menus use fixed digit counts; this localization helper is absent
- * in both Japanese editions. */
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
@@ -24,6 +22,5 @@ void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y)
     x -= digits << 3;
     UiText_DrawNumberAtOffsetFar(number, digits, layer, x, y);
 }
-
 
 #endif

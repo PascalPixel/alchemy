@@ -50,4 +50,4 @@ Func_0803d92c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0803d988:
-	.4byte Data_0804eb58
+	.4byte UiIcon_ItemIconPointers

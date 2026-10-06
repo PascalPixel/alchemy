@@ -1,9 +1,7 @@
 #include "TYPES.H"
 #include "GAME_STATE.H"
-extern u8 MsgLobbyLooksLikeFirst[];
-extern u8 MsgLobbyLooksLikeFirstTime[];
-extern u8 MsgLobbyTellConsecutiveWins[];
-extern u8 MsgLobbyTellTotalWins[];
+#include "text/MSG_IDS.H"
+#include "BATTLE.H"
 
 struct LobbyActor {
     u8 unknown_00[6];
@@ -15,10 +13,8 @@ void Engine_EventBegin(void);
 void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
 void Engine_EventSetMessage(s32 message);
 void UiWork_ClearValueNameTables(void);
-void UiText_DrawQuantity(s32 value, s32 digits);
 s32 Engine_EventShowMessage(s32 actor, s32 mode);
 
-/* The attendant's win count: by the player's facing, total or consecutive linked wins; with none yet, the matching wait line, otherwise the count as a five-digit argument before the line. The empty case of the first branch shares the printing tail. */
 s32 LinkLobby_TalkLinkedWins(s32 actor)
 {
     u32 facing = Object_GetById(0)->facing;
@@ -27,7 +23,7 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
 
     Engine_EventBegin();
     Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
-    if ((u32)(facing - 0xa001) <= 0x3ffe) {
+    if ((facing - 0xa001) <= 0x3ffe) {
         base = (s32)MsgLobbyLooksLikeFirst;
         count = &gGameState.link_tallies[4];
         if (*count == 0) {

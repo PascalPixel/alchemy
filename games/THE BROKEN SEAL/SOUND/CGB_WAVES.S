@@ -1,5 +1,3 @@
-@ The CGB wave channel's wave RAM patterns, each 32 four-bit samples,
-@ built from the PCM4 files beside the samples.
 	.section .rodata
 	.balign 4
 	.global Sound_CgbWave0

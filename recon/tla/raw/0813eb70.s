@@ -56,7 +56,7 @@ Func_0813eb70:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	ldr r3, .L_0813ec20
 	movs r2, #128
 	lsls r2, r2, #19
@@ -91,7 +91,7 @@ Func_0813eb70:
 .L_0813ec24:
 	.4byte 0x00000080
 .L_0813ec28:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813ec2c:
 	.4byte 0xfffff000
 .L_0813ec30:
@@ -441,7 +441,7 @@ Func_0813eb70:
 	ldrh r1, [r3]
 	movs r0, #1
 	negs r2, r2
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 .L_0813eee6:
 	ldr r2, [sp, #40]
 	cmp r2, #7
@@ -485,7 +485,7 @@ Func_0813eb70:
 .L_0813ef34:
 	.4byte 0x01010101
 .L_0813ef38:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813ef3c:
 	.4byte gIoWriteQueue
 .L_0813ef40:
@@ -1223,7 +1223,7 @@ Func_0813eb70:
 	ldrh r1, [r3]
 	movs r2, #0
 	movs r0, #2
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_0813f510
@@ -1272,7 +1272,7 @@ Func_0813eb70:
 .L_0813f508:
 	.4byte Func_08143000
 .L_0813f50c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813f510:
 	.4byte gIoWriteQueue
 .L_0813f514:

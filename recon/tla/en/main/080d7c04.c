@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
+#include "OBJECT_DISPATCH.H"
 
 extern u8 gEffectWork[];
 
@@ -10,6 +11,7 @@ extern s32 gGameState[];
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();
 int ObjectMotion_Launch();
+void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *child, u32 value);
 
 void BattleFx_FinishHeavyImpact(s32 arg)
 {
@@ -29,7 +31,6 @@ void BattleFx_FinishHeavyImpact(s32 arg)
 
     id = arg;
     ctx = Object_GetById();
-    /* The single-pass block preserves the first call's argument schedule. */
     do
     {
         if (ctx == ((void *)0))
@@ -38,14 +39,13 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         }
         BattleFx_InitializeSlots();
         base = (*((s32 *)gEffectWork));
-        Unnamed_080b0840Far(0x20118C);
+        Shop_RestoreSceneTilesFar(0x20118C);
         Audio_PlayCue(0xAD);
         Motion_SetVarCbAndRefresh(id, 1);
     }
     while (0);
     Audio_PlayCue(0xAE);
     Motion_SetVarCbAndRefresh(id, 1);
-    /* A second boundary gives the third repeated call its observed order. */
     do
     {
         Audio_PlayCue(0xAF);
@@ -68,13 +68,14 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         {
             EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
             EffectSlot_SetCallback(work, (s32)BattleFx_RunAngledApproachPhases);
-            /* This boundary keeps the work pointer ahead of the constant. */
             do
             {
             EffectSlot_SetObjectMode(work, 7);
             }
             while (0);
-            ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
+            Animation_ApplyChildValuesToRecordFar(
+                (struct DispatchChild *)*((void **)(head = (((s8 *)work) + 0))),
+                ((u32)(Random16() * 7)) >> 0x10);
             value = (__udivsi3(Random16(), 3) + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;

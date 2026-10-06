@@ -418,12 +418,12 @@ Func_0811df70:
 	bl Func_08138008
 	b .L_0811e296
 .L_0811e28c:
-	.4byte Func_08122d10
+	.4byte BattleEvent_Playback
 .L_0811e290:
 	mov r0, r8
 	bl Func_08138018
 .L_0811e296:
-	bl Func_081234f0
+	bl BattleEventRuntime_WaitForReady
 .L_0811e29a:
 	bl BattleActor_CommitPlacement
 	movs r0, #3

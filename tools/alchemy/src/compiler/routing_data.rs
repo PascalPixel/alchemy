@@ -1,15 +1,10 @@
-// Whole-file compiler-family decisions. Every file uses its family's one
-// flag set from routing.rs; these declarations contain no function addresses.
 
-// The MusicPlayer2000 library's modules, shared and edition-specific, and the
-// two agbcc -O2 flash helpers. Their neighbouring game-owned SOUND and SAVE
-// files keep the Game family.
 pub static AGBCC_SOURCES: &[&str] = &[
     "games/COMMON/SRC/SOUND/SOUND.C",
-    "games/COMMON/SRC/SOUND/SOUND2.C",
-    "games/COMMON/SRC/SOUND/SOUND3.C",
-    "games/COMMON/SRC/SOUND/SOUND4.C",
-    "games/COMMON/SRC/SOUND/SOUND5.C",
+    "games/COMMON/SRC/SOUND/ENGINE.C",
+    "games/COMMON/SRC/SOUND/CONTROL.C",
+    "games/COMMON/SRC/SOUND/MODULATE.C",
+    "games/COMMON/SRC/SOUND/TAIL.C",
     "games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C",
     "games/COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C",
     "games/COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C",
@@ -28,8 +23,6 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "games/THE LOST AGE/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C",
 ];
 
-// The flash library uses agbcc -O: its allocation and scheduling match that
-// family, while -O2 differs throughout. Game save-state handling is separate.
 pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/COMMON/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_BLOCK.C",
     "games/COMMON/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_CHIP.C",
@@ -52,6 +45,4 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/COMMON/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
 ];
 
-// Resident ARM routines, built with pret's agbcc_arm (Pascal, 2026-09-29):
-// only that compiler divides with the ROM's cmp/addlt, as agscc cannot.
 pub static AGBCC_ARM_SOURCES: &[&str] = &[];

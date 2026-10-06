@@ -8,7 +8,6 @@ void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
-/* Alternate scene-camera setup used by the later field presentation. */
 struct SceneCameraState {
     u8 filler0[12];
     s32 field0c;
@@ -51,8 +50,6 @@ struct SceneCameraObject {
 
 extern struct SceneCameraRuntime gCameraWork;
 extern struct SceneCameraObject gProjection;
-
-/* Keep the address symbol for the build map while exposing its role to C. */
 
 void Camera_ConfigureScene(s32 pos)
 {

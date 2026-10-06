@@ -1,6 +1,13 @@
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "BATTLE_SUMMON.H"
 
-extern const struct SummonDefinition Summon_DefinitionTable[];
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
 {

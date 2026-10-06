@@ -1,29 +1,25 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 #include "STAGED_ACTOR.H"
+#include "IO_REG.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
 typedef struct { s32 lo, hi; } Pair;
 
 typedef struct { s32 w0, w1, w2, w3; Pair tail; } Query;
-
-struct Particle_02000c4c {
-    u8 unknown_00[8];
-    s32 x;                  /* +0x08 */
-    s32 y;                  /* +0x0c */
-    u8 unknown_10[0x20];
-    s32 angle;              /* +0x30, 0x10000 to the turn */
-    u8 unknown_34[4];
-    s32 base_x;             /* +0x38 */
-    s32 base_y;             /* +0x3c */
-    u8 unknown_40[0x10];
-    u16 *sprite;            /* +0x50 */
-};
 
 typedef struct OrbitingSceneObjectSprite {
     u8 padding_00[5];
@@ -64,16 +60,7 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-/* The scene's tables, laid out after the code. */
-extern u8 KorimaHiroba_Scripts[];
-extern u8 KorimaHiroba_Messages[];
-extern u8 KorimaHiroba_Actors[];
-extern u8 KorimaHiroba_Extras[];
-
-
 u8 *SceneData_GetScriptTable(void) { return KorimaHiroba_Scripts; }
-
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 s32 SceneData_ReturnZero(void)
 {
@@ -84,7 +71,6 @@ u8 *SceneData_GetMessageTable(void) { return KorimaHiroba_Messages; }
 
 u8 *SceneData_GetActorTable(void) { return KorimaHiroba_Actors; }
 
-/* Runs the six-word placement query and forwards a successful result. */
 void SceneActor_RunPlacementQuery(void)
 {
     struct StagedActorProbe result;
@@ -94,12 +80,11 @@ void SceneActor_RunPlacementQuery(void)
     Engine_EventEnd();
 }
 
-/* Scene setup for slot 11 and effect 181. */
-void FieldScene_SetupActor11Effect181(void)
+void KorimaHiroba_AwardHiddenNut(void)
 {
     Engine_EventBegin();
-    Actor_SetPosition(11, 0, 0);
-    GameFlag_Set(0xfd3);
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_GameFlagSet(0xfd3);
     Engine_ItemShowFound(ITEM_NUT, 3);
     Engine_PartyGiveItem(ITEM_NUT, 0);
     Engine_EventEnd();
@@ -112,22 +97,21 @@ s32 FieldScene_SetupEntryActors8To11(void)
     void SceneEffect_AdjustPaletteWindow(s32 id);
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if (GameFlag_IsSet(0xfd3) == 0) {
+    if (Engine_GameFlagIsSet(0xfd3) == 0) {
         SceneEffect_InitOrbitingParticle(11);
     }
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
     FieldScene_RedrawActorFootprint(10);
-    if (GameFlag_IsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(0x845) == 0) {
         SceneEffect_AdjustPaletteWindow(11);
     }
     return 0;
 }
 
-/* Applies the adjustment to the protected palette window only. */
 void SceneEffect_AdjustPaletteWindow(s32 adj)
 {
-    volatile u16 *pal = (volatile u16 *)0x05000000;
+    volatile u16 *pal = BG_PLTT;
     u32 phase;
     u32 next;
     KorimaPalette_SaveFirst();
@@ -144,14 +128,9 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
         next = phase + 0x10000;
         phase = next;
     } while (next <= 0x00df0000);
-    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); ColorBuffer_ApplyTarget(0x10000, 0);
+    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
-/*
- * Applies the asymmetric RGB555 colour adjustment: red rises, green and
- * blue fall. Control jumps over a mask literal inside the span and rejoins
- * before the common return.
- */
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
     s16 green = (s16)((color >> 5) & 31);
@@ -166,7 +145,6 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_Divide(green, adj));
     blue = (s16)(blue - Math_Divide(blue, adj));
 
-    /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)
         red = 31;
 

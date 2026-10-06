@@ -1,20 +1,12 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 extern u8 Func_0800a418[];
 
-/* The strided tile copy runs from a heap copy of itself. */
 extern u8 Tile_CopyStridedCodeSize[];
 
-/* The 16 by 8 oval, in colour 1, that objects draw beneath them. */
 extern const u8 Object_ShadowTiles[];
 
-
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void PaletteDma_LoadBlock(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-
-/* Allocates and clears the object and state blocks (from the heap in mode
-   3), loads the object graphics and copies the strided tile copy routine
-   into heap block 53. */
 
 void ObjectSystem_Configure(s32 mode)
 {

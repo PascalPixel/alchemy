@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-/* battle/effects/common/spawn_objects.c */
 typedef struct {
     u8 reserved_00[9];
     u8 flags09_0 : 2;
@@ -12,7 +11,6 @@ typedef struct {
 } BattleEffectObject;
 
 extern u32 gBattleFxWork;
-
 
 BattleEffectObject *GetBattleEffectObject(s32);
 void AnimationObjects_SelectAnimationFar(BattleEffectObject *, s32);
@@ -26,7 +24,6 @@ void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
     if (entry_count == 0) {
         return;
     }
-    /* The object pointers start 0x77d8 bytes into the effect work. */
     offset = 0x77d8;
     do {
         BattleEffectObject *object = GetBattleEffectObject(kind);

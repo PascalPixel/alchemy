@@ -1,7 +1,3 @@
-@ Import veneers after the TITLE overlay's code: fixed 8-byte veneers through
-@ which the overlay calls main-image code, each loading its target into r4 and
-@ branching, which the calling convention permits.
-@ credit: reconstructed_veneer — TITLE overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -70,26 +66,26 @@ Engine_EventWait:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global Event_SetPairWork1c0
+	.global Event_SetDestination
 	.thumb_func
-Event_SetPairWork1c0:
-	overlay_veneer Event_SetPairWork1c0Far
+Event_SetDestination:
+	overlay_veneer Event_SetDestinationFar
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global ScrollFar_Entry00
 	.thumb_func
 ScrollFar_Entry00:
-	overlay_veneer Func_080f0000
+	overlay_veneer DisplayScroll_RunSlideshowFar
 	.global PaletteFar_Entry00
 	.thumb_func
 PaletteFar_Entry00:
-	overlay_veneer Func_080f2000
+	overlay_veneer Title_ShowIntroFar
 	.global Title_ShowSplashScreen
 	.thumb_func
 Title_ShowSplashScreen:

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-/* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void *ObjectTable_Get(u32 object);
 
 struct LinkedEffectVisual {

@@ -1,5 +1,3 @@
-/* resource_6a9: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -7,17 +5,20 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x0200807e)
-        "*/resource_6a9_overlay.o"(.text.x02008080)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PREPARE_OBJECT.o"(.text)
+        "*/resource_6a9_overlay.o"(.text.x020080ce)
         "*/resource_6a9_overlay.o"(.text.x020080d0)
-        "*/resource_6a9_overlay.o"(.text.x02008124)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_6a9_overlay.o"(.text.x0200815a)
         "*/resource_6a9_overlay.o"(.text.x0200815c)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/SCENE_TABLES.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x02008344)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/EXITS.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x02008374)
         "*/resource_6a9_overlay.o"(.text.x020083b4)
         "*/resource_6a9_overlay.o"(.text.x020083f0)
-        "*/resource_6a9_overlay.o"(.text.x02008438)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/WAIT_UNTIL_IDLE.o"(.text)
+        "*/resource_6a9_overlay.o"(.text.x02008452)
         "*/resource_6a9_overlay.o"(.text.x02008454)
         "*/resource_6a9_overlay.o"(.text.x0200853c)
         "*/resource_6a9_overlay.o"(.text.x020086a8)

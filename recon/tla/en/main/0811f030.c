@@ -14,12 +14,6 @@ struct MotionRecordNode {
     struct MotionRecordChild *children[1];
 };
 
-/*
- * Walks every motion record of an object: the first child of each record
- * takes the value, the others are cleared, and every child's flags are
- * filled. The result is unused by every caller.
- */
-
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 {
     s32 index = 0;

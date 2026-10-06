@@ -1,3 +1,13 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -6,34 +16,19 @@
 #include "FIELD_SCENE.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TBS_EDITION.H"
+#include "BATTLE_PARTY.H"
+#include "text/MSG_IDS.H"
+
+#define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)
+
+#define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement*))FieldScene_PrepareActors)
 
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
 
-
 void Owner_RecalculateStats();
 
-
-/* The scene's tables, in the overlay's read-only data. */
-extern u8 KuupuappuHeya_Scripts[];
-extern u8 KuupuappuHeya_Messages[];
-extern u8 KuupuappuHeya_Regions[];
-
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
-extern u8 KuupuappuHeya_SceneTableB[];
-extern u8 KuupuappuHeya_SceneTableA[];
-extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
-extern u8 LinkedMessage_YouWereSuchGreatHelp[];
-extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
-extern u8 LinkedMessage_TheyreBack[];
-extern u8 LinkedMessage_YouRobinRightWontForget[];
-extern u8 LinkedMessage_IvanGotShamansRod[];
 s32 PartyInventory_HasSpace(void);
-void Battle_InitializeRenderObject(void);
 void BattleEffect_CleanupSceneObjects(void);
 s32 PartyInventory_HasSpace();
 void Scene_JoinRodSearch();
@@ -45,43 +40,18 @@ void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
 s32 ArcTan2();
 void FieldScene_RunSplitTripleSteps();
-void SceneState_SetWord1c0To209AndRun();
+void KuupuappuHeya_OpenWindowTransition();
 void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
-void Map_SetWorkFourValues();
+void Map_SetViewBounds();
 u8 *Owner_GetState(s32);
-void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 void Djinn_Transfer(s32, s32, s32, s32);
-u8 *Object_CreateFar(s32);
-u8 *Runtime_AllocateHeapBlock(s32, s32);
+
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
-s32 KuupuappuHeya_IsActorNearPoint(s32, s32, s32);
-s32 KuupuappuHeya_IsRecordNearPoint(s32, s32, s32);
-void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-extern struct EventRuntime *Data_03001ebc;
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step_020036f8(s32 off, s32 amount)
-{
-    u8 *work = (u8 *)Data_03001ebc;
-    u16 *slot = (u16 *)((s32)work + off);
-    s32 next = *slot + amount;
-
-    *slot = next;
-}
-
-void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
 enum PromptMessage {
     MSG_ROBIN_CHECKED_CHEST = 0x929,
@@ -134,70 +104,9 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-extern u8 MsgKuupuappuMasterHammetIsntOnlyOne[];
-extern u8 MsgKuupuappuWeFoundOurStolenWeapons[];
-
-extern u8 MsgKuupuappuButChestWasEmpty[];
-extern u8 MsgKuupuappuButDidntFindAnything[];
-extern u8 MsgKuupuappuEveryoneThinksOurGuestsThieves[];
-extern u8 MsgKuupuappuIfYoureGonnaHeadInto[];
-extern u8 MsgKuupuappuRobinCheckedBarrel[];
-extern u8 MsgKuupuappuRobinCheckedChest[];
-extern u8 MsgKuupuappuTheyHidThoseStolenGoods[];
-extern u8 MsgKuupuappuThievesDidntHitOurHouse[];
-extern u8 MsgKuupuappuWeDontHaveTimeFor[];
-extern u8 MsgKuupuappuWowHaveManyThingsArent[];
-
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
-extern s32 KuupuappuHeya_StepActions[];
-extern s32 KuupuappuHeya_IdleActions[];
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 
-extern const struct SceneEvent gKuupuappuHeyaEventsEntrances15To17[];
-extern const struct SceneEvent gKuupuappuHeyaEventsFlag855[];
-extern const struct SceneEvent gKuupuappuHeyaEvents[];
-
-extern u8 MsgKuupuappuCouldSomeonePleaseHelpIvan[];
-extern u8 MsgKuupuappuDidJustArriveInTown[];
-extern u8 MsgKuupuappuIfOnlyTheseRocksWere[];
-extern u8 MsgKuupuappuIvanHasGreatPowersWouldnt[];
-extern u8 MsgKuupuappuJustMeOrAmMissing[];
-extern u8 MsgKuupuappuMisterFunSeeStrangeNew[];
-extern u8 MsgKuupuappuOwStop[];
-extern u8 MsgKuupuappuPleaseLookAfterIvan[];
-extern u8 MsgKuupuappuThankGoodnessThoseThievesWere[];
-extern u8 MsgKuupuappuThievesHidStolenTreasureIn[];
-extern u8 MsgKuupuappuThoseThreeStrangersSureHave[];
-extern u8 MsgKuupuappuWithBridgeOutWillQuite[];
-extern u8 MsgKuupuappuYoureGoingHelpIvan[];
-
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 u8 *SceneData_GetScriptTable(void)
 {
     return KuupuappuHeya_Scripts;
@@ -213,13 +122,10 @@ u8 *SceneData_GetMessageTable(void)
     return KuupuappuHeya_Messages;
 }
 
-/* The actors placed in the Vault houses: entrances 15 to 17 have their own
-   table. The chosen table is prepared before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     const struct ScenePlacement *table;
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler
-       from rewriting the test as greater than 14. */
+    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
     s32 first = 15;
 
     if (gGameState.entrance <= 17) {
@@ -234,28 +140,6 @@ prepare:
     return table;
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 #if !EDITION_INTERNATIONAL
 s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
 {
@@ -277,7 +161,7 @@ s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
         obj->velocity_y = 0x40000;
         *flags &= 0x7e;
         Engine_ActorSetSpriteFlags(obj, 0);
-        Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)pos + 2), *(s16 *)((u8 *)pos + 10));
+        Engine_ActorMoveToAndWait(0, ((union FieldCoordinate *)&pos->x)->part.pixel, ((union FieldCoordinate *)&pos->z)->part.pixel);
         ObjectDispatch_ApplyArgumentToChildren(obj, 6);
         Engine_ActorSetSpriteFlags(obj, 1);
         Engine_TaskWait(6);
@@ -313,7 +197,7 @@ void ActorPresentation_SetSceneCellByAngle(void)
 #endif
         x = 42;
         z = 85;
-        Map_CopyCellAttributes(41, 85, 1, 1, x, z);
+        Engine_MapCopyCellAttributes(41, 85, 1, 1, x, z);
     } else if (Object_GetById(0)->facing >= 0x2000
                && Object_GetById(0)->facing <= 0x6000) {
 #if EDITION_INTERNATIONAL
@@ -328,7 +212,7 @@ void ActorPresentation_SetSceneCellByAngle(void)
 #endif
         x = 42;
         z = 85;
-        Map_CopyCellAttributes(43, 85, 1, 1, x, z);
+        Engine_MapCopyCellAttributes(43, 85, 1, 1, x, z);
     }
 }
 
@@ -343,54 +227,30 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
     if ((obj->x.fixed >> 20) == 42) {
         x = 41;
         z = 24;
-        Map_CopyCellAttributes(101, 24, 3, 4, x, z);
-        GameFlag_Set(0x859);
+        Engine_MapCopyCellAttributes(101, 24, 3, 4, x, z);
+        Engine_GameFlagSet(0x859);
     }
     Engine_EventEnd();
 }
 
-/* Actor 19 serves the shop when the leader faces it across the counter and
- * talks otherwise. */
 void FieldScene_RunActorNineteenAngleDialogue(void)
 {
-    s32 v = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    s32 v = Object_GetById(0)->facing;
 
     Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {
         Engine_ShopOpen(4, 19);
     } else {
-        if (GameFlag_IsSet(0x855) == 0) {
+        if (Engine_GameFlagIsSet(0x855) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuMasterHammetIsntOnlyOne);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuWeFoundOurStolenWeapons);
         }
-        Event_ShowMessage(19, 0);
+        Engine_EventShowMessage(19, 0);
     }
     Engine_EventEnd();
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void FieldScene_RunActorTwentyAngleDialogue(void)
 {
     s32 v = Object_GetById(0)->facing;
@@ -399,12 +259,12 @@ void FieldScene_RunActorTwentyAngleDialogue(void)
     if (v >= 0xa001 && v <= 0xdfff) {
         Engine_ShopOpen(5, 20);
     } else {
-        if (GameFlag_IsSet(0x855) == 0) {
+        if (Engine_GameFlagIsSet(0x855) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuThievesDidntHitOurHouse);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuIfYoureGonnaHeadInto);
         }
-        Event_ShowMessage(20, 0);
+        Engine_EventShowMessage(20, 0);
     }
     Engine_EventEnd();
 }
@@ -417,12 +277,12 @@ void FieldScene_RunActorTwentyThreeAngleDialogue(void)
     if (v >= 0xa001 && v <= 0xdfff) {
         Engine_InnOpen(1, 23);
     } else {
-        if (GameFlag_IsSet(0x855) == 0) {
+        if (Engine_GameFlagIsSet(0x855) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuEveryoneThinksOurGuestsThieves);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuTheyHidThoseStolenGoods);
         }
-        Event_ShowMessage(23, 0);
+        Engine_EventShowMessage(23, 0);
     }
     Engine_EventEnd();
 }
@@ -434,7 +294,7 @@ void FieldScene_RunActorEighteenConditionalScene(void)
         Engine_ActorSetAnimationAndWait(18, 4);
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     } else {
         Engine_ItemShowFound(ITEM_BONE, 3);
         Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -448,7 +308,7 @@ void SceneDialogue_ShowLine12BB(void)
     Battle_InitializeRenderObject();
 #endif
     Engine_EventSetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
 }
 
 void SceneDialogue_ShowEmptyBarrel(void)
@@ -467,12 +327,9 @@ void SceneDialogue_ShowEmptyChest(void)
     Engine_EventEnd();
 }
 
-/* What the Vault houses answer: entrances 15 to 17 have their own events,
-   and the others change once flag 0x855 is set. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler
-       from rewriting the test as greater than 14. */
+    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
     s32 first = 15;
 
     if (gGameState.entrance <= 17) {
@@ -480,51 +337,29 @@ const struct SceneEvent *Scene_GetEvents(void)
             return gKuupuappuHeyaEventsEntrances15To17;
         }
     }
-    if (GameFlag_IsSet(0x855) != 0) {
+    if (Engine_GameFlagIsSet(0x855) != 0) {
         return gKuupuappuHeyaEventsFlag855;
     }
     return gKuupuappuHeyaEvents;
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 {
     Engine_ActorSetAnimation(x, 1);
     SceneActor_SetPairZeroAndValue(x, 0, 2);
-    Event_ShowMessage(x, 0);
+    Engine_EventShowMessage(x, 0);
 }
 
 void SceneState_RunGuardedActorStep(s32 x)
 {
-    u8 *flag = &Object_GetById(x)->unknown_5b;
+    u8 *flag = &Object_GetById(x)->paused;
     s32 zero = 0;
 
     *flag = 1;
     Engine_EventBegin();
     Engine_ActorSetAnimation(x, 1);
     Engine_EventWait(2);
-    Event_ShowMessage(x, 0);
+    Engine_EventShowMessage(x, 0);
     Engine_EventEnd();
     *flag = zero;
 }
@@ -532,11 +367,11 @@ void SceneState_RunGuardedActorStep(s32 x)
 void SceneDialogue_PromptAndCountSkip(s32 x)
 {
     SceneActor_SetPairZeroAndValue(x, 0, 2);
-    Event_OpenMessage(x, 0);
+    Engine_EventOpenMessage(x, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         gEventWork->message += 1;
     }
-    Event_ShowMessage(x, 0);
+    Engine_EventShowMessage(x, 0);
 }
 
 void SceneDialogue_RunActorElevenDialogue(void)
@@ -548,7 +383,7 @@ void SceneDialogue_RunActorElevenDialogue(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene383_02000428(void)
+void KuupuappuHeya_TalkAboutIvan(void)
 {
     u32 i;
     s32 record;
@@ -567,12 +402,12 @@ void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
     Engine_EventBegin();
     if (value >= 0xa001 && value <= 0xdfff) {
         Engine_ShopOpen(6, 21);
-    } else if (GameFlag_IsSet(0x855) == 0) {
+    } else if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuDidJustArriveInTown);
         SceneDialogue_PromptAndCountSkip(21);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuWithBridgeOutWillQuite);
-        Event_ShowMessage(21, 0);
+        Engine_EventShowMessage(21, 0);
     }
     Engine_EventEnd();
 }
@@ -580,7 +415,7 @@ void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
 void SceneDialogue_RunActor9FlaggedLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuIfOnlyTheseRocksWere);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuThankGoodnessThoseThievesWere);
@@ -592,7 +427,7 @@ void SceneDialogue_RunActor9FlaggedLine(void)
 void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) != 0) {
+    if (Engine_GameFlagIsSet(0x855) != 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuThievesHidStolenTreasureIn);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuJustMeOrAmMissing);
@@ -606,13 +441,13 @@ void FieldScene_RunFlag856DialogueBranch(void)
     s32 g;
     g = 0x851;
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x856) != 0) {
-        if (GameFlag_IsSet(g) == 0) {
+    if (Engine_GameFlagIsSet(0x856) != 0) {
+        if (Engine_GameFlagIsSet(g) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuYoureGoingHelpIvan);
             ActorPresentation_RunActorModeOneThenZeroWithStep(16);
             Engine_EventWait(10);
             SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
-            GameFlag_Set(g);
+            Engine_GameFlagSet(g);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuPleaseLookAfterIvan);
         }
@@ -642,10 +477,10 @@ void SceneActor_StepActor24AnimationByFacing(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(24, 2);
     Engine_EventSetMessage((s32)MsgKuupuappuOwStop);
-    Event_ShowMessage(24, 0);
-    Actor_SetSpeed(24, 0x40000, 0x20000);
+    Engine_EventShowMessage(24, 0);
+    Engine_ActorSetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
-        q = (s16 *)((u8 *)p + 100);
+        q = (s16 *)&p->timer;
         v = *q;
         if (v <= 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
@@ -653,7 +488,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
             goto clamp;
         }
     } else {
-        q = (s16 *)((u8 *)p + 100);
+        q = (s16 *)&p->timer;
         v = *q;
         if (v > 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);

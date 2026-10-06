@@ -1,14 +1,3 @@
-@ Map-drawing kernel, copied and run as one 616-byte unit (size and source
-@ {0x268, 0x08021070} in its loader's literal pool at 0x0802dd64). Behind a
-@ 4-byte Thumb entry (bx pc) the ARM body is hand-unrolled: r4 packs two loop
-@ counters and a 0x38 mask (subs #0x1000000; bpl, sub #0x10000; tst), lookups
-@ use pre-indexed write-back, and r0 is pushed and popped around the inner
-@ loop (stmfd sp!, {r0} ... ldmfd sp!, {r0}), where GCC's fixed ARM frame
-@ would use a stack slot. It is TLA's own revision of TBS
-@ GRAPHICS/TILE/DRAW_MAP.S (0x08009e7c): the first 32 bytes after the entry
-@ match it.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: handwritten — relocated ARM map-draw kernel (TLA revision of TBS DRAW_MAP)
 .syntax unified
 	.thumb
 	.global Render_DrawMapCode

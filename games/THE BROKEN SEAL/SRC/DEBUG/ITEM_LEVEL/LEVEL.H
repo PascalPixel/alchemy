@@ -1,16 +1,15 @@
 #ifndef DEBUG_ITEM_LEVEL_LEVEL_H
 #define DEBUG_ITEM_LEVEL_LEVEL_H
 
-/* The item and level debug room (resource_3cd): the declarations its
- * sources share. */
-
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+
+#include "WINDOW.H"
+#define UiWindow_Create ((s32 (*)())UiWindow_Create)
 
 extern struct EventWork *gEventWork;
 extern u8 gEffectWork[];
 
-/* The room's scene tables and the glyph rows its caption window draws. */
 extern u8 gItemLevelEntrances[];
 extern u8 gItemLevelExits[];
 extern u8 gItemLevelPlacements[];
@@ -18,11 +17,8 @@ extern u8 gItemLevelEvents[];
 extern u8 gItemLevelGlyphsUpper[];
 extern u8 gItemLevelGlyphsLower[];
 extern u8 gItemLevelGlyphsMarks[];
-/* The "Lv" beside the level the count panel shows. */
 extern u8 gItemLevelLvLabel[];
 
-/* Old-style declarations: the import veneers vary in arity between call
- * sites. */
 void Owner_RecalculateStats();
 s32 Party_ListActiveOwners();
 void Party_AdvanceOwnerCountToTarget();
@@ -36,7 +32,6 @@ void ObjectMotion_WaitForAnimationChange(u32 actor);
 void Engine_EventSetMessage();
 void Engine_EventShowMessage();
 void Engine_EventRequestExit();
-s32 UiWindow_Create();
 void UiWork_Finalize();
 void UiText_DrawResource();
 void UiText_DrawStringAtOffset();

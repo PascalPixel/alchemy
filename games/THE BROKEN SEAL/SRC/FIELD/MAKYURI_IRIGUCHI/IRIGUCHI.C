@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "MAPCOPY.H"
 #include "ENTRANCE.H"
 #include "CALL.H"
@@ -5,29 +14,19 @@
 #include "TYPES.H"
 #include "MAKYURI.H"
 #include "FIELD_EFFECT.H"
+#include "IO_REG.H"
+#include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgMakyuriWhoHonorsHeart[];
+#define Makyuri_SpawnLightObjects ((void (*)(s32,s32))Makyuri_SpawnLightObjects)
+
 
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
-void Makyuri_SpawnLightObjects(s32 count, s32 base);
-void Makyuri_ClearPalette(void);
-void Makyuri_CyclePalette(void);
 void BattleFx_StartFadeOverlay(s32 value);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-void MakyuriIriguchi_ArriveWithSparks(void);
-void MakyuriIriguchi_CrossDoorway(void);
-void MakyuriIriguchi_RunDoorScene(void);
-
-/* An actor's lift: how fast it rises and what pulls it back. */
-struct ActorLift {
-    s32 gravity;
-    s32 rise;
-};
-
-#define ACTOR_LIFT(actor) ((struct ActorLift *)(actor)->unknown_44)
 
 void Engine_EventBegin();
 void Engine_ActorSetPosition();
@@ -47,19 +46,14 @@ void Engine_CameraMoveToActor();
 void Engine_ActorWalkToAndWait();
 void Engine_CameraWaitForMove();
 void Engine_EventEnd();
-s32 SceneActor_FaceLeaderWhileGrounded(u8 *object);
 
-/* Actor 8's action tables in the overlay's data. */
-extern const u8 MakyuriIriguchi_Actor8Path1[];
-extern const u8 MakyuriIriguchi_Actor8Path2[];
-extern const u8 MakyuriIriguchi_Actor8Path3[];
 
-void FieldScene_Forward31d4(void)
+void MakyuriIriguchi_TickSpawnTimer(void)
 {
     Makyuri_TickSpawnTimer();
 }
 
-void FieldScene_CallHelper2e58(void)
+void MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void)
 {
     SceneState_ClearCurrentRecordAndReleaseTarget();
 }
@@ -69,12 +63,11 @@ void FieldScene_RunSingleStep(void)
     Makyuri_RunActorMove();
 }
 
-void FieldScene_CallHelper2d50(void)
+void MakyuriIriguchi_TriggerPillarRise(void)
 {
     MakyuriIriguchi_RaisePillar();
 }
 
-/* Contiguous unnamed leaf-owner run for resource_39b. */
 void *SceneData_GetSceneTableA(void) { return MakyuriIriguchi_SceneTableA; }
 
 int SceneData_ReturnZero(void) { return 0; }
@@ -83,7 +76,6 @@ void *SceneData_GetSceneTableB(void) { return MakyuriIriguchi_SceneTableB; }
 
 void *SceneData_GetSceneTableC(void) { return MakyuriIriguchi_SceneTableC; }
 
-/* Apply the overlay's common actor-0 presentation preset. */
 void FieldScene_RunStepWithValue1632(void)
 {
     Engine_EventBegin();
@@ -94,7 +86,7 @@ void FieldScene_RunStepWithValue1632(void)
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
-    u8 *v = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *v = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
     Audio_PlayCue(0xe4);
     F(v, s32, 0x6c) = (s32)MakyuriIriguchi_TrailSparks;
@@ -102,8 +94,8 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
     Object_SetModeById(ACTOR_PARTY_LEADER, 2);
     ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
-    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     F(v, s32, 0x6c) = 0;
     Battle_WaitMode0(30);
     Engine_EventCloseScreen();
@@ -129,9 +121,6 @@ void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
     Battle_WaitMode0(30);
 }
 
-/* Contiguous unnamed leaf-owner run for resource_39b. */
-
-/* Clear the scene flag and point actor 8 at its first local path. */
 void FieldScene_RunIndexedStep17(void)
 {
     SceneActor_RunActorZeroHandledMotion(17);
@@ -178,7 +167,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         do {
             *(s32 *)(slot) = 1;
             {
-                s32 shown = 0x11e;
+                u16 shown = 0x11e;
 
                 *(u16 *)(slot + 24) = shown;
             }
@@ -210,22 +199,22 @@ void FieldScene_RunIndexedStep63(void)
     Engine_EventRequestExit(63);
 }
 
-void FieldScene_RunActor8StepWithTableA820(void)
+void MakyuriIriguchi_InstallActorEightPath(void)
 {
-    GameFlag_Clear(0x205);
+    Engine_GameFlagClear(0x205);
     Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path1);
 }
 
 void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 field8;
     s32 quotient;
 
     record = Object_GetById(ACTOR_PARTY_LEADER);
-    field8 = *(s32 *)(record + 8);
+    field8 = record->x.fixed;
     quotient = field8 / 0x100000;
-    GameFlag_Set(0x205);
+    Engine_GameFlagSet(0x205);
     if (quotient == 7) {
         Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path2);
     } else {
@@ -233,7 +222,6 @@ void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
     }
 }
 
-/* The entrance opens: the scene restarts at its entrance 31. */
 void MakyuriIriguchi_OpenEntrance(void)
 {
     s32 game;
@@ -241,11 +229,10 @@ void MakyuriIriguchi_OpenEntrance(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(8, 2);
     Battle_WaitMode0(20);
-    gEventWork->start_transition = 0x200;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
     game = (s32)&gGameState;
-    /* FAKEMATCH: the do/while loads the game state's address ahead of the
-     * offset for the byte store. */
+    /* FAKEMATCH: the do/while loads the game state's address ahead of the offset for the byte store. */
     do {
         *(u8 *)(game + 0x22b) = 3;
         BattleFx_SetWeightedResult(36, 1);
@@ -287,10 +274,6 @@ void MakyuriIriguchi_ArriveWithSparks(void)
     }
 }
 
-/* Mercury Lighthouse entrance: set the blend, lights and palette cycle and
- * record the retreat point, then prepare the scene for the entrance the
- * party came through; through the sixth entrance the first time, a burst
- * of light lifts the leader in. */
 s32 MakyuriIriguchi_ApplyEntryState(void)
 {
     struct EffectOptions options;
@@ -300,15 +283,14 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
     s32 angle;
     s32 flag;
 
-    /* FAKEMATCH: the do/while and the held values keep the blend constants
-     * in registers ahead of their address loads, as in MAKYURI_HEYA. */
+    /* FAKEMATCH: the do/while and the held values keep the blend constants in registers ahead of their address loads, as in MAKYURI_HEYA. */
     do {
         s32 blend = 0x3f40;
-        *(volatile u16 *)0x04000050 = blend;
+        REG_BLDCNT = blend;
     } while (0);
     {
         s32 alpha = 0x1010;
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
     Makyuri_SpawnLightObjects(21, (s32)gSceneState);
     GameFlag_Set(0x111);
@@ -319,7 +301,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
     else
         Makyuri_ClearPalette();
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     switch (gGameState.entrance) {
     case 1:
         if (!GameFlag_IsSet(0x872))
@@ -363,8 +345,8 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_MapRedraw();
         WaitFrames(1);
         Actor_Get(0)->y.fixed = 0x820000;
-        ACTOR_LIFT(Actor_Get(0))->rise = 0x8000;
-        ACTOR_LIFT(Actor_Get(0))->gravity = flag;
+        Actor_Get(0)->gravity = 0x8000;
+        Actor_Get(0)->bounce = flag;
         Actor_Get(0)->motion_flags = flag;
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
@@ -391,8 +373,8 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_MapRenderWaitForValues();
         Actor_SetAttachedEffect(0, 0x100);
-        ACTOR_LIFT(Actor_Get(0))->rise = 0x10000;
-        ACTOR_LIFT(Actor_Get(0))->gravity = 0x4000;
+        Actor_Get(0)->gravity = 0x10000;
+        Actor_Get(0)->bounce = 0x4000;
         if (!GameFlag_IsSet(0x875)) {
             ColorBuffer_ApplySource(0x10000, 0);
             ColorBuffer_ApplyTarget(0x10003, 1);
@@ -419,7 +401,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_EventBegin();
         Engine_MapRedraw();
         WaitFrames(1);
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Battle_WaitMode0(120);
@@ -440,35 +422,33 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
     return 0;
 }
 
-/* Makyuri entrance event: Ivan crosses the doorway twice while the guard's action callbacks alternate, then shows an emote and the cells are copied. */
-/* Makyuri entrance event: an actor crosses the doorway twice while actor 8's action callbacks alternate, then shows an emote and the cells are copied. */
 void MakyuriIriguchi_CrossDoorway(void)
 {
     s32 i;
     s32 zero;
     s32 mask;
-    u8 *p;
-    s32 record;
+    struct FieldActor *ivan;
+    struct FieldActor *actor;
 
     Engine_EventBegin();
-    record = (s32)Object_GetById(12);
-    *(s32 *)(record + 24) = -0x10000;
-    record = (s32)Object_GetById(13);
-    *(s32 *)(record + 24) = -0x10000;
-    record = (s32)Object_GetById(14);
-    *(s32 *)(record + 24) = -0x10000;
-    Call3(Engine_ActorSetPosition, 3, 0x880000, 0xb80000);
-    Call3(Engine_ActorSetPosition, 0, 0x880000, 0x1280000);
-    Call3(Engine_ActorSetPosition, 8, 0x880000, 0x980000);
-    Call3(ObjectMotion_SetSpeedParameters, 3, 0x18000, 0xc000);
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x18000, 0xc000);
-    Call3(ObjectMotion_SetSpeedParameters, 0, 0xcccc, 0x6666);
+    actor = Object_GetById(12);
+    actor->scale_x = -0x10000;
+    actor = Object_GetById(13);
+    actor->scale_x = -0x10000;
+    actor = Object_GetById(14);
+    actor->scale_x = -0x10000;
+    Actor_SetPosition(3, 0x880000, 0xb80000);
+    Actor_SetPosition(0, 0x880000, 0x1280000);
+    Actor_SetPosition(8, 0x880000, 0x980000);
+    Actor_SetSpeed(3, 0x18000, 0xc000);
+    Actor_SetSpeed(8, 0x18000, 0xc000);
+    Actor_SetSpeed(0, 0xcccc, 0x6666);
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Engine_CameraMoveTo(0x880000, -1, 0xb80000, 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_ActorRunRepeatedMotion(3, 1);
-    *(u8 *)((s32)Object_GetById(8) + 90) &= 254;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Battle_WaitMode0(20);
     mask = 254;
     zero = 0;
@@ -477,12 +457,11 @@ void MakyuriIriguchi_CrossDoorway(void)
         Battle_WaitMode0(10);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path3);
         ObjectMotion_CommitCurrentPositionAndActivate(3);
-        Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
+        Actor_FaceDirection(3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
-        p = (u8 *)Object_GetById(3);
-        /* FAKEMATCH: or-ing a zero kept from before the loop leaves the
-         * reference's unread zero in sl. */
-        p[90] = (p[90] & mask) | zero;
+        ivan = Object_GetById(3);
+        /* FAKEMATCH: or-ing a zero kept from before the loop leaves the reference's unread zero in sl. */
+        ivan->steering_flags = (ivan->steering_flags & mask) | zero;
         Engine_ActorWalkTo(3, 136, 184);
         Battle_WaitMode0(10);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);
@@ -506,13 +485,13 @@ void MakyuriIriguchi_CrossDoorway(void)
     }
     Battle_WaitMode0(20);
     Engine_ActorShowEmote(3, 0x102, 60);
-    record = (s32)Object_GetById(3);
-    *(s32 *)(record + 108) = (s32)SceneActor_FaceLeaderWhileGrounded;
+    actor = Object_GetById(3);
+    actor->update = (void (*)(union FieldObject *))SceneActor_FaceLeaderWhileGrounded;
     Engine_CameraMoveToActor(0, 1);
     Battle_WaitMode0(30);
-    Call3(Engine_ActorWalkToAndWait, 0, 136, 0x108);
+    Actor_WalkToAndWait(0, 136, 0x108);
     Engine_CameraWaitForMove();
-    Call6(Map_CopyCellAttributeRect, 0, 0, 3, 3, 7, 9);
+    Map_CopyCellAttributes(0, 0, 3, 3, 7, 9);
     Engine_EventEnd();
 }
 

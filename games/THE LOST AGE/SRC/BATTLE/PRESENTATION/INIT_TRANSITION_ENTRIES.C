@@ -12,7 +12,7 @@ void BattlePresentation_InitializeTransitionEntries(struct BattleTransitionEntry
 {
     u32 previous = entries[0].value;
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(entries);
     entries[0].sum = previous + entries[0].value;
 }

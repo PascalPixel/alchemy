@@ -308,7 +308,7 @@ Func_0811f088:
 	ldr r3, [r7, #100]
 	cmp r3, #0
 	bne .L_0811f2de
-	bl Func_081234f0
+	bl BattleEventRuntime_WaitForReady
 .L_0811f2de:
 	mov r0, r9
 	movs r1, #1
@@ -350,4 +350,4 @@ Func_0811f088:
 .L_0811f328:
 	.4byte 0x00000cac
 .L_0811f32c:
-	.4byte Func_08122d10
+	.4byte BattleEvent_Playback

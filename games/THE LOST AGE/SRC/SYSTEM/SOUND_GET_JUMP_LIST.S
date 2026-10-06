@@ -1,8 +1,3 @@
-@ BIOS SoundGetJumpList wrapper: software interrupt 0x2a, then return. No bl
-@ reaches it and no literal word names it in TLA. Neither approved compiler
-@ emits svc outside inline assembly. These 4 bytes equal TBS
-@ SYSTEM/SOUND_GET_JUMP_LIST.S (0x080fa674) byte for byte.
-@ credit: library — TBS/TLA common BIOS SoundGetJumpList wrapper
 .syntax unified
 	.thumb
 	.global Bios_SoundGetJumpList

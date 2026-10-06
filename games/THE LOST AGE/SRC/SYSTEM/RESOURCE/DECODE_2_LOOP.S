@@ -1,12 +1,3 @@
-@ Decode loop of the format 2 decoder (DECODE_2.S). It rebuilds nibbles by
-@ calling into a table of 32-byte code slots with mov lr, pc;
-@ add pc, r9, r8, lsl #5, tests code bits on the carry out of lsrs, and
-@ sets the return address of its refill subroutine by hand
-@ (sub lr, pc, #280). None of this is compiler output. The 50 nop words
-@ that fill the slots after their bx lr or branch never run and carry no
-@ credit, as in TBS. These 1,188 bytes equal TBS
-@ SYSTEM/RESOURCE/DECODE_2_LOOP.S (0x08002850).
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, compression format 2 decoder loop
 .syntax unified
 	.arm
 .L_08012bbc:
@@ -360,3 +351,5 @@ AlchemyUncreditedEnd_08013048:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.L_08012f7c
+	.global Resource_Decode2End
+Resource_Decode2End:

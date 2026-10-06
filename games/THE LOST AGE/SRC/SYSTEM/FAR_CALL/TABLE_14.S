@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080380f8: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -17,53 +13,53 @@ UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	.thumb_func
 UiText_GetResourceDimensionsFar:
 	overlay_veneer UiText_GetResourceDimensions
-	.global Func_08038110
+	.global UiText_GetResourceDimensionsAltFar
 	.thumb_func
-Func_08038110:
-	overlay_veneer Func_0803b8cc
+UiText_GetResourceDimensionsAltFar:
+	overlay_veneer UiText_GetResourceDimensionsAlt
 	.global UiWork_ClearValueNameTablesFar
 	.thumb_func
 UiWork_ClearValueNameTablesFar:
-	overlay_veneer Func_0803cca8
+	overlay_veneer UiWork_ClearValueNameTables
 	.global UiText_DrawQuantity
 	.thumb_func
 UiText_DrawQuantity:
-	overlay_veneer Func_0803ccd0
-	.global Func_08038128
+	overlay_veneer UiWork_PushValueSlot
+	.global UiWindow_CreateWithLayoutBoundsFar
 	.thumb_func
-Func_08038128:
-	overlay_veneer Func_08042690
+UiWindow_CreateWithLayoutBoundsFar:
+	overlay_veneer UiWindow_CreateWithLayoutBounds
 	.global UiWindow_DrawPartyStatusContentsFar
 	.thumb_func
 UiWindow_DrawPartyStatusContentsFar:
-	overlay_veneer Func_0804297c
-	.global Func_08038138
+	overlay_veneer UiWindow_DrawPartyStatusContents
+	.global UiWork_FinalizeAndReleaseBlock16Far
 	.thumb_func
-Func_08038138:
-	overlay_veneer Func_08042dac
+UiWork_FinalizeAndReleaseBlock16Far:
+	overlay_veneer UiWork_FinalizeAndReleaseBlock16
 	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
 UiWork_FinalizePendingCoreFar:
-	overlay_veneer Func_0803ce1c
-	.global Func_08038148
+	overlay_veneer UiWork_FinalizePendingCore
+	.global UiWork_DrainPendingFar
 	.thumb_func
-Func_08038148:
+UiWork_DrainPendingFar:
 	overlay_veneer UiWork_DrainPending
-	.global Func_08038150
+	.global UiGlyph_ResetWorkStateFar
 	.thumb_func
-Func_08038150:
+UiGlyph_ResetWorkStateFar:
 	overlay_veneer Func_0803dc1c
-	.global Func_08038158
+	.global Resource_ClearOwnerListAndCountersFar
 	.thumb_func
-Func_08038158:
+Resource_ClearOwnerListAndCountersFar:
 	overlay_veneer Func_0803dd24
-	.global Func_08038160
+	.global Resource_PushPendingPairFar
 	.thumb_func
-Func_08038160:
+Resource_PushPendingPairFar:
 	overlay_veneer Func_0803dd68
-	.global Func_08038168
+	.global Resource_ScheduleOwnerResetDelayedFar
 	.thumb_func
-Func_08038168:
+Resource_ScheduleOwnerResetDelayedFar:
 	overlay_veneer Func_0803df00
 	.global Resource_ScheduleOwnerResetFar
 	.thumb_func
@@ -73,9 +69,9 @@ Resource_ScheduleOwnerResetFar:
 	.thumb_func
 Menu_OpenSelectionWindowFar:
 	overlay_veneer Menu_OpenSelectionWindow
-	.global Func_08038180
+	.global Resource_ResetOwnerEntriesFar
 	.thumb_func
-Func_08038180:
+Resource_ResetOwnerEntriesFar:
 	overlay_veneer Resource_ResetOwnerEntries
 	.global Func_08038188
 	.thumb_func

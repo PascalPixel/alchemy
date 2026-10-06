@@ -1,7 +1,3 @@
-@ Import veneers after the KUUPUAPPU_DOU overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — KUUPUAPPU_DOU overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -72,11 +68,11 @@ Engine_MapCopyCellAttributes:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:

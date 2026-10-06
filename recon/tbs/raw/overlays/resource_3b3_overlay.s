@@ -1,399 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008cc0,"ax",%progbits
-	.global TakaraHashira_CopyCellBlock
-	.thumb_func
-TakaraHashira_CopyCellBlock:
-	push {r5, r6, r7, lr}
-	mov r7, r11
-	mov r6, r10
-	mov r5, r9
-	push {r5, r6, r7}
-	mov r7, r8
-	push {r7}
-	sub sp, #8
-	lsls r1, r1, #7
-	ldr r4, [sp, #48]
-	mov r10, r2
-	adds r1, r1, r0
-	ldr r2, .L_02008d60
-	lsls r1, r1, #2
-	adds r3, r4, r3
-	adds r5, r1, r2
-	cmp r4, r3
-	bge .L_02008d4e
-	str r3, [sp, #4]
-	mov r6, r10
-	movs r3, #128
-	subs r3, r3, r6
-	lsls r3, r3, #2
-	mov r11, r3
-	ldr r3, [sp, #40]
-	lsls r3, r3, #4
-	mov r9, r3
-.L_02008cf6:
-	ldr r0, [sp, #44]
-	mov r1, r10
-	adds r2, r0, r1
-	cmp r0, r2
-	bge .L_02008d44
-	ldr r3, .L_02008d64
-	movs r7, #15
-	mov r8, r3
-	adds r3, r4, #0
-	ands r3, r7
-	add r3, r9
-	lsls r3, r3, #5
-	ldr r6, .L_02008d68
-	str r3, [sp, #0]
-	mov lr, r6
-	mov r12, r2
-.L_02008d16:
-	ldr r6, [sp, #0]
-	ldmia r5!, {r1}
-	adds r3, r0, #0
-	mov r2, r8
-	ands r3, r7
-	ands r1, r2
-	adds r3, r6, r3
-	ldr r6, .L_02008d6c
-	lsls r1, r1, #3
-	adds r2, r1, r6
-	ldr r2, [r2]
-	lsls r3, r3, #2
-	mov r6, lr
-	str r2, [r3, r6]
-	ldr r6, .L_02008d70
-	adds r2, r1, r6
-	ldr r1, .L_02008d74
-	ldr r2, [r2]
-	adds r3, r3, r1
-	adds r0, #1
-	str r2, [r3]
-	cmp r0, r12
-	blt .L_02008d16
-.L_02008d44:
-	ldr r2, [sp, #4]
-	adds r4, #1
-	add r5, r11
-	cmp r4, r2
-	blt .L_02008cf6
-.L_02008d4e:
-	add sp, #8
-	pop {r3, r5, r6, r7}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	mov r11, r7
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-.L_02008d60:
-	.4byte gMapCellBuffer
-.L_02008d64:
-	.4byte 0x00000fff
-.L_02008d68:
-	.4byte 0x06002800
-.L_02008d6c:
-	.4byte gMapBlocks
-.L_02008d70:
-	.4byte gMapBlocks + 0x4
-.L_02008d74:
-	.4byte 0x06002840
-	.section .text.x02009d84,"ax",%progbits
-	.global TakaraHashira_UpdatePillarActors
-	.thumb_func
-TakaraHashira_UpdatePillarActors:
-	push {r5, r6, r7, lr}
-	mov r7, r11
-	mov r6, r10
-	mov r5, r9
-	push {r5, r6, r7}
-	mov r7, r8
-	push {r7}
-	ldr r1, .L_02009fc0
-	sub sp, #20
-	movs r0, #8
-	movs r2, #16
-	mov r8, r1
-	add r2, sp
-	movs r3, #0
-	str r0, [sp, #12]
-	str r0, [sp, #4]
-	mov r9, r2
-	mov r10, r3
-	mov r11, r8
-.L_02009daa:
-	ldr r0, [sp, #12]
-	bl Object_GetById
-	adds r6, r0, #0
-	adds r2, r6, #0
-	adds r2, #34
-	movs r3, #2
-	strb r3, [r2]
-	ldr r0, [sp, #12]
-	subs r0, #8
-	str r0, [sp, #8]
-	mov r1, r10
-	ldr r3, [r6, #8]
-	mov r0, r8
-	ldr r2, [r1, r0]
-	asrs r3, r3, #20
-	cmp r3, r2
-	bne .L_02009de2
-	ldr r1, [sp, #4]
-	ldr r3, [r6, #16]
-	ldr r2, [r1, r0]
-	asrs r3, r3, #20
-	cmp r3, r2
-	bne .L_02009de2
-	ldr r3, [r6, #40]
-	cmp r3, #0
-	bne .L_02009de2
-	b .L_02009f90
-.L_02009de2:
-	adds r0, r6, #0
-	ldr r3, .L_02009fc4
-	adds r0, #8
-	ldr r1, .L_02009fc8
-	ldr r2, .L_02009fcc
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	movs r2, #128
-	ldr r1, .L_02009fc4
-	lsls r2, r2, #24
-.L_02009df6:
-	ldr r3, [r1, #8]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02009df6
-	adds r0, r6, #0
-	ldr r1, .L_02009fc8
-	bl Object_CheckMovementCollision
-	movs r2, #1
-	negs r2, r2
-	cmp r0, r2
-	bne .L_02009e18
-	adds r7, r6, #0
-	adds r7, #85
-	movs r3, #3
-	strb r3, [r7]
-	b .L_02009e1c
-.L_02009e18:
-	adds r7, r6, #0
-	adds r7, #85
-.L_02009e1c:
-	mov r0, r8
-	mov r3, r10
-	mov r5, r8
-	ldr r1, [r3, r0]
-	adds r5, #12
-	ldr r3, [sp, #4]
-	add r5, r10
-	ldr r2, [r3, r0]
-	movs r0, #0
-	adds r3, r5, #0
-	bl TakaraHashira_SetCellAttributes
-	mov r0, r11
-	ldr r3, [sp, #4]
-	ldr r1, [r0]
-	mov r0, r8
-	ldr r2, [r3, r0]
-	adds r3, r5, #0
-	movs r0, #2
-	bl TakaraHashira_SetCellAttributes
-	ldrb r2, [r7]
-	movs r3, #1
-	ands r3, r2
-	cmp r3, #0
-	beq .L_02009ed0
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #16]
-	movs r0, #2
-	bl GetMapCellCollision
-	cmp r0, #50
-	bne .L_02009e82
-	movs r0, #189
-	bl Engine_AudioPlayCue
-	adds r5, r6, #0
-	adds r5, #35
-	ldrb r3, [r5]
-	movs r2, #254
-	ands r2, r3
-	strb r2, [r5]
-	movs r1, #1
-	ldr r0, [sp, #12]
-	bl TakaraHashira_LowerActorToLedge
-	ldrb r3, [r5]
-	movs r1, #1
-	orrs r3, r1
-	strb r3, [r5]
-	b .L_02009ecc
-.L_02009e82:
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #16]
-	movs r0, #2
-	bl GetMapCellCollision
-	cmp r0, #51
-	bne .L_02009ec6
-	movs r1, #0
-	adds r0, r6, #0
-	bl SceneActor_WaitHeightBelowLimit
-	movs r0, #189
-	bl Engine_AudioPlayCue
-	movs r2, #0
-	str r2, [r6, #12]
-	adds r5, r6, #0
-	adds r5, #35
-	ldrb r3, [r5]
-	movs r2, #254
-	ands r2, r3
-	strb r2, [r5]
-	ldr r0, [sp, #12]
-	bl StagedActor_StepDownUntilClamp
-	movs r3, #0
-	str r3, [r6, #8]
-	str r3, [r6, #12]
-	str r3, [r6, #16]
-	ldrb r3, [r5]
-	movs r0, #1
-	orrs r3, r0
-	strb r3, [r5]
-	b .L_02009ecc
-.L_02009ec6:
-	adds r0, r6, #0
-	bl OverlayObject_WaitUntilSettledAndReset
-.L_02009ecc:
-	movs r1, #0
-	strb r1, [r7]
-.L_02009ed0:
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #16]
-	ldr r3, .L_02009fd0
-	asrs r2, r2, #20
-	asrs r1, r1, #20
-	add r3, r10
-	movs r0, #0
-	bl TakaraHashira_ReadMapCell
-	ldr r2, [r6, #12]
-	cmp r2, #0
-	blt .L_02009f2a
-	asrs r2, r2, #20
-	adds r2, #6
-	movs r0, #0
-	movs r1, #27
-	mov r3, r9
-	bl TakaraHashira_ReadMapCell
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #16]
-	asrs r1, r1, #20
-	asrs r2, r2, #20
-	movs r0, #0
-	mov r3, r9
-	bl TakaraHashira_SetCellAttributes
-	mov r3, r11
-	ldrb r2, [r3, #13]
-	mov r0, r9
-	ldrb r1, [r0, #1]
-	lsrs r2, r2, #6
-	movs r3, #63
-	lsls r2, r2, #6
-	ands r3, r1
-	orrs r3, r2
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #16]
-	strb r3, [r0, #1]
-	asrs r1, r1, #20
-	asrs r2, r2, #20
-	movs r0, #2
-	mov r3, r9
-	bl TakaraHashira_SetCellAttributes
-.L_02009f2a:
-	ldr r3, [r6, #8]
-	mov r1, r8
-	asrs r3, r3, #20
-	mov r2, r10
-	str r3, [r1, r2]
-	ldr r3, [r6, #12]
-	adds r2, #4
-	asrs r3, r3, #20
-	str r3, [r1, r2]
-	ldr r3, [r6, #16]
-	adds r2, #4
-	asrs r3, r3, #20
-	str r3, [r1, r2]
-	movs r5, #0
-	movs r7, #16
-.L_02009f48:
-	ldr r3, [sp, #8]
-	cmp r5, r3
-	beq .L_02009f88
-	ldr r1, .L_02009fc0
-	ldr r0, [r1, r7]
-	str r1, [sp, #0]
-	bl Engine_GameFlagClear
-	adds r0, r5, #0
-	adds r0, #8
-	bl Object_GetById
-	ldr r2, [r6, #8]
-	ldr r3, [r0, #8]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	ldr r1, [sp, #0]
-	cmp r2, r3
-	bne .L_02009f88
-	ldr r2, [r6, #16]
-	ldr r3, [r0, #16]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_02009f88
-	ldr r2, [r6, #12]
-	ldr r3, [r0, #12]
-	cmp r2, r3
-	ble .L_02009f88
-	ldr r0, [r1, r7]
-	bl Engine_GameFlagSet
-.L_02009f88:
-	adds r5, #1
-	adds r7, #20
-	cmp r5, #3
-	bls .L_02009f48
-.L_02009f90:
-	ldr r1, [sp, #4]
-	ldr r2, [sp, #12]
-	movs r0, #20
-	adds r1, #20
-	adds r2, #1
-	add r10, r0
-	add r11, r0
-	str r1, [sp, #4]
-	str r2, [sp, #12]
-	cmp r2, #11
-	bhi .L_02009fa8
-	b .L_02009daa
-.L_02009fa8:
-	bl TakaraHashira_SortPillarActors
-	add sp, #20
-	pop {r3, r5, r6, r7}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	mov r11, r7
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-.L_02009fc0:
-	.4byte TakaraHashira_PillarSlots
-.L_02009fc4:
-	.4byte 0x040000d4
-.L_02009fc8:
-	.4byte TakaraHashira_PillarSlots + 0x50
-.L_02009fcc:
-	.4byte 0x84000003
-.L_02009fd0:
-	.4byte TakaraHashira_PillarSlots + 0xc
 	.section .rodata.x0200abf8,"a",%progbits
 .L_0200abf8:
 	.4byte 0x00000000
@@ -1047,7 +653,7 @@ gTakaraHashiraEvents4:
 	.4byte 0x00000002
 	.4byte 0x00000202
 	.4byte 0xffff001e
-	.4byte FieldScene_RunScene3b3_02001fd4
+	.4byte TakaraHashira_PushPillar
 	.4byte 0x0000c602
 	.4byte 0xffff001f
 	.4byte FieldScene_RunSingleStep
@@ -1056,13 +662,13 @@ gTakaraHashiraEvents4:
 	.4byte TakaraHashira_RunStagedCellScene
 	.4byte 0x00000202
 	.4byte 0xffff001f
-	.4byte FieldScene_RunScene3b3_02001fd4
+	.4byte TakaraHashira_PushPillar
 	.4byte 0x00000002
 	.4byte 0xffff0028
-	.4byte SceneState_LinkActorZeroToWork24
+	.4byte TakaraHashira_AttachPillarRider
 	.4byte 0x00000002
 	.4byte 0xffff0029
-	.4byte SceneState_ClearWord24AndObjectByte62
+	.4byte TakaraHashira_ReleasePillarRider
 	.4byte 0x00000013
 	.4byte 0x0eda0064
 	.4byte 0x00200309
@@ -1139,7 +745,7 @@ gTakaraHashiraEvents5:
 	.4byte FieldScene_RunActor12Step
 	.4byte 0x10001815
 	.4byte 0x0202000d
-	.4byte FieldScene_RunScene3b3_0200215c
+	.4byte TakaraHashira_CheckLeaderOnPillar
 	.4byte 0x50001815
 	.4byte 0x0202000d
 	.4byte TakaraHashira_RaiseActorFourteen
@@ -1150,11 +756,12 @@ gTakaraHashiraEvents5:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.section .bss,"aw",%nobits
-	/* Keep the four pillar-work records in a sixteen-byte-aligned bank. */
 	.balign 16
 	.global TakaraHashira_PillarSlots
 TakaraHashira_PillarSlots:
 	.space 80
+	.global TakaraHashira_ProbePosition
+TakaraHashira_ProbePosition:
 	.space 12
 	.global TakaraHashira_ShakenScroll
 TakaraHashira_ShakenScroll:

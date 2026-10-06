@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08042508
+	.global Ui_LoadCharacterEntryForSlot
 	.thumb_func
-Func_08042508:
+Ui_LoadCharacterEntryForSlot:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -49,7 +49,7 @@ Func_08042508:
 	add r2, sp, #12
 	add r3, sp, #8
 	adds r1, r7, #0
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 .L_08042568:
 	add sp, #16
 	pop {r5, r6, r7, pc}

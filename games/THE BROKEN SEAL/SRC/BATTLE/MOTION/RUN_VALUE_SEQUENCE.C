@@ -1,19 +1,21 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "FIELD_EVENT.H"
 
-struct ObjectSlot_080babdc {
-    void *object;
-};
+#include "MOTION_OBJECT.H"
 
 #include "BATTLE_WORK.H"
 
-void *Owner_GetStateFar(s32 id);
-struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
-void Object_SetMode(void *object, s32 mode);
-void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
-void BattleMotion_SetRecordChildValues(void *object, s32 value);
-s32 BattleMotion_GetSlotField14(s32 id);
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
+#include "BATTLE_RUNTIME.H"
 
 void BattleMotion_RunValueSequence(s32 id)
 {
@@ -37,7 +39,7 @@ void BattleMotion_RunValueSequence(s32 id)
 
         sel[0] = id;
         BattleLayout_HighlightPartyPanelsFar(sel);
-        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, BattleMotion_GetSlotField14(id));
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, BattleMotion_GetSlotPalette(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);

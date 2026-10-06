@@ -108,7 +108,7 @@ Func_0810b9c0:
 	ldr r0, [sp, #24]
 	adds r6, r6, r3
 	adds r1, r6, #0
-	bl Func_08109270
+	bl Shop_DrawMsg
 .L_0810baa0:
 	movs r0, #1
 	bl WaitFrames

@@ -1,10 +1,5 @@
 use crate::coverage::model::Tile;
 
-// The file-type palette of the figure: each kind of file has its own clear
-// pastel on the teal chart (the chrome is in `palette`). C source and its
-// headers are rose-greys, drafts paler; sprite sheets purple, stills blue,
-// maps green; translation text a teal that recedes into the chart, so the
-// code and art lead the eye.
 const SOURCE_ROSE: &str = "#c4b4b7";
 const DRAFT_ROSE: &str = "#e2d6d7";
 const HEADER_ROSE: &str = "#a8959a";
@@ -17,14 +12,9 @@ const TRANSLATION_TEAL: &str = "#6cafb2";
 const MIDI_GREEN: &str = "#81d6b2";
 const PCM_ORANGE: &str = "#efbb82";
 const OTHER_TAN: &str = "#bda995";
-/// Library or handwritten assembly its header credits, a deeper teal.
 const CREDITED_ASSEMBLY: &str = "#4f94a0";
-/// Uncredited assembly: C that is not written yet (AGENTS.md rule 3).
 pub(crate) const NOT_YET_C: &str = "Not yet C";
 
-/// A tracked file's kind from its extension and the module that holds it:
-/// accepted C lives in SRC, complete but nonexact drafts in the
-/// `recon/<game>` scaffolding; images take the colour of what they show.
 pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     let source = tile.source.as_deref().unwrap_or("");
     match tile.extension.as_str() {
@@ -44,12 +34,9 @@ pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         _ => ("Other files", OTHER_TAN),
     }
 }
-/// Kinds drawn without a label on each file: the translation catalogs, read
-/// as one box per game under its TEXT heading.
 pub(crate) fn quiet(tile: &Tile) -> bool {
     content_style(tile).0 == "Translations"
 }
-/// The content types of a tile's files and their bytes, largest first.
 pub(crate) fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)> {
     fn gather(tile: &Tile, mix: &mut Vec<(&'static str, &'static str, i64)>) {
         if !tile.children.is_empty() {
@@ -81,7 +68,6 @@ pub(crate) fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
         })
         .collect()
 }
-/// One vocabulary, palette and byte total for the legend.
 pub(crate) fn legend_items(tiles: &[&Tile]) -> Vec<(&'static str, &'static str, i64)> {
     let mut kinds = std::collections::BTreeMap::new();
     for tile in leaves(tiles) {
@@ -92,7 +78,6 @@ pub(crate) fn legend_items(tiles: &[&Tile]) -> Vec<(&'static str, &'static str, 
         .map(|((name, swatch), bytes)| (name, swatch, bytes))
         .collect()
 }
-// Keep single-child directories: their path is part of the displayed hierarchy.
 pub(crate) fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     let base = if tiles
         .iter()
@@ -113,7 +98,6 @@ pub(crate) fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
         };
         let relative = source.strip_prefix(base).unwrap_or(source);
         if relative.is_empty() {
-            // Bytes assigned only to this real directory have no file owner.
             out.push(tile);
             continue;
         }
@@ -151,7 +135,6 @@ pub(crate) fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     }
     out
 }
-/// A folder tile holding `children`, its bytes their sum.
 fn source_container(source: String, children: Vec<Tile>) -> Tile {
     Tile {
         label: source_name(&source).into(),
@@ -207,21 +190,10 @@ fn published_view_leaves_out_untracked_private_inputs() {
     assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.S"));
 }
 
-/// Whether an assembly module's header credits it (`@ credit: library|
-/// handwritten — <object>`).
+/// Assembly under games/ is proven source (S1); under recon/ it is a listing.
 fn credited(path: &std::path::Path) -> bool {
-    use std::io::Read;
-    let mut head = [0u8; 512];
-    let read = std::fs::File::open(path)
-        .and_then(|mut file| file.read(&mut head))
-        .unwrap_or(0);
-    String::from_utf8_lossy(&head[..read]).lines().any(|line| {
-        line.trim_start().starts_with("@ credit: library")
-            || line.trim_start().starts_with("@ credit: handwritten")
-    })
+    path.components().any(|part| part.as_os_str() == "games")
 }
-/// Every nonempty file of the Camelot-shaped trees and the reconstruction
-/// scaffolding kept beside them under `recon/`.
 pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
     ["games", "recon"]
         .into_iter()
@@ -245,8 +217,6 @@ pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
                 .and_then(|e| e.to_str())
                 .unwrap_or("")
                 .to_ascii_lowercase();
-            // Assembly counts as assembly only when its header credits it as
-            // library or handwritten code; the rest is C not yet written.
             if extension == "s" && credited(entry.path()) {
                 extension = "s-credited".into();
             }
@@ -360,7 +330,6 @@ mod tests {
             content_style(&tile("xyz")),
             ("Other files", super::OTHER_TAN)
         );
-        // A collapsed folder is drawn by the bytes of what it holds.
         let file = |name: &str, extension: &str, bytes| Tile {
             label: name.into(),
             bytes,

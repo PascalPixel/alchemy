@@ -1,15 +1,3 @@
-@ Vector and matrix transforms of the resident runtime against its current
-@ transform (RUNTIME_MATRIX.S, run 0x03000350). Both form that matrix's
-@ address from the program counter (add r0, pc, #0xf0; add r1, pc, #0x7c)
-@ and accumulate 64-bit products with smull and smlal. IwramTransformMatrix
-@ keeps its first three product rows in a 36-byte stack buffer, pops that
-@ buffer into r0 and r2-r9 (pop {r0, r2-r9}) and stores all four rows back
-@ over the matrix with stmdb r1, {r0, r2-r9, sl, fp, ip}. GCC 2.96 loads the
-@ address of data from a literal-pool word rather than adding an offset to
-@ pc, and does not read a stack buffer back by popping it. TLA's runtime has
-@ its own variants (IWRAM_RUNTIME_TRANSFORM.S): its vector transform differs
-@ in the matrix offset and its matrix transform skips zero coefficients.
-@ credit: handwritten — IWRAM runtime vector and matrix transforms
 .syntax unified
 	.arm
 

@@ -1,62 +1,49 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-#include "OBJECT_LOOKUP.H"
+#include "OBJECT_RUNTIME.H"
+#include "ANIMSPR.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "UI.H"
-
-struct Child_08091c44 {
-    u8 padding[36];
-    u8 value;
-};
-
-struct Object_08091c44 {
-    u8 padding[80];
-    struct Child_08091c44 *child;
-    u8 active;
-};
+#include "EVENT_RUNTIME.H"
+#include "WINDOW.H"
+#include "FIELD_SCENE.H"
+#include "FIELD_EVENT.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-void Object_SetModeById(s32, s32);
-void Object_WaitUntilChildValueDiffers(s32, s32);
 
-struct Entry_08091c7c {
-    u8 unknown_00[10];
-    u16 value_0a;
-    u8 unknown_0c[2];
-    u16 value_0e;
-};
-
-struct Runtime_08091c7c {
-    u8 unknown_000[0x1f4];
-    s32 first_1f4;
-    struct Entry_08091c7c *second_1f8;
-    struct Entry_08091c7c *third_1fc;
+struct EventPromptWork {
+    struct EventRuntime event;
     u8 unknown_200[0xac2];
-    s16 value_cc2;
-    s16 value_cc4;
+    s16 resource_base;
+    s16 width;
 };
 
-extern struct Runtime_08091c7c *gWork;
 extern volatile s32 gKeyState;
-s16 *BattleAction_FindDescriptor(s32);
-s32 Inventory_RequestMode(s32, s32, s32, s32);
+struct ActionDescriptor;
 void UiWork_FinalizePendingCoreFar(void);
 
-s32 Menu_RunConfirmSelectionFar(s32 value, s32 x, s32 y, s32 z);
-
-/* An empty routine after the inventory give-and-report code; nothing in
-   the image calls it. */
 void Inventory_ReservedNoOp(void)
 {
 }
 
 void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 {
-    struct Object_08091c44 *obj = ObjectTable_Get(object_id);
+    struct ObjectRuntime *obj = ObjectTable_Get(object_id);
 
-    if (obj != 0 && obj->active == 1) {
+    if (obj != 0 && obj->animation_kind == 1) {
         s32 cnt = 0;
-        u8 *p = &obj->child->value;
+        u8 *p = &((struct AnimationObject *)obj->animation)->last_no;
 
         while (cnt <= 89) {
             WaitFrames(1);
@@ -68,14 +55,14 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
     }
 }
 
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
+s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
 {
-    struct Runtime_08091c7c *rt = gWork;
-    s32 v = *BattleAction_FindDescriptor(rt->first_1f4);
-    struct Entry_08091c7c *ent0 = rt->second_1f8;
-    struct Entry_08091c7c *ent1 = rt->third_1fc;
-    s32 flag = 1;
-    s32 ret;
+    struct EventPromptWork *work = (struct EventPromptWork *)gWork;
+    s32 sprite = ((struct ScenePlacement *)BattleAction_FindDescriptor(work->event.speaker))->sprite;
+    struct UiWindow *window = (struct UiWindow *)work->event.message_window;
+    struct UiWindow *side = (struct UiWindow *)work->event.side_window;
+    s32 use_bottom = 1;
+    s32 answer;
 
     while (gKeyState != 0)
         WaitFrames(1);
@@ -85,33 +72,33 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
 
     WaitFrames(3);
 
-    if (force == 0) {
-        s32 sum = ent0->value_0e + ent0->value_0a;
+    if (force_bottom == 0) {
+        s32 bottom = window->y + window->height;
 
-        if (ent1 != 0) {
-            s32 sum2 = ent1->value_0e + ent1->value_0a;
-            if (sum < sum2)
-                sum = sum2;
+        if (side != 0) {
+            s32 side_bottom = side->y + side->height;
+            if (bottom < side_bottom)
+                bottom = side_bottom;
         }
 
-        if (sum > 15)
-            flag = 0;
+        if (bottom > 15)
+            use_bottom = 0;
     }
 
-    ret = Inventory_RequestMode(flag, rt->value_cc2, rt->value_cc4, 0);
-    if (ret != 0) {
-        Object_SetModeById(id, 4);
-        UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
+    answer = Inventory_RequestMode(use_bottom, work->resource_base, work->width, 0);
+    if (answer != 0) {
+        Object_SetModeById(actor, 4);
+        UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
         UiWork_FinalizePendingCoreFar();
-        Object_WaitUntilChildValueDiffers(id, 4);
+        Object_WaitUntilChildValueDiffers(actor, 4);
     } else {
-        Object_SetModeById(id, 3);
-        UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
+        Object_SetModeById(actor, 3);
+        UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
         UiWork_FinalizePendingCoreFar();
-        Object_WaitUntilChildValueDiffers(id, 3);
+        Object_WaitUntilChildValueDiffers(actor, 3);
     }
 
-    return ret;
+    return answer;
 }
 
 s32 Object_CallSpawnRoutineAtOrigin(s32 value)

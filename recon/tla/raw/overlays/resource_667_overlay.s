@@ -569,8 +569,8 @@ Func_02000514:
 	movs r2, #0
 	movs r0, #14
 	bl ObjectMotion_ArmCallback
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Battle_WaitMode0
 	ldr r0, .L_02008648
@@ -639,8 +639,8 @@ Func_02000514:
 	adds r3, r3, r2
 	subs r2, #172
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r0, #128
@@ -758,8 +758,8 @@ Func_02000658:
 	movs r3, #60
 	str r3, [r2]
 	str r5, [r1, r6]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #3
@@ -907,7 +907,7 @@ Func_02000658:
 	bl Func_02001590
 	movs r0, #40
 	bl Func_020015a0
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	movs r1, #3
 	movs r0, #9
 	bl Motion_SetModeAndWaitAnimation
@@ -1079,15 +1079,15 @@ Func_02000658:
 	bl Func_02001590
 	movs r0, #60
 	bl Func_020015a0
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #128
 	movs r1, #0
 	lsls r0, r0, #9
 	bl Func_02001590
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	bl Func_020015c0

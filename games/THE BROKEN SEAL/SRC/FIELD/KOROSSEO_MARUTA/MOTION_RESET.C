@@ -1,19 +1,18 @@
-/* Resetting an actor's motion and claiming the stage's palette handle. */
 #include "LOG_ROLLING.H"
 
 void ColossoLogRollingStage_ResetActorMotion(s32 selector)
 {
     extern void ObjectDispatch_InitFromTable6();
 
-    u8 *record;
+    struct FieldActor *record;
 
     record = Object_GetById(selector);
     ObjectDispatch_InitFromTable6();
 
-    *(u32 *)(record + 36) = 0;
-    *(u32 *)(record + 44) = 0;
-    *(u32 *)(record + 56) = 0x80000000;
-    *(u32 *)(record + 64) = 0x80000000;
+    record->velocity_x = 0;
+    record->velocity_z = 0;
+    record->target_x = 0x80000000;
+    record->target_z = 0x80000000;
 }
 
 void ColossoLogRollingStage_EnsurePaletteHandle(void)

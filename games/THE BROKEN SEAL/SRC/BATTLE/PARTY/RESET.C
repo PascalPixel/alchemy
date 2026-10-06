@@ -1,0 +1,135 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "TYPES.H"
+#include "BATTLE_TYPES.H"
+#include "SCENE.H"
+#include "BATTLE_SUMMON.H"
+#include "BATTLE_PARTY.H"
+#include "OWNER_STATE.H"
+#include "BATTLE_RUNTIME.H"
+
+#define Trade_AddOfferFar ((void (*)(s32,s32,s32))Trade_AddOfferFar)
+
+s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
+s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
+
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
+
+s32 BattleParty_ResetActiveRuntimeFields(void)
+{
+    u16 owners[10];
+    s32 count;
+    s32 i;
+
+    count = BattleParty_PrepareActiveOwners(owners);
+
+    i = 0;
+    if (i < count) {
+        struct BattleUnit *unit;
+        u8 *cursor;
+        s32 remaining;
+
+        do {
+            unit = Owner_GetStateFar(owners[i]);
+            cursor = (u8 *)&unit->element_modifier[3];
+            remaining = 3;
+
+            do {
+                remaining--;
+                *cursor-- = 0;
+            } while (remaining >= 0);
+
+            unit->attack_modifier_turns = 0;
+            unit->attack_modifier = 0;
+            unit->defense_modifier_turns = 0;
+            unit->defense_modifier = 0;
+            unit->res_modifier_turns = 0;
+            unit->res_modifier = 0;
+            unit->delusion = 0;
+            unit->confusion = 0;
+            unit->charm = 0;
+            unit->stun = 0;
+            unit->sleep = 0;
+            unit->psy_seal = 0;
+            unit->refrain = 0;
+            unit->reflect = 0;
+            unit->death_count = 0;
+            unit->unknown_142[0] = 0;
+            unit->unknown_142[1] = 0;
+            unit->ready_pose = 0;
+            unit->cannot_move = 0;
+            unit->agility_modifier_turns = 0;
+            unit->agility_modifier = 0;
+            unit->battle_end_state = 0;
+
+            BattleUnit_Recalculate(owners[i]);
+            i++;
+        } while (i < count);
+    }
+}
+
+s32 BattleParty_ReconcileDjinnRecovery(void)
+{
+    u16 owners[10];
+    s32 count;
+    s32 i;
+    s32 owner;
+    s32 element;
+    s32 index;
+
+    count = BattleParty_PrepareActiveOwners(owners);
+
+    for (i = 0; i < count; i++) {
+        owner = owners[i];
+        for (element = 0; element <= 3; element++) {
+            for (index = 0; index <= 19; index++) {
+                if (Trade_CanOfferDjinnFar(owner, element, index) != 0) {
+                    struct DjinnRecoveryList *list = &Trade_GetOfferStateFar((owner < 0 || owner > 7) ? 1 : 0)->list;
+                    s32 j;
+
+                    for (j = 0; j < list->count; j++) {
+                        if (element == list->entries[j].element && index == list->entries[j].index)
+                            break;
+                    }
+                    if (j == list->count)
+                        Trade_AddOfferFar(owner, element, index);
+                }
+            }
+        }
+    }
+
+    if (GameFlag_TestFar(364) != 0)
+        return;
+
+    {
+        struct DjinnRecoveryList *list = &Trade_GetOfferStateFar(0)->list;
+        struct DjinnRecoveryEntry *entry;
+
+        i = 0;
+        if (i < list->count) {
+            s32 permanent_timer = -1;
+
+            entry = list->entries;
+            do {
+                if (entry->turns == permanent_timer && GetBattleObjectSlot(entry->unit_id) == 0) {
+                    u8 id = entry->unit_id;
+                    u8 element = entry->element;
+                    u8 index = entry->index;
+
+                    Djinn_ActivateFar(id, element, index);
+                    Trade_RemoveOfferFar(id, element, index);
+                }
+                i++;
+                entry++;
+            } while (i < list->count);
+        }
+    }
+}

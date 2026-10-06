@@ -1,7 +1,3 @@
-@ Import veneers after the VINASU_CHOJO overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — VINASU_CHOJO overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -38,9 +34,9 @@ Func_02001b2c:
 	.thumb_func
 Func_02001b34:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_02001b3c
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02001b3c:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02001b44
 	.thumb_func
@@ -53,23 +49,23 @@ Func_02001b4c:
 	.global Engine_MapCopyCellsTo
 	.thumb_func
 Engine_MapCopyCellsTo:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -78,10 +74,10 @@ Engine_MapCopyCellAttributes:
 	.thumb_func
 Func_02001b64:
 	overlay_veneer Func_08020210
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -101,11 +97,11 @@ Engine_EventWait:
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
@@ -141,7 +137,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02001be4
 	.thumb_func
 Func_02001be4:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
@@ -169,11 +165,11 @@ Object_SetPartAttribute:
 	.global Func_02001c1c
 	.thumb_func
 Func_02001c1c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_02001c24
 	.thumb_func
 Func_02001c24:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -197,35 +193,67 @@ Func_02001c4c:
 	.global Func_02001c54
 	.thumb_func
 Func_02001c54:
-	overlay_veneer Func_080c8278
-	.global Event_SetStatus1c6
+	overlay_veneer EventRuntime_SetCountdownFar
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_ClearStatus1c6
-	.thumb_func
-Event_ClearStatus1c6:
-	overlay_veneer Event_ClearStatus1c6Far
-	.global Event_WaitValue1c8Frames
-	.thumb_func
-Event_WaitValue1c8Frames:
+Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_StartScreenTransitionFar
+	.endif
+	.endif
+	.global Event_FinishScreenTransition
+	.thumb_func
+Event_FinishScreenTransition:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
+	overlay_veneer Event_FinishScreenTransitionFar
+	.endif
+	.endif
+	.global Event_WaitTransitionFrames
+	.thumb_func
+Event_WaitTransitionFrames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_DelayEffectFramesFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_DelayEffectFramesFar
+	.else
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Field_DispatchTypeHandler
 	.thumb_func
 Field_DispatchTypeHandler:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8488
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8488
+	.else
 	overlay_veneer Field_DispatchTypeHandlerFar
+	.endif
+	.endif
 	.global Func_02001c7c
 	.thumb_func
 Func_02001c7c:
-	overlay_veneer Func_080c84a0
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8490
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8490
+	.else
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	.endif
+	.endif
 	.global Func_02001c84
 	.thumb_func
 Func_02001c84:
@@ -235,25 +263,57 @@ Func_02001c84:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02001c8c
 	.thumb_func
 Func_02001c8c:
-	overlay_veneer Func_080c84b0
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	.else
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
+	.endif
+	.endif
 	.global Func_02001c94
 	.thumb_func
 Func_02001c94:
-	overlay_veneer Func_080c84b8
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetupObjectPairFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetupObjectPairFar
+	.else
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
+	.endif
+	.endif
 	.global Func_02001c9c
 	.thumb_func
 Func_02001c9c:
-	overlay_veneer Func_080c84c0
-	.global Engine_EventPrepareSpeakers
+	.ifdef TLA_EDITION_ES
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
+	.else
+	overlay_veneer EventObject_InitializeFar
+	.endif
+	.endif
+	.global Engine_EventResolvePendingActions
 	.thumb_func
-Engine_EventPrepareSpeakers:
-	overlay_veneer Func_080c84e0
+Engine_EventResolvePendingActions:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -271,7 +331,7 @@ Func_02001cbc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Object_SetActionCallbackFar
 	.else
-	overlay_veneer Func_080c8690
+	overlay_veneer Event_NoOpFar
 	.endif
 	.endif
 	.global Engine_PartyGetLeaderActor
@@ -283,17 +343,33 @@ Engine_PartyGetLeaderActor:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001ccc
 	.thumb_func
 Func_02001ccc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8788
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8788
+	.else
 	overlay_veneer Func_080c8798
+	.endif
+	.endif
 	.global Func_02001cd4
 	.thumb_func
 Func_02001cd4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8790
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8790
+	.else
 	overlay_veneer Func_080c87a0
+	.endif
+	.endif
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

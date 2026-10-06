@@ -1,19 +1,3 @@
-@ ARM part of the per-channel mixing in TLA's resident runtime. It picks a
-@ six-word interpolation template of IWRAM_RUNTIME_MIX_CHANNEL.S
-@ (add r0, pc, #0x1ac), and when the choice differs from the one recorded
-@ in the state word at 0x03000af8 (IWRAM_RUNTIME_MIX_STATE.S; ldr r2,
-@ [pc, #404]; str r0, [pc, #392]) it copies the template into the eight
-@ lanes of its own sample loop (add lr, pc, #52; stm lr, {...}). The 48
-@ words 0xfedcba98 that stand in those lanes in this image never run: the
-@ state word starts at zero, so the first call fills every lane before the
-@ loop runs, and the instructions that run there are copies of the credited
-@ templates. Those placeholders carry no credit, and neither do the three
-@ words after the routine where it saves r2, sl and sp before moving the
-@ stack (add r9, pc, #0x1d8; stm r9, {r2, sl, sp}) and restores them
-@ (add ip, pc, #4; ldm ip, {r2, r3, sp}); the stack-floor word 0x03007900
-@ after them is the literal it loads (ldr sl, [pc, #500]). Rewriting its
-@ own loop is beyond both approved compilers.
-@ credit: handwritten — TLA IWRAM runtime sound mixer
 .syntax unified
 	.thumb
 	.arm

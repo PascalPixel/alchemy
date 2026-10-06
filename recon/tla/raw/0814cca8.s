@@ -24,7 +24,7 @@ Func_0814cca8:
 	ldrh r1, [r1]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r5, .L_0814ccfc
 	movs r1, #128
 	adds r0, r6, #0
@@ -43,7 +43,7 @@ Func_0814cca8:
 .L_0814ccf4:
 	.4byte 0x00000001
 .L_0814ccf8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814ccfc:
 	.4byte IwramFillWords
 .L_0814cd00:

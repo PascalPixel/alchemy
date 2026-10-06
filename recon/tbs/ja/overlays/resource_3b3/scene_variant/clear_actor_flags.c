@@ -1,14 +1,10 @@
-/* NONMATCHING: localized scene source, 2026-10-01.
- * The complete 736-byte setup retains localized actor-eight/nine flag clears.
- * Japanese omits those clears; its complete setup is 716 bytes.
- */
 #include "HASHIRA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 #include "FIELD_SCENE.H"
 
-void FieldScene_RunScene3b3_02001fd4(void);
+void TakaraHashira_PushPillar(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
 void FieldEffect_UpdateGridPlacement(void);
 
@@ -53,11 +49,11 @@ extern const struct SceneEvent gTakaraHashiraEventsOther[];
 extern u8 TakaraHashira_PillarSlots[];
 void SceneActor_ApplyPlacementQueryAndTag();
 void BattleFx_StartFadeOverlay();
-void SceneState_ClearWord24AndObjectByte62();
+void TakaraHashira_ReleasePillarRider();
 void OverlayObject_SetCallbackAndMode2();
 void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
-void FieldScene_RunScene3b3_0200263c();
+void TakaraHashira_RestoreFlaggedPillar();
 
 s32 TakaraHashira_SetupArea(void)
 {
@@ -115,7 +111,7 @@ s32 TakaraHashira_SetupArea(void)
             }
             BattleFx_StartFadeOverlay(0);
             if (*((u8 *)Object_GetById(0) + 98) == 0) {
-                SceneState_ClearWord24AndObjectByte62();
+                TakaraHashira_ReleasePillarRider();
             }
             OverlayObject_SetCallbackAndMode2(8);
             OverlayObject_SetCallbackAndMode2(9);
@@ -164,9 +160,9 @@ s32 TakaraHashira_SetupArea(void)
             TakaraHashira_PrepLoweredActor(11);
             TakaraHashira_PrepLoweredActor(12);
             TakaraHashira_PrepLoweredActor(13);
-            FieldScene_RunScene3b3_0200263c(11);
-            FieldScene_RunScene3b3_0200263c(12);
-            FieldScene_RunScene3b3_0200263c(13);
+            TakaraHashira_RestoreFlaggedPillar(11);
+            TakaraHashira_RestoreFlaggedPillar(12);
+            TakaraHashira_RestoreFlaggedPillar(13);
             record = (u8 *)Object_GetById(13);
             *(s32 *)((s32)record + 108) = v5;
             TakaraHashira_PrepLoweredActor(14);

@@ -4,18 +4,18 @@
 
 #define ACTION_ID_MASK 0x3FFF
 
-/* PsynergyMenu_CollectActions per games/THE BROKEN SEAL/INCLUDE/PSYNERGY_MENU.H. */
-s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s32 mode)
+s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode)
 {
+    /* FAKEMATCH: the scalar cursor, offset clears and empty branches preserve operand order and 274 bytes; indexed clearing yields 266. */
     s32 n;
     u16 *out;
-    s32 outerCount;
+    s32 passes;
     s32 count;
     s32 i;
     s32 j;
     s32 off;
 
-    outerCount = (mode != 2) ? 4 : 3;
+    passes = (mode != 2) ? 4 : 3;
     for (n = 62; n >= 0; n -= 2) {
         u16 *q = (u16 *)((u8 *)actions + n);
         *q = 0;
@@ -24,7 +24,7 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s3
     count = 0;
 
     if (mode == 1) {
-        for (i = 0, off = 88, out = actions; i <= 31; i++, off += 4) {
+        for (i = 0, off = (u8 *)owner->action_slots - (u8 *)owner, out = actions; i <= 31; i++, off += 4) {
             if (*(u16 *)(off + (s32)owner) != 0) {
                 if (BattleAction_Get(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)->type_0c != 0) {
                     *out = *(u16 *)((s32)owner + off);
@@ -34,8 +34,8 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s3
             }
         }
     } else {
-        for (j = 0; j < outerCount; j++) {
-            out = (u16 *)(count * 2 + (s32)actions);
+        for (j = 0; j < passes; j++) {
+            out = (u16 *)(count * sizeof(actions[0]) + (s32)actions);
 
             for (i = 0; i < 32; i++) {
                 if (owner->action_slots[i].encoded_action != 0) {

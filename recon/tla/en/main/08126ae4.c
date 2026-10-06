@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-/* battle/presentation/actor/set_record_mode.c */
 struct EffectActorRecord {
     u8 reserved_00[5];
     u8 reserved_a : 2;

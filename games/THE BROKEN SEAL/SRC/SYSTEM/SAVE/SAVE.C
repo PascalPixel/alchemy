@@ -1,48 +1,246 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "SAVE_STATE.H"
+#include "GAME_STATE.H"
 #include "RUNTIME_INTERFACES.H"
+#include "RUNTIME_MEM.H"
+#include "TBS_EDITION.H"
+#include "RENDER_INPUT.H"
+#include "WINDOW.H"
+#include "HEAP_STATE.H"
+#include "IO_REG.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgNoBackupMemory[];
-extern u8 MsgSaveFailed[];
-extern u8 MsgOverwriteConfirm[];
-extern u8 MsgGameSaved[];
-extern u8 MsgSaving[];
-extern s16 gSaveSlot;
-extern u8 gSaveBuffer[];
-extern u8 *gSaveWorkspace;
-s32 SaveState_InitializeWorkspace(void);
-void SaveState_LoadSummaryRecords(void);
-s32 SaveMenu_SelectSlot(s16 a, s32 b);
+#define RenderOutput_RedrawSavedRect ((void (*)(void *))RenderOutput_RedrawSavedRect)
+
+#define UiWindow_FillTilemapRect ((void (*)(void*,s32,s32,s32,s32))UiWindow_FillTilemapRect)
+#define UiText_DrawFourNumbersInRow ((void (*)(void*,void*))UiText_DrawFourNumbersInRow)
+#define StatusMenu_DrawCharacterSummary ((void (*)(void*,void*))StatusMenu_DrawCharacterSummary)
+#define ObjectPlacement_CreateGroup ((void (*)(void*,s32,s32,void*))ObjectPlacement_CreateGroup)
+#define Menu_SpawnFourObjectsAtOrigin ((void (*)(void*,s32,s32))Menu_SpawnFourObjectsAtOrigin)
+#define RenderResource_CreatePair ((struct RenderOutput * (*)(s32,struct UiWindow*,s32,s32))RenderResource_CreatePair)
+#define Ui_ApplyTableOffsetToPair ((void (*)(void*))Ui_ApplyTableOffsetToPair)
+
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 s32 UiWork_IsComplete(void);
-s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
 void UiWork_FinalizePendingCore(void);
 void Audio_PlayCue(u8 mode);
-void SaveState_BuildSummaryHeader(void);
-void SaveState_CaptureObjectTableFar(void);
-s32 SaveState_WriteRecord(s32 a, void *b);
-void SaveState_ReleaseWorkspace(void);
 
-struct State_080208e4 {
-    u8 padding0[4];
-    s32 value;
-};
-
-void UiText_ShowPositionedMessageAndWait(s32, s32);
-s32 SaveMenu_SelectSlot(s16, s32);
-s32 SaveState_ReadRecordPayload(s32, void *);
-extern char MsgLoadFailed;
-extern struct State_080208e4 gGameState;
 extern s32 gLoadedStateWord;
 extern u8 gOptionMirror;
 extern s16 gPostLoadCounter;
+
+#if EDITION_INTERNATIONAL
+extern volatile s32 gKeyState;
+extern volatile s32 gKeysRepeat;
+
+void AudioCommand_PlayFar(s32 cue);
+void PaletteGlow_Update(s32 icon, s32 icon_sub);
+void UiWindow_DrawDividerLine(void *win, s32 a, s32 b, s32 c, s32 d);
+void UiText_DrawResource(s32 message, void *win, s32 x, s32 y);
+void UiText_DrawString(void *text, void *win, s32 x, s32 y);
+
+s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
+{
+    struct UiWindow *list;
+    struct SaveWorkspace *save;
+    struct UiWindow *status;
+    struct UiWindow *djinn;
+    struct UiWindow *counts;
+    struct SaveSummary *summary;
+    struct RenderOutput *cursor;
+    s32 redraw;
+    struct UiRenderWork *render;
+    u32 stamp;
+    void *work;
+    volatile u32 zero;
+    s32 result;
+    s32 i;
+    s32 y;
+
+    work = Runtime_AllocateHeapBlock(55, 0xa70);
+    save = *(gWorkSlot + HEAP_SLOT_SAVE);
+    status = NULL;
+    djinn = NULL;
+    counts = NULL;
+    redraw = 1;
+    render = *(gWorkSlot + HEAP_SLOT_WINDOW);
+    stamp = Runtime_GetBuildStampTimeFar();
+    if (slot < 0)
+        slot = 0;
+    if (mode == 1) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag != 0); i++) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
+        }
+    } else if (mode == 4) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].flag_count == 0); i++) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
+        }
+    } else if (mode == 5) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag == 0); i++) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
+        }
+    } else if (mode != 0) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0); i++) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
+        }
+    }
+
+    zero = 0;
+    Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
+    Scheduler_ScheduleCallbackAAfterFrames();
+    list = UiWindow_Create(1, 2, 28, 7, 2);
+    summary = save->summary;
+    y = 0;
+    for (i = 0; i < 3; i++, y += 16, summary++) {
+        if (summary->level == 0) {
+            UiText_DrawResource((s32)MsgSaveNoData, list, 10, y);
+        } else if (summary->frames < stamp) {
+            UiText_DrawResource((s32)MsgSaveContinue, list, 10, y);
+        } else if (summary->play_time != *(u32 *)summary->unknown_38) {
+            UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, y);
+        } else if (mode == 5 && (s8)summary->send_flag == 0) {
+            UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, y);
+        } else {
+            UiText_DrawString(summary->name, list, SAVE_SLOT_NAME_X, y);
+            UiText_DrawResource(summary->area + (s32)MsgDebugEntryName, list, 62, y);
+            render->dirty = 1;
+        }
+    }
+    UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
+    UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
+    cursor = RenderResource_CreatePair(mode, list, 72, -24);
+
+    while (1) {
+        if (redraw != 0) {
+            redraw = 0;
+            if (save->summary[slot].level != 0) {
+                PaletteGlow_Update(save->summary[slot].palette_glow, save->summary[slot].palette_glow_sub);
+                if (status == NULL)
+                    status = UiWindow_Create(1, 10, 14, 9, 2);
+                StatusMenu_DrawCharacterSummary(status, &save->summary[slot]);
+                WaitFrames(1);
+                if (djinn == NULL)
+                    djinn = UiWindow_Create(16, 10, 13, 3, 2);
+                Menu_ClearFirstObjectRowAndScheduleUpdate();
+                ObjectPlacement_CreateGroup(djinn, 0, 0, &save->summary[slot]);
+                WaitFrames(1);
+                if ((s8)save->summary[slot].djinn[0] + (s8)save->summary[slot].djinn[1] + (s8)save->summary[slot].djinn[2]
+                        + (s8)save->summary[slot].djinn[3] != 0) {
+                    if (counts == NULL)
+                        counts = UiWindow_Create(16, 14, 13, 5, 2);
+                    UiText_DrawFourNumbersInRow(counts, &save->summary[slot]);
+                    Menu_ClearSecondObjectRowAndScheduleUpdate();
+                    Menu_SpawnFourObjectsAtOrigin(counts, 0, 0);
+                } else {
+                    Menu_ClearSecondObjectRowAndScheduleUpdate();
+                    UiWork_Finalize(counts, 2);
+                    counts = NULL;
+                }
+            } else {
+                PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+                Menu_ClearSecondObjectRowAndScheduleUpdate();
+                Menu_ClearFirstObjectRowAndScheduleUpdate();
+                UiWork_Finalize(counts, 2);
+                UiWork_Finalize(djinn, 2);
+                UiWork_Finalize(status, 2);
+                counts = NULL;
+                djinn = NULL;
+                status = NULL;
+            }
+            RenderOutput_RedrawSavedRect(list);
+            UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
+            UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
+            UiWindow_FillTilemapRect(list, 0, slot * 2, 26, 1);
+        }
+        Ui_ApplyTableOffsetToPair(cursor);
+        WaitFrames(1);
+        if (gKeysRepeat & 0x40) {
+            AudioCommand_PlayFar(111);
+            redraw = 1;
+            do {
+                slot = (slot + 2) % 3;
+                if (mode == 0)
+                    break;
+            } while ((save->summary[slot].level == 0
+                || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+                || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+                || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+        } else if (gKeysRepeat & 0x80) {
+            AudioCommand_PlayFar(111);
+            redraw = 1;
+            do {
+                slot = (slot + 4) % 3;
+                if (mode == 0)
+                    break;
+            } while ((save->summary[slot].level == 0
+                || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+                || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+                || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+        } else if (gKeyState & 2) {
+            AudioCommand_PlayFar(113);
+            result = -1;
+            break;
+        } else if (gKeyState & 1) {
+            AudioCommand_PlayFar(112);
+            result = slot;
+            break;
+        }
+    }
+    Menu_ClearSecondObjectRowAndScheduleUpdate();
+    Menu_ClearFirstObjectRowAndScheduleUpdate();
+    UiWork_Finalize(counts, 2);
+    UiWork_Finalize(djinn, 2);
+    UiWork_Finalize(status, 2);
+    UiWork_Finalize(list, 2);
+    Scheduler_ScheduleCallbackA();
+    Runtime_ReleaseHeapBlock(55);
+    PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+    WaitFrames(1);
+done:
+    return result;
+}
+#endif
 
 s32 Save_WriteSelectedSlot(void)
 {
     s32 result;
     s32 slot;
     s32 flag;
-    u8 *base;
+    struct SaveWorkspace *work;
 
     result = 0;
     flag = SaveState_InitializeWorkspace();
@@ -51,13 +249,12 @@ s32 Save_WriteSelectedSlot(void)
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
-        base = gSaveWorkspace;
+        work = gSaveWorkspace;
         slot = SaveMenu_SelectSlot(gSaveSlot, 0);
         if (slot == -1) {
             result = slot;
         } else {
-            s32 off = (slot << 6) + 0x105c;
-            if (base[off] != 0) {
+            if (work->summary[slot].level != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)MsgOverwriteConfirm, 13);
                 while (UiWork_IsComplete() == 0) {
                     WaitFrames(1);
@@ -98,7 +295,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
     s32 err = SaveState_InitializeWorkspace();
 
     if (err != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
         ret = -9;
     } else {
         s32 value;
@@ -114,11 +311,11 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
             base = (char *)base + 0x1000;
             err |= SaveState_ReadRecordPayload(value + 3, base);
             if (err != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
+                UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);
                 ret = -2;
             } else {
-                gLoadedStateWord = gGameState.value;
-                gOptionMirror = ((u8 *)&gGameState)[0x22a];
+                gLoadedStateWord = gGameState.play_time;
+                gOptionMirror = gGameState.saved_options;
                 gPostLoadCounter = 0;
                 gSaveSlot = value;
             }

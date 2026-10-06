@@ -1,29 +1,26 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "AFFINE.H"
+#include "VRAM_BLOCK.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_MEM.H"
-/* Colosso: decode the portrait sheet into a scratch block, copy portrait
- * id's palette into object palette 15 and its 1 KB of tiles into the cached
- * VRAM slot (claimed on first use). Portrait 8 shares tiles with 4. The same
- * function sits in each of the three Colosso trial overlays. */
+#include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
 #include "CALL.H"
-/* Colosso: the trial overlays' scripted sprite task. Each frame it runs the
- * mode script's commands until a wait, interpolates the sprite's scale, the
- * blend and the horizontal position toward their targets, draws the mode's
- * sprites through an affine matrix and queues the blend registers. The same
- * function sits in each of the three Colosso trial overlays, with its
- * variables in each overlay's own work. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern s16 Korosseo_PortraitSlot;
-extern u8 Korosseo_PortraitPaletteOffsets[];
-void Runtime_BumpFree(u8 *block);
-s32 Resource_FindFreeEntry(void);
-s32 Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(s32 entry, u8 *destination);
-void VramBlock_LoadCached(s32 slot, s32 size, s32 source);
 
 static __inline__ void Dma_Wait(volatile u32 *dma)
 {
@@ -33,28 +30,16 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 
 struct Sprite { u32 words[3]; };
 
-struct SpriteTile { u16 pad, base; };
-
-struct SpriteTransform { unsigned x : 16; unsigned y : 16; unsigned angle : 16; unsigned pad : 16; };
-
-/* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
 struct Half { u16 value; };
 
-extern struct SpriteTile gVramBlockCache[];
-extern s16 Korosseo_PortraitSlot, Korosseo_ModeTaskTimer, Korosseo_ModeMoveTarget, Korosseo_ModeMoveDuration;
-extern s16 Korosseo_ModeMoveStart, Korosseo_ModeMoveStep, Korosseo_ModeScaleTarget, Korosseo_ModeScaleStart;
-extern s16 Korosseo_ModeScaleDuration, Korosseo_ModeScaleStep, Korosseo_ModeBlendTarget, Korosseo_ModeBlendStart;
-extern s16 Korosseo_ModeBlendDuration, Korosseo_ModeBlendStep, Korosseo_ModeTaskMode, Korosseo_ModeTaskParam;
+extern s16 Korosseo_ModeTaskTimer;
+extern s16 Korosseo_ModeMoveTarget;
+extern s16 Korosseo_ModeMoveDuration;
+extern s16 Korosseo_ModeTaskMode;
+extern s16 Korosseo_ModeTaskParam;
 extern s32 Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
-extern u32 Korosseo_ModeTaskSprites[];
-extern s32 Engine_TaskRemoveCallback(void (*fn)(void));
-extern void Resource_ResetEntry(s32 slot);
-extern s32 AffineMatrix_BuildForEffect(struct SpriteTransform *work);
-extern void Runtime_PushSlotEntry(void *sprite, s32 priority);
 
-/* FAKEMATCH: transfer the exact queue read boundary and count-store alias.
- * Each publication owns its cursor; only the hardware pointers persist. */
 #define QueueRegister(address, value) \
 { \
     u32 saved; \
@@ -84,21 +69,23 @@ void Korosseo_LoadPortrait(s32 id)
     if (id == 8)
         id = 4;
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering), buf);
-    Dma_Set(buf + off, (void *)0x050003e0, 0x84000008, (volatile u32 *)0x040000d4);
+    Dma_Set(buf + off, (void *)0x050003e0, DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
     Call3(VramBlock_LoadCached, Korosseo_PortraitSlot, 0x400, (id << 10) + (s32)buf + KOROSSEO_PALETTE_BYTES);
-    Dma_Wait((volatile u32 *)0x040000d4);
+    Dma_Wait(REG_DMA3);
     Runtime_BumpFree(buf);
 }
 
 void Korosseo_UpdateModeTask(void)
 {
+    /* FAKEMATCH: the queue read boundary and count-store alias keep separate cursors for each write. */
+    /* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
-    s32 tile = gVramBlockCache[Korosseo_PortraitSlot].base >> 5;
+    s32 tile = gVramBlockCache[Korosseo_PortraitSlot].offset >> 5;
     u32 flags;
     s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
-    struct SpriteTransform work;
+    struct AffineTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
 
@@ -182,8 +169,8 @@ render:
             Korosseo_ModeMoveDuration = zero.value;
     }
     work.angle = 0;
-    work.x = scale;
-    work.y = scale;
+    work.scale_x = scale;
+    work.scale_y = scale;
     matrix = (s16)AffineMatrix_BuildForEffect(&work);
     Korosseo_ModeTaskPosition += pos;
     pos = Korosseo_ModeTaskPosition / 256;
@@ -278,6 +265,6 @@ render:
     }
     queue = &gIoWriteQueue;
     ime = &REG_IME;
-    QueueRegister(0x04000050, 0x3f00)
-    QueueRegister(0x04000052, ((16 - blend) << 8) | blend)
+    QueueRegister((u32)&REG_BLDCNT, 0x3f00)
+    QueueRegister((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend)
 }

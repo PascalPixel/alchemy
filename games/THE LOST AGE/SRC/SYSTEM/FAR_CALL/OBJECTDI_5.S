@@ -1,21 +1,17 @@
-@ Far-call stub table at 0x08020120: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08020120
+	.global Map_ApplyWorkOriginAndSpanFar
 	.thumb_func
-Func_08020120:
+Map_ApplyWorkOriginAndSpanFar:
 	overlay_veneer Func_0802aa74
-	.global Func_08020128
+	.global Map_UpdateCurrentTileBlockFar
 	.thumb_func
-Func_08020128:
+Map_UpdateCurrentTileBlockFar:
 	overlay_veneer Func_0802c4d8
-	.global Func_08020130
+	.global WorldMap_LoadGraphicsFar
 	.thumb_func
-Func_08020130:
+WorldMap_LoadGraphicsFar:
 	overlay_veneer Func_0802be4c
 	.global Object_ResetMotion
 	.thumb_func
@@ -33,23 +29,23 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeout
-	.global Func_08020158
+	.global Map_GetScreenRelativePositionFar
 	.thumb_func
-Func_08020158:
+Map_GetScreenRelativePositionFar:
 	overlay_veneer Func_08023088
-	.global Func_08020160
+	.global WorldMap_UpdateViewFar
 	.thumb_func
-Func_08020160:
+WorldMap_UpdateViewFar:
 	overlay_veneer Func_0802c240
-	.global Func_08020168
+	.global Map_LoadDefaultCellsAndUpdateBlockFar
 	.thumb_func
-Func_08020168:
+Map_LoadDefaultCellsAndUpdateBlockFar:
 	overlay_veneer Func_0802cb08
-	.global Func_08020170
+	.global Map_PlayMetatileCopySequenceFar
 	.thumb_func
-Func_08020170:
+Map_PlayMetatileCopySequenceFar:
 	overlay_veneer Func_0802b2d4
-	.global Func_08020178
+	.global Map_CopyMetatileIndicesRectFar
 	.thumb_func
-Func_08020178:
+Map_CopyMetatileIndicesRectFar:
 	overlay_veneer Map_CopyMetatileIndicesRect

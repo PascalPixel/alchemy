@@ -1,3 +1,13 @@
+#include "BATTLE.H"
+#include "FIELD_EVENT.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "MAPCOPY.H"
 #include "HAIDIA.H"
 #include "EDITION.H"
@@ -6,16 +16,8 @@
 #include "FIELD_EFFECT.H"
 #include "CALL.H"
 
-extern const struct SceneEntrance gHaidiaDouEntrances1[];
-extern const struct SceneEntrance gHaidiaDouEntrances2[];
-extern const struct SceneEntrance gHaidiaDouEntrances3[];
-extern const struct SceneEntrance gHaidiaDouEntrancesOther[];
 
-extern const u32 HaidiaDou_Exits[];
 
-extern const struct ScenePlacement gHaidiaDouPlacements1[];
-extern const struct ScenePlacement gHaidiaDouPlacements2[];
-extern const struct ScenePlacement gHaidiaDouPlacements3[];
 
 struct FieldActor *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind);
 
@@ -24,33 +26,29 @@ void SceneState_SetValues8_3_4(void)
     BattleFx_RunPageEffectForSlot(8, 3, 4);
 }
 
-/* Give the actor at most sixty frames to descend to its target height, then
- * clamp the live height to the target so the following scene starts exact. */
-void SceneActor_WaitActorDescent(u8 *obj)
+void SceneActor_WaitActorDescent(struct FieldActor *actor)
 {
-    s32 cnt = 60;
+    s32 frames = 60;
 
-    while (cnt != 0) {
+    while (frames != 0) {
         WaitFrames(1);
-        cnt--;
-        if (*(s32 *)(obj + 12) <= *(s32 *)(obj + 20))
+        frames--;
+        if (actor->y.fixed <= actor->terrain_height)
             break;
     }
-    *(s32 *)(obj + 12) = *(s32 *)(obj + 20);
+    actor->y.fixed = actor->terrain_height;
 }
 
-/* Point an object toward actor zero using their fixed-point X/Z delta. */
-s32 SceneActor_FaceActorZero(u8 *obj)
+s32 SceneActor_FaceActorZero(struct FieldActor *obj)
 {
-    u8 *target = Actor_Get(ACTOR_PARTY_LEADER);
-    s32 dz = *(s32 *)(target + 16) - *(s32 *)(obj + 16);
-    s32 dx = *(s32 *)(target + 8) - *(s32 *)(obj + 8);
+    struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
+    s32 dz = target->z.fixed - obj->z.fixed;
+    s32 dx = target->x.fixed - obj->x.fixed;
 
-    *(s16 *)(obj + 6) = (s16)ArcTan2(dz, dx);
+    obj->facing = (s16)ArcTan2(dz, dx);
     return 0;
 }
 
-/* Where the party appears in each of the sanctum's three areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -67,7 +65,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gHaidiaDouEntrancesOther;
 }
 
-/* The sanctum's regions and exits, between its scene-dependent getters. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -78,8 +75,6 @@ const u32 *Scene_GetExits(void)
     return HaidiaDou_Exits;
 }
 
-/* The actors placed in each of the sanctum's three areas; any other scene
-   takes the first area's. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -98,18 +93,14 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FieldScene_ConfigureRegionAtRow15(void)
 {
-    Map_CopyCells(16, 15, 1, 1, 15, 15);
+    Engine_MapCopyCells(16, 15, 1, 1, 15, 15);
 }
 
-/* Configure the matching 16x15 scene rectangle at row 17. */
 void FieldScene_ConfigureRegionAtRow17(void)
 {
-    Map_CopyCells(16, 17, 1, 1, 15, 15);
+    Engine_MapCopyCells(16, 17, 1, 1, 15, 15);
 }
 
-/* When the pillar (actor 9) stands in column 23, steps the leader aside and
- * lowers the pillar into the floor amid a spray of dust between two
- * markers, opens the cell it blocked and sets flag 0x200. */
 void HaidiaDou_SinkPillarColumn23(void)
 {
     struct EffectOptions options;
@@ -120,7 +111,7 @@ void HaidiaDou_SinkPillarColumn23(void)
 
     Engine_EventBegin();
     if (Object_GetById(9)->x.fixed >> 20 == 23) {
-        Call3((void (*)())Engine_ActorMoveToAndWait, 0, 360, 664);
+        Actor_MoveToAndWait(0, 360, 664);
         Engine_ActorFaceDirection(0, 0xe000, 10);
         Object_GetById(9)->x.fixed += 0x20000;
         left = OverlayObject_CreateConfigured(Object_GetById(9)->x.fixed, 0,
@@ -132,7 +123,7 @@ void HaidiaDou_SinkPillarColumn23(void)
         o->start_scale_x = 0x9999;
         o->start_scale_y = 0x9999;
         o->palette = 7;
-        Audio_PlayCue(216);
+        Engine_AudioPlayCue(216);
         for (i = 0; i < 68; i++) {
             s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1700000;
             s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2700000;
@@ -153,9 +144,6 @@ void HaidiaDou_SinkPillarColumn23(void)
     Engine_EventEnd();
 }
 
-/* When the pillar (actor 10) stands in column 27, lowers it into the floor
- * amid a spray of dust between two markers, opens the cells it blocked,
- * sets flag 0x201 and settles it below the floor. */
 void HaidiaDou_SinkPillarColumn27(void)
 {
     struct EffectOptions options;
@@ -175,7 +163,7 @@ void HaidiaDou_SinkPillarColumn27(void)
         o->start_scale_x = 0x9999;
         o->start_scale_y = 0x9999;
         o->palette = 7;
-        Audio_PlayCue(216);
+        Engine_AudioPlayCue(216);
         for (i = 0; i < 68; i++) {
             s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1b00000;
             s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2900000;
@@ -207,40 +195,38 @@ void FieldScene_RunInitBracketThenSequence(void)
 s32 FieldScene_RunPrimarySequence(s32 a0)
 {
 
-    s32 box[3];
-    u8 *rec;
-    u8 *flag;
-    u8 *slot;
+    union FieldCoordinate to[3];
+    struct FieldActor *leader;
+    u8 *flags;
     s32 saved;
 
-    rec = (u8 *)Object_GetById(ACTOR_PARTY_LEADER);
-    flag = rec + 85;
-    saved = *flag;
-    slot = (u8 *)box;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    flags = &leader->motion_flags;
+    saved = *flags;
 #if EDITION_INTERNATIONAL
-    *(s32 *)(slot + 0) = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
-    *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
-    *(s32 *)(slot + 8) = (*(s32 *)(rec + 16) & -0x100000) + 0x280000;
+    to[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
+    to[1].fixed = leader->y.fixed;
+    to[2].fixed = (leader->z.fixed & -0x100000) + 0x280000;
 #else
-    *(s32 *)(slot + 0) = *(s32 *)(rec + 8);
-    *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
-    *(s32 *)(slot + 8) = *(s32 *)(rec + 16) + 0x200000;
+    to[0].fixed = leader->x.fixed;
+    to[1].fixed = leader->y.fixed;
+    to[2].fixed = leader->z.fixed + 0x200000;
 #endif
-    if (Object_CheckMovementCollision((s32)rec, (s32)slot) == 0) {
+    if (Object_CheckMovementCollision(leader, to) == 0) {
         Engine_EventBegin();
-        Object_SetMode((s32)rec, 6);
+        Object_SetMode(leader, 6);
         WaitFrames(6);
-        Audio_PlayCue(152);
-        Object_SetMode((s32)rec, 7);
-        *(s32 *)(rec + 48) = 0x30000;
-        *(s32 *)(rec + 52) = 0x20000;
-        *(s32 *)(rec + 40) = 0x40000;
-        *flag = *flag & 126;
-        Engine_ActorSetSpriteFlags((s32)rec, 0);
-        Engine_ActorMoveToAndWait(0, *(s16 *)(slot + 2), *(s16 *)(slot + 10));
-        Object_SetMode((s32)rec, 6);
-        Engine_ActorSetSpriteFlags((s32)rec, 1);
-        *flag = (u8)saved;
+        Engine_AudioPlayCue(152);
+        Object_SetMode(leader, 7);
+        leader->speed = 0x30000;
+        leader->acceleration = 0x20000;
+        leader->velocity_y = 0x40000;
+        *flags &= 126;
+        Engine_ActorSetSpriteFlags(leader, 0);
+        Engine_ActorMoveToAndWait(0, to[0].part.pixel, to[2].part.pixel);
+        Object_SetMode(leader, 6);
+        Engine_ActorSetSpriteFlags(leader, 1);
+        *flags = saved;
         Engine_EventEnd();
         return 1;
     }
@@ -251,7 +237,7 @@ void FieldScene_RunScene3a6SequenceA(void)
 {
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x200) == 0) {
         GameFlag_Set(0x200);
@@ -268,7 +254,7 @@ void FieldScene_RunScene3a6SequenceA(void)
         Actor_WalkToAndWait(8, 0x318, 248);
         Audio_PlayCue(152);
         record = Actor_Get(8);
-        *(s32 *)(record + 40) = 0x80000;
+        record->velocity_y = 0x80000;
         Actor_WalkToAndWait(8, 0x318, 0x118);
         Battle_WaitMode0(20);
         Actor_FaceDirection(8, 0xc000, 20);
@@ -281,7 +267,7 @@ void FieldScene_RunScene3a6SequenceB(void)
 {
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x200) != 0) {
         if (GameFlag_IsSet(0x201) == 0) {
@@ -298,7 +284,7 @@ void FieldScene_RunScene3a6SequenceB(void)
             Battle_WaitMode0(10);
             Actor_FaceDirection(8, 0xc000, 20);
             record = Actor_Get(8);
-            *(s32 *)(record + 108) = (s32)SceneActor_FaceActorZero;
+            record->update = (void (*)(union FieldObject *))SceneActor_FaceActorZero;
             Engine_EventEnd();
         }
     }
@@ -307,8 +293,8 @@ void FieldScene_RunScene3a6SequenceB(void)
 void FieldScene_RunScene3a6SequenceC(void)
 {
 
-    s32 rec8;
-    s32 record;
+    struct FieldActor *rec8;
+    struct FieldActor *record;
     s32 idx;
     s32 tbl;
     s32 idx4;
@@ -316,21 +302,21 @@ void FieldScene_RunScene3a6SequenceC(void)
     struct EventWork *p5;
 
     p5 = gEventWork;
-    if (GameFlag_IsSet(0x302) != 0) {
+    if (Engine_GameFlagIsSet(0x302) != 0) {
         off24a = 0x24a;
         if (*(s16 *)((s32)&gGameState + off24a) != 8) {
             idx = p5->touched_trigger;
             rec8 = Object_GetById(8);
             record = Object_GetById(ACTOR_PARTY_LEADER);
-            *(s32 *)(rec8 + 48) = *(s32 *)(record + 48);
+            rec8->speed = record->speed;
             rec8 = Object_GetById(8);
             record = Object_GetById(ACTOR_PARTY_LEADER);
-            *(s32 *)(rec8 + 52) = *(s32 *)(record + 52);
+            rec8->acceleration = record->acceleration;
             idx -= 45;
             tbl = (s32)HaidiaDou_WalkTargets;
             idx <<= 3;
             idx4 = idx + 4;
-            Actor_WalkTo(8, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
+            Engine_ActorWalkTo(8, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
         }
     }
 }

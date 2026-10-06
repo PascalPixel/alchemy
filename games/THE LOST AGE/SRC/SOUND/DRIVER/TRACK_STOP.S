@@ -1,11 +1,3 @@
-@ Stops a music track: for each sounding channel it loads the channel-off
-@ hook into r3 and reaches it by bl to the bx r3 that ends UPDATE.S
-@ (0x081c1b84), leaving r1 and r2 unset, a private call contract no C call
-@ has; movs r3, #7; ands r0, r3; beq branches on the flags of ands with no
-@ compare. These 68 bytes equal TBS SOUND/DRIVER/TRACK_STOP.S (0x080f9ef8).
-@ The zero halfword of alignment at 0x081c1bd2 never runs and carries no
-@ credit.
-@ credit: library — TBS/TLA common sound driver track-stop routine
 .syntax unified
 	.thumb
 	.global MusicTrack_Stop

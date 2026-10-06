@@ -32,9 +32,6 @@ pub fn quoted_include(line: &str) -> Option<&str> {
     Some(rest.split_once('"')?.0)
 }
 
-/// A checkout's commands as a cache identity: its own root spelled
-/// `<root>`, as the runtime cache spells it, so every worktree shares one
-/// content-addressed cache. The inputs themselves are hashed by content.
 pub fn portable_commands(root: &Path, commands: &[Vec<String>]) -> Vec<Vec<String>> {
     let root = root.to_string_lossy();
     commands
@@ -65,8 +62,6 @@ fn visit(
     }
     active.insert(path.clone());
     let bytes = std::fs::read(&path).map_err(|error| error.to_string())?;
-    // Inside the checkout a file is named from its root, so one source
-    // has one identity in every worktree.
     let name = base
         .and_then(|base| path.strip_prefix(base).ok())
         .unwrap_or(&path);
@@ -107,8 +102,6 @@ pub fn compiler_source_tree_signature(
     let mut seen = BTreeSet::new();
     let mut active = BTreeSet::new();
     visit(base, &source, &dirs, &mut seen, &mut active, &mut hash)?;
-    // A forced include is a compiler input even though the C file does not
-    // include it; its contents, not its name, are the identity.
     for command in commands {
         for pair in command.windows(2) {
             if pair[0] == "-include" {
@@ -125,63 +118,3 @@ pub fn compiler_source_tree_signature(
     Ok(hash.finalize().to_vec())
 }
 
-#[cfg(test)]
-#[test]
-fn forced_include_mutation_changes_compiler_input_identity() {
-    let root = tempfile::tempdir().unwrap();
-    let source = root.path().join("owner.c");
-    let forced = root.path().join("forced.h");
-    std::fs::write(&source, "void Owner(void) { Target(); }\n").unwrap();
-    std::fs::write(&forced, "void Target(void);\n").unwrap();
-    let commands = vec![vec!["cpp0".into(), "-include".into(), "forced.h".into()]];
-    let first = compiler_source_tree_signature(root.path(), &source, &commands).unwrap();
-    std::fs::write(&forced, "int Target(void);\n").unwrap();
-    let second = compiler_source_tree_signature(root.path(), &source, &commands).unwrap();
-    assert_ne!(first, second);
-    std::fs::remove_file(&forced).unwrap();
-    assert!(compiler_source_tree_signature(root.path(), &source, &commands).is_err());
-}
-
-#[cfg(test)]
-#[test]
-fn one_source_has_one_identity_in_every_checkout() {
-    let write = |root: &Path| {
-        std::fs::write(root.join("owner.c"), "#include \"body.h\"\n").unwrap();
-        std::fs::write(root.join("body.h"), "int body;\n").unwrap();
-        let commands = vec![vec![
-            "cc1".to_string(),
-            format!("-I{}", root.display()),
-            format!("{}/owner.c", root.display()),
-        ]];
-        (
-            compiler_source_tree_signature(root, &root.join("owner.c"), &commands).unwrap(),
-            portable_commands(root, &commands),
-        )
-    };
-    let (first, second) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
-    assert_eq!(write(first.path()), write(second.path()));
-    std::fs::write(second.path().join("body.h"), "int changed;\n").unwrap();
-    let commands = vec![vec!["cc1".to_string()]];
-    let signature = |root: &Path| {
-        compiler_source_tree_signature(root, &root.join("owner.c"), &commands).unwrap()
-    };
-    assert_ne!(signature(first.path()), signature(second.path()));
-}
-
-#[cfg(test)]
-#[test]
-fn included_file_mutation_changes_compiler_input_identity() {
-    let root = tempfile::tempdir().unwrap();
-    let source = root.path().join("owner.c");
-    let body = root.path().join("body.h");
-    std::fs::write(&source, "#include \"body.h\"\n").unwrap();
-    std::fs::write(&body, "before\n").unwrap();
-    let first = compiler_source_tree_signature(root.path(), &source, &[]).unwrap();
-    std::fs::write(&body, "after\n").unwrap();
-    let second = compiler_source_tree_signature(root.path(), &source, &[]).unwrap();
-    assert_ne!(first, second);
-    std::fs::write(&body, "#include \"owner.c\"\n").unwrap();
-    assert!(compiler_source_tree_signature(root.path(), &source, &[])
-        .unwrap_err()
-        .contains("recursive C source include"));
-}

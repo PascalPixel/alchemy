@@ -80,7 +80,7 @@ Func_080dc978:
 .L_080dca14:
 	.4byte 0x00000000
 .L_080dca18:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080dca1c:
 	movs r3, #0
 	ldrsb r3, [r5, r3]
@@ -89,7 +89,7 @@ Func_080dc978:
 	movs r3, #128
 	lsls r3, r3, #14
 	orrs r0, r3
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #8
 	bl BattleFx_StartBufferInterpolation
 	bl Func_080dca84

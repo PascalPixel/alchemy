@@ -1,15 +1,3 @@
-@ TLA revision of the sound driver's note start (TBS
-@ SOUND/DRIVER/HANDLE_NOTE.S, 0x080f9f6c, whose unchanged copy TLA still links
-@ in HANDLE_NOTE_UNREFERENCED.S). Its stereo-volume helper reads its inputs
-@ from r4 and r5, which no C argument passing uses, and keeps its clamp
-@ continuations before its entry; the note handler accumulates bits through
-@ the carry (lsrs; adcs), branches on shifted-out bits and reused flags with
-@ no compare, and calls the helper through that private register contract.
-@ The zero halfword of alignment at 0x081c09c6 never runs and carries no
-@ credit.
-@ It stays disassembly without credit: it calls through lr with the second
-@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
-@ an instruction.
 .syntax unified
 	.thumb
 .L_081c0772:

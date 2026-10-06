@@ -5,6 +5,7 @@
 #include "OBJECT_EFFECT.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
+#include "FIELD_EVENT.H"
 u8 *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct Vector_08099d18 {
@@ -39,9 +40,7 @@ typedef char State_08099d18_source_offset[
 
 extern struct State_08099d18 *gEffectWork;
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Vector_08099d18 *);
-void Object_SetMode(u8 *, s32);
 
 void BattleFx_SpawnFallingParticles(void)
 {
@@ -54,12 +53,12 @@ void BattleFx_SpawnFallingParticles(void)
 
     source = gEffectWork->source;
     position.x = source->x;
-    position.y = (s32)((u32)source->y -
-        Random16() * 16 + 0x180000);
+    position.y = source->y -
+        Random16() * 16 + 0x180000;
     position.z = source->z;
 
     angle = Random16() * 3;
-    Vector_AddPolarOffset((s32)(angle * 16), Random16(), &position);
+    Vector_AddPolarOffset(angle * 16, Random16(), &position);
 
     object = Object_Spawn(
         0x11d,
@@ -73,6 +72,6 @@ void BattleFx_SpawnFallingParticles(void)
         timer = (u16 *)(object + 94);
         timer_value = 12;
         *timer = timer_value;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
     }
 }

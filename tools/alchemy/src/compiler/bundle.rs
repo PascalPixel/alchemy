@@ -212,8 +212,6 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     cache_validation("agbcc");
     Ok(())
 }
-/// A toolchain is admitted by the pinned source it was built from, on any
-/// system, never by the bytes one host's C compiler happened to produce.
 fn validate_source_record(directory: &Path) -> Result<()> {
     let record = fs::read_to_string(directory.join(SOURCE_RECORD)).unwrap_or_default();
     if record != source_record() {
@@ -241,7 +239,6 @@ fn validate_driver(driver: &Path, name: &str, flags: &[&str]) -> Result<()> {
         .map_err(|detail| format!("compiler bundle {name} smoke compile failed: {detail}"))?;
     Ok(())
 }
-/// Validate a prospective installation without changing routing or cache state.
 pub fn validate_installation(directory: &Path) -> Result<()> {
     ensure_no_codegen_environment_overrides()?;
     validate_game_directory(directory, CompilerTarget::Tbs)?;
@@ -341,9 +338,6 @@ fn append_metadata_state(stream: &mut Vec<u8>, path: &Path, follow_links: bool) 
         }
     }
 }
-/// A bundle path as the signature names it: from the checkout's root when
-/// inside it, so every worktree of one bundle has one signature and shares
-/// the caches keyed by it. The bytes and modes are hashed as they are.
 fn portable_path(path: &Path) -> Vec<u8> {
     path_bytes(path.strip_prefix(root()).unwrap_or(path))
 }
@@ -388,10 +382,6 @@ pub fn compiler_bundle_signature() -> String {
         .get_or_init(compiler_bundle_signature_uncached)
         .clone()
 }
-/// Identity of every executable a build step runs: the approved compilers
-/// and their assembler, and the GNU binutils that assemble listings and
-/// link. Object and overlay keys include it, so a changed tool rebuilds
-/// what it made instead of reusing an object another tool wrote.
 pub fn toolchain_signature() -> String {
     static SIGNATURE: OnceLock<String> = OnceLock::new();
     SIGNATURE
@@ -413,15 +403,6 @@ pub fn toolchain_signature() -> String {
 pub fn compiler_bundle_signature_checked() -> Result<String> {
     ensure_compiler_bundle_access()?;
     Ok(compiler_bundle_signature())
-}
-/// Identity of the tool code that decides what a build stage caches: the
-/// digest `build.rs` takes of Alchemy's build sources, every Psynergy and
-/// ags source, the member crate manifests and lockfile. Alchemy's checks,
-/// reports and other readers of build outputs do not contribute: changing
-/// those readers rebuilds nothing. Changed build producers invalidate
-/// their cached outputs; the linked overlay also keys on libgcc's bytes.
-pub fn executable_signature() -> Result<String> {
-    Ok(env!("ALCHEMY_BUILD_IMPLEMENTATION").to_string())
 }
 
 fn path_bytes(path: &Path) -> Vec<u8> {

@@ -1,16 +1,6 @@
-@ Division and remainder of the resident runtime, taking the dividend in r0
-@ and the divisor in r1 like the compiler's division helpers: signed
-@ divide, signed remainder, unsigned remainder and unsigned divide over one
-@ unrolled restoring core, each step rsbs then orrcs and subcs. The signed
-@ divide branches on the carry out of lsrs r0, ip, #32 into that core
-@ inside IwramUnsignedDivide, which the other entries also reach with bl.
-@ GCC never branches on the carry out of a shift and never enters another
-@ function's body.
-@ credit: handwritten — IWRAM runtime division helpers
 .syntax unified
 	.arm
 
-@ コンパイラ実行時系と同型の符号付き除算。
 	.global IwramSignedDivide
 IwramSignedDivide:
 	eor	ip, r0, r1
@@ -25,7 +15,6 @@ IwramSignedDivide:
 	rsb	r0, r0, #0
 	bx	ip
 
-@ コンパイラ実行時系と同型の符号付き剰余。
 	.global IwramSignedRemainder
 IwramSignedRemainder:
 	stmfd	sp!, {lr}
@@ -42,7 +31,6 @@ IwramSignedRemainder:
 	ldmfd	sp!, {lr}
 	bx	lr
 
-@ コンパイラ実行時系と同型の符号なし剰余。
 	.global IwramUnsignedRemainder
 IwramUnsignedRemainder:
 	mov	ip, lr
@@ -50,7 +38,6 @@ IwramUnsignedRemainder:
 	mov	r0, r1
 	bx	ip
 
-@ コンパイラ実行時系と同型の符号なし除算。
 	.global IwramUnsignedDivide
 IwramUnsignedDivide:
 	mov	r2, r1

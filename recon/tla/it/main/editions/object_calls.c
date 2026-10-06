@@ -1,4 +1,3 @@
-/* Draft: the20-byte terrain snap uses the old scaffold call entry. Remaining localized difference: its BL must reach the existing terrain-query entry after complete callee proof. */
 #include "TYPES.H"
 
 void ObjectMotion_SnapToTerrain(void *object)

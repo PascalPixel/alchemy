@@ -71,7 +71,7 @@ Func_0813f8d4:
 	ldr r3, [r2]
 	cmp r3, #0
 	ble .L_0813fa1c
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r3, r8
 	ldr r0, [r3, #20]
 	bl Func_080150e4
@@ -80,7 +80,7 @@ Func_0813f8d4:
 	bl SceneTransform_ApplyPitch
 	mov r2, r8
 	ldr r0, [r2, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	mov r1, r8
 	ldr r3, [r1]
 	add r4, sp, #24
@@ -89,7 +89,7 @@ Func_0813f8d4:
 	adds r1, r4, #0
 	mov r0, r9
 	str r4, [sp, #4]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r4, [sp, #4]
 	mov r1, r8
 	ldr r3, [r4]
@@ -104,7 +104,7 @@ Func_0813f8d4:
 	ldr r3, [r1, #4]
 	adds r1, r7, #0
 	str r3, [r2]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r7]
 	mov r1, r8
 	adds r3, #64

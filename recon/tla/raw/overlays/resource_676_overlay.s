@@ -16,7 +16,7 @@ Func_02000038:
 Func_02000044:
 	push {lr}
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x02008050,"ax",%progbits
@@ -369,7 +369,7 @@ Func_02000270:
 	movs r2, #4
 	movs r1, #2
 	negs r2, r2
-	bl ObjectMotion_SnapHeadingAndOffset
+	bl ObjectMotion_CenterOnColumn
 .L_020082fe:
 	movs r0, #10
 	bl Battle_WaitMode0
@@ -379,8 +379,8 @@ Func_02000270:
 	movs r2, #0
 	ldrsh r0, [r3, r2]
 	bl Func_02002578
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02002490
 	pop {r5, r6, r7, pc}
 .L_02008320:
@@ -3240,8 +3240,8 @@ Func_02001944:
 	movs r2, #20
 	movs r0, #8
 	bl Func_02002530
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #123
 	bl Func_020025a0
 	movs r0, #40
@@ -3449,8 +3449,8 @@ Func_02001d14:
 	movs r2, #20
 	movs r0, #8
 	bl Func_02002530
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #123
 	bl Func_020025a0
 	movs r0, #40
@@ -3826,8 +3826,8 @@ Func_02001ec0:
 	movs r2, #20
 	movs r0, #8
 	bl Func_02002530
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #123
 	bl Func_020025a0
 	movs r0, #40

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-/* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 MsgItemName[];
 extern u8 MsgStatLabel[];
 extern u8 gMenuWork[];
@@ -11,11 +10,6 @@ void UiText_DrawNumberInWindowFar();
 s32 Owner_GetStateFar();
 void Menu_DrawPageIndicator();
 void Menu_SetPageIcons();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
 {
@@ -52,9 +46,6 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     } else {
         v6 = 0;
         base6_0 = 0;
-        /* The entry guard compares the count variable, not a literal zero:
-           folded to a literal it becomes `!= 0` and a `beq`, where the
-           original keeps the unsigned `bls`. */
         if ((u32)v10 > base6_0) {
             v5 = ((s32)(((s32)p8 << 1) + p9) + 0x1c8);
             do {

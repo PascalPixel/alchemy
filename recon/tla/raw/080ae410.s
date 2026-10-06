@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_080ae410
 	.thumb_func
 Func_080ae410:
@@ -40,7 +41,7 @@ Func_080ae410:
 .L_080ae452:
 	mov r0, r9
 	adds r1, r6, #0
-	bl Func_080ae3fc
+	bl FlagBits_Test
 	cmp r0, #0
 	beq .L_080ae466
 	adds r0, r5, #0
@@ -68,7 +69,7 @@ Func_080ae410:
 	ldrh r1, [r5]
 	mov r0, r9
 	adds r5, #2
-	bl Func_080ae3fc
+	bl FlagBits_Test
 	cmp r0, #0
 	beq .L_080ae4a2
 	movs r3, #130
@@ -216,7 +217,7 @@ Func_080ae410:
 	add r8, r1
 	cmp r7, r10
 	blt .L_080ae530
-	bl Func_080b1004
+	bl Djinn_ActivateOfferedForParty
 	movs r0, #1
 	bl Func_080ae16c
 	ldr r2, [sp, #4]
@@ -245,4 +246,4 @@ Func_080ae410:
 .L_080ae5f4:
 	.4byte IwramCopyWords
 .L_080ae5f8:
-	.4byte Data_0300117c
+	.4byte gFrameWaitCount

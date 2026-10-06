@@ -1,9 +1,3 @@
-/* Draft: Suhara gate farewell IT.
- * 2026-10-01: With the European map repairs, retaining the destination
- * column automatic swaps r5/r6 in six instructions (12 differing bytes)
- * inside the otherwise complete 892-byte callback.
- * Ordinary approved TBS flags; no output changes.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

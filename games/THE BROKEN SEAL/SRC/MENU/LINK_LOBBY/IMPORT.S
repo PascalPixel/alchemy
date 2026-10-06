@@ -1,7 +1,3 @@
-@ Import veneers after the LINK_LOBBY overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — LINK_LOBBY overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -201,7 +197,7 @@ Engine_ActorFaceActor:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -210,10 +206,10 @@ Engine_EventOpenMessage:
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
-	.global Event_SetPairWork1c0
+	.global Event_SetDestination
 	.thumb_func
-Event_SetPairWork1c0:
-	overlay_veneer Event_SetPairWork1c0Far
+Event_SetDestination:
+	overlay_veneer Event_SetDestinationFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -222,18 +218,18 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetPair1d4
+	.global Event_SetDefeatDestination
 	.thumb_func
-Event_SetPair1d4:
-	overlay_veneer Event_SetPair1d4Far
+Event_SetDefeatDestination:
+	overlay_veneer Event_SetDefeatDestinationFar
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_SanctumOpen
 	.thumb_func
 Engine_SanctumOpen:

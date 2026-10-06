@@ -1,21 +1,23 @@
-/* Scene tables, the hostage scene and small callbacks. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "B5_CONTEXT.H"
 #include "FUNKA.H"
 #include "CALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 #include "FIELD_EFFECT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgSoruIKnowItsARock[];
-extern u8 MsgSoruJasmineWhatHappened[];
-extern u8 MsgSoruSomeoneIsLiftingIt[];
-extern u8 MsgSoruSukuretaCouldThatBeThe[];
-
-void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
-s32 Engine_RandomNext(void);
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
-s32 Engine_GameFlagIsSet(s32 flag);
-void Engine_AudioPlayCue(s32 cue);
 
 struct EmberSprite {
     u8 unknown_00[9];
@@ -44,47 +46,28 @@ struct Ember {
     u8 motion_flags;
 };
 
-/* The embers' animation script, laid out after the code. */
-extern const s32 Funka_EmberScript[];
-extern s32 gEmberTimer;
-extern s32 gEmberState[16];
-extern s32 gEmberMask;
-extern u8 MsgSoruCannotResist[];
-extern u8 MsgSoruFriendsGone[];
-extern u8 MsgSoruOverHere[];
-extern u8 MsgSoruQuitActingTough[];
-extern u8 MsgSoruReturnStarToBag[];
-extern u8 MsgSoruThanksALot[];
-extern u8 MsgSoruTheyllBeSafe[];
-extern u8 MsgSoruThisIsTerrible[];
-extern u8 MsgSoruWellTurnedBadly[];
 
 enum {
     ACTOR_WISE_ONE = 15,
-    /* The actors SoruFunka_StepEmbers moves. */
     ACTOR_FIRST_ROCK = 16,
     ROCK_COUNT = 16
 };
 
 enum {
     OBJECT_ELEMENTAL_STAR = 22,
-    /* Its name is MsgItemName + 222. */
     ITEM_MARS_STAR = 222
 };
 
 enum {
-    /* Set as the party leaves the collapsing chamber. */
     FLAG_SOL_SANCTUM_ERUPTED = 0x814,
     FLAG_STAR_ROOM_COLLAPSED = 0x83f
 };
 
 struct QuakeWork {
     u8 unknown_000[0x40c];
-    s32 unknown_40c;
+    s32 fading;
 };
 
-/* The ten arcing effects' origins, laid out after the code. */
-extern s32 Funka_ArcOrigins[][2];
 void SoruFunka_SpawnEffectPair();
 void SceneEffect_UpdateArcOverAnchor();
 void SceneEffect_UpdateAnchoredRiseArc();
@@ -113,20 +96,11 @@ struct PairWork {
     u16 vram_block;
 };
 
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *gEffectWork;
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
 extern struct WorldMapVramBlock gVramBlockCache[];
-void Resource_ResetEntry(s32 block);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;
@@ -502,39 +476,39 @@ void Scene_SaturosTakesHostages(void)
     Actor_SetSpeed(ACTOR_MENARDI, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_ALEX, 0x8000, 0x4000);
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-    FieldScene_RunScene381_02000e30(10);
+    SoruFunka_RaiseAndShrinkActor(10);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
-    FieldScene_RunScene381_02000e30(9);
+    SoruFunka_RaiseAndShrinkActor(9);
     Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-    FieldScene_RunScene381_02000e30(11);
+    SoruFunka_RaiseAndShrinkActor(11);
     Actor_FaceDirection(ACTOR_JASMINE, 0x9000, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_JASMINE, 2);
     Event_ShowMessageAndWait(0x2005, 0, 40);
     Actor_FaceDirection(ACTOR_GARCIA, 0x3000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 30);
     Actor_FaceDirection(ACTOR_GARCIA, 0xe000, 0);
-    FieldScene_RunScene381_02000e30(5);
-    FieldScene_RunScene381_02000e30(13);
+    SoruFunka_RaiseAndShrinkActor(5);
+    SoruFunka_RaiseAndShrinkActor(13);
     Actor_FaceDirection(ACTOR_ALEX, 0x7000, 40);
     Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
-    FieldScene_RunScene381_02000e30(14);
+    SoruFunka_RaiseAndShrinkActor(14);
     Scene_RunExtendedEffectPresentation();
     Party_RemoveOwnerRestored(5);
 }
 
-void FieldScene_RunScene381_02000e30(s32 a0)
+void SoruFunka_RaiseAndShrinkActor(s32 a0)
 {
-    u8 *rec7;
-    s32 recA;
+    struct FieldActor *rec7;
+    struct FieldActor *recA;
     s32 rec2;
     u8 i;
 
     recA = Object_GetById(8);
-    *(s32 *)(recA + 24) = 0x10000;
-    *(s32 *)(recA + 28) = 0x10000;
+    recA->scale_x = 0x10000;
+    recA->scale_y = 0x10000;
     Engine_ActorWalkToAndWait(a0, 0x1d7, 0x122);
     Actor_FaceDirection(a0, 0xc000, 0);
     Engine_EventWait(10);
@@ -543,22 +517,22 @@ void FieldScene_RunScene381_02000e30(s32 a0)
     rec2 = Object_GetById(a0);
     Engine_ActorSetSpriteFlags(rec2, 0);
     Actor_SetChildValue(a0, 0x100);
-    rec7[85] = 0;
+    rec7->motion_flags = 0;
     Audio_PlayCue(201);
     i = 0;
     do {
-        *(s32 *)(rec7 + 12) += 0x8000;
+        rec7->y.fixed += 0x8000;
         Engine_EventWait(1);
         i++;
     } while (i != 60);
     Audio_PlayCue(190);
     i = 0;
     do {
-        *(s32 *)(rec7 + 12) += 0x1999;
-        *(s32 *)(rec7 + 24) -= 0x28f;
-        *(s32 *)(rec7 + 28) -= 0x28f;
-        *(s32 *)(recA + 24) -= 0x28f;
-        *(s32 *)(recA + 28) -= 0x28f;
+        rec7->y.fixed += 0x1999;
+        rec7->scale_x -= 0x28f;
+        rec7->scale_y -= 0x28f;
+        recA->scale_x -= 0x28f;
+        recA->scale_y -= 0x28f;
         Engine_EventWait(1);
         i++;
     } while (i != 90);
@@ -574,7 +548,7 @@ void Resource381_NoOpCallbackB(void)
 {
 }
 
-s32 FieldScene_RunWhenWord225Is10(void)
+s32 SoruFunka_RunHostageSceneOnEntranceTen(void)
 {
     if (gGameState.entrance == 10) {
         FieldEffect_InitSparkles();
@@ -589,8 +563,6 @@ s32 OverlayObject_SetRecordAngleFromHeading(Ent *p)
     return 1;
 }
 
-/* Gather actors 16 to 31 at the crater, fling them out in a ring, then
- * reset them once they land. */
 void SoruFunka_ThrowEruptionRing(void)
 {
     struct FieldActor *actor;
@@ -645,7 +617,6 @@ void SoruFunka_ThrowEruptionRing(void)
     }
 }
 
-/* The scene's state words and slots. */
 void SceneState_InitStateWordsAndSlots(void)
 {
     s32 *p;
@@ -661,9 +632,6 @@ void SceneState_InitStateWordsAndSlots(void)
     }
 }
 
-/* Sixteen-actor effect step (actors 16..31): sets the work values from the
- * effect timer, ages the actors that have come to rest, and when the frame
- * mask allows, launches the first idle one on a random bearing. */
 void SoruFunka_StepEmbers(void)
 {
     u8 *work;
@@ -680,10 +648,10 @@ void SoruFunka_StepEmbers(void)
     level = (u32)gEmberTimer / 10;
     if (level != 0) {
         *(s32 *)(work + 0x40c) = 0;
-        Call3((void (*)())Engine_WorkSetValuesIfNonNegative, level << 16, level << 16, 0x10000);
+        Work_SetValuesIfNonNegative(level << 16, level << 16, 0x10000);
     } else {
         *(s32 *)(work + 0x40c) = 1;
-        Call3((void (*)())Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     }
     t = gEmberTimer;
     if (t != 0)
@@ -745,7 +713,6 @@ void SoruFunka_StepEmbers(void)
     }
 }
 
-/* The random timer level. */
 void SceneState_UpdateRandomTimerLevel(void)
 {
     u32 v;
@@ -757,36 +724,29 @@ void SceneState_UpdateRandomTimerLevel(void)
     if (gEmberLevel != 0) {
         gEmberLevel--;
     } else {
-        gEmberLevel = (u32)(Random_Next() << 2) >> 16;
+        gEmberLevel = (u32)(Engine_RandomNext() << 2) >> 16;
     }
     v = gEmberLevel;
     switch (v) {
     case 3:
         gEmberMask = v;
-        gEmberLevelTimer = ((u32)(Random_Next() * 20) >> 16) + 40;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 20) >> 16) + 40;
         break;
     case 2:
         gEmberMask = 15;
-        gEmberLevelTimer = ((u32)(Random_Next() * 40) >> 16) + 80;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 40) >> 16) + 80;
         break;
     case 1:
         gEmberMask = 63;
-        gEmberLevelTimer = ((u32)(Random_Next() * 80) >> 16) + 160;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 80) >> 16) + 160;
         break;
     default:
         gEmberMask = 127;
-        gEmberLevelTimer = ((u32)(Random_Next() * 160) >> 16) + 320;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 160) >> 16) + 320;
         break;
     }
 }
 
-/* The star chamber's collapse and escape (Scene_RunExtendedEffectPresentation). */
-
-/*
- * The Elemental Star chamber collapses around the party leader and Gerald.
- * The Wise One appears, has the Mars Star put back in its bag, and
- * helps them out as the volcano erupts.
- */
 void Scene_RunExtendedEffectPresentation(void)
 {
     struct QuakeWork *quake;
@@ -819,9 +779,9 @@ void Scene_RunExtendedEffectPresentation(void)
     }
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
-    SceneActor_MoveTo232_125AndFace4000(ACTOR_PARTY_LEADER);
-    SceneActor_MoveTo232_125AndFace4000(ACTOR_GERALD);
-    quake->unknown_40c = 0;
+    SoruFunka_PlaceBeforeStar(ACTOR_PARTY_LEADER);
+    SoruFunka_PlaceBeforeStar(ACTOR_GERALD);
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(80);
     SceneState_ConfigureEightCornerRegions();
@@ -844,7 +804,6 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ColorBufferInterpolate(40);
     Engine_EventWait(40);
 
-    /* The two spin apart. */
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     gerald = Actor_Get(ACTOR_GERALD);
     leader_sprite = leader->sprite;
@@ -985,7 +944,7 @@ void Scene_RunExtendedEffectPresentation(void)
 
     Audio_PlayCue(23);
     FieldScene_RunVariantStep(1, 4, 0);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Engine_EventWait(10);
     FieldScene_RunVariantStep(0, 40, 0);
@@ -997,7 +956,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetDestination(ACTOR_GERALD, 202, 144);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_EventWait(20);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
@@ -1029,7 +988,6 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_GERALD, 0);
 
-    /* The Wise One arrives. */
     Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(110), PIXELS(152));
     Engine_TaskWait(1);
     Actor_SetSpeed(ACTOR_WISE_ONE, 0x13333, 0x9999);
@@ -1069,7 +1027,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_EventWait(40);
 
     FieldScene_RunVariantStep(1, 20, 0);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1077,7 +1035,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Audio_PlayCue(0x121);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(40);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(120);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1088,13 +1046,13 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Engine_EventWait(20);
     FieldScene_RunVariantStep(1, 10, 0);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_GERALD)->unknown_5a &= ~1;
+    Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
     Engine_ActorJump(ACTOR_GERALD, 4, 0);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 256, 150);
@@ -1102,8 +1060,8 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ActorWaitForMove(ACTOR_GERALD);
     FieldScene_RunVariantStep(0, 40, 0);
     Engine_EventWait(20);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
-    Actor_Get(ACTOR_GERALD)->unknown_5a |= 1;
+    Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_GERALD)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Engine_EventWait(40);
@@ -1131,7 +1089,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ActorWaitForMove(ACTOR_WISE_ONE);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTHEAST + FACING_STEP, 0);
     Engine_EventWait(20);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     ColorBuffer_ApplyTarget(0x20119e, 1);
     Engine_ColorBufferInterpolate(20);
@@ -1157,7 +1115,7 @@ void Scene_RunExtendedEffectPresentation(void)
         Engine_TaskWait(wait);
     }
     SceneState_ApplyRectsByCondition(0);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
@@ -1202,7 +1160,6 @@ void Scene_RunExtendedEffectPresentation(void)
         Engine_EventWait(40);
     }
 
-    /* The Elemental Star rises from the party leader. */
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     star = Object_Create(OBJECT_ELEMENTAL_STAR, actor->x.fixed, actor->y.fixed + PIXELS(36),
                          actor->z.fixed);
@@ -1278,7 +1235,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Engine_EventWait(40);
 
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
     ColorBuffer_ApplyTarget(0x20119e, 1);
     Engine_ColorBufferInterpolate(20);
@@ -1290,14 +1247,14 @@ void Scene_RunExtendedEffectPresentation(void)
     Camera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
     Engine_ActorJump(ACTOR_GERALD, 6, 0);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_GERALD)->unknown_5a &= ~1;
+    Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetDestination(ACTOR_PARTY_LEADER, 245, 145);
     Actor_SetDestination(ACTOR_GERALD, 215, 168);
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Engine_EventWait(80);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
-    Actor_Get(ACTOR_GERALD)->unknown_5a |= 1;
+    Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_GERALD)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_SetDestination(ACTOR_WISE_ONE, 184, 87);
     Engine_ActorWaitForMove(ACTOR_WISE_ONE);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
@@ -1407,26 +1364,24 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
     Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
-    FieldScene_CallHelper6620();
+    SoruFunka_CleanupSceneObjects();
     GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
     GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
     Engine_EventRequestExit(5);
     GameFlag_Set(0x100);
 }
 
-/* Scene steps, regions and arcing effects. */
-/* The IWRAM remainder, reached through an import veneer. */
-void SceneActor_MoveTo232_125AndFace4000(s32 no)
+void SoruFunka_PlaceBeforeStar(s32 actor)
 {
-    Ent_02002820 *rec;
+    struct FieldActor *object;
 
-    rec = (Ent_02002820 *)Object_GetById(no);
-    Actor_SetPosition(no, 0xe80000, 0x7d0000);
-    rec->unk6 = 0x4000;
-    Engine_ActorSetSpritePriority(no, 3);
+    object = Object_GetById(actor);
+    Engine_ActorSetPosition(actor, PIXELS(232), PIXELS(125));
+    object->facing = FACING_SOUTH;
+    Engine_ActorSetSpritePriority(actor, 3);
 }
 
 void SceneState_ApplyRectsByCondition(s32 a)
@@ -1435,17 +1390,17 @@ void SceneState_ApplyRectsByCondition(s32 a)
         s32 x;
         s32 y;
         x = 1;
-        Map_CopyCellsTo(8, 47, 64, 7, x, x);
+        Engine_MapCopyCellsTo(8, 47, 64, 7, x, x);
         y = 2;
-        Map_CopyCellsTo(7, 48, 63, 8, y, x);
-        Map_CopyCellsTo(7, 49, 63, 9, y, x);
+        Engine_MapCopyCellsTo(7, 48, 63, 8, y, x);
+        Engine_MapCopyCellsTo(7, 49, 63, 9, y, x);
     } else {
         s32 x;
         x = 1;
-        Map_CopyCellsTo(56, 0, 64, 7, x, x);
-        Map_CopyCellsTo(56, 0, 63, 8, x, x);
-        Map_CopyCellsTo(56, 0, 63, 9, 2, x);
-        Map_CopyCellsTo(58, 25, 64, 8, x, x);
+        Engine_MapCopyCellsTo(56, 0, 64, 7, x, x);
+        Engine_MapCopyCellsTo(56, 0, 63, 8, x, x);
+        Engine_MapCopyCellsTo(56, 0, 63, 9, 2, x);
+        Engine_MapCopyCellsTo(58, 25, 64, 8, x, x);
     }
     Engine_MapRedraw();
 }
@@ -1455,13 +1410,13 @@ void SceneState_ApplyRectPairByFlag(s32 a)
     if (a != 0) {
         s32 n;
         n = 2;
-        Map_CopyCellsTo(9, 45, 65, 5, n, n);
-        Map_CopyCellsTo(11, 46, 67, 6, 1, n);
+        Engine_MapCopyCellsTo(9, 45, 65, 5, n, n);
+        Engine_MapCopyCellsTo(11, 46, 67, 6, 1, n);
     } else {
         s32 n;
         n = 2;
-        Map_CopyCellsTo(89, 2, 65, 5, n, n);
-        Map_CopyCellsTo(102, 32, 67, 6, 1, n);
+        Engine_MapCopyCellsTo(89, 2, 65, 5, n, n);
+        Engine_MapCopyCellsTo(102, 32, 67, 6, 1, n);
     }
     Engine_MapRedraw();
 }
@@ -1469,7 +1424,7 @@ void SceneState_ApplyRectPairByFlag(s32 a)
 void FieldScene_RunRandomHalfBranch(void)
 {
     if ((gFrameCount & 1) == 0) {
-        if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
+        if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
             SceneState_ApplyRectsByCondition(1);
         } else {
             SceneState_ApplyRectsByCondition(0);
@@ -1480,7 +1435,7 @@ void FieldScene_RunRandomHalfBranch(void)
 void FieldScene_RunLateRandomHalfBranch(void)
 {
     if ((gFrameCount & 1) == 0) {
-        if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
+        if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
             SceneState_ApplyRectPairByFlag(1);
         } else {
             SceneState_ApplyRectPairByFlag(0);
@@ -1601,13 +1556,12 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
     Ent_02002c1c *p;
 
-    /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as
-     * the game passes it. */
+    /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as the game passes it. */
     p = (Ent_02002c1c *)((s32 (*)())Engine_EventGetViewCenter)(a);
     b = b << 16;
     a = a << 16;
-    Camera_MoveTo(a, -1, b, 1);
-    ColorBuffer_ApplyTarget(0, 0);
+    Engine_CameraMoveTo(a, -1, b, 1);
+    Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(20);
     Engine_TaskWait(40);
     p->unk10 = b;
@@ -1619,7 +1573,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
     Engine_TaskWait(5);
     Engine_MapRedraw();
     Engine_TaskWait(5);
-    ColorBuffer_ApplyTarget(0x10000, 0);
+    Engine_ColorBufferApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(20);
     Engine_TaskWait(30);
 }
@@ -1633,28 +1587,28 @@ void SceneState_ConfigureEightCornerRegions(void)
     s32 v;
 
     x = 0;
-    Map_CopyCellAttributes(14, 8, 1, 1, 10, x);
-    Map_CopyCellAttributes(14, 28, 1, 1, 11, x);
-    Map_CopyCellAttributes(44, 8, 1, 1, 12, x);
-    Map_CopyCellAttributes(44, 28, 1, 1, 13, x);
+    Engine_MapCopyCellAttributes(14, 8, 1, 1, 10, x);
+    Engine_MapCopyCellAttributes(14, 28, 1, 1, 11, x);
+    Engine_MapCopyCellAttributes(44, 8, 1, 1, 12, x);
+    Engine_MapCopyCellAttributes(44, 28, 1, 1, 13, x);
     z = 14;
     y = 8;
-    Map_CopyCellAttributes(13, 8, 1, 1, z, y);
+    Engine_MapCopyCellAttributes(13, 8, 1, 1, z, y);
     w = 28;
-    Map_CopyCellAttributes(13, 28, 1, 1, z, w);
+    Engine_MapCopyCellAttributes(13, 28, 1, 1, z, w);
     v = 44;
-    Map_CopyCellAttributes(43, 8, 1, 1, v, y);
-    Map_CopyCellAttributes(43, 28, 1, 1, v, w);
+    Engine_MapCopyCellAttributes(43, 8, 1, 1, v, y);
+    Engine_MapCopyCellAttributes(43, 28, 1, 1, v, w);
 }
 
 void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
 {
     if (a == 1) {
-        Audio_PlayCue(0x134);
-        ColorBuffer_ApplyTarget(0x203a52, 1);
+        Engine_AudioPlayCue(0x134);
+        Engine_ColorBufferApplyTarget(0x203a52, 1);
     } else {
-        Audio_PlayCue(0x121);
-        ColorBuffer_ApplyTarget(0x10000, 1);
+        Engine_AudioPlayCue(0x121);
+        Engine_ColorBufferApplyTarget(0x10000, 1);
     }
     Engine_ColorBufferInterpolate(b);
     if (c != 0) {
@@ -1732,7 +1686,6 @@ void SceneEffect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj)
     obj->z = anchor->z - (0x10000 - amp) * 5 + 0x100000;
 }
 
-/* Soru volcano: spawns the linked pair of effect objects above the parent actor, with a cue, and gives them actor 15's sprite priority. */
 void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];
@@ -1760,9 +1713,7 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
@@ -1784,13 +1735,12 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
     }
 }
 
-/* Small scene steps. */
 void SceneState_SetValue140Mode0(void)
 {
     Engine_PsynergyBegin(140, 0);
 }
 
-void FieldScene_CallHelper6620(void)
+void SoruFunka_CleanupSceneObjects(void)
 {
     BattleEffect_CleanupSceneObjects();
 }

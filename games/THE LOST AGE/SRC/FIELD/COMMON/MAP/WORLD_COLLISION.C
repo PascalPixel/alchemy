@@ -1,11 +1,7 @@
 #include "RAM_BUFFER.H"
 #include "TYPES.H"
-
-struct WorldPosition {
-    s32 x;
-    u8 unknown_04[4];
-    s32 y;
-};
+#include "MAP.H"
+#include "IO_REG.H"
 
 s32 GetWorldMapCollision(struct WorldPosition *position)
 {
@@ -18,17 +14,13 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     u8 packed_pixels;
     u32 result;
 
-    /* 1行64バイトで衝突判定タイル64個を表す。 */
-    cell = (((u32)(y_step / 8) & 63) << 6) +
-        ((u32)(x_step / 8) & 63);
-    /* 4×4ドット・4bppの衝突判定タイルは8バイト。 */
-    pixel_offset = (((u32)(y_step / 2) & 3) << 1) +
-        ((u32)(x_step / 4) & 1);
+    cell = (((y_step / 8) & 63) << 6) + ((x_step / 8) & 63);
+    pixel_offset = (((y_step / 2) & 3) << 1) + ((x_step / 4) & 1);
 
-    tile = *(u8 *)(0x06005000 + cell);
-    packed_pixels = *(Ram_MapCollision + 0x800 + ((u32)tile << 3) + pixel_offset);
+    tile = BG_SCREEN_BLOCK(10)[cell];
+    packed_pixels = *(Ram_MapCollision + 0x800 + (tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
-        if ((u32)x_step & 2)
+        if (x_step & 2)
             result = packed_pixels >> 4;
         else
             result = packed_pixels & 15;
@@ -36,11 +28,10 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
             return result;
     }
 
-    /* 前面が空なら背面マップを調べる。 */
-    tile = *(u8 *)(0x06004000 + cell);
-    packed_pixels = *(Ram_MapCollision + ((u32)tile << 3) + pixel_offset);
+    tile = BG_SCREEN_BLOCK(8)[cell];
+    packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
-        if ((u32)x_step & 2)
+        if (x_step & 2)
             result = packed_pixels >> 4;
         else
             result = packed_pixels & 15;

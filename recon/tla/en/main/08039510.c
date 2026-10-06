@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 extern u8 Data_03001e8c[];
 
@@ -17,7 +18,6 @@ struct RenderOutputList {
 };
 
 void RenderOutput_ReleaseFree(u32 arg0);
-s32 Resource_ResetEntry(u32 index);
 
 void RenderOutput_Release(struct RenderOutput *entry)
 {

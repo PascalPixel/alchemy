@@ -3,8 +3,6 @@
 #include "RESOURCE.H"
 extern u8 Data_03001e40[];
 
-/* graphics/tile/merge_shifted_tile_rows.c */
-
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift)
 {
     s32 neg;

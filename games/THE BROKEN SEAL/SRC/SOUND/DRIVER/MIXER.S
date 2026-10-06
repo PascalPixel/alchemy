@@ -1,12 +1,3 @@
-@ Sound mixer. The sound set-up at 0x080fa2a0 copies 1,024 bytes from here to
-@ 0x03007000 with CpuSet, and MIXER_ENTRY.S jumps into that copy. It switches
-@ between Thumb and ARM inside one routine (add r1, pc, #4; bx r1), saves r4
-@ and ip without lr (push {r4, ip}) and ends by unwinding the frame that
-@ MIXER_ENTRY.S built, with one pop {r0-r7}. None of that is compiler output.
-@ Every TBS and TLA edition has these bytes.
-@ The zero halfwords of alignment at 0x080f967e, 0x080f9726 and 0x080f980a
-@ never run and carry no credit.
-@ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module
 .syntax unified
 	.thumb
 	.global SoundDriver_Mixer

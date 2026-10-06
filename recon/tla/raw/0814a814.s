@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0814a814
+	.global BattleFx_RenderMode
 	.thumb_func
-Func_0814a814:
+BattleFx_RenderMode:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -387,7 +387,7 @@ Func_0814a814:
 	add r5, sp, #84
 	ldrsh r0, [r1, r3]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r7, [sp, #64]
 	movs r4, #0
 	mov r0, r10
@@ -494,7 +494,7 @@ Func_0814a814:
 	ldr r3, [r0]
 	ldr r1, [sp, #40]
 	str r3, [r1, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #48]
 	ldr r1, [sp, #24]
 	bl Graphics_PrepareTransferInIwramWork
@@ -517,7 +517,7 @@ Func_0814a814:
 .L_0814ac1e:
 	lsls r5, r0, #9
 	adds r0, r5, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	mov r2, r10
 	cmp r2, #1
 	bls .L_0814ac30
@@ -587,7 +587,7 @@ Func_0814a814:
 	asrs r6, r1, #2
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	mov r0, r10
 	asrs r2, r3, #1

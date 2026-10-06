@@ -53,7 +53,7 @@ Func_08154d5c:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r6, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	mov r0, r9
 	ldr r3, [r0, #20]
 	b .L_08154de0
@@ -71,7 +71,7 @@ Func_08154d5c:
 	adds r3, #34
 	ldrsh r0, [r0, r3]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r1, [r6]
 	ldr r3, [r5]
 	movs r0, #104

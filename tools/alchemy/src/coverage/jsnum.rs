@@ -13,8 +13,6 @@ pub fn commas(value: i64) -> String {
     }
     out
 }
-/// A share as a percentage to two decimals, rounded down, so 100% is shown
-/// only when every byte is done.
 pub fn floor_percent(n: i64, d: i64) -> f64 {
     if d == 0 {
         0.0

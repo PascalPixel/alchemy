@@ -8,15 +8,6 @@
 #include "FLAG_IDS.H"
 #include "SOUND_IDS.H"
 
-/*
- * West Lunpa Cave, the passage between Lunpa and the world map. Its gate
- * can only be worked from the Lunpa side: one switch lowers it, another
- * raises it, and freezing the puddle beneath it with Frost props it open
- * for good. After Hammet is freed, the party finds Bunza waiting here with
- * his wagon, and the player chooses whether to ride back to Kalay with them
- * or to stay behind.
- */
-
 enum CaveEntrance {
     CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
     CAVE_ENTRANCE_FROM_LUNPA = 2,
@@ -29,7 +20,6 @@ enum CaveExit {
     CAVE_EXIT_BY_WAGON = 3
 };
 
-/* Where the cave's exits arrive in the scenes they lead to. */
 enum {
     WORLD_MAP_ENTRANCE_FROM_CAVE = 49,
     LUNPA_ENTRANCE_FROM_CAVE = 3
@@ -43,7 +33,6 @@ enum CaveTrigger {
     TRIGGER_BUNZA_HIDING_PLACE = 10
 };
 
-/* The gate's position and the pillars Frost has raised. */
 enum CaveFlag {
     FLAG_CAVE_GATE_PROPPED = 0x200,
     FLAG_CAVE_GATE_LOWERED = 0x201,
@@ -52,7 +41,6 @@ enum CaveFlag {
     FLAG_CAVE_SOUTH_PILLAR = 0x204
 };
 
-/* The scene hides an actor it no longer needs at the map's corner. */
 enum CaveActor {
     ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
     ACTOR_SOUTH_PUDDLE,
@@ -68,19 +56,14 @@ enum CaveSprite {
     SPRITE_PUDDLE = 0xe3
 };
 
-/* A frozen puddle stands as a pillar of ice. */
 enum {
     PUDDLE_ANIM_FROZEN = 5
 };
 
-/* The pillar drawn behind the lowered gate. */
 enum {
     GATE_PILLAR_PRIORITY = 3
 };
 
-
-
-/* The party hears someone in the dark. */
 enum SightingLine {
     SIGHTING_GERALD_SAW_SOMEONE,
     SIGHTING_MIA_SAW_SOMETHING,
@@ -89,7 +72,6 @@ enum SightingLine {
     SIGHTING_GERALD_ASKS_WHAT_ELSE
 };
 
-/* Hammet and Bunza know each other's voices. */
 enum RecognitionLine {
     RECOGNITION_HAMMET_CALLS_OUT,
     RECOGNITION_HAMMET_NAMES_BUNZA,
@@ -186,7 +168,6 @@ enum DepartureLine {
     DEPARTURE_HAMMET_LONGS_FOR_LAYANA,
     DEPARTURE_BUNZA_SETS_OFF
 };
-
 
 extern const struct SceneEntrance gCaveEntrances[];
 extern const u32 gCaveExits[];

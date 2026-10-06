@@ -3,10 +3,6 @@
 
 #include "TYPES.H"
 
-/*
- * Shared four-slot projection state used by the four-object motion
- * setup/teardown paths and their frame callbacks.
- */
 struct FourObjectMotionState {
     u8 unknown_000[0x144];
     s16 vertical_origins[4];

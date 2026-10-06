@@ -1,6 +1,3 @@
-/* resource_39b: its entry veneers, its listing with maintained code and
-   the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -16,7 +13,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IRIGUCHI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/LIGHTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/RISE_EFFECT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IRIGUCHI2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/PILLAR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/CLEAR_RECORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/MAKYURI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/RELEASE_ATTACH.o"(.text)

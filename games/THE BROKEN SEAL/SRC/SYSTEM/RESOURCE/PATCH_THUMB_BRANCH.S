@@ -1,14 +1,7 @@
-@ Adjusts every Thumb bl pair (a 0xf000 halfword followed by a 0xf800
-@ halfword) in a block of code according to the pair's position in the block.
-@ It runs from a heap copy of exactly these 124 bytes. It saves r5 and r6
-@ without lr and subtracts registers with sub (sub r3, r0, r6); GCC saves lr
-@ with any register and writes register subtraction as rsb. Every TBS and TLA
-@ edition has these bytes.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_08002d5c
-Func_08002d5c:
+	.global Resource_PatchThumbBranch
+Resource_PatchThumbBranch:
 	push	{r5, r6}
 	add	r1, r1, r1
 	add	r2, r0, r1
@@ -43,4 +36,4 @@ Func_08002d5c:
 	pop	{r5, r6}
 	bx	lr
 	.global Resource_PatchThumbBranchCodeSize
-	.set Resource_PatchThumbBranchCodeSize, . - Func_08002d5c
+	.set Resource_PatchThumbBranchCodeSize, . - Resource_PatchThumbBranch

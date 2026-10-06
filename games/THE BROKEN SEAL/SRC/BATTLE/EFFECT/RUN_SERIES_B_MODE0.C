@@ -1,3 +1,16 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
+#include "RESOURCE.H"
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -11,39 +24,19 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "HEAP_STATE.H"
+#include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-extern void *gWorkSlot[];
-extern u8 gBattleFxWork[];
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 
-/* One slot of the cache, addressed whole. */
 #define WORK_SLOT(kind) (*(void **)((u8 *)gWorkSlot + (kind) * 4))
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
-    s32 side, s32 narrow, s32 *x, s32 *y);
-void *Resource_GetTableEntry(s32 id);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
-s32 Battle_GetObjectTableValueFar(s32 member_id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
+
+void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side, s32 narrow, s32 *x, s32 *y);
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
-    s32 slot, s32 delay);
-void ObjectGroup_TickMemberTimers(void);
 
-extern u16 BattleFx6_FlareCells[];
 
-void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode);
 
-/* Mode entries of battle effect series B. */
 void BattleFx_RunSeriesBMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunSeriesB(effect, 0);
@@ -74,9 +67,13 @@ void BattleFx_RunSeriesBMode4(struct BattleEffectArgument *effect)
     BattleFx_RunSeriesB(effect, 4);
 }
 
-/* Battle effect: a djinni hovers over the acting side while flares close in
-   on every affected unit, eight frames apart, and a burst and the mode's
-   own picture play over the unit; six modes. */
+enum SeriesBSheet {
+    SERIES_B_FLARES = 0x0000,
+    SERIES_B_BURST = 0x060e,
+    SERIES_B_PICTURE = 0x2b8e,
+    SERIES_B_DJINNI = 0x65c0
+};
+
 void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 {
     void **cursor;
@@ -100,7 +97,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    if (work->effect->unknown_001c == 1) {
+    if (work->effect->prelude == 1) {
         if (mode == 3)
             BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side ^ 1, 1,
                 &origin_x, &origin_y);
@@ -113,13 +110,12 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
         origin_x = origin_x * 4 / 5;
     }
     REG_BG2PA = 0xcc;
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, (u8 *)work + 0x60e, 1, 1);
-    /* FAKEMATCH: forwarded through Call3, each palette copy loads its routine
-       before it shifts the destination, as the reference does. */
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + SERIES_B_FLARES, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + SERIES_B_BURST, 1, 1);
+    /* FAKEMATCH: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does. */
     if (mode == 3 || mode == 5) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
-            (u8 *)work + 0x2b8e, 1, 1);
+            work->sheet + SERIES_B_PICTURE, 1, 1);
         if (mode == 3)
             Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT,
                 (s32)Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet), 128);
@@ -127,16 +123,16 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
             Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT,
                 (s32)Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
     } else if (mode == 4) {
-        Resource_LoadAndDecompress((s32)&ResourceId_WispSheet, (u8 *)work + 0x2b8e, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_WispSheet, work->sheet + SERIES_B_PICTURE, 1, 1);
     } else {
         void *palette;
 
         if (mode == 0)
             Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet,
-                (u8 *)work + 0x2b8e, 1, 0);
+                work->sheet + SERIES_B_PICTURE, 1, 0);
         else
             Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet,
-                (u8 *)work + 0x2b8e, 1, 0);
+                work->sheet + SERIES_B_PICTURE, 1, 0);
         if (mode == 0)
             palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
         else if (mode == 2 || mode == 4)
@@ -149,13 +145,13 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     }
     if (mode == 3)
         Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
-            (u8 *)work + 0x65c0, 1, 0);
+            work->sheet + SERIES_B_DJINNI, 1, 0);
     else if (mode == 2 || mode == 4)
         Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
-            (u8 *)work + 0x65c0, 1, 0);
+            work->sheet + SERIES_B_DJINNI, 1, 0);
     else
         Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
-            (u8 *)work + 0x65c0, 1, 0);
+            work->sheet + SERIES_B_DJINNI, 1, 0);
 
     for (i = 0; i != 512; i++) {
         struct EffectStep *flare = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -178,7 +174,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     REG_BG2X = shift << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (work->effect->side == 1)
         flags = 7;
     else
@@ -186,25 +182,26 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     Audio_PlayCue(142);
 
     for (frame = 0; frame != work->effect->count * 8 + 108; frame++) {
-        s32 facing = (s32)WORK_SLOT(12);
+        /* FAKEMATCH: WORK_SLOT keeps the slot offset in the literal as native does; indexing gWorkSlot loads the base and adds it. */
+        struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 
         if (frame == 80)
             BattleEventRuntime_BeginPhaseFar(0);
-        if (work->effect->unknown_001c == 1) {
+        if (work->effect->prelude == 1) {
             s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
             s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
 
-            BattleEffect_LoadWork(46, 7, 7, flags ^ 4, 2);
-            draw[0] = (DrawRectangle)gWorkSlot[46];
-            BattleEffect_LoadWork(47, 7, 7, flags ^ 4, 3);
-            draw[1] = (DrawRectangle)gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags ^ 4, 2);
+            draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags ^ 4, 3);
+            draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
             if (frame > 32)
                 y = y - frame * 2 + 64;
-            draw[0](canvas, (u8 *)work + 0x65c0, x, y, 40, 40);
+            draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
             if (frame <= 3)
-                draw[1](canvas, (u8 *)work + 0x65c0, x, y, 40, 40);
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+                draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
 
         for (member = 0; member != work->effect->count; member++) {
@@ -215,7 +212,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
             if (frame == member * 8 + 80)
                 Audio_PlayCue(212);
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = object->x;
             point[1] = height;
             point[2] = object->z;
@@ -223,10 +220,10 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
             if (frame == member * 8 + 48)
                 ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, member, 16);
             if (frame > member * 8) {
-                BattleEffect_LoadWork(46, 7, 7, flags, 2);
-                draw[0] = (DrawRectangle)gWorkSlot[46];
-                BattleEffect_LoadWork(47, 7, 7, flags, 3);
-                draw[1] = (DrawRectangle)gWorkSlot[47];
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
+                draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags, 3);
+                draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
                 if (mode == 0) {
                     SceneTransform_ApplyPitch(-frame << 10);
                 } else if (mode == 1) {
@@ -256,7 +253,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
                             if (screen.depth > 634)
                                 screen.depth = 634;
                             size = 6 - (screen.depth - 314) / 64;
-                            draw[1](canvas, (u8 *)work + BattleFx6_FlareCells[size - 1],
+                            draw[1](canvas, work->sheet + BattleFx6_FlareCells[size - 1],
                                 screen.x - size, screen.y - size, size * 2, size * 2);
                             flare->x -= flare->x / distance;
                             flare->y -= flare->y / distance;
@@ -264,8 +261,8 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
                         }
                     }
                 }
-                Runtime_ReleaseHeapBlock(47);
-                Runtime_ReleaseHeapBlock(46);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             }
             rider[0] = 0;
             rider[1] = 0;
@@ -275,56 +272,56 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
             if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
                 s32 cel = (frame - member * 8 - 52) / 4 % 6;
 
-                BattleEffect_LoadWork(46, 7, 7, flags, 2);
-                draw[0] = (DrawRectangle)gWorkSlot[46];
-                draw[0](canvas, (u8 *)work + cel * 1600 + 0x60e,
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
+                draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+                draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
                     screen.x - 20, screen.y - 20, 40, 40);
-                Runtime_ReleaseHeapBlock(46);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             }
             if (mode == 0) {
                 if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
                     s32 cel = (frame - member * 8 - 80) / 4 % 7;
 
-                    BattleEffect_LoadWork(46, 7, 7, flags, 2);
-                    draw[0] = (DrawRectangle)gWorkSlot[46];
-                    draw[0](canvas, (u8 *)work + cel * 960 + 0x2b8e,
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
+                    draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+                    draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE,
                         screen.x - 12, screen.y - 20, 24, 40);
-                    Runtime_ReleaseHeapBlock(46);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
             } else if (mode == 3 || mode == 5) {
                 if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
                     s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-                    BattleEffect_LoadWork(46, 7, 7, flags, 2);
-                    draw[0] = (DrawRectangle)gWorkSlot[46];
-                    draw[0](canvas, (u8 *)work + cel * 2048 + 0x2b8e,
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
+                    draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+                    draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                         screen.x - 16, screen.y - 32, 32, 64);
-                    Runtime_ReleaseHeapBlock(46);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
             } else if (mode == 4) {
                 if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
                     s32 cel = (frame - member * 8 - 80) / 2 % 6;
 
-                    BattleEffect_LoadWork(46, 7, 7, flags, 2);
-                    draw[0] = (DrawRectangle)gWorkSlot[46];
-                    BattleEffect_LoadWork(47, 7, 7, flags | 8, 2);
-                    draw[1] = (DrawRectangle)gWorkSlot[47];
-                    draw[0](canvas, (u8 *)work + cel * 2048 + 0x2b8e,
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
+                    draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags | 8, 2);
+                    draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+                    draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                         screen.x - 32, screen.y - 24, 64, 32);
-                    draw[1](canvas, (u8 *)work + cel * 2048 + 0x2b8e,
+                    draw[1](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                         screen.x - 32, screen.y + 8, 64, 32);
-                    Runtime_ReleaseHeapBlock(47);
-                    Runtime_ReleaseHeapBlock(46);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
             } else {
                 if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
                     s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-                    BattleEffect_LoadWork(46, 7, 7, flags, 3);
-                    draw[0] = (DrawRectangle)gWorkSlot[46];
-                    draw[0](canvas, (u8 *)work + cel * 1600 + 0x2b8e,
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 3);
+                    draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+                    draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
                         screen.x - 20, screen.y - 20, 40, 40);
-                    Runtime_ReleaseHeapBlock(46);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
             }
         }
@@ -333,6 +330,6 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

@@ -184,7 +184,7 @@ Func_080c9c38:
 	adds r0, #255
 	bl GameFlag_SetBit
 .L_080c9dba:
-	bl Func_080ad2b8
+	bl GameFlag_RefreshLureCapFar
 	pop {r5, r6, r7, pc}
 .L_080c9dc0:
 	.4byte gPartyState

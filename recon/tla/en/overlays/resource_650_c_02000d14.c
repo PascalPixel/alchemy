@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-
-
 #include "PARTY_STATE.H"
 
 struct SceneEventWork {
@@ -47,11 +45,6 @@ void Func_0200b2d8();
 void Func_0200b310();
 void Object_LinkObjectAndSetCallback();
 void Func_0200b320();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {

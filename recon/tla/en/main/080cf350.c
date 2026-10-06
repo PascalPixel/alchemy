@@ -1,11 +1,3 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six original incomplete-context compile failures remain.
- * No missing view, declaration or physical symbol was supplied.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "OBJECT_LOOKUP.H"
 #include "OBJDISP.H"
 #include "TYPES.H"

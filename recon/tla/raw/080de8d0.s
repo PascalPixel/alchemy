@@ -134,7 +134,7 @@ Func_080de8d0:
 .L_080de9dc:
 	.4byte IwramMulQ16
 .L_080de9e0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080de9e4:
 	.4byte Func_080de818
 .L_080de9e8:

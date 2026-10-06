@@ -187,62 +187,6 @@ Func_0200005c:
 	.4byte 0x00000005
 .L_02008200:
 	.4byte 0x00000009
-	.section .text.x02008208,"ax",%progbits
-	.global Func_02000208
-	.thumb_func
-Func_02000208:
-	push {r5, r6, lr}
-	movs r0, #164
-	lsls r0, r0, #3
-	bl Runtime_BumpAllocateAlternatePool
-	ldr r6, .L_0200826c
-	adds r5, r0, #0
-	movs r2, #0
-	ldrsh r3, [r6, r2]
-	movs r2, #1
-	negs r2, r2
-	cmp r3, r2
-	bne .L_02008228
-	bl Resource_FindFreeEntry
-	strh r0, [r6]
-.L_02008228:
-	ldr r0, .L_02008270
-	bl Resource_GetTableEntry
-	adds r1, r5, #0
-	bl Func_02000594
-	movs r3, #128
-	movs r2, #132
-	lsls r3, r3, #19
-	lsls r2, r2, #24
-	adds r3, #212
-	adds r0, r5, #0
-	ldr r1, .L_02008274
-	adds r2, #8
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	adds r2, r5, #0
-	movs r1, #160
-	adds r2, #32
-	movs r3, #0
-	ldrsh r0, [r6, r3]
-	lsls r1, r1, #3
-	bl VramBlock_LoadCached
-	movs r2, #128
-	lsls r2, r2, #19
-	adds r2, #212
-.L_0200825e:
-	ldr r3, [r2, #8]
-	cmp r3, #0
-	blt .L_0200825e
-	adds r0, r5, #0
-	bl Sys_Free
-	pop {r5, r6, pc}
-.L_0200826c:
-	.4byte Data_020006a4
-.L_02008270:
-	.4byte 0x00000025
-.L_02008274:
-	.4byte 0x050003e0
 	.section .text.x02008278,"ax",%progbits
 	.global Func_02000278
 	.thumb_func
@@ -323,7 +267,7 @@ Func_02000278:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008308:
-	.4byte Data_020006a4
+	.4byte gTitleVramBlock
 .L_0200830c:
 	.4byte ResourceTableEntries
 .L_02008310:
@@ -331,7 +275,7 @@ Func_02000278:
 .L_02008314:
 	.4byte Data_020006dc
 .L_02008318:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200831c,"ax",%progbits
 	.global Func_0200031c
 	.thumb_func
@@ -344,7 +288,7 @@ Func_0200031c:
 	ldr r3, .L_02008350
 	movs r0, #0
 	strh r3, [r2]
-	bl Func_02000208
+	bl Title_LoadSprites
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008358
@@ -511,8 +455,8 @@ Func_0200031c:
 	lsls r5, r5, #1
 	movs r3, #1
 	str r3, [r1, r5]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r2, [r6, #108]
 	movs r3, #60
 	str r3, [r2, r5]
@@ -562,11 +506,11 @@ Func_02000490:
 .L_020084d8:
 	.4byte 0x00000022
 .L_020084dc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020084e0:
 	adds r0, r4, #0
 	ldr r1, .L_02008560
-	bl Func_02000594
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -639,7 +583,7 @@ Func_02000490:
 .L_0200856c:
 	.4byte 0x06003000
 .L_02008570:
-	.4byte Data_03001120
+	.4byte gBgScroll
 	.section .rodata.x0200864c,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:
@@ -671,8 +615,8 @@ gSceneEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020006a4
-Data_020006a4:
+	.global gTitleVramBlock
+gTitleVramBlock:
 	.2byte 0xffff
 	.section .bss,"aw",%nobits
 	.space 0x00000036

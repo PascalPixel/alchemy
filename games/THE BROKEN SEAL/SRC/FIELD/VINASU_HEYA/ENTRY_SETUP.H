@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #ifndef GUARD_ENTRY_SETUP_H
 #define GUARD_ENTRY_SETUP_H
 
@@ -9,11 +10,6 @@
 
 #include "OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"
-
-/*
- * Effect spawning for overlay resource_39f.  Every cutscene beat in the
- * overlay creates its effects through this routine.
- */
 
 struct Sprite {
     u8 pad00[9];
@@ -248,9 +244,6 @@ typedef struct {
     s32 unkC;
 } Struct_22a4b;
 
-/*
- * Per-frame motion for an effect record in resource_3c8.
- */
 struct Sprite_0200096c {
     u8 pad00[9];
     u8 flags9;
@@ -320,7 +313,6 @@ typedef struct {
 } Struct_18f8;
 
 extern u32 StagedActor_DirectionSteps[];
-extern u8 *gMapWork;
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
 extern u8 gVinasuHeyaPrimaryTable[];
@@ -336,7 +328,7 @@ void SetMapCellCollision(s32, s32, s32, s32);
 void OverlayObject_WaitUntilIdle();
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 s32 Object_CheckMovementCollision();
-s32 *SceneData_FindSlotAtPosition();
+struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self);
 void SceneEvents_UpdateInView(u8 *);
 void Scene_RunScene3c8SequenceA(void);
 void VinasuHeya_RunCellPushScene(void);
@@ -344,8 +336,6 @@ void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void RunStagedActorTransition(void);
 void SceneActor_SwapPositionsByDepth(s32 group, s32 index);
 s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void);
-
-/* Complete scene setup, including the two global halfword state writes. */
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 

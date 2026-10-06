@@ -1,14 +1,3 @@
-@ IWRAM sound mixer. The sound setup copies it with Bios_CpuSet (literal pool
-@ at 0x081c1f90: source 0x081c1311 with bit 0 cleared, destination 0x03006000,
-@ control 0x04000100 = 256 words), so 1,024 bytes reach IWRAM: these 932 bytes
-@ and the 92 after them. It switches between Thumb and ARM inside the routine
-@ (add r1, pc, #4; bx r1), saves r4 and ip without lr and ends by unwinding
-@ the frame MIXER_ENTRY.S built, with one pop {r0-r7}; neither approved
-@ compiler emits any of these. The code is position-independent: these bytes
-@ equal TBS SOUND/DRIVER/MIXER.S (0x080f9674), which runs at 0x03007000.
-@ The zero halfwords of alignment at 0x081c131a, 0x081c13c2 and 0x081c14a6
-@ never run and carry no credit.
-@ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module (mixer)
 .syntax unified
 	.thumb
 	.global SoundDriver_Mixer

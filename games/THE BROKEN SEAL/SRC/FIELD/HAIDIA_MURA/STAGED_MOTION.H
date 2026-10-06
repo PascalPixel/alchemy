@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #ifndef GUARD_STAGED_MOTION_H
 #define GUARD_STAGED_MOTION_H
 
@@ -14,19 +15,13 @@
 #include "FIELD_SCENE.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-/* Robin's mother, as in the repair-morning scene of this overlay; the
-   villagers call her Dora. */
 enum {
     ACTOR_DORA = 21
 };
 
-/*
- * Reset or tear down a consecutive run of scene actors -- resource_373.
- */
 struct Resource373Actor {
     u8 unknown_00[8];
     s32 field08;
@@ -60,13 +55,12 @@ struct StagedParticle {
     u16 f5e;
 };
 
-/* Emitter fields are named by offset; the layout is not verified. */
 struct Resource373Emitter {
     u8 unknown_00[6];
     u16 field06;
-    s32 x;                          /* 0x08 */
-    s32 y;                          /* 0x0c */
-    s32 z;                          /* 0x10 */
+    s32 x;
+    s32 y;
+    s32 z;
     u8 unknown_14[4];
     s32 field18;
     s32 field1c;
@@ -82,7 +76,7 @@ struct Resource373Emitter {
 
 struct Resource373Particle {
     u8 unknown_00[0x28];
-    s32 lifetime;                   /* 0x28 */
+    s32 lifetime;
     u8 unknown_2c[4];
     s32 field30;
     s32 field34;
@@ -178,10 +172,10 @@ void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
 void Audio_PlayCueFromEventWork();
 void Object_SetPosition();
-void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_OpenVillagerLane(void);
 s32 SceneActor_RunStep18WhenTargetSet();
-void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void FieldScene_RunStep8C();
 void SceneState_SetValue0ThenCall();
 void FieldScene_RunStep17();
@@ -195,42 +189,9 @@ void Vector_AddPolarOffset(s32, s32, s32 *);
 void BattleEffect_CleanupSceneObjects(void);
 s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force);
 void InitializeStagedActorSceneOrbitingEffect(s32 id);
-u8 *Runtime_AllocateHeapBlock(s32, s32);
 void WorldMap_CreateLinkedEffects(s32);
 s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
-/* Actor IDs the scene sets up: three actors share a common data pointer,
- * a fourth actor (11) is driven through its own sequence of position/speed
- * calls. */
-
-/* Shared data used for actors A, B, C. */
-
 void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-/* Newly identified engine calls: each macro below names the site's own
- * engine function from its reconstructed C source, and keeps the site's
- * own calling form. */
-
-/*
- * Staged actor cutscene tail -- resource_373. The long scene script plus the
- * particle, sound, and vertical-motion effects it drives.
- */
 
 #endif

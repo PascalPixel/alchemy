@@ -1,17 +1,16 @@
-#include "TYPES.H"
-
-extern u8 ResourceBlockOwners[];
+#include "RESOURCE.H"
+#include "VRAM_TAB.H"
 
 s32 Resource_ResetEntry(u32 resource_index)
 {
-    struct ResourceTableEntry *entry = &ResourceTableEntries[resource_index];
+    struct VramBlockCacheEntry *entry = &ResourceTableEntries[resource_index];
 
-    if (resource_index > 95)
+    if (resource_index >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
-    if (entry->flags != 0xffff) {
+    if (entry->offset != VRAM_CACHE_OFFSET_FREE) {
         Resource_ClearSlotReferences(resource_index);
-        entry->flags |= 0xffff;
-        entry->value = 0;
+        entry->offset |= VRAM_CACHE_OFFSET_FREE;
+        entry->size = 0;
     }
     return 0;
 }

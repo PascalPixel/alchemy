@@ -1,5 +1,3 @@
-/* resource_6b5: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -7,9 +5,9 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SCENE_TABLES.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008044)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/LAYOUT.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x0200806c)
-        "*/resource_6b5_overlay.o"(.text.x02008114)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/LOBBY.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008134)
         "*/resource_6b5_overlay.o"(.text.x020082d8)
         "*/resource_6b5_overlay.o"(.text.x02008344)

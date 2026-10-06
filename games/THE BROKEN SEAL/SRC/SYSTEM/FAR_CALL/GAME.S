@@ -1,22 +1,12 @@
-@ Far-call stub table heading the party, item and flag code at 0x08077000: fixed 8-byte
-@ veneers, each loading its target into r4 and branching, which the calling
-@ convention permits. No compiler emits them; the shared overlay veneer macro
-@ builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_GameTable
 FarCall_GameTable:
 	.global Trade_GetOfferStateFar
-	.global Func_08077000
 	.thumb_func
 Trade_GetOfferStateFar:
-Func_08077000:
 	overlay_veneer Trade_GetOfferState
-	.global Func_08077008
-	.thumb_func
-Func_08077008:
 	.global Owner_GetStateFar
 	.thumb_func
 Owner_GetStateFar:
@@ -27,16 +17,13 @@ Runtime_GetObject:
 	.global BattleUnit_Recalculate
 	.thumb_func
 BattleUnit_Recalculate:
-	.global Func_08077010
-	.thumb_func
-Func_08077010:
 	.global Owner_RecalculateStatsFar
 	.thumb_func
 Owner_RecalculateStatsFar:
 	overlay_veneer Owner_RecalculateStats
-	.global Func_08077018
+	.global Item_GetDirectFar
 	.thumb_func
-Func_08077018:
+Item_GetDirectFar:
 	.global Item_Get
 	.thumb_func
 Item_Get:
@@ -48,13 +35,7 @@ Shop_GetSelectionState:
 	.global Inventory_AddItemFar
 	.thumb_func
 Inventory_AddItemFar:
-	.global Func_08077028
-	.thumb_func
-Func_08077028:
 	overlay_veneer Inventory_AddItem
-	.global Func_08077030
-	.thumb_func
-Func_08077030:
 	.global PartyInventory_AddFar
 	.thumb_func
 PartyInventory_AddFar:
@@ -69,23 +50,14 @@ Inventory_FindFar:
 	.global PartyInventory_FindOwnerFar
 	.thumb_func
 PartyInventory_FindOwnerFar:
-	.global Func_08077040
-	.thumb_func
-Func_08077040:
 	overlay_veneer PartyInventory_FindOwner
 	.global PartyInventory_RemoveFar
-	.global Func_08077048
 	.thumb_func
 PartyInventory_RemoveFar:
-	.thumb_func
-Func_08077048:
 	overlay_veneer PartyInventory_Remove
 	.global Inventory_EquipFar
 	.thumb_func
 Inventory_EquipFar:
-	.global Func_08077050
-	.thumb_func
-Func_08077050:
 	overlay_veneer Inventory_Equip
 	.global Inventory_RemoveFar
 	.thumb_func
@@ -95,16 +67,14 @@ Inventory_RemoveFar:
 	.thumb_func
 Inventory_BreakFar:
 	overlay_veneer Inventory_Break
-	.global Func_08077068
+	.global Inventory_RepairFar
 	.thumb_func
-Func_08077068:
+Inventory_RepairFar:
 	overlay_veneer Inventory_Repair
 	overlay_veneer Item_GetTargetMode
 	.global Inventory_GetEquippedItemFar
-	.global Func_08077078
 	.thumb_func
 Inventory_GetEquippedItemFar:
-Func_08077078:
 	overlay_veneer Inventory_GetEquippedItem
 	.global Ability_GetData
 	.thumb_func
@@ -112,9 +82,9 @@ Ability_GetData:
 	.global BattleAction_Get
 	.thumb_func
 BattleAction_Get:
-	.global Func_08077080
+	.global BattleAction_GetDirectFar
 	.thumb_func
-Func_08077080:
+BattleAction_GetDirectFar:
 	overlay_veneer BattleAction_GetDirect
 	.global OwnerAction_AddFar
 	.thumb_func
@@ -131,13 +101,10 @@ GameState_InitDefaultsFar:
 	overlay_veneer OwnerAction_CheckLevelThreshold
 	overlay_veneer Owner_InitRecords
 	overlay_veneer Owner_LevelNoOp
-	.global Func_080770b8
+	.global Owner_GetValueIfLevelThresholdReachedFar
 	.thumb_func
-Func_080770b8:
+Owner_GetValueIfLevelThresholdReachedFar:
 	overlay_veneer Owner_GetValueIfLevelThresholdReached
-	.global Func_080770c0
-	.thumb_func
-Func_080770c0:
 	.global GameFlag_IsSet
 	.thumb_func
 GameFlag_IsSet:
@@ -152,24 +119,15 @@ GameFlag_SetBitFar:
 	.global GameFlag_ClearBitFar
 	.thumb_func
 GameFlag_ClearBitFar:
-	.global Func_080770d0
-	.thumb_func
-Func_080770d0:
 	overlay_veneer GameFlag_ClearBit
 	overlay_veneer GameFlag_Toggle
 	.global GameFlag_GetByteFar
-	.global Func_080770e0
 	.thumb_func
 GameFlag_GetByteFar:
-	.thumb_func
-Func_080770e0:
 	overlay_veneer GameFlag_GetByte
 	.global GameFlag_SetByteFar
 	.thumb_func
 GameFlag_SetByteFar:
-	.global Func_080770e8
-	.thumb_func
-Func_080770e8:
 	overlay_veneer GameFlag_SetByte
 	overlay_veneer GameFlag_IncrementByte
 	overlay_veneer GameFlag_DecrementByte
@@ -177,21 +135,13 @@ Func_080770e8:
 	overlay_veneer GameFlag_SetNibble
 	overlay_veneer Owner_RefreshAndResetZero
 	.global Owner_AdjustFirstValueFar
-	.global Func_08077118
 	.thumb_func
 Owner_AdjustFirstValueFar:
-Func_08077118:
 	overlay_veneer Owner_AdjustFirstValue
-	.global Func_08077120
-	.thumb_func
-Func_08077120:
 	.global Owner_AdjustSecondValueFar
 	.thumb_func
 Owner_AdjustSecondValueFar:
 	overlay_veneer Owner_AdjustSecondValue
-	.global Func_08077128
-	.thumb_func
-Func_08077128:
 	.global Owner_RecalculateRatiosFar
 	.thumb_func
 Owner_RecalculateRatiosFar:
@@ -208,9 +158,6 @@ BattleUnit_AssignFar:
 	.global Party_CountActiveOwnersFar
 	.thumb_func
 Party_CountActiveOwnersFar:
-	.global Func_08077148
-	.thumb_func
-Func_08077148:
 	overlay_veneer Party_CountActiveOwners
 	.global Party_AddActiveOwnerFar
 	.thumb_func
@@ -255,9 +202,6 @@ Owner_GetRecordFar:
 	.global BattleRandom16Far
 	.thumb_func
 BattleRandom16Far:
-	.global Func_080771a0
-	.thumb_func
-Func_080771a0:
 	overlay_veneer BattleRandom16
 	.global Djinn_AddToOwnerFar
 	.thumb_func
@@ -266,13 +210,7 @@ Djinn_AddToOwnerFar:
 	.global Djinn_ActivateFar
 	.thumb_func
 Djinn_ActivateFar:
-	.global Func_080771b0
-	.thumb_func
-Func_080771b0:
 	overlay_veneer Djinn_Activate
-	.global Func_080771b8
-	.thumb_func
-Func_080771b8:
 	.global Djinn_DeactivateFar
 	.thumb_func
 Djinn_DeactivateFar:
@@ -297,16 +235,10 @@ Trade_ListFlaggedEntriesFar:
 	.thumb_func
 SummonDefinition_Get:
 	overlay_veneer SummonDefinition_GetNear
-	.global Func_080771e8
-	.thumb_func
-Func_080771e8:
 	.global Djinn_GetDefinitionHeaderFar
 	.thumb_func
 Djinn_GetDefinitionHeaderFar:
 	overlay_veneer Djinn_GetDefinitionHeader
-	.global Func_080771f0
-	.thumb_func
-Func_080771f0:
 	.global Party_AdvanceOwnerCountToTargetFar
 	.thumb_func
 Party_AdvanceOwnerCountToTargetFar:
@@ -316,9 +248,6 @@ Party_AdvanceOwnerCountToTargetFar:
 Owner_GetResistanceValueFar:
 	overlay_veneer Owner_GetResistanceValue
 	overlay_veneer Trade_CountPendingOffers
-	.global Func_08077208
-	.thumb_func
-Func_08077208:
 	.global Djinn_IsActiveFar
 	.thumb_func
 Djinn_IsActiveFar:
@@ -327,9 +256,9 @@ Djinn_IsActiveFar:
 	.thumb_func
 Trade_CanOfferDjinnFar:
 	overlay_veneer Trade_CanOfferDjinn
-	.global Func_08077218
+	.global Item_CanOwnerEquipDirectFar
 	.thumb_func
-Func_08077218:
+Item_CanOwnerEquipDirectFar:
 	.global Item_CanOwnerEquip
 	.thumb_func
 Item_CanOwnerEquip:
@@ -342,20 +271,14 @@ Item_IsCompatibleWithOwnerFar:
 	.thumb_func
 Inventory_FindEquippedFar:
 	overlay_veneer Inventory_FindEquipped
-	.global Party_AdjustSixDigitCounterAFar
+	.global Party_AdjustCoinsFar
 	.thumb_func
-Party_AdjustSixDigitCounterAFar:
-	overlay_veneer Party_AdjustSixDigitCounterA
+Party_AdjustCoinsFar:
+	overlay_veneer Party_AdjustCoins
 	.global Item_GetEquipmentGroupFar
 	.thumb_func
 Item_GetEquipmentGroupFar:
 	overlay_veneer Item_GetEquipmentGroup
-	.global Ability_GetMaximum
-	.thumb_func
-Ability_GetMaximum:
-	.global Func_08077240
-	.thumb_func
-Func_08077240:
 	.global Item_AdjustCounterFar
 	.thumb_func
 Item_AdjustCounterFar:
@@ -372,10 +295,8 @@ Inventory_CountFar:
 PartyInventory_HasSpaceFar:
 	overlay_veneer PartyInventory_HasSpace
 	.global Owner_GetLevelThresholdFar
-	.global Func_08077258
 	.thumb_func
 Owner_GetLevelThresholdFar:
-Func_08077258:
 	overlay_veneer Owner_GetLevelThreshold
 	.global Owner_RefreshActiveRatiosFar
 	.thumb_func
@@ -384,9 +305,6 @@ Owner_RefreshActiveRatiosFar:
 	.global Owner_RefreshRatiosOnFlagFar
 	.thumb_func
 Owner_RefreshRatiosOnFlagFar:
-	.global Func_08077268
-	.thumb_func
-Func_08077268:
 	overlay_veneer Owner_RefreshRatiosOnFlag
 	.global Party_SetFlag32AndRefreshMembersFar
 	.thumb_func
@@ -398,10 +316,8 @@ Party_ApplyStatePresetFar:
 	overlay_veneer Party_ApplyStatePreset
 	overlay_veneer Owner_RatioNoOp
 	.global Djinn_AddToLeastLoadedOwnerFar
-	.global Func_08077288
 	.thumb_func
 Djinn_AddToLeastLoadedOwnerFar:
-Func_08077288:
 	overlay_veneer Djinn_AddToLeastLoadedOwner
 	.global Party_SumDjinnCountsFar
 	.thumb_func
@@ -411,17 +327,14 @@ Party_SumDjinnCountsFar:
 	.thumb_func
 Party_AdjustSixDigitCounterBFar:
 	overlay_veneer Party_AdjustSixDigitCounterB
-	.global Func_080772a0
+	.global Party_AdjustCounterCappedAt28Far
 	.thumb_func
-Func_080772a0:
+Party_AdjustCounterCappedAt28Far:
 	overlay_veneer Party_AdjustCounterCappedAt28
 	.global Inventory_CheckDiscardFar
 	.thumb_func
 Inventory_CheckDiscardFar:
 	overlay_veneer Inventory_CheckDiscard
-	.global Func_080772b0
-	.thumb_func
-Func_080772b0:
 	.global Inventory_DiscardFar
 	.thumb_func
 Inventory_DiscardFar:
@@ -429,13 +342,7 @@ Inventory_DiscardFar:
 	.global BattleFx_IsReviveFar
 	.thumb_func
 BattleFx_IsReviveFar:
-	.global Func_080772b8
-	.thumb_func
-Func_080772b8:
 	overlay_veneer BattleFx_IsRevive
-	.global Func_080772c0
-	.thumb_func
-Func_080772c0:
 	.global Owner_RefreshClassActionsFar
 	.thumb_func
 Owner_RefreshClassActionsFar:
@@ -446,10 +353,8 @@ Party_GetAverageLevelFar:
 	overlay_veneer Party_GetAverageLevel
 	overlay_veneer Owner_RefreshDerivedData
 	.global Inventory_CountItemFar
-	.global Func_080772d8
 	.thumb_func
 Inventory_CountItemFar:
-Func_080772d8:
 	overlay_veneer Inventory_CountItem
 	.global PartyInventory_CountItemFar
 	.thumb_func
@@ -460,10 +365,8 @@ PartyInventory_CountItemFar:
 PartyInventory_DiscardFar:
 	overlay_veneer PartyInventory_Discard
 	.global GameFlag_RefreshLureCapFar
-	.global Func_080772f0
 	.thumb_func
 GameFlag_RefreshLureCapFar:
-Func_080772f0:
 	overlay_veneer GameFlag_RefreshLureCap
 	.global Equipment_GetUnleashRateBonusFar
 	.thumb_func
@@ -477,10 +380,10 @@ Runtime_GetBuildStampTimeFar:
 	.thumb_func
 PartyInventory_CountFreeSlotsFar:
 	overlay_veneer PartyInventory_CountFreeSlots
-	.global Func_08077310
+	.global InventorySnapshot_SaveFar
 	.thumb_func
-Func_08077310:
-	overlay_veneer Func_0807a664
+InventorySnapshot_SaveFar:
+	overlay_veneer InventorySnapshot_Save
 	.global InventorySnapshot_RestoreFar
 	.thumb_func
 InventorySnapshot_RestoreFar:

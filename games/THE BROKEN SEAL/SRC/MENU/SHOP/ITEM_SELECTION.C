@@ -1,37 +1,27 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "EDITION.H"
+#include "IO_REG.H"
 #include "SHOP.H"
+#include "BATTLE_RUNTIME.H"
+#include "SYSTEM.H"
 extern struct ShopRuntime *gMenuWork;
-void *Runtime_GetObject(s32);
-void UiWindow_Commit(s32);
-void UiNumber_DrawAt(s32, s32, s32, s32, s32);
-extern u8 Data_03001f2c[];
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
-extern u8 MsgCannotDropIt[];
-extern u8 MsgCannotRemoveIt[];
-
 
 void UiWork_FinalizeFar(s32 window, s32 style);
-struct ShopCursorAnchor *RenderOutput_CreateFar(
-    u32 resource,
-    u32 flags,
-    s32 window,
-    s32 x,
-    s32 y);
-void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
-void Menu_ReleaseEntryObjectsFar(void);
-void Shop_InitializeCursorWork(void);
-void Inn_Cleanup(void);
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
-s32 Shop_SelUse(s32 unit_id);
-s32 Inventory_CountFar(s32 unit_id);
+void PsynergyMenu_InitializeEntryObjectsFar();
 void Audio_PlayCue(s32 cue);
 
-/* Select a party member and then an item owned by that member. */
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 {
     struct ShopRuntime *shop;
-    struct ShopCursorAnchor *cursor_anchor;
+    struct RenderOutput *cursor_anchor;
     s32 list_window;
     s32 selected_index = 0;
     s32 redraw = 1;
@@ -44,13 +34,13 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
     cursor_anchor = RenderOutput_CreateFar(
-        *(u16 *)((u8 *)shop + 0x390),
+        shop->cursor_icon,
         0x40000000,
-        list_window,
+        (struct RenderInput *)list_window,
         0,
         result);
-    cursor_anchor->kind = 4;
-    cursor_anchor->unknown_00[4] = result;
+    cursor_anchor->active = 4;
+    cursor_anchor->kind = result;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     shop->mode = 12;
@@ -68,7 +58,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         }
 
         WaitFrames(1);
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             if (Inventory_CountFar(unit_id) == 0) {
                 Audio_PlayCue(0x71);
                 continue;
@@ -77,7 +67,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             Audio_PlayCue(0x70);
             item_slot = Shop_SelUse(unit_id);
             if (item_slot == -1) {
-                shop->cursor.anchor->kind = 4;
+                shop->cursor.anchor->active = 4;
                 shop->mode = 12;
                 redraw = 1;
                 continue;
@@ -88,7 +78,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(0x71);
             *selected_unit = -1;
             *selected_item = -1;
@@ -96,12 +86,12 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((gKeysRepeat & 0x20) != 0) {
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
             Audio_PlayCue(0x6f);
             selected_index--;
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x10) != 0) {
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
             Audio_PlayCue(0x6f);
             selected_index++;
             redraw = 1;
@@ -122,40 +112,31 @@ done:
 #include "BATTLE_CALC.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "text/MSG_IDS.H"
 
-s32 Ability_GetAvailability(s32);
-s32 Inventory_CheckDiscardFar(s32, s32);
-s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+
 void UiWork_FinalizePendingCoreFar(void);
-
-extern u8 MsgItemPlainName;
 
 s32 Shop_SelUse(s32 actor)
 {
     struct ShopRuntime *shop = gMenuWork;
-    /* win2 declared ahead of win1 (and both ahead of object) to match the
-     * reference's sp+8/sp+12/sp+16 spill-slot order for these three
-     * call-result locals; declaring them in call order instead misassigns
-     * object and win2 to each other's slots under this compiler. */
+
     s32 win2;
     s32 win1;
-    u8 *object;
+    struct BattleUnit *object;
     s32 selection;
     s32 redraw;
     s32 count;
     s32 result;
     s32 status;
     s32 flags;
-    s32 off;
     void *window;
     s32 x;
     s32 y;
 
-    /* count/result/redraw assigned as statements here (not declaration
-     * initializers) so the reference's constant-materialization order is
-     * reproduced: a shared movs r1,#1 is committed to count's and redraw's
-     * home registers (sl, r9) right before r1 is needed again for win1's
-     * call args, in this exact count-then-redraw order. */
     object = Runtime_GetObject(actor);
     count = 1;
     result = 0;
@@ -166,7 +147,7 @@ s32 Shop_SelUse(s32 actor)
     win1 = UiWindow_CreateFar(16, 8, 14, 4, 2);
 #endif
     win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
-    shop->cursor.anchor->kind = 18;
+    shop->cursor.anchor->active = 18;
     shop->mode = 12;
     selection = 0;
 
@@ -177,27 +158,19 @@ s32 Shop_SelUse(s32 actor)
             if (selection > count - 1)
                 selection = count - 1;
 
-            /* Split into a plain-int offset statement followed by a separate
-             * pointer dereference: writing this as one expression (any
-             * algebraic grouping of object+216+selection*2) always makes the
-             * compiler fold object into the offset register before the load
-             * (adds+adds+ldrh[reg,#0]); computing the byte offset in `off`
-             * first keeps object untouched in its own register so the load
-             * folds to a single reg+reg ldrh, matching the reference. */
-            off = selection * 2 + 216;
-            flags = *(u16 *)(object + off) & 0x1ff;
+            flags = object->inventory[selection] & 0x1ff;
             window = (void *)shop->item_window;
             x = selection % 5 << 4;
             y = (selection / 5 << 4) + 8;
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
             Shop_DrawUseItem(win1, actor, selection);
-            Shop_DrawMsg(win2, flags + (s32)&MsgItemPlainName);
+            Shop_DrawMsg(win2, flags + (s32)MsgItemPlainName);
         }
 
         WaitFrames(1);
 
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             status = Inventory_CheckDiscardFar(actor, selection);
             if (status == 0) {
                 Audio_PlayCue(112);
@@ -215,31 +188,25 @@ s32 Shop_SelUse(s32 actor)
             continue;
         }
 
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(113);
             result = -1;
             goto exit_loop;
         }
 
-        /* selection -= 1 / += 1 as its own statement before the __modsi3
-         * call (matching sibling main:080b211c's idiom) so the compiler
-         * commits the +-1 directly into selection's home register (r7)
-         * ahead of the add; folding it into one `selection +- 1 + count`
-         * expression instead subtracts/adds 1 from the sum register after
-         * the add, which is a different (non-matching) instruction order. */
-        if ((gKeysRepeat & 0x20) != 0) {
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
             Audio_PlayCue(111);
             selection -= 1;
             selection = (selection + count) % count;
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x10) != 0) {
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
             Audio_PlayCue(111);
             selection += 1;
             selection = (selection + count) % count;
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x40) != 0) {
+        if ((gKeysRepeat & KEY_UP) != 0) {
             selection -= 5;
             if (selection < 0)
                 selection += 15;
@@ -248,7 +215,7 @@ s32 Shop_SelUse(s32 actor)
             Audio_PlayCue(111);
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x80) != 0) {
+        if ((gKeysRepeat & KEY_DOWN) != 0) {
             selection += 5;
             if (selection >= count)
                 selection -= 15;
@@ -266,73 +233,59 @@ exit_loop:
     return result;
 }
 
-extern u8 MsgItemName;
-extern u8 MsgCannotDrop;
-extern u8 MsgCannotRemove;
-extern u8 MsgPriceHeading;
-
-void *Owner_GetStateFar(s32);
-void RenderOutput_RedrawSavedRectFar(s32);
-s32 Shop_SalePrice(s32);
-void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
-
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-    u8 *unit = Owner_GetStateFar(unit_id);
-    s32 slot_offset = item_id * 2 + 216;
-    s32 masked = *(u16 *)(unit + slot_offset) & 0x1ff;
-    u32 entry = *(u16 *)(unit + slot_offset);
+    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
+    s32 masked = unit->inventory[item_id] & 0x1ff;
+    u32 entry = unit->inventory[item_id];
     s32 mult = (entry >> 11) + 1;
 
     if (window != 0) {
         s32 result;
 
         UiWindow_Commit(window);
-        UiText_DrawCharacterAtOffsetFar(masked + (s32)&MsgItemName, window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar(masked + (s32)MsgItemName, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
-        /* The Japanese notes start a character in. */
         if (result == -4) {
 #if EDITION_INTERNATIONAL
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 0, 8);
 #else
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 8, 8);
 #endif
         } else if (result == -3) {
 #if EDITION_INTERNATIONAL
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 0, 8);
 #else
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 8, 8);
 #endif
         } else {
             s32 qty;
             s32 total;
 
-            qty = Shop_SalePrice(*(u16 *)(unit + slot_offset));
+            qty = Shop_SalePrice(unit->inventory[item_id]);
             total = mult *qty;
 
-/* The price line: the Japanese edition counts the coins with the word
-   before the heading, the others name them with MsgCoins, five before. */
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 80, 8);
 #elif defined(TBS_EDITION_DE)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 0, 8);
             UiNumber_DrawAt(total, 5, window, 32, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 72, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
 #elif defined(TBS_EDITION_ES)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 88, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 88, 8);
 #elif defined(TBS_EDITION_FR)
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 32, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 5, window, 72, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
 #else
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading - 1, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 1, window, 80, 8);
 #endif
         }
     }

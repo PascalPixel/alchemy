@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08042588
+	.global UiWindow_FillFromScene
 	.thumb_func
-Func_08042588:
+UiWindow_FillFromScene:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

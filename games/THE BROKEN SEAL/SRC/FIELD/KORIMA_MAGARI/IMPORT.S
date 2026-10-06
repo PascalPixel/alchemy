@@ -1,7 +1,3 @@
-@ Import veneers after the KORIMA_MAGARI overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — KORIMA_MAGARI overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -22,10 +18,10 @@ Engine_TaskAddCallback:
 	.thumb_func
 Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Vector_AddPolarOffset
 	.thumb_func
 Vector_AddPolarOffset:
@@ -62,10 +58,10 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Map_GetTerrainHeightFar
+	.global Map_GetTerrainHeight
 	.thumb_func
-Map_GetTerrainHeightFar:
-	overlay_veneer Func_080091a8
+Map_GetTerrainHeight:
+	overlay_veneer Map_GetTerrainHeightFar
 	.global Engine_MapCopyCells
 	.thumb_func
 Engine_MapCopyCells:
@@ -77,7 +73,7 @@ Map_CopyCellAttributeRect:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:

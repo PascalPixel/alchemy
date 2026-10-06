@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080149f8
+	.global Text_FormatHexToWork
 	.thumb_func
-Func_080149f8:
+Text_FormatHexToWork:
 	push {lr}
 	ldr r3, .L_08014a1c
 	ldr r4, .L_08014a20

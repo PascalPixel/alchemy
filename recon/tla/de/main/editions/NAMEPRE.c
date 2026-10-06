@@ -1,14 +1,10 @@
-/* Draft: the 244-byte Japanese/English prefix routine lacks the localized
- * eight-character limit and separating space. All four localized editions
- * use the 266-byte production branch; this attempt remains compilable. */
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+#include "SERIAL_RUNTIME.H"
 
-s32 Party_Check(void);
-void SerialRuntime_WaitForTransferB(void);
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void Sys_Free(void *);
-void *Runtime_BumpAllocateAlternatePool(s32);
 void WaitFrames(s32);
 void *Resource_FarCall005(s32);
 
@@ -29,7 +25,7 @@ s32 UpdateNameEntries(void)
     index = 0;
     while (index <= 2) {
         name_entry = Owner_GetState(index + 128);
-        if (Party_Check() == -1) {
+        if (SerialRuntime_BeginTransferB(name_entry) == -1) {
             break;
         }
         SerialRuntime_WaitForTransferB();
@@ -59,8 +55,7 @@ s32 UpdateNameEntries(void)
     }
     Sys_Free(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(340);
-    Resource_FarCall005(1);
-    if (Party_Check() != -1) {
+    if (SerialRuntime_BeginTransferB(Resource_FarCall005(1)) != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }

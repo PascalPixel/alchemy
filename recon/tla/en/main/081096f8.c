@@ -1,3 +1,6 @@
+#include "IO_REG.H"
+#include "RUNTIME_MEM.H"
+#include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 
@@ -11,19 +14,11 @@ struct UiSprite {
     u16 flags : 6;
 };
 
-void *Runtime_AllocateBlock(s32 kind, s32 size);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-struct UiSprite *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void Shop_FillSelector(s32 value, s32 x, void *buffer);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 s32 WaitFrames(s32 frames);
 void UiWork_FinalizeFar(s32 window, s32 mode);
-void Runtime_ReleaseHeapBlock(s32 kind);
-
-/* Spins a quantity from minimum + 1 to maximum with left and right, redrawing
-   the count and its total price; returns the chosen count, or -1 when
-   cancelled. */
 
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
 {
@@ -45,26 +40,26 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
         slot = Resource_FindFreeEntry();
         if (slot != 96) {
             VramBlock_LoadCached(slot, 0x100, 0);
-            RenderOutput_CreateFar(slot, 0x40004000, window, 0, 0);
-            sprite = RenderOutput_CreateFar(slot, 0x40004000, window, 32, 0);
+            RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0, 0);
+            sprite = (struct UiSprite *)RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 32, 0);
             sprite->tile += 4;
             for (;;) {
-                if (*(volatile u32 *)gKeyState & 1) {
+                if (*(volatile u32 *)gKeyState & KEY_A) {
                     Audio_PlayCue(112);
                     result = count + 1;
                     break;
                 }
-                if (*(volatile u32 *)gKeyState & 2) {
+                if (*(volatile u32 *)gKeyState & KEY_B) {
                     Audio_PlayCue(113);
                     result = -1;
                     break;
                 }
-                if (*(volatile u32 *)gKeysRepeat & 32) {
+                if (*(volatile u32 *)gKeysRepeat & KEY_LEFT) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count--;
                 }
-                if (*(volatile u32 *)gKeysRepeat & 16) {
+                if (*(volatile u32 *)gKeysRepeat & KEY_RIGHT) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count++;

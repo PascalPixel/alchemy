@@ -1,15 +1,15 @@
 #include "DMA.H"
+#include "INVENTORY_MENU.H"
+#include "IO_REG.H"
 
-extern u8 gMenuWork[];
-struct UiWindowWork { u8 data[0xa70]; };
-void UiWindow_InitializeWork(void)
+void UiWindow_InitializeWork(s32 unused)
 {
-    struct UiWindowWork *work = *(struct UiWindowWork **)gMenuWork;
+    struct InventoryMenuState *work = gMenuWork;
     volatile u32 zero = 0;
-    Dma_Set(&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
-    work->data[28] = 255;
-    work->data[30] = 1;
-    work->data[31] = 1;
-    work->data[274] = 1;
-    work->data[275] = 1;
+    Dma_Set(&zero, work, 0x8500029c, REG_DMA3);
+    work->pane_index[0] = -1;
+    work->pane_count[0] = 1;
+    work->pane_count[1] = 1;
+    work->column_count = 1;
+    work->row_count = 1;
 }

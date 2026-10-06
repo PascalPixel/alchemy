@@ -1,3 +1,14 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
@@ -7,32 +18,16 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "B5_CONTEXT.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
 
-extern u8 gBattleFxWork[];
-extern u8 ShatterRocks_ShardOffsets[];
-extern s8 ShatterRocks_RockX[];
-extern u8 ShatterRocks_DropFrames[];
-extern u8 ShatterRocks_RockCounts[];
-extern u8 ShatterRocks_ShardWidths[];
-extern u8 ShatterRocks_ShardHeights[];
-extern u16 ShatterRocks_ShardCells[];
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
+
 void Audio_PlayCue(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: up to five rocks (by variant) fall in turn between the
-   first and last affected units, each from its own frame and speeding up
-   until it lands. Eighteen frames after it starts falling a rock shatters
-   into 21 shards with a cue and a shake, and every affected unit reacts;
-   the shards fly up under gravity, cycling through three cells each. */
 void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
 {
     void **heap_cache;
@@ -58,18 +53,18 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000020 = 0x100;
-    *(volatile u16 *)0x04000050 = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work, 1, 1);
+    REG_BG2PA = 0x100;
+    REG_BLDCNT = 0;
+    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     blit = heap_cache[7];
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &final);
     first.x += (final.x - first.x) / 2;
-    *(volatile u32 *)0x04000028 = (64 - first.x) << 8;
+    REG_BG2X = (64 - first.x) << 8;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     rows = ShatterRocks_RockCounts[work->effect->variant];
     for (i = 0; i != rows; i++) {
         rock = &work->particles[i];
@@ -101,7 +96,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
                 for (j = 0; j != 21; j++) {
                     shard = &((struct EffectStep *)Ram_MapCellBuffer)[i * 21 + j];
                     cell = (j % 5) * 3 + shard->variant / 96 % 3;
-                    blit(canvas, (u8 *)work + ShatterRocks_ShardCells[cell] + 0x83c,
+                    blit(canvas, work->sheet + ShatterRocks_ShardCells[cell] + 0x83c,
                         HI(shard->x) - ((width = ShatterRocks_ShardWidths[cell]) >> 1),
                         HI(shard->y) - ((height = ShatterRocks_ShardHeights[cell]) >> 1),
                         width, height);
@@ -130,7 +125,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

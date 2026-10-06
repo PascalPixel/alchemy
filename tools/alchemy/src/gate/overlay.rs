@@ -1,27 +1,9 @@
-//! Overlay code never branches straight into the main image. The resource
-//! loader turns each Thumb call of a code overlay back into a call from where
-//! the overlay lands, so a direct branch reaches only the overlay's own
-//! bytes; main-image code is reached through the overlay's own IMPORT.S
-//! veneers, which load their target and `bx` to it. After each overlay links,
-//! and before the packer's call transform, the build fails when:
-//!
-//! - a direct branch in the overlay's code (Thumb `b`, `b<cond>` or `bl`, ARM
-//!   `b`, `bl` or `blx`) targets an address outside the overlay's own image;
-//! - the link map shows a section the linker made itself (`linker stubs`)
-//!   holding any bytes: long-branch veneers and interworking glue, which the
-//!   linker adds when a branch cannot reach its target directly.
-//!
-//! The assembler's mapping symbols (`$t`, `$a`, `$d`) in the linked ELF tell
-//! code from data; bytes before a section's first mapping symbol are data.
 use object::{Object, ObjectSection, ObjectSymbol, SectionFlags};
-use psynergy::decode::{decode_one, Kind};
+use crate::decode::{decode_one, Kind};
 use std::collections::{BTreeMap, BTreeSet};
 
-/// The failure's closing line: what to do instead.
 const REMEDY: &str = "call main-image code through the overlay's own IMPORT.S veneers";
 
-/// Fail when the linked overlay `elf` holds a direct branch out of its own
-/// image, or when its link `map` shows a linker-made stub or glue section.
 pub(crate) fn check(elf: &[u8], map: &str) -> Result<(), String> {
     let image = read(elf)?;
     let mut problems = linker_stubs(map);
@@ -47,24 +29,18 @@ pub(crate) fn check(elf: &[u8], map: &str) -> Result<(), String> {
     ))
 }
 
-/// One allocated section of the linked overlay.
 struct Section {
     address: u32,
     size: u32,
     bytes: Vec<u8>,
 }
 
-/// The linked overlay as the gate reads it.
 struct Image {
     sections: Vec<Section>,
-    /// Mapping symbols of the image's own sections: `a` ARM, `t` Thumb and
-    /// `d` data, each from its address to the next.
     marks: BTreeMap<u32, u8>,
-    /// Names of addresses, the overlay's and the main image's, for reports.
     names: BTreeMap<u32, String>,
 }
 
-/// The mapping symbol kind `name` spells, if it is one.
 fn mapping(name: &str) -> Option<u8> {
     let rest = name.strip_prefix('$')?.as_bytes();
     let kind = *rest.first()?;
@@ -103,14 +79,12 @@ fn read(elf: &[u8]) -> Result<Image, String> {
                     .section_index()
                     .is_some_and(|index| allocated.contains(&index.0))
                 {
-                    // Where two marks meet, code wins: the stricter reading.
                     let mark = marks.entry(address).or_insert(kind);
                     if *mark == b'd' {
                         *mark = kind;
                     }
                 }
             }
-            // Names for people: no local or linker-made ones (`.L`, `*ABS*`).
             None if !symbol.is_undefined()
                 && name.starts_with(|first: char| first.is_ascii_alphabetic() || first == '_') =>
             {
@@ -126,9 +100,6 @@ fn read(elf: &[u8]) -> Result<Image, String> {
     })
 }
 
-/// Every section the link map says the linker made, when it holds bytes.
-/// A map lists each input section as ` NAME ADDRESS SIZE OWNER`, the name on
-/// its own line when it is long.
 fn linker_stubs(map: &str) -> Vec<String> {
     let pattern =
         regex::Regex::new(r"(?m)^ (\S+)\s+0x([0-9a-f]+)\s+0x([0-9a-f]+) linker stubs\s*$")
@@ -147,7 +118,6 @@ fn linker_stubs(map: &str) -> Vec<String> {
         .collect()
 }
 
-/// Every direct branch of the image's code whose target is outside it.
 fn outside_branches(image: &Image) -> Vec<String> {
     let inside = |target: u32| {
         image
@@ -189,8 +159,6 @@ fn outside_branches(image: &Image) -> Vec<String> {
     problems
 }
 
-/// Every direct branch in `[start, stop)` of `section`, read as `kind` code:
-/// its address, target and text.
 fn branches(section: &Section, start: u32, stop: u32, kind: u8) -> Vec<(u32, u32, String)> {
     let mut found = Vec::new();
     match kind {
@@ -258,27 +226,25 @@ mod tests {
         image[at..at + bytes.len()].copy_from_slice(bytes);
     }
 
-    /// Thumb code at 0x00-0x20, data at 0x20-0x30, ARM code at 0x30-0x40.
     fn overlay() -> Vec<u8> {
         let mut image = vec![0u8; 0x40];
-        put(&mut image, BASE, &thumb_bl(BASE, BASE + 0x10)); // inside
-        put(&mut image, BASE + 4, &thumb_bl(BASE + 4, 0x0200_1000)); // main EWRAM
+        put(&mut image, BASE, &thumb_bl(BASE, BASE + 0x10));
+        put(&mut image, BASE + 4, &thumb_bl(BASE + 4, 0x0200_1000));
         let back = (0x0200_7ff0u32.wrapping_sub(BASE + 8 + 4) >> 1) & 0x7ff;
-        put(&mut image, BASE + 8, &(0xe000 | back as u16).to_le_bytes()); // b
+        put(&mut image, BASE + 8, &(0xe000 | back as u16).to_le_bytes());
         let past = ((BASE + 0x44).wrapping_sub(BASE + 0xa + 4) >> 1) & 0xff;
         put(
             &mut image,
             BASE + 0xa,
             &(0xd100 | past as u16).to_le_bytes(),
-        ); // bne
-        put(&mut image, BASE + 0xc, &0x4770u16.to_le_bytes()); // bx lr
-                                                               // A literal word shaped like a call out of the image is data.
+        );
+        put(&mut image, BASE + 0xc, &0x4770u16.to_le_bytes());
         put(&mut image, BASE + 0x20, &thumb_bl(BASE + 0x20, 0x0200_1000));
         let arm = |site: u32, target: u32, link: bool| {
             let offset = (target.wrapping_sub(site + 8) >> 2) & 0x00ff_ffff;
             (0xea00_0000 | u32::from(link) << 24 | offset).to_le_bytes()
         };
-        put(&mut image, BASE + 0x30, &arm(BASE + 0x30, BASE, false)); // inside
+        put(&mut image, BASE + 0x30, &arm(BASE + 0x30, BASE, false));
         put(
             &mut image,
             BASE + 0x34,

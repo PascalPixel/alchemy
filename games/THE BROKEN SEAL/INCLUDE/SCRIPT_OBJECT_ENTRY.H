@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* スクリプト衝突判定が走査する0x70バイトのオブジェクト表。 */
 struct ScriptObjectEntry {
     void *data;
     u8 unknown_04[4];
@@ -31,5 +30,9 @@ typedef char ScriptObjectEntry_size[
 ];
 
 #undef SCRIPT_OBJECT_ENTRY_OFFSET
+
+s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values);
+struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
+    struct ScriptObjectEntry *object, s32 *values);
 
 #endif

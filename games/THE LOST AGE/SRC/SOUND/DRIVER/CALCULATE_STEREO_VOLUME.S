@@ -1,9 +1,3 @@
-@ Stereo-volume helper that reads its inputs through r4 and r5, which its
-@ callers set, outside the registers a C call passes arguments in, and clamps
-@ each side's volume to 255. UPDATE.S (0x081c1b0c) and
-@ HANDLE_NOTE_UNREFERENCED.S call it through that private contract. These 48
-@ bytes equal TBS SOUND/DRIVER/CALCULATE_STEREO_VOLUME.S (0x080f9f3c).
-@ credit: library — TBS/TLA common sound driver stereo-volume helper
 .syntax unified
 	.thumb
 	.global SoundDriver_CalculateStereoVolumeTwin

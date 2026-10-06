@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 253\n"
 "X-Alchemy-Target: tbs-de\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(Keine Datei)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Von einem Heiligtum aus forts.)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(Noch nicht beendet)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(Die Datei ist fehlerhaft)"
 
@@ -2539,7 +2539,7 @@ msgctxt "message"
 msgid "00632"
 msgstr "Priester-Ring"
 
-msgctxt "message"
+msgctxt "MsgItemPluralName"
 msgid "00633"
 msgstr "???"
 
@@ -9299,7 +9299,7 @@ msgctxt "MsgItemAlreadyUsed"
 msgid "02322"
 msgstr "{argument_actor_name:1}{possessive_suffix} Item wurde{line_break}bereits eingesetzt!"
 
-msgctxt "message"
+msgctxt "MsgUsedItemBroke"
 msgid "02323"
 msgstr "{plural_suffix} {argument_item_name:1} zerbrach!"
 
@@ -9347,7 +9347,7 @@ msgctxt "MsgDmgP"
 msgid "02334"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02335"
 msgstr "Der Sensenmann ruft nach {argument_actor_name:1}!"
 
@@ -9359,7 +9359,7 @@ msgctxt "MsgPpLossP"
 msgid "02337"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02338"
 msgstr "{argument_actor_name:1} ist am Ende seiner Kraft..."
 
@@ -9407,7 +9407,7 @@ msgctxt "message"
 msgid "02349"
 msgstr "{argument_actor_name:1} weicht dem Schlag aus!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02350"
 msgstr "Team  von {argument_actor_name:1} wurde besiegt!"
 
@@ -9431,7 +9431,7 @@ msgctxt "MsgItemGained"
 msgid "02355"
 msgstr "Du findest {argument_item_name:1}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02356"
 msgstr "{argument_actor_name:1} erleidet eine Niederlage..."
 
@@ -9527,11 +9527,11 @@ msgctxt "MsgNoEffect"
 msgid "02379"
 msgstr "Aber es wirkt nicht auf {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgCastLacksPp"
 msgid "02380"
 msgstr "...hat aber nicht genug PP!"
 
-msgctxt "message"
+msgctxt "MsgPsynergyBlocked"
 msgid "02381"
 msgstr "Aber die Psynergy wird blockiert!"
 
@@ -9931,7 +9931,7 @@ msgctxt "message"
 msgid "02480"
 msgstr "Dschinn"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02481"
 msgstr "Erf."
 
@@ -9943,19 +9943,19 @@ msgctxt "message"
 msgid "02483"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02484"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02485"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02486"
 msgstr "Momentane Erfahrungspunkte. {argument_signed_number}{line_break}bis zum nächsten Level."
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02487"
 msgstr "Drücke die L- oder R-Taste, um{line_break}die Charaktere zu wechseln."
 
@@ -10027,7 +10027,7 @@ msgctxt "message"
 msgid "02504"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02505"
 msgstr "Normaler Status."
 
@@ -10103,7 +10103,7 @@ msgctxt "message"
 msgid "02523"
 msgstr "Schnelligkeit fiel um {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgBattleNoItems"
 msgid "02524"
 msgstr "Keine Items."
 
@@ -10111,7 +10111,7 @@ msgctxt "message"
 msgid "02525"
 msgstr "Keine Gegner."
 
-msgctxt "message"
+msgctxt "MsgBattleNoPsynergy"
 msgid "02526"
 msgstr "Keine Psynergy."
 
@@ -10127,11 +10127,11 @@ msgctxt "message"
 msgid "02529"
 msgstr "Du hast keine Ausrüstung."
 
-msgctxt "message"
+msgctxt "MsgBattleItemNoEffect"
 msgid "02530"
 msgstr "Dies einzusetzen hat keinen Sinn."
 
-msgctxt "message"
+msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "Es ist kaputt."
 
@@ -10139,7 +10139,7 @@ msgctxt "message"
 msgid "02532"
 msgstr "Du hast keinen Dschinn."
 
-msgctxt "message"
+msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "Im Kampf nicht einsetzbar."
 
@@ -10247,27 +10247,27 @@ msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Starten     {button_icon:2}:Stopp"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02560"
 msgstr "{button_icon:4}:Anhalten"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02561"
 msgstr "Wähle Slots, die stehen blei-"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02562"
 msgstr "ben sollen und zieh am Hebel!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02563"
 msgstr "{button_icon:1}:Stopp"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02564"
 msgstr "{button_icon:1}:Drehen"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02565"
 msgstr "{button_icon:1}:Starten"
 
@@ -10279,19 +10279,19 @@ msgctxt "message"
 msgid "02567"
 msgstr "{button_icon:2}:Aufhören"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02568"
 msgstr "Alle Slots stehen!"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "02569"
 msgstr "Du kannst nicht drehen!"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02570"
 msgstr "{argument_actor_name:1}{possessive_suffix} Kraft ist verbraucht...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02571"
 msgstr "{protagonist_name}{possessive_suffix} Team wurde{line_break}ausgelöscht...{end_wait}"
 
@@ -11571,7 +11571,7 @@ msgctxt "message"
 msgid "02890"
 msgstr "Wähle einen Dschinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "02891"
 msgstr "{button_icon:6}:Alle verbünden"
 
@@ -11643,7 +11643,7 @@ msgctxt "message"
 msgid "02908"
 msgstr "{button_icon:3}:Char. Status"
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "02909"
 msgstr "Akt. Status"
 
@@ -12159,7 +12159,7 @@ msgctxt "MsgSleepMode"
 msgid "03037"
 msgstr "Schlafmodus wird aktiviert.{line_break}Drücke {button_icon:3}+{button_icon:4}, um fortzufahren.{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03038"
 msgstr "Das Pausenmenü ist jetzt{line_break}nicht verfügbar.{end_wait}"
 
@@ -12659,7 +12659,7 @@ msgctxt "message"
 msgid "03162"
 msgstr "Psynergy ist eine{line_break}Macht des Geistes. {line_break}Menschen, die sie an-{page_break}wenden können, werden{line_break}Adepten genannt. Die{line_break}Psynergy kann sich{page_break}durch die Änderung der{line_break}Klasse oder bei einem{line_break}Levelanstieg verändern. {page_break}Versuche, deine Klasse{line_break}zu ändern, um neue{line_break}Psynergien zu gewinnen."
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialGive"
 msgid "03163"
 msgstr "Um deinen Dschinn{line_break}jemand anderem zu{line_break}geben, bewege ihn so:{end_wait}"
 
@@ -12687,11 +12687,11 @@ msgctxt "message"
 msgid "03169"
 msgstr "Lass mich dir eine Kost-{line_break}probe meiner Macht geben,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03170"
 msgstr "Hast du gesehen? Als du{line_break}mich freigesetzt hast,{line_break}habe ich mit meiner{page_break}mächtigen, steinzer-{line_break}schmetternden Faust{line_break}angegriffen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Nachdem wir freigesetzt{line_break}worden sind, warten wir{line_break}Dschinns darauf, be-{page_break}schworen zu werden...{end_now}"
 
@@ -13027,11 +13027,11 @@ msgctxt "MsgWeaponShopWelcome"
 msgid "03254"
 msgstr "Hereinspaziert!{line_break}Sieh dir nur unsere{line_break}guten Waffen an!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "03255"
 msgstr "Oh! Das ist eine gute{line_break}Wahl, aber du hast nicht{line_break}genug Geld.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "03256"
 msgstr "Wer soll das{line_break}bekommen?{end_now}"
 
@@ -13039,7 +13039,7 @@ msgctxt "MsgPackFull"
 msgid "03257"
 msgstr "Du bist schon voll-{line_break}bepackt, {argument_actor_name:1}. Wem soll{line_break}ich das geben?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "03258"
 msgstr "Du kannst das nicht{line_break}anlegen. Willst du es{page_break}trotzdem haben?{end_now}"
 
@@ -13075,7 +13075,7 @@ msgctxt "MsgWhatWouldYouLike"
 msgid "03266"
 msgstr "Was darf's denn sein?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "03267"
 msgstr "Noch einen Wunsch?{end_now}"
 

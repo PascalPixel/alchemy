@@ -1,9 +1,3 @@
-@ Updates 160 vertex records (position and depth in 16.16 fixed point) for a
-@ shared rotation. It runs from a RAM copy of exactly these 644 bytes. Not-yet-C,
-@ built from its disassembly: it has the shape of GCC 2.96 ARM-mode output
-@ (register subtraction as rsb, calls through mov lr, pc; bx ip, division by
-@ 256 as cmp; addlt #255; asr #8, lr saved with r5-sl while r4 stays free).
-@ This complete not-yet-C module uses the approved ARM game-code route.
 .syntax unified
 	.arm
 	.global Transform_UpdateVertices
@@ -147,7 +141,7 @@ Func_0800a0f8:
 	str	r3, [r6, #12]
 	b	.L_0800a344
 	.4byte Rom_Start + 0xc0
-	.4byte Data_03001f60
+	.4byte gScanlineAngle
 	.4byte gProjection + 0xc
 	.4byte gFrameCount
 .L_0800a31c:

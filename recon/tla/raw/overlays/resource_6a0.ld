@@ -1,5 +1,3 @@
-/* resource_6a0: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -53,14 +51,16 @@ SECTIONS
         "*/resource_6a0_overlay.o"(.text.x02009ee8)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02009f3a)
-        "*/resource_6a0_overlay.o"(.text.x02009f3c)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_6a0_overlay.o"(.text.x02009f72)
         "*/resource_6a0_overlay.o"(.text.x02009f74)
         "*/resource_6a0_overlay.o"(.text.x0200a13c)
         "*/resource_6a0_overlay.o"(.text.x0200a268)
         "*/resource_6a0_overlay.o"(.text.x0200a4ac)
         "*/resource_6a0_overlay.o"(.text.x0200a534)
         "*/resource_6a0_overlay.o"(.text.x0200a5a4)
-        "*/resource_6a0_overlay.o"(.text.x0200a6e4)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/resource_6a0_overlay.o"(.text.x0200a73a)
         "*/resource_6a0_overlay.o"(.text.x0200a73c)
         "*/resource_6a0_overlay.o"(.text.x0200a8d4)
         "*/resource_6a0_overlay.o"(.text.x0200a984)

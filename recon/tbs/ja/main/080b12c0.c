@@ -61,7 +61,7 @@ void Func_080b9d34(void *input, struct Work_080b12c0 *work);
 struct Unit_080b12c0 *Func_08077008(s32 id);
 struct Record_080b12c0 *Func_080b7f70(
     struct Motion_080b12c0 *object, s32 index);
-s32 Func_08009260(s32 value, s32 second, s32 third);
+s32 ResourceMetadata_SumCommandLengthsFar(s32 value, s32 second, s32 third);
 u32 Func_080c2410(u32 value);
 void Func_080b82c4(s32 first, s32 second, s32 divisor, s32 initial_y);
 void Func_08009088(struct Motion_080b12c0 *object, s32 action);
@@ -136,7 +136,7 @@ s32 RunBattlePresentation(struct Input_080b12c0 *input)
 
     record = Func_080b7f70(
         Func_080b7dd0(saved_input->primary_id)->object, 0);
-    divisor = Func_08009260(record->child->value, 2, 1);
+    divisor = ResourceMetadata_SumCommandLengthsFar(record->child->value, 2, 1);
     Func_080b82c4(
         work.primary_id,
         work.members[0],

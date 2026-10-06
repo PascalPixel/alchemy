@@ -113,7 +113,7 @@ Func_08021a84:
 .L_08021b74:
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_08022acc
+	bl Animation_SetWorkEntry
 	strb r5, [r7, #24]
 	b .L_08021afe
 .L_08021b80:
@@ -439,7 +439,7 @@ Func_08021a84:
 	lsls r3, r3, #2
 	ldr r0, [r3, r2]
 	adds r1, r5, #0
-	bl Func_08021940
+	bl Resource_DecompressLz
 	ldrb r2, [r6, #5]
 	mov r1, r9
 	ldr r3, [sp, #12]

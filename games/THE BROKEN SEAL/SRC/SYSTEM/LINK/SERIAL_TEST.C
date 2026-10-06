@@ -1,17 +1,23 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
+#include "KEYSTATE.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
-extern u8 gMapCellBuffer[];
+#include "CARTBOOT.H"
+#include "IO_REG.H"
 
-extern u8 gKeysHeld[];
+extern u8 gMapCellBuffer[];
+extern const u8 Rom_Start[];
 
 void Audio_PlayCue(s32 cue);
-void SerialRuntime_Initialize(void);
-void SerialRuntime_WaitForStatusMask(s32 mask);
-void SerialRuntime_BeginTransferA(const void *source, s32 size);
-void SerialRuntime_BeginTransferB(void *destination);
-
-#define KEYS_HELD (*(volatile u32 *)gKeysHeld)
 
 void RuntimeWait_BusyLoopTick(void)
 {
@@ -29,7 +35,7 @@ void SerialTest_Run(void)
     SerialRuntime_Initialize();
     n = 19;
     tile = (u16 *)0x06002426;
-    value = (s16)0xf093; /* palette 15, tile 0x93, counting down */
+    value = (s16)0xf093;
     do {
         n--;
         *tile = value;
@@ -40,13 +46,13 @@ void SerialTest_Run(void)
     Bios_CpuSet((const void *)&zero, (void *)gMapCellBuffer, 0x05000100);
     SerialRuntime_WaitForStatusMask(3);
 restart:
-    SerialRuntime_BeginTransferB((void *)gMapCellBuffer);
+    SerialRuntime_BeginTransferB(gMapCellBuffer);
     for (;;) {
-        if (KEYS_HELD & 1)
-            SerialRuntime_BeginTransferA((const void *)0x08000000, 0x280);
-        if (KEYS_HELD & 2)
-            SerialRuntime_BeginTransferA((const void *)0x08001000, 0x280);
-        if (KEYS_HELD & 8) {
+        if ((*(volatile u32 *)&gKeysHeld) & 1)
+            SerialRuntime_BeginTransferA((void *)Cart_Restart, 0x280);
+        if ((*(volatile u32 *)&gKeysHeld) & 2)
+            SerialRuntime_BeginTransferA((void *)(Rom_Start + 0x1000), 0x280);
+        if ((*(volatile u32 *)&gKeysHeld) & 8) {
             tick = 9999;
             do {
                 tick--;
@@ -54,7 +60,7 @@ restart:
             } while (tick >= 0);
         }
         if (SERIAL_ACTIVE_B == 0) {
-            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, (volatile u32 *)0x040000d4);
+            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
             goto restart;
         }
         WaitFrames(1);

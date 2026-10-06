@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x08020268: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -21,18 +17,18 @@ Animation_ApplyChildValuesFar:
 	.thumb_func
 Animation_ApplyChildValuesToRecordFar:
 	overlay_veneer Animation_ApplyChildValuesToRecord
-	.global Func_08020288
+	.global Animation_ApplyChildValueToFirstFar
 	.thumb_func
-Func_08020288:
-	overlay_veneer Func_080227a0
-	.global Func_08020290
+Animation_ApplyChildValueToFirstFar:
+	overlay_veneer Animation_ApplyChildValueToFirst
+	.global ObjectDispatch_SetSpritePriorityFar
 	.thumb_func
-Func_08020290:
-	overlay_veneer Func_080236e8
-	.global Func_08020298
+ObjectDispatch_SetSpritePriorityFar:
+	overlay_veneer ObjectDispatch_SetSpritePriority
+	.global ScriptObject_CheckOverlapFar
 	.thumb_func
-Func_08020298:
-	overlay_veneer Func_08024f20
+ScriptObject_CheckOverlapFar:
+	overlay_veneer ScriptObject_CheckOverlap
 	.global Func_080202a0
 	.thumb_func
 Func_080202a0:

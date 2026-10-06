@@ -41,7 +41,7 @@ Func_0804380c:
 	movs r7, #2
 	b .L_08043896
 .L_0804385c:
-	bl Func_08043230
+	bl SaveState_FindFreeSummarySlot
 	movs r3, #186
 	lsls r3, r3, #2
 	adds r6, r0, #0
@@ -76,7 +76,7 @@ Func_0804380c:
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWait
 .L_080438a6:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r7, #0
 	pop {r3}
 	mov r8, r3

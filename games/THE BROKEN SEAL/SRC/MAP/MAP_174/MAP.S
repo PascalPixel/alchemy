@@ -1,4 +1,3 @@
-@ Field_Map174: a field map, the same as MAP_001.
 	.include "games/THE BROKEN SEAL/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map174

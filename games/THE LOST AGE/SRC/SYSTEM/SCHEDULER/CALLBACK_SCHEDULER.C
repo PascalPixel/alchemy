@@ -3,7 +3,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "STRING.H"
 
-/* ⚓️'s table holds 24 tasks and clears the counts plainly, where ☀️ holds 20. */
 void Scheduler_ResetTaskTable(void)
 {
     struct SchedulerTask *task;
@@ -65,7 +64,7 @@ finish_pass:
         goto next_pass;
 }
 
-s32 Scheduler_FindCallback(u32 callback)
+s32 Scheduler_FindCallback(SchedulerCallback callback)
 {
     s32 result;
     struct SchedulerTask *task;
@@ -74,8 +73,7 @@ s32 Scheduler_FindCallback(u32 callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the
-     * interrupt-master register's address is loaded before the task table's. */
+    /* FAKEMATCH: the one-pass blocks keep the task-table address load before IME's address. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -85,7 +83,7 @@ s32 Scheduler_FindCallback(u32 callback)
         }
         do {
             for (i = 0; i <= 23; i++, task++) {
-                if (task->callback == callback) {
+                if (task->callback == (u32)callback) {
                     result = i;
                     break;
                 }
@@ -96,7 +94,7 @@ s32 Scheduler_FindCallback(u32 callback)
     return result;
 }
 
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
+s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
 {
     u32 saved_interrupt_state;
     s32 index;
@@ -104,19 +102,21 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
     s32 i;
 
     task = gSchedulerTaskTable;
-    (void)gSchedulerStatus; /* read and dropped */
+    (void)gSchedulerStatus;
     index = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass blocks keep the task-table address load before IME's address. */
     do {
-        saved_interrupt_state = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_state = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
         do {
             i = 0;
-            if (task->callback == callback) {
+            if (task->callback == (u32)callback) {
                 task->state = order;
                 index = 0;
             } else {
@@ -124,7 +124,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
                 i++;
                 task++;
                 if (i <= 23) {
-                    if (task->callback == callback) {
+                    if (task->callback == (u32)callback) {
                         task->state = order;
                         index = i;
                     } else {
@@ -136,7 +136,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
             if (index == -1) {
                 i = 0;
                 if (task->callback == 0) {
-                    task->callback = callback;
+                    task->callback = (u32)callback;
                     task->state = order;
                     task->mask = 0;
                     index = 0;
@@ -146,7 +146,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
                     task++;
                     if (i <= 23) {
                         if (task->callback == 0) {
-                            task->callback = callback;
+                            task->callback = (u32)callback;
                             task->state = order;
                             task->mask = 0;
                             index = i;
@@ -167,7 +167,7 @@ void Scheduler_Idle(void) {}
 
 void Scheduler_EmptyCallback(void) {}
 
-s32 Scheduler_RemoveCallback(u32 callback)
+s32 Scheduler_RemoveCallback(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -176,7 +176,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass blocks keep the task-table address load before IME's address. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -186,7 +186,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
         }
         do {
             for (i = 0; i <= 23; i++, task++) {
-                if (task->callback == callback) {
+                if (task->callback == (u32)callback) {
                     task->callback = 0;
                     task->state = 0x7fff;
                     result = i;
@@ -199,7 +199,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
     return result;
 }
 
-s32 Scheduler_EnableCallbacks(u32 callback)
+s32 Scheduler_EnableCallbacks(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -208,24 +208,26 @@ s32 Scheduler_EnableCallbacks(u32 callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if (callback != 0) {
-                    if (task->callback != callback)
-                        continue;
-                }
-                TASK_STATE_HIGH(task) |= 1;
-                result = i;
+        for (i = 0; i <= 23; i++, task++) {
+            if (callback != 0) {
+                if (task->callback != (u32)callback)
+                    continue;
             }
-        } while (0);
+            TASK_STATE_HIGH(task) |= 1;
+            /* FAKEMATCH: the result copy follows the state byte store, as in Scheduler_EnableUnmaskedOverlayCallbacks. */
+            __asm__ volatile("");
+            result = i;
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;
@@ -240,22 +242,24 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks; holding the copy and the IME pointer here also keeps the native r6/r7 choice. */
+            __asm__ volatile("" : "+r"(saved_interrupt_master) : "r"(ime));
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
-                    TASK_STATE_HIGH(task) |= 1;
-                    result = i;
-                }
+        for (i = 0; i <= 23; i++, task++) {
+            if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
+                TASK_STATE_HIGH(task) |= 1;
+                /* FAKEMATCH: under the ARM9TDMI load schedule the result copy fills the state byte's load delay; native stores the byte first. */
+                __asm__ volatile("");
+                result = i;
             }
-        } while (0);
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;

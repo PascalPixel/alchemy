@@ -359,7 +359,7 @@ Func_080279b0:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [sp, #16]
 	str r1, [r7, #36]
 	str r1, [r7, #44]
@@ -450,7 +450,7 @@ Func_080279b0:
 .L_08027d20:
 	.4byte Data_0802ec5c
 .L_08027d24:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08027d28:
 	.4byte 0xffffeaab
 .L_08027d2c:

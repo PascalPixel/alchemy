@@ -124,7 +124,7 @@ Func_08144b14:
 	movs r3, #36
 	ldrsh r0, [r2, r3]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r2, [r5]
 	movs r3, #64
 	subs r3, r3, r2
@@ -324,7 +324,7 @@ Func_08144b14:
 	mov r0, r8
 	lsls r0, r0, #4
 	mov r10, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #36]
 	bl Graphics_PrepareTransferInIwramWork
@@ -359,7 +359,7 @@ Func_08144b14:
 	add r5, sp, #92
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	ldr r0, [sp, #44]
 	adds r3, r3, r0
@@ -479,7 +479,7 @@ Func_08144b14:
 	ldrsh r0, [r1, r3]
 	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	adds r1, r0, #0
 	adds r1, #12
@@ -527,7 +527,7 @@ Func_08144b14:
 	adds r1, r7, #0
 	str r3, [r0, #8]
 	str r4, [sp, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r7]
 	ldr r5, [sp, #44]
 	ldr r4, [sp, #8]

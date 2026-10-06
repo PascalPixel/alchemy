@@ -1,12 +1,19 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OWNER_STATE.H"
+#include "BATTLE_STATUS_ICON.H"
 
-s32 BattleUnit_BuildStatusFlags(s32, s32);
-void Owner_RecalculateStatsFar(s32);
 s32 GetBattleObjectSlot(s32);
 
-/* ☀️'s, but ⚓️ reaches the owner's state with a direct call. */
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
     u8 *state;

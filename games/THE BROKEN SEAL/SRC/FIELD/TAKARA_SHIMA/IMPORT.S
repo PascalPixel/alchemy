@@ -1,8 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Import veneers after the TAKARA_SHIMA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — TAKARA_SHIMA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -82,15 +78,15 @@ Engine_MapCopyCellAttributes:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global SetMapCellCollision
 	.thumb_func
 SetMapCellCollision:
@@ -135,10 +131,7 @@ Object_GetById:
 	.global GetOrbitingSceneObject
 	.thumb_func
 GetOrbitingSceneObject:
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func
 ObjectMotion_SetSpeedParameters:
@@ -153,7 +146,7 @@ Engine_ActorMoveToAndWait:
 	.global Engine_ActorCenterAndWalk
 	.thumb_func
 Engine_ActorCenterAndWalk:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
 ObjectMotion_OffsetPositionAndResetMotion:
@@ -187,7 +180,7 @@ Engine_ActorSetSpritePriority:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -199,11 +192,11 @@ Party_SetFields1ceAnd1d0:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ItemShowFound
 	.thumb_func
 Engine_ItemShowFound:

@@ -247,7 +247,7 @@ Func_0813cb34:
 	adds r3, #12
 	str r3, [sp, #8]
 .L_0813cd22:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #24]
 	ldr r1, [sp, #8]
 	bl Graphics_PrepareTransferInIwramWork
@@ -290,7 +290,7 @@ Func_0813cb34:
 	adds r0, r7, #0
 	ldr r3, [r6, #8]
 	str r3, [r7, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	movs r1, #58
 	asrs r3, r3, #1
@@ -528,7 +528,7 @@ Func_0813cb34:
 	ldr r0, .L_0813cf7c
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_0813cf60
 .L_0813cf5c:
 	bl Func_08143bb8

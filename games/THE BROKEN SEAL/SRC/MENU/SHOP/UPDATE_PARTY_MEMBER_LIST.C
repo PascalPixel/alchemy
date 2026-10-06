@@ -1,45 +1,32 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "SHOP.H"
 
-void AnimationObjects_SelectAnimationFar(void *, s32);
-s32 Item_IsCompatibleWithOwnerFar(s16, s32);
+#define Item_IsCompatibleWithOwnerFar ((s32 (*)(s16,s32))Item_IsCompatibleWithOwnerFar)
 
-extern u8 *gMenuWork;
-
-union ShopPartyMemberId {
-    s32 word;
-    s16 half[2];
-};
+extern struct ShopRuntime *gMenuWork;
 
 void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
 {
-    u8 *shop;
-    u8 *party_member_base;
-    s32 *icon_entry;
+    struct ShopRuntime *shop = gMenuWork;
     s32 index;
-    s32 offset;
-    s16 unit_id;
 
-    shop = gMenuWork;
     if (window != 0) {
-        index = 0;
-        if (index < *(s8 *)(shop + 0x3a7)) {
-            party_member_base = shop + 2;
-            offset = 0x36c;
-            icon_entry = (s32 *)(shop + 0x114);
-            do {
-                if (index == selected)
-                    AnimationObjects_SelectAnimationFar((void *)*icon_entry, 30);
-                else
-                    AnimationObjects_SelectAnimationFar((void *)*icon_entry, 1);
-                icon_entry[16] = 0x10000;
-                unit_id = ((union ShopPartyMemberId *)(
-                    party_member_base + offset))->half[0];
-                if (Item_IsCompatibleWithOwnerFar(unit_id, requirement) == 0)
-                    icon_entry[16] = 0xcccc;
-                index++;
-                offset += 2;
-                icon_entry++;
-            } while (index < *(s8 *)(shop + 0x3a7));
+        for (index = 0; index < shop->party_member_count; index++) {
+            if (index == selected)
+                AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 30);
+            else
+                AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 1);
+            shop->party_member_scale[index] = 0x10000;
+            if (!Item_IsCompatibleWithOwnerFar(shop->party_member_ids[index], requirement))
+                shop->party_member_scale[index] = 0xcccc;
         }
     }
 }

@@ -1,57 +1,44 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "EDITION.H"
 #include "MENU_TEST.H"
 #include "CALL.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
 #include "ITEM.H"
+#include "ITEMGIFT.H"
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
-TEXT_MESSAGE_ENUM(MsgBattleAdditionalPsynergyHelp);
-TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
-void Event_SetValue1d8(s16 message);
-void BattleEv_RunWait(s32 mode, s32 frames);
-s32 PartyInventory_GiveItem(s32 item);
 
-extern u8 MsgSanctumWelcome[];
-extern u8 MsgWarriorShopWelcome[];
-extern u8 MsgWarriorArmorShopWelcome[];
-extern u8 MsgWarriorItemShopWelcome[];
-extern u8 MsgDebugBodyTornApart[];
-extern u8 MsgDebugGotDjinni[];
-extern u8 MsgDebugGotItem[];
-extern u8 MsgDebugGotSturdyEquipment[];
-extern u8 MsgDebugWentLevel[];
+void Event_SetMessageId(s16 message);
 
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
-struct ItemDefinition *Engine_DebugGetItem(s32 item);
+
 void Engine_AudioPlayCue(s32 cue);
-extern u8 gDebugItemPrompt[];
-extern u8 gDebugItemCapacityLabel[];
-extern u8 gDebugItemFullLabel[];
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
-struct TextRenderWork *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Engine_DebugRedrawWindow(struct TextRenderWork *window);
-void Engine_DebugClearWindow(struct TextRenderWork *window);
-void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
+struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 
-extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
 
-u8 *SceneData_GetTable93c8(void)
+u8 *MenuTest_GetEntrances(void)
 {
-    return MenuTest_CommandTable;
+    return MenuTest_Entrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -59,14 +46,14 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable93f8(void)
+u8 *MenuTest_GetExits(void)
 {
-    return MenuTest_CommandTableB;
+    return MenuTest_Exits;
 }
 
-u8 *SceneData_GetTable93fc(void)
+u8 *MenuTest_GetPlacements(void)
 {
-    return MenuTest_CommandTableC;
+    return MenuTest_Placements;
 }
 
 #if EDITION_INTERNATIONAL
@@ -82,15 +69,14 @@ void SceneDialogue_ShowMessageAndWait(s32 arg0)
 
 void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 {
-    s16 *tbl = Data_02000240;
     volatile s32 *key;
     s32 token;
     s32 i;
 
-    *(u8 *)&tbl[262] = 2;
+    gGameState.message_speed = 2;
     token = UiWindow_CreateWithSideObject(125, 0, 0, 0);
     for (i = 0; i < cnt; i++) {
-        key = &Data_03001ae8;
+        key = &gKeysHeld;
         UiWork_PushValueSlot(1, 1);
         UiWork_PushValueSlot(141, 2);
         UiWork_PushValueSlot(0x1e240, 5);
@@ -129,45 +115,45 @@ end:
 
 void SceneState_ApplyBlockC9b(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWeaponShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWeaponShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockCc6(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgArmorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockCf1(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgItemShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockD21(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgSanctumWelcome, (s32)MsgWarriorShopWelcome - (s32)MsgSanctumWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
 void SceneState_ApplyBlockD4c(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWarriorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockD77(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWarriorArmorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockDa2(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWarriorItemShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 #endif
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_RunMessageTest(void)
 {
-    Event_SetValue1d8(MsgBattleAdditionalPsynergyHelp);
-    Event_SetValue1d8(MsgHaidiaComeOnHurry);
+    Event_SetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
+    Event_SetMessageId(MSGNO(MsgHaidiaComeOnHurry));
     BattleEv_RunWait(-1, 0);
 }
 #endif
@@ -199,31 +185,26 @@ void CommandTable_NoOpCallback(void)
 
 void SceneState_SetRecordFlag53(void)
 {
-    Data_03001f30[0][0x35] = 1;
+    gEffectWork->child_mode = 1;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_GiveItemToParty(void)
 {
-    /* FAKEMATCH: the obsolete second-argument zero must use r1 before the one-argument item API. */
-    register s32 unused asm("r1") = 0;
-
-    /* FAKEMATCH: keeping the unused r1 value live emits the original caller setup; a plain call omits it. */
-    asm("" : : "r"(unused));
-    PartyInventory_GiveItem(181);
+    PartyInventory_GiveItem(181, 0);
 }
 #endif
 
-s32 SceneData_GetTable9564(void)
+s32 MenuTest_GetEvents(void)
 {
-    return (s32)MenuTest_SlotValues;
+    return (s32)MenuTest_Events;
 }
 
-void FieldScene_ApplyTable9684ValueToFourSlots(void)
+void MenuTest_RaisePartyLevelTarget(void)
 {
     s32 *p;
 
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugWentLevel, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugWentLevel, 1);
     p = (s32 *)MenuTest_SlotOffsets;
     Party_AdvanceOwnerCountToTarget(0, *p);
     Party_AdvanceOwnerCountToTarget(1, *p);
@@ -241,7 +222,7 @@ void FieldScene_GrantItemListToSlots(void)
     u32 tmp;
     s32 slot;
 
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotItem, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
     Inventory_AddItem(0, 187);
     Inventory_AddItem(0, 187);
     Inventory_AddItem(0, 187);
@@ -446,8 +427,6 @@ void CommandTable_ConfigureCommandGroups(void)
     s32 i;
     s32 j;
 
-    /* The Japanese debug command fills a buffer with successive characters,
-     * wrapping the scene's character counter from 96 back to 65. */
     for (i = 0; i < 16; i++) {
         for (j = 255; j >= 0; j--) {
             buf[j] = 0;
@@ -463,7 +442,7 @@ void CommandTable_ConfigureCommandGroups(void)
         }
     }
 #endif
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotDjinni, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotDjinni, 1);
     Djinn_AddToOwner(0, 0, 0);
     Djinn_AddToOwner(0, 0, 1);
     Djinn_AddToOwner(0, 0, 2);
@@ -529,7 +508,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     u32 i;
     u8 *record;
 
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugBodyTornApart, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
     Value2(Owner_AdjustFirstValue, 0, -100);
     Value2(Owner_AdjustFirstValue, 1, -100);
     Owner_AdjustFirstValue(2, -33);
@@ -553,7 +532,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
 
 void FieldScene_AssignCodeSetAToSlots(void)
 {
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotSturdyEquipment, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
     Inventory_AddItem(0, 85);
     Inventory_AddItem(0, 84);
     Inventory_AddItem(0, 124);
@@ -596,8 +575,8 @@ void FieldScene_AssignCodeSetAToSlots(void)
 
 void DebugMenu_SelectItem(void)
 {
-    struct TextRenderWork *window;
-    struct TextRenderWork *details;
+    struct RenderInput *window;
+    struct RenderInput *details;
     s32 item;
     s32 redraw;
     s32 index;
@@ -610,9 +589,9 @@ void DebugMenu_SelectItem(void)
     item = 1;
     redraw = 1;
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Engine_TaskWait(1);
     for (;;) {
         if (redraw) {
@@ -634,43 +613,43 @@ void DebugMenu_SelectItem(void)
                 UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
             }
         }
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             if (PartyInventory_Add(item) == -1) {
                 Engine_AudioPlayCue(113);
                 goto done;
             }
             Engine_AudioPlayCue(175);
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Engine_AudioPlayCue(113);
             goto done;
         }
-        if (gKeysRepeat & 64) {
+        if (gKeysRepeat & KEY_UP) {
             item--;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 128) {
+        if (gKeysRepeat & KEY_DOWN) {
             item++;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             item += 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             item -= 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 256) {
+        if (gKeysRepeat & KEY_R) {
             item += 30;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 512) {
+        if (gKeysRepeat & KEY_L) {
             item -= 30;
             redraw = 1;
             Engine_AudioPlayCue(111);
@@ -692,7 +671,7 @@ void SceneState_RunCall1c00(void)
 
 void FieldScene_AssignCodeSetBToSlots(void)
 {
-    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotTreasure, 1);
+    UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
     Inventory_AddItem(ROBIN, 0xb8);
     Inventory_AddItem(ROBIN, 0xcc);
     Inventory_AddItem(ROBIN, 0xdc);
@@ -763,8 +742,7 @@ s32 CommandTable_ConfigureCommandList(void)
     Item_AdjustCounter(130, 1);
     Item_AdjustCounter(140, 1);
     Item_AdjustCounter(151, 1);
-    /* FAKEMATCH: the typed void calls put the first three owner arguments
-     * before the target count; ordinary calls reverse their order. */
+    /* FAKEMATCH: the typed void calls put the first three owner arguments before the target count; ordinary calls reverse their order. */
 #if EDITION_INTERNATIONAL
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 50);
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(JERARD, 30);

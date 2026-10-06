@@ -1,5 +1,3 @@
-@ EWRAM variables not yet defined in C, in address order, as pret's
-@ sym files list them. Each .space runs to the next variable.
 	.section .sym_ewram,"aw",%nobits
 	.global gSaveBuffer
 gSaveBuffer:
@@ -103,8 +101,8 @@ gMusicPitchStep:
 	.global gMusicVolumeStep
 gMusicVolumeStep:
 	.space 0x00000004
-	.global Data_02003014
-Data_02003014:
+	.global gMusicFadeRequested
+gMusicFadeRequested:
 	.space 0x0000000c
 	.global gMusicPlayerVolumes
 gMusicPlayerVolumes:
@@ -154,8 +152,8 @@ Sound_WorkBytes:
 	.global Data_02004360
 Data_02004360:
 	.space 0x000008a0
-	.global Data_02004c00
-Data_02004c00:
+	.global gScratchWord
+gScratchWord:
 	.global Flash_Handler3
 Flash_Handler3:
 	.space 0x00000004

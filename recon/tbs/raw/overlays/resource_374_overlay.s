@@ -9,8 +9,8 @@
 	.4byte 0x01000006
 	.4byte 0x03020201
 	.4byte 0x05040403
-	.global Data_0200a874
-Data_0200a874:
+	.global HaidiaIe_Actor22Actions
+HaidiaIe_Actor22Actions:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -250,8 +250,8 @@ Data_0200ab2c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000010
-	.global Data_0200ac00
-Data_0200ac00:
+	.global HaidiaIe_FaceTargetActions
+HaidiaIe_FaceTargetActions:
 	.4byte 0x00000022
 	.4byte Object_UpdateFacingTowardTarget
 	.4byte 0x0000000c
@@ -452,8 +452,8 @@ Data_0200ae34:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000010
-	.global Data_0200aef0
-Data_0200aef0:
+	.global HaidiaIe_Actor17Actions
+HaidiaIe_Actor17Actions:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -478,8 +478,8 @@ Data_0200aef0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000010
-	.global Data_0200af50
-Data_0200af50:
+	.global HaidiaIe_LeaderStepActions
+HaidiaIe_LeaderStepActions:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -490,8 +490,8 @@ Data_0200af50:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
-	.global Data_0200af78
-Data_0200af78:
+	.global HaidiaIe_Actor25StepActions
+HaidiaIe_Actor25StepActions:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -609,7 +609,6 @@ Data_0200b108:
 	.4byte 0x00a01002
 	.4byte 0x00b0501c
 	.4byte 0x03214008
-	@ The late localizations use a different final first-visit script command.
 	.ifdef TBS_EDITION_FR
 	.4byte 0x0280000c
 	.else

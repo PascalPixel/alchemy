@@ -1,7 +1,3 @@
-/*
- * Draft: ItemMenu_Count does not yet match; 3 halfwords differ from ☀️'s C, first at +0xc (adds r4, #255).
- * Links as recon/tla/raw/080fad1c.s.
- */
 #include "OWNER_STATE.H"
 
 s32 ItemMenu_Count(s32 owner_id)

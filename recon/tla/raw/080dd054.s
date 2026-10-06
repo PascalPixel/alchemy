@@ -214,7 +214,7 @@ Func_080dd054:
 	bgt .L_080dd266
 	mov r0, r10
 	adds r1, r6, #0
-	bl Func_080202e8
+	bl ScriptObject_FindOverlappingEntryFar
 	cmp r0, #0
 	beq .L_080dd286
 	cmp r0, r11
@@ -437,9 +437,9 @@ Func_080dd054:
 	ldrsh r1, [r3, r2]
 	movs r4, #26
 	ldrsh r2, [r3, r4]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080dd3ec:
-	bl Func_080dc7cc
+	bl EffectRuntime_StopCurrentObject
 	ldr r0, [sp, #24]
 	cmp r0, #1
 	bne .L_080dd40a
@@ -472,7 +472,7 @@ Func_080dd054:
 .L_080dd42c:
 	.4byte 0xfff00000
 .L_080dd430:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080dd434:
 	.4byte Data_080f0ee4
 .L_080dd438:

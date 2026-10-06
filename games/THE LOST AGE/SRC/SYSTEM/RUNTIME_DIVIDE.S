@@ -1,12 +1,3 @@
-@ Division and remainder of TLA's resident runtime, taking the dividend in
-@ r0 and the divisor in r1. Divisors below 0x4000 use the reciprocal table
-@ at 0x080028a8 (umulls; mulne; subne; bxne lr), larger ones an unrolled
-@ restoring loop (rsbs; orrcs; subcs). The signed divide branches on the
-@ carry out of lsrs r0, ip, #32, and its Thumb entries run into the shared
-@ core as the ARM instructions andeq r4, r0, #0x1e00000. GCC never
-@ branches on the carry out of a shift or runs one entry into another.
-@ Its five 4-byte Thumb entries, which are TLA's own, carry no credit.
-@ credit: handwritten — TLA IWRAM runtime division helpers
 .syntax unified
 	.arm
 .L_030004a8:
@@ -54,8 +45,6 @@ AlchemyUncreditedEnd_08000acc:
 	bl	.L_03000534
 	mov	r0, r1
 	bx	ip
-@ Divide entry: signed when either operand is negative. ARM callers enter
-@ at its Thumb stub, which runs as andeq in ARM state.
 	.global IwramDivide
 IwramDivide:
 	.thumb

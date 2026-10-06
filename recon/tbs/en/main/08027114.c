@@ -1,147 +1,67 @@
-/* NONMATCHING: 2043 differing halfwords; 1619 halfword edits.
- * Compiles to 4176 bytes against the complete 4224-byte owner.
- * WALL: reference indirect dispatch and later block topology still differ.
- */
+/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 2131 (listing 1727, draft 1784, common 690). Not first-try; parked. */
+/* 08027114: differ 2131 against the 1727-line parent listing (was 2292).
+ * The draft also emits the two preceding nested helpers, 080270ac/080270d8.
+ * Shared battle, action, summon, item, window and OAM layouts replace private
+ * copies; serial payloads use their existing linker names. The 100-byte parent
+ * frame matches, but variable allocation and branch layout still differ widely.
+ * Trials: scalar command fields unchanged; a structured handshake loop gives
+ * 2245 before scoped initialization. Scoped counters give 2207; local ordering
+ * 2187; ordinary record indexing 2172; command switch 2131. Halfword pointer
+ * signature stores load the native constants but move the base by 8, giving
+ * 2145; those pointer-store trials were removed. */
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_UNIT.H"
+#include "ITEM.H"
+#include "BATTLE_SUMMON.H"
+#include "MENU_LIST.H"
+#include "SERIAL_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
-/*
- * Battle_CollectPartyCommands (main:08027114, 4224 bytes).
- *
- * Collects one command per acting party member for a link ("VS") battle
- * round.  The caller supplies the output command array, the parallel array
- * of actor ids and the number of members; the member-count parameter is
- * reused as the result, so a link drop-out or a cancelled round returns -1.
- *
- * Evidence used, all from recon/tbs/raw/08027114.s and its literal pools:
- *   - The serial handshake writes 'V','S','S','T' into the local packet at
- *     0x02002224 and polls the peer packet at 0x02002024 + (side ^ 1) * 24,
- *     waiting for "VSST"/"EDVS" while "EXEC" keeps the wait alive.  The
- *     same 24-byte record, the same side/paused bytes at 0x50/0x52 of the
- *     0x03001e74 cell and the same 0x03001f64 status mask appear in
- *     games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/WAIT_SYNC.C and
- *     games/THE BROKEN SEAL/SRC/SYSTEM/LINK/UPDATE_SESSION_COUNTDOWN.C.
- *   - The 260-byte block taken from pool 57 is published at 0x03001f34 and
- *     is the countdown/panel state whose entries[3], entryActive[3],
- *     targetOffset, currentOffset, displayHandle, secondaryHandle, timer and
- *     enabled fields are already named by update_session_countdown.c.  The
- *     remaining fields (per-round element costs at 0x54, the selection index
- *     and id lists at 0x74/0x96, the hint counter/timer at 0xd8/0xdc, the
- *     current actor at 0xe0 and the per-round result words at 0xe4) are
- *     established here from the accesses this owner performs; the block ends
- *     exactly at 0x104 = 260.
- *   - The command dispatch is a 17-entry jump table at 0x080275b8: 0 fight,
- *     1 psynergy, 2 item, 3 defend, 15 summon, 16 djinn, everything else
- *     falls straight through to the commit tail.
- *
- * The two local helpers are reconstructed as GNU C nested functions. This restores
- * the reference frame size and its r9 static-chain setup. The remaining
- * residual is structural: local lifetimes and later block topology still
- * differ, so this remains a measured draft rather than credited C.
- */
+#define LINK_LOCAL ((struct LinkPacket *)gSerialTransfer.payload)
+#define COUNTDOWN ((struct LinkRoundState *)gLinkCountdownWork)
 
-typedef s32 M2C_UNK;
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
-
-#define LINK_LOCAL  ((struct LinkPacket *)0x02002224)
-#define LINK_PEERS  ((struct LinkPacket *)0x02002024)
-
-/* Serial record: the "EXEC" heartbeat tag followed by the phase code. */
 struct LinkPacket {
-    u16 tag[4];             /* 0x00 */
-    u16 code[4];            /* 0x08 */
-    u8 unk_10[8];           /* 0x10 */
+    u16 tag[4];
+    u16 code[4];
+    u8 unk_10[8];
 };
 
-/* The link runtime cell at 0x03001e74; only the bytes this owner reads. */
-struct LinkWork {
-    u8 unk_00[0x44];
-    u8 enabled;             /* 0x44 */
-    u8 unk_45[0x0b];
-    u8 side;                /* 0x50 */
-    u8 unk_51;
-    u8 paused;              /* 0x52 */
-};
+extern struct LinkPacket gLinkPeerSignatures[];
 
-/* The 260-byte round state published at 0x03001f34. */
 struct LinkRoundState {
-    u8 entries[3][12];      /* 0x00 */
-    u8 entryActive[3];      /* 0x24 */
+    struct MenuSprite entries[3];
+    u8 entryActive[3];
     u8 unk_27;
-    s32 targetOffset;       /* 0x28 */
-    s32 currentOffset;      /* 0x2c */
+    s32 targetOffset;
+    s32 currentOffset;
     s32 unk_30;
     s32 unk_34;
     s32 unk_38;
     s32 unk_3c;
     s32 unk_40;
-    s32 displayHandle;      /* 0x44 */
-    s32 secondaryHandle;    /* 0x48 */
-    s32 timer;              /* 0x4c */
-    s32 enabled;            /* 0x50 */
-    u8 cost[8][4];          /* 0x54 */
-    u8 pick[34];            /* 0x74 */
-    u16 list[33];           /* 0x96 */
-    s32 hintCount;          /* 0xd8 */
-    s32 hintTimer;          /* 0xdc */
-    s32 actorId;            /* 0xe0 */
-    u32 result[8];          /* 0xe4 */
+    s32 displayHandle;
+    s32 secondaryHandle;
+    s32 timer;
+    s32 enabled;
+    u8 cost[8][4];
+    u8 pick[34];
+    u16 list[33];
+    s32 hintCount;
+    s32 hintTimer;
+    s32 actorId;
+    u32 result[8];
 };
 
-/* One 16-byte queued command; the last four bytes are never written here. */
-struct BattleCommandEntry {
-    u16 actor;              /* 0x00 */
-    u16 unk_02;
-    u16 order;              /* 0x04 */
-    u16 command;            /* 0x06 */
-    u16 param;              /* 0x08 */
-    u16 target;             /* 0x0a */
-    u16 sub;                /* 0x0c */
-    u16 unk_0e;
-};
-
-/* The battle actor record returned by Runtime_GetObject. */
-struct BattleActorWork {
-    u8 unk_000[0x3a];
-    s16 rank;               /* 0x3a */
-    u8 unk_03c[4];
-    u16 agility;            /* 0x40 */
-    u8 unk_042[0x16];
-    u16 ability[32][2];     /* 0x58: id then flags */
-    u16 item[15];           /* 0xd8 */
-    u8 unk_0f6[0x32];
-    u8 kind;                /* 0x128 */
-    u8 unk_129[0x14];
-    u8 flag_13d;            /* 0x13d */
-};
-
-/* Window work returned by UiWindow_Create; only the two placement fields. */
-struct UiWindowWork {
-    u8 unk_00[12];
-    u16 field_0c;           /* 0x0c */
-    u16 field_0e;           /* 0x0e */
-};
-
-/* Djinn definition; the four element costs follow the id. */
-struct DjinnDefinition {
-    u16 id;                 /* 0x00 */
-    u16 unk_02;
-    u8 cost[4];             /* 0x04 */
-};
-
-extern struct LinkWork *gBattleWork;
-extern struct LinkRoundState *gLinkCountdownWork;
 extern volatile u16 gLinkStatus;
 extern volatile u8 gDebugMode;
 extern volatile u32 gKeysHeld;
-extern u8 *gWindowWork;
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-s32 Resource_LoadIntoFreeSlot(s32 id);
-void Resource_ResetEntry(s32 handle);
-void *Runtime_AllocateBlock(s32 pool, s32 size);
-void *Runtime_BumpAllocate(s32 size);
-void Runtime_ReleaseHeapBlock(s32 pool);
 s32 Resource_LoadIndexedIntoBuffer(s32 handle, s32 index);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 handle);
 s32 Resource_LoadKind26EntryToBuffer(s32 id, s32 handle);
@@ -149,42 +69,36 @@ void Graphics_ExpandVramTilesByColorTable(s32 destination);
 void Link_DrawShiftedTilePair(s32 destination);
 void Menu_BuildLocalizedPatternTiles(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
-void Scheduler_RemoveCallback(void (*callback)(void));
 void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);
-s32 Battle_ClassifyEntryKind(const u8 *entry);
+s32 Battle_ClassifyEntryKind(const struct BattleAction *entry);
 s32 UiText_ShowLocalizedMessageAndWait(void);
-s32 UiText_DrawLocalizedResource80d(void);
-struct UiWindowWork *UiText_ShowMessageAndWaitComplete(s32 id, s32 x, s32 y);
-struct UiWindowWork *UiWindow_Create(s32 a, s32 b, s32 c, s32 d, s32 e);
-void UiWindow_SetTilemapEntry(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
+s32 UiText_DrawWaitingForOpponent(void);
+struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 id, s32 x, s32 y);
+struct UiWindow *UiWindow_Create(s32 a, s32 b, s32 c, s32 d, s32 e);
+void UiWindow_SetTilemapEntry(struct UiWindow *win, s32 id, s32 pos, s32 arg3, u32 arg4);
 void UiWindow_MarkVisibleTileAttributes(void);
-void UiText_DrawCharacterAtOffset(s32 id, struct UiWindowWork *win, s32 pos, s32 arg3);
-void UiText_DrawNumberAtOffset(s32 value, s32 width, struct UiWindowWork *win, s32 pos, s32 arg4);
 void UiWork_SetParamNibble(s32 value);
-void UiWork_Finalize(struct UiWindowWork *win, s32 release);
+void UiWork_Finalize(struct UiWindow *win, s32 release);
 s32 UiWork_IsComplete(void);
 s32 Ui_LoadEntryForKind(s32 kind, s32 handle);
-void Ui_FillVramBlockPattern(void);
-struct BattleActorWork *Runtime_GetObject(s32 actor);
-u8 *Ability_GetData(s32 id);
-u8 *Item_GetData(s32 id);
+
+struct BattleUnit *Runtime_GetObject(s32 actor);
+struct BattleAction *Ability_GetData(s32 id);
+struct ItemDefinition *Item_GetData(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 s32 Item_ClassifyUseAbility(s32 actor, s32 item);
 s32 BattleTarget_RunSelection(s32 actor, s32 a, s32 b, s32 kind);
-s32 Random16(void);
-void UiWindow_PutGlyph(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
-s32 Ui_Place(s32, s16 *, s32);
-s32 Ui_SetMode(s16 *, s32, s32, s32);
+void UiWindow_PutGlyph(struct UiWindow *win, s32 id, s32 pos, s32 arg3, u32 arg4);
 s32 Ui_RunSelectionScreen(s32 mode);
 void BattleLayout_HighlightPartyPanels(u16 *header);
 void Ui_RunOwnerStatusScreen(void *block, s32 handle, s32 actor);
 s32 Battle_SelectAbility(s32 actor, s32 mode);
-s32 Func_08024934(s32 a, s32 b, u8 *cost);
+s32 SummonMenu_SelectSummon(s32 a, s32 b, const u8 *standby);
 s32 BattleMenu_RunActionSelection(s32 actor, u16 *list, s32 count);
-s32 ItemList_SelectEntry(s32 actor, u16 *list);
+s32 ItemList_SelectEntry(s32 actor, u16 *list, s32 count);
 void Sys_Free(void *block);
-struct DjinnDefinition *SummonDefinition_Get(s32 id);
+
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 s32 Djinn_IsActiveFar(s32 actor, s32 element, s32 index);
 s32 BattleParty_ListActorIdsFar(s32 mode, void *block);
@@ -192,29 +106,29 @@ void Camera_ConfigureSceneFar(s32 offset);
 void BattlePres_SetActorModesFar(u16 *header, s32 mode);
 void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
-s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 count)
+s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
     struct LinkRoundState *state;
-    struct LinkWork *link;
+    struct BattleSession *link;
     struct LinkPacket *peer;
-    struct BattleCommandEntry *ent;
-    struct BattleActorWork *actor;
-    struct UiWindowWork *win;
-    struct UiWindowWork *hint;
-    struct DjinnDefinition *djinn;
-    u8 *slot;
-    u8 *ability;
-    u8 *ui;
+    struct BattleActionRecord *ent;
+    struct BattleUnit *actor;
+    struct UiWindow *win;
+    struct UiWindow *hint;
+    const struct SummonDefinition *djinn;
+    struct MenuSprite *slot;
+    struct BattleAction *ability;
+    struct UiRenderWork *ui;
     u16 *scan;
     u16 hdr[2];
     void *block;
-    s32 res1024;
-    s32 res512;
     s32 actorId;
+    s32 mode;
+    s32 aux;
     s32 kind;
     s32 param;
-    s32 aux;
-    s32 mode;
+    s32 res1024;
+    s32 res512;
     s32 miss;
     s32 cnt;
     s32 sel;
@@ -225,13 +139,8 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
     s32 ok;
     s32 i;
     s32 k;
-    s32 off2;
-    s32 off4;
-    s32 off16;
     s32 cur;
     s32 order;
-    u32 *word;
-    u8 *byte;
     s32 res;
 
     void DrawPartyPanels(void)
@@ -244,9 +153,9 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
 
     s32 DrawLocalizedResource(void)
     {
-        s16 data[64];
-        Ui_Place(0x80d, data, 0x34);
-        return Ui_SetMode(data, state->displayHandle, 0, 4);
+        u16 data[64];
+        UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 52);
+        UiText_RenderWideStringAtOffset(data, (struct UiWindow *)state->displayHandle, 0, 4);
     }
 
     aux = 256;
@@ -260,18 +169,24 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
     Link_DrawShiftedTilePair(0x06006680);
     Menu_BuildLocalizedPatternTiles();
     link = gBattleWork;
-    word = state->result;
-    k = 7;
-    do {
-        k--;
-        *word++ = 0x80000000;
-    } while (k >= 0);
-    byte = state->entryActive;
-    k = 2;
-    do {
-        k--;
-        *byte++ = 0;
-    } while (k >= 0);
+    {
+        u32 *word = state->result;
+        s32 n = 7;
+
+        do {
+            n--;
+            *word++ = 0x80000000;
+        } while (n >= 0);
+    }
+    {
+        u8 *byte = state->entryActive;
+        s32 n = 2;
+
+        do {
+            n--;
+            *byte++ = 0;
+        } while (n >= 0);
+    }
     state->targetOffset = 0;
     state->currentOffset = 0;
     state->unk_3c = 0;
@@ -280,7 +195,7 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
     state->secondaryHandle = 0;
     state->displayHandle = 0;
     state->timer = -1;
-    if (link->enabled != 0) {
+    if (link->two_sided != 0) {
         state->enabled = 1;
         LINK_LOCAL->code[0] = 'V';
         LINK_LOCAL->code[1] = 'S';
@@ -288,8 +203,8 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
         LINK_LOCAL->code[3] = 'T';
         miss = 0;
         for (;;) {
-            peer = &LINK_PEERS[link->side ^ 1];
-            if (link->paused != 0) {
+            peer = &gLinkPeerSignatures[link->link_side ^ 1];
+            if (link->link_paused != 0) {
                 goto handshake_failed;
             }
             if ((gLinkStatus & 3) != 3) {
@@ -299,13 +214,17 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
                 }
             } else {
                 miss = 0;
-                if (peer->code[0] == 'V' && peer->code[1] == 'S' &&
-                    peer->code[2] == 'S' && peer->code[3] == 'T') {
-                    goto handshake_done;
-                }
-                if (peer->code[0] == 'E' && peer->code[1] == 'D' &&
-                    peer->code[2] == 'V' && peer->code[3] == 'S') {
-                    goto handshake_done;
+                switch (peer->code[0]) {
+                case 'V':
+                    if (peer->code[1] == 'S' && peer->code[2] == 'S' &&
+                        peer->code[3] == 'T')
+                        goto handshake_done;
+                    break;
+                case 'E':
+                    if (peer->code[1] == 'D' && peer->code[2] == 'V' &&
+                        peer->code[3] == 'S')
+                        goto handshake_done;
+                    break;
                 }
                 if (!(peer->tag[0] == 'E' && peer->tag[1] == 'X' &&
                       peer->tag[2] == 'E' && peer->tag[3] == 'C')) {
@@ -337,7 +256,7 @@ handshake_done:
         }
         if (mode == 7) {
             block = Runtime_BumpAllocate(12);
-            if (gDebugMode != 0 && (gKeysHeld & 8) != 0) {
+            if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
                 sel = 2;
             } else {
                 sel = 1;
@@ -354,10 +273,10 @@ handshake_done:
             }
             ent = out;
             count = 1;
-            ent->actor = in[0];
-            ent->order = 0x7ffe;
+            ent->unit_id = in[0];
+            ent->priority = 0x7ffe;
             ent->command = 99;
-            ent->param = 0;
+            ent->parameter = 0;
             ent->target = 256;
             goto finish;
         }
@@ -369,12 +288,8 @@ handshake_done:
         if (i >= count) {
             goto finish;
         }
-        off4 = 0;
-        off16 = 0;
-        off2 = 0;
 
         for (;;) {
-            /* Carry the previous member's element budget into this round. */
             if (i == 0) {
                 BattlePlacement_CountValidEntriesFar(0, state->cost[0]);
             } else {
@@ -383,26 +298,25 @@ handshake_done:
                 }
             }
 
-            ent = (struct BattleCommandEntry *)((u8 *)out + off16);
-            actorId = *(u16 *)((u8 *)in + off2);
+            ent = &out[i];
+            actorId = in[i];
             actor = Runtime_GetObject(actorId);
-            gLinkCountdownWork->actorId = actorId;
-            gLinkCountdownWork->unk_40 = 0;
-            slot = gLinkCountdownWork->entries[2];
-            M2C_FIELD(slot, u32 *, 4) = 0x80000400;
-            M2C_FIELD(slot, u32 *, 8) = 0;
-            res = Ui_LoadEntryForKind(actor->kind, res512);
-            M2C_FIELD(slot, u16 *, 8) =
-                (u16)((M2C_FIELD(slot, u16 *, 8) & ~0x3ff) | (res & 0x3ff));
-            M2C_FIELD(slot, u16 *, 6) = (u16)(M2C_FIELD(slot, u16 *, 6) & ~0x1ff);
-            M2C_FIELD(slot, u8 *, 4) = 0x80;
-            M2C_FIELD(slot, u8 *, 9) = (u8)((M2C_FIELD(slot, u8 *, 9) & 15) | 0xe0);
+            COUNTDOWN->actorId = actorId;
+            COUNTDOWN->unk_40 = 0;
+            slot = &COUNTDOWN->entries[2];
+            slot->oam.word.attr01 = 0x80000400;
+            slot->oam.word.attr23 = 0;
+            res = Ui_LoadEntryForKind(actor->class_id, res512);
+            slot->oam.f.tile = res;
+            slot->oam.f.x = 0;
+            slot->oam.f.y = 0x80;
+            slot->oam.f.palette = 14;
             state->entryActive[2] = 1;
 
 mark_visible:
             UiWindow_MarkVisibleTileAttributes();
-            gLinkCountdownWork->entryActive[0] = 0;
-            gLinkCountdownWork->result[i] = 0x80000000;
+            COUNTDOWN->entryActive[0] = 0;
+            COUNTDOWN->result[i] = 0x80000000;
             hdr[0] = (u16)actorId;
             hdr[1] = 255;
             BattlePres_SetActorModesFar(hdr, 1);
@@ -426,39 +340,30 @@ mark_visible:
                     goto next_round;
                 }
                 i--;
-                off4 = i * 4;
-                off16 = i * 16;
-                off2 = i * 2;
                 continue;
             }
 
-            /* A countdown that has run out forces the defend command. */
-            if (gLinkCountdownWork->timer == 0) {
+            if (COUNTDOWN->timer == 0) {
                 mode = 3;
             }
-            slot = gLinkCountdownWork->entries[0];
-            M2C_FIELD(slot, u32 *, 8) = 0;
-            M2C_FIELD(slot, u32 *, 4) = 0x80002400;
+            slot = &COUNTDOWN->entries[0];
+            slot->oam.word.attr23 = 0;
+            slot->oam.word.attr01 = 0x80002400;
             res = Resource_LoadIndexedIntoBuffer(res1024, mode);
-            M2C_FIELD(slot, u16 *, 8) =
-                (u16)((M2C_FIELD(slot, u16 *, 8) & ~0x3ff) | (res & 0x3ff));
+            slot->oam.f.tile = res;
             if (mode == 15) {
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 128);
+                slot->oam.f.x = 128;
             } else {
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 96);
+                slot->oam.f.x = 96;
             }
-            M2C_FIELD(slot, u8 *, 4) = 136;
+            slot->oam.f.y = 136;
             state->entryActive[0] = 1;
             switch (mode) {
             case 0:
-                /* Fight: pick a target directly. */
                 win = UiWindow_Create(11, 17, 11, 3, 6);
-                UiText_DrawCharacterAtOffset(31, win, 16, 0);
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 64);
+                UiText_DrawCharacterAtOffset(31, (struct RenderInput *)win, 16, 0);
+                slot = &state->entries[0];
+                slot->oam.f.x = 64;
                 Audio_PlayCue(112);
                 res = BattleTarget_RunSelection(actorId, 1, 1, 0);
                 UiWork_Finalize(win, 1);
@@ -467,27 +372,25 @@ mark_visible:
                 }
                 kind = 0;
                 aux = res;
-                ent->sub = 1;
+                ent->range = 1;
                 goto commit;
 
             case 1:
-                /* Psynergy: list the castable abilities, then target one. */
                 Audio_PlayCue(112);
 psynergy_menu:
-                gLinkCountdownWork->unk_34 = 0;
-                gLinkCountdownWork->unk_30 = 0;
-                gLinkCountdownWork->unk_38 = 0;
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 48);
+                COUNTDOWN->unk_34 = 0;
+                COUNTDOWN->unk_30 = 0;
+                COUNTDOWN->unk_38 = 0;
+                slot = &state->entries[0];
+                slot->oam.f.x = 48;
                 cnt = 0;
                 k = 0;
-                cur = actor->ability[0][0] & 0x3fff;
+                cur = actor->action_slots[0].encoded_action & 0x3fff;
                 if (cur != 0) {
-                    scan = &actor->ability[0][0];
+                    scan = &actor->action_slots[0].encoded_action;
                     do {
                         ability = Ability_GetData(cur);
-                        if ((ability[1] & 0x80) != 0) {
+                        if ((ability->target_flags & 0x80) != 0) {
                             state->pick[cnt] = (u8)k;
                             state->list[cnt] = (u16)cur;
                             cnt++;
@@ -507,45 +410,41 @@ psynergy_menu:
                     goto mark_visible;
                 }
                 sel = state->pick[res];
-                param = actor->ability[sel][0] & 0x3fff;
+                param = actor->action_slots[sel].encoded_action & 0x3fff;
                 ability = Ability_GetData(param);
-                cost = ability[8];
+                cost = ability->range;
                 handle = Resource_LoadIntoFreeSlot(128);
-                ui = gWindowWork;
+                ui = (struct UiRenderWork *)gWindowWork[0];
                 win = UiWindow_Create(8, 17, 18, 3, 6);
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 40);
-                slot = state->entries[1];
-                M2C_FIELD(slot, u32 *, 4) = 0x40000400;
-                M2C_FIELD(slot, u32 *, 8) = 0;
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) |
-                          (((win->field_0c << 3) + 8) & 0x1ff));
-                M2C_FIELD(slot, u8 *, 4) = (u8)((win->field_0e << 3) + 4);
+                slot = &state->entries[0];
+                slot->oam.f.x = 40;
+                slot = &state->entries[1];
+                slot->oam.word.attr01 = 0x40000400;
+                slot->oam.word.attr23 = 0;
+                slot->oam.f.x = (win->x << 3) + 8;
+                slot->oam.f.y = (u8)((win->y << 3) + 4);
                 res = Resource_LoadIndexedEntryToBuffer(param, handle);
-                M2C_FIELD(slot, u16 *, 8) =
-                    (u16)((M2C_FIELD(slot, u16 *, 8) & ~0x3ff) | (res & 0x3ff));
+                slot->oam.f.tile = res;
                 state->entryActive[1] = 1;
-                ui[3751] = 5;
-                if ((s32)ability[9] > (s32)actor->rank) {
+                ui->level = 5;
+                if ((s32)ability->pp_cost > (s32)actor->pp) {
                     UiWork_SetParamNibble(2);
-                } else if (actor->flag_13d != 0) {
+                } else if (actor->psy_seal != 0) {
                     UiWork_SetParamNibble(9);
                 }
-                UiText_DrawCharacterAtOffset(param + 819, win, 16, 0);
-                UiText_DrawNumberAtOffset(ability[9], 2, win, 104, 0);
-                ui[3751] = 15;
+                UiText_DrawCharacterAtOffset(param + 819, (struct RenderInput *)win, 16, 0);
+                UiText_DrawNumberAtOffset(ability->pp_cost, 2, (struct RenderInput *)win, 104, 0);
+                ui->level = 15;
                 UiWork_SetParamNibble(15);
                 UiWindow_SetTilemapEntry(win, 61471, 11, 0, 0);
                 UiWindow_SetTilemapEntry(win, 61470, 12, 0, 0);
-                if (ability[2] != 4) {
-                    UiWindow_SetTilemapEntry(win, ability[2] + 20481, 15, 0, 0);
+                if (ability->damage_class != 4) {
+                    UiWindow_SetTilemapEntry(win, ability->damage_class + 20481, 15, 0, 0);
                 }
-                ent->sub = (u16)cost;
+                ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind(ability);
-                res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
+                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
@@ -556,17 +455,15 @@ psynergy_menu:
                 goto store_target;
 
             case 2:
-                /* Item: usable entries first, then the rest. */
                 Audio_PlayCue(112);
 item_menu:
-                gLinkCountdownWork->unk_34 = 0;
-                gLinkCountdownWork->unk_30 = 0;
-                gLinkCountdownWork->unk_38 = 0;
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 96);
+                COUNTDOWN->unk_34 = 0;
+                COUNTDOWN->unk_30 = 0;
+                COUNTDOWN->unk_38 = 0;
+                slot = &state->entries[0];
+                slot->oam.f.x = 96;
                 cnt = 0;
-                cur = actor->item[0];
+                cur = actor->inventory[0];
                 k = 0;
                 if (cur != 0) {
                     do {
@@ -580,10 +477,10 @@ item_menu:
                         if (k == 15) {
                             break;
                         }
-                        cur = actor->item[k];
+                        cur = actor->inventory[k];
                     } while (cur != 0);
                 }
-                cur = actor->item[0];
+                cur = actor->inventory[0];
                 k = 0;
                 if (cur != 0) {
                     do {
@@ -597,41 +494,36 @@ item_menu:
                         if (k == 15) {
                             break;
                         }
-                        cur = actor->item[k];
+                        cur = actor->inventory[k];
                     } while (cur != 0);
                 }
                 state->list[cnt] = 0;
-                res = ItemList_SelectEntry(actorId, state->list);
+                res = ItemList_SelectEntry(actorId, state->list, cnt);
                 if (res == -1) {
                     goto mark_visible;
                 }
                 sel = state->pick[res];
                 param = sel;
-                ability = Ability_GetData(M2C_FIELD(Item_GetData(actor->item[sel]),
-                                                    u16 *, 40));
-                cost = ability[8];
+                ability = Ability_GetData(Item_GetData(actor->inventory[sel])->action_id);
+                cost = ability->range;
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(9, 17, 15, 3, 6);
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 48);
-                slot = state->entries[1];
-                M2C_FIELD(slot, u32 *, 4) = 0x40000400;
-                M2C_FIELD(slot, u32 *, 8) = 0;
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) |
-                          (((win->field_0c << 3) + 8) & 0x1ff));
-                M2C_FIELD(slot, u8 *, 4) = (u8)((win->field_0e << 3) + 4);
-                res = Resource_LoadKind26EntryToBuffer(actor->item[sel], handle);
-                M2C_FIELD(slot, u16 *, 8) =
-                    (u16)((M2C_FIELD(slot, u16 *, 8) & ~0x3ff) | (res & 0x3ff));
+                slot = &state->entries[0];
+                slot->oam.f.x = 48;
+                slot = &state->entries[1];
+                slot->oam.word.attr01 = 0x40000400;
+                slot->oam.word.attr23 = 0;
+                slot->oam.f.x = (win->x << 3) + 8;
+                slot->oam.f.y = (u8)((win->y << 3) + 4);
+                res = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
+                slot->oam.f.tile = res;
                 state->entryActive[1] = 1;
-                UiText_DrawCharacterAtOffset((actor->item[sel] & 0x1ff) + 386,
+                UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + 386,
                                              win, 24, 0);
-                ent->sub = (u16)cost;
+                ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind(ability);
-                res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
+                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
@@ -642,46 +534,42 @@ item_menu:
                 goto store_target;
 
             case 3:
-                /* Defend: no submenu, only the command code. */
                 kind = 3;
                 goto commit;
 
             case 15:
-                /* Summon: pick an element and rank, then target. */
                 Audio_PlayCue(112);
 summon_menu:
-                gLinkCountdownWork->unk_34 = 0;
-                gLinkCountdownWork->unk_30 = 0;
-                gLinkCountdownWork->unk_38 = 0;
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 144);
-                gLinkCountdownWork->result[i] = 0x80000000;
+                COUNTDOWN->unk_34 = 0;
+                COUNTDOWN->unk_30 = 0;
+                COUNTDOWN->unk_38 = 0;
+                slot = &state->entries[0];
+                slot->oam.f.x = 144;
+                COUNTDOWN->result[i] = 0x80000000;
                 res = Battle_SelectAbility(actorId, 1);
-                ent->sub = 0;
+                ent->range = 0;
                 if (res == -1) {
                     goto mark_visible;
                 }
                 kind = 5;
                 param = res;
-                gLinkCountdownWork->result[i] = res;
+                COUNTDOWN->result[i] = res;
                 element = (res >> 8) & 15;
                 index = res & 255;
                 if (Djinn_IsActiveFar(actorId, element, index) != 0) {
                     ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
-                    cost = ability[8];
+                    cost = ability->range;
                     win = UiWindow_Create(11, 17, 10, 3, 6);
-                    slot = state->entries[0];
-                    M2C_FIELD(slot, u16 *, 6) =
-                        (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 64);
+                    slot = &state->entries[0];
+                    slot->oam.f.x = 64;
                     UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
                     UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
                                                  win, 16, 0);
-                    ent->sub = (u16)cost;
+                    ent->range = (u16)cost;
                     WaitFrames(1);
                     Audio_PlayCue(112);
-                    res = Battle_ClassifyEntryKind(ability);
-                    res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
+                    res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                    res = BattleTarget_RunSelection(actorId, ability->target_mode, cost, res);
                     if (state->hintCount != 0) {
                         hint = UiText_ShowMessageAndWaitComplete(3150, 15, 8);
                         while (UiWork_IsComplete() == 0) {
@@ -698,15 +586,14 @@ summon_menu:
                     goto store_target;
                 } else {
                     win = UiWindow_Create(11, 17, 10, 3, 6);
-                    slot = state->entries[0];
-                    M2C_FIELD(slot, u16 *, 6) =
-                        (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 64);
+                    slot = &state->entries[0];
+                    slot->oam.f.x = 64;
                     UiWork_SetParamNibble(2);
                     UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
                     UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
                                                  win, 16, 0);
                     UiWork_SetParamNibble(15);
-                    ent->sub = 1;
+                    ent->range = 1;
                     WaitFrames(1);
                     Audio_PlayCue(112);
                     res = BattleTarget_RunSelection(actorId, 4, 0, 7);
@@ -718,17 +605,15 @@ summon_menu:
                 }
 
             case 16:
-                /* Djinn: the four element costs gate the selection. */
                 Audio_PlayCue(112);
 djinn_menu:
-                gLinkCountdownWork->unk_34 = 0;
-                gLinkCountdownWork->unk_30 = 0;
-                gLinkCountdownWork->unk_38 = 0;
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 80);
+                COUNTDOWN->unk_34 = 0;
+                COUNTDOWN->unk_30 = 0;
+                COUNTDOWN->unk_38 = 0;
+                slot = &state->entries[0];
+                slot->oam.f.x = 80;
                 BattleLayout_HighlightPartyPanels(hdr);
-                res = Func_08024934(0, 0, state->cost[i]);
+                res = SummonMenu_SelectSummon(0, 0, state->cost[i]);
                 BattleLayout_HighlightPartyPanels(hdr);
                 if (res == -1) {
                     goto mark_visible;
@@ -737,38 +622,34 @@ djinn_menu:
                 param = res;
                 WaitFrames(1);
                 djinn = SummonDefinition_Get(res);
-                ability = Ability_GetData(djinn->id);
+                ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(10, 17, 17, 3, 6);
                 for (k = 0; k <= 3; k++) {
-                    if (djinn->cost[k] > state->cost[i][k]) {
+                    if (djinn->djinn_required[k] > state->cost[i][k]) {
                         break;
                     }
                 }
                 ok = (k == 4);
-                slot = state->entries[0];
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 56);
-                slot = state->entries[1];
-                M2C_FIELD(slot, u32 *, 4) = 0x40000400;
-                M2C_FIELD(slot, u32 *, 8) = 0;
-                M2C_FIELD(slot, u16 *, 6) =
-                    (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) |
-                          (((win->field_0c << 3) + 8) & 0x1ff));
-                M2C_FIELD(slot, u8 *, 4) = (u8)((win->field_0e << 3) + 4);
-                res = Resource_LoadIndexedEntryToBuffer(djinn->id & 0x3fff, handle);
-                M2C_FIELD(slot, u16 *, 8) =
-                    (u16)((M2C_FIELD(slot, u16 *, 8) & ~0x3ff) | (res & 0x3ff));
+                slot = &state->entries[0];
+                slot->oam.f.x = 56;
+                slot = &state->entries[1];
+                slot->oam.word.attr01 = 0x40000400;
+                slot->oam.word.attr23 = 0;
+                slot->oam.f.x = (win->x << 3) + 8;
+                slot->oam.f.y = (u8)((win->y << 3) + 4);
+                res = Resource_LoadIndexedEntryToBuffer(djinn->name_message_id & 0x3fff, handle);
+                slot->oam.f.tile = res;
                 state->entryActive[1] = 1;
                 if (ok == 0) {
                     UiWork_SetParamNibble(2);
                 }
-                UiText_DrawCharacterAtOffset(SummonDefinition_Get(param)->id + 819,
+                UiText_DrawCharacterAtOffset(SummonDefinition_Get(param)->name_message_id + 819,
                                              win, 16, 0);
                 for (k = 0; k <= 3; k++) {
-                    if (djinn->cost[k] != 0) {
+                    if (djinn->djinn_required[k] != 0) {
                         UiWindow_SetTilemapEntry(win, k + 20481, k * 2 + 13, 0, 0);
-                        UiWindow_PutGlyph(win, djinn->cost[k] + 48, k * 2 + 14, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[k] + 48, k * 2 + 14, 0, 0);
                     }
                 }
                 if (ok != 0) {
@@ -776,9 +657,9 @@ djinn_menu:
                 } else {
                     Audio_PlayCue(114);
                 }
-                res = Battle_ClassifyEntryKind(ability);
-                res = BattleTarget_RunSelection(actorId, ability[0], ability[8], res);
-                ent->sub = ability[8];
+                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                res = BattleTarget_RunSelection(actorId, ability->target_mode, ability->range, res);
+                ent->range = ability->range;
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
@@ -786,11 +667,11 @@ djinn_menu:
                     goto djinn_menu;
                 }
                 for (k = 0; k <= 3; k++) {
-                    if (djinn->cost[k] > state->cost[i][k]) {
+                    if (djinn->djinn_required[k] > state->cost[i][k]) {
                         state->cost[i][k] = 0;
                         break;
                     }
-                    state->cost[i][k] = (u8)(state->cost[i][k] - djinn->cost[k]);
+                    state->cost[i][k] = (u8)(state->cost[i][k] - djinn->djinn_required[k]);
                 }
                 goto store_target;
 
@@ -803,29 +684,26 @@ store_target:
 
 commit:
             Audio_PlayCue(110);
-            ent->actor = (u16)actorId;
+            ent->unit_id = (u16)actorId;
             order = actor->agility;
             if (order != 0) {
                 res = Random16();
                 order += (s32)((u32)(actor->agility * res) >> 20);
             }
-            ent->order = (u16)order;
+            ent->priority = (u16)order;
             if (i != 0) {
-                scan = (u16 *)((u8 *)in + off2);
+                scan = &in[i];
                 if (scan[0] == *(scan - 1)) {
-                    ent->order = (u16)((s16)order / 2);
+                    ent->priority = (u16)((s16)order / 2);
                 }
             }
-            if ((s16)ent->order < 0) {
-                ent->order = 2000;
+            if ((s16)ent->priority < 0) {
+                ent->priority = 2000;
             }
             ent->command = (u16)kind;
-            ent->param = (u16)param;
+            ent->parameter = (u16)param;
             ent->target = (u16)aux;
             i++;
-            off4 = i * 4;
-            off16 = i * 16;
-            off2 = i * 2;
             if (i < count) {
                 continue;
             }
@@ -847,7 +725,7 @@ finish:
         LINK_LOCAL->code[3] = 'S';
     }
     if (state->displayHandle != 0) {
-        UiWork_Finalize((struct UiWindowWork *)state->displayHandle, 1);
+        UiWork_Finalize((struct UiWindow *)state->displayHandle, 1);
     }
     Resource_ResetEntry(res512);
     Resource_ResetEntry(res1024);
@@ -855,7 +733,7 @@ finish:
     if (state->enabled != 0) {
         link = gBattleWork;
         miss = 0;
-        if (state->displayHandle == 0 && link->paused == 0) {
+        if (state->displayHandle == 0 && link->link_paused == 0) {
             state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);
             Ui_FillVramBlockPattern();
             DrawLocalizedResource();
@@ -863,8 +741,8 @@ finish:
             state->displayHandle = 0;
         }
         for (;;) {
-            peer = &LINK_PEERS[link->side ^ 1];
-            if (link->paused != 0) {
+            peer = &gLinkPeerSignatures[link->link_side ^ 1];
+            if (link->link_paused != 0) {
                 count = -1;
                 break;
             }
@@ -888,7 +766,7 @@ finish:
             WaitFrames(1);
         }
         if (state->displayHandle != 0) {
-            UiWork_Finalize((struct UiWindowWork *)state->displayHandle, 1);
+            UiWork_Finalize((struct UiWindow *)state->displayHandle, 1);
         }
     }
     Camera_ConfigureSceneFar(0);

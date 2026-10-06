@@ -1,53 +1,12 @@
-/* CANONICAL DRAFT, 2026-10-02, uncredited.
- * Four-neighbor family before existing TLA DISPATCH.C:36/88/392/40 bytes.
- * Retained whole-module candidate876/native876,68 differences all six;
- * lookup36/0,release88/0,constructor392/62,initialize40/6.
- * Existing320-byte suffix incl all pools/calls remains0diff;120 whole-module
- * actual BL/pool operands equal. Raw resource create336/release72 independently
- * symbolic-linked complete all six; their proposed production names remain
- * absent. These private context links establish physical identities, not credit.
- * Callee pointer declarations are local draft views. Closing the actual
- * shared API is still required before these calls can be adopted.
- * Below records are English instruction/pool scores; each tuple is extent/diff
- * for lookup,release,constructor,initialize, then whole extent/diff. Retained
- * ordinary baseline and every retained phase were also whole-linked all six.
- * plain_typed_bank:36/4,88/15,392/78,40/6;whole876/103
- * early_return_and_for:36/4,88/15,392/223,40/6;whole876/248
- * sequential_cursor:36/4,88/15,388/257,40/6;whole872/613
- * kind_if_chain:36/4,88/15,392/130,40/6;whole876/155
- * branch_child_lifetimes:36/4,88/15,392/139,40/6;whole876/164
- * coordinate_locals:36/4,88/15,392/170,40/6;whole876/195
- * scale_unit_local:36/4,88/15,392/78,40/6;whole876/103
- * metadata_local:36/4,88/15,392/78,40/6;whole876/103
- * lookup_tied_outputs:36/0,88/15,392/78,40/6;whole876/99
- * release_pointer:36/0,88/0,392/78,40/6;whole876/84
- * constructor_pointer:36/0,88/0,392/70,40/6;whole876/76
- * constructor_store_order:36/0,88/0,392/62,40/6;whole876/68
- * Phase has four forms total; no further trials. Retained boundaries only tie
- * initialized, used pointer/result values; no new reads,volatile,unused frame
- * storage,instruction ASM,compiler options or output patch. Dma_Set unchanged.
- * S3 whole876 adoption remains blocked by constructor/initialize mismatches.
- * A separate adjacent lookup/release prefix can belong to the moved existing
- * TBS OBJECT-to-COMMON owner after real API, source-bank and game/order proof;
- * constructor/initialize then stay raw before the unchanged DISPATCH320 owner.
- * Local resource pointer declarations below are explicitly draft views,
- * not a closed production API. The opaque actual-owner API is a prerequisite.
- */
 
-/* This listing proposal owns FieldObject_Create only; native complete function/pool390 bytes.
- * Its392-byte raw listing also carries a trailing anonymous zero
- * alignment halfword; this standalone draft emits no final halfword.
- * Unmarked internal compiler alignment can count under the current C2 span
- * convention; final linker gaps do not. No counting marker is introduced. */
 
 #include "OBJECT_RUNTIME.H"
+#include "METADATA_LOOKUP.H"
 #include "OBJECT_DISPATCH.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "DMA.H"
 
-/* LOCAL DRAFT VIEW:observed fields of the existing128-byte runtime owner.
- * This self-contained attempt does not add a maintained second header/type. */
 struct ObjectRuntimeDraft {
     s32 *script;
     s16 step;
@@ -82,8 +41,6 @@ struct ObjectRuntimeDraft {
     u8 movement_state;
     u8 unknown_5c[0x04];
     void *callback;
-    /* Motion/visual code uses the first word as an angle target; construction
-       initializes the two tile-coordinate words. */
     union {
         struct { s16 action; s16 unknown; } motion;
         struct { s16 x; s16 z; } tile;
@@ -96,22 +53,13 @@ struct ObjectRuntimeDraft {
     struct ObjectRuntimeDraft *support_object;
 };
 
-/* LOCAL DRAFT VIEW:92-byte object/camera work at heap slot+24; only the
- * observed signed constructor cursor is described, not a child-array capacity. */
 struct ObjectDraftWork {
     u8 unknown_00[24];
     s32 child_list_cursor;
     u8 unknown_1c[64];
 };
 
-/* LOCAL DRAFT VIEW: the observed radius byte of a resource metadata record. */
-struct ResourceObjectMetadataDraft {
-    u8 unknown_00[9];
-    u8 radius;
-};
-
 struct DispatchChild *ResourceObject_Create(s32 resource);
-struct ResourceObjectMetadataDraft *Resource_GetMetadataRecordFar(s32 resource);
 void *ObjectDispatch_FindFreeObject(void);
 
 typedef char RuntimeDraft_size[sizeof(struct ObjectRuntimeDraft)==128?1:-1];
@@ -137,7 +85,7 @@ struct ObjectRuntimeDraft *FieldObject_Create(s32 resource, s32 x, s32 y, s32 z)
             if (child !=0) {
                 object->animation_kind =1;
                 object->animation = child;
-                object->radius = Resource_GetMetadataRecordFar(resource)->radius >>1;
+                object->radius = Resource_GetMetadataRecordFar(resource)->box_y >>1;
             } else {
                 object->animation_kind =0;
             }
@@ -154,7 +102,7 @@ struct ObjectRuntimeDraft *FieldObject_Create(s32 resource, s32 x, s32 y, s32 z)
             Dma_Set(src, entry, 0x85000004, REG_DMA3);
             child = ResourceObject_Create(resource);
             if (child !=0) {
-                object->radius = Resource_GetMetadataRecordFar(resource)->radius >>1;
+                object->radius = Resource_GetMetadataRecordFar(resource)->box_y >>1;
                 *entry++ = child;
             }
             child = ResourceObject_Create(resource +1);

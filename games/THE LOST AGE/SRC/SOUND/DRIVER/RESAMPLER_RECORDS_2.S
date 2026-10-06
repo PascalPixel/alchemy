@@ -1,9 +1,3 @@
-@ Second 76-byte record of RESAMPLER_RECORDS.S up to its branch to the next
-@ record's boundary: flag-setting asrs and rors feeding conditional mulne
-@ and mlane, with no entry or return of its own. Its zero padding
-@ (0x080004e4, 32 bytes) is RESAMPLER_RECORDS_PAD_1.S and carries no
-@ credit.
-@ credit: handwritten — TLA fixed-size ARM sound resampler record
 .syntax unified
 	.arm
 	.global Sound_ResamplerRecord1

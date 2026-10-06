@@ -550,7 +550,7 @@ Func_08180c94:
 	str r3, [r5]
 	cmp r1, #47
 	bhi .L_08181144
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #3
 	ands r1, r6
 	ldr r4, .L_081811c8

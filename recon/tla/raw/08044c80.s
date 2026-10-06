@@ -48,7 +48,7 @@ Func_08044c80:
 	movs r1, #0
 	adds r3, r5, #0
 	str r6, [sp, #4]
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	mov r3, r10
 	str r6, [r3]
 	ldr r3, .L_08044db8
@@ -68,7 +68,7 @@ Func_08044c80:
 	movs r1, #0
 	adds r3, r5, #0
 	str r6, [sp, #4]
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	ldr r3, .L_08044dbc
 	str r6, [r7]
 	str r3, [sp, #40]
@@ -89,12 +89,12 @@ Func_08044c80:
 	strh r6, [r3]
 	mov r0, r11
 	movs r1, #1
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	movs r1, #1
 	ldr r0, [sp, #8]
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_08044dc0
-	bl Func_0803cf60
+	bl UiText_BuildRenderEntriesMode1
 	movs r2, #68
 	adds r1, r0, #0
 	movs r3, #2

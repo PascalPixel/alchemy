@@ -1,10 +1,3 @@
-@ Packs 8-bit pixels into 4bpp tile rows, keeping the destination pixel where
-@ the source pixel is 0. It runs from a 156-byte RAM copy of these 144 bytes
-@ and the three mask words after them (EXPAND_MASKED_MASKS.S, a data table
-@ without credit), loads those masks with add sl, pc, #132 and saves r5-sl
-@ without lr; GCC addresses constants through its literal pool and saves lr
-@ with any register. Every TBS and TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 .text
 	.arm

@@ -5,32 +5,7 @@ mod no_asm;
 mod publication;
 
 const USAGE: &str =
-    "usage: alchemy check <publication|coverage|layout|no-asm|progress|routes> [args]";
-
-/// Run a check body and report its error the way every check does.
-fn report(result: Result<(), String>) -> ExitCode {
-    match result {
-        Ok(()) => ExitCode::SUCCESS,
-        Err(error) => {
-            eprintln!("error: {error}");
-            ExitCode::FAILURE
-        }
-    }
-}
-
-fn routes(arguments: &[String]) -> ExitCode {
-    if arguments == ["--standard"] {
-        for flag in crate::compiler::routing::cflags_for_target(
-            crate::compiler::routing::CompilerTarget::Tbs,
-        ) {
-            println!("{flag}");
-        }
-        ExitCode::SUCCESS
-    } else {
-        eprintln!("usage: alchemy check routes --standard");
-        ExitCode::from(2)
-    }
-}
+    "usage: alchemy check <publication|coverage|layout|no-asm|progress> [args]";
 
 pub fn entry(arguments: &[String]) -> ExitCode {
     let Some(command) = arguments.first().map(String::as_str) else {
@@ -50,7 +25,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             crate::coverage::progress::entry(rest);
             ExitCode::SUCCESS
         }
-        "routes" => routes(rest),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

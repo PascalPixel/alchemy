@@ -1,8 +1,3 @@
-/* Draft: Treasure Isle scaffold initialization.
- * 2026-10-01: The international actor8 sprite-priority update is absent
- * in the Japanese initialization, adding8 bytes to this complete owner.
- * Ordinary approved TBS flags, no output edits.
- */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -17,12 +12,9 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void TakaraAshiba_RaiseTriggerOnStand(void);
 void SceneState_TriggerColumnTen(void);
 void SceneState_TriggerColumnNineteen(void);
-/* CALL.H keeps each scheduled callback's original argument order. */
 
 enum {
-    /* Message 0x182 + 243. */
     ITEM_RED_KEY = 243,
-    /* Message 0x182 + 244. */
     ITEM_BLUE_KEY = 244
 };
 
@@ -55,20 +47,9 @@ void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
+void TakaraAshiba_OpenPlatformPassage(s32 a0);
 
-void FieldScene_RunScene3b4_02000fdc(s32 a0);
-
-s32 *Engine_GetTriggerActor(s32 slot);
+s32 *Object_GetById(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
 
@@ -82,11 +63,11 @@ void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
 void FieldScene_RunSingleStep(void);
 void FieldScene_CallHelper3c70(void);
 
-void FieldScene_RunScene3b4_02002188(void);
-void FieldScene_RunScene3b4_02002290(void);
-void FieldScene_RunScene3b4_02002334(void);
+void TakaraAshiba_InitializeScene1(void);
+void TakaraAshiba_InitializeScene2(void);
+void TakaraAshiba_InitializeScene3(void);
 
-void FieldScene_RunScene3b4_02002334(void)
+void TakaraAshiba_InitializeScene3(void)
 {
     s32 record;
 
@@ -113,11 +94,11 @@ void FieldScene_RunScene3b4_02002334(void)
     if (GameFlag_IsSet(0x109) == 0) {
         if (GameFlag_IsSet(0x9ca) != 0) {
             Actor_SetPosition(15, 0x3580000, 0x3380000);
-            record = Engine_GetTriggerActor(15);
+            record = Object_GetById(15);
             *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
         } else if (GameFlag_IsSet(0x9c9) != 0) {
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            record = Engine_GetTriggerActor(15);
+            record = Object_GetById(15);
             *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
             ObjectDispatch_ApplyValueToChildren(record, 16);
         } else if (GameFlag_IsSet(0x9c8) != 0) {

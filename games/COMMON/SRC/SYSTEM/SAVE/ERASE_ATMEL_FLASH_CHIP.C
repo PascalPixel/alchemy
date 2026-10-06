@@ -1,7 +1,7 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-/* 0x08007c10 のフラッシュ設定表。wait は WAITCNT の SRAM 待ち値。 */
 struct FlashConfig08007028 {
     u8 unknown_00[0x24];
     u16 wait;
@@ -9,9 +9,6 @@ struct FlashConfig08007028 {
 
 extern FlashWaitProc Flash_Handler3;
 
-/* チップ全消去。復帰用の手続きを退避してから WAITCNT の SRAM 待ちを
-   設定表の値に替え、0x5555/0x2aaa へ解除列と消去命令 0x10 を書く。
-   0x2aaa の番地は最初の 0xAA を書いた後に作る。 */
 u16 EraseAtmelFlashChip(void)
 {
     u8 savedCode[64];
@@ -21,8 +18,8 @@ u16 EraseAtmelFlashChip(void)
 
     CopyFlashReadRoutineToRam(savedCode);
 
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xFFFC) |
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xFFFC) |
         ((struct FlashConfig08007028 *)Flash_ChipAtmelLayout)->wait;
 
     command = (volatile u8 *)0x0E005555;
@@ -36,8 +33,8 @@ u16 EraseAtmelFlashChip(void)
 
     result = Flash_Handler3(3, (u8 *)0x0E000000, 255);
 
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xFFFC) | 3;
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xFFFC) | 3;
 
     return result;
 }

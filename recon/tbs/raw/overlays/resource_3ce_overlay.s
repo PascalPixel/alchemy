@@ -78,8 +78,8 @@ gDebugItemFullLabel:
 	.4byte 0x2e2e2e4c
 	.4byte 0x2e2e2e2e
 	.4byte 0x0000002e
-	.global MenuTest_CommandTable
-MenuTest_CommandTable:
+	.global MenuTest_Entrances
+MenuTest_Entrances:
 	.4byte 0xffff0000
 	.4byte 0x0000003c
 	.4byte 0xc000005e
@@ -92,11 +92,11 @@ MenuTest_CommandTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global MenuTest_CommandTableB
-MenuTest_CommandTableB:
+	.global MenuTest_Exits
+MenuTest_Exits:
 	.4byte 0x000001ff
-	.global MenuTest_CommandTableC
-MenuTest_CommandTableC:
+	.global MenuTest_Placements
+MenuTest_Placements:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00280000
@@ -187,11 +187,11 @@ MenuTest_CommandTableC:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global MenuTest_SlotValues
-MenuTest_SlotValues:
+	.global MenuTest_Events
+MenuTest_Events:
 	.4byte 0x00000000
 	.4byte 0xffff0001
-	.4byte FieldScene_ApplyTable9684ValueToFourSlots
+	.4byte MenuTest_RaisePartyLevelTarget
 	.4byte 0x00000000
 	.4byte 0xffff0005
 	.4byte FieldScene_AssignCodeSetAToSlots

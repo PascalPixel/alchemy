@@ -139,16 +139,16 @@ Func_080ce0ac:
 	lsls r0, r0, #9
 	cmp r3, r0
 	bge .L_080ce1de
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Func_080cd91c
 	adds r5, r0, #0
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	ldr r0, [r6, #8]
-	bl Func_080d3be8
+	bl EventRuntime_SetMessage
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_080d407c
-	bl Func_080d2350
+	bl EventRuntime_ShowMessageAndWait
+	bl EventRuntime_End
 	b .L_080ce1e8
 .L_080ce1de:
 	mov r0, r11
@@ -240,7 +240,7 @@ Func_080ce0ac:
 	adds r6, #182
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_080dc410
+	bl BattleFx_LoadActionEffectResources
 	add r6, r8
 	movs r2, #0
 	movs r5, #1
@@ -249,7 +249,7 @@ Func_080ce0ac:
 	bl BattleFx_Run
 	mov r3, r8
 	strb r3, [r6]
-	bl Func_080dc7e8
+	bl BattleEffect_CleanupSceneObjects
 	mov r0, r11
 	bl Item_Get
 	ldrb r3, [r0, #12]

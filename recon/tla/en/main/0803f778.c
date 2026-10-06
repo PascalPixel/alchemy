@@ -1,23 +1,15 @@
 #include "TYPES.H"
-#include "SCENE.H"
 #include "SYSTEM.H"
+#include "RAM_BUFFER.H"
+
 void UiWindow_OpenMode1AndWaitFrame(void);
 s32 Menu_SelectTopEntry(s32);
 s32 UiWork_CloseAndRelease(void);
 s32 ItemMenu_Open(void);
-s32 Menu_OpenActionFlow(void);
-
-/* menu/selection/run_top_selection.c */
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define HAS_LOCALIZED_MENU_GUARD 1
-#endif
-
-extern u8 *gWork;
-
 s32 Object_GetTriggerTileAheadOfCurrentFar(void);
 s32 Menu_OpenConfirmPromptFar(void);
-s32 RunAssetSelectionScreenFar(void);
+s32 Func_080f8000(void);
+s32 Func_080f8010(void);
 
 s32 Menu_RunTopSelection(void)
 {
@@ -25,19 +17,12 @@ s32 Menu_RunTopSelection(void)
     s32 sel;
     u8 *state;
 
-    state = gWork;
+    state = Ram_HeapSlots->event_work;
     sel = 0;
 
 loop:
     UiWindow_OpenMode1AndWaitFrame();
     sel = Menu_SelectTopEntry(sel);
-#if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 1;
-    if (*(s16 *)(state + 0xcb8) != 0) {
-        MapGroupTable_SelectEntry();
-        WaitFrames(1);
-    }
-#endif
     ret = UiWork_CloseAndRelease();
 
     switch (sel) {
@@ -45,7 +30,7 @@ loop:
         ret = Object_GetTriggerTileAheadOfCurrentFar();
         if (ret == 0)
             ret = 0xff;
-        *(u16 *)(state + 0x17a) = ret;
+        *(u16 *)(state + 0x162) = ret;
         break;
     case 1:
         ret = Menu_OpenConfirmPromptFar();
@@ -58,12 +43,12 @@ loop:
             goto loop;
         break;
     case 3:
-        ret = RunAssetSelectionScreenFar();
+        ret = Func_080f8000();
         if (ret == -1)
             goto loop;
         break;
     case 4:
-        ret = Menu_OpenActionFlow();
+        ret = Func_080f8010();
         if (ret == -1)
             goto loop;
         break;
@@ -71,8 +56,5 @@ loop:
         break;
     }
 
-#if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 0;
-#endif
     return ret;
 }

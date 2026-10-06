@@ -1,10 +1,3 @@
-/*
- * Draft: ItemMenu_DrawItemDetailPage, ported from its ☀️ twin (the
- * European path) with the menu work from its heap slot. Remaining
- * difference: scheduling at the start and around the item name, where the
- * listing issues its loads before the independent moves; the message is
- * still listed as the number 0x92 (☀️'s MsgItemPlainName).
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
@@ -14,8 +7,6 @@ s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void WaitFrames(s32);
 
-/* ⚓️ keeps the detail window at 0x30 and the list window at 0x24 of the menu
-   work, and the items at 0x1c4, each four bytes on from ☀️'s. */
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
 {
     void *menu;

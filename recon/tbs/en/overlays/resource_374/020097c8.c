@@ -1,15 +1,5 @@
-/* NONMATCHING: named message-id attempt for Haidia Ie, 2026-10-01.
- * The approved TBS flags load MsgHaidiaWhysEveryoneHanging and
- * MsgHaidiaFarewell as table-owned symbols. The pool resolves to the same
- * ids, but allocation changes the opening stack-argument stores and the
- * two closing actor priority updates. Three finite C rewrites retained
- * those differences. Production IE.C now imports the canonical names as
- * PO-generated C enum constants and matches all six editions; this older
- * pointer-symbol attempt remains as the measured unsuccessful form.
- */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.H"
 
-/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
 static inline s32 Party_GiveItem(s32 item, s32 flags)
 {
     return Engine_PartyGiveItem(item, flags);
@@ -22,7 +12,7 @@ extern u8 MsgHaidiaFarewell[];
 
 void Scene_RunExtendedActorSequence(void)
 {
-    extern const u8 Data_0200ac00[];
+    extern const u8 HaidiaIe_FaceTargetActions[];
 
     u8 *record;
     struct EventWork *work;
@@ -90,7 +80,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorSetAnimation(30, 3);
     Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
     Engine_EventWait(40);
-    base5_200ac00 = Data_0200ac00;
+    base5_200ac00 = HaidiaIe_FaceTargetActions;
     Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)(base5_200ac00));
     Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)(base5_200ac00));
     Object_RefreshSelectorById(30);

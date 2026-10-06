@@ -1,18 +1,3 @@
-@ Battle-effect model decoder, the first member of a 0x234-byte unit that
-@ battle-effect code copies into a heap block, calls and frees (size and
-@ source 0x081a004c in its literal pool at 0x081a05ec). Behind a 4-byte
-@ Thumb entry (bx pc) the ARM decoder rebuilds the dispatcher's jump table
-@ for the address it runs at from its own position (ldr r2, [pc, #192];
-@ add r3, pc, #236; add r4, pc, #196) and calls the dispatcher with bl,
-@ keeping the decoder state in r2, r3, r5 and fp across those calls. Neither
-@ approved compiler relocates code at run time or passes state that way.
-@ After that entry these 204 bytes equal TBS
-@ BATTLE/EFFECT/SENTOU_KOUKA_TENKAI.S (0x080f0024). The entry is TLA's own
-@ and carries no credit. The unit's data words (an unused 0x80808080 word
-@ and the table's link address at 0x081a011c, the runtime table and its
-@ eight case addresses at 0x081a0130) are SENTOU_KOUKA_TENKAI_LINK.S and
-@ SENTOU_KOUKA_TENKAI_TABLES.S and carry no credit, as in TBS.
-@ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, battle-effect link
 .syntax unified
 	.thumb
 	.global SentouKouka_TenkaiCode

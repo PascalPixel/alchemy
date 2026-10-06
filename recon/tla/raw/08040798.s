@@ -38,7 +38,7 @@ Func_08040798:
 	movs r0, #7
 	ldr r1, [sp, #16]
 	movs r2, #40
-	bl Func_08044f88
+	bl RenderResource_CreatePair
 	str r0, [sp, #8]
 	cmp r5, #0
 	beq .L_080407f8
@@ -244,7 +244,7 @@ Func_08040798:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08040980:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08040984:
 	.4byte Data_0805ea8f
 .L_08040988:

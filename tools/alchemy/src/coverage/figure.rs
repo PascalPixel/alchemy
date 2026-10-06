@@ -1,9 +1,3 @@
-//! The README's two figures, drawn in whole game pixels with the lettering
-//! defined in `letters` and written at `FIGURE_SCALE`: PROGRESS_CHART.png, each
-//! game's DONE by hour, and PROGRESS.png, the map of tracked files.
-//! Both are drawn in Weyard UI (`palette`) and are opaque but for the four
-//! cut corner pixels of their frames, so they read the same on light and
-//! dark pages.
 use super::boxtree::{
     content_mix, directories, disk_tiles, legend_items, quiet, source_name, tracked_only,
 };
@@ -16,12 +10,9 @@ use super::raster::{Canvas, Relief};
 use super::sessions::{family, Family};
 use std::path::Path;
 
-/// Both figures are this many game pixels wide, shown at 838 CSS pixels,
-/// GitHub's widest content column.
 pub(crate) const WIDTH: i32 = 838;
 pub(crate) const CHART: &str = "PROGRESS_CHART.png";
 pub(crate) const MAP: &str = "PROGRESS.png";
-/// Where both figures send a reader; the README links each image there too.
 pub(crate) const LINK: &str = "github.com/PascalPixel/alchemy";
 
 fn latest_label(history: &History, game: &str) -> Option<String> {
@@ -33,26 +24,18 @@ fn latest_label(history: &History, game: &str) -> Option<String> {
         .iter()
         .rev()
         .find_map(|row| row.game(game).and_then(Measure::percent))
-        // Floored to two places, as the README's status line reads.
         .map(|value| format!("{:.2}%", ((value * 100.0) + 1e-6).floor() / 100.0))
 }
 
-/// Alchemy's mark and name at the top left of a figure, a heading after it
-/// and the repository's address after that, muted; returns where it ends.
 fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i32 {
     let mut x = 8 + canvas.mark(8, y, "alchemy", INK, SHADOW) + 4;
     x += canvas.text(letters, x, y, heading, INK, Some(SHADOW)) + 12;
     x + canvas.text(letters, x, y, LINK, MUTED, Some(SHADOW))
 }
-// ------------------------------------------------------------------ chart
 
-/// The hourly chart of `history`: x is calendar hours since the project
-/// began, y is 0–100%, today's
-/// values are labelled at the right end.
 pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     let days = &history.days;
     let models = models_shown(days);
-    // 16:9 (Pascal, 2026-09-24): the plot grows to fill what the strip and key leave.
     let height = WIDTH * 9 / 16;
     let footer = 72 + (legend_rows(letters, &models) - 1) * KEY_ROW;
     let mut canvas = Canvas::new(WIDTH, height, FACE);
@@ -73,8 +56,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     ];
     let pending = series.map(|(key, _, _)| history.pending(key));
     let latest = series.map(|(key, _, _)| latest_label(history, key));
-    // Title and key along the top line; each game's mark, in its line's
-    // colour, is its swatch.
     let masthead_end = masthead(&mut canvas, letters, 6, "Alchemy: Golden Sun Decompilation");
     let mut key_x = WIDTH - 8;
     for (key, name, ink) in series.iter().rev() {
@@ -88,7 +69,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         masthead_end + 12 <= key_x - 14,
         "the chart's top line overflows"
     );
-    // The plot well.
     let label_room = latest
         .iter()
         .flatten()
@@ -99,7 +79,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     let (left, top) = (40, 32);
     let (right, bottom) = (WIDTH - 8 - label_room, height - footer);
     let (plot_w, plot_h) = (right - left, bottom - top);
-    // A game without a byte-identical build keeps its historical line.
     let waiting = series
         .iter()
         .zip(pending)
@@ -143,7 +122,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         );
     }
     canvas.bevel(left - 1, top - 1, plot_w + 2, plot_h + 2, Relief::Sunken);
-    // Month starts, and the first day, along the bottom.
     let mut labelled_until = i32::MIN;
     for day in began..=last {
         let (name, first) = super::history::day_label(day);
@@ -167,7 +145,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         (left, right, bottom + 24),
         &x_of,
     );
-    // The lines, then today's values beside their ends.
     let mut ends = Vec::new();
     for ((key, _, ink), label) in series.iter().zip(&latest) {
         let points = super::history::points(history, key)
@@ -197,16 +174,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     canvas
 }
 
-/// Each model's colour in the strip (Pascal, 2026-09-24). A company keeps
-/// one hue family, Anthropic warm and OpenAI cool; the tier sets the depth,
-/// weakest to strongest (Haiku and Luna, Sonnet and Terra, Opus and Sol,
-/// Fable and Astra); within a model line the latest version is the brightest.
-/// Grok is black; Cursor, which left no logs, is grey.
-const MODEL_COLOURS: [(&str, &str); 14] = [
-    // The key's order (Pascal, 2026-09-24): Claude weakest to strongest,
-    // then Codex weakest to strongest, each model line oldest to newest.
-    // Claude is warm (yellow, orange, red) and Codex cool (blue, indigo,
-    // violet) so the two companies never share a hue.
+const MODEL_COLOURS: [(&str, &str); 15] = [
     ("Haiku 4.5", "#fff6cf"),
     ("Sonnet 5", "#ffe79a"),
     ("Opus 4.8", "#fcd3ad"),
@@ -218,6 +186,7 @@ const MODEL_COLOURS: [(&str, &str); 14] = [
     ("Luna 5.6", "#dcf0ff"),
     ("Terra 5.6", "#aed4fb"),
     ("Sol 5.6", "#9fabf5"),
+    ("Sol 6.1", "#7d8cf0"),
     ("Astra 6", "#c8a6f7"),
     ("Grok 4.6", "#000000"),
     ("Grok", "#000000"),
@@ -236,9 +205,6 @@ fn model_colour(model: &str) -> &'static str {
         None => "#8c8c8c",
     })
 }
-/// The models the strip shows with their colours, in the order each first
-/// appears in the history (release order within a day), untagged last. The
-/// key reads left to right and the strip stacks bottom to top in this order.
 fn models_shown(days: &[Day]) -> Vec<(String, &'static str)> {
     let mut first = std::collections::BTreeMap::<String, String>::new();
     for row in days {
@@ -282,11 +248,9 @@ fn models_shown(days: &[Day]) -> Vec<(String, &'static str)> {
 }
 const STRIP: i32 = 8;
 const KEY_ROW: i32 = 18;
-/// One key entry's advance: swatch, gap, name, gap.
 fn key_entry(letters: &Letters, model: &str) -> i32 {
     12 + letters.width(model) as i32 + 12
 }
-/// Each key row's entries, wrapped within the figure's margins.
 fn key_rows<'a>(
     letters: &Letters,
     models: &'a [(String, &'static str)],
@@ -307,8 +271,6 @@ fn key_rows<'a>(
 fn legend_rows(letters: &Letters, models: &[(String, &'static str)]) -> i32 {
     key_rows(letters, models).len() as i32
 }
-/// A thin strip under the date axis, a column per day stacked by the day's
-/// share of commits per model, and a key of the models it shows.
 fn models_strip(
     canvas: &mut Canvas,
     letters: &Letters,
@@ -318,8 +280,6 @@ fn models_strip(
     x_of: &dyn Fn(i64) -> i32,
 ) {
     canvas.rounded_fill(left - 1, top - 1, right - left + 2, STRIP + 2, DARK);
-    // Only days with commits draw; each column reaches halfway to the next
-    // such day on either side, so a day without commits leaves no hole.
     let present: Vec<(i64, &std::collections::BTreeMap<String, u64>)> = days
         .iter()
         .filter_map(|row| {
@@ -359,10 +319,6 @@ fn models_strip(
     }
 }
 
-// -------------------------------------------------------------------- map
-
-/// The tracked files of the Camelot-shaped trees and `recon/`, by size on
-/// disk, in the figure palette.
 pub(crate) fn map(letters: &Letters, root: &Path) -> Canvas {
     map_of(letters, tracked_only(root, disk_tiles(root)))
 }
@@ -427,8 +383,6 @@ pub(crate) fn map_of(letters: &Letters, tiles: Vec<Tile>) -> Canvas {
 
 type Box = (i32, i32, i32, i32);
 
-/// A treemap cell on whole pixels: each edge rounds on its own, so
-/// neighbours share their boundary exactly.
 fn snap(rect: Rect) -> Box {
     let (x0, y0) = (rect.x.round() as i32, rect.y.round() as i32);
     let (x1, y1) = (
@@ -476,7 +430,6 @@ fn draw(
                 cell.3 - 2 * inset,
             )
         } else {
-            // A file leaves its right and bottom pixel to the frame behind it.
             (cell.0, cell.1, (cell.2 - 1).max(1), (cell.3 - 1).max(1))
         };
         let expanded = container && body.2 >= 44 && body.3 >= 34;
@@ -484,7 +437,6 @@ fn draw(
             canvas.rounded_fill(cell.0, cell.1, cell.2, cell.3, FACE);
             canvas.bevel(cell.0, cell.1, cell.2, cell.3, Relief::Raised);
         } else {
-            // Only a titled folder rounds its corners; files stay square.
             stack(canvas, tile, body);
         }
         let name = match tile.source.as_deref() {
@@ -535,7 +487,6 @@ fn draw(
         }
     }
 }
-/// A tile's fill: its kinds stacked by bytes, the largest share at the bottom.
 fn stack(canvas: &mut Canvas, tile: &Tile, body: Box) {
     let parts = content_mix(tile)
         .into_iter()
@@ -550,9 +501,6 @@ fn stack(canvas: &mut Canvas, tile: &Tile, body: Box) {
         canvas.fill(body.0, to, body.2, from - to, swatch);
     }
 }
-/// A name that fits its box: one line on a folder's heading, or a file's
-/// name broken at `_ . - space` into centred lines on boxes large enough to
-/// read at a glance.
 fn caption(letters: &Letters, name: &str, body: Box, folder: bool) -> Option<(Vec<String>, Box)> {
     let line = LINE as i32;
     if name.is_empty() {
@@ -649,9 +597,6 @@ mod tests {
             vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],
         );
         assert_eq!((canvas.width, canvas.height), (838, 1490));
-        // The outer frame's cut corner is clear and its light bevel three
-        // quarters over the face; the games folder's corner is cut to the
-        // face behind the file frame, and its bevel starts beside it.
         use super::super::raster::{blend, rgb};
         let light = blend(
             rgb(crate::coverage::palette::LIGHT),
@@ -696,7 +641,6 @@ mod tests {
                 UNTAGGED
             ]
         );
-        // An unknown model takes its family's muted tone.
         assert_eq!(shown[3].1, model_colour("Codex"));
         assert_eq!(shown[4].1, "#000000");
     }
@@ -725,12 +669,10 @@ mod tests {
         let gold = super::super::raster::rgb(GOLD);
         let blue = super::super::raster::rgb(BLUE);
         let column = |x: i32, ink| (0..399).any(|y| canvas.get(x, y) == Some(ink));
-        // Gold runs from the first day; blue only from 18 September.
         assert!(column(41, gold));
         assert!(!column(41, blue) && !column(300, blue));
         let right = (0..WIDTH).rev().find(|x| column(*x, blue)).unwrap();
         assert!(right > 600);
-        // The last day's strip column is three quarters Opus 5.5 over grey.
         let pink = super::super::raster::rgb(model_colour("Opus 5.5"));
         let grey = super::super::raster::rgb(model_colour(UNTAGGED));
         let strip = (0..WIDTH)

@@ -431,7 +431,7 @@ Func_0816dc50:
 	subs r3, #16
 	str r6, [sp, #28]
 	str r3, [r5, #16]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #16]
 	bl Graphics_PrepareTransferInIwramWork
@@ -966,7 +966,7 @@ Func_0816dc50:
 	bl Func_081969ac
 	mov r0, r9
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 .L_0816e3f8:
 	movs r0, #1
 	movs r4, #128
@@ -1080,7 +1080,7 @@ Func_0816dc50:
 	str r3, [r1, #4]
 	mov r0, r9
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r4, .L_0816e624
 	movs r2, #7
 	strb r2, [r6]
@@ -1163,7 +1163,7 @@ Func_0816dc50:
 	bl Func_081969ac
 	mov r0, r9
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 .L_0816e58c:
 	movs r1, #1
 	add r8, r1

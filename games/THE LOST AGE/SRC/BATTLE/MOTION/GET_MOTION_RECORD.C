@@ -2,7 +2,6 @@
 #include "SCENE.H"
 #include "MOTION_OBJECT.H"
 
-/* ☀️'s, but ⚓️ also refuses a missing object. */
 void *GetMotionRecord(struct MotionObject *object, s32 record_index)
 {
     s32 storage_kind;

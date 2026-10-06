@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "SCENE.H"
@@ -6,10 +15,9 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_PARTY.H"
-s32 SerialRuntime_BeginTransferB(void);
-void SerialRuntime_WaitForTransferB(void);
-void Party_Apply(s32, u16 *);
-void Party_Do(void *);
+#include "SERIAL_RUNTIME.H"
+#include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -20,41 +28,37 @@ void Party_Do(void *);
 #define APPEND_NAME_SPACE 0
 #endif
 
-void Runtime_BumpFree(void *block);
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
-s32 SerialRuntime_BeginTransferA(void *data, s32 size);
-void SerialRuntime_WaitForTransferA(void);
-
 void WaitFrames(s32);
-u8 *Runtime_GetObject(s32);
-void *Trade_GetOfferStateFar(s32);
 
-extern char MsgEnemyLabel;
+enum LinkPartyPacketSize {
+    LINK_PARTY_UNIT_BYTES = 340,
+    LINK_PARTY_OFFER_BYTES = 320
+};
 
 s32 UpdateNameEntries(void)
 {
     u16 name_text[24];
     void *buffer;
-    u8 *name_entry;
+    struct BattleUnit *name_entry;
     s32 named_count;
     s32 index;
     s32 len;
     s32 i;
 
-    buffer = Runtime_BumpAllocateAlternatePool(340);
+    buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
     named_count = 0;
     index = 0;
     while (index <= 2) {
         name_entry = Runtime_GetObject(index + 128);
-        if (SerialRuntime_BeginTransferB() == -1) {
+        if (SerialRuntime_BeginTransferB(name_entry) == -1) {
             break;
         }
         SerialRuntime_WaitForTransferB();
-        if (name_entry[298] != 0) {
+        if (name_entry->status_12a != 0) {
             named_count += 1;
         }
         WaitFrames(2);
-        Party_Apply((s32)&MsgEnemyLabel, name_text);
+        Party_Apply((s32)MsgEnemyLabel, name_text);
         i = 0;
         if (name_text[i] != 0) {
             do {
@@ -70,18 +74,17 @@ s32 UpdateNameEntries(void)
 #endif
         len = i;
         for (i = 14; i >= len; i--) {
-            name_entry[i] = name_entry[i - len];
+            name_entry->name[i] = name_entry->name[i - len];
         }
         for (i = 0; i < len; i++) {
-            name_entry[i] = (u8)name_text[i];
+            name_entry->name[i] = name_text[i];
         }
-        name_entry[14] = 0;
+        name_entry->name[14] = 0;
         index += 1;
     }
     Party_Do(buffer);
-    buffer = Runtime_BumpAllocateAlternatePool(320);
-    Trade_GetOfferStateFar(1);
-    if (SerialRuntime_BeginTransferB() != -1) {
+    buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
+    if (SerialRuntime_BeginTransferB(Trade_GetOfferStateFar(1)) != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }
@@ -89,10 +92,6 @@ s32 UpdateNameEntries(void)
     return named_count;
 }
 
-/* Sends this side's battle party over the link cable: one unit state per
- * transfer, padded to three, then the Djinn offer with its owners renamed to
- * the member slots the other side knows them by. It is declared to return a
- * value and returns none: the epilogue keeps r0 free for one. */
 s32 LinkBattle_SendParty(void)
 {
     u8 *buffer;
@@ -105,7 +104,7 @@ s32 LinkBattle_SendParty(void)
     s32 mark;
     u16 owners[8];
 
-    size = 340;
+    size = LINK_PARTY_UNIT_BYTES;
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
     mark = 0xff;
     work = gBattleWork;
@@ -116,30 +115,29 @@ s32 LinkBattle_SendParty(void)
         Iwram_CopyWords(buffer, Owner_GetStateFar(owners[i]), size);
         ((struct BattleUnit *)buffer)->status_12a = 2;
         work->owner_slots[owners[i]] = i - 128;
-        if (SerialRuntime_BeginTransferA(buffer, 340) == -1)
+        if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
         SerialRuntime_WaitForTransferA();
         WaitFrames(2);
     }
     for (; i <= 2; i++) {
         ((struct BattleUnit *)buffer)->status_12a = 0;
-        if (SerialRuntime_BeginTransferA(buffer, 340) == -1)
+        if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
         SerialRuntime_WaitForTransferA();
         WaitFrames(2);
     }
-    size = 320;
+    size = LINK_PARTY_OFFER_BYTES;
     Runtime_BumpFree(buffer);
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's
-     * copy is emitted before the count's address as in the reference */
+    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
     do {
         Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
     } while (0);
     list = &((struct DjinnRecoveryTable *)buffer)->list;
     for (j = 0; j < list->count; j++)
         list->entries[j].unit_id = work->owner_slots[list->entries[j].unit_id];
-    if (SerialRuntime_BeginTransferA(buffer, 320) != -1) {
+    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
         SerialRuntime_WaitForTransferA();
         WaitFrames(1);
         WaitFrames(2);

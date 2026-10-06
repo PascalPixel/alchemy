@@ -111,7 +111,7 @@ Func_080daecc:
 	adds r3, r3, r1
 	str r3, [r7, #12]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r2, #240
 	mov r7, r10
 	lsls r2, r2, #12

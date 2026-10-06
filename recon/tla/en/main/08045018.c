@@ -9,7 +9,6 @@ struct Object_080216b4 {
     u8 destination;
 };
 
-/* Frame counter advanced by the vertical-blank interrupt. */
 extern volatile u32 gFrameTick;
 extern const u8 Ui_PairBobOffsets[];
 

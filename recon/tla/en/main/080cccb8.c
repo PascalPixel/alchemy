@@ -1,13 +1,6 @@
-/*
- * Draft: BattleAction_FindDescriptor, ported from its ☀️ twin with the event
- * work from its heap slot; it goes before SRC/GAME/FLAGS/IS_CONDITION_ACTIVE.C.
- * The listing loads the first table (ldr r7, [r3, #108]) before setting
- * up its two constants, where this C sets them first.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
-/* One 24-byte descriptor; a sprite of -1 ends each table. */
 struct ActionDescriptor {
     u16 sprite;
     s16 condition;
@@ -26,13 +19,12 @@ struct ActionDescriptorTables {
 
 struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
 {
-    struct ActionDescriptorTables *work = Ram_HeapSlots->event_work;
     struct ActionDescriptor *entry;
     s32 i;
     s32 group = 8;
 
     for (i = 0; i < 4; i++) {
-        entry = work->tables[i];
+        entry = ((struct ActionDescriptorTables *)Ram_HeapSlots->event_work)->tables[i];
         if (entry == NULL)
             continue;
         if (id <= 7) {

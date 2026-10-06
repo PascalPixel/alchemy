@@ -2,37 +2,15 @@
 #include "SCENE.H"
 #include "BATTLE_TYPES.H"
 #include "GAME_STATE.H"
-
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
-s32 GameFlag_TestFar(s32 flag_id);
-void GameFlag_SetBitFar(s32 flag_id);
-
-/*
- * Walks the word table returned by the overlay's table provider and
- * replaces the current scene with the first entry
- * of the matching group that passes the kind and flag checks.
- *
- * Table layout: a group header word has its upper 20 bits clear and a
- * 12-bit id in the low bits (0x1ff terminates the table); every other word
- * is an entry: bits 0-11 id (0x1ff ends the group), bits 12-19 sub value,
- * bits 20-27 kind (0 ends the group, 0xff matches any kind), bit 28 marks
- * that a flag id follows in the next word.
- */
-
-typedef u32 *(*TableProvider_0808a5f8)(void);
-
-struct Services_0808a5f8 {
-    u8 padding000[0x14];
-    TableProvider_0808a5f8 table_provider;
-};
-
-extern struct Services_0808a5f8 gOverlayArea;
+#include "FIELDRUN.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE.H"
 
 void MapGroupTable_SelectEntry(s32 kind)
 {
     s16 cur;
-    u32 *p;
-    u32 *start;
+    const u32 *p;
+    const u32 *start;
     u32 word;
     s32 id;
     s32 result;
@@ -42,7 +20,7 @@ void MapGroupTable_SelectEntry(s32 kind)
     s32 flag;
 
     cur = gGameState.scene;
-    p = gOverlayArea.table_provider();
+    p = gOverlayArea.exits();
     result = 999;
     sub = 0;
     if (kind == 999)
@@ -87,7 +65,6 @@ void MapGroupTable_SelectEntry(s32 kind)
     }
 }
 
-/* A unit's HP or PP as a fraction of its maximum, in 1/0x4000. */
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 {
     s32 ratio = (value << 14) / max;
@@ -101,7 +78,6 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
     return clamped;
 }
 
-/* A gauge shows empty only when nothing is left. */
 static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
 {
     unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
@@ -112,14 +88,6 @@ static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
         unit->pp_gauge = 1;
 }
 
-/*
- * Chooses the scene and entrance the coming scene change leads to. A reason
- * of -1 is the party's defeat: the selected member wakes with 1 HP, the first
- * two members are fully restored while flag 32 is set, and the party goes to the
- * defeat destination, or to the saved one when none is set. Any other reason
- * takes the requested destination. A half left at -1 takes the default; a
- * request that names neither half takes the default whole and sets flag 0x109.
- */
 void Party_SetReturnPoint(s32 reason)
 {
     struct BattleUnit *unit;

@@ -1,11 +1,3 @@
-@ Symbol lookup, copied and run as one 100-byte unit (size and source {0x64,
-@ 0x0803857c} in its loader's literal pool at 0x0803d1bc). Behind a 4-byte
-@ Thumb entry (bx pc) the ARM body puts a sentinel bit on top of the bit word
-@ with rrx from the carry of rsbs r4, r3, r4, lsl #3; GCC never emits rrx.
-@ After that entry its 96-byte body equals TBS GRAPHICS/TEXT/LOOKUP_SYMBOL.S
-@ (0x08015570) apart from one relocated literal word.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank, symbol lookup
 .syntax unified
 	.thumb
 	.global Text_LookupSymbolCode
@@ -45,3 +37,5 @@ AlchemyUncreditedEnd_0803857c:
 	stm	r0, {r1, r2, r3}
 	bx	lr
 	.4byte	Text_MessageBanks
+	.global Text_LookupSymbolCodeSize
+	.set Text_LookupSymbolCodeSize, . - Text_LookupSymbolCode

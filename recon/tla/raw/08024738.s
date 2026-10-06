@@ -96,7 +96,7 @@ Object_SetMoveTarget:
 	add r5, r8
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	adds r5, r0, #0
 .L_080247f2:
 	movs r3, #128

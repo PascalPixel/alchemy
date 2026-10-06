@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080c85c8: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -17,13 +13,13 @@ Event_ClearInvalidPackedValuesFar:
 	.thumb_func
 BattleFx_InitializeSlotsFar:
 	overlay_veneer BattleFx_InitializeSlots
-	.global Func_080c85e0
+	.global BattleFx_ClearActiveSlotsAndScheduleUpdatesFar
 	.thumb_func
-Func_080c85e0:
-	overlay_veneer Func_080d7ab4
-	.global Func_080c85e8
+BattleFx_ClearActiveSlotsAndScheduleUpdatesFar:
+	overlay_veneer BattleFx_ClearActiveSlotsAndScheduleUpdates
+	.global Motion_LaunchFromFocusedObjectFar
 	.thumb_func
-Func_080c85e8:
+Motion_LaunchFromFocusedObjectFar:
 	overlay_veneer Func_080d3070
 	.global ObjectMotion_OffsetPositionAndResetFar
 	.thumb_func
@@ -37,17 +33,17 @@ ObjectMotion_CommitPositionAndActivateFar:
 	.thumb_func
 Object_LinkObjectAndSetCallbackFar:
 	overlay_veneer Object_LinkObjectAndSetCallback
-	.global Func_080c8608
+	.global BattleEffect_PauseObjectFar
 	.thumb_func
-Func_080c8608:
+BattleEffect_PauseObjectFar:
 	overlay_veneer BattleEffect_PauseObject
-	.global Func_080c8610
+	.global BattleFx_ResumeObjectFar
 	.thumb_func
-Func_080c8610:
+BattleFx_ResumeObjectFar:
 	overlay_veneer Func_080e035c
-	.global Func_080c8618
+	.global ObjectTable_FindActiveByValueFar
 	.thumb_func
-Func_080c8618:
+ObjectTable_FindActiveByValueFar:
 	overlay_veneer Func_080d3c2c
 	.global ObjectTable_ReadActiveValueFar
 	.thumb_func

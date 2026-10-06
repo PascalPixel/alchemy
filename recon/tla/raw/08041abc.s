@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08041abc
+	.global UiWindow_ClearTileAttributesInRect
 	.thumb_func
-Func_08041abc:
+UiWindow_ClearTileAttributesInRect:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

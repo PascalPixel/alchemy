@@ -1,1 +1,1 @@
-/* Shared sound-driver settings are source constants in COMMON/SRC/SOUND/SOUND.C. */
+Resource_Decode2CodeSize = Resource_Decode2End - Resource_Decode2Code;

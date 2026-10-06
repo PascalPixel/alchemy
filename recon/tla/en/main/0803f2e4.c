@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-/* Sprite record setup for the menu selection list. */
-
 struct Object_0801c0dc {
     u8 filler0[5];
     u8 field_50 : 2;
@@ -40,15 +38,6 @@ void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 extern u8 MsgCommandName;
 extern u8 MsgItemName;
 extern u8 MsgAbilityName;
-
-/*
- * Load the graphic for kind through one of three tile loaders, record the
- * tile base, source slot and returned tile index in the node, then reset the
- * node's render object.  The object is reached through a pointer so that
- * every byte access stays within Thumb's 5-bit offset range from one base
- * register.  The per-kind tile counts are link-time constants; an integer
- * literal cannot produce 0x1f here.
- */
 
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node, s32 reuse)
 {
@@ -89,11 +78,6 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node, s32 reu
     obj->field_52 = 0;
     obj->field_55 = 0;
     obj->field_54 = 0;
-    /*
-     * field_76 = 1 stays before field_56 = 0: both mask with 0x3f, and the
-     * mask is copied before the byte-7 store because the byte-5 store still
-     * needs it.
-     */
     obj->field_76 = 1;
     obj->field_56 = 0;
     obj->field_8c = 0;

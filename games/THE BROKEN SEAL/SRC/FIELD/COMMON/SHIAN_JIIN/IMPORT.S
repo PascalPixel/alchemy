@@ -1,7 +1,3 @@
-@ Import veneers after the SHIAN_JIIN overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — SHIAN_JIIN overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -18,18 +14,18 @@ Engine_TaskWait:
 	.thumb_func
 Engine_ScheduleCallbackFar:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Scheduler_RemoveCallbackFar
+	.global Scheduler_RemoveCallback
 	.thumb_func
-Scheduler_RemoveCallbackFar:
-	overlay_veneer Func_080000d8
+Scheduler_RemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
-	.global ArcTan2Far
+	.global ArcTan2
 	.thumb_func
-ArcTan2Far:
-	overlay_veneer Func_08000100
+ArcTan2:
+	overlay_veneer ArcTan2Far
 	.global Engine_MathSin
 	.thumb_func
 Engine_MathSin:
@@ -61,11 +57,11 @@ Engine_MapCopyCellAttributes:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:
@@ -97,15 +93,15 @@ Engine_EventEnd:
 	.global FieldScene_PrepareActors
 	.thumb_func
 FieldScene_PrepareActors:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global UiText_DrawQuantityPairWithCueFar
+	.global UiText_DrawQuantityPairWithCue
 	.thumb_func
-UiText_DrawQuantityPairWithCueFar:
-	overlay_veneer Func_0808a078
+UiText_DrawQuantityPairWithCue:
+	overlay_veneer UiText_DrawQuantityPairWithCueFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -185,7 +181,7 @@ ObjectGroup_SetChildValue:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -237,7 +233,7 @@ Engine_CameraMoveToActor:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_ColorBufferApplyTarget
 	.thumb_func
 Engine_ColorBufferApplyTarget:
@@ -253,15 +249,15 @@ Engine_ColorBufferInterpolate:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_PsynergyPlayEffect
 	.thumb_func
 Engine_PsynergyPlayEffect:
@@ -286,10 +282,10 @@ Engine_PsynergyRaiseHands:
 	.thumb_func
 BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
-	.global BattleFx_PlayQueuedSoundFar
+	.global BattleFx_PlayQueuedSound
 	.thumb_func
-BattleFx_PlayQueuedSoundFar:
-	overlay_veneer Func_0808a5e8
+BattleFx_PlayQueuedSound:
+	overlay_veneer BattleFx_PlayQueuedSoundFar
 	.global Engine_SanctumOpen
 	.thumb_func
 Engine_SanctumOpen:

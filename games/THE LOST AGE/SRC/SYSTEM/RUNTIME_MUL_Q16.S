@@ -1,9 +1,3 @@
-@ 16.16 fixed-point multiply of TLA's resident runtime, behind a 4-byte
-@ Thumb entry (bx pc): smull, then the middle 32 bits of the 64-bit
-@ product in r0. After the entry these 16 bytes equal TBS
-@ SYSTEM/RUNTIME_MUL_Q16.S (0x0800089c) byte for byte. The entry is TLA's
-@ own and carries no credit.
-@ credit: library — TBS/TLA common IWRAM runtime 16.16 multiply
 .syntax unified
 	.thumb
 	.global IwramMulQ16

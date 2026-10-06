@@ -326,7 +326,7 @@ Func_0814512c:
 	adds r2, #12
 	str r2, [sp, #12]
 .L_0814539e:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #12]
 	ldr r0, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork
@@ -407,7 +407,7 @@ Func_0814512c:
 	add r5, sp, #88
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	ldr r0, [r5, #4]
 	asrs r2, r3, #1
@@ -631,7 +631,7 @@ Func_0814512c:
 	add r6, sp, #88
 	adds r1, r6, #0
 	mov r0, r8
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	mov r0, r10
 	mov r1, r11
@@ -796,11 +796,11 @@ Func_0814512c:
 	cmp r3, #3
 	bne .L_08145742
 	ldr r0, [sp, #52]
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_0814574e
 .L_08145742:
 	ldr r0, [sp, #52]
-	bl Func_081504b4
+	bl SummonFx_RunCanvasMode3
 	b .L_0814574e
 .L_0814574a:
 	bl Func_08143bb8

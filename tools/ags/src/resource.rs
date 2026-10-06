@@ -1,117 +1,14 @@
-//! Resource directory files built from editable inputs. A built file's name
-//! is its recipe, as in pret's graphics rules: the stem names the input, the
-//! first extension its form, and an optional second extension the resource
-//! packer's codec. Image forms read the indexed image `STEM.PNG`:
-//!
-//! - `.gbapal`: the image's palette as little-endian BGR555.
-//! - `.bitmap`: the pixels row by row, one palette index per byte.
-//! - `.4bpp`, `.8bpp`: the pixels as GBA tiles, row-major.
-//! - `.4bppWxH`, `.8bppWxH`: the pixels as GBA tiles cut into metatiles of
-//!   one OBJ shape, W by H pixels, as pret's gbagfx -mwidth and -mheight:
-//!   each metatile's tiles row-major before the next one's. A sheet of 1D
-//!   sprites is drawn this way so each sprite reads whole.
-//! - `.glyphs`: 1-bit glyphs. The image is one glyph, 8 pixels, wide with its
-//!   glyphs stacked; each row is a byte, its leftmost pixel in bit 0 and any
-//!   non-zero index inked.
-//! - `.icons`: an icon bank. The image is one 32x32 icon wide with its icons
-//!   stacked. The bank is a table of each icon's halfword offset, then each
-//!   icon as 8-bit tiles in the packer's palette LZ without its tag,
-//!   its stream zero-padded to a multiple of 32 bytes.
-//! - `.icon4`: one 4-bit icon, its pixels row by row in the 4-bit icon
-//!   coder (Psynergy's icon4), without a palette; its data source lists the
-//!   icons of a table by label, as pret's item icon table does.
-//! - `.frames`: a sprite bank. The image is one square frame wide with its
-//!   frames stacked, a front and a back pose in turn. The bank is a table of
-//!   each frame's offset in that order, ending 0, then the back frames and
-//!   then the front frames, each zero-skip coded.
-//!
-//! A table reads its text `STEM.TSV`:
-//!
-//! - `.table`: records of little-endian fields. The first line names each
-//!   column and its type, such as `x:s16\ty:s16` (`u8`, `s8`, `u16`, `s16`,
-//!   `u32` or `s32`); each further line is a record of decimal or `0x` hex
-//!   values in those columns. Only the last record may stop short.
-//! - `.plane`: a grid plane of cells, such as a map's 128x128 grid. The
-//!   first line gives the cell type, the grid's size, the fill of every
-//!   cell not written and the top-left cell of the written rows:
-//!   `cell:u16\tgrid:128x128\tfill:fff\tat:2,0`. Each further line is one
-//!   grid row from that cell, its cells in hex separated by spaces; the rest
-//!   of the row is fill, and an empty line a row of fill.
-//! - `.delta0`, `.delta1`, `.delta2`: the table's bytes as 16-bit tilemap
-//!   entries, delta-coded in that mode (Psynergy's tilemap delta).
-//! - `.script`: a halfword command script, one command per line, its values
-//!   decimal or `0x` hex: `channel N` (0xfd00 | N), `jump N` (0xfe00 | N),
-//!   `stop` (0xfeff), `end` (0xffff), and the commands `frame SOURCE COUNT
-//!   DESTINATION DELAY`, `control BLDCNT` and `level VALUE DELAY`, written
-//!   as their halfwords.
-//!
-//! A font reads two inputs, `STEM.PNG` and its table `STEM.TSV`:
-//!
-//! - `.font`: one record per glyph, cut from the sheet's 16x16 cells in
-//!   code order: the table's halfwords for that glyph, the advance width
-//!   first, then its rows of sixteen pixels as little-endian halfwords, the
-//!   leftmost pixel highest. The
-//!   table names `first` (the first code), `top` (the cell row of the
-//!   record's first row) and `rows`, then one line per glyph: its code in
-//!   hex and its halfwords.
-//!
-//! A field sprite bank reads its record table `STEM.TSV` and each sprite's
-//! PNG and TSV beside it (see ags::sprite):
-//!
-//! - `.sprites`: the bank as assembler source, which a data source
-//!   `.include`s; its lists name the labels of the frames and scripts.
-//! - `.spriteblocks`: the same, laid out sprite by sprite in the order
-//!   `LAYOUT.TSV` beside it gives.
-//!
-//! A picture made of several reads its part list `STEM.TSV`:
-//!
-//! - `.parts`: each line names a part image beside the list and that part's
-//!   form, such as `BLUE_FLAME_COLUMN\tbitmap`, or `table` for a table beside
-//!   it; the parts are built in turn and joined. A tile part may add
-//!   `MAP FIRST COUNT`: its image is then the picture the tilemap table
-//!   `MAP` shows of tiles FIRST..FIRST + COUNT, or with a further `frames`
-//!   that run's animation frames stacked (see `MapPart`).
-//!
-//! - `.icons4`: an icon bank of 4-bit icons, each with its own palette. Each
-//!   line names a 32x32 icon image beside the list, or `-` for an empty
-//!   slot. The bank is a table of each slot's halfword offset, 0 when empty,
-//!   then each icon's 16-colour palette and its pixels, row by row, in the
-//!   4-bit icon coder (Psynergy's icon4), zero-padded to a word, or to the
-//!   hex boundary an `align` line gives (the Japanese ☀️ bank pads to 20).
-//!
-//! A block map reads its grid `STEM.TSV`, one line per row of hex words:
-//!
-//! - `.blocks`: the grid cut into 16x16 blocks, left to right and top to
-//!   bottom. The bank is a table of each block's word offset, then each
-//!   block's words, little-endian, in the packer's palette LZ without its tag.
-//!
-//! Either may then be packed:
-//!
-//! - `.lz`: the packer's LZ, the smaller of its general (tag 0) and
-//!   palette (tag 1) encodings, the palette one on ties.
-//! - or `.plz`: the packer's palette LZ without its tag byte.
-//! - or `.mtf`: the tag-2 tile compressor.
-//! - or `.d7`: the backdrop codec, each 7-bit pixel as a delta from the one
-//!   before it.
 use crate::graphics::{indices, metatiles, MapDrawing};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
-use psynergy::assets::compression::{
+use crate::assets::compression::{
     encode_delta7, encode_icon4, encode_tilemap_delta, encode_zero_skip,
 };
-use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
+use crate::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
-/// The resource packer's compressor, as the streams in both games show: the
-/// general ring's window, read-ahead and reach, and the palette ring's
-/// read-ahead. It packed every code overlay and every LZ data resource.
 pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
-/// The codecs a built file may end in, after its form.
-pub const CODECS: &[&str] = &["lz", "plz", "mtf", "d7"];
+pub(crate) const CODECS: &[&str] = &["lz", "plz", "mtf", "d7"];
 
-/// Whether `built` names a file this encoder builds: `STEM.FORM` or
-/// `STEM.FORM.CODEC` with a form and a codec it knows. The publication check
-/// admits exactly these, so a new form never needs a check of its own, as
-/// pret's gbagfx rules know every conversion their makefile names.
 pub fn is_recipe(built: &str) -> bool {
     let file = built.rsplit('/').next().unwrap_or(built);
     let mut parts = file.split('.');
@@ -135,7 +32,6 @@ pub fn is_recipe(built: &str) -> bool {
     !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
 }
 
-/// Whether a form reads a table or tilemap rather than an image.
 fn data_form(form: &str) -> bool {
     matches!(
         form,
@@ -153,8 +49,6 @@ fn data_form(form: &str) -> bool {
     )
 }
 
-/// The input a built file name reads, relative to the same directory: the
-/// name up to its first extension, then `.TSV` for a data form or `.PNG`.
 pub fn input_name(built: &str) -> Result<String, String> {
     let (directory, file) = built.rsplit_once('/').unwrap_or(("", built));
     let (stem, rest) = file
@@ -172,10 +66,6 @@ pub fn input_name(built: &str) -> Result<String, String> {
     })
 }
 
-/// Where a recipe's further input `name` lies: beside its first input
-/// `input`; for `COMMON/NAME`, in games/COMMON's folder of the same path
-/// under `SRC`; and for `COMMON/DIR/.../NAME`, at that path under
-/// games/COMMON's `SRC`. There lives once what both games draw alike.
 pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::PathBuf, String> {
     let Some(shared) = name.strip_prefix("COMMON/") else {
         return Ok(input.with_file_name(name));
@@ -204,13 +94,10 @@ pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::Pa
     })
 }
 
-/// Build the file `built` names from the bytes of its input.
 pub fn build_file(built: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     build_file_with(built, input, &|name| Err(format!("{built} needs {name}")))
 }
 
-/// Build the file `built` names from its input, reading any second input,
-/// such as a font's table, by its file name beside the first.
 pub fn build_file_with(
     built: &str,
     input: &[u8],
@@ -256,7 +143,6 @@ pub fn build_file_with(
     }
 }
 
-/// The joined parts a part list names, each built from its image beside it.
 fn parts(
     built: &str,
     list: &[u8],
@@ -307,10 +193,6 @@ fn parts(
     Ok(output)
 }
 
-/// A part drawn by a tilemap: `PART\tFORM\tMAP\tFIRST\tCOUNT[\tframes]`
-/// names the tilemap table `MAP` beside the list and the run of tiles
-/// `FIRST..FIRST + COUNT` its picture, or with `frames` each of its stacked
-/// frames, holds (see `graphics::MapDrawing`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MapPart {
     pub map: String,
@@ -320,7 +202,6 @@ pub struct MapPart {
 }
 
 impl MapPart {
-    /// The drawing fields after a part's form.
     pub fn parse(built: &str, fields: &[&str]) -> Result<Self, String> {
         let number = |field: &str| {
             match field.strip_prefix("0x") {
@@ -342,7 +223,6 @@ impl MapPart {
         }
     }
 
-    /// Its layout, from its tilemap table beside the list.
     pub fn layout(
         &self,
         built: &str,
@@ -355,8 +235,6 @@ impl MapPart {
     }
 }
 
-/// A tilemap table's 16-bit entries and its width in cells: every column
-/// a u16.
 pub fn tilemap(built: &str, text: &[u8]) -> Result<(Vec<u16>, usize), String> {
     let header = std::str::from_utf8(text)
         .ok()
@@ -377,7 +255,6 @@ pub fn tilemap(built: &str, text: &[u8]) -> Result<(Vec<u16>, usize), String> {
     Ok((entries, wide))
 }
 
-/// A table's records, each field little-endian in its column's type.
 fn table(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(text).map_err(|_| format!("{built}: table is not text"))?;
     let mut lines = text.lines().filter(|line| !line.trim().is_empty());
@@ -432,7 +309,6 @@ fn table(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-/// A halfword command script, one command per line.
 fn script(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(text).map_err(|_| format!("{built}: script is not text"))?;
     let mut words: Vec<u16> = Vec::new();
@@ -472,10 +348,8 @@ fn script(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     Ok(words.iter().flat_map(|word| word.to_le_bytes()).collect())
 }
 
-/// A grid plane of cells, cropped to where it differs from its fill.
 fn plane(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(text).map_err(|_| format!("{built}: plane is not text"))?;
-    // Rows follow the header line by line; an empty row is all fill.
     let mut lines = text.lines();
     let header = lines
         .next()
@@ -526,7 +400,6 @@ fn plane(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
         .collect())
 }
 
-/// A bank of 16x16 blocks of words cut from a grid, each packed.
 fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(grid).map_err(|_| format!("{built}: grid is not text"))?;
     let rows = text
@@ -564,7 +437,6 @@ fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-/// A bank of 4-bit icons with their own palettes from its slot list.
 fn icon4_bank(
     built: &str,
     list: &[u8],
@@ -608,7 +480,6 @@ fn icon4_bank(
     Ok(output)
 }
 
-/// A font's glyph records from its sheet and table.
 fn font(built: &str, png: &[u8], table: &[u8]) -> Result<Vec<u8>, String> {
     let image = indexed_bitmap_png(png).map_err(|error| format!("{built}: {}", error.0))?;
     let text = std::str::from_utf8(table).map_err(|_| format!("{built}: table is not text"))?;
@@ -667,7 +538,6 @@ fn font(built: &str, png: &[u8], table: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-/// An icon bank of 32x32 icons stacked in one column.
 fn icon_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
     if width != 32 || !height.is_multiple_of(32) {
         return Err(format!("{built}: icons are 32 pixels square, stacked"));
@@ -684,7 +554,6 @@ fn icon_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<
     Ok(output)
 }
 
-/// A sprite bank of square frames stacked in one column.
 fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
     if width == 0 || !height.is_multiple_of(width) {
         return Err(format!("{built}: frames must be square and stacked"));
@@ -710,14 +579,13 @@ fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Resul
     Ok(output)
 }
 
-/// The OBJ shape `WxH` in pixels names, in tiles: one of the twelve.
 fn obj_shape(name: &str) -> Option<(usize, usize)> {
     let (wide, high) = name.split_once('x')?;
     let shape = (
         wide.parse::<usize>().ok()? / 8,
         high.parse::<usize>().ok()? / 8,
     );
-    (psynergy::assets::image::OBJ_SHAPES.contains(&shape)
+    (crate::assets::image::OBJ_SHAPES.contains(&shape)
         && format!("{}x{}", shape.0 * 8, shape.1 * 8) == name)
         .then_some(shape)
 }
@@ -756,306 +624,4 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "glyphs" => return Err(format!("{built}: glyphs are 8 pixels wide, stacked")),
         other => return Err(format!("{built}: unknown form .{other}")),
     })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use psynergy::assets::image::{png_from_bitmap, png_from_gba_tiles};
-
-    #[test]
-    fn a_common_sibling_lies_in_commons_folder_of_the_same_path() {
-        use std::path::Path;
-        let input = Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPRITES.TSV");
-        assert_eq!(
-            sibling_path(input, "SPR_001.PNG").unwrap(),
-            Path::new("games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPR_001.PNG")
-        );
-        assert_eq!(
-            sibling_path(input, "COMMON/SPR_020.PNG").unwrap(),
-            Path::new("games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
-        );
-        let absolute = Path::new("/w/games/THE BROKEN SEAL/SRC/GRAPHICS/SPRITE/SPRITES.TSV");
-        assert_eq!(
-            sibling_path(absolute, "COMMON/SPR_020.PNG").unwrap(),
-            Path::new("/w/games/COMMON/SRC/GRAPHICS/SPRITE/SPR_020.PNG")
-        );
-        assert_eq!(
-            sibling_path(input, "COMMON/MAP/MAP_153/GRID_METATILE.TSV").unwrap(),
-            Path::new("games/COMMON/SRC/MAP/MAP_153/GRID_METATILE.TSV")
-        );
-        assert!(sibling_path(input, "COMMON/MAP//X.TSV").is_err());
-        assert!(sibling_path(input, "COMMON/../X.PNG").is_err());
-        assert!(sibling_path(input, "COMMON/..").is_err());
-        assert!(sibling_path(Path::new("X/Y.TSV"), "COMMON/Z.PNG").is_err());
-    }
-
-    #[test]
-    fn an_icon4_is_its_pixels_in_the_icon_coder_without_a_palette() {
-        let pixels: Vec<u8> = (0..256).map(|index| (index % 16) as u8).collect();
-        let png = png_from_bitmap(&pixels, &[0u8; 32], 16).unwrap();
-        let built = build_file("UI/ICON.icon4", &png).unwrap();
-        assert_eq!(built, encode_icon4(&pixels).unwrap());
-        assert!(is_recipe("UI/ICON.icon4"));
-        assert_eq!(input_name("UI/ICON.icon4").unwrap(), "UI/ICON.PNG");
-    }
-
-    #[test]
-    fn metatile_forms_cut_the_sheet_into_their_obj_shape() {
-        // A 16x16 sheet whose four tiles are filled 1, 2, 3 and 4 row-major.
-        let pixels: Vec<u8> = (0..256)
-            .map(|i| 1 + (i % 16 / 8 + i / 128 * 2) as u8)
-            .collect();
-        let palette = [0u8; 32];
-        let sheet = png_from_bitmap(&pixels, &palette, 16).unwrap();
-        let first = |built: Vec<u8>| {
-            built
-                .chunks(32)
-                .map(|tile| tile[0] & 15)
-                .collect::<Vec<_>>()
-        };
-        assert_eq!(first(build_file("T.4bpp", &sheet).unwrap()), [1, 2, 3, 4]);
-        assert_eq!(
-            first(build_file("T.4bpp8x16", &sheet).unwrap()),
-            [1, 3, 2, 4]
-        );
-        assert_eq!(
-            first(build_file("T.4bpp16x16", &sheet).unwrap()),
-            [1, 2, 3, 4]
-        );
-        assert!(build_file("T.4bpp24x8", &sheet).is_err());
-        assert!(build_file("T.4bpp32x32", &sheet).is_err());
-        assert!(build_file("T.4bpp08x16", &sheet).is_err());
-    }
-
-    #[test]
-    fn part_lists_draw_tile_parts_by_their_tilemap() {
-        // A 2x1 map showing tiles 1 and 0: the picture's left cell is tile 1.
-        let left: Vec<u8> = (0..128).map(|i| u8::from(i % 16 < 8)).collect();
-        let joined = build_file_with("P.parts", b"M\ttable\nA\t8bpp\tM\t0\t2\n", &|name| {
-            Ok(match name {
-                "M.TSV" => b"a:u16\tb:u16\n1\t0\n".to_vec(),
-                _ => png_from_bitmap(&left, &[0, 0, 1, 0], 16).unwrap(),
-            })
-        })
-        .unwrap();
-        assert_eq!(&joined[..4], [1, 0, 0, 0]);
-        assert_eq!(joined[4..4 + 64], [0; 64]);
-        assert_eq!(joined[4 + 64..], [1; 64]);
-        assert!(build_file_with("P.parts", b"A\t8bpp\tM\t0\n", &|_| Ok(Vec::new())).is_err());
-    }
-
-    #[test]
-    fn recipes_are_the_forms_and_codecs_this_encoder_builds() {
-        for built in [
-            "GRAPHICS/FX/STAR.4bpp.mtf",
-            "GRAPHICS/FX/STAR.8bpp",
-            "GRAPHICS/FX/STAR.4bpp32x16.lz",
-            "MAP/M/METATILES.delta1.lz",
-            "GRAPHICS/UI/ICONS.icons4",
-            "GRAPHICS/FX/STAR.gbapal.plz",
-            "GRAPHICS/FX/STAR.bitmap.d7",
-        ] {
-            assert!(is_recipe(built), "{built}");
-        }
-        for built in [
-            "GRAPHICS/FX/STAR.raw",
-            "GRAPHICS/FX/STAR.4bpp.zip",
-            "GRAPHICS/FX/STAR.4bpp24x8",
-            "MAP/M/CELLS.delta3.lz",
-            "GRAPHICS/UI/ICONS.icons5",
-            "MAP/M/END.bin",
-            "GRAPHICS/FX/STAR.PNG",
-            "GRAPHICS/FX/STAR",
-            "GRAPHICS/FX/.4bpp",
-            "GRAPHICS/FX/STAR.4bpp.lz.lz",
-        ] {
-            assert!(!is_recipe(built), "{built}");
-        }
-        // Every codec a recipe may name is one the encoder writes.
-        let png = png_from_bitmap(&[0u8; 64], &[0, 0, 1, 0], 8).unwrap();
-        for codec in CODECS {
-            assert!(
-                build_file(&format!("T.4bpp.{codec}"), &png).is_ok(),
-                "{codec}"
-            );
-        }
-    }
-
-    #[test]
-    fn names_read_their_image_and_follow_their_recipe() {
-        assert_eq!(
-            input_name("GRAPHICS/FX/STAR.bitmap.lz").unwrap(),
-            "GRAPHICS/FX/STAR.PNG"
-        );
-        assert!(input_name("GRAPHICS/FX/STAR").is_err());
-        assert_eq!(
-            input_name("MAP/M/CELLS.delta1.lz").unwrap(),
-            "MAP/M/CELLS.TSV"
-        );
-        assert!(build_file("T.bin", &[1, 2, 3]).is_err());
-        assert_eq!(
-            build_file("T.delta2", b"a:u16\tb:u16\n1\t3\n").unwrap(),
-            [2, 1, 0, 2, 0]
-        );
-        assert_eq!(
-            build_file("T.delta1.lz", b"a:u16\n1\n").unwrap()[0] <= 1,
-            true
-        );
-        assert!(build_file("T.delta3", b"a:u16\n1\n").is_err());
-        // A script writes each command as its halfwords.
-        assert_eq!(
-            build_file(
-                "T.script",
-                b"channel\t0x84\nframe\t0x600\t2\t0x480\t0\njump\t0\nstop\nend\n"
-            )
-            .unwrap(),
-            [0x84, 0xfd, 0, 6, 2, 0, 0x80, 4, 0, 0, 0, 0xfe, 0xff, 0xfe, 0xff, 0xff]
-        );
-        assert_eq!(
-            build_file("T.script", b"control\t0x3f44\nlevel\t0x1008\t10\n").unwrap(),
-            [0x44, 0x3f, 8, 0x10, 10, 0]
-        );
-        assert!(build_file("T.script", b"frame\t1\t2\n").is_err());
-        assert!(build_file("T.script", b"jump\t0x100\n").is_err());
-        assert!(build_file("T.script", b"wait\t1\n").is_err());
-        // A font: one 16x16 cell whose row 1 inks the leftmost and rightmost pixels.
-        let mut pixels = vec![0u8; 256];
-        pixels[16] = 1;
-        pixels[31] = 1;
-        let sheet = png_from_bitmap(&pixels, &[0, 0, 0xff, 0x7f], 16).unwrap();
-        let table = b"first\t41\ntop\t1\nrows\t2\n41\t8\t0\n";
-        let built = build_file_with("F.font", &sheet, &|name| {
-            assert_eq!(name, "F.TSV");
-            Ok(table.to_vec())
-        })
-        .unwrap();
-        assert_eq!(built, [8, 0, 0, 0, 1, 0x80, 0, 0]);
-        assert!(build_file("F.font", &sheet).is_err());
-        // An icon bank: a halfword offset per icon, streams padded to 32 bytes.
-        let icons = build_file(
-            "I.icons",
-            &png_from_bitmap(&[1; 32 * 64], &[0, 0, 1, 0], 32).unwrap(),
-        )
-        .unwrap();
-        assert_eq!(&icons[..4], [4, 0, 36, 0]);
-        assert_eq!((icons.len() - 4) % 32, 0);
-        assert!(build_file(
-            "I.icons",
-            &png_from_bitmap(&[0; 16 * 32], &[0, 0], 16).unwrap()
-        )
-        .is_err());
-        // A 4-bit icon bank: an empty slot is 0; an icon is its palette and
-        // its stream, padded to a word.
-        let bank = build_file_with("B.icons4", b"-\nA\n", &|name| {
-            assert_eq!(name, "A.PNG");
-            Ok(png_from_bitmap(&[0; 32 * 32], &[0; 32], 32).unwrap())
-        })
-        .unwrap();
-        assert_eq!(&bank[..4], [0, 0, 4, 0]);
-        assert_eq!(bank.len(), 4 + 32 + 132);
-        assert_eq!(&bank[36..40], [0, 0, 0, 0]);
-        let wide = build_file_with("B.icons4", b"align\t20\n-\nA\n", &|_| {
-            Ok(png_from_bitmap(&[0; 32 * 32], &[0; 32], 32).unwrap())
-        })
-        .unwrap();
-        assert_eq!(wide.len(), 192);
-        assert!(build_file_with("B.icons4", b"align\t3\nA\n", &|_| Ok(Vec::new())).is_err());
-        // A block map: two blocks side by side, a word offset each.
-        let row = format!("{}\n", ["c80"; 32].join("\t"));
-        let blocks = build_file("M.blocks", row.repeat(16).as_bytes()).unwrap();
-        assert_eq!(&blocks[..4], [8, 0, 0, 0]);
-        let second = u32::from_le_bytes(blocks[4..8].try_into().unwrap()) as usize;
-        assert_eq!(blocks[8..second], blocks[second..]);
-        assert!(build_file("M.blocks", b"c80\t0\n").is_err());
-        assert!(build_file("M.blocks", b"x\n").is_err());
-        // Parts join in list order.
-        let joined = build_file_with("P.parts", b"A\tbitmap\nB\tbitmap\n", &|name| {
-            Ok(match name {
-                "A.PNG" => png_from_bitmap(&[1, 2], &[0, 0, 1, 0, 2, 0, 3, 0], 2).unwrap(),
-                _ => png_from_bitmap(&[3], &[0, 0, 1, 0, 2, 0, 3, 0], 1).unwrap(),
-            })
-        })
-        .unwrap();
-        assert_eq!(joined, [1, 2, 3]);
-        // 1-bit glyph rows: the leftmost pixel in bit 0.
-        let mut rows = vec![0u8; 16];
-        rows[0] = 1;
-        rows[15] = 2;
-        let glyphs = png_from_bitmap(&rows, &[0, 0, 0xff, 0x7f, 0x1f, 0], 8).unwrap();
-        assert_eq!(build_file("G.glyphs", &glyphs).unwrap(), [1, 0x80]);
-        assert!(build_file("G.glyphs", &png_from_bitmap(&[0; 32], &[0, 0], 16).unwrap()).is_err());
-        // A table packs each record's fields in their columns' types.
-        assert_eq!(input_name("M/PATH.table.lz").unwrap(), "M/PATH.TSV");
-        assert_eq!(
-            build_file("T.table", b"x:s8\ty:u16\n-1\t0x102\n2\n").unwrap(),
-            [0xff, 2, 1, 2]
-        );
-        assert!(build_file("T.table", b"x:s8\n128\n").is_err());
-        assert!(build_file("T.table", b"x:u8\ty:u8\n1\n2\t3\n").is_err());
-        assert!(build_file("T.table", b"x\n1\n").is_err());
-        // A plane fills around its written rows; cells are hex, space-separated.
-        assert_eq!(
-            input_name("M/GRID_SHAPE.plane").unwrap(),
-            "M/GRID_SHAPE.TSV"
-        );
-        assert_eq!(
-            build_file(
-                "P.plane",
-                b"cell:u16\tgrid:3x2\tfill:fff\tat:1,1\n001 0a2\n"
-            )
-            .unwrap(),
-            [0xff, 0xf, 0xff, 0xf, 0xff, 0xf, 0xff, 0xf, 1, 0, 0xa2, 0]
-        );
-        assert_eq!(
-            build_file("P.plane", b"cell:u8\tgrid:2x1\tfill:7\tat:0,0\n").unwrap(),
-            [7, 7]
-        );
-        assert!(build_file("P.plane", b"cell:u8\tgrid:2x1\tfill:0\tat:1,0\n01 02\n").is_err());
-        // A short row ends in fill; an empty row is all fill.
-        assert_eq!(
-            build_file(
-                "P.plane",
-                b"cell:u8\tgrid:2x3\tfill:9\tat:0,0\n01\n\n02 03\n"
-            )
-            .unwrap(),
-            [1, 9, 9, 9, 2, 3]
-        );
-        assert!(build_file("P.plane", b"cell:u8\tgrid:2x1\tfill:0\tat:0,0\n010\n").is_err());
-        assert!(build_file("P.plane", b"cell:u8\tgrid:1x1\tfill:0\tat:0,0\n\n\n").is_err());
-        assert!(build_file("P.plane", b"cell:u8\tgrid:2x2\tfill:100\tat:0,0\n").is_err());
-        assert!(build_file("P.plane", b"cell:u8\tgrid:2x2\tat:0,0\n").is_err());
-        // A part list may join a table after an image.
-        let mixed = build_file_with("P.parts", b"A\tbitmap\nM\ttable\n", &|name| {
-            Ok(match name {
-                "A.PNG" => png_from_bitmap(&[1, 2], &[0, 0, 1, 0, 2, 0, 3, 0], 2).unwrap(),
-                _ => b"v:u16\n0x304\n".to_vec(),
-            })
-        })
-        .unwrap();
-        assert_eq!(mixed, [1, 2, 4, 3]);
-        let palette: Vec<u8> = (0..16u16)
-            .flat_map(|color| (color * 0x421).to_le_bytes())
-            .collect();
-        let tiles: Vec<u8> = (0..64).map(|index| (index % 16) as u8 * 0x11).collect();
-        let png = png_from_gba_tiles(&tiles, &palette, GbaBpp::Bpp4, 2).unwrap();
-        assert_eq!(build_file("A.gbapal", &png).unwrap(), palette);
-        assert_eq!(build_file("A.4bpp", &png).unwrap(), tiles);
-        assert_eq!(build_file("A.bitmap", &png).unwrap().len(), 16 * 8);
-        let packed = build_file("A.4bpp.lz", &png).unwrap();
-        assert!(packed[0] <= 1);
-        assert_eq!(build_file("A.4bpp.mtf", &png).unwrap()[0], 2);
-        assert_eq!(build_file("A.bitmap.d7", &png).unwrap().len() % 2, 0);
-        assert!(build_file("A.4bpp.zip", &png).is_err());
-        // Two 2x2 frames: the back one (1) is stored before the front one (0).
-        let bank = png_from_bitmap(&[1, 0, 0, 2, 3, 3, 3, 3], &palette, 2).unwrap();
-        assert_eq!(
-            build_file("A.frames", &bank).unwrap(),
-            [17, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 1, 0xe1, 2, 0]
-        );
-        // A bitmap may be any size; tiles need whole tiles.
-        let odd = png_from_bitmap(&[3; 60], &palette, 12).unwrap();
-        assert_eq!(build_file("A.bitmap", &odd).unwrap().len(), 60);
-        assert!(build_file("A.4bpp", &odd).is_err());
-    }
 }

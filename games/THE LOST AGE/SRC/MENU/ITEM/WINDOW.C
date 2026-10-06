@@ -1,11 +1,18 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "M7_INTERFACES.H"
-void UiWindow_SetBounds( struct WindowBounds *, s32, s32, s32, s32);
+#include "RAM_BUFFER.H"
 
-extern u8 Menu_PlusSignString;
-extern u8 Menu_MinusSignString;
+#define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
 
-void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
-void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
+
 
 void ItemMenu_DrawStat(
     s32 delta, s32 unused, s32 window, s32 x, s32 y)
@@ -36,4 +43,43 @@ void ItemMenu_DrawStat(
         UiText_DrawStringInWindowFar(
             &Menu_MinusSignString, window, x - digits * 8 + 16, y);
     }
+}
+
+struct ItemMenuWindows {
+    u8 unknown_00[0x24];
+    struct RenderInput *item_window;
+    u8 unknown_28[0xc8];
+    struct RenderInput *message_window;
+};
+
+#define ITEM_MENU ((struct ItemMenuWindows *)Ram_HeapSlots->menu_runtime)
+
+void ItemMenu_SetItemWin5(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->item_window, 13, 5, 17, 10);
+}
+
+void ItemMenu_SetItemWin3(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->item_window, 13, 3, 17, 10);
+}
+
+void ItemMenu_SetMsgWin5(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 5);
+}
+
+void ItemMenu_SetMsgWin6(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 6);
+}
+
+void ItemMenu_SetMsgWin7(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 7);
+}
+
+void ItemMenu_SetMsgWin3(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 3);
 }

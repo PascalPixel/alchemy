@@ -55,8 +55,8 @@ Func_080f9644:
 	add r2, r9
 	movs r3, #0
 	strh r3, [r2]
-	bl Func_080fbe48
-	bl Func_080fbdbc
+	bl ItemMenu_SetMsgWin3
+	bl ItemMenu_SetItemWin3
 	movs r3, #134
 	lsls r3, r3, #2
 	add r3, r9
@@ -65,7 +65,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	ldr r1, .L_080f9a04
 	movs r0, #0
-	bl Func_080facb4
+	bl ItemMenu_DrawMsg
 	mov r3, r9
 	ldr r0, [r3, #48]
 	bl RenderOutput_RedrawSavedRectFar
@@ -103,8 +103,8 @@ Func_080f9644:
 	bne .L_080f9732
 	bl .L_080fa280
 .L_080f9732:
-	bl Func_080fbe48
-	bl Func_080fbdbc
+	bl ItemMenu_SetMsgWin3
+	bl ItemMenu_SetItemWin3
 	movs r3, #134
 	lsls r3, r3, #2
 	add r3, r9
@@ -117,7 +117,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	ldr r1, .L_080f9a08
 	movs r0, #0
-	bl Func_080facb4
+	bl ItemMenu_DrawMsg
 	movs r0, #0
 	bl Func_080fc6bc
 	movs r3, #1
@@ -304,8 +304,8 @@ Func_080f9644:
 	mov r5, r9
 	adds r5, #240
 	bl ItemMenu_HideAllIcons
-	bl Func_080fbddc
-	bl Func_080fbd9c
+	bl ItemMenu_SetMsgWin5
+	bl ItemMenu_SetItemWin5
 	ldr r0, [r5]
 	bl RenderOutput_RedrawSavedRectFar
 	bl Func_080fc12c
@@ -399,8 +399,8 @@ Func_080f9644:
 .L_080f99a4:
 	mov r5, r9
 	adds r5, #240
-	bl Func_080fbddc
-	bl Func_080fbd9c
+	bl ItemMenu_SetMsgWin5
+	bl ItemMenu_SetItemWin5
 	ldr r0, [r5]
 	bl RenderOutput_RedrawSavedRectFar
 	bl Func_080fc12c
@@ -573,7 +573,7 @@ Func_080f9644:
 	bl Owner_RefreshClassActionsFar
 	adds r0, r7, #0
 	bl Owner_RecalculateStatsFar
-	bl Func_080fbdbc
+	bl ItemMenu_SetItemWin3
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #22
@@ -908,11 +908,11 @@ Func_080f9644:
 .L_080f9dd6:
 	movs r3, #0
 	mov r10, r3
-	bl Func_080fbe48
-	bl Func_080fbdbc
+	bl ItemMenu_SetMsgWin3
+	bl ItemMenu_SetItemWin3
 	ldr r1, .L_080f9e68
 	movs r0, #0
-	bl Func_080facb4
+	bl ItemMenu_DrawMsg
 	movs r0, #1
 	bl Func_080fc6bc
 	movs r1, #1
@@ -1175,7 +1175,7 @@ Func_080f9644:
 	bl Owner_RecalculateStatsFar
 	ldrb r0, [r7]
 	bl Owner_RecalculateStatsFar
-	bl Func_080fbddc
+	bl ItemMenu_SetMsgWin5
 	mov r3, r9
 	adds r3, #240
 	ldr r0, [r3]
@@ -1203,7 +1203,7 @@ Func_080f9644:
 	mov r3, r9
 	ldr r0, [r3, #48]
 	bl RenderOutput_ClearListFar
-	bl Func_080fbd9c
+	bl ItemMenu_SetItemWin5
 	ldrb r0, [r7]
 	movs r1, #1
 	bl Func_080fae2c

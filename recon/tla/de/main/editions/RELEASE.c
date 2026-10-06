@@ -1,4 +1,3 @@
-/* Draft: all 54 instruction bytes match except the localized release call. The production branch uses the independently proven canonical veneer. */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 

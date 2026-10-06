@@ -1,4 +1,14 @@
-/* The Suhara desert: the phase request and two object toggles. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "FX_SCENE.H"
+#include "GLOBAL_CELLS.H"
 #include "SABAKU.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -8,53 +18,31 @@
 #include "CALL.H"
 #include "FIELD_EFFECT.H"
 #include "SCENE_IDS.H"
+#include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gSuharaSabakuEntrances1[];
-extern const struct SceneEntrance gSuharaSabakuEntrances2[];
-extern const struct SceneEntrance gSuharaSabakuEntrances3[];
-extern const struct SceneEntrance gSuharaSabakuEntrancesOther[];
 
-extern const struct ScenePlacement gSuharaSabakuPlacements1[];
-extern const struct ScenePlacement gSuharaSabakuPlacements2[];
-extern const struct ScenePlacement gSuharaSabakuPlacements3[];
-extern const struct ScenePlacement gSuharaSabakuPlacementsOther[];
 
-extern u8 MsgSuharaSandstorm[];
 
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
-extern u8 MsgSuharaNowhereFound[];
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);
 
-/* The game state seen as rows, as this handler addresses it. */
 union GameStateRows {
     u8 bytes[512][2];
     s16 halves[512][1];
     s32 words[256];
 };
 
-void Event_SetPairWork1c0(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
-extern const struct SceneEvent gSuharaSabakuEvents3[];
-extern const struct SceneEvent gSuharaSabakuEventsOther[];
 
-/* The IWRAM field globals: the map work first, the event work at +0x4c. */
 struct FieldGlobals {
     u8 *map;
     u8 unknown_04[0x48];
     struct EventWork *event;
 };
 
-extern struct FieldGlobals gMapWork;
-
 void QueueSceneSound(s32 cue);
 
-/* QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C) written out in place, with
- * that function's one-pass loops around the IME read and the queue update. */
 #define QUEUE_IO_WRITE(address, value)                                      \
     q = &gIoWriteQueue;                                                     \
     do { \
@@ -83,20 +71,19 @@ void SceneState_SendRequest15With45(void)
     BattleFx_SetPhaseRequest(15, 45);
 }
 
-s32 OverlayObject_ApplyZeroAndClearByte89(u8 *obj)
+s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj)
 {
     Engine_ActorSetSpriteFlags(obj, 0);
-    obj[89] = 0;
+    ((struct FieldActor *)obj)->collision_flags = 0;
     return 0;
 }
 
-s32 OverlayObject_ToggleField84Bit0(u8 *obj)
+s32 SuharaSabaku_ToggleActorActive(u8 *obj)
 {
-    obj[84] ^= 1;
+    ((struct FieldActor *)obj)->active ^= 1;
     return 1;
 }
 
-/* Where the party appears in each of the desert's three areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 selector = gGameState.scene;
@@ -113,7 +100,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSuharaSabakuEntrancesOther;
 }
 
-/* The Suhara desert: the empty table slot and the exits. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -124,7 +110,6 @@ u8 *SuharaSabaku_GetExits(void)
     return gSuharaSabakuExits;
 }
 
-/* The actors placed in each of the desert's three areas. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 selector = gGameState.scene;
@@ -141,14 +126,13 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gSuharaSabakuPlacementsOther;
 }
 
-/* The Suhara desert: the selected actor's progress and the middle steps. */
 void SuharaSabaku_SyncSelectedActorProgress(void)
 {
     struct Actor_02000400 *actor;
     struct SceneWork_02000400 *scene;
     s32 progress;
 
-    actor = Actor_Get(((struct Selection_02000400 *)((s16 *)&gGameState))->actor_id);
+    actor = Object_GetById(((struct Selection_02000400 *)((s16 *)&gGameState))->actor_id);
     scene = *(struct SceneWork_02000400 **)((u8 *)&gEventWork);
     actor->presentation = (u16)(gFrameCount << 12);
 
@@ -156,7 +140,7 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
     if (progress != 0) {
         if (progress == 1) {
             scene->state_one_marker = 99;
-        } else if (GameFlag_IsSet(0x106) == 0) {
+        } else if (Engine_GameFlagIsSet(0x106) == 0) {
             progress -= 1;
         }
     }
@@ -167,8 +151,8 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 {
     s32 p10;
     s32 rec2;
-    u8 *rec7;
-    s32 record;
+    struct FieldActor *rec7;
+    struct FieldActor *record;
     u8 *p6;
     u8 *base;
 
@@ -184,16 +168,16 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         Engine_ActorSetAnimation((s32)p6, 9);
         record = Object_GetById(p10);
         if (record != 0) {
-            Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination((s32)p6, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove((s32)p6);
         Audio_PlayCue(244);
         Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
-        rec7[85] = rec2;
-        Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12) + 0x200000, *(s32 *)(rec7 + 16));
+        rec7->motion_flags = rec2;
+        Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000, rec7->z.fixed);
         Engine_ActorWaitForMove((s32)p6);
-        *(s32 *)(rec7 + 40) = rec2;
-        rec7[85] = 4;
+        rec7->velocity_y = rec2;
+        rec7->motion_flags = 4;
         *(u8 *)(base + 498) = 2;
         GameFlag_Set(0x20f);
         GameFlag_SetByte(0x218, p10);
@@ -213,10 +197,9 @@ void FieldScene_RunActor11Step(void) { FieldScene_RunMiddleAuxiliarySequence(11)
 
 void FieldScene_RunActor12Step(void) { FieldScene_RunMiddleAuxiliarySequence(12); }
 
-/* FAKEMATCH: a one-pass IME wrapper and a signed queue limit preserve the
- * queued write order, as in VISIT_BLEND.C. */
 void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
+    /* FAKEMATCH: a one-pass IME wrapper and a signed queue limit preserve the queued write order. */
     s32 i;
     s32 next_frame;
     volatile u16 *ime;
@@ -281,39 +264,39 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     Engine_GameFlagSet(0x340);
     if (Engine_GameFlagIsSet(0x9a0) == 0) {
     } else {
-        if (Value1(Engine_GameFlagIsSet, 0x9b6) != 0) {
+        if (GameFlag_IsSet(0x9b6) != 0) {
         } else {
             Engine_GameFlagSet(0x9b6);
-            Call3(Engine_ActorSetSpeed, 13, 0x10000, 0x8000);
-            Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
+            Actor_SetSpeed(13, 0x10000, 0x8000);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
             record = Object_GetById(0);
             if ((s32)record != 0) {
                 Engine_ActorSetPosition(13, record->x.fixed, record->z.fixed);
             }
-            Call3(Engine_ActorFaceActor, 13, 0x4000, 0);
-            Object_GetById(13)->unknown_5a &= 254;
+            Actor_FaceActor(13, 0x4000, 0);
+            Object_GetById(13)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkTo(13, p9, (p11 - 16));
-            Object_GetById(0)->unknown_5a &= 254;
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
             Engine_EventWait(1);
-            SetFlagBits(&Object_GetById(0)->unknown_5a, 1);
+            Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_ActorSetAnimation(13, 1);
             Engine_ActorFaceDirection(0, 0x4000, 0);
             Engine_EventSetMessage((s32)MsgSuharaSandstorm);
-            Call3(Engine_ActorShowEmote, 13, 0x106, 60);
+            Actor_ShowEmote(13, 0x106, 60);
             Engine_EventShowMessage(13, 0);
-            Call3(Engine_ActorShowEmote, 13, 0x102, 60);
+            Actor_ShowEmote(13, 0x102, 60);
             Engine_EventShowMessage(13, 0);
-            Call3(Engine_ActorFaceDirection, 13, 0x2000, 0);
-            Call3(Engine_ActorShowEmote, 13, 0x101, 60);
+            Actor_FaceDirection(13, 0x2000, 0);
+            Actor_ShowEmote(13, 0x101, 60);
             Engine_EventShowMessage(13, 0);
             Engine_EventWait(10);
-            Call3(Engine_ActorFaceDirection, 13, 0xc000, 30);
+            Actor_FaceDirection(13, 0xc000, 30);
             Engine_ActorRunRepeatedMotion(13, 2);
             Engine_EventShowMessage(13, 0);
             Engine_ActorSetAnimationAndWait(13, 3);
             Engine_EventShowMessage(13, 0);
-            Call3(Engine_ActorSetSpeed, 13, 0x10000, 0x8000);
+            Actor_SetSpeed(13, 0x10000, 0x8000);
             Engine_ActorSetAnimation(13, 2);
             record = Object_GetById(0);
             if ((s32)record != 0) {
@@ -326,7 +309,6 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     Engine_EventEnd();
 }
 
-/* The Suhara desert: the late steps and actor 13's restoration. */
 void FieldScene_RunLateActor8Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(8); }
 
 void FieldScene_RunLateActor9Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(9); }
@@ -340,7 +322,7 @@ void FieldScene_RunLateActor12Step(void) { SuharaSabaku_RestoreActorScaleAndBlen
 void FieldScene_RunActorThirteenRestoration(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x9a0) == 0) {
     } else {
@@ -351,10 +333,9 @@ void FieldScene_RunActorThirteenRestoration(void)
                 GameFlag_Set(0x9b5);
                 Engine_EventBegin();
                 Engine_EventSetMessage((s32)MsgSuharaNowhereFound);
-                /* Record layout observed here: s32 at +8, s32 at +16. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
-                    Actor_SetPosition(ACTOR_ID, *(s32 *)(record + 8), *(s32 *)(record + 16));
+                    Actor_SetPosition(ACTOR_ID, record->x.fixed, record->z.fixed);
                 }
                 Actor_FaceActor(ACTOR_ID, 0xc000, 0);
                 Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 0x4e8);
@@ -382,10 +363,9 @@ void FieldScene_RunActorThirteenRestoration(void)
                 Event_ShowMessage(ACTOR_ID, 0);
                 Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Engine_ActorSetAnimation(ACTOR_ID, 2);
-                /* Record layout observed here: s16 at +10, s16 at +18. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
-                    Actor_SetDestination(ACTOR_ID, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                    Actor_SetDestination(ACTOR_ID, record->x.part.pixel, record->z.part.pixel);
                 }
                 Engine_ActorWaitForMove(ACTOR_ID);
                 Actor_SetPosition(ACTOR_ID, 0, 0);
@@ -415,7 +395,7 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
         actor->target_z = ACTOR_NO_TARGET;
     } else {
         actor->target_x = leader->x.fixed;
-        actor->target_y = *(s32 *)leader->unknown_14;
+        actor->target_y = leader->terrain_height;
         actor->target_z = leader->z.fixed;
         dx = actor->x.fixed - leader->x.fixed;
         if (dx < 0) {
@@ -444,7 +424,6 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
     return 1;
 }
 
-/* The Suhara desert: actor 12's place and the effect state byte. */
 void PlaceActorTwelveWhenFlagClear(void)
 {
     if (GameFlag_IsSet(2487) == 0) {
@@ -454,13 +433,12 @@ void PlaceActorTwelveWhenFlagClear(void)
     }
 }
 
-void SceneState_SetStateByte52(void)
+void SuharaSabaku_EnableEffectChildOption(void)
 {
     u8 *state = *(u8 **)gEffectWork;
-    state[52] = 1;
+    ((struct BattleFxScene *)state)->child_option = 1;
 }
 
-/* The Suhara desert: meeting one of the stranded actors 8 to 12. */
 void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 {
     register s32 a1 asm("r6") = actor; /* FAKEMATCH: pins the actor id to r6 */
@@ -469,7 +447,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
     if (gEventWork->raised_trigger == 99) {
         {
             u16 *target = (u16 *)&gEventWork->raised_trigger;
-            s32 shown = 0;
+            u16 shown = 0;
 
             *target = shown;
         }
@@ -503,10 +481,6 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
     Object_GetById(state->words[125])->motion_flags = 3;
 }
 
-/* The sand swallows the leader and the actor flag byte 0x218 names: cue 219,
- * both sink for sixty frames, the screen closes, flag 0x122 is set and the
- * party leaves for the world map, at entrance 77 from the second area when
- * the flag byte names actor 11 and at entrance 27 otherwise. */
 void SuharaSabaku_DropAndLeave(void)
 {
     s32 other;
@@ -536,13 +510,12 @@ void SuharaSabaku_DropAndLeave(void)
     Engine_EventEnd();
     Engine_GameFlagSet(0x122);
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && GameFlag_GetByte(0x218) == 11) {
-        Event_SetPairWork1c0((s32)&SceneId_WorldMap, 77);
+        Event_SetDestination((s32)&SceneId_WorldMap, 77);
     } else {
-        Event_SetPairWork1c0((s32)&SceneId_WorldMap, 27);
+        Event_SetDestination((s32)&SceneId_WorldMap, 27);
     }
 }
 
-/* The Suhara desert: the encounter palette's pulse. */
 void EncounterPalette_Pulse(void)
 {
     u16 phase = gFrameCount & 63;
@@ -555,8 +528,6 @@ void EncounterPalette_Pulse(void)
     EncounterPalette = ((u32)level << 16) >> 16;
 }
 
-/* The second desert area's encounter: actor 14 and map object 100 stand
- * aside while the encounter palette pulses. */
 s32 FieldScene_RunOpeningAuxiliarySequence(void)
 {
     s32 record;
@@ -570,8 +541,7 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
         Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
         /* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
         Value6(Engine_MapCopyCellAttributes, 11, 71, 1, 1, 12, 71);
-        /* FAKEMATCH: an empty scheduling barrier after the third cell copy
-         * gives the game's argument order r1, r2, r3, r0. */
+        /* FAKEMATCH: an empty scheduling barrier after the third cell copy gives the game's argument order r1, r2, r3, r0. */
         do {
         } while (0);
         record = Engine_TaskRemoveCallback(EncounterPalette_Pulse);
@@ -599,7 +569,6 @@ s32 FieldScene_RunScene3c0SequenceA(void)
     }
 }
 
-/* The third area answers its own events; the others share one table. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku3) {
@@ -608,16 +577,12 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gSuharaSabakuEventsOther;
 }
 
-/* The desert's scene script: it opens the screen, starts the leader's
- * progress task when flag byte 0x210 is set, keeps the encounter palette's
- * level in the first two areas and blends the visit or altar flags there;
- * the third area plays cue 0x120. */
 s32 SuharaSabaku_RunSceneScript(void)
 {
     u8 *map;
 
-    map = gMapWork.map;
-    gMapWork.event->start_transition = 0x201;
+    map = (*(struct FieldGlobals *)gMapWork).map;
+    (*(struct FieldGlobals *)gMapWork).event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     if (GameFlag_GetByte(0x210) != 0) {
         gGameState.movement_mode = 2;
         Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);
@@ -632,7 +597,7 @@ s32 SuharaSabaku_RunSceneScript(void)
     } else if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
         SuharaSabaku_ApplyAltarFlagBlend();
     } else {
-        Audio_PlayCue(0x120);
+        Engine_AudioPlayCue(0x120);
     }
     if (gGameState.entrance == 0) {
         *(u16 *)(map + 20) &= ~0x200;
@@ -640,15 +605,9 @@ s32 SuharaSabaku_RunSceneScript(void)
     return 0;
 }
 
-/* Raises flags 0x206-0x20a for each of flags 0x301-0x305 already set,
- * resets the scale of actors 8 to 12 unless flag 0x109 is set, then queues
- * the blend setup: full fade-in weights when flag 0x340 is set.
- *
- * FAKEMATCH: the queue bound is a variable, so the comparison stays signed
- * on the u16 count as the ROM's bgt has it, and the queue writes keep the
- * one-pass loops of QueueIoWriteDelay2. */
 void SuharaSabaku_ApplyVisitFlagBlend(void)
 {
+    /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */
     volatile u16 *ime;
     struct IoWriteQueue *q;
     u32 saved;
@@ -691,16 +650,9 @@ void SuharaSabaku_ApplyVisitFlagBlend(void)
     QUEUE_IO_WRITE(0x04000052, ((16 - alpha) << 8) | alpha);
 }
 
-/* Raises flags 0x206-0x208 for each of flags 0x311-0x313 already set and
- * 0x9b7 for 0x315, resets the scale of actors 8 to 10 unless flag 0x109 is
- * set, shows actor 11's second part, then queues the blend setup as
- * SuharaSabaku_ApplyVisitFlagBlend does.
- *
- * FAKEMATCH: the queue bound is a variable, so the comparison stays signed
- * on the u16 count as the ROM's bgt has it, and the queue writes keep the
- * one-pass loops of QueueIoWriteDelay2. */
 void SuharaSabaku_ApplyAltarFlagBlend(void)
 {
+    /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */
     volatile u16 *ime;
     struct IoWriteQueue *q;
     u32 saved;

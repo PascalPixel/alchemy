@@ -48,7 +48,7 @@ Func_0804868c:
 	bl UiWindow_Create
 	str r0, [sp, #44]
 	movs r0, #1
-	bl Func_08041c0c
+	bl UiWork_SetAltFlagAndClearTable
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #9
@@ -234,7 +234,7 @@ Func_0804868c:
 	adds r1, #1
 	subs r2, #2
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r0, [sp, #32]
 	cmp r0, #0
 	beq .L_08048878
@@ -258,7 +258,7 @@ Func_0804868c:
 	bne .L_08048884
 	b .L_080489a0
 .L_08048884:
-	bl Func_0803cca8
+	bl UiWork_ClearValueNameTables
 	movs r3, #0
 	str r3, [sp, #24]
 	movs r3, #192
@@ -320,7 +320,7 @@ Func_0804868c:
 	beq .L_0804893c
 	lsrs r0, r0, #17
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	movs r3, #240
 	lsls r3, r3, #4
 	ands r3, r5
@@ -593,7 +593,7 @@ Func_0804868c:
 	str r3, [sp, #0]
 	subs r2, #2
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r0, [sp, #72]
 	movs r3, #1
 	movs r1, #0
@@ -705,7 +705,7 @@ Func_0804868c:
 .L_08048c08:
 	.4byte gInput
 .L_08048c0c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08048c10:
 	mov r1, r9
 	ldrh r2, [r1, #8]
@@ -826,10 +826,10 @@ Func_0804868c:
 	bne .L_08048d1a
 	ands r5, r6
 	bl Ui_FillVramBlockPattern
-	bl Func_0803cca8
+	bl UiWork_ClearValueNameTables
 	lsrs r0, r5, #17
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	movs r2, #52
 	ldr r1, [sp, #8]
 	ldr r0, .L_08048f54
@@ -1140,7 +1140,7 @@ Func_0804868c:
 .L_08048f54:
 	.4byte 0x00000cf8
 .L_08048f58:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08048f5c:
 	ldr r0, [sp, #52]
 	movs r1, #5
@@ -1223,7 +1223,7 @@ Func_0804868c:
 .L_08048ff8:
 	.4byte Data_080597f8
 .L_08048ffc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08049000:
 	lsrs r0, r0, #2
 	ands r3, r1
@@ -1284,7 +1284,7 @@ Func_0804868c:
 	movs r2, #2
 	movs r3, #1
 	adds r5, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	cmp r5, #3
 	ble .L_08049038
 .L_0804907a:
@@ -1344,7 +1344,7 @@ Func_0804868c:
 	adds r1, #1
 	movs r2, #4
 	movs r3, #4
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 .L_080490ec:
 	ldr r0, [sp, #60]
 	bl Resource_ResetEntry
@@ -1359,7 +1359,7 @@ Func_0804868c:
 	bl UiWork_Finalize
 	bl Func_08041b68
 	movs r0, #0
-	bl Func_08041c0c
+	bl UiWork_SetAltFlagAndClearTable
 	ldr r0, [sp, #56]
 	bl Sys_Free
 	movs r0, #1
@@ -1377,7 +1377,7 @@ Func_0804868c:
 .L_08049134:
 	.4byte Data_0805f89b
 .L_08049138:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804913c:
 	.4byte Data_0805f7b8
 .L_08049140:

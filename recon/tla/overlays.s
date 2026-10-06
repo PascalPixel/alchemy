@@ -1,6 +1,3 @@
-@ The code overlays in resource order, each linked from its listing in
-@ raw/overlays and compressed by the build. The resource packer's alignment
-@ bytes between streams are not yet reproduced.
 	.section .overlays,"a"
 	.global Resource_Overlay649
 Resource_Overlay649:

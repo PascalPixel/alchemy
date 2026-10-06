@@ -1,8 +1,3 @@
-/* NONMATCHING: Colosso approach script, 2026-10-01.
- * The complete 276-byte callback retains its old script pointer literal.
- * French moves the owned script with the additional sprite-rendering code;
- * the remaining difference is that stale four-byte pool entry.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

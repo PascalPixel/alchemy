@@ -67,7 +67,7 @@ Func_0810aa80:
 	movs r1, #0
 	movs r2, #0
 	mov r3, r8
-	bl Func_080380d8
+	bl SideObject_CreateFar
 .L_0810ab0e:
 	movs r2, #128
 	lsls r2, r2, #3

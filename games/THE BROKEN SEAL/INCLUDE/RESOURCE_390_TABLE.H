@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* The 0x18-byte entries initialized by Resource390_InitRecords. */
 struct Resource390TableEntry {
     u16 unknown_00;
     u8 unknown_02[2];

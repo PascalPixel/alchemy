@@ -1,24 +1,3 @@
-@ Interrupt dispatcher at the head of TLA's resident runtime. The routine at
-@ 0x080133c4 copies 4,096 bytes with DMA3 from 0x080006b8 to 0x03000100
-@ (control 0x84000400): the runtime's 4,000 bytes (this module through
-@ IWRAM_RUNTIME_MIX_MODES.S) and the first 96 bytes of the byte-LZ decoder
-@ after it, which land at 0x030010a0..0x03001100. It points the interrupt
-@ vector at 0x03007ffc to this first word and fills the fourteen handler
-@ words at 0x030001e4 from the ROM table at 0x080178b4 (control
-@ 0x8400000e). The dispatcher saves SPSR with mrs, switches to System mode
-@ with msr CPSR_fc around each handler and returns from it through a Thumb
-@ stub (mov lr, r5; bx pc). mrs and msr have no C form. The runtime's data
-@ carries no credit: the handler words (IWRAM_RUNTIME_IRQ_TABLE.S), its
-@ transform matrix at 0x03000478 (IWRAM_RUNTIME_MATRIX.S), a filler word at
-@ 0x0300087c (in IWRAM_RUNTIME_MIX.S) and the mixer's variables at
-@ 0x03000ae8 (in IWRAM_RUNTIME_MIX_LANES.S), 0x03000af8
-@ (IWRAM_RUNTIME_MIX_STATE.S), 0x03000d1c (IWRAM_RUNTIME_MIX_RENDER_STATE.S)
-@ and 0x03000ee4 (in IWRAM_RUNTIME_MIX_RENDER.S). After their Thumb entries
-@ its 16.16 multiply, fill, square root and bit-run helpers, decompressor
-@ and word copier equal TBS SYSTEM/RUNTIME_MUL_Q16.S, RUNTIME_MATH.S,
-@ RUNTIME_DECOMPRESS.S and RUNTIME_COPY_WORDS.S; several of its other
-@ routines share runs with the TBS runtime modules but are laid out apart.
-@ credit: handwritten — TLA IWRAM runtime interrupt dispatcher
 .syntax unified
 	.arm
 	.global IwramIrqMain

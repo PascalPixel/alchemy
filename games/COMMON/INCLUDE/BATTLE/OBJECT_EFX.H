@@ -3,7 +3,7 @@
 
 #include "TYPES.H"
 
-extern u8 BattleFx_CommonParticleScript[];
-extern u8 BattleFx_FragmentScript;
+extern const s32 BattleFx_CommonParticleScript[];
+extern const s32 BattleFx_FragmentScript[];
 
 #endif

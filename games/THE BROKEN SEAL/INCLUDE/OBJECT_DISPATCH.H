@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* 種別1は単体、種別2は4個の子要素を指す。 */
 struct DispatchObject {
     u32 value_00;
     s16 value_04;
@@ -29,7 +28,9 @@ struct DispatchObject {
     u8 unknown_6c[4];
 };
 
-void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value);
+void ObjectDispatch_Initialize(struct DispatchObject *object, const s32 *script);
+void Animation_ApplyChildValues(struct DispatchObject *object, u32 value);
+void ObjectGroup_SetChildValueUnlessFifteen(void *parent, u32 value);
 
 extern const u32 ObjectDispatch_Table0Script[];
 extern const u32 ObjectDispatch_Table1Script[];

@@ -79,7 +79,7 @@ Func_0816729c:
 	ldr r1, .L_08167424
 	movs r2, #0
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r0, .L_08167428
 	bl Resource_GetTableEntry
 	movs r2, #128
@@ -205,7 +205,7 @@ Func_0816729c:
 .L_08167440:
 	.4byte gCameraSceneParameters
 .L_08167444:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08167448:
 	.4byte 0xffc00000
 .L_0816744c:
@@ -416,7 +416,7 @@ Func_0816729c:
 	ldr r3, [r6]
 	cmp r3, #0
 	ble .L_0816767c
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r6, #16]
 	bl Func_080150e4
 	ldr r0, [r6, #12]
@@ -425,7 +425,7 @@ Func_0816729c:
 	ldr r0, [r6, #16]
 	lsls r3, r5, #9
 	adds r0, r0, r3
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r3, [r6]
 	ldr r0, [sp, #12]
 	str r3, [r0]
@@ -440,7 +440,7 @@ Func_0816729c:
 	add r5, sp, #164
 	ldr r0, [sp, #12]
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r0, [r5, #8]
 	movs r3, #60
 	negs r3, r3
@@ -1068,7 +1068,7 @@ Func_0816729c:
 	adds r0, r3, r2
 .L_08167ae8:
 	str r0, [r5, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #192
 	lsls r1, r1, #13
 	movs r2, #0
@@ -1138,7 +1138,7 @@ Func_0816729c:
 	bne .L_08167b72
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -1273,7 +1273,7 @@ Func_0816729c:
 	str r2, [r3]
 	ldr r1, .L_08167ce0
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r3, .L_08167cd8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1674,7 +1674,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680b0
 	movs r2, #7
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 .L_08167fa8:
 	ldr r0, [sp, #72]
 	cmp r0, #150
@@ -1709,7 +1709,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680bc
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 .L_08167fee:
 	ldr r5, [sp, #72]
 	cmp r5, #214
@@ -1734,7 +1734,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680c0
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r5, [sp, #88]
 	movs r7, #0
 .L_08168024:
@@ -2276,7 +2276,7 @@ Func_0816729c:
 	adds r0, r3, r2
 .L_08168452:
 	str r0, [r5, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #128
 	lsls r1, r1, #12
 	movs r2, #0
@@ -3056,7 +3056,7 @@ Func_0816729c:
 .L_08168a30:
 	.4byte IwramFillWords
 .L_08168a34:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08168a38:
 	.4byte 0x000fffff
 .L_08168a3c:

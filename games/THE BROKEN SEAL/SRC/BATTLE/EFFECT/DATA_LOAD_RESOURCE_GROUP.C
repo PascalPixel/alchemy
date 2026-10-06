@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct Work {
     u8 unknown_000[448];
@@ -8,8 +9,6 @@ struct Work {
 extern struct Work gGameState;
 extern u8 Field_SceneTable[];
 extern u8 gOverlayArea[];
-
-void Resource_LoadCode(s32 first, s32 second);
 
 void BattleFx_LoadResourceGroup(void)
 {

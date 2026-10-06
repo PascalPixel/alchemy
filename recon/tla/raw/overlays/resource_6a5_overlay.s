@@ -10,7 +10,7 @@ Func_02000038:
 	bl Func_020059f4
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {r5, pc}
 	.2byte 0x0000
@@ -20,7 +20,7 @@ Func_02000038:
 Func_02000050:
 	push {lr}
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x02008090,"ax",%progbits
@@ -322,7 +322,7 @@ Func_02000198:
 .L_02008378:
 	.4byte 0x00203210
 .L_0200837c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008380:
 	movs r0, #36
 	bl ObjectMotion_EnableActionAndResetMotion
@@ -509,7 +509,7 @@ Func_020004c8:
 	lsls r2, r2, #8
 	b .L_0200851a
 .L_0200850c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008510:
 	bl Random16Far
 	adds r2, r0, #0
@@ -668,7 +668,7 @@ Func_020005b8:
 .L_02008656:
 	pop {r5, r6, pc}
 .L_02008658:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200865c,"ax",%progbits
 	.global Func_0200065c
 	.thumb_func
@@ -1235,7 +1235,7 @@ Func_0200065c:
 	movs r0, #31
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #31
 	bl Object_GetById
 	movs r1, #7
@@ -1272,7 +1272,7 @@ Func_0200065c:
 	movs r0, #32
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #32
 	bl Object_GetById
 	movs r1, #7
@@ -1456,8 +1456,8 @@ Func_02000cd0:
 	lsls r1, r1, #11
 	lsls r2, r2, #9
 	bl Func_020057ac
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #192
 	movs r1, #192
 	movs r2, #128
@@ -2167,8 +2167,8 @@ Func_02001388:
 	lsls r2, r2, #17
 	lsls r0, r0, #18
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, .L_020096dc
 	bl Func_020058c4
 	movs r0, #5
@@ -2525,8 +2525,8 @@ Func_020016e8:
 	lsls r2, r2, #17
 	lsls r0, r0, #18
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, .L_02009ab8
 	bl Func_020058c4
 	movs r2, #0
@@ -3169,8 +3169,8 @@ Func_02001bc4:
 	lsls r1, r1, #15
 	lsls r0, r0, #18
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, .L_0200a150
 	bl Func_020058c4
 	movs r0, #27
@@ -4522,8 +4522,8 @@ Func_02001bc4:
 	adds r2, r1, r3
 	movs r3, #24
 	str r3, [r2]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #0
 	mov r9, sp
 	bl Func_02001b04
@@ -4706,8 +4706,8 @@ Func_02002ae4:
 	movs r3, #0
 	lsls r0, r0, #18
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, .L_0200add8
 	bl Func_020058c4
 	movs r0, #7
@@ -6098,8 +6098,8 @@ Func_02002ae4:
 	adds r2, r1, r3
 	movs r3, #24
 	str r3, [r2]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #1
 	bl Func_02005934
 	bl Func_0200581c
@@ -6685,11 +6685,11 @@ Func_02003d9c:
 	movs r0, #36
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #36
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #144
 	ldr r0, .L_0200bf14
 	lsls r1, r1, #3
@@ -7025,7 +7025,7 @@ Func_020040f4:
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #99
 	adds r3, r3, r7
 	mov r8, r3
@@ -7111,7 +7111,7 @@ Func_020040f4:
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	movs r1, #1
 	movs r2, #1
@@ -7127,7 +7127,7 @@ Func_020040f4:
 .L_0200c204:
 	.4byte 0x0003ffff
 .L_0200c208:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200c20c:
 	bl Motion_CamBounds
 	bl Func_0200592c
@@ -7524,7 +7524,7 @@ Func_020044cc:
 	bl Func_02005754
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r7, #0
 	movs r6, #0
 	adds r3, #85
@@ -7664,7 +7664,7 @@ Func_020045a4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200c640:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200c644,"ax",%progbits
 	.global Func_02004644
 	.thumb_func
@@ -8316,37 +8316,7 @@ Func_02004b48:
 	.4byte Data_02006b72
 	.section .text.x0200cb9a,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x0200cb9c,"ax",%progbits
-	.global Func_02004b9c
-	.thumb_func
-Func_02004b9c:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x0200cbd2,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200cbd4,"ax",%progbits
 	.global Func_02004bd4
@@ -8422,7 +8392,7 @@ Func_02004bd4:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_0200cd94
 	mov r1, r9
 	str r3, [r6, #108]
@@ -8577,7 +8547,7 @@ Func_02004bd4:
 .L_0200cd90:
 	.4byte Data_0200ea10
 .L_0200cd94:
-	.4byte Func_02004b9c
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200cd98:
 	.4byte 0xffff0000
 	.section .text.x0200cd9c,"ax",%progbits
@@ -9211,7 +9181,7 @@ Func_02005204:
 	ldr r0, [r3]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #226
 	movs r3, #128
 	lsls r2, r2, #4
@@ -9286,8 +9256,8 @@ Func_02005204:
 	adds r3, r3, r2
 	adds r2, #93
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	add sp, #8
 	pop {r3, r5}
 	mov r8, r3
@@ -9301,53 +9271,7 @@ Func_02005204:
 	.4byte 0xffff6667
 .L_0200d340:
 	.4byte gPartyState
-	.section .text.x0200d344,"ax",%progbits
-	.global Func_02005344
-	.thumb_func
-Func_02005344:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	ldr r5, [r6, #68]
-	ldr r3, [r6, #8]
-	ldr r2, [r6, #72]
-	adds r3, r3, r5
-	str r3, [r6, #8]
-	ldr r3, [r6, #12]
-	ldr r7, [r6, #76]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #16]
-	adds r0, r5, #0
-	adds r3, r3, r7
-	movs r1, #18
-	str r3, [r6, #16]
-	bl __divsi3
-	subs r5, r5, r0
-	str r5, [r6, #68]
-	adds r3, r7, #0
-	cmp r7, #0
-	bge .L_0200d374
-	adds r3, #15
-.L_0200d374:
-	asrs r3, r3, #4
-	subs r3, r7, r3
-	str r3, [r6, #76]
-	ldr r2, [r6, #48]
-	ldr r3, [r6, #24]
-	ldr r1, [r6, #80]
-	adds r3, r3, r2
-	str r3, [r6, #24]
-	ldr r2, [r6, #52]
-	ldr r3, [r6, #28]
-	adds r3, r3, r2
-	str r3, [r6, #28]
-	adds r2, r6, #0
-	adds r2, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r2]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	pop {r5, r6, r7, pc}
+	.section .text.x0200d39a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200d39c,"ax",%progbits
 	.global Func_0200539c
@@ -9399,8 +9323,8 @@ Func_0200539c:
 	adds r3, r3, r4
 	lsls r2, r2, #1
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #204
 	bl Func_020059f4
 	movs r3, #3
@@ -9526,7 +9450,7 @@ Func_0200539c:
 .L_0200d520:
 	.4byte gPartyState
 .L_0200d524:
-	.4byte Func_02005344
+	.4byte Effect_AdvanceMotion
 .L_0200d528:
 	.4byte 0xffffa000
 .L_0200d52c:

@@ -469,7 +469,7 @@ BattleTarget_RunSelection:
 .L_080263ec:
 	.4byte gFrameCount
 .L_080263f0:
-	.4byte Data_080346f8
+	.4byte Menu_AnimatedCursorTiles
 .L_080263f4:
 	.4byte 0xfffffc00
 .L_080263f8:
@@ -1133,11 +1133,11 @@ BattleTarget_RunSelection:
 .L_080268e0:
 	.4byte 0x000008ac
 .L_080268e4:
-	.4byte Data_080373dc
+	.4byte OwnerStatus_HpString
 .L_080268e8:
-	.4byte Data_080373e0
+	.4byte OwnerStatus_SlashString
 .L_080268ec:
-	.4byte Data_080373e4
+	.4byte OwnerStatus_PpString
 .L_080268f0:
 	.4byte 0x000008ab
 .L_080268f4:

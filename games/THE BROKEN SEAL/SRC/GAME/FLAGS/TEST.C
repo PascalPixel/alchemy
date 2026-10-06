@@ -1,7 +1,6 @@
 #include "TYPES.H"
 extern u8 GameFlagBytes[];
 
-/* game_flags/test.c */
 s32 GameFlag_Test(s32 flag)
 {
     s32 flag_mask;
@@ -12,10 +11,9 @@ s32 GameFlag_Test(s32 flag)
     flag = ((u32)flag << 0x14) >> 0x17;
     flag_bytes = (u8 *)GameFlagBytes;
     flag_value = flag_bytes[flag] & flag_mask;
-    return (s32)((u32)((0 - flag_value) | flag_value) >> 0x1F);
+    return (u32)((0 - flag_value) | flag_value) >> 0x1F;
 }
 
-/* game_flags/set_bit.c */
 s32 GameFlag_SetBit(s32 flag)
 {
     s32 flag_mask;
@@ -24,11 +22,10 @@ s32 GameFlag_SetBit(s32 flag)
     flag_mask = 1 << (7 & flag);
     flag_bytes = (u8 *)GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes[flag] = (u8)(flag_bytes[flag] | flag_mask);
+    flag_bytes[flag] = flag_bytes[flag] | flag_mask;
     return flag;
 }
 
-/* game_flags/clear.c */
 void GameFlag_ClearBit(s32 flag)
 {
     s32 flag_mask;
@@ -37,10 +34,9 @@ void GameFlag_ClearBit(s32 flag)
     flag_mask = ~(1 << (7 & flag));
     flag_bytes = (u8 *)GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes[flag] = (u8)(flag_bytes[flag] & flag_mask);
+    flag_bytes[flag] = flag_bytes[flag] & flag_mask;
 }
 
-/* game_flags/toggle.c */
 extern u8 GameFlagBytes[];
 
 u32 GameFlag_Toggle(s32 flag)
@@ -52,22 +48,20 @@ u32 GameFlag_Toggle(s32 flag)
     flag_mask = 1 << (7 & flag);
     flag_bytes = (u8 *)GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes[flag] = (u8)(flag_bytes[flag] ^ flag_mask);
+    flag_bytes[flag] = flag_bytes[flag] ^ flag_mask;
     flag_value = flag_bytes[flag] & flag_mask;
     return (u32)((0 - flag_value) | flag_value) >> 31;
 }
 
-/* game_flags/get_byte.c */
 u8 GameFlag_GetByte(s32 flag)
 {
     u32 byte_index;
 
-    byte_index = (u32)flag << 20;
-    flag = (u32)byte_index >> 23;
+    byte_index = flag << 20;
+    flag = byte_index >> 23;
     return GameFlagBytes[flag];
 }
 
-/* game_flags/set_byte.c */
 u32 GameFlag_SetByte(u32 flag, u8 value)
 {
     u32 shifted = flag << 20;
@@ -76,7 +70,6 @@ u32 GameFlag_SetByte(u32 flag, u8 value)
     return flag;
 }
 
-/* game_flags/increment_byte.c */
 u8 GameFlag_IncrementByte(s32 flag)
 {
     u8 *flag_bytes;
@@ -89,7 +82,6 @@ u8 GameFlag_IncrementByte(s32 flag)
     return flag_bytes[flag];
 }
 
-/* game_flags/decrement_byte.c */
 u8 GameFlag_DecrementByte(s32 flag)
 {
     u8 *flag_bytes;
@@ -102,7 +94,6 @@ u8 GameFlag_DecrementByte(s32 flag)
     return flag_bytes[flag];
 }
 
-/* game_flags/get_nibble.c */
 s32 GameFlag_GetNibble(u32 flag)
 {
     u32 shifted = flag << 20;
@@ -118,7 +109,6 @@ s32 GameFlag_GetNibble(u32 flag)
     return result >> shift;
 }
 
-/* game_flags/set_nibble.c */
 void GameFlag_SetNibble(s32 flag, s32 value)
 {
     s32 field_mask = 0xF;
@@ -127,6 +117,6 @@ void GameFlag_SetNibble(s32 flag, s32 value)
     u8 *bytes = (u8 *)GameFlagBytes;
 
     flag = ((u32)flag << 0x14) >> 0x17;
-    bytes[flag] = (u8)((bytes[flag] & ~mask) |
-                       ((value & field_mask) << shift));
+    bytes[flag] = (bytes[flag] & ~mask) |
+                       ((value & field_mask) << shift);
 }

@@ -1,6 +1,5 @@
 #include "VILLAGE.H"
 
-/* Lunpa's entrances leave the camera free; the gate's keep it on the road. */
 #define LUNPA_ENTRANCE(entrance, x, z, facing) \
     { (entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0 }
 #define GATE_ENTRANCE(entrance, x, z, facing) \
@@ -32,7 +31,6 @@ const struct SceneEntrance gGateEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-/* A door leads to the room of the same number in the interiors. */
 #define ROOM_EXIT(exit) SCENE_EXIT((exit), SCENE_RUNPA_SUHARA, ROOM_ENTRANCE(exit))
 
 const u32 gLunpaExits[] = {
@@ -59,7 +57,6 @@ const u32 gGateExits[] = {
     SCENE_EXITS_END,
 };
 
-/* The puddle and the glint wait at the map's far corner until Reveal places them. */
 const struct ScenePlacement gLunpaPlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(520), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -103,7 +100,6 @@ const struct ScenePlacement gGatePlacements[] = {
 #define MIND_READ(actor, value) \
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), (actor), CONDITION_ALWAYS, (value) }
 
-/* A door opens as the leader walks north into it. */
 #define DOOR(trigger) \
     { TOUCH_WALKING_INTO(FACING_NORTH), (trigger), CONDITION_ALWAYS, EVENT_SCRIPT(Door_Enter) }
 
@@ -144,49 +140,49 @@ const struct ScenePlacement gGatePlacements[] = {
 const struct SceneEvent gLunpaSealedEvents[] = {
     LUNPA_ROADS_AND_DOORS,
     TALK(ACTOR_VILLAGER_A, EVENT_SCRIPT(VillagerA_Talk)),
-    TALK(ACTOR_VILLAGER_B, MsgRunpaVillageVillagerBSealed),
+    TALK(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBSealed)),
     TALK(ACTOR_VILLAGER_C, EVENT_SCRIPT(VillagerC_Talk)),
-    TALK(ACTOR_VILLAGER_D, MsgRunpaVillageVillagerDSealed),
-    TALK(ACTOR_VILLAGER_E, MsgRunpaVillageVillagerESealed),
-    TALK(ACTOR_VILLAGER_F, MsgRunpaVillageVillagerFSealed),
+    TALK(ACTOR_VILLAGER_D, MSGNO(MsgRunpaVillageVillagerDSealed)),
+    TALK(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerESealed)),
+    TALK(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFSealed)),
     TALK(ACTOR_VILLAGER_G, EVENT_SCRIPT(VillagerG_Talk)),
-    TALK(ACTOR_VILLAGER_H, MsgRunpaVillageVillagerHSealed),
+    TALK(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHSealed)),
     TALK(ACTOR_WEST_GUARD, EVENT_SCRIPT(WestGuard_Talk)),
     TALK(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_Talk)),
-    MIND_READ(ACTOR_VILLAGER_A, MsgRunpaVillageVillagerASealedThoughts),
-    MIND_READ(ACTOR_VILLAGER_B, MsgRunpaVillageVillagerBSealedThoughts),
-    MIND_READ(ACTOR_VILLAGER_C, MsgRunpaVillageVillagerCSealedThoughts),
-    MIND_READ(ACTOR_VILLAGER_D, MsgRunpaVillageVillagerDSealedThoughts),
-    MIND_READ(ACTOR_VILLAGER_E, MsgRunpaVillageVillagerESealedThoughts),
-    MIND_READ(ACTOR_VILLAGER_F, MsgRunpaVillageVillagerFSealedThoughts),
-    MIND_READ(ACTOR_VILLAGER_G, MsgRunpaVillageVillagerGSealedThoughts),
-    MIND_READ(ACTOR_VILLAGER_H, MsgRunpaVillageVillagerHSealedThoughts),
-    MIND_READ(ACTOR_WEST_GUARD, MsgRunpaVillageWestGuardSealedThoughts),
+    MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerASealedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBSealedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCSealedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_D, MSGNO(MsgRunpaVillageVillagerDSealedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerESealedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFSealedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGSealedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHSealedThoughts)),
+    MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardSealedThoughts)),
     MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_MindRead)),
     LUNPA_SECRETS,
 };
 
 const struct SceneEvent gLunpaReopenedEvents[] = {
     LUNPA_ROADS_AND_DOORS,
-    TALK(ACTOR_VILLAGER_A, MsgRunpaVillageVillagerAReopened),
+    TALK(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerAReopened)),
     TALK(ACTOR_VILLAGER_B, EVENT_SCRIPT(VillagerB_Shivers)),
-    TALK(ACTOR_VILLAGER_C, MsgRunpaVillageVillagerCReopened),
+    TALK(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCReopened)),
     TALK(ACTOR_VILLAGER_D, EVENT_SCRIPT(VillagerD_Talk)),
-    TALK(ACTOR_VILLAGER_E, MsgRunpaVillageVillagerEReopened),
-    TALK(ACTOR_VILLAGER_F, MsgRunpaVillageVillagerFReopened),
-    TALK(ACTOR_VILLAGER_G, MsgRunpaVillageVillagerGReopened),
-    TALK(ACTOR_VILLAGER_H, MsgRunpaVillageVillagerHReopened),
-    TALK(ACTOR_WEST_GUARD, MsgRunpaVillageWestGuardReopened),
-    TALK(ACTOR_EAST_GUARD, MsgRunpaVillageEastGuardReopened),
-    MIND_READ(ACTOR_VILLAGER_A, MsgRunpaVillageVillagerAReopenedThoughts),
-    MIND_READ(ACTOR_VILLAGER_B, MsgRunpaVillageVillagerBReopenedThoughts),
-    MIND_READ(ACTOR_VILLAGER_C, MsgRunpaVillageVillagerCReopenedThoughts),
-    MIND_READ(ACTOR_VILLAGER_D, MsgRunpaVillageVillagerDReopenedThoughts),
-    MIND_READ(ACTOR_VILLAGER_E, MsgRunpaVillageVillagerEReopenedThoughts),
-    MIND_READ(ACTOR_VILLAGER_F, MsgRunpaVillageVillagerFReopenedThoughts),
-    MIND_READ(ACTOR_VILLAGER_G, MsgRunpaVillageVillagerGReopenedThoughts),
-    MIND_READ(ACTOR_VILLAGER_H, MsgRunpaVillageVillagerHReopenedThoughts),
-    MIND_READ(ACTOR_WEST_GUARD, MsgRunpaVillageWestGuardReopenedThoughts),
+    TALK(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerEReopened)),
+    TALK(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFReopened)),
+    TALK(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGReopened)),
+    TALK(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHReopened)),
+    TALK(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardReopened)),
+    TALK(ACTOR_EAST_GUARD, MSGNO(MsgRunpaVillageEastGuardReopened)),
+    MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerAReopenedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBReopenedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCReopenedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_D, MSGNO(MsgRunpaVillageVillagerDReopenedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerEReopenedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFReopenedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGReopenedThoughts)),
+    MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHReopenedThoughts)),
+    MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardReopenedThoughts)),
     MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_MindRead)),
     LUNPA_SECRETS,
 };
@@ -211,7 +207,6 @@ const struct SceneEvent gGateEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-/* Each door swings open in two steps of cells copied over the doorway. */
 const u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
     { MAP_CELL_STEP(38, 35, 2, 2, 5), MAP_CELL_STEP(40, 35, 2, 2, 5), MAP_CELL_STEPS_END },
     { MAP_CELL_STEP(42, 35, 2, 2, 5), MAP_CELL_STEP(44, 35, 2, 2, 5), MAP_CELL_STEPS_END },
@@ -223,7 +218,6 @@ const u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
     { MAP_CELL_STEP(54, 33, 2, 2, 5), MAP_CELL_STEP(56, 33, 2, 2, 5), MAP_CELL_STEPS_END },
 };
 
-/* The doorway cells each door's steps are copied onto. */
 const struct LunpaDoor gLunpaDoors[] = {
     { gLunpaDoorSteps[0], 46, 9 },
     { gLunpaDoorSteps[1], 52, 12 },
@@ -235,5 +229,4 @@ const struct LunpaDoor gLunpaDoors[] = {
     { gLunpaDoorSteps[7], 44, 17 },
 };
 
-/* Nothing in the scene reads this word. */
 const u32 gLunpaUnusedWord = 0;

@@ -1,6 +1,3 @@
-/* resource_380: its entry veneers, its listing with maintained code linked
-   in place, as pret links objects in ROM order. Its import veneers follow
-   its code. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -10,7 +7,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STAR.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STAR2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/DIALOGUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/IMPORT.o"(.text)
         "*/resource_380_overlay.o"(.rodata.x0200cb1c)

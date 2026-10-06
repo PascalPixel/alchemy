@@ -1,7 +1,3 @@
-/* Draft: Torebi palace room keeper, ES.
- * 2026-10-01: The direct semantic reset has the right complete extent but four differing bytes: the r0 actor copy is scheduled after both coordinate shifts; the own-ROM sequence copies r0 before them. The adopted existing Call3 adapter preserves that order.
- * Approved TBS agscc and ordinary game flags; no output edits.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

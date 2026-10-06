@@ -1,13 +1,7 @@
 #include "INTERIORS.H"
 #include "SCENE_IDS.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgRunpaChefOffersStory[];
-extern u8 MsgRunpaChefThinksOfPrisoner[];
-extern u8 MsgRunpaInnClerkAsksAboutGuest[];
-extern u8 MsgRunpaInnkeeperOffersOwnHome[];
-extern u8 MsgRunpaInnkeeperOffersRoom[];
-extern u8 MsgRunpaTemplePriestReopened[];
-extern u8 MsgRunpaTemplePriestSealed[];
 
 const struct SceneEntrance gInteriorEntrances[] = {
     { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -88,12 +82,12 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
     ROOM_DOOR(ROOM_EIGHTH),
-    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS, MsgRunpaInteriorsFirstHomeASealed },
-    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS, MsgRunpaInteriorsFirstHomeBSealed },
-    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS, MsgRunpaInteriorsSecondHomeASealed },
-    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS, MsgRunpaInteriorsSecondHomeBSealed },
-    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS, MsgRunpaInteriorsThirdHomeASealed },
-    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS, MsgRunpaInteriorsThirdHomeBSealed },
+    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsFirstHomeASealed) },
+    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsFirstHomeBSealed) },
+    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsSecondHomeASealed) },
+    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsSecondHomeBSealed) },
+    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsThirdHomeASealed) },
+    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsThirdHomeBSealed) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
     { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
     { EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
@@ -101,23 +95,23 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
     { EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Innkeeper_Talk) },
-    { EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, MsgRunpaInteriorsInnClerkSealed },
-    { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MsgRunpaInteriorsInnWorkerSealed },
+    { EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsInnClerkSealed) },
+    { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsInnWorkerSealed) },
     { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(Chef_Talk) },
     { EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TemplePriest_Talk) },
     { EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TravelingPriest_Talk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS,
-      MsgRunpaInteriorsFirstHomeASealedThoughts },
+      MSGNO(MsgRunpaInteriorsFirstHomeASealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS,
-      MsgRunpaInteriorsFirstHomeBSealedThoughts },
+      MSGNO(MsgRunpaInteriorsFirstHomeBSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS,
-      MsgRunpaInteriorsSecondHomeASealedThoughts },
+      MSGNO(MsgRunpaInteriorsSecondHomeASealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS,
-      MsgRunpaInteriorsSecondHomeBSealedThoughts },
+      MSGNO(MsgRunpaInteriorsSecondHomeBSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS,
-      MsgRunpaInteriorsThirdHomeASealedThoughts },
+      MSGNO(MsgRunpaInteriorsThirdHomeASealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS,
-      MsgRunpaInteriorsThirdHomeBSealedThoughts },
+      MSGNO(MsgRunpaInteriorsThirdHomeBSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
       EVENT_SCRIPT(WeaponMerchant_ReadMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
@@ -131,20 +125,20 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
       EVENT_SCRIPT(ItemMerchant_ReadMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-      MsgRunpaInteriorsInnkeeperSealedThoughts },
+      MSGNO(MsgRunpaInteriorsInnkeeperSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_CLERK, CONDITION_ALWAYS,
-      MsgRunpaInteriorsInnClerkSealedThoughts },
+      MSGNO(MsgRunpaInteriorsInnClerkSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
-      MsgRunpaInteriorsInnWorkerSealedThoughts },
+      MSGNO(MsgRunpaInteriorsInnWorkerSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHEF, CONDITION_ALWAYS,
       EVENT_SCRIPT(Chef_ReadMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS,
-      MsgRunpaInteriorsTemplePriestSealedThoughts },
+      MSGNO(MsgRunpaInteriorsTemplePriestSealedThoughts) },
     { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_INTERIOR_WOODEN_BOX,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_INTERIOR_BARREL, FIND_ITEM(ITEM_VIAL) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MsgRunpaInteriorsFirstOven) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MsgRunpaInteriorsSecondOven) },
+    { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRunpaInteriorsFirstOven)) },
+    { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRunpaInteriorsSecondOven)) },
     { SCENE_EVENTS_END },
 };
 
@@ -157,12 +151,12 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
     ROOM_DOOR(ROOM_EIGHTH),
-    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS, MsgRunpaInteriorsFirstHomeAReopened },
-    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS, MsgRunpaInteriorsFirstHomeBReopened },
-    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS, MsgRunpaInteriorsSecondHomeAReopened },
-    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS, MsgRunpaInteriorsSecondHomeBReopened },
-    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS, MsgRunpaInteriorsThirdHomeAReopened },
-    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS, MsgRunpaInteriorsThirdHomeBReopened },
+    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsFirstHomeAReopened) },
+    { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsFirstHomeBReopened) },
+    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsSecondHomeAReopened) },
+    { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsSecondHomeBReopened) },
+    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsThirdHomeAReopened) },
+    { EVENT_TALK, ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsThirdHomeBReopened) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
     { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
@@ -171,21 +165,21 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     { EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Innkeeper_Talk) },
     { EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, EVENT_SCRIPT(InnClerk_Talk) },
-    { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MsgRunpaInteriorsInnWorkerReopened },
-    { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, MsgRunpaInteriorsChefReopened },
+    { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsInnWorkerReopened) },
+    { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsChefReopened) },
     { EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TemplePriest_Talk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS,
-      MsgRunpaInteriorsFirstHomeAReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsFirstHomeAReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS,
-      MsgRunpaInteriorsFirstHomeBReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsFirstHomeBReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS,
-      MsgRunpaInteriorsSecondHomeAReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsSecondHomeAReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_HOME_RESIDENT_B, CONDITION_ALWAYS,
-      MsgRunpaInteriorsSecondHomeBReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsSecondHomeBReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_HOME_RESIDENT_A, CONDITION_ALWAYS,
-      MsgRunpaInteriorsThirdHomeAReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsThirdHomeAReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_HOME_RESIDENT_B, CONDITION_ALWAYS,
-      MsgRunpaInteriorsThirdHomeBReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsThirdHomeBReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
       EVENT_SCRIPT(WeaponMerchant_ReadMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
@@ -199,20 +193,20 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
       EVENT_SCRIPT(ItemMerchant_ReadMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-      MsgRunpaInteriorsInnkeeperReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsInnkeeperReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_CLERK, CONDITION_ALWAYS,
-      MsgRunpaInteriorsInnClerkReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsInnClerkReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
-      MsgRunpaInteriorsInnWorkerReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsInnWorkerReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHEF, CONDITION_ALWAYS,
-      MsgRunpaInteriorsChefReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsChefReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS,
-      MsgRunpaInteriorsTemplePriestReopenedThoughts },
+      MSGNO(MsgRunpaInteriorsTemplePriestReopenedThoughts) },
     { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_INTERIOR_WOODEN_BOX,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_INTERIOR_BARREL, FIND_ITEM(ITEM_VIAL) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MsgRunpaInteriorsFirstOven) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MsgRunpaInteriorsSecondOven) },
+    { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRunpaInteriorsFirstOven)) },
+    { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRunpaInteriorsSecondOven)) },
     { SCENE_EVENTS_END },
 };
 
@@ -220,23 +214,10 @@ const struct SceneEvent gSuharaGateHouseEvents[] = {
     ROOM_DOOR(ROOM_SUHARA_GATE_HOUSE),
     { EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TravelingPriest_Talk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS,
-      MsgRunpaInteriorsTravelingPriestThoughts },
+      MSGNO(MsgRunpaInteriorsTravelingPriestThoughts) },
     { SCENE_EVENTS_END },
 };
 
-extern u8 MsgRunpaIsntWeaponsVendors[];
-extern u8 MsgRunpaItemMerchantSealedThoughts[];
-extern u8 MsgRunpaArmorMerchantReopened[];
-extern u8 MsgRunpaArmorMerchantReopenedThoughts[];
-extern u8 MsgRunpaArmorMerchantSealed[];
-extern u8 MsgRunpaArmorMerchantSealedThoughts[];
-extern u8 MsgRunpaItemMerchantReopened[];
-extern u8 MsgRunpaItemMerchantSealed[];
-extern u8 MsgRunpaWeaponMerchantReopened[];
-extern u8 MsgRunpaWeaponMerchantReopenedThoughts[];
-extern u8 MsgRunpaWeaponMerchantSealed[];
-extern u8 MsgRunpaWeaponMerchantSealedThoughts[];
-extern u8 MsgRunpaTravelingPriest[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -263,7 +244,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     if (gGameState.entrance == ROOM_SUHARA_GATE_HOUSE) {
         return gSuharaGateHouseEvents;
     }
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         return gInteriorReopenedEvents;
     }
     return gInteriorSealedEvents;
@@ -273,20 +254,20 @@ void Innkeeper_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
-        if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
             Engine_InnOpen(INN_LUNPA, ACTOR_INNKEEPER);
             return;
         }
     }
     Engine_EventBegin();
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersRoom);
-        Event_AskYesNo(ACTOR_INNKEEPER, 0);
+        Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersOwnHome);
-        Event_AskYesNo(ACTOR_INNKEEPER, 0);
+        Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
     }
     Engine_EventEnd();
 }
@@ -295,8 +276,8 @@ void Chef_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRunpaChefOffersStory);
-    Event_AskYesNo(ACTOR_CHEF, 0);
-    GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
+    Engine_EventAskYesNo(ACTOR_CHEF, 0);
+    Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
     Engine_EventEnd();
 }
 
@@ -304,8 +285,8 @@ void Chef_ReadMind(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRunpaChefThinksOfPrisoner);
-    Event_ShowMessage(ACTOR_CHEF, 0);
-    GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
+    Engine_EventShowMessage(ACTOR_CHEF, 0);
+    Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
     Engine_EventEnd();
 }
 
@@ -313,7 +294,7 @@ void InnClerk_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
-    Event_AskYesNo(ACTOR_INN_CLERK, 0);
+    Engine_EventAskYesNo(ACTOR_INN_CLERK, 0);
     Engine_EventEnd();
 }
 
@@ -321,33 +302,33 @@ void TemplePriest_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
         Engine_SanctumOpen(ACTOR_TEMPLE_PRIEST);
-    } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaTemplePriestReopened);
-        Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
+        Engine_EventShowMessage(ACTOR_TEMPLE_PRIEST, 0);
         Engine_EventEnd();
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaTemplePriestSealed);
-        Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
+        Engine_EventShowMessage(ACTOR_TEMPLE_PRIEST, 0);
         Engine_EventEnd();
     }
 }
 
 void ItemMerchant_ReadMind(void)
 {
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaIsntWeaponsVendors);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealedThoughts);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     }
 }
@@ -356,30 +337,30 @@ void ItemMerchant_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
         Engine_ShopOpen(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
-    } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaItemMerchantReopened);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealed);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     }
 }
 
 void WeaponMerchant_ReadMind(void)
 {
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopenedThoughts);
-        Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealedThoughts);
-        Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     }
 }
 
@@ -388,31 +369,31 @@ void WeaponMerchant_Talk(void)
     struct FieldActor *leader;
     s32 facing;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     facing = leader->facing;
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         if (FACING_IS_NORTH(facing)) {
             Engine_ShopOpen(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
         } else {
             Engine_EventBegin();
             Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopened);
-            Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+            Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
             Engine_EventEnd();
         }
     } else {
         Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealed);
-        Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     }
 }
 
 void ArmorMerchant_ReadMind(void)
 {
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopenedThoughts);
-        Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealedThoughts);
-        Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     }
 }
 
@@ -421,26 +402,23 @@ void ArmorMerchant_Talk(void)
     struct FieldActor *leader;
     s32 facing;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     facing = leader->facing;
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         if (FACING_IS_NORTH(facing)) {
             Engine_ShopOpen(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
         } else {
             Engine_EventBegin();
             Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopened);
-            Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+            Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
             Engine_EventEnd();
         }
     } else {
         Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealed);
-        Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     }
 }
 
-/* Lunpa's interiors open with the window transition. Entering from the
-   Suhara gate house clears the location-name flag and saves these rooms and
-   that entrance; the three shop counters' sprite flags are cleared. */
 s32 Scene_Initialize(void)
 {
     s16 entrance;
@@ -448,13 +426,13 @@ s32 Scene_Initialize(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     entrance = gGameState.entrance;
     if (entrance == ROOM_SUHARA_GATE_HOUSE) {
-        GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+        Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
         gGameState.saved_scene = (s32)&SceneId_RunpaSuhara;
         gGameState.saved_entrance = entrance;
     }
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_ARMOR_COUNTER), 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_ITEM_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_COUNTER), 0);
     return 0;
 }
 
@@ -462,11 +440,11 @@ void TravelingPriest_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
         Engine_SanctumOpen(ACTOR_TEMPLE_PRIEST);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaTravelingPriest);
-        Event_ShowMessage(ACTOR_TRAVELING_PRIEST, 0);
+        Engine_EventShowMessage(ACTOR_TRAVELING_PRIEST, 0);
     }
 }

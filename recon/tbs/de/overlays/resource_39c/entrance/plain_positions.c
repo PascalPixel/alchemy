@@ -1,9 +1,3 @@
-/* NONMATCHING: localized room entry before call and callback refinements, 2026-10-01.
- * The complete 3444-byte initializer compiles with the approved TBS flags.
- * 10 instruction bytes differ: direct position calls schedule the
- * actor argument after the shifts. Production preserves
- * the measured Call3 spelling and registers the later callback on both paths.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PROBE.H"
 #include "TYPES.H"
 #include "MAKYURI.H"
@@ -28,7 +22,7 @@ void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
 s32 MakyuriHeya_StartPillarPush(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
 void FieldScene_RunPrimarySequence(s32 mode);
-s32 SceneData_ApplyTableA2c5AndReturnZero(void);
+s32 MakyuriHeya_StopActorNinePositionCallback(void);
 void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
 void Engine_ActorStartAction(s32 actor);
 void Engine_EventBegin();
@@ -78,7 +72,6 @@ s32 Djinn_AddToOwner();
 void Djinn_Activate();
 void Owner_RecalculateStats();
 
-/* The map layer the lift is drawn on, scrolled by its vertical offset. */
 struct LiftLayer {
     u8 unknown_00[12];
     s32 offset;

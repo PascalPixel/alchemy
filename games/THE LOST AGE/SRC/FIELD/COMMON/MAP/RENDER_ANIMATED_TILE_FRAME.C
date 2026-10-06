@@ -1,18 +1,51 @@
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 
-/* map/shared/Map_RenderAnimatedTileFrame.c */
-struct MapBase {
-    u16 unused;
-    u16 offset;
+#include "VRAM_TAB.H"
+
+struct AnimTrack {
+    u8 unknown_00[0x10];
+    u8 *script;
+    u8 index;
 };
 
-extern u8 ResourceTableEntries[];
-extern u8 Map_TileDissolveOrder[];
+struct AnimObject {
+    u8 unknown_00[0x18];
+    u8 frame;
+    u8 unknown_19[0xf];
+    struct AnimTrack *track;
+};
 
-/* ☀️'s, reading the object's resource and size where ⚓️'s object keeps
-   them, 12 bytes earlier. */
+void Animation_WaitForTrackEnd(struct AnimObject *object)
+{
+    u8 frame = object->frame;
+    struct AnimTrack *track = object->track;
+    s32 i;
+
+    if (object != 0) {
+        i = 0;
+        if (track->script[track->index] != 241) {
+            do {
+                WaitFrames(1);
+                i++;
+                if (i > 89)
+                    break;
+                if (track->script[track->index] == 241)
+                    break;
+            } while (object->frame == frame);
+        }
+    }
+}
+
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 {
     u16 *destination;
@@ -24,7 +57,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     u8 offset_mask;
 
     destination = (u16 *)(0x06010000
-        + ((struct MapBase *)((u32)&ResourceTableEntries))[object[0x10]].offset);
+        + ResourceTableEntries[object[0x10]].offset);
     count = (object[0x14] * object[0x15]) / 64;
     row = 0;
 
@@ -34,7 +67,6 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
         index_mask = 0x3F;
         offset_mask = 0x3E;
 
-        /* 1行ごとに32セル進める。 */
         for (; row < (u32)count; row++, destination += 32, position++) {
             if ((u32)(position - 0x40) <= 0x3F) {
                 u8 entry;
@@ -85,7 +117,8 @@ void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
         if (cnt > 0) {
             pos1 = pos + 1;
             p = top;
-            asm volatile("" : "+l"(p)); /* FAKEMATCH: ⚓️ reloads the table between the first two positions */
+            /* FAKEMATCH: ⚓️ reloads the table between the first two positions */
+            asm volatile("" : "+l"(p));
             pos2 = pos + 2;
             pos3 = pos + 3;
             n = cnt;

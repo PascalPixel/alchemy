@@ -58,7 +58,7 @@ Func_08143bb8:
 .L_08143c24:
 	.4byte 0x00000787
 .L_08143c28:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08143c2c:
 	.4byte gCameraSceneParameters
 .L_08143c30:
@@ -104,7 +104,7 @@ Func_08143bb8:
 	ldrh r1, [r3]
 	movs r2, #7
 	movs r0, #2
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #206
@@ -122,7 +122,7 @@ Func_08143bb8:
 	mov r3, r8
 	subs r1, r3, r5
 	ldrh r0, [r7]
-	bl Func_08118048
+	bl BattlePresentation_SetPaletteLevelFar
 	adds r6, #1
 	movs r0, #1
 	bl WaitFrames

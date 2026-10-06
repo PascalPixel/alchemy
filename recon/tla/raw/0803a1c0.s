@@ -34,7 +34,7 @@ Func_0803a1c0:
 	cmp r3, #30
 	bhi .L_0803a2a0
 	adds r2, r7, #0
-	bl Func_08041abc
+	bl UiWindow_ClearTileAttributesInRect
 	ldr r3, .L_0803a234
 	subs r2, r7, #2
 	strh r3, [r5]
@@ -42,7 +42,7 @@ Func_0803a1c0:
 	adds r0, r5, #0
 	ldr r1, .L_0803a23c
 	mov r10, r2
-	bl Func_0803a054
+	bl Memory_FillHalfwordsDma
 	ldr r3, .L_0803a238
 	adds r5, r0, #0
 	strh r3, [r5]
@@ -80,7 +80,7 @@ Func_0803a1c0:
 	adds r0, r5, #0
 	ldr r1, .L_0803a298
 	mov r2, r10
-	bl Func_0803a054
+	bl Memory_FillHalfwordsDma
 	adds r5, r0, #0
 .L_0803a260:
 	ldr r3, .L_0803a28c
@@ -97,7 +97,7 @@ Func_0803a1c0:
 	adds r5, #2
 	adds r0, r5, #0
 	ldr r1, .L_0803a29c
-	bl Func_0803a054
+	bl Memory_FillHalfwordsDma
 	ldr r3, .L_0803a294
 	adds r5, r0, #0
 	strh r3, [r5]

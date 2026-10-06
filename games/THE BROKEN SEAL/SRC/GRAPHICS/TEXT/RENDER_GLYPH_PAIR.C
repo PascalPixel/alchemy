@@ -1,33 +1,31 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "TBS_EDITION.H"
 #include "TEXT_FONT.H"
+#include "GLYPH.H"
+#include "WINDOW.H"
 
-struct GlyphWork {
-    u8 unknown_000[RENDER_MODE_OFS];
-    u8 fixed_colour;
-    u8 unknown_ea5[7];
-    u16 outlined;
-    u16 colour;
-};
 
-extern struct GlyphWork *gWindowWork;
-extern u8 UiText_Glyphs[];
-extern u8 UiText_SecondGlyphs[];
-
-/* The Japanese canvas combines a kana or fixed-width kanji with its voicing
-   mark. The localized canvas combines two variable-width glyphs. Both pack
-   the result into four 4bpp tiles and return its width. */
 #if EDITION_INTERNATIONAL
 s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 {
     u8 buf[384];
-    struct GlyphWork *work;
+    struct UiRenderWork *work;
     const u8 *input;
     s32 length;
     s32 colour;
     s32 transparent;
+    s32 first_index;
     s32 second_index;
     s32 second_width;
     u8 *digits;
@@ -37,21 +35,22 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     s32 nibble;
     u32 value;
 
-    work = gWindowWork;
-    second_index = (s32)((u32)code << 8) >> 16;
+    work = (struct UiRenderWork *)gWindowWork[0];
+    second_index = (code << 8) >> 16;
     code &= 255;
     Iwram_ClearWords(buf, 384);
-    if (work->fixed_colour != 0) {
+    if (work->mode != 0) {
         transparent = 0;
         colour = 8;
     } else {
         transparent = 1;
         colour = work->colour;
     }
-    input = UiText_Glyphs + ((code - 32) << 5);
-    length = *(const u16 *)input;
-    input += 2;
-    if (work->outlined == 1) {
+    first_index = code - 32;
+    input = first_index * sizeof(struct FontGlyph) + (const u8 *)UiText_Glyphs;
+    length = ((const struct FontGlyph *)input)->width;
+    input = (const u8 *)((const struct FontGlyph *)input)->rows;
+    if (work->outline == 1) {
         Iwram_ExpandBitRuns(input, buf + 49, transparent);
         Iwram_ExpandBitRuns(input, buf + 50, transparent);
         Iwram_ExpandBitRuns(input, buf + 32, colour);
@@ -65,14 +64,14 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         input = UiText_SecondGlyphs + ((u16)second_index << 5);
         second_width = *(const s16 *)input;
         input += 2;
-        if (work->outlined == 1) {
+        if (work->outline == 1) {
             u8 *dst = buf + length;
             Iwram_ExpandBitRuns(input, dst + 49, transparent);
             Iwram_ExpandBitRuns(input, dst + 50, transparent);
             Iwram_ExpandBitRuns(input, dst + 32, colour);
             Iwram_ExpandBitRuns(input, dst + 33, colour);
             /* FAKEMATCH: the signed halfword width grows through its shifted form. */
-            second_width = (s32)(((u32)second_width << 16) + 0x10000) >> 16;
+            second_width = ((second_width << 16) + 0x10000) >> 16;
         } else {
             u8 *dst = buf + length;
             u8 *p;
@@ -113,7 +112,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 {
     u8 buf[256];
-    struct GlyphWork *work;
+    struct UiRenderWork *work;
     const u8 *input;
     const u8 *mark;
     s32 length;
@@ -129,29 +128,32 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 
     /* FAKEMATCH: the out input schedules its spill before the work-address load; the plain version reverses them. */
     asm ("" : : "r" (out));
-    work = gWindowWork;
+    work = (struct UiRenderWork *)gWindowWork[0];
     mark = 0;
     mark_code = UiText_MarkGlyphCodes[code >> 14];
     if (mark_code != 0)
-        mark = UiText_Glyphs + (mark_code - 32) * 26 + 2;
+        mark = (const u8 *)((const struct FontGlyph *)
+            ((const u8 *)UiText_Glyphs +
+            (mark_code - 32) * sizeof(struct FontGlyph)))->rows;
     code &= 0x3fff;
     if (code <= 0xff) {
-        input = UiText_Glyphs + (code - 32) * 26;
-        length = *(const u16 *)input;
-        input += 2;
+        input = (const u8 *)UiText_Glyphs +
+            (code - 32) * sizeof(struct FontGlyph);
+        length = ((const struct FontGlyph *)input)->width;
+        input = (const u8 *)((const struct FontGlyph *)input)->rows;
     } else {
         input = UiText_KanjiGlyphs + (code - 256) * 24;
         length = 10;
     }
     Iwram_ClearWords(buf, 256);
-    if (work->fixed_colour != 0) {
+    if (work->mode != 0) {
         transparent = 0;
         colour = 8;
     } else {
         transparent = 1;
         colour = work->colour;
     }
-    if (work->outlined == 1) {
+    if (work->outline == 1) {
         Iwram_ExpandBitRuns(input, buf + 49, transparent);
         Iwram_ExpandBitRuns(input, buf + 50, transparent);
         if (mark != 0) {
@@ -161,8 +163,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         Iwram_ExpandBitRuns(input, buf + 33, colour);
         if (mark != 0) {
-            /* FAKEMATCH: assigning digits in the mark argument makes the
-               argument register compute buf + 7 before its loop copy. */
+            /* FAKEMATCH: assigning digits in the mark argument makes the argument register compute buf + 7 before its loop copy. */
             Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
             Iwram_ExpandBitRuns(mark, buf + 8, colour);
         }
@@ -173,8 +174,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
             Iwram_ExpandBitRuns(mark, buf + 24, transparent);
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         if (mark != 0) {
-            /* FAKEMATCH: this mark path needs the same argument-before-loop
-               order as the outlined path. */
+            /* FAKEMATCH: this mark path needs the same argument-before-loop order as the outlined path. */
             Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
         }
     }

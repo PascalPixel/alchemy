@@ -57,7 +57,7 @@ Func_080e4244:
 	subs r3, #2
 	adds r0, #8
 	str r4, [sp, #0]
-	bl Func_08020348
+	bl Runtime_CheckRadiusOverlapFar
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	blt .L_080e42c0

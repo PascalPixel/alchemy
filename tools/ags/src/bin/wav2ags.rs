@@ -1,6 +1,3 @@
-//! wav2ags: a sound input to the bytes a sound data source reads, as pret's
-//! wav2agb is for Pokémon: an eight-bit WAV (NAME.PCM8.WAV) to its PCM wave
-//! record, or a .PCM4 CGB wave pattern to its sixteen bytes.
 use std::fs;
 use std::process::ExitCode;
 

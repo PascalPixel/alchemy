@@ -1,3 +1,15 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -7,43 +19,18 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
+#include "MENU_LIST.H"
 
-struct CameraWork {
-    u8 unknown_00[0x36];
-    u16 scroll;
-};
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
-extern u16 ParticleStreams_CellOffsets[];
-/* By variant: how many sparks a pillar throws, and how long it shakes. */
-extern u16 LightningPillar_Sparks[];
-/* By side, seven columns each: where each pillar strikes. */
-extern u8 LightningPillar_Columns[];
-/* By variant: how many pillars strike. */
-extern u8 LightningPillar_Counts[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 id);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleEventRuntime_BeginPhaseFar(s32 value);
-void AudioCommand_PlayFar(s32 value);
-void Camera_ApplyShake(s32 random_mask, s32 shake_range);
-void ObjectGroup_TickMemberTimers(void);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-s32 BattleFx_EndCanvasLayer(void);
 
-/*
- * Pillars of lightning strike one column after another, eight frames apart.
- * Each pillar flashes the canvas, shows its two cells for three frames,
- * throws sparks that bounce along the ground, and knocks the affected units.
- * The variant picks how many pillars strike; the strongest also scrolls the
- * camera toward the struck side for its first 64 frames.
- */
 void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];
@@ -68,18 +55,16 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     graphics = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw[0] = (DrawRectangle)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 7, 2);
     draw[1] = (DrawRectangle)heap_cache[8];
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
     if (work->effect->variant != 2) {
         void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
-        /* FAKEMATCH: calling through a local copy of the routine's address
-           loads that address before the palette address is shifted into
-           place; the direct call swaps those two instructions. */
+        /* FAKEMATCH: calling through a local copy of the routine's address loads that address before the palette address is shifted into place; the direct call swaps those two instructions. */
         WordCopy copy = Iwram_CopyWords;
 
         copy((void *)0x05000000, palette, 128);
@@ -92,7 +77,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     sparks = (struct EffectStep *)gMapCellBuffer;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     count = LightningPillar_Counts[work->effect->variant];
 
     for (frame = 0; frame != count * 8 - count + 48; frame++) {
@@ -122,7 +107,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
                     draw[0](canvas, work,
                         LightningPillar_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
                 if (frame >= start + 2 && frame < start + 4)
-                    draw[0](canvas, (u8 *)work + 0x1500,
+                    draw[0](canvas, work->sheet + 0x1500,
                         LightningPillar_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
                 if (frame == start + 2) {
                     s32 spawned = 0;
@@ -183,7 +168,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

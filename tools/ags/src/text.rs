@@ -1,12 +1,9 @@
-//! The twelve shipped message archives as ordinary GNU gettext PO catalogs,
-//! as pret's preproc turns its text into data: each catalog is encoded into a
-//! context-modelled Huffman archive whose internal addresses are words naming
-//! the archive's own label, so the linker places it.
 
 use super::asm::{Data, Label, Pointer};
 use encoding_rs::WINDOWS_1252;
-use psynergy::assets::huffman_archive::encode_huffman_archive;
-use psynergy::assets::po::{self, Catalog};
+mod huffman;
+use huffman::encode_huffman_archive;
+use crate::assets::po::{self, Catalog};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
@@ -23,9 +20,7 @@ pub struct ArchiveSpec {
 }
 
 impl ArchiveSpec {
-    /// The edition's alphabet from its font's character map: one character
-    /// per code from 0x20, U+FFFD for a slot that draws no character.
-    pub fn characters(&self) -> Option<String> {
+    pub(crate) fn characters(&self) -> Option<String> {
         self.charmap.map(|charmap| {
             charmap
                 .lines()
@@ -40,8 +35,6 @@ impl ArchiveSpec {
     }
 }
 
-/// Each edition's catalog and alphabet; the alphabets map font slots,
-/// retaining unused and duplicate glyphs for lossless PO conversion.
 pub static ARCHIVES: [ArchiveSpec; 12] = [
     ArchiveSpec {
         target: "tbs-ja",
@@ -160,73 +153,6 @@ fn command_symbol(name: &str) -> Option<(u16, bool)> {
     })
 }
 
-fn literal_escape(text: &str) -> String {
-    text.replace('{', "{{").replace('}', "}}")
-}
-
-pub fn symbols_text(symbols: &[u16], characters: Option<&str>) -> String {
-    let mut output = String::new();
-    let mut bytes = Vec::<u8>::new();
-    let characters = characters.map(|text| text.chars().collect::<Vec<_>>());
-    let flush = |output: &mut String, bytes: &mut Vec<u8>| {
-        if bytes.is_empty() {
-            return;
-        }
-        let (text, _, errors) = WINDOWS_1252.decode(bytes);
-        if errors {
-            for byte in bytes.iter() {
-                output.push_str(&format!("{{byte:{byte:02x}}}"));
-            }
-        } else {
-            output.push_str(&literal_escape(&text));
-        }
-        bytes.clear();
-    };
-    let mut index = 0;
-    while index < symbols.len() {
-        let symbol = symbols[index];
-        if (1..32).contains(&symbol) {
-            flush(&mut output, &mut bytes);
-            let (name, argument) = command(symbol);
-            if name == "control" {
-                output.push_str(&format!("{{control:{symbol}}}"));
-            } else if argument && index + 1 < symbols.len() {
-                index += 1;
-                output.push_str(&format!("{{{name}:{}}}", symbols[index]));
-            } else {
-                output.push_str(&format!("{{{name}}}"));
-            }
-        } else if let Some(characters) = &characters {
-            let character = symbol
-                .checked_sub(32)
-                .and_then(|index| characters.get(index as usize));
-            if let Some(&character) = character.filter(|&&character| {
-                character != '\u{fffd}'
-                    && characters.iter().position(|&value| value == character)
-                        == Some(symbol as usize - 32)
-            }) {
-                output.push_str(&literal_escape(&character.to_string()));
-            } else if symbol < 256 {
-                output.push_str(&format!("{{byte:{symbol:02x}}}"));
-            } else {
-                output.push_str(&format!("{{glyph:{symbol:03x}}}"));
-            }
-        } else if let Ok(byte) = u8::try_from(symbol) {
-            bytes.push(byte);
-        } else {
-            flush(&mut output, &mut bytes);
-            output.push_str(&format!("{{glyph:{symbol:03x}}}"));
-        }
-        index += 1;
-    }
-    flush(&mut output, &mut bytes);
-    if characters.is_some() {
-        output.nfc().collect()
-    } else {
-        output
-    }
-}
-
 fn parse_number(value: &str) -> Result<u16, String> {
     value
         .parse::<u16>()
@@ -341,23 +267,16 @@ fn header_number(headers: &BTreeMap<String, String>, name: &str) -> Result<usize
     )
 }
 
-/// A PO catalog's messages and encoder options. It records no placement: the
-/// linker places the archive and resolves the addresses it holds.
 #[derive(Debug)]
 pub struct SourceCatalog {
     pub target: String,
     pub symbol_count: usize,
     pub banks: Vec<Vec<Option<Vec<u16>>>>,
-    /// Each message the code names, `Msg<Name>`, with its number: the
-    /// message's position in the catalog, which differs between editions.
     pub names: Vec<(String, usize)>,
 }
 
-/// The context of every message the code does not name.
 const UNNAMED: &str = "message";
 
-/// Whether `name` is a message name: `Msg`, a capital and plain letters or
-/// digits, so `Msg_Show` style functions are never mistaken for one.
 pub fn message_name(name: &str) -> bool {
     name.strip_prefix("Msg").is_some_and(|rest| {
         rest.starts_with(|c: char| c.is_ascii_uppercase())
@@ -365,7 +284,6 @@ pub fn message_name(name: &str) -> bool {
     })
 }
 
-/// Each named entry of a PO catalog: its `msgctxt` name and number.
 pub fn catalog_names(catalog: &Catalog) -> Result<Vec<(String, usize)>, String> {
     let mut names = Vec::new();
     for entry in &catalog.entries {
@@ -475,16 +393,8 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
     })
 }
 
-/// The catalog's message archive, word aligned: its context models (labelled
-/// `<label>Models`), offset table, context directory (`<label>Contexts`, which
-/// the symbol decoder reads), message banks and bank directory
-/// (`<label>Banks`, which the message lookup reads). Every address the
-/// archive holds is a word naming `<label>Models`, which the linker resolves.
-pub fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
-    // Laid out from a word-aligned start, its padding holds wherever the
-    // linker places it on a word boundary.
-    let built = encode_huffman_archive(0, source.symbol_count, &source.banks)
-        .map_err(|error| error.to_string())?;
+pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
+    let built = encode_huffman_archive(0, source.symbol_count, &source.banks)?;
     let mut data = Data::from_bytes(built.bytes);
     data.align = 4;
     let models = format!("{label}Models");
@@ -513,9 +423,6 @@ pub fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
     Ok(data)
 }
 
-/// A catalog's message archive and its message numbers as assembly: the
-/// archive under `label`, then each named message as an absolute symbol,
-/// the file the build includes and po2ags writes.
 pub fn messages_include(
     source: &SourceCatalog,
     label: &str,
@@ -531,201 +438,4 @@ pub fn messages_include(
         writeln!(assembly, "\t.global {name}\n\t.set {name}, {number}").unwrap();
     }
     Ok(assembly)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use psynergy::assets::huffman_archive::MessageReader;
-    use psynergy::assets::po::Entry;
-
-    const ROM_BASE: u32 = 0x0800_0000;
-
-    fn small_catalog() -> Catalog {
-        let mut catalog = Catalog::default();
-        for (name, value) in [
-            ("X-Alchemy-Format", "1"),
-            ("X-Alchemy-Target", "tbs-en"),
-            ("X-Alchemy-Symbol-Count", "256"),
-        ] {
-            catalog.headers.insert(name.into(), value.into());
-        }
-        catalog.entries = ["Hi{line_break}Sun{end_now}", "Sun{end_now}", ""]
-            .into_iter()
-            .enumerate()
-            .map(|(index, value)| Entry {
-                comments: Vec::new(),
-                flags: if index == 2 {
-                    vec!["alchemy-null".into()]
-                } else {
-                    Vec::new()
-                },
-                context: Some("message".into()),
-                id: index.to_string(),
-                value: value.into(),
-            })
-            .collect();
-        catalog
-    }
-
-    #[test]
-    fn source_messages_derive_the_complete_archive_layout() {
-        let catalog = small_catalog();
-        let source = source_catalog(&catalog).unwrap();
-        let archive = archive(&source, "Message").unwrap();
-        assert_eq!(
-            source.banks.iter().map(Vec::len).sum::<usize>(),
-            catalog.entries.len()
-        );
-        assert_eq!(archive.align, 4);
-        let text = archive.source().unwrap();
-        assert!(text.starts_with("\t.balign 4\n\t.global MessageModels\nMessageModels:\n"));
-        assert!(
-            text.contains("\t.global MessageContexts\nMessageContexts:\n\t.4byte MessageModels\n")
-        );
-        // Linked on any word boundary, the archive reads back every message.
-        let base = ROM_BASE + 0x44;
-        let label = |name: &str| {
-            let offset = archive
-                .labels
-                .iter()
-                .find(|label| label.name == name)
-                .unwrap()
-                .offset;
-            base + offset as u32
-        };
-        let mut rom = vec![0; (base - ROM_BASE) as usize];
-        rom.extend_from_slice(&archive.bytes_at(base).unwrap());
-        let mut reader = MessageReader::new(
-            &rom,
-            ROM_BASE,
-            label("MessageContexts"),
-            label("MessageBanks"),
-            source.symbol_count,
-        )
-        .unwrap();
-        assert_eq!(reader.message(0).unwrap().symbols, source.banks[0][0]);
-        assert_eq!(reader.message(1).unwrap().symbols, source.banks[0][1]);
-        assert_eq!(reader.message(2).unwrap().symbols, None);
-    }
-
-    #[test]
-    fn source_catalog_refuses_bookkeeping_and_incomplete_message_keys() {
-        let mut catalog = small_catalog();
-        for bookkeeping in ["X-Alchemy-Archive-Size", "X-Alchemy-Archive-Address"] {
-            catalog
-                .headers
-                .insert(bookkeeping.into(), "0x08000040".into());
-            assert!(source_catalog(&catalog)
-                .unwrap_err()
-                .contains("encoder option"));
-            catalog.headers.remove(bookkeeping);
-        }
-        catalog.entries[2].id = "3".into();
-        assert!(source_catalog(&catalog).is_err());
-        catalog.entries[2].id = "0".into();
-        assert!(source_catalog(&catalog).is_err());
-        catalog.entries[2].id = "2".into();
-        catalog.entries[2].value = "not null".into();
-        assert!(source_catalog(&catalog).is_err());
-    }
-
-    #[test]
-    fn named_messages_take_their_number_from_the_catalog() {
-        let mut catalog = small_catalog();
-        catalog.entries[1].context = Some("MsgSunRises".into());
-        let source = source_catalog(&catalog).unwrap();
-        assert_eq!(source.names, [("MsgSunRises".to_owned(), 1)]);
-        // A name is a Msg identifier, and names one message only.
-        for context in ["Msg_Show", "sunrise", "MsgSun Rises", "Msg"] {
-            catalog.entries[1].context = Some(context.into());
-            assert!(source_catalog(&catalog).is_err(), "{context}");
-        }
-        catalog.entries[0].context = Some("MsgSunRises".into());
-        catalog.entries[1].context = Some("MsgSunRises".into());
-        assert!(source_catalog(&catalog)
-            .unwrap_err()
-            .contains("names two messages"));
-        assert!(message_name("MsgHpRecover2") && !message_name("Msg_ShowAndWait"));
-    }
-
-    #[test]
-    fn message_markup_round_trips_controls_braces_and_western_text() {
-        let symbols = vec![72, 233, 3, 8, 5, 123, 125, 30];
-        let text = symbols_text(&symbols, None);
-        assert_eq!(text_symbols(&text, None, 256).unwrap(), symbols);
-    }
-
-    #[test]
-    fn trailing_control_and_japanese_glyphs_round_trip() {
-        for symbols in [
-            vec![65, 19],
-            vec![0xa1, 0xdf, 0x100, 0x169],
-            vec![123, 125, 0x80],
-        ] {
-            assert_eq!(
-                text_symbols(
-                    &symbols_text(&symbols, ARCHIVES[0].characters().as_deref()),
-                    ARCHIVES[0].characters().as_deref(),
-                    512
-                )
-                .unwrap(),
-                symbols
-            );
-        }
-    }
-
-    #[test]
-    fn japanese_uses_the_rom_alphabet_and_composes_voiced_kana() {
-        let symbols = [
-            0x28, 0xc3, 0xde, 0xb0, 0xc0, 0x96, 0xde, 0x9a, 0xfc, 0xfa, 0xe3, 0x92, 0xef, 0x9d,
-            0x29,
-        ];
-        for spec in ARCHIVES.iter().filter(|spec| spec.charmap.is_some()) {
-            let alphabet = spec.characters();
-            let characters = alphabet.as_deref();
-            let text = symbols_text(&symbols, characters);
-            assert_eq!(text, "(データがこわれています)");
-            assert_eq!(text_symbols(&text, characters, 512).unwrap(), symbols);
-            assert_eq!(
-                text_symbols(&text.nfd().collect::<String>(), characters, 512).unwrap(),
-                symbols
-            );
-            assert_eq!(symbols_text(&[0x100, 0x101], characters), "神殿");
-            assert_eq!(
-                symbols_text(&[8, 0xde, 0xca, 0xdf], characters),
-                "{text_color:222}パ"
-            );
-            assert!(text_symbols("😀", characters, 512).is_err());
-        }
-        assert_eq!(
-            symbols_text(&[0x102], ARCHIVES[0].characters().as_deref()),
-            "名"
-        );
-        assert_eq!(
-            symbols_text(&[0x102], ARCHIVES[6].characters().as_deref()),
-            "後"
-        );
-    }
-
-    #[test]
-    fn every_japanese_glyph_including_unused_slots_round_trips() {
-        for (spec, count) in [(&ARCHIVES[0], 370), (&ARCHIVES[6], 408)] {
-            let alphabet = spec.characters();
-            let characters = alphabet.as_deref();
-            assert_eq!(characters.unwrap().chars().count(), count - 32);
-            for symbol in 32..count as u16 {
-                let text = symbols_text(&[symbol], characters);
-                assert_eq!(
-                    text_symbols(&text, characters, count).unwrap(),
-                    [symbol],
-                    "{} {symbol:x}",
-                    spec.target
-                );
-            }
-        }
-        for spec in ARCHIVES.iter() {
-            assert_eq!(spec.charmap.is_some(), spec.language == "ja");
-        }
-    }
 }

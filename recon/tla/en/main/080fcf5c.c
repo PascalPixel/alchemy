@@ -2,7 +2,6 @@
 #include "SYSTEM.H"
 extern u8 Data_03001f2c[];
 
-/* menu/psynergy_menu/classify_selected_psynergy.c */
 u8 *BattleAction_Get(s32 action);
 s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 

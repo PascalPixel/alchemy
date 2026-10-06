@@ -1,39 +1,31 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "RESOURCE_3A9.H"
+#include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gKareiHeyaEntrances1[];
-extern const struct SceneEntrance gKareiHeyaEntrances2[];
-extern const struct SceneEntrance gKareiHeyaEntrancesOther[];
+#define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement*))FieldScene_PrepareActors)
 
-/* Table selection, dialogue and arrival scripts for resource_3a9. */
+
 typedef struct Placement {
     u32 destination;
     u16 x;
     u16 y;
 } Placement;
 
-extern u8 KareiHeya_Exits[];
 
-extern const struct ScenePlacement gKareiHeyaPlacements1Entrance9[];
-extern const struct ScenePlacement gKareiHeyaPlacements1[];
-extern const struct ScenePlacement gKareiHeyaPlacements2[];
-extern const struct ScenePlacement gKareiHeyaPlacementsOther[];
-extern const struct SceneEvent gKareiHeyaEvents1Entrance9[];
-extern const struct SceneEvent gKareiHeyaEvents1[];
-extern const struct SceneEvent gKareiHeyaEvents2[];
-extern const struct SceneEvent gKareiHeyaEventsOther[];
-void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
-extern u8 MsgKareiCanLiveInPeaceIn[];
-extern u8 MsgKareiDoKnowAboutContinentSouth[];
-extern u8 MsgKareiGoingTolbiAlso[];
-extern u8 MsgKareiOurInnFeelsEmptyNow[];
-extern u8 MsgKareiPleaseFinishEatingIfTaking[];
 extern Placement KareiHeya_ArrivalPlacements[];
 
-void SceneState_ClearSlotsBySubState(void);
 
 enum ArrivalMessage {
     MSG_CAN_LIVE_IN_PEACE_IN = 0x1a8f,
@@ -43,7 +35,6 @@ enum ArrivalMessage {
     MSG_OUR_INN_FEELS_EMPTY_NOW = 0x1afb
 };
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -62,15 +53,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The exit table, the third entry the main image calls. */
 u8 *KareiHeya_GetExits(void)
 {
     return KareiHeya_Exits;
 }
 
-/* The actors placed in the Kalay houses. In the first scene the entrances
-   9 to 15 and 17 have their own table; the first scene's table is prepared
-   before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 scene = gGameState.scene;
@@ -103,7 +90,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKareiHeyaPlacementsOther;
 }
 
-/* What the Kalay houses answer, chosen as their placements are. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s32 scene = gGameState.scene;
@@ -131,13 +117,12 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKareiHeyaEventsOther;
 }
 
-/* In-image placement table, four entries. */
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
-    Event_ShowMessage(0xC, 0);
-    GameFlag_Set(0x910);
+    Engine_EventShowMessage(0xC, 0);
+    Engine_GameFlagSet(0x910);
     Engine_EventEnd();
 }
 
@@ -145,28 +130,26 @@ void SceneDialogue_RunActor16Dialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
-    u8 *p = (u8 *)Object_GetById(0);
+    struct FieldActor *p = Object_GetById(0);
 
-    /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
-     * arm's condition, which is what reproduces the branch. */
-    if ((u16)(*(u16 *)(p + 6) - 0x6001) <= 0x3FFE) {
+    if ((u16)(p->facing - 0x6001) <= 0x3FFE) {
         Engine_InnOpen(7, 8);
     } else {
         Engine_EventBegin();
 
-        if (GameFlag_IsSet(0x911) != 0) {
+        if (Engine_GameFlagIsSet(0x911) != 0) {
             Engine_EventSetMessage((s32)MsgKareiOurInnFeelsEmptyNow);
-            Event_ShowMessage(8, 0);
+            Engine_EventShowMessage(8, 0);
         } else {
             Engine_EventSetMessage((s32)MsgKareiGoingTolbiAlso);
-            Event_AskYesNo(8, 0);
-            GameFlag_Set(0x910);           /* 145 << 4 */
+            Engine_EventAskYesNo(8, 0);
+            Engine_GameFlagSet(0x910);
         }
 
         Engine_EventEnd();
@@ -177,49 +160,37 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 {
     void Engine_EventSetMessage(int);
 
-    u8 *p = (u8 *)Object_GetById(0);
+    struct FieldActor *p = Object_GetById(0);
 
-    /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
-     * arm's condition, which is what reproduces the branch. */
-    if ((u16)(*(u16 *)(p + 6) + 0x5FFF) <= 0x3FFE) {
+    if ((u16)(p->facing + 0x5FFF) <= 0x3FFE) {
         Engine_SanctumOpen(8);
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgKareiCanLiveInPeaceIn);
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
         Engine_EventEnd();
     }
 }
 
-/*
- * Scene arrival: clears the residue byte at +85 of every scene slot from 8 to
- * 65, then looks the sub-state up in the placement table and places the
- * player from that entry. Sub-states other than 12, 13, 16 and 19 return
- * without touching anything. The loop skips a null record but the later clear
- * of the player's own +85 does not test for null; that asymmetry is real.
- * 158 is read as a cue id from its argument position and is not verified.
- */
 void FieldScene_RunArrivalPlacement(void)
 {
 
-    u8 *work = *(u8 **)&gEventWork;
+    struct EventWork *work = gEventWork;
     u32 slot;
     s32 idx;
-    u8 *p;
+    struct FieldActor *p;
 
     Engine_EventBegin();
 
     for (slot = 8; slot <= 65; slot++) {
-        u8 *rec = (u8 *)Object_GetById(slot);
+        struct FieldActor *rec = Object_GetById(slot);
 
         if (rec != 0) {
-            rec[85] = 0;
+            rec->motion_flags = 0;
         }
     }
 
-    /* The sub-state slot is read twice, here and for Engine_EventRequestExit below, and
-     * both reads are kept. */
-    switch (*(s16 *)(work + 364)) {         /* 182 << 1 */
+    switch (work->touched_trigger) {
     case 12: idx = 0; break;
     case 13: idx = 1; break;
     case 16: idx = 2; break;
@@ -227,32 +198,30 @@ void FieldScene_RunArrivalPlacement(void)
     default: return;
     }
 
-    Audio_PlayCue(158);
+    Engine_AudioPlayCue(158);
 
     {
         u32 x = KareiHeya_ArrivalPlacements[idx].x;
         u32 y = KareiHeya_ArrivalPlacements[idx].y;
 
-        Map_AnimateCells(KareiHeya_ArrivalPlacements[idx].destination, x, y);
+        Engine_MapAnimateCells(KareiHeya_ArrivalPlacements[idx].destination, x, y);
     }
 
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
-    p = (u8 *)Object_GetById(0);
-    p[85] = 0;
+    p = Object_GetById(0);
+    p->motion_flags = 0;
 
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
+    Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
     Engine_EventWait(10);
 
-    Engine_EventRequestExit(*(s16 *)(work + 364));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();
 }
 
-/* The Kalay houses' scene start: open with the window transition; the first
-   scene clears the slots its entrance calls for. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -262,13 +231,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/*
- * Clears the set of scene slots this sub-state leaves behind. Sub-state 16
- * takes the last arm even though it lies inside 9..17, so the test is not
- * written as a range. 0x911 is read as an event-flag id from its argument
- * position, and the six-argument call's argument meanings are not
- * established.
- */
 void SceneState_ClearSlotsBySubState(void)
 {
     s16 sub = gGameState.entrance;
@@ -276,10 +238,9 @@ void SceneState_ClearSlotsBySubState(void)
     switch (sub) {
     case 3:
     {
-        /* The last two arguments travel on the stack. */
-        s32 fifth = 4;
+                s32 fifth = 4;
         s32 sixth = 2;
-        Map_CopyCellsTo(30, 14, 30, 16, fifth, sixth);
+        Engine_MapCopyCellsTo(30, 14, 30, 16, fifth, sixth);
         return;
     }
     case 9:
@@ -295,10 +256,8 @@ void SceneState_ClearSlotsBySubState(void)
         goto other;
     }
 
-    /* sub is 9..15 or 17. */
-    if (GameFlag_IsSet(0x911) != 0) {
-        /* Nine distinct call sites, not a loop; the trailing 15 is out of
-         * order and is kept that way. */
+    if (Engine_GameFlagIsSet(0x911) != 0) {
+
         Engine_ActorDestroy(10);
         Engine_ActorDestroy(11);
         Engine_ActorDestroy(12);
@@ -309,12 +268,12 @@ void SceneState_ClearSlotsBySubState(void)
         Engine_ActorDestroy(19);
         Engine_ActorDestroy(15);
     } else {
-        Actor_SetChildValue(13, 2);
+        Engine_ActorSetChildValue(13, 2);
     }
     return;
 
 other:
-    if (GameFlag_IsSet(0x911) != 0) {
+    if (Engine_GameFlagIsSet(0x911) != 0) {
         Engine_ActorDestroy(16);
         Engine_ActorDestroy(17);
     }

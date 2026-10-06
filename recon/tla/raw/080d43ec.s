@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d43ec
+	.global ObjectTable_AllocateAndSetObjectSpeed
 	.thumb_func
-Func_080d43ec:
+ObjectTable_AllocateAndSetObjectSpeed:
 	push {r5, r6, lr}
 	adds r6, r1, #0
 	movs r1, #213

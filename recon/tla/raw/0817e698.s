@@ -192,7 +192,7 @@ Func_0817e698:
 	adds r3, #20
 	adds r1, r3, #0
 	str r3, [sp, #4]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, .L_0817e848
 	movs r2, #128
 	lsls r2, r2, #19
@@ -369,7 +369,7 @@ Func_0817e698:
 	str r2, [r5, #16]
 	str r3, [r5, #20]
 	str r6, [r5, #12]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #4]
 	movs r0, #0
 	ldr r1, [r2, #4]

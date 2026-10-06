@@ -17,7 +17,7 @@ sub_08124af8:
 	ldrb r3, [r7]
 	cmp r3, #0
 	beq .L_08124b92
-	bl Func_081234a4
+	bl BattleEventRuntime_Reset
 	mov r2, r8
 	movs r3, #52
 	ldrsh r6, [r2, r3]

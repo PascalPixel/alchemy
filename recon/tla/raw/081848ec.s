@@ -158,7 +158,7 @@ Func_081848ec:
 .L_08184a0c:
 	.4byte 0xffc87150
 .L_08184a10:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08184a14:
 	ldr r3, .L_08184b38
 	ldr r2, .L_08184b3c
@@ -319,7 +319,7 @@ Func_081848ec:
 .L_08184b38:
 	.4byte 0xfffffe84
 .L_08184b3c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08184b40:
 	.4byte 0xfffffe87
 .L_08184b44:
@@ -1088,7 +1088,7 @@ Func_081848ec:
 	adds r3, r2, r3
 	adds r3, r3, r4
 	str r3, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0818526c
 	movs r2, #0
 	ldrb r0, [r3, r7]
@@ -1591,7 +1591,7 @@ Func_081848ec:
 	adds r3, r3, r1
 	str r3, [sp, #196]
 	str r4, [sp, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r4, [sp, #8]
 	ldr r3, [r4]
 	cmp r3, #0
@@ -1744,7 +1744,7 @@ Func_081848ec:
 	adds r3, r7, r3
 	adds r3, r3, r0
 	str r3, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #128]
 	movs r1, #128
 	lsls r1, r1, #12
@@ -1909,7 +1909,7 @@ Func_081848ec:
 	adds r0, r2, r0
 	adds r0, r0, r3
 	str r0, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [r5, #4]
 	adds r0, r7, #0
 	movs r2, #0
@@ -2035,7 +2035,7 @@ Func_081848ec:
 	lsls r4, r4, #5
 	adds r3, r2, r4
 	str r3, [r5, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r6, [sp, #128]
 	movs r5, #128
 	lsls r5, r5, #12
@@ -2142,7 +2142,7 @@ Func_081848ec:
 	bl Func_08196958
 	mov r0, r8
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #170
 	movs r4, #1
 	lsls r3, r3, #7
@@ -2201,7 +2201,7 @@ Func_081848ec:
 	str r2, [r4, #20]
 	adds r5, #255
 	str r3, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	cmp r11, r5
 	ble .L_081859ec
 	movs r3, #128
@@ -2296,7 +2296,7 @@ Func_081848ec:
 	strb r2, [r3]
 	lsls r5, r5, #9
 	strb r2, [r6, #1]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r5, #0
 	ldr r1, .L_08185b34
 	movs r2, #0
@@ -2516,7 +2516,7 @@ Func_08185b9c:
 	cmp r9, r3
 	bne .L_08185c16
 .L_08185c44:
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	bl Func_0814cca8
 	ldr r2, .L_08185cd4
 	movs r3, #240
@@ -2540,7 +2540,7 @@ Func_08185b9c:
 	ldr r1, .L_08185cdc
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r2, #16
 	negs r2, r2
 	adds r1, r2, #0
@@ -2585,7 +2585,7 @@ Func_08185b9c:
 .L_08185cd4:
 	.4byte gCameraSceneParameters
 .L_08185cd8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08185cdc:
 	.4byte 0x00000075
 .L_08185ce0:
@@ -3089,7 +3089,7 @@ Func_08185b9c:
 	ldr r3, .L_08186210
 	str r1, [r7, #12]
 	str r3, [r0, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_08186214
 	ldr r1, [sp, #84]
 	movs r2, #0
@@ -3176,7 +3176,7 @@ Func_08185b9c:
 	adds r0, r7, #0
 	bl Func_08196a7c
 	movs r5, #170
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r0, #1
 	lsls r5, r5, #7
 	add r9, r0
@@ -3297,7 +3297,7 @@ Func_08185b9c:
 	str r0, [sp, #56]
 	strb r3, [r0]
 	strb r3, [r2, #1]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #128
 	movs r0, #0
 	lsls r1, r1, #13
@@ -3436,7 +3436,7 @@ Func_08185b9c:
 	adds r3, r3, r2
 	mov r4, r8
 	str r3, [r4, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r5, #8]
 	bl Func_080150e4
 	ldr r3, [r5, #8]
@@ -3606,7 +3606,7 @@ Func_08185b9c:
 .L_081864e8:
 	.4byte Data_08197410
 .L_081864ec:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081864f0:
 	ldr r2, .L_08186618
 	movs r3, #0
@@ -3674,7 +3674,7 @@ Func_08185b9c:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r1, #16
 	negs r1, r1
 	movs r2, #4
@@ -3750,7 +3750,7 @@ Func_08185b9c:
 .L_08186614:
 	.4byte 0x00000784
 .L_08186618:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0818661c:
 	.4byte gInput
 .L_08186620:
@@ -3936,7 +3936,7 @@ Func_08185b9c:
 	ldr r3, [sp, #172]
 	ldr r1, [sp, #48]
 	ldrsh r0, [r6, r3]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r6, .L_081869fc
 	ldr r5, [sp, #24]
 	movs r4, #0
@@ -4237,7 +4237,7 @@ Func_08185b9c:
 .L_081869e4:
 	.4byte Data_02020202
 .L_081869e8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081869ec:
 	.4byte gCameraSceneParameters
 .L_081869f0:
@@ -4296,7 +4296,7 @@ Func_08185b9c:
 	ands r3, r2
 	strb r3, [r7, #24]
 	str r5, [r7, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r2, #128
 	lsls r2, r2, #8
 	movs r1, #128
@@ -4340,7 +4340,7 @@ Func_08185b9c:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r3, .L_08186dc8
 	ldr r2, [sp, #60]
 	movs r1, #6
@@ -4736,6 +4736,6 @@ Func_08185b9c:
 .L_08186df0:
 	.4byte gCameraSceneParameters
 .L_08186df4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08186df8:
 	.4byte Func_08143000

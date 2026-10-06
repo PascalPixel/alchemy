@@ -1,4 +1,3 @@
-/* Declarations shared by the Venus lighthouse summit scene's sources (resource_3c9). */
 #ifndef CHOJO_H
 #define CHOJO_H
 
@@ -12,18 +11,6 @@
 #define NULL ((void *)0)
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-
-typedef struct {
-    u8 filler0[9];
-    u8 f0 : 2;
-    u8 f1 : 2;
-    u8 f2 : 4;
-} Sub;
-
-typedef struct {
-    u8 filler0[0x50];
-    Sub *sub;
-} Obj;
 
 typedef struct {
     u8 filler0[0x18];
@@ -107,25 +94,25 @@ struct StagedVerticalEffect {
     s32 *f68;
 };
 
-extern unsigned char Data_0200e3d4[];
-extern unsigned char Data_0200e464[];
-extern unsigned char Data_0200e478[];
-extern unsigned char Data_0200e6ec[];
-extern Spr *Data_0200e6e8;
+extern const struct SceneEntrance gVinasuChojoEntrances[];
+extern const u32 gVinasuChojoExits[];
+extern const struct ScenePlacement gVinasuChojoPlacements[];
+extern const struct SceneEvent gVinasuChojoEvents[];
+extern s32 VinasuChojo_NearestActor;
 
 s32 Math_RemainderUnsigned(s32, s32);
 void OverlayObject_SetValue1(void *, s32);
-void SceneActor_ParkRecord(u8 *record);
+void SceneActor_ParkRecord(struct FieldActor *actor);
 s32 Object_CheckMovementCollision();
 void Vector_AddPolarOffset();
-void SceneActor_SetByte55ForActorZeroAnd12To17();
+void VinasuChojo_ConfigureGroupMotion();
 s32 SceneActor_FindNearestSlotOfKindF2(void);
 void SceneState_ForwardByRuntimeWordBits(s32 a);
 void Scene_RunScriptedActorPresentation(void);
 void SceneEffect_SpawnParticlesBesideActor();
 void Scene_RunPairedActorEffectSequence(void);
 void Inventory_AddItem(s32, s32);
-void FieldScene_RunScene3c9_02003924(void);
+void VinasuChojo_RunLeapEntrance(void);
 void FieldScene_RunBracketedSceneWithFlag282(void);
 void VinasuChojo_RunActorTransition();
 void FieldScene_RunMultiActorPresentation();
@@ -135,6 +122,6 @@ void VinasuChojo_ShowMessage();
 
 s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position);
 
-void FieldScene_RunScene3c9_02004b28();
+void VinasuChojo_TryToPreventFall();
 
 #endif

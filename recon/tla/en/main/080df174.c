@@ -1,11 +1,3 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "FIXED_MATH.H"
 #include "OBJDISP.H"
 #include "TYPES.H"
@@ -47,7 +39,6 @@ typedef char State_08099d18_source_offset[
 
 extern struct State_08099d18 *gEffectWork;
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Vector_08099d18 *);
 void Object_SetMode(u8 *, s32);
 

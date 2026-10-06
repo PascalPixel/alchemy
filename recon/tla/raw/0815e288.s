@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0815e288
+	.global BattleUnit_ProjectToScreen
 	.thumb_func
-Func_0815e288:
+BattleUnit_ProjectToScreen:
 	push {r5, r6, lr}
 	mov r6, r10
 	mov r5, r9
@@ -20,7 +20,7 @@ Func_0815e288:
 	adds r0, r5, #0
 	bl GetMotionRecordFar
 	mov r10, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r6, #0
 	adds r0, r6, #0
 	adds r1, #12

@@ -2,7 +2,6 @@
 #include "SCENE.H"
 extern struct InnState *Data_03001f2c;
 
-/* menu/entry/clear_first_object_row_and_schedule_update.c */
 void Scheduler_RemoveCallback(s32);
 void Menu_UpdateFirstObjectRowPositions(void);
 void ResourceObject_ReleaseFar(void *);

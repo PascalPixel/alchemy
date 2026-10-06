@@ -272,7 +272,7 @@ Func_081587e4:
 	cmp r1, #32
 	bne .L_081589e6
 .L_08158a0c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #16]
 	bl Graphics_PrepareTransferInIwramWork
@@ -299,7 +299,7 @@ Func_081587e4:
 	add r5, sp, #60
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	movs r1, #224
 	asrs r3, r3, #1

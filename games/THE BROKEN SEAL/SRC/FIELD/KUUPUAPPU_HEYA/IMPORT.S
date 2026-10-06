@@ -1,8 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Import veneers after the KUUPUAPPU_HEYA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — KUUPUAPPU_HEYA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -49,10 +45,10 @@ Engine_VramLoad:
 	.thumb_func
 ObjectDispatch_ApplyArgumentToChildren:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
-	.global Object_CreateFar
+	.global Engine_ObjectCreate
 	.thumb_func
-Object_CreateFar:
-	overlay_veneer Func_080090c8
+Engine_ObjectCreate:
+	overlay_veneer Object_CreateFar
 	.global Engine_ObjectDispatchRelease
 	.thumb_func
 Engine_ObjectDispatchRelease:
@@ -81,12 +77,12 @@ Engine_MapCopyCellAttributes:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 .endif
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:
@@ -138,7 +134,7 @@ Engine_EventEnd:
 	.global FieldScene_PrepareActors
 	.thumb_func
 FieldScene_PrepareActors:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
 Event_PrepareObjectAndApplyValue:
@@ -243,7 +239,7 @@ Engine_ActorFaceEachOther:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -280,14 +276,14 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Map_SetWorkFourValues
+	.global Map_SetViewBounds
 	.thumb_func
-Map_SetWorkFourValues:
-	overlay_veneer Map_SetWorkFourValuesFar
+Map_SetViewBounds:
+	overlay_veneer Map_SetViewBoundsFar
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -296,10 +292,10 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetPair1d4
+	.global Event_SetDefeatDestination
 	.thumb_func
-Event_SetPair1d4:
-	overlay_veneer Event_SetPair1d4Far
+Event_SetDefeatDestination:
+	overlay_veneer Event_SetDefeatDestinationFar
 .if EDITION_INTERNATIONAL
 	.global Engine_LeaderCheckAhead
 	.thumb_func
@@ -313,15 +309,15 @@ Battle_InitializeRenderObject:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global BattleFx_PlayCueAndStartEmitterOnTarget
 	.thumb_func
 BattleFx_PlayCueAndStartEmitterOnTarget:

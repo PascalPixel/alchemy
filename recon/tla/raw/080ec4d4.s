@@ -11,7 +11,7 @@ Func_080ec4d4:
 	mov r7, r8
 	push {r7}
 	sub sp, #84
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	ldr r0, .L_080ec794
 	ldr r1, .L_080ec794
 	adds r0, #32
@@ -120,7 +120,7 @@ Func_080ec4d4:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	adds r7, r0, #0
 .L_080ec5c4:
 	adds r1, r7, #0
@@ -369,7 +369,7 @@ Func_080ec4d4:
 	b .L_080ec820
 	.2byte 0x0000
 .L_080ec794:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec798:
 	.4byte ResourceTableEntries
 .L_080ec79c:
@@ -377,7 +377,7 @@ Func_080ec4d4:
 .L_080ec7a0:
 	.4byte Data_080f1100
 .L_080ec7a4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080ec7a8:
 	.4byte Data_0202a644
 .L_080ec7ac:
@@ -665,11 +665,11 @@ Func_080ec4d4:
 	mov r8, r3
 	b .L_080ec9e8
 .L_080ec9d4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080ec9d8:
 	.4byte gInput
 .L_080ec9dc:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec9e0:
 	ldr r4, .L_080eca48
 	movs r3, #128
@@ -725,9 +725,9 @@ Func_080ec4d4:
 .L_080eca44:
 	.4byte 0x000001ff
 .L_080eca48:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080eca4c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080eca50:
 	.4byte 0xfffffc00
 .L_080eca54:
@@ -874,7 +874,7 @@ Func_080ec4d4:
 .L_080ecb6c:
 	.4byte 0xfffffe00
 .L_080ecb70:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ecb74:
 	movs r2, #18
 	ldrsh r3, [r4, r2]
@@ -935,7 +935,7 @@ Func_080ec4d4:
 .L_080ecbdc:
 	ldr r0, [sp, #20]
 	ldr r1, [sp, #16]
-	bl Func_080ca280
+	bl Scene_GetAreaNameIndex
 	ldr r3, .L_080ece00
 	adds r0, r0, r3
 	str r0, [sp, #20]
@@ -1208,7 +1208,7 @@ Func_080ec4d4:
 .L_080ecdf0:
 	.4byte Data_0202a656
 .L_080ecdf4:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ecdf8:
 	.4byte 0x00000e29
 .L_080ecdfc:

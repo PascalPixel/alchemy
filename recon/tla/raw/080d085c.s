@@ -32,7 +32,7 @@ Func_080d085c:
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	b .L_080d0950
 .L_080d089e:
 	movs r2, #160
@@ -115,7 +115,7 @@ Func_080d085c:
 .L_080d0934:
 	.4byte IwramSignedDivide
 .L_080d0938:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080d093c:
 	movs r1, #130
 	lsls r1, r1, #1

@@ -1,6 +1,3 @@
-/* resource_39c: its entry veneers, its listing with maintained code and
-   the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -14,12 +11,12 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PAIR_BURST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/PALETTE_CYCLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA2.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA3.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA4.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/COLUMN.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/SWITCH.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/LIGHTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RISE_EFFECT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IRIGUCHI2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/PILLAR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RELEASE_TARGET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/MAKYURI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RELEASE_ATTACH.o"(.text)

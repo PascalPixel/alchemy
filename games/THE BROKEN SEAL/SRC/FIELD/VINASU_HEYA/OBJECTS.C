@@ -1,53 +1,36 @@
 #include "ENTRY_SETUP.H"
 
-void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter)
+void ConfigureOverlayObject(struct FieldActor *object, s32 palette)
 {
-    object->unknown_55 = 0;
-    object->unknown_59 = 8;
+    object->motion_flags = 0;
+    object->collision_flags = 8;
     Engine_ActorSetSpriteFlags(object, 0);
-    ObjectGroup_SetChildValue(object, parameter);
+    ObjectGroup_SetChildValue(object, palette);
 }
 
-void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
 {
-    void *obj;
-    u8 *p;
-    s32 mask;
-    u8 flag;
+    struct FieldActor *obj;
 
-    obj = Object_Create(arg3, arg0, arg1, arg2);
+    obj = Engine_ObjectCreate(type, x, y, z);
     if (obj != 0) {
-        p = *(u8 **)((u8 *)obj + 0x50);
-        mask = 13;
-        flag = p[9];
-        mask = -mask;
-        mask &= flag;
-        p[9] = mask;
-        ConfigureOverlayObject(obj, 0xE);
+        ((struct FieldSpritePriority *)obj->sprite)->priority = 0;
+        ConfigureOverlayObject(obj, 14);
         Engine_ObjectSetBlendMode(obj, 1);
         return obj;
     }
     return 0;
 }
 
-void *OverlayObject_PrepareObjectWithCommand15(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
 {
-    void *object;
-    u8 *rec;
-    s32 flags;
-    s32 result;
+    struct FieldActor *object;
 
-    object = Object_Create(arg3, arg0, arg1, arg2);
+    object = Engine_ObjectCreate(type, x, y, z);
     if (object != 0) {
-        rec = *(u8 **)((u8 *)object + 0x50);
-        flags = rec[9];
-        flags = (flags & -13) | 4;
-        rec[9] = flags;
-        ConfigureOverlayObject(object, 0xF);
-        flags = *((u8 *)object + 0x23);
-        result = 2;
-        result |= flags;
-        *((u8 *)object + 0x23) = result;
+        ((struct FieldSpritePriority *)object->sprite)->priority = 1;
+        ConfigureOverlayObject(object, 15);
+        object->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         return object;
     }
     return 0;

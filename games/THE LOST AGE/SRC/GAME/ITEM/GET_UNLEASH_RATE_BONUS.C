@@ -1,33 +1,50 @@
-#include "INVENTORY.H"
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
+#include "ITEM.H"
+#include "INVENTORY.H"
+#include "BATTLE_RANDOM.H"
 
-s32 Equipment_GetUnleashRateBonus(s32 owner)
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner)
 {
     s32 sum;
-    s32 offset;
-    s32 index;
-    u8 *data;
+    s32 i;
     s32 j;
-    s32 mask;
-    u16 v;
+    struct ItemDefinition *item;
 
     sum = 0;
-    offset = 216;
-    mask = 0x200;
-    index = 15;
-    while (--index >= 0) {
-        v = *(u16 *)((u8 *)offset + owner);
-        if (v & mask) {
-            data = (u8 *)Item_GetDirect(
-                *(u16 *)((u8 *)offset + owner)) + 24;
-            j = 4;
-            while (--j >= 0) {
-                if (data[0] == 23) { sum += (s8)data[1]; }
-                data += 4;
+    for (i = 0; i < 15; i++) {
+        if (owner->inventory[i] & 0x200) {
+            item = Item_GetDirect(owner->inventory[i]);
+            for (j = 0; j < 4; j++) {
+                if (item->effects[j].kind == 23)
+                    sum += item->effects[j].amount;
             }
         }
-        offset += 2;
     }
-    if (sum < 0) sum = 0;
+    if (sum < 0)
+        sum = 0;
     return sum;
+}
+
+s32 RollWeaponUnleash(struct BattleUnit *owner)
+{
+    struct ItemDefinition *item;
+    s32 rate;
+
+    if (owner->class_index == 0) {
+        return 1;
+    }
+    item = Inventory_GetEquippedDefinition(owner, 1);
+    if (item == NULL) {
+        return 1;
+    }
+    if (item->description_message == 0) {
+        return 1;
+    }
+    rate = ((Equipment_GetUnleashRateBonus(owner) +
+         (item->secondary_flags * 5)) << 0x10) / 100;
+    if (rate > (s32)(BattleRandom16() & 0xFFFF)) {
+        return item->description_message;
+    }
+    return 1;
 }

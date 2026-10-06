@@ -1,11 +1,3 @@
-@ Sound driver VSync step that re-arms the DMA channels feeding the direct
-@ sound FIFOs. It loads the SoundInfo pointer holder and the 'Smsh' ID from
-@ the literal block of the frame entry that follows (0x0800064c), a literal
-@ shared across functions that per-function compiler pools never produce,
-@ and branches on the flags of subs (across a strb) and of lsls with no
-@ compare. TLA revision of the first routine of TBS SOUND/DRIVER/UPDATE.S
-@ (0x080f9c44), which TLA's UPDATE.S still carries unchanged.
-@ credit: handwritten — sound driver VSync DMA refresh (TLA revision)
 .syntax unified
 	.thumb
 	.global SoundDriver_VSyncRefresh

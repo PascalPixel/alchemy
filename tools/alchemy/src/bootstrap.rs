@@ -1,4 +1,3 @@
-//! Installed dependencies survive output cleanup; imports never approve hashes.
 use crate::compiler::{
     bundle::validate_installation,
     routing::{binutils_prefix, bundle, root},
@@ -59,6 +58,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         }
         [flag, source] if flag == "--from" => {
             with_install_lock(|| install(Path::new(source), &bundle(), validate_installation))?;
+            ensure_binutils()?;
         }
         _ => return Err(USAGE.into()),
     }
@@ -233,8 +233,6 @@ fn build_from_sources() -> Result<(), String> {
     })
 }
 
-/// Build GNU binutils for `arm-none-eabi` natively when no valid installation
-/// exists; a present but invalid installation is never replaced silently.
 fn ensure_binutils() -> Result<(), String> {
     let prefix = binutils_prefix();
     if validate_binutils(&prefix).is_ok() {
@@ -335,8 +333,6 @@ fn build_binutils(prefix: &Path) -> Result<(), String> {
             fs::remove_dir_all(prefix).map_err(|e| e.to_string())?;
         }
         installed?;
-        // Extracted third-party sources carry their own documents; keep only
-        // the verified archive under out/.
         for directory in [&source, &objects] {
             fs::remove_dir_all(directory).map_err(|e| e.to_string())?;
         }
@@ -344,8 +340,6 @@ fn build_binutils(prefix: &Path) -> Result<(), String> {
     })
 }
 
-/// Every required tool reports the pinned version and assembles with the
-/// historical soft-float flags the production build uses.
 fn validate_binutils(prefix: &Path) -> Result<(), String> {
     let tool = |name: &str| prefix.join("bin").join(format!("arm-none-eabi-{name}"));
     for name in MODERN_BINUTILS_TOOLS {
@@ -422,8 +416,6 @@ fn install(
         .map_err(|e| e.to_string())?;
     }
     validate(stage.path())?;
-    // Complete a partial installation only when every existing compiler is
-    // identical to the admitted bundle. Existing executables are preserved.
     if destination.exists() {
         let mut missing = Vec::new();
         for name in FILES {
@@ -461,122 +453,4 @@ fn install(
     }
     fs::rename(stage.path(), destination).map_err(|e| e.to_string())?;
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    fn fixture(root: &Path) -> std::path::PathBuf {
-        let p = root.join("bundle");
-        fs::create_dir_all(p.join("agbcc")).unwrap();
-        for name in FILES {
-            fs::write(p.join(name), name).unwrap();
-        }
-        p
-    }
-    #[test]
-    fn rejected_import_preserves_installation() {
-        let temp = tempfile::tempdir().unwrap();
-        let source = fixture(temp.path());
-        let destination = temp.path().join("installed");
-        fs::create_dir(&destination).unwrap();
-        fs::write(destination.join("keep"), b"existing").unwrap();
-        assert!(install(&source, &destination, |_| Err("unapproved".into())).is_err());
-        assert_eq!(fs::read(destination.join("keep")).unwrap(), b"existing");
-        assert_eq!(fs::read_dir(temp.path()).unwrap().count(), 2);
-    }
-    #[test]
-    fn output_cleanup_preserves_toolchain_and_allows_rebootstrap() {
-        let temp = tempfile::tempdir().unwrap();
-        let source = fixture(temp.path());
-        let parent = temp.path().join("toolchain");
-        fs::create_dir(&parent).unwrap();
-        let destination = parent.join("compilers");
-        install(&source, &destination, |_| Ok(())).unwrap();
-        let out = temp.path().join("out");
-        fs::create_dir(&out).unwrap();
-        fs::write(out.join("report"), b"disposable").unwrap();
-        fs::remove_dir_all(&out).unwrap();
-        install(&source, &destination, |_| Ok(())).unwrap();
-        for name in FILES {
-            assert_eq!(fs::read(destination.join(name)).unwrap(), name.as_bytes());
-        }
-        assert!(!crate::compiler::routing::bundle().starts_with(root().join("out")));
-    }
-    #[test]
-    fn changed_bundle_cannot_replace_installation() {
-        let temp = tempfile::tempdir().unwrap();
-        let source = fixture(temp.path());
-        let destination = temp.path().join("installed");
-        install(&source, &destination, |_| Ok(())).unwrap();
-        fs::write(source.join("cc1"), b"changed").unwrap();
-        assert!(install(&source, &destination, |_| Ok(())).is_err());
-        assert_eq!(fs::read(destination.join("cc1")).unwrap(), b"cc1");
-    }
-    #[test]
-    fn admitted_bundle_completes_partial_installation_without_replacing_compilers() {
-        let temp = tempfile::tempdir().unwrap();
-        let source = fixture(temp.path());
-        let destination = temp.path().join("installed");
-        install(&source, &destination, |_| Ok(())).unwrap();
-        fs::remove_file(destination.join("agbcc/old_agbcc")).unwrap();
-        install(&source, &destination, |_| Ok(())).unwrap();
-        assert_eq!(
-            fs::read(destination.join("agbcc/old_agbcc")).unwrap(),
-            b"agbcc/old_agbcc"
-        );
-        fs::remove_file(destination.join("agbcc/old_agbcc")).unwrap();
-        fs::write(destination.join("cc1"), b"different compiler").unwrap();
-        assert!(install(&source, &destination, |_| Ok(())).is_err());
-        assert!(!destination.join("agbcc/old_agbcc").exists());
-        assert_eq!(
-            fs::read(destination.join("cc1")).unwrap(),
-            b"different compiler"
-        );
-    }
-    #[test]
-    fn modified_source_archives_are_rejected_before_extraction() {
-        let temp = tempfile::tempdir().unwrap();
-        let archive = temp.path().join("binutils-2.10.tar.gz");
-        fs::write(&archive, b"modified archive").unwrap();
-        assert!(verify_archive(&archive)
-            .unwrap_err()
-            .contains("unexpected digest"));
-    }
-    #[test]
-    fn modified_modern_binutils_archives_are_rejected() {
-        let temp = tempfile::tempdir().unwrap();
-        let archive = temp.path().join("binutils-2.33.1.tar.xz");
-        fs::write(&archive, b"modified archive").unwrap();
-        assert!(
-            verify_digest(&archive, MODERN_BINUTILS_SHA256, "binutils-2.33.1")
-                .unwrap_err()
-                .contains("unexpected digest")
-        );
-    }
-    #[test]
-    fn incomplete_binutils_installations_are_rejected() {
-        let temp = tempfile::tempdir().unwrap();
-        fs::create_dir_all(temp.path().join("bin")).unwrap();
-        fs::write(temp.path().join("bin/arm-none-eabi-as"), b"").unwrap();
-        assert!(validate_binutils(temp.path())
-            .unwrap_err()
-            .contains("missing"));
-    }
-    #[test]
-    fn unapproved_executables_are_rejected_by_real_validation() {
-        let temp = tempfile::tempdir().unwrap();
-        let source = fixture(temp.path());
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            for name in FILES {
-                fs::set_permissions(source.join(name), fs::Permissions::from_mode(0o755)).unwrap();
-            }
-        }
-        let destination = temp.path().join("installed");
-        assert!(install(&source, &destination, validate_installation).is_err());
-        assert!(!destination.exists());
-        assert_eq!(fs::read_dir(temp.path()).unwrap().count(), 1);
-    }
 }

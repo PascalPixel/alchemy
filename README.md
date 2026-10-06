@@ -7,18 +7,22 @@ form people can read, change and build on.
 
 ## Progress
 
-<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS_CHART.png" width="838" alt="DONE by hour for The Broken Seal and The Lost Age since 16 July 2026">
+<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS_CHART.png" width="838" alt="How much of each game is rebuilt, day by day since 16 July 2026">
 
-<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
+<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS.png" width="838" alt="A map of the project's files by size">
 
-The percentages are how much of each game has been rewritten, counted across
-all six languages it shipped in. A piece only counts once the rebuilt game is
-identical to the original, so the number can’t be talked into going up. Both
-pictures redraw themselves after every change.
+The percentages are how much of each game’s code has been rewritten so that it
+rebuilds the original exactly, in all six languages (Japanese, English,
+German, Spanish, French and Italian). A piece only counts once every language
+that uses it comes out byte for byte identical. The Broken Seal comes first;
+The Lost Age has just started. Both pictures redraw themselves after every
+change.
 
-The chart shows The Broken Seal in gold and The Lost Age in blue, with hourly
-measurements where available and the older daily records elsewhere. Dips mark
-stricter counts, not lost work.
+The chart shows that climb day by day, and the colours along the bottom show
+which AI models did the work. Sudden drops are honesty checks: when we find
+something that only looked finished, it comes back off the count until it’s
+done properly. The map below it shows the whole project by size: everything
+in light rose is still waiting to be rewritten.
 
 ## Why Alchemy?
 

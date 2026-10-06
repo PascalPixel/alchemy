@@ -55,7 +55,7 @@ Func_08159cac:
 .L_08159d14:
 	.4byte 0x0000014d
 .L_08159d18:
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r0, [sp, #32]
 	add r5, sp, #36
 	ldr r3, [r0, #20]
@@ -63,7 +63,7 @@ Func_08159cac:
 	adds r3, #34
 	ldrsh r0, [r0, r3]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r1, [r6]
 	ldr r3, [r5]
 	movs r4, #239

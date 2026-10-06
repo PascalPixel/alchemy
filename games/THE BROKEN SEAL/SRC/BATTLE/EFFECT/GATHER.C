@@ -1,3 +1,17 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CANVAS.H"
+#include "MOTION_OBJECT.H"
+#include "RUNTIME_MEM.H"
+#include "RESOURCE.H"
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -9,31 +23,15 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void *Resource_GetTableEntry(s32 id);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void **GetBattleObjectSlotFar(s32 member_id);
-s32 Battle_GetObjectTableValueFar(s32 member_id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
-    s32 slot, s32 delay);
-void ObjectGroup_TickMemberTimers(void);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 #define MOTES_PER_MEMBER 128
 
-/* Battle effect: 128 motes leave every affected unit in random directions,
-   one unit every twenty frames, and the first 32 of each unit are drawn
-   while they are pulled towards the acting unit, where they vanish. */
 void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -41,8 +39,8 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw;
-    void *sheet;
-    s32 facing;
+    u8 *sheet;
+    struct BattleCamera *camera;
     struct EffectPosition screen;
     s32 alternate;
     s32 member;
@@ -54,7 +52,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     sheet = heap_cache[2];
-    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + 12 * 4);
     if (effect->variant == 0)
         alternate = 0;
     else
@@ -73,7 +71,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         s32 *object;
         s32 height;
 
-        object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+        object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
         height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
         for (i = 0; i != MOTES_PER_MEMBER; i++) {
             struct EffectStep *mote =
@@ -93,19 +91,19 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     draw = (DrawRectangle)gWorkSlot[46];
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
 
     for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
         s32 *target;
         s32 height;
 
-        target = *GetBattleObjectSlotFar(work->effect->actor);
+        target = GetBattleObjectSlotFar(work->effect->actor)->object;
         height = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
         if (frame == 64)
             BattleEventRuntime_BeginPhaseFar(133);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 40)
             ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
         if (frame == work->effect->count * 20 + 52)
@@ -124,7 +122,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
                         EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
                         screen.x >>= 1;
                         size = 6;
-                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                        draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                             screen.x - size / 2, screen.y - size, size, size * 2);
                         EffectStep_AdvanceWithGravity3D(mote, 62, 0);
                         if (frame > member * 20 + i + 10) {
@@ -150,7 +148,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

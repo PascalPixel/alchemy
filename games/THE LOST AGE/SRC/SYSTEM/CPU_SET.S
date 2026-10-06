@@ -1,7 +1,3 @@
-@ BIOS call wrappers: CpuSet (svc 0x0b) and SoundBias (svc 0x19) with r0 = 0,
-@ which moves the sound bias down to level 0. Neither approved compiler
-@ emits svc. These 10 bytes equal TBS SYSTEM/CPU_SET.S (0x08006864).
-@ credit: library — TBS/TLA common BIOS call wrappers
 .syntax unified
 	.thumb
 	.global Bios_CpuSet

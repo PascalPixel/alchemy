@@ -3,7 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
-s32 Scheduler_DisableCallbacks(u32 callback)
+s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -12,23 +12,22 @@ s32 Scheduler_DisableCallbacks(u32 callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the
-     * interrupt-master register's address is loaded before the task table's. */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: under the ARM9TDMI load schedule the saved copy follows the IME store; this boundary keeps the native copy before it. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if (callback == 0 || task->callback == callback) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
-                    result = i;
-                }
+        for (i = 0; i <= 23; i++, task++) {
+            if (callback == 0 || task->callback == (u32)callback) {
+                TASK_STATE_HIGH(task) &= (u8)~1;
+                result = i;
             }
-        } while (0);
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;
@@ -43,33 +42,31 @@ s32 Scheduler_DisableOverlayCallbacks(void)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_DisableCallbacks */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if ((task->callback >> 24) == 2) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
-                    result = i;
-                }
+        for (i = 0; i <= 23; i++, task++) {
+            if ((task->callback >> 24) == 2) {
+                TASK_STATE_HIGH(task) &= (u8)~1;
+                result = i;
             }
-        } while (0);
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;
 }
 
-/* Runs the 24 task records whose high state byte matches the requested key. */
 void Scheduler_RunCallbacksByKey(s32 arg)
 {
     s32 key;
-    /* FAKEMATCH: capture the incoming key in the native saved register, then use an ordinary local for its lifetime. */
-    register s32 held asm("r7");
+    s32 held;
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
     u32 cursor = (u32)gSchedulerTaskTable;
     struct SchedulerTask *task;
@@ -99,7 +96,6 @@ next_task:
     }
 }
 
-/* The disabled scheduler returns the shifted key, as the native routine does. */
 s32 Scheduler_CountCallbacksByKey(s32 key)
 {
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
@@ -139,12 +135,10 @@ finish:
     return key;
 }
 
-/* The first task with high state byte 4 ends this bounded dispatch pass. */
 void Scheduler_RunCallbacksBeforeBoundary(s32 arg)
 {
     s32 key;
-    /* FAKEMATCH: capture the incoming key in the native saved register, then use an ordinary local for its lifetime. */
-    register s32 held asm("r7");
+    s32 held;
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
     u32 cursor = (u32)gSchedulerTaskTable;
     struct SchedulerTask *task;
@@ -177,7 +171,6 @@ next_task:
     }
 }
 
-/* Advances the shared 32-bit LCG and returns bits 8 through 23. */
 u32 Random16(void)
 {
     u32 value;

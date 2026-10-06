@@ -1,11 +1,15 @@
-/* Item menu: sort a fifteen-slot inventory by a list mode. Each pass of the
-   mode order takes one item type (bit 7: equipped items only) and moves the
-   matching items into the sorted list, highest item id first; the emptied
-   tail stays zero. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "ITEM.H"
 
-void Menu_CopyListOrder(s32 mode, u8 *order);
 
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode)
 {

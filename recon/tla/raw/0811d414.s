@@ -182,11 +182,11 @@ BattlePresentation_AppendLinkedActions:
 .L_0811d574:
 	.4byte 0x04000208
 .L_0811d578:
-	.4byte Data_020054c8
+	.4byte gBattleRandomSeed
 .L_0811d57c:
 	.4byte gRandomState
 .L_0811d580:
-	bl Func_08016950
+	bl BattleLink_ResetTransferState
 	bl SerialRuntime_RemoveIrqHandlers
 	ldr r0, [r5]
 	bl Sys_Free

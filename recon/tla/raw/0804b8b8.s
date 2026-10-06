@@ -15,7 +15,7 @@ Func_0804b8b8:
 	mov r0, sp
 	adds r0, #36
 	str r0, [sp, #24]
-	bl Func_08118138
+	bl BattleParty_PrepareReserveOwnersFar
 	movs r1, #0
 	movs r2, #1
 	str r1, [sp, #20]
@@ -180,7 +180,7 @@ Func_0804b8b8:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl Func_0804297c
+	bl UiWindow_DrawPartyStatusContents
 	bl BattleActor_CommitPlacementFar
 	mov r1, r8
 	movs r3, #255
@@ -191,7 +191,7 @@ Func_0804b8b8:
 	movs r1, #2
 	bl BattlePres_SetActorModesFar
 	mov r0, r8
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 .L_0804ba40:
 	movs r0, #1
 	bl WaitFrames
@@ -229,13 +229,13 @@ Func_0804b8b8:
 	movs r1, #0
 	bl BattlePres_SetActorModesFar
 	mov r0, r8
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl Func_0804297c
+	bl UiWindow_DrawPartyStatusContents
 	bl BattleActor_CommitPlacementFar
 	movs r0, #1
 	bl WaitFrames

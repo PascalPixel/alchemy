@@ -2,10 +2,6 @@
 #include "CONFIGURED_EFFECT_SPAWN.H"
 #include "FIELD_EVENT.H"
 
-/* Resource-local call aliases are bound to loader runtime destinations by
- * this owner's translation unit.  The five selectors are signed halfwords
- * in the shared scene record; switch tables and the final pool belong to
- * the complete entry setup function. */
 struct Effect *Func_02000058(s32, s32, s32, s32);
 void Func_02000558(void);
 void Func_020007d8(void);
@@ -49,8 +45,6 @@ extern u8 Value_000000b8;
 extern u8 Value_000000b9;
 extern u8 Value_000000ba;
 
-/* The six-argument scene operations share the calling form already verified
- * in this overlay's primary scene sequences. */
 static __inline__ void Scene_Call6(void (*func)(), s32 a0, s32 a1,
     s32 a2, s32 a3, s32 a4, s32 a5)
 {

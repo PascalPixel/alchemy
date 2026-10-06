@@ -213,7 +213,7 @@ BattlePres_RunBurstScene:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #36]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r5, [sp, #60]
 	movs r0, #239
 	movs r1, #238
@@ -392,7 +392,7 @@ BattlePres_RunBurstScene:
 	str r2, [sp, #32]
 	ldr r1, [sp, #24]
 	ldr r0, [r3, #8]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r5, [sp, #24]
 	ldr r3, [r5]
 	lsrs r2, r3, #31
@@ -781,7 +781,7 @@ BattlePres_RunBurstScene:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork
@@ -811,7 +811,7 @@ BattlePres_RunBurstScene:
 	ble .L_0815a7c8
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r7]
 	mov r1, r10
 	lsrs r3, r2, #31
@@ -894,7 +894,7 @@ BattlePres_RunBurstScene:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r7, [sp, #52]
 	movs r0, #3
 	movs r3, #0

@@ -887,7 +887,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r0, [r3, #8]
 	adds r1, r5, #0
 	str r5, [sp, #60]
-	bl Func_0815e1fc
+	bl EffectPosition_ApplyAnimationAndYOffset
 	ldr r0, [sp, #84]
 	movs r6, #0
 	ldr r3, [r0, #20]
@@ -900,7 +900,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r1, [sp, #84]
 	ldrsh r0, [r6, r1]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r0, [sp, #84]
 	movs r3, #1
 	add r9, r3
@@ -2400,7 +2400,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r5, [r3, #48]
 	asrs r0, r0, #1
 	mov r8, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12
@@ -2416,7 +2416,7 @@ BattleFx_RunProjectileVolleyB:
 	blt .L_08153906
 	adds r1, r6, #0
 	adds r0, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r6]
 	ldr r3, .L_081539bc
 	asrs r2, r2, #1
@@ -2551,11 +2551,11 @@ BattleFx_RunProjectileVolleyB:
 	cmp r6, #14
 	bne .L_0815399e
 	ldr r0, [sp, #84]
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_081539aa
 .L_0815399e:
 	ldr r0, [sp, #84]
-	bl Func_081504b4
+	bl SummonFx_RunCanvasMode3
 	b .L_081539aa
 .L_081539a6:
 	bl Func_08143bb8

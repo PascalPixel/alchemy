@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.align 2, 0
 	.global Func_080d2b4c
 	.thumb_func
 Func_080d2b4c:
@@ -74,14 +75,14 @@ Func_080d2b4c:
 	asrs r3, r3, #24
 	cmp r3, #3
 	bne .L_080d2bec
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	adds r0, #8
 	bl BattleFx_LookupResult
 .L_080d2bec:
 	movs r0, #0
 	movs r1, #0
-	bl Func_080ca5d8
+	bl BattleFx_SelectBattleCue
 .L_080d2bf4:
 	pop {r3, r5}
 	mov r8, r3

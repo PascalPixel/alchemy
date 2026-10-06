@@ -1,7 +1,3 @@
-//! Which model wrote each commit: a Co-Authored-By trailer that names a
-//! version, else an unversioned trailer or agent author, else untagged.
-//! Nothing outside the repository's history is read; days before
-//! `history::FROZEN_THROUGH` keep their approved counts instead.
 use super::history::UNTAGGED;
 use std::path::Path;
 
@@ -11,7 +7,6 @@ pub(crate) enum Family {
     Codex,
     Grok,
 }
-/// The family of a readable model name.
 pub(crate) fn family(name: &str) -> Option<Family> {
     let word = name.split([' ', '-']).next().unwrap_or("");
     match word {
@@ -21,9 +16,6 @@ pub(crate) fn family(name: &str) -> Option<Family> {
         _ => None,
     }
 }
-/// The model a Co-Authored-By trailer names, and whether it names a
-/// version: "Claude Opus 4.8 (1M context)" is Opus 4.8; "Claude" and
-/// "OpenAI Codex" name only their family.
 fn trailer_model(trailer: &str) -> Option<(String, bool)> {
     let name = trailer.split(['<', '(']).next().unwrap_or("").trim();
     let name = name.strip_prefix("Claude ").unwrap_or(name);
@@ -39,14 +31,12 @@ fn trailer_model(trailer: &str) -> Option<(String, bool)> {
 fn author_model(author: &str) -> Option<&'static str> {
     match author.trim() {
         "Codex" => Some("Codex"),
-        // Cursor's agent ran Grok (Pascal, 2026-09-24).
         "Cursor Agent" => Some("Grok"),
         "Claude" => Some("Claude"),
         _ => None,
     }
 }
 
-/// One commit as `git log --format=LOG` prints it.
 pub(crate) const LOG: &str = "%ad|%an|%(trailers:key=Co-Authored-By,valueonly,separator=;)";
 #[derive(Debug, Default)]
 pub(crate) struct Commit {
@@ -66,8 +56,6 @@ pub(crate) fn commits(log: &str) -> Vec<Commit> {
         })
         .collect()
 }
-/// A commit's models: its versioned trailers, else an unversioned trailer
-/// or agent author, else untagged.
 pub(crate) fn label(commit: &Commit) -> Vec<String> {
     let named = commit
         .trailers
@@ -90,12 +78,12 @@ pub(crate) fn label(commit: &Commit) -> Vec<String> {
         .or_else(|| author_model(&commit.author).map(String::from));
     vec![hint.unwrap_or_else(|| UNTAGGED.into())]
 }
-/// The `git log` of the checked-out branch, main in CI, from `since` (a date) when given.
 pub(crate) fn git_log(root: &Path, since: Option<&str>) -> Result<String, String> {
     let mut command = std::process::Command::new("git");
     command.args([
         "log",
         "HEAD",
+        "--no-merges",
         &format!("--format={LOG}"),
         "--date=format:%Y-%m-%d",
     ]);

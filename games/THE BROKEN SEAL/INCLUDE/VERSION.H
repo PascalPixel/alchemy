@@ -1,7 +1,6 @@
 #ifndef TBS_VERSION_H
 #define TBS_VERSION_H
 
-/* Japanese is the source edition; international builds select a language. */
 #if (defined(TBS_EDITION_JA) + defined(TBS_EDITION_EN) + defined(TBS_EDITION_DE) + defined(TBS_EDITION_ES) + defined(TBS_EDITION_FR) + defined(TBS_EDITION_IT)) > 1
 #error Select exactly one TBS edition
 #endif

@@ -1,12 +1,9 @@
-/* Draft: Japanese top-menu width 8 has no complete instruction-extent
- * match. Table/call layout still needs a source structural branch. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "TLA_EDITION.H"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
-/* ☀️'s, reaching the selection work through ⚓️'s heap slot. */
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {
     u8 *state;

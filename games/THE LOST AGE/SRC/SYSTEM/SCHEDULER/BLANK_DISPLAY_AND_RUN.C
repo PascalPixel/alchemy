@@ -1,14 +1,20 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "IO_REG.H"
 
-s32 LuckyDice_Run();
-s32 Audio_PlayCue(s32);
-
-/* The interrupt master-enable word (IME) before and after the blanked frame. */
-#define REG_IME (*(volatile u16 *)0x04000000)
 
 s32 Runtime_BlankDisplayAndRun(void)
 {
-    REG_IME = 0x40;
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
     Audio_PlayCue(2);
     LuckyDice_Run();
     return 0;

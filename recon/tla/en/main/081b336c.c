@@ -4,7 +4,6 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "RAM_BUFFER.H"
 
-/* The reel game's state block, the seventh heap-cache cell. */
 struct ReelWork {
     u8 unknown_000[0x8c];
     s32 state;
@@ -19,12 +18,6 @@ struct ReelWork {
 extern u8 gBattleFxWork[];
 extern char MsgSlotsBet;
 extern const u8 ReelGame_TitleLetterWidths[];
-
-/* Reel game: clear every particle's variant, line the eight title letters
-   up above the screen (each 0x80000 higher than the last, spaced by their
-   widths), build the scanline offset curve (zero outside a cosine bump
-   mirrored about line 86), reset the state, cursor and spin count, and open
-   the two-line coin window. */
 
 void ReelGame_InitTitle(void)
 {

@@ -1,12 +1,18 @@
-/* Battle effect: set up the canvas tile layer. Fade the battle palette,
-   clear the canvas tiles and fill the window map, lay out the 16 by 16
-   canvas tile map (columns past 15 blank), then set the display, window and
-   blend registers and clear the canvas buffers. The IWRAM clear and fill
-   routines are called through value-returning pointers, which loads each
-   destination before the routine as the ROM does. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
+
+#define BattlePresentation_ConfigurePaletteFadeFar ((void (*)(s32,s32,s32))BattlePresentation_ConfigurePaletteFadeFar)
 
 extern u8 gBattleWork[];
 
@@ -36,8 +42,6 @@ struct BattleLayer {
 };
 
 extern u16 gBgScroll[];
-void Runtime_ApplyValueToWork7818(void);
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 fade, s32 arg);
 
 void BattleFx_SetupCanvasTileMap(void)
 {
@@ -49,7 +53,7 @@ void BattleFx_SetupCanvasTileMap(void)
     s32 col;
     s32 off;
 
-    Runtime_ApplyValueToWork7818();
+    BattleFx_ClearActorTimers();
     BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
     gBgScroll[3] = 32;
     layer->offset = 0;
@@ -64,17 +68,17 @@ void BattleFx_SetupCanvasTileMap(void)
                 *(volatile u16 *)(0x0600fb00 + off) = row * 16 + 0x100 + col;
         }
     }
-    *(volatile u16 *)0x04000000 = 0x7741;
-    *(volatile u16 *)0x0400000a = 0x1f81;
-    *(volatile u16 *)0x04000050 = 0x3f42;
-    *(volatile u16 *)0x04000040 = 0xf0;
-    *(volatile u16 *)0x04000044 = 0x1088;
-    *(volatile u16 *)0x04000042 = 0xf0;
-    *(volatile u16 *)0x04000046 = 0x1088;
-    *(volatile u16 *)0x04000048 = 0x3537;
-    *(volatile u16 *)0x0400004a = 0x3f21;
-    *(volatile u16 *)0x04000052 = 0x100e;
+    REG_DISPCNT = 0x7741;
+    REG_BG1CNT = 0x1f81;
+    REG_BLDCNT = 0x3f42;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0x1088;
+    REG_WININ = 0x3537;
+    REG_WINOUT = 0x3f21;
+    REG_BLDALPHA = 0x100e;
     ClearWords(Iwram_ClearWords, canvas, 0x4000);
-    ClearWords(Iwram_ClearWords, (void *)0x06004000, 0x4000);
+    ClearWords(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
     WaitFrames(1);
 }

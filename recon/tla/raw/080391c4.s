@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiWork_DrawByAttributes
 	.thumb_func
 UiWork_DrawByAttributes:
@@ -34,7 +35,7 @@ UiWork_DrawByAttributes:
 	adds r1, r6, #0
 	adds r2, r7, #0
 	mov r3, r8
-	bl Func_0803a084
+	bl UiWindow_DrawFrame
 	movs r1, #240
 	ldr r3, .L_08039254
 	ldr r0, .L_08039258
@@ -65,7 +66,7 @@ UiWork_DrawByAttributes:
 	adds r1, r6, #0
 	adds r2, r7, #0
 	mov r3, r8
-	bl Func_0803a084
+	bl UiWindow_DrawFrame
 .L_08039242:
 	movs r3, #1
 	mov r2, r10

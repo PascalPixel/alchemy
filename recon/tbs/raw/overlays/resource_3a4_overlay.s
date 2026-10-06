@@ -746,7 +746,6 @@ gArutinYamaEntrances11:
 	.4byte 0x00000000
 	.global gArutinYamaRegions9
 gArutinYamaRegions9:
-	/* Europe combines the two ninth-room boxes and widens the tenth. */
 	.ifdef TBS_EDITION_ES
 	.4byte 0xff8c0310
 	.4byte 0x0320023c
@@ -1175,10 +1174,10 @@ gArutinYamaEvents1:
 	.4byte ArutinYama_RunLeapSequence
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte SceneState_SetWorkByte22bTo3
+	.4byte ArutinYama_StartAreaOneEncounter
 	.4byte 0x00008d15
 	.4byte 0xffff040a
-	.4byte SceneState_SetWorkByte22bTo3
+	.4byte ArutinYama_StartAreaOneEncounter
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1192,7 +1191,7 @@ ArutinYama_OpenedAreaScript:
 	.4byte ActorPresentation_SetCellAndLowerActorEight
 	.4byte 0x00001815
 	.4byte 0x02010009
-	.4byte SceneState_ApplyRectAndSetActor9Byte55
+	.4byte ArutinYama_RestoreFallingActorNine
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1223,10 +1222,10 @@ gArutinYamaEvents3:
 	.4byte ArutinYama_BeginRollingRide
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte SceneState_SetByte22bTo3
+	.4byte ArutinYama_StartAreaThreeEncounter
 	.4byte 0x00008d15
 	.4byte 0xffff0409
-	.4byte SceneState_SetByte22bTo3
+	.4byte ArutinYama_StartAreaThreeEncounter
 	.4byte 0x00008f15
 	.4byte 0xffff000a
 	.4byte 0x00000000
@@ -1284,10 +1283,10 @@ gArutinYamaEvents5:
 	.4byte SceneActor_RaiseSlot9StepB
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte SceneState_SetByte22bTo3AndSend51
+	.4byte ArutinYama_StartAreaFiveEncounter
 	.4byte 0x00008d15
 	.4byte 0xffff040a
-	.4byte SceneState_SetByte22bTo3AndSend51
+	.4byte ArutinYama_StartAreaFiveEncounter
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte ArutinYama_BeginRollingRide
@@ -1366,16 +1365,16 @@ gArutinYamaEvents7:
 	.4byte FieldScene_RunScene3a4SequenceD
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte SceneActor_SetActor10Byte23To3
+	.4byte ArutinYama_SetActorTenUnderfootPriority
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte SceneActor_SetActor10Byte23To1
+	.4byte ArutinYama_SetActorTenAutomaticPriority
 	.4byte 0x00008c15
 	.4byte 0xffff000a
 	.4byte SceneActor_UpdateSlot10ByTileX
 	.4byte 0x00000602
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene3a4_02000c9c
+	.4byte ArutinYama_PushMovableObject
 	.4byte 0x00001815
 	.4byte 0x02000009
 	.4byte SceneActor_RaiseSlot9StepA

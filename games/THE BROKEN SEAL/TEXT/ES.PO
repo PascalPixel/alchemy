@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 253\n"
 "X-Alchemy-Target: tbs-es\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(No hay partida)."
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Empezar en un Templo)."
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(No ha sido borrado)."
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(Partida dañada)."
 
@@ -2539,7 +2539,7 @@ msgctxt "message"
 msgid "00632"
 msgstr "{article_class:2}Anillo Clerical"
 
-msgctxt "message"
+msgctxt "MsgItemPluralName"
 msgid "00633"
 msgstr "???"
 
@@ -9299,7 +9299,7 @@ msgctxt "MsgItemAlreadyUsed"
 msgid "02322"
 msgstr "¡El objeto de {argument_actor_name:1}{line_break}ya ha sido usado!"
 
-msgctxt "message"
+msgctxt "MsgUsedItemBroke"
 msgid "02323"
 msgstr "¡{argument_item_name:2} se rompió!"
 
@@ -9347,7 +9347,7 @@ msgctxt "MsgDmgP"
 msgid "02334"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PV!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02335"
 msgstr "¡La Muerte llama a {argument_actor_name:1}!"
 
@@ -9359,7 +9359,7 @@ msgctxt "MsgPpLossP"
 msgid "02337"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02338"
 msgstr "{argument_actor_name:1} no tiene más fuerzas..."
 
@@ -9407,7 +9407,7 @@ msgctxt "message"
 msgid "02349"
 msgstr "¡{argument_actor_name:1} esquiva el ataque!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02350"
 msgstr "¡El equipo de {argument_actor_name:1} cayó!"
 
@@ -9431,7 +9431,7 @@ msgctxt "MsgItemGained"
 msgid "02355"
 msgstr "Recibes {argument_item_name:10}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02356"
 msgstr "{argument_actor_name:1} cayó en la lucha..."
 
@@ -9527,11 +9527,11 @@ msgctxt "MsgNoEffect"
 msgid "02379"
 msgstr "¡Pero no funciona con {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgCastLacksPp"
 msgid "02380"
 msgstr "...¡Pero no tiene suficientes PP!"
 
-msgctxt "message"
+msgctxt "MsgPsynergyBlocked"
 msgid "02381"
 msgstr "¡Pero tiene bloqueada la Psinergía!"
 
@@ -9931,7 +9931,7 @@ msgctxt "message"
 msgid "02480"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02481"
 msgstr "Exp."
 
@@ -9943,19 +9943,19 @@ msgctxt "message"
 msgid "02483"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02484"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02485"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02486"
 msgstr "Puntos de experiencia. Necesita{line_break}{argument_signed_number} más para subir de nivel."
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02487"
 msgstr "Usa los Botones L y R para{line_break}cambiar de personaje."
 
@@ -10027,7 +10027,7 @@ msgctxt "message"
 msgid "02504"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02505"
 msgstr "Estado normal."
 
@@ -10103,7 +10103,7 @@ msgctxt "message"
 msgid "02523"
 msgstr "La agilidad baja {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgBattleNoItems"
 msgid "02524"
 msgstr "No tiene objetos."
 
@@ -10111,7 +10111,7 @@ msgctxt "message"
 msgid "02525"
 msgstr "No hay enemigos."
 
-msgctxt "message"
+msgctxt "MsgBattleNoPsynergy"
 msgid "02526"
 msgstr "No tiene Psinergía."
 
@@ -10127,11 +10127,11 @@ msgctxt "message"
 msgid "02529"
 msgstr "No tiene equipamiento."
 
-msgctxt "message"
+msgctxt "MsgBattleItemNoEffect"
 msgid "02530"
 msgstr "Usar esto no tendrá efecto."
 
-msgctxt "message"
+msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "Está inservible."
 
@@ -10139,7 +10139,7 @@ msgctxt "message"
 msgid "02532"
 msgstr "No tiene Djinn."
 
-msgctxt "message"
+msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "No funciona durante la batalla."
 
@@ -10247,27 +10247,27 @@ msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Jugar        {button_icon:2}:Salir"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02560"
 msgstr "{button_icon:4}:Parar"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02561"
 msgstr "Cuando hayas elegido cuáles"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02562"
 msgstr "parar, tira de la palanca."
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02563"
 msgstr "{button_icon:1}:Parar"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02564"
 msgstr "{button_icon:1}:Girar"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02565"
 msgstr "{button_icon:1}:Tirar"
 
@@ -10279,19 +10279,19 @@ msgctxt "message"
 msgid "02567"
 msgstr "{button_icon:2}:Salir"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02568"
 msgstr "¡Si bloqueas todos los símbolos,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "02569"
 msgstr "no puedes tirar de la palanca!"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02570"
 msgstr "La fuerza de {argument_actor_name:1} se agotó...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02571"
 msgstr "El equipo de {protagonist_name}{line_break}ha sido aniquilado...{end_wait}"
 
@@ -11571,7 +11571,7 @@ msgctxt "message"
 msgid "02890"
 msgstr "Elige un Djinn."
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "02891"
 msgstr "{button_icon:6}:Asignar todos"
 
@@ -11643,7 +11643,7 @@ msgctxt "message"
 msgid "02908"
 msgstr "{button_icon:3}:Estado Pers."
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "02909"
 msgstr "Estado actual"
 
@@ -12159,7 +12159,7 @@ msgctxt "MsgSleepMode"
 msgid "03037"
 msgstr "Salvapantallas activándose.{line_break}Pulsa {button_icon:3}+{button_icon:4} para desactivarlo.{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03038"
 msgstr "El menú de pausa no{line_break}está disponible aquí.{end_wait}"
 
@@ -12659,7 +12659,7 @@ msgctxt "message"
 msgid "03162"
 msgstr "La Psinergía es un poder{line_break}mental. Aquellos que la{line_break}usan reciben el nombre{page_break}de Adeptos. La Psinergía{line_break}puede cambiar con las{line_break}clases o cuando subes de{page_break}nivel. Intenta cambiar{line_break}la clase para conseguir{line_break}nuevas Psinergías."
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialGive"
 msgid "03163"
 msgstr "Para dar tu Djinn{line_break}a otro, hazlo de la{line_break}siguiente forma.{end_wait}"
 
@@ -12687,11 +12687,11 @@ msgctxt "message"
 msgid "03169"
 msgstr "Déjame mostrarte el{line_break}poder de mi ataque,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03170"
 msgstr "¿Ves? ¡Cuando liberaste{line_break}mi poder, ataqué con mi{line_break}poderosa piedra afilada!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Después de ser liberados,{line_break}estaremos listos para{line_break}ser invocados...{end_now}"
 
@@ -13027,11 +13027,11 @@ msgctxt "MsgWeaponShopWelcome"
 msgid "03254"
 msgstr "¡Bienvenido!{line_break}Echa un vistazo a{line_break}nuestras armas.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "03255"
 msgstr "¡Vaya! Una elección{line_break}inteligente, pero no tienes{line_break}monedas para eso.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "03256"
 msgstr "¿Quién va a llevarlo?{end_now}"
 
@@ -13039,7 +13039,7 @@ msgctxt "MsgPackFull"
 msgid "03257"
 msgstr "No puedes llevar más{line_break}objetos, {argument_actor_name:1}.{line_break}¿A quién se lo das?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "03258"
 msgstr "{argument_actor_name:1}, no puedes equiparlo.{line_break}Aun así, ¿lo quieres?{end_now}"
 
@@ -13075,7 +13075,7 @@ msgctxt "MsgWhatWouldYouLike"
 msgid "03266"
 msgstr "¿Qué deseas?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "03267"
 msgstr "¿Algo más?{end_now}"
 
@@ -43640,6 +43640,6 @@ msgid "10907"
 msgstr "Ha hi fu he ho"
 
 #, alchemy-null
-msgctxt "message"
+msgctxt "MsgDebugSecondForm"
 msgid "10908"
 msgstr ""

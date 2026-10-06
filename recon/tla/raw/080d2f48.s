@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global ObjectMotion_SnapHeadingAndOffset
+	.global ObjectMotion_CenterOnColumn
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffset:
+ObjectMotion_CenterOnColumn:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

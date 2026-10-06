@@ -42,7 +42,7 @@ Func_080e3074:
 	movs r6, #0
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	ldr r3, .L_080e342c
 	mov r2, r10
 	str r3, [r2, #108]
@@ -366,7 +366,7 @@ Func_080e3074:
 	bl Object_SetPositionAndResetMotionFar
 	movs r1, #0
 	mov r0, r10
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r2, [sp, #36]
 	movs r5, #0
 	movs r1, #24
@@ -465,7 +465,7 @@ Func_080e3074:
 	b .L_080e3600
 	.2byte 0x0000
 .L_080e342c:
-	.4byte Func_080e3060
+	.4byte BattleFx_SpinObject
 .L_080e3430:
 	.4byte 0x050003c0
 .L_080e3434:
@@ -518,7 +518,7 @@ Func_080e3074:
 	bl Object_SetPositionAndResetMotionFar
 	movs r1, #0
 	mov r0, r10
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r2, r10
 	adds r2, #85
 	movs r3, #0

@@ -1,17 +1,8 @@
-@ Decodes the next character of a Huffman-coded message by walking the code
-@ tree chosen by the previous character. Tree bits and message bits are read
-@ one at a time with lsrs and bcs or bcc, and each bit word is refilled
-@ through the carry with ldreq and rrxseq. It runs from RAM copies of exactly
-@ these 320 bytes (two loaders) and saves r5 and r6 without lr. GCC never
-@ branches on the carry out of a shift, never emits rrx and saves lr with any
-@ register. Every TBS and TLA edition has it, differing only in where its one
-@ literal, Text_MessageContexts, lies.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 .text
 	.arm
-	.global Func_08015430
-Func_08015430:
+	.global Text_DecodeSymbol
+Text_DecodeSymbol:
 	push	{r5, r6}
 	ldm	r0, {r1, r2, r3}
 	ldr	ip, [pc, #300]
@@ -102,4 +93,4 @@ Func_08015430:
 	bx	lr
 	.4byte Text_MessageContexts
 	.global Text_DecodeSymbolCodeSize
-	.set Text_DecodeSymbolCodeSize, . - Func_08015430
+	.set Text_DecodeSymbolCodeSize, . - Text_DecodeSymbol

@@ -50,11 +50,11 @@ Func_081a7518:
 .L_081a757c:
 	.4byte 0x00001440
 .L_081a7580:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081a7584:
 	.4byte 0x00000020
 .L_081a7588:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a758c:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
@@ -120,7 +120,7 @@ Func_081a7518:
 	adds r2, #4
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	ldr r3, .L_081a7634
 	movs r2, #128
@@ -130,7 +130,7 @@ Func_081a7518:
 	cmp r3, #0
 	bne .L_081a766e
 	movs r0, #1
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	bl Blend_WaitForTransition
 	ldr r3, .L_081a764c
 	movs r2, #9
@@ -149,7 +149,7 @@ Func_081a7518:
 .L_081a7644:
 	.4byte 0x06003000
 .L_081a7648:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a764c:
 	.4byte gInput
 .L_081a7650:
@@ -193,11 +193,11 @@ Func_081a7518:
 	cmp r6, #0
 	beq .L_081a76a0
 	movs r0, #8
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	b .L_081a76a6
 .L_081a76a0:
 	movs r0, #60
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 .L_081a76a6:
 	bl Blend_WaitForTransition
 	cmp r6, #0

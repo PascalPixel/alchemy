@@ -1,4 +1,3 @@
-/* Draft: Japanese and German menu widths differ by one immediate. */
 #include "TYPES.H"
 
 void *AffineEffect_InitializeWork(void);
@@ -7,7 +6,6 @@ s32 Menu_RunResourceSelectionLoop(s32);
 void Menu_AppendResourceEntry(s32 entry);
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 
-/* Runs a selection over the four menu entries 0x11 to 0x14. */
 s32 Menu_SelectEntry11To14(s32 arg0)
 {
     s32 ret;

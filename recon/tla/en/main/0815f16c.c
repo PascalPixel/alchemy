@@ -1,14 +1,6 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
-/*
- * Battle presentation for action ids 100-200 (kind = id - 100): loads the
- * kind's graphics and palette, flies 64 particles in from the caster, then
- * runs the kind's frame-by-frame effect for its duration and restores the
- * target object. Complete draft of main:0815f16c; not exact.
- */
-
-/* The admitted DMA primitive, shared from TBS until it moves to games/COMMON;
- * TLA's TYPES.H already declares the same fixed-width types. */
 #define ALCHEMY_TYPES_H
 #include "../../../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
 
@@ -215,10 +207,9 @@ void Func_08013560(s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Scheduler_RemoveCallback(void *);
 s32 Random16(void);
-void *Runtime_BumpAllocateAlternatePool(s32);
-void Func_08014de4(void);
+void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32);
-void Func_08015068(s32);
+void SceneTransform_ApplyYaw(s32);
 void Func_080150e4(s32);
 void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
@@ -240,18 +231,18 @@ void BattleFx_BeginTiledCanvas(s32);
 void Func_08143bb8(void);
 void Func_08144aac(s32, struct DrawFuncs *);
 void BattleFx_RunSparkGroups(struct SummonAction *, s32);
-void Func_0814a7f0(struct SummonAction *);
+void BattleFx_RenderMode5(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
-void Func_081504b4(struct SummonAction *);
-void Func_081504c0(struct SummonAction *);
-void Func_081504cc(struct SummonAction *);
+void SummonFx_RunCanvasMode3(struct SummonAction *);
+void SummonFx_RunCanvasMode1(struct SummonAction *);
+void SummonFx_RunCanvasMode2(struct SummonAction *);
 void Func_08152475(void);
 void BattleFx_RunProjectileVolley(struct SummonAction *, s32);
 s32 Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Func_08158ce0(s32, s32);
 void Func_0815b434(void *, s32, s32);
-void Func_0815e1ec(void *, s32 *);
-void Func_0815e20c(s32, s32 *);
+void EffectPosition_ApplyBaseAndYOffset(void *, s32 *);
+void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
 void Func_0815f000(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
@@ -511,8 +502,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     else
         work->unk7784 = 50;
     Scheduler_AddOrUpdateCallback(Func_08143001, 3200);
-    Func_0815e20c(action->actor, target);
-    Func_0815e20c(action->target, base);
+    EffectPosition_ApplyStepAndYOffset(action->actor, target);
+    EffectPosition_ApplyStepAndYOffset(action->target, base);
     Func_08144aac(action->side, &drawFuncs);
     work->unk77b4 = 24;
     work->unk77b8 = 0;
@@ -539,7 +530,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     object->unk2c = 0;
     object->unk34 = 0;
     object->unk48 = 0;
-    Func_0815e20c(action->target, base);
+    EffectPosition_ApplyStepAndYOffset(action->target, base);
     base[0] = base[0] / 2;
     Func_081c0010(212);
 
@@ -550,11 +541,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (p->x >= 0) {
                 if (frame >= i / 4) {
                     n = 5;
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_080150e4(p->vz);
                     SceneTransform_ApplyPitch(p->vx);
-                    Func_08015068(p->vy);
-                    Func_0815e1ec(p, pos);
+                    SceneTransform_ApplyYaw(p->vy);
+                    EffectPosition_ApplyBaseAndYOffset(p, pos);
                     pos[0] = pos[0] / 2 + base[0];
                     if (kind <= 37)
                         pos[1] = pos[1] + base[1] - 8;
@@ -574,9 +565,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             }
         }
         if (kind <= 37 && count < 64) {
-            Func_08014de4();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
-            Func_0815e1ec(origin, pos);
+            EffectPosition_ApplyBaseAndYOffset(origin, pos);
             pos[0] = pos[0] / 2;
             drawFuncs.draw[0](screen, EWRAM_BUF + 0x3c56, pos[0] - 10, pos[1] - 4, 20, 40);
         }
@@ -645,7 +636,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         if (kind == 45)
             BattleFx_RunProjectileVolley(action, 9);
         if (kind == 54)
-            Func_0814a7f0(action);
+            BattleFx_RenderMode5(action);
         if (kind == 56)
             BattleFx_RunProjectileVolley(action, 8);
         return;
@@ -873,7 +864,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             break;
         }
         if (frame < 6) {
-            Func_0815e20c(action->target, base);
+            EffectPosition_ApplyStepAndYOffset(action->target, base);
             base[0] = base[0] / 2;
             base[1] += 8;
         }
@@ -890,7 +881,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (frame >= 4 && frame < 16)
                 drawFuncs.draw[1](screen, work->frames + 0x5100 + ((frame - 4) / 2) * 0x3c0, target[0] / 2 - 8,
                                   base[1] - 24, 20, 48);
-            Func_08014de4();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
             if (frame > 3) {
                 if (kind == 79) {
@@ -900,7 +891,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             n = (p->life >> 2) + 1;
                             if (n > 10)
                                 n = 10;
-                            Func_0815e1ec(p, point);
+                            EffectPosition_ApplyBaseAndYOffset(p, point);
                             point[0] = point[0] / 2;
                             drawFuncs.draw[0](screen, (u8 *)tiles + Data_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
                             Func_08138058(p, 62, kind == 89 ? 0 : -0x800);
@@ -912,7 +903,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         p = &work->particle[i / 2];
                         if (p->life > 0) {
                             n = __divsi3(p->life, 20) + 2;
-                            Func_0815e1ec(p, point);
+                            EffectPosition_ApplyBaseAndYOffset(p, point);
                             point[0] = point[0] / 2;
                             drawFuncs.draw[(i / 2) & 1](screen, (u8 *)tiles + Data_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
                             Func_08138058(p, 62, -0x800);
@@ -958,7 +949,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 for (i = 0; i != 32; i++, p++) {
                     if (p->life >= 0) {
                         n = (i & 1) + 6;
-                        Func_0815e1ec(p, point);
+                        EffectPosition_ApplyBaseAndYOffset(p, point);
                         point[0] = point[0] >> 1;
                         drawFuncs.draw[kind == 78](screen, (u8 *)tiles + Data_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
                         Func_08138058(p, 62, 0);
@@ -982,7 +973,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             p = SPARKS;
             for (i = 0; i != 16; i++, p++) {
                 if (frame >= i + 4 && p->life <= 23) {
-                    Func_0815e1ec(p, point);
+                    EffectPosition_ApplyBaseAndYOffset(p, point);
                     point[0] = point[0] / 2;
                     drawFuncs.draw[0](screen, EWRAM_BUF, point[0] - 20, point[1] - 32, 40, 64);
                     Func_08138058(p, 64, 0);
@@ -1053,7 +1044,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (frame >= i + 4) {
                     life = p->life;
                     if (life <= 23) {
-                        Func_0815e1ec(p, point);
+                        EffectPosition_ApplyBaseAndYOffset(p, point);
                         point[0] = point[0] / 2;
                         drawFuncs.draw[1](screen, EWRAM_BUF + 0x1809 + (life / 4) * 0x480, point[0] - 12, point[1] - 24, 24, 48);
                         Func_08138058(p, 60, 0x1000);
@@ -1131,7 +1122,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (frame >= i / 2 + 4) {
                         life = p->life;
                         if (life <= 11) {
-                            Func_0815e1ec(p, point);
+                            EffectPosition_ApplyBaseAndYOffset(p, point);
                             point[0] = point[0] / 2;
                             drawFuncs.draw[0](screen, EWRAM_BUF + (life / 2) * 0x800, point[0] - 16, point[1] - 32, 32, 64);
                             Func_08138058(p, 60, 0x1000);
@@ -1247,7 +1238,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (frame >= i / 2 + 4) {
                         life = p->life;
                         if (life <= 9) {
-                            Func_0815e1ec(p, point);
+                            EffectPosition_ApplyBaseAndYOffset(p, point);
                             point[0] = point[0] / 2;
                             drawFuncs.draw[0](screen, EWRAM_BUF + 0xd80 + (life / 2) * 0x800, point[0] - 16, point[1] - 32, 32, 64);
                             Func_08138058(p, 64, 0x1000);
@@ -1416,10 +1407,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             for (i = 0; i != 64; i++, p++) {
                 if (p->x >= 0 && frame >= i / 2) {
                     m = i & 3;
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     SceneTransform_ApplyPitch(p->vx);
-                    Func_08015068(p->vy);
-                    Func_0815e1ec(p, point);
+                    SceneTransform_ApplyYaw(p->vy);
+                    EffectPosition_ApplyBaseAndYOffset(p, point);
                     point[0] = point[0] / 2 + target[0] / 2;
                     point[1] = point[1] + target[1] + 32;
                     drawFuncs.draw[1](screen, EWRAM_BUF + Data_08198946[m], point[0] - 4, point[1] - 4, 8, 8);
@@ -1617,7 +1608,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             model->fade = 0;
                         texture164.pixels = EWRAM_BUF + 0xc56 + (p->life << 12);
                         p->life = (p->life + 1) & 3;
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                         Func_080150e4(p->z);
                         p->z += p->vz;
@@ -1645,7 +1636,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             model->mesh = Data_08199340;
             model->matrix = matrix;
             model->fade = fade;
-            Func_08014de4();
+            Render_ResetTransformState();
             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
             Func_080151e4(0x8000, 0x10000, 0x8000);
             if (frame == 8)
@@ -1654,17 +1645,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 angle = frame << 12;
                 if (kind == 82) {
                     SceneTransform_ApplyPitch(-0x800);
-                    Func_08015068(-frame << 11);
+                    SceneTransform_ApplyYaw(-frame << 11);
                     SceneTransform_ApplyPitch(-frame << 4);
                 } else {
                     SceneTransform_ApplyPitch(-0x1000);
-                    Func_08015068(frame << 11);
+                    SceneTransform_ApplyYaw(frame << 11);
                 }
                 Func_0801521c(angle);
                 Func_08196958(Data_08199210, matrix, 4);
                 Func_08196a7c(model);
                 if (kind != 82) {
-                    Func_08015068(-frame << 12);
+                    SceneTransform_ApplyYaw(-frame << 12);
                     Func_0801521c(0x8000);
                     Func_08196958(Data_08199210, matrix, 4);
                     Func_08196a7c(model);
@@ -1704,7 +1695,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             fade = (8 - t) * 8;
                         model->fade = fade;
                         if (fade > -64) {
-                            Func_08014de4();
+                            Render_ResetTransformState();
                             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                             Func_080151e4(0x8000, 0x10000, 0x8000);
                             Func_080150e4((i << 14) + 0x2000);
@@ -1724,7 +1715,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         fade = (8 - t) * 8;
                     model->fade = fade;
                     if (fade >= -63) {
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                         Func_080151e4(0x8000, 0x10000, 0x8000);
                         SceneTransform_ApplyPitch(0x4000);
@@ -1742,7 +1733,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             fade = (8 - t) * 8;
                         model->fade = fade;
                         if (fade > -64) {
-                            Func_08014de4();
+                            Render_ResetTransformState();
                             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                             Func_080151e4(0x8000, 0x10000, 0x8000);
                             Func_080150e4((i << 14) + 0x2000);
@@ -1800,7 +1791,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     fade = (8 - t) * 8;
                 model->fade = fade;
                 if (fade >= -63) {
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_08015160((target[0] / 2 - 64) << 16, 0x280000, 0);
                     Func_080151e4(0x8000, 0x10000, 0x8000);
                     SceneTransform_ApplyPitch(1000);
@@ -1822,14 +1813,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (fade > -64) {
                         scale = (frame - start) * Data_08198956[i] * 1500 + 0x4180;
                         model->fade = fade;
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 60) << 16, Data_0819895a[i] << 16, 0);
                         Func_080151e4(scale * 2, scale * 4, scale / 4);
                         SceneTransform_ApplyPitch(1000);
                         if (i & 1)
-                            Func_08015068((i * 2 + frame) << 12);
+                            SceneTransform_ApplyYaw((i * 2 + frame) << 12);
                         else
-                            Func_08015068((i * 2 - frame) << 12);
+                            SceneTransform_ApplyYaw((i * 2 - frame) << 12);
                         Func_08196958(Data_08198c6c, matrix, 16);
                         Func_08196a7c(model);
                     }
@@ -1861,14 +1852,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (fade > -64) {
                         scale = (frame - start) * Data_08198962[i] * 2000 + 0x4000;
                         model->fade = fade;
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 60) << 16, 0x280000, 0);
                         Func_080151e4(scale, Data_08198966[i] * scale * 2, scale / 4);
                         SceneTransform_ApplyPitch(1000);
                         if (i & 1)
-                            Func_08015068((i * 8 + frame) << 10);
+                            SceneTransform_ApplyYaw((i * 8 + frame) << 10);
                         else
-                            Func_08015068((i * 8 - frame) << 10);
+                            SceneTransform_ApplyYaw((i * 8 - frame) << 10);
                         Func_08196958(Data_08199090, matrix, 32);
                         Func_08196a7c(model);
                     }
@@ -1892,7 +1883,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (EWRAM_BUF[0x400 + i] >> 1 == frame / 2)
                     EWRAM_BUF[0x800 + i] = EWRAM_BUF[i];
             }
-            Func_0815e20c(action->actor, point2);
+            EffectPosition_ApplyStepAndYOffset(action->actor, point2);
             point2[0] = point2[0] / 2;
             p = SPARKS;
             for (i = 0; i != 16; i++, p++) {
@@ -1916,7 +1907,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     m = 0;
                     if (p->life > 11)
                         m = (p->life - 12) / 2;
-                    Func_0815e1ec(p, point);
+                    EffectPosition_ApplyBaseAndYOffset(p, point);
                     point[0] = point[0] / 2;
                     drawFuncs.draw[1](screen, EWRAM_BUF + m * 0x400, point[0] - 16, point[1] - 16, 32, 32);
                     Func_08138058(p, 62, 0x800);
@@ -1940,7 +1931,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     m = 0;
                     if (p->life > 11)
                         m = __divsi3(p->life - 12, 3);
-                    Func_0815e1ec(p, point);
+                    EffectPosition_ApplyBaseAndYOffset(p, point);
                     point[0] = point[0] / 2;
                     drawFuncs.draw[0](screen, EWRAM_BUF + m * 0x800, point[0] - 16, point[1] - 32, 32, 64);
                     Func_08138058(p, 58, 0x1000);
@@ -1957,7 +1948,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             p = SPARKS;
             for (i = 0; i != 16; i++, p++) {
                 m = Func_08002064(i, 3);
-                Func_0815e1ec(p, point);
+                EffectPosition_ApplyBaseAndYOffset(p, point);
                 point[0] = point[0] / 2;
                 drawFuncs.draw[i & 1](screen, EWRAM_BUF + m * 0x240, point[0] - 12, point[1] - 12, 24, 24);
                 Func_08138058(p, 60, 1 << ((i & 3) + 11));
@@ -1980,7 +1971,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (frame >= i / 2 + 4) {
                     life = p->life;
                     if (life <= 23) {
-                        Func_0815e1ec(p, point);
+                        EffectPosition_ApplyBaseAndYOffset(p, point);
                         point[0] = point[0] / 2;
                         drawFuncs.draw[1](screen, EWRAM_BUF + (life / 4) * 0x480, point[0] - 12, point[1] - 24, 24, 48);
                         Func_08138058(p, 62, 0x800);
@@ -1995,7 +1986,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (frame >= i + 4) {
                     life = p->life;
                     if (life <= 23) {
-                        Func_0815e1ec(p, point);
+                        EffectPosition_ApplyBaseAndYOffset(p, point);
                         point[0] = point[0] / 2;
                         if (kind == 69 || kind == 74)
                             drawFuncs.draw[1](screen, EWRAM_BUF + (life / 4) * 0x480, point[0] - 12, point[1] - 24, 24, 48);
@@ -2012,7 +2003,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         }
 
         if (kind == 8 && frame < 44) {
-            Func_0815e1ec(origin, point);
+            EffectPosition_ApplyBaseAndYOffset(origin, point);
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + 0x3c56, point[0] - 10, point[1] - 4, 20, 40);
             if (frame == 23)
@@ -2051,7 +2042,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             }
         }
         if (kind <= 37 && frame <= 5) {
-            Func_0815e1ec(origin, point);
+            EffectPosition_ApplyBaseAndYOffset(origin, point);
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, EWRAM_BUF + 0x3c56, point[0] - 10, point[1] - 4, 20, 40);
             origin[0] += center[0];
@@ -2107,11 +2098,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         Func_0801314c(188);
         Func_0801314c(104);
         if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
-            Func_081504c0(action);
+            SummonFx_RunCanvasMode1(action);
         else if (kind == 9 || kind == 67)
-            Func_081504cc(action);
+            SummonFx_RunCanvasMode2(action);
         else if (kind == 11)
-            Func_081504b4(action);
+            SummonFx_RunCanvasMode3(action);
         return;
     }
     if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 || kind == 72 || kind == 58 || kind == 59

@@ -201,7 +201,7 @@ Func_080feec0:
 	mov r0, r11
 	adds r1, r7, #0
 	mov r2, r9
-	bl Func_080ff27c
+	bl CharacterMenu_DrawSelectionLabels
 	b .L_080ff066
 .L_080ff05c:
 	mov r0, r11
@@ -354,7 +354,7 @@ Func_080feec0:
 	strb r0, [r4, #28]
 	ldr r0, [sp, #36]
 	ldrh r1, [r4, r2]
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	b .L_080ff1a2
 	.2byte 0x0000
 .L_080ff18c:

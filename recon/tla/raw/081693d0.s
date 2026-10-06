@@ -39,7 +39,7 @@ Func_081693d0:
 	ldr r2, .L_08169450
 	movs r0, #2
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	ldr r4, [sp, #60]
 	movs r7, #239
 	lsls r7, r7, #7
@@ -170,7 +170,7 @@ Func_081693d0:
 	ldr r1, .L_081695bc
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r0, .L_081695c0
 	ldr r1, [sp, #56]
 	movs r2, #0
@@ -248,7 +248,7 @@ Func_081693d0:
 .L_081695cc:
 	.4byte 0xfffc0000
 .L_081695d0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081695d4:
 	lsls r5, r5, #18
 	str r3, [sp, #36]
@@ -737,7 +737,7 @@ Func_081693d0:
 	ldr r2, .L_08169a7c
 	movs r0, #2
 	movs r1, #96
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r6, #238
 	ldr r5, [sp, #60]
 	lsls r6, r6, #7
@@ -1370,9 +1370,9 @@ Func_081693d0:
 	movs r1, #0
 	str r2, [r0, #16]
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	bl Func_0814cca8
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -1421,7 +1421,7 @@ Func_081693d0:
 .L_08169ea8:
 	.4byte 0x000000f0
 .L_08169eac:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08169eb0:
 	.4byte 0x05000200
 .L_08169eb4:
@@ -1468,7 +1468,7 @@ Func_081693d0:
 	ldr r1, [sp, #68]
 	ldrsh r0, [r7, r1]
 	adds r1, r6, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r3, [r6]
 	adds r7, #2
 	lsrs r2, r3, #31

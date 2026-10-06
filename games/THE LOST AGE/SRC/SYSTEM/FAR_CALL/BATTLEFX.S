@@ -1,14 +1,9 @@
-@ Far-call stub table at 0x080c8520: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8520
+	.global Event_GetSpecialValueFar
 	.thumb_func
-Func_080c8520:
-@ Spanish/Italian entries dispatch the scale clamp.
+Event_GetSpecialValueFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_SnapScaleToFull
 .else
@@ -21,16 +16,23 @@ Func_080c8520:
 	.global BattleFx_StartItemBreakFar
 	.thumb_func
 BattleFx_StartItemBreakFar:
+.ifdef TLA_EDITION_ES
+	overlay_veneer UpdateRisingParticleBurst
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer UpdateRisingParticleBurst
+.else
 	overlay_veneer BattleFx_StartItemBreak
+.endif
+.endif
 	.global BattleFx_SnapScaleToFullFar
 	.thumb_func
 BattleFx_SnapScaleToFullFar:
-@ This entry changes the active party's second value in Spanish/Italian.
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleParty_ApplySecondValueDelta
+	overlay_veneer BattleParty_ApplyDrain
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleParty_ApplySecondValueDelta
+	overlay_veneer BattleParty_ApplyDrain
 .else
 	overlay_veneer BattleFx_SnapScaleToFull
 .endif
@@ -47,13 +49,21 @@ UpdateRisingParticleBurstFar:
 	overlay_veneer UpdateRisingParticleBurst
 .endif
 .endif
-	.global Func_080c8540
+	.global BattleParty_ApplyDrainFar
 	.thumb_func
-Func_080c8540:
+BattleParty_ApplyDrainFar:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cb6c8
-	.global Func_080c8548
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080cb6c8
+.else
+	overlay_veneer BattleParty_ApplyDrain
+.endif
+.endif
+	.global BattleParty_ApplyHealthDeltaFar
 	.thumb_func
-Func_080c8548:
+BattleParty_ApplyHealthDeltaFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Menu_RunDefaultConfirmation
 .else
@@ -87,38 +97,54 @@ Func_080c8558:
 	overlay_veneer Func_080d295c
 .endif
 .endif
-	.global Func_080c8560
+	.global BattleFx_GetWeightedResultFar
 	.thumb_func
-Func_080c8560:
+BattleFx_GetWeightedResultFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Audio_PlayPartyCue
+	overlay_veneer Party_PlaySavedMusic
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Audio_PlayPartyCue
+	overlay_veneer Party_PlaySavedMusic
 .else
 	overlay_veneer BattleFx_GetWeightedResult
 .endif
 .endif
-	.global Func_080c8568
+	.global BattleFx_GetPhaseResultFar
 	.thumb_func
-Func_080c8568:
+BattleFx_GetPhaseResultFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Audio_SelectPartyCueForArea
+	overlay_veneer Scene_ResolveInteractionResult
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Audio_SelectPartyCueForArea
+	overlay_veneer Scene_ResolveInteractionResult
 .else
 	overlay_veneer BattleFx_GetPhaseResult
 .endif
 .endif
-	.global Func_080c8570
+	.global Party_PlaySavedMusicFar
 	.thumb_func
-Func_080c8570:
+Party_PlaySavedMusicFar:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c9dc8
-	.global Func_080c8578
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c9dc8
+.else
+	overlay_veneer Party_PlaySavedMusic
+.endif
+.endif
+	.global Scene_ResolveInteractionResultFar
 	.thumb_func
-Func_080c8578:
-	overlay_veneer Func_080ca1bc
+Scene_ResolveInteractionResultFar:
+.ifdef TLA_EDITION_ES
+	overlay_veneer EffectSlot_Update
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer EffectSlot_Update
+.else
+	overlay_veneer Scene_ResolveInteractionResult
+.endif
+.endif
 	.global Func_080c8580
 	.thumb_func
 Func_080c8580:

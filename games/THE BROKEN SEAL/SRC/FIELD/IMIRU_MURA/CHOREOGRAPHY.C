@@ -1,24 +1,27 @@
+#include "GLOBAL_CELLS.H"
 #include "IMIRU.H"
 #include "CALL.H"
+#include "FRAME.H"
+#include "FIELD_EVENT.H"
 
 s32 __umodsi3();
 
-void ActorPresentation_ApplyTableA5ecToActorNine(void)
+void ImiruMura_ShowActorNineTurnMessage(void)
 {
     extern s32 ImiruMura_TurnScript[];
 
     Engine_ActorEnableActionCallback(9, (s32)ImiruMura_TurnScript);
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
 }
 
-void SceneState_StoreTable96adToWork(void)
+void ImiruMura_CastPsynergyAtActorNine(void)
 {
     u8 *work;
 
     Engine_PsynergyBegin(93, 1);
     work = *(u8 **)gEffectWork;
     Engine_PsynergySetTarget(3, 9);
-    *(s32 *)(work + 36) = (s32)ActorPresentation_ApplyTableA5ecToActorNine;
+    *(s32 *)(work + 36) = (s32)ImiruMura_ShowActorNineTurnMessage;
     Engine_PsynergyRaiseHands();
     Engine_PsynergyPlayEffect(1);
     Engine_PsynergyLowerHands();
@@ -57,13 +60,12 @@ void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
 
 void FieldScene_RunScene399SequenceA(void)
 {
-    extern u32 Data_03001e40;
-    u32 *frame;
+    volatile u32 *frame;
     union FieldObject *object;
 
-    frame = &Data_03001e40;
+    frame = &gFrameCount;
     if (__umodsi3(*frame, 60) == 0) {
-        object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1cf0000, 0, 0x1240000);
+        object = (union FieldObject *)Object_Create(222, 0x1cf0000, 0, 0x1240000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
@@ -72,7 +74,7 @@ void FieldScene_RunScene399SequenceA(void)
         }
     }
     if (__umodsi3(*frame + 30, 60) == 0) {
-        object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1400000, 0x200000, 0x1640000);
+        object = (union FieldObject *)Object_Create(222, 0x1400000, 0x200000, 0x1640000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
@@ -81,7 +83,7 @@ void FieldScene_RunScene399SequenceA(void)
         }
     }
     if (__umodsi3(*frame + 10, 60) == 0) {
-        object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x760000, 0, 0x460000);
+        object = (union FieldObject *)Object_Create(222, 0x760000, 0, 0x460000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
@@ -90,7 +92,7 @@ void FieldScene_RunScene399SequenceA(void)
         }
     }
     if (__umodsi3(*frame + 50, 60) == 0) {
-        object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1560000, 0, 0x7c0000);
+        object = (union FieldObject *)Object_Create(222, 0x1560000, 0, 0x7c0000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
@@ -99,7 +101,7 @@ void FieldScene_RunScene399SequenceA(void)
         }
     }
     if (__umodsi3(*frame + 80, 60) == 0) {
-        object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1af0000, 0, 0xab0000);
+        object = (union FieldObject *)Object_Create(222, 0x1af0000, 0, 0xab0000);
         if (object != NULL) {
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
@@ -109,8 +111,6 @@ void FieldScene_RunScene399SequenceA(void)
     }
 }
 
-/* The flag setter is called through a void function type, as the three
- * call sites discard its result and the compiler keeps their tails apart. */
 void SceneState_UpdateZoneFlagsFromActorZero(void)
 {
     T_020018c4 *obj;
@@ -132,29 +132,29 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
         if ((u32)((y >> 19) - 36) > 9 || (u32)(cx - 22) > 9)
             goto rest;
     }
-    r = GameFlag_IsSet(g);
+    r = Engine_GameFlagIsSet(g);
     if (r != 0)
         return;
-    (*(State **)&gMapWork)->unk17 = r;
+    ((State *)gMapWork[0])->unk17 = r;
     ((void (*)(s32))Engine_GameFlagSet)(g);
-    GameFlag_Clear(h);
+    Engine_GameFlagClear(h);
     return;
 
 rest:
     if (x > 0xE80000 && obj->unkC > 0x1E0000 && y > 0xD40000) {
-        st = *(State **)&gMapWork;
+        st = gMapWork[0];
         st->unk17 = 0;
         ((void (*)(s32))Engine_GameFlagSet)(g);
-        GameFlag_Clear(h);
+        Engine_GameFlagClear(h);
         return;
     }
-    r = GameFlag_IsSet(h);
+    r = Engine_GameFlagIsSet(h);
     if (r != 0)
         return;
-    st = *(State **)&gMapWork;
+    st = gMapWork[0];
     st->unk17 = 1;
     ((void (*)(s32))Engine_GameFlagSet)(h);
-    GameFlag_Clear(g);
+    Engine_GameFlagClear(g);
     return;
 }
 
@@ -172,15 +172,15 @@ void SceneState_UpdateActor11WithFlag203(void)
     b = actor->z.fixed >> 20;
     if (b != 7)
         return;
-    GameFlag_Set(0x203);
+    Engine_GameFlagSet(0x203);
     Engine_ActorSetSpritePriority(11, 3);
 #else
-    GameFlag_Set(0x203);
+    Engine_GameFlagSet(0x203);
     Engine_ActorSetSpritePriority(11, 3);
     a = 15;
     b = 7;
 #endif
-    Map_CopyCellAttributes(15, 6, 1, 1, a, b);
+    Engine_MapCopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
 void SceneActor_SetActorZeroFacingC000AndRun(void)
@@ -190,31 +190,24 @@ void SceneActor_SetActorZeroFacingC000AndRun(void)
     Engine_EventBegin();
     work = ((struct SceneService_02001990 *)Object_GetById(0));
     work->value06 = 0xc000;
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(8);
 }
 
-/* Runs a short fixed sequence of two calls, one 3-argument call passing a
- * fixed-point-looking pair of constants, one 3-argument call passing
- * (0, 232, 204), and a final call, in that order. */
 void RunEventScript02(void)
 {
     u32 i;
     u8 *record;
 
     Engine_EventBegin();
-    Engine_EventOpenScreen(); /* main:0808a360 */
+    Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 232, 204);
     Engine_EventEnd();
 }
 
-/* Runs a long scripted sequence of position, animation, and timing calls
- * against actor records 0, 3, 19, and 20, with a scene phase word at
- * offset 0x1c0 of the shared scene work record set at the start and near
- * the end. */
 void FieldScene_RunThreeActorChoreography(void)
 {
 
@@ -225,18 +218,18 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Engine_ActorWalkTo(0, 0x2b2, 200);
-    /* Clear the byte at offset 85 of the returned record. */
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
+
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
-    work = *(struct EventWork **)Data_03001ebc;
+    work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 48;
     Engine_EventOpenScreen();
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
-    leader = (struct FieldActor *)Object_GetById(0);
+    leader = Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
@@ -245,7 +238,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_ActorStartRepeatedMotion(19, 2);
     Engine_ActorRunRepeatedMotion(20, 2);
     Engine_EventWait(40);
-    Engine_EventSetMessage(MsgImiruMary);
+    Engine_EventSetMessage(MSGNO(MsgImiruMary));
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xe000, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
@@ -287,10 +280,10 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_FaceDirection(19, 0x5000, 0);
     Actor_FaceDirection(20, 0x3000, 20);
     Actor_SetSpeed(20, 0x10000, 0x8000);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(20, 0x290, 166);
     Engine_EventWait(1);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
+    Object_GetById(20)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4014, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
@@ -347,11 +340,11 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_EventWait(20);
     Actor_WalkToAndWait(ACTOR_MIA, 0x2b0, 200);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(20, 0x284, 166);
     Engine_EventWait(1);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
-    (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Set(0x82e);
     GameFlag_Clear(0x82d);
     Engine_EventEnd();
@@ -409,25 +402,20 @@ void StagedActor_RunHeadingProbeStep(void)
 
     for (;;) {
         heading = ImiruMura_SwayHeadings[(Data_03001ae8 >> 4) & 15];
-        /* The test is on heading << 16 against 0xffff0000, that is on the
-         * signed halfword -1, which means "no heading". */
-        if ((heading << 16) == (s32)0xffff0000) {
+        if ((heading << 16) == -0x10000) {
             return;
         }
-        /* Nothing is placed in an argument register before this call. */
+
         Engine_EventBegin();
 
-        /* The 0x80000 bias is built from an immediate and a shift. */
-        probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
+        probe[0] = (subject->x & 0xfff00000) + 0x80000;
         probe[1] = subject->y;
-        probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
+        probe[2] = (subject->z & 0xfff00000) + 0x80000;
         z = probe[2];
         x = probe[0];
         p = (u8 *)subject;
         p += 34;
         goal = GetMapCellCollision((s32)*p, x, z);
-        /* 0x100000 is built from an immediate and a shift.  The probe block is
-         * passed by address and is advanced by the callee. */
         Vector_AddPolarOffset((s32)0x100000, heading, probe);
 
         marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
@@ -438,14 +426,12 @@ void StagedActor_RunHeadingProbeStep(void)
             goto tail;
         }
 
-        /* Rewind the probe to the position it held before the step above. */
         probe[0] = x;
         probe[2] = z;
         subject->state_048 = 0x20000;
         subject->state_052 = 0x1999;
         subject->state_100 = 0;
         Engine_ObjectSetPosition(subject, x, subject->y, z);
-        /* Same import as the probe above, two arguments here. */
         Object_SetMode(subject, 2);
         ObjectDispatch_ApplyValueToChildren(subject, 48);
         Engine_ObjectCommitPosition(subject);
@@ -468,7 +454,7 @@ continueProbe:
         }
 
 advanceProbe:
-        AdvanceProbe_02001fa4(heading, probe);
+        ImiruMura_AdvanceProbe(heading, probe);
         marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
         if (marker != 255) {
             goto continueProbe;
@@ -480,13 +466,12 @@ finishProbe:
         Engine_ObjectSetPosition(subject, x, subject->y, z);
         Engine_ObjectCommitPosition(subject);
         Engine_TaskWait(2);
-        /* The back edge re-reads the heading table and starts again. */
     }
 
 blocked:
     subject->callback = NULL;
     subject->flags_090 |= 1;
-    /* 0x4000 is built from an immediate and a shift. */
+
     subject->state_052 = 0x4000;
 
 tail:

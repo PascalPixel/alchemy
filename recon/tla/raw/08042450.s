@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08042450
+	.global CreateSideObject
 	.thumb_func
-Func_08042450:
+CreateSideObject:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -55,7 +55,7 @@ Func_08042450:
 	str r1, [sp, #4]
 	adds r0, r7, #0
 	mov r1, r10
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	ldr r3, [sp, #48]
 	movs r1, #128
 	str r3, [sp, #0]

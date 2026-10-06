@@ -188,13 +188,13 @@ Func_0816fca8:
 	add r5, sp, #72
 	ldr r0, [r3, #8]
 	adds r1, r5, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r1, [sp, #60]
 	add r6, sp, #84
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	adds r1, r6, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #56]
 	cmp r2, #0
 	bne .L_0816fe44
@@ -737,7 +737,7 @@ Func_0816fca8:
 	mov r1, r8
 	str r3, [r1, #4]
 	str r2, [r6, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r11
 	ldr r0, [r2]
 	ldr r1, [r2, #4]

@@ -1,14 +1,8 @@
-/* Near miss: score 180. ☀️'s, with the remembered pair at gPartyState 0x1e8
-   and the held buttons from gInput. ⚓️ loads gPartyState's address before
-   building the field offset (ldr r2 before movs r1, #244), where agscc
-   builds the offset first; the same order shows in 080ae16c and 0804d4f8.
-   45 s of permuting found nothing. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "TLA_EDITION.H"
 #include "PARTY_STATE.H"
 
-/* The controller state the engine refreshes each frame. */
 struct InputState {
     u32 held;
     u32 pressed;
@@ -22,7 +16,7 @@ struct TextObject {
     u8 storage[12];
 };
 
-void Event_SetPairWork1c0Far(s16 primary, s16 secondary);
+void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
 void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
 void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
@@ -31,7 +25,6 @@ void UiWork_Finalize(struct Work *work, s32 release);
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
 s32 Menu_HandleSelectionRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode);
 
-/* ☀️'s debug selection, starting from the pair ⚓️ keeps in gPartyState. */
 s16 Menu_RunSelection(void)
 {
     s32 resource;
@@ -58,7 +51,7 @@ s16 Menu_RunSelection(void)
         if (result == -1) {
             UiTextResource_Release(resource);
             UiWork_Finalize(work, 2);
-            Event_SetPairWork1c0Far(primary, secondary);
+            Event_SetDestinationFar(primary, secondary);
             return result;
         }
         if (result == -2) {

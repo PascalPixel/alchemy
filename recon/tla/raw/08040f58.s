@@ -22,7 +22,7 @@ Func_08040f58:
 	bl GameFlag_SetBit
 	ldr r0, .L_08040f8c
 	movs r1, #30
-	bl Event_SetPairWork1c0Far
+	bl Event_SetDestinationFar
 	pop {pc}
 .L_08040f8c:
 	.4byte 0x000000f4

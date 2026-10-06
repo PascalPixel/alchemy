@@ -84,7 +84,7 @@ Func_080d47b4:
 	strb r3, [r0, #9]
 .L_080d4858:
 	mov r0, r10
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 .L_080d485e:
 	adds r0, r5, #0
 	pop {r3, r5}

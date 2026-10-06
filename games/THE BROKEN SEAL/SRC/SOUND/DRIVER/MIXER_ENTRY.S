@@ -1,20 +1,5 @@
-@ Per-frame sound entry. It loads the SoundInfo pointer held at 0x03007ff0
-@ and returns unless the SoundInfo it points to starts with the driver's
-@ 'Smsh' ID, marks the driver busy by bumping that ID and builds a frame
-@ (r4-r7 and lr, then r0 with r8-fp moved through r1-r4 in ascending order).
-@ It reads VCOUNT, calls the driver hooks through the bx r3 at 0x080f9a12 and
-@ jumps to the IWRAM mixer at 0x03007001 with ldr r3; bx r3, never returning
-@ here: MIXER.S unwinds the frame. Neither approved compiler builds a frame
-@ for another routine to unwind. Every TBS and TLA edition has this code;
-@ TLA's jumps to 0x03006001 (TLA SOUND/MIXER_ENTRY.S).
-@ The zero halfword of alignment at 0x080f965a never runs and carries no
-@ credit.
-@ credit: library — TBS/TLA common sound driver guarded ROM-to-IWRAM mixer entry
 .syntax unified
 	.thumb
-	.global Func_080f95f0
-	.thumb_func
-Func_080f95f0:
 	.global AudioEngine_RunMixerTick
 	.thumb_func
 AudioEngine_RunMixerTick:

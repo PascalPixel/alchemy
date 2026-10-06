@@ -5,46 +5,46 @@
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
-    u8 state;                    /* 0x05 */
+    u8 state;
     u8 unknown_06[6];
-    u16 field_0c;                /* 0x0c */
+    u16 field_0c;
     u8 unknown_0e;
-    u8 field_0f;                 /* 0x0f */
+    u8 field_0f;
 };
 
 struct ItemListWork {
     u8 unknown_000[8];
-    s32 field_008;                            /* 0x008 */
+    s32 field_008;
     u8 unknown_00c[8];
-    struct MenuEntryIcon *pane_icon[2];       /* 0x014 */
-    s8 tab_index[2];                          /* 0x01c */
+    struct MenuEntryIcon *pane_icon[2];
+    s8 tab_index[2];
     u8 unknown_01e[6];
-    s32 field_024;                            /* 0x024 */
+    s32 field_024;
     u8 unknown_028[4];
-    void *info_window;                        /* 0x02c */
-    void *equip_window;                       /* 0x030 */
-    s32 list_window;                          /* 0x034 */
+    void *info_window;
+    void *equip_window;
+    s32 list_window;
     u8 unknown_038[0x0c];
-    struct MenuEntryIcon *entry_grid_cursor;  /* 0x044 */
-    struct MenuEntryIcon *entry_icons[32];    /* 0x048 */
+    struct MenuEntryIcon *entry_grid_cursor;
+    struct MenuEntryIcon *entry_icons[32];
     u8 unknown_0c8[0x4c];
-    s32 tab_objects[4];                       /* 0x114 */
+    s32 tab_objects[4];
     u8 unknown_124[0x20];
-    u16 tab_colors[4];                        /* 0x144 */
+    u16 tab_colors[4];
     u8 unknown_14c[0x28];
-    u16 pane_row[2];                          /* 0x174 */
-    u16 pane_action[2];                       /* 0x178 */
+    u16 pane_row[2];
+    u16 pane_action[2];
     u8 unknown_17c[0x4c];
-    u16 items[32];                            /* 0x1c8 */
-    u16 owner_table[8];                       /* 0x208 */
-    u8 item_count;                            /* 0x218 */
-    u8 owner_count;                           /* 0x219 */
-    u8 owner_ids[2];                          /* 0x21a */
-    struct MenuEntryIcon *cursor_icon;        /* 0x21c */
-    u16 flags;                                /* 0x220 */
+    u16 items[32];
+    u16 owner_table[8];
+    u8 item_count;
+    u8 owner_count;
+    u8 owner_ids[2];
+    struct MenuEntryIcon *cursor_icon;
+    u16 flags;
     u8 unknown_222[0x3e];
-    s8 selected_index_by_owner[8];            /* 0x260 */
-    u8 mode;                                  /* 0x268 */
+    s8 selected_index_by_owner[8];
+    u8 mode;
 };
 
 extern struct ItemListWork *gMenuWork;
@@ -56,10 +56,6 @@ void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ITEM_ID_MASK 0x1ff
-
-/* The item page for equipment: names the selected item, draws each row's
-   element icon and highlight, then marks the equipment slot the selected
-   item fits when it is equipped (bit 9). */
 
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
 {

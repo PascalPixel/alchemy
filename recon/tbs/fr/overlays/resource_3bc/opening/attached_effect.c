@@ -1,9 +1,3 @@
-/* NONMATCHING: localized moving-sidewalk attached effect, 2026-10-01.
- * The complete opening owner compiles with approved TBS flags but retains
- * the attached-effect 0x100 call after animation one. Spanish, French and
- * Italian omit that call, shortening the complete owner by eight bytes.
- */
-/* The four-step actor motion, actor placement and the opening sequence. */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING.H"
 #include "CALL.H"
 extern u8 MsgKorosseoAnotherLogRollingArea[];
@@ -17,7 +11,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 {
     extern void Korosseo_FinishSoloRound();
     extern s32 FieldScene_RunMiddleSequence();
-    extern s32 Korosseo_FadeInCompetitor();
+    extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
     extern void Korosseo_RestoreCompetitor();
 
     s32 i;

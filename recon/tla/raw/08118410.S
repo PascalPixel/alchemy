@@ -1,13 +1,3 @@
-@ Loader that runs the colour-scale kernel of COLOR_SCALE_KERNEL.S from the
-@ stack. It reads {DMA3 register base, 0x08118394, 0x8400001f} from its own
-@ PC-relative block with add r4, pc, #16 and ldmia r4, {r4, r5, r7},
-@ reserves 124 bytes of stack, has DMA3 copy the kernel there with
-@ stmia r4!, {r5, r6, r7} and calls the copy (mov lr, sp; bl suffix).
-@ Neither approved compiler emits the Thumb add r4, pc, #16, and neither
-@ loads a block into its own base register. TBS has no such loader.
-@ It stays disassembly without credit: it calls through lr with the second
-@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
-@ an instruction.
 .syntax unified
 	.thumb_func
 	.arm

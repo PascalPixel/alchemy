@@ -1,6 +1,3 @@
-/* resource_3a8: its entry veneers, its listing with maintained code linked
-   in place, as pret links objects in ROM order. Its import veneers follow
-   its code. */
 SECTIONS
 {
     .text 0x2008000 :

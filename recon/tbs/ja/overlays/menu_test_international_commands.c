@@ -1,15 +1,8 @@
-/* Draft: Japanese debug-room source.
- * 2026-10-01: This international model produced a 5,772-byte Japanese scene,
- * 416 bytes longer than its own image. The Japanese scene omits the directional
- * message group, adds a buffer benchmark and character selector, sets 777,777
- * coins and levels all four owners to 30. This attempt retains the earlier
- * international behavior.
- * Compiles with ordinary TBS flags; no source selection or credit is claimed.
- */
 #include "EDITION.H"
 #include "../../../../games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/MENU_TEST.H"
 #include "CALL.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
@@ -20,7 +13,7 @@
 TEXT_MESSAGE_ENUM(MsgBattleAdditionalPsynergyHelp);
 TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
 
-void Event_SetValue1d8(s16 message);
+void Event_SetMessageId(s16 message);
 void BattleEv_RunWait(s32 mode, s32 frames);
 s32 PartyInventory_GiveItem(s32 item);
 
@@ -43,23 +36,22 @@ extern u8 gDebugItemCapacityLabel[];
 extern u8 gDebugItemFullLabel[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-struct TextRenderWork *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Engine_DebugRedrawWindow(struct TextRenderWork *window);
-void Engine_DebugClearWindow(struct TextRenderWork *window);
-void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
+struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Engine_DebugRedrawWindow(struct RenderInput *window);
+void Engine_DebugClearWindow(struct RenderInput *window);
+void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
 
-u8 *SceneData_GetTable93c8(void)
+u8 *MenuTest_GetEntrances(void)
 {
-    return MenuTest_CommandTable;
+    return MenuTest_Entrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -67,14 +59,14 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable93f8(void)
+u8 *MenuTest_GetExits(void)
 {
-    return MenuTest_CommandTableB;
+    return MenuTest_Exits;
 }
 
-u8 *SceneData_GetTable93fc(void)
+u8 *MenuTest_GetPlacements(void)
 {
-    return MenuTest_CommandTableC;
+    return MenuTest_Placements;
 }
 
 void SceneDialogue_ShowMessageAndWait(s32 arg0)
@@ -172,8 +164,8 @@ void SceneState_ApplyBlockDa2(void)
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_RunMessageTest(void)
 {
-    Event_SetValue1d8(MsgBattleAdditionalPsynergyHelp);
-    Event_SetValue1d8(MsgHaidiaComeOnHurry);
+    Event_SetMessageId(MsgBattleAdditionalPsynergyHelp);
+    Event_SetMessageId(MsgHaidiaComeOnHurry);
     BattleEv_RunWait(-1, 0);
 }
 #endif
@@ -220,12 +212,12 @@ void DebugMenu_GiveItemToParty(void)
 }
 #endif
 
-s32 SceneData_GetTable9564(void)
+s32 MenuTest_GetEvents(void)
 {
-    return (s32)MenuTest_SlotValues;
+    return (s32)MenuTest_Events;
 }
 
-void FieldScene_ApplyTable9684ValueToFourSlots(void)
+void MenuTest_RaisePartyLevelTarget(void)
 {
     s32 *p;
 
@@ -581,8 +573,8 @@ void FieldScene_AssignCodeSetAToSlots(void)
 
 void DebugMenu_SelectItem(void)
 {
-    struct TextRenderWork *window;
-    struct TextRenderWork *details;
+    struct RenderInput *window;
+    struct RenderInput *details;
     s32 item;
     s32 redraw;
     s32 index;
@@ -619,43 +611,43 @@ void DebugMenu_SelectItem(void)
                 UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
             }
         }
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             if (PartyInventory_Add(item) == -1) {
                 Engine_AudioPlayCue(113);
                 goto done;
             }
             Engine_AudioPlayCue(175);
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Engine_AudioPlayCue(113);
             goto done;
         }
-        if (gKeysRepeat & 64) {
+        if (gKeysRepeat & KEY_UP) {
             item--;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 128) {
+        if (gKeysRepeat & KEY_DOWN) {
             item++;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             item += 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             item -= 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 256) {
+        if (gKeysRepeat & KEY_R) {
             item += 30;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 512) {
+        if (gKeysRepeat & KEY_L) {
             item -= 30;
             redraw = 1;
             Engine_AudioPlayCue(111);

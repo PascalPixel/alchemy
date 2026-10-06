@@ -452,13 +452,13 @@ gHaidiaDouEventsOther:
 gHaidiaDouEvents1:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte SceneAudio_PlayCue123AndDispatchWork364
+	.4byte HaidiaDou_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte SceneAudio_PlayCue123AndDispatchWork364
+	.4byte HaidiaDou_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte SceneAudio_PlayCue123AndDispatchWork364
+	.4byte HaidiaDou_PlayCueAndRequestTouchedExit
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -603,7 +603,7 @@ gHaidiaDouEvents3:
 	.4byte HaidiaDou_RunProbedColumnScene
 	.4byte 0x00000602
 	.4byte 0xffff0015
-	.4byte FieldScene_RunScene3a6_020014ac
+	.4byte HaidiaDou_ToppleActorNine
 	.4byte 0x00000202
 	.4byte 0xffff0016
 	.4byte HaidiaDou_RunLoweredActorScene

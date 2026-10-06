@@ -1,9 +1,22 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "HEYA.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
+#include "text/MSG_IDS.H"
+
+#define StagedActor_CountdownUntilPositionUnset ((s32 (*)(u8*))StagedActor_CountdownUntilPositionUnset)
 
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -63,88 +76,20 @@ struct EffectRecord {
     u8 active;
 };
 
-extern u8 FuneHeya_SceneTable02[];
-extern u8 FuneHeya_SceneTable01[];
-extern u8 FuneHeya_SceneTable03;
-struct SceneActor *Object_GetByIdFar(s32 actor_id);
-
-extern u8 FuneHeya_StepScriptF[];
-extern u8 FuneHeya_StepScriptG[];
-extern u8 FuneHeya_StepScriptE[];
-extern u8 FuneHeya_StepScriptH[];
-extern u8 FuneHeya_StepScriptD[];
-extern u8 FuneHeya_StepScriptC[];
-extern u8 FuneHeya_StepScriptB[];
-extern u8 FuneHeya_StepScriptA[];
-s32 Engine_GameFlagIsSet();
 extern u8 Data_02000240[];
 
-extern u8 MsgFuneBadLuckLosingMyLucky[];
-extern u8 MsgFuneButWeCantSendShip[];
-extern u8 MsgFuneHaHaHaChosenOarsman[];
-extern u8 MsgFuneIfShipFromTolbiHad[];
-extern u8 MsgFuneItsTooLateHireMercenaries[];
-extern u8 MsgFuneJokingWantRow[];
-extern u8 MsgFuneLongerWeSitHereMore[];
-extern u8 MsgFuneLooksLikeYouveBeenChosen[];
-extern u8 MsgFuneNoooooNotGoing[];
-extern u8 MsgFuneNowWantSeeCaptainToo[];
-extern u8 MsgFuneOarsmanWasInjured[];
-extern u8 MsgFuneTheresWholeBunchReallyMuscular[];
-extern u8 MsgFuneTheseProudWarriorsNotGoing[];
-extern u8 MsgFuneWeDontKnowMightHappen[];
-extern u8 MsgFuneYouCameAskCaptainSet[];
-extern u8 MsgFuneYouGoingRow[];
-extern u8 FuneHeya_SceneTable04[];
-extern u8 FuneHeya_SceneTable05[];
-extern u8 FuneHeya_SceneTable06[];
-extern u8 FuneHeya_SceneTable07[];
-extern u8 FuneHeya_SceneTable08[];
-extern u8 FuneHeya_SceneTable09[];
-extern u8 FuneHeya_SceneTable10[];
-extern u8 FuneHeya_SceneTable11[];
-extern u8 FuneHeya_SceneTable12[];
-extern u8 FuneHeya_SceneTable13[];
-extern u8 FuneHeya_SceneTable14[];
-void Battle_ResetEffectCounterFar();
+void Battle_ResetEffectCounter();
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
-extern u8 MsgFuneDontFeelDontTalkMe[];
-extern u8 MsgFuneDontTellGoing[];
-extern u8 MsgFuneYouFinallyPickedSomeoneDidnt[];
 s32 SceneState_ApplyLevelFromFlags(void);
-void FuneHeya_TurnActorToOpenSide(s32 actor);
 void FieldScene_RunStepThen10(s32 actor);
 void FieldScene_RunPrimarySequence(s32 actor, s32 message, s32 flag);
 
-extern u8 MsgFuneGivesMeChillsThinkCould[];
-extern u8 MsgFuneHaHaHaRowingFeel[];
-extern u8 MsgFuneHoHoPersonGoingGet[];
-extern u8 MsgFuneIfYouveChosenOarsmanLets[];
-extern u8 MsgFuneNotThinkingMaking[];
-extern u8 MsgFuneOarsmanGiveBreak[];
-extern u8 MsgFuneOhhhhNooooGoingMakeMe[];
-extern u8 MsgFunePeopleAskingFrail[];
-extern u8 MsgFunePoorOarsmanFeel[];
-extern u8 MsgFuneRobinYouveGotGoodEye[];
-extern u8 MsgFuneThatsWhoYouPickedOarsman[];
-extern u8 MsgFuneYouveBeenChosenAsOarsman[];
 s32 SceneState_ApplyLevelFromFlags();
 
 s32 SceneActor_CheckBucketOffsetPoint();
 void FieldScene_CallPairWith10();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetPosition();
-void Engine_ActorSetDestinationOffset();
-void Engine_ActorSetAnimation();
 void ObjectMotion_SetActionVariant();
-void Engine_ActorWaitForMove();
-extern s32 FuneHeya_TurnSteps[];
-
-void FuneHeya_TurnActorToOpenSide(s32 a0);
-
-s32 StagedActor_CountdownUntilPositionUnset(u8 *object);
-void StagedActor_AdvanceCounter98(u8 *object);
 
 struct Walker {
     u8 unknown_00[0x4c];
@@ -153,7 +98,6 @@ struct Walker {
     s16 step;
 };
 
-/* Ship cabin walker: advance the actor's scripted walk one step, turning, walking and waiting on the leader between steps. */
 void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 {
     struct FieldActor *leader;
@@ -170,7 +114,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         goto advance;
     case 4:
         Object_SetMode(obj, 2);
-        Call4(Engine_ObjectSetPosition, (s32)obj, 0x1d40000, 0x200000, 0x2780000);
+        FieldObject_SetPosition((s32)obj, 0x1d40000, 0x200000, 0x2780000);
         walker->countdown = 60;
         walker->step++;
         break;
@@ -178,14 +122,14 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0) {
             Object_SetMode(obj, 1);
             obj->rise_counter = 0;
-            if (leader->unknown_5b == 0) {
+            if (leader->paused == 0) {
                 obj->rise_enabled = 1;
             }
             walker->step++;
         }
         break;
     case 7:
-        if (leader->unknown_5b == 0) {
+        if (leader->paused == 0) {
             Object_SetMode(obj, 3);
             obj->rise_enabled = 2;
         }
@@ -196,10 +140,10 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         break;
     case 9:
         Object_SetMode(obj, 2);
-        Call4(Engine_ObjectSetPosition, (s32)obj, 0x1e00000, 0x200000, 0x2580000);
+        FieldObject_SetPosition((s32)obj, 0x1e00000, 0x200000, 0x2580000);
         walker->countdown = 60;
         walker->step++;
-        if (leader->unknown_5b == 0) {
+        if (leader->paused == 0) {
             obj->rise_enabled = 3;
         }
         break;
@@ -215,7 +159,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
     case 6:
     case 8:
     case 11:
-        StagedActor_AdvanceCounter98((u8 *)obj);
+        FuneHeya_AdvanceWalkerAfterRise((u8 *)obj);
         break;
     case 12:
         walker->step = 0;
@@ -227,7 +171,7 @@ void UpdateActorNineEffectMode(struct EffectRecord *record)
 {
     struct SceneActor *actor;
 
-    actor = Object_GetByIdFar(9);
+    actor = Object_GetById(9);
     if (record->state != 0)
         return;
     if (actor->mode == 1) {
@@ -245,7 +189,6 @@ void UpdateActorNineEffectMode(struct EffectRecord *record)
     }
 }
 
-/* Places both sprite parts behind the foreground and clears automatic priority. */
 s32 StagedActor_SetReadyState(struct FieldActor *work)
 {
     struct FieldSprite *rec = work->sprite;
@@ -259,11 +202,7 @@ s32 StagedActor_SetReadyState(struct FieldActor *work)
     return 1;
 }
 
-/*
- * Overlay resource_3b1. Picks the scene data table for the current scene
- * index, with two arms further narrowed by story flags.
- */
-s32 SceneData_SelectTableByWord224(void)
+s32 FuneHeya_SelectEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_FuneHeya) {
         return (s32)FuneHeya_SceneTable02;
@@ -276,7 +215,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-s32 SceneData_GetTableEB94(void)
+s32 FuneHeya_GetExits(void)
 {
     return (s32)&FuneHeya_SceneTable03;
 }
@@ -345,7 +284,7 @@ s32 FuneHeya_GetStepScript(void)
             return (s32)FuneHeya_StepScriptD;
         } else if (Engine_GameFlagIsSet(0x911) != 0) {
             if (Engine_GameFlagIsSet(0x922) != 0) {
-                if (Value1(Engine_GameFlagIsSet, 0x8a0) != 0) {
+                if (GameFlag_IsSet(0x8a0) != 0) {
                     FuneHeya_StepScriptC[46] = 1;
                 }
                 if (Engine_GameFlagIsSet(0x925) != 0) {
@@ -374,26 +313,6 @@ s32 FuneHeya_GetStepScript(void)
     return (s32)script;
 }
 
-/* Message ids. */
-
-/* Scene-step dispatcher for overlay resource 0x3b1.
- *
- * The owner takes a step selector plus two step parameters and jumps through a
- * 26-entry table into one bounded block of scene setup calls per step. Step 18
- * finishes by re-entering the dispatcher with step 14, which the compiler turns
- * into a jump back to the range check.
- *
- * Uncertain: the roles of the two parameters differ per step (actor slot,
- * count, flag, upper loop bound), so they keep neutral names here. The record
- * fields written at +6 (halfword) and +24 (word) are the same scene-object
- * fields the neighbouring scene sources touch; their meaning is not recovered.
- */
-
-/*
- * Field scene beat for overlay resource_3b1.  Each callee is named for its own
- * call site: every call reaches its target through its own local veneer, even
- * where the same logical callee is used from more than one site.
- */
 u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 {
     s16 *tbl = ((s16 *)Data_02000240);
@@ -402,24 +321,24 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
     switch (scene) {
     case 1:
     case 2:
-        if (GameFlag_IsSet(2208) != 0) {
+        if (Engine_GameFlagIsSet(2208) != 0) {
             return FuneHeya_SceneTable07;
         }
-        if (GameFlag_IsSet(0x928) != 0 && GameFlag_IsSet(0x93e) == 0) {
+        if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
             return FuneHeya_SceneTable06;
         }
         return FuneHeya_SceneTable05;
     case 4:
     case 23:
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return FuneHeya_SceneTable14;
         }
         return FuneHeya_SceneTable11;
     case 5:
-        if (GameFlag_IsSet(2208) != 0) {
+        if (Engine_GameFlagIsSet(2208) != 0) {
             return FuneHeya_SceneTable09;
         }
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return FuneHeya_SceneTable10;
         }
         return FuneHeya_SceneTable08;
@@ -436,13 +355,13 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
     return FuneHeya_SceneTable04;
 }
 
-void FieldScene_RunScene3b1_02000670(void)
+void FuneHeya_AskToSeeCaptain(void)
 {
     u32 i;
     s32 record;
 
     Engine_EventBegin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     if (GameFlag_IsSet(0x921) != 0) {
         Engine_EventSetMessage((s32)MsgFuneIfShipFromTolbiHad);
         Event_ShowMessage(10, 0);
@@ -470,11 +389,11 @@ void SceneDialogue_RunActor12Line(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgFuneYouCameAskCaptainSet);
-    Event_AskYesNo(12, 0);
+    Engine_EventAskYesNo(12, 0);
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1_02000728(void)
+void FuneHeya_TalkCaptainStatus(void)
 {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x928) != 0) {
@@ -500,7 +419,7 @@ void FieldScene_RunScene3b1_02000728(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1_020007f8(void)
+void FuneHeya_AskAboutWarriors(void)
 {
     u32 i;
     s32 record;
@@ -519,7 +438,7 @@ void FieldScene_RunScene3b1_020007f8(void)
             Event_ShowMessage(8, 0);
             goto L_0200088e;
         }
-        bump_step(2);
+        gEventWork->message += 2;
         Event_ShowMessage(8, 0);
         Actor_FaceDirection(8, 0x3000, 0);
     } else {
@@ -533,48 +452,39 @@ void FieldScene_RunScene3b1_020007f8(void)
 void SceneDialogue_ShowLine1E19Or1D50(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x925) != 0) {
+    if (Engine_GameFlagIsSet(0x925) != 0) {
         Engine_EventSetMessage((s32)MsgFuneYouGoingRow);
-        Event_AskYesNo(10, 0);
+        Engine_EventAskYesNo(10, 0);
     } else {
         Engine_EventSetMessage((s32)MsgFuneTheresWholeBunchReallyMuscular);
-        Event_ShowMessage(10, 0);
+        Engine_EventShowMessage(10, 0);
     }
     Engine_EventEnd();
 }
 
-/* Scene setup for resource_3b1: installs actors 10 through 17. */
-
-/* The pool word, referenced by address so that it is emitted. */
-
-/*
- * Actors 24 and 25 setup for overlay resource_3b1. Each callee slot uses
- * its own local veneer, so the names are per call site and not the shared
- * main-image symbol.
- */
 void SceneState_RunFlagBranchedActor8Setup(void)
 {
-    if (GameFlag_IsSet(0x300) != 0) {
+    if (Engine_GameFlagIsSet(0x300) != 0) {
         u8 *obj = SceneState_ApplyLevelFromFlags();
-        u8 *p;
+        struct FieldActor *p;
 
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(obj);
         Engine_EventSetMessage((s32)MsgFuneLooksLikeYouveBeenChosen);
         FieldScene_RunStepThen10(8);
         Engine_ActorSetAnimation(obj, 2);
-        p = (u8 *)Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
-            Actor_SetDestination(obj, *(s16 *)(p + 10), *(s16 *)(p + 18));
+            Engine_ActorSetDestination(obj, p->x.part.pixel, p->z.part.pixel);
         }
         Engine_ActorWaitForMove(obj);
-        Actor_SetPosition(obj, 0, 0);
+        Engine_ActorSetPosition(obj, 0, 0);
         Engine_EventEnd();
-    } else if (GameFlag_IsSet(0x92b) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x990);
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x917);
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x935);
     } else {
         FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x92c);
@@ -583,81 +493,74 @@ void SceneState_RunFlagBranchedActor8Setup(void)
 
 void SceneDialogue_RunActorTenFlaggedDialogue(void)
 {
-    if (GameFlag_IsSet(0x300) != 0) {
+    if (Engine_GameFlagIsSet(0x300) != 0) {
         u8 *o = SceneState_ApplyLevelFromFlags();
-        u8 *p;
+        struct FieldActor *p;
 
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
         Engine_EventSetMessage((s32)MsgFuneHaHaHaChosenOarsman);
         FieldScene_RunStepThen10(10);
         Engine_ActorSetAnimation(o, 2);
-        p = (u8 *)Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
-            Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
+            Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
         Engine_ActorWaitForMove(o);
-        Actor_SetPosition(o, 0, 0);
+        Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
-    } else if (GameFlag_IsSet(0x92b) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x992);
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x919);
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x937);
     } else {
         FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x92e);
     }
 }
 
-/* What actor 11 says aboard, by how far the choice of who rows has come. */
-
-/* Once flag 0x8a0 is set actor 11 will not talk; once someone is picked
- * (flag 0x300) the picked actor walks back to the leader; otherwise actor 11
- * asks, and the flag its yes sets depends on which of 0x92b, 0x92a and 0x929
- * is set. */
 void FieldScene_RunActor11FlagDialogue(void)
 {
-    if (GameFlag_IsSet(0x8A0) != 0) {
+    if (Engine_GameFlagIsSet(0x8A0) != 0) {
         Engine_EventBegin();
-        Actor_SetAttachedEffect(11, 0x102);
+        Engine_ActorSetAttachedEffect(11, 0x102);
         Engine_EventWait(40);
         Engine_EventSetMessage((s32)MsgFuneDontFeelDontTalkMe);
-        Event_ShowMessage(11, 0);
+        Engine_EventShowMessage(11, 0);
         Engine_EventEnd();
-    } else if (GameFlag_IsSet(0x300) != 0) {
+    } else if (Engine_GameFlagIsSet(0x300) != 0) {
         s32 actor = SceneState_ApplyLevelFromFlags();
-        u8 *leader;
+        struct FieldActor *leader;
 
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(actor);
         Engine_EventSetMessage((s32)MsgFuneYouFinallyPickedSomeoneDidnt);
         FieldScene_RunStepThen10(11);
         Engine_ActorSetAnimation(actor, 2);
-        leader = (u8 *)Object_GetById(0);
+        leader = Object_GetById(0);
         if (leader != 0) {
-            Actor_SetDestination(actor, *(s16 *)(leader + 10), *(s16 *)(leader + 18));
+            Engine_ActorSetDestination(actor, leader->x.part.pixel, leader->z.part.pixel);
         }
         Engine_ActorWaitForMove(actor);
-        Actor_SetPosition(actor, 0, 0);
+        Engine_ActorSetPosition(actor, 0, 0);
         Engine_EventEnd();
-    } else if (GameFlag_IsSet(0x92b) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x993);
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x91a);
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x938);
     } else {
         FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x92f);
     }
 }
 
-/* Message ids. */
 void FieldScene_RunScene3b1SequenceA(void)
 {
     u32 i;
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     if (GameFlag_IsSet(0x300) != 0) {
@@ -666,9 +569,9 @@ void FieldScene_RunScene3b1SequenceA(void)
         Engine_EventSetMessage((s32)MsgFuneGivesMeChillsThinkCould);
         FieldScene_RunStepThen10(12);
         Engine_ActorSetAnimation(rec7, 2);
-        record = (s32)Object_GetByIdFar(0);
+        record = Object_GetById(0);
         if (record != 0) {
-            Actor_SetDestination(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(rec7, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(rec7);
         Actor_SetPosition(rec7, 0, 0);
@@ -680,9 +583,9 @@ void FieldScene_RunScene3b1SequenceA(void)
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(12);
             Engine_ActorSetAnimation(12, 2);
-            record = (s32)Object_GetByIdFar(0);
+            record = Object_GetById(0);
             if (record != 0) {
-                Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
             }
             Engine_ActorWaitForMove(12);
             Actor_SetPosition(12, 0, 0);
@@ -701,7 +604,7 @@ void FieldScene_RunScene3b1SequenceA(void)
             }
             GameFlag_Set(0x930);
         } else {
-            bump_step(1);
+            gEventWork->message++;
             FieldScene_RunStepThen10(12);
         }
     }
@@ -713,7 +616,7 @@ void FieldScene_RunScene3b1SequenceB(void)
 {
     u32 i;
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     if (GameFlag_IsSet(0x300) != 0) {
@@ -722,9 +625,9 @@ void FieldScene_RunScene3b1SequenceB(void)
         Engine_EventSetMessage((s32)MsgFuneRobinYouveGotGoodEye);
         FieldScene_RunStepThen10(9);
         Engine_ActorSetAnimation(rec7, 2);
-        record = (s32)Object_GetByIdFar(0);
+        record = Object_GetById(0);
         if (record != 0) {
-            Actor_SetDestination(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(rec7, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(rec7);
         Actor_SetPosition(rec7, 0, 0);
@@ -736,9 +639,9 @@ void FieldScene_RunScene3b1SequenceB(void)
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(9);
             Engine_ActorSetAnimation(9, 2);
-            record = (s32)Object_GetByIdFar(0);
+            record = Object_GetById(0);
             if (record != 0) {
-                Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                Actor_SetDestination(9, record->x.part.pixel, record->z.part.pixel);
             }
             Engine_ActorWaitForMove(9);
             Actor_SetPosition(9, 0, 0);
@@ -757,7 +660,7 @@ void FieldScene_RunScene3b1SequenceB(void)
             }
             GameFlag_Set(0x92d);
         } else {
-            bump_step(1);
+            gEventWork->message++;
             FieldScene_RunStepThen10(9);
         }
     }
@@ -767,27 +670,27 @@ void FieldScene_RunScene3b1SequenceB(void)
 
 void SceneDialogue_RunActorThirteenFlag300Branch(void)
 {
-    if (GameFlag_IsSet(0x300) != 0) {
+    if (Engine_GameFlagIsSet(0x300) != 0) {
         u8 *o = SceneState_ApplyLevelFromFlags();
-        u8 *p;
+        struct FieldActor *p;
 
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
         Engine_EventSetMessage((s32)MsgFuneThatsWhoYouPickedOarsman);
         FieldScene_RunStepThen10(13);
         Engine_ActorSetAnimation(o, 2);
-        p = (s32)Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
-            Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
+            Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
         Engine_ActorWaitForMove(o);
-        Actor_SetPosition(o, 0, 0);
+        Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
-    } else if (GameFlag_IsSet(0x92b) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x995);
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x91c);
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x93a);
     } else {
         FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x931);
@@ -796,27 +699,27 @@ void SceneDialogue_RunActorThirteenFlag300Branch(void)
 
 void FieldScene_RunFlag300BranchDialogue(void)
 {
-    if (GameFlag_IsSet(0x300) != 0) {
+    if (Engine_GameFlagIsSet(0x300) != 0) {
         u8 *o = SceneState_ApplyLevelFromFlags();
-        u8 *p;
+        struct FieldActor *p;
 
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
         Engine_EventSetMessage((s32)MsgFuneIfYouveChosenOarsmanLets);
         FieldScene_RunStepThen10(14);
         Engine_ActorSetAnimation(o, 2);
-        p = (s32)Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
-            Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
+            Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
         Engine_ActorWaitForMove(o);
-        Actor_SetPosition(o, 0, 0);
+        Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
-    } else if (GameFlag_IsSet(0x92b) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x996);
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x91d);
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x93b);
     } else {
         FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x932);
@@ -825,27 +728,27 @@ void FieldScene_RunFlag300BranchDialogue(void)
 
 void FieldScene_RunActor15FlagDialogue(void)
 {
-    if (GameFlag_IsSet(0x300) != 0) {
+    if (Engine_GameFlagIsSet(0x300) != 0) {
         u8 *o = SceneState_ApplyLevelFromFlags();
-        u8 *p;
+        struct FieldActor *p;
 
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
         Engine_EventSetMessage((s32)MsgFuneYouveBeenChosenAsOarsman);
         FieldScene_RunStepThen10(15);
         Engine_ActorSetAnimation(o, 2);
-        p = (s32)Object_GetByIdFar(0);
+        p = Object_GetById(0);
         if (p != 0) {
-            Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
+            Engine_ActorSetDestination(o, p->x.part.pixel, p->z.part.pixel);
         }
         Engine_ActorWaitForMove(o);
-        Actor_SetPosition(o, 0, 0);
+        Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
-    } else if (GameFlag_IsSet(0x92b) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x997);
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x91e);
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x93c);
     } else {
         FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x933);
@@ -855,9 +758,9 @@ void FieldScene_RunActor15FlagDialogue(void)
 void FieldScene_RunActor16FlagDialogue(void)
 {
     s32 obj;
-    u8 *actor;
+    struct FieldActor *actor;
 
-    if (GameFlag_IsSet(0x300) != 0) {
+    if (Engine_GameFlagIsSet(0x300) != 0) {
         obj = SceneState_ApplyLevelFromFlags();
         Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(obj);
@@ -865,21 +768,21 @@ void FieldScene_RunActor16FlagDialogue(void)
         FieldScene_RunStepThen10(16);
         Engine_ActorSetAnimation(obj, 2);
 
-        actor = (s32)Object_GetByIdFar(0);
+        actor = Object_GetById(0);
         if (actor != 0) {
-            Actor_SetDestination(obj, *(s16 *)(actor + 10),
-                          *(s16 *)(actor + 18));
+            Engine_ActorSetDestination(obj, actor->x.part.pixel,
+                          actor->z.part.pixel);
         }
 
         Engine_ActorWaitForMove(obj);
-        Actor_SetPosition(obj, 0, 0);
+        Engine_ActorSetPosition(obj, 0, 0);
         Engine_EventEnd();
     } else {
-        if (GameFlag_IsSet(0x92b) != 0) {
+        if (Engine_GameFlagIsSet(0x92b) != 0) {
             FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x998);
-        } else if (GameFlag_IsSet(0x92a) != 0) {
+        } else if (Engine_GameFlagIsSet(0x92a) != 0) {
             FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x91f);
-        } else if (GameFlag_IsSet(0x929) != 0) {
+        } else if (Engine_GameFlagIsSet(0x929) != 0) {
             FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x93d);
         } else {
             FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x934);
@@ -922,42 +825,40 @@ struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 void FuneHeya_TurnActorToOpenSide(s32 a0)
 {
     s32 p10;
-    s32 rec4;
-    u8 *record;
+    struct FieldActor *rec4;
+    struct FieldActor *record;
     s32 none;
     s32 v8;
     s32 v6;
 
-    rec4 = (s32)Object_GetById(0);
+    rec4 = Object_GetById(0);
     v8 = 1;
     ObjectMotion_SetActionVariant(a0, 2);
     {
-        u8 *record = (u8 *)Object_GetById(a0);
-        /* FAKEMATCH: the flag byte is read through a volatile access. */
-        u8 value = *(volatile u8 *)&record[35];
-    
-        record[35] = (u8)(value | 1);
+        struct FieldActor *record = Object_GetById(a0);
+
+        record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
-    v6 = (((*(u16 *)(rec4 + 6) + 0x4000) & 0xf000) >> 12);
-    if (SceneActor_CheckBucketOffsetPoint((((*(u16 *)(rec4 + 6) + 0x4000) & 0xf000) >> 12)) != 0) {
+    v6 = (((rec4->facing + 0x4000) & 0xf000) >> 12);
+    if (SceneActor_CheckBucketOffsetPoint((((rec4->facing + 0x4000) & 0xf000) >> 12)) != 0) {
         none = 0;
         v8 = none;
     }
     if (v8 != 0) {
-        v6 = (((*(u16 *)(rec4 + 6) + -0x4000) & 0xf000) >> 12);
-        if (SceneActor_CheckBucketOffsetPoint((((*(u16 *)(rec4 + 6) + -0x4000) & 0xf000) >> 12)) != 0) {
+        v6 = (((rec4->facing + -0x4000) & 0xf000) >> 12);
+        if (SceneActor_CheckBucketOffsetPoint((((rec4->facing + -0x4000) & 0xf000) >> 12)) != 0) {
             none = 0;
             v8 = none;
         }
         if (v8 != 0) {
-            v6 = (((*(u16 *)(rec4 + 6) + 0x8000) & 0xf000) >> 12);
+            v6 = (((rec4->facing + 0x8000) & 0xf000) >> 12);
         }
     }
-    record = (s32)Object_GetById(0);
-    if ((s32)record != 0) {
-        Engine_ActorSetPosition(a0, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+    record = Object_GetById(0);
+    if (record != 0) {
+        Engine_ActorSetPosition(a0, record->x.fixed, record->z.fixed);
     }
-    Call3(Engine_ActorSetSpeed, a0, 0x19999, 0xcccc);
+    Actor_SetSpeed(a0, 0x19999, 0xcccc);
     Engine_ActorSetAnimation(a0, 2);
     {
         s32 w = FuneHeya_TurnSteps[v6];
@@ -966,6 +867,6 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
     }
     Engine_ActorWaitForMove(a0);
     Engine_ActorSetAnimation(a0, 1);
-    FieldScene_CallPairWith10(a0, *(u16 *)(rec4 + 6));
+    FieldScene_CallPairWith10(a0, rec4->facing);
     p10 = a0;
 }

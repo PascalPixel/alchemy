@@ -2,46 +2,7 @@
 	.thumb
 	.section .text.x0200807e,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008080,"ax",%progbits
-	.global Func_02000080
-	.thumb_func
-Func_02000080:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Func_02001f5c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020080ca
-	movs r1, #0
-	bl Object_SetSpritePriority
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r2, #4
-	movs r3, #8
-	strb r3, [r2]
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	adds r0, r5, #0
-	movs r1, #14
-	bl Object_SetPartAttribute
-	adds r0, r5, #0
-	movs r1, #1
-	bl Animation_SetStateFlags
-	adds r0, r5, #0
-	b .L_020080cc
-.L_020080ca:
-	movs r0, #0
-.L_020080cc:
-	pop {r5, r6, pc}
+	.section .text.x020080ce,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020080d0,"ax",%progbits
 	.global Func_020000d0
@@ -55,7 +16,7 @@ Func_020000d0:
 	adds r2, r5, #0
 	adds r1, r4, #0
 	adds r3, r6, #0
-	bl Func_02001f5c
+	bl Engine_ObjectCreate
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0200811e
@@ -70,7 +31,7 @@ Func_020000d0:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #15
 	bl Object_SetPartAttribute
@@ -87,37 +48,7 @@ Func_020000d0:
 .L_02008120:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x02008124,"ax",%progbits
-	.global Func_02000124
-	.thumb_func
-Func_02000124:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200815c,"ax",%progbits
 	.global Func_0200015c
@@ -165,7 +96,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Func_02001f5c
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -193,7 +124,7 @@ Func_0200015c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008334
 	mov r1, r9
 	str r3, [r6, #108]
@@ -360,7 +291,7 @@ Func_0200015c:
 .L_02008330:
 	.4byte Data_02002148
 .L_02008334:
-	.4byte Func_02000124
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
 	.section .text.x0200833c,"ax",%progbits
@@ -1012,7 +943,7 @@ Func_0200054c:
 .L_02008808:
 	.4byte IwramMulQ16
 .L_0200880c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008810:
 	.4byte 0xfff40000
 .L_02008814:
@@ -1317,7 +1248,7 @@ Func_02000818:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008a6c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008a70:
 	.4byte 0x00013333
 .L_02008a74:
@@ -1390,7 +1321,7 @@ Func_02000a80:
 .L_02008af4:
 	.4byte 0x00000000
 .L_02008af8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008afc:
 	.4byte Data_020022c4
 .L_02008b00:
@@ -1474,7 +1405,7 @@ Func_02000a80:
 .L_02008b90:
 	.4byte Data_020022be
 .L_02008b94:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008b98:
 	.4byte Data_02002118
 .L_02008b9c:
@@ -1598,7 +1529,7 @@ Func_02000c50:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008c84:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008c88:
 	.4byte Data_020022c8
 .L_02008c8c:
@@ -1737,7 +1668,7 @@ Func_02000c94:
 	bl Func_02001fb4
 	pop {r5, r6, r7, pc}
 .L_02008d90:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008d94:
 	.4byte Data_020022cc
 .L_02008d98:
@@ -2094,7 +2025,7 @@ Func_02000ef0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02009054:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009058:
 	.4byte 0x00013333
 .L_0200905c:
@@ -2128,8 +2059,8 @@ Func_02001068:
 	movs r0, #1
 	bl Func_02002004
 .L_0200909a:
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001fb4
 	pop {pc}
 	.section .text.x020090a8,"ax",%progbits
@@ -2180,7 +2111,7 @@ Func_020010a8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009100:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009104:
 	.4byte 0xfff20000
 	.section .text.x02009108,"ax",%progbits
@@ -2527,7 +2458,7 @@ Func_02001108:
 	lsls r1, r1, #17
 	lsls r3, r3, #16
 	movs r0, #159
-	bl Func_02001f5c
+	bl Engine_ObjectCreate
 	ldr r3, .L_02009410
 	adds r5, r0, #0
 	str r3, [r5, #108]
@@ -2773,8 +2704,8 @@ Func_020015cc:
 	bl Func_02002044
 	movs r0, #4
 	bl Func_02002004
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001fb4
 	pop {pc}
 	.section .text.x020095ec,"ax",%progbits
@@ -2787,8 +2718,8 @@ Func_020015ec:
 	bl Func_02002044
 	movs r0, #5
 	bl Func_02002004
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001fb4
 	pop {pc}
 	.section .text.x0200960c,"ax",%progbits
@@ -3009,7 +2940,7 @@ Func_02001650:
 .L_02009798:
 	.4byte Data_02002580
 .L_0200979c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020097a0:
 	.4byte Data_020022c8
 .L_020097a4:
@@ -3143,7 +3074,7 @@ Func_02001650:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200989c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020098a0:
 	.4byte Data_02002580
 .L_020098a4:
@@ -3347,7 +3278,7 @@ Func_02001a14:
 	movs r2, #0
 	lsls r3, r3, #16
 	movs r0, #159
-	bl Func_02001f5c
+	bl Engine_ObjectCreate
 	ldr r3, .L_02009b14
 	mov r8, r0
 	str r3, [r0, #108]
@@ -3359,14 +3290,14 @@ Func_02001a14:
 	negs r1, r1
 	lsls r0, r0, #17
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_02009b18
 	bl Scheduler_AddOrUpdateCallback
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #21
@@ -3654,7 +3585,7 @@ Func_02001a14:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_02009cd0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009cd4:
 	.4byte Data_020022cc
 .L_02009cd8:
@@ -3738,7 +3669,7 @@ Func_02001cdc:
 .L_02009d6c:
 	.4byte 0x000000c5
 .L_02009d70:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009d74:
 	.4byte Data_020022c8
 .L_02009d78:
@@ -3893,7 +3824,7 @@ Func_02001cdc:
 .L_02009eac:
 	.4byte 0x000000c6
 .L_02009eb0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009eb4:
 	.4byte Data_020022c8
 .L_02009eb8:

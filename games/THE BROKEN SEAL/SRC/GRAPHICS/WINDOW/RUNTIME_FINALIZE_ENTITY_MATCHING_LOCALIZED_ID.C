@@ -1,41 +1,39 @@
 #include "TYPES.H"
+#include "WINDOW.H"
+#include "RENDER_INPUT.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
-extern u8 Data_03001e8c[];
 
 extern s32 Localization_LookupEntryId();
-extern void UiWork_Finalize(struct Work *work, s32 release);
 
 void UiWork_FinalizeEntityMatchingLocalizedId(void)
 {
-    u8 *base;
-    u8 *work;
+    struct UiRenderWork *state;
+    struct UiWindow *work;
     s32 id;
     s32 index;
     s32 i;
-    u8 *entity;
-    s32 offset;
+    struct RenderOutput *entity;
 
-    base = *(u8 **)((u32)&Data_03001e8c);
-    work = base + 0x500;
+    state = (struct UiRenderWork *)gWindowWork[0];
+    work = state->windows;
     id = Localization_LookupEntryId();
     if (id == -1)
         return;
 
-    if (*(u16 *)(base + RENDER_SLOT_ID_OFS + 2) == id) {
+    if (state->resource_ids[1] == id) {
         index = 1;
-    } else if (*(u16 *)(base + RENDER_SLOT_ID_OFS) == id) {
+    } else if (state->resource_ids[0] == id) {
         index = 0;
     } else {
         return;
     }
 
-    offset = RENDER_SLOT_VALUE_OFS + index * 2;
-    id = *(u16 *)(base + offset);
+    id = state->output_ids[index];
 
-    for (i = 0; i != WINDOW_COUNT; i++, work += 36) {
-        entity = *(u8 **)work;
-        if (*(u8 *)(entity + 4) == 2 && *(u8 *)(entity + 14) == id) {
+    for (i = 0; i != WINDOW_COUNT; i++, work++) {
+        entity = work->output.head;
+        if ((u8)entity->kind == 2 && (u8)entity->index == id) {
             UiWork_Finalize(work, 2);
             return;
         }

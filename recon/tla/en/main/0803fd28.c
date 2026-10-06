@@ -1,7 +1,7 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
-/* The object palette the slider graphics use. */
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 
@@ -20,17 +20,10 @@ extern u8 MsgAutoSleepLabel[];
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 s32 __divsi3(s32 numerator, s32 denominator);
 void Func_080b0038(void *object, s32 x, s32 y);
-
-/* Opens the workspace options window: four divider lines, six captions,
-   the selection cursor, the two value markers placed along their sliders
-   (value * 60 / step pixels in) and seven frame icons in three rows.
-   Caption ids come from the literal pool as link-time values. */
 
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {

@@ -212,7 +212,7 @@ Func_0804e1d8:
 	movs r1, #1
 	add r2, sp, #12
 	add r3, sp, #8
-	bl Func_0803d9bc
+	bl UiIcon_BuildAbilityIconTiles
 .L_0804e37a:
 	movs r1, #128
 	ldr r0, [sp, #12]

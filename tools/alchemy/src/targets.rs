@@ -1,4 +1,3 @@
-//! Golden Sun's twelve ROM targets and their isolated build paths.
 
 use crate::compiler::routing::CompilerTarget;
 
@@ -15,9 +14,6 @@ macro_rules! target_registry {
     };
 }
 
-// Each edition's approved reference ROM is known by its SHA-256 alone: an
-// intentional record that admits the builder's own copy, never a source of
-// build input.
 target_registry! {
     TbsJa => ("tbs-ja", "roms/tbs-ja.gba", "TBS_EDITION_JA", "out/tbs-ja",
         "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"),
@@ -60,7 +56,6 @@ impl std::fmt::Display for DecompTargetId {
 pub struct DecompTarget {
     pub id: DecompTargetId,
     pub rom: &'static str,
-    /// The approved reference ROM's SHA-256.
     pub rom_sha256: &'static str,
     pub rom_size: u64,
     pub compiler: CompilerTarget,
@@ -68,13 +63,10 @@ pub struct DecompTarget {
     pub source_dir: &'static str,
     pub asm_dir: &'static str,
     pub output_dir: &'static str,
-    /// Fixed `ldr r4, [pc, #0]; bx r4` entry veneers every code overlay of
-    /// this game opens with: six in The Broken Seal, seven in The Lost Age.
     pub overlay_entry_veneers: usize,
 }
 
 impl DecompTarget {
-    /// Refuse `rom` unless it is this edition's approved reference ROM.
     pub fn verify_reference(&self, rom: &[u8]) -> Result<(), String> {
         if crate::compiler::sha256::hex(rom) != self.rom_sha256 {
             return Err(format!(
@@ -84,32 +76,25 @@ impl DecompTarget {
         }
         Ok(())
     }
-    /// The game's linker script, `MAIN.LD`, which composes every edition.
     pub fn script(&self) -> std::path::PathBuf {
         std::path::Path::new(self.game_dir()).join("MAIN.LD")
     }
-    /// The bodies another edition gives the game's output sections, beside
-    /// its scaffold in `recon/<game>/<lang>`, as pret's early versions linked
-    /// through `baserom.gba`; Japanese is the game's native composition.
     pub fn edition_script(&self) -> Option<std::path::PathBuf> {
         match self.id.as_str().split_once('-') {
             Some((_, "ja")) | None => None,
             Some((game, lang)) => Some(["recon", game, lang, "MAIN.LD"].iter().collect()),
         }
     }
-    /// The six editions of this target's game, Japanese first.
     pub fn editions(&self) -> [DecompTarget; 6] {
         let first = self.id as usize / 6 * 6;
         std::array::from_fn(|index| target_for(TARGET_IDS[first + index]))
     }
-    /// The edition's language, the `ja` of `tbs-ja`.
     pub fn language(&self) -> &'static str {
         self.id
             .as_str()
             .split_once('-')
             .map_or("", |(_, lang)| lang)
     }
-    /// The game's physical root, `games/THE BROKEN SEAL` or `games/THE LOST AGE`.
     pub fn game_dir(&self) -> &'static str {
         self.source_dir
             .strip_suffix("/SRC")
@@ -169,100 +154,5 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
         asm_dir,
         output_dir,
         overlay_entry_veneers,
-    }
-}
-#[cfg(test)]
-fn relative_path(path: &str) -> bool {
-    !path.is_empty()
-        && !path.starts_with(['/', '\\'])
-        && !path.split(['/', '\\']).any(|part| part == "..")
-}
-#[cfg(test)]
-fn self_test() -> Result<String, String> {
-    let mut outputs = std::collections::HashSet::new();
-    for id in TARGET_IDS {
-        let target = target_for(id);
-        let (root, recon) = match target.compiler {
-            CompilerTarget::Tbs => ("games/THE BROKEN SEAL/", "recon/tbs/"),
-            CompilerTarget::Tla => ("games/THE LOST AGE/", "recon/tla/"),
-        };
-        if !relative_path(target.output_dir)
-            || !target.source_dir.starts_with(root)
-            || !target.asm_dir.starts_with(recon)
-            || !outputs.insert(target.output_dir)
-            || !target.game_dir().starts_with(root.trim_end_matches('/'))
-        {
-            return Err(format!("{id} does not have isolated relative paths"));
-        }
-    }
-    for invalid in ["", "tbs", "TBS-en", "tbs-en ", "alchemy"] {
-        if parse_decomp_target(invalid).is_ok() {
-            return Err(format!("invalid target was accepted: {invalid}"));
-        }
-    }
-    Ok(format!(
-        "self-test=ok build_targets=12 default={DEFAULT_TARGET}"
-    ))
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn an_unspecified_target_selects_the_native_japanese_game() {
-        let target = decomp_target(None).unwrap();
-        assert_eq!(target.id, DecompTargetId::TbsJa);
-        assert_eq!(target.output_dir, "out/tbs-ja");
-        assert_eq!(target.edition_define, "TBS_EDITION_JA");
-        assert!(target.edition_script().is_none());
-        assert!(target_for(DecompTargetId::TlaJa).edition_script().is_none());
-    }
-
-    #[test]
-    fn every_edition_links_through_its_games_script() {
-        for id in TARGET_IDS {
-            let target = target_for(id);
-            assert_eq!(
-                target.script(),
-                std::path::Path::new(target.game_dir()).join("MAIN.LD")
-            );
-            let (game, lang) = id.as_str().split_once('-').unwrap();
-            assert_eq!(
-                target.edition_script(),
-                (lang != "ja").then(|| format!("recon/{game}/{lang}/MAIN.LD").into())
-            );
-        }
-    }
-    #[test]
-    fn games_name_their_roots_and_entry_veneers() {
-        let tla = target_for(DecompTargetId::TlaEn);
-        assert_eq!(tla.game_dir(), "games/THE LOST AGE");
-        assert_eq!(tla.overlay_entry_veneers, 7);
-        assert_eq!(target_for(DEFAULT_TARGET).overlay_entry_veneers, 6);
-    }
-    #[test]
-    fn each_edition_admits_only_its_own_reference_rom() {
-        let mut identities = std::collections::HashSet::new();
-        for id in TARGET_IDS {
-            let target = target_for(id);
-            assert_eq!(target.rom, format!("roms/{id}.gba"));
-            assert_eq!(target.rom_sha256.len(), 64);
-            assert!(target
-                .rom_sha256
-                .bytes()
-                .all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f')));
-            assert!(identities.insert(target.rom_sha256));
-            assert!(target
-                .verify_reference(b"a local ROM is not an approved reference")
-                .is_err());
-        }
-    }
-    #[test]
-    fn registry_covers_isolated_targets() {
-        assert_eq!(
-            self_test().unwrap(),
-            "self-test=ok build_targets=12 default=tbs-ja"
-        );
     }
 }

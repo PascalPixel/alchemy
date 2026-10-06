@@ -1,13 +1,11 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
+#include "OBJECT_DISPATCH.H"
 
 extern u8 gEffectWork[];
 
 void BattleFx_HalveDistanceToTarget(void);
 void BattleFx_UpdateRandomTargetParticle(void);
-
-/* The Mercury Djinni capture: the Djinni bounces three times, splits into
-   eight linked copies of itself, rises out of view, and a ring of slot
-   particles closes the scene. */
 
 struct CaptureSprite {
     u8 unknown_00[40];
@@ -46,24 +44,20 @@ extern s32 gGameState[];
 
 struct CaptureObject *Object_GetById(s32 id);
 void BattleFx_InitializeSlots(void);
-void Unnamed_080b0840Far(s32 value);
+void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Object_SetMode(struct CaptureObject *object, s32 mode);
-void ObjectDispatch_SetSingleChildField26Far(struct CaptureObject *object, s32 value);
 struct CaptureResource *Object_ReplaceResourceEntry(struct CaptureSprite *sprite, struct CaptureResource *resource);
 void Func_080090d0(struct CaptureObject *object);
-void Resource_ResetEntry(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 void EffectSlot_SetCallback(void *slot, void *callback);
 void EffectSlot_SetObjectMode(void *slot, s32 mode);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -94,7 +88,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
 
     BattleFx_InitializeSlots();
     effect_slots = *(void **)gEffectWork;
-    Unnamed_080b0840Far(0x204084);
+    Shop_RestoreSceneTilesFar(0x204084);
     WaitFrames(30);
     djinni->visible = 0;
     Audio_PlayCue(173);
@@ -125,9 +119,9 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
             copy->collision_flags |= 1;
             copy->callback = (void *)BattleFx_HalveDistanceToTarget;
             copy->facing = djinni->facing;
-            Animation_ApplyChildValuesFar(copy, 9);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
             Object_SetMode(copy, 0);
-            ObjectDispatch_SetSingleChildField26Far(copy, 0);
+            ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
             resource = Object_ReplaceResourceEntry(copy->sprite, resource);
             copy->linked = previous;
             previous = copy;
@@ -164,7 +158,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         EffectSlot_Initialize(slot, 240, position.x, position.z);
         EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRandomTargetParticle);
         EffectSlot_SetObjectMode(slot, 7);
-        ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 9);
+        Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 9);
         remaining--;
         WaitFrames(1);
         slot += 72;

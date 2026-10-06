@@ -9,7 +9,7 @@ Func_08015e44:
 	adds r3, #204
 	adds r6, r1, #0
 	ldr r5, [r3]
-	bl Func_08015f0c
+	bl SaveState_FindLatestSlot
 	cmp r0, #14
 	bls .L_08015e5c
 	movs r0, #1

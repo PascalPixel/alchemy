@@ -38,7 +38,7 @@ Func_080d7430:
 	mov r1, r8
 	adds r2, r5, #0
 	movs r3, #1
-	bl Func_080d0e1c
+	bl BattleFx_BuildBuffer
 	movs r3, #168
 	lsls r3, r3, #4
 	adds r6, r5, r3
@@ -46,14 +46,14 @@ Func_080d7430:
 	mov r1, r8
 	adds r2, r6, #0
 	movs r3, #1
-	bl Func_080d0e1c
+	bl BattleFx_BuildBuffer
 	movs r3, #168
 	lsls r3, r3, #5
 	adds r2, r5, r3
 	adds r0, r6, #0
 	adds r1, r5, #0
 	movs r3, #12
-	bl Func_080d0c50
+	bl BattleFx_InterpolateBuffers
 	movs r3, #224
 	lsls r3, r3, #4
 	add r8, r3
@@ -61,7 +61,7 @@ Func_080d7430:
 	mov r2, r8
 	movs r1, #0
 	movs r3, #1
-	bl Func_080d0e1c
+	bl BattleFx_BuildBuffer
 	movs r3, #252
 	lsls r3, r3, #5
 	adds r2, r5, r3

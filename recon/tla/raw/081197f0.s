@@ -66,7 +66,7 @@ Func_081197f0:
 	movs r0, #106
 	adds r0, #255
 	bl GameFlag_SetBit
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r5, .L_08119ab4
 	movs r1, #76
 	mov r0, r10
@@ -93,7 +93,7 @@ Func_081197f0:
 	movs r2, #0
 	mov lr, r5
 	.2byte 0xf800
-	bl Func_080c8520
+	bl Event_GetSpecialValueFar
 	movs r3, #206
 	lsls r3, r3, #3
 	add r3, r9
@@ -107,7 +107,7 @@ Func_081197f0:
 	movs r0, #12
 	bl Runtime_AllocateBlock
 	movs r0, #4
-	bl Func_08020088
+	bl ObjectSystem_InitializeFar
 	movs r0, #183
 	lsls r0, r0, #1
 	bl GameFlag_Test
@@ -270,8 +270,8 @@ Func_081197f0:
 	bl Func_081185c4
 .L_08119a30:
 	movs r0, #9
-	bl Func_08038128
-	bl Func_0811bddc
+	bl UiWindow_CreateWithLayoutBoundsFar
+	bl Camera_InitDefaultTransform
 	bl BattleActor_CommitPlacement
 	bl Func_081263c4
 	movs r3, #206
@@ -297,7 +297,7 @@ Func_081197f0:
 	movs r0, #0
 	bl BattlePres_SetupTransitionScene
 	movs r0, #1
-	bl Func_08118d6c
+	bl Party_ReservedNoOp5B14
 	ldr r5, .L_08119aac
 	movs r3, #128
 	lsls r3, r3, #19
@@ -329,7 +329,7 @@ Func_081197f0:
 .L_08119ab8:
 	.4byte gPartyState
 .L_08119abc:
-	.4byte Data_020054c8
+	.4byte gBattleRandomSeed
 .L_08119ac0:
 	.4byte gLinkStatus
 .L_08119ac4:
@@ -439,7 +439,7 @@ Func_081197f0:
 	cmp r0, #0
 	bne .L_08119bb4
 	adds r0, r5, #0
-	bl Func_0811d61c
+	bl BattlePresentation_BuildActions
 	b .L_08119bba
 .L_08119ba6:
 	ldr r0, [sp, #40]
@@ -593,7 +593,7 @@ Func_081197f0:
 .L_08119cc8:
 	.4byte gPartyState
 .L_08119ccc:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_08119cd0:
 	.4byte Func_0811b9fc
 .L_08119cd4:
@@ -614,7 +614,7 @@ Func_081197f0:
 	add r6, r9
 	ldr r0, [r6]
 	str r4, [sp, #4]
-	bl Func_0811d748
+	bl Battle_FindTaggedSlotByValue
 	ldr r4, [sp, #4]
 	cmp r0, r7
 	beq .L_08119d40
@@ -629,7 +629,7 @@ Func_081197f0:
 	mov r5, r9
 	strh r3, [r2, r5]
 	ldr r0, [r6]
-	bl Func_0811d748
+	bl Battle_FindTaggedSlotByValue
 	ldr r4, [sp, #4]
 	movs r3, #1
 	strh r0, [r4, #10]
@@ -651,7 +651,7 @@ Func_081197f0:
 	.4byte 0x00000000
 .L_08119d40:
 	str r4, [sp, #4]
-	bl Func_08119374
+	bl BattlePres_SyncTurn
 	ldr r4, [sp, #4]
 	cmp r0, #0
 	bge .L_08119d4e
@@ -760,7 +760,7 @@ Func_081197f0:
 	strb r4, [r1]
 	bl Func_08124cc0
 	bl Func_08124e20
-	bl Func_0811bc98
+	bl BattleMotion_DestroyAllSlotObjects
 	ldr r5, [sp, #40]
 	subs r5, #74
 	cmp r5, #1
@@ -776,7 +776,7 @@ Func_081197f0:
 	ldrb r3, [r0]
 	cmp r3, #0
 	beq .L_08119e46
-	bl Func_08119374
+	bl BattlePres_SyncTurn
 	cmp r0, #0
 	bge .L_08119e4c
 	b .L_08119f4c
@@ -789,7 +789,7 @@ Func_081197f0:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_08119eb0
-	bl Func_081197d0
+	bl Tutorial_GetDjinnGiveMessage
 	movs r1, #0
 	adds r0, #7
 	movs r2, #4
@@ -809,7 +809,7 @@ Func_081197f0:
 	bl UiWork_FinalizeFar
 	movs r0, #1
 	bl WaitFrames
-	bl Func_081197d0
+	bl Tutorial_GetDjinnGiveMessage
 	movs r2, #4
 	movs r3, #1
 	movs r1, #10
@@ -833,7 +833,7 @@ Func_081197f0:
 	ldr r5, [sp, #40]
 	subs r5, #74
 .L_08119ebc:
-	bl Func_081195d4
+	bl BattlePres_ClearLinkPayload
 	cmp r5, #1
 	bls .L_08119f34
 	ldr r2, [sp, #40]
@@ -898,7 +898,7 @@ Func_081197f0:
 	ldr r5, [sp, #40]
 	subs r5, #74
 .L_08119f4c:
-	bl Func_081195d4
+	bl BattlePres_ClearLinkPayload
 	movs r0, #0
 	bl Scheduler_EnableCallbacks
 	ldr r3, .L_08119f70
@@ -918,7 +918,7 @@ Func_081197f0:
 .L_08119f74:
 	.4byte 0x00000c84
 .L_08119f78:
-	bl Func_081195d4
+	bl BattlePres_ClearLinkPayload
 	ldr r5, [sp, #40]
 	subs r5, #74
 	cmp r5, #1

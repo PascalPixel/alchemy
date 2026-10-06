@@ -52,7 +52,7 @@ Func_0804b6a0:
 	cmp r2, #0
 	bge .L_0804b6e0
 	ldr r0, .L_0804b7b8
-	bl Func_08045330
+	bl Link_DrawShiftedTilePair
 	ldr r3, [r7, #80]
 	cmp r3, #0
 	beq .L_0804b7b4
@@ -151,4 +151,4 @@ Func_0804b6a0:
 .L_0804b7b8:
 	.4byte 0x06006680
 .L_0804b7bc:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures

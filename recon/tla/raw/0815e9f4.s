@@ -223,7 +223,7 @@ Func_0815e9f4:
 	ldr r0, [r2, #8]
 	adds r1, r3, #0
 	str r3, [sp, #12]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r1, [sp, #12]
 	mov r2, r10
 	ldr r3, [r1]
@@ -278,17 +278,17 @@ Func_0815e9f4:
 	movs r3, #1
 	ands r3, r1
 	adds r7, r3, #5
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r6, #20]
 	bl Func_080150e4
 	ldr r0, [r6, #12]
 	bl SceneTransform_ApplyPitch
 	ldr r0, [r6, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	add r5, sp, #80
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	adds r3, #64
 	str r3, [r5]
@@ -408,7 +408,7 @@ Func_0815e9f4:
 	ldrsh r0, [r1, r5]
 	add r5, sp, #92
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	mov r2, r11
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -433,7 +433,7 @@ Func_0815e9f4:
 .L_0815ed7c:
 	.4byte Func_08143488
 .L_0815ed80:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815ed84:
 	.4byte Data_08197424
 .L_0815ed88:
@@ -547,7 +547,7 @@ Func_0815e9f4:
 	mov r1, r11
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #12]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r2, [sp, #12]
 	ldr r3, [r2, #4]
 	adds r3, #16
@@ -614,7 +614,7 @@ Func_0815e9f4:
 	mov lr, r4
 	.2byte 0xf800
 .L_0815eede:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #8]
 	bl Graphics_PrepareTransferInIwramWork
@@ -642,7 +642,7 @@ Func_0815e9f4:
 	ble .L_0815ef66
 	mov r1, r8
 	adds r0, r7, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r3, r8
 	ldr r2, [r3]
 	ldr r1, [sp, #48]
@@ -724,7 +724,7 @@ Func_0815e9f4:
 	mov r3, r9
 	subs r1, r6, r3
 	ldrh r0, [r5]
-	bl Func_08118048
+	bl BattlePresentation_SetPaletteLevelFar
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1
@@ -742,7 +742,7 @@ Func_0815e9f4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0815efe8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815efec:
 	.4byte gMapCellBuffer
 .L_0815eff0:

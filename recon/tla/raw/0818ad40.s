@@ -292,7 +292,7 @@ Func_0818ad40:
 	add r6, sp, #72
 	ldr r0, [r3, #8]
 	adds r1, r6, #0
-	bl Func_0815e1fc
+	bl EffectPosition_ApplyAnimationAndYOffset
 	add r5, sp, #60
 	adds r0, r5, #0
 	bl Func_0815e22c
@@ -570,7 +570,7 @@ Func_0818ad40:
 	ldr r3, .L_0818b220
 	str r2, [r5, #16]
 	str r3, [r5, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r2, #128
 	lsls r2, r2, #9
 	adds r0, r2, #0
@@ -652,7 +652,7 @@ Func_0818ad40:
 	movs r0, #184
 	lsls r0, r0, #5
 	adds r0, #112
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, [sp, #28]
 	bl Func_0801521c
 	movs r2, #128

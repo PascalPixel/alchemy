@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803b8cc
+	.global UiText_GetResourceDimensionsAlt
 	.thumb_func
-Func_0803b8cc:
+UiText_GetResourceDimensionsAlt:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

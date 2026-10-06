@@ -1,36 +1,16 @@
-#include "TYPES.H"
-extern volatile s32 gSerialReceiveDest;
-extern volatile s32 gSerialSendSource;
-
-s32 WaitFrames(s32);
+#include "SERIAL_RUNTIME.H"
 
 void SerialRuntime_WaitForTransfers(void)
 {
-    u32 count;
+    u32 count = 0;
 
-    count = 0;
-    if (*(volatile s32 *)&gSerialSendSource != 0)
-    {
-        goto loop;
-    }
-    if (*(volatile s32 *)&gSerialReceiveDest != 0)
-    {
-        goto loop;
-    }
-    return;
+    goto check;
 loop:
     WaitFrames(1);
     count++;
-    if (count > 0x000927BF)
-    {
+    if (count > 0x927bf)
         return;
-    }
-    if (*(volatile s32 *)&gSerialSendSource != 0)
-    {
+check:
+    if (gSerialSendSource != 0 || gSerialReceiveDest != 0)
         goto loop;
-    }
-    if (*(volatile s32 *)&gSerialReceiveDest != 0)
-    {
-        goto loop;
-    }
 }

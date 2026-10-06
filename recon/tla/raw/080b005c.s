@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080b005c
+	.global Owner_GetDefaultElement
 	.thumb_func
-Func_080b005c:
+Owner_GetDefaultElement:
 	push {lr}
 	movs r2, #165
 	lsls r2, r2, #1

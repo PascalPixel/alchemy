@@ -4,7 +4,7 @@ extern u8 Data_03001e60[];
 
 extern u8 *gSpriteObjects;
 
-void Ui_SetGridColumnByte6(s32 slot, s32 value)
+void Ui_SetGridColumnPriority(s32 slot, s32 value)
 {
     u8 *base = gSpriteObjects;
     s32 offset = (slot & 3) * 4 + 40;

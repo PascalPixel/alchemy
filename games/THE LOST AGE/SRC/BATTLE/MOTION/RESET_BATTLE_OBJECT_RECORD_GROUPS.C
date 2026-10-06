@@ -1,11 +1,21 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
+#include "BATTLE_SESSION.H"
+#include "BATTLE_WORK.H"
 #include "RAM_BUFFER.H"
 
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
-void ResetMotionRecordGroup(void *owner);
-s32 ActivateBattleObjectSlot(s32 object_id);
-void *BattleMotion_DestroyAllSlotObjects(void);
+#define Object_Destroy ((void (*)(void*))Object_Destroy)
+
+
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object)
 {
@@ -33,4 +43,49 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
             break;
         }
     }
+}
+
+static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
+{
+    u8 *work = (u8 *)Ram_HeapSlots->battle_work;
+    struct BattleObjectSlot *slots = ((struct BattleSession *)work)->slots;
+
+    if (id > 7)
+        id -= 0x78;
+    id += 0x74;
+    if (work[id] == 0xff)
+        return NULL;
+    return &slots[work[id]];
+}
+
+s32 ActivateBattleObjectSlot(s32 object_id)
+{
+    struct BattleObjectSlot *slot;
+
+    BattleMotion_ReleaseObjectSlotByValue(object_id);
+    slot = BattleObject_FindSlot(object_id);
+    slot->active = 1;
+    return 0;
+}
+
+void BattleMotion_DestroyAllSlotObjects(void)
+{
+    s32 no;
+    s32 i;
+    struct BattleObjectSlot *slot;
+
+    i = 0;
+    do {
+        no = i + 0x78;
+        if (i <= 7) {
+            no = i;
+        }
+        slot = BattleObject_FindSlot(no);
+        if ((slot != NULL) && (slot->active != 0)) {
+            Object_Destroy(slot->object);
+            slot->object = NULL;
+            slot->active = 0;
+        }
+        i += 1;
+    } while (i <= 0xD);
 }

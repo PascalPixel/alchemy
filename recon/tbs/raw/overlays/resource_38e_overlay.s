@@ -92,7 +92,6 @@ gBiribinoNiwaPlacements:
 	.4byte 0x00000000
 	.4byte 0x01580000
 	.4byte 0x00024000
-	/* ES/FR/IT retain an extra actor in the garden placement group. */
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
@@ -123,7 +122,7 @@ gBiribinoNiwaEvents:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte FieldScene_RunScene38e_0200045c
+	.4byte BiribinoNiwa_LeaveThroughGate
 	.4byte 0x00000000
 	.4byte 0x08450008
 	.4byte MsgBilibinTheLumberIOrderedFromKolima

@@ -1,7 +1,15 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 
-/* battle/effects/common/run_no_effect_frames.c */
-void BattleFx_RunNoEffect(void);
 
 void BattleFx_RunNoEffectFrames(s32 frame_count)
 {

@@ -69,13 +69,13 @@ Func_08101638:
 	mov lr, r7
 	.2byte 0xf800
 	ldr r0, .L_081017d8
-	bl Func_080383b8
+	bl Graphics_ExpandVramTilesByColorTableFar
 	ldr r1, .L_081017dc
 	movs r2, #32
 	ldr r0, .L_081017e0
 	mov lr, r9
 	.2byte 0xf800
-	bl Func_080149f0
+	bl Runtime_GetLowTableAddress
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128

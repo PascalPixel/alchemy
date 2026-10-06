@@ -1,58 +1,58 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "EQUIPMENT_MENU.H"
 #include "ITEM.H"
 #include "FAR_RUNTIME.H"
 #include "INVENTORY_MENU.H"
 #include "OWNER_STATE.H"
+#include "UI.H"
 
-extern s32 gFrameCount;
-void AnimationObjects_SelectAnimationFar(void *, s32);
-
-
-s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-void UiIcon_PrepareObject(void *icon);
+#define gFrameCount (*(s32 *)&gFrameCount)
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
 {
-    u8 *menu;
+    struct InventoryMenuState *menu;
     s8 member_index;
 
-    menu = ((u8 *)gMenuWork);
-    if ((gFrameCount & 31) == 0 && menu[0x219] != 0) {
+    menu = gMenuWork;
+    if ((gFrameCount & 31) == 0 && menu->party_count != 0) {
         member_index = 0;
         do {
-            s32 owner_offset = member_index * 2 + 520;
-
-            if (Item_CanOwnerEquip(*(u16 *)(menu + owner_offset),
-                                   *(u16 *)(menu + 376) & 0x1FF) != 0) {
-                s32 off = member_index * 4 + 276;
-                void *indicator = *(void **)(menu + off);
+            if (Item_CanOwnerEquip(menu->owner_ids[member_index],
+                                   menu->selected_items[0] & ITEM_ID_MASK) != 0) {
+                struct AnimationObject *indicator = menu->owner_objects[member_index];
                 AnimationObjects_SelectAnimationFar(indicator, 3);
             } else {
-                s32 off = member_index * 4 + 276;
-                void *indicator = *(void **)(menu + off);
+                struct AnimationObject *indicator = menu->owner_objects[member_index];
                 AnimationObjects_SelectAnimationFar(indicator, 1);
             }
             member_index++;
-        } while (member_index < menu[0x219]);
+        } while (member_index < menu->party_count);
     }
 }
 
 void EquipmentMenu_StartCompatibilityIndicators(void)
 {
-    u8 *menu;
+    struct InventoryMenuState *menu;
     s8 member_index;
 
-    menu = ((u8 *)gMenuWork);
-    if (menu[0x219] != 0) {
+    menu = gMenuWork;
+    if (menu->party_count != 0) {
         member_index = 0;
         do {
-            s32 off = member_index * 4 + 276;
-            void *indicator = *(void **)(menu + off);
+            struct AnimationObject *indicator = menu->owner_objects[member_index];
             AnimationObjects_SelectAnimationFar(indicator, 1);
             member_index++;
-        } while (member_index < menu[0x219]);
+        } while (member_index < menu->party_count);
     }
-    Scheduler_RemoveCallback((u32)((s32)&EquipmentMenu_UpdateCompatibilityIndicators));
+    Scheduler_RemoveCallback(&EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
 s32 ItemMenu_IsSpecial(s32 item_id)
@@ -80,7 +80,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
 
     menu = gMenuWork;
     RenderOutput_RedrawSavedRectFar(menu->message_window);
-    UiText_DrawCharacterAtOffsetFar(message, menu->message_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(message, (s32)menu->message_window, 0, 0);
 }
 
 void Menu_HideEmptyEntryIcons(const u16 *items)
@@ -91,7 +91,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items)
     for (slot = 0; slot < 32; slot++) {
         if (items[slot] == 0) {
             UiIcon_PrepareObject(menu->entry_icons[slot]);
-            menu->entry_icons[slot]->state = 13;
+            menu->entry_icons[slot]->active = 13;
         }
     }
 }
@@ -107,7 +107,7 @@ s32 ItemMenu_Count(s32 owner_id)
     slots = Owner_GetStateFar(owner_id)->inventory;
     remaining = 0xE;
     do {
-        item_id = 0x1FF & *slots;
+        item_id = ITEM_ID_MASK & *slots;
         slots += 1;
         if (item_id != 0) {
             count += 1;

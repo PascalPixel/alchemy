@@ -37,7 +37,6 @@ struct EffectKindObject {
 
 extern u32 gGameState[];
 
-/* Object table: 192 pointers at gEventWork + 0x14 (see ObjectTable_Get). */
 void *ResourceMetadata_RegisterFar(void *, s32);
 void Object_SetMode(void *, s32);
 

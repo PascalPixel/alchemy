@@ -1,11 +1,3 @@
-@ Resource decoder for stream type 2, run from a heap copy that the loader
-@ at 0x08005394 makes of the 1,260-byte block formed by this entry,
-@ DECODE_2_NIBBLES.S and DECODE_2_LOOP.S. It returns 4 with movne r0, #4;
-@ bxne lr before it saves any register, then loads its nibble order from
-@ DECODE_2_NIBBLES.S (add ip, pc, #36; ldm ip, {sl, fp}), primes its bit
-@ buffer and jumps into the loop. GCC saves registers on entry, before any
-@ return. Every TBS and TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
 	.global Resource_Decode2

@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiGlyph_DecodeWithHeapRoutines
 	.thumb_func
 UiGlyph_DecodeWithHeapRoutines:

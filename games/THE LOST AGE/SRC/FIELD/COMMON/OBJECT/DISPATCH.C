@@ -1,4 +1,5 @@
 #include "OBJECT_DISPATCH.H"
+#include "ANIMSPR.H"
 
 void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object, s32 argument)
 {
@@ -76,7 +77,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 argum
     }
 }
 
-void ObjectDispatch_SetChildField12(struct DispatchObject *object, u32 value)
+void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object, u32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1)
         object->target.child->value_12 = value;
@@ -89,7 +90,7 @@ void Animation_SetIndexAndInitObjects(struct DispatchObject *object, s32 index)
     if (object != NULL && (object->kind & 0xf) == 1) {
         child = object->target.child;
         if (index >= 0) {
-            *child->animation_index = index;
+            child->entries[0]->anim_id = index;
             InitializeAnimationObjects(child);
         }
     }

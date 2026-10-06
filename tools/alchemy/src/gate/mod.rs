@@ -1,21 +1,12 @@
-//! Gates `build rom` runs on what it links, as Pascal set them on 2026-09-29.
-//! Each reads the build's own objects, linked images and maps, and fails the
-//! build with a message naming the rule and where it broke. They write
-//! nothing the build caches.
 pub(crate) mod ids;
 pub(crate) mod overlay;
 
-/// A minimal little-endian ARM ELF32 for the gates' tests: one allocated
-/// section, its REL relocations and a symbol table.
 #[cfg(test)]
 pub(crate) mod elf {
-    /// Where a test symbol is defined.
     pub(crate) const UNDEFINED: u16 = 0;
     pub(crate) const SECTION: u16 = 1;
     pub(crate) const ABSOLUTE: u16 = 0xfff1;
 
-    /// A symbol: its name, value, section and whether it is global. Local
-    /// symbols come first, as ELF requires.
     pub(crate) struct Symbol<'a>(pub &'a str, pub u32, pub u16, pub bool);
 
     fn string(table: &mut Vec<u8>, name: &str) -> u32 {
@@ -32,8 +23,6 @@ pub(crate) mod elf {
         file.len() as u32
     }
 
-    /// `section` at `address` holding `bytes`, with `relocations` as
-    /// `(offset, symbol number from 1, type)` against `symbols`.
     pub(crate) fn build(
         section: &str,
         address: u32,
@@ -158,8 +147,8 @@ pub(crate) mod elf {
             file[at..at + width].copy_from_slice(&value.to_le_bytes()[..width]);
             at += width;
         };
-        put(1, 2); // ET_REL
-        put(40, 2); // EM_ARM
+        put(1, 2);
+        put(40, 2);
         put(1, 4);
         put(0, 4);
         put(0, 4);

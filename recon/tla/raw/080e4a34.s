@@ -126,7 +126,7 @@ Func_080e4a34:
 	mov r5, r8
 	ldr r0, [r3, #16]
 	movs r1, #0
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	ldr r1, [r5, #8]
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #16]
@@ -256,7 +256,7 @@ Func_080e4a34:
 	mov r1, r8
 	ldr r0, [r1, #80]
 	movs r1, #15
-	bl Func_08020288
+	bl Animation_ApplyChildValueToFirstFar
 .L_080e4c50:
 	mov r2, r10
 	cmp r2, #45
@@ -291,7 +291,7 @@ Func_080e4a34:
 	ldrsh r0, [r1, r6]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r3, [sp, #44]
 	movs r1, #1
 	movs r2, #24
@@ -310,7 +310,7 @@ Func_080e4a34:
 	mov r2, r8
 	ldr r0, [r2, #80]
 	movs r1, #0
-	bl Func_08020288
+	bl Animation_ApplyChildValueToFirstFar
 .L_080e4cc4:
 	movs r5, #1
 	movs r0, #1

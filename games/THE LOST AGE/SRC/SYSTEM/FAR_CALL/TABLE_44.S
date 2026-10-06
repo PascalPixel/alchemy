@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x08118028: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -13,19 +9,19 @@ BattlePres_SetupTransitionSceneFar:
 	.thumb_func
 BattlePres_SetupTransitionAtPairMidpointFar:
 	overlay_veneer BattlePres_SetupTransitionAtPairMidpoint
-	.global Func_08118038
+	.global BattlePresentation_ConfigurePaletteFadeFar
 	.thumb_func
-Func_08118038:
+BattlePresentation_ConfigurePaletteFadeFar:
 	overlay_veneer Func_0812628c
-	.global Func_08118040
+	.global BattleBackground_LoadFar
 	.thumb_func
-Func_08118040:
+BattleBackground_LoadFar:
 	overlay_veneer Func_081263fc
-	.global Func_08118048
+	.global BattlePresentation_SetPaletteLevelFar
 	.thumb_func
-Func_08118048:
+BattlePresentation_SetPaletteLevelFar:
 	overlay_veneer Func_08126218
-	.global Func_08118050
+	.global Summon_GetEntryByte4Far
 	.thumb_func
-Func_08118050:
+Summon_GetEntryByte4Far:
 	overlay_veneer Summon_GetEntryByte4

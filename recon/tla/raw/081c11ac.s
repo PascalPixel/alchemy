@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081c11ac
+	.global SongFlag_Set
 	.thumb_func
-Func_081c11ac:
+SongFlag_Set:
 	movs r3, #7
 	ands r3, r0
 	movs r2, #1
@@ -18,4 +18,4 @@ Func_081c11ac:
 	strb r2, [r1, r0]
 	bx lr
 .L_081c11c8:
-	.4byte Data_02002f20
+	.4byte gSongFlags

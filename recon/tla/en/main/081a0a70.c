@@ -1,38 +1,39 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
+#include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
-extern u8 gFlashNumRemainingBytes[];
+
+struct DisplayScrollObject {
+    u32 attr01;
+    u32 attr2;
+};
+
+extern u16 DisplayScroll_Position;
+extern s16 DisplayScroll_Busy;
+extern s16 DisplayScroll_LastPosition;
+extern struct DisplayScrollObject *DisplayScroll_Objects;
+extern const void *DisplayScroll_LineTable[];
 
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
-
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-s32 Func_080f07f0(const void *resource, s32 offset, s32 mode);
-
-extern u16 Data_02004c00;
-extern u16 Flash_Layout;
-extern u16 Flash_Handler0;
-extern const void *DisplayScroll_LineTable[];
-
-/* Allocate the scrolling display's object table, clear OBJ VRAM and fill its
-   last tiles with colour 1, then lay out the entries: three strips of eight
-   tall objects, a 16 x 6 grid of wide objects stepping 8 down and 32 across
-   with 4 tiles each, and eight parked objects. Reset the scroll position and
-   group, schedule the step and group callbacks, and load the 32 tile groups. */
+s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
 void DisplayScroll_InitObjectTable(void)
 {
+    /* FAKEMATCH: retain the existing pointer-cell and postincrement word
+       stores; direct typed stores in f4f9d28 change the 376-byte body to 368. */
     volatile u32 fill;
     u32 *entry;
     u32 i;
     u32 j;
 
-    *(void **)gFlashNumRemainingBytes = Runtime_BumpAllocateAlternatePool(0x400);
+    *(void **)((u8 *)&DisplayScroll_Objects) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
     fill = 0x11111111;
     Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, (volatile u32 *)0x040000d4);
 
-    entry = *(u32 **)gFlashNumRemainingBytes;
+    entry = *(u32 **)((u8 *)&DisplayScroll_Objects);
     for (i = 0; i < 8; i++) {
         u32 *q = entry;
 
@@ -71,11 +72,11 @@ void DisplayScroll_InitObjectTable(void)
         *q = 0x300;
         entry += 2;
     }
-    Data_02004c00 = 0;
-    Flash_Layout = 0;
-    Flash_Handler0 = 0;
-    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);
-    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
+    DisplayScroll_Position = 0;
+    DisplayScroll_LastPosition = 0;
+    DisplayScroll_Busy = 0;
+    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0x480);
     for (i = 0; i < 32; i++)
-        Func_080f07f0(DisplayScroll_LineTable[0], i * 24, 1);
+        DisplayScroll_DrawLine(DisplayScroll_LineTable[0], i * 24, 1);
 }

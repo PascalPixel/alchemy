@@ -41,7 +41,7 @@ Func_0200005c:
 .L_020080a4:
 	.4byte 0x00000022
 .L_020080a8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020080ac:
 	adds r0, r4, #0
 	ldr r1, .L_02008144
@@ -129,7 +129,7 @@ Func_0200005c:
 .L_02008150:
 	.4byte 0x06003000
 .L_02008154:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_02008158:
 	.4byte gPartyState
 	.section .text.x0200815c,"ax",%progbits
@@ -404,8 +404,8 @@ Func_02000328:
 	adds r3, r3, r2
 	mov r1, r10
 	str r1, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r3, .L_020086ac
 	movs r2, #241
 	lsls r2, r2, #1
@@ -456,7 +456,7 @@ Func_02000328:
 .L_020083cc:
 	movs r0, #60
 	bl Battle_WaitMode0
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
@@ -813,11 +813,11 @@ Func_02000328:
 .L_020086b4:
 	.4byte 0x00000000
 .L_020086b8:
-	.4byte Data_03001180
+	.4byte gSleepDisabled
 .L_020086bc:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_020086c0:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_020086c4:
 	.4byte 0x0000000b
 .L_020086c8:
@@ -1231,8 +1231,8 @@ Func_02000328:
 	bl Battle_WaitMode0
 	movs r0, #78
 	bl Func_02002408
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #60
 	bl Battle_WaitMode0
 .L_02008a2c:
@@ -1253,7 +1253,7 @@ Func_02000328:
 .L_02008a48:
 	.4byte 0x00000005
 .L_02008a4c:
-	.4byte Data_03001180
+	.4byte gSleepDisabled
 .L_02008a50:
 	.4byte 0x00000138
 .L_02008a54:
@@ -1486,7 +1486,7 @@ Func_02000b24:
 .L_02008bf8:
 	.4byte 0x04000128
 .L_02008bfc:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_02008c00:
 	.4byte Data_02003a74
 .L_02008c04:
@@ -1495,7 +1495,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_02008d7c
-	bl Party_Check
+	bl SerialRuntime_BeginTransferB
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3
@@ -1667,7 +1667,7 @@ Func_02000b24:
 .L_02008d7c:
 	.4byte Data_02012f94 + 0x6c
 .L_02008d80:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_02008d84:
 	.4byte 0x00001186
 .L_02008d88:
@@ -1675,7 +1675,7 @@ Func_02000b24:
 .L_02008d8c:
 	.4byte gLinkStatus
 .L_02008d90:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_02008d94:
 	.4byte 0x000927bf
 .L_02008d98:

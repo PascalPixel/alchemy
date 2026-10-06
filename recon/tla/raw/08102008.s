@@ -133,7 +133,7 @@ Func_08102008:
 	add r11, r0
 	mov r0, r11
 	ldrb r1, [r5]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	mov r11, r0
 .L_0810210c:
 	movs r1, #1
@@ -275,7 +275,7 @@ Func_08102008:
 	bl Func_08104ef8
 	mov r0, r10
 	adds r1, r7, #0
-	bl Func_08101ac8
+	bl DjinnMenu_DrawPage
 	ldr r0, [sp, #84]
 	cmp r0, #1
 	bne .L_081022f8
@@ -858,7 +858,7 @@ Func_08102008:
 	beq .L_081026d4
 	b .L_08102b06
 .L_081026d4:
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r2, #9
 	movs r3, #1
 	adds r0, #12
@@ -883,10 +883,10 @@ Func_08102008:
 	adds r0, r5, #0
 	bl UiWork_FinalizeFar
 	mov r0, r10
-	bl Func_08101c0c
+	bl DjinnMenu_DrawFirstPage
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r2, #9
 	movs r3, #1
 	adds r0, #13
@@ -911,7 +911,7 @@ Func_08102008:
 	adds r0, r5, #0
 	bl UiWork_FinalizeFar
 	mov r0, r10
-	bl Func_08101c0c
+	bl DjinnMenu_DrawFirstPage
 	movs r2, #132
 	lsls r2, r2, #6
 	adds r2, #40
@@ -944,7 +944,7 @@ Func_08102008:
 	b .L_08102b06
 .L_08102798:
 	str r4, [sp, #8]
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1
@@ -972,7 +972,7 @@ Func_08102008:
 	movs r1, #1
 	bl UiWork_FinalizeFar
 	mov r0, r10
-	bl Func_08101c0c
+	bl DjinnMenu_DrawFirstPage
 	movs r2, #132
 	lsls r2, r2, #6
 	adds r2, #40
@@ -1054,7 +1054,7 @@ Func_08102008:
 	b .L_08102b06
 .L_08102870:
 	str r4, [sp, #8]
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1
@@ -1083,7 +1083,7 @@ Func_08102008:
 	movs r1, #1
 	bl UiWork_FinalizeFar
 	mov r0, r10
-	bl Func_08101c0c
+	bl DjinnMenu_DrawFirstPage
 	movs r2, #132
 	lsls r2, r2, #6
 	adds r2, #40
@@ -1155,7 +1155,7 @@ Func_08102008:
 	movs r3, #1
 	strb r3, [r2]
 	str r4, [sp, #8]
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r2, #9
 	movs r3, #1
 	movs r1, #9
@@ -1203,10 +1203,10 @@ Func_08102008:
 	str r4, [sp, #8]
 	bl UiWork_FinalizeFar
 	mov r0, r10
-	bl Func_08101c0c
+	bl DjinnMenu_DrawFirstPage
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1
@@ -1251,10 +1251,10 @@ Func_08102008:
 	str r4, [sp, #8]
 	bl UiWork_FinalizeFar
 	mov r0, r10
-	bl Func_08101c0c
+	bl DjinnMenu_DrawFirstPage
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1
@@ -1299,7 +1299,7 @@ Func_08102008:
 	str r4, [sp, #8]
 	bl UiWork_FinalizeFar
 	mov r0, r10
-	bl Func_08101c0c
+	bl DjinnMenu_DrawFirstPage
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #132
@@ -1449,7 +1449,7 @@ Func_08102008:
 	lsls r1, r1, #2
 	mov r0, r10
 	str r4, [sp, #8]
-	bl Func_08101ac8
+	bl DjinnMenu_DrawPage
 	movs r2, #1
 	str r2, [sp, #68]
 	ldr r4, [sp, #8]
@@ -1704,7 +1704,7 @@ Func_08102008:
 	asrs r1, r1, #2
 	lsls r1, r1, #2
 	mov r0, r10
-	bl Func_08101ac8
+	bl DjinnMenu_DrawPage
 	movs r7, #1
 	str r7, [sp, #68]
 	b .L_08102db4
@@ -1786,7 +1786,7 @@ Func_08102008:
 	str r1, [sp, #52]
 	ldr r0, [sp, #52]
 	ldrsb r1, [r2, r5]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	movs r3, #2
 	str r0, [sp, #52]
 	str r0, [sp, #48]
@@ -1828,7 +1828,7 @@ Func_08102008:
 	str r2, [sp, #52]
 	adds r0, r2, #0
 	ldrsb r1, [r3, r5]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	mov r4, r11
 	str r0, [sp, #52]
 	ldrb r2, [r7, r4]
@@ -1972,7 +1972,7 @@ Func_08102008:
 .L_08102f9e:
 	ldr r0, [sp, #52]
 	adds r1, r5, #0
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	movs r1, #2
 	mov r3, r8
 	str r0, [sp, #52]

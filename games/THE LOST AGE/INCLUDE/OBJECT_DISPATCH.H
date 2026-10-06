@@ -2,6 +2,10 @@
 #define TLA_OBJECT_DISPATCH_H
 
 #include "TYPES.H"
+#include "SYSTEM.H"
+
+struct AnimationObject;
+struct AnimationEntry;
 
 struct DispatchChild {
     u8 unknown_00[5];
@@ -13,22 +17,30 @@ struct DispatchChild {
     u8 display_flag : 1;
     u8 unknown_11_high : 6;
     s16 value_12;
-    u8 unknown_14[6];
+    u8 unknown_14[5];
+    u8 dirty;
     u8 value_1a;
-    u8 unknown_1b[0x0d];
-    s16 *animation_index;
+    u8 count;
+    u8 unknown_1c[0x0c];
+    struct AnimationEntry *entries[4];
 };
+
+struct FieldSprite;
 
 struct DispatchObject {
     u32 value_00;
     s16 value_04;
-    u8 unknown_06[0x2a];
+    u8 unknown_06[0x1d];
+    u8 priority_flags;
+    u8 unknown_24[0x0c];
     s32 value_30;
     s32 value_34;
     u8 unknown_38[0x18];
     union {
         struct DispatchChild *child;
         struct DispatchChild **children;
+        struct FieldSprite *sprite;
+        struct AnimationObject *animation;
     } target;
     u8 kind;
     u8 unknown_55[2];
@@ -41,16 +53,20 @@ struct DispatchObject {
     s16 value_64;
     u8 unknown_66[2];
     s32 argument;
-    u8 unknown_6c[4];
+    void (*update)(struct DispatchObject *object);
 };
 
 s32 Animation_ApplyChildArgument(struct DispatchChild *, s32);
 void Animation_ApplyChildValue(struct DispatchChild *, s32);
 s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *, s32);
-void ObjectDispatch_Initialize(struct DispatchObject *, u32);
-s32 Animation_ApplyChildValuesToRecord(struct DispatchChild *);
-s32 WaitFrames(s32);
+void ObjectDispatch_Initialize(struct DispatchObject *, const s32 *);
+void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *, u32);
+void Animation_ApplyChildValuesToRecord(struct DispatchChild *, u32);
+void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *, u32);
+void Animation_ApplyChildValues(struct DispatchObject *, u32);
+void Animation_ApplyChildValuesFar(struct DispatchObject *, u32);
+void ObjectDispatch_SetSpritePriority(struct DispatchObject *, s32);
 
 extern const s32 ObjectDispatch_Table4[];
 extern const s32 ObjectDispatch_Table6[];

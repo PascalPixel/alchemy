@@ -803,7 +803,7 @@ Func_02000390:
 	bl Func_02001108
 	movs r0, #20
 	negs r0, r0
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 .L_0200875a:
 	add sp, #8
 	pop {r5, r6, r7, pc}
@@ -1922,11 +1922,11 @@ Func_02000f28:
 	movs r0, #19
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Object_GetById
 	movs r1, #4

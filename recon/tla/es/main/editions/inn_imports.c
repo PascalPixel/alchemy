@@ -1,12 +1,8 @@
-/* Draft: the complete 164-byte ES output has 5 differing import bytes.
- * All non-relocation instructions match; callee ownership must be proved
- * before a source call-target change. Preserved at the Japanese-base pivot. */
+#include "OWNER_STATE.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
-/* The event work's screen effect and its delay: ☀️ keeps them at 0x1c0 and
-   0x1c8. */
 struct FieldEffectState {
     u8 padding0[0x1AC];
     s32 effect;
@@ -23,17 +19,14 @@ struct FieldObject {
 };
 
 s32 Party_ListActiveOwnersFar(s16 *);
-void Party_AdjustSixDigitCounterAFar(s32);
-struct FieldObject *Owner_GetState(s32);
+void Party_AdjustCoinsFar(s32);
 void Owner_RecalculateRatiosFar(s32);
-void Event_ClearStatus1c6Far(void);
-void Event_WaitValue1c8FramesFar(void);
+void Event_FinishScreenTransitionFar(void);
+void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
-void Event_SetStatus1c6Far(void);
+void Event_StartScreenTransitionFar(void);
 
-/* ☀️'s: pay for the room, restore every active member and play the night's
-   fade and tune. */
 void Inn_PlaySleep(s32 room_price)
 {
     s16 objects[8];
@@ -43,7 +36,7 @@ void Inn_PlaySleep(s32 room_price)
     struct FieldEffectState *state;
 
     count = Party_ListActiveOwnersFar(objects);
-    Party_AdjustSixDigitCounterAFar(-room_price);
+    Party_AdjustCoinsFar(-room_price);
 
     for (index = 0; index < count; index++) {
         object = Owner_GetState(objects[index]);
@@ -58,13 +51,13 @@ void Inn_PlaySleep(s32 room_price)
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
-    Event_ClearStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_FinishScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
-    Event_SetStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_StartScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     WaitFrames(30);
     ((struct FieldEffectState *)Ram_HeapSlots->event_work)->delay = 16;
 }

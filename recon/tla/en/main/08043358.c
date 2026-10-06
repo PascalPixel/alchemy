@@ -1,6 +1,3 @@
-/* Save: fill the summary header at the start of the save image (leader name
-   and level, area, play time, coins, Djinn counts, party and progress
-   counters) and its checksum over the rest of the image. */
 #include "TYPES.H"
 
 struct SaveSummary {

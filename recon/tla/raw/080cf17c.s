@@ -30,7 +30,7 @@ BattleFx_StartRandomParticleEmitter:
 	str r3, [sp, #4]
 	ldr r3, [r7, #16]
 	str r3, [sp, #8]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	cmp r5, r0
 	bne .L_080cf1de
 	movs r0, #128

@@ -1,9 +1,6 @@
 #ifndef SUHARA_SABAKU_SABAKU_H
 #define SUHARA_SABAKU_SABAKU_H
 
-/* The Suhara desert (resource_3c0): the declarations, views and call
- * helpers its scene sources share. */
-
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -30,7 +27,6 @@ struct SceneWork_02000400 {
 extern u8 gSuharaSabakuExits[];
 extern u8 gSuharaSabakuActor12Action[];
 
-/* The encounter palette's level, kept while the encounter pulses it. */
 extern u16 gSuharaSabakuShownLevel;
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
@@ -39,23 +35,9 @@ void BattleFx_EmitRandomParticle();
 
 #define ACTOR_ID 13
 
-/* Actor id operated on throughout this scene. */
-
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
-void SetEffectRecordMode(struct EffectWork *work, s32 mode);
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
 
 void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
@@ -63,9 +45,9 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 void SceneState_SendRequest15With45(void);
 
-s32 OverlayObject_ApplyZeroAndClearByte89(u8 *obj);
+s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj);
 
-s32 OverlayObject_ToggleField84Bit0(u8 *obj);
+s32 SuharaSabaku_ToggleActorActive(u8 *obj);
 
 s32 SceneData_ReturnZero(void);
 
@@ -99,7 +81,7 @@ void FieldScene_RunActorThirteenRestoration(void);
 
 void PlaceActorTwelveWhenFlagClear(void);
 
-void SceneState_SetStateByte52(void);
+void SuharaSabaku_EnableEffectChildOption(void);
 
 void EncounterPalette_Pulse(void);
 

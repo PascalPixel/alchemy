@@ -1,8 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Import veneers after the TAKARA_HASHIRA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — TAKARA_HASHIRA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -76,10 +72,10 @@ Engine_MapAnimateCells:
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Map_GetTerrainHeightFar
+	.global Map_GetTerrainHeight
 	.thumb_func
-Map_GetTerrainHeightFar:
-	overlay_veneer Func_080091a8
+Map_GetTerrainHeight:
+	overlay_veneer Map_GetTerrainHeightFar
 	.global GetMapCellCollision
 	.thumb_func
 GetMapCellCollision:
@@ -98,15 +94,15 @@ Map_CopyCellAttributeRect:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:

@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_080fbe6c
 	.thumb_func
 Func_080fbe6c:
@@ -31,7 +32,7 @@ Func_080fbe6c:
 	adds r3, #240
 	ldr r7, [r3]
 	mov r10, r0
-	bl Func_080fbe24
+	bl ItemMenu_SetMsgWin7
 	adds r0, r7, #0
 	bl RenderOutput_RedrawSavedRectFar
 	ldr r2, [sp, #20]
@@ -146,22 +147,22 @@ Func_080fbe6c:
 	mov r2, r10
 	movs r0, #30
 	movs r1, #14
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	ldr r0, [sp, #24]
 	movs r1, #0
 	add r0, r11
 	mov r2, r10
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	mov r0, r11
 	add r0, r8
 	adds r0, #1
 	movs r1, #10
 	mov r2, r10
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	mov r0, r11
 	movs r1, #2
 	mov r2, r10
-	bl Func_08108050
+	bl Shop_FillSelectorFar
 	movs r1, #128
 	ldr r0, [sp, #16]
 	lsls r1, r1, #1

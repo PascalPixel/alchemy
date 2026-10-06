@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "ITEM.H"
@@ -6,55 +7,50 @@ extern u8 Data_03001f2c[];
 
 struct ItemMenuIcon {
     u8 unknown_00[5];
-    u8 state;                       /* 0x05 */
-    u16 x;                          /* 0x06 */
-    u16 y;                          /* 0x08 */
+    u8 state;
+    u16 x;
+    u16 y;
     u8 unknown_0a[4];
-    u8 render_target;               /* 0x0e */
+    u8 render_target;
 };
 
-/* The item menu work block at 0x03001F2C, as this loop sees it. */
 struct ItemCommandWork {
     u8 unknown_000[0x14];
     union {
         struct ItemMenuIcon *icon;
         u32 word;
-    } list;                         /* 0x014 */
+    } list;
     u8 unknown_018[0x0c];
-    s32 status_window;              /* 0x024 */
+    s32 status_window;
     u8 unknown_028[4];
-    s32 info_window;                /* 0x02c */
+    s32 info_window;
     u8 unknown_030[4];
-    s32 preview_window;             /* 0x034 */
+    s32 preview_window;
     u8 unknown_038[0xd4];
-    s32 message_window;             /* 0x10c */
+    s32 message_window;
     u8 unknown_110[0x64];
-    u16 selected_slot;              /* 0x174 */
-    u16 target_slot;                /* 0x176 */
-    u16 selected_item;              /* 0x178 */
-    u16 target_item;                /* 0x17a */
+    u16 selected_slot;
+    u16 target_slot;
+    u16 selected_item;
+    u16 target_item;
     u8 unknown_17c[0x4c];
-    u16 items[32];                  /* 0x1c8 */
+    u16 items[32];
     u8 unknown_208[0x10];
-    u8 item_count;                  /* 0x218 */
-    u8 party_count;                 /* 0x219 */
-    u8 item_owner;                  /* 0x21a */
-    u8 target_owner;                /* 0x21b */
-    struct ItemMenuIcon * volatile selected_item_icon; /* 0x21c */
+    u8 item_count;
+    u8 party_count;
+    u8 item_owner;
+    u8 target_owner;
+    struct ItemMenuIcon * volatile selected_item_icon;
     u8 unknown_220[2];
-    s16 completion_flag;            /* 0x222 */
+    s16 completion_flag;
     u8 unknown_224[0x36];
-    s16 message_offset;             /* 0x25a */
-    u8 equip_preview;               /* 0x25c */
-    u8 list_mode;                   /* 0x25d */
+    s16 message_offset;
+    u8 equip_preview;
+    u8 list_mode;
 };
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
-/* The resident word copier, addressed from the start of the IWRAM runtime
-   bank, whose first routine is the interrupt handler. A symbol plus an
-   offset keeps the call in a register as the pool entry's schedule shows;
-   named alone, GCC emits a Thumb bl that cannot reach IWRAM. */
 #define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
 s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)

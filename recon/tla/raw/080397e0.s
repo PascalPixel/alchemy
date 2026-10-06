@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080397e0
+	.global UiWork_ProcessRenderChannels
 	.thumb_func
-Func_080397e0:
+UiWork_ProcessRenderChannels:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

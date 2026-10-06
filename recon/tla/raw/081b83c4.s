@@ -34,7 +34,7 @@ Func_081b83c4:
 	bl Runtime_AllocateBlock
 	str r0, [sp, #116]
 	ldr r0, .L_081b8610
-	bl Func_080132fc
+	bl Resource_ReservedNoOp
 	bl Func_081b8020
 	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081b8614
@@ -284,7 +284,7 @@ Func_081b83c4:
 .L_081b8610:
 	.4byte 0x0000000c
 .L_081b8614:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081b8618:
 	.4byte 0x06003000
 .L_081b861c:
@@ -424,7 +424,7 @@ Func_081b83c4:
 .L_081b872c:
 	.4byte 0x05000200
 .L_081b8730:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081b8734:
 	movs r3, #128
 	ldr r1, .L_081b8770
@@ -615,7 +615,7 @@ Func_081b83c4:
 	movs r3, #8
 	movs r2, #0
 	bl UiText_DrawCharacterAtOffsetFar
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -731,7 +731,7 @@ Func_081b83c4:
 	adds r5, #28
 	cmp r1, #4
 	bne .L_081b896c
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	ldr r7, .L_081b8bf0
@@ -756,7 +756,7 @@ Func_081b83c4:
 	bl UiText_DrawNumberInWindowFar
 	ldr r1, [sp, #92]
 	negs r0, r1
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	movs r4, #128
 	ldr r2, [sp, #120]
 	lsls r4, r4, #3
@@ -774,7 +774,7 @@ Func_081b83c4:
 	str r2, [sp, #96]
 	str r3, [sp, #84]
 	str r3, [sp, #80]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -931,7 +931,7 @@ Func_081b83c4:
 	beq .L_081b8b72
 	b .L_081b8c70
 .L_081b8b72:
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -956,7 +956,7 @@ Func_081b83c4:
 	bl UiText_DrawNumberInWindowFar
 	ldr r2, [sp, #92]
 	negs r0, r2
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	ldr r0, [r5, #16]
 	ldr r4, [sp, #120]
 	movs r5, #128
@@ -1759,7 +1759,7 @@ Func_081b83c4:
 	movs r5, #0
 	str r4, [sp, #64]
 	str r5, [sp, #88]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	ldr r6, [sp, #120]
@@ -1937,7 +1937,7 @@ Func_081b83c4:
 	str r1, [sp, #80]
 	str r1, [sp, #84]
 	str r2, [sp, #56]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -1961,7 +1961,7 @@ Func_081b83c4:
 	movs r0, #105
 	bl Audio_PlayCue
 	ldr r0, [sp, #76]
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	ldr r3, .L_081b9510
 	ldr r1, [sp, #120]
 	movs r2, #128
@@ -1990,7 +1990,7 @@ Func_081b83c4:
 	bl Audio_PlayCue
 .L_081b9388:
 	movs r0, #1
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	ldr r3, .L_081b9510
 	ldr r6, [sp, #120]
 	movs r1, #128
@@ -3909,7 +3909,7 @@ Func_081b83c4:
 	adds r3, r6, #0
 	bl Graphics_ScaleRgb555BufferB
 .L_081ba23a:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #116]
 	ldr r1, [sp, #36]
 	bl Graphics_PrepareTransferInIwramWork
@@ -3924,7 +3924,7 @@ Func_081b83c4:
 	bl .L_081b9550
 .L_081ba25a:
 	ldr r5, .L_081ba308
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	ldr r2, [r5, #16]
 	lsls r3, r0, #2
 	adds r3, r3, r0

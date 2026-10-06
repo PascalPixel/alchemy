@@ -1,20 +1,20 @@
 #include "ENTRANCE.H"
 
-/* Spawn and configure the compact companion object at a source position. */
-void OverlayObject_SpawnKind24AtObject(u8 *src)
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
-    u8 *obj = Object_Create(24, *(int *)(src + 8),
-                              *(int *)(src + 12), *(int *)(src + 16));
+    struct FieldActor *obj = Engine_ObjectCreate(24, src->x.fixed, src->y.fixed, src->z.fixed);
+
     if (obj != 0) {
-        u8 *rec = *(u8 **)(obj + 80);
-        Object_SetScript(obj, MakyuriIriguchi_RiseScript);
-        obj[85] = 0;
-        obj[34] = 1;
-        obj[35] = 2;
-        if (rec != 0) {
-            AnimationObjects_SelectAnimation(rec, 2);
-            rec[38] = 0;
-            rec[9] |= 0x0c;
+        struct FieldSprite *sprite = obj->sprite;
+
+        Engine_ObjectSetScript(obj, MakyuriIriguchi_RiseScript);
+        obj->motion_flags = 0;
+        obj->terrain_id = 1;
+        obj->priority_flags = 2;
+        if (sprite != 0) {
+            AnimationObjects_SelectAnimation(sprite, 2);
+            sprite->flags = 0;
+            ((struct FieldSpritePriority *)sprite)->priority = 3;
         }
     }
 }
@@ -38,24 +38,9 @@ s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work)
     return 1;
 }
 
-s32 OverlayObject_RampWords24And28Over16Frames(u8 *obj)
+s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
 {
-    u16 *cnt = (u16 *)(obj + 100);
-    s16 n;
-
-    *cnt = *cnt + 1;
-    n = (s16)*cnt;
-    if (n > 16) {
-        return 0;
-    }
-    *(s32 *)(obj + 24) = (n * 3) << 10;
-    *(s32 *)(obj + 28) = (n * 3) << 10;
-    return 1;
-}
-
-s32 OverlayObject_AdvanceScaleCounter(u8 *o)
-{
-    u16 *c = (u16 *)(o + 100);
+    u16 *c = &o->timer;
     s16 n;
 
     *c = *c + 1;
@@ -63,7 +48,22 @@ s32 OverlayObject_AdvanceScaleCounter(u8 *o)
     if (n > 16) {
         return 0;
     }
-    *(s32 *)(o + 24) = (n << 11) + 0x10000;
-    *(s32 *)(o + 28) = (n << 11) + 0x10000;
+    o->scale_x = (n * 3) << 10;
+    o->scale_y = (n * 3) << 10;
+    return 1;
+}
+
+s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
+{
+    u16 *c = &o->timer;
+    s16 n;
+
+    *c = *c + 1;
+    n = (s16)*c;
+    if (n > 16) {
+        return 0;
+    }
+    o->scale_x = (n << 11) + 0x10000;
+    o->scale_y = (n << 11) + 0x10000;
     return 1;
 }

@@ -148,7 +148,7 @@ Func_08109cac:
 	ldr r1, .L_08109ff0
 	ldr r0, [sp, #20]
 	add r1, r8
-	bl Func_08109270
+	bl Shop_DrawMsg
 .L_08109dda:
 	ldr r4, .L_08109ff4
 	movs r3, #1

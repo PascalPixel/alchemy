@@ -104,7 +104,7 @@ Func_0814db04:
 	ldr r1, .L_0814dc40
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r1, #194
 	lsls r1, r1, #1
 	adds r1, #255
@@ -546,7 +546,7 @@ Func_0814db04:
 	movs r0, #145
 	bl Audio_PlayCue
 .L_0814df3e:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #40]
 	cmp r2, #32
 	bne .L_0814df9c
@@ -695,7 +695,7 @@ Func_0814db04:
 	adds r4, r0, #4
 	b .L_0814e0aa
 .L_0814e07c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814e080:
 	.4byte Data_08198280
 .L_0814e084:

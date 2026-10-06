@@ -1,39 +1,29 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "GATE.H"
 #include "FIELD_SCENE.H"
-/* The Suhara gate's scene start: once flag 0x89f is set the gate returns
- * the party to Lunpa's Suhara side at entrance 10; the first scene sets the
- * retreat point and the passage cells by the entrance used, and the second
- * poses the gate crew. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gSuharaGateEntrances2[];
-extern const struct SceneEntrance gSuharaGateEntrances3[];
-extern const struct SceneEntrance gSuharaGateEntrancesOther[];
 
-extern u8 SuharaGate_SceneTable[];
 
-extern const struct ScenePlacement gSuharaGatePlacements1[];
-extern const struct ScenePlacement gSuharaGatePlacements1Flagged[];
-extern const struct ScenePlacement gSuharaGatePlacements2[];
-extern const struct ScenePlacement gSuharaGatePlacementsOther[];
 
-extern const struct SceneEvent gSuharaGateEvents2[];
-extern const struct SceneEvent gSuharaGateEvents3[];
-extern const struct SceneEvent gSuharaGateEventsOther[];
 
-extern u8 MsgFieldVenusLighthouseWasAttackedBy[];
-extern u8 MsgSuharaMeaning[];
-extern u8 MsgSuharaPityColossoVictor[];
-extern u8 MsgSuharaWantGoBabi[];
 
 void Scene_SetActor13Value1A(void)
 {
     BattleFx_SetPhaseRequest(0xD, 0x1A);
 }
 
-/* Where the party appears on each side of the gate. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -59,8 +49,6 @@ u8 *SceneData_GetSceneTable(void)
     return SuharaGate_SceneTable;
 }
 
-/* The actors placed at the gate; the first row places others once flag
- * 0x96f is set. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -69,7 +57,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
         return gSuharaGatePlacements2;
     }
     if (scene == (s32)&SceneId_SuharaGate1) {
-        if (GameFlag_IsSet(0x96f) != 0) {
+        if (Engine_GameFlagIsSet(0x96f) != 0) {
             return gSuharaGatePlacements1Flagged;
         }
         return gSuharaGatePlacements1;
@@ -77,7 +65,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gSuharaGatePlacementsOther;
 }
 
-/* What each side of the gate answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -158,7 +145,7 @@ void Scene_RunScene3c3SequenceC(void)
     s32 v5;
 
     arg = *(s16 *)(*(u8 **)gWork + 0x16c);
-    *(u8 *)((s32)Actor_Get(0) + 85) = 0;
+    Actor_Get(0)->motion_flags = 0;
     v5 = 2;
     Audio_PlayCue(158);
     Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
@@ -175,9 +162,9 @@ void Dialogue_ShowMessages8fbAnd8fc(void)
 
     s16 token = *(s16 *)(gWork + 364);
 
-    Audio_PlayCue(123);
-    GameFlag_Clear(0x8FB);
-    GameFlag_Clear(0x8FC);
+    Engine_AudioPlayCue(123);
+    Engine_GameFlagClear(0x8FB);
+    Engine_GameFlagClear(0x8FC);
     Engine_EventRequestExit(token);
 }
 
@@ -206,7 +193,7 @@ void Scene_RunScene3c3SequenceA(void)
     extern u8 gWork[];
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 v5;
 
     Engine_EventBegin();
@@ -215,7 +202,7 @@ void Scene_RunScene3c3SequenceA(void)
     Actor_FaceDirection(0, 0xc000, 0);
     record = Actor_Get(0);
     if (record != 0) {
-        Actor_SetPosition(11, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(11, record->x.fixed, record->z.fixed);
     }
     Engine_TaskWait(1);
     Actor_SetSpeed(11, 0x19999, 0xcccc);
@@ -260,7 +247,7 @@ void Scene_RunScene3c3SequenceA(void)
         Engine_EventWait(40);
         Event_ShowMessageAndWait(11, 0, 10);
     } else {
-        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+        gEventWork->message += 1;
     }
     Actor_FaceDirection(11, 0x5000, 10);
     Event_ShowMessageAndWait(11, 0, 40);
@@ -291,7 +278,7 @@ void Scene_RunScene3c3SequenceA(void)
     Engine_ActorSetAnimation(11, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(11);
     Actor_SetPosition(11, 0, 0);
@@ -308,14 +295,6 @@ void Scene_RunScene3c3SequenceA(void)
     Engine_EventEnd();
 }
 
-/*
- * Dialogue bracket at 0x02000730.  The 124-byte owner includes its four-word
- * literal pool at 0x0200079c-0x020007ab.  The tail is shared through a label
- * rather than copied into each arm: copying it would add a fourth call site
- * where there are three.  The skip-beat counter sits at byte offset 472 off
- * the gWork pointer cell, which costs one dereference.  The guard is
- * tested against zero at this site; the polarity is read per call site.
- */
 void Scene_RunActorNinePromptDialogue(void)
 {
     extern u8 *gWork;
@@ -324,7 +303,7 @@ void Scene_RunActorNinePromptDialogue(void)
 
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x89f) != 0) {
+    if (Engine_GameFlagIsSet(0x89f) != 0) {
         Engine_EventSetMessage((s32)MsgSuharaPityColossoVictor);
         goto close;
     }
@@ -334,25 +313,24 @@ void Scene_RunActorNinePromptDialogue(void)
         s32 mode = 0;
         s32 no = 9;
 
-        Event_OpenMessage(no, mode);
+        Engine_EventOpenMessage(no, mode);
     }
 
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         goto skip;
     }
 
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     Engine_ActorSetAnimationAndWait(9, 4);
 
 close:
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     goto done;
 
 skip:
-    /* Skip-beat counter, two beats' worth. */
     work = gWork;
     *(u16 *)(work + 472) += 2;
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
 
 done:
     Engine_EventEnd();

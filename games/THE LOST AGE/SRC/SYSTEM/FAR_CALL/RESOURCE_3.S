@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080202a8: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -9,26 +5,26 @@
 	.thumb_func
 ResourceMetadata_SumCommandLengthsFar:
 	overlay_veneer ResourceMetadata_SumCommandLengths
-	.global Func_080202b0
+	.global GetWorldMapTerrainBehaviorFar
 	.thumb_func
-Func_080202b0:
-	overlay_veneer Func_0802dc48
+GetWorldMapTerrainBehaviorFar:
+	overlay_veneer GetWorldMapTerrainBehavior
 	.global ResourceSlot_LoadFar
 	.thumb_func
 ResourceSlot_LoadFar:
-	overlay_veneer Func_080227e0
-	.global Func_080202c0
+	overlay_veneer ResourceSlot_Load
+	.global SetMapCellCollisionFar
 	.thumb_func
-Func_080202c0:
-	overlay_veneer Func_0802d6e8
+SetMapCellCollisionFar:
+	overlay_veneer SetMapCellCollision
 	.global Animation_ApplyChildValueFar
 	.thumb_func
 Animation_ApplyChildValueFar:
 	overlay_veneer Animation_ApplyChildValue
-	.global Func_080202d0
+	.global Runtime_RemapBytesByTableFar
 	.thumb_func
-Func_080202d0:
-	overlay_veneer Func_0802a52c
+Runtime_RemapBytesByTableFar:
+	overlay_veneer Runtime_RemapBytesByTable
 	.global Map_EnableUpdateCallbackFar
 	.thumb_func
 Map_EnableUpdateCallbackFar:
@@ -37,10 +33,10 @@ Map_EnableUpdateCallbackFar:
 	.thumb_func
 Map_DisableUpdateCallbackFar:
 	overlay_veneer Func_0802cd70
-	.global Func_080202e8
+	.global ScriptObject_FindOverlappingEntryFar
 	.thumb_func
-Func_080202e8:
-	overlay_veneer Func_08024f80
+ScriptObject_FindOverlappingEntryFar:
+	overlay_veneer ScriptObject_FindOverlappingEntry
 	.global Func_080202f0
 	.thumb_func
 Func_080202f0:

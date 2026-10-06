@@ -17,5 +17,4 @@ struct EffectRuntime {
     struct EffectRuntimeSlot slots[10];
 };
 
-
 #endif

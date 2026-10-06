@@ -7,7 +7,7 @@ Func_080cf350:
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_080cf3ac
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	movs r3, #128
 	lsls r3, r3, #9
@@ -30,7 +30,7 @@ Func_080cf350:
 	bl Object_SetPosition
 	movs r1, #1
 	adds r0, r6, #0
-	bl Func_08020290
+	bl ObjectDispatch_SetSpritePriorityFar
 	movs r0, #3
 	bl WaitFrames
 	adds r0, r5, #0

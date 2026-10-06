@@ -45,13 +45,13 @@ BattleFx_DispatchRequestKind:
 	cmp r1, #5
 	bne .L_080db6ca
 	adds r0, r5, #0
-	bl Func_080dede0
+	bl BattleFx_CallEffect05
 	b .L_080db840
 .L_080db6ca:
 	cmp r1, #6
 	bne .L_080db6d6
 	adds r0, r5, #0
-	bl Func_080de654
+	bl BattleFx_StartOrbitingParticles
 	b .L_080db840
 .L_080db6d6:
 	cmp r1, #12
@@ -69,7 +69,7 @@ BattleFx_DispatchRequestKind:
 	cmp r1, #14
 	bne .L_080db6fa
 	adds r0, r5, #0
-	bl Func_080dfcf8
+	bl BattleFx_CallEffect14
 	b .L_080db840
 .L_080db6fa:
 	cmp r1, #13
@@ -119,7 +119,7 @@ BattleFx_DispatchRequestKind:
 	cmp r1, #25
 	bne .L_080db75e
 	adds r0, r5, #0
-	bl Func_080e306c
+	bl BattleFx_CallSpinEffect
 	b .L_080db840
 .L_080db75e:
 	cmp r1, #20

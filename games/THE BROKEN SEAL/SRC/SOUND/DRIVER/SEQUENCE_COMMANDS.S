@@ -1,19 +1,5 @@
-@ Sound sequence command helpers. 0x080f9a80 copies the 36-entry command table
-@ at 0x080fb7a0 through the range check at 0x080f9a9a; the other entries read
-@ command bytes and words of the track in r1. They keep their return address
-@ in ip (mov ip, lr ... bx ip), let 0x080f9a98 fall through into 0x080f9a9a,
-@ hand results back in r3 and branch on flags from lsrs (0x080f9a9e). Neither
-@ approved compiler emits any of these. Every TBS and TLA edition has this
-@ code, differing only in the relocated table address.
-@ The zero halfwords of alignment at 0x080f9a96, 0x080f9abe, 0x080f9afa,
-@ 0x080f9b3e, 0x080f9b4a, 0x080f9b72, 0x080f9ba2, 0x080f9bb6, 0x080f9bf2 and
-@ 0x080f9bfe never run and carry no credit.
-@ credit: library — TBS/TLA common sound sequence command interpreter
 .syntax unified
 	.thumb
-.global Func_080f9a80
-	.thumb_func
-Func_080f9a80:
 	.global Sound_LoadCommandTable
 	.thumb_func
 Sound_LoadCommandTable:
@@ -22,7 +8,7 @@ Sound_LoadCommandTable:
 	ldr	r2, .L_080f9a80_source
 .L_080f9a80_loop:
 	ldr	r3, [r2, #0]
-	bl	Func_080f9a9a
+	bl	Sound_CheckReadAddress
 	stmia	r0!, {r3}
 	adds	r2, #4
 	subs	r1, #1
@@ -31,14 +17,14 @@ Sound_LoadCommandTable:
 AlchemyUncredited_080f9a96:
 	.2byte 0
 
-	.global Func_080f9a98
+	.global Sound_ReadCheckedByte
 	.thumb_func
-Func_080f9a98:
+Sound_ReadCheckedByte:
 AlchemyUncreditedEnd_080f9a96:
 	ldrb	r3, [r2, #0]
-	.global Func_080f9a9a
+	.global Sound_CheckReadAddress
 	.thumb_func
-Func_080f9a9a:
+Sound_CheckReadAddress:
 	push	{r0}
 	lsrs	r0, r2, #25
 	bne.n	.L_080f9a80_return
@@ -56,23 +42,23 @@ Func_080f9a9a:
 .L_080f9a80_source:
 	.4byte Sound_CommandTableTemplate
 
-	.global Func_080f9ab4
+	.global MusicTrack_ReadCheckedCommandByte
 	.thumb_func
-Func_080f9ab4:
+MusicTrack_ReadCheckedCommandByte:
 	ldr	r2, [r1, #64]
-	.global Func_080f9ab6
+	.global MusicTrack_ReadCheckedByteAt
 	.thumb_func
-Func_080f9ab6:
+MusicTrack_ReadCheckedByteAt:
 	adds	r3, r2, #1
 	str	r3, [r1, #64]
 	ldrb	r3, [r2, #0]
-	b.n	Func_080f9a9a
+	b.n	Sound_CheckReadAddress
 AlchemyUncredited_080f9abe:
 	.2byte 0
 
-.global Func_080f9ac0
+.global MusicTrack_Goto
 	.thumb_func
-Func_080f9ac0:
+MusicTrack_Goto:
 AlchemyUncreditedEnd_080f9abe:
 	push	{lr}
 .L_080f9ac0_jump:
@@ -85,15 +71,15 @@ AlchemyUncreditedEnd_080f9abe:
 	ldrb	r3, [r2, #1]
 	orrs	r0, r3
 	lsls	r0, r0, #8
-	bl	Func_080f9a98
+	bl	Sound_ReadCheckedByte
 	orrs	r0, r3
 	str	r0, [r1, #64]
 	pop	{r0}
 	bx	r0
 
-.global Func_080f9ae0
+.global MusicTrack_CallPattern
 	.thumb_func
-Func_080f9ae0:
+MusicTrack_CallPattern:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #3
 	bcs.n	.L_080f9ae0_full
@@ -105,15 +91,15 @@ Func_080f9ae0:
 	ldrb	r2, [r1, #2]
 	adds	r2, #1
 	strb	r2, [r1, #2]
-	b.n	Func_080f9ac0
+	b.n	MusicTrack_Goto
 .L_080f9ae0_full:
-	b.n	Func_080f9a50
+	b.n	MusicTrack_FinishSequence
 AlchemyUncredited_080f9afa:
 	.2byte 0
 
-.global Func_080f9afc
+.global MusicTrack_ReturnFromPattern
 	.thumb_func
-Func_080f9afc:
+MusicTrack_ReturnFromPattern:
 AlchemyUncreditedEnd_080f9afa:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
@@ -127,9 +113,9 @@ AlchemyUncreditedEnd_080f9afa:
 .L_080f9afc_0:
 	bx	lr
 
-	.global Func_080f9b10
+	.global MusicTrack_Repeat
 	.thumb_func
-Func_080f9b10:
+MusicTrack_Repeat:
 	push	{lr}
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -143,7 +129,7 @@ Func_080f9b10:
 	adds	r3, #1
 	strb	r3, [r1, #3]
 	mov	ip, r3
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	cmp	ip, r3
 	bcs.n	.L_080f9b10_advance
 	b.n	.L_080f9ac0_jump
@@ -157,23 +143,23 @@ Func_080f9b10:
 AlchemyUncredited_080f9b3e:
 	.2byte 0
 
-.global Func_080f9b40
+.global MusicTrack_SetPriorityFromCommand
 	.thumb_func
-Func_080f9b40:
+MusicTrack_SetPriorityFromCommand:
 AlchemyUncreditedEnd_080f9b3e:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #29]
 	bx	ip
 
 AlchemyUncredited_080f9b4a:
 	.balign 4, 0
-.global Func_080f9b4c
+.global MusicPlayer_SetTempoFromCommand
 	.thumb_func
-Func_080f9b4c:
+MusicPlayer_SetTempoFromCommand:
 AlchemyUncreditedEnd_080f9b4a:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	lsls	r3, r3, #1
 	strh	r3, [r0, #28]
 	ldrh	r2, [r0, #30]
@@ -182,11 +168,11 @@ AlchemyUncreditedEnd_080f9b4a:
 	strh	r3, [r0, #32]
 	bx	ip
 
-.global Func_080f9b60
+.global MusicTrack_SetKeyOffsetFromCommand
 	.thumb_func
-Func_080f9b60:
+MusicTrack_SetKeyOffsetFromCommand:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #10]
 	ldrb	r3, [r1, #0]
 	movs	r2, #12
@@ -196,9 +182,9 @@ Func_080f9b60:
 
 AlchemyUncredited_080f9b72:
 	.balign 4, 0
-.global Func_080f9b74
+.global MusicTrack_SetVoiceFromCommand
 	.thumb_func
-Func_080f9b74:
+MusicTrack_SetVoiceFromCommand:
 AlchemyUncreditedEnd_080f9b72:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
@@ -211,24 +197,24 @@ AlchemyUncreditedEnd_080f9b72:
 	ldr	r3, [r0, #48]
 	adds	r2, r2, r3
 	ldr	r3, [r2, #0]
-	bl	Func_080f9a9a
+	bl	Sound_CheckReadAddress
 	str	r3, [r1, #36]
 	ldr	r3, [r2, #4]
-	bl	Func_080f9a9a
+	bl	Sound_CheckReadAddress
 	str	r3, [r1, #40]
 	ldr	r3, [r2, #8]
-	bl	Func_080f9a9a
+	bl	Sound_CheckReadAddress
 	str	r3, [r1, #44]
 	bx	ip
 
 AlchemyUncredited_080f9ba2:
 	.balign 4, 0
-.global Func_080f9ba4
+.global MusicTrack_SetVolumeFromCommand
 	.thumb_func
-Func_080f9ba4:
+MusicTrack_SetVolumeFromCommand:
 AlchemyUncreditedEnd_080f9ba2:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #18]
 	ldrb	r3, [r1, #0]
 	movs	r2, #3
@@ -238,12 +224,12 @@ AlchemyUncreditedEnd_080f9ba2:
 
 AlchemyUncredited_080f9bb6:
 	.balign 4, 0
-.global Func_080f9bb8
+.global MusicTrack_SetPanFromCommand
 	.thumb_func
-Func_080f9bb8:
+MusicTrack_SetPanFromCommand:
 AlchemyUncreditedEnd_080f9bb6:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	subs	r3, #64
 	strb	r3, [r1, #20]
 	ldrb	r3, [r1, #0]
@@ -252,11 +238,11 @@ AlchemyUncreditedEnd_080f9bb6:
 	strb	r3, [r1, #0]
 	bx	ip
 
-.global Func_080f9bcc
+.global MusicTrack_SetBendFromCommand
 	.thumb_func
-Func_080f9bcc:
+MusicTrack_SetBendFromCommand:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	subs	r3, #64
 	strb	r3, [r1, #14]
 	ldrb	r3, [r1, #0]
@@ -265,11 +251,11 @@ Func_080f9bcc:
 	strb	r3, [r1, #0]
 	bx	ip
 
-.global Func_080f9be0
+.global MusicTrack_SetBendRangeFromCommand
 	.thumb_func
-Func_080f9be0:
+MusicTrack_SetBendRangeFromCommand:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #15]
 	ldrb	r3, [r1, #0]
 	movs	r2, #12
@@ -279,23 +265,23 @@ Func_080f9be0:
 
 AlchemyUncredited_080f9bf2:
 	.balign 4, 0
-.global Func_080f9bf4
+.global MusicTrack_SetLfoDelayFromCommand
 	.thumb_func
-Func_080f9bf4:
+MusicTrack_SetLfoDelayFromCommand:
 AlchemyUncreditedEnd_080f9bf2:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #27]
 	bx	ip
 
 AlchemyUncredited_080f9bfe:
 	.balign 4, 0
-.global Func_080f9c00
+.global MusicTrack_SetModulationTargetFromCommand
 	.thumb_func
-Func_080f9c00:
+MusicTrack_SetModulationTargetFromCommand:
 AlchemyUncreditedEnd_080f9bfe:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	ldrb	r0, [r1, #24]
 	cmp	r0, r3
 	beq.n	.L_080f9c00_0
@@ -307,11 +293,11 @@ AlchemyUncreditedEnd_080f9bfe:
 .L_080f9c00_0:
 	bx	ip
 
-.global Func_080f9c18
+.global MusicTrack_SetTuneFromCommand
 	.thumb_func
-Func_080f9c18:
+MusicTrack_SetTuneFromCommand:
 	mov	ip, lr
-	bl	Func_080f9ab4
+	bl	MusicTrack_ReadCheckedCommandByte
 	subs	r3, #64
 	strb	r3, [r1, #12]
 	ldrb	r3, [r1, #0]
@@ -320,16 +306,16 @@ Func_080f9c18:
 	strb	r3, [r1, #0]
 	bx	ip
 
-.global Func_080f9c2c
+.global MusicTrack_WriteSoundRegisterFromCommand
 	.thumb_func
-Func_080f9c2c:
+MusicTrack_WriteSoundRegisterFromCommand:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
 	adds	r2, #1
 	ldr	r0, [pc, #8]
 	adds	r0, r0, r3
-	bl	Func_080f9ab6
+	bl	MusicTrack_ReadCheckedByteAt
 	strb	r3, [r0, #0]
 	bx	ip
 	.4byte 0x04000060

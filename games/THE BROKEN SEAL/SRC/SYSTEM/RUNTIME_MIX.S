@@ -1,26 +1,7 @@
-@ Per-channel sound mixing of the resident runtime, entered in Thumb at
-@ 0x03000659 by SOUND/DRIVER/CHANNEL_UPDATE_ENTRY.S. The Thumb part tests
-@ channel flags with tst and branches on flags from lsls, then switches to
-@ ARM inside the routine (add r1, pc, #8; bx r1). The ARM part picks one of
-@ the interpolation templates of RUNTIME_MIX_INTERPOLATE.S
-@ (add r0, pc, #252), records the choice in RUNTIME_MIX_STATE.S
-@ (str r0, [pc, #216]) and, when the choice differs from the one recorded
-@ there, copies the six-word template into each of the four lanes of its
-@ own sample loop (add lr, pc, #36; stmia lr!). The 24 words 0xfedcba98
-@ that stand in those lanes in this image never run: the recorded choice
-@ starts at zero, so the first call fills every lane before the loop runs,
-@ and the instructions that run there are copies of the credited templates.
-@ Changing instruction set inside a routine and rewriting its own loop are
-@ beyond both approved compilers. The placeholders and the zero halfword
-@ after bx r1 (0x08000e86) carry no credit; the stack-floor word 0x03007900
-@ at the end is the literal it loads (ldr sl, [pc, #324]).
-@ credit: handwritten — IWRAM runtime sound mixer
 .syntax unified
 	.thumb_func
 	.arm
 
-@ 音源ごとの状態更新と標本合成を行う常駐音響処理。
-@ サム入口からアーム合成核へ切り替わる。由来は命令列だけでは確定しない。
 	.thumb
 	.align 2
 	.global IwramSoundMixEntry
@@ -135,12 +116,10 @@ IwramSoundMixEntry:
 	bx	r1
 AlchemyUncredited_08000e86:
 	.2byte	0x0000
-@ 合成作業域の先頭番地。
 .L_audio_workspace_pointer:
 AlchemyUncreditedEnd_08000e86:
 	.4byte IwramSoundMixWorkspace
 
-@ 標本補間と四語単位の混合を行うアーム合成核。
 	.global IwramSoundMixArm
 	.arm
 IwramSoundMixArm:
@@ -217,7 +196,6 @@ IwramSoundMixArm:
 .L_audio_0820:
 	ldm	r5, {r0, r1, sl, lr}
 	mul	r9, r7, ip
-@ 実行時に補間命令へ置換される自己書換え雛形。
 AlchemyUncredited_08000f98:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98

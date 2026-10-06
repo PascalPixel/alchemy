@@ -37,7 +37,7 @@ Func_080d3940:
 	ldrb r0, [r3]
 	mov r10, r3
 	movs r3, #255
-	bl Func_080202c0
+	bl SetMapCellCollisionFar
 	movs r0, #128
 	lsls r0, r0, #13
 	adds r1, r7, #0
@@ -48,7 +48,7 @@ Func_080d3940:
 	movs r3, #255
 	ldr r1, [r5]
 	ldr r2, [r5, #8]
-	bl Func_080202c0
+	bl SetMapCellCollisionFar
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r7, r3

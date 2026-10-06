@@ -43,7 +43,7 @@ Func_0810b1b4:
 	ldrsb r0, [r2, r3]
 	bl Audio_PlayCue
 	ldr r0, .L_0810b368
-	bl Func_081088d8
+	bl Shop_RestoreSceneTiles
 	mov r0, r10
 	lsls r0, r0, #2
 	mov r9, r0
@@ -89,13 +89,13 @@ Func_0810b1b4:
 	ldr r2, [r6]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl Func_080c85b0
+	bl EffectSlot_InitializeFar
 	adds r0, r5, #0
 	ldr r1, .L_0810b374
-	bl Func_080c85a8
+	bl EffectSlot_SetCallbackFar
 	movs r1, #7
 	adds r0, r5, #0
-	bl Func_080c85a0
+	bl EffectSlot_SetObjectModeFar
 	bl Random16
 	lsls r1, r0, #3
 	subs r1, r1, r0
@@ -186,7 +186,7 @@ Func_0810b1b4:
 	ldr r0, [r2, r3]
 	movs r1, #16
 	bl Animation_ApplyChildValueFar
-	bl Func_08108928
+	bl Shop_InitEffect
 	movs r0, #30
 	bl WaitFrames
 	movs r3, #128

@@ -1,12 +1,17 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 
-s32 Map_DisableUpdateCallbackFar(void);
-s32 Map_EnableUpdateCallbackFar(void);
 s32 GameFlag_ClearBit(s32 flag_no);
 s32 GameFlag_SetBit(s32 flag_no);
-
-/* The owner that actually clears the overlay callbacks this routine then flags. */
 
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void)
 {

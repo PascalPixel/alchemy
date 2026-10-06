@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_6AF overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_6AF overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -34,26 +30,26 @@ Func_02000f7c:
 	.thumb_func
 Func_02000f84:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_02000f8c
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02000f8c:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02000f94
 	.thumb_func
 Func_02000f94:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -78,10 +74,10 @@ Func_02000f9c:
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -89,7 +85,7 @@ Animation_SetStateFlags:
 	.global Func_02000fb4
 	.thumb_func
 Func_02000fb4:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02000fbc
 	.thumb_func
 Func_02000fbc:
@@ -101,11 +97,11 @@ Battle_WaitMode0:
 	.global Func_02000fcc
 	.thumb_func
 Func_02000fcc:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02000fd4
 	.thumb_func
 Func_02000fd4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -117,7 +113,7 @@ ObjectMotion_ResetAndSetPosition:
 	.global Func_02000fec
 	.thumb_func
 Func_02000fec:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global ObjectMotion_SetVariantCallback
 	.thumb_func
 ObjectMotion_SetVariantCallback:
@@ -129,7 +125,7 @@ Object_SetPartAttribute:
 	.global Func_02001004
 	.thumb_func
 Func_02001004:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -141,7 +137,7 @@ Func_02001014:
 	.global Func_0200101c
 	.thumb_func
 Func_0200101c:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02001024
 	.thumb_func
 Func_02001024:
@@ -153,19 +149,19 @@ Func_0200102c:
 	.global Func_02001034
 	.thumb_func
 Func_02001034:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_0200103c
 	.thumb_func
 Func_0200103c:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02001044
 	.thumb_func
 Func_02001044:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Func_0200104c
 	.thumb_func
 Func_0200104c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001054
 	.thumb_func
 Func_02001054:

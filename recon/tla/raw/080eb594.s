@@ -79,7 +79,7 @@ Func_080eb594:
 	movs r1, #128
 	lsls r1, r1, #5
 	adds r0, r4, #0
-	bl Func_080eb51c
+	bl ColorBuffer_MapToFadeStep1
 	b .L_080eb686
 .L_080eb640:
 	movs r3, #128
@@ -92,7 +92,7 @@ Func_080eb594:
 	movs r1, #128
 	lsls r1, r1, #5
 	adds r0, r4, #0
-	bl Func_080eb544
+	bl ColorBuffer_MapToFadeStep2
 	b .L_080eb686
 .L_080eb65a:
 	movs r3, #128
@@ -105,7 +105,7 @@ Func_080eb594:
 	movs r1, #128
 	lsls r1, r1, #5
 	adds r0, r4, #0
-	bl Func_080eb56c
+	bl ColorBuffer_MapToFadeStep3
 	b .L_080eb686
 .L_080eb674:
 	movs r3, #128

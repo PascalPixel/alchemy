@@ -45,7 +45,7 @@ Func_080cd680:
 	beq .L_080cd6da
 	movs r1, #6
 	movs r2, #0
-	bl Func_080d3460
+	bl BattleFx_RunRisingObjectSequence
 	mov r3, r8
 	strh r3, [r5]
 .L_080cd6da:
@@ -155,7 +155,7 @@ Func_080cd680:
 	bge .L_080cd7b8
 	mov r0, r8
 	adds r1, r3, #0
-	bl Func_080cdea8
+	bl EventRuntime_RunMessage
 	b .L_080cd7c0
 .L_080cd7b8:
 	adds r0, r7, #0
@@ -179,7 +179,7 @@ Func_080cd680:
 	movs r0, #1
 	negs r0, r0
 	adds r1, r3, #0
-	bl Func_080cdea8
+	bl EventRuntime_RunMessage
 	b .L_080cd7f2
 .L_080cd7ea:
 	adds r0, r7, #0

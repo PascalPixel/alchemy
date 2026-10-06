@@ -1,13 +1,8 @@
-//! Publish locally verified measurements, never the private build inputs.
-//! `make land` prepares them; the pre-push hook uploads them by commit to
-//! the `decomp-reports` release, where CI draws the progress figures and
-//! hands decomp.dev its report.
 use super::decomp::REPORT;
 use sha2::{Digest, Sha256};
 use std::path::Path;
 use std::process::Command;
 
-/// Both games' DONE parts, as CI records them in the progress history.
 pub(crate) const MEASUREMENT: &str = "out/reports/decomp/measurement.tsv";
 
 const REPO: &str = "PascalPixel/alchemy";
@@ -15,8 +10,6 @@ const RELEASE: &str = "decomp-reports";
 const RECEIPT: &str = "out/reports/decomp/publication.tsv";
 const STALE: &str =
     "progress measurement is stale or missing: run make land before committing main";
-/// What a push uploads: the decomp.dev report and the measurement, each
-/// named by the commit it measures.
 const ASSETS: [(&str, &str); 2] = [(REPORT, "pb"), (MEASUREMENT, "tsv")];
 
 fn command(root: &Path, program: &str, arguments: &[&str]) -> Result<String, String> {
@@ -65,8 +58,6 @@ fn read_assets(root: &Path) -> Result<Vec<Vec<u8>>, String> {
         .collect()
 }
 
-/// Called only after make land's complete build, comparison and publication
-/// gates; the coverage report gate wrote both files from their one measurement.
 pub(crate) fn prepare(root: &Path) -> Result<(), String> {
     let tree = command(root, "git", &["write-tree"])?;
     let files = read_assets(root)?;

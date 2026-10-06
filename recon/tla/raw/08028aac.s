@@ -383,7 +383,7 @@ Func_08028aac:
 	ldrh r1, [r5, #32]
 	ldrh r3, [r7, #32]
 	ldr r2, [sp, #0]
-	bl Func_08026f80
+	bl Runtime_CheckRadiusOverlap
 	cmp r0, #0
 	blt .L_08028dc4
 	ldr r1, [sp, #12]
@@ -505,7 +505,7 @@ Func_08028aac:
 .L_08028e94:
 	.4byte Data_0802ec5c
 .L_08028e98:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08028e9c:
 	.4byte 0xfffff000
 .L_08028ea0:
@@ -531,7 +531,7 @@ Func_08028aac:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r3, [sp, #12]
 	adds r2, r7, #0
 	str r3, [r7, #36]
@@ -718,7 +718,7 @@ Func_08028aac:
 	ldr r1, [r3]
 	mov r3, r8
 	ands r1, r3
-	bl ObjectDispatch_SetSingleChildField1a
+	bl ObjectDispatch_SetChildByteValue
 .L_0802903a:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -811,7 +811,7 @@ Func_08028aac:
 .L_080290e0:
 	.4byte Data_0802ec94
 .L_080290e4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080290e8:
 	.4byte gPartyState
 .L_080290ec:

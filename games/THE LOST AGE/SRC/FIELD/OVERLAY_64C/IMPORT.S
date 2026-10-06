@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_64C overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_64C overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -57,7 +53,7 @@ Sys_Free:
 	.global Func_02001f54
 	.thumb_func
 Func_02001f54:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -73,11 +69,11 @@ Resource_FindFreeEntry:
 	.global Func_02001f74
 	.thumb_func
 Func_02001f74:
-	overlay_veneer Func_080001d8
+	overlay_veneer Bg0_ClearTilemapFar
 	.global Func_02001f7c
 	.thumb_func
 Func_02001f7c:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global Render_ProjectPoint
 	.thumb_func
 Render_ProjectPoint:
@@ -85,7 +81,7 @@ Render_ProjectPoint:
 	.global Func_02001f8c
 	.thumb_func
 Func_02001f8c:
-	overlay_veneer Func_08000298
+	overlay_veneer Resource_ReservedNoOpFar
 	.global QueueIoWriteDelay2
 	.thumb_func
 QueueIoWriteDelay2:
@@ -125,11 +121,11 @@ Func_02001fd4:
 	.global Func_02001fdc
 	.thumb_func
 Func_02001fdc:
-	overlay_veneer Func_08020128
-	.global ObjectDispatch_SetSingleChildField26
+	overlay_veneer Map_UpdateCurrentTileBlockFar
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -137,7 +133,7 @@ Animation_SetStateFlags:
 	.global Func_02001ff4
 	.thumb_func
 Func_02001ff4:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -169,11 +165,7 @@ Func_0200200c:
 	.global Func_02002014
 	.thumb_func
 Func_02002014:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080ad2f8
-	.else
 	overlay_veneer Func_080ad318
-	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -181,7 +173,7 @@ Battle_WaitMode0:
 	.global Func_02002024
 	.thumb_func
 Func_02002024:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -189,7 +181,7 @@ Object_GetById:
 	.global Func_02002034
 	.thumb_func
 Func_02002034:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -197,7 +189,7 @@ Object_SetModeById:
 	.global Func_02002044
 	.thumb_func
 Func_02002044:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:
@@ -205,25 +197,25 @@ Motion_CamBounds:
 	.global Func_02002054
 	.thumb_func
 Func_02002054:
-	overlay_veneer Event_SetPairWork1c0Far
-	.global Event_SetStatus1c6
+	overlay_veneer Event_SetDestinationFar
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_ClearStatus1c6
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
-	overlay_veneer Event_ClearStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_FinishScreenTransition:
+	overlay_veneer Event_FinishScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_02002074
@@ -242,10 +234,10 @@ Func_02002074:
 	.thumb_func
 Func_0200207c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	overlay_veneer Func_080c8438
 	.endif
@@ -253,7 +245,7 @@ Func_0200207c:
 	.global Func_02002084
 	.thumb_func
 Func_02002084:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_0200208c
 	.thumb_func
 Func_0200208c:
@@ -271,7 +263,7 @@ Func_0200209c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020020a4
@@ -283,7 +275,7 @@ Func_020020a4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8958
 	.else
-	overlay_veneer Func_080c8960
+	overlay_veneer SceneEvent_FindActiveRecordFar
 	.endif
 	.endif
 	.global Func_020020ac

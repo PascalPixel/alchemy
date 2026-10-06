@@ -17,7 +17,7 @@ Func_0811c594:
 	b .L_0811c646
 .L_0811c5ae:
 	adds r0, r7, #0
-	bl Func_0811cd30
+	bl BattleTarget_ReplaceDefeated
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #176
@@ -54,7 +54,7 @@ Func_0811c594:
 	ldr r0, .L_0811c64c
 	bl UiText_ShowMessageAndWaitCoreFar
 	adds r0, r7, #0
-	bl Func_0811c66c
+	bl BattleEscape_PlayRun
 	cmp r0, #0
 	beq .L_0811c640
 	movs r0, #1
@@ -63,7 +63,7 @@ Func_0811c594:
 	movs r0, #45
 	bl WaitFrames
 	adds r0, r7, #0
-	bl BattlePres_ShowMessageWhenField38Positive
+	bl BattlePres_ShowDefendMessage
 	b .L_0811c640
 .L_0811c616:
 	movs r0, #45
@@ -86,7 +86,7 @@ Func_0811c594:
 	adds r0, r7, #0
 	bl Func_0811c710
 .L_0811c640:
-	bl Func_08038220
+	bl UiWork_ResetFreeChannelFar
 	movs r0, #0
 .L_0811c646:
 	pop {r5, r6, r7, pc}

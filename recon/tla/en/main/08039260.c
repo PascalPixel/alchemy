@@ -1,40 +1,10 @@
-/*
- * Draft: UiWindow_Create, ported from its ☀️ twin with ⚓️'s twelve windows
- * 0x508 into the window work in its heap slot. Remaining difference, in the
- * attribute-drawn branch: the listing stores the timer before or-ing 2 into
- * the flags; this C or-s first (score 220; 45 seconds of permuting found
- * nothing better).
- */
-#include "TYPES.H"
+#include "WINDOW.H"
+#include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
-/* One of the twelve window records 0x508 into the window work. */
-struct UiWindow {
-    s32 state;
-    struct UiWindow *self;
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-    u16 unknown_10;
-    u16 unknown_12;
-    u16 unknown_14;
-    u16 flags;
-    u16 unknown_18;
-    s16 timer;
-    u8 unknown_1c[8];
-};
-
-
-void WaitFrames(s32 frames);
-void UiWork_ResetCounters();
+void UiWork_ResetCounters(void);
 void UiWork_DrawByAttributes(struct UiWindow *window);
-void UiWork_WaitUntilField1aClear(struct UiWindow *window);
-
-/* Open a window at a tile position and size in the first free record, with
-   the attribute bits that choose its frame and drawing; a window drawn
-   through its attributes appears at once, any other one opens over eight
-   frames. Returns the record, or 0 when all twelve are in use. */
+void UiWork_WaitWindowDuration(void *work);
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 {
@@ -42,13 +12,13 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
     struct UiWindow *found;
     s32 i;
 
-    slot = (struct UiWindow *)(Ram_HeapSlots->window_tiles + 0x508);
+    slot = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->windows;
     found = 0;
     i = 0;
-    while ((slot->flags & 1) != 0 || slot->timer != 0) {
+    while ((slot->flags & 1) != 0 || slot->duration != 0) {
         i++;
         slot++;
-        if (i == 12) {
+        if (i == UI_WINDOW_COUNT) {
             goto done;
         }
     }
@@ -59,12 +29,12 @@ done:
         found->width = width;
         found->height = height;
         found->x = x;
+        found->output.head = NULL;
         found->state = 0;
-        found->unknown_14 = 0;
-        found->self = slot;
+        found->output.tail_link = &slot->output.head;
         found->unknown_10 = 1;
         found->flags = 1;
-        UiWork_ResetCounters(x); /* the reset ignores the x it is passed */
+        UiWork_ResetCounters();
         if (attrs & 8) {
             found->flags |= 8;
         }
@@ -81,14 +51,14 @@ done:
             found->flags |= 0x100;
         }
         if (attrs & 2) {
-            found->timer = 1;
+            found->duration = 1;
             found->flags |= 2;
-            found->unknown_18 = 0;
+            found->frame = 0;
             UiWork_DrawByAttributes(found);
         } else {
-            found->timer = 8;
-            found->unknown_18 = 7;
-            UiWork_WaitUntilField1aClear(found);
+            found->duration = 8;
+            found->frame = 7;
+            UiWork_WaitWindowDuration(found);
             WaitFrames(1);
         }
     }

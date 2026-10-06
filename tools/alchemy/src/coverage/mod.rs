@@ -2,6 +2,7 @@ pub(crate) mod boxtree;
 pub(crate) mod calcrom;
 pub(crate) mod decomp;
 pub(crate) mod figure;
+pub(crate) mod figures;
 pub(crate) mod history;
 pub(crate) mod jsnum;
 pub(crate) mod letters;
@@ -13,9 +14,10 @@ pub(crate) mod raster;
 pub(crate) mod sessions;
 pub(crate) mod tree;
 
+use crate::coverage::calcrom::Game;
 use crate::coverage::progress::GameDone;
-use crate::coverage::tree::root;
 use std::path::Path;
+
 const USAGE: &str =
     "usage: alchemy check coverage [--report|--publish MEASUREMENT DIRECTORY|--self-test]\n\
 Measures both games, each from its six verified builds together (make compare-editions); a game\n\
@@ -30,8 +32,50 @@ fn read(path: &Path) -> Result<String, String> {
 fn write(path: &Path, text: &str) -> Result<(), String> {
     std::fs::write(path, text).map_err(|e| format!("cannot write {}: {e}", path.display()))
 }
-/// ☀️ The Broken Seal and ⚓️ The Lost Age, each DONE in all six of its
-/// editions together and pending until six byte-identical builds measure it.
+pub fn commas(value: i64) -> String {
+    let text = value.to_string();
+    let (sign, digits) = text
+        .strip_prefix('-')
+        .map_or(("", text.as_str()), |v| ("-", v));
+    let mut out = String::from(sign);
+    for (i, c) in digits.chars().enumerate() {
+        if i > 0 && (digits.len() - i) % 3 == 0 {
+            out.push(',');
+        }
+        out.push(c);
+    }
+    out
+}
+
+pub fn floor_percent(n: i64, d: i64) -> f64 {
+    if d == 0 {
+        0.0
+    } else {
+        (n as i128 * 10_000 / d as i128) as f64 / 100.0
+    }
+}
+
+pub(crate) fn measure_both(root: &Path) -> Result<[Result<Game, String>; 2], String> {
+    let [sun, anchor] = std::thread::scope(|scope| {
+        ["tbs-en", "tla-en"]
+            .map(|id| {
+                scope.spawn(move || {
+                    calcrom::measure_game(root, crate::targets::decomp_target(Some(id))?)
+                })
+            })
+            .map(|thread| thread.join().expect("measurement thread"))
+    });
+    Ok([sun?, anchor?])
+}
+
+fn status(games: &[Result<Game, String>; 2]) -> String {
+    let (sun, anchor) = done(games);
+    status_line(sun, anchor)
+}
+fn done(games: &[Result<Game, String>; 2]) -> (Option<GameDone>, Option<GameDone>) {
+    let done = |game: &Result<Game, String>| game.as_ref().ok().map(|g| g.combined().done);
+    (done(&games[0]), done(&games[1]))
+}
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
@@ -40,7 +84,6 @@ fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
 }
 const MEASUREMENT_HEADER: &str =
     "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers";
-/// The measurement a push carries to CI: each verified game's DONE parts.
 fn measurement_text(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let mut text = format!("{MEASUREMENT_HEADER}\n");
     for (game, done) in [("tbs", sun), ("tla", anchor)] {
@@ -129,8 +172,6 @@ mod tests {
         assert!(parse_measurement(&format!("{text}tla\t1\t2\n")).is_err());
     }
 }
-/// Both figures as the history's recorded figure date draws them; the map
-/// draws the files `root` tracks.
 fn render_figures(
     root: &Path,
     history: &history::History,
@@ -139,9 +180,6 @@ fn render_figures(
     let chart = figure::chart(&letters, &history::as_drawn(history));
     Ok((chart, figure::map(&letters, root)))
 }
-/// CI: record a pushed measurement in `directory`'s history, count every
-/// day after the frozen model table from main's commits, and draw both
-/// figures beside it.
 fn publish_figures(root: &Path, measurement: &Path, directory: &Path) -> Result<String, String> {
     let [sun, anchor] = parse_measurement(&read(measurement)?)?;
     let path = directory.join("history.tsv");
@@ -167,52 +205,37 @@ fn publish_figures(root: &Path, measurement: &Path, directory: &Path) -> Result<
     ))
 }
 fn run(argv: &[String]) -> Result<String, String> {
-    let root = root();
+    let root = crate::compiler::routing::root();
     match argv {
         [flag] if flag == "-h" || flag == "--help" => Ok(USAGE.into()),
         [flag] if flag == "--self-test" => Ok("self-test=ok coverage".into()),
         [flag, measurement, directory] if flag == "--publish" => {
-            publish_figures(&root, Path::new(measurement), Path::new(directory))
+            publish_figures(root, Path::new(measurement), Path::new(directory))
         }
-        [] | [_] => {
-            let report = match argv {
-                [] => false,
-                [flag] if flag == "--report" => true,
-                _ => {
-                    return Err(format!(
-                        "unrecognized arguments: {}\n{USAGE}",
-                        argv.join(" ")
-                    ))
-                }
-            };
-            let games = [
-                progress::status(&root, "tbs-en")?,
-                progress::status(&root, "tla-en")?,
-            ];
-            let done = |game: &Result<calcrom::Game, String>| {
-                game.as_ref().ok().map(|game| game.combined().done)
-            };
-            let (sun, anchor) = (done(&games[0]), done(&games[1]));
-            let status = status_line(sun, anchor);
-            if !report {
-                return Ok(status);
-            }
-            let decomp = decomp::write(&root, [("tbs", &games[0]), ("tla", &games[1])])?;
-            let path = root.join(publish::MEASUREMENT);
-            std::fs::create_dir_all(path.parent().expect("measurement directory"))
-                .map_err(|e| format!("{}: {e}", publish::MEASUREMENT))?;
-            write(&path, &measurement_text(sun, anchor))?;
-            Ok(format!(
-                "measured {status} {decomp} measurement={}",
-                publish::MEASUREMENT
-            ))
-        }
+        [] => Ok(status(&measure_both(root)?)),
+        [flag] if flag == "--report" => report(root),
         _ => Err(format!(
             "unrecognized arguments: {}\n{USAGE}",
             argv.join(" ")
         )),
     }
 }
+
+pub(crate) fn report(root: &Path) -> Result<String, String> {
+    let games = measure_both(root)?;
+    let (sun, anchor) = done(&games);
+    let decomp = decomp::write(root, [("tbs", &games[0]), ("tla", &games[1])])?;
+    let path = root.join(publish::MEASUREMENT);
+    std::fs::create_dir_all(path.parent().expect("measurement directory"))
+        .map_err(|e| format!("{}: {e}", publish::MEASUREMENT))?;
+    write(&path, &measurement_text(sun, anchor))?;
+    Ok(format!(
+        "measured {} {decomp} measurement={}",
+        status_line(sun, anchor),
+        publish::MEASUREMENT
+    ))
+}
+
 pub fn entry(arguments: &[String]) {
     match run(arguments) {
         Ok(line) => println!("{line}"),

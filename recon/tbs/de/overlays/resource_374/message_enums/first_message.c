@@ -1,9 +1,3 @@
-/* NONMATCHING: partial canonical PO enum import, 2026-10-01.
- * The complete 2816-byte Scene_RunExtendedActorSequence extent compiles with
- * the approved TBS flags. 2 literal-pool bytes still differ because
- * MsgHaidiaFarewell remains the English immediate in this attempt.
- * Production IE.C imports both PO constants and matches this edition.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.H"
 #include "MAP_SCROLL.H"
 #include "CALL.H"
@@ -14,7 +8,7 @@ TEXT_MESSAGE_ENUM(MsgHaidiaFarewell);
 
 void Scene_RunExtendedActorSequence(void)
 {
-    extern const u8 Data_0200ac00[];
+    extern const u8 HaidiaIe_FaceTargetActions[];
 
     u8 *record;
     struct EventWork *work;
@@ -82,7 +76,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorSetAnimation(30, 3);
     Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
     Engine_EventWait(40);
-    base5_200ac00 = Data_0200ac00;
+    base5_200ac00 = HaidiaIe_FaceTargetActions;
     Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)(base5_200ac00));
     Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)(base5_200ac00));
     Object_RefreshSelectorById(30);

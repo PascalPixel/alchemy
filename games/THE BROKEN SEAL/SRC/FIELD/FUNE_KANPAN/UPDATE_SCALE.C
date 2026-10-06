@@ -1,31 +1,38 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KANPAN.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 
-union Slot {
+union KanpanSlot {
     s32 w;
     s16 h[2];
 };
 
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 Math_RemainderUnsigned(s32, s16);
 
-/* Briefly stretches the sprite, then waits before the next pulse. */
 s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
-    /* FAKEMATCH: In-place signed accesses preserve the countdown's load
-     * and address scheduling. */
-    switch (*(s16 *)&actor->unknown_64) {
+    /* FAKEMATCH: In-place signed accesses preserve the countdown's load and address scheduling. */
+    switch (*(s16 *)&actor->timer) {
     case 6:
         actor->scale_x += -0x4000;
         actor->scale_y += 0x2000;
         break;
     case 4:
         actor->scale_x += 0x2000;
-        /* The loader relocates the stored pool word to -0x1000. */
+
         actor->scale_y -= 0x1000;
         break;
     case 2:
@@ -35,11 +42,11 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
     case 0:
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;
-        (*(s16 *)&actor->unknown_64) =
-            (s16)(Math_RemainderUnsigned(Random_Next(), 90) + 60);
+        (*(s16 *)&actor->timer) =
+            (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
-    (*(s16 *)&actor->unknown_64)--;
+    (*(s16 *)&actor->timer)--;
     return 1;
 }
 
@@ -49,8 +56,6 @@ s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
     return 0;
 }
 
-/* A gull hovering over the deck: its flight step, its drift and the
-   directions it drifts in. */
 struct HoverGull {
     u8 unknown_00[0x4c];
     s32 drift;
@@ -63,9 +68,6 @@ struct HoverGull {
 
 #define GULL(obj) ((struct HoverGull *)(obj))
 
-/* The first hovering gull: it drifts about over the deck, and one frame in
- * a hundred starts down to land beside actor 21, who turns to it and hops
- * or starts back; then it flies up to hover again. */
 s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
 {
     if (GULL(obj)->step != 0) {
@@ -73,7 +75,7 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x10c0000, 0x140000, 0x2b40000);
+            FieldObject_SetPosition((s32)obj, 0x10c0000, 0x140000, 0x2b40000);
             GULL(obj)->step++;
             break;
         case 2:
@@ -101,9 +103,9 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
             break;
         case 5:
             if (GULL(obj)->right_side != 0)
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x11a0000, 0, 0x2920000);
+                FieldObject_SetPosition((s32)obj, 0x11a0000, 0, 0x2920000);
             else
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0xfe0000, 0, 0x29c0000);
+                FieldObject_SetPosition((s32)obj, 0xfe0000, 0, 0x29c0000);
             GULL(obj)->step++;
             break;
         case 6:
@@ -151,7 +153,6 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
     return 1;
 }
 
-/* The second gull does the same beside actor 22. */
 s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
 {
     if (GULL(obj)->step != 0) {
@@ -159,7 +160,7 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x1000000, 0x140000, 0x2800000);
+            FieldObject_SetPosition((s32)obj, 0x1000000, 0x140000, 0x2800000);
             GULL(obj)->step++;
             break;
         case 2:
@@ -187,9 +188,9 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
             break;
         case 5:
             if (GULL(obj)->right_side != 0)
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x1080000, 0, 0x2580000);
+                FieldObject_SetPosition((s32)obj, 0x1080000, 0, 0x2580000);
             else
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0xf20000, 0, 0x25c0000);
+                FieldObject_SetPosition((s32)obj, 0xf20000, 0, 0x25c0000);
             GULL(obj)->step++;
             break;
         case 6:

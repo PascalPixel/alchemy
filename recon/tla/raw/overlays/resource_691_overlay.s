@@ -2,46 +2,7 @@
 	.thumb
 	.section .text.x0200807e,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008080,"ax",%progbits
-	.global Func_02000080
-	.thumb_func
-Func_02000080:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Func_02003a64
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020080ca
-	movs r1, #0
-	bl Object_SetSpritePriority
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r2, #4
-	movs r3, #8
-	strb r3, [r2]
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	adds r0, r5, #0
-	movs r1, #14
-	bl Object_SetPartAttribute
-	adds r0, r5, #0
-	movs r1, #1
-	bl Animation_SetStateFlags
-	adds r0, r5, #0
-	b .L_020080cc
-.L_020080ca:
-	movs r0, #0
-.L_020080cc:
-	pop {r5, r6, pc}
+	.section .text.x020080ce,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020080d0,"ax",%progbits
 	.global Func_020000d0
@@ -55,7 +16,7 @@ Func_020000d0:
 	adds r2, r5, #0
 	adds r1, r4, #0
 	adds r3, r6, #0
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0200811e
@@ -70,7 +31,7 @@ Func_020000d0:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #15
 	bl Object_SetPartAttribute
@@ -87,37 +48,7 @@ Func_020000d0:
 .L_02008120:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x02008124,"ax",%progbits
-	.global Func_02000124
-	.thumb_func
-Func_02000124:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200815c,"ax",%progbits
 	.global Func_0200015c
@@ -165,7 +96,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -193,7 +124,7 @@ Func_0200015c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008334
 	mov r1, r9
 	str r3, [r6, #108]
@@ -360,7 +291,7 @@ Func_0200015c:
 .L_02008330:
 	.4byte Data_02003e6c
 .L_02008334:
-	.4byte Func_02000124
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
 	.section .text.x0200833c,"ax",%progbits
@@ -831,7 +762,7 @@ Func_02000668:
 	adds r5, r0, #0
 	movs r1, #0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r2, r8
 	ldrb r0, [r2]
 	ldr r1, [r6, #8]
@@ -1014,7 +945,7 @@ Func_0200079c:
 	strb r5, [r3]
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	asrs r6, r6, #19
 	ldr r1, [r7, #8]
 	ldr r2, [r7, #16]
@@ -1694,7 +1625,7 @@ Func_02000c40:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008d30:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008d34:
 	.4byte Data_02003d74
 .L_02008d38:
@@ -1763,7 +1694,7 @@ Func_02000d40:
 	add sp, #56
 	pop {r5, r6, r7, pc}
 .L_02008db8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008dbc:
 	.4byte Data_02003d50
 	.section .text.x02008dc0,"ax",%progbits
@@ -2052,7 +1983,7 @@ Func_02000fcc:
 	pop {pc}
 	.2byte 0x0000
 .L_02008ff0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008ff4,"ax",%progbits
 	.global Func_02000ff4
 	.thumb_func
@@ -2349,7 +2280,7 @@ Func_020011e4:
 	movs r0, #148
 	adds r0, #255
 	sub sp, #68
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	mov r1, r8
 	adds r6, r0, #0
 	ldrh r0, [r1, #6]
@@ -2365,7 +2296,7 @@ Func_020011e4:
 	bl Func_02003a54
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	bl Func_02003aec
 	movs r0, #0
 	bl Func_02003bcc
@@ -2609,7 +2540,7 @@ Func_020011e4:
 .L_02009430:
 	.4byte Func_02000d40
 .L_02009434:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009438:
 	.4byte Func_020011b8
 .L_0200943c:
@@ -2997,7 +2928,7 @@ Func_020015e4:
 .L_0200971c:
 	.4byte 0xfef00000
 .L_02009720:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009724:
 	.4byte Func_020011b8
 .L_02009728:
@@ -3116,7 +3047,7 @@ Func_02001738:
 	adds r2, r2, r3
 	adds r0, #255
 	ldr r3, [r4, #16]
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	add r7, sp, #16
 	str r0, [r7]
 	movs r4, #1
@@ -3129,7 +3060,7 @@ Func_02001738:
 	movs r2, #0
 	movs r3, #0
 	adds r0, #255
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	mov r1, r10
 	ldrb r3, [r6, #16]
 	lsls r5, r1, #2
@@ -3152,7 +3083,7 @@ Func_02001738:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7, r5]
 	movs r1, #3
 	bl Func_02003a54
@@ -3179,7 +3110,7 @@ Func_02001738:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7]
 	movs r1, #3
 	bl Func_02003a54
@@ -3320,7 +3251,7 @@ Func_02001738:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_020099b0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020099b4:
 	.4byte Func_020011b8
 .L_020099b8:
@@ -3809,7 +3740,7 @@ Func_02001c00:
 	bl Func_02003c54
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r5, .L_02009df8
 	movs r2, #133
 	lsls r2, r2, #2
@@ -3870,7 +3801,7 @@ Func_02001c00:
 .L_02009e00:
 	.4byte 0x00013333
 .L_02009e04:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02009e08,"ax",%progbits
 	.global Func_02001e08
 	.thumb_func
@@ -4246,7 +4177,7 @@ Func_020020d0:
 	pop {pc}
 	.2byte 0x0000
 .L_0200a0f4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200a0f8,"ax",%progbits
 	.global Func_020020f8
 	.thumb_func
@@ -4427,53 +4358,7 @@ Func_020021e8:
 	.4byte Data_02004a5c
 .L_0200a250:
 	.4byte Data_0200460c
-	.section .text.x0200a254,"ax",%progbits
-	.global Func_02002254
-	.thumb_func
-Func_02002254:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	ldr r5, [r6, #68]
-	ldr r3, [r6, #8]
-	ldr r2, [r6, #72]
-	adds r3, r3, r5
-	str r3, [r6, #8]
-	ldr r3, [r6, #12]
-	ldr r7, [r6, #76]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #16]
-	adds r0, r5, #0
-	adds r3, r3, r7
-	movs r1, #18
-	str r3, [r6, #16]
-	bl __divsi3
-	subs r5, r5, r0
-	str r5, [r6, #68]
-	adds r3, r7, #0
-	cmp r7, #0
-	bge .L_0200a284
-	adds r3, #15
-.L_0200a284:
-	asrs r3, r3, #4
-	subs r3, r7, r3
-	str r3, [r6, #76]
-	ldr r2, [r6, #48]
-	ldr r3, [r6, #24]
-	ldr r1, [r6, #80]
-	adds r3, r3, r2
-	str r3, [r6, #24]
-	ldr r2, [r6, #52]
-	ldr r3, [r6, #28]
-	adds r3, r3, r2
-	str r3, [r6, #28]
-	adds r2, r6, #0
-	adds r2, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r2]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	pop {r5, r6, r7, pc}
+	.section .text.x0200a2aa,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200a2ac,"ax",%progbits
 	.global Func_020022ac
@@ -4526,8 +4411,8 @@ Func_020022ac:
 	adds r3, r3, r2
 	subs r2, #172
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #204
 	bl Func_02003c54
 	movs r3, #3
@@ -4658,7 +4543,7 @@ Func_020022ac:
 .L_0200a438:
 	.4byte gPartyState
 .L_0200a43c:
-	.4byte Func_02002254
+	.4byte Effect_AdvanceMotion
 .L_0200a440:
 	.4byte 0xffffa000
 .L_0200a444:
@@ -4694,7 +4579,7 @@ Func_0200244c:
 	strb r6, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, [r5, #12]
 	movs r2, #128
 	adds r3, r3, r7
@@ -4799,7 +4684,7 @@ Func_02002518:
 	movs r0, #96
 	ldr r3, [r3, #16]
 	adds r0, #255
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	mov r7, sp
 	str r0, [r7]
 	movs r3, #1
@@ -4812,7 +4697,7 @@ Func_02002518:
 	movs r2, #0
 	movs r3, #0
 	adds r0, #255
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	mov r3, r10
 	ldr r1, [r0, #80]
 	lsls r5, r3, #2
@@ -4835,7 +4720,7 @@ Func_02002518:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7, r5]
 	movs r1, #3
 	bl Func_02003a54
@@ -4861,7 +4746,7 @@ Func_02002518:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7]
 	movs r1, #3
 	bl Func_02003a54
@@ -5043,7 +4928,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200a75e:
 	movs r0, #20
 	bl Func_02002518
@@ -5280,7 +5165,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #18
 	bl Object_GetById
 	ldr r3, [r0, #8]
@@ -5296,7 +5181,7 @@ Func_02002618:
 	adds r3, r3, r5
 	str r3, [r0, #12]
 	str r3, [r0, #20]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200a98c:
 	movs r0, #15
 	bl Func_02002518
@@ -5428,7 +5313,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #12
 	bl Object_GetById
 	ldr r3, [r0, #8]
@@ -5444,7 +5329,7 @@ Func_02002618:
 	adds r3, r3, r5
 	str r3, [r0, #12]
 	str r3, [r0, #20]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200aaca:
 	movs r0, #10
 	bl Func_02002518
@@ -5490,7 +5375,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200ab2c:
 	movs r0, #13
 	bl Func_02002518
@@ -6637,7 +6522,7 @@ Func_020034ac:
 	adds r2, r2, r3
 	adds r0, #255
 	ldr r3, [r7, #16]
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_0200b5a2
@@ -6653,7 +6538,7 @@ Func_020034ac:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r6, #0
 	movs r1, #2
 	bl Func_02003a54
@@ -6775,7 +6660,7 @@ Func_020035e0:
 	ldr r2, [r6, #12]
 	ldr r3, [r6, #16]
 	adds r0, #255
-	bl Func_02003a64
+	bl Engine_ObjectCreate
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_0200b6ca
@@ -6793,7 +6678,7 @@ Func_020035e0:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r7, #0
 	movs r1, #2
 	bl Func_02003a54

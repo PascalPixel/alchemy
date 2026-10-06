@@ -56,18 +56,18 @@ Func_081a0d78:
 	adds r1, r1, r3
 	lsls r1, r1, #3
 	movs r2, #1
-	bl Func_081a101c
+	bl DisplayScroll_DrawLine
 	b .L_081a0e0a
 .L_081a0de0:
 	.4byte 0x00000001
 .L_081a0de4:
-	.4byte Data_02007504
+	.4byte DisplayScroll_Position
 .L_081a0de8:
-	.4byte Data_02007508
+	.4byte DisplayScroll_Busy
 .L_081a0dec:
-	.4byte Data_081a20bc
+	.4byte DisplayScroll_LineTable
 .L_081a0df0:
-	.4byte Data_0200750c
+	.4byte DisplayScroll_LastPosition
 .L_081a0df4:
 	adds r3, r4, #0
 	movs r2, #31
@@ -77,7 +77,7 @@ Func_081a0d78:
 	adds r1, r1, r3
 	lsls r1, r1, #3
 	movs r2, #1
-	bl Func_081a101c
+	bl DisplayScroll_DrawLine
 	strh r0, [r5]
 .L_081a0e0a:
 	pop {r5, r6, pc}

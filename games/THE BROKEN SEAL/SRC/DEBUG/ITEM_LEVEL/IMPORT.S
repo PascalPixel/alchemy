@@ -1,8 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Import veneers after the ITEM_LEVEL overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — ITEM_LEVEL overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -74,7 +70,7 @@ Owner_RecalculateStats:
 	.global Engine_DebugGetItem
 	.thumb_func
 Engine_DebugGetItem:
-	overlay_veneer Func_08077018
+	overlay_veneer Item_GetDirectFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:
@@ -83,7 +79,7 @@ PartyInventory_Add:
 	.global Engine_DebugGetAbility
 	.thumb_func
 Engine_DebugGetAbility:
-	overlay_veneer Func_08077080
+	overlay_veneer BattleAction_GetDirectFar
 	.endif
 	.global Party_ListActiveOwners
 	.thumb_func
@@ -111,7 +107,7 @@ Engine_ActorSetAnimation:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
@@ -149,7 +145,7 @@ ObjectMotion_WaitForAnimationChange:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_DebugDrawItemDetails
 	.thumb_func
 Engine_DebugDrawItemDetails:

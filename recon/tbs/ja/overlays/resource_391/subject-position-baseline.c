@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese Korima bridge's selected-actor position callback.
- * 2026-10-01, approved TBS flags: 76 bytes against the Japanese 56-byte
- * leader callback. The complete source overlay is 13188 against 13168.
- * The later-edition rounding and selected actor are preserved here.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

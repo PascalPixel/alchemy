@@ -141,7 +141,7 @@ Func_0811ea0c:
 	lsls r2, r2, #1
 	adds r3, r6, r2
 	ldrh r0, [r3]
-	bl Func_0812814c
+	bl Battle_GetSpriteFlagHighBits
 	mov r4, r8
 	adds r3, r0, #0
 	movs r2, #36
@@ -188,7 +188,7 @@ Func_0811ea0c:
 	lsls r4, r4, #1
 	adds r3, r0, r4
 	ldrh r0, [r3]
-	bl Func_0812814c
+	bl Battle_GetSpriteFlagHighBits
 	ldr r1, [sp, #16]
 	adds r3, r0, #0
 	mov r4, r8
@@ -270,7 +270,7 @@ Func_0811ea0c:
 	mov r3, r8
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_0811bfd0
+	bl BattleMotion_ResetObjectAtScaledAnchor
 	movs r0, #2
 	bl WaitFrames
 	movs r0, #4
@@ -407,7 +407,7 @@ Func_0811ea0c:
 	ldr r0, [sp, #4]
 	bl Sys_Free
 .L_0811ed5e:
-	bl Func_081234f0
+	bl BattleEventRuntime_WaitForReady
 	ldr r2, [sp, #12]
 	cmp r2, #0
 	beq .L_0811ed7e
@@ -445,4 +445,4 @@ Func_0811ea0c:
 .L_0811eda8:
 	.4byte 0x00000caa
 .L_0811edac:
-	.4byte Func_08122d10
+	.4byte BattleEvent_Playback

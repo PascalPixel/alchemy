@@ -1,10 +1,3 @@
-@ The 132 bytes that fill the fifth record of RESAMPLER_KERNELS.S (in
-@ RESAMPLER_KERNELS_2.S) to 152 bytes after its branch to the slot's end:
-@ shifted sums with conditional corrections and rotations (asrs; adds;
-@ addmi; ror) left from another record. The selector copies them with the
-@ record, but that branch always skips them, so they
-@ never run. Filler that never runs carries no credit, as
-@ RESAMPLER_KERNELS_PAD.S and RESAMPLER_KERNELS_PAD_1.S.
 .syntax unified
 	.section .padding,"a",%progbits
 	.arm

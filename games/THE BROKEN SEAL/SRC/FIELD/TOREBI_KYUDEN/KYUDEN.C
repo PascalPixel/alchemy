@@ -1,58 +1,30 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+#include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gTorebiKyudenEntrances2[];
-extern const struct SceneEntrance gTorebiKyudenEntrancesOther[];
 
-extern const struct ScenePlacement gTorebiKyudenPlacements2[];
-extern const struct ScenePlacement gTorebiKyudenPlacementsAfterColosso[];
-extern const struct ScenePlacement gTorebiKyudenPlacementsColosso[];
-extern const struct ScenePlacement gTorebiKyudenPlacementsOther[];
 
-extern u8 MsgTorebiTiredFeelFreeRest[];
-extern u8 MsgTorebiCameRestBefore[];
-extern u8 MsgTorebiPlanningEnterColosso[];
-extern u8 MsgTorebiRunBabisSoldiers[];
-extern u8 MsgTorebiUseFourBeds[];
-extern u8 MsgTorebiWeHaveJustEnoughExtra[];
 
-extern u8 MsgTorebiCantFightBecauseLittleIndigestion[];
-extern u8 MsgTorebiEvenIfEscapedBabiPalace[];
 
-extern u8 MsgTorebiGetUp[];
-extern u8 MsgTorebiEasternShoresKaragol[];
-extern u8 MsgTorebiFoundCloakBall[];
-extern u8 MsgTorebiMeetBabi[];
 
-extern const u16 TorebiKyuden_CellSteps[];
-extern u8 MsgTorebiCallsName[];
-extern u8 MsgTorebiIodemIodem[];
-extern u8 MsgTorebiLikeSleep[];
-extern u8 MsgTorebiWaitingCompanions[];
 
-extern u8 MsgTorebiArent[];
 
-extern u8 MsgTorebiBabiWaitingForAtColosseum[];
-extern u8 MsgTorebiRobinIdReallyLikeThank[];
-extern u8 MsgTorebiWarriorsWhoStayed[];
 
-extern u8 MsgFieldPeeredWell[];
-extern u8 MsgTorebiItsFilledWithFreshClean[];
 
-extern const struct SceneEvent gTorebiKyudenEvents2AfterColosso[];
-extern const struct SceneEvent gTorebiKyudenEvents2Colosso[];
-extern const struct SceneEvent gTorebiKyudenEvents2[];
-extern const struct SceneEvent gTorebiKyudenEventsAfterColosso[];
-extern const struct SceneEvent gTorebiKyudenEventsColosso[];
-extern const struct SceneEvent gTorebiKyudenEventsOther[];
 
-void FieldScene_RunMainCutsceneSequence(void);
-void FieldScene_RunBranchingActorSequence(void);
-void FieldScene_RunScene3b8SequenceB(void);
 
-/* The stats an owner keeps: current HP and PP follow their maximums. */
 struct OwnerState {
     u8 unknown_00[0x34];
     u16 max_hp;
@@ -61,9 +33,6 @@ struct OwnerState {
     u16 pp;
 };
 
-
-/* Restore the whole party: every owner's HP and PP to their maximums, and
- * the three companions back into the active party. */
 static __inline__ void Party_RestoreAll(void)
 {
     s16 owners[8];
@@ -71,20 +40,19 @@ static __inline__ void Party_RestoreAll(void)
     s32 cnt;
     s32 i;
 
-    cnt = Party_ListActiveOwners(owners);
+    cnt = Engine_PartyListActiveOwners(owners);
     for (i = 0; i < cnt; i++) {
-        state = Owner_GetState(owners[i]);
+        state = Engine_OwnerGetState(owners[i]);
         state->hp = state->max_hp;
         state->pp = state->max_pp;
-        Owner_RecalculateRatios(owners[i]);
+        Engine_OwnerRecalculateRatios(owners[i]);
     }
-    Party_AddActiveOwner(1);
-    Party_AddActiveOwner(2);
-    Party_AddActiveOwner(3);
-    InventorySnapshot_Restore();
+    Engine_PartyAddActiveOwner(1);
+    Engine_PartyAddActiveOwner(2);
+    Engine_PartyAddActiveOwner(3);
+    Engine_InventorySnapshotRestore();
 }
 
-/* Where the party appears in the palace; the second scene has its own. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
@@ -93,60 +61,53 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gTorebiKyudenEntrancesOther;
 }
 
-s32 SceneData_GetTableca7c(void)
+s32 TorebiKyuden_GetRegions(void)
 {
     return (s32)TorebiKyuden_EmptyTable;
 }
 
-s32 SceneData_GetTableca8c(void)
+s32 TorebiKyuden_GetExits(void)
 {
     return (s32)TorebiKyuden_MessageTable;
 }
 
-/* The actors placed in the palace: the second scene has its own; the
-   others change once Colosso is under way (flag 0x962) and once it is over
-   (flag 0x950). */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
         return gTorebiKyudenPlacements2;
     }
-    if (GameFlag_IsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(0x950) != 0) {
         return gTorebiKyudenPlacementsAfterColosso;
     }
-    if (GameFlag_IsSet(0x962) != 0) {
+    if (Engine_GameFlagIsSet(0x962) != 0) {
         return gTorebiKyudenPlacementsColosso;
     }
     return gTorebiKyudenPlacementsOther;
 }
 
-/* The palace guest rooms: the steward asks whether the party met Babi's
- * soldiers, the room keeper offers the four beds or a free rest, and the
- * last host asks about Colosso. Each question loads its first message once
- * and adds to it for the answers. */
 void FieldScene_RunBranchedSteps1FF1(s32 a)
 {
     s32 k = (s32)MsgTorebiRunBabisSoldiers;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0)
-        Event_SetMessage(k + 1);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+        Engine_EventSetMessage(k + 1);
     else
-        Event_SetMessage(k + 2);
-    Event_ShowMessage(a, 0);
+        Engine_EventSetMessage(k + 2);
+    Engine_EventShowMessage(a, 0);
 }
 
 void RunOpeningAuxiliarySequence(s32 a)
 {
 
-    u8 *ret;
+    struct FieldActor *ret;
     s16 v;
     s32 c;
     s32 t;
 
     ret = Actor_Get(ACTOR_PARTY_LEADER);
-    v = (*(u16 *)(ret + 6) + 0x2000) & 0xc000;
+    v = (ret->facing + 0x2000) & 0xc000;
     Event_Begin();
     Battle_ResetEffectCounter();
     if (GameFlag_IsSet(512) == 0) {
@@ -159,7 +120,7 @@ void RunOpeningAuxiliarySequence(s32 a)
         c = 0x4000;
         if (t == (0x4000 << 16)) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
-            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
         }
         Actor_SetSpeed(a, 0x10000, 0x8000);
         Actor_WalkByAndWait(a, 0, -48);
@@ -168,9 +129,9 @@ void RunOpeningAuxiliarySequence(s32 a)
     } else {
         GameFlag_Clear(512);
         GameFlag_Set(0x969);
-        Actor_FaceDirection(a, 0x4000, 0);
+        Actor_FaceDirection(a, FACING_SOUTH, 0);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
         Event_Wait(20);
         c = (s32)MsgTorebiUseFourBeds;
         Event_SetMessage(c);
@@ -194,7 +155,7 @@ void RunOpeningAuxiliarySequence(s32 a)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_02000264(s32 a0)
+void TorebiKyuden_OfferRest(s32 a0)
 {
     u32 i;
     s32 record;
@@ -205,9 +166,9 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
     if (GameFlag_IsSet(0x966) == 0) {
         GameFlag_Set(0x966);
         GameFlag_Set(0x967);
-        Actor_FaceDirection(a0, 0x4000, 0);
+        Actor_FaceDirection(a0, FACING_SOUTH, 0);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
         Event_Wait(20);
         base6_2241 = (s32)MsgTorebiCameRestBefore;
         Event_SetMessage(base6_2241);
@@ -236,34 +197,34 @@ void FieldScene_RunBranchedSteps2006(s32 a)
 {
     s32 k = (s32)MsgTorebiPlanningEnterColosso;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Actor_ShowEmote(a, 0x102, 0x28);
-        Event_SetMessage(k + 1);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_ActorShowEmote(a, 0x102, 0x28);
+        Engine_EventSetMessage(k + 1);
     } else {
-        Event_Wait(10);
-        Actor_ShowEmote(a, 0x105, 0x28);
-        Event_SetMessage(k + 2);
+        Engine_EventWait(10);
+        Engine_ActorShowEmote(a, 0x105, 0x28);
+        Engine_EventSetMessage(k + 2);
     }
-    Event_ShowMessage(a, 0);
+    Engine_EventShowMessage(a, 0);
 }
 
 void RunMiddleAuxiliarySequence(s32 a)
 {
-    u8 *obj;
+    struct FieldActor *obj;
     u8 *q;
 
-    obj = (u8 *)Actor_Get(a);
+    obj = Actor_Get(a);
     Event_Begin();
     q = TorebiKyuden_MiddleActionScript;
     Actor_EnableActionCallback(a, q);
     Event_SetMessage((s32)MsgTorebiCantFightBecauseLittleIndigestion);
     Event_ShowMessage(a, 0);
     Actor_Stop(a);
-    *(s32 *)(obj + 28) = 0x10000;
-    *(s32 *)(obj + 24) = 0x10000;
+    obj->scale_y = 0x10000;
+    obj->scale_x = 0x10000;
     Event_Wait(30);
     Actor_RunRepeatedMotion(a, 2);
     Event_Wait(30);
@@ -280,15 +241,15 @@ void RunMiddleAuxiliarySequence(s32 a)
     Event_Wait(30);
     Actor_EnableActionCallback(a, q);
     Event_ShowMessage(a, 0);
-    Actor_FaceDirection(a, 0xe000, 0);
+    Actor_FaceDirection(a, FACING_NORTHEAST, 0);
     Event_Wait(10);
-    *(s32 *)(obj + 28) = 0x10000;
-    *(s32 *)(obj + 24) = 0x10000;
+    obj->scale_y = 0x10000;
+    obj->scale_x = 0x10000;
     Actor_EnableActionCallback(a, q);
     Event_End();
 }
 
-void FieldScene_RunScene3b8_0200049c(s32 unused0, s32 a1)
+void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
 {
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiEvenIfEscapedBabiPalace);
@@ -304,73 +265,68 @@ void FieldScene_RunScene3b8_0200049c(s32 unused0, s32 a1)
         Actor_SetAnimationAndWait(a1, 4);
         Event_Wait(20);
         Event_ShowMessage(a1, 0);
-        Actor_FaceDirection(a1, 0x8000, 0);
+        Actor_FaceDirection(a1, FACING_WEST, 0);
     }
     Event_End();
 }
 
-/* The palace talks: the questions about meeting Babi and the eastern
- * shores past Karagol, the Cloak Ball found in the guest room, and the
- * morning the party wakes in the palace (FieldScene_RunScene3b8SequenceB).
- * The questions load their first message once and add to it for the
- * answers. */
 void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
     s32 k = (s32)MsgTorebiMeetBabi;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0)
-        Event_SetMessage(k + 1);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+        Engine_EventSetMessage(k + 1);
     else
-        Event_SetMessage(k + 2);
-    Event_ShowMessage(a, 0);
+        Engine_EventSetMessage(k + 2);
+    Engine_EventShowMessage(a, 0);
 }
 
 void SceneDialogue_RunChoiceSequence22ab(s32 no)
 {
     s32 msg = (s32)MsgTorebiEasternShoresKaragol;
 
-    Event_SetMessage(msg);
-    Event_OpenMessage(no, 0);
-    if (Event_ChooseYesNo(0, 0) == 0)
-        Event_SetMessage(msg + 1);
+    Engine_EventSetMessage(msg);
+    Engine_EventOpenMessage(no, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+        Engine_EventSetMessage(msg + 1);
     else
-        Event_SetMessage(msg + 2);
-    Event_ShowMessage(no, 0);
+        Engine_EventSetMessage(msg + 2);
+    Engine_EventShowMessage(no, 0);
 }
 
 void SceneDialogue_RunChoiceSequence2352(void)
 {
     s32 msg;
 
-    Event_Begin();
+    Engine_EventBegin();
     Battle_ResetEffectCounter();
     msg = (s32)MsgTorebiFoundCloakBall;
-    Event_SetMessage(msg);
-    Event_ShowMessage(-1, 0);
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(14, 2);
-    Event_Wait(30);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 30);
-    Event_OpenMessage(14, 0);
-    if (Event_ChooseYesNo(0, 0) != 0) {
-        Event_SetMessage(msg + 2);
-        Event_ShowMessage(14, 0);
+    Engine_EventSetMessage(msg);
+    Engine_EventShowMessage(-1, 0);
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(14, 2);
+    Engine_EventWait(30);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 30);
+    Engine_EventOpenMessage(14, 0);
+    if (Engine_EventChooseYesNo(0, 0) != 0) {
+        Engine_EventSetMessage(msg + 2);
+        Engine_EventShowMessage(14, 0);
     } else {
-        Event_Wait(20);
-        Event_SetMessage(msg + 3);
-        Event_ShowMessage(14, 0);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-        Event_Wait(30);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-        Event_Wait(30);
-        Actor_SetPosition(16, 0, 0);
-        Item_ShowFound(ITEM_CLOAK_BALL, 3);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-        Party_GiveItem(ITEM_CLOAK_BALL, 0);
-        GameFlag_Set(0xf31);
+        Engine_EventWait(20);
+        Engine_EventSetMessage(msg + 3);
+        Engine_EventShowMessage(14, 0);
+        Engine_EventWait(10);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        Engine_EventWait(30);
+        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+        Engine_EventWait(30);
+        Engine_ActorSetPosition(16, 0, 0);
+        Engine_ItemShowFound(ITEM_CLOAK_BALL, 3);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+        Engine_PartyGiveItem(ITEM_CLOAK_BALL, 0);
+        Engine_GameFlagSet(0xf31);
     }
 }
 
@@ -383,9 +339,9 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_Get(0)->active = 0;
     Actor_Get(10)->active = 0;
     Task_Wait(1);
-    *(volatile u16 *)0x04000000 = 0x1140;
+    REG_DISPCNT = 0x1140;
     Event_ShowMessage(-1, 0);
-    *(volatile u16 *)0x04000000 = 0x140;
+    REG_DISPCNT = 0x140;
     Actor_Get(0)->active = 1;
     Actor_Get(10)->active = 1;
     Actor_SetAnimation(0, 31);
@@ -394,17 +350,17 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_SetPosition(1, 0x780000, 0x680000);
     Actor_SetPosition(3, 0x680000, 0x500000);
     Actor_SetPosition(2, 0x780000, 0x780000);
-    Actor_FaceDirection(1, 0, 0);
-    Actor_FaceDirection(3, 0, 0);
-    Actor_FaceDirection(2, 0xe000, 0);
+    Actor_FaceDirection(1, FACING_EAST, 0);
+    Actor_FaceDirection(3, FACING_EAST, 0);
+    Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     gEventWork->transition_frames = 60;
-    Event_SetStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     Event_Wait(20);
     gEventWork->transition_frames = 24;
     Actor_SetSpeed(3, 0x10000, 0x8000);
     Actor_WalkByAndWait(ACTOR_MIA, 16, 0);
-    Actor_FaceDirection(3, 0x2000, 0);
+    Actor_FaceDirection(3, FACING_SOUTHEAST, 0);
     Event_Wait(20);
     Actor_RunRepeatedMotion(3, 2);
     Event_Wait(30);
@@ -435,18 +391,18 @@ void FieldScene_RunScene3b8SequenceB(void)
     Event_Wait(10);
     Actor_ShowEmote(0, 0x102, 80);
     Actor_ShowEmote(2, 0x106, 60);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(2, 4);
     Event_Wait(20);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
-    Actor_FaceDirection(1, 0x4000, 0);
+    Actor_FaceDirection(1, FACING_SOUTH, 0);
     Event_Wait(30);
     Actor_RunRepeatedMotion(1, 2);
     Event_Wait(45);
-    Actor_FaceDirection(1, 0, 0);
-    Actor_FaceDirection(2, 0xe000, 0);
+    Actor_FaceDirection(1, FACING_EAST, 0);
+    Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     Event_Wait(30);
     Event_OpenMessage(1, 0);
     if (Event_ChooseYesNo(-1, 0) != 0) {
@@ -475,15 +431,15 @@ void FieldScene_RunScene3b8SequenceB(void)
     Event_Wait(10);
     Actor_SetSpeed(1, 0x10000, 0x8000);
     Actor_WalkByAndWait(1, -16, 0);
-    Actor_FaceDirection(1, 0, 0);
+    Actor_FaceDirection(1, FACING_EAST, 0);
     Event_Wait(35);
     Actor_Jump(0, 6, 0);
     Actor_SetSpeed(0, 0x1e666, 0xf333);
     Actor_WalkByAndWait(0, -32, 0);
     record = Actor_Get(0);
     Actor_SetSpriteFlags(record, 1);
-    Actor_FaceDirection(3, 0x4000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(3, FACING_SOUTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(40);
     Actor_SetAnimation(0, 3);
     Event_Wait(30);
@@ -521,12 +477,12 @@ void FieldScene_RunScene3b8SequenceB(void)
 
 void FieldScene_RunScene3b8SequenceA(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s16 dir;
     u16 facing;
 
     record = Actor_Get(0);
-    dir = (*(u16 *)(record + 6) + 0x2000) & -0x4000;
+    dir = (record->facing + 0x2000) & -0x4000;
     Event_Begin();
     Battle_ResetEffectCounter();
     Event_SetMessage((s32)MsgTorebiLikeSleep);
@@ -547,9 +503,9 @@ void FieldScene_RunScene3b8SequenceA(void)
             Actor_WalkToAndWait(0, 240, 120);
         }
         Actor_WalkToAndWait(0, 184, 120);
-        Actor_FaceDirection(0, 0, 0);
+        Actor_FaceDirection(0, FACING_EAST, 0);
         Event_Wait(10);
-        Motion_LaunchFromFocusedObject(1, 16, 0, 0x8000);
+        FieldMotion_LaunchFromFocusedObject(1, 16, 0, 0x8000);
         Object_RefreshSelectorById(1);
         Event_Wait(10);
         Event_ShowMessage(1, 0);
@@ -559,11 +515,11 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_SetSpeed(1, 0x10000, 0x8000);
         Actor_WalkByAndWait(ACTOR_GERALD, 40, 0);
         Actor_WalkByAndWait(1, 0, -32);
-        Actor_FaceDirection(1, 0x6000, 0);
+        Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
         Event_Wait(20);
-        Actor_FaceDirection(0, 0x8000, 0);
+        Actor_FaceDirection(0, FACING_WEST, 0);
         Event_Wait(20);
-        Motion_LaunchFromFocusedObject(2, -16, 0, 0);
+        FieldMotion_LaunchFromFocusedObject(2, -16, 0, 0);
         Object_RefreshSelectorById(2);
         Event_Wait(10);
         Event_ShowMessage(2, 0);
@@ -573,11 +529,11 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_SetSpeed(2, 0x10000, 0x8000);
         Actor_WalkByAndWait(2, -40, 0);
         Actor_WalkByAndWait(2, 0, 40);
-        Actor_FaceDirection(2, 0xe000, 0);
+        Actor_FaceDirection(2, FACING_NORTHEAST, 0);
         Event_Wait(20);
-        Actor_FaceDirection(0, 0, 0);
+        Actor_FaceDirection(0, FACING_EAST, 0);
         Event_Wait(20);
-        Motion_LaunchFromFocusedObject(3, 16, 0, 0x8000);
+        FieldMotion_LaunchFromFocusedObject(3, 16, 0, 0x8000);
         Object_RefreshSelectorById(3);
         Event_Wait(10);
         Event_ShowMessage(3, 0);
@@ -587,12 +543,12 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_SetSpeed(3, 0x10000, 0x8000);
         Actor_WalkByAndWait(3, 40, 0);
         Actor_WalkByAndWait(3, 0, 40);
-        Actor_FaceDirection(3, 0xa000, 0);
+        Actor_FaceDirection(3, FACING_NORTHWEST, 0);
         Event_Wait(20);
         Camera_MoveTo(-1, -1, -1, 0);
         Actor_WalkByAndWait(0, -56, 0);
         Actor_WalkByAndWait(0, 0, -32);
-        Actor_FaceDirection(0, 0x2000, 0);
+        Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
         Event_Wait(30);
         Actor_SetAnimationAndWait(3, 3);
         Event_Wait(10);
@@ -602,25 +558,25 @@ void FieldScene_RunScene3b8SequenceA(void)
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(1, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Actor_SetAnimationAndWait(2, 3);
         Event_Wait(10);
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(2, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Event_Wait(20);
-        Actor_FaceDirection(0, 0, 0);
-        Actor_FaceDirection(1, 0x8000, 0);
-        Actor_FaceDirection(3, 0x8000, 0);
-        Actor_FaceDirection(2, 0, 0);
+        Actor_FaceDirection(0, FACING_EAST, 0);
+        Actor_FaceDirection(1, FACING_WEST, 0);
+        Actor_FaceDirection(3, FACING_WEST, 0);
+        Actor_FaceDirection(2, FACING_EAST, 0);
         Inn_PlaySleep(0);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-        Actor_FaceDirection(1, 0x6000, 0);
-        Actor_FaceDirection(3, 0xa000, 0);
-        Actor_FaceDirection(2, 0xe000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+        Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
+        Actor_FaceDirection(3, FACING_NORTHWEST, 0);
+        Actor_FaceDirection(2, FACING_NORTHEAST, 0);
         Event_Wait(20);
         Actor_SetAnimationAndWait(1, 3);
         Event_Wait(10);
@@ -630,14 +586,14 @@ void FieldScene_RunScene3b8SequenceA(void)
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(2, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Actor_SetAnimationAndWait(3, 3);
         Event_Wait(10);
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(ACTOR_MIA, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Actor_WalkByAndWait(1, 0, 32);
         Actor_WalkBy(1, -112, 0);
@@ -646,10 +602,10 @@ void FieldScene_RunScene3b8SequenceA(void)
         Event_Wait(50);
         Actor_WalkByAndWait(2, 0, -24);
         Actor_WaitForMove(ACTOR_GERALD);
-        Actor_FaceDirection(0, 0x4000, 0);
+        Actor_FaceDirection(0, FACING_SOUTH, 0);
         Actor_WalkByAndWait(1, 0, -16);
         Actor_WaitForMove(3);
-        Actor_FaceDirection(3, 0xc000, 0);
+        Actor_FaceDirection(3, FACING_NORTH, 0);
         Event_Wait(20);
         Event_ShowMessage(ACTOR_GERALD, 0);
         Event_Wait(10);
@@ -661,21 +617,21 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_SetAnimation(1, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            ObjectMotion_ResetAndSetPosition(1, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(ACTOR_GERALD);
         Actor_SetPosition(1, 0, 0);
         Actor_SetAnimation(3, 2);
         record = Actor_Get(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            ObjectMotion_ResetAndSetPosition(3, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(ACTOR_MIA);
         Actor_SetPosition(3, 0, 0);
         Actor_SetAnimation(2, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            ObjectMotion_ResetAndSetPosition(2, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(2);
         Actor_SetPosition(2, 0, 0);
@@ -876,7 +832,7 @@ void RunPrimaryEffectSequence(void)
     Actor_RunRepeatedMotion(22, 2);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_FaceDirection(20, 0, 0);
+    Actor_FaceDirection(20, FACING_EAST, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
@@ -930,7 +886,7 @@ void RunPrimaryEffectSequence(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(20, 4);
     Event_Wait(30);
-    Actor_FaceDirection(20, 0, 0);
+    Actor_FaceDirection(20, FACING_EAST, 0);
     Event_Wait(30);
     Actor_SetSpeed(20, 65536, 32768);
     Actor_WalkByAndWait(20, 120, 0);
@@ -941,267 +897,267 @@ void RunPrimaryEffectSequence(void)
 
 void FieldScene_RunBranchingActorSequence(void)
 {
-    s32 record;
+    struct FieldActor *actor;
     s32 step;
     s32 pick;
-    s32 state;
+    struct EventWork *event;
     u8 *work;
 
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiCallsName);
-    Actor_SetAnimation(0, 31);
-    record = Actor_Get(0);
-    Actor_SetSpriteFlags(record, 0);
-    Actor_SetPosition(1, 0x680000, 0x680000);
-    Actor_SetPosition(3, 0x580000, 0x780000);
-    Actor_SetPosition(2, 0x780000, 0x780000);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(3, 0, 0);
-    Actor_FaceDirection(2, 0x8000, 0);
-    state = (s32)gWork[0];
-    *(s32 *)(state + 0x1c0) = 0x100;
-    *(s32 *)(state + 0x1c8) = 12;
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 31);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetPosition(ACTOR_GERALD, 0x680000, 0x680000);
+    Actor_SetPosition(ACTOR_MIA, 0x580000, 0x780000);
+    Actor_SetPosition(ACTOR_IVAN, 0x780000, 0x780000);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+    event = (struct EventWork *)gWork[0];
+    event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    event->transition_frames = 12;
     Task_Wait(1);
     DisplayTransition_InitializeBattleEffectState(9);
     work = gWork[4];
     SetHalf((u16 *)(work + 0x52a), 0);
     SetHalf((u16 *)(work + 0x534), 0x1f1f);
     SetHalf((u16 *)(work + 0x536), 1);
-    Event_SetStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     for (step = 1; step <= 5; step++) {
         Task_Wait(3);
         *(u16 *)(work + 0x52a) = step;
     }
     Event_Wait(40);
-    Actor_RunRepeatedMotion(0, 2);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(30);
     for (step = 5; step <= 31; step++) {
         Task_Wait(3);
         *(u16 *)(work + 0x52a) = step;
     }
     SetHalf((u16 *)(work + 0x536), 31);
-    state = (s32)gWork[0];
-    *(s32 *)(state + 0x1c0) = 0x209;
-    *(s32 *)(state + 0x1c8) = 24;
+    event = (struct EventWork *)gWork[0];
+    event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    event->transition_frames = 24;
     Event_Wait(20);
-    Actor_ShowEmote(1, 0x100, 50);
-    Actor_FaceActor(1, 0, 40);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT, 50);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 40);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_ShowEmote(2, 0x101, 40);
-    Actor_FaceDirection(2, 0xe000, 0);
+    Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | 1, 40);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
     Event_Wait(30);
-    Event_ShowMessage(2, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(10);
-    Event_ShowMessage(3, 0);
-    Actor_FaceDirection(3, 0xe000, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
     Event_Wait(30);
-    Actor_RunRepeatedMotion(3, 2);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Event_Wait(30);
-    Actor_SetSpeed(3, 0x10000, 0x8000);
-    Actor_WalkByAndWait(3, 0, -40);
-    Actor_WalkByAndWait(3, 32, 0);
-    Actor_FaceDirection(3, 0x2000, 0);
+    Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
+    Actor_WalkByAndWait(ACTOR_MIA, 0, -40);
+    Actor_WalkByAndWait(ACTOR_MIA, 32, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
     Event_Wait(10);
-    Event_ShowMessage(3, 0);
-    record = Actor_Get(0);
-    *(s32 *)(record + 16) += -0x30000;
-    record = Actor_Get(0);
-    *(s32 *)(record + 64) += -0x30000;
-    Actor_SetAnimation(0, 32);
+    Event_ShowMessage(ACTOR_MIA, 0);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor->z.fixed -= 0x30000;
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor->target_z -= 0x30000;
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 32);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(0, 34);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
     Event_Wait(30);
-    Actor_SetAnimation(0, 33);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 33);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(1, 4);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(10);
-    Actor_ShowEmote(0, 0x102, 80);
-    Actor_ShowEmote(2, 0x100, 50);
-    Event_OpenMessage(2, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
+    Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT, 50);
+    Event_OpenMessage(ACTOR_IVAN, 0);
     if (Event_ChooseYesNo(-1, 0) == 0) {
         Event_Wait(10);
-        Actor_SetAnimationAndWait(0, 33);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
         Event_Wait(20);
-        Actor_ShowEmote(1, 0x103, 40);
-        Actor_Jump(1, 4, 13);
-        Actor_Jump(1, 4, 30);
-        Event_ShowMessage(1, 0);
-        *(u16 *)(gWork[0] + 0x1d8) += 1;
+        Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 3, 40);
+        Actor_Jump(ACTOR_GERALD, 4, 13);
+        Actor_Jump(ACTOR_GERALD, 4, 30);
+        Event_ShowMessage(ACTOR_GERALD, 0);
+        ((struct EventWork *)gWork[0])->message++;
     } else {
         Event_Wait(10);
-        Actor_SetAnimationAndWait(0, 34);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
         Event_Wait(20);
-        Actor_ShowEmote(1, 0x103, 40);
-        Actor_Jump(1, 4, 13);
-        Actor_Jump(1, 4, 30);
-        *(u16 *)(gWork[0] + 0x1d8) += 1;
-        Event_ShowMessage(1, 0);
+        Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 3, 40);
+        Actor_Jump(ACTOR_GERALD, 4, 13);
+        Actor_Jump(ACTOR_GERALD, 4, 30);
+        ((struct EventWork *)gWork[0])->message++;
+        Event_ShowMessage(ACTOR_GERALD, 0);
     }
     Event_Wait(10);
-    Actor_FaceDirection(2, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(2, 4);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Actor_FaceDirection(1, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST, 0);
     Event_Wait(30);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(40);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(2, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
     Event_Wait(30);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(10);
-    Actor_FaceDirection(3, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
     Event_Wait(50);
-    Actor_FaceDirection(3, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
     Event_Wait(35);
-    Actor_ShowEmote(3, 0x108, 50);
+    Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | 8, 50);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(3, 3);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(30);
-    Event_ShowMessage(3, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
-    Event_OpenMessage(2, 0);
+    Event_OpenMessage(ACTOR_IVAN, 0);
     if (Event_ChooseYesNo(-1, 0) == 0) {
         Event_Wait(10);
-        Actor_SetAnimationAndWait(0, 33);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
         Event_Wait(20);
-        Actor_ShowEmote(1, 0x107, 40);
-        Event_ShowMessage(1, 0);
+        Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 7, 40);
+        Event_ShowMessage(ACTOR_GERALD, 0);
         pick = 0;
-        *(u16 *)(gWork[0] + 0x1d8) += 1;
+        ((struct EventWork *)gWork[0])->message++;
     } else {
         Event_Wait(10);
-        Actor_SetAnimationAndWait(0, 34);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
         Event_Wait(20);
-        Actor_ShowEmote(1, 0x107, 40);
-        *(u16 *)(gWork[0] + 0x1d8) += 1;
+        Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 7, 40);
+        ((struct EventWork *)gWork[0])->message++;
         pick = 1;
-        Event_ShowMessage(1, 0);
+        Event_ShowMessage(ACTOR_GERALD, 0);
     }
     Event_Wait(10);
-    Actor_FaceDirection(2, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(2, 4);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Actor_FaceDirection(1, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST, 0);
     Event_Wait(30);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(40);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(2, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
     Event_Wait(30);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(10);
-    Actor_FaceDirection(3, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
     Event_Wait(50);
-    Actor_FaceDirection(3, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
     Event_Wait(35);
-    Actor_ShowEmote(3, 0x108, 50);
+    Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | 8, 50);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(3, 3);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(30);
-    Event_ShowMessage(3, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     if (pick == 0) {
         Event_Wait(10);
-        Actor_SetAnimationAndWait(2, 3);
+        Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
         Event_Wait(30);
-        Event_ShowMessage(2, 0);
+        Event_ShowMessage(ACTOR_IVAN, 0);
         Event_Wait(10);
-        Actor_RunRepeatedMotion(1, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(30);
-        Event_ShowMessage(1, 0);
-        *(u16 *)(gWork[0] + 0x1d8) += 2;
+        Event_ShowMessage(ACTOR_GERALD, 0);
+        ((struct EventWork *)gWork[0])->message += 2;
     } else {
-        *(u16 *)(gWork[0] + 0x1d8) += 2;
+        ((struct EventWork *)gWork[0])->message += 2;
         Event_Wait(10);
-        Actor_SetAnimationAndWait(2, 4);
+        Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
         Event_Wait(20);
-        Event_ShowMessage(2, 0);
+        Event_ShowMessage(ACTOR_IVAN, 0);
         Event_Wait(10);
-        Actor_RunRepeatedMotion(1, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(20);
-        Event_ShowMessage(1, 0);
+        Event_ShowMessage(ACTOR_GERALD, 0);
     }
     Event_Wait(10);
-    Actor_ShowEmote(0, 0x102, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
     Event_Wait(30);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
-    Actor_FaceEachOther(2, 3, 40);
-    Actor_FaceDirection(3, 0x2000, 0);
-    Actor_FaceDirection(2, 0xe000, 0);
+    Actor_FaceEachOther(ACTOR_IVAN, ACTOR_MIA, 40);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
     Event_Wait(30);
-    while ((gKeysHeld & 240) == 0) {
+    while ((gKeysHeld & KEYS_DPAD) == 0) {
         Task_Wait(1);
     }
-    Actor_Jump(0, 6, 0);
-    Actor_SetSpeed(0, 0x1e666, 0xf333);
-    Actor_WalkByAndWait(0, -32, -8);
-    record = Actor_Get(0);
-    Actor_SetSpriteFlags(record, 1);
+    Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, -8);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    Actor_SetSpriteFlags(actor, 1);
     Event_Wait(20);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(3, 0x4000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Event_Wait(20);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(3, 2);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Event_Wait(20);
-    Event_ShowMessage(3, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
-    Actor_FaceDirection(0, 0x4000, 0);
-    Actor_FaceDirection(1, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST, 0);
     Event_Wait(30);
-    Event_ShowMessage(2, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(20);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimationAndWait(3, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(30);
-    Actor_SetSpeed(1, 0x13333, 0x9999);
-    Actor_SetSpeed(3, 0x13333, 0x9999);
-    Actor_SetSpeed(2, 0x13333, 0x9999);
-    Actor_SetAnimation(1, 2);
-    record = Actor_Get(0);
-    if (record != 0) {
-        ObjectMotion_ResetAndSetPosition(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_WALK);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    if (actor != NULL) {
+        ObjectMotion_ResetAndSetPosition(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(1);
-    Actor_SetPosition(1, 0, 0);
-    Actor_SetAnimation(3, 2);
-    record = Actor_Get(0);
-    if (record != 0) {
-        ObjectMotion_ResetAndSetPosition(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    if (actor != NULL) {
+        ObjectMotion_ResetAndSetPosition(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(3);
-    Actor_SetPosition(3, 0, 0);
-    Actor_SetAnimation(2, 2);
-    record = Actor_Get(0);
-    if (record != 0) {
-        ObjectMotion_ResetAndSetPosition(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    Actor_SetPosition(ACTOR_MIA, 0, 0);
+    Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    if (actor != NULL) {
+        ObjectMotion_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(2);
-    Actor_SetPosition(2, 0, 0);
+    Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Event_Wait(10);
     Event_End();
 }
@@ -1213,8 +1169,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Audio_PlayCue(30);
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiWaitingCompanions);
-    Event_SetStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
@@ -1236,9 +1192,9 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_WalkToAndWait(0, 208, 0x2f8);
     Event_Wait(10);
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
-    Motion_LaunchFromFocusedObject(1, -16, 16, 0xc000);
-    Motion_LaunchFromFocusedObject(3, 0, 24, 0xc000);
-    Motion_LaunchFromFocusedObject(2, 16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(1, -16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(3, 0, 24, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(2, 16, 16, 0xc000);
     Actor_WaitForMove(1);
     Event_Wait(30);
     Event_Wait(10);
@@ -1252,7 +1208,7 @@ void FieldScene_RunMainCutsceneSequence(void)
         Event_Wait(20);
         Event_ShowMessage(20, 0);
         Event_Wait(10);
-        Actor_FaceDirection(14, 0xa000, 0);
+        Actor_FaceDirection(14, FACING_NORTHWEST, 0);
         Event_Wait(30);
         Actor_SetAnimationAndWait(14, 3);
         Event_Wait(20);
@@ -1261,59 +1217,59 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(20);
         Event_ShowMessage(20, 0);
-        Actor_FaceDirection(20, 0xc000, 0);
+        Actor_FaceDirection(20, FACING_NORTH, 0);
         Event_Wait(20);
         Actor_SetSpeed(20, 0x10000, 0x8000);
         Actor_WalkByAndWait(20, 0, -16);
         Event_Wait(40);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(40);
-        Actor_FaceDirection(20, 0x4000, 0);
+        Actor_FaceDirection(20, FACING_SOUTH, 0);
         Event_Wait(20);
         Actor_WalkByAndWait(20, 0, 32);
-        Actor_FaceDirection(14, 0x8000, 0);
+        Actor_FaceDirection(14, FACING_WEST, 0);
         Event_Wait(10);
-        Actor_FaceDirection(20, 0, 0);
+        Actor_FaceDirection(20, FACING_EAST, 0);
         Event_Wait(30);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(30);
-        Actor_FaceDirection(20, 0x4000, 0);
+        Actor_FaceDirection(20, FACING_SOUTH, 0);
         Event_Wait(20);
         Actor_SetSpeed(20, 0xcccc, 0x6666);
-        Actor_Get(20)->unknown_5a &= 0xfe;
+        Actor_Get(20)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_WalkByAndWait(20, 0, -16);
-        Actor_Get(20)->unknown_5a |= 1;
-        Actor_FaceDirection(14, 0x4000, 0);
+        Actor_Get(20)->steering_flags |= ACTOR_FACES_MOTION;
+        Actor_FaceDirection(14, FACING_SOUTH, 0);
         Event_Wait(40);
         Actor_SetSpeed(14, 0xcccc, 0x6666);
         Actor_WalkByAndWait(14, 0, 16);
         Event_Wait(40);
-        UiText_DrawQuantity(164, 2);
+        Engine_UiTextDrawQuantity(164, 2);
         Event_ShowMessage(-1, 0);
         Item_ShowFound(164, 3);
         Party_GiveItem(164, 0);
-        Actor_FaceDirection(0, 0xc000, 0);
+        Actor_FaceDirection(0, FACING_NORTH, 0);
         Event_Wait(30);
         Actor_WalkByAndWait(14, 0, -16);
-        Actor_FaceDirection(14, 0x4000, 0);
+        Actor_FaceDirection(14, FACING_SOUTH, 0);
         Event_Wait(30);
         Actor_RunRepeatedMotion(14, 2);
         Event_Wait(20);
         Event_OpenMessage(14, 0);
-        AdvanceMessage(2);
+        gEventWork->message += 2;
     } else {
-        AdvanceMessage(5);
+        gEventWork->message += 5;
         Event_Wait(10);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(20);
         Event_ShowMessage(20, 0);
-        Actor_FaceDirection(14, 0xa000, 0);
+        Actor_FaceDirection(14, FACING_NORTHWEST, 0);
         Event_Wait(40);
         Actor_SetAnimationAndWait(14, 3);
         Event_Wait(20);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(30);
-        Actor_FaceDirection(14, 0x4000, 0);
+        Actor_FaceDirection(14, FACING_SOUTH, 0);
         Event_Wait(30);
         Actor_RunRepeatedMotion(14, 2);
         Event_Wait(20);
@@ -1325,17 +1281,17 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(20);
         Event_ShowMessage(20, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(20);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(20, 0);
     }
 
     Event_Wait(10);
-    Actor_FaceDirection(14, 0xa000, 0);
+    Actor_FaceDirection(14, FACING_NORTHWEST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
@@ -1348,13 +1304,13 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_Jump(1, 4, 30);
     Event_ShowMessage(1, 0);
     Event_Wait(10);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(20);
     Actor_SetSpeed(14, 0x19999, 0xcccc);
     Actor_WalkByAndWait(20, 0, 16);
     Task_Wait(2);
-    Actor_FaceDirection(20, 0x2000, 0);
+    Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_Wait(10);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
@@ -1384,8 +1340,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(30);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_RunRepeatedMotion(20, 2);
@@ -1394,10 +1350,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 0);
     Actor_FaceEachOther(3, 2, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_SetAnimationAndWait(20, 4);
@@ -1419,12 +1375,12 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_SetAnimationAndWait(14, 3);
         Event_Wait(30);
         Event_ShowMessage(14, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
         Actor_SetAnimationAndWait(14, 4);
         Event_Wait(20);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
 
@@ -1438,7 +1394,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(50);
     Actor_FaceActor(14, 20, 60);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
@@ -1456,8 +1412,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_ShowMessage(14, 0);
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -1480,12 +1436,12 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Actor_FaceEachOther(1, 0, 0);
     Actor_FaceEachOther(3, 2, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(50);
-    Actor_FaceDirection(20, 0x2000, 0);
+    Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
@@ -1493,7 +1449,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(1, 0);
     Event_Wait(20);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Event_Wait(40);
     Actor_ShowEmote(14, 0x105, 60);
     Event_ShowMessage(14, 0);
@@ -1508,10 +1464,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 0);
     Actor_FaceEachOther(3, 2, 60);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(50);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(20);
@@ -1524,24 +1480,18 @@ void FieldScene_RunMainCutsceneSequence(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
         Event_ShowMessage(1, 0);
-        AdvanceMessage(3);
+        gEventWork->message += 3;
     } else {
-
         Event_Wait(10);
-
-        {
-            u8 **scene_address = (u8 **)&gEventWork;
-
-            AdvanceMessageAt(scene_address, 1);
-            Event_OpenMessage(1, 0);
-            if (Event_ChooseYesNo(0, 0) == 0) {
-                Event_Wait(20);
-                Event_ShowMessage(1, 0);
-                AdvanceMessageAt(scene_address, 1);
-            } else {
-                AdvanceMessageAt(scene_address, 1);
-                Event_ShowMessage(1, 0);
-            }
+        gEventWork->message++;
+        Event_OpenMessage(1, 0);
+        if (Event_ChooseYesNo(0, 0) == 0) {
+            Event_Wait(20);
+            Event_ShowMessage(1, 0);
+            gEventWork->message++;
+        } else {
+            gEventWork->message++;
+            Event_ShowMessage(1, 0);
         }
     }
 
@@ -1550,8 +1500,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(1, 2);
     Event_Wait(20);
@@ -1629,9 +1579,9 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(30);
     Actor_FaceActor(20, 14, 30);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
@@ -1649,7 +1599,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(14, 4);
     Event_Wait(20);
@@ -1657,12 +1607,12 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 0);
     Actor_FaceEachOther(3, 2, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(40);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(30);
     Actor_ShowEmote(14, 0x102, 40);
     Event_ShowMessage(14, 0);
@@ -1685,15 +1635,15 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_FaceActor(1, 20, 0);
     Actor_FaceActor(3, 20, 0);
     Actor_FaceActor(2, 20, 0);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
     Actor_ShowEmote(20, 0x100, 60);
     Actor_FaceActor(20, 14, 0);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(20);
@@ -1705,11 +1655,11 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_ShowEmote(20, 0x101, 60);
     Actor_SetSpeed(20, 0x13333, 0x9999);
     Actor_WalkByAndWait(20, 0, -24);
-    Actor_FaceDirection(20, 0, 0);
+    Actor_FaceDirection(20, FACING_EAST, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
@@ -1733,7 +1683,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(1, 0);
     Event_Wait(10);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
@@ -1756,10 +1706,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 0);
     Actor_FaceEachOther(3, 2, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_RunRepeatedMotion(14, 2);
@@ -1791,7 +1741,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_RunRepeatedMotion(14, 2);
     Event_Wait(20);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
@@ -1800,15 +1750,15 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
     Actor_ShowEmote(2, 0x101, 40);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
-    Actor_FaceDirection(14, 0x4000, 0);
-    Actor_FaceDirection(20, 0x2000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
+    Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
@@ -1836,8 +1786,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_ShowMessage(14, 0);
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 50);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
@@ -1865,10 +1815,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     if (Event_ChooseYesNo(14, 0) == 0) {
         Event_Wait(10);
         Event_ShowMessage(2, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(2, 0);
     }
 
@@ -1883,7 +1833,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(20);
-    Actor_FaceDirection(20, 0, 0);
+    Actor_FaceDirection(20, FACING_EAST, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
@@ -1894,17 +1844,17 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 40);
     Event_ShowMessage(1, 0);
-    Actor_FaceDirection(14, 0x4000, 0);
-    Actor_FaceDirection(20, 0x2000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
+    Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_Wait(30);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
     Event_Wait(30);
     Actor_FaceEachOther(3, 2, 60);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Event_ShowMessage(3, 0);
     Event_Wait(10);
@@ -1913,10 +1863,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_ShowMessage(2, 0);
     Event_Wait(10);
     Actor_FaceEachOther(20, 14, 60);
-    Actor_FaceDirection(20, 0x2000, 0);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(30);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
@@ -1929,10 +1879,10 @@ void FieldScene_RunMainCutsceneSequence(void)
         Event_Wait(20);
         Actor_ShowEmote(1, 0x102, 40);
         Event_ShowMessage(1, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(1, 0);
     }
 
@@ -1966,7 +1916,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(20);
     Actor_RunRepeatedMotion(14, 2);
     Event_Wait(20);
@@ -1980,10 +1930,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 0);
     Actor_FaceEachOther(3, 2, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_ShowEmote(20, 0x106, 50);
@@ -1991,7 +1941,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
-    Actor_FaceDirection(20, 0x2000, 0);
+    Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_ShowEmote(14, 0x108, 40);
@@ -2000,11 +1950,11 @@ void FieldScene_RunMainCutsceneSequence(void)
         Event_Wait(20);
         Actor_ShowEmote(14, 0x100, 40);
         Event_ShowMessage(14, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
         Actor_ShowEmote(14, 0x100, 40);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
 
@@ -2022,7 +1972,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_ShowEmote(14, 0x100, 40);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
@@ -2041,7 +1991,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(30);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
-    Actor_FaceDirection(20, 0x2000, 0);
+    Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_Wait(20);
     Object_LinkObjectAndSetCallback(0, 20);
     Object_LinkObjectAndSetCallback(1, 20);
@@ -2049,8 +1999,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Object_LinkObjectAndSetCallback(2, 20);
     Actor_SetSpeed(20, 0x10000, 0x8000);
     Actor_WalkByAndWait(20, 0, 32);
-    Actor_FaceDirection(20, 0, 0);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(20, FACING_EAST, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
@@ -2060,15 +2010,15 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_WalkBy(20, 0, 80);
     Event_Wait(40);
     Actor_WalkByAndWait(ACTOR_GERALD, -16, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(3, 0x4000, 0);
+    Actor_FaceDirection(1, FACING_SOUTH, 0);
+    Actor_FaceDirection(3, FACING_SOUTH, 0);
     Actor_WaitForMove(20);
     Event_Wait(80);
     Actor_SetPosition(20, 0, 0);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Object_LinkObjectAndSetCallback(0, 14);
     Object_LinkObjectAndSetCallback(1, 14);
@@ -2081,11 +2031,11 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_WalkByAndWait(14, 0, 24);
     Actor_WalkByAndWait(14, -80, 0);
     Event_Wait(10);
-    Actor_FaceDirection(14, 0, 0);
+    Actor_FaceDirection(14, FACING_EAST, 0);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(20);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(20);
     Actor_WalkByAndWait(14, 0, 48);
     Actor_WalkByAndWait(14, -64, 0);
@@ -2130,7 +2080,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_02003d40(void)
+void TorebiKyuden_LeaveThroughDoor(void)
 {
     struct EventWork *work;
 
@@ -2174,8 +2124,6 @@ void RunSceneEffectSetup(void)
     Event_End();
 }
 
-/* Actor 8's question once flag 2412 is set: the leader walks over, and a
- * no brings actors 8 and 9 into a longer exchange. */
 void RunSupplementalSequenceOne(void)
 {
     s32 p;
@@ -2241,50 +2189,45 @@ void SceneDialogue_AskIfLeavingPalace(s32 a)
 {
     s32 k = (s32)MsgTorebiWarriorsWhoStayed;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(k + 1);
-        Event_ShowMessage(a, 0);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventSetMessage(k + 1);
+        Engine_EventShowMessage(a, 0);
     } else {
-        Event_SetMessage(k + 2);
-        Event_ShowMessage(a, 0);
+        Engine_EventSetMessage(k + 2);
+        Engine_EventShowMessage(a, 0);
     }
 }
 
 void FieldScene_RunStepWithValue29e0(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
-    Message_ShowCentered((s32)MsgTorebiItsFilledWithFreshClean, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
+    Engine_MessageShowCentered((s32)MsgTorebiItsFilledWithFreshClean, 1);
+    Engine_EventEnd();
 }
 
-/* What the palace answers: in each scene, one table while Colosso is under
-   way (flag 0x962), one once it is over (flag 0x950), one before. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return gTorebiKyudenEvents2AfterColosso;
         }
-        if (GameFlag_IsSet(0x962) != 0) {
+        if (Engine_GameFlagIsSet(0x962) != 0) {
             return gTorebiKyudenEvents2Colosso;
         }
         return gTorebiKyudenEvents2;
     }
-    if (GameFlag_IsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(0x950) != 0) {
         return gTorebiKyudenEventsAfterColosso;
     }
-    if (GameFlag_IsSet(0x962) != 0) {
+    if (Engine_GameFlagIsSet(0x962) != 0) {
         return gTorebiKyudenEventsColosso;
     }
     return gTorebiKyudenEventsOther;
 }
 
-/* The palace's scene start, entry veneer 0. */
-
-/* Babi's Palace entry: record the entrance flags, then outside the second scene restore the lighthouse-item scene and the guards, set the entrance selector and, arriving by entrance 99 or 98, restore the party and run its scene. */
 s32 TorebiKyuden_ApplyEntryState(void)
 {
     struct FieldActor *actor;
@@ -2334,7 +2277,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
         } else if (GameFlag_IsSet(0x962) && !GameFlag_IsSet(0x966)) {
             Actor_SetPosition(10, 0x780000, 0x480000);
         }
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         Actor_Get(9)->collision_flags |= 4;
         if (gGameState.entrance == 99) {
             Party_RestoreAll();

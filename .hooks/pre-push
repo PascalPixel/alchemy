@@ -1,3 +1,2 @@
 #!/bin/sh
-# Inspect every outgoing commit, including private files deleted later.
 exec env ALCHEMY_PUSH_URL="$2" make --no-print-directory prepush

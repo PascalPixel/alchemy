@@ -1,13 +1,5 @@
 #include "TYPES.H"
 
-/*
- * Measured draft for the reviewed 188-byte owner. The 2026-09-19 baseline
- * emitted 180 bytes with 167 differing byte positions. Keeping the loop
- * count live before setup gives the reference's two saved high registers and
- * emits 184 bytes with 108 differing positions. This proves no exact bytes;
- * the remaining type and allocation residual must be resolved before adoption.
- */
-
 void Func_0200a7ec();
 s32 Func_0200a814();
 void Func_0200a824();
@@ -15,11 +7,6 @@ s32 Func_0200a834();
 s32 Func_0200a83c();
 s32 Func_0200a844();
 void Func_0200aa0c();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {

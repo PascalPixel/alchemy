@@ -2,12 +2,10 @@
 #define GUARD_SERIAL_RUNTIME_H
 
 #include "TYPES.H"
-#include "GLOBAL_CELLS.H"
+#include "LAYOUT_GUARD.H"
+#include "SYSTEM.H"
 #include "IO_REG.H"
-
-#define SERIAL_RUNTIME_TU
-
-typedef void (*InterruptHandler)(void);
+#include "IRQ.H"
 
 struct DmaRegisters {
     u32 source;
@@ -17,11 +15,18 @@ struct DmaRegisters {
 
 struct SerialPacket {
     u8 sequence;
-    u8 peer_pair;
+    u8 missing_mask;
     u16 checksum;
     u8 payload[24];
-    u8 padding[4];
+    u8 reserved_tail[4];
 };
+
+LAYOUT_SIZE_GUARD(SerialPacket_Size, struct SerialPacket, 32);
+LAYOUT_OFFSET_GUARD(SerialPacket_Sequence, struct SerialPacket, sequence, 0);
+LAYOUT_OFFSET_GUARD(SerialPacket_MissingMask, struct SerialPacket, missing_mask, 1);
+LAYOUT_OFFSET_GUARD(SerialPacket_Checksum, struct SerialPacket, checksum, 2);
+LAYOUT_OFFSET_GUARD(SerialPacket_Payload, struct SerialPacket, payload, 4);
+LAYOUT_OFFSET_GUARD(SerialPacket_ReservedTail, struct SerialPacket, reserved_tail, 28);
 
 union SerialDataRegisters {
     u32 words[2];
@@ -49,14 +54,26 @@ struct SerialRuntime {
     u8 storage[0x100];
 };
 
+LAYOUT_SIZE_GUARD(SerialRuntime_Size, struct SerialRuntime, 0x160);
+LAYOUT_OFFSET_GUARD(SerialRuntime_Mode, struct SerialRuntime, mode, 0);
+LAYOUT_OFFSET_GUARD(SerialRuntime_TransferEnabled, struct SerialRuntime, transfer_enabled, 8);
+LAYOUT_OFFSET_GUARD(SerialRuntime_SendIndex, struct SerialRuntime, send_index, 0x14);
+LAYOUT_OFFSET_GUARD(SerialRuntime_Storage, struct SerialRuntime, storage, 0x60);
+
 struct SerialTransferState {
     u8 active;
     u8 status;
     u8 flags;
     u8 peer_flags;
-    u8 reserved[20];
-    u16 value;
+    u8 payload[20];
 };
+
+LAYOUT_SIZE_GUARD(SerialTransferState_Size, struct SerialTransferState, 24);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Active, struct SerialTransferState, active, 0);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Status, struct SerialTransferState, status, 1);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Flags, struct SerialTransferState, flags, 2);
+LAYOUT_OFFSET_GUARD(SerialTransferState_PeerFlags, struct SerialTransferState, peer_flags, 3);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Payload, struct SerialTransferState, payload, 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
@@ -72,25 +89,32 @@ struct SerialTransferState {
     DMA3->control = (control_); \
 } while (0)
 
-void Func_0800307c(s32 index, s32 priority, InterruptHandler handler);
-void WaitFrames(s32 frames);
-void Func_080060e8(void *payload);
-u8 Func_0800615c(void *payload);
-void Func_08006240(void);
-void Func_0800651c(void);
+s32 SerialRuntime_PollStatus(void);
+s32 SerialRuntime_ExchangePayloads(void *send, void *receive);
+void SerialRuntime_PrepareSendPacket(void *payload);
+u8 SerialRuntime_CollectReceivedPayloads(void *payload);
+void SerialRuntime_StepBlockTransfer(void);
+void SerialRuntime_EnableTransferTimer(void);
+void SerialRuntime_DisableTransfer(void);
+s32 SerialRuntime_BeginTransferA(void *source, s32 size);
+s32 SerialRuntime_BeginTransferB(void *destination);
+void SerialRuntime_WaitForTransferA(void);
+void SerialRuntime_WaitForTransferB(void);
+void SerialRuntime_WaitForTransfers(void);
+s32 SerialRuntime_GetActiveTransfers(void);
+void BattleLink_ResetTransferState(void);
+void SerialRuntime_HandleTransferInterrupt(void);
+void SerialRuntime_RemoveIrqHandlers(void);
+u32 SerialRuntime_WaitForStatusMask(s32 mask);
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
-extern volatile s32 gSerialSendSource;
+extern u16 gSerialExchangeActive;
+extern s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
-extern volatile s32 gSerialReceiveDest;
+extern s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
-/* The four peers' 24-byte payloads that each frame's exchange receives;
-   gSerialTransfer holds the payload this console sends. */
 extern u8 gSerialPeerPayloads[4][24];
-/* The block transfer's seven-bit packet sequence number. */
 extern volatile u8 gSerialBlockSequence;
-/* A byte the link lobby's party-record exchange writes and serial start-up
-   clears, just past the runtime record. */
 extern u8 gLinkExchangeState;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
@@ -107,8 +131,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
     u32 saved;
     u32 zero;
 
-    /* FAKEMATCH: the blocks retain the IME write order; the second state
-     * assignment keeps its allocation priority above the IME pointer. */
+    /* FAKEMATCH: the blocks preserve IME write order; the repeated state assignment keeps its allocation priority above the IME pointer. */
     do {
         state = &gSerialTransfer;
         ime = &REG_IME;
@@ -125,8 +148,8 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
     gSerialSendSource = zero;
     gSerialSendSize = zero;
     gSerialReceiveDest = zero;
-    state->peer_flags = zero;
-    state->flags = zero;
+    *(u8 *)&state->peer_flags = zero;
+    *(volatile u8 *)&state->flags = zero;
     gSerialReceivedSize = zero;
     *ime = saved;
 }

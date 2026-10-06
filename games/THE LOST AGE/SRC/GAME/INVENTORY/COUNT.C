@@ -1,4 +1,16 @@
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "INVENTORY.H"
+#include "BATTLE_TYPES.H"
+
+
+s32 Equipment_HasValue(s32 owner, s32 value);
 
 s32 PartyInventory_CountItem(s32 item_id)
 {
@@ -16,4 +28,49 @@ s32 PartyInventory_CountItem(s32 item_id)
         } while (n != 0);
     }
     return item_count;
+}
+
+struct ActionDefinition *BattleAction_GetDirect(s32 action_id)
+{
+    u32 entry_index = action_id & 0x3fff;
+    struct ActionDefinition *table;
+
+    if (entry_index > 0x2de)
+        entry_index = 0;
+    table = BattleAction_DefinitionTable;
+    return &table[entry_index];
+}
+
+s32 Party_FindOwnerWithAction(s32 action)
+{
+    s16 owners[10];
+    s32 count = Party_ListActiveOwners(owners);
+    s32 i;
+
+    for (i = 0; i < count; i++) {
+        if (Equipment_HasValue(owners[i], action) != 0)
+            break;
+    }
+    if (i == count)
+        return -1;
+    return owners[i];
+}
+
+s32 Equipment_HasValue(s32 owner, s32 value)
+{
+    struct BattleUnit *unit = Owner_GetState(owner);
+    struct OwnerActionSlot *entry;
+    s32 index = 0;
+    s32 mask = OWNER_ACTION_ID_MASK;
+
+    entry = unit->action_slots;
+    do {
+        s32 current = entry->encoded_action;
+
+        entry++;
+        if ((current & mask) == value)
+            return 1;
+        index++;
+    } while (index <= 31);
+    return 0;
 }

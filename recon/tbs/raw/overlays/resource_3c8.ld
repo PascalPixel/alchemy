@@ -1,6 +1,3 @@
-/* resource_3c8: its entry veneers, its listing with maintained code and
-   the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -11,12 +8,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA5.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA6.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA2.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA3.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA4.o"(.text)
-        "*/resource_3c8_overlay.o"(.text.x0200cbd8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/PUSH.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/BLOCKS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/BRIDGE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/EVENTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/PARTICLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c8_overlay.o"(.rodata.x0200d040)

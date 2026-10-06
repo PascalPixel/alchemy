@@ -1,5 +1,6 @@
-/* Near miss: English title graphics shape: DE needs a four-row localized sheet; loaded overlay differs by twenty bytes in extent. */
-/* The title overlay: its scene tables. */
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
@@ -19,7 +20,7 @@ extern u8 gTitleEvents[];
 
 extern u32 gKeyState;
 extern u32 gKeysHeld;
-void Event_SetPairWork1c0(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void RuntimeDispatch_NoOpHook(s32 resource);
 void Blend_SetDarkenTarget16(s32 target);
 void Blend_WaitForTransition(void);
@@ -30,15 +31,8 @@ void ScrollFar_Entry00(s32 mode);
 s32 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *buffer);
-s32 Resource_FindFreeEntry(void);
-u8 *Resource_GetTableEntry(s32 resource);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 VramBlock_LoadCached(s32 block, s32 size, const void *data);
 #define DMA3 ((volatile u32 *)0x040000d4)
-
-void Runtime_PushSlotEntry(void *entry, s32 slot);
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {
@@ -126,11 +120,6 @@ u8 *Title_GetEvents(void)
     return gTitleEvents;
 }
 
-/* The title scene's driver. Entrance 10 reveals the title and waits up to a
- * minute for a key before returning to it; entrance 9 plays the ending's
- * scroll and returns to the clear screen; entrance 2 runs the title menu until
- * a saved game is chosen; any other entrance starts a new game in Lunpa's
- * village, Haidia. */
 s32 Title_Run(void)
 {
     s32 wait;
@@ -148,7 +137,7 @@ s32 Title_Run(void)
                     break;
             } while (gKeyState == 0);
         }
-        Event_SetPairWork1c0((s32)&SceneId_Title, 2);
+        Event_SetDestination((s32)&SceneId_Title, 2);
         return 0;
     }
     if (gGameState.entrance == 9) {
@@ -159,7 +148,7 @@ s32 Title_Run(void)
         Blend_WaitForTransition();
         Engine_EventWait(240);
         Engine_AudioPlayCue(19);
-        Event_SetPairWork1c0((s32)&SceneId_Clear, 2);
+        Event_SetDestination((s32)&SceneId_Clear, 2);
         return 0;
     }
     RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
@@ -186,12 +175,12 @@ s32 Title_Run(void)
         }
         goto menu;
     chosen:
-        Event_SetPairWork1c0((s32)&SceneId_Clear, 1);
+        Event_SetDestination((s32)&SceneId_Clear, 1);
     } else {
         Engine_AudioPlayCue(64);
         PaletteFar_Entry00(0);
         Party_ApplyStatePreset();
-        Event_SetPairWork1c0((s32)&SceneId_HaidiaMura, 16);
+        Event_SetDestination((s32)&SceneId_HaidiaMura, 16);
         Engine_AudioPlayCue(17);
     }
     Engine_AudioPlayCue(17);
@@ -202,11 +191,6 @@ s32 Title_Run(void)
     return 0;
 }
 
-/* The title sprites: decode their tiles and palette, then load the tiles
- * into the title's VRAM block. */
-
-/* Decode the title sprites' tiles and palette and load the tiles into the
- * title's VRAM block, finding one the first time. */
 void Title_LoadSprites(s32 unused)
 {
     u8 *buffer;
@@ -224,11 +208,6 @@ void Title_LoadSprites(s32 unused)
     Sys_Free(buffer);
 }
 
-/* The title screen's reveal: the background fades in and a row of eighteen
- * sprites appears one by one. */
-
-/* Rebuild the row of eighteen title sprites; one more shows every two
- * frames, and the newest two blink with the frame counter. */
 void Title_RevealSpriteRow(void)
 {
     u32 *w;
@@ -264,8 +243,6 @@ loop:
     gTitleRevealFrame++;
 }
 
-/* Fade the title in: the background, then the sprite row under a blend
- * that clears over sixteen steps. */
 void Title_RevealScreen(s32 unused)
 {
     s32 i;
@@ -292,12 +269,6 @@ void Title_RevealScreen(s32 unused)
     gEventWork->transition_frames = 60;
 }
 
-/* The title screen's background: the Golden Sun logo's palette, tiles and a
- * 30 x 20 map counting up from tile 0x1a0, then cleared scroll registers.
- * The cell buffer is the fixed RAM buffer, reloaded for each use. */
-
-/* Load the title background: palette, tiles and a 30 x 20 map counting up from
- * tile 0x1a0, then clear the scroll registers. */
 void Title_LoadBackground(void)
 {
     u8 *res;

@@ -315,7 +315,7 @@ Func_08186dfc:
 .L_08187070:
 	.4byte gCameraSceneParameters
 .L_08187074:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08187078:
 	.4byte Func_08143114
 .L_0818707c:
@@ -396,7 +396,7 @@ Func_08186dfc:
 	movs r2, #0
 	ldr r1, .L_0818739c
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r3, #0
 	str r3, [sp, #76]
 	ldr r3, .L_081873a0
@@ -835,7 +835,7 @@ Func_08186dfc:
 	str r3, [r7, #8]
 	ldr r3, [sp, #36]
 	str r3, [r7, #12]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #144
 	lsls r1, r1, #14
 	movs r2, #0
@@ -847,7 +847,7 @@ Func_08186dfc:
 	mov r4, r8
 	negs r0, r4
 	lsls r0, r0, #8
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r2, #234
 	mov r1, r8
 	lsls r2, r2, #8
@@ -882,7 +882,7 @@ Func_08186dfc:
 	ldr r1, [sp, #36]
 	str r6, [r7, #20]
 	str r1, [r7, #12]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #144
 	movs r0, #0
 	movs r2, #0
@@ -1416,7 +1416,7 @@ Func_08186dfc:
 	str r3, [r7, #8]
 	str r4, [r7, #12]
 	mov r8, r2
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r0, #0
 	ldr r1, .L_08187a88
 	movs r2, #0
@@ -1491,7 +1491,7 @@ Func_08186dfc:
 	ldr r3, .L_08187a9c
 	str r0, [r2, #4]
 	str r3, [r7, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r0, #0
 	ldr r1, .L_08187a88
 	movs r2, #0
@@ -1931,7 +1931,7 @@ Func_08186dfc:
 	blt .L_08187dcc
 	cmp r3, #136
 	bgt .L_08187dcc
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_08187da4
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
@@ -1978,12 +1978,12 @@ Func_08186dfc:
 	ldr r0, [r5, #8]
 	bl SceneTransform_ApplyPitch
 	ldr r0, [r5, #8]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_08187db6
 .L_08187d80:
 	.4byte Data_08199bf9
 .L_08187d84:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08187d88:
 	.4byte Data_08196f08
 .L_08187d8c:
@@ -2005,7 +2005,7 @@ Func_08186dfc:
 	bl Func_080150e4
 	ldr r0, [r5, #8]
 	negs r0, r0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_08187db6:
 	ldr r3, [sp, #28]
 	mov r2, r8
@@ -2847,7 +2847,7 @@ Func_08186dfc:
 	mov r10, r0
 	mov r9, r1
 .L_0818844c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r8
 	cmp r2, #0
 	bne .L_0818846a

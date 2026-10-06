@@ -83,7 +83,7 @@ Func_0817d724:
 	movs r3, #36
 	ldrsh r0, [r4, r3]
 	str r7, [sp, #28]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #80]
 	mov r3, sp
 	adds r3, #92
@@ -91,7 +91,7 @@ Func_0817d724:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #24]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r4, [sp, #76]
 	movs r7, #224
 	lsls r7, r7, #3
@@ -286,7 +286,7 @@ Func_0817d724:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 .L_0817d974:
 	mov r2, r11
 	cmp r2, #165
@@ -380,7 +380,7 @@ Func_0817d724:
 .L_0817da24:
 	.4byte IwramCopyWords
 .L_0817da28:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817da2c:
 	.4byte 0x04040404
 .L_0817da30:
@@ -401,7 +401,7 @@ Func_0817d724:
 	movs r0, #1
 	ldr r1, .L_0817da88
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r5, .L_0817da7c
 	movs r4, #160
 	lsls r4, r4, #19
@@ -567,7 +567,7 @@ Func_0817d724:
 	b .L_0817dbe2
 	.2byte 0x0000
 .L_0817db80:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817db84:
 	.4byte gCameraSceneParameters
 .L_0817db88:
@@ -607,13 +607,13 @@ Func_0817d724:
 	ldr r1, [sp, #28]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 .L_0817dbd6:
 	ldr r1, [sp, #80]
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	ldr r1, [sp, #24]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 .L_0817dbe2:
 	mov r3, r11
 	subs r3, #152
@@ -733,7 +733,7 @@ Func_0817d724:
 	strb r3, [r5, #24]
 	str r7, [r5, #8]
 	movs r7, #128
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	lsls r7, r7, #8
 	movs r1, #128
 	adds r0, r7, #0
@@ -754,7 +754,7 @@ Func_0817d724:
 	cmp r3, #1
 	bne .L_0817dd00
 	adds r0, r7, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_0817dd00:
 	ldr r0, .L_0817dfa8
 	bl Func_0801521c
@@ -765,7 +765,7 @@ Func_0817d724:
 	mov r7, r11
 	adds r0, r5, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	cmp r7, #133
 	bgt .L_0817dd80
 	mov r3, r11

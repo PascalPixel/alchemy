@@ -1,11 +1,5 @@
-/* Near miss: score 60 (the listing also holds Menu_ReservedNoOp, written
-   here after it). ⚓️ reads the buttons from gInput and calls the flag
-   routines directly. It copies cursor into r5 between loading gInput's
-   address and reading the repeat mask; this draft reads the mask first.
-   The remaining load scheduling differs with the approved game flags. */
 #include "TYPES.H"
 
-/* The controller state the engine refreshes each frame. */
 struct InputState {
     u32 held;
     u32 pressed;
@@ -17,11 +11,6 @@ extern volatile struct InputState gInput;
 s32 GameFlag_Test(s32);
 void GameFlag_SetBit(s32);
 void GameFlag_ClearBit(s32);
-
-/* Flag grid input (debug menu): the cursor picks a flag on a 16x16 page (column,
-   row); A toggles it, B or Select leaves, the D-pad moves the cursor and L/R
-   turn pages, ten at a time with Start held. Returns 1 when the page or a
-   flag changed. */
 
 s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor)
 {

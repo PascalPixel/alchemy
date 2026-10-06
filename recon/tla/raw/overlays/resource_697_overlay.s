@@ -496,7 +496,7 @@ Func_02000330:
 .L_02008410:
 	.4byte gPartyState
 .L_02008414:
-	.4byte 0x000029c6
+	.4byte MsgTrialRoadGiveUpPrompt
 	.section .text.x02008418,"ax",%progbits
 	.global Func_02000418
 	.thumb_func
@@ -684,7 +684,7 @@ Func_020004f4:
 .L_020085ac:
 	.4byte Data_020023c4 + 0x88
 .L_020085b0:
-	.4byte 0x000029c5
+	.4byte MsgTrialRoadStoredItem
 	.section .text.x020085b4,"ax",%progbits
 	.global Func_020005b4
 	.thumb_func
@@ -739,9 +739,9 @@ Func_020005b4:
 	pop {pc}
 	.2byte 0x0000
 .L_0200861c:
-	.4byte 0x000029c4
+	.4byte MsgTrialRoadChestBlocked
 .L_02008620:
-	.4byte 0x000029c3
+	.4byte MsgTrialRoadPlaceItemPrompt
 .L_02008624:
 	.4byte gPartyState
 	.global Data_02000628
@@ -846,7 +846,7 @@ Func_020006b4:
 	cmp r5, #0
 	beq .L_02008706
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, .L_02008708
 	adds r0, r5, #0
 	bl Func_020057d0
@@ -2411,37 +2411,7 @@ Func_020011f8:
 	pop {pc}
 	.section .text.x02009262,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02009264,"ax",%progbits
-	.global Func_02001264
-	.thumb_func
-Func_02001264:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x0200929a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200929c,"ax",%progbits
 	.global Func_0200129c
@@ -2517,7 +2487,7 @@ Func_0200129c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_0200945c
 	mov r1, r9
 	str r3, [r6, #108]
@@ -2672,7 +2642,7 @@ Func_0200129c:
 .L_02009458:
 	.4byte Data_02007bc0
 .L_0200945c:
-	.4byte Func_02001264
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02009460:
 	.4byte 0xffff0000
 	.section .text.x02009464,"ax",%progbits
@@ -2835,7 +2805,7 @@ Func_020014e4:
 .L_02009594:
 	.4byte gPartyState
 .L_02009598:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200959c:
 	.4byte Func_02001464
 .L_020095a0:
@@ -6360,7 +6330,7 @@ Func_02002dec:
 .L_0200b220:
 	.4byte 0xfff00000
 .L_0200b224:
-	.4byte 0x000029cd
+	.4byte MsgTrialRoadSwiftChallenge
 .L_0200b228:
 	.4byte 0x0001b333
 	.section .text.x0200b22c,"ax",%progbits
@@ -6618,7 +6588,7 @@ Func_0200322c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200b4ac:
-	.4byte 0x000029ca
+	.4byte MsgTrialRoadSlowArrival
 .L_0200b4b0:
 	.4byte 0x0001b333
 	.section .text.x0200b4b4,"ax",%progbits
@@ -6701,8 +6671,8 @@ Func_020034b4:
 	movs r1, #6
 	movs r0, #14
 	bl Object_SetModeById
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #30
 	bl Battle_WaitMode0
 	ldr r0, .L_0200b7c4
@@ -6930,7 +6900,7 @@ Func_020034b4:
 	mov r10, r5
 	pop {r5, r6, pc}
 .L_0200b7c4:
-	.4byte 0x000029d1
+	.4byte MsgTrialRoadHeroesProven
 	.section .text.x0200b7c8,"ax",%progbits
 	.global Func_020037c8
 	.thumb_func
@@ -7008,21 +6978,21 @@ Func_020037c8:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #7
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl ObjectDispatch_SetSingleChildFlags
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #30
 	bl Battle_WaitMode0
 	ldr r0, .L_0200b8fc
@@ -7054,7 +7024,7 @@ Func_020037c8:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b8fc:
-	.4byte 0x000029d0
+	.4byte MsgTrialRoadLeaveVillage
 	.section .text.x0200b900,"ax",%progbits
 	.global Func_02003900
 	.thumb_func
@@ -7107,7 +7077,7 @@ Func_02003900:
 	ldr r1, .L_0200bd0c
 	movs r0, #14
 	bl ObjectMotion_EnableActionAndSetCallback
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r0, #128
@@ -7478,7 +7448,7 @@ Func_02003900:
 .L_0200bd0c:
 	.4byte Data_02005be8
 .L_0200bd10:
-	.4byte 0x0000299a
+	.4byte MsgTrialRoadTrapInstructions
 .L_0200bd14:
 	.4byte Data_02005d28
 .L_0200bd18:
@@ -8050,7 +8020,7 @@ Func_02003f68:
 .L_0200c174:
 	.4byte 0xffff0000
 .L_0200c178:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200c17c:
 	.4byte 0x40002000
 .L_0200c180:
@@ -8155,7 +8125,7 @@ Func_02004224:
 	bl Object_GetById
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_Test
@@ -9172,7 +9142,7 @@ Func_02004a94:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r6, #0
 	movs r1, #2
 	bl Func_020057c8
@@ -9312,7 +9282,7 @@ Func_02004bc8:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r7, #0
 	movs r1, #2
 	bl Func_020057c8
@@ -9937,7 +9907,7 @@ Func_02004ddc:
 .L_0200d100:
 	.4byte 0xfffff000
 .L_0200d104:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_0200d108:
 	.4byte gLinkStatus
 .L_0200d10c:
@@ -10476,7 +10446,7 @@ Func_020051a0:
 .L_0200d518:
 	.4byte 0x80008000
 .L_0200d51c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200d520:
 	.4byte gPartyState
 .L_0200d524:

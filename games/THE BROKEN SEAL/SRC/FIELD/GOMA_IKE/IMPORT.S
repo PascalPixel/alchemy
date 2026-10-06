@@ -1,7 +1,3 @@
-@ Import veneers after the GOMA_IKE overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — GOMA_IKE overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -13,7 +9,7 @@ Resource388_QueueSlotCommand:
 	.global Resource388_SetSlotOption
 	.thumb_func
 Resource388_SetSlotOption:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Resource388_TestSetupGate
 	.thumb_func
 Resource388_TestSetupGate:

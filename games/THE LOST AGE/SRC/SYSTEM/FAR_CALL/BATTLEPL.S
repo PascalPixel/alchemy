@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x08118088: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -17,21 +13,21 @@ BattleParty_ListActorIdsFar:
 	.thumb_func
 GetBattleObjectSlotFar:
 	overlay_veneer GetBattleObjectSlot
-	.global Func_081180a0
+	.global Battle_RunEncounterFar
 	.thumb_func
-Func_081180a0:
+Battle_RunEncounterFar:
 	overlay_veneer Func_081197f0
-	.global Func_081180a8
+	.global BattleMotion_ProjectPositionFar
 	.thumb_func
-Func_081180a8:
+BattleMotion_ProjectPositionFar:
 	overlay_veneer Func_0811bd50
-	.global Func_081180b0
+	.global BattleMotion_ProjectScaledPositionFar
 	.thumb_func
-Func_081180b0:
+BattleMotion_ProjectScaledPositionFar:
 	overlay_veneer Func_0811c2b4
-	.global Func_081180b8
+	.global BattleMotion_ProjectConditionalPositionFar
 	.thumb_func
-Func_081180b8:
+BattleMotion_ProjectConditionalPositionFar:
 	overlay_veneer Func_0811c314
 	.global BattleParty_ListLivingUnitsFar
 	.thumb_func
@@ -65,10 +61,10 @@ ColorBuffer_ScaleFar:
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesFar:
 	overlay_veneer BattlePlacement_UpdateTimedEntries
-	.global Func_08118100
+	.global BattleMotion_GetSlotPaletteFar
 	.thumb_func
-Func_08118100:
-	overlay_veneer BattleMotion_GetSlotField14
+BattleMotion_GetSlotPaletteFar:
+	overlay_veneer BattleMotion_GetSlotPalette
 	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesTwentyTimesFar:

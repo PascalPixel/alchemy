@@ -1,8 +1,3 @@
-@ The two tables of MIDI_KEY_TO_FREQUENCY.S: twelve two-word semitone
-@ frequency entries (96 bytes), which it reaches with add r3, pc, #32 and
-@ ldmia r1, {r1, r3}, and the 180-byte key table whose bytes give each key
-@ its octave shift (high nibble) and semitone (low nibble), which it reads
-@ with add r4, pc, #136; ldrb r4, [r1, r4]. Data tables carry no credit.
 .syntax unified
 	.section .rodata,"a",%progbits
 	.arm

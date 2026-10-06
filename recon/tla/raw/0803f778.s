@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f778
+	.global Menu_RunTopSelection
 	.thumb_func
-Func_0803f778:
+Menu_RunTopSelection:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -13,7 +13,7 @@ Func_0803f778:
 	adds r0, r5, #0
 	bl Menu_SelectTopEntry
 	adds r5, r0, #0
-	bl Func_0803f810
+	bl UiWork_CloseAndRelease
 	cmp r5, #4
 	bhi .L_0803f7fa
 	ldr r2, .L_0803f7fc

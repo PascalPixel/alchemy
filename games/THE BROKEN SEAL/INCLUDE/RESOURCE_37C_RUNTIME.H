@@ -4,7 +4,6 @@
 #include "LAYOUT_GUARD.H"
 extern struct EventWork *gEventWork;
 
-/* resource_37c observes only this setup-request word of the shared runtime. */
 struct Resource37cRuntime {
     u8 unknown_000[0x1c0];
     s32 setup_request_1c0;
@@ -16,13 +15,8 @@ LAYOUT_OFFSET_GUARD(
     setup_request_1c0,
     0x1c0);
 
-/* Keep the existing pointer-load form while exposing the observed field. */
 #define RESOURCE37C_RUNTIME \
     ((struct Resource37cRuntime *)*(void **)&gEventWork)
-
-/* Address-stable overlay ABI declarations. */
-
-/* Observed setup operations; their wider interfaces remain local and opaque. */
 
 s32 Resource37c_TestSetupGate(s32);
 void Resource37c_SetSetupFlag(s32);

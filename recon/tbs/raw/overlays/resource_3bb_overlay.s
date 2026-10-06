@@ -527,10 +527,10 @@ KorosseoKabe_SpectatorTimer:
 gKorosseoKabeEvents:
 	.4byte 0x00004602
 	.4byte 0xffff001e
-	.4byte SceneState_SendWord250With6
+	.4byte KorosseoKabe_RunSelectedActorRisingEffect
 	.4byte 0x00008602
 	.4byte 0xffff001e
-	.4byte FieldScene_Forward4358
+	.4byte KorosseoKabe_CheckLeaderAhead
 	.4byte 0x00008602
 	.4byte 0xffff001c
 	.4byte FieldScene_RunStep16At45By26
@@ -575,7 +575,7 @@ gKorosseoKabeEvents:
 	.4byte FieldScene_SetFlag332AndDrawTiles
 	.4byte 0x10008e15
 	.4byte 0x03300012
-	.4byte SceneState_SetWorkByte35
+	.4byte KorosseoKabe_EnableEffectChildMode
 	.4byte 0x00008e15
 	.4byte 0x03300012
 	.4byte KorosseoKabe_SpinActorAway
@@ -602,7 +602,7 @@ gKorosseoKabeEvents:
 	.4byte SceneState_StoreSlotTileXToWork832To848
 	.4byte 0x00009115
 	.4byte 0x0334001f
-	.4byte SceneState_InstallTask8714AndApplyTwoRects
+	.4byte KorosseoKabe_StopSpectatorCallbackAndRestoreCells
 	.4byte 0x00000000
 	.4byte 0xffff0022
 	.4byte RunPartyCountInteractionCopyA

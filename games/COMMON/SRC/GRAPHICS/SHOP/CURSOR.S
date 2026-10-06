@@ -1,5 +1,3 @@
-@ The shop's cursor, a crystal spinning in eight 16x16 frames of 8-bit colour
-@ drawn with the system palette, one resource each.
 	.section .rodata
 	.global Shop_CursorFrameA
 Shop_CursorFrameA:

@@ -93,28 +93,28 @@ ToretoEda_SceneTable2:
 ToretoEda_SceneTable3:
 	.4byte 0x00000a02
 	.4byte 0xffff0001
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000a02
 	.4byte 0xffff0002
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000a02
 	.4byte 0xffff0003
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000a02
 	.4byte 0xffff0004
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000a02
 	.4byte 0xffff0005
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000a02
 	.4byte 0xffff0006
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000a02
 	.4byte 0xffff0007
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000a02
 	.4byte 0xffff0008
-	.4byte State_SetValue123ThenCounter16c
+	.4byte ToretoEda_PlayCueAndSelectTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000a
 	.4byte Scene_ApplyOffset0Pos5

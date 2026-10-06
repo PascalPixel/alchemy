@@ -19,7 +19,7 @@ Func_08108660:
 	adds r2, r7, #0
 	movs r1, #7
 	movs r0, #7
-	bl Func_08038390
+	bl Menu_RunConfirmSelectionAtFar
 	ldr r3, [r5]
 	adds r7, r0, #0
 	strb r6, [r3, #5]

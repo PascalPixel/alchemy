@@ -618,7 +618,7 @@ gImiruMuraEventsOther:
 	.4byte SceneActor_SetActorZeroFacingC000AndRun
 	.4byte 0x00000002
 	.4byte 0xffff005a
-	.4byte FieldScene_Forward2188
+	.4byte ImiruMura_RunHeadingProbe
 	.4byte 0x00000000
 	.4byte 0x08810008
 	.4byte SceneDialogue_RunActorEightFlagGatedDialogue
@@ -674,7 +674,7 @@ gImiruMuraEvents2:
 	.4byte MsgImiruMuraGetMaryHurry
 	.4byte 0x00000000
 	.4byte 0x08810008
-	.4byte FieldScene_RunScene399_020005dc
+	.4byte ImiruMura_TalkAboutLighthouse
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MsgImiruMuraThatFountainWaterReallyMadeGrandpa
@@ -722,7 +722,7 @@ gImiruMuraEvents2:
 	.4byte MsgImiruMuraImSoHappyThatMommyIs
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte FieldScene_RunScene399_02000a3c
+	.4byte ImiruMura_OpenInn
 	.4byte 0x00000000
 	.4byte 0x08810011
 	.4byte MsgImiruMuraWereTheOnlyInnThatStays
@@ -737,7 +737,7 @@ gImiruMuraEvents2:
 	.4byte MsgImiruMuraImGladTheBeaconHasBeen
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte FieldScene_RunScene399_02000abc
+	.4byte ImiruMura_OpenSanctum
 	.4byte 0x00000000
 	.4byte 0x08810014
 	.4byte SceneDialogue_RunActor20BranchScene

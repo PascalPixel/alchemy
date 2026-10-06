@@ -10,7 +10,6 @@ void Party_ResolveTablePair(void)
     s16 second = gGameState[225];
     const s16 *entry = Party_PairResolveRules;
 
-    /* -1で終端する4半語の表を検索する。 */
     while (entry[0] != -1) {
         if (entry[0] == first &&
             (entry[1] == -1 || entry[1] == second)) {

@@ -1,12 +1,3 @@
-@ Channel end, block mixing and sample normalisation of the resident mixer.
-@ It returns conditionally with movne pc, lr, and each time before its block
-@ loop it copies two-word templates over the eight nop words of that loop
-@ (add r1, pc, #52; sub r0, pc, #104; stm r1, {r6, r7}), so the loop runs
-@ the copies and never the stored nops, which carry no credit.
-@ IwramSoundNormalizeSample branches on overflow (adds r7, r7, r7; bvc) and
-@ returns with bxvc lr. Rewriting its own loop is beyond both approved
-@ compilers.
-@ credit: handwritten — IWRAM runtime channel mixing
 .syntax unified
 	.thumb_func
 	.arm
@@ -116,7 +107,6 @@ IwramSoundSaveChannel:
 	add	r0, pc, #1, 0
 	bx	r0
 
-@ 音源反復を進め、全音源の処理後にアーム初期化部へ渡す。
 	.thumb
 	.global IwramSoundMixNextChannel
 IwramSoundMixNextChannel:
@@ -130,7 +120,6 @@ IwramSoundMixNextChannel:
 	add	r0, pc, #116
 	bx	r0
 
-@ 符号付き標本の振幅形式をそろえる補助処理。
 	.arm
 	.global IwramSoundNormalizeSample
 	.global IwramSoundNormalizeChannels

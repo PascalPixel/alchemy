@@ -1000,7 +1000,7 @@ Battle_CollectPartyCommands:
 	adds r2, #84
 	movs r1, #0
 	movs r0, #0
-	bl Func_08024934
+	bl SummonMenu_SelectSummon
 	adds r6, r0, #0
 	ldr r0, [sp, #20]
 	bl BattleLayout_HighlightPartyPanels
@@ -1948,7 +1948,7 @@ Battle_CollectPartyCommands:
 	bl Ui_FillVramBlockPattern
 	add r2, sp, #100
 	mov r9, r2
-	bl UiText_DrawLocalizedResource80d
+	bl UiText_DrawWaitingForOpponent
 	b .L_080280c4
 .L_080280b8:
 	adds r7, r5, #0

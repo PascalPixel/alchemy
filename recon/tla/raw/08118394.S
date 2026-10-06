@@ -1,12 +1,3 @@
-@ Colour-scale kernel that COLOR_SCALE_LOADER.S copies to the stack and
-@ calls: behind its 4-byte Thumb entry (bx pc) it scales every BGR555
-@ colour by a factor clamped to 256/256 (asr lr, r2, #8; cmp lr, #0x100;
-@ movge) with its three channel masks in r6-r8. It is kept as assembly
-@ without credit because its ARM body has the shape of GCC 2.96 ARM-mode
-@ output (push {r5-r8, lr} while r4, the loop counter, stays free as
-@ -fcall-used-r4 allows, subs scheduled ahead of strh and bne, and
-@ mov r0, #0 before pop and bx lr), and no approved route compiles ARM
-@ state. TBS has no such kernel.
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleKernel

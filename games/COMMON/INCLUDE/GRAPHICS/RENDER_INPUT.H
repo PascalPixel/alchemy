@@ -2,6 +2,7 @@
 #define ALCHEMY_RENDER_INPUT_H
 
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
 
 struct RenderInput {
     u8 unknown_00[8];
@@ -25,7 +26,6 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
 s32 Ui_CreateOutputFromResourceSlot(
     struct RenderInput *window, s32 x, s32 y, s32 resource);
 
-/* 描画登録1件。+0x18の下位10bitは表番号として扱う。 */
 union RenderTableValue {
     u32 value;
     struct {
@@ -40,12 +40,13 @@ union RenderTableValue {
 };
 
 struct RenderOutput {
-    s32 zero;
-    s8 one4;
-    s8 one5;
+    struct RenderOutput *next;
+    s8 kind;
+    s8 active;
     s16 x;
     s16 y;
-    u8 unknown_0a[4];
+    u16 unknown_0a;
+    u16 anim_step;
     s8 index;
     u8 sentinel;
     u8 unknown_10[4];
@@ -53,12 +54,25 @@ struct RenderOutput {
     union RenderTableValue table;
 };
 
+struct RenderOutputList {
+    struct RenderOutput *head;
+    struct RenderOutput **tail_link;
+};
+
+LAYOUT_SIZE_GUARD(RenderOutputList_Size, struct RenderOutputList, 8);
+LAYOUT_OFFSET_GUARD(RenderOutputList_Tail, struct RenderOutputList, tail_link, 4);
+
 struct RenderOutput *RenderOutput_Create(
     s32 no,
     s32 flags,
     struct RenderInput *input,
     s32 offset_x,
     s32 offset_y);
+
+struct RenderOutput *RenderOutput_CreateFar(
+    s32 resource, s32 flags, struct RenderInput *window, s32 x, s32 y);
+
+LAYOUT_OFFSET_GUARD(RenderOutput_AnimStep, struct RenderOutput, anim_step, 0x0c);
 
 #define RENDER_OUTPUT_OFFSET(field) \
     ((u32)&(((struct RenderOutput *)0)->field))

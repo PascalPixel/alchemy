@@ -191,13 +191,13 @@ gKorimaKiEvents:
 	.4byte KorimaKi_RunMessageScene
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene395_02000158
+	.4byte KorimaKi_TalkToToreto
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte PaletteScene_RunActorNineBranch
 	.4byte 0x00008d15
 	.4byte 0x0844040c
-	.4byte FieldScene_RunScene395_02000158
+	.4byte KorimaKi_TalkToToreto
 	.4byte 0x00008d15
 	.4byte 0xffff000c
 	.4byte PaletteScene_RunActorEightBranch

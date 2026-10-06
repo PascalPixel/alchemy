@@ -1,68 +1,104 @@
-/*
- * Draft: ShopCursor_MoveTowardTarget does not yet match; 2 halfwords differ from ☀️'s C, first at +0x48 (ldrh r3, [r4, #6]).
- * Links as recon/tla/raw/08108948.s.
- */
-#include "SHOP.H"
+#include "TYPES.H"
+#include "RENDER_INPUT.H"
+#include "RAM_BUFFER.H"
 
-struct ShopCursorSprite {
-    u8 unknown_00[6];
+struct ShopCursor {
+    struct RenderOutput *anchor;
+    u16 x;
+    u16 y;
+    s16 target_x;
+    s16 target_y;
+    s8 active;
+    s8 kind;
+};
+
+struct ShopRuntime {
+    u8 unknown_000[0x4dc];
+    struct ShopCursor cursor;
+    u8 unknown_4ec[0x19];
+    u8 mode;
+};
+
+struct SpriteAttr {
+    unsigned y : 8;
+    unsigned affine : 2;
+    unsigned blend_mode : 2;
+    unsigned mosaic : 1;
+    unsigned full_color : 1;
+    unsigned shape : 2;
+    unsigned x : 9;
+    unsigned affine_index : 5;
+    unsigned size : 2;
+};
+
+struct SpriteAttr2 {
+    u16 y : 8;
+    u16 affine : 2;
+    u16 blend_mode : 2;
+    u16 mosaic : 1;
+    u16 full_color : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 size : 2;
+};
+
+struct ShopCursorSprite3 {
+    struct RenderOutput *next;
+    u8 unknown_04[2];
     u16 x;
     u16 y;
     u8 unknown_0a[0x0a];
-    u8 screen_y;
-    u8 unknown_1b;
-    u16 attr_x : 9;
-    u16 attr_rest : 7;
+    struct SpriteAttr2 oam;
 };
 
-/* Moves the cursor sprite a quarter of its remaining signed X and Y distance
- * toward the target, at least one pixel per axis, and refreshes the packed
- * screen coordinate of each axis that moved. */
+void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
+
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 {
-    struct ShopCursorSprite *sprite;
+    struct RenderOutput *sprite;
     s32 delta;
     s32 step;
 
-    sprite = (struct ShopCursorSprite *)cursor->anchor;
+    sprite = cursor->anchor;
     if (sprite != NULL) {
-        delta = sprite->x - cursor->target_x;
+        delta = (u16)sprite->x - cursor->target_x;
         step = delta / 4;
         if (step < 0)
             step = -step;
         if (delta > 0) {
             if (step != 0)
-                sprite->x -= step;
+                sprite->x = (u16)sprite->x - step;
             else
-                sprite->x += (u16)-1;
+                sprite->x = (u16)sprite->x - 1;
         } else {
             if (delta >= 0)
                 goto move_y;
             if (step != 0)
-                sprite->x += step;
+                sprite->x = (u16)sprite->x + step;
             else
-                sprite->x += 1;
+                sprite->x = (u16)sprite->x + 1;
         }
-        sprite->attr_x = sprite->x;
+        ((struct SpriteAttr2 *)&sprite->packed)->x = (u16)sprite->x;
 
 move_y:
-        delta = sprite->y - cursor->target_y;
+        delta = (u16)sprite->y - cursor->target_y;
         step = delta / 4;
         if (step < 0)
             step = -step;
         if (delta > 0) {
             if (step != 0)
-                sprite->y -= step;
+                sprite->y = (u16)sprite->y - step;
             else
-                sprite->y += (u16)-1;
+                sprite->y = (u16)sprite->y - 1;
         } else {
             if (delta >= 0)
                 return;
             if (step != 0)
-                sprite->y += step;
+                sprite->y = (u16)sprite->y + step;
             else
-                sprite->y += 1;
+                sprite->y = (u16)sprite->y + 1;
         }
-        sprite->screen_y = sprite->y;
+        *(u8 *)&sprite->packed = (u8)sprite->y;
     }
 }

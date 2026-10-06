@@ -137,7 +137,7 @@ Func_08049154:
 	add r2, sp
 	mov r8, r2
 	mov r0, r8
-	bl Func_080ad180
+	bl Trade_ListFlaggedEntriesFar
 	str r0, [sp, #80]
 	movs r7, #0
 	adds r3, r0, #0
@@ -248,7 +248,7 @@ Func_08049154:
 	adds r1, #1
 	movs r3, #1
 	adds r0, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	bl Ui_FillVramBlockPattern
 	ldr r1, [sp, #32]
 	mov r3, r11
@@ -583,7 +583,7 @@ Func_08049154:
 	subs r2, #2
 	str r3, [sp, #0]
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r1, [sp, #72]
 	movs r0, #1
 	movs r2, #0
@@ -670,7 +670,7 @@ Func_08049154:
 .L_08049668:
 	.4byte Data_080597f8
 .L_0804966c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08049670:
 	lsrs r0, r0, #2
 	ands r3, r1
@@ -717,7 +717,7 @@ Func_08049154:
 	adds r1, #1
 	movs r2, #2
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	cmp r5, #3
 	ble .L_08049692
 	ldr r4, [sp, #80]
@@ -1100,6 +1100,6 @@ Func_08049154:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080499ac:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080499b0:
 	.4byte gInput

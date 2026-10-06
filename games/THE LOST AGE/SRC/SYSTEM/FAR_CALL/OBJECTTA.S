@@ -1,29 +1,25 @@
-@ Far-call stub table at 0x080c83a8: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Event_SetStatus1c6Far
+	.global Event_StartScreenTransitionFar
 	.thumb_func
-Event_SetStatus1c6Far:
-	overlay_veneer Func_080d2a3c
-	.global Event_ClearStatus1c6Far
+Event_StartScreenTransitionFar:
+	overlay_veneer EventRuntime_StartScreen
+	.global Event_FinishScreenTransitionFar
 	.thumb_func
-Event_ClearStatus1c6Far:
-	overlay_veneer Func_080d2a64
-	.global Event_WaitValue1c8FramesFar
+Event_FinishScreenTransitionFar:
+	overlay_veneer EventRuntime_FinishScreen
+	.global Event_WaitTransitionFramesFar
 	.thumb_func
-Event_WaitValue1c8FramesFar:
-	overlay_veneer Func_080d2a8c
-	.global Func_080c83c0
+Event_WaitTransitionFramesFar:
+	overlay_veneer EventRuntime_WaitDelay
+	.global DisplayScroll_InitializeHBlankDmaFar
 	.thumb_func
-Func_080c83c0:
+DisplayScroll_InitializeHBlankDmaFar:
 	overlay_veneer Func_080d6408
-	.global Func_080c83c8
+	.global DisplayScroll_DisarmHBlankDmaFar
 	.thumb_func
-Func_080c83c8:
+DisplayScroll_DisarmHBlankDmaFar:
 	overlay_veneer Func_080d64b8
 	.global BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.thumb_func
@@ -37,30 +33,30 @@ Func_080c83d8:
 	.thumb_func
 Func_080c83e0:
 	overlay_veneer Func_080cf424
-	.global Func_080c83e8
+	.global ObjectEvent_GetObjectFar
 	.thumb_func
-Func_080c83e8:
-	overlay_veneer Func_080ceffc
-	.global Func_080c83f0
+ObjectEvent_GetObjectFar:
+	overlay_veneer ObjectEvent_GetObject
+	.global ObjectEvent_SetMode4WithCueFar
 	.thumb_func
-Func_080c83f0:
-	overlay_veneer Func_080cefb4
-	.global Func_080c83f8
+ObjectEvent_SetMode4WithCueFar:
+	overlay_veneer ObjectEvent_SetMode4WithCue
+	.global ObjectEvent_SetMode5WithCueFar
 	.thumb_func
-Func_080c83f8:
-	overlay_veneer Func_080cef68
-	.global Func_080c8400
+ObjectEvent_SetMode5WithCueFar:
+	overlay_veneer ObjectEvent_SetMode5WithCue
+	.global ObjectEvent_SetMode2Far
 	.thumb_func
-Func_080c8400:
-	overlay_veneer Func_080cefd0
-	.global Func_080c8408
+ObjectEvent_SetMode2Far:
+	overlay_veneer ObjectEvent_SetMode2
+	.global ObjectEvent_PlaceOnGroundFar
 	.thumb_func
-Func_080c8408:
-	overlay_veneer Func_080cf00c
-	.global Func_080c8410
+ObjectEvent_PlaceOnGroundFar:
+	overlay_veneer ObjectEvent_PlaceOnGround
+	.global ObjectEvent_RemoveFar
 	.thumb_func
-Func_080c8410:
-	overlay_veneer Func_080cf004
+ObjectEvent_RemoveFar:
+	overlay_veneer ObjectEvent_Remove
 	.global Func_080c8418
 	.thumb_func
 Func_080c8418:
@@ -69,10 +65,10 @@ Func_080c8418:
 	.thumb_func
 Object_SetWideSpriteFar:
 	overlay_veneer Object_SetWideSprite
-	.global Func_080c8428
+	.global Object_ReturnHomeFar
 	.thumb_func
-Func_080c8428:
-	overlay_veneer Func_080ceec8
+Object_ReturnHomeFar:
+	overlay_veneer Object_ReturnHome
 	.global Func_080c8430
 	.thumb_func
 Func_080c8430:
@@ -89,9 +85,9 @@ Func_080c8440:
 	.thumb_func
 Event_SpawnObjectTableFar:
 	overlay_veneer Event_SpawnObjectTable
-	.global Func_080c8450
+	.global ObjectTable_DestroyAtIndexFar
 	.thumb_func
-Func_080c8450:
+ObjectTable_DestroyAtIndexFar:
 	overlay_veneer Func_080caa2c
 	.global ObjectTable_GetFar
 	.thumb_func
@@ -129,25 +125,25 @@ Func_080c8490:
 	.thumb_func
 Field_DispatchTypeHandlerFar:
 	overlay_veneer Field_DispatchTypeHandler
-	.global Func_080c84a0
+	.global BattleFx_LoadActionEffectResourcesFar
 	.thumb_func
-Func_080c84a0:
-	overlay_veneer Func_080dc410
-	.global Func_080c84a8
+BattleFx_LoadActionEffectResourcesFar:
+	overlay_veneer BattleFx_LoadActionEffectResources
+	.global BattleFx_SetupObjectPairFar
 	.thumb_func
-Func_080c84a8:
-	overlay_veneer Func_080dc62c
-	.global Func_080c84b0
+BattleFx_SetupObjectPairFar:
+	overlay_veneer BattleFx_SetupObjectPair
+	.global EffectRuntime_StopCurrentObjectFar
 	.thumb_func
-Func_080c84b0:
-	overlay_veneer Func_080dc7cc
-	.global Func_080c84b8
+EffectRuntime_StopCurrentObjectFar:
+	overlay_veneer EffectRuntime_StopCurrentObject
+	.global BattleEffect_CleanupSceneObjectsFar
 	.thumb_func
-Func_080c84b8:
-	overlay_veneer Func_080dc7e8
-	.global Func_080c84c0
+BattleEffect_CleanupSceneObjectsFar:
+	overlay_veneer BattleEffect_CleanupSceneObjects
+	.global EventObject_InitializeFar
 	.thumb_func
-Func_080c84c0:
+EventObject_InitializeFar:
 	overlay_veneer Func_080dc6d8
 	.global BattleEffect_InitializeSharedSceneFar
 	.thumb_func
@@ -157,13 +153,13 @@ BattleEffect_InitializeSharedSceneFar:
 	.global BattleEffect_ResolvePendingActionsFar
 	.thumb_func
 BattleEffect_ResolvePendingActionsFar:
-	overlay_veneer BattleEffect_ResolvePendingActions
+	overlay_veneer EventRuntime_ResolvePendingActions
 .else
 .ifdef TLA_EDITION_IT
 	.global BattleEffect_ResolvePendingActionsFar
 	.thumb_func
 BattleEffect_ResolvePendingActionsFar:
-	overlay_veneer BattleEffect_ResolvePendingActions
+	overlay_veneer EventRuntime_ResolvePendingActions
 .else
 	.global BattleFx_PrepareBufferInterpolationFar
 	.thumb_func

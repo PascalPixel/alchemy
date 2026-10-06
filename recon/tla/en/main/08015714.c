@@ -6,9 +6,6 @@ s32 Trig_Cos(s32);
 extern u8 gProjection[];
 void Graphics_PrepareTransfer(void *src, void *dst, void *work);
 
-/* graphics/prepare_transfer_in_iwram_work.c */
-/* graphics/prepare_transfer_in_iwram_work.c */
-
 void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
 {
     s32 half;

@@ -45,7 +45,7 @@ Func_080ed2a4:
 	cmp r3, #3
 	beq .L_080ed30c
 .L_080ed2f6:
-	bl Func_080cad9c
+	bl ObjectTable_Snapshot
 	ldr r6, [sp, #16]
 	movs r1, #197
 	lsls r1, r1, #1
@@ -64,8 +64,8 @@ Func_080ed2a4:
 	movs r3, #6
 	str r6, [sp, #24]
 	str r3, [r2]
-	bl Func_080d2a64
-	bl Func_080d2a8c
+	bl EventRuntime_FinishScreen
+	bl EventRuntime_WaitDelay
 	ldr r1, [sp, #20]
 	mov r0, sp
 	adds r1, #24
@@ -103,7 +103,7 @@ Func_080ed2a4:
 .L_080ed368:
 	.4byte 0x00000001
 .L_080ed36c:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ed370:
 	ldr r6, [sp, #16]
 	movs r1, #230
@@ -124,8 +124,8 @@ Func_080ed2a4:
 	adds r2, r6, r1
 	movs r3, #0
 	str r3, [r2]
-	bl Func_080d2a64
-	bl Func_080d2a8c
+	bl EventRuntime_FinishScreen
+	bl EventRuntime_WaitDelay
 	bl Scheduler_ResetTaskTable
 	bl UiWork_InitializeWithResourceCountersFar
 	ldr r2, [sp, #12]
@@ -480,7 +480,7 @@ Func_080ed2a4:
 	negs r3, r3
 	strh r3, [r6]
 .L_080ed654:
-	bl Func_080ec14c
+	bl BattleFx_CleanupResourcesAndWindow
 	movs r2, #64
 	movs r3, #128
 	lsls r3, r3, #19
@@ -518,7 +518,7 @@ Func_080ed2a4:
 .L_080ed69c:
 	.4byte 0x01010100
 .L_080ed6a0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080ed6a4:
 	.4byte Data_0202a640
 .L_080ed6a8:
@@ -602,8 +602,8 @@ Func_080ed2a4:
 	adds r4, #114
 	adds r3, r2, r4
 	strb r5, [r3]
-	bl Func_080d2a3c
-	bl Func_080d2a8c
+	bl EventRuntime_StartScreen
+	bl EventRuntime_WaitDelay
 	ldr r6, [sp, #16]
 	ldr r2, [sp, #24]
 	movs r1, #218
@@ -624,7 +624,7 @@ Func_080ed2a4:
 .L_080ed770:
 	.4byte 0x04000208
 .L_080ed774:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080ed778:
 	movs r0, #0
 	add sp, #56

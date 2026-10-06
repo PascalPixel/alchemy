@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080ad0c0: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -12,10 +8,6 @@ Owner_AdjustFirstValueFar:
 	.global Owner_AdjustSecondValueFar
 	.thumb_func
 Owner_AdjustSecondValueFar:
-	.thumb_func
-	.global Func_080ad0c8
-	.thumb_func
-Func_080ad0c8:
 	overlay_veneer Owner_AdjustSecondValue
 	.global Owner_RecalculateRatiosFar
 	.thumb_func
@@ -40,23 +32,23 @@ Party_CountActiveOwnersFar:
 	.global Party_AddActiveOwnerFar
 	.thumb_func
 Party_AddActiveOwnerFar:
-	overlay_veneer Func_080afdd8
+	overlay_veneer Party_AddActiveOwner
 	.global Party_ListActiveOwnersFar
 	.thumb_func
 Party_ListActiveOwnersFar:
 	overlay_veneer Party_ListActiveOwners
-	.global Func_080ad108
+	.global RollWeaponUnleashFar
 	.thumb_func
-Func_080ad108:
-	overlay_veneer Func_080b04bc
+RollWeaponUnleashFar:
+	overlay_veneer RollWeaponUnleash
 	.global Party_RemoveActiveOwnerFar
 	.thumb_func
 Party_RemoveActiveOwnerFar:
 	overlay_veneer Party_RemoveActiveOwner
-	.global Func_080ad118
+	.global Item_GetEquippedElementFar
 	.thumb_func
-Func_080ad118:
-	overlay_veneer Func_080b0434
+Item_GetEquippedElementFar:
+	overlay_veneer Item_GetEquippedElement
 	.global Battle_HitCheck
 	.thumb_func
 Battle_HitCheck:
@@ -64,15 +56,15 @@ Battle_HitCheck:
 	.global Battle_CalcAttack
 	.thumb_func
 Battle_CalcAttack:
-	overlay_veneer Func_080b03ac
+	overlay_veneer Owner_ScaleAdjustedAmount
 	.global Battle_CalcPower
 	.thumb_func
 Battle_CalcPower:
-	overlay_veneer Func_080b03e0
+	overlay_veneer Owner_ScaleValueByCurve
 	.global Battle_CalcRestore
 	.thumb_func
 Battle_CalcRestore:
-	overlay_veneer Func_080b0408
+	overlay_veneer Owner_ScaleValueByOffsetCurve
 	.global Owner_GetRecordFar
 	.thumb_func
 Owner_GetRecordFar:
@@ -105,10 +97,10 @@ Trade_AddOfferFar:
 	.thumb_func
 Djinn_TransferFar:
 	overlay_veneer Djinn_Transfer
-	.global Func_080ad180
+	.global Trade_ListFlaggedEntriesFar
 	.thumb_func
-Func_080ad180:
-	overlay_veneer Func_080aff28
+Trade_ListFlaggedEntriesFar:
+	overlay_veneer Trade_ListFlaggedEntries
 	.global SummonDefinition_Get
 	.thumb_func
 SummonDefinition_Get:
@@ -121,9 +113,9 @@ Djinn_GetDefinitionHeaderFar:
 	.thumb_func
 Party_AdvanceOwnerCountToTargetFar:
 	overlay_veneer Party_AdvanceOwnerCountToTarget
-	.global Func_080ad1a0
+	.global Owner_GetResistanceValueFar
 	.thumb_func
-Func_080ad1a0:
+Owner_GetResistanceValueFar:
 	overlay_veneer Owner_GetResistanceValue
 	.global Trade_CountPendingOffersFar
 	.thumb_func

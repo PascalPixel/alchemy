@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_6BA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_6BA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -34,26 +30,26 @@ Func_02000c88:
 	.thumb_func
 Func_02000c90:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:
@@ -182,10 +178,10 @@ Djinn_Activate:
 	.thumb_func
 Party_AdvanceOwnerCountToTarget:
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
-	.global Party_AdjustSixDigitCounterA
+	.global Party_AdjustCoins
 	.thumb_func
-Party_AdjustSixDigitCounterA:
-	overlay_veneer Party_AdjustSixDigitCounterAFar
+Party_AdjustCoins:
+	overlay_veneer Party_AdjustCoinsFar
 	.global PartyInventory_HasSpace
 	.thumb_func
 PartyInventory_HasSpace:
@@ -201,11 +197,11 @@ Djinn_AddToLeastLoadedOwner:
 	.global Func_02000dc0
 	.thumb_func
 Func_02000dc0:
-	overlay_veneer Func_080ad2b8
+	overlay_veneer GameFlag_RefreshLureCapFar
 	.global Func_02000dc8
 	.thumb_func
 Func_02000dc8:
-	overlay_veneer Func_080ad2f0
+	overlay_veneer PartyInventory_FindRoomFar
 	.global Func_02000dd0
 	.thumb_func
 Func_02000dd0:
@@ -229,7 +225,7 @@ Object_GetById:
 	.global Func_02000df8
 	.thumb_func
 Func_02000df8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -237,7 +233,7 @@ Object_SetModeById:
 	.global Func_02000e08
 	.thumb_func
 Func_02000e08:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -245,11 +241,11 @@ UiText_OpenMessageAtObject:
 	.global Func_02000e18
 	.thumb_func
 Func_02000e18:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_02000e20
 	.thumb_func
 Func_02000e20:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02000e28
 	.thumb_func
 Func_02000e28:
@@ -263,7 +259,7 @@ Func_02000e30:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global ItemMenu_DrawItemDetails

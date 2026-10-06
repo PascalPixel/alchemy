@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dfd00
+	.global RunBattleEffect14
 	.thumb_func
-Func_080dfd00:
+RunBattleEffect14:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -326,7 +326,7 @@ Func_080dfd00:
 	mov r3, r10
 	movs r1, #0
 	ldr r0, [r3, #16]
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	bl BattleFx_PrepareBufferInterpolation
 	adds r2, r7, #0
 	adds r2, #100
@@ -363,4 +363,4 @@ Func_080dfd00:
 .L_080dfff4:
 	.4byte Func_080dfb88
 .L_080dfff8:
-	.4byte Func_080dfffc
+	.4byte BattleFx_AgeAndCueAtEighty

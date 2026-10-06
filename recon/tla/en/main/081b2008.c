@@ -2,7 +2,6 @@
 extern struct GameState gGameState;
 extern u8 Data_03001cb4[];
 
-/* runtime/blank_display_load_value_and_run.c */
 s32 Audio_PlayCue(s32);
 s32 Unnamed_080f7460(void);
 

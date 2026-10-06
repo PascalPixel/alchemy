@@ -105,4 +105,4 @@ Func_08127588:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08127648:
-	.4byte Data_0812ce7c
+	.4byte BattleFormation_Records

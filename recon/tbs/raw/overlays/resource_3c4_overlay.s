@@ -834,19 +834,19 @@ Data_0200bc0c:
 	.4byte FieldScene_PlaceAndPinSlots10And11
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene3c4_02002480
+	.4byte BabiChika_RestorePlatformCells
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte FieldScene_RunScene3c4_02002480
+	.4byte BabiChika_RestorePlatformCells
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte FieldScene_RunScene3c4_02002480
+	.4byte BabiChika_RestorePlatformCells
 	.4byte 0x00004e15
 	.4byte 0x0200000f
 	.4byte SceneActor_MirrorFlag201IntoSlot14
 	.4byte 0x00004e15
 	.4byte 0x02010010
-	.4byte SceneActor_SetActor14Field98ByFlag200
+	.4byte BabiChika_ConfigureActorFourteenRise
 	.4byte 0x00004e15
 	.4byte 0x09700011
 	.4byte SceneState_ApplyFlag970
@@ -864,7 +864,7 @@ Data_0200bc0c:
 	.4byte SceneActor_ConfigureSlot21AndSetFlag201
 	.4byte 0x10002115
 	.4byte 0x02020013
-	.4byte FieldScene_SetActor19TableB3B8
+	.4byte BabiChika_InstallActorNineteenFlicker
 	.4byte 0x00002115
 	.4byte 0x02020013
 	.4byte SceneState_SetValue202ThenCall

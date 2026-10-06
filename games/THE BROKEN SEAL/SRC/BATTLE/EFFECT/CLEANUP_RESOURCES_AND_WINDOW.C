@@ -1,13 +1,29 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "SCENE.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
+#include "BATTLE_RUNTIME.H"
+#include "text/MSG_IDS.H"
+
+#include "OBJECT_LOOKUP.H"
+#define ObjectTable_Get ((struct MapObject * (*)(s32))ObjectTable_Get)
 
 extern u8 gMapCellBuffer[];
 
-extern s32 Resource_ResetEntry(u32 index);
 extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 
 void BattleFx_CleanupResourcesAndWindow(void)
@@ -17,10 +33,16 @@ void BattleFx_CleanupResourcesAndWindow(void)
     UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 0x1c), 2);
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define WORLD_MAP_CURSOR_SNAPS 1
+#define WORLD_MAP_NAME_RANGE   64
+#define WORLD_MAP_NAME_LEFT    3
 #else
-/* The European editions build the marker window their own way, which stays
-   in their scaffolds for now. */
+#define WORLD_MAP_CURSOR_SNAPS 0
+#define WORLD_MAP_NAME_RANGE   100
+#define WORLD_MAP_NAME_LEFT    1
+#endif
 
 struct MapMarker {
     struct MapMarker *link;
@@ -67,28 +89,12 @@ struct MapObject {
     union MapFixed z;
 };
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
 extern struct WorldMapVramBlock gVramBlockCache[];
 extern u32 gFrameCount;
 extern u32 gKeysHeld;
-extern const u8 WorldMap_MarkerBlendCycle[];
-extern const u16 WorldMap_CursorDirectionAngles[];
-extern const s32 WorldMap_PlaceMarkers[];
-extern u8 MsgDebugEntryName[];
-extern u8 MsgPresentLocation[];
 
-s32 GameFlag_TestFar(s32 flag);
-struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
-s32 BattleFx_FindConditionResource(s32 id, s32 kind);
-void UiWindow_Clear(s32 window);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
-void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
+s32 ArcTan2(s32 dz, s32 dx);
 
 #define QUEUE_IO_WRITE_DELAY2(address, value) do {                          \
         u32 saved;                                                          \
@@ -111,9 +117,6 @@ void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
         *ime = saved;                                                       \
     } while (0)
 
-/* The world map's frame callback: move the cursor with the keys, place
-   the markers of the places the flags have opened, name the nearest one
-   in the window, and pulse the markers' blend. */
 void Map_UpdateWorldMapMarkers(void)
 {
     s32 leader;
@@ -122,6 +125,7 @@ void Map_UpdateWorldMapMarkers(void)
     s32 blend;
     s32 best;
     s32 best_distance;
+    s32 cursor_x;
     s32 best_x;
     s32 best_y;
     s32 message;
@@ -131,7 +135,6 @@ void Map_UpdateWorldMapMarkers(void)
     s32 position[3];
     struct WorldMapWork *work;
     struct MapObject *object;
-    s32 cursor_x;
     s32 cursor_y;
     s32 tile;
     s32 mode;
@@ -144,15 +147,23 @@ void Map_UpdateWorldMapMarkers(void)
     struct IoWriteQueue *q;
     volatile u16 *ime;
 
+#if WORLD_MAP_CURSOR_SNAPS
+    leader = gGameState.selected_actor;
+    work = (struct WorldMapWork *)Ram_MapCellBuffer;
+    marker = work->markers;
+    place = WorldMap_PlaceMarkers;
+    tile_base = gVramBlockCache[work->vram_block].offset >> 5;
+#else
     work = (struct WorldMapWork *)Ram_MapCellBuffer;
     leader = gGameState.selected_actor;
     place = WorldMap_PlaceMarkers;
     tile_base = gVramBlockCache[work->vram_block].offset >> 5;
     marker = work->markers;
+#endif
     best = -1;
-    best_distance = 100;
+    best_distance = WORLD_MAP_NAME_RANGE;
     blend = WorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
-    if (!GameFlag_TestFar(0x11c) && (gKeysHeld & 0x300)) {
+    if (!GameFlag_TestFar(0x11c) && (gKeysHeld & KEYS_SHOULDERS)) {
         object = ObjectTable_Get(gGameState.selected_actor);
         if (object == NULL)
             goto markers;
@@ -198,10 +209,17 @@ markers:
             message = *place++;
             if (flag == 0)
                 continue;
+#if WORLD_MAP_CURSOR_SNAPS
+            if (flag == -1)
+                break;
+            tile = flag >> 16;
+            mode = 1;
+#else
             tile = flag >> 16;
             mode = 1;
             if (flag == -1)
                 break;
+#endif
         }
         if (!GameFlag_TestFar(flag))
             continue;
@@ -226,6 +244,33 @@ markers:
         if (i != 0 || (gFrameCount & 15) <= 7)
             Runtime_PushSlotEntry(marker++, y);
     }
+#if WORLD_MAP_CURSOR_SNAPS
+    if (gKeysHeld == 0) {
+        if (best != -1) {
+            if (best_distance <= 1) {
+                work->x.value = best_x << 16;
+                work->z.value = best_y << 16;
+                work->speed = 0x10000;
+            } else {
+                if (work->speed < 0x20000)
+                    work->speed = 0x20000;
+                angle = ArcTan2(best_y - cursor_y, best_x - cursor_x);
+                position[0] = work->x.value;
+                position[1] = 0;
+                position[2] = work->z.value;
+                Vector_AddPolarOffset(work->speed, (u16)angle, position);
+                work->x.value = position[0];
+                work->z.value = position[2];
+                if (work->speed < 0x60000)
+                    work->speed += 0x2000;
+            }
+            cursor_x = work->x.part.whole;
+            cursor_y = work->z.part.whole;
+        } else {
+            work->speed = 0x10000;
+        }
+    }
+#endif
     if (best != -1 && (gFrameCount & 15) <= 7) {
         marker->blend_mode = 0;
         marker->tile = tile_base + 3;
@@ -245,11 +290,11 @@ markers:
             if (best == 0)
                 best_message = (s32)MsgPresentLocation;
             else
-                best_message = BattleFx_FindConditionResource(best_message, 1) + (s32)MsgDebugEntryName;
+                best_message = Scene_GetAreaNameIndex(best_message, 1) + (s32)MsgDebugEntryName;
             UiText_MeasureResourceEntriesFar(best_message, &width, &height);
             cursor_x = best_x;
             cursor_y = best_y;
-            cursor_x--;
+            cursor_x -= WORLD_MAP_NAME_LEFT;
             cursor_y -= 11;
             if (cursor_x + width > 240) {
                 cursor_x = 232 - width;
@@ -257,7 +302,7 @@ markers:
             }
             if (cursor_y < 0)
                 cursor_y = 0;
-            UiText_DrawMessageAt(best_message, work->window, cursor_x, cursor_y);
+            UiText_DrawResourceFar(best_message, work->window, cursor_x, cursor_y);
         }
     }
     q = &gIoWriteQueue;
@@ -265,4 +310,3 @@ markers:
     QUEUE_IO_WRITE_DELAY2(0x04000050, 0x3f00);
     QUEUE_IO_WRITE_DELAY2(0x04000052, ((16 - blend) << 8) | blend);
 }
-#endif

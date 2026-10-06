@@ -1,92 +1,93 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "SYSTEM.H"
-extern u8 Data_03001f2c[];
+#include "BATTLE_UNIT.H"
 
-/* menu/psynergy_menu/classify_selected_psynergy.c */
-u8 *BattleAction_Get(s32 action);
-s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 {
-    u8 *psynergy;
+    struct BattleAction *psynergy;
     s32 diff;
     s32 ret;
 
     psynergy = BattleAction_Get(
-        (s32)(0x3fff &
-              (*(struct PsynergyMenuState **)((u32)&Data_03001f2c))
-                  ->selected_psynergy));
-    if (BattleFx_HasMatchingEvent5Far(psynergy[0x0c]) != 0) {
+        0x3fff &
+              gMenuWork
+                  ->pane_action[0]);
+    if (BattleFx_HasMatchingEvent5Far(psynergy->type_0c) != 0) {
         return 0;
     }
     ret = 2;
-    if (psynergy[8] != 0xff) {
-        u8 kind = psynergy[0];
+    if (psynergy->range != 0xff) {
+        u8 kind = psynergy->target_mode;
         diff = kind ^ 2;
         ret = (0 - diff) | diff;
-        ret = (s32)((u32)ret >> 0x1f);
+        ret = (u32)ret >> 0x1f;
         ret = 1 - ret;
     }
     return ret;
 }
 
-/* psynergy_menu/select_party_slot.c */
-struct Rec5 { u8 pad[5]; unsigned int flag : 8; };
-struct Cur { unsigned short mark : 8; };
-
-extern struct PsynergyMenuState *gMenuWork;
-void *Owner_GetStateFar(s32);
-s32 UiMenu_SlideCursor(s32, s32);
-s32 PsynergyMenu_SetupActionIcons(void *, void *);
-void UiIcon_PrepareObject(void *cursor);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 {
-    void *menu = gMenuWork;
-    s32 offset = party_slot + 28;
-    s32 cursor_offset = party_slot * 4 + 20;
-    void *icon;
+    /* FAKEMATCH: retain the original scalar tab/icon address lanes. Direct indexed owner fields change the 244-byte native object to 246 bytes and reorder loads around the cursor call. */
+    struct PsynergyMenuState *menu = gMenuWork;
+    s32 tab_offset = party_slot + ((u8 *)menu->tab_index - (u8 *)menu);
+    s32 icon_offset = party_slot * sizeof(menu->pane_icon[0]) +
+                      ((u8 *)menu->pane_icon - (u8 *)menu);
+    struct RenderOutput *icon;
     u8 byte_val;
-    s32 owner_index;
-    s32 combined_offset;
-    s32 obj_off;
-    s32 obj_id;
-    void *obj_ptr;
-    void *p456;
-    u8 *p2;
+    s32 tab;
+    s32 owner_offset;
+    s32 table_offset;
+    s32 owner_id;
+    struct BattleUnit *owner;
+    u16 *actions;
+    u8 *counts;
     s32 badge;
     s32 result;
-    s32 cursor_offset2;
+    s32 icon_offset2;
 
     result = 0;
-    icon = *(void **)(menu + cursor_offset);
-    *(u8 *)(icon + 5) = 1;
-    *(u16 *)(icon + 12) = result;
-    ((struct Rec5 *)(*(u8 **)(menu + 540)))->flag = 13;
-    p2 = (u8 *)menu + 2;
-    owner_index = *(s8 *)(menu + offset);
-    byte_val = ((struct Cur *)(menu + 537))->mark;
-    p2[offset] = byte_val;
+    icon = *(struct RenderOutput **)((u8 *)menu + icon_offset);
+    icon->active = 1;
+    icon->anim_step = result;
+    menu->cursor_icon->active = 13;
+    counts = (u8 *)menu + ((u8 *)menu->tab_counts - (u8 *)menu->tab_index);
+    tab = *(s8 *)((u8 *)menu + tab_offset);
+    byte_val = menu->owner_count;
+    counts[tab_offset] = byte_val;
 
-    if (owner_index == -1) {
-        *(u8 *)(menu + offset) = 0;
-        combined_offset = 0;
+    if (tab == -1) {
+        *((u8 *)menu + tab_offset) = 0;
+        owner_offset = 0;
     } else {
-        combined_offset = owner_index * 2;
-        UiMenu_SlideCursor(owner_index * 24 - 10, 16);
+        owner_offset = tab * sizeof(menu->owner_table[0]);
+        UiMenu_SlideCursor(tab * 24 - 10, 16);
     }
 
-    obj_off = combined_offset + 520;
-    obj_id = *(u16 *)(menu + obj_off);
-    obj_ptr = Owner_GetStateFar(obj_id);
-    p456 = menu + 456;
-    badge = PsynergyMenu_CollectActions(obj_ptr, p456, 2);
-    *(u8 *)(menu + 536) = (u8)badge;
-    result = PsynergyMenu_SetupActionIcons(menu + 520, p456);
+    table_offset = owner_offset + ((u8 *)menu->owner_table - (u8 *)menu);
+    owner_id = *(u16 *)((u8 *)menu + table_offset);
+    owner = Owner_GetStateFar(owner_id);
+    actions = menu->psynergies;
+    badge = PsynergyMenu_CollectActions(owner, actions, 2);
+    menu->psynergy_count = badge;
+    result = PsynergyMenu_SetupActionIcons(menu->owner_table, actions);
 
-    cursor_offset2 = party_slot * 4 + 20;
-    icon = *(void **)(menu + cursor_offset2);
+    icon_offset2 = party_slot * sizeof(menu->pane_icon[0]) +
+                   ((u8 *)menu->pane_icon - (u8 *)menu);
+    icon = *(struct RenderOutput **)((u8 *)menu + icon_offset2);
     UiIcon_PrepareObject(icon);
     WaitFrames(1);
     return result;

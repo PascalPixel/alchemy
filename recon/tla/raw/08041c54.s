@@ -40,7 +40,7 @@ UiWindow_DrawDividerLine:
 	subs r3, r6, r2
 	add r0, r10
 	movs r2, #1
-	bl Func_08041abc
+	bl UiWindow_ClearTileAttributesInRect
 	movs r1, #14
 	ldrsh r3, [r5, r1]
 	movs r1, #12
@@ -196,7 +196,7 @@ UiWindow_DrawDividerLine:
 	subs r2, r3, r7
 	adds r0, r0, r7
 	movs r3, #1
-	bl Func_08041abc
+	bl UiWindow_ClearTileAttributesInRect
 	movs r1, #14
 	ldrsh r3, [r5, r1]
 	movs r1, #12

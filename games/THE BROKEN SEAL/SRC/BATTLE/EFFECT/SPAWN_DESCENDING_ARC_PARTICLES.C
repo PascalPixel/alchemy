@@ -1,10 +1,18 @@
-/* Battle effect: spawn the two particles that fall in arcs either side of
-   the source object, one for each of the descending-arc update callbacks. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "VRAM_BLOCK.H"
 #include "TYPES.H"
 #include "SCENE_IDS.H"
+#include "FX_SCENE.H"
 
-/* A falling particle: a 16.16 position, the height it vanishes at, its
-   sprite scale, and the object it drifts down beside. */
 struct ArcParticle {
     u8 unknown_00[8];
     s32 x;
@@ -24,11 +32,8 @@ struct BattleEffect16GlobalState {
 
 extern struct BattleEffect16GlobalState gGameState;
 
-void Object_Destroy(void);
+void ObjectDispatch_ReleaseFar(void);
 
-/* Drops the particle two pixels a frame beside its source, on the positive
-   z side, while its sprite grows to full size; it vanishes ten pixels above
-   its floor (four in the Clear scene). */
 void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
 {
     struct ArcParticle *source;
@@ -43,7 +48,7 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
 
     y = particle->y;
     if (y <= limit) {
-        Object_Destroy();
+        ObjectDispatch_ReleaseFar();
         return;
     }
 
@@ -57,7 +62,6 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
     particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
 }
 
-/* The same fall on the negative z side, with the vertical scale negated. */
 void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 {
     struct ArcParticle *source;
@@ -72,7 +76,7 @@ void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 
     y = particle->y;
     if (y <= limit) {
-        Object_Destroy();
+        ObjectDispatch_ReleaseFar();
         return;
     }
 
@@ -87,8 +91,6 @@ void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 }
 
 struct ArcParticle;
-void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle);
-void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle);
 
 struct ArcFrame {
     u8 padding00[22];
@@ -144,22 +146,14 @@ struct ArcObject {
     void *callback;
 };
 
-struct ResourceSlot {
-    u16 id;
-    u16 address;
-};
-
-extern u8 *gEffectWork;
-extern struct ResourceSlot ResourceTableEntries[];
+extern struct BattleFxScene *gEffectWork;
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
-void Resource_ResetEntry(s32 id);
 
 void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
 {
-    u8 *work = gEffectWork;
-    struct ArcObject *leader = *(struct ArcObject **)(work + 16);
+    struct BattleFxScene *scene = gEffectWork;
+    struct ArcObject *leader = scene->main_object;
     struct ArcObject *objects[2];
     struct ArcObject *object;
     struct ArcSprite *sprite;
@@ -184,9 +178,9 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
         AnimationObjects_SelectAnimationFar(sprite, 0);
         sprite->animation = zero;
         Resource_ResetEntry(sprite->resource);
-        sprite->resource = *(u16 *)(work + 0x71a);
+        sprite->resource = scene->arc_tile_slot;
         sprite->active = 1;
-        sprite->attr.half.tile = ResourceTableEntries[sprite->resource].address >> 5;
+        sprite->attr.half.tile = gVramBlockCache[sprite->resource].offset >> 5;
         sprite->flags05_5 = 0;
         sprite->layer = 1;
         sprite->size = 2;

@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_67D overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_67D overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -33,11 +29,11 @@ Battle_WaitMode0:
 	.global Func_020021c4
 	.thumb_func
 Func_020021c4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020021cc
 	.thumb_func
 Func_020021cc:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -73,7 +69,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02002214
 	.thumb_func
 Func_02002214:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -97,7 +93,7 @@ Object_LinkPair:
 	.global Func_02002244
 	.thumb_func
 Func_02002244:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -105,7 +101,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02002254
 	.thumb_func
 Func_02002254:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -137,7 +133,7 @@ Field_DispatchTypeHandler:
 	.global Func_02002294
 	.thumb_func
 Func_02002294:
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.global Func_0200229c
 	.thumb_func
 Func_0200229c:
@@ -147,25 +143,25 @@ Func_0200229c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_020022a4
 	.thumb_func
 Func_020022a4:
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.global Func_020022ac
 	.thumb_func
 Func_020022ac:
-	overlay_veneer Func_080c84b8
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Func_020022b4
 	.thumb_func
 Func_020022b4:
-	overlay_veneer Func_080c84c0
+	overlay_veneer EventObject_InitializeFar
 	.global Func_020022bc
 	.thumb_func
 Func_020022bc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020022c4
 	.thumb_func
 Func_020022c4:
@@ -173,7 +169,7 @@ Func_020022c4:
 	.global Func_020022cc
 	.thumb_func
 Func_020022cc:
-	overlay_veneer Func_080c85e8
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global ObjectMotion_OffsetPositionAndReset
 	.thumb_func
 ObjectMotion_OffsetPositionAndReset:
@@ -187,33 +183,33 @@ Func_020022dc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020022e4
 	.thumb_func
 Func_020022e4:
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.global Func_020022ec
 	.thumb_func
 Func_020022ec:
-	overlay_veneer Func_080c8810
+	overlay_veneer BattleFx_EndArcEffectFar
 	.global Func_020022f4
 	.thumb_func
 Func_020022f4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
-	overlay_veneer Func_080c8818
+	overlay_veneer BattleFx_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_020022fc
 	.thumb_func
 Func_020022fc:
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.global Func_02002304
 	.thumb_func
 Func_02002304:

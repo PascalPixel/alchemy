@@ -1,32 +1,10 @@
-//! The sound encoders, as pret's mid2agb and wav2agb: engine sequences from
-//! sequence MIDI files, and PCM wave records from WAV files. A sequence's
-//! jumps, pattern calls, track list and tone bank are address words naming
-//! labels, so the linker places every sequence.
-//!
-//! A sequence MIDI's conductor track carries the sequence's skeleton as a
-//! text event, one segment per line:
-//!
-//! ```text
-//! smsh-sequence 1
-//! stream track_1
-//! align 4 0
-//! header sound_000 block_count=0 priority=0 reverb=178 tone_bank=Voices tracks=track_1
-//! ```
-//!
-//! and each stream track carries its notes and controls as MIDI events, as
-//! a MIDI editor shows them: tempo, program changes, volume, pan and
-//! modulation control changes, pitch bends, and the bend range and tuning
-//! registered parameters (see `MIDI_CONTROLS`). What MIDI has no event for
-//! is a marker event of one line, such as `key_shift 0` or `goto loop_1`:
-//! the event's kind, then its integers and labels.
 use super::asm::{identifier, Data, Pointer};
-use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
+use crate::assets::midi::{midi_events, EventBody, MidiEvent};
 use std::collections::{BTreeSet, HashMap};
 use std::fmt;
 
-/// One argument of a sequence event: an integer or a label.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Arg {
+pub(crate) enum Arg {
     Int(i64),
     Sym(String),
 }
@@ -49,9 +27,8 @@ impl From<&str> for Arg {
     }
 }
 
-/// One sequence event: its kind and arguments, written `kind arg arg`.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Event {
+pub(crate) struct Event {
     pub kind: String,
     pub args: Vec<Arg>,
 }
@@ -62,7 +39,6 @@ impl Event {
             args,
         }
     }
-    /// Read an event from its one-line text.
     pub fn parse(text: &str) -> Result<Self, String> {
         let mut words = text.split(' ');
         let kind = words.next().filter(|kind| identifier(kind));
@@ -91,14 +67,10 @@ impl fmt::Display for Event {
     }
 }
 
-/// One segment of a sequence's layout, in order.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Segment {
-    /// A track's events under its label.
+pub(crate) enum Segment {
     Stream { label: String, events: Vec<Event> },
-    /// Padding to a power-of-two boundary with a fill byte.
     Align { boundary: i64, fill: i64 },
-    /// The song header: its exported label, settings, tone bank and tracks.
     Header {
         label: String,
         block_count: i64,
@@ -111,32 +83,7 @@ pub enum Segment {
 
 const SKELETON_ENGINE: &str = "smsh-sequence 1";
 
-/// A skeleton's text: the engine line, then one line per segment. Streams
-/// carry only their labels; their events live in their tracks.
-pub fn skeleton_text(segments: &[Segment]) -> String {
-    let mut text = format!("{SKELETON_ENGINE}\n");
-    for segment in segments {
-        text += &match segment {
-            Segment::Stream { label, .. } => format!("stream {label}\n"),
-            Segment::Align { boundary, fill } => format!("align {boundary} {fill}\n"),
-            Segment::Header {
-                label,
-                block_count,
-                priority,
-                reverb,
-                tone_bank,
-                tracks,
-            } => format!(
-                "header {label} block_count={block_count} priority={priority} reverb={reverb} tone_bank={tone_bank} tracks={}\n",
-                tracks.join(",")
-            ),
-        };
-    }
-    text
-}
-
-/// Read a skeleton's text; streams come back without events.
-pub fn parse_skeleton(text: &str) -> Result<Vec<Segment>, String> {
+pub(crate) fn parse_skeleton(text: &str) -> Result<Vec<Segment>, String> {
     let mut lines = text.lines();
     if lines.next() != Some(SKELETON_ENGINE) {
         return Err(format!("sequence skeleton must begin {SKELETON_ENGINE:?}"));
@@ -419,11 +366,7 @@ fn encode_sequence_stream(events: &[Event]) -> Result<EncodedSequenceStream, Str
         pointers,
     })
 }
-/// An engine sequence from its layout: `header`, `stream` and `align`
-/// segments in order. The header's label is exported; the tone bank it names
-/// is linked from elsewhere, and every other symbol (tracks, jump, repeat and
-/// pattern targets) must be a label the sequence defines.
-pub fn build_sequence(layout: &[Segment]) -> Result<Data, String> {
+pub(crate) fn build_sequence(layout: &[Segment]) -> Result<Data, String> {
     let mut data = Data::default();
     let mut tone_banks = BTreeSet::new();
     for segment in layout {
@@ -502,165 +445,8 @@ pub fn build_sequence(layout: &[Segment]) -> Result<Data, String> {
     }
     Ok(data)
 }
-#[cfg(test)]
-fn events(lines: &[&str]) -> Vec<Event> {
-    lines
-        .iter()
-        .map(|line| Event::parse(line).unwrap())
-        .collect()
-}
-#[cfg(test)]
-fn song(track_events: Vec<Event>) -> Vec<Segment> {
-    vec![
-        Segment::Header {
-            label: "song".into(),
-            block_count: 0,
-            priority: 1,
-            reverb: 0,
-            tone_bank: "voicegroup".into(),
-            tracks: vec!["track".into()],
-        },
-        Segment::Align {
-            boundary: 16,
-            fill: 0,
-        },
-        Segment::Stream {
-            label: "track".into(),
-            events: track_events,
-        },
-    ]
-}
-#[test]
-fn sequences_link_their_tracks_jumps_and_tone_bank_by_label() {
-    let track = events(&[
-        "goto end",
-        "label loop",
-        "note 1 60 100",
-        "wait 1",
-        "repeat 2 loop",
-        "label end",
-        "pattern loop",
-        "fine",
-    ]);
-    let data = build_sequence(&song(track.clone())).unwrap();
-    assert_eq!(
-        data.bytes,
-        [
-            1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xb2, 0, 0, 0, 0, 0xd0, 60, 100, 0x81,
-            0xb5, 2, 0, 0, 0, 0, 0xb3, 0, 0, 0, 0, 0xb1,
-        ]
-    );
-    let sites: Vec<(usize, &str)> = data
-        .pointers
-        .iter()
-        .map(|(site, pointer)| (*site, pointer.symbol.as_str()))
-        .collect();
-    assert_eq!(
-        sites,
-        [
-            (4, "voicegroup"),
-            (8, "track"),
-            (17, "end"),
-            (27, "loop"),
-            (32, "loop")
-        ]
-    );
-    assert_eq!(data.align, 16);
-    let text = data.source().unwrap();
-    assert!(
-        text.starts_with("\t.balign 16\n\t.global song\nsong:\n"),
-        "{text}"
-    );
-    assert!(text.contains("\ntrack:\n") && !text.contains(".global track"));
-    let mut missing = song(track.clone());
-    if let Segment::Stream { events, .. } = &mut missing[2] {
-        events[0] = Event::parse("goto missing").unwrap();
-    }
-    assert!(build_sequence(&missing)
-        .unwrap_err()
-        .contains("unknown sequence symbol"));
-    let mut duplicate = song(track.clone());
-    if let Segment::Stream { label, .. } = &mut duplicate[2] {
-        *label = "song".into();
-    }
-    assert!(build_sequence(&duplicate)
-        .unwrap_err()
-        .contains("duplicate local label"));
-    for (edit, error) in [
-        ((1i64, 1i64, 0i64, 1usize), "nonzero"),
-        ((0, 256, 0, 1), "header value"),
-        ((0, 1, 256, 1), "header value"),
-        ((0, 1, 0, 0), "track list"),
-    ] {
-        let mut invalid = song(track.clone());
-        if let Segment::Header {
-            block_count,
-            priority,
-            reverb,
-            tracks,
-            ..
-        } = &mut invalid[0]
-        {
-            (*block_count, *priority, *reverb) = (edit.0, edit.1, edit.2);
-            tracks.truncate(edit.3);
-        }
-        assert!(
-            build_sequence(&invalid).unwrap_err().contains(error),
-            "{error}"
-        );
-    }
-    for (boundary, fill, error) in [(3, 0, "power of two"), (16, 256, "alignment fill")] {
-        let mut invalid = song(track.clone());
-        invalid[1] = Segment::Align { boundary, fill };
-        assert!(
-            build_sequence(&invalid).unwrap_err().contains(error),
-            "{error}"
-        );
-    }
-}
-#[test]
-fn skeletons_and_events_read_back_their_text() {
-    let layout = song(Vec::new());
-    let text = skeleton_text(&layout);
-    assert_eq!(
-        text,
-        "smsh-sequence 1\nheader song block_count=0 priority=1 reverb=0 tone_bank=voicegroup tracks=track\nalign 16 0\nstream track\n"
-    );
-    assert_eq!(parse_skeleton(&text).unwrap(), layout);
-    assert!(parse_skeleton("{\"format\":1}").is_err());
-    assert!(
-        parse_skeleton(&text.replace("reverb=0", "reverb=0 base=0x08000000"))
-            .unwrap_err()
-            .contains("records base")
-    );
-    for line in ["volume 100", "goto loop_1", "note_end", "key_shift -1"] {
-        assert_eq!(Event::parse(line).unwrap().to_string(), line);
-    }
-    assert!(Event::parse("[\"fine\"]").is_err());
-    assert!(Event::parse("volume 1.5").is_err());
-}
-#[test]
-fn running_status_follows_the_engine_and_tempo_never_runs() {
-    let encoded = encode_sequence_stream(&events(&[
-        "priority 5",
-        "control_running priority 6",
-        "key_shift -1",
-        "control_running key_shift 1",
-        "tempo 30",
-    ]))
-    .unwrap();
-    assert_eq!(encoded.data, [0xba, 5, 6, 0xbc, 0xff, 1, 0xbb, 30]);
-    assert!(encode_sequence_stream(&events(&["tempo 30", "control_running tempo 31"])).is_err());
-}
-/// Prefix of the retired per-event sequence sidecars. The converter derives
-/// every encoding choice, so a MIDI still carrying one is refused.
+
 const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
-/// Bar lengths, in sequence ticks, tried in order when a playback MIDI is
-/// adopted: four, three, two and one 24-tick beats, then one, seven, five and
-/// three 12-tick half beats.
-const ADOPTION_BARS: [i64; 8] = [96, 72, 48, 24, 12, 84, 60, 36];
-/// Bar lines of a sequence MIDI: every time signature in the conductor track
-/// starts bars of its length at its tick; before the first one, MIDI's 4/4.
 fn sequence_meter(conductor: &[MidiEvent], division: u16) -> Result<Vec<(i64, i64)>, String> {
     let whole = i64::from(division) * 4;
     let mut meter = Vec::<(i64, i64)>::new();
@@ -687,22 +473,6 @@ fn sequence_meter(conductor: &[MidiEvent], division: u16) -> Result<Vec<(i64, i6
     }
     Ok(meter)
 }
-/// The time signature whose bars last `bar` sequence ticks, counted in 24-tick
-/// beats, or in 12-tick half beats when the bar is not whole beats.
-fn time_signature(bar: i64, division: u16) -> Result<[u8; 4], String> {
-    let whole = i64::from(division) * 4;
-    for unit in [24, 12] {
-        let note = whole / unit;
-        if bar % unit == 0 && note * unit == whole && note.count_ones() == 1 && bar / unit <= 0xff {
-            return Ok([(bar / unit) as u8, note.trailing_zeros() as u8, 24, 8]);
-        }
-    }
-    Err(format!(
-        "a {bar}-tick bar has no time signature at {division} ticks per quarter"
-    ))
-}
-/// A rest as the converter writes it: cut at every bar line, then into the
-/// longest wait commands within each bar.
 fn rest_waits(start: i64, length: i64, meter: &[(i64, i64)]) -> Result<Vec<usize>, String> {
     if start < 0 || length < 0 {
         return Err("MIDI rest lies before the stream start".to_string());
@@ -740,11 +510,6 @@ struct MidiNode {
     event: Event,
 }
 
-/// The sequence controls a MIDI carries as its own events, as pret's mid2agb
-/// reads them: a tempo meta, a program change (`voice`), control changes 7
-/// (`volume`), 10 (`pan`) and 1 (`modulation_depth`), a pitch bend, and the
-/// registered parameters 0 (`pitch_bend_range`) and 1 (`tuning`). A marker
-/// never spells one, so a control lives once, where a MIDI editor shows it.
 const MIDI_CONTROLS: [&str; 8] = [
     "tempo",
     "voice",
@@ -756,12 +521,7 @@ const MIDI_CONTROLS: [&str; 8] = [
     "tuning",
 ];
 
-/// The engine tempo a tempo meta's microseconds per quarter note give. A
-/// MIDI quarter is 96 ticks, four of the engine's 24-tick beats, and the
-/// engine plays twice its tempo in beats a minute at the GBA's frame rate of
-/// 16,777,216 / 280,896 Hz against the 60 Hz it counts in.
 fn midi_tempo(micros: u32) -> Result<i64, String> {
-    // T = 60e6 * 120 / (frame rate * micros), rounded.
     let numerator = 7_200_000_000u128 * 280_896;
     let denominator = 16_777_216u128 * u128::from(micros);
     if micros == 0 {
@@ -770,10 +530,6 @@ fn midi_tempo(micros: u32) -> Result<i64, String> {
     Ok(((2 * numerator + denominator) / (2 * denominator)) as i64)
 }
 
-/// The control a channel event sets, if any. `parameter` is the registered
-/// parameter the stream has selected; `preamble` is whether no meta event or
-/// note has come yet, where a player's bank, reverb and default bend range
-/// set up playback and are not the sequence's.
 fn midi_control(
     status: u8,
     data: &[u8],
@@ -788,7 +544,6 @@ fn midi_control(
     let control = |kind: &str, value: i64| Ok(Some(Event::new(kind, vec![value.into()])));
     match status & 0xf0 {
         0xc0 => control("voice", value(0)?),
-        // The engine keeps a bend's high seven bits.
         0xe0 => control("pitch_bend", value(1)?),
         0xb0 => match value(0)? {
             7 => control("volume", value(1)?),
@@ -808,7 +563,6 @@ fn midi_control(
                 (Some(0), Some(1)) => control("tuning", value(1)?),
                 _ => Err("MIDI data entry names no registered parameter".to_string()),
             },
-            // Bank select, data entry's low byte and reverb set up playback.
             0 | 38 | 91 => Ok(None),
             other => Err(format!(
                 "MIDI control change {other} is no sequence command"
@@ -852,7 +606,6 @@ fn reconstruct_midi_stream(
             preamble = false;
         }
         if let Some(control) = derived {
-            // A control inside a pattern's inline copy belongs to the pattern.
             if depth == 0 {
                 grid.push(nodes.len());
                 nodes.push(MidiNode {
@@ -961,8 +714,6 @@ fn reconstruct_midi_stream(
         if node.compact_tick < cursor {
             return Err("MIDI event order moves backwards".to_string());
         }
-        // The rest ends at this event in played time; pattern calls before it
-        // have already advanced the bar position.
         let gap = node.compact_tick - cursor;
         for wait in rest_waits(node.raw_tick - gap, gap, meter)? {
             output.push(Event::new("wait", vec![(wait as i64).into()]));
@@ -972,13 +723,6 @@ fn reconstruct_midi_stream(
     }
     Ok(output)
 }
-/// The converter's encoding of a reconstructed stream. A note, or a control
-/// that sets running status, continues the running command only as the first
-/// event after a rest; chords and events after other commands repeat it. An
-/// end of tie that names a key continues a running end of tie. Key and
-/// velocity are written when they change. A label, pattern call, repeat or
-/// jump forgets the running command, key and velocity, because another path
-/// reaches the event after it; a pattern end changes nothing.
 fn default_sequence(events: &[Event]) -> Result<Vec<Event>, String> {
     let mut output = Vec::new();
     let mut running: Option<u8> = None;
@@ -1063,133 +807,11 @@ fn default_sequence(events: &[Event]) -> Result<Vec<Event>, String> {
     }
     Ok(output)
 }
-fn midi_variable(mut value: usize) -> Vec<u8> {
-    let mut bytes = vec![(value & 0x7f) as u8];
-    while {
-        value >>= 7;
-        value != 0
-    } {
-        bytes.push(((value & 0x7f) as u8) | 0x80);
-    }
-    bytes.reverse();
-    bytes
-}
-fn encode_midi_track(events: &[MidiEvent]) -> Result<Vec<u8>, String> {
-    let mut output = Vec::new();
-    let mut tick = 0i64;
-    for event in events {
-        if matches!(event.body, EventBody::Meta { meta: 0x2f, .. }) {
-            continue;
-        }
-        let delta = event
-            .tick
-            .checked_sub(tick)
-            .filter(|delta| *delta >= 0)
-            .ok_or("MIDI event order moves backwards")? as usize;
-        output.extend(midi_variable(delta));
-        tick = event.tick;
-        match &event.body {
-            EventBody::Meta { meta, data } => {
-                output.extend([0xff, *meta]);
-                output.extend(midi_variable(data.len()));
-                output.extend(data);
-            }
-            EventBody::Sysex { status, data } => {
-                output.push(*status);
-                output.extend(midi_variable(data.len()));
-                output.extend(data);
-            }
-            EventBody::Channel { status, data } => {
-                output.push(*status);
-                output.extend(data);
-            }
-        }
-    }
-    output.extend([0, 0xff, 0x2f, 0]);
-    Ok(output)
-}
-fn repack_midi_tracks(midi: &[u8], native_tracks: usize) -> Result<Vec<u8>, String> {
-    let report = midi_events(midi).map_err(|error| error.to_string())?;
-    if report.format == 1 && usize::from(report.tracks) == native_tracks + 1 {
-        return Ok(midi.to_vec());
-    }
-    if report.format != 0 || report.tracks != 1 {
-        return Err("playback MIDI is neither canonical format 1 nor convertible format 0".into());
-    }
-    let mut tracks = vec![Vec::<MidiEvent>::new(); native_tracks + 1];
-    for event in report.events {
-        let destination = match &event.body {
-            EventBody::Channel { status, .. } => usize::from(status & 0x0f) + 1,
-            _ => 0,
-        };
-        if destination >= tracks.len() {
-            return Err(format!(
-                "playback MIDI channel {} exceeds native track count",
-                destination
-            ));
-        }
-        tracks[destination].push(event);
-    }
-    let count = u16::try_from(tracks.len()).map_err(|_| "too many MIDI tracks")?;
-    let mut output = Vec::new();
-    output.extend_from_slice(b"MThd");
-    output.extend_from_slice(&6u32.to_be_bytes());
-    output.extend_from_slice(&1u16.to_be_bytes());
-    output.extend_from_slice(&count.to_be_bytes());
-    output.extend_from_slice(&report.ticks_per_quarter.to_be_bytes());
-    for (track_index, mut events) in tracks.into_iter().enumerate() {
-        if track_index != 0 {
-            let mut active = HashMap::<u8, usize>::new();
-            let mut last_tick = 0i64;
-            for event in &events {
-                last_tick = last_tick.max(event.tick);
-                if let EventBody::Channel { status, data } = &event.body {
-                    let note = data.first().copied().unwrap_or(0);
-                    if status & 0xf0 == 0x90 && data.get(1).copied().unwrap_or(0) != 0 {
-                        *active.entry(note).or_default() += 1;
-                    } else if status & 0xf0 == 0x80
-                        || (status & 0xf0 == 0x90 && data.get(1) == Some(&0))
-                    {
-                        if let Some(count) = active.get_mut(&note).filter(|count| **count != 0) {
-                            *count -= 1;
-                        }
-                    }
-                }
-            }
-            let channel = u8::try_from(track_index - 1).map_err(|_| "too many MIDI channels")?;
-            for (note, count) in active {
-                for order in 0..count {
-                    events.push(MidiEvent {
-                        tick: last_tick,
-                        track: track_index,
-                        order: usize::MAX - order,
-                        body: EventBody::Channel {
-                            status: 0x80 | channel,
-                            data: vec![note, 0],
-                        },
-                    });
-                }
-            }
-        }
-        events.sort_by_key(|event| (event.tick, event.order));
-        let data = encode_midi_track(&events)?;
-        output.extend_from_slice(b"MTrk");
-        output.extend_from_slice(
-            &u32::try_from(data.len())
-                .map_err(|_| "MIDI track is too large")?
-                .to_be_bytes(),
-        );
-        output.extend(data);
-    }
-    Ok(output)
-}
-/// A sequence MIDI's events by track, its stream skeleton and its bar lines.
 struct SequenceMidi {
     tracks: HashMap<usize, Vec<MidiEvent>>,
     skeleton: Option<Vec<Segment>>,
     meter: Vec<(i64, i64)>,
 }
-/// A MIDI file's events by track and its ticks per quarter note.
 fn midi_tracks(midi: &[u8]) -> Result<(HashMap<usize, Vec<MidiEvent>>, u16), String> {
     let report = midi_events(midi).map_err(|error| error.to_string())?;
     let mut tracks = HashMap::<usize, Vec<MidiEvent>>::new();
@@ -1224,7 +846,6 @@ fn read_sequence_midi(midi: &[u8]) -> Result<SequenceMidi, String> {
         meter,
     })
 }
-/// The converter's reading of one MIDI stream track under the given bar lines.
 fn read_midi_stream(
     midi: &SequenceMidi,
     track: usize,
@@ -1235,10 +856,7 @@ fn read_midi_stream(
         meter,
     )?)
 }
-/// The engine sequence a sequence MIDI encodes, as mid2agb converts one: its
-/// conductor track carries the layout skeleton and bar lines, and track `n`
-/// holds the events of the skeleton's `n`th stream.
-pub fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
+pub(crate) fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
     let midi = read_sequence_midi(midi)?;
     let skeleton = midi
         .skeleton
@@ -1259,407 +877,14 @@ pub fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
     }
     build_sequence(&layout)
 }
-/// The assembler source `build rom` assembles for a sequence MIDI, as pret's
-/// mid2agb writes one song's: the sequence in `.rodata`, its header label
-/// exported and every address word a label the linker resolves.
 pub fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
     Ok(format!(
         "\t.section .rodata\n{}",
         build_midi_sequence(midi)?.source()?
     ))
 }
-/// Turn a playback MIDI into the sequence MIDI of a sequence layout. Its
-/// conductor becomes the layout's skeleton and the first time signature, in
-/// `ADOPTION_BARS` order, under which the converter reads every stream of the
-/// layout back exactly; without one, adoption refuses and names the first
-/// difference. Nothing here reads a ROM: both inputs are editable.
-pub fn adopt_midi(layout: &[Segment], midi: &[u8]) -> Result<Vec<u8>, String> {
-    let mut streams = Vec::new();
-    let mut skeleton = Vec::new();
-    for segment in layout {
-        if let Segment::Stream { label, events } = segment {
-            streams.push((label.as_str(), events));
-            skeleton.push(Segment::Stream {
-                label: label.clone(),
-                events: Vec::new(),
-            });
-        } else {
-            skeleton.push(segment.clone());
-        }
-    }
-    let midi = repack_midi_tracks(midi, streams.len())?;
-    // The conductor is replaced, so nothing it carried is read.
-    let (tracks, division) = midi_tracks(&midi)?;
-    if tracks.keys().copied().max().unwrap_or(0) != streams.len() {
-        return Err("MIDI and native sequence track counts differ".to_string());
-    }
-    let playback = SequenceMidi {
-        tracks,
-        skeleton: None,
-        meter: Vec::new(),
-    };
-    let mut first_difference = None;
-    let mut adopted = None;
-    'bars: for bar in ADOPTION_BARS {
-        for (index, (label, native)) in streams.iter().enumerate() {
-            let read = read_midi_stream(&playback, index + 1, &[(0, bar)])?;
-            if read != **native {
-                if first_difference.is_none() {
-                    let at = read
-                        .iter()
-                        .zip(native.iter())
-                        .take_while(|(a, b)| a == b)
-                        .count();
-                    let show = |event: Option<&Event>| {
-                        event.map_or("nothing".to_string(), Event::to_string)
-                    };
-                    first_difference = Some(format!(
-                        "{label} event {at}: native {} but MIDI reads {}",
-                        show(native.get(at)),
-                        show(read.get(at))
-                    ));
-                }
-                continue 'bars;
-            }
-        }
-        adopted = Some(bar);
-        break;
-    }
-    let bar = adopted.ok_or_else(|| {
-        format!(
-            "no time signature reproduces the native sequence; {}",
-            first_difference.unwrap_or_default()
-        )
-    })?;
-    let conductor = encode_midi_track(&[
-        MidiEvent {
-            tick: 0,
-            track: 0,
-            order: 0,
-            body: EventBody::Meta {
-                meta: 0x01,
-                data: skeleton_text(&skeleton).into_bytes(),
-            },
-        },
-        MidiEvent {
-            tick: 0,
-            track: 0,
-            order: 1,
-            body: EventBody::Meta {
-                meta: 0x58,
-                data: time_signature(bar, division)?.to_vec(),
-            },
-        },
-    ])?;
-    let header = 8 + u32::from_be_bytes(midi[4..8].try_into().map_err(|_| "MIDI header")?) as usize;
-    let old_conductor = midi
-        .get(header + 4..header + 8)
-        .map(|size| u32::from_be_bytes(size.try_into().unwrap()) as usize)
-        .ok_or("MIDI conductor track is missing")?;
-    let mut output = midi[..header].to_vec();
-    output.extend_from_slice(b"MTrk");
-    output.extend_from_slice(
-        &u32::try_from(conductor.len())
-            .map_err(|_| "MIDI conductor is too large")?
-            .to_be_bytes(),
-    );
-    output.extend(conductor);
-    output.extend_from_slice(
-        midi.get(header + 8 + old_conductor..)
-            .ok_or("MIDI conductor track is truncated")?,
-    );
-    Ok(output)
-}
-#[cfg(test)]
-fn marker(tick: i64, order: usize, text: &str) -> MidiEvent {
-    MidiEvent {
-        tick,
-        track: 1,
-        order,
-        body: EventBody::Meta {
-            meta: 0x06,
-            data: text.as_bytes().to_vec(),
-        },
-    }
-}
-#[test]
-fn sequence_midi_reading_follows_bar_lines_time_slots_and_jump_targets() {
-    let note = |tick, order, status: u8, key| MidiEvent {
-        tick,
-        track: 1,
-        order,
-        body: EventBody::Channel {
-            status,
-            data: vec![key, 100],
-        },
-    };
-    let stream = [
-        note(0, 0, 0x90, 60),
-        note(0, 1, 0x90, 64),
-        note(5, 2, 0x80, 60),
-        note(5, 3, 0x80, 64),
-        note(12, 4, 0x90, 67),
-        note(17, 5, 0x80, 67),
-        marker(24, 6, "label loop"),
-        note(24, 7, 0x90, 67),
-        note(29, 8, 0x80, 67),
-        marker(200, 9, "goto loop"),
-    ];
-    let read =
-        |bar| default_sequence(&reconstruct_midi_stream(&stream, &[(0, bar)]).unwrap()).unwrap();
-    let with_rest = |waits: &[i64]| {
-        let mut expected = events(&[
-            "note 5 60 100",
-            "note 5 64",
-            "wait 12",
-            "note_running 5 67",
-            "wait 12",
-            "label loop",
-            "note 5 67 100",
-        ]);
-        expected.extend(
-            waits
-                .iter()
-                .map(|wait| Event::new("wait", vec![(*wait).into()])),
-        );
-        expected.push(Event::parse("goto loop").unwrap());
-        expected
-    };
-    assert_eq!(read(96), with_rest(&[72, 96, 8]));
-    assert_eq!(read(72), with_rest(&[48, 72, 56]));
-    let signature = |numerator: u8, power: u8| MidiEvent {
-        tick: 0,
-        track: 0,
-        order: 0,
-        body: EventBody::Meta {
-            meta: 0x58,
-            data: vec![numerator, power, 24, 8],
-        },
-    };
-    assert_eq!(sequence_meter(&[signature(3, 4)], 96).unwrap(), [(0, 72)]);
-    assert_eq!(sequence_meter(&[], 96).unwrap(), [(0, 384)]);
-    assert!(sequence_meter(&[signature(1, 5)], 100).is_err());
-    assert_eq!(time_signature(96, 96).unwrap(), [4, 4, 24, 8]);
-    assert_eq!(time_signature(84, 96).unwrap(), [7, 5, 24, 8]);
-    assert_eq!(time_signature(12, 96).unwrap(), [1, 5, 24, 8]);
-}
-#[test]
-fn sequence_midi_reading_derives_control_running_status() {
-    let cc = |tick, order, number, value| MidiEvent {
-        tick,
-        track: 1,
-        order,
-        body: EventBody::Channel {
-            status: 0xb0,
-            data: vec![number, value],
-        },
-    };
-    let stream = [
-        cc(0, 0, 7, 80),
-        cc(12, 1, 7, 90),
-        cc(12, 2, 10, 64),
-        cc(12, 3, 10, 60),
-        marker(24, 4, "note_end 60"),
-        marker(24, 5, "note_end 64"),
-        marker(36, 6, "note_end 62"),
-        marker(36, 7, "note_end"),
-        marker(48, 8, "fine"),
-    ];
-    let read = default_sequence(&reconstruct_midi_stream(&stream, &[(0, 96)]).unwrap()).unwrap();
-    assert_eq!(
-        read,
-        events(&[
-            "volume 80",
-            "wait 12",
-            "control_running volume 90",
-            "pan 64",
-            "pan 60",
-            "wait 12",
-            "note_end 60",
-            "note_end_running 64",
-            "wait 12",
-            "note_end_running 62",
-            "note_end",
-            "wait 12",
-            "fine",
-        ])
-    );
-    let spelled = [marker(0, 0, "control_running volume 1")];
-    assert!(
-        default_sequence(&reconstruct_midi_stream(&spelled, &[(0, 96)]).unwrap())
-            .unwrap_err()
-            .contains("derives")
-    );
-    assert!(reconstruct_midi_stream(&[marker(0, 0, "[\"fine\"]")], &[(0, 96)]).is_err());
-}
-#[test]
-fn sequence_controls_come_from_the_midi_events_alone() {
-    let at = |order: usize, body| MidiEvent {
-        tick: 0,
-        track: 1,
-        order,
-        body,
-    };
-    let channel = |order, status, data: &[u8]| {
-        at(
-            order,
-            EventBody::Channel {
-                status,
-                data: data.to_vec(),
-            },
-        )
-    };
-    let stream = [
-        // A player's set-up: bank, reverb and a default bend range.
-        channel(0, 0xb0, &[0, 0]),
-        channel(1, 0xb0, &[91, 50]),
-        channel(2, 0xb0, &[101, 0]),
-        channel(3, 0xb0, &[100, 0]),
-        channel(4, 0xb0, &[6, 2]),
-        channel(5, 0xb0, &[38, 0]),
-        marker(0, 6, "key_shift 0"),
-        at(
-            7,
-            EventBody::Meta {
-                meta: 0x51,
-                data: vec![0x1f, 0xb6, 0xc5],
-            },
-        ),
-        channel(8, 0xc0, &[45]),
-        channel(9, 0xb0, &[7, 86]),
-        channel(10, 0xb0, &[10, 64]),
-        channel(11, 0xb0, &[101, 0]),
-        channel(12, 0xb0, &[100, 1]),
-        channel(13, 0xb0, &[6, 64]),
-        channel(14, 0xb0, &[38, 0]),
-        channel(15, 0xe0, &[0, 64]),
-        channel(16, 0xb0, &[1, 5]),
-        channel(17, 0xb0, &[101, 0]),
-        channel(18, 0xb0, &[100, 0]),
-        channel(19, 0xb0, &[6, 12]),
-    ];
-    assert_eq!(
-        reconstruct_midi_stream(&stream, &[(0, 96)]).unwrap(),
-        events(&[
-            "key_shift 0",
-            "tempo 58",
-            "voice 45",
-            "volume 86",
-            "pan 64",
-            "tuning 64",
-            "pitch_bend 64",
-            "modulation_depth 5",
-            "pitch_bend_range 12",
-        ])
-    );
-    assert_eq!(midi_tempo(4_821_899).unwrap(), 25);
-    assert_eq!(midi_tempo(4_018_250).unwrap(), 30);
-    // A marker never spells a control the MIDI carries as its own event.
-    let spelled = [marker(0, 0, "volume 86")];
-    assert!(reconstruct_midi_stream(&spelled, &[(0, 96)])
-        .unwrap_err()
-        .contains("spells a control"));
-    let unknown = [channel(0, 0xb0, &[64, 127])];
-    assert!(reconstruct_midi_stream(&unknown, &[(0, 96)]).is_err());
-}
-#[cfg(test)]
-fn track_chunk(events: &[MidiEvent]) -> Vec<u8> {
-    let data = encode_midi_track(events).unwrap();
-    [
-        b"MTrk".as_slice(),
-        &(data.len() as u32).to_be_bytes(),
-        &data,
-    ]
-    .concat()
-}
-#[test]
-fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
-    let at = |tick, order, body| MidiEvent {
-        tick,
-        track: 1,
-        order,
-        body,
-    };
-    let playback = [
-        b"MThd\0\0\0\x06\0\x01\0\x02\0\x60".as_slice(),
-        &track_chunk(&[]),
-        &track_chunk(&[
-            at(
-                0,
-                0,
-                EventBody::Channel {
-                    status: 0x90,
-                    data: vec![60, 100],
-                },
-            ),
-            at(
-                5,
-                1,
-                EventBody::Channel {
-                    status: 0x80,
-                    data: vec![60, 64],
-                },
-            ),
-            at(
-                96,
-                2,
-                EventBody::Meta {
-                    meta: 0x06,
-                    data: b"fine".to_vec(),
-                },
-            ),
-        ]),
-    ]
-    .concat();
-    let layout = |waits: &[i64]| {
-        let mut stream = events(&["note 5 60 100"]);
-        stream.extend(
-            waits
-                .iter()
-                .map(|wait| Event::new("wait", vec![(*wait).into()])),
-        );
-        stream.push(Event::parse("fine").unwrap());
-        vec![Segment::Stream {
-            label: "track_1".into(),
-            events: stream,
-        }]
-    };
-    let adopted_midi = adopt_midi(&layout(&[72, 24]), &playback).unwrap();
-    // The adopted MIDI builds exactly the sequence its layout describes.
-    assert_eq!(
-        build_midi_sequence(&adopted_midi).unwrap(),
-        build_sequence(&layout(&[72, 24])).unwrap()
-    );
-    let adopted = read_sequence_midi(&adopted_midi).unwrap();
-    assert_eq!(adopted.meter, [(0, 72)]);
-    assert_eq!(
-        adopted.skeleton.unwrap(),
-        [Segment::Stream {
-            label: "track_1".into(),
-            events: Vec::new()
-        }]
-    );
-    let refusal = adopt_midi(&layout(&[50, 46]), &playback).unwrap_err();
-    assert!(refusal.contains("no time signature"), "{refusal}");
-    let directive = [MIDI_BUILD_DIRECTIVE, b"{}"].concat();
-    let retired = [
-        b"MThd\0\0\0\x06\0\x01\0\x01\0\x60".as_slice(),
-        &track_chunk(&[MidiEvent {
-            tick: 0,
-            track: 0,
-            order: 0,
-            body: EventBody::Meta {
-                meta: 0x7f,
-                data: directive,
-            },
-        }]),
-    ]
-    .concat();
-    assert!(read_sequence_midi(&retired).is_err());
-}
-
-pub fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
-    let wave = psynergy::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
+pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
+    let wave = crate::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
     let last_sample = u32::try_from(
         wave.samples
             .len()
@@ -1695,9 +920,6 @@ pub fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
     Ok(bytes)
 }
 
-/// The bytes a sound data source reads for one editable input, as pret's
-/// wav2agb builds `.bin` files from `.wav`: a WAV's PCM wave record, or the
-/// sixteen bytes of a `.PCM4` CGB wave RAM pattern (32 four-bit samples).
 pub fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     let extension = name.rsplit_once('.').map_or("", |(_, suffix)| suffix);
     if extension.eq_ignore_ascii_case("wav") {
@@ -1712,108 +934,3 @@ pub fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     }
 }
 
-#[test]
-fn sound_files_build_from_wav_and_pcm4_inputs_only() {
-    use psynergy::assets::wav::{write_pcm8, Pcm8};
-    let wave = write_pcm8(&Pcm8 {
-        rate: 8_000,
-        samples: vec![1, 2, 3],
-        unity_note: 60,
-        pitch_fraction: 0,
-        loop_range: None,
-    })
-    .unwrap();
-    assert_eq!(
-        build_sound_file("SAMPLE/X.PCM8.WAV", &wave).unwrap(),
-        build_pcm_record(&wave).unwrap()
-    );
-    assert_eq!(
-        build_sound_file("SAMPLE/X.PCM4", &[0x5a; 16]).unwrap(),
-        [0x5a; 16]
-    );
-    assert!(build_sound_file("SAMPLE/X.PCM4", &[0; 15]).is_err());
-    assert!(build_sound_file("SAMPLE/X.BIN", &[0; 16]).is_err());
-}
-
-#[test]
-fn sequence_assembly_places_the_song_in_rodata_by_label() {
-    let source = vec![
-        Segment::Stream {
-            label: "track_1".into(),
-            events: events(&["fine"]),
-        },
-        Segment::Align {
-            boundary: 4,
-            fill: 0,
-        },
-        Segment::Header {
-            label: "sound_001".into(),
-            block_count: 0,
-            priority: 0,
-            reverb: 0,
-            tone_bank: "Voices".into(),
-            tracks: vec!["track_1".into()],
-        },
-    ];
-    let track = |events: &[MidiEvent]| {
-        let data = encode_midi_track(events).unwrap();
-        [
-            b"MTrk".as_slice(),
-            &(data.len() as u32).to_be_bytes(),
-            &data,
-        ]
-        .concat()
-    };
-    let fine = MidiEvent {
-        tick: 0,
-        track: 1,
-        order: 0,
-        body: EventBody::Meta {
-            meta: 0x06,
-            data: b"fine".to_vec(),
-        },
-    };
-    let playback = [
-        b"MThd\0\0\0\x06\0\x01\0\x02\0\x60".as_slice(),
-        &track(&[]),
-        &track(&[fine]),
-    ]
-    .concat();
-    let midi = adopt_midi(&source, &playback).unwrap();
-    let text = sequence_assembly(&midi).unwrap();
-    assert!(
-        text.starts_with("\t.section .rodata\n\t.balign 4\n"),
-        "{text}"
-    );
-    assert!(text.contains("\t.global sound_001\nsound_001:\n"), "{text}");
-    assert!(
-        text.contains("\t.4byte Voices\n\t.4byte track_1\n"),
-        "{text}"
-    );
-}
-
-#[test]
-fn pcm_records_derive_header_pitch_and_alignment_from_the_wav() {
-    use psynergy::assets::wav::{write_pcm8, Pcm8};
-    let mut wave = Pcm8 {
-        rate: 8_000,
-        samples: vec![128, 0, 127],
-        unity_note: 48,
-        pitch_fraction: 0,
-        loop_range: Some((1, 2)),
-    };
-    let built = build_pcm_record(&write_pcm8(&wave).unwrap()).unwrap();
-    let mut expected = Vec::new();
-    for value in [0x4000_0000u32, 16_384_000, 1, 2] {
-        expected.extend(value.to_le_bytes());
-    }
-    expected.extend([128, 0, 127, 0]);
-    assert_eq!(built, expected);
-    wave.loop_range = Some((1, 1));
-    assert!(build_pcm_record(&write_pcm8(&wave).unwrap()).is_err());
-    wave.loop_range = None;
-    let built = build_pcm_record(&write_pcm8(&wave).unwrap()).unwrap();
-    assert_eq!(&built[..4], &[0; 4]);
-    wave.samples.clear();
-    assert!(build_pcm_record(&write_pcm8(&wave).unwrap()).is_err());
-}

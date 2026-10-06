@@ -65,7 +65,7 @@ Func_0803d3c0:
 	mov r0, r10
 	mov r1, r11
 	adds r3, r5, #0
-	bl Func_08042450
+	bl CreateSideObject
 .L_0803d440:
 	adds r0, r5, #0
 .L_0803d442:

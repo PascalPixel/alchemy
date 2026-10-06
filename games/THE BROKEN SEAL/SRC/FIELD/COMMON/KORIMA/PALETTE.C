@@ -1,46 +1,46 @@
-/* Korima: the village's palette snapshots. The colour work buffer mirrors
- * palette RAM; each overlay keeps two saved copies of it in its variables.
- * The same four functions sit in each of the four Korima overlays. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "DMA.H"
+#include "FIELD_EVENT.H"
+#include "IO_REG.H"
 
-/* The colour work buffer, as the battle effects' colour buffers name it. */
-extern u8 *Data_03001ed0;
-extern u8 KorimaPalette_First[];
-extern u8 KorimaPalette_Second[];
-void Engine_ColorBufferApplySource(s32 value, s32 mode);
-void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
+#define Data_03001ed0 (*(u8 * *)&Data_03001ed0)
+
 
 void KorimaPalette_SaveFirst(void)
 {
-    Dma_Set(Data_03001ed0, KorimaPalette_First, 0x840000e0, (volatile u32 *)0x040000d4);
+    Dma_Set(Data_03001ed0, KorimaPalette_First, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
 }
 
 void KorimaPalette_SaveSecond(void)
 {
-    Dma_Set(Data_03001ed0, KorimaPalette_Second, 0x840000e0, (volatile u32 *)0x040000d4);
+    Dma_Set(Data_03001ed0, KorimaPalette_Second, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
 }
 
-/* Copy both halves of palette RAM into the work buffer and take it as the
- * colour source. */
 void KorimaPalette_Capture(void)
 {
     u8 *buf = Data_03001ed0;
 
-    Dma_Set((const void *)0x05000000, buf, 0x84000070, (volatile u32 *)0x040000d4);
-    Dma_Set((const void *)0x05000200, buf + 0x1c0, 0x84000070, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)0x05000000, buf, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+    Dma_Set((const void *)0x05000200, buf + 0x1c0, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
     Engine_ColorBufferApplySource(0x10000, 0);
 }
 
-/* Put a saved copy back into the work buffer, take it as the colour target
- * and capture palette RAM again as the source. */
 void KorimaPalette_Restore(s32 second)
 {
     u8 *buf = Data_03001ed0;
 
     if (second)
-        Dma_Set(KorimaPalette_Second, buf, 0x840000e0, (volatile u32 *)0x040000d4);
+        Dma_Set(KorimaPalette_Second, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
     else
-        Dma_Set(KorimaPalette_First, buf, 0x840000e0, (volatile u32 *)0x040000d4);
+        Dma_Set(KorimaPalette_First, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
     Engine_ColorBufferApplyTarget(0x10000, 0);
     KorimaPalette_Capture();
 }

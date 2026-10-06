@@ -1,6 +1,15 @@
-/* Draft, complete main:080e7404 [080e7404,080e823c) with its two nested
-   functions main:080e7338 and main:080e73a0, 3844 bytes together, written
-   fresh from the listings in plain C. */
+/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): parent differ 322 (listing 1532, draft 1634, common 1422), above the ~50 first-try bar; AddFlame/AddMote stay locked. Not first-try; parked. */
+/* 080e7404 BattleEffect_RunParticleStreams: differ 222 of 1632 (draft 1634, common 1522). Left: in the first effect loop the reference keeps heat (work->frame / 4) in r4 and saves it at sp+8 around AudioCommand_PlayFar(141); here it lands in r6, which shifts registers, pools and stack slots in that loop. Writing the second loop's size as (frame + 0x1d0) << 8 matches its grow giv but needs that sp+8 slot, so it waits. direction = mode still folds to 1.
+ * Stubborn (2026-10-06): parent remains differ 222 after prior trials; not first-try. Nested AddFlame (080e7338) and AddMote (080e73a0) match byte-exact as the draft's leading 100 instructions (alchemy diff THIS 080e7338,080e73a0 → common 100 of 100) but adopt only with this parent (W notes). Score+parked from sun100 queue-3. */
+/* Trials: const/register heat, outer heat, declaration order and a sheet-field
+ * pointer leave differ 222. Keeping the undivided frame until palette use gives
+ * 231. Moving heat before angle gives 606. Forcing r4 omits its required call
+ * spill; clobber barriers did not improve the draft and were removed. A scoped
+ * r4 quotient copied back to an ordinary local gives 221 with an extra move.
+ * Reusing size/x/y for heat gives 573/681/223; initializing direction before
+ * its branch gives 445. Mode read/write barriers with the second loop's
+ * factored size give 414 (register) or 513 (memory). All were removed. */
+/* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -16,39 +25,18 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
-
-struct Projection {
-    s32 unknown_00[4];
-    s32 depth;
-};
-
-/* The battle presentation block in heap slot 44. */
-struct BattlePresentationWork {
-    u8 unknown_00[16];
-    s32 scroll_enabled;
-};
-
-/* A scene object: two bits of its tenth byte pick its draw variant. */
-struct SceneObject {
-    u8 reserved_00[9];
-    u8 flags09_0 : 2;
-    u8 variant : 2;
-    u8 flags09_4 : 4;
-    u8 reserved_0a[28];
-    u8 enabled;
-};
+#include "PROJECT.H"
+#include "ANIMSPR.H"
+#include "TRANSFORM.H"
 
 struct Scale {
     s32 x;
     s32 y;
 };
 
-
-
 extern void *gBattleFxWork[];
 extern void *gTransitionWork[];
 extern DrawRectangle gWorkSlot[];
-extern struct Projection gProjection;
 extern struct BattleCamera *gCameraWork;
 extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
@@ -69,10 +57,9 @@ void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
 void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleEffect_SetupBlendedDisplay(void);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
-struct SceneObject *GetBattleEffectObject(s32 kind);
-void Object_InitializeMode(struct SceneObject *object, s32 animation);
+struct AnimationObject *GetBattleEffectObject(s32 kind);
+void Object_InitializeMode(struct AnimationObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
 void BattleActor_CommitPlacementFar(void);
 void AudioCommand_PlayFar(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -82,23 +69,24 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 
-/* The flashes and the embers of the second half live in the map cell buffer. */
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
-#define HALF(p, n) (((s16 *)&(p))[n])
 
-/* Battle effect: a fiery orb is revealed line by line, flies up shedding
-   flames while seven motes circle it, and bursts into embers and flashes.
-   With mode 1 the actor rides it as two objects; otherwise one spawned
-   object does. A or B skips the flight. */
+static __inline__ void CopyWords(void *destination, const void *source, s32 size)
+{
+    /* FAKEMATCH: called directly, the constant arguments are loaded before
+       the routine's address and the size's lsls lands ahead of it (2 of
+       1631 lines at each of the two VRAM copies); through the inline
+       parameters the routine is loaded first, as in the reference. */
+    Iwram_CopyWords(destination, source, size);
+}
+
 void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode)
 {
     volatile u32 fill;
@@ -110,7 +98,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     struct BattleEffectWork *work;
     void *colors = (void *)0x05000000;
 
-    /* Wake the first free flame of the sixteen kept after the motes. */
     void AddFlame(s32 x, s32 y, s32 velocity_x)
     {
         s32 i;
@@ -128,7 +115,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         }
     }
 
-    /* Wake the first free mote. */
     void AddMote(s32 x, s32 y)
     {
         s32 i;
@@ -148,6 +134,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     s32 position[4];
     s32 vector[3];
     struct EffectPosition spot;
+    struct EffectPosition *pos;
     struct EffectPosition point;
     struct Scale scale;
     s32 frame;
@@ -156,6 +143,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     cache = &gBattleFxWork[1];
     canvas = cache[0];
     work = cache[-1];
+
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2000);
     *(volatile u16 *)0x04000020 = 0x100;
@@ -166,9 +154,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         object->vertical_motion_strength = 0x91eb;
         ObjectGroup_UpdateMembers(work->effect->actor, -1, 2, -1, 0);
         AudioCommand_PlayFar(145);
-        direction = mode;
-        if (work->effect->side != 1)
-            direction = -1;
+        direction = work->effect->side == 1 ? mode : -1;
     } else {
         direction = -1;
     }
@@ -176,18 +162,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     *(u16 *)0x05000000 = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(0, 0);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     if (mode == 1) {
         for (i = 0; i != 2; i++) {
-            struct SceneObject *object = GetBattleEffectObject(483 + i * 0x2001);
+            struct AnimationObject *object = GetBattleEffectObject(483 + i * 0x2001);
 
             work->objects[i] = object;
             if (object != 0) {
-                object->enabled = 0;
+                object->flags = 0;
                 Object_InitializeMode(object, 2);
-                ((struct SceneObject *)work->objects[i])->variant = 3;
+                ((struct AnimationObject *)work->objects[i])->part[0].priority = 3;
             }
         }
     } else {
@@ -198,19 +184,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
     fill = 0x01010101;
     Dma_Set((void *)&fill, Ram_MapCellBuffer, 0x85002000, REG_DMA3);
-    Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+    CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
     WaitFrames(1);
     *(volatile u16 *)0x04000050 = 0;
     *(volatile u16 *)0x04000020 = 0x100;
     *(volatile u16 *)0x0400000a = 0x1f80;
     *(volatile u16 *)0x0400000c = 0x2787;
     for (i = 0; i != 63; i++) {
-        s32 red = Random16();
-        s32 green = Random16();
-        s32 blue = Random16();
+        s32 red = (Random16() & 15) + 16;
+        s32 green = (Random16() & 15) + 16;
+        s32 blue = (Random16() & 15) + 16;
 
-        ((u16 *)0x05000100)[i] = (((blue & 15) + 16) << 10) | (((green & 15) + 16) << 5)
-            | ((red & 15) + 16);
+        ((u16 *)0x05000100)[i] = (blue << 10) | (green << 5) | red;
     }
     fill = 0;
     Dma_Set((void *)&fill, canvas, 0x85001000, REG_DMA3);
@@ -221,8 +206,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 
         ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
     }
-    Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
-    gProjection.depth = 240;
+    CopyWords((void *)0x06004000, canvas, 0x4000);
+    gProjection.center_y = 240;
     BattleFx_SelectLivingTargets(work->effect);
     work->bg2x = 0;
     work->bg2y = 0;
@@ -230,13 +215,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     work->scroll_interval = 2;
     work->scroll_step_x = direction << 7;
     work->scroll_step_y = 256;
-    Scheduler_AddOrUpdateCallback((s32)Camera_AdvanceBg2Reference, 0x4ff);
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_FlushPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(Camera_AdvanceBg2Reference, 0x4ff);
+    Scheduler_AddOrUpdateCallback(BattleFx_FlushPendingGraphicsTransfer, 0x480);
     for (i = 0; i != 128; i++)
         offsets[i] = Random16() & 63;
     {
-        s32 step = 1;
         s32 limit = 0;
+        s32 step = 1;
         s32 row = 0;
 
         do {
@@ -260,8 +245,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x1010;
     {
-        u16 saved_x = (u16)gBgScroll[1].x;
-        u16 saved_y = (u16)gBgScroll[1].y;
+        s32 saved_x = gBgScroll[1].x;
+        s32 saved_y = gBgScroll[1].y;
         struct BattlePresentationWork *presentation = gTransitionWork[0];
 
         gBgScroll[1].x = 0;
@@ -270,15 +255,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         draw = gTransitionWork[2];
         work->transfer_mode = 3;
         work->transfer_value = (s32)(Ram_MapBlocks + 0x202);
-        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmPaletteHBlankDma, 0x4fe);
+        Scheduler_AddOrUpdateCallback(BattleFx_ArmPaletteHBlankDma, 0x4fe);
         for (i = 0; i != 64; i++)
             work->particles[i].variant = -1;
-        presentation->scroll_enabled = 1;
+        presentation->initial_value = 1;
         work->frame = 0;
-        for (frame = 0; frame != 192; frame++) {
-            s32 time = work->frame;
+        for (frame = 0; frame != 192; frame++, work->frame++) {
             s32 angle = frame << 8;
-            s32 heat = time / 4;
+            s32 heat = work->frame / 4;
             u16 *line = (u16 *)((u8 *)work + 0x1f80);
             s32 size;
             s32 x;
@@ -337,8 +321,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 position[2] = (96 - y) << 16;
                 Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
             }
-            y = 32 - y;
-            for (i = 0; i != 32; i++) {
+            for (i = 0, y = 32 - y; i != 32; i++) {
                 struct EffectStep *mote = &work->particles[i];
 
                 if (mote->variant == -1) {
@@ -358,13 +341,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             SceneTransform_ApplyRoll(0x800);
             SceneTransform_ApplyYaw(frame << 8);
             for (i = 0; i != 7; i++) {
-                vector[1] = (ParticleStreams_OrbitPoints[i][1] + frame) << 16;
                 vector[0] = (ParticleStreams_OrbitPoints[i][0] / 2) << 16;
+                vector[1] = (ParticleStreams_OrbitPoints[i][1] + frame) << 16;
                 vector[2] = (ParticleStreams_OrbitPoints[i][2] / 2) << 16;
-                EffectPosition_ApplyBaseAndYOffset(vector, &spot);
-                spot.x = HALF(spot, 1) + 128;
-                spot.y = HALF(spot, 3) + 60;
-                draw(Ram_MapCellBuffer, (u8 *)work + 0x1f40, spot.x - 4, spot.y - 4, 8, 8);
+                EffectPosition_ApplyBaseAndYOffset(vector, pos = &spot);
+                pos->x = HI(pos->x) + 128;
+                pos->y = HI(pos->y) + 60;
+                draw(Ram_MapCellBuffer, (u8 *)work + 0x1f40, pos->x - 4, pos->y - 4, 8, 8);
             }
             if (direction == 1)
                 x = frame / 4 - 16;
@@ -372,13 +355,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 x = 16 - frame / 4;
             y = frame - 96;
             for (i = 0; i != 7; i++) {
-                s16 *point = ParticleStreams_DropPoints[i];
-                s32 drop = point[1] + y;
+                s32 drop = ParticleStreams_DropPoints[i][1] + y;
 
                 if (drop <= 93)
-                    draw(Ram_MapCellBuffer, (u8 *)work + 0x1c80, point[0] + x - 12, drop - 12, 24, 24);
+                    draw(Ram_MapCellBuffer, (u8 *)work + 0x1c80, ParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
                 else if (drop <= 95)
-                    AddFlame((point[0] + x) << 16, drop << 16, 1);
+                    AddFlame((ParticleStreams_DropPoints[i][0] + x) << 16, drop << 16, 1);
             }
             for (i = 0; i != 32; i++) {
                 struct EffectStep *mote = &work->particles[i];
@@ -395,14 +377,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             }
             work->transfer_pending = 1;
             WaitFrames(1);
-            work->frame++;
         }
     skipped:
         WaitFrames(1);
-        presentation->scroll_enabled = 0;
-        Scheduler_RemoveCallback((u32)Camera_AdvanceBg2Reference);
-        Scheduler_RemoveCallback((u32)BattleFx_ArmPaletteHBlankDma);
-        Scheduler_RemoveCallback((u32)BattleFx_FlushPendingGraphicsTransfer);
+        presentation->initial_value = 0;
+        Scheduler_RemoveCallback(Camera_AdvanceBg2Reference);
+        Scheduler_RemoveCallback(BattleFx_ArmPaletteHBlankDma);
+        Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
         gBgScroll[1].x = saved_x;
         gBgScroll[1].y = saved_y;
     }
@@ -446,7 +427,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     }
     work->transfer_mode = 1;
     work->transfer_value = 0x10101010;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != 54; frame++) {
         s32 size = (frame << 8) + 0x1d000;
@@ -472,7 +453,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             BattleEventRuntime_BeginPhaseFar(134);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != 64; i++) {
             struct EffectStep *ember = &EMBERS[i];
 
@@ -486,7 +467,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 if (point.depth > 799)
                     point.depth = 799;
                 size = 9 - (point.depth - 160) / 64;
-                draw(canvas, (u8 *)work + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
+                draw(canvas, (u8 *)work + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
                     point.x - size / 2, point.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
                 if (ember->y <= 0x140000) {
@@ -501,10 +482,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         }
         for (i = 0; i != 64; i++) {
             struct EffectStep *mote = &work->particles[i];
-            s32 rise = i & 7;
-            u32 size = rise + 3;
+            u32 rise = i & 7;
+            s32 size = rise + 3;
 
-            draw(canvas, (u8 *)work + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
+            draw(canvas, (u8 *)work + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
                 mote->x - size / 2, mote->y - size, size, size * 2);
             mote->y = mote->y - rise - 8;
             if (mote->y < -10)
@@ -565,7 +546,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     if (mode == 0)
         ResourceObject_ReleaseFar(work->objects[0]);

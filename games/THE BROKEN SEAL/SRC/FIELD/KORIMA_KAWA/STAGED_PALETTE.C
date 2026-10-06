@@ -1,20 +1,23 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "MAPCOPY.H"
-/*
- * resource_393 scene script: staged-actor motion, scene beats, and the
- * overlay's palette adjustment.
- */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
 #include "RESOURCE_393.H"
+#include "FIELDOBJ.H"
 
-extern u8 *gWork;
-extern u8 Data_02008fc8[];
-extern u8 Data_02009028[];
-extern u8 Data_02009038[];
-extern u8 Data_02009098[];
+#define ObjectDispatch_SetSingleChildFlags ((void (*)(u8*,s32))ObjectDispatch_SetSingleChildFlags)
+
 
 struct SceneBeatSubject {
     u8 unknown_00[0x23];
@@ -22,32 +25,26 @@ struct SceneBeatSubject {
 };
 
 void Battle_Reset(void);
-void Object_SetModeById(s32, s32); void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
-void Battle_WaitMode0(s32); u8 *Object_GetById();
-void GameFlag_SetBit(s32); void ObjectDispatch_SetSingleChildField26(u8 *, s32);
+void Object_SetModeById(s32, s32);
+void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
+void Battle_WaitMode0(s32);
+u8 *Object_GetById();
+void GameFlag_SetBit(s32);
 void BattleFx_FinishAction(void);
-s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,
-                         struct StagedActorEffectRequest *request);
+s32 Object_CheckMovementCollision(struct StagedActorEffect *actor, struct StagedActorEffectRequest *request);
 s32 GameFlag_Test();
 void WaitFrames(s32 actor_index);
 void Object_SetMode(struct StagedActorEffect *actor, s32 mode);
 void KorimaPalette_SaveFirst(void);
 void KorimaPalette_Capture(void);
 void KorimaPalette_SaveSecond(void);
-void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
-/*
- * Six-argument draw wrapper.  Inlining it here preserves the reference's
- * r2-before-r3 stacked-literal order at the call site.
- */
-
-void SceneEffect_AdjustPaletteColors(s32 a);
 
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
     /* FAKEMATCH: a direct call builds both stacked literals in r3; the reference builds palette 16 in r2 first. */
-    void Actor_SetAnimation(s32, s32); u8 *Object_GetById(s32);
+    void Engine_ActorSetAnimation(s32, s32); u8 *Object_GetById(s32);
 
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
 }
@@ -72,13 +69,6 @@ u8 *MapStagedScene_SelectSecondaryData(void) { return Data_02009028; }
 
 u8 *MapStagedScene_SelectTertiaryData(void) { return Data_02009038; }
 
-/*
- * Placement query followed by the tile-(10,12) scene transition.  The
- * six-word result is one aggregate and its two-word tail is forwarded by
- * value.  Keeping `zero' live across the draw is load-bearing: it lets the
- * dead result pointer be reused for the following stack slot.
- */
-
 void FieldScene_RunActorTenPlacementScene(void)
 {
     /* FAKEMATCH: replacing the live zero below with 0 changes r5 allocation and the outgoing stack store order. */
@@ -89,7 +79,7 @@ void FieldScene_RunActorTenPlacementScene(void)
     if (StagedActor_FindClearPosition(&result)) {
         SceneActor_MoveAndRedraw(result);
         if (result.actor_slot == 10 && (result.position_x >> 20) == 12) {
-            u8 *actor;
+            struct FieldActor *actor;
             s32 zero;
             Object_SetModeById(10, 3);
             ObjectMotion_OffsetPositionAndResetMotion(10, -18, 6);
@@ -102,7 +92,7 @@ void FieldScene_RunActorTenPlacementScene(void)
             StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, zero);
             GameFlag_SetBit(0x201);
             actor = Object_GetById(10);
-            ObjectDispatch_SetSingleChildField26(actor, 0);
+            ObjectDispatch_SetSingleChildFlags(actor, 0);
         }
     }
     BattleFx_FinishAction();
@@ -127,10 +117,10 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         actor->move_rate_z = 0x20000;
         actor->elevation_rate = 0x40000;
         *flags &= 0x7e;
-        ObjectDispatch_SetSingleChildField26(actor, 0);
+        ObjectDispatch_SetSingleChildFlags(actor, 0);
         ObjectMotion_SetPositionAndCommit(0, request->cell_x, request->cell_z);
         Object_SetMode(actor, 6);
-        ObjectDispatch_SetSingleChildField26(actor, 1);
+        ObjectDispatch_SetSingleChildFlags(actor, 1);
         *flags = (u8)result;
         Object_SetModeById(10, 7);
         actor->position_x += 0xffff0000;
@@ -170,15 +160,13 @@ void SceneActor_ApplyOffsetObjectPosition(void)
     StagedActor_RunStepEffect(&pos);
 }
 
-u8 *SceneData_GetTable9098(void) { return Data_02009098; }
+u8 *KorimaKawa_GetEvents(void) { return Data_02009098; }
 
-/* Set workspace word 448 to 516, then run the scene's beat sequence. */
-s32 SceneState_SetRuntimeWord448To516(void)
+s32 KorimaKawa_PrepareWindowTransition(void)
 {
+    struct EventWork *work = gEventWork;
 
-    u8 *work = gWork;
-
-    *(s32 *)(work + 448) = 516;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldScene_RedrawActorFootprint(10);
 
     if (GameFlag_Test(0x201) != 0) {
@@ -187,7 +175,7 @@ s32 SceneState_SetRuntimeWord448To516(void)
         subj->marker = 2;
         DrawSceneBeat(32, 20, 2, 4, 11, 16);
         StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-        ObjectDispatch_SetSingleChildField26(Object_GetById(10), 0);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
     }
 
     FieldScene_RedrawActorFootprint(8);
@@ -201,26 +189,15 @@ s32 SceneState_SetRuntimeWord448To516(void)
 
 void SceneEffect_AdjustPaletteColors(s32 a)
 {
-
-    u32 x;
+    u16 i;
 
     KorimaPalette_SaveFirst();
-    x = 0;
-    do {
-        u32 idx = x >> 16;
-        if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
-            u16 *pal = (u16 *)(0x5000000 + idx * 2);
+    for (i = 0; i < 224; i++) {
+        if ((i < 17 || i > 23) && (i < 193 || i > 200)) {
+            u16 *pal = (u16 *)(0x5000000 + i * 2);
             *pal = SceneEffect_AdjustColorChannels(*pal, a);
         }
-        {
-            /* FAKEMATCH: using x directly removes the r3 result copy and changes the loop's compare register. */
-            u32 nx = x + 0x10000;
-            x = nx;
-            if (nx > 0xdf0000) {
-                break;
-            }
-        }
-    } while (1);
+    }
     KorimaPalette_Capture();
     KorimaPalette_SaveSecond();
     BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
@@ -241,7 +218,6 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_DivideSigned(green, adj));
     blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
-    /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)
         red = 31;
 

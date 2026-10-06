@@ -1,5 +1,3 @@
-/* resource_68f: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -7,17 +5,19 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68F/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
         "*/resource_68f_overlay.o"(.text.x0200807e)
-        "*/resource_68f_overlay.o"(.text.x02008080)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_68f_overlay.o"(.text.x020080b6)
         "*/resource_68f_overlay.o"(.text.x020080b8)
         "*/resource_68f_overlay.o"(.text.x02008280)
-        "*/resource_68f_overlay.o"(.text.x02008298)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/WAIT_UNTIL_IDLE.o"(.text)
+        "*/resource_68f_overlay.o"(.text.x020082b2)
         "*/resource_68f_overlay.o"(.text.x020082b4)
         "*/resource_68f_overlay.o"(.text.x020082f0)
         "*/resource_68f_overlay.o"(.text.x02008338)
         "*/resource_68f_overlay.o"(.text.x02008404)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68F/SCENE_TABLES.o"(.text)
         "*/resource_68f_overlay.o"(.text.x02008488)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68F/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68F/EXITS.o"(.text)
         "*/resource_68f_overlay.o"(.text.x020084c8)
         "*/resource_68f_overlay.o"(.text.x02008548)
         "*/resource_68f_overlay.o"(.text.x0200858c)
@@ -44,7 +44,8 @@ SECTIONS
         "*/resource_68f_overlay.o"(.text.x02008fb8)
         "*/resource_68f_overlay.o"(.text.x02009044)
         "*/resource_68f_overlay.o"(.text.x020090d4)
-        "*/resource_68f_overlay.o"(.text.x02009188)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/resource_68f_overlay.o"(.text.x020091de)
         "*/resource_68f_overlay.o"(.text.x020091e0)
         "*/resource_68f_overlay.o"(.text.x0200937c)
         "*/resource_68f_overlay.o"(.text.x020093b8)

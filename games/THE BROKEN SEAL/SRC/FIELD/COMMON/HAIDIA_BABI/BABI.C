@@ -1,13 +1,24 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "FXBLEND.H"
+#include "MAP_SCROLL.H"
 #include "HAIDIA_BABI.H"
 #include "RAM_BUFFER.H"
+#include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-s32 ArcTan2(s32, s32);
-s32 FieldScene_PrepareActors(s32);
+#define FieldScene_PrepareActors ((s32 (*)(s32))FieldScene_PrepareActors)
+#define ObjectDispatch_RegisterChildMetadata ((void (*)(struct FieldActor*,s32))ObjectDispatch_RegisterChildMetadata)
 
-extern u8 MsgHaidiaFolksSeemKnow[];
 
-extern u8 MsgHaidiaHeyBoy[];
-extern u8 MsgHaidiaTheMaskedManWasGarcia[];
+
 void BattleFx_SetBlock30ValuesMaxZero(void);
 
 void Map_ClearLayerEntryFlag();
@@ -16,34 +27,6 @@ void FieldScene_RunComplexActorSequence();
 void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
-
-/* The facing controller and the scene hooks the entry veneers export. */
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-    s32 delta;
-    u16 old;
-    s32 tgt;
-    struct FacingObject *target;
-
-    target = object->facing_target;
-    if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
-        tgt = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
-        old = object->facing;
-        delta = (s16)(tgt - old);
-        if (delta != 0) {
-            if (delta > 0x1000) {
-                delta = 0x1000;
-            }
-            /* The loader relocates the stored pool word to -0x1000. */
-            if (delta < -0x1000) {
-                delta = -0x1000;
-            }
-            object->facing = (u16)(old + delta);
-        }
-    }
-    return 1;
-}
 
 s32 *HaidiaBabi_GetEntrances(void)
 {
@@ -57,7 +40,7 @@ s32 SceneData_ReturnZero(void)
 
 s32 HaidiaBabi_SelectExits(void)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return (s32)gHaidiaBabiExits2;
     }
     return (s32)gHaidiaBabiExits;
@@ -70,9 +53,9 @@ s32 HaidiaBabi_SelectPlacements(void)
 
     if (*(s16 *)(b + 0x1c2) == 19)
         return (s32)gHaidiaBabiPlacements4;
-    if (GameFlag_IsSet(0x87a) != 0)
+    if (Engine_GameFlagIsSet(0x87a) != 0)
         tbl = gHaidiaBabiPlacements3;
-    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
+    else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
         tbl = gHaidiaBabiPlacements2;
     else
         tbl = gHaidiaBabiPlacements;
@@ -80,39 +63,37 @@ s32 HaidiaBabi_SelectPlacements(void)
     return (s32)tbl;
 }
 
-/* Asks whether the party knows Kraden, with a line for each answer. */
 void HaidiaBabi_AskAboutKraden(s32 object)
 {
     s32 msg = (s32)MsgHaidiaFolksSeemKnow;
 
     Engine_EventSetMessage(msg);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(msg + 1);
     } else {
         Engine_EventSetMessage(msg + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
-/* The events hook, the villagers' scenes and the house's exits. */
 s32 HaidiaBabi_SelectEvents(void)
 {
     if (gGameState.entrance == 19) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return (s32)gHaidiaBabiEvents6;
         }
         return (s32)gHaidiaBabiEvents5;
     }
 
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return (s32)gHaidiaBabiEvents4;
     }
-    if (GameFlag_IsSet(0x87A) != 0) {
+    if (Engine_GameFlagIsSet(0x87A) != 0) {
         return (s32)gHaidiaBabiEvents3;
     }
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return (s32)gHaidiaBabiEvents2;
     }
     return (s32)gHaidiaBabiEvents;
@@ -136,7 +117,7 @@ void HaidiaBabi_RunHeyBoyScene(void)
     Engine_EventWait(20);
     Event_OpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Engine_ActorStartRepeatedMotion(16, 1);
     Engine_EventWait(20);
@@ -146,25 +127,25 @@ void HaidiaBabi_RunHeyBoyScene(void)
 
 void SceneDialogue_RunActorFourteenDialogue11AA(void)
 {
-    void *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
-    Actor_FaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
+    Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
     Engine_EventSetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
-    Event_OpenMessage(0xE, 0);
+    Engine_EventOpenMessage(0xE, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Event_ShowMessage(0xE, 0);
+        Engine_EventShowMessage(0xE, 0);
     } else {
-        work = *(void **)&gEventWork;
-        FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16)(FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
-        Event_AskYesNo(0xE, 0);
+        work = gEventWork;
+        work->message = (u16)(work->message + 1);
+        Engine_EventAskYesNo(0xE, 0);
     }
     Engine_EventEnd();
 }
 
-void SceneState_SetWork448To521AndRun(s32 object)
+void HaidiaBabi_CloseScreenAndExit(s32 object)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
     }
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -175,80 +156,80 @@ void SceneState_SetWork448To521AndRun(s32 object)
 
 void SceneState_SetValue123Mode1(void)
 {
-    Audio_PlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(1);
+    Engine_AudioPlayCue(0x7B);
+    HaidiaBabi_CloseScreenAndExit(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
-    Audio_PlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(2);
+    Engine_AudioPlayCue(0x7B);
+    HaidiaBabi_CloseScreenAndExit(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
-    Audio_PlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(3);
+    Engine_AudioPlayCue(0x7B);
+    HaidiaBabi_CloseScreenAndExit(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
-    Audio_PlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(4);
+    Engine_AudioPlayCue(0x7B);
+    HaidiaBabi_CloseScreenAndExit(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
-    Audio_PlayCue(0x80);
-    SceneState_SetWork448To521AndRun(5);
+    Engine_AudioPlayCue(0x80);
+    HaidiaBabi_CloseScreenAndExit(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
-    Audio_PlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(6);
+    Engine_AudioPlayCue(0x7B);
+    HaidiaBabi_CloseScreenAndExit(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
-    Audio_PlayCue(0x80);
-    SceneState_SetWork448To521AndRun(7);
+    Engine_AudioPlayCue(0x80);
+    HaidiaBabi_CloseScreenAndExit(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
-    Audio_PlayCue(0x81);
-    SceneState_SetWork448To521AndRun(8);
+    Engine_AudioPlayCue(0x81);
+    HaidiaBabi_CloseScreenAndExit(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
-    Audio_PlayCue(0x81);
-    SceneState_SetWork448To521AndRun(9);
+    Engine_AudioPlayCue(0x81);
+    HaidiaBabi_CloseScreenAndExit(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
-    Audio_PlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(10);
+    Engine_AudioPlayCue(0x7B);
+    HaidiaBabi_CloseScreenAndExit(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
-    Audio_PlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(11);
+    Engine_AudioPlayCue(0x7B);
+    HaidiaBabi_CloseScreenAndExit(11);
 }
 
-/* The entry hook: how the house is set up for the entrance and the story. */
 s32 HaidiaBabi_RestoreEntryState(void)
 {
+    /* FAKEMATCH: the shared cached-cell base keeps the word read before the narrow store. */
     u32 i;
     s32 record;
-    s32 base5_3001ebc;
+    struct EventWork **control;
 
     if (gGameState.entrance == 19) {
         Engine_GameFlagClear(0x12f);
-        *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     } else {
         if (Engine_GameFlagIsSet(0x834) != 0) {
             Engine_ActorSetPosition(11, 0, 0);
@@ -290,13 +271,14 @@ s32 HaidiaBabi_RestoreEntryState(void)
                     if (gGameState.entrance == 22) {
                         FieldScene_RunSupplementalSequenceOne();
                     } else {
-                        base5_3001ebc = (u32)&gEventWork;
-                        *(s32 *)((*(s32 *)base5_3001ebc + 0x1c0)) = 0x209;
+                        control = &gEventWork;
+                        (*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
                         if (Engine_GameFlagIsSet(0x834) != 0) {
                             BattleFx_StartTwelveFrameBlend();
                             {
-                                u16 *target = (u16 *)((*(s32 *)(base5_3001ebc + 12) + 0x1f84));
-                                s32 shown = 1;
+                                struct FieldBlendWork *blend = *(struct FieldBlendWork **)((u8 *)control + 12);
+                                u16 *target = (u16 *)&blend->loud;
+                                u16 shown = 1;
 
                                 *target = shown;
                             }
@@ -318,67 +300,32 @@ s32 HaidiaBabi_RestoreEntryState(void)
     return 0;
 }
 
-extern u8 MsgHaidiaWake[];
 
-struct SceneMapState {
-    u8 unknown_0000[0x1f84];
-    u16 active;
-};
 
-extern const u8 gHaidiaBabiSharedAction[];
-extern const u8 gHaidiaBabiActorExitAction[];
-extern const u8 gHaidiaBabiLeaderExitAction[];
-
-/* FAKEMATCH: a one-halfword record keeps the leader-flag zero in a halfword
-   register, which the reference reloads from the literal pool after the
-   actor lookup. */
 struct SceneHalf {
     u16 value;
 };
 
 void FieldScene_RunSixStepSequence17e4();
-void Engine_TaskWait();
-void Engine_MapRedraw();
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
-void Engine_ActorSetSpriteFlags(struct FieldActor *actor, s32 flags);
 void Graphics_EnableObjLayerAndCallbacks();
 void ObjectDispatch_StopCallbacksAndHideLayers();
-void ObjectDispatch_RegisterChildMetadata(struct FieldActor *actor, s32 palette);
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset);
-void Engine_EventWait();
-void Engine_EventBegin();
-s32 Engine_EventChooseYesNo();
 void Object_RefreshSelectorById();
-void Engine_ActorSetPosition();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorJump();
-void Engine_ActorStartRepeatedMotion();
-void Engine_ActorRunRepeatedMotion();
-void Engine_ActorSetChildValue();
-void Engine_EventSetMessage();
 void Ui_SetRenderResultFromObject();
-void Engine_ActorSetSpritePriority();
-void Engine_CameraFollowActor();
-void Engine_EventRequestExit();
 void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
-void Engine_EventOpenScreen();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
-void Engine_AudioPlayCue();
 
-/* Haidia, the morning after the storm: the leader wakes in the house, the
-   view opens on the room, the two talk over the scene's messages, and both
-   walk out of the house. */
 void FieldScene_RunComplexActorSequence(void)
 {
+    /* FAKEMATCH: a halfword record keeps the actor-flag zero loaded from the pool after the actor lookup. */
     s32 base;
     struct FieldSprite *sprite;
     struct FieldActor *p12;
     struct FieldActor *p89;
-    u8 *work;
+    struct MapScrollWork *work;
     struct FieldActor *scene_actor;
     struct EventWork **control;
     struct SceneHalf stopped;
@@ -389,7 +336,7 @@ void FieldScene_RunComplexActorSequence(void)
     {
         struct EventWork *event = *control;
 
-        work = *(u8 **)Ram_MapWork;
+        work = *(struct MapScrollWork **)Ram_MapWork;
         scene_actor = event->view_center;
     }
     sprite = Object_GetById(17)->sprite;
@@ -421,19 +368,19 @@ void FieldScene_RunComplexActorSequence(void)
     UiText_ShowCenteredMessage(base + 1, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventWait(40);
-    *(u32 *)(work + 236) = 0x01480000;
-    *(u32 *)(work + 240) = 0x02580000;
-    *(u32 *)(work + 244) = 0x02700000;
-    *(u32 *)(work + 248) = 0x03300000;
+    work->min_x = 0x01480000;
+    work->min_y = 0x02580000;
+    work->max_x = 0x02700000;
+    work->max_y = 0x03300000;
     scene_actor->x.fixed = 0x02340000;
     scene_actor->y.fixed = ground;
     scene_actor->z.fixed = 0x02b30000;
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    (*control)->start_transition = 521;
+    (*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     (*control)->transition_frames = 64;
     BattleFx_StartTwelveFrameBlend();
-    (*(struct SceneMapState **)((u8 *)control + Ram_SceneMapStateOffset))->active = 1;
+    (*(struct FieldBlendWork **)((u8 *)control + Ram_SceneMapStateOffset))->loud = 1;
     BattleFx_SetBlock30Values12Zero();
     Engine_TaskWait(30);
     Engine_EventOpenScreen();
@@ -470,10 +417,10 @@ void FieldScene_RunComplexActorSequence(void)
     FieldScene_RunSixStepSequence17e4();
     Engine_ActorStartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(36872, 0, 20);
-    Object_GetById(8)->unknown_5a &= 0xfe;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(8, 542, 680);
     Engine_EventWait(1);
-    Object_GetById(8)->unknown_5a |= 0x1;
+    Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(8, 2);
     ObjectDispatch_RegisterChildMetadata(Object_GetById(0), 226);
@@ -483,10 +430,10 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_EventWait(10);
     Engine_ActorSetChildValue(0, 0);
     Engine_EventWait(20);
-    Object_GetById(8)->unknown_5a &= 0xfe;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(8, 534, 688);
     Engine_EventWait(1);
-    Object_GetById(8)->unknown_5a |= 0x1;
+    Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
     Actor_SetSpeed(8, 98304, 49152);
     Actor_SetSpeed(0, 98304, 49152);
@@ -514,7 +461,7 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_ActorEnableActionCallback(8, gHaidiaBabiActorExitAction);
     Engine_ActorEnableActionCallback(0, gHaidiaBabiLeaderExitAction);
     Engine_EventWait(20);
-    (*control)->start_transition = 513;
+    (*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     (*control)->transition_frames = 16;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

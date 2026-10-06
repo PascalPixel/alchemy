@@ -1,11 +1,17 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
-
-/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
- * this file's code made before it shared the header's declaration. */
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -42,91 +48,34 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
 } ActiveSubjectSlot;
 
 extern s16 Korosseo_MarkerSlot;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
 
 typedef void(*SceneTask)(void);
 s16 Resource_LoadFixedBlockBIntoFreeSlot(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 void ObjectDispatch_InitFromTable6(struct FieldActor *);
-
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
-
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-static inline void InitializeActorZero(void)
+void OverlayObject_ResetMotionFields(s32 actor)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-}
-
-static inline void InitializeSelectedActor(s32 actorId)
-{
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-/* Selects a later line in the current dialogue. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-void OverlayObject_ResetMotionFields(void)
-{
-    struct FieldActor *o = ((struct FieldActor * (*)(void))Object_GetById)();
+    struct FieldActor *o = Object_GetById(actor);
 
     ObjectDispatch_InitFromTable6(o);
     o->velocity_x = 0;
@@ -135,7 +84,7 @@ void OverlayObject_ResetMotionFields(void)
     o->target_z = ACTOR_NO_TARGET;
 }
 
-void SceneState_InitHalfwordC6a6Once(void)
+void KorosseoKawa_EnsureMarkerSlot(void)
 {
 
     if (Korosseo_MarkerSlot == -1) {

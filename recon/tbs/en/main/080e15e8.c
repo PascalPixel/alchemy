@@ -1,11 +1,9 @@
-/* Draft, 664 rows off, most of them from one cause: the frame is 4 bytes
-   short. The ROM spills count itself (sp+100, between size and sc) as a copy
-   of the frame * 2 induction; here count is replaced by the temporary of its
-   own multiplication, whose slot falls below sc. The ROM also reduces
-   frame * 4 for the three line lengths to an induction of its own (sp+24);
-   here that value lives too briefly to be worth one. And the ROM keeps j in
-   r8 and n in r10 where this has them the other way round. */
+#include "CANVAS.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
+#include "PROJECT.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -19,7 +17,6 @@
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_AdvanceScrollOnInterval(void);
 void AudioCommand_PlayFar(s32);
-void BattleFx_BeginCanvasLayer(s32);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
@@ -32,8 +29,6 @@ void SceneTransform_ApplyRoll(s32);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyScale(s32 *);
 void BattleEffect_SetupBlendedDisplay(void);
-void BattleFx_SelectLivingTargets(void *);
-void BattleFx_SpawnObjects(s32, s32, s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *, s32, s32);
@@ -42,17 +37,9 @@ void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
 void BattleFx_PlaceFormationObjects(s32, s32, s32);
 void BattleEffect_RunImpactBurst(s32, s32, s32);
-void ResourceObject_ReleaseFar(void *);
-void BattleFx_EndCanvasLayer(void);
 
 extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;
-
-struct Cells03001ce0 {
-    s32 unk00[4];
-    s32 unk10;
-};
-extern struct Cells03001ce0 gProjection;
 
 extern s16 Mode12_Points[][2];
 extern u16 ParticleStreams_CellOffsets[];
@@ -146,7 +133,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     work->transfer_mode = 0;
     BattleEffect_WipeCanvas(0, 0);
     BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
-    gProjection.unk10 = 240;
+    gProjection.center_y = 240;
     BattleEffect_WipeCanvas(0, 1);
     *(u16 *)0x04000020 = 0x80;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
@@ -184,7 +171,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         if (frame == 151) {
             AudioCommand_PlayFar(145);
         }
-        if (gKeysRepeat & 3) {
+        if (gKeysRepeat & (KEY_A | KEY_B)) {
             break;
         }
         Graphics_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
@@ -563,7 +550,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     BattleEffect_RunImpactBurst(0, cam_x, cam_y);
     }
     for (i = 0; i != 9; i++) {
-        ResourceObject_ReleaseFar(work->objects[i]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
     BattleFx_EndCanvasLayer();
 }

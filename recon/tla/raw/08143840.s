@@ -82,7 +82,7 @@ Func_08143840:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #128
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #180
@@ -143,7 +143,7 @@ Func_08143840:
 .L_08143958:
 	.4byte 0x00000784
 .L_0814395c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08143960:
 	.4byte Func_08143488
 .L_08143964:

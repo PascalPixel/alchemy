@@ -1,28 +1,36 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "IO_REG.H"
+#include "RESOURCE.H"
 #include "EDITION.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
 #include "WORKSPACE_OPTIONS.H"
+#include "UIFLOW.H"
+#include "text/MSG_IDS.H"
 
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
-void UiWork_Finalize(struct RenderInput *window, s32 mode);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-void Resource_ResetEntry(s32 slot);
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
+#define ShopCursor_AdvanceFar ((void (*)(union MenuCursor*))ShopCursor_AdvanceFar)
+#define Shop_SetCursorFar ((void (*)(union MenuCursor*,s32,s32,s32))Shop_SetCursorFar)
+#define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
+
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
-void ShopCursor_AdvanceFar(union MenuCursor *cursor);
-void Shop_SetCursorFar(union MenuCursor *cursor, s32 x, s32 y, s32 speed);
-void ShopCursor_SetPositionImmediateFar(union MenuCursor *cursor, s32 x, s32 y);
 
-extern u8 MsgTalkChoice[];
 extern u8 Resource_FixedBlockBTiles[];
 
-extern volatile u32 gKeysRepeat;
 
-/* The Spanish and Japanese choices are shorter: a narrower window further
-   right. */
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define TALK_WINDOW_X     7
 #define TALK_WINDOW_WIDTH 18
@@ -34,8 +42,6 @@ extern volatile u32 gKeysRepeat;
 #define TALK_WINDOW_WIDTH 16
 #endif
 
-/* "Descriptions", "Cheer" or "Nothing": returns the row chosen with A, or -1
-   when B cancels. */
 s32 PartyTalkMenu_Choose(void)
 {
     /* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an equal-size struct changes stack-address construction in all six editions. */
@@ -59,7 +65,7 @@ s32 PartyTalkMenu_Choose(void)
         ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3, window->y * 8 + 9);
     }
     palette = (u16 *)0x050001c0;
-    Dma_Set((const void *)0x050001e0, palette, 0x84000008, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
     palette[4] = 0x6318;
     do {
         UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 14);
@@ -70,26 +76,26 @@ s32 PartyTalkMenu_Choose(void)
             Shop_SetCursorFar(&cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
         }
         ShopCursor_AdvanceFar(&cursor);
-        if (gKeysRepeat & 0x40) {
+        if (gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111);
             row--;
             moved = 1;
             if (row == -1)
                 row = 2;
         }
-        if (gKeysRepeat & 0x80) {
+        if (gKeysRepeat & KEY_DOWN) {
             Audio_PlayCue(111);
             row++;
             moved = 1;
             if (row == 3)
                 row = 0;
         }
-        if (gKeysRepeat & 2) {
+        if (gKeysRepeat & KEY_B) {
             Audio_PlayCue(113);
             row = -1;
             goto close;
         }
-    } while (!(gKeysRepeat & 1));
+    } while (!(gKeysRepeat & KEY_A));
     Audio_PlayCue(112);
 close:
     UiWork_Finalize(window, 2);

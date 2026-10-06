@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
 
 struct SlotEntry {
@@ -35,8 +37,6 @@ struct MenuSelection {
 extern u32 gFrameTick;
 extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
-extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
-extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
 {

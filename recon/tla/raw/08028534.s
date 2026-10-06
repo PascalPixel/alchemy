@@ -493,7 +493,7 @@ Func_08028534:
 .L_08028908:
 	.4byte Data_0802ec5c
 .L_0802890c:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08028910:
 	.4byte 0xfffff000
 .L_08028914:
@@ -521,7 +521,7 @@ Func_08028534:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r2, [sp, #12]
 	str r2, [r7, #36]
 	str r2, [r7, #44]

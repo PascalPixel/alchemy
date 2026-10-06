@@ -1,10 +1,4 @@
-/* Near miss: score 60. ⚓️ loads the level byte (ldrb r1, [r0, #15]) before
-   forming the experience address; this draft after, also after 45 s more of
-   permuting. */
-/*
- * Draft: Owner_GetValueIfLevelThresholdReached does not yet match; ⚓️ loads the level before forming the experience address, and these temporaries keep the owner in r5 instead of r0.
- * Links as recon/tla/raw/080afb80.s.
- */
+#include "OWNER_STATE.H"
 #include "TYPES.H"
 
 struct Owner_080792c4 {
@@ -14,7 +8,6 @@ struct Owner_080792c4 {
     u32 value_124;
 };
 
-void *Owner_GetState(s32 owner_no);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 s32 Owner_LevelUp();
 

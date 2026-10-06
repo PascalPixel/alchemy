@@ -1,37 +1,41 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
+#include "WINDOW.H"
+#include "SYSTEM.H"
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
 #include "TBS_EDITION.H"
+#include "text/MSG_IDS.H"
 
-struct MessageWindow;
+#define gKeyState (*(volatile u32 *)&gKeyState)
 
-extern u8 *gWindowWork;
-extern u8 MsgPairJoinedParty[];
+#define Party_LookupCharacterValueByFlag32 ((s32 (*)(s32))Party_LookupCharacterValueByFlag32)
+#define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 
-struct MessageWindow *UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWindow_DrawDividerLine(struct MessageWindow *, s32, s32, s32, s32);
-s32 Party_LookupCharacterValueByFlag32(s32);
+
+void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Localization_LookupEntryId(s32);
-void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
-s32 UiText_BuildRenderEntriesMode1(s32);
-s32 UiText_QueueRenderEntries(struct MessageWindow *, s32, s32, s32, s32);
+struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
-void Runtime_PushSlotEntry(s32 *, s32);
-void WaitFrames(s32);
-s32 Audio_Check(void);
-void UiWork_Finalize(struct MessageWindow *, s32);
-void Resource_ResetEntry(s32);
 
-extern volatile u32 gKeyState;
 
-/* Announce two characters joining the party: a window with both members'
-   glyphs and the joined line, then wait for the jingle or a key. */
 void Party_ShowPairJoinedMessage(s32 first, s32 second)
 {
-    u8 *work = gWindowWork;
-    struct MessageWindow *window;
+    u8 *work = gWindowWork[0];
+    struct UiWindow *window;
     s32 sprite2[3];
     s32 sprite1[3];
     s32 *entry1;
@@ -49,7 +53,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
 
-        work[RENDER_DIRTY_OFS] = 1;
+        ((struct UiRenderWork *)work)->dirty = 1;
 
         UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)), 0, &handle1, &palette, 14, zero);
         p = entry1;
@@ -64,8 +68,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
         *p++ = 0x802c000c;
         *p = palette | 0xf000;
 
-        *(u16 *)(work + RENDER_RESULT_OFS) = zero;
-        *(u16 *)(work + RENDER_RESULT_OFS + 2) = zero;
+        ((struct UiRenderWork *)work)->result[0] = zero;
+        ((struct UiRenderWork *)work)->result[1] = zero;
 
         UiWork_PushValueSlot(first, 1);
         UiWork_PushValueSlot(second, 1);
@@ -78,7 +82,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
             Runtime_PushSlotEntry(entry1, 250);
             Runtime_PushSlotEntry(entry2, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & 0x303) == 0);
+        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
         UiWork_Finalize(window, 2);
         WaitFrames(1);
@@ -87,30 +91,26 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
     }
 }
 u32 Resource_DecodeByteLz(const void *, void *);
-void Runtime_ReleaseHeapBlock(s32);
 
-/* graphics/resource/RenderOutput_LoadPair.c */
-extern s32 RenderResource_PairSourceTable[];
+extern const u8 *RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
     void *staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
-    s32 resource_address = RenderResource_PairSourceTable[group_index];
+    const u8 *resource = RenderResource_PairSourceTable[group_index];
 
     if (resource_index <= 0x5F) {
-        Resource_DecodeByteLz((const void *)resource_address, staging_buffer);
+        Resource_DecodeByteLz(resource, staging_buffer);
         VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
         Runtime_ReleaseHeapBlock(14);
     }
 }
 
-/* graphics/resource/RenderResource_CreatePair.c */
-void RenderResource_LoadPair(s32 arg0, s32 arg1);
-void *RenderResource_CreatePair(
-    s32 arg0,
-    struct RenderInput *arg1,
-    s32 arg2,
-    s32 arg3)
+struct RenderOutput *RenderResource_CreatePair(
+    s32 group,
+    struct RenderInput *input,
+    s32 x,
+    s32 y)
 {
     s32 index;
     struct RenderOutput *first;
@@ -120,11 +120,10 @@ void *RenderResource_CreatePair(
     if (index > 95)
         return NULL;
 
-    RenderResource_LoadPair(arg0, index);
-    /* Two 32x16 OBJ sprites; the right half starts eight tiles later. */
-    first = RenderOutput_Create(index, 0x80004000, arg1, arg2, arg3);
+    RenderResource_LoadPair(group, index);
+    first = RenderOutput_Create(index, 0x80004000, input, x, y);
     first->sentinel = 0xFD;
-    second = RenderOutput_Create(index, 0x80004000, arg1, arg2 + 32, arg3);
+    second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
     second->sentinel = 0xFD;
     second->table.bits.index += 8;
     return first;

@@ -1,75 +1,82 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CHARACTER_MENU.H"
 #include "EDITION.H"
 #include "INVENTORY_MENU.H"
-#include "A8_STATE.H"
 #include "OBJECT_FACTORY.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
-extern u8 Data_03001f2c[];
 
-s32 UiMenu_CreateCursor(void *menu);
-void PsynergyMenu_InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
+void PsynergyMenu_InitializeEntryObjects();
 
-void ItemMenu_Init(void)
+void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
 {
     struct InventoryMenuState *menu = gMenuWork;
     s32 index;
 
     PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
     for (index = 3; index >= 0; index--)
-        *(u16 *)((u8 *)menu + 324 + index * 2) = 30;
+        menu->owner_y[index] = 30;
 
     {
-        s32 zero = 0;
+        u8 zero = 0;
         s32 style;
-        *(s32 *)((u8 *)menu + 40) = zero;
-        *(s32 *)((u8 *)menu + 36) = zero;
+        menu->help_window = NULL;
+        menu->status_window = NULL;
         style = 2;
-        *(s32 *)((u8 *)menu + 44) =
-            UiWindow_CreateFar(0, 17, 30, 3, style);
-        *(s32 *)((u8 *)menu + 32) = zero;
-        *(u8 *)((u8 *)menu + 272) = zero;
-        *(u8 *)((u8 *)menu + 273) = zero;
-        *(u8 *)((u8 *)menu + 274) = 8;
-        *(u8 *)((u8 *)menu + 275) = style;
+        menu->info_window =
+            (struct UiWindow *)UiWindow_CreateFar(0, 17, 30, 3, style);
+        menu->item_window = NULL;
+        menu->selected_column = zero;
+        menu->selected_row = zero;
+        menu->column_count = 8;
+        menu->row_count = style;
     }
 }
 
-void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
+void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
 {
-    void **output0;
+    struct RenderOutput **output0;
     s32 index0;
     s32 fifth0;
-    void **output1;
+    struct RenderOutput **output1;
     s32 index1;
     s32 fifth1;
-    void **output2;
+    struct RenderOutput **output2;
     s32 index2;
     s32 fifth2;
 
     index0 = 0;
     fifth0 = 0xA8;
-    output0 = &state->entries[0];
+    output0 = &state->entry_icons[0];
     do {
-        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, arg1, 0xF8, fifth0);
+        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, (struct RenderInput *)arg1, 0xF8, fifth0);
         index0++;
     } while (index0 <= 7);
 
     index1 = 8;
     fifth1 = 0xA8;
-    output1 = &state->entries[8];
+    output1 = &state->entry_icons[8];
     do {
-        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, arg1, 0x100, fifth1);
+        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, (struct RenderInput *)arg1, 0x100, fifth1);
         index1++;
     } while (index1 <= 15);
 
     index2 = 16;
     fifth2 = 0xA8;
-    output2 = &state->entries[16];
+    output2 = &state->entry_icons[16];
     do {
-        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, arg1, 0x100, fifth2);
+        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, (struct RenderInput *)arg1, 0x100, fifth2);
         index2++;
     } while (index2 <= 31);
 }
@@ -77,61 +84,58 @@ void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
 void ItemMenu_HideAllIcons(void)
 {
     s32 hidden_state = 13;
-    struct InventoryMenuIcon **icons = gMenuWork->entry_icons;
+    struct RenderOutput **icons = gMenuWork->entry_icons;
     s32 slot;
 
     for (slot = 31; slot >= 0; slot--) {
-        struct InventoryMenuIcon *icon = *icons++;
+        struct RenderOutput *icon = *icons++;
         if (icon != 0) {
-            icon->state = hidden_state;
+            icon->active = hidden_state;
         }
     }
 }
 
 #if EDITION_INTERNATIONAL
-/* Only the localised item menus hide the first icon of each page; the
-   Japanese edition has no such routine. */
 void ItemMenu_HidePageIcons(void)
 {
     struct InventoryMenuState *menu = gMenuWork;
     s32 slot = 0;
     s32 hidden_state = 13;
-    struct InventoryMenuIcon **icon_slot = menu->entry_icons;
+    struct RenderOutput **icon_slot = menu->entry_icons;
 
     do {
-        struct InventoryMenuIcon *icon = *icon_slot++;
+        struct RenderOutput *icon = *icon_slot++;
 
         if (icon != 0 && slot % 5 == 0) {
-            icon->state = hidden_state;
+            icon->active = hidden_state;
         }
         slot++;
     } while (slot <= 31);
 }
 #endif
 
-void UiWindow_CloseIfOpen(void *, s32);
-void Menu_ReleaseEntryObjects(void);
+void UiWindow_CloseIfOpen();
 
 void ItemMenu_Close(void)
 {
-    u8 *menu;
-    s8 *cursor;
+    struct InventoryMenuState *menu;
+    struct RenderOutput *cursor;
 
-    menu = *(u8 **)((u32)&Data_03001f2c);
+    menu = gMenuWork;
     Menu_ReleaseEntryObjects();
     ItemMenu_HideAllIcons();
     WaitFrames(1);
-    cursor = *(s8 **)(menu + 0x17C);
-    cursor[5] = 0xD;
-    UiWindow_CloseIfOpen(menu + 0x10, 1);
-    UiWindow_CloseIfOpen(menu + 0x20, 1);
-    UiWindow_CloseIfOpen(menu + 0x10C, 1);
-    UiWindow_CloseIfOpen(menu + 0x24, 1);
-    UiWindow_CloseIfOpen(menu + 0x28, 1);
-    UiWindow_CloseIfOpen(menu + 0x2C, 1);
-    UiWindow_CloseIfOpen(menu + 0x30, 1);
-    UiWindow_CloseIfOpen(menu + 0x34, 1);
-    UiWindow_CloseIfOpen(menu + 0x38, 1);
-    UiWindow_CloseIfOpen(menu + 0x3C, 1);
-    UiWindow_CloseIfOpen(menu + 0x40, 1);
+    cursor = menu->cursor;
+    cursor->active = 0xD;
+    UiWindow_CloseIfOpen(&menu->main_window, 1);
+    UiWindow_CloseIfOpen(&menu->item_window, 1);
+    UiWindow_CloseIfOpen(&menu->message_window, 1);
+    UiWindow_CloseIfOpen(&menu->status_window, 1);
+    UiWindow_CloseIfOpen(&menu->help_window, 1);
+    UiWindow_CloseIfOpen(&menu->info_window, 1);
+    UiWindow_CloseIfOpen(&menu->equip_window, 1);
+    UiWindow_CloseIfOpen(&menu->list_window, 1);
+    UiWindow_CloseIfOpen(&menu->unknown_window_38, 1);
+    UiWindow_CloseIfOpen(&menu->modal_window, 1);
+    UiWindow_CloseIfOpen(&menu->unknown_window_40, 1);
 }

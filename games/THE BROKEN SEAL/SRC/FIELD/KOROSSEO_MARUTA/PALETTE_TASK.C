@@ -1,4 +1,4 @@
-/* The palette task and positioning scaled objects. */
+#include "RESOURCE.H"
 #include "LOG_ROLLING.H"
 
 void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, u32 mode)
@@ -37,7 +37,6 @@ void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 secon
 void ColossoLogRollingStage_StopPaletteTask(void)
 {
     extern void Korosseo_UpdateMarker(void);
-    extern void Resource_ResetEntry(s32 slot);
 
     Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
     Resource_ResetEntry(Korosseo_MarkerSlot);
@@ -79,15 +78,15 @@ void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
         s32 move_rate = 0x14000;
         u8 *state_byte = object;
         u8 zero = 0;
-        *(s32 *)(object + 0x30) = move_rate;
-        *(s32 *)(object + 0x34) = move_rate >> 1;
-        state_byte += 0x5b;
+        ((struct FieldActor *)object)->speed = move_rate;
+        ((struct FieldActor *)object)->acceleration = move_rate >> 1;
+        state_byte = &((struct FieldActor *)object)->paused;
         *state_byte = zero;
     }
 
     ObjectDispatch_InitFromTable6();
     Object_SetMode(object, 5);
-    Object_SetPosition(object, x << 16, *(s32 *)(object + 12), z << 16);
+    Object_SetPosition(object, x << 16, ((struct FieldActor *)object)->y.fixed, z << 16);
     Object_CommitPosition(object);
     Object_SetMode(object, 1);
 }

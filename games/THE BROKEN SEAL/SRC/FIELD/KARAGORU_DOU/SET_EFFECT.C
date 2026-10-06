@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -21,24 +30,6 @@ struct EffectRecord {
     u8 flags_hi : 4;
 };
 
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
-struct HeightTrackedObject {
-    u8 pad00[12];
-    s32 height;                 /* +12 */
-};
-
-extern u8 LinkedMessage_DoYouWishCrossInto[];
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
     work->record->mode = mode;
@@ -46,7 +37,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 
 void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Object_Create(kind, x, y, z);
+    u8 *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -69,7 +60,7 @@ void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 
 void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Object_Create(kind, x, y, z);
+    u8 *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);

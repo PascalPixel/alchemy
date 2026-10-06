@@ -1,7 +1,24 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "METADATA_LOOKUP.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "FIELD_EVENT.H"
+#include "FIXED_MATH.H"
+#include "MENU_LIST.H"
 
-/* battle/effects/scene_transition/finish_and_release_heap_block.c */
+#define Animation_ApplyChildPalette ((void (*)(struct FxObject*,s32))Animation_ApplyChildPalette)
+#define Object_SetMoveTargetFar ((void (*)(struct FxObject*,s32,s32,s32))Object_SetMoveTargetFar)
+#define BattleFx_SetCallbackWhenTargetUnset ((void (*)(void))BattleFx_SetCallbackWhenTargetUnset)
+
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 struct FxVector {
@@ -14,32 +31,30 @@ struct FxSprite {
     u32 unknown_00[2];
     u8 unknown_08;
     u32 unknown_09_0 : 2;
-    u32 mode : 2;               /* 0x09, bits 2-3 */
+    u32 mode : 2;
     u32 unknown_09_4 : 4;
     u8 unknown_0a[0x1c];
-    u8 palette;                 /* 0x26 */
+    u8 palette;
 };
 
 struct FxObject {
     u16 unknown_00[3];
-    u16 angle;                  /* 0x06 */
+    u16 angle;
     s32 x;
     s32 y;
     s32 z;
     u32 unknown_14[7];
-    s32 scale_x;                /* 0x30 */
+    s32 scale_x;
     s32 scale_y;
     u32 unknown_38[6];
-    struct FxSprite *sprite;    /* 0x50 */
+    struct FxSprite *sprite;
     u32 unknown_54 : 8;
-    u32 visible : 8;            /* 0x55 */
+    u32 visible : 8;
     u32 unknown_56 : 16;
     u32 unknown_58[5];
-    void *callback;             /* 0x6c */
+    void *callback;
 };
 
-/* The wave scene's work: two pages of per-line offsets, the hue the buffer
-   is tinted with, and the two objects its bolts run between. */
 struct WaveFxWork {
     u16 lines[2][162];
     u16 phase;
@@ -54,26 +69,11 @@ struct WaveFxWork {
     u8 counter;
 };
 
-extern struct WaveFxWork *gBattleBgFxWork;
 
-void Animation_ApplyChildPalette(struct FxObject *object, s32 palette);
-void Runtime_ReleaseHeapBlock(s32 a);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
-struct FxObject *Object_GetById(s32 id);
-void BattleFx_PrepareBufferInterpolation(void);
-u32 __udivsi3(u32 numerator, u32 denominator);
-s32 Trig_Sin(s32 angle);
-void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 mode);
-void BattleFx_AdvanceHueCycle(void);
 s16 *BattleAction_FindDescriptor(s32 id);
-s8 *Resource_GetMetadataRecordFar(s32 id);
 struct FxObject *Object_CreateFar(s32 sprite, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
-void AudioCommand_PlayFar(s32 cue);
-void BattleFx_SetCallbackWhenTargetUnset(void);
-void BattleFx_UpdateWaveScene(void);
 
 void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 {
@@ -81,17 +81,12 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 
     work = *(void **)((u32)&gBattleBgFxWork);
     Ui_SetBank15PaletteAndClearRenderMode();
-    Scheduler_RemoveCallback((u32)BattleFx_UpdateWaveScene);
+    Scheduler_RemoveCallback(BattleFx_UpdateWaveScene);
     Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16, 0x290)), 1);
     BattleFx_PrepareBufferInterpolation();
     Runtime_ReleaseHeapBlock(0x16);
 }
 
-/* The wave scene's frame callback: refills the hidden page of line offsets
-   with a sine that advances four steps a frame and swaps the pages, steps
-   the hue on every other frame, and on frames 0, 8 and 16 of each 61-frame
-   round sends a bolt from the source object to the target, turned to face
-   along the way. */
 void BattleFx_UpdateWaveScene(void)
 {
     struct WaveFxWork *work = gBattleBgFxWork;
@@ -103,7 +98,7 @@ void BattleFx_UpdateWaveScene(void)
     struct FxSprite *sprite;
     struct FxVector from;
     struct FxVector to;
-    s8 *meta;
+    struct AnimationMetadata *meta;
 
     if (work->delay != 0) {
         work->delay--;
@@ -129,11 +124,11 @@ void BattleFx_UpdateWaveScene(void)
         if (source != 0 && target != 0) {
             from.x = source->x;
             meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->source_id));
-            from.y = source->y + (meta[8] << 16) - 0x20000;
+            from.y = source->y + ((s8)meta->box_x << 16) - 0x20000;
             from.z = source->z;
             to.x = target->x;
             meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->target_id));
-            to.y = target->y + (meta[8] << 16) - 0x20000;
+            to.y = target->y + ((s8)meta->box_x << 16) - 0x20000;
             to.z = target->z;
             object = Object_CreateFar(0x119, to.x, to.y, to.z);
             if (object != 0) {

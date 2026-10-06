@@ -1,5 +1,3 @@
-/* resource_680: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -7,7 +5,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_680/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_680/SCENE_TABLES.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008040)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_680/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_680/EXITS.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008080)
         "*/resource_680_overlay.o"(.text.x020080d0)
         "*/resource_680_overlay.o"(.text.x020080e0)

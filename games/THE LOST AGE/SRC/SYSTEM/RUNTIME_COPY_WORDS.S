@@ -1,11 +1,3 @@
-@ Word copier of TLA's resident runtime, behind a 4-byte Thumb entry
-@ (bx pc): 256-byte blocks through eight-register ldm and stmia, the first
-@ entered part-way into its unrolled run with add pc, pc, ip, lsr #2, then
-@ single words; it saves r5-r9 without lr. GCC never jumps into unrolled
-@ code and saves lr with any register. After the entry these 120 bytes
-@ equal TBS SYSTEM/RUNTIME_COPY_WORDS.S (0x08001af8, run at 0x03001388).
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common IWRAM runtime word copier
 .syntax unified
 	.arm
 	.thumb

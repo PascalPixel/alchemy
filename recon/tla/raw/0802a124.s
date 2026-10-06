@@ -341,7 +341,7 @@ Func_0802a124:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [sp, #16]
 	str r1, [r7, #36]
 	str r1, [r7, #44]
@@ -424,7 +424,7 @@ Func_0802a124:
 .L_0802a464:
 	.4byte Data_0802ec5c
 .L_0802a468:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_0802a46c:
 	.4byte 0xffffeaab
 .L_0802a470:

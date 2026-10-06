@@ -257,7 +257,7 @@ Func_0817d174:
 	cmp r5, #192
 	bne .L_0817d36a
 .L_0817d378:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r1, r10
 	adds r1, #12
 	mov r0, r10
@@ -306,7 +306,7 @@ Func_0817d174:
 	asrs r5, r5, #1
 	mov r0, r8
 	ands r5, r3
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r6]
 	lsls r1, r5, #3
 	asrs r2, r2, #1

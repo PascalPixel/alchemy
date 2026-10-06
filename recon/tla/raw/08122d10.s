@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08122d10
+	.global BattleEvent_Playback
 	.thumb_func
-Func_08122d10:
+BattleEvent_Playback:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -347,7 +347,7 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r7, r5]
-	bl BattleMotion_GetSlotField14
+	bl BattleMotion_GetSlotPalette
 	adds r1, r0, #0
 	ldr r0, [r6]
 	bl BattleMotion_SetRecordChildValues
@@ -479,10 +479,10 @@ Func_08122d10:
 	bl UiWork_ClearValueNameTablesFar
 	adds r0, r5, #0
 	movs r1, #4
-	bl Func_08013d0c
+	bl QueueIoWriteDelay10
 	adds r0, r5, #0
 	movs r1, #16
-	bl Func_08013c58
+	bl QueueIoWriteDelay6
 	movs r3, #160
 	mov r1, r9
 	lsls r3, r3, #8
@@ -525,7 +525,7 @@ Func_08122d10:
 .L_0812312c:
 	.4byte 0x000001ff
 .L_08123130:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08123134:
 	.4byte Data_0812996c
 .L_08123138:
@@ -645,7 +645,7 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r5]
-	bl BattleMotion_GetSlotField14
+	bl BattleMotion_GetSlotPalette
 	adds r1, r0, #0
 	ldr r0, [r6]
 	bl BattleMotion_SetRecordChildValues
@@ -724,7 +724,7 @@ Func_08122d10:
 	lsls r1, r1, #1
 	adds r3, r0, r1
 	ldrh r0, [r3]
-	bl Summon_GetEntryByte3Kind
+	bl Summon_GetLayoutKind
 	cmp r0, #0
 	blt .L_081232ce
 	subs r0, #1
@@ -765,7 +765,7 @@ Func_08122d10:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Summon_GetEntryByte3Kind
+	bl Summon_GetLayoutKind
 	cmp r0, #0
 	blt .L_08123316
 	adds r0, #146
@@ -951,13 +951,13 @@ Func_08122d10:
 	b .L_08123494
 	.2byte 0x0000
 .L_08123478:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0812347c:
 	.4byte gInput
 .L_08123480:
 	.4byte gFrameTick
 .L_08123484:
-	.4byte Data_030011d8
+	.4byte gLagFramesShown
 .L_08123488:
 	.4byte 0xfffffc00
 .L_0812348c:

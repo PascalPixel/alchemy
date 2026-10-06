@@ -1,4 +1,3 @@
-/* Declarations shared by the Babi lighthouse underground scene's sources (resource_3c4). */
 #ifndef BABI_H
 #define BABI_H
 
@@ -12,24 +11,6 @@
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 
-TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
-TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksRobinSoulYe);
-TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksAfterAnswer);
-TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSeemsSpeakYourSoul);
-
-struct Owner {
-    u8 unk0[9];
-    u8 unk9_0 : 2;
-    u8 mode : 2;
-    u8 unk9_4 : 4;
-};
-
-struct SceneObject {
-    u8 filler00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 struct Vec {
     s32 x;
@@ -44,13 +25,6 @@ struct EffectParams {
     s32 callback;
 };
 
-struct Actor {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-};
-
 struct Slot02000f10 {
     u8 head[8];
     s32 x;
@@ -58,33 +32,19 @@ struct Slot02000f10 {
     s32 rank;
 };
 
-struct Actor_02000cc0 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-typedef struct Slot_02001f70 {
-    s32 pad0;
-    s32 pad4;
-    s32 w8;                /* +8, 12.20 fixed point */
-} Slot_02001f70;
-
 typedef struct Actor_02000cd0 {
     u8 pad0[6];
-    u16 tag;               /* +6  */
-    s32 x;                 /* +8,  12.20 fixed point */
-    s32 y;                 /* +12 */
-    s32 z;                 /* +16, 12.20 fixed point */
+    u16 tag;
+    s32 x;
+    s32 y;
+    s32 z;
     u8 pad20[20];
-    s32 speedZ;            /* +40 */
+    s32 speedZ;
     s32 pad44;
-    s32 speedX;            /* +48 */
-    s32 speedY;            /* +52 */
+    s32 speedX;
+    s32 speedY;
     u8 pad56[29];
-    u8 flags;              /* +85 */
+    u8 flags;
 } Actor_02000cd0;
 
 extern const s32 BabiChika_FlickerScript[];
@@ -95,14 +55,6 @@ typedef struct Target_02000cd0 {
     union FieldCoordinate z;
 } Target_02000cd0;
 
-struct Actor_02000dc8 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
 typedef struct Record {
     s32 pad0;
     s32 pad4;
@@ -110,16 +62,6 @@ typedef struct Record {
     s32 w12;
     s32 w16;
 } Record;
-
-/*
- * resource_3c4: land an actor on the highest platform sharing its tile.
- */
-typedef struct Slot_02001c2c {
-    u8 pad0[8];
-    s32 x;                 /* +8,  12.20 fixed point */
-    s32 y;                 /* +12 */
-    s32 z;                 /* +16, 12.20 fixed point */
-} Slot_02001c2c;
 
 struct Actor_02000ec8 { u8 unknown_00[8]; s32 x; s32 y; s32 z; u8 unknown_14[0xf]; u8 flatla3; };
 
@@ -134,13 +76,6 @@ struct Track02001038 {
     s32 mark;
 };
 
-/*
- * Per-frame integrator for an effect record -- resource_3c4. It adds the
- * velocity at +68/+72/+76 into the position at +8/+12/+16, decays two of the
- * three velocities, accumulates the rates at +48/+52, and turns the sprite.
- */
-
-/* Every field is named by offset; the layout is not verified. */
 struct MotionEffect {
     u8 pad00[8];
     s32 position[3];
@@ -163,45 +98,6 @@ struct MotionEffect {
     u32 callback;
 };
 
-typedef struct Slot_02002410 {
-    s32 pad0;
-    s32 pad4;
-    s32 column;            /* +8,  12.20 fixed point */
-    s32 pad12;
-    s32 row;               /* +16, 12.20 fixed point */
-} Slot_02002410;
-
-struct Actor02001424 {
-    u8 head[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct Actor_02001510 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-typedef struct Slot_02001a10 {
-    s32 pad0;
-    s32 pad4;
-    s32 col;            /* +8,  12.20 fixed point */
-    s32 pad12;
-    s32 row;               /* +16, 12.20 fixed point */
-} Slot_02001a10;
-
-typedef struct Slot_020023a0 {
-    s32 pad0;
-    s32 pad4;
-    s32 column;            /* +8,  12.20 fixed point */
-    s32 pad12;
-    s32 row;               /* +16, 12.20 fixed point */
-} Slot_020023a0;
-
 extern u8 Data_0200b8f4[];
 extern u8 Data_0200ba74[];
 extern u8 Data_0200bc0c[];
@@ -210,34 +106,9 @@ extern u8 Data_0200bef4[];
 void Object_SetPosition();
 s32 Object_CheckMovementCollision();
 s32 Vector_AddPolarOffset();
-void Func_0808b868(u8 *);
 s32 Battle_GetWorkObject1e0();
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 struct Record_02000ec8;
-
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
-/* Copy the low two mode bits into the object's owner record. */
-
-/*
- * Slot nine setup for overlay resource_3c4.
- */
-
-/*
- * Setup step in resource_3c4. One six-argument placement, then two identical
- * follow-ups that pin an overlay at the 12.20 grid cell of slots 8 and 9: the
- * slot's +8 and +16 words are each shifted right by 20 and passed as the two
- * stack arguments of the placement call.
- */
 
 struct Record_02000ec8;
 

@@ -20,7 +20,7 @@ Func_0811b75c:
 .L_0811b778:
 	ldr r0, [sp, #16]
 	mov r1, r11
-	bl Func_0811b4ac
+	bl BattlePlacement_ContainsId
 	cmp r0, #0
 	bne .L_0811b794
 	mov r0, r11
@@ -237,7 +237,7 @@ Func_0811b75c:
 	adds r5, r0, #0
 	str r5, [r7, #32]
 	movs r1, #0
-	bl Func_08020080
+	bl Animation_SetWorkEntryFar
 	movs r3, #3
 	strb r3, [r5, #6]
 .L_0811b92a:

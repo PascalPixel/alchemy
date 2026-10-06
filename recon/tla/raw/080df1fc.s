@@ -132,7 +132,7 @@ Func_080df1fc:
 	adds r0, r7, #0
 	strb r3, [r1]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r2, [sp, #20]
 	cmp r2, #0
 	beq .L_080df35c
@@ -283,7 +283,7 @@ Func_080df1fc:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_08020298
+	bl ScriptObject_CheckOverlapFar
 	mov r8, r0
 	cmp r0, #0
 	bne .L_080df478
@@ -398,7 +398,7 @@ Func_080df1fc:
 .L_080df548:
 	.4byte gInput
 .L_080df54c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080df550:
 	movs r0, #1
 	bl WaitFrames

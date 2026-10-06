@@ -56,7 +56,7 @@ Func_08043774:
 	strh r6, [r3]
 	strh r5, [r7]
 .L_080437e2:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r6, #0
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -71,8 +71,8 @@ Func_08043774:
 .L_080437fc:
 	.4byte gPartyState
 .L_08043800:
-	.4byte Data_0300117c
+	.4byte gFrameWaitCount
 .L_08043804:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_08043808:
-	.4byte Data_03001218
+	.4byte gIdleFrameCount

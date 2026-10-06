@@ -1,7 +1,3 @@
-@ Import veneers after the FUNE_HEYA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — FUNE_HEYA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -59,11 +55,11 @@ Engine_ObjectSetPosition:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
@@ -118,10 +114,7 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:
@@ -223,7 +216,7 @@ ObjectGroup_SetChildValue:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -282,7 +275,7 @@ Battle_GetWorkObject1e0:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -294,22 +287,19 @@ Party_SetFields1ceAnd1d0:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	.global Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
+	.global Battle_ResetEffectCounter
 	.thumb_func
-Event_WaitValue1c8FramesFar:
-	overlay_veneer Func_0808a370
-	.global Battle_ResetEffectCounterFar
-	.thumb_func
-Battle_ResetEffectCounterFar:
-	overlay_veneer Func_0808a460
+Battle_ResetEffectCounter:
+	overlay_veneer Battle_ResetEffectCounterFar
 	.global Audio_PlayCueFromEventWork
 	.thumb_func
 Audio_PlayCueFromEventWork:

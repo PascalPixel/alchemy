@@ -1,6 +1,5 @@
 #include "SERIAL_RUNTIME.H"
 
-
 s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 {
     volatile u32 *siocnt;
@@ -21,8 +20,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
             if (serial_error == 0 && gSerialRuntime.send_index == -1) {
                 u32 ie;
 
-                /* FAKEMATCH: the do/while blocks and the separate enable
-                 * variable are meaningless, as in SerialRuntime_PollStatus. */
+                /* FAKEMATCH: the do/while blocks and the separate enable variable are meaningless, as in SerialRuntime_PollStatus. */
                 do {
                     REG_IME = serial_error;
                 } while (0);

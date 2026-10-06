@@ -1,5 +1,3 @@
-/* resource_670: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -12,7 +10,7 @@ SECTIONS
         "*/resource_670_overlay.o"(.text.x020080c4)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_670/SCENE_TABLES.o"(.text)
         "*/resource_670_overlay.o"(.text.x020080fc)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_670/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_670/EXITS.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200812c)
         "*/resource_670_overlay.o"(.text.x020081b4)
         "*/resource_670_overlay.o"(.text.x02008228)
@@ -63,7 +61,8 @@ SECTIONS
         "*/resource_670_overlay.o"(.text.x0200ade0)
         "*/resource_670_overlay.o"(.text.x0200ae60)
         "*/resource_670_overlay.o"(.text.x0200aeb0)
-        "*/resource_670_overlay.o"(.text.x0200aedc)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/resource_670_overlay.o"(.text.x0200af32)
         "*/resource_670_overlay.o"(.text.x0200af34)
         "*/resource_670_overlay.o"(.text.x0200afec)
         "*/resource_670_overlay.o"(.text.x0200b030)

@@ -101,15 +101,15 @@ SceneAction_EntryPair:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
-	.global Data_0200e074
-Data_0200e074:
+	.global VinasuChojo_ScaleStepAction
+VinasuChojo_ScaleStepAction:
 	.4byte 0x00000022
 	.4byte OverlayObject_StepScaleByCounter
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
-	.global Data_0200e088
-Data_0200e088:
+	.global VinasuChojo_BeamOpenAction
+VinasuChojo_BeamOpenAction:
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0x00001000
@@ -130,8 +130,8 @@ Data_020060ac:
 	.4byte 0x0000008c
 	.4byte 0x00000000
 	.4byte 0x00000010
-	.global Data_0200e0d0
-Data_0200e0d0:
+	.global VinasuChojo_BeamRiseAction
+VinasuChojo_BeamRiseAction:
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0xfffffc80
@@ -141,8 +141,8 @@ Data_0200e0d0:
 	.4byte 0x000000a0
 	.4byte 0x00000000
 	.4byte 0x00000010
-	.global Data_0200e0f4
-Data_0200e0f4:
+	.global VinasuChojo_BeamCloseAction
+VinasuChojo_BeamCloseAction:
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0x00040000
@@ -158,8 +158,8 @@ Data_0200e0f4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
-	.global Data_0200e130
-Data_0200e130:
+	.global VinasuChojo_BeamEndAction
+VinasuChojo_BeamEndAction:
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0x00020000
@@ -293,8 +293,8 @@ VinasuChojo_RiseActionScript:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
-	.global Data_0200e324
-Data_0200e324:
+	.global VinasuChojo_StepBackAction
+VinasuChojo_StepBackAction:
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0xffff4000
@@ -310,8 +310,8 @@ Data_0200e324:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
-	.global Data_0200e360
-Data_0200e360:
+	.global VinasuChojo_LeapAction
+VinasuChojo_LeapAction:
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0xfffb8000
@@ -327,8 +327,8 @@ Data_0200e360:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
-	.global Data_0200e39c
-Data_0200e39c:
+	.global VinasuChojo_PartyExitAction
+VinasuChojo_PartyExitAction:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -338,15 +338,15 @@ Data_0200e39c:
 	.4byte 0x00000001
 	.4byte 0x0000001b
 	.4byte 0x00000010
-	.global Data_0200e3c0
-Data_0200e3c0:
+	.global VinasuChojo_PartyHeadingAction
+VinasuChojo_PartyHeadingAction:
 	.4byte 0x00000022
 	.4byte OverlayObject_UpdateHeadingTimer
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
-	.global Data_0200e3d4
-Data_0200e3d4:
+	.global gVinasuChojoEntrances
+gVinasuChojoEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000130
 	.4byte 0x300000d8
@@ -383,15 +383,15 @@ Data_0200e3d4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200e464
-Data_0200e464:
+	.global gVinasuChojoExits
+gVinasuChojoExits:
 	.4byte 0x000000bb
 	.4byte 0x00149002
 	.4byte 0x002630b4
 	.4byte 0x0090c0b3
 	.4byte 0x000001ff
-	.global Data_0200e478
-Data_0200e478:
+	.global gVinasuChojoPlacements
+gVinasuChojoPlacements:
 	.4byte 0xffff0102
 	.4byte 0x00000001
 	.4byte 0x00f80000
@@ -548,17 +548,17 @@ Data_0200e478:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200e6e8
-Data_0200e6e8:
+	.global VinasuChojo_NearestActor
+VinasuChojo_NearestActor:
 	.4byte 0x00000000
-	.global Data_0200e6ec
-Data_0200e6ec:
+	.global gVinasuChojoEvents
+gVinasuChojoEvents:
 	.4byte 0x00000202
 	.4byte 0xffff000b
 	.4byte InitializeActorZeroMotion
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte SceneActor_SetByte55ForActorZeroAnd12To17
+	.4byte VinasuChojo_ConfigureGroupMotion
 	.4byte 0x00000202
 	.4byte 0xffff000a
 	.4byte InitializeActorZeroMotion

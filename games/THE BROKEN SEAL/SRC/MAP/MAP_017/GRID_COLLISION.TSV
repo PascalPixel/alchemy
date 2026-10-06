@@ -1,45 +1,45 @@
 cell:u8	grid:128x128	fill:0	at:0,0
-ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff ff ff 00 ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 ff ff
-ff ff 00 00 ff ff ff ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff 00 00 00 00 00 00 00 ff
-ff 00 00 00 ff ff ff ff ff ff ff 00 00 15 15 ff ff ff ff 00 ff ff ff ff 00 00 29 00 00 00 00 ff
-ff 00 00 00 ff ff ff ff ff ff ff f2 00 00 00 ff 00 1e 00 00 00 ff ff ff ff 00 00 00 00 00 00 ff
-ff 00 00 00 65 ff ff ff ff ff ff 00 00 00 00 ff 00 32 00 f4 00 ff ff ff ff 00 00 00 00 ff ff ff
-ff 00 00 00 00 00 00 0a 00 00 00 00 00 00 00 00 00 fd 00 00 00 00 00 ff ff ff 00 00 00 ff ff ff
-ff 00 00 00 0c 00 00 00 00 00 00 00 00 00 00 00 00 fd 00 00 00 00 00 00 00 00 ff ff ff ff ff ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 09 00 00 00 00 00 00 00 00 00 00 00 ff ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 ff 0d ff ff ff ff ff 00 00 ff ff ff ff f2 00 00 00 00 00 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 ff fd ff ff ff ff ff 00 00 ff ff ff ff f4 00 00 00 00 00 00 00 00 00 ff
-ff 00 00 0b 0b 00 00 00 00 fd ff ff ff ff ff 00 00 ff ff ff ff 00 00 ff ff ff ff 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 07 00 00 00 ff ff ff ff 00 00 ff ff ff ff 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06 00 00 00 ff ff ff ff 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05 00 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff 00 00 00 00 00 00 5a 5a 00 00 00 f5 00 f5 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-ff ff 00 00 00 00 00 5a 5a 00 00 f5 00 00 00 f5 fe ff fe 00 00 02 00 00 00 00 00 00 00 00 00 ff
-ff ff 00 00 00 00 00 00 00 00 00 00 f5 00 f5 00 00 ff 00 00 00 02 01 00 00 00 00 01 00 00 00 ff
-ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff 00 00 02 00 00 00 00 00 00 00 00 ff ff
-ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff 00 00 00 00 00 00 00 00 00 00 ff ff
-ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff 00 00 00 00 00 00 00 00 00 ff ff ff
-ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff 00 00 00 00 14 14 00 00 00 ff ff ff
-ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff
+ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff ff ff 0 ff ff ff ff ff ff ff ff ff ff ff ff 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 ff ff
+ff ff 0 0 ff ff ff ff ff ff ff ff ff 0 0 ff ff ff ff ff ff 0 0 ff 0 0 0 0 0 0 0 ff
+ff 0 0 0 ff ff ff ff ff ff ff 0 0 15 15 ff ff ff ff 0 ff ff ff ff 0 0 29 0 0 0 0 ff
+ff 0 0 0 ff ff ff ff ff ff ff f2 0 0 0 ff 0 1e 0 0 0 ff ff ff ff 0 0 0 0 0 0 ff
+ff 0 0 0 65 ff ff ff ff ff ff 0 0 0 0 ff 0 32 0 f4 0 ff ff ff ff 0 0 0 0 ff ff ff
+ff 0 0 0 0 0 0 a 0 0 0 0 0 0 0 0 0 fd 0 0 0 0 0 ff ff ff 0 0 0 ff ff ff
+ff 0 0 0 c 0 0 0 0 0 0 0 0 0 0 0 0 fd 0 0 0 0 0 0 0 0 ff ff ff ff ff ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9 0 0 0 0 0 0 0 0 0 0 0 ff ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 8 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 ff d ff ff ff ff ff 0 0 ff ff ff ff f2 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 ff fd ff ff ff ff ff 0 0 ff ff ff ff f4 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 b b 0 0 0 0 fd ff ff ff ff ff 0 0 ff ff ff ff 0 0 ff ff ff ff 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 7 0 0 0 ff ff ff ff 0 0 ff ff ff ff 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 ff ff ff ff 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff 0 0 0 0 0 0 5a 5a 0 0 0 f5 0 f5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+ff ff 0 0 0 0 0 5a 5a 0 0 f5 0 0 0 f5 fe ff fe 0 0 2 0 0 0 0 0 0 0 0 0 ff
+ff ff 0 0 0 0 0 0 0 0 0 0 f5 0 f5 0 0 ff 0 0 0 2 1 0 0 0 0 1 0 0 0 ff
+ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff ff 0 0 2 0 0 0 0 0 0 0 0 ff ff
+ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff ff ff 0 0 0 0 0 0 0 0 0 0 ff ff
+ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 ff ff ff ff ff 0 0 0 0 0 0 0 0 0 ff ff ff
+ff ff ff ff 0 0 0 0 0 0 0 0 ff ff ff ff ff ff ff ff 0 0 0 0 14 14 0 0 0 ff ff ff
+ff ff ff ff 0 0 0 0 0 0 0 0 ff ff ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 ff ff ff
 
 
 
 
 
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ff
 
 
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 28
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 28

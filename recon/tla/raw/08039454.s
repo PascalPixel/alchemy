@@ -37,7 +37,7 @@ UiWindow_ClearInteriorTiles:
 	adds r2, r6, #0
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl Func_08041abc
+	bl UiWindow_ClearTileAttributesInRect
 	lsls r3, r7, #6
 	add r3, r8
 	lsls r2, r5, #1

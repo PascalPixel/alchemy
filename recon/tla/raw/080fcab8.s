@@ -53,7 +53,7 @@ Func_080fcab8:
 	adds r3, #240
 	str r0, [r3]
 	movs r0, #14
-	bl Func_080f9108
+	bl Palette_LightenBankHighlight
 	ldr r0, .L_080fcbc4
 	bl Link_DrawShiftedTilePairFar
 	bl Menu_CancelSoundReset

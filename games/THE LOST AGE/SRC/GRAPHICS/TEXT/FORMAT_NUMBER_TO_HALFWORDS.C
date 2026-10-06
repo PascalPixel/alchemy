@@ -1,7 +1,14 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-extern u8 gNumberTextBuffer[];
 
-void Text_FormatSignedDecimalToWork(s32 out);
 
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {
@@ -11,11 +18,11 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 
     dst = out;
     Text_FormatSignedDecimalToWork(value);
-    src = (u8 *)((u32)&gNumberTextBuffer);
+    src = gNumberTextBuffer;
     n = 0xD;
     do {
         n -= 1;
-        *dst = (s16)*src;
+        *dst = *src;
         src += 1;
         dst += 1;
     } while (n >= 0);

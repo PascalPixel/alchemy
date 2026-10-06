@@ -62,14 +62,14 @@ Func_0814153c:
 	movs r7, #238
 	ldr r0, [r3, #84]
 	bl Resource_ResetEntry
-	bl Func_08020380
+	bl VramBlock_Reset93Far
 	ldr r2, .L_08141794
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
 	ldr r1, .L_08141798
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r4, [sp, #96]
 	lsls r7, r7, #7
 	movs r1, #238
@@ -289,7 +289,7 @@ Func_0814153c:
 .L_08141788:
 	.4byte 0x00003f44
 .L_0814178c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08141790:
 	.4byte Func_08143000
 .L_08141794:
@@ -938,7 +938,7 @@ Func_0814153c:
 	str r2, [r5]
 	cmp r3, #47
 	bhi .L_08141ce6
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r8
 	movs r1, #3
 	ldr r4, [sp, #44]
@@ -1025,7 +1025,7 @@ Func_0814153c:
 	str r2, [r6, #16]
 	str r3, [r6, #8]
 	str r7, [r6, #12]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r4, .L_08141e88
 	ldr r1, [sp, #44]
 	ldr r3, [sp, #40]
@@ -1047,7 +1047,7 @@ Func_0814153c:
 	ldr r7, [sp, #84]
 	negs r0, r7
 	lsls r0, r0, #10
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, .L_08141e90
 	mov r1, r9
 	movs r2, #4
@@ -1059,7 +1059,7 @@ Func_0814153c:
 	subs r3, #172
 	cmp r3, #48
 	bhi .L_08141df2
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r4, .L_08141e88
 	ldr r1, [sp, #44]
 	ldr r3, [sp, #40]
@@ -1363,7 +1363,7 @@ Func_0814153c:
 	cmp r8, r3
 	bne .L_08141fda
 .L_08142008:
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r3, .L_08142048
 	ldr r2, .L_08142064
 	movs r6, #128
@@ -1378,7 +1378,7 @@ Func_0814153c:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r5, .L_08142068
 	movs r1, #128
 	ldr r0, [sp, #100]
@@ -1408,7 +1408,7 @@ Func_0814153c:
 .L_08142060:
 	.4byte Func_0813baec
 .L_08142064:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08142068:
 	.4byte IwramFillWords
 .L_0814206c:
@@ -1688,7 +1688,7 @@ Func_0814153c:
 	movs r3, #96
 	bl Func_0818caa8
 .L_0814228e:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r6]
 	ldr r1, .L_08142318
 	ldr r2, .L_0814231c
@@ -1792,7 +1792,7 @@ Func_0814153c:
 	str r5, [r4, #16]
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r1, #31
 	movs r0, #31
 	movs r2, #31
@@ -2073,7 +2073,7 @@ Func_0814153c:
 	str r4, [r2, #12]
 	str r3, [r2]
 	str r1, [r2, #16]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #128
 	ldr r0, .L_0814274c
 	lsls r1, r1, #13
@@ -2207,7 +2207,7 @@ Func_0814153c:
 	movs r5, #128
 	lsls r5, r5, #9
 .L_081426be:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #192
 	lsls r1, r1, #12
 	movs r2, #0
@@ -2219,7 +2219,7 @@ Func_0814153c:
 	ldr r2, [sp, #84]
 	negs r0, r2
 	lsls r0, r0, #10
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r5, #0
 	bl Func_0801521c
 	ldr r1, .L_08142748
@@ -2244,7 +2244,7 @@ Func_0814153c:
 .L_08142710:
 	.4byte 0x00000075
 .L_08142714:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08142718:
 	.4byte gCameraSceneParameters
 .L_0814271c:
@@ -2333,7 +2333,7 @@ Func_0814153c:
 	ldr r1, [sp, #24]
 	mov r2, r10
 	str r1, [r2, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #128
 	ldr r0, .L_08142914
 	lsls r1, r1, #14
@@ -2356,7 +2356,7 @@ Func_0814153c:
 	adds r0, #16
 	bl SceneTransform_ApplyPitch
 	mov r0, r9
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r2, #128
 	lsls r2, r2, #9
 	movs r1, #192
@@ -2431,7 +2431,7 @@ Func_0814153c:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r7, [sp, #96]
@@ -2501,7 +2501,7 @@ Func_0814153c:
 .L_08142928:
 	.4byte 0x06004000
 .L_0814292c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08142930:
 	.4byte gCameraSceneParameters
 .L_08142934:

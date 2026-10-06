@@ -212,7 +212,7 @@ BabiFune_SceneTableD:
 	.4byte PlayWorkspaceCueAndClearPaletteZero
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte FieldScene_Forward11fc
+	.4byte BabiFune_LoadTablesAndStopDma
 	.4byte 0x40009085
 	.4byte 0xffff0000
 	.4byte FieldScene_ConfigureFixedPointValues
@@ -312,7 +312,7 @@ BabiFune_ActionScriptA:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte SceneState_StoreSlotZeroField12
+	.4byte BabiFune_StoreLeaderHeight
 	.4byte 0x00000010
 	.global BabiFune_ActionScriptB
 BabiFune_ActionScriptB:
@@ -357,7 +357,7 @@ BabiFune_ActionScriptB:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte SceneData_StoreRecord1Field12
+	.4byte BabiFune_StoreActorOneHeight
 	.4byte 0x00000010
 	.global BabiFune_ActionScriptC
 BabiFune_ActionScriptC:
@@ -407,7 +407,7 @@ BabiFune_ActionScriptC:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte SceneData_StoreRecord2Field12
+	.4byte BabiFune_StoreActorTwoHeight
 	.4byte 0x00000010
 	.global BabiFune_ActionScriptD
 BabiFune_ActionScriptD:
@@ -452,7 +452,7 @@ BabiFune_ActionScriptD:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte SceneState_StoreSlotThreeField12
+	.4byte BabiFune_StoreActorThreeHeight
 	.4byte 0x00000010
 	.section .bss,"aw",%nobits
 	.global BabiFune_FadeSprites

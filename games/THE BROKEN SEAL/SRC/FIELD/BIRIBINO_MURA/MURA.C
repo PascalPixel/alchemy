@@ -1,52 +1,23 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "MURA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gBiribinoMuraEntrances1[];
-extern const struct SceneEntrance gBiribinoMuraEntrances2[];
-extern const struct SceneEntrance gBiribinoMuraEntrances3[];
-extern const struct SceneEntrance gBiribinoMuraEntrancesOther[];
-extern const struct SceneRegion gBiribinoMuraRegions2[];
-extern const struct ScenePlacement gBiribinoMuraPlacements1[];
-extern const struct ScenePlacement gBiribinoMuraPlacements2[];
-extern const struct ScenePlacement gBiribinoMuraPlacements3[];
-extern const struct ScenePlacement gBiribinoMuraPlacementsOther[];
-extern u8 MsgBiribinoBottomNotVisibleLooksVery[];
-extern u8 MsgFieldPeeredWell[];
-extern const struct SceneEvent gBiribinoMuraEvents1[];
-extern const struct SceneEvent gBiribinoMuraEvents2[];
-extern const struct SceneEvent gBiribinoMuraEvents3[];
-extern const struct SceneEvent gBiribinoMuraEventsOther[];
-extern u8 MsgBiribinoAreaOffLimitsThoseWithout[];
-extern u8 MsgBiribinoCurseWasBrokenThanksEfforts[];
-extern u8 MsgBiribinoDidSeeTreeAtEntrance[];
-extern u8 MsgBiribinoHaveEverBeenVillageImil[];
-extern u8 MsgBiribinoHaveTriedHeadingSoutheastFrom[];
-extern u8 MsgBiribinoItsTreeButAlmostLooks[];
-extern u8 MsgBiribinoJillGaveRobinSpecialGift[];
-extern u8 MsgBiribinoMccoysHiddenWarehouseDoNot[];
-extern u8 MsgBiribinoThankSavedMeFromBeing[];
-extern u8 MsgBiribinoThereTreeLooksLikePerson[];
-extern u8 MsgBiribinoWasTurnedIntoTreeFor[];
-extern u8 MsgBiribinoYoureGuy[];
-void FieldScene_RunScene38b_020008f0(void);
-void FieldScene_RunScene38bSequenceA(void);
-void FieldScene_RunScene38b_02000d10(void);
-void BiribinoMura_UpdateCornerSpawn(void);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-void Engine_ObjectCommitPosition(struct FieldActor *object);
-void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
-void Scene_UpdatePuzzleActors(void);
-void FieldScene_DrawTilesByActor8Row(void);
 
-/* One cell step per facing sixteenth: x in the high half, z in the low. */
-extern s32 BiribinoMura_FacingCellSteps[];
 
-void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 
-/* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
 struct SpawnCounter {
     s16 frames;
 };
@@ -70,7 +41,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -80,7 +51,6 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
     return 1;
 }
 
-/* Where the party appears in each of Bilibin's three scenes. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -97,7 +67,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gBiribinoMuraEntrancesOther;
 }
 
-/* Only the second scene has map regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_BiribinoMura2) {
@@ -106,7 +75,6 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
-/* Returns the scene's message table. */
 u8 *SceneData_GetMessageTable(void)
 {
     return Placement_Messages;
@@ -117,7 +85,6 @@ void SceneState_SetValues9_3_0(void)
     BattleFx_RunPageEffectForSlot(9, 3, 0);
 }
 
-/* The actors placed in each of Bilibin's three scenes. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -142,7 +109,6 @@ void FieldScene_RunScriptedSteps947And29DD(void)
     Engine_EventEnd();
 }
 
-/* What each of Bilibin's three scenes answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -180,12 +146,12 @@ void SceneDialogue_RunLine1470(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene38b_02000240(void)
+void BiribinoMura_TalkAboutHumanTree(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
     if (GameFlag_IsSet(0x301) != 0) {
-        bump_step_020001ec(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(9, 0);
     GameFlag_Set(0x301);
@@ -196,7 +162,7 @@ void SceneDialogue_RunActorTwelveDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoDidSeeTreeAtEntrance);
-    Event_AskYesNo(12, 0);
+    Engine_EventAskYesNo(12, 0);
     Engine_EventEnd();
 }
 
@@ -204,7 +170,7 @@ void SceneDialogue_RunActorFourteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoHaveTriedHeadingSoutheastFrom);
-    Event_AskYesNo(14, 0);
+    Engine_EventAskYesNo(14, 0);
     Engine_EventEnd();
 }
 
@@ -212,7 +178,7 @@ void SceneDialogue_ShowLine16BF(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoWasTurnedIntoTreeFor);
-    Event_AskYesNo(21, 0);
+    Engine_EventAskYesNo(21, 0);
     Engine_EventEnd();
 }
 
@@ -220,7 +186,7 @@ void SceneDialogue_RunActorSixteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoCurseWasBrokenThanksEfforts);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
@@ -228,7 +194,7 @@ void SceneDialogue_ShowLine16CC(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoHaveEverBeenVillageImil);
-    Event_AskYesNo(18, 0);
+    Engine_EventAskYesNo(18, 0);
     Engine_EventEnd();
 }
 
@@ -236,7 +202,7 @@ void FieldScene_RunEarlySequence(void)
 {
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
     s32 v5;
     u8 *tbl;
     u8 *tbl2;
@@ -249,9 +215,9 @@ void FieldScene_RunEarlySequence(void)
     p7 = *(u8 **)&gEventWork;
     Engine_EventBegin();
     for (i = 8; i < 66; i++) {
-        record = (u8 *)Object_GetById(i);
+        record = Object_GetById(i);
         if (record != 0) {
-            record[85] = 0;
+            record->motion_flags = 0;
         }
     }
     v5 = (s32)((s32)(*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
@@ -268,8 +234,8 @@ void FieldScene_RunEarlySequence(void)
     tbl2 = (u8 *)Mura_DoorCellSteps;
     Engine_MapAnimateCells(*(s32 *)(tbl2 + off), a1, a2);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *((u8 *)Object_GetById(0) + 85) = 0;
-    *(s32 *)((*(u8 **)&gEventWork + 0x1c0)) = 0x100;
+    Object_GetById(0)->motion_flags = 0;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (v5 == 6) {
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
@@ -291,8 +257,8 @@ void FieldScene_RunScene38bSequenceC(void)
     struct FieldActor *rec;
     struct FieldActor *rec7;
 
-    rec = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
-    rec7 = (struct FieldActor *)Object_GetById(11);
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(11);
     if ((rec7->x.fixed >> 20) == 6) {
         Engine_EventBegin();
         Engine_ActorSetSpritePriority(11, 1);
@@ -300,7 +266,7 @@ void FieldScene_RunScene38bSequenceC(void)
         Engine_EventWait(20);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
         Actor_SetSpeed(11, 0x3333, 0x1999);
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
         rec7->motion_flags = 0;
         rec->scale_x = -0x10000;
         Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -321,7 +287,7 @@ void FieldScene_RunScene38bSequenceC(void)
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 132, 186);
         rec->scale_x = 0x10000;
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
@@ -337,12 +303,12 @@ void FieldScene_RunScene38bSequenceC(void)
     }
 }
 
-void FieldScene_CallHelper170c(void)
+void BiribinoMura_CheckLeaderAhead(void)
 {
     Engine_LeaderCheckAhead();
 }
 
-void FieldScene_RunScene38b_02000584(void)
+void BiribinoMura_ReceiveJillsGift(void)
 {
     u32 i;
     struct FieldActor *rec7;
@@ -396,22 +362,22 @@ void FieldScene_RunScene38b_02000584(void)
             Engine_EventWait(20);
             Event_ShowMessage(14, 0);
             Actor_SetSpeed(14, 0x9999, 0x4ccc);
-            *((u8 *)Object_GetById(14) + 90) &= 254;
+            Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(14, 0x10a, 172);
             Engine_EventWait(1);
-            *((u8 *)Object_GetById(14) + 90) |= 1;
+            Object_GetById(14)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_EventWait(10);
             Engine_ActorSetAnimationAndWait(14, 3);
             Event_ShowMessageAndWait(14, 0, 10);
             Engine_MessageShowCentered((s32)MsgBiribinoJillGaveRobinSpecialGift, 1);
-            bump_step(1);
+            gEventWork->message++;
             Engine_ItemShowFound(ITEM_HARD_NUT, 3);
             Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
             Engine_ActorSetAnimationAndWait(14, 3);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             Actor_SetSpeed(14, 0x10000, 0x8000);
-            *((u8 *)Object_GetById(14) + 90) &= 254;
+            Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(14, 0x106, 156);
             Engine_EventWait(1);
             {
@@ -436,27 +402,27 @@ void FieldScene_RunScene38b_02000584(void)
     }
 }
 
-/* Bilibin's scene start: fade in from the backdrop and run the scene's own
-   opening; the third scene also schedules its task. */
 s32 Scene_Initialize(void)
 {
+    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
+
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (gGameState.scene == (s32)&SceneId_BiribinoMura1) {
-        FieldScene_RunScene38b_020008f0();
+        BiribinoMura_RestoreVillageActors();
     } else {
         if (gGameState.scene == (s32)&SceneId_BiribinoMura3) {
             FieldScene_RunScene38bSequenceA();
             ((void (*)())Engine_TaskAddCallback)((s32)BiribinoMura_UpdateCornerSpawn, 0xc80);
         } else {
             if (gGameState.scene == (s32)&SceneId_BiribinoMura2) {
-                FieldScene_RunScene38b_02000d10();
+                BiribinoMura_RestoreRaisedEntrance();
             }
         }
     }
     return 0;
 }
 
-void FieldScene_RunScene38b_020008f0(void)
+void BiribinoMura_RestoreVillageActors(void)
 {
 
     struct FieldActor *record;
@@ -505,17 +471,17 @@ void Scene_UpdatePuzzleActors(void)
 {
     s32 p10;
     s32 p9;
-    s32 rec7;
-    s32 record;
+    struct FieldActor *rec7;
+    struct FieldActor *record;
     s32 p6;
     s32 row;
 
     rec7 = Object_GetById(ACTOR_PARTY_LEADER);
     record = Object_GetById(20);
-    row = *(s32 *)(record + 16) >> 20;
-    p9 = (*(s32 *)(rec7 + 8) >> 20);
-    p10 = (*(s32 *)(rec7 + 16) >> 20);
-    p6 = *(s32 *)(record + 8);
+    row = record->z.fixed >> 20;
+    p9 = (rec7->x.fixed >> 20);
+    p10 = (rec7->z.fixed >> 20);
+    p6 = record->x.fixed;
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 12);
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 13);
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 14);
@@ -585,9 +551,9 @@ void FieldScene_RunScene38bSequenceA(void)
         rec8->motion_flags = rec7;
         record = GameFlag_IsSet(0x881);
         if (record != 0) {
-            *((u8 *)Object_GetById(9) + 89) |= 16;
-            *((u8 *)Object_GetById(16) + 89) |= 16;
-            *((u8 *)Object_GetById(11) + 89) |= 16;
+            Object_GetById(9)->collision_flags |= 16;
+            Object_GetById(16)->collision_flags |= 16;
+            Object_GetById(11)->collision_flags |= 16;
             Actor_SetPosition(16, 0x8e0000, 0x9c0000);
             record = Actor_Get(16);
             Engine_ActorSetSpriteFlags(record, 0);
@@ -611,81 +577,44 @@ void FieldScene_RunScene38bSequenceA(void)
     ActorPresentation_RepaintTenCellsAndActorEightCell();
 }
 
-/*
- * Ten (x, z) tile pairs, held in the overlay's own writable image.  Overlay
- * data lives in EWRAM and is deliberately not const.
- */
-
-/*
- * Slot accessor: Object_GetById(slot) returns the actor record, or NULL.
- * Typed as a byte pointer so the +0x08 and +0x10 field reads are explicit.
- */
-
-/*
- * The six-argument renderer ABI: four register arguments plus two stack
- * words, here the tile x and tile z of the cell being repainted.  The two
- * names are separate per-site call words that reach the same renderer.
- */
-
-/*
- * Repaint ten fixed collision cells and then actor 8's own cell.  The
- * 92-byte owner includes the alignment halfword and the single pool word
- * that follows the code; that word holds the address of Mura_RepaintCells, which
- * is in-image data rather than a RAM global.  The two renderer calls must
- * keep their separate call words -- naming one renderer for both changes the
- * displacement emitted at each site.
- */
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     s32 tx;
     s32 tz;
     u32 i;
 
-    /*
-     * Slot 8 is the scene's own actor; the accessor result is not
-     * null-checked here.  The 20-bit shift is one signed arithmetic shift:
-     * 16 takes the fixed-point coordinate to pixels, the further 4 take it
-     * to the 16-pixel tile grid.
-     */
-    actor = Actor_Get(8);
-    tx = *(s32 *)(actor + 0x08) >> 20;
-    tz = *(s32 *)(actor + 0x10) >> 20;
+    actor = Object_GetById(8);
+    tx = actor->x.fixed >> 20;
+    tz = actor->z.fixed >> 20;
 
-    /*
-     * Ten fixed cells from the table, then the actor's own cell.  The table
-     * is walked by the byte index itself rather than by a 0..9 counter
-     * scaled by two, so the loop steps the byte offset directly.
-     */
     for (i = 0; i < 20; i += 2) {
         s32 x = (s32)Mura_RepaintCells[i];
         s32 z = (s32)Mura_RepaintCells[i + 1];
-        Map_CopyCellAttributes(1, 0, 1, 1, x, z);
+        Engine_MapCopyCellAttributes(1, 0, 1, 1, x, z);
     }
 
-    /*
-     * The same repaint with 0 rather than 1 in the first argument.  What
-     * that selector chooses is not established.
-     */
-    Map_CopyCellAttributes(0, 0, 1, 1, tx, tz);
+    Engine_MapCopyCellAttributes(0, 0, 1, 1, tx, tz);
 }
 
-void FieldScene_RunScene38b_02000d10(void)
+void BiribinoMura_RestoreRaisedEntrance(void)
 {
+    /* FAKEMATCH: the inline halfword cell view remains pending a native field review. */
+
     s32 arg0;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldScene_DrawTilesByActor8Row();
     record = ReadU16Elem((u16 *)&gGameState, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
-        if (GameFlag_IsSet(0x109) == 0) {
+        if (Engine_GameFlagIsSet(0x109) == 0) {
             rec7 = Object_GetById(ACTOR_PARTY_LEADER);
             Engine_EventBegin();
-            arg0 = *(s32 *)(rec7 + 8);
-            *(s32 *)(rec7 + 12) = 0x100000;
-            Camera_MoveTo(arg0, 0x100000, *(s32 *)(rec7 + 16), 0);
+            arg0 = rec7->x.fixed;
+            rec7->y.fixed = 0x100000;
+            Engine_CameraMoveTo(arg0, 0x100000, rec7->z.fixed, 0);
             Engine_MapRedraw();
             Engine_EventEnd();
             Engine_TaskWait(1);
@@ -693,26 +622,25 @@ void FieldScene_RunScene38b_02000d10(void)
     }
 }
 
-s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
-
-    s32 **tbl = (s32 **)((u8 *)gEventWork + 0x14);
+    struct FieldActor **actors = gEventWork->placed_actors - 8;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = tbl[i];
+        struct FieldActor *actor = actors[i];
 
-        if (x == (p[2] >> 20) && z == (p[4] >> 20)) {
-            return p;
+        if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20) {
+            return actor;
         }
     }
     return 0;
 }
 
-/* Pushes the block the leader faces one cell ahead when nothing is in the
- * way, walking the leader along with it. */
 void BiribinoMura_PushFacedBlock(void)
 {
+    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
+
     struct FieldActor *leader;
     struct FieldActor *block;
     s32 zero;
@@ -723,12 +651,12 @@ void BiribinoMura_PushFacedBlock(void)
 
     leader = Object_GetById(0);
     dir = leader->facing >> 12;
-    block = (struct FieldActor *)SceneActor_FindAtTileXZ(
+    block = SceneActor_FindActorAtCell(
         (leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
         (leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
     if (block != NULL) {
         zero = 0;
-        block->unknown_22 = 2;
+        block->terrain_id = 2;
         p = pos;
         step = BiribinoMura_FacingCellSteps[dir];
         p[0].fixed = block->x.fixed + (step & -0x10000);
@@ -760,10 +688,10 @@ void BiribinoMura_PushFacedBlock(void)
     }
 }
 
-/* Spawn a kind-24 effect every thirty calls while the selected actor is
- * below both coordinate limits. Only the y limit resets the counter. */
 void BiribinoMura_UpdateCornerSpawn(void)
 {
+    /* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
+
     struct FieldActor *actor;
 
     actor = Object_GetById(gGameState.selected_actor);
@@ -784,8 +712,6 @@ void BiribinoMura_UpdateCornerSpawn(void)
     }
 }
 
-/* Spawns the kind-24 effect where the actor stands, drawn translucent
-   behind the background layers. */
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
 {
     struct FieldActor *effect;
@@ -796,9 +722,9 @@ void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
         return;
 
     sprite = effect->sprite;
-    Object_SetScript(effect, Mura_SpawnScript);
+    Engine_ObjectSetScript(effect, Mura_SpawnScript);
     effect->motion_flags = 0;
-    effect->unknown_22 = 1;
+    effect->terrain_id = 1;
     effect->priority_flags = 2;
     if (sprite == NULL)
         return;
@@ -809,7 +735,6 @@ void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
     sprite->priority = 3;
 }
 
-/* Opens the two gate cells on row 14 the actor stands in (z 6 or 9). */
 void FieldScene_DrawTilesByActor8Row(void)
 {
     struct FieldActor *actor;

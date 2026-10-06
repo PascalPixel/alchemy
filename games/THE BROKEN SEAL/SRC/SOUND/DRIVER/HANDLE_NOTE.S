@@ -1,15 +1,3 @@
-@ Starts a note on a music track: reads the optional key, velocity and length
-@ bytes, picks the instrument, takes a free or the quietest channel and sets
-@ up its voice. It saves the high registers in ascending order and restores
-@ all eight through one pop {r0-r7}, which neither approved compiler emits. It
-@ passes the stereo-volume helper its inputs in r4 and r5, reuses comparison
-@ flags across branch targets, and calls the key-to-frequency hook through the
-@ shared bx r3 at 0x080f9ee8. Every TBS and TLA edition has this routine; the
-@ others differ from this one only in the relocated address of its last
-@ literal.
-@ The zero halfword of alignment at 0x080fa162 never runs and carries no
-@ credit.
-@ credit: library — TBS/TLA common sound driver note-start routine
 .syntax unified
 	.thumb
 	.global MusicTrack_HandleNote
@@ -212,7 +200,7 @@ MusicTrack_HandleNote:
 	cmp	r0, r1
 	beq.n	.L_080fa0d2
 	adds	r1, r5, #0
-	bl	Func_080fa1ac
+	bl	MusicTrack_ClearModulationState
 .L_080fa0d2:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
@@ -234,7 +222,7 @@ MusicTrack_HandleNote:
 	str	r0, [r4, #4]
 	ldrh	r0, [r5, #30]
 	strh	r0, [r4, #12]
-	bl	Func_080f9f3c
+	bl	SoundDriver_CalculateStereoVolume
 	ldrb	r1, [r4, #8]
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]

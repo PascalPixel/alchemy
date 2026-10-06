@@ -1,8 +1,6 @@
 #include "TYPES.H"
 extern u8 GameFlagBytes[];
 
-/* game_flags/test.c */
-
 u32 GameFlag_Toggle(s32 flag)
 {
     s32 flag_mask;

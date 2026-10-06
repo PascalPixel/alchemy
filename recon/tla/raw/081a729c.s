@@ -24,7 +24,7 @@ Func_081a729c:
 	mov r11, r0
 	bl Scheduler_ResetTaskTable
 	movs r0, #1
-	bl Func_08013ef8
+	bl Blend_SetBrightenTarget16
 	bl Func_08014b70
 	bl Func_08014368
 	movs r0, #1
@@ -59,7 +59,7 @@ Func_081a729c:
 .L_081a7314:
 	.4byte 0x00001440
 .L_081a7318:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a731c:
 	.4byte 0x00000016
 .L_081a7320:
@@ -129,7 +129,7 @@ Func_081a729c:
 	adds r2, #4
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	mov r1, r9
 	cmp r1, #0
@@ -166,7 +166,7 @@ Func_081a729c:
 	bl Runtime_ReleaseHeapBlock
 .L_081a73f2:
 	movs r0, #30
-	bl Func_08013f3c
+	bl Blend_SetBrightenTarget0
 	bl Blend_WaitForTransition
 	ldr r3, .L_081a7420
 	movs r2, #128
@@ -198,7 +198,7 @@ Func_081a729c:
 .L_081a7430:
 	.4byte 0x06003000
 .L_081a7434:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a7438:
 	.4byte Data_081a8288
 .L_081a743c:

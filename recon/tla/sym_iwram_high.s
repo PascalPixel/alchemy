@@ -1,5 +1,3 @@
-@ IWRAM variables not yet defined in C, in address order, as pret's
-@ sym files list them. Each .space runs to the next variable.
 	.section .sym_iwram_high,"aw",%nobits
 	.space 0x00000c1b
 	.global Data_03006fbf
@@ -8,8 +6,8 @@ Data_03006fbf:
 	.global IwramSoundMixWorkspace
 IwramSoundMixWorkspace:
 	.space 0x00000840
-	.global Data_03007800
-Data_03007800:
+	.global gCartridgeResetMarker
+gCartridgeResetMarker:
 	.space 0x00000004
 	.global Data_03007804
 Data_03007804:

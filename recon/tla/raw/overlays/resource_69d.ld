@@ -1,5 +1,3 @@
-/* resource_69d: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -42,14 +40,16 @@ SECTIONS
         "*/resource_69d_overlay.o"(.text.x020091cc)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
         "*/resource_69d_overlay.o"(.text.x0200921e)
-        "*/resource_69d_overlay.o"(.text.x02009220)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_69d_overlay.o"(.text.x02009256)
         "*/resource_69d_overlay.o"(.text.x02009258)
         "*/resource_69d_overlay.o"(.text.x02009420)
         "*/resource_69d_overlay.o"(.text.x0200954c)
         "*/resource_69d_overlay.o"(.text.x02009790)
         "*/resource_69d_overlay.o"(.text.x02009818)
         "*/resource_69d_overlay.o"(.text.x02009888)
-        "*/resource_69d_overlay.o"(.text.x020099c8)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/resource_69d_overlay.o"(.text.x02009a1e)
         "*/resource_69d_overlay.o"(.text.x02009a20)
         "*/resource_69d_overlay.o"(.text.x02009bb8)
         "*/resource_69d_overlay.o"(.text.x02009c68)

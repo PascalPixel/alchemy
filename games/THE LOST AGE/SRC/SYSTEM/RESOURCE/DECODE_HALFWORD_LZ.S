@@ -1,14 +1,3 @@
-@ Halfword LZ decoder run from the stack. Its loader (0x08015830) takes 0x57
-@ from its literal pool at 0x08015874, reserves (0x57 + 4) & ~3 = 88 bytes of
-@ stack, has DMA3 copy (0x57 + 1) / 4 = 22 words, exactly these 88 bytes, and
-@ calls the copy. Behind a 4-byte Thumb entry (bx pc) the ARM body keeps a
-@ sentinel in its flag word, tests it with lsls and bcc, refills it through
-@ the carry (adc) and returns mid-body with bxeq lr. GCC never branches on the
-@ carry out of a shift and uses adc only for 64-bit sums. After that entry
-@ its 84-byte body equals TBS SYSTEM/RESOURCE/DECODE_HALFWORD_LZ.S
-@ (0x08002298) byte for byte, as in every TBS and TLA edition.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM halfword-LZ decoder copied to the stack
 .syntax unified
 	.thumb
 	.global Resource_DecodeHalfwordLzCode

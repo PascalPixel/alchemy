@@ -1,31 +1,24 @@
-/* Draft: Japanese debug command source alternative.
- * 2026-10-01: Compiled owner 664 bytes; clear/fill register allocation or scheduling differs from the 664-byte Japanese owner.
- * This reduced attempt includes its current source declaration context.
- * Ordinary TBS compiler and options; no scene placement or credit claimed.
- */
 extern int MenuTest_BenchmarkCharacter[1];
 #include "EDITION.H"
-/* Declarations shared by the debug menu test's sources (resource_3ce). */
 #ifndef MENU_TEST_H
 #define MENU_TEST_H
 
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+#include "OWNERVAL.H"
 #include "GAME_STATE.H"
 
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;
-/* The shops' welcome lines open their blocks of messages; the menu steps
- * through a block as long as the distance between the first two. */
 extern u8 MsgWeaponShopWelcome[];
 extern u8 MsgArmorShopWelcome[];
 extern u8 MsgItemShopWelcome[];
 extern u8 *Data_03001f30[];
 extern u8 Data_03001ebc[];
-extern u8 MenuTest_SlotValues[];
-extern u8 MenuTest_CommandTable[];
-extern u8 MenuTest_CommandTableB[];
-extern u8 MenuTest_CommandTableC[];
+extern u8 MenuTest_Events[];
+extern u8 MenuTest_Entrances[];
+extern u8 MenuTest_Exits[];
+extern u8 MenuTest_Placements[];
 extern u8 MenuTest_SlotOffsets[];
 
 u8 Engine_TaskWait();
@@ -41,12 +34,11 @@ s32 Battle_ApplyPresetItemsAndFlags();
 s32 Shop_PickUnitItem();
 s32 NameEntry_EditOwnerName();
 void UiText_ShowPositionedMessageAndWait();
-s32 Owner_RecalculateStats();
-s32 Party_AdvanceOwnerCountToTarget();
+void Owner_RecalculateStats();
+void Party_AdvanceOwnerCountToTarget();
 s32 Inventory_AddItem();
 s32 Djinn_AddToOwner();
 s32 Djinn_Activate();
-s32 Owner_AdjustFirstValue();
 s32 Owner_AdjustSecondValue();
 s32 Party_RemoveActiveOwner();
 s32 Party_AddActiveOwner();
@@ -55,41 +47,6 @@ s32 DebugMenu_BrowseIcons(void);
 s32 Shop_ConfirmAct(void);
 s32 Menu_OpenCharacterSelector(void);
 
-/* Scene state, dialogue and command-table steps for resource_3ce. */
-
-/*
- * Table getter at 0x02000030. The eight-byte owner includes its one pool word
- * at 0x02000034, which holds 0x020093c8; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/*
- * Table getter at 0x0200003c. The eight-byte owner includes its one pool word
- * at 0x02000040, which holds 0x020093f8; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/*
- * Table getter at 0x02000044. The eight-byte owner includes its one pool word
- * at 0x02000048, which holds 0x020093fc; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/* Step by one until the query returns non-zero. The test sits at the bottom of
- * the loop and entry jumps to it. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Each symbol here is the per-site call word the overlay image holds -- one
- * word can serve two sites with different targets -- and the macro keeps the
- * site's own calling form. The names themselves are provisional. */
-
-/* Runs one setup call, then a long table of two-argument calls each passing
- * a slot index (0-3) and an associated code value, and finishes with a few
- * index-only calls. */
 static __inline__ void bump_step(s32 amount)
 {
     u8 *work = *(u8 **)Data_03001ebc;
@@ -97,11 +54,10 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-/* The sources call one another across files. */
-u8 *SceneData_GetTable93c8(void);
+u8 *MenuTest_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetTable93f8(void);
-u8 *SceneData_GetTable93fc(void);
+u8 *MenuTest_GetExits(void);
+u8 *MenuTest_GetPlacements(void);
 void SceneState_ApplyBlockC9b(void);
 void SceneState_ApplyBlockCc6(void);
 void SceneState_ApplyBlockCf1(void);
@@ -112,8 +68,8 @@ void SceneState_QueryTwoValues(void);
 void SceneState_ApplyZero(void);
 void CommandTable_NoOpCallback(void);
 void SceneState_SetRecordFlag53(void);
-s32 SceneData_GetTable9564(void);
-void FieldScene_ApplyTable9684ValueToFourSlots(void);
+s32 MenuTest_GetEvents(void);
+void MenuTest_RaisePartyLevelTarget(void);
 void FieldScene_GrantItemListToSlots(void);
 void CommandTable_ConfigureCommandGroups(void);
 void FieldScene_ApplySlotOffsetsAndFlags(void);
@@ -139,7 +95,7 @@ s32 DebugMenu_SelectCharacter(void);
 TEXT_MESSAGE_ENUM(MsgBattleAdditionalPsynergyHelp);
 TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
 
-void Event_SetValue1d8(s16 message);
+void Event_SetMessageId(s16 message);
 void BattleEv_RunWait(s32 mode, s32 frames);
 s32 PartyInventory_GiveItem(s32 item);
 
@@ -162,20 +118,18 @@ extern u8 gDebugItemCapacityLabel[];
 extern u8 gDebugItemFullLabel[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-struct TextRenderWork *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Engine_DebugRedrawWindow(struct TextRenderWork *window);
-void Engine_DebugClearWindow(struct TextRenderWork *window);
-void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
+struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Engine_DebugRedrawWindow(struct RenderInput *window);
+void Engine_DebugClearWindow(struct RenderInput *window);
+void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
-
 
 void CommandTable_ConfigureCommandGroups(void)
 {

@@ -349,7 +349,7 @@ Func_08127cd4:
 	b .L_08127f1a
 	.2byte 0x0000
 .L_08127f68:
-	.4byte Data_0812ce7c
+	.4byte BattleFormation_Records
 .L_08127f6c:
 	.4byte Data_0812ce94
 .L_08127f70:

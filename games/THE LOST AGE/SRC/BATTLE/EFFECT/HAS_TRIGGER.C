@@ -1,9 +1,25 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 
-s32 BattleFx_FindMatchingEvent(s32, s32, void *);
+struct PendingEvent;
 
-s32 BattleFx_HasMatchingEvent5(s32 effectId);
-void ObjectMotion_SnapToTerrain(void *object);
+
+
+s32 BattleFx_HasMatchingEvent5(s32 effectId)
+{
+    u16 kind = effectId;
+    s32 result = (s32)Func_080ce458(0xf0000005, kind, Func_080ce31c(kind));
+
+    return (u32)((-result) | result) >> 31;
+}
 
 u32 BattleFx_HasTrigger(u16 effectId)
 {

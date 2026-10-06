@@ -327,7 +327,7 @@ Func_080298c0:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [sp, #32]
 	str r1, [r7, #36]
 	str r1, [r7, #44]
@@ -454,7 +454,7 @@ Func_080298c0:
 .L_08029c54:
 	.4byte 0xffff0000
 .L_08029c58:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08029c5c:
 	.4byte gInput
 .L_08029c60:
@@ -466,7 +466,7 @@ Func_080298c0:
 .L_08029c6c:
 	.4byte IwramMulQ16
 .L_08029c70:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08029c74:
 	.4byte Data_0802ed28
 .L_08029c78:
@@ -903,7 +903,7 @@ Func_080298c0:
 	b .L_0802a064
 	.2byte 0x0000
 .L_08029ff4:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08029ff8:
 	.4byte 0xfffff000
 .L_08029ffc:
@@ -937,7 +937,7 @@ Func_080298c0:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r6, [sp, #32]
 	str r6, [r7, #36]
 	str r6, [r7, #44]

@@ -3,7 +3,6 @@
 
 s32 GameFlag_Test(s32 flag);
 
-/* Counts the party members who have joined: flags 0 to 7. */
 s32 Party_CountActiveOwners(void)
 {
     s32 count;

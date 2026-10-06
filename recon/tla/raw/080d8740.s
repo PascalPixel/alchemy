@@ -27,7 +27,7 @@ Func_080d8740:
 	lsls r0, r0, #14
 	adds r0, #132
 	str r3, [sp, #4]
-	bl Unnamed_080b0840Far
+	bl Shop_RestoreSceneTilesFar
 	movs r0, #30
 	bl WaitFrames
 	adds r2, r6, #0
@@ -119,7 +119,7 @@ Func_080d8740:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r1, r10
 	ldr r0, [r5, #80]
 	bl Func_080dc0d8
@@ -205,13 +205,13 @@ Func_080d8740:
 	ldr r3, [r5, #8]
 	adds r0, r6, #0
 	adds r1, #255
-	bl Func_080ebec8
+	bl EffectSlot_Initialize
 	adds r0, r6, #0
 	ldr r1, .L_080d8978
-	bl Func_080ebeb4
+	bl EffectSlot_SetCallback
 	adds r0, r6, #0
 	movs r1, #7
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	ldr r0, [r6]
 	movs r1, #9
 	bl Animation_ApplyChildValuesToRecordFar
@@ -240,8 +240,8 @@ Func_080d8740:
 	bge .L_080d8940
 	movs r0, #50
 	bl WaitFrames
-	bl Func_08108060
-	bl Func_080d7ab4
+	bl Shop_InitEffectFar
+	bl BattleFx_ClearActiveSlotsAndScheduleUpdates
 .L_080d8960:
 	add sp, #52
 	pop {r3, r5, r6, r7}

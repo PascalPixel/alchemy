@@ -1,14 +1,3 @@
-/*
- * Draft: InventoryMenu_SortByListOrder does not yet match; ☀️'s C scores 300
- * against the listing: three scheduling swaps (subs r6 before the items
- * load, the pool load before adds r2, ldrb before movs #0x7f). Permuting
- * 150s found nothing better.
- * Links as recon/tla/raw/080f8ce8.s.
- */
-/* Item menu: sort a fifteen-slot inventory by a list mode. Each pass of the
-   mode order takes one item type (bit 7: equipped items only) and moves the
-   matching items into the sorted list, highest item id first; the emptied
-   tail stays zero. */
 #include "TYPES.H"
 #include "ITEM.H"
 

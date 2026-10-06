@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 370\n"
 "X-Alchemy-Target: tbs-ja\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(きろくされてません)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(神殿からのスタートになります)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(まだクリアしてません)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(データがこわれています)"
 
@@ -8255,7 +8255,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "02061"
 msgstr "あいての にゅうりょくを まっています"
 
-msgctxt "message"
+msgctxt "MsgMysteryPersonName"
 msgid "02062"
 msgstr "なぞの男"
 
@@ -8311,7 +8311,7 @@ msgctxt "MsgItemAlreadyUsed"
 msgid "02075"
 msgstr "{argument_actor_name:233} つかおうとしたアイテムは{line_break}もう なくなっている!"
 
-msgctxt "message"
+msgctxt "MsgUsedItemBroke"
 msgid "02076"
 msgstr "{argument_item_name:234} こわれて使えなくなった!"
 
@@ -8359,7 +8359,7 @@ msgctxt "MsgDmgP"
 msgid "02087"
 msgstr "{argument_actor_name:234} {argument_signed_number}の ダメージ!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02088"
 msgstr "{argument_actor_name:234} しりょうのよびごえをきいた!"
 
@@ -8371,7 +8371,7 @@ msgctxt "MsgPpLossP"
 msgid "02090"
 msgstr "{argument_actor_name:234} {argument_signed_number}の EPダメージ!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02091"
 msgstr "{argument_actor_name:234} 力つきた・・・"
 
@@ -8419,7 +8419,7 @@ msgctxt "message"
 msgid "02102"
 msgstr "{argument_actor_name:234} すばやくかわした!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02103"
 msgstr "{argument_actor_name:224}ちは 戦いに やぶれた・・・"
 
@@ -8443,7 +8443,7 @@ msgctxt "MsgItemGained"
 msgid "02108"
 msgstr "{argument_item_name:134} 手に入れた"
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02109"
 msgstr "{argument_actor_name:234} 戦いに やぶれた・・・"
 
@@ -8547,11 +8547,11 @@ msgctxt "MsgNoEffect"
 msgid "02134"
 msgstr "しかし {argument_actor_name:230}は きかなかった!"
 
-msgctxt "message"
+msgctxt "MsgCastLacksPp"
 msgid "02135"
 msgstr "しかし EPがたりなかった!"
 
-msgctxt "message"
+msgctxt "MsgPsynergyBlocked"
 msgid "02136"
 msgstr "しかし エナジーをふうじられている!"
 
@@ -8951,7 +8951,7 @@ msgctxt "message"
 msgid "02235"
 msgstr "ジン"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02236"
 msgstr "けいけんち"
 
@@ -8963,19 +8963,19 @@ msgctxt "message"
 msgid "02238"
 msgstr "さいだいEP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02239"
 msgstr "せいじょう"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02240"
 msgstr "せんとうふのう"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02241"
 msgstr "げんざいの けいけんちです{line_break}つぎのレベルまであと{argument_signed_number}ひつようです"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02242"
 msgstr "ひょうじする キャラクターは{line_break}LRボタンできりかえられます"
 
@@ -9047,7 +9047,7 @@ msgctxt "message"
 msgid "02259"
 msgstr "かいじょするのかな?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02260"
 msgstr "ステータスは せいじょうです"
 
@@ -9123,7 +9123,7 @@ msgctxt "message"
 msgid "02278"
 msgstr "すばやさが {argument_signed_number}下がっています"
 
-msgctxt "message"
+msgctxt "MsgBattleNoItems"
 msgid "02279"
 msgstr "なにももっていません"
 
@@ -9131,7 +9131,7 @@ msgctxt "message"
 msgid "02280"
 msgstr "あいてがいません"
 
-msgctxt "message"
+msgctxt "MsgBattleNoPsynergy"
 msgid "02281"
 msgstr "つかえるエナジーがありません"
 
@@ -9147,11 +9147,11 @@ msgctxt "message"
 msgid "02284"
 msgstr "そうびをもっていません"
 
-msgctxt "message"
+msgctxt "MsgBattleItemNoEffect"
 msgid "02285"
 msgstr "使ってもこうかがありません"
 
-msgctxt "message"
+msgctxt "MsgBattleItemBroken"
 msgid "02286"
 msgstr "こわれています"
 
@@ -9159,7 +9159,7 @@ msgctxt "message"
 msgid "02287"
 msgstr "ジンをもっていません"
 
-msgctxt "message"
+msgctxt "MsgBattleItemUnavailable"
 msgid "02288"
 msgstr "せんとう中はつかえません"
 
@@ -9271,27 +9271,27 @@ msgctxt "MsgSlotsControls"
 msgid "02315"
 msgstr "A スロットスタート Bやめる"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02316"
 msgstr "R とめる"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02317"
 msgstr "とめるスロットをえらんだら"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02318"
 msgstr "みぎのレバーで スタート!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02319"
 msgstr "A とめる     "
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02320"
 msgstr "A まわす     "
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02321"
 msgstr "A スロットスタート"
 
@@ -9303,7 +9303,7 @@ msgctxt "message"
 msgid "02323"
 msgstr "B やめる"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02324"
 msgstr "すべてとめるとスタートできません"
 
@@ -9331,11 +9331,11 @@ msgctxt "message"
 msgid "02330"
 msgstr "パスワードあってるカモ。"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02331"
 msgstr "{argument_actor_name:234} 力つきた・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02332"
 msgstr "{protagonist_name}たちは ぜんめつした・・・。{end_wait}"
 
@@ -13459,7 +13459,7 @@ msgctxt "message"
 msgid "03362"
 msgstr "ジンをえらんでください"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "03363"
 msgstr "SEL:すべてセット"
 
@@ -13531,7 +13531,7 @@ msgctxt "message"
 msgid "03380"
 msgstr "L:キャラステータス"
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "03381"
 msgstr "げんざいのステータス"
 
@@ -14055,7 +14055,7 @@ msgctxt "message"
 msgid "03511"
 msgstr "うのパラメータ"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03512"
 msgstr "ポーズメニューは{line_break}ここではつかえません{end_wait}"
 
@@ -14123,7 +14123,7 @@ msgctxt "message"
 msgid "03528"
 msgstr "エナジーは せいしんパワーです{line_break}そして エナジーをもっている{line_break}者たちをエナジストとよびます{page_break}エナジーは クラスがかわったり{line_break}せいちょうで へんかします{line_break}いろいろ使ってみて下さい。"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialGive"
 msgid "03529"
 msgstr "もしも ジンをほかの人に{line_break}わたしたいなら こうして{line_break}いどうして下さい。{end_wait}"
 
@@ -14151,11 +14151,11 @@ msgctxt "message"
 msgid "03535"
 msgstr "それでは {actor_name:1}に{line_break}ボクの きょうりょくないちげきを{line_break}さっそく 使ってもらいます。{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03536"
 msgstr "ほら! ボクをときはなって{line_break}きょうりょくないちげきが{line_break}発動したでしょ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03537"
 msgstr "ときはなたれると ボクらジンは{line_break}スタンバイのじょうたいになります{line_break}そして・・・{end_now}"
 
@@ -14491,11 +14491,11 @@ msgctxt "MsgWeaponShopWelcome"
 msgid "03620"
 msgstr "おう いらっしゃい!{line_break}ウチの武器を 見てってくれよ。{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "03621"
 msgstr "おや せっかくだけど{line_break}お金がたりないようだぜ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "03622"
 msgstr "だれに わたすんだい?{end_now}"
 
@@ -14503,7 +14503,7 @@ msgctxt "MsgPackFull"
 msgid "03623"
 msgstr "おや {argument_actor_name:155}んは{line_break}もちものが いっぱいだぜ{line_break}だれに わたすんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "03624"
 msgstr "{argument_actor_name:155}んは そうびできないけど{line_break}それでも かまわないだろ?{end_now}"
 
@@ -14539,7 +14539,7 @@ msgctxt "MsgWhatWouldYouLike"
 msgid "03632"
 msgstr "どれを かってくれるんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "03633"
 msgstr "ほかにも かうかい?{end_now}"
 
@@ -15731,7 +15731,7 @@ msgctxt "message"
 msgid "03930"
 msgstr "戦士さん ゆっくりやすんだ{line_break}いってくる よろしネ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGlyphName"
 msgid "03931"
 msgstr "ロビン"
 

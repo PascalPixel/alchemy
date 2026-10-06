@@ -14,7 +14,7 @@ void Graphics_BuildSequentialTileTable(s32 *destination)
         count += 1;
         *destination++ = value;
         value += 0x04040404;
-    } while ((u32)count <= 0x3F);
+    } while (count >= 0 && count <= 0x3f);
 
     value = 0x03020100;
     count = 0;
@@ -22,7 +22,7 @@ void Graphics_BuildSequentialTileTable(s32 *destination)
         count += 1;
         *destination++ = value;
         value += 0x04040404;
-    } while ((u32)count <= 0x37);
+    } while (count >= 0 && count <= 0x37);
 
     fill = Iwram_FillWords;
     fill(destination, 0x220, -1);

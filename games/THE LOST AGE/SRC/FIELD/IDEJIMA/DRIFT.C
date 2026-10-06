@@ -2,8 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "RAM_BUFFER.H"
 
-/* The drifting island: its map set-up; DRIFT_SPAWN.C throws up its objects. */
-
 struct MapLayer {
     u8 unknown_00[6];
     s16 y;
@@ -17,8 +15,6 @@ struct MapWork {
     struct MapLayer layer;
 };
 
-/* Before the island drifts: sets two map layer values, copies one map cell and
-   gives actor 9 animation 2. */
 void DriftScene_Prepare(void)
 {
     struct MapLayer *layer = &Ram_HeapSlots->map_work->layer;

@@ -1,5 +1,3 @@
-/* Draft: removing the Japanese discarded villager lookup shortens this
- * function by 28 bytes. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.H"
 #include "TYPES.H"
 #include "CALL.H"
@@ -53,12 +51,8 @@ enum {
 
 void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
 
-/*
- * An actor climbs between the yard and the ledge in front of the house at
- * x 392, playing one animation for each half of the climb.
- */
-void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
-void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void PaletteGlow_Update(s32 a, s32 b);
 void FieldScene_RunLargeStagingSequence(void);
 void HaidiaMura_OpenVillagerLane(void);

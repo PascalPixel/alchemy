@@ -14,7 +14,7 @@ Func_080cb05c:
 	cmp r0, #0
 	beq .L_080cb08c
 	movs r0, #153
-	bl Func_080ad2e8
+	bl Party_FindOwnerWithActionFar
 	movs r3, #1
 	negs r3, r3
 	cmp r0, r3

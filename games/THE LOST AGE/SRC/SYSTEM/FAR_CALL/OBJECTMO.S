@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080c8088: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -9,10 +5,10 @@
 	.thumb_func
 Object_GetByIdFar:
 	overlay_veneer Object_GetById
-	.global Func_080c8090
+	.global ObjectTable_DestroyByIdFar
 	.thumb_func
-Func_080c8090:
-	overlay_veneer Func_080d36a8
+ObjectTable_DestroyByIdFar:
+	overlay_veneer ObjectTable_DestroyById
 	.global ObjectMotion_SetSpeedParametersFar
 	.thumb_func
 ObjectMotion_SetSpeedParametersFar:
@@ -49,10 +45,10 @@ ObjectMotion_ResetAndSetPositionInMode2Far:
 	.thumb_func
 ObjectMotion_SetPositionAndResetFar:
 	overlay_veneer ObjectMotion_SetPositionAndReset
-	.global ObjectMotion_SnapHeadingAndOffsetFar
+	.global ObjectMotion_CenterOnColumnFar
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffsetFar:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffset
+ObjectMotion_CenterOnColumnFar:
+	overlay_veneer ObjectMotion_CenterOnColumn
 	.global ObjectMotion_OffsetPositionAndResetMotionFar
 	.thumb_func
 ObjectMotion_OffsetPositionAndResetMotionFar:
@@ -61,22 +57,22 @@ ObjectMotion_OffsetPositionAndResetMotionFar:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivateFar:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivate
-	.global Func_080c80f8
+	.global ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.thumb_func
-Func_080c80f8:
-	overlay_veneer Func_080d3118
-	.global Func_080c8100
+ObjectMotion_SetHorizontalPositionWithTerrainFar:
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrain
+	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.thumb_func
-Func_080c8100:
-	overlay_veneer Func_080d3164
-	.global Func_080c8108
+ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar:
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
+	.global ObjectMotion_SetPositionWithTerrainFar
 	.thumb_func
-Func_080c8108:
-	overlay_veneer Func_080d31c0
-	.global Func_080c8110
+ObjectMotion_SetPositionWithTerrainFar:
+	overlay_veneer ObjectMotion_SetPositionWithTerrain
+	.global ObjectMotion_MoveToObjectFar
 	.thumb_func
-Func_080c8110:
-	overlay_veneer Func_080d3214
+ObjectMotion_MoveToObjectFar:
+	overlay_veneer ObjectMotion_MoveToObject
 	.global Object_SetModeByIdFar
 	.thumb_func
 Object_SetModeByIdFar:
@@ -105,10 +101,10 @@ ObjectMotion_SetVariantCallbackFar:
 	.thumb_func
 Motion_SetVarCbAndRefreshFar:
 	overlay_veneer Motion_SetVarCbAndRefresh
-	.global Func_080c8150
+	.global BattleFx_RunRisingObjectSequenceFar
 	.thumb_func
-Func_080c8150:
-	overlay_veneer Func_080d3460
+BattleFx_RunRisingObjectSequenceFar:
+	overlay_veneer BattleFx_RunRisingObjectSequence
 	.global ObjectMotion_SetAngleTowardFar
 	.thumb_func
 ObjectMotion_SetAngleTowardFar:
@@ -117,9 +113,9 @@ ObjectMotion_SetAngleTowardFar:
 	.thumb_func
 Object_LinkPairFar:
 	overlay_veneer Object_LinkPair
-	.global Func_080c8168
+	.global ObjectGroup_ConfigureChildValueFar
 	.thumb_func
-Func_080c8168:
+ObjectGroup_ConfigureChildValueFar:
 	overlay_veneer ObjectGroup_ConfigureChildValue
 	.global Object_SetPartAttributeFar
 	.thumb_func
@@ -129,10 +125,10 @@ Object_SetPartAttributeFar:
 	.thumb_func
 Func_080c8178:
 	overlay_veneer Func_080d3780
-	.global Func_080c8180
+	.global EventRuntime_SetMessageFar
 	.thumb_func
-Func_080c8180:
-	overlay_veneer Func_080d3be8
+EventRuntime_SetMessageFar:
+	overlay_veneer EventRuntime_SetMessage
 	.global UiText_OpenMessageAtObjectFar
 	.thumb_func
 UiText_OpenMessageAtObjectFar:
@@ -145,10 +141,10 @@ Func_080c8190:
 	.thumb_func
 Func_080c8198:
 	overlay_veneer Func_080d406c
-	.global Func_080c81a0
+	.global EventRuntime_ShowMessageAndWaitFar
 	.thumb_func
-Func_080c81a0:
-	overlay_veneer Func_080d407c
+EventRuntime_ShowMessageAndWaitFar:
+	overlay_veneer EventRuntime_ShowMessageAndWait
 	.global Func_080c81a8
 	.thumb_func
 Func_080c81a8:
@@ -173,25 +169,25 @@ Event_ShowCounterAtPositionFar:
 	.thumb_func
 ObjectMotion_ArmCallbackFar:
 	overlay_veneer ObjectMotion_ArmCallback
-	.global Func_080c81d8
+	.global ObjectMotion_ArmCallbackAndRefreshFar
 	.thumb_func
-Func_080c81d8:
+ObjectMotion_ArmCallbackAndRefreshFar:
 	overlay_veneer ObjectMotion_ArmCallbackAndRefresh
-	.global Func_080c81e0
+	.global Object_ResetTargetAndSetMode1Far
 	.thumb_func
-Func_080c81e0:
+Object_ResetTargetAndSetMode1Far:
 	overlay_veneer Object_ResetTargetAndSetMode1
 	.global ObjectTable_RunIfActiveFar
 	.thumb_func
 ObjectTable_RunIfActiveFar:
 	overlay_veneer ObjectTable_RunIfActive
-	.global Func_080c81f0
+	.global Battle_ShowPairedUnitWorkAndWaitFar
 	.thumb_func
-Func_080c81f0:
+Battle_ShowPairedUnitWorkAndWaitFar:
 	overlay_veneer Func_080d41fc
-	.global Func_080c81f8
+	.global Ui_SetRenderResultFromObjectFar
 	.thumb_func
-Func_080c81f8:
+Ui_SetRenderResultFromObjectFar:
 	overlay_veneer Func_080d4330
 	.global ObjectMotion_SetActionVariantFar
 	.thumb_func
@@ -217,10 +213,10 @@ ObjectVisual_CopyAttributesFar:
 	.thumb_func
 Object_AttachWorkTargetToObjectFar:
 	overlay_veneer Object_AttachWorkTargetToObject
-	.global Func_080c8230
+	.global ObjectTable_AllocateAndSetObjectSpeedFar
 	.thumb_func
-Func_080c8230:
-	overlay_veneer Func_080d43ec
+ObjectTable_AllocateAndSetObjectSpeedFar:
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeed
 	.global Motion_CamBoundsFar
 	.thumb_func
 Motion_CamBoundsFar:

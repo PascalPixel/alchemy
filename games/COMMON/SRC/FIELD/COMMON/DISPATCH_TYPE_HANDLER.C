@@ -1,14 +1,21 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 s32 BattleFx_Run(void);
 s32 BattleFx_DispatchRequestKind(void);
-void BattleFx_ClearChildValueOnMismatch(void);
 
-void FieldEvent_RunTypeHandler(void);
 
 void Field_DispatchTypeHandler(s32 kind)
 {
-    /* 種別0から3に対応する初期化処理を呼ぶ。 */
     if (kind == 0) {
         BattleFx_Run();
     } else if (kind == 1) {

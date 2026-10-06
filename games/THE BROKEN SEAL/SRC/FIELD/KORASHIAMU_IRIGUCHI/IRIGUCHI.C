@@ -1,46 +1,21 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "STATUS.H"
+#include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gKorashiamuIriguchiEntrances1[];
-extern const struct SceneEntrance gKorashiamuIriguchiEntrances3[];
-extern const struct SceneEntrance gKorashiamuIriguchiEntrancesOther[];
 
-extern const u32 gKorashiamuIriguchiExits[];
 
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance5[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance7[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance8[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance12[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance66[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements3Flag950[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements3Flag962[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements3[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacementsOther[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents2[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents1Entrance12[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents1[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents3[];
-extern const struct SceneEvent gKorashiamuIriguchiEventsOther[];
 
-extern u8 MsgKorashiamuAmNavampaGondowanSixthRanked[];
-extern u8 MsgKorashiamuColosseumAlreadyFullIfReally[];
-extern u8 MsgKorashiamuColossosLuckyGuessMakesBattles[];
-extern u8 MsgKorashiamuDekkaMustWinFinalsDekka[];
-extern u8 MsgKorashiamuDoKnowLuckyGuess[];
-extern u8 MsgKorashiamuHoldOnSecond[];
-extern u8 MsgKorashiamuHopingGetInSeeColosso[];
-extern u8 MsgKorashiamuImBufordSeventhSeed[];
-extern u8 MsgKorashiamuImRatedAsSecondBest[];
-extern u8 MsgKorashiamuLookImSorryButWe[];
-extern u8 MsgKorashiamuWaahDontFrightenMe[];
-extern u8 MsgKorashiamuWantTryOutLuckyGuess[];
-extern u8 MsgKorashiamuWantWatchFinalsFromGood[];
-extern u8 MsgKorashiamuWantWinBigPutOn[];
-extern u8 MsgKorashiamuWhoHaveComeQuestionMe[];
-extern u8 MsgKorashiamuYouReadyForFinals[];
 void SceneState_ForwardMaskedHalfwordWith10();
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -64,9 +39,6 @@ const u32 *Scene_GetExits(void)
     return gKorashiamuIriguchiExits;
 }
 
-/* The actors placed at the Colosso entrance. In the first scene the
-   entrance the party came by picks the table; in the third, flags 0x950
-   and 0x962. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     const struct ScenePlacement *table;
@@ -101,9 +73,9 @@ const struct ScenePlacement *Scene_GetPlacements(void)
             break;
         }
     } else if (gGameState.scene == (s32)&SceneId_KorashiamuIriguchi3) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             table = gKorashiamuIriguchiPlacements3Flag950;
-        } else if (GameFlag_IsSet(0x962) != 0) {
+        } else if (Engine_GameFlagIsSet(0x962) != 0) {
             table = gKorashiamuIriguchiPlacements3Flag962;
         } else {
             table = gKorashiamuIriguchiPlacements3;
@@ -114,8 +86,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return table;
 }
 
-/* What the Colosso entrance answers; entrance 12 of the first scene has its
-   own events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -135,16 +105,15 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKorashiamuIriguchiEventsOther;
 }
 
-/* The Colosso entrance's talk with its visitors and competitors. */
 void SceneDialogue_RunActor10MessageByFlag962(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x962)) {
+    if (Engine_GameFlagIsSet(0x962)) {
         Engine_EventSetMessage((s32)MsgKorashiamuColosseumAlreadyFullIfReally);
-        Event_ShowMessage(10, 0);
+        Engine_EventShowMessage(10, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKorashiamuHopingGetInSeeColosso);
-        Event_AskYesNo(10, 0);
+        Engine_EventAskYesNo(10, 0);
     }
     Engine_EventEnd();
 }
@@ -152,39 +121,39 @@ void SceneDialogue_RunActor10MessageByFlag962(void)
 void SceneDialogue_RunActor13MessageByFlag962(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x962)) {
-        Actor_ShowEmote(13, 258, 40);
+    if (Engine_GameFlagIsSet(0x962)) {
+        Engine_ActorShowEmote(13, 258, 40);
         Engine_EventSetMessage((s32)MsgKorashiamuWantWatchFinalsFromGood);
-        Event_ShowMessage(13, 0);
+        Engine_EventShowMessage(13, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKorashiamuColossosLuckyGuessMakesBattles);
-        Event_ShowMessage(13, 0);
+        Engine_EventShowMessage(13, 0);
     }
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_02000334(void)
+void KorashiamuIriguchi_TalkToActorFourteen(void)
 {
     u32 i;
     s32 record;
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x962) != 0) {
+    if (Engine_GameFlagIsSet(0x962) != 0) {
         Engine_ActorRunRepeatedMotion(14, 2);
         Engine_EventSetMessage((s32)MsgKorashiamuHoldOnSecond);
         FieldScene_CallPairWith10(14);
         Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 0);
         Engine_EventWait(20);
-        Event_AskYesNo(14, 0);
+        Engine_EventAskYesNo(14, 0);
         SceneState_ForwardMaskedHalfwordWith10(14, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKorashiamuWantWinBigPutOn);
-        Event_ShowMessage(14, 0);
+        Engine_EventShowMessage(14, 0);
     }
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_0200039c(void)
+void KorashiamuIriguchi_TryLuckyGuess(void)
 {
     u32 i;
     s32 record;
@@ -197,11 +166,11 @@ void FieldScene_RunScene3b9_0200039c(void)
             Engine_EventSetMessage((s32)MsgKorashiamuWantTryOutLuckyGuess);
             Event_OpenMessage(16, 0);
             if (Engine_EventChooseYesNo(0, 0) == 0) {
-                bump_step(1);
+                gEventWork->message++;
                 Actor_ShowEmote(16, 0x100, 40);
                 Event_OpenMessage(16, 0);
                 if (Engine_EventChooseYesNo(0, 0) == 0) {
-                    bump_step(1);
+                    gEventWork->message++;
                 }
                 Engine_EventWait(40);
                 Event_ShowMessage(16, 0);
@@ -218,10 +187,10 @@ void FieldScene_RunScene3b9_0200039c(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_02000468(void)
+void KorashiamuIriguchi_IntroduceSecondSeed(void)
 {
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(13);
@@ -231,16 +200,16 @@ void FieldScene_RunScene3b9_02000468(void)
     Engine_EventSetMessage((s32)MsgKorashiamuImRatedAsSecondBest);
     FieldScene_CallPairWith10(13);
     Engine_ActorRunRepeatedMotion(13, 1);
-    Event_ShowMessage(13, 0);
+    Engine_EventShowMessage(13, 0);
     {
-        u16 *target = (u16 *)(rec7 + 100);
-        s32 shown = 0x2d0;
+        u16 *target = (u16 *)&rec7->timer;
+        u16 shown = 0x2d0;
 
         *target = shown;
     }
     {
-        u16 *target = (u16 *)(rec7 + 102);
-        s32 shown = 112;
+        u16 *target = (u16 *)&rec7->work;
+        u16 shown = 112;
 
         *target = shown;
     }
@@ -248,7 +217,7 @@ void FieldScene_RunScene3b9_02000468(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_020004c8(void)
+void KorashiamuIriguchi_FrightenActorFourteen(void)
 {
     u32 i;
     s32 record;
@@ -277,7 +246,7 @@ void SceneDialogue_ShowLine2118WithActor15Steps(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_0200055c(void)
+void KorashiamuIriguchi_CheerForDekka(void)
 {
     u32 i;
     s32 record;
@@ -318,7 +287,7 @@ void FieldScene_RunActorSeventeenDialogueSteps(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_02000648(void)
+void KorashiamuIriguchi_IntroduceSeventhSeed(void)
 {
     u32 i;
     s32 record;
@@ -329,7 +298,7 @@ void FieldScene_RunScene3b9_02000648(void)
     FieldScene_CallPairWith10(18);
     Actor_FaceDirection(18, 0xd000, 20);
     Actor_FaceDirection(18, 0xb000, 20);
-    Actor_FaceDirection(18, 0x8000, 40);
+    Actor_FaceDirection(18, FACING_WEST, 40);
     Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
     FieldScene_CallPairWith10(18);
     Engine_ActorSetAnimationAndWait(18, 3);
@@ -338,14 +307,14 @@ void FieldScene_RunScene3b9_02000648(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_020006bc(void)
+void KorashiamuIriguchi_AskReadyForFinals(void)
 {
     Engine_EventBegin();
     Engine_ActorFaceEachOther(8, ACTOR_PARTY_LEADER, 20);
     Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
-    Event_OpenMessage(8, 0);
+    Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0)
-        bump_step_now(1);
-    Event_ShowMessage(8, 0);
+        gEventWork->message++;
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }

@@ -27,7 +27,7 @@ Func_080e9090:
 	bl BattleEffect_InitializeSharedScene
 	movs r1, #0
 	ldr r0, [r5, #16]
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	movs r0, #1
 	bl Func_080e89e4
 	bl Func_080e8cfc

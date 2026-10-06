@@ -1,39 +1,37 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
+#include "FIELD_EVENT.H"
 
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, s32 effect);
-void Engine_GameFlagClear(s32 flag);
 
-/*
- * Overlay resource_3cc: in-image table getters and the scene state helpers
- * that pair a value update with a follow-up counter write.
- */
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
-u8 *SceneData_GetTable81a8(void)
+u8 *TestRooms_GetEntrances(void)
 {
-    return (u8 *)0x020081a8;
+    return TestRooms_Entrances;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
-u8 *SceneData_GetTable81d8(void)
+u8 *TestRooms_GetExits(void)
 {
-    return (u8 *)0x020081d8;
+    return TestRooms_Exits;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
-u8 *SceneData_GetTable81ec(void)
+u8 *TestRooms_GetPlacements(void)
 {
-    return (u8 *)0x020081ec;
+    return TestRooms_Placements;
 }
 
 void State_ApplyValues8And0And0Then30(void)
@@ -60,16 +58,11 @@ void State_ApplyValues11And3And0Then6c(void)
     Engine_GameFlagClear(0x6C);
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
-u8 *SceneData_GetTable8264(void)
+u8 *TestRooms_GetEvents(void)
 {
-    return (u8 *)0x02008264;
+    return TestRooms_Events;
 }
 
-/*
- * Overlay entry point, reached through the loader-relocated call word at
- * image offset 4. It sequences nothing and returns zero.
- */
 s32 Scene_RunEmptyScene(void)
 {
     return 0;

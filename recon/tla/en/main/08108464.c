@@ -12,11 +12,6 @@ void Shop_Run(s32, s32);
 #define FINAL_ARG 1
 #endif
 
-/*
- * This owner's view of gGameState, which games/THE BROKEN SEAL/INCLUDE/BATTLE_EFFECT_RUNTIME.H
- * declares as `struct BattleWork`. Two fields are evidence here; the paddings
- * are arithmetic to reach them.
- */
 struct Work_080b0444 {
     u8 padding0[0x10];
     s32 value10;
@@ -27,8 +22,6 @@ struct Work_080b0444 {
 extern struct Work_080b0444 gGameState;
 
 void *Owner_GetStateFar(s32);
-
-/* 固定値を設定し、3つの項目フラグを1にする。 */
 
 s32 Battle_ApplyPresetItemsAndFlags(void)
 {

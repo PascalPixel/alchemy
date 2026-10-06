@@ -14,7 +14,7 @@ Func_080db0b0:
 	movs r0, #0
 	sub sp, #20
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	mov r8, r0
 	adds r0, r5, #0
@@ -278,7 +278,7 @@ Func_080db0b0:
 	strb r3, [r4]
 	movs r1, #0
 	mov r0, r8
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r0, #5
 	bl WaitFrames
 	mov r0, r8
@@ -306,7 +306,7 @@ Func_080db0b0:
 .L_080db31c:
 	.4byte 0x00000000
 .L_080db320:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080db324:
 	.4byte .L_080db1e8
 .L_080db328:
@@ -423,7 +423,7 @@ Func_080db0b0:
 	bl Object_SetMode
 	mov r0, r8
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	add r1, sp, #8
 	ldrb r1, [r1]
 	mov r2, r11

@@ -40,7 +40,7 @@ Func_080cd5bc:
 	cmp r1, r3
 	bge .L_080cd60c
 	adds r0, r7, #0
-	bl Func_080cdea8
+	bl EventRuntime_RunMessage
 	b .L_080cd674
 .L_080cd60c:
 	adds r0, r6, #0
@@ -82,7 +82,7 @@ Func_080cd5bc:
 .L_080cd654:
 	movs r0, #129
 	bl Audio_PlayCue
-	bl Func_080d5e64
+	bl ObjectEffect_BeginContextEffect25
 	b .L_080cd66a
 .L_080cd660:
 	movs r0, #123

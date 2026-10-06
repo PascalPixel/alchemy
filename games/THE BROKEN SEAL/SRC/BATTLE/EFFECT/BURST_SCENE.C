@@ -1,3 +1,16 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "ANIMSPR.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -11,36 +24,17 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
+#include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
-    s32 anchor, s32 *out_x, s32 *out_y);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
+
+void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
-void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
-/* Seven bytes for each burst scene: which burst sheet and palette it uses,
-   how many bursts strike, how many motes each wakes, how far apart they are,
-   how long the scene runs and whether a burst flashes the canvas. */
-extern u8 BurstScene_Records[];
-extern u16 ParticleStreams_CellOffsets[];
 
-/* Battle effect: bursts strike the target one after another. Each shows six
-   frames of the burst sheet (or, on its odd pairs, of the wide streak in the
-   map cell buffer), makes the target react on its third frame and wakes a
-   handful of the motes waiting above it, then leaves a fading column. The
-   motes fall, bounce and shrink until their life in variant runs out. */
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 {
     struct EffectPosition actor_position;
@@ -49,12 +43,10 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     s32 screen_x;
     s32 screen_y;
     DrawRectangle draw[2];
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
-    void *sheet;
+    u8 *sheet;
     struct BattleCamera *camera;
     struct MotionObject *target;
     u8 *palette;
@@ -64,31 +56,29 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     s32 i;
     s32 j;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    sheet = heap_cache[2];
-    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    sheet = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000052 = 0x1010;
-    if (work->effect->unknown_001c == 1)
+    REG_BLDALPHA = 0x1010;
+    if (work->effect->prelude == 1)
         BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side, 2, &screen_x, &screen_y);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
     for (row = 0; row != 288; row++) {
         for (column = 0; column != 40; column++) {
             s32 source = row * 40 + column;
             s32 offset = row * 20 + column / 2 + 0x5100;
 
-            ((u8 *)work)[offset] = ((u8 *)work)[source];
+            work->sheet[offset] = work->sheet[source];
         }
     }
     if (BurstScene_Records[variant * 7] == 0)
-        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1, 1);
     else
-        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, Ram_MapCellBuffer + 0x5e00, 1, 0);
     switch (BurstScene_Records[variant * 7 + 1]) {
     case 0:
@@ -110,7 +100,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_position);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 768; i++) {
         struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -132,14 +122,14 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
         EffectPosition_ApplyStepAndYOffset(work->effect->actor, &actor_position);
         actor_position.x /= 2;
         if (work->effect->side == 0) {
-            BattleEffect_LoadWork(46, 7, 7, 3, 2);
-            BattleEffect_LoadWork(47, 7, 7, 11, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
         } else {
-            BattleEffect_LoadWork(46, 7, 7, 7, 2);
-            BattleEffect_LoadWork(47, 7, 7, 15, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
         }
-        draw[0] = gWorkSlot[46];
-        draw[1] = gWorkSlot[47];
+        draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+        draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != bursts; i++) {
             s32 start = i * BurstScene_Records[variant * 7 + 4];
 
@@ -148,10 +138,10 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 
                 if ((i & 3) <= 1 || BurstScene_Records[variant * 7] == 1) {
                     if (work->effect->side == 0)
-                        draw[i & 1](canvas, (u8 *)work + step * 3456,
+                        draw[i & 1](canvas, work->sheet + step * 3456,
                             target_position.x / 2 - 16, target_position.y - 40, 48, 72);
                     else
-                        draw[i & 1](canvas, (u8 *)work + step * 3456,
+                        draw[i & 1](canvas, work->sheet + step * 3456,
                             target_position.x / 2 - 32, target_position.y - 40, 48, 72);
                 } else {
                     if (work->effect->side == 0)
@@ -180,17 +170,17 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                     ((struct EffectStep *)Ram_MapCellBuffer)[i * 32 + j].variant = (Random16() & 7) + 15;
             }
             if (frame >= start + 2 && frame < start + 14)
-                draw[0](canvas, (u8 *)work + ((frame - start - 2) / 2) * 960 + 0x5100,
+                draw[0](canvas, work->sheet + ((frame - start - 2) / 2) * 960 + 0x5100,
                     target_position.x / 2 - 10, target_position.y - 24, 20, 48);
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
-        BattleEffect_LoadWork(46, 7, 7, 3, 3);
-        BattleEffect_LoadWork(47, 7, 7, 3, 2);
-        draw[0] = gWorkSlot[46];
-        draw[1] = gWorkSlot[47];
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+        draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+        draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != 512; i++) {
             struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
@@ -201,7 +191,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                 position.x /= 2;
                 size >>= 3;
                 size++;
-                draw[(i / 2) & 1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[(i / 2) & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
                 if (mote->y < 0x80000)
@@ -209,65 +199,30 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                 mote->variant--;
             }
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
-
-/* A rock of the rising wall: two bits of its tenth byte pick its draw
-   variant. */
-struct WallRock {
-    u8 reserved_00[9];
-    u8 flags09_0 : 2;
-    u8 variant : 2;
-    u8 flags09_4 : 4;
-    u8 reserved_0a[28];
-    u8 enabled;
-};
 
 struct WallScale {
     s32 x;
     s32 y;
 };
 
-struct WallRock *GetBattleEffectObject(s32 kind);
-void Object_InitializeMode(struct WallRock *object, s32 animation);
-void Object_ApplyProjectedPlacementFar(struct WallRock *object, s32 *position,
-    struct WallScale *scale, s32 mode);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);
+void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, s32 *position, struct WallScale *scale, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
-/* The wall sheet as it is repacked into the work block: where each of the
-   nine wall rows and the three mound cells starts, and how wide and tall
-   they are. */
-extern u16 RisingWall_RowSheetOffsets[];
-extern u8 RisingWall_RowWidths[];
-extern u16 RisingWall_MoundSheetOffsets[];
-extern u8 RisingWall_MoundWidths[];
-extern u8 RisingWall_MoundHeights[];
-/* BG2's horizontal start for each side and variant, in whole pixels. */
-extern s8 RisingWall_Bg2Shifts[][3];
-/* Where the six rocks that join later first fall. */
-extern u8 RisingWall_LateRockColumns[];
 extern const struct WallScale RisingWall_UnitScale;
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: a wall of earth. Two mirrored halves of a mound rise, a
-   column of wall rows scrolls up between them and later back down, the full
-   wall stands for seventy-two frames while dust falls in front of it, and
-   eleven rocks drop along it one after another, each respawning until the
-   wall goes. Every affected unit reacts while the wall stands.
-
-   The wall sheet is repacked into work->sheet a byte at a time, the palette
-   destination and the wall's width are named once in locals, and the mound
-   cell is its own variable: each is what the code's register use shows. */
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -275,7 +230,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw[2];
-    void *sheet;
+    u8 *sheet;
     s32 bias;
     s32 offset;
     struct WallScale scale;
@@ -297,9 +252,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     if (work->effect->variant == 0)
-        *(volatile u16 *)0x04000020 = 204;
+        REG_BG2PA = 204;
     else if (work->effect->variant == 1)
-        *(volatile u16 *)0x04000020 = 170;
+        REG_BG2PA = 170;
     if (work->effect->side == 1) {
         bias = 8;
         if (work->effect->variant == 0)
@@ -312,7 +267,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         bias = -16;
         offset = -12;
     }
-    *(volatile u32 *)0x04000028 =
+    REG_BG2X =
         RisingWall_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
     Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer, 1, 0);
     Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
@@ -360,24 +315,24 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     }
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     for (i = 0; i != 11; i++) {
-        struct WallRock *object = GetBattleEffectObject(390);
+        struct AnimationObject *object = GetBattleEffectObject(390);
 
         work->objects[i] = object;
         if (object != 0) {
-            object->enabled = 0;
-            Object_InitializeMode(object, i / 4);
-            ((struct WallRock *)work->objects[i])->variant = 1;
+            object->flags = 0;
+            AnimationObjects_SelectAnimationFar(object, i / 4);
+            ((struct AnimationObject *)work->objects[i])->part[0].priority = 1;
         }
     }
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = gWorkSlot[46];
-    BattleEffect_LoadWork(47, 7, 7, 7, 2);
-    draw[1] = gWorkSlot[47];
-    *(volatile u16 *)0x04000050 = 0x3f46;
-    *(volatile u16 *)0x04000052 = 0x1010;
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+    draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    REG_BLDCNT = 0x3f46;
+    REG_BLDALPHA = 0x1010;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     for (i = 0; i != 11; i++) {
         struct EffectStep *rock = &work->particles[10 + i];
 
@@ -399,7 +354,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         dust->velocity_y = ((Random16() & 63) + 32) << 13;
         dust->variant = Random16() & 31;
     }
-    *(volatile u16 *)0x0400000c = 0x785;
+    REG_BG2CNT = 0x785;
     work->shake_frames = 250;
     for (frame = 0; frame != 192; frame++) {
         if (frame == 0)
@@ -415,9 +370,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 
             if (cell > 2)
                 cell = (cell & 1) + 1;
-            draw[0](canvas, (u8 *)work + RisingWall_MoundSheetOffsets[cell], bias - RisingWall_MoundWidths[cell] + 64,
+            draw[0](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell], bias - RisingWall_MoundWidths[cell] + 64,
                 116 - RisingWall_MoundHeights[cell], RisingWall_MoundWidths[cell], RisingWall_MoundHeights[cell]);
-            draw[1](canvas, (u8 *)work + RisingWall_MoundSheetOffsets[cell], bias + 64,
+            draw[1](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell], bias + 64,
                 116 - RisingWall_MoundHeights[cell], RisingWall_MoundWidths[cell], RisingWall_MoundHeights[cell]);
         }
         if (frame >= 12 && frame <= 87) {
@@ -428,9 +383,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
             if (row > 7)
                 row = 7;
             for (i = 0; i != 4; i++) {
-                draw[0](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
+                draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
-                draw[1](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias + 64,
+                draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
             }
         }
@@ -442,9 +397,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
             if (row > 7)
                 row = 7;
             for (i = 0; i != 4; i++) {
-                draw[0](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
+                draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
-                draw[1](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias + 64,
+                draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
             }
         }
@@ -463,7 +418,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
                 if (dust->variant == 0) {
                     s32 size = (i & 3) + 5;
 
-                    draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
                     dust->y -= dust->velocity_y;
                     if (dust->y < 0 && frame <= 159)
@@ -542,9 +497,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     for (i = 0; i != 11; i++)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     BattleFx_EndCanvasLayer();

@@ -1,7 +1,15 @@
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-extern u8 Data_0804f124[];
-extern u8 Data_0804eb58[];
+
+
 s32 Ui_CountIconTableEntries(void)
 {
-    return (s32)((u32)Data_0804f124 - (u32)Data_0804eb58) >> 2;
+    return (UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers) >> 2;
 }

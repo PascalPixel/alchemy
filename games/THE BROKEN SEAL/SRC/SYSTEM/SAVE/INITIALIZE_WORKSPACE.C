@@ -1,17 +1,8 @@
+#include "RUNTIME_MEM.H"
 #include "SAVE_STATE.H"
 #include "SYSTEM.H"
+#include "IRQ.H"
 
-typedef void (*InterruptHandler)(void);
-extern InterruptHandler Data_030000e0[];
-
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index);
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
-
-/* Allocates the save workspace, waits for the flash chip to identify itself
-   (eight tries, a frame apart; returns 1 if it never does), then reads all
-   sixteen slots: a slot with the signature, a record id below sixteen and a
-   good checksum is marked occupied, and of two slots holding the same record
-   only the one with the later sequence number stays. */
 s32 SaveState_InitializeWorkspace(void)
 {
     struct SaveWorkspace *work;
@@ -23,7 +14,7 @@ s32 SaveState_InitializeWorkspace(void)
     work = Runtime_AllocateBlock(0x33, sizeof(*work));
     zero = 0;
     START_DMA(&zero, work, 0x85000440);
-    SetFlashTimerIntr(2, &Data_030000e0[5]);
+    SetFlashTimerIntr(2, &gIrqHandlers[5]);
 
     for (index = 0; index < 8; index++) {
         if ((u16)IdentifyFlash() == 0)
@@ -56,8 +47,6 @@ s32 SaveState_InitializeWorkspace(void)
         if (status != 0)
             continue;
 
-        /* The checksum was good, so status is zero: it is the counter of
-           the search through the slots read so far. */
         work->occupied[index] = 1;
         work->record_id[index] = record;
         if (status < index) {

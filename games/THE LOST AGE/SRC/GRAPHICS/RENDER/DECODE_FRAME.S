@@ -1,20 +1,3 @@
-@ Frame decoder. Each of its three loaders (the functions at 0x08021a84,
-@ 0x0802386c and 0x08023e18) allocates a 0x2c8-byte heap block and has DMA3
-@ copy the 488 bytes from 0x08020da8 to 0x08020f90 into it (pools {0x2c8,
-@ 0x08020f90, 0x08020da8} at 0x08021e00, 0x08023bf4 and 0x08023ee4); the
-@ remaining 224 bytes of the block are a table the decoder fills at run time.
-@ Behind a 4-byte Thumb entry (bx pc) the ARM decoder enters its unrolled
-@ copy loop with add pc, pc, r2, lsl #2, dispatches through halfword code
-@ offsets (ldrsh r4, [pc, r4]; add pc, pc, r4) and keeps its mode word with
-@ str r2, [pc, #124]; GCC emits neither jumps into unrolled code nor
-@ PC-relative stores. After that entry these 472 bytes equal TBS
-@ GRAPHICS/RENDER/DECODE.S (0x08009bb8) apart from one IWRAM address in the
-@ literal pool (0x03001174 for 0x03001c90). The Thumb entry, which is TLA's
-@ own, and the nop that add pc, pc, r2, lsl #2 always skips carry no credit.
-@ The data after its final return (the mode word, two table addresses and
-@ the 224-byte table, 0x08020f84..0x08021070) is DECODE_FRAME_DATA.S,
-@ uncredited as TBS GRAPHICS/RENDER/DECODE_DATA.S.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, text decoder (instance 1)
 .syntax unified
 	.thumb
 	.global Render_DecodeFrameCode

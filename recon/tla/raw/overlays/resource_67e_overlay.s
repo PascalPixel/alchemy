@@ -527,8 +527,8 @@ Func_02000438:
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_02000db0
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02000d08
 	pop {r5, r6, pc}
 	.2byte 0x0000
@@ -786,7 +786,7 @@ Func_0200060c:
 	pop {pc}
 	.2byte 0x0000
 .L_020086a0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x020086a4,"ax",%progbits
 	.global Func_020006a4
 	.thumb_func
@@ -1205,7 +1205,7 @@ Func_020009d0:
 	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_02008a90
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	bl Func_020006a4
 .L_02008a90:
 	movs r0, #144
@@ -1400,7 +1400,7 @@ Func_02000bdc:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #129
 	bl Func_02000e08
 	movs r2, #16

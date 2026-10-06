@@ -63,7 +63,7 @@ Owner_LevelUp:
 	str r0, [r2]
 .L_080af994:
 	mov r0, r11
-	bl Owner_GetRecordStride180
+	bl Character_GetDefinition
 	movs r2, #0
 	ldrsh r3, [r6, r2]
 	adds r1, r0, #0

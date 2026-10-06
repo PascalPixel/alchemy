@@ -98,7 +98,7 @@ Game_ResetForNewGame:
 	bl GameFlag_ClearBit
 	b .L_080c9a28
 .L_080c9a00:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080c9a04:
 	.4byte Field_SceneTable
 .L_080c9a08:
@@ -152,12 +152,12 @@ Game_ResetForNewGame:
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
-	bl Func_08014c6c
+	bl Runtime_SetIrqHandler
+	bl Runtime_InitializeHeap
 	bl Func_08014b70
 	b .L_080c9a98
 	.2byte 0x0000
@@ -168,7 +168,7 @@ Game_ResetForNewGame:
 .L_080c9a90:
 	.4byte gPartyState
 .L_080c9a94:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_080c9a98:
 	bl Func_08014368
 	mov r1, r8
@@ -198,7 +198,7 @@ Game_ResetForNewGame:
 	cmp r3, r2
 	bne .L_080c9b7a
 	adds r0, r6, #0
-	bl Func_081180a0
+	bl Battle_RunEncounterFar
 	adds r6, r0, #0
 	b .L_080c9b7a
 .L_080c9ad8:
@@ -292,7 +292,7 @@ Game_ResetForNewGame:
 	movs r3, #0
 	ldrsh r0, [r2, r3]
 	bl Func_080c9c38
-	bl Func_080ca1bc
+	bl Scene_ResolveInteractionResult
 	adds r0, r5, #0
 	bl GameFlag_Test
 	cmp r0, #0
@@ -307,7 +307,7 @@ Game_ResetForNewGame:
 	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_080c9bc4
-	bl Func_080c9dc8
+	bl Party_PlaySavedMusic
 	b .L_080c9bec
 .L_080c9bc4:
 	movs r0, #141
@@ -328,7 +328,7 @@ Game_ResetForNewGame:
 	bl Audio_PlayCue
 	b .L_080c9bec
 .L_080c9be8:
-	bl Func_080c9dc8
+	bl Party_PlaySavedMusic
 .L_080c9bec:
 	ldr r3, .L_080c9c0c
 	mov r0, r10
@@ -338,7 +338,7 @@ Game_ResetForNewGame:
 	adds r3, r3, r1
 	strh r2, [r3]
 	movs r0, #0
-	bl Func_080c9c10
+	bl BattleFx_LoadResourceGroup
 	adds r0, r6, #0
 	bl Func_080cb91c
 	bl Func_080c9694

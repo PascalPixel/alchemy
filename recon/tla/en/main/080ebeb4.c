@@ -1,4 +1,5 @@
-
+#include "TYPES.H"
+#include "EFFECT_SLOT.H"
 
 void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
 {

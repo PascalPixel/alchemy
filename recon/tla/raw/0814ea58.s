@@ -292,7 +292,7 @@ Func_0814ea58:
 	movs r0, #133
 	bl Func_081180e8
 .L_0814ec9c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork
@@ -372,7 +372,7 @@ Func_0814ea58:
 	adds r0, r7, #0
 	adds r1, r6, #0
 	ldrb r5, [r3, r4]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	asrs r4, r3, #1
 	str r4, [r6]

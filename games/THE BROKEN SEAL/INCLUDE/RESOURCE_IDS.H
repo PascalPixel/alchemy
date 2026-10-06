@@ -1,17 +1,13 @@
 #ifndef ALCHEMY_RESOURCE_IDS_H
 #define ALCHEMY_RESOURCE_IDS_H
 
-/*
- * Resource numbers are rows of the resource directory
- * (SYSTEM/RESOURCE/DIRECTORY.S), which names each row after what it holds.
- * A name's value is its row number, so it is a link-time value: take its
- * address, and the compiler loads the number from the literal pool as the
- * game does. A switch cannot use one as a case label.
- */
 extern char ResourceId_BuildStamp;
 extern char ResourceId_PaletteFarCalls;
 extern char ResourceId_EffectFarCalls;
+extern char ResourceId_ResourceFarCalls;
+extern char ResourceId_ResourceFarCallsAlternate;
 extern char ResourceId_WindowTiles;
+extern char ResourceId_SmallFont;
 extern char ResourceId_NintendoLogo;
 extern char ResourceId_CamelotLogo;
 extern char ResourceId_GoldenSunLogo;
@@ -27,6 +23,7 @@ extern char ResourceId_ForestBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_DesertBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
+extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_SlotsFramePicture;
 extern char ResourceId_SlotsIcons;
 extern char ResourceId_SlotsJackpot;

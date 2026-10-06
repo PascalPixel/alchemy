@@ -1,14 +1,6 @@
-@ Far-call stub table heading the system runtime at 0x080000c0: fixed 8-byte
-@ veneers, each loading its target into r4 and branching, which the calling
-@ convention permits. No compiler emits them; the shared overlay veneer macro
-@ builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080000c0
-	.thumb_func
-Func_080000c0:
 	.global WaitFramesFar
 	.thumb_func
 WaitFramesFar:
@@ -21,9 +13,6 @@ Scheduler_AddOrUpdateCallbackFar:
 	.global Scheduler_RemoveCallbackFar
 	.thumb_func
 Scheduler_RemoveCallbackFar:
-	.global Func_080000d8
-	.thumb_func
-Func_080000d8:
 	overlay_veneer Scheduler_RemoveCallback
 	overlay_veneer Scheduler_EnableCallbacks
 	overlay_veneer Scheduler_DisableCallbacks
@@ -31,16 +20,10 @@ Func_080000d8:
 	.global Random16Far
 	.thumb_func
 Random16Far:
-	.global Func_080000f8
-	.thumb_func
-Func_080000f8:
 	overlay_veneer Random16
 	.global ArcTan2Far
 	.thumb_func
 ArcTan2Far:
-	.global Func_08000100
-	.thumb_func
-Func_08000100:
 	overlay_veneer ArcTan2
 	overlay_veneer Math_IntegerSqrt
 	.global FixedSqrtFar
@@ -58,9 +41,6 @@ Trig_CosFar:
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
 Vector_AddPolarOffsetFar:
-	.global Func_08000128
-	.thumb_func
-Func_08000128:
 	overlay_veneer Vector_AddPolarOffset
 	.global Runtime_SetIrqHandlerFar
 	.thumb_func
@@ -70,9 +50,6 @@ Runtime_SetIrqHandlerFar:
 	.global Runtime_AllocateHeapBlockFar
 	.thumb_func
 Runtime_AllocateHeapBlockFar:
-	.global Func_08000140
-	.thumb_func
-Func_08000140:
 	overlay_veneer Runtime_AllocateHeapBlock
 	.global Runtime_AllocateBlockFar
 	.thumb_func
@@ -124,9 +101,6 @@ VramBlock_LoadCachedFar:
 	.global Resource_FindFreeEntryFar
 	.thumb_func
 Resource_FindFreeEntryFar:
-	.global Func_080001d0
-	.thumb_func
-Func_080001d0:
 	overlay_veneer Resource_FindFreeEntry
 	overlay_veneer Bg0_ClearTilemap
 	.global AffineMatrix_BuildForEffectFar

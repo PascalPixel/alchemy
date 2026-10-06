@@ -1,4 +1,3 @@
-/* Declarations shared by McCoy's palace sources in Bilibin (resource_38d). */
 #ifndef KYUDEN_H
 #define KYUDEN_H
 
@@ -13,14 +12,11 @@ enum {
     FLAG_REWARD_TAKEN = 0x84e
 };
 
-/* The scene's tables and action tables, laid out after the code. */
 extern u8 Placement_Scripts[];
 extern u8 Placement_Messages[];
 extern const u8 Kyuden_FacingActions[];
 extern const u8 Kyuden_PacingActions[];
 
-/* Main-image code reached through the overlay's import veneers. Old-style
- * declarations: the scenes pass their arguments as plain words. */
 s32 ArcTan2(s32, s32);
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
@@ -36,11 +32,5 @@ void ConfigurePrimarySceneChannels(void);
 void ConfigureSecondarySceneChannels(void);
 void RunEventScript02(void);
 void BiribinoKyuden_RunActorRowScene(void);
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
 
 #endif

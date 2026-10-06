@@ -231,7 +231,7 @@ Func_0802d088:
 .L_0802d22e:
 	pop {r5, r6, pc}
 .L_0802d230:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0802d234:
 	.4byte gIoWriteQueue
 .L_0802d238:

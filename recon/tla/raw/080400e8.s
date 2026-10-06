@@ -35,7 +35,7 @@ Func_080400e8:
 	movs r2, #64
 	mov r1, r8
 	movs r0, #7
-	bl Func_08044f88
+	bl RenderResource_CreatePair
 	str r0, [sp, #12]
 	movs r0, #1
 	bl WaitFrames
@@ -100,7 +100,7 @@ Func_080400e8:
 .L_080401ac:
 	.4byte 0x00000000
 .L_080401b0:
-	.4byte Data_03001180
+	.4byte gSleepDisabled
 .L_080401b4:
 	ldr r0, [r6, r7]
 	movs r3, #251
@@ -568,7 +568,7 @@ Func_080400e8:
 .L_0804056c:
 	.4byte 0x00001161
 .L_08040570:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_08040574:
 	ldr r5, .L_080405a8
 .L_08040576:

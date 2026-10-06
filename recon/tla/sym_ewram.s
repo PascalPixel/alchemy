@@ -1,5 +1,3 @@
-@ EWRAM variables not yet defined in C, in address order, as pret's
-@ sym files list them. Each .space runs to the next variable.
 	.section .sym_ewram,"aw",%nobits
 	.global Data_02000000
 Data_02000000:
@@ -61,11 +59,11 @@ Data_02000520:
 	.global Data_02001000
 Data_02001000:
 	.space 0x00000024
-	.global Data_02001024
-Data_02001024:
+	.global gSnapshotObjects
+gSnapshotObjects:
 	.space 0x00001068
-	.global Data_0200208c
-Data_0200208c:
+	.global gItemCounters
+gItemCounters:
 	.space 0x000002c0
 	.global gSceneState
 gSceneState:
@@ -73,17 +71,17 @@ gSceneState:
 	.global Data_020023c4
 Data_020023c4:
 	.space 0x00000b5c
-	.global Data_02002f20
-Data_02002f20:
+	.global gSongFlags
+gSongFlags:
 	.space 0x000000e0
-	.global Data_02003000
-Data_02003000:
+	.global gSleepActive
+gSleepActive:
 	.space 0x00000010
 	.global gOamBuckets
 gOamBuckets:
 	.space 0x00000400
-	.global Data_02003410
-Data_02003410:
+	.global ResourceBlockOwners
+ResourceBlockOwners:
 	.space 0x00000200
 	.global gSchedulerTaskTable
 gSchedulerTaskTable:
@@ -91,8 +89,8 @@ gSchedulerTaskTable:
 	.global Data_020036d0
 Data_020036d0:
 	.space 0x00000004
-	.global Data_020036d4
-Data_020036d4:
+	.global gSerialSendSize
+gSerialSendSize:
 	.space 0x00000004
 	.global Data_020036d8
 Data_020036d8:
@@ -103,20 +101,20 @@ ResourceTableEntries:
 	.global Data_02003860
 Data_02003860:
 	.space 0x00000010
-	.global Data_02003870
-Data_02003870:
+	.global gSerialPeerPayloads
+gSerialPeerPayloads:
 	.space 0x00000004
-	.global Data_02003874
-Data_02003874:
+	.global gLinkPeerSignatures
+gLinkPeerSignatures:
 	.space 0x0000005c
-	.global Data_020038d0
-Data_020038d0:
+	.global gSerialSendSource
+gSerialSendSource:
 	.space 0x00000010
 	.global gIoWriteQueue
 gIoWriteQueue:
 	.space 0x00000190
-	.global Data_02003a70
-Data_02003a70:
+	.global gSerialTransfer
+gSerialTransfer:
 	.space 0x00000004
 	.global Data_02003a74
 Data_02003a74:
@@ -130,8 +128,8 @@ gModelTransformWork:
 	.global Data_02005350
 Data_02005350:
 	.space 0x00000004
-	.global Data_02005354
-Data_02005354:
+	.global gSerialReceivedSize
+gSerialReceivedSize:
 	.space 0x0000000c
 	.global gSerialRuntime
 gSerialRuntime:
@@ -139,20 +137,20 @@ gSerialRuntime:
 	.global Data_02005364
 Data_02005364:
 	.space 0x0000015c
-	.global Data_020054c0
-Data_020054c0:
+	.global gLinkExchangeState
+gLinkExchangeState:
 	.space 0x00000004
-	.global Data_020054c4
-Data_020054c4:
+	.global gSerialBlockSequence
+gSerialBlockSequence:
 	.space 0x00000004
-	.global Data_020054c8
-Data_020054c8:
+	.global gBattleRandomSeed
+gBattleRandomSeed:
 	.space 0x00000008
 	.global gObjAffineMatrices
 gObjAffineMatrices:
 	.space 0x00000100
-	.global Data_020055d0
-Data_020055d0:
+	.global gSerialReceiveDest
+gSerialReceiveDest:
 	.space 0x00000230
 	.global gMusicRestoreDelay
 gMusicRestoreDelay:
@@ -166,8 +164,8 @@ gMusicVolume:
 	.global Data_0200580c
 Data_0200580c:
 	.space 0x00000004
-	.global Data_02005810
-Data_02005810:
+	.global gMusicVolumeStep
+gMusicVolumeStep:
 	.space 0x00000004
 	.global Data_02005814
 Data_02005814:
@@ -265,17 +263,17 @@ gFlashSavedIme:
 	.global Data_02007500
 Data_02007500:
 	.space 0x00000004
-	.global Data_02007504
-Data_02007504:
+	.global DisplayScroll_Position
+DisplayScroll_Position:
 	.space 0x00000004
-	.global Data_02007508
-Data_02007508:
+	.global DisplayScroll_Busy
+DisplayScroll_Busy:
 	.space 0x00000004
-	.global Data_0200750c
-Data_0200750c:
+	.global DisplayScroll_LastPosition
+DisplayScroll_LastPosition:
 	.space 0x00000004
-	.global Data_02007510
-Data_02007510:
+	.global DisplayScroll_Objects
+DisplayScroll_Objects:
 	.space 0x00000004
 	.global Data_02007514
 Data_02007514:
@@ -712,8 +710,8 @@ Data_02026800:
 	.global Data_02028000
 Data_02028000:
 	.space 0x00002000
-	.global Data_0202a000
-Data_0202a000:
+	.global gWorldMapWork
+gWorldMapWork:
 	.space 0x00000004
 	.global Data_0202a004
 Data_0202a004:
@@ -793,8 +791,8 @@ Data_0202e004:
 	.global Data_0202e008
 Data_0202e008:
 	.space 0x00001ff8
-	.global Data_02030000
-Data_02030000:
+	.global gEwramHeap
+gEwramHeap:
 	.space 0x00008000
 	.global Data_02038000
 Data_02038000:

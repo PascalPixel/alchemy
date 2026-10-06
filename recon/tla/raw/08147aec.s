@@ -133,7 +133,7 @@ Func_08147aec:
 	add r5, sp, #76
 	ldr r0, [r1, #8]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r3, [r5]
 	lsrs r2, r3, #31
 	adds r3, r3, r2
@@ -320,7 +320,7 @@ Func_08147aec:
 	movs r1, #160
 	str r1, [sp, #48]
 .L_08147d6a:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #12]
 	bl Graphics_PrepareTransferInIwramWork

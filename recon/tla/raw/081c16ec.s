@@ -1,6 +1,3 @@
-@ Ends a sequence: mark every linked channel for release, detach it, and clear
-@ the track flags. This is the MusicPlayer2000 ply_fine behavior; every TLA
-@ edition has this complete48-byte instruction extent, including its alignment.
 .syntax unified
 	.thumb
 	.global MusicTrack_FinishSequence

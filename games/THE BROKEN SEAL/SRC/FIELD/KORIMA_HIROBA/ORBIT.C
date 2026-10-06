@@ -1,34 +1,25 @@
-/*
- * The orbiting nut: its per-frame orbit, and the setup that shows the
- * item's icon on actor 11 and starts it circling.
- */
 
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 #include "STAGED_ACTOR.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
 typedef struct { s32 lo, hi; } Pair;
 
 typedef struct { s32 w0, w1, w2, w3; Pair tail; } Query;
-
-struct Particle_02000c4c {
-    u8 unknown_00[8];
-    s32 x;                  /* +0x08 */
-    s32 y;                  /* +0x0c */
-    u8 unknown_10[0x20];
-    s32 angle;              /* +0x30, 0x10000 to the turn */
-    u8 unknown_34[4];
-    s32 base_x;             /* +0x38 */
-    s32 base_y;             /* +0x3c */
-    u8 unknown_40[0x10];
-    u16 *sprite;            /* +0x50 */
-};
 
 typedef struct OrbitingSceneObjectSprite {
     u8 padding_00[5];
@@ -69,17 +60,6 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-/* The scene's tables, laid out after the code. */
-extern u8 KorimaHiroba_Scripts[];
-extern u8 KorimaHiroba_Messages[];
-extern u8 KorimaHiroba_Actors[];
-extern u8 KorimaHiroba_Extras[];
-
-
-/* Constant getter; the owner includes its own pool word. */
-
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
-
 s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
 {
     u16 *sprite = record->sprite;
@@ -94,14 +74,13 @@ s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
     record->x = record->base_x + Engine_MathCos(record->angle) * 2;
     record->y = record->base_y + lift;
 
-    /* Signed divide by 8, spelled `if (v < 0) v += 7; v >>= 3`. */
     tilt = Engine_MathCos(record->angle + 0x8000);
     if (tilt < 0)
         tilt += 7;
-    sprite[15] = (u16)(tilt >> 3);          /* +0x1e */
+    sprite[15] = (u16)(tilt >> 3);
 
-    jitter = (s32)(((u32)Random_Next() << 9) >> 16);
-    jitter += (s32)(((u32)Random_Next() << 9) >> 16);
+    jitter = (s32)(((u32)Engine_RandomNext() << 9) >> 16);
+    jitter += (s32)(((u32)Engine_RandomNext() << 9) >> 16);
     record->angle += jitter + 1024;
 
     return 0;
@@ -126,7 +105,7 @@ void SceneEffect_InitOrbitingParticle(s32 id)
     actor->active = zero;
     actor->mode = zero;
 
-    if (GameFlag_IsSet(0x109) == 0)
+    if (Engine_GameFlagIsSet(0x109) == 0)
         actor->y += 0x200000;
 
     actor->flags_23 &= 0xfe;

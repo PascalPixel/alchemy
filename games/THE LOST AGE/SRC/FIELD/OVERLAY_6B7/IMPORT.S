@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_6B7 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_6B7 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -97,11 +93,11 @@ PartyInventory_HasSpace:
 	.global Func_020006e4
 	.thumb_func
 Func_020006e4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020006ec
 	.thumb_func
 Func_020006ec:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -109,7 +105,7 @@ Object_GetById:
 	.global Func_020006fc
 	.thumb_func
 Func_020006fc:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -121,19 +117,19 @@ ObjectMotion_WaitForAnimationChange:
 	.global Func_02000714
 	.thumb_func
 Func_02000714:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_0200071c
 	.thumb_func
 Func_0200071c:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_02000724
 	.thumb_func
 Func_02000724:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_0200072c
 	.thumb_func
 Func_0200072c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global ItemMenu_DrawItemDetails
 	.thumb_func
 ItemMenu_DrawItemDetails:

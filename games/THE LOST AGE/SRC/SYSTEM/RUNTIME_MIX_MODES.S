@@ -1,10 +1,3 @@
-@ Wave, noise and square channel loops of TLA's resident mixer, entered
-@ from the mixer. The wave loop saves r2, r3, r9 and ip in the middle of
-@ the routine (push {r2, r3, r9, ip}), and every loop leaves with
-@ b 0x03000b94 into the channel code of IWRAM_RUNTIME_MIX_CHANNEL.S,
-@ sharing that routine's frame. Jumping between routine bodies is beyond
-@ both approved compilers.
-@ credit: handwritten — TLA IWRAM runtime synthesised channel loops
 .syntax unified
 	.arm
 	.global IwramSoundSynthWave

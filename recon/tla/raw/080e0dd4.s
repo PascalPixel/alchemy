@@ -13,7 +13,7 @@ Func_080e0dd4:
 	ldr r6, [r3]
 	sub sp, #12
 	ldr r7, [r6, #16]
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r2, #1
 	negs r2, r2
 	movs r3, #0
@@ -58,7 +58,7 @@ Func_080e0dd4:
 	bl WaitFrames
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r5, .L_080e0e90
 	adds r3, r7, #0
 	adds r3, #85
@@ -87,7 +87,7 @@ Func_080e0dd4:
 .L_080e0e94:
 	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080e0e98:
-	.4byte Func_080e0c84
+	.4byte BattleFx_AdvanceAngleWithRamp
 .L_080e0e9c:
 	.4byte Func_080e0cac
 .L_080e0ea0:
@@ -96,13 +96,13 @@ Func_080e0dd4:
 	ldr r3, [r5, #8]
 	adds r0, r6, #0
 	lsls r1, r1, #2
-	bl Func_080ebec8
+	bl EffectSlot_Initialize
 	adds r0, r6, #0
 	ldr r1, .L_080e0f38
-	bl Func_080ebeb4
+	bl EffectSlot_SetCallback
 	adds r0, r6, #0
 	movs r1, #7
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	bl Random16
 	lsls r1, r0, #3
 	subs r1, r1, r0

@@ -14,7 +14,7 @@ Func_080ec2b8:
 	str r1, [sp, #16]
 	str r2, [sp, #12]
 	str r0, [sp, #20]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Func_080ed804
 	mov r11, r0
 	movs r0, #128
@@ -237,7 +237,7 @@ Func_080ec2b8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ec478:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec47c:
 	.4byte Data_0202a648
 .L_080ec480:

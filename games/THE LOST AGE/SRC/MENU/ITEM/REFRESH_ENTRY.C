@@ -1,13 +1,11 @@
 #include "M7_INTERFACES.H"
 #include "RAM_BUFFER.H"
 
-/* ☀️'s, reaching the menu page work through ⚓️'s heap slot, whose owner
-   entries start 4 bytes later. */
 void ItemMenu_RefreshEntry(s32 layout)
 {
-    struct Object080a1c **slot;
-    struct Object080a1c **scan;
-    struct Object080a1c *object;
+    struct RenderOutput **slot;
+    struct RenderOutput **scan;
+    struct RenderOutput *object;
     s32 index;
     s32 origin_y;
     s32 base;
@@ -17,7 +15,7 @@ void ItemMenu_RefreshEntry(s32 layout)
     if (layout != 1) {
         origin_y = 0x28;
     }
-    slot = (struct Object080a1c **)(base + 0x4c);
+    slot = (struct RenderOutput **)(base + 0x4c);
     index = 0;
     scan = slot;
     do {

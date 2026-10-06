@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_080ebeb4
+	.align 2, 0
+	.global EffectSlot_SetCallback
 	.thumb_func
-Func_080ebeb4:
+EffectSlot_SetCallback:
 	ldr r2, .L_080ebec4
 	movs r3, #0
 	str r1, [r0, #52]

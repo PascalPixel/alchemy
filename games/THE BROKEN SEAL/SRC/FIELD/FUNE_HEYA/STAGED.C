@@ -64,20 +64,17 @@ struct EffectRecord {
 
 s32 Random16(u8 *o);
 
-          /* site 0x10ac; returns the actor record */
-
-/* Contiguous unnamed state-owner run for resource_3b1. */
 s32 ResetStagedActorState(struct StagedActor *actor)
 {
     Object_SetMode(actor, 1);
     actor->x.value = 0;
     actor->y = 0;
     actor->z.value = 0;
-    actor->unknown_24 = 0;
-    actor->unknown_28 = 0;
-    actor->unknown_2c = 0;
-    actor->unknown_3c = 0x80000000;
-    actor->unknown_38 = 0x80000000;
+    actor->velocity_x = 0;
+    actor->velocity_y = 0;
+    actor->velocity_z = 0;
+    actor->target_y = 0x80000000;
+    actor->target_x = 0x80000000;
     return 0;
 }
 
@@ -89,7 +86,7 @@ s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 
     if (actor->vertical_motion_direction != 0) {
         descending_y = (actor->y
-            - ((u32)(Random_Next() << 0xF) >> 0x10)) + 0xFFFF8000;
+            - ((u32)(Engine_RandomNext() << 0xF) >> 0x10)) + 0xFFFF8000;
         actor->y = descending_y;
         if (descending_y < 0) {
             vertical_motion_direction = 0;
@@ -97,7 +94,7 @@ s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
         }
     } else {
         ascending_y = actor->y
-            + ((u32)(Random_Next() << 0xF) >> 0x10) + 0x8000;
+            + ((u32)(Engine_RandomNext() << 0xF) >> 0x10) + 0x8000;
         actor->y = ascending_y;
         if (ascending_y > 0x80000) {
             vertical_motion_direction = 1;
@@ -108,43 +105,43 @@ block_5:
     return 1;
 }
 
-s32 StagedActor_SetAngleByKind(u8 *o)
+s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 {
     u32 v = (u32)(Random16(o) << 6) >> 16;
 
     if (v == 6) {
         s32 k = 0x3000;
-        *(u16 *)(o + 6) = k;
+        o->facing = k;
     } else if (v == 9) {
         s32 k = 0x5000;
-        *(u16 *)(o + 6) = k;
+        o->facing = k;
     }
     return 1;
 }
 
-void StagedActor_AdvanceCounter98(u8 *o)
+void FuneHeya_AdvanceWalkerAfterRise(u8 *o)
 {
-    u8 *p = o + 98;
+    u8 *p = &((struct FieldActor *)o)->rise_counter;
     s32 n = *p + 1;
 
     *p = n;
     if ((u8)n > 80) {
-        *(u16 *)(o + 102) += 1;
+        ((struct FieldActor *)o)->work += 1;
     }
 }
 
-s32 StagedActor_CountdownUntilPositionUnset(u8 *o)
+s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
 {
-    s32 n = *(s32 *)(o + 76);
+    s32 n = o->rise_base_y;
 
     if (n != 0) {
-        *(s32 *)(o + 76) = n - 1;
+        o->rise_base_y = n - 1;
     } else {
         return 1;
     }
-    if (*(s32 *)(o + 56) == 0x80000000
-        && *(s32 *)(o + 60) == *(s32 *)(o + 56)
-        && *(s32 *)(o + 64) == *(s32 *)(o + 60)) {
+    if (o->target_x == 0x80000000
+        && o->target_y == o->target_x
+        && o->target_z == o->target_y) {
         return 1;
     }
     return 0;

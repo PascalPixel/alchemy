@@ -1,18 +1,9 @@
 #include "SUHARA.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgSuharaArentSurprisedFind[];
-extern u8 MsgSuharaBusyEverSince[];
-extern u8 MsgSuharaGetSickThinkingAboutLalivero[];
-extern u8 MsgSuharaOursOnlyStore[];
-extern u8 MsgSuharaSighNothinMaybe[];
-extern u8 MsgSuharaWonderWhySandstorms[];
 
-extern u8 MsgSuharaSupposeFolkBlown[];
 
-extern u8 MsgSuharaIodem[];
 
-/* The room's scene tables, which the main image asks for through the
- * overlay's entry veneers. */
 u8 *SuharaHeya_GetEntrances(void)
 {
     return gSuharaHeyaEntrances;
@@ -28,100 +19,90 @@ u8 *SuharaHeya_GetExits(void)
     return gSuharaHeyaExits;
 }
 
-/* Flag 0x96f selects the later placements. */
 s32 SuharaHeya_SelectPlacements(void)
 {
-    if (GameFlag_IsSet(0x96f) != 0) {
+    if (Engine_GameFlagIsSet(0x96f) != 0) {
         return (s32)gSuharaHeyaPlacements96f;
     }
     return (s32)gSuharaHeyaPlacements;
 }
 
-/* The house's counters: a shop or the inn when the leader faces them,
- * otherwise a line chosen by flag 0x96f. */
 void Dialogue_HandleFacingChoice(s32 no)
 {
-    u16 facing = (Actor_Get(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
-        Shop_Open(31, no);
-    } else if (GameFlag_IsSet(0x96f)) {
+        Engine_ShopOpen(31, no);
+    } else if (Engine_GameFlagIsSet(0x96f)) {
         s32 msg = (s32)MsgSuharaArentSurprisedFind;
-        Event_SetMessage(msg);
-        Event_OpenMessage(no, 0);
-        if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-            Event_Wait(10);
-            Event_SetMessage(msg + 1);
+        Engine_EventSetMessage(msg);
+        Engine_EventOpenMessage(no, 0);
+        if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+            Engine_EventWait(10);
+            Engine_EventSetMessage(msg + 1);
         } else {
-            Event_SetMessage(msg + 2);
+            Engine_EventSetMessage(msg + 2);
         }
-        Event_ShowMessage(no, 0);
+        Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaOursOnlyStore);
-        Event_ShowMessage(no, 0);
+        Engine_EventSetMessage((s32)MsgSuharaOursOnlyStore);
+        Engine_EventShowMessage(no, 0);
     }
 }
 
 void Dialogue_HandleFacingBranch(s32 no)
 {
-    u16 facing = (((u16 *)Actor_Get(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
-        Inn_CheckIn(10, no);
-    } else if (GameFlag_IsSet(0x96f)) {
-        Event_SetMessage((s32)MsgSuharaBusyEverSince);
-        Event_ShowMessage(no, 0);
+        Engine_InnCheckIn(10, no);
+    } else if (Engine_GameFlagIsSet(0x96f)) {
+        Engine_EventSetMessage((s32)MsgSuharaBusyEverSince);
+        Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaSighNothinMaybe);
-        Event_ShowMessage(no, 0);
+        Engine_EventSetMessage((s32)MsgSuharaSighNothinMaybe);
+        Engine_EventShowMessage(no, 0);
     }
 }
 
 void Dialogue_HandleFacingAction(s32 no)
 {
-    u16 facing = (((u16 *)Actor_Get(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
-        Shop_ConfirmAct(no);
-    } else if (GameFlag_IsSet(0x96f)) {
-        Event_SetMessage((s32)MsgSuharaWonderWhySandstorms);
-        Event_ShowMessage(no, 0);
+        Engine_ShopConfirmAct(no);
+    } else if (Engine_GameFlagIsSet(0x96f)) {
+        Engine_EventSetMessage((s32)MsgSuharaWonderWhySandstorms);
+        Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
-        Event_ShowMessage(no, 0);
+        Engine_EventSetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
+        Engine_EventShowMessage(no, 0);
     }
 }
 
-/* Asks whether the party was blown here on the way to Babi Lighthouse, with a
- * line for each answer. */
 void SuharaHeya_AskBlownHere(s32 obj)
 {
     s32 msg = (s32)MsgSuharaSupposeFolkBlown;
-    Event_SetMessage(msg);
-    Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(msg + 1);
+    Engine_EventSetMessage(msg);
+    Engine_EventOpenMessage(obj, 0);
+    if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(msg + 1);
     } else {
-        Event_SetMessage(msg + 2);
+        Engine_EventSetMessage(msg + 2);
     }
-    Event_ShowMessage(obj, 0);
+    Engine_EventShowMessage(obj, 0);
 }
 
-void State_ApplyCounter16cThenCall7b(void)
+void SuharaHeya_PlayCueAndRequestTouchedExit(void)
 {
-    u8 *state = (u8 *)gEventWork;
-    s16 *cnt = (s16 *)(state + 0x16C);
+    struct EventWork *state = gEventWork;
+    s16 *cnt = (s16 *)&state->touched_trigger;
 
-    Event_RequestExit(*cnt);
-    Audio_PlayCue(0x7B);
+    Engine_EventRequestExit(*cnt);
+    Engine_AudioPlayCue(0x7B);
 }
 
-/*
- * Runs the primary script for this scene: a long fixed sequence driving
- * actors 10, 19, 20, 21, 30 and 40 through position, pose and timing steps,
- * guarded by an initial skip check.
- */
 void Scene_RunPrimaryScript(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     GameFlag_Set(2480);
     if (GameFlag_IsSet(2442) == 0) {
         Audio_PlayCue(30);
@@ -371,21 +352,21 @@ void Scene_RunPrimaryScript(void)
         Audio_PlayCue(30);
         Actor_SetSpeed(19, 78643, 39321);
         Actor_SetAnimation(19, 2);
-        record = (u8 *)Actor_Get(0);
+        record = Actor_Get(0);
         if (record != 0) {
-            Actor_SetDestination(19, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(19, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(19);
         Actor_SetPosition(19, 0, 0);
         Event_Wait(10);
-        Audio_PlayCueFromEventWork();
+        Engine_AudioPlayCueFromEventWork();
         Event_End();
     }
 }
 
 s32 SuharaHeya_SelectEvents(void)
 {
-    if (GameFlag_IsSet(0x96F) != 0) {
+    if (Engine_GameFlagIsSet(0x96F) != 0) {
         return (s32)gSuharaHeyaEvents96f;
     }
     return (s32)gSuharaHeyaEvents;
@@ -395,23 +376,22 @@ s32 Scene_InitActorRecords(void)
 {
     union SceneActor *work;
     if (gGameState.entrance == 90)
-        GameFlag_Set(0x96f);
-    ((s32 *)gEventWork)[112] = 521;
-    ((s32 *)gEventWork)[114] = 24;
-    ((union SceneActor *)Actor_Get(12))->bytes[89] |= 4;
-    ((union SceneActor *)Actor_Get(13))->bytes[89] |= 4;
-    work = (union SceneActor *)Actor_Get(20);
+        Engine_GameFlagSet(0x96f);
+    gEventWork->start_transition = 521;
+    gEventWork->transition_frames = 24;
+    ((union SceneActor *)Object_GetById(12))->bytes[89] |= 4;
+    ((union SceneActor *)Object_GetById(13))->bytes[89] |= 4;
+    work = (union SceneActor *)Object_GetById(20);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     {
-        /* The mask is built in a local, not folded into the store. */
         struct SceneRecord *record = work->fields.record;
         s32 flags = ~12;
 
         flags = flags & record->flags;
         record->flags = flags | 4;
     }
-    work = (union SceneActor *)Actor_Get(21);
+    work = (union SceneActor *)Object_GetById(21);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     work->bytes[85] = 2;

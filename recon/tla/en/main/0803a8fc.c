@@ -13,10 +13,6 @@ extern struct GlyphWork *gWindowWork;
 extern u8 UiText_Glyphs[];
 extern u8 UiText_SecondGlyphs[];
 
-/* Render a character, and the second glyph its upper bits name, into a
-   24-pixel-wide nibble canvas, then pack the canvas into four 4bpp tiles.
-   Returns the combined width. */
-
 s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 {
     u8 buf[384];

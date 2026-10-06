@@ -1,17 +1,17 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
+#include "OBJECT_DISPATCH.H"
 
 extern u8 gEffectWork[];
 
-void BattleFx_AdvanceObjectField6WithRamp(void);
+void BattleFx_AdvanceAngleWithRamp(void);
 void BattleFx_ShrinkObjectAndDestroySlow(void);
 void BattleEffect_UpdatePhasedRadialParticle(void);
 void BattleFx_SetObjectAlternatingWords(void);
 
-
 extern s32 gGameState[];
 void Motion_SetVarCbAndRefresh(s32, s32);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32, s32);
+void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *child, u32 value);
 
 struct PhasedRadialSequenceObject {
     u8 unknown_00[8];
@@ -50,7 +50,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 
     BattleFx_InitializeSlots();
     effect_slots = *(void **)gEffectWork;
-    Unnamed_080b0840Far(0x201090);
+    Shop_RestoreSceneTilesFar(0x201090);
     WaitFrames(30);
     ObjectMotion_ArmCallback(arg, 0x4000, 0);
     WaitFrames(20);
@@ -62,7 +62,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
-    source_object->callback = (void *)BattleFx_AdvanceObjectField6WithRamp;
+    source_object->callback = (void *)BattleFx_AdvanceAngleWithRamp;
     source_object->timer = 0;
     WaitFrames(80);
     source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;
@@ -80,8 +80,8 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdatePhasedRadialParticle);
         EffectSlot_SetObjectMode(slot, 7);
         object_pointer = slot;
-        value = *(s32 *)object_pointer;
-        ObjectGroup_SetChildValueUnlessFifteenFar(value, 10);
+        Animation_ApplyChildValuesToRecordFar(
+            (struct DispatchChild *)*(void **)object_pointer, 10);
         value = __udivsi3(Random16(), 3) + 0x10000;
         *(s32 *)((u8 *)slot + 44) = value;
         *(s32 *)((u8 *)slot + 40) = value;

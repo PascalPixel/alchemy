@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d0520
+	.global DisplayTransition_Finish
 	.thumb_func
-Func_080d0520:
+DisplayTransition_Finish:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -30,7 +30,7 @@ Func_080d0520:
 	.4byte .L_080d069a
 .L_080d0558:
 	movs r0, #0
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	mov r0, r10
 	bl Blend_SetDarkenTarget16
 	b .L_080d0718
@@ -38,7 +38,7 @@ Func_080d0520:
 	movs r0, #128
 	lsls r0, r0, #8
 	movs r1, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	mov r0, r10
 	bl BattleFx_StartBufferInterpolation
 	b .L_080d0718
@@ -202,7 +202,7 @@ Func_080d0520:
 	ldr r2, .L_080d0724
 	movs r0, #1
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #160
 	lsls r0, r0, #3
 	adds r0, #58
@@ -222,7 +222,7 @@ Func_080d0520:
 	ldr r2, .L_080d0724
 	movs r0, #1
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #58

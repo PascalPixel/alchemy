@@ -304,7 +304,7 @@ Func_08171430:
 	subs r3, r3, r2
 	strh r3, [r0, #54]
 .L_0817169e:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #8]
 	ldr r0, [sp, #48]
 	bl Graphics_PrepareTransferInIwramWork
@@ -334,7 +334,7 @@ Func_08171430:
 	bhi .L_081717c2
 	ldr r1, [sp, #28]
 	mov r0, r8
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r0, [sp, #28]
 	asrs r5, r5, #1
 	ldr r3, [r0]
@@ -548,13 +548,13 @@ Func_08171430:
 	ldr r7, [sp, #28]
 	adds r0, r6, #0
 	adds r1, r7, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	b .L_081718a8
 .L_0817189c:
 	ldr r7, [sp, #28]
 	adds r0, r5, #0
 	adds r1, r7, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	add r6, sp, #92
 .L_081718a8:
 	ldr r3, [r7]
@@ -659,7 +659,7 @@ Func_08171430:
 .L_08171972:
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r7]
 	mov r0, r8
 	lsrs r2, r3, #31
@@ -700,7 +700,7 @@ Func_08171430:
 	ldrsh r0, [r4, r3]
 	adds r1, #80
 	str r1, [sp, #20]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, [sp, #16]
 	movs r2, #5
 	strb r2, [r3]
@@ -845,7 +845,7 @@ Func_08171430:
 	ldr r4, [sp, #24]
 	mov r0, r11
 	str r4, [r0, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r0, r10
 	adds r1, r7, #0
 	movs r2, #0

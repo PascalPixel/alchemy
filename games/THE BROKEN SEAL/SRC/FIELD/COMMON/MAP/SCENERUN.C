@@ -1,19 +1,26 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
 #include "SCENE_IDS.H"
+#include "FIELDRUN.H"
+#include "IO_REG.H"
+#include "IRQ.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "BATTLE_RUNTIME.H"
 
-/* One row of the scene table. */
-struct SceneRecord {
-    s16 resource_id;
-    s8 group;
-    s8 variant;
-    u16 map_index;
-    u16 reserved;
-};
+#define MapGroupTable_SelectEntry ((void (*)(void))MapGroupTable_SelectEntry)
+#define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
 
-/* Scenes past the table are not maps: a blank screen, the two table
-   screens that draw over the last object palettes, and a battle. */
 enum {
     SCENE_BLANK = 0x1fb,
     SCENE_TABLE_LOAD = 0x1fc,
@@ -21,39 +28,14 @@ enum {
     SCENE_BATTLE = 0x1fe
 };
 
-#define REG_DMA0 ((volatile u16 *)0x040000b0)
-#define REG_DMA3 ((volatile u32 *)0x040000d4)
 #define OBJ_PALETTE_LAST ((void *)0x050001c0)
 #define DMA_COPY_16_WORDS 0x84000010
 
 extern u8 gDebugMode;
-extern struct SceneRecord Field_SceneTable[];
 
-void Runtime_BumpFree(void *buffer);
-void Runtime_SetIrqHandler(s32 index, s32 handler, s32 context);
-void Resource_InitializeTable(void);
-void Scheduler_ResetTaskTable(void);
-void Bg0_ClearTilemap(void);
-void Runtime_InitializeHeap(void);
-void *Runtime_BumpAllocate(s32 size);
-void PaletteGlow_UpdateFar(s32 first, s32 second);
-void GameState_InitDefaultsFar(void);
-s32 GameFlag_TestFar(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
-void MapGroupTable_SelectEntry(void);
-void Party_SetReturnPoint(s32 reason);
-void BattleFx_LoadResourceGroup(s32 group);
-void Scene_ResetFlagsOnEnter(s32 scene, s32 keep);
 void Audio_PlayCueFromEventWork(void);
-void Scene_ResolveInteractionResult(void);
-void Func_0808c4f8(s32 entrance);
-s32 Battle_RunEncounterFar(s32 entrance);
-s32 FarCall_BlankRunTable(s32 entrance);
-s32 FarCall_BlankLoadTable(s32 entrance);
 void Audio_PlayCue(s32 cue);
 
-/* The table screens borrow the last two object palettes; each keeps them
-   in a heap buffer while it runs and puts them back. */
 static __inline__ s32 Scene_RunTable(s32 entrance)
 {
     void *palette = OBJ_PALETTE_LAST;
@@ -80,17 +62,10 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
     return result;
 }
 
-/*
- * The game's scene loop, which never returns. It starts at the title, or
- * with the debug switch at one of two test scenes, and then runs scene
- * after scene: each pass resets the tasks, the heap and the resources, and
- * either runs one of the special scenes and lets its result choose where
- * the party goes next, or enters the map scene the game state names.
- */
 void Game_ResetForNewGame(s32 mode)
 {
-    struct SceneRecord *table;
-    struct SceneRecord *record;
+    const struct SceneRecord *table;
+    const struct SceneRecord *record;
     s32 entrance;
 
     table = Field_SceneTable;
@@ -166,7 +141,7 @@ start:
         }
         gGameState.map = record->map_index;
         BattleFx_LoadResourceGroup(0);
-        Func_0808c4f8(entrance);
+        Field_RunScene(entrance);
         MapGroupTable_SelectEntry();
     }
 }

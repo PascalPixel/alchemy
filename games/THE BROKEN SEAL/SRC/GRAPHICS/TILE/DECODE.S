@@ -1,12 +1,3 @@
-@ Decodes a bit-coded 8bpp image, one pixel per call of the command dispatcher
-@ in BIT_DISPATCH.S. BattleBackground_Load copies this routine, the
-@ dispatcher, its jump tables and BIT_COMMANDS.S to RAM as one 560-byte block;
-@ on entry the routine rebuilds the dispatcher's table for the address it runs
-@ at, from its own position (add r3, pc, #240; add r4, pc, #200). It keeps the
-@ decoder state in r2, r3, r5 and fp across those calls. Neither approved
-@ compiler relocates code at run time or passes state that way. Every TBS and
-@ TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 .text
 	.arm
@@ -35,23 +26,23 @@ BitDecoder_DecodeImage:
 .L_080b5180:
 	mov	r7, #32
 .L_080b5184:
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	lsr	r6, r5, #25
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	lsr	r6, r5, #25
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

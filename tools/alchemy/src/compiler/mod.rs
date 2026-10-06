@@ -1,11 +1,9 @@
-//! Golden Sun compiler policy, ownership and linking integration.
-//! Portable decoding, comparison, execution and caching live in Psynergy.
 pub(crate) mod assembly_source;
 pub(crate) mod build_io;
 pub(crate) mod bundle;
 pub(crate) mod bundle_data;
+pub(crate) mod c_syntax;
 pub(crate) mod no_asm;
-pub(crate) mod overlay;
 pub(crate) mod plan;
 pub(crate) mod preprocess;
 pub(crate) mod routing;

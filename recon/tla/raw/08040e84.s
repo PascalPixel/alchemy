@@ -29,7 +29,7 @@ Func_08040e84:
 	strh r2, [r3]
 	ldr r0, .L_08040ecc
 	movs r1, #1
-	bl Event_SetPairWork1c0Far
+	bl Event_SetDestinationFar
 	pop {pc}
 	.2byte 0x0000
 .L_08040ec8:

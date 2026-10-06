@@ -1,18 +1,31 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "SCENE.H"
+#include "BATTLE_RUNTIME.H"
+#include "GAME_STATE.H"
+#include "EVENTWRK.H"
 
-extern u8 *gEventWork;
+#define BattleFx_GetResourceGroup ((s32 (*)(s32))BattleFx_GetResourceGroup)
+
+extern struct EventWork *gEventWork;
 
 extern s32 Encounter_SelectEnemyGroup();
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
-    u8 *table = gEventWork + 0x1a0;
+    u8 *table = gEventWork->encounter_groups;
 
-    /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
     return Encounter_SelectEnemyGroup(table[index]);
 }
 
-s32 BattleFx_LookupResult(void *);
 s32 Encounter_SelectEnemyGroup(s32, s32);
 
 s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
@@ -27,8 +40,6 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
     return Encounter_EnemyGroupTable[(arg0 * 14) + arg1 + 2];
 }
 
-u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
-extern u8 Encounter_AreaEntryTable[];
 unsigned char BattleFx_GetPhaseResult(s32 phase_index)
 {
   s32 entry_offset;
@@ -43,12 +54,9 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
   weighted_row_address = entry;
   weighted_row = *((u16 *)weighted_row_address);
   entry_address = weighted_index_address;
-  /* Exact GCC 2.96 output carries this call's result through r0. */
   BattleFx_GetWeightedResult(
       weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
 }
-
-extern s16 gGameState[];
 
 struct SceneInteractionEntry {
     s16 id;
@@ -58,16 +66,12 @@ struct SceneInteractionEntry {
     s16 result;
 };
 
-extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
-
-s32 GameFlag_TestFar(s32 flag);
-
 void Scene_ResolveInteractionResult(void)
 {
     s16 result = 18;
-    s16 progress = gGameState[224];
-    s16 sub = gGameState[225];
-    s16 alt = gGameState[230];
+    s16 progress = gGameState.scene;
+    s16 sub = gGameState.entrance;
+    s16 alt = gGameState.scene_group;
     const struct SceneInteractionEntry *entry = Scene_InteractionRuleTable;
 
     for (; entry->id != -1; entry++) {
@@ -98,48 +102,39 @@ void Scene_ResolveInteractionResult(void)
         }
     }
 
-    gGameState[248] = result;
+    gGameState.cue = result;
 }
 
-struct BattleResourceCondition {
+struct SceneAreaNameRule {
     s16 id;
-    s16 condition : 15;
-    u16 use_effect_id : 1;
-    void *resource;
+    s16 entrance : 15;
+    u16 use_scene_id : 1;
+    s32 area_name_index;
 };
 
-extern const struct BattleResourceCondition BattleFx_ConditionResources[];
-
-s32 BattleFx_GetResourceGroup(s32 effect_id);
-
-/* Finds the resource for an effect and condition in the rule list: a rule
-   matches the effect id itself when its flag bit is set, otherwise the
-   effect's resource group, and its condition must be -1 or equal. The
-   group routine returns s8 in its own file, but this caller takes the
-   result unextended, as from an s32 prototype. */
-void *BattleFx_FindConditionResource(s32 effect_id, s32 condition)
+s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
-    const struct BattleResourceCondition *entry = BattleFx_ConditionResources;
-    void *resource = 0;
-    s32 group = BattleFx_GetResourceGroup(effect_id);
+    const struct SceneAreaNameRule *entry = Scene_AreaNameRules;
+    s32 area_name_index = 0;
+    s32 group = BattleFx_GetResourceGroup(scene);
 
     while (entry->id != -1) {
-        if (entry->use_effect_id) {
-            if (entry->id == effect_id) {
-                if (entry->condition == -1 || entry->condition == condition) {
-                    resource = entry->resource;
+        if (entry->use_scene_id) {
+            if (entry->id == scene) {
+                if (entry->entrance == -1 || entry->entrance == entrance) {
+                    area_name_index = entry->area_name_index;
                     break;
                 }
             }
         } else {
             if (entry->id == group) {
-                if (entry->condition == -1 || entry->condition == condition) {
-                    resource = entry->resource;
+                if (entry->entrance == -1 || entry->entrance == entrance) {
+                    area_name_index = entry->area_name_index;
                     break;
                 }
             }
         }
         entry++;
     }
-    return resource;
+    return area_name_index;
 }

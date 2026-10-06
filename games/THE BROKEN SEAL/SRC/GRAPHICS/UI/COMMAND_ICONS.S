@@ -1,5 +1,3 @@
-@ Ui_CommandIcons: 49 command icons of 32x32, drawn with the system palette:
-@ a halfword offset per icon, then each as 8-bit tiles in palette LZ.
 	.section .rodata
 	.global Ui_CommandIcons
 Ui_CommandIcons:

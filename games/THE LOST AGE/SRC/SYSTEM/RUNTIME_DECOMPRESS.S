@@ -1,15 +1,3 @@
-@ Resident decompressor of TLA's runtime, behind a 4-byte Thumb entry
-@ (bx pc). Flag bits, eight to a byte with a sentinel bit, choose between
-@ literal bytes, where values above 0xdf skip destination bytes, and
-@ two-byte back-references with a 12-bit offset and a 4-bit length. It
-@ returns before saving anything when the halfword at the start of the
-@ stream is zero (orrs; bxeq lr), saves r5-r7 without lr and branches on
-@ the carry and zero flags left by lsrs r3, r3, #1. GCC saves lr with its
-@ registers on entry and never branches on the carry out of a shift. After
-@ the entry these 152 bytes equal TBS SYSTEM/RUNTIME_DECOMPRESS.S
-@ (0x08000d30, run at 0x030005c0).
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common IWRAM runtime decompressor
 .syntax unified
 	.arm
 	.thumb

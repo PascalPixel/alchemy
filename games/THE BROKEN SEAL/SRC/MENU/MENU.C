@@ -1,189 +1,281 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
+#include "SELECT.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "NODE_CHAIN.H"
+#include "text/MSG_IDS.H"
 
-struct SlotEntry {
-    struct SlotEntry *next;
-    u8 y;
-    u8 affine : 2;
-    u8 mode : 2;
-    u8 mosaic : 1;
-    u8 colors : 1;
-    u8 shape : 2;
-    u16 x : 9;
-    u16 param : 5;
-    u16 size : 2;
-    u16 tile : 10;
-    u16 prio : 2;
-    u16 pal : 4;
-};
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct UiWindow *, s32, s32))UiText_DrawCharacterAtOffset)
+#define Menu_AnimatedCursorTiles ((u8 *)&Menu_AnimatedCursorTiles)
 
-struct MenuNode {
-    s32 unknown_00;
-    struct MenuNode *next;
-    u16 offset;
-    u16 active;
-    u16 handle;
-    u16 tile_id;
-    s16 x, y, dx, dy, x_end, y_end;
-    u8 unknown_1c[6];
-    s16 scale, scale_step, scale_end;
-    struct SlotEntry entry;
-};
-
-struct MenuSelection {
-    struct MenuNode nodes[2];
-    u8 unknown_68[0x27a];
-    u16 mode;
-    u8 unknown_2e4[0x394 - 0x2e4];
-    u16 count;
-    u16 first;
-    u16 second;
-    u16 unknown_39a;
-    u16 other;
-};
+#define Menu_CursorObjectTiles ((u8 (*))&Menu_CursorObjectTiles)
 
 extern u32 gFrameTick;
-extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
-extern s32 GameFlag_IsSet(s32 flag);
-extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
-extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
-struct UiWork {
-    u8 pad0[8];
-    u16 x;
-};
-
-struct Node {
-    u8 pad0[32];
-    u16 glyph;
-};
-
-struct Screen {
-    u8 pad0[0x350];
-    struct UiWork *window;
-    u8 pad1[0x394 - 0x354];
-    u16 f394;
-    u8 pad2[0x3a0 - 0x396];
-    u16 f3a0;
-    u8 pad3[0x3b8 - 0x3a2];
-    u16 f3b8;
-};
-
-extern struct Screen *gResQueueWork;
-extern u8 MsgItemNotHeld[];
-extern u8 MsgAbilityNotKnown[];
-struct UiWork *UiWindow_Create(s32, s32, s32, s32, s32);
-struct Node *NodeChain_GetNodeAtCount(struct Screen *, u32);
-void UiText_DrawCharacterAtOffset(s32, struct UiWork *, s32, s32);
-void UiWork_Finalize(struct UiWork *, s32);
-void RenderOutput_PrepareForRedraw(struct UiWork *);
-
-void Runtime_ReleaseHeapBlock(u32 value);
-
-struct Node_0801b148 {
-    u32 value0;
-    struct Node_0801b148 *next;
-    u16 value8;
-    u16 active;
-    u16 handle;
-};
+void RenderOutput_PrepareForRedraw(struct UiWindow *);
 
 struct Work;
-void Resource_ScheduleOwnerReset(void);
 void WaitFrames(s32);
-s32 Resource_ResetEntry(u32 index);
-void Resource_ResetPendingTransfer(void);
 
-void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index);
-
-/* menu/selection/set_node_coordinates.c */
-struct Node_0801b1ec {
-    u8 filler0[4];
-    struct Node_0801b1ec *next;
-    u8 filler8[8];
-    u16 first1;
-    u16 second1;
-    u8 filler14[4];
-    u16 first2;
-    u16 second2;
+struct EffectPosition {
+    s32 x;
+    s32 y;
+    s32 z;
 };
 
-struct State_0801b1ec {
-    u8 filler0[0x348];
-    struct Node_0801b1ec *head;
-    u8 filler34c[0x4a];
-    u16 first;
-    u16 second;
-};
+void MenuSelection_DrawFrame(void)
+{
+    struct SelectionScreen *state = gResQueueWork;
+    struct SelectionSprite *cursor_entry = &state->records[14].sprite;
+    struct SelectionNode *cursor = &state->records[14];
+    struct SelectionNode *transfer = &state->records[15];
+    struct SelectionNode *node;
+    struct SelectionSprite *e;
+    struct SelectionSprite *te;
+    s32 cnt = 0;
+    s32 slot;
+    s32 tmp;
+    struct EffectPosition pos;
 
-void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
+    node = state->head;
+    while (node != 0) {
+        e = &node->sprite;
+        e->affine = 0;
+        e->param = 0;
+        e->x = node->x;
+        e->y = node->y;
+        slot = 240;
+        if (state->vertical_scroll != 0) {
+            e->y += state->vertical_scroll;
+        } else if (node->x != node->target_x) {
+            if (node->dx > 0) {
+                if (node->x + node->dx > node->target_x) {
+                    node->x = node->target_x;
+                } else {
+                    node->x = node->x + node->dx;
+                }
+            } else {
+                if (node->x + node->dx < node->target_x) {
+                    node->x = node->target_x;
+                } else {
+                    node->x = node->x + node->dx;
+                }
+            }
+            e->x = node->x;
+        } else if (cnt == state->cursor_index) {
+            slot = 241;
+            if (cursor->kind != 0) {
+                if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
+                    cursor->target_x = pos.x;
+                    cursor->target_y = pos.y;
+                    if (cursor->scale == 0) {
+                        cursor->x = pos.x;
+                        cursor->y = pos.y;
+                        cursor->scale = 1;
+                    }
+                }
+            }
+        }
+        if (node->scale != 0) {
+            if (GameFlag_IsSet(0x103) != 0) {
+                if (state->records[14].kind == 1) {
+                    e->mode = 1;
+                } else {
+                    e->mode = 0;
+                }
+                if (node->kind == 1) {
+                    e->mode = 1;
+                }
+            }
+            Runtime_PushSlotEntry((s32 *)e, slot);
+        }
+        node = node->next;
+        cnt++;
+    }
+    if (transfer->kind != 0) {
+        node = NodeChain_GetNodeAtCount(state);
+        te = &transfer->sprite;
+        te->mode = 0;
+        te->affine = 0;
+        te->param = 0;
+        te->mosaic = 0;
+        te->colors = 1;
+        te->size = 2;
+        te->shape = 0;
+        te->priority = 0;
+        te->tile = transfer->tile;
+        te->x = node->x - 4;
+        te->y = node->y + (Menu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
+        if (transfer->scale != transfer->scale_end) {
+            state->matrix[0] = transfer->scale;
+            state->matrix[1] = transfer->scale;
+            state->matrix[2] = 0;
+            te->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
+            te->affine = 3;
+            te->x = te->x + 0xfff0;
+            te->y = te->y + 0xf0;
+            transfer->scale = transfer->scale + transfer->scale_step;
+        }
+        if (GameFlag_IsSet(0x103) != 0) {
+            te->mode = 1;
+        }
+        Runtime_PushSlotEntry((s32 *)te, 248);
+    }
+    MenuSelection_DrawSideMarker(state, 0);
+    MenuSelection_DrawSideMarker(state, 1);
+    node = state->path;
+    while (node != 0) {
+        e = &node->sprite;
+        if (node->x != node->target_x) {
+            node->x = node->x + node->dx;
+        }
+        if (node->y != node->target_y) {
+            node->y = node->y + node->dy;
+        }
+        e->x = node->x;
+        e->y = node->y;
+        if (node->scale != node->scale_end) {
+            node->scale = node->scale + node->scale_step;
+            state->matrix[0] = node->scale;
+            state->matrix[1] = node->scale;
+            state->matrix[2] = 0;
+            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
+            e->affine = 3;
+            e->x = e->x + 0xfff8;
+            e->y = e->y + 0xf8;
+        } else {
+            e->affine = 0;
+            e->param = 0;
+        }
+        if (GameFlag_IsSet(0x103) != 0) {
+            if (state->records[14].kind == 1) {
+                e->mode = 1;
+            } else {
+                e->mode = 0;
+            }
+            if (node->kind == 1) {
+                e->mode = 1;
+            }
+        }
+        Runtime_PushSlotEntry((s32 *)e, 240);
+        node = node->next;
+    }
+    if (cursor->kind != 0) {
+        cnt = (s32)Menu_AnimatedCursorTiles;
+        {
+            void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
+
+            cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
+        }
+        if (cursor->target_x != cursor->x) {
+            tmp = (cursor->target_x - cursor->x) >> 1;
+            if (tmp != 0) {
+                cursor->x = cursor->x + tmp;
+            } else {
+                cursor->x = cursor->target_x;
+            }
+        }
+        if (cursor->target_y != cursor->y) {
+            if ((tmp = (cursor->target_y - cursor->y) >> 1) != 0) {
+                cursor->y = cursor->y + tmp;
+            } else {
+                cursor->y = cursor->target_y;
+            }
+        }
+        cursor_entry->y = cursor->y + Menu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
+        cursor_entry->x = cursor->x - 4;
+        if (GameFlag_IsSet(0x103) != 0) {
+            if (state->records[14].kind == 1) {
+                cursor_entry->mode = 1;
+            } else {
+                cursor_entry->mode = 0;
+            }
+        }
+        Runtime_PushSlotEntry((s32 *)cursor_entry, 248);
+    }
+    state->status += 1;
+}
+
+void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index)
 {
     u32 frame = (gFrameTick >> 2) & 7;
-    struct SlotEntry *entry;
+    struct SelectionSprite *entry;
     u8 *frames;
     u8 *tmp;
 
-    if (state->nodes[index].active == 0)
+    if (state->records[index].kind == 0)
         return;
-    entry = &state->nodes[index].entry;
-    entry->x = state->nodes[index].x;
-    entry->y = state->nodes[index].y;
+    entry = &state->records[index].sprite;
+    entry->x = state->records[index].x;
+    entry->y = state->records[index].y;
     if (index != 0) {
         frames = Menu_CursorObjectTiles;
-        if (state->nodes[1].offset != 0)
-            entry->x = entry->x + state->nodes[1].offset;
+        if (state->records[1].base != 0)
+            entry->x = entry->x + state->records[1].base;
     } else {
         frames = Menu_CursorLeftObjectTiles;
-        if (state->nodes[0].offset != 0)
-            entry->x = entry->x - state->nodes[0].offset;
+        if (state->records[0].base != 0)
+            entry->x = entry->x - state->records[0].base;
     }
     tmp = frames + frame * 128;
-    entry->tile = VramBlock_LoadCached(state->nodes[index].handle, 128, tmp);
+    entry->tile = VramBlock_LoadCached(state->records[index].slot, 128, tmp);
     if (GameFlag_IsSet(0x103)) {
-        if (state->mode == 1)
+        if (state->records[14].kind == 1)
             entry->mode = 1;
         else
             entry->mode = 0;
     }
     Runtime_PushSlotEntry((s32 *)entry, 238);
-    if (state->nodes[index].offset != 0)
-        state->nodes[index].offset--;
+    if (state->records[index].base != 0)
+        state->records[index].base--;
 }
 
 void Menu_OpenSelectionWindow(s32 mode, u32 count)
 {
-    struct Screen *screen;
-    struct Node *node;
-    struct UiWork **slot;
-    struct UiWork *window;
+    struct SelectionScreen *screen;
+    struct SelectionNode *node;
+    struct UiWindow **slot;
+    struct UiWindow *window;
 
     screen = gResQueueWork;
-    node = NodeChain_GetNodeAtCount(screen, count);
+    node = NodeChain_GetNodeAtCount(screen);
     slot = &screen->window;
     window = *slot;
     if (window == 0) {
         if (mode == 6) {
-            if (screen->f3b8 != 0) {
+            if (screen->locked != 0) {
                 *slot = UiWindow_Create(17, 17, 5, 3, mode);
             } else {
                 *slot = UiWindow_Create(17, 0, 5, 3, mode);
             }
-            screen->f3a0 = 0;
-            screen->f3b8 = 999;
+            screen->vertical_scroll = 0;
+            screen->locked = 999;
         } else {
             *slot = UiWindow_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
         }
         RenderOutput_PrepareForRedraw(screen->window);
     } else {
-        if (count != 0 && window->x != count + 2) {
+        if (count != 0 && window->width != count + 2) {
             UiWork_Finalize(window, 2);
             *slot = UiWindow_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
         }
         RenderOutput_PrepareForRedraw(screen->window);
     }
-    if (screen->f394 != 0) {
-        UiText_DrawCharacterAtOffset(node->glyph, screen->window, 0, 0);
+    if (screen->count != 0) {
+        UiText_DrawCharacterAtOffset(node->message, screen->window, 0, 0);
     } else {
         switch (mode) {
         case 4:
@@ -198,102 +290,97 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
 
 void Resource_ResetOwnerEntries(void)
 {
-    u8 *state = gResQueueWork;
-    struct Node_0801b148 *node;
+    struct SelectionScreen *state = gResQueueWork;
+    struct SelectionNode *node;
 
     Resource_ScheduleOwnerReset();
-    UiWork_Finalize(*(struct Work **)(state + 0x350), 2);
+    UiWork_Finalize(state->window, 2);
     WaitFrames(1);
-    node = *(struct Node_0801b148 **)(state + 0x348);
+    node = state->head;
     while (node != 0) {
-        if (node->active != 0) {
-            Resource_ResetEntry(node->handle);
-            node->active = 0;
+        if (node->kind != 0) {
+            Resource_ResetEntry(node->slot);
+            node->kind = 0;
         }
         node = node->next;
     }
-    node = *(struct Node_0801b148 **)(state + 0x34c);
+    node = state->path;
     while (node != 0) {
-        if (node->active != 0) {
-            Resource_ResetEntry(node->handle);
-            node->active = 0;
+        if (node->kind != 0) {
+            Resource_ResetEntry(node->slot);
+            node->kind = 0;
         }
         node = node->next;
     }
     Resource_ResetPendingTransfer();
-    if (*(s16 *)(state + 18) != 0) {
-        Resource_ResetEntry(*(u16 *)(state + 12));
-        if (*(s16 *)(state + 18) != 0) {
-            Resource_ResetEntry(*(u16 *)(state + 64));
+    if (state->records[0].y != 0) {
+        Resource_ResetEntry(state->records[0].slot);
+        if (state->records[0].y != 0) {
+            Resource_ResetEntry(state->records[1].slot);
         }
     }
-    Resource_ResetEntry(*(u16 *)(state + 0x2e4));
+    Resource_ResetEntry(state->records[14].slot);
     Runtime_ReleaseHeapBlock(18);
 }
 
 void Menu_SetNodeCoordinates(u32 first, u32 second)
 {
-    struct State_0801b1ec *state = gResQueueWork;
-    struct Node_0801b1ec *node;
+    struct SelectionScreen *state = gResQueueWork;
+    struct SelectionNode *node;
 
-    state->first = first;
-    state->second = second;
+    state->base_x = first;
+    state->base_y = second;
     node = state->head;
     while (node != 0) {
-        node->first1 = first;
-        node->first2 = first;
-        node->second1 = second;
-        node->second2 = second;
+        node->x = first;
+        node->target_x = first;
+        node->y = second;
+        node->target_y = second;
         node = node->next;
         first += 16;
     }
 }
 
-/* menu/selection/setup_both_sides.c */
 void Menu_SetupSelectionBothSides(void)
 {
-    struct MenuSelection *state;
+    struct SelectionScreen *state;
 
-    state = (struct MenuSelection *)gResQueueWork;
+    state = (struct SelectionScreen *)gResQueueWork;
     Menu_SetupSelectionSide(state, 0);
     Menu_SetupSelectionSide(state, 1);
 }
 
-extern s32 Resource_FindFreeEntry(void);
-
-void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index)
+void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 {
-    struct SlotEntry *entry = &state->nodes[index].entry;
+    struct SelectionSprite *entry = &state->records[index].sprite;
     u8 *frames = 0;
     u32 count;
 
-    state->nodes[index].active = 0;
+    state->records[index].kind = 0;
     if (index != 0) {
-        /* FAKEMATCH: a separate local gives the early r5 load and late copy.
-           2026-10-02: assigning frames here directly changes allocation
-           throughout the function, including the later node accesses. */
+        /* FAKEMATCH: the separate local preserves the early r5 load and late copy; direct assignment changes later node registers. */
         u8 *right = Menu_CursorObjectTiles;
 
         count = state->count;
-        if (state->other != 0)
-            count -= state->other;
+        if (state->top != 0)
+            count -= state->top;
         if (count > 5) {
-            state->nodes[index].active = 1;
+            state->records[index].kind = 1;
             count = 5;
         }
         frames = right;
-        state->nodes[1].x = state->first + 16 * (count - 1) + 17;
+        state->records[1].x = state->base_x + 16 * (count - 1) + 17;
     } else {
         frames = Menu_CursorLeftObjectTiles;
-        state->nodes[0].x = state->first - 9;
-        if (state->other != 0)
-            state->nodes[0].active = 1;
+        state->records[0].x = state->base_x - 9;
+        if (state->top != 0)
+            state->records[0].kind = 1;
     }
-    if (state->nodes[index].y == 0) {
-        state->nodes[index].handle = Resource_FindFreeEntry();
-        state->nodes[index].tile_id = VramBlock_LoadCached(state->nodes[index].handle, 128, frames);
-        state->nodes[index].y = state->second;
-        state->nodes[index].offset = 0;
+    if (state->records[index].y == 0) {
+        state->records[index].slot = Resource_FindFreeEntry();
+        state->records[index].tile = VramBlock_LoadCached(state->records[index].slot, 128, frames);
+        state->records[index].y = state->base_y;
+        state->records[index].base = 0;
         entry->mode = 0;
         entry->mosaic = 0;
         entry->colors = 1;
@@ -301,6 +388,6 @@ void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index)
         entry->param = 0;
         entry->size = 0;
         entry->shape = 2;
-        entry->prio = 0;
+        entry->priority = 0;
     }
 }

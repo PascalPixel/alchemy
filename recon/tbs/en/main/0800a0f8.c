@@ -1,37 +1,8 @@
-/* Transform_UpdateVertices draft (2026-09-29), not exact: 161 of 161 words,
- * branches and pool line up, remaining differences are register choice and
- * scheduling in the first loop and prologue.
- * Compiler: agscc (GCC 2.96) cannot produce this routine. It if-converts
- * signed x/256 and x/4 to add; movlt, while the reference has cmp; addlt,
- * which agbcc's own ARM compiler (agbcc/gcc_arm, built as pret's
- * agbcc_arm) emits for plain x/4 and x/256 at -O2 -fomit-frame-pointer.
- * That binary is not an approved digest, so this stays a draft.
- * CAMELOT_ASM proof for FixedMul: the ROM's smull puts RdHi in the same
- * register as an input (smull r3, r2, r1, r2), which GCC's own
- * early-clobber mulsidi3 pattern never allocates; an asm with plain "=r"
- * outputs does. */
-/* 2026-09-29 later: with agbcc_arm the draft is 161 of 161 words and the
- * register-blind shape differs in 34+34 words: the prologue loads, the
- * loop keeping gProjection's address hoisted in r9 where the reference
- * reloads 0x03001cec each pass, and the (s16) extension of t, which the
- * reference makes before the second smull. z-first argument temporaries
- * and a (s16) cast at the multiply were the steps that helped.
- * Evening (main's agbcc_arm route): reading the scale at 0x03001cec as its
- * own s32 symbol instead of gProjection's field 0x0c stops loop.c hoisting
- * gProjection into r9, and every long-lived register then matches the
- * reference (cs r5, sn sl, -sn r9, count r8, z r4). That points to a
- * separate IWRAM variable at 0x03001cec (gProjection+0x0c, center x = 120
- * in UPDATE_VIEW.C and END_CANVAS_LAYER.C); it needs its own label in
- * sym_iwram.s before adoption. The constant 0x8000 in a local assigned just
- * before the two FixedMul calls puts it in r1 as the reference does, and an
- * early-clobber lo output ("=&r") matches the ROM's RdLo choices. Left:
- * the (s16) extension of t before the second smull, the prologue load
- * order, and the loop tail order (subs before the struct copy). */
-typedef unsigned short u16;
-typedef short s16;
-typedef int s32;
-typedef unsigned int u32;
-typedef long long s64;
+/* 0800a0f8: ARM draft; no admitted game ARM build route.
+   Stock agscc --arm: listing 157, draft 157, differ 214. Early-clobber
+   outputs remove invalid smull RdLo/Rm overlap (previously differ 216).
+   Established agbcc_arm library setting, analysis only: differ 144. */
+#include "PROJECT.H"
 
 struct FarCallStub {
     u32 code;
@@ -67,15 +38,9 @@ struct VertexOut {
     struct VertexPair prev;
 };
 
-struct Projection {
-    s32 unk00[3];
-    s32 scale;
-    s32 unk10;
-};
-
 extern struct FarCallStub WaitFramesFar[];
-extern u32 Data_03001f60;
-extern struct Projection gProjection;
+extern u32 gScanlineAngle;
+
 extern u32 gFrameCount;
 
 static __inline__ s32 FixedMul(s32 a, s32 b)
@@ -83,8 +48,10 @@ static __inline__ s32 FixedMul(s32 a, s32 b)
     s32 lo;
     s32 hi;
 
-    /* CAMELOT_ASM: see header */
-    asm volatile("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b));
+    /* FAKEMATCH: early-clobber both outputs; ordinary constraints let agscc
+       ARM overlap RdLo and Rm, which the assembler diagnoses as invalid. */
+    CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
+    asm volatile("smull %0, %1, %2, %3" : "=&r"(lo), "=&r"(hi) : "r"(a), "r"(b));
     return (u32)lo >> 16 | hi << 16;
 }
 #define FIXED_MUL(a, b) FixedMul(a, b)
@@ -113,8 +80,8 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
     angle = (u16)((ArcTan2Fn)WaitFramesFar[8].target)(x >> 4, z >> 4);
     ox = FIXED_MUL(0x8000, to->x);
     oz = FIXED_MUL(0x8000, to->z);
-    if (angle != Data_03001f60) {
-        Data_03001f60 = angle;
+    if (angle != gScanlineAngle) {
+        gScanlineAngle = angle;
         sn = ((TrigFn)WaitFramesFar[11].target)(angle);
         cs = ((TrigFn)WaitFramesFar[12].target)(angle);
         for (i = 0; i < 160; i++) {
@@ -126,7 +93,7 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
             u = FIXED_MUL(sn, x) / 256;
             v->v = u;
             out->b = u;
-            k = gProjection.scale;
+            k = gProjection.focal;
             a = k * ((s16)t << 8);
             b = -k * ((s16)u << 8);
             v->dx = -(a + FIXED_MUL(z, -sn));

@@ -14,7 +14,7 @@ Func_02000098:
 	adds r0, r6, #0
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, [r5, #8]
 	ldr r2, .L_020080ec
 	movs r0, #1
@@ -27,7 +27,7 @@ Func_02000098:
 	adds r0, r6, #0
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #11
 	str r3, [r5, #40]
@@ -82,13 +82,13 @@ Func_020000f0:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #11
 	str r3, [r5, #40]
@@ -111,7 +111,7 @@ Func_020000f0:
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r0, #8
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r0, #8
@@ -122,7 +122,7 @@ Func_020000f0:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #8
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -145,7 +145,7 @@ Func_020000f0:
 	lsls r1, r1, #1
 	movs r2, #20
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -171,7 +171,7 @@ Func_020000f0:
 	movs r1, #129
 	lsls r1, r1, #1
 	ldr r0, [r5]
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r0, #8
@@ -254,7 +254,7 @@ Func_020002b4:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -276,13 +276,13 @@ Func_020002b4:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #11
 	str r3, [r5, #40]
@@ -295,7 +295,7 @@ Func_020002b4:
 	movs r2, #20
 	lsls r1, r1, #1
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -339,7 +339,7 @@ Func_020002b4:
 	movs r2, #0
 	lsls r1, r1, #1
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -352,7 +352,7 @@ Func_020002b4:
 	adds r1, #255
 	movs r2, #0
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #0
 	movs r0, #5
 	bl UiText_OpenMessageAtObject
@@ -479,7 +479,7 @@ Func_0200049c:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r5, .L_02008638
@@ -500,7 +500,7 @@ Func_0200049c:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #6
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #6
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -523,7 +523,7 @@ Func_0200049c:
 	movs r2, #20
 	lsls r1, r1, #1
 	movs r0, #6
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #6
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -610,8 +610,8 @@ Func_02000640:
 	bl Func_02003310
 	movs r0, #123
 	bl Engine_AudioPlayCue
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #3
 	bl Func_020032e8
 	pop {pc}
@@ -689,7 +689,7 @@ Func_020006a8:
 	lsls r1, r1, #5
 	adds r0, #153
 	adds r1, #51
-	bl Func_020032d0
+	bl Engine_CameraSetSpeed
 	movs r0, #168
 	movs r1, #1
 	lsls r0, r0, #16
@@ -761,7 +761,7 @@ Func_020006a8:
 	movs r2, #0
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #8
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -769,7 +769,7 @@ Func_020006a8:
 	movs r2, #20
 	lsls r1, r1, #1
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #8
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -881,7 +881,7 @@ Func_020006a8:
 	lsls r1, r1, #5
 	adds r0, #153
 	adds r1, #51
-	bl Func_020032d0
+	bl Engine_CameraSetSpeed
 	movs r0, #168
 	movs r1, #1
 	movs r3, #1
@@ -945,7 +945,7 @@ Func_020006a8:
 	adds r1, #255
 	movs r2, #0
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r2, #20
 	movs r0, #5
 	movs r1, #4
@@ -959,16 +959,16 @@ Func_020006a8:
 	movs r1, #129
 	ldr r0, [r6]
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r1, #129
 	movs r0, #8
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r1, #8
 	movs r2, #20
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -976,7 +976,7 @@ Func_020006a8:
 	movs r2, #0
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	ldr r0, [r6]
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -991,7 +991,7 @@ Func_020006a8:
 	movs r2, #40
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -1119,7 +1119,7 @@ Func_020006a8:
 	lsls r1, r1, #5
 	adds r0, #153
 	adds r1, #51
-	bl Func_020032d0
+	bl Engine_CameraSetSpeed
 	movs r0, #168
 	movs r1, #1
 	movs r3, #1
@@ -1169,7 +1169,7 @@ Func_020006a8:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r2, #204
@@ -1201,12 +1201,12 @@ Func_020006a8:
 	movs r1, #129
 	ldr r0, [r6]
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r1, #8
 	movs r2, #20
 	adds r1, #255
 	movs r0, #6
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #6
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -1221,7 +1221,7 @@ Func_020006a8:
 	movs r2, #40
 	adds r1, #255
 	ldr r0, [r6]
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #6
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -1265,7 +1265,7 @@ Func_020006a8:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #6
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #6
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -1554,17 +1554,17 @@ Func_020016d8:
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #153
 	movs r1, #152
 	lsls r0, r0, #8
 	lsls r1, r1, #5
 	adds r0, #153
 	adds r1, #51
-	bl Func_020032d0
+	bl Engine_CameraSetSpeed
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -1588,7 +1588,7 @@ Func_020016d8:
 	bl ObjectMotion_ArmCallback
 	movs r1, #5
 	movs r0, #8
-	bl Func_02003238
+	bl Engine_ActorPlaceAtActor
 	movs r0, #1
 	bl Task_Wait
 	movs r1, #204
@@ -1669,7 +1669,7 @@ Func_020016d8:
 	movs r2, #40
 	lsls r1, r1, #1
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #5
 	adds r0, #8
@@ -1725,7 +1725,7 @@ Func_020016d8:
 	lsls r1, r1, #1
 	movs r2, #20
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	mov r1, r9
 	movs r0, #8
 	movs r2, #40
@@ -1808,7 +1808,7 @@ Func_020016d8:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #8
@@ -1840,7 +1840,7 @@ Func_020016d8:
 	adds r1, #255
 	movs r2, #40
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #8
 	adds r0, #5
@@ -1860,7 +1860,7 @@ Func_020016d8:
 	adds r1, #255
 	movs r2, #80
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #242
 	movs r2, #172
@@ -1873,12 +1873,12 @@ Func_020016d8:
 	adds r1, #255
 	movs r2, #120
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #8
 	adds r1, #255
 	movs r2, #40
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #2
 	movs r2, #10
@@ -1899,7 +1899,7 @@ Func_020016d8:
 	lsls r1, r1, #5
 	adds r0, #153
 	adds r1, #51
-	bl Func_020032d0
+	bl Engine_CameraSetSpeed
 	movs r0, #131
 	movs r1, #1
 	movs r2, #180
@@ -1920,7 +1920,7 @@ Func_020016d8:
 	lsls r1, r1, #1
 	movs r2, #0
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	movs r2, #0
@@ -1952,7 +1952,7 @@ Func_020016d8:
 	movs r2, #80
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #8
 	adds r0, #5
@@ -1970,7 +1970,7 @@ Func_020016d8:
 	adds r1, #255
 	movs r2, #0
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #8
 	movs r2, #20
@@ -2045,7 +2045,7 @@ Func_020016d8:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #160
 	lsls r0, r0, #8
 	adds r0, #8
@@ -2071,7 +2071,7 @@ Func_020016d8:
 	movs r2, #20
 	lsls r1, r1, #1
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2141,7 +2141,7 @@ Func_020016d8:
 	movs r2, #40
 	lsls r1, r1, #1
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #160
 	lsls r0, r0, #8
 	adds r0, #8
@@ -2151,7 +2151,7 @@ Func_020016d8:
 	movs r2, #0
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2196,7 +2196,7 @@ Func_020016d8:
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
@@ -2267,7 +2267,7 @@ Func_020016d8:
 	movs r2, #40
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #160
 	lsls r0, r0, #8
 	adds r0, #8
@@ -2315,8 +2315,8 @@ Func_020016d8:
 	mov r1, r8
 	movs r2, #80
 	bl ObjectMotion_ArmCallback
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #11
 	bl Func_020032e8
 	pop {r3, r5, r6}
@@ -2360,7 +2360,7 @@ Func_02001ee0:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r5, .L_0200a2e0
 	movs r2, #133
 	lsls r2, r2, #2
@@ -2382,7 +2382,7 @@ Func_02001ee0:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #196
 	movs r2, #172
 	lsls r1, r1, #17
@@ -2414,7 +2414,7 @@ Func_02001ee0:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #176
 	movs r2, #204
 	lsls r2, r2, #16
@@ -2427,11 +2427,11 @@ Func_02001ee0:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #120
 	bl Battle_WaitMode0
 	ldr r0, .L_0200a2e8
@@ -2447,7 +2447,7 @@ Func_02001ee0:
 	movs r2, #0
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2455,7 +2455,7 @@ Func_02001ee0:
 	movs r2, #80
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #8
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2466,12 +2466,12 @@ Func_02001ee0:
 	adds r1, #255
 	movs r2, #40
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #10
 	movs r2, #80
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2482,14 +2482,14 @@ Func_02001ee0:
 	movs r2, #0
 	lsls r1, r1, #1
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r0, #8
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r0, #40
 	bl Battle_WaitMode0
 	movs r0, #8
@@ -2499,7 +2499,7 @@ Func_02001ee0:
 	adds r1, #255
 	movs r2, #40
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #8
 	movs r1, #0
 	movs r2, #40
@@ -2508,7 +2508,7 @@ Func_02001ee0:
 	adds r1, #255
 	movs r2, #20
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	movs r2, #20
@@ -2521,7 +2521,7 @@ Func_02001ee0:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2553,12 +2553,12 @@ Func_02001ee0:
 	adds r1, #255
 	movs r2, #0
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #2
 	movs r2, #80
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #10
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2573,7 +2573,7 @@ Func_02001ee0:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #20
 	movs r0, #8
 	movs r1, #4
@@ -2584,7 +2584,7 @@ Func_02001ee0:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #5
 	movs r1, #4
 	movs r2, #20
@@ -2626,7 +2626,7 @@ Func_02001ee0:
 	lsls r1, r1, #5
 	adds r0, #204
 	adds r1, #153
-	bl Func_020032d0
+	bl Engine_CameraSetSpeed
 	movs r0, #184
 	movs r1, #1
 	movs r2, #210
@@ -2652,11 +2652,11 @@ Func_02001ee0:
 	movs r1, #129
 	movs r0, #8
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r1, #129
 	movs r0, #5
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r3, #12
 	movs r2, #8
 	movs r1, #9
@@ -2734,8 +2734,8 @@ Func_02001ee0:
 	adds r3, r3, r2
 	movs r2, #120
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #12
 	bl Func_020032e8
 	add sp, #28
@@ -2831,7 +2831,7 @@ Func_02002304:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	movs r1, #156
 	movs r2, #230
@@ -2847,11 +2847,11 @@ Func_02002304:
 	ldr r0, [r6]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r0, .L_0200a710
@@ -2889,7 +2889,7 @@ Func_02002304:
 	lsls r1, r1, #1
 	movs r2, #80
 	movs r0, #10
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #176
 	movs r0, #10
 	lsls r1, r1, #8
@@ -2918,14 +2918,14 @@ Func_02002304:
 	movs r2, #40
 	adds r1, #255
 	movs r0, #8
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #6
 	movs r1, #2
 	bl Motion_SetVarCbAndRefresh
 	movs r1, #129
 	movs r0, #5
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r2, #20
 	movs r0, #5
 	movs r1, #0
@@ -2948,7 +2948,7 @@ Func_02002304:
 	movs r2, #40
 	adds r1, #255
 	movs r0, #6
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #6
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -2994,13 +2994,13 @@ Func_02002304:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r0, #5
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #0
@@ -3088,7 +3088,7 @@ Func_02002304:
 	adds r1, #255
 	movs r2, #40
 	movs r0, #6
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #192
 	movs r2, #0
 	movs r0, #6
@@ -3187,7 +3187,7 @@ Func_02002304:
 .L_0200a714:
 	.4byte 0x00019999
 .L_0200a718:
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #5
 	adds r0, #10
@@ -3291,7 +3291,7 @@ Func_02002304:
 	adds r1, #255
 	movs r2, #0
 	ldr r0, [r6]
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #192
 	movs r2, #0
 	lsls r1, r1, #8
@@ -3309,14 +3309,14 @@ Func_02002304:
 	movs r2, #0
 	adds r1, #255
 	ldr r0, [r6]
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	ldr r0, [r6]
 	movs r1, #2
 	bl Motion_SetVarCbAndRefresh
 	movs r1, #129
 	movs r0, #8
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r2, #20
 	movs r0, #8
 	movs r1, #0
@@ -3328,7 +3328,7 @@ Func_02002304:
 	lsls r1, r1, #1
 	movs r2, #20
 	movs r0, #10
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #176
 	movs r2, #20
 	movs r0, #10
@@ -3365,7 +3365,7 @@ Func_02002304:
 	movs r2, #40
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #0
 	movs r0, #5
 	bl Engine_EventShowMessage
@@ -3390,7 +3390,7 @@ Func_02002304:
 	ldr r0, [r6]
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r7, #24]
@@ -3399,7 +3399,7 @@ Func_02002304:
 	movs r1, #129
 	movs r0, #5
 	lsls r1, r1, #1
-	bl Func_020032c8
+	bl Engine_ActorSetAttachedEffect
 	movs r1, #0
 	movs r0, #5
 	bl Engine_EventShowMessage
@@ -3435,7 +3435,7 @@ Func_02002304:
 	adds r1, #255
 	movs r2, #0
 	ldr r0, [r6]
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	ldr r0, [r6]
 	movs r1, #0
 	movs r2, #20
@@ -3485,7 +3485,7 @@ Func_02002304:
 	movs r2, #20
 	adds r1, #255
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #5
 	movs r1, #0
 	bl Engine_EventShowMessage
@@ -3556,7 +3556,7 @@ Func_02002304:
 	lsls r1, r1, #1
 	movs r2, #0
 	movs r0, #6
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #6
@@ -3600,7 +3600,7 @@ Func_02002304:
 	movs r2, #0
 	lsls r1, r1, #1
 	movs r0, #10
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #5
 	adds r0, #10
@@ -3612,7 +3612,7 @@ Func_02002304:
 	lsls r1, r1, #5
 	adds r0, #153
 	adds r1, #51
-	bl Func_020032d0
+	bl Engine_CameraSetSpeed
 	movs r0, #198
 	movs r1, #1
 	movs r2, #234
@@ -3695,7 +3695,7 @@ Func_02002304:
 	movs r2, #20
 	lsls r1, r1, #1
 	movs r0, #5
-	bl Func_020032c0
+	bl Engine_ActorShowEmote
 	movs r0, #128
 	lsls r0, r0, #5
 	adds r0, #5
@@ -3760,7 +3760,7 @@ Func_02002c64:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r1, #192
@@ -3780,8 +3780,8 @@ Func_02002c64:
 	movs r0, #1
 	bl Task_Wait
 	bl FelixWake_EndStep
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Task_Wait
 	bl FelixWake_WaitForButton
@@ -3808,7 +3808,7 @@ Func_02002c64:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r2, #20
@@ -4041,7 +4041,7 @@ Func_02002f88:
 	adds r0, r5, #0
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	ldr r2, .L_0200afcc
 	lsls r3, r3, #7
@@ -4103,7 +4103,7 @@ Func_02002fd4:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	ldr r2, .L_0200b040
 	lsls r3, r3, #7
@@ -4151,7 +4151,7 @@ Func_02002fd4:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	ldr r2, .L_0200b0ac
 	lsls r3, r3, #7
@@ -4203,7 +4203,7 @@ Func_02002fd4:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r5, #0
 	adds r3, #85
 	strb r6, [r3]

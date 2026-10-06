@@ -1,257 +1,6 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
-	.section .text.x0200cbd8,"ax",%progbits
-	.global Func_02004bd8
-	.thumb_func
-Func_02004bd8:
-	push {r5, r6, r7, lr}
-	adds r5, r0, #0
-	ldr r3, [r5, #8]
-	sub sp, #12
-	mov r0, sp
-	str r3, [r0]
-	ldr r1, .L_0200cd60
-	ldr r3, [r5, #12]
-	adds r3, r3, r1
-	str r3, [r0, #4]
-	ldr r3, [r5, #16]
-	movs r1, #0
-	str r3, [r0, #8]
-	bl SceneData_FindSlotAtPosition
-	adds r7, r0, #0
-	ldr r6, [r7, #80]
-	ldr r3, [r6, #40]
-	movs r1, #128
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	lsls r1, r1, #1
-	cmp r3, r1
-	beq .L_0200cc0a
-	b .L_0200cd4c
-.L_0200cc0a:
-	ldr r2, [r5, #36]
-	adds r4, r2, #0
-	cmp r2, #0
-	bge .L_0200cc14
-	negs r4, r2
-.L_0200cc14:
-	ldr r3, [r5, #44]
-	adds r1, r3, #0
-	cmp r3, #0
-	bge .L_0200cc1e
-	negs r1, r3
-.L_0200cc1e:
-	cmp r4, r1
-	ble .L_0200cc38
-	adds r3, r2, #0
-	cmp r3, #0
-	bge .L_0200cc2c
-	ldr r2, .L_0200cd64
-	adds r3, r3, r2
-.L_0200cc2c:
-	cmp r3, #0
-	bge .L_0200cc34
-	ldr r4, .L_0200cd68
-	b .L_0200cc4a
-.L_0200cc34:
-	ldr r4, .L_0200cd6c
-	b .L_0200cc4a
-.L_0200cc38:
-	cmp r3, #0
-	bge .L_0200cc40
-	ldr r1, .L_0200cd64
-	adds r3, r3, r1
-.L_0200cc40:
-	cmp r3, #0
-	bge .L_0200cc48
-	ldr r4, .L_0200cd70
-	b .L_0200cc4a
-.L_0200cc48:
-	ldr r4, .L_0200cd74
-.L_0200cc4a:
-	ldrb r1, [r4]
-	adds r0, r1, #0
-	cmp r0, #0
-	beq .L_0200cc74
-	adds r2, r6, #0
-	adds r2, #36
-	ldrb r3, [r2]
-	cmp r3, r0
-	beq .L_0200cc6e
-	adds r6, r2, #0
-.L_0200cc5e:
-	adds r4, #1
-	ldrb r1, [r4]
-	adds r2, r1, #0
-	cmp r2, #0
-	beq .L_0200cc74
-	ldrb r3, [r6]
-	cmp r3, r2
-	bne .L_0200cc5e
-.L_0200cc6e:
-	adds r3, r1, #0
-	cmp r3, #0
-	bne .L_0200cc7e
-.L_0200cc74:
-	adds r0, r5, #0
-	ldr r1, .L_0200cd78
-	bl Engine_ObjectSetScript
-	b .L_0200cd54
-.L_0200cc7e:
-	ldr r3, .L_0200cd7c
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_0200cd80
-	cmp r2, r3
-	bne .L_0200cce8
-	ldr r0, .L_0200cd84
-	movs r4, #0
-	ldr r6, [r5, #8]
-	ldr r3, [r0, r4]
-	asrs r2, r6, #20
-	cmp r2, r3
-	bne .L_0200cca8
-	ldr r3, [r5, #16]
-	ldr r2, [r0, #4]
-	asrs r3, r3, #20
-	cmp r3, r2
-	beq .L_0200ccc4
-.L_0200cca8:
-	adds r4, #1
-	cmp r4, #3
-	bhi .L_0200ccc4
-	lsls r1, r4, #3
-	ldr r3, [r0, r1]
-	asrs r2, r6, #20
-	cmp r2, r3
-	bne .L_0200cca8
-	ldr r3, [r5, #16]
-	adds r2, r1, #4
-	ldr r2, [r0, r2]
-	asrs r3, r3, #20
-	cmp r3, r2
-	bne .L_0200cca8
-.L_0200ccc4:
-	movs r6, #0
-	lsls r4, r4, #2
-	b .L_0200ccd0
-.L_0200ccca:
-	adds r3, r1, #1
-	str r3, [r0, r4]
-	adds r6, #1
-.L_0200ccd0:
-	ldr r0, .L_0200cd88
-	ldr r1, [r0, r4]
-	ldrb r2, [r1]
-	cmp r2, #0
-	beq .L_0200cc74
-	ldr r3, [r7, #80]
-	adds r3, #36
-	ldrb r3, [r3]
-	cmp r2, r3
-	bne .L_0200ccca
-	ldr r3, .L_0200cd8c
-	b .L_0200cd3e
-.L_0200cce8:
-	ldr r0, .L_0200cd90
-	movs r4, #0
-	ldr r6, [r5, #8]
-	ldr r3, [r0, r4]
-	asrs r2, r6, #20
-	cmp r2, r3
-	bne .L_0200cd00
-	ldr r3, [r5, #16]
-	ldr r2, [r0, #4]
-	asrs r3, r3, #20
-	cmp r3, r2
-	beq .L_0200cd1c
-.L_0200cd00:
-	adds r4, #1
-	cmp r4, #7
-	bhi .L_0200cd1c
-	lsls r1, r4, #3
-	ldr r3, [r0, r1]
-	asrs r2, r6, #20
-	cmp r2, r3
-	bne .L_0200cd00
-	ldr r3, [r5, #16]
-	adds r2, r1, #4
-	ldr r2, [r0, r2]
-	asrs r3, r3, #20
-	cmp r3, r2
-	bne .L_0200cd00
-.L_0200cd1c:
-	movs r6, #0
-	lsls r4, r4, #2
-	b .L_0200cd28
-.L_0200cd22:
-	adds r3, r1, #1
-	str r3, [r0, r4]
-	adds r6, #1
-.L_0200cd28:
-	ldr r0, .L_0200cd94
-	ldr r1, [r0, r4]
-	ldrb r2, [r1]
-	cmp r2, #0
-	beq .L_0200cc74
-	ldr r3, [r7, #80]
-	adds r3, #36
-	ldrb r3, [r3]
-	cmp r2, r3
-	bne .L_0200cd22
-	ldr r3, .L_0200cd98
-.L_0200cd3e:
-	ldr r2, [r3, r4]
-	lsls r3, r6, #2
-	ldr r1, [r3, r2]
-	adds r0, r5, #0
-	bl Engine_ObjectSetScript
-	b .L_0200cd54
-.L_0200cd4c:
-	ldr r1, .L_0200cd78
-	adds r0, r5, #0
-	bl Engine_ObjectSetScript
-.L_0200cd54:
-	movs r0, #0
-	add sp, #12
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-.L_0200cd60:
-	.4byte 0xfff00000
-.L_0200cd64:
-	.4byte 0x0000ffff
-.L_0200cd68:
-	.4byte Data_020051a4
-.L_0200cd6c:
-	.4byte Data_020051a8
-.L_0200cd70:
-	.4byte Data_020051ac
-.L_0200cd74:
-	.4byte Data_020051b0
-.L_0200cd78:
-	.4byte Data_02005564
-.L_0200cd7c:
-	.4byte gCell
-.L_0200cd80:
-	.4byte 0x000000b9
-.L_0200cd84:
-	.4byte gVinasuSwitchCells
-.L_0200cd88:
-	.4byte Data_0200772c
-.L_0200cd8c:
-	.4byte Data_0200777c
-.L_0200cd90:
-	.4byte Data_02005164
-.L_0200cd94:
-	.4byte Data_0200778c
-.L_0200cd98:
-	.4byte Data_020077ec
 	.section .rodata.x0200d040,"a",%progbits
 .L_0200d040:
 	.4byte 0x00000000
@@ -335,8 +84,8 @@ gVinasuBlockHeights:
 	.4byte 0xffc00000
 	.4byte 0xffb00000
 	.4byte 0xffb00000
-	.global Data_02005164
-Data_02005164:
+	.global gVinasuPillarCells
+gVinasuPillarCells:
 	.4byte 0x0000000b
 	.4byte 0x00000027
 	.4byte 0x0000000e
@@ -353,17 +102,17 @@ Data_02005164:
 	.4byte 0x0000002e
 	.4byte 0x00000010
 	.4byte 0x0000002e
-	.global Data_020051a4
-Data_020051a4:
+	.global gVinasuShapesPushedLeft
+gVinasuShapesPushedLeft:
 	.4byte 0x00070605
-	.global Data_020051a8
-Data_020051a8:
+	.global gVinasuShapesPushedRight
+gVinasuShapesPushedRight:
 	.4byte 0x00080604
-	.global Data_020051ac
-Data_020051ac:
+	.global gVinasuShapesPushedUp
+gVinasuShapesPushedUp:
 	.4byte 0x00080703
-	.global Data_020051b0
-Data_020051b0:
+	.global gVinasuShapesPushedDown
+gVinasuShapesPushedDown:
 	.4byte 0x00050403
 .L_0200d1b4:
 	.4byte 0x00080706
@@ -400,14 +149,14 @@ gEffectScripts:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyLowNibbleOfField100
+	.4byte VinasuHeya_UpdateChildFromTimer
 	.4byte 0x00000010
 .L_0200d204:
 	.4byte 0x00000015
 	.4byte 0x00000023
 	.4byte 0x00002126
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyLowNibbleOfField100
+	.4byte VinasuHeya_UpdateChildFromTimer
 	.4byte 0x00000010
 	.global gVinasuLeaderApproachScript
 gVinasuLeaderApproachScript:
@@ -609,7 +358,7 @@ gVinasuSettleScriptA:
 	.4byte 0x00000007
 	.4byte 0x02980000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 	.global gVinasuSettleScriptB
 gVinasuSettleScriptB:
@@ -634,10 +383,10 @@ gVinasuSettleScriptB:
 	.4byte 0x00000007
 	.4byte 0x02b80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
-	.global Data_02005564
-Data_02005564:
+	.global gVinasuRefusedPushScript
+gVinasuRefusedPushScript:
 .L_0200d564:
 	.4byte 0x00000015
 	.4byte 0x00000026
@@ -681,7 +430,7 @@ Data_02005564:
 	.4byte 0x00000007
 	.4byte 0x02b80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d60c:
 	.4byte 0x00000003
@@ -696,7 +445,7 @@ Data_02005564:
 	.4byte 0x00000007
 	.4byte 0x02980000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d644:
 	.4byte 0x00000003
@@ -711,7 +460,7 @@ Data_02005564:
 	.4byte 0x00000007
 	.4byte 0x02b80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d67c:
 	.4byte 0x00000003
@@ -726,7 +475,7 @@ Data_02005564:
 	.4byte 0x00000007
 	.4byte 0x02980000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d6b4:
 	.4byte 0x00000003
@@ -764,7 +513,7 @@ Data_02005564:
 	.4byte 0x00000007
 	.4byte 0x02980000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d744:
 	.4byte 0x00000003
@@ -779,10 +528,10 @@ Data_02005564:
 	.4byte 0x00000007
 	.4byte 0x02b80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
-	.global Data_0200577c
-Data_0200577c:
+	.global gVinasuFirstGateScript
+gVinasuFirstGateScript:
 	.4byte 0x00000003
 	.4byte 0x00d80000
 	.4byte 0x00000000
@@ -802,8 +551,8 @@ Data_0200577c:
 	.4byte 0x00000000
 	.4byte 0x02f80000
 	.4byte 0x00000010
-	.global Data_020057c8
-Data_020057c8:
+	.global gVinasuFirstGateOpenScript
+gVinasuFirstGateOpenScript:
 	.4byte 0x00000003
 	.4byte 0x01080000
 	.4byte 0x00000000
@@ -825,7 +574,7 @@ Data_020057c8:
 	.4byte 0x00000007
 	.4byte 0x02e80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d824:
 	.4byte 0x00000003
@@ -858,7 +607,7 @@ Data_020057c8:
 	.4byte 0x00000007
 	.4byte 0x02b80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d8a4:
 	.4byte 0x00000003
@@ -891,7 +640,7 @@ Data_020057c8:
 	.4byte 0x00000007
 	.4byte 0x02980000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d924:
 	.4byte 0x00000003
@@ -915,7 +664,7 @@ Data_020057c8:
 	.4byte 0x00000007
 	.4byte 0x02a80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d980:
 	.4byte 0x00000003
@@ -930,7 +679,7 @@ Data_020057c8:
 	.4byte 0x00000007
 	.4byte 0x02780000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200d9b8:
 	.4byte 0x00000003
@@ -999,10 +748,10 @@ Data_020057c8:
 	.4byte 0x00000007
 	.4byte 0x02780000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
-	.global Data_02005ac8
-Data_02005ac8:
+	.global gVinasuSecondGateScript
+gVinasuSecondGateScript:
 	.4byte 0x00000003
 	.4byte 0x00d80000
 	.4byte 0x00000000
@@ -1051,7 +800,7 @@ Data_02005ac8:
 	.4byte 0x00000007
 	.4byte 0x02e80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200db90:
 	.4byte 0x00000003
@@ -1093,7 +842,7 @@ Data_02005ac8:
 	.4byte 0x00000007
 	.4byte 0x02b80000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200dc34:
 	.4byte 0x00000003
@@ -1117,7 +866,7 @@ Data_02005ac8:
 	.4byte 0x00000007
 	.4byte 0x02980000
 	.4byte 0x00000022
-	.4byte Func_02004bd8
+	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
 .L_0200dc90:
 	.4byte 0x00000003
@@ -1168,8 +917,8 @@ gVinasuSettleCells:
 	.4byte 0x003b006f
 	.4byte 0x00020001
 	.4byte 0xffff0006
-	.global Data_02005d3c
-Data_02005d3c:
+	.global gVinasuGateCells
+gVinasuGateCells:
 	.4byte 0x003a0060
 	.4byte 0x00020001
 	.4byte 0x005f0006
@@ -2574,10 +2323,10 @@ gVinasuHeyaEvents3:
 	.4byte SceneState_ApplyRectAt19_44AndRunThree
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte SceneState_ClearWorkspaceWord24
+	.4byte VinasuHeya_ReleaseEffectLeader
 	.4byte 0x00000002
 	.4byte 0xffff0020
-	.4byte SceneState_StoreLookupZeroToWord24
+	.4byte VinasuHeya_AttachEffectLeader
 	.4byte 0x00000202
 	.4byte 0xffff002d
 	.4byte FieldScene_RunGuardedThreeStepSetup
@@ -2663,7 +2412,7 @@ gVinasuHeyaEvents4:
 	.4byte FieldScene_RunGuardedRectStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00008c15
 	.4byte 0x03010009
 	.4byte VinasuHeya_RunCellPushScene
@@ -2737,7 +2486,7 @@ gVinasuHeyaEvents5:
 	.4byte SceneState_RunConditionalStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00000013
 	.4byte 0x0f350064
 	.4byte 0x00100052
@@ -2850,7 +2599,7 @@ gVinasuHeyaEvents6:
 	.4byte FieldScene_DrawTilesWhenCheckClear
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00000013
 	.4byte 0x0f360064
 	.4byte 0x00100009
@@ -2896,8 +2645,8 @@ gVinasuHeyaEvents6:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200772c
-Data_0200772c:
+	.global gVinasuSwitchShapes
+gVinasuSwitchShapes:
 	.4byte .L_0200d1b4
 	.4byte .L_0200d1b8
 	.4byte .L_0200d1bc
@@ -2922,14 +2671,14 @@ Data_0200772c:
 	.4byte .L_0200d70c
 	.4byte .L_0200d744
 	.4byte .L_0200d564
-	.global Data_0200777c
-Data_0200777c:
+	.global gVinasuSwitchPushScripts
+gVinasuSwitchPushScripts:
 	.4byte .L_0200f73c
 	.4byte .L_0200f74c
 	.4byte .L_0200f75c
 	.4byte .L_0200f76c
-	.global Data_0200778c
-Data_0200778c:
+	.global gVinasuPillarShapes
+gVinasuPillarShapes:
 	.4byte .L_0200d1c4
 	.4byte .L_0200d1c6
 	.4byte .L_0200d1c6 + 0x1
@@ -2962,8 +2711,8 @@ Data_0200778c:
 .L_0200f7e4:
 	.4byte .L_0200d824
 	.4byte .L_0200d564
-	.global Data_020077ec
-Data_020077ec:
+	.global gVinasuPillarPushScripts
+gVinasuPillarPushScripts:
 	.4byte .L_0200f7ac
 	.4byte .L_0200f7b4
 	.4byte .L_0200f7b8

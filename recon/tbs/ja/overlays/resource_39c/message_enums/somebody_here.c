@@ -1,9 +1,3 @@
-/* NONMATCHING: Japanese compile-known dialogue message, 2026-10-01.
- * The complete actor-three scene compiles with the approved TBS flags,
- * but builds message 5888 from a shifted byte instead of the game's
- * pool load, moving the following instructions and pool entries.
- * Production uses the canonical PO symbol and matches every edition.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PROBE.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
@@ -37,7 +31,7 @@ void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
 s32 MakyuriHeya_StartPillarPush(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
 void FieldScene_RunPrimarySequence(s32 mode);
-s32 SceneData_ApplyTableA2c5AndReturnZero(void);
+s32 MakyuriHeya_StopActorNinePositionCallback(void);
 void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
 void Engine_ActorStartAction(s32 actor);
 void Engine_EventBegin();
@@ -87,7 +81,6 @@ s32 Djinn_AddToOwner();
 void Djinn_Activate();
 void Owner_RecalculateStats();
 
-/* The map layer the lift is drawn on, scrolled by its vertical offset. */
 struct LiftLayer {
     u8 unknown_00[12];
     s32 offset;
@@ -110,13 +103,11 @@ void FieldScene_RunActorThreeBranchSequence(void)
     Actor_FaceDirection(3, FX16_0_5, 20);
     Object_SetModeById(3, 16);
     record = (s32)Object_GetById(3);
-    /* Set the +24 field of actor 3's record to -1.0 in 16.16 fixed point. */
     *(s32 *)(record + 24) = -FX16_1_0;
     Battle_WaitMode0(20);
     Event_ShowMessageAndWait(3, 0, 20);
     Object_SetModeById(3, 1);
     record = (s32)Object_GetById(3);
-    /* Set the +24 field of actor 3's record to 1.0 in 16.16 fixed point. */
     *(s32 *)(record + 24) = FX16_1_0;
     Battle_WaitMode0(20);
     Actor_FaceDirection(3, FX16_0_25, 20);

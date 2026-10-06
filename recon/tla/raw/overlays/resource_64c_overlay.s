@@ -35,7 +35,7 @@ Func_0200005c:
 .L_02008098:
 	.4byte 0x0000000f
 .L_0200809c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020080a0:
 	.4byte Data_02003dbc
 .L_020080a4:
@@ -295,7 +295,7 @@ Func_0200020c:
 .L_02008270:
 	.4byte Data_02003dbe
 .L_02008274:
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r1, r11
 	cmp r1, #4
 	bne .L_02008282
@@ -357,7 +357,7 @@ Func_0200020c:
 	adds r3, r3, r2
 	movs r2, #64
 	str r2, [r3]
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	ldr r3, .L_02008404
 	movs r7, #0
 	ldrsh r2, [r3, r5]
@@ -477,7 +477,7 @@ Func_0200020c:
 	bl WaitFrames
 	b .L_0200855a
 .L_020083ec:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020083f0:
 	.4byte Data_02003d20
 .L_020083f4:
@@ -744,7 +744,7 @@ Func_0200020c:
 .L_020085f0:
 	.4byte Func_0200005c
 .L_020085f4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020085f8:
 	.4byte gIoWriteQueue
 .L_020085fc:
@@ -1408,14 +1408,14 @@ Func_0200020c:
 	adds r3, r3, r0
 	movs r2, #64
 	str r2, [r3]
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_02008afc:
 	movs r0, #1
 	adds r7, #1
 	bl WaitFrames
 	cmp r7, #124
 	bne .L_02008ad0
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	b .L_02008b16
 .L_02008b0e:
 	ldr r2, .L_02008b54
@@ -1450,7 +1450,7 @@ Func_0200020c:
 .L_02008b50:
 	.4byte 0x050001c0
 .L_02008b54:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_02008b58:
 	.4byte Func_0200005c
 .L_02008b5c:
@@ -2350,7 +2350,7 @@ Func_020011f4:
 .L_02009226:
 	pop {r5, pc}
 .L_02009228:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200922c,"ax",%progbits
 	.global Func_0200122c
 	.thumb_func
@@ -2386,7 +2386,7 @@ Func_0200122c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009268:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200926c:
 	.4byte Data_02003db8
 .L_02009270:
@@ -2502,7 +2502,7 @@ Func_0200130c:
 .L_02009340:
 	.4byte 0x0000000c
 .L_02009344:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009348:
 	.4byte Data_02003fc0
 .L_0200934c:
@@ -2598,7 +2598,7 @@ Func_02001364:
 .L_020093f4:
 	.4byte gPartyState
 .L_020093f8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020093fc:
 	.4byte 0xffff0000
 	.section .text.x02009400,"ax",%progbits
@@ -2640,8 +2640,8 @@ Func_02001400:
 	adds r3, r3, r2
 	movs r2, #16
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	mov r3, r10
 	cmp r3, #2
 	bne .L_02009470
@@ -3327,7 +3327,7 @@ Func_0200199c:
 .L_020099ce:
 	pop {r5, pc}
 .L_020099d0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x020099d4,"ax",%progbits
 	.global Func_020019d4
 	.thumb_func
@@ -3358,7 +3358,7 @@ Func_020019d4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009a08:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02009a0c,"ax",%progbits
 	.global Func_02001a0c
 	.thumb_func
@@ -3381,7 +3381,7 @@ Func_02001a0c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009a30:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02009a34,"ax",%progbits
 	.global Func_02001a34
 	.thumb_func
@@ -3813,7 +3813,7 @@ Func_02001be0:
 .L_02009d4a:
 	pop {r5, r6, r7, pc}
 .L_02009d4c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009d50:
 	.4byte Data_02003fc4
 .L_02009d54:

@@ -1,32 +1,22 @@
 #include "TYPES.H"
+#include "TEXT_RENDER_RUNTIME.H"
 #include "TBS_EDITION.H"
-
-struct Work_08017c1c {
-    u8 pad_00[12];
-    u16 x;
-    u16 y;
-};
-
-extern u8 *gWindowWork;
-
-s32 UiText_RenderStringTiles(u16 *, s32, s32, s32);
+#include "MENU_LIST.H"
 
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,
-    const struct Work_08017c1c *work,
+    const struct RenderInput *work,
     s32 offset_x,
     s32 offset_y)
 {
-    u8 *base = gWindowWork;
-    s32 index;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
     u32 cell;
 
     if (buffer == NULL) {
-        u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
+        u16 *counter = &canvas->count;
 
-        index = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-        buffer = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
-        *(u16 *)(base + index) = 0;
+        buffer = canvas->entries;
+        canvas->entries[*counter] = 0;
         *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     }
 
@@ -38,12 +28,12 @@ void UiText_RenderGlyphTileAtWorkOffset(
 
         cell *= 2;
         dst = 0x06002000 + cell;
-        src = (s32)base + cell;
+        src = (s32)canvas->tilemap + cell;
 
         UiText_RenderStringTiles(
             buffer,
-            src,
-            dst,
+            (u16 *)src,
+            (u16 *)dst,
             0x06002000);
     }
 }

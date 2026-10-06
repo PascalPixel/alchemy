@@ -1,69 +1,54 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_MOTION.H"
+#include "BATTLE_PRESENTATION.H"
+#include "BATTLE_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(void *);
-void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
+#define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
 
-struct State_080b7f9c {
-    u8 filler0[12];
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-    s32 field18;
-    s32 field1c;
-    s32 field20;
-    u8 filler24[16];
-    s16 field34;
-    s16 field36;
-};
-
-struct Local_080b7f9c {
-    s32 first;
-    s32 second;
-    s32 third;
-};
-
-extern struct State_080b7f9c *gCameraWork;
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
-void Object_SetMode(struct MotionObject *, s32);
 s32 ArcTan2(s32, s32);
 
-u8 *Owner_GetStateFar(s32);
-extern s32 BattleMotion_VariantAcceleration[];
-extern s32 BattleMotion_VariantSpeedLimit[];
-extern s32 BattleMotion_VariantVelocityY[];
-extern s32 BattleMotion_VariantDistancePercent[];
 
 void Camera_InitDefaultTransform(void)
 {
-    struct State_080b7f9c *state = gCameraWork;
-    struct Local_080b7f9c transfer;
+    struct BattleCamera *state = gCameraWork;
+    struct FixedPointPosition transfer;
 
-    state->field36 = 192 << 6;
-    state->field34 = 254 << 8;
-    state->field20 = 255 << 17;
-    state->field0c = 0;
-    state->field10 = 0;
-    state->field14 = 0;
-    state->field1c = 0;
-    state->field18 = 0;
+    state->yaw = 192 << 6;
+    state->pitch = 254 << 8;
+    state->distance = 255 << 17;
+    state->pos[0] = 0;
+    state->pos[1] = 0;
+    state->pos[2] = 0;
+    state->follow_pos = 0;
+    state->unknown_18 = 0;
 
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(&state->field0c);
-    SceneTransform_ApplyYaw(state->field36);
-    SceneTransform_ApplyPitch(state->field34);
+    SceneTransform_ApplyPosition(&state->pos[0]);
+    SceneTransform_ApplyYaw((s16)state->yaw);
+    SceneTransform_ApplyPitch((s16)state->pitch);
 
-    transfer.first = 0;
-    transfer.second = 0;
-    transfer.third = state->field20;
+    transfer.x = 0;
+    transfer.y = 0;
+    transfer.z = state->distance;
     Iwram_TransformVector((s32 *)&transfer, (s32 *)state);
 }
 
@@ -90,7 +75,7 @@ void Actor_ResetMotionAtAnchor(s32 slot_id)
     if (z < 0)
         z += 7;
     object->angle =
-        (s16)(ArcTan2(z >> 3, slot->anchor_x) - 0x8000);
+        ArcTan2(z >> 3, slot->anchor_x) - 0x8000;
 }
 
 void BattleMotion_SetupEscapeObject(s32 object_id)
@@ -129,7 +114,7 @@ void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot,
     end_z = end->z;
     start_z = start->z;
     z_step = progress * (end_z - start_z) / 100;
-    *(s16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     start->acceleration = 0x20000;
     start->speed_limit = 0x80000;
     start->velocity_y = 0x40000;
@@ -193,31 +178,22 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 {
     struct BattleObjectSlot *slot;
     struct MotionObject *object;
-    /* FAKEMATCH: Byte indexing preserves the load operand order. */
-    s32 offset;
     s32 x;
-    s32 *table;
     s32 scale;
 
     slot = GetBattleObjectSlot(id);
     object = slot->object;
-    if (Owner_GetStateFar(id)[0x128] != 0x94) {
-        table = BattleMotion_VariantAcceleration;
-        offset = variant * sizeof(*table);
-        object->acceleration = *(s32 *)((u8 *)table + offset);
-        table = BattleMotion_VariantSpeedLimit;
-        object->speed_limit = *(s32 *)((u8 *)table + offset);
-        if (object->y == 0 || variant > 4) {
-            table = BattleMotion_VariantVelocityY;
-            object->velocity_y = *(s32 *)((u8 *)table + offset);
-        }
+    if (Owner_GetStateFar(id)->class_id != 0x94) {
+        object->acceleration = BattleMotion_VariantAcceleration[variant];
+        object->speed_limit = BattleMotion_VariantSpeedLimit[variant];
+        if (object->y == 0 || variant > 4)
+            object->velocity_y = BattleMotion_VariantVelocityY[variant];
         object->vertical_motion_strength = 0x9999;
         object->vertical_motion_phase = 0;
         object->auto_face_motion = 0;
         Object_ResetMotion(object);
         scale = slot->anchor_x;
-        table = BattleMotion_VariantDistancePercent;
-        x = (scale * *(s32 *)((u8 *)table + offset)) / 100;
+        x = (scale * BattleMotion_VariantDistancePercent[variant]) / 100;
         Object_SetPosition(object, x, 0, slot->anchor_z);
     }
     Object_SetMode(object, 5);
@@ -253,6 +229,7 @@ void BattleMotion_ApproachTarget(
     object->acceleration = dist;
     object->speed_limit = dist;
     object->snap_to_target = 1;
+
     if (object->motion_flags & 4)
         object->velocity_y = initial_velocity_y;
     object->velocity_y = initial_velocity_y;

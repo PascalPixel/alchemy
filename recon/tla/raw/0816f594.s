@@ -124,7 +124,7 @@ Func_0816f594:
 	ldrh r3, [r3]
 	mov r7, r9
 	strh r3, [r4, #54]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #16]
 	adds r1, r0, #0
 	adds r1, #12
@@ -172,7 +172,7 @@ Func_0816f594:
 	ldr r3, [r1, #16]
 	mov r1, r10
 	str r3, [r7, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r4, r10
 	ldr r3, [r4]
 	lsrs r2, r3, #31
@@ -352,7 +352,7 @@ Func_0816f594:
 	lsls r1, r3, #3
 .L_0816f86e:
 	str r1, [r6, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
 	subs r0, #64

@@ -29,7 +29,7 @@ Func_08043cd8:
 	str r1, [sp, #28]
 	str r1, [sp, #24]
 	str r2, [sp, #12]
-	bl Func_080ad2c8
+	bl Runtime_GetBuildStampTimeFar
 	mov r3, r8
 	str r0, [sp, #8]
 	cmp r3, #0
@@ -270,7 +270,7 @@ Func_08043cd8:
 	ldr r2, .L_0804420c
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_080439c4
+	bl Scheduler_ScheduleCallbackAAfterFrames
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #2
@@ -382,7 +382,7 @@ Func_08043cd8:
 	mov r1, r9
 	movs r2, #72
 	mov r0, r10
-	bl Func_08044f88
+	bl RenderResource_CreatePair
 	movs r5, #144
 	str r0, [sp, #16]
 	bl Func_080f8070
@@ -571,7 +571,7 @@ Func_08043cd8:
 	mov r0, r9
 	movs r1, #0
 	movs r3, #26
-	bl Func_080439e8
+	bl UiWindow_FillTilemapRect
 .L_08044142:
 	ldr r0, [sp, #16]
 	bl Func_08045018
@@ -803,7 +803,7 @@ Func_08043cd8:
 	movs r1, #2
 	mov r0, r9
 	bl UiWork_Finalize
-	bl Func_080439d8
+	bl Scheduler_ScheduleCallbackA
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
 	ldr r3, .L_08044340

@@ -1,7 +1,3 @@
-/* Draft: the international resource selection emits236 bytes under the
- * approved Japanese TLA flags, but no complete Japanese instruction extent
- * matches it. The Japanese raw owner remains; this local width records the
- * measured international attempt without claiming Japanese behavior. */
 #include "TLA_EDITION.H"
 #undef SELECT_MENU_WIDTH
 #define SELECT_MENU_WIDTH 7
@@ -11,7 +7,6 @@
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
-/* ☀️'s, reaching the selection work through ⚓️'s heap slot. */
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {
     u8 *state;

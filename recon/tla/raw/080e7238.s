@@ -17,7 +17,7 @@ Func_080e7238:
 	sub sp, #32
 	bl Runtime_AllocateHeapBlock
 	str r0, [sp, #16]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	mov r8, r0
 	ldr r0, .L_080e74d0
@@ -84,7 +84,7 @@ Func_080e7238:
 	str r3, [r1, #28]
 	mov r0, r8
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r3, #0
 	movs r2, #2
 	str r2, [sp, #4]
@@ -279,7 +279,7 @@ Func_080e7238:
 	strh r3, [r1, #6]
 	mov r0, r8
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r2, #3
 	str r2, [sp, #4]
 .L_080e7476:

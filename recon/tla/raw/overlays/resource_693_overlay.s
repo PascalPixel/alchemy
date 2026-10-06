@@ -1441,7 +1441,7 @@ Func_02000c14:
 .L_02008c72:
 	pop {pc}
 .L_02008c74:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008c78:
 	.4byte 0x05000172
 .L_02008c7c:
@@ -1492,11 +1492,11 @@ Func_02000c8c:
 	movs r1, #2
 	negs r2, r2
 	ldr r0, [r5]
-	bl ObjectMotion_SnapHeadingAndOffset
+	bl ObjectMotion_CenterOnColumn
 	movs r0, #8
 	bl Battle_WaitMode0
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r3, #170
 	lsls r3, r3, #1
 	adds r6, r6, r3
@@ -1656,7 +1656,7 @@ Func_02000dc4:
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #17
 	bl Object_GetById
 	movs r5, #0

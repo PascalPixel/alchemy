@@ -1,9 +1,22 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
+
+#define Object_SetMoveTarget ((void (*)(struct FieldActor *, s32, s32, s32))Object_SetMoveTarget)
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -40,114 +53,42 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     s32 handle;
 } ActiveSubjectSlot;
 
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 Korosseo_GaugeGraphics[];
 extern u8 Korosseo_UpdatePathRival[];
 extern u8 HexDigits[];
-extern u32 KorosseoKawa_DirectionSteps[];
 
 typedef void(*SceneTask)(void);
 void Korosseo_DrawGauge(void);
-s32 Resource_GetTableEntryFar(void);
-void Resource_DecodeType01(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 
 void Vector_AddPolarOffset();
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
-
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-static inline void InitializeActorZero(void)
-{
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-}
-
-static inline void InitializeSelectedActor(s32 actorId)
-{
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
-}
-
-/* Selects a later line in the current dialogue. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-u8 *Runtime_AllocateBlock();            /* allocate a record by (id, size) */
+s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 
 
-void Resource_DecodeType01();           /* upload image data to a handle */
 
-s32 Resource_FindFreeEntry();            /* next palette slot index */
-
-
-void Runtime_BumpFree();           /* release a graphics handle */
-
-s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);  /* terrain probe */
-
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
-
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
-
-void Script_WaitForEventTimeout(struct FieldActor *);              /* re-attach the camera */
+void Script_WaitForEventTimeout(struct FieldActor *);
 
 struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
 {
-    extern u8 *Data_03001ebc;
-
-    struct FieldActor **slots = (struct FieldActor **)(Data_03001ebc + 0x14);
+    struct FieldActor **slots = gEventWork->placed_actors - 8;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
@@ -162,14 +103,6 @@ struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct Fiel
     return 0;
 }
 
-/*
- * The push interaction: probe the cell one step ahead of the subject and, if
- * something occupies it, slide it and the subject one step on. The 360-byte
- * owner includes its four-word literal pool, which ends where the next owner
- * begins. Record fields are asserted only where written -- facing at +6,
- * position at +8/+12/+16, state at +0x22, occupancy flag bit 0 at +0x59 -- and
- * the terrain probe is tested signed, so only a positive code refuses.
- */
 void StagedActor_PushActorAhead(void)
 {
     extern s16 Data_02000240[];
@@ -200,7 +133,6 @@ void StagedActor_PushActorAhead(void)
         return;
     }
 
-    /* Is the cell one step beyond the target already taken? */
     step = KorosseoKawa_DirectionSteps[dir];
     pos.x = target->x.fixed + (s32)(step & 0xffff0000);
     pos.y = target->y.fixed;
@@ -212,9 +144,8 @@ void StagedActor_PushActorAhead(void)
         return;
     }
 
-    /* ...and the cell directly above the target? */
     pos.x = target->x.fixed;
-    pos.y = target->y.fixed + 0x100000;      /* 128 << 13 */
+    pos.y = target->y.fixed + 0x100000;
     pos.z = target->z.fixed;
 
     blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
@@ -222,7 +153,7 @@ void StagedActor_PushActorAhead(void)
         return;
     }
 
-    target->unknown_22 = 2;
+    target->terrain_id = 2;
     zero = 0;
 
     step = KorosseoKawa_DirectionSteps[dir];
@@ -242,14 +173,13 @@ void StagedActor_PushActorAhead(void)
     target->acceleration = 0x3333;
     Object_SetMoveTarget(target, pos.x, pos.y, pos.z);
 
-    /* The same destination block, moved onto the subject this time. */
     subject->speed = 0x3333;
     subject->acceleration = 0x3333;
     Object_SetMoveTarget(subject, pos.x, pos.y, pos.z);
 
-    Audio_PlayCue(0xee);
+    Engine_AudioPlayCue(0xee);
     Script_WaitForEventTimeout(target);
-    Audio_PlayCue(0x120);                                /* 144 << 1 */
+    Engine_AudioPlayCue(0x120);
 
     target->x.fixed = pos.x;
     target->z.fixed = pos.z;
@@ -259,19 +189,6 @@ void StagedActor_PushActorAhead(void)
     Object_SetMode(subject, 1);
 }
 
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay.
- * The occupancy lookups take the position block; the record pointer the call
- * sites also pass is not asserted as an argument. */
-
-/*
- * Probe the two cells ahead of the active subject and return what occupies the
- * nearer one, else the further one, else zero. The 160-byte owner includes its
- * alignment bytes and two-word literal pool. Facing is the biased quadrant of
- * the halfword at +6, with no sign extension; each probe rounds x and z down to
- * whole units and re-centres them by half a unit, carrying y unrounded. Only
- * the record fields at +6, +8, +12 and +16 are asserted.
- */
 struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 {
     extern s16 Data_02000240[];
@@ -283,20 +200,19 @@ struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 
     rec = Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
 
-    /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (rec->facing + 0x2000) & 0xc000;
 
     pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
     pos.y = rec->y.fixed;
     pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, facing, &pos);          /* 128 << 13 */
+    Vector_AddPolarOffset(0x100000, facing, &pos);
 
     hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
     if (hit == 0) {
         pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
         pos.y = rec->y.fixed;
         pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
-        Vector_AddPolarOffset(0x200000, facing, &pos);      /* 128 << 14 */
+        Vector_AddPolarOffset(0x200000, facing, &pos);
 
         hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
     }

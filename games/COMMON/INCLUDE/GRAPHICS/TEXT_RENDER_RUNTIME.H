@@ -1,23 +1,25 @@
 #ifndef ALCHEMY_TEXT_RENDER_RUNTIME_H
 #define ALCHEMY_TEXT_RENDER_RUNTIME_H
 
-#include "TYPES.H"
+#include "RENDER_INPUT.H"
 
-struct TextRenderWork {
-    u8 unknown_00[12];
-    u16 x;
-    u16 y;
-};
+s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
+
+void UiText_DrawCharacterAtOffset(
+    s32 character,
+    struct RenderInput *work,
+    u32 offset_x,
+    u32 offset_y);
 
 void UiText_DrawStringAtOffset(
     u8 *text,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y);
 void UiText_DrawNumberAtOffset(
     s32 value,
     s32 format,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y);
 

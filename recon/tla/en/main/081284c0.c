@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
@@ -5,19 +6,13 @@
 #include "BATTLE_TYPES.H"
 
 #if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
-/* Counts one defeated enemy toward the battle spoils: its coins and
-   experience (randomly raised in proportion to the enemy's level when the
-   party earned them), the formation slot it came from, and a chance at its
-   item drop, which replaces the least valuable drop so far. */
 
 struct EnemyRecord {
     u8 unknown_00[0x4c];
-    u16 coins;                      /* 0x4c */
-    s16 item;                       /* 0x4e */
-    s16 item_chance;                /* 0x50 */
-    u16 experience;                 /* 0x52 */
+    u16 coins;
+    s16 item;
+    s16 item_chance;
+    u16 experience;
 };
 
 struct EnemyRecord *Owner_GetRecordFar(s32);
@@ -123,7 +118,7 @@ void Battle_AwardSpoils(void)
     if (spoils->coins != 0) {
         UiWork_PushValueSlotFar(spoils->coins, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgCoinsGained);
-        Party_AdjustSixDigitCounterAFar(spoils->coins);
+        Party_AdjustCoinsFar(spoils->coins);
         BattlePresentation_WaitForAdvance();
     }
     found = &gOverflowItem;

@@ -1,10 +1,9 @@
-/* Declarations shared by the Vale house scene's sources (resource_374). The
- * calls reach this overlay's import veneers by the names IMPORT.S gives
- * them, and its tables by the labels on the listing's data rows. */
+#include "RESOURCE.H"
 #ifndef HAIDIA_H
 #define HAIDIA_H
 
 #include "TYPES.H"
+#include "VRAM_BLOCK.H"
 #include "CALLBACK_SCHEDULER.H"
 
 #define NULL ((void *)0)
@@ -13,6 +12,9 @@
 #include "FIELD_SCENE.H"
 #include "FACING_OBJECT.H"
 #include "FIELD_EFFECT.H"
+
+#include "BATTLE_EFFECT_RUNTIME.H"
+#define Data_03001ebc ((u8 *)&Data_03001ebc)
 
 struct Obj {
     u8 pad00[6];
@@ -44,14 +46,6 @@ struct SceneVerticalEffect {
     struct VerticalEffectAnchor *anchor;
 };
 
-/*
- * Exact 2026-09-23 (832 bytes), a tagged fake match. The callback passed
- * to the target-and-callback call (main Object_SetTargetAndCallback) is the
- * data symbol Data_0200ac00, as in HAIDIA_IE/ELDER_AID_EVENT.C; as a plain
- * integer its pool load was scheduled before the zero actor argument.
- * The do/while around the 0x22b area-state store holds the linked scene
- * load after the store, as in the reference.
- */
 struct SceneWork {
     u8 pad000[0x22b];
     u8 area_state;
@@ -82,7 +76,7 @@ void FieldScene_RunStep15(void);
 void FieldScene_RunStep17(void);
 void FieldScene_RunStep20(void);
 void SceneState_ApplyPair140And0(void);
-void FieldScene_Forward4dac(void);
+void HaidiaIe_CleanupSceneObjects(void);
 void OverlayObject_UpdateOnFrameBit1(s32 obj);
 struct SceneVerticalEffect;
 void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect);
@@ -93,12 +87,6 @@ struct PairWork {
     u16 vram_block;
 };
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;
@@ -120,10 +108,10 @@ extern u8 Data_0200ba64[];
 extern u8 Data_0200b938[];
 extern u8 Value_0200beb4;
 extern u8 Data_0200ae34[];
-extern u8 Data_0200aef0[];
-extern u8 Data_0200af50[];
-extern u8 Data_0200af78[];
-extern u8 Data_0200a874[];
+extern u8 HaidiaIe_Actor17Actions[];
+extern u8 HaidiaIe_LeaderStepActions[];
+extern u8 HaidiaIe_Actor25StepActions[];
+extern u8 HaidiaIe_Actor22Actions[];
 extern u8 Data_0200aa48[];
 extern u8 Data_0200ab2c[];
 extern u8 Data_0200ac14[];
@@ -132,9 +120,7 @@ extern u8 Data_0200ad74[];
 extern u8 Data_0200afa0[];
 extern const u8 Data_0200ac90[];
 extern const u8 Data_0200adf0[];
-extern u8 Data_03001ebc[];
 extern struct PairWork *Data_03001f30;
-extern struct WorldMapVramBlock ResourceTableEntries[];
 
 void BattleEffect_CleanupSceneObjects(void);
 void BattleFx_SetBlock30ValuesMaxZero(void);
@@ -149,7 +135,7 @@ void Engine_MapCopyCellsTo();
 void Engine_MapRedraw();
 void Engine_TaskWait();
 void BattleFx_StartTwelveFrameBlend();
-void Unnamed_08094ac8();
+void FieldFx_StartGroundParticles();
 s32 Scene_CopyCellAttributes();
 void Object_SetTargetAndCallback();
 void Engine_ActorSetSpriteFlags();
@@ -157,7 +143,7 @@ void Engine_ActorSetAnimation();
 void HaidiaIe_RunScriptScene();
 void Engine_EventOpenScreen();
 void Engine_EventWaitForScreen();
-void Event_SetPair1d4(const void *, s32);
+void Event_SetDefeatDestination(const void *, s32);
 void BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0(const void *, s32);
 struct FieldActor *Battle_GetWorkObject1e0(void);
@@ -179,33 +165,10 @@ void BattleFx_SetBlock30Values12Zero();
 void Engine_EventCloseScreen();
 void Engine_GameFlagClear();
 void Engine_EventEnd();
-void Resource_ResetEntry(s32 block);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void Object_LinkObjectAndSetCallback();
 void ObjectMotion_Launch();
 void Owner_RefreshActiveRatios();
-
-/* Exact complete owner [020017c8,020022c8): 2816 bytes, pools included.
- * 2026-09-27 Sol H1: FieldActor lookup results own x/z, priority_flags and
- * motion_flags. The nullable lookup has a separate actor lifetime from the
- * earlier child records. This typed record model resolves all 639 differing
- * halfwords / 185 edits, preserving callback target reloads and table r5.
- * Complete normalized diff and literal pools read; candidate/reference cmp
- * is exact. This is not a constant spelling or register-allocation sweep.
- * Reuse sun-west's canonical s32 Party_GiveItem interface for both rewards;
- * that independently proven ABI correction is not the matching lever.
- * Historical baseline and closed axes:
- * Typed callback inline scopes reproduce the prior baseline bytes exactly;
- * they restore target-ID reloads and the r5 table but lose the direct-call
- * trial's shared-constant lifetimes (16 wrong instructions in 671ed82f4).
- * The compiler's cross-call target pseudo, not pointer qualifiers alone,
- * changes the saved-register interference. Inline scopes are ruled out. */
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
 
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 

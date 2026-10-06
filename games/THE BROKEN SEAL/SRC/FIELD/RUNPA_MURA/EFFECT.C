@@ -3,13 +3,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/*
- * Effect sprites for Lunpa's scenes: creating them and moving them each
- * frame, and the motion scripts a spawned effect runs, such as the dust the
- * fortress guards kick up.
- */
-
-/* The palettes effects draw with. */
 enum {
     PALETTE_TRANSLUCENT_EFFECT = 14,
     PALETTE_EFFECT = 15
@@ -24,7 +17,7 @@ struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type)
 {
     struct FieldEffect *effect;
 
-    effect = (struct FieldEffect *)Object_Create(type, x, y, z);
+    effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
     if (effect != NULL) {
         effect->sprite->priority = 0;
         effect->motion_flags = 0;
@@ -41,7 +34,7 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
 {
     struct FieldEffect *effect;
 
-    effect = (struct FieldEffect *)Object_Create(type, x, y, z);
+    effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
     if (effect != NULL) {
         effect->sprite->priority = 1;
         effect->motion_flags = 0;
@@ -55,10 +48,6 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
     return NULL;
 }
 
-/*
- * The motion scripts a spawn chooses from. Each holds the effect for its
- * lifetime, then hides and deletes it.
- */
 const s32 gShortEffectScript[] = {
     SCRIPT_WAIT(1),
     SCRIPT_REPEAT(22, 0),

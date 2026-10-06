@@ -104,7 +104,7 @@ Func_08145df8:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #48]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r1, [sp, #48]
 	movs r3, #64
 	ldr r2, [r1]
@@ -282,7 +282,7 @@ Func_08145df8:
 	bls .L_08146036
 	b .L_081461e4
 .L_08146036:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #56]
 	adds r1, r0, #0
 	adds r1, #12
@@ -299,7 +299,7 @@ Func_08145df8:
 	mov r1, r9
 	str r3, [r5, #8]
 	adds r0, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r1, [sp, #48]
 	ldr r2, [sp, #52]
 	ldr r3, [r1]
@@ -335,7 +335,7 @@ Func_08145df8:
 	mov r8, r2
 	mov r10, r3
 .L_081460a2:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r11
 	cmp r2, #63
 	bgt .L_081460c6
@@ -348,14 +348,14 @@ Func_08145df8:
 	mov r0, r10
 	bl Func_080150e4
 	mov r0, r10
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_081460c6:
 	ldr r0, [sp, #20]
 	bl Func_080150e4
 	add r2, sp, #112
 	adds r1, r2, #0
 	ldr r0, .L_08146260
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r1, r9
 	ldr r3, [r1]
 	ldr r2, [sp, #112]

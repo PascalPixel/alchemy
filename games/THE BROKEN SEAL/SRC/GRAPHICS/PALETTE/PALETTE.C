@@ -1,3 +1,14 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "GAME_STATE.H"
+#include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
@@ -8,28 +19,13 @@ struct MenuWorkspaceEntry {
     u8 unknown_0c[40];
 };
 
-struct MenuWorkspace {
-    u8 unknown_000[0x400];
-    struct MenuWorkspaceEntry entries[7];
-    u8 unknown_56c[8];
-    u16 selection[4];
-    u16 cursor;
-};
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-extern u8 gGameState[];
-u16 Palette_ScaleTintChannels(u8 *work, s32 scale_r, s32 scale_g, s32 scale_b);
-
-extern const u8 PaletteGlow_WaveTable[];
 #define GLOW_PALETTE ((u16 *)0x050001e8)
 
-u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale, s32 blue_scale);
 
-/* Clears the state of the seven workspace entries, then the four selected
-   entries and the cursor that RUN_WORKSPACE_SELECTION_LOOP.C reads. */
-void Menu_ResetWorkspaceSelection(struct MenuWorkspace *work)
+void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
 {
-    struct MenuWorkspaceEntry *entry = work->entries;
+    struct MenuWorkspaceEntry *entry = (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
     u16 zero = 0;
 
     entry->state = zero;
@@ -45,32 +41,47 @@ void Menu_ResetWorkspaceSelection(struct MenuWorkspace *work)
     entry->state = zero;
     entry++;
     entry->state = zero;
-    work->selection[0] = zero;
-    work->selection[1] = zero;
-    work->selection[2] = zero;
-    work->selection[3] = zero;
-    work->cursor = zero;
+    work->page = zero;
+    work->tint[0] = zero;
+    work->tint[1] = zero;
+    work->tint[2] = zero;
+    work->cursor_frame = zero;
 }
 
-/* Palette tint: three BGR channels kept at work + 0x576, driven by the
-   day counters in the game state and scaled into palette bank 15. */
-void GraphicsPalette_SetTintChannelsFromCounters(void *work)
+void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work)
 {
-    s16 phase; s32 bias; s32 c2, c0, c1;
-    phase = (gGameState[0x205] + 0xC) % 0x18 * 4;
-    bias = gGameState[0x206] - 7;
-    c0 = PaletteGlow_WaveTable[(s16)(phase % 0x60)];
-    c1 = PaletteGlow_WaveTable[(phase + 0x20) % 0x60];
-    c2 = PaletteGlow_WaveTable[(phase + 0x40) % 0x60];
-    c0 += bias; c1 += bias; c2 += bias;
-    if (c0 < 0) c0 = 0; if (c1 < 0) c1 = 0; if (c2 < 0) c2 = 0;
-    if (c0 > 0x1F) c0 = 0x1F; if (c1 > 0x1F) c1 = 0x1F; if (c2 > 0x1F) c2 = 0x1F;
-    FIELD_AT_OFFSET(work, s16 *, 0x576) = (s16)c0;
-    FIELD_AT_OFFSET(work, s16 *, 0x578) = (s16)c1;
-    FIELD_AT_OFFSET(work, s16 *, 0x57A) = (s16)c2;
+    s16 phase;
+    s32 bias;
+    s32 blue;
+    s32 red;
+    s32 green;
+
+    phase = (gGameState.palette_glow[0] + 12) % 24 * 4;
+    bias = gGameState.palette_glow[1] - 7;
+    red = PaletteGlow_WaveTable[(phase % 96)];
+    green = PaletteGlow_WaveTable[(phase + 32) % 96];
+    blue = PaletteGlow_WaveTable[(phase + 64) % 96];
+    red += bias;
+    green += bias;
+    blue += bias;
+    if (red < 0)
+        red = 0;
+    if (green < 0)
+        green = 0;
+    if (blue < 0)
+        blue = 0;
+    if (red > 31)
+        red = 31;
+    if (green > 31)
+        green = 31;
+    if (blue > 31)
+        blue = 31;
+    work->tint[0] = red;
+    work->tint[1] = green;
+    work->tint[2] = blue;
 }
 
-void Palette_WriteBlendedBank15Entries(u8 *work)
+void Palette_WriteBlendedBank15Entries(struct WorkspaceWork *work)
 {
     *(s16 *)0x050001E8 = Palette_ScaleTintChannels(work, 0xEEEE, 0xCCCC, 0x11110);
     *(s16 *)0x050001EA = Palette_ScaleTintChannels(work, 0xD555, 0xBBBB, 0xEEEE);
@@ -81,17 +92,15 @@ void Palette_WriteBlendedBank15Entries(u8 *work)
     *(s16 *)0x050001F4 = Palette_ScaleTintChannels(work, 0x13BBB, 0x10000, 0x17777);
 }
 
-/* Scales the three tint channels kept at work + 0x576 by Q16 factors and
-   packs them, clamped to 0-31, into a BGR555 colour. */
-u16 Palette_ScaleTintChannels(u8 *work, s32 scale_r, s32 scale_g, s32 scale_b)
+u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r, s32 scale_g, s32 scale_b)
 {
     s32 r;
     s32 g;
     s32 b;
 
-    r = Iwram_MulQ16(*(u16 *)(work + 0x576) << 16, scale_r) >> 16;
-    g = Iwram_MulQ16(*(u16 *)(work + 0x578) << 16, scale_g) >> 16;
-    b = Iwram_MulQ16(*(u16 *)(work + 0x57a) << 16, scale_b) >> 16;
+    r = Iwram_MulQ16(work->tint[0] << 16, scale_r) >> 16;
+    g = Iwram_MulQ16(work->tint[1] << 16, scale_g) >> 16;
+    b = Iwram_MulQ16(work->tint[2] << 16, scale_b) >> 16;
     if (r < 0)
         r = 0;
     if (g < 0)
@@ -131,9 +140,6 @@ u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale, s32 blue_sca
     return red + ((blue << 10) + (green << 5));
 }
 
-/* Scales each 5-bit component by its own Q16 factor and packs BGR555. */
-/* Cycles a base color around the wave table and writes seven shades of it
-   to OBJ palette 15, entries 4 to 10. */
 void PaletteGlow_Update(s32 phase, s32 brightness)
 {
     s16 rgb[3];
@@ -145,7 +151,7 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
 
     step = ((phase + 12) % 24) * 4;
     offset = brightness - 7;
-    red = PaletteGlow_WaveTable[(s16)(step % 96)] + offset;
+    red = PaletteGlow_WaveTable[(step % 96)] + offset;
     green = PaletteGlow_WaveTable[(step + 32) % 96] + offset;
     blue = PaletteGlow_WaveTable[(step + 64) % 96] + offset;
     if (red < 0)
@@ -172,57 +178,40 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
     GLOW_PALETTE[6] = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
 }
 
-void GraphicsPalette_DecrementSelectionWrap(void *base)
+void GraphicsPalette_DecrementSelectionWrap(struct WorkspaceWork *work)
 {
-    s32 v;
-    u16 t;
-    s32 cur;
-
-    base = (u8 *)base + 0x574;
-    v = *(u16 *)base;
-    t = v;
-    cur = t;
-
-    if (cur == 0) {
-        cur = 2;
-    } else {
-        cur = v + 0xFFFF;
-    }
-    *(u16 *)base = cur;
+    if (work->page == 0)
+        work->page = 2;
+    else
+        work->page--;
 }
 
-void Menu_AdvanceWorkspaceIndexModulo3(void *arg0)
+void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work)
 {
-  unsigned int zero;
-  unsigned long cnt;
-  cnt = 1 + (*((u16 *)(0x574 + ((u8 *)arg0))));
-  zero = 0U;
-  *((u16 *)(((u8 *)arg0) + 0x574)) = cnt;
-  if (((u32)(cnt << 0x10)) >= (((unsigned long) 0x20000U) + 1))
-  {
-    *((u16 *)(((u8 *)arg0) + 0x574)) = zero;
-  }
+    if (++work->page > 2)
+        work->page = 0;
 }
 
 void GraphicsPalette_DecrementSelectedCounter(s32 work)
 {
+    /* FAKEMATCH: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
     u8 *p;
     u16 sel;
     s32 off;
 
-    sel = *(u16 *)((u8 *)work + 0x574);
+    sel = ((struct WorkspaceWork *)work)->page;
     switch (sel) {
     case 0:
         off = 0x20C;
-        p = &gGameState[off];
+        p = (u8 *)&gGameState + off;
         break;
     case 1:
-        off = 0x205;
-        p = &gGameState[off];
+        off = (u32)&((struct GameState *)0)->palette_glow[0];
+        p = (u8 *)&gGameState + off;
         break;
     case 2:
-        off = 0x206;
-        p = &gGameState[off];
+        off = (u32)&((struct GameState *)0)->palette_glow[1];
+        p = (u8 *)&gGameState + off;
         break;
     default:
         return;
@@ -234,29 +223,30 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
 
 void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
 {
+    /* FAKEMATCH: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
     u8 *sp;
     u16 sel;
     s32 off;
 
-    sel = *(u16 *)((u8 *)arg0 + 0x574);
+    sel = ((struct WorkspaceWork *)arg0)->page;
     switch (sel) {
     case 0:
         off = 0x20C;
-        sp = &gGameState[off];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 1) {
             break;
         }
         return;
     case 1:
-        off = 0x205;
-        sp = &gGameState[off];
+        off = (u32)&((struct GameState *)0)->palette_glow[0];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 23) {
             break;
         }
         return;
     case 2:
-        off = 0x206;
-        sp = &gGameState[off];
+        off = (u32)&((struct GameState *)0)->palette_glow[1];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 14) {
             break;
         }

@@ -1,7 +1,3 @@
-/* NONMATCHING: localized scene source, 2026-10-01.
- * The complete 124-byte getter sets only flag 90a on entrance five.
- * ES/FR/IT also set 87a; their complete getter is 136 bytes.
- */
 #include "RAMAKAN.H"
 #include "text/MSG_IDS.H"
 TEXT_MESSAGE_ENUM(MsgShianJiinIDoNotThinkMasterHama);

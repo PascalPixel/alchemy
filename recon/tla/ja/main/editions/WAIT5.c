@@ -1,6 +1,3 @@
-/* Draft: complete44-byte Japanese instruction extent matches, but the
- * localized motion dispatcher selects a different veneer. Production uses
- * the already owned Japanese entry, without an alias or address constant. */
 #include "TYPES.H"
 
 s32 WaitFrames(s32);
@@ -16,8 +13,7 @@ struct SparkObject {
     s16 angle;
 };
 
-/* ⚓️ adds this step between ☀️'s two: a longer approach, then phase 5. */
-void BattleFx_WaitThenSetField18To5(struct SparkObject *obj)
+void BattleFx_LongApproachThenSpark(struct SparkObject *obj)
 {
     BattleMotion_ApproachTargetFar(obj->target, obj->angle, 0x18, 0xc3333);
     WaitFrames(26);

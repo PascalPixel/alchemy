@@ -1,9 +1,9 @@
-#include "TYPES.H"
+#include "AUDIO_ENGINE.H"
 
-/* Sound_CommandTable (0x02004000) slot 34 */
-extern void (*Data_02004088)(s32);
+extern void (*Data_02004088)(struct SoundNote *);
 
-void AudioCommand_InvokeSlot34(s32 argument)
+void AudioCommand_InvokeSlot34(struct SoundNote *note)
 {
-    Data_02004088(argument);
+    /* FAKEMATCH: the entry-cell load and one-word call avoid an extra instruction from table indexing. */
+    Data_02004088(note);
 }

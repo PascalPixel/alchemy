@@ -1195,31 +1195,31 @@ gRunpaJoEvents1:
 	.4byte 0x00000014
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte CellDoor_Touch
+	.4byte EV99_ROUYA
 	.4byte 0x0000c402
 	.4byte 0x035a0028
-	.4byte FieldScene_UpdateObjectPairC
+	.4byte EV40_C
 	.4byte 0x00004402
 	.4byte 0x035a0028
-	.4byte FieldScene_UpdateObjectPairC
+	.4byte EV40_C
 	.4byte 0x0000c402
 	.4byte 0x035b0029
-	.4byte FieldScene_UpdateObjectPairC
+	.4byte EV40_C
 	.4byte 0x00004402
 	.4byte 0x035b0029
-	.4byte FieldScene_UpdateObjectPairC
+	.4byte EV40_C
 	.4byte 0x0000c402
 	.4byte 0x035c002a
-	.4byte FieldScene_UpdateObjectPairC
+	.4byte EV40_C
 	.4byte 0x00004402
 	.4byte 0x035c002a
-	.4byte FieldScene_UpdateObjectPairC
+	.4byte EV40_C
 	.4byte 0x00000002
 	.4byte 0x02240032
-	.4byte RunActor12InteractionSequence
+	.4byte EV50_MAIN
 	.4byte 0x00000002
 	.4byte 0x02250033
-	.4byte RunActors13And21InteractionSequence
+	.4byte EV51_MAIN
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte MsgRunpaDonpaResting
@@ -1234,10 +1234,10 @@ gRunpaJoEvents1:
 	.4byte MsgRunpaHammetMoneyTree
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte RunActor20SceneSequence
+	.4byte EV20_MAIN
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte FieldScene_RunActorTwentyOneSequence
+	.4byte EV21_MAIN
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte MsgRunpaWhoFoughtDonpa
@@ -1252,22 +1252,22 @@ gRunpaJoEvents1:
 	.4byte MsgRunpaHammetKeepsEarnings
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte FinishActor20SceneSequence
+	.4byte EV20_END
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte FieldScene_SelectActorTwentyOneMessage
+	.4byte EV21_MES
 	.4byte 0x00000006
 	.4byte 0xffff005d
-	.4byte ActivateSceneActor18
+	.4byte EV93_ON
 	.4byte 0x00000006
 	.4byte 0xffff005e
-	.4byte RunActor17SceneStep
+	.4byte EV94_MAIN
 	.4byte 0x00000006
 	.4byte 0xffff005f
-	.4byte RunActor12InteractionSequence
+	.4byte EV50_MAIN
 	.4byte 0x00000006
 	.4byte 0xffff0060
-	.4byte RunActors13And21InteractionSequence
+	.4byte EV51_MAIN
 	.4byte 0x00000013
 	.4byte 0x0fa20064
 	.4byte 0x001000bc
@@ -1362,37 +1362,37 @@ gRunpaJoEvents2:
 	.4byte 0x00000018
 	.4byte 0x00000002
 	.4byte 0x0949001e
-	.4byte InspectEmptyChest
+	.4byte EV30_TAKARABAKO
 	.4byte 0x00000002
 	.4byte 0x094a001f
-	.4byte RunpaJo_RunGuardChallenge
+	.4byte EV31_BANPEI
 	.4byte 0x00000002
 	.4byte 0x094b0020
-	.4byte InspectEmptySceneObject
+	.4byte EV32_KARA
 	.4byte 0x00000002
 	.4byte 0x094c0021
-	.4byte InspectOrdinaryObject
+	.4byte EV33_SHIRABE
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte CellDoor_Touch
+	.4byte EV99_ROUYA
 	.4byte 0x00004402
 	.4byte 0x03580028
-	.4byte FieldScene_UpdateTableBObjectPair
+	.4byte EV40_D
 	.4byte 0x0000c402
 	.4byte 0x03590029
-	.4byte FieldScene_UpdateTableBObjectPair
+	.4byte EV40_D
 	.4byte 0x00004402
 	.4byte 0x03590029
-	.4byte FieldScene_UpdateTableBObjectPair
+	.4byte EV40_D
 	.4byte 0x00009415
 	.4byte 0xffff0008
-	.4byte CellKey_PickUp
+	.4byte EV08_KAGI
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte CellKey_PickUp
+	.4byte EV08_KAGI
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte ConfigureSceneActor18
+	.4byte EV18_SET
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte MsgRunpaChildMustGrowUp
@@ -1410,22 +1410,22 @@ gRunpaJoEvents2:
 	.4byte MsgRunpaWomenWantHome
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte ConfigureSceneActor12Variant
+	.4byte EV12_SET
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte ConfigureSceneActor13
+	.4byte EV13_SET
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte ConfigureSceneActor14
+	.4byte EV14_SET
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte FieldScene_RunDonpaSleepingSequence
+	.4byte EV25_DONPA
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte FieldScene_RunSupplementalSequenceTwo
+	.4byte EV24_MAIN
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte ConfigureSceneActor26
+	.4byte EV26_SET
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte MsgRunpaDonpappaSuccessor
@@ -1455,16 +1455,16 @@ gRunpaJoEvents2:
 	.4byte MsgRunpaHiddenDoorSwitch
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte SelectActor24SceneVariant
+	.4byte EV24_SEL
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte SelectActor25SceneVariant
+	.4byte EV25_SEL
 	.4byte 0x00000006
 	.4byte 0xffff005b
-	.4byte ConfigureSceneActor9
+	.4byte EV91_SET
 	.4byte 0x00000006
 	.4byte 0xffff005c
-	.4byte ActivateSceneActor17
+	.4byte EV92_ON
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1490,52 +1490,52 @@ gRunpaJoEvents3:
 	.4byte 0x00000006
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte CellDoor_Touch
+	.4byte EV99_ROUYA
 	.4byte 0x00000003
 	.4byte 0xffff0062
-	.4byte LockedDoor_Touch
+	.4byte EV98_TOBIRA
 	.4byte 0x0000c402
 	.4byte 0x03550028
-	.4byte FieldScene_UpdateObjectPairB
+	.4byte EV40_B
 	.4byte 0x0000c402
 	.4byte 0x03560029
-	.4byte FieldScene_UpdateObjectPairB
+	.4byte EV40_B
 	.4byte 0x0000c402
 	.4byte 0x0357002a
-	.4byte FieldScene_UpdateObjectPairB
+	.4byte EV40_B
 	.4byte 0x00004402
 	.4byte 0x0357002a
-	.4byte FieldScene_UpdateObjectPairB
+	.4byte EV40_B
 	.4byte 0x00004602
 	.4byte 0xffff0032
-	.4byte FieldScene_StartActorTwelveTransition
+	.4byte EV50_START
 	.4byte 0x00000202
 	.4byte 0xffff0046
-	.4byte RunSceneObjectSetup
+	.4byte EV70_INIT
 	.4byte 0x00000003
 	.4byte 0x02180033
-	.4byte RunSecondaryMapInteraction
+	.4byte EV51_SUB
 	.4byte 0x00000003
 	.4byte 0x02170034
-	.4byte InspectVillageWell
+	.4byte EV52_IDO
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte ConfigurePrimaryInteractionRegions
+	.4byte EV00_HANTEI1
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte ConfigureSecondaryInteractionRegions
+	.4byte EV00_HANTEI2
 	.4byte 0x00004e15
 	.4byte 0xffff0008
-	.4byte InspectWardrobe
+	.4byte EV08_TANSU
 	.4byte 0x00004e15
 	.4byte 0xffff0009
-	.4byte InspectFirewood
+	.4byte EV09_MAKI
 	.4byte 0x00004e15
 	.4byte 0xffff000a
-	.4byte InspectBooks
+	.4byte EV10_HON
 	.4byte 0x00008c15
 	.4byte 0x0943000c
-	.4byte FieldScene_UpdateActorTwelveTransition
+	.4byte EV12_MOVE
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1552,25 +1552,25 @@ gRunpaJoEventsOther:
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte CellDoor_Touch
+	.4byte EV99_ROUYA
 	.4byte 0x0000c402
 	.4byte 0x03500028
-	.4byte FieldScene_UpdateObjectPairA
+	.4byte EV40_A
 	.4byte 0x0000c402
 	.4byte 0x03510029
-	.4byte FieldScene_UpdateObjectPairA
+	.4byte EV40_A
 	.4byte 0x0000c402
 	.4byte 0x0352002a
-	.4byte FieldScene_UpdateObjectPairA
+	.4byte EV40_A
 	.4byte 0x0000c402
 	.4byte 0x0353002b
-	.4byte FieldScene_UpdateObjectPairA
+	.4byte EV40_A
 	.4byte 0x0000c402
 	.4byte 0x0354002c
-	.4byte FieldScene_UpdateObjectPairA
+	.4byte EV40_A
 	.4byte 0x00000002
 	.4byte 0x02700014
-	.4byte PlayStoryScene
+	.4byte EV20_DEMO
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte MsgRunpaHammetStillInside
@@ -1585,10 +1585,10 @@ gRunpaJoEventsOther:
 	.4byte MsgRunpaCantBelieveWhen
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte ConfigureActor13Interaction
+	.4byte EV17_TALK
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte ConfigureActor13SceneResource
+	.4byte EV17_LOAD
 	.4byte 0x00000013
 	.4byte 0x0fa70065
 	.4byte 0x001000bf

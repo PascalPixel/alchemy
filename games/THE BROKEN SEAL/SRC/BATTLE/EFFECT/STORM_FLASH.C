@@ -1,29 +1,32 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "SYSTEM.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "MAP_SCROLL.H"
+#include "FXBLEND.H"
+#include "IO_REG.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_PARTY.H"
 
-s32 GameFlag_TestFar(s32);
+#define BattleFx_ApplyColorToTargetBuffer ((void (*)(void*,s32))BattleFx_ApplyColorToTargetBuffer)
+
 void Audio_PlayCue(s32);
-void BattleFx_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
-struct FlashTarget {
-    u8 unknown_0000[0x1880];
-    u8 palette[0x1181];
-    u8 step;
-    u8 phase;
-};
+extern void *Data_03001ec8[];
 
-struct FlashWork {
-    u8 buffers[0x1f80];
-    s16 timer;
-    s16 enabled;
-    s16 loud;
-};
-
-extern u8 *Data_03001ec8[];
-
-/* One ground particle: its sprite entry, its place on the map in 16.16
-   fixed point and the frames it has left. */
 struct GroundParticle {
     u8 unknown_00[4];
     u16 y : 8;
@@ -54,33 +57,14 @@ struct GroundParticleWork {
     s32 unknown_408[2];
 };
 
-struct FieldView {
-    s32 *leader;
-    u8 unknown_04[0xe4 - 4];
-    s32 camera[2];
-};
-
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
-s32 Resource_FindFreeEntry(void);
 void Resource_DecodeByteLz(const void *source, void *destination);
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
-void Runtime_PushSlotEntry(void *entry, s32 value);
 
-extern void *gMapWork[];
-extern const u8 FieldFx_GroundParticleTiles[];
-/* Per frame left: the sprite's offset from its place, its tile, shape and size. */
-extern s16 FieldFx_GroundParticleFrames[];
-
-/* Each frame, draws the ground particles that are on screen and, when one
-   runs out of frames, sets it down again at a random spot on the ground
-   around the leader. Flag 0x166 holds every particle on its frame. */
-void Unnamed_08094820(void)
+void FieldFx_UpdateGroundParticles(void)
 {
-    struct FieldView *view = gMapWork[0];
+    struct MapScrollWork *view = gMapWork[0];
     struct GroundParticleWork *work = gMapWork[21];
-    s32 *camera = view->camera;
+    s32 *camera = &view->view_x;
     s32 camera_x = camera[0];
     s32 camera_z = camera[1];
     struct GroundParticle *particle = work->particles;
@@ -98,7 +82,7 @@ void Unnamed_08094820(void)
         frame = &FieldFx_GroundParticleFrames[5 * particle->timer];
         x = (particle->pos_x - camera_x) / 0x10000 + *frame++;
         y = (particle->pos_z - particle->pos_y - camera_z) / 0x10000 + *frame++;
-        if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
+        if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
             particle->priority = 1;
             particle->x = x;
             particle->y = y;
@@ -109,7 +93,7 @@ void Unnamed_08094820(void)
             Runtime_PushSlotEntry(particle, 240);
         }
         if (particle->timer == 0) {
-            s32 *leader = view->leader;
+            s32 *leader = view->origin;
 
             x = leader[0] + (Random16() << 8) - 0x800000;
             y = leader[2] + (Random16() << 8) - 0x800000;
@@ -121,12 +105,10 @@ void Unnamed_08094820(void)
     }
 }
 
-/* Counts the storm timer down: at zero it re-arms at a random interval and
-   plays the thunder cue, then flashes the target buffer for two steps. */
 void BattleFx_UpdateStormFlash(void)
 {
-    struct FlashWork *work = (struct FlashWork *)Data_03001ec8[0];
-    struct FlashTarget *target = (struct FlashTarget *)Data_03001ec8[2];
+    struct FieldBlendWork *work = Data_03001ec8[0];
+    struct BattleEffectBuffers *target = Data_03001ec8[2];
     s16 *timer = &work->timer;
 
     if (*timer < 0)
@@ -147,24 +129,21 @@ void BattleFx_UpdateStormFlash(void)
     case 5:
     case 10:
         BattleFx_ApplyColorToTargetBuffer(work, 1);
-        Dma_Set(work->buffers + 0x1500, target->palette, 0x840002a0, (volatile u32 *)0x040000d4);
-        target->step = 12;
-        target->phase = 0;
+        Dma_Set(work->delta, target->delta, 0x840002a0, REG_DMA3);
+        target->duration = 12;
+        target->step = 0;
         break;
     case 1:
     case 6:
     case 11:
-        BattleFx_ApplyColorToTargetBuffer(work->buffers + 0xa80, 1);
-        target->step = 1;
-        target->phase = 0;
+        BattleFx_ApplyColorToTargetBuffer(work->to, 1);
+        target->duration = 1;
+        target->step = 0;
         break;
     }
 }
 
-/* Starts the ground particles: clears their work block, loads their tiles
-   into VRAM, lays all 32 on the ground under the leader with staggered
-   frames, sets the blend registers and schedules their update. */
-void Unnamed_08094ac8(void)
+void FieldFx_StartGroundParticles(void)
 {
     struct GroundParticleWork *work;
     s32 *leader;
@@ -175,18 +154,15 @@ void Unnamed_08094ac8(void)
     u32 i;
     s32 value;
 
-    /* FAKEMATCH: one cursor holds the fill value, then the tile buffer, then
-       each particle's first words, which gives the reference its register;
-       the blend writes are a block that runs once, which keeps the callback's
-       arguments behind them. */
+    /* FAKEMATCH: reusing the cursor preserves its register; one-pass blend writes keep callback argument setup after them. */
     work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
-    leader = ((struct FieldView *)gMapWork[0])->leader;
+    leader = ((struct MapScrollWork *)gMapWork[0])->origin;
     BattleFx_SetQueuedSoundAndPlay(170);
     words = 0;
     particle = work->particles;
     fill = (u32)words;
     Dma_Set((const void *)&fill, work, 0x85000000 | (sizeof(struct GroundParticleWork) / 4),
-        (volatile u32 *)0x040000d4);
+        REG_DMA3);
     words = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(FieldFx_GroundParticleTiles, words);
     work->entry = Resource_FindFreeEntry();
@@ -209,12 +185,12 @@ void Unnamed_08094ac8(void)
         particle++;
     }
     do {
-        blend = (volatile u16 *)0x04000050;
+        blend = &REG_BLDCNT;
         value = 0x3f00;
         *blend = value;
         value = 0x1008;
         *++blend = value;
         *++blend = 0;
     } while (0);
-    Scheduler_AddOrUpdateCallback(Unnamed_08094820, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
 }

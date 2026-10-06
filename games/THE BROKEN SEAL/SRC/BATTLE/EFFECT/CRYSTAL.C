@@ -1,3 +1,14 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -7,42 +18,16 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
+#include "MENU_LIST.H"
 
-struct CameraWork {
-    u8 unknown_00[0x36];
-    u16 scroll;
-};
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
-/* By variant: how many crystals fall, and for how many frames. */
-extern u8 Crystal_Counts[];
-/* Sixteen x and y pairs: where each shard of a broken crystal starts. */
-extern u8 Crystal_ShardStarts[];
-/* By shard cell: its width, its height and where it sits in the sheet. */
-extern u8 Crystal_ShardWidths[];
-extern u8 Crystal_ShardHeights[];
-extern s32 Crystal_ShardOffsets[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleEventRuntime_BeginPhaseFar(s32 value);
-void AudioCommand_PlayFar(s32 value);
-void Camera_ApplyShake(s32 random_mask, s32 shake_range);
-void ObjectGroup_TickMemberTimers(void);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-s32 BattleFx_EndCanvasLayer(void);
 
-/*
- * Crystals fall one after another, eight frames apart, toward the affected
- * side. A crystal that reaches the ground breaks into sixteen shards that
- * fly apart, tumble through three cells each and slow down, while the
- * screen shakes and the affected units are knocked. The variant picks how
- * many crystals fall and how long the effect runs; the strongest also
- * scrolls the camera for its first 104 frames.
- */
 void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];
@@ -65,12 +50,12 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(u16 *)0x04000052 = 0x1010;
-    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work, 1, 1);
+    REG_BLDALPHA = 0x1010;
+    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     for (j = 0; j != Crystal_Counts[work->effect->variant * 2]; j++) {
         seed = &work->particles[j];
         x = Random16() & 31;
@@ -80,7 +65,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
             seed->velocity_x = (Random16() & 63) << 12;
         } else {
             x = ((Random16() & 31) + 8) << 16;
-            seed->velocity_x = -(s32)(Random16() & 63) << 12;
+            seed->velocity_x = -(Random16() & 63) << 12;
         }
         seed->x = x - seed->velocity_x * 18;
         seed->velocity_y = 0;
@@ -116,7 +101,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
                         cell = (j % 5) * 3 + (sparks[i * 16 + j].variant / 96) % 3;
                         spark = &sparks[i * 16 + j];
                         draw[j <= 2](canvas,
-                            (u8 *)work + Crystal_ShardOffsets[cell] + 0x800,
+                            work->sheet + Crystal_ShardOffsets[cell] + 0x800,
                             ((s16 *)&spark->x)[1] - Crystal_ShardWidths[cell] / 2,
                             ((s16 *)&spark->y)[1] - Crystal_ShardHeights[cell] / 2,
                             Crystal_ShardWidths[cell], Crystal_ShardHeights[cell]);
@@ -135,8 +120,8 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
                             spark = &sparks[i * 16 + j];
                             spark->x = ((Crystal_ShardStarts[j * 2] - 40) << 16) + point->x;
                             spark->y = Crystal_ShardStarts[j * 2 + 1] << 16;
-                            spark->velocity_x = ((s32)(Random16() & 127) - 64) << 11;
-                            spark->velocity_y = -(s32)(Random16() & 127) << 11;
+                            spark->velocity_x = ((Random16() & 127) - 64) << 11;
+                            spark->velocity_y = -(Random16() & 127) << 11;
                             if (i & 1) {
                                 spark->velocity_x *= 2;
                                 spark->velocity_y *= 2;
@@ -158,7 +143,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

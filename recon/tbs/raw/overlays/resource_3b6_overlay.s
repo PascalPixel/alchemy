@@ -78,7 +78,6 @@
 	.4byte 0x00000000
 	.global Data_02008bb4
 Data_02008bb4:
-	/* Room camera bounds: Japanese door views stop eight pixels earlier. */
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1245,7 +1244,7 @@ Data_020099d0:
 	.4byte MsgTorebiHeyaYouAllGotToSeeColosso
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte FieldScene_RunScene3b6_02000898
+	.4byte TorebiHeya_ComplainAboutScam
 	.4byte 0x00000000
 	.4byte 0xffff0020
 	.4byte MsgTorebiHeyaOnceThisGuyGetsMadTheres

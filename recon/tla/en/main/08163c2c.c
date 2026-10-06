@@ -1,12 +1,5 @@
 #include "TYPES.H"
-
-/* Battle effect: wipe the 128 by 128 canvas (16 by 16 tiles of 8 by 8
-   bytes) with a ragged front. Each of the 128 lanes waits a random 0..63
-   steps; the front then accelerates every frame, across the canvas when
-   mode is 1 and down it otherwise, writing 1 - value into every pixel it
-   passes. */
-
-extern u8 gWorkSlot[];
+#include "RAM_BUFFER.H"
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
@@ -20,8 +13,8 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
     s32 y;
     s32 pos;
 
-    canvas = *(u8 **)(gWorkSlot + 40 * 4);
-    work = *(u8 **)(gWorkSlot + 39 * 4);
+    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = Ram_HeapSlots->battle_fx_work[0];
     for (x = 0; x != 128; x++)
         delay[x] = Random16() & 0x3f;
 
@@ -42,10 +35,10 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
                         canvas[(((y / 8) * 16 + pos / 8) * 8 + (y & 7)) * 8 + (pos & 7)] = 1 - value;
                 }
             }
-            *(s32 *)(work + 0x7824) = 1;
+            *(s32 *)(work + 0x78e8) = 1;
             WaitFrames(1);
         } while (front <= 256);
-    } else {
+    } else if (mode != 3) {
         s32 front;
         s32 speed;
 
@@ -62,7 +55,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
                         canvas[(((pos / 8) * 16 + x / 8) * 8 + (pos & 7)) * 8 + (x & 7)] = 1 - value;
                 }
             }
-            *(s32 *)(work + 0x7824) = 1;
+            *(s32 *)(work + 0x78e8) = 1;
             WaitFrames(1);
         } while (front <= 191);
     }

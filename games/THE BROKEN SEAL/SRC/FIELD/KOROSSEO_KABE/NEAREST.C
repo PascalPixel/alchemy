@@ -1,14 +1,14 @@
 #include "TASK.H"
-extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
+#include "text/MSG_IDS.H"
 
 void KorosseoKabe_MarkSceneProgress(void)
 {
-    u8 *state = (u8 *)gEventWork;
+    struct EventWork *work = gEventWork;
     s32 v = gGameState.selected_actor;
 
-    if (v != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == v
-        && GameFlag_IsSet(321) != 0) {
-        u16 *p = (u16 *)(state + 386);
+    if (v != 0 && (work->psynergy_request >> 10) == v
+        && Engine_GameFlagIsSet(321) != 0) {
+        u16 *p = (u16 *)&work->raised_trigger;
         s32 t = 99;
 
         *p = t;
@@ -17,7 +17,7 @@ void KorosseoKabe_MarkSceneProgress(void)
 
 void KorosseoKabe_SelectNearestActor(void)
 {
-    u8 *state = (u8 *)gEventWork;
+    struct EventWork *state = gEventWork;
     s32 best = 8;
     s32 bestd = 0x100000;
     s32 n = gGameState.selected_actor;
@@ -49,10 +49,10 @@ void KorosseoKabe_SelectNearestActor(void)
         }
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
-    Event_ShowMessage(best, 0);
-    q = (s32 *)(state + 448);
+    Engine_EventShowMessage(best, 0);
+    q = (s32 *)&state->start_transition;
     *q = 512;
-    *(s32 *)(state + 456) = 15;
+    state->transition_frames = 15;
     Engine_EventWait(20);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -66,7 +66,7 @@ void KorosseoKabe_SelectNearestActor(void)
     n++;
     if (n > 3) {
         Engine_EventRequestExit(10);
-        GameFlag_Set(282);
+        Engine_GameFlagSet(282);
     } else {
         Korosseo_SelectSoloCompetitor(n);
         Engine_EventOpenScreen();

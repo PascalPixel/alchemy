@@ -51,7 +51,7 @@ Func_080fe894:
 	cmp r2, #0
 	bge .L_080fe8e4
 	movs r0, #14
-	bl Func_080f9108
+	bl Palette_LightenBankHighlight
 	movs r3, #128
 	movs r2, #128
 	lsls r3, r3, #19
@@ -148,7 +148,7 @@ Func_080fe894:
 	lsls r3, r3, #1
 	add r3, r11
 	ldrh r1, [r7, r3]
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	mov r1, r9
 	cmp r1, #2
 	bne .L_080fe9e4

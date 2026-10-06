@@ -326,7 +326,6 @@ Placement_Effects87a:
 	.4byte 0x00008f15
 	.4byte 0xffff0008
 	.4byte 0x00000000
-	/* ES/FR/IT retain the blocked-path event in the final placement group. */
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE

@@ -66,7 +66,7 @@ Func_08153ebc:
 .L_08153f3c:
 	.4byte gMapCellBuffer
 .L_08153f40:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08153f44:
 	.4byte Func_08143000
 .L_08153f48:
@@ -189,7 +189,7 @@ Func_08153ebc:
 	ldr r1, .L_08154100
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r3, #238
 	lsls r3, r3, #7
 	movs r2, #238
@@ -318,7 +318,7 @@ Func_08153ebc:
 	ands r3, r0
 	adds r3, #48
 	str r3, [r5]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	bl Random16
 	mov r3, r8
 	ands r0, r3
@@ -330,7 +330,7 @@ Func_08153ebc:
 	bl Random16
 	mov r2, r8
 	ands r0, r2
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r6, #0
 	bl Graphics_SaveTransferWork
 	movs r3, #1
@@ -820,7 +820,7 @@ Func_08153ebc:
 	adds r1, r6, #0
 	str r3, [r2]
 	ldr r0, [sp, #20]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	movs r0, #5
 	asrs r3, r3, #1
@@ -896,7 +896,7 @@ Func_08153ebc:
 	ldr r3, .L_08154650
 	strh r2, [r3, #4]
 	bl Func_0814cca8
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -964,7 +964,7 @@ Func_08153ebc:
 .L_0815464c:
 	.4byte Func_0813baec
 .L_08154650:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08154654:
 	.4byte 0x05000200
 .L_08154658:
@@ -983,7 +983,7 @@ Func_08153ebc:
 	adds r3, #36
 	ldrsh r0, [r2, r3]
 	adds r1, r6, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	bl Random16
 	ands r0, r7
 	adds r0, #40

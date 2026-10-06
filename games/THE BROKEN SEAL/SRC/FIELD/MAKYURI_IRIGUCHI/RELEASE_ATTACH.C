@@ -1,6 +1,6 @@
+#include "RUNTIME_MEM.H"
 #include "ENTRANCE.H"
 
-/* Release the optional published attachment; complete owner, no pool. */
 void OverlayObject_ReleasePublishedAttachment(void)
 {
     u8 **pub = Runtime_AllocateBlock(35, 4);

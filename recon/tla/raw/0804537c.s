@@ -28,20 +28,20 @@ Func_0804537c:
 	mov r0, r8
 	adds r1, r5, #0
 	adds r2, r6, #0
-	bl Func_080452bc
+	bl Graphics_MergeShiftedTileRows
 	adds r5, #32
 	adds r2, r6, #0
 	adds r2, #32
 	mov r0, r8
 	adds r1, r5, #0
 	adds r3, r7, #0
-	bl Func_080452bc
+	bl Graphics_MergeShiftedTileRows
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080453c4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080453c8:
 	.4byte 0x06000400
 .L_080453cc:
-	.4byte Data_0805f730
+	.4byte gRomShiftedTilePair

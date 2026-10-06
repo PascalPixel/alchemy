@@ -189,7 +189,7 @@ Func_08146e00:
 	adds r3, #255
 	str r3, [sp, #84]
 .L_08146f7a:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #92]
 	ldr r1, [sp, #40]
 	bl Graphics_PrepareTransferInIwramWork
@@ -608,7 +608,7 @@ Func_08146e00:
 	adds r1, r7, #0
 	str r3, [r5, #8]
 	adds r0, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r7]
 	ldr r0, .L_08147334
 	asrs r2, r3, #1
@@ -707,11 +707,11 @@ Func_08146e00:
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	adds r1, r5, #0
 	movs r0, #1
 	movs r2, #8
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	movs r5, #240
 	ldr r2, [sp, #88]
 	lsls r5, r5, #7
@@ -954,7 +954,7 @@ Func_08146e00:
 	str r2, [r5]
 	str r2, [r5, #4]
 	mov r10, r2
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r5, #0
 	bl SceneTransform_ApplyPosition
 	ldr r3, [sp, #84]
@@ -993,7 +993,7 @@ Func_08146e00:
 	add r7, sp, #148
 	adds r1, r7, #0
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r7]
 	ldr r0, [sp, #68]
 	asrs r3, r3, #17
@@ -1408,7 +1408,7 @@ Func_08146e00:
 	ldr r0, .L_08147a10
 	bl Func_080150e4
 	ldr r0, .L_08147a14
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r3, [sp, #28]
 	movs r1, #0
 	ldr r5, [sp, #32]
@@ -1446,7 +1446,7 @@ Func_08146e00:
 	mov r1, r10
 	adds r3, #2
 	str r3, [r5, #24]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	movs r1, #192
 	ldr r0, [sp, #48]
 	lsls r1, r1, #3

@@ -1,9 +1,19 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
 
-extern volatile u32 gKeyState;
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 
 void Runtime_IdleForever(void)
 {
@@ -14,13 +24,7 @@ void Runtime_IdleForever(void)
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-/* The last letter of the cartridge header's four-letter game code, which
-   names the release's language. */
-extern const u8 Rom_LanguageCode;
 
-/* The Spanish and Italian editions ask the cartridge which language it
-   speaks: the last letter of the header's game code. German is 1, French 2,
-   Spanish 3 and Italian 4; anything else is 0. */
 s32 System_GetLanguage(void)
 {
     s32 language;

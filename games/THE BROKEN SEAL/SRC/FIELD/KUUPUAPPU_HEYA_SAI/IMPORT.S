@@ -1,7 +1,3 @@
-@ Import veneers after the KUUPUAPPU_HEYA_SAI overlay's code: fixed 8-byte
-@ veneers through which the overlay calls main-image code, each loading its
-@ target into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — KUUPUAPPU_HEYA_SAI overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -65,7 +61,7 @@ Engine_EventEnd:
 	.global FieldScene_PrepareActors
 	.thumb_func
 FieldScene_PrepareActors:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Engine_PartyGiveItem
 	.thumb_func
 Engine_PartyGiveItem:
@@ -101,7 +97,7 @@ Engine_ActorFaceEachOther:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:

@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "CALL.H"
-extern u8 MsgKorosseoCheering[];
-extern u8 MsgKorosseoCheeringChoices[];
-extern struct EventWork *gEventWork;
+#include "FIELDOBJ.H"
+#include "GAME_FLAGS.H"
+#include "text/MSG_IDS.H"
 
 u8 *Object_GetById();
 void Engine_EventBegin();
@@ -12,32 +12,24 @@ s32 Engine_EventChooseYesNo();
 void Engine_EventShowMessage();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
-void GameFlag_SetByte();
 void Engine_EventRequestExit();
 void Engine_GameFlagSet();
 void Korosseo_SelectSoloCompetitor();
 void Engine_EventOpenScreen();
 void Engine_EventEnd();
 
-/* The game state, read here as words: word 125 holds the solo competitor. */
 extern s32 gGameState[];
 
-/* Colosso: actor id asks whether the party is done cheering, its two answers
- * starting at MsgKorosseoCheeringChoices. On yes the solo competitor's
- * position is saved and the next one is chosen, or the party leaves after
- * the fourth; on no they are sent back to cheer. The same function sits in
- * each of the three Colosso trial overlays. */
 void Korosseo_FinishSoloRound(s32 id)
 {
-    s32 work;
+    struct EventWork *work;
     s32 slot;
-    u8 *obj;
+    struct FieldActor *obj;
     s32 msg;
     s32 res;
 
-    work = (s32)gEventWork;
-    /* FAKEMATCH: the reference looks the speaker up twice here and drops
-     * both results; no use of them is recovered. */
+    work = gEventWork;
+    /* FAKEMATCH: the speaker lookup is retained twice with both results unused. */
     Object_GetById(id);
     Object_GetById(id);
     slot = gGameState[125];
@@ -46,9 +38,7 @@ void Korosseo_FinishSoloRound(s32 id)
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
     ((s32 (*)())Engine_EventOpenMessage)(id, 0);
-    /* FAKEMATCH: the choice list and its count go through one work pointer
-     * and word-sized locals, which keeps the reference's pool loads and
-     * halfword stores in its order. */
+    /* FAKEMATCH: one work pointer and word locals preserve the pool-load and halfword-store order. */
     {
         u8 *w = *(u8 **)&gEventWork;
         s32 v = (s32)MsgKorosseoCheeringChoices;
@@ -65,12 +55,12 @@ void Korosseo_FinishSoloRound(s32 id)
     if (res == 0) {
         Engine_EventSetMessage(msg + 1);
         Engine_EventShowMessage(id, 0);
-        *(s32 *)(work + 0x1c0) = 0x200;
-        *(s32 *)(work + 0x1c8) = 15;
+        work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+        work->transition_frames = 15;
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
-        Call2(GameFlag_SetByte, (slot << 4) + 0x370, *(s32 *)(obj + 8) >> 20);
-        Call2(GameFlag_SetByte, (slot << 4) + 0x378, *(s32 *)(obj + 16) >> 20);
+        Call2(GameFlag_SetByte, (slot << 4) + 0x370, obj->x.fixed >> 20);
+        Call2(GameFlag_SetByte, (slot << 4) + 0x378, obj->z.fixed >> 20);
         slot++;
         if (slot > 3) {
             Engine_EventRequestExit(10);
@@ -79,7 +69,7 @@ void Korosseo_FinishSoloRound(s32 id)
             Korosseo_SelectSoloCompetitor(slot);
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            *(s32 *)(work + 0x1c0) = 0;
+            work->start_transition = 0;
         }
     } else {
         Engine_EventSetMessage(msg + 2);

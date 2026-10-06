@@ -1,9 +1,14 @@
-/* Draw a line into the effect canvas (8bpp tiles, 16 tiles to a row, rows
-   clamped to 0..127) keeping the larger colour; the shape of
-   CANVAS_DRAW_LINE.C, which psynergy similar found. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 
-extern u8 gBattleFxWork[];
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 

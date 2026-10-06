@@ -1,44 +1,31 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "HEYA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgRariberoTakenHostageFaran[];
-extern u8 MsgRariberoWentOceanLook[];
-void Shop_Run(s32, s32);
+#define Shop_Run ((void (*)(s32,s32))Shop_Run)
+#define Inn_CheckIn ((void (*)(s32,s32))Inn_CheckIn)
 
-extern u8 MsgRariberoWantedSendShips[];
-extern u8 MsgRariberoWarriorRightPlease[];
-s32 Engine_GameFlagIsSet(s32);
-void Engine_EventSetMessage(s32);
-void Engine_EventShowMessage(s32, s32);
 
-extern u8 MsgRariberoGuessPeopleAngara[];
-extern u8 MsgRariberoImpossibleGoOcean[];
 
-extern u8 MsgRariberoBabiIsntBuilding[];
-extern u8 MsgRariberoBabiLighthouseStruck[];
+
 void Shop_ConfirmAct(s32);
 
-extern u8 MsgRariberoDidntKnowTime[];
-extern u8 MsgRariberoWantStayLet[];
-void Inn_CheckIn(s32, s32);
 
-extern u8 MsgRariberoImSorry[];
-extern const u8 gRariberoPoseAction[];
-void Engine_ResetSceneEffectCounter(void);
-void Engine_ActorSetAnimationAndWait(s32 actor, s32 mode);
-void Engine_ActorRunRepeatedMotion(s32 actor, s32 mode);
-void Engine_ActorWalkByAndWait(s32 actor, s32 x, s32 z);
-void Engine_ActorFaceDirection(s32 actor, s32 angle, s32 value);
 
-extern u8 MsgRariberoPleaseWaitForMeOutside[];
 
-extern u8 MsgRariberoDoNotWorryAboutSheba[];
-extern u8 MsgRariberoHowDidSearchForSheba[];
 
-extern u8 MsgRariberoTellOthers[];
 
 enum {
     ENTRANCE_SANCTUM_RETURN = 12,
@@ -71,7 +58,6 @@ u8 *RariberoHeya_GetEntrances(void)
     return gRariberoEntrances;
 }
 
-/* The sanctum has regions of its own; the house takes the town's. */
 u8 *RariberoHeya_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya1) {
@@ -85,11 +71,10 @@ u8 *RariberoHeya_GetExits(void)
     return gRariberoExits;
 }
 
-/* The house places its actors anew once the aerie's events are done. */
 u8 *RariberoHeya_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
-        if (GameFlag_IsSet(0x9A7) != 0) {
+        if (Engine_GameFlagIsSet(0x9A7) != 0) {
             return gRariberoHeyaPlacements9a7;
         }
         return gRariberoHeyaPlacements;
@@ -97,16 +82,11 @@ u8 *RariberoHeya_GetPlacements(void)
     return gRariberoPlacements;
 }
 
-/* The Lalivero shopkeeper: spoken to across the counter she opens shop 32;
- * otherwise she talks about the kidnapping, or about the rough sea once flag
- * 0x9a7 is set. The kidnapping question is loaded once and its two answers
- * are the lines after it. */
 void RariberoHeya_RunItemShop(s32 keeper)
 {
     struct FieldActor *leader = Object_GetById(0);
 
-    /* FAKEMATCH: the halfword cast of the masked facing keeps the
-     * reference's compare. */
+    /* FAKEMATCH: the halfword cast of the masked facing keeps the reference's compare. */
     if ((u16)((leader->facing + 0x2000) & 0xc000) == 0xc000) {
         Shop_Run(32, keeper);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -127,13 +107,9 @@ void RariberoHeya_RunItemShop(s32 keeper)
     }
 }
 
-/*
- * Raribero house: a face-toward branch. If the party faces the door (north)
- * the door line plays; otherwise a flag picks one of the two default lines.
- */
 void Dialogue_HandleFacingBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_Run(33, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -145,14 +121,9 @@ void Dialogue_HandleFacingBranch(s32 no)
     }
 }
 
-/*
- * Raribero house: choose which dialogue branch to play. If the party faces
- * the door (north) the alternate line for this door runs; otherwise a flag
- * decides between the two default lines.
- */
 void Dialogue_HandleAlternateFacingBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_Run(34, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -164,13 +135,9 @@ void Dialogue_HandleAlternateFacingBranch(s32 no)
     }
 }
 
-/*
- * Raribero house: a face-toward action. If the party faces the door (north)
- * the door line plays; otherwise a flag picks one of the two default lines.
- */
 void Dialogue_HandleFacingAction(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_ConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -182,14 +149,9 @@ void Dialogue_HandleFacingAction(s32 no)
     }
 }
 
-/*
- * Raribero house: a face-toward cue branch. If the party faces the door
- * (north) the cue line plays; otherwise a flag picks one of the two default
- * lines.
- */
 void Dialogue_HandleFacingCueBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Inn_CheckIn(11, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -238,17 +200,17 @@ void RariberoScene_PlayPoseSequence(void)
 void FieldScene_RunSequenceA(void)
 {
 
-    GameFlag_Set(0x9BC);
+    Engine_GameFlagSet(0x9BC);
     Engine_EventBegin();
     Engine_ResetSceneEffectCounter();
     Engine_EventWait(0xA);
-    Camera_MoveTo(0x780000, -1, 0x600000, 1);
+    Engine_CameraMoveTo(0x780000, -1, 0x600000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(0x1E);
     Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
-    Event_ShowMessage(0xC, 0);
+    Engine_EventShowMessage(0xC, 0);
     Engine_EventWait(0xA);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
     Engine_EventWait(0x1E);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(0x1E);
@@ -257,32 +219,31 @@ void FieldScene_RunSequenceA(void)
 
 void FieldScene_RunThreeCallSequence(void)
 {
-    void Event_ShowMessage(s32, s32);
+    void Engine_EventShowMessage(s32, s32);
 
-    GameFlag_Set(0x9BC);
+    Engine_GameFlagSet(0x9BC);
     Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
-    Event_ShowMessage(0xC, 0);
+    Engine_EventShowMessage(0xC, 0);
 }
 
-void SceneState_ForwardWord16cAndApply7b(void)
+void RariberoHeya_RequestTouchedExitAndPlayCue(void)
 {
-    u8 *work = (u8 *)gEventWork;
-    s16 *p = (s16 *)(work + 0x16C);
+    struct EventWork *work = gEventWork;
+    s16 *p = (s16 *)&work->touched_trigger;
 
     Engine_EventRequestExit(*p);
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
 }
 
-/* Both interiors answer differently once the aerie's events are done. */
 u8 *RariberoHeya_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
-        if (GameFlag_IsSet(0x9a7) != 0) {
+        if (Engine_GameFlagIsSet(0x9a7) != 0) {
             return gRariberoHeyaEvents9a7;
         }
         return gRariberoHeyaEvents;
     }
-    if (GameFlag_IsSet(0x9a7) != 0) {
+    if (Engine_GameFlagIsSet(0x9a7) != 0) {
         return gRariberoEvents9a7;
     }
     return gRariberoEvents;
@@ -297,7 +258,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_SetPosition(ACTOR_PARTY_LEADER, 6291456, 12058624);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
     Actor_FaceDirection(11, 0, 0);
-    Call3(Engine_ActorFaceDirection, 12, 32768, 0);
+    Actor_FaceDirection(12, 32768, 0);
     Engine_EventSetMessage((s32)MsgRariberoHowDidSearchForSheba);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -403,7 +364,7 @@ void FieldScene_RunPrimaryScript(void)
     Engine_ActorSetAnimationAndWait(11, 3);
     Engine_EventWait(30);
     Engine_EventShowMessage(11, 0);
-    (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))++;
+    (gEventWork->message)++;
     } else {
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
@@ -413,7 +374,7 @@ void FieldScene_RunPrimaryScript(void)
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(11, 4);
     Engine_EventWait(20);
-    (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))++;
+    (gEventWork->message)++;
     Event_ShowMessage(11, 0);
     }
     Engine_EventWait(10);
@@ -431,7 +392,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
     Actor_FaceDirection(ACTOR_GERALD, 49152, 0);
     Actor_FaceDirection(ACTOR_IVAN, 49152, 0);
-    Call3(Engine_ActorFaceDirection, 3, 49152, 0);
+    Actor_FaceDirection(3, 49152, 0);
     Engine_EventWait(50);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(11, 3);
@@ -451,7 +412,7 @@ void FieldScene_RunPrimaryScript(void)
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(12, 2);
     Engine_EventWait(20);
-    Call3(Engine_ActorFaceDirection, 12, 32768, 0);
+    Actor_FaceDirection(12, 32768, 0);
     Engine_EventWait(20);
     Engine_EventShowMessage(12, 0);
     Engine_EventWait(10);
@@ -463,7 +424,7 @@ void FieldScene_RunPrimaryScript(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 11, 16384, 0);
+    Actor_FaceDirection(11, 16384, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(11, 0);
     Engine_EventWait(10);
@@ -478,11 +439,11 @@ void FieldScene_RunPrimaryScript(void)
     Actor_ShowEmote(12, 256, 40);
     Engine_EventShowMessage(12, 0);
     Engine_EventWait(20);
-    Call3(Engine_ActorFaceDirection, 12, 16384, 0);
+    Actor_FaceDirection(12, 16384, 0);
     Engine_EventWait(40);
     Engine_EventShowMessage(12, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 11, 16384, 0);
+    Actor_FaceDirection(11, 16384, 0);
     Engine_EventWait(50);
     Actor_ShowEmote(11, 262, 60);
     Engine_EventShowMessage(11, 0);
@@ -503,19 +464,19 @@ void FieldScene_RunPrimaryScript(void)
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(12, 2);
     Engine_EventWait(30);
-    Call3(Engine_ActorFaceDirection, 12, 32768, 0);
+    Actor_FaceDirection(12, 32768, 0);
     Engine_EventWait(20);
     Engine_EventShowMessage(12, 0);
     Engine_EventWait(10);
     Actor_ShowEmote(11, 257, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 1, 57344, 0);
+    Actor_FaceDirection(1, 57344, 0);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(1, 4);
     Engine_EventWait(20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 12, 16384, 0);
+    Actor_FaceDirection(12, 16384, 0);
     Engine_EventWait(30);
     Actor_ShowEmote(12, 261, 60);
     Engine_EventShowMessage(12, 0);
@@ -524,7 +485,7 @@ void FieldScene_RunPrimaryScript(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 11, 16384, 0);
+    Actor_FaceDirection(11, 16384, 0);
     Engine_EventWait(40);
     Actor_ShowEmote(11, 258, 40);
     Engine_EventShowMessage(11, 0);
@@ -624,11 +585,6 @@ void FieldScene_RunPrimaryScript(void)
     Engine_EventEnd();
 }
 
-/*
- * "But tell me, what of the others?" Actor 11 asks, and the party and actor
- * 12 answer in turn, each beat an action on one actor and then a wait; the
- * last line stays open for the question that follows.
- */
 void FieldScene_RunSecondaryScript(void)
 {
     Engine_EventSetMessage((s32)MsgRariberoTellOthers);
@@ -636,30 +592,30 @@ void FieldScene_RunSecondaryScript(void)
 
     Engine_ActorRunRepeatedMotion(11, 2);
     Engine_EventWait(20);
-    Event_ShowMessage(11, 0);
+    Engine_EventShowMessage(11, 0);
     Engine_EventWait(10);
 
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Engine_ActorFaceDirection(ACTOR_GERALD, 0xc000, 0);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(10);
 
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Engine_EventShowMessage(ACTOR_MIA, 0);
     Engine_EventWait(10);
 
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
     Engine_EventWait(10);
 
     Engine_ActorRunRepeatedMotion(12, 2);
     Engine_EventWait(20);
-    Event_ShowMessage(12, 0);
+    Engine_EventShowMessage(12, 0);
     Engine_EventWait(20);
 
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -668,38 +624,28 @@ void FieldScene_RunSecondaryScript(void)
 
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Engine_EventWait(30);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(30);
 
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(10);
 
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Engine_EventShowMessage(ACTOR_MIA, 0);
     Engine_EventWait(10);
 
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(30);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
     Engine_EventWait(10);
 
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
-    Event_OpenMessage(0x2002, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+    Engine_EventOpenMessage(0x2002, 0);
 }
 
-/* The action table actor 14 takes while flag 0x300 is set. */
-
-/*
- * Opens both Lalivero interiors. Arriving from the aerie by entrance 90 sets
- * flag 0x9a7. In the sanctum three actors take collision flag 4 and sprite
- * priority 2, and returning by entrance 12 records the sanctum as the scene
- * to come back to. In the house the resident is set up the same way, actor
- * 14 takes its action table while flag 0x300 is set, and arriving by
- * entrance 99 plays the report before the entrance becomes 21.
- */
 s32 Scene_Initialize(void)
 {
     s32 scene;
@@ -707,20 +653,20 @@ s32 Scene_Initialize(void)
     struct FieldActor *actor;
 
     if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
-        GameFlag_Set(FLAG_AERIE_EVENTS_DONE);
+        Engine_GameFlagSet(FLAG_AERIE_EVENTS_DONE);
     }
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     scene = gGameState.scene;
     if (scene == (s32)&SceneId_RariberoHeya1) {
-        actor = Actor_Get(ACTOR_SANCTUM_FIRST);
+        actor = Object_GetById(ACTOR_SANCTUM_FIRST);
         actor->priority_flags = 0;
         actor->collision_flags |= 4;
         actor->sprite->priority = 2;
-        actor = Actor_Get(ACTOR_SANCTUM_SECOND);
+        actor = Object_GetById(ACTOR_SANCTUM_SECOND);
         actor->priority_flags = 0;
         actor->collision_flags |= 4;
         actor->sprite->priority = 2;
-        actor = Actor_Get(ACTOR_SANCTUM_THIRD);
+        actor = Object_GetById(ACTOR_SANCTUM_THIRD);
         actor->collision_flags |= 4;
         actor->priority_flags = 0;
         actor->sprite->priority = 2;
@@ -732,17 +678,17 @@ s32 Scene_Initialize(void)
         }
     }
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
-        actor = Actor_Get(ACTOR_HOUSE_RESIDENT);
+        actor = Object_GetById(ACTOR_HOUSE_RESIDENT);
         actor->collision_flags |= 4;
         actor->priority_flags = 0;
         actor->sprite->priority = 2;
-        if (GameFlag_IsSet(0x300) != 0) {
+        if (Engine_GameFlagIsSet(0x300) != 0) {
             Engine_ActorEnableActionCallback(14, gRariberoPoseAction);
         }
         if (gGameState.entrance == ENTRANCE_HOUSE_REPORT) {
             FieldScene_RunPrimaryScript();
-            Engine_ActorSetActionCallback(Actor_Get(ACTOR_HOUSE_REPORT_FIRST), 6);
-            Engine_ActorSetActionCallback(Actor_Get(ACTOR_HOUSE_REPORT_SECOND), 6);
+            Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_FIRST), 6);
+            Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_SECOND), 6);
             gGameState.entrance = ENTRANCE_HOUSE_AFTER_REPORT;
         }
     }

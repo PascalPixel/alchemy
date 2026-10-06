@@ -1,3 +1,17 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
+#include "RESOURCE.H"
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -11,92 +25,19 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-extern void *gWorkSlot[];
-extern u8 gBattleFxWork[];
-extern s32 gCameraWork[];
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_ArmBg2AffineHBlankDma(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void *Resource_GetTableEntry(s32 id);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
-void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
-    s32 slot, s32 delay);
-void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
-extern u16 BattleFx_GlintCellOffsets[];
-extern u8 BattleFx_GlintCellWidths[];
-extern u8 BattleFx_GlintCellHeights[];
-extern u8 RenderMode_GlintFlips[];
-
-/* The modes whose particles close in on the unit; the others rise. */
 #define CONVERGES(mode) \
     ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
-void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
+enum { RENDER_MODE_TORNADO = 0x2580 };
 
-/* Mode entries of the battle render effect. */
-void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect)
-{
-    if (effect->variant == 0) {
-        BattleFx_RenderMode(effect, 0);
-        return;
-    }
-    BattleFx_RenderMode(effect, 1);
-}
-
-void BattleFx_RenderMode1(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 1);
-}
-
-void BattleFx_RenderMode2(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 2);
-}
-
-void BattleFx_RenderMode3(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 3);
-}
-
-void BattleFx_RenderMode4(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 4);
-}
-
-void BattleFx_RenderMode5(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 5);
-}
-
-void BattleFx_RenderMode7(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 7);
-}
-
-void BattleFx_RenderMode6(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 6);
-}
-
-/* Battle effect: a cloud of particles around each affected unit, eight
-   frames apart, in one of eight modes that choose the picture, how many
-   particles there are and whether they close in on the unit or rise. */
 void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 {
     void **cursor;
@@ -120,7 +61,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     count = 16;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
     if (mode == 0) {
         palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     } else if (mode == 1) {
@@ -132,24 +73,23 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     } else if (mode == 4) {
         palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     } else if (mode == 5) {
-        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1, 0);
         palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
     } else if (mode == 7) {
         count = 24;
-        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1, 0);
         palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     } else {
         count = 32;
-        Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
         palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
     }
-    /* FAKEMATCH: forwarded through Call3, the palette copy loads its routine
-       before it shifts the destination, as the reference does. */
+    /* FAKEMATCH: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does. */
     Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT, (s32)palette, 128);
     if (mode == 4)
-        Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
     if (mode == 3)
-        Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, (u8 *)work + 0x2580, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + RENDER_MODE_TORNADO, 1, 0);
 
     for (i = 0; i != 512; i++) {
         struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -171,14 +111,14 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     else
         total = work->effect->count * 8 + 32;
     if (!(mode <= 1 || mode == 3))
-        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+        Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
 
     for (frame = 0; frame != total; frame++) {
-        s32 facing = gCameraWork[0];
+        struct BattleCamera *camera = gCameraWork;
 
         if (mode == 7) {
             if (frame == total - 46)
@@ -214,21 +154,21 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                         - (BattleFx_GlintCellWidths[frame & 3] >> 1);
                     y = base.y - ((Trig_Cos(angle) * radius) >> 16)
                         - (BattleFx_GlintCellHeights[frame & 3] >> 1);
-                    BattleEffect_LoadWork(47, 7, 7, 3 | RenderMode_GlintFlips[Random16() & 3], 2);
-                    ((DrawRectangle)gWorkSlot[47])(canvas,
-                        (u8 *)work + BattleFx_GlintCellOffsets[frame & 3] + 0x2580,
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3 | RenderMode_GlintFlips[Random16() & 3], 2);
+                    ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+                        work->sheet + BattleFx_GlintCellOffsets[frame & 3] + RENDER_MODE_TORNADO,
                         x, y + 16,
                         BattleFx_GlintCellWidths[frame & 3],
                         BattleFx_GlintCellHeights[frame & 3]);
-                    Runtime_ReleaseHeapBlock(47);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                 }
             }
-            BattleEffect_LoadWork(46, 7, 7, 3, 3);
-            draw[0] = (DrawRectangle)gWorkSlot[46];
-            BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            draw[1] = (DrawRectangle)gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+            draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+            draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = object->x;
             point[1] = 160 << 13;
             point[2] = object->z;
@@ -254,16 +194,16 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                             EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
                             screen.x >>= 1;
                             if (mode == 5 || mode == 7)
-                                draw[1](canvas, (u8 *)work + cel * 1600,
+                                draw[1](canvas, work->sheet + cel * 1600,
                                     screen.x - 20, screen.y - 20, 40, 40);
                             else if (mode == 6)
-                                draw[1](canvas, (u8 *)work + 0xc00,
+                                draw[1](canvas, work->sheet + 0xc00,
                                     screen.x - 6, screen.y - 12, 12, 24);
                             else if (mode == 4)
-                                draw[1](canvas, work,
+                                draw[1](canvas, work->sheet,
                                     screen.x - 11, screen.y - 21, 22, 42);
                             else
-                                draw[(i & 3) != 0](canvas, (u8 *)work + cel * 1152,
+                                draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
                                     screen.x - 12, screen.y - 24, 24, 48);
                             if (DECAYS(mode)) {
                                 mote->x -= mote->x / distance;
@@ -286,8 +226,8 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                     }
                 }
             }
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             if (frame == member * 8 + 16) {
                 s32 delay = total - frame;
 
@@ -302,8 +242,8 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     if (!(mode <= 1 || mode == 3))
-        Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+        Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     BattleFx_EndCanvasLayer();
 }

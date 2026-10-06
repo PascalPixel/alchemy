@@ -50,11 +50,11 @@ Func_081a76f8:
 .L_081a775c:
 	.4byte 0x00001440
 .L_081a7760:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081a7764:
 	.4byte 0x00000021
 .L_081a7768:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a776c:
 	.4byte gMapCellBuffer
 .L_081a7770:
@@ -107,10 +107,10 @@ Func_081a76f8:
 	adds r2, #4
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	movs r0, #1
-	bl Func_08013f3c
+	bl Blend_SetBrightenTarget0
 	bl Blend_WaitForTransition
 	ldr r3, .L_081a7804
 	movs r2, #128
@@ -140,9 +140,9 @@ Func_081a76f8:
 .L_081a7814:
 	.4byte 0x84001000
 .L_081a7818:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a781c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_081a7820:
 	movs r0, #1
 	adds r5, #1
@@ -178,7 +178,7 @@ Func_081a76f8:
 	mov r8, r3
 	pop {r5, r6, pc}
 .L_081a7860:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_081a7864:
 	.4byte 0x06004100
 .L_081a7868:

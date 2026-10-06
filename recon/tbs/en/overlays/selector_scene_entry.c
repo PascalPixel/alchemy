@@ -60,8 +60,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene number is reloaded after each group: called scripts may change it.
- * All three selector tables and their shared case tails belong to this owner. */
 s32 Scene_RunSelectorEntry(void)
 {
     u8 *actor;
@@ -97,7 +95,6 @@ s32 Scene_RunSelectorEntry(void)
             break;
         case 15:
             SetEffectRecordMode(Func_02005ad4(0), 1);
-            /* fall through */
         case 4:
             if (Func_02005a84(0x876)) {
                 Func_0200597c(1);
@@ -231,7 +228,6 @@ s32 Scene_RunSelectorEntry(void)
         case 3:
         case 13:
             FieldScene_RunScene39b_02001208();
-            /* fall through */
         case 1:
         case 2:
         case 12:
@@ -265,7 +261,6 @@ s32 Scene_RunSelectorEntry(void)
             SetEffectRecordMode(Func_02005ad4(0), 1);
             SceneEffect_SpawnParticleRowsByMode(0);
             FieldScene_RunPrimarySequence(1);
-            /* fall through */
         case 14:
             if (((s16 *)&gGameState)[225] == 14) {
                 Func_02005c64(211);
@@ -376,7 +371,6 @@ s32 Scene_RunSelectorEntry(void)
         case 12:
             Func_02005aac(1);
             SetEffectRecordMode(Func_02005ad4(0), 1);
-            /* fall through */
         case 11:
             Call6(Func_02005a1c, 104, 34, 5, 4, 40, 34);
             Call6(Func_02005a04, 45, 91, 40, 91, 5, 4);

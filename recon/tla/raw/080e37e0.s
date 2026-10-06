@@ -16,15 +16,15 @@ Func_080e37e0:
 	movs r3, #0
 	str r3, [r7, #24]
 	mov r10, r2
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r0, #0
-	bl Func_080cded4
+	bl EventRuntime_ResolvePendingActions
 	mov r0, r8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
-	bl Func_080d2a3c
-	bl Func_080d2a8c
+	bl ObjectDispatch_SetSingleChildFlagsFar
+	bl EventRuntime_StartScreen
+	bl EventRuntime_WaitDelay
 	movs r0, #140
 	ldr r3, [r7, #16]
 	ldr r1, [r7, #8]
@@ -88,9 +88,9 @@ Func_080e37e0:
 	mov r0, r8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	adds r0, r5, #0
 	bl Object_Destroy
 	movs r3, #0
@@ -103,4 +103,4 @@ Func_080e37e0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e38c4:
-	.4byte Func_080e3060
+	.4byte BattleFx_SpinObject

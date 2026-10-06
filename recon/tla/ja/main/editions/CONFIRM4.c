@@ -1,4 +1,3 @@
-/* Draft: Japanese confirmation column differs by one immediate. */
 #include "TYPES.H"
 
 void *AffineEffect_InitializeWork(void);

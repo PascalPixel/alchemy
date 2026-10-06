@@ -1,5 +1,6 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 struct FlashInfo_0800711c {
     u8 filler0[36];
@@ -18,8 +19,8 @@ u16 EraseAtmelFlashBlock(u16 sector)
         return 0x80ff;
 
     CopyFlashReadRoutineToRam(savedCode);
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xfffc) |
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xfffc) |
         ((struct FlashInfo_0800711c *)Flash_ChipAtmelLayout)->control;
 
     current = sector << 4;
@@ -45,7 +46,7 @@ advance:
         goto next_sector;
 
 done:
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xfffc) | 3;
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xfffc) | 3;
     return result;
 }

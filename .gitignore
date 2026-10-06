@@ -2,8 +2,6 @@
 *.gba
 out/
 tools/out/
-# Worktree convenience symlink to the shared ROM set.
 /roms
 
-# Local agent state and worker worktrees: never repository content.
 /.claude/

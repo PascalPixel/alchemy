@@ -1,39 +1,22 @@
-/* Sound test: three cue numbers, one per row (a background track, a jingle
-   and a song). Up and down pick the row; right and left step its cue by one
-   and R and L by ten; A plays it, B plays cue 19 and START fades the music
-   out. SELECT cycles the mixer preset and fades the second player. A clip in
-   the mixer restarts the twenty-frame indicator timer. Never returns. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
 #include "AUDIO_ENGINE.H"
 
-extern volatile u32 gKeysRepeat;
-extern s32 gSoundClipFlag;
-extern s32 Data_03007804;
-s32 Sound_LoadPresetParameters(s32 preset);
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 void AudioCommand_Play(s32 id);
 
-extern u8 gMusicPlayerBgm[];
-extern u8 gMusicRestoreDelay[];
-void Audio_Initialize(void);
-extern u8 RomBytes_02003000;
-extern u8 RomBytes_02003004;
-extern u16 gMusicVolume;
-extern u16 gMusicPitchStep;
-extern u16 gMusicVolumeStep;
-extern u8 Data_02003014;
-extern u16 gMusicPlayerVolumes;
-extern u16 gMusicPitchTarget;
-extern u16 gMusicVolumeTarget;
-extern u16 gMusicPitch;
-extern u8 gAudioSecondaryState;
-extern u8 Audio_CommandMask;
-void MusicPlayer_SetPitchAndUpdateFrequency(s32 address, u16 value);
-void MusicPlayer_SetPitch(u8 *state, u32 mask, u32 value);
-void MusicPlayer_SetVolume(struct Work *work, u32 mask, u32 value);
-void Audio_StopAllPlayers(void);
-void Audio_ResumeAllPlayers(void);
 
 void AudioTest_RunParameterController(void)
 {
@@ -44,9 +27,7 @@ void AudioTest_RunParameterController(void)
 
     row = 0;
     preset = 2;
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling.
-       2026-10-02: a plain assignment still moves the state address load ahead
-       of the preset setup and the state store after the timer setup. */
+    /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. */
     do {
         Data_03007804 = 0;
     } while (0);
@@ -61,33 +42,33 @@ void AudioTest_RunParameterController(void)
             timer = 20;
         }
 
-        if (gKeysRepeat & 4) {
+        if (gKeysRepeat & KEY_SELECT) {
             preset = (preset + 1) % 5;
             Sound_LoadPresetParameters(preset);
         }
-        if (gKeysRepeat & 0x100)
+        if (gKeysRepeat & KEY_R)
             cues[row] += 10;
-        if (gKeysRepeat & 0x200)
+        if (gKeysRepeat & KEY_L)
             cues[row] -= 10;
-        if (gKeysRepeat & 0x10)
+        if (gKeysRepeat & KEY_RIGHT)
             cues[row] += 1;
-        if (gKeysRepeat & 0x20)
+        if (gKeysRepeat & KEY_LEFT)
             cues[row] -= 1;
-        if (gKeysRepeat & 0x40) {
+        if (gKeysRepeat & KEY_UP) {
             if (row > 0)
                 row--;
         }
-        if (gKeysRepeat & 0x80) {
+        if (gKeysRepeat & KEY_DOWN) {
             if (row <= 1)
                 row++;
         }
-        if (gKeysRepeat & 1)
+        if (gKeysRepeat & KEY_A)
             AudioCommand_Play(cues[row]);
-        if (gKeysRepeat & 2)
+        if (gKeysRepeat & KEY_B)
             AudioCommand_Play(19);
-        if (gKeysRepeat & 8)
+        if (gKeysRepeat & KEY_START)
             AudioCommand_Play(17);
-        if (gKeysRepeat & 4)
+        if (gKeysRepeat & KEY_SELECT)
             AudioCommand_Play(0x121);
 
         WaitFrames(1);
@@ -108,9 +89,9 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitchTarget = 0x100;
     gMusicPitch = 0x100;
     gMusicPitchStep = 4;
-    Data_02003014 = 0;
+    gMusicFadeRequested = 0;
     Audio_CommandMask = 0;
-    player_volume = &gMusicPlayerVolumes;
+    player_volume = (s16 *)gMusicPlayerVolumes;
     RomBytes_02003004 = 0;
     remaining = 7;
     do {
@@ -122,20 +103,18 @@ void Audio_InitializeRuntimeDefaults(void)
 
 void MusicCommand_SetPitchAndUpdateFrequency(u16 value)
 {
-    MusicPlayer_SetPitchAndUpdateFrequency((u32)gMusicPlayerBgm, value);
+    MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, value);
 }
 
 void MusicCommand_SetPitch(s16 pitch)
 {
-    /* FAKEMATCH: the player pointer temporary preserves measured argument allocation or instruction order.
-       2026-10-02: replacing this temporary and one-pass block with a direct
-       call moves pitch sign extension before the player address load. */
+    /* FAKEMATCH: the player temporary and one-pass block keep pitch sign extension after the player-address load. */
   int player_address;
-  player_address = (u32)gMusicPlayerBgm;
+  player_address = (u32)&gMusicPlayerBgm;
   /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
   do
   {
-    MusicPlayer_SetPitch(player_address, 0xFF, pitch);
+    MusicPlayer_SetPitch((struct SoundPlayer *)player_address, 0xFF, pitch);
   }
   while (0);
 }
@@ -148,12 +127,12 @@ void Audio_SetWorkPairB(u16 primary, u16 secondary)
 
 void MusicCommand_SetVolume(s16 volume)
 {
-    MusicPlayer_SetVolume((u32)gMusicPlayerBgm, 0xFF, (u16)volume);
+    MusicPlayer_SetVolume(&gMusicPlayerBgm, 0xFF, volume);
     gMusicVolumeTarget = volume;
     gMusicVolume = volume;
 }
 
-void Audio_SetWorkPairA(u16 primary, u16 secondary)
+void Audio_SetMusicVolumeTargetAndStep(u16 primary, u16 secondary)
 {
     gMusicVolumeTarget = primary;
     gMusicVolumeStep = secondary;
@@ -161,7 +140,7 @@ void Audio_SetWorkPairA(u16 primary, u16 secondary)
 
 u8 AudioCommand_GetStateByte(void)
 {
-    return *(u8 *)gMusicRestoreDelay;
+    return gMusicRestoreDelay;
 }
 
 void AudioCommand_StopAllPlayers(void)
@@ -176,9 +155,9 @@ void AudioCommand_ResumeAllPlayers(void)
 
 void AudioCommand_UpdateToggleMask(u32 command)
 {
-    u32 toggle = command & 0x80;
+    u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
-    command &= 0x7f;
+    command &= AUDIO_COMMAND_MASK;
     if (toggle != 0)
         Audio_CommandMask ^= command;
     else
@@ -187,7 +166,7 @@ void AudioCommand_UpdateToggleMask(u32 command)
 
 u8 AudioCommand_GetSecondaryStateByte(void)
 {
-    return *(u8 *)&gAudioSecondaryState;
+    return gAudioSecondaryState;
 }
 
 void AudioCommand_WaitForCompletion(void)
@@ -195,7 +174,7 @@ void AudioCommand_WaitForCompletion(void)
     s32 wait_count = 0;
 
     do {
-        if (*(u8 *)gMusicRestoreDelay == 0)
+        if (gMusicRestoreDelay == 0)
             break;
         WaitFrames(1);
         wait_count++;

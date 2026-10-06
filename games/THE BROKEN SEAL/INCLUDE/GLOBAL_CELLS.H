@@ -3,7 +3,8 @@
 
 #include "TYPES.H"
 
-/* Byte views of IWRAM work cells whose pointer is read through a cast. */
+extern void *gMapWork[];
+
 extern u8 Data_03001e74_a[];
 extern u8 Data_03001f2c_a[];
 

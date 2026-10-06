@@ -1,11 +1,19 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "OWNER_STATE.H"
 #include "TYPES.H"
 
-u8 *Owner_GetState(s32);
-s32 Shop_CanServe(s32 selection, s32 variant);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {
-    u8 value = Owner_GetState(entry_no)[0xF];
+    u8 value = ((struct BattleUnit *)Owner_GetState(entry_no))->level;
     s32 result = 0;
 
     if (kind == 0) {
@@ -22,13 +30,13 @@ s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 
 s32 Shop_CanServe(s32 entry_no, s32 kind)
 {
-    u8 *entry = Owner_GetState(entry_no);
+    struct BattleUnit *entry = Owner_GetState(entry_no);
     s32 result = 0;
 
-    if ((kind == 0 && *(s16 *)(entry + 56) <= 0)
-        || (kind == 1 && *(s8 *)(entry + 305) != 0)
-        || (kind == 2 && entry[320] != 0)
-        || (kind == 3 && *(s8 *)(entry + 304) != 0)) {
+    if ((kind == 0 && entry->hp <= 0)
+        || (kind == 1 && entry->poison != 0)
+        || (kind == 2 && entry->evil_spirit != 0)
+        || (kind == 3 && entry->restraint != 0)) {
         result = 1;
     }
     return result;

@@ -90,7 +90,7 @@ Func_08178710:
 	ldr r0, [r3, #8]
 	adds r1, r4, #0
 	str r4, [sp, #48]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r1, [sp, #84]
 	mov r2, sp
 	adds r2, #124
@@ -98,7 +98,7 @@ Func_08178710:
 	ldrsh r0, [r1, r7]
 	adds r1, r2, #0
 	str r2, [sp, #44]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, [sp, #80]
 	movs r4, #224
 	lsls r4, r4, #3
@@ -172,7 +172,7 @@ Func_08178710:
 .L_08178870:
 	.4byte Data_02012000
 .L_08178874:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #32]
 	ldr r0, [sp, #60]
 	bl Graphics_PrepareTransferInIwramWork
@@ -223,7 +223,7 @@ Func_08178710:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r5, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r7, [sp, #80]
 	movs r3, #0
 	mov r9, r3
@@ -778,7 +778,7 @@ Func_08178710:
 	lsls r2, r1, #3
 	bics r3, r2
 	strb r3, [r6, #24]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #84]
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -846,7 +846,7 @@ Func_08178710:
 	cmp r3, #1
 	bne .L_08178da8
 	adds r0, r5, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_08178da8:
 	movs r3, #220
 	lsls r3, r3, #6

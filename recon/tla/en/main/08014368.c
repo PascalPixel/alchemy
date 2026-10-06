@@ -1,23 +1,11 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "FIXED_MATH.H"
-
-/* resource/initialize.c */
-/* resource/table/initialize.c */
-struct ResourceTableEntry {
-    u16 value;
-    u16 flags;
-};
-
-extern u8 ResourceBlockOwners[];
-extern struct ResourceTableEntry ResourceTableEntries[];
+#include "VRAM_TAB.H"
 
 void Resource_InitializeTable(void)
 {
-    u32 limit = 0x1ff;
+    u32 limit = VRAM_BLOCK_COUNT - 1;
     u8 *occupancy_markers = ResourceBlockOwners;
     u32 count = 0;
-    u32 empty_marker = 0xff;
+    u32 empty_marker = VRAM_BLOCK_OWNER_FREE;
 
     do {
         *occupancy_markers++ = empty_marker;
@@ -25,14 +13,14 @@ void Resource_InitializeTable(void)
     } while (count <= limit);
 
     {
-        struct ResourceTableEntry *resource_entry = ResourceTableEntries;
+        struct VramBlockCacheEntry *resource_entry = ResourceTableEntries;
 
         count = 0;
         do {
-            resource_entry->flags |= 0xffff;
-            resource_entry->value = 0;
+            resource_entry->offset |= VRAM_CACHE_OFFSET_FREE;
+            resource_entry->size = 0;
             resource_entry++;
             count++;
-        } while (count <= 95);
+        } while (count < VRAM_CACHE_ENTRY_COUNT);
     }
 }

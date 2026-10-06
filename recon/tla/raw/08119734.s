@@ -16,7 +16,7 @@ Func_08119734:
 .L_08119748:
 	movs r0, #128
 	bl ActivateBattleObjectSlot
-	bl Func_0811bc98
+	bl BattleMotion_DestroyAllSlotObjects
 	movs r1, #1
 	adds r0, r5, #0
 	bl Summon_TakeCharge

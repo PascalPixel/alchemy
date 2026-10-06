@@ -1,12 +1,21 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "TRANSFORM.H"
 #include "DMA.H"
+#include "IO_REG.H"
+#include "FIXED_MATH.H"
 
-/* Lost Age source currently covers rewind, push and the two matrix copies.
-   Its reset, pop and identity helpers remain raw until their C matches.
-   These game branches describe source presence; both games retain their
-   ordinary compiler and options, and each native bank keeps its order. */
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
@@ -22,16 +31,13 @@ void SceneTransform_RewindStack(void)
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
+typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
-/* Allocates the transform stack's 48-byte slots, empties it and loads the
-   identity into the current transform. */
 void Render_ResetTransformState(void)
 {
     gTransformStackTop = Runtime_AllocateBlock(2, sizeof(gTransform));
     gTransformStackDepth = 0;
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(gTransform);
 }
 
@@ -40,7 +46,7 @@ void Render_ResetTransformState(void)
 void Graphics_SaveTransferWorkOnce(void)
 {
     if (gTransformStackDepth <= 0) {
-        Dma_Set(gTransform, gTransformStackTop, 0x8400000c, (volatile u32 *)0x040000d4);
+        Dma_Set(gTransform, gTransformStackTop, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
         gTransformStackDepth++;
         gTransformStackTop += 48;
     }
@@ -48,35 +54,33 @@ void Graphics_SaveTransferWorkOnce(void)
 
 void Graphics_SaveTransferWork(void *destination)
 {
-    Dma_Set(gTransform, destination, 0x8400000c, (volatile u32 *)0x040000d4);
+    Dma_Set(gTransform, destination, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
 }
 
 void Graphics_LoadTransferWork(const void *source)
 {
-    Dma_Set(source, gTransform, 0x8400000c, (volatile u32 *)0x040000d4);
+    Dma_Set(source, gTransform, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
 }
 
-#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
 void Graphics_RestoreTransferWork(void)
 {
     if (gTransformStackDepth > 0) {
         --gTransformStackDepth;
         gTransformStackTop -= 48;
-        Dma_Set(gTransformStackTop, gTransform, 0x8400000c, (volatile u32 *)0x040000d4);
+        Dma_Set(gTransformStackTop, gTransform, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
     }
 }
 
+#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
+
 void SceneTransform_ResetMatrix(void)
 {
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(gTransform);
 }
 
-/* Builds the rotation matrix for the three angles (Q16 sines and cosines,
-   rows x, y, z, zero translation) and hands it to the IWRAM transform
-   routine. */
 void SceneTransform_ApplyRotation(s32 *angles)
 {
     s32 sx, cx, sy, cy, sz, cz;
@@ -103,15 +107,13 @@ void SceneTransform_ApplyRotation(s32 *angles)
     Iwram_TransformMatrix(m);
 }
 
-/* Each builds one elementary matrix on the identity and hands it to the
-   IWRAM transform routine. */
 void SceneTransform_ApplyPitch(s32 angle)
 {
     s32 matrix[12];
     s32 sin = Trig_Sin(angle);
     s32 cos = Trig_Cos(angle);
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[4] = cos;
     matrix[5] = sin;
@@ -126,7 +128,7 @@ void SceneTransform_ApplyYaw(s32 angle)
     s32 sin = Trig_Sin(angle);
     s32 cos = Trig_Cos(angle);
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[0] = cos;
     matrix[2] = -sin;
@@ -141,7 +143,7 @@ void SceneTransform_ApplyRoll(s32 angle)
     s32 sin = Trig_Sin(angle);
     s32 cos = Trig_Cos(angle);
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[0] = cos;
     matrix[1] = sin;
@@ -154,7 +156,7 @@ void SceneTransform_ApplyPosition(const s32 *position)
 {
     s32 matrix[12];
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[9] = position[0];
     matrix[10] = position[1];
@@ -166,7 +168,7 @@ void SceneTransform_ApplyScale(const s32 *scale)
 {
     s32 matrix[12];
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[0] = scale[0];
     matrix[4] = scale[1];
@@ -174,9 +176,6 @@ void SceneTransform_ApplyScale(const s32 *scale)
     Iwram_TransformMatrix(matrix);
 }
 
-/* Builds the rotation matrix for the three angles with the given
-   translation as its last row and hands it to the IWRAM transform
-   routine. */
 void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position)
 {
     s32 sx, cx, sy, cy, sz, cz;
@@ -203,8 +202,6 @@ void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position)
     Iwram_TransformMatrix(m);
 }
 
-/* SceneTransform_ApplyRotationTranslation with each matrix row scaled by
-   the matching component of the scale vector. */
 void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
 {
     s32 sx, cx, sy, cy, sz, cz;
@@ -233,5 +230,74 @@ void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
     m[10] = position[1];
     m[11] = position[2];
     Iwram_TransformMatrix(m);
+}
+
+void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
+{
+    u32 code[7];
+    s32 dx, dy, dz;
+    s32 ux;
+    /* FAKEMATCH: the used eye x component remains in r11 through the row dot calls. */
+    register s32 ex asm("r11");
+    Dot3Fn dot;
+    s32 ey;
+    /* FAKEMATCH: the used perpendicular axis stays in r8 through the cross product. */
+    register s32 uz asm("r8");
+    s32 vx, vy, vz;
+    s32 scale;
+    s32 ez;
+    s32 rest;
+    u32 one = 0x80000000;
+    u32 (*divide)(u32 dividend, u32 divisor);
+
+    dot = (Dot3Fn)code;
+    Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 7, REG_DMA3);
+    dx = target[0] - eye[0];
+    dy = target[1] - eye[1];
+    dz = target[2] - eye[2];
+    rest = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
+    divide = Iwram_UnsignedDivide;
+    scale = divide(one, rest) >> 15;
+    scale = -scale;
+    dx = Iwram_MulQ16(dx, scale);
+    dy = Iwram_MulQ16(dy, scale);
+    rest = Iwram_MulQ16(dz, scale);
+    uz = -dx;
+    /* FAKEMATCH: keep the used negated axis before spilling the third product. */
+    asm("" : "+r"(rest) : "r"(uz));
+    dz = rest;
+    rest = Iwram_MulQ16(dy, dy);
+    scale = 0x10000;
+    if (scale - rest > 0)
+        scale = divide(one, FixedSqrt(scale - rest)) << 1;
+    ux = Iwram_MulQ16(dz, scale);
+    uz = Iwram_MulQ16(uz, scale);
+    vx = Iwram_MulQ16(dy, uz);
+    vy = Iwram_MulQ16(dz, ux) - Iwram_MulQ16(dx, uz);
+    vz = -Iwram_MulQ16(dy, ux);
+    scale = divide(one, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
+    vx = Iwram_MulQ16(vx, scale);
+    vy = Iwram_MulQ16(vy, scale);
+    vz = Iwram_MulQ16(vz, scale);
+    ex = eye[0];
+    ey = eye[1];
+    ez = eye[2];
+    {
+        /* FAKEMATCH: the used zero argument remains in r0 beside the first row stores. */
+        register s32 zero asm("r0");
+        out[0] = ux;
+        zero = 0;
+        out[3] = zero;
+        out[6] = uz;
+        out[9] = -dot(ex, ux, ez, uz, zero, zero);
+    }
+    out[4] = vy;
+    out[7] = vz;
+    out[1] = vx;
+    out[10] = -dot(ex, vx, ey, vy, ez, vz);
+    out[2] = dx;
+    out[5] = dy;
+    out[8] = dz;
+    out[11] = -dot(ex, dx, ey, dy, ez, dz);
 }
 #endif

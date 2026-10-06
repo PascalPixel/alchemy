@@ -12,6 +12,6 @@ Func_080d390c:
 	adds r2, #4
 	strb r3, [r2]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	pop {pc}
 	.2byte 0x0000

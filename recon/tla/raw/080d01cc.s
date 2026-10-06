@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d01cc
+	.global DisplayTransition_Start
 	.thumb_func
-Func_080d01cc:
+DisplayTransition_Start:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -36,7 +36,7 @@ Func_080d01cc:
 	movs r0, #0
 	bl Blend_SetDarkenTarget16
 	mov r0, r10
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	movs r0, #1
 	bl WaitFrames
 	b .L_080d04d2
@@ -79,7 +79,7 @@ Func_080d01cc:
 .L_080d026c:
 	strh r5, [r4]
 	movs r0, #0
-	bl Func_080d174c
+	bl BattleFx_SetPrimaryBufferValue
 	b .L_080d0506
 	.2byte 0x0000
 .L_080d0278:
@@ -318,7 +318,7 @@ Func_080d01cc:
 .L_080d0454:
 	.4byte Func_080d0954
 .L_080d0458:
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r2, #160
 	lsls r2, r2, #3
 	movs r1, #160
@@ -352,7 +352,7 @@ Func_080d01cc:
 	ldr r2, .L_080d0514
 	movs r0, #1
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r1, #160
 	lsls r1, r1, #3
 	movs r0, #160

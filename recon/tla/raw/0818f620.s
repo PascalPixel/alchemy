@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_0818f620
 	.thumb_func
 Func_0818f620:
@@ -169,7 +170,7 @@ Func_0818f620:
 	ldr r5, [sp, #60]
 	ldr r1, [sp, #12]
 	ldr r0, [r5, #8]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r6, [sp, #56]
 	cmp r6, #3
 	bne .L_0818f77e
@@ -181,7 +182,7 @@ Func_0818f620:
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	ldr r1, [sp, #16]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 .L_0818f78a:
 	ldr r2, [sp, #56]
 	cmp r2, #0
@@ -985,7 +986,7 @@ Func_0818f620:
 	ldr r0, .L_0818fdf4
 	bl Scheduler_RemoveCallback
 	ldr r0, [sp, #60]
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_0818feee
 .L_0818fdd6:
 	ldr r7, [sp, #56]
@@ -1050,7 +1051,7 @@ Func_0818f620:
 .L_0818fe50:
 	.4byte 0x00000787
 .L_0818fe54:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0818fe58:
 	.4byte IwramClearWords
 .L_0818fe5c:
@@ -1094,7 +1095,7 @@ Func_0818f620:
 	ldrh r1, [r3]
 	movs r0, #2
 	movs r2, #0
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]

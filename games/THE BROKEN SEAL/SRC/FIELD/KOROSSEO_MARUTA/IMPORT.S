@@ -1,7 +1,3 @@
-@ Import veneers after the KOROSSEO_MARUTA overlay's code: fixed 8-byte
-@ veneers through which the overlay calls main-image code, each loading its
-@ target into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — KOROSSEO_MARUTA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -38,10 +34,10 @@ Math_Atan2:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	.global Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlock
 	.thumb_func
-Runtime_AllocateHeapBlockFar:
-	overlay_veneer Func_08000140
+Runtime_AllocateHeapBlock:
+	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Runtime_AllocateBlock
 	.thumb_func
 Runtime_AllocateBlock:
@@ -93,10 +89,10 @@ Runtime_PushSlotEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global ResourceMetadata_ClearRecordFar
+	.global ResourceMetadata_ClearRecord
 	.thumb_func
-ResourceMetadata_ClearRecordFar:
-	overlay_veneer Func_08009060
+ResourceMetadata_ClearRecord:
+	overlay_veneer ResourceMetadata_ClearRecordFar
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -155,15 +151,15 @@ Engine_MapCopyCellAttributes:
 	.global Engine_MapCopyCellsTo
 	.thumb_func
 Engine_MapCopyCellsTo:
-	overlay_veneer Func_080091c8
+	overlay_veneer Map_CopyCellIndexRectFar
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Graphics_EnableObjLayerAndCallbacks
 	.thumb_func
 Graphics_EnableObjLayerAndCallbacks:
@@ -265,13 +261,10 @@ Engine_EventEnd:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Object_GetByIdFar
-	.thumb_func
-Object_GetByIdFar:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	overlay_veneer Func_0808a080
+	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:
@@ -347,7 +340,7 @@ Engine_ActorSetChildValue:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -398,7 +391,7 @@ Engine_CameraWaitForMove:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -407,10 +400,10 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetPair1d4
+	.global Event_SetDefeatDestination
 	.thumb_func
-Event_SetPair1d4:
-	overlay_veneer Event_SetPair1d4Far
+Event_SetDefeatDestination:
+	overlay_veneer Event_SetDefeatDestinationFar
 	.global Engine_LeaderCheckAhead
 	.thumb_func
 Engine_LeaderCheckAhead:
@@ -430,15 +423,15 @@ Engine_ColorBufferInterpolate:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ActorLookup
 	.thumb_func
 Engine_ActorLookup:

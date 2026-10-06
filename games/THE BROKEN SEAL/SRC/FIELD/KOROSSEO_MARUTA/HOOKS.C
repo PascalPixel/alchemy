@@ -1,4 +1,3 @@
-/* The scene hooks the entry veneers export: the stage's tables. */
 #include "LOG_ROLLING.H"
 
 u8 *ColossoLogRollingStage_GetScriptData(void)

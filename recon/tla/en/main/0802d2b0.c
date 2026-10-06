@@ -1,7 +1,3 @@
-/*
- * Draft: Curve_StepAtDifferencePosition does not yet match; 5 halfwords differ from ☀️'s C, first at +0x6 (adds r5, r2, #0).
- * Links as recon/tla/raw/0802d2b0.s.
- */
 #include "CURVE.H"
 
 s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end)

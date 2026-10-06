@@ -1,15 +1,21 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
+#include "FIELD_EVENT.H"
 
-/* Mode entries of the projectile volley effect. */
+#define ObjectDispatch_ApplyValueToChildrenFar ((s32 (*)(s32,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Object_SetMode(s32, s32);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32);
-s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
-s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 
 void BattleFx_RunMode0(void *effect)
 {

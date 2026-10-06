@@ -1,7 +1,3 @@
-@ Import veneers after the DERI_HEYA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — DERI_HEYA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -29,31 +25,47 @@ Func_02000c9c:
 	.global Func_02000ca4
 	.thumb_func
 Func_02000ca4:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer MapLayer_SetField22Far
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer MapLayer_SetField22Far
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer MapLayer_SetField22Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer MapLayer_SetField22Far
+	.else
 	overlay_veneer Func_080201a0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02000cac
 	.thumb_func
 Func_02000cac:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
@@ -101,7 +113,7 @@ Inventory_CountItem:
 	.global Func_02000d14
 	.thumb_func
 Func_02000d14:
-	overlay_veneer Func_080ad2f0
+	overlay_veneer PartyInventory_FindRoomFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -109,11 +121,11 @@ Battle_WaitMode0:
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -129,7 +141,7 @@ ObjectMotion_SetPositionAndReset:
 	.global Func_02000d4c
 	.thumb_func
 Func_02000d4c:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -145,7 +157,7 @@ ObjectMotion_SetAngleToward:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -153,7 +165,7 @@ UiText_OpenMessageAtObject:
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -169,27 +181,59 @@ Func_02000d94:
 	.global Func_02000d9c
 	.thumb_func
 Func_02000d9c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c82d0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c82d0
+	.else
 	overlay_veneer Func_080c82e0
+	.endif
+	.endif
 	.global Func_02000da4
 	.thumb_func
 Func_02000da4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
+	.else
 	overlay_veneer Func_080c83d8
+	.endif
+	.endif
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8470
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8470
+	.else
 	overlay_veneer Func_080c8480
-	.global Engine_EventPrepareSpeakers
+	.endif
+	.endif
+	.global Engine_EventResolvePendingActions
 	.thumb_func
-Engine_EventPrepareSpeakers:
-	overlay_veneer Func_080c84e0
+Engine_EventResolvePendingActions:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_02000dbc
 	.thumb_func
 Func_02000dbc:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	overlay_veneer Func_080c8558
 	.endif
@@ -197,11 +241,27 @@ Func_02000dbc:
 	.global Func_02000dc4
 	.thumb_func
 Func_02000dc4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86e8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86e8
+	.else
 	overlay_veneer Func_080c86f8
+	.endif
+	.endif
 	.global Func_02000dcc
 	.thumb_func
 Func_02000dcc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86f8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86f8
+	.else
 	overlay_veneer Func_080c8708
+	.endif
+	.endif
 	.global Func_02000dd4
 	.thumb_func
 Func_02000dd4:
@@ -211,7 +271,7 @@ Func_02000dd4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02000ddc

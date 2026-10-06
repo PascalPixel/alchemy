@@ -1,6 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Title_IntroGraphicsB: the title screen, its 256-colour palette, then 600
-@ tiles of 8-bit colour in the byte LZ the resource loader decodes.
 	.section .rodata
 	.global Title_IntroGraphicsB
 Title_IntroGraphicsB:

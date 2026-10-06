@@ -1,34 +1,25 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "SYSTEM.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_RANDOM.H"
 #include "BATTLE_RUNTIME.H"
+#include "IO_REG.H"
+#include "SERIAL_RUNTIME.H"
 
-extern s32 Data_03001cb4;
+#define gRandomSeed (*(s32 *)&gRandomSeed)
+
 extern volatile u16 gLinkStatus;
-extern volatile u16 gSerialReceivedSize;
 
-void Runtime_BumpFree(void *block);
-s32 SerialRuntime_BeginTransferA(void *data, s32 size);
-s32 SerialRuntime_BeginTransferB(void *data);
-s32 SerialRuntime_GetActiveTransfers(void);
-void SerialRuntime_RemoveIrqHandlers(void);
-void BattleLink_ResetTransferState(void);
-
-/* One queued action as the two sides of a linked battle exchange it. */
-struct BattleLinkedAction {
-    s16 unit_id;
-    u16 source_id;
-    u16 flags;
-    u16 unknown_06;
-    u16 unknown_08;
-    u16 kind;
-    u8 unknown_0c[4];
-};
-
-/* The header sent ahead of the actions: how many follow, a random check
- * value both sides must agree on, and the seed the battle continues from. */
 struct BattleLinkedActionState {
     s32 count;
     s32 check;
@@ -36,13 +27,7 @@ struct BattleLinkedActionState {
     u8 unknown_0c[28];
 };
 
-/* Exchange this turn's actions with the other side of a linked battle.
- * The party's actions are tagged with their member slots and sent in
- * 20-byte blocks behind a header; the other side's are received behind
- * `actions` and renamed to this side's unit ids. The side that leads sends
- * first and gives the seed; the other receives first and checks it. Returns
- * the number of actions received, or -1 once the link fails. */
-s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s32 count)
+s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count)
 {
     struct BattleSession *battle = gBattleWork;
     s32 result = 0;
@@ -50,8 +35,6 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
     struct BattleLinkedActionState *state = (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
-    /* Send the header, then the actions; give up after 300 frames or 25
-     * frames without both link lines up. */
     s32 BattleLink_SendActions(void)
     {
         s32 timeout;
@@ -92,7 +75,6 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
         return 0;
     }
 
-    /* Receive the header, then as many actions as it announces. */
     s32 BattleLink_ReceiveActions(void)
     {
         s32 timeout;
@@ -143,16 +125,15 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
     }
 
     for (index = 0; index < count; index++) {
-        struct BattleLinkedAction *action = &actions[index];
+        struct BattleActionRecord *action = &actions[index];
 
-        action->source_id = battle->owner_slots[action->unit_id];
-        /* The side is read through a byte pointer each pass, as the
-         * reference reads it. */
-        if (*(u8 *)&battle->link_side == 0) {
-            if (action->flags & 1)
-                action->flags++;
+        action->slot = battle->owner_slots[action->unit_id];
+
+        if (battle->link_side == 0) {
+            if (action->priority & 1)
+                action->priority++;
         } else {
-            action->flags |= 1;
+            action->priority |= 1;
         }
     }
 
@@ -163,16 +144,13 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
 
             state->count = count;
             state->check = BattleRandom16Far();
-            /* FAKEMATCH: the interrupt master is saved and cleared inside
-             * a one-pass loop, as QueueTransfer and the serial runtime do:
-             * its notes keep the seed copy between the two writes and make
-             * the state pointer reload after the first. */
+            /* FAKEMATCH: the one-pass IME scope keeps the seed copy between writes and reloads state after the first write. */
             do {
-                ime = (volatile u16 *)0x04000208;
+                ime = &REG_IME;
                 saved = *ime;
-                *ime = (u16)(u32)ime;
+                *ime = (u32)ime;
             } while (0);
-            gBattleRandomSeed = state->seed = Data_03001cb4;
+            gBattleRandomSeed = state->seed = gRandomSeed;
             do { /* FAKEMATCH: the one-pass restore, see above */
                 *ime = saved;
             } while (0);
@@ -192,10 +170,10 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
         }
 
         for (index = 0; index < result; index++) {
-            struct BattleLinkedAction *action = &actions[count + index];
+            struct BattleActionRecord *action = &actions[count + index];
 
-            action->unit_id = action->source_id;
-            action->kind ^= 0x80;
+            action->unit_id = action->slot;
+            action->target = action->target ^ 0x80;
         }
 
         Runtime_BumpFree(state);

@@ -1,16 +1,14 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-/* The old man who asks whether the party thinks the wave hurt his hip. */
-
-extern u8 MsgDeriHurtHip[];
 
 void DeriMura_TalkHip(void)
 {
     s32 msg;
 
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     msg = (s32)MsgDeriHurtHip;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(12, 0);

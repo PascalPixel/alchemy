@@ -216,7 +216,7 @@ Func_0815e3ac:
 	ldrsh r0, [r6, r5]
 	adds r1, #76
 	str r1, [sp, #16]
-	bl Func_0815e1fc
+	bl EffectPosition_ApplyAnimationAndYOffset
 	ldr r3, [r6, #4]
 	cmp r3, #0
 	bne .L_0815e5b8
@@ -356,7 +356,7 @@ Func_0815e3ac:
 	lsls r2, r2, #1
 	adds r3, r1, r2
 	ldrh r0, [r3]
-	bl Func_08118058
+	bl Summon_IsEntrySecondaryFlaggedFar
 	cmp r0, #0
 	beq .L_0815e69e
 	movs r0, #134
@@ -418,7 +418,7 @@ Func_0815e3ac:
 	add r2, sp, #88
 	ldr r0, [r6, #8]
 	adds r1, r2, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r3, [sp, #92]
 	ldr r5, [sp, #28]
 	adds r3, #16
@@ -608,7 +608,7 @@ Func_0815e3ac:
 	b .L_0815e8ca
 	.2byte 0x0000
 .L_0815e878:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815e87c:
 	.4byte Data_0819886c
 .L_0815e880:
@@ -676,7 +676,7 @@ Func_0815e3ac:
 	mov lr, r4
 	.2byte 0xf800
 .L_0815e8fc:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #8]
 	bl Graphics_PrepareTransferInIwramWork
@@ -794,4 +794,4 @@ Func_0815e3ac:
 .L_0815e9ec:
 	.4byte Func_08143000
 .L_0815e9f0:
-	.4byte Data_03001120
+	.4byte gBgScroll

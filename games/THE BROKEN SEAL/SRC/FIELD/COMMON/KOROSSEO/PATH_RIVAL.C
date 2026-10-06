@@ -1,25 +1,27 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "COLGAUGE.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
-#include "CALL.H"
 #include "VRAM_BLOCK.H"
-
-u16 Math_Atan2(s32 dy, s32 dx);
-
-struct PathRecorder {
-    s16 mode;
-    s16 mirror;
-    s16 actor;
-    u16 pos;
-    s16 still;
-};
+#include "IO_REG.H"
 
 struct PathWork {
     u8 unknown_00[224];
-    u16 actor;
-    u16 finish_facing_a;
-    u16 finish_facing_b;
+    u16 rival_actor;
+    u16 finish_item_actor_a;
+    u16 finish_item_actor_b;
     u16 unknown_e6;
     s32 finish_x;
     s32 finish_z;
@@ -29,18 +31,13 @@ struct PathWork {
 #define PATH_RECORDER ((struct PathRecorder *)gSceneState)
 #define PATH_WORK ((struct PathWork *)gKorosseoWork)
 
-extern const s32 Korosseo_RivalFinishScript[];
-
-/* The rival's recorded course: mode 2 records the actor's pixel position each
- * frame; mode 1 replays it, turning at most 0x1000 a frame, and at the end
- * walks the rival beside the finish and hands it to the finish script. */
 void Korosseo_UpdatePathRival(void)
 {
     struct PathWork *work = PATH_WORK;
     struct PathRecorder *rec = PATH_RECORDER;
     struct FieldActor *obj;
     s32 x, z, d;
-    u16 *facing;
+    u16 *item_actor;
 
     obj = Object_GetById(rec->actor);
     if (obj == NULL) {
@@ -60,12 +57,12 @@ void Korosseo_UpdatePathRival(void)
             }
             if (Engine_GameFlagIsSet(0x211)) {
                 fz = work->finish_z + 0x100000;
-                facing = &work->finish_facing_b;
+                item_actor = &work->finish_item_actor_b;
             } else {
                 fz = work->finish_z - 0x100000;
-                facing = &work->finish_facing_a;
+                item_actor = &work->finish_item_actor_a;
             }
-            obj->unknown_64 = *facing;
+            obj->timer = *item_actor;
             obj->acceleration = 0x4000;
             obj->speed = 0x10000;
             Engine_ObjectSetPosition(obj, x, 0, fz);
@@ -109,57 +106,20 @@ void Korosseo_UpdatePathRival(void)
         if ((s16)rec->pos == 0x383e) {
             work->path[(s16)rec->pos++] = 0;
             work->path[(s16)rec->pos] = 0;
-            rec->actor = work->actor;
+            rec->actor = work->rival_actor;
             rec->pos = 0;
             rec->mode = 1;
         }
     }
 }
 
-/* The race gauge and its sprites: the work begins with their eighteen
- * records, and the stage scenes keep their own state after them. */
-struct GaugeSprite {
-    s32 link;
-    s32 attr;
-    s32 tile;
-};
-
-struct GaugeWork {
-    struct GaugeSprite sprites[18];
-    s16 vram_block;
-    /* How far the gauge has slid in from the top, 0 to 2. */
-    s16 level;
-    s16 hold;
-    s16 rival;
-    s16 player;
-    u16 finish_facing_a;
-    u16 finish_facing_b;
-    /* Middle pieces on each side of the gauge. */
-    s16 segments;
-    s32 finish_x;
-    s32 finish_z;
-};
-
-extern u16 Korosseo_GaugePalette[];
 extern u8 Korosseo_GaugeGraphics[];
 
-void Runtime_BumpFree(u8 *block);
-void Resource_DecodeType01(u8 *source, u8 *destination);
-void VramBlock_LoadCached(s32 block, s32 size, u8 *source);
-s32 Resource_ActivateEntry(u32 block);
-void Runtime_PushSlotEntry(struct GaugeSprite *sprite, s32 priority);
-
-/* Draws the race gauge each frame: it slides in while flag 0x106 is clear
- * and out once it is set, loading its palette and tiles as it first shows.
- * The gauge is two end caps and a middle joint around segments pieces on
- * each side, the right half mirrored; on eleven frames of every sixteen
- * the player and the rival are marked on it by how far each stands from
- * the finish. */
 void Korosseo_DrawGauge(void)
 {
-    struct GaugeWork *gauge = (struct GaugeWork *)gKorosseoWork;
+    struct KorosseoGaugeWork *gauge = (struct KorosseoGaugeWork *)gKorosseoWork;
     s32 *dst = (s32 *)gauge;
-    struct GaugeSprite *entry = gauge->sprites;
+    struct KorosseoGaugeSprite *entry = gauge->sprites;
     s32 tile;
     u32 segments;
     u32 i;
@@ -180,11 +140,10 @@ void Korosseo_DrawGauge(void)
         }
     } else if (gauge->level <= 1) {
         if (++gauge->level == 1) {
-            Dma_Set(Korosseo_GaugePalette, (void *)0x050003c0, 0x80000010,
-                    (volatile u32 *)0x040000d4);
+            Dma_Set(Korosseo_GaugePalette, (void *)0x050003c0, DMA_ENABLE32 | 0x10, REG_DMA3);
             buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
             Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
-            Call3((void (*)())VramBlock_LoadCached, gauge->vram_block, 512, (s32)buf);
+            VramBlock_LoadCached(gauge->vram_block, 512, buf);
             Runtime_BumpFree(buf);
         }
     }
@@ -241,7 +200,7 @@ void Korosseo_DrawGauge(void)
 
     if ((gFrameCount & 15) > 4) {
         shape = 0x40000000;
-        actor = Engine_ActorLookup(gauge->player);
+        actor = Engine_ActorLookup(gauge->rival_actor);
         if (actor != 0) {
             x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
             y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;
@@ -253,7 +212,7 @@ void Korosseo_DrawGauge(void)
             *dst++ = (tile + 12) | 0xe400;
             Runtime_PushSlotEntry(entry++, 255);
         }
-        actor = Engine_ActorLookup(gauge->rival);
+        actor = Engine_ActorLookup(gauge->player_actor);
         if (actor != 0) {
             x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
             y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;

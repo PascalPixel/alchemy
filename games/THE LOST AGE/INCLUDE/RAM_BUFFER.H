@@ -3,70 +3,58 @@
 
 #include "TYPES.H"
 
-/* Fixed RAM buffers that Camelot's code addressed as constants, as in TBS:
- * code the ROM shows folding a constant address reaches its buffer through
- * the entry here, and the build checks each entry against the object named
- * beside it. Everywhere else the label serves. */
+#define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
+#define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
 
-#define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */
-#define Ram_MapCollision ((u8 *)0x0202c000) /* gMapCollision */
+#define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundDriver_Mixer)
 
-/* The IWRAM copy of the sound mixer, which the sound set-up fills from ROM.
- * Its label is a Thumb routine, so only a constant gives the even address
- * the copy writes to without an extra instruction. */
-#define Ram_SoundMixer ((u8 *)0x03006000) /* SoundDriver_Mixer */
+#define Ram_IwramHeapEnd FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
-/* The end of the IWRAM the heap hands blocks out of; the sound mixer's
- * workspace follows it. */
-#define Ram_IwramHeapEnd ((u8 *)0x03006fc0) /* IwramSoundMixWorkspace */
-
-/* The heap's slot words, which hold the resident work blocks, open IWRAM.
- * GCC reaches a slot from the constant base with the slot's offset in the
- * load, as it does for a field of a structure at a constant address. */
 struct BattleSession;
+struct BattlePresentationTransition;
 struct MapWork;
+struct ObjectSystemWork;
+struct DisplayTransitionState;
 
 struct HeapSlots {
-    void *unknown_00[2];
-    /* The transform stack's block of 48-byte matrices. */
+    void *next_ewram;
+    void *next_iwram;
     u8 *transform_stack;
     void *unknown_0c[2];
-    /* The field's 64 script objects, which The Broken Seal keeps as
-       gObjectSlots. */
     void *script_objects;
-    void *unknown_18[2];
-    /* The field map's work block. */
+    struct ObjectSystemWork *object_system;
+    void *unknown_1c[1];
     struct MapWork *map_work;
-    /* The battle session, which The Broken Seal keeps in its own cell. */
     struct BattleSession *battle_work;
-    void *unknown_28[5];
-    /* The window tilemap: a dirty flag at 3, then 32 x 32 cells from 8. */
+    void *unknown_28[2];
+    void *camera_work;
+    void *unknown_34[2];
     u8 *window_tiles;
-    void *unknown_40[2];
-    /* The menu screen work, which The Broken Seal keeps as gResQueueWork. */
+    void *window_layout;
+    void *glyph_work;
     void *menu_work;
     void *unknown_4c[4];
-    /* The battle effect work pair, The Broken Seal's gBattleFxWork. */
     u8 *battle_fx_work[2];
     void *unknown_64[2];
-    /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
-    void *unknown_70[23];
-    /* The serial link runtime's work. */
+    void *unknown_70[3];
+    struct DisplayTransitionState *display_transition;
+    void *block_32;
+    void *unknown_84[11];
+    struct BattlePresentationTransition *transition_work;
+    u16 *canvas_map;
+    void *unknown_b8[5];
     void *serial_work;
     void *unknown_d0[3];
-    /* The item and Psynergy menus' work, which The Broken Seal keeps as
-       gMenuWork. */
     void *menu_runtime;
-    /* The battle effects' work, which The Broken Seal keeps as gEffectWork. */
     void *effect_work;
     void *unknown_e4[1];
-    /* The resource selection menu's work, which The Broken Seal keeps as
-       gMenuSelectWork. */
     void *menu_select_work;
-    void *unknown_ec[5];
+    void *unknown_ec[3];
+    void *block_62;
+    void *unknown_fc[1];
 };
 
-#define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */
+#define Ram_HeapSlots FIXED_ADDRESS((struct HeapSlots *), 0x03000000, gHeapSlots)
 
 #endif

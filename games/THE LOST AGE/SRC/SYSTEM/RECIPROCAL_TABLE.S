@@ -1,6 +1,3 @@
-@ Reciprocal table read by IWRAM_RUNTIME_DIVIDE.S for divisors below 0x4000.
-@ Each nonzero divisor uses ceil(2^32 / divisor), stored modulo 2^32. The
-@ divide helper handles divisor 1's wrapped zero product separately.
 .syntax unified
 	.section .rodata,"a",%progbits
 	.align 2

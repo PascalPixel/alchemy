@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_649 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_649 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -22,10 +18,10 @@ Runtime_BumpAllocateAlternatePool:
 	.thumb_func
 Sys_Free:
 	overlay_veneer Sys_FreeFar
-	.global Func_02000594
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02000594:
-	overlay_veneer Func_080001a8
+Resource_DecodeType01:
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -37,7 +33,7 @@ Resource_FindFreeEntry:
 	.global Func_020005ac
 	.thumb_func
 Func_020005ac:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -45,7 +41,7 @@ Resource_GetTableEntry:
 	.global Func_020005bc
 	.thumb_func
 Func_020005bc:
-	overlay_veneer Func_08000298
+	overlay_veneer Resource_ReservedNoOpFar
 	.global Blend_SetDarkenTarget16
 	.thumb_func
 Blend_SetDarkenTarget16:
@@ -65,11 +61,11 @@ Func_020005dc:
 	.global Func_020005e4
 	.thumb_func
 Func_020005e4:
-	overlay_veneer Func_080ad218
+	overlay_veneer Party_SetLeaderJasmineFar
 	.global Func_020005ec
 	.thumb_func
 Func_020005ec:
-	overlay_veneer Func_080ad220
+	overlay_veneer Party_SetLeaderGarciaFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -81,21 +77,21 @@ Object_GetById:
 	.global Func_02000604
 	.thumb_func
 Func_02000604:
-	overlay_veneer Event_SetPairWork1c0Far
-	.global Event_SetStatus1c6
+	overlay_veneer Event_SetDestinationFar
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_0200061c

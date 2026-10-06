@@ -1,30 +1,23 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "PROBE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgMakyuriHeyaStrangeForcesBlockWay[];
 
-extern const struct SceneEntrance gMakyuriHeyaEntrances4[];
-extern const struct SceneEntrance gMakyuriHeyaEntrances3[];
-extern const struct SceneEntrance gMakyuriHeyaEntrances2[];
-extern const struct SceneEntrance gMakyuriHeyaEntrancesOther[];
 
-extern u8 MakyuriHeya_SceneTable[];
 
-extern const struct ScenePlacement gMakyuriHeyaPlacements1[];
-extern const struct ScenePlacement gMakyuriHeyaPlacements2[];
-extern const struct ScenePlacement gMakyuriHeyaPlacements3[];
-extern const struct ScenePlacement gMakyuriHeyaPlacements4[];
-extern const struct ScenePlacement gMakyuriHeyaPlacementsOther[];
 
-extern const struct SceneEvent gMakyuriHeyaEvents1[];
-extern const struct SceneEvent gMakyuriHeyaEvents2[];
-extern const struct SceneEvent gMakyuriHeyaEvents3[];
-extern const struct SceneEvent gMakyuriHeyaEventsOther[];
 
-/* Where the party appears in each of the lighthouse rooms; the first takes
-   the table the other scenes take. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 selector = gGameState.scene;
@@ -46,12 +39,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTableE614(void)
+u8 *MakyuriHeya_GetExits(void)
 {
     return MakyuriHeya_SceneTable;
 }
 
-/* The actors placed in each of the lighthouse rooms. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 selector = gGameState.scene;
@@ -71,12 +63,12 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gMakyuriHeyaPlacementsOther;
 }
 
-void FieldScene_CallHelper67e8(void)
+void MakyuriHeya_TickSpawnTimer(void)
 {
     Makyuri_TickSpawnTimer();
 }
 
-void FieldScene_Forward646c(void)
+void MakyuriHeya_ClearSceneRecordAndTarget(void)
 {
     SceneState_ClearCurrentRecordAndReleaseTarget();
 }
@@ -86,7 +78,7 @@ void FieldScene_RunSingleStep(void)
     Makyuri_RunActorMove();
 }
 
-void FieldScene_CallHelper6364(void)
+void MakyuriHeya_TriggerPillarRise(void)
 {
     MakyuriIriguchi_RaisePillar();
 }
@@ -98,8 +90,6 @@ void SceneDialogue_RunLine1637(void)
     Engine_EventEnd();
 }
 
-/* What each lighthouse room answers; the fourth takes the table the other
-   scenes take. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 selector = gGameState.scene;

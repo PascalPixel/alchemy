@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "OWNER_STATE.H"
@@ -15,11 +24,7 @@ struct OwnerVitals {
     u8 status;
 };
 
-s32 Event_ValidatePackedId(u32 packed);
-void Party_RemoveActiveOwnerFar(s32 owner);
-s32 Party_CountActiveOwnersFar(void);
 
-/* Clears each of the party's two packed event ids that validates. */
 void Event_ClearValidPackedIds(void)
 {
     if (Event_ValidatePackedId(gPartyState.packed_events[0]))
@@ -41,8 +46,6 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
     return clamped;
 }
 
-/* Takes an owner out of the active party fully restored; if no active member
-   is left standing, the current owner gets 1 HP. */
 void Party_RemoveOwnerRestored(s32 owner)
 {
     struct OwnerVitals *vitals;

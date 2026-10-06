@@ -1,3 +1,14 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TBS_EDITION.H"
 #include "TEXT_FONT.H"
@@ -11,19 +22,11 @@
 #include "IO_REG.H"
 #include "FIELD_SCENE.H"
 
-extern u8 Clear_ScriptTable[];
-extern u8 Clear_MessageTable[];
-extern u8 Clear_ActorTable[];
-extern u8 Clear_EffectTable[];
-
-extern struct MapRenderWork *gMapWork;
 extern u16 gBgScroll[];
-void Resource_DecodeType01(const u8 *source, void *destination);
 
-/* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and
-   reloads the cell buffer's address after it, as the game does. */
 static __inline__ void DecodeBackground(const u8 *res)
 {
+    /* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and reloads the cell buffer's address after it, as the game does. */
     Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
 }
 
@@ -32,23 +35,13 @@ struct ClearWork {
     u16 mode;
 };
 
-struct ScrollPair {
-    u16 x;
-    u16 y;
-};
-
-#define DMA3 ((volatile u32 *)0x040000d4)
-
-extern u16 Clear_BlendFrame;
-void Clear_UpdateBlend(void);
+#define DMA3 (REG_DMA3)
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {
     REG_IME = saved;
 }
 
-/* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
- * the count cast preserves the queue's original publication order. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -72,19 +65,8 @@ static __inline__ void RestoreInterrupts(u32 saved)
         RestoreInterrupts(saved);                                          \
     } while (0)
 
-/* FAKEMATCH: volatile keys make each test read them again, as the game does. */
 extern volatile u32 gKeysHeld;
-extern s16 Clear_CodeUnlocked;
-extern s16 Clear_ExtraCodeUnlocked;
-extern s16 Clear_CodeProgress;
-extern s16 Clear_ExtraCodeProgress;
-extern s16 Clear_CodeHeld;
-extern s16 Clear_ExtraCodeHeld;
-extern u16 Clear_CodeSequence[];
-extern u16 Clear_ExtraCodeSequence[];
 
-/* Each getter is eight bytes including the one pool word that holds the
- * table it returns. */
 u8 *SceneData_GetScriptTable(void)
 {
     return Clear_ScriptTable;
@@ -110,12 +92,6 @@ u8 *SceneData_GetEffectTable(void)
     return Clear_EffectTable;
 }
 
-/* The clear screen's background: the Golden Sun logo's palette, tiles and a
- * 30 x 20 map counting up from tile 0x1a0, then cleared scroll registers.
- * The cell buffer is the fixed RAM buffer, reloaded for each use. */
-
-/* Load the clear-screen background: palette, tiles and a 30 x 20 map counting up from
- * tile 0x1a0, then clear the scroll registers. */
 void Clear_LoadBackground(void)
 {
     u8 *res;
@@ -130,7 +106,7 @@ void Clear_LoadBackground(void)
 
     id = (s32)&ResourceId_GoldenSunLogo;
     Engine_BlendSetDarkenTarget16(0);
-    *(volatile u16 *)0x0400000c = 0x681;
+    REG_BG2CNT = 0x681;
     gBgScroll[5] = 0;
     blank = 0x1ff;
     res = Engine_ResourceGetTableEntry(id);
@@ -166,7 +142,7 @@ col:
         scroll++;
     }
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, DMA3);
-    (*(struct ClearWork **)&gMapWork)->mode = 0x1400;
+    ((struct ClearWork *)gMapWork[0])->mode = 0x1400;
     {
         struct FieldActor *leader;
 
@@ -177,9 +153,9 @@ col:
     }
 }
 
-/* Fade the blend in step by step each frame; remove itself once full. */
 void Clear_UpdateBlend(void)
 {
+    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking; the count cast preserves the queue's original publication order. */
     struct IoWriteQueue *q;
     s32 frame;
     s32 level;
@@ -194,11 +170,9 @@ void Clear_UpdateBlend(void)
         Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
 
-/* The clear screen's two button codes. Each new press must match the next
- * entry of its sequence, a wrong press starts it over, and reaching the
- * zero entry unlocks the code with a chime. A held press counts once. */
 void Clear_CheckButtonCodes(void)
 {
+    /* FAKEMATCH: volatile keys make each test read them again, as the game does. */
     if (Clear_CodeUnlocked == 0) {
         if (Clear_CodeHeld != 0) {
             if (gKeysHeld == 0)
@@ -235,7 +209,6 @@ void Clear_CheckButtonCodes(void)
     }
 }
 
-/* Write the one-character string for a name-entry grid cell. */
 void Clear_NameEntryCharacter(s32 cell, u8 *text)
 {
     text[1] = 0;
@@ -272,7 +245,6 @@ void Clear_NameEntryCharacter(s32 cell, u8 *text)
     else
         text[0] = '=';
 #else
-    /* Japanese grid entries use single glyphs, then glyph/dakuten pairs. */
     if (cell <= 14)
         text[0] = cell - 111;
     else if (cell <= 44)
@@ -295,9 +267,6 @@ void Clear_NameEntryCharacter(s32 cell, u8 *text)
 #endif
 }
 
-/* The clear screen's mode mask: once flag 324 is set, every scene but the
- * world map answers all bits, unless the game state's word at 0x23e is 2.
- * The mask is the sign of the scene's difference from the world map. */
 s32 Scene_GetModeMask(void)
 {
     s32 mode;
@@ -305,9 +274,9 @@ s32 Scene_GetModeMask(void)
     if (Engine_GameFlagIsSet(324) == 0) {
         return 0;
     }
-    if (gGameState.unknown_23e == 2) {
+    if (gGameState.scene_variant == 2) {
         return 0;
     }
     mode = gGameState.scene ^ (s32)&SceneId_WorldMap;
-    return -(s32)((u32)(-mode | mode) >> 31);
+    return -((u32)(-mode | mode) >> 31);
 }

@@ -45,7 +45,7 @@ Func_080caa4c:
 	subs r3, #4
 	cmp r3, r12
 	bge .L_080caa96
-	bl Func_080cad64
+	bl ObjectTable_Clear
 	movs r3, #255
 	lsls r3, r3, #8
 	ldr r7, .L_080caca8
@@ -231,7 +231,7 @@ Func_080caa4c:
 	strb r2, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r1, #12
 	adds r0, r5, #0
 	bl Object_SetMode

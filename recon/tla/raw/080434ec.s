@@ -26,7 +26,7 @@ Func_080434ec:
 	movs r6, #3
 	negs r6, r6
 .L_0804351e:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r6, #0
 	pop {r5, r6, pc}
 	.2byte 0x0000

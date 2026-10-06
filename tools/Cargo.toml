@@ -1,14 +1,16 @@
-# One workspace, one lockfile, one shared artifact tree for every tool crate.
-# Alchemy owns project integration; Psynergy is also a standalone portable tool.
-# Each crate is a workspace member and a row in the tooling index of AGENTS.md.
 [workspace]
 resolver = "2"
-members = ["ags", "alchemy", "psynergy"]
-exclude = ["compilers"]
+members = ["ags", "alchemy"]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
 
 [profile.release]
-incremental = true
+debug = false
+incremental = false
+strip = true
+
+[profile.dev]
+debug = false
+incremental = false

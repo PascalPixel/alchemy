@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_677 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_677 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -18,10 +14,10 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Func_02000980
 	.thumb_func
 Func_02000980:
@@ -34,14 +30,14 @@ Func_02000988:
 	.thumb_func
 PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
-	.global Party_AdjustSixDigitCounterA
+	.global Party_AdjustCoins
 	.thumb_func
-Party_AdjustSixDigitCounterA:
-	overlay_veneer Party_AdjustSixDigitCounterAFar
+Party_AdjustCoins:
+	overlay_veneer Party_AdjustCoinsFar
 	.global Func_020009a0
 	.thumb_func
 Func_020009a0:
-	overlay_veneer Func_080ad2f0
+	overlay_veneer PartyInventory_FindRoomFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -49,11 +45,11 @@ Battle_WaitMode0:
 	.global Func_020009b0
 	.thumb_func
 Func_020009b0:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020009b8
 	.thumb_func
 Func_020009b8:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -85,7 +81,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020009f8
 	.thumb_func
 Func_020009f8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -101,7 +97,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02000a18
 	.thumb_func
 Func_02000a18:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -109,7 +105,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02000a28
 	.thumb_func
 Func_02000a28:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -129,7 +125,7 @@ Func_02000a48:
 	.global Func_02000a50
 	.thumb_func
 Func_02000a50:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02000a58
 	.thumb_func
 Func_02000a58:
@@ -139,7 +135,7 @@ Func_02000a58:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02000a60

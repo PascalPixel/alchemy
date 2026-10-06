@@ -1,49 +1,28 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "ARUTIN.H"
 #include "CALL.H"
+#include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gArutinMuraEntrances1[];
-extern const struct SceneEntrance gArutinMuraEntrances2[];
-extern const struct SceneEntrance gArutinMuraEntrancesOther[];
+#define FieldScene_PrepareActors ((void (*)(void*))FieldScene_PrepareActors)
 
-/* The scene's message table, laid out after the code. */
+
 extern u8 Placement_Messages[];
 
-extern u8 gArutinMuraPlacements1[];
-extern u8 gArutinMuraPlacements2[];
-extern u8 gArutinMuraPlacementsOther[];
-void FieldScene_PrepareActors(void *placements);
 
-extern const struct SceneEvent gArutinMuraEvents1[];
-extern const struct SceneEvent gArutinMuraEvents2[];
-extern const struct SceneEvent gArutinMuraEventsOther[];
 
-extern u8 MsgArutinDefeatedThoseMonstersDidnt[];
-extern u8 MsgArutinDidSeeWaterGushingOut[];
-extern u8 MsgArutinDoWantWeapons[];
-extern u8 MsgArutinGirlFromXianBoughtLot[];
-extern u8 MsgArutinGirlFromXianWasAsking[];
-extern u8 MsgArutinHowAboutArentImpressedBy[];
-extern u8 MsgArutinItsGreatCanSellArmor[];
-extern u8 MsgArutinMyStoreSubmergedWantSell[];
-extern u8 MsgArutinNoneMyGoodsWereDamaged[];
-extern u8 MsgArutinOnesWhoDefeatedWaterBeasts[];
-extern u8 MsgArutinThankGoodnessWaterHasReceded[];
-extern u8 MsgArutinThereFewBeastsInMine[];
-extern u8 MsgArutinThereSmallTempleWestAltin[];
-extern u8 MsgArutinTrueFoundAncientRuinsIn[];
-extern u8 MsgArutinTryingFindYourWayWest[];
-extern u8 MsgArutinWeCantDrinkWaterMonsters[];
-extern u8 MsgArutinWeGotLittleDampBut[];
-extern u8 MsgArutinWillDoIfMyMerchandise[];
-extern u8 MsgArutinYoullHaveFindPassageIn[];
-extern u8 MsgArutinYourFirstTimeVisitAltin[];
 void FieldScene_RunMiddleSequence(void);
-void FieldScene_RunScene3a3SequenceD(void);
 
-/* Where the party appears in each of Altin's two areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 v = gGameState.scene;
@@ -57,8 +36,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gArutinMuraEntrancesOther;
 }
 
-/* The table accessors between the scene-id selectors at the head of the
-   overlay. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -69,23 +46,20 @@ u8 *SceneData_GetMessageTable(void)
     return Placement_Messages;
 }
 
-/* The actors placed in each of Altin's two areas, patched in place by the
-   story flags: the overlay image is writable. The second area's table is
-   prepared before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 id = gGameState.scene;
     if (id == (s32)&SceneId_ArutinMura1) {
-        if (GameFlag_IsSet(0x909)) {
+        if (Engine_GameFlagIsSet(0x909)) {
             gArutinMuraPlacements1[142] = 0;
             gArutinMuraPlacements1[166] = 0;
         }
         return (const struct ScenePlacement *)gArutinMuraPlacements1;
     }
     if (id == (s32)&SceneId_ArutinMura2) {
-        if (GameFlag_IsSet(0x8fd))
+        if (Engine_GameFlagIsSet(0x8fd))
             gArutinMuraPlacements2[46] = 1;
-        if (GameFlag_IsSet(0x8fe) || GameFlag_IsSet(0x907))
+        if (Engine_GameFlagIsSet(0x8fe) || Engine_GameFlagIsSet(0x907))
             gArutinMuraPlacements2[94] = 1;
         FieldScene_PrepareActors(gArutinMuraPlacements2);
         return (const struct ScenePlacement *)gArutinMuraPlacements2;
@@ -93,7 +67,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return (const struct ScenePlacement *)gArutinMuraPlacementsOther;
 }
 
-/* What each of Altin's two areas answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 v = gGameState.scene;
@@ -109,19 +82,19 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void FieldScene_RunActorEightPromptDialogue(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinYourFirstTimeVisitAltin);
-    /* r1 is set before r0; the argument order is unchanged. */
-    Event_OpenMessage(8, 0);
+
+    Engine_EventOpenMessage(8, 0);
 
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
     } else {
-        work = (u8 *)gEventWork;
-        *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + 1);
-        Event_AskYesNo(8, 0);
+        work = gEventWork;
+        work->message = (u16)(work->message + 1);
+        Engine_EventAskYesNo(8, 0);
     }
 
     Engine_EventEnd();
@@ -131,44 +104,38 @@ void SceneDialogue_ShowLine1918(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinDidSeeWaterGushingOut);
-    Event_AskYesNo(9, 0);
+    Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
 
-/*
- * One of two branches of the opening setup: a short branch that only moves
- * actor 14, or a longer branch that positions actor 18 and a second record
- * from their x/y/z fields at +8/+12/+16, clearing a byte at +85 of a
- * separately looked-up record on the way.
- */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 
-    u8 *rec18;
+    struct FieldActor *rec18;
     u8 *ready_flag;
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     if (GameFlag_IsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinOnesWhoDefeatedWaterBeasts);
-        Event_AskYesNo(14, 0); /* object 14, action 0 */
+        Event_AskYesNo(14, 0);
     } else {
-        Engine_ActorSetAnimation(14, 4); /* object 14, action 4 */
+        Engine_ActorSetAnimation(14, 4);
         Engine_EventSetMessage((s32)MsgArutinWeCantDrinkWaterMonsters);
         Event_ShowMessageAndWait(14, 0, 10);
         ready_flag = GameFlag_IsSet(0x8ff);
         if (ready_flag == 0) {
-            rec18 = (u8 *)Object_GetById(18);
-            /* Clear the byte at +85 of the lookup result. */
-            *(u8 *)(Battle_GetWorkObject1e0() + 85) = ready_flag;
+            rec18 = Object_GetById(18);
+
+            ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = ready_flag;
             Camera_SetSpeed(0x10000, 0x2000);
-            Camera_MoveTo(*(s32 *)(rec18 + 8), *(s32 *)(rec18 + 12), *(s32 *)(rec18 + 16), 1); /* use_setter 1 */
+            Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1);
             Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
             Actor_FaceDirection(14, 0x3000, 0);
             Engine_CameraWaitForMove();
-            Engine_EventWait(120); /* should_wait 120 */
-            record = (u8 *)Object_GetById(0);
-            Camera_MoveTo(*(s32 *)(record + 8), *(s32 *)(record + 12), *(s32 *)(record + 16), 1); /* use_setter 1 */
+            Engine_EventWait(120);
+            record = Object_GetById(0);
+            Camera_MoveTo(record->x.fixed, record->y.fixed, record->z.fixed, 1);
             Engine_CameraWaitForMove();
         }
         Engine_ActorSetAnimationAndWait(14, 4);
@@ -182,7 +149,7 @@ void SceneDialogue_RunActor17Message1924(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinTrueFoundAncientRuinsIn);
-    Event_AskYesNo(17, 0);
+    Engine_EventAskYesNo(17, 0);
     Engine_EventEnd();
 }
 
@@ -191,7 +158,7 @@ void SceneDialogue_RunActor9Message1932(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinGirlFromXianWasAsking);
-    Event_AskYesNo(9, 0);
+    Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
 
@@ -202,7 +169,7 @@ void SceneDialogue_RunActor10Message18d9(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinTryingFindYourWayWest);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -211,7 +178,7 @@ void SceneDialogue_RunActor14Message18e1(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinDefeatedThoseMonstersDidnt);
-    Event_AskYesNo(14, 0);
+    Engine_EventAskYesNo(14, 0);
     Engine_EventEnd();
 }
 
@@ -220,7 +187,7 @@ void SceneDialogue_RunActor21Message194a(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinThereFewBeastsInMine);
-    Event_AskYesNo(21, 0);
+    Engine_EventAskYesNo(21, 0);
     Engine_EventEnd();
 }
 
@@ -239,11 +206,11 @@ void FieldScene_RunActorFifteenFlagBranch(void)
     void Engine_EventSetMessage();
     void Engine_ShopOpen();
 
-    if (GameFlag_IsSet(0x242) == 0) {
+    if (Engine_GameFlagIsSet(0x242) == 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgArutinDoWantWeapons);
-        /* r1 is set before r0 here; the argument order is unchanged. */
-        Event_AskYesNo(15, 0);
+
+        Engine_EventAskYesNo(15, 0);
         Engine_EventEnd();
         return;
     }
@@ -255,10 +222,10 @@ void FieldScene_RunActorFifteenFlagBranch(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinThankGoodnessWaterHasReceded);
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinYoullHaveFindPassageIn);
     }
-    Event_ShowMessage(15, 0);
+    Engine_EventShowMessage(15, 0);
     Engine_EventEnd();
 }
 
@@ -268,10 +235,10 @@ void FieldScene_RunActorTwentyFlagBranch(void)
     void Engine_EventEnd(void);
     void Engine_EventSetMessage(s32);
 
-    if (GameFlag_IsSet(0x241) == 0) {
+    if (Engine_GameFlagIsSet(0x241) == 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgArutinMyStoreSubmergedWantSell);
-        Event_ShowMessage(20, 0);
+        Engine_EventShowMessage(20, 0);
         Engine_EventEnd();
         return;
     }
@@ -283,19 +250,19 @@ void FieldScene_RunActorTwentyFlagBranch(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinItsGreatCanSellArmor);
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinHowAboutArentImpressedBy);
     }
-    Event_ShowMessage(17, 0);
+    Engine_EventShowMessage(17, 0);
     Engine_EventEnd();
 }
 
 void FieldScene_RunActorTwentyOneFlagBranch(void)
 {
-    if (GameFlag_IsSet(0x240) == 0) {
+    if (Engine_GameFlagIsSet(0x240) == 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgArutinWillDoIfMyMerchandise);
-        Event_ShowMessage(21, 0);
+        Engine_EventShowMessage(21, 0);
         Engine_EventEnd();
         return;
     }
@@ -307,32 +274,32 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinNoneMyGoodsWereDamaged);
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinGirlFromXianBoughtLot);
     }
-    Event_ShowMessage(16, 0);
+    Engine_EventShowMessage(16, 0);
     Engine_EventEnd();
 }
 
 void FieldScene_RunFacingGatedDialogue18(void)
 {
-    u8 *rec;
+    struct FieldActor *rec;
 
-    rec = (u8 *)Object_GetById(0);
+    rec = Object_GetById(0);
 
-    if ((u32)((*(u16 *)(rec + 6) + 0x5fff) << 16) <= 0x3ffe0000) {
+    if ((u32)((rec->facing + 0x5fff) << 16) <= 0x3ffe0000) {
         Engine_InnOpen(6, 18);
         return;
     }
 
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinThereSmallTempleWestAltin);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     } else {
         Engine_EventSetMessage((s32)MsgArutinWeGotLittleDampBut);
-        Event_AskYesNo(18, 0);
+        Engine_EventAskYesNo(18, 0);
     }
 
     Engine_EventEnd();
@@ -341,8 +308,8 @@ void FieldScene_RunFacingGatedDialogue18(void)
 void FieldScene_RunEarlySequence(void)
 {
     u32 i;
-    u8 *work;
-    u8 *record;
+    struct EventWork *work;
+    struct FieldActor *record;
     s32 idx;
     u8 *tbl;
     s32 off;
@@ -351,16 +318,16 @@ void FieldScene_RunEarlySequence(void)
     s32 b;
     s32 c;
 
-    work = (u8 *)gEventWork;
+    work = gEventWork;
     Engine_EventBegin();
     for (i = 8; i <= 65; i++) {
-        record = (u8 *)Object_GetById(i);
+        record = Object_GetById(i);
         if (record != 0) {
-            record[85] = 0;
+            record->motion_flags = 0;
         }
     }
     tbl = ArutinMura_TriggerTable;
-    idx = ((s32)((s32)(*(u16 *)(work + 0x16c) - 2) << 16) >> 16);
+    idx = (s32)((*(u16 *)&work->touched_trigger - 2) << 16) >> 16;
     off = idx << 3;
     o4 = off + 4;
     a = *(s16 *)(tbl + o4);
@@ -382,8 +349,8 @@ void FieldScene_RunEarlySequence(void)
         Map_AnimateCells(*(s32 *)(tbl + off), a, b);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
-    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     if (idx == 6) {
         Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
@@ -396,7 +363,7 @@ void FieldScene_RunEarlySequence(void)
         }
     }
     Engine_EventWait(10);
-    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();
@@ -404,14 +371,14 @@ void FieldScene_RunEarlySequence(void)
 
 void FieldScene_RunScene3a3SequenceB(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
-    work = (u8 *)gEventWork;
+    work = gEventWork;
     Engine_EventBegin();
-    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     Audio_PlayCue(123);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();
@@ -475,31 +442,26 @@ void SceneState_SetFlag906ByActorNineteenX(void)
     struct Actor *p = (struct Actor *)Object_GetById(19);
 
     if ((p->f08 >> 20) == 22) {
-        GameFlag_Set(0x906);
+        Engine_GameFlagSet(0x906);
     } else {
-        GameFlag_Clear(0x906);
+        Engine_GameFlagClear(0x906);
     }
 }
 
-/*
- * Altin's scene start: mirror three progress flags into three scene flags,
- * then run the continuation of the area the party enters. Every call here
- * leaves through its own veneer, so the sites stay separate.
- */
 s32 Scene_Initialize(void)
 {
     s16 scene;
 
-    if (GameFlag_IsSet(0x8fd) != 0) {
-        GameFlag_Set(0x240);
+    if (Engine_GameFlagIsSet(0x8fd) != 0) {
+        Engine_GameFlagSet(0x240);
     }
 
-    if (GameFlag_IsSet(0x8fe) != 0 || GameFlag_IsSet(0x907) != 0) {
-        GameFlag_Set(0x241);
+    if (Engine_GameFlagIsSet(0x8fe) != 0 || Engine_GameFlagIsSet(0x907) != 0) {
+        Engine_GameFlagSet(0x241);
     }
 
-    if (GameFlag_IsSet(0x8fe) != 0 && GameFlag_IsSet(0x907) != 0) {
-        GameFlag_Set(0x242);
+    if (Engine_GameFlagIsSet(0x8fe) != 0 && Engine_GameFlagIsSet(0x907) != 0) {
+        Engine_GameFlagSet(0x242);
     }
 
     scene = gGameState.scene;
@@ -514,54 +476,48 @@ s32 Scene_Initialize(void)
 
 void FieldScene_RunMiddleSequence(void)
 {
-    s32 scene;
-    s32 rec5;
-    s32 rec6;
-    s32 rec0;
+    struct FieldActor *leader;
     s32 kind;
 
-    scene = Object_GetById(0);
-    rec5 = GameFlag_IsSet(0x242);
-    if (rec5 != 0) {
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (GameFlag_IsSet(0x242) != 0) {
         Map_CopyCellsTo(64, 32, 0, 32, 32, 32);
         Map_CopyCellAttributes(64, 32, 32, 32, 0, 0);
         kind = 20;
     } else {
-        rec6 = GameFlag_IsSet(0x241);
-        if (rec6 != 0) {
+        if (GameFlag_IsSet(0x241) != 0) {
             Map_CopyCellsTo(64, 0, 0, 32, 32, 32);
             /* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-            Value6(Engine_MapCopyCellAttributes, 64, 0, 32, 32, rec5, rec5);
+            Value6(Engine_MapCopyCellAttributes, 64, 0, 32, 32, 0, 0);
             Engine_ActorDestroy(17);
             kind = 20;
         } else {
-            rec0 = GameFlag_IsSet(0x240);
-            if (rec0 == 0) {
-                goto L_020009b8;
+            if (GameFlag_IsSet(0x240) == 0) {
+                goto unchanged;
             }
             Map_CopyCellsTo(0, 64, 0, 32, 32, 32);
             /* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-            Value6(Engine_MapCopyCellAttributes, 0, 64, 32, 32, rec6, rec6);
+            Value6(Engine_MapCopyCellAttributes, 0, 64, 32, 32, 0, 0);
             Engine_ActorDestroy(16);
             kind = 17;
         }
     }
     Engine_ActorDestroy(kind);
     Engine_ActorDestroy(21);
-    goto L_020009da;
-L_020009b8:
-    Map_CopyCellAttributes(0, 32, 32, 32, rec0, rec0);
+    goto placed;
+unchanged:
+    Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
     Engine_ActorDestroy(15);
     Engine_ActorDestroy(16);
     Engine_ActorDestroy(17);
-L_020009da:
+placed:
     if (GameFlag_IsSet(0x8ff) != 0) {
         Engine_ActorDestroy(18);
     } else {
         BattleFx_SetQueuedSoundAndPlay(170);
         Actor_SetChildValue(18, 2);
         Engine_ActorSetAnimation(18, 3);
-        ((void (*)())Engine_TaskAddCallback)((s32)SceneEffect_SpawnDriftingParticle, 0xc80);
+        Engine_TaskAddCallback(SceneEffect_SpawnDriftingParticle, 0xc80);
     }
     if (gGameState.entrance == 3) {
         GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -570,46 +526,22 @@ L_020009da:
     if (GameFlag_IsSet(0x906) != 0) {
         Actor_SetPosition(19, 0x1680000, 0xa80000);
     }
-    Engine_ActorSetSpriteFlags((s32)Object_GetById(19), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
     Actor_SetChildValue(22, 15);
     Engine_ActorSetChildValue(23, 15);
     Actor_SetChildValue(24, 15);
-    {
-        u8 bits = 8;
-        u8 *flags = (u8 *)Object_GetById(22) + 89;
-        u8 value = *flags;
-
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(23) + 89;
-        value = *flags;
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(24) + 89;
-        bits |= *flags;
-        *flags = bits;
-    }
-    {
-        u8 bits = 2;
-        u8 *flags = (u8 *)Object_GetById(22) + 35;
-        u8 value = *flags;
-
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(23) + 35;
-        value = *flags;
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(24) + 35;
-        bits |= *flags;
-        *flags = bits;
-    }
+    Object_GetById(22)->collision_flags |= 8;
+    Object_GetById(23)->collision_flags |= 8;
+    Object_GetById(24)->collision_flags |= 8;
+    Object_GetById(22)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(23)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(24)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     Engine_ActorSetSpritePriority(22, 1);
     Engine_ActorSetSpritePriority(23, 1);
     Engine_ActorSetSpritePriority(24, 1);
     Engine_TaskWait(1);
     Engine_EventBegin();
-    Camera_MoveTo(*(s32 *)(scene + 8), *(s32 *)(scene + 12), *(s32 *)(scene + 16), 0);
+    Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
     Engine_MapRedraw();
     Engine_EventEnd();
     Engine_TaskWait(1);
@@ -617,49 +549,43 @@ L_020009da:
 
 void FieldScene_RunScene3a3SequenceD(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     s32 facing;
 
     if (GameFlag_IsSet(0x240) == 0) {
         Actor_SetPosition(8, 0x3280000, 0x2d70000);
-        actor = (u8 *)Object_GetById(8);
+        actor = Object_GetById(8);
         facing = 0x3000;
-        *(u16 *)(actor + 6) = facing;
+        actor->facing = facing;
         Actor_SetPosition(9, 0x31a0000, 0x3390000);
     }
     if (GameFlag_IsSet(0x241) == 0) {
         Actor_SetPosition(10, 0x2300000, 0x2c60000);
-        actor = (u8 *)Object_GetById(10);
+        actor = Object_GetById(10);
         facing = 0x1000;
-        *(u16 *)(actor + 6) = facing;
+        actor->facing = facing;
         Actor_SetPosition(11, 0x2400000, 0x2c60000);
     }
     if (GameFlag_IsSet(0x242) == 0) {
         Actor_SetPosition(15, 0x1270000, 0x2e80000);
-        actor = (u8 *)Object_GetById(15);
+        actor = Object_GetById(15);
         facing = 0xb000;
-        *(u16 *)(actor + 6) = facing;
+        actor->facing = facing;
     } else {
         u8 flags;
 
-        actor = (u8 *)Object_GetById(15);
+        actor = Object_GetById(15);
         flags = 4;
-        flags |= actor[89];
-        actor[89] = flags;
+        flags |= actor->collision_flags;
+        actor->collision_flags = flags;
     }
-    actor = (u8 *)Object_GetById(17);
+    actor = Object_GetById(17);
     if (actor != 0) {
-        u8 flags = 4;
-
-        flags |= actor[89];
-        actor[89] = flags;
+        actor->collision_flags = 4 | actor->collision_flags;
     }
-    actor = (u8 *)Object_GetById(16);
+    actor = Object_GetById(16);
     if (actor != 0) {
-        u8 flags = 4;
-
-        flags |= actor[89];
-        actor[89] = flags;
+        actor->collision_flags = 4 | actor->collision_flags;
     }
 }
 
@@ -709,7 +635,7 @@ void SceneEffect_SpawnDriftingParticle(void)
 {
     struct SceneMotion *work;
     if ((gFrameCount & 3) == 0) {
-        work = ((struct SceneMotion *)Value4((struct SceneMotion *(*)(s32, s32, s32, s32))Engine_ObjectCreate, 222, 0x400000, 0, 0x1900000));
+        work = ((struct SceneMotion *)Object_Create(222, 0x400000, 0, 0x1900000));
         if (work != 0) {
             work->timer = 20;
             work->delay = 0;

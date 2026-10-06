@@ -3,15 +3,6 @@
 
 #include "FIELD_EVENT.H"
 
-/*
- * Short-lived effect sprites a scene spawns: objects that drift by a
- * velocity, grow by a scale rate and spin, driven by a motion script.
- */
-
-/*
- * An effect object. It shares the actor's position, scale, sprite and update
- * fields and keeps its own rates where a walking actor keeps its speed.
- */
 struct FieldEffect {
     u8 unknown_00[8];
     s32 x;
@@ -48,26 +39,17 @@ LAYOUT_OFFSET_GUARD(FieldEffect_Spin, struct FieldEffect, spin, 0x64);
 LAYOUT_OFFSET_GUARD(FieldEffect_Countdown, struct FieldEffect, countdown, 0x68);
 LAYOUT_OFFSET_GUARD(FieldEffect_Update, struct FieldEffect, update, 0x6c);
 
-/* One object record, seen as the actor or the effect it holds. */
 union FieldObject {
     struct FieldActor actor;
     struct FieldEffect effect;
 };
 
-/*
- * An object's motion script is a list of words: each command word is
- * followed by its operands. A repeat jumps back to its label, the index
- * after the matching word, or to the start for label 0, until it has run
- * the given number of times.
- */
 #define SCRIPT_WAIT(frames) 0, (frames)
 #define SCRIPT_SET_POSITION(x, y, z) 2, (x), (y), (z)
 #define SCRIPT_REPEAT(count, label) 12, (count), (label)
 #define SCRIPT_DELETE 27
 
-/* What a spawned effect takes from its options, beside its motion script. */
 enum EffectSpawnFlags {
-    /* The low four bits choose the motion script and its animation. */
     EFFECT_SCRIPT_MASK = 0x0f,
     EFFECT_USE_PALETTE = 0x10000,
     EFFECT_USE_PRIORITY = 0x20000,

@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_GATE_H
 #define ALCHEMY_GATE_H
 
-/* Declarations shared by the Suhalla gate scene sources. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"

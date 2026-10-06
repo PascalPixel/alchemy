@@ -2,7 +2,6 @@
 #include "SCENE.H"
 #include "SYSTEM.H"
 
-/* battle/effects/item_break/spawn_mode_1.c */
 void Audio_PlayCue(s32);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(void *, s32);

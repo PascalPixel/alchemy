@@ -98,7 +98,7 @@ Func_080dcb44:
 	movs r3, #128
 	lsls r3, r3, #14
 	orrs r0, r3
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #1
 	bl BattleFx_StartBufferInterpolation
 .L_080dcc0e:
@@ -289,7 +289,7 @@ Func_080dcb44:
 .L_080dcd84:
 	.4byte 0xfff20000
 .L_080dcd88:
-	.4byte Func_080dcf08
+	.4byte BattleFx_SetCallbackWhenTargetUnset
 .L_080dcd8c:
 	movs r1, #203
 	lsls r1, r1, #1

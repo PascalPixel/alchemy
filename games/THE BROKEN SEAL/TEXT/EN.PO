@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 123\n"
 "X-Alchemy-Target: tbs-en\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(No saved data)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Continue from a Sanctum)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(Not cleared yet)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(The data is corrupted)"
 
@@ -8311,7 +8311,7 @@ msgctxt "MsgItemAlreadyUsed"
 msgid "02075"
 msgstr "{argument_actor_name:1}'s item has{line_break}already been used!"
 
-msgctxt "message"
+msgctxt "MsgUsedItemBroke"
 msgid "02076"
 msgstr "Your {argument_item_name:1} broke!"
 
@@ -8359,7 +8359,7 @@ msgctxt "MsgDmgP"
 msgid "02087"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02088"
 msgstr "The Grim Reaper calls out to {argument_actor_name:1}!"
 
@@ -8371,7 +8371,7 @@ msgctxt "MsgPpLossP"
 msgid "02090"
 msgstr "{argument_actor_name:1} loses {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02091"
 msgstr "{argument_actor_name:1}'s strength is exhausted..."
 
@@ -8419,7 +8419,7 @@ msgctxt "message"
 msgid "02102"
 msgstr "{argument_actor_name:1} nimbly dodges the blow!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02103"
 msgstr "{argument_actor_name:1}'s party has been defeated!"
 
@@ -8443,7 +8443,7 @@ msgctxt "MsgItemGained"
 msgid "02108"
 msgstr "You got {argument_item_name:2}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02109"
 msgstr "{argument_actor_name:1} goes down in defeat..."
 
@@ -8539,11 +8539,11 @@ msgctxt "MsgNoEffect"
 msgid "02132"
 msgstr "But it has no effect on {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgCastLacksPp"
 msgid "02133"
 msgstr "...But doesn't have enough PP!"
 
-msgctxt "message"
+msgctxt "MsgPsynergyBlocked"
 msgid "02134"
 msgstr "But the Psynergy was blocked!"
 
@@ -8943,7 +8943,7 @@ msgctxt "message"
 msgid "02233"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02234"
 msgstr "Exp"
 
@@ -8955,19 +8955,19 @@ msgctxt "message"
 msgid "02236"
 msgstr "Maximum PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02237"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02238"
 msgstr "Unable to fight"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02239"
 msgstr "Current experience points. {argument_signed_number}{line_break}more to reach the next level."
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02240"
 msgstr "Use the L & R buttons to switch{line_break}between characters."
 
@@ -9039,7 +9039,7 @@ msgctxt "message"
 msgid "02257"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02258"
 msgstr "Normal status."
 
@@ -9115,7 +9115,7 @@ msgctxt "message"
 msgid "02276"
 msgstr "Agility has dropped by {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgBattleNoItems"
 msgid "02277"
 msgstr "You have no items."
 
@@ -9123,7 +9123,7 @@ msgctxt "message"
 msgid "02278"
 msgstr "You have no opponent."
 
-msgctxt "message"
+msgctxt "MsgBattleNoPsynergy"
 msgid "02279"
 msgstr "You have no Psynergy."
 
@@ -9139,11 +9139,11 @@ msgctxt "message"
 msgid "02282"
 msgstr "You have no equipment."
 
-msgctxt "message"
+msgctxt "MsgBattleItemNoEffect"
 msgid "02283"
 msgstr "Using this will have no effect."
 
-msgctxt "message"
+msgctxt "MsgBattleItemBroken"
 msgid "02284"
 msgstr "It's broken."
 
@@ -9151,7 +9151,7 @@ msgctxt "message"
 msgid "02285"
 msgstr "You have no Djinn."
 
-msgctxt "message"
+msgctxt "MsgBattleItemUnavailable"
 msgid "02286"
 msgstr "Cannot be used during battle."
 
@@ -9247,11 +9247,11 @@ msgctxt "MsgSlotsBet"
 msgid "02309"
 msgstr "Bet"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "02310"
 msgstr "Coins"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "02311"
 msgstr "Winnings"
 
@@ -9263,43 +9263,43 @@ msgctxt "MsgSlotsControls"
 msgid "02313"
 msgstr "{button_icon:1}:Start machine      {button_icon:2}:Quit"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02314"
 msgstr "{button_icon:4}:Stop slots"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02315"
 msgstr "When you've chosen which slots"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02316"
 msgstr "to lock, pull the lever!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02317"
 msgstr "{button_icon:1}:Stop"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02318"
 msgstr "{button_icon:1}:Spin"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02319"
 msgstr "{button_icon:1}:Start machine"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceThrow"
 msgid "02320"
 msgstr "{button_icon:1}:Throw"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceQuit"
 msgid "02321"
 msgstr "{button_icon:2}:Quit"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02322"
 msgstr "If you lock all the slots,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "02323"
 msgstr "you can't pull the lever!"
 
@@ -9327,11 +9327,11 @@ msgctxt "message"
 msgid "02329"
 msgstr "Password may be incorrect."
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02330"
 msgstr "{argument_actor_name:1}'s strength is exhausted...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02331"
 msgstr "{protagonist_name}'s party has{line_break}been annihilated...{end_wait}"
 
@@ -11879,15 +11879,15 @@ msgctxt "message"
 msgid "02967"
 msgstr "Choose a Djinni"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "02968"
 msgstr "{button_icon:6}:Set All"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "02969"
 msgstr "{button_icon:6}:All Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "02970"
 msgstr "Choose a Djinni."
 
@@ -11895,15 +11895,15 @@ msgctxt "message"
 msgid "02971"
 msgstr "Is this OK?"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyHelp"
 msgid "02972"
 msgstr "{button_icon:4}:Standby {button_icon:6}:Help"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetHelp"
 msgid "02973"
 msgstr "{button_icon:4}:Set {button_icon:6}:Help"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "02974"
 msgstr "It's recovering"
 
@@ -11947,11 +11947,11 @@ msgctxt "MsgPsynergyUnchanged"
 msgid "02984"
 msgstr "* No change"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "02985"
 msgstr "{button_icon:3}:Char. Status"
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "02986"
 msgstr "Current status"
 
@@ -11967,31 +11967,31 @@ msgctxt "MsgUnleashEffect"
 msgid "02989"
 msgstr "Effect of unleashing in battle:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "02990"
 msgstr "Give"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "02991"
 msgstr "Set"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "02992"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "02993"
 msgstr "Trade"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "02994"
 msgstr "{argument_actor_name:1}'s"
 
-msgctxt "message"
+msgctxt "MsgDjinnAbilityName"
 msgid "02995"
 msgstr "{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgDjinnChooseAction"
 msgid "02996"
 msgstr "What will you do?"
 
@@ -12031,7 +12031,7 @@ msgctxt "message"
 msgid "03005"
 msgstr "Cancelled"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "03006"
 msgstr "Now recovering"
 
@@ -12483,7 +12483,7 @@ msgctxt "message"
 msgid "03118"
 msgstr "Parameter"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03119"
 msgstr "The Pause menu is not{line_break}available now.{end_wait}"
 
@@ -12551,11 +12551,11 @@ msgctxt "message"
 msgid "03135"
 msgstr "Psynergy is a mental{line_break}power. People who wield{line_break}it are called Adepts.{page_break}Psynergy can change{line_break}with class changes or{line_break}when you go up a level.{page_break}Try changing your{line_break}class to earn new{line_break}Psynergy."
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialGive"
 msgid "03136"
 msgstr "To give your Djinni to{line_break}someone else, move it{line_break}like this.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03137"
 msgstr "After choosing who will{line_break}take the Djinni, you{line_break}can set it.{end_wait}"
 
@@ -12567,31 +12567,31 @@ msgctxt "message"
 msgid "03139"
 msgstr "Setting a Djinni changes{line_break}your attributes and{line_break}maybe even your class.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialPowers"
 msgid "03140"
 msgstr "Each Djinni has{line_break}different powers.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleash"
 msgid "03141"
 msgstr "Once we are set, you{line_break}can unleash us to{line_break}use our powers.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialDemonstrate"
 msgid "03142"
 msgstr "So, let me demonstrate{line_break}the power of my attack,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03143"
 msgstr "See! When you unleashed{line_break}me, I attacked with my{line_break}mighty stone-cleaver!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03144"
 msgstr "After being unleashed,{line_break}we Djinn will then{line_break}stand by to be summoned...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSummon"
 msgid "03145"
 msgstr "If you have standby{line_break}Djinn, you can summon{line_break}even greater powers!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleashCommand"
 msgid "03146"
 msgstr "Choose this command{line_break}to unleash me in{line_break}battle, OK?{end_now}"
 
@@ -12599,11 +12599,11 @@ msgctxt "message"
 msgid "03147"
 msgstr "Then you can summon{line_break}even greater powers!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialRecovery"
 msgid "03148"
 msgstr "After a Djinni has been{line_break}used to summon, it must{line_break}spend time in recovery.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03149"
 msgstr "And after we recover, we{line_break}will set ourselves again{line_break}and be ready to attack.{end_wait}"
 
@@ -12919,11 +12919,11 @@ msgctxt "MsgWeaponShopWelcome"
 msgid "03227"
 msgstr "Come in! Welcome!{line_break}Take a look at our{line_break}fine weapons.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "03228"
 msgstr "Oh! That's a fine{line_break}choice, but you don't{line_break}have enough money.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "03229"
 msgstr "Which one of you{line_break}gets this?{end_now}"
 
@@ -12931,7 +12931,7 @@ msgctxt "MsgPackFull"
 msgid "03230"
 msgstr "Your pack is full,{line_break}{argument_actor_name:1}. Who will you{line_break}give this to?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "03231"
 msgstr "You can't equip this, {argument_actor_name:1}.{line_break}Do you still want it?{end_now}"
 
@@ -12967,7 +12967,7 @@ msgctxt "MsgWhatWouldYouLike"
 msgid "03239"
 msgstr "What would you like?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "03240"
 msgstr "Anything else?{end_now}"
 
@@ -14159,7 +14159,7 @@ msgctxt "message"
 msgid "03537"
 msgstr "Was it nice to rest?{line_break}Come stay again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGlyphName"
 msgid "03538"
 msgstr "Isaac"
 

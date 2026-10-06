@@ -61,7 +61,7 @@ Func_080ea8d4:
 	adds r5, r5, r0
 	movs r1, #0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r0, [r7, #8]
 	movs r3, #255
 	strb r3, [r5, #2]
@@ -123,7 +123,7 @@ Func_080ea8d4:
 .L_080ea9ce:
 	ldr r0, [sp, #0]
 	bl Func_080eaa14
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	adds r5, r0, #0
 	adds r6, r5, #0

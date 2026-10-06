@@ -1,22 +1,67 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
+#include "DMA.H"
 
-extern u8 gSerialExchangeActive[];
+u8 SerialRuntime_CollectReceivedPayloads(void *payload)
+{
+    u8 flags[8];
+    s32 i;
+    u32 k;
+    u16 *packet;
+    u16 *swap;
+    s32 sum;
+    s32 enable;
+
+    *(u32 *)&flags[4] = 0;
+    /* FAKEMATCH: keeps the frame clear ahead of the interrupt disable; without it the IME address load rises above "sub sp" (score 6). */
+    __asm__("");
+    REG_IME = 0;
+    for (i = 0; i <= 3; i++) {
+        swap = gSerialRuntime.pending_buffer[i];
+        gSerialRuntime.pending_buffer[i] = gSerialRuntime.ready_buffer[i];
+        gSerialRuntime.ready_buffer[i] = swap;
+    }
+    *(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
+    /* FAKEMATCH: an unsigned long store does not alias the u32 snapshot, so sched2 puts lr = sp before the snapshot store as the native does (2 without). */
+    *(unsigned long *)gSerialRuntime.channel_flags = 0;
+    /* FAKEMATCH: a separate enable value set before the barrier loads the 1 ahead of the IME address and lets -1 be derived from it (26 with a literal 1). */
+    enable = 1;
+    /* FAKEMATCH: holds the IME address load after the 1 (score 6 without). */
+    __asm__("");
+    REG_IME = enable;
+    /* FAKEMATCH: keeps the IME store ahead of the mask clear and the loop setup (score 22 without). */
+    __asm__("");
+    gSerialRuntime.current_mask = 0;
+    for (i = 0; i <= 1; i++) {
+        packet = gSerialRuntime.pending_buffer[i];
+        sum = 0;
+        for (k = 0; k <= 13; k++)
+            sum += packet[k];
+        if (flags[i] == 1 && (s16)sum == -1) {
+            Dma_Set(gSerialRuntime.pending_buffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, (volatile u32 *)DMA3);
+            gSerialRuntime.current_mask |= 1 << i;
+        }
+        if ((s16)sum == -1)
+            gSerialRuntime.pending_buffer[i][1] = ~gSerialRuntime.pending_buffer[i][1];
+    }
+    gSerialRuntime.received_mask |= gSerialRuntime.current_mask;
+    return gSerialRuntime.current_mask;
+}
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {
     struct SerialRuntime *send_state;
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;
+    /* FAKEMATCH: a plain value snapshot delays stack allocation and the snapshot pointer in lr, and reverses indexed halfword operands. The volatile local and restricted view retain the measured order. */
     volatile union SerialDataRegisters serial_data;
     union SerialDataRegisters *const __restrict serial_snapshot =
         (union SerialDataRegisters *)&serial_data;
     volatile u32 *sio_control;
     s32 channel;
 
-    sio_control = (volatile u32 *)0x04000128;
-    /* Capture volatile I/O through one stable, restricted local view. */
+    sio_control = &REG_SIOCNT;
     *serial_snapshot =
         *(volatile union SerialDataRegisters *)REG_SIODATA32;
     send_state = &gSerialRuntime;
@@ -77,8 +122,6 @@ receive_loop:
     }
 }
 
-void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
-
 void SerialRuntime_RemoveIrqHandlers(void)
 {
     s16 *work;
@@ -100,26 +143,25 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
             WaitFrames(1);
         } while ((mask & gLinkStatus) != mask);
     }
-    /* SIOCNT bits 4-5: this unit's multiplayer ID. */
     return (REG_SIOCNT << 0x1A) >> 0x1E;
 }
 
-s32 SerialRuntime_BeginTransferA(s32 value, s32 transfer_value)
+s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
     volatile u16 *ime;
     u32 saved_interrupt_master;
     s32 busy;
+    s32 value;
     s32 transfer;
 
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps the source in r0 through the busy check. A separate result is hoisted into r0 and moves the source to another register. */
+    value = (s32)source;
     active = &SERIAL_ACTIVE_A;
     busy = *active;
     transfer = transfer_value;
-    /* FAKEMATCH: both do/while blocks and the second active assignment are
-     * meaningless. Setting active twice raises its allocation priority above
-     * transfer, so active gets r5 and transfer r6; the blocks keep the stores
-     * in the reference order. */
+    /* FAKEMATCH: assigning active twice selects r5 for active and r6 for transfer; one-pass blocks preserve store order. */
     do {
         state = &gSerialTransfer;
     } while (0);
@@ -132,7 +174,7 @@ s32 SerialRuntime_BeginTransferA(s32 value, s32 transfer_value)
 begin_transfer:
     ime = &REG_IME;
     saved_interrupt_master = *ime;
-    *ime = (u16)(u32)ime; /* its own address, 0x208: bit 0 clear */
+    *ime = (u32)ime;
     do {
         state->status = 0x80;
         SERIAL_VALUE_A = transfer;
@@ -147,23 +189,20 @@ transfer_complete:
     return value;
 }
 
-s32 SerialRuntime_BeginTransferB(s32 value)
+s32 SerialRuntime_BeginTransferB(void *destination)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
     volatile u16 *ime;
     u32 saved_interrupt_master;
     s32 busy;
+    s32 value;
 
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps the destination in r0 through the busy check. A separate result is hoisted into r0 and makes the function save another register. */
+    value = (s32)destination;
+    state = &gSerialTransfer;
     active = &SERIAL_ACTIVE_B;
     busy = *active;
-    /* FAKEMATCH: the do/while blocks and the second active assignment are
-     * meaningless, as in SerialRuntime_BeginTransferA: they give active r5
-     * and state r6 and keep the stores in the reference order. */
-    do {
-        state = &gSerialTransfer;
-    } while (0);
-    active = &SERIAL_ACTIVE_B;
     if (busy == 0)
         goto begin_transfer;
     value = -1;
@@ -172,7 +211,8 @@ s32 SerialRuntime_BeginTransferB(s32 value)
 begin_transfer:
     ime = &REG_IME;
     saved_interrupt_master = *ime;
-    *ime = (u16)(u32)ime; /* its own address, 0x208: bit 0 clear */
+    *ime = (u32)ime;
+    /* FAKEMATCH: the one-pass block keeps the IME read and write ahead of the transfer stores, as in SerialRuntime_BeginTransferA. */
     do {
         state->status = 0x81;
         SERIAL_VALUE_B = 0;
@@ -180,11 +220,9 @@ begin_transfer:
         *active = value;
     } while (0);
     {
-        /* The sequence clear stores a pooled halfword zero loaded into r0
-         * after the sequence's address, where CSE would store busy's zero. */
+
         volatile u8 *sequence = &gSerialBlockSequence;
         register u16 zero asm("r0") = 0; /* FAKEMATCH: the zero in r0, see above */
-        asm("" : "+l"(zero)); /* FAKEMATCH: hides the zero from CSE, see above */
         *sequence = zero;
     }
     *ime = saved_interrupt_master;

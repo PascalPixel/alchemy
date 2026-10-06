@@ -1,18 +1,21 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "SERIAL_RUNTIME.H"
+#include "IO_REG.H"
 
-extern struct SerialRuntime gSerialRuntime;
+void SerialRuntime_EnableTransferTimer(void)
+{
+    struct SerialRuntime *state = &gSerialRuntime;
+
+    if (state->mode != 0)
+        state->transfer_enabled = 1;
+}
 
 void SerialRuntime_DisableTransfer(void)
 {
-    s32 base;
-
-    *(volatile u16 *)0x04000208 = 0;
-    *(u16 *)0x04000200 = *(u16 *)0x04000200 & 0xff3f;
-    *(volatile u16 *)0x04000208 = 1;
-    *(u16 *)0x04000128 = 0x2003;
-    *(u32 *)0x0400010c = 0x0000c963;
-    *(u16 *)0x04000202 = 0xc0;
-    base = (u32)&gSerialRuntime;
-    *((u8 *)base + 8) = 0;
+    REG_IME = 0;
+    REG_IE = REG_IE & 0xff3f;
+    REG_IME = 1;
+    REG_SIOCNT16 = 0x2003;
+    REG_TM3CNT = 0x0000c963;
+    REG_IF = 0xc0;
+    gSerialRuntime.transfer_enabled = 0;
 }

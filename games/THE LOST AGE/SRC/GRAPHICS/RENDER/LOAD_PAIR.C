@@ -1,11 +1,20 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-void Resource_DecodeByteLzInRam(void *source, void *destination);
-s32 VramBlock_LoadCached(s32 entry_no, s32 mode, void *data);
+#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
 
-extern s32 RenderResource_PairSourceTable[];
+
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
@@ -17,4 +26,27 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
         VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
         Runtime_ReleaseHeapBlock(56);
     }
+}
+
+struct RenderOutput *RenderResource_CreatePair(
+    s32 group,
+    struct RenderInput *input,
+    s32 x,
+    s32 y)
+{
+    s32 index;
+    struct RenderOutput *first;
+    struct RenderOutput *second;
+
+    index = Resource_FindFreeEntry();
+    if (index > 95)
+        return NULL;
+
+    RenderResource_LoadPair(group, index);
+    first = RenderOutput_Create(index, 0x80004000, input, x, y);
+    first->sentinel = 0xFD;
+    second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
+    second->sentinel = 0xFD;
+    second->table.bits.index += 8;
+    return first;
 }

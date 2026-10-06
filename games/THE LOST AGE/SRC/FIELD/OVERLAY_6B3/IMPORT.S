@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_6B3 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_6B3 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -25,7 +21,7 @@ Sys_Free:
 	.global Func_020007ac
 	.thumb_func
 Func_020007ac:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -37,11 +33,11 @@ Resource_FindFreeEntry:
 	.global Func_020007c4
 	.thumb_func
 Func_020007c4:
-	overlay_veneer Func_080001d8
+	overlay_veneer Bg0_ClearTilemapFar
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:
-	overlay_veneer Func_080001f0
+	overlay_veneer Ui_LoadWindowGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -85,7 +81,7 @@ Object_GetById:
 	.global Func_02000824
 	.thumb_func
 Func_02000824:
-	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetDestinationFar
 	.global BattleFx_GetResourceId
 	.thumb_func
 BattleFx_GetResourceId:

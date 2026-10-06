@@ -1,7 +1,3 @@
-/* Draft: this dispatcher predates the typed metadata argument and the
- * repaired raw callee ownership. Two wrongly named call targets differed
- * when recorded; the owner correction now resolves them. The old omitted
- * argument prototype is retained as the measured source attempt. */
 #ifndef TLA_OBJECT_DISPATCH_H
 #define TLA_OBJECT_DISPATCH_H
 
@@ -53,14 +49,12 @@ void Animation_ApplyChildValue(struct DispatchChild *, s32);
 s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *);
 void ObjectDispatch_Initialize(struct DispatchObject *, u32);
-s32 Animation_ApplyChildValuesToRecord(struct DispatchChild *);
 s32 WaitFrames(s32);
 
 extern const s32 ObjectDispatch_Table4[];
 extern const s32 ObjectDispatch_Table6[];
 
 #endif
-
 
 void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object, s32 argument)
 {
@@ -138,7 +132,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 argum
     }
 }
 
-void ObjectDispatch_SetChildField12(struct DispatchObject *object, u32 value)
+void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object, u32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1)
         object->target.child->value_12 = value;

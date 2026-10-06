@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_6B1 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_6B1 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -37,7 +33,7 @@ Sys_Free:
 	.global Func_02000c24
 	.thumb_func
 Func_02000c24:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -49,7 +45,7 @@ Resource_FindFreeEntry:
 	.global Func_02000c3c
 	.thumb_func
 Func_02000c3c:
-	overlay_veneer Func_080001e8
+	overlay_veneer Runtime_PushSlotEntryFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -70,9 +66,9 @@ Func_02000c5c:
 	.thumb_func
 Func_02000c64:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_02000c6c
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02000c6c:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02000c74
 	.thumb_func
@@ -101,15 +97,15 @@ Func_02000c8c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -125,11 +121,11 @@ Battle_WaitMode0:
 	.global Func_02000cb4
 	.thumb_func
 Func_02000cb4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -145,7 +141,7 @@ Object_SetActionCallbackAndRefreshById:
 	.global Func_02000cdc
 	.thumb_func
 Func_02000cdc:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -165,7 +161,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02000d04
 	.thumb_func
 Func_02000d04:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02000d0c
 	.thumb_func
 Func_02000d0c:
@@ -185,35 +181,35 @@ Func_02000d14:
 	.global Func_02000d1c
 	.thumb_func
 Func_02000d1c:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02000d24
 	.thumb_func
 Func_02000d24:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02000d2c
 	.thumb_func
 Func_02000d2c:
-	overlay_veneer Func_080c8390
-	.global Event_SetStatus1c6
+	overlay_veneer BattleFx_StartBufferInterpolationFar
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_02000d44
 	.thumb_func
 Func_02000d44:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02000d4c
 	.thumb_func
 Func_02000d4c:
@@ -226,10 +222,10 @@ Func_02000d54:
 	.thumb_func
 Func_02000d5c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

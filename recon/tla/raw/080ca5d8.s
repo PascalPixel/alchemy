@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ca5d8
+	.global BattleFx_SelectBattleCue
 	.thumb_func
-Func_080ca5d8:
+BattleFx_SelectBattleCue:
 	push {r5, r6, r7, lr}
 	lsls r0, r0, #4
 	adds r0, r0, r1

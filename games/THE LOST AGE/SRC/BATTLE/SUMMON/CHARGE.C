@@ -3,26 +3,23 @@
 #include "OWNER_STATE.H"
 #include "RAM_BUFFER.H"
 
-/* Summon charge channels: each class holds a mask of the channels in use,
-   and a unit's name ends in the marker digit of its channel. */
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
 struct SummonChargeState {
     u8 unknown_00[0x10];
-    u16 class_ids[6];   /* 0x10 */
-    u32 used_masks[6];  /* 0x1c */
-    s8 channels[6];     /* 0x34 */
+    u16 class_ids[6];
+    u32 used_masks[6];
+    s8 channels[6];
     u8 unknown_3a[6];
-    u8 count;           /* 0x40 */
+    u8 count;
 };
 
-/* ⚓️ keeps the class as a halfword at 0x14a; ☀️ as a byte at 0x128. */
 struct BattleActorDefinition {
     u8 name[14];
     u8 unknown_0e[0x11b];
-    u8 unavailable;     /* 0x129 */
+    u8 unavailable;
     u8 unknown_12a[0x20];
-    u16 class_id;       /* 0x14a */
+    u16 class_id;
 };
 
 s32 Summon_ReleaseCharge(s32 actor_id)
@@ -58,9 +55,9 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     state->used_masks[index] &= ~(1 << bit);
 }
 
-s32 Summon_ResetCharge(s32 class_id)
+s32 Summon_ResetCharge(s32 enemy_id)
 {
-    u8 *summon;
+    struct BattleUnit *summon;
     s32 object_index;
     s32 slot;
     s32 next_slot;
@@ -70,23 +67,23 @@ s32 Summon_ResetCharge(s32 class_id)
     object_index = 0;
     marker = LIST_MARKER_CHAR;
 scan_objects:
-    summon = (u8 *)Owner_GetState(object_index + 0x80);
-    occupied = summon[298];
+    summon = Owner_GetState(object_index + 0x80);
+    occupied = summon->status_12a;
     if (occupied != 1) goto next_object;
-    if (*(u16 *)(summon + 330) != class_id) goto next_object;
+    if (summon->enemy_id != enemy_id) goto next_object;
     slot = 0;
-    if (summon[0] != 0) goto scan_slots;
-    summon[0] = marker;
-    summon[occupied] = slot;
+    if (summon->name[0] != 0) goto scan_slots;
+    summon->name[0] = marker;
+    summon->name[occupied] = slot;
     return;
 scan_slots:
     slot++;
     if (slot > 13) return;
-    occupied = summon[slot];
+    occupied = summon->name[slot];
     if (occupied != 0) goto scan_slots;
     next_slot = slot + 1;
-    summon[slot] = marker;
-    summon[next_slot] = occupied;
+    summon->name[slot] = marker;
+    summon->name[next_slot] = occupied;
     return;
 next_object:
     object_index++;

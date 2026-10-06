@@ -1,3 +1,15 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"
@@ -13,28 +25,14 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
-extern u16 ParticleStreams_CellOffsets[];
 
-/* The motes live at the start of the map cell buffer. */
+
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 value);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
-void ObjectGroup_TickMemberTimers(void);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
-void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode);
-
-/* Mode entries of the particle pool effect. */
 
 void BattleFx_RunParticlePoolMode1(struct BattleEffectArgument *effect)
 {
@@ -46,21 +44,15 @@ void BattleFx_RunParticlePoolMode0(struct BattleEffectArgument *effect)
     BattleFx_RunParticlePool(effect, 0);
 }
 
-/* The two rectangle blitters BattleEffect_LoadWork leaves in heap slots 46
-   and 47, kept together: the effect fetches both and draws with the first. */
 struct BlitterPair {
     DrawRectangle upper;
     DrawRectangle lower;
 };
 
-/* Battle effect: a cloud of motes bursts from the actor and drifts, each
-   swaying on its own sine; the targets react one after another. */
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 {
     s32 point[3];
     struct EffectPosition position;
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     struct BlitterPair draw;
@@ -72,21 +64,19 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
-    sheet = heap_cache[2];
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+    sheet = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
     work->effect = effect;
     if (mode == 0)
         BattleFx_BeginCanvasLayer(0);
     else
         BattleFx_BeginCanvasLayer(1);
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw.upper = gWorkSlot[46];
-    BattleEffect_LoadWork(47, 7, 7, 11, 2);
-    draw.lower = gWorkSlot[47];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw.upper = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
+    draw.lower = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (mode == 0)
         resource = (s32)&ResourceId_OrangePaletteA;
@@ -95,7 +85,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     for (i = 0; i != 256; i++) {
@@ -103,8 +93,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
         s32 angle;
 
         mote = &gMotes[i];
-        /* The range is set first and the random number masks it: the code
-           loads the range into the speed's own register. */
+
         speed = 0x3ff;
         speed &= Random16();
         angle = Random16() & 0xffff;
@@ -123,7 +112,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 
     for (frame = 0; frame != 128; frame++) {
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != 128; i++) {
             mote = &gMotes[i];
             if (frame >= i / 32 * 8 && mote->variant >= 0) {
@@ -172,8 +161,8 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

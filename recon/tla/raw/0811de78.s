@@ -70,7 +70,7 @@ Func_0811de78:
 	cmp r3, #0
 	bne .L_0811df0c
 	ldrsh r0, [r5, r7]
-	bl Func_0811bec8
+	bl BattleMotion_SetupEscapeObject
 	movs r0, #8
 	bl WaitFrames
 .L_0811df0c:
@@ -97,7 +97,7 @@ Func_0811de78:
 	movs r3, #255
 	strh r0, [r2]
 	strh r3, [r2, #2]
-	bl Func_0811bec8
+	bl BattleMotion_SetupEscapeObject
 	movs r0, #8
 	bl WaitFrames
 	ldrb r0, [r6]

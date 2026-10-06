@@ -1,9 +1,3 @@
-/* NONMATCHING: early Imil cell coordinates, 2026-10-01.
- * The complete actor-eleven update compiles with approved TBS flags but
- * assigning its cell coordinates before the flag and priority calls adds
- * four bytes and keeps them in saved registers. Production sets them after
- * those calls in the editions without the live-position guard.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -1,11 +1,6 @@
-/*
- * Draft: Palette_StepTowardResource does not yet match; 3 halfwords differ from ☀️'s C, first at +0x26 (ldr r7, [pc, #16]).
- * Links as recon/tla/raw/081b203c.s.
- */
+#include "RESOURCE.H"
 #include "DMA.H"
 
-/* Step background colours 1-63 one unit per channel towards the palette of
-   resource_id. */
 void Palette_StepTowardResource(s32 resource_id)
 {
     u16 target[64];

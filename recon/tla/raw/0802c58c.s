@@ -357,4 +357,4 @@ Func_0802c58c:
 .L_0802c85c:
 	.4byte Data_02028000
 .L_0802c860:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork

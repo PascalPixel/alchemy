@@ -1,31 +1,31 @@
 cell:u8	grid:128x128	fill:0	at:6,6
-00 fb fb fb fb fb fb fb fb fb fb fb 00 00 00 fb fb fb fb fb fb
-00 fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-00 fb fb 00 00 00 00 00 00 00 fb fb fb fb fb fb fb
-00 fb
-00 fb
+0 fb fb fb fb fb fb fb fb fb fb fb 0 0 0 fb fb fb fb fb fb
+0 fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+0 fb fb 0 0 0 0 0 0 0 fb fb fb fb fb fb fb
+0 fb
+0 fb
 fb fb fb
-fb fb fb 00 00 00 00 00 14 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fb
-fb fb fb fb 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 64 00 00 00 fb fb
-fb fb fb fb 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 00 00 00 00 fb fb
-fb fb fb 00 00 fb fb fb fb fb fb 00 fb 00 15 00 00 00 00 00 00 00 fb fb fb
-fb fb 00 00 00 00 00 00 00 fb 00 fb
-fb 00 00 00 00 00 00 00 00 00 fb fb
-00 00 00 00 00 00 00 00 00 00 fb fb fb
-00 00 00 00 00 00 00 00 00 fb 00 fb 00 00 00 00 00 00 fb fb fb fb fb fb fb
-00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb
-00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 fb fb fb fb fb fb 00 fb fb fb fb fb fb fb
-00 00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 fb 00 00 fb fb 00 00 00 fb fb fb 00 fb fb
-00 00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 fb fb fb 00 00 00 00 00 00 fb 00 00 00 fb
-00 00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 fb fb fb 00 00 00 00 00 00 00 00 00 00 fb
-00 00 fb 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 fb 00 fb fb
-00 00 fb 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 fb 00 00 00 00 00 00 00 fb fb fb fb
-00 00 fb fb 00 00 00 00 00 fb fb fb 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb
-00 00 fb fb fb fb fb fb fb fb fb fb 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb
-00 00 fb fb fb fb fb fb fb fb fb fb 00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb
-00 00 00 fb fb fb fb fb fb fb fb fb fb 00 00 00 00 00 00 00 00 00 fb fb fb fb fb
-00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb 00 00 00 00 00 00 00 fb fb fb fb
-00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb 00 00 00 00 00 fb fb fb fb fb
-00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb 0 0 0 0 0 14 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fb
+fb fb fb fb 0 0 0 0 0 0 fb fb 0 0 0 0 0 0 0 64 0 0 0 fb fb
+fb fb fb fb 0 0 0 0 0 0 fb fb 0 0 0 0 0 0 0 0 0 0 0 fb fb
+fb fb fb 0 0 fb fb fb fb fb fb 0 fb 0 15 0 0 0 0 0 0 0 fb fb fb
+fb fb 0 0 0 0 0 0 0 fb 0 fb
+fb 0 0 0 0 0 0 0 0 0 fb fb
+0 0 0 0 0 0 0 0 0 0 fb fb fb
+0 0 0 0 0 0 0 0 0 fb 0 fb 0 0 0 0 0 0 fb fb fb fb fb fb fb
+0 0 0 0 0 0 0 0 0 fb fb 0 0 0 0 0 0 0 0 fb fb fb fb fb fb fb fb fb fb fb
+0 0 0 0 0 0 0 0 0 fb fb 0 0 0 0 0 fb fb fb fb fb fb 0 fb fb fb fb fb fb fb
+0 0 0 0 0 0 0 0 0 0 fb fb 0 0 0 0 fb 0 0 fb fb 0 0 0 fb fb fb 0 fb fb
+0 0 0 0 0 0 0 0 0 0 fb fb 0 0 0 0 fb fb fb 0 0 0 0 0 0 fb 0 0 0 fb
+0 0 0 0 0 0 0 0 0 0 fb fb 0 0 0 0 fb fb fb 0 0 0 0 0 0 0 0 0 0 fb
+0 0 fb 0 0 0 0 0 0 0 fb fb 0 0 0 0 0 fb fb 0 0 0 0 0 0 0 fb 0 fb fb
+0 0 fb 0 0 0 0 0 0 0 fb fb 0 0 0 0 0 0 fb 0 0 0 0 0 0 0 fb fb fb fb
+0 0 fb fb 0 0 0 0 0 fb fb fb 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fb fb fb fb
+0 0 fb fb fb fb fb fb fb fb fb fb 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fb fb fb
+0 0 fb fb fb fb fb fb fb fb fb fb 0 0 0 0 0 0 0 0 0 0 0 0 0 fb fb fb
+0 0 0 fb fb fb fb fb fb fb fb fb fb 0 0 0 0 0 0 0 0 0 fb fb fb fb fb
+0 0 0 0 0 0 0 0 0 0 fb fb fb fb fb 0 0 0 0 0 0 0 fb fb fb fb
+0 0 0 0 0 0 0 0 0 0 0 fb fb fb fb fb 0 0 0 0 0 fb fb fb fb fb
+0 0 0 0 0 0 0 0 0 0 0 0 fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+0 0 0 0 0 0 0 0 0 0 0 0 fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+0 0 0 0 0 0 0 0 0 0 0 0 0 fb fb fb fb fb fb fb fb fb fb fb fb

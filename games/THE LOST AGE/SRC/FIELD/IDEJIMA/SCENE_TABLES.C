@@ -1,29 +1,26 @@
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-
-/* Idejima's tables: where the party appears, the exits, the placed actors,
-   the events for each entrance, and its map regions. */
 
 enum {
     ENTRANCE_WAKE = 2,
     ENTRANCE_WAKE_AGAIN = 4
 };
 
-extern const struct SceneEntrance gIdejimaEntrances[];
-extern const u32 gIdejimaExits[];
-extern const struct ScenePlacement gIdejimaPlacements[];
-extern const struct SceneEvent gIdejimaEvents[];
-extern const struct SceneEvent gIdejimaEventsEntrance1[];
-/* The search events that start the wake-up scenes. */
-extern const struct SceneEvent gIdejimaEventsWake[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gIdejimaEntrances;
 }
 
-/* Idejima declares no regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "METADATA_LOOKUP.H"
 #include "SCENE.H"
 #include "OBJECT_LOOKUP.H"
 
@@ -13,12 +14,6 @@ struct ScreenObject {
     u8 **sprite;
     u8 flags;
 };
-
-s8 *Resource_GetMetadataRecordFar(s16 resource_id);
-
-/* Writes the object's position relative to the camera in whole units, x
-   then z less height; sprite-mode objects are raised by their metadata
-   offset. Returns -1 when there is no such object. */
 
 s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 {
@@ -39,6 +34,6 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
     *position++ = x / 0x10000;
     *position = z / 0x10000;
     if ((object->flags & 15) == 1)
-        *position -= Resource_GetMetadataRecordFar(*(s16 *)object->sprite[10])[8];
+        *position -= (s8)Resource_GetMetadataRecordFar(*(s16 *)object->sprite[10])->box_x;
     return 0;
 }

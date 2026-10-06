@@ -7,28 +7,17 @@ s32 Item_GetEquipmentGroup(s32 item_id)
 
     item = Item_GetDirect(item_id);
     group = 0;
-    if (item->type == 1) {
+    if (item->type == 1)
         group = 1;
-        goto end;
-    }
-    if (item->type == 2) {
-        goto two;
-    }
-    if (item->type == 3) {
-        goto two;
-    }
-    if (item->type == 4) {
-        goto two;
-    }
-    if (item->type == 5) {
-        goto two;
-    }
-    if (item->type == 9) {
-        goto two;
-    }
-    goto end;
-two:
-    group = 2;
-end:
+    else if (item->type == 2)
+        group = 2;
+    else if (item->type == 3)
+        group = 2;
+    else if (item->type == 4)
+        group = 2;
+    else if (item->type == 5)
+        group = 2;
+    else if (item->type == 9)
+        group = 2;
     return group;
 }

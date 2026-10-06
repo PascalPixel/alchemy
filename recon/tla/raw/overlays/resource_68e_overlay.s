@@ -163,7 +163,7 @@ Func_0200012c:
 	bl Object_GetById
 	adds r0, #35
 	strb r5, [r0]
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r2, #241
 	lsls r2, r2, #1
 	adds r3, r6, r2
@@ -371,7 +371,7 @@ Func_020001e4:
 	bne .L_0200836e
 	movs r0, #1
 	negs r0, r0
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 	b .L_02008378
 .L_0200836e:
 	cmp r7, #1
@@ -389,7 +389,7 @@ Func_020001e4:
 	ldr r6, .L_02008490
 	lsls r5, r5, #1
 	ldrh r0, [r6, r5]
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 	movs r0, #91
 	bl Func_02001408
 	movs r1, #5

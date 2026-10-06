@@ -157,10 +157,10 @@ Func_080e0134:
 	ldr r2, [r7]
 	adds r0, r5, #0
 	adds r1, #255
-	bl Func_080ebec8
+	bl EffectSlot_Initialize
 	adds r0, r5, #0
 	ldr r1, .L_080e02e8
-	bl Func_080ebeb4
+	bl EffectSlot_SetCallback
 	ldr r0, [r5]
 	movs r1, #7
 	bl Animation_ApplyChildValuesToRecordFar

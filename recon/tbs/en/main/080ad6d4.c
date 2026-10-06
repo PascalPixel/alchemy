@@ -1,87 +1,47 @@
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 927 of 1276 (1295 draft instructions), down from 1136 before shared work structures and real IWRAM calls. Remaining: native frame is 136 bytes versus 128 here, mode stays in fp rather than a spill, and the copy/preview paths allocate registers differently. Hoisting the two output pairs leaves 927 unchanged. No function counts yet.
+ * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3. */
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "DJINN_MENU.H"
+#include "BATTLE_UNIT.H"
+#include "GAME_STATE.H"
+#include "WINDOW.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
-extern u8 gMenuWork[];
-extern u8 gWindowWork[];
+extern struct DjinnMenuWork *gMenuWork;
 
-/*
- * Modal owner-action comparison loop for the shared 0x03001f2c scene work.
- *
- * The caller selects a mode (0 and 1 drive the two-owner compare, 2 and 3 the
- * single-owner variant). The routine lays out the head window plus the two
- * half-width list windows, swaps the palette/bank pair between the two owner
- * records so OwnerAction_DiffSlots can report how many action slots each side
- * would gain, then spins a frame loop that redraws the lists, animates the two
- * projection slots, services the scripted scene phases at scene+0x212c, and
- * reads the two input cells. It returns 1 when the confirm key is taken on the
- * first animation step, -1 for cancel and -2 for the secondary cancel.
- *
- * Uncertain, and left as evidenced offsets rather than invented names:
- *  - the shared work at 0x03001f2c is only partially described by
- *    games/THE BROKEN SEAL/INCLUDE/FOUR_OBJECT_MOTION.H; the fields this owner touches
- *    (0x134, 0x178, 0x184, 0x21a, 0x254..0x258) extend past that struct, so
- *    the file uses the FIELD_AT_OFFSET idiom of its exact sibling
- *    games/THE BROKEN SEAL/src/menu/sel/run_paired_entry_action.c instead of inventing a type.
- *  - the reference reaches the fixed IWRAM entry at 0x03000118 with the
- *    "mov ip, pc / bx rN" interface supplied by IWRAM_CALL.H.
- *  - _call_via_r3/f4/f8 take a fixed IWRAM helper entry as their last
- *    argument (0x03001388 word copy, 0x03000168 word fill); the reference also
- *    materialises that constant before the three-argument variants, which this
- *    draft does not reproduce.
- *  - UiWindow_CloseIfOpen and UiWindow_Close are called here with a second
- *    argument that the adopted definitions ignore; the declarations below
- *    match the reference call sites, not those definitions.
- */
-
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
-/* Fixed IWRAM helper entries used as descriptors by the copy dispatcher. */
-#define IWRAM_WORD_COPY 0x03001388
-#define IWRAM_WORD_FILL 0x03000168
-
-/* The scaling entry the reference reaches through the ip-linked inline call. */
-
-#define VRAM_STRIP 0x060052c0
-
-extern u8 gGameState[];
 extern u8 Menu_BackdropFrameTile[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-void *Runtime_GetObject(s32);
-s16 *Runtime_BumpAllocateAlternatePool(s32);
+struct BattleUnit *Owner_GetStateFar(s32);
 void WaitFrames(s32);
-void Audio_PlayCue(s32);
-s32 Modulo(s32, s32);
-s32 __divsi3(s32, s32);
+void AudioCommand_PlayFar(s32);
 s32 Menu_GetModuloOfSum(s32, s32);
-void BattleUnit_Recalculate(s32);
-s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
+void Owner_RecalculateStatsFar(s32);
 
-void UiWindow_Commit(s32);
-void UiWindow_Clear(s32);
-s32 UiWindow_Close(s32, s32);
+void RenderOutput_RedrawSavedRectFar(s32);
+void RenderOutput_PrepareForRedrawFar(s32);
+s32 UiWork_FinalizeFar(s32, s32);
 void UiWindow_CloseIfOpen(s32 *, s32);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
-void UiText_DrawAt(s32, s32, s32, s32);
+void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 void UiText_DrawQuantity(s32, s32);
-void UiPalette_SetColor(s32);
-s32 UiWork_Create(s32, s32, s32, s32);
+s32 UiWork_SetParamNibbleFar(s32);
+s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 
 void Runtime_SetMainState19(void);
 void Menu_RunPairedEntryAction(s32, s32);
 void UiMenu_PositionCursor(s32, s32);
-s32 OwnerAction_DiffSlots(void *, void *, void *, s32 *, s32 *);
+s32 OwnerAction_DiffSlots(struct OwnerActionSlot *, struct OwnerActionSlot *, u16 *, s32 *, s32 *);
 void FourObjectMotion_SetSlotPhase(s32, s32);
 s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
 
-void Sys_Free(void *);
+void Runtime_BumpFree(void *);
 s32 Trig_Sin(s32);
-void _call_via_r3(s32, s32, s32, s32);
-void _call_via_r4(s32, s32, s32);
-void _call_via_r5(s32, s32, s32);
 void UiWindow_ClearInteriorTilesFar(s32, s32, s32, s32, s32);
 void RenderOutput_ClearListFar(s32);
 void UiWindow_MarkVisibleTileAttributesFar(void);
@@ -90,14 +50,14 @@ void Djinn_ActivateFar(s32, s32, s32);
 void Djinn_DeactivateFar(s32, s32, s32);
 void Menu_UpdateEntryObjectTransforms(void);
 void UiMenu_SlideCursor(s32, s32);
-s32 DjinnMenu_DrawStatPreview(s32, s32, s32, u8, s32, s32, s32, s32, s32);
+s32 DjinnMenu_DrawStatPreview(s32, s32, s32, s32, s32, s32, s32, s32, s32);
 
 s32 OwnerAction_RunCompareLoop(u32 mode)
 {
-    void *state;
-    u8 *scene;
-    u8 *render;
-    u8 *list;
+    struct DjinnMenuWork *state;
+    struct DjinnMenuBackdrop *scene;
+    struct UiRenderWork *render;
+    struct UiWindow *list;
     s32 count[2];
     s32 cursor[2];
     s32 page;
@@ -113,288 +73,278 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     u16 attr;
     s32 i;
 
-    state = *(void **)gMenuWork;
+    state = gMenuWork;
     anim = 0;
     dirty = 1;
     page = 2;
     frame = 0;
 
-    FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 13;
+    state->cursor->active = 13;
 
     cursor[0] = 0;
     cursor[1] = 0;
 
     for (i = 3; i >= 0; i--) {
-        FIELD_AT_OFFSET(state, s16, 0x144 + i * 2) = 0xc8;
+        state->owner_y[i] = 0xc8;
     }
-    FIELD_AT_OFFSET(state, s16, 0x134 + FIELD_AT_OFFSET(state, s8, 0x1d) * 2) = 0x78;
-    FIELD_AT_OFFSET(state, s16, 0x144 + FIELD_AT_OFFSET(state, s8, 0x1d) * 2) = 0x20;
-    FIELD_AT_OFFSET(state, s16, 0x134 + FIELD_AT_OFFSET(state, s8, 0x1c) * 2) = 0x10;
-    FIELD_AT_OFFSET(state, s16, 0x144 + FIELD_AT_OFFSET(state, s8, 0x1c) * 2) = 0x20;
+    state->owner_x[state->selected_column[1]] = 0x78;
+    state->owner_y[state->selected_column[1]] = 0x20;
+    state->owner_x[state->selected_column[0]] = 0x10;
+    state->owner_y[state->selected_column[0]] = 0x20;
 
-    RenderOutput_ClearListFar(FIELD_AT_OFFSET(state, s32, 0x30));
+    RenderOutput_ClearListFar(state->list_window);
     WaitFrames(1);
-    UiWindow_CloseIfOpen(&FIELD_AT_OFFSET(state, s32, 0x10c), 1);
-    UiWindow_UpdateOrCreate(&FIELD_AT_OFFSET(state, s32, 0x10c), 0, 0, 30, 5, 2);
+    UiWindow_CloseIfOpen(&state->help_window, 1);
+    UiWindow_UpdateOrCreate(&state->help_window, 0, 0, 30, 5, 2);
 
     count[0] = 1;
     count[1] = 1;
 
     if (mode <= 1) {
-        /* Two owners: give each side the other's palette/bank pair and count
-         * the action slots the swap would produce. */
-        s16 *diff_work;
-        s16 *unit_copy;
-        u8 *unit;
+        u16 *diff_work;
+        struct BattleUnit *unit_copy;
+        struct BattleUnit *unit;
         s32 first_id;
         s32 second_id;
-        s32 first_pal;
-        s32 first_bank;
+        s32 first_element;
+        s32 first_index;
         s32 first_flag;
-        s32 second_pal;
-        s32 second_bank;
+        s32 second_element;
+        s32 second_index;
         s32 second_flag;
         s32 out_a;
         s32 out_b;
 
         diff_work = Runtime_BumpAllocateAlternatePool(96);
-        unit_copy = Runtime_BumpAllocateAlternatePool(0x14c);
-        second_pal = 0;
-        second_bank = 0;
-        first_id = FIELD_AT_OFFSET(state, u8, 0x21a);
-        first_pal = FIELD_AT_OFFSET(state, u8, 0x256);
-        first_bank = FIELD_AT_OFFSET(state, u8, 0x254) & 31;
-        first_flag = (u16)(FIELD_AT_OFFSET(state, u16, 0x178) & 0x8000);
+        unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
+        second_element = 0;
+        second_index = 0;
+        first_id = state->shown_owner[0];
+        first_element = state->pair_element[0];
+        first_index = state->pair_index[0] & 31;
+        first_flag = (u16)(state->pair_entries[0] & 0x8000);
 
-        unit = Runtime_GetObject(first_id);
-        _call_via_r3((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
-        Djinn_DeactivateFar(first_id, first_pal, first_bank);
+        unit = Owner_GetStateFar(first_id);
+        Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
+        Djinn_DeactivateFar(first_id, first_element, first_index);
         if (mode == 0) {
-            second_pal = FIELD_AT_OFFSET(state, u8, 0x257);
-            second_bank = FIELD_AT_OFFSET(state, u8, 0x255) & 31;
-            second_flag = (u16)(FIELD_AT_OFFSET(state, u16, 0x17a) & 0x8000);
-            Djinn_AddToOwnerFar(first_id, second_pal, second_bank);
+            second_element = state->pair_element[1];
+            second_index = state->pair_index[1] & 31;
+            second_flag = (u16)(state->pair_entries[1] & 0x8000);
+            Djinn_AddToOwnerFar(first_id, second_element, second_index);
             if (second_flag != 0) {
-                Djinn_ActivateFar(first_id, second_pal, second_bank);
+                Djinn_ActivateFar(first_id, second_element, second_index);
             }
         }
-        BattleUnit_Recalculate(first_id);
+        Owner_RecalculateStatsFar(first_id);
         count[0] = OwnerAction_DiffSlots(
-            (u8 *)unit_copy + 88, unit + 88, diff_work, &out_b, &out_a);
-        _call_via_r5((s32)unit, (s32)unit_copy, 0x14c);
+            unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
+        Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
 
-        second_id = FIELD_AT_OFFSET(state, u8, 0x21b);
-        unit = Runtime_GetObject(second_id);
-        _call_via_r5((s32)unit_copy, (s32)unit, 0x14c);
+        second_id = state->shown_owner[1];
+        unit = Owner_GetStateFar(second_id);
+        Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
         if (mode == 0) {
-            Djinn_DeactivateFar(second_id, second_pal, second_bank);
+            Djinn_DeactivateFar(second_id, second_element, second_index);
         }
-        Djinn_AddToOwnerFar(second_id, first_pal, first_bank);
+        Djinn_AddToOwnerFar(second_id, first_element, first_index);
         if (first_flag != 0) {
-            Djinn_ActivateFar(second_id, first_pal, first_bank);
+            Djinn_ActivateFar(second_id, first_element, first_index);
         }
-        BattleUnit_Recalculate(second_id);
+        Owner_RecalculateStatsFar(second_id);
         count[1] = OwnerAction_DiffSlots(
-            (u8 *)unit_copy + 88, unit + 88, diff_work, &out_b, &out_a);
-        _call_via_r5((s32)unit, (s32)unit_copy, 0x14c);
-        Sys_Free(unit_copy);
-        Sys_Free(diff_work);
+            unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
+        Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
+        Runtime_BumpFree(unit_copy);
+        Runtime_BumpFree(diff_work);
     } else if (mode - 2 <= 1) {
-        /* One owner: mode 3 also applies the secondary entry. */
-        s16 *diff_work;
-        s16 *unit_copy;
-        u8 *unit;
+        u16 *diff_work;
+        struct BattleUnit *unit_copy;
+        struct BattleUnit *unit;
         s32 first_id;
-        s32 first_pal;
-        s32 first_bank;
+        s32 first_element;
+        s32 first_index;
         s32 apply_second;
         s32 out_a;
         s32 out_b;
 
         diff_work = Runtime_BumpAllocateAlternatePool(96);
-        unit_copy = Runtime_BumpAllocateAlternatePool(0x14c);
-        first_id = FIELD_AT_OFFSET(state, u8, 0x21a);
-        first_pal = FIELD_AT_OFFSET(state, u8, 0x256);
-        first_bank = FIELD_AT_OFFSET(state, u8, 0x254) & 31;
+        unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
+        first_id = state->shown_owner[0];
+        first_element = state->pair_element[0];
+        first_index = state->pair_index[0] & 31;
         apply_second = (mode == 3);
 
-        unit = Runtime_GetObject(first_id);
-        _call_via_r3((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
-        Djinn_DeactivateFar(first_id, first_pal, first_bank);
+        unit = Owner_GetStateFar(first_id);
+        Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
+        Djinn_DeactivateFar(first_id, first_element, first_index);
         if (apply_second != 0) {
-            Djinn_ActivateFar(first_id, first_pal, first_bank);
+            Djinn_ActivateFar(first_id, first_element, first_index);
         }
-        BattleUnit_Recalculate(first_id);
+        Owner_RecalculateStatsFar(first_id);
         count[0] = OwnerAction_DiffSlots(
-            (u8 *)unit_copy + 88, unit + 88, diff_work, &out_b, &out_a);
-        _call_via_r4((s32)unit, (s32)unit_copy, 0x14c);
+            unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
+        Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
         count[1] = count[0];
         page = 0;
-        Sys_Free(unit_copy);
-        Sys_Free(diff_work);
+        Runtime_BumpFree(unit_copy);
+        Runtime_BumpFree(diff_work);
     }
 
-    count[0] = __divsi3(count[0] - 1, 5) + 1;
+    count[0] = ((count[0] - 1) / 5) + 1;
     if (count[0] == 0) {
         count[0] = 1;
     }
-    count[1] = __divsi3(count[1] - 1, 5) + 1;
+    count[1] = ((count[1] - 1) / 5) + 1;
     if (count[1] == 0) {
         count[1] = 1;
     }
 
-    UiWindow_UpdateOrCreate(&FIELD_AT_OFFSET(state, s32, 0x24), 0, 5, 15, 15, 2);
-    UiWindow_UpdateOrCreate(&FIELD_AT_OFFSET(state, s32, 0x34), 15, 5, 15, 15, 2);
-    UiWindow_Commit(FIELD_AT_OFFSET(state, s32, 0x10c));
+    UiWindow_UpdateOrCreate(&state->window, 0, 5, 15, 15, 2);
+    UiWindow_UpdateOrCreate(&state->second_window, 15, 5, 15, 15, 2);
+    RenderOutput_RedrawSavedRectFar(state->help_window);
 
     if (mode == 2) {
-        UiText_DrawAt(0xba5, FIELD_AT_OFFSET(state, s32, 0x10c), 96, 0);
-        UiText_DrawAt(0xbc1, FIELD_AT_OFFSET(state, s32, 0x10c), 96, 16);
+        UiText_DrawCharacterAtOffsetFar(0xba5, state->help_window, 96, 0);
+        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 96, 16);
     } else if (mode == 3) {
-        UiText_DrawAt(0xba4, FIELD_AT_OFFSET(state, s32, 0x10c), 96, 0);
-        UiText_DrawAt(0xbc1, FIELD_AT_OFFSET(state, s32, 0x10c), 96, 16);
+        UiText_DrawCharacterAtOffsetFar(0xba4, state->help_window, 96, 0);
+        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 96, 16);
     } else if (mode == 0) {
-        UiText_DrawAt(0xba7, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 0);
-        UiText_DrawAt(0xbc1, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 8);
+        UiText_DrawCharacterAtOffsetFar(0xba7, state->help_window, 128, 0);
+        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 128, 8);
     } else {
-        UiText_DrawAt(0xba6, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 0);
-        UiText_DrawAt(0xbc1, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 8);
+        UiText_DrawCharacterAtOffsetFar(0xba6, state->help_window, 128, 0);
+        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 128, 8);
     }
 
-    /* Primary class line: attribute halfword 0x178 supplies both the name
-     * string and the element tile. */
     step = (mode == 1);
-    attr = FIELD_AT_OFFSET(state, u16, 0x178);
+    attr = state->pair_entries[0];
     if ((attr & 0x8000) == 0) {
-        UiPalette_SetColor(2);
-        attr = FIELD_AT_OFFSET(state, u16, 0x178);
+        UiWork_SetParamNibbleFar(2);
+        attr = state->pair_entries[0];
     }
-    UiText_DrawAt(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-        FIELD_AT_OFFSET(state, s32, 0x10c), 48, step * 8);
-    attr = FIELD_AT_OFFSET(state, u16, 0x178);
+    UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
+        state->help_window, 48, step * 8);
+    attr = state->pair_entries[0];
     UiWindow_SetTilemapEntryFar(
-        FIELD_AT_OFFSET(state, s32, 0x10c), ((attr & 0xe0) >> 5) + 0x5001, 5, step, 0);
-    UiPalette_SetColor(15);
+        state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, step, 0);
+    UiWork_SetParamNibbleFar(15);
 
     if (mode == 0) {
-        /* Secondary class line comes from the partner attribute at 0x17a. */
-        attr = FIELD_AT_OFFSET(state, u16, 0x17a);
+        attr = state->pair_entries[1];
         if ((attr & 0x8000) == 0) {
-            UiPalette_SetColor(2);
-            attr = FIELD_AT_OFFSET(state, u16, 0x17a);
+            UiWork_SetParamNibbleFar(2);
+            attr = state->pair_entries[1];
         }
-        UiText_DrawAt(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-            FIELD_AT_OFFSET(state, s32, 0x10c), 48, 16);
-        attr = FIELD_AT_OFFSET(state, u16, 0x17a);
+        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
+            state->help_window, 48, 16);
+        attr = state->pair_entries[1];
         UiWindow_SetTilemapEntryFar(
-            FIELD_AT_OFFSET(state, s32, 0x10c), ((attr & 0xe0) >> 5) + 0x5001, 5, 2, mode);
-        UiPalette_SetColor(15);
+            state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, 2, mode);
+        UiWork_SetParamNibbleFar(15);
     } else if (mode - 2 <= 1) {
-        /* Single-owner modes repeat the primary attribute on the lower line,
-         * and the reference takes the palette branch on the opposite sense. */
-        attr = FIELD_AT_OFFSET(state, u16, 0x178);
+        attr = state->pair_entries[0];
         if ((attr & 0x8000) != 0) {
-            UiPalette_SetColor(2);
-            attr = FIELD_AT_OFFSET(state, u16, 0x178);
+            UiWork_SetParamNibbleFar(2);
+            attr = state->pair_entries[0];
         }
-        UiText_DrawAt(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-            FIELD_AT_OFFSET(state, s32, 0x10c), 48, 16);
-        attr = FIELD_AT_OFFSET(state, u16, 0x178);
+        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
+            state->help_window, 48, 16);
+        attr = state->pair_entries[0];
         UiWindow_SetTilemapEntryFar(
-            FIELD_AT_OFFSET(state, s32, 0x10c), ((attr & 0xe0) >> 5) + 0x5001, 5, 2, 0);
-        UiPalette_SetColor(15);
-        UiWindow_SetTilemapEntryFar(FIELD_AT_OFFSET(state, s32, 0x10c), 0xf296, 7, 1, 0);
+            state->help_window, ((attr & 0xe0) >> 5) + 0x5001, 5, 2, 0);
+        UiWork_SetParamNibbleFar(15);
+        UiWindow_SetTilemapEntryFar(state->help_window, 0xf296, 7, 1, 0);
     }
 
     for (;;) {
-        render = *(u8 **)gWindowWork;
-        scene = FIELD_AT_OFFSET(state, u8 *, 0x184);
+        render = (struct UiRenderWork *)gWindowWork[0];
+        scene = state->backdrop;
         input_edge = gKeyState;
         input_held = gKeysRepeat;
 
-        if (FIELD_AT_OFFSET(scene, s32, 0x212c) != 0) {
-            /* A scripted phase owns the screen: input is suppressed and the
-             * render work is parked in a scratch copy across the message. */
+        if (scene->tutorial_step != 0) {
             s16 *saved;
             s32 work;
 
             saved = Runtime_BumpAllocateAlternatePool(0x200);
             input_edge = 0;
             input_held = 0;
-            FIELD_AT_OFFSET(scene, s32, 0x2128) += 1;
+            scene->tutorial_timer += 1;
 
-            switch (FIELD_AT_OFFSET(scene, s32, 0x212c)) {
+            switch (scene->tutorial_step) {
             case 5:
             case 12:
             case 23:
-                if (FIELD_AT_OFFSET(scene, s32, 0x2128) == 100) {
+                if (scene->tutorial_timer == 100) {
                     input_held = 1;
                     input_edge = 1;
-                    FIELD_AT_OFFSET(scene, s32, 0x2128) = 0;
-                    FIELD_AT_OFFSET(scene, s32, 0x212c) += 1;
+                    scene->tutorial_timer = 0;
+                    scene->tutorial_step += 1;
                 }
                 break;
             case 10:
-                if (FIELD_AT_OFFSET(scene, s32, 0x2128) == 60) {
-                    _call_via_r3((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
-                    work = UiWork_Create(0xc43, 8, 0, 1);
-                    FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 1;
+                if (scene->tutorial_timer == 60) {
+                    Iwram_CopyWords(saved, render, 0x200);
+                    work = UiText_OpenMessageWindowFar(0xc43, 8, 0, 1);
+                    state->cursor->active = 1;
                     UiMenu_SlideCursor(2, 96);
-                    gGameState[0x20c] = 1;
+                    gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0) {
                         WaitFrames(1);
                     }
-                    UiWindow_Close(work, 1);
-                    _call_via_r3((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
+                    UiWork_FinalizeFar(work, 1);
+                    Iwram_CopyWords(render, saved, 0x200);
                     UiWindow_MarkVisibleTileAttributesFar();
-                    render[0xea3] = 1;
+                    render->dirty = 1;
                     dirty = 1;
-                    FIELD_AT_OFFSET(scene, s32, 0x2128) = 0;
-                    FIELD_AT_OFFSET(scene, s32, 0x212c) = 11;
-                    FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 13;
+                    scene->tutorial_timer = 0;
+                    scene->tutorial_step = 11;
+                    state->cursor->active = 13;
                 }
                 break;
             case 11:
-                if (FIELD_AT_OFFSET(scene, s32, 0x2128) == 60) {
-                    _call_via_r3((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
-                    work = UiWork_Create(0xc42, 8, 0, 1);
-                    FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 1;
+                if (scene->tutorial_timer == 60) {
+                    Iwram_CopyWords(saved, render, 0x200);
+                    work = UiText_OpenMessageWindowFar(0xc42, 8, 0, 1);
+                    state->cursor->active = 1;
                     UiMenu_SlideCursor(106, 56);
-                    gGameState[0x20c] = 1;
+                    gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0) {
                         WaitFrames(1);
                     }
-                    UiWindow_Close(work, 1);
-                    _call_via_r3((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
+                    UiWork_FinalizeFar(work, 1);
+                    Iwram_CopyWords(render, saved, 0x200);
                     UiWindow_MarkVisibleTileAttributesFar();
-                    render[0xea3] = 1;
+                    render->dirty = 1;
                     WaitFrames(1);
                     dirty = 1;
-                    FIELD_AT_OFFSET(scene, s32, 0x2128) = 0;
-                    FIELD_AT_OFFSET(scene, s32, 0x212c) = 12;
-                    FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 13;
+                    scene->tutorial_timer = 0;
+                    scene->tutorial_step = 12;
+                    state->cursor->active = 13;
                 }
                 break;
             default:
                 break;
             }
-            Sys_Free(saved);
+            Runtime_BumpFree(saved);
         }
 
         if (dirty != 0) {
             if (mode <= 1) {
-                UiWindow_ClearInteriorTilesFar(FIELD_AT_OFFSET(state, s32, 0x10c), 128, 16, 224, 24);
+                UiWindow_ClearInteriorTilesFar(state->help_window, 128, 16, 224, 24);
                 if (page == 1) {
-                    UiText_DrawAt(0xba1, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 16);
+                    UiText_DrawCharacterAtOffsetFar(0xba1, state->help_window, 128, 16);
                 } else {
                     UiText_DrawQuantity(
-                        FIELD_AT_OFFSET(state, u8, 0x21a + (page != 2)), 1);
-                    UiText_DrawAt(0xba0, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 16);
+                        state->shown_owner[page != 2], 1);
+                    UiText_DrawCharacterAtOffsetFar(0xba0, state->help_window, 128, 16);
                 }
             }
-            render[0xea6] = 1;
-            UiWindow_Clear(FIELD_AT_OFFSET(state, s32, 0x24));
-            UiWindow_Clear(FIELD_AT_OFFSET(state, s32, 0x34));
+            render->menu_busy = 1;
+            RenderOutput_PrepareForRedrawFar(state->window);
+            RenderOutput_PrepareForRedrawFar(state->second_window);
             if ((dirty >> 1) != 0) {
                 WaitFrames(1);
             }
@@ -415,31 +365,29 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     entry = 1;
                     swap = 0;
                 }
-                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x24), 0, 0,
-                    FIELD_AT_OFFSET(state, u8, 0x258), page, swap, entry, page, 1);
-                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x34), 0, 0,
-                    FIELD_AT_OFFSET(state, u8, 0x258), page, swap, entry,
+                DjinnMenu_DrawStatPreview(state->window, 0, 0,
+                    state->pair_owner[0], page, swap, entry, page, 1);
+                DjinnMenu_DrawStatPreview(state->second_window, 0, 0,
+                    state->pair_owner[0], page, swap, entry,
                     cursor[0] + 1, 1);
             } else if (page == 1) {
                 if (mode == 1) {
                     entry = 4;
                 }
-                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x24), 0, 0,
-                    FIELD_AT_OFFSET(state, u8, 0x21b), page, 0, entry, 0, 0);
-                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x34), 0, 0,
-                    FIELD_AT_OFFSET(state, u8, 0x21b), page, 0, entry,
+                DjinnMenu_DrawStatPreview(state->window, 0, 0,
+                    state->shown_owner[1], page, 0, entry, 0, 0);
+                DjinnMenu_DrawStatPreview(state->second_window, 0, 0,
+                    state->shown_owner[1], page, 0, entry,
                     cursor[1] + 1, 0);
             } else {
                 Menu_RunPairedEntryAction(mode, 0);
             }
-            render[0xea6] = 0;
+            render->menu_busy = 0;
         }
 
         if (page <= 1) {
-            list = FIELD_AT_OFFSET(state, u8 *, 0x34);
+            list = (struct UiWindow *)state->second_window;
             if (count[page] > 1) {
-                /* Page pips along the bottom edge, the selected one taken from
-                 * the neighbouring bank. */
                 for (i = 0; i < count[page]; i++) {
                     s32 tile;
 
@@ -451,19 +399,19 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         tile -= 0x1000;
                     }
                     UiWindow_SetTilemapEntryFar((s32)list, tile,
-                        FIELD_AT_OFFSET(list, u16, 8) - count[page] + i - 2,
+                        list->width - count[page] + i - 2,
                         -1, 0);
                 }
                 UiWindow_SetTilemapEntryFar((s32)list, 0xf128,
-                    FIELD_AT_OFFSET(list, u16, 8) - count[page] - 3, -1, 0);
+                    list->width - count[page] - 3, -1, 0);
                 UiWindow_SetTilemapEntryFar((s32)list, 0xf129,
-                    FIELD_AT_OFFSET(list, u16, 8) - 2, -1, 0);
-                render[0xea3] |= 2 << (FIELD_AT_OFFSET(list, u16, 0xe) >> 2);
+                    list->width - 2, -1, 0);
+                render->dirty |= 2 << (list->y >> 2);
             }
         }
 
         frame = frame + 1;
-        step = Modulo(frame, 60) - 5;
+        step = (frame % 60) - 5;
         if (step < 0) {
             step = 0;
         }
@@ -477,14 +425,14 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             s32 rise;
             s32 slide;
 
-            rise = -Iwram_MulQ16(16, Trig_Sin(Modulo(step, 30) * 0x444));
+            rise = -Iwram_MulQ16(16, Trig_Sin((step % 30) * 0x444));
             if (rise < -6) {
                 rise = -6;
             }
             if (rise > 12) {
                 rise = 12;
             }
-            slide = Modulo(step, 35) * 2;
+            slide = (step % 35) * 2;
             FourObjectMotion_SetSlotPosition(0, slide + 34, rise + 20, 0);
             if (mode == 0) {
                 FourObjectMotion_SetSlotPosition(1, 99 - slide, 36 - rise, 0);
@@ -501,9 +449,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         if ((frame & 3) == 0) {
             if ((frame & 4) != 0) {
-                _call_via_r3(VRAM_STRIP, (s32)Menu_BackdropFrameTile, 32, IWRAM_WORD_COPY);
+                Iwram_CopyWords((void *)0x060052c0, Menu_BackdropFrameTile, 32);
             } else {
-                _call_via_r3(VRAM_STRIP, 32, 0x44444444, IWRAM_WORD_FILL);
+                Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
             }
         }
 
@@ -512,34 +460,34 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 result = 1;
                 break;
             }
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         } else if ((input_edge & 8) != 0) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -2;
             break;
         } else if ((input_edge & 2) != 0) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         } else if ((input_edge & 0x100) != 0) {
             if (mode <= 1) {
-                page = Modulo(page + 1, 3);
+                page = ((page + 1) % 3);
                 dirty = 2;
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
             }
         } else if ((input_held & 32) != 0) {
             if (page <= 1) {
                 cursor[page] = cursor[page] - 1;
                 cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
                 dirty = 1;
             }
         } else if ((input_held & 16) != 0) {
             if (page <= 1) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
                 cursor[page] = cursor[page] + 1;
                 dirty = 1;
@@ -551,20 +499,20 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
     FourObjectMotion_SetSlotPhase(0, 0);
     FourObjectMotion_SetSlotPhase(1, 0);
-    ScheduleCallbackAfterFrames(Menu_UpdateEntryObjectTransforms, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
 
-    render = *(u8 **)gWindowWork;
-    render[0xea6] = 1;
-    UiWindow_CloseIfOpen(&FIELD_AT_OFFSET(state, s32, 0x10c), 1);
+    render = (struct UiRenderWork *)gWindowWork[0];
+    render->menu_busy = 1;
+    UiWindow_CloseIfOpen(&state->help_window, 1);
     WaitFrames(1);
-    UiWindow_UpdateOrCreate(&FIELD_AT_OFFSET(state, s32, 0x10c), 13, 0, 17, 5, 2);
-    UiWindow_CloseIfOpen(&FIELD_AT_OFFSET(state, s32, 0x24), 1);
-    UiWindow_CloseIfOpen(&FIELD_AT_OFFSET(state, s32, 0x34), 1);
-    UiWindow_Commit(FIELD_AT_OFFSET(state, s32, 0x30));
-    UiWindow_Commit(FIELD_AT_OFFSET(state, s32, 0x28));
-    UiWindow_Commit(FIELD_AT_OFFSET(state, s32, 0x10));
-    render = *(u8 **)gWindowWork;
-    render[0xea6] = 0;
+    UiWindow_UpdateOrCreate(&state->help_window, 13, 0, 17, 5, 2);
+    UiWindow_CloseIfOpen(&state->window, 1);
+    UiWindow_CloseIfOpen(&state->second_window, 1);
+    RenderOutput_RedrawSavedRectFar(state->list_window);
+    RenderOutput_RedrawSavedRectFar(state->unknown_window_028);
+    RenderOutput_RedrawSavedRectFar(state->status_window);
+    render = (struct UiRenderWork *)gWindowWork[0];
+    render->menu_busy = 0;
     WaitFrames(1);
     return result;
 }

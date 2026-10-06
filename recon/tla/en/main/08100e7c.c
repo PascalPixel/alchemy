@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
@@ -12,8 +13,6 @@ struct ItemMenuDisplayState {
     u16 busy;
 };
 
-/* The pointer at 0x2128 is cleared beside the variant; its pointer type
-   keeps the two stores apart for the scheduler. */
 struct ItemMenuSavedGraphics {
     u8 reserved_000[0xa8];
     u8 tiles[0x2000];
@@ -42,9 +41,6 @@ struct ItemMenuWork {
 
 extern struct ItemMenuModeState gGameState;
 extern struct ItemMenuDisplayState *gMenuCtrlWork;
-struct ItemMenuWork *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_BumpFree(void *buffer);
 s32 GameFlag_TestFar(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 mode);
@@ -60,15 +56,12 @@ void Menu_SetFirstObjectRowCoordinates(s32 mode);
 void Palette_LightenBankHighlight(s32 palette);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
-void Func_080aa768(void);
+void DjinnMenu_RunScreen(void);
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
 void Menu_ResetTwoResourceEntries(void);
 void ItemMenu_Close(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
-
-/* Open the item menu as a modal view, selecting its story variant, then
-   restore the saved graphics and the caller's menu mode. */
 
 s32 ItemMenu_Run(void)
 {
@@ -118,7 +111,7 @@ s32 ItemMenu_Run(void)
     menu->slot = 0;
     menu->target_slot = 0;
     FourObjectMotion_InitializeBottomRow(menu->window, 0);
-    Func_080aa768();
+    DjinnMenu_RunScreen();
     FourObjectMotion_ClearSlotsAndScheduleAlt();
     Menu_ResetTwoResourceEntries();
     WaitFrames(1);

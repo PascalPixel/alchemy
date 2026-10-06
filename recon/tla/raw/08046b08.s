@@ -361,7 +361,7 @@ Func_08046b08:
 	ldrh r2, [r3, #8]
 	ldrh r3, [r3, #10]
 	str r4, [sp, #0]
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r3, .L_08047114
 	movs r0, #1
 	ldr r3, [r3, #4]
@@ -920,7 +920,7 @@ Func_08046b08:
 	adds r1, #1
 	movs r2, #2
 	movs r3, #2
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	b .L_080472da
 .L_08047228:
 	cmp r2, #3
@@ -969,7 +969,7 @@ Func_08046b08:
 	movs r2, #20
 .L_08047278:
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	b .L_080472da
 .L_08047280:
 	.4byte Data_0805f7d8
@@ -1013,7 +1013,7 @@ Func_08046b08:
 	adds r1, #1
 	movs r2, #7
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 .L_080472da:
 	add r1, sp, #436
 	ldr r3, [r1, #12]
@@ -1200,7 +1200,7 @@ Func_08046b08:
 .L_0804743c:
 	.4byte 0xfffffc00
 .L_08047440:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08047444:
 	.4byte 0xfffffe00
 .L_08047448:
@@ -2230,7 +2230,7 @@ Func_08046b08:
 	ldr r3, [sp, #80]
 	cmp r3, #0
 	beq .L_08047c7a
-	bl Func_0803cca8
+	bl UiWork_ClearValueNameTables
 	movs r3, #128
 	lsls r3, r3, #9
 	ands r3, r5
@@ -2243,7 +2243,7 @@ Func_08046b08:
 	beq .L_08047c54
 	lsrs r0, r0, #17
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	b .L_08047c58
 .L_08047c54:
 	ldr r0, .L_08047cd8
@@ -2672,7 +2672,7 @@ Func_08046b08:
 .L_08047fdc:
 	ldr r0, [sp, #144]
 	mov r1, r8
-	bl Func_080ad1a0
+	bl Owner_GetResistanceValueFar
 	movs r3, #80
 	ldr r2, [sp, #136]
 	str r3, [sp, #0]
@@ -3213,7 +3213,7 @@ Func_08046b08:
 .L_080483de:
 	adds r0, r7, #0
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_0804843c
 	movs r2, #128
 	ldr r1, [sp, #48]
@@ -3239,7 +3239,7 @@ Func_08046b08:
 	ldr r3, [r3]
 	movs r1, #5
 	subs r0, r0, r3
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_08048440
 	ldr r1, [sp, #52]
 	movs r2, #128
@@ -3524,7 +3524,7 @@ Func_08046b08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl Func_0804297c
+	bl UiWindow_DrawPartyStatusContents
 	ldr r2, [r5]
 	movs r3, #0
 	str r3, [r2, #72]

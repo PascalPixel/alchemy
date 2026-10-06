@@ -1,13 +1,12 @@
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
+#include "FIELD.H"
 extern struct EffectRuntime *gEventWork;
-extern u8 Data_03001ebc[];
 
 void Object_SetMode(struct ObjectRuntime *, s32);
-void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *, s32);
 void Audio_PlayCue(s32);
-s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 s32 EffectRuntime_FindSlotByObject(s32 id)
 {
@@ -41,13 +40,13 @@ void EffectRuntime_ReservedNoOp(void)
 void EffectRuntime_SetMode5AndPlayCue(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * 8;
-        object = ((struct EffectRuntimeSlot *)(base + offset + 0x11c))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 5);
         Audio_PlayCue(0x7d);
@@ -58,20 +57,20 @@ void EffectRuntime_SetMode5AndPlayCue(s32 id)
 void EffectRuntime_SetMode7AndLaunch(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * 8;
-        object = ((struct EffectRuntimeSlot *)(base + offset + 0x11c))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         WaitFrames(0x12);
         if (object != NULL)
             Object_SetMode(object, 7);
         Audio_PlayCue(0x92);
         if (object != NULL) {
             object->velocity_y = 0x80000;
-            ObjectDispatch_SetSingleChildField26Far(object, 1);
+            ObjectDispatch_SetSingleChildFlagsFar(object, 1);
         }
     }
 }
@@ -79,13 +78,13 @@ void EffectRuntime_SetMode7AndLaunch(s32 id)
 void EffectRuntime_SetMode4AndPlayCue(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * 8;
-        object = ((struct EffectRuntimeSlot *)(base + offset + 0x11c))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 4);
         Audio_PlayCue(0x7c);
@@ -96,13 +95,13 @@ void EffectRuntime_SetMode4AndPlayCue(s32 id)
 void EffectRuntime_SetMode2(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * 8;
-        object = ((struct EffectRuntimeSlot *)(base + offset + 0x11c))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 2);
     }
@@ -111,26 +110,24 @@ void EffectRuntime_SetMode2(s32 id)
 struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id)
 {
     s32 slot = EffectRuntime_FindSlotByObject(id);
+    struct EffectRuntimeSlot *slot_data;
 
     if (slot == -1)
         return NULL;
-    {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * 8;
-        return ((struct EffectRuntimeSlot *)(base + offset + 0x11c))->object;
-    }
+    slot_data = &gEventWork->slots[slot];
+    return slot_data->object;
 }
 
 void EffectRuntime_ClearCurrentFlags(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * 8;
-        object = ((struct EffectRuntimeSlot *)(base + offset + 0x11c))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             object->animation_kind = 0;
     }
@@ -149,8 +146,7 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
     object_x = x;
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        slot_data = (struct EffectRuntimeSlot *)((u32)gEventWork +
-            slot * sizeof(struct EffectRuntimeSlot) + 0x11c);
+        slot_data = &gEventWork->slots[slot];
         object = slot_data->object;
         if (object != NULL) {
             if (object_x == -1)

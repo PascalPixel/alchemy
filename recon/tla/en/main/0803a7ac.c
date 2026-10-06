@@ -13,15 +13,6 @@ s32 UiWork_IsIdle(struct Work *work);
 
 extern s32 gGameState[];
 
-/* Shows message no in a window centred across the screen and waits until it
- * has printed. Flag 8 places the window high and flag 0x40 lower; otherwise it
- * goes above or below the screen row of the object in game-state word 125.
- * Flag 1 is passed on to the window as its release flag, flag 2 marks text
- * rendering busy while the message shows, flag 0x20 sets the menu busy byte
- * once it has printed, and flag 4 leaves the window open instead of closing
- * it and waiting for it to finish. Ends by clearing the busy byte and the
- * result words and waiting three frames. */
-
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 {
     u8 *base = *(u8 **)((u32)&Data_03001e8c);

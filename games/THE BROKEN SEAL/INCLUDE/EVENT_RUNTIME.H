@@ -3,9 +3,6 @@
 
 #include "TYPES.H"
 
-/*
- * Shared cell work. Overlapping views stay as separate types.
- */
 struct EventValueWork {
     u8 unknown_000[0x1f4];
     s32 value;
@@ -56,8 +53,6 @@ struct EventRuntime {
     s32 side_window;
 };
 
-/* The work pointers gWindowWork starts: the window work first, the event
-   runtime twelve pointers later. */
 struct WorkPointers {
     u8 *window;
     u8 unknown_04[0x2c];

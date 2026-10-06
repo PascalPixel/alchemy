@@ -1,37 +1,7 @@
-/* Places both 12-byte sprite parts from fixed-point screen coordinates,
-   object/ground heights and a two-word scale. Unsigned dimensions and a
-   signed vertical offset share the exact projected-sprite family layout.
-   Complete body and own pools: [0800b074,0800b166), 242 exact bytes.
-   Inter-function alignment at b166 is retained separately and uncredited. */
 #include "TYPES.H"
+#include "ANIMSPR.H"
 
-struct ProjectedSpritePart {
-    u8 unknown_00[4];
-    u16 y : 8;
-    u16 affine : 2;
-    u16 unknown_5 : 6;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 unknown_7 : 2;
-    u8 unknown_08[4];
-};
-
-struct ProjectedSprite {
-    struct ProjectedSpritePart part[2];
-    s32 scale;
-    u8 vram_block;
-    u8 flags;
-    u16 rotation;
-    u8 width;
-    u8 height;
-    s8 offset_x;
-    s8 offset_y;
-    u8 unknown_24;
-    u8 hidden;
-    u8 shadow_flags;
-};
-
-void Render_PlaceSpritePartPair(struct ProjectedSprite *sprite, s32 screen_x,
+void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x,
     s32 height, s32 screen_y, s32 ground_height, s32 *scale)
 {
     u32 half_width = sprite->width >> 1;
@@ -43,7 +13,7 @@ void Render_PlaceSpritePartPair(struct ProjectedSprite *sprite, s32 screen_x,
     s32 scale_y = *scale;
     s32 x;
     s32 y;
-    struct ProjectedSpritePart *shadow;
+    struct AnimationSpritePart *shadow;
 
     if (scale_x > 0x10000 || scale_y > 0x10000) {
         affine = 3;

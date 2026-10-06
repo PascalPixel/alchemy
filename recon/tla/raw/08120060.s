@@ -36,10 +36,10 @@ Func_08120060:
 .L_081200a0:
 	adds r0, r7, #0
 	movs r1, #4
-	bl Func_08013d0c
+	bl QueueIoWriteDelay10
 	adds r0, r7, #0
 	movs r1, #16
-	bl Func_08013c58
+	bl QueueIoWriteDelay6
 	movs r2, #16
 	movs r3, #128
 	lsls r3, r3, #19
@@ -88,7 +88,7 @@ Func_08120060:
 .L_0812010c:
 	.4byte 0x000001ff
 .L_08120110:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08120114:
 	ldr r3, [sp, #4]
 	movs r1, #240

@@ -153,7 +153,7 @@ Func_02000110:
 	movs r0, #12
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #176
 	movs r2, #216
 	movs r0, #12
@@ -203,7 +203,7 @@ Func_02000110:
 	movs r0, #12
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #1
 	movs r0, #12
 	bl ObjectMotion_SetActionVariant
@@ -779,7 +779,7 @@ Func_02000630:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020086ac:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020086b0:
 	.4byte 0x05000100
 .L_020086b4:
@@ -887,7 +887,7 @@ Func_020006bc:
 	movs r0, #13
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {r5, pc}
 .L_02008798:

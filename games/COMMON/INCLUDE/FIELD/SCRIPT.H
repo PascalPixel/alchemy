@@ -4,9 +4,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
 
-/* Command callbacks observe the current script, its signed cursor and
-   condition/repeat state. The operand view below exposes the same work
-   cells for the existing mixed-width set/add/compare operations. */
 struct ScriptInterpreter;
 
 typedef s32 (*ScriptCommand)(struct ScriptInterpreter *);
@@ -24,11 +21,10 @@ struct ScriptInterpreter {
     u8 delay;
 };
 
-/* Script operand work. Mixed widths stay as placed in the image. */
 struct ScriptOperands {
-    u32 script_address;      /* 0x00 */
-    u16 cursor;              /* 0x04; cast to s16 for signed interpretation */
-    u16 unsigned_halfword;   /* 0x06 */
+    u32 script_address;
+    u16 cursor;
+    u16 unsigned_halfword;
     u32 word_08;
     u32 word_0c;
     u32 word_10;

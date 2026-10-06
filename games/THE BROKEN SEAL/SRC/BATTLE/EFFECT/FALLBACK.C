@@ -1,9 +1,19 @@
-/* Battle effects: the fallback transition. An object grows as it glides
-   from above the scene's main object to above the scene position over
-   eleven frames, chimes three times, then throws out sixteen radial camera
-   particles from where it stands and is destroyed. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-#include "EFFECT_0809B11C.H"
+#include "MOTION_OBJECT.H"
+#include "FX_SCENE.H"
+#include "EFFECT_SLOT.H"
+
+#define Camera_WorldToScreen ((void (*)(s32*))Camera_WorldToScreen)
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(struct MotionObject*,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
 
 struct FallbackPosition {
     s32 x;
@@ -11,53 +21,21 @@ struct FallbackPosition {
     s32 z;
 };
 
-struct FallbackObject {
-    u8 reserved_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 reserved_14[4];
-    s32 scale_x;
-    s32 scale_y;
-};
+extern struct BattleFxScene *gEffectWork;
 
-struct FallbackScene {
-    s32 reserved_00;
-    s32 x;
-    s32 y;
-    s32 z;
-    struct FallbackObject *target;
-    u8 reserved_14[0x44];
-    struct EffectSlot records[16];
-};
-
-extern struct FallbackScene *gEffectWork;
-
-struct FallbackObject *Object_Spawn(s32, s32, s32, s32);
-void Object_SetMode(struct FallbackObject *, s32);
-void BattleEffect_InitializeSharedScene(void);
+struct MotionObject *Object_Spawn(s32, s32, s32, s32);
+void Object_SetMode(struct MotionObject *, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
-void Camera_WorldToScreen(s32 *);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, u32, s32 *);
-void EffectSlot_Initialize(struct EffectSlot *, s32, s32, s32);
-void ObjectGroup_SetChildValueUnlessFifteenFar(struct FallbackObject *, s32);
-void Object_Destroy(struct FallbackObject *);
-void BattleFx_UpdateRadialCamera(struct EffectSlot *);
-void BattleFx_PrepareBufferInterpolation(void);
-
-/* The value a tenth of the way per step from one end to the other. */
-static __inline__ s32 Fallback_Interpolate(s32 to, s32 from, s32 step)
-{
-    return from + (to - from) * step / 10;
-}
+void ObjectDispatch_ReleaseFar(struct MotionObject *);
 
 void BattleEffect_RunFallbackObjectTransition(void)
 {
-    struct FallbackScene *scene = gEffectWork;
-    struct FallbackObject *target = scene->target;
-    struct FallbackObject *object;
+    struct BattleFxScene *scene = gEffectWork;
+    struct MotionObject *target = scene->main_object;
+    struct MotionObject *object;
     struct EffectSlot *record;
     struct FallbackPosition position;
     struct FallbackPosition origin;
@@ -86,7 +64,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
         object->x = origin.x + (destination.x - origin.x) * step / 10;
         object->y = origin.y + (destination.y - origin.y) * step / 10;
         object->z = origin.z + (destination.z - origin.z) * step / 10;
-        scale = Fallback_Interpolate(0x10000, 0x4000, step);
+        scale = BattleFx_Interpolate(0x10000, 0x4000, step);
         object->scale_x = scale;
         object->scale_y = scale;
         WaitFrames(1);
@@ -105,7 +83,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
     WaitFrames(10);
     Audio_PlayCue(0x6d);
 
-    record = &scene->records[0];
+    record = &scene->slots[0];
     for (index = 0; index < 16; index++) {
         position.x = object->x;
         position.y = object->y + 0x80000;
@@ -122,7 +100,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
     position.y = object->y + 0x80000;
     position.z = object->z;
     WaitFrames(8);
-    Object_Destroy(object);
+    ObjectDispatch_ReleaseFar(object);
     WaitFrames(4);
     WaitFrames(30);
     BattleFx_PrepareBufferInterpolation();

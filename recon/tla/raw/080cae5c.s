@@ -63,7 +63,7 @@ Func_080cae5c:
 	ldr r3, [sp, #0]
 	adds r0, r6, #0
 	ldrb r1, [r3]
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r2, r11
 	ldrb r1, [r2]
 	movs r3, #3
@@ -82,7 +82,7 @@ Func_080cae5c:
 	ands r3, r2
 	orrs r3, r1
 	strb r3, [r5]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	cmp r7, r0
 	bne .L_080caf32
 	movs r2, #192
@@ -136,4 +136,4 @@ Func_080cae5c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080caf68:
-	.4byte Data_02001024
+	.4byte gSnapshotObjects

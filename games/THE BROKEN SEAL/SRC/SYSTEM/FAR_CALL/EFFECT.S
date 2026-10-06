@@ -1,16 +1,11 @@
-@ Far-call stub table heading the battle effect code at 0x080c9000: fixed 8-byte
-@ veneers, each loading its target into r4 and branching, which the calling
-@ convention permits. No compiler emits them; the shared overlay veneer macro
-@ builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_EffectTable
 FarCall_EffectTable:
-	.global Func_080c9000
+	.global BattleEffect_LoadWorkFar
 	.thumb_func
-Func_080c9000:
+BattleEffect_LoadWorkFar:
 	overlay_veneer BattleEffect_LoadWork
 	.global BattleFx_DispatchByIdRangeFar
 	.thumb_func
@@ -24,17 +19,17 @@ BattleFx_InitializeModeFar:
 	.thumb_func
 BattleFx_DispatchModeFar:
 	overlay_veneer BattleFx_DispatchMode
-	.global Func_080c9020
+	.global BattleFx_RunIceFleckBurstFar
 	.thumb_func
-Func_080c9020:
-	overlay_veneer Unnamed_080cb7f8
+BattleFx_RunIceFleckBurstFar:
+	overlay_veneer BattleFx_RunIceFleckBurst
 	.global BattleEffect_RunTileAndPaletteAnimationFar
 	.thumb_func
 BattleEffect_RunTileAndPaletteAnimationFar:
 	overlay_veneer BattleEffect_RunTileAndPaletteAnimation
-	.global Func_080c9030
+	.global BattleFx_RunGatheringBurstFar
 	.thumb_func
-Func_080c9030:
+BattleFx_RunGatheringBurstFar:
 	overlay_veneer BattleFx_RunGatheringBurst
 	.global BattlePresentation_PrepareSceneFar
 	.thumb_func

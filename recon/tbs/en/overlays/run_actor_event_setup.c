@@ -12,22 +12,16 @@ void FieldScene_RunScene3a2SequenceA();
 u8 * Object_GetById();
 void Engine_ActorSetSpriteFlags();
 void ActorPresentation_PrepareActorFourteenWithCallback();
-void FieldScene_SetSlot15Byte89AndRunStep();
+void YamaRama_DisableActorCollision();
 void Engine_GameFlagSet();
 void Engine_MapCopyCellsTo();
 s32 Engine_ActorEnableActionCallback();
 void Scene_RunActorExchange();
 
-
 extern u8 Data_0000004a[];
 extern u8 Data_00000058[];
 extern u8 gGameState[];
 extern s16 Data_02000240_t[][1];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -54,10 +48,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* NONMATCHING: 744 of 744 bytes, 2 halfword edits (2026-09-24). The reference
- * loads the gGameState base after the event-work store; here it is
- * scheduled first. A do-while wrap, volatile spellings and a local for the
- * area id did not move it. */
 s32 Func_020011b0(void)
 {
     u32 i;
@@ -103,7 +93,7 @@ s32 Func_020011b0(void)
             }
             if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
                 Engine_ActorSetAnimation(15, 4);
-                FieldScene_SetSlot15Byte89AndRunStep();
+                YamaRama_DisableActorCollision();
             }
             if ((u32)(((u16)Data_02000240_t[225][0] - 4) << 16) <= 0x10000) {
                 Call1(Engine_GameFlagClear, 0x12f);

@@ -1,12 +1,3 @@
-/* Packed ability-event match trial, 2026-10-02.
- * EN ordinary compiler: 288 bytes versus the listing's 284-byte extent;
- * score 1510 (25 register, 5 operand, 11 reordered, 4 inserted, 2 deleted).
- * Byte-width, signed-command and branch reshapes scored 1689/1650/1754,
- * so this retains the initial ordinary typed form.
- * Traverses the same 12-byte event records as the selector draft.
- * No steering device. EN-only listing score; complete six-edition linked
- * body, pools, call identities and storage ownership remain unproved.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 struct PendingAction { u8 unknown_00[6]; u8 event_kind; u8 unknown_07[9]; };
@@ -15,7 +6,7 @@ struct PendingEventList { u8 unknown_00[16]; struct PendingEventRecord *events; 
 struct PendingFacingObject { u8 unknown_00[6]; u16 facing; };
 const struct PendingAction *BattleAction_Get(s32 action);
 struct PendingFacingObject *ObjectTable_Get(u32 owner);
-s32 Func_080cdf5c(void);
+s32 EventRuntime_GetControlledOwner(void);
 s32 Func_080cb09c(void);
 s32 Func_080cb144(void);
 s32 GameFlag_IsConditionActive(s32 condition);
@@ -24,7 +15,7 @@ s32 Func_080cdac0(s32 kind, s32 owner, s32 target);
 struct PendingEventRecord *Func_080ce458(u32 filter, s32 kind, s32 selector)
 {
  struct PendingEventRecord *event = ((struct PendingEventList *)Ram_HeapSlots->event_work)->events;
- s32 facing = ObjectTable_Get(Func_080cdf5c())->facing;
+ s32 facing = ObjectTable_Get(EventRuntime_GetControlledOwner())->facing;
  s32 low = selector & 255;
  s32 high = selector & 0xff00;
 

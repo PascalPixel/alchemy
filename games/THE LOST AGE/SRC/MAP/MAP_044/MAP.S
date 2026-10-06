@@ -1,4 +1,3 @@
-@ Field_Map044: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map044

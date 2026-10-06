@@ -1,3 +1,13 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -9,18 +19,14 @@ struct SceneEffectOrigin {
 struct SceneEffectWork {
     struct SceneEffectOrigin *origin;
 };
-extern struct SceneEffectWork *gCam;
 
-/* The spread of the falling effect, in the overlay's work past its image. */
 s32 gFallingEffectOffset __attribute__((section(".bss")));
 s32 gFallingEffectWidth __attribute__((section(".bss")));
 u32 gFallingEffectState __attribute__((section(".bss")));
-extern const s32 gFallingEffectScript[];
 
 void FieldScene_UpdateFallingEffect(void)
 {
-    /* FAKEMATCH: object starts as a meaningless null; the reference keeps that
-       zero in r5 from the prologue and stores it when state 3 ends. */
+    /* FAKEMATCH: object starts as a meaningless null; the reference keeps that zero in r5 from the prologue and stores it when state 3 ends. */
     struct FieldActor *object = 0;
     struct SceneEffectOrigin *origin;
     struct FieldSprite *sprite;
@@ -49,7 +55,7 @@ void FieldScene_UpdateFallingEffect(void)
         break;
     }
     if ((gFrameCount & 7) == 0 && (object = Engine_ObjectCreate(285, 0, 0, 0)) != 0) {
-        origin = gCam->origin;
+        origin = ((struct SceneEffectWork *)gMapWork[0])->origin;
         if ((gFrameCount & 63) == 0)
             Engine_AudioPlayCue(246);
         if (gFallingEffectState != 0)

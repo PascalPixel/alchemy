@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dc7e8
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_080dc7e8:
+BattleEffect_CleanupSceneObjects:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -67,8 +67,8 @@ Func_080dc7e8:
 	asrs r3, r3, #24
 	cmp r3, #0
 	bne .L_080dc942
-	bl Func_080e137c
-	bl Func_080e1650
+	bl BattleFx_WaitForArcGroups
+	bl BattleFx_EndArcEffect
 	movs r3, #197
 	lsls r3, r3, #1
 	add r3, r11
@@ -173,7 +173,7 @@ Func_080dc7e8:
 	movs r3, #1
 	strb r3, [r2]
 .L_080dc938:
-	bl Func_080d2c98
+	bl Event_NoOp
 	movs r0, #224
 	bl Runtime_ReleaseHeapBlock
 .L_080dc942:

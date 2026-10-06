@@ -1,3 +1,15 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -13,36 +25,16 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
-extern struct BattleCamera *gCameraWork;
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-u32 Resource_DecodeType01(const void *source, void *destination);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
+
 void Audio_PlayCue(s32 cue);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
-void Graphics_RestoreTransferWork(void);
-void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
-extern u16 ParticleStreams_CellOffsets[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect opening shared by the djinn effects: thirty-two sparks spin
-   out of the acting unit and are pulled back in while the gathering point
-   travels to the place the anchor picks; a djinn of the kind's colour then
-   appears there, its screen position goes back to the caller, and a burst of
-   sixty-four motes flies out of it. Kinds above three run twenty frames
-   longer and fade the blend out at the end. */
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y)
 {
@@ -56,7 +48,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw[2];
-    void *sheet;
+    u8 *sheet;
     s32 total;
     struct MotionObject *target;
     struct MotionObject *actor;
@@ -73,9 +65,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    /* FAKEMATCH: the canvas size sits in a local set here, well ahead of
-       the two clears that use it; as a literal at the calls GCC keeps it in
-       one register across them, where the ROM builds it at each call. */
+    /* FAKEMATCH: the canvas size sits in a local set here, well ahead of the two clears that use it; as a literal at the calls GCC keeps it in one register across them, where the ROM builds it at each call. */
     size = 0x4000;
     work->fade_frames = 24;
     work->fade_step = 0;
@@ -104,14 +94,14 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     Resource_DecodeType01(palette + 128, work);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (side == 1) {
-        BattleEffect_LoadWork(46, 7, 7, 7, 3);
-        BattleEffect_LoadWork(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
     } else {
-        BattleEffect_LoadWork(46, 7, 7, 3, 3);
-        BattleEffect_LoadWork(47, 7, 7, 3, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     }
-    draw[0] = gWorkSlot[46];
-    draw[1] = gWorkSlot[47];
+    draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 64; i++) {
@@ -129,7 +119,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     base[0] = actor->x;
     base[1] = 0;
     base[2] = actor->z;
@@ -167,11 +157,11 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         struct BattleCamera *camera = gCameraWork;
 
         if (frame > 75)
-            *(volatile u16 *)0x04000052 = (168 - frame * 2) | 0x1000;
+            REG_BLDALPHA = (168 - frame * 2) | 0x1000;
         if (frame == 8)
             Audio_PlayCue(212);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= 6 && frame <= 45) {
             base[0] += step[0];
             base[1] += step[1];
@@ -212,7 +202,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
                 if (position.depth > 634)
                     position.depth = 634;
                 size = 8 - (position.depth - 250) / 64;
-                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(spark, 60, 0);
                 if (frame >= i / 8 + 24) {
@@ -261,7 +251,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
                 if (mote->variant >= 0) {
                     s32 size = (mote->variant >> 3) + 2;
 
-                    draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                     EffectStep_AdvanceWithGravity2D(mote, 60, 0);
                     mote->variant--;
@@ -271,11 +261,11 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     Iwram_ClearWords((void *)0x06004000, size);
     Iwram_ClearWords(canvas, size);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
 }

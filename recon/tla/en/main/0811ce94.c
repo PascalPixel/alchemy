@@ -1,11 +1,3 @@
-/*
- * Draft: BattleEscape_CheckSuccess, ported from its ☀️ twin; it follows
- * BattleUnit_ClearField12bForGroup in SRC/BATTLE/BATTLE2.C. Score 200: the
- * listing sets the first ListLivingUnits argument (movs r0, #1) and the
- * first level total (movs r6, #0) before the chance is computed, where this
- * sets them after; and it loads gPartyState's address before the split
- * constant 0x24b, where this builds the constant first.
- */
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_ESCAPE.H"

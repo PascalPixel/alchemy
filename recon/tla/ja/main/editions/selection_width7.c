@@ -1,6 +1,3 @@
-/* Draft: fresh Japanese complete 236-byte selection measurement differs only
-   in the menu row immediate, 7 here versus the native 5. Both calls and the
-   two 12-byte indexed table owners are now defined at their actual bytes. */
 #include "TLA_EDITION.H"
 #undef SELECT_MENU_WIDTH
 #define SELECT_MENU_WIDTH 7
@@ -11,7 +8,6 @@
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
-/* ☀️'s, reaching the selection work through ⚓️'s heap slot. */
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {
     u8 *state;

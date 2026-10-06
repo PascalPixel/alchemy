@@ -1,6 +1,14 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 
-s32 BattleFx_RunSevenMode(s32, s32);
 
 void BattleFx_RunSevenModeMode4(s32 arg0)
 {

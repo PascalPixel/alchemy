@@ -1,14 +1,8 @@
-/*
- * Draft: Menu_MoveSelectionForward does not yet match; 5 halfwords differ from ☀️'s C, first at +0x5a (ldrh r3, [r0, #0]).
- * Links as recon/tla/raw/0803e918.s.
- */
 #include "LAYOUT_GUARD.H"
 
-/* The node window status while it scrolls, and once it has settled. */
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 
-/* Rows visible in the selection list. */
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
@@ -44,7 +38,6 @@ void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, u32 down);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
 
-/* Moves the cursor down one row, scrolling the list at the bottom row. */
 void Menu_MoveSelectionForward(struct SelectionScreen *screen)
 {
     u32 end = screen->top + screen->cursor + 1;

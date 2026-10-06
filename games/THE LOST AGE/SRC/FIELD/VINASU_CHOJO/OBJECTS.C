@@ -1,21 +1,51 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-/* The two bytes the lighthouse top's objects are set up with. */
-struct OverlayObject {
-    u8 unknown_00[0x55];
-    u8 unknown_55;
-    u8 unknown_56[3];
-    u8 unknown_59;
-};
+#define ObjectDispatch_SetSingleChildFlags ((void (*)(struct FieldActor*,s32))ObjectDispatch_SetSingleChildFlags)
 
-void ObjectDispatch_SetSingleChildField26(struct OverlayObject *object, s32 value);
-void Object_SetPartAttribute(struct OverlayObject *object, s32 value);
+#define Object_SetPartAttribute ((void (*)(struct FieldActor*,s32))Object_SetPartAttribute)
 
-/* ☀️'s ConfigureOverlayObject, under ⚓️'s names for what it calls. */
-void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter)
+
+void ConfigureOverlayObject(struct FieldActor *object, s32 parameter)
 {
-    object->unknown_55 = 0;
-    object->unknown_59 = 8;
-    ObjectDispatch_SetSingleChildField26(object, 0);
+    object->motion_flags = 0;
+    object->collision_flags = 8;
+    ObjectDispatch_SetSingleChildFlags(object, 0);
     Object_SetPartAttribute(object, parameter);
+}
+
+
+struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind)
+{
+    struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
+
+    if (object != 0) {
+        Object_SetSpritePriority(object, 0);
+        ConfigureOverlayObject(object, 14);
+        Animation_SetStateFlags(object, 1);
+        return object;
+    }
+    return 0;
+}
+
+struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
+{
+    struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
+
+    if (object != 0) {
+        Object_SetSpritePriority(object, 1);
+        ConfigureOverlayObject(object, 15);
+        object->priority_flags |= 2;
+        return object;
+    }
+    return 0;
 }

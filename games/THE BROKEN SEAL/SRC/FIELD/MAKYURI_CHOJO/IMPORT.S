@@ -1,7 +1,3 @@
-@ Import veneers after the MAKYURI_CHOJO overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — MAKYURI_CHOJO overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -30,10 +26,10 @@ Engine_MathSin:
 	.thumb_func
 Engine_MathCos:
 	overlay_veneer Trig_CosFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -60,15 +56,15 @@ Engine_MapCopyCellsTo:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global SetOverlayObjectMode
 	.thumb_func
 SetOverlayObjectMode:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global RunOverlayObjectCommand1
 	.thumb_func
 RunOverlayObjectCommand1:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
@@ -85,14 +81,14 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBitFar
+	.global Engine_GameFlagClear
 	.thumb_func
-GameFlag_ClearBitFar:
-	overlay_veneer Func_080770d0
-	.global Owner_RefreshRatiosOnFlagFar
+Engine_GameFlagClear:
+	overlay_veneer GameFlag_ClearBitFar
+	.global Owner_RefreshRatiosOnFlag
 	.thumb_func
-Owner_RefreshRatiosOnFlagFar:
-	overlay_veneer Func_08077268
+Owner_RefreshRatiosOnFlag:
+	overlay_veneer Owner_RefreshRatiosOnFlagFar
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
@@ -121,10 +117,10 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	.global ObjectMotion_SetPositionAndCommitFar
+	.global Engine_ActorMoveToAndWait
 	.thumb_func
-ObjectMotion_SetPositionAndCommitFar:
-	overlay_veneer Func_0808a0c0
+Engine_ActorMoveToAndWait:
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
 Engine_ActorWalkTo:
@@ -157,10 +153,10 @@ Engine_ActorStartRepeatedMotion:
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Object_LinkPairFar
+	.global Engine_ActorFaceEachOther
 	.thumb_func
-Object_LinkPairFar:
-	overlay_veneer Func_0808a150
+Engine_ActorFaceEachOther:
+	overlay_veneer Object_LinkPairFar
 	.global Engine_ActorSetChildValue
 	.thumb_func
 Engine_ActorSetChildValue:
@@ -172,14 +168,14 @@ ObjectGroup_SetChildValue:
 	.thumb_func
 SetOverlayObjectSlot:
 	overlay_veneer ObjectGroup_SetChildValueFar
-	.global Event_SetValue1d8Far
+	.global Engine_EventSetMessage
 	.thumb_func
-Event_SetValue1d8Far:
-	overlay_veneer Func_0808a170
-	.global UiText_OpenMessageAtObjectFar
+Engine_EventSetMessage:
+	overlay_veneer Event_SetMessageIdFar
+	.global Engine_EventOpenMessage
 	.thumb_func
-UiText_OpenMessageAtObjectFar:
-	overlay_veneer Func_0808a178
+Engine_EventOpenMessage:
+	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
@@ -216,14 +212,14 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Battle_GetWorkObject1e0Far
+	.global Engine_EventGetViewCenter
 	.thumb_func
-Battle_GetWorkObject1e0Far:
-	overlay_veneer Func_0808a228
+Engine_EventGetViewCenter:
+	overlay_veneer Battle_GetWorkObject1e0Far
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -247,11 +243,11 @@ Engine_ColorBufferInterpolate:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_PsynergyPlayEffect
 	.thumb_func
 Engine_PsynergyPlayEffect:
@@ -268,18 +264,18 @@ Engine_PsynergySetTarget:
 	.thumb_func
 Engine_PsynergyLowerHands:
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
-	.global BattleEffect_CleanupSceneObjectsFar
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-BattleEffect_CleanupSceneObjectsFar:
-	overlay_veneer Func_0808a440
+BattleEffect_CleanupSceneObjects:
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Engine_PsynergyRaiseHands
 	.thumb_func
 Engine_PsynergyRaiseHands:
 	overlay_veneer EventObject_InitializeFar
-	.global Audio_PlayCueFromEventWorkFar
+	.global Audio_PlayCueFromEventWork
 	.thumb_func
-Audio_PlayCueFromEventWorkFar:
-	overlay_veneer Func_0808a4f0
+Audio_PlayCueFromEventWork:
+	overlay_veneer Audio_PlayCueFromEventWorkFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

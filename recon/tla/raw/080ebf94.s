@@ -12,7 +12,7 @@ Func_080ebf94:
 	adds r1, r7, #0
 	adds r1, #32
 	str r1, [sp, #4]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	movs r5, #0
 	str r5, [sp, #12]
@@ -156,7 +156,7 @@ Func_080ebf94:
 	ldr r3, [r7, #8]
 	adds r2, #4
 	str r3, [r2]
-	bl Func_08038398
+	bl Resource_LoadFixedBlockBIntoFreeSlotFar
 	strh r0, [r7, #2]
 	ldr r2, .L_080ec140
 	ldrh r3, [r7, #2]
@@ -203,7 +203,7 @@ Func_080ebf94:
 	add sp, #20
 	pop {r5, r6, r7, pc}
 .L_080ec128:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec12c:
 	.4byte 0x0001ffff
 .L_080ec130:

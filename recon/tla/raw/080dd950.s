@@ -39,7 +39,7 @@ Func_080dd950:
 	bl Func_080dd748
 	movs r1, #1
 	adds r0, r5, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #1
 	bl BattleFx_StartBufferInterpolation
 	movs r0, #0
@@ -47,7 +47,7 @@ Func_080dd950:
 	bl BattleFx_ApplyColorToSourceBuffer
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #30
 	bl BattleFx_StartBufferInterpolation
 	movs r0, #1
@@ -66,7 +66,7 @@ Func_080dd950:
 	ldrsh r1, [r7, r2]
 	movs r3, #26
 	ldrsh r2, [r7, r3]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080dd9e8:
 	adds r3, r7, #0
 	adds r3, #52

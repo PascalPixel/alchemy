@@ -1,66 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {r5, lr}
-	movs r1, #128
-	lsls r1, r1, #7
-	adds r1, #132
-	adds r5, r0, #0
-	movs r0, #8
-	bl Func_02002a34
-	bl Func_02002a44
-	movs r0, #5
-	bl Object_GetById
-	movs r1, #2
-	bl Func_02002a5c
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #0
-	bl Func_020023a4
-	movs r0, #5
-	bl Object_GetById
-	movs r1, #0
-	bl Func_02002a5c
-	bl Func_02002a54
-	bl Func_02002a4c
-	movs r0, #8
-	.ifdef TLA_EDITION_ES
-	bl Field_EndActorSpriteEffect
-	.else
-	.ifdef TLA_EDITION_IT
-	bl Field_EndActorSpriteEffect
-	.else
-	bl Field_BeginPaletteTransition
-	.endif
-	.endif
-	pop {r5, pc}
-	.section .text.x0200809c,"ax",%progbits
-	.global Func_0200009c
-	.thumb_func
-Func_0200009c:
-	push {r5, lr}
-	adds r5, r0, #0
-	ldr r2, [r5, #12]
-	ldr r3, [r5, #16]
-	ldr r1, [r5, #8]
-	adds r5, #100
-	bl Func_0200260c
-	ldrh r2, [r5]
-	movs r3, #224
-	adds r2, #1
-	strh r2, [r5]
-	lsls r3, r3, #11
-	lsls r2, r2, #16
-	ands r3, r2
-	cmp r3, #0
-	bne .L_020080c4
-	movs r0, #125
-	bl Func_02002a64
-.L_020080c4:
-	pop {r5, pc}
+	.section .text.x020080c6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020080c8,"ax",%progbits
 	.global Func_020000c8
@@ -97,13 +37,13 @@ Func_020000c8:
 	strb r3, [r7]
 	movs r0, #30
 	bl Battle_WaitMode0
-	bl Func_020027b0
+	bl VinasuIriguchi_StopSparks
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200811c:
-	.4byte Func_0200009c
+	.4byte VinasuIriguchi_UpdateSparkTrail
 	.section .text.x02008128,"ax",%progbits
 	.global Func_02000128
 	.thumb_func
@@ -384,8 +324,8 @@ Func_0200030c:
 	negs r1, r1
 	lsls r0, r0, #17
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #4
@@ -393,7 +333,7 @@ Func_0200030c:
 	movs r0, #10
 	bl Object_SetModeById
 	movs r0, #165
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r1, #176
 	movs r2, #128
 	movs r3, #176
@@ -436,7 +376,7 @@ Func_0200030c:
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #165
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #10
 	bl ObjectMotion_CommitCurrentPositionAndActivate
 	movs r0, #11
@@ -465,7 +405,7 @@ Func_02000440:
 	movs r0, #0
 	bl Func_020029cc
 	movs r0, #165
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #10
 	movs r1, #3
 	bl Object_SetModeById
@@ -1518,7 +1458,7 @@ Func_02000510:
 	movs r1, #2
 	bl Func_02002a5c
 	movs r0, #178
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #128
@@ -1530,7 +1470,7 @@ Func_02000510:
 	bl Battle_WaitMode0
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r1, #0
 	movs r0, #12
 	bl ObjectMotion_SetActionVariant
@@ -1877,7 +1817,7 @@ Func_02000510:
 .L_02009220:
 	.4byte 0x00013333
 .L_02009224:
-	.4byte Func_0200009c
+	.4byte VinasuIriguchi_UpdateSparkTrail
 .L_02009228:
 	adds r3, r7, #0
 	adds r3, #100
@@ -1980,7 +1920,7 @@ Func_02000510:
 	movs r0, #17
 	bl Object_SetModeById
 	movs r0, #133
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	ldr r3, [r7, #8]
 	movs r2, #128
 	lsls r2, r2, #12
@@ -2028,19 +1968,19 @@ Func_02000510:
 	movs r0, #17
 	bl Object_SetModeById
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #20
@@ -2075,7 +2015,7 @@ Func_02000510:
 	movs r1, #0
 	movs r0, #17
 	bl Func_0200290c
-	bl Func_020027b0
+	bl VinasuIriguchi_StopSparks
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #4
@@ -2978,7 +2918,7 @@ Func_02001c30:
 	bl Object_GetById
 	movs r5, #192
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	lsls r5, r5, #18
 	movs r1, #0
 	movs r0, #5
@@ -2989,8 +2929,8 @@ Func_02001c30:
 	adds r3, r3, r2
 	movs r2, #60
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r0, .L_02009fc8
@@ -3044,7 +2984,7 @@ Func_02001c30:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #50
 	movs r0, #5
 	movs r1, #6
@@ -3415,7 +3355,7 @@ Func_02001fd0:
 	adds r3, r6, r0
 	strb r1, [r3]
 	movs r0, #134
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 .L_0200a0bc:
 	movs r3, #128
 	lsls r3, r3, #4
@@ -3521,7 +3461,7 @@ Func_02001fd0:
 	bne .L_0200a17c
 	movs r0, #155
 	lsls r0, r0, #1
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 .L_0200a17c:
 	movs r2, #0
 	ldrsh r3, [r5, r2]
@@ -3549,7 +3489,7 @@ Func_02001fd0:
 	cmp r3, #0
 	bne .L_0200a1c2
 	movs r0, #144
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #192
 	movs r1, #192
 	movs r2, #128
@@ -3938,14 +3878,14 @@ Func_020023a4:
 	bl Func_0200285c
 	mov r0, r8
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r2, r8
 	adds r2, #35
 	movs r3, #2
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r2, [r6, #80]
 	movs r3, #128
 	lsls r3, r3, #7
@@ -3990,7 +3930,7 @@ Func_020023a4:
 .L_0200a524:
 	.4byte 0xfff40000
 .L_0200a528:
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200a588
@@ -4305,29 +4245,6 @@ Func_020026f4:
 .L_0200a7a8:
 	.4byte 0x000001e1
 .L_0200a7ac:
-	.4byte Func_0200258c
-	.section .text.x0200a7b0,"ax",%progbits
-	.global Func_020027b0
-	.thumb_func
-Func_020027b0:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #220
-	ldr r0, .L_0200a7d8
-	ldr r5, [r3]
-	bl Scheduler_RemoveCallbackFar
-	movs r3, #132
-	lsls r3, r3, #6
-	adds r3, #132
-	adds r5, r5, r3
-	movs r3, #0
-	ldrsh r0, [r5, r3]
-	bl Resource_ResetEntry
-	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
-	pop {r5, pc}
-.L_0200a7d8:
 	.4byte Func_0200258c
 	.section .rodata.x0200aa6c,"a",%progbits
 	.global Data_02002a6c
@@ -4690,7 +4607,7 @@ gSceneEvents:
 	.4byte 0x00001608
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte Func_02000054
+	.4byte VinasuIriguchi_RunActorSparkBurst
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_020000c8

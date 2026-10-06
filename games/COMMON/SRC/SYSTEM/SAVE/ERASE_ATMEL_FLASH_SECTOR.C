@@ -1,5 +1,6 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 extern FlashWaitProc Flash_Handler3;
 
@@ -12,8 +13,8 @@ u16 EraseAtmelFlashSector(u16 sector)
     u16 result;
 
     cursor = (u8 *)(0x0E000000 + (sector << info[28]));
-    saved = *(volatile u16 *)0x04000208;
-    *(volatile u16 *)0x04000208 = 0;
+    saved = REG_IME;
+    REG_IME = 0;
     *(volatile u8 *)0x0E005555 = 0xAA;
     *(volatile u8 *)0x0E002AAA = 0x55;
     *(volatile u8 *)0x0E005555 = 0xA0;
@@ -24,7 +25,7 @@ u16 EraseAtmelFlashSector(u16 sector)
         count--;
     }
     cursor--;
-    *(volatile u16 *)0x04000208 = saved;
+    REG_IME = saved;
     result = Flash_Handler3(1, cursor, 0xFF);
     if (result != 0) {
         result = (result & 0xFF00) | 2;

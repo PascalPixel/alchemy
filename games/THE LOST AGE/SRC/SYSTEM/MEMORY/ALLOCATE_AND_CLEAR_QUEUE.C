@@ -1,37 +1,25 @@
+#include "RUNTIME_MEM.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-
-struct SubQueueItem_08011b00 {
-    u32 unknown_00;
-    u16 unknown_04;
-    u16 unknown_06;
-    u16 unknown_08;
-    u16 unknown_0a;
-    u16 unknown_0c[16];
-};
-
-struct Queue_08011b00 {
-    struct SubQueueItem_08011b00 slots[4];
-    u16 count;
-};
+#include "PALQUEUE.H"
 
 void Runtime_AllocateAndClearQueue(void)
 {
-    struct Queue_08011b00 *queue;
-    struct SubQueueItem_08011b00 *entry;
+    struct PaletteSnapshotWork *queue;
+    struct PaletteSnapshot *entry;
     u16 i;
     u16 j;
 
-    queue = (struct Queue_08011b00 *)Runtime_AllocateBlock(112, sizeof(struct Queue_08011b00));
-    entry = queue->slots;
+    queue = Runtime_AllocateBlock(112, sizeof(struct PaletteSnapshotWork));
+    entry = queue->entries;
     for (i = 0; i != 4; i++) {
-        entry->unknown_00 = 0;
-        entry->unknown_04 = 0;
-        entry->unknown_06 = 0;
-        entry->unknown_08 = 0;
-        entry->unknown_0a = 0;
+        entry->source = 0;
+        entry->position = 0;
+        entry->timer = 0;
+        entry->delay = 0;
+        entry->count = 0;
         for (j = 0; j != 16; j++) {
-            entry->unknown_0c[j] = 0;
+            entry->colors[j] = 0;
         }
         entry++;
     }

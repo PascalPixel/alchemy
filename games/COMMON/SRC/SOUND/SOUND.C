@@ -1,7 +1,6 @@
 #include "AUDIO_ENGINE.H"
 #include "RAM_BUFFER.H"
 
-/* Shared driver settings, as MusicPlayer2000's C configuration supplies them. */
 #define SOUND_PLAYER_COUNT 8
 #define SOUND_MAX_LINES 0
 #define SOUND_CLEAR_CONTROL 0x05000040
@@ -10,7 +9,6 @@
 
 void Sound_Mixer(void);
 void AudioEngine_Initialize(struct SoundWork *work);
-void CgbAudio_Initialize(struct SoundNote *notes);
 void AudioEngine_SetMode(u32 mode);
 void AudioEngine_RunMixerTick(void);
 void MusicPlayer_Initialize(struct SoundPlayer *player, struct SoundTrack *tracks, u8 count);
@@ -18,9 +16,8 @@ void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHead
 void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
-void AudioCommand_InvokeSlot35(void *block);
 extern struct SoundWork Sound_Work;
-extern struct SoundNote Sound_CgbNotes[4];
+extern struct CgbNote Sound_CgbNotes[4];
 extern u8 Sound_WorkBytes[];
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];
@@ -28,7 +25,6 @@ extern const struct SongEntry Sound_SongTable[];
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_SetLfoSpeedFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_SetModulationFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_ReleaseKey(struct SoundPlayer *player, struct SoundTrack *track);
 void AudioEngine_SetPcmRate(u32 mode);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
@@ -43,7 +39,7 @@ void Audio_ResumePlayer(struct SoundPlayer *player)
 {
     if (player->lock == SOUND_LOCK) {
         player->lock++;
-        player->status &= 0x7fffffff;
+        player->status &= ~SOUND_PLAYER_PAUSED;
         player->lock = SOUND_LOCK;
     }
 }
@@ -65,8 +61,7 @@ void Audio_Initialize(void)
     /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
     u32 total;
     s32 i;
-    /* FAKEMATCH: keep the slot cursor in r5 across the library calls. */
-    register const struct PlayerSlot *slots asm("r5");
+    const struct PlayerSlot *slots;
     /* FAKEMATCH: the work-area literal loads straight into the store's r0. */
     register u8 *bytes asm("r0");
 
@@ -125,7 +120,7 @@ void Audio_PlaySoundIfInactive(u16 id)
 
     if (player->header != song->header)
         MusicPlayer_StartSong(player, song->header);
-    else if ((player->status & 0xFFFF) == 0 || (player->status & 0x80000000))
+    else if ((player->status & 0xFFFF) == 0 || (player->status & SOUND_PLAYER_PAUSED))
         MusicPlayer_StartSong(player, song->header);
 }
 
@@ -140,7 +135,7 @@ void Audio_PlayOrResumeSound(u16 id)
         MusicPlayer_StartSong(player, song->header);
     else if ((player->status & 0xFFFF) == 0)
         MusicPlayer_StartSong(player, song->header);
-    else if (player->status & 0x80000000)
+    else if (player->status & SOUND_PLAYER_PAUSED)
         Audio_ResumePlayer(player);
 }
 
@@ -172,8 +167,7 @@ void Audio_StopAllPlayers(void)
     /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
     u32 total;
     s32 i;
-    /* FAKEMATCH: keep the slot cursor in r5 and the countdown in r4. */
-    register const struct PlayerSlot *slots asm("r5");
+    const struct PlayerSlot *slots;
 
     /* FAKEMATCH: retain the count's literal load, extension and zero guard. */
     asm volatile("ldr %0, .LSoundStopCount" : "=r"(total));
@@ -207,8 +201,7 @@ void Audio_ResumeAllPlayers(void)
     /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
     u32 total;
     s32 i;
-    /* FAKEMATCH: keep the slot cursor in r5 and the countdown in r4. */
-    register const struct PlayerSlot *slots asm("r5");
+    const struct PlayerSlot *slots;
 
     /* FAKEMATCH: retain the count's literal load, extension and zero guard. */
     asm volatile("ldr %0, .LSoundResumeCount" : "=r"(total));
@@ -254,7 +247,7 @@ void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed)
         player->fade_counter = speed;
         player->fade_period = speed;
         player->fade_volume = 2;
-        player->status &= 0x7FFFFFFF;
+        player->status &= ~SOUND_PLAYER_PAUSED;
         player->lock = SOUND_LOCK;
     }
 }
@@ -265,10 +258,10 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
     struct SoundTrack *track = player->tracks;
 
     while (count > 0) {
-        if (track->flags & 0x80) {
-            if (track->flags & 0x40) {
+        if (track->flags & SOUND_TRACK_ACTIVE) {
+            if (track->flags & SOUND_TRACK_RESET) {
                 AudioCommand_InvokeSlot35(track);
-                track->flags = 0x80;
+                track->flags = SOUND_TRACK_ACTIVE;
                 track->bend_range = 2;
                 track->volume_scale = 0x40;
                 track->lfo_speed = 22;
@@ -280,7 +273,7 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
     }
 }
 
-void CgbAudio_Initialize(struct SoundNote *notes)
+void CgbAudio_Initialize(struct CgbNote *notes)
 {
     struct SoundWork *work;
     u32 lock;
@@ -289,16 +282,16 @@ void CgbAudio_Initialize(struct SoundNote *notes)
     u32 limit;
     u32 control;
 
-    *(u16 *)0x04000084 = 0x8F;
-    *(u16 *)0x04000080 = 0;
-    *(u8 *)0x04000063 = 8;
-    *(u8 *)0x04000069 = 8;
-    *(u8 *)0x04000079 = 8;
-    *(u8 *)0x04000065 = 0x80;
-    *(u8 *)0x0400006D = 0x80;
-    *(u8 *)0x0400007D = 0x80;
-    *(u8 *)0x04000070 = 0;
-    *(u8 *)0x04000080 = 0x77;
+    REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
+    REG_SOUNDCNT_L = 0;
+    REG_NR12 = 8;
+    REG_NR22 = 8;
+    REG_NR42 = 8;
+    REG_NR14 = 0x80;
+    REG_NR24 = 0x80;
+    REG_NR44 = 0x80;
+    REG_NR30 = 0;
+    REG_NR50 = 0x77;
 
     work = SOUND_WORK;
     lock = work->lock;

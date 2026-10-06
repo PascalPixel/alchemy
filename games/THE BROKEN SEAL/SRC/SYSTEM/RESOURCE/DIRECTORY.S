@@ -1,8 +1,3 @@
-@ The resource directory Resource_GetTableEntry indexes: one word per
-@ resource number, the address of the resource's first byte. A named row
-@ defines ResourceId_<name> as its own row number, so the resource numbers
-@ the code loads are these rows. Rows are labels, never numbers; an empty
-@ row is 0.
 	.macro resource name, place:req
 	.ifnb \name
 	.global ResourceId_\name
@@ -32,10 +27,10 @@ Resource_DirectoryTable:
 	resource , FarCall_BlankLoadTable
 	resource , FarCall_SoundTable
 	resource , FarCall_SoundTable
-	resource , FarCall_ResourceTable
-	resource , FarCall_ResourceTable
+	resource ResourceFarCalls, FarCall_ResourceTable
+	resource ResourceFarCallsAlternate, FarCall_ResourceTable
 	resource WindowTiles, Ui_WindowTiles
-	resource , UiText_SmallFont
+	resource SmallFont, UiText_SmallFont
 	resource IntroGraphicsA, Title_IntroGraphicsA
 	resource IntroGraphicsB, Title_IntroGraphicsB
 	resource IntroGraphicsC, Title_IntroGraphicsC
@@ -77,7 +72,7 @@ Resource_DirectoryTable:
 	resource VioletSkyBackdrop, Battle_VioletSkyBackdrop
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
-	resource , Battle_AerialViewBackdrop
+	resource AerialViewBackdrop, Battle_AerialViewBackdrop
 	resource SlotsFramePicture, Slots_FramePicture
 	resource SlotsIcons, Slots_Icons
 	resource SlotsJackpot, Slots_Jackpot

@@ -316,7 +316,7 @@ Func_08027e20:
 	b .L_080281ee
 	.2byte 0x0000
 .L_0802808c:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08028090:
 	.4byte gInput
 .L_08028094:
@@ -538,7 +538,7 @@ Func_08027e20:
 	adds r0, r6, #0
 	subs r3, #2
 	mov r2, r11
-	bl Func_08026f80
+	bl Runtime_CheckRadiusOverlap
 	cmp r0, #0
 	blt .L_0802834a
 	ldr r3, [r6, #80]
@@ -575,7 +575,7 @@ Func_08027e20:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_08024f20
+	bl ScriptObject_CheckOverlap
 	cmp r0, #0
 	bne .L_08028342
 	ldr r3, [r6]
@@ -828,7 +828,7 @@ Func_08027e20:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [sp, #16]
 	mov r2, r8
 	str r1, [r2, #36]

@@ -1,13 +1,9 @@
-/* Near miss: score 80. The owners come from gPartyState. ⚓️ loads
-   gPartyState's address before forming the owner's offset (134 << 2); this
-   draft forms the offset first with the approved game flags. */
 #include "SCENE.H"
 #include "GAME_FLAGS.H"
 #include "INVENTORY.H"
 #include "PARTY_STATE.H"
 #include "TYPES.H"
 
-/* party/set_flag32_and_refresh_members.c */
 void Owner_RefreshDerivedData(s32 arg0);
 s32 Owner_RecalculateStats(s32);
 s32 GameFlag_SetBit(s32 flag);

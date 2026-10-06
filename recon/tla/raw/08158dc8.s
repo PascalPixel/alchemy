@@ -169,7 +169,7 @@ Func_08158dc8:
 	ldr r1, .L_08158f68
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r2, .L_08158f6c
 	ldr r5, .L_08158f54
 	movs r6, #128
@@ -371,7 +371,7 @@ Func_08158dc8:
 	lsls r0, r0, #17
 	ldr r2, .L_081592d0
 	bl Camera_StoreSceneParameters
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r6, [sp, #100]
 	cmp r6, #128
 	ble .L_08159130
@@ -407,7 +407,7 @@ Func_08158dc8:
 	adds r0, r5, #0
 	bl SceneTransform_ApplyPitch
 	lsls r0, r6, #12
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r2, [sp, #100]
 	cmp r2, #150
 	ble .L_08159116
@@ -484,7 +484,7 @@ Func_08158dc8:
 	lsls r3, r3, #16
 	str r3, [r6, #8]
 	str r2, [sp, #12]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	adds r7, #4
 	asrs r3, r3, #17
@@ -722,7 +722,7 @@ Func_08158dc8:
 	str r3, [r5, #8]
 	adds r1, r6, #0
 	mov r0, r10
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r6]
 	movs r0, #6
 	ldrsh r3, [r6, r0]

@@ -1,22 +1,3 @@
-@ Writes a zero-terminated byte stream in which values above 0xdf skip
-@ destination bytes. With r2 = 0 it copies the bytes, entering its unrolled
-@ loop at the source's word alignment with add pc, pc, r2, lsl #2; other r2
-@ values pick, through a table of halfword code offsets
-@ (ldrsh r4, [pc, r4]; add pc, pc, r4), a constant fill value or a 256-byte
-@ translation table that it first copies into the buffer of DECODE_DATA.S
-@ after its code, remembering the choice there with str r2, [pc, #124].
-@ Writing into those words only works in a RAM copy; GCC emits neither jumps
-@ into unrolled code nor PC-relative stores. Three routines allocate heap
-@ slot 52 with 0x2c4 bytes and copy from 0x08009bb8 into it with DMA3: the
-@ copies whose source is loaded at 0x0800c670 and 0x0800c8ae move all 708
-@ bytes (these 472 and DECODE_DATA.S), the one loaded at 0x0800aa48 only the
-@ 484 bytes up to 0x08009d9c, leaving the buffer to be filled at run time.
-@ Every TBS and TLA edition has these 472 bytes, differing only in the
-@ relocated IWRAM literal (TLA GRAPHICS/DECODE_FRAME.S and
-@ BATTLE/EFFECT/DECODE_FRAME.S).
-@ The nop after its jump (0x08009bd4), which the jump always skips, carries
-@ no credit.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
 	.global Render_DecodeFrame

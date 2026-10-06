@@ -373,7 +373,7 @@ Func_0818fefc:
 	movs r0, #1
 	ldr r1, .L_08190388
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	bl Func_0817d6c4
 	movs r0, #8
 	movs r1, #2
@@ -389,7 +389,7 @@ Func_0818fefc:
 	ldr r2, [sp, #96]
 	ldr r1, [sp, #20]
 	ldr r0, [r2, #8]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r3, [sp, #84]
 	cmp r3, #3
 	bne .L_0819022c
@@ -592,7 +592,7 @@ Func_0818fefc:
 .L_08190390:
 	.4byte gMapCellBuffer
 .L_08190394:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08190398:
 	.4byte 0xffff0000
 .L_0819039c:
@@ -895,7 +895,7 @@ Func_0818fefc:
 	ldr r0, .L_081907a8
 	movs r5, #128
 	str r0, [r7, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	lsls r5, r5, #8
 	movs r1, #128
 	adds r0, r5, #0
@@ -965,7 +965,7 @@ Func_0818fefc:
 	movs r3, #127
 	bics r3, r5
 	strb r3, [r7, #24]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_081907bc
 	ldr r1, .L_081907c0
 	movs r2, #0
@@ -987,7 +987,7 @@ Func_0818fefc:
 	add r0, r10
 	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r1, .L_081907a4
 	ldr r0, [sp, #52]
 	movs r2, #32
@@ -1162,7 +1162,7 @@ Func_0818fefc:
 	cmp r1, #64
 	bne .L_081907ee
 .L_08190818:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	lsls r0, r6, #1
 	ldr r2, .L_08190b2c
 	adds r0, r0, r6
@@ -1263,7 +1263,7 @@ Func_0818fefc:
 	lsls r1, r1, #7
 	str r4, [r7, #20]
 	adds r5, r3, r1
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r8
 	cmp r2, #1
 	bgt .L_0819090c
@@ -1297,7 +1297,7 @@ Func_0818fefc:
 	bl SceneTransform_ApplyPitch
 	ldr r3, .L_08190b4c
 	ldrsh r0, [r3, r6]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, .L_08190b50
 	mov r1, r11
 	movs r2, #4
@@ -1373,7 +1373,7 @@ Func_0818fefc:
 	adds r5, r3, r4
 .L_081909bc:
 	str r1, [r7, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #96]
 	ldr r3, [r0, #4]
 	cmp r3, #0
@@ -1446,7 +1446,7 @@ Func_0818fefc:
 	bl SceneTransform_ApplyPitch
 	ldr r3, .L_08190b68
 	ldrsh r0, [r3, r6]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r5, #0
 	cmp r5, #0
 	bge .L_08190a62
@@ -1529,7 +1529,7 @@ Func_0818fefc:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r0, .L_08190b70
 	bl Scheduler_RemoveCallback
 	movs r0, #104

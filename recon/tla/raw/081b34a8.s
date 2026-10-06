@@ -36,7 +36,7 @@ Func_081b34a8:
 	str r0, [sp, #36]
 	ldr r0, .L_081b353c
 	ldr r5, .L_081b3540
-	bl Func_080132fc
+	bl Resource_ReservedNoOp
 	movs r0, #160
 	lsls r0, r0, #1
 	adds r5, r5, r0
@@ -77,7 +77,7 @@ Func_081b34a8:
 .L_081b3540:
 	.4byte Data_0200024c
 .L_081b3544:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081b3548:
 	.4byte 0x06002800
 .L_081b354c:
@@ -287,7 +287,7 @@ Func_081b34a8:
 .L_081b36d4:
 	.4byte 0x00003f44
 .L_081b36d8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081b36dc:
 	strh r3, [r2]
 	ldr r3, .L_081b3714
@@ -785,7 +785,7 @@ Func_081b34a8:
 	ldr r3, [r2]
 	cmp r3, #15
 	bgt .L_081b3ad8
-	bl Func_081b2150
+	bl Palette_DarkenSceneStep
 	ldr r7, [sp, #16]
 	ldr r3, [r7]
 .L_081b3ad8:

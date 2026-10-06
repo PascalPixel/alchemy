@@ -1,14 +1,10 @@
-#include "TYPES.H"
+#include "AUDIO_ENGINE.H"
 
-extern u8 Audio_CommandMask;
-
-/* Sets the audio command mask, or toggles the given bits when bit 7 of the
-   command is set. */
 void AudioCommand_UpdateToggleMask(u32 command)
 {
-    u32 toggle = command & 0x80;
+    u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
-    command &= 0x7f;
+    command &= AUDIO_COMMAND_MASK;
     if (toggle != 0)
         Audio_CommandMask ^= command;
     else

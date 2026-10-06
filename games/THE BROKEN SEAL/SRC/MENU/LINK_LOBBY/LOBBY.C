@@ -1,16 +1,22 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "EDITION.H"
-/* The link lobby: its scene tables and the serial query with interrupts held. */
 #include "LOBBY.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "FIELD_EVENT.H"
 #include "SERIAL_RUNTIME.H"
 #include "IWRAM_CALL.H"
 
-extern u8 gLinkStatus[];
-extern const s32 LinkLobby_SlotValues[];
-extern const u8 LinkLobby_SlotColumns[];
+extern u16 gLinkStatus;
 
-/* Four-character wire tags identify the edition and each exchange phase. */
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 const s32 LinkLobby_SlotValues[] = {
@@ -44,7 +50,6 @@ const s32 LinkLobby_SlotValues[] = {
 
 #undef PEER_TAG
 
-/* One linked player's six compared words. */
 struct LinkPeer {
     s32 values[6];
 };
@@ -55,10 +60,7 @@ struct LobbyPanel {
     u8 unknown_00[24];
 };
 
-s32 LinkLobby_PeerSlotMatches(s32 slot);
-void LinkLobby_WriteSlotValue(s32 slot);
 
-/* Frames the peers have been waited for; it follows the overlay's image. */
 s32 gLinkLobbyWaitFrames;
 
 u8 *LinkLobby_GetEntrances(void)
@@ -71,17 +73,19 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u32 State_RunQueryWithInterruptMasterSaved(void)
+s32 LinkLobby_InitializeSerial(void)
 {
-    volatile u16 *ime = (volatile u16 *)0x04000208;
-    u32 saved = *ime;
-    u32 ret;
+    volatile u16 *ime;
+    u32 saved;
 
-    *ime = (u16)(u32)ime;
+    /* FAKEMATCH: the ignored s32 result keeps the return-address scratch in r1; void selects r0. */
+
+    ime = &REG_IME;
+    saved = *ime;
+    *ime = (u32)ime;
     SerialRuntime_RemoveIrqHandlers();
-    ret = SerialRuntime_Initialize();
+    SerialRuntime_Initialize();
     *ime = saved;
-    return ret;
 }
 
 u8 *LinkLobby_GetExits(void) { return gLinkLobbyExits; }
@@ -96,13 +100,12 @@ s32 LinkLobby_SelectPlacements(void)
     return (s32)gLinkLobbyPlacements;
 }
 
-/* Record whether a link is up (flag 0x303) and whether this player is a child (flag 0x302), then report whether the other player's word for this slot equals the slot's expected value. */
 s32 LinkLobby_PeerSlotMatches(s32 slot)
 {
     s32 id = -1;
 
-    if ((*(u16 *)gLinkStatus & 3) == 3) {
-        id = (u32)(REG_SIOCNT << 26) >> 30;
+    if ((gLinkStatus & 3) == 3) {
+        id = (REG_SIOCNT << 26) >> 30;
         Engine_GameFlagSet(0x303);
     } else {
         Engine_GameFlagClear(0x303);
@@ -126,15 +129,13 @@ s32 LinkLobby_PeerSlotMatches(s32 slot)
     return 0;
 }
 
-/* Copies a slot's value into its column of the words the transfer sends. */
 void LinkLobby_WriteSlotValue(s32 slot)
 {
-    s32 *dst = (s32 *)gSerialTransfer.reserved;
+    s32 *dst = (s32 *)gSerialTransfer.payload;
     s32 *src = &LinkLobby_SlotValues[slot];
     dst[LinkLobby_SlotColumns[slot]] = *src;
 }
 
-/* The link lobby: poll whether the peers stand ready in the circle. */
 s32 LinkLobby_PollPeerReady(void)
 {
     struct EventWork *work;

@@ -1,13 +1,10 @@
 #include "EDITION.H"
 #if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
-/* These localization routines have no counterpart in Japanese TBS. */
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
 extern u8 gFrameTick[];
 
-/* Cycles the four object palette colours at 0x050001d0 through a sine glow
-   driven by the frame phase at 0x03001800. */
 void PaletteGlow_UpdateSine(void)
 {
     s32 *phase;

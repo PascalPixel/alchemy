@@ -842,7 +842,7 @@ gBabiIriguchiEventsOther:
 	.4byte ActorPresentation_PlaceActorTwelveAtTile20And12
 	.4byte 0x10009315
 	.4byte 0xffff000c
-	.4byte SceneState_SetRuntimeByte34
+	.4byte BabiIriguchi_EnableEffectChildOption
 	.4byte 0x00009315
 	.4byte 0xffff000c
 	.4byte ActorPresentation_PlaceActorTwelveAtTile20And12

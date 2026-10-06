@@ -1,3 +1,15 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -10,34 +22,20 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 struct Scale { s32 x; s32 y; };
 struct Placement { s32 x; s32 y; s32 z; s32 w; };
 
-extern const struct Scale Data_080edab8;
-extern const struct Scale Data_080edac0;
-extern const u8 Data_080eee1e[];
-extern const u8 Data_080eee2a[];
-extern const u8 Data_080eee36[];
-extern const u8 Data_080eee3e[];
-extern const u8 Data_080eee46[];
-extern const u8 Data_080eee4e[];
-
-struct FormationWork {
-    u8 unknown_0000[0x77d8];
-    void *objects[12];
-};
+extern const struct Scale Formation_NormalScale;
+extern const struct Scale Formation_SmallScale;
 
 void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
 
-/* Places the battle objects of one of four formations around (x, z): a
-   3x3 grid, or the twelve- and eight-object layouts from the offset tables. */
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
-    struct FormationWork *work = *(struct FormationWork **)gBattleFxWork;
-    struct Scale normal = Data_080edab8;
-    struct Scale small = Data_080edac0;
+    struct BattleEffectWork *work = (struct BattleEffectWork *)*(void **)gBattleFxWork;
+    struct Scale normal = Formation_NormalScale;
+    struct Scale small = Formation_SmallScale;
     struct Placement pos;
     s32 i;
 
@@ -53,45 +51,34 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
         break;
     case 1:
         for (i = 0; i != 12; i++) {
-            pos.x = (Data_080eee1e[i] << 16) + x - 0x100000;
-            pos.z = (Data_080eee2a[i] << 16) + z - 0x200000;
+            pos.x = (Formation_TwelveX[i] << 16) + x - 0x100000;
+            pos.z = (Formation_TwelveZ[i] << 16) + z - 0x200000;
             Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
         }
         break;
     case 2:
         for (i = 0; i != 8; i++) {
-            pos.x = (Data_080eee36[i] << 16) + x + 0x100000;
-            pos.z = (Data_080eee3e[i] << 16) + z;
+            pos.x = (Formation_RightEightX[i] << 16) + x + 0x100000;
+            pos.z = (Formation_RightEightZ[i] << 16) + z;
             Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
         }
         break;
     case 3:
         for (i = 0; i != 8; i++) {
-            pos.x = (Data_080eee46[i] << 16) + x;
-            pos.z = (Data_080eee4e[i] << 16) + z;
+            pos.x = (Formation_SmallEightX[i] << 16) + x;
+            pos.z = (Formation_SmallEightZ[i] << 16) + z;
             Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &small, 0);
         }
         break;
     }
 }
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Audio_PlayCue(s32 cue);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
 extern struct EffectStep gMapCellBuffer[];
-extern u16 ParticleStreams_CellOffsets[];
-extern u8 ImpactBurst_CellWidths[];
-extern u8 ImpactBurst_CellHeights[];
-extern u16 ImpactBurst_CellSourceOffsets[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: a flare opens at the impact point while thirty sparks
-   spray from it, two more every frame; from frame 36 a second, finer spray
-   of sixty motes follows and three flare shards fly apart. The formation's
-   objects stay placed around the point for the first 36 frames. */
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 {
     void **heap_cache;
@@ -100,7 +87,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     void *canvas;
     DrawRectangle spark;
     DrawRectangle flare;
-    void *sheet;
+    u8 *sheet;
     s32 origin_x;
     struct EffectStep *step;
     s32 frame;
@@ -117,16 +104,16 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     REG_BG2PA = 0x80;
     REG_BG2X = 0;
     REG_BLDCNT = 0x3f46;
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     flare = heap_cache[7];
-    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     spark = heap_cache[8];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, (u8 *)work + 0x59d8, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + 0x59d8, 0, 0);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 64; i++) {
         s32 speed = (Random16() & 255) + 256;
@@ -169,7 +156,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
             if (cell < 0)
                 cell = 0;
-            flare(canvas, (u8 *)work + ImpactBurst_CellSourceOffsets[cell],
+            flare(canvas, work->sheet + ImpactBurst_CellSourceOffsets[cell],
                 (x >> 16) - ((width = ImpactBurst_CellWidths[cell]) >> 1),
                 (y >> 16) - ((height = ImpactBurst_CellHeights[cell]) >> 1),
                 width, height);
@@ -186,7 +173,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
                 size = step->variant / 16 + 3;
                 px = HI(step->x);
                 py = HI(step->y);
-                spark(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     px - size / 2, py - size, size, size * 2);
             }
         }
@@ -202,7 +189,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
                 size = step->variant / 16 + 1;
                 px = HI(step->x);
                 py = HI(step->y);
-                spark(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     px - size / 2, py - size, size, size * 2);
             }
         }
@@ -219,7 +206,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
                 cell = (frame - 36) / 7;
                 px = HI(shard->x);
                 py = HI(shard->y);
-                flare(canvas, (u8 *)work + cell * 0x120 + 0x59d8,
+                flare(canvas, work->sheet + cell * 0x120 + 0x59d8,
                     px - 6, py - 12, 12, 24);
             }
         }
@@ -230,14 +217,13 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     {
-        /* FAKEMATCH: the routine's address is loaded before the size, as a
-           call through a local makes it. */
+        /* FAKEMATCH: the routine's address is loaded before the size, as a call through a local makes it. */
         s32 (*clear)(void *, s32) = Iwram_ClearWords;
 
         clear(BG_CHAR_BLOCK(1), 0x4000);
     }
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }

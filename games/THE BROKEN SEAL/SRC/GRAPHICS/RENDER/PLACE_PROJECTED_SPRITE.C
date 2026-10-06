@@ -1,62 +1,22 @@
-/* Projects a sprite part pair to the screen. The four spill slots (flip,
-   half height, size, affine mode) are declared in reverse; the screen bounds
-   are four separate tests so GCC does not fold them into one unsigned range
-   check; the mode passes through as s32 and narrows at the call; the flip
-   branch sets the matrix index before negating the offset. The first part's
-   y store goes through sprite->part rather than part[0], which schedules the
-   half-height load before the screen y load as the ROM does. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
+#include "ANIMSPR.H"
 #include "IWRAM_CALL.H"
 
-extern u8 gMenuCtrlWork[];
+#define gMenuCtrlWork ((u8 (*))&gMenuCtrlWork)
 
-struct ProjectedSpritePart {
-    u8 unknown_00[4];
-    u16 y : 8;
-    u16 affine : 2;
-    u16 unknown_5 : 6;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 unknown_7 : 2;
-    u8 unknown_08[4];
-};
-
-struct ProjectedSprite {
-    struct ProjectedSpritePart part[2];
-    s32 scale;
-    u8 vram_block;
-    u8 flags;
-    u16 rotation;
-    u8 width;
-    u8 height;
-    s8 offset_x;
-    s8 offset_y;
-    u8 unknown_24;
-    u8 hidden;
-    u8 shadow_flags;
-};
-
-struct ProjectedEffect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
-
-struct RenderState {
-    u8 unknown_00[4];
-    s16 frozen;
-};
-
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 Sprite_ComposeAnimationFrame(struct ProjectedSprite *sprite, u16 mode);
-s32 AffineMatrix_BuildForEffect(struct ProjectedEffect *source);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
-s32 Resource_ActivateEntry(u32 resource_index);
-
-/* Places a sprite and its optional shadow from a four-word screen position
-   (x, shadow height, depth, ground) and a two-word scale. */
-void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s32 *scale, s32 mode)
+void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;
     u32 half_width = sprite->width >> 1;
@@ -71,17 +31,15 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     s32 pz = *pos++;
     s32 pw = *pos;
     s32 slot;
-    /* FAKEMATCH: unused; they give the ROM's 68-byte frame.
-       2026-10-02: deleting both arrays changes only the stack allocation
-       and release from 68 to 44 bytes; the complete function then differs. */
+    /* FAKEMATCH: the two unused arrays supply 24 bytes of the 68-byte frame; removing them leaves 44 bytes. */
     s32 ground[3];
     s32 screen[3];
-    struct ProjectedEffect effect;
+    struct AffineTransform effect;
     s32 flip;
     s32 x;
     s32 y;
     s32 depth;
-    struct ProjectedSpritePart *part;
+    struct AnimationSpritePart *part;
 
     flip = Sprite_ComposeAnimationFrame(sprite, mode);
     if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0) {
@@ -90,10 +48,10 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     } else {
         affine = 1;
         effect.angle = sprite->rotation;
-        effect.x = scale_x >> 8;
-        effect.y = scale_y >> 8;
+        effect.scale_x = scale_x >> 8;
+        effect.scale_y = scale_y >> 8;
         if (flip != 0)
-            effect.x = -effect.x;
+            effect.scale_x = -effect.scale_x;
         matrix = AffineMatrix_BuildForEffect(&effect);
     }
     if (scale_x > 0x10000 || scale_y > 0x10000) {
@@ -111,7 +69,7 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
         depth = 2;
     }
     y = ((pz - pw) >> 16) - size_half;
-    if (sprite->shadow_flags & 1) {
+    if (sprite->flags & 1) {
         if (y < 160) {
             part = &sprite->part[1];
             part->affine = affine;
@@ -134,7 +92,7 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     }
 }
 
-void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
+void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
 {
     s32 flip;
     u32 half_height;
@@ -143,7 +101,7 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     s32 half_width;
     s32 ground[3];
     s32 screen[3];
-    struct ProjectedEffect effect;
+    struct AffineTransform effect;
     s32 z;
     s32 base;
     s32 scale_x;
@@ -153,7 +111,7 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     s32 slot;
 
     affine = 1;
-    if ((*(struct RenderState **)gMenuCtrlWork)->frozen != 0)
+    if ((*(struct ObjectSystemWork **)gMenuCtrlWork)->suspended != 0)
         goto hide;
     z = Render_ProjectPoint(point, screen);
     if (screen[2] == 0)
@@ -166,7 +124,7 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
         goto hide;
     if (screen[1] > 208)
         goto hide;
-    if (sprite->flags & 2)
+    if (sprite->display_flags & 2)
         z = sprite->scale;
     else
         z = Iwram_MulQ16(z, sprite->scale);
@@ -193,12 +151,12 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     }
     if (affine != 0) {
         effect.angle = sprite->rotation;
-        effect.x = scale_x >> 8;
+        effect.scale_x = scale_x >> 8;
         if (flip != 0) {
-            effect.x = -effect.x;
+            effect.scale_x = -effect.scale_x;
             offset_x = -offset_x;
         }
-        effect.y = scale_y >> 8;
+        effect.scale_y = scale_y >> 8;
         z = AffineMatrix_BuildForEffect(&effect);
     } else if (flip != 0) {
         z = 8;
@@ -218,8 +176,8 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     } else {
         Runtime_PushSlotEntry(sprite, depth);
     }
-    if (sprite->shadow_flags & 1) {
-        struct ProjectedSpritePart *shadow;
+    if (sprite->flags & 1) {
+        struct AnimationSpritePart *shadow;
 
         ground[0] = point[0];
         ground[1] = 0;
@@ -237,8 +195,8 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     }
     return;
 hide:
-    if (!(sprite->flags & 1)) {
-        Resource_ActivateEntry(sprite->vram_block);
-        sprite->hidden = 1;
+    if (!(sprite->display_flags & 1)) {
+        Resource_ActivateEntry(sprite->slot);
+        sprite->dirty = 1;
     }
 }

@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x08108030: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -21,18 +17,18 @@ Func_08108040:
 	.thumb_func
 Func_08108048:
 	overlay_veneer Func_08108aa8
-	.global Func_08108050
+	.global Shop_FillSelectorFar
 	.thumb_func
-Func_08108050:
+Shop_FillSelectorFar:
 	overlay_veneer Shop_FillSelector
-	.global Unnamed_080b0840Far
+	.global Shop_RestoreSceneTilesFar
 	.thumb_func
-Unnamed_080b0840Far:
-	overlay_veneer Func_081088d8
-	.global Func_08108060
+Shop_RestoreSceneTilesFar:
+	overlay_veneer Shop_RestoreSceneTiles
+	.global Shop_InitEffectFar
 	.thumb_func
-Func_08108060:
-	overlay_veneer Func_08108928
+Shop_InitEffectFar:
+	overlay_veneer Shop_InitEffect
 	.global Func_08108068
 	.thumb_func
 Func_08108068:
@@ -45,7 +41,7 @@ Func_08108070:
 	.thumb_func
 AudioCommand_WaitForStateByteClearFar:
 	overlay_veneer AudioCommand_WaitForStateByteClear
-	.global Func_08108080
+	.global Inn_PlaySleepFar
 	.thumb_func
-Func_08108080:
+Inn_PlaySleepFar:
 	overlay_veneer Inn_PlaySleep

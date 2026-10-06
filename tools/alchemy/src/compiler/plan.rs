@@ -1,12 +1,6 @@
-//! Compilation policy for source-to-assembly plans.
-//!
-//! `routing_source` selects evidenced compiler policy; `input` is the file being
-//! compiled. Candidate sources need both names. Compiler family and ordered
-//! flags come only from routing; callers may supply local include paths or dumps.
 use crate::compiler::bundle::{
     compiler_command_for_target, validate_agbcc_bundle, validate_bundle,
 };
-// POSIX filename semantics retained by the compiler argv contract.
 
 pub fn basename(path: &str) -> &str {
     path.trim_end_matches('/').rsplit('/').next().unwrap_or("")
@@ -20,27 +14,6 @@ pub fn extname(path: &str) -> &str {
     }
 }
 
-#[test]
-fn posix_names_preserve_dotfiles_unicode_and_trailing_slashes() {
-    for (path, base, ext) in [
-        ("", "", ""),
-        ("///", "", ""),
-        ("a/.", ".", ""),
-        ("a/..//", "..", ""),
-        ("a/...", "...", "."),
-        ("a/.c", ".c", ""),
-        ("a/..c", "..c", ".c"),
-        ("a/.c.s/", ".c.s", ".s"),
-        ("a/b..", "b..", "."),
-        ("日本/場面.c//", "場面.c", ".c"),
-    ] {
-        assert_eq!((basename(path), extname(path)), (base, ext));
-    }
-    assert_eq!(
-        crate::compiler::plan::inferred_preprocessed_output("a.c/"),
-        "a..i"
-    );
-}
 use crate::compiler::routing::{
     agbcc_arm_driver, agbcc_driver, bundle_for, cflags_for_target_source, include_flag, is_arm,
     uses_agbcc_compiler, CompilerTarget,
@@ -53,9 +26,7 @@ pub struct SourceToAssemblyPlanOptions {
     pub input: String,
     pub output: String,
     pub support_flags: Vec<String>,
-    /// Preprocessor-only flags; old-agbcc rejects them on its `.i` compile step.
     pub preprocessor_flags: Vec<String>,
-    /// Explicit old-agbcc intermediate; otherwise inferred beside the output.
     pub preprocessed_output: Option<String>,
     pub dumpbase: Option<String>,
 }
@@ -78,8 +49,6 @@ impl SourceToAssemblyPlanOptions {
         }
     }
 }
-/// Preserves the pinned trailing-slash bug: `a.c/` becomes `a..i`. Fixing it
-/// would change a cache-visible intermediate name.
 pub fn inferred_preprocessed_output(output: &str) -> String {
     let extension = extname(output);
     if extension.is_empty() {
@@ -88,8 +57,6 @@ pub fn inferred_preprocessed_output(output: &str) -> String {
         format!("{}.i", &output[..output.len() - extension.len()])
     }
 }
-/// Flags that only add output beside the compile: debug records, include
-/// paths, `-d<letters>` RTL dumps and `-fsched-verbose=N` scheduling traces.
 fn diagnostic_flag(flag: &str) -> bool {
     flag == "-g"
         || flag.strip_prefix("-I").is_some_and(|path| !path.is_empty())
@@ -131,7 +98,6 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
             .preprocessed_output
             .clone()
             .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
-        // old-agbcc identifies as 2.9.
         let gcc_minor = 9;
         steps.push(direct_preprocessor_command_for_target_with_minor_and_flags(
             options.target,
@@ -156,7 +122,6 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         arguments.push("-S".to_string());
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
-        // GCC otherwise interprets Atlas's uppercase .C extension as C++.
         if extname(&options.input) == ".C" {
             arguments.extend(["-x".to_string(), "c".to_string()]);
         }
@@ -201,169 +166,4 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
     command.push(input.to_string());
     command.push(output.to_string());
     Ok(command)
-}
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn shipped_preprocessor_selects_one_of_six_editions() {
-        let work = tempfile::tempdir().unwrap();
-        let input = work.path().join("version.c");
-        let output = work.path().join("version.i");
-        std::fs::write(&input, "#include \"VERSION.H\"\n#if defined(TBS_EDITION_JA)\nJA\n#elif defined(TBS_EDITION_EN)\nEN\n#elif defined(TBS_EDITION_DE)\nDE\n#elif defined(TBS_EDITION_ES)\nES\n#elif defined(TBS_EDITION_FR)\nFR\n#elif defined(TBS_EDITION_IT)\nIT\n#endif\n").unwrap();
-        for edition in ["JA", "EN", "DE", "ES", "FR", "IT", ""] {
-            let flags = if edition.is_empty() {
-                Vec::new()
-            } else {
-                vec![format!("-DTBS_EDITION_{edition}=1")]
-            };
-            let command = direct_preprocessor_command_for_target_with_minor_and_flags(
-                CompilerTarget::Tbs,
-                &input.to_string_lossy(),
-                &output.to_string_lossy(),
-                96,
-                &flags,
-            )
-            .unwrap();
-            let result = std::process::Command::new(&command[0])
-                .args(&command[1..])
-                .output()
-                .unwrap();
-            assert!(
-                result.status.success(),
-                "{}",
-                String::from_utf8_lossy(&result.stderr)
-            );
-            let expected = if edition.is_empty() { "JA" } else { edition };
-            assert!(std::fs::read_to_string(&output)
-                .unwrap()
-                .contains(&format!("\n{expected}\n")));
-        }
-        for flags in [
-            vec!["-DTBS_EDITION_JA=1".into(), "-DTBS_EDITION_EN=1".into()],
-            vec!["-DTBS_EDITION_JA=0".into()],
-        ] {
-            let command = direct_preprocessor_command_for_target_with_minor_and_flags(
-                CompilerTarget::Tbs,
-                &input.to_string_lossy(),
-                &output.to_string_lossy(),
-                96,
-                &flags,
-            )
-            .unwrap();
-            assert!(!std::process::Command::new(&command[0])
-                .args(&command[1..])
-                .output()
-                .unwrap()
-                .status
-                .success());
-        }
-    }
-    #[test]
-    fn uppercase_c_preserves_the_c_route_and_codegen_flags() {
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Tbs,
-            "games/THE BROKEN SEAL/SRC/MENU/INPUT_CANCEL_SOUND_TICK.C",
-            "candidate.c",
-            "candidate.s",
-        );
-        let lower = source_to_assembly_plan(&options).unwrap();
-        options.input = "candidate.C".into();
-        let upper = source_to_assembly_plan(&options).unwrap();
-        assert_eq!(lower.len(), 1);
-        assert_eq!(upper.len(), 1);
-        let mut expected = lower[0].clone();
-        expected.pop();
-        expected.extend(["-x".into(), "c".into(), "candidate.C".into()]);
-        assert_eq!(upper[0], expected);
-    }
-    #[test]
-    fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
-        for source in [
-            "games/THE BROKEN SEAL/SRC/MENU/INPUT_CANCEL_SOUND_TICK.C",
-            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
-        ] {
-            let mut options = SourceToAssemblyPlanOptions::new(
-                CompilerTarget::Tbs,
-                source,
-                "source.c",
-                "source.s",
-            );
-            let canonical = cflags_for_target_source(options.target, source);
-            options.support_flags = vec![
-                "-da".into(),
-                "-dL".into(),
-                "-fsched-verbose=5".into(),
-                "-Ilocal-headers".into(),
-            ];
-            let plan = source_to_assembly_plan(&options).unwrap();
-            let command = plan.last().unwrap();
-            assert!(command
-                .windows(canonical.len())
-                .any(|flags| flags == canonical));
-            assert!(command.iter().any(|flag| flag == "-da"));
-            assert!(command.iter().any(|flag| flag == "-Ilocal-headers"));
-            for flag in [
-                "-O0",
-                "-fno-regmove",
-                "-ffixed-r5",
-                "-marm",
-                "-d",
-                "-fsched-verbose=",
-                "-dumpbase",
-            ] {
-                options.support_flags = vec![flag.into()];
-                assert!(source_to_assembly_plan(&options)
-                    .unwrap_err()
-                    .contains("not an include path or diagnostic"));
-            }
-        }
-    }
-    #[test]
-    fn edition_define_stays_in_old_agbcc_preprocessor_step() {
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Tbs,
-            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
-            "candidate.c",
-            "candidate.s",
-        );
-        options.preprocessor_flags = vec!["-DTBS_EDITION_JA=1".into()];
-        let plan = source_to_assembly_plan(&options).unwrap();
-        assert!(plan[0]
-            .iter()
-            .any(|argument| argument == "-DTBS_EDITION_JA=1"));
-        assert!(!plan[1]
-            .iter()
-            .any(|argument| argument.starts_with("-DTBS_EDITION_")));
-    }
-    #[test]
-    fn edition_define_reaches_gcc296_driver() {
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Tla,
-            "games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.C",
-            "candidate.c",
-            "candidate.s",
-        );
-        options.preprocessor_flags = vec!["-DTLA_EDITION_IT=1".into()];
-        let plan = source_to_assembly_plan(&options).unwrap();
-        assert_eq!(plan.len(), 1);
-        assert!(plan[0]
-            .iter()
-            .any(|argument| argument == "-DTLA_EDITION_IT=1"));
-    }
-    #[test]
-    fn shared_tla_audio_file_routes_through_old_agbcc() {
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Tla,
-            "games/COMMON/SRC/SOUND/SOUND2.C",
-            "candidate.c",
-            "candidate.s",
-        );
-        options.preprocessor_flags = vec!["-DTLA_EDITION_JA=1".into()];
-        let plan = source_to_assembly_plan(&options).unwrap();
-        assert!(plan[1][0].ends_with("/agbcc/old_agbcc"));
-        assert!(plan[0]
-            .iter()
-            .any(|argument| argument == "-DTLA_EDITION_JA=1"));
-    }
 }

@@ -383,7 +383,7 @@ Ui_RunSelectionScreen:
 .L_08022148:
 	.4byte gFrameCount
 .L_0802214c:
-	.4byte Data_080366f8
+	.4byte Ui_BounceScales
 .L_08022150:
 	.4byte 0xffffff00
 .L_08022154:
@@ -915,7 +915,7 @@ Ui_RunSelectionScreen:
 .L_0802253a:
 	movs r1, #155
 	movs r0, #102
-	bl Func_080b5128
+	bl BattlePresentation_WaitForPromptAtFar
 	movs r1, #1
 	ldr r0, [sp, #20]
 	bl UiWork_Finalize

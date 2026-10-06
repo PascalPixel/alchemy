@@ -1,9 +1,17 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "M7_INTERFACES.H"
-#include "GLOBAL_CELLS.H"
-extern u8 Data_03001f2c[];
 
-void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns);
+#include "PSYNERGY_MENU.H"
+
 
 void PsynergyMenu_RefreshOwnerEntriesDefault(void)
 {
@@ -12,12 +20,12 @@ void PsynergyMenu_RefreshOwnerEntriesDefault(void)
 
 void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
 {
-    struct Object080a1c **slot;
-    struct Object080a1c **scan;
+    struct RenderOutput **slot;
+    struct RenderOutput **scan;
     s32 index;
 
     index = 0;
-    slot = (struct Object080a1c **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
+    slot = gMenuWork->entry_icons;
     scan = slot;
     do {
         if (*scan++ != NULL) {
@@ -28,10 +36,10 @@ void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
     } while (index <= 0x1F);
 }
 
-void PsynergyMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
+void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
     s32 origin_x, s32 origin_y,
     s32 columns) {
-    struct Object080a1c *object;
+    struct RenderOutput *object;
 
     if (index > 0x1F) {
         index = 0;

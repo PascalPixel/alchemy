@@ -9,11 +9,11 @@ void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32
         return;
     }
     if (operation == 1) {
-        state->script_address += (u32)value * 4;
+        state->script_address += value * 4;
         return;
     }
     result = 0;
-    if (state->script_address == (u32)value) {
+    if (state->script_address == value) {
         result = 1;
     }
     state->comparison_result = result;
@@ -21,17 +21,11 @@ void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32
 
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    s32 result;
-
     if (operation == 0) {
         state->cursor = value;
     } else if (operation == 1) {
-        state->cursor =
-            (u16)((u32)(s32)(s16)state->cursor + (u32)value);
+        state->cursor = (s16)state->cursor + value;
     } else {
-        result = 0;
-        if ((s16)state->cursor == (s16)value)
-            result = 1;
-        state->comparison_result = result;
+        state->comparison_result = (s16)state->cursor == (s16)value;
     }
 }

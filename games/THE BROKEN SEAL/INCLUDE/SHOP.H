@@ -3,16 +3,13 @@
 
 #include "GLOBAL_CELLS.H"
 #include "ITEM.H"
-
-struct ShopCursorAnchor {
-    u8 unknown_00[5];
-    u8 kind;
-    u16 x;
-    u16 y;
-};
+#include "LAYOUT_GUARD.H"
+#include "RENDER_INPUT.H"
+#include "EFFECT_SLOT.H"
+#include "ANIMSPR.H"
 
 struct ShopCursor {
-    struct ShopCursorAnchor *anchor;
+    struct RenderOutput *anchor;
     u16 x;
     u16 y;
     s16 target_x;
@@ -23,58 +20,39 @@ struct ShopCursor {
 
 struct ShopRuntime {
     u8 unknown_000[0x0c];
-    s32 money_window;                   /* 0x00c */
+    s32 money_window;
     u8 unknown_010[0x10];
-    s32 item_window;                    /* 0x020 */
+    s32 item_window;
     u8 unknown_024[0xf0];
-    void *party_member_icons[9];        /* 0x114 */
-    u8 unknown_138[0x1c];
-    s32 party_member_styles[9];         /* 0x154 */
-    u8 unknown_178[0xf4];
-    s16 stock_item_ids[129];            /* 0x26c */
-    s16 party_member_ids[9];            /* 0x36e */
-    struct ShopCursor cursor;           /* 0x380 */
-    u16 cursor_icon;                    /* 0x390 */
-    u16 previous_page_icon;             /* 0x392 */
-    u16 next_page_icon;                 /* 0x394 */
-    u16 unknown_396;
-    u16 stat_down_icon;                 /* 0x398 */
-    u16 stat_up_icon;                   /* 0x39a */
+    struct AnimationObject *party_member_icons[8];
+    s16 party_member_x[8];
+    s16 party_member_y[8];
+    s32 party_member_scale[8];
+    u8 unknown_174[0xf8];
+    s16 stock_item_ids[129];
+    s16 party_member_ids[9];
+    struct ShopCursor cursor;
+    u16 cursor_icon;
+    u16 previous_page_icon;
+    u16 next_page_icon;
+    u16 gem_icon;
+    u16 stat_up_icon;
+    u16 stat_down_icon;
     u16 unknown_39c;
-    u16 selected_item;                  /* 0x39e */
+    u16 selected_item;
     u8 unknown_3a0[4];
-    u16 keeper_resource;                /* 0x3a4 */
-    s8 stock_count;                     /* 0x3a6 */
-    s8 party_member_count;              /* 0x3a7 */
-    u8 mode;                            /* 0x3a8 */
-    u8 shop_type;                       /* 0x3a9 */
-    s8 party_action;                    /* 0x3aa */
+    u16 keeper_resource;
+    s8 stock_count;
+    s8 party_member_count;
+    u8 mode;
+    u8 shop_type;
+    s8 party_action;
+    s8 burst_member;
+    u8 warrior_shop;
+    u8 unknown_3ad[3];
+    struct EffectSlot effects[24];
 };
 
-struct ShopPartyState {
-    u8 unknown_00[0x10];
-    s32 money;                          /* 0x10 */
-};
-
-LAYOUT_SIZE_GUARD(
-    ShopCursorAnchor_Size,
-    struct ShopCursorAnchor,
-    0x0c);
-LAYOUT_OFFSET_GUARD(
-    ShopCursorAnchor_Kind,
-    struct ShopCursorAnchor,
-    kind,
-    0x05);
-LAYOUT_OFFSET_GUARD(
-    ShopCursorAnchor_X,
-    struct ShopCursorAnchor,
-    x,
-    0x06);
-LAYOUT_OFFSET_GUARD(
-    ShopCursorAnchor_Y,
-    struct ShopCursorAnchor,
-    y,
-    0x08);
 LAYOUT_SIZE_GUARD(
     ShopCursor_Size,
     struct ShopCursor,
@@ -92,7 +70,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_SIZE_GUARD(
     ShopRuntime_Size,
     struct ShopRuntime,
-    0x3ac);
+    0xa70);
 LAYOUT_OFFSET_GUARD(
     ShopRuntime_MoneyWindow,
     struct ShopRuntime,
@@ -109,9 +87,9 @@ LAYOUT_OFFSET_GUARD(
     party_member_icons,
     0x114);
 LAYOUT_OFFSET_GUARD(
-    ShopRuntime_PartyMemberStyles,
+    ShopRuntime_PartyMemberScale,
     struct ShopRuntime,
-    party_member_styles,
+    party_member_scale,
     0x154);
 LAYOUT_OFFSET_GUARD(
     ShopRuntime_StockItems,
@@ -143,18 +121,12 @@ LAYOUT_OFFSET_GUARD(
     struct ShopRuntime,
     party_action,
     0x3aa);
-LAYOUT_OFFSET_GUARD(
-    ShopPartyState_Money,
-    struct ShopPartyState,
-    money,
-    0x10);
-LAYOUT_SIZE_GUARD(
-    ShopPartyState_Size,
-    struct ShopPartyState,
-    0x14);
+LAYOUT_OFFSET_GUARD(ShopRuntime_MemberX, struct ShopRuntime, party_member_x, 0x134);
+LAYOUT_OFFSET_GUARD(ShopRuntime_MemberY, struct ShopRuntime, party_member_y, 0x144);
+LAYOUT_OFFSET_GUARD(ShopRuntime_BurstMember, struct ShopRuntime, burst_member, 0x3ab);
+LAYOUT_OFFSET_GUARD(ShopRuntime_WarriorShop, struct ShopRuntime, warrior_shop, 0x3ac);
+LAYOUT_OFFSET_GUARD(ShopRuntime_Effects, struct ShopRuntime, effects, 0x3b0);
 
-/* The shop's 16 by 16 cursor sprites: the pointing hand, the gem, the small
-   and large up and down arrows. */
 extern const u8 Shop_HandTiles[];
 extern const u8 Shop_GemTiles[];
 extern const u8 Shop_SmallDownArrowTiles[];
@@ -162,8 +134,6 @@ extern const u8 Shop_SmallUpArrowTiles[];
 extern const u8 Shop_UpArrowTiles[];
 extern const u8 Shop_DownArrowTiles[];
 
-/* The blank price and quantity strips of eight tiles that the digits are
-   drawn over. */
 extern const u8 Shop_PriceTiles[];
 extern const u8 Shop_QuantityTiles[];
 
@@ -187,6 +157,10 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id);
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity);
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot);
 s32 Shop_SellOld(s32 unit_id, s32 slot);
+s32 Shop_SelRepair(s32 unit_id);
+s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price);
+void ShopCursor_Advance(struct ShopCursor *cursor);
+void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 s32 Shop_SalePrice(s32 item_id);
 s32 Shop_PickUnit(void);
 void Shop_DrawUnitGrid(s32 window, s32 unit_id);

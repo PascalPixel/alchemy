@@ -27,7 +27,7 @@ Func_080435fc:
 	ldr r0, .L_08043680
 	bl UiText_ShowPositionedMessageAndWait
 	bl Func_08043358
-	bl Func_080c8628
+	bl ObjectTable_SnapshotFar
 	adds r0, r5, #0
 	ldr r1, .L_08043684
 	bl Func_08042f10
@@ -40,7 +40,7 @@ Func_080435fc:
 	bl UiWork_IsComplete
 	cmp r0, #0
 	beq .L_08043642
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	cmp r5, #0
 	beq .L_08043666
 	ldr r0, .L_08043688
@@ -55,7 +55,7 @@ Func_080435fc:
 	movs r1, #9
 	bl UiText_ShowPositionedMessageAndWait
 .L_0804366e:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r6, #0
 	pop {r5, r6, pc}
 	.2byte 0x0000

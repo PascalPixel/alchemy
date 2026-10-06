@@ -60,7 +60,7 @@ Func_08040cc4:
 	movs r2, #8
 	movs r3, #100
 	bl UiText_DrawResource
-	bl Func_08044460
+	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #128
 	movs r6, #0
 	lsls r1, r1, #23

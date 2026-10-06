@@ -1,17 +1,23 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "ARUTAMIRA.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
+#include "OBJECT_DISPATCH.H"
 #include "FIELD_SCENE.H"
 #include "SCENE_IDS.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
-extern const struct ScenePlacement gArutamiraDouPlacements2[];
-extern const struct ScenePlacement gArutamiraDouPlacements4[];
-extern const struct ScenePlacement gArutamiraDouPlacements6[];
-extern const struct ScenePlacement gArutamiraDouPlacementsOther[];
 
-/* Three DMA words hold the six actor-wheel halfwords. */
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
 union GameStateRows {
@@ -21,13 +27,9 @@ union GameStateRows {
     s32 words[256];
 };
 
-/* The game state read as rows of halfwords. */
 #define gGameStateRows (*(union GameStateRows *)&gGameState)
 
 extern u8 gEffectWork[];
-void Animation_ApplyChildValues();
-void Battle_WaitMode0();
-void Engine_ActorFaceDirection();
 
 struct Obj {
     u8 unknown_00[24];
@@ -37,7 +39,6 @@ struct Obj {
     s16 frame;
 };
 
-extern s32 ArutamiraDou_PulseScales[];
 
 void ArutamiraDou_UpdateScalePulse();
 
@@ -46,8 +47,7 @@ void FieldScene_SetActor13Value41(void)
     BattleFx_SetPhaseRequest(13, 0x41);
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3bd. */
-u8 *SceneData_GetTablebf70(void)
+u8 *ArutamiraDou_GetEntrances(void)
 {
     return ArutamiraDou_SceneTableA;
 }
@@ -57,12 +57,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTablec138(void)
+u8 *ArutamiraDou_GetExits(void)
 {
     return ArutamiraDou_SceneTableB;
 }
 
-/* The actors placed in the scene. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -79,47 +78,43 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gArutamiraDouPlacementsOther;
 }
 
-/* Set the blend mode, then the blend weights for the current fade level. */
 void ArutamiraDou_ApplyFadeBlend(void)
 {
     s8 level = ((s8 *)gSceneState)[4];
 
-    /* FAKEMATCH: the do-while wrap keeps the level's sign extension after
-     * the BLDCNT store. */
+    /* FAKEMATCH: the do-while wrap keeps the level's sign extension after the BLDCNT store. */
     do {
         s32 blend = 0x3f42;
 
-        *(volatile u16 *)0x04000050 = blend;
+        REG_BLDCNT = blend;
     } while (0);
     if (level == 0) {
         s32 alpha = 0x1000;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 1) {
         s32 alpha = 0xe00;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 2) {
         s32 alpha = 0xc00;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 3) {
         s32 alpha = 0xa00;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 4) {
         s32 alpha = 0x800;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else {
         s32 alpha = 0x600;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
 }
 
-/* Record the fade level in the scene state; while the event work's word at
-   +0xcb8 is clear, the blend takes it at once. */
 void ArutamiraDou_SetFadeLevel(s32 level)
 {
     u8 *work;
@@ -180,7 +175,7 @@ void SceneEffect_SetupBlendByFlag201(void)
         s32 c = 5;
         *slot = c;
     }
-    if (GameFlag_IsSet(0x201) != 0) {
+    if (Engine_GameFlagIsSet(0x201) != 0) {
         {
             u16 *slot = (u16 *)(state + 0x534);
             s32 c = 0x1d1d;
@@ -207,20 +202,17 @@ void SceneEffect_SetupBlendByFlag201(void)
     }
     {
         s32 a = 0x3f42;
-        *(u16 *)0x4000050 = a;
+        REG_BLDCNT = a;
     }
     {
         s32 b = 0xc04;
-        *(u16 *)0x4000052 = b;
+        REG_BLDALPHA = b;
     }
 }
 
-/* Restore the room's blend setting and the five actors' child poses. */
 void ArutamiraDou_ApplyRoomVisuals(void)
 {
-    /* FAKEMATCH: the volatile view keeps two distinct scene reads; this
-     * initialized narrow record keeps the snapshot unsigned until its later
-     * signed comparison, without an extra halfword-to-word register copy. */
+    /* FAKEMATCH: the volatile view keeps two distinct scene reads; this initialized narrow record keeps the snapshot unsigned until its later signed comparison, without an extra halfword-to-word register copy. */
     struct { u32 value : 16; } map = { 0 };
 
     map.value = gGameStateRows.snapshot[224][0];
@@ -229,7 +221,7 @@ void ArutamiraDou_ApplyRoomVisuals(void)
     {
         s32 alpha = 0x1000;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
     if ((s16)map.value == (s32)&SceneId_ArutamiraDou6) {
         Engine_ActorSetChildValue(16, 1);
@@ -246,50 +238,47 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
     u8 *work = (*(u8 * *)gEffectWork);
     s16 *tbl;
 
-    if (GameFlag_IsSet(0x200) != 0) {
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         SceneEffect_SetupBlendByFlag201();
         work[0x34] = 1;
     }
     tbl = (s16 *)&gGameState;
     if (tbl[0xe0] == (s32)&SceneId_ArutamiraDou6) {
-        Actor_SetChildValue(16, 6);
-        Actor_SetChildValue(17, 6);
-        Actor_SetChildValue(18, 6);
-        Actor_SetChildValue(19, 6);
-        Actor_SetChildValue(20, 6);
+        Engine_ActorSetChildValue(16, 6);
+        Engine_ActorSetChildValue(17, 6);
+        Engine_ActorSetChildValue(18, 6);
+        Engine_ActorSetChildValue(19, 6);
+        Engine_ActorSetChildValue(20, 6);
     }
 }
 
 void ArutamiraDou_RespawnActorObject(void)
 {
-    s32 rec6;
-    s32 record;
-    u8 *p6;
-    u8 *p5;
+    u8 *work;
+    struct FieldActor *old;
+    struct FieldActor *copy;
 
-    p6 = *(s32 *)gEffectWork;
-    p5 = *(s32 *)((s32)p6 + 16);
-    Engine_ActorFaceDirection(*(s16 *)((s32)p6 + 24), 0x4000, 0);
-    Animation_ApplyChildValues((s32)p5, 0);
+    work = *(u8 **)gEffectWork;
+    old = *(struct FieldActor **)(work + 16);
+    Engine_ActorFaceDirection(*(s16 *)(work + 24), 0x4000, 0);
+    Animation_ApplyChildValues((struct DispatchObject *)old, 0);
     Battle_WaitMode0(20);
-    rec6 = (s32)Engine_ObjectCreate(0, *(s32 *)((s32)p5 + 8), *(s32 *)((s32)p5 + 12), *(s32 *)((s32)p5 + 16));
-    if (rec6 != 0) {
-        Dma_Set((const void *)((s32)p5), (void *)(rec6), -0x7bffffe4, (volatile u32 *)(0x40000d4));
-        *(s32 *)((s32)p5 + 108) = 0;
-        *(s32 *)((s32)p6 + 16) = rec6;
-        p5[84] = 0;
+    copy = Engine_ObjectCreate(0, old->x.fixed, old->y.fixed, old->z.fixed);
+    if (copy != 0) {
+        Dma_Set(old, copy, DMA_ENABLE32 | DMA_32BIT | sizeof(struct FieldActor) / 4, REG_DMA3);
+        old->update = 0;
+        *(struct FieldActor **)(work + 16) = copy;
+        old->active = 0;
     }
 }
 
-/* When actor 12 stands on cell (30, 20), settles it there, copies the cell's
- * attributes to (32, 20) and sets flag 0x212. */
 void ArutamiraDou_SettleActorOnCell(void)
 {
     struct FieldActor *actor = Object_GetById(12);
 
     if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
         actor->motion_flags = 2;
-        *(s32 *)actor->unknown_14 = 0;
+        actor->terrain_height = 0;
         actor->priority_flags = 2;
         Engine_MapCopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if EDITION_INTERNATIONAL
@@ -304,16 +293,15 @@ void FieldScene_RunTwoCallSequence(void)
     ArutamiraDou_SettleActorOnCell();
 }
 
-/* Contiguous unnamed state-owner run for resource_3bd. */
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
-    Ent_02000d58 *p = (Ent_02000d58 *)Object_GetById(11);
+    struct FieldActor *p = Object_GetById(11);
     Vec v;
 
-    v.x = p->unk8;
-    v.y = p->unkC;
-    v.z = p->unk10;
+    v.x = p->x.fixed;
+    v.y = p->y.fixed;
+    v.z = p->z.fixed;
 
     if (Object_CheckMovementCollision(p, &v) > 0) {
         obj[0x35] = 1;
@@ -323,7 +311,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 void FieldScene_RunActorElevenCellSetup(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
-    u8 *p = (u8 *)Object_GetById(11);
+    struct FieldActor *p = Object_GetById(11);
     s32 t;
 
     obj += 0x35;
@@ -332,18 +320,16 @@ void FieldScene_RunActorElevenCellSetup(void)
     if (t == 0) {
         s32 a = 0x49;
         s32 b = 0x11;
-        Map_CopyCellAttributes(0x4c, 0x10, 1, 1, a, b);
+        Engine_MapCopyCellAttributes(0x4c, 0x10, 1, 1, a, b);
         if (p != 0) {
             s32 c = 2;
-            p[0x55] = c;
-            p[0x23] = t;
+            p->motion_flags = c;
+            p->priority_flags = t;
         }
-        GameFlag_Set(0x211);
+        Engine_GameFlagSet(0x211);
     }
 }
 
-/* Hops the selected actor one step (two cells) the way it faces, snapping to
- * the facing's sixteenth, unless something blocks the landing cell. */
 void ArutamiraDou_HopSelectedActor(void)
 {
     struct FieldActor *actor = Object_GetById(gGameState.selected_actor);
@@ -404,19 +390,18 @@ void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
     s32 k1 = 0x1f80000;
     s32 k2 = 0x180000;
     s32 k3 = 0x900000;
-    u8 *obj = (u8 *)Object_GetById(a);
+    struct FieldActor *obj = Object_GetById(a);
     s32 buf[3];
     s32 *bp = buf;
 
     bp[0] = k1;
     bp[2] = k2;
     Vector_AddPolarOffset(b, c, bp);
-    *(s32 *)(obj + 8) = bp[0];
-    *(s32 *)(obj + 12) = bp[2];
-    *(s32 *)(obj + 16) = k3;
+    obj->x.fixed = bp[0];
+    obj->y.fixed = bp[2];
+    obj->z.fixed = k3;
 }
 
-/* Contiguous unnamed state-owner run for resource_3bd. */
 void SceneActor_PlaceFiveActorsInRow(u8 *p)
 {
     s32 i = 0;
@@ -428,14 +413,9 @@ void SceneActor_PlaceFiveActorsInRow(u8 *p)
     } while (i <= 4);
 }
 
-/* Five actors turn in a ring: the wheel speeds up, runs, slows, and stops
-   when the actor the scene state's third byte chooses comes round; that
-   actor then pulses. A cue plays at every 0x3000 of travel.
-   FAKEMATCH: forced temporaries; the block-local zero and state, the
-   reloaded work pointers and the stored-sum temporaries keep the game's
-   register and pool order, which the plain statements do not. */
 void ArutamiraDou_SpinActorWheel(void)
 {
+    /* FAKEMATCH: forced temporaries; the block-local zero and state, the reloaded work pointers and the stored-sum temporaries keep the game's register and pool order, which the plain statements do not. */
     u16 *p = ArutamiraDou_ClearTarget;
     s32 flag = 1;
     s32 state = *(s16 *)p;
@@ -461,7 +441,7 @@ void ArutamiraDou_SpinActorWheel(void)
         s32 v = ((s8 *)gSceneState)[2];
         s32 r = Math_Divide(v << 16, 5);
         if ((unsigned int)(((p[3] - r) << 16) + 0xc2ff0000) <= 0x5fe0000) {
-            u8 *o;
+            struct FieldActor *o;
             s32 nv = r + 0x4000;
             p[3] = nv;
             {
@@ -470,8 +450,8 @@ void ArutamiraDou_SpinActorWheel(void)
                 p[0] = k;
                 p[4] = z;
             }
-            o = (u8 *)Object_GetById(v + 11);
-            *(s32 *)(o + 0x6c) = (s32)ArutamiraDou_UpdateScalePulse;
+            o = Object_GetById(v + 11);
+            o->update = (void (*)(union FieldObject *))ArutamiraDou_UpdateScalePulse;
         }
     } else if (state == 0x63) {
         flag = 0;
@@ -487,7 +467,7 @@ void ArutamiraDou_SpinActorWheel(void)
             if ((u16)t2 > 0x3000) {
                 s32 z2 = 0;
                 q2[5] = z2;
-                Audio_PlayCue(0x87);
+                Engine_AudioPlayCue(0x87);
             }
         }
     }

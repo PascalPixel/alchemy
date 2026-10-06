@@ -8,7 +8,7 @@ Func_080d296c:
 	adds r6, r0, #0
 	adds r0, r5, #0
 	adds r7, r2, #0
-	bl Func_080ad2f0
+	bl PartyInventory_FindRoomFar
 	cmp r0, #0
 	bge .L_080d29d6
 	adds r0, r6, #0
@@ -43,7 +43,7 @@ Func_080d296c:
 	movs r2, #0
 	bl ObjectMotion_SetAngleToward
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	movs r0, #1
 	negs r0, r0
 	b .L_080d2a00
@@ -51,7 +51,7 @@ Func_080d296c:
 	movs r2, #0
 	adds r0, r6, #0
 	movs r1, #0
-	bl Func_080d3118
+	bl ObjectMotion_SetHorizontalPositionWithTerrain
 	adds r0, r5, #0
 	movs r1, #3
 	bl Func_080cf424

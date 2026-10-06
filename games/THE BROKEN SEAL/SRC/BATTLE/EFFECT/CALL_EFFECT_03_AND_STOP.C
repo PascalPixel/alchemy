@@ -1,19 +1,30 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
+#include "FX_SCENE.H"
+
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct BattleEffect03Object*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
+#define BattleFx_UpdateShrinkingOrbitObject ((void (*)(void))BattleFx_UpdateShrinkingOrbitObject)
+#define BattleFx_RunSparkEmitter ((void (*)(void))BattleFx_RunSparkEmitter)
+#define Object_ReplaceResourceEntry ((struct BattleEffect03Link * (*)(void*,struct BattleEffect03Link*))Object_ReplaceResourceEntry)
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void RunBattleEffect03(void);
 
 void BattleFx_CallEffect03AndStop(void)
 {
     RunBattleEffect03();
     EffectRuntime_StopCurrentObject();
 }
-
-/* Battle effect 03: spawn eight shrinking orbit objects around the target,
- * then one spark object that flashes for 30 frames, runs its emitter and is
- * sent off and destroyed; release the linked resource and run the finish
- * callback. The spark reuses the target and object variables. */
 
 struct BattleEffect03Object {
     u8 reserved_00[8];
@@ -44,38 +55,19 @@ struct BattleEffect03Link {
     u8 marker;
 };
 
-struct BattleEffect03State {
-    s32 reserved_00;
-    s32 x;
-    s32 y;
-    s32 z;
-    struct BattleEffect03Object *target;
-    u8 reserved_14[12];
-    s8 long_delay;
-    u8 reserved_21[3];
-    void (*finish_callback)(void);
-};
+extern struct BattleFxScene *gEffectWork;
 
-extern struct BattleEffect03State *gEffectWork;
-void BattleFx_UpdateShrinkingOrbitObject(void);
-void BattleFx_RunSparkEmitter(void);
-
-void BattleEffect_InitializeSharedScene(void);
 struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
-struct BattleEffect03Link *Object_ReplaceResourceEntry(void *, struct BattleEffect03Link *);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
 void Object_CommitPosition(struct BattleEffect03Object *);
-void Object_Destroy(struct BattleEffect03Object *);
-void Resource_ResetEntry(u8);
-void BattleFx_PrepareBufferInterpolation(void);
+void ObjectDispatch_ReleaseFar(struct BattleEffect03Object *);
 
 void RunBattleEffect03(void)
 {
-    struct BattleEffect03State *state = gEffectWork;
-    struct BattleEffect03Object *target = state->target;
+    struct BattleFxScene *state = gEffectWork;
+    struct BattleEffect03Object *target = state->main_object;
     struct BattleEffect03Object *object;
     struct BattleEffect03Link *last;
     u8 link_marker;
@@ -131,7 +123,7 @@ void RunBattleEffect03(void)
     if (object != 0) {
         target->callback = BattleFx_RunSparkEmitter;
         target->angle = 0;
-        if (state->long_delay != 0)
+        if (state->enabled != 0)
             WaitFrames(128);
         else
             WaitFrames(192);
@@ -143,7 +135,7 @@ void RunBattleEffect03(void)
         target->unknown_5a = 0;
         Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
         Object_CommitPosition(target);
-        Object_Destroy(target);
+        ObjectDispatch_ReleaseFar(target);
     }
     if (link_marker != 0x60)
         Resource_ResetEntry(link_marker);

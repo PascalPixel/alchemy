@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
@@ -7,14 +16,17 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "RUNTIME_MEM.H"
+#include "IO_REG.H"
+#include "FLAG_IDS.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-void Map_SetCameraCenter(s32 x, s32 y);
+#define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
 
-/* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime,
-   following the independently matched neighbouring column renderer. */
+#define Tilemap_DecodeStagedBuffer ((void (*)(void))Tilemap_DecodeStagedBuffer)
+#define DisplayBlend_StartScript ((void (*)(void*))DisplayBlend_StartScript)
+
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
+    /* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime. */
     u32 *tiles;
     u8 *dest;
     u32 index = (*map << 20) >> 19;
@@ -43,9 +55,6 @@ static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32
     *(u16 *)(destination + 64) = *colors;
 }
 
-extern struct MapRenderWork *gMapWork;
-void Map_UpdateLayerScroll(void);
-
 static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
     u32 *tiles;
@@ -62,9 +71,6 @@ static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod
     *(u32 *)(dest + 64) = *tiles;
 }
 
-/* A layered scene's resources, as rows counted from the first field map:
-   the map itself, then the palette, the three tile sheets and the layer
-   data. */
 struct SceneEntry {
     u16 resources[6];
 };
@@ -80,11 +86,10 @@ struct SceneLayerSource {
     u8 period_y;
 };
 
-/* The head of a field map resource (SRC/MAP/MAP.INC). */
 struct SceneHeader {
     u8 origin[4];
     u8 priority[3];
-    u8 screen[3];
+    u8 char_base[3];
     u16 unknown_0a;
     struct SceneLayerSource layers[3];
     s32 tiles;
@@ -95,61 +100,15 @@ struct SceneHeader {
     s32 script;
 };
 
-struct SceneLayer {
-    s32 x;
-    s32 y;
-    s32 base_x;
-    s32 base_y;
-    s32 scroll_x;
-    s32 scroll_y;
-    s32 speed_x;
-    s32 speed_y;
-    s32 phase_x;
-    s32 phase_y;
-    u32 period_x : 16;
-    u32 period_y : 16;
-    u32 *cells;
-};
-
-struct SceneWork {
-    u8 unknown_00[0x10];
-    u8 *script;
-    u32 blend_control : 16;
-    u32 unknown_16 : 16;
-    u8 unknown_18[0xcc];
-    s32 scale_x;
-    s32 scale_y;
-    s32 origin[4];
-    u8 unknown_fc[4];
-    u8 priority[3];
-    u8 unknown_103;
-    struct SceneLayer layers[3];
-};
-
-extern struct SceneEntry Map_LayeredScenes[];
 extern u8 gMapLayerData[];
 
-void Blend_SetDarkenTarget0(s32 value);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_DecodeType2(const void *source, void *destination);
-void Tilemap_DecodeStagedBuffer(void);
-void Tilemap_ConvertBuffer(void);
-void MapAnimation_StartChannels(void *channels);
-void DisplayBlend_StartScript(void *script);
-s32 GameFlag_IsSet(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
-void Runtime_BumpFree(void *allocation);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
-
-/* Iwram_Call2 (IWRAM_CALL.H) with r3 among the registers the routine may
-   change; the ROM keeps nothing in r3 across the two layer multiplies. */
 static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
 {
-    /* FAKEMATCH: the call's operands in their registers, as Iwram_Call2. */
-    register s32 result __asm__("r0") = left; /* FAKEMATCH: as above. */
+    /* FAKEMATCH: fixed registers place the call operands in r0 and r1. */
+    register s32 result __asm__("r0") = left; /* FAKEMATCH: the result shares the left operand's r0 register. */
     register s32 factor __asm__("r1") = right;
 
-    /* FAKEMATCH: the same call, with r3 listed as changed. */
+    /* FAKEMATCH: the inline call marks r3 as changed across layer multiplies. */
     __asm__ volatile(".align 2\n\tmov ip, pc\n\tbx %2\n\t"
                      : "+r"(result)
                      : "r"(factor), "r"(routine)
@@ -157,17 +116,12 @@ static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
     return result;
 }
 
-/* Loads a layered scene: decodes the map's cells, collision and tilemap and
-   starts its optional tile animation and blend script, sets the three
-   layers' origins, scroll rates and periods, writes the layers' background
-   controls, and, unless the flag that keeps the current pictures is set,
-   decodes the scene's palette, tile sheets and layer data. */
 s32 Map_LoadLayeredScene(s32 index)
 {
     struct SceneEntry *entry;
-    struct SceneWork *work;
+    struct MapScrollWork *work;
     struct SceneHeader *header;
-    struct SceneLayer *layer;
+    struct MapLayerScroll *layer;
     struct SceneLayerSource *source;
     s32 *scale_x;
     s32 *scale_y;
@@ -177,11 +131,11 @@ s32 Map_LoadLayeredScene(s32 index)
     u8 *src;
     s32 cnt;
 
-    *(volatile u16 *)0x04000000 &= 0xc1ff;
+    REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
     Blend_SetDarkenTarget0(0);
     entry = &Map_LayeredScenes[index];
-    work = Runtime_AllocateBlock(8, sizeof(struct SceneWork));
-    Iwram_ClearWords(work, sizeof(struct SceneWork));
+    work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
+    Iwram_ClearWords(work, sizeof(struct MapScrollWork));
     header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
     src = (u8 *)header + header->tiles;
     Resource_DecodeType01(src, Ram_MapCellBuffer + 1);
@@ -191,12 +145,11 @@ s32 Map_LoadLayeredScene(s32 index)
     src = (u8 *)header + header->tilemap;
     Resource_DecodeType01(src, Ram_MapCellBuffer);
     Tilemap_ConvertBuffer();
-    /* FAKEMATCH: the optional blocks' offsets pass through the pointer
-       variable, which keeps them in r0 as the ROM does. */
+    /* FAKEMATCH: passing optional offsets through the pointer keeps them in r0. */
     src = (u8 *)header->animation;
     if (src != 0) {
         Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1000);
-        MapAnimation_StartChannels(Ram_MapCollision + 0x1000);
+        MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
     }
     src = (u8 *)header->blend;
     if (src != 0) {
@@ -204,17 +157,17 @@ s32 Map_LoadLayeredScene(s32 index)
         DisplayBlend_StartScript(Ram_MapCollision + 0x1e00);
     }
     work->script = (u8 *)header + header->script;
-    work->origin[0] = header->origin[0] << 19;
-    work->origin[1] = header->origin[1] << 19;
-    work->origin[2] = header->origin[2] << 19;
-    work->origin[3] = header->origin[3] << 19;
-    scale_x = &work->scale_x;
+    work->min_x = header->origin[0] << 19;
+    work->min_y = header->origin[1] << 19;
+    work->max_x = header->origin[2] << 19;
+    work->max_y = header->origin[3] << 19;
+    scale_x = &work->view_x;
     *scale_x = 0;
-    scale_y = &work->scale_y;
+    scale_y = &work->view_y;
     *scale_y = 0;
-    work->priority[0] = header->priority[0];
-    work->priority[1] = header->priority[1];
-    work->priority[2] = header->priority[2];
+    work->enabled[0] = header->priority[0];
+    work->enabled[1] = header->priority[1];
+    work->enabled[2] = header->priority[2];
     layer = work->layers;
     source = header->layers;
     for (i = 0; i < 3; i++) {
@@ -225,67 +178,66 @@ s32 Map_LoadLayeredScene(s32 index)
         s32 base_x;
         s32 base_y;
 
-        layer->base_x = base_x = x << 19;
-        layer->base_y = base_y = y << 19;
+        layer->offset_x = base_x = x << 19;
+        layer->offset_y = base_y = y << 19;
         layer->speed_x = source->speed_x << 12;
         layer->speed_y = source->speed_y << 12;
-        layer->period_x = source->period_x;
-        layer->period_y = source->period_y;
+        layer->mask_x = source->period_x;
+        layer->mask_y = source->period_y;
         layer->phase_x = 0;
         layer->phase_y = 0;
         scroll_x = source->scroll_x << 12;
         scroll_y = source->scroll_y << 12;
-        layer->scroll_x = scroll_x;
-        layer->scroll_y = scroll_y;
-        layer->cells = (u32 *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
+        layer->scale_x = scroll_x;
+        layer->scale_y = scroll_y;
+        layer->cells = (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
         layer->x = Scene_Call2(*scale_x, scroll_x, IwramMulQ16ReturnIp) + base_x;
         layer->y = Scene_Call2(*scale_y, scroll_y, IwramMulQ16ReturnIp) + base_y;
         source++;
         layer++;
     }
-    work->blend_control = 0x1000;
-    if (work->priority[0] != 0)
-        work->blend_control = 0x1800;
-    if (work->priority[1] != 0)
-        work->blend_control |= 0x400;
-    if (work->priority[2] != 0)
-        work->blend_control |= 0x200;
-    cnt = work->priority[0] | (header->screen[0] << 2) | 0x500;
-    *(volatile u16 *)0x0400000e = cnt;
-    /* FAKEMATCH: one-pass loops hold the second and third background
-       control writes in source order. */
+    work->flags = DISPCNT_OBJ_ON;
+    if (work->enabled[0] != 0)
+        work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
+    if (work->enabled[1] != 0)
+        work->flags |= DISPCNT_BG2_ON;
+    if (work->enabled[2] != 0)
+        work->flags |= DISPCNT_BG1_ON;
+    cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
+    REG_BG3CNT = cnt;
+    /* FAKEMATCH: one-pass loops keep the second and third background-control writes in source order. */
     do {
-        cnt = work->priority[1] | (header->screen[1] << 2) | 0x600;
-        *(volatile u16 *)0x0400000c = cnt;
+        cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
+        REG_BG2CNT = cnt;
     } while (0);
     do {
-        cnt = work->priority[2] | (header->screen[2] << 2) | 0x700;
-        *(volatile u16 *)0x0400000a = cnt;
+        cnt = work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7);
+        REG_BG1CNT = cnt;
     } while (0);
-    if (GameFlag_IsSet(0x170) != 0) {
-        GameFlag_ClearBitFar(0x170);
+    if (GameFlag_IsSet(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
+        GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
     } else {
         buf = (u8 *)Runtime_BumpAllocate(0x4000);
         if (buf != NULL) {
             backdrop = *(s16 *)0x05000000;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
             *(s16 *)buf = backdrop;
-            Iwram_CopyWords((void *)0x05000000, buf, 0x1c0);
+            Iwram_CopyWords((void *)BG_PLTT, buf, 0x1c0);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x06004000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(1), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x06008000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(2), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x0600c000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(3), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001), gMapLayerData);
             Runtime_BumpFree(buf);
         }
     }
     cnt = 0;
-    *(volatile u16 *)0x0400004c = cnt;
-    *(volatile u16 *)0x04000050 = cnt;
-    cnt = 0x140;
-    *(volatile u16 *)0x04000000 = cnt;
+    REG_MOSAIC = cnt;
+    REG_BLDCNT = cnt;
+    cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+    REG_DISPCNT = cnt;
     Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
     return 2;
 }
@@ -297,7 +249,7 @@ void Map_ApplyWorkOriginAndSpan(void)
     s32 second;
     s32 *p;
 
-    p = **(s32 ***)((u32)&gCam);
+    p = ((struct MapScrollWork *)gMapWork[0])->origin;
     first = 0;
     second = 0;
     third = 0;
@@ -310,18 +262,6 @@ void Map_ApplyWorkOriginAndSpan(void)
     Map_UpdateLayerScroll();
 }
 
-/* Exact candidate: whole owner [0800fec8, 0800ff54), 140 bytes, four own pool
-   words. Baseline 2026-09-26: 144 bytes, 64 differing halfwords, 59
-   aligned edits. No callees. Raw caller 08010000 selects this row update
-   on a vertical scroll boundary and ff54 on a horizontal boundary.
-   H1: use the adopted ff54 family's typed per-cell helper and explicit
-   outer row/base lifetimes, with paired word stores for this row owner.
-   Prediction: only r8/sl saved, base in ip, all four pools reloaded where
-   the reference owns them. Accept only exact 140 bytes plus landing gates.
-   H1 result: exact 140/140 bytes, zero differing halfwords/aligned edits,
-   topology equal; complete normalized comparison read. The same-source
-   family evidence is the adopted ff54 implementation, not another project.
-   The ff54 owner is unchanged. */
 void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 {
     u8 *dest = (u8 *)(0x06002800 + (a0 << 11));
@@ -372,7 +312,7 @@ void Map_UpdateLayerScroll(void)
     s32 base_x, base_y;
     u32 i;
 
-    work = *(struct MapScrollWork **)&gMapWork;
+    work = gMapWork[0];
     origin = work->origin;
     layer = work->layers;
     if (origin == 0)
@@ -456,7 +396,7 @@ void Map_SetCameraCenter(s32 x, s32 y)
 {
     u32 no;
     u8 *dest;
-    struct MapScrollWork *work = gCam;
+    struct MapScrollWork *work = gMapWork[0];
     struct MapLayerScroll *layer = work->layers;
 
     x -= 0x780000;
@@ -509,6 +449,160 @@ void Map_SetCameraCenter(s32 x, s32 y)
                 row = (row + 128) & 0x3f80;
                 rowmod = (rowmod + 64) & 0x3c0;
             }
+        }
+    }
+}
+
+struct TilePos { s32 x, y; };
+
+void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
+    u32 dst_x, u32 dst_y, u32 width, u32 height)
+{
+    /* FAKEMATCH: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
+    u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
+    u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
+    register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
+    struct TilePos tile[3];
+    s32 i;
+    struct TilePos *pos = tile;
+    u32 y;
+    register u32 x;
+
+    for (i = 2; i >= 0; i--) {
+        pos->x = layer->x >> 20;
+        pos->y = layer->y >> 20;
+        pos++;
+        layer++;
+    }
+    for (y = dst_y; y < dst_y + height; y++) {
+        for (x = dst_x; x < dst_x + width; x++) {
+            /* FAKEMATCH: the cell value remains live in r5 while layers are tested. */
+            register u32 cell __asm__ ("r5") = 0xfff & *src++;
+            volatile u32 *dest;
+            u32 offset;
+            u32 tmp3;
+            u32 n;
+            register u32 *tiles;
+            u32 tmp6;
+            u32 tmp9;
+            u32 tmp12;
+            u32 tmp11;
+            u32 tmp13;
+            u32 tmp15;
+            tmp9 = *dst;
+            tmp3 = tmp9 & -0x1000;
+            tmp12 = x & 15;
+            dst[0] = cell | tmp3;
+            tmp6 = tmp12;
+            dst++;
+            tmp15 = y & 15;
+            tmp3 = tmp15;
+            pos = tile;
+            tmp13 = tmp3 << 5;
+            tmp12 = tmp13;
+            n = tmp12;
+            n += tmp6;
+            tmp13 = 4 * n;
+            i = 0;
+            tmp11 = tmp13;
+            tmp6 = tmp11;
+            offset = tmp6;
+            for (; i < 3; i++) {
+                if (pos->x <= (s32)x && 16 + pos->x > (s32)x && pos->y <= (s32)y && pos->y + 12 > (s32)y) {
+                    u32 *tmp;
+                    u32 tmp2;
+                    u32 tmp4;
+                    u32 *tmp7;
+                    u32 tmp10;
+                    u32 tmp14;
+                    u32 tmp18;
+                    u32 tmp21;
+                    /* FAKEMATCH: consumed offset in r3 changes only registers/order, preserving all instructions. */
+                    register u32 bytes __asm__ ("r3") = cell * 8;
+                    u32 tmp16;
+                    {
+                        tmp2 = 0x06002800;
+                        /* FAKEMATCH: the consumed-base barrier preserves two register choices and one load's order. */
+                        __asm__ __volatile__ ("" : : "l" (tmp2));
+                        tmp = (u32 *)Ram_MapBlocks;
+                        tiles = tmp;
+                        tmp16 = offset + tmp2;
+                    }
+                    tmp21 = tmp16;
+                    tmp18 = tmp21;
+                    tmp2 = tmp18;
+                    tmp = (u32 *)tmp2;
+                    dest = tmp;
+                    tiles = (u32 *)((u8 *)tiles + bytes);
+                    tmp14 = *tiles;
+                    tmp10 = tmp14;
+                    *dest = tmp10;
+                    tmp7 = (u32 *)(Ram_MapBlocks + 4);
+                    tiles = tmp7;
+                    tiles = (u32 *)((u8 *)tiles + bytes);
+                    tmp16 = 0x06002840 + offset;
+                    tmp18 = tmp16;
+                    tmp14 = tmp18;
+                    tmp21 = *tiles;
+                    tmp10 = tmp21;
+                    tmp4 = tmp10;
+                    tmp2 = tmp4;
+                    tmp4 = tmp14;
+                    tmp7 = (u32 *)tmp4;
+                    dest = tmp7;
+                    *dest = tmp2;
+                    break;
+                }
+                offset += 0x800;
+                pos++;
+            }
+        }
+        src += 128 - width;
+        dst += 128 - width;
+    }
+}
+
+struct MapCopyCommand {
+    u16 source;
+    s16 y, width, height, delay;
+} __attribute__((packed, aligned(2)));
+typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];
+
+void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destination_y)
+{
+    struct MapCopyCommand *record = (struct MapCopyCommand *)command;
+    u32 source = record->source;
+    /* FAKEMATCH: the fixed r3 sentinel preserves the r3/ip comparison registers. */
+    register u32 end __asm__("r3") = 0xffff;
+    /* FAKEMATCH: compare an ip snapshot and retain the entry in r0. */
+    register u32 test __asm__("ip") = source;
+
+    /* FAKEMATCH: the ip snapshot prevents comparing in r0 and dropping the register copy. */
+    __asm__ ("" : "+r" (test), "+r" (end));
+
+    if (test != end) {
+        /* FAKEMATCH: the r9 sentinel preserves six register choices. */
+        register u32 stop __asm__("r9") = end;
+        s16 *args = (s16 *)(command + 1);
+
+        while (1) {
+            s32 source_y = args[0];
+            s32 width = args[1];
+            s32 height = args[2];
+            s32 delay = args[3];
+            args += 5;
+
+            Map_CopyMetatileIndicesRect(source, (u16)source_y,
+                          destination_x, destination_y,
+                          (u16)width, (u16)height);
+            record++;
+            WaitFrames((u16)delay);
+            source = record->source;
+            test = source;
+            /* FAKEMATCH: the post-wait ip snapshot prevents comparing in r0 and dropping its register copy. */
+            __asm__ ("" : "+r" (test));
+            if (test == stop)
+                break;
         }
     }
 }

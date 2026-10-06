@@ -1,34 +1,17 @@
-/* NONMATCHING: French Colosso mode-four sprite layout, 2026-10-01.
- * This generic case draws one 64x32 sprite at y=48. French draws two 32x32
- * sprites at y=64; this complete callback is 1264 bytes instead of 1312
- * in all three trial overlays.
- */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TBS_EDITION.H"
-/* Colosso: decode the portrait sheet into a scratch block, copy portrait
- * id's palette into object palette 15 and its 1 KB of tiles into the cached
- * VRAM slot (claimed on first use). Portrait 8 shares tiles with 4. The same
- * function sits in each of the three Colosso trial overlays. */
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
 #include "CALL.H"
-/* Colosso: the trial overlays' scripted sprite task. Each frame it runs the
- * mode script's commands until a wait, interpolates the sprite's scale, the
- * blend and the horizontal position toward their targets, draws the mode's
- * sprites through an affine matrix and queues the blend registers. The same
- * function sits in each of the three Colosso trial overlays, with its
- * variables in each overlay's own work. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 
 extern s16 Korosseo_PortraitSlot;
 extern u8 Korosseo_PortraitPaletteOffsets[];
-u8 *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_BumpFree(u8 *block);
-s32 Resource_FindFreeEntry(void);
-s32 Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(s32 entry, u8 *destination);
-void VramBlock_LoadCached(s32 slot, s32 size, s32 source);
 
 static __inline__ void Dma_Wait(volatile u32 *dma)
 {
@@ -39,8 +22,6 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 struct Sprite { u32 words[3]; };
 
 struct SpriteTile { u16 pad, base; };
-
-struct SpriteTransform { unsigned x : 16; unsigned y : 16; unsigned angle : 16; unsigned pad : 16; };
 
 /* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
 struct Half { u16 value; };
@@ -54,10 +35,6 @@ extern s32 Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
 extern u32 Korosseo_ModeTaskSprites[];
 extern s32 Engine_TaskRemoveCallback(void (*fn)(void));
-extern void Resource_ResetEntry(s32 slot);
-extern s32 AffineMatrix_BuildForEffect(struct SpriteTransform *work);
-extern void Runtime_PushSlotEntry(void *sprite, s32 priority);
-
 /* FAKEMATCH: transfer the exact queue read boundary and count-store alias.
  * Each publication owns its cursor; only the hardware pointers persist. */
 #define QueueRegister(address, value) \
@@ -85,7 +62,7 @@ void Korosseo_UpdateModeTask(void)
     s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
     u32 flags;
-    struct SpriteTransform work;
+    struct AffineTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
 
@@ -169,8 +146,8 @@ render:
             Korosseo_ModeMoveDuration = zero.value;
     }
     work.angle = 0;
-    work.x = scale;
-    work.y = scale;
+    work.scale_x = scale;
+    work.scale_y = scale;
     matrix = (s16)AffineMatrix_BuildForEffect(&work);
     Korosseo_ModeTaskPosition += pos;
     pos = Korosseo_ModeTaskPosition / 256;

@@ -1,7 +1,3 @@
-@ Import veneers after the TORETO_EDA overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — TORETO_EDA overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -34,10 +30,10 @@ BattleFx_FinishAction:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global Event_SetValue170
+	.global Event_SetExitRequest
 	.thumb_func
-Event_SetValue170:
-	overlay_veneer Event_SetValue170Far
+Event_SetExitRequest:
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetPhaseRequest
 	.thumb_func
 BattleFx_SetPhaseRequest:

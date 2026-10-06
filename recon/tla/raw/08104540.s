@@ -375,7 +375,7 @@ Func_08104540:
 	str r0, [r2]
 	ldr r3, [sp, #20]
 	ldr r1, [r3]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	mov r1, r11
 	str r0, [r1]
 	movs r0, #111
@@ -396,7 +396,7 @@ Func_08104540:
 	str r0, [r1]
 	ldr r2, [sp, #20]
 	ldr r1, [r2]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	mov r3, r11
 	str r0, [r3]
 	movs r0, #111

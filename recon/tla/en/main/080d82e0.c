@@ -1,12 +1,5 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "TYPES.H"
+#include "OBJECT_DISPATCH.H"
 #include "OBJDISP.H"
 
 extern u8 gEffectWork[];
@@ -16,10 +9,6 @@ void BattleFx_ShrinkObjectAndDestroyFast(void);
 void BattleFx_UpdateRadialSpread(void);
 void BattleFx_UpdateDescendingOrbitObject(void);
 extern const u8 BattleFx_CommonParticleScript[];
-
-/* The Venus Djinni capture: the Djinni hops twice and leaps, a ring of
-   particles rises from it and falls back, then a burst above the leader
-   and eight sparks scattered around it close the scene. */
 
 struct CaptureObject {
     u8 unknown_00[8];
@@ -50,7 +39,7 @@ extern s32 gGameState[];
 
 struct CaptureObject *Object_GetById(s32 id);
 void BattleFx_InitializeSlots(void);
-void Unnamed_080b0840Far(s32 value);
+void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
@@ -61,12 +50,9 @@ void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 void EffectSlot_SetCallback(void *slot, void *callback);
 void EffectSlot_SetObjectMode(void *slot, s32 mode);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
-s32 Random16(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 __udivsi3(s32 numerator, s32 denominator);
 struct CaptureObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
@@ -89,7 +75,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 
     BattleFx_InitializeSlots();
     effect_slots = *(void **)gEffectWork;
-    Unnamed_080b0840Far(0x201204);
+    Shop_RestoreSceneTilesFar(0x201204);
     WaitFrames(30);
     djinni->visible = 0;
     Audio_PlayCue(152);
@@ -122,7 +108,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         EffectSlot_Initialize(slot, 284, position[0], position[2]);
         EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
         EffectSlot_SetObjectMode(slot, 7);
-        ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
+        Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 11);
         *(s32 *)(slot + 40) = 0x8000;
         *(s32 *)(slot + 44) = Random16() + 0x18000;
         remaining--;
@@ -164,7 +150,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
             djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
             djinni->mode = 0;
             Object_SetMode(djinni, 7);
-            Animation_ApplyChildValuesFar(djinni, 11);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
         }
     }
 
@@ -186,7 +172,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         djinni->base_y = djinni->y;
         djinni->speed = Random16() + 0x16666;
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
-        Animation_ApplyChildValuesFar(djinni, 11);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
         djinni->lifetime = 8;
         ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, (u32)BattleFx_CommonParticleScript);
     }

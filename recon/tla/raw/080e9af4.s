@@ -91,7 +91,7 @@ Func_080e9af4:
 	bl Object_SetPositionAndResetMotionFar
 	adds r0, r7, #0
 	movs r1, #0
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	movs r1, #5
 	adds r0, r7, #0
 	bl Object_SetMode
@@ -211,7 +211,7 @@ Func_080e9af4:
 	movs r3, #26
 	ldrsh r2, [r0, r3]
 	ldr r0, [sp, #8]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080e9cb6:
 	movs r6, #128
 	lsls r6, r6, #5

@@ -403,7 +403,7 @@ gTorebiMachiPlacements:
 gTorebiMachiEvents:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte FieldScene_RunScene3b5_02000224
+	.4byte TorebiMachi_OpenActorEightPassage
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte SceneScript_SetupActors
@@ -433,19 +433,19 @@ gTorebiMachiEvents:
 	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0x08c00014
 	.4byte FieldScene_RunPrimarySequence
@@ -499,7 +499,7 @@ gTorebiMachiEvents:
 	.4byte FieldScene_RunPatientTalk
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte FieldScene_RunScene3b5_02000568
+	.4byte TorebiMachi_AskForSweets
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte SceneDialogue_RunActor27Message1fa3
@@ -575,7 +575,6 @@ gTorebiMachiEvents:
 	.4byte 0x00000033
 	.4byte 0x0f970064
 	.4byte 0x00200009
-	/* Japanese actor-event row has no c400 mode flags. */
 	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00000023
 	.else
@@ -602,7 +601,7 @@ gTorebiMachiEvents:
 gTorebiMachiEvents2:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte FieldScene_RunScene3b5_02000224
+	.4byte TorebiMachi_OpenActorEightPassage
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte SceneScript_SetupActors
@@ -632,19 +631,19 @@ gTorebiMachiEvents2:
 	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0x18c100ef
 	.4byte SceneState_SetValue30ThenCall
@@ -695,7 +694,7 @@ gTorebiMachiEvents2:
 	.4byte FieldScene_RunPatientTalk
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte FieldScene_RunScene3b5_02000568
+	.4byte TorebiMachi_AskForSweets
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte MsgTorebiMachiTheFinalsStartTodayIWonder
@@ -793,7 +792,7 @@ gTorebiMachiEvents2:
 gTorebiMachiEvents3:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte FieldScene_RunScene3b5_02000224
+	.4byte TorebiMachi_OpenActorEightPassage
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte SceneScript_SetupActors
@@ -823,19 +822,19 @@ gTorebiMachiEvents3:
 	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0x18c100ef
 	.4byte SceneState_SetValue30ThenCall
@@ -868,7 +867,7 @@ gTorebiMachiEvents3:
 	.4byte MsgTorebiMachiIllBeBackToDoBusiness
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte FieldScene_RunScene3b5_020005dc
+	.4byte TorebiMachi_ReceiveLeftovers
 	.4byte 0x00000000
 	.4byte 0x08c1001c
 	.4byte FieldScene_RunScene3b5SequenceA

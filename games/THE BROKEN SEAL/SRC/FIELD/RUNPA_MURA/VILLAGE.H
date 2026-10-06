@@ -11,21 +11,6 @@
 #include "ITEM_IDS.H"
 #include "SOUND_IDS.H"
 
-/*
- * Lunpa, the thieves' village, and the gates of Lunpa Fortress above it.
- *
- * Two guards keep strangers at the village entrance while Dodonpa holds
- * Hammet in the fortress. Reveal uncovers the village's secrets for as
- * long as it lasts: a puddle that Frost turns into a pillar of ice, a
- * Psynergy Stone, and a switch that opens the hidden passage to the jail.
- * A Nut hovers out of reach until Catch pulls it down.
- *
- * At the gates, two more guards turn the party back. Cloak lets the party
- * slip past them; a party they catch is marched away, and one caught inside
- * the fortress is thrown out onto the gate road. After the escape with
- * Hammet the guards talk of the intruders and the party will not go back.
- */
-
 enum LunpaEntrance {
     LUNPA_ENTRANCE_FROM_WORLD_MAP = 1,
     LUNPA_ENTRANCE_FROM_GATE,
@@ -41,7 +26,6 @@ enum LunpaEntrance {
     LUNPA_ENTRANCE_FROM_JAIL
 };
 
-/* A door's trigger and exit share the number of the room it leads to. */
 enum LunpaExit {
     LUNPA_EXIT_TO_WORLD_MAP = 1,
     LUNPA_EXIT_TO_GATE,
@@ -70,7 +54,6 @@ enum GateExit {
     GATE_EXIT_THIRD
 };
 
-/* Where the exits arrive in the scenes they lead to. */
 enum {
     WORLD_MAP_ENTRANCE_FROM_LUNPA = 34,
     CAVE_ENTRANCE_FROM_LUNPA = 2,
@@ -79,7 +62,6 @@ enum {
     FORTRESS_ENTRANCE_FROM_GATE = 1
 };
 
-/* The rooms behind the doors take the numbers the interiors give them. */
 #define ROOM_ENTRANCE(exit) ((exit) - LUNPA_EXIT_TO_FIRST_HOME + ROOM_ENTRANCE_FIRST)
 
 enum LunpaTrigger {
@@ -111,13 +93,11 @@ enum GateTrigger {
     TRIGGER_PARTY_SPOTTED = 91
 };
 
-/* The doors a party walks through, in trigger order. */
 enum {
     DOOR_COUNT = 8,
     DOOR_TEMPLE = TRIGGER_TEMPLE_DOOR - TRIGGER_FIRST_HOME_DOOR
 };
 
-/* Reveal's secrets stay hidden while FLAG_LUNPA_SECRETS_HIDDEN is set. */
 enum LunpaFlag {
     FLAG_LUNPA_PUDDLE_FROZEN = 0x200,
     FLAG_LUNPA_SECRETS_HIDDEN = 0x201,
@@ -135,10 +115,6 @@ enum LunpaFlag {
     FLAG_LUNPA_NUT_CAUGHT = 0xfd1
 };
 
-/*
- * The fortress remembers what the party did inside only for one visit; the
- * gate clears ten flags, 0x943 to 0x94c, whenever the party arrives.
- */
 enum {
     FLAG_FORTRESS_VISIT = 0x943
 };
@@ -159,7 +135,6 @@ enum LunpaActor {
     ACTOR_FLOATING_NUT
 };
 
-/* Door scripts stop every actor the scene can place. */
 enum {
     ACTOR_LAST_PLACED = 65
 };
@@ -185,12 +160,10 @@ enum LunpaSprite {
     SPRITE_GLINT = 0x11d
 };
 
-/* The placement behaviour of the floating Nut. */
 enum {
     ACTOR_FLOAT = 7
 };
 
-/* The phases of Reveal and Cloak their area events answer. */
 enum {
     REVEAL_SHOWN = 5,
     REVEAL_FADED = 4,
@@ -198,51 +171,16 @@ enum {
     CLOAK_FADED = 2
 };
 
-/* The glint over the hidden switch hovers, stretched, above the ground. */
 enum {
     GLINT_MOTION_FLAGS = 8,
     GLINT_SCALE_X = 0x13333,
     GLINT_SCALE_Y = 0x18000
 };
 
-/* Retreat from the gate returns the party to this entrance. */
 enum {
     GATE_RETREAT_ENTRANCE = 10
 };
 
-TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerESealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerASealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerESealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerAReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerEReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerAReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerEReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageEastGuardReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardReopenedThoughts);
-
-/* The guards' warning to a party they catch is a run of lines. */
 
 enum CatchLine {
     CATCH_LEFT_GUARD_CHALLENGES,
@@ -251,33 +189,24 @@ enum CatchLine {
     CATCH_RIGHT_GUARD_SENDS_PARTY_OFF
 };
 
-/* The right guard's thoughts before the escape. */
-
-/* The left guard half recognizes Hammet, then dismisses the thought. */
-
 enum RecognitionLine {
     RECOGNITION_SEEN_THAT_MAN,
     RECOGNITION_IMPOSSIBLE
 };
 
-
-/* A thrown-out leader lies sprawled on the road. */
 enum {
     ANIM_SPRAWLED = 19
 };
 
-/* A leader on the pillar of ice stands at least this high; map cells are as wide. */
 enum {
     PILLAR_TOP_HEIGHT = PIXELS(16),
     CELL_SIZE = PIXELS(16)
 };
 
-/* The map object that marks the Psynergy Stone. */
 enum {
     MAP_OBJECT_PSYNERGY_STONE = 102
 };
 
-/* The heap slot the floating Nut decodes its icon into. */
 enum {
     HEAP_ITEM_ICON = 17,
     ITEM_ICON_BUFFER_SIZE = 0x608,
@@ -285,18 +214,12 @@ enum {
     ITEM_ICON_TILE_BYTES = 128
 };
 
-
 struct LunpaDoor {
     const u16 *steps;
     u16 x;
     u16 y;
 };
 
-/*
- * The floating Nut keeps its hover in the object record: an angle where a
- * walking actor keeps its speed, and its resting point where a walking actor
- * keeps its destination.
- */
 struct FloatingNut {
     u8 unknown_00[8];
     s32 x;
@@ -316,7 +239,6 @@ struct FloatingNut {
     u8 unknown_57[5];
     u8 ready;
     u8 unknown_5d[4];
-    /* Set to move only by velocity, skipping the walk to a destination. */
     u8 free_motion;
     u8 unknown_62[10];
     s32 (*update)(union FieldObject *object);

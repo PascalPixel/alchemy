@@ -27,7 +27,7 @@ Func_0801399c:
 	ldr r0, .L_08013a6c
 	ldr r1, .L_08013a70
 	ldr r5, .L_08013a74
-	bl Func_080164e8
+	bl SerialRuntime_ExchangePayloads
 	strh r0, [r5]
 	bl Func_08016990
 .L_080139d6:
@@ -105,21 +105,21 @@ Func_0801399c:
 .L_08013a64:
 	.4byte 0x000003ff
 .L_08013a68:
-	.4byte Data_030011b8
+	.4byte gSerialExchangeActive
 .L_08013a6c:
-	.4byte Data_02003a70
+	.4byte gSerialTransfer
 .L_08013a70:
-	.4byte Data_02003870
+	.4byte gSerialPeerPayloads
 .L_08013a74:
 	.4byte gLinkStatus
 .L_08013a78:
 	.4byte gBlendDuration
 .L_08013a7c:
-	.4byte Data_03001230
+	.4byte gFrameRenderPending
 .L_08013a80:
 	.4byte gOamUsage
 .L_08013a84:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08013a88:
 	.4byte Data_030011f8
 .L_08013a8c:
@@ -205,6 +205,6 @@ Func_0801399c:
 .L_08013b24:
 	.4byte IwramSoundRenderFrame
 .L_08013b28:
-	.4byte Data_030011d4
+	.4byte gLagFrameCount
 .L_08013b2c:
 	.4byte Data_0300121c

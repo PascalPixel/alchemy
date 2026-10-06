@@ -12,4 +12,8 @@ typedef unsigned long long u64;
 
 #define NULL ((void *)0)
 
+#define FIXED_ADDRESS(type, address, linked) (type address)
+#define FIXED_OFFSET(value, linked, from) value
+#define CAMELOT_ASM(proof)
+
 #endif

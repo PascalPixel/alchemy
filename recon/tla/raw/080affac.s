@@ -51,7 +51,7 @@ Owner_GetDigitValues:
 	cmp r5, #7
 	bgt .L_080b0020
 	adds r0, r5, #0
-	bl Owner_GetRecordStride180
+	bl Character_GetDefinition
 	adds r1, r6, #0
 	adds r0, #146
 	movs r4, #3

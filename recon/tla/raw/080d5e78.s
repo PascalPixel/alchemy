@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global ObjectEffect_EndContextEffect
 	.thumb_func
 ObjectEffect_EndContextEffect:

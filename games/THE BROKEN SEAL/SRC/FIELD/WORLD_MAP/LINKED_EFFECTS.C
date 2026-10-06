@@ -1,6 +1,8 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "VRAM_BLOCK.H"
+#include "B5_CONTEXT.H"
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -26,16 +28,11 @@ struct PairWork {
     u16 vram_block;
 };
 
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
-
 extern struct PairWork *gEffectWork;
 void Effect_AnimateVerticalNegative(union FieldObject *object);
 void Effect_AnimateVerticalPositive(union FieldObject *object);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
-s32 Resource_ResetEntry(u32 index);
 
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;
@@ -44,9 +41,6 @@ struct WorldMapOam {
     u16 size : 2;
 };
 
-/* Spawns two effect objects linked to the parent actor, one drifting down
- * and one up, sharing the effect work VRAM block. Built into resource_371
- * and resource_373. */
 void WorldMap_CreateLinkedEffects(union PairObject *parent)
 {
     union PairObject *pair[2];
@@ -73,9 +67,7 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
@@ -85,7 +77,6 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
             }
         }
     }
-    /* The reference dereferences both final entries without another null check. */
     {
         union PairObject *p = pair[0];
         struct FieldSprite *sp = p->object.actor.sprite;

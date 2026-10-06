@@ -59,7 +59,7 @@ Encounter_SelectEnemyGroup:
 	movs r0, #0
 	cmp r7, #0
 	beq .L_080ca146
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	mov r2, r9
 	ldrh r3, [r2, #2]
 	subs r0, r0, r3
@@ -184,7 +184,7 @@ Encounter_SelectEnemyGroup:
 	mov r2, r9
 	ldrh r5, [r2, r3]
 	ldr r0, [sp, #4]
-	bl Func_080ca5d8
+	bl BattleFx_SelectBattleCue
 	adds r0, r5, #0
 .L_080ca146:
 	add sp, #8

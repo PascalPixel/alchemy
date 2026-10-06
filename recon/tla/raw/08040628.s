@@ -123,7 +123,7 @@ Func_08040628:
 	adds r3, r7, #0
 	bl UiText_DrawResource
 .L_0804071c:
-	bl Func_08044460
+	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #128
 	movs r3, #0
 	lsls r1, r1, #23
@@ -175,7 +175,7 @@ Func_08040628:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08040784:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08040788:
 	.4byte 0x00001154
 .L_0804078c:

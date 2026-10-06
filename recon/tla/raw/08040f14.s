@@ -26,7 +26,7 @@ Func_08040f14:
 	strh r2, [r3]
 	ldr r0, .L_08040f54
 	movs r1, #9
-	bl Event_SetPairWork1c0Far
+	bl Event_SetDestinationFar
 	pop {pc}
 .L_08040f50:
 	.4byte gPartyState

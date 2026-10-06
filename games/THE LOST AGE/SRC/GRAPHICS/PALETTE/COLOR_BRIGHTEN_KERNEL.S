@@ -1,12 +1,3 @@
-@ Saturating colour-buffer brighten that saves a backup copy, run from the
-@ stack by its loader in raw 08001c90.S (0x84000022: 34 words). Behind
-@ its 4-byte Thumb entry (bx pc) the ARM body saves r5-r9 without lr
-@ (push {r5, r6, r7, r8, r9} ... bx lr); GCC saves lr with any register.
-@ After that entry its 132-byte body equals the brighten kernel of TBS
-@ GRAPHICS/PALETTE/COLOR_KERNELS.S (0x08001fb8) byte for byte; TLA links it
-@ apart from the other four.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM colour-buffer kernels copied to the stack, brighten
 .syntax unified
 	.thumb
 	.global ColorBuffer_BrightenKernelCode

@@ -1,3 +1,15 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -11,24 +23,14 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 extern void *gWorkSlot[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
-    s32 slot, s32 delay);
-void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
-/* Per variant: how long it runs, how long each column stays up, its shake. */
 enum {
     TIMING_FRAMES,
     TIMING_RISE_FRAMES,
@@ -39,19 +41,12 @@ struct RockWallHeights {
     s32 column[4];
 };
 
-extern const u8 RockWall_Timings[][3];
-extern const struct RockWallHeights RockWall_Heights;
 
 #define COLUMN_WIDTH 40
 
-/* Where a pixel lies in a canvas of 8x8 tiles, 32 tiles to the row. */
 #define CANVAS_PIXEL(x, y) \
     (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
-/* Battle effect: three columns of rock, 40 pixels wide and four frames
-   apart, rise out of the ground and sink back, each capped with the strip of
-   ground it lifted (read back from the background tiles). A unit standing on
-   a rising column is thrown into the air, and reacts when it lands. */
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -61,7 +56,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
     s32 frame;
     s32 column;
     DrawRectangle draw;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 x_offset;
     struct RockWallHeights heights;
     s32 point[3];
@@ -75,21 +70,20 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + 12 * 4);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, (u8 *)work + 0x1e00, 1, 1);
-    /* FAKEMATCH: forwarded through Call3, the copy loads the buffer address
-       straight into r0, so the loop below loads its own after the call. */
+    Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + 0x1e00, 1, 1);
+    /* FAKEMATCH: forwarded through Call3, the copy loads the buffer address straight into r0, so the loop below loads its own after the call. */
     Call3((void (*)())Iwram_CopyWords, (s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
     for (row = 0; row != 16; row++) {
         y = row + 96;
         for (col = 0; col != COLUMN_WIDTH; col++) {
             s32 pixel = CANVAS_PIXEL(col + 32, y);
 
-            ((u8 *)work)[row * COLUMN_WIDTH + col] = Ram_MapCellBuffer[pixel];
+            work->sheet[row * COLUMN_WIDTH + col] = Ram_MapCellBuffer[pixel];
         }
     }
     if (work->effect->side == 1) {
@@ -104,14 +98,14 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
         work->particles[member].variant = 0;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     heights = RockWall_Heights;
     work->shake_frames = 128;
     Audio_PlayCue(141);
 
     for (frame = 0; frame != RockWall_Timings[work->effect->variant][TIMING_FRAMES]; frame++) {
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == RockWall_Timings[work->effect->variant][TIMING_FRAMES] - 16)
             BattleEventRuntime_BeginPhaseFar(133);
         for (column = 0; column != 3; column++) {
@@ -128,7 +122,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
                 if (height < 0)
                     height = -height;
                 top = 112 - height;
-                draw(canvas, (u8 *)work + 0x1e00, column * COLUMN_WIDTH + 8, top,
+                draw(canvas, work->sheet + 0x1e00, column * COLUMN_WIDTH + 8, top,
                     COLUMN_WIDTH, height);
                 draw(canvas, work, column * COLUMN_WIDTH + 8, 96 - height, COLUMN_WIDTH, 16);
                 for (member = 0; member != work->effect->count; member++) {
@@ -169,7 +163,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

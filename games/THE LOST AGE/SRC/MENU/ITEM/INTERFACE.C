@@ -1,6 +1,18 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
+#include "RENDER_INPUT.H"
 
-/* ⚓️ keeps the icon entries four bytes later than ☀️'s State080a8088. */
+#define RenderOutput_CreateFromResourceFar ((void * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateFromResourceFar)
+
 struct IconMenuState {
     u8 padding_000[0x24];
     s32 handle;
@@ -8,7 +20,6 @@ struct IconMenuState {
     void *entries[32];
 };
 
-void *RenderOutput_CreateFromResourceFar(s32 group, s32 index, s32 window, s32 x, s32 y);
 
 void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1)
 {
@@ -43,4 +54,18 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1)
         *output2++ = RenderOutput_CreateFromResourceFar(2, index2, arg1, 0x100, fifth2);
         index2++;
     } while (index2 <= 31);
+}
+
+void ItemMenu_HideAllIcons(void)
+{
+    s32 hidden_state = 13;
+    struct RenderOutput **icons = (struct RenderOutput **)((struct IconMenuState *)Ram_HeapSlots->menu_runtime)->entries;
+    s32 slot;
+
+    for (slot = 31; slot >= 0; slot--) {
+        struct RenderOutput *icon = *icons++;
+        if (icon != 0) {
+            icon->active = hidden_state;
+        }
+    }
 }

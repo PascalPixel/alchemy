@@ -1,9 +1,3 @@
-/* Draft: Treasure Isle scaffold following spacing.
- * 2026-10-01: International leader steps24px and first follower16px;
- * Japanese uses24px for both in the first sequence and16px for later leader steps. Five complete
- * owners differ at those immediate operands only after layout fixes.
- * Ordinary approved TBS flags.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -11,7 +5,7 @@
 #include "STAGED_ACTOR.H"
 
 extern s16 Data_02000240[];
-s32 *Engine_GetTriggerActor(s32 slot);
+s32 *Object_GetById(s32 slot);
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_OffsetPositionAndResetMotion();
 void ObjectMotion_ResetAndSetPosition();
@@ -30,7 +24,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
     Audio_PlayCue(188);
-    record = Engine_GetTriggerActor(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -55,7 +49,7 @@ void FieldScene_RunScene3b4SequenceA(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(9, 0x1b333, 0xd999);
     Audio_PlayCue(188);
-    record = Engine_GetTriggerActor(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -83,7 +77,7 @@ void FieldScene_RunPrimarySequence(void)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
         Audio_PlayCue(188);
-        record = Engine_GetTriggerActor(0);
+        record = Object_GetById(0);
         if (record != 0) {
             Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -147,7 +141,7 @@ void FieldScene_RunScene3b4SequenceB(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(12, 0x1b333, 0xd999);
     Audio_PlayCue(188);
-    record = Engine_GetTriggerActor(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

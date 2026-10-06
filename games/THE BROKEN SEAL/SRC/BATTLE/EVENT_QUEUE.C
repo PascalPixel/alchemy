@@ -1,81 +1,55 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "OBJDISP.H"
+#include "ITEM.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_STATUS_ICON.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_WORK.H"
-extern u8 Data_03001ee4[];
-
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-void BattleEv_SetRuntimeField8(void)
+void BattleEv_MarkDisplay(void)
 {
-    FIELD_AT_OFFSET(*(void **)((u32)&Data_03001ee4), s32 *, 8) = 1;
+    gBattleDisplayWork->marked = 1;
 }
 
-struct BattleEventActor {
-    u8 padding_000[0x12a];
-    u8 field_12a;
-};
-
-struct BattleEventObjectSlot {
-    s32 field_00;
-    u8 padding_004[0x24];
-    s16 field_28;
-};
-
-s32 Object_Destroy(s32);
-struct BattleEventActor *Owner_GetStateFar();
-s32 Owner_UpdateRatioPairFar(void *, s32);
-struct BattleEventObjectSlot *GetBattleObjectSlot(s32 arg0);
+void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-s32 BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
-    s32 result;
-    struct BattleEventActor *creature;
-    struct BattleEventObjectSlot *runtime;
+    /* FAKEMATCH: the shared discard-only result type preserves TBS epilogue register choice. No result is taken from the void destructor or returned. */
+    struct BattleUnit *creature;
+    struct BattleObjectSlot *runtime;
 
-    creature = Owner_GetStateFar();
-    if (creature->field_12a == 1) {
+    creature = Owner_GetStateFar(arg0);
+    if (creature->status_12a == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
         runtime = GetBattleObjectSlot(arg0);
-        result = Object_Destroy(runtime->field_00);
-        runtime->field_00 = 0;
-        runtime->field_28 = 0;
-        return result;
+        ObjectDispatch_ReleaseFar((struct DispatchObject *)runtime->object);
+        runtime->object = 0;
+        runtime->active = 0;
     }
-    return (s32)creature;
 }
 
-/* Opcode 13: defeats from here on earn spoils. */
 void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 {
     runtime->flags |= 1;
 }
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
-
-extern u8 *gBattleDisplayWork;
-
-
-
 void UiWork_PushValueSlotFar(u32, u32);
-void UiText_ShowMessageAndWaitCoreFar(u32);
-void BattlePresentation_WaitForAdvance(void);
-void UiWork_ClearValueNameTablesFar(void);
 void Audio_PlayCue(u32);
-void BattleMotion_RunValueSequence(u32, u32, u32);
-void BattleEnemy_RecordDefeat(u32, u32);
-void BattleActor_ResetRuntimeFields(u32);
-void BattleMotion_InitializeActorRecords(u32);
-void UiWindow_DrawPartyStatusContentsFar(u32);
-void BattleUnit_BuildStatusFlags(u32, u32);
-void BattlePres_SetActorModeAndAction(u32);
-u32 BattleEventRuntime_Reset(void);
+void BattleMotion_RunValueSequence();
 
 u32 BattleEv_DispatchQueued(void)
 {
@@ -85,43 +59,36 @@ u32 BattleEv_DispatchQueued(void)
 
     for (i = 0; i < queue->count; i++) {
         u8 opcode = queue->opcodes[i];
-        if (opcode <= 13) switch (opcode) {
-        case 13: Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]); break;
-        case 12: BattleActor_DestroyTemporaryObject(queue->operands[i]); break;
-        case 0: UiWork_PushValueSlotFar(queue->operands[i], 1); break;
-        case 1: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
-        case 2: UiWork_PushValueSlotFar(queue->operands[i] & 0x1ff, 2); break;
-        case 3: UiWork_PushValueSlotFar(queue->operands[i] & 0x3fff, 4); break;
-        case 6: FIELD(gBattleDisplayWork, s32, 8) = 1; break;
-        case 7: UiWork_ClearValueNameTablesFar(); break;
-        case 4:
+        if (opcode <= BATTLE_EVENT_SCRIPT_UPDATE) switch (opcode) {
+        case BATTLE_EVENT_SCRIPT_UPDATE: Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]); break;
+        case BATTLE_EVENT_ACTOR_EFFECT: BattleActor_DestroyTemporaryObject(queue->operands[i]); break;
+        case BATTLE_EVENT_UNIT: UiWork_PushValueSlotFar(queue->operands[i], 1); break;
+        case BATTLE_EVENT_VALUE: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
+        case BATTLE_EVENT_ITEM: UiWork_PushValueSlotFar(queue->operands[i] & ITEM_ID_MASK, 2); break;
+        case BATTLE_EVENT_ACTION: UiWork_PushValueSlotFar(queue->operands[i] & OWNER_ACTION_ID_MASK, 4); break;
+        case BATTLE_EVENT_MARK: gBattleDisplayWork->marked = 1; break;
+        case BATTLE_EVENT_RESET: UiWork_ClearValueNameTablesFar(); break;
+        case BATTLE_EVENT_TEXT:
             if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
             BattlePresentation_WaitForAdvance();
             UiWork_ClearValueNameTablesFar();
             break;
-        case 5:
+        case BATTLE_EVENT_TEXT_CONTINUE:
             if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
             UiWork_ClearValueNameTablesFar();
             break;
-        case 8:
+        case BATTLE_EVENT_ACTOR_BEGIN:
             if (runtime->pending_cue > 0) Audio_PlayCue(runtime->pending_cue);
             BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
             break;
-        case 9:
-        {
-            /* FAKEMATCH: the operand's byte offset is formed before the
-               flags are read, as the ROM schedules it. */
-            u32 operand_offset = (u8 *)&queue->operands[i] - (u8 *)queue;
-            u32 flags = runtime->flags;
-
-            BattleEnemy_RecordDefeat(FIELD(queue, u32, operand_offset), flags);
-            BattleActor_ResetRuntimeFields(FIELD(queue, u32, operand_offset));
-            BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
+        case BATTLE_EVENT_ACTOR_RESOLVE:
+            BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
+            BattleActor_ResetRuntimeFields(queue->operands[i]);
+            BattleMotion_InitializeActorRecords(queue->operands[i]);
             break;
-        }
-        case 10: UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode); break;
-        case 11:
-            BattleUnit_BuildStatusFlags(queue->operands[i], (u32)GetBattleObjectSlot(queue->operands[i]));
+        case BATTLE_EVENT_REFRESH: UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode); break;
+        case BATTLE_EVENT_ACTOR_FINISH:
+            BattleUnit_BuildStatusFlags(queue->operands[i], GetBattleObjectSlot(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);
             break;
         }
@@ -129,15 +96,13 @@ u32 BattleEv_DispatchQueued(void)
     return BattleEventRuntime_Reset();
 }
 
-
 u32 BattleEv_Push(u32 opcode, u32 operand)
 {
     struct BattleEventQueue *queue = &gBattleWork->events.queue;
-    u32 *count = (u32 *)&queue->count;
-    u32 index = *count;
+    u32 index = queue->count;
 
     queue->opcodes[index] = opcode;
     queue->operands[index] = operand;
-    *count = index + 1;
+    queue->count = index + 1;
     return opcode;
 }

@@ -437,8 +437,8 @@ Func_02000328:
 	lsls r3, r3, #1
 	mov r1, r8
 	str r3, [r2, r1]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02000178
 	bl Func_0200132c
 	movs r0, #40
@@ -493,7 +493,7 @@ Func_020003bc:
 Func_020003c8:
 	push {lr}
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x020083d4,"ax",%progbits
@@ -849,8 +849,8 @@ Func_020005fc:
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_020012cc
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_0200125c
 	pop {r5, r6, pc}
 .L_02008694:
@@ -897,7 +897,7 @@ Func_0200069c:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #241
 	lsls r2, r2, #1
 	adds r3, r5, r2
@@ -990,7 +990,7 @@ Func_0200069c:
 	bl Func_0200133c
 	movs r0, #1
 	bl Func_020012fc
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 .L_020087b0:
 	movs r0, #0
 	pop {r5, pc}

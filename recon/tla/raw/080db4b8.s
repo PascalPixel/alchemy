@@ -36,17 +36,17 @@ BattleFx_Run:
 .L_080db4f6:
 	cmp r2, #5
 	bne .L_080db500
-	bl Func_080dede8
+	bl RunBattleEffect05
 	b .L_080db668
 .L_080db500:
 	cmp r2, #14
 	bne .L_080db50a
-	bl Func_080dfd00
+	bl RunBattleEffect14
 	b .L_080db668
 .L_080db50a:
 	cmp r2, #6
 	bne .L_080db514
-	bl Func_080de688
+	bl BattleFx_RunOrbitingParticles
 	b .L_080db668
 .L_080db514:
 	cmp r2, #3
@@ -176,7 +176,7 @@ BattleFx_Run:
 	movs r1, #9
 	movs r2, #24
 	ldrsh r0, [r6, r2]
-	bl Func_080cdbf8
+	bl BattleFx_FindNearestObject
 	bl BattleFx_FilterObjectIdByFlags
 	adds r5, r0, #0
 	bl Func_080cce94
@@ -185,7 +185,7 @@ BattleFx_Run:
 	adds r1, r5, #0
 	movs r3, #24
 	ldrsh r0, [r6, r3]
-	bl Func_080dc62c
+	bl BattleFx_SetupObjectPair
 	adds r0, r5, #0
 	bl Func_080e011c
 	adds r0, r5, #0

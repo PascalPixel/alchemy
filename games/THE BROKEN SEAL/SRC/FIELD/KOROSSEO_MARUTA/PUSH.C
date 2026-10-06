@@ -1,8 +1,5 @@
-/* Finding an actor on a tile and pushing a staged actor. */
 #include "LOG_ROLLING.H"
 
-/* The actor standing on the tile of position, if any. Callers pass the actor
- * that is moving as well; the lookup does not skip it. */
 s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 {
     s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
@@ -22,14 +19,13 @@ s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 
 void ColossoLogRollingStage_PushStagedActor(void)
 {
-    extern s32 Object_CheckMovementCollision(SceneRecord *, Position3 *);
-    extern void Object_SetPosition(SceneRecord *, s32, s32, s32);
-    extern void Object_CommitPosition(SceneRecord *);
+    extern s32 Object_CheckMovementCollision(MarutaSceneRecord *, Position3 *);
+    extern void Object_SetPosition(MarutaSceneRecord *, s32, s32, s32);
+    extern void Object_CommitPosition(MarutaSceneRecord *);
 
-
-    SceneRecord *subject;
-    SceneRecord *target;
-    SceneRecord *blocker;
+    MarutaSceneRecord *subject;
+    MarutaSceneRecord *target;
+    MarutaSceneRecord *blocker;
     u32 step;
     u32 direction;
     Position3 position;
@@ -53,7 +49,6 @@ void ColossoLogRollingStage_PushStagedActor(void)
         return;
     }
 
-    /* Is the cell one step beyond the target already taken? */
     step = StagedActor_DirectionSteps[direction];
     position.x = target->x + (s32)(step & 0xffff0000);
     position.y = target->y;
@@ -65,9 +60,8 @@ void ColossoLogRollingStage_PushStagedActor(void)
         return;
     }
 
-    /* ...and the cell directly above the target? */
     position.x = target->x;
-    position.y = target->y + 0x100000;      /* 128 << 13 */
+    position.y = target->y + 0x100000;
     position.z = target->z;
 
     blocker = FindActorAtWholeTilePosition(&position, target);
@@ -99,9 +93,9 @@ void ColossoLogRollingStage_PushStagedActor(void)
     subject->rate_z = 0x3333;
     Object_SetPosition(subject, position.x, position.y, position.z);
 
-    Audio_PlayCue(0xee);
+    Engine_AudioPlayCue(0xee);
     Object_CommitPosition(target);
-    Audio_PlayCue(0x120);                                /* 144 << 1 */
+    Engine_AudioPlayCue(0x120);
 
     target->x = position.x;
     target->z = position.z;
@@ -111,33 +105,30 @@ void ColossoLogRollingStage_PushStagedActor(void)
     Object_SetMode(subject, 1);
 }
 
-/* This overlay's own byte-exact occupancy lookup. */
 s32 *ColossoLogRollingStage_FindActorAhead(void)
 {
     extern void Vector_AddPolarOffset();
 
-
-    u8 *record;
+    struct FieldActor *record;
     s32 facing;
     s32 position[3];
     s32 *occupant;
 
     record = Object_GetById(gGameState.selected_actor);
 
-    /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
-    facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;
+    facing = (record->facing + 0x2000) & 0xc000;
 
-    position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
-    position[1] = *(s32 *)(record + 12);
-    position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, facing, position);          /* 128 << 13 */
+    position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
+    position[1] = record->y.fixed;
+    position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, facing, position);
 
     occupant = FindActorAtWholeTilePosition(position, record);
     if (occupant == 0) {
-        position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
-        position[1] = *(s32 *)(record + 12);
-        position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
-        Vector_AddPolarOffset(0x200000, facing, position);      /* 128 << 14 */
+        position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
+        position[1] = record->y.fixed;
+        position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
+        Vector_AddPolarOffset(0x200000, facing, position);
 
         occupant = FindActorAtWholeTilePosition(position, record);
     }

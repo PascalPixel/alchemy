@@ -6,18 +6,6 @@ extern struct EventWork *gEventWork;
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define ObjectMotion_CallThenWaitForAnimationChange_9(args...) ((void (*)())Engine_ActorSetAnimationAndWait)(args)
-#define ACTOR_FIELD_108(rec) (*(s32 *)((rec) + 108))
-
-struct EffectRec {
-    u8 pad[9];
-    u8 f0 : 2;
-    u8 f1 : 2;
-};
-
-struct EffectWork {
-    u8 pad[0x50];
-    struct EffectRec *rec;
-};
 
 struct SceneRecordHeading {
     u8 pad[6];
@@ -59,9 +47,9 @@ struct Descriptor_020041ec {
 
 extern u8 ShianJiin_XianMessages[];
 
-s16 ArcTan2Far(s32, s32);
+s32 ArcTan2(s32, s32);
 void Engine_ScheduleCallbackFar();
-void Scheduler_RemoveCallbackFar();
+
 void FieldScene_SpawnRandomizedParticle();
 void Effect_Spawn();
 void Effect_Spawn();
@@ -83,88 +71,15 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 arg0, s32 arg1);
 void FieldScene_RunOpeningAuxiliarySequence(s32 arg0, s32 arg1);
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
-void UiText_DrawQuantityPairWithCueFar();
+void UiText_DrawQuantityPairWithCue();
 
-/*
- * resource_39e owner at 0x02001494, 2236 bytes.
- *
- * Second ensemble beat of this overlay's scene script: 233 calls into the
- * shared scene-script helper block, then a two-stage story branch.
- *
- *   - the opening call sets story flag 0x89a;
- *   - stage 1 (Engine_EventChooseYesNo(0, 0) == 0) joins with id 16 and sets flag 0x898
- *     -- the flag the dispatcher at 0x020012e0 tests and 0x02001dbc clears;
- *   - stage 1 otherwise bumps the step counter at +472 of the scene work
- *     record and runs stage 2: its ==0 arm joins with id 18 and also sets
- *     0x898, its else arm bumps that counter again and sets flag 0x899.
- *
- * Both join arms share the tail at 0x02001cb4: Engine_EventShowMessageAndWait(id, 0, 20) with
- * the id carried in r0, then Engine_GameFlagSet(0x898).
- *
- * Midway the beat clears then sets bit 0 of byte +90 of record 16 around a
- * Engine_ActorWalkToAndWait reposition, plays sounds 158/159 with Engine_MapAnimateCells text
- * calls, runs the slot-19/20 sequence (Engine_ActorSetPosition(19/20, 232 << 16,
- * 168 << 16), record +12 = 0xc0000, +60 = 0x80000000, +24 = 0xcccc, +30 of
- * the +80 sub-object = 0x8000, sound 124) that also closes the owners at
- * 0x02001160 and 0x02001dbc, and ends with Engine_ActorEnableActionCallback(12, 0x0200c638) as
- * 0x02001dbc does.
- *
- * Complete owner: `push {r5, lr}` at 0x02001494 through `pop {r5} / pop {r0} /
- * bx r0` at 0x02001d42-0x02001d46, two inline pools plus two trailing pool
- * words ending 0x02001d4f; the next owner (0x02001d50, `push {lr}`) follows.
- * Called once from within this overlay.
- *
- * Call binding. This overlay reaches the shared helpers through its own veneer
- * bank, so every emitted call word names a veneer, not the main-image address.
- * The legacy alias a reference site produces is derived from that site's own
- * position, so one alias can name two different veneers and several aliases
- * can name one veneer. Each helper is therefore declared once, under an alias
- * whose reference sites all resolve to that helper's veneer, and is spelled in
- * the body under the main-image function it reaches. The bound veneer -- and
- * so the emitted call word -- depends only on the alias, never on where the
- * call lands in the candidate.
- *
- * The set of bit 0 in byte +90 reads the byte into its own local before the
- * or, as the staged-actor scene at resource_373:02003fb0 does at the same
- * offset; the paired clear needs no local because an and against 0xfe already
- * holds its mask in a word register.
- *
- * Uncertainty: helper roles and argument roles are read from call shape only;
- * ids, dialogue ids and constants are transcribed. 0x0200c77a, 0x0200c790 and
- * 0x0200c638 are overlay-image data pointers whose contents are unidentified.
- */
-
-/* Veneer aliases this overlay binds; see Call binding above. */
-
-/* The main-image helper each veneer above reaches. */
 void FieldScene_RunForwardArcBurst(void);
 
 void FieldScene_RunDescentBurst(void);
 
-/* Field cleared to 0 on each actor record below. */
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-/* Newly named raw call sites: each engine function below was reached only
- * through an unresolved veneer island until its own source was read; the
- * per-site macro keeps the site's original calling form. */
-
-/* The scene step counter at +472 of the shared scene work record. */
-static __inline__ void Scene_BumpStep(s32 amount)
-{
-    u8 *work = *(u8 **)&gEventWork;
-
-    *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + amount);
-}
-
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6,
                           u32 flags, u8 *extra);
 
-/* Scripts and cell steps in the temple overlay's data. */
 extern u8 ShianJiin_ActorTwelveScript[];
 extern u8 ShianJiin_CellStepsA[];
 extern u8 ShianJiin_CellStepsB[];

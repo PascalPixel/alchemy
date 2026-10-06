@@ -262,7 +262,7 @@ Func_0813c5f4:
 	orrs r2, r1
 	strh r2, [r3]
 .L_0813c7fe:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #32]
 	bl Graphics_PrepareTransferInIwramWork
@@ -343,7 +343,7 @@ Func_0813c5f4:
 	mov r8, r3
 	mov r0, r8
 	adds r1, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	mov r4, r8
 	asrs r7, r3, #1

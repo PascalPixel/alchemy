@@ -1,7 +1,3 @@
-@ Import veneers after the GOMA_IRIGUCHI overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — GOMA_IRIGUCHI overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -47,11 +43,11 @@ Engine_ActorSetSpriteFlags:
 	.global SetOverlayObjectMode
 	.thumb_func
 SetOverlayObjectMode:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
@@ -60,22 +56,22 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 Engine_MapWaitWorkValuesBelow256:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
-	.global Owner_GetStateFar
+	.global Owner_GetState
 	.thumb_func
-Owner_GetStateFar:
-	overlay_veneer Func_08077008
+Owner_GetState:
+	overlay_veneer Owner_GetStateFar
 	.global Item_Get
 	.thumb_func
 Item_Get:
-	overlay_veneer Func_08077018
-	.global Inventory_AddItemFar
+	overlay_veneer Item_GetDirectFar
+	.global Inventory_AddItem
 	.thumb_func
-Inventory_AddItemFar:
-	overlay_veneer Func_08077028
-	.global Inventory_EquipFar
+Inventory_AddItem:
+	overlay_veneer Inventory_AddItemFar
+	.global Inventory_Equip
 	.thumb_func
-Inventory_EquipFar:
-	overlay_veneer Func_08077050
+Inventory_Equip:
+	overlay_veneer Inventory_EquipFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:
@@ -178,7 +174,7 @@ SetOverlayObjectSlot:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:

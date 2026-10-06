@@ -1,8 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Import veneers after the MENU_TEST overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — MENU_TEST overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -96,7 +92,7 @@ Owner_RecalculateStats:
 	.global Engine_DebugGetItem
 	.thumb_func
 Engine_DebugGetItem:
-	overlay_veneer Func_08077018
+	overlay_veneer Item_GetDirectFar
 	.global Inventory_AddItem
 	.thumb_func
 Inventory_AddItem:
@@ -153,10 +149,10 @@ PartyInventory_GiveItem:
 	.endif
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
-	.global Event_SetValue1d8
+	.global Event_SetMessageId
 	.thumb_func
-Event_SetValue1d8:
-	overlay_veneer Event_SetValue1d8Far
+Event_SetMessageId:
+	overlay_veneer Event_SetMessageIdFar
 	.global BattleEv_RunWait
 	.thumb_func
 BattleEv_RunWait:

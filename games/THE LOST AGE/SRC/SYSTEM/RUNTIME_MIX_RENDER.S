@@ -1,17 +1,3 @@
-@ Output stage of TLA's resident mixer, behind a 4-byte Thumb entry
-@ (bx pc). It keeps its state in the words at 0x03000d1c
-@ (IWRAM_RUNTIME_MIX_RENDER_STATE.S; str r1, [pc, #-64]), selects one of
-@ the two bgt templates after its return and stores it over the loop branch
-@ at 0x03000e64 (ldrne/ldreq r1, [pc, #296]; str r1, [pc, #252]), and
-@ normalises overflowing samples in a subroutine that branches on overflow
-@ (adds r7, r7, r7; bvc) and returns with bxvc lr. Rewriting its own loop
-@ branch is beyond both approved compilers. The loop branch as stored here
-@ never runs, since the renderer writes a template over it on entry, and
-@ carries no credit, as do the Thumb entry, which is TLA's own, and the
-@ word after the final branch into which the renderer stores its mask
-@ (str lr, [pc]). The word after that, 0x03006fc0, is the literal it loads
-@ (ldr r0, [pc, #380]).
-@ credit: handwritten — TLA IWRAM runtime frame renderer
 .syntax unified
 	.thumb
 	.global IwramSoundRenderFrame
@@ -109,7 +95,6 @@ AlchemyUncreditedEnd_0800141c:
 	bgt	.L_03000e60
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-@ The two bgt templates, encoded for the loop branch they are stored over.
 	.4byte	0xca000000 | (((.L_03000db8 - (.L_03000e64 + 8)) >> 2) & 0x00ffffff)
 	.4byte	0xca000000 | (((.L_03000db0 - (.L_03000e64 + 8)) >> 2) & 0x00ffffff)
 .L_03000e90:

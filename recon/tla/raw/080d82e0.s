@@ -31,7 +31,7 @@ Func_080d82e0:
 	ldr r3, [r3]
 	ldr r0, .L_080d846c
 	mov r9, r3
-	bl Unnamed_080b0840Far
+	bl Shop_RestoreSceneTilesFar
 	movs r0, #30
 	bl WaitFrames
 	adds r2, r6, #0
@@ -69,7 +69,7 @@ Func_080d82e0:
 	lsls r5, r5, #9
 	adds r2, r5, #0
 	adds r0, r1, #0
-	bl Func_08020228
+	bl Runtime_SetWorkTripleIfNonNegativeFar
 	ldr r3, .L_080d8474
 	adds r0, r6, #0
 	str r3, [r6, #108]
@@ -93,7 +93,7 @@ Func_080d82e0:
 	ldr r1, .L_080d8478
 	adds r2, r5, #0
 	adds r0, r1, #0
-	bl Func_08020228
+	bl Runtime_SetWorkTripleIfNonNegativeFar
 	ldr r3, [r6, #8]
 	mov r8, sp
 	str r3, [sp, #0]
@@ -113,13 +113,13 @@ Func_080d82e0:
 	ldr r3, [r6, #8]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl Func_080ebec8
+	bl EffectSlot_Initialize
 	adds r0, r5, #0
 	ldr r1, .L_080d847c
-	bl Func_080ebeb4
+	bl EffectSlot_SetCallback
 	adds r0, r5, #0
 	movs r1, #7
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	ldr r0, [r5]
 	movs r1, #11
 	bl Animation_ApplyChildValuesToRecordFar
@@ -159,7 +159,7 @@ Func_080d82e0:
 	movs r0, #1
 	movs r1, #1
 	movs r2, #1
-	bl Func_08020228
+	bl Runtime_SetWorkTripleIfNonNegativeFar
 	movs r0, #30
 	bl WaitFrames
 	ldr r3, .L_080d8464
@@ -311,8 +311,8 @@ Func_080d82e0:
 .L_080d8594:
 	movs r0, #15
 	bl WaitFrames
-	bl Func_08108060
-	bl Func_080d7ab4
+	bl Shop_InitEffectFar
+	bl BattleFx_ClearActiveSlotsAndScheduleUpdates
 .L_080d85a2:
 	add sp, #12
 	pop {r3, r5, r6}

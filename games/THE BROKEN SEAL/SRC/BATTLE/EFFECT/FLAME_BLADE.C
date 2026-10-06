@@ -1,3 +1,16 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "MOTION_OBJECT.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -6,41 +19,23 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
+#include "FIXED_MATH.H"
 
-/* The whole-pixel half of a 16.16 coordinate. */
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(void*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
+#define gBattleFxWork ((void *(*))&gBattleFxWork)
+
+
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Three tables of 340 sparks fill the map cell buffer. */
 #define SPARK ((struct EffectStep *)Ram_MapCellBuffer)
 
-extern void *gBattleFxWork[];
-extern u16 ParticleStreams_CellOffsets[];
-/* The strike column of each of the three strikes, for either side. */
-extern const u8 FlameBlade_StrikeColumns[];
-/* The flash cell for each third of a flash's life. */
-extern const u8 FlameBlade_FlashCells[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
 void Object_SetMode(void *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void **GetBattleObjectSlotFar(s32 unit);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void ObjectGroup_TickMemberTimers(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
-void Camera_ApplyShake(s32 x, s32 y);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-void BattleFx_StepPaletteToResource(s32 resource_id);
 void Audio_PlayCue(s32 cue);
 
-/* Battle effect: a flame blade slides down beside the acting unit, then two
-   strikes eight frames apart each throw twelve flashes and 256 sparks and
-   make the affected units react six frames later. */
 void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 {
     void **heap;
@@ -48,31 +43,29 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 n;
-    void *sheet;
-    void *object;
+    u8 *sheet;
+    struct MotionObject *object;
     DrawRectangle routine[2];
     s32 frame;
     s32 i;
 
-    /* The first two heap slots are read through a walking pointer; the
-       base itself serves the sheet. */
-    heap = gBattleFxWork;
+    heap = (void **)gBattleFxWork;
     p = heap;
     work = *p++;
     canvas = *p;
     sheet = heap[2];
 
-    object = *GetBattleObjectSlotFar(effect->actor);
+    object = GetBattleObjectSlotFar(effect->actor)->object;
     effect->variant = 1;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     BattleFx_FetchRectangleBlitters(work->effect->side, routine);
     Object_SetMode(object, 2);
     ObjectDispatch_ApplyValueToChildrenFar(object, 48);
 
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, (u8 *)work + (128 << 6), 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet + (128 << 6), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
     n = 0;
@@ -97,9 +90,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
             s32 mag;
             s32 ang;
 
-            /* FAKEMATCH: the mask is loaded into the magnitude before the
-               random word is taken in, as the native code does; masking the
-               call's result keeps the mask in a scratch register. */
+            /* FAKEMATCH: the mask is loaded into the magnitude before the random word is taken in, as the native code does; masking the call's result keeps the mask in a scratch register. */
             mag = 0x1FF;
             mag &= Random16();
             ang = Random16() & 0xFFFF;
@@ -116,7 +107,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     frame = 0;
     do {
@@ -133,7 +124,6 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
             BattleEventRuntime_BeginPhaseFar(134);
         }
 
-        /* The blade: in from the top for ten frames, held, then sinking. */
         if (frame <= 39) {
             s32 high;
             s32 x;
@@ -184,7 +174,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
             }
             if (frame >= start) {
                 if (frame < start + 2) {
-                    routine[0](canvas, (u8 *)work + (128 << 6),
+                    routine[0](canvas, work->sheet + (128 << 6),
                         FlameBlade_StrikeColumns[n + work->effect->side * 3] - 16, 56, 32, 64);
                 }
                 i = 0;
@@ -198,9 +188,9 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
                     y = HI(flash->y);
                     x = HI(flash->x) + FlameBlade_StrikeColumns[n + work->effect->side * 3];
                     life = flash->variant;
-                    if ((u32)life <= 17) {
+                    if (life >= 0 && life <= 17) {
                         routine[0](canvas,
-                            (u8 *)work + (FlameBlade_FlashCells[life / 3] << 11) + (128 << 6),
+                            work->sheet + (FlameBlade_FlashCells[life / 3] << 11) + (128 << 6),
                             x - 16, y + 56, 32, 64);
                     }
                     life = flash->variant;
@@ -226,7 +216,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
                             spark->velocity_y = -spark->velocity_y / 2;
                         } else {
                             x = spark->x;
-                            if ((u32)x <= 0x007EFFFF && y >= 0) {
+                            if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                                 u8 *cell;
                                 s32 lane;
                                 s32 py = y >> 16;
@@ -234,7 +224,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
                                 size = spark->variant / 5 + 1;
                                 lane = i & 1;
-                                cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
+                                cell = sheet + ParticleStreams_CellOffsets[size - 1];
                                 px -= size / 2;
                                 py -= size;
                                 routine[lane](canvas, cell, px, py, size, size * 2);
@@ -262,8 +252,8 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     } while (frame != 80);
 
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

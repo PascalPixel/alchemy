@@ -1,28 +1,22 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
+#include "ITEM.H"
+#include "UI.H"
+#include "text/MSG_IDS.H"
 
 extern struct ShopRuntime *gMenuWork;
-extern u8 MsgItemName[];
-extern u8 MsgShopCannotEquip[];
-extern u8 MsgShopStatLabel[];
 
-struct ItemDefinition *Item_Get(s32 item);
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
-s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
-s32 Inventory_FindEquippedFar(s32 unit_id, s32 kind);
-struct ShopCursorAnchor *RenderOutput_CreateFar(u32 resource, u32 flags, s32 window, s32 x, s32 y);
-void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void Owner_RecalculateStatsFar(s32 unit_id);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 
-/* Draws how equipping an item would change a member's attack, defense and
- * agility: each stat without the item and, when it changes, with the item
- * tried on, an arrow for each change, and the name of the item it would
- * replace. The item is tried in the slot of the equipped item of its type,
- * else the first unequipped slot, else the first slot holding a type-6 item,
- * else the first slot. */
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop = gMenuWork;
@@ -75,9 +69,9 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
     without[3] = unit->luck;
     for (i = 0; i <= 2; i++) {
         if (without[i] > with[i])
-            RenderOutput_CreateFar(shop->stat_up_icon, 0x40000000, window, 56, i * 16 - 4)->unknown_00[4] = 0;
+            RenderOutput_CreateFar(shop->stat_down_icon, 0x40000000, (struct RenderInput *)window, 56, i * 16 - 4)->kind = 0;
         else if (without[i] < with[i])
-            RenderOutput_CreateFar(shop->stat_down_icon, 0x40000000, window, 56, i * 16 - 4)->unknown_00[4] = 0;
+            RenderOutput_CreateFar(shop->stat_up_icon, 0x40000000, (struct RenderInput *)window, 56, i * 16 - 4)->kind = 0;
         UiNumber_DrawAt(without[i], 3, window, 32, i * 16);
         if (without[i] != with[i])
             UiNumber_DrawAt(with[i], 3, window, 72, i * 16);

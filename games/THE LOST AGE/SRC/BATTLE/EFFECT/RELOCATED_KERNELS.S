@@ -1,18 +1,3 @@
-@ Twelve battle-effect ARM kernels that the bank copies out and runs; the
-@ tables at 0x08196d74 and 0x081969a4 give their sizes and addresses. Each
-@ sits behind a 4-byte Thumb entry (bx pc). This module holds kernels 1 to
-@ 3; RELOCATED_KERNEL_4.S to RELOCATED_KERNEL_11.S hold the rest. Each of
-@ these three clears bit 0 of its closing literal 0x080028a9 (0x081391bc,
-@ 0x081393cc and 0x081395ec), the address of the reciprocal table at
-@ 0x080028a8, at run time (ldr fp, [pc, #484]; bic fp, fp, #1;
-@ str fp, [pc, #476]; 500 and 492 in kernel 2, 516 and 508 in kernel 3),
-@ loads it again as that table's address and multiplies with the
-@ flag-setting umulls; they store to no other PC-relative address. GCC 2.96
-@ never stores to a PC-relative address and has no flag-setting long
-@ multiply. The entries, which are TLA's own, and the three literals, words
-@ rewritten at run time, carry no credit. TBS has no counterpart; no TBS
-@ battle-effect module shares a 64-byte run with them.
-@ credit: handwritten — relocated ARM kernels 1 to 3 of the battle-effect bank
 .syntax unified
 	.thumb
 	.global Data_08138fc8

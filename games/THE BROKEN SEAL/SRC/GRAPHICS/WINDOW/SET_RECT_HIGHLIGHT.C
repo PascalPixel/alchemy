@@ -1,15 +1,20 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "TBS_EDITION.H"
 #include "BATTLE_WORK.H"
 
-extern u8 *Data_03001e8c;
-
-/* Sets (alt bit 0 = 1) or clears palette bit 12 on every tile of a
-   width x height rectangle of the 32 x 32 window tilemap, clipped to the
-   30 x 20 screen, and marks each touched group of four rows dirty. */
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork[0];
 
     alt &= 1;
     alt <<= 12;
@@ -44,10 +49,9 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
                 } while (col != 0);
             }
 
-            /* FAKEMATCH: the do-while (0) keeps the row counter update after
-               the dirty-byte store instead of filling the load delay. */
+            /* FAKEMATCH: the do-while (0) keeps the row counter update after the dirty-byte store instead of filling the load delay. */
             do {
-                base[RENDER_DIRTY_OFS] |= 2 << ((u32)y >> 2);
+                ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
             } while (0);
             height--;
             y++;
@@ -55,11 +59,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
     }
 }
 
-s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 
-/* Clears the highlight over the whole party panel strip, then highlights
-   the panel of every unit in the 0xff-terminated id list (at most four)
-   that stands in one of the battle's first four party places. */
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
     struct BattleSession *battle = gBattleWork;

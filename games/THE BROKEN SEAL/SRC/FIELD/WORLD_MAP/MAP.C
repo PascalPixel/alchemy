@@ -1,16 +1,26 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "GLOBAL_CELLS.H"
 #include "STORY.H"
 #include "TYPES.H"
 #include "FIELD_SERVICE.H"
 #include "IWRAM_CALL.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-#define FrameCounter gFrameCount
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 
 enum {
     CONTACT_LAST_ACTOR = 65,
-    /* An actor's touch trigger is its id plus this base. */
     CONTACT_TRIGGER_BASE = 100,
     FLAG_CONTACT_PAUSED = 0x163,
     FLAG_CONTACT_BLOCKED = 0x104
@@ -18,160 +28,99 @@ enum {
 
 extern u8 gDebugMode[];
 
-void Scene_RunScene371SequenceA(s32 direction);
-void Event_SetPairWork1c0(s32 a0, s32 a1);
+void Event_SetDestination(s32 a0, s32 a1);
 void PartyInventory_Discard(s32 item);
-void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
-void Map_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3);
-s32 GameFlag_GetByte(s32 flag);
-void WorldMap_ActivateSite138(s32 actor);
-void WorldMap_RunBlackOrbScene(void);
 void RunEventScript01(void);
-void FieldScene_RunActorTransferSequence(void);
-void FieldScene_RunScene371_020017fc(void);
-void FieldScene_RunScene371_02001888(void);
-void FieldScene_RunScene371_02001938(void);
-void FieldScene_RunScene371_020019e8(void);
-void FieldScene_RunScene371_02001a98(void);
-void FieldScene_RunScene371_02001b5c(void);
-void FieldScene_RunScene371_02002274(void);
-void FieldScene_RunScene371_0200357c(void);
-void StoryScene_StartTransition(void);
-void FieldScene_RunActorEightApproach(void);
-void FieldScene_RunActorPresentationSequence(void);
-void MapActor_UpdateContact(void);
-void StoryScene_UpdateSelectedActorProgress(void);
-extern s32 gWorldMapTriggerActor;
 
-extern u8 MsgWorldMapAfterBringingDjinniIntoYour[];
-extern u8 MsgWorldMapNextIllShowHowCan[];
-extern u8 MsgWorldMapWeCantStayAnotherMinute[];
 
-/*
- * The progress word is game-state halfword 284 read as a whole word and the level
- * word is the workspace at +428; both offsets are built in one register, so
- * the order in which the locals are declared is what reproduces the
- * reference.
- */
 void StoryProgress_TriggerEvent0808(void)
 {
+    struct EventWork *work = gEventWork;
 
-    u8 *workspace = (u8 *)gEventWork;
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
-        if ((u32)Random_Next() < 0x8000) {
+    if (gGameState.encounter_steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
+        if ((u32)Engine_RandomNext() < 0x8000) {
             BattleFx_SetPhaseRequest(0x808, 3);
-            *(s32 *)(workspace + 424) = 0;
+            work->encounter_bias = 0;
         } else {
-            *progress = *level;
+            gGameState.encounter_steps = work->encounter_threshold;
         }
     }
 }
 
 void StoryProgress_TriggerEvent0809(void)
 {
+    struct GameState *state = &gGameState;
+    s32 *steps = &state->encounter_steps;
+    struct EventWork *work = gEventWork;
 
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    u8 *workspace = (u8 *)gEventWork;
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         BattleFx_SetPhaseRequest(0x809, 42);
-        *(s32 *)(workspace + 424) = 0;
+        work->encounter_bias = 0;
     }
 }
 
 void StoryProgress_TriggerEvent080A(void)
 {
+    struct GameState *state = &gGameState;
+    s32 *steps = &state->encounter_steps;
+    struct EventWork *work = gEventWork;
 
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    u8 *workspace = (u8 *)gEventWork;
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         BattleFx_SetPhaseRequest(0x80a, 24);
-        *(s32 *)(workspace + 424) = 0;
+        work->encounter_bias = 0;
     }
 }
 
-void StoryActor_AdvanceTimer(u8 *actor)
+void StoryActor_AdvanceTimer(struct FieldActor *actor)
 {
-    u16 *timer = (u16 *)(actor + 0x64);
-
-    /*
-     * Arm order decides the branch sense: the fall-through is the increment
-     * and the taken branch is the call.  Swapping the arms inverts the test.
-     */
-    if (*(s16 *)timer <= 0) {
-        *timer = (u16)(*timer + 1);
+    if ((s16)actor->timer <= 0) {
+        actor->timer++;
     } else {
         Engine_ObjectDispatchRelease(actor);
     }
 }
 
-void StoryActor_ConfigureSpawnedObject(u8 *actor)
+void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 {
+    struct FieldActor *spark;
+    s32 x;
+    s32 y;
+    s32 z;
 
-    s32 fixed_scale;
-    u8 *spawned_actor;
-    u8 *spawned_record;
-
-    if ((gFrameCount & 4) != 0) {
-        fixed_scale = 0x14ccc;
-        *(s32 *)(actor + 0x18) = fixed_scale;
-        *(s32 *)(actor + 0x1c) = fixed_scale;
+    if (gFrameCount & 4) {
+        actor->scale_x = 0x14ccc;
+        actor->scale_y = 0x14ccc;
     } else {
-        fixed_scale = 0x10000;
-        *(s32 *)(actor + 0x18) = fixed_scale;
-        *(s32 *)(actor + 0x1c) = fixed_scale;
+        actor->scale_x = 0x10000;
+        actor->scale_y = 0x10000;
     }
-
-    if ((gFrameCount & 2) == 0) {
+    if (!(gFrameCount & 2))
         return;
-    }
-
-    {
-        s32 x = *(s32 *)(actor + 0x08);
-        s32 y = *(s32 *)(actor + 0x0c);
-        s32 z = *(s32 *)(actor + 0x10);
-        spawned_actor = Object_Create(0x11d, x, y, z);
-    }
-    Audio_PlayCue(0xf6);
-    if (spawned_actor == 0) {
+    x = actor->x.fixed;
+    y = actor->y.fixed;
+    z = actor->z.fixed;
+    spark = Engine_ObjectCreate(0x11d, x, y, z);
+    Engine_AudioPlayCue(0xf6);
+    if (spark == 0)
         return;
-    }
-
-    {
-        u8 *spawned_flags = spawned_actor + 0x55;
-        s32 zero_value = 0;
-
-        *spawned_flags = zero_value;
-        spawned_record = *(u8 **)(spawned_actor + 0x50);
-        ((StorySpawnRecord *)spawned_record)->field = 1;
-        Engine_ActorSetSpriteFlags(spawned_actor, 0);
-        Object_SetMode(spawned_actor, 1);
-        *(u16 *)(spawned_actor + 0x64) = zero_value;
-        *(s32 *)(spawned_actor + 0x6c) = (s32)StoryActor_AdvanceTimer;
-    }
+    spark->motion_flags = 0;
+    ((struct FieldSpritePriority *)spark->sprite)->priority = 1;
+    Engine_ActorSetSpriteFlags(spark, 0);
+    Object_SetMode(spark, 1);
+    spark->timer = 0;
+    spark->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
 }
 
-/* Blink the actor's palette with the frame counter and, while it is not held,
- * bob it on its sine path and advance the angle. */
 void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 {
     s16 *angle;
 
-    if (FrameCounter & 2)
+    if (gFrameCount & 2)
         Engine_ObjectSetPartPalettes(actor, 10);
     else
         Engine_ObjectSetPartPalettes(actor, 7);
-    if ((s16)actor->unknown_66 == 0) {
-        angle = (s16 *)&actor->unknown_64;
+    if ((s16)actor->work == 0) {
+        angle = (s16 *)&actor->timer;
         actor->x.fixed = 0x15d00000;
         actor->y.fixed = Iwram_MulQ16(Engine_MathSin(*angle << 3), 0x40000) + 0x100000;
         actor->z.fixed = 0x5300000;
@@ -181,27 +130,20 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
     }
 }
 
-s32 StoryActor_Initialize(u8 *actor)
+s32 StoryActor_Initialize(struct FieldActor *actor)
 {
-    u8 *actor_flags;
-    s32 fixed_scale;
-
-    if (GameFlag_IsSet(0x30) != 0) {
+    if (Engine_GameFlagIsSet(0x30) != 0) {
         return 0;
     }
-    if (GameFlag_IsSet(0x16E) != 0) {
+    if (Engine_GameFlagIsSet(0x16E) != 0) {
         return 0;
     }
-    *(s32 *)(actor + 0x6C) = (s32)WorldMap_UpdateBobbingMarker;
-    actor_flags = actor + 0x55;
-    *actor_flags = 0;
-    actor_flags += 0xF;
-    *(u16 *)actor_flags = 0;
-    actor_flags += 2;
-    *(u16 *)actor_flags = 0;
-    fixed_scale = 0x8000;
-    *(s32 *)(actor + 0x18) = fixed_scale;
-    *(s32 *)(actor + 0x1C) = fixed_scale;
+    actor->update = (void (*)(union FieldObject *))WorldMap_UpdateBobbingMarker;
+    actor->motion_flags = 0;
+    actor->timer = 0;
+    actor->work = 0;
+    actor->scale_x = 0x8000;
+    actor->scale_y = 0x8000;
     return 0;
 }
 
@@ -220,19 +162,18 @@ u8 *WorldMap_GetExits(void)
     return gWorldMapExits;
 }
 
-s32 StoryActor_ApplyFlaggedMode(u8 *actor)
+s32 StoryActor_ApplyFlaggedMode(struct FieldActor *actor)
 {
-    StoryActor_ApplyMapRotation();
-    if (GameFlag_IsSet(0x847) != 0) {
+    StoryActor_ApplyMapRotation(actor);
+    if (Engine_GameFlagIsSet(0x847) != 0) {
         Object_SetMode(actor, 2);
     }
     return 1;
 }
 
-/* Turns the actor's sprite to the map's rotation. */
 s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
 {
-    struct MapRenderWork *work = gMapWork;
+    struct MapRenderWork *work = gMapWork[0];
     struct FieldSprite *sprite = actor->sprite;
 
     sprite->rotation = work->rotation;
@@ -240,10 +181,9 @@ s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
     return 1;
 }
 
-/* Sets the actor's first collision flag and turns its sprite to the map's rotation. */
 s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
 {
-    struct MapRenderWork *work = gMapWork;
+    struct MapRenderWork *work = gMapWork[0];
     struct FieldSprite *sprite = actor->sprite;
 
     actor->collision_flags |= 1;
@@ -251,74 +191,36 @@ s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
     return 1;
 }
 
-s32 StoryActor_ResetPosition(u8 *actor)
+s32 StoryActor_ResetPosition(struct FieldActor *actor)
 {
-    s32 zero;
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ObjectSetPartPalettes(actor, 10);
-    {
-        u8 *mode_flags = actor + 0x59;
-        zero = 0;
-        *mode_flags = zero;
-    }
-    if (GameFlag_IsSet(0x8A0) != 0) {
-        GameFlag_Set(0x2f1);
-        *(s32 *)(actor + 8) = zero;
-        *(s32 *)(actor + 12) = zero;
+    actor->collision_flags = 0;
+    if (Engine_GameFlagIsSet(0x8A0) != 0) {
+        Engine_GameFlagSet(0x2f1);
+        actor->x.fixed = 0;
+        actor->y.fixed = 0;
     }
     return 0;
 }
 
-/*
- * The popped register is r1, so r0 survives the return and is the result.
- * The owner includes its alignment halfword and its one pool word, the
- * address of gFrameCount -- a live status word, not overlay image data.
- * The exclusive or against the bit just tested clears bit 0 only.  value is
- * a byte, so value >> 8 is zero and both branches do the same clear and
- * store; that shape is deliberate and decides the register allocation.
- */
-s32 StoryActor_ClearActiveFlag(u8 *actor)
+s32 StoryActor_ClearActiveFlag(struct FieldActor *actor)
 {
-
-    u8 *active_flags = actor + 0x54;
-    u8 value = *active_flags;
-    u32 active_bit = 1 + (value >> 8);
-
-    if ((active_bit & value) != 0 && (gFrameCount & active_bit) != 0) {
-        u8 cleared = 1;
-
-        if (active_flags) {
-            cleared ^= value;
-            *active_flags = (u8)cleared;
-        } else {
-            cleared ^= value;
-            *active_flags = (u8)cleared;
-        }
-    }
+    if ((actor->active & 1) && (gFrameCount & 1))
+        actor->active ^= 1;
     return 1;
 }
 
-/*
- * Selects the placement and spawn table for the current scene. The selector is
- * the signed game-state halfword 225; only 49 through 80 are covered and
- * everything else takes the default arm, which calls Engine_GameFlagSet before
- * returning. Cases 49 and 64 are conditional and fall through to the default
- * when their test fails. The case arms are in the order the reference uses,
- * not ascending, and that order is what reproduces it.
- */
 struct ScenePlacement *StoryScene_SelectPlacementTable(void)
 {
-    s16 *scene_table = (s16 *)&gGameState;
-    s32 scene_id = scene_table[225];
-
-    switch (scene_id) {
+    switch (gGameState.entrance) {
     case 49:
-        if (GameFlag_IsSet(0x94f) == 0 && GameFlag_IsSet(0x941) != 0) {
+        if (Engine_GameFlagIsSet(0x94f) == 0 && Engine_GameFlagIsSet(0x941) != 0) {
             return gWorldMapPlacements49;
         }
         break;
     case 64:
-        if (GameFlag_IsSet(0x85a) == 0) {
+        if (Engine_GameFlagIsSet(0x85a) == 0) {
             return gWorldMapPlacements64;
         }
         break;
@@ -343,55 +245,42 @@ struct ScenePlacement *StoryScene_SelectPlacementTable(void)
         break;
     }
 
-    GameFlag_Set(0x235);
+    Engine_GameFlagSet(0x235);
     return gWorldMapPlacements;
 }
 
-/* Publishes one of two branch values at +0x170 of the scene state, chosen by
- * comparing the other actor's x against the subject's. */
-void StoryScene_SetBranchValueFromX(
-    u8 *actor_object, s32 val_lower,
-    s32 val_other)
+void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after)
 {
+    struct EventWork *work;
+    struct FieldActor *subject;
+    struct FieldActor *other;
 
-    u8 *scene_state;
-    s16 *scene_table;
-    struct Object *subject_actor;
-    struct Object *other_actor;
-
-    subject_actor = Actor_Get(actor_object - 0x64);
-    scene_table = (s16 *)&gGameState;
-    other_actor = Actor_Get(*(s32 *)&scene_table[250]);
-    scene_state = *(u8 **)&gEventWork;
-    if (other_actor->x < subject_actor->x) {
-        *(u16 *)(scene_state + 0x170) = val_lower;
+    subject = Object_GetById(trigger - CONTACT_TRIGGER_BASE);
+    other = Object_GetById(gGameState.selected_actor);
+    work = gEventWork;
+    if (other->x.fixed < subject->x.fixed) {
+        work->requested_exit = exit_before;
     } else {
-        *(u16 *)(scene_state + 0x170) = val_other;
+        work->requested_exit = exit_after;
     }
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
 }
 
-/* The same branch value, chosen on z instead of x. */
-void StoryScene_SetBranchValueFromZ(
-    u8 *actor_object, s32 val_lower,
-    s32 val_other)
+void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after)
 {
+    struct EventWork *work;
+    struct FieldActor *subject;
+    struct FieldActor *other;
 
-    u8 *scene_state;
-    s16 *scene_table;
-    struct Object *subject_actor;
-    struct Object *other_actor;
-
-    subject_actor = Actor_Get(actor_object - 0x64);
-    scene_table = (s16 *)&gGameState;
-    other_actor = Actor_Get(*(s32 *)&scene_table[250]);
-    scene_state = *(u8 **)&gEventWork;
-    if (other_actor->z < subject_actor->z) {
-        *(u16 *)(scene_state + 0x170) = val_lower;
+    subject = Object_GetById(trigger - CONTACT_TRIGGER_BASE);
+    other = Object_GetById(gGameState.selected_actor);
+    work = gEventWork;
+    if (other->z.fixed < subject->z.fixed) {
+        work->requested_exit = exit_before;
     } else {
-        *(u16 *)(scene_state + 0x170) = val_other;
+        work->requested_exit = exit_after;
     }
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
 }
 
 void SceneState_SetValues130_6_47(void)
@@ -425,13 +314,6 @@ struct SceneEvent *WorldMap_GetEvents(void)
     return gWorldMapEvents;
 }
 
-/*
- * Marks each placed actor active while it stands inside a window around the
- * view centre: 160 pixels to either side, 300 pixels toward lower depth and
- * 200 toward higher depth. When an active actor comes within reach of the
- * selected actor, measured as the sum of the axis distances against both
- * scaled radii, its trigger is recorded as touched unless flag 0x104 is set.
- */
 void MapActor_UpdateContact(void)
 {
     struct FieldActor *leader;
@@ -444,7 +326,7 @@ void MapActor_UpdateContact(void)
     s32 leader_reach;
     u32 i;
 
-    leader = Actor_Get(gGameState.selected_actor);
+    leader = Object_GetById(gGameState.selected_actor);
     leader_reach = leader->sprite->scale * leader->radius;
     work = gEventWork;
     actor = work->view_center;
@@ -471,7 +353,7 @@ void MapActor_UpdateContact(void)
             continue;
         }
         actor->active = 1;
-        if (gDebugMode[0] != 0 && GameFlag_IsSet(FLAG_CONTACT_PAUSED) != 0) {
+        if (gDebugMode[0] != 0 && Engine_GameFlagIsSet(FLAG_CONTACT_PAUSED) != 0) {
             continue;
         }
         scale = actor->sprite->scale;
@@ -483,7 +365,7 @@ void MapActor_UpdateContact(void)
         if (dx + (actor->z.fixed - leader->z.fixed < 0 ? leader->z.fixed - actor->z.fixed
                                                        : actor->z.fixed - leader->z.fixed)
                 < reach
-            && GameFlag_IsSet(FLAG_CONTACT_BLOCKED) == 0) {
+            && Engine_GameFlagIsSet(FLAG_CONTACT_BLOCKED) == 0) {
             work->touched_trigger = i + CONTACT_TRIGGER_BASE;
         }
     }
@@ -491,10 +373,10 @@ void MapActor_UpdateContact(void)
 
 void SceneState_ApplyFlag85aBranch(void)
 {
-    if (GameFlag_IsSet(0x85a) == 0) {
+    if (Engine_GameFlagIsSet(0x85a) == 0) {
         Engine_EventRequestExit(101);
     } else {
-        Audio_PlayCue(123);
+        Engine_AudioPlayCue(123);
         Engine_EventRequestExit(3);
     }
 }
@@ -506,14 +388,11 @@ void FieldScene_RunStep74(void)
     Engine_EventRequestExit(74);
 }
 
-/* World map entry: record the arrival and start the map's camera and tasks, then run the scene the entrance or the story flags call for. */
 s32 WorldMap_EnterScene(void)
 {
-    s16 *entrance;
-    u8 *state;
+    struct GameState *state = &gGameState;
+    s16 *entrance = &state->entrance;
 
-    state = (u8 *)&gGameState;
-    entrance = &((struct GameState *)state)->entrance;
     if (*entrance == 99) {
         Engine_GameFlagSet(0x160);
         Engine_GameFlagSet(0x161);
@@ -521,10 +400,10 @@ s32 WorldMap_EnterScene(void)
     }
     if (*entrance == 90) {
         Scene_RunScene371SequenceA(0);
-        Event_SetPairWork1c0((s32)&SceneId_MakyuriChojo1, 1);
+        Event_SetDestination((s32)&SceneId_MakyuriChojo1, 1);
     } else if (*entrance == 91) {
         Scene_RunScene371SequenceA(1);
-        Event_SetPairWork1c0((s32)&SceneId_VinasuChojo, 93);
+        Event_SetDestination((s32)&SceneId_VinasuChojo, 93);
     } else if (*entrance == 78) {
         Engine_EventBegin();
         PartyInventory_Discard(242);
@@ -538,11 +417,11 @@ s32 WorldMap_EnterScene(void)
         Engine_GameFlagClear(0x12f);
         Engine_TaskAddCallback(MapActor_UpdateContact, 0xc80);
         if (Engine_GameFlagIsSet(0x90a) == 0) {
-            Call4(Map_SetWindowCellTile, 128, 256, 176, 56);
+            FieldMap_SetWindowCellTile(128, 256, 176, 56);
         }
         switch (*entrance) {
         case 1:
-            if (Value1(Engine_GameFlagIsSet, 0x815) == 0) {
+            if (GameFlag_IsSet(0x815) == 0) {
                 Engine_GameFlagSet(0x815);
                 Engine_GameFlagSet(0x85c);
             }
@@ -551,7 +430,7 @@ s32 WorldMap_EnterScene(void)
             if (Engine_GameFlagIsSet(0x109) != 0) {
                 if (Engine_GameFlagIsSet(0x85d) == 0 && Engine_GameFlagIsSet(0x234) != 0) {
                     gWorldMapTriggerActor = 55;
-                    Call3(Engine_ActorSetPosition, 55, 0x17940000, 0xd480000);
+                    Actor_SetPosition(55, 0x17940000, 0xd480000);
                     Object_GetById(gWorldMapTriggerActor)->facing = 0x3000;
                     WorldMap_ActivateSite138(gWorldMapTriggerActor);
                 }
@@ -570,28 +449,28 @@ s32 WorldMap_EnterScene(void)
             }
             break;
         case 65:
-            FieldScene_RunScene371_020017fc();
+            WorldMap_TransferToExit102();
             break;
         case 66:
-            FieldScene_RunScene371_02001888();
+            WorldMap_TransferToExit103();
             break;
         case 67:
-            FieldScene_RunScene371_02001938();
+            WorldMap_TransferToExit104();
             break;
         case 68:
-            FieldScene_RunScene371_020019e8();
+            WorldMap_TransferToFuneHeya();
             break;
         case 69:
-            FieldScene_RunScene371_02001a98();
+            WorldMap_TransferToExit106();
             break;
         case 70:
-            FieldScene_RunScene371_02001b5c();
+            WorldMap_CompleteTransfer();
             break;
         case 71:
-            FieldScene_RunScene371_02002274();
+            WorldMap_DisembarkCarriage();
             break;
         case 72:
-            FieldScene_RunScene371_0200357c();
+            WorldMap_RunOpeningRise();
             break;
         case 73:
             StoryScene_StartTransition();
@@ -601,8 +480,7 @@ s32 WorldMap_EnterScene(void)
         case 77:
             Engine_GameFlagSet(0x11c);
             if (GameFlag_GetByte(0x2f8) != 0) {
-                state = (u8 *)&gGameState;
-                state[0x1f2] = 2;
+                gGameState.movement_mode = 2;
                 Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
             }
             break;
@@ -624,7 +502,7 @@ s32 WorldMap_EnterScene(void)
 void RunEventScript01(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Engine_EventOpenScreen();
@@ -649,7 +527,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(12, 2);
     record = Object_GetById(8);
     if (record != 0) {
-        Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(12);
     Actor_SetPosition(12, 0, 0);
@@ -657,7 +535,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(11, 2);
     record = Object_GetById(8);
     if (record != 0) {
-        Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(11);
     Actor_SetPosition(11, 0, 0);
@@ -665,7 +543,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     record = Object_GetById(8);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -684,10 +562,9 @@ void RunEventScript01(void)
 
 void FieldScene_RunActorTransferSequence(void)
 {
-    u8 *actor;
-    u8 *record;
-    s32 scale;
-    s32 action;
+    struct FieldActor *actor;
+    struct FieldActor *record;
+    const u8 *action;
 
     actor = Object_GetById(15);
     Engine_EventBegin();
@@ -718,11 +595,11 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(12, gTransferArrive12);
     Engine_EventWait(20);
-    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferArrive13);
+    Object_SetActionCallbackAndRefreshById(13, gTransferArrive13);
     Audio_PlayCue(0x121);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x1704, 0x640);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
@@ -748,7 +625,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
-    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferDepart13);
+    Object_SetActionCallbackAndRefreshById(13, gTransferDepart13);
     Audio_PlayCue(0x121);
     Engine_EventWait(20);
     Battle_ClearObjectFlag5bWhenMode3();
@@ -808,7 +685,7 @@ void FieldScene_RunActorTransferSequence(void)
     Battle_ClearObjectFlag5bWhenMode3();
     Audio_PlayCue(107);
     Camera_SetSpeed(0x40000, 0x40000);
-    FieldScene_RunScene371_0200155c();
+    WorldMap_ShakeTransferStartCamera();
     Audio_PlayCue(0x121);
     Actor_ShowEmote(8, 0x100, 0);
     Actor_ShowEmote(9, 0x100, 0);
@@ -824,45 +701,35 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetSpeed(14, 0x4ccc, 0x2666);
     Engine_ActorEnableActionCallback(14, gTransferGuide14);
     Engine_EventWait(160);
-    *(s32 *)(actor + 72) = 0x1999;
-    *(s32 *)(actor + 68) = 0x1999;
-    *(s32 *)(actor + 24) = 0x18000;
-    *(s32 *)(actor + 28) = 0x18000;
-    {
-        s32 shown = 0;
-
-        *(u16 *)(actor + 100) = shown;
-    }
-    *(s32 *)(actor + 12) = 0x400000;
-    {
-        u8 *target = *(u8 **)(actor + 80);
-        s32 shown = 0xf000;
-
-        *(u16 *)(target + 30) = shown;
-    }
+    actor->gravity = 0x1999;
+    actor->bounce = 0x1999;
+    actor->scale_x = 0x18000;
+    actor->scale_y = 0x18000;
+    actor->timer = 0;
+    actor->y.fixed = 0x400000;
+    actor->sprite->rotation = 0xf000;
     Engine_ActorSetSpriteFlags(actor, 0);
     Object_SetMode(actor, 2);
     Engine_TaskWait(1);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
-    Engine_TaskAddCallback((s32)FieldScene_RunScene371_020017a4, 0xc80);
+    Engine_TaskAddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(actor + 100) == 0);
+    } while ((s16)actor->timer == 0);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
     record = Actor_Get(14);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_EventWait(10);
-    scale = 192;
     record = Actor_Get(9);
-    *(s32 *)(record + 40) = (scale << 11);
+    record->velocity_y = 0x60000;
     record = Object_GetById(8);
-    *(s32 *)(record + 40) = (scale << 11);
+    record->velocity_y = 0x60000;
     Audio_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
-    FieldScene_RunScene371_02001680();
-    FieldScene_RunScene371_02001680();
+    WorldMap_ShakeTransferLandingCamera();
+    WorldMap_ShakeTransferLandingCamera();
     Engine_EventWait(60);
     Camera_SetSpeed(0x20000, 0x4000);
     Camera_MoveTo(0x16080000, -1, 0x6f80000, 1);
@@ -871,7 +738,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetAttachedEffect(9, 0x102);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
-    Engine_TaskRemoveCallback((s32)FieldScene_RunScene371_020017a4);
+    Engine_TaskRemoveCallback(WorldMap_UpdateTransferredActorLanding);
     Engine_TaskWait(1);
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
@@ -900,19 +767,19 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_WalkToAndWait(9, 0x1608, 0x6d8);
     Actor_SetPosition(9, 0, 0);
     Audio_PlayCue(141);
-    Engine_ActorEnableActionCallback(10, (s32)gTransferReturn10);
+    Engine_ActorEnableActionCallback(10, gTransferReturn10);
     Engine_ActorEnableActionCallback(11, gTransferReturn11);
     Engine_EventWait(40);
     Engine_ActorEnableActionCallback(12, gTransferReturn12);
     Engine_EventWait(40);
-    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferReturn13);
+    Object_SetActionCallbackAndRefreshById(13, gTransferReturn13);
     Battle_ClearObjectFlag5bWhenMode3();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x170c0000, 0x6280000);
     Actor_SetPosition(ACTOR_GERALD, 0x17140000, 0x6400000);
     Camera_SetSpeed(0x40000, 0x8000);
     Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
     Engine_CameraWaitForMove();
-    action = (s32)gTransferGather;
+    action = gTransferGather;
     Engine_ActorEnableActionCallback(10, action);
     Engine_EventWait(20);
     Camera_SetSpeed(0x6666, 0xccc);
@@ -940,7 +807,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -955,12 +822,8 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_0200155c(void)
+void WorldMap_ShakeTransferStartCamera(void)
 {
-
-    u32 i;
-    s32 record;
-
     Camera_MoveTo(0x160c0000, -1, 0x6f80000, 1);
     Engine_TaskWait(4);
     Camera_MoveTo(0x16040000, -1, 0x6fc0000, 1);
@@ -987,12 +850,8 @@ void FieldScene_RunScene371_0200155c(void)
     Engine_TaskWait(4);
 }
 
-void FieldScene_RunScene371_02001680(void)
+void WorldMap_ShakeTransferLandingCamera(void)
 {
-
-    u32 i;
-    s32 record;
-
     Camera_MoveTo(0x15ec0000, -1, 0x6c80000, 1);
     Engine_TaskWait(4);
     Camera_MoveTo(0x15e40000, -1, 0x6cc0000, 1);
@@ -1019,47 +878,37 @@ void FieldScene_RunScene371_02001680(void)
     Engine_TaskWait(4);
 }
 
-void FieldScene_RunScene371_020017a4(void)
+void WorldMap_UpdateTransferredActorLanding(void)
 {
+    struct FieldActor *actor;
+    struct FieldActor *guide;
 
-    u32 i;
-    s32 rec7;
-    s32 record;
-
-    rec7 = Object_GetById(15);
-    record = Object_GetById(14);
-    *(s32 *)(rec7 + 8) = *(s32 *)(record + 8);
-    *(s32 *)(rec7 + 16) = *(s32 *)(record + 16);
-    if (*(s32 *)(rec7 + 12) < 0xa0000) {
-        *(s32 *)(rec7 + 12) = 0xa0000;
+    actor = Object_GetById(15);
+    guide = Object_GetById(14);
+    actor->x.fixed = guide->x.fixed;
+    actor->z.fixed = guide->z.fixed;
+    if (actor->y.fixed < 0xa0000) {
+        actor->y.fixed = 0xa0000;
         if (GameFlag_IsSet(0x200) == 0) {
             Audio_PlayCue(145);
-            Object_SetMode(rec7, 3);
+            Object_SetMode(actor, 3);
             GameFlag_Set(0x200);
-            {
-                u16 *target = (u16 *)(rec7 + 100);
-                s32 shown = 1;
-
-                *target = shown;
-            }
+            actor->timer = 1;
         }
     }
 }
 
-void FieldScene_RunScene371_020017fc(void)
+void WorldMap_TransferToExit102(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    *(s32 *)(rec7 + 28) = 0x14000;
-    *(s32 *)(rec7 + 24) = 0x14000;
+    actor->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x6666, 0x3333);
@@ -1071,34 +920,27 @@ void FieldScene_RunScene371_020017fc(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001888(void)
+void WorldMap_TransferToExit103(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        *(u16 *)(rec7 + 100) = shown;
-    }
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1106,34 +948,27 @@ void FieldScene_RunScene371_02001888(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001938(void)
+void WorldMap_TransferToExit104(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        *(u16 *)(rec7 + 100) = shown;
-    }
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1141,34 +976,27 @@ void FieldScene_RunScene371_02001938(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_020019e8(void)
+void WorldMap_TransferToFuneHeya(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        *(u16 *)(rec7 + 100) = shown;
-    }
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1176,30 +1004,23 @@ void FieldScene_RunScene371_020019e8(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001a98(void)
+void WorldMap_TransferToExit106(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        *(u16 *)(rec7 + 100) = shown;
-    }
+    actor->timer = 0;
     if (StoryScene_ComputeOpposingSlotDelta() == 11) {
         Engine_ActorEnableActionCallback(8, gTransferLeaderTurn);
     } else {
@@ -1207,7 +1028,7 @@ void FieldScene_RunScene371_02001a98(void)
     }
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1215,21 +1036,18 @@ void FieldScene_RunScene371_02001a98(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001b5c(void)
+void WorldMap_CompleteTransfer(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x13e80000, 0x9180000);
-    *(s32 *)(rec7 + 28) = 0x14000;
-    *(s32 *)(rec7 + 24) = 0x14000;
+    actor->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
@@ -1243,15 +1061,11 @@ void FieldScene_RunScene371_02001b5c(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001c08(void)
+void WorldMap_ShowDjinnTutorial(void)
 {
-
-    u32 i;
-    s32 record;
-
     Battle_ClearObjectFlag5bWhenMode3();
     BattleFx_ScheduleRatioTransition(0x10000, 6);
-    Event_WaitForDisplayField358Clear();
+    Event_WaitForZoomTransition();
     Battle_SetObjectFlag5bWhenMode3();
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventSetMessage((s32)MsgWorldMapAfterBringingDjinniIntoYour);
@@ -1271,15 +1085,6 @@ void FieldScene_RunScene371_02001c08(void)
     Engine_EventWait(30);
     BattleFx_SetWeightedResult(12, 6);
 }
-extern u8 MsgWorldMapOh[];
-extern u8 MsgWorldMapComePromiseWont[];
-extern u8 MsgWorldMapMeanieDontCare[];
-extern u8 MsgWorldMapSeeWontRegret[];
-extern u8 MsgWorldMapAbilityVenusDjinni[];
-extern u8 MsgWorldMapSeeDjinnUseful[];
-extern u8 MsgWorldMapGoSetStandby[];
-extern u8 MsgWorldMapHmmmmExplainAgain[];
-extern u8 MsgWorldMapYeahWantLearn[];
 
 void Owner_RefreshActiveRatios(s32 owner);
 s32 Djinn_AddToOwner();
@@ -1291,10 +1096,6 @@ void BattleFx_RunPageEffectForSlot(s32 actor, s32 a1, s32 a2);
 #define DJINNI 8
 #define FLAG_DJINNI_MET 0x16e
 
-/* The world map's Venus Djinni: on the first meeting it joins the leader, grows
- * from a speck and explains itself, pleading until the party agrees to listen;
- * later it offers to explain Djinn again. The pleas are counted apart from the
- * loops, which is what lets the growing loop count down from its own start. */
 void WorldMap_MeetVenusDjinni(void)
 {
     struct FieldActor *djinni;
@@ -1307,8 +1108,8 @@ void WorldMap_MeetVenusDjinni(void)
     count = 0;
     djinni = Object_GetById(DJINNI);
     leader = Object_GetById(0);
-    x = (leader->x.fixed + (s32)0xea300000) / 2 + 0x15d00000;
-    z = (leader->z.fixed + (s32)0xfad00000) / 2 + 0x5300000;
+    x = (leader->x.fixed - 0x15d00000) / 2 + 0x15d00000;
+    z = (leader->z.fixed - 0x5300000) / 2 + 0x5300000;
     if (!GameFlag_IsSet(FLAG_DJINNI_MET)) {
         Owner_RefreshActiveRatios(1);
         GameFlag_Set(FLAG_DJINNI_MET);
@@ -1322,21 +1123,21 @@ void WorldMap_MeetVenusDjinni(void)
         Actor_FaceActor(0, DJINNI, 0);
         Event_Wait(10);
         Actor_ShowEmote(0, 0x101, 60);
-        djinni->unknown_66 = 1;
+        djinni->work = 1;
         Actor_FaceActor(DJINNI, 0, 0);
         Task_Wait(16);
         Event_SetMessage((s32)MsgWorldMapOh);
         Event_ShowMessage(DJINNI, 0);
         Battle_ClearObjectFlag5bWhenMode3();
         BattleFx_ScheduleRatioTransition(0x13333, 6);
-        Event_WaitForDisplayField358Clear();
+        Event_WaitForZoomTransition();
         Battle_SetObjectFlag5bWhenMode3();
         djinni->motion_flags = 2;
-        *(s32 *)&djinni->unknown_44[4] = 0x4000;
+        djinni->gravity = 0x4000;
         djinni->speed = 0x10000;
         djinni->acceleration = 0x10000;
         djinni->velocity_y = 0;
-        *(s32 *)djinni->unknown_14 = 0;
+        djinni->terrain_height = 0;
         FieldObject_SetPosition(djinni, 0x15d00000, 0, 0x5300000);
         for (i = 0; i < 16; i++) {
             djinni->scale_x += 0x800;
@@ -1348,7 +1149,7 @@ void WorldMap_MeetVenusDjinni(void)
         Task_Wait(16);
         djinni->update = 0;
         Engine_ObjectSetPartPalettes(djinni, 0);
-        *(s32 *)&djinni->unknown_44[4] = 0x10000;
+        djinni->gravity = 0x10000;
         Event_ShowMessage(DJINNI, 0);
         Audio_PlayCue(131);
         Engine_PsynergyBegin(140, 0);
@@ -1392,7 +1193,7 @@ void WorldMap_MeetVenusDjinni(void)
         Event_ShowMessage(DJINNI, 0);
         djinni->motion_flags = 2;
         djinni->velocity_y = 0;
-        *(s32 *)djinni->unknown_14 = 0;
+        djinni->terrain_height = 0;
         for (i = 7; i >= 0; i--) {
             djinni->facing += 0x1000;
             Task_Wait(1);
@@ -1432,8 +1233,8 @@ listened:
         Message_ShowCentered(count++, 3);
         Event_SetMessage(count);
         {
-            register s32 frames asm("r2") = 20; /* FAKEMATCH: pins the frames to r2 */
-            register s32 flags asm("r1"); /* FAKEMATCH: pins the flags to r1 */
+            s32 frames = 20;
+            s32 flags;
 
             asm volatile("" : : "r"(frames)); /* FAKEMATCH: sets the jump's frames first */
             Actor_Jump(DJINNI, 2, frames);
@@ -1483,9 +1284,9 @@ listened:
         goto learn;
     Event_ShowMessage(DJINNI, 0);
     {
-        register s32 far asm("r3") = z; /* FAKEMATCH: pins z to r3 */
+        s32 far = z;
         register s32 near asm("r2") = x; /* FAKEMATCH: pins x to r2 */
-        register s32 tile_x asm("r1"); /* FAKEMATCH: pins the tile x to r1 */
+        s32 tile_x;
         register s32 tile_z asm("r2"); /* FAKEMATCH: reuses r2 for the tile z */
 
         asm volatile("" : : "r"(far), "r"(near)); /* FAKEMATCH: copies z before x */
@@ -1494,7 +1295,7 @@ listened:
         Actor_WalkToAndWait(DJINNI, tile_x, tile_z);
     }
 finish:
-    FieldScene_RunScene371_02001c08();
+    WorldMap_ShowDjinnTutorial();
     Battle_ClearObjectFlag5bWhenMode3();
     return;
 learn:

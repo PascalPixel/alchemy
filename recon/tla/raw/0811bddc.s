@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811bddc
+	.global Camera_InitDefaultTransform
 	.thumb_func
-Func_0811bddc:
+Camera_InitDefaultTransform:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -23,13 +23,13 @@ Func_0811bddc:
 	str r6, [r5, #28]
 	str r6, [r5, #24]
 	sub sp, #12
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r5, #0
 	adds r0, #12
 	bl SceneTransform_ApplyPosition
 	movs r3, #54
 	ldrsh r0, [r5, r3]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r3, #52
 	ldrsh r0, [r5, r3]
 	bl SceneTransform_ApplyPitch

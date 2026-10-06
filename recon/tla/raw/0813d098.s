@@ -212,7 +212,7 @@ Func_0813d098:
 	mov r11, r0
 	ldrsh r0, [r5, r1]
 	ldr r1, [sp, #32]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r5, [sp, #76]
 	movs r2, #0
 	mov r10, r2
@@ -496,7 +496,7 @@ Func_0813d098:
 	ldrsh r0, [r1, r6]
 	adds r1, r2, #0
 	str r2, [sp, #36]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r5, [sp, #84]
 	mov r6, sp
 	adds r6, #128
@@ -504,7 +504,7 @@ Func_0813d098:
 	ldrsh r0, [r5, r3]
 	adds r1, r6, #0
 	str r6, [sp, #48]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r0, [sp, #36]
 	ldr r3, [r6, #4]
 	ldr r1, [r0, #4]
@@ -579,12 +579,12 @@ Func_0813d098:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	ldr r1, [sp, #36]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r5, [sp, #84]
 	ldr r1, [sp, #48]
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #36]
 	ldr r0, [sp, #48]
 	ldr r1, [r2, #4]
@@ -1420,13 +1420,13 @@ Func_0813d098:
 	movs r2, #36
 	ldrsh r0, [r3, r2]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r1, [sp, #84]
 	mov r11, r5
 	movs r6, #36
 	ldrsh r0, [r1, r6]
 	ldr r1, [sp, #48]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #48]
 	ldr r1, [r5, #4]
 	ldr r3, [r2, #4]
@@ -1529,7 +1529,7 @@ Func_0813d098:
 	cmp r5, #3
 	bne .L_0813dbe8
 .L_0813dca0:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #56]
 	ldr r1, [sp, #24]
 	bl Graphics_PrepareTransferInIwramWork
@@ -1737,7 +1737,7 @@ Func_0813d098:
 	blt .L_0813defc
 	adds r1, r6, #0
 	adds r0, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r6]
 	ldr r1, .L_0813dea0
 	asrs r2, r2, #1
@@ -1861,7 +1861,7 @@ Func_0813d098:
 	blt .L_0813df72
 	adds r1, r6, #0
 	adds r0, r7, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	adds r0, r7, #0
 	asrs r3, r3, #1
@@ -1979,7 +1979,7 @@ Func_0813d098:
 	adds r5, r5, r0
 	lsls r3, r5, #4
 	adds r5, r5, r3
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #36]
 	movs r2, #0
 	ldr r0, [r1]
@@ -2002,7 +2002,7 @@ Func_0813d098:
 	movs r0, #128
 	lsls r0, r0, #6
 	asrs r5, r5, #1
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r6, #0
 	adds r1, r5, #0
 	adds r2, r5, #0

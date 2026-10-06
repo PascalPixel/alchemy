@@ -1,9 +1,30 @@
-/*
- * Battle effect 11's lift: two item-break anchors carry the target while the
- * player steers it, drop it where it fits, and break into twenty shards.
- */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
+#include "FX_SCENE.H"
 #include "OBJDISP.H"
+#include "CALLBACK_SCHEDULER.H"
+
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
+#define Random16 ((s32 (*)(void))Random16)
+
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct FxObject*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
+#define BattleFx_SpawnItemBreakMode1 ((struct FxObject * (*)(s32,s32,s32,s32))BattleFx_SpawnItemBreakMode1)
+#define Object_SetMoveTargetFar ((void (*)(struct FxObject*,s32,s32,s32))Object_SetMoveTargetFar)
+#define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
+#define BattleFx_GetCycledTableWord ((s32 (*)(u32))BattleFx_GetCycledTableWord)
+#define ScriptObject_CheckOverlapFar ((s32 (*)(struct FxObject*,struct FxPosition*))ScriptObject_CheckOverlapFar)
+#define BattleFx_SpawnRadialParticleRing ((void (*)(struct FxObject*))BattleFx_SpawnRadialParticleRing)
 
 struct FxPosition {
     s32 x;
@@ -13,78 +34,46 @@ struct FxPosition {
 
 struct FxObject {
     u8 unknown_00[8];
-    s32 x;                      /* 0x08 */
+    s32 x;
     s32 y;
     s32 z;
-    s32 ground;                 /* 0x14 */
+    s32 ground;
     u8 unknown_18[10];
-    u8 mode;                    /* 0x22 */
+    u8 mode;
     u8 unknown_23;
-    s32 velocity_x;             /* 0x24 */
-    s32 velocity_y;             /* 0x28 */
-    s32 velocity_z;             /* 0x2c */
-    s32 speed;                  /* 0x30 */
-    s32 lift;                   /* 0x34 */
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    s32 speed;
+    s32 lift;
     u8 unknown_38[12];
-    s32 gravity;                /* 0x44 */
+    s32 gravity;
     u8 unknown_48[13];
-    u8 flag;                    /* 0x55 */
+    u8 flag;
     u8 unknown_56[4];
     u8 unknown_5a;
     u8 unknown_5b;
     u8 unknown_5c[12];
-    struct FxObject *linked;    /* 0x68 */
-    void *callback;             /* 0x6c */
+    struct FxObject *linked;
+    void *callback;
 };
 
-struct EffectWork {
-    u8 unknown_00[4];
-    s32 x;
-    s32 y;
-    s32 z;
-    struct FxObject *source;    /* 0x10 */
-    struct FxObject *target;    /* 0x14 */
-    u8 unknown_18[0x1c];
-    u8 falls;                   /* 0x34 */
-    u8 unknown_35[3];
-    void *callback;             /* 0x38 */
-    const u8 *script;           /* 0x3c */
-    u8 unknown_40[4];
-    u8 palette;                 /* 0x44 */
-};
-
-extern struct EffectWork *gEffectWork;
-extern const u8 BattleFx_SourceHoldScript[];
-extern const u8 BattleFx_FragmentScript[];
+extern struct BattleFxScene *gEffectWork;
+extern const s32 BattleFx_FragmentScript[];
 extern volatile u32 gKeysHeld;
-extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
-void BattleEffect_InitializeSharedScene(void);
-struct FxObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
-void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
-void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
-void ObjectGroup_ApplyRandomChildValues(void);
-void BattleFx_SpawnFallingParticles(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
-void Scheduler_RemoveCallback(void (*callback)(void));
 void AudioCommand_PlayFar(s32 cue);
-void ObjectDispatch_SetSingleChildField26Far(struct FxObject *object, s32 value);
-s32 BattleFx_GetCycledTableWord(u32 keys);
+void ObjectDispatch_SetSingleChildFlagsFar(struct FxObject *object, s32 value);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
-s32 ScriptObject_CheckOverlapFar(struct FxObject *object, struct FxPosition *position);
 s32 Object_CheckMovementCollision(struct FxObject *object, struct FxPosition *position);
 struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-s32 Random16(void);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object, s32 magnitude, s32 angle);
 void ObjectDispatch_ReleaseFar(struct FxObject *object);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
-void BattleFx_SpawnRadialParticleRing(struct FxObject *object);
 
-/* Tests the object's movement from one step above the ground. */
 static __inline__ s32 Object_ProbeRaised(struct FxObject *object, struct FxPosition *position)
 {
     s32 hit;
@@ -95,14 +84,9 @@ static __inline__ s32 Object_ProbeRaised(struct FxObject *object, struct FxPosit
     return hit;
 }
 
-/* Lifts the target between two anchors and lets the keys steer it: each
-   frame the anchors follow, and a direction is tried one step ahead. A step
-   that is blocked shakes the anchors; one that fits sets the target down.
-   Either way the anchors then break into twenty shards and the target takes
-   its own script back, falling if the effect says so. */
 void BattleFx_SteerLiftedTarget(s32 target_id)
 {
-    struct EffectWork *work;
+    struct BattleFxScene *work;
     struct FxObject *source;
     struct FxObject *target;
     struct FxObject *shards[20];
@@ -116,16 +100,14 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     struct FxPosition *p;
 
     work = gEffectWork;
-    source = work->source;
-    target = work->target;
+    source = work->main_object;
+    target = work->child;
     if (target == NULL)
         return;
     BattleEffect_InitializeSharedScene();
     source->linked = target;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)BattleFx_SourceHoldScript);
-    /* FAKEMATCH: the position is reached through this pointer everywhere but
-       in the steering loop's first part, which names the position itself;
-       that keeps the pointer in r10 and gives the loop its own copy. */
+    ObjectDispatch_InitializeFar((struct DispatchObject *)source, BattleFx_SourceHoldScript);
+    /* FAKEMATCH: the position is reached through this pointer everywhere but in the steering loop's first part, which names the position itself; that keeps the pointer in r10 and gives the loop its own copy. */
     p = &position;
     p->x = work->x;
     p->y = work->y + 0x100000;
@@ -154,7 +136,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
     AudioCommand_PlayFar(130);
     target->flag = 4;
-    ObjectDispatch_SetSingleChildField26Far(target, 0);
+    ObjectDispatch_SetSingleChildFlagsFar(target, 0);
     if (anchors[0] != NULL && anchors[1] != NULL) {
         while (target->y - target->ground <= 0x180000) {
             object->y += 0x6000;
@@ -173,7 +155,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     target->mode = 2;
     for (;;) {
         WaitFrames(1);
-        if ((gKeyState & 0x303) != 0)
+        if ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
             break;
         angle = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
         if (angle == 0xffff) {
@@ -199,8 +181,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         position.z = target->z;
         Vector_AddPolarOffset(0x100000, angle, &position);
         i = ScriptObject_CheckOverlapFar(target, &position);
-        /* FAKEMATCH: entering the blocked path from both tests keeps it ahead
-           of the drop path, as the ROM lays them out. */
+        /* FAKEMATCH: entering the blocked path from both tests keeps it ahead of the drop path, as the ROM lays them out. */
         if (i != 0)
             goto blocked;
         if (Object_ProbeRaised(target, p) > 0) {
@@ -259,7 +240,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
             object = Object_Spawn(0x11d, p->x, p->y, p->z);
             *walk++ = object;
             if (object != NULL) {
-                ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_FragmentScript);
+                ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_FragmentScript);
                 object->speed = Random16() + 0x20000;
                 object->lift = 0x20000;
                 object->flag = 0;
@@ -271,22 +252,16 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     AudioCommand_PlayFar(131);
     ObjectDispatch_ReleaseFar(anchors[0]);
     ObjectDispatch_ReleaseFar(anchors[1]);
-    Animation_ApplyChildValuesFar(target, work->palette);
-    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->script));
-    {
-        /* FAKEMATCH: one zero, set before these stores, clears the mode
-           byte and the source's callback from the same register. */
-        s32 zero = 0;
-
-        target->callback = work->callback;
-        target->flag = 3;
-        target->velocity_y = 0xa0000;
-        target->gravity = 0x3333;
-        target->mode = zero;
-        source->callback = (void *)zero;
-    }
+    Animation_ApplyChildValuesFar(target, work->saved_palette);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)target, work->saved_script);
+    target->callback = work->saved_callback;
+    target->flag = 3;
+    target->velocity_y = 0xa0000;
+    target->gravity = 0x3333;
+    target->mode = 0;
+    source->callback = 0;
     Animation_ApplyChildValuesFar(source, 0);
-    if ((s8)work->falls != 0) {
+    if (work->child_option != 0) {
         for (i = 0; i < 90 && target->velocity_y >= 0; i++)
             WaitFrames(1);
         WaitFrames(1);

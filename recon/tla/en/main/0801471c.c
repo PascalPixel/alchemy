@@ -1,7 +1,3 @@
-/* Near miss: score 60. ☀️'s, for ⚓️'s 24 tasks. ⚓️ loads the task table
-   (ldr r1) straight after copying mask into r6; this draft sets the -1
-   result first. Declaration orders, a byte mask and 40 s of permuting did
-   not fix it; its neighbours matched once the table load came first. */
 #include "TYPES.H"
 #include "IO_REG.H"
 

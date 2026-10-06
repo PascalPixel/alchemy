@@ -1,13 +1,3 @@
-@ Fixed-point vector integrators for three and two axes: each adds the
-@ velocity to the position, adds its third argument to the second velocity
-@ component, then multiplies every velocity component by its second argument
-@ and divides by 64, rounding toward zero. Each muls sets the N flag that the
-@ next bge tests with no compare between them, where both approved compilers
-@ emit each Thumb conditional branch directly after its own cmp or cmn; the
-@ vector is loaded with ldmia r0! and rewound with subs r0, and the third
-@ argument is kept in lr. TBS has no such routine; the battle-effect kernel
-@ bank links a second copy (KERNEL_BANK_INTEGRATE_VECTORS.S).
-@ credit: handwritten — three- and two-axis fixed-point vector integrators (instance 1)
 .syntax unified
 	.thumb
 	.global BattleFx_IntegrateVector3

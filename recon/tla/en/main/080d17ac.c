@@ -1,18 +1,19 @@
-#include "SCENE.H"
 #include "TYPES.H"
+#include "PALBUF.H"
+#include "RAM_BUFFER.H"
 
-s32 BattleFx_BuildBuffer(s32, s32, s32, s32);
+void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames);
 
 void BattleFx_StartBufferInterpolation(s32 mode)
 {
-    struct BattleEffectBuffers *buffers = Data_03001ed0;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
 
     if (buffers != NULL) {
-        buffers->mode_2a01 = mode;
-        buffers->unknown_2a02 = 0;
-        BattleFx_InterpolateBuffers((s16 *)buffers->buffer_380,
-                                        (s16 *)buffers->buffer_e00,
-                                        (s16 *)buffers->buffer_1880,
-                                        mode);
+        buffers->duration = mode;
+        buffers->step = 0;
+        BattleFx_InterpolateBuffers((s16 *)buffers->current,
+                                    (s16 *)buffers->target,
+                                    (s16 *)buffers->delta,
+                                    mode);
     }
 }

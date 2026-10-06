@@ -3,9 +3,47 @@
 
 #include "LAYOUT_GUARD.H"
 
+struct BattleUnit;
+
+enum InventoryEncoding {
+    ITEM_ID_MASK = 0x1ff,
+    INVENTORY_EQUIPPED = 0x200,
+    INVENTORY_BROKEN = 0x400,
+    INVENTORY_ENTRY_MASK = 0x7ff,
+    INVENTORY_QUANTITY_SHIFT = 11,
+    INVENTORY_QUANTITY_STEP = 0x800,
+    INVENTORY_QUANTITY_MASK = 0xf800,
+    INVENTORY_SLOTS = 15
+};
+
+enum ItemFlags {
+    ITEM_CURSED = 1,
+    ITEM_CANNOT_UNEQUIP = 2,
+    ITEM_INDISPENSABLE = 8,
+    ITEM_STACKABLE = 0x10
+};
+
+enum ItemEffectKind {
+    ITEM_EFFECT_NONE,
+    ITEM_EFFECT_ADD_HP,
+    ITEM_EFFECT_ADD_HP_REGEN,
+    ITEM_EFFECT_ADD_PP,
+    ITEM_EFFECT_ADD_PP_REGEN,
+    ITEM_EFFECT_ADD_AGILITY,
+    ITEM_EFFECT_ADD_LUCK,
+    ITEM_EFFECT_SCALE_HP,
+    ITEM_EFFECT_SCALE_HP_REGEN,
+    ITEM_EFFECT_SCALE_PP,
+    ITEM_EFFECT_SCALE_PP_REGEN,
+    ITEM_EFFECT_SCALE_ATTACK,
+    ITEM_EFFECT_SCALE_DEFENSE,
+    ITEM_EFFECT_SCALE_AGILITY,
+    ITEM_EFFECT_SCALE_LUCK
+};
+
 struct ItemEffect {
-    u8 kind;                        /* 0x00 */
-    s8 amount;                      /* 0x01 */
+    u8 kind;
+    s8 amount;
     u8 reserved_02[2];
 };
 
@@ -14,21 +52,21 @@ LAYOUT_OFFSET_GUARD(ItemEffect_Kind, struct ItemEffect, kind, 0x00);
 LAYOUT_OFFSET_GUARD(ItemEffect_Amount, struct ItemEffect, amount, 0x01);
 
 struct ItemDefinition {
-    s16 price;                      /* 0x00 */
-    u8 type;                        /* 0x02 */
-    u8 flags;                       /* 0x03 */
-    u16 equip_mask;                 /* 0x04 */
-    u16 icon;                       /* 0x06 */
-    s16 primary_bonus;              /* 0x08 */
-    s8 secondary_bonus;             /* 0x0a */
-    u8 secondary_flags;             /* 0x0b */
-    u8 use_type;                    /* 0x0c */
+    s16 price;
+    u8 type;
+    u8 flags;
+    u16 equip_mask;
+    u16 icon;
+    s16 primary_bonus;
+    s8 secondary_bonus;
+    u8 secondary_flags;
+    u8 use_type;
     u8 reserved_0d;
-    u16 description_message;        /* 0x0e */
+    u16 description_message;
     u8 reserved_10[4];
-    s32 element;                    /* 0x14, read as a word */
-    struct ItemEffect effects[4];   /* 0x18 */
-    u16 action_id;                  /* 0x28 */
+    s32 element;
+    struct ItemEffect effects[4];
+    u16 action_id;
     u8 reserved_2a[2];
 };
 
@@ -101,8 +139,9 @@ LAYOUT_OFFSET_GUARD(
 
 struct ItemDefinition *Item_Get(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
-s32 Equipment_GetUnleashRateBonus(s32 owner);
-u16 RollWeaponUnleash(void *owner);
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
+s32 RollWeaponUnleash(struct BattleUnit *owner);
+s32 RollWeaponUnleashFar(struct BattleUnit *owner);
 
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);

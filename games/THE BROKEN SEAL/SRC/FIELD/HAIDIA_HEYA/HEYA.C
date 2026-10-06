@@ -1,30 +1,11 @@
 #include "TIMED_EVENTS.H"
 #include "CALL.H"
+#include "FXBLEND.H"
+#include "FIELD_EVENT.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgHaidiaDidYouHearAboutDora[];
-extern u8 MsgHaidiaLetsScareSukuretasVisitors[];
-extern u8 MsgHaidiaSukuretaCameToStudyMt[];
-extern u8 MsgHaidiaTheCulpritsHadStrangePowers[];
-extern u8 MsgHaidiaThisIsMyFarewellGift[];
-extern u8 MsgHaidiaYouMustSaveJasmine[];
 
-extern u8 MsgHaidiaHopeDidntGet[];
 
-extern u8 MsgHaidiaAWiseManFleesWhen[];
-extern u8 MsgHaidiaGoodArmorDrawsOutStrength[];
-extern u8 MsgHaidiaGoodWeaponsDrawOutStrength[];
-extern u8 MsgHaidiaHey2[];
-extern u8 MsgHaidiaImNotSadJustGo[];
-extern u8 MsgHaidiaTheRumorWasTrue[];
-extern u8 MsgHaidiaValeFeelsEmpty[];
-extern u8 MsgHaidiaWhenDidYouComeBack[];
-extern u8 MsgHaidiaYouCameBack[];
-extern u8 MsgHaidiaYoureLeavingAgainSoon[];
-
-struct FlashCueWork {
-    u8 unknown_0000[0x1f84];
-    s16 alternate_cue;
-};
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
@@ -43,7 +24,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -64,21 +45,19 @@ s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
     return 0;
 }
 
-/* The eight-byte owner includes its one pool word. */
-void *SceneData_GetTable9478(void)
+void *HaidiaHeya_GetEntrances(void)
 {
     return gValeHouseEntrances;
 }
 
-/* A four-byte leaf that returns zero. */
 int SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-void *SceneData_SelectTable9568ByFlag(void)
+void *HaidiaHeya_SelectExits(void)
 {
-    if (GameFlag_IsSet(0x834) != 0)
+    if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateExits;
     return gValeHouseExits;
 }
@@ -87,9 +66,9 @@ void *SceneData_SelectFlaggedTable(void)
 {
     void *tbl;
 
-    if (GameFlag_IsSet(0x87a)) {
+    if (Engine_GameFlagIsSet(0x87a)) {
         tbl = gValeHouseReturnPlacements;
-    } else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE)) {
+    } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE)) {
         tbl = gValeHousePlacementsAfterLeaving;
     } else {
         tbl = gValeHousePlacements;
@@ -98,34 +77,32 @@ void *SceneData_SelectFlaggedTable(void)
     return tbl;
 }
 
-void *SceneData_SelectTable9c00ByFlags(void)
+void *HaidiaHeya_SelectEvents(void)
 {
-    if (GameFlag_IsSet(0x834) != 0)
+    if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateEvents;
-    if (GameFlag_IsSet(0x87a) != 0)
+    if (Engine_GameFlagIsSet(0x87a) != 0)
         return gValeHouseReturnEvents;
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
         return gValeHouseEventsAfterLeaving;
     return gValeHouseEvents;
 }
 
-/* The 44-byte actor-15 scene owner includes its one pool word. */
 void Villager_AskWhySukuretaCame(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaSukuretaCameToStudyMt);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
-    Event_AskYesNo(15, 0);
+    Engine_EventAskYesNo(15, 0);
     Engine_EventEnd();
 }
 
-/* The 44-byte actor-19 scene owner includes its one pool word. */
 void Villager_PlanToScareVisitors(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaLetsScareSukuretasVisitors);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
-    Event_AskYesNo(19, 0);
+    Engine_EventAskYesNo(19, 0);
     Engine_EventEnd();
 }
 
@@ -151,38 +128,35 @@ void Scene_GiveFarewellHerb(void)
     Engine_EventEnd();
 }
 
-/* The 32-byte actor-16 dialogue owner includes its one pool word. */
 void Villager_AskAboutStrangePowers(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaTheCulpritsHadStrangePowers);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
-/* The 32-byte actor-10 dialogue owner includes its one pool word. */
 void Villager_AskAboutDora(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaDidYouHearAboutDora);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
-/* A villager hopes the party did not get sick on its travels. */
 void HaidiaHeya_TalkHopeDidntGetSick(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaHopeDidntGet);
-    Event_ShowMessage(0x800b, 0);
+    Engine_EventShowMessage(0x800b, 0);
     Engine_EventEnd();
 }
 
-void SceneState_SetRuntimeWord448To521AndRun(s32 value)
+void HaidiaHeya_RequestWindowExit(s32 value)
 {
-    if (GameFlag_IsSet(0x834) != 0)
+    if (Engine_GameFlagIsSet(0x834) != 0)
         BattleFx_SetBlock30ValuesMaxZero();
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     gEventWork->transition_frames = 16;
     Engine_EventCloseScreen();
@@ -190,91 +164,90 @@ void SceneState_SetRuntimeWord448To521AndRun(s32 value)
     Engine_EventRequestExit(value);
 }
 
-/* Eight numbered-scene wrappers follow, each a twelve-byte owner. */
 void FieldScene_RunIndexedStep1(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(1);
+    HaidiaHeya_RequestWindowExit(1);
 }
 
 void FieldScene_RunIndexedStep2(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(2);
+    HaidiaHeya_RequestWindowExit(2);
 }
 
 void FieldScene_RunIndexedStep3(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(3);
+    HaidiaHeya_RequestWindowExit(3);
 }
 
 void FieldScene_RunIndexedStep4(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(4);
+    HaidiaHeya_RequestWindowExit(4);
 }
 
 void FieldScene_RunIndexedStep5(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(5);
+    HaidiaHeya_RequestWindowExit(5);
 }
 
 void FieldScene_RunIndexedStep6(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(6);
+    HaidiaHeya_RequestWindowExit(6);
 }
 
 void FieldScene_RunIndexedStep7(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(7);
+    HaidiaHeya_RequestWindowExit(7);
 }
 
 void FieldScene_RunIndexedStep8(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(8);
+    HaidiaHeya_RequestWindowExit(8);
 }
 
 s32 Scene_RunSupplementalSequenceOne(void)
 {
     extern u8 *gWork;
 
-    u8 *record;
+    struct FieldActor *record;
     u8 **scene = (u8 **)&gWork;
 
     *(s32 *)(scene[0] + 0x1c0) = 0x209;
-    if (GameFlag_IsSet(0x834) != 0) {
-        Actor_SetPosition(8, 0, 0);
-        Actor_SetPosition(9, 0, 0);
-        Actor_SetPosition(10, 0, 0);
-        Actor_SetPosition(11, 0, 0);
-        Actor_SetPosition(12, 0, 0);
-        Actor_SetPosition(13, 0, 0);
-        Actor_SetPosition(14, 0, 0);
-        Actor_SetPosition(15, 0, 0);
+    if (Engine_GameFlagIsSet(0x834) != 0) {
+        Engine_ActorSetPosition(8, 0, 0);
+        Engine_ActorSetPosition(9, 0, 0);
+        Engine_ActorSetPosition(10, 0, 0);
+        Engine_ActorSetPosition(11, 0, 0);
+        Engine_ActorSetPosition(12, 0, 0);
+        Engine_ActorSetPosition(13, 0, 0);
+        Engine_ActorSetPosition(14, 0, 0);
+        Engine_ActorSetPosition(15, 0, 0);
         Engine_ActorSetPosition(16, 0, 0);
-        Actor_SetPosition(17, 0, 0);
-        Actor_SetPosition(18, 0, 0);
-        Actor_SetPosition(19, 0, 0);
-        Actor_SetPosition(20, 0, 0);
-        Actor_SetPosition(21, 0, 0);
-        Actor_SetPosition(22, 0, 0);
+        Engine_ActorSetPosition(17, 0, 0);
+        Engine_ActorSetPosition(18, 0, 0);
+        Engine_ActorSetPosition(19, 0, 0);
+        Engine_ActorSetPosition(20, 0, 0);
+        Engine_ActorSetPosition(21, 0, 0);
+        Engine_ActorSetPosition(22, 0, 0);
         BattleFx_StartTwelveFrameBlend();
-        ((struct FlashCueWork *)scene[3])->alternate_cue = 1;
+        ((struct FieldBlendWork *)scene[3])->loud = 1;
         BattleFx_SetBlock30Values12Zero();
         Engine_TaskWait(30);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         BattleFx_SetBlock30Values128One();
     }
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         if (gGameState.entrance == 6) {
-            if (GameFlag_IsSet(0x81d) == 0) {
+            if (Engine_GameFlagIsSet(0x81d) == 0) {
                 FieldScene_RunLongPresentationSequence();
             }
         }
-        Actor_Get(10)->collision_flags |= 0x80;
+        Object_GetById(10)->collision_flags |= 0x80;
     }
     if (gGameState.entrance == 2) {
-        if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-            Actor_SetPosition(13, 0x1c60000, 0x960000);
-            record = Actor_Get(13);
+        if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+            Engine_ActorSetPosition(13, 0x1c60000, 0x960000);
+            record = Object_GetById(13);
             Engine_ActorSetSpriteFlags((s32)record, 0);
             Engine_ActorSetAnimation(13, 5);
             Map_ClearLayerEntryFlag(4);
@@ -286,11 +259,11 @@ s32 Scene_RunSupplementalSequenceOne(void)
 void FieldScene_RunByActorDirectionAndFlags(void)
 {
 
-    u8 *p;
+    struct FieldActor *p;
     u32 dir;
 
-    p = Actor_Get(ACTOR_PARTY_LEADER);
-    dir = *(u16 *)(p + 6);
+    p = Object_GetById(ACTOR_PARTY_LEADER);
+    dir = p->facing;
     dir += 0xffff5fff;
 
     if (dir <= 0x3ffe) {
@@ -299,63 +272,63 @@ void FieldScene_RunByActorDirectionAndFlags(void)
     }
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         Engine_EventSetMessage((s32)MsgHaidiaYouCameBack);
-        Event_AskYesNo(21, 0);
+        Engine_EventAskYesNo(21, 0);
     } else {
-        if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
             Engine_EventSetMessage((s32)MsgHaidiaValeFeelsEmpty);
         } else {
             Engine_EventSetMessage((s32)MsgHaidiaGoodWeaponsDrawOutStrength);
         }
-        Event_ShowMessage(21, 0);
+        Engine_EventShowMessage(21, 0);
     }
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene376_0200055c(void)
+void HaidiaHeya_OpenArmorShop(void)
 {
     struct FieldActor *actor;
 
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     if ((u32)(actor->facing - 0xa001) <= 0x3ffe) {
         Engine_ShopOpen(2, 22);
     } else {
         Engine_EventBegin();
-        if (GameFlag_IsSet(0x87a) != 0) {
+        if (Engine_GameFlagIsSet(0x87a) != 0) {
             Engine_EventSetMessage((s32)MsgHaidiaTheRumorWasTrue);
         } else {
-            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+            if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
                 Engine_EventSetMessage((s32)MsgHaidiaImNotSadJustGo);
             } else {
                 Engine_EventSetMessage((s32)MsgHaidiaGoodArmorDrawsOutStrength);
             }
         }
-        Event_ShowMessage(22, 0);
+        Engine_EventShowMessage(22, 0);
         Engine_EventEnd();
     }
 }
 
-void FieldScene_RunScene376_020005d4(void)
+void HaidiaHeya_OpenItemShop(void)
 {
     struct FieldActor *actor;
 
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     if ((u32)(actor->facing - 0xa001) <= 0x3ffe) {
         Engine_ShopOpen(3, 20);
     } else {
-        if (GameFlag_IsSet(0x87a) != 0) {
+        if (Engine_GameFlagIsSet(0x87a) != 0) {
             Engine_EventBegin();
             Engine_EventSetMessage((s32)MsgHaidiaWhenDidYouComeBack);
-            Event_ShowMessage(20, 0);
+            Engine_EventShowMessage(20, 0);
             Engine_EventEnd();
         } else {
-            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+            if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
                 Scene_GiveFarewellHerb();
             } else {
                 Engine_EventBegin();
                 Engine_EventSetMessage((s32)MsgHaidiaAWiseManFleesWhen);
-                Event_ShowMessage(20, 0);
+                Engine_EventShowMessage(20, 0);
                 Engine_EventEnd();
             }
         }
@@ -367,7 +340,7 @@ void FieldScene_RunLongPresentationSequence(void)
     void Camera_MoveTo();
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     struct FieldActor *actor;
     s32 v6;
     s32 base7_20090c1;
@@ -391,9 +364,9 @@ void FieldScene_RunLongPresentationSequence(void)
     record = Actor_Get(25);
     Engine_ActorSetSpriteFlags(record, 0);
     v6 = 0;
-    *((u8 *)Object_GetById(23) + 85) = v6;
-    *((u8 *)Object_GetById(24) + 85) = v6;
-    *((u8 *)Object_GetById(25) + 85) = v6;
+    Object_GetById(23)->motion_flags = v6;
+    Object_GetById(24)->motion_flags = v6;
+    Object_GetById(25)->motion_flags = v6;
     base7_20090c1 = (s32)Scene_UpdateTimedActor;
     ((void (*)())Engine_TaskAddCallback)(base7_20090c1, 0xc80);
     Engine_TaskWait(1);
@@ -426,7 +399,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Call3(Object_SetTargetAndCallback, 2, 0x1000a, base5_20092fc);
     Object_SetTargetAndCallback(3, 0x1000a, base5_20092fc);
     Engine_EventWait(0x12c);
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = v6;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = v6;
     Camera_SetSpeed(0x1999, 0x333);
     Camera_MoveTo(0x3120000, 0, 0x1ae0000, 1);
     Engine_EventWait(240);
@@ -499,7 +472,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_FaceDirection(10, 0x5000, 60);
     Engine_ActorStartRepeatedMotion(10, 2);
     Engine_ActorStartRepeatedMotion(11, 2);
-    Call11(Engine_EventShowTwoMessagesAndWait, 10, 11, 6, 6, 6, 11, 12, 1, 7, 1, v6);
+    Event_ShowTwoMessagesAndWait(10, 11, 6, 6, 6, 11, 12, 1, 7, 1, v6);
     Engine_EventWait(20);
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
@@ -540,7 +513,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_FaceDirection(ACTOR_IVAN, 0x7000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xb000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Camera_MoveTo(0x3090000, 0, 0x1ac0000, 1);
     Engine_EventWait(20);
@@ -592,7 +565,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Engine_ActorSetAnimation(9, 3);
     Engine_ActorSetAnimation(10, 3);
     Engine_ActorSetAnimationAndWait(9, 3);
-    *((u8 *)Object_GetById(3) + 35) &= 254;
+    Object_GetById(3)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(ACTOR_MIA, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_MIA, 0x31a, 0x208);
@@ -600,7 +573,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Actor_WalkToAndWait(ACTOR_MIA, 0x310, 0x1f0);
     Actor_FaceDirection(ACTOR_MIA, 0x9000, 10);
-    *((u8 *)Object_GetById(3) + 35) |= 1;
+    Object_GetById(3)->priority_flags |= 1;
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     Engine_ActorSetAnimation(8, 3);
     Engine_ActorSetAnimation(9, 3);
@@ -669,13 +642,13 @@ void Scene_UpdateTimedActor(void)
     default:
         return;
     }
-    actor = Actor_Get(no);
+    actor = Object_GetById(no);
     if (actor == NULL) {
         return;
     }
-    other = Actor_Get(8);
+    other = Object_GetById(8);
     if (other != NULL) {
-        Actor_SetPosition(no, other[2], other[4]);
+        Engine_ActorSetPosition(no, other[2], other[4]);
     }
     actor->words[6] = 0x6666;
     actor->words[7] = 0x6666;

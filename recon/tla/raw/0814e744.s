@@ -56,7 +56,7 @@ Func_0814e744:
 	adds r3, #28
 	cmp r8, r2
 	bne .L_0814e7a8
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r6, #0
 	adds r1, #12
 	adds r0, r6, #0
@@ -97,7 +97,7 @@ Func_0814e744:
 	ldr r3, [r5, #16]
 	mov r0, r9
 	str r3, [r4, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r0, r10
 	ldr r3, [r0]
 	movs r1, #0

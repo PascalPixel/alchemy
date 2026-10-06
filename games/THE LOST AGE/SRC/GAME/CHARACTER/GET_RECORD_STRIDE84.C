@@ -1,6 +1,28 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-extern const u8 Data_080c15f4[];
-s32 Owner_GetRecordStride84(s32 arg0)
+#include "OWNER_STATE.H"
+
+s32 Inventory_GetEquippedItem(struct BattleUnit *owner, s32 type);
+
+struct ClassDefinition *Owner_GetRecordStride84(s32 class_id)
 {
-    return (s32)(Data_080c15f4 + arg0 * 0x54);
+    return &Class_DefinitionTable[class_id];
+}
+
+void Owner_RefreshDerivedData(s32 owner_no)
+{
+    struct BattleUnit *owner = Owner_GetState(owner_no);
+
+    owner->class_index = Owner_DetermineClass(owner->enemy_id,
+        owner->djinn_available, Inventory_GetEquippedItem(owner, 10));
+    Owner_UpdateClassActions(owner_no);
+    Owner_CalculateBaseElements(owner_no, owner->base_elements);
 }

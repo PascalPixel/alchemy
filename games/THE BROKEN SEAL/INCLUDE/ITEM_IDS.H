@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_ITEM_IDS_H
 #define ALCHEMY_ITEM_IDS_H
 
-/* Item ids; an item's name is message 0x182 plus its id. */
 enum ItemId {
     ITEM_NUT = 0xb5,
     ITEM_VIAL = 0xb6,

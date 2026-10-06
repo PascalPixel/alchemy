@@ -1,7 +1,3 @@
-@ Import veneers after the BABI_FUNE overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — BABI_FUNE overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -73,15 +69,15 @@ Engine_MapCopyCellAttributes:
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
-	.global Inventory_AddItemFar
+	.global Inventory_AddItem
 	.thumb_func
-Inventory_AddItemFar:
-	overlay_veneer Func_08077028
+Inventory_AddItem:
+	overlay_veneer Inventory_AddItemFar
 	.global Engine_GameFlagSet
 	.thumb_func
 Engine_GameFlagSet:
@@ -141,7 +137,7 @@ Engine_ActorRunRepeatedMotion:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -170,22 +166,22 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Event_SetPairWork1c0Far
+	.global Event_SetDestination
 	.thumb_func
-Event_SetPairWork1c0Far:
-	overlay_veneer Func_0808a238
+Event_SetDestination:
+	overlay_veneer Event_SetDestinationFar
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Battle_ResetEffectCounter
 	.thumb_func
 Battle_ResetEffectCounter:

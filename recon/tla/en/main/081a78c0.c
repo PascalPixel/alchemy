@@ -1,7 +1,4 @@
-/* Title palette fade: step the 8.8 colour channels toward the target, pack
-   them into the back palette buffer and queue both banks for the next frame.
-
-   FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
+/* FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
    function-level queue and IME pointers and the one-pass loop around the
    IME read (as in SYSTEM/IO_WRITE_QUEUE.C); the front bank address passes
    through a block local, and the packing loop counts down from an explicit

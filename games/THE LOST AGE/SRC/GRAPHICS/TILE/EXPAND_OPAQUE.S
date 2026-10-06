@@ -1,12 +1,3 @@
-@ Opaque tile expander, copied and run as one 128-byte unit (size and source
-@ {0x80, 0x08038e30} in its loader's literal pool at 0x0803dc14). Behind a
-@ 4-byte Thumb entry (bx pc) the ARM body loads its masks from the three
-@ words after the code (EXPAND_OPAQUE_MASKS.S) with add sl, pc, #100 and
-@ saves r5-sl without lr; GCC saves lr with any register. After that entry
-@ its 112-byte body and the masks equal TBS GRAPHICS/TILE/EXPAND_OPAQUE.S
-@ (0x08015e10) and EXPAND_OPAQUE_MASKS.S byte for byte. The entry, which is
-@ TLA's own, and the mask table carry no credit.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank, opaque tile expander
 .syntax unified
 	.thumb
 	.global Tile_ExpandOpaqueCode

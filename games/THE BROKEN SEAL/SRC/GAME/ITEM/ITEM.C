@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -6,62 +15,26 @@
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
+#include "INVENTORY_MENU.H"
+#include "ITEM.H"
+#include "DJINN_MENU.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_CALC.H"
+#include "UI.H"
 
-struct ItemOwner {
-    u8 padding_000[0x10];
-    u16 stat_10;
-    u16 stat_12;
-    u8 padding_014[4];
-    u16 stat_18;
-    u16 stat_1a;
-    u16 stat_1c;
-    u8 stat_1e;
-    u8 padding_01f[0x15];
-    s16 max_hp;                     /* 0x034 */
-    s16 max_pp;
-    s16 hp;
-    s16 pp;
-    u8 padding_03c[0x9c];
-    u16 items[15];                  /* 0x0d8 */
-    u8 padding_0f6[0x3b];
-    s8 poison;                      /* 0x131 */
-};
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
-struct ItemData {
-    u8 padding_00[0x0c];
-    u8 kind;
-    u8 padding_0d[0x1b];
-    u16 use_ability;
-};
+#define Link_DrawShiftedTilePairFar ((void (*)(void*))Link_DrawShiftedTilePairFar)
+#define FourObjectMotion_InitializeBottomRow ((void (*)(s32,s32))FourObjectMotion_InitializeBottomRow)
+#define Djinn_DeactivateFar ((s32 (*)(s32,s32,s32))Djinn_DeactivateFar)
+#define Trade_AddOfferFar ((s32 (*)(s32,s32,s32))Trade_AddOfferFar)
 
-struct ItemUseWork {
-    u8 padding_000[0x1c8];
-    u16 entries[32];
-    u16 targets[8];                 /* 0x208, the party list */
-    u8 entry_count;                 /* 0x218 */
-    u8 target_count;                /* 0x219 */
-    u8 padding_21a[0x40];
-    s16 result_code;                /* 0x25a */
-};
+#define gMenuCtrlWork (*(struct ItemMenuDisplayState * *)&gMenuCtrlWork)
 
-extern struct ItemUseWork *gMenuWork;
-struct ItemOwner *Owner_GetStateFar(s32);
-struct ItemData *Item_Get(s32);
-u8 Inventory_RemoveFar(s32, s32);
-u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
-s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
-void BattleUnit_Recalculate(s32);
-struct BattleAction *BattleAction_Get(s32);
-void Owner_RecalculateRatiosFar(s32);
-s32 Battle_CalcRestore(s32, s32, s32);
+extern struct InventoryMenuState *gMenuWork;
 void UiWork_PushValueSlotFar(s32, s32);
-s32 Audio_PlayCueReturnOne(s32 cue);
 
-/* ability/play_use_animation.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
-/* menu/core/get_modulo_of_sum.c */
-void Ability_PlayUseAnimation(void);
 
 struct ItemMenuModeState {
     u8 reserved_000[0x20c];
@@ -73,8 +46,6 @@ struct ItemMenuDisplayState {
     u16 busy;
 };
 
-/* The pointer at 0x2128 is cleared beside the variant; its pointer type
-   keeps the two stores apart for the scheduler. */
 struct ItemMenuSavedGraphics {
     u8 reserved_000[0xa8];
     u8 tiles[0x2000];
@@ -102,58 +73,35 @@ struct ItemMenuWork {
 };
 
 extern struct ItemMenuModeState gGameState;
-extern struct ItemMenuDisplayState *gMenuCtrlWork;
-struct ItemMenuWork *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_BumpFree(void *buffer);
-s32 GameFlag_TestFar(s32 flag);
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_InitializeWork(s32 mode);
-void Func_080153e0(s32 value);
-void Func_080152a8(void);
-void Link_DrawShiftedTilePairFar(void *tiles);
-s32 Party_ListActiveOwnersFar(u16 *owners);
-void Resource_LoadPairedBlocksIfAvailable(void);
-void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns);
-void Palette_LightenBankHighlight(s32 palette);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
-void Func_080aa768(void);
-void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
-void Menu_ResetTwoResourceEntries(void);
-void ItemMenu_Close(void);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void Event_ClearInvalidPackedValuesFar(void);
-
-s32 Menu_SetFirstObjectRowCoordinates(s32 arg0);
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
-    struct ItemUseWork *work;
+    struct InventoryMenuState *work;
     s32 result;
     s32 item_id;
-    struct ItemOwner *owner;
-    struct ItemData *item;
+    struct BattleUnit *owner;
+    struct ItemDefinition *item;
 
     owner = Owner_GetStateFar(owner_id);
     work = gMenuWork;
-    item_id = 0x1ff & owner->items[slot];
+    item_id = 0x1ff & owner->inventory[slot];
     item = Item_Get(item_id);
     result = BattleEffect_ApplyToTargets(
-        0x3fff & item->use_ability,
+        0x3fff & item->action_id,
         owner_id,
         target_id,
         1);
     if (result != -1) {
-        item = Item_Get(owner->items[slot]);
-        if (item->kind == 1) {
+        item = Item_Get(owner->inventory[slot]);
+        if (item->use_type == 1) {
             Inventory_RemoveFar(owner_id, slot);
-            work->entry_count =
-                ItemMenu_Collect(owner, work->entries, 0);
+            work->item_count =
+                ItemMenu_Collect(owner, work->items, 0);
         }
-        if (item->kind == 4) {
+        if (item->use_type == 4) {
             if (item_id == 0xb8)
                 item_id = 0xb9;
-            owner->items[slot] = item_id;
+            owner->inventory[slot] = item_id;
         }
         result = 0;
     }
@@ -165,11 +113,6 @@ s32 Item_ReturnOne(void)
     return 1;
 }
 
-/* Apply an item or ability effect to its target, or with range 0xff to
-   every member of the menu's party list: restore HP or PP, raise a stat,
-   revive or cure. Returns -1 and leaves the result message code when
-   nothing changed. The entry block reads the range before the list's first
-   count test, as the ROM does. */
 s32 BattleEffect_ApplyToTargets(
     s32 effect_id,
     s32 source_id,
@@ -177,9 +120,9 @@ s32 BattleEffect_ApplyToTargets(
     s32 fixed_scale)
 {
     struct BattleAction *effect;
-    struct ItemUseWork *runtime;
-    struct ItemOwner *target;
-    struct ItemOwner *source;
+    struct InventoryMenuState *runtime;
+    struct BattleUnit *target;
+    struct BattleUnit *source;
     s32 later_target;
     s32 changed;
     u8 index;
@@ -200,15 +143,13 @@ s32 BattleEffect_ApplyToTargets(
     else
         target = Owner_GetStateFar(0);
 
-    /* FAKEMATCH: dead range test; gcse reuses its read at the loop top.
-       2026-10-02: deleting this test delays the range load until after the
-       count guard and changes the target-index and power-load registers. */
+    /* FAKEMATCH: the dead test keeps the range load before the count guard and preserves target-index and power-load registers. */
     if (effect->range == 0xff && later_target != 0)
         result_code = 3;
 
-    for (index = 0; index < runtime->target_count; index++) {
+    for (index = 0; index < runtime->party_count; index++) {
         if (effect->range == 0xff) {
-            target_id = runtime->targets[index];
+            target_id = runtime->owner_ids[index];
             target = Owner_GetStateFar(target_id);
         }
 
@@ -220,8 +161,8 @@ s32 BattleEffect_ApplyToTargets(
                     s32 stat_offset;
 
                     source = Owner_GetStateFar(source_id);
-                    stat_offset = effect->damage_class * 4 + 0x48;
-                    scale = *(s16 *)((u8 *)source + stat_offset);
+                    stat_offset = effect->damage_class;
+                    scale = source->elements[stat_offset].power;
                 } else
                     scale = 100;
                 amount = Battle_CalcRestore(amount, scale, 0x100);
@@ -255,7 +196,7 @@ s32 BattleEffect_ApplyToTargets(
             break;
 
         case 9:
-            random_adjust = ((u32)Random16() * 4) >> 16;
+            random_adjust = (Random16() * 4) >> 16;
             if (random_adjust == 0) {
                 random_adjust = -1;
             } else {
@@ -267,33 +208,33 @@ s32 BattleEffect_ApplyToTargets(
 
             switch (effect_id & 0x3fff) {
             case 0x104:
-                target->stat_10 += amount + random_adjust;
+                target->base_hp += amount + random_adjust;
                 result_code = 0x10;
                 changed = 1;
                 break;
             case 0x105:
-                target->stat_12 += amount + random_adjust;
+                target->base_pp += amount + random_adjust;
                 result_code = 0x11;
                 changed = 1;
                 break;
             case 0x108:
-                target->stat_1c += amount + random_adjust;
+                target->base_agility += amount + random_adjust;
                 result_code = 0x12;
                 changed = 1;
                 break;
             case 0x109:
-                target->stat_1e += amount;
+                target->base_luck += amount;
                 result_code = 0x13;
                 changed = 1;
                 break;
             case 0x106:
-                target->stat_18 += amount + random_adjust;
+                target->base_attack += amount + random_adjust;
                 UiWork_PushValueSlotFar(3, 5);
                 result_code = 0x14;
                 changed = 1;
                 break;
             case 0x107:
-                target->stat_1a += amount + random_adjust;
+                target->base_defense += amount + random_adjust;
                 UiWork_PushValueSlotFar(4, 5);
                 result_code = 0x15;
                 changed = 1;
@@ -423,30 +364,29 @@ s32 BattleEffect_ApplyToTargets(
     }
 
     if (changed == 0) {
-        runtime->result_code = result_code;
+        runtime->message_offset = result_code;
         return -1;
     }
 
-    for (index = 0; index < runtime->target_count; index++)
-        BattleUnit_Recalculate(runtime->targets[index]);
-    runtime->result_code = result_code;
+    for (index = 0; index < runtime->party_count; index++)
+        BattleUnit_Recalculate(runtime->owner_ids[index]);
+    runtime->message_offset = result_code;
     return 0;
 }
 
-void Item_PlayUseAnimation(void)
+void Item_PlayUseAnimation(u32 item)
 {
-    ((s32 (*)(s32))Ability_PlayUseAnimation)(0x3fff & *(u16 *)((u8 *)((void * (*)())Item_Get)() + 0x28));
+    Ability_PlayUseAnimation(Item_Get(item)->action_id & 0x3fff);
 }
 
-/* menu/entry/set_first_object_row_coordinates.c */
-void Ability_PlayUseAnimation(void)
+void Ability_PlayUseAnimation(s32 action)
 {
     s32 animation_type;
     u32 target_type;
-    void *ability;
+    struct BattleAction *ability;
 
-    ability = ((void * (*)())BattleAction_Get)();
-    animation_type = 0xf & FIELD(ability, u8 *, 1);
+    ability = BattleAction_Get(action);
+    animation_type = 0xf & ability->target_flags;
     switch (animation_type) {
     case 1:
         Audio_PlayCueReturnOne(0x7e);
@@ -455,7 +395,7 @@ void Ability_PlayUseAnimation(void)
         Audio_PlayCueReturnOne(0x7e);
         return;
     default:
-        target_type = FIELD(ability, u8 *, 3) - 1;
+        target_type = ability->effect - 1;
         switch (target_type) {
         case 4:
             Audio_PlayCueReturnOne(0x52);
@@ -502,8 +442,6 @@ void Ability_PlayUseAnimation(void)
     }
 }
 
-/* menu/reserved_status_zero.c */
-/* menu/status/reserved_status_zero.c */
 s32 Menu_ReservedStatusZero(void)
 {
     return 0;
@@ -533,8 +471,6 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
     return arg0;
 }
 
-/* Open the item menu as a modal view, selecting its story variant, then
-   restore the saved graphics and the caller's menu mode. */
 s32 ItemMenu_Run(void)
 {
     struct ItemMenuWork *menu;
@@ -568,7 +504,7 @@ s32 ItemMenu_Run(void)
         }
     }
     Scheduler_EnableOverlayCallbacksWithFlags();
-    Func_080153e0(1);
+    UiWork_SetAltFlagAndClearTableFar(1);
     Link_DrawShiftedTilePairFar((void *)0x06002500);
     menu->count = Party_ListActiveOwnersFar(menu->owners);
     Resource_LoadPairedBlocksIfAvailable();
@@ -583,15 +519,15 @@ s32 ItemMenu_Run(void)
     menu->slot = 0;
     menu->target_slot = 0;
     FourObjectMotion_InitializeBottomRow(menu->window, 0);
-    Func_080aa768();
+    DjinnMenu_RunScreen();
     FourObjectMotion_ClearSlotsAndScheduleAlt();
     Menu_ResetTwoResourceEntries();
     WaitFrames(1);
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     gMenuCtrlWork->busy = 0;
-    Func_080152a8();
-    Func_080153e0(0);
+    UiWindow_MarkVisibleTileAttributesFar();
+    UiWork_SetAltFlagAndClearTableFar(0);
     Iwram_CopyWords((void *)0x06004000, saved->tiles, 0x2000);
     Iwram_CopyWords((void *)0x05000080, saved->palette, 128);
     WaitFrames(1);
@@ -602,4 +538,242 @@ s32 ItemMenu_Run(void)
     Event_ClearInvalidPackedValuesFar();
     gGameState.mode = old_mode;
     return 1;
+}
+
+void AudioCommand_PlayFar(s32 cue);
+
+s32 DjinnMenu_RunScreen(void)
+{
+    struct DjinnMenuWork *menu;
+    struct RenderOutput *cursor;
+    s32 result;
+    s32 state;
+    s32 ret;
+    s32 done;
+    s32 i;
+
+    done = 0;
+    result = 0;
+    ret = 0;
+    menu = (struct DjinnMenuWork *)gMenuWork;
+    cursor = menu->cursor;
+    cursor->active = 13;
+    cursor->anim_step = 0;
+    Menu_OpenBackdropScreen();
+    WaitFrames(1);
+    state = 2;
+    do {
+        switch (state) {
+        case 0:
+            if (result < 0) {
+                ret = -1;
+                done = 1;
+            }
+            state = 2;
+            break;
+        case 1:
+            break;
+        case 2:
+            Menu_SetFirstObjectRowCoordinates(0);
+            FourObjectMotion_SetSlotPosition(1, 0, 200, 0);
+            result = DjinnMenu_SelectDjinn(0);
+            state = 15;
+            if (result == 10)
+                break;
+            state = 0;
+            if (result < 0)
+                break;
+            menu->selection[1] = menu->selected_column[0];
+            state = 10;
+            if (result == 7)
+                break;
+            state = 3;
+            break;
+        case 10:
+            menu->owner = menu->owners[menu->selected_column[0]];
+            menu->shown_owner[0] = menu->owners[menu->selected_column[0]];
+            result = DjinnMenu_ShowOwnerStatus();
+            if (result == -2)
+                done = 1;
+            state = 2;
+            break;
+        case 15:
+            result = DjinnMenu_ShowHelp();
+            if (result == -2)
+                done = 1;
+            state = 2;
+            break;
+        case 8:
+            state = 0;
+            if (menu->pair_count == 0)
+                break;
+            result = DjinnMenu_SelectDjinn(1);
+            if (result == -2)
+                done = 1;
+            state = 4;
+            if (result < 0)
+                break;
+            state = 9;
+            break;
+        case 3:
+            DjinnMenu_DrawElementList(&menu->backdrop->list);
+            Menu_SetFirstObjectRowCoordinates(-8);
+            menu->owner = menu->owners[menu->selected_column[0]];
+            menu->shown_owner[0] = menu->owners[menu->selected_column[0]];
+            FourObjectMotion_SetSlotPosition(0, menu->selected_column[0] * 56 + 48, 54, 0);
+            result = DjinnMenu_SelectDjinn(1);
+            for (i = 0; i < menu->owner_count; i++)
+                menu->owner_y[i] += 8;
+            if (result == -2)
+                done = 1;
+            if (result < 0) {
+                state = 2;
+                break;
+            }
+            if (result == 3 || result == 4 || result == 8 || result == 9)
+                menu->shown_owner[1] = menu->owners[menu->selected_column[1]];
+            if (result < 0)
+                state = 2;
+            else if (result == 1)
+                state = 5;
+            else if (result == 2)
+                state = 6;
+            else if (result == 3) {
+                menu->pending = 2;
+                state = 7;
+            } else if (result == 4) {
+                menu->pending = 2;
+                state = 9;
+            } else if (result == 5)
+                state = 11;
+            else if (result == 6)
+                state = 12;
+            else if (result == 8) {
+                menu->pending = 2;
+                state = 13;
+            } else if (result == 9) {
+                menu->pending = 2;
+                state = 14;
+            }
+            break;
+        case 7:
+            result = OwnerAction_RunCompareLoop(1);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 13:
+            AudioCommand_PlayFar(126);
+            result = Djinn_TransferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0], menu->shown_owner[1]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[1]);
+            menu->cursor->active = 13;
+            RenderOutput_ClearListFar(menu->list_window);
+            Menu_ComputeEntryValues(menu->backdrop);
+            {
+                s32 column;
+                s32 found;
+                u8 entry;
+
+                column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
+                found = 0;
+                entry = menu->pair_entries[0];
+                for (i = 0; i < menu->backdrop->list.counts[column]; i++) {
+                    if (entry == (u8)menu->backdrop->list.ids[column][i]) {
+                        found = i;
+                        break;
+                    }
+                }
+                menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                menu->cursor->active = 1;
+                /* FAKEMATCH: a barrier, so sched2 builds the selection address before found * 10. */
+                __asm__("");
+            }
+            state = 0;
+            break;
+        case 6:
+            result = OwnerAction_RunCompareLoop(2);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 12:
+            AudioCommand_PlayFar(175);
+            Djinn_DeactivateFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            result = Trade_AddOfferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            menu->cursor->active = 13;
+            RenderOutput_ClearListFar(menu->list_window);
+            menu->cursor->active = 1;
+            state = 2;
+            break;
+        case 9:
+            result = OwnerAction_RunCompareLoop(0);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 14:
+            AudioCommand_PlayFar(126);
+            Djinn_TransferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0], menu->shown_owner[1]);
+            result = Djinn_TransferFar(menu->shown_owner[1], menu->pair_element[1], menu->pair_index[1], menu->shown_owner[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[1]);
+            Menu_ComputeEntryValues(menu->backdrop);
+            {
+                s32 column;
+                s32 found;
+                u8 entry;
+
+                column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
+                found = 0;
+                entry = menu->pair_entries[0];
+                for (i = 0; i < menu->backdrop->list.counts[column]; i++) {
+                    if (entry == (u8)menu->backdrop->list.ids[column][i]) {
+                        found = i;
+                        break;
+                    }
+                }
+                menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                menu->cursor->active = 1;
+                /* FAKEMATCH: a barrier, so sched2 builds the selection address before found * 10. */
+                __asm__("");
+            }
+            state = 2;
+            break;
+        case 4:
+            if (result == -1) {
+                ret = result;
+                state = 2;
+            } else if (menu->pending & 1)
+                state = 8;
+            else if (menu->pending & 2)
+                state = 7;
+            break;
+        case 5:
+            result = OwnerAction_RunCompareLoop(3);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 11:
+            AudioCommand_PlayFar(139);
+            Djinn_ActivateFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            result = Trade_RemoveOfferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            menu->cursor->active = 13;
+            RenderOutput_ClearListFar(menu->list_window);
+            menu->cursor->active = 1;
+            state = 2;
+            break;
+        default:
+            done = 1;
+            break;
+        }
+    } while (done == 0);
+    return ret;
 }

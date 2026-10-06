@@ -1,12 +1,6 @@
 #ifndef GUARD_TIMED_EVENTS_H
 #define GUARD_TIMED_EVENTS_H
 
-/*
- * A run of unnamed leaf owners in resource_376: scene data getters, actor
- * dialogue beats, numbered scene steps, and the long presentation
- * sequence.
- */
-
 #include "TYPES.H"
 
 #define NULL ((void *)0)
@@ -20,7 +14,6 @@ enum ValeHouseFlag {
 };
 
 enum {
-    /* Message 0x182 + 180. */
     ITEM_HERB = 180
 };
 
@@ -41,10 +34,6 @@ union SceneActor {
     u16 halfwords[52];
 };
 
-/*
- * The fields at 100 and 102 are consecutive halfwords, so this byte and
- * halfword view needs two-byte layout rather than the default four.
- */
 union SceneField {
     u16 value;
     u8 bytes[2];
@@ -77,11 +66,5 @@ s32 Battle_GetWorkObject1e0();
 s32 Object_SetActionCallbackAndRefreshById();
 void Scene_UpdateTimedActor(void);
 void Scene_GiveFarewellHerb(void);
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
 
 #endif

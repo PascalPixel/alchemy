@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
 #if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
 
 struct SelectionNode {
     struct SelectionNode *prev;
@@ -41,9 +40,6 @@ extern struct SelectionScreen *gResQueueWork;
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
 void Menu_LoadSelectedResource(void);
-
-/* Link up to five of the selection screen's options into its node list,
-   then place the nodes around the screen's centred x. */
 
 void MenuSelection_BuildEntries(void)
 {

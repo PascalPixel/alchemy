@@ -16,7 +16,7 @@ Func_0810b168:
 .L_0810b17c:
 	adds r0, r5, #0
 	subs r6, #1
-	bl Func_080c8588
+	bl EffectSlot_UpdateFar
 	adds r5, #72
 	cmp r6, #0
 	bge .L_0810b17c

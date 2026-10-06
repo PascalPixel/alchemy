@@ -33,8 +33,8 @@ Func_020003cc:
 	ldr r2, [sp, #20]
 	adds r3, r3, r1
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r3, .L_020086c0
 	movs r0, #225
 	lsls r0, r0, #1
@@ -71,7 +71,7 @@ Func_020003cc:
 .L_02008450:
 	movs r0, #60
 	bl Battle_WaitMode0
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 	movs r0, #17
 	bl Engine_AudioPlayCue
 	movs r0, #150
@@ -79,7 +79,7 @@ Func_020003cc:
 	bl Battle_WaitMode0
 	ldr r0, .L_020086cc
 	movs r1, #72
-	bl Event_SetPairWork1c0
+	bl Event_SetDestination
 	bl .L_02008cbe
 .L_02008474:
 	movs r0, #112
@@ -398,7 +398,7 @@ Func_020003cc:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -448,7 +448,7 @@ Func_020003cc:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -498,7 +498,7 @@ Func_020003cc:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -666,7 +666,7 @@ Clear_LoadFourthSlot:
 	strb r3, [r2]
 	ldr r0, .L_0200887c
 	movs r1, #1
-	bl Event_SetPairWork1c0
+	bl Event_SetDestination
 	b .L_02008c96
 .L_020087aa:
 	movs r7, #1
@@ -693,7 +693,7 @@ Clear_LoadFourthSlot:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -759,7 +759,7 @@ Clear_LoadFourthSlot:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -936,15 +936,15 @@ Clear_LoadFourthSlot:
 	.ifndef TBS_EDITION_FR
 	.else
 .L_02008878:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 	.endif
 	.else
 .L_02008878:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 	.endif
 	.else
 .L_02008878:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 	.endif
 	.ifndef TBS_EDITION_EN
 	.ifndef TBS_EDITION_DE
@@ -1206,7 +1206,7 @@ Clear_FinalizeAndWait:
 	adds r2, r5, #0
 	adds r1, r6, #0
 	movs r0, #0
-	bl Func_02000de4
+	bl Clear_PackPasswordData
 	adds r1, r5, #0
 	mov r9, r0
 	bl SceneData_GetBufferCrc16
@@ -1589,8 +1589,8 @@ Clear_FinalizeAndWait:
 	bl Battle_WaitMode0
 	movs r0, #17
 	bl Engine_AudioPlayCue
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #60
 	bl Battle_WaitMode0
 .L_02008cbe:
@@ -1633,560 +1633,6 @@ Clear_FinalizeAndWait:
 	.4byte gEventWork
 .L_02008cf8:
 	.4byte 0x000003e7
-	.section .text.x02008de2,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02008de4,"ax",%progbits
-	.global Func_02000de4
-	.thumb_func
-Func_02000de4:
-	push {r5, r6, r7, lr}
-	mov r7, r11
-	mov r6, r10
-	mov r5, r9
-	push {r5, r6, r7}
-	mov r7, r8
-	push {r7}
-	sub sp, #64
-	movs r0, #11
-	str r1, [sp, #28]
-	mov r11, r2
-	str r0, [sp, #24]
-	cmp r1, #1
-	beq .L_02008e18
-	cmp r1, #1
-	bgt .L_02008e0a
-	cmp r1, #0
-	beq .L_02008e12
-	b .L_02008e22
-.L_02008e0a:
-	ldr r1, [sp, #28]
-	cmp r1, #2
-	beq .L_02008e1e
-	b .L_02008e22
-.L_02008e12:
-	movs r2, #173
-	str r2, [sp, #24]
-	b .L_02008e22
-.L_02008e18:
-	movs r3, #39
-	str r3, [sp, #24]
-	b .L_02008e22
-.L_02008e1e:
-	movs r4, #9
-	str r4, [sp, #24]
-.L_02008e22:
-	ldr r0, [sp, #24]
-	movs r6, #0
-	mov r9, r6
-	cmp r0, #0
-	beq .L_02008e3e
-	movs r2, #0
-	mov r3, r11
-.L_02008e30:
-	strb r2, [r3]
-	movs r1, #1
-	ldr r4, [sp, #24]
-	add r9, r1
-	adds r3, #1
-	cmp r9, r4
-	bne .L_02008e30
-.L_02008e3e:
-	mov r0, sp
-	movs r6, #0
-	adds r0, #32
-	str r6, [sp, #20]
-	str r6, [sp, #16]
-	str r6, [sp, #12]
-	str r6, [sp, #8]
-	str r0, [sp, #4]
-	mov r9, r6
-	movs r2, #0
-	adds r3, r0, #0
-.L_02008e54:
-	movs r1, #1
-	add r9, r1
-	mov r4, r9
-	stmia r3!, {r2}
-	cmp r4, #8
-	bne .L_02008e54
-	movs r6, #0
-	ldr r5, .L_02009028
-	mov r9, r6
-	movs r6, #1
-.L_02008e68:
-	ldrh r0, [r5]
-	adds r5, #2
-	bl Engine_GameFlagIsSet
-	cmp r0, #0
-	beq .L_02008e84
-	ldr r1, [sp, #8]
-	adds r3, r6, #0
-	mov r0, r9
-	lsls r3, r0
-	orrs r1, r3
-	lsls r3, r1, #24
-	lsrs r3, r3, #24
-	str r3, [sp, #8]
-.L_02008e84:
-	movs r2, #1
-	add r9, r2
-	mov r3, r9
-	cmp r3, #6
-	bne .L_02008e68
-	movs r4, #0
-	ldr r7, [sp, #4]
-	mov r9, r4
-.L_02008e94:
-	ldr r2, .L_0200902c
-	mov r6, r9
-	lsls r3, r6, #2
-	ldr r0, [r2, r3]
-	bl Owner_GetState
-	mov r12, r0
-	mov r1, r12
-	adds r1, #16
-	movs r0, #0
-	ldrsh r3, [r1, r0]
-	ldr r0, .L_02009030
-	ldrh r2, [r1]
-	cmp r3, r0
-	ble .L_02008eb6
-	strh r0, [r1]
-	adds r2, r0, #0
-.L_02008eb6:
-	lsls r3, r2, #16
-	cmp r3, #0
-	bge .L_02008ec0
-	movs r3, #0
-	strh r3, [r1]
-.L_02008ec0:
-	movs r4, #2
-	ldrsh r3, [r1, r4]
-	ldrh r2, [r1, #2]
-	cmp r3, r0
-	ble .L_02008ece
-	strh r0, [r1, #2]
-	adds r2, r0, #0
-.L_02008ece:
-	lsls r3, r2, #16
-	cmp r3, #0
-	bge .L_02008ed8
-	movs r3, #0
-	strh r3, [r1, #2]
-.L_02008ed8:
-	ldrh r3, [r1, #8]
-	ldr r2, .L_02009034
-	cmp r3, r2
-	bls .L_02008ee2
-	strh r2, [r1, #8]
-.L_02008ee2:
-	ldrh r3, [r1, #10]
-	cmp r3, r2
-	bls .L_02008eea
-	strh r2, [r1, #10]
-.L_02008eea:
-	ldrh r3, [r1, #12]
-	cmp r3, r2
-	bls .L_02008ef2
-	strh r2, [r1, #12]
-.L_02008ef2:
-	ldrb r3, [r1, #14]
-	cmp r3, #99
-	bls .L_02008efc
-	movs r3, #99
-	strb r3, [r1, #14]
-.L_02008efc:
-	movs r3, #0
-	ldrsh r2, [r1, r3]
-	movs r4, #2
-	ldrsh r3, [r1, r4]
-	lsls r2, r2, #21
-	lsls r3, r3, #10
-	orrs r2, r3
-	ldrh r3, [r1, #8]
-	orrs r2, r3
-	str r2, [r7]
-	ldrh r3, [r1, #12]
-	ldrh r2, [r1, #10]
-	lsls r3, r3, #12
-	lsls r2, r2, #22
-	orrs r2, r3
-	ldrb r3, [r1, #14]
-	lsls r3, r3, #4
-	orrs r2, r3
-	mov r6, r9
-	str r2, [r7, #4]
-	lsls r0, r6, #3
-	mov r6, r12
-	ldrb r2, [r6, #15]
-	adds r3, r2, #0
-	cmp r3, #99
-	bls .L_02008f36
-	movs r3, #99
-	strb r3, [r6, #15]
-	movs r2, #99
-.L_02008f36:
-	adds r3, r2, #0
-	cmp r3, #0
-	bne .L_02008f42
-	movs r3, #1
-	mov r1, r12
-	strb r3, [r1, #15]
-.L_02008f42:
-	mov r2, r12
-	ldrb r3, [r2, #15]
-	mov r4, r9
-	subs r2, r0, r4
-	ldr r6, [sp, #20]
-	lsls r3, r2
-	orrs r6, r3
-	mov r2, r12
-	str r6, [sp, #20]
-	movs r5, #0
-	adds r2, #248
-	movs r1, #0
-.L_02008f5a:
-	ldmia r2!, {r3}
-	ldr r0, [sp, #16]
-	lsls r3, r1
-	adds r0, r0, r3
-	adds r5, #1
-	str r0, [sp, #16]
-	adds r1, #7
-	cmp r5, #4
-	bne .L_02008f5a
-	ldr r1, .L_02009038
-	ldr r2, .L_0200903c
-	movs r3, #1
-	mov r0, r12
-	movs r5, #0
-	mov r8, r1
-	mov lr, r2
-	mov r10, r3
-	adds r0, #216
-.L_02008f7e:
-	ldrh r3, [r0]
-	mov r1, r8
-	movs r4, #0
-	ands r1, r3
-	mov r2, lr
-.L_02008f88:
-	ldrh r3, [r2]
-	adds r2, #2
-	cmp r1, r3
-	bne .L_02008f9e
-	ldr r6, [sp, #12]
-	mov r3, r10
-	lsls r3, r4
-	orrs r6, r3
-	lsls r3, r6, #24
-	lsrs r3, r3, #24
-	str r3, [sp, #12]
-.L_02008f9e:
-	adds r4, #1
-	cmp r4, #8
-	bne .L_02008f88
-	adds r5, #1
-	adds r0, #2
-	cmp r5, #15
-	bne .L_02008f7e
-	movs r0, #1
-	add r9, r0
-	mov r1, r9
-	adds r7, #8
-	cmp r1, #4
-	beq .L_02008fba
-	b .L_02008e94
-.L_02008fba:
-	ldr r2, [sp, #28]
-	cmp r2, #0
-	beq .L_02008fc2
-	b .L_02009108
-.L_02008fc2:
-	movs r3, #39
-	movs r6, #0
-	mov r10, r3
-	mov r9, r6
-.L_02008fca:
-	mov r4, r9
-	ldr r3, .L_0200902c
-	lsls r2, r4, #2
-	ldr r0, [r3, r2]
-	bl Owner_GetState
-	mov r5, r10
-	adds r4, r0, #0
-	movs r0, #216
-	movs r7, #0
-	mov r8, r0
-	add r5, r11
-.L_02008fe2:
-	mov r1, r8
-	ldrh r0, [r1, r4]
-	str r4, [sp, #0]
-	bl Item_Get
-	ldr r4, [sp, #0]
-	mov r2, r8
-	ldrh r1, [r2, r4]
-	ldr r3, .L_02009024
-	ands r1, r3
-	adds r0, r6, #1
-	ldrb r3, [r5]
-	adds r2, r1, #0
-	asrs r2, r0
-	adds r3, r3, r2
-	strb r3, [r5]
-	movs r3, #7
-	subs r3, r3, r6
-	lsls r1, r3
-	ldrb r3, [r5, #1]
-	adds r3, r3, r1
-	strb r3, [r5, #1]
-	adds r6, r0, #0
-	movs r3, #1
-	adds r5, #1
-	add r10, r3
-	cmp r6, #7
-	bne .L_02009040
-	movs r6, #0
-	adds r5, #1
-	add r10, r3
-	b .L_02009040
-	.2byte 0x0000
-.L_02009024:
-	.4byte 0x000001ff
-.L_02009028:
-	.4byte Data_020016d0
-.L_0200902c:
-	.4byte Data_020016c0
-.L_02009030:
-	.4byte 0x000007cf
-.L_02009034:
-	.4byte 0x000003e7
-.L_02009038:
-	.4byte 0x000001ff
-.L_0200903c:
-	.4byte Data_020016dc
-.L_02009040:
-	movs r0, #2
-	adds r7, #1
-	add r8, r0
-	cmp r7, #15
-	bne .L_02008fe2
-	movs r1, #1
-	add r9, r1
-	mov r2, r9
-	cmp r2, #4
-	bne .L_02008fca
-	movs r3, #107
-	movs r6, #1
-	movs r4, #0
-	mov r10, r3
-	negs r6, r6
-	mov r9, r4
-.L_02009060:
-	ldr r3, .L_020091d4
-	mov r0, r9
-	lsls r2, r0, #2
-	ldr r0, [r3, r2]
-	bl Owner_GetState
-	ldr r2, .L_020091d8
-	mov r8, r0
-	movs r1, #0
-	mov r0, r10
-	mov lr, r1
-	mov r12, r2
-	add r0, r11
-.L_0200907a:
-	mov r3, r12
-	mov r1, r8
-	ldrh r4, [r3]
-	movs r5, #0
-	movs r7, #0
-	adds r1, #216
-.L_02009086:
-	ldrh r2, [r1]
-	ldr r3, .L_020091dc
-	ands r3, r2
-	adds r1, #2
-	cmp r3, r4
-	bne .L_0200909a
-	movs r3, #248
-	lsls r3, r3, #8
-	ands r3, r2
-	lsrs r5, r3, #11
-.L_0200909a:
-	adds r7, #1
-	cmp r7, #15
-	bne .L_02009086
-	lsls r2, r5, #16
-	cmp r6, #0
-	bge .L_020090be
-	lsrs r1, r2, #16
-	negs r3, r6
-	adds r2, r1, #0
-	asrs r2, r3
-	ldrb r3, [r0]
-	movs r4, #1
-	adds r3, r3, r2
-	strb r3, [r0]
-	add r10, r4
-	adds r0, #1
-	adds r6, #8
-	b .L_020090c0
-.L_020090be:
-	lsrs r1, r2, #16
-.L_020090c0:
-	ldrb r3, [r0]
-	lsls r1, r6
-	adds r3, r3, r1
-	movs r1, #5
-	subs r6, #5
-	negs r1, r1
-	strb r3, [r0]
-	cmp r6, r1
-	bne .L_020090da
-	movs r2, #1
-	adds r0, #1
-	add r10, r2
-	movs r6, #3
-.L_020090da:
-	movs r4, #1
-	add lr, r4
-	movs r3, #2
-	mov r1, lr
-	add r12, r3
-	cmp r1, #23
-	bne .L_0200907a
-	add r9, r4
-	mov r2, r9
-	cmp r2, #4
-	bne .L_02009060
-	ldr r2, .L_020091e0
-	mov r1, r11
-	ldrh r3, [r2, #18]
-	adds r1, #165
-	strb r3, [r1]
-	ldr r3, [r2, #16]
-	adds r1, #1
-	lsrs r3, r3, #8
-	strb r3, [r1]
-	ldr r3, [r2, #16]
-	adds r1, #1
-	strb r3, [r1]
-.L_02009108:
-	ldr r3, [sp, #28]
-	cmp r3, #2
-	beq .L_0200917c
-	ldr r4, [sp, #28]
-	negs r3, r3
-	orrs r3, r4
-	lsrs r3, r3, #31
-	adds r3, #8
-	movs r6, #0
-	mov r1, r11
-	ldr r4, [sp, #4]
-	mov r9, r6
-	adds r0, r3, r1
-.L_02009122:
-	ldr r2, [r4]
-	lsrs r3, r2, #24
-	strb r3, [r0]
-	lsrs r3, r2, #16
-	strb r3, [r0, #1]
-	lsrs r3, r2, #8
-	strb r3, [r0, #2]
-	strb r2, [r0, #3]
-	ldr r1, [r4, #4]
-	lsrs r3, r1, #24
-	strb r3, [r0, #4]
-	lsrs r3, r1, #16
-	strb r3, [r0, #5]
-	lsrs r3, r1, #8
-	strb r1, [r0, #7]
-	strb r3, [r0, #6]
-	ldr r2, [r4, #8]
-	lsrs r3, r2, #28
-	orrs r1, r3
-	lsrs r3, r2, #20
-	strb r3, [r0, #8]
-	lsrs r3, r2, #12
-	strb r3, [r0, #9]
-	lsrs r3, r2, #4
-	lsls r2, r2, #4
-	strb r2, [r0, #11]
-	strb r3, [r0, #10]
-	strb r1, [r0, #7]
-	ldr r1, [r4, #12]
-	lsrs r3, r1, #28
-	orrs r2, r3
-	strb r2, [r0, #11]
-	lsrs r3, r1, #20
-	movs r2, #1
-	strb r3, [r0, #12]
-	add r9, r2
-	lsrs r3, r1, #12
-	strb r3, [r0, #13]
-	lsrs r1, r1, #4
-	mov r3, r9
-	strb r1, [r0, #14]
-	adds r4, #16
-	adds r0, #15
-	cmp r3, #2
-	bne .L_02009122
-.L_0200917c:
-	add r4, sp, #20
-	ldrb r4, [r4]
-	mov r6, r11
-	strb r4, [r6]
-	ldr r6, [sp, #20]
-	mov r0, r11
-	lsrs r3, r6, #8
-	strb r3, [r0, #1]
-	lsrs r3, r6, #16
-	strb r3, [r0, #2]
-	lsrs r2, r6, #20
-	movs r3, #240
-	ands r2, r3
-	ldr r3, [sp, #16]
-	movs r1, #15
-	ands r3, r1
-	orrs r2, r3
-	strb r2, [r0, #3]
-	ldr r1, [sp, #16]
-	lsrs r3, r1, #4
-	strb r3, [r0, #4]
-	lsrs r3, r1, #12
-	strb r3, [r0, #5]
-	lsrs r3, r1, #20
-	strb r3, [r0, #6]
-	add r2, sp, #8
-	ldrb r2, [r2]
-	strb r2, [r0, #7]
-	ldr r3, [sp, #28]
-	cmp r3, #0
-	beq .L_020091c0
-	add r4, sp, #12
-	ldrb r4, [r4]
-	strb r4, [r0, #8]
-.L_020091c0:
-	ldr r0, [sp, #24]
-	add sp, #64
-	pop {r3, r5, r6, r7}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	mov r11, r7
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-.L_020091d4:
-	.4byte Data_020016c0
-.L_020091d8:
-	.4byte Data_020016ec
-.L_020091dc:
-	.4byte 0x000001ff
-.L_020091e0:
-	.4byte gCell
 	.section .rodata.x020094d4,"a",%progbits
 	.global Clear_CodeSequence
 Clear_CodeSequence:
@@ -2340,25 +1786,25 @@ Clear_CodeHeld:
 	.global Clear_ExtraCodeHeld
 Clear_ExtraCodeHeld:
 	.4byte 0x00000000
-	.global Data_020016c0
-Data_020016c0:
+	.global Clear_PasswordMembers
+Clear_PasswordMembers:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000003
-	.global Data_020016d0
-Data_020016d0:
+	.global Clear_PasswordFlags
+Clear_PasswordFlags:
 	.4byte 0x09510941
 	.4byte 0x08d108b3
 	.4byte 0x0868081e
-	.global Data_020016dc
-Data_020016dc:
+	.global Clear_PasswordKeyItems
+Clear_PasswordKeyItems:
 	.4byte 0x00c900c8
 	.4byte 0x00cb00ca
 	.4byte 0x00cd00cc
 	.4byte 0x00cf00ce
-	.global Data_020016ec
-Data_020016ec:
+	.global Clear_PasswordStackItems
+Clear_PasswordStackItems:
 	.4byte 0x00b500b4
 	.4byte 0x00b700b6
 	.4byte 0x00bb00ba

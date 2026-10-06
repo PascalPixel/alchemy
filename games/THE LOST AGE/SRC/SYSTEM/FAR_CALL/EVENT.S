@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080c8008: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -12,15 +8,15 @@ Game_ResetForNewGameFar:
 	.global Battle_WaitMode0Far
 	.thumb_func
 Battle_WaitMode0Far:
-	overlay_veneer Battle_WaitMode0
-	.global Func_080c8018
+	overlay_veneer EventRuntime_Wait
+	.global EventRuntime_BeginFar
 	.thumb_func
-Func_080c8018:
-	overlay_veneer Func_080d22a8
-	.global Func_080c8020
+EventRuntime_BeginFar:
+	overlay_veneer EventRuntime_Begin
+	.global EventRuntime_EndFar
 	.thumb_func
-Func_080c8020:
-	overlay_veneer Func_080d2350
+EventRuntime_EndFar:
+	overlay_veneer EventRuntime_End
 	.global Event_RunObjectHookAndWaitFar
 	.thumb_func
 Event_RunObjectHookAndWaitFar:
@@ -33,10 +29,10 @@ Event_CallWithLastActiveObjectIdFar:
 	.thumb_func
 Scene_AssignViewFlagsFar:
 	overlay_veneer Scene_AssignViewFlags
-	.global Event_SetWorkWord10Far
+	.global Event_SetSceneEventsFar
 	.thumb_func
-Event_SetWorkWord10Far:
-	overlay_veneer Event_SetWorkWord10
+Event_SetSceneEventsFar:
+	overlay_veneer Event_SetSceneEvents
 	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
 Event_PrepareObjectAndApplyValueFar:

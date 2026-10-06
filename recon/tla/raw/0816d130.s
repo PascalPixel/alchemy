@@ -107,7 +107,7 @@ Func_0816d130:
 	movs r0, #134
 	bl Func_081180e8
 .L_0816d212:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #24]
 	ldr r1, [sp, #12]
 	bl Graphics_PrepareTransferInIwramWork
@@ -207,11 +207,11 @@ Func_0816d130:
 	str r0, [r6, #4]
 	str r0, [r6, #8]
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r2, .L_0816d3d4
 	movs r3, #12
 	subs r3, #2

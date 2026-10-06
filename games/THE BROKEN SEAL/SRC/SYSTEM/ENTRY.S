@@ -1,11 +1,3 @@
-@ Start-up code entered from the branch at 0x08000000. It switches the CPU to
-@ IRQ mode and then to System mode with msr CPSR_fc, loading each mode's stack
-@ pointer, stores 0x08000770 in the interrupt vector at 0x03007ffc and calls the
-@ Thumb routine at 0x08002e00 with mov lr, pc; bx r1, starting over if that
-@ returns. Neither approved compiler emits msr or loads sp from a literal.
-@ Every TBS and TLA edition has this routine; TLA SYSTEM/ENTRY.S differs only
-@ in its call target and in the add r0, pc offset to its runtime image.
-@ credit: library — TBS/TLA common GBA ARM start-up entry
 .syntax unified
 .text
 	.arm

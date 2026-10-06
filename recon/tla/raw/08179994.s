@@ -122,7 +122,7 @@ Func_08179994:
 	mov r1, r11
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #36]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #56]
 	cmp r2, #7
 	ble .L_08179aa2
@@ -277,7 +277,7 @@ Func_08179994:
 	adds r6, r3, r2
 	movs r3, #3
 	ands r6, r3
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r1, r8
 	ldr r3, .L_08179d70
 	ldr r0, [r1]
@@ -312,7 +312,7 @@ Func_08179994:
 	muls r0, r3
 	adds r0, r1, r0
 	lsls r0, r0, #8
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r3, #0
 	mov r2, r10
 	str r3, [r5]
@@ -393,7 +393,7 @@ Func_08179994:
 	mov r2, r11
 	ldrsh r0, [r7, r2]
 	ldr r1, [sp, #24]
-	bl Func_0815e1fc
+	bl EffectPosition_ApplyAnimationAndYOffset
 	mov r1, r11
 	ldrsh r0, [r7, r1]
 	movs r1, #4

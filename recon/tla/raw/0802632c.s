@@ -362,7 +362,7 @@ Func_0802632c:
 	adds r0, #8
 	subs r3, #2
 	mov r2, r8
-	bl Func_08026f80
+	bl Runtime_CheckRadiusOverlap
 	cmp r0, #0
 	blt .L_08026622
 	ldr r0, [sp, #12]
@@ -430,7 +430,7 @@ Func_0802632c:
 .L_08026690:
 	.4byte Data_0802ec5c
 .L_08026694:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08026698:
 	.4byte 0xfffff000
 .L_0802669c:

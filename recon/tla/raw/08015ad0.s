@@ -29,7 +29,7 @@ Func_08015ad0:
 	cmp r6, #1
 	bne .L_08015b0c
 	ldr r5, [sp, #0]
-	bl Func_08015f0c
+	bl SaveState_FindLatestSlot
 	cmp r0, #15
 	bne .L_08015b1e
 	movs r5, #15

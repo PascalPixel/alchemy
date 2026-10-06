@@ -1,26 +1,11 @@
 #include "CAVE.H"
+#include "text/MSG_IDS.H"
 
-extern u8 MsgFieldFlippedSwitch[];
 
-extern u8 MsgRunpaBunza[];
-extern u8 MsgRunpaDodonpaNeverIntention[];
-extern u8 MsgRunpaMoment[];
-extern u8 MsgRunpaThinkSawSomeone[];
 
-extern u8 MsgRunpaBunzaAsksAboutUnfinishedBusiness[];
-extern u8 MsgRunpaGeraldAsksAboutUnfinishedBusiness[];
-extern u8 MsgRunpaGeraldAsksIfNotRiding[];
-extern u8 MsgRunpaGeraldChecksNothingLeft[];
-extern u8 MsgRunpaLetsTakeWagon[];
-extern u8 MsgRunpaMiaAsksIfRidingAfter[];
-extern u8 MsgRunpaTotallyConfusedChanged[];
 
-extern u8 MsgRunpaMeaningWontRide[];
 
-extern u8 MsgRunpaGeraldAsksAboutThingsTo[];
 
-extern u8 MsgRunpaDontUnfinishedBusiness[];
-extern u8 MsgRunpaInsistStick[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -37,7 +22,6 @@ const u32 *Scene_GetExits(void)
     return gCaveExits;
 }
 
-/* The cave's actors stand only in its own scene. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_RunpaDou) {
@@ -55,13 +39,12 @@ void HiddenPuddle_Freeze(void)
 {
     struct FieldActor *puddle;
 
-    puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
+    puddle = Object_GetById(ACTOR_HIDDEN_PUDDLE);
     if (puddle != NULL) {
         Engine_ActorSetSpriteFlags(puddle, 0);
     }
 }
 
-/* The pillar raised from the south puddle changes the ground it stands on. */
 void SouthPuddle_Freeze(void)
 {
     struct FieldActor *puddle;
@@ -75,7 +58,6 @@ void SouthPuddle_Freeze(void)
     GameFlag_Set(FLAG_CAVE_SOUTH_PILLAR);
 }
 
-/* The gate rises onto the frozen pillar and stays there. */
 void Gate_DrawPropped(void)
 {
     struct FieldActor *pillar;
@@ -120,7 +102,7 @@ void GatePuddle_Freeze(void)
 
 void NorthPuddle_Freeze(void)
 {
-    GameFlag_Set(FLAG_CAVE_NORTH_PILLAR);
+    Engine_GameFlagSet(FLAG_CAVE_NORTH_PILLAR);
 }
 
 void Gate_Lower(void)
@@ -188,12 +170,6 @@ void RaisingSwitch_Flip(void)
     }
 }
 
-/* Bunza and Hammet meet again at the cave mouth once Hammet is free. */
-
-/*
- * Once Hammet is free, Bunza steps out from where he hid, Hammet and the
- * party gather around him, and the two recognize each other.
- */
 void Reunion_Begin(void)
 {
     struct FieldActor *leader;
@@ -312,7 +288,6 @@ void Reunion_Begin(void)
     }
 }
 
-/* Everyone gathers by the cave mouth and talks over how Hammet was saved. */
 void Reunion_Converse(void)
 {
     s32 reunion;
@@ -498,7 +473,6 @@ void Reunion_Converse(void)
     Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
     Engine_EventWait(30);
 
-    /* Bunza goes to look out of the cave, then hurries back. */
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
     Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | 0, 60);
     Actor_SetSpeed(ACTOR_BUNZA, 0x18000, 0xc000);
@@ -606,11 +580,6 @@ void Reunion_Converse(void)
     WagonChoice_Run();
 }
 
-/*
- * Bunza leads the way to his wagon and Gerald asks whether the party rides
- * too. The party questions an answer that seems to change its mind until
- * the choice is settled either way.
- */
 void WagonChoice_Run(void)
 {
     s32 wagon;
@@ -619,14 +588,14 @@ void WagonChoice_Run(void)
 
     wagon = (s32)MsgRunpaLetsTakeWagon;
     Engine_EventSetMessage(wagon + WAGON_BUNZA_LEADS_THE_WAY);
-    Event_ShowMessage(ACTOR_BUNZA, 0);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_EventShowMessage(ACTOR_BUNZA, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventSetMessage(wagon + WAGON_GERALD_ASKS_TO_RIDE);
-    Event_OpenMessage(ACTOR_GERALD, 0);
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
 
 ask_to_ride:
     if (Leader_AnswersYes()) {
@@ -644,7 +613,6 @@ check_nothing_left:
                 goto ride;
             }
         }
-/* Bunza will not wait for the party any longer. */
         if (Bunza_CannotWait()) {
             goto stay;
         }
@@ -664,9 +632,9 @@ check_nothing_left:
             }
             confusion = (s32)MsgRunpaTotallyConfusedChanged;
             Engine_EventSetMessage(confusion + CONFUSION_IVAN_IS_CONFUSED);
-            Event_ShowMessage(ACTOR_IVAN, 0);
+            Engine_EventShowMessage(ACTOR_IVAN, 0);
             Engine_EventSetMessage(confusion + CONFUSION_GERALD_ASKS_AGAIN);
-            Event_OpenMessage(ACTOR_GERALD, 0);
+            Engine_EventOpenMessage(ACTOR_GERALD, 0);
             goto ask_to_ride;
 ride:
             Party_RidesWagon();
@@ -687,14 +655,14 @@ u8 Leader_AnswersYes(void)
 u8 Gerald_AsksIfNotRiding(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldAsksIfNotRiding);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 u8 Gerald_AsksAboutUnfinishedBusiness(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutUnfinishedBusiness);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -706,25 +674,24 @@ u8 Party_ConfirmsStaying(void)
 u8 Bunza_AsksAboutUnfinishedBusiness(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaBunzaAsksAboutUnfinishedBusiness);
-    Event_OpenMessage(ACTOR_BUNZA, 0);
+    Engine_EventOpenMessage(ACTOR_BUNZA, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 u8 Gerald_ChecksNothingLeftToDo(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldChecksNothingLeft);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return TRUE;
 }
 
 u8 Mia_AsksIfRidingAfterAll(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaMiaAsksIfRidingAfter);
-    Event_OpenMessage(ACTOR_MIA, 0);
+    Engine_EventOpenMessage(ACTOR_MIA, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* Bunza cannot wait any longer, and Mia asks whether the party stays. */
 u8 Bunza_CannotWait(void)
 {
     s32 warning;
@@ -748,16 +715,10 @@ u8 Bunza_CannotWait(void)
 u8 Gerald_AsksAboutThingsToDo(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutThingsTo);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* The party either stays behind in the cave or rides the wagon out. */
-
-/*
- * Hammet and Bunza say goodbye and leave for the wagon; the party watches
- * them go, then falls in behind the leader.
- */
 void Party_StaysBehind(void)
 {
     struct FieldActor *leader;
@@ -864,10 +825,6 @@ void Party_StaysBehind(void)
     GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
 }
 
-/*
- * Everyone heads for the wagon: Hammet and Bunza lead, the party falls in
- * behind the leader, and the leader follows them out of the cave.
- */
 void Party_RidesWagon(void)
 {
     struct FieldActor *leader;
@@ -959,31 +916,28 @@ void Party_RidesWagon(void)
     Engine_EventRequestExit(CAVE_EXIT_BY_WAGON);
 }
 
-/* The cave's scene start: open with the window transition, hide the four
-   puddles, set the north one's scale, and redraw the gate and the pillars
-   its flags record. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (gGameState.scene == (s32)&SceneId_RunpaDou) {
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SOUTH_PUDDLE), 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_GATE_PUDDLE), 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_NORTH_PUDDLE), 0);
-        Actor_Get(ACTOR_NORTH_PUDDLE)->scale_y = 0xf333;
-        if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) != 0) {
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_HIDDEN_PUDDLE), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOUTH_PUDDLE), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_GATE_PUDDLE), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_NORTH_PUDDLE), 0);
+        Object_GetById(ACTOR_NORTH_PUDDLE)->scale_y = 0xf333;
+        if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_LOWERED) != 0) {
             Gate_Lower();
         }
-        if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_RAISED) != 0) {
             Gate_Raise();
         }
-        if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_PROPPED) != 0) {
             Gate_DrawPropped();
         }
-        if (GameFlag_IsSet(FLAG_CAVE_NORTH_PILLAR) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_NORTH_PILLAR) != 0) {
             Engine_ActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIM_FROZEN);
         }
-        if (GameFlag_IsSet(FLAG_CAVE_SOUTH_PILLAR) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_SOUTH_PILLAR) != 0) {
             Engine_ActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIM_FROZEN);
         }
     }

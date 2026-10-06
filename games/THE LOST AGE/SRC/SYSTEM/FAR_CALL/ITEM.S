@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080ad1b0: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -25,10 +21,10 @@ Item_IsCompatibleWithOwnerFar:
 	.thumb_func
 Inventory_FindEquippedFar:
 	overlay_veneer Inventory_FindEquipped
-	.global Party_AdjustSixDigitCounterAFar
+	.global Party_AdjustCoinsFar
 	.thumb_func
-Party_AdjustSixDigitCounterAFar:
-	overlay_veneer Func_080afeb0
+Party_AdjustCoinsFar:
+	overlay_veneer Party_AdjustCoins
 	.global Item_GetEquipmentGroupFar
 	.thumb_func
 Item_GetEquipmentGroupFar:

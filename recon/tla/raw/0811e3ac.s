@@ -351,7 +351,7 @@ Func_0811e3ac:
 	bl ReleaseBattleObjectRecords
 	subs r5, #1
 	ldrh r0, [r6, r7]
-	bl Func_0811a5fc
+	bl BattleMotion_ReleaseObjectSlotByValue
 	adds r6, #2
 	cmp r5, #0
 	bne .L_0811e666
@@ -391,11 +391,11 @@ Func_0811e3ac:
 .L_0811e6c2:
 	mov r2, r9
 	ldrh r0, [r2, #52]
-	bl Func_081280bc
+	bl Summon_GetEntryValue
 	mov r3, r9
 	adds r5, r0, #0
 	ldrh r0, [r3, #52]
-	bl Func_081280d8
+	bl Summon_GetEntryFlag1Field
 	mov r2, r9
 	adds r3, r0, #0
 	ldr r1, [r2, #44]
@@ -407,7 +407,7 @@ Func_0811e3ac:
 	beq .L_0811e714
 	mov r3, r9
 	ldrh r0, [r3, #52]
-	bl Func_081280bc
+	bl Summon_GetEntryValue
 	movs r1, #224
 	ldr r2, [sp, #0]
 	lsls r1, r1, #7
@@ -429,7 +429,7 @@ Func_0811e3ac:
 .L_0811e714:
 	mov r2, r9
 	ldrh r0, [r2, #52]
-	bl Func_081280bc
+	bl Summon_GetEntryValue
 	ldr r3, [sp, #0]
 	strh r0, [r3, #4]
 	ldr r1, [sp, #4]

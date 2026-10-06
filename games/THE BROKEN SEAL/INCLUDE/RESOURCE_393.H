@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* Object position view used by the resource_393 coordinate wrapper. */
 struct Resource393Object {
     u8 unknown_00[8];
     u32 position_x;
@@ -23,7 +22,5 @@ struct Resource393Position {
 };
 
 extern struct Resource393Work Data_02000240;
-extern struct Resource393Object *Func_02001a38(s32 object_id);
-extern void Func_0200168a(struct Resource393Position *position);
 
 #endif

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08016544
+	.global SerialRuntime_PrepareSendPacket
 	.thumb_func
-Func_08016544:
+SerialRuntime_PrepareSendPacket:
 	push {r5, lr}
 	ldr r4, .L_080165ac
 	movs r5, #0

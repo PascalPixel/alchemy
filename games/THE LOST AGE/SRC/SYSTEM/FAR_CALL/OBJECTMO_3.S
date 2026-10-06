@@ -1,7 +1,3 @@
-@ Far-call stub table at 0x080c88c8: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -63,10 +59,10 @@ ObjectMotion_ResetTargetsAndVelocityFar:
 	.thumb_func
 ObjectEffect_BeginContextEffect26Far:
 	overlay_veneer ObjectEffect_BeginContextEffect26
-	.global Func_080c8908
+	.global ObjectEffect_BeginContextEffect25Far
 	.thumb_func
-Func_080c8908:
-	overlay_veneer Func_080d5e64
+ObjectEffect_BeginContextEffect25Far:
+	overlay_veneer ObjectEffect_BeginContextEffect25
 	.global Func_080c8910
 	.thumb_func
 Func_080c8910:

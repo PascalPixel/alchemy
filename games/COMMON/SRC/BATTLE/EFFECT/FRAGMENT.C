@@ -4,6 +4,7 @@
 #include "FIXED_MATH.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
+#include "FIELD_EVENT.H"
 
 struct ItemBreakFragmentPosition {
     s32 x;
@@ -36,7 +37,6 @@ extern s32 ArcTan2(s32, s32);
 
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
-extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
 
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 {
@@ -57,8 +57,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
             s32 current = source->angle;
             s32 max_turn = 128;
 
-            /* FAKEMATCH: the zero-instruction dependency keeps the clamp byte seed before the signed angle difference. */
-            asm("" : "+r"(max_turn), "+r"(angle) : "r"(current));
             steering_delta = (s16)(angle - current);
             max_turn <<= 5;
             if (steering_delta > max_turn)
@@ -92,6 +90,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         object->field_48 = 0x1999;
         Object_SetMode(object, 0);
         object->field_5e = 12;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
     }
 }

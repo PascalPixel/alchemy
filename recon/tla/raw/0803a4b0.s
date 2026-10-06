@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a4b0
+	.global UiWork_InitCountersAndScheduleRefresh
 	.thumb_func
-Func_0803a4b0:
+UiWork_InitCountersAndScheduleRefresh:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -64,6 +64,6 @@ Func_0803a4b0:
 .L_0803a526:
 	pop {r5, r6, pc}
 .L_0803a528:
-	.4byte Func_0803a8c8
+	.4byte UiWork_ProcessAll
 .L_0803a52c:
-	.4byte Func_0803a8d8
+	.4byte UiWork_ProcessAllOrChannels

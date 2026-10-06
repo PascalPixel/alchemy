@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814ef44
+	.balign 4
+	.global BattleFx_RunSeriesA
 	.thumb_func
-Func_0814ef44:
+BattleFx_RunSeriesA:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -105,7 +106,7 @@ Func_0814ef44:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r2, [r5]
 	movs r3, #64
 	subs r3, r3, r2
@@ -887,7 +888,7 @@ Func_0814ef44:
 	ldr r0, [sp, #60]
 	lsls r0, r0, #3
 	mov r9, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #36]
 	ldr r1, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork
@@ -988,7 +989,7 @@ Func_0814ef44:
 	mov r5, r9
 	subs r0, r3, r5
 	lsls r0, r0, #11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_0814f732
 .L_0814f6d6:
 	cmp r7, #11
@@ -1022,18 +1023,18 @@ Func_0814ef44:
 	lsls r0, r0, #3
 	subs r0, r5, r0
 	lsls r0, r0, #9
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_0814f732
 .L_0814f71a:
 	cmp r7, #3
 	bne .L_0814f726
 .L_0814f71e:
 	ldr r0, [sp, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_0814f732
 .L_0814f726:
 	ldr r0, [sp, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, [sp, #16]
 	bl SceneTransform_ApplyPitch
 .L_0814f732:
@@ -1131,7 +1132,7 @@ Func_0814ef44:
 	add r5, sp, #100
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	cmp r7, #0
 	beq .L_0814f7ea
 	cmp r7, #8

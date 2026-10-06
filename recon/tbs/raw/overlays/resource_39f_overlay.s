@@ -111,7 +111,7 @@ gEffectScripts:
 	.4byte 0x00000023
 	.4byte 0x00000006
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyField100
+	.4byte MogoruMori_CopyTimerToChild
 	.4byte 0x00000010
 	.global MogoruMori_ActorScript
 MogoruMori_ActorScript:
@@ -126,7 +126,7 @@ MogoruMori_ActorScript:
 	.4byte 0x00000023
 	.4byte 0x0000000f
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyField100
+	.4byte MogoruMori_CopyTimerToChild
 	.4byte 0x00000022
 	.4byte OverlayObject_ApplyZero
 	.4byte 0x00000010
@@ -822,7 +822,7 @@ gMogoruMoriEvents1:
 	.4byte SceneActor_RunActorTwelveThreeWaypointMotion
 	.4byte 0x00009415
 	.4byte 0x0fd40010
-	.4byte FieldScene_RunStepFD4WithActor181
+	.4byte MogoruMori_AwardHiddenNut
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -878,7 +878,7 @@ gMogoruMoriEvents2:
 	.4byte FieldScene_RunActorThirteenPresentationBeat
 	.4byte 0x00008e15
 	.4byte 0x03050011
-	.4byte FieldScene_RunScene39f_02001818
+	.4byte MogoruMori_TransferActorFourteen
 	.4byte 0x00008e15
 	.4byte 0x03060011
 	.4byte SceneActor_RunActorFourteenFourWaypointMotion
@@ -940,7 +940,7 @@ gMogoruMoriEvents3:
 	.4byte SceneActor_BobActorZeroWhenTargetClear
 	.4byte 0x00000002
 	.4byte 0x089d0016
-	.4byte FieldScene_RunScene39f_020021b0
+	.4byte MogoruMori_RunActorEighteenEscape
 	.4byte 0x00000002
 	.4byte 0x089e0017
 	.4byte MogoruMori_RunClosingChoreography
@@ -961,7 +961,7 @@ gMogoruMoriEvents3:
 	.4byte FieldScene_RunActor17CameraSequence
 	.4byte 0x00008e15
 	.4byte 0x030a0016
-	.4byte FieldScene_RunScene39f_02002004
+	.4byte MogoruMori_TransferActorEighteen
 	.4byte 0x00008e15
 	.4byte 0x030b0016
 	.4byte FieldScene_RunActorEighteenEffectSequence

@@ -18,7 +18,7 @@ Func_080d7c04:
 	adds r3, #224
 	ldr r0, .L_080d7d38
 	ldr r5, [r3]
-	bl Unnamed_080b0840Far
+	bl Shop_RestoreSceneTilesFar
 	movs r0, #173
 	bl Audio_PlayCue
 	adds r0, r6, #0
@@ -69,13 +69,13 @@ Func_080d7c04:
 	ldr r3, [r6, #8]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl Func_080ebec8
+	bl EffectSlot_Initialize
 	adds r0, r5, #0
 	ldr r1, .L_080d7d40
-	bl Func_080ebeb4
+	bl EffectSlot_SetCallback
 	adds r0, r5, #0
 	movs r1, #7
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	bl Random16
 	lsls r1, r0, #3
 	subs r1, r1, r0
@@ -119,8 +119,8 @@ Func_080d7c04:
 	bl Audio_PlayCue
 	movs r0, #100
 	bl WaitFrames
-	bl Func_08108060
-	bl Func_080d7ab4
+	bl Shop_InitEffectFar
+	bl BattleFx_ClearActiveSlotsAndScheduleUpdates
 .L_080d7d32:
 	add sp, #12
 	pop {r5, r6, r7, pc}

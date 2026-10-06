@@ -1,7 +1,3 @@
-/*
- * Draft: Object_IsTargetUnset does not yet match; 4 halfwords differ from ☀️'s C, first at +0xc (ldr r3, [r0, #56]).
- * Links as recon/tla/raw/08023f64.s.
- */
 #include "OBJECT_RUNTIME.H"
 
 s32 Object_IsTargetUnset(struct ObjectRuntime *object)

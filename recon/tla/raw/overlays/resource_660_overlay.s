@@ -755,11 +755,11 @@ Func_02000580:
 	movs r0, #19
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #17
 	bl Object_GetById
 	adds r0, #85
@@ -795,14 +795,14 @@ Func_02000580:
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r1, r5, #0
 	movs r0, #18
 	bl Func_02000894
 	movs r0, #18
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_020086ac:
 	ldr r3, .L_020086fc
 	movs r2, #241
@@ -874,8 +874,8 @@ Func_02000710:
 	bl Battle_WaitMode0
 	bl Func_020007d4
 	bl Func_020007bc
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, .L_020087a0
 	bl Func_02000844
 	movs r2, #10

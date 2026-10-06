@@ -202,7 +202,7 @@ Func_08144628:
 	movs r0, #133
 	bl Func_081180e8
 .L_081447b8:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #32]
 	bl Graphics_PrepareTransferInIwramWork
@@ -357,7 +357,7 @@ Func_08144628:
 .L_081448e6:
 	mov r1, r8
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r1, r8
 	ldr r5, [r1]
 	adds r0, r7, #0
@@ -462,7 +462,7 @@ Func_08144628:
 .L_081449b8:
 	.4byte Data_08197864
 .L_081449bc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081449c0:
 	mvns r3, r3
 	lsrs r3, r3, #31

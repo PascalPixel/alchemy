@@ -1,23 +1,22 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
+#include "EVENTWRK.H"
 
-/* The event work's message counter: ☀️ keeps it at 0x1d8 and names its
-   twin Event_ShowValue1d8AtPosition. */
-struct EventCounterWork {
-    u8 unknown_000[0x1c4];
-    s16 counter;
-};
 
-extern s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern s32 UiWork_IsIdleFar(s32);
-
-/* Open the counter's message window near a point, kept on screen, and wait
-   for it before counting on. */
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
     s32 x0 = x;
-    struct EventCounterWork *state = Ram_HeapSlots->event_work;
+    struct EventWork *state = Ram_HeapSlots->event_work;
     s32 py = y;
     s32 px = x0;
     s32 min_x = 8;
@@ -38,8 +37,8 @@ void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
     if (py > 220)
         py = 220;
 
-    ret = UiText_OpenMessageWindowFar(state->counter, px, py, 1);
+    ret = UiText_OpenMessageWindowFar((s16)state->message_id, px, py, 1);
     while (UiWork_IsIdleFar(ret) == 0)
         WaitFrames(1);
-    state->counter++;
+    state->message_id++;
 }

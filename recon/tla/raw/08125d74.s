@@ -209,7 +209,7 @@ Func_08125d74:
 .L_08125f08:
 	.4byte 0x00003f21
 .L_08125f0c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08125f10:
 	movs r0, #0
 	movs r1, #0
@@ -230,7 +230,7 @@ Func_08125d74:
 	ldr r2, .L_08125fb8
 	movs r1, #32
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	strh r6, [r5, #2]
 	movs r0, #1
 	bl WaitFrames
@@ -241,16 +241,16 @@ Func_08125d74:
 	adds r3, #65
 	ldrb r0, [r3]
 	lsls r5, r5, #19
-	bl Func_08038128
+	bl UiWindow_CreateWithLayoutBoundsFar
 	adds r5, #8
 	movs r0, #20
 	bl WaitFrames
 	adds r0, r5, #0
 	movs r1, #2
-	bl Func_08013d0c
+	bl QueueIoWriteDelay10
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_08013c58
+	bl QueueIoWriteDelay6
 	adds r3, r7, #0
 	subs r3, #74
 	cmp r3, #2
@@ -278,7 +278,7 @@ Func_08125d74:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	b .L_081261b8
 .L_08125fb0:
 	.4byte Func_08125c94
@@ -287,7 +287,7 @@ Func_08125d74:
 .L_08125fb8:
 	.4byte Func_08125d68
 .L_08125fbc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08125fc0:
 	ldr r5, [r5, #36]
 	movs r3, #1
@@ -414,7 +414,7 @@ Func_08125d74:
 	str r3, [r0]
 	movs r1, #32
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #1
 	b .L_081260e0
 .L_081260cc:
@@ -439,13 +439,13 @@ Func_08125d74:
 	lsls r5, r5, #19
 	ldrb r0, [r3]
 	adds r5, #8
-	bl Func_08038128
+	bl UiWindow_CreateWithLayoutBoundsFar
 	adds r0, r5, #0
 	movs r1, #2
-	bl Func_08013d0c
+	bl QueueIoWriteDelay10
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_08013c58
+	bl QueueIoWriteDelay6
 	ldr r3, .L_08126148
 	movs r2, #128
 	lsls r2, r2, #19
@@ -527,7 +527,7 @@ Func_08125d74:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 .L_081261b8:
 	ldr r5, .L_081261f4
 	movs r6, #128
@@ -536,7 +536,7 @@ Func_08125d74:
 	movs r2, #0
 	adds r6, #10
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	strh r5, [r6]
 	movs r0, #1
 	bl WaitFrames
@@ -562,7 +562,7 @@ Func_08125d74:
 .L_081261f8:
 	.4byte 0x00001541
 .L_081261fc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08126200:
 	lsls r2, r2, #19
 	strh r3, [r2]

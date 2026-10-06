@@ -203,7 +203,7 @@ Func_08150c74:
 	adds r0, #12
 	str r0, [sp, #28]
 .L_08150dfa:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #28]
 	ldr r0, [sp, #48]
 	bl Graphics_PrepareTransferInIwramWork
@@ -333,7 +333,7 @@ Func_08150c74:
 	str r3, [r6, #4]
 	ldr r3, [r5, #16]
 	str r3, [r6, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r2, r9
 	ldr r3, [r2]
 	ldr r0, [sp, #44]

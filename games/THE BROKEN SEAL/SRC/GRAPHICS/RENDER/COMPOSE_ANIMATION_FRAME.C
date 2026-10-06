@@ -1,88 +1,38 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
-extern u8 gMenuCtrlWork[];
-extern u8 gWorkSlot[];
+#include "IO_REG.H"
+#include "HEAP_STATE.H"
 
-/* Steps the scripts of a composite sprite's layers, picks each layer's frame
-   for the facing direction and, when a frame changed, draws the layers in
-   priority order, outlines the result and uploads it. Returns whether the
-   first layer's facing entry asks for a flip. */
+#define Animation_SetWorkEntry ((void (*)(void*,s32))Animation_SetWorkEntry)
 
-/* One scripted layer of the composite object. */
-struct AnimationEntry {
-    s16 anim_id;    /* 0x00 */
-    u16 timer;      /* 0x02 compared as s16, updated as u16 */
-    u8 kind;        /* 0x04 direction-table selector */
-    u8 param;       /* 0x05 draw parameter */
-    u8 priority;    /* 0x06 draw order, 0..3 */
-    u8 mode;        /* 0x07 1 = copy, 3 = decode, else draw */
-    void **frames;  /* 0x08 */
-    void *field_0c;
-    u8 *script;     /* 0x10 */
-    u8 pos;         /* 0x14 script cursor */
-    u8 step;        /* 0x15 timer decrement */
-    u8 frame;       /* 0x16 selected frame, 255 = none */
-    u8 frame_base;  /* 0x17 */
-};
-
-struct AnimationObject {
-    u8 field_00[8];
-    u16 tile : 10;  /* 0x08 the VRAM tile index */
-    u16 attr : 6;
-    u8 field_0a[18];
-    u8 slot;        /* 0x1c */
-    u8 field_1d[3];
-    u8 width;       /* 0x20 */
-    u8 height;      /* 0x21 */
-    u8 field_22[2];
-    u8 last_no;     /* 0x24 */
-    u8 dirty;       /* 0x25 */
-    u8 flags;       /* 0x26 bit 1 requests the outline pass */
-    u8 count;       /* 0x27 */
-    struct AnimationEntry *entries[4]; /* 0x28 */
-};
-
-/* Running byte total plus the two outline colours. */
-struct ComposeContext {
-    u16 used;       /* 0x00 */
-    u8 field_02[4];
-    u8 edge;        /* 0x06 */
-    u8 fill;        /* 0x07 */
-};
+#define gMenuCtrlWork ((void *(*))&gMenuCtrlWork)
+#define Render_DecodeFrame ((const u8 (*))&Render_DecodeFrame)
 
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
-extern const u8 Render_DecodeFrame[];
-extern const u8 Render_DecodeFrameBuffer[];
-extern u8 Render_DecodeFrameCodeSize[];
 
-extern const u8 AnimationFacing_Kind1[];
-extern const u8 AnimationFacing_Kind22[];
-extern const u8 AnimationFacing_Kind2[];
-extern const u8 AnimationFacing_Kind3[];
-extern const u8 AnimationFacing_Kind5[];
-extern const u8 AnimationFacing_Kind8[];
-extern const u8 AnimationFacing_Kind88[];
-extern const u8 AnimationFacing_Kind4[];
-extern const u8 AnimationFacing_Kind6[];
 
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
-u32 Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *allocation);
-void Runtime_ReleaseHeapBlock(s32 id);
-u32 Resource_DecodeType01(const void *source, void *destination);
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-void Animation_SetWorkEntry(void *work, s32 no);
 
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 {
     s32 changed;
     u32 size;
-    struct ComposeContext *ctx;
+    struct ObjectSystemWork *ctx;
     DrawFn draw;
     s32 held;
     struct AnimationEntry *e;
@@ -101,15 +51,15 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
     s32 tile;
 
     changed = 0;
-    ctx = *(struct ComposeContext **)gMenuCtrlWork;
+    ctx = (struct ObjectSystemWork *)gMenuCtrlWork[0];
     held = 1;
-    draw = *(DrawFn *)&gMenuCtrlWork[184];
+    draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
     if (draw == 0) {
-        block = (void *)Runtime_AllocateHeapBlock(52, (s32)Render_DecodeFrameCodeSize);
+        block = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
         Dma_Set(Render_DecodeFrame, block,
-                (((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) | 0x84000000,
-                (volatile u32 *)0x040000d4);
-        draw = *(DrawFn *)&gMenuCtrlWork[184];
+                (((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) | (DMA_ENABLE32 | DMA_32BIT),
+                REG_DMA3);
+        draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
         held = 0;
     }
 
@@ -121,8 +71,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
         if (e->script == 0) {
             continue;
         }
-        /* FAKEMATCH: explicit timer-test lifetime keeps command back-edges
-           and the decoded frame value separate from the hold reload. */
+        /* FAKEMATCH: explicit timer-test lifetime keeps command back-edges and the decoded frame value separate from the hold reload. */
     read_command:
         if ((s16)e->timer > 0)
             goto advance_timer;
@@ -131,10 +80,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
         switch (base) {
         case 254:
             Animation_SetWorkEntry(e, arg);
-            obj->last_no = (u8)arg;
+            obj->last_no = arg;
             break;
         case 253:
-            e->pos = (u8)arg;
+            e->pos = arg;
             break;
         case 245:
             e->timer += arg << 4;
@@ -143,7 +92,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
             e->pos -= 2;
             goto framed;
         case 240:
-            e->kind = (u8)arg;
+            e->kind = arg;
             break;
         case 255:
             e->frame_base = 255;
@@ -167,7 +116,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
         case 252:
             break;
         default:
-            e->frame_base = (u8)base;
+            e->frame_base = base;
             e->timer += arg << 4;
             goto select_direction;
         }
@@ -179,26 +128,26 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
     select_direction:
         switch (e->kind) {
         case 1:
-            attr = AnimationFacing_Kind1[(u16)dir >> 13];
+            attr = AnimationFacing_Kind1[dir >> 13];
             break;
         case 2:
         case 20:
-            attr = AnimationFacing_Kind2[(u16)dir >> 13];
+            attr = AnimationFacing_Kind2[dir >> 13];
             break;
         case 22:
-            attr = AnimationFacing_Kind22[(u16)dir >> 13];
+            attr = AnimationFacing_Kind22[dir >> 13];
             break;
         case 3:
-            attr = AnimationFacing_Kind3[(u16)dir >> 12];
+            attr = AnimationFacing_Kind3[dir >> 12];
             break;
         case 4:
-            attr = AnimationFacing_Kind4[(u16)dir >> 10];
+            attr = AnimationFacing_Kind4[dir >> 10];
             break;
         case 5:
-            attr = AnimationFacing_Kind5[(u16)dir >> 12];
+            attr = AnimationFacing_Kind5[dir >> 12];
             break;
         case 6:
-            attr = AnimationFacing_Kind6[(u16)dir >> 10];
+            attr = AnimationFacing_Kind6[dir >> 10];
             break;
         case 8:
             attr = AnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
@@ -215,7 +164,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
             changed = 1;
         }
         if (e->frame != base) {
-            e->frame = (u8)base;
+            e->frame = base;
             obj->dirty = 1;
         }
     }
@@ -225,7 +174,6 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
         buf = (u8 *)Runtime_BumpAllocate(size);
         Iwram_ClearWords(buf, size);
 
-        /* Insertion sort of (priority, index) keys, low key drawn first. */
         n = -1;
         for (i = obj->count - 1; i >= 0; i--) {
             e = obj->entries[i];
@@ -243,8 +191,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
                 continue;
             }
             key = (key << 8) | i;
-            /* FAKEMATCH: the first shift written apart and the scan left by
-               goto keep the scan unrotated, with its step at the top. */
+            /* FAKEMATCH: the first shift written apart and the scan left by goto keep the scan unrotated, with its step at the top. */
             k = n;
             if (k >= 0 && order[k] > key) {
                 order[k + 1] = order[k];
@@ -258,7 +205,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
                 }
             }
         insert:
-            order[k + 1] = (u16)key;
+            order[k + 1] = key;
             n++;
         }
         n++;
@@ -285,8 +232,6 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
         }
 
         if ((obj->flags & 2) != 0) {
-            /* Erode the composed silhouette; interior keeps the fill
-               colour, everything else that is set becomes the edge. */
             u8 *mask;
             u8 edge;
             u8 fill;
@@ -332,11 +277,9 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
         tile = VramBlock_LoadCached(obj->slot, size, 0);
         {
             void *vram = (void *)(0x06010000 + (tile << 5));
-            UploadFn *slots = (UploadFn *)gWorkSlot;
-
-            slots[53](buf, obj->width, obj->height, vram);
+            ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width, obj->height, vram);
         }
-        obj->tile = tile;
+        obj->part[0].tile = tile;
         obj->dirty = 0;
         ctx->used += size;
         Runtime_BumpFree(buf);

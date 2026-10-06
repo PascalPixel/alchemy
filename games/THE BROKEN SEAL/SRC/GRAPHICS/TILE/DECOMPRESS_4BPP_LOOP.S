@@ -1,10 +1,3 @@
-@ Decode loop of DECOMPRESS_4BPP.S. Code bits are read with lsrs and bcs
-@ or bcc, each bit word is refilled through the carry (ldreq; rrxseq), the
-@ nibbles come from the move-to-front table in r2 and r3, and it returns
-@ for the entry with pop {r5, r6}; bx lr. GCC never branches on the carry
-@ out of a shift and never emits rrx. Every TBS and TLA edition has these
-@ bytes.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 	.arm
 .L_08015b38:

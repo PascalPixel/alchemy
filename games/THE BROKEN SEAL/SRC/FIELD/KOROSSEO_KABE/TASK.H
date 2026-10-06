@@ -1,15 +1,12 @@
+#include "RESOURCE.H"
 #ifndef KOROSSEO_KABE_TASK_H
 #define KOROSSEO_KABE_TASK_H
-
-/* Declarations shared by the Colosso wall stage's scene code. */
 
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/* The engine's work blocks, one pointer per slot; slot 59 holds the stage's
- * descriptor. */
 extern u8 gWorkSlot[];
 #define WORK_SLOT_STAGE 59
 extern u8 gEffectWork[];
@@ -48,8 +45,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The mode task's records; the halfword at +26 holds the per-mode span in
- * sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
@@ -79,7 +74,7 @@ typedef struct RaisedEffect {
     s16 f64;
 } RaisedEffect;
 
-typedef struct SceneRecord {
+typedef struct KabeSceneRecord {
     u8 pad_00[6];
     u16 facing;
     s32 x;
@@ -95,7 +90,7 @@ typedef struct SceneRecord {
     s32 rate_z;
     u8 pad_38[33];
     u8 flags;
-} SceneRecord;
+} KabeSceneRecord;
 
 typedef struct Position3 {
     s32 x;
@@ -103,7 +98,6 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
-/* The stage's data, in the overlay's read-only data and work. */
 extern u8 HexDigits[];
 extern u8 Korosseo_GaugeGraphics[];
 extern s32 KorosseoKabe_SparkScript[];
@@ -136,16 +130,9 @@ extern u16 Korosseo_MarkerStartX;
 extern u16 Korosseo_MarkerStartY;
 extern u16 Korosseo_MarkerStep;
 
-/* Import veneers, named by the main-image code each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-void *Runtime_AllocateBlock();
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();
-void Runtime_BumpFree();
-void Resource_ResetEntry();
-s32 Resource_FindFreeEntry();
-s32 Resource_GetTableEntry();
 void ObjectDispatch_InitFromTable6();
 void ObjectDispatch_WaitForValue16();
 s32 Object_CheckMovementCollision();
@@ -166,32 +153,30 @@ s32 Menu_OpenCharacterSelector();
 s32 AudioCommand_GetStateByte();
 void BattleFx_RunRisingObjectSequence();
 
-/* The stage's code still in the listing, and the shared Colosso code. */
 void KorosseoKabe_RollLogToCell();
 void Korosseo_SelectSoloCompetitor();
 void Korosseo_FinishSoloRound();
 s32 KorosseoKabe_RunStateInteraction();
 void KorosseoKabe_ShowFollowUpPrompt();
 void Korosseo_LoadPortrait();
-s32 Korosseo_FadeInCompetitor();
+void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Korosseo_RestoreCompetitor();
 void Korosseo_UpdatePathRival(void);
 void Korosseo_UpdateModeTask(void);
 void Korosseo_UpdateMarker(void);
 void Korosseo_DrawGauge(void);
 
-/* The area's functions, in cartridge order. */
 void SceneData_NoOpHandler(void);
 void FieldScene_RunSingleStep(void);
 void SceneState_ConfigureRegionByActorElevenColumn(void);
 void FieldScene_RunTwoStepSequence(void);
 void SceneState_StoreSlotTileXToWork832To848(void);
-void SceneState_SetWorkByte35(void);
+void KorosseoKabe_EnableEffectChildMode(void);
 void SceneState_SetFlag331AndConfigureRegion46_17(void);
 void FieldScene_SetFlag332AndDrawTiles(void);
 void FieldScene_SetFlag333AndDrawTiles(void);
-void SceneState_SendWord250With6(void);
-void FieldScene_Forward4358(void);
+void KorosseoKabe_RunSelectedActorRisingEffect(void);
+void KorosseoKabe_CheckLeaderAhead(void);
 void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2);
 void SceneState_ApplyRectsForActors15To17(void);
 void FieldScene_RunStep15At29By26(void);
@@ -202,9 +187,9 @@ void FieldScene_RunStep17At40By23(void);
 void FieldScene_RunStep17At40By25(void);
 void FieldScene_RunSupplementalSequenceOne(void);
 void FieldScene_PlaceSpectatorRow(void);
-void SceneState_ApplyTable8715AndValue104(void);
+void KorosseoKabe_StartSupplementalSceneTask(void);
 void SceneState_WaitForStatusWords(void);
-void SceneState_InstallTask8714AndApplyTwoRects(void);
+void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void);
 void FieldScene_RunPairedEntranceWalk(s32 a0);
 void FieldScene_RunSecondActorInteraction(s32 a0);
 void FieldScene_RunSceneThreeCoordinator(s32 a0);
@@ -227,7 +212,6 @@ void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z);
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
 void Text_WriteU32AsHex(u8 *buf, u32 value);
 void SceneState_EmptyHook(void);
-/* The stage's control record, at the head of the scene state. */
 struct StageControl {
     s16 status;
     s16 f2;
@@ -236,26 +220,26 @@ struct StageControl {
     s16 f8;
 };
 
-void SceneState_SetHalfword1000To9(void);
+void KorosseoKabe_MarkStageReady(void);
 void SceneState_WaitUntilStatusNine(void);
 void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a);
 s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
 void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
 void SceneState_InitControlRecordAndStartTask(s32 resource);
-void SceneState_SetWorkHalfwordDc(s16 v);
+void Korosseo_SetGaugeHold(s16 v);
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self);
 void StagedActor_PushActorAhead(void);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 #endif

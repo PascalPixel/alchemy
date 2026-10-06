@@ -1,12 +1,3 @@
-@ Sound sequence command interpreter: mov ip, lr frames, flag branches on
-@ lsrs with no compare, and a private continuation entered by bl and by
-@ branches from other entries. These 452 bytes equal TBS
-@ SOUND/DRIVER/SEQUENCE_COMMANDS.S (0x080f9a80) apart from one relocated
-@ literal word, the command table address.
-@ The zero halfwords of alignment at 0x081c1732, 0x081c175a, 0x081c1796,
-@ 0x081c17da, 0x081c17e6, 0x081c180e, 0x081c183e, 0x081c1852, 0x081c188e and
-@ 0x081c189a never run and carry no credit.
-@ credit: library — TBS/TLA common sound sequence command interpreter
 .syntax unified
 	.thumb
 	.global Sound_LoadCommandTable

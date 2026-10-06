@@ -1,5 +1,3 @@
-/* resource_396: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -8,7 +6,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/HEYA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/HEYA2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/IMPORT.o"(.text)
         "*/resource_396_overlay.o"(.rodata.x02009c00)
     }

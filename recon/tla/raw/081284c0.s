@@ -270,7 +270,7 @@ Func_081284c0:
 	bl UiText_ShowMessageAndWaitCoreFar
 	ldr r3, [sp, #24]
 	ldr r0, [r3]
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	bl BattlePresentation_WaitForAdvance
 .L_08128712:
 	ldr r0, .L_081287bc

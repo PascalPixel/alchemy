@@ -1,0 +1,230 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "TYPES.H"
+#include "EDITION.H"
+#include "BATTLE_ESCAPE.H"
+
+#include "BATTLE_WORK.H"
+#include "BATTLE_PARTY.H"
+#include "BATTLE_UNIT.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_PRESENTATION.H"
+#include "OWNER_STATE.H"
+
+extern struct BattlePresentationTransition *gTransitionWork;
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void GameFlag_SetBitFar(s32 flag);
+void GameFlag_ClearBitFar(s32 flag);
+
+void Palette_CopyBanksWithBrightnessOffset(s32 offset)
+{
+    s32 iter;
+    s32 bank;
+    s32 col;
+    s32 mask;
+    s32 idx;
+
+    bank = 15;
+    iter = 0;
+    mask = 31;
+    do
+    {
+        for (col = 0; col <= 15; col++)
+        {
+            u32 color;
+            s32 blue;
+            s32 green;
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+            /* FAKEMATCH: the red-mask copy requires r1 before the channel shifts. */
+            register s32 red __asm__("r1");
+#else
+            s32 red;
+#endif
+            s32 value;
+
+            idx = bank * 16 + col;
+            color = ((u16 *)0x05000000)[idx];
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+            /* FAKEMATCH: copy the red mask after the color load, before the channel shifts. */
+            __asm__("add %0, %1, #0" : "=r" (red) : "r" (mask), "r" (color));
+#endif
+            blue = (color >> 10) & mask;
+            green = (color >> 5) & mask;
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+            red &= color;
+#else
+            red = color & mask;
+#endif
+            blue += offset;
+            green += offset;
+            red += offset;
+            if (blue > 31)
+                blue = 31;
+            if (green > 31)
+                green = 31;
+            if (red > 31)
+                red = 31;
+            if (blue < 0)
+                blue = 0;
+            if (green < 0)
+                green = 0;
+            if (red < 0)
+                red = 0;
+            value = blue << 10;
+            value |= green << 5;
+            value |= red;
+            ((s16 *)0x04FFFFE0)[idx] = value;
+        }
+        iter++;
+        bank = 5;
+    } while (iter <= 1);
+}
+
+s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
+{
+    struct BattleUnit *character;
+    struct BattleSession *battle;
+    u8 *mode;
+    s32 count;
+    s32 added;
+    s32 i;
+
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    battle = Ram_HeapSlots->battle_work;
+#else
+    battle = gBattleWork;
+#endif
+    {
+        struct BattleActionRecord *queued = battle->actions;
+        u32 n;
+
+        for (n = 0; n < 20; n++) {
+            queued[n].unit_id = BATTLE_UNIT_LIST_END;
+            queued[n].priority = 0x8000;
+        }
+    }
+
+    BattleUnit_ResetGuardLevels();
+    Palette_CopyBanksWithBrightnessOffset(8);
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    GameFlag_SetBit(0x16b);
+#else
+    GameFlag_SetBitFar(0x16b);
+#endif
+    mode = &battle->encounter_mode;
+    Camera_ConfigureScene(0);
+    UiWork_FinalizeSharedSlotFar();
+
+    if (*mode != 2) {
+        count = BattlePres_BuildUnitEntries(actions);
+        if (count < 0)
+            goto finish;
+        if (count != 0 && actions[0].command == 99 && BattleEscape_CheckSuccess() == 0)
+            *mode = 2;
+    } else {
+        count = 0;
+    }
+
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    if (Ram_HeapSlots->battle_work->two_sided != 0) {
+#else
+    if (gBattleWork->two_sided != 0) {
+#endif
+        added = BattlePresentation_AppendLinkedActions(actions, count);
+        if (BattlePres_WaitSync() < 0) {
+            count = -1;
+            goto finish;
+        }
+        count += added;
+        if (added < 0) {
+            count = -1;
+            goto finish;
+        }
+    } else {
+        count += BattlePres_BuildOpponentEntries(actions + count);
+    }
+
+    BattleQueue_SortByPriority(actions, count);
+    if (count > 0) {
+        struct BattleActionRecord *action = actions;
+
+        i = count;
+        do {
+            if (action->command == 3 || action->command == 7) {
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+                character = Owner_GetState(action->unit_id);
+                character->guard_level = action->command == 3 ? 1 : 3;
+#else
+                character = Owner_GetStateFar(action->unit_id);
+                character->guard_level = action->command == 3 ? 1 : 2;
+#endif
+            }
+            action++;
+            i--;
+        } while (i != 0);
+    }
+
+finish:
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    GameFlag_ClearBit(0x16b);
+#else
+    GameFlag_ClearBitFar(0x16b);
+#endif
+    Camera_InitDefaultTransform();
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    Ram_HeapSlots->transition_work->target_yaw = 0x2000;
+#else
+    gTransitionWork->target_yaw = 0x2000;
+#endif
+    return count;
+}
+
+s16 Battle_GetTaggedSlotValue(s32 slot)
+{
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    struct BattleSession *battle = Ram_HeapSlots->battle_work;
+#else
+    struct BattleSession *battle = gBattleWork;
+#endif
+
+    if ((slot & 0x80) != 0)
+        return battle->enemy_units[slot & 0xf];
+    return battle->party_units[slot & 0xf];
+}
+
+s32 Battle_FindTaggedSlotByValue(u32 value)
+{
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    struct BattleSession *battle = Ram_HeapSlots->battle_work;
+#else
+    struct BattleSession *battle = gBattleWork;
+#endif
+    s32 i;
+    s16 item;
+
+    if (value <= 7) {
+        for (i = 0; ; i++) {
+            item = battle->party_units[i];
+            if (item == BATTLE_UNIT_LIST_END)
+                return -1;
+            if (item != BATTLE_UNIT_REMOVED && item == value)
+                return i | 0x100;
+        }
+    }
+    for (i = 0; ; i++) {
+        item = battle->enemy_units[i];
+        if (item == BATTLE_UNIT_LIST_END)
+            return -1;
+        if (item != BATTLE_UNIT_REMOVED && item == value)
+            return i | 0x180;
+    }
+}

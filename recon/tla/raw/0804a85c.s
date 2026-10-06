@@ -409,7 +409,7 @@ Func_0804a85c:
 	add r5, sp, #200
 	mov r0, r10
 	adds r1, r5, #0
-	bl Func_081180b8
+	bl BattleMotion_ProjectConditionalPositionFar
 	ldr r4, [sp, #28]
 	movs r3, #8
 	strb r3, [r4, #2]
@@ -450,7 +450,7 @@ Func_0804a85c:
 	ldr r2, [sp, #20]
 	mov r1, r11
 	ldrh r0, [r2, r3]
-	bl Func_081180b8
+	bl BattleMotion_ProjectConditionalPositionFar
 	ldr r3, .L_0804abfc
 	ldr r4, [sp, #24]
 	str r3, [r4, #4]
@@ -491,7 +491,7 @@ Func_0804a85c:
 .L_0804abfc:
 	.4byte 0x40002000
 .L_0804ac00:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804ac04:
 	.4byte Data_0805c9c4
 .L_0804ac08:
@@ -828,7 +828,7 @@ Func_0804a85c:
 	adds r6, r0, #0
 	mov r1, r11
 	ldrh r0, [r5, r7]
-	bl Func_081180b8
+	bl BattleMotion_ProjectConditionalPositionFar
 	mov r0, r9
 	cmp r0, #0
 	beq .L_0804ae8a
@@ -1400,7 +1400,7 @@ Func_0804a85c:
 	mov r8, r0
 	adds r1, r5, #0
 	ldrh r0, [r2, r3]
-	bl Func_081180b8
+	bl BattleMotion_ProjectConditionalPositionFar
 	ldr r3, .L_0804b35c
 	ldr r0, [r3]
 	lsls r0, r0, #12
@@ -1476,7 +1476,7 @@ Func_0804a85c:
 .L_0804b358:
 	.4byte 0x00000d03
 .L_0804b35c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804b360:
 	.4byte 0x00000c5a
 .L_0804b364:
@@ -1561,7 +1561,7 @@ Func_0804a85c:
 	ldrh r0, [r2, r3]
 	adds r1, r4, #0
 	str r4, [sp, #8]
-	bl Func_081180b8
+	bl BattleMotion_ProjectConditionalPositionFar
 	ldr r3, .L_0804b4bc
 	ldr r0, [r3]
 	lsls r0, r0, #12
@@ -1660,7 +1660,7 @@ Func_0804a85c:
 .L_0804b4b8:
 	.4byte 0xfffffe00
 .L_0804b4bc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804b4c0:
 	movs r3, #4
 	negs r3, r3

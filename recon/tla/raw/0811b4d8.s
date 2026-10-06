@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global BattleUnit_BuildStatusFlags
 	.thumb_func
 BattleUnit_BuildStatusFlags:

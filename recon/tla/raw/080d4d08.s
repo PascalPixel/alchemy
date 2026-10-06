@@ -277,7 +277,7 @@ Func_080d4d08:
 	ldrb r3, [r3, #26]
 	str r3, [sp, #0]
 .L_080d4f16:
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r1, #6
 	adds r0, r6, #0
 	bl Object_SetMode
@@ -306,7 +306,7 @@ Func_080d4d08:
 	movs r1, #254
 	ands r1, r2
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r3, .L_080d5064
 	movs r5, #133
 	lsls r5, r5, #2
@@ -322,7 +322,7 @@ Func_080d4d08:
 	bl Object_SetMode
 	adds r0, r6, #0
 	ldr r1, [sp, #0]
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r0, [r3, #32]
@@ -451,7 +451,7 @@ Func_080d4d08:
 	ldrb r5, [r5]
 	mov r2, r9
 	strb r5, [r2]
-	bl Func_080d2350
+	bl EventRuntime_End
 	mov r2, r11
 	cmp r2, #0
 	beq .L_080d50ae
@@ -475,7 +475,7 @@ Func_080d4d08:
 	ldrb r0, [r3]
 	ldr r1, [r7]
 	ldr r2, [r7, #8]
-	bl Func_080201c8
+	bl GetMapCellCollisionFar
 	cmp r0, #254
 	bne .L_080d50ce
 	adds r0, r6, #0

@@ -43,9 +43,9 @@ Func_0804bc08:
 	str r6, [sp, #92]
 	bl Resource_LoadIndexedIntoBuffer
 	ldr r0, .L_0804bd08
-	bl Func_080453d0
+	bl Graphics_ExpandVramTilesByColorTable
 	ldr r0, .L_0804bd0c
-	bl Func_08045330
+	bl Link_DrawShiftedTilePair
 	bl Func_080451bc
 	ldr r2, [sp, #36]
 	movs r4, #130
@@ -243,7 +243,7 @@ Func_0804bc08:
 .L_0804bddc:
 	add r4, sp, #108
 	mov r9, r4
-	bl Func_0804bba8
+	bl Battle_DrawPartyPanelsWithEmptyList
 	ldr r1, [sp, #36]
 	ldr r0, [r1]
 	movs r1, #0
@@ -334,7 +334,7 @@ Func_0804bc08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl Func_0804297c
+	bl UiWindow_DrawPartyStatusContents
 	bl BattleActor_CommitPlacementFar
 	ldr r4, [sp, #36]
 	movs r0, #130
@@ -407,7 +407,7 @@ Func_0804bc08:
 	bne .L_0804bf2e
 	lsls r0, r5, #1
 	adds r0, r7, r0
-	bl Func_08118138
+	bl BattleParty_PrepareReserveOwnersFar
 	adds r5, r5, r0
 .L_0804bf2e:
 	movs r0, #1
@@ -483,13 +483,13 @@ Func_0804bc08:
 .L_0804bfc0:
 	.4byte gLinkStatus
 .L_0804bfc4:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_0804bfc8:
 	.4byte Func_0804b6a0
 .L_0804bfcc:
 	.4byte gPartyState
 .L_0804bfd0:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_0804bfd4:
 	.4byte gInput
 .L_0804bfd8:
@@ -601,7 +601,7 @@ Func_0804bc08:
 	mov r8, r4
 	bl BattlePres_SetActorModesFar
 	ldr r0, [sp, #32]
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #0
@@ -1126,7 +1126,7 @@ Func_0804bc08:
 	orrs r3, r2
 	strh r3, [r1, #6]
 	ldr r0, [sp, #32]
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 	ldr r1, [sp, #36]
 	ldr r3, [sp, #24]
 	ldr r2, [r1]
@@ -1137,7 +1137,7 @@ Func_0804bc08:
 	bl Func_08049154
 	adds r6, r0, #0
 	ldr r0, [sp, #32]
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 	movs r4, #1
 	negs r4, r4
 	cmp r6, r4
@@ -2208,6 +2208,6 @@ Func_0804bc08:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0804cda0:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_0804cda4:
 	.4byte gLinkStatus

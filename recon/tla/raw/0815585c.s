@@ -476,7 +476,7 @@ Func_0815585c:
 	movs r0, #212
 	bl Audio_PlayCue
 .L_08155c00:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
@@ -577,7 +577,7 @@ Func_0815585c:
 	b .L_08155ce4
 .L_08155cc0:
 	mov r0, r11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_08155ce4
 .L_08155cc8:
 	adds r0, r7, #0
@@ -596,11 +596,11 @@ Func_0815585c:
 	add r5, sp, #60
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r2, [r5, #8]
 	cmp r2, #249
 	bgt .L_08155d04
@@ -761,7 +761,7 @@ Func_0815585c:
 	adds r0, r6, #0
 	ldr r3, [r2, #8]
 	str r3, [r4, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r5]
 	ldr r7, [sp, #52]
 	movs r1, #20

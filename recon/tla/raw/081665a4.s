@@ -50,7 +50,7 @@ Func_081665a4:
 	movs r6, #36
 	ldrsh r0, [r1, r6]
 	adds r1, r5, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	mov r2, r11
 	ldr r3, [r2, #4]
 	b .L_0816661c

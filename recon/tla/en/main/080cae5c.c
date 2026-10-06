@@ -1,0 +1,66 @@
+#include "TYPES.H"
+#include "RAM_BUFFER.H"
+#include "EVENTWRK.H"
+#include "OBJECT_RUNTIME.H"
+#include "FIELD_SPRITE.H"
+#include "MAP.H"
+#include "DMA.H"
+
+void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 value);
+
+extern struct ObjectRuntime gSnapshotObjects[];
+
+struct ObjectRuntime *ObjectTable_Get(u32 object_id);
+void ObjectTable_Restore(void)
+{
+    struct ObjectRuntime *copy = gSnapshotObjects;
+    u8 *indices = (u8 *)gSnapshotObjects - 32;
+    u8 *frames = (u8 *)&gSnapshotObjects[32];
+    u8 *next_frames = frames + 32;
+    u8 *priorities = frames + 64;
+    s32 count;
+    struct ObjectRuntime *object;
+    struct FieldSprite *sprite;
+    s32 *view;
+    struct ObjectRuntime *camera;
+    s32 index;
+    s32 priority;
+    s32 y;
+
+    count = 0;
+    index = *indices++;
+    /* FAKEMATCH: a scheduling barrier the native order needs. */
+    __asm__("");
+    while (index != 255) {
+        object = ObjectTable_Get(index);
+        if (object != NULL) {
+            sprite = object->animation;
+            Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), (volatile u32 *)0x040000d4);
+            object->animation = sprite;
+            Object_SetMode(object, *frames);
+            ObjectDispatch_SetSingleChildFlagsFar(object, *next_frames);
+            priority = *priorities;
+            sprite->priority = priority;
+            sprite->part_priority = priority;
+            if (index == EventRuntime_GetControlledOwner()) {
+                camera = ((struct EventWork *)Ram_HeapSlots->event_work)->view_center;
+                view = Ram_HeapSlots->map_work->origin;
+                y = object->y;
+                camera->x = object->x;
+                camera->terrain_height = y;
+                camera->y = y;
+                camera->z = object->z;
+                view[1] = y;
+                Object_ResetMotion(object);
+            }
+        }
+        copy++;
+        frames++;
+        next_frames++;
+        count++;
+        priorities++;
+        if (count > 31)
+            break;
+        index = *indices++;
+    }
+}

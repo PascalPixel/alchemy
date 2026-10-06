@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "INVENTORY.H"
 #include "SCENE.H"
 
 s32 Inventory_AddItemFar(s32, s32);

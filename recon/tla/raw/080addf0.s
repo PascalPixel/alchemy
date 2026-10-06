@@ -136,9 +136,9 @@ Func_080addf0:
 	strh r2, [r3]
 	adds r3, r7, r1
 	str r0, [r3]
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r0, #5
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r1, #149
 	movs r0, #4
 	bl OwnerAction_Add
@@ -203,7 +203,7 @@ Func_080addf0:
 	mov r2, r11
 	strb r6, [r3]
 	str r2, [r7]
-	bl Func_080add74
+	bl Runtime_GetBuildStampTime
 	movs r1, #182
 	lsls r1, r1, #2
 	adds r3, r7, r1
@@ -264,11 +264,11 @@ Func_080addf0:
 .L_080ae008:
 	.4byte 0xffffffff
 .L_080ae00c:
-	.4byte Data_0300117c
+	.4byte gFrameWaitCount
 .L_080ae010:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_080ae014:
-	.4byte Data_03001218
+	.4byte gIdleFrameCount
 .L_080ae018:
 	.4byte Data_020036d0
 .L_080ae01c:

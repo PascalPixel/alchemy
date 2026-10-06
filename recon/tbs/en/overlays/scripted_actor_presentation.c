@@ -1,42 +1,7 @@
-/* NONMATCHING: 2492/2508 bytes, 1154 differing halfwords, 486 aligned edits.
- * H2 is preserved at d73d75772; canonical plain-zero baseline restored.
- * 2026-09-27 Sol Venus Summit H2: a Value_00000000 producer prevents CSE
- * from forwarding the coordinate's low zero bits. It restores three pool
- * groups and a real load, but that SI load follows the motion store instead
- * of preceding the z store; first pool is +4, middle and final pools -4.
- * Complete normalized diff and allocator output reviewed. Initial zero is
- * still r6 rather than r8, actor base r5 rather than r6, motion pointer r8
- * rather than r5. Prediction failed; no credit. Preserve this counterexample
- * before restoring the plain-zero baseline. No second symbol-width sweep.
- * 2026-09-27 Sol Venus Summit H1: reuse the initial actor local for the
- * lead actor, transferring Haidia's typed lookup lifetime model. Prediction:
- * lead base r6 and motion-field pointer r5, with the initial zero retained
- * separately from the later camera zero. Complete normalized diff is
- * byte-identical to baseline: lead r5, motion pointer sl, missing first
- * zero pool. Both lookups were already typed; variable reuse supplies no
- * new alias information. Close this axis; keep the simpler shared local.
- * 2026-09-26 corrected model: equal control-flow topology, no stack frame;
- * first zero literal pool missing, early actor/flag ownership differs.
- * H1: u16 zero instead of s32 gives byte-identical output: no improvement.
- * H2: exact ACTOR_TRANSITION.C Half aggregate also gives identical output.
- * Both bounded variants closed; no adoption and no new DONE bytes.
- * Reopen only with evidence that prevents the zero from being represented
- * by the low byte of the preceding 0x940000 coordinate, not declaration
- * permutations. The missing pool starts at reference offset 0x1b8.
- * Own-ROM extent 020008b4..02001280, pools at 0a6c, 0e98 and 124c.
- * All 255 call sites agree in order and runtime target with the registered
- * draft. The alternate resource_3c9_c_020008b4.c recovery has wrong service
- * names at repeated encoded BL labels; it is not the active model.
- * Exact neighbour Scene_RunActorEntrySequence rechecks at 3604/3604 bytes.
- * Reuse its maintained event interfaces and call-scope helpers, FieldActor
- * coordinate/motion/facing fields, and the three audited local callees.
- * Old registered draft failed to compile: ObjectRuntime has no unknown_00.
- */
 #include "TYPES.H"
 #include "VINASU.H"
 #include "FIELD_EVENT.H"
 
-/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
 static inline s32 Event_ChooseYesNo(s32 actor, s32 flags)
 {
     return Engine_EventChooseYesNo(actor, flags);

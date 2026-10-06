@@ -1,3 +1,2 @@
 #!/bin/sh
-# Merge commits run the same staged checks.
 exec make --no-print-directory precommit

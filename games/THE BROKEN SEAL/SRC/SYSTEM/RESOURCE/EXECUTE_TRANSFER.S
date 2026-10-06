@@ -1,14 +1,7 @@
-@ Runs a list of 12-byte transfer records from a stack copy of exactly these
-@ 104 bytes. A record without size bits goes straight to the DMA3 registers
-@ with stm; otherwise its value is stored, ORed or cleared at the destination
-@ with a byte, halfword or word access chosen by one compare
-@ (ldrbcc/ldrheq/ldrgt). It saves r5 alone with stmfd sp!, {r5}; GCC saves lr
-@ with any register. Every TBS and TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_08002cf4
-Func_08002cf4:
+	.global Resource_ExecuteTransfer
+Resource_ExecuteTransfer:
 	stmfd	sp!, {r5}
 	add	r0, r0, #4
 .L_08002cfc:
@@ -40,4 +33,4 @@ Func_08002cf4:
 	stm	ip, {r2, r3, r4}
 	b	.L_08002d3c
 	.global TransferCommandExecutor_Size
-	.set TransferCommandExecutor_Size, . - Func_08002cf4
+	.set TransferCommandExecutor_Size, . - Resource_ExecuteTransfer

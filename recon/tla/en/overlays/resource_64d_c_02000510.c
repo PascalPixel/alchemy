@@ -2,7 +2,7 @@
 
 void Func_020023a4();
 void Func_020026f4();
-void Func_020027b0();
+void VinasuIriguchi_StopSparks();
 void Func_02002854();
 void Func_020028ac();
 void Func_020028b4();
@@ -42,12 +42,7 @@ void Func_02002a44();
 void Func_02002a4c();
 void Func_02002a54();
 void Func_02002a5c();
-void Func_02002a64();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+void Engine_AudioPlayCue();
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -360,11 +355,11 @@ void Scene_RunSoldierInterception(void)
     Func_02002a44();
     record = Func_020028cc(9);
     Func_02002a5c((s32)record, 2);
-    Func_02002a64(178);
+    Engine_AudioPlayCue(178);
     Func_020028ac(20);
     Call2(Func_02002a34, 8, 0x4084);
     Func_020028ac(60);
-    Call1(Func_02002a64, 0x186);
+    Call1(Engine_AudioPlayCue, 0x186);
     Func_0200295c(12, 0);
     Func_020023a4(12);
     Value3(Func_02002964, 17, 0x100, 0);
@@ -487,7 +482,7 @@ void Scene_RunSoldierInterception(void)
     Call3(Func_020028fc, 17, -20, 20);
     Func_02002904(17);
     Func_02002914(17, 1);
-    Func_02002a64(133);
+    Engine_AudioPlayCue(133);
     *(s32 *)(rec + 8) += 0x80000;
     *(s32 *)(rec + 108) = v5;
     *(s32 *)(rec + 16) += -0x80000;
@@ -513,13 +508,13 @@ void Scene_RunSoldierInterception(void)
     }
     Func_02002924(17, 6, 40);
     Func_02002914(17, 11);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
     Func_020028ac(20);
     *(u16 *)p10 = v5;
@@ -532,7 +527,7 @@ void Scene_RunSoldierInterception(void)
     Func_0200290c(19, 0, 0);
     Func_0200290c(18, 0, 0);
     Func_0200290c(17, 0, 0);
-    Func_020027b0();
+    VinasuIriguchi_StopSparks();
     Func_020028ac(20);
     Func_0200291c(9, 4);
     Func_020028ac(10);

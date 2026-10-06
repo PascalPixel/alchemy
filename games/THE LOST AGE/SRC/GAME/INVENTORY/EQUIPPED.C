@@ -2,20 +2,18 @@
 
 s32 Inventory_FindEquipped(s32 owner, s32 type)
 {
-    u8 *base = Owner_GetState(owner);
+    struct OwnerInventoryState *base = Owner_GetState(owner);
     s32 index;
-    s32 offset;
     struct ItemDefinition *item;
 
-    for (index = 0, offset = 216; index <= 14; index++) {
-        if (*(u16 *)((u8 *)offset + (s32)base) & 0x200) {
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+        if (base->inventory[index] & INVENTORY_EQUIPPED) {
             item = Item_GetDirect(
-                *(u16 *)((u8 *)offset + (s32)base));
+                base->inventory[index]);
             if (item->type == type) break;
         }
-        offset += 2;
     }
-    if (index == 15) index = -1;
+    if (index == INVENTORY_SLOTS) index = -1;
     return index;
 }
 
@@ -26,8 +24,8 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(
     s32 slot;
     struct ItemDefinition *item;
 
-    for (slot = 0; slot <= 14; slot++) {
-        if (inv->inventory[slot] & 0x200) {
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+        if (inv->inventory[slot] & INVENTORY_EQUIPPED) {
             item = Item_GetDirect(inv->inventory[slot]);
             if (item->type == type) {
                 return item;

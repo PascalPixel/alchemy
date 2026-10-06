@@ -4,53 +4,50 @@
 #include "TYPES.H"
 
 struct BattleEffectArgument;
+void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode);
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect);
+void BattleFx_InitializeMode1(struct BattleEffectArgument *effect);
 void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
 
+s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
+
 void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
 
-/* BattleEffect_LoadWork builds a rectangle blitter into heap slot `slot`,
-   for a canvas of 1 << width_shift by 1 << height_shift pixels, and returns
-   1 when it used its whole template. The name is older than the reading. */
 enum {
-    GOUSEI_CLIP_X = 1, /* clip at the canvas sides; without it x wraps */
-    GOUSEI_CLIP_Y = 2, /* clip at the canvas top and bottom */
-    GOUSEI_FLIP_X = 4, /* read each source row backwards */
-    GOUSEI_FLIP_Y = 8, /* read the source rows from the last to the first */
+    GOUSEI_CLIP_X = 1,
+    GOUSEI_CLIP_Y = 2,
+    GOUSEI_FLIP_X = 4,
+    GOUSEI_FLIP_Y = 8,
     GOUSEI_FLIP = GOUSEI_FLIP_X | GOUSEI_FLIP_Y
 };
 enum {
-    GOUSEI_YOMI,   /* every pixel replaces the canvas pixel */
-    GOUSEI_NURI,   /* pixels that are not zero replace it */
-    GOUSEI_HIKAKU, /* the greater of the two stays */
-    GOUSEI_KASAN   /* the two are added, up to 63 */
+    GOUSEI_YOMI,
+    GOUSEI_NURI,
+    GOUSEI_HIKAKU,
+    GOUSEI_KASAN
 };
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
 
-/* The rectangle blitters return a value every caller ignores; declaring it
-   still matters, because a call that sets r0 changes how the scheduler
-   orders the argument loads. */
 typedef s32 (*BattleEffectDrawRectangle)(
     void *destination, const void *source,
     s32 x, s32 y, s32 width, s32 height);
 typedef BattleEffectDrawRectangle DrawRectangle;
 typedef BattleEffectDrawRectangle DrawRectangleFn;
 
-/* target_flags 下位4ビットのダメージ種別。 */
 enum {
-    BATTLE_DAMAGE_PP_DIRECT = -1, /* PPへの直接ダメージ */
-    BATTLE_DAMAGE_HP_HEAL = 1,    /* HP回復 */
-    BATTLE_DAMAGE_HP_POWER = 2,   /* 威力ベースのHPダメージ */
-    BATTLE_DAMAGE_WEAPON = 3,     /* 武器攻撃 */
-    BATTLE_DAMAGE_WEAPON_SCALED = 4, /* 武器攻撃 威力乗算/10 */
-    BATTLE_DAMAGE_HP_ADDITIVE_6 = 5, /* 加算HPダメージ 減衰6系 */
-    BATTLE_DAMAGE_HP_ADDITIVE_7 = 6, /* 加算HPダメージ 減衰5系 */
-    BATTLE_DAMAGE_HP_ADDITIVE_9 = 8, /* 加算HPダメージ 減衰8系 */
-    BATTLE_DAMAGE_PP_DRAIN = 10,  /* PP吸収系 */
-    BATTLE_DAMAGE_PP_HEAL = 11    /* PP回復 */
+    BATTLE_DAMAGE_PP_DIRECT = -1,
+    BATTLE_DAMAGE_HP_HEAL = 1,
+    BATTLE_DAMAGE_HP_POWER = 2,
+    BATTLE_DAMAGE_WEAPON = 3,
+    BATTLE_DAMAGE_WEAPON_SCALED = 4,
+    BATTLE_DAMAGE_HP_ADDITIVE_6 = 5,
+    BATTLE_DAMAGE_HP_ADDITIVE_7 = 6,
+    BATTLE_DAMAGE_HP_ADDITIVE_9 = 8,
+    BATTLE_DAMAGE_PP_DRAIN = 10,
+    BATTLE_DAMAGE_PP_HEAL = 11
 };
 
-/* 挙動から付けた識別名で、原作の識別子の主張ではない。 */
 enum {
     EFX_CURE_POISON = 3,
     EFX_CURE_PART = 4,

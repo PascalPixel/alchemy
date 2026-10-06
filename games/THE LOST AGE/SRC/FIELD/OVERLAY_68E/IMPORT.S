@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_68E overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_68E overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -53,7 +49,7 @@ ObjectDispatch_ApplyValueToChildren:
 	.global Func_020012f8
 	.thumb_func
 Func_020012f8:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:
@@ -94,10 +90,10 @@ Menu_SelectEntry20To21:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global Party_AdjustSixDigitCounterA
+	.global Party_AdjustCoins
 	.thumb_func
-Party_AdjustSixDigitCounterA:
-	overlay_veneer Party_AdjustSixDigitCounterAFar
+Party_AdjustCoins:
+	overlay_veneer Party_AdjustCoinsFar
 	.global Func_02001358
 	.thumb_func
 Func_02001358:
@@ -121,11 +117,11 @@ Battle_WaitMode0:
 	.global Func_02001380
 	.thumb_func
 Func_02001380:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02001388
 	.thumb_func
 Func_02001388:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -145,11 +141,11 @@ ObjectMotion_SetPositionAndReset:
 	.global Func_020013b0
 	.thumb_func
 Func_020013b0:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_020013b8
 	.thumb_func
 Func_020013b8:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -157,7 +153,7 @@ Object_SetModeById:
 	.global Func_020013c8
 	.thumb_func
 Func_020013c8:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -165,15 +161,15 @@ UiText_OpenMessageAtObject:
 	.global Func_020013d8
 	.thumb_func
 Func_020013d8:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:
@@ -181,7 +177,7 @@ Func_020013f0:
 	.global Func_020013f8
 	.thumb_func
 Func_020013f8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001400
 	.thumb_func
 Func_02001400:

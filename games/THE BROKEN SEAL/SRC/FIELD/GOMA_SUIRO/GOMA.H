@@ -1,26 +1,12 @@
 #ifndef ALCHEMY_GOMA_H
 #define ALCHEMY_GOMA_H
 
-/* The Goma waterway (resource_38a): what its files share. */
-
 #include "TYPES.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 #include "CONFIGURED_EFFECT_SPAWN.H"
-
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
 
 typedef struct {
     u8 pad_to_angle[30];
@@ -34,20 +20,8 @@ typedef struct {
 
 void WaitFrames(s32 frames);
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
-
-/* Contiguous unnamed leaf-owner run for resource_38a. */
-
-/* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
-
-/* Complete eight-byte literal-address getter, including its sole pool word. */
-
-/* Wait at most sixty frames for the object to reach the requested height. */
-
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 
-/* The object is accessed through word fields and a linked record. Keep the
- * shared storage view so the record load follows the position stores. */
 union MotionWork {
     struct {
         u32 unk_00[2];

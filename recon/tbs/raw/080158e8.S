@@ -1,11 +1,3 @@
-@ Builds metatile entries from halfword command lists, decoding the commands
-@ 0xf007 to 0xf01b through two jump tables. It runs from a heap copy of
-@ exactly these 532 bytes. Kept as assembly without credit: it has the shape
-@ of GCC 2.96 ARM-mode output (each switch as cmp; ldrls pc,
-@ [pc, r3, lsl #2]; b default, halfword stores post-incremented by their
-@ size with the rest of the step as a separate add, lr saved with r5-sl while
-@ r4 stays free). The approved routes compile only Thumb. TLA's
-@ GRAPHICS/BUILD_METATILES.S holds the same ARM code, likewise uncredited.
 .syntax unified
 .text
 	.arm
@@ -37,26 +29,27 @@ Tile_BuildMetatiles:
 	cmp	r3, #19
 	ldrls	pc, [pc, r3, lsl #2]
 	b .L_080159f4
-	stmdaeq	r1, {r3, r4, r6, r7, r8, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r3, r4, r7, r8, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r3, r4, r5, r7, r8, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r3, r4, r6, r7, r8, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r3, r4, r6, r7, r8, fp, ip, lr}
+	.4byte .L_first_other
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_first_f010
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_first_f013
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_first_other
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_first_other
+.L_first_f010:
 	lsl	lr, r6, #3
 	add	ip, lr, #8
 	add	r8, lr, #1
@@ -65,6 +58,7 @@ Tile_BuildMetatiles:
 	mov	r2, ip
 	add	r5, r5, #1
 	b .L_08015a8c
+.L_first_f013:
 	lsl	lr, r6, #3
 	add	ip, lr, #8
 	mov	r8, lr
@@ -73,6 +67,7 @@ Tile_BuildMetatiles:
 	add	r2, lr, #7
 	add	r5, r5, #1
 	b .L_08015a8c
+.L_first_other:
 	lsl	lr, r6, #3
 	add	ip, lr, #8
 	mov	r7, lr
@@ -88,35 +83,38 @@ Tile_BuildMetatiles:
 	cmp	r3, #20
 	ldrls	pc, [pc, r3, lsl #2]
 	b .L_08015a8c
-	stmdaeq	r1, {r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r5, r6, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r4, r5, r6, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r2, r3, r7, r9, fp, ip, lr}
-	stmdaeq	r1, {r7, r9, fp, ip, lr}
+	.4byte .L_next_other
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_next_f012
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_next_f015
+	.4byte .L_08015a8c
+	.4byte .L_next_other
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_08015a8c
+	.4byte .L_next_other
+.L_next_f012:
 	add	ip, r1, #8
 	add	r4, r1, #7
 	mov	r2, ip
 	b .L_08015a8c
+.L_next_f015:
 	add	ip, r1, #8
 	mov	r4, ip
 	add	r2, r1, #7
 	b .L_08015a8c
+.L_next_other:
 	add	r2, r1, #8
 	mov	ip, r2
 	mov	r4, r2

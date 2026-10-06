@@ -1,21 +1,20 @@
-@ Unidentified ROM data, read from your own ROM at build time as early pret
-@ projects read their base ROM. Each section shrinks as its data gains source.
 	.section .unidentified.08000000,"a"
-	.global Resource_Data000
-Resource_Data000:
+	.global Cartridge_Restart
+Cartridge_Restart:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .unidentified.080178b4,"a"
-	.global Data_080178b4
-Data_080178b4:
-	.incbin "baserom.gba", 0x000178b4, 0x00000136
-	.global Data_080179ea
-Data_080179ea:
+	.global Runtime_IrqHandlers
+Runtime_IrqHandlers:
+	.incbin "baserom.gba", 0x000178b4, 0x00000038
+	.incbin "baserom.gba", 0x000178ec, 0x000000fe
+	.global Math_ArcTanTable
+Math_ArcTanTable:
 	.incbin "baserom.gba", 0x000179ea, 0x00000106
-	.global Data_08017af0
-Data_08017af0:
+	.global Ui_WindowPalette
+Ui_WindowPalette:
 	.incbin "baserom.gba", 0x00017af0, 0x00000020
-	.global Data_08017b10
-Data_08017b10:
+	.global System_BasicColorPalette
+System_BasicColorPalette:
 	.incbin "baserom.gba", 0x00017b10, 0x000001c0
 	.global Data_08017cd0
 Data_08017cd0:
@@ -50,8 +49,8 @@ Flash_ChipAtmelLayout:
 	.section .unidentified.08017fbc,"a"
 	.incbin "baserom.gba", 0x00017fbc, 0x00008044
 	.section .unidentified.080203a8,"a"
-	.global Data_080203a8
-Data_080203a8:
+	.global ResourceSlot_ConversionTables
+ResourceSlot_ConversionTables:
 	.incbin "baserom.gba", 0x000203a8, 0x00000500
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
@@ -63,8 +62,8 @@ Data_080209a8:
 	.global Data_0802e89c
 Data_0802e89c:
 	.incbin "baserom.gba", 0x0002e89c, 0x00000080
-	.global Data_0802e91c
-Data_0802e91c:
+	.global ResourceSlot_NumberTable
+ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x0002e91c, 0x000001a8
 	.global Data_0802eac4
 Data_0802eac4:
@@ -96,8 +95,8 @@ Data_0802eb98:
 	.global Data_0802ebc8
 Data_0802ebc8:
 	.incbin "baserom.gba", 0x0002ebc8, 0x00000080
-	.global Data_0802ec48
-Data_0802ec48:
+	.global Script_MainScript
+Script_MainScript:
 	.incbin "baserom.gba", 0x0002ec48, 0x00000014
 	.global Data_0802ec5c
 Data_0802ec5c:
@@ -126,14 +125,14 @@ Data_0802ed34:
 	.global Data_0802edc4
 Data_0802edc4:
 	.incbin "baserom.gba", 0x0002edc4, 0x00000100
-	.global Data_0802eec4
-Data_0802eec4:
+	.global Curve_SampleIndexTable
+Curve_SampleIndexTable:
 	.incbin "baserom.gba", 0x0002eec4, 0x00000100
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
 	.incbin "baserom.gba", 0x0002efc4, 0x00000040
-	.global Data_0802f004
-Data_0802f004:
+	.global WorldMap_TerrainBehaviorTable
+WorldMap_TerrainBehaviorTable:
 	.incbin "baserom.gba", 0x0002f004, 0x00000050
 	.global Data_0802f054
 Data_0802f054:
@@ -219,17 +218,17 @@ Data_0804e7dc:
 	.global UiIcon_OverlayPointerTable
 UiIcon_OverlayPointerTable:
 	.incbin "baserom.gba", 0x0004ea74, 0x000000e4
-	.global Data_0804eb58
-Data_0804eb58:
+	.global UiIcon_ItemIconPointers
+UiIcon_ItemIconPointers:
 	.incbin "baserom.gba", 0x0004eb58, 0x000005cc
-	.global Data_0804f124
-Data_0804f124:
+	.global UiIcon_ItemIconPointersEnd
+UiIcon_ItemIconPointersEnd:
 	.incbin "baserom.gba", 0x0004f124, 0x000058f0
 	.global UiIcon_PsynergyIconPointers
 UiIcon_PsynergyIconPointers:
 	.incbin "baserom.gba", 0x00054a14, 0x00000410
-	.global Data_08054e24
-Data_08054e24:
+	.global UiIcon_PsynergyIconPointersEnd
+UiIcon_PsynergyIconPointersEnd:
 	.incbin "baserom.gba", 0x00054e24, 0x000041d0
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
@@ -365,8 +364,8 @@ Data_0805f6e0:
 	.global Data_0805f700
 Data_0805f700:
 	.incbin "baserom.gba", 0x0005f700, 0x00000030
-	.global Data_0805f730
-Data_0805f730:
+	.global gRomShiftedTilePair
+gRomShiftedTilePair:
 	.incbin "baserom.gba", 0x0005f730, 0x00000040
 	.global Graphics_ExpandNibbleTable
 Graphics_ExpandNibbleTable:
@@ -497,8 +496,8 @@ Item_DefinitionTable:
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
 	.incbin "baserom.gba", 0x000b7c14, 0x00002268
-	.global Data_080b9e7c
-Data_080b9e7c:
+	.global Enemy_DefinitionTable
+Enemy_DefinitionTable:
 	.incbin "baserom.gba", 0x000b9e7c, 0x000070d0
 	.global Owner_GrowthRecords
 Owner_GrowthRecords:
@@ -509,8 +508,8 @@ Summon_OrderList:
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000c150c, 0x000000e8
-	.global Data_080c15f4
-Data_080c15f4:
+	.global Class_DefinitionTable
+Class_DefinitionTable:
 	.incbin "baserom.gba", 0x000c15f4, 0x00005010
 	.global Data_080c6604
 Data_080c6604:
@@ -524,11 +523,11 @@ Data_080c6684:
 	.global Data_080c6b04
 Data_080c6b04:
 	.incbin "baserom.gba", 0x000c6b04, 0x00000014
-	.global Data_080c6b18
-Data_080c6b18:
+	.global Battle_Effect90Classes
+Battle_Effect90Classes:
 	.incbin "baserom.gba", 0x000c6b18, 0x0000005e
-	.global Data_080c6b76
-Data_080c6b76:
+	.global Battle_Effect91Classes
+Battle_Effect91Classes:
 	.incbin "baserom.gba", 0x000c6b76, 0x0000003a
 	.global Djinn_Definitions
 Djinn_Definitions:
@@ -536,8 +535,8 @@ Djinn_Definitions:
 	.section .unidentified.080c89cc,"a"
 	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .unidentified.080ed80c,"a"
-	.global Data_080ed80c
-Data_080ed80c:
+	.global BattleFx_ArcTiles
+BattleFx_ArcTiles:
 	.incbin "baserom.gba", 0x000ed80c, 0x00000100
 	.global Data_080ed90c
 Data_080ed90c:
@@ -560,11 +559,11 @@ Data_080eef34:
 	.global Encounter_AreaEntryTable
 Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000eef54, 0x00000140
-	.global Data_080ef094
-Data_080ef094:
+	.global Scene_CueRuleTable
+Scene_CueRuleTable:
 	.incbin "baserom.gba", 0x000ef094, 0x00000410
-	.global Data_080ef4a4
-Data_080ef4a4:
+	.global Scene_AreaNameRules
+Scene_AreaNameRules:
 	.incbin "baserom.gba", 0x000ef4a4, 0x00000378
 	.section .unidentified.080ef824,"a"
 	.global Party_PairResolveRules
@@ -618,8 +617,8 @@ Data_080f02c6:
 	.global Data_080f0308
 Data_080f0308:
 	.incbin "baserom.gba", 0x000f0308, 0x000003d0
-	.global Data_080f06d8
-Data_080f06d8:
+	.global Object_VariantMotionScripts
+Object_VariantMotionScripts:
 	.incbin "baserom.gba", 0x000f06d8, 0x00000184
 	.global Data_080f085c
 Data_080f085c:
@@ -627,8 +626,8 @@ Data_080f085c:
 	.global Data_080f0874
 Data_080f0874:
 	.incbin "baserom.gba", 0x000f0874, 0x00000018
-	.global Data_080f088c
-Data_080f088c:
+	.global ObjectGroup_BlinkChildValues
+ObjectGroup_BlinkChildValues:
 	.incbin "baserom.gba", 0x000f088c, 0x00000004
 	.global Data_080f0890
 Data_080f0890:
@@ -690,8 +689,8 @@ Data_080f0e9c:
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
 	.incbin "baserom.gba", 0x000f0ea4, 0x00000020
-	.global Data_080f0ec4
-Data_080f0ec4:
+	.global BattleFx_EightWayHeadingWords
+BattleFx_EightWayHeadingWords:
 	.incbin "baserom.gba", 0x000f0ec4, 0x00000020
 	.global Data_080f0ee4
 Data_080f0ee4:
@@ -858,14 +857,14 @@ Data_080f39c4:
 	.global Data_080f3bc4
 Data_080f3bc4:
 	.incbin "baserom.gba", 0x000f3bc4, 0x00000018
-	.global Data_080f3bdc
-Data_080f3bdc:
+	.global ColorBuffer_FadeStep1Map
+ColorBuffer_FadeStep1Map:
 	.incbin "baserom.gba", 0x000f3bdc, 0x00000020
-	.global Data_080f3bfc
-Data_080f3bfc:
+	.global ColorBuffer_FadeStep2Map
+ColorBuffer_FadeStep2Map:
 	.incbin "baserom.gba", 0x000f3bfc, 0x00000020
-	.global Data_080f3c1c
-Data_080f3c1c:
+	.global ColorBuffer_FadeStep3Map
+ColorBuffer_FadeStep3Map:
 	.incbin "baserom.gba", 0x000f3c1c, 0x000043e4
 	.section .unidentified.081055f8,"a"
 	.incbin "baserom.gba", 0x001055f8, 0x00000240
@@ -951,8 +950,8 @@ Data_08105a50:
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x0010c008, 0x00000140
-	.global Data_0810c148
-Data_0810c148:
+	.global Shop_PriceTiles
+Shop_PriceTiles:
 	.incbin "baserom.gba", 0x0010c148, 0x00000100
 	.global Data_0810c248
 Data_0810c248:
@@ -1007,8 +1006,8 @@ Data_08128828:
 	.global Data_08128836
 Data_08128836:
 	.incbin "baserom.gba", 0x00128836, 0x0000000e
-	.global Data_08128844
-Data_08128844:
+	.global BattlePlacement_StepPairs
+BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x00128844, 0x00000024
 	.global Data_08128868
 Data_08128868:
@@ -1080,8 +1079,8 @@ Data_0812a176:
 	.global Data_0812cacc
 Data_0812cacc:
 	.incbin "baserom.gba", 0x0012cacc, 0x00000004
-	.global Data_0812cad0
-Data_0812cad0:
+	.global Resource_SlotAssignments
+Resource_SlotAssignments:
 	.incbin "baserom.gba", 0x0012cad0, 0x000000e0
 	.global Data_0812cbb0
 Data_0812cbb0:
@@ -1114,8 +1113,8 @@ Data_0812cd74:
 Data_0812ce54:
 	.incbin "baserom.gba", 0x0012ce54, 0x00000020
 	.section .unidentified.0812ce7c,"a"
-	.global Data_0812ce7c
-Data_0812ce7c:
+	.global BattleFormation_Records
+BattleFormation_Records:
 	.incbin "baserom.gba", 0x0012ce7c, 0x00000018
 	.global Data_0812ce94
 Data_0812ce94:
@@ -2921,8 +2920,8 @@ Data_081a19a8:
 	.global Data_081a2059
 Data_081a2059:
 	.incbin "baserom.gba", 0x001a2059, 0x00000063
-	.global Data_081a20bc
-Data_081a20bc:
+	.global DisplayScroll_LineTable
+DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x001a20bc, 0x00000344
 	.global Data_081a2400
 Data_081a2400:

@@ -960,7 +960,7 @@ FuneHeya_SceneTable05:
 	.4byte FieldScene_RunThreeActorPresentation
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte FieldScene_RunScene3b1_020007f8
+	.4byte FuneHeya_AskAboutWarriors
 	.4byte 0x00000000
 	.4byte 0x09250009
 	.4byte MsgFuneHeyaApparentlyWeCantTakeSilkRoad
@@ -1206,10 +1206,10 @@ FuneHeya_SceneTable08:
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte FieldScene_RunScene3b1_02000728
+	.4byte FuneHeya_TalkCaptainStatus
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte FieldScene_RunScene3b1_02000670
+	.4byte FuneHeya_AskToSeeCaptain
 	.4byte 0x00000000
 	.4byte 0x09210009
 	.4byte MsgFuneHeyaIWonderIfThereAreAny

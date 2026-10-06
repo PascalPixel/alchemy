@@ -284,7 +284,7 @@ Func_02000254:
 	movs r2, #8
 	movs r1, #2
 	negs r2, r2
-	bl ObjectMotion_SnapHeadingAndOffset
+	bl ObjectMotion_CenterOnColumn
 	b .L_020082bc
 .L_020082b2:
 	movs r2, #8
@@ -296,8 +296,8 @@ Func_02000254:
 	bl Battle_WaitMode0
 	adds r0, r7, #0
 	bl Func_0200050c
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02000474
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -366,7 +366,7 @@ Func_020002f8:
 .L_0200834a:
 	pop {pc}
 .L_0200834c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008350:
 	.4byte 0x05000172
 .L_02008354:

@@ -12,14 +12,14 @@ struct ItemOwner {
     u16 stat_1c;
     u8 stat_1e;
     u8 padding_01f[0x15];
-    s16 max_hp;                     /* 0x034 */
+    s16 max_hp;
     s16 max_pp;
     s16 hp;
     s16 pp;
     u8 padding_03c[0x9c];
-    u16 items[15];                  /* 0x0d8 */
+    u16 items[15];
     u8 padding_0f6[0x3b];
-    s8 poison;                      /* 0x131 */
+    s8 poison;
 };
 
 struct ItemData {
@@ -32,11 +32,11 @@ struct ItemData {
 struct ItemUseWork {
     u8 padding_000[0x1c8];
     u16 entries[32];
-    u16 targets[8];                 /* 0x208, the party list */
-    u8 entry_count;                 /* 0x218 */
-    u8 target_count;                /* 0x219 */
+    u16 targets[8];
+    u8 entry_count;
+    u8 target_count;
     u8 padding_21a[0x40];
-    s16 result_code;                /* 0x25a */
+    s16 result_code;
 };
 
 extern struct ItemUseWork *gMenuWork;

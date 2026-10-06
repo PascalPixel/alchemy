@@ -1,36 +1,34 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TEXT_RENDER_RUNTIME.H"
+#include "WINDOW.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
-extern u8 Data_03001e8c[];
-
-extern u8 *gWindowWork;
-
-s32 UiText_BuildRenderEntries(s32 character, s32 count);
-u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
-void UiText_RenderWideStringAtOffset(void *text, s32 work, s32 x, s32 y);
-void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
-s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
-    u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
-    s32 offset;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
+    u16 *counter = &canvas->count;
     s32 zero = 0;
 
     *counter = zero;
     UiText_BuildRenderEntries(arg0, 1);
-    offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-    *(u16 *)(base + offset) = zero;
+    canvas->entries[*counter] = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-    /* 0xeb0から始まる列を次の処理へ渡す。 */
-    UiText_RenderWideStringAtOffset(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
+    UiText_RenderWideStringAtOffset(canvas->entries, (struct UiWindow *)arg1, arg2, arg3);
 }
 
 void UiText_DrawCharacterAtOffset(
     s32 character,
-    struct TextRenderWork *position,
+    struct RenderInput *position,
     u32 offset_x,
     u32 offset_y)
 {
@@ -39,29 +37,28 @@ void UiText_DrawCharacterAtOffset(
     u16 *text;
     s32 zero;
     u32 cell;
-    u8 *base;
+    struct UiRenderWork *canvas;
     u16 *counter;
 
-    base = gWindowWork;
-    counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
+    canvas = (struct UiRenderWork *)gWindowWork[0];
+    counter = &canvas->count;
     zero = 0;
     *counter = zero;
     UiText_BuildRenderEntries(character, 1);
 
-    byte_offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-    *(u16 *)(base + byte_offset) = zero;
-    *counter = (u16)((*counter + 1) & RENDER_ENTRY_MASK);
+    canvas->entries[*counter] = zero;
+    *counter = (*counter + 1) & RENDER_ENTRY_MASK;
 
     cell = ((position->y + (offset_y >> 3) + 1) << 5)
         + (position->x + (offset_x >> 3)) + 1;
     if (cell < 0x280U) {
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
-        text = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
+        text = canvas->entries;
         UiText_RenderStringTiles(
             text,
-            (s32)(base + byte_offset),
-            vram_address,
+            (u16 *)((u8 *)canvas->tilemap + byte_offset),
+            (u16 *)vram_address,
             7 & offset_x);
     }
 }
@@ -77,25 +74,25 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
     output = buffer;
     if (*input != 0) {
         do {
-            *output = (s16)*input;
+            *output = *input;
             input++;
             output++;
         } while (*input != 0);
     }
     *output = 0;
-    UiText_RenderWideStringAtOffset(buffer, arg1, arg2, arg3);
+    UiText_RenderWideStringAtOffset((u16 *)buffer, (struct UiWindow *)arg1, arg2, arg3);
     Runtime_BumpFree(buffer);
 }
 
 void UiText_DrawStringAtOffset(
     u8 *text,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y)
 {
     s16 *buffer;
     s16 *output;
-    u8 *base;
+    struct UiRenderWork *canvas;
     u32 cell;
     s32 vram;
     s32 src;
@@ -103,7 +100,7 @@ void UiText_DrawStringAtOffset(
     s32 phase;
 
     buffer = Runtime_BumpAllocateAlternatePool(0x200);
-    base = gWindowWork;
+    canvas = (struct UiRenderWork *)gWindowWork[0];
     output = buffer;
     if (*text != 0) {
         do {
@@ -114,19 +111,18 @@ void UiText_DrawStringAtOffset(
     }
     *output = 0;
 
-    /* 座標を8ドット単位のセル番号へ変換する。 */
     cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
         + (work->x + ((u32)offset_x >> 3)) + 1;
     if (cell < 0x280) {
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
-        src = (s32)base + cell;
+        src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
-            buffer,
-            src,
-            dst,
+            (u16 *)buffer,
+            (u16 *)src,
+            (u16 *)dst,
             phase);
         Runtime_BumpFree(buffer);
     }
@@ -145,7 +141,7 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     *output = 0;
     x >>= 3;
     y >>= 3;
-    UiText_RenderWideStringInWindow(buffer, arg1, x, y);
+    UiText_RenderWideStringInWindow((s16 *)buffer, (struct UiWindow *)arg1, x, y);
     Runtime_BumpFree(buffer);
 }
 
@@ -153,20 +149,18 @@ void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawString(UiText_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
 void UiText_DrawNumberAtOffset(
     s32 arg0,
     s32 arg1,
-    struct TextRenderWork *arg2,
+    struct RenderInput *arg2,
     s32 arg3,
     s32 arg4)
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawStringAtOffset(UiText_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
@@ -174,13 +168,12 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawStringInWindow(UiText_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
 void UiText_DrawPrefixedNumberAtOffset(
     s32 value,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y,
     s32 variant)
@@ -190,17 +183,16 @@ void UiText_DrawPrefixedNumberAtOffset(
     u8 *text;
     s32 index;
     u32 cell;
-    u8 *base;
+    struct UiRenderWork *canvas;
     s32 vram;
     s32 src;
     s32 dst;
     s32 phase;
 
-    base = gWindowWork;
+    canvas = (struct UiRenderWork *)gWindowWork[0];
     text = UiText_FormatNumber(formatted, value, 4);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
-    /* Here the second variant has a prefix glyph pair of its own. */
     if (variant == 0) {
         output[0] = 0xf01d;
         output[1] = 0xf01e;
@@ -227,12 +219,12 @@ void UiText_DrawPrefixedNumberAtOffset(
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
-        src = (s32)base + cell;
+        src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
-            output,
-            src,
-            dst,
+            (u16 *)output,
+            (u16 *)src,
+            (u16 *)dst,
             phase);
     }
 }

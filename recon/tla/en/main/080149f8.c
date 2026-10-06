@@ -2,8 +2,6 @@
 #include "SCENE.H"
 extern u8 gNumberTextBuffer[];
 
-/* ui/text/fmt/text_format_hex_to_work.c */
-/* ui/text/fmt/format_hex_to_work.c */
 extern const u8 RomBytes_0800795c[];
 
 void Text_FormatHexToWork(u32 value)

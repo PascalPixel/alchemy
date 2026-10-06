@@ -1,0 +1,34 @@
+#include "TYPES.H"
+#include "SYSTEM.H"
+#include "EVENT_RUNTIME.H"
+#include "FIELD.H"
+
+extern struct EventRuntime *gEventWork;
+void *ObjectTable_Get(s32 id);
+
+s32 Event_ShowMessageAtPosition();
+
+void Event_ShowSpeakerMessage(s32 speaker)
+{
+    register s32 x asm("r6"); /* FAKEMATCH: the unset x lives in r6 */
+    s32 y;
+    register struct EventRuntime *state asm("r8") = gEventWork; /* FAKEMATCH: keeps the work in r8 */
+
+    speaker &= 0xfff;
+    ObjectTable_Get(speaker);
+    state->speaker = speaker;
+    if (state->message_busy == 0) {
+        s32 py; s32 px = x; s32 min_x = 8; s32 min_y = 20; asm("" : "=l"(py) : "0"(y)); /* FAKEMATCH: copies y before the test */ if (py > 119) py += 32; else py -= 32; if (px < min_x) px = min_x; if (px > 312) px = 312; if (py < min_y) py = min_y; if (py > 220) py = 220;
+        { s32 win = UiText_OpenMessageWindowFar(state->message, px, py, 1);
+        state->message_window = win;
+        while (UiWork_IsIdleFar(win) == 0)
+            WaitFrames(1);
+        }
+    }
+    { s16 *m = &state->message; (*m)++; }
+}
+
+void ObjectTable_CallRefreshHook(void)
+{
+    Event_ShowMessageAtPosition();
+}

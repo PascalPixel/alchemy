@@ -37,8 +37,8 @@ Func_0801319c:
 	ldr r2, .L_08013248
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_08014c6c
-	bl Func_080133c4
+	bl Runtime_InitializeHeap
+	bl Runtime_InstallIwramAndIrqs
 	ldr r3, .L_0801324c
 	str r5, [r3]
 	ldr r3, .L_08013250
@@ -48,7 +48,7 @@ Func_0801319c:
 	ldr r3, .L_08013258
 	strb r5, [r3]
 	bl Func_080132d0
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	ldr r3, .L_08013240
 	movs r2, #128
@@ -57,17 +57,17 @@ Func_0801319c:
 	movs r0, #0
 	ldr r2, .L_0801325c
 	movs r1, #1
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	ldr r2, .L_08013260
 	movs r0, #13
 	movs r1, #1
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r2, #192
 	ldr r3, .L_08013264
 	lsls r2, r2, #8
 	adds r2, #15
 	strh r2, [r3]
-	bl Func_081c0008
+	bl Audio_InitializeRuntimeDefaultsFar
 	bl Func_08014368
 	bl Scheduler_ResetTaskTable
 	ldr r3, .L_08013268
@@ -86,9 +86,9 @@ Func_0801319c:
 .L_08013250:
 	.4byte Data_03001110
 .L_08013254:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08013258:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_0801325c:
 	.4byte Func_0801399c
 .L_08013260:
@@ -96,9 +96,9 @@ Func_0801319c:
 .L_08013264:
 	.4byte 0x04000132
 .L_08013268:
-	.4byte Data_03007800
+	.4byte gCartridgeResetMarker
 .L_0801326c:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_08013270:
 	strb r3, [r2]
 	ldr r2, .L_08013298
@@ -121,7 +121,7 @@ Func_0801319c:
 .L_08013298:
 	.4byte gOamUsage
 .L_0801329c:
-	.4byte Data_03001180
+	.4byte gSleepDisabled
 .L_080132a0:
 	pop {r5, pc}
 	.2byte 0x0000

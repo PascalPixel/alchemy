@@ -39,7 +39,7 @@ LuckyDice_Run:
 	bl Runtime_AllocateBlock
 	str r0, [sp, #104]
 	ldr r0, .L_081ac2e4
-	bl Func_080132fc
+	bl Resource_ReservedNoOp
 	bl Func_081ac028
 	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081ac2e8
@@ -190,7 +190,7 @@ LuckyDice_Run:
 .L_081ac2e4:
 	.4byte 0x0000000c
 .L_081ac2e8:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081ac2ec:
 	.4byte 0x06003000
 .L_081ac2f0:
@@ -210,7 +210,7 @@ LuckyDice_Run:
 .L_081ac30c:
 	.4byte 0x84001f00
 .L_081ac310:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081ac314:
 	movs r3, #128
 	ldr r1, .L_081ac350
@@ -419,7 +419,7 @@ LuckyDice_Run:
 	adds r3, r6, #0
 	bl Graphics_ScaleRgb555Buffer
 .L_081ac4ce:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #104]
 	ldr r1, [sp, #40]
 	bl Graphics_PrepareTransferInIwramWork
@@ -608,7 +608,7 @@ LuckyDice_Run:
 	cmp r1, #0
 	ble .L_081ac6d0
 	adds r0, r1, #0
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	ldr r3, [sp, #80]
 	movs r2, #1
 	str r2, [sp, #72]
@@ -895,7 +895,7 @@ LuckyDice_Run:
 	str r2, [r5, #32]
 .L_081ac872:
 	ldr r7, .L_081aca44
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	ldr r2, [r7, #16]
 	lsls r3, r0, #2
 	adds r3, r3, r0
@@ -945,7 +945,7 @@ LuckyDice_Run:
 	bl UiWork_FinalizeFar
 	movs r6, #1
 	str r6, [sp, #96]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -958,7 +958,7 @@ LuckyDice_Run:
 .L_081ac8f4:
 	ldr r1, [sp, #92]
 	negs r0, r1
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	movs r4, #128
 	ldr r2, [sp, #108]
 	lsls r4, r4, #3

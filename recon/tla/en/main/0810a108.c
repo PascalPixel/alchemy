@@ -2,11 +2,6 @@
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
-/* Sells count of one inventory slot (count -1 sells the whole stack as
-   one): refuses worthless and cursed-and-equipped items, picks the offer
-   text for broken, several, rare or ordinary items, and on agreement
-   removes the items and pays out. */
-
 extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
 extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
 extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];
@@ -17,7 +12,7 @@ void UiMessage_ShowAndRestoreState(s32 message);
 s32 UiMessage_ShowChoice(s32 value);
 void Audio_PlayCue(s32 cue);
 void Func_080772b0(s32 unit_id, s32 slot);
-void Party_AdjustSixDigitCounterAFar(s32 amount);
+void Party_AdjustCoinsFar(s32 amount);
 
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
@@ -70,7 +65,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     Audio_PlayCue(102);
     for (i = 0; i < count; i++)
         Func_080772b0(unit_id, slot);
-    Party_AdjustSixDigitCounterAFar(total);
+    Party_AdjustCoinsFar(total);
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->item_window, unit_id);
     if (rare || all)

@@ -7,6 +7,6 @@ Func_08127578:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	pop {pc}
 	.2byte 0x0000

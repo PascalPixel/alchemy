@@ -1,3 +1,15 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"
@@ -13,48 +25,26 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
+#include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
-extern struct BattleCamera *gCameraWork;
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 
-/* Which crescent picture each of a mote's eight steps shows. */
-extern u8 MemberBeam_MotePictures[];
-/* The beam head's three pictures: place in the sheet, width and height. */
-extern u16 MemberBeam_HeadOffsets[];
-extern u8 MemberBeam_HeadWidths[];
-extern u8 MemberBeam_HeadHeights[];
+
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
-    s32 anchor, s32 *out_x, s32 *out_y);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 value);
-void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void SceneTransform_ApplyPosition(s32 *position);
-u32 Resource_DecodeType01(const void *source, void *destination);
+void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: the palette copies share the routine's address but build
-       the palette address again at each call, which only an inlined constant
-       argument compiles to; a direct call keeps it in a register. */
+    /* FAKEMATCH: the palette copies share the routine's address but build the palette address again at each call, which only an inlined constant argument compiles to; a direct call keeps it in a register. */
     copy(destination, source, size);
 }
 
-void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode);
-
-/* Mode entries of the member beam effect. */
 
 void BattleFx_RunTwoModeAMode0(struct BattleEffectArgument *effect)
 {
@@ -66,8 +56,6 @@ void BattleFx_RunTwoModeAMode1(struct BattleEffectArgument *effect)
     BattleFx_RunMemberBeam(effect, 1);
 }
 
-/* Battle effect: motes sink towards each target, then a beam comes down on
-   it from the top of the screen. */
 void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 {
     struct EffectPosition single;
@@ -91,8 +79,8 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    if (work->effect->unknown_001c == 1)
-        BattleFx_PrepareCanvasEffect(effect, mode, work->effect->side ^ work->effect->unknown_001c, 0, &screen_x, &screen_y);
+    if (work->effect->prelude == 1)
+        BattleFx_PrepareCanvasEffect(effect, mode, work->effect->side ^ work->effect->prelude, 0, &screen_x, &screen_y);
     palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
     CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
     palette += 128;
@@ -115,7 +103,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
         gMotes[i].z = (Random16() | -32) << 14;
         gMotes[i].variant = Random16() & 255;
     }
-    *(volatile u16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     if (work->effect->count == 1) {
         EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &single);
         offset = 64 - single.x;
@@ -125,10 +113,10 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
         else
             offset = 0;
     }
-    *(volatile s32 *)0x04000028 = offset << 8;
+    REG_BG2X = offset << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != work->effect->count * 16 + 116; frame++) {
         struct BattleCamera *camera = gCameraWork;
@@ -137,7 +125,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
             AudioCommand_PlayFar(212);
         if (frame == 80)
             BattleEventRuntime_BeginPhaseFar(0);
-        k = work->effect->unknown_001c;
+        k = work->effect->prelude;
         if (k == 1) {
             s32 angle = frame << 11;
             s32 x = (-Trig_Sin(angle) * 20 >> 16) + screen_x + offset - 20;
@@ -149,19 +137,19 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
             draw[1](canvas, work->sheet + 0x65c0, x, y, 40, 40);
             if (frame <= 3)
                 draw[1](canvas, work->sheet + 0x65c0, x, y, 40, 40);
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        draw[0] = gWorkSlot[46];
-        BattleEffect_LoadWork(47, 7, 7, 7, 2);
-        draw[1] = gWorkSlot[47];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+        draw[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+        draw[1] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
         for (k = 0; k != work->effect->count; k++) {
             struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
             s32 start = k * 16;
 
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = target->x;
             point[1] = 0;
             point[2] = target->z;
@@ -196,7 +184,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
                 struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 if (frame == start + 72)
                     ObjectGroup_UpdateMembers(work->effect->actors[i], 1, -1, -1, 0);
                 if (frame == start + 88)
@@ -231,12 +219,12 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
                 }
             }
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         work->transfer_pending = 1;
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

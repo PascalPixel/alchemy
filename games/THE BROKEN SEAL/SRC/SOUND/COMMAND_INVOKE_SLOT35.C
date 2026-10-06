@@ -1,9 +1,9 @@
-#include "TYPES.H"
+#include "AUDIO_ENGINE.H"
 
-/* Sound_CommandTable (0x02004000) slot 35 */
-extern void (*Data_0200408c)(s32);
+extern void (*Data_0200408c)(void *);
 
-void AudioCommand_InvokeSlot35(s32 argument)
+void AudioCommand_InvokeSlot35(void *block)
 {
-    Data_0200408c(argument);
+    /* FAKEMATCH: the entry-cell load and one-word call avoid an extra instruction from table indexing. */
+    Data_0200408c(block);
 }

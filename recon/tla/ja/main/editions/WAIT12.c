@@ -1,6 +1,3 @@
-/* Draft: complete44-byte Japanese instruction extent matches, but the
- * localized motion dispatcher selects a different veneer. Production uses
- * the already owned Japanese entry, without an alias or address constant. */
 #include "TYPES.H"
 
 s32 WaitFrames(s32);

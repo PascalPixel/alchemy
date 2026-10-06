@@ -2,12 +2,9 @@
 #define GUARD_VRAM_BLOCK_H
 
 #include "TYPES.H"
+#include "RESOURCE.H"
+#include "VRAM_TAB.H"
 
-struct VramBlockCacheEntry {
-    u16 size;
-    u16 offset;
-};
-
-extern struct VramBlockCacheEntry gVramBlockCache[];
+s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot);
 
 #endif

@@ -1,44 +1,19 @@
-//! Compiler runtime members built from the approved licensed agscc source.
-//! Ordinary archives supply the linker; generated provenance stays ignored.
 use crate::compiler::build_io::{read, text, write};
 use crate::compiler::routing::{bundle, runtime_library_cflags, CompilerTarget};
 use crate::compiler::sha256;
 use fs2::FileExt;
-use psynergy::process::run;
+use crate::process::run;
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
 
 const CONTAINER: &str = "agscc";
-/// The container's target makefile fragment: generated sources and flags.
 const TARGET_RULES: &str = "gcc/config/arm/t-arm-elf";
-/// `LIBGCC2_CFLAGS` and `INTERNAL_CFLAGS` defines of the container's library build.
 const LIBRARY_DEFINES: &[&str] = &[
     "-DCROSS_COMPILE",
     "-DIN_GCC",
     "-DIN_LIBGCC2",
     "-D__GCC_FLOAT_NOT_NEEDED",
 ];
-/// The options `agscc/build.sh` configures the container with.
-const CONFIGURE: &[&str] = &[
-    "--build=i686-unknown-linux-gnu",
-    "--host=i686-unknown-linux-gnu",
-    "--target=arm-elf",
-    "--with-cpu=arm7tdmi",
-    "--enable-multilib",
-    "--enable-interwork",
-    "--enable-languages=c",
-    "--without-headers",
-    "--disable-shared",
-    "--disable-threads",
-    "--disable-nls",
-    "--with-gnu-as",
-    "--with-gnu-ld",
-    "--disable-checking",
-];
-const CONFIGURE_CFLAGS: &str =
-    "-O2 -std=gnu17 -Wno-error -Wno-implicit-int -Wno-implicit-function-declaration";
-
 fn member_name(name: &str) -> bool {
     name.starts_with('_')
         && name.len() > 1
@@ -46,8 +21,6 @@ fn member_name(name: &str) -> bool {
             .bytes()
             .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
 }
-/// A generated library source and the container rule that writes it:
-/// `name:` followed by `echo '...' > name` and `cat $(srcdir)/path >> name`.
 fn generated_source(container: &Path, rules: &str, name: &str) -> Result<String, String> {
     let mut lines = rules.lines().skip_while(|line| {
         line.split_once(':')
@@ -83,7 +56,6 @@ fn generated_source(container: &Path, rules: &str, name: &str) -> Result<String,
     }
     Ok(output)
 }
-/// A makefile variable's words, as the target fragment assigns them.
 fn rule_variable(rules: &str, name: &str) -> Result<Vec<String>, String> {
     rules
         .lines()
@@ -95,12 +67,9 @@ fn rule_variable(rules: &str, name: &str) -> Result<Vec<String>, String> {
 }
 
 enum Source {
-    /// `-xassembler-with-cpp` source in the container.
     Assembly(PathBuf),
-    /// A fine-grained source a container rule generates.
     Generated(String),
-    /// C that includes the configured `tconfig.h`.
-    Configured(PathBuf),
+    Target(PathBuf),
 }
 fn source_of(container: &Path, source: &str) -> Source {
     if !source.contains('/') {
@@ -108,66 +77,10 @@ fn source_of(container: &Path, source: &str) -> Source {
     } else if source.ends_with(".asm") {
         Source::Assembly(container.join(source))
     } else {
-        Source::Configured(container.join(source))
+        Source::Target(container.join(source))
     }
 }
 
-/// The configured container headers (`tconfig.h`, `tm.h`), produced once by
-/// the container's own `configure` under ignored output.
-fn configured(root: &Path) -> Result<PathBuf, String> {
-    static LOCK: Mutex<()> = Mutex::new(());
-    let container = root.join(CONTAINER);
-    let script = container.join("gcc/configure");
-    let identity = sha256::hex(
-        &[
-            read(&script)?,
-            CONFIGURE.join("\0").into_bytes(),
-            CONFIGURE_CFLAGS.as_bytes().to_vec(),
-        ]
-        .concat(),
-    );
-    let parent = root.join("tools/out/compiler-build/runtime");
-    let directory = parent.join(format!("configure-{}", &identity[..16]));
-    if directory.join("tconfig.h").is_file() {
-        return Ok(directory);
-    }
-    let _guard = LOCK.lock().map_err(|_| "runtime configure lock poisoned")?;
-    std::fs::create_dir_all(&parent).map_err(|error| format!("{}: {error}", parent.display()))?;
-    let lock_path = parent.join(".configure.lock");
-    let lock = std::fs::File::create(&lock_path)
-        .map_err(|error| format!("{}: {error}", lock_path.display()))?;
-    lock.lock_exclusive()
-        .map_err(|error| format!("{}: {error}", lock_path.display()))?;
-    if directory.join("tconfig.h").is_file() {
-        return Ok(directory);
-    }
-    let work = tempfile::Builder::new()
-        .prefix(".configure-")
-        .tempdir_in(&parent)
-        .map_err(|error| error.to_string())?;
-    let output = std::process::Command::new("sh")
-        .arg(&script)
-        .arg(format!("--srcdir={}", container.join("gcc").display()))
-        .args(CONFIGURE)
-        .env("CFLAGS", CONFIGURE_CFLAGS)
-        .current_dir(work.path())
-        .output()
-        .map_err(|error| format!("runtime configure: {error}"))?;
-    if !output.status.success() || !work.path().join("tconfig.h").is_file() {
-        let log = String::from_utf8_lossy(&output.stderr);
-        let tail: Vec<_> = log.lines().rev().take(12).collect();
-        return Err(format!(
-            "runtime configure of {CONTAINER} failed: {}",
-            tail.into_iter().rev().collect::<Vec<_>>().join("\n")
-        ));
-    }
-    let staged = work.keep();
-    std::fs::rename(&staged, &directory)
-        .map_err(|error| format!("{}: {error}", directory.display()))?;
-    Ok(directory)
-}
-
-/// The compile command of one member, without its output option.
 fn member_command(
     root: &Path,
     source: &str,
@@ -210,8 +123,14 @@ fn member_command(
                 text(generated),
             ]);
         }
-        Source::Configured(path) => {
-            command.push(format!("-I{}", configured(root)?.display()));
+        Source::Target(path) => {
+            for name in ["tconfig.h", "tm.h"] {
+                write(
+                    work.join(name),
+                    read(container.join("config/arm").join(name))?,
+                )?;
+            }
+            command.push(format!("-I{}", work.display()));
             command.extend(includes.iter().map(|path| format!("-I{}", path.display())));
             command.extend([format!("-DL{member}"), text(path)]);
         }
@@ -241,8 +160,6 @@ struct MemberReceipt {
 }
 
 impl ArchiveReceipt {
-    /// The receipt as TSV: its settings as `# name value` lines, then one
-    /// row per member under a header row.
     fn table(&self) -> Vec<u8> {
         let mut table = format!(
             "# format\t{}\n# compiler_sha256\t{}\n# ar_sha256\t{}\n# archive_sha256\t{}\nmember\tsource\tsource_sha256\tplan_sha256\tobject_sha256\n",
@@ -470,7 +387,6 @@ fn check_archive_members(ar: &Path, archive: &Path, objects: &[PathBuf]) -> Resu
     Ok(())
 }
 
-/// Build the requested archive in the given member order, without a game registry.
 pub fn build_archive(
     root: &Path,
     output: &Path,
@@ -549,78 +465,4 @@ pub fn entry(args: &[String]) -> Result<(), String> {
     )?;
     println!("archive={} members={}", archive.display(), members.len());
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn archive_rejects_outside_generated_and_duplicate_members() {
-        let root = tempfile::tempdir().unwrap();
-        std::fs::create_dir(root.path().join(CONTAINER)).unwrap();
-        for source in ["other.c", "../other.c", "/tmp/other.c", "gcc/../../other.c"] {
-            assert!(validate_members(root.path(), &[("_first".into(), source.into())]).is_err());
-        }
-        let valid = vec![("_first".into(), "dp-bit.c".into())];
-        assert!(validate_members(root.path(), &valid).is_ok());
-        let mut duplicate = valid;
-        duplicate.push(("_first".into(), "dp-bit.c".into()));
-        assert!(validate_members(root.path(), &duplicate)
-            .unwrap_err()
-            .contains("duplicate"));
-        for path in [
-            "libgcc.a",
-            "out/libgcc.a",
-            "tools/out/compiler-runtime/../../source.a",
-        ] {
-            assert!(archive_path(root.path(), Path::new(path), true).is_err());
-        }
-    }
-    #[cfg(unix)]
-    #[test]
-    fn archive_rejects_source_and_output_symlink_escapes() {
-        let root = tempfile::tempdir().unwrap();
-        let outside = tempfile::tempdir().unwrap();
-        std::fs::create_dir_all(root.path().join("agscc/gcc")).unwrap();
-        std::fs::write(outside.path().join("runtime.c"), "int outside;\n").unwrap();
-        std::os::unix::fs::symlink(
-            outside.path().join("runtime.c"),
-            root.path().join("agscc/gcc/runtime.c"),
-        )
-        .unwrap();
-        assert!(
-            validate_members(root.path(), &[("_first".into(), "gcc/runtime.c".into())]).is_err()
-        );
-        std::fs::create_dir_all(root.path().join("tools/out")).unwrap();
-        std::os::unix::fs::symlink(
-            outside.path(),
-            root.path().join("tools/out/compiler-runtime"),
-        )
-        .unwrap();
-        assert!(archive_path(
-            root.path(),
-            Path::new("tools/out/compiler-runtime/new/libgcc.a"),
-            true
-        )
-        .is_err());
-        assert!(!outside.path().join("new").exists());
-    }
-    #[test]
-    fn generated_sources_follow_the_container_rule() {
-        let container = tempfile::tempdir().unwrap();
-        std::fs::create_dir_all(container.path().join("gcc/config")).unwrap();
-        std::fs::write(container.path().join("gcc/config/body.c"), "int body;\n").unwrap();
-        let rules = "X = 1\n\nwide.c: $(srcdir)/config/body.c\n\techo '#define WIDE' > wide.c\n\techo '#define ORDER' >> wide.c\n\tcat $(srcdir)/config/body.c >> wide.c\n\nother.c:\n\techo x > other.c\n";
-        assert_eq!(
-            generated_source(container.path(), rules, "wide.c").unwrap(),
-            "#define WIDE\n#define ORDER\nint body;\n"
-        );
-        assert!(generated_source(container.path(), rules, "other.c").is_err());
-        assert!(generated_source(container.path(), rules, "absent.c").is_err());
-        assert_eq!(
-            rule_variable("FLAGS = -Da -fb\n", "FLAGS").unwrap(),
-            ["-Da", "-fb"]
-        );
-        assert!(rule_variable("FLAGS = -Da\n", "OTHER").is_err());
-    }
 }

@@ -1,9 +1,3 @@
-/* NONMATCHING: localized Venus leap with a direct map call, 2026-10-01.
- * The complete leap owner compiles with approved TBS flags at the right size
- * but differs in nine instruction bytes: the direct Engine map call changes
- * destination-register setup and zero/state scheduling. Production uses the
- * existing tagged Map_CopyCellAttributes adapter and matches all six scenes.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY_SETUP.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"

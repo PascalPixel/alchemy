@@ -1,17 +1,19 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-
-/* Battle timers: per-unit countdown bytes in the owner record, and the
-   placement entries whose timers expire into Djinn activation. */
-
-struct PlacementEntry {
-    u8 x;
-    u8 y;
-    u8 id;
-    s8 timer;
-};
+#include "OWNER_STATE.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 
 struct PlacementList {
-    struct PlacementEntry entries[72];
+    struct DjinnRecoveryEntry entries[72];
     s32 count;
 };
 
@@ -20,20 +22,10 @@ struct PlacementTable {
     struct PlacementList list;
 };
 
-struct BattleObject {
-    u8 padding[0x38];
-    s16 active;
-};
 
-struct BattleObject *Owner_GetState();
-struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
-void Owner_RecalculateStatsFar(u8 id);
-void Djinn_ActivateFar(u8 id, u8 x, u8 y);
-void Trade_RemoveOfferFar(u8 id, u8 x, u8 y);
-
-s32 BattleUnit_TickCounter13f(s32 id)
+s32 BattleUnit_TickReflect(s32 id)
 {
-    u8 *value = (u8 *)Owner_GetState(id) + 0x13F;
+    u8 *value = (u8 *)&((struct BattleUnit *)Owner_GetState(id))->reflect;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
@@ -43,14 +35,14 @@ s32 BattleUnit_TickCounter13f(s32 id)
     return 0;
 }
 
-s32 BattleUnit_TickCounter146(s32 id)
+s32 BattleUnit_TickAgilityModifier(s32 id)
 {
-    u8 *base = (u8 *)Owner_GetState(id);
-    u8 *value = base + 0x146;
+    struct BattleUnit *unit = Owner_GetState(id);
+    u8 *value = &unit->agility_modifier_turns;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
-            base[0x147] = 0;
+            unit->agility_modifier = 0;
             return 1;
         }
     }
@@ -60,8 +52,8 @@ s32 BattleUnit_TickCounter146(s32 id)
 s32 BattlePlacement_UpdateTimedEntries(void)
 {
     struct PlacementList *list;
-    struct PlacementEntry *timed_entry;
-    struct PlacementEntry *expired_entry;
+    struct DjinnRecoveryEntry *timed_entry;
+    struct DjinnRecoveryEntry *expired_entry;
     s32 index;
     s32 removed;
     s32 initial_count;
@@ -73,9 +65,9 @@ s32 BattlePlacement_UpdateTimedEntries(void)
     if (index < initial_count) {
         timed_entry = list->entries;
         do {
-            if (timed_entry->timer > 0 &&
-                Owner_GetState(timed_entry->id)->active != 0) {
-                timed_entry->timer--;
+            if (timed_entry->turns > 0 &&
+                ((struct BattleUnit *)Owner_GetState(timed_entry->unit_id))->hp != 0) {
+                timed_entry->turns--;
             }
             index++;
             timed_entry++;
@@ -85,11 +77,11 @@ s32 BattlePlacement_UpdateTimedEntries(void)
     if (index < list->count) {
         expired_entry = list->entries;
         do {
-            if (expired_entry->timer == 0) {
-                u8 id = expired_entry->id;
+            if (expired_entry->turns == 0) {
+                u8 id = expired_entry->unit_id;
 
-                Djinn_ActivateFar(id, expired_entry->x, expired_entry->y);
-                Trade_RemoveOfferFar(id, expired_entry->x, expired_entry->y);
+                Djinn_ActivateFar(id, expired_entry->element, expired_entry->index);
+                Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
                 Owner_RecalculateStatsFar(id);
                 removed = 1;
             } else {
@@ -103,12 +95,12 @@ s32 BattlePlacement_UpdateTimedEntries(void)
 
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
 {
-    s32 cnt;
+    s32 turns;
 
-    cnt = 0x13;
+    turns = 19;
     do {
-        cnt -= 1;
+        turns--;
         BattlePlacement_UpdateTimedEntries();
-    } while (cnt >= 0);
+    } while (turns >= 0);
     return 0;
 }

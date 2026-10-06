@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
@@ -136,12 +138,9 @@ void Func_0813ba50(void);
 void Func_08179e6c(void);
 s32 Func_081963ec(s32, s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
-void Resource_ResetEntry(s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
-void Func_08118040(s32, s32, s32);
+void BattleBackground_LoadFar(s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
-u32 Resource_GetTableEntry(u32);
-void Resource_DecodeType01(const void *, void *);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
@@ -155,9 +154,8 @@ void Func_081c0010(s32);
 void Func_0815f0a0(s32);
 void Func_08138086(Particle *, s32, s32);
 void Func_08138058(Particle *, s32, s32);
-void *Runtime_BumpAllocateAlternatePool(s32);
 s32 *Func_081969f8(s32);
-void Func_08014de4(void);
+void Render_ResetTransformState(void);
 void Func_08015160(s32, s32, s32);
 void Func_080150e4(s32);
 void SceneTransform_ApplyPitch(s32);
@@ -170,7 +168,7 @@ void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
 void ResourceObject_ReleaseFar(Sprite *);
 s32 Func_080143e0(s32);
-void Func_08014c4c(void);
+void PaletteDma_LoadBlock(void);
 void Func_08152404(s32, s32, s32);
 void Func_0815f000(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
@@ -179,8 +177,6 @@ void Func_08143bb8(void);
 void Func_08143000(void);
 void Func_0813baec(void);
 
-/* The admitted DMA primitive, shared from TBS until it moves to games/COMMON;
- * TLA's TYPES.H already declares the same fixed-width types. */
 #define ALCHEMY_TYPES_H
 #include "../../../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
 
@@ -255,7 +251,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             *(s32 *)0x030011f0 = 240;
             targets[0] = 255;
             BattleActor_SpawnObjectsForListFar(targets, 0);
-            Func_08118040(1, 0x45, 0);
+            BattleBackground_LoadFar(1, 0x45, 0);
             for (i = 0, pal = (u16 *)0x050000c0; i != 128; i++, pal++) {
                 color = *pal;
                 r = (color & 0x1f) - 4;
@@ -772,7 +768,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 z = 0;
             if (z >= -63) {
                 beam[5] = z;
-                Func_08014de4();
+                Render_ResetTransformState();
                 Func_08015160(camera + 0x20000, 0x80000, 0);
                 Func_080150e4(0x4300);
                 SceneTransform_ApplyPitch(-0x800);
@@ -931,7 +927,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     for (i = 0; i != 57; i++)
         ResourceObject_ReleaseFar(work->sprites[i]);
     bank[21] = Func_080143e0(128);
-    Func_08014c4c();
+    PaletteDma_LoadBlock();
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (vu32 *)0x040000d4);
     *(u16 *)0x050001bc = *(u16 *)0x050001e8;
     work->transfer_mode = 2;

@@ -41,9 +41,9 @@ Func_081a150c:
 	ldr r0, .L_081a15a8
 	bl Func_081a0674
 	movs r0, #0
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r0, #1
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r2, #248
 	movs r3, #128
 	lsls r2, r2, #5
@@ -52,11 +52,11 @@ Func_081a150c:
 .L_081a1574:
 	.4byte 0x00000001
 .L_081a1578:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_081a157c:
 	.4byte Data_03001110
 .L_081a1580:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_081a1584:
 	.4byte Data_02007518
 .L_081a1588:

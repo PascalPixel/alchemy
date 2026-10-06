@@ -1,45 +1,31 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "FX_SCENE.H"
 #include "IRIGUCHI.H"
 #include "TYPES.H"
 #include "CALL.H"
 #include "STAGED_ACTOR.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
+#include "FIELD_SCENE.H"
+#include "text/MSG_IDS.H"
 
 void Effect_AdvanceMotion(struct MotionEffect *effect);
 void OverlayObject_WaitUntilIdle(s32 *obj);
-extern const struct SceneEntrance gBabiIriguchiEntrances3[];
-extern const struct SceneEntrance gBabiIriguchiEntrances2[];
-extern const struct SceneEntrance gBabiIriguchiEntrances1[];
-extern const struct SceneEntrance gBabiIriguchiEntrancesOther[];
-extern const struct SceneRegion gBabiIriguchiRegions3[];
-extern const struct ScenePlacement gBabiIriguchiPlacements3[];
-extern const struct ScenePlacement gBabiIriguchiPlacements2[];
-extern const struct ScenePlacement gBabiIriguchiPlacements1[];
-extern const struct ScenePlacement gBabiIriguchiPlacementsOther[];
-void Engine_EventBegin();
-void Engine_ActorShowEmote();
-void ObjectMotion_SetSpeedParameters();
-void Engine_ActorJump();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void Engine_ActorFaceDirection();
 void SceneState_ApplyRectsAtActors8And9();
-void Engine_EventEnd();
-extern u8 MsgBabiSeemsLocked[];
-extern u8 MsgBabiTheDoor[];
-extern u8 MsgBabiYoureSureTheyWentThrough[];
-extern u8 MsgBabiTruthDoorOpenThoseSeeing[];
-extern u8 MsgFieldFlippedSwitch[];
-void FieldScene_RunActorEventSequence(void);
 
 extern s32 StagedActor_DirectionSteps[];
 s32 Map_GetTerrainHeight(s32 mode, s32 x, s32 z);
 
 s32 battle_owner_69(void);
 s32 FieldEffect_UpdateGridPlacement(void);
-void SceneActor_PushObjectAheadIfLevel(void);
-extern const struct SceneEvent gBabiIriguchiEvents3[];
-extern const struct SceneEvent gBabiIriguchiEvents2[];
-extern const struct SceneEvent gBabiIriguchiEvents1[];
-extern const struct SceneEvent gBabiIriguchiEventsOther[];
 
 void SceneState_SetValue8Mode66(void)
 {
@@ -59,17 +45,12 @@ void OverlayObject_WaitUntilIdle(s32 *obj)
     }
 }
 
-/*
- * The decay of the Z velocity stays a signed divide by sixteen: that shape is
- * what reproduces the negative bias and arithmetic shift in the reference.
- */
 void Effect_AdvanceMotion(struct MotionEffect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
 
-    /* This block orders the Z load after the Y store; do not flatten it. */
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];
@@ -89,12 +70,6 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     sprite->angle += effect->step64;
 }
 
-/* The leader drops into the entrance from high above: raised far over the
-   floor with the words at +68 and +72 set, the motion byte at +85 lets the
-   fall play once the screen has opened. */
-
-/* The arrival by entrance 3 the scene start plays until its flag is set: the
-   leader lands in a ring of seventeen sparks and recovers. */
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     u32 i;
@@ -106,15 +81,15 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     WaitFrames(1);
-    *(s32 *)((u8 *)Object_GetById(0) + 12) = 0x820000;
-    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x8000;
-    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0;
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->y.fixed = 0x820000;
+    Object_GetById(0)->gravity = 0x8000;
+    Object_GetById(0)->bounce = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Battle_WaitMode0(30);
     Audio_PlayCue(204);
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 3;
+    Object_GetById(0)->motion_flags = 3;
     Battle_WaitMode0(24);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     options.palette = 7;
@@ -136,42 +111,40 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
-    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x10000;
-    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0x4000;
+    Object_GetById(0)->gravity = 0x10000;
+    Object_GetById(0)->bounce = 0x4000;
     Engine_EventEnd();
 }
 
-/* The leader falls in, hidden, and at once leaves by the exit given. */
 void FieldScene_RunScene3c5SequenceA(s32 exit)
 {
-    u8 *leader;
+    struct FieldActor *leader;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     WaitFrames(1);
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 12) = 0x820000;
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 72) = 0x4000;
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 68) = 0;
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->y.fixed = 0x820000;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->gravity = 0x4000;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->bounce = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Battle_WaitMode0(10);
     Audio_PlayCue(204);
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 3;
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 40) = -0x50000;
+    Object_GetById(0)->motion_flags = 3;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->velocity_y = -0x50000;
     OverlayObject_WaitUntilIdle((s32 *)Actor_Get(ACTOR_PARTY_LEADER));
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     Engine_EventRequestExit(exit);
     Engine_EventEnd();
 }
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -188,7 +161,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gBabiIriguchiEntrancesOther;
 }
 
-/* Only the third scene has regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_BabiIriguchi3) {
@@ -197,14 +169,11 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
-/* The entrance's exits, which the main image asks for through the overlay's
- * entry veneers. */
 u8 *BabiIriguchi_GetExits(void)
 {
     return gBabiIriguchiExits;
 }
 
-/* The actors placed in each of the entrance's scenes. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -223,30 +192,30 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void BabiIriguchi_JumpFromLedge(void)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
 
-    rec7 = (s32)Object_GetById(0);
+    rec7 = Object_GetById(0);
     Engine_EventBegin();
-    if ((*(s32 *)(rec7 + 8) >> 20) != 6) {
-        if ((*(s32 *)(rec7 + 8) >> 20) != 18) {
+    if ((rec7->x.fixed >> 20) != 6) {
+        if ((rec7->x.fixed >> 20) != 18) {
             goto done;
         }
     }
-    if ((*(s32 *)(rec7 + 16) >> 20) == 20) {
-        *(s32 *)(rec7 + 56) = -0x80000000;
-        *(s32 *)(rec7 + 64) = -0x80000000;
-        Call3(Engine_ActorShowEmote, 0, 0x100, 20);
-        Call3(ObjectMotion_SetSpeedParameters, 0, 0x20000, 0x10000);
+    if ((rec7->z.fixed >> 20) == 20) {
+        rec7->target_x = -0x80000000;
+        rec7->target_z = -0x80000000;
+        Actor_ShowEmote(0, 0x100, 20);
+        Actor_SetSpeed(0, 0x20000, 0x10000);
         Engine_ActorJump(0, 4, 0);
-{ u16 dir = *(u16 *)(rec7 + 6); if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff) goto step_down; }
+{ u16 dir = rec7->facing; if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff) goto step_down; }
         ObjectMotion_OffsetPositionAndResetMotion(0, 16, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
-        Call3(Engine_ActorFaceDirection, 0, 0x8000, 20);
+        Actor_FaceDirection(0, FACING_WEST, 20);
         goto done;
         step_down:;
-        Call3(ObjectMotion_OffsetPositionAndResetMotion, 0, 0, -16);
+        FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
-        Call3(Engine_ActorFaceDirection, 0, 0x4000, 20);
+        Actor_FaceDirection(0, FACING_SOUTH, 20);
     }
     done:;
     SceneState_ApplyRectsAtActors8And9();
@@ -263,10 +232,10 @@ void FieldScene_RunFourCallSequence(void)
 
 void SceneState_BranchOnActorEightOrNineTile(void)
 {
-    s32 *p = Actor_Get(9);
+    s32 *p = Object_GetById(9);
 
-    if ((((s32 *)Object_GetById(0))[2] >> 20) <= 12) {
-        p = Actor_Get(8);
+    if ((Object_GetById(0)->x.fixed >> 20) <= 12) {
+        p = Object_GetById(8);
         if ((p[2] >> 20) == 6) {
             if ((p[4] >> 20) == 20) {
                 FieldScene_RunFourCallSequence();
@@ -284,7 +253,6 @@ void SceneState_BranchOnActorEightOrNineTile(void)
     FieldEffect_UpdateGridPlacement();
 }
 
-/* resource_3c5 owner at 0x02001158, 42 bytes. */
 void ResetSceneParametersAndFinishSetup(void)
 {
     Camera_MoveTo(-1, -1, -1, 0);
@@ -338,21 +306,21 @@ void FieldScene_RunStepWithValue2693(void)
 
 void FieldScene_RunBranchingActorSequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     GameFlag_Set(0x988);
     GameFlag_Set(0x98a);
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     Engine_EventSetMessage((s32)MsgBabiYoureSureTheyWentThrough);
-    Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Battle_WaitMode0(10);
-    Call4(Motion_LaunchFromFocusedObject, 10, 16, 0, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 1, -8, 16, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 2, 8, 16, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 3, 24, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(10, 16, 0, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(1, -8, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(2, 8, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(3, 24, 16, 0xc000);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
@@ -365,8 +333,8 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(30);
     Event_ShowMessage(11, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0xc000, 0);
-    Actor_FaceDirection(11, 0xc000, 0);
+    Actor_FaceDirection(14, FACING_NORTH, 0);
+    Actor_FaceDirection(11, FACING_NORTH, 0);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(14, 2);
@@ -385,13 +353,13 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_ShowEmote(12, 0x102, 50);
     Event_ShowMessage(12, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(13, 0, 0);
+    Actor_FaceDirection(13, FACING_EAST, 0);
     Battle_WaitMode0(25);
     Engine_ActorRunRepeatedMotion(13, 2);
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(12, 0x8000, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(13, 4);
     Battle_WaitMode0(20);
@@ -403,17 +371,17 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Actor_ShowEmote(13, 0x107, 40);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(13, 0x4000, 0);
+    Actor_FaceDirection(13, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(13, 0x101, 75);
     Actor_ShowEmote(14, 0x101, 60);
-    Actor_FaceDirection(12, 0x4000, 0);
+    Actor_FaceDirection(12, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
-    Actor_FaceDirection(11, 0x4000, 0);
+    Actor_FaceDirection(11, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Battle_WaitMode0(30);
     Event_ShowMessage(14, 0);
     Camera_MoveTo(0x1180000, -1, 0x1400000, 1);
@@ -443,29 +411,29 @@ void FieldScene_RunBranchingActorSequence(void)
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x8000, 0);
+        Actor_FaceDirection(10, FACING_WEST, 0);
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
         Event_ShowMessage(10, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x8000, 0);
+        Actor_FaceDirection(10, FACING_WEST, 0);
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
     Actor_ShowEmote(14, 0x101, 60);
-    Iriguchi_SetSpeed(14, 0x10000, 0x8000);
+    Actor_SetSpeed(14, 0x10000, 0x8000);
     Actor_WalkByAndWait(14, 0, 16);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(10, 0xc000, 0);
+    Actor_FaceDirection(10, FACING_NORTH, 0);
     Battle_WaitMode0(35);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
@@ -491,12 +459,12 @@ void FieldScene_RunBranchingActorSequence(void)
         Engine_ActorSetAnimationAndWait(14, 4);
         Battle_WaitMode0(20);
         Event_ShowMessage(14, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(14, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
     Battle_WaitMode0(10);
@@ -505,12 +473,12 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(13, 2);
     Battle_WaitMode0(20);
-    Iriguchi_SetSpeed(13, 0x14ccc, 0xa666);
+    Actor_SetSpeed(13, 0x14ccc, 0xa666);
     Actor_WalkByAndWait(13, 0, 16);
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(10);
-    Iriguchi_SetSpeed(12, 0x14ccc, 0xa666);
+    Actor_SetSpeed(12, 0x14ccc, 0xa666);
     Actor_WalkByAndWait(12, 0, 16);
     Battle_WaitMode0(20);
     Actor_ShowEmote(12, 0x107, 50);
@@ -520,7 +488,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
     Actor_ShowEmote(10, 0x102, 60);
-    Actor_FaceDirection(10, 0x8000, 0);
+    Actor_FaceDirection(10, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
@@ -532,16 +500,16 @@ void FieldScene_RunBranchingActorSequence(void)
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
         Event_ShowMessage(10, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
-    Actor_FaceDirection(10, 0xc000, 0);
+    Actor_FaceDirection(10, FACING_NORTH, 0);
     Battle_WaitMode0(35);
     Engine_ActorSetAnimationAndWait(14, 3);
     Battle_WaitMode0(30);
@@ -553,14 +521,14 @@ void FieldScene_RunBranchingActorSequence(void)
     Object_SetModeById(12, 3);
     Engine_ActorSetAnimationAndWait(13, 3);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(12, 0x4000, 0);
-    Actor_FaceDirection(13, 0x4000, 0);
+    Actor_FaceDirection(12, FACING_SOUTH, 0);
+    Actor_FaceDirection(13, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Object_SetModeById(12, 3);
     Engine_ActorSetAnimationAndWait(13, 3);
     Battle_WaitMode0(30);
-    Iriguchi_SetSpeed(12, 0x10000, 0x8000);
-    Iriguchi_SetSpeed(13, 0x10000, 0x8000);
+    Actor_SetSpeed(12, 0x10000, 0x8000);
+    Actor_SetSpeed(13, 0x10000, 0x8000);
     Actor_WalkBy(12, 32, 0);
     Actor_WalkByAndWait(13, 32, 0);
     Actor_WalkBy(12, 0, 16);
@@ -568,42 +536,42 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_WalkTo(13, 0x158, 0x138);
     Actor_WalkToAndWait(12, 0x158, 0x150);
     Object_SetModeById(13, 1);
-    Actor_FaceDirection(12, 0x8000, 0);
-    Actor_FaceDirection(13, 0x8000, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
-    Iriguchi_SetSpeed(14, 0x10000, 0x8000);
+    Actor_SetSpeed(14, 0x10000, 0x8000);
     Actor_WalkToAndWait(14, 0x148, 0x138);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(30);
-    Iriguchi_SetSpeed(11, 0x10000, 0x8000);
+    Actor_SetSpeed(11, 0x10000, 0x8000);
     Actor_WalkToAndWait(11, 0x148, 0x148);
-    Actor_FaceDirection(11, 0x8000, 0);
+    Actor_FaceDirection(11, FACING_WEST, 0);
     Battle_WaitMode0(20);
-    Iriguchi_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Object_SetModeById(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById(ACTOR_IVAN, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Object_SetModeById(ACTOR_MIA, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -613,18 +581,18 @@ void FieldScene_RunBranchingActorSequence(void)
 
 void FieldScene_RunActorEventSequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     GameFlag_Set(0x989);
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     Engine_EventSetMessage((s32)MsgBabiTheDoor);
-    Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x138);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Battle_WaitMode0(10);
     Motion_LaunchFromFocusedObject(1, 0, 16, 0);
-    Call4(Motion_LaunchFromFocusedObject, 2, -16, -8, 0);
+    FieldMotion_LaunchFromFocusedObject(2, -16, -8, 0);
     Motion_LaunchFromFocusedObject(3, -16, 24, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Battle_WaitMode0(20);
@@ -658,13 +626,13 @@ void FieldScene_RunActorEventSequence(void)
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(12, 0x101, 50);
-    Actor_FaceDirection(12, 0x8000, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(12, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0x8000, 0);
-    Actor_FaceDirection(11, 0x8000, 0);
-    Actor_FaceDirection(13, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
+    Actor_FaceDirection(11, FACING_WEST, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
@@ -688,23 +656,23 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(10, 2);
     Battle_WaitMode0(20);
-    Iriguchi_SetSpeed(10, 0x10000, 0x8000);
+    Actor_SetSpeed(10, 0x10000, 0x8000);
     Actor_WalkByAndWait(10, 0, -40);
-    Actor_FaceDirection(10, 0, 0);
+    Actor_FaceDirection(10, FACING_EAST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
     Engine_ActorSetAnimationAndWait(14, 3);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(13, 0x4000, 0);
-    Actor_FaceDirection(12, 0xc000, 0);
+    Actor_FaceDirection(13, FACING_SOUTH, 0);
+    Actor_FaceDirection(12, FACING_NORTH, 0);
     Battle_WaitMode0(30);
     Object_SetModeById(12, 3);
     Engine_ActorSetAnimationAndWait(13, 3);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(13, 0x8000, 0);
-    Actor_FaceDirection(12, 0x8000, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(10, 3);
     Battle_WaitMode0(30);
@@ -721,10 +689,10 @@ void FieldScene_RunActorEventSequence(void)
     Actor_FaceDirection(11, 0xb000, 0);
     Actor_FaceDirection(12, 0xb000, 0);
     Actor_FaceDirection(13, 0xb000, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Battle_WaitMode0(30);
     Actor_ShowEmote(11, 0x100, 0);
     Actor_ShowEmote(12, 0x100, 0);
@@ -742,13 +710,13 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(10, 0x4000, 0);
+    Actor_FaceDirection(10, FACING_SOUTH, 0);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(ACTOR_MIA, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
     Battle_WaitMode0(30);
     Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
@@ -760,37 +728,37 @@ void FieldScene_RunActorEventSequence(void)
     Event_ShowMessage(ACTOR_GERALD, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(14, 0x103, 50);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Event_OpenMessage(14, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(11, 0x8000, 0);
-    Actor_FaceDirection(12, 0x8000, 0);
-    Actor_FaceDirection(13, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(11, FACING_WEST, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x1000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
         Engine_ActorRunRepeatedMotion(14, 2);
         Battle_WaitMode0(20);
         Event_ShowMessage(14, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Engine_ActorRunRepeatedMotion(14, 2);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(10, 2);
     Battle_WaitMode0(20);
     Actor_WalkByAndWait(10, 0, 16);
-    Actor_FaceDirection(10, 0x2000, 0);
+    Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0xa000, 0);
+    Actor_FaceDirection(14, FACING_NORTHWEST, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(14, 4);
     Battle_WaitMode0(20);
@@ -809,19 +777,19 @@ void FieldScene_RunActorEventSequence(void)
     Actor_ShowEmote(10, 0x101, 60);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x2000, 0);
+        Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
         Event_ShowMessage(10, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x2000, 0);
+        Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
@@ -833,7 +801,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(20);
     Engine_ActorRunRepeatedMotion(14, 2);
     Battle_WaitMode0(40);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
@@ -846,8 +814,8 @@ void FieldScene_RunActorEventSequence(void)
     Engine_ActorRunRepeatedMotion(10, 2);
     Battle_WaitMode0(20);
     Actor_WalkToAndWait(10, 0x138, 0x138);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(10, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(10, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
@@ -859,32 +827,32 @@ void FieldScene_RunActorEventSequence(void)
     Object_SetModeById(ACTOR_MIA, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Battle_WaitMode0(30);
-    Iriguchi_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Object_SetModeById(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById(ACTOR_IVAN, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Object_SetModeById(ACTOR_MIA, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(10, 0xb000, 0);
     Actor_FaceDirection(14, 0xb000, 0);
     Actor_FaceDirection(11, 0xb000, 0);
@@ -896,7 +864,7 @@ void FieldScene_RunActorEventSequence(void)
 
 void ActorPresentation_SetSceneCellByFlag985(void)
 {
-    if (GameFlag_IsSet(0x985) == 0) {
+    if (Engine_GameFlagIsSet(0x985) == 0) {
         s32 k5 = 17, k6 = 78;
 
         Engine_MapCopyCellsLayered(36, 78, 1, 2, k5, k6);
@@ -916,11 +884,6 @@ void SceneState_ApplyRectAt32x78(void)
     }
 }
 
-/* The door of truth: actors 8 and 9 are its two leaves. Flag 0x985 records
-   it open; a switch opens it for one who sees with a true heart. */
-
-/* Slide the leaves apart and open the passage; the first time, the scene
-   that follows plays. */
 void BabiIriguchi_OpenTruthDoor(void)
 {
     if (GameFlag_IsSet(0x985) == 0) {
@@ -931,7 +894,7 @@ void BabiIriguchi_OpenTruthDoor(void)
         Actor_SetDestination(9, 0x148, 240);
         ObjectMotion_CommitCurrentPositionAndActivate(8);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
-        Iriguchi_CopyCellAttributes(81, 14, 4, 1, 17, 14);
+        Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
         Engine_EventEnd();
         if (GameFlag_IsSet(0x989) == 0) {
             FieldScene_RunActorEventSequence();
@@ -939,7 +902,6 @@ void BabiIriguchi_OpenTruthDoor(void)
     }
 }
 
-/* Slide the leaves together, close the passage and toggle flag 0x301. */
 void BabiIriguchi_CloseTruthDoor(void)
 {
     if (GameFlag_IsSet(0x985) != 0) {
@@ -950,7 +912,7 @@ void BabiIriguchi_CloseTruthDoor(void)
         Actor_SetDestination(9, 0x138, 240);
         ObjectMotion_CommitCurrentPositionAndActivate(8);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
-        Iriguchi_CopyCellAttributes(0, 14, 4, 1, 17, 14);
+        Map_CopyCellAttributes(0, 14, 4, 1, 17, 14);
         Engine_EventEnd();
         if (GameFlag_IsSet(0x301) != 0) {
             GameFlag_Clear(0x301);
@@ -960,8 +922,6 @@ void BabiIriguchi_CloseTruthDoor(void)
     }
 }
 
-/* The door's switch: while the word at +0xcb8 of the event work is set the
-   leader flips it and the door opens; otherwise the door's words show. */
 void BabiIriguchi_FlipTruthDoorSwitch(void)
 {
     u8 *work = (u8 *)gEventWork;
@@ -970,10 +930,8 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
     Engine_EventBegin();
     seeing = (s16 *)(work + 0xcb8);
     if (seeing[0] != 0) {
-        if (GameFlag_IsSet(0x985) == 0) {
-            /* FAKEMATCH: forced temporaries; the destination stays in two
-               saved registers across both copies, where plain constants
-               are built again for each call. */
+        if (Engine_GameFlagIsSet(0x985) == 0) {
+            /* FAKEMATCH: forced temporaries; the destination stays in two saved registers across both copies, where plain constants are built again for each call. */
             s32 dest_x = 17, dest_y = 78;
 
             Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
@@ -986,14 +944,11 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
         }
     } else {
         Engine_EventSetMessage((s32)MsgBabiTruthDoorOpenThoseSeeing);
-        Event_ShowMessage(-1, 0);
+        Engine_EventShowMessage(-1, 0);
     }
     Engine_EventEnd();
 }
 
-/* The terrain lookup consumes both computed coordinates, not just the mode.
- * Omitting x/z left their live argument registers unexplained in the draft.
- * Exact complete 72-byte owner, including both final pool words. */
 struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
 {
     s32 pos[3];
@@ -1013,14 +968,14 @@ struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
     return StagedActor_FindAtTile(p, actor);
 }
 
-void SceneState_SetRuntimeByte34(void)
+void BabiIriguchi_EnableEffectChildOption(void)
 {
-    FIELD_AT_OFFSET(*(void **)gEffectWork, s8 *, 0x34) = 1;
+    ((struct BattleFxScene *)*(void **)gEffectWork)->child_option = 1;
 }
 
 void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 {
-    s32 *p = Actor_Get(12);
+    s32 *p = Object_GetById(12);
     s32 a = p[2] >> 20;
 
     if (a == 20) {
@@ -1033,7 +988,7 @@ void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
             {
                 s32 k5 = a, k6 = b;
 
-                Iriguchi_CopyCellAttributes(38, 12, 1, 1, k5, k6);
+                Map_CopyCellAttributeRect(38, 12, 1, 1, k5, k6);
             }
         }
     }
@@ -1041,7 +996,7 @@ void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 
 void SceneActor_PushObjectAheadIfLevel(void)
 {
-    struct StagedActor *p = (struct StagedActor *)Actor_Get(ACTOR_PARTY_LEADER);
+    struct StagedActor *p = (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
     struct StagedActor *q = BabiIriguchi_FindActorAhead(p);
     s32 diff;
 
@@ -1052,10 +1007,7 @@ void SceneActor_PushObjectAheadIfLevel(void)
     diff = q->y - p->y;
 
     if (diff >= 0) {
-        /* Written with an empty arm on purpose: the reference branches away on
-         * the *return* condition (`bge`), and spelling this as a plain
-         * `if (diff >= 0x80000) return;` inverts it to `blt`. Arm order
-         * decides the branch sense; no flag moves it. */
+
         if (diff < 0x80000) {
         } else {
             return;
@@ -1067,13 +1019,6 @@ void SceneActor_PushObjectAheadIfLevel(void)
     StagedActor_AdvancePair();
 }
 
-/* The facing check reads the game state as rows of bytes, not through the
- * field event header's structure. */
-
-/* With the party leader facing north or south and either the byte at 498 of
- * the game state set or no actor ahead, runs the grid placement for that
- * facing; unless that placement reports zero, pushes the object ahead when
- * the byte is clear. */
 void SceneActor_RunSlotZeroFacingCheck(void)
 {
     struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
@@ -1096,7 +1041,6 @@ void SceneActor_RunSlotZeroFacingCheck(void)
     }
 }
 
-/* What each of the entrance's scenes answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -1115,50 +1059,46 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void SceneState_ConfigureRegion82_7AndApply768(void)
 {
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 a = 18;
     s32 b = 7;
 
-    Iriguchi_CopyCellAttributes(82, 7, 1, 2, a, b);
+    Map_CopyCellAttributeRect(82, 7, 1, 2, a, b);
     WaitFrames(1);
-    GameFlag_Set(768);
+    Engine_GameFlagSet(768);
 }
 
 void SceneState_ApplyRectsAtActors8And9(void)
 {
-    s32 *p = Actor_Get(8);
+    s32 *p = Object_GetById(8);
 
     Engine_ActorSetSpritePriority(8, 1);
     Engine_ActorSetSpritePriority(9, 1);
     {
         s32 k5 = 5, k6 = 19;
 
-        Iriguchi_CopyCellAttributes(69, 19, 3, 3, k5, k6);
+        Map_CopyCellAttributeRect(69, 19, 3, 3, k5, k6);
     }
     {
         s32 k5 = 17, k6 = 19;
 
-        Iriguchi_CopyCellAttributes(69, 19, 3, 3, k5, k6);
+        Map_CopyCellAttributeRect(69, 19, 3, 3, k5, k6);
     }
     {
         s32 k5 = p[2] >> 20, k6 = p[4] >> 20;
 
-        Iriguchi_CopyCellAttributes(3, 3, 1, 1, k5, k6);
+        Map_CopyCellAttributeRect(3, 3, 1, 1, k5, k6);
     }
     {
-        s32 *q = Actor_Get(9);
+        s32 *q = Object_GetById(9);
         s32 k5 = q[2] >> 20, k6 = q[4] >> 20;
 
-        Iriguchi_CopyCellAttributes(3, 3, 1, 1, k5, k6);
+        Map_CopyCellAttributeRect(3, 3, 1, 1, k5, k6);
     }
 }
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-/* Keep the two door-side actors on the leader's background layer. Actors
-   behind the leader use the next layer and enable depth sorting. */
 void BabiIriguchi_MatchLeaderPriority(void)
 {
     struct FieldSprite *sprite;
@@ -1189,8 +1129,6 @@ void BabiIriguchi_MatchLeaderPriority(void)
 }
 #endif
 
-/* An actor of the antechamber's row, with the frames it waits before it
-   starts to turn. */
 struct RowActor {
     u8 unknown_00[8];
     union FieldCoordinate x;
@@ -1206,8 +1144,6 @@ struct RowActor {
     u16 delay;
 };
 
-/* The scene start of the entrance's four scenes: where Retreat returns to,
-   then what each scene and each way in has to put in place. */
 s32 BabiIriguchi_SetupScene(void)
 {
     struct FieldActor *actor;
@@ -1253,7 +1189,7 @@ s32 BabiIriguchi_SetupScene(void)
         }
         SceneState_ApplyRectsAtActors8And9();
         actor = Object_GetById(9);
-        actor->y.fixed = *(s32 *)Object_GetById(9)->unknown_14;
+        actor->y.fixed = Object_GetById(9)->terrain_height;
         if (GameFlag_IsSet(0x300) != 0) {
             Object_SetModeById(10, 4);
             Object_GetById(10)->collision_flags = 0xfe;
@@ -1326,8 +1262,8 @@ s32 BabiIriguchi_SetupScene(void)
             break;
         }
     } else if (scene == (s32)&SceneId_BabiIriguchi1) {
-        Object_GetById(8)->unknown_5a &= 0xfe;
-        Object_GetById(9)->unknown_5a &= 0xfe;
+        Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+        Object_GetById(9)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_SetSpeed(8, 0x10000, 0x8000);
         Actor_SetSpeed(9, 0x10000, 0x8000);
         if (GameFlag_IsSet(0x109) == 0) {
@@ -1343,10 +1279,10 @@ s32 BabiIriguchi_SetupScene(void)
             Actor_SetPosition(12, 0x1380000, 0xf80000);
             Actor_SetPosition(13, 0x1280000, 0xf80000);
             Actor_SetPosition(14, 0x1400000, 0x1280000);
-            Actor_FaceDirection(11, 0, 0);
-            Actor_FaceDirection(12, 0xc000, 0);
-            Actor_FaceDirection(13, 0xc000, 0);
-            Actor_FaceDirection(14, 0x8000, 0);
+            Actor_FaceDirection(11, FACING_EAST, 0);
+            Actor_FaceDirection(12, FACING_NORTH, 0);
+            Actor_FaceDirection(13, FACING_NORTH, 0);
+            Actor_FaceDirection(14, FACING_WEST, 0);
             Battle_WaitMode0(5);
         } else if (GameFlag_IsSet(0x989) != 0) {
             Actor_SetPosition(10, 0x1380000, 0x1380000);
@@ -1360,8 +1296,8 @@ s32 BabiIriguchi_SetupScene(void)
         if (GameFlag_IsSet(0x985) != 0) {
             Actor_SetPosition(8, 0x1180000, 0xf00000);
             Actor_SetPosition(9, 0x1480000, 0xf00000);
-            Actor_FaceDirection(8, 0x8000, 0);
-            Actor_FaceDirection(9, 0, 0);
+            Actor_FaceDirection(8, FACING_WEST, 0);
+            Actor_FaceDirection(9, FACING_EAST, 0);
             Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
         }
         if (gGameState.entrance == 3) {

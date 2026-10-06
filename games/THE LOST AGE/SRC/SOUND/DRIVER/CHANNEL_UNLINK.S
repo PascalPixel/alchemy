@@ -1,10 +1,3 @@
-@ Unlinks a sound channel from its track's chain. subs r1, #20; bcc branches
-@ on the carry of the subtraction with no compare between them, where both
-@ approved compilers emit each Thumb conditional branch directly after its
-@ own cmp or cmn; ldmia r0! is later rewound with subs r0, #56. It is TLA's
-@ revision of the driver's channel unlink, whose TBS form (0x080f9a30) TLA
-@ also links at 0x081c16cc.
-@ credit: handwritten — sound channel chain unlink helper (TLA revision)
 .syntax unified
 	.thumb
 	.global SoundChannel_Unlink

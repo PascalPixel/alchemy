@@ -1,8 +1,5 @@
 #include "OBJECT_RUNTIME.H"
 
-/* Turns an object toward its action angle, cutting a turn wider than 4096
-   to 2048, and returns the turn. Both the main image and overlay 6A5 carry
-   it. */
 s32 ObjectMotion_StepAngle(struct ObjectRuntime *object)
 {
     s32 delta = 0;

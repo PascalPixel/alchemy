@@ -67,7 +67,7 @@ Func_0811d9cc:
 	add r2, r10
 	lsls r3, r3, #9
 	str r3, [r2]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
@@ -445,7 +445,7 @@ Func_0811d9cc:
 	movs r1, #0
 	bl BattlePres_SetActorModes
 .L_0811dd70:
-	bl Func_0811bc98
+	bl BattleMotion_DestroyAllSlotObjects
 	movs r0, #192
 	lsls r0, r0, #3
 	adds r0, #124

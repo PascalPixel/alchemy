@@ -1,7 +1,3 @@
-/*
- * Draft: Ability_RequestGlyph does not yet match; 3 halfwords differ from ☀️'s C, first at +0x18 (ldrh r0, [r0, #4]).
- * Links as recon/tla/raw/0803d4e4.s.
- */
 #include "TYPES.H"
 
 void UiIcon_BuildItemIconTiles(s32, s32, s32, s32, s32);

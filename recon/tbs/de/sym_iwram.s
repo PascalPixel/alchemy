@@ -1,6 +1,3 @@
-@ tbs-de's iwram variables not yet defined in C, in address order, as pret's
-@ sym files list them: where this edition's code reads each one. Each
-@ .space runs to the next variable.
 	.section .sym_iwram,"aw",%nobits
 	.space 0x00000010
 	.global Data_03001400
@@ -24,8 +21,8 @@ gSchedulerTaskTable:
 	.global gBlendFramesLeft
 gBlendFramesLeft:
 	.space 0x00000004
-	.global Data_03001ac4
-Data_03001ac4:
+	.global gDebugTextEnabled
+gDebugTextEnabled:
 	.space 0x0000000c
 	.global gBgScroll
 gBgScroll:
@@ -41,23 +38,21 @@ gBlendStartLevel:
 	.global gCpuLoadTimer
 gCpuLoadTimer:
 	.space 0x00000004
-	.global Data_03001af4
-Data_03001af4:
+	.global gScanlinePitch
+gScanlinePitch:
 	.space 0x00000004
 	.global gKeysPressedLatch
 gKeysPressedLatch:
 	.space 0x00000004
-	.global Data_03001afc
-Data_03001afc:
+	.global gKeysRepeatDirected
+gKeysRepeatDirected:
 	.space 0x00000004
-	.global Data_03001b00
-Data_03001b00:
+	.global gKeyRepeatTimer
+gKeyRepeatTimer:
 	.space 0x00000004
 	.global gKeysRepeat
 gKeysRepeat:
 	.space 0x0000000c
-	.global ResourceTableEntries
-ResourceTableEntries:
 	.global gVramBlockCache
 gVramBlockCache:
 	.space 0x00000180
@@ -75,8 +70,8 @@ gBlendDuration:
 	.global gLoadedStateWord
 gLoadedStateWord:
 	.space 0x00000004
-	.global Data_03001ca0
-Data_03001ca0:
+	.global gSleepDisabled
+gSleepDisabled:
 	.space 0x00000004
 	.global gCpuLoadPeak
 gCpuLoadPeak:
@@ -87,11 +82,11 @@ gBlendTargetLevel:
 	.global gSerialExchangeActive
 gSerialExchangeActive:
 	.space 0x00000004
-	.global Data_03001cb4
-Data_03001cb4:
+	.global gRandomSeed
+gRandomSeed:
 	.space 0x00000004
-	.global Data_03001cb8
-Data_03001cb8:
+	.global gResetRequested
+gResetRequested:
 	.space 0x00000004
 	.global gDebugTextCursor
 gDebugTextCursor:
@@ -105,8 +100,8 @@ gTransformStackDepth:
 	.global gSleepRequested
 gSleepRequested:
 	.space 0x00000004
-	.global Data_03001ccc
-Data_03001ccc:
+	.global gLagFrameCount
+gLagFrameCount:
 	.space 0x00000004
 	.global gLagFramesShown
 gLagFramesShown:
@@ -117,8 +112,8 @@ gBlendBrighten:
 	.global gProjection
 gProjection:
 	.space 0x00000014
-	.global Data_03001cf4
-Data_03001cf4:
+	.global gKeysHeldLast
+gKeysHeldLast:
 	.space 0x00000004
 	.global gBlendLayers
 gBlendLayers:
@@ -129,14 +124,14 @@ Data_03001cfc:
 	.global gObjAffineCount
 gObjAffineCount:
 	.space 0x00000004
-	.global Data_03001d04
-Data_03001d04:
+	.global gKeysDirection
+gKeysDirection:
 	.space 0x0000000c
 	.global gOptionMirror
 gOptionMirror:
 	.space 0x00000004
-	.global Data_03001d0c
-Data_03001d0c:
+	.global gKeysHeldAtVBlank
+gKeysHeldAtVBlank:
 	.space 0x0000000c
 	.global gOamCopyEnabled
 gOamCopyEnabled:
@@ -150,8 +145,8 @@ gDebugPaused:
 	.global gPostLoadCounter
 gPostLoadCounter:
 	.space 0x00000004
-	.global Data_03001d28
-Data_03001d28:
+	.global gVBlankDone
+gVBlankDone:
 	.space 0x00000004
 	.global gTransformStackTop
 gTransformStackTop:
@@ -167,8 +162,8 @@ gFrameCount:
 	.global Data_03001e40
 Data_03001e40:
 	.space 0x00000004
-	.global Data_03001e44
-Data_03001e44:
+	.global gFrameRenderPending
+gFrameRenderPending:
 	.space 0x0000000c
 	.global Data_03001e50
 Data_03001e50:
@@ -194,8 +189,6 @@ gMapAnimationPages:
 	.space 0x00000004
 	.global gMapWork
 gMapWork:
-	.global gCam
-gCam:
 	.space 0x00000004
 	.global Data_03001e74_a
 Data_03001e74_a:
@@ -248,8 +241,8 @@ gParticleWork:
 	.global Data_03001ec8
 Data_03001ec8:
 	.space 0x00000004
-	.global Data_03001ecc
-Data_03001ecc:
+	.global gDisplayTransition
+gDisplayTransition:
 	.space 0x00000004
 	.global Data_03001ed0
 Data_03001ed0:
@@ -308,14 +301,14 @@ gKorosseoWork:
 	.global gDebugMode
 gDebugMode:
 	.space 0x00000004
-	.global Data_03001f58
-Data_03001f58:
+	.global gCpuLoadDisplayEnabled
+gCpuLoadDisplayEnabled:
 	.space 0x00000004
 	.global gSleepComboFrames
 gSleepComboFrames:
 	.space 0x00000004
-	.global Data_03001f60
-Data_03001f60:
+	.global gScanlineAngle
+gScanlineAngle:
 	.space 0x00000004
 	.global gLinkStatus
 gLinkStatus:
@@ -323,11 +316,11 @@ gLinkStatus:
 	.global gNumberTextBuffer
 gNumberTextBuffer:
 	.space 0x00000008
-	.global Data_03001f78
-Data_03001f78:
+	.global gNumberTextHexEnd
+gNumberTextHexEnd:
 	.space 0x00000002
-	.global Data_03001f7a
-Data_03001f7a:
+	.global gNumberTextDecimalEnd
+gNumberTextDecimalEnd:
 	.space 0x00000076
 	.global gIwramHeap
 gIwramHeap:

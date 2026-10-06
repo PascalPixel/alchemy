@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080e1448
+	.global BattleFx_SpawnScaledArcObjects
 	.thumb_func
-Func_080e1448:
+BattleFx_SpawnScaledArcObjects:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

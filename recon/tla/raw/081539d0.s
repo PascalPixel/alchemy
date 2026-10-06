@@ -94,7 +94,7 @@ Func_081539d0:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r5, [r3, #48]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
@@ -143,7 +143,7 @@ Func_081539d0:
 	b .L_08153b12
 .L_08153aee:
 	mov r0, r9
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_08153b12
 .L_08153af6:
 	mov r0, r8
@@ -162,11 +162,11 @@ Func_081539d0:
 	add r5, sp, #28
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r2, [r5, #8]
 	cmp r2, #249
 	bgt .L_08153b32

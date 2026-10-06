@@ -44,16 +44,16 @@ Func_080ae6e4:
 	movs r0, #222
 	bl PartyInventory_Remove
 	movs r0, #0
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r0, #1
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r0, #2
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r0, #3
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r0, #0
 	bl Func_080ae358
-	bl Func_080b1004
+	bl Djinn_ActivateOfferedForParty
 	movs r2, #0
 .L_080ae758:
 	adds r0, r2, #0

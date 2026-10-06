@@ -1,7 +1,3 @@
-/* Draft: FacingObject_TurnPairToFaceEachOther (0x080d3600), ☀️'s
-   FIELD/COMMON/OBJECT/LINK_PAIR.C. Score 60: the ROM sets turning (movs r1,
-   #2) right after loading first->facing; this source sets it after the
-   sign extension. Links as recon/tla/raw/080d3600.s. */
 #include "TYPES.H"
 
 struct FacingObject {

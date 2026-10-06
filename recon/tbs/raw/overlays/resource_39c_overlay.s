@@ -195,7 +195,7 @@ MakyuriHeya_PushScriptA:
 	.4byte 0x00000010
 	.4byte 0x00003333
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000003
 	.4byte 0x03180000
 	.4byte 0x00000000
@@ -213,14 +213,14 @@ MakyuriHeya_PushScriptB:
 	.4byte 0x00000010
 	.4byte 0x00003333
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000003
 	.4byte 0x03180000
 	.4byte 0x00000000
 	.4byte 0x02e80000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte SceneData_ApplyTableA2c5AndReturnZero
+	.4byte MakyuriHeya_StopActorNinePositionCallback
 	.4byte 0x00000010
 	.global MakyuriHeya_PushScriptD
 MakyuriHeya_PushScriptD:
@@ -233,21 +233,21 @@ MakyuriHeya_PushScriptD:
 	.4byte 0x00000010
 	.4byte 0x00003333
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000003
 	.4byte 0x03380000
 	.4byte 0x00000000
 	.4byte 0x02e80000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte SceneData_ApplyTableA2c5AndReturnZero
+	.4byte MakyuriHeya_StopActorNinePositionCallback
 	.4byte 0x00000010
 	.global MakyuriHeya_PushScriptC
 MakyuriHeya_PushScriptC:
 	.4byte 0x00000000
 	.4byte 0x0000002d
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000010
 	.global gPaletteCycleRed
 gPaletteCycleRed:
@@ -1017,25 +1017,25 @@ gMakyuriHeyaEvents1:
 	.4byte 0x00000006
 	.4byte 0x00000002
 	.4byte 0x18750020
-	.4byte FieldScene_Forward646c
+	.4byte MakyuriHeya_ClearSceneRecordAndTarget
 	.4byte 0x00000202
 	.4byte 0x1875001f
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x1875001f
-	.4byte FieldScene_Forward646c
+	.4byte MakyuriHeya_ClearSceneRecordAndTarget
 	.4byte 0x00000a02
 	.4byte 0x18750015
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x18750015
-	.4byte FieldScene_CallHelper67e8
+	.4byte MakyuriHeya_TickSpawnTimer
 	.4byte 0x00000202
 	.4byte 0x1875000b
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x1875000b
-	.4byte FieldScene_CallHelper6364
+	.4byte MakyuriHeya_TriggerPillarRise
 	.4byte 0x00004602
 	.4byte 0xffff000f
 	.4byte FieldScene_RunScene39cSequenceB
@@ -1156,7 +1156,7 @@ gMakyuriHeyaEvents3:
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff0035
-	.4byte SceneState_ApplyWork16cMinus50A
+	.4byte MakyuriHeya_RunExitThreeScene
 	.4byte 0x00000031
 	.4byte 0xffff0039
 	.4byte 0x00000007
@@ -1177,7 +1177,7 @@ gMakyuriHeyaEvents3:
 	.4byte 0x0000000c
 	.4byte 0x0000c602
 	.4byte 0xffff003f
-	.4byte SceneState_ApplyWork16cMinus50
+	.4byte MakyuriHeya_RunExitThirteenScene
 	.4byte 0x00000001
 	.4byte 0xffff0036
 	.4byte 0x00000004
@@ -1260,7 +1260,7 @@ gMakyuriHeyaEventsOther:
 	.4byte 0x00000004
 	.4byte 0x0000c602
 	.4byte 0xffff0037
-	.4byte SceneState_ApplyWork16cMinus50B
+	.4byte MakyuriHeya_RunExitFiveScene
 	.4byte 0x00000000
 	.4byte 0x08700003
 	.4byte FieldScene_RunActorThreeBranchSequence

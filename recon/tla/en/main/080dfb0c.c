@@ -1,15 +1,13 @@
 #include "TYPES.H"
+#include "MOTION_OBJECT.H"
+#include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 #include "FIXED_MATH.H"
+#include "SYSTEM.H"
 
-struct RingOrigin {
-    u8 pad00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
+void Effect_AdvanceMotion(struct FieldEffect *effect);
 
-void BattleFx_SpawnRadialParticleRing(struct RingOrigin *origin)
+void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin)
 {
     struct EffectOptions options;
     s32 velocity[3];
@@ -18,7 +16,7 @@ void BattleFx_SpawnRadialParticleRing(struct RingOrigin *origin)
     u32 i;
 
     options.palette = 0;
-    options.update = BattleFx_UpdateParticleMotionAndScale;
+    options.update = Effect_AdvanceMotion;
     options.start_scale_x = 0xCCCC;
     options.start_scale_y = 0xCCCC;
     i = 0;
@@ -28,7 +26,7 @@ void BattleFx_SpawnRadialParticleRing(struct RingOrigin *origin)
         velocity[1] = 0;
         sine = Trig_Sin(angle);
         velocity[2] = sine;
-        Effect_Spawn(origin->x, origin->y, origin->z, velocity[0], velocity[1], sine, 0x01090001, &options);
+        Effect_SpawnResident(origin->x, origin->y, origin->z, velocity[0], velocity[1], sine, 0x01090001, &options);
         i++;
     } while (i <= 16);
 }

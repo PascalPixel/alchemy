@@ -1,21 +1,28 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "RENDER_INPUT.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
-/* graphics/registers/set_bg1_priority3.c */
-#define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 typedef void (*InterruptHandler)(void);
 void Runtime_SetIrqHandler(s32 index, s32 priority, InterruptHandler handler);
-void Graphics_ClearBg1ControlBit2(void);
 
 s32 UiWork_IsComplete(void);
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 
-/* graphics/registers/set_bg1_priority3.c */
 void Graphics_SetBg1Priority3(void)
 {
+    /* FAKEMATCH: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
     u32 mask = 4;
     u32 value = REG_BG1CNT;
 
@@ -25,9 +32,9 @@ void Graphics_SetBg1Priority3(void)
     REG_BG1CNT = value;
 }
 
-/* graphics/registers/clear_bg1_control_bit2.c */
 void Graphics_ClearBg1ControlBit2(void)
 {
+    /* FAKEMATCH: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
     u32 mask = 4;
     u32 value = REG_BG1CNT;
 
@@ -36,8 +43,6 @@ void Graphics_ClearBg1ControlBit2(void)
     REG_BG1CNT = value;
 }
 
-/* Clears BG0's vertical offset and installs Graphics_ClearBg1ControlBit2 as
-   the V-count interrupt at line 136. */
 void Graphics_InstallBg1VCountHandler(void)
 {
     u32 address = 0x04000012;
@@ -49,17 +54,12 @@ void Graphics_InstallBg1VCountHandler(void)
     Runtime_SetIrqHandler(2, 136, (InterruptHandler)address);
 }
 
-s32 UiText_ShowMessageAndWaitComplete(s32 arg0, s32 arg1, s32 arg2)
+s32 UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y)
 {
     s32 result;
 
-    result = UiText_OpenMessageWindow(arg0, arg1, arg2, 1);
-    goto check;
-again:
-    WaitFrames(1);
-check:
-    if (UiWork_IsComplete() == 0) {
-        goto again;
-    }
+    result = UiText_OpenMessageWindow(message, x, y, 1);
+    while (UiWork_IsComplete() == 0)
+        WaitFrames(1);
     return result;
 }

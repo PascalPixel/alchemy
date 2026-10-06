@@ -48,7 +48,7 @@ Func_0815e320:
 	bne .L_0815e384
 .L_0815e37c:
 	adds r0, r5, #0
-	bl Func_0818f5cc
+	bl BattleFx_RunCanvasModeByCount
 	b .L_0815e396
 .L_0815e384:
 	cmp r3, #199

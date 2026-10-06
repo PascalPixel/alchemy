@@ -1,7 +1,15 @@
-/* The elemental rings of Mt. Aleph, linked into both overlays that show
- * them (380 and its twin 381). Engine_* bind at each overlay's runtime
- * import veneer; the ring tables are each overlay's own. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 struct SoruRingObject {
     u8 pad00[8];
@@ -41,13 +49,7 @@ struct SoruRingList {
     u16 count;
 };
 
-extern s32 Soru_RingOffsetX[];
-extern s32 Soru_RingOffsetZ[];
-extern u8 Soru_RingDrift[][3];
-extern u8 Soru_RingSwing[][3];
-extern s8 Soru_RingDirection[][3];
 
-struct SoruRingList *Runtime_AllocateBlock(s32 slot, s32 size);
 u32 Engine_RandomNext(void);
 s32 Engine_MathSin(s32 angle);
 s32 Engine_MathCos(s32 angle);
@@ -55,11 +57,6 @@ struct SoruRingObject *Object_GetById(s32 actor);
 void Engine_ObjectSetBlendMode(struct SoruRingObject *obj, s32 mode);
 s32 Engine_TaskAddCallback(void *callback, s32 priority);
 
-/* Each frame: every ring breathes between its smallest size and its own
- * limit, and every third frame drifts by a random step along each axis its
- * direction table allows. A ring that has shrunk to its smallest size is
- * hidden at the origin for 24 steps while its saved position keeps
- * drifting, then reappears there. */
 void Soru_UpdateRing(void)
 {
     struct SoruRingList *list = Runtime_AllocateBlock(33, 404);
@@ -187,10 +184,6 @@ void Soru_UpdateRing(void)
     }
 }
 
-/* Mt. Aleph (Sol Sanctum and the crater): claim heap block 33 for up to ten
- * ring entries, one per actor from first, each blended, placed at its fixed
- * offset, and schedule the ring's update. The same function sits in both
- * overlays. */
 void SoruStar_SetupElementalRings(s32 first, u32 count)
 {
     struct SoruRingList *list;
@@ -204,7 +197,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
     list = Runtime_AllocateBlock(33, 0x194);
     zero = 0;
     entry = list->entries;
-    Dma_Set((const void *)&zero, list, 0x85000065, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, list, 0x85000065, REG_DMA3);
     if (count > 10)
         count = 10;
     none = 0;

@@ -1,3 +1,12 @@
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "ABILITY_IDS.H"
 #include "FIELD_EVENT.H"
@@ -5,21 +14,7 @@
 #include "FLAG_IDS.H"
 #include "ITEM_IDS.H"
 #include "SOUND_IDS.H"
-extern u8 MsgKuupuappuLeftThiefRegretsEscape[];
-extern u8 MsgKuupuappuLeftThiefThoughts[];
-extern u8 MsgKuupuappuRightThiefRegretsStaying[];
-extern u8 MsgKuupuappuRightThiefThoughts[];
-extern u8 MsgKuupuappuThiefLeaderSilencesThieves[];
-extern u8 MsgKuupuappuThiefLeaderThoughts[];
-extern u8 MsgKuupuappuPrisonerRegretsFight[];
-extern u8 MsgKuupuappuPrisonerThoughts[];
-
-/*
- * The jail cell on the underground way between the Vault and Lunpa. While
- * the Vault thieves are locked up, the three of them sit in the cell; after
- * the party returns from the later Vault, a lone prisoner has taken their
- * place.
- */
+#include "text/MSG_IDS.H"
 
 enum JailEntrance {
     JAIL_ENTRANCE_FROM_VAULT = 1,
@@ -33,7 +28,6 @@ enum JailExit {
     JAIL_EXIT_TO_LUNPA = 3
 };
 
-/* Each exit arrives at the destination scene's entrance from the jail. */
 enum {
     ENTRANCE_FROM_JAIL = 12
 };
@@ -71,17 +65,10 @@ enum JailSprite {
     SPRITE_PRISONER = 0x74
 };
 
-/* The collision flags set on whoever sits in the cell. */
 enum {
     CELL_COLLISION_FLAGS = 0x14
 };
 
-extern const struct SceneEntrance gJailEntrances[];
-extern const u32 gJailExits[];
-extern const struct ScenePlacement gJailThiefPlacements[];
-extern const struct ScenePlacement gJailPrisonerPlacements[];
-extern const struct SceneEvent gJailThiefEvents[];
-extern const struct SceneEvent gJailPrisonerEvents[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -114,20 +101,18 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gJailThiefEvents;
 }
 
-/* The leader looks at each of his men and silences them, then turns to the
-   party and speaks again. */
 void ThiefLeader_Talk(void)
 {
     Engine_EventBegin();
 
-    Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
+    Engine_ActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
     Engine_EventWait(40);
 
-    Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
+    Engine_ActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
     Engine_EventWait(40);
 
     Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderSilencesThieves);
-    Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
+    Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
 
     Engine_ActorStartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
@@ -139,7 +124,7 @@ void ThiefLeader_Talk(void)
     Engine_ActorRunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
     Engine_EventWait(20);
 
-    Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
+    Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
 
     Engine_EventEnd();
 }
@@ -150,7 +135,7 @@ void LeftThief_Talk(void)
     Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefRegretsEscape);
-    Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
+    Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
     Engine_EventEnd();
 }
 
@@ -160,7 +145,7 @@ void RightThief_Talk(void)
     Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgKuupuappuRightThiefRegretsStaying);
-    Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
+    Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
     Engine_EventEnd();
 }
 
@@ -168,7 +153,7 @@ void ThiefLeader_ReadMind(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderThoughts);
-    Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
+    Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
     Engine_EventEnd();
 }
 
@@ -176,7 +161,7 @@ void LeftThief_ReadMind(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefThoughts);
-    Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
+    Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
     Engine_EventEnd();
 }
 
@@ -184,13 +169,13 @@ void RightThief_ReadMind(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuRightThiefThoughts);
-    Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
+    Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
     Engine_EventEnd();
 }
 
 void VaultDoor_Leave(void)
 {
-    Audio_PlayCue(SOUND_MAP_EXIT);
+    Engine_AudioPlayCue(SOUND_MAP_EXIT);
     Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
 
@@ -202,13 +187,13 @@ s32 Scene_Initialize(void)
     entrance = gGameState.entrance;
 
     if (entrance == JAIL_ENTRANCE_FROM_LUNPA) {
-        GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+        Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else if (entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
-        Actor_Get(ACTOR_PRISONER)->collision_flags |= CELL_COLLISION_FLAGS;
+        Object_GetById(ACTOR_PRISONER)->collision_flags |= CELL_COLLISION_FLAGS;
     } else {
-        Actor_Get(ACTOR_THIEF_LEADER)->collision_flags |= CELL_COLLISION_FLAGS;
-        Actor_Get(ACTOR_LEFT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
-        Actor_Get(ACTOR_RIGHT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
+        Object_GetById(ACTOR_THIEF_LEADER)->collision_flags |= CELL_COLLISION_FLAGS;
+        Object_GetById(ACTOR_LEFT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
+        Object_GetById(ACTOR_RIGHT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
     }
 
     return 0;

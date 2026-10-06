@@ -1,17 +1,9 @@
-/* The tree that is pushed over to bridge the gap. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
 
 void FieldScene_RunSharedSetPiece(s32 delay);
 
-/*
- * Actor 10 topples: it leans over faster and faster until it passes the
- * tipping point, rocks back, then falls for good, sinking as it goes down,
- * and comes to rest lying flat. Each phase turns the sprite a little more
- * every frame and swings the actor sideways with the turn. The shared set
- * piece follows.
- */
 void ArutinYama_SwingActorIntoSetPiece(void)
 {
     struct FieldActor *actor;

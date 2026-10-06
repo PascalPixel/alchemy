@@ -1,7 +1,3 @@
-@ Far-call stub table after the cartridge header at 0x080000c0: fixed 8-byte veneers, each loading its target into r4 and
-@ branching, which the calling convention permits. No compiler emits them; the
-@ shared overlay veneer macro builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -9,9 +5,9 @@
 	.thumb_func
 WaitFramesFar:
 	overlay_veneer WaitFrames
-	.global Func_080000c8
+	.global Scheduler_ResetTaskTableFar
 	.thumb_func
-Func_080000c8:
+Scheduler_ResetTaskTableFar:
 	overlay_veneer Scheduler_ResetTaskTable
 	.global Scheduler_AddOrUpdateCallbackFar
 	.thumb_func
@@ -21,17 +17,17 @@ Scheduler_AddOrUpdateCallbackFar:
 	.thumb_func
 Func_080000d8:
 	overlay_veneer Scheduler_RemoveCallback
-	.global Func_080000e0
+	.global Scheduler_EnableCallbacksFar
 	.thumb_func
-Func_080000e0:
+Scheduler_EnableCallbacksFar:
 	overlay_veneer Scheduler_EnableCallbacks
-	.global Func_080000e8
+	.global Scheduler_DisableCallbacksFar
 	.thumb_func
-Func_080000e8:
+Scheduler_DisableCallbacksFar:
 	overlay_veneer Scheduler_DisableCallbacks
-	.global Func_080000f0
+	.global Scheduler_RunCallbacksByKeyFar
 	.thumb_func
-Func_080000f0:
+Scheduler_RunCallbacksByKeyFar:
 	overlay_veneer Scheduler_RunCallbacksByKey
 	.global Func_080000f8
 	.thumb_func
@@ -45,10 +41,10 @@ ArcTan2Far:
 	.thumb_func
 Math_IntegerSqrtFar:
 	overlay_veneer Math_IntegerSqrt
-	.global Func_08000110
+	.global FixedSqrtFar
 	.thumb_func
-Func_08000110:
-	overlay_veneer Func_080149e0
+FixedSqrtFar:
+	overlay_veneer FixedSqrt
 	.global Math_SineFar
 	.thumb_func
 Math_SineFar:
@@ -61,14 +57,14 @@ Math_CosineFar:
 	.thumb_func
 Func_08000128:
 	overlay_veneer Vector_AddPolarOffset
-	.global Func_08000130
+	.global Runtime_SetIrqHandlerFar
 	.thumb_func
-Func_08000130:
-	overlay_veneer Func_08013438
-	.global Func_08000138
+Runtime_SetIrqHandlerFar:
+	overlay_veneer Runtime_SetIrqHandler
+	.global Runtime_InitializeHeapFar
 	.thumb_func
-Func_08000138:
-	overlay_veneer Func_08014c6c
+Runtime_InitializeHeapFar:
+	overlay_veneer Runtime_InitializeHeap
 	.global Func_08000140
 	.thumb_func
 Func_08000140:
@@ -81,14 +77,14 @@ Runtime_AllocateBlockFar:
 	.thumb_func
 Runtime_ReleaseHeapBlockFar:
 	overlay_veneer Runtime_ReleaseHeapBlock
-	.global Func_08000158
+	.global Runtime_GetRemainingIwramFar
 	.thumb_func
-Func_08000158:
-	overlay_veneer Func_08014ca0
-	.global Func_08000160
+Runtime_GetRemainingIwramFar:
+	overlay_veneer Runtime_GetRemainingIwram
+	.global Runtime_GetRemainingEwramFar
 	.thumb_func
-Func_08000160:
-	overlay_veneer Func_08014cb0
+Runtime_GetRemainingEwramFar:
+	overlay_veneer Runtime_GetRemainingEwram
 	.global Runtime_BumpAllocateFar
 	.thumb_func
 Runtime_BumpAllocateFar:
@@ -101,33 +97,33 @@ Runtime_BumpAllocateAlternatePoolFar:
 	.thumb_func
 Sys_FreeFar:
 	overlay_veneer Sys_Free
-	.global Func_08000180
+	.global Runtime_WriteDebugTextTilesFar
 	.thumb_func
-Func_08000180:
-	overlay_veneer Func_08014ae0
-	.global Func_08000188
+Runtime_WriteDebugTextTilesFar:
+	overlay_veneer Runtime_WriteDebugTextTiles
+	.global Text_DrawHexRightAlignedFar
 	.thumb_func
-Func_08000188:
-	overlay_veneer Func_08014b30
-	.global Func_08000190
+Text_DrawHexRightAlignedFar:
+	overlay_veneer Text_DrawHexRightAligned
+	.global Text_DrawSignedDecimalRightAlignedFar
 	.thumb_func
-Func_08000190:
-	overlay_veneer Func_08014b50
+Text_DrawSignedDecimalRightAlignedFar:
+	overlay_veneer Text_DrawSignedDecimalRightAligned
 	.global Func_08000198
 	.thumb_func
 Func_08000198:
 	overlay_veneer Func_08014aa8
-	.global Func_080001a0
+	.global Resource_DecodeByteLzInRamFar
 	.thumb_func
-Func_080001a0:
+Resource_DecodeByteLzInRamFar:
 	overlay_veneer Resource_DecodeByteLzInRam
-	.global Func_080001a8
+	.global Resource_DecodeType01Far
 	.thumb_func
-Func_080001a8:
+Resource_DecodeType01Far:
 	overlay_veneer Resource_DecodeType01
-	.global Func_080001b0
+	.global Resource_InitializeTableFar
 	.thumb_func
-Func_080001b0:
+Resource_InitializeTableFar:
 	overlay_veneer Func_08014368
 	.global Resource_ResetEntryFar
 	.thumb_func
@@ -145,73 +141,73 @@ VramBlock_LoadCachedFar:
 	.thumb_func
 Resource_FindFreeEntryFar:
 	overlay_veneer Resource_FindFreeEntry
-	.global Func_080001d8
+	.global Bg0_ClearTilemapFar
 	.thumb_func
-Func_080001d8:
+Bg0_ClearTilemapFar:
 	overlay_veneer Func_08014b70
 	.global AffineMatrix_BuildForEffectFar
 	.thumb_func
 AffineMatrix_BuildForEffectFar:
 	overlay_veneer AffineMatrix_BuildForEffect
-	.global Func_080001e8
+	.global Runtime_PushSlotEntryFar
 	.thumb_func
-Func_080001e8:
+Runtime_PushSlotEntryFar:
 	overlay_veneer Func_080140d8
-	.global Func_080001f0
+	.global Ui_LoadWindowGraphicsFar
 	.thumb_func
-Func_080001f0:
-	overlay_veneer Func_08014bac
-	.global Func_080001f8
+Ui_LoadWindowGraphicsFar:
+	overlay_veneer Ui_LoadWindowGraphics
+	.global PaletteDma_LoadBlockFar
 	.thumb_func
-Func_080001f8:
-	overlay_veneer Func_08014c4c
-	.global Func_08000200
+PaletteDma_LoadBlockFar:
+	overlay_veneer PaletteDma_LoadBlock
+	.global Render_ResetTransformStateFar
 	.thumb_func
-Func_08000200:
-	overlay_veneer Func_08014de4
-	.global Func_08000208
+Render_ResetTransformStateFar:
+	overlay_veneer Render_ResetTransformState
+	.global SceneTransform_ResetMatrixFar
 	.thumb_func
-Func_08000208:
+SceneTransform_ResetMatrixFar:
 	overlay_veneer Func_08014ee0
-	.global Func_08000210
+	.global Graphics_SaveTransferWorkOnceFar
 	.thumb_func
-Func_08000210:
+Graphics_SaveTransferWorkOnceFar:
 	overlay_veneer Graphics_SaveTransferWorkOnce
-	.global Func_08000218
+	.global Graphics_RestoreTransferWorkFar
 	.thumb_func
-Func_08000218:
-	overlay_veneer Func_08014ea8
-	.global Func_08000220
+Graphics_RestoreTransferWorkFar:
+	overlay_veneer Graphics_RestoreTransferWork
+	.global SceneTransform_ApplyRotationFar
 	.thumb_func
-Func_08000220:
+SceneTransform_ApplyRotationFar:
 	overlay_veneer Func_08014efc
 	.global SceneTransform_ApplyPitchFar
 	.thumb_func
 SceneTransform_ApplyPitchFar:
 	overlay_veneer SceneTransform_ApplyPitch
-	.global Func_08000230
+	.global SceneTransform_ApplyYawFar
 	.thumb_func
-Func_08000230:
-	overlay_veneer Func_08015068
-	.global Func_08000238
+SceneTransform_ApplyYawFar:
+	overlay_veneer SceneTransform_ApplyYaw
+	.global SceneTransform_ApplyRollFar
 	.thumb_func
-Func_08000238:
+SceneTransform_ApplyRollFar:
 	overlay_veneer Func_080150e4
 	.global SceneTransform_ApplyPositionFar
 	.thumb_func
 SceneTransform_ApplyPositionFar:
 	overlay_veneer SceneTransform_ApplyPosition
-	.global Func_08000248
+	.global SceneTransform_ApplyScaleFar
 	.thumb_func
-Func_08000248:
+SceneTransform_ApplyScaleFar:
 	overlay_veneer Func_080151ac
-	.global Func_08000250
+	.global SceneTransform_ApplyRotationTranslationFar
 	.thumb_func
-Func_08000250:
+SceneTransform_ApplyRotationTranslationFar:
 	overlay_veneer Func_0801524c
-	.global Func_08000258
+	.global SceneTransform_ApplyScaledRotationFar
 	.thumb_func
-Func_08000258:
+SceneTransform_ApplyScaledRotationFar:
 	overlay_veneer Func_08015384
 	.global Graphics_PrepareTransferInIwramWorkFar
 	.thumb_func
@@ -221,9 +217,9 @@ Graphics_PrepareTransferInIwramWorkFar:
 	.thumb_func
 Render_ProjectPointFar:
 	overlay_veneer Render_ProjectPoint
-	.global Func_08000270
+	.global Camera_SetAngleParametersFar
 	.thumb_func
-Func_08000270:
+Camera_SetAngleParametersFar:
 	overlay_veneer Func_08015714
 	.global Camera_StoreSceneParametersFar
 	.thumb_func
@@ -241,10 +237,10 @@ Runtime_ConstantZeroResultFar:
 	.thumb_func
 Resource_GetTableEntryFar:
 	overlay_veneer Resource_GetTableEntry
-	.global Func_08000298
+	.global Resource_ReservedNoOpFar
 	.thumb_func
-Func_08000298:
-	overlay_veneer Func_080132fc
+Resource_ReservedNoOpFar:
+	overlay_veneer Resource_ReservedNoOp
 	.global Resource_LoadCodeFar
 	.thumb_func
 Resource_LoadCodeFar:
@@ -253,105 +249,105 @@ Resource_LoadCodeFar:
 	.thumb_func
 Blend_SetDarkenTarget16Far:
 	overlay_veneer Blend_SetDarkenTarget16
-	.global Func_080002b0
+	.global Blend_SetDarkenTarget0Far
 	.thumb_func
-Func_080002b0:
-	overlay_veneer Func_08013eb4
-	.global Func_080002b8
+Blend_SetDarkenTarget0Far:
+	overlay_veneer Blend_SetDarkenTarget0
+	.global Blend_SetBrightenTarget16Far
 	.thumb_func
-Func_080002b8:
-	overlay_veneer Func_08013ef8
-	.global Func_080002c0
+Blend_SetBrightenTarget16Far:
+	overlay_veneer Blend_SetBrightenTarget16
+	.global Blend_SetBrightenTarget0Far
 	.thumb_func
-Func_080002c0:
-	overlay_veneer Func_08013f3c
-	.global Func_080002c8
+Blend_SetBrightenTarget0Far:
+	overlay_veneer Blend_SetBrightenTarget0
+	.global Blend_ConfigureTransitionFar
 	.thumb_func
-Func_080002c8:
-	overlay_veneer Func_08013f80
+Blend_ConfigureTransitionFar:
+	overlay_veneer Blend_ConfigureTransition
 	.global Blend_WaitForTransitionFar
 	.thumb_func
 Blend_WaitForTransitionFar:
 	overlay_veneer Blend_WaitForTransition
-	.global Func_080002d8
+	.global RuntimeDispatch_ReservedNoOpAFar
 	.thumb_func
-Func_080002d8:
+RuntimeDispatch_ReservedNoOpAFar:
 	overlay_veneer Func_080132b8
-	.global Func_080002e0
+	.global RuntimeDispatch_ReservedNoOpBFar
 	.thumb_func
-Func_080002e0:
+RuntimeDispatch_ReservedNoOpBFar:
 	overlay_veneer Func_080132bc
-	.global Func_080002e8
+	.global RuntimeDispatch_ReservedNoOpCFar
 	.thumb_func
-Func_080002e8:
+RuntimeDispatch_ReservedNoOpCFar:
 	overlay_veneer Func_080132c0
-	.global Func_080002f0
+	.global RuntimeDispatch_ReservedNoOpDFar
 	.thumb_func
-Func_080002f0:
+RuntimeDispatch_ReservedNoOpDFar:
 	overlay_veneer Func_080132c4
-	.global Func_080002f8
+	.global RuntimeDispatch_ReservedNoOpEFar
 	.thumb_func
-Func_080002f8:
+RuntimeDispatch_ReservedNoOpEFar:
 	overlay_veneer Func_080132c8
-	.global Func_08000300
+	.global SerialRuntime_InitializeFar
 	.thumb_func
-Func_08000300:
+SerialRuntime_InitializeFar:
 	overlay_veneer Func_08016180
-	.global Func_08000308
+	.global SerialRuntime_PollAndTransferFar
 	.thumb_func
-Func_08000308:
+SerialRuntime_PollAndTransferFar:
 	overlay_veneer Func_08016348
-	.global Func_08000310
+	.global QueueIoWriteDelay1Far
 	.thumb_func
-Func_08000310:
-	overlay_veneer Func_08013b68
+QueueIoWriteDelay1Far:
+	overlay_veneer QueueIoWriteDelay1
 	.global QueueIoWriteDelay2Far
 	.thumb_func
 QueueIoWriteDelay2Far:
 	overlay_veneer QueueIoWriteDelay2
-	.global Func_08000320
+	.global QueueIoWriteDelay3Far
 	.thumb_func
-Func_08000320:
-	overlay_veneer Func_08013be0
-	.global Func_08000328
+QueueIoWriteDelay3Far:
+	overlay_veneer QueueIoWriteDelay3
+	.global QueueIoWriteDelay5Far
 	.thumb_func
-Func_08000328:
-	overlay_veneer Func_08013c1c
-	.global Func_08000330
+QueueIoWriteDelay5Far:
+	overlay_veneer QueueIoWriteDelay5
+	.global QueueIoWriteDelay6Far
 	.thumb_func
-Func_08000330:
-	overlay_veneer Func_08013c58
-	.global Func_08000338
+QueueIoWriteDelay6Far:
+	overlay_veneer QueueIoWriteDelay6
+	.global QueueIoWriteDelay7Far
 	.thumb_func
-Func_08000338:
-	overlay_veneer Func_08013c94
-	.global Func_08000340
+QueueIoWriteDelay7Far:
+	overlay_veneer QueueIoWriteDelay7
+	.global QueueIoWriteDelay9Far
 	.thumb_func
-Func_08000340:
-	overlay_veneer Func_08013cd0
-	.global Func_08000348
+QueueIoWriteDelay9Far:
+	overlay_veneer QueueIoWriteDelay9
+	.global QueueIoWriteDelay10Far
 	.thumb_func
-Func_08000348:
-	overlay_veneer Func_08013d0c
-	.global Func_08000350
+QueueIoWriteDelay10Far:
+	overlay_veneer QueueIoWriteDelay10
+	.global QueueIoWriteDelay11Far
 	.thumb_func
-Func_08000350:
-	overlay_veneer Func_08013d48
+QueueIoWriteDelay11Far:
+	overlay_veneer QueueIoWriteDelay11
 	.global Runtime_SetMainState19Far
 	.thumb_func
 Runtime_SetMainState19Far:
 	overlay_veneer Runtime_SetMainState19
-	.global Func_08000360
+	.global Graphics_PrepareTransferAndRunFar
 	.thumb_func
-Func_08000360:
-	overlay_veneer Func_080156f8
-	.global Func_08000368
+Graphics_PrepareTransferAndRunFar:
+	overlay_veneer Graphics_PrepareTransferAndRun
+	.global SerialRuntime_WaitForStatusMaskFar
 	.thumb_func
-Func_08000368:
-	overlay_veneer Func_080167d8
-	.global Func_08000370
+SerialRuntime_WaitForStatusMaskFar:
+	overlay_veneer SerialRuntime_WaitForStatusMask
+	.global SerialRuntime_RemoveIrqHandlersFar
 	.thumb_func
-Func_08000370:
+SerialRuntime_RemoveIrqHandlersFar:
 	overlay_veneer SerialRuntime_RemoveIrqHandlers
 	.global Sound_LoadPresetParametersFar
 	.thumb_func
@@ -364,7 +360,7 @@ Func_08000380:
 	.global Party_CheckFar
 	.thumb_func
 Party_CheckFar:
-	overlay_veneer Party_Check
+	overlay_veneer SerialRuntime_BeginTransferB
 	.global Func_08000390
 	.thumb_func
 Func_08000390:
@@ -373,21 +369,21 @@ Func_08000390:
 	.thumb_func
 SerialRuntime_WaitForTransferBFar:
 	overlay_veneer SerialRuntime_WaitForTransferB
-	.global Func_080003a0
+	.global SerialRuntime_WaitForTransfersFar
 	.thumb_func
-Func_080003a0:
+SerialRuntime_WaitForTransfersFar:
 	overlay_veneer Func_080168f8
-	.global Func_080003a8
+	.global SerialRuntime_GetActiveTransfersFar
 	.thumb_func
-Func_080003a8:
+SerialRuntime_GetActiveTransfersFar:
 	overlay_veneer Func_0801692c
-	.global Func_080003b0
+	.global SerialRuntime_StepBlockTransferFar
 	.thumb_func
-Func_080003b0:
+SerialRuntime_StepBlockTransferFar:
 	overlay_veneer Func_08016990
-	.global Func_080003b8
+	.global Scheduler_SetCallbackMaskFar
 	.thumb_func
-Func_080003b8:
+Scheduler_SetCallbackMaskFar:
 	overlay_veneer Scheduler_SetCallbackMask
 	.global Owner_GetStateFar
 	.thumb_func
@@ -405,9 +401,9 @@ GameFlag_SetBitFar:
 	.thumb_func
 GameFlag_ClearBitFar:
 	overlay_veneer GameFlag_ClearBit
-	.global Func_080003e0
+	.global GameFlag_ToggleFar
 	.thumb_func
-Func_080003e0:
+GameFlag_ToggleFar:
 	overlay_veneer Func_08016d34
 	.global GameFlag_GetByteFar
 	.thumb_func
@@ -417,13 +413,13 @@ GameFlag_GetByteFar:
 	.thumb_func
 GameFlag_SetByteFar:
 	overlay_veneer GameFlag_SetByte
-	.global Func_080003f8
+	.global GameFlag_IncrementByteFar
 	.thumb_func
-Func_080003f8:
+GameFlag_IncrementByteFar:
 	overlay_veneer Func_08016d7c
-	.global Func_08000400
+	.global GameFlag_DecrementByteFar
 	.thumb_func
-Func_08000400:
+GameFlag_DecrementByteFar:
 	overlay_veneer Func_08016d98
 	.global GameFlag_GetNibbleFar
 	.thumb_func
@@ -433,9 +429,9 @@ GameFlag_GetNibbleFar:
 	.thumb_func
 Func_08000410:
 	overlay_veneer Func_08016dd0
-	.global Func_08000418
+	.global Scheduler_FindCallbackFar
 	.thumb_func
-Func_08000418:
+Scheduler_FindCallbackFar:
 	overlay_veneer Scheduler_FindCallback
 	.global Func_08000420
 	.thumb_func

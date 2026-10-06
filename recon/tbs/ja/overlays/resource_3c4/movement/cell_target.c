@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese cell-centered Babi tunnel movement, 2026-10-01.
- * The complete movement owner compiles with approved TBS flags but rounds
- * the target to cell centers, adding eight bytes. The Japanese game takes
- * the signed pixel halves directly; the other five editions center cells.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/BABI.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -25,8 +20,6 @@ s32 SceneActor_MoveActorZeroToTarget(const struct CellTarget *target)
 
     Vector_AddPolarOffset(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
-    /* Both guards branch to one shared exit placed after the body.  Writing
-     * `return 1` twice would put an inline copy near the top instead. */
     if (Object_CheckMovementCollision(actor, probe) == 1) {
         goto refuse;
     }
@@ -43,7 +36,7 @@ s32 SceneActor_MoveActorZeroToTarget(const struct CellTarget *target)
     actor->speedX = 0x00030000;
     actor->speedY = 0x00020000;
     actor->speedZ = 0x00040000;
-    actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
+    actor->flags &= (u8)0x7e;
 
     Engine_ActorSetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);

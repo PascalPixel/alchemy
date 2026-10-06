@@ -9,16 +9,6 @@
 #include "FLAG_IDS.H"
 #include "ITEM_IDS.H"
 
-/*
- * The rooms behind Lunpa's doors: three homes, the weapon and armor shop,
- * the item shop, the inn, the temple, and the house on the way to the
- * Suhalla Gate. Each room's door trigger, exit and entrance share the
- * room's number. Until Lunpa trades again the merchants and the inn turn
- * the party away; afterwards the shops, inn and sanctum open to anyone
- * facing their counter. Counters face south, so the party faces a counter
- * when it looks north.
- */
-
 enum InteriorRoom {
     ROOM_FIRST_HOME = 1,
     ROOM_SECOND_HOME,
@@ -33,7 +23,6 @@ enum InteriorRoom {
     ROOM_TEMPLE_SECOND_ENTRANCE
 };
 
-/* A room's door takes the party out through the exit of the same number. */
 #define ROOM_DOOR(room) { EVENT_EXIT, (room), CONDITION_ALWAYS, (room) }
 
 enum LunpaEntrance {
@@ -107,47 +96,6 @@ enum {
     INN_LUNPA = 8
 };
 
-/* Lines spoken while Lunpa is sealed, then after it trades again. */
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeASealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeASealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeASealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeASealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeASealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeASealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnClerkSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerSealed);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnkeeperSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnClerkSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsTemplePriestSealedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeAReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeAReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeAReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeAReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeAReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeAReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsChefReopened);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnkeeperReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnClerkReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsChefReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsTemplePriestReopenedThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsTravelingPriestThoughts);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstOven);
-TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondOven);
 
 extern const struct SceneEntrance gInteriorEntrances[];
 extern const u32 gInteriorExits[];
@@ -156,7 +104,6 @@ extern const struct SceneEvent gInteriorSealedEvents[];
 extern const struct SceneEvent gInteriorReopenedEvents[];
 extern const struct SceneEvent gSuharaGateHouseEvents[];
 
-/* Event scripts the tables reach in every run of the overlay's code. */
 void Innkeeper_Talk(void);
 void Chef_Talk(void);
 void Chef_ReadMind(void);

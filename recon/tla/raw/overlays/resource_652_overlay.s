@@ -131,9 +131,9 @@ Func_020000ac:
 	bl Battle_WaitMode0
 	pop {r5, pc}
 .L_02008148:
-	.4byte 0x0000156d
+	.4byte MsgDeriHeyaGah
 .L_0200814c:
-	.4byte 0x0000156e
+	.4byte MsgDeriHeyaYarg
 	.section .text.x02008150,"ax",%progbits
 	.global Func_02000150
 	.thumb_func
@@ -170,7 +170,7 @@ Func_02000150:
 	bl Battle_WaitMode0
 	pop {r5, pc}
 .L_020081a0:
-	.4byte 0x0000156f
+	.4byte MsgDeriHeyaWhatAreYouDoing
 	.section .text.x02008218,"ax",%progbits
 	.global Func_02000218
 	.thumb_func
@@ -257,7 +257,7 @@ Func_02000270:
 .L_020082ac:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_020082cc
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -268,7 +268,7 @@ Func_02000270:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082cc:
-	.4byte 0x00001747
+	.4byte MsgDeriHeyaSouthRoadDanger
 	.section .text.x020082d0,"ax",%progbits
 	.global Func_020002d0
 	.thumb_func
@@ -304,7 +304,7 @@ Func_020002d0:
 .L_0200830c:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_0200832c
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -315,7 +315,7 @@ Func_020002d0:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200832c:
-	.4byte 0x00001749
+	.4byte MsgDeriHeyaNewTravelers
 	.section .text.x02008330,"ax",%progbits
 	.global Func_02000330
 	.thumb_func
@@ -351,7 +351,7 @@ Func_02000330:
 .L_0200836c:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_0200838c
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -362,7 +362,7 @@ Func_02000330:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200838c:
-	.4byte 0x0000174d
+	.4byte MsgDeriHeyaDinnerChoice
 	.section .text.x02008390,"ax",%progbits
 	.global Func_02000390
 	.thumb_func
@@ -394,7 +394,7 @@ Func_02000390:
 	bne .L_02008430
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_020083e8
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -407,7 +407,7 @@ Func_02000390:
 .L_020083e4:
 	.4byte gPartyState
 .L_020083e8:
-	.4byte 0x00001755
+	.4byte MsgDeriHeyaTravelersFreeTime
 .L_020083ec:
 	bl UiText_OpenMessageAtObject
 	bl Func_02000dd4
@@ -442,7 +442,7 @@ Func_02000390:
 .L_02008438:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_02008494
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -477,7 +477,7 @@ Func_02000390:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008494:
-	.4byte 0x00001755
+	.4byte MsgDeriHeyaTravelersFreeTime
 	.section .text.x02008498,"ax",%progbits
 	.global Func_02000498
 	.thumb_func
@@ -511,7 +511,7 @@ Func_02000498:
 .L_020084d0:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_020084f0
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -522,7 +522,7 @@ Func_02000498:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020084f0:
-	.4byte 0x00001844
+	.4byte MsgDeriHeyaLeaveForMadora
 	.section .text.x020084f4,"ax",%progbits
 	.global Func_020004f4
 	.thumb_func
@@ -558,7 +558,7 @@ Func_020004f4:
 .L_02008530:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_02008550
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -569,7 +569,7 @@ Func_020004f4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008550:
-	.4byte 0x00001833
+	.4byte MsgDeriHeyaPirateTreasure
 	.section .text.x02008554,"ax",%progbits
 	.global Func_02000554
 	.thumb_func
@@ -605,7 +605,7 @@ Func_02000554:
 .L_02008590:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_020085b0
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -616,7 +616,7 @@ Func_02000554:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020085b0:
-	.4byte 0x00001835
+	.4byte MsgDeriHeyaSpaciousVillage
 	.section .text.x020085b4,"ax",%progbits
 	.global Func_020005b4
 	.thumb_func
@@ -652,7 +652,7 @@ Func_020005b4:
 .L_020085f0:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_02008610
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -663,7 +663,7 @@ Func_020005b4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008610:
-	.4byte 0x00001839
+	.4byte MsgDeriHeyaFishermenWaiting
 	.section .text.x02008614,"ax",%progbits
 	.global Func_02000614
 	.thumb_func
@@ -671,7 +671,7 @@ Func_02000614:
 	push {r5, lr}
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_02008668
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -701,7 +701,7 @@ Func_02000614:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008668:
-	.4byte 0x0000180c
+	.4byte MsgDeriHeyaGoingToMadora
 	.section .text.x0200866c,"ax",%progbits
 	.global Func_0200066c
 	.thumb_func
@@ -709,7 +709,7 @@ Func_0200066c:
 	push {r5, lr}
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_020086c0
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -739,7 +739,7 @@ Func_0200066c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020086c0:
-	.4byte 0x00001829
+	.4byte MsgDeriHeyaLookingForBoat
 	.section .text.x020086c4,"ax",%progbits
 	.global Func_020006c4
 	.thumb_func
@@ -747,7 +747,7 @@ Func_020006c4:
 	push {lr}
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_02008700
 	bl Engine_EventSetMessage
 	movs r1, #0
@@ -766,7 +766,7 @@ Func_020006c4:
 	bl Engine_EventEnd
 	pop {pc}
 .L_02008700:
-	.4byte 0x0000183b
+	.4byte MsgDeriHeyaWatchingPractice
 	.section .text.x02008704,"ax",%progbits
 	.global Func_02000704
 	.thumb_func
@@ -813,7 +813,7 @@ Func_02000730:
 	ldr r7, [r0, #12]
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	adds r0, r5, #0
 	bl Func_02000d14
 	cmp r0, #0
@@ -926,7 +926,7 @@ Func_02000730:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_02008870:
-	.4byte 0x00000e11
+	.4byte MsgItemReceived
 .L_02008874:
 	.4byte 0x00013333
 	.section .text.x02008878,"ax",%progbits
@@ -1137,15 +1137,15 @@ Func_02000878:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008a3c:
-	.4byte 0x00000e11
+	.4byte MsgItemReceived
 .L_02008a40:
-	.4byte 0x00000e20
+	.4byte MsgItemCannotCarry
 .L_02008a44:
-	.4byte 0x00000e21
+	.4byte MsgItemDropPrompt
 .L_02008a48:
 	.4byte gPartyState
 .L_02008a4c:
-	.4byte 0x00000e12
+	.4byte MsgItemGiven
 	.section .text.x02008a50,"ax",%progbits
 	.global Func_02000a50
 	.thumb_func
@@ -1191,14 +1191,14 @@ Func_02000a50:
 	movs r0, #24
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #5
 	movs r0, #25
 	bl Object_SetModeById
 	movs r0, #25
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_02008ac0:
 	movs r2, #133
 	lsls r2, r2, #2
@@ -1240,11 +1240,11 @@ Func_02000a50:
 	ldr r6, [r1, #32]
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r0, #13
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	bl Func_02000dac
 	movs r0, #162
@@ -1260,7 +1260,7 @@ Func_02000a50:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #1
 	movs r0, #9
 	bl Engine_ActorSetSpritePriority
@@ -1296,7 +1296,7 @@ Func_02000a50:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_02008bac:
 	movs r0, #128
 	lsls r0, r0, #4
@@ -1417,7 +1417,11 @@ Data_02000e04:
 .L_02008e14:
 	.4byte 0x00000016
 	.4byte 0x0000001e
+	.ifdef TLA_EDITION_JA
+	.4byte 0x00000083
+	.else
 	.4byte 0x00000081
+	.endif
 	.4byte 0x00000016
 	.4byte 0x00000010
 	.4byte 0x00001999
@@ -1595,7 +1599,11 @@ Data_02000e04:
 	.4byte 0x00000011
 	.4byte 0x00000016
 	.4byte 0x0000001e
+	.ifdef TLA_EDITION_JA
+	.4byte 0x00000083
+	.else
 	.4byte 0x00000081
+	.endif
 	.4byte 0x00000016
 	.4byte 0x00000010
 	.4byte 0x00001999
@@ -2065,13 +2073,13 @@ Data_020016e4:
 	.4byte MsgFieldIHearTheSeafoodInMadra
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x0000219c
+	.4byte MsgSeaOfTimeCurrents
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x0000219d
+	.4byte MsgSeaOfTimeRedRocks
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x0000219e
+	.4byte MsgSeaOfTimeThreeGenerations
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte Func_020002d0
@@ -2125,13 +2133,13 @@ Data_020016e4:
 	.4byte MsgFieldImSoTornDoILike
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000021a1
+	.4byte MsgSeaOfTimeHusbandDizzy
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x000021a2
+	.4byte MsgSeaOfTimeYeppToldMe
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x000021a3
+	.4byte MsgSeaOfTimeGiveUp
 	.4byte 0x00008d15
 	.4byte 0xffff001b
 	.4byte DeriHeya_TalkScamps
@@ -2231,13 +2239,13 @@ Data_02001990:
 	.4byte Func_020005b4
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x0000183a
+	.4byte MsgDeriHeyaDinnerShowPractice
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0000183d
+	.4byte MsgDeriHeyaSeafoodWhen
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x0000183e
+	.4byte MsgDeriHeyaVegetablesAgain
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte MsgFieldMmmMmnphDadWasSoMad
@@ -2249,13 +2257,13 @@ Data_02001990:
 	.4byte Func_020006c4
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x0000219c
+	.4byte MsgSeaOfTimeCurrents
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x0000219d
+	.4byte MsgSeaOfTimeRedRocks
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x0000219e
+	.4byte MsgSeaOfTimeThreeGenerations
 	.4byte 0x00000000
 	.4byte 0xffff001e
 	.4byte Func_020002d0
@@ -2297,16 +2305,16 @@ Data_02001990:
 	.4byte MsgDeriHeyaMazeTreasure
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000183f
+	.4byte MsgDeriHeyaTiredPerformer
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001840
+	.4byte MsgDeriHeyaDragonKingLine
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001842
+	.4byte MsgDeriHeyaBadShows
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001843
+	.4byte MsgDeriHeyaGuestDance
 	.4byte 0x00008d15
 	.4byte 0xffff0018
 	.4byte MsgFieldIStillWantToCatchThat
@@ -2315,16 +2323,16 @@ Data_02001990:
 	.4byte MsgFieldImSureGladIMadeIt
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001841
+	.4byte MsgDeriHeyaSeafoodStory
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x000021a1
+	.4byte MsgSeaOfTimeHusbandDizzy
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x000021a2
+	.4byte MsgSeaOfTimeYeppToldMe
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x000021a3
+	.4byte MsgSeaOfTimeGiveUp
 	.4byte 0x00008d15
 	.4byte 0xffff001e
 	.4byte DeriHeya_TalkMazeTreasure
@@ -2368,7 +2376,7 @@ Data_02001c18:
 	.4byte Func_02000498
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001845
+	.4byte MsgDeriHeyaBoringVillage
 	.4byte 0x00001815
 	.4byte 0x0220000a
 	.4byte Func_02000704

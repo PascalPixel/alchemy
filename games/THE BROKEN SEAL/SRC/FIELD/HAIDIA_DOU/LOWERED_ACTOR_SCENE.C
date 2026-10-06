@@ -1,6 +1,7 @@
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
+#include "FIELDOBJ.H"
 #include "CALL.H"
 
 void Object_SetModeById(s32 id, s32 mode);
@@ -9,14 +10,10 @@ void Engine_EventBegin();
 void Battle_WaitMode0();
 void ObjectMotion_SetSpeedParameters();
 void Engine_GameFlagSet();
-void Func_020032f6();
 void ObjectMotion_OffsetPositionAndResetMotion();
 void Engine_EventEnd();
 void Audio_PlayCue();
 
-/* Haidia Cave: move the probed actor, lower actor 11 and fill the cleared
- * rectangle; at column 20 set flag 0x205, otherwise set 0x204 and copy the
- * opened cells. */
 void HaidiaDou_RunLoweredActorScene(void)
 {
     s32 record;
@@ -32,11 +29,11 @@ void HaidiaDou_RunLoweredActorScene(void)
         Audio_PlayCue(240);
         Object_SetModeById(11, 8);
         {
-            u8 *obj = (u8 *)Object_GetById(11);
+            struct FieldActor *obj = Object_GetById(11);
             s32 two = 2;
             s32 zero = 0;
 
-            obj[35] = two;
+            obj->priority_flags = two;
             StagedActor_FillGridAttributeRectangle(0, 13, (probe.position_z >> 20) - 1, 4, two, zero);
         }
         if ((probe.position_z >> 20) == 20) {

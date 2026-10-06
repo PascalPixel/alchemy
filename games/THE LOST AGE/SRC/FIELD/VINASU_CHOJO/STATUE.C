@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* The statue's two map states on the lighthouse top: each copies the same
-   six rectangles from a different source column. */
 void SceneState_ApplySixRectsAfter161(void)
 {
     s32 x;

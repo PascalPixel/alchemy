@@ -1,11 +1,3 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "FIXED_MATH.H"
 #include "OBJDISP.H"
 #include "TYPES.H"
@@ -40,7 +32,6 @@ struct ItemBreakFragmentObject {
 };
 
 extern s32 ArcTan2(s32, s32);
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);

@@ -10,11 +10,6 @@ extern u8 *Data_03001ebc;
 
 s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *result);
 
-/* Camera: turn a world position into screen coordinates in place. In the
-   projected camera mode (3) the point goes through the projection; otherwise
-   it is taken relative to the camera's whole-unit x and z, with height folded
-   into z. Either way the height is cleared. */
-
 void Camera_WorldToScreen(struct EffectVector *position)
 {
     u8 **data = &Data_03001ebc;

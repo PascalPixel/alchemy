@@ -3,6 +3,8 @@
 
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
+#include "PALBUF.H"
 
 struct BattleAnimationState {
     u8 unknown_00[0x28];
@@ -27,14 +29,6 @@ struct BattleRenderObject {
 struct BattleRuntime {
     u8 unknown_000[0x1c8];
     s32 unknown_1c8;
-    /*
-     * Two-state, driven by the shoulder buttons off the 0x03001c94 latch:
-     * Battle_UpdateModeFromShoulderButtons sets it to 0 on L (0x200)
-     * and to -1 on R (0x100), and
-     * Battle_Reset initialises it to 0. Battle_WaitMode0 calls WaitFrames
-     * only while it is 0. That is the whole of the evidence -- what the two
-     * states mean is not established, so the name says mode and not more.
-     */
     s32 mode_1cc;
     u8 unknown_1d0[0x0a];
     u16 unknown_1da;
@@ -50,29 +44,6 @@ struct BattleRuntime {
     s16 unknown_cc4;
 };
 
-struct BattleWork {
-    u8 unknown_000[0x1ee];
-    /* Audio cue the battle-start transition plays first. */
-    u16 battle_cue;
-    u8 unknown_1f0[2];
-    u8 mode_1f2;
-    u8 unknown_1f3;
-    s32 object_id;
-    s32 unknown_1f8;
-    u8 unknown_1fc[0x0e];
-    u8 enabled_20a;
-};
-
-struct BattleEffectBuffers {
-    s16 primary_value;
-    u8 unknown_002[0x37e];
-    u8 buffer_380[0xa80];
-    u8 buffer_e00[0xa80];
-    u8 buffer_1880[0x1181];
-    u8 mode_2a01;
-    u8 unknown_2a02;
-};
-
 struct BattleEffectEntry {
     u16 id;
     u8 value;
@@ -81,7 +52,6 @@ struct BattleEffectEntry {
 
 extern struct BattleRuntime *Data_03001ebc;
 extern struct BattleEffectBuffers *Data_03001ed0;
-extern struct BattleWork Data_02000240;
 
 void BattleFx_SpawnLinked(s32 resource_id, s32 flags, s32 state);
 

@@ -192,7 +192,7 @@ Func_0814a264:
 	movs r0, #134
 	bl Func_081180e8
 .L_0814a3de:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12
@@ -230,7 +230,7 @@ Func_0814a264:
 .L_0814a424:
 	mov r1, r9
 	ldr r0, [sp, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r7, r9
 	ldr r3, [r7]
 	lsrs r2, r3, #31

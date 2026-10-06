@@ -1,7 +1,5 @@
 #include "SCRIPT.H"
 
-/* The two games differ in the first command: TBS advances the current
-   pointer; TLA follows the pointer stored in the next operand. */
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
@@ -29,13 +27,13 @@ s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter)
 s32 Script_ClearByte54(struct ScriptInterpreter *interpreter)
 {
     interpreter->byte_54 = 0;
-    interpreter->cursor = (u16)interpreter->cursor + 1;
+    interpreter->cursor = interpreter->cursor + 1;
     return 1;
 }
 
 s32 Script_SetByte54(struct ScriptInterpreter *interpreter)
 {
     interpreter->byte_54 = 1;
-    interpreter->cursor = (u16)interpreter->cursor + 1;
+    interpreter->cursor = interpreter->cursor + 1;
     return 1;
 }

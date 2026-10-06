@@ -1,4 +1,3 @@
-@ Source-built code overlays in resource order.
 	.section .overlays,"a"
 	.global Resource_Overlay36F
 Resource_Overlay36F:

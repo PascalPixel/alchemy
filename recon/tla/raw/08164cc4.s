@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08164cc4
+	.global BattleEffect_RunParticleStreams
 	.thumb_func
-Func_08164cc4:
+BattleEffect_RunParticleStreams:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -508,7 +508,7 @@ Func_08164cc4:
 .L_081650b8:
 	.4byte gMapCellBuffer
 .L_081650bc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081650c0:
 	movs r3, #3
 	str r7, [sp, #0]
@@ -873,14 +873,14 @@ Func_08164cc4:
 	movs r3, #128
 	lsls r3, r3, #18
 	str r3, [r5, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r5, #0
 	bl SceneTransform_ApplyPosition
 	movs r0, #128
 	lsls r0, r0, #4
 	bl Func_080150e4
 	ldr r0, [sp, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r7, .L_08165468
 	movs r2, #0
 	mov r8, r2
@@ -910,7 +910,7 @@ Func_08164cc4:
 	lsls r2, r2, #16
 	str r2, [r6, #8]
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	movs r0, #2
 	ldrsh r2, [r5, r0]
 	movs r0, #153
@@ -1172,7 +1172,7 @@ Func_08164cc4:
 .L_081655cc:
 	.4byte Func_08143174
 .L_081655d0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081655d4:
 	.4byte 0xfffff000
 .L_081655d8:
@@ -1345,7 +1345,7 @@ Func_08164cc4:
 	movs r0, #134
 	bl Func_081180e8
 .L_0816573a:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
@@ -1362,7 +1362,7 @@ Func_08164cc4:
 	add r6, sp, #96
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	ldr r2, [r6, #8]
 	asrs r3, r3, #1
@@ -1538,7 +1538,7 @@ Func_08164cc4:
 	add r5, sp, #96
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	asrs r7, r3, #1
 	str r7, [r5]

@@ -1,5 +1,5 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1632, common 1301, differ 670 (native frame 336,
+   listing 1640, draft 1632, common 1305, differ 662 (native frame 336,
    draft 328: two fewer spill slots, so most stack offsets read 8 low).
    The native's extra slots, in its frame order:
    - sp+96, &scale held through the frame loop, just below count
@@ -62,7 +62,16 @@
      instead; sc = scale at the loop top: 808, sc folds away; sc set
      before the loop: 882; smoke set before the random block or after
      the first LoadWork: 812.
-   - smoke pointer removed, work->sheet + 0x6000 in each call: 670. */
+   - smoke pointer removed, work->sheet + 0x6000 in each call: 670.
+   - on 670: glint x with cam_x >> 17 in place, no base local: 662.
+   - on 662: glint y + 56 folded into y, cam_x >> 17 first, Trig_Sin * 8:
+     662; ApplyScale in each branch: 683; s as (frame - 151) * 0x1800 +
+     0x9400: 662; scale stored 2, 1, 0: 666; aux cells as &aux[...] or
+     the ring cell as &sheet[...] + rings: 662; burst at literal 60 and
+     112, no cx, cy: 736.
+   - on 662, rejected: count = frame * 2 set just before the palette
+     call and passed to it: 648, but count's giv slot goes and the frame
+     shrinks to 324 (see the 796 trial above). */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -581,11 +590,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             BattleFx_PlaceFormationObjects(0, cam_x, cam_y);
         }
         if ((u32)(frame - 16) <= 127) {
-            s32 base = cam_x >> 17;
             for (i = 0; i != 3; i++) {
                 s32 k = i & 3;
                 s32 angle = Random16() & 0xffff;
-                s32 x = ((Trig_Sin(angle) << 3) >> 16) + base - (BattleFx_GlintCellWidths[k] >> 1);
+                s32 x = ((Trig_Sin(angle) << 3) >> 16) + (cam_x >> 17) - (BattleFx_GlintCellWidths[k] >> 1);
                 s32 y = ((Trig_Cos(angle) * 40) >> 16) - (BattleFx_GlintCellHeights[k] >> 1);
                 BattleEffect_LoadWork(47, 7, 7, 3 | Mode12_SmokeFlips[Random16() & 3], 2);
                 SLOT(47)(dst, Ram_MapCellBuffer + BattleFx_GlintCellOffsets[k], x, y + 56,

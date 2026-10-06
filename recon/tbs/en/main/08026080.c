@@ -1,5 +1,15 @@
-/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 1400 (listing 1585, draft 1599, common 892). Not first-try; parked. */
-/* 08026080: listing 1585, draft 1599, differ 1400; both frames are 324 bytes.
+/* Stubborn (2026-10-06, sun100 T10 on 51bbf7161e): differ 1332 (listing 1585, draft 1599, common 926). Not first-try; parked. */
+/* 08026080: listing 1585, draft 1599, differ 1332; both frames are 324 bytes.
+ * Spill slots follow declaration order: the native keeps runtime 76,
+ * window 72, cursor 68, cnt 64, redraw 56, slotId 52, pending 48, matrix 44,
+ * so they are declared in that order (was 1400). Still differing: ids, tbl
+ * and sp+236 address temporaries sit at 16/20/40 against native 28/36/32.
+ * Trials on this order's predecessor (1400): sel as the parameter itself
+ * 1401; RESOLVE.C slots with sel as parameter 1415; mode forced to r8
+ * 1396; sel r10 and mode r8 1447 (with slots 1461); sel r10 alone 1451;
+ * slots forced to r5 1694. On this order: mode r8 1334 (no device kept);
+ * pd..pc or column/rows/count declared in the switch block, no change;
+ * pd..pc right after matrix (native spills one at 40), no change.
  * Recheck after shared work areas: ordinary infoWin differs 1464; removing
  * the enemy temporary 1493/1604, marker temporary 1445/1598, coordinate
  * temporary 1410/1599; removing all three temporaries 1523/1600. Keep the
@@ -49,19 +59,16 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     struct AffineTransform efx;
     struct BattleUnit *unit;
     struct BattleSession *runtime;
-    struct CursorSlot *slot;
-    struct SelectionSprite *entry;
-    struct SelectionSprite *head;
-    s32 sel;
-    s32 slotId;
     struct UiWindow *window;
+    s32 sel;
     register struct UiWindow *infoWin asm("r9"); /* FAKEMATCH: the ordinary window lifetime differs 1464; native r9 reduces it to 1400 without changing instruction count. */
-    s32 matrix;
     s32 cursor;
     s32 cnt;
     s32 total;
     s32 redraw;
+    s32 slotId;
     s32 pending;
+    s32 matrix;
     s32 found;
     s32 column;
     s32 rows;
@@ -75,6 +82,9 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     s32 width;
     s32 repeat;
     s32 result;
+    struct CursorSlot *slot;
+    struct SelectionSprite *entry;
+    struct SelectionSprite *head;
     u8 *pd;
     u8 *ps;
     u8 *pl;

@@ -187,30 +187,6 @@ Resource_FindFreeEntry:
 	.thumb_func
 Scheduler_SetCallbackMask:
 	.incbin "baserom.gba", 0x0001471c, 0x00000040
-	.section .rom.000149f8, "ax"
-	.global Text_FormatHexToWork
-	.type Text_FormatHexToWork, %function
-	.thumb_func
-Text_FormatHexToWork:
-	.incbin "baserom.gba", 0x000149f8, 0x0000002c
-	.section .rom.00014a24, "ax"
-	.global Text_FormatSignedDecimalToWork
-	.type Text_FormatSignedDecimalToWork, %function
-	.thumb_func
-Text_FormatSignedDecimalToWork:
-	.incbin "baserom.gba", 0x00014a24, 0x00000084
-	.section .rom.00014aa8, "ax"
-	.global Func_08014aa8
-	.type Func_08014aa8, %function
-	.thumb_func
-Func_08014aa8:
-	.incbin "baserom.gba", 0x00014aa8, 0x00000038
-	.section .rom.00014ae0, "ax"
-	.global Runtime_WriteDebugTextTiles
-	.type Runtime_WriteDebugTextTiles, %function
-	.thumb_func
-Runtime_WriteDebugTextTiles:
-	.incbin "baserom.gba", 0x00014ae0, 0x00000050
 	.section .rom.00014b70, "ax"
 	.global Func_08014b70
 	.type Func_08014b70, %function
@@ -421,7 +397,10 @@ Ui_WindowPalette:
 	.incbin "baserom.gba", 0x00017af0, 0x00000020
 	.global System_BasicColorPalette
 System_BasicColorPalette:
-	.incbin "baserom.gba", 0x00017b10, 0x000001d8
+	.incbin "baserom.gba", 0x00017b10, 0x000001c0
+	.global Data_08017cd0
+Data_08017cd0:
+	.incbin "baserom.gba", 0x00017cd0, 0x00000018
 	.section .rom.00017d08, "ax"
 	.incbin "baserom.gba", 0x00017d08, 0x0000005c
 	.global Flash_Chips
@@ -3459,20 +3438,6 @@ ObjectMotion_WaitForAnimationChange:
 	.thumb_func
 BattleFx_RunRisingObjectSequence:
 	.incbin "baserom.gba", 0x000d3440, 0x0000013c
-	.section .rom.000d35de, "ax"
-	.incbin "baserom.gba", 0x000d35de, 0x00000002
-	.section .rom.000d35e0, "ax"
-	.global FacingObject_TurnPairToFaceEachOther
-	.type FacingObject_TurnPairToFaceEachOther, %function
-	.thumb_func
-FacingObject_TurnPairToFaceEachOther:
-	.incbin "baserom.gba", 0x000d35e0, 0x000000a8
-	.section .rom.000d3688, "ax"
-	.global ObjectTable_DestroyById
-	.type ObjectTable_DestroyById, %function
-	.thumb_func
-ObjectTable_DestroyById:
-	.incbin "baserom.gba", 0x000d3688, 0x00000020
 	.section .rom.000d3760, "ax"
 	.global Func_080d3780
 	.type Func_080d3780, %function

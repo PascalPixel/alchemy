@@ -8,6 +8,7 @@
 mod aim;
 mod ast;
 mod effects;
+pub(crate) mod humanize;
 mod lex;
 mod mutate;
 mod parse;

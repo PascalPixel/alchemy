@@ -1,5 +1,5 @@
 /* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): parent differ 322 (listing 1532, draft 1634, common 1422), above the ~50 first-try bar; AddFlame/AddMote stay locked. Not first-try; parked. */
-/* 080e7404 BattleEffect_RunParticleStreams: differ 222 of 1632 (draft 1634, common 1522). Left: in the first effect loop the reference keeps heat (work->frame / 4) in r4 and saves it at sp+8 around AudioCommand_PlayFar(141); here it lands in r6, which shifts registers, pools and stack slots in that loop. Writing the second loop's size as (frame + 0x1d0) << 8 matches its grow giv but needs that sp+8 slot, so it waits. direction = mode still folds to 1.
+/* 080e7404 BattleEffect_RunParticleStreams: differ 89 of 1632 (draft 1633, common 1588). heat now sits in r4 with its sp+8 caller-save (FAKEMATCH hold/clobber around the 141 call) and the second loop's size is (frame + 0x1d0) << 8, so every stack slot matches. Left, all in the first effect loop's top and line loops: the reference copies the loaded work->frame (r2) into the division temp (r3) and holds work in r0 (line = r0 + 0x1f80); ours folds the load into the temp and holds work in r2. From there the reload registers rotate differently (frame tests r0, r1, r2 in the reference, r3, r0, r1 here), the first zero loop's i = 0 lands in r2 instead of r3 so the hoisted 0 stays a pool load, palette level is r3 instead of r2, and the literal pool lands after the first zero loop instead of after x. direction = mode still folds to 1 (movs r4, #1 for ldr r4, [sp, #76]).
  * Stubborn (2026-10-06): parent remains differ 222 after prior trials; not first-try. Nested AddFlame (080e7338) and AddMote (080e73a0) match byte-exact as the draft's leading 100 instructions (alchemy diff THIS 080e7338,080e73a0 → common 100 of 100) but adopt only with this parent (W notes). Score+parked from sun100 queue-3. */
 /* Trials: const/register heat, outer heat, declaration order and a sheet-field
  * pointer leave differ 222. Keeping the undivided frame until palette use gives
@@ -28,7 +28,31 @@
  * r1/r6/r7 at the loop top or before the palette loop 222, heat moves to r7 and
  * its division vanishes; frame == 0 test as work->frame == 0 206 but compares
  * the field where the native compares fp; direction after the join as
- * mode == 1 && side == 1 ? mode : -1 247, still folds. All removed. */
+ * mode == 1 && side == 1 ? mode : -1 247, still folds. All removed.
+ * 2026-10-06 session 2 (on f96ab443dd), still 222. Most of the first loop's
+ * other lines follow from heat: reload1.c hands out reload registers round
+ * robin, and the native's run r0, r1, r2, r3, r0, r1 from the frame > 16 test
+ * on, skipping r4 while heat holds it; ours runs r3, r4, r0, r1, r2, r4. The
+ * first zero loop's shared movs r3, #0 is the same effect: loop.c hoists an
+ * HImode 0 (a pool load) in both builds, and the native's reload for i = 0
+ * lands on r3, the hoisted 0's register, so reload_cse drops the pool load;
+ * ours lands on r1. global.c (lines 500-515) drops every hard-register
+ * conflict with r7, the Thumb frame pointer, so an asm clobber cannot keep
+ * heat out of r7: heat stays in r7 and flow2 deletes its division as dead
+ * (wrong code). To reach caller-save r4, heat needs pseudos, not clobbers, in
+ * r6 and r7 across its range. reload's find_reg takes a free register before
+ * it spills, and r0-r4 are mostly free there, so a reload eviction of heat is
+ * unlikely. Trials: do { AudioCommand_PlayFar(145); } while (0) 475 (the
+ * loop note splits cse, but loop.c and cse2 reshape the branch and mode
+ * still folds); u8 mode in header and draft 224 (adds lsls/lsrs, still
+ * folds); asm clobber of r6/r7 before frame == 0 222 (division deleted);
+ * work->frame == 0 206 (heat still r6, only the rotation moves); first zero
+ * loop storing x = 0 655. All removed. Kept: an asm-defined pseudo held
+ * across the 141 call (it takes r7) plus an r6 clobber puts heat in r4 with
+ * the sp+8 save, as in the reference (418 alone, its grow giv slot still
+ * shifting the frame); with the second loop's size as (frame + 0x1d0) << 8
+ * the frame matches: 89. Also tried: count = work->frame passed through an
+ * asm "+r" before the division, 89, the load still folds. */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -295,8 +319,22 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 if ((gKeysRepeat & 3) && frame > 4)
                     goto skipped;
             }
-            if (frame == 0)
-                AudioCommand_PlayFar(141);
+            {
+                s32 hold;
+
+                /* FAKEMATCH: with line in r5, hold in r7 and r6 clobbered,
+                   heat takes r4 and its sp+8 caller-save as in the
+                   reference (222 -> 89); global.c ignores hard conflicts
+                   with r7, the frame pointer, so r7 needs a pseudo. */
+                /* FAKEMATCH: hold takes r7 across the call. */
+                asm("" : "=r"(hold));
+                /* FAKEMATCH: r6 is clobbered across the call. */
+                asm("" : : : "r6");
+                if (frame == 0)
+                    AudioCommand_PlayFar(141);
+                /* FAKEMATCH: hold's use after the call. */
+                asm("" : : "r"(hold));
+            }
             for (i = 0; i != 15; i++)
                 *line++ = 0;
             for (; i != 135; i++) {
@@ -450,7 +488,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != 54; frame++) {
-        s32 size = (frame << 8) + 0x1d000;
+        s32 size = (frame + 0x1d0) << 8;
         struct BattleCamera *camera = gCameraWork;
         s32 elapsed = frame - 16;
         struct Scale scale;

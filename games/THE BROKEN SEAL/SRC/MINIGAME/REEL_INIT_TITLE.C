@@ -6,6 +6,7 @@
 #include "MENU.H"
 #include "MINIGAME.H"
 #include "SOUND.H"
+#include "SOUND_IDS.H"
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -109,17 +110,17 @@ void ReelGame_RunFrame(void)
     Random16();
 
     dma = REG_DMA0;
-    dma[5] &= 0xc5ff;
-    dma[5] &= 0x7fff;
+    dma[5] &= ~DMA_START_HBLANK_REPEAT;
+    dma[5] &= ~DMA_ENABLE;
     dma[5];
-    Dma_Set(work->scanline_offsets, (void *)0x04000054, 0xa2600001,
+    Dma_Set(work->scanline_offsets, (void *)&REG_BLDY, 0xa2600001,
             (volatile u32 *)dma);
 
     pad = gKeysHeld;
-    held = gKeysHeld & 0xf0;
+    held = gKeysHeld & KEYS_DPAD;
     work->pressed = pad & ~work->keys;
     work->direction = held;
-    if ((work->keys & 0xf0) == work->direction) {
+    if ((work->keys & KEYS_DPAD) == work->direction) {
         if (work->repeat > 12)
             work->repeat = 12;
         if (work->repeat == 0) {
@@ -140,33 +141,33 @@ void ReelGame_RunFrame(void)
         coins = PartyInventory_CountItemFar(228);
         UiNumber_DrawAt(coins - work->bet, REEL_COIN_DIGITS, work->sub_window, REEL_COIN_X, 0);
         UiNumber_DrawAt(work->bet, 2, work->sub_window, 64, 8);
-        if (work->pressed & 2) {
+        if (work->pressed & KEY_B) {
             struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
 
             work->state = 10;
-            save->won_prizes[0] = 254;
+            save->won_prizes[0] = -2;
             UiWork_FinalizeFar(work->window, 1);
             goto build_objects;
         }
-        if (work->pressed & 0x40) {
+        if (work->pressed & KEY_UP) {
             if (work->bet <= 3 && coins > work->bet) {
                 work->bet++;
-                AudioCommand_PlayFar(111);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             } else {
-                AudioCommand_PlayFar(113);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             }
         }
-        if (work->pressed & 0x80) {
+        if (work->pressed & KEY_DOWN) {
             if (work->bet > 1) {
                 work->bet--;
-                AudioCommand_PlayFar(111);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             } else {
-                AudioCommand_PlayFar(113);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             }
         }
         REG_BLDCNT = 0x3fd0;
         REG_BLDALPHA = 0x10;
-        if (work->pressed & 1) {
+        if (work->pressed & KEY_A) {
             work->state = 1;
             fx->frame = 0;
             UiWork_FinalizeFar(work->window, 1);
@@ -182,7 +183,7 @@ void ReelGame_RunFrame(void)
             ;
         if (k == 5)
             all = 1;
-        if (work->pressed & 1) {
+        if (work->pressed & KEY_A) {
             work->timer = 0;
             fx->frame = 0;
             if (work->spins == 4) {
@@ -204,16 +205,16 @@ void ReelGame_RunFrame(void)
                     work->reels[i].stop = -1;
                 work->spins++;
             } else {
-                AudioCommand_PlayFar(113);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             }
         } else {
-            if (work->direction & 0x10) {
+            if (work->direction & KEY_RIGHT) {
                 work->cursor = (work->cursor + 1) % 6;
-                AudioCommand_PlayFar(111);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             }
-            if (work->direction & 0x20) {
+            if (work->direction & KEY_LEFT) {
                 work->cursor = (work->cursor + 5) % 6;
-                AudioCommand_PlayFar(111);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             }
         }
 
@@ -289,9 +290,9 @@ void ReelGame_RunFrame(void)
     } else if (work->state == 3) {
         work->timer++;
         blend = 0;
-        if (work->pressed & 1) {
+        if (work->pressed & KEY_A) {
             work->state = 10;
-            AudioCommand_PlayFar(112);
+            AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         }
     } else if (work->state == 11) {
 #if EDITION_INTERNATIONAL
@@ -300,12 +301,12 @@ void ReelGame_RunFrame(void)
             UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
         }
 #endif
-        if (work->pressed & 1) {
+        if (work->pressed & KEY_A) {
             work->state = 5;
 #if EDITION_INTERNATIONAL
             work->phase = 0;
 #endif
-            AudioCommand_PlayFar(112);
+            AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
             UiWork_FinalizeFar(work->window, 1);
         }
     } else if (work->state == 20) {
@@ -320,7 +321,7 @@ void ReelGame_RunFrame(void)
         if (work->timer == 16)
             AudioCommand_PlayFar(0x132);
         if (work->timer > 56) {
-            if (fx->frame > 31 || (work->pressed & 0x100)) {
+            if (fx->frame > 31 || (work->pressed & KEY_R)) {
                 fx->frame = 0;
                 for (i = 0; i != 5; i++) {
                     if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
@@ -375,14 +376,14 @@ void ReelGame_RunFrame(void)
                     }
                     if (mixed == 0) {
                         work->winning_lines[col] = 1;
-                        save->won_prizes[0 + hits] = ReelGame_SymbolPrizes[found];
+                        save->won_prizes[hits] = ReelGame_SymbolPrizes[found];
                         hits++;
                     }
                 }
             }
             work->timer = 0;
             if (hits != 0) {
-                save->won_prizes[0 + hits] = -1;
+                save->won_prizes[hits] = -1;
                 work->state = 2;
                 AudioCommand_PlayFar(171);
                 fx->transfer_mode = 1;
@@ -592,7 +593,7 @@ build_objects:
         n++;
     }
 
-    Dma_Set(work->obj, (void *)0x07000000, (n * 2) | 0x84000000, REG_DMA3);
+    Dma_Set(work->obj, OAM, (n * 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
 }
 
 void ReelGame_InitTitle(void)
@@ -781,7 +782,7 @@ void ReelGame_Run(void)
 
             reel->position = 8;
             reel->held = 0;
-            reel->stop = 255;
+            reel->stop = -1;
             for (k = 0; k != 21; k++)
                 reel->symbols[k] = Random16() % 5;
         }

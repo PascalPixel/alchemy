@@ -77,7 +77,7 @@ Engine_MapCopyCellAttributes:
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 .endif
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
@@ -134,7 +134,7 @@ Engine_EventEnd:
 	.global FieldScene_PrepareActors
 	.thumb_func
 FieldScene_PrepareActors:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
 Event_PrepareObjectAndApplyValue:

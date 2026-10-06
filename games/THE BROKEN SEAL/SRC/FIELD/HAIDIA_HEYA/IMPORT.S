@@ -57,7 +57,7 @@ Engine_EventEnd:
 	.global SceneEvents_UpdateInView
 	.thumb_func
 SceneEvents_UpdateInView:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Engine_PartyGiveItem
 	.thumb_func
 Engine_PartyGiveItem:

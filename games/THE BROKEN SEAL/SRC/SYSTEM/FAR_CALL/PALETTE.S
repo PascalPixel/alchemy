@@ -3,9 +3,9 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_PaletteTable
 FarCall_PaletteTable:
-	.global Func_080f2000
+	.global Title_ShowIntroFar
 	.thumb_func
-Func_080f2000:
+Title_ShowIntroFar:
 	overlay_veneer Title_ShowIntro
 	overlay_veneer Graphics_NoOpColor
 	overlay_veneer Title_NoOpPalette

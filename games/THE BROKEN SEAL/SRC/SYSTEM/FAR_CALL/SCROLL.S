@@ -3,7 +3,7 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_ScrollTable
 FarCall_ScrollTable:
-	.global Func_080f0000
+	.global DisplayScroll_RunSlideshowFar
 	.thumb_func
-Func_080f0000:
+DisplayScroll_RunSlideshowFar:
 	overlay_veneer DisplayScroll_RunSlideshow

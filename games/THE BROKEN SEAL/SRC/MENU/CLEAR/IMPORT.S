@@ -157,7 +157,7 @@ Owner_GetState:
 	.global Item_Get
 	.thumb_func
 Item_Get:
-	overlay_veneer Func_08077018
+	overlay_veneer Item_GetDirectFar
 	.global GameState_InitDefaults
 	.thumb_func
 GameState_InitDefaults:

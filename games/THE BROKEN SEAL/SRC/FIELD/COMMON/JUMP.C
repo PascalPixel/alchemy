@@ -107,7 +107,7 @@ again:
     BattleFx_FinishAction();
     if (work != NULL)
         work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
-    if (Func_080091b0(leader->terrain_id, pos->x, pos->z) == 0xf9) {
+    if (GetMapCellCollisionFar(leader->terrain_id, pos->x, pos->z) == 0xf9) {
         Object_SetMode(leader, 1);
         WaitFrames(6);
         goto again;

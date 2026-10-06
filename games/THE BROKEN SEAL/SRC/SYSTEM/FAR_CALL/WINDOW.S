@@ -3,9 +3,9 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_WindowTable
 FarCall_WindowTable:
-	.global Func_08015000
+	.global UiWork_InitializeWithResourceCountersFar
 	.thumb_func
-Func_08015000:
+UiWork_InitializeWithResourceCountersFar:
 	overlay_veneer UiWork_InitializeWithResourceCounters
 	.global UiWork_InitializeFar
 	.thumb_func
@@ -88,10 +88,8 @@ UiText_DrawCharacterAtOffsetFar:
 UiText_DrawStringFar:
 	overlay_veneer UiText_DrawString
 	.global UiText_DrawStringAtOffsetFar
-	.global Func_08015090
 	.thumb_func
 UiText_DrawStringAtOffsetFar:
-Func_08015090:
 	overlay_veneer UiText_DrawStringAtOffset
 	.global UiText_DrawStringInWindowFar
 	.thumb_func
@@ -102,10 +100,8 @@ UiText_DrawStringInWindowFar:
 UiText_DrawNumberFar:
 	overlay_veneer UiText_DrawNumber
 	.global UiText_DrawNumberAtOffsetFar
-	.global Func_080150a8
 	.thumb_func
 UiText_DrawNumberAtOffsetFar:
-Func_080150a8:
 	overlay_veneer UiText_DrawNumberAtOffset
 	.global UiNumber_DrawAt
 	.thumb_func
@@ -120,10 +116,8 @@ UiWork_SetParamNibbleFar:
 	overlay_veneer UiWork_SetParamNibble
 	overlay_veneer UiWork_SetRenderWord
 	.global RenderOutput_CreateFar
-	.global Func_080150c8
 	.thumb_func
 RenderOutput_CreateFar:
-Func_080150c8:
 	overlay_veneer RenderOutput_Create
 	.global RenderOutput_CreateFromResourceFar
 	.thumb_func
@@ -140,10 +134,8 @@ Ui_LoadCharacterEntryForSlotFar:
 	overlay_veneer RenderOutput_SetAnimation
 	overlay_veneer RenderOutput_SetInvertedSentinel
 	.global UiWindow_CreateWithSideObjectFar
-	.global Func_080150f8
 	.thumb_func
 UiWindow_CreateWithSideObjectFar:
-Func_080150f8:
 	overlay_veneer UiWindow_CreateWithSideObject
 	.global UiWork_FinalizeEntityMatchingLocalizedIdFar
 	.thumb_func
@@ -206,10 +198,8 @@ UiWork_DrainPendingFar:
 	overlay_veneer MenuSelection_BuildEntries
 	overlay_veneer UiWork_ReservedNoOp
 	.global Battle_CollectPartyCommandsFar
-	.global Func_080151c0
 	.thumb_func
 Battle_CollectPartyCommandsFar:
-Func_080151c0:
 	overlay_veneer Battle_CollectPartyCommands
 	.global UiText_ShowMessageAndWaitCoreFar
 	.thumb_func
@@ -220,9 +210,6 @@ UiText_ShowMessageAndWaitCoreFar:
 UiText_PrepareMessageWorkFar:
 	overlay_veneer UiText_PrepareMessageWork
 	overlay_veneer UiTextResource_NoOpCallback4
-	.global Func_080151e0
-	.thumb_func
-Func_080151e0:
 	.global Localization_LookupEntryIdFar
 	.thumb_func
 Localization_LookupEntryIdFar:
@@ -252,10 +239,8 @@ UiTimedNotice_CloseIfActiveFar:
 UiText_ShowCenteredMessageFar:
 	overlay_veneer UiText_ShowCenteredMessage
 	.global UiWork_FinalizeSharedSlotFar
-	.global Func_08015218
 	.thumb_func
 UiWork_FinalizeSharedSlotFar:
-Func_08015218:
 	overlay_veneer UiWork_FinalizeSharedSlot
 	.global UiWork_ResetFreeChannelFar
 	.thumb_func
@@ -289,9 +274,6 @@ Ui_PrepareTransferForItemFar:
 UiText_RenderWideStringAtOffsetFar:
 	overlay_veneer UiText_RenderWideStringAtOffset
 	overlay_veneer GraphicsPalette_SelectionNoOp
-	.global Func_08015268
-	.thumb_func
-Func_08015268:
 	.global UiWindow_FillFromSceneFar
 	.thumb_func
 UiWindow_FillFromSceneFar:
@@ -319,9 +301,6 @@ Menu_RunSelectionFar:
 	.thumb_func
 Menu_RunSelectionWithCursorObjectFar:
 	overlay_veneer Menu_RunSelectionWithCursorObject
-	.global Func_08015298
-	.thumb_func
-Func_08015298:
 	.global Resource_LoadByModeIntoSlotFar
 	.thumb_func
 Resource_LoadByModeIntoSlotFar:
@@ -333,16 +312,14 @@ UiWindow_MarkVisibleTileAttributesFar:
 	overlay_veneer UiWindow_MarkVisibleTileAttributes
 	overlay_veneer ItemIcon_Compose
 	.global BattleLayout_HighlightPartyPanelsFar
-	.global Func_080152b8
 	.thumb_func
 BattleLayout_HighlightPartyPanelsFar:
-Func_080152b8:
 	overlay_veneer BattleLayout_HighlightPartyPanels
 	overlay_veneer UiIcon_BuildItemIconTiles
 	overlay_veneer UiIcon_BuildAbilityIconTiles
-	.global Func_080152d0
+	.global RenderOutput_CreateLoadedFar
 	.thumb_func
-Func_080152d0:
+RenderOutput_CreateLoadedFar:
 	.global UiIcon_Draw
 	.thumb_func
 UiIcon_Draw:
@@ -391,19 +368,14 @@ DebugMenu_BrowseEntryGlyphsFar:
 	overlay_veneer DebugMenu_BrowseEntryGlyphs
 	overlay_veneer Item_ReturnTrue
 	.global Djinn_ShowJoinedMessageFar
-	.global Func_08015358
 	.thumb_func
 Djinn_ShowJoinedMessageFar:
-Func_08015358:
 	overlay_veneer Djinn_ShowJoinedMessage
 	.global PaletteGlow_UpdateFar
 	.thumb_func
 PaletteGlow_UpdateFar:
 	overlay_veneer PaletteGlow_Update
 	overlay_veneer Menu_RunWorkspaceOptions
-	.global Func_08015370
-	.thumb_func
-Func_08015370:
 	.global Menu_RunWorkspaceResultLoopFar
 	.thumb_func
 Menu_RunWorkspaceResultLoopFar:
@@ -434,10 +406,8 @@ PartyTalkMenu_ChooseFar:
 	overlay_veneer PartyTalkMenu_Choose
 	overlay_veneer RenderResource_LoadTableEntry
 	.global Menu_RunConfirmSelectionAtFar
-	.global Func_080153b0
 	.thumb_func
 Menu_RunConfirmSelectionAtFar:
-Func_080153b0:
 	overlay_veneer Menu_RunConfirmSelectionAt
 	.global Resource_LoadFixedBlockBIntoFreeSlotFar
 	.thumb_func
@@ -467,9 +437,6 @@ UiWork_SetAltFlagAndClearTableFar:
 	.thumb_func
 Menu_AnimateSelectionToEntryFar:
 	overlay_veneer Menu_AnimateSelectionToEntry
-	.global Func_080153f0
-	.thumb_func
-Func_080153f0:
 	.global Ui_GetTableWordZeroFar
 	.thumb_func
 Ui_GetTableWordZeroFar:
@@ -483,10 +450,8 @@ UiText_OpenEntryMessageFar:
 SaveState_CountRecordsExcludingFlaggedFar:
 	overlay_veneer SaveState_CountRecordsExcludingFlagged
 	.global UiWindow_DrawFrameFar
-	.global Func_08015408
 	.thumb_func
 UiWindow_DrawFrameFar:
-Func_08015408:
 	overlay_veneer UiWindow_DrawFrame
 	.global UiWindow_EraseBorderRectFar
 	.thumb_func

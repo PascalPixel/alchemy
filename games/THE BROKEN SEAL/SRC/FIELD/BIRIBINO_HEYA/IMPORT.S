@@ -25,7 +25,7 @@ Engine_EventEnd:
 	.global ScenePlacement_ClipToView
 	.thumb_func
 ScenePlacement_ClipToView:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:

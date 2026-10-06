@@ -57,11 +57,11 @@ Map_CopyCellAttributeRect:
 	.global Engine_MapCopyCellsLayered
 	.thumb_func
 Engine_MapCopyCellsLayered:
-	overlay_veneer Func_080091c8
+	overlay_veneer Map_CopyCellIndexRectFar
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
-	overlay_veneer Func_080091d8
+	overlay_veneer Map_CheckObjectStepFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:

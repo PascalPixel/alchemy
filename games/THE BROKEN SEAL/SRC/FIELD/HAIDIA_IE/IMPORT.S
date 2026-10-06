@@ -265,7 +265,7 @@ Event_SetDefeatDestination:
 	.global FieldFx_StartGroundParticles
 	.thumb_func
 FieldFx_StartGroundParticles:
-	overlay_veneer Func_0808a2c0
+	overlay_veneer FieldFx_StartGroundParticlesFar
 	.global BattleFx_StartTwelveFrameBlend
 	.thumb_func
 BattleFx_StartTwelveFrameBlend:

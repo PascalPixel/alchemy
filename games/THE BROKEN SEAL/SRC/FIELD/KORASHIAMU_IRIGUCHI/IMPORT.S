@@ -49,7 +49,7 @@ Party_RemoveActiveOwner:
 	.global InventorySnapshot_Take
 	.thumb_func
 InventorySnapshot_Take:
-	overlay_veneer Func_08077310
+	overlay_veneer InventorySnapshot_SaveFar
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:

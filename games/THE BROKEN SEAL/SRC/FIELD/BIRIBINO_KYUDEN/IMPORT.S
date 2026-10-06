@@ -65,7 +65,7 @@ Engine_EventEnd:
 	.global FieldScene_PrepareActors
 	.thumb_func
 FieldScene_PrepareActors:
-	overlay_veneer Func_0808a038
+	overlay_veneer Scene_AssignViewFlagsFar
 	.global Engine_PartyGiveItem
 	.thumb_func
 Engine_PartyGiveItem:

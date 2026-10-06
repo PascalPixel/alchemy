@@ -3,9 +3,9 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.global FarCall_FieldTable
 FarCall_FieldTable:
-	.global Func_08009000
+	.global ObjectSystem_ConfigureFar
 	.thumb_func
-Func_08009000:
+ObjectSystem_ConfigureFar:
 	overlay_veneer ObjectSystem_Configure
 	.global Object_ApplyProjectedPlacementFar
 	.thumb_func
@@ -14,10 +14,8 @@ Object_ApplyProjectedPlacementFar:
 	overlay_veneer Render_PlaceProjectedSprite
 	overlay_veneer Animation_InitializeObjects
 	.global AnimationObjects_SelectAnimationFar
-	.global Func_08009020
 	.thumb_func
 AnimationObjects_SelectAnimationFar:
-Func_08009020:
 	.global Object_InitializeMode
 	.thumb_func
 Object_InitializeMode:
@@ -36,10 +34,8 @@ ResourceObject_ReleaseFar:
 	overlay_veneer ResourceObject_Release
 	overlay_veneer Render_PlaceSpritePartPair
 	.global ResourceMetadata_RegisterFar
-	.global Func_08009048
 	.thumb_func
 ResourceMetadata_RegisterFar:
-Func_08009048:
 	overlay_veneer ResourceMetadata_Register
 	.global ResourceMetadata_UnregisterFar
 	.thumb_func
@@ -55,18 +51,13 @@ Func_08009060:
 	overlay_veneer ResourceMetadata_ClearRecord
 	overlay_veneer Animation_InitWorkFromMetadata
 	.global Animation_SetWorkEntryFar
-	.global Func_08009070
 	.thumb_func
 Animation_SetWorkEntryFar:
-Func_08009070:
 	overlay_veneer Animation_SetWorkEntry
 	.global ObjectSystem_InitializeFar
 	.thumb_func
 ObjectSystem_InitializeFar:
 	overlay_veneer ObjectSystem_Initialize
-	.global Func_08009080
-	.thumb_func
-Func_08009080:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -80,10 +71,8 @@ ObjectDispatch_ApplyValueToChildrenFar:
 	overlay_veneer ObjectDispatch_ApplyValueToChildren
 	overlay_veneer ObjectDispatch_ApplyPairToChildren
 	.global ObjectDispatch_InitializeFar
-	.global Func_08009098
 	.thumb_func
 ObjectDispatch_InitializeFar:
-Func_08009098:
 	overlay_veneer ObjectDispatch_Initialize
 	.global ObjectDispatch_InitFromTable2Far
 	.thumb_func
@@ -118,17 +107,13 @@ ObjectDispatch_ReleaseFar:
 	overlay_veneer ObjectDispatch_Release
 	overlay_veneer ObjectDispatch_SetChildRotation
 	.global ObjectDispatch_InitFromTable4WithArgumentFar
-	.global Func_080090e0
 	.thumb_func
 ObjectDispatch_InitFromTable4WithArgumentFar:
-Func_080090e0:
 	overlay_veneer ObjectDispatch_InitFromTable4WithArgument
 	overlay_veneer ObjectDispatch_InitFromTable5WithArgument
 	.global Object_SetPositionAndResetMotionFar
-	.global Func_080090f0
 	.thumb_func
 Object_SetPositionAndResetMotionFar:
-Func_080090f0:
 	overlay_veneer Object_SetPositionAndResetMotion
 	.global render_animated_tile_frameFar
 	.thumb_func
@@ -152,10 +137,8 @@ Map_InitializePerspectiveSceneFar:
 	overlay_veneer Map_InitializePerspectiveScene
 	overlay_veneer Map_SetCameraCenter
 	.global Map_ApplyWorkOriginAndSpanFar
-	.global Func_08009128
 	.thumb_func
 Map_ApplyWorkOriginAndSpanFar:
-Func_08009128:
 	overlay_veneer Map_ApplyWorkOriginAndSpan
 	.global Map_UpdateCurrentTileBlockFar
 	.thumb_func
@@ -233,9 +216,6 @@ Map_GetTerrainHeightFar:
 	.thumb_func
 Func_080091a8:
 	overlay_veneer Map_GetTerrainHeight
-	.global Func_080091b0
-	.thumb_func
-Func_080091b0:
 	.global GetMapCellCollisionFar
 	.thumb_func
 GetMapCellCollisionFar:
@@ -248,20 +228,20 @@ Map_CopyMetatileCellsRectFar:
 	.thumb_func
 Map_CopyCellAttributeRectFar:
 	overlay_veneer Map_CopyCellAttributeRect
-	.global Func_080091c8
+	.global Map_CopyCellIndexRectFar
 	.thumb_func
-Func_080091c8:
+Map_CopyCellIndexRectFar:
 	overlay_veneer Map_CopyCellIndexRect
 	.global Map_SetWindowCellTileFar
 	.thumb_func
 Map_SetWindowCellTileFar:
 	overlay_veneer Map_SetWindowCellTile
 	.global Object_CheckMovementCollision
-	.global Func_080091d8
+	.global Map_CheckObjectStepFar
 	.thumb_func
 Object_CheckMovementCollision:
 	.thumb_func
-Func_080091d8:
+Map_CheckObjectStepFar:
 	overlay_veneer Map_CheckObjectStep
 	.global ObjectDispatch_SetSingleChildFlagsFar
 	.thumb_func
@@ -293,10 +273,8 @@ ObjectDispatch_StopCallbacksAndHideLayersFar:
 	overlay_veneer ObjectDispatch_StopCallbacksAndHideLayers
 	overlay_veneer ObjectDispatch_SetChildDisplayFlag1
 	.global CheckMapPositionCellOccupiedFar
-	.global Func_08009220
 	.thumb_func
 CheckMapPositionCellOccupiedFar:
-Func_08009220:
 	overlay_veneer CheckMapPositionCellOccupied
 	.global ObjectDispatch_RegisterChildMetadataFar
 	.thumb_func
@@ -314,9 +292,6 @@ Map_LoadAreaGraphicsFar:
 	.thumb_func
 Animation_ApplyChildValuesFar:
 	overlay_veneer Animation_ApplyChildValues
-	.global Func_08009248
-	.thumb_func
-Func_08009248:
 	.global ObjectGroup_SetChildValueUnlessFifteenFar
 	.thumb_func
 ObjectGroup_SetChildValueUnlessFifteenFar:
@@ -330,10 +305,8 @@ ScriptObject_CheckOverlapFar:
 Map_SetWorkFlagBits9To11Far:
 	overlay_veneer Map_SetWorkFlagBits9To11
 	.global ResourceMetadata_SumCommandLengthsFar
-	.global Func_08009260
 	.thumb_func
 ResourceMetadata_SumCommandLengthsFar:
-Func_08009260:
 	overlay_veneer ResourceMetadata_SumCommandLengths
 	.global GetWorldMapTerrainBehaviorFar
 	.thumb_func

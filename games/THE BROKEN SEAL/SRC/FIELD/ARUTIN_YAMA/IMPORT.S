@@ -141,7 +141,7 @@ Engine_EventEnd:
 	.global Event_LoadAreaScript
 	.thumb_func
 Event_LoadAreaScript:
-	overlay_veneer Func_0808a040
+	overlay_veneer Event_SetSceneEventsFar
 	.global Engine_PartyGiveItem
 	.thumb_func
 Engine_PartyGiveItem:

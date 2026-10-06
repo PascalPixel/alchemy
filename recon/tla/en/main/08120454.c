@@ -1,7 +1,12 @@
 /* Battle_ResolveTargetAction, tla-en 0x08120454.
  * alchemy diff: listing 3450 instructions, draft 3468, common 3056, differ 806.
  * The Broken Seal's source (0x080bbb0c) compiled for this game with only its
- * names resolved: draft 2549, common 1381, differ 3237. */
+ * names resolved: draft 2549, common 1381, differ 3237.
+ * That source now carries this game's differences under GAME_TLA (games/THE
+ * BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C): draft 3368,
+ * common 2037, differ 2744. Still to bring over from this draft: the weapon
+ * case's s16 hp0 arithmetic, the immobilize scan, the affinity loops, the
+ * power lookup and the critical bonus's level read; then register order. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "BATTLE_ACTOR.H"

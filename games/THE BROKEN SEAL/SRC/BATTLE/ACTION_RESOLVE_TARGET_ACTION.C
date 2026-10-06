@@ -610,6 +610,10 @@ after_power:
             APPLY_GUARD();
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
                 dmg = pp;
+#if GAME_TLA
+            if (dmg > pp)
+                dmg = pp;
+#endif
 
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);

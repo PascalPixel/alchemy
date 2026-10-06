@@ -1,5 +1,5 @@
 /* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): parent differ 322 (listing 1532, draft 1634, common 1422), above the ~50 first-try bar; AddFlame/AddMote stay locked. Not first-try; parked. */
-/* 080e7404 BattleEffect_RunParticleStreams: differ 54 of 1632 (draft 1634, common 1606). heat now sits in r4 with its sp+8 caller-save (FAKEMATCH hold/clobber around the 141 call), the second loop's size is (frame + 0x1d0) << 8 so every stack slot matches, and an asm read of count after the division keeps the work->frame load apart from the division temp, which also fixes the reload rotation through the line loops. Left, at the first effect loop's top: the reference loads work into r0, the frame into r2 and copies it to the temp r3, then builds line from r0; ours has count in r3 and the temp in r2, and reloads work after the asm for line. The palette's level is r3 instead of r2, the literal pool lands one block early, and direction = mode still folds to 1 (movs r4, #1 for ldr r4, [sp, #76]).
+/* 080e7404 BattleEffect_RunParticleStreams: differ 38 of 1632 (draft 1632, common 1613). heat now sits in r4 with its sp+8 caller-save (FAKEMATCH hold/clobber around the 141 call), the second loop's size is (frame + 0x1d0) << 8 so every stack slot matches, and an asm read of count after heat and line keeps the work->frame load apart from the division temp, which also fixes the reload rotation through the line loops and the instruction count. Left: at the first effect loop's top the reference holds work in r0, the 0x778c offset in r1, count in r2 and the temp in r3; ours has work r1, offset r0, count r3, temp r2. The palette's level is r3 instead of r2 (a swap of the same kind), and direction = mode still folds to 1 (movs r4, #1 for ldr r4, [sp, #76]).
  * Stubborn (2026-10-06): parent remains differ 222 after prior trials; not first-try. Nested AddFlame (080e7338) and AddMote (080e73a0) match byte-exact as the draft's leading 100 instructions (alchemy diff THIS 080e7338,080e73a0 → common 100 of 100) but adopt only with this parent (W notes). Score+parked from sun100 queue-3. */
 /* Trials: const/register heat, outer heat, declaration order and a sheet-field
  * pointer leave differ 222. Keeping the undivided frame until palette use gives
@@ -53,7 +53,9 @@
  * shifting the frame); with the second loop's size as (frame + 0x1d0) << 8
  * the frame matches: 89. Also tried: count = work->frame passed through an
  * asm "+r" before the division, 89, the load still folds; an asm read of
- * count after the division 54 (kept); the same read before the division 57. */
+ * count after the division with line computed after the asm 54; the same
+ * read before the division 57; line in its declaration before the read 38
+ * (kept). */
 /* 080e7338 AddFlame and 080e73a0 AddMote are nested functions of this one; they match (differ 0) inside this draft. Score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -309,14 +311,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             s32 angle = frame << 8;
             s32 count = work->frame;
             s32 heat = count / 4;
-            u16 *line;
+            u16 *line = (u16 *)((u8 *)work + 0x1f80);
             s32 size;
             s32 x;
             s32 y;
 
-            /* FAKEMATCH: count read after the division keeps its load apart from the division temp, as in the reference (89 -> 54). */
+            /* FAKEMATCH: count read after heat and line keeps its load apart from the division temp, as in the reference (89 -> 38). */
             asm("" : : "r"(count));
-            line = (u16 *)((u8 *)work + 0x1f80);
             if (mode == 1) {
                 if ((gKeysRepeat & 3) && frame > 16)
                     goto skipped;

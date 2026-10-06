@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 1975, differ 261.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 2008, differ 194.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -58,6 +58,12 @@
    4 and 1 in the cursor-move blocks take r6 and r5 where the native has
    r5 and r6. A third permuter run from 261 (7 min, 2 jobs) found only the
    same sel = -1 and savedY moves again (238), and ids[i] + j for ids[i][j].
+   The status pointer is assigned after sel = -1, not in its declaration
+   (261 -> 194, 2105 instructions): the native's reloads show the order.
+   Its -1 takes r1 and the status pointer r2 before the hoisted zero for
+   the clear loop reuses r2, so the loop-end copy reloads status into r5;
+   then mode is reloaded into r7 across the list draw and the count
+   loop's i++ is reloaded once. Assigned before sel = -1: 261.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -139,9 +145,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     u32 repeat;
     struct UiWindow *work;
     s32 step;
-    s8 *status = buf;
+    s8 *status;
 
     sel = -1;
+    status = buf;
     for (i = 7; i >= 0; i--)
         status[i] = 0;
     if (mode == 0) {

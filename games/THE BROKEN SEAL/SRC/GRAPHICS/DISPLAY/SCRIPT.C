@@ -141,7 +141,7 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
     if (slot > 3)
         return -1;
     entry = &work->entries[slot];
-    source = (u16 *)0x05000000 + (((u16)bank << 4) + (u16)index);
+    source = (u16 *)BG_PLTT + (((u16)bank << 4) + (u16)index);
     size = count;
     entry->position = 0;
     entry->timer = 0;

@@ -40,7 +40,7 @@ extern volatile u32 gFrameCount;
             u32 *destination = q->entries[count];                            \
             *(u16 *)&q->count = count + 1;                                  \
             *destination++ = (value);                                       \
-            *destination++ = 0x04000000;                                    \
+            *destination++ = (u32)&REG_DISPCNT;                             \
             *destination = 0x20000;                                         \
         }                                                                   \
         do { *ime = saved; } while (0);                                     \
@@ -217,7 +217,7 @@ void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
 void DisplayTransition_Update(void)
 {
     struct DisplayTransitionFrame *state =
-        *(struct DisplayTransitionFrame **)Ram_DisplayWork;
+        *Ram_DisplayWork;
     struct DisplayTransitionWindow *display =
         *(struct DisplayTransitionWindow **)Ram_MapWork;
     s8 *duration = &state->duration;
@@ -254,7 +254,7 @@ void DisplayTransition_Update(void)
 void DisplayTransition_UpdateFromCentre(void)
 {
     struct DisplayTransitionFrame *state =
-        *(struct DisplayTransitionFrame **)Ram_DisplayWork;
+        *Ram_DisplayWork;
     struct DisplayTransitionWindow *window =
         *(struct DisplayTransitionWindow **)Ram_MapWork;
     s8 *duration = &state->duration;

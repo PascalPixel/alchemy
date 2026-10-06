@@ -725,3 +725,300 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 }
 
 #endif
+
+#if defined(TBS_EDITION_JA)
+#include "RUNTIME_MEM.H"
+#include "TEXT_READER.H"
+#include "DMA.H"
+#include "IO_REG.H"
+#include "WINDOW.H"
+#include "HEAP_STATE.H"
+#include "GAME_STATE.H"
+#include "BATTLE_RUNTIME.H"
+#include "SCENE.H"
+
+extern const u8 Text_DecodeSymbol[];
+extern u8 Text_DecodeSymbolCodeSize[];
+extern char MsgItemName;
+extern char MsgAbilityName;
+extern char MsgClassName;
+extern char MsgDebugEntryName;
+extern char MsgMysteryPersonName;
+
+extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name,
+    u32 pos, u16 *entry, s32 no, s32 plural, s32 *suffix)
+{
+    u16 c;
+
+    if (mode != 0) {
+        entry[pos] = ' ';
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+        entry[pos] = 10;
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+        entry[pos] = 10;
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+    }
+    while (*name != 0) {
+        c = *name++;
+        entry[pos] = c;
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+    }
+    if (mode != 0) {
+        entry[pos] = 10;
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+        entry[pos] = 8;
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+        entry[pos] = ' ';
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+    }
+    return pos;
+}
+
+s32 UiText_BuildRenderEntries(s32 script, s32 clear)
+{
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    u32 ch = 0;
+    s32 head = 1;
+    u32 start = work->count;
+    u32 cnt = 0;
+    s32 running = 1;
+    u32 pos = start;
+    u16 *entry = work->entries;
+    u8 mode = work->menu_state & 2;
+    s32 (*decode)(struct TextReader *);
+    s32 overflow = 0;
+    u32 prev;
+    u32 next;
+    u32 i;
+    u32 j;
+    s32 tmp;
+    s32 message;
+    s32 value;
+    u8 *num;
+    u8 *src;
+    u16 *dst;
+    struct BattleUnit *actor;
+    u16 name[24];
+    u8 numbuf[16];
+    struct TextReader st;
+
+    if (script == -1) {
+        start = work->message_start;
+    } else {
+        {
+            u32 size;
+            void *code;
+
+            /* FAKEMATCH: plain assignment and const initialization reverse the two slot/size argument moves; the one-pass block preserves their native order. */
+            do {
+                size = (u32)Text_DecodeSymbolCodeSize;
+            } while (0);
+            code = Runtime_AllocateHeapBlock(50, size);
+            Dma_Set((const void *)Text_DecodeSymbol, code,
+                0x84000000 | (size >> 2), REG_DMA3);
+        }
+        decode = (s32 (*)(struct TextReader *))gWindowWork[50 - HEAP_SLOT_WINDOW];
+        UiText_LookupMessage(&st, script);
+        do {
+            prev = ch;
+            ch = (u32)decode(&st);
+            if (overflow != 0) {
+                if (ch < 32) {
+                    switch (ch) {
+                    case 19:
+                        UiRender_LookupNamedValue(3, clear);
+                        break;
+                    case 0:
+                    case 2:
+                    case 30:
+                        running = 0;
+                        break;
+                    case 8:
+                    case 9:
+                        decode(&st);
+                        break;
+                    case 22:
+                        UiRender_LookupNamedValue(5, clear);
+                        break;
+                    case 20:
+                        UiRender_LookupNamedValue(2, clear);
+                        break;
+                    case 21:
+                        UiRender_LookupNamedValue(4, clear);
+                        break;
+                    case 23:
+                        UiRender_LookupNamedValue(6, clear);
+                        break;
+                    case 17:
+                        decode(&st);
+                        break;
+                    case 18:
+                        break;
+                    case 1:
+                        running = 0;
+                        ch = 2;
+                        break;
+                    case 16:
+                        break;
+                    case -1:
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            } else {
+                if (work->spacing_before != 0 && head == 0 &&
+                    ch != 222 && ch != 223) {
+                    entry[pos] = 5;
+                    pos = (pos + 1) & RENDER_ENTRY_MASK;
+                }
+                if (work->spacing_after != 0 && head == 0 &&
+                    ch != 222 && ch != 223 &&
+                    prev <= 256 && prev > 127 &&
+                    prev != 222 && prev != 223 && prev != 32 &&
+                    prev != 165 && prev != 161 && prev != 164) {
+                    entry[pos] = 222;
+                    pos = (pos + 1) & RENDER_ENTRY_MASK;
+                }
+                if (ch > 31) {
+                    if (mode != 0 && ch == ' ') {
+                        entry[pos] = ch;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                    }
+                    if (work->spacing_before != 0 &&
+                        (ch == 32 || cnt > 10)) {
+                        entry[pos] = 165;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        entry[pos] = 165;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        entry[pos] = 165;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        entry[pos] = 161;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        overflow = 1;
+                        if (cnt > 10)
+                            ch = 32;
+                    }
+                    entry[pos] = (u16)ch;
+                    pos = (pos + 1) & RENDER_ENTRY_MASK;
+                    head = 0;
+                } else {
+                    switch (ch) {
+                    case 0:
+                    case 2:
+                    case 30:
+                        running = 0;
+                        break;
+                    case 8:
+                    case 9:
+                        entry[pos] = (u16)ch;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        entry[pos] = decode(&st) + 0xffffU;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        break;
+                    case 22:
+                        value = UiRender_LookupNamedValue(5, clear);
+                        num = UiText_FormatNumber(numbuf, value, 0);
+                        i = num - numbuf;
+                        while (i != 16 && numbuf[i] != 0) {
+                            entry[pos] = numbuf[i];
+                            pos = (pos + 1) & RENDER_ENTRY_MASK;
+                            i++;
+                        }
+                        break;
+                    case 19:
+                        tmp = UiRender_LookupNamedValue(3, clear);
+                        UiText_DecodeMessage(tmp + (s32)&MsgClassName, name, 24);
+                        pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        break;
+                    case 20:
+                        tmp = UiRender_LookupNamedValue(2, clear);
+                        UiText_DecodeMessage((tmp & 511) + (s32)&MsgItemName, name, 24);
+                        pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        break;
+                    case 21:
+                        tmp = UiRender_LookupNamedValue(4, clear);
+                        UiText_DecodeMessage(tmp + (s32)&MsgAbilityName, name, 24);
+                        pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        break;
+                    case 23:
+                        UiText_DecodeMessage(
+                            Scene_GetAreaNameIndexFar(UiRender_LookupNamedValue(6, clear), 1)
+                                + (s32)&MsgDebugEntryName, name, 24);
+                        pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        break;
+                    case 16:
+                        src = Owner_GetStateFar(gGameState.selected_actor)->name;
+                        dst = name;
+                        i = 0;
+                        do {
+                            *dst = *src;
+                            i++;
+                            src++;
+                            dst++;
+                        } while (i <= 14);
+                        pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        break;
+                    case 18:
+                        actor = Owner_GetStateFar(UiRender_LookupNamedValue(1, clear));
+                        if (work->menu_state != 0 &&
+                            (actor->class_id == 122 || actor->class_id == 125)) {
+                            message = (s32)&MsgMysteryPersonName;
+                            if (actor->class_id == 125)
+                                message++;
+                            UiText_DecodeMessage(message, name, 10);
+                            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        } else {
+                            src = actor->name;
+                            dst = name;
+                            j = 0;
+                            do {
+                                *dst = *src;
+                                j++;
+                                src++;
+                                dst++;
+                            } while (j <= 14);
+                            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        }
+                        break;
+                    case 17:
+                        tmp = decode(&st) - 1;
+                        src = Owner_GetStateFar(tmp)->name;
+                        dst = name;
+                        j = 0;
+                        do {
+                            *dst = *src;
+                            j++;
+                            src++;
+                            dst++;
+                        } while (j <= 14);
+                        pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                        break;
+                    case -1:
+                        break;
+                    case 1:
+                    case 3:
+                        head = 1;
+                    default:
+                        entry[pos] = (u16)ch;
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        break;
+                    }
+                }
+            }
+            cnt++;
+        } while (running != 0 && cnt <= RENDER_ENTRY_MASK);
+        entry[pos] = (u16)ch;
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+        entry[pos] = 0;
+        next = (pos + 1) & RENDER_ENTRY_MASK;
+        work->count = (u16)next;
+        Runtime_ReleaseHeapBlock(50);
+        work->message_start = (u16)start;
+    }
+    if (clear != 0)
+        UiWork_ClearValueNameTables();
+    return start;
+}
+
+#endif

@@ -5,10 +5,10 @@
 	.thumb_func
 Object_GetByIdFar:
 	overlay_veneer Object_GetById
-	.global Func_080c8090
+	.global ObjectTable_DestroyByIdFar
 	.thumb_func
-Func_080c8090:
-	overlay_veneer Func_080d36a8
+ObjectTable_DestroyByIdFar:
+	overlay_veneer ObjectTable_DestroyById
 	.global ObjectMotion_SetSpeedParametersFar
 	.thumb_func
 ObjectMotion_SetSpeedParametersFar:
@@ -101,10 +101,10 @@ ObjectMotion_SetVariantCallbackFar:
 	.thumb_func
 Motion_SetVarCbAndRefreshFar:
 	overlay_veneer Motion_SetVarCbAndRefresh
-	.global Func_080c8150
+	.global BattleFx_RunRisingObjectSequenceFar
 	.thumb_func
-Func_080c8150:
-	overlay_veneer Func_080d3460
+BattleFx_RunRisingObjectSequenceFar:
+	overlay_veneer BattleFx_RunRisingObjectSequence
 	.global ObjectMotion_SetAngleTowardFar
 	.thumb_func
 ObjectMotion_SetAngleTowardFar:
@@ -213,10 +213,10 @@ ObjectVisual_CopyAttributesFar:
 	.thumb_func
 Object_AttachWorkTargetToObjectFar:
 	overlay_veneer Object_AttachWorkTargetToObject
-	.global Func_080c8230
+	.global ObjectTable_AllocateAndSetObjectSpeedFar
 	.thumb_func
-Func_080c8230:
-	overlay_veneer Func_080d43ec
+ObjectTable_AllocateAndSetObjectSpeedFar:
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeed
 	.global Motion_CamBoundsFar
 	.thumb_func
 Motion_CamBoundsFar:

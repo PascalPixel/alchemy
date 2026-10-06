@@ -1095,10 +1095,10 @@ UiText_BuildRenderEntries:
 UiText_GetResourceDimensions:
 	.incbin "baserom.gba", 0x0003b89c, 0x0000004c
 	.section .rom.0003b8e8, "ax"
-	.global Func_0803b8cc
-	.type Func_0803b8cc, %function
+	.global UiText_GetResourceDimensionsAlt
+	.type UiText_GetResourceDimensionsAlt, %function
 	.thumb_func
-Func_0803b8cc:
+UiText_GetResourceDimensionsAlt:
 	.incbin "baserom.gba", 0x0003b8e8, 0x0000004c
 	.section .rom.0003b934, "ax"
 	.global UiText_MeasureEntryDimensions
@@ -1349,10 +1349,10 @@ UiTextResource_Initialize:
 UiTextResource_SetPosition:
 	.incbin "baserom.gba", 0x0003f6f0, 0x00000028
 	.section .rom.0003f7d0, "ax"
-	.global Func_0803f778
-	.type Func_0803f778, %function
+	.global Menu_RunTopSelection
+	.type Menu_RunTopSelection, %function
 	.thumb_func
-Func_0803f778:
+Menu_RunTopSelection:
 	.incbin "baserom.gba", 0x0003f7d0, 0x00000098
 	.section .rom.0003f884, "ax"
 	.balign 4
@@ -1404,10 +1404,10 @@ UiWindow_ClearTileAttributesInRect:
 Func_08041b68:
 	.incbin "baserom.gba", 0x00041bcc, 0x000000a4
 	.section .rom.00041c70, "ax"
-	.global Func_08041c0c
-	.type Func_08041c0c, %function
+	.global UiWork_SetAltFlagAndClearTable
+	.type UiWork_SetAltFlagAndClearTable, %function
 	.thumb_func
-Func_08041c0c:
+UiWork_SetAltFlagAndClearTable:
 	.incbin "baserom.gba", 0x00041c70, 0x00000048
 	.section .rom.00041cb8, "ax"
 	.global UiWindow_DrawDividerLine
@@ -1476,10 +1476,10 @@ UiText_DrawNumberInWindow:
 RenderOutput_Create:
 	.incbin "baserom.gba", 0x00042378, 0x00000088
 	.section .rom.000424b4, "ax"
-	.global Func_08042450
-	.type Func_08042450, %function
+	.global CreateSideObject
+	.type CreateSideObject, %function
 	.thumb_func
-Func_08042450:
+CreateSideObject:
 	.incbin "baserom.gba", 0x000424b4, 0x000000b8
 	.section .rom.0004256c, "ax"
 	.global Ui_LoadCharacterEntryForSlot
@@ -1496,10 +1496,10 @@ Ui_LoadCharacterEntryForSlot:
 Func_0804257c:
 	.incbin "baserom.gba", 0x000425e0, 0x0000000c
 	.section .rom.000425ec, "ax"
-	.global Func_08042588
-	.type Func_08042588, %function
+	.global UiWindow_FillFromScene
+	.type UiWindow_FillFromScene, %function
 	.thumb_func
-Func_08042588:
+UiWindow_FillFromScene:
 	.incbin "baserom.gba", 0x000425ec, 0x00000074
 	.section .rom.00042744, "ax"
 	.incbin "baserom.gba", 0x00042744, 0x0000029c
@@ -1710,10 +1710,10 @@ Func_0804d7fc:
 	.section .rom.0004dc86, "ax"
 	.incbin "baserom.gba", 0x0004dc86, 0x000000ba
 	.section .rom.0004dd40, "ax"
-	.global Func_0804db74
-	.type Func_0804db74, %function
+	.global Menu_RunSelection
+	.type Menu_RunSelection, %function
 	.thumb_func
-Func_0804db74:
+Menu_RunSelection:
 	.incbin "baserom.gba", 0x0004dd40, 0x00000254
 	.section .rom.0004e06c, "ax"
 	.global Menu_DrawFlagBitTable
@@ -1966,10 +1966,10 @@ Trade_AddOfferFar:
 	.thumb_func
 Djinn_TransferFar:
 	.incbin "baserom.gba", 0x000ad178, 0x00000008
-	.global Func_080ad180
-	.type Func_080ad180, %function
+	.global Trade_ListFlaggedEntriesFar
+	.type Trade_ListFlaggedEntriesFar, %function
 	.thumb_func
-Func_080ad180:
+Trade_ListFlaggedEntriesFar:
 	.incbin "baserom.gba", 0x000ad180, 0x00000008
 	.global SummonDefinition_Get
 	.type SummonDefinition_Get, %function
@@ -2509,10 +2509,10 @@ UiText_DrawQuantityPairWithCueFar:
 	.thumb_func
 Object_GetByIdFar:
 	.incbin "baserom.gba", 0x000c8088, 0x00000008
-	.global Func_080c8090
-	.type Func_080c8090, %function
+	.global ObjectTable_DestroyByIdFar
+	.type ObjectTable_DestroyByIdFar, %function
 	.thumb_func
-Func_080c8090:
+ObjectTable_DestroyByIdFar:
 	.incbin "baserom.gba", 0x000c8090, 0x00000008
 	.global ObjectMotion_SetSpeedParametersFar
 	.type ObjectMotion_SetSpeedParametersFar, %function
@@ -2629,10 +2629,10 @@ ObjectMotion_SetVariantCallbackFar:
 	.thumb_func
 Motion_SetVarCbAndRefreshFar:
 	.incbin "baserom.gba", 0x000c8148, 0x00000008
-	.global Func_080c8150
-	.type Func_080c8150, %function
+	.global BattleFx_RunRisingObjectSequenceFar
+	.type BattleFx_RunRisingObjectSequenceFar, %function
 	.thumb_func
-Func_080c8150:
+BattleFx_RunRisingObjectSequenceFar:
 	.incbin "baserom.gba", 0x000c8150, 0x00000008
 	.global ObjectMotion_SetAngleTowardFar
 	.type ObjectMotion_SetAngleTowardFar, %function
@@ -2769,10 +2769,10 @@ ObjectVisual_CopyAttributesFar:
 	.thumb_func
 Object_AttachWorkTargetToObjectFar:
 	.incbin "baserom.gba", 0x000c8228, 0x00000008
-	.global Func_080c8230
-	.type Func_080c8230, %function
+	.global ObjectTable_AllocateAndSetObjectSpeedFar
+	.type ObjectTable_AllocateAndSetObjectSpeedFar, %function
 	.thumb_func
-Func_080c8230:
+ObjectTable_AllocateAndSetObjectSpeedFar:
 	.incbin "baserom.gba", 0x000c8230, 0x00000008
 	.global Motion_CamBoundsFar
 	.type Motion_CamBoundsFar, %function
@@ -3584,10 +3584,10 @@ ObjectMotion_WaitForAnimationChange:
 	.section .rom.000d336c, "ax"
 	.incbin "baserom.gba", 0x000d336c, 0x000000e8
 	.section .rom.000d3454, "ax"
-	.global Func_080d3460
-	.type Func_080d3460, %function
+	.global BattleFx_RunRisingObjectSequence
+	.type BattleFx_RunRisingObjectSequence, %function
 	.thumb_func
-Func_080d3460:
+BattleFx_RunRisingObjectSequence:
 	.incbin "baserom.gba", 0x000d3454, 0x0000013c
 	.section .rom.000d35f2, "ax"
 	.incbin "baserom.gba", 0x000d35f2, 0x00000002
@@ -3598,10 +3598,10 @@ Func_080d3460:
 FacingObject_TurnPairToFaceEachOther:
 	.incbin "baserom.gba", 0x000d35f4, 0x000000a8
 	.section .rom.000d369c, "ax"
-	.global Func_080d36a8
-	.type Func_080d36a8, %function
+	.global ObjectTable_DestroyById
+	.type ObjectTable_DestroyById, %function
 	.thumb_func
-Func_080d36a8:
+ObjectTable_DestroyById:
 	.incbin "baserom.gba", 0x000d369c, 0x00000020
 	.section .rom.000d3774, "ax"
 	.global Func_080d3780
@@ -3699,10 +3699,10 @@ Func_080d41fc:
 Func_080d4330:
 	.incbin "baserom.gba", 0x000d4324, 0x00000054
 	.section .rom.000d43e0, "ax"
-	.global Func_080d43ec
-	.type Func_080d43ec, %function
+	.global ObjectTable_AllocateAndSetObjectSpeed
+	.type ObjectTable_AllocateAndSetObjectSpeed, %function
 	.thumb_func
-Func_080d43ec:
+ObjectTable_AllocateAndSetObjectSpeed:
 	.incbin "baserom.gba", 0x000d43e0, 0x00000020
 	.global Motion_CamBounds
 	.type Motion_CamBounds, %function

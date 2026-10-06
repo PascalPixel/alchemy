@@ -257,7 +257,7 @@ Object_SetModeById:
 	.global Func_02005e84
 	.thumb_func
 Func_02005e84:
-	overlay_veneer Func_080c8150
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:
@@ -297,7 +297,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02005ed4
 	.thumb_func
 Func_02005ed4:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

@@ -209,7 +209,7 @@ ObjectMotion_Launch:
 	.global Func_02003f0c
 	.thumb_func
 Func_02003f0c:
-	overlay_veneer Func_080c8150
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:
@@ -253,7 +253,7 @@ Func_02003f5c:
 	.global Func_02003f64
 	.thumb_func
 Func_02003f64:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

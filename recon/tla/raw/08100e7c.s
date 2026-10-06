@@ -97,7 +97,7 @@ Func_08100e7c:
 .L_08100f3c:
 	bl Scheduler_EnableOverlayCallbacksWithFlags
 	movs r0, #1
-	bl Func_080383c0
+	bl UiWork_SetAltFlagAndClearTableFar
 	ldr r0, .L_08100fd4
 	bl Link_DrawShiftedTilePairFar
 	movs r2, #129
@@ -169,7 +169,7 @@ Func_08100e7c:
 	strh r5, [r3, #4]
 	bl Func_08038290
 	movs r0, #0
-	bl Func_080383c0
+	bl UiWork_SetAltFlagAndClearTableFar
 	mov r1, r8
 	movs r2, #128
 	ldr r5, .L_08101060

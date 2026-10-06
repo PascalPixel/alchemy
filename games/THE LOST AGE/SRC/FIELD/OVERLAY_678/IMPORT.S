@@ -221,7 +221,7 @@ Object_SetModeById:
 	.global Func_020028e0
 	.thumb_func
 Func_020028e0:
-	overlay_veneer Func_080c8150
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:
@@ -249,7 +249,7 @@ Func_02002910:
 	.global Func_02002918
 	.thumb_func
 Func_02002918:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

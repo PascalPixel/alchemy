@@ -345,7 +345,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02005914
 	.thumb_func
 Func_02005914:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

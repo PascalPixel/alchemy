@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d36a8
+	.global ObjectTable_DestroyById
 	.thumb_func
-Func_080d36a8:
+ObjectTable_DestroyById:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	bl ObjectTable_Get

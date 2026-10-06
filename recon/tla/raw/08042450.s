@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08042450
+	.global CreateSideObject
 	.thumb_func
-Func_08042450:
+CreateSideObject:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

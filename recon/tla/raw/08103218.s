@@ -947,7 +947,7 @@ Func_08103218:
 	movs r1, #0
 	ldr r2, [sp, #216]
 	mov r3, r9
-	bl Func_080380d8
+	bl SideObject_CreateFar
 .L_081039be:
 	movs r2, #166
 	ldr r1, [sp, #44]

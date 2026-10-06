@@ -281,7 +281,7 @@ Func_02005b9c:
 	.global Func_02005ba4
 	.thumb_func
 Func_02005ba4:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

@@ -409,7 +409,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_0200436c
 	.thumb_func
 Func_0200436c:
-	overlay_veneer Func_080c8150
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -453,7 +453,7 @@ Func_020043bc:
 	.global Func_020043c4
 	.thumb_func
 Func_020043c4:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

@@ -1185,7 +1185,7 @@ Func_080cb91c:
 	adds r5, #165
 	add r5, r8
 	strb r0, [r5]
-	bl Func_080381e8
+	bl Menu_RunTopSelectionFar
 	movs r3, #1
 	strb r3, [r5]
 	bl Func_080cb05c
@@ -1311,7 +1311,7 @@ Func_080cb91c:
 	ands r3, r2
 	cmp r3, #0
 	beq .L_080cc3be
-	bl Func_08038278
+	bl Menu_RunSelectionFar
 	b .L_080cc468
 .L_080cc3be:
 	ldrb r3, [r1]

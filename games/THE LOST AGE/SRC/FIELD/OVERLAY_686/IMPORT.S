@@ -201,7 +201,7 @@ Object_SetModeById:
 	.global Func_02002e7c
 	.thumb_func
 Func_02002e7c:
-	overlay_veneer Func_080c8150
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:

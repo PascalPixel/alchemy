@@ -101,10 +101,10 @@ Trade_AddOfferFar:
 	.thumb_func
 Djinn_TransferFar:
 	overlay_veneer Djinn_Transfer
-	.global Func_080ad180
+	.global Trade_ListFlaggedEntriesFar
 	.thumb_func
-Func_080ad180:
-	overlay_veneer Func_080aff28
+Trade_ListFlaggedEntriesFar:
+	overlay_veneer Trade_ListFlaggedEntries
 	.global SummonDefinition_Get
 	.thumb_func
 SummonDefinition_Get:

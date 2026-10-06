@@ -57,7 +57,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02000204
 	.thumb_func
 Func_02000204:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Func_0200020c
 	.thumb_func
 Func_0200020c:

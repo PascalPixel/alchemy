@@ -225,7 +225,7 @@ Engine_ActorSetAttachedEffect:
 	.global Engine_CameraSetSpeed
 	.thumb_func
 Engine_CameraSetSpeed:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

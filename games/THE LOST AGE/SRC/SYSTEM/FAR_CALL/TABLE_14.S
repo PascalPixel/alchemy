@@ -13,10 +13,10 @@ UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	.thumb_func
 UiText_GetResourceDimensionsFar:
 	overlay_veneer UiText_GetResourceDimensions
-	.global Func_08038110
+	.global UiText_GetResourceDimensionsAltFar
 	.thumb_func
-Func_08038110:
-	overlay_veneer Func_0803b8cc
+UiText_GetResourceDimensionsAltFar:
+	overlay_veneer UiText_GetResourceDimensionsAlt
 	.global UiWork_ClearValueNameTablesFar
 	.thumb_func
 UiWork_ClearValueNameTablesFar:

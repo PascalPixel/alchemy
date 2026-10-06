@@ -93,7 +93,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02000328
 	.thumb_func
 Func_02000328:
-	overlay_veneer Func_080c8230
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Motion_CamBounds
 	.thumb_func
 Motion_CamBounds:

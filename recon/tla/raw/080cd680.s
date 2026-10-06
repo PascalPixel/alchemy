@@ -45,7 +45,7 @@ Func_080cd680:
 	beq .L_080cd6da
 	movs r1, #6
 	movs r2, #0
-	bl Func_080d3460
+	bl BattleFx_RunRisingObjectSequence
 	mov r3, r8
 	strh r3, [r5]
 .L_080cd6da:

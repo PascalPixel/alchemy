@@ -21,7 +21,17 @@
    path's (its text_dirty constant reloads into r4 where the add tail
    uses r1, and its two argument loads swap), so 9 extra instructions and
    every later branch offset differ. A single goto redraw tail gives168
-   (the allocation falls back).
+   (the allocation falls back). Both tails reload their constant 1 into
+   r3 first; choose_reload_regs' round-robin then gives the remove tail r4
+   and the result path r1, where the native result path has r4. That
+   rotation suggests the native has no separate remove-path reload there,
+   so its seventh latch may come from elsewhere: still open. Trials,
+   reverted: keyboard toggle duplicated in the A path with the duplicated
+   tail178, with a goto redraw tail279. Permuter (5 min, seed 1): length++
+   before bytes++ in the add path gives71 (draft662): jump2 now merges the
+   two redraw tails, but on the remove tail's r4 constant, and the add
+   path's increments reorder; the native merged tail keeps r1, so both
+   tails must reload into r1 while the result path takes r4 after them.
    Natural trials: pointer copy loop323; indexed loop320; one shared
    character local254; count order and side-key navigation228. The existing
    international caret-r5 device gives218. Pinning cursor flag alone333,

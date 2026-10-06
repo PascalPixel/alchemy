@@ -931,6 +931,8 @@
     "*/recon/tla/it/rom.o"(.rom.000dbde8)
     "*/recon/tla/it/rom.o"(.rom.000dbdfc)
     "*/recon/tla/it/rom.o"(.rom.000dbe38)
+    "*/recon/tla/it/rom.o"(.rom.000dbe74)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SPARK.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/RESOURCE.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/GROUP.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000dc1a4)

@@ -33,7 +33,7 @@ u8 Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value)
     return value;
 }
 
-u8 Func_080dbde8(s32 x, s32 z, s32 layer)
+s32 Func_080dbde8(s32 x, s32 z, s32 layer)
 {
     return Func_080dbb78(x, z, layer)->attribute_b;
 }
@@ -42,4 +42,40 @@ u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value)
 {
     Func_080dbb78(x, z, layer)->attribute_b = value;
     return value;
+}
+
+u8 Func_080dbe08(s32 x, s32 z, s32 layer, s32 bits)
+{
+    s32 flags = Func_080dbde8(x, z, layer);
+    u8 *cell = (u8 *)Func_080dbb78(x, z, layer);
+
+    flags |= bits;
+    cell[3] = flags;
+    return flags;
+}
+
+u8 Func_080dbe44(s32 x, s32 z, s32 layer, s32 bits)
+{
+    s32 flags = Func_080dbde8(x, z, layer);
+    u8 *cell = (u8 *)Func_080dbb78(x, z, layer);
+
+    flags &= ~bits;
+    cell[3] = flags;
+    return flags;
+}
+
+s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
+{
+    s32 dx = (*a++ - *b++) >> 16;
+    s32 dy = (*a++ - *b++) >> 16;
+    s32 dz = (*a - *b) >> 16;
+    s32 radius = radius_a + radius_b;
+
+    if (dx > 0x400000 || dz > 0x400000)
+        return -1;
+    if (dy > radius << 16)
+        return -1;
+    if (dx * dx + dz * dz < radius * radius)
+        return 1;
+    return -1;
 }

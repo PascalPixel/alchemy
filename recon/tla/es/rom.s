@@ -4069,7 +4069,11 @@ Func_080dbdd4:
 	.type Func_080dbdf4, %function
 	.thumb_func
 Func_080dbdf4:
-	.incbin "baserom.gba", 0x000e4e38, 0x00000274
+	.incbin "baserom.gba", 0x000e4e38, 0x0000003c
+	.section .rom.000e4e74, "ax"
+	.global Func_080dbe80
+Func_080dbe80:
+	.incbin "baserom.gba", 0x000e4e74, 0x000001c4
 	.section .rom.000e51a4, "ax"
 	.global Func_080db9c0
 	.type Func_080db9c0, %function
@@ -4401,7 +4405,10 @@ ObjectGroup_BlinkChildValues:
 	.incbin "baserom.gba", 0x000f9880, 0x000005c8
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
-	.incbin "baserom.gba", 0x000f9e48, 0x00000050
+	.incbin "baserom.gba", 0x000f9e48, 0x00000024
+	.global Data_080f0e78
+Data_080f0e78:
+	.incbin "baserom.gba", 0x000f9e6c, 0x0000002c
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
 	.incbin "baserom.gba", 0x000f9e98, 0x00000020

@@ -8,6 +8,10 @@
    r1, not r2, so no ldm r7, {r2, r4} and the second loop smull copies its
    low word; (s16)t read back by ldrsh where the listing extends it into lr
    at once.
+   Trial (whole upstream rule set): alchemy permute --camelot-arm
+   --heat, aimed at 48 rows on 15 lines, 2.5 minutes, 4 jobs: best
+   weighted 1340 -> 1270 but differ 53, by shared temporaries
+   (tmp = v->dx before out->x); not taken.
    camelot_arm trials (2026-10-06, session 4), from 48:
    - The k load's place is an alias conflict, not an option: needs no
      -fno-strict-aliasing. Read k in alias set 0 (union Word { s32 i; };

@@ -18,7 +18,22 @@
    - x from v->x at each use: 53 (s16 t too: 58); register s32 x
      asm("r2") in the loop: no change, the inline copies it.
    - alchemy permute --camelot-arm --function Transform_UpdateVertices,
-     3 minutes from 48: best differ 53.
+     9 minutes from 48: best differ 53.
+   - The listing's z is r4 both before and in the loop, but its x is r1
+     before and r2 in the loop: one z, and a loop x of its own. A block
+     local s32 x in the first loop with x = to->x - from->x and z = to->z
+     - from->z: the prologue matches the listing up to the half constant
+     (to->z in ip, z in r4, x in r1), loop x in r0: 49. Without the
+     one-expression forms: 53; z local too: 63.
+   - On that 49: t = ...; a = (s16)t; out->a = v->u = t; ... a = (a << 8)
+     * k gives the listing's lsl r1, r3, #16; strh; asr lr, r1, #16;
+     strh and lsl r3, lr, #8 (with r2 for r1, x being in r1), but the k
+     load and a's mul are scheduled above u's smull, where the listing
+     has them after both u stores: 70; a <<= 8; a *= k: 52; s16 t: 54;
+     k = gProjection.center_x: 70; a from v->u: 91. Without the first
+     scheduling pass (-fno-schedule-insns, study only) the k load still
+     rises above u's stores, so in the listing something the k load
+     depends on, not the scheduler's choice, holds it there.
    camelot_arm trials (2026-10-06, session 2), from 104:
    - smull with two alternatives, "=&r,&r"(lo), "=r,&r"(hi), "r,r"(a),
      "1,r"(b): RdHi takes Rs when b dies, as the listing's ldr r3; smull

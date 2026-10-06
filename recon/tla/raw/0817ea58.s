@@ -78,7 +78,7 @@ Func_0817ea58:
 	movs r0, #1
 	ldr r1, .L_0817eb1c
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r4, #160
 	lsls r4, r4, #19
 	movs r3, #0

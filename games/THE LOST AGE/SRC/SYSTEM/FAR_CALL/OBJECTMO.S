@@ -181,13 +181,13 @@ Object_ResetTargetAndSetMode1Far:
 	.thumb_func
 ObjectTable_RunIfActiveFar:
 	overlay_veneer ObjectTable_RunIfActive
-	.global Func_080c81f0
+	.global Battle_ShowPairedUnitWorkAndWaitFar
 	.thumb_func
-Func_080c81f0:
+Battle_ShowPairedUnitWorkAndWaitFar:
 	overlay_veneer Func_080d41fc
-	.global Func_080c81f8
+	.global Ui_SetRenderResultFromObjectFar
 	.thumb_func
-Func_080c81f8:
+Ui_SetRenderResultFromObjectFar:
 	overlay_veneer Func_080d4330
 	.global ObjectMotion_SetActionVariantFar
 	.thumb_func

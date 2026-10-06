@@ -286,7 +286,7 @@ Func_0817d724:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 .L_0817d974:
 	mov r2, r11
 	cmp r2, #165
@@ -401,7 +401,7 @@ Func_0817d724:
 	movs r0, #1
 	ldr r1, .L_0817da88
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r5, .L_0817da7c
 	movs r4, #160
 	lsls r4, r4, #19

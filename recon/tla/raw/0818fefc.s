@@ -373,7 +373,7 @@ Func_0818fefc:
 	movs r0, #1
 	ldr r1, .L_08190388
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	bl Func_0817d6c4
 	movs r0, #8
 	movs r1, #2
@@ -1529,7 +1529,7 @@ Func_0818fefc:
 	ldrh r1, [r3]
 	movs r2, #24
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r0, .L_08190b70
 	bl Scheduler_RemoveCallback
 	movs r0, #104

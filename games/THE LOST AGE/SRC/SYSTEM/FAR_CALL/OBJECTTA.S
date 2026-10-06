@@ -141,9 +141,9 @@ EffectRuntime_StopCurrentObjectFar:
 	.thumb_func
 BattleEffect_CleanupSceneObjectsFar:
 	overlay_veneer BattleEffect_CleanupSceneObjects
-	.global Func_080c84c0
+	.global EventObject_InitializeFar
 	.thumb_func
-Func_080c84c0:
+EventObject_InitializeFar:
 	overlay_veneer Func_080dc6d8
 	.global BattleEffect_InitializeSharedSceneFar
 	.thumb_func

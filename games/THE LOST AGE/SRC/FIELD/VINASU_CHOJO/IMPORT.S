@@ -299,7 +299,7 @@ Func_02001c9c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.else
-	overlay_veneer Func_080c84c0
+	overlay_veneer EventObject_InitializeFar
 	.endif
 	.endif
 	.global Engine_EventResolvePendingActions

@@ -261,7 +261,7 @@ Func_02001ea8:
 	.global Func_02001eb0
 	.thumb_func
 Func_02001eb0:
-	overlay_veneer Func_080c84c0
+	overlay_veneer EventObject_InitializeFar
 	.global Func_02001eb8
 	.thumb_func
 Func_02001eb8:

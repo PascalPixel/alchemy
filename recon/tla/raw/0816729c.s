@@ -79,7 +79,7 @@ Func_0816729c:
 	ldr r1, .L_08167424
 	movs r2, #0
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r0, .L_08167428
 	bl Resource_GetTableEntry
 	movs r2, #128
@@ -1273,7 +1273,7 @@ Func_0816729c:
 	str r2, [r3]
 	ldr r1, .L_08167ce0
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r3, .L_08167cd8
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1674,7 +1674,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680b0
 	movs r2, #7
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 .L_08167fa8:
 	ldr r0, [sp, #72]
 	cmp r0, #150
@@ -1709,7 +1709,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680bc
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 .L_08167fee:
 	ldr r5, [sp, #72]
 	cmp r5, #214
@@ -1734,7 +1734,7 @@ Func_0816729c:
 	movs r0, #1
 	ldr r1, .L_081680c0
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r5, [sp, #88]
 	movs r7, #0
 .L_08168024:

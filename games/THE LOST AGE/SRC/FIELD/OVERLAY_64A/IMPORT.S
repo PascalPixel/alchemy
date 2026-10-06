@@ -53,7 +53,7 @@ Blend_SetDarkenTarget16:
 	.global Func_02002220
 	.thumb_func
 Func_02002220:
-	overlay_veneer Func_08000300
+	overlay_veneer SerialRuntime_InitializeFar
 	.global Func_02002228
 	.thumb_func
 Func_02002228:

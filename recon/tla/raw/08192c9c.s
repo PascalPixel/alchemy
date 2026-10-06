@@ -1034,7 +1034,7 @@ Func_08192c9c:
 	ldr r1, .L_08193648
 	movs r2, #0
 	movs r0, #1
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r0, .L_0819364c
 	bl Resource_GetTableEntry
 	movs r3, #128
@@ -3515,7 +3515,7 @@ Func_08192c9c:
 	movs r0, #1
 	ldr r1, .L_081947c0
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r4, #0
 	movs r7, #192
 	movs r0, #160

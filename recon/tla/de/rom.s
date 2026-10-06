@@ -3990,10 +3990,10 @@ BattleMotion_ProjectPositionFar:
 	.thumb_func
 BattleMotion_ProjectScaledPositionFar:
 	.incbin "baserom.gba", 0x001180b0, 0x00000008
-	.global Func_081180b8
-	.type Func_081180b8, %function
+	.global BattleMotion_ProjectConditionalPositionFar
+	.type BattleMotion_ProjectConditionalPositionFar, %function
 	.thumb_func
-Func_081180b8:
+BattleMotion_ProjectConditionalPositionFar:
 	.incbin "baserom.gba", 0x001180b8, 0x00000008
 	.global BattleParty_ListLivingUnitsFar
 	.type BattleParty_ListLivingUnitsFar, %function

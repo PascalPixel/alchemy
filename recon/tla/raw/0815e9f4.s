@@ -724,7 +724,7 @@ Func_0815e9f4:
 	mov r3, r9
 	subs r1, r6, r3
 	ldrh r0, [r5]
-	bl Func_08118048
+	bl BattlePresentation_SetPaletteLevelFar
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #1

@@ -104,7 +104,7 @@ Func_0814db04:
 	ldr r1, .L_0814dc40
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r1, #194
 	lsls r1, r1, #1
 	adds r1, #255

@@ -2603,10 +2603,10 @@ EffectRuntime_StopCurrentObjectFar:
 	.thumb_func
 BattleEffect_CleanupSceneObjectsFar:
 	.incbin "baserom.gba", 0x000c84b8, 0x00000008
-	.global Func_080c84c0
-	.type Func_080c84c0, %function
+	.global EventObject_InitializeFar
+	.type EventObject_InitializeFar, %function
 	.thumb_func
-Func_080c84c0:
+EventObject_InitializeFar:
 	.incbin "baserom.gba", 0x000c84c0, 0x00000010
 	.global BattleFx_PrepareBufferInterpolationFar
 	.type BattleFx_PrepareBufferInterpolationFar, %function

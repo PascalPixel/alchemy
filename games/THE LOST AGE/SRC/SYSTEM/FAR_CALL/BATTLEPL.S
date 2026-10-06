@@ -25,9 +25,9 @@ BattleMotion_ProjectPositionFar:
 	.thumb_func
 BattleMotion_ProjectScaledPositionFar:
 	overlay_veneer Func_0811c2b4
-	.global Func_081180b8
+	.global BattleMotion_ProjectConditionalPositionFar
 	.thumb_func
-Func_081180b8:
+BattleMotion_ProjectConditionalPositionFar:
 	overlay_veneer Func_0811c314
 	.global BattleParty_ListLivingUnitsFar
 	.thumb_func

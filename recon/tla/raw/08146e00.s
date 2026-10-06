@@ -707,11 +707,11 @@ Func_08146e00:
 	movs r0, #1
 	adds r1, r5, #0
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	adds r1, r5, #0
 	movs r0, #1
 	movs r2, #8
-	bl Func_08118038
+	bl BattlePresentation_ConfigurePaletteFadeFar
 	movs r5, #240
 	ldr r2, [sp, #88]
 	lsls r5, r5, #7

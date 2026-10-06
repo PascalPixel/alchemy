@@ -2344,7 +2344,7 @@ Func_0815cde8:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r1, #128
 	ldr r3, .L_0815e158
 	ldr r0, [sp, #80]

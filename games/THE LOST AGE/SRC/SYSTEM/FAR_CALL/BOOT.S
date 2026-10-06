@@ -269,33 +269,33 @@ Blend_ConfigureTransitionFar:
 	.thumb_func
 Blend_WaitForTransitionFar:
 	overlay_veneer Blend_WaitForTransition
-	.global Func_080002d8
+	.global RuntimeDispatch_ReservedNoOpAFar
 	.thumb_func
-Func_080002d8:
+RuntimeDispatch_ReservedNoOpAFar:
 	overlay_veneer Func_080132b8
-	.global Func_080002e0
+	.global RuntimeDispatch_ReservedNoOpBFar
 	.thumb_func
-Func_080002e0:
+RuntimeDispatch_ReservedNoOpBFar:
 	overlay_veneer Func_080132bc
-	.global Func_080002e8
+	.global RuntimeDispatch_ReservedNoOpCFar
 	.thumb_func
-Func_080002e8:
+RuntimeDispatch_ReservedNoOpCFar:
 	overlay_veneer Func_080132c0
-	.global Func_080002f0
+	.global RuntimeDispatch_ReservedNoOpDFar
 	.thumb_func
-Func_080002f0:
+RuntimeDispatch_ReservedNoOpDFar:
 	overlay_veneer Func_080132c4
-	.global Func_080002f8
+	.global RuntimeDispatch_ReservedNoOpEFar
 	.thumb_func
-Func_080002f8:
+RuntimeDispatch_ReservedNoOpEFar:
 	overlay_veneer Func_080132c8
-	.global Func_08000300
+	.global SerialRuntime_InitializeFar
 	.thumb_func
-Func_08000300:
+SerialRuntime_InitializeFar:
 	overlay_veneer Func_08016180
-	.global Func_08000308
+	.global SerialRuntime_PollAndTransferFar
 	.thumb_func
-Func_08000308:
+SerialRuntime_PollAndTransferFar:
 	overlay_veneer Func_08016348
 	.global QueueIoWriteDelay1Far
 	.thumb_func
@@ -369,17 +369,17 @@ Func_08000390:
 	.thumb_func
 SerialRuntime_WaitForTransferBFar:
 	overlay_veneer SerialRuntime_WaitForTransferB
-	.global Func_080003a0
+	.global SerialRuntime_WaitForTransfersFar
 	.thumb_func
-Func_080003a0:
+SerialRuntime_WaitForTransfersFar:
 	overlay_veneer Func_080168f8
-	.global Func_080003a8
+	.global SerialRuntime_GetActiveTransfersFar
 	.thumb_func
-Func_080003a8:
+SerialRuntime_GetActiveTransfersFar:
 	overlay_veneer Func_0801692c
-	.global Func_080003b0
+	.global SerialRuntime_StepBlockTransferFar
 	.thumb_func
-Func_080003b0:
+SerialRuntime_StepBlockTransferFar:
 	overlay_veneer Func_08016990
 	.global Scheduler_SetCallbackMaskFar
 	.thumb_func

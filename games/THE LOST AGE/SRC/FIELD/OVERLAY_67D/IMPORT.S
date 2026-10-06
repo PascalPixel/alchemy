@@ -157,7 +157,7 @@ Func_020022ac:
 	.global Func_020022b4
 	.thumb_func
 Func_020022b4:
-	overlay_veneer Func_080c84c0
+	overlay_veneer EventObject_InitializeFar
 	.global Func_020022bc
 	.thumb_func
 Func_020022bc:

@@ -213,7 +213,7 @@ ObjectMotion_ArmCallback:
 	.global Func_020032b8
 	.thumb_func
 Func_020032b8:
-	overlay_veneer Func_080c81f0
+	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
 	.global Engine_ActorShowEmote
 	.thumb_func
 Engine_ActorShowEmote:

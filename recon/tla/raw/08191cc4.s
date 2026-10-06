@@ -71,7 +71,7 @@ Func_08191cc4:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5

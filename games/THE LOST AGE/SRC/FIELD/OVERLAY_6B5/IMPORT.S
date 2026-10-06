@@ -41,7 +41,7 @@ Sys_Free:
 	.global Func_02001914
 	.thumb_func
 Func_02001914:
-	overlay_veneer Func_08000300
+	overlay_veneer SerialRuntime_InitializeFar
 	.global Func_0200191c
 	.thumb_func
 Func_0200191c:
@@ -61,7 +61,7 @@ SerialRuntime_BeginTransferB:
 	.global Func_0200193c
 	.thumb_func
 Func_0200193c:
-	overlay_veneer Func_080003a8
+	overlay_veneer SerialRuntime_GetActiveTransfersFar
 	.global Func_02001944
 	.thumb_func
 Func_02001944:

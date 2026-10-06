@@ -171,7 +171,7 @@ Func_0813fd84:
 	ldr r1, .L_0813ff48
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r4, [sp, #108]
 	mov r3, r10
 	str r3, [r4, #16]
@@ -1430,7 +1430,7 @@ Func_0813fd84:
 	ldr r1, .L_08140918
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r0, #31
 	movs r1, #31
 	movs r2, #31
@@ -2503,7 +2503,7 @@ Func_0813fd84:
 	movs r0, #1
 	ldrh r1, [r3]
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r2, .L_081411e4

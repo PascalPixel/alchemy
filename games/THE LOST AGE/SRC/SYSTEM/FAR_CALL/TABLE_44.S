@@ -9,17 +9,17 @@ BattlePres_SetupTransitionSceneFar:
 	.thumb_func
 BattlePres_SetupTransitionAtPairMidpointFar:
 	overlay_veneer BattlePres_SetupTransitionAtPairMidpoint
-	.global Func_08118038
+	.global BattlePresentation_ConfigurePaletteFadeFar
 	.thumb_func
-Func_08118038:
+BattlePresentation_ConfigurePaletteFadeFar:
 	overlay_veneer Func_0812628c
-	.global Func_08118040
+	.global BattleBackground_LoadFar
 	.thumb_func
-Func_08118040:
+BattleBackground_LoadFar:
 	overlay_veneer Func_081263fc
-	.global Func_08118048
+	.global BattlePresentation_SetPaletteLevelFar
 	.thumb_func
-Func_08118048:
+BattlePresentation_SetPaletteLevelFar:
 	overlay_veneer Func_08126218
 	.global Summon_GetEntryByte4Far
 	.thumb_func

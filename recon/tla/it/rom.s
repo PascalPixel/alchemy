@@ -2729,15 +2729,15 @@ Object_ResetTargetAndSetMode1Far:
 	.thumb_func
 ObjectTable_RunIfActiveFar:
 	.incbin "baserom.gba", 0x000c81e8, 0x00000008
-	.global Func_080c81f0
-	.type Func_080c81f0, %function
+	.global Battle_ShowPairedUnitWorkAndWaitFar
+	.type Battle_ShowPairedUnitWorkAndWaitFar, %function
 	.thumb_func
-Func_080c81f0:
+Battle_ShowPairedUnitWorkAndWaitFar:
 	.incbin "baserom.gba", 0x000c81f0, 0x00000008
-	.global Func_080c81f8
-	.type Func_080c81f8, %function
+	.global Ui_SetRenderResultFromObjectFar
+	.type Ui_SetRenderResultFromObjectFar, %function
 	.thumb_func
-Func_080c81f8:
+Ui_SetRenderResultFromObjectFar:
 	.incbin "baserom.gba", 0x000c81f8, 0x00000008
 	.global ObjectMotion_SetActionVariantFar
 	.type ObjectMotion_SetActionVariantFar, %function
@@ -2982,10 +2982,10 @@ EffectRuntime_StopCurrentObjectFar:
 	.thumb_func
 BattleEffect_CleanupSceneObjectsFar:
 	.incbin "baserom.gba", 0x000c84c8, 0x00000008
-	.global Func_080c84c0
-	.type Func_080c84c0, %function
+	.global EventObject_InitializeFar
+	.type EventObject_InitializeFar, %function
 	.thumb_func
-Func_080c84c0:
+EventObject_InitializeFar:
 	.incbin "baserom.gba", 0x000c84d0, 0x00000008
 	.global BattleEffect_InitializeSharedSceneFar
 	.type BattleEffect_InitializeSharedSceneFar, %function

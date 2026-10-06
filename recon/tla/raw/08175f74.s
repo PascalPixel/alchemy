@@ -109,7 +109,7 @@ Func_08175f74:
 	ldr r1, .L_08176068
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r2, #20
 	negs r2, r2
 	adds r1, r2, #0
@@ -853,7 +853,7 @@ Func_08175f74:
 	movs r0, #1
 	ldr r1, .L_0817669c
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r0, #160
 	lsls r0, r0, #19
 	movs r1, #128
@@ -3437,7 +3437,7 @@ Func_08175f74:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r5, .L_08177a10
 	movs r1, #128
 	ldr r0, [sp, #96]

@@ -2100,7 +2100,7 @@ Func_0815b764:
 	ldrh r1, [r3]
 	negs r2, r2
 	movs r0, #2
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	ldr r3, .L_0815c7fc
 	movs r2, #128
 	lsls r2, r2, #19

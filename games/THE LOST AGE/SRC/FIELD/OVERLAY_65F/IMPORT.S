@@ -213,7 +213,7 @@ Func_02005274:
 	.global Func_0200527c
 	.thumb_func
 Func_0200527c:
-	overlay_veneer Func_080c81f0
+	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:

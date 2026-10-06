@@ -2540,7 +2540,7 @@ Func_08185b9c:
 	ldr r1, .L_08185cdc
 	movs r0, #1
 	movs r2, #0
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r2, #16
 	negs r2, r2
 	adds r1, r2, #0
@@ -3674,7 +3674,7 @@ Func_08185b9c:
 	ldrh r1, [r3]
 	movs r0, #1
 	movs r2, #24
-	bl Func_08118040
+	bl BattleBackground_LoadFar
 	movs r1, #16
 	negs r1, r1
 	movs r2, #4

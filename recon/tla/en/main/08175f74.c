@@ -224,7 +224,7 @@ void Func_08163c2c(s32, s32);
 void BattleActor_SpawnObjectsForListFar(struct Local264 *, s32);
 void Func_08013560(s32);
 void PaletteDma_LoadBlock(void);
-void Func_08118040(s32, s32, s32);
+void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void Func_08144aac(s32, DrawRectangleFn *);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
@@ -333,7 +333,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     Func_08013560(1);
     PaletteDma_LoadBlock();
     scene->unk_867 = 1;
-    Func_08118040(1, (s32)&Value_00000075, 0);
+    BattleBackground_LoadFar(1, (s32)&Value_00000075, 0);
     Func_08164b2c(0, -20, -20);
     Func_08163c2c(1, 1);
     REG_BLDALPHA = 0x1010;
@@ -497,7 +497,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
             Render_ApplyProjectedPlacementFar(work->objects[0], pos232, scale160, 0);
         }
         if (frame == 131) {
-            Func_08118040(1, (s32)&Value_00000075, 0);
+            BattleBackground_LoadFar(1, (s32)&Value_00000075, 0);
             CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
             CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
         }
@@ -1251,7 +1251,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     REG_DISPCNT = 0x141;
     Func_08013560(1);
     scene->unk_867 = 0;
-    Func_08118040(1, scene->unk_670, 24);
+    BattleBackground_LoadFar(1, scene->unk_670, 24);
     CpuFill(canvas, 0x4000, 0);
     CpuFill((void *)0x06004000, 0x4000, 0);
     DISPLAY_11E0->width = 120;

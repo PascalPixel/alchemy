@@ -139,7 +139,7 @@ void Func_08179e6c(void);
 s32 Func_081963ec(s32, s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
-void Func_08118040(s32, s32, s32);
+void BattleBackground_LoadFar(s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
@@ -251,7 +251,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             *(s32 *)0x030011f0 = 240;
             targets[0] = 255;
             BattleActor_SpawnObjectsForListFar(targets, 0);
-            Func_08118040(1, 0x45, 0);
+            BattleBackground_LoadFar(1, 0x45, 0);
             for (i = 0, pal = (u16 *)0x050000c0; i != 128; i++, pal++) {
                 color = *pal;
                 r = (color & 0x1f) - 4;

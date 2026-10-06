@@ -1,14 +1,14 @@
 .syntax unified
 .text
 	.arm
-	.global Func_080b5258
-	.global Func_080b5274
-	.global Func_080b529c
-	.global Func_080b52c4
-	.global Func_080b52ec
-	.global Func_080b5314
-	.global Func_080b5344
-Func_080b5258:
+	.global Model_BitCommands
+	.global Model_AddShortDelta
+	.global Model_SubtractShortDelta
+	.global Model_AddLongDelta
+	.global Model_SubtractLongDelta
+	.global Model_AddSignedDelta
+	.global Model_SetBitValue
+Model_BitCommands:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -16,7 +16,7 @@ Func_080b5258:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Func_080b5274:
+Model_AddShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -27,7 +27,7 @@ Func_080b5274:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Func_080b529c:
+Model_SubtractShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -38,7 +38,7 @@ Func_080b529c:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Func_080b52c4:
+Model_AddLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -49,7 +49,7 @@ Func_080b52c4:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Func_080b52ec:
+Model_SubtractLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -60,7 +60,7 @@ Func_080b52ec:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Func_080b5314:
+Model_AddSignedDelta:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -73,7 +73,7 @@ Func_080b5314:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-Func_080b5344:
+Model_SetBitValue:
 	ror	r5, r3, #10
 	and	r5, r5, #-33554432
 	lsr	r3, r3, #10

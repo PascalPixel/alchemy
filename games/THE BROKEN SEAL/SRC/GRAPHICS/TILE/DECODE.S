@@ -26,23 +26,23 @@ BitDecoder_DecodeImage:
 .L_080b5180:
 	mov	r7, #32
 .L_080b5184:
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	lsr	r6, r5, #25
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	lsr	r6, r5, #25
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #17
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #9
-	bl Func_080b520c
+	bl Model_DispatchBitCommand
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

@@ -35,7 +35,7 @@ struct EffectRecord {
 
 s32 Object_CheckMovementCollision();
 
-void Battle_ResetEffectCounterFar();
+void Battle_ResetEffectCounter();
 void Func_02007fcc();
 void Func_02007fe8();
 void Func_02008004();
@@ -123,7 +123,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain();
 void FuneHeya_PoseSceneActor();
 void ObjectMotion_WaitForAnimationChange();
 void ObjectMotion_ArmCallback();
-void Event_WaitTransitionFramesFar();
+void Engine_EventWaitForScreen();
 void Event_CallWithLastActiveObjectId();
 u8 *Battle_GetWorkObject1e0();
 void FieldScene_CallPairWith10(s32 a, u16 b);
@@ -391,7 +391,7 @@ void FuneHeya_RunFlagBranchSequence(void)
 {
 
     Engine_EventBegin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     gGameState.battle_start = 3;
     /* FAKEMATCH: the do/while orders the flag store before this call. */
     do {
@@ -436,7 +436,7 @@ void FieldScene_RunFlagGatedThreeActorSetup(void)
         return;
 
     Engine_EventBegin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     Engine_CameraSetSpeed(0x19999, 0x3333);
     ConfigureSceneMotionFlags(0xe0 << 17, -1, 0x027e0000, 0x10000028u);
     Engine_EventSetMessage((s32)MsgFuneWonderCouldHaveHappened);
@@ -472,7 +472,7 @@ void FieldScene_RunThreeActorPresentation(void)
     if (GameFlag_IsSet(0x911) == 0) {
     } else {
         Engine_EventBegin();
-        Battle_ResetEffectCounterFar();
+        Battle_ResetEffectCounter();
         Camera_SetSpeed(0x26666, 0x4ccc);
         ConfigureSceneMotionFlags( 0x5b70000, -1, 0x1d00000, 0x10000014);
         Engine_ActorRunRepeatedMotion(13, 1);
@@ -837,7 +837,7 @@ void FieldScene_RunBranchingActorPresentation(void)
     s32 action;
 
     Engine_EventBegin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
     Actor_ShowEmote(8, 0x100, 40);
     request_a = 0x1008;
@@ -2078,7 +2078,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
         Engine_EventOpenScreen();
         if (arg != 0) {
-            Event_WaitTransitionFramesFar();
+            Engine_EventWaitForScreen();
         }
         Engine_EventWait(0);
         break;

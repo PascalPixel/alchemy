@@ -7,9 +7,6 @@ FarCall_GameTable:
 	.thumb_func
 Trade_GetOfferStateFar:
 	overlay_veneer Trade_GetOfferState
-	.global Func_08077008
-	.thumb_func
-Func_08077008:
 	.global Owner_GetStateFar
 	.thumb_func
 Owner_GetStateFar:
@@ -38,9 +35,6 @@ Shop_GetSelectionState:
 	.global Inventory_AddItemFar
 	.thumb_func
 Inventory_AddItemFar:
-	.global Func_08077028
-	.thumb_func
-Func_08077028:
 	overlay_veneer Inventory_AddItem
 	.global PartyInventory_AddFar
 	.thumb_func
@@ -56,16 +50,10 @@ Inventory_FindFar:
 	.global PartyInventory_FindOwnerFar
 	.thumb_func
 PartyInventory_FindOwnerFar:
-	.global Func_08077040
-	.thumb_func
-Func_08077040:
 	overlay_veneer PartyInventory_FindOwner
 	.global PartyInventory_RemoveFar
-	.global Func_08077048
 	.thumb_func
 PartyInventory_RemoveFar:
-	.thumb_func
-Func_08077048:
 	overlay_veneer PartyInventory_Remove
 	.global Inventory_EquipFar
 	.thumb_func

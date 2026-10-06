@@ -70,7 +70,7 @@ void Scene_BagMarsStar(void)
     Engine_EventWait(20);
     star = Scene_PresentItem(222, 0xe80000, 0x100000, 0x900000);
     Engine_EventWait(40);
-    UiWork_PushValueSlotFar(star, 1);
+    UiWork_PushValueSlot(star, 1);
     Engine_MessageShowCentered((s32)MsgSoruMarsStarBagged, 1);
     Actor_SetPosition(ACTOR_JASMINE, 0x1330000, 0x1150000);
     Actor_SetPosition(ACTOR_SUKURETA, 0x1330000, 0x1150000);

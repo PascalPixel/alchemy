@@ -22,10 +22,10 @@ Scheduler_RemoveCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
-	.global ArcTan2Far
+	.global ArcTan2
 	.thumb_func
-ArcTan2Far:
-	overlay_veneer Func_08000100
+ArcTan2:
+	overlay_veneer ArcTan2Far
 	.global Engine_MathSin
 	.thumb_func
 Engine_MathSin:
@@ -98,10 +98,10 @@ FieldScene_PrepareActors:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global UiText_DrawQuantityPairWithCueFar
+	.global UiText_DrawQuantityPairWithCue
 	.thumb_func
-UiText_DrawQuantityPairWithCueFar:
-	overlay_veneer Func_0808a078
+UiText_DrawQuantityPairWithCue:
+	overlay_veneer UiText_DrawQuantityPairWithCueFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -282,10 +282,10 @@ Engine_PsynergyRaiseHands:
 	.thumb_func
 BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
-	.global BattleFx_PlayQueuedSoundFar
+	.global BattleFx_PlayQueuedSound
 	.thumb_func
-BattleFx_PlayQueuedSoundFar:
-	overlay_veneer Func_0808a5e8
+BattleFx_PlayQueuedSound:
+	overlay_veneer BattleFx_PlayQueuedSoundFar
 	.global Engine_SanctumOpen
 	.thumb_func
 Engine_SanctumOpen:

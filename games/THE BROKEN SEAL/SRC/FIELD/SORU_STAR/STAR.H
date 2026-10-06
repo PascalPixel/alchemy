@@ -61,7 +61,7 @@ extern void PartyInventory_Add(s32 arg0);
 s32 CalculateAngleFromCoordinateDelta(s32, s32);
 void Scene_UnmaskGarcia(void);
 void Scene_BagJupiterStar(void);
-void UiWork_PushValueSlotFar();
+void UiWork_PushValueSlot();
 s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
 void SoruStar_LineUpFollowers(void);
 void Party_RemoveOwnerRestored();

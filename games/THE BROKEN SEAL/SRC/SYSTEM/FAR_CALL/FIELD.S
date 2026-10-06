@@ -184,16 +184,10 @@ Map_CopyMetatileIndicesRectFar:
 	.global Map_ClearLayerEntryFlagFar
 	.thumb_func
 Map_ClearLayerEntryFlagFar:
-	.global Func_08009188
-	.thumb_func
-Func_08009188:
 	overlay_veneer Map_ClearLayerEntryFlag
 	.global Map_SetLayerEntryFlagFar
 	.thumb_func
 Map_SetLayerEntryFlagFar:
-	.global Func_08009190
-	.thumb_func
-Func_08009190:
 	overlay_veneer Map_SetLayerEntryFlag
 	.global DisplayBlend_DisableRunScriptFar
 	.thumb_func
@@ -237,9 +231,6 @@ Map_CheckObjectStepFar:
 	.global ObjectDispatch_SetSingleChildFlagsFar
 	.thumb_func
 ObjectDispatch_SetSingleChildFlagsFar:
-	.global Func_080091e0
-	.thumb_func
-Func_080091e0:
 	overlay_veneer ObjectDispatch_SetSingleChildFlags
 	.global ObjectDispatch_SetChildBlendModeFar
 	.thumb_func

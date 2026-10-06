@@ -20,16 +20,10 @@ Scheduler_RemoveCallbackFar:
 	.global Random16Far
 	.thumb_func
 Random16Far:
-	.global Func_080000f8
-	.thumb_func
-Func_080000f8:
 	overlay_veneer Random16
 	.global ArcTan2Far
 	.thumb_func
 ArcTan2Far:
-	.global Func_08000100
-	.thumb_func
-Func_08000100:
 	overlay_veneer ArcTan2
 	overlay_veneer Math_IntegerSqrt
 	.global FixedSqrtFar

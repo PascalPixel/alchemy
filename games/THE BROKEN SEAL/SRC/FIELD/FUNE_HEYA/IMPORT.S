@@ -295,14 +295,11 @@ Engine_EventCloseScreen:
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	.global Event_WaitTransitionFramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
+	.global Battle_ResetEffectCounter
 	.thumb_func
-Event_WaitTransitionFramesFar:
-	overlay_veneer Func_0808a370
-	.global Battle_ResetEffectCounterFar
-	.thumb_func
-Battle_ResetEffectCounterFar:
-	overlay_veneer Func_0808a460
+Battle_ResetEffectCounter:
+	overlay_veneer Battle_ResetEffectCounterFar
 	.global Audio_PlayCueFromEventWork
 	.thumb_func
 Audio_PlayCueFromEventWork:

@@ -47,7 +47,7 @@ struct Descriptor_020041ec {
 
 extern u8 ShianJiin_XianMessages[];
 
-s32 ArcTan2Far(s32, s32);
+s32 ArcTan2(s32, s32);
 void Engine_ScheduleCallbackFar();
 
 void FieldScene_SpawnRandomizedParticle();
@@ -71,7 +71,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 arg0, s32 arg1);
 void FieldScene_RunOpeningAuxiliarySequence(s32 arg0, s32 arg1);
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
-void UiText_DrawQuantityPairWithCueFar();
+void UiText_DrawQuantityPairWithCue();
 
 void FieldScene_RunForwardArcBurst(void);
 

@@ -91,7 +91,7 @@ struct EffectParams {
     u8 pad1c[12];
 };
 
-s32 Inventory_AddItemFar(s32 group, s32 value);
+s32 Inventory_AddItem(s32 group, s32 value);
 
 struct Member_387 {
     u8 pad[216];
@@ -105,7 +105,7 @@ struct Item_387 {
     u8 equippable;
 };
 
-s32 Inventory_AddItemFar(s32 member, s32 item);
+s32 Inventory_AddItem(s32 member, s32 item);
 
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
@@ -592,9 +592,9 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 {
-    u8 *work = Owner_GetStateFar(group);
+    u8 *work = Owner_GetState(group);
     s32 i;
-    Inventory_AddItemFar(group, value);
+    Inventory_AddItem(group, value);
     for (i = 0; i < 15; i++) {
         if (*(u16 *)(work + 216 + i * 2) == value)
             Inventory_Equip(group, i);
@@ -610,7 +610,7 @@ void GomaIriguchi_GiveShamansRod(void)
     s32 id;
 
     id = 65;
-    member = (struct Member_387 *)Owner_GetStateFar(2);
+    member = (struct Member_387 *)Owner_GetState(2);
     tries = 0;
 retry:
     if (++tries > 1000) {
@@ -626,7 +626,7 @@ retry:
 #endif
         member->items[14] = 0;
     }
-    if (Inventory_AddItemFar(2, id) == -1) {
+    if (Inventory_AddItem(2, id) == -1) {
         for (i = 0; i <= 14; i++) {
             item = Item_Get(member->items[i]);
             if (((u8 *)item)[2] == 1) {

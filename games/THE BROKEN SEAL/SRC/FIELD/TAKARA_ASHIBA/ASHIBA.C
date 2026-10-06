@@ -49,9 +49,9 @@ static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 
-s32 PartyInventory_FindOwnerFar();
-void PartyInventory_RemoveFar();
-s32 PartyInventory_FindOwnerFar(s32);
+s32 PartyInventory_FindOwner();
+void PartyInventory_Remove();
+s32 PartyInventory_FindOwner(s32);
 void TakaraAshiba_OpenPassage(s32);
 
 void Battle_Reset();
@@ -357,10 +357,10 @@ void FieldScene_RunScene3b4SequenceC(void)
     record = Object_GetById(0);
     if (record->facing == 0xc000) {
         if (GameFlag_IsSet(0x9c4) == 0) {
-            if (PartyInventory_FindOwnerFar(243) != -1) {
+            if (PartyInventory_FindOwner(243) != -1) {
                 GameFlag_Set(0x9c4);
                 TakaraAshiba_OpenPlatformPassage(0x100);
-                PartyInventory_RemoveFar(243);
+                PartyInventory_Remove(243);
             }
         }
     }
@@ -378,12 +378,12 @@ void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
     if (Engine_GameFlagIsSet(flag)!= 0) {
         return;
     }
-    if (PartyInventory_FindOwnerFar(244) == -1) {
+    if (PartyInventory_FindOwner(244) == -1) {
         return;
     }
     Engine_GameFlagSet(flag);
     TakaraAshiba_OpenPassage(0x100 | selector);
-    PartyInventory_RemoveFar(244);
+    PartyInventory_Remove(244);
 }
 
 void FieldScene_RunIndexedStep0(void)

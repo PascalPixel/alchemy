@@ -22,14 +22,14 @@ Engine_VramLoad:
 	.thumb_func
 Engine_MapAnimateCells:
 	overlay_veneer Map_PlayMetatileCopySequenceFar
-	.global Map_ClearLayerEntryFlagFar
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Map_ClearLayerEntryFlagFar:
-	overlay_veneer Func_08009188
-	.global Map_SetLayerEntryFlagFar
+Map_ClearLayerEntryFlag:
+	overlay_veneer Map_ClearLayerEntryFlagFar
+	.global Map_SetLayerEntryFlag
 	.thumb_func
-Map_SetLayerEntryFlagFar:
-	overlay_veneer Func_08009190
+Map_SetLayerEntryFlag:
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
@@ -110,18 +110,18 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
-	.global Object_RefreshSelectorByIdFar
+	.global Object_RefreshSelectorById
 	.thumb_func
-Object_RefreshSelectorByIdFar:
-	overlay_veneer Func_0808a0a0
+Object_RefreshSelectorById:
+	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorStop
 	.thumb_func
 Engine_ActorStop:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
-	.global ObjectMotion_ResetAndSetPositionFar
+	.global ObjectMotion_ResetAndSetPosition
 	.thumb_func
-ObjectMotion_ResetAndSetPositionFar:
-	overlay_veneer Func_0808a0b8
+ObjectMotion_ResetAndSetPosition:
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
 	.global Engine_ActorWalkTo
 	.thumb_func
 Engine_ActorWalkTo:
@@ -198,10 +198,10 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
-	.global Object_AttachWorkTargetToObjectFar
+	.global Object_AttachWorkTargetToObject
 	.thumb_func
-Object_AttachWorkTargetToObjectFar:
-	overlay_veneer Func_0808a200
+Object_AttachWorkTargetToObject:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
 	.global Engine_CameraMoveTo
 	.thumb_func
 Engine_CameraMoveTo:
@@ -214,26 +214,26 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetExitRequestFar
-	.global DisplayTransition_InitializeBattleEffectStateFar
+	.global DisplayTransition_InitializeBattleEffectState
 	.thumb_func
-DisplayTransition_InitializeBattleEffectStateFar:
-	overlay_veneer Func_0808a300
-	.global Event_StartScreenTransitionFar
+DisplayTransition_InitializeBattleEffectState:
+	overlay_veneer DisplayTransition_InitializeBattleEffectStateFar
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_StartScreenTransitionFar:
-	overlay_veneer Func_0808a360
-	.global Event_WaitTransitionFramesFar
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitTransitionFramesFar:
-	overlay_veneer Func_0808a370
+Event_WaitTransitionFrames:
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ItemShowFound
 	.thumb_func
 Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
-	.global Battle_ResetEffectCounterFar
+	.global Battle_ResetEffectCounter
 	.thumb_func
-Battle_ResetEffectCounterFar:
-	overlay_veneer Func_0808a460
+Battle_ResetEffectCounter:
+	overlay_veneer Battle_ResetEffectCounterFar
 	.global Engine_PsynergyCancel
 	.thumb_func
 Engine_PsynergyCancel:
@@ -242,10 +242,10 @@ Engine_PsynergyCancel:
 	.thumb_func
 Audio_PlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
-	.global Motion_LaunchFromFocusedObjectFar
+	.global Motion_LaunchFromFocusedObject
 	.thumb_func
-Motion_LaunchFromFocusedObjectFar:
-	overlay_veneer Func_0808a570
+Motion_LaunchFromFocusedObject:
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Engine_ActorWalkBy
 	.thumb_func
 Engine_ActorWalkBy:
@@ -254,14 +254,14 @@ Engine_ActorWalkBy:
 	.thumb_func
 Engine_ActorWalkByAndWait:
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
-	.global Object_LinkObjectAndSetCallbackFar
+	.global Object_LinkObjectAndSetCallback
 	.thumb_func
-Object_LinkObjectAndSetCallbackFar:
-	overlay_veneer Func_0808a588
-	.global Inn_PlaySleepFar
+Object_LinkObjectAndSetCallback:
+	overlay_veneer Object_LinkObjectAndSetCallbackFar
+	.global Inn_PlaySleep
 	.thumb_func
-Inn_PlaySleepFar:
-	overlay_veneer Func_080b0068
+Inn_PlaySleep:
+	overlay_veneer Inn_PlaySleepFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

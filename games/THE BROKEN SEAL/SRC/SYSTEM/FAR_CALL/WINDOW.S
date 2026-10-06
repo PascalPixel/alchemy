@@ -159,9 +159,6 @@ UiText_DrawQuantity:
 	.global UiWork_PushValueSlotFar
 	.thumb_func
 UiWork_PushValueSlotFar:
-	.global Func_08015120
-	.thumb_func
-Func_08015120:
 	overlay_veneer UiWork_PushValueSlot
 	.global UiWindow_CreateWithLayoutBoundsFar
 	.thumb_func
@@ -261,10 +258,8 @@ UiTextResource_ReleaseFar:
 	overlay_veneer Menu_RunSelectionHook
 	overlay_veneer Item_CallHandler48
 	.global ItemIcon_LoadTilesFar
-	.global Func_08015250
 	.thumb_func
 ItemIcon_LoadTilesFar:
-Func_08015250:
 	.global Ui_PrepareTransferForItemFar
 	.thumb_func
 Ui_PrepareTransferForItemFar:

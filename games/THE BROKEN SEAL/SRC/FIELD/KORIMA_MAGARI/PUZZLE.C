@@ -145,7 +145,7 @@ void State_UpdateScrollRegistersWithPreset(void)
     destination = (volatile u32 *)0x04000014;
 
     if (line == 227 || line <= 52) {
-        if (((Random16Far() * 100) >> 16) < KorimaMagari_ShakeChance) {
+        if (((Random16() * 100) >> 16) < KorimaMagari_ShakeChance) {
             source = KorimaMagari_ShakeScroll;
         }
     }

@@ -106,10 +106,10 @@ Engine_MapRenderWaitForValues:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global UiWork_PushValueSlotFar
+	.global UiWork_PushValueSlot
 	.thumb_func
-UiWork_PushValueSlotFar:
-	overlay_veneer Func_08015120
+UiWork_PushValueSlot:
+	overlay_veneer UiWork_PushValueSlotFar
 	.global UiText_ShowCenteredMessage
 	.thumb_func
 UiText_ShowCenteredMessage:

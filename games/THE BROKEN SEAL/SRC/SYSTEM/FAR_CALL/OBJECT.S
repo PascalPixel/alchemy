@@ -58,9 +58,9 @@ PartyInventory_GiveItemFar:
 	.thumb_func
 Inventory_PromptAndSetObjectModeFar:
 	overlay_veneer Inventory_PromptAndSetObjectMode
-	.global Func_0808a078
+	.global UiText_DrawQuantityPairWithCueFar
 	.thumb_func
-Func_0808a078:
+UiText_DrawQuantityPairWithCueFar:
 	overlay_veneer UiText_DrawQuantityPairWithCue
 	.global Object_GetByIdFar
 	.thumb_func
@@ -81,9 +81,6 @@ ObjectMotion_EnableActionAndSetCallbackFar:
 	.global Object_RefreshSelectorByIdFar
 	.thumb_func
 Object_RefreshSelectorByIdFar:
-	.global Func_0808a0a0
-	.thumb_func
-Func_0808a0a0:
 	overlay_veneer Object_RefreshSelectorById
 	.global ObjectMotion_EnableActionAndResetMotionFar
 	.thumb_func
@@ -96,9 +93,6 @@ Object_SetActionCallbackAndRefreshByIdFar:
 	.global ObjectMotion_ResetAndSetPositionFar
 	.thumb_func
 ObjectMotion_ResetAndSetPositionFar:
-	.global Func_0808a0b8
-	.thumb_func
-Func_0808a0b8:
 	overlay_veneer ObjectMotion_ResetAndSetPosition
 	.global ObjectMotion_SetPositionAndCommitFar
 	.thumb_func
@@ -239,9 +233,6 @@ ObjectVisual_CopyAttributesFar:
 	.global Object_AttachWorkTargetToObjectFar
 	.thumb_func
 Object_AttachWorkTargetToObjectFar:
-	.global Func_0808a200
-	.thumb_func
-Func_0808a200:
 	overlay_veneer Object_AttachWorkTargetToObject
 	.global ObjectTable_AllocateAndSetObjectSpeedFar
 	.thumb_func
@@ -268,11 +259,8 @@ Battle_GetWorkObject1e0Far:
 Map_SetViewBoundsFar:
 	overlay_veneer Map_SetViewBounds
 	.global Event_SetDestinationFar
-	.global Func_0808a238
 	.thumb_func
 Event_SetDestinationFar:
-	.thumb_func
-Func_0808a238:
 	overlay_veneer Event_SetDestination
 	overlay_veneer Event_SetSavedDestination
 	.global Event_SetExitRequestFar
@@ -361,9 +349,6 @@ FieldEffect_InitSparklesFar:
 	.global DisplayTransition_InitializeBattleEffectStateFar
 	.thumb_func
 DisplayTransition_InitializeBattleEffectStateFar:
-	.global Func_0808a300
-	.thumb_func
-Func_0808a300:
 	overlay_veneer DisplayTransition_InitializeBattleEffectState
 	overlay_veneer DisplayTransition_InitializeState
 	overlay_veneer DisplayTransition_Start
@@ -386,25 +371,16 @@ BattleFx_StartBufferInterpolationFar:
 	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32B
 	overlay_veneer BattleFx_SetPrimaryBufferValue
 	.global Event_StartScreenTransitionFar
-	.global Func_0808a360
 	.thumb_func
 Event_StartScreenTransitionFar:
-	.thumb_func
-Func_0808a360:
 	overlay_veneer Event_StartScreenTransition
 	.global Event_FinishScreenTransitionFar
 	.thumb_func
 Event_FinishScreenTransitionFar:
-	.global Func_0808a368
-	.thumb_func
-Func_0808a368:
 	overlay_veneer Event_FinishScreenTransition
 	.global Event_WaitTransitionFramesFar
 	.thumb_func
 Event_WaitTransitionFramesFar:
-	.global Func_0808a370
-	.thumb_func
-Func_0808a370:
 	overlay_veneer Event_WaitTransitionFrames
 	.global DisplayScroll_InitializeHBlankDmaFar
 	.thumb_func
@@ -487,11 +463,8 @@ EventObject_InitializeFar:
 	overlay_veneer BattleEffect_InitializeSharedScene
 	overlay_veneer BattleFx_PrepareBufferInterpolation
 	.global Battle_ResetEffectCounterFar
-	.global Func_0808a460
 	.thumb_func
 Battle_ResetEffectCounterFar:
-	.thumb_func
-Func_0808a460:
 	overlay_veneer Battle_ResetEffectCounter
 	.global RunSceneTransitionEffectFar
 	.thumb_func
@@ -598,9 +571,6 @@ BattleFx_ClearActiveSlotsAndScheduleUpdatesFar:
 	.global Motion_LaunchFromFocusedObjectFar
 	.thumb_func
 Motion_LaunchFromFocusedObjectFar:
-	.global Func_0808a570
-	.thumb_func
-Func_0808a570:
 	overlay_veneer Motion_LaunchFromFocusedObject
 	.global ObjectMotion_OffsetPositionAndResetFar
 	.thumb_func
@@ -613,9 +583,6 @@ ObjectMotion_CommitPositionAndActivateFar:
 	.global Object_LinkObjectAndSetCallbackFar
 	.thumb_func
 Object_LinkObjectAndSetCallbackFar:
-	.global Func_0808a588
-	.thumb_func
-Func_0808a588:
 	overlay_veneer Object_LinkObjectAndSetCallback
 	.global BattleEffect_PauseObjectFar
 	.thumb_func
@@ -655,9 +622,6 @@ BattleFx_SetQueuedSoundAndPlayFar:
 	.global BattleFx_PlayQueuedSoundFar
 	.thumb_func
 BattleFx_PlayQueuedSoundFar:
-	.global Func_0808a5e8
-	.thumb_func
-Func_0808a5e8:
 	overlay_veneer BattleFx_PlayQueuedSound
 	.global Party_RemapCharacterIdIfEnabledFar
 	.thumb_func

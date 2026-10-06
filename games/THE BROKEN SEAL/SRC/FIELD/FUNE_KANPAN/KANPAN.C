@@ -109,9 +109,6 @@ void Engine_EventCloseScreen();
 void Engine_ActorStop();
 void Engine_EventRequestExit();
 
-void ObjectDispatch_SetSingleChildFlagsFar(struct FieldActor *object, s32 value);
-void Event_FinishScreenTransitionFar();
-void Event_WaitTransitionFramesFar();
 
 extern struct GameState gGameState;
 
@@ -1387,7 +1384,7 @@ void FieldScene_RunActorSequence(void)
     Engine_EventBegin();
     Engine_ActorSetChildValue(0, 15);
     record = Object_GetById(0);
-    ObjectDispatch_SetSingleChildFlagsFar(record, 0);
+    Engine_ActorSetSpriteFlags(record, 0);
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptD);
@@ -1495,8 +1492,8 @@ void FieldScene_RunActorSequence(void)
     Actor_SetSpeed(29, 0x19999, 0xcccc);
     Object_SetActionCallbackAndRefreshById(29, base5_200c888);
     Engine_EventWait(20);
-    Event_FinishScreenTransitionFar();
-    Event_WaitTransitionFramesFar();
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
     Engine_ActorStop(24);
     Engine_ActorStop(25);
     Engine_ActorStop(26);

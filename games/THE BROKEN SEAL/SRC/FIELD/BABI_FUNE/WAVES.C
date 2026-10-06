@@ -24,7 +24,7 @@
 #define BabiFune_SwellLayerSixY (*(u32 *)&BabiFune_SwellLayerSixY)
 #define BabiFune_SwellLayerSevenY (*(u32 *)&BabiFune_SwellLayerSevenY)
 
-void Inventory_AddItemFar(s32 a, s32 b);
+void Inventory_AddItem(s32 a, s32 b);
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -197,7 +197,7 @@ s32 BabiFune_SetupScene(void)
 
     map = gMapWork[0];
     if (((union GameStateRows *)&gGameState)->halves[225][0] == 99) {
-        Inventory_AddItemFar(0, 242);
+        Inventory_AddItem(0, 242);
     }
     ((struct EventWork *)gMapWork[19])->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Object_GetById(8)->collision_flags = 0;

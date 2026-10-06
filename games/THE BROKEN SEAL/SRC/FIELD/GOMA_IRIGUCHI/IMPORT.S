@@ -56,18 +56,18 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 Engine_MapWaitWorkValuesBelow256:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
-	.global Owner_GetStateFar
+	.global Owner_GetState
 	.thumb_func
-Owner_GetStateFar:
-	overlay_veneer Func_08077008
+Owner_GetState:
+	overlay_veneer Owner_GetStateFar
 	.global Item_Get
 	.thumb_func
 Item_Get:
 	overlay_veneer Item_GetDirectFar
-	.global Inventory_AddItemFar
+	.global Inventory_AddItem
 	.thumb_func
-Inventory_AddItemFar:
-	overlay_veneer Func_08077028
+Inventory_AddItem:
+	overlay_veneer Inventory_AddItemFar
 	.global Inventory_Equip
 	.thumb_func
 Inventory_Equip:

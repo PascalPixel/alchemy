@@ -55,7 +55,7 @@ Shop_PickUnitItemFar:
 	.thumb_func
 AudioCommand_WaitForStateByteClearFar:
 	overlay_veneer AudioCommand_WaitForStateByteClear
-	.global Func_080b0068
+	.global Inn_PlaySleepFar
 	.thumb_func
-Func_080b0068:
+Inn_PlaySleepFar:
 	overlay_veneer Inn_PlaySleep

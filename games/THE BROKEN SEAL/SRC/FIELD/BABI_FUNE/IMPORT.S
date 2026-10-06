@@ -74,10 +74,10 @@ Engine_ObjectSetBlendMode:
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
-	.global Inventory_AddItemFar
+	.global Inventory_AddItem
 	.thumb_func
-Inventory_AddItemFar:
-	overlay_veneer Func_08077028
+Inventory_AddItem:
+	overlay_veneer Inventory_AddItemFar
 	.global Engine_GameFlagSet
 	.thumb_func
 Engine_GameFlagSet:
@@ -166,10 +166,10 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Event_SetDestinationFar
+	.global Event_SetDestination
 	.thumb_func
-Event_SetDestinationFar:
-	overlay_veneer Func_0808a238
+Event_SetDestination:
+	overlay_veneer Event_SetDestinationFar
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:

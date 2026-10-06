@@ -28,7 +28,7 @@ void Object_RefreshSelectorById();
 void ObjectMotion_CommitPositionAndActivate();
 void MusicCommand_SetPitchAndUpdateFrequency();
 void BabiFune_ScheduleFade();
-void Event_SetDestinationFar();
+void Event_SetDestination();
 
 s32 BabiFune_StoreLeaderHeight(void)
 {
@@ -297,5 +297,5 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_GameFlagSet(282);
-    Event_SetDestinationFar((s32)&SceneId_Title, 9);
+    Event_SetDestination((s32)&SceneId_Title, 9);
 }

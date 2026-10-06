@@ -109,7 +109,7 @@ void RunOpeningAuxiliarySequence(s32 a)
     ret = Actor_Get(ACTOR_PARTY_LEADER);
     v = (ret->facing + 0x2000) & 0xc000;
     Event_Begin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     if (GameFlag_IsSet(512) == 0) {
         GameFlag_Set(512);
         GameFlag_Clear(0x969);
@@ -162,7 +162,7 @@ void TorebiKyuden_OfferRest(s32 a0)
     s32 base6_2241;
 
     Event_Begin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     if (GameFlag_IsSet(0x966) == 0) {
         GameFlag_Set(0x966);
         GameFlag_Set(0x967);
@@ -301,7 +301,7 @@ void SceneDialogue_RunChoiceSequence2352(void)
     s32 msg;
 
     Engine_EventBegin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     msg = (s32)MsgTorebiFoundCloakBall;
     Engine_EventSetMessage(msg);
     Engine_EventShowMessage(-1, 0);
@@ -354,8 +354,8 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_FaceDirection(3, FACING_EAST, 0);
     Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     gEventWork->transition_frames = 60;
-    Event_StartScreenTransitionFar();
-    Event_WaitTransitionFramesFar();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     Event_Wait(20);
     gEventWork->transition_frames = 24;
     Actor_SetSpeed(3, 0x10000, 0x8000);
@@ -453,21 +453,21 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_SetAnimation(1, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPositionFar(1, record->x.part.pixel, record->z.part.pixel);
+        ObjectMotion_ResetAndSetPosition(1, record->x.part.pixel, record->z.part.pixel);
     }
     Actor_WaitForMove(1);
     Actor_SetPosition(1, 0, 0);
     Actor_SetAnimation(3, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPositionFar(3, record->x.part.pixel, record->z.part.pixel);
+        ObjectMotion_ResetAndSetPosition(3, record->x.part.pixel, record->z.part.pixel);
     }
     Actor_WaitForMove(3);
     Actor_SetPosition(3, 0, 0);
     Actor_SetAnimation(2, 2);
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPositionFar(2, record->x.part.pixel, record->z.part.pixel);
+        ObjectMotion_ResetAndSetPosition(2, record->x.part.pixel, record->z.part.pixel);
     }
     Actor_WaitForMove(2);
     Actor_SetPosition(2, 0, 0);
@@ -484,14 +484,14 @@ void FieldScene_RunScene3b8SequenceA(void)
     record = Actor_Get(0);
     dir = (record->facing + 0x2000) & -0x4000;
     Event_Begin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     Event_SetMessage((s32)MsgTorebiLikeSleep);
     Event_OpenMessage(-1, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
     } else {
         if (GameFlag_IsSet(0x96a) != 0) {
             Event_Wait(20);
-            Inn_PlaySleepFar(0);
+            Inn_PlaySleep(0);
             goto L_02000fe2;
         }
         Event_Wait(20);
@@ -505,8 +505,8 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_WalkToAndWait(0, 184, 120);
         Actor_FaceDirection(0, FACING_EAST, 0);
         Event_Wait(10);
-        FieldMotion_LaunchFromFocusedObjectFar(1, 16, 0, 0x8000);
-        Object_RefreshSelectorByIdFar(1);
+        FieldMotion_LaunchFromFocusedObject(1, 16, 0, 0x8000);
+        Object_RefreshSelectorById(1);
         Event_Wait(10);
         Event_ShowMessage(1, 0);
         Event_Wait(10);
@@ -519,8 +519,8 @@ void FieldScene_RunScene3b8SequenceA(void)
         Event_Wait(20);
         Actor_FaceDirection(0, FACING_WEST, 0);
         Event_Wait(20);
-        FieldMotion_LaunchFromFocusedObjectFar(2, -16, 0, 0);
-        Object_RefreshSelectorByIdFar(2);
+        FieldMotion_LaunchFromFocusedObject(2, -16, 0, 0);
+        Object_RefreshSelectorById(2);
         Event_Wait(10);
         Event_ShowMessage(2, 0);
         Event_Wait(10);
@@ -533,8 +533,8 @@ void FieldScene_RunScene3b8SequenceA(void)
         Event_Wait(20);
         Actor_FaceDirection(0, FACING_EAST, 0);
         Event_Wait(20);
-        FieldMotion_LaunchFromFocusedObjectFar(3, 16, 0, 0x8000);
-        Object_RefreshSelectorByIdFar(3);
+        FieldMotion_LaunchFromFocusedObject(3, 16, 0, 0x8000);
+        Object_RefreshSelectorById(3);
         Event_Wait(10);
         Event_ShowMessage(3, 0);
         Event_Wait(10);
@@ -572,7 +572,7 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_FaceDirection(1, FACING_WEST, 0);
         Actor_FaceDirection(3, FACING_WEST, 0);
         Actor_FaceDirection(2, FACING_EAST, 0);
-        Inn_PlaySleepFar(0);
+        Inn_PlaySleep(0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
         Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
         Actor_FaceDirection(3, FACING_NORTHWEST, 0);
@@ -617,21 +617,21 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_SetAnimation(1, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPositionFar(1, record->x.part.pixel, record->z.part.pixel);
+            ObjectMotion_ResetAndSetPosition(1, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(ACTOR_GERALD);
         Actor_SetPosition(1, 0, 0);
         Actor_SetAnimation(3, 2);
         record = Actor_Get(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPositionFar(3, record->x.part.pixel, record->z.part.pixel);
+            ObjectMotion_ResetAndSetPosition(3, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(ACTOR_MIA);
         Actor_SetPosition(3, 0, 0);
         Actor_SetAnimation(2, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPositionFar(2, record->x.part.pixel, record->z.part.pixel);
+            ObjectMotion_ResetAndSetPosition(2, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(2);
         Actor_SetPosition(2, 0, 0);
@@ -645,7 +645,7 @@ void RunPrimaryEffectSequence(void)
 {
     GameFlag_Set(2411);
     Event_Begin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     Event_SetMessage((s32)MsgTorebiIodemIodem);
     Actor_WalkToAndWait(0, 520, 424);
     Actor_FaceDirection(0, 57344, 0);
@@ -918,13 +918,13 @@ void FieldScene_RunBranchingActorSequence(void)
     event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     event->transition_frames = 12;
     Task_Wait(1);
-    DisplayTransition_InitializeBattleEffectStateFar(9);
+    DisplayTransition_InitializeBattleEffectState(9);
     work = gWork[4];
     SetHalf((u16 *)(work + 0x52a), 0);
     SetHalf((u16 *)(work + 0x534), 0x1f1f);
     SetHalf((u16 *)(work + 0x536), 1);
-    Event_StartScreenTransitionFar();
-    Event_WaitTransitionFramesFar();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     for (step = 1; step <= 5; step++) {
         Task_Wait(3);
         *(u16 *)(work + 0x52a) = step;
@@ -1140,21 +1140,21 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_SetAnimation(ACTOR_GERALD, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-        ObjectMotion_ResetAndSetPositionFar(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
+        ObjectMotion_ResetAndSetPosition(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(1);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-        ObjectMotion_ResetAndSetPositionFar(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+        ObjectMotion_ResetAndSetPosition(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(3);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-        ObjectMotion_ResetAndSetPositionFar(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+        ObjectMotion_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(2);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -1169,8 +1169,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Audio_PlayCue(30);
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiWaitingCompanions);
-    Event_StartScreenTransitionFar();
-    Event_WaitTransitionFramesFar();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
@@ -1185,16 +1185,16 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_ShowMessage(14, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
-    Object_AttachWorkTargetToObjectFar(0, 1);
+    Object_AttachWorkTargetToObject(0, 1);
     Camera_WaitForMove();
     Event_Wait(40);
     Actor_SetSpeed(0, 0x10000, 0x8000);
     Actor_WalkToAndWait(0, 208, 0x2f8);
     Event_Wait(10);
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
-    FieldMotion_LaunchFromFocusedObjectFar(1, -16, 16, 0xc000);
-    FieldMotion_LaunchFromFocusedObjectFar(3, 0, 24, 0xc000);
-    FieldMotion_LaunchFromFocusedObjectFar(2, 16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(1, -16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(3, 0, 24, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(2, 16, 16, 0xc000);
     Actor_WaitForMove(1);
     Event_Wait(30);
     Event_Wait(10);
@@ -1993,10 +1993,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(30);
     Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_Wait(20);
-    Object_LinkObjectAndSetCallbackFar(0, 20);
-    Object_LinkObjectAndSetCallbackFar(1, 20);
-    Object_LinkObjectAndSetCallbackFar(3, 20);
-    Object_LinkObjectAndSetCallbackFar(2, 20);
+    Object_LinkObjectAndSetCallback(0, 20);
+    Object_LinkObjectAndSetCallback(1, 20);
+    Object_LinkObjectAndSetCallback(3, 20);
+    Object_LinkObjectAndSetCallback(2, 20);
     Actor_SetSpeed(20, 0x10000, 0x8000);
     Actor_WalkByAndWait(20, 0, 32);
     Actor_FaceDirection(20, FACING_EAST, 0);
@@ -2020,10 +2020,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_FaceDirection(3, FACING_NORTH, 0);
     Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
-    Object_LinkObjectAndSetCallbackFar(0, 14);
-    Object_LinkObjectAndSetCallbackFar(1, 14);
-    Object_LinkObjectAndSetCallbackFar(3, 14);
-    Object_LinkObjectAndSetCallbackFar(2, 14);
+    Object_LinkObjectAndSetCallback(0, 14);
+    Object_LinkObjectAndSetCallback(1, 14);
+    Object_LinkObjectAndSetCallback(3, 14);
+    Object_LinkObjectAndSetCallback(2, 14);
     Event_Wait(30);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
@@ -2060,19 +2060,19 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimation(1, 2);
     position = Actor_Get(0);
     if (position != 0)
-        ObjectMotion_ResetAndSetPositionFar(1, position[5], position[9]);
+        ObjectMotion_ResetAndSetPosition(1, position[5], position[9]);
     Actor_WaitForMove(1);
     Actor_SetPosition(1, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, 2);
     position = Actor_Get(ACTOR_PARTY_LEADER);
     if (position != 0)
-        ObjectMotion_ResetAndSetPositionFar(2, position[5], position[9]);
+        ObjectMotion_ResetAndSetPosition(2, position[5], position[9]);
     Actor_WaitForMove(2);
     Actor_SetPosition(2, 0, 0);
     Actor_SetAnimation(3, 2);
     position = Actor_Get(0);
     if (position != 0)
-        ObjectMotion_ResetAndSetPositionFar(3, position[5], position[9]);
+        ObjectMotion_ResetAndSetPosition(3, position[5], position[9]);
     Actor_WaitForMove(3);
     Actor_SetPosition(3, 0, 0);
     Event_Wait(10);
@@ -2090,25 +2090,25 @@ void TorebiKyuden_LeaveThroughDoor(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
     if (work->touched_trigger == 32) {
-        Map_ClearLayerEntryFlagFar(1);
+        Map_ClearLayerEntryFlag(1);
         Event_Wait(10);
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
     } else {
         if (work->touched_trigger == 30) {
-            Map_ClearLayerEntryFlagFar(4);
+            Map_ClearLayerEntryFlag(4);
             Event_Wait(10);
             Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
         } else {
-            Map_ClearLayerEntryFlagFar(2);
+            Map_ClearLayerEntryFlag(2);
             Event_Wait(10);
             Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
         }
     }
     Event_Wait(16);
     Event_RequestExit(work->touched_trigger);
-    Map_SetLayerEntryFlagFar(1);
-    Map_SetLayerEntryFlagFar(2);
-    Map_SetLayerEntryFlagFar(4);
+    Map_SetLayerEntryFlag(1);
+    Map_SetLayerEntryFlag(2);
+    Map_SetLayerEntryFlag(4);
     Event_End();
 }
 
@@ -2129,7 +2129,7 @@ void RunSupplementalSequenceOne(void)
     s32 p;
     GameFlag_Set(2412);
     Event_Begin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     Actor_FaceDirection(8, 20480, 0);
     Actor_FaceDirection(9, 12288, 0);
     Actor_WalkToAndWait(0, 200, 272);
@@ -2235,9 +2235,9 @@ s32 TorebiKyuden_ApplyEntryState(void)
     u8 *buf;
     s32 set;
 
-    Map_SetLayerEntryFlagFar(1);
-    Map_SetLayerEntryFlagFar(2);
-    Map_SetLayerEntryFlagFar(4);
+    Map_SetLayerEntryFlag(1);
+    Map_SetLayerEntryFlag(2);
+    Map_SetLayerEntryFlag(4);
     if (gGameState.entrance == 90) {
         GameFlag_Set(0x962);
     }

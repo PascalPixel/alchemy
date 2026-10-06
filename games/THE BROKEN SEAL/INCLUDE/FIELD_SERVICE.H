@@ -271,11 +271,4 @@ static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct Fi
     Vector_AddPolarOffset(radius, heading, probe);
 }
 
-void Motion_LaunchFromFocusedObjectFar();
-
-static inline void FieldMotion_LaunchFromFocusedObjectFar(s32 first, s32 second, s32 third, s32 fourth)
-{
-    Motion_LaunchFromFocusedObjectFar(first, second, third, fourth);
-}
-
 #endif

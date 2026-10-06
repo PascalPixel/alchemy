@@ -46,16 +46,13 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildFlagsFar
-	.thumb_func
-ObjectDispatch_SetSingleChildFlagsFar:
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer Func_080091e0
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
@@ -313,26 +310,20 @@ Event_StartScreenTransition:
 	.thumb_func
 Engine_EventOpenScreen:
 	overlay_veneer Event_StartScreenTransitionFar
-	.global Event_FinishScreenTransitionFar
-	.thumb_func
-Event_FinishScreenTransitionFar:
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Func_0808a368
-	.global Event_WaitTransitionFramesFar
-	.thumb_func
-Event_WaitTransitionFramesFar:
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Func_0808a370
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Battle_ResetEffectCounter
 	.thumb_func
 Battle_ResetEffectCounter:

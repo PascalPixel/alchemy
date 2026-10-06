@@ -156,7 +156,7 @@ void Scene_BagVenusStar(void)
     Engine_EventWait(20);
     obj = Scene_PresentItem(220, 0x2c80000, 0x100000, 0x1d00000);
     Engine_EventWait(40);
-    UiWork_PushValueSlotFar(obj, 1);
+    UiWork_PushValueSlot(obj, 1);
     mes = (s32)MsgSoruVenusStarBagged;
     Engine_MessageShowCentered(mes, 1);
     Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
@@ -254,7 +254,7 @@ void Scene_BagMercuryStar(void)
     Engine_EventWait(20);
     obj = Scene_PresentItem(221, 0x2c80000, 0x100000, 0x900000);
     Engine_EventWait(40);
-    UiWork_PushValueSlotFar(obj, 1);
+    UiWork_PushValueSlot(obj, 1);
     mes = (s32)MsgSoruPutMercuryStar;
     Engine_MessageShowCentered(mes, 1);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTHEAST, 0);
@@ -364,7 +364,7 @@ void Scene_BagJupiterStar(void)
     Engine_EventWait(20);
     obj = Scene_PresentItem(223, 0xe80000, 0x100000, 0x1d00000);
     Engine_EventWait(40);
-    UiWork_PushValueSlotFar(obj, 1);
+    UiWork_PushValueSlot(obj, 1);
     Engine_MessageShowCentered((s32)MsgSoruJupiterStarBagged, 1);
 }
 

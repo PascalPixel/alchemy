@@ -83,14 +83,14 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 ItemIcon_LoadTilesFar:
 	overlay_veneer Ui_PrepareTransferForItemFar
-	.global PartyInventory_FindOwnerFar
+	.global PartyInventory_FindOwner
 	.thumb_func
-PartyInventory_FindOwnerFar:
-	overlay_veneer Func_08077040
-	.global PartyInventory_RemoveFar
+PartyInventory_FindOwner:
+	overlay_veneer PartyInventory_FindOwnerFar
+	.global PartyInventory_Remove
 	.thumb_func
-PartyInventory_RemoveFar:
-	overlay_veneer Func_08077048
+PartyInventory_Remove:
+	overlay_veneer PartyInventory_RemoveFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:

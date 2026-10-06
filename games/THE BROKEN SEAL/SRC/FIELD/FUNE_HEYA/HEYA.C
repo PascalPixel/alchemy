@@ -78,7 +78,7 @@ struct EffectRecord {
 
 extern u8 Data_02000240[];
 
-void Battle_ResetEffectCounterFar();
+void Battle_ResetEffectCounter();
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
 s32 SceneState_ApplyLevelFromFlags(void);
@@ -361,7 +361,7 @@ void FuneHeya_AskToSeeCaptain(void)
     s32 record;
 
     Engine_EventBegin();
-    Battle_ResetEffectCounterFar();
+    Battle_ResetEffectCounter();
     if (GameFlag_IsSet(0x921) != 0) {
         Engine_EventSetMessage((s32)MsgFuneIfShipFromTolbiHad);
         Event_ShowMessage(10, 0);

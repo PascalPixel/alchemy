@@ -25,7 +25,7 @@ extern struct ScenePlacement gShianJiinPlacements[];
 
 
 void Effect_Spawn();
-void BattleFx_PlayQueuedSoundFar();
+void BattleFx_PlayQueuedSound();
 void Engine_MapCopyCellAttributes();
 
 
@@ -58,7 +58,7 @@ s32 StopXianActor(void *actor)
 s32 FaceXianActorToPlayer(struct FieldActor *actor)
 {
     struct FieldActor *player = Object_GetById(ACTOR_PARTY_LEADER);
-    actor->facing = ArcTan2Far(player->z.fixed - actor->z.fixed, player->x.fixed - actor->x.fixed);
+    actor->facing = ArcTan2(player->z.fixed - actor->z.fixed, player->x.fixed - actor->x.fixed);
     return 0;
 }
 
@@ -178,7 +178,7 @@ void ShianJiin_RunTempleWalkScene(void)
     Effect_Spawn(master->x.fixed, master->y.fixed, (master->z.fixed + 0x40000), 0, 0, 0, 0x10000, p8);
     Effect_Spawn(master->x.fixed, master->y.fixed, (master->z.fixed + 0x40000), -0x8000, 0, 0, 0x10000, p8);
     Engine_EventWait(30);
-    BattleFx_PlayQueuedSoundFar();
+    BattleFx_PlayQueuedSound();
     Map_CopyCellAttributes(10, 24, 1, 1, 10, 22);
     Engine_GameFlagSet(0x892);
     Engine_EventEnd();
@@ -1959,7 +1959,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Engine_EventWait(20);
     FieldScene_RunParticleRain();
     Engine_EventWait(60);
-    UiText_DrawQuantityPairWithCueFar(2, 144);
+    UiText_DrawQuantityPairWithCue(2, 144);
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(8, 0, 20);

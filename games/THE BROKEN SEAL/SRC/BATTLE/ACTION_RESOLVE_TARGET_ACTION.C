@@ -118,7 +118,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 affinity;
     struct BattleUnit *copy;
     s32 power;
-    s16 hp0;
+    s32 hp0;
     s32 kind;
     s32 scale;
     s32 pass;
@@ -126,7 +126,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     u8 target_id;
     s8 *rm;
     struct BattleUnit *target;
-    s32 n;
+    u32 n;
     s32 value;
     s32 dmg;
     s8 *am;
@@ -154,7 +154,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 affinity;
     struct BattleUnit *copy;
     s32 power;
-    s16 hp0;
+    s32 hp0;
     s32 kind;
     s16 *cmd;
     s32 target_id;
@@ -466,13 +466,13 @@ after_power:
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
+        s32 apwr;
 
         switch (nibble) {
         case BATTLE_DAMAGE_WEAPON:
         case BATTLE_DAMAGE_WEAPON_SCALED:
         {
             s32 def;
-            s32 apwr;
 
 #if GAME_TLA
             if (target->guard_level == 4)
@@ -481,7 +481,6 @@ after_power:
             hp0 = target->hp;
             def = target->defense;
             scale = def;
-            cur = hp0;
             if (half != 0) {
                 scale = (u32)def >> 1;
 #if GAME_TLA
@@ -505,7 +504,7 @@ after_power:
                     if (action_id == 312 || action_id == 316) {
                         kind = ((struct BattleUnit *)Owner_GetState(plan->actor_id))->attack;
                         if (action_id == 312)
-                            kind += ((struct BattleUnit *)Owner_GetState(plan->actor_id2))->attack;
+                            kind += ((struct BattleUnit *)Owner_GetState(plan->actor_id2))->attack / 4;
                     }
                     dmg = Battle_CalcAttack(kind, scale, apwr, bonus);
 #else
@@ -537,8 +536,8 @@ after_power:
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
-                    if (dmg < cur - 1) {
-                        dmg = cur - 1;
+                    if (dmg < hp0 - 1) {
+                        dmg = hp0 - 1;
                         if (dmg <= 0)
                             dmg = 1;
                     }
@@ -548,14 +547,14 @@ after_power:
 #else
                 if (GameFlag_TestFar(366) != 0 && *cmd == 5
 #endif
-                    && cur <= dmg) {
-                    dmg = cur - 1;
+                    && hp0 <= dmg) {
+                    dmg = hp0 - 1;
                 }
                 pass++;
             } while (pass <= 1);
+            hp0 -= dmg;
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            cur -= dmg;
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             {
                 s32 text;
@@ -568,10 +567,10 @@ after_power:
             }
 
 #if GAME_TLA
-            if (cur <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
-                cur = 1;
-            if (cur <= 0) {
-                cur = 0;
+            if (hp0 <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
+                hp0 = 1;
+            if (hp0 <= 0) {
+                hp0 = 0;
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 if (target->enemy_id != 369 && target->enemy_id != 373) {
                     BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -579,16 +578,16 @@ after_power:
                 }
             } else
 #else
-            if (cur <= 0) {
+            if (hp0 <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-                cur = 0;
+                hp0 = 0;
                 TEXT_SIDE(MsgGoesDown, MsgFelled);
             } else
 #endif
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            dealt = target->hp - cur;
-            target->hp = cur;
+            dealt = target->hp - hp0;
+            target->hp = hp0;
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
@@ -603,8 +602,8 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            apwr = action->power;
+            dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg = dmg * PpLossFalloff[offset] / 100;
             dmg *= adjust;
             APPLY_GUARD();
@@ -642,9 +641,13 @@ after_power:
             if (action->power == 0)
                 break;
             cur = target->hp;
+#if GAME_TLA
+            if (cur == 0)
+                break;
+#endif
 
-            dmg = action->power;
-            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
+            apwr = action->power;
+            dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
             dmg = dmg * HpHealFalloff[offset] / 100;
             dmg *= adjust;
             dmg += BattleRandom16Far() & 3;
@@ -676,8 +679,8 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            apwr = action->power;
+            dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg = dmg * PpDmgFalloff[offset] / 100;
             dmg *= adjust;
             APPLY_GUARD();
@@ -718,7 +721,7 @@ after_power:
                 TAKE_BONUS();
                 if (pass == 0)
                     bonus = 0;
-                dmg = action->power;
+                apwr = action->power;
 #if GAME_TLA
                 if (action_id == 683 || action_id == 673 || action_id == 724
                     || plan->command == 6 || plan->command == 10) {
@@ -766,7 +769,7 @@ after_power:
                     value = target->max_hp;
                     if (value > 10000)
                         value = 10000;
-                    dmg += value * rate / 100;
+                    apwr += value * rate / 100;
                 }
 #else
                 if (*cmd == 6) {
@@ -801,10 +804,10 @@ after_power:
                             break;
                         }
                     }
-                    dmg += target->max_hp * kind / 100;
+                    apwr += target->max_hp * kind / 100;
                 }
 #endif
-                dmg = Battle_CalcPower(dmg, bonus, 256);
+                dmg = Battle_CalcPower(apwr, bonus, 256);
                 dmg *= adjust;
                 switch (nibble & 15) {
                 case BATTLE_DAMAGE_HP_ADDITIVE_6:
@@ -844,6 +847,12 @@ after_power:
                 cur -= dmg;
             }
 
+#if GAME_TLA
+            if (cur <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
+                cur = 1;
+            if (gPartyState.battle_rule_24b == 6)
+                cur = 0;
+#endif
             if (cur <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -870,8 +879,8 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            dmg = action->power;
-            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
+            apwr = action->power;
+            dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
             dmg = dmg * PpHealFalloff[offset] / 100;
             dmg *= adjust;
             pp += dmg;
@@ -906,8 +915,8 @@ after_power:
                 break;
             cur = target->hp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            apwr = action->power;
+            dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg *= adjust;
             dmg = dmg * HpDmgFalloff[offset] / 100;
             APPLY_GUARD();

@@ -1,10 +1,24 @@
 /* 0800a0f8: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
-   alchemy diff --camelot-arm: listing 157, draft 158, common 132, differ
-   51 (stock agbcc_arm 124). What remains: the 0x8000 constant built twice
-   (the listing keeps it in r1 for both smulls, one instruction), to->x in
-   ip and z's load in r4 where the listing has r1 and ip; x in r1, not r2,
-   so no ldm r7, {r2, r4} and the second loop smull copies its low word;
-   (s16)t read back by ldrsh where the listing extends it into lr at once.
+   alchemy diff --camelot-arm: listing 157, draft 157, common 133, differ
+   48 (stock agbcc_arm 124). What remains: the shared 0x8000 lands in r2
+   where the listing has r1, and the second smull is scheduled before the
+   gScanlineAngle pool load; z's load in r4 where the listing has ip; x in
+   r1, not r2, so no ldm r7, {r2, r4} and the second loop smull copies its
+   low word; (s16)t read back by ldrsh where the listing extends it into lr
+   at once.
+   camelot_arm trials (2026-10-06, session 3), from 51:
+   - One half = 0x8000 in a block around ox and oz, as the listing's one
+     mov r1, #32768 feeds both smulls: 51 to 48 (k reused for it: 104).
+   - z = to->z - from->z in one expression: to->z gets its own register
+     as listed, but to->x and to->z swap r1 and ip: 54; z first: 54; x
+     and z each in one expression: 63.
+   - s16 t (chained or separate stores): the separate lsl/asr extension,
+     after both strh rather than between them into lr, and the else loop
+     reallocates: 85.
+   - x from v->x at each use: 53 (s16 t too: 58); register s32 x
+     asm("r2") in the loop: no change, the inline copies it.
+   - alchemy permute --camelot-arm --function Transform_UpdateVertices,
+     3 minutes from 48: best differ 53.
    camelot_arm trials (2026-10-06, session 2), from 104:
    - smull with two alternatives, "=&r,&r"(lo), "=r,&r"(hi), "r,r"(a),
      "1,r"(b): RdHi takes Rs when b dies, as the listing's ldr r3; smull
@@ -135,8 +149,11 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
     z -= from->z;
     x -= from->x;
     angle = (u16)((ArcTan2Fn)WaitFramesFar[8].target)(x >> 4, z >> 4);
-    ox = FIXED_MUL(0x8000, to->x);
-    oz = FIXED_MUL(0x8000, to->z);
+    {
+        s32 half = 0x8000;
+        ox = FIXED_MUL(half, to->x);
+        oz = FIXED_MUL(half, to->z);
+    }
     if (angle != gScanlineAngle) {
         gScanlineAngle = angle;
         sn = ((TrigFn)WaitFramesFar[11].target)(angle);

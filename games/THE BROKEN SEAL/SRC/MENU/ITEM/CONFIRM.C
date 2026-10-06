@@ -138,7 +138,7 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
     return copy(dst, src, size);
 }
 
-s32 Unnamed_080a5388(s32 unused)
+s32 ItemMenu_ConfirmEquip(s32 unused)
 {
     s32 sel = 0;
     s32 changed = 1;

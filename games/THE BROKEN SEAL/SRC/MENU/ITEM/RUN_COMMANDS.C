@@ -407,7 +407,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 #endif
                 RenderOutput_RedrawSavedRectFar(menu->message_window);
                 ItemMenu_DrawItemHead();
-                result = Unnamed_080a5388(0);
+                result = ItemMenu_ConfirmEquip(0);
             }
             if (GameFlag_TestFar(0x150) != 0) {
                 break;
@@ -539,7 +539,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->pane_owner[0] = menu->pane_owner[1];
                 menu->selected_items[0] &= ITEM_ID_MASK;
                 ItemMenu_DrawItemHead();
-                result = Unnamed_080a5388(0);
+                result = ItemMenu_ConfirmEquip(0);
                 if (GameFlag_TestFar(0x150) == 0) {
                     RenderOutput_ClearListFar(menu->info_window);
                     ItemMenu_SetItemWin5();

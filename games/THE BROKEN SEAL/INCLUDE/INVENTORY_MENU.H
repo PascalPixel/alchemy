@@ -149,7 +149,7 @@ s32 Menu_SelectQuantity(s32 item);
 void ItemMenu_DrawItemDetails(s32 window, s32 item);
 s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single);
 s32 ItemMenu_ConfirmDrop(s32 item);
-s32 Unnamed_080a5388(s32 unused);
+s32 ItemMenu_ConfirmEquip(s32 unused);
 s32 ItemMenu_RunList(s32 pane);
 s32 ItemMenu_SelectItem(void);
 void Resource_LoadPairedBlocks(void);

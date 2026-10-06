@@ -1,7 +1,20 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 940, common 486, differ 914.
+ * Native 946 instructions, draft 933, common 489, differ 901.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
+ * Native slots, top down: standby 84, count 80, window 76, render 72,
+ * drawn_row 68 (drawn_page r9, row r10, page r11), cursor_handle 64,
+ * description 60, counts 56, mask 52, preferred 48, cursor_position 40-47,
+ * summon 36, ordered 32, sprites 28, cursor 24, count - 1 at 20, row * 2 16,
+ * cursor_handle << 16 at 12, &glyph 8, r4 caller-save 4. The draft's extra
+ * slots are draw-loop givs (sprite offset index * 12 + 8 and a sprites copy);
+ * native recomputes them from index each pass and keeps index in r4.
+ *
+ * One row local (y = index * 2) for the djinn columns removed the index * 2
+ * giv: 914 -> 901. Declaring scalars in native slot order (count, window,
+ * render, drawn_row, cursor_handle, description, counts, mask, preferred,
+ * cursor_position) gave 956; count and window first alone gave 946. Counting
+ * columns (col * 2 + 13) compiled the same as col += 2.
  *
  * Natural trials: early cursor pointer removal 979 -> 969; indexed sprite
  * initialization and handles 977; shared index 963; pointer sprite traversal
@@ -153,7 +166,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                     }
                 }
                 {
-                    s32 element, col;
+                    s32 element, col, y;
 
                     index = 0;
                     while (index <= 3 && (id = ordered[page + index]) != 32) {
@@ -177,10 +190,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                             (struct RenderInput *)window, 16, index * 16);
                         required = summon->djinn_required;
                         col = 13;
+                        y = index * 2;
                         for (element = 0; element <= 3; element++) {
                             if (*required != 0) {
-                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col, index * 2, 0);
-                                UiWindow_PutGlyph(window, *required + 48, col + 1, index * 2, 0);
+                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col, y, 0);
+                                UiWindow_PutGlyph(window, *required + 48, col + 1, y, 0);
                                 col += 2;
                             }
                             required++;

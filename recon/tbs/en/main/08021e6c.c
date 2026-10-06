@@ -1,6 +1,8 @@
-/* Stubborn (2026-10-06, T08 on sun100 51bbf7161e): differ 1086 (listing 1037, draft 1001, common 476). Not matched; parked. */
+/* Stubborn (2026-10-06, T08 on sun100 51bbf7161e): differ 1050 (listing 1037, draft 1001, common 494). Not matched; parked. */
 /* Trial: indexed fill, party sum and draw loops (for (cnt = 0; cnt <= 5; cnt++) with the -1 test after the resource store), one (cnt - count) * 24 shared by both pos_x stores: differ 1129 -> 1097. */
 /* Trial: scale read from Ui_BounceScales into its own variable, then rescaled: differ 1097 -> 1086. */
+/* Trial: the trade kinds counted in their own num, not cnt (native keeps it in r5, cnt in r8): differ 1086 -> 1050. */
+/* Trial: cnt as the tile row counter (native rows are in r8), cnt declared first, a separate sprite-loop counter: 1050, unchanged. panel and col at function scope: worse (1114 before num). tilemap[panel * 2 + panel]: worse (1083). Mode-1 blank panels indexed as tilemap[0x224 + panel * 3 + row * 32 + (col & 3)]: worse (1071). */
 /* Remaining: register allocation. Native keeps work in r9, cnt in r8, result in r10 and spills scale to sp+36 (ldrh of the slot for scale_x); the draft keeps scale in r9, work in r10 and frames 44 bytes against 60. */
 /* 08021e6a: two zero bytes before this function are alignment, not code: DISPLAY.o ends at 0x08021e6a and a C object aligns .text to 4, so the linker fills them, as it already does at 0x08021dfa. */
 /* Shared UiRenderWork, MenuCell, GlyphPalette, BgScroll and MenuSprite replace
@@ -74,15 +76,15 @@ s32 Ui_RunSelectionScreen(s32 mode)
     s32 cnt;
     s32 keys, repeat;
     s32 slot;
-    s32 i;
+    s32 i, num;
 
     render = (struct UiRenderWork *)gWindowWork[0];
     slot = Resource_LoadIntoFreeSlot(0x400);
     rebuild = 1;
     trade_count = 0;
     work = Runtime_BumpAllocateAlternatePool(sizeof(*work));
-    for (cnt = 255; cnt >= 0; cnt--)
-        work->palette.slot[cnt] = 255;
+    for (i = 255; i >= 0; i--)
+        work->palette.slot[i] = 255;
     work->palette.count = 1;
     if (mode == 0)
         work->window = UiWindow_Create(20, 17, 10, 3, 6);
@@ -99,21 +101,21 @@ s32 Ui_RunSelectionScreen(s32 mode)
         work->selection = gLinkCountdownWork->command_selection[1];
         work->kinds[0] = 0;
         work->kinds[1] = 1;
-        cnt = 2;
+        num = 2;
         if (Trade_GetOfferStateFar(0)->available != 0) {
             BattlePlacement_CountValidEntriesFar(0, party);
             for (i = 0; i <= 3; i++)
                 trade_count += party[i];
             work->kinds[2] = 15;
-            cnt = 3;
+            num = 3;
             if (trade_count != 0) {
                 work->kinds[3] = 16;
-                cnt = 4;
+                num = 4;
             }
         }
-        work->kinds[cnt++] = 2;
-        work->kinds[cnt++] = 3;
-        work->kinds[cnt] = -1;
+        work->kinds[num++] = 2;
+        work->kinds[num++] = 3;
+        work->kinds[num] = -1;
     }
     for (cnt = 0; cnt <= 5; cnt++) {
         work->entries[cnt].resource = slot;

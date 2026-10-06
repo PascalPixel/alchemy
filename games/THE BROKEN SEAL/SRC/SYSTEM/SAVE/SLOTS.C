@@ -16,11 +16,7 @@
 #include "RUNTIME_INTERFACES.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
-#include "SYSTEM.H"
 #include "text/MSG_IDS.H"
-
-typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
@@ -59,7 +55,7 @@ s32 SaveState_ProcessSelectedSlot(void)
             }
             dst = (u8 *)buffer + (s32)gSaveStamp;
             dst -= (s32)gSaveBuffer;
-            ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))(dst, gSaveStamp, 16);
+            Iwram_CopyWords(dst, gSaveStamp, 16);
             found = SaveState_WriteRecord(gSaveSlot, buffer);
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);

@@ -17,14 +17,10 @@
 #include "GLOBAL_CELLS.H"
 #include "IO_REG.H"
 
-#define Data_03007804 (*(struct ResourceWork *)&Data_03007804)
-
 struct ResourceWork {
     u32 header[3];
     u32 cursor;
 };
-
-
 
 void Resource_LoadWorkHeader(void)
 {
@@ -32,7 +28,7 @@ void Resource_LoadWorkHeader(void)
     struct ResourceWork *work;
 
     header = (const void *)Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
-    work = &Data_03007804;
+    work = (struct ResourceWork *)&Data_03007804;
     Dma_Set(header, work, 0x84000003, REG_DMA3);
     work->cursor = 0;
 }

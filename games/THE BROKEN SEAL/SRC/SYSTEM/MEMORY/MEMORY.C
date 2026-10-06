@@ -28,10 +28,10 @@ void Bg0_ClearTilemap(void)
     volatile u32 fill;
 
     fill = 0xf000f000;
-    Dma_Set((const void *)&fill, (void *)0x06002000, 0x85000140, REG_DMA3);
+    Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
     /* FAKEMATCH: the cursor store sits in a do-while(0) to hold the BG0CNT constant load order */
     do {
-        gDebugTextCursor = (u16 *)0x06002000;
+        gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
     } while (0);
     {
         s32 control = 0x400;
@@ -42,9 +42,9 @@ void Bg0_ClearTilemap(void)
 
 void Ui_LoadWindowGraphics(void)
 {
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), BG_CHAR_BLOCK(0), 0x84000800,
             REG_DMA3);
-    Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
+    Dma_Set((const void *)Ui_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010,
             REG_DMA3);
     /* FAKEMATCH: the two do-while blocks keep the value-before-address order of the palette stores */
     do {
@@ -56,7 +56,7 @@ void Ui_LoadWindowGraphics(void)
         s32 color;
 
         color = 0x4180;
-        pal = (volatile u16 *)0x050001e8;
+        pal = &BG_PLTT_COLOR(15, 4);
         *pal = color;
         color = 0x3960;
         pal++;
@@ -77,13 +77,13 @@ void Ui_LoadWindowGraphics(void)
         pal++;
         *pal = color;
     } while (0);
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
+    Dma_Set((const void *)System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0,
             REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
+    Dma_Set((const void *)System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
@@ -156,7 +156,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
         address = (u32)work->heap.next_ewram;
         aligned_size = (((u32)size + 3) >> 2) * 4;
         next = address + aligned_size;
-        if (next >= (129 << 18)) {
+        if (next >= 0x02040000U) {
             address = (u32)work->heap.next_iwram;
             next_address = address + aligned_size;
             if (next_address >= (u32)Ram_IwramHeapEnd) {

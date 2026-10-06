@@ -48,7 +48,7 @@ typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
+            u32 *destination = q->entries[count];                           \
             *(u16 *)&q->count = count + 1;                                  \
             *destination++ = value;                                         \
             *destination++ = address;                                       \

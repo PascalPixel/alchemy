@@ -34,7 +34,7 @@ void SerialTest_Run(void)
     Audio_PlayCue(3);
     SerialRuntime_Initialize();
     n = 19;
-    tile = (u16 *)0x06002426;
+    tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
     value = (s16)0xf093;
     do {
         n--;

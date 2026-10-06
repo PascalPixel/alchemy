@@ -21,9 +21,9 @@
 s32 BattleFx_ClampRgb555Channel(s32 value);
 s32 BattleFx_ClampRgb555Component(s32 value);
 
-extern u16 Data_0809e92e[];
-extern u16 Data_0809e96e[];
-extern u16 Data_0809e9ae[];
+extern u16 BattlePalette_ChannelCurve[];
+extern u16 BattlePalette_ChannelCurveLight[];
+extern u16 BattlePalette_ChannelCurveContrast[];
 
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {
@@ -90,9 +90,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                     g = 28;
                 if (b > 28)
                     b = 28;
-                *dst++ = Data_0809e96e[b];
-                *dst++ = Data_0809e96e[g];
-                *dst++ = Data_0809e96e[r];
+                *dst++ = BattlePalette_ChannelCurveLight[b];
+                *dst++ = BattlePalette_ChannelCurveLight[g];
+                *dst++ = BattlePalette_ChannelCurveLight[r];
             }
             break;
         case PALETTE_TRANSFORM_WARM:
@@ -111,9 +111,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                     g = BattleFx_ClampRgb555Channel(g);
                     b = BattleFx_ClampRgb555Channel(b);
                 }
-                *dst++ = Data_0809e9ae[b];
-                *dst++ = Data_0809e96e[g];
-                *dst++ = Data_0809e92e[r];
+                *dst++ = BattlePalette_ChannelCurveContrast[b];
+                *dst++ = BattlePalette_ChannelCurveLight[g];
+                *dst++ = BattlePalette_ChannelCurve[r];
             }
             break;
         case PALETTE_TRANSFORM_MUTED:
@@ -139,9 +139,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = BattleFx_ClampRgb555Channel(r);
                 g = BattleFx_ClampRgb555Channel(g);
                 b = BattleFx_ClampRgb555Channel(b);
-                *dst++ = Data_0809e92e[b];
-                *dst++ = Data_0809e92e[g];
-                *dst++ = Data_0809e92e[r];
+                *dst++ = BattlePalette_ChannelCurve[b];
+                *dst++ = BattlePalette_ChannelCurve[g];
+                *dst++ = BattlePalette_ChannelCurve[r];
             }
             break;
         case PALETTE_TRANSFORM_PALE:
@@ -159,9 +159,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = BattleFx_ClampRgb555Channel(r);
                 g = BattleFx_ClampRgb555Channel(g);
                 b = BattleFx_ClampRgb555Channel(b);
-                dst[0] = Data_0809e9ae[b];
-                dst[1] = Data_0809e9ae[g];
-                dst[2] = Data_0809e9ae[r];
+                dst[0] = BattlePalette_ChannelCurveContrast[b];
+                dst[1] = BattlePalette_ChannelCurveContrast[g];
+                dst[2] = BattlePalette_ChannelCurveContrast[r];
                 dst += 3;
             }
             break;
@@ -175,9 +175,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = BattleFx_ClampRgb555Channel(r);
                 g = g - g / 3;
                 b = b - b / 3;
-                dst[0] = Data_0809e92e[b];
-                dst[1] = Data_0809e92e[g];
-                dst[2] = Data_0809e96e[r];
+                dst[0] = BattlePalette_ChannelCurve[b];
+                dst[1] = BattlePalette_ChannelCurve[g];
+                dst[2] = BattlePalette_ChannelCurveLight[r];
                 dst += 3;
             }
             break;
@@ -195,9 +195,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = BattleFx_ClampRgb555Channel(r);
                 g = BattleFx_ClampRgb555Channel(g);
                 b = BattleFx_ClampRgb555Channel(b);
-                dst[0] = Data_0809e9ae[b];
-                dst[1] = Data_0809e96e[g];
-                dst[2] = Data_0809e92e[r];
+                dst[0] = BattlePalette_ChannelCurveContrast[b];
+                dst[1] = BattlePalette_ChannelCurveLight[g];
+                dst[2] = BattlePalette_ChannelCurve[r];
                 dst += 3;
             }
             break;
@@ -259,9 +259,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             nr = BattleFx_ClampRgb555Channel((u32)nr >> 16);
             ng = BattleFx_ClampRgb555Channel((u32)ng >> 16);
             nb = BattleFx_ClampRgb555Channel((u32)nb >> 16);
-            *dst++ = Data_0809e92e[nb];
-            *dst++ = Data_0809e92e[ng];
-            *dst++ = Data_0809e92e[nr];
+            *dst++ = BattlePalette_ChannelCurve[nb];
+            *dst++ = BattlePalette_ChannelCurve[ng];
+            *dst++ = BattlePalette_ChannelCurve[nr];
         }
     } else if (mode & PALETTE_TRANSFORM_SPLIT) {
         for (i = 0; i < cnt; i++) {
@@ -284,11 +284,10 @@ void BattleEffect_InitializeBuffers(void)
 
     buffer = Runtime_AllocateBlock(0x20, sizeof(*buffer));
     zero = 0;
-    Dma_Set(&zero, buffer, 0x85000a81, REG_DMA3);
-    Dma_Set((void *)0x05000000, buffer, 0x84000070, REG_DMA3);
-    Dma_Set((void *)0x05000200, (u8 *)buffer->palette + 0x1c0, 0x84000070,
-            REG_DMA3);
-    BattleFx_BuildBuffer(0x10000, (s32)buffer, (s32)buffer->target, 0);
+    Dma_Set(&zero, buffer, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof(*buffer) >> 2), REG_DMA3);
+    Dma_Set((void *)BG_PLTT, &buffer->palette[0], DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, &buffer->palette[0xe0], DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+    BattleFx_BuildBuffer(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target, 0);
     Scheduler_AddOrUpdateCallback((void (*)(void))BattlePalette_UpdateBlend, 0xc8f);
 }
 
@@ -303,7 +302,7 @@ void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode)
     struct BattleEffectBuffers *buffers = Data_03001ed0;
 
     if (buffers != NULL) {
-        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->target, mode);
+        BattleFx_BuildBuffer(value, buffers->palette, buffers->target, mode);
     }
 }
 
@@ -312,7 +311,7 @@ void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode)
     struct BattleEffectBuffers *buffers = Data_03001ed0;
 
     if (buffers != NULL) {
-        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->current, mode);
+        BattleFx_BuildBuffer(value, buffers->palette, buffers->current, mode);
     }
 }
 

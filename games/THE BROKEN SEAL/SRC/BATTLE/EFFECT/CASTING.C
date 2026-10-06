@@ -32,7 +32,6 @@ typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
 
 void Object_SetMode(void *object, s32 mode);
-s32 BattleFx_RunSparkGroups(void *effect, s32 mode);
 void Graphics_PackTileRows();
 
 void Audio_PlayCue(s32 cue);
@@ -60,7 +59,6 @@ static __inline__ void FillWords(void *dest, u32 size, u32 value)
     /* FAKEMATCH: Inline scope reloads the fill routine before its arguments. */
     Iwram_FillWords(dest, size, value);
 }
-
 
 static __inline__ void DrawImage(void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height,
                                  RectangleBlit *draw)

@@ -118,7 +118,7 @@ void Palette_DarkenSceneStep(void)
     u16 *color;
     s32 i;
 
-    color = (u16 *)0x05000140;
+    color = (u16 *)&BG_PLTT_COLOR(10, 0);
     for (i = 0; i != 16; i++) {
         s32 blue = (*color >> 10) & 0x1f;
         s32 green = (*color >> 5) & 0x1f;
@@ -136,7 +136,7 @@ void Palette_DarkenSceneStep(void)
             red = 0;
         *color++ = (blue << 10) | (green << 5) | red;
     }
-    color = (u16 *)0x05000202;
+    color = (u16 *)&OBJ_PLTT[1];
     for (i = 0; i != 239; i++) {
         s32 blue = (*color >> 10) & 0x1f;
         s32 green = (*color >> 5) & 0x1f;
@@ -159,10 +159,10 @@ void Palette_DarkenSceneStep(void)
 void Palette_StepTowardResource(s32 resource_id)
 {
     u16 target[64];
-    u16 *color = (u16 *)0x05000000;
+    u16 *color = (u16 *)BG_PLTT;
     s32 i;
 
-    Dma_Set(Resource_GetTableEntry(resource_id), target, 0x84000020, REG_DMA3);
+    Dma_Set(Resource_GetTableEntry(resource_id), target, DMA_ENABLE32 | DMA_32BIT | 0x20, REG_DMA3);
     for (i = 0; i != 64; i++, color++) {
         s32 red = *color & 0x1f;
         s32 green = (*color >> 5) & 0x1f;
@@ -185,7 +185,7 @@ void Palette_StepTowardResource(s32 resource_id)
             blue--;
         target[i] = (blue << 10) | (green << 5) | red;
     }
-    Dma_Set(target + 1, (void *)0x05000002, 0x8000003f, REG_DMA3);
+    Dma_Set(target + 1, (void *)&BG_PLTT[1], DMA_ENABLE32 | 63, REG_DMA3);
 }
 
 void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)

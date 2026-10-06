@@ -123,7 +123,7 @@ void KorimaKi_TalkToToreto(void)
             }
             {
                 u16 *target = &gEventWork->unknown_172;
-                s32 shown = 1;
+                u16 shown = 1;
 
                 *target = shown;
             }

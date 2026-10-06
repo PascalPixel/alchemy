@@ -2103,7 +2103,7 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
         *(s32 *)((s32)rec7 + 40) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
         {
             u16 *target = (u16 *)((s32)rec7 + 100);
-            s32 shown = 20;
+            u16 shown = 20;
 
             *target = shown;
             *((u8 *)target - 3) = 1;

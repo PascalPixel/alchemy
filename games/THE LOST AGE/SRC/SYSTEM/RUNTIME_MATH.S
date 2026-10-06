@@ -3,17 +3,15 @@
 	.thumb
 	.global IwramClearWords
 IwramClearWords:
-AlchemyUncredited_08000810:
 	bx	pc
+AlchemyUncredited_08000812:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000810:
+AlchemyUncreditedEnd_08000812:
 	mov	r2, #0
 	.global IwramFillWords
 IwramFillWords:
-AlchemyUncredited_08000818:
 	andeq	r4, r0, #120, 14
-AlchemyUncreditedEnd_08000818:
 	push	{r5, r6, r7, r8, r9}
 	mov	r3, r2
 	mov	r4, r2
@@ -48,11 +46,11 @@ AlchemyUncreditedEnd_08000818:
 	.thumb
 	.global IwramSqrt
 IwramSqrt:
-AlchemyUncredited_0800088c:
 	bx	pc
+AlchemyUncredited_0800088e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0800088c:
+AlchemyUncreditedEnd_0800088e:
 	movs	r1, r0
 	mov	r0, #0
 	bxmi	lr
@@ -70,11 +68,11 @@ AlchemyUncreditedEnd_0800088c:
 	bne	.L_030002e8
 	bx	lr
 	.thumb
-AlchemyUncredited_080008cc:
 	bx	pc
+AlchemyUncredited_080008ce:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080008cc:
+AlchemyUncreditedEnd_080008ce:
 	.ifeq EDITION_INTERNATIONAL
 	add	ip, r0, #24
 	.else

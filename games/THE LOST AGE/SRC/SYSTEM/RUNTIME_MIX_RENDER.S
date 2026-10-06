@@ -2,11 +2,11 @@
 	.thumb
 	.global IwramSoundRenderFrame
 IwramSoundRenderFrame:
-AlchemyUncredited_080012f8:
 	bx	pc
+AlchemyUncredited_080012fa:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080012f8:
+AlchemyUncreditedEnd_080012fa:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	r1, [pc, #-52]
 	tst	r1, #12
@@ -83,10 +83,8 @@ AlchemyUncreditedEnd_080012f8:
 	subs	r9, r9, #2
 .L_03000e60:
 	ldmgt	r0, {r2, r4}
-AlchemyUncredited_0800141c:
 .L_03000e64:
 	bgt	.L_03000db0
-AlchemyUncreditedEnd_0800141c:
 	ldr	r2, [pc, #-316]
 	cmp	r2, #0
 	strgt	r9, [pc, #-324]
@@ -123,7 +121,5 @@ AlchemyUncreditedEnd_0800141c:
 	b	.L_03000dcc
 	.global Data_03000ee4
 Data_03000ee4:
-AlchemyUncredited_0800149c:
 	.4byte	0
-AlchemyUncreditedEnd_0800149c:
 	.4byte	IwramSoundMixWorkspace

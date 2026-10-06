@@ -5,11 +5,11 @@ Text_LookupSymbolCode:
 	.global Text_LookupSymbol
 	.thumb_func
 Text_LookupSymbol:
-AlchemyUncredited_0803857c:
 	bx	pc
+AlchemyUncredited_0803857e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0803857c:
+AlchemyUncreditedEnd_0803857e:
 	lsr	r3, r1, #8
 	ldr	ip, [pc, #80]
 	add	ip, ip, r3, lsl #3

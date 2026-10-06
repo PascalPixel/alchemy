@@ -5,11 +5,11 @@ Resource_DecodeHalfwordLzCode:
 	.global Resource_DecodeHalfwordLz
 	.thumb_func
 Resource_DecodeHalfwordLz:
-AlchemyUncredited_08001ffc:
 	bx	pc
+AlchemyUncredited_08001ffe:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001ffc:
+AlchemyUncreditedEnd_08001ffe:
 	mov	r3, #0x80000000
 	b	.L_0800200c
 .L_08002008:

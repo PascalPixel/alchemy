@@ -5,11 +5,11 @@ BattleFx_DecodeFrameCode:
 	.global BattleFx_DecodeFrame
 	.thumb_func
 BattleFx_DecodeFrame:
-AlchemyUncredited_080c93cc:
 	bx	pc
+AlchemyUncredited_080c93ce:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080c93cc:
+AlchemyUncreditedEnd_080c93ce:
 	cmp	r2, #0
 	bne	.L_080c94e8
 	mov	r4, #255

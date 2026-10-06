@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 105 of 1276 (1277 draft instructions); was 289 at session 3's start, 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp (as the plain parameter), render in sl, the row computation, the swap preview, the whole help line and the gMenuWork load now match. Remaining: the prologue's zeros (native gives frame and cursor[] their own 0 where this shares anim's), native loads 0xba0 from the pool where this builds it as 186<<4, and instruction order at a few calls (see Open). No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 93 of 1276 (1277 draft instructions); was 105 at session 4's start, 289 at session 3's start, 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp (as the plain parameter), render in sl, the row computation, the swap preview, the whole help line and the gMenuWork load now match. Remaining: the prologue's zeros (native gives frame and cursor[] their own 0 where this shares anim's), native loads 0xba0 from the pool where this builds it as 186<<4, and instruction order at a few calls (see Open). No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -20,7 +20,8 @@
  * Trial (2026-10-06, session 2): with the copy routine in r5, mode as the plain parameter wins fp by itself, so its fixed-fp FAKEMATCH is gone, and the row computation ties mode as native: 293 -> 289. On top of that, 0x8000 fixed in r8 and 0 in sl give 285 (the pools then line up) but attr still takes r1 and the copies stay wrong; not kept for 4. cursor[0] = cursor[1] = 0 leaves 289 and still reloads anim's 0 where native has its own zero in r7.
  * Trial (2026-10-06, session 3): the help line's ands copied attr where native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31). In regmove the first commutative operand that stays live is copied into the result, so the copy goes to the constant only when attr is a hard register: attr fixed in r2 (FAKEMATCH) gives 289 -> 187. Constant-first source order (0xe0 & attr) folds back: 289. The tilemap entries read state->pair_entries[x] directly, where native loads it into r3 and not attr's r2: 175. row * 8 as the argument, not a y temporary: 172. 224 and the shared 0 then tie at priority 769 (7 refs over 182 insns, 4 over 104) and 224 wins by pseudo number; 0 fixed in sl (FAKEMATCH) and set inside the first tilemap call's argument as native: 127 (zero = 0 as a statement before the call: 139, before the draw: 154, at the row computation: 172). The 0x8000 test through state->pair_entries[0] directly, without attr: 259 against 289 (the no-call path then reloads).
  * Trial (2026-10-06, session 3): the prologue assignments as anim, dirty, frame, cursor[0], page, then state->cursor->active = 13 and cursor[1] (permuter hint, 5 minutes over the prologue): gMenuWork is loaded into r3 before the stack adjustment and state->cursor is reached through mov r4, r9 as native, and cursor[0] takes a fresh 0: 127 -> 105. All 24 orders of anim, dirty, page and frame alone: 127 to 135; frame = anim and state loaded last: 127; all 240 orders of the five with cursor[1] last or right after cursor[0]: 105 at best (also anim, frame, dirty, cursor[0], page); cursor[0] = cursor[1] = 0 or cursor[1] = cursor[0] = 0 in any of 120 orders each: 119 at best.
- * Open (2026-10-06, session 3): 105 instructions remain, all register choice or instruction order. Prologue: native gives anim, dirty, page and frame the registers r0, r1, r3, r2 and zeroes both cursor[] entries from its own 0 in r7; here frame's reload inherits anim's 0 in r0 and cursor[1] stores anim's 0 reloaded from its slot (CSE puts anim's register in for the constant). 0xba0: native loads it from the pool, which a K constant reaches only when the movsi split does not run on it; this splits it to 186<<4. Order only: the tutorial's work = UiText_OpenMessageWindowFar copy (native right after the call), the argument loads of both 0x060052c0 IWRAM calls (native r1, r3, r0 for the copy and r3, r0, r1, r2 for the fill), the 0x200 size of the tutorial copies (native shifts it last), the tile loop's list->width - count[page] - 3 and the two SetSlotPhase(x, 0) after the loop (native sets r1 first). */
+ * Trial (2026-10-06, session 4): expand_call loads a call argument into its pseudo before the function address when the argument is a constant costing more than 2 (0x060052c0, 0x44444444, 0x200), but loads a variable's register after it; native loads all three after the IWRAM address. A tile variable for 0x060052c0 shared by the copy and the fill: 105 -> 103; a fill variable for 0x44444444 as well: both calls match, 97. A size variable for the tutorial buffer's 0x200 in both copies of each case: 93 (the allocation through size or with 0x200, and size set before or after it: 93). Cursor[] zeroed through an empty asm output (none) after the four scalars: CSE gives the asm anim's register as input, 127.
+ * Open (2026-10-06, session 4): 93 instructions remain, all register choice or instruction order. Prologue: native gives anim, dirty, page and frame the registers r0, r1, r3, r2 and zeroes both cursor[] entries from its own 0 in r7; here frame's reload inherits anim's 0 in r0 and cursor[1] stores anim's 0 reloaded from its slot (CSE puts anim's register in for the constant). 0xba0: native loads it from the pool, which a K constant reaches only when the movsi split does not run on it; this splits it to 186<<4. Order only: the tutorial's work = UiText_OpenMessageWindowFar copy (native right after the call), the tutorial copies' argument moves (native mov r1 before the address load and the size's shift last), the tile loop's list->width - count[page] - 3 and the two SetSlotPhase(x, 0) after the loop (native sets r1 first). */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -290,8 +291,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         if (scene->tutorial_step != 0) {
             s16 *saved;
+            s32 size;
 
-            saved = Runtime_BumpAllocateAlternatePool(0x200);
+            size = 0x200;
+            saved = Runtime_BumpAllocateAlternatePool(size);
             input_edge = 0;
             input_held = 0;
             scene->tutorial_timer += 1;
@@ -311,7 +314,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 if (scene->tutorial_timer == 60) {
                     s32 work;
 
-                    Iwram_CopyWords(saved, render, 0x200);
+                    Iwram_CopyWords(saved, render, size);
                     work = UiText_OpenMessageWindowFar(0xc43, 8, 0, 1);
                     state->cursor->active = 1;
                     UiMenu_SlideCursor(2, 96);
@@ -320,7 +323,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         WaitFrames(1);
                     }
                     UiWork_FinalizeFar(work, 1);
-                    Iwram_CopyWords(render, saved, 0x200);
+                    Iwram_CopyWords(render, saved, size);
                     UiWindow_MarkVisibleTileAttributesFar();
                     render->dirty = 1;
                     dirty = 1;
@@ -333,7 +336,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 if (scene->tutorial_timer == 60) {
                     s32 work;
 
-                    Iwram_CopyWords(saved, render, 0x200);
+                    Iwram_CopyWords(saved, render, size);
                     work = UiText_OpenMessageWindowFar(0xc42, 8, 0, 1);
                     state->cursor->active = 1;
                     UiMenu_SlideCursor(106, 56);
@@ -342,7 +345,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         WaitFrames(1);
                     }
                     UiWork_FinalizeFar(work, 1);
-                    Iwram_CopyWords(render, saved, 0x200);
+                    Iwram_CopyWords(render, saved, size);
                     UiWindow_MarkVisibleTileAttributesFar();
                     render->dirty = 1;
                     WaitFrames(1);
@@ -479,10 +482,15 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         UiMenu_PositionCursor(anim * 56 + 80, 16);
 
         if ((frame & 3) == 0) {
+            void *tile;
+            u32 fill;
+
+            tile = (void *)0x060052c0;
+            fill = 0x44444444;
             if ((frame & 4) != 0) {
-                Iwram_CopyWords((void *)0x060052c0, Menu_BackdropFrameTile, 32);
+                Iwram_CopyWords(tile, Menu_BackdropFrameTile, 32);
             } else {
-                Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
+                Iwram_FillWords(tile, 32, fill);
             }
         }
 

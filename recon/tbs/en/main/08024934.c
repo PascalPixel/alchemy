@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 928, common 539, differ 796.
+ * Native 946 instructions, draft 924, common 537, differ 796.
  * Remaining: native 372-byte frame versus 380, spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * The scan of available and the compaction into ordered now match apart from
@@ -27,7 +27,19 @@
  * 878 (native's shape there, offset r5 from 8 and stmia handles, but its
  * base pseudo takes a call-saved register and drawn_page loses r9).
  * Native's draw block uses r9 for a hoisted 0 and r8 for y; drawn_page is
- * dead there.
+ * dead there. From 796: do { } while (1) main loop 796 unchanged; scalars
+ * declared in native slot order (count, window, render, drawn_row,
+ * cursor_handle, description, counts, mask, preferred, cursor_position,
+ * summon) 838, though every spill slot then sits exactly 8 above native's:
+ * reload numbers slots by pseudo, so that order is right once the two
+ * draw-loop giv slots go. In a for (;;) loop, loop.c's find_and_verify_loops
+ * moves the `result = ordered[page + row]; break;` block out of the loop to
+ * the barrier after the scan (b.n -1254 and back); native keeps it inline
+ * with result in r6, which a goto main loop (no loop notes) gives: kept at
+ * 796 (draft 924 instructions), the -1 tilemap row then takes r6 where
+ * native has r5 and native stores a fresh 0 per call. The tile-store giv would stay
+ * unreduced at lifetime 1 (119 vs 124, like giv 938), so native's ldrh and
+ * strh addresses were probably separate givs at loop time.
  * Native slots, top down: standby 84, count 80, window 76, render 72,
  * drawn_row 68 (drawn_page r9, row r10, page r11), cursor_handle 64,
  * description 60, counts 56, mask 52, preferred 48, cursor_position 40-47,
@@ -168,7 +180,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     ordered[used] = 32;
 
-    for (;;) {
+loop:
+    {
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
@@ -310,12 +323,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         if (pressed & 1) {
             result = ordered[page + row];
-            break;
+            goto done;
         }
         if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
             AudioCommand_PlayFar(113);
             result = -1;
-            break;
+            goto done;
         }
         if (repeated & 128) {
             AudioCommand_PlayFar(111);
@@ -368,6 +381,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         WaitFrames(1);
     }
+    goto loop;
+done:
     WaitFrames(1);
     handle = handles;
     index = 3;

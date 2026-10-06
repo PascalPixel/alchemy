@@ -51,7 +51,7 @@ LAYOUT_OFFSET_GUARD(MapState_Cells, struct MapState, layers, 0x130);
 
 struct WorldPosition {
     s32 x;
-    u8 unknown_04[4];
+    s32 height;
     s32 y;
 };
 

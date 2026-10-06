@@ -62,8 +62,6 @@ struct WorldCell {
 #define BG_PALETTE ((s16 *)0x05000000)
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
-#define WORLD_SCREEN_ENTRIES 0x06004000
-
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
 {
     struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork[0];
@@ -95,7 +93,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
     }
 
     if (update != 0) {
-        screen = (u16 *)(WORLD_SCREEN_ENTRIES + ((((layer * 2 + y) << 6) + x) << 5));
+        screen = (u16 *)(BG_SCREEN_BLOCK(8) + ((((layer * 2 + y) << 6) + x) << 5));
         source = buffer;
         for (i = 0; i < 16; i++) {
             for (j = 0; j < 16; j++) {
@@ -137,7 +135,7 @@ s32 Map_InitializePerspectiveScene(void)
     Blend_SetDarkenTarget0(0);
     work = (struct PerspectiveWork *)Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
     fill = 0;
-    Dma_Set(&fill, work, 0x85000000 | (sizeof(struct PerspectiveWork) / 4), REG_DMA3);
+    Dma_Set(&fill, work, DMA_ENABLE32 | DMA_SRC_FIXED32 | DMA_32BIT | (sizeof(struct PerspectiveWork) / 4), REG_DMA3);
     work->view_x = 0;
     work->view_y = 0;
     work->scale_x = 0x200000;
@@ -213,13 +211,13 @@ s32 Map_InitializePerspectiveScene(void)
     do {
         size = (s32)&Transform_UpdateVerticesSize;
         Dma_Set((void *)Transform_UpdateVertices, (void *)Runtime_AllocateHeapBlock(46, size),
-                0x84000000 | (size >> 2), REG_DMA3);
+                DMA_ENABLE32 | DMA_32BIT | (size >> 2), REG_DMA3);
     } while (0);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = work->pitch;
-    ((PlaneFn)((union HeapState *)gWorkSlot)->slots[46])(camera, position, tiles->scanlines,
+    ((PlaneFn)gWorkSlot[46])(camera, position, tiles->scanlines,
                                  lines[gFrameCount & 1]);
     position[0] = 0;
     position[1] = 0;
@@ -313,17 +311,17 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
     tiles = gBgTileBuffer;
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), tiles);
-    Dma_Set(tiles, (void *)0x06008000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
-    Dma_Set(Ram_BgTileBuffer + 0x2000, (void *)0x0600a000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
-    Dma_Set(Ram_BgTileBuffer + 0x4000, (void *)0x0600c000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
-    Dma_Set(Ram_BgTileBuffer + 0x6000, (void *)0x0600e000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[5]), (void *)gMapLayerData);
     fill = 0xf07ff07f;
-    Dma_Set((const void *)&fill, (void *)0x06002800, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
-    cursor = (u32 *)0x06003000;
+    Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(5), DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
+    cursor = (u32 *)BG_SCREEN_BLOCK(6);
     tile = 0x01a901a8;
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 15; col++) {

@@ -44,7 +44,7 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
     struct MapCell *cell;
 
     x = position->x / 65536;
-    y = (position->y - *(s32 *)((u8 *)position + 4)) / 65536;
+    y = (position->y - position->height) / 65536;
     work = gMapWork[0];
     if (work == NULL)
         return 0;
@@ -71,7 +71,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     pixel_offset = (((u32)(y_step / 2) & 3) << 1) +
         ((u32)(x_step / 4) & 1);
 
-    tile = *(u8 *)(0x06005000 + cell);
+    tile = BG_SCREEN_BLOCK(10)[cell];
     packed_pixels = *(Ram_MapCollision + 0x800 + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
         if ((u32)x_step & 2)
@@ -82,7 +82,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
             return result;
     }
 
-    tile = *(u8 *)(0x06004000 + cell);
+    tile = BG_SCREEN_BLOCK(8)[cell];
     packed_pixels = *(Ram_MapCollision + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
         if ((u32)x_step & 2)
@@ -186,7 +186,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     do { size = (u32)TileMap_DrawRowsCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((const void *)TileMap_DrawRows, code, DMA_ENABLE32 | DMA_32BIT | size >> 2, REG_DMA3);
-    do { ((void (*)(s32, s32, void *, void *))((union HeapState *)gWorkSlot)->slots[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
+    do { ((void (*)(s32, s32, void *, void *))gWorkSlot[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
     Runtime_ReleaseHeapBlock(49);
 }
 

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "MAP.H"
+#include "IO_REG.H"
 
 void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY)
 {
@@ -18,11 +19,11 @@ void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX
             u32 *src;
             u32 *dst;
 
-            dst = (u32 *)0x06002800 + index;
+            dst = (u32 *)BG_SCREEN_BLOCK(5) + index;
             src = (u32 *)(Ram_MapBlocks + offset);
             *dst = *src;
             src = (u32 *)(Ram_MapBlocks + 4 + offset);
-            dst = (u32 *)0x06002840 + index;
+            dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
             *dst = *src;
 
         /* FAKEMATCH: end is a forced temporary for the bound's evaluation order. */

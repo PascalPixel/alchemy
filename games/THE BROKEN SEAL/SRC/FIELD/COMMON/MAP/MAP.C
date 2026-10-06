@@ -264,7 +264,7 @@ void Map_ApplyWorkOriginAndSpan(void)
 
 void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 {
-    u8 *dest = (u8 *)(0x06002800 + (a0 << 11));
+    u8 *dest = BG_SCREEN_BLOCK(5) + (a0 << 11);
     u32 row = ((a2 / 2) & 0x7F) << 7;
     u32 rowmod = (a2 & 30) << 5;
     u32 col = (a1 / 2) & 0x7F;
@@ -283,7 +283,7 @@ void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 
 void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2)
 {
-    u8 *destination = (u8 *)(0x06002800 + (a0 << 11));
+    u8 *destination = BG_SCREEN_BLOCK(5) + (a0 << 11);
     u32 row = ((a2 / 2) & 0x7F) << 7;
     u32 rowmod = (a2 & 30) << 5;
     u32 col = (a1 / 2) & 0x7F;
@@ -433,7 +433,7 @@ void Map_SetCameraCenter(s32 x, s32 y)
             layer++;
             x /= 0x80000;
             y /= 0x80000;
-            dest = (u8 *)(0x06002800 + (no << 11));
+            dest = BG_SCREEN_BLOCK(5) + (no << 11);
             row = ((y / 2) & 127) << 7;
             rowmod = (y & 30) << 5;
             for (i = 0; i < rows / 2; i++) {

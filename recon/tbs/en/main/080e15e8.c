@@ -1,3 +1,13 @@
+/* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
+   listing 1640, draft 1638, common 1181, differ 916 (native frame 336,
+   draft 328: two fewer spill slots; native keeps frame * 4 as its own
+   induction variable beside frame * 2, which the draft does not).
+   Trials:
+   - unscored first draft: differ 938 (frame 332).
+   - pts[].y as (y >> 16) + 60, not a halfword cast: 929.
+   - size = 5 after the three scale stores: 923.
+   - n = frame * 4 - i * 48 - 256 without the reach local: 916.
+   - n = count * 2 - i * 48 - 256: 916, no change. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -62,7 +72,6 @@ struct BlitterPair {
 
 #define PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 #define SLOT(n) (((DrawRectangle *)gWorkSlot)[n])
-#define HI(v) (((s16 *)&(v))[1])
 
 void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 {
@@ -203,10 +212,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             SceneTransform_ApplyYaw(a << 12);
             if (frame > 150) {
                 s32 s = frame * 0x1800 - 0xd9400;
-                size = 5;
                 sc[0] = s;
                 sc[1] = s;
                 sc[2] = s;
+                size = 5;
             } else {
                 s32 s = 0x10000 - a * 3 * 0x400;
                 sc[0] = s;
@@ -225,18 +234,16 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         }
 
         if (frame <= 149) {
-            s32 reach = frame * 4;
-
             for (i = 0; i != 6; i++) {
                 vec[0] = (Mode12_Points[i][0] - 96) << 16;
                 vec[1] = 0;
                 vec[2] = (Mode12_Points[i][1] - 96) << 16;
                 EffectPosition_ApplyBaseAndYOffset(vec, (struct EffectPosition *)&pts[i]);
                 pts[i].x = (pts[i].x >> 17) + 64;
-                pts[i].y = HI(pts[i].y) + 60;
+                pts[i].y = (pts[i].y >> 16) + 60;
             }
             for (i = 0; i != 3; i++) {
-                n = reach - i * 48 - 256;
+                n = frame * 4 - i * 48 - 256;
                 if (n > 48) {
                     n = 48;
                 }
@@ -277,7 +284,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 vec[2] = -(Trig_Cos(i << 9) * 96);
                 EffectPosition_ApplyBaseAndYOffset(vec, (struct EffectPosition *)&pts[0]);
                 pts[0].x = (pts[0].x >> 17) + 64;
-                pts[0].y = HI(pts[0].y) + 60;
+                pts[0].y = (pts[0].y >> 16) + 60;
                 s = size + 1;
                 blit47(dst, work->sheet + rings + lvl * 0x302 + ParticleStreams_CellOffsets[s - 1],
                     pts[0].x - s / 2, pts[0].y - s, s, s * 2);

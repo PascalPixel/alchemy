@@ -19,8 +19,6 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 ent
 s32 UiWork_IsComplete(void);
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed);
 
-s32 UiWork_AnimateSpriteSlots(void);
-
 void UiWork_SetBusyFlags(s32 flags)
 {
     struct UiRenderWork *work;

@@ -27,9 +27,6 @@
 
 typedef void (*RamRoutine)(void *dst, void *scene);
 
-
-extern s32 Party_CountActiveOwnersFar(void);
-
 void UiWindow_FillFromScene(void *dst)
 {
     void *scene = gWindowWork[0];

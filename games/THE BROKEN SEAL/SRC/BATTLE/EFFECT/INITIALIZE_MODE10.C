@@ -28,7 +28,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-
 void AudioCommand_PlayFar(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -490,13 +489,10 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-
 extern u8 gMapCellBuffer[];
 
 void Audio_PlayCue(s32);
-void AnimationObjects_SelectAnimationFar(void *, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
-
 
 extern struct Cells03001ad0 gBgScroll;
 
@@ -931,8 +927,6 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
-
-
 
 #define SHARDS_PER_MEMBER 128
 

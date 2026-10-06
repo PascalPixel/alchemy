@@ -17,7 +17,6 @@
 #include "SCENE.H"
 #include "RESOURCE.H"
 
-
 struct PlacementDescriptor {
     u8 pad_00[0x2c];
     s8 kinds[4];
@@ -41,7 +40,6 @@ extern struct PlacementState *Data_03001f2c_a;
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 extern struct FourObjectMotionState *gMenuWork;
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
                                  struct PlacementDescriptor *descriptor)

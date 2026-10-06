@@ -1,12 +1,12 @@
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
+#include "FIELD.H"
 extern struct EffectRuntime *gEventWork;
 
 void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *, s32);
 void Audio_PlayCue(s32);
-s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 s32 EffectRuntime_FindSlotByObject(s32 id)
 {

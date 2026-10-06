@@ -19,7 +19,6 @@
 #include "IRQ.H"
 
 void WaitFrames(s32 frames);
-void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 
 extern volatile u32 gFrameCount;
 

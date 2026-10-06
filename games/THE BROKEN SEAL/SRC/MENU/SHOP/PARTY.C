@@ -16,12 +16,9 @@
 #include "FIXED_POINT_POSITION.H"
 #include "text/MSG_IDS.H"
 
-
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 extern struct ShopRuntime *gMenuWork;
 
 void UiWork_PushValueSlotFar(s32 message, s32 style);
-
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
 

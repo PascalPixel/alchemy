@@ -39,12 +39,8 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
     return copy(dst, src, size);
 }
 
-
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-s32 Inventory_AddItemFar(s32 owner, s32 item);
-s32 Inventory_RemoveFar(s32 owner, s32 slot);
-void Event_ClearInvalidPackedValuesFar(void);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
 
 enum ItemMenuStep {

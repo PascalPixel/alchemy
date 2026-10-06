@@ -14,11 +14,6 @@
 #include "FIELD_SPRITE.H"
 #include "RESOURCE.H"
 
-
-s32 Party_ListActiveOwnersFar(u16 *out);
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 value);
-
-s32 Party_CountActiveOwnersFar(void);
 void Object_ApplyProjectedPlacementFar(void *, s32 *, s32 *, s32);
 
 struct MenuCursorAttributes {

@@ -16,9 +16,6 @@
 
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
-
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
 {
     struct BattleEffectWork *work = gBattleFxWork;

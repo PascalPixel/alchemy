@@ -3,9 +3,9 @@
 #include "PARTY_STATE.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+#include "GRAPHICS.H"
 extern struct ShopRuntime *gMenuWork;
 
-s32 UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 void Shop_DrawMoney(void)
 {
     struct ShopRuntime *shop;

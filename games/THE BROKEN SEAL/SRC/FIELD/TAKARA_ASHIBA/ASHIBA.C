@@ -58,7 +58,6 @@ void Battle_Reset();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_OffsetPositionAndResetMotion();
 void Battle_WaitMode0();
-void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void BattleFx_FinishAction();
 void AudioCommand_Play();

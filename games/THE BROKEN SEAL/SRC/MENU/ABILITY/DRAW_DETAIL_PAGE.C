@@ -16,8 +16,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-
-void GameFlag_ClearBitFar(s32 flag);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #if EDITION_INTERNATIONAL

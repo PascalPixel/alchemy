@@ -149,7 +149,6 @@ struct ArcObject {
 extern struct BattleFxScene *gEffectWork;
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
 
 void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
 {

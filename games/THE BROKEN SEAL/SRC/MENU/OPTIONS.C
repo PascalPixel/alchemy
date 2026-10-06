@@ -39,7 +39,6 @@ extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
 void WaitFrames(s32);
 void PaletteGlow_Update(s32, s32);
-void RenderOutput_ClearList(struct RenderInput *);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
 void Audio_PlayCue(s32);
 

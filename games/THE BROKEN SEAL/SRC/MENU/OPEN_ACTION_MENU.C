@@ -38,15 +38,12 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
     return fill(dst, size, value);
 }
 
-
 #if EDITION_INTERNATIONAL
 #define SAVED_TILE_BYTES 0x2000
 #else
 #define SAVED_TILE_BYTES 0x800
 #endif
 
-s32 Party_ListActiveOwnersFar(u16 *);
-s32 Party_SumDjinnCountsFar(s32);
 void FourObjectMotion_InitializeTopRow();
 
 s32 ActionMenu_Open(void)

@@ -16,9 +16,6 @@
 #include "ANIMSPR.H"
 #include "EFFECT_STEP.H"
 
-
-s32 Render_ProjectPoint(const s32 *, s32 *);
-
 void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 {
     struct MotionObject *object;

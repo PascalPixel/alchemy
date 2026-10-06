@@ -26,7 +26,6 @@ void Object_SetMode(struct ObjectRuntime *actor, s32 mode);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *actor, s32 value);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void BattleFx_FinishAction(void);
 
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)

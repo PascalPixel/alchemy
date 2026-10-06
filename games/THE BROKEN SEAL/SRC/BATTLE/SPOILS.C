@@ -21,7 +21,6 @@
 #define Item_EncodeBankedId ((s32 (*)(s32))Item_EncodeBankedId)
 #define Item_EncodeBankedId ((s32 (*)(s32))Item_EncodeBankedId)
 
-void GameFlag_SetBitFar(s32);
 u32 Random16(void);
 
 static __inline__ s32 BattleEnemy_CalculateCoinReward(
@@ -59,10 +58,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(
 }
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
-void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
-void BattlePresentation_WaitForAdvance(void);
 void Audio_PlayCue(s32 cue);
-void Party_AdjustCoinsFar(s32 amount);
 
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {

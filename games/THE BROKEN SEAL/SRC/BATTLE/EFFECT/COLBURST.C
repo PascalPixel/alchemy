@@ -24,13 +24,10 @@
 
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-
 extern u8 gMapCellBuffer[];
-void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void Audio_PlayCue(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
-
 
 void BattleFx_RunRevealColumnMode1(s32 arg0)
 {

@@ -28,10 +28,6 @@ struct DisplayScrollObject {
 extern u16 gScratchWord;
 extern u32 gFrameTick;
 
-
-void GameFlag_SetBitFar(s32 flag);
-
-
 void DisplayScroll_UpdateObjects(void)
 {
     /* FAKEMATCH: the two-word OAM walk preserves stores and registers reversed by named fields. */

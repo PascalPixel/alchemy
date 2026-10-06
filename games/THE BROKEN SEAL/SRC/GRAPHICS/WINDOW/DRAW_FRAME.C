@@ -10,8 +10,6 @@
 #include "TYPES.H"
 #include "WINDOW.H"
 
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
-
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];

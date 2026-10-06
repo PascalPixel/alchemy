@@ -10,9 +10,7 @@
 #include "LOG_ROLLING.H"
 #include "text/MSG_IDS.H"
 
-
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
-void UiText_DrawQuantity(s32 value, s32 digits);
 void ObjectDispatch_WaitForValue16(struct FieldActor *object);
 
 void WriteU32AsHex(u8 *hex_text, u32 value)

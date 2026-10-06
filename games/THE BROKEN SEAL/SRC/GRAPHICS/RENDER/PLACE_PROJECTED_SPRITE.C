@@ -16,8 +16,6 @@
 
 #define gMenuCtrlWork ((u8 (*))&gMenuCtrlWork)
 
-
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;

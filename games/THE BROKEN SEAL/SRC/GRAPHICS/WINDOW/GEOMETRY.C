@@ -13,7 +13,6 @@
 #include "DMA.H"
 #include "WINDOW.H"
 
-
 #define WINDOW_HALF(window, type, field) \
     (*(type *)((u8 *)(window) + (u32)&(((struct UiWindow *)0)->field)))
 
@@ -22,8 +21,6 @@ struct UiWindowInterpolationScratch {
     s32 scaled_duration;
     s32 result;
 };
-
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 

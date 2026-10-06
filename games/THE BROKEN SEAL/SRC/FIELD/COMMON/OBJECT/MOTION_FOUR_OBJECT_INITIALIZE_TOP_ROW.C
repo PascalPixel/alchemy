@@ -19,11 +19,6 @@
 s32 Object_ApplyProjectedPlacementFar(u32 object, u32 *request, u32 *motion, u32 limit);
 extern struct FourObjectMotionState *gMenuWork;
 
-
-
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-
-
 void FourObjectMotion_InitializeTopRow(void)
 {
     struct FourObjectMotionState *state = gMenuWork;

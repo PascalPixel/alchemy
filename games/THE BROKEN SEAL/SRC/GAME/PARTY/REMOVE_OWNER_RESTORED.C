@@ -10,9 +10,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "PARTY_STATE.H"
 
-s32 Party_RemoveActiveOwnerFar(s32 owner);
-s32 Party_CountActiveOwnersFar(void);
-
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 {
     s32 ratio = (value << 14) / max;

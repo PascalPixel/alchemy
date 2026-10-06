@@ -31,7 +31,6 @@
 
 #define Battle_FindTaggedSlotByValue ((s32 (*)(s32))Battle_FindTaggedSlotByValue)
 
-
 struct BattleAutomaticState {
     unsigned initialized : 1;
     unsigned selection : 3;
@@ -279,8 +278,6 @@ done:
     return;
 }
 
-
-
 void Dma_StopAllThenRunHook(void)
 {
     Dma_Set(0, 0, 0x84000000, REG_DMA3);
@@ -319,11 +316,7 @@ extern volatile u32 gFrameCount;
 extern volatile s32 gFrameTick;
 extern volatile s32 gKeysPressedLatch;
 
-void UiText_DrawQuantity(u32 value, u32 slot);
 void Object_SetMode(void *object, s32 mode);
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
-s32 BattleLayout_HighlightPartyPanelsFar(u16 *selection);
 
 void BattleEvent_Playback(void)
 {

@@ -27,14 +27,11 @@
 
 extern struct ShopRuntime *gMenuWork;
 void UiWork_FinalizePendingCoreFar(void);
-void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 void UiWork_FinalizeFar(s32 window, s32 style);
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
-s32 Party_AdjustCoinsFar(s32 amount);
 void PsynergyMenu_InitializeEntryObjectsFar();
-
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {

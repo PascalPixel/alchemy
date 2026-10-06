@@ -4,8 +4,7 @@
 #include "GAME_STATE.H"
 #include "FIELDRUN.H"
 #include "BATTLE_RUNTIME.H"
-
-void GameFlag_SetBitFar(s32 flag_id);
+#include "BATTLE.H"
 
 void MapGroupTable_SelectEntry(s32 kind)
 {

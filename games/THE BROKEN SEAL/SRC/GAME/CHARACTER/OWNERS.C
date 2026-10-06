@@ -26,10 +26,6 @@ struct TradeFlags {
     u32 flags;
 };
 
-
-
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
-
 struct ElementLevelBonus {
     u16 power;
     u16 resist;
@@ -37,12 +33,7 @@ struct ElementLevelBonus {
 
 extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
 
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
-
 s32 GameFlag_Test(s32 flag);
-
-s32 Owner_RefreshClassActions(s32);
-u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 
 #if EDITION_INTERNATIONAL
 #define ENEMY_SUFFIX_FIRST '1'
@@ -51,8 +42,6 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 #define ENEMY_SUFFIX_FIRST 'A'
 #define ENEMY_SUFFIX_LAST 25
 #endif
-
-
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 

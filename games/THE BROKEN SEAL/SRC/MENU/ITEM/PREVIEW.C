@@ -8,11 +8,9 @@
 #include "CHARACTER_MENU.H"
 #include "MENU_LIST.H"
 #include "INVENTORY.H"
+#include "GAME.H"
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
-s32 Inventory_AddItemFar(s32 owner, s32 item);
-
-s32 Inventory_RemoveFar(s32 owner, s32 slot);
 
 s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode)
 {

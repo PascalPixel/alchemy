@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-s32 BattleFx_RunSparkGroups(s32, s32);
+#include "BATTLE.H"
 
 void BattleFx_RunTwoModeBMode0(s32 arg0)
 {

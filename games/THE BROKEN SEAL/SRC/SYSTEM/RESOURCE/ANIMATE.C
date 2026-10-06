@@ -16,14 +16,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-
-void ResourceMetadata_ClearRecord(void *);
-
-
-
-
-
-
 struct ResourceSlotNumber {
     u16 resource;
     s16 number;

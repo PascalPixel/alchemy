@@ -2,8 +2,7 @@
 #include "WINDOW.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
-
-s32 UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+#include "GRAPHICS.H"
 
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     u32 left, u32 top, u32 right, u32 bottom)

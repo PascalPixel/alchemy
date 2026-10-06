@@ -18,8 +18,6 @@
 
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
-void AnimationObjects_SelectAnimationFar(void *, s32);
-
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)
 {

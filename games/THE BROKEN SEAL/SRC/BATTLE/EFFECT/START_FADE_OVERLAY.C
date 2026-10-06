@@ -17,7 +17,6 @@
 #include "IO_REG.H"
 
 void *ObjectTable_Get(u32 object);
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 struct FadeMark {
     void *next;

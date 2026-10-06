@@ -32,11 +32,7 @@
 struct InventoryMenuState;
 void Audio_PlayCue(s32 cue);
 void PsynergyMenu_InitializeEntryObjects();
-s32 Party_AddActiveOwnerFar(s32 owner);
-s32 Party_ListActiveOwnersFar(u16 *owners);
-s32 Party_RemoveActiveOwnerFar(s32 owner);
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
-s32 Party_SumDjinnCountsFar(s32 side);
 
 s32 CharacterSelector_RunRearrange(void)
 {

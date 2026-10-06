@@ -12,7 +12,6 @@
 #include "TYPES.H"
 #include "SAVE_STATE.H"
 
-
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 {
     struct ResourceMenuWork *work;
@@ -40,8 +39,6 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 
 #define UiWindow_ClearInteriorTiles ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTiles)
 
-
-s32 Party_SumDjinnCountsFar(s32);
 void Menu_CenterResourceEntries(s32, s32, s32);
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
@@ -87,7 +84,6 @@ s32 Menu_SelectTopEntry(s32 sel)
     return ret;
 }
 
-
 #if EDITION_INTERNATIONAL
 #define ANIMATE_ENTRIES_ROW 7
 #else
@@ -108,7 +104,6 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     UiWork_CloseAndRelease();
     return arg1;
 }
-
 
 s32 Menu_SelectSaveSlotAction(void)
 {
@@ -160,7 +155,6 @@ s32 Menu_SelectSaveSlotAction(void)
     }
     return ret;
 }
-
 
 #if EDITION_INTERNATIONAL
 #define MODE_LABEL_X     18
@@ -222,7 +216,6 @@ done:
 void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 
-
 #if EDITION_INTERNATIONAL
 #define PASSWORD_HELP_X 16
 #else
@@ -230,7 +223,6 @@ void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 #endif
 
 #if defined(TBS_EDITION_FR)
-void RenderOutput_ClearList(void *);
 
 void Menu_DrawModeIndicator(void)
 {

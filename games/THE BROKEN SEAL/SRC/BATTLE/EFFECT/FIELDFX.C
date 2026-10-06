@@ -54,7 +54,6 @@ s32 Object_CommitPosition();
 
 extern void ObjectDispatch_ReleaseFar(void *object);
 
-
 extern u8 *gEventWork;
 
 struct FxObject {
@@ -90,7 +89,6 @@ void AudioCommand_PlayFar(s32 cue);
 s32 Object_CheckMovementCollision(struct FxObject *object, struct Output_08097f80 *position);
 struct FxObject *Object_GetById(s32 id);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
-void EffectRuntime_StopCurrentObject(void);
 
 void BattleFx_SteerPushedTarget(s32 target_id)
 {

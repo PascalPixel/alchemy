@@ -37,7 +37,6 @@ extern volatile u32 gFrameCount;
 
 u32 Resource_DecodeByteLz(const void *, void *);
 
-
 struct UiScaleSprite {
     u8 filler0[6];
     u16 src_6;
@@ -57,9 +56,6 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 {
     return word ^ mask;
 }
-
-
-s32 ItemIcon_Compose(s32, s32);
 
 void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj)
 {

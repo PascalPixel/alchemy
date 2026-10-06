@@ -32,11 +32,9 @@
 #define gMenuCtrlWork (*(struct ItemMenuDisplayState * *)&gMenuCtrlWork)
 
 extern struct InventoryMenuState *gMenuWork;
-s32 Inventory_RemoveFar(s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
 
 struct ItemMenuModeState {
     u8 reserved_000[0x20c];
@@ -75,9 +73,6 @@ struct ItemMenuWork {
 };
 
 extern struct ItemMenuModeState gGameState;
-s32 Party_ListActiveOwnersFar(u16 *owners);
-void Event_ClearInvalidPackedValuesFar(void);
-
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
@@ -546,8 +541,6 @@ s32 ItemMenu_Run(void)
 }
 
 void AudioCommand_PlayFar(s32 cue);
-s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 index);
 
 s32 DjinnMenu_RunScreen(void)
 {

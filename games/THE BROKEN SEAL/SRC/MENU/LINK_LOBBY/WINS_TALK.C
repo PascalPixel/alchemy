@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "text/MSG_IDS.H"
+#include "BATTLE.H"
 
 struct LobbyActor {
     u8 unknown_00[6];
@@ -12,7 +13,6 @@ void Engine_EventBegin(void);
 void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
 void Engine_EventSetMessage(s32 message);
 void UiWork_ClearValueNameTables(void);
-void UiText_DrawQuantity(s32 value, s32 digits);
 s32 Engine_EventShowMessage(s32 actor, s32 mode);
 
 s32 LinkLobby_TalkLinkedWins(s32 actor)

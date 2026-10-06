@@ -30,14 +30,11 @@ void Audio_PlayCue(s32);
 
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
-s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Battle_WaitMode0(s32);
 void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
-void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
-
 
 struct BurstParticle {
     u8 pad_00[8];

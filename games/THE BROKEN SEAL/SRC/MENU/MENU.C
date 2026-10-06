@@ -30,16 +30,11 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *);
 struct Work;
 void WaitFrames(s32);
 
-
 struct EffectPosition {
     s32 x;
     s32 y;
     s32 z;
 };
-
-
-extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);
-
 
 void MenuSelection_DrawFrame(void)
 {

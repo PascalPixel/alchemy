@@ -35,11 +35,7 @@
 #define BattleFx_RunIceFleckBurstFar ((void (*)(struct BattlePresentationWork*))BattleFx_RunIceFleckBurstFar)
 #define BattleFx_DispatchModeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchModeFar)
 
-
-void UiText_ShowMessageAndWaitCoreFar(s32);
-
 void UiWork_PushValueSlotFar(s32, s32);
-
 
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries)

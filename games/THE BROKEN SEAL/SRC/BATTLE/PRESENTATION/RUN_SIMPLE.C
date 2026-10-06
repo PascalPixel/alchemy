@@ -32,11 +32,7 @@
 #define BattleFx_DispatchModeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchModeFar)
 #define BattleActor_SpawnObjectsForList ((s32 (*)(void*,s32))BattleActor_SpawnObjectsForList)
 
-
 s32 ArcTan2(s32 first, s32 second);
-
-
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 {
@@ -248,8 +244,6 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     Actor_ResetMotionAtAnchor(work.actor);
     return 0;
 }
-
-s32 Inventory_RemoveFar(s32 owner, s32 slot);
 
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
                         struct BattleActionRecord *selection)

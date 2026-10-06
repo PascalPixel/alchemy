@@ -118,9 +118,7 @@ done:
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 
-s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 void UiWork_FinalizePendingCoreFar(void);
-
 
 s32 Shop_SelUse(s32 actor)
 {
@@ -234,9 +232,6 @@ exit_loop:
     WaitFrames(1);
     return result;
 }
-
-
-void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {

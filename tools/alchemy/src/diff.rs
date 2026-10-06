@@ -145,8 +145,8 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     if camelot_arm && (arm_study || game != "tbs") {
         return Err("--camelot-arm compiles ☀️ game ARM C only, and not with --arm".into());
     }
-    if heat && (arm_study || camelot_arm) {
-        return Err("--heat maps the game route's code; it does not combine with --arm or --camelot-arm".into());
+    if heat && arm_study {
+        return Err("--heat maps the game route's or camelot_arm's code; it does not combine with --arm".into());
     }
     Ok(Options { draft, addresses, game, target, show, arm_study, camelot_arm, rtl, heat, overlay, symbol })
 }
@@ -347,11 +347,7 @@ fn source_location(line: &str) -> Option<(String, u32)> {
 /// None for code from another file (a header's inline helper).
 pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>, file_name: &str) -> Result<Vec<(String, Option<u32>)>, String> {
     for step in steps {
-        let mut step = step.clone();
-        if step.iter().any(|argument| argument == "-S") {
-            step.push("-g".into());
-        }
-        command(&step, root())?;
+        command(&with_line_table(step), root())?;
     }
     let object = object.to_string_lossy();
     let only = symbol.map(|s| format!("--disassemble={s}"));
@@ -365,6 +361,16 @@ pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>
         .into_iter()
         .map(|(row, at)| (row, at.filter(|(file, _)| in_draft(file)).map(|(_, line)| line)))
         .collect())
+}
+
+/// A compile step with -g added: the driver's (-S) or a direct cc1's
+/// (-dumpbase, the library and camelot_arm routes); other steps unchanged.
+fn with_line_table(step: &[String]) -> Vec<String> {
+    let mut step = step.to_vec();
+    if step.iter().any(|argument| argument == "-S" || argument == "-dumpbase") {
+        step.push("-g".into());
+    }
+    step
 }
 
 /// Where a draft's code differs from its listing, by source line.
@@ -641,8 +647,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         }
     }
     if options.heat {
-        let heat_object = draft_object(&root.join(target.output_dir), &format!("{stem}-heat"), false);
-        let steps = draft_steps(target, &draft, &heat_object, false)?;
+        let heat_object = if options.camelot_arm {
+            camelot_arm_object(&root.join(target.output_dir), &format!("{stem}-heat"))
+        } else {
+            draft_object(&root.join(target.output_dir), &format!("{stem}-heat"), false)
+        };
+        let steps = if options.camelot_arm {
+            camelot_arm_steps(target, &draft, &heat_object)?
+        } else {
+            draft_steps(target, &draft, &heat_object, false)?
+        };
         let name = draft.file_name().unwrap_or_default().to_string_lossy().into_owned();
         let located = located(&steps, &heat_object, draft_symbol.as_deref(), &name)?;
         if located.iter().map(|(row, _)| row).ne(compiled.iter()) {
@@ -903,6 +917,19 @@ int study(void) { return 17; }
         let found = heat(&longer, &located);
         assert_eq!((found.lines.into_iter().collect::<Vec<_>>(), found.first), (vec![(7, 1)], Some(7)));
         assert_eq!(heat(&plain, &located), Heat::default());
+    }
+
+    #[test]
+    fn line_tables_reach_the_driver_and_direct_cc1_compile_steps() {
+        let words = |text: &str| text.split(' ').map(String::from).collect::<Vec<_>>();
+        let cpp = words("cpp0 -lang-c probe.c probe.i");
+        let cc1 = words("agbcc/camelot_arm probe.i -dumpbase probe.c -O2 -o probe.s");
+        let driver = words("xgcc -O2 -S -o probe.s probe.c");
+        let assemble = words("arm-none-eabi-as -o probe.o probe.s");
+        assert_eq!(with_line_table(&cpp), cpp);
+        assert_eq!(with_line_table(&assemble), assemble);
+        assert_eq!(with_line_table(&cc1).last().map(String::as_str), Some("-g"));
+        assert_eq!(with_line_table(&driver).last().map(String::as_str), Some("-g"));
     }
 
     #[test]

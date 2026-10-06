@@ -4,7 +4,11 @@
    alchemy diff --camelot-arm (upstream's whole arm_adjust_cost):
    listing 52, draft 52, common 7, differ 90; stock agbcc_arm: 90.
    The listing's ldm r0! / stmia r2! and its strne stores, still under
-   the flags of the zero tests, are not produced. As
+   the flags of the zero tests, are not produced. Neither compiler can
+   emit them: gcc_arm writes ldm/stm with writeback only in
+   arm_gen_movstrqi's block copies, whose register lists always start
+   at r0 (its load_multiple/store_multiple expanders never write back),
+   and the listing's lists are r4-r7. As
    ColorBuffer_DarkenKernel, but a zero word is left as it is. */
 typedef unsigned int u32;
 typedef unsigned char u8;

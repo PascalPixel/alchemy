@@ -10,6 +10,10 @@
    single str. Trial: the backup as one 16-byte struct copy
    (*(struct Quad *)backup = *(struct Quad *)buf): 66, the block move
    loads all four words again and stores them with stm, no writeback.
+   Neither compiler can emit the listing's stmia r2! / stmia r0! of
+   r4-r7: gcc_arm writes ldm/stm with writeback only in
+   arm_gen_movstrqi's block copies, whose register lists always start
+   at r0 (its load_multiple/store_multiple expanders never write back).
    Each word holds packed
    colour bytes; the kernel backs a block of four words up and subtracts
    amount from every byte, stopping at zero. */

@@ -1,14 +1,21 @@
-/* Draft: Japanese SaveMenu_SelectSlot, 2026-10-05. Native 0x5f8 bytes,
-   this shared-structure reconstruction 0x5c8. Remaining: register allocation
-   and spills (60-byte frame versus native 68), instruction order and pools.
-   Japanese eligibility scans are independent; its cursor is a ShopCursor
-   local and it does not install the international scheduler callbacks.
+/* Draft: Japanese SaveMenu_SelectSlot, 2026-10-06. Native 0x5f8 bytes.
+   Thumb scaffold diff: 663 native instructions, 653 draft, common 418,
+   differ 480 (was 593). Japanese eligibility scans are independent; its
+   cursor is a ShopCursor local and it does not install the international
+   scheduler callbacks. The slot list now indexes save->summary[i] and sets
+   y = i * 16: the counter stays ascending in r4 with the native caller-save
+   stores and unmerged message calls, and marker sits above zero as native.
+   Remaining: native reduces y to its own stack giv (sp+8, the missing 4 of
+   the 64-byte frame versus 68), so locals shift by 4 and the loop/redraw
+   registers differ (redraw sp+24, kind sp+28, &marker sp+12, counts fp).
    Trials: the shared MenuCursor union emitted the same 0x5c8-byte body.
-   Thumb scaffold diff: 663 native instructions, 638 draft, common 354,
-   differ 593. Computing y from i keeps the ascending index but emits a
-   64-byte frame and differ 607; indexed summary plus independent y returns
-   to a descending counter. A fixed r4 index gives differ 544 but loses the
-   native caller-save stores and is rejected. No new device retained. */
+   summary pointer plus y += 16 (old draft): descending counter, 593.
+   summary = &save->summary[i] plus y += 16: still descending, 588.
+   summary pointer plus y = i * 16: 489. i * 16 written in each call: the
+   counter descends again, 585. y = i << 4: 489. Declaring marker before
+   zero moves zero below marker as native, differ unchanged. A fixed r4
+   index gave 544 but loses the native caller-save stores; rejected. No
+   device retained. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -70,17 +77,16 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     struct UiWindow *status;
     struct UiWindow *djinn;
     struct UiWindow *counts;
-    struct SaveSummary *summary;
     struct RenderOutput *cursor;
     s32 redraw;
     struct UiRenderWork *render;
     u32 stamp;
     void *work;
+    struct ShopCursor marker;
     volatile u32 zero;
     s32 result;
     s32 i;
     s32 y;
-    struct ShopCursor marker;
     s32 kind;
     s32 tile;
 
@@ -142,20 +148,20 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     zero = 0;
     Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
     list = UiWindow_Create(1, 2, 28, 7, 2);
-    summary = save->summary;
-    y = 0;
-    for (i = 0; i < 3; i++, y += 16, summary++) {
-        if (summary->level == 0) {
+
+    for (i = 0; i < 3; i++) {
+        y = i * 16;
+        if (save->summary[i].level == 0) {
             UiText_DrawResource((s32)MsgSaveNoData, list, 10, y);
-        } else if (summary->frames < stamp) {
+        } else if (save->summary[i].frames < stamp) {
             UiText_DrawResource((s32)MsgSaveContinue, list, 10, y);
-        } else if (summary->play_time != *(u32 *)summary->unknown_38) {
+        } else if (save->summary[i].play_time != *(u32 *)save->summary[i].unknown_38) {
             UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, y);
-        } else if (mode == 5 && (s8)summary->send_flag == 0) {
+        } else if (mode == 5 && (s8)save->summary[i].send_flag == 0) {
             UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, y);
         } else {
-            UiText_DrawString(summary->name, list, SAVE_SLOT_NAME_X, y);
-            UiText_DrawResource(summary->area + (s32)MsgDebugEntryName, list, 72, y);
+            UiText_DrawString(save->summary[i].name, list, SAVE_SLOT_NAME_X, y);
+            UiText_DrawResource(save->summary[i].area + (s32)MsgDebugEntryName, list, 72, y);
             render->dirty = 1;
         }
     }

@@ -12,9 +12,6 @@ Func_0800230c:
 	negs	r0, r0
 .L_helper_return:
 	bx	lr
-	.global Func_0800231c
-	.thumb_func
-Func_0800231c:
 	.global Trig_Cos
 	.thumb_func
 Trig_Cos:

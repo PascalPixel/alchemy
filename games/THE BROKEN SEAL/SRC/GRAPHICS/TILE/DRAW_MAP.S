@@ -1,9 +1,7 @@
 .syntax unified
 	.arm
 	.global TileMap_DrawRows
-	.global Func_08009e7c
 TileMap_DrawRows:
-Func_08009e7c:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	r4, #10485760
 	orr	r4, r4, #56

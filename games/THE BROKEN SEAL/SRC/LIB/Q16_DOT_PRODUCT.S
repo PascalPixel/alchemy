@@ -1,8 +1,6 @@
 .syntax unified
 	.arm
-	.global Func_08007994
 	.global RelocatedQ16DotProduct
-Func_08007994:
 RelocatedQ16DotProduct:
 	smull	r12, r0, r1, r0
 	smlal	r12, r0, r2, r3

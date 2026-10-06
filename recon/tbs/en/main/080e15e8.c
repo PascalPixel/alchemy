@@ -111,7 +111,18 @@
      the loop top: 484; n = reach - 256; n -= i * 48: 691.
    - on 404: ramp smoke y as (frame - 151) * 20 - 12 (or + 44 - 56):
      378, adopted; the ramp loop bound written out: 845; h assigned
-     just before its loop: 428. */
+     just before its loop: 428.
+   - on 378: n in one expression, as (frame - 64) * 4 - i * 48,
+     (frame - i * 12) * 4 - 256, (frame - i * 12 - 64) * 4 or
+     frame * 2 * 2 - i * 48 - 256: 633; n = (frame - 64) * 4;
+     n -= i * 48: 378; n = (frame - i * 12) * 4; n -= 256: 670;
+     n = frame - i * 12 - 64; n *= 4: 660; reach = frame * 4 at the
+     loop top: 454 (outer giv as native, copy in r8), with n split:
+     663 to 681; no count local (n = frame * 2 in the ring block,
+     from the permuter on 601): 563; ring store as
+     sheet[offset + (rings + j)]: 378.
+   - permuter, 5 minutes on 601 over the whole function: 422, from
+     the same scale rewrite this draft carries; nothing else held. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

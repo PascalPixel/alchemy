@@ -1,6 +1,21 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 924, common 537, differ 796.
- * Remaining: native 372-byte frame versus 380, spill/register allocation,
+ * Native 946 instructions, draft 916, common 548, differ 766; frame 372
+ * as native's.
+ * Session 2: the draw loop written as a rotated goto loop (no loop notes)
+ * gives native's 372-byte frame: loop.c no longer hoists the sprites copy
+ * (insn 935, life 13, 17 * 13 >= 123 insns) nor reduces the tile-store giv
+ * index * 12 + 8, so the base is reloaded from its slot twice and the offset
+ * recomputed each pass, as native does. With that frame, scalars declared
+ * in native slot order (count, window, render, drawn_row, cursor_handle,
+ * description, counts, mask, preferred, cursor_position, summon) put every
+ * user spill slot at native's offset: 796 -> 766. Trials from 796: y set
+ * beside the tile store 796 unchanged; unrotated goto draw loop 803, frame
+ * 368; rotated goto loop alone 880, frame 372.
+ * Remaining: index takes r7 in the init and handle loops where native gives
+ * it r4 with caller-saves at sp+4; row r9 and drawn_page r10 are swapped
+ * against native; GCSE address slots (sprites 8 vs native 28, ordered 12 vs
+ * 32, count - 1 36 vs 20) are numbered in a different order.
+ * Earlier remaining: spill/register allocation,
  * sprite setup/load order, and consequent branches and literal-pool placement.
  * The scan of available and the compaction into ordered now match apart from
  * slot offsets and one reload through ip for the first *have load.
@@ -99,17 +114,21 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     s32 handles[4];
     u8 visible[4];
     s32 glyph;
+    s32 count;
+    struct UiWindow *window;
     struct UiRenderWork *render;
-    struct UiWindow *description, *counts, *window;
-    struct MenuCell *nav;
+    s32 drawn_row, drawn_page, row, page;
+    s32 cursor_handle;
+    struct UiWindow *description, *counts;
+    s32 mask, preferred;
+    struct MenuPoint cursor_position;
     const struct SummonDefinition *summon;
+    struct MenuCell *nav;
     struct MenuSprite *sprite;
     const u8 *required, *supply;
     s32 *handle;
-    s32 drawn_row, drawn_page, row, page, preferred;
-    s32 cursor_handle, count, last, used, mask, element;
+    s32 last, used, element;
     s32 id, tile, affordable;
-    struct MenuPoint cursor_position;
     s32 pressed, repeated, result;
     s32 index;
 
@@ -217,7 +236,8 @@ loop:
                     s32 element, col, y;
 
                     index = 0;
-                    while (index <= 3 && (id = ordered[page + index]) != 32) {
+                    if ((id = ordered[page + index]) != 32) {
+                    next:
                         summon = SummonDefinition_Get(id);
                         required = summon->djinn_required;
                         supply = standby;
@@ -251,6 +271,8 @@ loop:
                         }
                         UiWork_SetParamNibble(15);
                         visible[index++] = 1;
+                        if (index <= 3 && (id = ordered[page + index]) != 32)
+                            goto next;
                     }
                     while (index <= 3)
                         visible[index++] = 0;

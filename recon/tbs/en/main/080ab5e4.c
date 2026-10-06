@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 1975, differ 261.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2105, common 2008, differ 194.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -47,9 +47,13 @@
    and the set-all pointer giv (43 refs, 73 insns) both scored 29452 in
    global.c's allocno_compare, so lists, the lower allocno, took sl; at 261
    lists is in r9 and the giv and refresh in sl, as the native has them.
-   Remaining (261, one instruction over): reload choices in the opening
-   loops (the native reloads mode into r7 and reuses it as the 0 for i),
-   and scattered lo-register swaps.
+   The status pointer is assigned after sel = -1, just before the clear
+   loop: reload then takes r1 for the -1 and r2 for the buffer address, as
+   the native does, and the opening and its count loops match (261 -> 194,
+   2105 instructions). As `for (status = buf, i = 7; ...)` it is the same;
+   `s32 sel = -1` at its declaration 269, declared beside status 430-525.
+   Remaining (194): the balance loop's column pointer, the select handlers'
+   flag slot and djinn field registers, the cursor-move constants.
    The native keeps ok in i's stack slot (sp+68) in both select handlers,
    as when reload spills two pseudos from one hard register; the draft
    gives ok r8. Reusing i as the A handler's flag gives 249, in both
@@ -139,9 +143,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     u32 repeat;
     struct UiWindow *work;
     s32 step;
-    s8 *status = buf;
+    s8 *status;
 
     sel = -1;
+    status = buf;
     for (i = 7; i >= 0; i--)
         status[i] = 0;
     if (mode == 0) {

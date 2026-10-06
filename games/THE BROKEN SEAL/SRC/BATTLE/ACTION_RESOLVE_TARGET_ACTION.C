@@ -97,6 +97,44 @@
 
 s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 {
+#if GAME_TLA
+    struct BattleAction *action;
+    s32 action_id;
+    struct BattleUnit *actor;
+    s32 actor_id;
+    s32 range;
+    s32 bonus;
+    struct BattleSession *work;
+    s32 offset;
+    s32 half;
+    s32 adjust;
+    s32 dealt;
+    s32 crush;
+    s32 hit;
+    s32 modifier;
+    s32 skip;
+    s32 nibble;
+    s32 affinity;
+    struct BattleUnit *copy;
+    s32 power;
+    s16 hp0;
+    s32 kind;
+    s32 scale;
+    s32 pass;
+    s16 *cmd;
+    u8 target_id;
+    s8 *rm;
+    struct BattleUnit *target;
+    s32 n;
+    s32 value;
+    s32 dmg;
+    s8 *am;
+    s32 guard;
+    s16 saved[8];
+    s32 count;
+    s32 tmp;
+    s32 size;
+#else
     s32 offset;
     struct BattleAction *action;
     struct BattleUnit *actor;
@@ -133,6 +171,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 count;
     s32 tmp;
     s32 size;
+#endif
     bonus = 0;
 #if GAME_TLA
     work = Ram_HeapSlots->battle_work;
@@ -523,12 +562,25 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             }
 
+#if GAME_TLA
+            if (cur <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
+                cur = 1;
+            if (cur <= 0) {
+                cur = 0;
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                if (target->enemy_id != 369 && target->enemy_id != 373) {
+                    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                    TEXT_SIDE(MsgGoesDown, MsgFelled);
+                }
+            } else
+#else
             if (cur <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(MsgGoesDown, MsgFelled);
             } else
+#endif
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - cur;
             target->hp = cur;
@@ -858,12 +910,25 @@ after_power:
                 cur -= dmg;
             }
 
+#if GAME_TLA
+            if (cur <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
+                cur = 1;
+            if (cur <= 0) {
+                cur = 0;
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                if (target->enemy_id != 369 && target->enemy_id != 373) {
+                    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                    TEXT_SIDE(MsgGoesDown, MsgFelled);
+                }
+            } else
+#else
             if (cur <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE(MsgGoesDown, MsgFelled);
             } else
+#endif
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - cur;
             target->hp = cur;
@@ -910,7 +975,15 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 MES_PUSH(MsgCureStun);
             }
+#if GAME_TLA
+            if (target->sleep != 0) {
+                target->sleep = 0;
+                MES_PUSH(MsgWakes);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            }
+#else
             target->sleep = 0;
+#endif
             if (target->psy_seal != 0) {
                 target->psy_seal = 0;
                 MES_PUSH(MsgCureSeal);
@@ -946,7 +1019,16 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 MES_PUSH(MsgCureStun);
             }
+#if GAME_TLA
+            if (target->sleep != 0) {
+                target->sleep = 0;
+                BattleEv_Push(BATTLE_EVENT_RESET, 0);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                MES_PUSH(MsgWakes);
+            }
+#else
             target->sleep = 0;
+#endif
             if (target->psy_seal != 0) {
                 target->psy_seal = 0;
                 BattleEv_Push(BATTLE_EVENT_RESET, 0);
@@ -979,13 +1061,29 @@ after_power:
             stat_ptr = (u16 *)&target->hp;
             old = *stat_ptr--;
             heal = *(s16 *)(stat_ptr + 1);
-            stat_ptr--;
-            maxu = *stat_ptr--;
-            maxv = *(s16 *)(stat_ptr + 1);
-            if (action->effect == EFX_HEAL_60)
-                heal += maxv * 60 / 100;
-            else
-                heal += maxv * 30 / 100;
+#if GAME_TLA
+            if (action->effect == 76) {
+                maxv = *(s16 *)&target->max_hp;
+                maxu = *(u16 *)&target->max_hp;
+                heal += maxv * 2 / 5;
+            } else if (action->effect == 71) {
+                maxv = *(s16 *)&target->max_hp;
+                maxu = *(u16 *)&target->max_hp;
+                heal += maxv * 7 / 10;
+            } else if (action->effect == 70) {
+                maxu = *(u16 *)&target->max_hp;
+                heal += (s16)maxu / 2;
+            } else
+#endif
+            {
+                stat_ptr--;
+                maxu = *stat_ptr--;
+                maxv = *(s16 *)(stat_ptr + 1);
+                if (action->effect == EFX_HEAL_60)
+                    heal += maxv * 60 / 100;
+                else
+                    heal += maxv * 30 / 100;
+            }
             if (heal > (s16)maxu)
                 heal = (s16)maxu;
             tmp = heal - (s16)old;
@@ -1011,6 +1109,33 @@ after_power:
             s32 old;
             s32 maxv;
             s32 heal;
+#if GAME_TLA
+            s32 maxu;
+            s32 effect;
+
+            effect = action->effect;
+            heal = target->pp;
+            old = *(u16 *)&target->pp;
+            if (effect == 77) {
+                maxv = *(s16 *)&target->max_pp;
+                maxu = *(u16 *)&target->max_pp;
+                heal += (s16)(maxv / 10);
+            } else if (effect == 78) {
+                maxv = target->max_pp;
+                maxu = *(u16 *)&target->max_pp;
+                heal += maxv * 3 / 10;
+            } else {
+                maxv = target->max_pp;
+                maxu = *(u16 *)&target->max_pp;
+                heal += maxv * 7 / 100;
+            }
+            if (heal > (s16)maxu)
+                heal = (s16)maxu;
+            tmp = heal - (s16)old;
+            if (tmp == 0 && nibble != BATTLE_DAMAGE_PP_HEAL)
+                break;
+            if (heal == (s16)maxu)
+#else
 
             heal = target->pp;
             maxv = target->max_pp;
@@ -1022,6 +1147,7 @@ after_power:
             if (tmp == 0 && nibble != BATTLE_DAMAGE_PP_HEAL)
                 break;
             if (heal == maxv)
+#endif
                 MES_PUSH(MsgPpFull);
             else {
                 BattleEv_Push(BATTLE_EVENT_VALUE, tmp);

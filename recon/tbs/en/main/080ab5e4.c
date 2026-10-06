@@ -1,8 +1,10 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2108, common 1359, differ 1495.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2108, common 1360, differ 1493.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
    are unsigned bytes: the native tests them with ldrb, indexed by i (1495).
+   The set-all help tests setAll == 0 first, as the native's pool order and
+   fall-through show (1493).
    Native frame 108, draft 104. Declaring the status array before the balance
    array puts them in native relative order, with the same score. Unsigned
    redraw and block-local refresh are unchanged; initializing redraw after
@@ -183,10 +185,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 FourObjectMotion_SetSlotPosition(mode, 0, 200, 0);
             } else if (mode == 0) {
                 if (groupMode) {
-                    if (setAll != 0) {
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnAllStandby, state->help_window, 0, 0);
-                    } else {
+                    if (setAll == 0) {
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnSetAll, state->help_window, 0, 0);
+                    } else {
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnAllStandby, state->help_window, 0, 0);
                     }
                     if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
                         if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))

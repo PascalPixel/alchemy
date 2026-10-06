@@ -1086,7 +1086,6 @@
     "*/recon/tla/es/rom.o"(.rom.0010bb47)
     "*/recon/tla/es/rom.o"(.rom.0010bb54)
     "*/recon/tla/es/rom.o"(.rom.0010bb6c)
-    "*/recon/tla/es/rom.o"(.rom.0010c000)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_41.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_42.o"(.text .rodata .data .padding)
     "*/recon/tla/es/rom.o"(.rom.0010c0a8)

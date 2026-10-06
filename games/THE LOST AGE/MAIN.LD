@@ -1075,7 +1075,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00105a00)
     "*/recon/tla/ja/rom.o"(.rom.00105a18)
     "*/recon/tla/ja/rom.o"(.rom.00105a30)
-    "*/recon/tla/ja/rom.o"(.rom.00108000)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_41.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_42.o"(.text .rodata .data .padding)
     "*/recon/tla/ja/rom.o"(.rom.001080a8)

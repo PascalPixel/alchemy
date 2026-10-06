@@ -93,7 +93,36 @@
    The surviving insn must compute y from i itself. Next: a
    non-replaceable y whose giv gains benefit (a second i * 16 that gcse
    cannot merge) with the summary-pointer form, where pass 1 can
-   eliminate i and so charges no copy cost. */
+   eliminate i and so charges no copy cost.
+   Session 2026-10-06 21:55: the native slot loop read whole. sp+36 is
+   save->summary stepped by 64 (name passed as sp+36 + 16); r6 is
+   &summary->level stepped by 64 (area +2, play_time +4, send_flag +21,
+   frames +26, unknown_38 +28); y at sp+8 steps by 16 and starts from
+   i's zero register; i counts up in r4 (cmp r4, #2; ble), saved at sp+4
+   around each call. English keeps the same pointer pair (sp+20, r5) and
+   y in r11 but counts r6 down and cross-jumps the four message calls.
+   i is never eliminable here (so a non-replaceable user y always pays
+   copy_cost): eliminating the compare needs a giv of i whose add is a
+   bare pointer register (loop.c 8530). check_dbra_loop runs before
+   reduction; only DEST_REG givs count in giv_count, but any other
+   mention of i also blocks reversal here (the loop has calls).
+   Probes: a label between i = 0 and the loop (if (mode == 0) zero = 0;
+   then for (; i < 3; i++)): loop_iterations fails, the loop still
+   reverses (non-vanilla), 589. y = 0 before the loop and y = (i + 1) *
+   16 at the body end: y is not replaceable (used after the increment
+   around the loop), benefit 4 less copy 4 and add 2, not reduced, 527.
+   y = i * 16 only in the name branch, i * 16 in the four message calls,
+   y = 0 before the loop: the four combine into y (benefit 10), reduced
+   in pass 1, but check_final_value makes y replaceable again (final
+   value known), its insn dies between passes and pass 2 reverses i,
+   576. y = 0 and for (...; i++, y = i * 16) with this i-indexed body:
+   y is set by a copy of an i << 4 temporary, check_final_value makes
+   it replaceable, reduced in pass 1, reversed in pass 2, 583.
+   So y's giv insn must survive pass 1 as non-replaceable: y
+   mentioned between i++ and its set in loop order, or an uncomputable
+   final value (an exit, or an unknown count with y live after the
+   loop); and its benefit after copy 4 and add 2 must stay positive,
+   which takes at least three other i * 16 givs combined into it. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

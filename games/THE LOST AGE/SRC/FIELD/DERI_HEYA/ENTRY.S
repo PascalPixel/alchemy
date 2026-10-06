@@ -4,7 +4,7 @@
 	.balign 4
 	overlay_veneer Func_02000a50
 	overlay_veneer Scene_GetEntrances
-	overlay_veneer Func_02000044
+	overlay_veneer Scene_GetExits
 	overlay_veneer Func_02000064
 	overlay_veneer Func_02000218
 	overlay_veneer Scene_GetRegions

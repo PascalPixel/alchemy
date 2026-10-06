@@ -64,7 +64,14 @@
  * break, or visible[index] = 1; index++, both 805 (same code).
  * 805 -> 774: the sprite push loop is indexed (visible[index], &sprites[index]),
  * so index counts up as native (still in r7, native r4); pointer walks let
- * loop.c reverse it to 3..0.
+ * loop.c reverse it to 3..0. From 774: the handle loop indexed
+ * (sprites[index].oam.f.tile, with or without a slot local) 861, against
+ * native's base + offset giv there; the sprite setup loop indexed and without
+ * its y local compiles the same (774) and is kept.
+ * Next: index (r7) still outranks id (r4) in greg; native's draw loop keeps
+ * summon spilled (slot 36), y in r8 sharing index << 1 with index * 12, and
+ * no index * 12 + 8 giv (the draft's sp 8 giv and sprites copy are the two
+ * extra frame slots).
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -123,13 +130,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     preferred = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     window = UiWindow_Create(13, 11, 17, 9, 6);
     for (index = 0; index < 4; index++) {
-        s32 y = index * 2;
-
-        sprite = &sprites[index];
         sprites[index].oam.word.attr01 = MENU_SPRITE_SIZE_16;
         sprites[index].oam.word.attr23 = 0;
-        sprite->oam.f.x = window->x * 8 + 8;
-        sprite->oam.f.y = (y + window->y) * 8 + 4;
+        sprites[index].oam.f.x = window->x * 8 + 8;
+        sprites[index].oam.f.y = (index * 2 + window->y) * 8 + 4;
     }
     sprite = sprites;
     for (index = 0; index < 4; index++) {

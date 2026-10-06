@@ -26,6 +26,10 @@
  *     native's sub r3, r1, #32 shape; byte offset idx * 26 for the narrow glyph too 169;
  *     a second row local in the pass loop 164 / 369 (no agbcc_arm change); code = ch - 222 once
  *     at the top, also in the font test, 174 / 361
+ * alchemy permute --camelot-arm (2026-10-06, 4 minutes, seed 1): candidates at differ 118, 108
+ *   and 98 (weighted 1790 from 2550), the best after 14 rewrites: statement reorders, loop
+ *   forms, pointer indexing, an assignment moved into a condition and 3 temporaries shared by
+ *   two statements each. Not yet taken: the shared temporaries need natural forms first.
  * Remaining: win is spilled and reloaded for its width (native reads r0 before the spill, idx
  * takes r0 here and ip in native); the narrow glyph's width load is scheduled before rows, so
  * the two arms do not share their last ldrh as native's do; native recomputes ch - 32 for the

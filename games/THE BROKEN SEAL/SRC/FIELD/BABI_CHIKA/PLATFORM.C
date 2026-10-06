@@ -86,7 +86,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
     } else {
         tbl = Data_0200ba74;
     }
-    Func_0808b868(tbl);
+    FieldScene_PrepareActors((struct SceneRegionEntry *)tbl);
     return tbl;
 }
 

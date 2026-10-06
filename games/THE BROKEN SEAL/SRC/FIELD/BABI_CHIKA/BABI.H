@@ -106,7 +106,6 @@ extern u8 Data_0200bef4[];
 void Object_SetPosition();
 s32 Object_CheckMovementCollision();
 s32 Vector_AddPolarOffset();
-void Func_0808b868(u8 *);
 s32 Battle_GetWorkObject1e0();
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 struct Record_02000ec8;

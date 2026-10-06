@@ -275,7 +275,7 @@ Func_020020a4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8958
 	.else
-	overlay_veneer Func_080c8960
+	overlay_veneer SceneEvent_FindActiveRecordFar
 	.endif
 	.endif
 	.global Func_020020ac

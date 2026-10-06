@@ -97,7 +97,7 @@ Func_02003150:
 	.global Func_02003158
 	.thumb_func
 Func_02003158:
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -106,16 +106,16 @@ Map_GetTerrainHeight:
 	.thumb_func
 Func_02003168:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201a8
+	overlay_veneer DisplayBlend_DisableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201a8
+	overlay_veneer DisplayBlend_DisableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201a8
+	overlay_veneer DisplayBlend_DisableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201a8
+	overlay_veneer DisplayBlend_DisableRunScriptFar
 	.else
 	overlay_veneer Func_080201d8
 	.endif
@@ -126,16 +126,16 @@ Func_02003168:
 	.thumb_func
 Func_02003170:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif

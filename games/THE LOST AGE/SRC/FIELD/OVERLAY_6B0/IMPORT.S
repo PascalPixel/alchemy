@@ -133,7 +133,7 @@ Func_02003330:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Map_DisableBlendScriptFar
 	.else
-	overlay_veneer Func_080201a8
+	overlay_veneer DisplayBlend_DisableRunScriptFar
 	.endif
 	.endif
 	.endif
@@ -153,7 +153,7 @@ Func_02003338:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020180
 	.else
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.endif
 	.endif
 	.endif
@@ -202,16 +202,16 @@ Func_02003348:
 	.thumb_func
 Func_02003350:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b0
+	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.else
 	overlay_veneer Map_CopyCellsRectFar
 	.endif

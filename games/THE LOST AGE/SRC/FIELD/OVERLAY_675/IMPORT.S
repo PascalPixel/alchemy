@@ -50,16 +50,16 @@ Func_0200122c:
 	.thumb_func
 Func_02001234:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201b8
+	overlay_veneer DisplayBlend_StartScriptFar
 	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
@@ -278,10 +278,10 @@ Func_02001334:
 	.thumb_func
 Func_0200133c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8960
+	overlay_veneer SceneEvent_FindActiveRecordFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8960
+	overlay_veneer SceneEvent_FindActiveRecordFar
 	.else
 	overlay_veneer Func_080c8968
 	.endif

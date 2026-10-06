@@ -1,7 +1,20 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1411, common 816, differ 1171.
+ * Native 1392 instructions, draft 1407, common 856, differ 1087.
  * Remaining: native 352-byte frame versus 348, redraw/copy register choices,
  * spill slots, sprite load order, and consequent branches/literal pools.
+ * Native keeps redraw in r10 and the cursor pixel offsets in stack slots
+ * (sp+56, sp+60) whose zero initialization survives; the icon loop's x is
+ * its own register there. The local declaration order below was found by
+ * searching orders against differ and is not yet a readable order.
+ *
+ * Trials 2026-10-06: searched declaration order alone 1171 -> 1127. The
+ * closing busy flag addressed from the battle work slot, as RESOLVE.C does,
+ * reuses the native literal (gBattleWork, then +192): 1162 alone, 1118 with
+ * the searched order. Cursor tables indexed by cur.pos[cur.mode] (native
+ * loads by the mode register): 1113. Equipment and condition cursors read
+ * straight from their tables (native loads entry by [table, index]): 1087.
+ * A separate icon-loop x: 1354 (1330 after search). A separate index for
+ * the condition code: 1179. Declarations in native spill-slot order: 1250.
  *
  * Current compiler ablation: three old register bindings gave differ 1280.
  * Removing only the redraw binding gave 1331; removing both copier bindings
@@ -24,6 +37,7 @@
 #include "MOTION_OBJECT.H"
 #include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"
+#include "HEAP_STATE.H"
 
 struct StatusCursor {
     s8 pos[5];
@@ -64,37 +78,36 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     struct MenuSprite objIcon[11];
     struct MenuSprite objName;
     struct StatusCursor cur;
-    struct UiWindow *winMain;
-    struct UiWindow *winDesc;
-    struct BattleUnit *object;
-    struct UiRenderWork *base;
-    struct MenuCell *screen;
-    const struct OwnerStatusStatCursor *stat;
-    const struct OwnerStatusCursor *cell;
     s32 *q;
-    u16 *text;
-    s32 handleFrame;
+    struct UiWindow *winMain;
+    s32 defDelta;
+    s32 i;
+    s32 rowPixels;
+    struct UiWindow *winDesc;
+    struct UiRenderWork *base;
     s32 handleCursor;
-    s32 extended;
+    s8 *out;
+    u16 *text;
+    s32 code;
+    s32 idx;
+    s32 handleFrame;
+    s32 atkDelta;
     s32 redraw;
+    struct BattleUnit *object;
+    struct BattleUnit *saved;
+    const struct OwnerStatusStatCursor *stat;
+    s32 extended;
+    struct MenuSprite *p;
+    s32 agiDelta;
     s32 keys;
     s32 cnt;
-    s32 idx;
-    s32 iconIdx;
-    s32 colPixels;
-    s32 rowPixels;
-    s32 i;
     s32 n;
-    s32 code;
-    s32 atkDelta;
-    s32 defDelta;
-    s32 agiDelta;
-    s8 *out;
-    struct BattleUnit *saved;
-    struct MenuSprite *p;
+    s32 iconIdx;
     struct MenuSprite *icons;
+    struct MenuCell *screen;
     s32 *handles;
     s8 *codes;
+    s32 colPixels;
 
     base = (struct UiRenderWork *)gWindowWork[0];
     idx = -1;
@@ -273,7 +286,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         }
 
         if (cur.mode == 0) {
-            i = cur.pos[0];
+            i = cur.pos[cur.mode];
             if (extended == 0) {
                 i += 9;
             }
@@ -285,15 +298,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 winMain->x + stat->highlight_column + 1, winMain->y + stat->highlight_row + 1, stat->highlight_width, 1,
                 14);
         } else if (cur.mode == 1) {
-            cell = &OwnerStatus_EquipmentCursors[cur.pos[1]];
-            cur.entry = cell->entry;
-            cur.col = cell->column;
-            cur.row = cell->row;
+            cur.entry = OwnerStatus_EquipmentCursors[cur.pos[cur.mode]].entry;
+            cur.col = OwnerStatus_EquipmentCursors[cur.pos[cur.mode]].column;
+            cur.row = OwnerStatus_EquipmentCursors[cur.pos[cur.mode]].row;
         } else if (cur.mode == 2) {
-            cell = &OwnerStatus_ConditionCursors[cur.pos[2]];
-            cur.entry = cell->entry;
-            cur.col = cell->column;
-            cur.row = cell->row;
+            cur.entry = OwnerStatus_ConditionCursors[cur.pos[cur.mode]].entry;
+            cur.col = OwnerStatus_ConditionCursors[cur.pos[cur.mode]].column;
+            cur.row = OwnerStatus_ConditionCursors[cur.pos[cur.mode]].row;
         }
 
         if (cur.lastEntry != cur.entry) {
@@ -677,7 +688,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     UiWork_Finalize(winMain, 1);
     UiWork_Finalize(winDesc, 1);
     UiWindow_DrawPartyStatusContents(gBattleWork->party_status_mode);
-    ((struct MenuCell *)gWindowWork[42])->busy = 0;
+    ((struct MenuCell **)&gBattleWork)[HEAP_SLOT_WINDOW + 42 - HEAP_SLOT_BATTLE]->busy = 0;
     WaitFrames(1);
     return 0;
 }

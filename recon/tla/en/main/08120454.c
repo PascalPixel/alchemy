@@ -23,7 +23,8 @@
  * new HP held in dmg (605 both). No change: target_id s32 instead of u8,
  * case 401 last, apwr's place among the declarations, BattleEv_Push
  * without a prototype, heal += dmg instead of heal += apwr (kept: one line
- * shared with ☀️).
+ * shared with ☀️), plain max_hp reads and value casts in place of the
+ * heal and PP restore's pointer casts (kept: the same instructions).
  * The enemy-slot scan after a summon now matches. Still to bring over: the
  * rate switch's 409 test (the listing derives it from
  * 411 in r3; ours loads it fresh in r2), the summon message tail, the heal's

@@ -1095,15 +1095,15 @@ after_power:
             heal = *(s16 *)(stat_ptr + 1);
 #if GAME_TLA
             if (action->effect == 76) {
-                maxv = *(s16 *)&target->max_hp;
-                maxu = *(u16 *)&target->max_hp;
+                maxv = target->max_hp;
+                maxu = (u16)target->max_hp;
                 heal += maxv * 2 / 5;
             } else if (action->effect == 71) {
-                maxv = *(s16 *)&target->max_hp;
-                maxu = *(u16 *)&target->max_hp;
+                maxv = target->max_hp;
+                maxu = (u16)target->max_hp;
                 heal += maxv * 7 / 10;
             } else if (action->effect == 70) {
-                maxu = *(u16 *)&target->max_hp;
+                maxu = (u16)target->max_hp;
                 heal += (s16)maxu / 2;
             } else
 #endif
@@ -1145,17 +1145,17 @@ after_power:
             s32 maxu;
 
             heal = target->pp;
-            old = *(u16 *)&target->pp;
+            old = (u16)target->pp;
             if (action->effect == 77) {
                 heal += (s16)(target->max_pp / 10);
-                maxu = *(u16 *)&target->max_pp;
+                maxu = (u16)target->max_pp;
             } else if (action->effect == 78) {
                 maxv = target->max_pp;
-                maxu = *(u16 *)&target->max_pp;
+                maxu = (u16)target->max_pp;
                 heal += maxv * 3 / 10;
             } else {
                 maxv = target->max_pp;
-                maxu = *(u16 *)&target->max_pp;
+                maxu = (u16)target->max_pp;
                 heal += maxv * 7 / 100;
             }
             if (heal > (s16)maxu)

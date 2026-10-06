@@ -1,18 +1,22 @@
+/* Battle_ResolveTargetAction, tla-en 0x08120454.
+ * alchemy diff: listing 3450 instructions, draft 3468, common 3056, differ 806.
+ * The Broken Seal's source (0x080bbb0c) compiled for this game with only its
+ * names resolved: draft 2549, common 1381, differ 3237. */
 #include "RUNTIME_MEM.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/TYPES.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_ACTOR.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_CALC.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_EFX.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_EVENT.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_MSG.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_RUNTIME.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_SUMMON.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_TYPES.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_WORK.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/PARTY_STATE.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/OWNER_STATE.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/RAM_BUFFER.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/RUNTIME_MEM.H"
+#include "TYPES.H"
+#include "BATTLE_ACTOR.H"
+#include "BATTLE_CALC.H"
+#include "BATTLE_EFX.H"
+#include "BATTLE_EVENT.H"
+#include "BATTLE_MSG.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_SUMMON.H"
+#include "BATTLE_TYPES.H"
+#include "BATTLE_WORK.H"
+#include "PARTY_STATE.H"
+#include "OWNER_STATE.H"
+#include "RAM_BUFFER.H"
+#include "RUNTIME_MEM.H"
 
 s32 BattleUnit_KeepsOneHp(s32 unit);
 void Battle_ApplyActionExtras(s32 unit, s32 a, s32 b);

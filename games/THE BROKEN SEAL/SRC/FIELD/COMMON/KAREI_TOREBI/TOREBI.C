@@ -16,21 +16,6 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 
-
-
-
-
-
-
-
-
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
 struct SpriteBytes {
     u8 unknown_00[9];
     u8 priority;
@@ -495,10 +480,10 @@ void FieldScene_ConfigureFlaggedActors(void)
     if (GameFlag_IsSet(0x950)) {
         Engine_ActorSetChildValue(12, 2);
     }
-    if (((union GameStateRows *)&gGameState)->halves[225][0] == 3) {
+    if (gGameState.entrance == 3) {
         Engine_GameFlagClear(0x12f);
     }
-    if (((union GameStateRows *)&gGameState)->halves[225][0] == 1) {
+    if (gGameState.entrance == 1) {
         Engine_GameFlagClear(0x8aa);
     }
     if (Engine_GameFlagIsSet(0x8aa)) {

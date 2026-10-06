@@ -16,6 +16,11 @@
  * both FAKEMATCH-tagged: differ 1977 -> 1966, frame 716 -> 756. All locals
  * now sit at native offsets minus 12; the 12 bytes are most likely three
  * more spill slots below the four pointer spills (register allocation).
+ * Native's affine loop keeps four offset givs (204, 212, 220, 228, +32 each)
+ * and reloads sprites per access; the draft forms one sprites+204 pointer.
+ * Trial: tile loop as [i++] = j + row * 30: differ 1966, unchanged.
+ * Trial: sprites as a volatile pointer: differ 2099, worse.
+ * Trial: affine loop through x = i * 4 and obj[x + k]: differ 1966, unchanged.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

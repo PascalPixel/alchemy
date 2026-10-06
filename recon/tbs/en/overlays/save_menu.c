@@ -1,3 +1,5 @@
+/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 873 of 920 (draft 935, common 491) with --symbol Func_020003cc; resource_370_c_020003cc.c differs 1045 (draft 937).
+ * Stubborn (2026-10-06): the draft frame is 4 bytes larger (first spill at [sp, #24], native [sp, #20]) and its literal pool sits 112 bytes later; register allocation diverges from the first mode test on (native keeps the 0x1c2 base in r3 and reloads per store, the draft hoists it into r2/r7 and CSEs the store address). Not first-try; parked without trials. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"

@@ -23,6 +23,7 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 #if GAME_TLA
+#include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
 #endif
 
@@ -542,7 +543,11 @@ after_power:
                             dmg = 1;
                     }
                 }
+#if GAME_TLA
+                if (GameFlag_Test(366) != 0 && plan->command == 5
+#else
                 if (GameFlag_TestFar(366) != 0 && *cmd == 5
+#endif
                     && cur <= dmg) {
                     dmg = cur - 1;
                 }
@@ -810,7 +815,13 @@ after_power:
                 }
                 dmg += BattleRandom16Far() & 3;
                 APPLY_GUARD();
+#if GAME_TLA
+                if ((gPartyState.battle_rule_24b == 6
+                        || (GameFlag_Test(366) != 0 && plan->command == 6))
+                    && cur > dmg) {
+#else
                 if (GameFlag_TestFar(366) != 0 && *cmd == 6 && cur > dmg) {
+#endif
                     dmg = cur;
                 }
                 pass++;
@@ -1641,11 +1652,10 @@ done:
         }
     }
     Sys_Free(copy);
+    Owner_RecalculateStatsFar(target_id);
 #if GAME_TLA
-    BattleUnit_Recalculate(target_id);
     UiWindow_DrawPartyStatusContentsFar(Ram_HeapSlots->battle_work->party_status_mode);
 #else
-    Owner_RecalculateStatsFar(target_id);
     UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
 #endif
     if (target->hp != 0)

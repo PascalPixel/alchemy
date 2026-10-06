@@ -21,9 +21,6 @@
 
 #define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
 
-#define Tilemap_DecodeStagedBuffer ((void (*)(void))Tilemap_DecodeStagedBuffer)
-#define DisplayBlend_StartScript ((void (*)(void*))DisplayBlend_StartScript)
-
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
     /* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime. */
@@ -138,8 +135,7 @@ s32 Map_LoadLayeredScene(s32 index)
     Iwram_ClearWords(work, sizeof(struct MapScrollWork));
     header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
     src = (u8 *)header + header->tiles;
-    Resource_DecodeType01(src, Ram_MapCellBuffer + 1);
-    Tilemap_DecodeStagedBuffer();
+    Tilemap_DecodeStagedBuffer(Resource_DecodeType01(src, Ram_MapCellBuffer + 1));
     src = (u8 *)header + header->collision;
     Resource_DecodeType01(src, Ram_MapCollision);
     src = (u8 *)header + header->tilemap;
@@ -154,7 +150,7 @@ s32 Map_LoadLayeredScene(s32 index)
     src = (u8 *)header->blend;
     if (src != 0) {
         Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1e00);
-        DisplayBlend_StartScript(Ram_MapCollision + 0x1e00);
+        DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
     }
     work->script = (u8 *)header + header->script;
     work->min_x = header->origin[0] << 19;
@@ -219,7 +215,7 @@ s32 Map_LoadLayeredScene(s32 index)
     } else {
         buf = (u8 *)Runtime_BumpAllocate(0x4000);
         if (buf != NULL) {
-            backdrop = *(s16 *)0x05000000;
+            backdrop = *(s16 *)BG_PLTT;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
             *(s16 *)buf = backdrop;
             Iwram_CopyWords((void *)BG_PLTT, buf, 0x1c0);

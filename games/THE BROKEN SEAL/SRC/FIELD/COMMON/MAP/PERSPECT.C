@@ -9,6 +9,7 @@
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
 #include "MAPFRAME.H"
@@ -25,13 +26,6 @@
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 #include "TRANSFORM.H"
-
-#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
-
-extern char ResourceId_PerspectiveDataA;
-extern char ResourceId_DefaultMapCells;
-extern char ResourceId_DefaultMapAnimation;
-extern char ResourceId_DefaultMetatileAttributes;
 
 extern u32 gFrameCount;
 
@@ -59,7 +53,7 @@ struct WorldCell {
     u32 flag : 1;
 };
 
-#define BG_PALETTE ((s16 *)0x05000000)
+#define BG_PALETTE ((s16 *)BG_PLTT)
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
@@ -206,7 +200,7 @@ s32 Map_InitializePerspectiveScene(void)
     /* FAKEMATCH: Iwram_TransformVector's void call loads camera into r1 after the routine; the value-returning cast keeps r1 first. */
     ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))Iwram_TransformVector)(&vector, camera);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
+    Graphics_PrepareTransferInIwramWork(camera->eye, position);
     /* FAKEMATCH: loop note orders the transform call's r1, routine, r0 */
     do {
         size = (s32)&Transform_UpdateVerticesSize;
@@ -232,7 +226,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = *distance + 0x10000;
-    Iwram_TransformVector((s32 *)&vector, (s32 *)camera);
+    Iwram_TransformVector((s32 *)&vector, camera->eye);
     REG_MOSAIC = 0;
     /* FAKEMATCH: loop notes keep the display writes in source order */
     do {
@@ -246,8 +240,8 @@ s32 Map_InitializePerspectiveScene(void)
     gBgScroll[3].y = 0;
     work->window_top = 0;
     work->window_bottom = 159;
-    Scheduler_AddOrUpdateCallback((s32)WorldMap_UpdateView, 0xc85);
-    Scheduler_AddOrUpdateCallback((s32)MapAnimation_ApplyAffineFrame, 0x480);
+    Scheduler_AddOrUpdateCallback(WorldMap_UpdateView, 0xc85);
+    Scheduler_AddOrUpdateCallback(MapAnimation_ApplyAffineFrame, 0x480);
     for (i = 255; i >= 0; i--)
         work->tile_ids[i] = i;
 }

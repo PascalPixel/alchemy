@@ -1,4 +1,4 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1974, differ 1966.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1974, differ 1918.
  * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
  * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
  * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
@@ -21,6 +21,28 @@
  * Trial: tile loop as [i++] = j + row * 30: differ 1966, unchanged.
  * Trial: sprites as a volatile pointer: differ 2099, worse.
  * Trial: affine loop through x = i * 4 and obj[x + k]: differ 1966, unchanged.
+ * Session 2026-10-06 21h: one shared `die` pointer lives across the whole
+ * function, so global.c ranks it below the hoisted 127/31 constants; native
+ * gives each particle loop a fresh giv (r5, then 127 in r6, 31 in r7).
+ * Trial: init loop through work->particles[i]: 1966 -> 1939 (loop matches).
+ * Trial: bet loop (state 0, KEY_A) indexed too: 1944, worse; kept on die.
+ * Trial: state 0 marker loop indexed: 1939 -> 1931. Shadow loop: -> 1930.
+ * Trial: physics loop indexed: 2446, far worse; kept on die.
+ * Trial: tile loop as row * 30 + j, as < bounds, through tile = row * 30,
+ * as *(u16 *)(0x06003000 + i * 2), through pos: 1930..1932; as x/y: 1964;
+ * as byte offset i += 2: 1966. Pseudo order alone moves 30+ instructions.
+ * Trial: greedy declaration order (one line moved per round): render first,
+ * sprites and obj_palette last: 1930 -> 1918; no single move improves more.
+ * Trial: fill loop as ((u32 *)sprites)[50 + count * 2] and through a u32
+ * w[] member at offset 0: 1918, identical code. struct *volatile sprites: 2053.
+ * Open: native's sprites->obj[count] loops (fill, state 0 markers, affine)
+ * keep offset givs that include every constant (count * 8 + 200, + 204) and
+ * add sprites per access ([base, off], base reloaded from sp+108); the draft
+ * folds sprites into one pointer giv. loop.c folds any invariant register
+ * into a giv (simplify_giv_expr returns it as USE); combine_givs_p can then
+ * express an address giv as (plus offset_giv sprites) only when no constant
+ * is left outside the offset. Find the source form that puts the field
+ * offset inside the index; that likely also explains native's 3 extra spills.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -95,10 +117,8 @@ void LuckyDice_Run(void)
     s32 faces[2];
     s32 order[2];
     s32 matches[2];
-    u16 *obj_palette;
-    struct BattleEffectWork *work;
-    struct LuckyDiceSprites *sprites;
     struct BattleCamera *render;
+    struct BattleEffectWork *work;
     struct EffectStep *die;
     struct EffectStep *other;
     s32 state;
@@ -135,6 +155,8 @@ void LuckyDice_Run(void)
     s32 scale;
     s32 pairs;
     s16 value;
+    struct LuckyDiceSprites *sprites;
+    u16 *obj_palette;
 
     Runtime_AllocateHeapBlock(41, 0x60e);
     obj_palette = Runtime_AllocateHeapBlock(40, 0x200);
@@ -189,17 +211,15 @@ void LuckyDice_Run(void)
     kind = -1;
     winnings = 0;
     counter = 0;
-    die = work->particles;
     for (i = 0; i != 2; i++) {
-        die->x = ((Random16() & 127) - 64) << 16;
-        die->y = (Random16() & 31) << 16;
-        die->z = ((Random16() & 127) - 64) << 16;
-        die->velocity_x = ((Random16() & 127) - 64) << 14;
-        die->velocity_y = ((Random16() & 31) + 32) << 12;
-        die->velocity_z = ((Random16() & 127) - 64) << 14;
-        die->variant = 0;
+        work->particles[i].x = ((Random16() & 127) - 64) << 16;
+        work->particles[i].y = (Random16() & 31) << 16;
+        work->particles[i].z = ((Random16() & 127) - 64) << 16;
+        work->particles[i].velocity_x = ((Random16() & 127) - 64) << 14;
+        work->particles[i].velocity_y = ((Random16() & 31) + 32) << 12;
+        work->particles[i].velocity_z = ((Random16() & 127) - 64) << 14;
+        work->particles[i].variant = 0;
         spin[i] = 300;
-        die++;
     }
     results[0] = results[1] = results[2] = results[3] = 0;
     flash[0] = flash[1] = 0;
@@ -440,9 +460,8 @@ void LuckyDice_Run(void)
         }
 
         if (state == 0) {
-            die = work->particles;
             for (i = 0; i != 2; i++) {
-                Render_ProjectPoint(die, proj);
+                Render_ProjectPoint(&work->particles[i], proj);
                 n = depth[order[i]] / 2 + 128;
                 x = proj[0] - __divsi3(0x800, n);
                 y = proj[1] + __divsi3(0x300, n);
@@ -452,15 +471,13 @@ void LuckyDice_Run(void)
                 }
                 sprites->obj[count].attr2 = 0x958;
                 count++;
-                die++;
             }
         }
 
-        die = work->particles;
         for (i = 0; i != 2; i++) {
             point[1] = 0;
-            point[0] = die->x;
-            point[2] = die->z;
+            point[0] = work->particles[i].x;
+            point[2] = work->particles[i].z;
             Render_ProjectPoint(point, proj);
             if (proj[2] < 0x15e) {
                 proj[2] = 0x15e;
@@ -469,13 +486,12 @@ void LuckyDice_Run(void)
                 proj[2] = 0x28a;
             }
             depth[2 + i] = proj[2] - 0x15e;
-            depth[2 + i] += *((s16 *)&die->y + 1);
+            depth[2 + i] += *((s16 *)&work->particles[i].y + 1);
             if (proj[1] + 88 > -16) {
                 sprites->obj[count].attr01 = ((((proj[0] + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((proj[1] + 0x158) & 255) | 0x40002300;
                 sprites->obj[count].attr2 = 0x890;
                 count++;
             }
-            die++;
         }
 
         if (state == 1) {

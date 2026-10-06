@@ -11603,11 +11603,11 @@ msgctxt "message"
 msgid "02898"
 msgstr "No cambiarás de clase."
 
-msgctxt "message"
+msgctxt "MsgDjinnPsyHelp"
 msgid "02899"
 msgstr "{button_icon:4}:Psi. {argument_actor_name:1}"
 
-msgctxt "message"
+msgctxt "MsgDjinnStatusHelp"
 msgid "02900"
 msgstr "{button_icon:4}:Estado"
 

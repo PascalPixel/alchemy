@@ -13491,11 +13491,11 @@ msgctxt "message"
 msgid "03370"
 msgstr "クラスチェンジしません"
 
-msgctxt "message"
+msgctxt "MsgDjinnPsyHelp"
 msgid "03371"
 msgstr "R:{argument_actor_name:233}エナジー"
 
-msgctxt "message"
+msgctxt "MsgDjinnStatusHelp"
 msgid "03372"
 msgstr "R:ステータス"
 

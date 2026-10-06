@@ -1,5 +1,5 @@
 .syntax unified
-	.section .padding,"a",%progbits
+.text
 	.arm
 	adds	r7, r7, fp, asr #18
 	addmi	r7, r7, #64

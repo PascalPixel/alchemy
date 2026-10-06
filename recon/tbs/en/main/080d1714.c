@@ -1,5 +1,5 @@
-/* 080d1714: differ 992 of 1481 instructions (1471 generated, common
- * 980). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 909 of 1481 instructions (1466 generated, common
+ * 1019). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
@@ -34,6 +34,16 @@
  * - the burst loop reads particles[index + 60].velocity_x and _y by
  *   index, as the native's two runtime-relative givs of 28 per mark
  *   show (it keeps mark for x and y): 992, frame 356 as the native.
+ * - burst angle as step * 2340, no angle variable: 1130 (the burst
+ *   loop then allocates as the native: &work r8, &screen sl, step fp,
+ *   the angle giv spilled; but the frame drops to 352); with
+ *   center_x = (wave_x >> 17) + 32 before the threshold loop: 1137.
+ * - the distance loop's three divisions as / dist: the libcall keeps
+ *   each coordinate in a register across it, as the native does: 956;
+ *   the other __divsi3, __modsi3 and __umodsi3 calls as / and %: 956.
+ * - distance loop through point = &particles[index] each iteration,
+ *   one giv as the native's r6: 909. The same in the burst setup loop
+ *   and spark spawn loop: 909 (spawn kept for reading).
  * Allocation: index (158 refs over ~1490 insns) gets fp, not the
  * native's r9. In the threshold loop the native also reduces
  * frame - threshold to a giv (sp+20) and hoists (wave_x >> 17) + 32
@@ -91,9 +101,6 @@ void Scheduler_RemoveCallback(void (*callback)(void));
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 s32 Random16(void);
 s32 ArcTan2(s32 x, s32 z);
-s32 __divsi3(s32 numerator, s32 denominator);
-s32 __modsi3(s32 numerator, s32 denominator);
-s32 __umodsi3(s32 numerator, s32 denominator);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void Render_ResetTransformState(void);
@@ -297,7 +304,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 size = 48;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + __modsi3(frame / 4, 3) * 3072
+                (u8 *)runtime + frame / 4 % 3 * 3072
                     + (48 - size) * 48,
                 32,
                 112 - size,
@@ -311,7 +318,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 size = 64;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + __modsi3(frame / 4, 3) * 3072
+                (u8 *)runtime + frame / 4 % 3 * 3072
                     + (64 - size) * 48,
                 32,
                 64 - size,
@@ -320,7 +327,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         }
 
         if ((u32)(frame - 160) <= 239) {
-            src = (u8 *)runtime + __modsi3(frame / 4, 3) * 3072;
+            src = (u8 *)runtime + frame / 4 % 3 * 3072;
             draw_rectangle(draw_destination, src, 8, 0, 48, 64);
             draw_rectangle(draw_destination, src, 8, 64, 48, 64);
         }
@@ -406,7 +413,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 runtime->particles[index].y = speed * Trig_Cos(angle);
                 runtime->particles[index].variant = 0;
                 runtime->particles[index].z =
-                    (__umodsi3(Random16(), 200) - 100) << 16;
+                    ((u32)Random16() % 200 - 100) << 16;
                 index++;
             } while (index != 32);
 
@@ -457,14 +464,15 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 if (frame <= 329) {
                     index = 0;
                     do {
+                        point = &runtime->particles[index];
                         dist = Iwram_Sqrt(
-                            (runtime->particles[index].x >> 8) * (runtime->particles[index].x >> 8)
-                                + (runtime->particles[index].y >> 8)
-                                    * (runtime->particles[index].y >> 8)
-                                + (runtime->particles[index].z >> 8)
-                                    * (runtime->particles[index].z >> 8)) >> 9;
+                            (point->x >> 8) * (point->x >> 8)
+                                + (point->y >> 8)
+                                    * (point->y >> 8)
+                                + (point->z >> 8)
+                                    * (point->z >> 8)) >> 9;
                         if (dist != 0) {
-                            EffectPosition_ApplyBaseAndYOffset(&runtime->particles[index].x, &screen);
+                            EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
                             screen.x =
                                 (screen.x >> 17) + (wave_x >> 17) + 32;
                             screen.y = (screen.y >> 16)
@@ -474,7 +482,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 screen.depth = 170;
                             if (screen.depth > 350)
                                 screen.depth = 350;
-                            span = 6 - __divsi3(screen.depth - 170, 36);
+                            span = 6 - (screen.depth - 170) / 36;
                             draw_rectangle_alt(
                                 draw_destination,
                                 graphics + ParticleStreams_CellOffsets[span - 1],
@@ -482,12 +490,12 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 screen.y - span,
                                 span,
                                 span * 2);
-                            runtime->particles[index].x -=
-                                __divsi3(runtime->particles[index].x, dist);
-                            runtime->particles[index].y -=
-                                __divsi3(runtime->particles[index].y, dist);
-                            runtime->particles[index].z -=
-                                __divsi3(runtime->particles[index].z, dist);
+                            point->x -=
+                                point->x / dist;
+                            point->y -=
+                                point->y / dist;
+                            point->z -=
+                                point->z / dist;
                         } else {
                             alive++;
                         }
@@ -495,7 +503,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                     } while (index != 32);
 
                     if (alive > 0) {
-                        span = __divsi3(alive, 10) + 1;
+                        span = alive / 10 + 1;
                         draw_rectangle_alt(
                             draw_destination,
                             graphics + ParticleStreams_CellOffsets[span - 1],
@@ -513,16 +521,14 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         do {
                             speed = (Random16() & 127) + 16;
                             angle = Random16() & 0xffff;
-                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].velocity_x =
-                                (Trig_Sin(angle) * speed) >> 6;
-                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].velocity_y =
-                                -(Trig_Cos(angle) * speed) >> 6;
-                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].velocity_y =
-                                ((Random16() & 255) - 128) << 10;
-                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].x = 0;
-                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].y = 0;
-                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].z = 0;
-                            ((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index].variant = (Random16() & 15) + 64;
+                            spark = &((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index];
+                            spark->velocity_x = (Trig_Sin(angle) * speed) >> 6;
+                            spark->velocity_y = -(Trig_Cos(angle) * speed) >> 6;
+                            spark->velocity_y = ((Random16() & 255) - 128) << 10;
+                            spark->x = 0;
+                            spark->y = 0;
+                            spark->z = 0;
+                            spark->variant = (Random16() & 15) + 64;
                             index++;
                         } while (index != 96);
                     }
@@ -541,7 +547,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 if (screen.depth > 350)
                                     screen.depth = 350;
                                 span =
-                                    3 - __divsi3(screen.depth - 170, 90);
+                                    3 - (screen.depth - 170) / 90;
                                 draw_rectangle(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],
@@ -621,7 +627,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 if (screen.depth > 350)
                                     screen.depth = 350;
                                 span = 3
-                                    - __divsi3(screen.depth - 170, 90);
+                                    - (screen.depth - 170) / 90;
                                 draw_rectangle(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],

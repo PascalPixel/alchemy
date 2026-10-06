@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2107, common 2036, differ 140.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2107, common 2042, differ 128.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -79,6 +79,11 @@
    step 27, where the native sets r1 and r2 before r0. UiMenu_SlideCursor
    is void as declared (no change); UiWork_FinalizeFar as s32 gives 144,
    FourObjectMotion_ReplaceSlot as void 146: not kept.
+   The A handler's flag is i (140 -> 128): the native keeps it in i's
+   slot, sp+68, and with it the whole handler matches but for the owner,
+   element and number registers. The R handler keeps its own ok, still in
+   r8 where the native has sp+68: i there gives 1267, both 1255; j 635,
+   count 617, step 177, result 329, message 194.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -527,17 +532,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             break;
         }
         if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
-            ok = 1;
+            i = 1;
             if (!(buf[x] & 1)) {
                 if (sel == -1) {
                     AudioCommand_PlayFar(114);
                     continue;
                 }
-                ok = 0;
+                i = 0;
                 if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
-                    ok = 1;
+                    i = 1;
             }
-            if (ok == 0) {
+            if (i == 0) {
                 AudioCommand_PlayFar(114);
                 RenderOutput_ClearListFar(state->list_window);
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 80, 216, 104);

@@ -624,7 +624,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_POOL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TWELVE_MODE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000cda0c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/CANVFX.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/WEBWIPE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/REGS.o"(.text)

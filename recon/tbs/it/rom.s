@@ -955,12 +955,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000c7438, 0x00001bc8
-	.section .rom.000cbc0c, "ax"
-	.global BattleEffect_RunTileAndPaletteAnimation
-	.type BattleEffect_RunTileAndPaletteAnimation, %function
-	.thumb_func
-BattleEffect_RunTileAndPaletteAnimation:
-	.incbin "baserom.gba", 0x000cbc0c, 0x000009cc
 	.section .rom.000cf8e0, "ax"
 	.global BattleFx_RunSevenMode
 	.type BattleFx_RunSevenMode, %function
@@ -1099,7 +1093,22 @@ BladeRain_CellHeights:
 	.incbin "baserom.gba", 0x000edf83, 0x00000005
 	.global BladeRain_CellSourceOffsets
 BladeRain_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000edf88, 0x000000d0
+	.incbin "baserom.gba", 0x000edf88, 0x00000008
+	.global BattlePieceWidth
+BattlePieceWidth:
+	.incbin "baserom.gba", 0x000edf90, 0x00000021
+	.global BattlePieceHeight
+BattlePieceHeight:
+	.incbin "baserom.gba", 0x000edfb1, 0x00000021
+	.global BattlePieceOffset
+BattlePieceOffset:
+	.incbin "baserom.gba", 0x000edfd2, 0x00000044
+	.global BattlePieceStartX
+BattlePieceStartX:
+	.incbin "baserom.gba", 0x000ee016, 0x00000021
+	.global BattlePieceStartY
+BattlePieceStartY:
+	.incbin "baserom.gba", 0x000ee037, 0x00000021
 	.global CornerSparks_X
 CornerSparks_X:
 	.incbin "baserom.gba", 0x000ee058, 0x00000004

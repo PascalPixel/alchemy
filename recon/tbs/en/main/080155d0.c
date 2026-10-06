@@ -22,7 +22,9 @@
  *   rejected: literal colour constants instead of c1, c3 221 (at 214); width read before rows
  *     217 (at 214) and 164 (at 164); width read before idx no change; UiSprite_CursorFrameTiles
  *     [0x800 + idx] 190; byte offset (ch - 32) * 32 for the wide glyph 169, though it gives
- *     native's sub r3, r1, #32 shape; byte offset idx * 26 for the narrow glyph too 169
+ *     native's sub r3, r1, #32 shape; byte offset idx * 26 for the narrow glyph too 169;
+ *     a second row local in the pass loop 164 / 369 (no agbcc_arm change); code = ch - 222 once
+ *     at the top, also in the font test, 174 / 361
  * Remaining: win is spilled and reloaded for its width (native reads r0 before the spill, idx
  * takes r0 here and ip in native); the narrow glyph's width load is scheduled before rows, so
  * the two arms do not share their last ldrh as native's do; native recomputes ch - 32 for the

@@ -1,3 +1,4 @@
+/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 2131 (listing 1727, draft 1784, common 690). Not first-try; parked. */
 /* 08027114: differ 2131 against the 1727-line parent listing (was 2292).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8.
  * Shared battle, action, summon, item, window and OAM layouts replace private

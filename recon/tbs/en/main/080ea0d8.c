@@ -1,3 +1,4 @@
+/* Stubborn (2026-10-06, sun100 queue-2 rescore on staging 2fb23197f0): differ 2324 (listing 2455, draft 2439, common 1285). Not first-try; parked. */
 /* 080ea0d8: differ 2324 of 2455, unchanged by the shared-layout cleanup.
  * The parent frame is 184 bytes in both. Register allocation, stack slots and
  * branch layout still differ widely; the BattleFx9 data names remain draft

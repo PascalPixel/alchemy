@@ -21,9 +21,6 @@
 
 #define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
 
-#define Tilemap_DecodeStagedBuffer ((void (*)(void))Tilemap_DecodeStagedBuffer)
-#define DisplayBlend_StartScript ((void (*)(void*))DisplayBlend_StartScript)
-
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
     /* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime. */
@@ -138,8 +135,7 @@ s32 Map_LoadLayeredScene(s32 index)
     Iwram_ClearWords(work, sizeof(struct MapScrollWork));
     header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
     src = (u8 *)header + header->tiles;
-    Resource_DecodeType01(src, Ram_MapCellBuffer + 1);
-    Tilemap_DecodeStagedBuffer();
+    Tilemap_DecodeStagedBuffer(Resource_DecodeType01(src, Ram_MapCellBuffer + 1));
     src = (u8 *)header + header->collision;
     Resource_DecodeType01(src, Ram_MapCollision);
     src = (u8 *)header + header->tilemap;
@@ -154,7 +150,7 @@ s32 Map_LoadLayeredScene(s32 index)
     src = (u8 *)header->blend;
     if (src != 0) {
         Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1e00);
-        DisplayBlend_StartScript(Ram_MapCollision + 0x1e00);
+        DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
     }
     work->script = (u8 *)header + header->script;
     work->min_x = header->origin[0] << 19;
@@ -217,9 +213,9 @@ s32 Map_LoadLayeredScene(s32 index)
     if (GameFlag_IsSet(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
         GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
     } else {
-        buf = (u8 *)Runtime_BumpAllocate(0x4000);
+        buf = Runtime_BumpAllocate(0x4000);
         if (buf != NULL) {
-            backdrop = *(s16 *)0x05000000;
+            backdrop = *(s16 *)BG_PLTT;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
             *(s16 *)buf = backdrop;
             Iwram_CopyWords((void *)BG_PLTT, buf, 0x1c0);
@@ -244,27 +240,28 @@ s32 Map_LoadLayeredScene(s32 index)
 
 void Map_ApplyWorkOriginAndSpan(void)
 {
-    s32 first;
-    s32 third;
-    s32 second;
+    struct MapScrollWork *work = gMapWork[0];
+    s32 x;
+    s32 y;
+    s32 height;
     s32 *p;
 
-    p = ((struct MapScrollWork *)gMapWork[0])->origin;
-    first = 0;
-    second = 0;
-    third = 0;
+    p = work->origin;
+    x = 0;
+    height = 0;
+    y = 0;
     if (p != NULL) {
-        first = *p++;
-        second = *p++;
-        third = *p;
+        x = *p++;
+        height = *p++;
+        y = *p;
     }
-    Map_SetCameraCenter(first, (s32)((u32)third - (u32)second));
+    Map_SetCameraCenter(x, y - height);
     Map_UpdateLayerScroll();
 }
 
 void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 {
-    u8 *dest = (u8 *)(0x06002800 + (a0 << 11));
+    u8 *dest = BG_SCREEN_BLOCK(5) + (a0 << 11);
     u32 row = ((a2 / 2) & 0x7F) << 7;
     u32 rowmod = (a2 & 30) << 5;
     u32 col = (a1 / 2) & 0x7F;
@@ -283,7 +280,7 @@ void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 
 void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2)
 {
-    u8 *destination = (u8 *)(0x06002800 + (a0 << 11));
+    u8 *destination = BG_SCREEN_BLOCK(5) + (a0 << 11);
     u32 row = ((a2 / 2) & 0x7F) << 7;
     u32 rowmod = (a2 & 30) << 5;
     u32 col = (a1 / 2) & 0x7F;
@@ -433,7 +430,7 @@ void Map_SetCameraCenter(s32 x, s32 y)
             layer++;
             x /= 0x80000;
             y /= 0x80000;
-            dest = (u8 *)(0x06002800 + (no << 11));
+            dest = BG_SCREEN_BLOCK(5) + (no << 11);
             row = ((y / 2) & 127) << 7;
             rowmod = (y & 30) << 5;
             for (i = 0; i < rows / 2; i++) {

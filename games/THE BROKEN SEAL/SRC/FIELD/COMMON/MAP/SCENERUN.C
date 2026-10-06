@@ -17,8 +17,8 @@
 #include "IRQ.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_RUNTIME.H"
+#include "FLAG_IDS.H"
 
-#define MapGroupTable_SelectEntry ((void (*)(void))MapGroupTable_SelectEntry)
 #define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
 
 enum {
@@ -28,9 +28,6 @@ enum {
     SCENE_BATTLE = 0x1fe
 };
 
-#define OBJ_PALETTE_LAST ((void *)0x050001c0)
-#define DMA_COPY_16_WORDS 0x84000010
-
 extern u8 gDebugMode;
 
 void Audio_PlayCueFromEventWork(void);
@@ -38,26 +35,26 @@ void Audio_PlayCue(s32 cue);
 
 static __inline__ s32 Scene_RunTable(s32 entrance)
 {
-    void *palette = OBJ_PALETTE_LAST;
+    void *palette = (void *)&BG_PLTT_COLOR(14, 0);
     void *saved = Runtime_BumpAllocate(64);
     s32 result;
 
-    Dma_Set(palette, saved, DMA_COPY_16_WORDS, REG_DMA3);
+    Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     result = FarCall_BlankRunTable(entrance);
-    Dma_Set(saved, palette, DMA_COPY_16_WORDS, REG_DMA3);
+    Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     Runtime_BumpFree(saved);
     return result;
 }
 
 static __inline__ s32 Scene_LoadTable(s32 entrance)
 {
-    void *palette = OBJ_PALETTE_LAST;
+    void *palette = (void *)&BG_PLTT_COLOR(14, 0);
     void *saved = Runtime_BumpAllocate(64);
     s32 result;
 
-    Dma_Set(palette, saved, DMA_COPY_16_WORDS, REG_DMA3);
+    Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     result = FarCall_BlankLoadTable(entrance);
-    Dma_Set(saved, palette, DMA_COPY_16_WORDS, REG_DMA3);
+    Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     Runtime_BumpFree(saved);
     return result;
 }
@@ -127,9 +124,9 @@ start:
             Party_SetReturnPoint(entrance);
             continue;
         }
-        Scene_ResetFlagsOnEnter(gGameState.scene, GameFlag_TestFar(0x109));
+        Scene_ResetFlagsOnEnter(gGameState.scene, GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
         Scene_ResolveInteractionResult();
-        if (!GameFlag_TestFar(0x109)) {
+        if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
             if (GameFlag_TestFar(0x11a) || GameFlag_TestFar(0x11b))
                 GameFlag_ClearBitFar(0x11a);
             else
@@ -141,7 +138,6 @@ start:
         }
         gGameState.map = record->map_index;
         BattleFx_LoadResourceGroup(0);
-        Field_RunScene(entrance);
-        MapGroupTable_SelectEntry();
+        MapGroupTable_SelectEntry(Field_RunScene(entrance));
     }
 }

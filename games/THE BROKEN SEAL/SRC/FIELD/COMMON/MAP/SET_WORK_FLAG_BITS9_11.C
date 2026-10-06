@@ -4,7 +4,7 @@
 
 void Map_SetWorkFlagBits9To11(u32 v)
 {
-    struct MapState *state = ((void *volatile *)gMapWork)[0];
+    struct MapState *state = gMapWork[0];
     u32 mask = v & 0xe00;
     u32 flags = state->flags;
 

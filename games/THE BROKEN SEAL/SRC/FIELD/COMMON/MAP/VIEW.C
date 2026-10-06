@@ -26,8 +26,6 @@
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
 
-#define gKeysRepeat (*(u32 *)&gKeysRepeat)
-
 extern u8 gMapCellBuffer[];
 
 void Event_FinishScreenTransition(void);
@@ -53,9 +51,9 @@ void Map_ShowWorldMap(s32 picture)
     s32 saved_status;
     s16 blend;
 
-    if (((struct EventRuntime *)field)->mode_19e != 3)
+    if (field->mode != 3)
         return;
-    ((struct ObjectRuntime *)field->view_center)->movement_state = 1;
+    field->view_center->paused = 1;
     saved_status = field->transition_frames;
     field->transition_frames = 6;
     Event_FinishScreenTransition();
@@ -72,8 +70,8 @@ void Map_ShowWorldMap(s32 picture)
     graphics = Resource_GetTableEntry(resource);
     Dma_Set(graphics, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (448 / 4), REG_DMA3);
     BG_PLTT[0] = 0;
-    Resource_DecodeType01(graphics + 448, (void *)gMapCellBuffer);
-    Dma_Set((void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
+    Resource_DecodeType01(graphics + 448, gMapCellBuffer);
+    Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
     {
         /* FAKEMATCH: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
         s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
@@ -82,13 +80,13 @@ void Map_ShowWorldMap(s32 picture)
         REG_DISPCNT = v;
     }
     BattleFx_SetupResourcesAndWindow();
-    Scheduler_AddOrUpdateCallback((s32)Map_UpdateWorldMapMarkers, 0xc80);
+    Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
     if (GameFlag_TestFar(284))
         UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
     do {
         WaitFrames(1);
     } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
-    Scheduler_RemoveCallback((u32)Map_UpdateWorldMapMarkers);
+    Scheduler_RemoveCallback(Map_UpdateWorldMapMarkers);
     BattleFx_CleanupResourcesAndWindow();
     {
         s32 v;
@@ -134,7 +132,7 @@ void Map_ShowWorldMap(s32 picture)
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     field->transition_frames = saved_status;
-    ((struct ObjectRuntime *)field->view_center)->movement_state = 0;
+    field->view_center->paused = 0;
 }
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
@@ -152,11 +150,11 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
     Object_GetById(gGameState.selected_actor);
     object = (struct ObjectRuntime *)gEventWork->view_center;
     x = object->x;
-    left = x + 0xFEC00000;
-    right = x + 0x01400000;
+    left = x - (320 << 16);
+    right = x + (320 << 16);
     y = object->z;
-    top = y + 0xFDA80000;
-    bottom = y + 0x01900000;
+    top = y - (600 << 16);
+    bottom = y + (400 << 16);
 
     id = 8;
     do {
@@ -179,21 +177,19 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
 
 void BattleFx_RunVisibilityTransition(void)
 {
-  if (((struct EventRuntime *)Runtime_AllocateBlock(27, 0xccc))->mode_19e == 3)
-  {
-    Scheduler_EnableUnmaskedOverlayCallbacks();
-    BattleFx_UpdateObjectVisibilityBounds();
-    Battle_InitializeRenderObject();
-    BattleFx_ScheduleRatioTransition(0x9D89, 6);
-    if ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L)
-    {
-      do
-      {
-        WaitFrames(1);
-      }
-      while ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L);
+    struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
+
+    if (field->mode == 3) {
+        Scheduler_EnableUnmaskedOverlayCallbacks();
+        BattleFx_UpdateObjectVisibilityBounds();
+        Battle_InitializeRenderObject();
+        BattleFx_ScheduleRatioTransition(0x9d89, 6);
+        if (gKeysHeld & KEY_L) {
+            do {
+                WaitFrames(1);
+            } while (gKeysHeld & KEY_L);
+        }
+        BattleFx_ScheduleRatioTransition(0x10000, 6);
+        Scheduler_DisableOverlayCallbacks();
     }
-    BattleFx_ScheduleRatioTransition(0x10000, 6);
-    Scheduler_DisableOverlayCallbacks();
-  }
 }

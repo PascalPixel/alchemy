@@ -127,8 +127,8 @@ WorldMap_FootprintActions:
 	.global WorldMap_KeyYaws
 WorldMap_KeyYaws:
 	.incbin "baserom.gba", 0x0001328c, 0x00000040
-	.global Data_080132cc
-Data_080132cc:
+	.global WorldMap_GraphicsResources
+WorldMap_GraphicsResources:
 	.incbin "baserom.gba", 0x000132cc, 0x00000030
 	.global Curve_LerpWeightTable
 Curve_LerpWeightTable:

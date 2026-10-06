@@ -73,7 +73,8 @@
    text's 0x666 first or in the middle 182, number first 210; the column
    pointer as an s32 value 1325, &selected_column[0] 182, the |= 4 store
    through buf 1373, = 7 1322, Djinn_MarkBalancedEntries's result kept
-   1325; savedY = y before the count loop 214. Lreg priorities in the R
+   1325; savedY = y before the count loop 214; status[x] for buf[x] in
+   the cursor blocks 348, in the whole loop 736. Lreg priorities in the R
    handler: element (9 refs, 11 insns) before owner (9, 13) before
    number (15, 24), giving r5, r6, r7; the
    native gives number r6 and owner r7. In the cursor blocks the 1

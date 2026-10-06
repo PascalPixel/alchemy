@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 293 of 1276 (1281 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp, render in sl and the swap preview now match. Remaining: in the help line the constant 224 wins a hi register from 0x8000 and 0 (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 289 of 1276 (1281 draft instructions); was 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp (now as the plain parameter), render in sl, the row computation and the swap preview now match. Remaining: in the help line the constant 224 wins a hi register from 0x8000 and 0 (see Open), which moves the literal pools; native loads 0xba0 from the pool where this builds it as 186<<4. Hoisting the two output pairs leaves the count unchanged. No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -15,7 +15,10 @@
  * Trial (2026-10-06): j for the owner_y loop apart from the tile loop's i: the counter takes r2 as native: 458 -> 446. Cursor zeroed before anim, dirty, page and frame shares one zero everywhere (444), unlike native; page, frame, dirty, anim order gives 453.
  * Trial (2026-10-06): one id for both owners in the swap preview, where first_id and second_id were two: id keeps r6 and unit r7 as native: 446 -> 408. Reloading attr once after the first 0x8000 test instead of inside it gives 411; row and y declared last leave 408.
  * Trial (2026-10-06, session 2): the swap preview's last three Iwram_CopyWords through a local function pointer: gcse propagates the constant back and nothing changes (408); the same pointer fixed in r5 (FAKEMATCH, the 332/address tie below) matches the whole swap preview: 408 -> 293.
- * Open (2026-10-06): 224 (the element mask, 7 refs over 172 insns, priority 814) outranks 0x8000 and the shared 0 (4 refs over 100 insns, 800 each) and takes r8; it would need 176 insns or 6 refs to fall behind them; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. A permuter run over the help-line section (4 minutes) found nothing below 458 before the id and j changes. */
+ * Trial (2026-10-06, session 2): 0 for the mode-0 tilemap entry instead of mode: 295. 0x8000 fixed in r8 and the shared 0 in sl (two FAKEMATCH variables): 224 is rebuilt at each use as native, but attr moves to r1 and the copies around each and change: 369 (mask & attr: 369; zero assigned inside the argument: 376). The row computation differs because mode, a hard register here, is copied where native ties it: native eors r2 (mode copy) with 1, this copies 1 and eors with a copy of fp.
+ * Trial (2026-10-06, session 2): y = row * 8 before the attr load: 546. row = mode, then row = (row == 1): 426. row = (1 == mode): 293, folded to the same tree. A 5-minute permuter run (2 jobs, 5,445 candidates) randomizing only the help line from row to the 0xf296 entry found nothing below 293.
+ * Trial (2026-10-06, session 2): with the copy routine in r5, mode as the plain parameter wins fp by itself, so its fixed-fp FAKEMATCH is gone, and the row computation ties mode as native: 293 -> 289. On top of that, 0x8000 fixed in r8 and 0 in sl give 285 (the pools then line up) but attr still takes r1 and the copies stay wrong; not kept for 4.
+ * Open (2026-10-06): 224 (the element mask, 7 refs over 172 insns, priority 814) outranks 0x8000 and the shared 0 (4 refs over 100 insns, 800 each) and takes r8; it would need 176 insns or 6 refs to fall behind them; native keeps 0x8000 in r8 and 0 in sl and rematerializes 224. Fixing them in r8 and sl (369, then 285 with mode as a pseudo) shows the second cause: attr takes r1 where native has r2, and with a hard register as one operand of a two-address and, the other operand is copied, where native copies the constant (mov r3, r8; ands r3, r2); the right answer is a source shape that drops 224 below 800, not fixed registers. Smaller: native loads 0xba0 from the pool (this splits it to 186<<4); scheduling differs at the tutorial work = UiText_OpenMessageWindowFar result, the 0x060052c0 copy's argument loads (native r1, r3, r0) and the two SetSlotPhase(x, 0) after the loop (native sets r1 first). */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -68,10 +71,8 @@ void Menu_UpdateEntryObjectTransforms(void);
 void UiMenu_SlideCursor(s32, s32);
 s32 DjinnMenu_DrawStatPreview(s32, s32, s32, s32, s32, s32, s32, s32, s32);
 
-s32 OwnerAction_RunCompareLoop(u32 mode_arg)
+s32 OwnerAction_RunCompareLoop(u32 mode)
 {
-    /* FAKEMATCH: as a pseudo mode ranks below the pointers in r5-r10 and is spilled; native keeps it in fp. */
-    register u32 mode asm("r11") = mode_arg;
     struct DjinnMenuWork *state;
     struct DjinnMenuBackdrop *scene;
     struct UiRenderWork *render;

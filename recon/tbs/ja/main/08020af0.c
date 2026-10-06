@@ -1,8 +1,27 @@
 /* Japanese NameEntry_EditOwnerName draft; native extent 0x5e0.
-   alchemy diff --edition tbs-ja: native663/draft663/common555/differ216.
-   The108-byte local frame matches. Remaining differences are register
-   allocation (cursor flag, caret control, last-letter pointer), argument
-   arithmetic and scheduling; this draft is not linked.
+   alchemy diff --edition tbs-ja: native663/draft672/common641/differ53.
+   The108-byte local frame matches; this draft is not linked.
+   2026-10-06 session 2 diagnosis: the last-letter pointer is not a user
+   variable but loop.c's reduced giv of input+bytes-1 (its spill slot
+   [sp,#12] lies below &cursor's [sp,#16], so its pseudo is newer than
+   gcse's &cursor), hence the indexed input[bytes] source. Global
+   priorities floor_log2(refs)*refs/live were &caret3040, cursor flag
+   2954, giv3086: the cursor flag and &caret refs sit in blocks of loop
+   depth 6 (one natural loop per latch). A seventh latch (the remove path
+   redraws and continues itself, as the international source does) makes
+   them depth 7: &caret r9, cursor flag fp, giv spilled, as native.
+   Steps kept: indexed bytes216 (identical code), right-key wrap as
+   0/8/10 -> 18 else 0 212, duplicated remove-path redraw107, row != 7 then
+   *= 8 in two statements103, volatile key-state view for START and
+   SELECT91, copy pointers pinned r1/r2 as international79 (natural
+   orders: count first93), caret x held in a function-scope x (global
+   pseudo, so the multiply chain keeps r3 and reload copies to r1)53;
+   slot for x61, x = count*10 with x+72 in the call71, a block-local x79.
+   Remaining: the remove-path redraw tail is not cross-jumped into the add
+   path's (its text_dirty constant reloads into r4 where the add tail
+   uses r1, and its two argument loads swap), so 9 extra instructions and
+   every later branch offset differ. A single goto redraw tail gives168
+   (the allocation falls back).
    Natural trials: pointer copy loop323; indexed loop320; one shared
    character local254; count order and side-key navigation228. The existing
    international caret-r5 device gives218. Pinning cursor flag alone333,
@@ -61,7 +80,7 @@
 #include "BATTLE_RUNTIME.H"
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
-#define gKeyState (*(u32 *)&gKeyState)
+#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
 #define Shop_SetCursorFar ((void (*)(union MenuCursor*,s32,s32,s32))Shop_SetCursorFar)
@@ -100,9 +119,8 @@ s32 NameEntry_EditOwnerName(s32 entry)
     struct RenderInput *window;
     union MenuCursor cursor;
     union MenuCursor caret;
-    s32 column, row, slot;
+    s32 column, row, slot, x;
     u32 character;
-    u8 *end;
     u16 *pal;
 
     Ui_LoadWindowGraphics();
@@ -146,12 +164,12 @@ s32 NameEntry_EditOwnerName(s32 entry)
         caret.output = (struct RenderOutput *)slot;
         ((struct RenderOutput *)slot)->sentinel = 255;
         ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->priority = 0;
-        ShopCursor_SetPositionImmediateFar(&caret, 72 + NameEntry_CountLetters(input) * 10, 22);
+        x = 72 + NameEntry_CountLetters(input) * 10;
+        ShopCursor_SetPositionImmediateFar(&caret, x, 22);
     }
     pal = (u16 *)0x050001c0;
     Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
     pal[4] = 0x6318;
-    end = (u8 *)(bytes + (s32)input - 1);
     for (;;) {
         s32 width = 1;
 
@@ -172,7 +190,8 @@ s32 NameEntry_EditOwnerName(s32 entry)
         }
         if (text_dirty) {
             text_dirty = 0;
-            Shop_SetCursorFar(&caret, 72 + NameEntry_CountLetters(input) * 10, 22, 3);
+            x = 72 + NameEntry_CountLetters(input) * 10;
+            Shop_SetCursorFar(&caret, x, 22, 3);
         }
         ShopCursor_AdvanceFar(&cursor);
         ShopCursor_MoveTowardTargetFar(&caret);
@@ -194,10 +213,12 @@ s32 NameEntry_EditOwnerName(s32 entry)
                 else if (row == 5)
                     row = 4;
             } else {
-                if (row == -1)
+                if (row == -1) {
                     row = 10;
-                else
-                    row = (row != 7) * 8;
+                } else {
+                    row = (row != 7);
+                    row *= 8;
+                }
             }
         }
         if (gKeysRepeat & KEY_DOWN) {
@@ -239,10 +260,11 @@ s32 NameEntry_EditOwnerName(s32 entry)
                 column = 0;
             else if (column == 5 || column == 11 || column == 17)
                 column++;
-            if (column == 18 && row != 0 && row != 8) {
-                column = 0;
-                if (row == 10)
+            if (column == 18) {
+                if (row == 0 || row == 8 || row == 10)
                     column = 18;
+                else
+                    column = 0;
             }
         }
         if (gKeyState & KEY_START) {
@@ -268,16 +290,17 @@ change_keyboard:
 remove_character:
             if (length != 0) {
                 length--;
-                end--;
                 bytes--;
-                character = end[1];
-                end[1] = 0;
+                character = input[bytes];
+                input[bytes] = 0;
                 if ((u8)(character - 0xde) <= 1) {
-                    end--;
                     bytes--;
-                    end[1] = 0;
+                    input[bytes] = 0;
                 }
-                goto redraw;
+                RenderOutput_PrepareForRedraw(label);
+                UiText_DrawString(input, (s32)label, 0, 0);
+                text_dirty = 1;
+                continue;
             }
             result = -1;
             goto finish;
@@ -293,8 +316,10 @@ remove_character:
                     UiText_DrawString(saved, (s32)label, 0, 0);
                     WaitFrames(10);
                 } else {
-                    u8 *src = input;
-                    u8 *dst = saved;
+                    /* FAKEMATCH: the destination lives in r1, as the native allocates it. */
+                    register u8 *dst asm("r1") = saved;
+                    /* FAKEMATCH: the source lives in r2, as the native allocates it. */
+                    register u8 *src asm("r2") = input;
                     s32 i = 0;
 
                     while (i < 15) {
@@ -324,14 +349,13 @@ remove_character:
             if (length == 5 && (u8)(character - 0xde) > 1)
                 continue;
             dst = input + bytes;
-            if (!NameEntry_AcceptsMark(character, *end)) {
+            if (!NameEntry_AcceptsMark(character, input[bytes - 1])) {
                 Audio_PlayCue(113);
                 continue;
             }
             *dst = character;
-            end++;
             bytes++;
-            end[1] = 0;
+            input[bytes] = 0;
             length++;
             if ((u8)(character - 0xde) <= 1)
                 length--;
@@ -340,11 +364,10 @@ remove_character:
                 row = 10;
                 cursor_dirty = 1;
             }
+            RenderOutput_PrepareForRedraw(label);
+            UiText_DrawString(input, (s32)label, 0, 0);
+            text_dirty = 1;
         }
-redraw:
-        RenderOutput_PrepareForRedraw(label);
-        UiText_DrawString(input, (s32)label, 0, 0);
-        text_dirty = 1;
     }
 finish:
     UiWork_Finalize((struct UiWindow *)window, 2);

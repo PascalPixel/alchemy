@@ -31,7 +31,19 @@
  * - the 64-step init loop by pointer with its own counter: 1249 (base
  *   0x7080 as native, but 120 and 63 hoisted into registers); point =
  *   &runtime->particles[index] set at the top of each iteration: 1184,
- *   the loop matches but for index on the stack. */
+ *   the loop matches but for index on the stack.
+ * - register on mark, step and alive (the permuter's hint): 1184, no
+ *   change; index fixed in r9: 1729, discarded.
+ * Diagnosis of the index spill (greg dump): index (pseudo 52, 158 refs
+ * over 1512 insns) is allocated after about 60 shorter allocnos and
+ * finds r5-r11 all taken by conflicts. In the frame loop's actor loop
+ * the native reloads runtime from sp+92 and adds 0x7828 at each of the
+ * three runtime->effect uses; the draft's loop pass hoists that sum
+ * (loop dump: insn 540, regno 183, life 3, savings 3, moved, because
+ * threshold * 3 * 3 just reaches the loop's 124 insns) and the hoisted
+ * pointer takes r9 for the whole loop, the register the native gives
+ * index. A source shape with fewer matched runtime->effect sums or a few
+ * more insns in that loop should leave r9 to index. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"

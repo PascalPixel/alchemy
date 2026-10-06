@@ -1,5 +1,31 @@
-/* Stubborn (2026-10-06, sun100 T10 on 51bbf7161e): differ 1332 (listing 1585, draft 1599, common 926). Not first-try; parked. */
-/* 08026080: listing 1585, draft 1599, differ 1332; both frames are 324 bytes.
+/* 08026080: listing 1585, draft 1587, differ 1094 (common 1039); both
+ * frames are 324 bytes. The whole prologue through the first call now
+ * matches: sel is the parameter itself in r10, mode in r8, and
+ * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
+ * the gBattleWork address in r5 and adds 192 as the native does.
+ * Session T10-08026080/1 (from 1332), each kept:
+ * - slide_offset through ((struct MenuCell **)&gBattleWork)[48]: native
+ *   base reuse reproduced, 1332 (gWorkSlot[9]/[57] loads gWorkSlot+0 and
+ *   offsets 36/228 instead, 1338).
+ * - party and enemy lists as for (i = 0; i <= 5 && units[i] != 0xFF; i++),
+ *   as the selection search at the end is written: both pre-tests and loop
+ *   bodies take the native shape; the s16 enemy FAKEMATCH is gone.
+ * - kind cases in body order 5, 3, 4, 6 (native body addresses).
+ * - the found and sel-search loops count with j (native r5) apart from
+ *   the list loops' i (native r7): 1394 -> 1379.
+ * - the confirm block's id and counter are block locals (native r4 and
+ *   r1, no call crossed); sel kept the selected id and caller-saved it in
+ *   r4: 1379 -> 1101.
+ * - sel as the parameter: 1104, with sel r10 and mode r8 as native.
+ * - cnt = 0 before redraw = 0xFFFF: 1094, the prologue matches.
+ * Trials this session: gWorkSlot indices 1338; while loop for the party
+ * list 1347; (u16) sleep mask, no change (the native keeps ldrh then ands
+ * with 0xFFFF hoisted to r4 and caller-saved at sp+8; not reproduced);
+ * on 1094: ordinary infoWin 1174, no marker temporary 1190, no coordinate
+ * temporary 1104, so the three devices stay. Next divergence: spread = 1
+ * reloads through r7 against native r6 (reload rotation), then the ids
+ * address spill at 16 against native 28.
+ * Earlier history (differ 1400 -> 1332):
  * Spill slots follow declaration order: the native keeps runtime 76,
  * window 72, cursor 68, cnt 64, redraw 56, slotId 52, pending 48, matrix 44,
  * so they are declared in that order (was 1400). Still differing: ids, tbl
@@ -29,6 +55,7 @@
 #include "MENU_LIST.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "HEAP_STATE.H"
 
 struct CursorSlot {
     u8 x;
@@ -44,7 +71,7 @@ void UiText_DrawNumberInWindow(
     s32 value, s32 digits, s32 work, s32 x, s32 y);
 void Ui_ClearVramBlock(void);
 
-s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
+s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 {
     u16 ids[8];
     struct SelectionSprite entries[6];
@@ -60,7 +87,6 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     struct BattleUnit *unit;
     struct BattleSession *runtime;
     struct UiWindow *window;
-    s32 sel;
     register struct UiWindow *infoWin asm("r9"); /* FAKEMATCH: the ordinary window lifetime differs 1464; native r9 reduces it to 1400 without changing instruction count. */
     s32 cursor;
     s32 cnt;
@@ -92,51 +118,34 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     u8 *pc;
 
     runtime = gBattleWork;
-    redraw = 0xFFFF;
     cnt = 0;
+    redraw = 0xFFFF;
     slotId = Resource_LoadIntoFreeSlot(256);
     infoWin = 0;
     if (spread == 0)
         spread = 1;
     if (mode == 2 || mode == 4)
-        gLinkCountdownWork->slide_offset = -2;
+        ((struct MenuCell **)&gBattleWork)[48]->slide_offset = -2;
     else
-        gLinkCountdownWork->slide_offset = 16;
+        ((struct MenuCell **)&gBattleWork)[48]->slide_offset = 16;
     i = 5;
     while (i >= 0) {
         tbl[i].flags = 0;
         i--;
     }
-    sel = preferred;
     cursor = -1;
     if (mode == 2) {
-        i = 0;
-        if (runtime->party_units[0] != 0xFF) {
-            do {
-                ids[cnt] = runtime->party_units[i];
-                cnt++;
-                i++;
-                if (i > 5)
-                    break;
-            } while (runtime->party_units[i] != 0xFF);
+        for (i = 0; i <= 5 && runtime->party_units[i] != 0xFF; i++) {
+            ids[cnt] = runtime->party_units[i];
+            cnt++;
         }
     } else if (mode == 4) {
         ids[0] = (u16)sel;
         cnt = 1;
     } else {
-        i = 0;
-        if (runtime->enemy_units[0] != 0xFF) {
-            do {
-                /* FAKEMATCH: keep the consumed enemy-id load separate;
-                   folding it differs 1493 and adds five instructions, versus 1400 here. */
-                s16 enemy;
-                enemy = runtime->enemy_units[i];
-                ids[cnt] = enemy;
-                cnt++;
-                i++;
-                if (i > 5)
-                    break;
-            } while (runtime->enemy_units[i] != 0xFF);
+        for (i = 0; i <= 5 && runtime->enemy_units[i] != 0xFF; i++) {
+            ids[cnt] = runtime->enemy_units[i];
+            cnt++;
         }
     }
     ids[cnt] = 0xFF;
@@ -144,11 +153,17 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     if (mode == 2) {
         if (spread != 0xFF && kind != 0) {
             found = 0;
-            for (i = 0; i < cnt; i++) {
-                if (ids[i] == 0xFE)
+            for (j = 0; j < cnt; j++) {
+                if (ids[j] == 0xFE)
                     continue;
-                unit = Owner_GetStateFar(ids[i]);
+                unit = Owner_GetStateFar(ids[j]);
                 switch (kind) {
+                case 5:
+                    if (unit->hp == 0) {
+                        sel = ids[j];
+                        found = 1;
+                    }
+                    break;
                 case 3:
                     if (unit->poison != 0)
                         found = 1;
@@ -160,12 +175,6 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                         found = 1;
                     else if (unit->death_count != 0)
                         found = 1;
-                    break;
-                case 5:
-                    if (unit->hp == 0) {
-                        sel = ids[i];
-                        found = 1;
-                    }
                     break;
                 case 6:
                     if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
@@ -181,17 +190,17 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                     break;
                 }
                 if (found != 0) {
-                    sel = ids[i];
+                    sel = ids[j];
                     break;
                 }
             }
         }
-        for (i = 0; i < cnt; i++) {
-            if (ids[i] == sel)
+        for (j = 0; j < cnt; j++) {
+            if (ids[j] == sel)
                 break;
         }
-        if (i != cnt)
-            cursor = i;
+        if (j != cnt)
+            cursor = j;
     }
     if (cursor < 0)
         cursor = (cnt - 1) / 2;
@@ -549,19 +558,22 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
             }
         }
         if (pressed & 1) {
-            sel = ids[cursor];
+            s32 id;
+            s32 k;
+
+            id = ids[cursor];
             redraw = 0;
             result = -1;
-            for (i = 0; i <= 5 && runtime->party_units[i] != 0xFF; i++) {
-                if (runtime->party_units[i] == sel) {
-                    result = 0x100 | i;
+            for (k = 0; k <= 5 && runtime->party_units[k] != 0xFF; k++) {
+                if (runtime->party_units[k] == id) {
+                    result = 0x100 | k;
                     break;
                 }
             }
             if (result < 0) {
-                for (i = 0; i <= 5 && runtime->enemy_units[i] != 0xFF; i++) {
-                    if (runtime->enemy_units[i] == sel) {
-                        result = 0x180 | i;
+                for (k = 0; k <= 5 && runtime->enemy_units[k] != 0xFF; k++) {
+                    if (runtime->enemy_units[k] == id) {
+                        result = 0x180 | k;
                         break;
                     }
                 }

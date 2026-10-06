@@ -1,3 +1,15 @@
+/* 08023178: Ui_RunOwnerStatusScreen draft.
+ * Native 1392 instructions, draft 1406, common 807, differ 1184.
+ * Remaining: native 352-byte frame versus 348, redraw/copy register choices,
+ * spill slots, sprite load order, and consequent branches/literal pools.
+ *
+ * Current compiler ablation: three old register bindings gave differ 1280.
+ * Removing only the redraw binding gave 1331; removing both copier bindings
+ * as well gave 1196 and reduced the frame difference from 8 to 4 bytes.
+ * Ordinary direct MenuSprite accesses give 1184. Keeping the redraw binding
+ * with direct copies gave 1197; direct handle/code arrays gave 1267.
+ * No register bindings or other steering devices remain in this draft.
+ */
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -61,8 +73,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 handleFrame;
     s32 handleCursor;
     s32 extended;
-    /* FAKEMATCH: native redraw uses r10 across calls; final ablation scores14890 versus14696 with this consumed flag bound. */
-    register s32 redraw asm("r10");
+    s32 redraw;
     s32 keys;
     s32 cnt;
     s32 idx;
@@ -78,9 +89,6 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s8 *out;
     struct BattleUnit *saved;
     struct MenuSprite *p;
-    struct MenuSprite *face;
-    struct MenuSprite *cursor;
-    struct MenuSprite *name;
     struct MenuSprite *icons;
     s32 *handles;
     s8 *codes;
@@ -139,20 +147,17 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     winDesc = UiWindow_Create(0, 14, 30, 6, 10);
     UiWindow_MarkVisibleTileAttributes();
 
-    name = &objName;
-    face = &objFace;
-    cursor = &objCursor;
     icons = objIcon;
     for (;;) {
         keys = gKeysRepeat;
 
-        name->oam.word.attr01 = 0x80000400;
-        name->oam.word.attr23 = 0;
-        name->oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame) & 0x3FF;
-        name->oam.f.x = 8;
-        name->oam.f.y = 24;
-        name->oam.f.palette = 14;
-        Runtime_PushSlotEntry((s32 *)name, 240);
+        objName.oam.word.attr01 = 0x80000400;
+        objName.oam.word.attr23 = 0;
+        objName.oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame) & 0x3FF;
+        objName.oam.f.x = 8;
+        objName.oam.f.y = 24;
+        objName.oam.f.palette = 14;
+        Runtime_PushSlotEntry((s32 *)&objName, 240);
 
         switch (cur.entry) {
         case 0:
@@ -298,25 +303,25 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         colPixels = cur.col * 8;
         rowPixels = cur.row * 8;
 
-        face->oam.word.attr01 = 0xC0002400;
-        face->oam.word.attr23 = 0;
-        face->oam.f.tile = ((struct MenuSprite *)GetBattleObjectSlotFar(owner)->object->records)->oam.f.tile;
-        face->oam.f.x = 0xAC;
-        face->oam.f.y = 56;
-        Runtime_PushSlotEntry((s32 *)face, 240);
+        objFace.oam.word.attr01 = 0xC0002400;
+        objFace.oam.word.attr23 = 0;
+        objFace.oam.f.tile = ((struct MenuSprite *)GetBattleObjectSlotFar(owner)->object->records)->oam.f.tile;
+        objFace.oam.f.x = 0xAC;
+        objFace.oam.f.y = 56;
+        Runtime_PushSlotEntry((s32 *)&objFace, 240);
 
-        cursor->oam.word.attr01 = 0x40000400;
-        cursor->oam.word.attr23 = 0;
-        cursor->oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles)
+        objCursor.oam.word.attr01 = 0x40000400;
+        objCursor.oam.word.attr23 = 0;
+        objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles)
             & 0x3FF;
-        cursor->oam.f.x = (colPixels + winMain->x * 8
+        objCursor.oam.f.x = (colPixels + winMain->x * 8
                           - ((gFrameCount & 4) >> 2))
             + 16;
-        cursor->oam.f.y = (u8)((rowPixels + winMain->y * 8
+        objCursor.oam.f.y = (u8)((rowPixels + winMain->y * 8
                                - ((gFrameCount & 4) >> 2))
             + 16);
-        cursor->oam.f.affine_index = 8;
-        Runtime_PushSlotEntry((s32 *)cursor, 241);
+        objCursor.oam.f.affine_index = 8;
+        Runtime_PushSlotEntry((s32 *)&objCursor, 241);
 
         if (redraw != 0) {
             object = Owner_GetStateFar(owner);
@@ -554,12 +559,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(*object));
                 code = 0;
-                {
-                    /* FAKEMATCH: direct and wrapper trials hoist the used copier to r10; native reloads its consumed pointer in r3 for this call. */
-                    register s32 (*copy)(void *, const void *, s32) asm("r3") = Iwram_CopyWords;
-
-                    copy(saved, object, sizeof(*object));
-                }
+                Iwram_CopyWords(saved, object, sizeof(*object));
 
                 atkDelta = object->attack;
                 defDelta = object->defense;
@@ -571,12 +571,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 atkDelta -= object->attack;
                 defDelta -= object->defense;
                 agiDelta -= object->agility;
-                {
-                    /* FAKEMATCH: the second native copy also uses the real routine pointer in r3; intervening calls clobber that register. */
-                    register s32 (*copy)(void *, const void *, s32) asm("r3") = Iwram_CopyWords;
-
-                    copy(object, saved, sizeof(*object));
-                }
+                Iwram_CopyWords(object, saved, sizeof(*object));
                 Sys_Free(saved);
 
                 switch (iconIdx) {

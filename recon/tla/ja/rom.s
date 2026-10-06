@@ -930,18 +930,17 @@ Func_0802db64:
 	.thumb_func
 Func_0802db88:
 	.incbin "baserom.gba", 0x0002db04, 0x000000c0
-	.section .rom.0002dc54, "ax"
-	.global Func_0802dcd8
-	.type Func_0802dcd8, %function
-	.thumb_func
-Func_0802dcd8:
-	.incbin "baserom.gba", 0x0002dc54, 0x000001b4
+	.section .rom.0002dc84, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0002dc84, 0x00000184
 	.section .rom.0002de08, "ax"
 	.global Func_0802de8c
 	.type Func_0802de8c, %function
 	.thumb_func
 Func_0802de8c:
-	.incbin "baserom.gba", 0x0002de08, 0x00000a90
+	.incbin "baserom.gba", 0x0002de08, 0x00000828
+	.section .rom.0002e818, "ax"
+	.incbin "baserom.gba", 0x0002e818, 0x00000080
 	.global ResourceSlot_NumberTable
 ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x0002e898, 0x00000230
@@ -959,7 +958,10 @@ Map_TerrainHeightHandlers:
 	.incbin "baserom.gba", 0x0002ef40, 0x00000040
 	.global WorldMap_TerrainBehaviorTable
 WorldMap_TerrainBehaviorTable:
-	.incbin "baserom.gba", 0x0002ef80, 0x000001cc
+	.incbin "baserom.gba", 0x0002ef80, 0x0000008c
+	.global Battle_FormationPlacementScale
+Battle_FormationPlacementScale:
+	.incbin "baserom.gba", 0x0002f00c, 0x00000140
 	.global ObjectDispatch_Table4
 ObjectDispatch_Table4:
 	.incbin "baserom.gba", 0x0002f14c, 0x00000030

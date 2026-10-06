@@ -10,7 +10,11 @@
    Remaining: native reduces y to its own stack giv (sp+8, the missing 4 of
    the 64-byte frame versus 68) and keeps a summary pointer at sp+36, so
    djinn and status sit 4 lower and the loop registers differ. Native slot
-   order suggests a summary pointer declared between counts and cursor.
+   order suggests a summary pointer declared between counts and cursor:
+   with summary = save->summary stepped by summary++ it takes the slot
+   just above cursor as native, and only the y giv's slot (and so the
+   4-byte shift) is then missing. Next: find the form whose y GCC reduces
+   while the counter stays ascending; none of these trials does.
    Trials: the shared MenuCursor union emitted the same 0x5c8-byte body.
    summary pointer plus y += 16 (old draft): descending counter, 593.
    summary = &save->summary[i] plus y += 16: still descending, 588.
@@ -20,7 +24,8 @@
    before redraw: 474. Adding that summary pointer, set from
    &save->summary[i] each pass: 474; stepped with summary++: 495. Moving the
    declaration of y or i to the top or the end: unchanged (480 before the
-   kind move). y = ++i * 16 as the loop step: descending, 588. A fixed r4
+   kind move). y = ++i * 16 as the loop step: descending, 588. kind moved
+   with summary++ and y += 16: descending, 593. A fixed r4
    index gave 544 but loses the native caller-save stores; rejected. No
    device retained. */
 #include "BATTLE.H"

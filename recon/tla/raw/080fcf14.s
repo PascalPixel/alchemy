@@ -19,7 +19,7 @@ Func_080fcf14:
 	bl BattleAction_Get
 	adds r5, r0, #0
 	ldrb r0, [r5, #6]
-	bl Func_080c8508
+	bl BattleFx_HasMatchingEvent5Far
 	cmp r0, #0
 	beq .L_080fcf42
 	movs r0, #0

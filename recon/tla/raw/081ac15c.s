@@ -895,7 +895,7 @@ LuckyDice_Run:
 	str r2, [r5, #32]
 .L_081ac872:
 	ldr r7, .L_081aca44
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	ldr r2, [r7, #16]
 	lsls r3, r0, #2
 	adds r3, r3, r0
@@ -945,7 +945,7 @@ LuckyDice_Run:
 	bl UiWork_FinalizeFar
 	movs r6, #1
 	str r6, [sp, #96]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1

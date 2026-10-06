@@ -169,11 +169,11 @@ Battle_WaitMode0:
 	.global Func_02003aec
 	.thumb_func
 Func_02003aec:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02003af4
 	.thumb_func
 Func_02003af4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -185,11 +185,11 @@ ObjectMotion_ResetAndSetPositionInMode2:
 	.global Func_02003b0c
 	.thumb_func
 Func_02003b0c:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02003b14
 	.thumb_func
 Func_02003b14:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -273,7 +273,7 @@ Field_DispatchTypeHandler:
 	.global Func_02003bac
 	.thumb_func
 Func_02003bac:
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.global Func_02003bb4
 	.thumb_func
 Func_02003bb4:
@@ -283,17 +283,17 @@ Func_02003bb4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02003bbc
 	.thumb_func
 Func_02003bbc:
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.global Func_02003bc4
 	.thumb_func
 Func_02003bc4:
-	overlay_veneer Func_080c84b8
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Func_02003bcc
 	.thumb_func
 Func_02003bcc:
@@ -302,10 +302,10 @@ Func_02003bcc:
 	.thumb_func
 Func_02003bd4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif
@@ -319,7 +319,7 @@ Func_02003bdc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Object_SetActionCallbackFar
 	.else
-	overlay_veneer Func_080c8690
+	overlay_veneer Event_NoOpFar
 	.endif
 	.endif
 	.global Func_02003be4

@@ -133,7 +133,7 @@ Func_02004424:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
@@ -201,11 +201,11 @@ Battle_WaitMode0:
 	.global Func_02004464
 	.thumb_func
 Func_02004464:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_0200446c
 	.thumb_func
 Func_0200446c:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -253,15 +253,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020044cc
 	.thumb_func
 Func_020044cc:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_020044d4
 	.thumb_func
 Func_020044d4:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_020044dc
 	.thumb_func
 Func_020044dc:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -293,7 +293,7 @@ Object_SetPartAttribute:
 	.global Func_0200451c
 	.thumb_func
 Func_0200451c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -305,7 +305,7 @@ Func_0200452c:
 	.global Func_02004534
 	.thumb_func
 Func_02004534:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_0200453c
 	.thumb_func
 Func_0200453c:
@@ -317,7 +317,7 @@ ObjectMotion_ArmCallback:
 	.global Func_0200454c
 	.thumb_func
 Func_0200454c:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -389,7 +389,7 @@ Object_SetWideSprite:
 	.global Func_020045cc
 	.thumb_func
 Func_020045cc:
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.global ObjectTable_Get
 	.thumb_func
 ObjectTable_Get:

@@ -193,7 +193,7 @@ Func_02003348:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
@@ -269,11 +269,11 @@ Battle_WaitMode0:
 	.global Func_02003398
 	.thumb_func
 Func_02003398:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020033a0
 	.thumb_func
 Func_020033a0:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -305,7 +305,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020033e0
 	.thumb_func
 Func_020033e0:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -321,7 +321,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02003400
 	.thumb_func
 Func_02003400:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:

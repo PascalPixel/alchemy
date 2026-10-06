@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08020080
+	.global Animation_SetWorkEntryFar
 	.thumb_func
-Func_08020080:
+Animation_SetWorkEntryFar:
 	overlay_veneer Animation_SetWorkEntry
 	.global Func_08020088
 	.thumb_func

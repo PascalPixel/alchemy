@@ -201,7 +201,7 @@ Func_02000dc0:
 	.global Func_02000dc8
 	.thumb_func
 Func_02000dc8:
-	overlay_veneer Func_080ad2f0
+	overlay_veneer PartyInventory_FindRoomFar
 	.global Func_02000dd0
 	.thumb_func
 Func_02000dd0:
@@ -225,7 +225,7 @@ Object_GetById:
 	.global Func_02000df8
 	.thumb_func
 Func_02000df8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -233,7 +233,7 @@ Object_SetModeById:
 	.global Func_02000e08
 	.thumb_func
 Func_02000e08:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -241,7 +241,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02000e18
 	.thumb_func
 Func_02000e18:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_02000e20
 	.thumb_func
 Func_02000e20:

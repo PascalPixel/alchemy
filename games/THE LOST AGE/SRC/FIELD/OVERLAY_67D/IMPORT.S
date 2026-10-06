@@ -29,11 +29,11 @@ Battle_WaitMode0:
 	.global Func_020021c4
 	.thumb_func
 Func_020021c4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020021cc
 	.thumb_func
 Func_020021cc:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -69,7 +69,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02002214
 	.thumb_func
 Func_02002214:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -93,7 +93,7 @@ Object_LinkPair:
 	.global Func_02002244
 	.thumb_func
 Func_02002244:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -101,7 +101,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02002254
 	.thumb_func
 Func_02002254:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -133,7 +133,7 @@ Field_DispatchTypeHandler:
 	.global Func_02002294
 	.thumb_func
 Func_02002294:
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.global Func_0200229c
 	.thumb_func
 Func_0200229c:
@@ -143,17 +143,17 @@ Func_0200229c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_020022a4
 	.thumb_func
 Func_020022a4:
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.global Func_020022ac
 	.thumb_func
 Func_020022ac:
-	overlay_veneer Func_080c84b8
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Func_020022b4
 	.thumb_func
 Func_020022b4:

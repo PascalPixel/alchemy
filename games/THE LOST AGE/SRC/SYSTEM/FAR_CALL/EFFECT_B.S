@@ -13,9 +13,9 @@ BattleFx_HasReachedTargetFar:
 	.thumb_func
 EffectSlot_SetPositionFar:
 	overlay_veneer EffectSlot_SetPosition
-	.global Func_080c85a0
+	.global EffectSlot_SetObjectModeFar
 	.thumb_func
-Func_080c85a0:
+EffectSlot_SetObjectModeFar:
 	overlay_veneer EffectSlot_SetObjectMode
 	.global Func_080c85a8
 	.thumb_func

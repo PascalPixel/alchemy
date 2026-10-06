@@ -141,7 +141,7 @@ Func_02004dec:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
@@ -210,16 +210,16 @@ Func_02004e04:
 	.thumb_func
 Func_02004e0c:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	overlay_veneer Func_080201f8
 	.endif
@@ -265,11 +265,11 @@ Battle_WaitMode0:
 	.global Func_02004e5c
 	.thumb_func
 Func_02004e5c:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02004e64
 	.thumb_func
 Func_02004e64:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global UiText_DrawQuantityPairWithCue
 	.thumb_func
 UiText_DrawQuantityPairWithCue:
@@ -313,11 +313,11 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02004ebc
 	.thumb_func
 Func_02004ebc:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02004ec4
 	.thumb_func
 Func_02004ec4:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -345,7 +345,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02004efc
 	.thumb_func
 Func_02004efc:
-	overlay_veneer Func_080c8168
+	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -353,11 +353,11 @@ Object_SetPartAttribute:
 	.global Func_02004f0c
 	.thumb_func
 Func_02004f0c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_02004f14
 	.thumb_func
 Func_02004f14:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8508
+	.global BattleFx_HasMatchingEvent5Far
 	.thumb_func
-Func_080c8508:
+BattleFx_HasMatchingEvent5Far:
 	overlay_veneer BattleFx_HasMatchingEvent5
 	.global BattleFx_HasTriggerFar
 	.thumb_func

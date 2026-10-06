@@ -249,21 +249,21 @@ Resource_LoadCodeFar:
 	.thumb_func
 Blend_SetDarkenTarget16Far:
 	overlay_veneer Blend_SetDarkenTarget16
-	.global Func_080002b0
+	.global Blend_SetDarkenTarget0Far
 	.thumb_func
-Func_080002b0:
+Blend_SetDarkenTarget0Far:
 	overlay_veneer Blend_SetDarkenTarget0
-	.global Func_080002b8
+	.global Blend_SetBrightenTarget16Far
 	.thumb_func
-Func_080002b8:
+Blend_SetBrightenTarget16Far:
 	overlay_veneer Blend_SetBrightenTarget16
-	.global Func_080002c0
+	.global Blend_SetBrightenTarget0Far
 	.thumb_func
-Func_080002c0:
+Blend_SetBrightenTarget0Far:
 	overlay_veneer Blend_SetBrightenTarget0
-	.global Func_080002c8
+	.global Blend_ConfigureTransitionFar
 	.thumb_func
-Func_080002c8:
+Blend_ConfigureTransitionFar:
 	overlay_veneer Blend_ConfigureTransition
 	.global Blend_WaitForTransitionFar
 	.thumb_func

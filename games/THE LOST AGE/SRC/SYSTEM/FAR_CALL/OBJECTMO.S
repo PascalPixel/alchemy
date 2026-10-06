@@ -57,21 +57,21 @@ ObjectMotion_OffsetPositionAndResetMotionFar:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivateFar:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivate
-	.global Func_080c80f8
+	.global ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.thumb_func
-Func_080c80f8:
+ObjectMotion_SetHorizontalPositionWithTerrainFar:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrain
-	.global Func_080c8100
+	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.thumb_func
-Func_080c8100:
+ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar:
 	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
-	.global Func_080c8108
+	.global ObjectMotion_SetPositionWithTerrainFar
 	.thumb_func
-Func_080c8108:
+ObjectMotion_SetPositionWithTerrainFar:
 	overlay_veneer ObjectMotion_SetPositionWithTerrain
-	.global Func_080c8110
+	.global ObjectMotion_MoveToObjectFar
 	.thumb_func
-Func_080c8110:
+ObjectMotion_MoveToObjectFar:
 	overlay_veneer ObjectMotion_MoveToObject
 	.global Object_SetModeByIdFar
 	.thumb_func
@@ -113,9 +113,9 @@ ObjectMotion_SetAngleTowardFar:
 	.thumb_func
 Object_LinkPairFar:
 	overlay_veneer Object_LinkPair
-	.global Func_080c8168
+	.global ObjectGroup_ConfigureChildValueFar
 	.thumb_func
-Func_080c8168:
+ObjectGroup_ConfigureChildValueFar:
 	overlay_veneer ObjectGroup_ConfigureChildValue
 	.global Object_SetPartAttributeFar
 	.thumb_func
@@ -125,9 +125,9 @@ Object_SetPartAttributeFar:
 	.thumb_func
 Func_080c8178:
 	overlay_veneer Func_080d3780
-	.global Func_080c8180
+	.global EventRuntime_SetMessageFar
 	.thumb_func
-Func_080c8180:
+EventRuntime_SetMessageFar:
 	overlay_veneer EventRuntime_SetMessage
 	.global UiText_OpenMessageAtObjectFar
 	.thumb_func
@@ -141,9 +141,9 @@ Func_080c8190:
 	.thumb_func
 Func_080c8198:
 	overlay_veneer Func_080d406c
-	.global Func_080c81a0
+	.global EventRuntime_ShowMessageAndWaitFar
 	.thumb_func
-Func_080c81a0:
+EventRuntime_ShowMessageAndWaitFar:
 	overlay_veneer EventRuntime_ShowMessageAndWait
 	.global Func_080c81a8
 	.thumb_func
@@ -169,13 +169,13 @@ Event_ShowCounterAtPositionFar:
 	.thumb_func
 ObjectMotion_ArmCallbackFar:
 	overlay_veneer ObjectMotion_ArmCallback
-	.global Func_080c81d8
+	.global ObjectMotion_ArmCallbackAndRefreshFar
 	.thumb_func
-Func_080c81d8:
+ObjectMotion_ArmCallbackAndRefreshFar:
 	overlay_veneer ObjectMotion_ArmCallbackAndRefresh
-	.global Func_080c81e0
+	.global Object_ResetTargetAndSetMode1Far
 	.thumb_func
-Func_080c81e0:
+Object_ResetTargetAndSetMode1Far:
 	overlay_veneer Object_ResetTargetAndSetMode1
 	.global ObjectTable_RunIfActiveFar
 	.thumb_func

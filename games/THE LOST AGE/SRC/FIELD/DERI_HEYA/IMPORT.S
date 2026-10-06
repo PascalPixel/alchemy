@@ -113,7 +113,7 @@ Inventory_CountItem:
 	.global Func_02000d14
 	.thumb_func
 Func_02000d14:
-	overlay_veneer Func_080ad2f0
+	overlay_veneer PartyInventory_FindRoomFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -121,11 +121,11 @@ Battle_WaitMode0:
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -141,7 +141,7 @@ ObjectMotion_SetPositionAndReset:
 	.global Func_02000d4c
 	.thumb_func
 Func_02000d4c:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -157,7 +157,7 @@ ObjectMotion_SetAngleToward:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -165,7 +165,7 @@ UiText_OpenMessageAtObject:
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:

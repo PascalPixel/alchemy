@@ -153,11 +153,11 @@ Battle_WaitMode0:
 	.global Func_020051c0
 	.thumb_func
 Func_020051c0:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020051c8
 	.thumb_func
 Func_020051c8:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -209,15 +209,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02005230
 	.thumb_func
 Func_02005230:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02005238
 	.thumb_func
 Func_02005238:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_02005240
 	.thumb_func
 Func_02005240:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -241,7 +241,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02005270
 	.thumb_func
 Func_02005270:
-	overlay_veneer Func_080c8168
+	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -249,7 +249,7 @@ Object_SetPartAttribute:
 	.global Func_02005280
 	.thumb_func
 Func_02005280:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -261,7 +261,7 @@ Func_02005290:
 	.global Func_02005298
 	.thumb_func
 Func_02005298:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global Func_020052a0
 	.thumb_func
 Func_020052a0:
@@ -273,7 +273,7 @@ ObjectMotion_ArmCallback:
 	.global Func_020052b0
 	.thumb_func
 Func_020052b0:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -357,7 +357,7 @@ Field_DispatchTypeHandler:
 	.global Func_02005348
 	.thumb_func
 Func_02005348:
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.global Func_02005350
 	.thumb_func
 Func_02005350:
@@ -367,17 +367,17 @@ Func_02005350:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02005358
 	.thumb_func
 Func_02005358:
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.global Func_02005360
 	.thumb_func
 Func_02005360:
-	overlay_veneer Func_080c84b8
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Func_02005368
 	.thumb_func
 Func_02005368:

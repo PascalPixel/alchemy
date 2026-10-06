@@ -97,11 +97,11 @@ Battle_WaitMode0:
 	.global Func_02000fcc
 	.thumb_func
 Func_02000fcc:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02000fd4
 	.thumb_func
 Func_02000fd4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -113,7 +113,7 @@ ObjectMotion_ResetAndSetPosition:
 	.global Func_02000fec
 	.thumb_func
 Func_02000fec:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global ObjectMotion_SetVariantCallback
 	.thumb_func
 ObjectMotion_SetVariantCallback:

@@ -5,9 +5,9 @@
 	.thumb_func
 UiWork_FinalizeSharedSlotFar:
 	overlay_veneer Func_0803a530
-	.global Func_08038220
+	.global UiWork_ResetFreeChannelFar
 	.thumb_func
-Func_08038220:
+UiWork_ResetFreeChannelFar:
 	overlay_veneer UiWork_ResetFreeChannel
 	.global UiTextResource_InitializeFar
 	.thumb_func

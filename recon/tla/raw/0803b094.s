@@ -602,7 +602,7 @@ UiText_BuildRenderEntries:
 	movs r0, #6
 	bl Func_0803cd08
 	movs r1, #1
-	bl Func_080c8648
+	bl Scene_GetAreaNameIndexFar
 	ldr r3, .L_0803b638
 	ldr r1, [sp, #12]
 	adds r0, r0, r3

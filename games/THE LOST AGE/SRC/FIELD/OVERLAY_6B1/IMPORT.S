@@ -97,7 +97,7 @@ Func_02000c8c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
@@ -121,11 +121,11 @@ Battle_WaitMode0:
 	.global Func_02000cb4
 	.thumb_func
 Func_02000cb4:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -141,7 +141,7 @@ Object_SetActionCallbackAndRefreshById:
 	.global Func_02000cdc
 	.thumb_func
 Func_02000cdc:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:

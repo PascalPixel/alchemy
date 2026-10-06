@@ -37,7 +37,7 @@ Party_AdjustCoins:
 	.global Func_020009a0
 	.thumb_func
 Func_020009a0:
-	overlay_veneer Func_080ad2f0
+	overlay_veneer PartyInventory_FindRoomFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -45,11 +45,11 @@ Battle_WaitMode0:
 	.global Func_020009b0
 	.thumb_func
 Func_020009b0:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020009b8
 	.thumb_func
 Func_020009b8:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -81,7 +81,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020009f8
 	.thumb_func
 Func_020009f8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -97,7 +97,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_02000a18
 	.thumb_func
 Func_02000a18:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -105,7 +105,7 @@ UiText_OpenMessageAtObject:
 	.global Func_02000a28
 	.thumb_func
 Func_02000a28:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:

@@ -41,7 +41,7 @@ Battle_WaitMode0:
 	.global Func_02000568
 	.thumb_func
 Func_02000568:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -65,11 +65,11 @@ Object_SetPartAttribute:
 	.global Func_02000598
 	.thumb_func
 Func_02000598:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_020005a0
 	.thumb_func
 Func_020005a0:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -77,7 +77,7 @@ ObjectMotion_ArmCallback:
 	.global Func_020005b0
 	.thumb_func
 Func_020005b0:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:

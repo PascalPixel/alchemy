@@ -475,7 +475,7 @@ Func_080d4d08:
 	ldrb r0, [r3]
 	ldr r1, [r7]
 	ldr r2, [r7, #8]
-	bl Func_080201c8
+	bl GetMapCellCollisionFar
 	cmp r0, #254
 	bne .L_080d50ce
 	adds r0, r6, #0

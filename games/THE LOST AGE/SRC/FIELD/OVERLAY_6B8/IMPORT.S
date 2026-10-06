@@ -165,7 +165,7 @@ ObjectMotion_SetPositionAndReset:
 	.global Func_02000e74
 	.thumb_func
 Func_02000e74:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -181,11 +181,11 @@ ObjectMotion_SetAngleToward:
 	.global Func_02000e94
 	.thumb_func
 Func_02000e94:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_02000e9c
 	.thumb_func
 Func_02000e9c:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:

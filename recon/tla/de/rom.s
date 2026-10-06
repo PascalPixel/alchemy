@@ -495,10 +495,10 @@ Map_DisableBlendScriptFar:
 	.thumb_func
 Map_GetTerrainHeightFar:
 	.incbin "baserom.gba", 0x000201f0, 0x00000008
-	.global Func_080201c8
-	.type Func_080201c8, %function
+	.global GetMapCellCollisionFar
+	.type GetMapCellCollisionFar, %function
 	.thumb_func
-Func_080201c8:
+GetMapCellCollisionFar:
 	.incbin "baserom.gba", 0x000201f8, 0x00000008
 	.global Func_080201d0
 	.type Func_080201d0, %function

@@ -161,7 +161,7 @@ Func_02004224:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
@@ -337,11 +337,11 @@ Battle_WaitMode0:
 	.global Func_020042dc
 	.thumb_func
 Func_020042dc:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020042e4
 	.thumb_func
 Func_020042e4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -377,11 +377,11 @@ ObjectMotion_OffsetPositionAndResetMotion:
 	.global Func_0200432c
 	.thumb_func
 Func_0200432c:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02004334
 	.thumb_func
 Func_02004334:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -417,7 +417,7 @@ Object_SetPartAttribute:
 	.global Func_0200437c
 	.thumb_func
 Func_0200437c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -429,7 +429,7 @@ Func_0200438c:
 	.global Func_02004394
 	.thumb_func
 Func_02004394:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -437,7 +437,7 @@ ObjectMotion_ArmCallback:
 	.global Func_020043a4
 	.thumb_func
 Func_020043a4:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:

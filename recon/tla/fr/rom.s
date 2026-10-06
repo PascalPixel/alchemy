@@ -495,10 +495,10 @@ Map_DisableBlendScriptFar:
 	.thumb_func
 Map_GetTerrainHeightFar:
 	.incbin "baserom.gba", 0x000201f0, 0x00000008
-	.global Func_080201c8
-	.type Func_080201c8, %function
+	.global GetMapCellCollisionFar
+	.type GetMapCellCollisionFar, %function
 	.thumb_func
-Func_080201c8:
+GetMapCellCollisionFar:
 	.incbin "baserom.gba", 0x000201f8, 0x00000008
 	.global Func_080201d0
 	.type Func_080201d0, %function
@@ -1885,20 +1885,20 @@ Party_AddActiveOwnerFar:
 	.thumb_func
 Party_ListActiveOwnersFar:
 	.incbin "baserom.gba", 0x000b2100, 0x00000008
-	.global Func_080ad108
-	.type Func_080ad108, %function
+	.global RollWeaponUnleashFar
+	.type RollWeaponUnleashFar, %function
 	.thumb_func
-Func_080ad108:
+RollWeaponUnleashFar:
 	.incbin "baserom.gba", 0x000b2108, 0x00000008
 	.global Party_RemoveActiveOwnerFar
 	.type Party_RemoveActiveOwnerFar, %function
 	.thumb_func
 Party_RemoveActiveOwnerFar:
 	.incbin "baserom.gba", 0x000b2110, 0x00000008
-	.global Func_080ad118
-	.type Func_080ad118, %function
+	.global Item_GetEquippedElementFar
+	.type Item_GetEquippedElementFar, %function
 	.thumb_func
-Func_080ad118:
+Item_GetEquippedElementFar:
 	.incbin "baserom.gba", 0x000b2118, 0x00000008
 	.global Battle_HitCheck
 	.type Battle_HitCheck, %function
@@ -1984,10 +1984,10 @@ Djinn_GetDefinitionHeaderFar:
 	.thumb_func
 Party_AdvanceOwnerCountToTargetFar:
 	.incbin "baserom.gba", 0x000b2198, 0x00000008
-	.global Func_080ad1a0
-	.type Func_080ad1a0, %function
+	.global Owner_GetResistanceValueFar
+	.type Owner_GetResistanceValueFar, %function
 	.thumb_func
-Func_080ad1a0:
+Owner_GetResistanceValueFar:
 	.incbin "baserom.gba", 0x000b21a0, 0x00000008
 	.global Trade_CountPendingOffersFar
 	.type Trade_CountPendingOffersFar, %function
@@ -2060,15 +2060,15 @@ Func_080ad208:
 	.thumb_func
 Func_080ad210:
 	.incbin "baserom.gba", 0x000b2210, 0x00000008
-	.global Func_080ad218
-	.type Func_080ad218, %function
+	.global Party_SetLeaderJasmineFar
+	.type Party_SetLeaderJasmineFar, %function
 	.thumb_func
-Func_080ad218:
+Party_SetLeaderJasmineFar:
 	.incbin "baserom.gba", 0x000b2218, 0x00000008
-	.global Func_080ad220
-	.type Func_080ad220, %function
+	.global Party_SetLeaderGarciaFar
+	.type Party_SetLeaderGarciaFar, %function
 	.thumb_func
-Func_080ad220:
+Party_SetLeaderGarciaFar:
 	.incbin "baserom.gba", 0x000b2220, 0x00000008
 	.global Func_080ad228
 	.type Func_080ad228, %function
@@ -2136,10 +2136,10 @@ BattleFx_IsReviveFar:
 	.thumb_func
 Owner_RefreshClassActionsFar:
 	.incbin "baserom.gba", 0x000b2288, 0x00000008
-	.global Func_080ad290
-	.type Func_080ad290, %function
+	.global Party_GetAverageLevelFar
+	.type Party_GetAverageLevelFar, %function
 	.thumb_func
-Func_080ad290:
+Party_GetAverageLevelFar:
 	.incbin "baserom.gba", 0x000b2290, 0x00000008
 	.global Owner_RefreshDerivedDataFar
 	.type Owner_RefreshDerivedDataFar, %function
@@ -2156,10 +2156,10 @@ Inventory_CountItemFar:
 	.thumb_func
 PartyInventory_CountItemFar:
 	.incbin "baserom.gba", 0x000b22a8, 0x00000008
-	.global Func_080ad2b0
-	.type Func_080ad2b0, %function
+	.global PartyInventory_DiscardFar
+	.type PartyInventory_DiscardFar, %function
 	.thumb_func
-Func_080ad2b0:
+PartyInventory_DiscardFar:
 	.incbin "baserom.gba", 0x000b22b0, 0x00000008
 	.section .rom.000b2338, "ax"
 	.global Func_080ad338

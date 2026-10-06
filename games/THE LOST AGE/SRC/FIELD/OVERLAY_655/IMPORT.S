@@ -141,11 +141,11 @@ Battle_WaitMode0:
 	.global Func_02003c28
 	.thumb_func
 Func_02003c28:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02003c30
 	.thumb_func
 Func_02003c30:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -173,15 +173,15 @@ ObjectMotion_SetPositionAndReset:
 	.global Func_02003c68
 	.thumb_func
 Func_02003c68:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02003c70
 	.thumb_func
 Func_02003c70:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_02003c78
 	.thumb_func
 Func_02003c78:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -209,7 +209,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02003cb0
 	.thumb_func
 Func_02003cb0:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
@@ -305,7 +305,7 @@ Field_DispatchTypeHandler:
 	.global Func_02003d50
 	.thumb_func
 Func_02003d50:
-	overlay_veneer Func_080c84a0
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.global Func_02003d58
 	.thumb_func
 Func_02003d58:
@@ -315,17 +315,17 @@ Func_02003d58:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.else
-	overlay_veneer Func_080c84a8
+	overlay_veneer BattleFx_SetupObjectPairFar
 	.endif
 	.endif
 	.global Func_02003d60
 	.thumb_func
 Func_02003d60:
-	overlay_veneer Func_080c84b0
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.global Func_02003d68
 	.thumb_func
 Func_02003d68:
-	overlay_veneer Func_080c84b8
+	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Func_02003d70
 	.thumb_func
 Func_02003d70:
@@ -338,10 +338,10 @@ Func_02003d78:
 	.thumb_func
 Func_02003d80:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif

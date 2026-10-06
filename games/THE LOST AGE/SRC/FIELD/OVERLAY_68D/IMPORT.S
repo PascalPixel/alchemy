@@ -81,11 +81,11 @@ Battle_WaitMode0:
 	.global Func_02001fcc
 	.thumb_func
 Func_02001fcc:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02001fd4
 	.thumb_func
 Func_02001fd4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
@@ -125,7 +125,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02002024
 	.thumb_func
 Func_02002024:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -153,7 +153,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_0200205c
 	.thumb_func
 Func_0200205c:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -169,7 +169,7 @@ ObjectMotion_ArmCallback:
 	.global Func_0200207c
 	.thumb_func
 Func_0200207c:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:

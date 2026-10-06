@@ -41,17 +41,17 @@ Party_AddActiveOwnerFar:
 	.thumb_func
 Party_ListActiveOwnersFar:
 	overlay_veneer Party_ListActiveOwners
-	.global Func_080ad108
+	.global RollWeaponUnleashFar
 	.thumb_func
-Func_080ad108:
+RollWeaponUnleashFar:
 	overlay_veneer RollWeaponUnleash
 	.global Party_RemoveActiveOwnerFar
 	.thumb_func
 Party_RemoveActiveOwnerFar:
 	overlay_veneer Party_RemoveActiveOwner
-	.global Func_080ad118
+	.global Item_GetEquippedElementFar
 	.thumb_func
-Func_080ad118:
+Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
 	.global Battle_HitCheck
 	.thumb_func
@@ -117,9 +117,9 @@ Djinn_GetDefinitionHeaderFar:
 	.thumb_func
 Party_AdvanceOwnerCountToTargetFar:
 	overlay_veneer Party_AdvanceOwnerCountToTarget
-	.global Func_080ad1a0
+	.global Owner_GetResistanceValueFar
 	.thumb_func
-Func_080ad1a0:
+Owner_GetResistanceValueFar:
 	overlay_veneer Owner_GetResistanceValue
 	.global Trade_CountPendingOffersFar
 	.thumb_func

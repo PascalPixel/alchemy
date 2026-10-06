@@ -29,7 +29,7 @@ Func_08043cd8:
 	str r1, [sp, #28]
 	str r1, [sp, #24]
 	str r2, [sp, #12]
-	bl Func_080ad2c8
+	bl Runtime_GetBuildStampTimeFar
 	mov r3, r8
 	str r0, [sp, #8]
 	cmp r3, #0

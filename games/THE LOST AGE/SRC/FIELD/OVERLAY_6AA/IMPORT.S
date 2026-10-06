@@ -149,7 +149,7 @@ Func_02004c10:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020198
 	.else
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.endif
 	.endif
 	.endif
@@ -317,11 +317,11 @@ Battle_WaitMode0:
 	.global Func_02004ca8
 	.thumb_func
 Func_02004ca8:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02004cb0
 	.thumb_func
 Func_02004cb0:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -341,7 +341,7 @@ ObjectMotion_SetPositionAndCommit:
 	.global Func_02004cd8
 	.thumb_func
 Func_02004cd8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:

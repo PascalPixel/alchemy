@@ -146,13 +146,13 @@ Func_080e4730:
 	mov r3, r8
 	ldr r0, [r3, #80]
 	movs r1, #15
-	bl Func_08020288
+	bl Animation_ApplyChildValueToFirstFar
 	mov r5, r8
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [r5, #80]
 	movs r1, #0
-	bl Func_08020288
+	bl Animation_ApplyChildValueToFirstFar
 	ldr r3, [r5, #80]
 	movs r5, #128
 	lsls r5, r5, #3
@@ -163,7 +163,7 @@ Func_080e4730:
 	mov r1, r8
 	ldr r0, [r1, #80]
 	movs r1, #15
-	bl Func_08020288
+	bl Animation_ApplyChildValueToFirstFar
 	bl Resource_FindFreeEntry
 	movs r2, #0
 	adds r1, r5, #0
@@ -231,7 +231,7 @@ Func_080e4730:
 	mov r1, r8
 	ldr r0, [r1, #80]
 	movs r1, #0
-	bl Func_08020288
+	bl Animation_ApplyChildValueToFirstFar
 	mov r3, r11
 	movs r2, #24
 	ldrsh r0, [r3, r2]

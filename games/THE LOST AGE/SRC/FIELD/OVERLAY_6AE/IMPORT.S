@@ -165,11 +165,11 @@ Battle_WaitMode0:
 	.global Func_0200560c
 	.thumb_func
 Func_0200560c:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02005614
 	.thumb_func
 Func_02005614:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
 Event_PrepareObjectAndApplyValue:
@@ -221,15 +221,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_0200567c
 	.thumb_func
 Func_0200567c:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_02005684
 	.thumb_func
 Func_02005684:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_0200568c
 	.thumb_func
 Func_0200568c:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -261,7 +261,7 @@ ObjectMotion_SetAngleToward:
 	.global Func_020056cc
 	.thumb_func
 Func_020056cc:
-	overlay_veneer Func_080c8168
+	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:
@@ -269,7 +269,7 @@ Object_SetPartAttribute:
 	.global Func_020056dc
 	.thumb_func
 Func_020056dc:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global UiText_OpenMessageAtObject
 	.thumb_func
 UiText_OpenMessageAtObject:
@@ -281,7 +281,7 @@ Func_020056ec:
 	.global Func_020056f4
 	.thumb_func
 Func_020056f4:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -289,7 +289,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02005704
 	.thumb_func
 Func_02005704:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:

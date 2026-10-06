@@ -173,7 +173,7 @@ Battle_WaitMode0:
 	.global Func_02002024
 	.thumb_func
 Func_02002024:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -181,7 +181,7 @@ Object_GetById:
 	.global Func_02002034
 	.thumb_func
 Func_02002034:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -234,10 +234,10 @@ Func_02002074:
 	.thumb_func
 Func_0200207c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.else
 	overlay_veneer Func_080c8438
 	.endif

@@ -233,7 +233,7 @@ Owner_RefreshDerivedData:
 	.global Func_02002388
 	.thumb_func
 Func_02002388:
-	overlay_veneer Func_080ad2c8
+	overlay_veneer Runtime_GetBuildStampTimeFar
 	.global Func_02002390
 	.thumb_func
 Func_02002390:

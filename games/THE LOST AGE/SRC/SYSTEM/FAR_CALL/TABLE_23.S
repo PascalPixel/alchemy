@@ -13,13 +13,13 @@ Func_080ad208:
 	.thumb_func
 Func_080ad210:
 	overlay_veneer Func_080ae220
-	.global Func_080ad218
+	.global Party_SetLeaderJasmineFar
 	.thumb_func
-Func_080ad218:
+Party_SetLeaderJasmineFar:
 	overlay_veneer Party_SetLeaderJasmine
-	.global Func_080ad220
+	.global Party_SetLeaderGarciaFar
 	.thumb_func
-Func_080ad220:
+Party_SetLeaderGarciaFar:
 	overlay_veneer Party_SetLeaderGarcia
 	.global Func_080ad228
 	.thumb_func

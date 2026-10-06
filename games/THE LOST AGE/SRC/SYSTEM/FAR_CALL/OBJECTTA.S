@@ -33,29 +33,29 @@ Func_080c83d8:
 	.thumb_func
 Func_080c83e0:
 	overlay_veneer Func_080cf424
-	.global Func_080c83e8
+	.global ObjectEvent_GetObjectFar
 	.thumb_func
-Func_080c83e8:
+ObjectEvent_GetObjectFar:
 	overlay_veneer ObjectEvent_GetObject
-	.global Func_080c83f0
+	.global ObjectEvent_SetMode4WithCueFar
 	.thumb_func
-Func_080c83f0:
+ObjectEvent_SetMode4WithCueFar:
 	overlay_veneer ObjectEvent_SetMode4WithCue
-	.global Func_080c83f8
+	.global ObjectEvent_SetMode5WithCueFar
 	.thumb_func
-Func_080c83f8:
+ObjectEvent_SetMode5WithCueFar:
 	overlay_veneer ObjectEvent_SetMode5WithCue
-	.global Func_080c8400
+	.global ObjectEvent_SetMode2Far
 	.thumb_func
-Func_080c8400:
+ObjectEvent_SetMode2Far:
 	overlay_veneer ObjectEvent_SetMode2
-	.global Func_080c8408
+	.global ObjectEvent_PlaceOnGroundFar
 	.thumb_func
-Func_080c8408:
+ObjectEvent_PlaceOnGroundFar:
 	overlay_veneer ObjectEvent_PlaceOnGround
-	.global Func_080c8410
+	.global ObjectEvent_RemoveFar
 	.thumb_func
-Func_080c8410:
+ObjectEvent_RemoveFar:
 	overlay_veneer ObjectEvent_Remove
 	.global Func_080c8418
 	.thumb_func
@@ -65,9 +65,9 @@ Func_080c8418:
 	.thumb_func
 Object_SetWideSpriteFar:
 	overlay_veneer Object_SetWideSprite
-	.global Func_080c8428
+	.global Object_ReturnHomeFar
 	.thumb_func
-Func_080c8428:
+Object_ReturnHomeFar:
 	overlay_veneer Object_ReturnHome
 	.global Func_080c8430
 	.thumb_func
@@ -125,21 +125,21 @@ Func_080c8490:
 	.thumb_func
 Field_DispatchTypeHandlerFar:
 	overlay_veneer Field_DispatchTypeHandler
-	.global Func_080c84a0
+	.global BattleFx_LoadActionEffectResourcesFar
 	.thumb_func
-Func_080c84a0:
+BattleFx_LoadActionEffectResourcesFar:
 	overlay_veneer BattleFx_LoadActionEffectResources
-	.global Func_080c84a8
+	.global BattleFx_SetupObjectPairFar
 	.thumb_func
-Func_080c84a8:
+BattleFx_SetupObjectPairFar:
 	overlay_veneer BattleFx_SetupObjectPair
-	.global Func_080c84b0
+	.global EffectRuntime_StopCurrentObjectFar
 	.thumb_func
-Func_080c84b0:
+EffectRuntime_StopCurrentObjectFar:
 	overlay_veneer EffectRuntime_StopCurrentObject
-	.global Func_080c84b8
+	.global BattleEffect_CleanupSceneObjectsFar
 	.thumb_func
-Func_080c84b8:
+BattleEffect_CleanupSceneObjectsFar:
 	overlay_veneer BattleEffect_CleanupSceneObjects
 	.global Func_080c84c0
 	.thumb_func

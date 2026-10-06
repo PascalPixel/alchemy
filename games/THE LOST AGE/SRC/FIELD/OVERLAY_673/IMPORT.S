@@ -85,11 +85,11 @@ Battle_WaitMode0:
 	.global Func_0200119c
 	.thumb_func
 Func_0200119c:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_020011a4
 	.thumb_func
 Func_020011a4:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -109,11 +109,11 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020011cc
 	.thumb_func
 Func_020011cc:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_020011d4
 	.thumb_func
 Func_020011d4:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -121,11 +121,11 @@ Object_SetModeById:
 	.global Func_020011e4
 	.thumb_func
 Func_020011e4:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_020011ec
 	.thumb_func
 Func_020011ec:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:

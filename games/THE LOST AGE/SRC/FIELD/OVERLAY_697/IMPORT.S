@@ -198,16 +198,16 @@ Func_02005820:
 	.thumb_func
 Func_02005828:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201c8
+	overlay_veneer GetMapCellCollisionFar
 	.else
 	overlay_veneer Func_080201f8
 	.endif
@@ -241,7 +241,7 @@ Func_02005858:
 	.global Func_02005860
 	.thumb_func
 Func_02005860:
-	overlay_veneer Func_080ad2b0
+	overlay_veneer PartyInventory_DiscardFar
 	.global Func_02005868
 	.thumb_func
 Func_02005868:
@@ -261,11 +261,11 @@ Battle_WaitMode0:
 	.global Func_02005880
 	.thumb_func
 Func_02005880:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Func_02005888
 	.thumb_func
 Func_02005888:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -309,15 +309,15 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_020058e0
 	.thumb_func
 Func_020058e0:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Func_020058e8
 	.thumb_func
 Func_020058e8:
-	overlay_veneer Func_080c8100
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Func_020058f0
 	.thumb_func
 Func_020058f0:
-	overlay_veneer Func_080c8110
+	overlay_veneer ObjectMotion_MoveToObjectFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
@@ -353,11 +353,11 @@ Object_SetPartAttribute:
 	.global Func_02005938
 	.thumb_func
 Func_02005938:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Func_02005940
 	.thumb_func
 Func_02005940:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -365,7 +365,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02005950
 	.thumb_func
 Func_02005950:
-	overlay_veneer Func_080c81d8
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
 	.global Func_02005958
 	.thumb_func
 Func_02005958:
@@ -470,10 +470,10 @@ Func_020059e8:
 	.thumb_func
 Func_020059f0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8508
+	overlay_veneer BattleFx_HasMatchingEvent5Far
 	.else
 	overlay_veneer Func_080c8518
 	.endif

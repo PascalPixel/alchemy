@@ -2672,7 +2672,7 @@ Func_08046b08:
 .L_08047fdc:
 	ldr r0, [sp, #144]
 	mov r1, r8
-	bl Func_080ad1a0
+	bl Owner_GetResistanceValueFar
 	movs r3, #80
 	ldr r2, [sp, #136]
 	str r3, [sp, #0]

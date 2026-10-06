@@ -133,7 +133,7 @@ Object_GetById:
 	.global Func_020005c8
 	.thumb_func
 Func_020005c8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:

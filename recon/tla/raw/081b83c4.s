@@ -615,7 +615,7 @@ Func_081b83c4:
 	movs r3, #8
 	movs r2, #0
 	bl UiText_DrawCharacterAtOffsetFar
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -731,7 +731,7 @@ Func_081b83c4:
 	adds r5, #28
 	cmp r1, #4
 	bne .L_081b896c
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	ldr r7, .L_081b8bf0
@@ -774,7 +774,7 @@ Func_081b83c4:
 	str r2, [sp, #96]
 	str r3, [sp, #84]
 	str r3, [sp, #80]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -931,7 +931,7 @@ Func_081b83c4:
 	beq .L_081b8b72
 	b .L_081b8c70
 .L_081b8b72:
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -1759,7 +1759,7 @@ Func_081b83c4:
 	movs r5, #0
 	str r4, [sp, #64]
 	str r5, [sp, #88]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	ldr r6, [sp, #120]
@@ -1937,7 +1937,7 @@ Func_081b83c4:
 	str r1, [sp, #80]
 	str r1, [sp, #84]
 	str r2, [sp, #56]
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #1
@@ -3924,7 +3924,7 @@ Func_081b83c4:
 	bl .L_081b9550
 .L_081ba25a:
 	ldr r5, .L_081ba308
-	bl Func_080ad290
+	bl Party_GetAverageLevelFar
 	ldr r2, [r5, #16]
 	lsls r3, r0, #2
 	adds r3, r3, r0

@@ -37,11 +37,11 @@ Engine_EventWait:
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
-	overlay_veneer Func_080c8018
+	overlay_veneer EventRuntime_BeginFar
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
-	overlay_veneer Func_080c8020
+	overlay_veneer EventRuntime_EndFar
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
@@ -77,7 +77,7 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Func_02000ca8
 	.thumb_func
 Func_02000ca8:
-	overlay_veneer Func_080c80f8
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
@@ -105,7 +105,7 @@ Object_LinkPair:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Func_080c8180
+	overlay_veneer EventRuntime_SetMessageFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -113,7 +113,7 @@ Engine_EventOpenMessage:
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
-	overlay_veneer Func_080c81a0
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
 	.global ObjectMotion_ArmCallback
 	.thumb_func
 ObjectMotion_ArmCallback:
@@ -170,10 +170,10 @@ Engine_EventWaitDelay:
 	.thumb_func
 Object_SetWideSprite:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8410
+	overlay_veneer ObjectEvent_RemoveFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8410
+	overlay_veneer ObjectEvent_RemoveFar
 	.else
 	overlay_veneer Object_SetWideSpriteFar
 	.endif
@@ -187,7 +187,7 @@ Engine_ActorReturnHome:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8418
 	.else
-	overlay_veneer Func_080c8428
+	overlay_veneer Object_ReturnHomeFar
 	.endif
 	.endif
 	.global Engine_EventResolvePendingActions

@@ -15,8 +15,9 @@ pub fn extname(path: &str) -> &str {
 }
 
 use crate::compiler::routing::{
-    agbcc_arm_driver, agbcc_driver, bundle_for, cflags_for_target_source, include_flag, is_arm,
-    uses_agbcc_compiler, CompilerTarget,
+    bundle_for, cflags_for_family, driver_for_family, family_for_source, family_include_flags,
+    include_flag,
+    CompilerFamily, CompilerTarget,
 };
 pub type Result<T> = std::result::Result<T, String>;
 #[derive(Debug, Clone)]
@@ -29,6 +30,8 @@ pub struct SourceToAssemblyPlanOptions {
     pub preprocessor_flags: Vec<String>,
     pub preprocessed_output: Option<String>,
     pub dumpbase: Option<String>,
+    /// An analysis-only route that replaces the one routing_source would take.
+    pub family: Option<CompilerFamily>,
 }
 impl SourceToAssemblyPlanOptions {
     pub fn new(
@@ -46,6 +49,7 @@ impl SourceToAssemblyPlanOptions {
             preprocessor_flags: Vec::new(),
             preprocessed_output: None,
             dumpbase: None,
+            family: None,
         }
     }
 }
@@ -79,32 +83,31 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
             "compiler flag is not an include path or diagnostic: {flag}"
         ));
     }
-    let old_agbcc = uses_agbcc_compiler(options.target, &options.routing_source);
-    let mut flags = cflags_for_target_source(options.target, &options.routing_source);
+    let family = options
+        .family
+        .unwrap_or_else(|| family_for_source(options.target, &options.routing_source));
+    let mut flags = cflags_for_family(options.target, family);
     flags.extend(options.support_flags.iter().cloned());
     let dumpbase = options
         .dumpbase
         .clone()
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut steps = Vec::new();
-    if old_agbcc {
-        let driver = if is_arm(options.target, &options.routing_source) {
-            agbcc_arm_driver()
-        } else {
-            agbcc_driver()
-        };
+    if let Some(driver) = driver_for_family(family) {
         validate_agbcc_bundle()?;
         let compiler_input = options
             .preprocessed_output
             .clone()
             .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
         let gcc_minor = 9;
+        let mut preprocessor_flags = family_include_flags(family);
+        preprocessor_flags.extend(options.preprocessor_flags.iter().cloned());
         steps.push(direct_preprocessor_command_for_target_with_minor_and_flags(
             options.target,
             &options.input,
             &compiler_input,
             gcc_minor,
-            &options.preprocessor_flags,
+            &preprocessor_flags,
         )?);
         let mut command = vec![
             driver.to_string_lossy().into_owned(),

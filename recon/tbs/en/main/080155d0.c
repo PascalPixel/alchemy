@@ -1,4 +1,12 @@
-/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4). Analysis-only ARM study; no route admitted, no credit.
+/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4); camelot_arm is an analysis-only study (K1, K3).
+ * alchemy diff --camelot-arm, upstream's whole arm_adjust_cost (2026-10-06, session 6):
+ *   listing 196, draft 198, common 119, differ 156; the same draft under stock agbcc_arm:
+ *   draft 199, common 109, differ 177. 165 to 156 (session 6, aimed by --heat):
+ *   the wide branch indexes by ch - 32 again rather than idx, as the listing's sub r3, r1, #32
+ *   inside that branch. Trial (session 6): code = ch - 222 once, before the test, used there
+ *   and by both branches (the listing's cmp lr, #1 after both): 159.
+ * Earlier (session 5): listing 196, draft 197, common 114, differ 165, as under the
+ *   anti/output half alone (stock agbcc_arm 164).
  * agbcc_arm control (library setting -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4):
  *   listing 196, draft 198, common 115, differ 164
  * agscc control (alchemy diff --arm): listing 196, draft 223, common 24, differ 371
@@ -25,6 +33,10 @@
  *     native's sub r3, r1, #32 shape; byte offset idx * 26 for the narrow glyph too 169;
  *     a second row local in the pass loop 164 / 369 (no agbcc_arm change); code = ch - 222 once
  *     at the top, also in the font test, 174 / 361
+ * alchemy permute --camelot-arm (2026-10-06, 4 minutes, seed 1): candidates at differ 118, 108
+ *   and 98 (weighted 1790 from 2550), the best after 14 rewrites: statement reorders, loop
+ *   forms, pointer indexing, an assignment moved into a condition and 3 temporaries shared by
+ *   two statements each. Not yet taken: the shared temporaries need natural forms first.
  * Remaining: win is spilled and reloaded for its width (native reads r0 before the spill, idx
  * takes r0 here and ip in native); the narrow glyph's width load is scheduled before rows, so
  * the two arms do not share their last ldrh as native's do; native recomputes ch - 32 for the
@@ -117,7 +129,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
         gw = glyph->width;
     } else {
         code = ch - 222;
-        wide = &((struct UiTextWideGlyph *)UiText_Glyphs)[idx];
+        wide = &((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32];
         rows = wide->rows;
         gw = wide->width;
     }

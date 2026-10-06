@@ -251,7 +251,16 @@ never a file or a function.
   file, as pret names its library files: pret's agbcc for MusicPlayer2000
   (`-O2`) and the flash library (`-O`, except two helper files whose bytes
   show `-O2`), and agbcc_arm for RAM-executed ARM code
-  (`-fomit-frame-pointer`). No other routing: never a per-file or
+  (`-fomit-frame-pointer`). ☀️'s seven compiler-shaped game ARM functions
+  are a study, not a route: the hypothesis is that Camelot compiled them with
+  `agbcc/camelot_arm`, agbcc_arm's pinned gcc_arm with upstream GCC's whole
+  `arm_adjust_cost` (agscc's `arm.c`) built by bootstrap, at that library ARM
+  setting. What is proven: the setting's habits (no frame, saves from r5, no
+  r11, interworking returns) run through all seven, and the upstream rules
+  fill load/store slots stock gcc_arm leaves empty, but only
+  Tile_BuildMetatiles, 92 of their 851 instructions, matches under it.
+  `CAMELOT_ARM_SOURCES` stays empty and `--camelot-arm` earns no credit
+  until the study meets K3's bar. No other routing: never a per-file or
   per-function compiler, option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to

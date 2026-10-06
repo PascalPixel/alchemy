@@ -185,7 +185,7 @@ Event_WaitTransitionFrames:
 	.global Func_02003240
 	.thumb_func
 Func_02003240:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02003248
 	.thumb_func
 Func_02003248:
@@ -235,27 +235,27 @@ Field_BeginPaletteTransition:
 	.global Func_02003278
 	.thumb_func
 Func_02003278:
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.global Func_02003280
 	.thumb_func
 Func_02003280:
-	overlay_veneer Func_080c8810
+	overlay_veneer BattleFx_EndArcEffectFar
 	.global Func_02003288
 	.thumb_func
 Func_02003288:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
-	overlay_veneer Func_080c8818
+	overlay_veneer BattleFx_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_02003290
 	.thumb_func
 Func_02003290:
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.global Func_02003298
 	.thumb_func
 Func_02003298:

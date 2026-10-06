@@ -257,11 +257,11 @@ Func_02001d9c:
 	.global Func_02001da4
 	.thumb_func
 Func_02001da4:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02001dac
 	.thumb_func
 Func_02001dac:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -285,7 +285,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001dcc
 	.thumb_func
 Func_02001dcc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001dd4
 	.thumb_func
 Func_02001dd4:
@@ -297,7 +297,7 @@ ObjectMotion_CommitPositionAndActivate:
 	.global Func_02001de4
 	.thumb_func
 Func_02001de4:
-	overlay_veneer Func_080c8628
+	overlay_veneer ObjectTable_SnapshotFar
 	.global Func_02001dec
 	.thumb_func
 Func_02001dec:
@@ -343,7 +343,7 @@ Func_02001e14:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001e1c

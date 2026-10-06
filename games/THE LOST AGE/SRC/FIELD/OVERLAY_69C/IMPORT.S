@@ -285,7 +285,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002420
 	.thumb_func
 Func_02002420:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02002428
 	.thumb_func
 Func_02002428:
@@ -322,10 +322,10 @@ Func_02002440:
 	.thumb_func
 Func_02002448:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

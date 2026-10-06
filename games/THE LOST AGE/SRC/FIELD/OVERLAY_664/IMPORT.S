@@ -321,15 +321,15 @@ Func_02005efc:
 	.global Func_02005f04
 	.thumb_func
 Func_02005f04:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02005f0c
 	.thumb_func
 Func_02005f0c:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02005f14
 	.thumb_func
 Func_02005f14:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -349,7 +349,7 @@ Event_WaitTransitionFrames:
 	.global Func_02005f2c
 	.thumb_func
 Func_02005f2c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02005f34
 	.thumb_func
 Func_02005f34:
@@ -359,19 +359,19 @@ Func_02005f34:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_SnapScaleToFullFar
 	.else
-	overlay_veneer Func_080c8540
+	overlay_veneer BattleParty_ApplyDrainFar
 	.endif
 	.endif
 	.global Func_02005f3c
 	.thumb_func
 Func_02005f3c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.endif
 	.endif
 	.global Object_SetActionCallback
@@ -431,7 +431,7 @@ Func_02005f84:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02005f8c

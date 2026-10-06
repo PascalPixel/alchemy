@@ -181,15 +181,15 @@ Func_02000d14:
 	.global Func_02000d1c
 	.thumb_func
 Func_02000d1c:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02000d24
 	.thumb_func
 Func_02000d24:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02000d2c
 	.thumb_func
 Func_02000d2c:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -209,7 +209,7 @@ Event_WaitTransitionFrames:
 	.global Func_02000d44
 	.thumb_func
 Func_02000d44:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02000d4c
 	.thumb_func
 Func_02000d4c:
@@ -222,10 +222,10 @@ Func_02000d54:
 	.thumb_func
 Func_02000d5c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

@@ -11,7 +11,7 @@ Func_08108148:
 	sub sp, #4
 	bl Runtime_AllocateHeapBlock
 	adds r5, r0, #0
-	bl Func_080c84d8
+	bl EventRuntime_ResolveAllPendingActionsFar
 	movs r3, #0
 	mov r0, sp
 	str r3, [r0]

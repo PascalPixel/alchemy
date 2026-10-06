@@ -282,10 +282,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_020023d8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	overlay_veneer Func_080c8558
 	.endif

@@ -153,7 +153,7 @@ Func_020014e0:
 	.global Func_020014e8
 	.thumb_func
 Func_020014e8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020014f0
 	.thumb_func
 Func_020014f0:

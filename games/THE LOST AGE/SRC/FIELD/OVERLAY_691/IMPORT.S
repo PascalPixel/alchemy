@@ -297,7 +297,7 @@ Func_02003bc4:
 	.global Func_02003bcc
 	.thumb_func
 Func_02003bcc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02003bd4
 	.thumb_func
 Func_02003bd4:
@@ -403,7 +403,7 @@ Func_02003c44:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87d0
 	.else
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.endif
 	.endif
 	.global Func_02003c4c

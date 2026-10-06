@@ -249,11 +249,11 @@ Func_0200207c:
 	.global Func_02002084
 	.thumb_func
 Func_02002084:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_0200208c
 	.thumb_func
 Func_0200208c:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -277,7 +277,7 @@ Event_WaitTransitionFrames:
 	.global Func_020020ac
 	.thumb_func
 Func_020020ac:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020020b4
 	.thumb_func
 Func_020020b4:

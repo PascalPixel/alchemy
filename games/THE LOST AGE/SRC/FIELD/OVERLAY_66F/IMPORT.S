@@ -193,7 +193,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001164
 	.thumb_func
 Func_02001164:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -215,7 +215,7 @@ Func_02001184:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_0200118c

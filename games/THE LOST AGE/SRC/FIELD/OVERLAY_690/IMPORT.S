@@ -165,7 +165,7 @@ Func_02002050:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020318
 	.else
-	overlay_veneer Func_08020348
+	overlay_veneer Runtime_CheckRadiusOverlapFar
 	.endif
 	.endif
 	.endif
@@ -269,7 +269,7 @@ Func_02002110:
 	.global Func_02002118
 	.thumb_func
 Func_02002118:
-	overlay_veneer Func_080c82f8
+	overlay_veneer EventRuntime_PrepareCurrentObjectFar
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
@@ -309,11 +309,11 @@ Func_02002140:
 	.global Func_02002148
 	.thumb_func
 Func_02002148:
-	overlay_veneer Func_080c84d8
+	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
 	.global Func_02002150
 	.thumb_func
 Func_02002150:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02002158
 	.thumb_func
 Func_02002158:
@@ -371,7 +371,7 @@ Func_020021a8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020021b0

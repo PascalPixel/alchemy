@@ -281,7 +281,7 @@ Func_02004c78:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020318
 	.else
-	overlay_veneer Func_08020348
+	overlay_veneer Runtime_CheckRadiusOverlapFar
 	.endif
 	.endif
 	.endif
@@ -397,19 +397,19 @@ Func_02004d40:
 	.global Func_02004d48
 	.thumb_func
 Func_02004d48:
-	overlay_veneer Func_080c82f8
+	overlay_veneer EventRuntime_PrepareCurrentObjectFar
 	.global Func_02004d50
 	.thumb_func
 Func_02004d50:
-	overlay_veneer Func_080c8350
+	overlay_veneer DisplayTransition_StartFar
 	.global Func_02004d58
 	.thumb_func
 Func_02004d58:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02004d60
 	.thumb_func
 Func_02004d60:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -461,19 +461,19 @@ BattleFx_PrepareBufferInterpolation:
 	.global Func_02004d98
 	.thumb_func
 Func_02004d98:
-	overlay_veneer Func_080c84d8
+	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
 	.global Func_02004da0
 	.thumb_func
 Func_02004da0:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02004da8
 	.thumb_func
 Func_02004da8:
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.global Func_02004db0
 	.thumb_func
 Func_02004db0:
-	overlay_veneer Func_080c8628
+	overlay_veneer ObjectTable_SnapshotFar
 	.global Func_02004db8
 	.thumb_func
 Func_02004db8:
@@ -495,7 +495,7 @@ Func_02004dc0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02004dc8

@@ -257,11 +257,11 @@ Func_02002ed4:
 	.global Func_02002edc
 	.thumb_func
 Func_02002edc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02002ee4
 	.thumb_func
 Func_02002ee4:
-	overlay_veneer Func_080c8628
+	overlay_veneer ObjectTable_SnapshotFar
 	.global Func_02002eec
 	.thumb_func
 Func_02002eec:

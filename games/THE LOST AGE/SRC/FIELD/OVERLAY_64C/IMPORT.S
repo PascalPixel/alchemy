@@ -245,7 +245,7 @@ Func_0200207c:
 	.global Func_02002084
 	.thumb_func
 Func_02002084:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_0200208c
 	.thumb_func
 Func_0200208c:
@@ -263,7 +263,7 @@ Func_0200209c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020020a4

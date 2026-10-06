@@ -270,10 +270,10 @@ Func_02003ae0:
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif
@@ -282,10 +282,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -323,7 +323,7 @@ Func_02003b08:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global Object_LinkObjectAndSetCallback

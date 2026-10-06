@@ -149,19 +149,19 @@ Func_0200102c:
 	.global Func_02001034
 	.thumb_func
 Func_02001034:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_0200103c
 	.thumb_func
 Func_0200103c:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02001044
 	.thumb_func
 Func_02001044:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Func_0200104c
 	.thumb_func
 Func_0200104c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001054
 	.thumb_func
 Func_02001054:

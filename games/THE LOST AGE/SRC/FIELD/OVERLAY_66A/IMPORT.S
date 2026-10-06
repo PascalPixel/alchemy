@@ -229,7 +229,7 @@ Func_02001520:
 	.global Func_02001528
 	.thumb_func
 Func_02001528:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global BattleFx_StartItemBreak
 	.thumb_func
 BattleFx_StartItemBreak:
@@ -238,10 +238,10 @@ BattleFx_StartItemBreak:
 	.thumb_func
 BattleFx_SnapScaleToFull:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8520
+	overlay_veneer Event_GetSpecialValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8520
+	overlay_veneer Event_GetSpecialValueFar
 	.else
 	overlay_veneer BattleFx_SnapScaleToFullFar
 	.endif
@@ -303,7 +303,7 @@ Func_02001590:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001598
@@ -343,27 +343,27 @@ Field_BeginPaletteTransition:
 	.global Func_020015b0
 	.thumb_func
 Func_020015b0:
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.global Func_020015b8
 	.thumb_func
 Func_020015b8:
-	overlay_veneer Func_080c8810
+	overlay_veneer BattleFx_EndArcEffectFar
 	.global Func_020015c0
 	.thumb_func
 Func_020015c0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
-	overlay_veneer Func_080c8818
+	overlay_veneer BattleFx_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_020015c8
 	.thumb_func
 Func_020015c8:
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.global Func_020015d0
 	.thumb_func
 Func_020015d0:

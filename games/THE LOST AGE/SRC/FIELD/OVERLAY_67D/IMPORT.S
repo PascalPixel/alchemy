@@ -161,7 +161,7 @@ Func_020022b4:
 	.global Func_020022bc
 	.thumb_func
 Func_020022bc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020022c4
 	.thumb_func
 Func_020022c4:
@@ -183,33 +183,33 @@ Func_020022dc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020022e4
 	.thumb_func
 Func_020022e4:
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.global Func_020022ec
 	.thumb_func
 Func_020022ec:
-	overlay_veneer Func_080c8810
+	overlay_veneer BattleFx_EndArcEffectFar
 	.global Func_020022f4
 	.thumb_func
 Func_020022f4:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
-	overlay_veneer Func_080c8818
+	overlay_veneer BattleFx_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_020022fc
 	.thumb_func
 Func_020022fc:
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.global Func_02002304
 	.thumb_func
 Func_02002304:

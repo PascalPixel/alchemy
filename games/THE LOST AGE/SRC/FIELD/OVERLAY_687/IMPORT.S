@@ -149,11 +149,11 @@ Party_SetFields1eeAnd1f0:
 	.global Func_0200201c
 	.thumb_func
 Func_0200201c:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02002024
 	.thumb_func
 Func_02002024:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -177,17 +177,17 @@ Event_WaitTransitionFrames:
 	.global Func_02002044
 	.thumb_func
 Func_02002044:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_0200204c
 	.thumb_func
 Func_0200204c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.endif
 	.endif
 	.global Func_02002054

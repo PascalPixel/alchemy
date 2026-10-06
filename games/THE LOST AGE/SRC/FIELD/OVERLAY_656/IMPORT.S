@@ -257,7 +257,7 @@ Party_SetFields1eeAnd1f0:
 	.global Func_02002d88
 	.thumb_func
 Func_02002d88:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -281,7 +281,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002da8
 	.thumb_func
 Func_02002da8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:

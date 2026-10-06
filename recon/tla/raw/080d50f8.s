@@ -215,7 +215,7 @@ Func_080d50f8:
 	mov r1, r10
 	adds r2, r6, #0
 	str r4, [sp, #0]
-	bl Func_08020348
+	bl Runtime_CheckRadiusOverlapFar
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	blt .L_080d52a0

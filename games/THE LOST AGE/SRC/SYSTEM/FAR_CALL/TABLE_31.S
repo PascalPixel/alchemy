@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8628
+	.global ObjectTable_SnapshotFar
 	.thumb_func
-Func_080c8628:
+ObjectTable_SnapshotFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080dd698
 .else

@@ -157,15 +157,15 @@ Func_020018e8:
 	.global Func_020018f0
 	.thumb_func
 Func_020018f0:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_020018f8
 	.thumb_func
 Func_020018f8:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02001900
 	.thumb_func
 Func_02001900:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -197,7 +197,7 @@ Func_02001928:
 	.global Func_02001930
 	.thumb_func
 Func_02001930:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001938
 	.thumb_func
 Func_02001938:

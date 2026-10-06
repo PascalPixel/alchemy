@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c8378
+	.global BattleFx_ApplyColorToTargetBufferFar
 	.thumb_func
-Func_080c8378:
+BattleFx_ApplyColorToTargetBufferFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_InterpolateBuffers
 .else
@@ -13,9 +13,9 @@ Func_080c8378:
 	overlay_veneer BattleFx_ApplyColorToTargetBuffer
 .endif
 .endif
-	.global Func_080c8380
+	.global BattleFx_ApplyColorToSourceBufferFar
 	.thumb_func
-Func_080c8380:
+BattleFx_ApplyColorToSourceBufferFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_StartBufferInterpolation
 .else
@@ -25,9 +25,9 @@ Func_080c8380:
 	overlay_veneer BattleFx_ApplyColorToSourceBuffer
 .endif
 .endif
-	.global Func_080c8388
+	.global BattleFx_InterpolateBuffersFar
 	.thumb_func
-Func_080c8388:
+BattleFx_InterpolateBuffersFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d0c50
 .else

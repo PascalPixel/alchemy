@@ -249,15 +249,15 @@ Func_02001eb0:
 	.global Func_02001eb8
 	.thumb_func
 Func_02001eb8:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02001ec0
 	.thumb_func
 Func_02001ec0:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02001ec8
 	.thumb_func
 Func_02001ec8:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -281,17 +281,17 @@ Event_WaitTransitionFrames:
 	.global Func_02001ee8
 	.thumb_func
 Func_02001ee8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001ef0
 	.thumb_func
 Func_02001ef0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.endif
 	.endif
 	.global Object_LinkObjectAndSetCallback
@@ -307,7 +307,7 @@ Func_02001f00:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001f08

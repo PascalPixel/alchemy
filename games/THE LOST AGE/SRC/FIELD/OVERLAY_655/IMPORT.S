@@ -269,7 +269,7 @@ Func_02003d10:
 	.global Func_02003d18
 	.thumb_func
 Func_02003d18:
-	overlay_veneer Func_080c82d8
+	overlay_veneer BattleFx_FindNearestObjectFar
 	.global Func_02003d20
 	.thumb_func
 Func_02003d20:
@@ -333,7 +333,7 @@ Func_02003d70:
 	.global Func_02003d78
 	.thumb_func
 Func_02003d78:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02003d80
 	.thumb_func
 Func_02003d80:

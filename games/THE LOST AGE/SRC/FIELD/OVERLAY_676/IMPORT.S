@@ -217,7 +217,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002590
 	.thumb_func
 Func_02002590:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02002598
 	.thumb_func
 Func_02002598:

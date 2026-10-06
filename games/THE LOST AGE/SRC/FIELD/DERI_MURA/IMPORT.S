@@ -146,10 +146,10 @@ Func_02000d18:
 	.thumb_func
 Engine_EventCloseScreen:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -199,7 +199,7 @@ Engine_EventResolvePendingActions:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global Func_02000d48
@@ -239,7 +239,7 @@ Engine_PartyGetLeaderActor:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02000d68

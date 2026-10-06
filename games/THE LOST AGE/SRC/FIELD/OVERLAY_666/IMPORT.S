@@ -145,7 +145,7 @@ Func_02000b84:
 	.global Func_02000b8c
 	.thumb_func
 Func_02000b8c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -163,7 +163,7 @@ Func_02000ba4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02000bac

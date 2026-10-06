@@ -261,7 +261,7 @@ Event_WaitTransitionFrames:
 	.global Func_020029cc
 	.thumb_func
 Func_020029cc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020029d4
 	.thumb_func
 Func_020029d4:
@@ -323,17 +323,17 @@ Func_02002a1c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87d0
 	.else
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.endif
 	.endif
 	.global Func_02002a24
 	.thumb_func
 Func_02002a24:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif
@@ -342,10 +342,10 @@ Func_02002a24:
 	.thumb_func
 Func_02002a2c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.else
 	overlay_veneer Func_080c87f0
 	.endif
@@ -375,27 +375,27 @@ Field_BeginPaletteTransition:
 	.global Func_02002a44
 	.thumb_func
 Func_02002a44:
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.global Func_02002a4c
 	.thumb_func
 Func_02002a4c:
-	overlay_veneer Func_080c8810
+	overlay_veneer BattleFx_EndArcEffectFar
 	.global Func_02002a54
 	.thumb_func
 Func_02002a54:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8808
+	overlay_veneer BattleFx_StartArcEffectFar
 	.else
-	overlay_veneer Func_080c8818
+	overlay_veneer BattleFx_WaitForArcGroupsFar
 	.endif
 	.endif
 	.global Func_02002a5c
 	.thumb_func
 Func_02002a5c:
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

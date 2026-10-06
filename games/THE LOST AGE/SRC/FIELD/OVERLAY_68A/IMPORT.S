@@ -215,17 +215,17 @@ Func_020019fc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global Func_02001a04
 	.thumb_func
 Func_02001a04:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.else
 	overlay_veneer Func_080c8580
 	.endif

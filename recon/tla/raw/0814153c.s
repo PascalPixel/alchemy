@@ -62,7 +62,7 @@ Func_0814153c:
 	movs r7, #238
 	ldr r0, [r3, #84]
 	bl Resource_ResetEntry
-	bl Func_08020380
+	bl VramBlock_Reset93Far
 	ldr r2, .L_08141794
 	movs r3, #240
 	str r3, [r2, #16]

@@ -27,7 +27,7 @@ Func_080435fc:
 	ldr r0, .L_08043680
 	bl UiText_ShowPositionedMessageAndWait
 	bl Func_08043358
-	bl Func_080c8628
+	bl ObjectTable_SnapshotFar
 	adds r0, r5, #0
 	ldr r1, .L_08043684
 	bl Func_08042f10

@@ -189,7 +189,7 @@ Func_02004454:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020318
 	.else
-	overlay_veneer Func_08020348
+	overlay_veneer Runtime_CheckRadiusOverlapFar
 	.endif
 	.endif
 	.endif
@@ -353,15 +353,15 @@ Func_0200458c:
 	.global Func_02004594
 	.thumb_func
 Func_02004594:
-	overlay_veneer Func_080c82f8
+	overlay_veneer EventRuntime_PrepareCurrentObjectFar
 	.global Func_0200459c
 	.thumb_func
 Func_0200459c:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_020045a4
 	.thumb_func
 Func_020045a4:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -409,11 +409,11 @@ Func_020045dc:
 	.global Func_020045e4
 	.thumb_func
 Func_020045e4:
-	overlay_veneer Func_080c84d8
+	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
 	.global Func_020045ec
 	.thumb_func
 Func_020045ec:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020045f4
 	.thumb_func
 Func_020045f4:
@@ -439,7 +439,7 @@ Func_02004614:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87d0
 	.else
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.endif
 	.endif
 	.global Func_0200461c

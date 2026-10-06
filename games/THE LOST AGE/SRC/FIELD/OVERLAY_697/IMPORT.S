@@ -465,7 +465,7 @@ ObjectTable_Get:
 	.global Func_020059e8
 	.thumb_func
 Func_020059e8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020059f0
 	.thumb_func
 Func_020059f0:
@@ -547,7 +547,7 @@ Func_02005a40:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02005a48

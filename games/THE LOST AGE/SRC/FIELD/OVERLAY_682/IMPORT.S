@@ -261,7 +261,7 @@ Func_02002b5c:
 	.global Func_02002b64
 	.thumb_func
 Func_02002b64:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global BattleFx_GetResourceId
 	.thumb_func
 BattleFx_GetResourceId:
@@ -307,7 +307,7 @@ Func_02002bb4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02002bbc

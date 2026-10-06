@@ -93,7 +93,7 @@ Func_081197f0:
 	movs r2, #0
 	mov lr, r5
 	.2byte 0xf800
-	bl Func_080c8520
+	bl Event_GetSpecialValueFar
 	movs r3, #206
 	lsls r3, r3, #3
 	add r3, r9

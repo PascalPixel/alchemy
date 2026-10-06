@@ -2482,10 +2482,10 @@ UiText_DrawQuantityPairWithCueFar:
 	.thumb_func
 Func_080c82c0:
 	.incbin "baserom.gba", 0x000c82c0, 0x00000018
-	.global Func_080c82d8
-	.type Func_080c82d8, %function
+	.global BattleFx_FindNearestObjectFar
+	.type BattleFx_FindNearestObjectFar, %function
 	.thumb_func
-Func_080c82d8:
+BattleFx_FindNearestObjectFar:
 	.incbin "baserom.gba", 0x000c82d8, 0x00000008
 	.global Func_080c82e0
 	.type Func_080c82e0, %function
@@ -2497,20 +2497,20 @@ Func_080c82e0:
 	.thumb_func
 Func_080c82e8:
 	.incbin "baserom.gba", 0x000c82e8, 0x00000010
-	.global Func_080c82f8
-	.type Func_080c82f8, %function
+	.global EventRuntime_PrepareCurrentObjectFar
+	.type EventRuntime_PrepareCurrentObjectFar, %function
 	.thumb_func
-Func_080c82f8:
+EventRuntime_PrepareCurrentObjectFar:
 	.incbin "baserom.gba", 0x000c82f8, 0x00000038
 	.global Func_080c8330
 	.type Func_080c8330, %function
 	.thumb_func
 Func_080c8330:
 	.incbin "baserom.gba", 0x000c8330, 0x00000020
-	.global Func_080c8350
-	.type Func_080c8350, %function
+	.global DisplayTransition_StartFar
+	.type DisplayTransition_StartFar, %function
 	.thumb_func
-Func_080c8350:
+DisplayTransition_StartFar:
 	.incbin "baserom.gba", 0x000c8350, 0x00000018
 	.global Func_080c8368
 	.type Func_080c8368, %function
@@ -2613,15 +2613,15 @@ Func_080c84c0:
 	.thumb_func
 BattleFx_PrepareBufferInterpolationFar:
 	.incbin "baserom.gba", 0x000c84d0, 0x00000008
-	.global Func_080c84d8
-	.type Func_080c84d8, %function
+	.global EventRuntime_ResolveAllPendingActionsFar
+	.type EventRuntime_ResolveAllPendingActionsFar, %function
 	.thumb_func
-Func_080c84d8:
+EventRuntime_ResolveAllPendingActionsFar:
 	.incbin "baserom.gba", 0x000c84d8, 0x00000008
-	.global Func_080c84e0
-	.type Func_080c84e0, %function
+	.global EventRuntime_ResolvePendingActionsFar
+	.type EventRuntime_ResolvePendingActionsFar, %function
 	.thumb_func
-Func_080c84e0:
+EventRuntime_ResolvePendingActionsFar:
 	.incbin "baserom.gba", 0x000c84e0, 0x00000008
 	.global Func_080c84e8
 	.type Func_080c84e8, %function
@@ -2650,30 +2650,30 @@ BattleFx_SnapScaleToFullFar:
 	.thumb_func
 UpdateRisingParticleBurstFar:
 	.incbin "baserom.gba", 0x000c8538, 0x00000008
-	.global Func_080c8540
-	.type Func_080c8540, %function
+	.global BattleParty_ApplyDrainFar
+	.type BattleParty_ApplyDrainFar, %function
 	.thumb_func
-Func_080c8540:
+BattleParty_ApplyDrainFar:
 	.incbin "baserom.gba", 0x000c8540, 0x00000008
-	.global Func_080c8548
-	.type Func_080c8548, %function
+	.global BattleParty_ApplyHealthDeltaFar
+	.type BattleParty_ApplyHealthDeltaFar, %function
 	.thumb_func
-Func_080c8548:
+BattleParty_ApplyHealthDeltaFar:
 	.incbin "baserom.gba", 0x000c8548, 0x00000010
 	.global Func_080c8558
 	.type Func_080c8558, %function
 	.thumb_func
 Func_080c8558:
 	.incbin "baserom.gba", 0x000c8558, 0x00000018
-	.global Func_080c8570
-	.type Func_080c8570, %function
+	.global Party_PlaySavedMusicFar
+	.type Party_PlaySavedMusicFar, %function
 	.thumb_func
-Func_080c8570:
+Party_PlaySavedMusicFar:
 	.incbin "baserom.gba", 0x000c8570, 0x00000008
-	.global Func_080c8578
-	.type Func_080c8578, %function
+	.global Scene_ResolveInteractionResultFar
+	.type Scene_ResolveInteractionResultFar, %function
 	.thumb_func
-Func_080c8578:
+Scene_ResolveInteractionResultFar:
 	.incbin "baserom.gba", 0x000c8578, 0x00000008
 	.global Func_080c8580
 	.type Func_080c8580, %function
@@ -2853,10 +2853,10 @@ Object_SpawnFar:
 	.thumb_func
 Func_080c8760:
 	.incbin "baserom.gba", 0x000c8760, 0x00000018
-	.global Func_080c8778
-	.type Func_080c8778, %function
+	.global EventRuntime_GetControlledOwnerFar
+	.type EventRuntime_GetControlledOwnerFar, %function
 	.thumb_func
-Func_080c8778:
+EventRuntime_GetControlledOwnerFar:
 	.incbin "baserom.gba", 0x000c8778, 0x00000008
 	.global Func_080c8780
 	.type Func_080c8780, %function
@@ -2903,10 +2903,10 @@ Func_080c87c8:
 	.thumb_func
 Func_080c87d0:
 	.incbin "baserom.gba", 0x000c87d0, 0x00000010
-	.global Func_080c87e0
-	.type Func_080c87e0, %function
+	.global BattleFx_StepVector3Far
+	.type BattleFx_StepVector3Far, %function
 	.thumb_func
-Func_080c87e0:
+BattleFx_StepVector3Far:
 	.incbin "baserom.gba", 0x000c87e0, 0x00000008
 	.global Func_080c87e8
 	.type Func_080c87e8, %function
@@ -2928,25 +2928,25 @@ Func_080c87f8:
 	.thumb_func
 Field_BeginPaletteTransitionFar:
 	.incbin "baserom.gba", 0x000c8800, 0x00000008
-	.global Func_080c8808
-	.type Func_080c8808, %function
+	.global BattleFx_StartArcEffectFar
+	.type BattleFx_StartArcEffectFar, %function
 	.thumb_func
-Func_080c8808:
+BattleFx_StartArcEffectFar:
 	.incbin "baserom.gba", 0x000c8808, 0x00000008
-	.global Func_080c8810
-	.type Func_080c8810, %function
+	.global BattleFx_EndArcEffectFar
+	.type BattleFx_EndArcEffectFar, %function
 	.thumb_func
-Func_080c8810:
+BattleFx_EndArcEffectFar:
 	.incbin "baserom.gba", 0x000c8810, 0x00000008
-	.global Func_080c8818
-	.type Func_080c8818, %function
+	.global BattleFx_WaitForArcGroupsFar
+	.type BattleFx_WaitForArcGroupsFar, %function
 	.thumb_func
-Func_080c8818:
+BattleFx_WaitForArcGroupsFar:
 	.incbin "baserom.gba", 0x000c8818, 0x00000008
-	.global Func_080c8820
-	.type Func_080c8820, %function
+	.global BattleFx_SetObjectTickModeFar
+	.type BattleFx_SetObjectTickModeFar, %function
 	.thumb_func
-Func_080c8820:
+BattleFx_SetObjectTickModeFar:
 	.incbin "baserom.gba", 0x000c8820, 0x00000008
 	.section .rom.000c88c8, "ax"
 	.global Func_080c88c8

@@ -325,15 +325,15 @@ Func_02004e38:
 	.global Func_02004e40
 	.thumb_func
 Func_02004e40:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02004e48
 	.thumb_func
 Func_02004e48:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02004e50
 	.thumb_func
 Func_02004e50:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Func_02004e58
 	.thumb_func
 Func_02004e58:
@@ -373,7 +373,7 @@ Func_02004e88:
 	.global Func_02004e90
 	.thumb_func
 Func_02004e90:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02004e98
 	.thumb_func
 Func_02004e98:
@@ -390,12 +390,12 @@ Func_02004e98:
 	.thumb_func
 Func_02004ea0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8560
+	overlay_veneer BattleFx_GetWeightedResultFar
 	.else
-	overlay_veneer Func_080c8570
+	overlay_veneer Party_PlaySavedMusicFar
 	.endif
 	.endif
 	.global Func_02004ea8
@@ -483,7 +483,7 @@ Func_02004f00:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02004f08
@@ -507,7 +507,7 @@ Func_02004f20:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87d0
 	.else
-	overlay_veneer Func_080c87e0
+	overlay_veneer BattleFx_StepVector3Far
 	.endif
 	.endif
 	.global Func_02004f28

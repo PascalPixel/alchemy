@@ -297,7 +297,7 @@ Func_02005538:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_08020318
 	.else
-	overlay_veneer Func_08020348
+	overlay_veneer Runtime_CheckRadiusOverlapFar
 	.endif
 	.endif
 	.endif
@@ -459,7 +459,7 @@ Func_02005608:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c82e8
 	.else
-	overlay_veneer Func_080c82f8
+	overlay_veneer EventRuntime_PrepareCurrentObjectFar
 	.endif
 	.endif
 	.global Func_02005610
@@ -471,17 +471,17 @@ Func_02005610:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8340
 	.else
-	overlay_veneer Func_080c8350
+	overlay_veneer DisplayTransition_StartFar
 	.endif
 	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8398
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif
@@ -490,10 +490,10 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c83a0
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
@@ -543,7 +543,7 @@ Func_02005640:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_InitializeSharedSceneFar
 	.else
-	overlay_veneer Func_080c84d8
+	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
 	.endif
 	.endif
 	.global Func_02005648
@@ -555,7 +555,7 @@ Func_02005648:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.endif
 	.endif
 	.global Func_02005650
@@ -567,7 +567,7 @@ Func_02005650:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer UpdateRisingParticleBurstFar
 	.else
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.endif
 	.endif
 	.global Func_02005658
@@ -591,7 +591,7 @@ Func_02005660:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Object_BuildRecordSnapshotFar
 	.else
-	overlay_veneer Func_080c8628
+	overlay_veneer ObjectTable_SnapshotFar
 	.endif
 	.endif
 	.global Func_02005668
@@ -663,17 +663,17 @@ Func_02005690:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02005698
 	.thumb_func
 Func_02005698:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif
@@ -682,10 +682,10 @@ Func_02005698:
 	.thumb_func
 Func_020056a0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8820
+	overlay_veneer BattleFx_SetObjectTickModeFar
 	.else
 	overlay_veneer Func_080c8830
 	.endif

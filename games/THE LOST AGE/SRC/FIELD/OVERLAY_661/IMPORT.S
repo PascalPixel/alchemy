@@ -381,7 +381,7 @@ Func_020041b0:
 	.global Func_020041b8
 	.thumb_func
 Func_020041b8:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -439,7 +439,7 @@ Func_020041f0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_020041f8

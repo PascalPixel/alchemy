@@ -133,19 +133,19 @@ Func_02001160:
 	.global Func_02001168
 	.thumb_func
 Func_02001168:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02001170
 	.thumb_func
 Func_02001170:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_02001178
 	.thumb_func
 Func_02001178:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Func_02001180
 	.thumb_func
 Func_02001180:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02001188
 	.thumb_func
 Func_02001188:
@@ -155,7 +155,7 @@ Func_02001188:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001190

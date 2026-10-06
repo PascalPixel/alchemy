@@ -237,15 +237,15 @@ Event_WaitTransitionFrames:
 	.global Func_020011e0
 	.thumb_func
 Func_020011e0:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_020011e8
 	.thumb_func
 Func_020011e8:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8548
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	overlay_veneer Func_080c8558
 	.endif

@@ -425,15 +425,15 @@ Party_SetFields1f2And1f4:
 	.global Func_0200491c
 	.thumb_func
 Func_0200491c:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_02004924
 	.thumb_func
 Func_02004924:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_0200492c
 	.thumb_func
 Func_0200492c:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -457,7 +457,7 @@ Event_WaitTransitionFrames:
 	.global Func_0200494c
 	.thumb_func
 Func_0200494c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Func_02004954
 	.thumb_func
 Func_02004954:
@@ -498,10 +498,10 @@ Func_02004994:
 	.thumb_func
 Func_0200499c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d8
+	overlay_veneer BattleFx_StepVector2Far
 	.else
 	overlay_veneer Func_080c87e8
 	.endif

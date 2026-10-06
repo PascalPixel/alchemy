@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080c84d8
+	.global EventRuntime_ResolveAllPendingActionsFar
 	.thumb_func
-Func_080c84d8:
+EventRuntime_ResolveAllPendingActionsFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cdec8
 .else
@@ -13,9 +13,9 @@ Func_080c84d8:
 	overlay_veneer EventRuntime_ResolveAllPendingActions
 .endif
 .endif
-	.global Func_080c84e0
+	.global EventRuntime_ResolvePendingActionsFar
 	.thumb_func
-Func_080c84e0:
+EventRuntime_ResolvePendingActionsFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cded4
 .else

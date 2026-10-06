@@ -193,7 +193,7 @@ Func_02001cf4:
 	.global Func_02001cfc
 	.thumb_func
 Func_02001cfc:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global ObjectMotion_OffsetPositionAndReset
 	.thumb_func
 ObjectMotion_OffsetPositionAndReset:
@@ -227,7 +227,7 @@ Func_02001d34:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02001d3c

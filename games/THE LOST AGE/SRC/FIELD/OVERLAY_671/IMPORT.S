@@ -373,19 +373,19 @@ Func_020057cc:
 	.global Func_020057d4
 	.thumb_func
 Func_020057d4:
-	overlay_veneer Func_080c82f8
+	overlay_veneer EventRuntime_PrepareCurrentObjectFar
 	.global Func_020057dc
 	.thumb_func
 Func_020057dc:
-	overlay_veneer Func_080c8378
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
 	.global Func_020057e4
 	.thumb_func
 Func_020057e4:
-	overlay_veneer Func_080c8380
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Func_020057ec
 	.thumb_func
 Func_020057ec:
-	overlay_veneer Func_080c8390
+	overlay_veneer BattleFx_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -409,7 +409,7 @@ Event_WaitTransitionFrames:
 	.global Func_0200580c
 	.thumb_func
 Func_0200580c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -417,7 +417,7 @@ Object_LinkObjectAndSetCallback:
 	.global Func_0200581c
 	.thumb_func
 Func_0200581c:
-	overlay_veneer Func_080c8628
+	overlay_veneer ObjectTable_SnapshotFar
 	.global Func_02005824
 	.thumb_func
 Func_02005824:
@@ -463,7 +463,7 @@ Func_0200584c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8768
 	.else
-	overlay_veneer Func_080c8778
+	overlay_veneer EventRuntime_GetControlledOwnerFar
 	.endif
 	.endif
 	.global Func_02005854

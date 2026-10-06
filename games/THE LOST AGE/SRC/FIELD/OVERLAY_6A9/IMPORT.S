@@ -181,7 +181,7 @@ Func_02001134:
 	.global Func_0200113c
 	.thumb_func
 Func_0200113c:
-	overlay_veneer Func_080c84e0
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:

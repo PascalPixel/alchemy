@@ -23,7 +23,10 @@
      listing pool word gProjection + 0xc and [rN]: still 124, --arm 198.
    - With center: (s16)t << 8 again: 138; t = v->u = ...: 135; center set
      after the trig calls: 124; x inline at the top, z before x in the
-     loop, or out[1] = out[0] before v++: 124. */
+     loop, or out[1] = out[0] before v++: 124.
+   - FixedMul: hi as "=r": 124 (agbcc_arm still never puts RdHi in Rs);
+     hi tied to b: draft 161, 124; asm without volatile: 183; plain
+     (s64)a * b >> 16: 288. */
 #include "PROJECT.H"
 
 struct FarCallStub {

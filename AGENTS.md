@@ -197,8 +197,11 @@ or functions is exactly this cheating.
     (`EV08_KAGI` 鍵, `EV52_IDO` 井戸, `EV99_ROUYA` 牢屋), or a terse English
     verb of the period where the code does not show the subject (`EV12_SET`,
     `EV20_MAIN`, `EV94_MAIN`). It is `static` once the table that reaches it
-    lives in the same object. Engine functions keep our `Subsystem_VerbObject`
-    names; short locals; named struct fields.
+    lives in the same object. Engine functions take terse English
+    abbreviations in the register of the event commands, compact CamelCase
+    (`BtlTgtSet`), with romaji only for nouns of the game world; until the
+    final pass reaches them they keep our `Subsystem_VerbObject` names.
+    Short locals; named struct fields.
   - The bytes prove layers, units and calls; the ROM keeps no names (only
     credits text and ⚓️'s build stamp `020610172024`). Names, numbering and
     comments are reconstruction: never present them as recovered.

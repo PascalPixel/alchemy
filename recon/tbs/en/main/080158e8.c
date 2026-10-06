@@ -1,12 +1,22 @@
 /* 080158e8: ARM draft; no admitted game ARM build route.
    Native: 92 instructions and 41 switch-table words, 532 bytes total.
-   Stock agscc --arm: 92/92/common56/differ72.
-   Fixed agbcc_arm library setting: -O2 92/92/common87/differ10;
-   the uniform -O control gives 92/96/common39/differ110.
-   Remaining -O2 differences are in the final store/loop-test schedule.
-   Natural trials: moving packed-value calculation or row update leaves10;
-   u16 packed value gives14; indexed stores worsen register allocation.
-   Those trials were reverted. No compiler route follows from this score. */
+   Current: stock agscc --arm 92/91/common82/differ19 (was differ72);
+   fixed agbcc_arm library setting (-O2 -mthumb-interwork
+   -fomit-frame-pointer -fcall-used-r4) 92/92/common89/differ6 (was 10).
+   The uniform -O control gave 92/96/common39/differ110.
+   Remaining agbcc_arm difference: add sl, mov r1 and cmp each sit one
+   store lower than native. sched1 decides it (-fno-schedule-insns2 is
+   unchanged): its backward list scheduler places cmp right above bls
+   because the jump's anti-dependence on the last post-increment store
+   costs 2, so the fillers start one stall slot too low.
+   Trials: one packed-value local v set three times, each value computed
+   before its dst++ (not a birthing insn, so f+d no longer launches next
+   to the last store) 10->6; for-loop row counter instead of an explicit
+   next = row + 1 gives the same r9 and 6 (do/while with next: --arm 18);
+   while (++row < 20) 6; src += 2 after the last store 6; earlier:
+   moving packed-value calculation or row update alone 10; u16 packed
+   value 14; indexed stores worsen register allocation.
+   No compiler route follows from these scores. */
 typedef unsigned short u16;
 typedef int s32;
 typedef unsigned int u32;
@@ -23,10 +33,8 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
     s32 f;
     s32 found;
     s32 v;
-    u32 next;
 
-    row = 0;
-    do {
+    for (row = 0; row < 20; row++) {
         d = 0;
         a = d;
         c = d;
@@ -36,7 +44,6 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
         found = f;
         col = f;
         dst++;
-        next = row + 1;
         for (; col < 30; col++) {
             u16 cmd = *src++;
 
@@ -95,9 +102,10 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
                 }
             }
         }
-        *dst++ = e + (c << 8);
-        dst++;
+        v = e + (c << 8);
+        *dst++ = v;
         v = b + (a << 8);
+        dst++;
         *dst++ = v;
         dst++;
         *dst++ = v;
@@ -110,7 +118,8 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
         *dst++ = v;
         dst++;
         *dst++ = v;
+        v = f + (d << 8);
         dst++;
-        *dst++ = f + (d << 8);
-    } while ((row = next) < 20);
+        *dst++ = v;
+    }
 }

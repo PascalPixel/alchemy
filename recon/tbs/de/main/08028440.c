@@ -18,9 +18,13 @@
  * ES.PO has: the archive grows by 4 bytes; both editions FAILED.
  * Trial: register s32 name asm("r0") = 10908: constant propagated,
  * still r3; 2 of 185 lines differ (alchemy show).
- * Trial: asm("" : "=l"(name) : "0"(10908)): r0 as natively, but the
- * add is scheduled before adds r1, r7, #0; 2 of 185 lines differ
- * (alchemy show).
+ * Trial: asm("" : "=l"(name) : "0"(10908)), then index + name: r0 as
+ * natively, but the add is scheduled before adds r1, r7, #0; differ 2.
+ * The same with "=r", or with name pinned by register asm("r0"):
+ * differ 2, the same schedule.
+ * Trial: the same barrier, then name + index, name = index + name or
+ * name += index: the schedule matches, but the add is adds r0, r0, r5
+ * where natively it is adds r0, r5, r0; differ 2.
  * Splitting the scaffold (BROWSE_GLYPHS.o(.text), then .rom.000285d4 in
  * German and .rom.000288c8 in French) placed every other byte right. */
 #include "BATTLE.H"

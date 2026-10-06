@@ -338,7 +338,7 @@ pub(crate) fn candidates(text: &str) -> Vec<Edit> {
     parentheses(text, &tokens, &mut found);
     flatten(text, &tokens, &mut found);
     empty_statements(&plain, &mut found);
-    found
+    trial::untagged(text, found)
 }
 
 pub(crate) fn rewrite(root: &Path, file: &Path, text: &str, games: &[DecompTarget]) -> Result<(String, usize), String> {
@@ -398,6 +398,18 @@ mod tests {
         assert_eq!(rewritten(claimed), claimed);
         let leaves_inside = "{\n    if (a) {\n        while (b) {\n            return;\n        }\n    } else {\n        y = 2;\n    }\n}\n";
         assert_eq!(rewritten(leaves_inside), leaves_inside);
+    }
+
+    #[test]
+    fn fakematch_tagged_statements_and_asm_stay() {
+        let lead = "{\n    k = 0;\n    /* FAKEMATCH: one pass */\n    do {\n        i = i + 1;\n    } while (0);\n    j = j + 1;\n}\n";
+        assert_eq!(rewritten(lead), "{\n    k = 0;\n    /* FAKEMATCH: one pass */\n    do {\n        i = i + 1;\n    } while (0);\n    j++;\n}\n");
+        let trail = "{\n    i = i + 1; /* FAKEMATCH: r4 */\n    r = (x);\n}\n";
+        assert_eq!(rewritten(trail), "{\n    i = i + 1; /* FAKEMATCH: r4 */\n    r = x;\n}\n");
+        let block = "{\n    if (a) { /* FAKEMATCH: order */\n        return;\n    } else {\n        y = 2;\n    }\n}\n";
+        assert_eq!(rewritten(block), block);
+        let asm = "{\n    asm(\"\" : \"+r\"((x)));\n    register u32 r asm(\"r4\") = (x);\n}\n";
+        assert_eq!(rewritten(asm), asm);
     }
 
     #[test]

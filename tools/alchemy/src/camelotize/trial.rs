@@ -1,12 +1,12 @@
-//! Source edits proved one file at a time: each set of edits is compiled with
-//! the English build's compiler and flags and kept only when the file's
-//! assembly (code, data and every relocation it names) is identical and the
-//! compiler says nothing new. An edit inside an `#if` block is compiled for
+//! Source edits proved one file at a time: each set of edits is compiled and
+//! assembled with the English build's compiler, flags and assembler, and kept
+//! only when the object (every section's bytes, every relocation and symbol)
+//! is identical and the compiler says nothing new. An edit inside an `#if` block is compiled for
 //! every edition of the game instead. Sets are tried together and bisected
 //! when one fails, so a file costs a handful of compiles, not one per edit.
 
 use crate::compiler::bundle::compiler_command_for_target;
-use crate::compiler::routing::cflags_for_target_source;
+use crate::compiler::routing::{cflags_for_target_source, compiler_assembly_command, is_arm};
 use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::path::Path;
 use std::process::Command;
@@ -96,6 +96,57 @@ pub(crate) fn conditional(text: &str) -> Vec<std::ops::Range<usize>> {
     ranges
 }
 
+/// The candidates outside FAKEMATCH-tagged statements and asm.
+pub(crate) fn untagged(text: &str, found: Vec<Edit>) -> Vec<Edit> {
+    let tagged = super::tagged::ranges(text);
+    found.into_iter().filter(|e| !super::tagged::covered(&tagged, e.start, e.end)).collect()
+}
+
+/// What an object file gives the linker: every section's name, size and
+/// bytes, its relocations by target name, and its symbols. Debug sections
+/// and the local `.L` labels, which only number GCC's jumps, are left out.
+pub(crate) fn object_contents(bytes: &[u8]) -> Result<String, String> {
+    use object::{Object, ObjectSection, ObjectSymbol, RelocationTarget, SectionKind};
+    use std::fmt::Write;
+    let file = object::File::parse(bytes).map_err(|e| e.to_string())?;
+    let section_name = |index| file.section_by_index(index).ok().and_then(|s| s.name().ok().map(str::to_string)).unwrap_or_default();
+    let mut out = String::new();
+    for section in file.sections() {
+        let name = section.name().unwrap_or("");
+        if matches!(section.kind(), SectionKind::Metadata | SectionKind::Debug | SectionKind::DebugString)
+            || name.starts_with(".stab")
+            || name.starts_with(".debug")
+        {
+            continue;
+        }
+        let data = section.data().map_err(|e| e.to_string())?;
+        let _ = writeln!(out, "section {name} {:?} size {} align {} {data:02x?}", section.kind(), section.size(), section.align());
+        for (offset, relocation) in section.relocations() {
+            let target = match relocation.target() {
+                RelocationTarget::Symbol(index) => match file.symbol_by_index(index) {
+                    Ok(symbol) if !symbol.name().unwrap_or("").is_empty() => symbol.name().unwrap_or("").to_string(),
+                    Ok(symbol) => symbol.section_index().map(section_name).unwrap_or_default(),
+                    Err(e) => return Err(e.to_string()),
+                },
+                RelocationTarget::Section(index) => section_name(index),
+                _ => String::new(),
+            };
+            let _ = writeln!(out, "  reloc {offset:#x} {:?} {} {target}", relocation.flags(), relocation.addend());
+        }
+    }
+    let mut symbols: Vec<String> = file
+        .symbols()
+        .filter(|s| !s.name().unwrap_or("").starts_with(".L"))
+        .map(|s| {
+            let section = s.section_index().map(section_name).unwrap_or_default();
+            format!("symbol {} {section} {:#x} {} {:?} {:?}", s.name().unwrap_or(""), s.address(), s.size(), s.kind(), s.scope())
+        })
+        .collect();
+    symbols.sort();
+    out.push_str(&symbols.join("\n"));
+    Ok(out)
+}
+
 /// Candidates that overlap an earlier one are dropped.
 pub(crate) fn disjoint(mut edits: Vec<Edit>) -> Vec<Edit> {
     edits.sort_by_key(|e| e.start);
@@ -123,11 +174,14 @@ struct Build {
 }
 
 impl Build {
-    /// The assembly and the compiler's messages for this text in place of the file.
+    /// The object's contents and the compiler's messages for this text in
+    /// place of the file. Assembly text is not compared: an edit that only
+    /// renumbers GCC's `.L` labels leaves the object identical.
     fn compile(&self, root: &Path, file: &Path, text: &str) -> Result<(String, String), String> {
         let name = file.file_name().and_then(|n| n.to_str()).unwrap_or("SOURCE.C");
         let source = self.directory.path().join(name);
         let assembly = self.directory.path().join("OUT.S");
+        let object = self.directory.path().join("OUT.O");
         std::fs::write(&source, text).map_err(|e| e.to_string())?;
         let mut arguments = vec![format!("-I{}", file.parent().unwrap_or(root).display())];
         arguments.extend(cflags_for_target_source(self.target.compiler, name));
@@ -139,12 +193,19 @@ impl Build {
         arguments.extend(["-x".into(), "c".into(), source.to_string_lossy().into_owned()]);
         let command = compiler_command_for_target(self.target.compiler, &arguments).map_err(|e| e.to_string())?;
         let output = Command::new(&command[0]).args(&command[1..]).current_dir(root).output().map_err(|e| e.to_string())?;
-        let messages = String::from_utf8_lossy(&output.stderr).into_owned();
+        let mut messages = String::from_utf8_lossy(&output.stderr).into_owned();
         if !output.status.success() {
             return Err(messages);
         }
-        let text = std::fs::read_to_string(&assembly).map_err(|e| e.to_string())?;
-        Ok((text, messages))
+        let arm = is_arm(self.target.compiler, name);
+        let command = compiler_assembly_command(&assembly.to_string_lossy(), &object.to_string_lossy(), arm);
+        let output = Command::new(&command[0]).args(&command[1..]).current_dir(root).output().map_err(|e| e.to_string())?;
+        messages.push_str(&String::from_utf8_lossy(&output.stderr));
+        if !output.status.success() {
+            return Err(messages);
+        }
+        let bytes = std::fs::read(&object).map_err(|e| e.to_string())?;
+        Ok((object_contents(&bytes)?, messages))
     }
 }
 

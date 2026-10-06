@@ -1,14 +1,20 @@
-//! Hex literals that are quantities, written in decimal. Hex stays where C
-//! programmers keep it: bit operations and the masks and flags they test or
-//! store, addresses, Q-format fixed-point constants and the values beside
-//! them, and the all-ones limits of a width. Preprocessor lines, strings,
-//! comments and asm statements are never touched. Every converted value is
-//! below 0x02000000, so it has type int (or its suffix's type) in either
-//! spelling and the bytes cannot change.
+//! Hex literals that are quantities, written in decimal. Only code below
+//! 0x1000 is converted: from 0x1000 up the authors wrote packed tile
+//! entries, fixed point and sizes in hex. Hex also stays where C programmers
+//! keep it: bit operations and the masks and flags they test or store, every
+//! argument of a call or macro whose name says flag, the values beside a
+//! fixed-point constant, and the all-ones limits of a width. Preprocessor
+//! lines (every `#define` body among them), strings, comments, asm and
+//! FAKEMATCH-tagged statements are never touched. Every converted value is
+//! below 0x1000, so it has type int (or its suffix's type) in either spelling
+//! and the bytes cannot change.
 
+use super::tagged;
 use crate::permute::lex::{lex, Tok, Token};
 
 const ADDRESS: u64 = 0x0200_0000;
+/// Values from here up stay hex in code.
+const QUANTITY_LIMIT: u64 = 0x1000;
 const BITWISE: &[&str] = &["&", "|", "^", "~", "<<", ">>", "&=", "|=", "^=", "<<=", ">>="];
 const LIMITS: &[u64] = &[0x7F, 0xFF, 0x7FFF, 0xFFFF, 0xFF_FFFF];
 
@@ -138,24 +144,84 @@ fn masked_operand(tokens: &[Token], end: usize) -> bool {
             }
             false
         }
-        Some("]") => false,
+        Some("]") => {
+            let mut depth = 0;
+            for k in (0..=last).rev() {
+                match punct(&tokens[k]) {
+                    Some("]") => depth += 1,
+                    Some("[") => {
+                        depth -= 1;
+                        if depth == 0 {
+                            return k.checked_sub(1).and_then(|n| ident(&tokens[n])).is_some_and(flag_name);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            false
+        }
         _ => ident(&tokens[last]).is_some_and(flag_name),
     }
 }
 
+fn says_flag(name: &str) -> bool {
+    name.to_ascii_lowercase().contains("flag")
+}
+
+/// Whether a bracket group around token `i` belongs to a flag: the
+/// arguments of a call or macro whose name says flag (`GameFlag_TestFar`,
+/// `FLAG_SET`), an index into a flag-named array, or a list that passes a
+/// flag-named function or value (`Call1(Engine_SetTriggerFlag, 0x220)`).
+fn flag_argument(tokens: &[Token], groups: &[Option<usize>], i: usize) -> bool {
+    let mut group = groups[i];
+    while let Some(open) = group {
+        let callee = open.checked_sub(1).and_then(|k| ident(&tokens[k]));
+        let list = matches!(punct(&tokens[open]), Some("(" | "["));
+        let passes = || (open + 1..tokens.len()).take_while(|&k| groups[k].is_some_and(|g| g >= open)).any(|k| groups[k] == Some(open) && ident(&tokens[k]).is_some_and(says_flag));
+        if list && (callee.is_some_and(says_flag) || passes()) {
+            return true;
+        }
+        group = groups[open];
+    }
+    false
+}
+
+/// The index of the token before the operand at `i`, past any casts.
+fn before_operand(tokens: &[Token], i: usize) -> Option<usize> {
+    let mut k = i.checked_sub(1)?;
+    while punct(&tokens[k]) == Some(")") {
+        let open = (0..k).rev().find(|&j| punct(&tokens[j]) == Some("("))?;
+        let inside = &tokens[open + 1..k];
+        let cast = !inside.is_empty()
+            && inside.iter().all(|t| ident(t).is_some() || punct(t) == Some("*"))
+            && ident(&inside[0]).is_some()
+            && open.checked_sub(1).is_none_or(|j| ident(&tokens[j]).is_none() && punct(&tokens[j]) != Some(")"));
+        if !cast {
+            break;
+        }
+        k = open.checked_sub(1)?;
+    }
+    Some(k)
+}
+
 fn keeps_hex(tokens: &[Token], groups: &[Option<usize>], i: usize, value: u64) -> bool {
-    if value >= ADDRESS || fixed_point(value) || LIMITS.contains(&value) {
+    if value >= QUANTITY_LIMIT || value >= ADDRESS || fixed_point(value) || LIMITS.contains(&value) {
         return true;
     }
-    let before = i.checked_sub(1).map(|k| &tokens[k]);
+    if flag_argument(tokens, groups, i) {
+        return true;
+    }
+    let operand = before_operand(tokens, i);
+    if operand.and_then(|k| punct(&tokens[k])).is_some_and(|p| BITWISE.contains(&p)) {
+        return true;
+    }
+    if operand.is_some_and(|k| {
+        matches!(punct(&tokens[k]), Some("==" | "!=" | "=" | "<" | "<=" | ">" | ">=" | "+=" | "-=")) && masked_operand(tokens, k)
+    }) {
+        return true;
+    }
     let after = tokens.get(i + 1);
-    if before.and_then(punct).is_some_and(|p| BITWISE.contains(&p)) {
-        return true;
-    }
     if after.and_then(punct).is_some_and(|p| matches!(p, "&" | "|" | "^" | "<<" | ">>")) {
-        return true;
-    }
-    if matches!(before.and_then(punct), Some("==" | "!=" | "=")) && masked_operand(tokens, i - 1) {
         return true;
     }
     if after.and_then(punct).is_some_and(|p| matches!(p, "==" | "!=")) {
@@ -183,82 +249,14 @@ fn keeps_hex(tokens: &[Token], groups: &[Option<usize>], i: usize, value: u64) -
     })
 }
 
-/// The quantities in `#define` bodies, by the same rules as code, offset to
-/// `text`. A body that holds an address or names `FIXED_ADDRESS` is left
-/// whole; so is a macro whose name says it is a flag or mask, and a body
-/// that is one bare bit (0x10, 0x8000), which as a constant is a flag.
-fn definitions(text: &str) -> Vec<(usize, usize, String)> {
-    let mut edits = Vec::new();
-    let mut at = 0;
-    let mut lines = text.split_inclusive('\n');
-    while let Some(first) = lines.next() {
-        let start = at;
-        let mut line = first.to_string();
-        at += first.len();
-        while line.trim_end_matches('\n').ends_with('\\') {
-            let Some(next) = lines.next() else {
-                break;
-            };
-            line.push_str(next);
-            at += next.len();
-        }
-        let Some(rest) = line.trim_start().strip_prefix('#').map(str::trim_start) else {
-            continue;
-        };
-        let Some(rest) = rest.strip_prefix("define").filter(|r| r.starts_with([' ', '\t'])) else {
-            continue;
-        };
-        let name_at = line.len() - rest.trim_start().len();
-        let name: String = line[name_at..].chars().take_while(|c| c.is_ascii_alphanumeric() || *c == '_').collect();
-        let mut body_at = name_at + name.len();
-        if line[body_at..].starts_with('(') {
-            let Some(close) = line[body_at..].find(')') else {
-                continue;
-            };
-            body_at += close + 1;
-        }
-        let body = &line[body_at..];
-        if flag_name(&name) || body.contains("FIXED_ADDRESS") {
-            continue;
-        }
-        let Ok(tokens) = lex(&body.replace("\\\n", "  ")) else {
-            continue;
-        };
-        let tokens = code(tokens);
-        let values: Vec<u64> = tokens
-            .iter()
-            .filter_map(|t| match &t.tok {
-                Tok::Number(n) => hex(n).map(|h| h.value),
-                _ => None,
-            })
-            .collect();
-        if values.iter().any(|&v| v >= ADDRESS) || (tokens.len() == 1 && values.first().is_some_and(|v| v.is_power_of_two() && *v >= 0x10)) {
-            continue;
-        }
-        let groups = groups(&tokens);
-        for (i, token) in tokens.iter().enumerate() {
-            let Tok::Number(number) = &token.tok else {
-                continue;
-            };
-            let Some(h) = hex(number) else {
-                continue;
-            };
-            if !keeps_hex(&tokens, &groups, i, h.value) {
-                let offset = start + body_at;
-                edits.push((offset + token.start, offset + token.end, format!("{}{}", h.value, h.suffix)));
-            }
-        }
-    }
-    edits
-}
-
 pub(crate) fn rewrite(text: &str) -> (String, usize) {
     let Ok(tokens) = lex(text) else {
         return (text.to_string(), 0);
     };
     let tokens = code(tokens);
     let groups = groups(&tokens);
-    let mut edits: Vec<(usize, usize, String)> = definitions(text);
+    let tagged = tagged::ranges(text);
+    let mut edits: Vec<(usize, usize, String)> = Vec::new();
     for (i, token) in tokens.iter().enumerate() {
         let Tok::Number(number) = &token.tok else {
             continue;
@@ -266,12 +264,11 @@ pub(crate) fn rewrite(text: &str) -> (String, usize) {
         let Some(h) = hex(number) else {
             continue;
         };
-        if keeps_hex(&tokens, &groups, i, h.value) {
+        if keeps_hex(&tokens, &groups, i, h.value) || tagged::covered(&tagged, token.start, token.end) {
             continue;
         }
         edits.push((token.start, token.end, format!("{}{}", h.value, h.suffix)));
     }
-    edits.sort_by_key(|e| e.0);
     let count = edits.len();
     let mut out = text.to_string();
     for (start, end, decimal) in edits.into_iter().rev() {
@@ -309,7 +306,38 @@ mod tests {
     fn addresses_fixed_point_and_limits_stay_hex() {
         same("p = (u16 *)0x04000000;\nq = 0x03007FF0;\nspeed = 0x18000;\nx = 0xFF;\ny = 0xFFFF;\nREG_BLDALPHA = 0x1010;\n");
         same("Actor_SetSpeed(8, 0x19999, 0x6666);\ngravity = 0x1999;\n");
-        assert_eq!(rewrite("Walk(9, 0x15f8, 0x6f8);\n").0, "Walk(9, 5624, 1784);\n");
+        assert_eq!(rewrite("Walk(9, 0x15f8, 0x6f8);\n").0, "Walk(9, 0x15f8, 1784);\n");
+    }
+
+    #[test]
+    fn values_from_0x1000_up_stay_hex() {
+        same("tile = 0x5001;\nsize = 0x1000;\nx = 0xf128 + y;\nSet(0x4014, 0xc00f);\n");
+        assert_eq!(rewrite("n = 0xfff;\n").0, "n = 4095;\n");
+    }
+
+    #[test]
+    fn flag_arguments_stay_hex() {
+        same("GameFlag_TestFar(0x16b);\nFLAG_SET(0x943);\nif (FLAG_CHK(0x214)) {}\nEngine_GameFlagSet(0xf2a);\n");
+        same("x = GameFlag_Test(a + 0x10, 0x2);\nIF(FLAG_CHK(0x20)) {}\n");
+        same("Call1(Engine_SetTriggerFlag, 0x220);\nCall2(GameFlag_SetByte, (s << 4) + 0x370, 1);\nf = gPlacementsFlag[0x14e];\n");
+        same("for (flag = 0x200; flag <= 0x2ff; flag++) {}\nif (flag_bytes[flag] <= 0xfe) {}\n");
+    }
+
+    #[test]
+    fn masks_behind_a_cast_stay_hex() {
+        same("actor->flags &= (u8)0x7e;\nx = y | (u16)0x10;\nz = w & (u8 *)0x10;\n");
+        assert_eq!(rewrite("n = f(a) + (u8)0x10;\n").0, "n = f(a) + (u8)16;\n");
+        assert_eq!(rewrite("Wait(0x10);\n").0, "Wait(16);\n");
+    }
+
+    #[test]
+    fn fakematch_tagged_statements_and_asm_stay_hex() {
+        same("{\n    /* FAKEMATCH: order */\n    a = 0x10;\n}\n");
+        same("{\n    a = 0x10; /* FAKEMATCH: order */\n}\n");
+        same("void F(void)\n{\n    /* FAKEMATCH: frame */\n    u8 a;\n    a = 0x10;\n}\n");
+        same("{\n    register u32 r asm(\"r4\") = 0x10;\n}\n");
+        let text = "{\n    x = 1;\n    /* FAKEMATCH: order */\n    a = 0x10;\n    b = 0x10;\n}\n";
+        assert_eq!(rewrite(text).0, "{\n    x = 1;\n    /* FAKEMATCH: order */\n    a = 0x10;\n    b = 16;\n}\n");
     }
 
     #[test]
@@ -326,15 +354,12 @@ mod tests {
     }
 
     #[test]
-    fn definitions_convert_quantities_but_keep_addresses_flags_and_bits() {
-        let text = "#define COUNT 0x30\n#define SHEET(w) ((w)->sheet + 0xC56)\n#define LONG (0x20 + \\\n    0x8)\nx = 0x10;\n";
-        assert_eq!(
-            rewrite(text),
-            ("#define COUNT 48\n#define SHEET(w) ((w)->sheet + 3158)\n#define LONG (32 + \\\n    8)\nx = 16;\n".to_string(), 5)
-        );
-        same("#define DMA3 ((volatile u32 *)0x040000d4)\n#define BASE (Ram + 0x10, 0x03000000)\n");
-        same("#define Iwram_X FIXED_ADDRESS((u8 *), 0x30, X)\n#define ITEM_ID_MASK 0x1ff\n#define FLAG_SECOND 0x41\n");
-        same("#define EMOTE_IN_FRONT 0x100\n#define KEY(k) ((k) & 0x3ff)\n#define SPEED 0x18000\n");
+    fn definitions_are_never_rewritten() {
+        same("#define COUNT 0x30\n#define SHEET(w) ((w)->sheet + 0xC56)\n#define LONG (0x20 + \\\n    0x8)\n");
+        same("#define DJINN_ENTRY_OWNER 0xf00\n#define DJINN_ENTRY_ELEMENT 0xe0\n#define SOUNDCNT_X_ALL_TONES_ON 0x0f\n");
+        same("#define KEYCNT_SOFT_RESET 0xc00f\n#define WAITCNT_GAME 0x4014\n#define HEX_DIGIT 0xf0e0\n");
+        same("#define PAGE_CAP_LEFT 0xf128\n#define ELEMENT_TILE 0x5001\n");
+        assert_eq!(rewrite("#define COUNT 0x30\nx = 0x10;\n").0, "#define COUNT 0x30\nx = 16;\n");
     }
 
     #[test]

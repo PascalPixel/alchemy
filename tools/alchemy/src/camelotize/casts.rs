@@ -87,7 +87,7 @@ pub(crate) fn candidates(text: &str) -> Vec<Edit> {
             found.push(Edit { start: tokens[open].start, end: tokens[close].end, text: String::new() });
         }
     }
-    found
+    trial::untagged(text, found)
 }
 
 pub(crate) fn rewrite(root: &Path, file: &Path, text: &str, games: &[DecompTarget]) -> Result<(String, usize), String> {
@@ -112,6 +112,15 @@ mod tests {
     fn calls_declarators_sizeof_and_asm_are_not_casts() {
         let text = "void F(u8);\ntypedef void (*Fn)(u8 *);\nn = sizeof(u16);\nG(u8) ;\nasm(\"\" : : \"r\"((u32)x));\n/* (u8)x */\n";
         assert!(spans(text).is_empty(), "{:?}", spans(text));
+    }
+
+    #[test]
+    fn fakematch_tagged_statements_and_asm_keep_their_casts() {
+        let text = "{\n    z = 0;\n    /* FAKEMATCH: order */\n    a = (u8)b;\n    c = (u8)d; /* FAKEMATCH: r4 */\n    register u32 r asm(\"r4\") = (u32)x;\n    e = (u8)f;\n}\n";
+        assert_eq!(spans(text), vec!["(u8)"]);
+        assert_eq!(candidates(text)[0].start, text.find("(u8)f").unwrap());
+        let block = "void F(void)\n{\n    /* FAKEMATCH: frame */\n    a = (u8)b;\n    if (a) {\n        c = (u16 *)d;\n    }\n}\n";
+        assert!(spans(block).is_empty());
     }
 
     #[test]

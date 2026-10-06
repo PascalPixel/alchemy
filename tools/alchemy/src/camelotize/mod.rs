@@ -7,6 +7,7 @@ mod numbers;
 mod registers;
 mod source;
 mod stabs;
+mod tagged;
 mod trial;
 
 use crate::compiler::routing::{root, COMMON_INCLUDE_MODULES};
@@ -24,20 +25,24 @@ nothing. REWRITE is one of:
   declarations  a file's own declarations of functions a header declares,
                 replaced by an include of that header
   barriers      FAKEMATCH-tagged empty asm barriers, with their tag
-  numbers       hex literals that are quantities, in decimal, in code and
-                #define bodies; masks, bit operands, flags, addresses and
-                fixed-point constants stay hex
+  numbers       hex literals below 0x1000 that are quantities, in decimal,
+                in code only; #define bodies, masks, bit operands, flag ids
+                (every argument of a call or macro named for a flag) and
+                everything from 0x1000 up stay hex
   casts         value casts and pointer casts the compiler does not need:
-                each removal is compiled for English (for every edition
-                inside an #if block), and kept only when the file's
-                assembly is identical and no warning is new
+                each removal is compiled and assembled for English (for
+                every edition inside an #if block), and kept only when the
+                object's bytes, relocations and symbols are identical and
+                no warning is new
   idioms        x = x + 1 as x++, x = x | n as x |= n, !(a == b) as
                 a != b, parentheses around one name or number, an else
                 after a block that returns, flattened, and empty
                 statements; each proved the same way as casts
-Struct layouts and types come from the build's own compiler for each game
-the file builds in. Then run alchemy keep: it keeps only the files whose
-edits leave all twelve editions byte-identical."#;
+numbers, casts and idioms leave FAKEMATCH-tagged statements and blocks and
+every statement holding asm untouched. Struct layouts and types come from
+the build's own compiler for each game the file builds in. Then run a bare
+`alchemy keep`, with no paths: it keeps only the files whose edits leave all
+twelve editions byte-identical (a path given to keep is held, not checked)."#;
 
 fn games(file: &Path) -> Vec<DecompTarget> {
     let text = file.to_string_lossy();
@@ -199,7 +204,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if dry {
         println!("{total} changes; nothing written (--dry-run)");
     } else {
-        println!("{total} changes; run alchemy keep to keep only byte-identical files");
+        println!("{total} changes; run a bare `alchemy keep`, with no paths, to keep only byte-identical files");
     }
     Ok(())
 }

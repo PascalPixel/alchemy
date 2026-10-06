@@ -1,9 +1,10 @@
-/* 080d1714: differ 1320 of 1481 instructions (1471 generated, common
- * 816). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 1191 of 1481 instructions (1490 generated, common
+ * 890). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
- * slots: the native frame is 356 bytes and keeps index in r9 and frame
- * at sp+80; it strength-reduces frame - threshold into its own slot and
+ * slots: the frame matches at 356 bytes, but the native keeps index in
+ * r9 and the inner step counters in r11 where the draft spills them, and
+ * keeps frame at sp+80; it strength-reduces frame - threshold into its own slot and
  * hoists (wave_x >> 17) + 32 out of the threshold loop. Loops the native
  * addresses from a literal or runtime + constant base are written by
  * index; loops it walks with a pointer keep one.
@@ -22,7 +23,12 @@
  * - first particle loop by index: 1348; burst setup loop by index: 1338;
  *   distance loop by index: 1324; spark spawn loop by index: 1320.
  * - first-phase particle loop by index: 1581; spark update loop by
- *   index: 1370 (both kept as pointers). */
+ *   index: 1370 (both kept as pointers).
+ * - the inner spark loop of the threshold loop reads the mark position
+ *   as runtime->particles[index + 60], which the native addresses from
+ *   runtime plus an index * 28 offset rather than the mark pointer:
+ *   1191, frame 356 (was 340).
+ * - the 64-step init loop by pointer with its own counter: 1376. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -596,9 +602,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                 spark->variant += 2;
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
-                                    (screen.x >> 17) + mark->velocity_x;
+                                    (screen.x >> 17) + runtime->particles[index + 60].velocity_x;
                                 screen.y = ((s16 *)&screen)[3]
-                                    + mark->velocity_y;
+                                    + runtime->particles[index + 60].velocity_y;
                                 screen.depth = ((s16 *)&screen)[5];
                                 if (screen.depth <= 169)
                                     screen.depth = 170;

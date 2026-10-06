@@ -276,13 +276,6 @@ s32 SaveMenu_Run(void)
         Call1(Func_020018fa, 0x12c);
         Func_02001912((s32)&SceneId_WorldMap, 72);
         return 0;
-        L_02000474:;
-        Func_02001944(112);
-        Engine_RenderOutputPrepareForRedraw(page_window);
-        Engine_UiWorkFinalize(page_window, 2);
-        Engine_UiWorkFinalize(help_window, 2);
-        Engine_UiWorkFinalize(heading_window, 2);
-        Func_020017c0(1);
     } else {
         *(u8 *)0x03001ca0 = started;
     }
@@ -425,30 +418,21 @@ s32 SaveMenu_Run(void)
         *(u8 *)0x03001ca0 = 1;
         Func_02001c4a(0xbe, 1);
         goto L_02000c96;
-
-        v7 = 1;
-        L_020007aa:;
-        v7 = 1;
-        goto L_020008e0;
-        L_020007ae:;
-        v4 = 0;
-        goto L_0200095e;
     } else {
         if (v6 != 5) {
             goto L_020004a8;
         }
-        do {
-            v6 = Func_02001bb0(5);
-            if (v6 == -1) {
-                goto L_020004a8;
-            }
-            base3_2000240 = (s32)&Data_02000240;
-            base2_2000240 = (s32)&Data_02000240;
-            Func_02001bf6(Data_02000240.record.value_205, Data_02000240.record.value_206);
-            L_020007dc:;
-            v6 = Func_02001bb4(0);
-
-        } while (v6 == -1);
+        L_020007b8:;
+        v6 = Func_02001bb0(5);
+        if (v6 == -1) {
+            goto L_020004a8;
+        }
+        Func_02001bf6(Data_02000240.record.value_205, Data_02000240.record.value_206);
+        L_020007dc:;
+        v6 = Func_02001bb4(0);
+        if (v6 == -1) {
+            goto L_020007b8;
+        }
         if (v6 != 1) {
             goto L_020009cc;
         }
@@ -489,7 +473,8 @@ s32 SaveMenu_Run(void)
                     if (received[1] == 86) {
                         if (received[2] == 84) {
                             if (received[3] == 83) {
-                                goto L_020007aa;
+                                v7 = 1;
+                                goto L_020008e0;
                             }
                         }
                     }
@@ -522,7 +507,8 @@ s32 SaveMenu_Run(void)
                 missing_link_frames = 0;
             }
             if (missing_link_frames == 10) {
-                goto L_020007ae;
+                v4 = 0;
+                goto L_0200095e;
             }
             if (gSerialSendSource == 0) {
                 break;
@@ -548,13 +534,6 @@ s32 SaveMenu_Run(void)
     Func_02001d36(v6);
     Func_02001d2e(v6, 2);
     goto L_020004a8;
-    L_020009a6:;
-    Func_02001e76(113);
-    Engine_RenderOutputPrepareForRedraw(page_window);
-    Engine_UiWorkFinalize(page_window, 2);
-    Engine_UiWorkFinalize(help_window, 2);
-    Engine_UiWorkFinalize(heading_window, 2);
-    goto L_020009d2;
     L_020009cc:;
     if (v6 != 0) {
     } else {
@@ -591,16 +570,27 @@ s32 SaveMenu_Run(void)
         Call1(Func_02001ece, 0x6006000);
         Engine_RenderOutputPrepareForRedraw(page_window);
         page = none;
-        L_02000aaa:;
+        for (;;) {
         Call1(Func_02001ee2, 0x6002500);
         if ((gKeyState & KEY_B) != 0) {
-            goto L_020009a6;
+            Func_02001e76(113);
+            Engine_RenderOutputPrepareForRedraw(page_window);
+            Engine_UiWorkFinalize(page_window, 2);
+            Engine_UiWorkFinalize(help_window, 2);
+            Engine_UiWorkFinalize(heading_window, 2);
+            goto L_020009d2;
         }
         if ((gKeyState & KEY_A) != 0) {
             page = (page + 1);
             v7 = 1;
             if (page == page_count) {
-                goto L_02000474;
+                Func_02001944(112);
+                Engine_RenderOutputPrepareForRedraw(page_window);
+                Engine_UiWorkFinalize(page_window, 2);
+                Engine_UiWorkFinalize(help_window, 2);
+                Engine_UiWorkFinalize(heading_window, 2);
+                Func_020017c0(1);
+                goto L_020004a8;
             }
             Func_02001fa2(111);
         } else {
@@ -698,7 +688,7 @@ s32 SaveMenu_Run(void)
             v7 = 0;
         }
         Func_02001faa(1);
-        goto L_02000aaa;
+        }
     }
     Call1(Func_02001fb4, 0x12c);
     goto L_020004a8;

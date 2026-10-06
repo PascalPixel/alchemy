@@ -43,6 +43,30 @@
  * around the 145 cue 475, mode still folds (cse2 ignores loop-end notes).
  * The remaining mode fold (direction = mode -> movs #1) needs a CODE_LABEL
  * with uses between the mode test and the direction store.
+ * 2026-10-06 (worktree wf_550f1aeb-bae-26): differ 183 of 1632
+ * (draft 1633, common 1541). Heat now sits in r4 with the reference's
+ * caller-save at sp+8: two FAKEMATCH asms (keep defined at the loop top and
+ * used after the 141 cue, which also clobbers r6) leave global no call-saved
+ * low register, and with that slot in the frame the second loop's size
+ * written (frame + 0x1d0) << 8 drops its grow giv as the native does.
+ * Remaining: (a) the two empty asms count 4 bytes each in arm_reorg's
+ * address estimate, so a literal pool lands after the first zero loop
+ * (ldr [pc, #16]; b.n +10) instead of inside the direction branch after
+ * the palette loop; one asm alone does not move it, so the real mechanism
+ * (or a single device) is still wanted. (b) The load/copy pair and the
+ * frame == 0 test (count compared, native compares fp). (c) Palette loop
+ * level tied to the quotient by local-alloc. (d) mode fold.
+ * Measured on 190: clobbering r6 and r7 at the cue 183 but wrong code
+ * (r7 is the Thumb hard frame pointer, in eliminable_regset, so global
+ * records no conflict for it and heat's division was deleted); r6 alone
+ * 190 (heat to r7); heat computed after the cue 208 (heat then takes r0;
+ * across the cue r0-r3 conflict, so r4 is the first call-clobbered
+ * choice); green = (i - 16) / 4 with level = green + heat 206 (level no
+ * longer tied, but the copy and the i - 13 fold vanish); line computed
+ * between the load and the division with frame == 0 226; keep used five
+ * times before the third zero loop 500, 185 with the second loop's size
+ * factored (that asm also unrotates the third zero loop); keep with three
+ * uses at the cue 195 (keep outranks line, line to r7); two uses 183.
  * Native copy is compared (cmp r3) and adjusted (adds r3, #3), so the copy is
  * cse's first_reg there yet the load was not retargeted: some insn must sit
  * between the load and the copy through cse2 and vanish afterwards. On 190:
@@ -310,7 +334,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             s32 size;
             s32 x;
             s32 y;
+            s32 keep;
 
+            /* FAKEMATCH: keep holds r7 from here past the 141 cue so global gives heat r4 with the native caller-save at sp+8 (190 -> 183); without it heat takes r7. */
+            __asm__ __volatile__("" : "=l" (keep));
             if (mode == 1) {
                 if ((gKeysRepeat & 3) && frame > 16)
                     goto skipped;
@@ -320,6 +347,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             }
             if (count == 0)
                 AudioCommand_PlayFar(141);
+            /* FAKEMATCH: ends keep's life and clobbers r6 while heat is live, so heat finds no call-saved low register and takes r4 (190 -> 183); without it heat takes r6. */
+            __asm__ __volatile__("" : : "l" (keep), "l" (keep) : "r6");
             for (i = 0; i != 15; i++)
                 *line++ = 0;
             for (; i != 135; i++) {
@@ -473,7 +502,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != 54; frame++) {
-        s32 size = (frame << 8) + 0x1d000;
+        s32 size = (frame + 0x1d0) << 8;
         struct BattleCamera *camera = gCameraWork;
         s32 elapsed = frame - 16;
         struct Scale scale;

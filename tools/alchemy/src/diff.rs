@@ -7,8 +7,8 @@ use crate::ld_map::{Map, Placed, ROM};
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm] [--show]
-       alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--arm] [--show]
+const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm] [--rtl] [--show]
+       alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--arm] [--rtl] [--show]
 Compiles DRAFT.c for --edition (default: the game's English edition) with
 the build's own compiler and options, then compares its instructions with
 listing objects out/EDITION/obj/recon/<game>/raw/ADDRESS.o (build the
@@ -28,7 +28,10 @@ the full twelve-edition ROM comparison remains the matching authority.
 --arm is an explicit analysis-only study with the pinned game compiler:
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
-Study output stays in obj/drafts/arm-study; no build routing is changed."#;
+Study output stays in obj/drafts/arm-study; no build routing is changed.
+--rtl keeps the compiler's dump after every pass (GCC's -da) in
+out/EDITION/obj/drafts/rtl/, named DRAFT.c.PASS, to find the pass where the
+draft's allocation or scheduling first leaves the listing's."#;
 
 const ARM_STUDY_NOTICE: &str = "ARM study only: pinned game compiler, -mthumb replaced by -marm; all other game options unchanged.\nNot an admitted build route; this comparison earns no credit.";
 
@@ -39,6 +42,7 @@ struct Options {
     target: DecompTarget,
     show: bool,
     arm_study: bool,
+    rtl: bool,
     overlay: Option<String>,
     symbol: Option<String>,
 }
@@ -50,6 +54,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut target = None;
     let mut show = false;
     let mut arm_study = false;
+    let mut rtl = false;
     let mut overlay = None;
     let mut symbol = None;
     let mut i = 0;
@@ -57,6 +62,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         match arguments[i].as_str() {
             "--show" => show = true,
             "--arm" => arm_study = true,
+            "--rtl" => rtl = true,
             "--overlay" => {
                 i += 1;
                 overlay = Some(arguments.get(i).ok_or_else(|| USAGE.to_string())?.clone());
@@ -116,7 +122,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         "tbs"
     });
     let target = target.unwrap_or(decomp_target(Some(&format!("{game}-en")))?);
-    Ok(Options { draft, addresses, game, target, show, arm_study, overlay, symbol })
+    Ok(Options { draft, addresses, game, target, show, arm_study, rtl, overlay, symbol })
 }
 
 fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
@@ -362,9 +368,26 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let draft = std::fs::canonicalize(&options.draft)
         .map_err(|e| format!("{}: {e}", options.draft.display()))?;
     let mut steps = draft_steps(target, &draft, &object, options.arm_study)?;
+    if options.rtl {
+        steps[0].push("-da".into());
+    }
     let assemble = steps.pop().expect("draft plan ends with assembly");
     for step in steps {
         command(&step, root)?;
+    }
+    if options.rtl {
+        // The 2.96 driver names each dump after the input and writes it in
+        // the working directory; gather them beside the draft object.
+        let dumps = object.parent().unwrap().join("rtl");
+        std::fs::create_dir_all(&dumps).map_err(|e| e.to_string())?;
+        let name = draft.file_name().unwrap_or_default().to_string_lossy().into_owned();
+        for entry in std::fs::read_dir(root).map_err(|e| e.to_string())?.flatten() {
+            let file = entry.file_name().to_string_lossy().into_owned();
+            if file.starts_with(&format!("{name}.")) {
+                std::fs::rename(entry.path(), dumps.join(&file)).map_err(|e| format!("{file}: {e}"))?;
+            }
+        }
+        println!("pass dumps: {}/{name}.*", dumps.display());
     }
     if options.arm_study {
         eprint!("{}", study_assembly(&assemble, root)?);
@@ -507,6 +530,8 @@ mod tests {
         assert!(!default.arm_study);
         let study = parse(&args(&["0800a0f8.c", "--arm", "--edition", "tbs-ja"])).unwrap();
         assert!(study.arm_study);
+        assert!(!study.rtl);
+        assert!(parse(&args(&["08023e70.c", "--rtl"])).unwrap().rtl);
         assert_eq!(study.target.id.as_str(), "tbs-ja");
         for flag in ["-O1", "-fomit-frame-pointer", "-marm", "--cflags"] {
             assert!(parse(&args(&["0800a0f8.c", "--arm", flag])).is_err(), "{flag}");

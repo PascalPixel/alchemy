@@ -72,7 +72,29 @@
      no start local in the lightning test: 732.
    - on 662, rejected: count = frame * 2 set just before the palette
      call and passed to it: 648, but count's giv slot goes and the frame
-     shrinks to 324 (see the 796 trial above). */
+     shrinks to 324 (see the 796 trial above).
+   - on 662: reach = frame * 4 set at the loop top beside count, n =
+     reach - i * 48 - 256: 691, frame 332 with four reduced givs (h at
+     28 as the native) but in the order count 16, reach 20, s 24; the
+     native's order (s 16, count 20, frame * 4 24, h 28) is loop.c's
+     reduction order: pass one reduces h, then frame * 4, then count,
+     and pass two reduces s (791: 459 vs 479 in pass one). reach before
+     count: 689; reach = count * 2 with size = 2 after it: 657, frame
+     328, no new giv.
+   - no count local (size = 2 just before the key test, ring n = frame
+     * 2): 782; with the frame loop as while (frame != 170) { ...
+     frame++; }: 782, no change; plus half = s / 2 in the ring loop:
+     673 and frame 336, but the count giv now spills to sp+100 at the
+     loop top and the slots below it still differ. half = s / 2 with
+     count kept: 731 (frame 332), and with the while loop too: 731.
+   - permuter, 5 minutes from 662: 605, minimized by reverting hunks to
+     509. Its gain is a forced temporary holding &ResourceId_VioletMote
+     Sheet across the two loads before it (tmp3 = tmp8 = &Crystal...):
+     without it 673. It shifts reload's register rotation (the native
+     reloads work into r5 there), noise, not source; its other rewrites
+     (while loops for both frame loops, AudioCommand_PlayFar(145) after
+     cx = 60, the j loop as while, the final loop as do-while) give 662
+     on this draft, no change. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

@@ -309,7 +309,7 @@ Func_08104540:
 	movs r2, #200
 	movs r0, #0
 	movs r1, #32
-	bl Func_08105300
+	bl MenuIcon_SetPosition
 	ldr r2, [sp, #60]
 	cmp r2, #0
 	beq .L_081047ce

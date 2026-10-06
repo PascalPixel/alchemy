@@ -96,7 +96,7 @@ Func_081051a8:
 .L_0810525c:
 	.4byte Data_08105a40
 .L_08105260:
-	.4byte Func_081050cc
+	.4byte MenuIcon_UpdateTransforms
 .L_08105264:
 	add sp, #8
 	pop {r3}

@@ -373,6 +373,7 @@ the checkout it runs in, and `alchemy --help` lists every command.
 # Choose what to match
 make deps                              # what unblocks the most (W4)
 alchemy similar                        # nearest C twins in either game
+alchemy similar --editions             # each ☀️ listing's copies in all twelve builds
 # Match one function
 alchemy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
 alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a frame gap

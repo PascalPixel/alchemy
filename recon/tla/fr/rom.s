@@ -1301,7 +1301,7 @@ Func_0803e918:
 	.type Func_0803e998, %function
 	.thumb_func
 Func_0803e998:
-	.incbin "baserom.gba", 0x0003e9dc, 0x0000063c
+	.incbin "baserom.gba", 0x0003e9dc, 0x000005b0
 	.section .rom.0003f048, "ax"
 	.incbin "baserom.gba", 0x0003f048, 0x000001d0
 	.section .rom.0003f218, "ax"

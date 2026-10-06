@@ -651,8 +651,6 @@
         "*/recon/tla/raw/0803eb2c.o"(.text)
         "*/recon/tla/raw/0803ebdc.o"(.text)
         "*/recon/tla/raw/0803ed98.o"(.text)
-        "*/recon/tla/raw/0803ef48.o"(.text)
-        "*/recon/tla/raw/0803ef8c.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/SELECTION_RESOURCE.o"(.text)
         "*/recon/tla/raw/0803f004.o"(.text)
         "*/recon/tla/raw/0803f1d4.o"(.text)

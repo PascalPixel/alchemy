@@ -239,7 +239,7 @@ msgctxt "MsgAbilityLearned"
 msgid "00057"
 msgstr "{argument_actor_name:1} apprende{line_break}{argument_ability_name}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCommandName"
 msgid "00058"
 msgstr "Attacca"
 

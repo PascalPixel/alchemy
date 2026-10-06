@@ -1,6 +1,9 @@
 /* 0800a494: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
-   alchemy diff --camelot-arm: listing 307, draft 296, common 204, differ
-   195 (stock agbcc_arm 199).
+   alchemy diff --camelot-arm: listing 307, draft 291, common 213, differ
+   172 (stock agbcc_arm 199). 195 to 172 (2026-10-06, session 2): the
+   smull's constraints as two alternatives, the high word tied to the
+   second input or early-clobbered ("=&r,&r"(lo), "=r,&r"(hi), "r,r"(a),
+   "1,r"(b)), as Transform_UpdateVertices takes them.
    Stock agscc --arm: listing 307, draft 294, common 55, differ 491.
    Fixed agbcc_arm -O2 library setting: 307/296/common202/differ199.
    Shared ScriptMotionObject layout and separate ratio/velocity values come
@@ -44,8 +47,9 @@ static __inline__ s32 MulQ16(s32 a, s32 b)
 
     /* The native smull writes its low and high words to unpaired registers
        (r1/r3, r2/r0); a 64-bit product takes a register pair. */
+    /* RdHi tied to Rs or early-clobbered: camelot_arm 195 to 172. */
     /* FAKEMATCH: unpaired smull halves; agbcc_arm differ 479 as s64, 278 */
-    __asm__("smull %0, %1, %2, %3" : "=&r"(lo), "=&r"(hi) : "r"(a), "r"(b));
+    __asm__("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
     return ((u32)lo >> 16) | (hi << 16);
 }
 

@@ -1,7 +1,31 @@
 /* 0800a0f8: ARM draft for the camelot_arm route (CAMELOT_ARM_SOURCES, K1).
-   alchemy diff --camelot-arm: listing 157, draft 157, common 105, differ
-   104 (stock agbcc_arm 124). What remains is register choice around the
-   smull pairs and the ldrsh of the stored halfword (native keeps it in lr).
+   alchemy diff --camelot-arm: listing 157, draft 158, common 132, differ
+   51 (stock agbcc_arm 124). What remains: the 0x8000 constant built twice
+   (the listing keeps it in r1 for both smulls, one instruction), to->x in
+   ip and z's load in r4 where the listing has r1 and ip; x in r1, not r2,
+   so no ldm r7, {r2, r4} and the second loop smull copies its low word;
+   (s16)t read back by ldrsh where the listing extends it into lr at once.
+   camelot_arm trials (2026-10-06, session 2), from 104:
+   - smull with two alternatives, "=&r,&r"(lo), "=r,&r"(hi), "r,r"(a),
+     "1,r"(b): RdHi takes Rs when b dies, as the listing's ldr r3; smull
+     r0, r3, r1, r3 does: 104 to 99 (with the x = to->x order below).
+   - x = to->x; z = to->z - from->z; x -= from->x: the listing's load order,
+     103; x = to->x; z = to->z; z -= from->z; x -= from->x: 77 (with all
+     below). x first as one expression: 108; Arctan arguments inline: 112.
+   - center = &gProjection.center_x before the loop, k = *center: the
+     listing's pool word and a reload each iteration, as listed.
+   - out->a = v->u = t, then a = (out->a << 8) * k: 83; from v->u: 99.
+   - a = ((s16)t << 8) * k: 97 (one lsl/asr pair, the listing has two
+     shifts then lsl #8); (s16)t * 256 * k: 107 (k << 8).
+   - s16 t, out->a = v->u = t = ...: stores of the unextended value and a
+     separate lsl/asr as listed, but center then keeps r9: 107; with u
+     chained too, or k = gProjection.center_x: 107.
+   - Declaration order of x and z, z loaded before x: no change; asm
+     without volatile: 157.
+   - v->dx = -(FIXED_MUL(z, -sn) + a) before b, found by alchemy permute
+     --camelot-arm: 77 to 51; the same with a + FIXED_MUL(z, -sn): 55.
+     The permuter's own best (differ 52, 8 minutes) adds only a temporary
+     shared by v->x and v->dx.
    Control 1, alchemy diff --arm (agscc, -marm): listing 157, draft 157,
    differ 188. Its APCS frame (mov ip, sp; fp; ldmea) and asr #31 / lsr #24
    division never appear in the listing, so it cannot reach 0.
@@ -78,10 +102,10 @@ static __inline__ s32 FixedMul(s32 a, s32 b)
     s32 lo;
     s32 hi;
 
-    /* FAKEMATCH: early-clobber both outputs; ordinary constraints let agscc
-       ARM overlap RdLo and Rm, which the assembler diagnoses as invalid. */
+    /* FAKEMATCH: register choice; RdLo early-clobbered, RdHi either tied to
+       Rs (when b dies, as listed) or early-clobbered; camelot_arm 104 to 99. */
     CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
-    asm volatile("smull %0, %1, %2, %3" : "=&r"(lo), "=&r"(hi) : "r"(a), "r"(b));
+    asm volatile("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
     return (u32)lo >> 16 | hi << 16;
 }
 #define FIXED_MUL(a, b) FixedMul(a, b)
@@ -102,11 +126,14 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
     s32 a;
     s32 b;
     s32 k;
-    s32 x;
+    s32 *center;
     s32 z;
+    s32 x;
 
-    z = to->z - from->z;
-    x = to->x - from->x;
+    x = to->x;
+    z = to->z;
+    z -= from->z;
+    x -= from->x;
     angle = (u16)((ArcTan2Fn)WaitFramesFar[8].target)(x >> 4, z >> 4);
     ox = FIXED_MUL(0x8000, to->x);
     oz = FIXED_MUL(0x8000, to->z);
@@ -114,19 +141,19 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
         gScanlineAngle = angle;
         sn = ((TrigFn)WaitFramesFar[11].target)(angle);
         cs = ((TrigFn)WaitFramesFar[12].target)(angle);
+        center = &gProjection.center_x;
         for (i = 0; i < 160; i++) {
             x = v->x;
             z = v->z;
             t = -(FIXED_MUL(cs, x) / 256);
-            v->u = t;
-            out->a = t;
+            out->a = v->u = t;
             u = FIXED_MUL(sn, x) / 256;
             v->v = u;
             out->b = u;
-            k = gProjection.center_x;
-            a = (v->u << 8) * k;
+            k = *center;
+            a = (out->a << 8) * k;
+            v->dx = -(FIXED_MUL(z, -sn) + a);
             b = ((s16)u << 8) * -k;
-            v->dx = -(a + FIXED_MUL(z, -sn));
             v->dz = b + FIXED_MUL(z, cs);
             out->x = (ox + v->dx) >> 8;
             out->y = (oz + v->dz) >> 8;

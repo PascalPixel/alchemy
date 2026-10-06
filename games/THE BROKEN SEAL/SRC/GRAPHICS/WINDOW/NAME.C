@@ -258,6 +258,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     struct RenderInput *window;
     union MenuCursor cursor;
     union MenuCursor caret;
+    struct RenderOutput *o;
     s32 column, row, slot;
     u8 *end;
     u16 *pal;
@@ -294,17 +295,17 @@ s32 NameEntry_EditOwnerName(s32 entry)
     row = 5;
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        cursor.output = (struct RenderOutput *)slot;
+        o = (struct RenderOutput *)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        cursor.output = o;
         ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 + 140, window->y * 8 + 52);
     }
     slot = Resource_FindFreeEntry();
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, RomBytes_080317e4);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        caret.output = (struct RenderOutput *)slot;
-        ((struct RenderOutput *)slot)->sentinel = 255;
-        ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->priority = 0;
+        o = (struct RenderOutput *)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        caret.output = o;
+        o->sentinel = 255;
+        ((struct FieldSprite *)o->unknown_10)->priority = 0;
         ShopCursor_SetPositionImmediateFar(&caret, UiText_SetRenderString(input) + 70, 22);
     }
     pal = (u16 *)0x050001c0;
@@ -335,9 +336,8 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_MoveTowardTargetFar(&caret);
         {
             u32 frame = (gFrameTick >> 1) & 7;
-            /* FAKEMATCH: the caret sprite lives in r5, as the native allocates it. */
-            register struct RenderOutput *o asm("r5") = caret.output;
 
+            o = caret.output;
             ((struct FieldSprite *)o->unknown_10)->x = o->x + NameEntry_CaretWave[frame];
             ((struct FieldSprite *)o->unknown_10)->y = o->y + NameEntry_CaretWave[(frame + 5) & 7];
         }
@@ -486,6 +486,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     struct RenderInput *window;
     union MenuCursor cursor;
     union MenuCursor caret;
+    struct RenderOutput *o;
     s32 column, row, slot, x;
     u32 character;
     u16 *pal;
@@ -520,17 +521,17 @@ s32 NameEntry_EditOwnerName(s32 entry)
     row = 10;
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        cursor.output = (struct RenderOutput *)slot;
+        o = (struct RenderOutput *)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        cursor.output = o;
         ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 + 140, window->y * 8 + 92);
     }
     slot = Resource_FindFreeEntry();
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, RomBytes_080317e4);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        caret.output = (struct RenderOutput *)slot;
-        ((struct RenderOutput *)slot)->sentinel = 255;
-        ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->priority = 0;
+        o = (struct RenderOutput *)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        caret.output = o;
+        o->sentinel = 255;
+        ((struct FieldSprite *)o->unknown_10)->priority = 0;
         x = 72 + NameEntry_CountLetters(input) * 10;
         ShopCursor_SetPositionImmediateFar(&caret, x, 22);
     }
@@ -564,9 +565,8 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_MoveTowardTargetFar(&caret);
         {
             u32 frame = (gFrameTick >> 1) & 7;
-            /* FAKEMATCH: the caret sprite lives in r5, as the native allocates it; unpinned it takes r4 (differ 20). */
-            register struct RenderOutput *o asm("r5") = caret.output;
 
+            o = caret.output;
             ((struct FieldSprite *)o->unknown_10)->x = o->x + NameEntry_CaretWave[frame];
             ((struct FieldSprite *)o->unknown_10)->y = o->y + NameEntry_CaretWave[(frame + 5) & 7];
         }

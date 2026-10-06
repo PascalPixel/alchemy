@@ -709,6 +709,8 @@ after_power:
         case BATTLE_DAMAGE_HP_ADDITIVE_7:
         case BATTLE_DAMAGE_HP_ADDITIVE_9:
         {
+            s32 round;
+
 #if GAME_TLA
             if (target->guard_level == 4)
                 break;
@@ -716,10 +718,10 @@ after_power:
             if (action->power == 0)
                 break;
             cur = target->hp;
-            pass = 1;
+            round = 1;
             do {
                 TAKE_BONUS();
-                if (pass == 0)
+                if (round == 0)
                     bonus = 0;
                 apwr = action->power;
 #if GAME_TLA
@@ -831,8 +833,8 @@ after_power:
 #endif
                     dmg = cur;
                 }
-                pass++;
-            } while (pass <= 1);
+                round++;
+            } while (round <= 1);
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -1433,18 +1435,23 @@ after_power:
         case EFX_DRAIN_HP_HALF:
         {
             s32 heal;
+#if GAME_TLA
+            s32 amt;
+#endif
 
             heal = actor->hp;
 #if GAME_TLA
+            amt = dealt;
             if (action->effect == EFX_DRAIN_HP_HALF)
-                dealt /= 2;
-            dmg = dealt;
+                amt /= 2;
+            dmg = amt;
+            heal += amt;
 #else
             dmg = dealt;
             if (action->effect == EFX_DRAIN_HP_HALF)
                 dmg /= 2;
-#endif
             heal += dmg;
+#endif
             if (heal > actor->max_hp) {
                 heal = actor->max_hp;
                 dmg = heal - actor->hp;

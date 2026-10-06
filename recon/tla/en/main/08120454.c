@@ -4,10 +4,14 @@
  * names resolved: draft 2549, common 1381, differ 3237.
  * That source now carries this game's differences under GAME_TLA (games/THE
  * BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) and now beats this
- * draft: draft 3467, common 3069, differ 779. One power variable (apwr) for
- * every damage case moved it from differ 2590 to 779 and keeps ☀️ exact.
- * Still to bring over: the immobilize scan (the listing tests entry 0 before
- * the loop) and the summon message tail; then register order. */
+ * draft: draft 3463, common 3128, differ 657. One power variable (apwr) for
+ * every damage case moved it from differ 2590 to 779, the additive case's
+ * own loop counter to 657; ☀️ stays exact. Tried and worse: a while loop
+ * for the immobilize scan (832), tmp or one shared amt for the drains (708,
+ * 716), while loops for the affinity scans. Still to bring over: the
+ * immobilize scan (the listing tests entry 0 before the loop), the rate
+ * switch's decision tree near 400-402, the summon message tail and the heal
+ * branches' load order; then register order. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "BATTLE_ACTOR.H"

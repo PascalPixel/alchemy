@@ -57,7 +57,38 @@
    the test: unchanged. A 5-minute permuter run on this draft: 433, only
    by forced temporaries in the redraw block (level, djinn[2],
    &save->summary[slot] for the counts call, slot * 16 inside the cursor
-   y); noise, not adopted. No device retained. */
+   y); noise, not adopted. No device retained.
+   Session 2026-10-06 19:30, reading loop.c: check_dbra_loop reverses i
+   only when bl->giv_count == 0, no loop exit, and no insn in the loop
+   but i's own sets and the final compare mentions i (calls rule out the
+   other reversal path). The native keeps i ascending although nothing
+   in its final loop uses i, so at pass 2 the loop still held a giv of i
+   or an insn naming i that later passes delete. Two mechanisms fit: (a)
+   a giv of i whose (benefit - add_cost 2) x lifetime x 17 lies between
+   the pass-2 and pass-1 insn counts is reduced only in pass 2; shown
+   with save->summary[i].area in the summary++ form (68 vs 73 in pass 1,
+   reduced in pass 2, i ascending), but that leaves its own register and
+   unreduced i << 6 temps, 587. A y used at six calls cannot be that giv:
+   its lifetime (78 to 93) makes any positive benefit reduce in pass 1.
+   (b) a giv reduced in pass 1 but not replaceable keeps its original
+   insn (y = i << 4) before the new y = y_new copy (loop.c line 4834); that
+   insn names i in pass 2, and flow deletes it later as a dead store. Not
+   replaceable means y is mentioned after an increment of i, going round
+   the loop from y's set (check_final_value; a y = 0 before the loop is
+   not enough, final_value makes it replaceable again). But a user
+   variable not replaceable pays copy_cost 4 unless i is eliminable, so
+   y = i * 16 alone (benefit 2) is never reduced; it needs combined i * 16
+   temporaries. Native slots: summary at 36 is a user pointer declared
+   between counts and cursor (summary++ biv, level family at r6 from it);
+   y at 8 is a loop-made pseudo. Trials, with that declaration order,
+   summary++ and kind = 1 before RenderResource_CreatePair: y = i * 16
+   at the top, 495; i * 16 in each call, reversed in pass 2, 593;
+   summary = &save->summary[i] with i * 16 in calls, reversed, 585, and
+   reusing summary in the redraw block, 694; y = i * 16 as the for step
+   after y = 0, final_value replaceable, reversed, 593; i * 16 in the
+   message calls and y = i * 16 in the else branch after y = 0, reversed,
+   593; save->summary[i].name with i * 16 in calls, 585, with y at the
+   top, 483; save->summary[i].area, 587 as above. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

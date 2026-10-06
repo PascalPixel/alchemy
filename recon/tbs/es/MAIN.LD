@@ -185,6 +185,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/LOOKUP_SYMBOL.o"(.text .rodata .data .padding)
     "*/recon/tbs/es/rom.o"(.rom.000145d0)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/METATILE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_NIBBLES.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_LOOP.o"(.text .rodata .data .padding)

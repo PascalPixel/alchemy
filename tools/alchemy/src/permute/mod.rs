@@ -819,7 +819,7 @@ fn unified(old: &str, new: &str, name: &str) -> String {
             }
             // Each run of changes: its removals, then its insertions.
             let run = r + range[r..].iter().take_while(|entry| entry.0 != b' ').count();
-            for tag in [b'-', b'+'] {
+            for tag in *b"-+" {
                 for entry in range[r..run].iter().filter(|entry| entry.0 == tag) {
                     push(&mut out, tag as char, entry.1);
                 }

@@ -154,16 +154,15 @@ const CALLEE_SAVED: u16 = 0b0000_1111_1111_0000;
 
 impl Evidence {
     /// A prologue and epilogue a compiler writes: a return, and either no
-    /// stack save or one that opens the function; a save without lr (an
-    /// interworking leaf) returns through lr itself.
+    /// stack save or one that opens the function and saves lr. agscc -marm
+    /// and agbcc_arm push lr whenever they save registers, leaf functions
+    /// included, so a save without lr is a hand marker.
     pub fn compiled_frame(&self) -> bool {
         let returns = |kinds: &[&str]| kinds.iter().any(|exit| self.exits.contains_key(exit));
-        returns(&["bx-lr", "ldm-pc", "mov-pc-lr", "pop-pc"])
+        returns(&["bx-ip", "bx-lr", "ldm-pc", "mov-pc-lr", "pop-pc"])
             && match self.save {
                 None => true,
-                Some(list) => {
-                    self.save_opens && (list & LR != 0 || returns(&["bx-lr", "mov-pc-lr"]))
-                }
+                Some(list) => self.save_opens && list & LR != 0,
             }
     }
 }
@@ -203,6 +202,10 @@ pub(crate) fn analyze(
         } else if w & 0x0FFF_FFF0 == 0x012F_FF10 {
             match w & 15 {
                 14 => bump(&mut e.exits, "bx-lr"),
+                // ldmfd sp!, {..., ip}; bx ip: GCC 2.9's interworking epilogue.
+                12 if index > 0 && words[index - 1].1 & 0x0FFF_1000 == 0x08BD_1000 => {
+                    bump(&mut e.exits, "bx-ip")
+                }
                 12 => bump(&mut e.markers, "ip-return"),
                 rm if holds(adr, rm) => bump(&mut e.markers, "pc-interwork"),
                 _ if after_link => {}
@@ -215,6 +218,10 @@ pub(crate) fn analyze(
             bump(&mut e.markers, "psr");
         } else if w & 0x0FFF_0000 == 0x092D_0000 || w & 0x0FFF_FFFF == 0x052D_E004 {
             let list = if bit(26) { LR } else { w as u16 };
+            // A save of argument registers alone is a varargs spill.
+            if list & LR == 0 && list & !0xF != 0 {
+                bump(&mut e.markers, "save-no-lr");
+            }
             if e.save.is_none() {
                 e.save = Some(list);
                 e.save_opens = index == 0 || (index == 1 && opened_with_ip);
@@ -813,9 +820,14 @@ mod tests {
         assert_eq!(shape(&e, false), "compiled");
         assert_eq!(shape(&plain(&[MOV_R0_R1, BX_LR]), false), "compiled");
         assert_eq!(shape(&e, true), "mixed");
-        // An interworking leaf saves without lr and returns through it.
-        let leaf = plain(&[0xE92D_0030, MOV_R0_R1, 0xE8BD_0030, BX_LR]);
-        assert_eq!((register_list(leaf.save.unwrap()).as_str(), shape(&leaf, false)), ("{r4-r5}", "compiled"));
+        // A leaf saves lr too: push {r5-r9, sl, lr} ... pop {r5-r9, sl, lr}; bx lr.
+        let leaf = plain(&[0xE92D_47E0, MOV_R0_R1, 0xE8BD_47E0, BX_LR]);
+        assert!(leaf.markers.is_empty());
+        assert_eq!(shape(&leaf, false), "compiled");
+        // GCC 2.9's interworking return: push {lr} ... pop {ip}; bx ip.
+        let interworking = plain(&[0xE92D_4000, MOV_R0_R1, 0xE8BD_1000, 0xE12F_FF1C]);
+        assert!(interworking.markers.is_empty());
+        assert_eq!(shape(&interworking, false), "compiled");
         // mov ip, sp; push {r4-r7, fp, ip, lr, pc}; sub fp, ip, #4 ... ldmea fp, {...}
         let framed = plain(&[0xE1A0_C00D, 0xE92D_D8F0, 0xE24C_B004, 0xE91B_A8F0]);
         assert!(framed.frame && framed.save_opens);
@@ -842,6 +854,14 @@ mod tests {
         assert_eq!((register_list(clobbers.unsaved).as_str(), shape(&clobbers, false)), ("{r5}", "hand"));
         let call_used = plain(&[0xE1A0_4000, BX_LR]); // mov r4, r0
         assert_eq!((register_list(call_used.unsaved).as_str(), shape(&call_used, false)), ("{r4}", "compiled"));
+        // Camelot's compilers push lr whenever they save registers, leaf
+        // functions included: a save without lr is a hand marker.
+        let no_lr = plain(&[0xE92D_0030, MOV_R0_R1, 0xE8BD_0030, BX_LR]); // push {r4, r5} ... pop {r4, r5}; bx lr
+        assert_eq!(no_lr.markers.keys().copied().collect::<Vec<_>>(), ["save-no-lr"]);
+        assert!(!no_lr.compiled_frame());
+        assert_eq!(shape(&no_lr, false), "hand");
+        // A varargs spill of argument registers alone is no such save.
+        assert!(plain(&[0xE92D_000E, PUSH_R4_LR, POP_R4_PC]).markers.is_empty()); // push {r1-r3}; push {r4, lr}
         // A save that does not open the function is no compiled prologue.
         assert_eq!(shape(&plain(&[MOV_R0_R1, PUSH_R4_LR, POP_R4_PC]), false), "fragment");
         assert_eq!(shape(&plain(&[MOV_R0_R1]), false), "fragment");

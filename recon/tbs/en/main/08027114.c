@@ -1,5 +1,5 @@
-/* 08027114: differ 1563 against the 1727-line parent listing (draft 1822,
- * common 993; was 2131).
+/* 08027114: differ 1508 against the 1727-line parent listing (draft 1825,
+ * common 1022; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -50,9 +50,10 @@
  * the second SummonDefinition_Get, the icon tile stored straight from the
  * loader: 1574 (it was 1943 in the old case order). mode and the
  * selection results as one variable, as native keeps both in r6: 1563
- * (1887 in the old order). Next: djinn's register
- * (frame 104), the round end at next_round, and the djinn and summon
- * loops. */
+ * (1887 in the old order). Every entries[0].x store written directly
+ * instead of through slot: 1508 (1678 on 1616). The frame figures above
+ * date from 1802; recheck them. Next: djinn's register, the round end at
+ * next_round, and the djinn and summon loops. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -399,8 +400,7 @@ mark_visible:
             case 0:
                 win = UiWindow_Create(11, 17, 11, 3, 6);
                 UiText_DrawCharacterAtOffset(31, (struct RenderInput *)win, 16, 0);
-                slot = &state->entries[0];
-                slot->oam.f.x = 64;
+                state->entries[0].oam.f.x = 64;
                 Audio_PlayCue(112);
                 mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
                 UiWork_Finalize(win, 1);
@@ -420,8 +420,7 @@ psynergy_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 48;
+                state->entries[0].oam.f.x = 48;
                 cnt = 0;
                 k = 0;
                 cur = actor->action_slots[0].encoded_action & 0x3fff;
@@ -455,8 +454,7 @@ psynergy_menu:
                 handle = Resource_LoadIntoFreeSlot(128);
                 ui = (struct UiRenderWork *)gWindowWork[0];
                 win = UiWindow_Create(8, 17, 18, 3, 6);
-                slot = &state->entries[0];
-                slot->oam.f.x = 40;
+                state->entries[0].oam.f.x = 40;
                 slot = &state->entries[1];
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
@@ -501,8 +499,7 @@ djinn_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 80;
+                state->entries[0].oam.f.x = 80;
                 BattleLayout_HighlightPartyPanels(hdr);
                 mode = SummonMenu_SelectSummon(0, 0, state->cost[i]);
                 BattleLayout_HighlightPartyPanels(hdr);
@@ -570,8 +567,7 @@ summon_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 144;
+                state->entries[0].oam.f.x = 144;
                 COUNTDOWN->result[i] = 0x80000000;
                 mode = Battle_SelectAbility(actorId, 1);
                 ent->range = 0;
@@ -587,8 +583,7 @@ summon_menu:
                     ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
                     cost = ability->range;
                     win = UiWindow_Create(11, 17, 10, 3, 6);
-                    slot = &state->entries[0];
-                    slot->oam.f.x = 64;
+                    state->entries[0].oam.f.x = 64;
                     UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
                     UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
                                                  win, 16, 0);
@@ -613,8 +608,7 @@ summon_menu:
                     goto store_target;
                 } else {
                     win = UiWindow_Create(11, 17, 10, 3, 6);
-                    slot = &state->entries[0];
-                    slot->oam.f.x = 64;
+                    state->entries[0].oam.f.x = 64;
                     UiWork_SetParamNibble(2);
                     UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
                     UiText_DrawCharacterAtOffset(element * 20 + index + 1119,
@@ -639,8 +633,7 @@ item_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
-                slot = &state->entries[0];
-                slot->oam.f.x = 96;
+                state->entries[0].oam.f.x = 96;
                 cnt = 0;
                 cur = actor->inventory[0];
                 k = 0;
@@ -687,8 +680,7 @@ item_menu:
                 cost = ability->range;
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(9, 17, 15, 3, 6);
-                slot = &state->entries[0];
-                slot->oam.f.x = 48;
+                state->entries[0].oam.f.x = 48;
                 slot = &state->entries[1];
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;

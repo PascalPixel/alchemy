@@ -1,4 +1,4 @@
-/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 2047, differ 117.
+/* 080ab5e4 DjinnMenu_SelectDjinn: listing 2105, draft 2106, common 2072, differ 67.
    Message symbols are whole, except where the native adds to one pool base:
    the pair help text is MsgDjinnOwnerLabel + 1 and + 2, and the single-djinn
    help is MsgDjinnChoose + 2, + 3 and + 4 (1589 -> 1504). The balance flags
@@ -101,6 +101,22 @@
    The Japanese copy needs #if branches for message symbols its edition
    lacks (MsgDjinnNowRecovering is undeclared there) before it can be
    scored.
+   Loop depth weights the allocation (2026-10-06): flow.c makes one
+   natural loop per back edge, so a block's register refs count 1 + the
+   continues reachable from it, and global.c ranks the cursor moves'
+   constants 4 and 1 by those refs. The up handler tests buf[x] & 4 with
+   its own continue before an unconditional draw, as the native's direct
+   jump to the loop top shows (117 -> 73): the 4 then outranks the 1 in
+   both cursor moves, and the A handler's owner, element and number match.
+   The R handler's flag is i as well (73 -> 67): the native keeps it in
+   i's slot, sp+68.
+   Remaining at 67: the R handler's owner and number swapped between r6
+   and r7 (global priority: owner 36 refs over 13 insns beats number 60
+   over 24; a weight of 13 instead of 12, one more continue reachable from
+   it but not from the up handler, would flip it); the redraw block's
+   0x666 reload register (r1 for r3, reload's round-robin) and the reload
+   of x after it (+1 instruction); fp copied through r2 for r1 in one
+   test; the final owner store.
  * Stubborn (2026-10-06): re-scored differ 1589; not first-try. Score+parked from sun100 queue-3. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -174,7 +190,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     u32 djinn = 0;
     s32 groupMode = 0;
     s32 setAll = 0;
-    s32 ok;
     s32 result;
     s32 message;
     u32 pressed;
@@ -517,12 +532,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 AudioCommand_PlayFar(114);
                 continue;
             }
-            ok = 0;
+            i = 0;
             if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)) || Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
-                ok = 1;
+                i = 1;
             groupMode = 1;
             gKeysPressedLatch = 0;
-            if (ok == 0) {
+            if (i == 0) {
                 AudioCommand_PlayFar(114);
                 RenderOutput_ClearListFar(state->list_window);
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 80, 216, 104);
@@ -635,8 +650,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         }
         if (repeat & 0x40) {
             AudioCommand_PlayFar(111);
-            if (!(buf[x] & 4))
-                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
+            if (buf[x] & 4)
+                continue;
+            Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
             if (buf[x] & 4)
                 continue;
             if (buf[x] & 1) {

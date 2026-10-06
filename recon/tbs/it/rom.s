@@ -550,14 +550,14 @@ DisplayTransition_EdgeOffsets:
 	.global DisplayTransition_DitherTable
 DisplayTransition_DitherTable:
 	.incbin "baserom.gba", 0x0009ea46, 0x00000040
-	.global Data_0809e92e
-Data_0809e92e:
+	.global BattlePalette_ChannelCurve
+BattlePalette_ChannelCurve:
 	.incbin "baserom.gba", 0x0009ea86, 0x00000040
-	.global Data_0809e96e
-Data_0809e96e:
+	.global BattlePalette_ChannelCurveLight
+BattlePalette_ChannelCurveLight:
 	.incbin "baserom.gba", 0x0009eac6, 0x00000040
-	.global Data_0809e9ae
-Data_0809e9ae:
+	.global BattlePalette_ChannelCurveContrast
+BattlePalette_ChannelCurveContrast:
 	.incbin "baserom.gba", 0x0009eb06, 0x00000042
 	.global BattleFx_DefinitionTable
 BattleFx_DefinitionTable:

@@ -290,7 +290,7 @@ extern u8 gBattleFxWork[];
 extern u8 *gBattleOwnerStates;
 #endif
 #ifndef OWN_gRandomSeed
-extern u8 gRandomSeed[];
+extern u32 gRandomSeed;
 #endif
 #ifndef OWN_gTransitionWork
 extern struct BattlePresentationTransition *gTransitionWork;

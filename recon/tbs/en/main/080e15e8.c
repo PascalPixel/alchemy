@@ -1,7 +1,18 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1638, common 1182, differ 914 (native frame 336,
-   draft 328: two fewer spill slots; native keeps frame * 4 as its own
-   induction variable beside frame * 2, which the draft does not).
+   listing 1640, draft 1634, common 1231, differ 812 (native frame 336,
+   draft 324: three fewer spill slots, so most stack offsets read 12 low).
+   The native's extra slots, in its frame order:
+   - sp+96, &scale hoisted out of the frame loop as a compiler temporary
+     (a user sc = scale pointer spills in the wrong place: 882);
+   - sp+60, sx in the smoke burst (the draft keeps it in fp and reloads
+     the constant 12 that the native keeps in r6);
+   - sp+24, frame * 4 as its own reduced giv. The loop dump says why the
+     draft has none: GCSE's PRE hoists frame << 2 to the three-streams
+     loop's preheader, lifetime 4, and loop.c rejects it, "not worth
+     while, 170 vs 479"; it needs lifetime * benefit * 17 >= the frame
+     loop's insn count, so the native's frame * 4 lives longer or is
+     not a user variable (a reach local is a user var and costs copy_cost:
+     -1938).
    Trials:
    - unscored first draft: differ 938 (frame 332).
    - pts[].y as (y >> 16) + 60, not a halfword cast: 929.
@@ -10,7 +21,18 @@
    - n = count * 2 - i * 48 - 256: 916, no change.
    - ring store as sheet[offset + rings + j]: 914 (native adds offset to
      work, then rings); (sheet + rings)[offset + j]: 976;
-     sheet[offset + j + rings]: 916. */
+     sheet[offset + j + rings]: 916.
+   - scale used directly, no sc pointer: 844.
+   - ring cell address as sheet + (lvl * 0x302 + cell) + rings: 812 (the
+     native adds lvl * 0x302 to the cell offset, then work, then rings,
+     inside the loop); (rings + lvl * 0x302 + cell): 832;
+     &sheet[lvl * 0x302 + cell + rings]: 816; rings + (lvl * 0x302 +
+     cell): 828.
+   - on 812: n from count * 2, frame << 2, (frame - i * 12) * 4 or
+     frame * 4 - (i * 48 + 256): 812, no change; reach = frame * 4 before
+     the points loop (on 914): 921, user var rejected as above; blit[0] =
+     SLOT(46) without cache: 817; sx after oy: 858; declaration order:
+     no change. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -92,7 +114,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     DrawRectangle blit[2];
     s32 size;
     s32 count;
-    s32 *sc;
     s32 i;
     s32 j;
     s32 n;
@@ -169,7 +190,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         }
     }
     *(u16 *)0x0400000c = 0x784;
-    sc = scale;
 
     for (frame = 0; frame != 170; frame++) {
         size = 2;
@@ -215,17 +235,17 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             SceneTransform_ApplyYaw(a << 12);
             if (frame > 150) {
                 s32 s = frame * 0x1800 - 0xd9400;
-                sc[0] = s;
-                sc[1] = s;
-                sc[2] = s;
+                scale[0] = s;
+                scale[1] = s;
+                scale[2] = s;
                 size = 5;
             } else {
                 s32 s = 0x10000 - a * 3 * 0x400;
-                sc[0] = s;
-                sc[1] = s;
-                sc[2] = s;
+                scale[0] = s;
+                scale[1] = s;
+                scale[2] = s;
             }
-            SceneTransform_ApplyScale(sc);
+            SceneTransform_ApplyScale(scale);
         } else {
             pos[0] = 0;
             pos[1] = 0;
@@ -289,7 +309,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 pts[0].x = (pts[0].x >> 17) + 64;
                 pts[0].y = (pts[0].y >> 16) + 60;
                 s = size + 1;
-                blit47(dst, work->sheet + rings + lvl * 0x302 + ParticleStreams_CellOffsets[s - 1],
+                blit47(dst, work->sheet + (lvl * 0x302 + ParticleStreams_CellOffsets[s - 1]) + rings,
                     pts[0].x - s / 2, pts[0].y - s, s, s * 2);
             }
             Runtime_ReleaseHeapBlock(47);

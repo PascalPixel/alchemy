@@ -143,10 +143,11 @@ or functions is exactly this cheating.
   `FAKEMATCH` tag with its measured reason inside the function. A device is
   for a difference of instruction order or register choice only, an
   unused local of a real type whose size exactly explains the native stack
-  frame, or an empty one-pass block that restores a compiler block boundary
-  the bytes prove existed (a CSE block that ended where no code is left),
-  even where that changes which instructions are chosen (Pascal,
-  2026-10-07); and only after reshaping the source has failed. A function
+  frame, or a one-pass block, empty or around real statements, that
+  restores a compiler block or loop boundary the bytes prove existed (a
+  CSE block that ended where no code is left, a block loop.c kept inside
+  its loop), even where that changes which instructions are chosen
+  (Pascal, 2026-10-07); and only after reshaping the source has failed. A function
   is never written as inline assembly. A fake match stays in the source, tagged; it is never
   replaced by a compiler option or routing that fits only those functions
   (K1, K3). `CAMELOT_ASM("proof")` marks assembly Camelot very likely

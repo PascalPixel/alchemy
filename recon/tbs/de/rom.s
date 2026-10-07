@@ -177,8 +177,8 @@ UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000142d0, 0x000002f4
 	.section .rom.00020b2e, "ax"
 	.incbin "baserom.gba", 0x00020b2e, 0x000008fe
-	.section .rom.00021e3c, "ax"
-	.incbin "baserom.gba", 0x00021e3c, 0x00002008
+	.section .rom.00022b34, "ax"
+	.incbin "baserom.gba", 0x00022b34, 0x00000ac4
 	.section .rom.00024d44, "ax"
 	.incbin "baserom.gba", 0x00024d44, 0x00000e00
 	.section .rom.00025dd8, "ax"
@@ -679,12 +679,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x000a38a0, 0x00000560
-	.section .rom.000b0550, "ax"
-	.global OwnerAction_RunCompareLoop
-	.type OwnerAction_RunCompareLoop, %function
-	.thumb_func
-OwnerAction_RunCompareLoop:
-	.incbin "baserom.gba", 0x000b0550, 0x00000c20
 	.section .rom.000b18c8, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:
@@ -947,12 +941,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000c9a38, 0x000013c8
-	.section .rom.000d16e0, "ax"
-	.global BattleFx_RunSevenMode
-	.type BattleFx_RunSevenMode, %function
-	.thumb_func
-BattleFx_RunSevenMode:
-	.incbin "baserom.gba", 0x000d16e0, 0x00000614
 	.section .rom.000e4772, "ax"
 	.incbin "baserom.gba", 0x000e4772, 0x00000002
 	.section .rom.000ebed8, "ax"
@@ -1133,7 +1121,19 @@ MemberBeam_HeadWidths:
 	.incbin "baserom.gba", 0x000efeb0, 0x00000003
 	.global MemberBeam_HeadHeights
 MemberBeam_HeadHeights:
-	.incbin "baserom.gba", 0x000efeb3, 0x00000059
+	.incbin "baserom.gba", 0x000efeb3, 0x00000003
+	.global SevenMode_Records
+SevenMode_Records:
+	.incbin "baserom.gba", 0x000efeb6, 0x0000000e
+	.global SevenMode_ShardWidths
+SevenMode_ShardWidths:
+	.incbin "baserom.gba", 0x000efec4, 0x00000012
+	.global SevenMode_ShardHeights
+SevenMode_ShardHeights:
+	.incbin "baserom.gba", 0x000efed6, 0x00000012
+	.global SevenMode_ShardOffsets
+SevenMode_ShardOffsets:
+	.incbin "baserom.gba", 0x000efee8, 0x00000024
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000eff0c, 0x0000000e

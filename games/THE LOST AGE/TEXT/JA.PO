@@ -42823,27 +42823,27 @@ msgctxt "MsgFieldAndTheOthersDrankOf"
 msgid "10703"
 msgstr "{actor_name:5}たちは{line_break}いずみの水を のんだ{page_break}ぜんいんの HPとEPが{line_break}まんたんになった!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldReadTheSignTheSpring2"
 msgid "10704"
 msgstr "{actor_name:5}は{line_break}かんばんを よんでみた{page_break}「レムリアの いずみ」{line_break}うしろむきに コインをなげて{line_break}じぶんのうんせいを ためそう{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldReadTheSignTheSpring"
 msgid "10705"
 msgstr "{actor_name:5}は{line_break}かんばんを よんでみた{page_break}「レムリアの いずみ」{line_break}ラッキーコインをなげて{line_break}こううんを 手に入れよう{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouFaceAwayFrom"
 msgid "10706"
 msgstr "コインを うしろむきになげて{line_break}いずみの中のターゲットに入れると{line_break}こううんが おとずれるそうです{page_break}せっかくだから あなたも{line_break}ためしてみたら どうでしょう{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDLoveToTest"
 msgid "10707"
 msgstr "わたしも うんだめしをしたいが{line_break}コインをきらしてしまったぞ・・・{line_break}いずみから ひろっちゃおうかな{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIRememberAnOutsiderWho"
 msgid "10708"
 msgstr "外のせかいからきた人の中には{line_break}ここにいるあいだ 1日もかかさず{line_break}うんだめししていた人もいたわね{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeHadSuchAGood"
 msgid "10709"
 msgstr "あの人 外のせかいにもどったら{line_break}おなじようないずみをつくりたいって{line_break}いってたけど・・・どうしたかしらね{end_wait}"
 

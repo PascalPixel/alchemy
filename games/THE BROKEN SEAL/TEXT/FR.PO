@@ -9795,11 +9795,11 @@ msgctxt "MsgDjinnSet"
 msgid "02446"
 msgstr "{argument_ability_name} est lié sur {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02447"
 msgstr "Votre Djinn est en train de récupérer."
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02448"
 msgstr "Prêt à invoquer."
 
@@ -10135,7 +10135,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "C'est cassé."
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02532"
 msgstr "Vous n'avez pas de Djinn."
 
@@ -10143,7 +10143,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "Impossible à utiliser en combat."
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02534"
 msgstr "Réutilisation Djinn impossible."
 

@@ -4,13 +4,6 @@ SECTIONS
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A2/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A2/SCENE_TABLES.o"(.text)
-        "*/resource_6a2_overlay.o"(.text.x02008054)
-        "*/resource_6a2_overlay.o"(.text.x0200807c)
-        "*/resource_6a2_overlay.o"(.text.x02008090)
-        "*/resource_6a2_overlay.o"(.text.x020080e8)
-        "*/resource_6a2_overlay.o"(.text.x0200818c)
-        "*/resource_6a2_overlay.o"(.text.x020081bc)
-        "*/resource_6a2_overlay.o"(.text.x02008228)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A2/SCENE_EVENTS.o"(.text)
         "*/resource_6a2_overlay.o"(.text.x02008290)
         "*/resource_6a2_overlay.o"(.text.x02008358)

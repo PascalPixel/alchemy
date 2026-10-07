@@ -32,7 +32,13 @@
  * for header after i, then x = 112, 61 -> 59: native's order (i = 0,
  * the cache base into r8, then 112); vc set before the for with i = 0
  * in its header 61. code = 0 after Runtime_BumpAllocate, retried on 61:
- * 296 (global allocation cascades from the frame setup on).
+ * 296 (global allocation cascades from the frame setup on); the agility
+ * delta read first 711. Modifier order diagnosed from native: ldrb r1
+ * comes before the sign-extending ldrb r3, [r3] (dest == base), so in
+ * native's RTL m's zero-extending load precedes a second, sign-extending
+ * load that CSE left alone; reg alloc cannot reverse the two (the second
+ * overwrites the address). Trial on 59: m read as *(u8 *)&field with the
+ * field itself in the > 0 test, 92 (one ldrsb serves both again).
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending

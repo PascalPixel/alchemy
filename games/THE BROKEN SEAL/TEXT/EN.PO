@@ -11927,19 +11927,19 @@ msgctxt "MsgPsynergyLost"
 msgid "02979"
 msgstr "* Psynergy Lost"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "02980"
 msgstr "Set"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "02981"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "02982"
 msgstr "Give"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "02983"
 msgstr "Trade"
 
@@ -12043,7 +12043,7 @@ msgctxt "message"
 msgid "03008"
 msgstr "Give it away"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "03009"
 msgstr "Is this OK?"
 
@@ -12559,11 +12559,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03137"
 msgstr "After choosing who will{line_break}take the Djinni, you{line_break}can set it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03138"
 msgstr "When your class changes,{line_break}the Psynergy you can use{line_break}may also change.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03139"
 msgstr "Setting a Djinni changes{line_break}your attributes and{line_break}maybe even your class.{end_wait}"
 

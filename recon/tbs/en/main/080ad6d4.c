@@ -46,65 +46,62 @@
  * Open (2026-10-07, session 11, 20 remain): unchanged from session 10; the prologue needs r7 in reload's spill list (one insn where r7 is the cheapest register to spill) and a frame zero that is not an inherited constant reload.
  * Trial (2026-10-07, session 13): the dirty update inside a one-pass do { } while (0) block (FAKEMATCH) in place of the asm barrier before it: 20 -> 16 in all six editions. Haifa-sched treats a mid-block NOTE_INSN_LOOP_BEG/END as a barrier carried by the next insn (sched_analyze_insn, schedule_barrier_found): here the 0xea3 pool load, which then depends on every earlier insn and precedes everything after, so the bracket arguments keep native order and the pool load comes before ldrh. With the asm barrier ldrh won: insn_cost gives the unrecognizable asm cost 1, ldrh's true dependence on the asm (r7) is class 3 and the pool load's output dependence class 2. Without any barrier, the bitfield struct UiWork view of dirty (UI.H) drops ldrh's anti dependence on the strb (alias sets 85 and 96 differ) and the pool load wins by LUID, but the bracket arguments lose native order: 22.
  * Trial (2026-10-07, session 13): result = 0 right after anim = 0 matches the prologue: 16 -> 0 in all six editions. result is global (it lives to the return) and allocated r7, so CSE makes it the canonical register of the 0 class (make_regs_eqv prefers the register that lives longest) and the cursor[] stores use it: movs r7, #0 as native. frame = 0 then searches find_equiv_reg (reload.c) for a register holding 0, and the nearest set is result's r7; choose_reload_regs refuses an equivalent in HARD_FRAME_POINTER_REGNUM (r7 in Thumb), and find_equiv_reg stops at the nearest match, so frame takes a fresh reload register (r2) and the rotation from there (page r3, state r4, &cursor r0, state r1 after the owner_y loop) is native. result = 0 after state, frame or page: 32, 32, 8; entry, swap or step = 0 anywhere in the prologue: 16. An empty one-pass block anywhere in the prologue: 18 to 30 (it is a sched2 barrier and does not stop find_equiv_reg).
+ * Trial (2026-10-07, session 13): written for its module MARK_BALANCED_ENTRIES.C (its linker neighbour, with the sibling DjinnMenu_ShowOwnerStatus): the module's includes and window prototypes (struct UiWindow casts), GAME.H's prototype takes u32 mode as the bls compares show, and every message is a linker symbol named in all six PO files (MsgDjinnName for the djinni names, MsgDjinnCompareSet, Standby, Give, Trade and Confirm, MsgDjinnTutorialClassPsynergy and MsgDjinnTutorialSetChanges): differ 0 in all six editions, pools included.
  * Trial (2026-10-06, parallel session, merged 2026-10-07): the routine address held in r5 from the second copy on (fixed-register pointer, FAKEMATCH): the swap preview allocates as native, 332 rematerialized at each call: 408 -> 293. A plain function-pointer local set before the call (or inside the call expression) is set before the 332 and lives 92 insns against 88, so 332 still wins: 408. (Superseded by session 4's size local.)
  * Trial (2026-10-06, parallel session): 0x8000 fixed in r8 for the help line: 293 -> 291 (not kept: 224 then takes sl and the shape is unchanged); with the shared 0 also fixed in sl, 224 is rematerialized as native but the pools move: 374. An empty volatile asm between the two help-line statements (flushing CSE): 494. frame = 0 before page = 2: 293, identical code. ((attr >> 5) & 7) for the element: 272, but only because the pools shift; native ands 224 before the shift, so not kept.
  * Trial (2026-10-06, parallel session): the zeros. Native stores anim, dirty, page, frame from r0, r1, r3, r2 (frame does not reuse anim's 0) and the cursor pair from a fresh r7; here frame reuses r0 and the cursor pair reloads anim's slot. cursor[1] = cursor[0] = 0: 293; anim = 0 last: 297; s32 cursor[2] = { 0, 0 }: 593. A 4-minute permuter run over the order of the eight entry statements: best 286 (cursor[0] first, anim after the cursor write), whose store order is further from native's; not kept.
  * Trial (2026-10-06, parallel session): the page label 0xba0 (message 2976) as a linker symbol (named MsgDjinnPsynergyPage there, MsgDjinnPsyHelp in session 5, which this draft keeps): native's pool load of a shiftable constant is a symbol address, not 186<<4: 293 -> 276.
  * Trial (2026-10-06, parallel session): help line. 0x8000 fixed in r8 and the 0 in sl again: 376; 224 then goes unallocated, but regmove has already copied attr at every AND because the shared 224 never dies there, so it is still not native. Regmove's backward pass ties the operand that dies after scanning back to its set; native's tie of 224 and 31 needs both to die at their ANDs, so they were never shared when regmove ran. Passing 0 for mode in block 2: 295. (attr >> 5) & 7: 272 again, the 7 shared in r8 instead. The tile statements reading pair_entries directly, without attr: 347. Block 3 testing the attr of block 1 without its reload: 422. attr declared in each block: 293, identical code. Within block 1 both 224s sit in one basic block, so CSE always shares them unless the constant differs in mode or value; none of the source forms tried changes that. (Session 3's attr fixed in r2 solved the help line.)
  * Open (2026-10-06, session 4; 0xba0 solved in session 5, 64 remain): 93 instructions remained at session 4's end, all register choice or instruction order. Prologue: native gives anim, dirty, page and frame the registers r0, r1, r3, r2 and zeroes both cursor[] entries from its own 0 in r7; here frame's reload inherits anim's 0 in r0 and cursor[1] stores anim's 0 reloaded from its slot (CSE puts anim's register in for the constant). 0xba0: native loads it from the pool, which a K constant reaches only when the movsi split does not run on it; this splits it to 186<<4. Order only: the tutorial's work = UiText_OpenMessageWindowFar copy (native right after the call), the tutorial copies' argument moves (native mov r1 before the address load and the size's shift last), the tile loop's list->width - count[page] - 3 and the two SetSlotPhase(x, 0) after the loop (native sets r1 first: arguments load in order, so r1 first means its argument was precomputed, a value costing more than 2 that later folds to 0, or the scheduler had a reason this source does not give it). */
-#include "MEM.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
+#include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "DJINN_MENU.H"
 #include "BATTLE_UNIT.H"
-#include "GAME_STATE.H"
-#include "WINDOW.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "BTLSYS.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
+#include "RENDER_INPUT.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "IO_REG.H"
+#include "UIWINDOW.H"
+#include "WINDOW.H"
+#include "GAME_STATE.H"
 extern struct DjinnMenuWork *gMenuWork;
+
+extern u8 MsgDjinnName[];
 extern u8 MsgDjinnPsyHelp[];
 extern u8 MsgDjinnStatusHelp[];
-
-extern u8 Menu_BackdropFrameTile[];
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
-
-struct BtlUnit *UnitGetFar(s32);
-void WaitFrames(s32);
-void AudioCommand_PlayFar(s32);
-s32 Menu_GetModuloOfSum(s32, s32);
-void UnitCalcFar(s32);
-
-void RenderOutput_RedrawSavedRectFar(s32);
-void RenderOutput_PrepareForRedrawFar(s32);
+extern u8 MsgDjinnCompareSet[];
+extern u8 MsgDjinnCompareStandby[];
+extern u8 MsgDjinnCompareGive[];
+extern u8 MsgDjinnCompareTrade[];
+extern u8 MsgDjinnCompareConfirm[];
+extern u8 MsgDjinnTutorialClassPsynergy[];
+extern u8 MsgDjinnTutorialSetChanges[];
+void UiWindow_CloseIfOpen(struct UiWindow **window, s32 release);
+void UiText_DrawCharacterAtOffsetFar(s32 message,
+    struct UiWindow *window, s32 x, s32 y);
+void UiWindow_SetTilemapEntryFar(struct UiWindow *window,
+    s32 tile, s32 x, s32 y, s32 palette);
 s32 UiWork_FinalizeFar(s32, s32);
-void UiWindow_CloseIfOpen(s32 *, s32);
-s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
-void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 void UiText_DrawQuantity(s32, s32);
-s32 UiWork_SetParamNibbleFar(s32);
+s32 UiWork_SetParamNibbleFar(s32 color);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
-
-void Runtime_SetMainState19(void);
 void Menu_RunPairedEntryAction(s32, s32);
-void UiMenu_PositionCursor(s32, s32);
-s32 OwnerAction_DiffSlots(struct OwnerActionSlot *, struct OwnerActionSlot *, u16 *, s32 *, s32 *);
 void FourObjectMotion_SetSlotPhase(s32, s32);
-s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
-
-void Runtime_BumpFree(void *);
 s32 Trig_Sin(s32);
-void UiWindow_ClearInteriorTilesFar(s32, s32, s32, s32, s32);
-void RenderOutput_ClearListFar(s32);
-void UiWindow_MarkVisibleTileAttributesFar(void);
-void Djinn_AddToOwnerFar(s32, s32, s32);
-void Djinn_ActivateFar(s32, s32, s32);
-void Djinn_DeactivateFar(s32, s32, s32);
-void Menu_UpdateEntryObjectTransforms(void);
-void UiMenu_SlideCursor(s32, s32);
-s32 DjinnMenu_DrawStatPreview(s32, s32, s32, s32, s32, s32, s32, s32, s32);
+s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 
 s32 OwnerAction_RunCompareLoop(u32 mode)
 {
@@ -148,9 +145,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     state->owner_x[state->selected_column[0]] = 0x10;
     state->owner_y[state->selected_column[0]] = 0x20;
 
-    RenderOutput_ClearListFar(state->list_window);
+    RenderOutput_ClearListFar((struct UiWindow *)state->list_window);
     WaitFrames(1);
-    UiWindow_CloseIfOpen(&state->help_window, 1);
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->help_window, 1);
     UiWindow_UpdateOrCreate(&state->help_window, 0, 0, 30, 5, 2);
 
     count[0] = 1;
@@ -259,20 +256,20 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
     UiWindow_UpdateOrCreate(&state->window, 0, 5, 15, 15, 2);
     UiWindow_UpdateOrCreate(&state->second_window, 15, 5, 15, 15, 2);
-    RenderOutput_RedrawSavedRectFar(state->help_window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->help_window);
 
     if (mode == 2) {
-        UiText_DrawCharacterAtOffsetFar(0xba5, state->help_window, 96, 0);
-        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 96, 16);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareStandby, (struct UiWindow *)state->help_window, 96, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 96, 16);
     } else if (mode == 3) {
-        UiText_DrawCharacterAtOffsetFar(0xba4, state->help_window, 96, 0);
-        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 96, 16);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareSet, (struct UiWindow *)state->help_window, 96, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 96, 16);
     } else if (mode == 0) {
-        UiText_DrawCharacterAtOffsetFar(0xba7, state->help_window, 128, 0);
-        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 128, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareTrade, (struct UiWindow *)state->help_window, 128, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 128, 8);
     } else {
-        UiText_DrawCharacterAtOffsetFar(0xba6, state->help_window, 128, 0);
-        UiText_DrawCharacterAtOffsetFar(0xbc1, state->help_window, 128, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareGive, (struct UiWindow *)state->help_window, 128, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 128, 8);
     }
 
     row = (mode == 1);
@@ -281,10 +278,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         UiWork_SetParamNibbleFar(2);
         attr = state->pair_entries[0];
     }
-    UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-        state->help_window, 48, row * 8);
-    UiWindow_SetTilemapEntryFar(
-        state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, row, zero = 0);
+    UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + (s32)MsgDjinnName,
+        (struct UiWindow *)state->help_window, 48, row * 8);
+    UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, row, zero = 0);
     UiWork_SetParamNibbleFar(15);
 
     if (mode == 0) {
@@ -293,10 +289,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             UiWork_SetParamNibbleFar(2);
             attr = state->pair_entries[1];
         }
-        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-            state->help_window, 48, 16);
-        UiWindow_SetTilemapEntryFar(
-            state->help_window, ((state->pair_entries[1] & 0xe0) >> 5) + 0x5001, 5, 2, mode);
+        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + (s32)MsgDjinnName,
+            (struct UiWindow *)state->help_window, 48, 16);
+        UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, ((state->pair_entries[1] & 0xe0) >> 5) + 0x5001, 5, 2, mode);
         UiWork_SetParamNibbleFar(15);
     } else if (mode - 2 <= 1) {
         attr = state->pair_entries[0];
@@ -304,12 +299,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             UiWork_SetParamNibbleFar(2);
             attr = state->pair_entries[0];
         }
-        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + 0x45f,
-            state->help_window, 48, 16);
-        UiWindow_SetTilemapEntryFar(
-            state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, 2, zero);
+        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + (s32)MsgDjinnName,
+            (struct UiWindow *)state->help_window, 48, 16);
+        UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, 2, zero);
         UiWork_SetParamNibbleFar(15);
-        UiWindow_SetTilemapEntryFar(state->help_window, 0xf296, 7, 1, zero);
+        UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, 0xf296, 7, 1, zero);
     }
 
     for (;;) {
@@ -347,7 +341,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     s32 work;
 
                     Iwram_CopyWords(saved, render, size);
-                    work = UiText_OpenMessageWindowFar(0xc43, 8, 0, 1);
+                    work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialSetChanges, 8, 0, 1);
                     /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
                     asm("");
                     state->cursor->active = 1;
@@ -373,7 +367,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     s32 work;
 
                     Iwram_CopyWords(saved, render, size);
-                    work = UiText_OpenMessageWindowFar(0xc42, 8, 0, 1);
+                    work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialClassPsynergy, 8, 0, 1);
                     /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
                     asm("");
                     state->cursor->active = 1;
@@ -404,13 +398,13 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         if (dirty != 0) {
             swap = 1;
             if (mode <= 1) {
-                UiWindow_ClearInteriorTilesFar(state->help_window, 128, 16, 224, 24);
+                UiWindow_ClearInteriorTilesFar((struct RenderInput *)state->help_window, 128, 16, 224, 24);
                 if (page == 1) {
-                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, state->help_window, 128, 16);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, (struct UiWindow *)state->help_window, 128, 16);
                 } else {
                     UiText_DrawQuantity(
                         state->shown_owner[page != 2], 1);
-                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, state->help_window, 128, 16);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, (struct UiWindow *)state->help_window, 128, 16);
                 }
             }
             render->menu_busy = 1;
@@ -474,14 +468,14 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     if (i == cursor[page]) {
                         tile -= 0x1000;
                     }
-                    UiWindow_SetTilemapEntryFar((s32)list, tile,
+                    UiWindow_SetTilemapEntryFar(list, tile,
                         list->width - count[page] + i - 2,
                         -1, 0);
                 }
                 top = -1;
-                UiWindow_SetTilemapEntryFar((s32)list, 0xf128,
+                UiWindow_SetTilemapEntryFar(list, 0xf128,
                     list->width - count[page] - 3, top, 0);
-                UiWindow_SetTilemapEntryFar((s32)list, 0xf129,
+                UiWindow_SetTilemapEntryFar(list, 0xf129,
                     list->width - 2, top, 0);
                 /* FAKEMATCH: a one-pass block. Its loop notes are a sched2 barrier carried by the block's first insn (the 0xea3 pool load): every set before it gains a dependent, so the bracket calls' arguments take native order (the dirty update's movs r3, #2 otherwise gave the second call's r3 copy one more dependent than its r0 copy), and the pool load is scheduled before ldrh as native. An asm barrier here fixed the arguments but put ldrh first (a true dependence on the asm's r7 makes it class 3). */
                 do {
@@ -591,17 +585,17 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         phase = 0;
         FourObjectMotion_SetSlotPhase(1, phase);
     }
-    Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
 
     ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;
-    UiWindow_CloseIfOpen(&state->help_window, 1);
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->help_window, 1);
     WaitFrames(1);
     UiWindow_UpdateOrCreate(&state->help_window, 13, 0, 17, 5, 2);
-    UiWindow_CloseIfOpen(&state->window, 1);
-    UiWindow_CloseIfOpen(&state->second_window, 1);
-    RenderOutput_RedrawSavedRectFar(state->list_window);
-    RenderOutput_RedrawSavedRectFar(state->unknown_window_028);
-    RenderOutput_RedrawSavedRectFar(state->status_window);
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->window, 1);
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->second_window, 1);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->list_window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->unknown_window_028);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->status_window);
     ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
     WaitFrames(1);
     return result;

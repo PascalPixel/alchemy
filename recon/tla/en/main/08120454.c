@@ -258,7 +258,20 @@
  * r7 before the test, copies it to r0 for the halving and copies r7 to
  * r6 for the amount, as if the halving read a spilled dealt whose reload
  * inherits r7); the four ldrh the barrier holds before their ldrsh; and
- * about 20 single loads swapped with a neighbour (K2's load order). */
+ * about 20 single loads swapped with a neighbour (K2's load order).
+ * Load models tried as studies, each a cc1 rebuilt from agscc (the
+ * unchanged source rebuilds the admitted cc1 byte for byte), scored here
+ * and over the 713 C files tla-en links, compiled with ⚓️'s options and
+ * compared as assembly with the admitted cc1 (library files included, so
+ * an upper bound): a latency of 3 for halfword and byte loads only 188,
+ * 83 files change (LinkLobby_WriteSlotValue issues an lsl before its
+ * ldrb, which that latency forbids); a load preferred to any equal insn
+ * as rank_for_schedule's last tie-break after reload 76, 43 files; a load
+ * preferred only to an equal constant step (movs #n, or lsls/adds #n into
+ * the same register) 70 as the last tie-break (24 files) and 80 as the
+ * first after priority (50 files). Session 2's latency of 3 for every
+ * load gave 273. None explains these swaps without changing credited
+ * code. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

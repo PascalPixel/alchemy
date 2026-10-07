@@ -1,9 +1,21 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1581.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1577.
+ * One native mov sl,r2 now replaces the first C copy plus empty boundary.
+ * All actual affine operations stay identical; the pool-skip branch moves
+ * past the second base load, removing an alignment halfword and restoring
+ * native's146-byte physical backedge (the empty-boundary form was148).
+ * This removes conservative extra length from our own copy/boundary pair,
+ * not by adding padding or changing an address. Four explicit copy devices,
+ * then two, then only the first all produce identical2033/1577/common1251;
+ * retain only the first. Plain C plus its empty boundary remains1581.
+ * The mov copies the unchanged unsigned value from r2 into sl without
+ * touching flags; its memory clobber preserves the following base reload.
+ * Remaining pool placement differs: native skips after the second store,
+ * while this draft still skips after the second base load. Frame stays768.
  * All four affine accesses now retain their native read/modify/write
  * lifetimes. Separate reads/stores reload the base after OR, instead of
  * recopying the offset. Short base bindings use r2 for b and r1 for c/d;
  * the third store's base remains live for the fourth read. That removes
- * one excess base load and restores native's146-byte loop backedge. Shift
+ * one excess base load and restores the executed loop instruction count. Shift
  * inputs stay r2 until copied to sl, and the last words stay r3. The loop
  * counter/update registers also match.2034/1636 ->2033/1581, frame768.
  * Second-access trials: plain split2034/1640; base/r2 1632 but halfword
@@ -1032,9 +1044,8 @@ void LuckyDice_Run(void)
                     /* FAKEMATCH: native then reloads the first object's base in r2; the shared affine base otherwise stays in r1. */
                     register struct LuckyDiceSprites *p asm("r2");
 
-                    term = shifted;
-                    /* FAKEMATCH: both values stay live across native's copy, then the base reload follows; the first access becomes exact (1644 to1636). */
-                    __asm__("" : "+r"(term) : "r"(shifted) : "memory");
+                    /* FAKEMATCH: native's single r2-to-sl copy replaces our C-copy/empty-boundary pair; the identical operations put the pool-skip branch later and remove extra alignment (1581 to1577, backedge148 to146). One copy suffices; no padding or address is added. */
+                    __asm__("mov %0, %1" : "=r"(term) : "r"(shifted) : "memory");
                     p = sprites;
                     /* FAKEMATCH: native reloads the object base for each affine field. */
                     __asm__ volatile("" : "+r"(p));

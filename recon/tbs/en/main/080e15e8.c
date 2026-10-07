@@ -136,6 +136,44 @@
    - permuter restricted to the n line and the smoke block, 6 minutes
      from 812: 670, from smoke assigned inside the first call's
      arguments; the same 670 without any smoke pointer, adopted.
+   - a parallel session on 812 (merged; its body scored 662 against
+     this one's 6): n written frame * 4 - 256 - i * 48, (frame - 64) *
+     4 - i * 48 and four other orders: 812, all fold the same; smoke
+     size as w and h locals: 864; no sx local (ox + 72 in place): 809,
+     oy spills instead; sc = scale at the loop top: 808, sc folds away;
+     sc set before the loop: 882 (user pseudos are numbered in
+     declaration order, size 40, count 41, sc 42, and global gives
+     count a hard register that reload later takes back into a shared
+     slot, while the native spills count from the start).
+   - that session on 670: glint x with cam_x >> 17 in place, no base
+     local: 662. On 662: glint y + 56 folded into y, cam_x >> 17 first,
+     Trig_Sin * 8: 662; ApplyScale in each branch: 683; s as (frame -
+     151) * 0x1800 + 0x9400: 662; scale stored 2, 1, 0: 666; aux cells
+     as &aux[...] or the ring cell as &sheet[...] + rings: 662; burst
+     at literal 60 and 112, no cx, cy: 736; no d local, (u32)(frame -
+     80) in place: 662; no start local in the lightning test: 732.
+   - that session on 662, rejected: count = frame * 2 set just before
+     the palette call and passed to it: 648, but count's giv slot goes
+     and the frame shrinks to 324; reach = frame * 4 set at the loop
+     top beside count, n = reach - i * 48 - 256: 691, frame 332 with
+     four reduced givs (h at 28 as the native) but in the order count
+     16, reach 20, s 24; the native's order (s 16, count 20, frame * 4
+     24, h 28) is loop.c's reduction order: pass one reduces h, then
+     frame * 4, then count, and pass two reduces s (791: 459 vs 479 in
+     pass one); reach before count: 689; reach = count * 2 with
+     size = 2 after it: 657, frame 328, no new giv.
+   - that session: no count local (size = 2 just before the key test,
+     ring n = frame * 2): 782; with the frame loop as while (frame !=
+     170) { ... frame++; }: 782; plus half = s / 2 in the ring loop:
+     673 and frame 336, but the count giv spills to sp+100 at the loop
+     top and the slots below it still differ; half = s / 2 with count
+     kept: 731 (frame 332), with the while loop too: 731.
+   - that session, permuter 5 minutes from 662: 605, minimized to 509;
+     its gain is a forced temporary holding &ResourceId_VioletMoteSheet
+     across the two loads before it (without it 673), which shifts
+     reload's register rotation: noise, not source; its other rewrites
+     (while loops for both frame loops, AudioCommand_PlayFar(145) after
+     cx = 60, the j loop as while, the final loop as do-while): 662.
    - on 670: blit[0] = SLOT(46) without cache: 675; sx = 72 + ox,
      literal 10000 for rings in the ring address, or the burst's draw
      assigned after its declaration: 670; sc = scale pointer set before

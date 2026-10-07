@@ -1,5 +1,50 @@
 /* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
    (K1: stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   Stock agbcc_arm (2026-10-07, session 3): listing 157, draft 157,
+   common 127, differ 60. Five empty non-volatile asm devices (FAKEMATCH,
+   in the loops) make both loop tails match: in gcc_arm's sched.c,
+   insn_cost sets LINK_COST_FREE on any link whose consumer fails recog,
+   so an asm that rewrites a live register in place turns a costly anti
+   dependence (ldm r6 -> add r6) into two links of cost 1, an asm that
+   reads memory after the stm becomes bpl's only predecessor so the stm
+   no longer waits its store cost above the branch, and in the else loop
+   one asm on v fills the third cycle the strh needs above the ldm.
+   Still unreachable, with the mechanism: the prologue. priority() is
+   the longest cost path from the block's head; mov r5, r1 (6) and
+   ldr r9 (33) are the first writers of r5 and r9 after the push, so
+   each anti-depends on it at the push's cost (5) and has priority 5,
+   like sub sp (576) and its clobber (577); rank_for_schedule then takes
+   the higher LUID, 6 and 33, first in the backward pass. A link is free
+   only when its consumer is unrecognized, so 6 and 33 would have to be
+   asm instructions themselves (33 is a pool load, so it cannot); an
+   empty asm placed after them reads them at priority 5 and also beats
+   576 on LUID, and an asm before them would be dead (deleted) or, if
+   volatile, a barrier depending on 576. Neither has a latency that
+   could hold it back (6 costs 1; 33's consumers are the call and an
+   asm, whose link is free). The same holds for mov r0, r8 above str
+   r8, [r2] before the Sin call: the call depends on the pending store
+   directly at its store cost. Other remaining rows: to->z in r4 for ip
+   and the half in r2 for r1, with the two smulls interleaved
+   differently; the loop's x in r1 for r2 (ldm r7, {r2, r4}), (s16)t
+   reloaded by ldrsh instead of extended into lr, and the k load above
+   the u stores (k's alias set, see camelot_arm below); the odd-frame
+   y's ldr r2, [sp] and ldr r1, [r7, #12] above ldrsh r3, which the
+   anti dependence of ldrsh r3 on str r3, [r6, #8] (hard register r3,
+   cost 2) puts there and no source device reaches.
+   Session 3 trials, from 76:
+   - Else loop: asm on out between out[1] = out[0] and out += 2: 76
+     (ldm and add r6 reorder, stm still waits); with v and out[1]'s
+     memory in one asm: 74; the memory read through a block-local next
+     = out + 1: 74 (CSE folds it to r6 + 16, so the out asm anti-depends
+     on it); "m"(*v) instead: 72; plus an asm on v before v++: 68.
+   - First loop: the same three asms: 126 (v and out swap r6 and r7
+     throughout); the memory asm on out: 64; on cs: 64, the tail from
+     str r3 on matches; without the asm on v before v++ (here it took
+     the add ip slot): 60.
+   - Odd-frame y as v->u / 4 + ((oz + v->dz) >> 8) + v->v / 2: 68; an
+     asm on v between out->x and out->y: 60, unchanged.
+   - On 60, a = (s16)t before out->a = v->u = t, then a <<= 8; a *= k
+     (the camelot_arm 52 form's loop alone): 97, draft 158.
    Stock agbcc_arm (2026-10-07, session 1): listing 157, draft 157,
    common 119, differ 76 (14 register, 20 reordered, 4 inserted, 4
    deleted). Not reachable from source under this route: the prologue.
@@ -294,6 +339,10 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
             out->y = (oz + v->dz) >> 8;
             v++;
             out[1] = out[0];
+            /* FAKEMATCH: reads memory after the stm so bpl waits on this free link, not on the stm's store cost; stm then sits right above bpl (with the next device, differ 68 -> 60) */
+            asm("" : "=r"(cs) : "0"(cs), "m"(*v));
+            /* FAKEMATCH: rewrites out in place so add r6 no longer waits on the ldm's cost through the anti dependence; add r6 then sits between ldm and stm */
+            asm("" : "=r"(out) : "0"(out));
             out += 2;
         }
     } else {
@@ -307,8 +356,14 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
             }
             out->a = v->u;
             out->b = v->v;
+            /* FAKEMATCH: one empty cycle between strh and ldm, which the strh's store cost of 3 needs, so subs rises above strh as listed (differ 72 -> 68) */
+            asm("" : "=r"(v) : "0"(v));
             v++;
             out[1] = out[0];
+            /* FAKEMATCH: reads memory after the stm so bpl waits on this free link, not on the stm's store cost; stm then sits right above bpl (with the next device, differ 76 -> 72) */
+            asm("" : "=r"(v) : "0"(v), "m"(*v));
+            /* FAKEMATCH: rewrites out in place so add r6 no longer waits on the ldm's cost through the anti dependence; add r6 then sits between ldm and stm */
+            asm("" : "=r"(out) : "0"(out));
             out += 2;
         }
     }

@@ -504,7 +504,7 @@ void FieldScene_ConfigureFlaggedActors(void)
         ((u8 *)actor->sprite)[9] |= 12;
         ((u8 *)actor->sprite)[38] = 0;
         zero = 0;
-        (actor->sprite)->rotation = 0xc000;
+        actor->sprite->rotation = 0xc000;
         actor = Object_GetById(11);
         actor->priority_flags = zero;
         ((u8 *)actor->sprite)[9] |= 12;

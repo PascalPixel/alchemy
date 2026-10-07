@@ -104,7 +104,7 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
     if (spark == 0)
         return;
     spark->motion_flags = 0;
-    (spark->sprite)->priority = 1;
+    spark->sprite->priority = 1;
     Engine_ActorSetSpriteFlags(spark, 0);
     Object_SetMode(spark, 1);
     spark->timer = 0;

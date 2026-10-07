@@ -525,7 +525,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
     s32 z;
     s32 id;
 
-    list = *(u8 **)((gMapWork[0]) + 16);
+    list = *(u8 **)(gMapWork[0] + 16);
     actor = ObjectTable_Get(gGameState.selected_actor);
     actor_x = actor->x >> 20;
     actor_z = actor->z >> 20;

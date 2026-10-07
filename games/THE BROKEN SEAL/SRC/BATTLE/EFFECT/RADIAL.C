@@ -149,7 +149,8 @@ top:
             return;
         *state_pointer = *state_pointer + 1;
         goto top;
-    } else if (state == 2) {
+    }
+    if (state == 2) {
         position.x = camera->x;
         position.y = camera->y + 0x80000;
         position.z = camera->z;

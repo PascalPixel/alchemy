@@ -622,8 +622,7 @@ void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work, s32 operat
     if (operation == SCRIPT_OPERAND_SET) {
         work->signed_halfword_64 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->signed_halfword_64 =
-            work->signed_halfword_64 + value;
+        work->signed_halfword_64 += value;
     } else {
         work->comparison_result = work->signed_halfword_64 == (s16)value;
     }
@@ -634,8 +633,7 @@ void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work, s32 operat
     if (operation == SCRIPT_OPERAND_SET) {
         work->signed_halfword_66 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->signed_halfword_66 =
-            work->signed_halfword_66 + value;
+        work->signed_halfword_66 += value;
     } else {
         work->comparison_result = work->signed_halfword_66 == (s16)value;
     }

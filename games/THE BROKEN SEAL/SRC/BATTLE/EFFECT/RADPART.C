@@ -291,7 +291,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         ((struct EffectSlot *)slot)->scale_x = value;
         remaining--;
         WaitFrames(1);
-        slot = slot + 72;
+        slot += 72;
     } while (remaining >= 0);
 
     WaitFrames(60);

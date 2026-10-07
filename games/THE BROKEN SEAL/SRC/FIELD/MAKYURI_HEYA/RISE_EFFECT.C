@@ -30,7 +30,7 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
     if (sprite != 0) {
         AnimationObjects_SelectAnimation(sprite, 2);
         sprite->flags = 0;
-        (sprite)->priority = 3;
+        sprite->priority = 3;
     }
 }
 

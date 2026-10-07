@@ -88,7 +88,7 @@ void InventorySnapshot_Restore(void)
 
         gGameState.first_shortcut = *source++;
         gGameState.second_shortcut = *source++;
-        *(u16 *)(gGameState.active_owners) = *source++;
+        *(u16 *)gGameState.active_owners = *source++;
         *(u16 *)(gGameState.active_owners + 2) = *source;
         source = gInventorySnapshot;
         *source = 0;

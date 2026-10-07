@@ -19,7 +19,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 type)
 
     object = CreateOverlayObject(type, x, y, z);
     if (object != NULL) {
-        (object->sprite)->priority = 0;
+        object->sprite->priority = 0;
         object->motion_flags = 0;
         object->collision_flags = 8;
         SetOverlayObjectMode(object, 0);

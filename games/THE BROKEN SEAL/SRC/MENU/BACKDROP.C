@@ -137,7 +137,7 @@ s32 Menu_ComputeEntryValues(void *tbl)
             *dst = v;
             src += 1;
             dst += 1;
-            p = p + 0x14;
+            p += 0x14;
         } while (i < cnt);
     }
 }

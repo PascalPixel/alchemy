@@ -160,7 +160,7 @@ void ArutinYama_RestoreAreaThree(void)
 {
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)(gMapWork[0] + 20) &= ~0x200;
         Actor_SetPosition(9, 0, 0);
     } else {
         ArutinYama_StartPaletteAnim();
@@ -192,7 +192,7 @@ void ArutinYama_RestoreAreaFour(void)
     extern u8 Data_02000240[];
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)(gMapWork[0] + 20) &= ~0x200;
     } else {
         Map_CopyCellAttributes(52, 42, 1, 1, 53, 42);
     }
@@ -212,7 +212,7 @@ void ArutinYama_RestoreAreaFive(void)
     struct FieldActor *record;
 
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)(gMapWork[0] + 20) &= ~0x200;
         Actor_SetPosition(10, 0, 0);
     } else {
         if (GameFlag_IsSet(0x109) == 0) {
@@ -268,7 +268,7 @@ void ArutinYama_RestoreAreaSix(void)
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)(gMapWork[0] + 20) &= ~0x200;
     }
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);

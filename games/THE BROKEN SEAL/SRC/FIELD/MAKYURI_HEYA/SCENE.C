@@ -219,7 +219,8 @@ void MakyuriHeya_RunColumnProbeScene(void)
             MakyuriHeya_StopActorNinePositionCallback();
             MakyuriHeya_OpenStoneDoor(1);
             goto wait;
-        } else if (column == 53) {
+        }
+        if (column == 53) {
             Engine_GameFlagSet(0x31b);
             Engine_GameFlagClear(0x319);
             Engine_GameFlagClear(0x31a);
@@ -1602,7 +1603,7 @@ void MakyuriHeya_RideLift(void)
     struct LiftLayer *layer;
     s32 speed;
 
-    layer = (struct LiftLayer *)((gMapWork[0]) + 356);
+    layer = (struct LiftLayer *)(gMapWork[0] + 356);
     speed = 0x9c28;
     layer->offset = 0x04890000;
     layer->unknown_1c = 0;

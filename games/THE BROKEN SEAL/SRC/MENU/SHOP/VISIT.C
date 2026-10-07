@@ -127,7 +127,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
         row = 0;
     EventTable_ApplyRowAbilities(row);
     Shop_InitializeCursorWork();
-    shop = (gMenuWork);
+    shop = gMenuWork;
     shop->shop_type = EventTable_GetRowType(row);
     if (row == 16)
         shop->warrior_shop = 1;

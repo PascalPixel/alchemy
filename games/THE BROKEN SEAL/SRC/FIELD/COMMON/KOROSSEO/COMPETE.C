@@ -132,7 +132,7 @@ void Korosseo_RestoreCompetitor(s32 id)
     actor->motion_flags = 3;
     actor->terrain_id = layer.value;
     actor->y.fixed = zero;
-    (actor)->terrain_height = zero;
+    actor->terrain_height = zero;
     Engine_ActorSetSpriteFlags(actor, 1);
     Object_SetMode(actor, 0);
     Object_SetMode(actor, 1);

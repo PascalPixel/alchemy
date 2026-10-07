@@ -290,7 +290,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
 
             found = SaveState_WriteRecord(gSaveSlot, base);
             next = gSaveSlot;
-            base = base + 0x1000;
+            base += 0x1000;
             found |= SaveState_WriteRecord(next + 3, base);
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
@@ -318,7 +318,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
         void *base = &gSaveBuffer;
 
         found = SaveState_WriteRecord(arg0, base);
-        base = base + 0x1000;
+        base += 0x1000;
         found |= SaveState_WriteRecord(arg0 + 3, base);
         if (found != 0) {
             UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);

@@ -47,7 +47,7 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
 {
     struct EventWork *owner = Runtime_AllocateBlock(0x1b, 0xccc);
     ((struct ObjectRuntime *)owner->view_center)->speed_limit = first;
-    (owner->view_center)->acceleration = second;
+    owner->view_center->acceleration = second;
 }
 
 void Object_ResetMotion(void *);

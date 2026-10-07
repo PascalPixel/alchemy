@@ -118,7 +118,7 @@ void Menu_AppendResourceEntry(s32 no)
 
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
 {
-    struct ResourceMenuWork *menu = (gMenuSelectWork);
+    struct ResourceMenuWork *menu = gMenuSelectWork;
     s32 x;
     s32 i;
     s32 count;

@@ -55,7 +55,7 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
   weighted_row = *((u16 *)weighted_row_address);
   entry_address = weighted_index_address;
   BattleFx_GetWeightedResult(
-      weighted_row, *((u16 *)((entry_address) + 2)));
+      weighted_row, *((u16 *)(entry_address + 2)));
 }
 
 struct SceneInteractionEntry {

@@ -146,7 +146,8 @@ s32 DjinnMenu_ShowHelp(void)
                 selection = Menu_GetModuloOfSum(selection, 7);
                 Audio_PlayCue(111);
                 break;
-            } else if (gKeyState & KEY_START) {
+            }
+            if (gKeyState & KEY_START) {
                 Audio_PlayCue(113);
                 result = -2;
                 break;

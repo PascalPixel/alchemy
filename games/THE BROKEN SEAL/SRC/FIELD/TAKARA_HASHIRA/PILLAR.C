@@ -159,7 +159,7 @@ void TakaraHashira_RaiseActorFourteen(void)
     Object_GetById(13)->scale_x = 0x10000;
     Object_GetById(13)->scale_y = 0x10000;
     (Object_GetById(13)->sprite)->priority = 2;
-    (pillar->sprite)->priority = 2;
+    pillar->sprite->priority = 2;
     pillar->acceleration = 0x6666;
     pillar->speed = 0xcccc;
     FieldObject_SetPosition(pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
@@ -388,7 +388,7 @@ void SceneActor_CheckActors8To11NearSlotZero(void)
             && hero->z.fixed > actor->z.fixed - 0x180000) {
             if (hero->x.fixed - 0x100000 <= actor->x.fixed
                 && actor->x.fixed < hero->x.fixed + 0x100000) {
-                Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, (actor->sprite)->priority);
+                Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, actor->sprite->priority);
                 return;
             }
         } else {

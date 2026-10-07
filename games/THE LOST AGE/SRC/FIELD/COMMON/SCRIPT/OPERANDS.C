@@ -24,7 +24,7 @@ void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 
     if (operation == 0) {
         state->cursor = value;
     } else if (operation == 1) {
-        state->cursor = state->cursor + value;
+        state->cursor += value;
     } else {
         state->comparison_result = (s16)state->cursor == (s16)value;
     }

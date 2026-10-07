@@ -255,7 +255,7 @@ void Effect_UpdateBg3HofsByVcount(void)
 
 void Effect_SetBg3HofsSplit(void)
 {
-    union SceneCell *work = ((gMapWork[0]) + 260);
+    union SceneCell *work = (gMapWork[0] + 260);
     s32 hofs;
 
     sSplitLine = 192 - work[1].h[1];

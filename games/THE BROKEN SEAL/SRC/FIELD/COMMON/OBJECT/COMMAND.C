@@ -241,7 +241,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
     s16 cursor = interpreter->cursor;
 
     interpreter->lookup_result = interpreter->script[cursor + 1] - 1;
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 0;
 }
 
@@ -249,11 +249,11 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
     if (interpreter->delay > 0x3B) {
         interpreter->delay = 0;
-        interpreter->cursor = interpreter->cursor + 1;
+        interpreter->cursor++;
         return 1;
     }
     if (Object_IsTargetUnset((struct ObjectRuntime *)interpreter) != 0) {
-        interpreter->cursor = interpreter->cursor + 1;
+        interpreter->cursor++;
         return 1;
     }
     return 0;
@@ -339,7 +339,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
     if (interpreter->condition_result != 0) {
         interpreter->cursor = Script_FindLabel(interpreter, value);
     } else {
-        interpreter->cursor = interpreter->cursor + 2;
+        interpreter->cursor += 2;
     }
     return 1;
 }
@@ -353,7 +353,7 @@ u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
     if (interpreter->condition_result == 0) {
         interpreter->cursor = Script_FindLabel(interpreter, value);
     } else {
-        interpreter->cursor = interpreter->cursor + 2;
+        interpreter->cursor += 2;
     }
     return 1;
 }
@@ -371,7 +371,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 {
     interpreter->condition_result =
         GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -382,7 +382,7 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
     value = interpreter->script[interpreter->cursor + 1];
     interpreter->condition_result = GameFlag_TestFar(value);
     GameFlag_SetBitFar(value);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -393,7 +393,7 @@ s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
     value = interpreter->script[interpreter->cursor + 1];
     interpreter->condition_result = GameFlag_TestFar(value);
     GameFlag_ClearBitFar(value);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -410,7 +410,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
     } else {
         GameFlag_SetBitFar(value);
     }
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -418,7 +418,7 @@ s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter)
 {
     ObjectDispatch_ApplyArgumentToChildren(interpreter,
         interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -430,14 +430,14 @@ s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter)
 
 s32 Script_SkipCommand(struct ScriptInterpreter *interpreter)
 {
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
 {
     Audio_PlayCue(interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -452,7 +452,7 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
         if (entry->script != NULL && (1 & *flags)
             && entry != (struct ObjectRuntime *)object) {
             if (Runtime_CheckRadiusOverlap(&entry->x,
-                    (entry)->radius - 2,
+                    entry->radius - 2,
                     values, ((struct FieldActor *)object)->radius - 2) >= 0)
                 return -1;
         }
@@ -472,7 +472,7 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
         if (entry->script != NULL && (1 & *flags)
             && entry != (struct ObjectRuntime *)object) {
             if (Runtime_CheckRadiusOverlap(&entry->x,
-                    (entry)->radius - 2,
+                    entry->radius - 2,
                     values, ((struct FieldActor *)object)->radius - 2) >= 0)
                 return (struct ScriptObjectEntry *)entry;
         }
@@ -495,7 +495,7 @@ s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
     argument++;
     third = *argument;
     Object_SetPositionAndResetMotion((struct ObjectRuntime *)interpreter, first, second, third);
-    interpreter->cursor = interpreter->cursor + 4;
+    interpreter->cursor += 4;
     return 1;
 }
 
@@ -514,7 +514,7 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
     argument++;
     third = *argument;
     Object_SetMoveTarget((struct ObjectRuntime *)interpreter, first, second, third);
-    interpreter->cursor = interpreter->cursor + 4;
+    interpreter->cursor += 4;
     return 1;
 }
 

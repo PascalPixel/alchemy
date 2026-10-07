@@ -137,7 +137,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct RenderOutput *cursor_anchor;
 
     Shop_InitializeCursorWork();
-    shop = (gMenuWork);
+    shop = gMenuWork;
     shop->party_action = list_window;
 
     {
@@ -206,7 +206,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
 s32 Sanctum_RunPartyService(void)
 {
-    struct ShopRuntime *shop = (gMenuWork);
+    struct ShopRuntime *shop = gMenuWork;
     s32 price_window;
     s32 redraw;
     s32 kind;
@@ -309,20 +309,19 @@ s32 Sanctum_RunPartyService(void)
         if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
             break;
-        } else {
-            if ((gKeysRepeat & KEY_LEFT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-                redraw = 1;
-                selection -= 1;
-            }
-            if ((gKeysRepeat & KEY_RIGHT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-                redraw = 1;
-                selection += 1;
-            }
-            WaitFrames(1);
-            continue;
         }
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
+            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            redraw = 1;
+            selection -= 1;
+        }
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
+            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            redraw = 1;
+            selection += 1;
+        }
+        WaitFrames(1);
+        continue;
     }
 
     Menu_ReleaseEntryObjectsFar();

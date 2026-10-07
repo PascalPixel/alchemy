@@ -570,7 +570,7 @@ void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
     Engine_EventSetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
-    (record)->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
+    record->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
     Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
     Engine_EventEnd();
 }

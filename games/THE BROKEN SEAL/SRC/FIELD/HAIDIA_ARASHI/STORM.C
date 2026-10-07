@@ -101,7 +101,7 @@ void HaidiaArashi_UpdatePulsingGlow(void)
     source = Object_GetById(19);
     glow = Object_GetById(27);
     sprite = glow->sprite;
-    timer = &(source)->timer;
+    timer = &source->timer;
     if (*timer != 0) {
         if (*timer == 60) {
             Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);

@@ -153,7 +153,7 @@ struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
     struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
 
     if (object != 0) {
-        (object->sprite)->priority = 0;
+        object->sprite->priority = 0;
         object->motion_flags = 0;
         object->collision_flags = 8;
         Engine_ActorSetSpriteFlags(object, 0);
@@ -169,7 +169,7 @@ struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
     struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
 
     if (object != 0) {
-        (object->sprite)->priority = 1;
+        object->sprite->priority = 1;
         object->motion_flags = 0;
         object->collision_flags = 8;
         Engine_ActorSetSpriteFlags(object, 0);

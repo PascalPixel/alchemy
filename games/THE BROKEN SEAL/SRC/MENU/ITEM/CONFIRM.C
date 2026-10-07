@@ -65,7 +65,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
     slot = a0 & ITEM_ID_MASK;
     Item_Get(slot);
-    UiText_DrawAt(slot + (s32)(MsgItemName), win, 24, 0);
+    UiText_DrawAt(slot + (s32)MsgItemName, win, 24, 0);
     text = (s32)MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
     UiText_DrawAt(text, win, 0, 16);

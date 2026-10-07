@@ -398,7 +398,7 @@ void MakyuriHeya_TriggerFloorSwitch(void)
     Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
     Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
     Audio_PlayCue(217);
-    Engine_MapAnimateCells((MakyuriHeya_FloorSwitchCells), 10, 18);
+    Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
     Engine_EventEnd();
 }
 

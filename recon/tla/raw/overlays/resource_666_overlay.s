@@ -74,7 +74,7 @@ Func_020001ac:
 .L_020081f6:
 	pop {r5, pc}
 .L_020081f8:
-	.4byte 0x00001b18
+	.4byte MsgDonTMentionTheTidal
 	.section .text.x020081fc,"ax",%progbits
 	.global Func_020001fc
 	.thumb_func
@@ -116,7 +116,7 @@ Func_020001fc:
 .L_02008246:
 	pop {r5, pc}
 .L_02008248:
-	.4byte 0x00001b1a
+	.4byte MsgMaybeYouVeNoticedBut
 	.section .text.x0200824c,"ax",%progbits
 	.global Func_0200024c
 	.thumb_func
@@ -156,7 +156,7 @@ Func_0200024c:
 .L_02008292:
 	pop {r5, pc}
 .L_02008294:
-	.4byte 0x00001b40
+	.4byte MsgInTheMiddleOfOsenia
 	.section .text.x020084f4,"ax",%progbits
 	.global Func_020004f4
 	.thumb_func
@@ -191,7 +191,7 @@ Func_020004f4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200853c:
-	.4byte 0x00001c67
+	.4byte MsgSoIHearYouCaught
 	.section .text.x02008540,"ax",%progbits
 	.global Func_02000540
 	.thumb_func
@@ -724,7 +724,7 @@ Func_02000738:
 .L_02008a6a:
 	pop {r5, pc}
 .L_02008a6c:
-	.4byte 0x00002f99
+	.4byte MsgLegendsSaidThatCrossboneIsle
 .L_02008a70:
 	.4byte Data_02000be4
 	.section .rodata.x02008be4,"a",%progbits
@@ -1296,34 +1296,39 @@ Data_020013dc:
 	.4byte Func_0200024c
 	.4byte 0x00000173
 	.4byte 0xffff00d6
-	.4byte 0x00403051
+	.2byte MsgSeasonalVeggiesBoilingWithSome
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d7
-	.4byte 0x00403052
+	.2byte MsgThereIsASeafoodPie
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d8
-	.4byte 0x00403053
+	.2byte MsgItLooksLikeSomeKind
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d9
-	.4byte 0x00403054
+	.2byte MsgItSAlhafraSFamous
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgThatSeafoodStewHasAn
+	.2byte 0x0040
 	.4byte 0x00000002
 	.4byte 0x08b2001e
 	.4byte Func_02000084
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001b03
+	.4byte MsgIDonTCareIf
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001b04
+	.4byte MsgThoseGuysWhoBoughtThe
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001b05
+	.4byte MsgIWonderIfTheMayor
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001b06
+	.4byte MsgWhyWouldAnyonePaySo
 	.4byte 0x00000000
 	.4byte 0x08b1000e
 	.4byte Func_020002bc
@@ -1332,7 +1337,7 @@ Data_020013dc:
 	.4byte Func_020002bc
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001b07
+	.4byte MsgWeReTakingCareOf
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_02000298
@@ -1341,127 +1346,127 @@ Data_020013dc:
 	.4byte Func_02000444
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001b0f
+	.4byte MsgWhenWeLostOurHouse
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001b10
+	.4byte MsgIJustWishThatOld
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001b11
+	.4byte MsgIDonTMindHelping
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001b12
+	.4byte MsgAllIAskIsFor
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001b13
+	.4byte MsgIsThisHowAYoung
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001b18
+	.4byte MsgDonTMentionTheTidal
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001b19
+	.4byte MsgIfAllMyGoodsWere
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001b1a
+	.4byte MsgMaybeYouVeNoticedBut
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001b1b
+	.4byte MsgYouSeeHowFullOur
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001b1c
+	.4byte MsgTheTownOughtToGive
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001b1d
+	.4byte MsgICanTBelieveThe
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001b1e
+	.4byte MsgTheInnkeeperToldMeTo
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001b1f
+	.4byte MsgTheInnkeeperServesHisPaying
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001b20
+	.4byte MsgWeReAllGuestsIn
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001b21
+	.4byte MsgOhhhIMHungryMy
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001b22
+	.4byte MsgIDonTThinkI
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001b23
+	.4byte MsgILlNeverForgiveThe
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001b24
+	.4byte MsgOurGuestsAreVeryUpset
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00001b25
+	.4byte MsgMyPopSBeenLookin
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00001b26
+	.4byte MsgWhyDoWeAllHave
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00001b27
+	.4byte MsgWeAllHaveToBear
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00001b28
+	.4byte MsgIHeardThereSOnly
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte 0x00001b2e
+	.4byte MsgTheBrokenMastOnThe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001b2f
+	.4byte MsgINeverImaginedAnyoneFrom
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001b30
+	.4byte MsgPerhapsTheMayorWillCover
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001b31
+	.4byte MsgIBetTheMasterOf
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001b32
+	.4byte MsgICanTBelieveThe2
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001b33
+	.4byte MsgICanTBelieveI
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001b34
+	.4byte MsgMaybeItSCauseAll
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001b35
+	.4byte MsgIThinkIVeLost
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001b36
+	.4byte MsgMaybeIMJustHungry
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001b37
+	.4byte MsgSniffSniffThatSmellThat
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001b38
+	.4byte MsgIHopeTheMayorS
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001b39
+	.4byte MsgIKnowOurMayorS
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001b3a
+	.4byte MsgEveryoneSaysTheHillBeneath
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00001b3b
+	.4byte MsgIThinkTheyPutMe
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00001b3c
+	.4byte MsgWhenYouReLivingPacked
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00001b3d
+	.4byte MsgThatWarriorNextDoorIs
 	.4byte 0x00008d15
 	.4byte 0xffff041f
 	.4byte Func_0200047c
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001b40
+	.4byte MsgInTheMiddleOfOsenia
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001b41
+	.4byte MsgThePeopleOfGarohBrought
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1511,130 +1516,135 @@ Data_02001730:
 	.4byte Func_0200024c
 	.4byte 0x00000173
 	.4byte 0xffff00d6
-	.4byte 0x00403051
+	.2byte MsgSeasonalVeggiesBoilingWithSome
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d7
-	.4byte 0x00403052
+	.2byte MsgThereIsASeafoodPie
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d8
-	.4byte 0x00403053
+	.2byte MsgItLooksLikeSomeKind
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d9
-	.4byte 0x00403054
+	.2byte MsgItSAlhafraSFamous
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgThatSeafoodStewHasAn
+	.2byte 0x0040
 	.4byte 0x00000000
 	.4byte 0x1971001e
-	.4byte 0x00001c73
+	.4byte MsgThatCuteBoyNextDoor
 	.4byte 0x00008d15
 	.4byte 0x1971001e
-	.4byte 0x00001c74
+	.4byte MsgTheFellowNextDoorWas
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001c2f
+	.4byte MsgIMAmazedThoseGuys
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001c30
+	.4byte MsgIThoughtItWasWeird
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001c31
+	.4byte MsgPiratesHereInAlhafraThat
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001c32
+	.4byte MsgThoseGuysWereJustTrying
 	.4byte 0x00000000
 	.4byte 0x08b8000c
 	.4byte Func_020004b8
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001c34
+	.4byte MsgOoohNotMuchLongerAnd
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001c35
+	.4byte MsgOnceMyOldNeighborsHouse
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001c36
+	.4byte MsgOnceEveryoneStartedWorkingTo
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001c37
+	.4byte MsgIWonderWhatHappenedThat
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001c38
+	.4byte MsgAhhItSSoRelieving
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001c39
+	.4byte MsgItWonTBeLong
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001c3a
+	.4byte MsgTheLadyOfThisHouse
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001c3b
+	.4byte MsgTheLadyOfTheHouse
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001c5d
+	.4byte MsgTheMadransDroppedInAnd
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001c5e
+	.4byte MsgTheMadransMustHaveBeen
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001c5f
+	.4byte MsgAsSoonAsIM
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001c60
+	.4byte MsgWeReAllTakingTurns
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001c61
+	.4byte MsgEveryoneSWorkingSoHard
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001c62
+	.4byte MsgThereSStillPlentyOf
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001c63
+	.4byte MsgTonightSMealIsChock
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001c64
+	.4byte MsgMomSaidWeReGonna
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00001c65
+	.4byte MsgMySonHasTerribleLuck
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00001c66
+	.4byte MsgTheGuyNextToUs
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte Func_020004f4
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001c6a
+	.4byte MsgWhyDoIHaveTo2
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001c6b
+	.4byte MsgIMayNotLookVery
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001c6c
+	.4byte MsgWeHeardALoudPopping
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001c6d
+	.4byte MsgIWonderWhatOurNew
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001c6e
+	.4byte MsgIWasToldToUse
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001c6f
+	.4byte MsgOhIfWeGetA
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00001c70
+	.4byte MsgIGuessIJustDon
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00001c71
+	.4byte MsgOurNeighborIsSoMellow
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x00001c72
+	.4byte MsgFeelFreeToHelpWhomever
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001c75
+	.4byte MsgCapturingTheDreadedBriggsWas
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001c76
+	.4byte MsgIThinkThisManMight
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1684,118 +1694,123 @@ Data_020019dc:
 	.4byte Func_0200024c
 	.4byte 0x00000173
 	.4byte 0xffff00d6
-	.4byte 0x00403051
+	.2byte MsgSeasonalVeggiesBoilingWithSome
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d7
-	.4byte 0x00403052
+	.2byte MsgThereIsASeafoodPie
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d8
-	.4byte 0x00403053
+	.2byte MsgItLooksLikeSomeKind
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d9
-	.4byte 0x00403054
+	.2byte MsgItSAlhafraSFamous
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgThatSeafoodStewHasAn
+	.2byte 0x0040
 	.4byte 0x00000002
 	.4byte 0x1823001f
 	.4byte Func_02000738
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002588
+	.4byte MsgIDonTWantTo
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002589
+	.4byte MsgBriggsDidnTCommitAny
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000258a
+	.4byte MsgBriggsPaidForTheBoat
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000258b
+	.4byte MsgIDonTBelieveFor
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000258c
+	.4byte MsgFixingThatOldGuyS
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000258d
+	.4byte MsgTheRepairsOnOurNeighbors
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000258e
+	.4byte MsgMyHouseIsDamagedMore
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000258f
+	.4byte MsgMyHusbandAndIDon
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002590
+	.4byte MsgWillTheyEverGetOut
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002591
+	.4byte MsgIDonTHaveAnything
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002592
+	.4byte MsgIDonTMindNot
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002593
+	.4byte MsgIHatedThisPlaceAt
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025a6
+	.4byte MsgTheBridgeToTheWest
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025a7
+	.4byte MsgPeopleWillStartTravelingAgain
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000025a8
+	.4byte MsgWeReStillRecoveringFrom
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000025a9
+	.4byte MsgTheMayorUsedTheMoney
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000025aa
+	.4byte MsgItSeemsThatBriggsBroke
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000025ab
+	.4byte MsgBriggsMightHaveHadA
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000025ac
+	.4byte MsgABiggerBoatCouldHaul
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x000025ad
+	.4byte MsgIJustWantAHouse
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x000025ae
+	.4byte MsgSomeoneSaidMySonAnd
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x000025af
+	.4byte MsgSoThatAlexFellowLeft
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000025b0
+	.4byte MsgAfterTheTidalWaveIt
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000025b1
+	.4byte MsgTheMayorMayHavePulled
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000025b2
+	.4byte MsgBriggsAndHisWifeWere
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000025b3
+	.4byte MsgIfIHadAKey
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000025b4
+	.4byte MsgSoWhatIfTradeBrings
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000025b5
+	.4byte MsgIDReallyLikeTo
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x000025b6
+	.4byte MsgIsnTAnyoneHelpingMy
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x000025b7
+	.4byte MsgHeWasJustMyType
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025b8
+	.4byte MsgIHeardYouWereThere
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025b9
+	.4byte MsgTheyWereSoConfidentWhen
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

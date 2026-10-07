@@ -450,7 +450,7 @@ Func_0200045c:
 	pop {pc}
 	.2byte 0x0000
 .L_020084c4:
-	.4byte 0x00002ac7
+	.4byte MsgYouReLate
 	.section .text.x020084c8,"ax",%progbits
 	.global Func_020004c8
 	.thumb_func
@@ -695,7 +695,7 @@ Func_0200065c:
 	bl ObjectMotion_SetPositionAndReset
 	b .L_02008ca8
 .L_020086c0:
-	.4byte 0x00002acd
+	.4byte MsgThereSeemsToBeA
 .L_020086c4:
 	movs r0, #160
 	lsls r0, r0, #4
@@ -1781,7 +1781,7 @@ Func_02000cd0:
 	b .L_020090d4
 	.2byte 0x0000
 .L_020090cc:
-	.4byte 0x00002ace
+	.4byte MsgWeHaveIgnitedTheBeacon
 .L_020090d0:
 	adds r6, #2
 	adds r5, #1
@@ -2429,7 +2429,7 @@ Func_02001388:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020096dc:
-	.4byte 0x00002ae4
+	.4byte MsgBlank3
 .L_020096e0:
 	.4byte gPartyState
 .L_020096e4:
@@ -2840,7 +2840,7 @@ Func_020016e8:
 	mov r10, r5
 	pop {r5, r6, pc}
 .L_02009ab8:
-	.4byte 0x00002aea
+	.4byte MsgBlank4
 .L_02009abc:
 	.4byte gPartyState
 .L_02009ac0:
@@ -3523,7 +3523,7 @@ Func_02001bc4:
 	lsls r1, r1, #18
 	b .L_0200a15c
 .L_0200a150:
-	.4byte 0x00002b1c
+	.4byte MsgWasnTTheOnlySurprise
 .L_0200a154:
 	.4byte Data_02005ff8
 .L_0200a158:
@@ -4808,7 +4808,7 @@ Func_02002ae4:
 	b .L_0200adf8
 	.2byte 0x0000
 .L_0200add8:
-	.4byte 0x00002af0
+	.4byte MsgWeDidItWeBeat
 .L_0200addc:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -10619,16 +10619,16 @@ gSceneEvents:
 	.4byte Func_0200065c
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00002ac9
+	.4byte MsgOnceYouVeLitThe
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00002aca
+	.4byte MsgOnceJupiterIsLitOnly
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00002acb
+	.4byte MsgOnceJupiterIsLitWe
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00002acc
+	.4byte MsgDoEvenThinkAboutResisting
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

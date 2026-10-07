@@ -492,17 +492,17 @@ Func_020001e4:
 .L_0200847c:
 	.4byte gPartyState
 .L_02008480:
-	.4byte 0x000013bc
+	.4byte MsgWhatWillYouThrow
 .L_02008484:
-	.4byte 0x000013c2
+	.4byte MsgCoins2
 .L_02008488:
-	.4byte 0x000013c5
+	.4byte MsgToss
 .L_0200848c:
 	.4byte gInput
 .L_02008490:
 	.4byte Data_0200173c
 .L_02008494:
-	.4byte 0x000013bf
+	.4byte MsgYouWonCoin
 .L_02008498:
 	.4byte Data_02001700
 	.section .text.x02008884,"ax",%progbits
@@ -1977,22 +1977,22 @@ gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x000028a4
+	.4byte MsgReadTheSignTheSpring
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x000028a3
+	.4byte MsgReadTheSignTheSpring2
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x000028a5
+	.4byte MsgIfYouFaceAwayFrom
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x000028a6
+	.4byte MsgIDLoveToTest
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x000028a7
+	.4byte MsgIRememberAnOutsiderWho
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x000028a8
+	.4byte MsgHeHadSuchAGood
 	.4byte 0x00000003
 	.4byte 0x02000019
 	.4byte Func_02000054

@@ -309,7 +309,7 @@ void Ui_LoadWindowGraphics(void);
 #endif
 
 #if GAME_TLA
-struct BattleObjectSlot;
+struct BtlObj;
 struct ObjectRuntime;
 
 struct ParticleChild {
@@ -336,7 +336,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant);
 void BattleMotion_ApproachTarget(s32 actor_id, s32 target_id, s32 travel_divisor, s32 initial_velocity_y);
 #endif
 #ifndef OWN_BattleMotion_InterpolatePosition
-void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot, struct BattleObjectSlot *end_slot, s32 progress);
+void BattleMotion_InterpolatePosition(struct BtlObj *start_slot, struct BtlObj *end_slot, s32 progress);
 #endif
 s32 LuckyDice_Run(void);
 void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);

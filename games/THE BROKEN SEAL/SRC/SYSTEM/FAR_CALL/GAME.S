@@ -7,20 +7,20 @@ FarCall_GameTable:
 	.thumb_func
 Trade_GetOfferStateFar:
 	overlay_veneer Trade_GetOfferState
-	.global Owner_GetStateFar
+	.global UnitGetFar
 	.thumb_func
-Owner_GetStateFar:
+UnitGetFar:
 	.global Runtime_GetObject
 	.thumb_func
 Runtime_GetObject:
-	overlay_veneer Owner_GetState
+	overlay_veneer UnitGet
 	.global BattleUnit_Recalculate
 	.thumb_func
 BattleUnit_Recalculate:
-	.global Owner_RecalculateStatsFar
+	.global UnitCalcFar
 	.thumb_func
-Owner_RecalculateStatsFar:
-	overlay_veneer Owner_RecalculateStats
+UnitCalcFar:
+	overlay_veneer UnitCalc
 	.global Item_GetDirectFar
 	.thumb_func
 Item_GetDirectFar:
@@ -79,9 +79,9 @@ Inventory_GetEquippedItemFar:
 	.global Ability_GetData
 	.thumb_func
 Ability_GetData:
-	.global BattleAction_Get
+	.global BtlActGet
 	.thumb_func
-BattleAction_Get:
+BtlActGet:
 	.global BattleAction_GetDirectFar
 	.thumb_func
 BattleAction_GetDirectFar:
@@ -138,23 +138,23 @@ GameFlag_SetByteFar:
 	.thumb_func
 Owner_AdjustFirstValueFar:
 	overlay_veneer Owner_AdjustFirstValue
-	.global Owner_AdjustSecondValueFar
+	.global UnitEpAddFar
 	.thumb_func
-Owner_AdjustSecondValueFar:
-	overlay_veneer Owner_AdjustSecondValue
-	.global Owner_RecalculateRatiosFar
+UnitEpAddFar:
+	overlay_veneer UnitEpAdd
+	.global UnitRatioFar
 	.thumb_func
-Owner_RecalculateRatiosFar:
-	overlay_veneer Owner_RecalculateRatios
+UnitRatioFar:
+	overlay_veneer UnitRatio
 	.global Owner_UpdateRatioPairFar
 	.thumb_func
 Owner_UpdateRatioPairFar:
 	overlay_veneer Owner_UpdateRatioPair
 	overlay_veneer Owner_UpdateSecondInputAndRatios
-	.global BattleUnit_AssignFar
+	.global BtlUnitSetFar
 	.thumb_func
-BattleUnit_AssignFar:
-	overlay_veneer BattleUnit_Assign
+BtlUnitSetFar:
+	overlay_veneer BtlUnitSet
 	.global Party_CountActiveOwnersFar
 	.thumb_func
 Party_CountActiveOwnersFar:
@@ -199,10 +199,10 @@ BtlRcvCalc:
 	.thumb_func
 Owner_GetRecordFar:
 	overlay_veneer Owner_GetRecord
-	.global BattleRandom16Far
+	.global BtlRndFar
 	.thumb_func
-BattleRandom16Far:
-	overlay_veneer BattleRandom16
+BtlRndFar:
+	overlay_veneer BtlRnd
 	.global Djinn_AddToOwnerFar
 	.thumb_func
 Djinn_AddToOwnerFar:
@@ -339,10 +339,10 @@ Inventory_CheckDiscardFar:
 	.thumb_func
 Inventory_DiscardFar:
 	overlay_veneer Inventory_Discard
-	.global BattleFx_IsReviveFar
+	.global BtlEfxRevChkFar
 	.thumb_func
-BattleFx_IsReviveFar:
-	overlay_veneer BattleFx_IsRevive
+BtlEfxRevChkFar:
+	overlay_veneer BtlEfxRevChk
 	.global Owner_RefreshClassActionsFar
 	.thumb_func
 Owner_RefreshClassActionsFar:

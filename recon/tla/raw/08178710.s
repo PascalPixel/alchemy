@@ -938,7 +938,7 @@ Func_08178710:
 	b .L_08178ce4
 .L_08178e66:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_08178e6c:
 	bl Func_081434f8
 	movs r1, #2

@@ -15,6 +15,6 @@ extern const u8 Battle_ActionStatus[];
 
 s32 BattleCommand_BuildPlan(
     struct BattleActionRecord *request,
-    struct BattlePlan *plan);
+    struct BtlPlan *plan);
 
 #endif

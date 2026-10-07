@@ -6,9 +6,9 @@
 #include "ANIMSPR.H"
 #include "BATTLE_PRESENTATION.H"
 
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
+s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *output)
 {
-    struct BattleUnit *state = Owner_GetStateFar(id);
+    struct BtlUnit *state = UnitGetFar(id);
     s8 mode = state->poison;
     u32 flags = 0;
 

@@ -36,7 +36,7 @@ UiText_DrawString:
 	mov r3, r10
 	bl UiText_RenderWideStringAtOffset
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	b .L_080420f4
 .L_080420f0:
 	.4byte 0x00000000

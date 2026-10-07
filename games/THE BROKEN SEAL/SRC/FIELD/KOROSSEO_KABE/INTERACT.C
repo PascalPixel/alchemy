@@ -224,12 +224,12 @@ L_main:
 
 void OverlayObject_NotifyMatchingEntries(s32 no, s32 val)
 {
-    u16 *tbl = Owner_GetState(no);
+    u16 *tbl = UnitGet(no);
     s32 i;
 
     Inventory_AddItem(no, val);
 
-    tbl = ((struct BattleUnit *)tbl)->inventory;
+    tbl = ((struct BtlUnit *)tbl)->inventory;
     for (i = 0; i <= 14; i++) {
         if (tbl[i] == val) {
             Inventory_Equip(no, i);

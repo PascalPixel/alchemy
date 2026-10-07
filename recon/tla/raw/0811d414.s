@@ -91,7 +91,7 @@ BattlePresentation_AppendLinkedActions:
 	ldr r2, [r3]
 	ldr r3, [r7]
 	str r3, [r2]
-	bl BattleRandom16Far
+	bl BtlRndFar
 	mov r1, r10
 	ldr r3, [r1]
 	str r0, [r3, #4]
@@ -139,7 +139,7 @@ BattlePresentation_AppendLinkedActions:
 	bl Func_0811d24c
 	cmp r0, #0
 	blt .L_0811d580
-	bl BattleRandom16Far
+	bl BtlRndFar
 	mov r2, r10
 	ldr r1, [r2]
 	ldr r3, [r1, #4]
@@ -172,7 +172,7 @@ BattlePresentation_AppendLinkedActions:
 	bne .L_0811d550
 .L_0811d562:
 	ldr r0, [r5]
-	bl Sys_Free
+	bl MemFree
 	mov r1, r8
 	ldr r0, [r1]
 	b .L_0811d592
@@ -189,7 +189,7 @@ BattlePresentation_AppendLinkedActions:
 	bl BattleLink_ResetTransferState
 	bl SerialRuntime_RemoveIrqHandlers
 	ldr r0, [r5]
-	bl Sys_Free
+	bl MemFree
 	movs r0, #1
 	negs r0, r0
 .L_0811d592:

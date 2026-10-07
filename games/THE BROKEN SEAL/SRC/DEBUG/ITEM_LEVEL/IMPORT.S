@@ -59,14 +59,14 @@ DebugMenu_BrowseIcons:
 	.thumb_func
 DebugMenu_BrowseEntryGlyphs:
 	overlay_veneer DebugMenu_BrowseEntryGlyphsFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
-	.global Owner_RecalculateStats
+UnitGet:
+	overlay_veneer UnitGetFar
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Engine_DebugGetItem
 	.thumb_func
 Engine_DebugGetItem:

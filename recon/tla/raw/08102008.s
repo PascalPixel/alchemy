@@ -522,7 +522,7 @@ Func_08102008:
 	adds r3, r3, r4
 	ldrh r0, [r1, r3]
 	ldr r6, [r1, #16]
-	bl Owner_GetState
+	bl UnitGet
 	movs r7, #42
 	adds r5, r0, #0
 	adds r0, r6, #0
@@ -930,7 +930,7 @@ Func_08102008:
 	movs r0, #4
 	bl Trade_AddOfferFar
 	movs r0, #4
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	movs r7, #2
 	b .L_08102b02
 .L_08102788:
@@ -1438,7 +1438,7 @@ Func_08102008:
 	ldr r4, [sp, #8]
 	ldr r0, [sp, #32]
 	str r4, [sp, #8]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r1, r11
 	ldr r4, [sp, #8]
 	cmp r1, #0
@@ -1672,7 +1672,7 @@ Func_08102008:
 	bl Trade_AddOfferFar
 .L_08102d58:
 	adds r0, r6, #0
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r4, [sp, #8]
 .L_08102d60:
 	ldr r7, [sp, #64]

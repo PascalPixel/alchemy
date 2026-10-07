@@ -32,7 +32,7 @@ s32 Summon_FindSlot(void);
 s32 Summon_ClassValid(s32 class_id);
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
-s32 BattleFormation_SelectRandomAvailableMember(s32 record_id);
+s32 BtlGrpRnd(s32 record_id);
 s32 Summon_TakeCharge(s32 class_id, s32 n);
 s32 Summon_ReleaseCharge(s32 actor_id);
 s32 Summon_ResetCharge(s32 class_id);

@@ -38,18 +38,18 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
     s32 offset;
 
     count = 0;
-    order = (struct SlotArray *)gBattleWork;
+    order = (struct SlotArray *)BtlWk;
 
     if (require_living_unit != 0) {
         for (;;) {
             index = 0;
-            slot = (u32)&((struct BattleSession *)0)->party_units / sizeof(s16);
+            slot = (u32)&((struct BtlWork *)0)->party_units / sizeof(s16);
             if (order->items[slot] != 255) {
                 entry = order->items;
                 do {
                     value = entry[slot];
                     if (value != 254) {
-                        if (Owner_GetStateFar(value)->hp != 0) {
+                        if (UnitGetFar(value)->hp != 0) {
                             positions[count] = index | 0x100;
                             count++;
                         }
@@ -62,8 +62,8 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
         }
     } else {
         index = 0;
-        slot = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
-        tail = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
+        slot = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
+        tail = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
         offset = tail * 2;
         entry = (s16 *)(order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255) {
@@ -234,7 +234,7 @@ pick:
             break;                                                            \
         }                                                                     \
         if ((unit)->hp == 0                                                   \
-            && BattleFx_IsReviveFar((action)->effect) == 0)                  \
+            && BtlEfxRevChkFar((action)->effect) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
             (damage_class) = ((action)->target_flags & 0x0f) - 1;             \
@@ -269,15 +269,15 @@ pick:
 
 s32 BattleTarget_SelectForAction(
     s32 actor_id,
-    struct BattleAction *action)
+    struct BtlAct *action)
 {
     u16 order_positions[6];
     s32 unit_ids[6];
     s32 target_positions[6];
-    struct BattleSession *turn_order;
-    struct BattleUnit *unit;
-    struct BattleUnit *next_unit;
-    struct BattleUnit *this_unit;
+    struct BtlWork *turn_order;
+    struct BtlUnit *unit;
+    struct BtlUnit *next_unit;
+    struct BtlUnit *this_unit;
     s32 candidate_count;
     s32 target_index;
     s32 target_count;
@@ -293,7 +293,7 @@ s32 BattleTarget_SelectForAction(
     u32 roll;
     s16 *slot;
 
-    turn_order = gBattleWork;
+    turn_order = BtlWk;
     target_count = 0;
     candidate_count = 0;
 
@@ -349,7 +349,7 @@ scan_complete:
     for (target_index = 0;
          target_index < candidate_count;
          target_index++) {
-        unit = Owner_GetStateFar(unit_ids[target_index]);
+        unit = UnitGetFar(unit_ids[target_index]);
         CHECK_EFFECT_TARGET(unit, action, applies, damage_class);
         if (applies != 0) {
             unit_ids[target_count] = unit_ids[target_index];
@@ -363,7 +363,7 @@ scan_complete:
 
     if (action->target_mode == 1
         && action->range == 1
-        && Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
+        && Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)
                 ->target_strategy != 2
         && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
         selected = -1;
@@ -373,9 +373,9 @@ scan_complete:
             for (inner_index = target_index;
                  inner_index < target_count - 1;
                  inner_index++) {
-                this_unit = Owner_GetStateFar(unit_ids[inner_index]);
-                next_unit = Owner_GetStateFar(unit_ids[inner_index + 1]);
-                if (Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
+                this_unit = UnitGetFar(unit_ids[inner_index]);
+                next_unit = UnitGetFar(unit_ids[inner_index + 1]);
+                if (Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)
                         ->target_strategy == 0) {
                     value = this_unit->hp;
                     next_value = next_unit->hp;

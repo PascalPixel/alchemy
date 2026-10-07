@@ -12,17 +12,17 @@ extern struct FieldActor *Data_02002760[];
 extern s16 Data_02002860;
 extern s16 Data_02002862;
 
-void *Runtime_BumpAllocate(s32 size);
+void *MemAlloc(s32 size);
 void Func_02001d68(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached(s32 entry, s32 size, void *source);
-void Sys_Free(void *block);
+void MemFree(void *block);
 void Func_02000e58(void);
 
 static inline void *BumpAlloc(s32 size)
 {
     /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each size's constant */
-    return Runtime_BumpAllocate(size);
+    return MemAlloc(size);
 }
 
 static inline void VramLoad(s32 entry, s32 size, void *source)
@@ -39,7 +39,7 @@ void Func_02001014(void)
     Func_02001d68(Data_02001f10, buffer);
     Data_0200275c = Resource_FindFreeEntry();
     VramLoad(Data_0200275c, 0xc00, buffer);
-    Sys_Free(buffer);
+    MemFree(buffer);
     Scheduler_AddOrUpdateCallback(Func_02000e58, 1152);
     Data_0200275e = 0;
     Data_02002860 = 0;
@@ -54,7 +54,7 @@ void Func_02001094(void)
     Func_02001d68(Data_02002072 + 1, buffer);
     Data_0200275c = Resource_FindFreeEntry();
     VramLoad(Data_0200275c, 0x800, buffer);
-    Sys_Free(buffer);
+    MemFree(buffer);
     Scheduler_AddOrUpdateCallback(Func_02000e58, 1152);
     Data_0200275e = 0;
     Data_02002860 = 0;
@@ -69,7 +69,7 @@ void Func_02001114(void)
     Func_02001d68(Data_020022a2, buffer);
     Data_0200275c = Resource_FindFreeEntry();
     VramLoad(Data_0200275c, 0x800, buffer);
-    Sys_Free(buffer);
+    MemFree(buffer);
     Scheduler_AddOrUpdateCallback(Func_02000e58, 1152);
     Data_0200275e = 0;
     Data_02002860 = 1;

@@ -12,7 +12,7 @@ Func_0803d594:
 	adds r6, r1, #0
 	mov r8, r2
 	mov r10, r3
-	bl BattleAction_Get
+	bl BtlActGet
 	adds r1, r6, #0
 	ldrh r0, [r0, #4]
 	mov r2, r8

@@ -4710,7 +4710,7 @@ Func_0200242c:
 	lsls r2, r2, #2
 	adds r3, r5, r2
 	ldr r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a500
@@ -4798,7 +4798,7 @@ Func_0200242c:
 	lsls r0, r0, #2
 	adds r3, r5, r0
 	ldr r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a5a8
@@ -4877,7 +4877,7 @@ Func_0200242c:
 	lsls r0, r0, #2
 	adds r3, r5, r0
 	ldr r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #32
 	adds r5, r0, #0
 	ldr r3, .L_0200a90c
@@ -8062,7 +8062,7 @@ Func_02004188:
 	asrs r0, r0, #16
 	bl VramBlock_LoadCached
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #240
 	lsls r0, r0, #2
 	bl Runtime_BumpAllocateAlternatePool
@@ -10089,7 +10089,7 @@ Func_020051a0:
 	adds r2, r5, #0
 	bl VramBlock_LoadCached
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 .L_0200d26a:
 	ldr r3, [sp, #36]
 	adds r3, #218
@@ -10613,7 +10613,7 @@ Func_020055c4:
 	ldr r0, .L_0200d684
 	bl Scheduler_AddOrUpdateCallback
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5

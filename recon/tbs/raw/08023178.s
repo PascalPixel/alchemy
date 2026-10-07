@@ -620,7 +620,7 @@ Ui_RunOwnerStatusScreen:
 	b .L_08023cfa
 .L_08023656:
 	ldr r0, [sp, #84]
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	mov r9, r0
 	bl UiWindow_MarkVisibleTileAttributes
 	bl Ui_FillVramBlockPattern
@@ -1248,7 +1248,7 @@ Ui_RunOwnerStatusScreen:
 .L_08023b42:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, [sp, #104]
 	str r0, [sp, #36]
 	cmp r3, #13
@@ -1273,7 +1273,7 @@ Ui_RunOwnerStatusScreen:
 	lsls r4, r4, #1
 	mov r8, r4
 	mov r0, r8
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r4, #0
 	str r4, [sp, #4]
 	mov r1, r9
@@ -1301,7 +1301,7 @@ Ui_RunOwnerStatusScreen:
 	ldr r0, [sp, #84]
 	mov r10, r1
 	mov r11, r2
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r1, r9
 	ldrh r3, [r1, #60]
 	mov r2, r10
@@ -1619,7 +1619,7 @@ Ui_RunOwnerStatusScreen:
 	adds r3, #65
 	ldrb r0, [r3]
 	adds r5, #192
-	bl UiWindow_DrawPartyStatusContents
+	bl PtyStDraw
 	ldr r2, [r5]
 	movs r3, #0
 	str r3, [r2, #72]
@@ -1640,4 +1640,4 @@ Ui_RunOwnerStatusScreen:
 .L_08023e68:
 	.4byte gKeyState
 .L_08023e6c:
-	.4byte gBattleWork
+	.4byte BtlWk

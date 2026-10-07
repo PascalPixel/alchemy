@@ -57,7 +57,7 @@ struct FieldPartyState {
 extern struct EventWork *gEventWork;
 extern struct FieldPartyState gGameState;
 extern struct EncounterZone Encounter_EnemyGroupTable[];
-struct BattleUnit *Owner_GetStateFar(s32 unit);
+struct BtlUnit *UnitGetFar(s32 unit);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
 
@@ -158,7 +158,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
     if (rate == 0)
         return 0;
     if (GameFlag_IsSet(5) != 0) {
-        level = (s32)Owner_GetStateFar(5)->experience;
+        level = (s32)UnitGetFar(5)->experience;
         if (level > 130)
             return 0;
     }

@@ -678,9 +678,9 @@ Func_0816bc70:
 	cmp r4, #8
 	bne .L_0816c12a
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #8]
-	bl Sys_Free
+	bl MemFree
 	b .L_0816c224
 .L_0816c1dc:
 	.4byte IwramFillWords

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiWindow_DrawPartyStatusContents
+	.global PtyStDraw
 	.thumb_func
-UiWindow_DrawPartyStatusContents:
+PtyStDraw:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -227,7 +227,7 @@ UiWindow_DrawPartyStatusContents:
 	ldr r1, [sp, #4]
 	ldr r2, [sp, #12]
 	ldrh r0, [r1, r2]
-	bl Owner_GetState
+	bl UnitGet
 	adds r6, r0, #0
 	movs r3, #56
 	ldrsh r5, [r6, r3]

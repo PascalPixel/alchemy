@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Owner_RecalculateStats
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
+UnitCalc:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -13,7 +13,7 @@ Owner_RecalculateStats:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Owner_GetState
+	bl UnitGet
 	adds r7, r0, #0
 	movs r0, #16
 	ldrsh r3, [r7, r0]
@@ -1056,7 +1056,7 @@ Owner_RecalculateStats:
 	strh r2, [r7, #58]
 .L_080adbd8:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	add sp, #4
 	pop {r3, r5}
 	mov r8, r3

@@ -28,5 +28,5 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     *output = 0;
     y >>= 3;
     UiText_RenderWideStringInWindow(buffer, arg1, x, y);
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

@@ -41,7 +41,7 @@ struct ItemUseWork {
 
 extern struct ItemUseWork *gMenuWork;
 
-struct ItemOwner *Owner_GetStateFar(s32);
+struct ItemOwner *UnitGetFar(s32);
 struct ItemData *Item_Get(s32);
 u8 Inventory_RemoveFar(s32, s32);
 u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
@@ -55,7 +55,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     struct ItemOwner *owner;
     struct ItemData *item;
 
-    owner = Owner_GetStateFar(owner_id);
+    owner = UnitGetFar(owner_id);
     work = gMenuWork;
     item_id = 0x1ff & owner->items[slot];
     item = Item_Get(item_id);

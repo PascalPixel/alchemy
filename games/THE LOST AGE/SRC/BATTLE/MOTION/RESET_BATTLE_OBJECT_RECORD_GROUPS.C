@@ -45,10 +45,10 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
     }
 }
 
-static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
+static __inline__ struct BtlObj *BattleObject_FindSlot(s32 id)
 {
     u8 *work = (u8 *)Ram_HeapSlots->battle_work;
-    struct BattleObjectSlot *slots = ((struct BattleSession *)work)->slots;
+    struct BtlObj *slots = ((struct BtlWork *)work)->slots;
 
     if (id > 7)
         id -= 0x78;
@@ -60,7 +60,7 @@ static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
 
 s32 ActivateBattleObjectSlot(s32 object_id)
 {
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
 
     BattleMotion_ReleaseObjectSlotByValue(object_id);
     slot = BattleObject_FindSlot(object_id);
@@ -72,7 +72,7 @@ void BattleMotion_DestroyAllSlotObjects(void)
 {
     s32 no;
     s32 i;
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
 
     i = 0;
     do {

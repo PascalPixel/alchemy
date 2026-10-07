@@ -4275,13 +4275,13 @@ Func_02000b24:
 	mov lr, r6
 	.2byte 0xf800
 	movs r0, #0
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #1
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #2
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #3
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r2, #244
 	adds r1, r5, #0
 	lsls r2, r2, #4
@@ -4595,13 +4595,13 @@ Func_02000b24:
 	mov lr, r6
 	.2byte 0xf800
 	movs r0, #0
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #1
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #2
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #3
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r2, #244
 	adds r1, r5, #0
 	lsls r2, r2, #4
@@ -6026,7 +6026,7 @@ Func_02001804:
 	.4byte 0x06002000
 .L_02009870:
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
@@ -6082,7 +6082,7 @@ Func_0200187c:
 .L_020098d4:
 	.4byte 0x06002000
 .L_020098d8:
-	bl Sys_Free
+	bl MemFree
 	pop {r5, r6, pc}
 	.2byte 0x0000
 	.section .text.x020098e0,"ax",%progbits
@@ -6204,7 +6204,7 @@ Func_020018e0:
 	ldr r2, .L_02009a1c
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	lsls r1, r7, #3
 	ldr r2, [r5, r1]
 	movs r4, #128
@@ -6266,7 +6266,7 @@ Func_020018e0:
 	ldr r2, .L_02009b78
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	mov r3, r8
 	lsrs r3, r6
 	movs r2, #127
@@ -6296,7 +6296,7 @@ Func_020018e0:
 	ldr r3, .L_02009b78
 	lsls r2, r7, #2
 	ldr r0, [r3, r2]
-	bl Owner_GetState
+	bl UnitGet
 	movs r6, #0
 	adds r5, r0, #0
 .L_02009a82:
@@ -6359,7 +6359,7 @@ Func_020018e0:
 	ldr r3, .L_02009b78
 	movs r7, #0
 	ldr r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 .L_02009b02:
 	ldr r3, [sp, #4]
 	movs r2, #1
@@ -6388,7 +6388,7 @@ Func_020018e0:
 	ldr r2, .L_02009b78
 	lsls r3, r7, #2
 	ldr r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	mov r4, r8
 	adds r0, #216
 	movs r6, #0
@@ -6444,7 +6444,7 @@ Func_020018e0:
 	ldr r3, .L_02009c70
 	lsls r2, r7, #2
 	ldr r0, [r3, r2]
-	bl Owner_GetState
+	bl UnitGet
 	mov r2, r8
 	movs r1, #0
 	add r2, r10
@@ -6542,7 +6542,7 @@ Func_020018e0:
 	bl Owner_RefreshDerivedData
 	adds r7, #1
 	ldr r0, [r6, r5]
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	cmp r7, #4
 	bne .L_02009c4c
 	add sp, #40
@@ -6655,7 +6655,7 @@ Func_02001c7c:
 	ldr r2, .L_02009e48
 	lsls r3, r6, #2
 	ldr r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	adds r1, r0, #0
 	adds r1, #16
 	movs r2, #218
@@ -6850,7 +6850,7 @@ Func_02001c7c:
 	ldr r2, .L_02009ecc
 	lsls r3, r6, #2
 	ldr r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r4, #0
 	mov r12, r4
 	adds r7, r0, #0
@@ -6908,7 +6908,7 @@ Func_02001c7c:
 	ldr r3, .L_0200a05c
 	lsls r2, r6, #2
 	ldr r0, [r3, r2]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #0
 	str r0, [sp, #0]
 	mov lr, r1

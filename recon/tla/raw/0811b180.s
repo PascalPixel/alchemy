@@ -54,7 +54,7 @@ Func_0811b180:
 	cmp r3, r1
 	bls .L_0811b23a
 	ldrh r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #165
 	lsls r2, r2, #1
 	adds r5, r0, #0
@@ -116,7 +116,7 @@ Func_0811b180:
 	cmp r3, r1
 	bls .L_0811b274
 	ldrh r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #165
 	lsls r2, r2, #1
 	adds r3, r0, r2

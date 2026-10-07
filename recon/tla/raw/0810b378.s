@@ -34,7 +34,7 @@ Func_0810b378:
 	mov r1, r8
 	ldrsh r0, [r1, r5]
 	str r2, [sp, #0]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	ldr r2, [sp, #0]

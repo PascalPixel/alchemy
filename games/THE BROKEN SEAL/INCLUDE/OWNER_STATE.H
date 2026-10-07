@@ -3,6 +3,6 @@
 
 #include "BATTLE_RUNTIME.H"
 
-void *Owner_GetState();
+void *UnitGet();
 
 #endif

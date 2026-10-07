@@ -126,14 +126,14 @@ UiWork_PushValueSlot:
 	.thumb_func
 UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
-	.global Owner_RecalculateStats
+UnitGet:
+	overlay_veneer UnitGetFar
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Inventory_Find
 	.thumb_func
 Inventory_Find:

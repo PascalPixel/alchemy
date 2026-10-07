@@ -45,7 +45,7 @@ Func_08119148:
 .L_08119198:
 	mov r2, r10
 	ldrh r0, [r7, r2]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #170
 	adds r1, r0, #0
 	lsls r2, r2, #1
@@ -107,7 +107,7 @@ Func_08119148:
 	movs r5, #170
 	adds r0, r6, #0
 	lsls r5, r5, #1
-	bl Sys_Free
+	bl MemFree
 	adds r0, r5, #0
 	bl Runtime_BumpAllocateAlternatePool
 	adds r6, r0, #0
@@ -157,7 +157,7 @@ Func_08119148:
 	bl WaitFrames
 .L_08119288:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	add sp, #16
 	pop {r3, r5, r6, r7}
 	mov r8, r3

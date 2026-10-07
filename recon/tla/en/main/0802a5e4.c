@@ -27,7 +27,7 @@ void Tilemap_ConvertBuffer(void)
         u32 code_size = (u32)Tile_ConvertMapCodeSize;
 
         do {
-            routine = (ConvertFn)Runtime_BumpAllocate(code_size);
+            routine = (ConvertFn)MemAlloc(code_size);
             Dma_Set((void *)Func_0800a37c, routine, 0x84000000 | (code_size >> 2),
                     (volatile u32 *)0x040000d4);
         } while (0);

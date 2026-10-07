@@ -4,7 +4,7 @@
 
 struct ItemDefinition *Item_Get(s32);
 s32 BattleFx_HasTriggerFar(s32);
-void *BattleAction_Get(s32);
+void *BtlActGet(s32);
 s32 Item_CanOwnerEquip(s32, s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
@@ -21,7 +21,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     }
 
     {
-        void *abilityData = BattleAction_Get(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
+        void *abilityData = BtlActGet(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
 
         if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
             if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {

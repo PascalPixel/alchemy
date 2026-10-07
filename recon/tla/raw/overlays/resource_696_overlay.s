@@ -700,7 +700,7 @@ Func_0200057c:
 	movs r0, #208
 	lsls r0, r0, #3
 	sub sp, #72
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r1, #128
 	lsls r1, r1, #19
 	ldrh r2, [r1]
@@ -734,7 +734,7 @@ Func_0200057c:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_02008658
 	movs r2, #133
 	lsls r2, r2, #2
@@ -775,7 +775,7 @@ Func_0200057c:
 	subs r3, #12
 	movs r0, #144
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_02008664
 	bl Resource_GetTableEntry
@@ -850,7 +850,7 @@ Func_0200057c:
 	cmp r7, #18
 	bne .L_02008694
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #246
 	bl Engine_AudioPlayCue
 	movs r0, #14
@@ -4707,7 +4707,7 @@ Func_0200290c:
 	ldrsh r5, [r7, r1]
 	adds r7, #2
 	adds r0, r5, #0
-	bl Owner_GetState
+	bl UnitGet
 	adds r6, r0, #0
 	movs r5, #0
 	adds r6, #216
@@ -5692,7 +5692,7 @@ Func_02002fb0:
 	cmp r3, #0
 	blt .L_0200b01c
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}

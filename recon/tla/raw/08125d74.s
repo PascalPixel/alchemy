@@ -321,10 +321,10 @@ Func_08125d74:
 	movs r1, #2
 	adds r0, r5, #0
 	add r10, r1
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	adds r7, r0, #0
 	adds r0, r5, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #165
 	lsls r2, r2, #1
 	adds r3, r0, r2

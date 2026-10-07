@@ -14,7 +14,7 @@ Func_08109624:
 	adds r6, r1, #0
 	mov r10, r3
 	adds r5, r0, #0
-	bl Owner_GetState
+	bl UnitGet
 	adds r7, r0, #0
 	adds r0, r6, #0
 	bl Item_Get

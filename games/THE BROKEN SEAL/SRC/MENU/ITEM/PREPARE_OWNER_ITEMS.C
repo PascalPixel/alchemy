@@ -18,7 +18,7 @@ s32 ItemMenu_PrepOwner(s32 pane)
     struct InventoryMenuState *menu = gMenuWork;
     s32 result = 0;
     s32 index;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
 
     index = menu->pane_index[pane];
     RenderOutput_ClearListFar(menu->info_window);
@@ -29,7 +29,7 @@ s32 ItemMenu_PrepOwner(s32 pane)
     } else {
         UiMenu_SlideCursor(index * 24 - 10, 16);
     }
-    owner = Owner_GetStateFar(menu->owner_ids[index]);
+    owner = UnitGetFar(menu->owner_ids[index]);
     menu->item_count = ItemMenu_Collect(owner, menu->items, 0);
     result = ItemMenu_RunOwnerSelection(menu->owner_ids, menu->items);
     UiIcon_PrepareObject(menu->pane_icons[pane]);

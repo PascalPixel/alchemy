@@ -4,12 +4,12 @@
 
 void ReleaseBattleObjectRecords(s32 object_id)
 {
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
     s32 record_index;
     void *record;
 
-    slot = GetBattleObjectSlot(object_id);
+    slot = BtlObjGet(object_id);
     if (slot != NULL) {
         object = slot->object;
         if (object != NULL) {

@@ -26,10 +26,10 @@ VramBlock_LoadCached:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -114,10 +114,10 @@ Func_02000e04:
 	.thumb_func
 Func_02000e0c:
 	overlay_veneer Func_08038318
-	.global Owner_RecalculateStats
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Inventory_AddItem
 	.thumb_func
 Inventory_AddItem:
@@ -126,10 +126,10 @@ Inventory_AddItem:
 	.thumb_func
 Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
-	.global Owner_AdjustSecondValue
+	.global UnitEpAdd
 	.thumb_func
-Owner_AdjustSecondValue:
-	overlay_veneer Owner_AdjustSecondValueFar
+UnitEpAdd:
+	overlay_veneer UnitEpAddFar
 	.global Djinn_AddToOwner
 	.thumb_func
 Djinn_AddToOwner:

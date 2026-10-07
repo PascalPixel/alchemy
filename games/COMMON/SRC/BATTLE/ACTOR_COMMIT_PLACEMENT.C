@@ -14,7 +14,7 @@
 #define BattleActor_SpawnObjectsForList ((s32 (*)(void*,s32))BattleActor_SpawnObjectsForList)
 
 
-void BattleActor_CommitPlacement(void)
+void BtlObjPut(void)
 {
     u8 actor_slots[28];
 

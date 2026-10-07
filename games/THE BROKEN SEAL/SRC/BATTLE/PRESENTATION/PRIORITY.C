@@ -29,7 +29,7 @@ s32 BattlePres_BuildOpponentEntries(
 {
     u16 unit_ids[14];
     s32 entry_count = 0;
-    struct BattleSession *battle = gBattleWork;
+    struct BtlWork *battle = BtlWk;
     s32 unit_count;
     s32 i;
 
@@ -63,7 +63,7 @@ s32 BattlePres_BuildOpponentEntries(
 
     for (i = 0; i < unit_count; i++) {
         s32 unit_id = unit_ids[i];
-        struct BattleUnit *unit = Owner_GetStateFar(unit_id);
+        struct BtlUnit *unit = UnitGetFar(unit_id);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++) {
@@ -107,10 +107,10 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
         struct BattleActionRecord *entry = &entries[i];
 
         if (entry->command == 5) {
-            struct BattleAction *action;
+            struct BtlAct *action;
 
-            Owner_GetStateFar(entry->unit_id);
-            action = BattleAction_Get(Djinn_GetDefinitionHeaderFar(
+            UnitGetFar(entry->unit_id);
+            action = BtlActGet(Djinn_GetDefinitionHeaderFar(
                 (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
                 entry->priority += 10000;

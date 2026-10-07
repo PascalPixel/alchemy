@@ -30,7 +30,7 @@ Func_080fb638:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BattleAction_Get
+	bl BtlActGet
 	ldrh r3, [r5, #40]
 	mov r8, r0
 	cmp r3, #0

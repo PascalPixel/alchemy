@@ -68,7 +68,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *menu = gMenuWork;
-    struct BattleUnit *unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
+    struct BtlUnit *unit = (struct BtlUnit *)UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *info = Item_Get(item_id);
     s32 replaced;
@@ -113,10 +113,10 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 
 s32 Shop_SellOld(s32 unit_id, s32 slot)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 item_id;
 
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     if (slot == -1)
     {
         return 0;
@@ -232,7 +232,7 @@ s32 Shop_SelSell(s32 unit_id)
     s32 price_window;
     struct ShopRuntime *shop;
     s32 list_window;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 selection;
     s32 item_count;
     s32 redraw;
@@ -243,7 +243,7 @@ s32 Shop_SelSell(s32 unit_id)
     s32 x;
 
     shop = gMenuWork;
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     item_count = 1;
     list_window = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
     selection = 0;
@@ -335,13 +335,13 @@ done:
 
 void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 x;
     s32 y;
     s32 slot;
     struct RenderOutput *icon;
 
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     x = 8;
     y = 0;
     if (window != 0) {
@@ -392,10 +392,10 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     s32 selection;
     struct ItemDefinition *item;
     struct ShopRuntime *shop;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     shop = gMenuWork;
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     item = Item_Get(unit->inventory[slot]);
     result = 1;
     effect = Shop_SalePrice(unit->inventory[slot]);
@@ -419,7 +419,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
     struct ShopRuntime *shop = gMenuWork;
-    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
+    struct BtlUnit *unit = UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_Get(item_id);
     u8 rare = item->flags & 4;

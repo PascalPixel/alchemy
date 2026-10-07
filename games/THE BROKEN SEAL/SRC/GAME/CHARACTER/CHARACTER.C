@@ -27,7 +27,7 @@
 
 #define Game_ResetForNewGameFar ((s32 (*)(s32))Game_ResetForNewGameFar)
 
-#define gBattleOwnerStates (*(struct BattleUnit * *)&gBattleOwnerStates)
+#define gBattleOwnerStates (*(struct BtlUnit * *)&gBattleOwnerStates)
 
 
 
@@ -68,7 +68,7 @@ s32 GameFlag_SetBit(s32 flag);
 
 extern u8 gDebugMode;
 
-void *Owner_GetState(u32 owner);
+void *UnitGet(u32 owner);
 
 void Owner_RefreshAndResetZero(void)
 {
@@ -79,7 +79,7 @@ void Owner_RefreshAndResetZero(void)
 void *Trade_GetOfferState(s32 arg0)
 {
     if (arg0 != 0) {
-        return Owner_GetState(0x83);
+        return UnitGet(0x83);
     }
     return &gGameState.unknown_008[4];
 }
@@ -96,17 +96,17 @@ u32 Party_GetAverageLevel(void)
         return 0;
     }
     for (i = 0; i < count; i++) {
-        total += ((struct BattleUnit *)Owner_GetState(
+        total += ((struct BtlUnit *)UnitGet(
             gGameState.active_owners[i]))->level;
     }
     total = total / count;
     return total;
 }
 
-void *Owner_GetState(u32 owner)
+void *UnitGet(u32 owner)
 {
-    struct BattleUnit *states;
-    struct BattleUnit *unit;
+    struct BtlUnit *states;
+    struct BtlUnit *unit;
 
     /* FAKEMATCH: the dead entry copy of lr no ordinary C emits */
     asm volatile("mov r3, lr" ::: "r3");
@@ -154,10 +154,10 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 directio
     }
 }
 
-void Owner_RecalculateStats(s32 owner)
+void UnitCalc(s32 owner)
 {
     struct StatWork *work;
-    struct BattleUnit *st;
+    struct BtlUnit *st;
     s32 i, j, el;
     s32 value;
     s32 flag;
@@ -167,7 +167,7 @@ void Owner_RecalculateStats(s32 owner)
     s16 old;
 
     work = (struct StatWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
-    st = Owner_GetState(owner);
+    st = UnitGet(owner);
     work->hp = st->base_hp;
     work->pp = st->base_pp;
     work->attack = st->base_attack;
@@ -484,10 +484,10 @@ void GameFlag_RefreshLureCap(void)
     GameFlag_ClearBit(0x167);
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        struct BattleUnit *owner;
+        struct BtlUnit *owner;
         s32 i;
 
-        owner = Owner_GetState(gGameState.active_owners[n]);
+        owner = UnitGet(gGameState.active_owners[n]);
         for (i = 0; i < 15; i++) {
             if (owner->inventory[i] & INVENTORY_EQUIPPED) {
                 struct ItemEffect *effect;

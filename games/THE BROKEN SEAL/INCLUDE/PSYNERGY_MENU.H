@@ -8,7 +8,7 @@
 
 struct AnimationObject;
 
-struct BattleUnit;
+struct BtlUnit;
 
 struct PsynergyMenuState {
     u8 unknown_000[8];
@@ -143,7 +143,7 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_CreateEntryGrid(void);
 void PsynergyMenu_CloseWindows(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-u8 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode);
+u8 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 owner_index);
 s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner);

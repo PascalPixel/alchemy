@@ -78,7 +78,7 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
     return clamped;
 }
 
-static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
+static __inline__ void Unit_UpdateGauges(struct BtlUnit *unit)
 {
     unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
     if (unit->hp_gauge == 0 && unit->hp != 0)
@@ -90,21 +90,21 @@ static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
 
 void Party_SetReturnPoint(s32 reason)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 i;
     s32 scene;
     s32 entrance;
 
     gGameState.scene_change_reason = reason;
     if (reason == -1) {
-        unit = Owner_GetStateFar(gGameState.selected_actor);
+        unit = UnitGetFar(gGameState.selected_actor);
         if (unit->hp == 0) {
             unit->hp = 1;
             Unit_UpdateGauges(unit);
         }
         if (GameFlag_TestFar(32)) {
             for (i = 0; i < 2; i++) {
-                unit = Owner_GetStateFar(i);
+                unit = UnitGetFar(i);
                 /* FAKEMATCH: the one-pass block keeps both copies ahead of the ratio */
                 do {
                     unit->hp = unit->max_hp;

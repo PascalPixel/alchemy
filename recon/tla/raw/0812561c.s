@@ -16,7 +16,7 @@ Func_0812561c:
 	ldrb r0, [r0]
 	str r1, [sp, #4]
 	mov r8, r0
-	bl Owner_GetState
+	bl UnitGet
 	mov r2, r8
 	str r0, [sp, #8]
 	cmp r2, #7
@@ -259,7 +259,7 @@ Func_0812561c:
 	cmp r6, #3
 	ble .L_081257da
 	mov r0, r8
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	movs r6, #0
 	movs r7, #72
 .L_08125804:
@@ -292,12 +292,12 @@ Func_0812561c:
 	movs r0, #212
 	bl Audio_PlayCue
 	mov r0, r8
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r1, #3
 	ldr r0, [r0]
 	bl Object_SetMode
 	mov r0, r8
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r1, #32
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -314,14 +314,14 @@ Func_0812561c:
 	cmp r6, #3
 	ble .L_08125804
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	ldr r1, [sp, #4]
 	cmp r1, #0
 	bne .L_08125890
 	b .L_08125a64
 .L_08125890:
 	mov r0, r8
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, [r0]
 	cmp r3, #0
 	bne .L_0812589e
@@ -530,12 +530,12 @@ Func_0812561c:
 	bl BattleEv_DispatchQueued
 .L_08125a64:
 	mov r0, r8
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, [r0]
 	cmp r3, #0
 	beq .L_08125a76
 	mov r0, r8
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 .L_08125a76:
 	add sp, #32
 	pop {r3, r5, r6, r7}

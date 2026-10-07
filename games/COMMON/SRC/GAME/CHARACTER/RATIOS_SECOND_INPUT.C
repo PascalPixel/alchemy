@@ -1,7 +1,7 @@
 #include "BATTLE_UNIT.H"
 
 void Owner_UpdateSecondInputAndRatios(
-    struct BattleUnit *state, s32 input)
+    struct BtlUnit *state, s32 input)
 {
     s32 clamped;
     s32 value;

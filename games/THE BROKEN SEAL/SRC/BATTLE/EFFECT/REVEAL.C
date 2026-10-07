@@ -245,7 +245,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     }
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-    BattleBackground_LoadFar(1, gBattleWork->background, 24);
+    BattleBackground_LoadFar(1, BtlWk->background, 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

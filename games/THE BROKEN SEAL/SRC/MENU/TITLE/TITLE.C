@@ -200,7 +200,7 @@ void Title_LoadSprites(s32 unused)
     dma = DMA3;
     while (dma[2] & 0x80000000)
         ;
-    Sys_Free(buffer);
+    MemFree(buffer);
 }
 
 void Title_RevealSpriteRow(void)

@@ -1,15 +1,15 @@
 #include "OWNER_STATE.H"
 #include "FIXED_MATH.H"
 
-void Owner_RecalculateRatios(s32 owner_no)
+void UnitRatio(s32 owner_no)
 {
     s32 first;
     s32 second;
     s32 first_value;
     s32 second_value;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
 
-    owner = Owner_GetState(owner_no);
+    owner = UnitGet(owner_no);
     first = (owner->hp << 14) / owner->max_hp;
     first_value = 0x4000;
     if (first <= 0x4000) {
@@ -38,7 +38,7 @@ void Owner_RecalculateRatios(s32 owner_no)
     }
 }
 
-void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
+void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 {
     s32 value;
 

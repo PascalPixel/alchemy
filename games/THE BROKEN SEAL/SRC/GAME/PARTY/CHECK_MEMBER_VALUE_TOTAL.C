@@ -96,7 +96,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
             work->message = saved;
             return owner;
         } else {
-            Owner_GetStateFar(member);
+            UnitGetFar(member);
             {
                 /* FAKEMATCH: the ROM loads the slot argument before the member. Only the English build, without the thirty-item check below, needs the copy; the direct call matches the rest. */
                 s32 s = slot;

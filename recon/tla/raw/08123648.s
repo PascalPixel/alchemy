@@ -15,13 +15,13 @@ Func_08123648:
 	add r3, sp, #32
 	str r1, [r3]
 	mov r11, r1
-	bl BattleAction_Get
+	bl BtlActGet
 	str r0, [sp, #28]
 	movs r2, #0
 	ldrb r5, [r0]
 	str r2, [sp, #24]
 	ldrb r0, [r0, #3]
-	bl BattleFx_IsReviveFar
+	bl BtlEfxRevChkFar
 	cmp r0, #0
 	beq .L_0812367a
 	movs r3, #1
@@ -164,7 +164,7 @@ Func_08123648:
 	bne .L_08123786
 	adds r0, r5, #0
 	str r4, [sp, #0]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	ldr r4, [sp, #0]

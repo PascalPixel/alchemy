@@ -169,7 +169,7 @@ void Runtime_FillFreeHeapWords(u32 value)
     Iwram_FillWords((void *)address, 0x02040000U - address, value);
 }
 
-void *Runtime_BumpAllocate(s32 size)
+void *MemAlloc(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
     u32 other;

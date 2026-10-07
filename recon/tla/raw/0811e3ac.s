@@ -213,7 +213,7 @@ Func_0811e3ac:
 	strb r3, [r2]
 	mov r8, r2
 	ldrb r0, [r2]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, [r0]
 	cmp r3, #0
 	bne .L_0811e57c
@@ -221,11 +221,11 @@ Func_0811e3ac:
 	strb r3, [r6]
 	mov r3, r8
 	ldrb r0, [r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	bl Func_0811a720
 	mov r1, r8
 	ldrb r0, [r1]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, .L_0811e5d4
 	str r3, [r0, #24]
 	b .L_0811e57c
@@ -242,7 +242,7 @@ Func_0811e3ac:
 	str r3, [r7, #8]
 	ldr r3, [sp, #8]
 	ldrb r0, [r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r5, [r0]
 	movs r1, #3
 	adds r0, r5, #0
@@ -321,7 +321,7 @@ Func_0811e3ac:
 	bne .L_0811e618
 	mov r3, r8
 	ldrb r0, [r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	str r0, [sp, #0]
 	ldr r2, [sp, #4]
 	ldr r1, [r0]
@@ -358,7 +358,7 @@ Func_0811e3ac:
 .L_0811e67a:
 	mov r2, r8
 	ldrb r0, [r2]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r2, #44
 	adds r1, r0, #0
 	ldr r3, .L_0811e708
@@ -367,12 +367,12 @@ Func_0811e3ac:
 	.2byte 0xf800
 	mov r3, r8
 	ldrb r0, [r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r1, [sp, #4]
 	bl Func_0811a720
 	mov r1, r8
 	ldrb r0, [r1]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, .L_0811e70c
 	str r3, [r0, #24]
 	ldr r2, [sp, #4]
@@ -437,7 +437,7 @@ Func_0811e3ac:
 	beq .L_0811e72e
 	mov r2, r9
 	ldr r0, [r2, #44]
-	bl Sys_Free
+	bl MemFree
 .L_0811e72e:
 	mov r3, r9
 	str r5, [r3, #44]

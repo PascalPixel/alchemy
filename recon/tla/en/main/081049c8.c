@@ -24,7 +24,7 @@ void Djinn_CountTurns(u8 *counts)
         one = 1;
         owner_ids = (u16 *)(work + 0x208);
         do {
-            owner = Owner_GetStateFar(*owner_ids);
+            owner = UnitGetFar(*owner_ids);
             row_index = 0;
             count = 0;
             row = (u32 *)(owner + 0xf8);

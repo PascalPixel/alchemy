@@ -9,7 +9,7 @@ sub_08124af8:
 	mov r5, r8
 	push {r5, r6, r7}
 	mov r10, r0
-	bl Owner_GetState
+	bl UnitGet
 	movs r7, #159
 	mov r8, r0
 	lsls r7, r7, #1
@@ -62,7 +62,7 @@ sub_08124af8:
 	mov r2, r8
 	strh r5, [r2, #56]
 	mov r0, r10
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 .L_08124b7a:
 	bl BattleEv_DispatchQueued
 	movs r2, #159

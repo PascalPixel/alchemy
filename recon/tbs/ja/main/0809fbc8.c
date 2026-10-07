@@ -90,7 +90,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
-struct BattleAction *BattleAction_Get(s32 action);
+struct BtlAct *BtlActGet(s32 action);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ACTION_ID_MASK 0x3fff
@@ -98,7 +98,7 @@ void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 {
     struct PsynergyListWork *menu;
-    struct BattleAction *ability;
+    struct BtlAct *ability;
     s32 row;
     s32 base;
 
@@ -121,7 +121,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 (menu->psynergies[state->selected_index] & ACTION_ID_MASK)
                 + (s32)&MsgAbilityDescription,
             (s32)menu->info_window, 0, 0);
-        ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
+        ability = BtlActGet(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
 #if defined(TBS_EDITION_JA)
         UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
         row = 0;
@@ -156,7 +156,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     base = state->page * PAGE_ROWS;
     for (row = 0; row <= PAGE_ROWS - 1; row++) {
         if (row == state->row) {
-            ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
+            ability = BtlActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
                 UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + LIST_FIRST_ROW, 0);
                 Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1, 14);
@@ -165,7 +165,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
                 Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 19, 1, 14);
             }
         } else {
-            ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
+            ability = BtlActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
                 UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + LIST_FIRST_ROW, 4);
                 Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1, 15);
@@ -217,8 +217,8 @@ void UiText_DrawStringAtOffsetFar(u8 *, void *, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
 void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 void PsynergyMenu_DrawRange(s32, s32, s32, s32, s32);
-u8 *Owner_GetStateFar(s32 owner);
-struct BattleAction *Ability_GetData(s32 action);
+u8 *UnitGetFar(s32 owner);
+struct BtlAct *Ability_GetData(s32 action);
 
 s32 PsynergyMenu_DrawListPage(
     s32 window, s32 unused, const struct MenuResult *res)
@@ -232,7 +232,7 @@ s32 PsynergyMenu_DrawListPage(
 
     (void)unused;
 
-    owner = Owner_GetStateFar(menu->owner_ids[0]);
+    owner = UnitGetFar(menu->owner_ids[0]);
 
     UiWindow_Commit(window);
 
@@ -251,7 +251,7 @@ s32 PsynergyMenu_DrawListPage(
     if (rows > row) {
         ofs = (s32)(first * 2) + PSY_LIST_OFS;
         do {
-            struct BattleAction *act;
+            struct BtlAct *act;
             s32 msg;
             s32 y;
             s32 range;

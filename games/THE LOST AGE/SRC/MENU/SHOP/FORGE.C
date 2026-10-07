@@ -45,7 +45,7 @@ s32 Forge_RollResult(s32 item)
     return result;
 }
 
-u8 *Owner_GetState(s32 owner);
+u8 *UnitGet(s32 owner);
 s32 Forge_GetMaterialChance(s32 item);
 
 s32 Forge_OwnerHasMaterial(s32 owner)
@@ -53,7 +53,7 @@ s32 Forge_OwnerHasMaterial(s32 owner)
     u16 *item;
     s32 i;
 
-    item = (u16 *)Owner_GetState(owner);
+    item = (u16 *)UnitGet(owner);
     i = 0;
     item += 108;
     do {

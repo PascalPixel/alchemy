@@ -203,7 +203,7 @@ Game_ResetForNewGame:
 	b .L_080c9b7a
 .L_080c9ad8:
 	movs r0, #64
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #128
 	movs r2, #132
 	adds r5, r0, #0
@@ -220,7 +220,7 @@ Game_ResetForNewGame:
 	b .L_080c9b1e
 .L_080c9afc:
 	movs r0, #64
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #128
 	movs r2, #132
 	adds r5, r0, #0
@@ -247,11 +247,11 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	b .L_080c9b7a
 .L_080c9b3c:
 	movs r0, #64
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #128
 	movs r2, #132
 	adds r5, r0, #0
@@ -277,7 +277,7 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 .L_080c9b7a:
 	adds r0, r6, #0
 	bl Func_080c977c

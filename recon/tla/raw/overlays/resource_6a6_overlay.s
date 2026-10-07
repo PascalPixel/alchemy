@@ -373,7 +373,7 @@ Func_02000198:
 	adds r7, r0, #0
 	movs r0, #128
 	lsls r0, r0, #5
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_02008424
 	bl Resource_GetTableEntry
@@ -387,7 +387,7 @@ Func_02000198:
 	bl VramBlock_LoadCached
 	mov r10, r0
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r5, r7, #0
 	adds r5, #12
 	movs r6, #95
@@ -521,7 +521,7 @@ Func_02000198:
 	mov r0, r8
 	bl Resource_ResetEntry
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #244
 	movs r1, #1
 	movs r2, #195

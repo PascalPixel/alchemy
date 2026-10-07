@@ -21,7 +21,7 @@ s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
+struct BtlObj *BtlObjGet(s32 object_id);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {
@@ -33,12 +33,12 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
 
     i = 0;
     if (i < count) {
-        struct BattleUnit *unit;
+        struct BtlUnit *unit;
         u8 *cursor;
         s32 remaining;
 
         do {
-            unit = Owner_GetStateFar(owners[i]);
+            unit = UnitGetFar(owners[i]);
             cursor = (u8 *)&unit->element_modifier[3];
             remaining = 3;
 
@@ -119,7 +119,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 
             entry = list->entries;
             do {
-                if (entry->turns == permanent_timer && GetBattleObjectSlot(entry->unit_id) == 0) {
+                if (entry->turns == permanent_timer && BtlObjGet(entry->unit_id) == 0) {
                     u8 id = entry->unit_id;
                     u8 element = entry->element;
                     u8 index = entry->index;

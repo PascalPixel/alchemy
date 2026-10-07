@@ -17,7 +17,7 @@
 #include "BATTLE_CALC.H"
 #include "IWRAM_CALL.H"
 
-s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
+s32 BtlGrpRnd(s32 record_id)
 {
     s32 choices[5];
     struct BattleFormationRecord *record;
@@ -54,7 +54,7 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
 s32 BattleFormation_BuildEnemyList(s32 record_id)
 {
     u16 *list;
-    struct BattleSession *work;
+    struct BtlWork *work;
     struct BattleFormationRecord *record;
     s32 count;
     s32 margin;
@@ -74,7 +74,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     u32 i;
     s32 j;
 
-    work = gBattleWork;
+    work = BtlWk;
     margin = 0;
     work->summon_count = 0;
     list = list_buffer;
@@ -182,7 +182,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     work->first_defeated = 6;
     work->defeat_state = 0;
     for (i = 128; i <= 133; i++)
-        Iwram_ClearWords(Owner_GetStateFar(i), BATTLE_UNIT_SIZE);
+        Iwram_ClearWords(UnitGetFar(i), BATTLE_UNIT_SIZE);
 
     i = 0;
     if (list[0] == 0)
@@ -193,8 +193,8 @@ assign_enemy:
 
         if (charge & 0x8000)
             Summon_ResetCharge(list[i]);
-        BattleUnit_AssignFar(i + 128, list[i], charge & 0x7fff);
-        Owner_GetStateFar(i + 128);
+        BtlUnitSetFar(i + 128, list[i], charge & 0x7fff);
+        UnitGetFar(i + 128);
         if (margin != 0)
             Owner_ApplyLevelGains(i + 128, margin);
     }

@@ -168,7 +168,7 @@ s32 Inn_RoomPrice(s32 mode)
     s32 index;
 
     for (index = 0; index < shop->party_member_count; index++) {
-        if (Owner_GetStateFar(shop->party_member_ids[index])->hp != 0)
+        if (UnitGetFar(shop->party_member_ids[index])->hp != 0)
             active++;
     }
     return factor * active;
@@ -231,18 +231,18 @@ void Inn_PlaySleep(s32 room_price)
     s16 objects[8];
     s32 count;
     s32 index;
-    struct BattleUnit *object;
+    struct BtlUnit *object;
     struct EventRuntime *state;
 
     count = Party_ListActiveOwnersFar(objects);
     Party_AdjustCoinsFar(-room_price);
 
     for (index = 0; index < count; index++) {
-        object = Owner_GetStateFar(objects[index]);
+        object = UnitGetFar(objects[index]);
         if (object->hp != 0) {
             object->hp = object->max_hp;
             object->pp = object->max_pp;
-            Owner_RecalculateRatiosFar(objects[index]);
+            UnitRatioFar(objects[index]);
         }
     }
 

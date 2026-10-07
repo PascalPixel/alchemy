@@ -9,8 +9,8 @@ void Object_SetMode(struct MotionObject *, s32);
 
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor)
 {
-    struct BattleObjectSlot *first_context = GetBattleObjectSlotFar(first);
-    struct BattleObjectSlot *second_context = GetBattleObjectSlotFar(second);
+    struct BtlObj *first_context = GetBattleObjectSlotFar(first);
+    struct BtlObj *second_context = GetBattleObjectSlotFar(second);
     struct MotionObject *object = first_context->object;
     struct MotionObject *target = second_context->object;
     s32 scale = 80;

@@ -5,7 +5,7 @@
 
 void BattleFx_InitializeRisingObject(s32 slot)
 {
-    struct BattleObjectSlot *context = GetBattleObjectSlotFar(slot);
+    struct BtlObj *context = GetBattleObjectSlotFar(slot);
     struct ObjectRuntime *object = context->object;
 
     object->acceleration = 0x20000;

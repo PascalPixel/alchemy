@@ -253,30 +253,30 @@ Func_08041350:
 	strh r0, [r3]
 .L_08041542:
 	movs r0, #4
-	bl Owner_GetState
+	bl UnitGet
 	movs r5, #250
 	lsls r5, r5, #1
 	strh r5, [r0, #58]
 	movs r0, #5
-	bl Owner_GetState
+	bl UnitGet
 	strh r5, [r0, #58]
 	movs r0, #6
-	bl Owner_GetState
+	bl UnitGet
 	strh r5, [r0, #58]
 	movs r0, #7
-	bl Owner_GetState
+	bl UnitGet
 	strh r5, [r0, #58]
 	movs r0, #4
-	bl Owner_GetState
+	bl UnitGet
 	strh r5, [r0, #54]
 	movs r0, #5
-	bl Owner_GetState
+	bl UnitGet
 	strh r5, [r0, #54]
 	movs r0, #6
-	bl Owner_GetState
+	bl UnitGet
 	strh r5, [r0, #54]
 	movs r0, #7
-	bl Owner_GetState
+	bl UnitGet
 	strh r5, [r0, #54]
 .L_08041586:
 	adds r0, r6, #0

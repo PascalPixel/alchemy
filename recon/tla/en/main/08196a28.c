@@ -9,7 +9,7 @@ struct Texture {
 };
 
 u32 Runtime_GetRemainingIwram(void);
-void *Runtime_BumpAllocate(s32 size);
+void *MemAlloc(s32 size);
 
 s32 Func_08196a28(struct Texture *source, struct Texture *copy)
 {
@@ -20,7 +20,7 @@ s32 Func_08196a28(struct Texture *source, struct Texture *copy)
     if (Runtime_GetRemainingIwram() < size + 8)
         return 0;
     *(u16 *)copy = *(u16 *)source;
-    copy->pixels = (u32)Runtime_BumpAllocate(size + 8);
+    copy->pixels = (u32)MemAlloc(size + 8);
     pixels = source->pixels;
     misalign = pixels & 3;
     Iwram_CopyWords((void *)copy->pixels, (void *)(pixels - misalign), (size + misalign + 3) & ~3);

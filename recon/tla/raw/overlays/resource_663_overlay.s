@@ -1744,7 +1744,7 @@ Func_02001010:
 	movs r0, #208
 	lsls r0, r0, #3
 	sub sp, #72
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	bl Func_02003bc8
 	movs r0, #0
@@ -1781,7 +1781,7 @@ Func_02001010:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_020090f8
 	movs r2, #133
 	lsls r2, r2, #2
@@ -1825,7 +1825,7 @@ Func_02001010:
 	subs r3, #12
 	movs r0, #144
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_02009104
 	bl Resource_GetTableEntry
@@ -1887,7 +1887,7 @@ Func_02001010:
 	cmp r7, #18
 	bne .L_02009128
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #246
 	bl Func_02003cd8
 	movs r0, #8
@@ -3631,7 +3631,7 @@ Func_02001f7c:
 	movs r0, #128
 	lsls r0, r0, #4
 	sub sp, #16
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	bl Func_02003bc8
 	movs r0, #0
@@ -3664,7 +3664,7 @@ Func_02001f7c:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_0200a004
 	mov r0, sp
 	adds r0, #14
@@ -3677,7 +3677,7 @@ Func_02001f7c:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #128
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_0200a018
 	bl Resource_GetTableEntry
@@ -3729,7 +3729,7 @@ Func_02001f7c:
 	cmp r7, #16
 	bne .L_0200a034
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #246
 	bl Func_02003cd8
 	movs r0, #14
@@ -4503,7 +4503,7 @@ Func_020026b8:
 	movs r0, #208
 	lsls r0, r0, #3
 	sub sp, #8
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #32]
@@ -4547,7 +4547,7 @@ Func_020026b8:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r2, #128
 	movs r3, #128
 	lsls r2, r2, #3
@@ -4568,7 +4568,7 @@ Func_020026b8:
 	subs r3, #12
 	movs r0, #144
 	lsls r0, r0, #2
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_0200a784
 	bl Resource_GetTableEntry
@@ -4625,7 +4625,7 @@ Func_020026b8:
 	cmp r7, #18
 	bne .L_0200a7a4
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #246
 	bl Func_02003cd8
 	movs r0, #12

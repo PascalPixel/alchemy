@@ -79,7 +79,7 @@ Func_08042e28:
 	movs r0, #10
 	bl WaitFrames
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
 	add sp, #4
 	pop {r5, r6, r7, pc}

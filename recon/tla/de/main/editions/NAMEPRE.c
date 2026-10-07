@@ -4,7 +4,7 @@
 #include "SERIAL_RUNTIME.H"
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void Sys_Free(void *);
+void MemFree(void *);
 void WaitFrames(s32);
 void *Resource_FarCall005(s32);
 
@@ -24,7 +24,7 @@ s32 UpdateNameEntries(void)
     named_count = 0;
     index = 0;
     while (index <= 2) {
-        name_entry = Owner_GetState(index + 128);
+        name_entry = UnitGet(index + 128);
         if (SerialRuntime_BeginTransferB(name_entry) == -1) {
             break;
         }
@@ -53,12 +53,12 @@ s32 UpdateNameEntries(void)
         name_entry[14] = 0;
         index += 1;
     }
-    Sys_Free(buffer);
+    MemFree(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(340);
     if (SerialRuntime_BeginTransferB(Resource_FarCall005(1)) != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }
-    Sys_Free(buffer);
+    MemFree(buffer);
     return named_count;
 }

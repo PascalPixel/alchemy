@@ -6,10 +6,10 @@
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void *Runtime_BumpAllocate(s32 size);
+void *MemAlloc(s32 size);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *buffer);
-void Sys_Free(void *buffer);
+void MemFree(void *buffer);
 void Runtime_FillFreeHeapWords(u32 value);
 void Runtime_InitializeHeap(void);
 

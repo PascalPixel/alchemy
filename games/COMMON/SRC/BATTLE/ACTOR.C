@@ -19,7 +19,7 @@
 #include "ANIMSPR.H"
 #include "SYSTEM.H"
 
-struct BattleUnit *Owner_GetState(s32);
+struct BtlUnit *UnitGet(s32);
 void Animation_ApplyChildArgumentFar(void *, s32);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
@@ -29,7 +29,7 @@ s32 BattleActor_RemoveFromLists(s32 actor)
 void BattleActor_RemoveFromLists(s32 actor)
 #endif
 {
-    struct BattleSession *work;
+    struct BtlWork *work;
     s32 i;
 #if GAME_TLA
     /* FAKEMATCH: retain r2 and integer-load/pointer-store operands; natural loops split the removal exit. */
@@ -40,8 +40,8 @@ void BattleActor_RemoveFromLists(s32 actor)
 
 #if GAME_TLA
     work = Ram_HeapSlots->battle_work;
-    Owner_GetState(actor)->side = BATTLE_UNIT_ABSENT;
-    i = (u32)&((struct BattleSession *)0)->party_units;
+    UnitGet(actor)->side = BATTLE_UNIT_ABSENT;
+    i = (u32)&((struct BtlWork *)0)->party_units;
     slot = i;
     unit = *(s16 *)(slot + (u32)work);
     if (unit == actor)
@@ -56,8 +56,8 @@ void BattleActor_RemoveFromLists(s32 actor)
         } while (unit != BATTLE_UNIT_LIST_END);
     }
 #else
-    work = gBattleWork;
-    Owner_GetStateFar(actor)->side = BATTLE_UNIT_ABSENT;
+    work = BtlWk;
+    UnitGetFar(actor)->side = BATTLE_UNIT_ABSENT;
     for (i = 0; ; i++) {
         if (work->party_units[i] == actor) {
             work->party_units[i] = BATTLE_UNIT_REMOVED;
@@ -112,7 +112,7 @@ removed:
 void BattleMotion_InitializeActorRecords(s32 id)
 {
     void *items[4];
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     struct AnimationObject *item;
 #if GAME_TLA
     /* FAKEMATCH: ordering the child load swaps r2/r3 unless it stays in r2. */
@@ -123,12 +123,12 @@ void BattleMotion_InitializeActorRecords(s32 id)
     s32 index;
 
 #if GAME_TLA
-    state = Owner_GetState(id);
+    state = UnitGet(id);
 #else
-    state = Owner_GetStateFar(id);
+    state = UnitGetFar(id);
 #endif
     index = 0;
-    while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
+    while ((item = GetMotionRecord(BtlObjGet(id)->object, index)) != 0) {
         if (state->side != BATTLE_UNIT_ENEMY)
 #if GAME_TLA
             Animation_ApplyChildArgumentFar(item, 4);
@@ -146,7 +146,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 
     if (state->side == BATTLE_UNIT_ENEMY) {
         index = 0;
-        while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
+        while ((item = GetMotionRecord(BtlObjGet(id)->object, index)) != 0) {
             child = item->entries[0];
 #if GAME_TLA
             /* FAKEMATCH: load the child before the index shift; ordinary loops reverse them. */

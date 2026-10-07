@@ -1201,9 +1201,9 @@ Func_0818bc98:
 	bl Func_08196a7c
 .L_0818c5c8:
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #16]
-	bl Sys_Free
+	bl MemFree
 .L_0818c5d4:
 	ldr r3, [sp, #64]
 	cmp r3, #0

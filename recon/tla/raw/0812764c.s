@@ -29,7 +29,7 @@ Func_0812764c:
 	adds r5, r7, #0
 .L_08127680:
 	ldrh r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	ldrb r3, [r0, #15]
 	subs r5, #1
 	adds r6, #2
@@ -255,7 +255,7 @@ Func_0812764c:
 	movs r5, #1
 .L_08127850:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	adds r0, r5, #0
 	add sp, #16
 	pop {r3, r5, r6, r7}

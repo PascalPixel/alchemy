@@ -54,6 +54,6 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
 
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
 {
-    UiIcon_BuildItemIconTiles(BattleAction_Get(action)->unknown_04[0],
+    UiIcon_BuildItemIconTiles(BtlActGet(action)->unknown_04[0],
         with_base, slot, tile, reuse);
 }

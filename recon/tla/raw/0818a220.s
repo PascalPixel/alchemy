@@ -1252,10 +1252,10 @@ Func_0818a220:
 	bne .L_0818ab0e
 .L_0818abda:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r6, .L_0818acfc
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	movs r2, #0
 	mov r8, r2
 .L_0818abec:

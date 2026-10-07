@@ -1892,9 +1892,9 @@ Func_08175f74:
 	bl Func_08196a7c
 .L_08176e0a:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 .L_08176e16:
 	ldr r3, [sp, #80]
 	subs r3, #244
@@ -2372,9 +2372,9 @@ Func_08175f74:
 	cmp r4, #3
 	bne .L_08177130
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 .L_081771ca:
 	ldr r5, [sp, #80]
 	movs r6, #165
@@ -3298,9 +3298,9 @@ Func_08175f74:
 	bl Func_08196a7c
 .L_081778d6:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	movs r0, #240
 	ldr r7, [sp, #92]
 	lsls r0, r0, #7
@@ -4975,9 +4975,9 @@ Func_08175f74:
 	bl Func_08196a7c
 .L_081785dc:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r5, [sp, #100]
 	movs r4, #1
 	ldr r3, [r5, #20]

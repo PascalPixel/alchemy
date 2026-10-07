@@ -36,7 +36,7 @@ void Audio_PlayCue(s32 cue);
 static __inline__ s32 Scene_RunTable(s32 entrance)
 {
     void *palette = (void *)&BG_PLTT_COLOR(14, 0);
-    void *saved = Runtime_BumpAllocate(64);
+    void *saved = MemAlloc(64);
     s32 result;
 
     Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
@@ -49,7 +49,7 @@ static __inline__ s32 Scene_RunTable(s32 entrance)
 static __inline__ s32 Scene_LoadTable(s32 entrance)
 {
     void *palette = (void *)&BG_PLTT_COLOR(14, 0);
-    void *saved = Runtime_BumpAllocate(64);
+    void *saved = MemAlloc(64);
     s32 result;
 
     Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);

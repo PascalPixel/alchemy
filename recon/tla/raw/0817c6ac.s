@@ -657,7 +657,7 @@ Func_0817c6ac:
 	bl Func_08196a7c
 .L_0817cbce:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_0817cbd4:
 	bl Func_081434f8
 	ldr r2, [sp, #80]

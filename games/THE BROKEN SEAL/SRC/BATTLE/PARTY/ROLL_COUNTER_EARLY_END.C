@@ -8,11 +8,11 @@
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
 
     if (turns <= 5) {
         s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
-        if (threshold >= (BattleRandom16Far() & 0xffff))
+        if (threshold >= (BtlRndFar() & 0xffff))
             return 1;
     }
     return 0;
@@ -20,7 +20,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 
 s32 BattleUnit_TickAttackModifier(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
 
     if (state->attack_modifier_turns != 0) {
         s32 zero;
@@ -43,7 +43,7 @@ s32 BattleUnit_TickAttackModifier(s32 unit_id)
 
 s32 BattleUnit_TickDefenseModifier(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
 
     if (state->defense_modifier_turns != 0) {
         state->defense_modifier_turns--;
@@ -63,7 +63,7 @@ s32 BattleUnit_TickDefenseModifier(s32 unit_id)
 
 s32 BattleUnit_TickResistanceModifier(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
 
     if (state->res_modifier_turns != 0) {
         state->res_modifier_turns--;
@@ -83,7 +83,7 @@ s32 BattleUnit_TickResistanceModifier(s32 unit_id)
 
 s32 BattleUnit_TickDelusion(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
     if (state->delusion != 0) {
         state->delusion--;
         if (state->delusion == 0)
@@ -98,7 +98,7 @@ s32 BattleUnit_TickDelusion(s32 unit_id)
 
 s32 BattleUnit_TickConfusion(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
     if ((u8)state->confusion != 0) {
         (*(u8 *)&state->confusion)--;
         if (state->confusion == 0)
@@ -113,7 +113,7 @@ s32 BattleUnit_TickConfusion(s32 unit_id)
 
 s32 BattleUnit_TickCharm(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
     if (state->charm != 0) {
         state->charm--;
         if (state->charm == 0)
@@ -128,7 +128,7 @@ s32 BattleUnit_TickCharm(s32 unit_id)
 
 s32 BattleUnit_TickStun(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
     if (state->stun != 0) {
         state->stun--;
         if (state->stun == 0)
@@ -143,7 +143,7 @@ s32 BattleUnit_TickStun(s32 unit_id)
 
 s32 BattleUnit_TickSleep(s32 unit_id)
 {
-    struct BattleUnit *state = Owner_GetStateFar(unit_id);
+    struct BtlUnit *state = UnitGetFar(unit_id);
     if (state->sleep != 0) {
         state->sleep--;
         if (state->sleep == 0)
@@ -163,9 +163,9 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
     u8 remaining;
     s32 turns;
     s32 packed;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
-    unit = Owner_GetStateFar(id);
+    unit = UnitGetFar(id);
     packed = unit->psy_seal;
     turns = packed & 0xFF;
     if (turns != 0) {
@@ -198,7 +198,7 @@ block_9:
 
 s32 BattleUnit_TickRefrain(s32 unit_id)
 {
-    u8 *value = &Owner_GetStateFar(unit_id)->refrain;
+    u8 *value = &UnitGetFar(unit_id)->refrain;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {

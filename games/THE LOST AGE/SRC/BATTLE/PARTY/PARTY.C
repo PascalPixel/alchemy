@@ -3,7 +3,7 @@
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 {
-    struct BattleSession *order;
+    struct BtlWork *order;
     s32 count;
     s32 i;
 

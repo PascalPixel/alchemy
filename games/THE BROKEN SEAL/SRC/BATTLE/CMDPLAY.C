@@ -57,9 +57,9 @@ s32 BattleCommand_SelectAutomatic(
     struct ItemDefinition *item;
     s32 item_available;
     s8 mode;
-    struct BattleAction *item_action;
-    struct BattleAction *action;
-    struct BattleUnit *actor;
+    struct BtlAct *item_action;
+    struct BtlAct *action;
+    struct BtlUnit *actor;
     s32 action_id;
     s32 target_flags;
     u8 effect;
@@ -71,7 +71,7 @@ s32 BattleCommand_SelectAutomatic(
         s32 result;
         s32 index;
 
-        value = BattleRandom16Far() & 0xff;
+        value = BtlRndFar() & 0xff;
         total = weights[0];
         result = 0;
         index = 0;
@@ -89,7 +89,7 @@ s32 BattleCommand_SelectAutomatic(
         return result;
     }
 
-    actor = Owner_GetStateFar(request->unit_id);
+    actor = UnitGetFar(request->unit_id);
     keep_going = allow_item = 1;
     attempt = 0;
     selected = -1U;
@@ -117,7 +117,7 @@ select_again:
         break;
     case 3:
         if (auto_state->initialized == 0) {
-            auto_state->selection = BattleRandom16Far();
+            auto_state->selection = BtlRndFar();
             auto_state->initialized = 1;
         }
 read_saved_selection:
@@ -290,7 +290,7 @@ void BattleEventRuntime_BeginPhase(s32 cue)
 {
     struct BattleEventState *events;
 
-    events = &gBattleWork->events;
+    events = &BtlWk->events;
     if (events->phase == BATTLE_PLAYBACK_IDLE) {
         events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
         if (cue != 0) {
@@ -303,12 +303,12 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 {
     struct BattleEventState *events;
 
-    events = &gBattleWork->events;
+    events = &BtlWk->events;
     events->queue.count = 0;
     events->event_index = 0;
     events->timer = frames;
     events->phase = BATTLE_PLAYBACK_DISPATCH;
-    gBattleWork->plan.target_count = 0;
+    BtlWk->plan.target_count = 0;
     return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
 }
 
@@ -322,7 +322,7 @@ void BattleEvent_Playback(void)
 {
     u16 selection[8];
     struct AnimationObject *records[4];
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
     struct BattleEventState *state = &work->events;
 
     void BattleEvent_ClearRecordTiles(struct AnimationObject *record, s32 value)
@@ -401,21 +401,21 @@ void BattleEvent_Playback(void)
                         if (state->pending_cue > 0)
                             AudioCommand_PlayFar(state->pending_cue);
                         state->actor_id = state->queue.operands[i];
-                        Object_SetMode(GetBattleObjectSlot(state->actor_id)->object, 5);
+                        Object_SetMode(BtlObjGet(state->actor_id)->object, 5);
                         state->phase = 10;
                         state->timer = 0;
                         break;
                     case BEV_OBJ_RES:
                         {
-                            struct BattleUnit *unit;
+                            struct BtlUnit *unit;
                             struct AnimationObject *record;
                             s32 n;
 
                             state->actor_id = state->queue.operands[i];
                             BattleEnemy_RecordDefeat(state->actor_id, state->flags);
                             BattleActor_ResetRuntimeFields(state->actor_id);
-                            unit = Owner_GetStateFar(state->actor_id);
-                            for (n = 0; (record = GetMotionRecord(GetBattleObjectSlot(state->actor_id)->object, n)) != 0; n++) {
+                            unit = UnitGetFar(state->actor_id);
+                            for (n = 0; (record = GetMotionRecord(BtlObjGet(state->actor_id)->object, n)) != 0; n++) {
                                 if (unit->side != 1)
                                     Object_InitializeMode(record, 4);
                                 else
@@ -428,14 +428,14 @@ void BattleEvent_Playback(void)
                         }
                         break;
                     case BEV_REDRAW:
-                        UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
+                        PtyStDrawFar(BtlWk->party_status_mode);
                         break;
                     case BEV_OBJ_END:
                         {
-                            struct BattleObjectSlot *slot;
+                            struct BtlObj *slot;
 
-                            BattleUnit_BuildStatusFlags(state->queue.operands[i], GetBattleObjectSlot(state->queue.operands[i]));
-                            slot = GetBattleObjectSlot(state->queue.operands[i]);
+                            BattleUnit_BuildStatusFlags(state->queue.operands[i], BtlObjGet(state->queue.operands[i]));
+                            slot = BtlObjGet(state->queue.operands[i]);
                             BattleMotion_SetRecordChildValues(slot->object, BattleMotion_GetSlotPalette(state->queue.operands[i]));
                             BattlePres_SetActorModeAndAction(state->queue.operands[i]);
                         }
@@ -489,15 +489,15 @@ void BattleEvent_Playback(void)
         } else if (state->phase == 10) {
             if (state->timer & 1) {
                 if (state->timer & 2) {
-                    struct BattleObjectSlot *slot;
+                    struct BtlObj *slot;
 
                     selection[0] = 0xff;
-                    slot = GetBattleObjectSlot(state->actor_id);
+                    slot = BtlObjGet(state->actor_id);
                     BattleMotion_SetRecordChildValues(slot->object, BattleMotion_GetSlotPalette(state->actor_id));
                 } else {
                     selection[0] = state->actor_id;
                     selection[1] = 0xff;
-                    BattleMotion_SetRecordChildValues(GetBattleObjectSlot(state->actor_id)->object, 7);
+                    BattleMotion_SetRecordChildValues(BtlObjGet(state->actor_id)->object, 7);
                 }
                 BattleLayout_HighlightPartyPanelsFar(selection);
             }
@@ -511,7 +511,7 @@ void BattleEvent_Playback(void)
                 s32 frame = 6;
 
                 if (state->timer == 0 && state->flags != 0) {
-                    s32 kind = Summon_GetLayoutKind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = Summon_GetLayoutKind(UnitGetFar(state->actor_id)->class_id);
 
                     if (kind >= 0) {
                         kind--;
@@ -524,7 +524,7 @@ void BattleEvent_Playback(void)
                 if (state->timer > 0x41d)
                     state->timer = 0;
                 if (state->timer == 0) {
-                    s32 kind = Summon_GetLayoutKind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = Summon_GetLayoutKind(UnitGetFar(state->actor_id)->class_id);
 
                     if (kind >= 0)
                         AudioCommand_PlayFar(kind + 146);
@@ -537,7 +537,7 @@ void BattleEvent_Playback(void)
                     struct AnimationObject **slot;
                     s32 none;
 
-                    for (n = 0, slot = records, none = 0xff; (record = GetMotionRecord(GetBattleObjectSlot(state->actor_id)->object, n)) != 0; n++) {
+                    for (n = 0, slot = records, none = 0xff; (record = GetMotionRecord(BtlObjGet(state->actor_id)->object, n)) != 0; n++) {
                         struct AnimationEntry *child;
                         u8 old;
 
@@ -557,13 +557,13 @@ void BattleEvent_Playback(void)
                 return;
             }
             if (state->timer > 4) {
-                struct BattleObjectSlot *slot;
+                struct BtlObj *slot;
                 struct AnimationObject *record;
                 s32 count;
                 s32 frame;
                 s32 base;
 
-                slot = GetBattleObjectSlot(state->actor_id);
+                slot = BtlObjGet(state->actor_id);
                 slot->fading = 1;
                 for (count = 0; (record = GetMotionRecord(slot->object, count)) != 0; count++)
                     records[count] = record;

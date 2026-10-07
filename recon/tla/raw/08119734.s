@@ -23,7 +23,7 @@ Func_08119734:
 	adds r1, r5, #0
 	movs r2, #255
 	movs r0, #128
-	bl BattleUnit_AssignFar
+	bl BtlUnitSetFar
 	adds r2, r6, #0
 	adds r2, #102
 	movs r3, #128
@@ -33,7 +33,7 @@ Func_08119734:
 	strh r3, [r2]
 	bl Summon_Refresh
 	movs r0, #128
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r2, [r0, #12]
 	cmp r2, #0
 	bge .L_0811978a
@@ -53,6 +53,6 @@ Func_08119734:
 .L_0811979a:
 	asrs r3, r3, #16
 	movs r1, #128
-	bl BattlePresentation_SpawnActorObject
-	bl BattleActor_CommitPlacement
+	bl BtlObjMake
+	bl BtlObjPut
 	pop {r5, r6, pc}

@@ -37,7 +37,7 @@ s32 BattleEscape_CheckSuccess(void)
             BATTLE_SIDE_PARTY,
             living_units);
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
-            level_total += ((u8 *)Owner_GetState(
+            level_total += ((u8 *)UnitGet(
                 (s32)living_units[unit_index]))[0x0f];
         }
         chance += __divsi3(level_total * 0x1F4, living_count);
@@ -46,7 +46,7 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
-            level_total += ((u8 *)Owner_GetState(
+            level_total += ((u8 *)UnitGet(
                 (s32)living_units[unit_index]))[0x0f];
         }
         chance -= __divsi3(level_total * 0x1F4, living_count);

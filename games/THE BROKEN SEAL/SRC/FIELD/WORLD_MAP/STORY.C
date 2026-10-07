@@ -622,7 +622,7 @@ void Scene_RunScene371SequenceA(s32 palette)
     Engine_EventWait(45);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Sys_Free(buffer);
+    MemFree(buffer);
     Engine_GameFlagSet(0x101);
 }
 

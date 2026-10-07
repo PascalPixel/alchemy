@@ -101,7 +101,7 @@ s32 __divsi3(s32 numerator, s32 denominator);
 
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-void Owner_RecalculateStats(s32 owner)
+void UnitCalc(s32 owner)
 {
     struct StatWork *work;
     struct OwnerStats *st;
@@ -114,7 +114,7 @@ void Owner_RecalculateStats(s32 owner)
     s16 old;
 
     work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
-    st = Owner_GetState(owner);
+    st = UnitGet(owner);
     work->hp = st->base_hp;
     work->pp = st->base_pp;
     work->attack = st->base_attack;

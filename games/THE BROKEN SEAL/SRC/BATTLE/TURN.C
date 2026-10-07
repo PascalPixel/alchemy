@@ -25,7 +25,7 @@
 #define gFrameCount (*(s32 *)&gFrameCount)
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
-#define Owner_RecalculateStatsFar ((void (*)(u16))Owner_RecalculateStatsFar)
+#define UnitCalcFar ((void (*)(u16))UnitCalcFar)
 
 
 
@@ -121,11 +121,11 @@ void BattleUnit_ResetGuardLevels(void)
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
     for (index = 0; index < count; index++) {
-        struct BattleUnit *actor;
+        struct BtlUnit *actor;
 
-        actor = Owner_GetStateFar(ids[index]);
+        actor = UnitGetFar(ids[index]);
         actor->guard_level = 0;
-        Owner_RecalculateStatsFar(ids[index]);
+        UnitCalcFar(ids[index]);
     }
 }
 
@@ -138,10 +138,10 @@ s32 BattleEscape_CheckSuccess(void)
     s32 level_total;
     s32 unit_index;
     s32 chance;
-    struct BattleSession *escape_state;
+    struct BtlWork *escape_state;
 
     escaped = 0;
-    escape_state = gBattleWork;
+    escape_state = BtlWk;
     if (escape_state->encounter_mode == 1) {
         escaped = 1;
     } else {
@@ -152,7 +152,7 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
-            level_total += Owner_GetStateFar(
+            level_total += UnitGetFar(
                 living_units[unit_index])->level;
         }
         chance += level_total * 0x1F4 / living_count;
@@ -161,7 +161,7 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
-            level_total += Owner_GetStateFar(
+            level_total += UnitGetFar(
                 living_units[unit_index])->level;
         }
         chance -= level_total * 0x1F4 / living_count;
@@ -188,7 +188,7 @@ s32 BattlePres_BuildUnitEntries(
     s32 unit_index;
 
     for (unit_index = 0; unit_index < unit_count; unit_index++) {
-        struct BattleUnit *unit = Owner_GetStateFar(unit_ids[unit_index]);
+        struct BtlUnit *unit = UnitGetFar(unit_ids[unit_index]);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++) {

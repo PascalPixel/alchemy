@@ -58,7 +58,7 @@ void Debug_SelectAbilityPair(void)
 
     cursor = NULL;
     redraw = 1;
-    list = Runtime_BumpAllocate(0x700);
+    list = MemAlloc(0x700);
     OwnerAction_AddFar(0, 140);
     OwnerAction_AddFar(1, 140);
     OwnerAction_AddFar(2, 140);

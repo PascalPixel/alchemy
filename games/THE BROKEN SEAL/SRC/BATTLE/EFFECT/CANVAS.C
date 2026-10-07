@@ -62,7 +62,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     /* FAKEMATCH: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes. */
 
     struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-    struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
+    struct BtlWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
     void *canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
     struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     volatile u16 *ime;
@@ -133,7 +133,7 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
     /* FAKEMATCH: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes. */
 
     struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-    struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
+    struct BtlWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
     void *canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
     struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     volatile u16 *ime;
@@ -228,7 +228,7 @@ void BattleFx_EndCanvasLayer(void)
     /* FAKEMATCH: the one-pass IME/queue scopes and u16 count store preserve scheduling, loading the queue before the preceding store. */
 
     struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-    struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
+    struct BtlWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
     s32 i;
 
     Audio_PlayCue(0x121);
@@ -257,7 +257,7 @@ void BattleFx_EndCanvasLayer(void)
 
 void BattleFx_SetTransitionFlagAndDisplay(void)
 {
-  struct BattleSession *state;
+  struct BtlWork *state;
   s32 one;
   s32 transfer;
   s32 *flag;

@@ -22,7 +22,7 @@ void Owner_RefreshActiveRatios(s32 mode);
 void InventorySnapshot_Save(void)
 {
     u16 *save;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s16 *inventory;
     s32 owner;
     s32 i;
@@ -36,7 +36,7 @@ void InventorySnapshot_Save(void)
         first = gGameState.first_shortcut;
         second = gGameState.second_shortcut;
         for (owner = 0; owner < 4; owner++) {
-            unit = (struct BattleUnit *)Owner_GetState(owner);
+            unit = (struct BtlUnit *)UnitGet(owner);
             for (n = 0; n < 15; n++)
                 *save++ = unit->inventory[n];
             for (n = 0; n < 15; n++) {
@@ -52,7 +52,7 @@ void InventorySnapshot_Save(void)
             for (; n < 15; n++)
                 inventory[n] = 0;
             Owner_RefreshDerivedData(owner);
-            Owner_RecalculateStats(owner);
+            UnitCalc(owner);
         }
         *save++ = first;
         *save++ = second;
@@ -74,7 +74,7 @@ void InventorySnapshot_Restore(void)
         owner = 0;
         do {
             u16 *inventory =
-                ((struct BattleUnit *)Owner_GetState(owner))->inventory;
+                ((struct BtlUnit *)UnitGet(owner))->inventory;
             s32 remaining = 14;
 
             do {
@@ -82,7 +82,7 @@ void InventorySnapshot_Restore(void)
                 remaining--;
             } while (remaining >= 0);
             Owner_RefreshDerivedData(owner);
-            Owner_RecalculateStats(owner);
+            UnitCalc(owner);
             owner++;
         } while (owner <= 3);
 

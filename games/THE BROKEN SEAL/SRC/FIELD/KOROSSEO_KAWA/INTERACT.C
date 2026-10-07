@@ -285,7 +285,7 @@ L_main:
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
 {
-    struct BattleUnit *t = Owner_GetState(a);
+    struct BtlUnit *t = UnitGet(a);
     s32 i;
 
     Inventory_AddItem(a, b);

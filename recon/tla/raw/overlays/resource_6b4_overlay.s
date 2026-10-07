@@ -2216,7 +2216,7 @@ Func_02000564:
 	bl Func_02001534
 .L_020093d6:
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	movs r0, #0
 	pop {r3, r5, r6}
 	mov r8, r3

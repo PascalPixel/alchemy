@@ -23,12 +23,12 @@
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s8 *cursor;
     s32 count;
     u8 zero;
 
-    state = Owner_GetStateFar(actor);
+    state = UnitGetFar(actor);
     count = 3;
     zero = 0;
     cursor = &state->element_modifier[3];
@@ -62,8 +62,8 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     state->agility_modifier = 0;
     state->battle_end_state = 0;
 
-    Owner_RecalculateStatsFar(actor);
-    return BattleUnit_BuildStatusFlags(actor, GetBattleObjectSlot(actor));
+    UnitCalcFar(actor);
+    return BattleUnit_BuildStatusFlags(actor, BtlObjGet(actor));
 }
 
 struct AdvanceSprite {

@@ -9,11 +9,11 @@ Func_0811c074:
 	push {r7}
 	adds r5, r0, #0
 	mov r8, r1
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	adds r7, r0, #0
 	adds r0, r5, #0
 	ldr r6, [r7]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #165
 	lsls r2, r2, #1
 	adds r3, r0, r2

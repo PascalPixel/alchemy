@@ -17,13 +17,13 @@
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 i;
     s32 zero;
     s32 count;
     s32 mode;
 
-    state = Owner_GetStateFar(id);
+    state = UnitGetFar(id);
     zero = 0;
     for (i = 4; i >= 0; i--)
         output[i] = zero;
@@ -69,7 +69,7 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 groups;
     s32 value;
 
-    encoded = (s32)Owner_GetStateFar(menu->pane_owner[index]);
+    encoded = (s32)UnitGetFar(menu->pane_owner[index]);
     limit = menu->item_count;
     value = menu->selected_index_by_owner[menu->pane_owner[index]];
     if ((value + 1) > limit) {

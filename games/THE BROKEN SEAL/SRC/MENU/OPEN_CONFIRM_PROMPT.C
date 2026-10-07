@@ -86,7 +86,7 @@ s32 Menu_OpenConfirmPrompt(void)
     if (result == 1) {
         struct EventWork *target = ((struct EventWork **)&gMenuCtrlWork)[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
         u16 flags;
-        BattleAction_Get(0x3fff & state->pane_action[0]);
+        BtlActGet(0x3fff & state->pane_action[0]);
         flags = low | (high << 10);
         target->psynergy_request = flags;
     }
@@ -126,7 +126,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
     s32 classification;
     s32 raw;
     s32 self_flag;
-    struct BattleAction *action;
+    struct BtlAct *action;
 
     state = 0;
     done = 0;
@@ -156,7 +156,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 
         case 1:
             WaitFrames(1);
-            Owner_GetStateFar(work->owner_ids[0]);
+            UnitGetFar(work->owner_ids[0]);
             state = 0;
             if (work->psynergy_count != 0) {
                 /* FAKEMATCH: clobbering r2 hides the 0x218 it holds from reload_cse_move2add, so the 0x268 mode offset is built from its own constant (movs/lsls) instead of adds r2, #80. */
@@ -241,8 +241,8 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 self_flag = 9;
             }
             if (result != -1) {
-                action = BattleAction_Get(work->pane_action[0] & 0x3fff);
-                Owner_AdjustSecondValueFar(work->owner_ids[0], -action->pp_cost);
+                action = BtlActGet(work->pane_action[0] & 0x3fff);
+                UnitEpAddFar(work->owner_ids[0], -action->pp_cost);
             }
             BattleUnit_Recalculate(work->owner_ids[0]);
             if (result != -1) {

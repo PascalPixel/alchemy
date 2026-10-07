@@ -21,9 +21,9 @@ struct ItemDefinition *Item_GetDirect(s32 item_id)
 s32 Item_CanOwnerEquipDirect(s32 owner_id, s32 item_id)
 {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct OwnerInventoryState *owner = Owner_GetState(owner_id);
+    struct OwnerInventoryState *owner = UnitGet(owner_id);
 #else
-    struct BattleUnit *owner = Owner_GetState(owner_id);
+    struct BtlUnit *owner = UnitGet(owner_id);
 #endif
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 mask = item->equip_mask;

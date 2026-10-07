@@ -19,7 +19,7 @@
 
 s32 ArcTan2(s32, s32);
 
-void BattleMotion_SetObjectPosition(struct BattleObjectSlot *slot)
+void BattleMotion_SetObjectPosition(struct BtlObj *slot)
 {
     struct MotionObject *object = slot->object;
 
@@ -34,10 +34,10 @@ void BattleMotion_SetObjectPosition(struct BattleObjectSlot *slot)
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 {
     u32 scaled_x;
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
 
-    slot = GetBattleObjectSlot(object_id);
+    slot = BtlObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x10000;
     object->speed_limit = 0x40000;
@@ -52,10 +52,10 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 
 void Func_0811c01c(s32 object_id)
 {
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
 
-    slot = GetBattleObjectSlot(object_id);
+    slot = BtlObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x10000;
     object->speed_limit = 0x40000;

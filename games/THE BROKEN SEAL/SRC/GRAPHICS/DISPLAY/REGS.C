@@ -50,7 +50,7 @@ void Palette_StepFadeTransfer(void)
     /* FAKEMATCH: relative heap cells 9 and 39 avoid address instructions added by named globals or full heap indexing. */
     void **slots = (void **)((u8 *)gWorkSlot + 9 * sizeof(void *));
     struct BattleEffectWork *work = slots[39 - 9];
-    struct BattleSession *battle = slots[0];
+    struct BtlWork *battle = slots[0];
 
     if (work->fade_frames > 0) {
         s32 step = ++work->fade_step;

@@ -686,7 +686,7 @@ Func_080cb91c:
 	bl UiText_ShowPositionedMessageAndWaitFar
 	ldr r3, .L_080cbef0
 	ldr r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r4, .L_080cbee8
 	adds r6, r0, #0
 	strh r4, [r6, #56]

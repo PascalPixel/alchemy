@@ -22,8 +22,8 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
     do {
         size = (u32)Text_LookupSymbolCodeSize;
     } while (0);
-    routine = (void (*)(struct TextReader *, s32))Runtime_BumpAllocate(size);
+    routine = (void (*)(struct TextReader *, s32))MemAlloc(size);
     Dma_Set((const void *)Text_LookupSymbolCode, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(reader, message);
-    Sys_Free(routine);
+    MemFree(routine);
 }

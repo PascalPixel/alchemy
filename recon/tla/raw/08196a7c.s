@@ -40,7 +40,7 @@ Func_08196a7c:
 	beq .L_08196af0
 	ldr r5, .L_08196d74
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -65,7 +65,7 @@ Func_08196a7c:
 	beq .L_08196af0
 	ldr r5, .L_08196d7c
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -80,7 +80,7 @@ Func_08196a7c:
 	beq .L_08196af0
 	ldr r5, .L_08196d84
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -95,7 +95,7 @@ Func_08196a7c:
 	beq .L_08196af0
 	ldr r5, .L_08196d8c
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -109,7 +109,7 @@ Func_08196a7c:
 	cmp r1, r7
 	beq .L_08196b70
 	ldr r0, .L_08196d94
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #128
 	mov r8, r0
 	lsls r3, r3, #19
@@ -142,7 +142,7 @@ Func_08196a7c:
 	cmp r1, r7
 	beq .L_08196bae
 	ldr r0, .L_08196da0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #128
 	mov r8, r0
 	lsls r3, r3, #19
@@ -175,7 +175,7 @@ Func_08196a7c:
 	cmp r1, r7
 	beq .L_08196bec
 	ldr r0, .L_08196dac
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #128
 	mov r8, r0
 	lsls r3, r3, #19
@@ -209,7 +209,7 @@ Func_08196a7c:
 	beq .L_08196c32
 	ldr r5, .L_08196db8
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -246,7 +246,7 @@ Func_08196a7c:
 	beq .L_08196c78
 	ldr r5, .L_08196dc0
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -283,7 +283,7 @@ Func_08196a7c:
 	beq .L_08196cbe
 	ldr r5, .L_08196dc8
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -320,7 +320,7 @@ Func_08196a7c:
 	beq .L_08196d04
 	ldr r5, .L_08196dd0
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	mov r8, r0
@@ -367,7 +367,7 @@ Func_08196a7c:
 	movs r3, #4
 	negs r3, r3
 	ands r0, r3
-	bl Sys_Free
+	bl MemFree
 	mov r3, r10
 	str r3, [r6, #16]
 .L_08196d46:
@@ -382,7 +382,7 @@ Func_08196a7c:
 	cmp r3, #0
 	beq .L_08196d60
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r1, [r6]
 .L_08196d60:
 	cmp r1, #0

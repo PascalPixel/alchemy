@@ -24,8 +24,8 @@ void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
     u8 local_context[4];
-    struct BattleUnit *character;
-    struct BattleObjectSlot *slot;
+    struct BtlUnit *character;
+    struct BtlObj *slot;
 
     if (context == 0) {
         context = local_context;
@@ -35,14 +35,14 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         context[3] = 0;
     }
 
-    character = Owner_GetStateFar(unit_id);
+    character = UnitGetFar(unit_id);
     character->hp -= damage;
     if (character->hp < 0)
         character->hp = 0;
 
-    slot = GetBattleObjectSlot(unit_id);
+    slot = BtlObjGet(unit_id);
     Object_SetMode(slot->object, 5);
-    UiWindow_DrawPartyStatusContentsFar(0);
+    PtyStDrawFar(0);
     UiWork_ClearValueNameTablesFar();
 
     if (unit_id <= 7) {
@@ -71,7 +71,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
     }
 
-    slot = GetBattleObjectSlot(unit_id);
+    slot = BtlObjGet(unit_id);
     Object_SetMode(slot->object, 1);
 }
 
@@ -79,9 +79,9 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
 {
   struct AnimationEntry *actor_data;
   struct AnimationObject *object;
-  if (Owner_GetStateFar(unit_id)->hp <= 0)
+  if (UnitGetFar(unit_id)->hp <= 0)
   {
-    object = GetBattleObjectSlot(unit_id)->object->records;
+    object = BtlObjGet(unit_id)->object->records;
     AnimationObjects_SelectAnimationFar(object, 5);
     actor_data = object->entries[0];
     actor_data->param = 6;
@@ -99,7 +99,7 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
     s32 living_count;
 
     target_id = action->target;
-    if (Owner_GetStateFar(target_id)->hp != 0) {
+    if (UnitGetFar(target_id)->hp != 0) {
         return target_id;
     }
 

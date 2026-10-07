@@ -19,7 +19,7 @@ extern s32 Shop_SelectQuantity(s32, s32, s32);
 s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     struct ItemDefinition *item;
     s32 quantity;
     s32 chance;
@@ -28,7 +28,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     s32 result;
 
     shop = gMenuWork;
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {

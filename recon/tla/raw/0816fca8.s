@@ -796,9 +796,9 @@ Func_0816fca8:
 	cmp r2, #40
 	bne .L_08170218
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 .L_081702e2:
 	movs r0, #4
 	movs r1, #4

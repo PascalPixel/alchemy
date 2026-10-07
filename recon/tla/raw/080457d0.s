@@ -1227,7 +1227,7 @@ Func_080457d0:
 .L_08046102:
 	strh r4, [r0]
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	ldr r6, [sp, #48]
 	movs r3, #0
 	strb r3, [r6, #6]

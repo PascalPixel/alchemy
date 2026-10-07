@@ -4,7 +4,7 @@
 
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
 {
-    struct BattleSession *state = Ram_HeapSlots->battle_work;
+    struct BtlWork *state = Ram_HeapSlots->battle_work;
 
     out->x = state->slots[no].anchor_x;
     out->y = 0;

@@ -65,7 +65,7 @@ negate:
             }
         }
         SaveState_ReleaseWorkspace();
-        Sys_Free(buffer);
+        MemFree(buffer);
         value = result;
     }
     return value;

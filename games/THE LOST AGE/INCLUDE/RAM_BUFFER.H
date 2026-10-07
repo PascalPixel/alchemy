@@ -10,7 +10,7 @@
 
 #define Ram_IwramHeapEnd FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
-struct BattleSession;
+struct BtlWork;
 struct BattlePresentationTransition;
 struct MapWork;
 struct ObjectSystemWork;
@@ -25,7 +25,7 @@ struct HeapSlots {
     struct ObjectSystemWork *object_system;
     void *unknown_1c[1];
     struct MapWork *map_work;
-    struct BattleSession *battle_work;
+    struct BtlWork *battle_work;
     void *unknown_28[2];
     void *camera_work;
     void *unknown_34[2];

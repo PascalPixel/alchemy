@@ -18,7 +18,7 @@ Func_080464dc:
 	mov r10, r4
 	mov r8, r2
 	str r3, [sp, #60]
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #56]
 	mov r1, r10
 	ldr r0, [r1]
@@ -59,12 +59,12 @@ Func_080464dc:
 	b .L_08046ae2
 .L_0804654a:
 	movs r0, #128
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r5, #166
 	lsls r5, r5, #1
 	str r0, [sp, #48]
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	str r0, [sp, #52]
 	movs r0, #96
 	bl Runtime_BumpAllocateAlternatePool
@@ -99,7 +99,7 @@ Func_080464dc:
 	bl Djinn_ActivateFar
 .L_080465a2:
 	adds r0, r7, #0
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #56]
 	add r2, sp, #64
@@ -316,7 +316,7 @@ Func_080464dc:
 	mov r11, r3
 .L_08046772:
 	ldrh r0, [r6]
-	bl BattleAction_Get
+	bl BtlActGet
 	adds r5, r0, #0
 	ldrb r3, [r5, #2]
 	cmp r3, #4
@@ -418,7 +418,7 @@ Func_080464dc:
 	mov r3, r9
 	bl UiWindow_SetTilemapEntry
 	ldrh r0, [r6]
-	bl BattleAction_Get
+	bl BtlActGet
 	mov r4, r11
 	ldr r2, [r7]
 	ldrb r0, [r0, #9]
@@ -729,11 +729,11 @@ Func_080464dc:
 	mov lr, r3
 	.2byte 0xf800
 	ldr r0, [sp, #24]
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #52]
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #48]
-	bl Sys_Free
+	bl MemFree
 	mov r2, r10
 	ldr r0, [r2]
 .L_08046ae2:

@@ -19,7 +19,7 @@ struct EnemyRecord *Owner_GetRecordFar(s32);
 s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);
-u32 BattleRandom16Far(void);
+u32 BtlRndFar(void);
 s32 Item_EncodeBankedId(s32);
 
 void Battle_AwardSpoils(void)
@@ -42,7 +42,7 @@ void Battle_AwardSpoils(void)
     s16 gains[8];
     u16 units[8];
 
-    spoils = &gBattleWork->spoils;
+    spoils = &BtlWk->spoils;
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgExpGained);
@@ -53,7 +53,7 @@ void Battle_AwardSpoils(void)
     backup = Runtime_BumpAllocateAlternatePool(sizeof(struct SpoilsUnit));
     for (i = 0; i < count; i++) {
         unit_id = list[i];
-        unit = (struct SpoilsUnit *)Owner_GetStateFar(unit_id);
+        unit = (struct SpoilsUnit *)UnitGetFar(unit_id);
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct SpoilsUnit)),
             Func_080770b8(unit_id, gains) != 0) {

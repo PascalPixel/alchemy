@@ -5,7 +5,7 @@
 
 void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
 {
-    struct BattleObjectSlot *slot = GetBattleObjectSlot(actor_id);
+    struct BtlObj *slot = BtlObjGet(actor_id);
     struct MotionObject *object;
     struct AnimationObject *record;
     struct AnimationObject **records;

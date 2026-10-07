@@ -4,7 +4,7 @@
 
 extern u16 Data_020023c4[];
 
-void Owner_RecalculateStats(s32 owner);
+void UnitCalc(s32 owner);
 void GameFlag_ClearBit(s32 flag);
 
 void Party_RestoreSnapshot(void)
@@ -14,13 +14,13 @@ void Party_RestoreSnapshot(void)
 
     if (*src++ == 0x6774) {
         for (owner = 4; owner <= 7; owner++) {
-            u16 *dst = (u16 *)((u8 *)Owner_GetState(owner) + 216);
+            u16 *dst = (u16 *)((u8 *)UnitGet(owner) + 216);
             s32 i;
 
             for (i = 14; i >= 0; i--)
                 *dst++ = *src++;
             Owner_RefreshDerivedData(owner);
-            Owner_RecalculateStats(owner);
+            UnitCalc(owner);
         }
         gPartyState.packed_events[0] = *src++;
         gPartyState.packed_events[1] = *src++;

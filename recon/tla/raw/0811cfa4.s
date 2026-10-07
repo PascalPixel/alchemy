@@ -19,7 +19,7 @@ BattlePres_BuildUnitEntries:
 	adds r5, r0, #0
 .L_0811cfc4:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r5, #0
 	pop {r5, r6, pc}
 	.2byte 0x0000

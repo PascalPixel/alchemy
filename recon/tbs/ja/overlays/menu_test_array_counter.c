@@ -34,12 +34,12 @@ s32 Battle_ApplyPresetItemsAndFlags();
 s32 Shop_PickUnitItem();
 s32 NameEntry_EditOwnerName();
 void UiText_ShowPositionedMessageAndWait();
-void Owner_RecalculateStats();
+void UnitCalc();
 void Party_AdvanceOwnerCountToTarget();
 s32 Inventory_AddItem();
 s32 Djinn_AddToOwner();
 s32 Djinn_Activate();
-s32 Owner_AdjustSecondValue();
+s32 UnitEpAdd();
 s32 Party_RemoveActiveOwner();
 s32 Party_AddActiveOwner();
 s32 Item_AdjustCounter();
@@ -207,8 +207,8 @@ void CommandTable_ConfigureCommandGroups(void)
     Djinn_Activate(2, 3, 3);
     Djinn_Activate(2, 3, 4);
     Djinn_Activate(2, 3, 5);
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(3);
-    Owner_RecalculateStats(2);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(3);
+    UnitCalc(2);
 }

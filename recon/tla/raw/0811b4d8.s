@@ -12,7 +12,7 @@ BattleUnit_BuildStatusFlags:
 	movs r5, #0
 	cmp r3, #0
 	bne .L_0811b596
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #50
 	adds r2, r0, #0
 	adds r1, #255

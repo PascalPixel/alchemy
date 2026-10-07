@@ -6,7 +6,7 @@
 Owner_GetLevelThreshold:
 	push {r5, lr}
 	adds r5, r1, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #42
 	adds r2, r0, #0
 	adds r1, #255

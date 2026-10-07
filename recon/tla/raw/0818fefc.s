@@ -1004,7 +1004,7 @@ Func_0818fefc:
 	bne .L_08190680
 .L_081906e2:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 .L_081906e8:
 	ldr r3, [sp, #84]
 	cmp r3, #8
@@ -1476,9 +1476,9 @@ Func_0818fefc:
 	b .L_0819097c
 .L_08190a92:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	movs r1, #240
 	ldr r0, [sp, #92]
 	lsls r1, r1, #7

@@ -36,7 +36,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {
     s32 i;
     s32 id;
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
     struct AnimationObject *res;
     struct SpriteEntry *entry;
@@ -58,7 +58,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
     for (i = 0; i <= 13 && (id = list[i]) != 255; i++) {
         if (id == 254)
             continue;
-        slot = GetBattleObjectSlot(id);
+        slot = BtlObjGet(id);
         if (slot == 0)
             continue;
         BattleUnit_BuildStatusFlags(id, slot);
@@ -124,7 +124,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
         i = 0;
         if ((resource = list[0]) != 255) {
 again:
-            if (list[i] != 254 && (slot = GetBattleObjectSlot(resource)) != 0 && (object = slot->object) != 0)
+            if (list[i] != 254 && (slot = BtlObjGet(resource)) != 0 && (object = slot->object) != 0)
                 BattlePres_SetActorModeAndAction(resource);
             i++;
             if (i <= 13 && (resource = list[i]) != 255)

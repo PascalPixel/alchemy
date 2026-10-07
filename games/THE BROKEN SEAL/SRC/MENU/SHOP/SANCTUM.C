@@ -35,7 +35,7 @@ void PsynergyMenu_InitializeEntryObjectsFar();
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {
-    u8 value = Owner_GetStateFar(entry_no)->level;
+    u8 value = UnitGetFar(entry_no)->level;
     s32 result = 0;
 
     if (kind == 0) {
@@ -52,7 +52,7 @@ s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 
 s32 Shop_CanServe(s32 entry_no, s32 kind)
 {
-    struct BattleUnit *entry = Owner_GetStateFar(entry_no);
+    struct BtlUnit *entry = UnitGetFar(entry_no);
     s32 result = 0;
 
     if ((kind == 0 && entry->hp <= 0)

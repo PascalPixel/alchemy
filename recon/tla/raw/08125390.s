@@ -102,7 +102,7 @@ Battle_ApplyActionExtras:
 	bne .L_08125448
 	b .L_08125600
 .L_08125448:
-	bl BattleRandom16Far
+	bl BtlRndFar
 	adds r3, r7, #0
 	muls r3, r0
 	lsrs r7, r3, #16

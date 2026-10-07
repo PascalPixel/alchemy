@@ -374,15 +374,15 @@
     (f) = 7;                                                               \
 }
 
-s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
+s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 {
-    struct BattleAction *action;
+    struct BtlAct *action;
     s32 act_no;
-    struct BattleUnit *actor;
+    struct BtlUnit *actor;
     s32 aid;
     s32 elm;
     s32 bonus;
-    struct BattleSession *work;
+    struct BtlWork *work;
     s32 dist;
     s32 half;
     s32 adj;
@@ -393,7 +393,7 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     s32 skip;
     s32 type;
     s32 aff;
-    struct BattleUnit *bak;
+    struct BtlUnit *bak;
     s32 pow;
     s32 hp;
     s32 kind;
@@ -402,7 +402,7 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     s16 *cmd;
     u8 tid;
     s8 *rm;
-    struct BattleUnit *target;
+    struct BtlUnit *target;
     u32 n;
     s32 value;
     s32 dmg;
@@ -422,8 +422,8 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     crush = 0;
     skip = 0;
     aff = 0;
-    size = sizeof(struct BattleUnit);
-    bak = Runtime_BumpAllocate(size);
+    size = sizeof(struct BtlUnit);
+    bak = MemAlloc(size);
 
     if (act_no == 312 || act_no == 316)
         aid = plan->actor_id2;
@@ -435,9 +435,9 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     adj = plan->tgt_adj[slot];
     crit = plan->tgt_crit[slot];
 
-    action = BattleAction_Get(act_no);
-    actor = Owner_GetState(aid);
-    target = Owner_GetState(tid);
+    action = BtlActGet(act_no);
+    actor = UnitGet(aid);
+    target = UnitGet(tid);
     Iwram_CopyWords(bak, target, size);
     switch (target->enemy_id) {
     case 221:
@@ -507,7 +507,7 @@ pow_end:
         chance = pow - target->elements[plan->elm].resist;
         chance += 30;
         chance *= 65536 / 100;
-        if (chance > (BattleRandom16Far() & 0xffff))
+        if (chance > (BtlRndFar() & 0xffff))
             BtlEvPush(BEV_SCR, 5);
     }
 
@@ -539,10 +539,10 @@ pow_end:
         chg = -1;
         ent = Summon_FindSlot();
         if (action->effect == 51) {
-            cls = BattleFormation_SelectRandomAvailableMember(work->enemy_group);
+            cls = BtlGrpRnd(work->enemy_group);
         } else if (action->effect == 86) {
             if (actor->enemy_id == 164)
-                cls = (BattleRandom16Far() & 3) + 378;
+                cls = (BtlRndFar() & 3) + 378;
             else
                 cls = 81;
         } else if (action->effect == 87) {
@@ -558,7 +558,7 @@ pow_end:
                 if (chg & 0x8000)
                     Summon_ResetCharge(cls);
             }
-            BattleUnit_AssignFar(ent, cls, chg & 0x7fff);
+            BtlUnitSetFar(ent, cls, chg & 0x7fff);
             if (action->effect == 87) {
                 work->queue_count--;
                 work->queue_head = (work->queue_head + 1) % 2;
@@ -583,19 +583,19 @@ pow_end:
             }
             Summon_Refresh();
             {
-                struct BattleObjectSlot *obj;
+                struct BtlObj *obj;
 
-                obj = GetBattleObjectSlot(ent);
-                BattlePresentation_SpawnActorObject(obj, ent,
+                obj = BtlObjGet(ent);
+                BtlObjMake(obj, ent,
                     obj->anchor_x / 0x10000, obj->anchor_z / 0x10000);
             }
-            BattleActor_CommitPlacement();
+            BtlObjPut();
             {
                 s32 num;
 
-                num = BattleParty_ListPresentEnemies(list);
+                num = BtlEnmList(list);
                 for (cnt = 0; cnt < num; cnt++)
-                    Actor_ResetMotionAtAnchor((u16)list[cnt]);
+                    ObjMotRst((u16)list[cnt]);
             }
             BtlEvPush(BEV_UNIT, ent);
             if (action->effect == 87)
@@ -643,7 +643,7 @@ pow_end:
     }
 
     if ((action->effect != 75 || slot == 0) && skip == 0
-        && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
+        && (target->hp != 0 || BtlEfxRevChkFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
 
@@ -679,9 +679,9 @@ pow_end:
 
                     atk = actor->attack;
                     if (act_no == 312 || act_no == 316) {
-                        atk = ((struct BattleUnit *)Owner_GetState(plan->actor_id))->attack;
+                        atk = ((struct BtlUnit *)UnitGet(plan->actor_id))->attack;
                         if (act_no == 312)
-                            atk += ((struct BattleUnit *)Owner_GetState(plan->actor_id2))->attack / 4;
+                            atk += ((struct BtlUnit *)UnitGet(plan->actor_id2))->attack / 4;
                     }
                     dmg = BtlAtkCalc(atk, scale, ap, bonus);
                 }
@@ -704,7 +704,7 @@ pow_end:
                         }
                     }
                 }
-                dmg += BattleRandom16Far() & 3;
+                dmg += BtlRndFar() & 3;
                 GUARD_CUT();
                 if (dmg <= 0)
                     dmg = 1;
@@ -748,7 +748,7 @@ pow_end:
                 BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->hp - hp;
             target->hp = hp;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
@@ -788,7 +788,7 @@ pow_end:
             BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->pp - pp;
             target->pp = pp;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
@@ -804,7 +804,7 @@ pow_end:
             dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * HpHealFalloff[dist] / 100;
             dmg *= adj;
-            dmg += BattleRandom16Far() & 3;
+            dmg += BtlRndFar() & 3;
             cur += dmg;
             if (cur > target->max_hp) {
                 cur = target->max_hp;
@@ -819,7 +819,7 @@ pow_end:
             }
             dealt = target->hp - cur;
             target->hp = cur;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
@@ -853,7 +853,7 @@ pow_end:
                 pp = 0;
             BtlEvPush(BEV_OBJ_END, tid);
             target->pp = pp;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
@@ -941,7 +941,7 @@ pow_end:
                     dmg = dmg * HpDmgFalloff6[dist] / 100;
                     break;
                 }
-                dmg += BattleRandom16Far() & 3;
+                dmg += BtlRndFar() & 3;
                 GUARD_CUT();
                 if ((gPartyState.battle_rule_24b == 6
                         || (GameFlag_Test(366) != 0 && plan->command == 6))
@@ -985,7 +985,7 @@ pow_end:
                 BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->hp - cur;
             target->hp = cur;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
@@ -1011,7 +1011,7 @@ pow_end:
                 MES_PUSH(MsgPpRecover);
             }
             target->pp = pp;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
@@ -1060,7 +1060,7 @@ pow_end:
                 BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->hp - cur;
             target->hp = cur;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
             }
             BtlEvPush(BEV_OBJ_END, tid);
@@ -1078,7 +1078,7 @@ pow_end:
     }
     BtlEvPush(BEV_UNIT, tid);
     if ((action->effect != 75 || slot != 0)
-        && (BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0
+        && (BtlEfxRevChkFar(action->effect) != 0 || target->hp != 0
             || BtlEfxDeadChk(action->effect) != 0)
         && hit != 0) {
         switch (action->effect) {
@@ -1219,7 +1219,7 @@ pow_end:
                 MES_PUSH(MsgHpRecover);
             }
             target->hp = heal;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
@@ -1266,14 +1266,14 @@ pow_end:
                 MES_PUSH(MsgPpRecover);
             }
             target->pp = heal;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
         }
 
         case 59:
             target->agility_modifier = 8;
             target->agility_modifier_turns = 5;
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, target->agility - bak->agility);
             MES_PUSH(MsgAgiUp);
             break;
@@ -1287,7 +1287,7 @@ pow_end:
             *am = v;
         }
             target->agility_modifier_turns = 5;
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, bak->agility - target->agility);
             MES_PUSH(MsgAgiDown);
             break;
@@ -1295,7 +1295,7 @@ pow_end:
         case 9:
             target->attack_modifier -= 1;
             STEP_LIM(target->attack_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, bak->attack - target->attack);
             MES_PUSH(MsgAtkDown);
             target->attack_modifier_turns = 7;
@@ -1304,7 +1304,7 @@ pow_end:
         case 8:
             target->attack_modifier -= 2;
             STEP_LIM(target->attack_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, bak->attack - target->attack);
             MES_PUSH(MsgAtkDown);
             target->attack_modifier_turns = 7;
@@ -1313,7 +1313,7 @@ pow_end:
         case 7:
             target->attack_modifier += 1;
             STEP_LIM(target->attack_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, target->attack - bak->attack);
             MES_PUSH(MsgAtkUp);
             target->attack_modifier_turns = 7;
@@ -1322,7 +1322,7 @@ pow_end:
         case 6:
             target->attack_modifier += 2;
             STEP_LIM(target->attack_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, target->attack - bak->attack);
             MES_PUSH(MsgAtkUp);
             target->attack_modifier_turns = 7;
@@ -1331,7 +1331,7 @@ pow_end:
         case 13:
             target->defense_modifier -= 1;
             STEP_LIM(target->defense_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, bak->defense - target->defense);
             MES_PUSH(MsgDefDown);
             target->defense_modifier_turns = 7;
@@ -1340,7 +1340,7 @@ pow_end:
         case 12:
             target->defense_modifier -= 2;
             STEP_LIM(target->defense_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, bak->defense - target->defense);
             MES_PUSH(MsgDefDown);
             target->defense_modifier_turns = 7;
@@ -1349,7 +1349,7 @@ pow_end:
         case 11:
             target->defense_modifier += 1;
             STEP_LIM(target->defense_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, target->defense - bak->defense);
             MES_PUSH(MsgDefUp);
             target->defense_modifier_turns = 7;
@@ -1358,7 +1358,7 @@ pow_end:
         case 10:
             target->defense_modifier += 2;
             STEP_LIM(target->defense_modifier);
-            Owner_RecalculateStatsFar(tid);
+            UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, target->defense - bak->defense);
             MES_PUSH(MsgDefUp);
             target->defense_modifier_turns = 7;
@@ -1369,7 +1369,7 @@ pow_end:
                 break;
             MES_PUSH(MsgRevived);
             target->hp = target->max_hp;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
 
         case 56:
@@ -1377,7 +1377,7 @@ pow_end:
                 break;
             MES_PUSH(MsgRevived);
             target->hp = target->max_hp / 2;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
 
         case 57:
@@ -1385,7 +1385,7 @@ pow_end:
                 break;
             MES_PUSH(MsgRevived);
             target->hp = target->max_hp * 8 / 10;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
 
         case 73:
@@ -1393,7 +1393,7 @@ pow_end:
                 break;
             MES_PUSH(MsgRevived);
             target->hp = (s16)(target->max_hp * 6 / 10);
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
 
         case 3:
@@ -1493,7 +1493,7 @@ pow_end:
             else
                 MES_PUSH(MsgSpiritDrain);
             target->hp = 0;
-            Owner_RecalculateRatiosFar(tid);
+            UnitRatioFar(tid);
             break;
 
         case 29:
@@ -1525,7 +1525,7 @@ pow_end:
                 MES_PUSH(MsgHpRecover);
             }
             actor->hp = dmg;
-            Owner_RecalculateRatiosFar(aid);
+            UnitRatioFar(aid);
             break;
 
         case 32:
@@ -1549,7 +1549,7 @@ pow_end:
                 MES_PUSH(MsgPpRecover);
             }
             actor->pp = heal;
-            Owner_RecalculateRatiosFar(aid);
+            UnitRatioFar(aid);
             break;
         }
 
@@ -1563,7 +1563,7 @@ pow_end:
                 break;
             BtlEvPush(BEV_NUM, dmg);
             MES_SIDE(MsgLeechTake, MsgLeechGain);
-            Owner_AdjustSecondValueFar(aid, dmg);
+            UnitEpAddFar(aid, dmg);
             break;
 
         case 84:
@@ -1574,7 +1574,7 @@ pow_end:
                 break;
             BtlEvPush(BEV_NUM, dmg);
             MES_SIDE(MsgMorePpLossP, MsgMorePpLossE);
-            Owner_AdjustSecondValueFar(tid, -dmg);
+            UnitEpAddFar(tid, -dmg);
             break;
 
         case 33:
@@ -1702,19 +1702,19 @@ done:
     if (target->hp != 0) {
         if (target->sleep != 0)
         if (target->sleep <= 6
-            && dealt > 0 && (3 & BattleRandom16Far()) == 0) {
+            && dealt > 0 && (3 & BtlRndFar()) == 0) {
             target->sleep = 0;
             BtlEvPush(BEV_UNIT, tid);
             MES_PUSH(MsgWakes);
         }
     }
-    Sys_Free(bak);
-    Owner_RecalculateStatsFar(tid);
-    UiWindow_DrawPartyStatusContentsFar(Ram_HeapSlots->battle_work->party_status_mode);
+    MemFree(bak);
+    UnitCalcFar(tid);
+    PtyStDrawFar(Ram_HeapSlots->battle_work->party_status_mode);
     if (target->hp != 0)
         BtlEvPush(BEV_OBJ_END, tid);
     if (act_no != 403 && actor->evil_spirit != 0
-        && (BattleRandom16Far() & 3) == 0 && dealt > 0) {
+        && (BtlRndFar() & 3) == 0 && dealt > 0) {
         s32 share;
 
         share = dealt >> 2;

@@ -26,7 +26,7 @@ BtlTgtExec:
 	movs r0, #166
 	lsls r0, r0, #1
 	str r3, [sp, #64]
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r1, #156
 	lsls r1, r1, #1
 	str r0, [sp, #20]
@@ -67,13 +67,13 @@ BtlTgtExec:
 	ldrsb r3, [r5, r3]
 	mov r11, r0
 	str r3, [sp, #36]
-	bl BattleAction_Get
+	bl BtlActGet
 	str r0, [sp, #84]
 	ldr r0, [sp, #76]
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #80]
 	mov r0, r10
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #166
 	mov r8, r0
 	ldr r3, .L_081207bc
@@ -298,7 +298,7 @@ BtlTgtExec:
 	adds r3, #255
 	adds r5, #30
 	muls r5, r3
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255
@@ -397,7 +397,7 @@ BtlTgtExec:
 	bne .L_08120762
 	ldr r1, [sp, #64]
 	ldr r0, [r1]
-	bl BattleFormation_SelectRandomAvailableMember
+	bl BtlGrpRnd
 	adds r5, r0, #0
 	b .L_081207d8
 .L_08120762:
@@ -406,7 +406,7 @@ BtlTgtExec:
 	ldrh r3, [r6]
 	cmp r3, #164
 	bne .L_0812077c
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	movs r2, #189
 	ands r3, r0
@@ -501,7 +501,7 @@ BtlTgtExec:
 	adds r1, r5, #0
 	ands r2, r7
 	mov r0, r9
-	bl BattleUnit_AssignFar
+	bl BtlUnitSetFar
 	ldr r1, [sp, #84]
 	ldrb r3, [r1, #3]
 	cmp r3, #87
@@ -581,7 +581,7 @@ BtlTgtExec:
 .L_081208b8:
 	bl Summon_Refresh
 	mov r0, r9
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r2, [r0, #12]
 	cmp r2, #0
 	bge .L_081208d0
@@ -601,11 +601,11 @@ BtlTgtExec:
 .L_081208e0:
 	asrs r3, r3, #16
 	mov r1, r9
-	bl BattlePresentation_SpawnActorObject
-	bl BattleActor_CommitPlacement
+	bl BtlObjMake
+	bl BtlObjPut
 	add r5, sp, #96
 	adds r0, r5, #0
-	bl BattleParty_ListPresentEnemies
+	bl BtlEnmList
 	cmp r0, #0
 	ble .L_0812090a
 	adds r6, r5, #0
@@ -614,7 +614,7 @@ BtlTgtExec:
 	ldrh r0, [r6]
 	subs r5, #1
 	adds r6, #2
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	cmp r5, #0
 	bne .L_081208fc
 .L_0812090a:
@@ -780,7 +780,7 @@ BtlTgtExec:
 	bne .L_08120a44
 	ldr r3, [sp, #84]
 	ldrb r0, [r3, #3]
-	bl BattleFx_IsReviveFar
+	bl BtlEfxRevChkFar
 	cmp r0, #0
 	bne .L_08120a44
 	bl .L_08121480
@@ -887,13 +887,13 @@ BtlTgtExec:
 .L_08120b1a:
 	ldr r2, [sp, #92]
 	ldrb r0, [r2]
-	bl Owner_GetState
+	bl UnitGet
 	ldrh r5, [r0, #60]
 	cmp r11, r6
 	bne .L_08120b36
 	ldr r3, [sp, #92]
 	ldrb r0, [r3, #2]
-	bl Owner_GetState
+	bl UnitGet
 	ldrh r3, [r0, #60]
 	lsrs r3, r3, #2
 	adds r5, r5, r3
@@ -950,7 +950,7 @@ BtlTgtExec:
 	movs r0, #5
 	bl BtlEvPush
 .L_08120b9a:
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r3, r0
 	adds r5, r5, r3
@@ -1237,7 +1237,7 @@ BtlTgtExec:
 	str r3, [sp, #48]
 	mov r3, r8
 	strh r6, [r3, #58]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08120dce:
 	ldr r4, [sp, #84]
@@ -1276,7 +1276,7 @@ BtlTgtExec:
 	adds r5, r0, #0
 	ldr r0, [sp, #52]
 	muls r5, r0
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r3, r0
 	mov r2, r8
@@ -1319,7 +1319,7 @@ BtlTgtExec:
 	str r3, [sp, #48]
 	mov r0, r10
 	strh r6, [r5, #56]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08120e74:
 	movs r0, #44
@@ -1739,7 +1739,7 @@ BtlTgtExec:
 	bl __divsi3
 	adds r5, r0, #0
 .L_08121172:
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r3, r0
 	adds r5, r5, r3
@@ -1941,7 +1941,7 @@ BtlTgtExec:
 	strh r6, [r2, #58]
 .L_081212fc:
 	mov r0, r10
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08121304:
 	movs r3, #44
@@ -2094,7 +2094,7 @@ BtlTgtExec:
 	str r3, [sp, #48]
 	mov r0, r10
 	strh r6, [r2, #56]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08121430:
 	.4byte HpDmgFalloff5
@@ -2171,7 +2171,7 @@ BtlTgtExec:
 .L_081214c8:
 	ldr r3, [sp, #84]
 	ldrb r0, [r3, #3]
-	bl BattleFx_IsReviveFar
+	bl BtlEfxRevChkFar
 	cmp r0, #0
 	bne .L_081214ee
 	mov r5, r8
@@ -2688,7 +2688,7 @@ BtlTgtExec:
 	movs r3, #5
 	strb r3, [r2]
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r3, r8
 	adds r3, #64
 	ldrh r1, [r3]
@@ -2712,7 +2712,7 @@ BtlTgtExec:
 	movs r3, #5
 	strb r3, [r2]
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r3, [sp, #20]
 	movs r0, #1
 	adds r3, #64
@@ -2748,7 +2748,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121a0c:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r0, [sp, #20]
 	mov r2, r8
 	ldrh r3, [r2, #60]
@@ -2788,7 +2788,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121a5e:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r5, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r0, #60]
@@ -2828,7 +2828,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121ab0:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r4, [sp, #20]
 	mov r2, r8
 	ldrh r1, [r2, #60]
@@ -2868,7 +2868,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121b02:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r2, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r2, #60]
@@ -2908,7 +2908,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121b54:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r5, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r0, #62]
@@ -2948,7 +2948,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121ba6:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r2, [sp, #20]
 	mov r4, r8
 	ldrh r1, [r2, #62]
@@ -2988,7 +2988,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121bf8:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r2, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r2, #62]
@@ -3048,7 +3048,7 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121c70:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r0, [sp, #20]
 	mov r5, r8
 	ldrh r3, [r0, #62]
@@ -3101,7 +3101,7 @@ BtlTgtExec:
 	asrs r2, r2, #1
 	mov r3, r8
 	strh r2, [r3, #56]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_081223ba
 .L_08121ce4:
 	mov r5, r8
@@ -3500,7 +3500,7 @@ BtlTgtExec:
 	strh r3, [r4, #56]
 .L_08121fe4:
 	mov r0, r10
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_081223ba
 .L_08121fec:
 	.4byte 0x00000cbf
@@ -3646,7 +3646,7 @@ BtlTgtExec:
 	strh r5, [r3, #58]
 .L_0812210a:
 	ldr r0, [sp, #76]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_081223ba
 .L_08122112:
 	ldr r0, [sp, #48]
@@ -3692,7 +3692,7 @@ BtlTgtExec:
 .L_08122162:
 	ldr r0, [sp, #76]
 	adds r1, r5, #0
-	bl Owner_AdjustSecondValueFar
+	bl UnitEpAddFar
 	b .L_081223ba
 .L_0812216c:
 	mov r3, r8
@@ -3730,7 +3730,7 @@ BtlTgtExec:
 .L_081221ae:
 	negs r1, r5
 	mov r0, r10
-	bl Owner_AdjustSecondValueFar
+	bl UnitEpAddFar
 	b .L_081223ba
 .L_081221b8:
 	movs r2, #52
@@ -4057,7 +4057,7 @@ BtlTgtExec:
 	ldr r0, [sp, #48]
 	cmp r0, #0
 	ble .L_08122446
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r0, r3
 	cmp r0, #0
@@ -4071,15 +4071,15 @@ BtlTgtExec:
 	bl BtlEvPush
 .L_08122446:
 	ldr r0, [sp, #20]
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl UiWindow_DrawPartyStatusContentsFar
+	bl PtyStDrawFar
 	mov r2, r8
 	movs r1, #56
 	ldrsh r3, [r2, r1]
@@ -4100,7 +4100,7 @@ BtlTgtExec:
 	ldrb r3, [r3]
 	cmp r3, #0
 	beq .L_081224aa
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r0, r3
 	cmp r0, #0

@@ -709,9 +709,9 @@ Func_08179394:
 	cmp r1, #2
 	bne .L_08179822
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #28]
-	bl Sys_Free
+	bl MemFree
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0

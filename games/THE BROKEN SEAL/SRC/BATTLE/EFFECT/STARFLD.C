@@ -51,7 +51,7 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 heigh
 
 void Graphics_AdvancePaletteCycle(void)
 {
-    struct BattleSession *battle = gBattleWork;
+    struct BtlWork *battle = BtlWk;
     s8 *table;
     u16 step;
     s32 next;
@@ -72,7 +72,7 @@ void Graphics_AdvancePaletteCycle(void)
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
     s16 active_actors[14];
-    struct BattleSession *battle = gBattleWork;
+    struct BtlWork *battle = BtlWk;
     u32 count;
     u32 i;
     volatile u16 *blend_y;

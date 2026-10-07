@@ -10,17 +10,17 @@ WaitFrames:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
 Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_02001248
 	.thumb_func

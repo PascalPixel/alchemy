@@ -50,7 +50,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
     }
     WaitFrames(10);
     Random16();
-    actor_record = GetBattleObjectSlot(actor_id)->object;
+    actor_record = BtlObjGet(actor_id)->object;
 
     if ((u32)target_id <= 7) {
         side_count = BattleParty_ListLivingUnits(2, visible_units);
@@ -75,20 +75,20 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
         *(u16 *)0x04000052 = (16 - index) | 0x1000;
         WaitFrames(1);
     }
-    UiWindow_DrawPartyStatusContentsFar(9);
+    PtyStDrawFar(9);
 
     if (target_id > 0x7f) {
         u32 count = BattleParty_ListLivingUnits(2, visible_units);
         for (index = 0; living_count != count; index++) {
             u32 unit = index + 0x80;
-            if (Owner_GetStateFar(unit)->hp > 0) {
+            if (UnitGetFar(unit)->hp > 0) {
                 visible_units[living_count++] = unit;
             }
         }
     } else {
         u32 count = BattleParty_ListLivingUnits(1, visible_units);
         for (index = 0; living_count != count; index++) {
-            if (Owner_GetStateFar(index)->hp > 0) {
+            if (UnitGetFar(index)->hp > 0) {
                 visible_units[living_count++] = index;
             }
         }
@@ -110,7 +110,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
     BattleFx_InitializeModeFar((s32 *)&context);
 
     WaitFrames(10);
-    BattleActor_CommitPlacement();
+    BtlObjPut();
     *(u16 *)0x04000050 = 0x3f40;
     for (index = 0; index != side_count; index++) {
         BattlePres_SetActorRecordMode(index + side_start, 1);

@@ -56,10 +56,10 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 Engine_MapWaitWorkValuesBelow256:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global Item_Get
 	.thumb_func
 Item_Get:

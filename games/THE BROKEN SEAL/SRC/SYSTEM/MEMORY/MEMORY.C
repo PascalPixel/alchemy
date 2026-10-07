@@ -173,7 +173,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
     return (void *)cached_address;
 }
 
-void *Runtime_BumpAllocate(s32 size)
+void *MemAlloc(s32 size)
 {
     union HeapState *work = (union HeapState *)gWorkSlot;
     u32 next_address;

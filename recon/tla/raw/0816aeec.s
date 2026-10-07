@@ -955,9 +955,9 @@ Func_0816aeec:
 	bne .L_0816b5b0
 .L_0816b646:
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #52]
-	bl Sys_Free
+	bl MemFree
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0

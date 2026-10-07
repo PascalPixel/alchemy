@@ -73,6 +73,6 @@ void Ui_PrepareTransferForItem(s32 code)
 
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
 {
-    UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->unknown_04[0],
+    UiIcon_BuildAbilityIconTiles(BtlActGet(action)->unknown_04[0],
         with_base, slot, tile, reuse);
 }

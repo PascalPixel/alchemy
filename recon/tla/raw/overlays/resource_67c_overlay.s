@@ -6094,7 +6094,7 @@ Func_02003278:
 	.2byte 0xf800
 	movs r0, #200
 	lsls r0, r0, #4
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	ldr r0, .L_0200b2cc
@@ -6107,7 +6107,7 @@ Func_02003278:
 	ldrh r0, [r6]
 	bl VramBlock_LoadCached
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #28
@@ -6591,7 +6591,7 @@ Func_02003628:
 	.2byte 0xf800
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	ldr r0, .L_0200b680
@@ -6604,7 +6604,7 @@ Func_02003628:
 	ldrh r0, [r6]
 	bl VramBlock_LoadCached
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #28

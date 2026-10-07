@@ -21,21 +21,21 @@ void BattleEv_MarkDisplay(void)
 }
 
 void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
-struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
+struct BtlObj *BtlObjGet(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
     /* FAKEMATCH: the shared discard-only result type preserves TBS epilogue register choice. No result is taken from the void destructor or returned. */
-    struct BattleUnit *creature;
-    struct BattleObjectSlot *runtime;
+    struct BtlUnit *creature;
+    struct BtlObj *runtime;
 
-    creature = Owner_GetStateFar(arg0);
+    creature = UnitGetFar(arg0);
     if (creature->side == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
-        runtime = GetBattleObjectSlot(arg0);
+        runtime = BtlObjGet(arg0);
         ObjectDispatch_ReleaseFar((struct DispatchObject *)runtime->object);
         runtime->object = 0;
         runtime->active = 0;
@@ -53,7 +53,7 @@ void BattleMotion_RunValueSequence();
 
 u32 BattleEv_DispatchQueued(void)
 {
-    struct BattleEventState *runtime = &gBattleWork->events;
+    struct BattleEventState *runtime = &BtlWk->events;
     struct BattleEventQueue *queue = &runtime->queue;
     s32 i;
 
@@ -86,9 +86,9 @@ u32 BattleEv_DispatchQueued(void)
             BattleActor_ResetRuntimeFields(queue->operands[i]);
             BattleMotion_InitializeActorRecords(queue->operands[i]);
             break;
-        case BEV_REDRAW: UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode); break;
+        case BEV_REDRAW: PtyStDrawFar(BtlWk->party_status_mode); break;
         case BEV_OBJ_END:
-            BattleUnit_BuildStatusFlags(queue->operands[i], GetBattleObjectSlot(queue->operands[i]));
+            BattleUnit_BuildStatusFlags(queue->operands[i], BtlObjGet(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);
             break;
         }
@@ -98,7 +98,7 @@ u32 BattleEv_DispatchQueued(void)
 
 u32 BtlEvPush(u32 opcode, u32 operand)
 {
-    struct BattleEventQueue *queue = &gBattleWork->events.queue;
+    struct BattleEventQueue *queue = &BtlWk->events.queue;
     u32 index = queue->count;
 
     queue->opcodes[index] = opcode;

@@ -25,7 +25,7 @@ struct PlacementTable {
 
 s32 BattleUnit_TickReflect(s32 id)
 {
-    u8 *value = (u8 *)&((struct BattleUnit *)Owner_GetState(id))->reflect;
+    u8 *value = (u8 *)&((struct BtlUnit *)UnitGet(id))->reflect;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
@@ -37,7 +37,7 @@ s32 BattleUnit_TickReflect(s32 id)
 
 s32 BattleUnit_TickAgilityModifier(s32 id)
 {
-    struct BattleUnit *unit = Owner_GetState(id);
+    struct BtlUnit *unit = UnitGet(id);
     u8 *value = &unit->agility_modifier_turns;
     if (*value != 0) {
         (*value)--;
@@ -66,7 +66,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
         timed_entry = list->entries;
         do {
             if (timed_entry->turns > 0 &&
-                ((struct BattleUnit *)Owner_GetState(timed_entry->unit_id))->hp != 0) {
+                ((struct BtlUnit *)UnitGet(timed_entry->unit_id))->hp != 0) {
                 timed_entry->turns--;
             }
             index++;
@@ -82,7 +82,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
 
                 Djinn_ActivateFar(id, expired_entry->element, expired_entry->index);
                 Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
-                Owner_RecalculateStatsFar(id);
+                UnitCalcFar(id);
                 removed = 1;
             } else {
                 expired_entry++;

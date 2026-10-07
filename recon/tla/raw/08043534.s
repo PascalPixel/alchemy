@@ -77,7 +77,7 @@ Func_08043534:
 .L_080435ce:
 	bl SaveState_ReleaseWorkspace
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
 .L_080435da:
 	pop {r3, r5}

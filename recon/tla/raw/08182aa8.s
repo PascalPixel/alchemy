@@ -2718,9 +2718,9 @@ Func_08182aa8:
 	b .L_08183d86
 .L_08183f9a:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #36]
-	bl Sys_Free
+	bl MemFree
 	movs r3, #240
 	ldr r1, [sp, #72]
 	lsls r3, r3, #7
@@ -3210,9 +3210,9 @@ Func_08182aa8:
 	cmp r2, #3
 	bne .L_0818430e
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	bl Func_081434f8
 	movs r4, #240
 	ldr r3, [sp, #72]

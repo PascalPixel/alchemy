@@ -45,7 +45,7 @@ s32 ItemMenu_SelectItem(void)
 {
     /* FAKEMATCH: the icon prefix keeps the row load before the active-byte store; the canonical view reverses them. */
     struct InventoryMenuState *menu;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     s32 result;
     s32 done;
     s32 redraw;
@@ -61,7 +61,7 @@ s32 ItemMenu_SelectItem(void)
         s32 id = menu->pane_owner[0];
 
         result = 0;
-        Owner_GetStateFar(menu->owner_ids[id]);
+        UnitGetFar(menu->owner_ids[id]);
     }
 #if EDITION_INTERNATIONAL
     UiWindow_UpdateOrCreate((s32 *)&menu->equip_window, 0, 10, 15, 10, 2);
@@ -88,7 +88,7 @@ s32 ItemMenu_SelectItem(void)
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         ItemMenu_PosCategory();
         RenderOutput_RedrawSavedRectFar(menu->status_window);
-        owner = Owner_GetStateFar(menu->pane_owner[0]);
+        owner = UnitGetFar(menu->pane_owner[0]);
         for (i = 0; i <= 14; i++)
             saved[i] = owner->inventory[i];
         menu->item_count = ItemMenu_Collect(owner, menu->items, 0);

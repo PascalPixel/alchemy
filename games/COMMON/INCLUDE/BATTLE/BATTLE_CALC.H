@@ -17,8 +17,8 @@ s32 BtlHitChk(s32 actor, s32 target, s32 range, s32 effect, s32 table);
 s32 BtlAtkCalc(s32 amount, s32 reduction, s32 adjustment, s32 selector);
 s32 BtlPowCalc(s32 value, s32 selector, s32 multiplier);
 s32 BtlRcvCalc(s32 value, s32 selector, s32 multiplier);
-s16 Owner_AdjustSecondValueFar(s32 unit, s32 amount);
-s32 BattleUnit_AssignFar(s32 slot, s32 unit, s32 mask);
+s16 UnitEpAddFar(s32 unit, s32 amount);
+s32 BtlUnitSetFar(s32 slot, s32 unit, s32 mask);
 s32 BtlEfxDeadChk(s32 effect);
 
 #endif

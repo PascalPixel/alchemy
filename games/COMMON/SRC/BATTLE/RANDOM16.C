@@ -16,7 +16,7 @@
 #include "BATTLE_RANDOM.H"
 #include "BATTLE_TYPES.H"
 
-u32 BattleRandom16(void)
+u32 BtlRnd(void)
 {
     s32 battle_value;
     battle_value = (gBattleRandomSeed * 0x41c64e6d) + 0x3039;
@@ -26,7 +26,7 @@ u32 BattleRandom16(void)
 
 u32 BattleRandomPercent(void)
 {
-    return (BattleRandom16() * 0x64) >> 0x10;
+    return (BtlRnd() * 0x64) >> 0x10;
 }
 
 
@@ -82,9 +82,9 @@ s32 Owner_GetDefaultElement(void *state);
 s32 Item_GetEquippedElement(s32 owner_id)
 {
     struct ItemDefinition *item;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
 
-    owner = Owner_GetState(owner_id);
+    owner = UnitGet(owner_id);
     if (owner->class_index == 0) {
         return Owner_GetDefaultElement(owner);
     }

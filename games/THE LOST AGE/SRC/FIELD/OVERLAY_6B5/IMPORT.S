@@ -34,9 +34,9 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_02001914
 	.thumb_func
@@ -66,10 +66,10 @@ Func_0200193c:
 	.thumb_func
 Func_02001944:
 	overlay_veneer Scheduler_SetCallbackMaskFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

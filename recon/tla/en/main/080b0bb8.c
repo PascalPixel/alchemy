@@ -2,7 +2,7 @@
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerDjinnState *state = Owner_GetState(owner);
+    struct OwnerDjinnState *state = UnitGet(owner);
     struct TradeOfferState *table;
     s32 i;
     s32 status;

@@ -61,7 +61,7 @@ BattleParty_ListActorIdsFar:
 	.global GetBattleObjectSlotFar
 	.thumb_func
 GetBattleObjectSlotFar:
-	overlay_veneer GetBattleObjectSlot
+	overlay_veneer BtlObjGet
 	.global Battle_RunEncounterFar
 	.thumb_func
 Battle_RunEncounterFar:
@@ -122,7 +122,7 @@ DebugParty_LoadPresetFar:
 	.global BattleActor_CommitPlacementFar
 	.thumb_func
 BattleActor_CommitPlacementFar:
-	overlay_veneer BattleActor_CommitPlacement
+	overlay_veneer BtlObjPut
 	overlay_veneer ReleaseBattleObjectRecords
 	.global BattlePresentation_WaitForPromptAtFar
 	.thumb_func

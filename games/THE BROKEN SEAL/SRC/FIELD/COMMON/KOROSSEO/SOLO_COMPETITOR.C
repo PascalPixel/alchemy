@@ -12,11 +12,11 @@
 #include "BATTLE_UNIT.H"
 
 void Engine_PartyAddActiveOwner(s32 id);
-struct BattleUnit *Engine_OwnerGetState(s32 id);
+struct BtlUnit *Engine_OwnerGetState(s32 id);
 
 void Korosseo_SelectSoloCompetitor(s32 id)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 v;
     s32 t;
 

@@ -4,8 +4,8 @@
 
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
 {
-    struct MotionObject *left = GetBattleObjectSlot(first)->object;
-    struct MotionObject *right = GetBattleObjectSlot(second)->object;
+    struct MotionObject *left = BtlObjGet(first)->object;
+    struct MotionObject *right = BtlObjGet(second)->object;
     s32 left_x = left->x;
     s32 right_x = right->x;
     s32 left_z = left->z;

@@ -54,7 +54,7 @@ extern u8 gOptionMirror;
 extern u32 GameFlagBytes[];
 
 u32 Runtime_GetBuildStampTimeFar(s32);
-struct OwnerState *Owner_GetStateFar(s32 owner);
+struct OwnerState *UnitGetFar(s32 owner);
 u16 BattleFx_FindConditionResourceFar(s32 map, s32 entrance);
 u8 Party_SumDjinnCountsFar(s32 element);
 void Party_ListActiveOwnersFar(u16 *owners);
@@ -79,7 +79,7 @@ u32 SaveState_BuildSummaryHeader(void)
         copy[64] = gLoadedStateWord;
     }
     gGameState.unknown_22a = gOptionMirror;
-    owner = Owner_GetStateFar(gGameState.leader);
+    owner = UnitGetFar(gGameState.leader);
     destination = summary->name;
     source = owner->name;
     for (i = 11; i >= 0; i--)

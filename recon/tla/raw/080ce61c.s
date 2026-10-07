@@ -23,7 +23,7 @@ Func_080ce61c:
 	sub sp, #16
 	mov r0, r9
 	str r3, [sp, #12]
-	bl BattleAction_Get
+	bl BtlActGet
 	mov r2, r8
 	ldrb r0, [r0, #6]
 	lsrs r7, r2, #10
@@ -317,10 +317,10 @@ Func_080ce61c:
 	cmp r7, #7
 	bgt .L_080ce920
 	mov r0, r9
-	bl BattleAction_Get
+	bl BtlActGet
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl Owner_GetState
+	bl UnitGet
 	ldrb r1, [r5, #9]
 	movs r2, #58
 	ldrsh r3, [r0, r2]
@@ -361,7 +361,7 @@ Func_080ce61c:
 .L_080ce918:
 	negs r1, r1
 	adds r0, r7, #0
-	bl Owner_AdjustSecondValueFar
+	bl UnitEpAddFar
 .L_080ce920:
 	ldr r2, [sp, #4]
 	cmp r2, #23

@@ -27,7 +27,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 id)
 {
     struct MotionObject *object;
 
-    object = GetBattleObjectSlot(id)->object;
+    object = BtlObjGet(id)->object;
     Object_ResetMotion(object);
     Object_SetMode(object, 2);
 }
@@ -40,7 +40,7 @@ void BattleMotion_NoOp(void *, s32);
 
 void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 {
-    struct BattleObjectSlot *second_slot;
+    struct BtlObj *second_slot;
     struct MotionObject *first;
     struct MotionObject *second;
     s32 x1;
@@ -53,8 +53,8 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
         s32 z;
     } pos;
 
-    first = GetBattleObjectSlot(first_id)->object;
-    second_slot = GetBattleObjectSlot(second_id);
+    first = BtlObjGet(first_id)->object;
+    second_slot = BtlObjGet(second_id);
 
 
     x1 = first->target_x;
@@ -100,7 +100,7 @@ void Animation_SetWorkEntryFar(u8 *effect, s32 entry);
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 slot)
 {
-    struct SlotEffectEntry *entry = (struct SlotEffectEntry *)GetBattleObjectSlot(slot);
+    struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BtlObjGet(slot);
     u8 *effect;
 
     if (entry->object != NULL) {
@@ -125,7 +125,7 @@ s32 Func_0811c37c(s32 owner);
 
 s32 Func_0811c2b4(s32 slot, s32 *screen)
 {
-    struct MotionObject *object = GetBattleObjectSlot(slot)->object;
+    struct MotionObject *object = BtlObjGet(slot)->object;
     struct SlotMotionRecord *record = GetMotionRecord(object, 0);
     s32 scale;
     /* FAKEMATCH: an unused vector the size of the native frame. */
@@ -137,17 +137,17 @@ s32 Func_0811c2b4(s32 slot, s32 *screen)
     return 0;
 }
 
-void *Owner_GetState(s32 owner);
+void *UnitGet(s32 owner);
 
 s32 Func_0811c314(s32 slot, s32 *screen)
 {
-    struct MotionObject *object = GetBattleObjectSlot(slot)->object;
+    struct MotionObject *object = BtlObjGet(slot)->object;
     struct SlotMotionRecord *record = GetMotionRecord(object, 0);
     s32 scale;
 
     Camera_ApplyTransformByFlag();
     scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
-    if (Summon_IsEntryFlagged(*(u16 *)((u8 *)Owner_GetState(slot) + 0x14a)) != 0)
+    if (Summon_IsEntryFlagged(*(u16 *)((u8 *)UnitGet(slot) + 0x14a)) != 0)
         screen[1] -= Iwram_MulQ16(scale, 24);
     else
         screen[1] -= Iwram_MulQ16(scale, 48);

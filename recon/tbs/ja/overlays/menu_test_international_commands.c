@@ -228,10 +228,10 @@ void MenuTest_RaisePartyLevelTarget(void)
     Party_AdvanceOwnerCountToTarget(3, *p);
     Party_AdvanceOwnerCountToTarget(2, *p);
     *p += 10;
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(3);
-    Owner_RecalculateStats(2);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(3);
+    UnitCalc(2);
 }
 
 void FieldScene_GrantItemListToSlots(void)
@@ -431,10 +431,10 @@ void FieldScene_GrantItemListToSlots(void)
     Inventory_AddItem(3, 196);
     Inventory_AddItem(3, 196);
     Inventory_AddItem(3, 196);
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(3);
-    Owner_RecalculateStats(2);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(3);
+    UnitCalc(2);
 }
 
 void CommandTable_ConfigureCommandGroups(void)
@@ -495,10 +495,10 @@ void CommandTable_ConfigureCommandGroups(void)
     Djinn_Activate(2, 3, 3);
     Djinn_Activate(2, 3, 4);
     Djinn_Activate(2, 3, 5);
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(3);
-    Owner_RecalculateStats(2);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(3);
+    UnitCalc(2);
 }
 
 void FieldScene_ApplySlotOffsetsAndFlags(void)
@@ -511,21 +511,21 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     Value2(Owner_AdjustFirstValue, 1, -100);
     Owner_AdjustFirstValue(2, -33);
     Owner_AdjustFirstValue(3, -100);
-    Owner_AdjustSecondValue(0, -50);
-    Owner_AdjustSecondValue(1, -40);
-    Owner_AdjustSecondValue(2, -35);
-    Owner_AdjustSecondValue(3, -20);
-    record = Owner_GetState(0);
+    UnitEpAdd(0, -50);
+    UnitEpAdd(1, -40);
+    UnitEpAdd(2, -35);
+    UnitEpAdd(3, -20);
+    record = UnitGet(0);
     record[0x131] = 1;
     record += 0x140;
     *record = 1;
-    record = Owner_GetState(1);
+    record = UnitGet(1);
     record[0x130] = 1;
     record[0x131] = 2;
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(3);
-    Owner_RecalculateStats(2);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(3);
+    UnitCalc(2);
 }
 
 void FieldScene_AssignCodeSetAToSlots(void)
@@ -565,10 +565,10 @@ void FieldScene_AssignCodeSetAToSlots(void)
     Inventory_AddItem(3, 130);
     Inventory_AddItem(3, 142);
     Inventory_AddItem(3, 171);
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(3);
-    Owner_RecalculateStats(2);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(3);
+    UnitCalc(2);
 }
 
 void DebugMenu_SelectItem(void)
@@ -714,10 +714,10 @@ void FieldScene_AssignCodeSetBToSlots(void)
     Inventory_AddItem(MEARI, 0xcb);
     Inventory_AddItem(MEARI, 0xcc);
     Inventory_AddItem(MEARI, 0xcf);
-    Owner_RecalculateStats(ROBIN);
-    Owner_RecalculateStats(JERARD);
-    Owner_RecalculateStats(MEARI);
-    Owner_RecalculateStats(IWAN);
+    UnitCalc(ROBIN);
+    UnitCalc(JERARD);
+    UnitCalc(MEARI);
+    UnitCalc(IWAN);
 }
 
 s32 CommandTable_ConfigureCommandList(void)
@@ -745,10 +745,10 @@ s32 CommandTable_ConfigureCommandList(void)
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(JERARD, 30);
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(MEARI, 30);
     Party_AdvanceOwnerCountToTarget(IWAN, 30);
-    Owner_RecalculateStats(ROBIN);
-    Owner_RecalculateStats(JERARD);
-    Owner_RecalculateStats(MEARI);
-    Owner_RecalculateStats(IWAN);
+    UnitCalc(ROBIN);
+    UnitCalc(JERARD);
+    UnitCalc(MEARI);
+    UnitCalc(IWAN);
     return 0;
 }
 

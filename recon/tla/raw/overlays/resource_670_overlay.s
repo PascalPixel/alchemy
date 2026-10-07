@@ -9253,7 +9253,7 @@ Func_0200516c:
 	cmp r0, #0
 	beq .L_0200d26a
 	movs r0, #7
-	bl Owner_GetState
+	bl UnitGet
 	adds r5, r0, #0
 	ldrh r1, [r5, #52]
 	ldrh r3, [r5, #54]

@@ -22,8 +22,8 @@ void VramBlock_LoadResource(s32 entry_no, s32 size, s32 resource_id)
     if (entry_no > 95)
         return;
     source = Resource_GetTableEntry(resource_id);
-    buffer = Runtime_BumpAllocate(size);
+    buffer = MemAlloc(size);
     Resource_DecodeByteLzInRam(source, buffer);
     VramBlock_LoadCached(entry_no, size, buffer);
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

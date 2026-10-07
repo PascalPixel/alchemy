@@ -49,11 +49,11 @@ struct LevelUpWork {
     u8 unused_0c[0x20];
 };
 
-void Sys_Free(void *buffer);
+void MemFree(void *buffer);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 struct OwnerGrowth *Character_GetDefinition(s32 owner);
 s32 Owner_RefreshClassActions(s32 owner);
-void Owner_RecalculateStats(s32 owner);
+void UnitCalc(s32 owner);
 u32 Random16(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 u32 __udivsi3(u32 numerator, u32 denominator);
@@ -67,7 +67,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     s32 diff;
     s32 level;
 
-    st = Owner_GetState(owner);
+    st = UnitGet(owner);
     work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
     work->class_id = st->class_id;
     level = st->level;
@@ -122,8 +122,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         st->base_20 = 0;
         st->base_21 = 0;
         Owner_RefreshClassActions(owner);
-        Owner_RecalculateStats(owner);
+        UnitCalc(owner);
     }
-    Sys_Free(work);
+    MemFree(work);
     return res;
 }

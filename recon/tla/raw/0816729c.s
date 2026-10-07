@@ -1087,9 +1087,9 @@ Func_0816729c:
 	adds r0, r5, #0
 	bl Func_08196a7c
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_08167b26:
 	ldr r3, [sp, #88]
 	movs r4, #240
@@ -2295,9 +2295,9 @@ Func_0816729c:
 	adds r0, r5, #0
 	bl Func_08196a7c
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_08168490:
 	ldr r3, [sp, #72]
 	cmp r3, #85

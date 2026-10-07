@@ -7,7 +7,7 @@
  * native has lsl #24, bge); the condition loads' sign extension
  * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
  * saved/pointer pair (r5/r6 swapped) and code = 0 set before
- * Runtime_BumpAllocate where native sets it after; one long branch two
+ * MemAlloc where native sets it after; one long branch two
  * bytes short (the one instruction the condition loads lack).
  *
  * Session 5 2026-10-07: the up-key n-- after the 0x6F call 87 -> 85
@@ -31,7 +31,7 @@
  * again). The icon loop through a block-local cache pointer, set in the
  * for header after i, then x = 112, 61 -> 59: native's order (i = 0,
  * the cache base into r8, then 112); vc set before the for with i = 0
- * in its header 61. code = 0 after Runtime_BumpAllocate, retried on 61:
+ * in its header 61. code = 0 after MemAlloc, retried on 61:
  * 296 (global allocation cascades from the frame setup on); the agility
  * delta read first 711. Modifier order diagnosed from native: ldrb r1
  * comes before the sign-extending ldrb r3, [r3] (dest == base), so in
@@ -53,7 +53,7 @@
  * do-while(0) 541 (still merged); the cursor tile & 0x3FF 377 (no change).
  * Also rejected: (s32)(m << 24) < 0 for the second test 382; a block
  * size variable for the three 332-byte calls 377 (CSE folds it back into
- * each argument; native keeps 332 in r8 across Runtime_BumpAllocate).
+ * each argument; native keeps 332 in r8 across MemAlloc).
  *
  * Session 3 2026-10-07: the second modifier test as (m >> 7) != 0
  * 377 -> 331 (lsr #7, beq where native has lsl #24, bge, but no
@@ -68,7 +68,7 @@
  * folds the load to m's subreg). The skip-blocks path needs the label
  * after the first then-block to have one use; native must differ
  * there or in the path length (PATHLENGTH 10), not yet found.
- * code = 0 before Runtime_BumpAllocate instead of after it 331 -> 120
+ * code = 0 before MemAlloc instead of after it 331 -> 120
  * (the 332 pseudo, REG_EQUIV and local to its block, now keeps r8
  * across the three calls, code goes to sp+4 and reloads into r4 for
  * the modifier stores, and the freed registers fix the face/cursor
@@ -84,7 +84,7 @@
  * p = objIcon before q = tbl 95 -> 93; the closing reset loop through
  * a block-local pointer (native r5, q's r7 before) 93 -> 89.
  * Rejected after 105: code = 0
- * after Runtime_BumpAllocate 318 (native's order, but the 332 pseudo
+ * after MemAlloc 318 (native's order, but the 332 pseudo
  * loses r8 again); j-- before the call in the condition loads 107;
  * n-- then the call then keys = 0 107; the agility modifier cleared
  * first 107; *out++ in the call 105, saved without the cast or the
@@ -202,7 +202,7 @@
  * (extended == 0) + 8 or a 0/1 flag plus 8: 815 to 1134, each folded to
  * 9 - (extended != 0) or hoisted. code = 0 before the allocation 760,
  * after the first copy 750 (native keeps that 0 in r4 for the modifier
- * stores and 332 in r8 across Runtime_BumpAllocate). A 5-minute permuter
+ * stores and 332 in r8 across MemAlloc). A 5-minute permuter
  * run (--heat, 2 jobs) reached 700 by random rewrites; its minimization
  * did not finish, so none is carried over.
  *
@@ -231,7 +231,7 @@
  *
  * Earlier trials 2026-10-06: searched declaration order alone 1171 -> 1127. The
  * closing busy flag addressed from the battle work slot, as RESOLVE.C does,
- * reuses the native literal (gBattleWork, then +192): 1162 alone, 1118 with
+ * reuses the native literal (BtlWk, then +192): 1162 alone, 1118 with
  * the searched order. Cursor tables indexed by cur.pos[cur.mode] (native
  * loads by the mode register): 1113. Equipment and condition cursors read
  * straight from their tables (native loads entry by [table, index]): 1087.
@@ -289,7 +289,7 @@ void UiWork_PushValueSlot(s32 value, s32 slot);
 void UiWindow_MarkVisibleTileAttributes(void);
 void UiWindow_DrawDividerLine(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void UiWindow_DrawPartyStatusContents(s32 id);
+void PtyStDraw(s32 id);
 void Resource_LoadTableEntryToBuffer(s32 icon, s32 handle);
 s32 Ui_LoadEntryForKind(s32 owner, s32 handle);
 s32 Owner_GetResistanceValueFar(s32 owner, s32 index);
@@ -325,8 +325,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 code;
     s32 atkDelta;
     s32 redraw;
-    struct BattleUnit *object;
-    struct BattleUnit *saved;
+    struct BtlUnit *object;
+    struct BtlUnit *saved;
     const struct OwnerStatusStatCursor *stat;
     struct MenuSprite *p;
     s32 agiDelta;
@@ -564,7 +564,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         Runtime_PushSlotEntry((s32 *)&objCursor, 241);
 
         if (redraw != 0) {
-            object = Owner_GetStateFar(owner);
+            object = UnitGetFar(owner);
             UiWindow_MarkVisibleTileAttributes();
             Ui_FillVramBlockPattern();
 
@@ -802,7 +802,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 }
             }
 
-            text = (u16 *)Runtime_BumpAllocate(0x100);
+            text = (u16 *)MemAlloc(0x100);
             if ((u32)cur.entry > 13) {
                 iconIdx = sel[cur.entry - 14];
                 if (iconIdx == 0 && object->hp == 0) {
@@ -810,7 +810,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 }
 
                 code = 0;
-                saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(*object));
+                saved = (struct BtlUnit *)MemAlloc(sizeof(*object));
                 Iwram_CopyWords(saved, object, sizeof(*object));
 
                 atkDelta = object->attack;
@@ -824,7 +824,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 defDelta -= object->defense;
                 agiDelta -= object->agility;
                 Iwram_CopyWords(object, saved, sizeof(*object));
-                Sys_Free(saved);
+                MemFree(saved);
 
                 switch (iconIdx) {
                 case 8:
@@ -868,7 +868,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             }
 
             UiText_RenderWideStringAtOffset(text, (struct UiWindow *)winDesc, 0, 4);
-            Sys_Free(text);
+            MemFree(text);
             redraw = 0;
             base->dirty = 1;
         }
@@ -934,8 +934,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     UiWindow_MarkVisibleTileAttributes();
     UiWork_Finalize(winMain, 1);
     UiWork_Finalize(winDesc, 1);
-    UiWindow_DrawPartyStatusContents(gBattleWork->party_status_mode);
-    ((struct MenuCell **)&gBattleWork)[HEAP_SLOT_WINDOW + 42 - HEAP_SLOT_BATTLE]->busy = 0;
+    PtyStDraw(BtlWk->party_status_mode);
+    ((struct MenuCell **)&BtlWk)[HEAP_SLOT_WINDOW + 42 - HEAP_SLOT_BATTLE]->busy = 0;
     WaitFrames(1);
     return 0;
 }

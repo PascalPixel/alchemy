@@ -33,7 +33,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                 struct ItemPartyView *party =
                     (struct ItemPartyView *)&gGameState;
                 do {
-                    obj = (struct BattleUnitObject *)Owner_GetStateFar(party->active_owners[i]);
+                    obj = (struct BattleUnitObject *)UnitGetFar(party->active_owners[i]);
                     matches = 0;
                     p = obj->abilities;
                     j = 14;
@@ -51,7 +51,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                 } while (i < count);
             }
         } else {
-            obj = (struct BattleUnitObject *)Owner_GetStateFar(actor);
+            obj = (struct BattleUnitObject *)UnitGetFar(actor);
             p = obj->abilities;
             j = 14;
             do {

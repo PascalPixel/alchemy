@@ -8,7 +8,7 @@
 
 s32 Summon_Refresh(void)
 {
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
     u16 unit_ids[14];
     s32 x[6];
     s32 z[6];
@@ -23,7 +23,7 @@ s32 Summon_Refresh(void)
         s32 id = work->enemy_units[i];
 
         if (id != 0xfe) {
-            struct BattleObjectSlot *object = GetBattleObjectSlot(id);
+            struct BtlObj *object = BtlObjGet(id);
 
             object->anchor_x = x[i] << 16;
             object->anchor_z = z[i] << 16;

@@ -6,7 +6,7 @@ Func_080afb80:
 	push {r5, r6, r7, lr}
 	adds r6, r0, #0
 	adds r7, r1, #0
-	bl Owner_GetState
+	bl UnitGet
 	ldrb r1, [r0, #15]
 	movs r3, #146
 	lsls r3, r3, #1

@@ -40,10 +40,10 @@ ColorBuffer_Darken:
 	.incbin "baserom.gba", 0x00001cf0, 0x00000020
 	.size ColorBuffer_Darken, .-ColorBuffer_Darken
 	.section .rom.00013164, "ax"
-	.global Sys_Free
-	.type Sys_Free, %function
+	.global MemFree
+	.type MemFree, %function
 	.thumb_func
-Sys_Free:
+MemFree:
 	.incbin "baserom.gba", 0x00013164, 0x00000038
 	.section .rom.0001319c, "ax"
 	.global Func_0801319c
@@ -341,10 +341,10 @@ Func_0801692c:
 Func_08016990:
 	.incbin "baserom.gba", 0x000169bc, 0x00000314
 	.section .rom.00016cd0, "ax"
-	.global Owner_GetState
-	.type Owner_GetState, %function
+	.global UnitGet
+	.type UnitGet, %function
 	.thumb_func
-Owner_GetState:
+UnitGet:
 	.incbin "baserom.gba", 0x00016cd0, 0x00000040
 	.section .rom.00016d60, "ax"
 	.global Func_08016d34
@@ -1367,10 +1367,10 @@ UiWindow_FillFromScene:
 	.section .rom.00042734, "ax"
 	.incbin "baserom.gba", 0x00042734, 0x0000029c
 	.section .rom.000429d0, "ax"
-	.global UiWindow_DrawPartyStatusContents
-	.type UiWindow_DrawPartyStatusContents, %function
+	.global PtyStDraw
+	.type PtyStDraw, %function
 	.thumb_func
-UiWindow_DrawPartyStatusContents:
+PtyStDraw:
 	.incbin "baserom.gba", 0x000429d0, 0x00000430
 	.section .rom.00042e18, "ax"
 	.incbin "baserom.gba", 0x00042e18, 0x00000300
@@ -1687,10 +1687,10 @@ Func_080ad0b8:
 	.section .rom.000ba3f6, "ax"
 	.incbin "baserom.gba", 0x000ba3f6, 0x00000002
 	.section .rom.000ba3f8, "ax"
-	.global Owner_RecalculateStats
-	.type Owner_RecalculateStats, %function
+	.global UnitCalc
+	.type UnitCalc, %function
 	.thumb_func
-Owner_RecalculateStats:
+UnitCalc:
 	.incbin "baserom.gba", 0x000ba3f8, 0x000007f4
 	.global GameFlag_RefreshLureCap
 	.type GameFlag_RefreshLureCap, %function

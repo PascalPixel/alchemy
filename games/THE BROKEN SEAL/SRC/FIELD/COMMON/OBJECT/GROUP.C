@@ -21,7 +21,7 @@
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)
 {
-    struct BattleObjectSlot *set;
+    struct BtlObj *set;
     struct AnimationObject *group;
     struct BattleEffectWork *state;
     s32 group_index;

@@ -22,7 +22,7 @@ Func_080f8170:
 	mov r11, r1
 	mov r0, r11
 	mov r9, r3
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #24]
 	mov r10, r0
 	lsls r3, r3, #1
@@ -249,7 +249,7 @@ Func_080f8170:
 	movs r5, #166
 	lsls r5, r5, #1
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_080f8564
 	mov r1, r10
 	adds r2, r5, #0
@@ -283,7 +283,7 @@ Func_080f8170:
 	bl Inventory_EquipFar
 .L_080f83bc:
 	mov r0, r11
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	movs r1, #241
 	movs r3, #0
 	lsls r1, r1, #8
@@ -370,7 +370,7 @@ Func_080f8170:
 	movs r5, #166
 	lsls r5, r5, #1
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_080f8564
 	mov r1, r10
 	adds r2, r5, #0
@@ -402,7 +402,7 @@ Func_080f8170:
 	bl Inventory_EquipFar
 .L_080f84b6:
 	mov r0, r11
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r0, r10
 	mov r1, r8
 	adds r2, r7, #0
@@ -416,7 +416,7 @@ Func_080f8170:
 	mov lr, r3
 	.2byte 0xf800
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	b .L_080f85fe
 .L_080f84dc:
 	ldr r2, [sp, #12]

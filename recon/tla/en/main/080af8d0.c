@@ -6,7 +6,7 @@ s32 Owner_GetValueIfLevelThresholdReached(s32, s32);
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
-    struct OwnerLevelState *state = (struct OwnerLevelState *)Owner_GetState(owner);
+    struct OwnerLevelState *state = (struct OwnerLevelState *)UnitGet(owner);
 
     if (state->enabled != 0) {
         if (level <= 0) {

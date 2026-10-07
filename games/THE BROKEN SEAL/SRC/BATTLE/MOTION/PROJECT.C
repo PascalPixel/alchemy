@@ -22,7 +22,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
     struct AnimationEntry *effect;
     s32 entry;
 
-    object = GetBattleObjectSlot(id)->object;
+    object = BtlObjGet(id)->object;
     if ((object != NULL) && ((0xF & object->record_storage_kind) == 1)) {
         entry = ResourceMetadata_RegisterFar((struct AnimationObject *)object->records, 0x11b);
         if (entry != 0) {
@@ -36,7 +36,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 
 s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 {
-    struct MotionObject *object = GetBattleObjectSlot(id)->object;
+    struct MotionObject *object = BtlObjGet(id)->object;
     struct AnimationObject *record = GetMotionRecord(object, 0);
     s32 scaled;
     s32 factor;
@@ -53,7 +53,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 
 s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
 {
-    struct MotionObject *object = GetBattleObjectSlot(id)->object;
+    struct MotionObject *object = BtlObjGet(id)->object;
     struct AnimationObject *record = GetMotionRecord(object, 0);
     s32 scaled;
     s32 factor;
@@ -61,7 +61,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
     Camera_ApplyTransformByFlag();
     scaled = Render_ProjectPoint(&object->x, projected);
     factor = Iwram_MulQ16(scaled, record->scale);
-    if (Summon_IsEntryFlagged(Owner_GetStateFar(id)->class_id) != 0)
+    if (Summon_IsEntryFlagged(UnitGetFar(id)->class_id) != 0)
         scaled = Iwram_MulQ16(factor, 24);
     else
         scaled = Iwram_MulQ16(factor, 48);
@@ -74,10 +74,10 @@ u32 Battle_GetObjectTableValue(s32 id)
     u32 value;
     u8 no;
 
-    no = Owner_GetStateFar(id)->class_id;
+    no = UnitGetFar(id)->class_id;
     value = (u8)Summon_GetEntryByte4(no) << 16;
     if (value == 0) {
-        no = Owner_GetStateFar(id)->class_id;
+        no = UnitGetFar(id)->class_id;
         if (Summon_IsEntryFlagged(no) != 0) {
             value = 0x180000;
         } else {

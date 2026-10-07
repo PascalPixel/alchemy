@@ -54,10 +54,10 @@ Resource_ResetEntry:
 	.thumb_func
 VramBlock_LoadCached:
 	overlay_veneer VramBlock_LoadCachedFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

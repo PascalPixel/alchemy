@@ -204,9 +204,9 @@ Func_08192a4c:
 	adds r0, r6, #0
 	bl Func_08196a7c
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	movs r3, #224
 	lsls r3, r3, #6
 	cmp r10, r3

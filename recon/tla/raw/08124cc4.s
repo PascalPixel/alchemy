@@ -34,7 +34,7 @@ Func_08124cc4:
 	cmp r0, #0
 	beq .L_08124d1a
 	ldrb r0, [r5, #2]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	cmp r3, #0
@@ -110,12 +110,12 @@ Func_08124cc4:
 	cmp r0, #0
 	beq .L_08124dc6
 	adds r0, r5, #0
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r1, #3
 	ldr r0, [r0]
 	bl Object_SetMode
 	adds r0, r5, #0
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r1, #32
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -130,7 +130,7 @@ Func_08124cc4:
 	adds r0, r5, #0
 	bl Trade_RemoveOfferFar
 	adds r0, r5, #0
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	adds r0, r5, #0
 	bl BattleParty_IsUnitListed
 	cmp r0, #0

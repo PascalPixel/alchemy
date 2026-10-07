@@ -27,7 +27,7 @@ void GameFlag_RefreshLureCap(void)
         struct OwnerInventoryState *owner;
         s32 i;
 
-        owner = Owner_GetState(gPartyState.active_owners[n]);
+        owner = UnitGet(gPartyState.active_owners[n]);
         for (i = 0; i < 15; i++) {
             if (owner->inventory[i] & 0x200) {
                 struct ItemUses *uses;

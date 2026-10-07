@@ -10,10 +10,10 @@ __modsi3:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:
@@ -66,10 +66,10 @@ Func_020006a4:
 	.thumb_func
 Func_020006ac:
 	overlay_veneer Func_08038320
-	.global Owner_RecalculateStats
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Func_020006bc
 	.thumb_func
 Func_020006bc:

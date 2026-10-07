@@ -5,14 +5,14 @@
 	.thumb_func
 Owner_AdjustFirstValueFar:
 	overlay_veneer Owner_AdjustFirstValue
-	.global Owner_AdjustSecondValueFar
+	.global UnitEpAddFar
 	.thumb_func
-Owner_AdjustSecondValueFar:
-	overlay_veneer Owner_AdjustSecondValue
-	.global Owner_RecalculateRatiosFar
+UnitEpAddFar:
+	overlay_veneer UnitEpAdd
+	.global UnitRatioFar
 	.thumb_func
-Owner_RecalculateRatiosFar:
-	overlay_veneer Owner_RecalculateRatios
+UnitRatioFar:
+	overlay_veneer UnitRatio
 	.global Owner_UpdateRatioPairFar
 	.thumb_func
 Owner_UpdateRatioPairFar:
@@ -21,9 +21,9 @@ Owner_UpdateRatioPairFar:
 	.thumb_func
 Owner_UpdateSecondInputAndRatiosFar:
 	overlay_veneer Owner_UpdateSecondInputAndRatios
-	.global BattleUnit_AssignFar
+	.global BtlUnitSetFar
 	.thumb_func
-BattleUnit_AssignFar:
+BtlUnitSetFar:
 	overlay_veneer Func_080afbec
 	.global Party_CountActiveOwnersFar
 	.thumb_func
@@ -69,10 +69,10 @@ BtlRcvCalc:
 	.thumb_func
 Owner_GetRecordFar:
 	overlay_veneer Owner_GetRecord
-	.global BattleRandom16Far
+	.global BtlRndFar
 	.thumb_func
-BattleRandom16Far:
-	overlay_veneer BattleRandom16
+BtlRndFar:
+	overlay_veneer BtlRnd
 	.global Djinn_AddToOwnerFar
 	.thumb_func
 Djinn_AddToOwnerFar:

@@ -8,7 +8,7 @@ extern u8 gItemCounters[ITEM_COUNTER_COUNT];
 
 s32 Inventory_Break(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct OwnerInventoryState *inv = UnitGet(owner);
     if (inv->inventory[slot] == 0) {
         return -1;
     }
@@ -18,7 +18,7 @@ s32 Inventory_Break(s32 owner, s32 slot)
 
 s32 Inventory_Repair(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct OwnerInventoryState *inv = UnitGet(owner);
     if (inv->inventory[slot] == 0) {
         return -1;
     }

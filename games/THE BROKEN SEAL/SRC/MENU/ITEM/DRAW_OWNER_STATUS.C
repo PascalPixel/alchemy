@@ -36,10 +36,10 @@ void WaitFrames(s32 frames);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
     struct InventoryMenuState *menu;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     menu = gMenuWork;
-    unit = Owner_GetStateFar(owner);
+    unit = UnitGetFar(owner);
     menu->cursor->active = 1;
     flags &= 0x100;
     if (flags == 0) {

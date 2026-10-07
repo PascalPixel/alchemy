@@ -15,7 +15,7 @@
 #include "SYSTEM.H"
 void BattlePresentation_WaitForAdvance(void);
 
-s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
+s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused)
 {
     s32 i;
 

@@ -38,7 +38,7 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
         s32 remaining = object_count;
 
         do {
-            struct BattleUnit *object;
+            struct BtlUnit *object;
             struct OwnerActionSlot *resource;
             u32 id;
             s32 index;

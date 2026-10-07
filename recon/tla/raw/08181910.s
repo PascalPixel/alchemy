@@ -651,9 +651,9 @@ Func_08181910:
 	bne .L_08181dd6
 .L_08181e20:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0

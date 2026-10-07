@@ -14,7 +14,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 selected_index;
     s32 owner;
 
-    owner_state = (s32)Owner_GetStateFar(menu->owner_ids[index]);
+    owner_state = (s32)UnitGetFar(menu->owner_ids[index]);
     entry_count = menu->psynergy_count;
     owner = menu->owner_ids[index];
     selected_index = menu->selected_index_by_owner[owner];

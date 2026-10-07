@@ -4266,9 +4266,9 @@ Func_08192c9c:
 	bl Func_08196a7c
 .L_08194d6e:
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #112]
-	bl Sys_Free
+	bl MemFree
 .L_08194d7a:
 	ldr r5, [sp, #168]
 	ldr r6, .L_08194dcc
@@ -5112,9 +5112,9 @@ Func_08192c9c:
 	adds r0, r5, #0
 	bl Func_08196a7c
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	add r3, sp, #420
 	mov r9, r3
 	bl Func_0819284c

@@ -46,7 +46,7 @@ s32 PartyInventory_GiveItem(s32 item)
             work->message_position = saved;
             return owner;
         } else {
-            Owner_GetStateFar(member);
+            UnitGetFar(member);
             {
                 /* FAKEMATCH: the ROM loads the slot argument before the member. */
                 s32 s = slot;

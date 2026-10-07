@@ -9,7 +9,7 @@ enum {
     BATTLE_PLAN_SIZE = 0x64
 };
 
-struct BattlePlan {
+struct BtlPlan {
     u8 actor_id;
     s8 target_count;
     u8 actor_id2;
@@ -37,19 +37,19 @@ struct ActionDefinition {
 };
 
 LAYOUT_SIZE_GUARD(ActionDefinition_Size, struct ActionDefinition, 12);
-LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
-LAYOUT_OFFSET_GUARD(BattlePlan_ActorId2, struct BattlePlan, actor_id2, 0x02);
-LAYOUT_OFFSET_GUARD(BattlePlan_TgtNo, struct BattlePlan, tgt_no, 0x03);
+LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BtlPlan, BATTLE_PLAN_SIZE);
+LAYOUT_OFFSET_GUARD(BattlePlan_ActorId2, struct BtlPlan, actor_id2, 0x02);
+LAYOUT_OFFSET_GUARD(BattlePlan_TgtNo, struct BtlPlan, tgt_no, 0x03);
 LAYOUT_OFFSET_GUARD(
     BattlePlan_TgtAdj,
-    struct BattlePlan,
+    struct BtlPlan,
     tgt_adj,
     0x1f);
-LAYOUT_OFFSET_GUARD(BattlePlan_Command, struct BattlePlan, command, 0x4a);
-LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BattlePlan, action_id, 0x4c);
+LAYOUT_OFFSET_GUARD(BattlePlan_Command, struct BtlPlan, command, 0x4a);
+LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BtlPlan, action_id, 0x4c);
 LAYOUT_OFFSET_GUARD(
     BattlePlan_SpiritDmg,
-    struct BattlePlan,
+    struct BtlPlan,
     spirit_dmg,
     0x60);
 

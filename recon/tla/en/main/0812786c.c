@@ -26,9 +26,9 @@ struct OwnerState {
     struct OwnerStats stats;
 };
 
-struct OwnerState *Owner_GetStateFar(s32 owner);
+struct OwnerState *UnitGetFar(s32 owner);
 s32 __divsi3(s32 numerator, s32 denominator);
-void Owner_RecalculateStatsFar(s32 owner);
+void UnitCalcFar(s32 owner);
 
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
@@ -40,7 +40,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     s32 i;
 
     base = Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
-    state = Owner_GetStateFar(owner);
+    state = UnitGetFar(owner);
     stats = &state->stats;
     Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
 
@@ -103,6 +103,6 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     }
 
     state->level += levels;
-    Owner_RecalculateStatsFar(owner);
+    UnitCalcFar(owner);
     Runtime_BumpFree(base);
 }

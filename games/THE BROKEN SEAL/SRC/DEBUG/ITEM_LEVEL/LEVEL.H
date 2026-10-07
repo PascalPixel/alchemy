@@ -19,7 +19,7 @@ extern u8 gItemLevelGlyphsLower[];
 extern u8 gItemLevelGlyphsMarks[];
 extern u8 gItemLevelLvLabel[];
 
-void Owner_RecalculateStats();
+void UnitCalc();
 s32 Party_ListActiveOwners();
 void Party_AdvanceOwnerCountToTarget();
 u8 *Object_GetById();

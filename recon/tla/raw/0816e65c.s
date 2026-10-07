@@ -570,9 +570,9 @@ Func_0816e65c:
 	bl BattleFxKernels_IntegrateVector3
 .L_0816eace:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #20]
-	bl Sys_Free
+	bl MemFree
 	ldr r6, .L_0816ec44
 	ldr r2, [sp, #48]
 	ldr r1, [sp, #32]

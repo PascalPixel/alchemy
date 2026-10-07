@@ -38,7 +38,7 @@ Func_081a052c:
 .L_081a056c:
 	ldr r5, .L_081a05ec
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -59,7 +59,7 @@ Func_081a052c:
 	mov lr, r6
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_081a05dc
 	ldr r2, .L_081a05f4
 	mov lr, r3

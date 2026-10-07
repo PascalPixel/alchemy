@@ -34,7 +34,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
     s32 selection;
     s32 count;
     s32 result;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     u8 sort_mode;
     s32 by_category;
     s32 pending;
@@ -48,7 +48,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
     result = 0;
     sort_mode = 0;
     by_category = 0;
-    owner = Owner_GetStateFar(owner_ids[selection]);
+    owner = UnitGetFar(owner_ids[selection]);
     if (UiWindow_UpdateOrCreate((s32 *)&menu->item_window, 13, 3, 17, 10, 2))
         Menu_SpawnIconEntries(menu, (s32)menu->item_window);
     if (UiWindow_UpdateOrCreate((s32 *)&menu->help_window, 13, 13, 17, 4, 2)) {
@@ -72,9 +72,9 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
             sort_mode = 0;
             pending = 0;
             window = (s32)menu->status_window;
-            owner = Owner_GetStateFar(owner_ids[selection]);
+            owner = UnitGetFar(owner_ids[selection]);
             if (by_category) {
-                menu->item_count = ItemMenu_Collect(Owner_GetStateFar(owner_ids[selection]), menu->items, 0);
+                menu->item_count = ItemMenu_Collect(UnitGetFar(owner_ids[selection]), menu->items, 0);
                 ItemMenu_OpenCategory(owner_ids[selection]);
                 Menu_DrawOwnerStatusPanel(window, owner_ids[selection], 0, 8);
             } else {

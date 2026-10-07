@@ -1,11 +1,11 @@
 #include "OWNER_STATE.H"
 #include "OWNERVAL.H"
 
-void Owner_RecalculateRatios(s32);
+void UnitRatio(s32);
 
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 {
-    struct BattleUnit *state = Owner_GetState(owner);
+    struct BtlUnit *state = UnitGet(owner);
     s32 cur = state->hp;
     s32 max = state->max_hp;
     s32 value = cur + delta;
@@ -19,6 +19,6 @@ s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
             result = value;
     }
     state->hp = result;
-    Owner_RecalculateRatios(owner);
+    UnitRatio(owner);
     return state->hp;
 }

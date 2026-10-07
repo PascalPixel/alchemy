@@ -2789,9 +2789,9 @@ Func_0817ea58:
 	bl Func_08196a7c
 .L_0817ffc0:
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 .L_0817ffcc:
 	ldr r4, [sp, #140]
 	movs r7, #142

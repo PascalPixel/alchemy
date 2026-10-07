@@ -819,7 +819,7 @@ Func_0818df5c:
 	cmp r7, #5
 	bne .L_0818e566
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	b .L_0818e6f8
 .L_0818e5c8:
 	mov r3, r11
@@ -1705,9 +1705,9 @@ Func_0818df5c:
 	cmp r7, #3
 	bne .L_0818ec36
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #28]
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_0818ed98
 	ldr r5, .L_0818ed9c
 	movs r7, #0

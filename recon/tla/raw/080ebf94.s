@@ -96,7 +96,7 @@ Func_080ebf94:
 	cmp r2, #127
 	bls .L_080ec040
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #142
 	lsls r0, r0, #1
 	bl GameFlag_Test

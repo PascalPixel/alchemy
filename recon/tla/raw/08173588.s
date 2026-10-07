@@ -498,9 +498,9 @@ Func_08173588:
 	bne .L_081738fc
 .L_08173976:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #16]
-	bl Sys_Free
+	bl MemFree
 	ldr r2, .L_081739d0
 	movs r3, #120
 	str r3, [r2, #12]

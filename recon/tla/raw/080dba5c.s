@@ -30,7 +30,7 @@ Func_080dba5c:
 	movs r3, #1
 	strh r3, [r2]
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r6, r0, #0
 	ldr r3, .L_080dbb38
 	movs r2, #0
@@ -51,7 +51,7 @@ Func_080dba5c:
 	adds r5, r0, #0
 	strh r2, [r3]
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	movs r3, #249
 	lsls r3, r3, #3
 	adds r6, r7, r3

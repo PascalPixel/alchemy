@@ -98,10 +98,10 @@ void Object_RunUpdateAllFromHeap(void)
 {
     void (*routine)(void);
 
-    routine = (void (*)(void))Runtime_BumpAllocate((s32)Object_UpdateAllCodeSize);
+    routine = (void (*)(void))MemAlloc((s32)Object_UpdateAllCodeSize);
     Dma_Set(Object_UpdateAll, routine, 0x84000000 | ((u32)Object_UpdateAllCodeSize >> 2), REG_DMA3);
     routine();
-    Sys_Free(routine);
+    MemFree(routine);
 }
 
 void Object_UpdateAllMotion(void)

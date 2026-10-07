@@ -68,12 +68,12 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 #endif
     s32 sel;
     s32 ret;
-    struct BattleUnit *source;
-    struct BattleUnit *target;
+    struct BtlUnit *source;
+    struct BtlUnit *target;
     struct InventoryMenuState *menu;
     struct ItemDefinition *item;
-    struct BattleUnit *source_copy;
-    struct BattleUnit *target_copy;
+    struct BtlUnit *source_copy;
+    struct BtlUnit *target_copy;
     u32 state;
     s32 command;
     s32 result;
@@ -182,7 +182,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 #endif
                     menu->pane_icons[0]->active = 13;
                     menu->item_count = ItemMenu_Collect(
-                        Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
+                        UnitGetFar(menu->pane_owner[0]), menu->items, 0);
                     ItemMenu_DrawIcons(menu->items, 0);
                     state = ITEM_STEP_OWNER;
                 }
@@ -245,7 +245,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     state = ITEM_STEP_ITEM;
                 }
                 menu->item_count = ItemMenu_Collect(
-                    Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
+                    UnitGetFar(menu->pane_owner[0]), menu->items, 0);
                 ItemMenu_DrawIcons(menu->items, 0);
                 menu->completion_flag = 1;
             } else {
@@ -305,20 +305,20 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             if (ItemMenu_ConfirmDrop(sel) == 0) {
 #if EDITION_INTERNATIONAL
                 command = menu->pane_owner[0];
-                Owner_GetStateFar(command);
+                UnitGetFar(command);
                 for (work = 0; work < result + 1; work++) {
                     Inventory_RemoveFar(command, menu->selected_slots[0]);
                     Item_AdjustCounterFar(menu->selected_items[0] & ITEM_ID_MASK, 1);
                 }
-                Owner_RecalculateStatsFar(command);
+                UnitCalcFar(command);
 #else
                 owner = menu->pane_owner[0];
-                Owner_GetStateFar(owner);
+                UnitGetFar(owner);
                 for (work = 0; work < result + 1; work++) {
                     Inventory_RemoveFar(owner, menu->selected_slots[0]);
                     Item_AdjustCounterFar(menu->selected_items[0] & ITEM_ID_MASK, 1);
                 }
-                Owner_RecalculateStatsFar(owner);
+                UnitCalcFar(owner);
 #endif
                 ItemMenu_SetItemWin3();
                 ItemMenu_RefreshOwner(menu->pane_owner[0], 0);
@@ -332,7 +332,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             } else {
                 state = ITEM_STEP_COMMAND;
             }
-            Owner_RecalculateStatsFar(menu->pane_owner[0]);
+            UnitCalcFar(menu->pane_owner[0]);
             menu->selected_item_icon->active = 13;
             Event_ClearInvalidPackedValuesFar();
             break;
@@ -394,8 +394,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     aborted = 1;
                 }
             }
-            Owner_RecalculateStatsFar(menu->pane_owner[0]);
-            Owner_RecalculateStatsFar(menu->pane_owner[1]);
+            UnitCalcFar(menu->pane_owner[0]);
+            UnitCalcFar(menu->pane_owner[1]);
             Owner_RefreshClassActionsFar(menu->pane_owner[0]);
             Owner_RefreshClassActionsFar(menu->pane_owner[1]);
             result = 1;
@@ -455,10 +455,10 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 state = ITEM_STEP_TARGET;
                 break;
             }
-            source = Owner_GetStateFar(menu->pane_owner[0]);
-            target = Owner_GetStateFar(menu->pane_owner[1]);
-            source_copy = Runtime_BumpAllocate(BATTLE_UNIT_SIZE);
-            target_copy = Runtime_BumpAllocate(BATTLE_UNIT_SIZE);
+            source = UnitGetFar(menu->pane_owner[0]);
+            target = UnitGetFar(menu->pane_owner[1]);
+            source_copy = MemAlloc(BATTLE_UNIT_SIZE);
+            target_copy = MemAlloc(BATTLE_UNIT_SIZE);
             CopyWords(IWRAM_COPY_WORDS, source_copy, source, BATTLE_UNIT_SIZE);
             CopyWords(IWRAM_COPY_WORDS, target_copy, target, BATTLE_UNIT_SIZE);
             moved_source = 0;
@@ -526,8 +526,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, 15, 14);
 #endif
             } else {
-                Owner_RecalculateStatsFar(menu->pane_owner[0]);
-                Owner_RecalculateStatsFar(menu->pane_owner[1]);
+                UnitCalcFar(menu->pane_owner[0]);
+                UnitCalcFar(menu->pane_owner[1]);
                 Owner_RefreshClassActionsFar(menu->pane_owner[0]);
                 Owner_RefreshClassActionsFar(menu->pane_owner[1]);
                 ItemMenu_SetMsgWin5();
@@ -588,11 +588,11 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 state = ITEM_STEP_ITEM;
                 break;
             }
-            Owner_RecalculateStatsFar(menu->pane_owner[0]);
+            UnitCalcFar(menu->pane_owner[0]);
             Owner_RefreshClassActionsFar(menu->pane_owner[0]);
             menu->pane_icons[0]->active = 13;
             menu->item_count = ItemMenu_Collect(
-                Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
+                UnitGetFar(menu->pane_owner[0]), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
             ItemMenu_DrawEquipPreview(
@@ -610,13 +610,13 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case ITEM_STEP_REMOVE:
-            Owner_GetStateFar(menu->pane_owner[0])->inventory[menu->selected_slots[0]]
+            UnitGetFar(menu->pane_owner[0])->inventory[menu->selected_slots[0]]
                 &= 0xfdff;
-            Owner_RecalculateStatsFar(menu->pane_owner[0]);
+            UnitCalcFar(menu->pane_owner[0]);
             Owner_RefreshClassActionsFar(menu->pane_owner[0]);
             menu->pane_icons[0]->active = 13;
             menu->item_count = ItemMenu_Collect(
-                Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
+                UnitGetFar(menu->pane_owner[0]), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
             menu->equip_preview = 1;

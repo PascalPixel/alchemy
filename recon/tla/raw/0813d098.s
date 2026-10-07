@@ -2016,9 +2016,9 @@ Func_0813d098:
 	bl Func_08196a7c
 .L_0813e070:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r4, .L_0813e0ec
 .L_0813e07e:
 	ldr r2, [sp, #28]

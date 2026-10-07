@@ -254,7 +254,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
     struct EffectLaunch launch2;
     /* FAKEMATCH: the reference holds the address of slot 12 in the register that later holds the IME address; only a variable assigned twice does that. The session is slot 9, read three words below it. */
     volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
-    struct BattleSession *session = *(struct BattleSession **)((u8 *)ime - 12);
+    struct BtlWork *session = *(struct BtlWork **)((u8 *)ime - 12);
     struct Bg2OriginWork *work;
     s32 frame;
     s32 *brightness;

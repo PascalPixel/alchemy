@@ -5,7 +5,7 @@
 BattlePres_SetActorRecordMode:
 	push {r5, r6, r7, lr}
 	adds r5, r1, #0
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	cmp r0, #0
 	beq .L_08126b60
 	ldr r0, [r0]

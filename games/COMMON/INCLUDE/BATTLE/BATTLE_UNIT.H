@@ -20,7 +20,7 @@ struct BattleElementStats {
     s16 resist;
 };
 
-struct BattleAction {
+struct BtlAct {
     u8 target_mode;
     u8 target_flags;
     u8 damage_class;
@@ -38,7 +38,7 @@ enum BattleActionUse {
     ACTION_USABLE_IN_BATTLE = 0x80
 };
 
-struct BattleUnit {
+struct BtlUnit {
     u8 name[0x0f];
     u8 level;
     s16 base_hp;
@@ -115,77 +115,77 @@ struct BattleUnit {
 
 LAYOUT_SIZE_GUARD(
     BattleAction_Size,
-    struct BattleAction,
+    struct BtlAct,
     BATTLE_ACTION_SIZE);
 LAYOUT_OFFSET_GUARD(
     BattleAction_Effect,
-    struct BattleAction,
+    struct BtlAct,
     effect,
     0x03);
 LAYOUT_OFFSET_GUARD(
     BattleAction_Power,
-    struct BattleAction,
+    struct BtlAct,
     power,
     0x0a);
 LAYOUT_OFFSET_GUARD(
     BattleAction_Type,
-    struct BattleAction,
+    struct BtlAct,
     type_0c,
     0x0c);
 
 LAYOUT_SIZE_GUARD(OwnerActionSlot_Size, struct OwnerActionSlot, 4);
 LAYOUT_SIZE_GUARD(BattleElementStats_Size, struct BattleElementStats, 4);
-LAYOUT_SIZE_GUARD(BattleUnit_Size, struct BattleUnit, BATTLE_UNIT_SIZE);
-LAYOUT_OFFSET_GUARD(BattleUnit_BaseHp, struct BattleUnit, base_hp, 0x10);
-LAYOUT_OFFSET_GUARD(BattleUnit_BaseAttack, struct BattleUnit, base_attack, 0x18);
-LAYOUT_OFFSET_GUARD(BattleUnit_Actions, struct BattleUnit, action_slots, 0x58);
-LAYOUT_OFFSET_GUARD(BattleUnit_AvailableDjinn, struct BattleUnit, djinn_available, 0xf8);
-LAYOUT_OFFSET_GUARD(BattleUnit_ActiveDjinn, struct BattleUnit, djinn_active, 0x108);
-LAYOUT_OFFSET_GUARD(BattleUnit_Rewards, struct BattleUnit, rewards, 0x120);
-LAYOUT_OFFSET_GUARD(BattleUnit_Hp, struct BattleUnit, hp, 0x038);
+LAYOUT_SIZE_GUARD(BattleUnit_Size, struct BtlUnit, BATTLE_UNIT_SIZE);
+LAYOUT_OFFSET_GUARD(BattleUnit_BaseHp, struct BtlUnit, base_hp, 0x10);
+LAYOUT_OFFSET_GUARD(BattleUnit_BaseAttack, struct BtlUnit, base_attack, 0x18);
+LAYOUT_OFFSET_GUARD(BattleUnit_Actions, struct BtlUnit, action_slots, 0x58);
+LAYOUT_OFFSET_GUARD(BattleUnit_AvailableDjinn, struct BtlUnit, djinn_available, 0xf8);
+LAYOUT_OFFSET_GUARD(BattleUnit_ActiveDjinn, struct BtlUnit, djinn_active, 0x108);
+LAYOUT_OFFSET_GUARD(BattleUnit_Rewards, struct BtlUnit, rewards, 0x120);
+LAYOUT_OFFSET_GUARD(BattleUnit_Hp, struct BtlUnit, hp, 0x038);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_BaseElements,
-    struct BattleUnit,
+    struct BtlUnit,
     base_elements,
     0x024);
-LAYOUT_OFFSET_GUARD(BattleUnit_Level, struct BattleUnit, level, 0x00f);
-LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BattleUnit, elements, 0x048);
+LAYOUT_OFFSET_GUARD(BattleUnit_Level, struct BtlUnit, level, 0x00f);
+LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BtlUnit, elements, 0x048);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_ReadyPose,
-    struct BattleUnit,
+    struct BtlUnit,
     ready_pose,
     0x144);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Inventory,
-    struct BattleUnit,
+    struct BtlUnit,
     inventory,
     0x0d8);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_DjinnOwnedCounts,
-    struct BattleUnit,
+    struct BtlUnit,
     djinn_owned_counts,
     0x118);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_DjinnActiveCounts,
-    struct BattleUnit,
+    struct BtlUnit,
     djinn_active_counts,
     0x11c);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_GuardLevel,
-    struct BattleUnit,
+    struct BtlUnit,
     guard_level,
     0x12b);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Status13a,
-    struct BattleUnit,
+    struct BtlUnit,
     charm,
     0x13a);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Status140,
-    struct BattleUnit,
+    struct BtlUnit,
     evil_spirit,
     0x140);
 
-LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BattleUnit, enemy_id, 0x14a);
+LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BtlUnit, enemy_id, 0x14a);
 
 #endif

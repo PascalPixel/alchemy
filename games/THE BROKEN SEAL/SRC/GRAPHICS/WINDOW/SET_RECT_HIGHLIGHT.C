@@ -62,7 +62,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
-    struct BattleSession *battle = gBattleWork;
+    struct BtlWork *battle = BtlWk;
     s32 count;
     s32 i;
     s32 j;

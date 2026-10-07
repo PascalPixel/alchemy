@@ -63,7 +63,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
         i = unit_count;
         do {
-            u8 level = Owner_GetStateFar(*p)->level;
+            u8 level = UnitGetFar(*p)->level;
 
             i--;
             p++;
@@ -129,13 +129,13 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
     struct BattleBaseStats *base;
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 value;
     s32 floor;
     s32 i;
 
     base = (struct BattleBaseStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
-    state = Owner_GetStateFar(owner);
+    state = UnitGetFar(owner);
     Iwram_CopyWords(base, &state->base_hp, sizeof(struct BattleBaseStats));
 
     value = state->base_hp;
@@ -197,7 +197,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     }
 
     state->level += levels;
-    Owner_RecalculateStatsFar(owner);
+    UnitCalcFar(owner);
     Runtime_BumpFree(base);
 }
 
@@ -209,13 +209,13 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 
 s32 Summon_TakeCharge(s32 no, s32 n)
 {
-    struct BattleSession *w;
+    struct BtlWork *w;
     s32 num;
     s32 i;
     s32 retry;
     s32 ch;
 
-    w = gBattleWork;
+    w = BtlWk;
     num = w->summon_count;
     for (i = 0; i < num; i++) {
         if (w->enemy_classes[i] == no)
@@ -249,15 +249,15 @@ s32 Summon_TakeCharge(s32 no, s32 n)
 
 s32 Summon_ReleaseCharge(s32 actor_id)
 {
-    struct BattleSession *state = gBattleWork;
-    struct BattleUnit *actor;
+    struct BtlWork *state = BtlWk;
+    struct BtlUnit *actor;
     s32 count = state->summon_count;
     s32 index;
     s32 name_length;
     s32 bit;
     s32 class_id;
 
-    actor = Owner_GetStateFar(actor_id);
+    actor = UnitGetFar(actor_id);
     if (actor->class_index != 0)
         return;
 
@@ -282,7 +282,7 @@ s32 Summon_ReleaseCharge(s32 actor_id)
 
 s32 Summon_ResetCharge(s32 class_id)
 {
-    struct BattleUnit *summon;
+    struct BtlUnit *summon;
     s32 object_index;
     s32 slot;
     s32 next_slot;
@@ -292,7 +292,7 @@ s32 Summon_ResetCharge(s32 class_id)
     object_index = 0;
     marker = LIST_MARKER_CHAR;
 scan_objects:
-    summon = Owner_GetStateFar(object_index + 0x80);
+    summon = UnitGetFar(object_index + 0x80);
     occupied = summon->side;
     if (occupied != 1) goto next_object;
     if (summon->class_id != class_id) goto next_object;

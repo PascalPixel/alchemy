@@ -600,7 +600,7 @@ Func_0200050c:
 	lsls r1, r1, #2
 	adds r3, r5, r1
 	ldrb r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #58
 	ldrsh r3, [r0, r2]
 	adds r5, #1
@@ -616,7 +616,7 @@ Func_0200050c:
 	adds r3, r3, r1
 	ldr r0, [r3]
 	movs r1, #1
-	bl Owner_AdjustSecondValue
+	bl UnitEpAdd
 .L_0200856c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -1396,7 +1396,7 @@ Func_02000be0:
 	adds r3, r3, r2
 	adds r6, r0, #0
 	ldr r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	adds r5, r0, #0
 	bl Random16Far
 	ldrb r3, [r5, #15]
@@ -7448,7 +7448,7 @@ Func_02003d44:
 	bl QueueIoWriteDelay2
 .L_0200c2c6:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #2
 	adds r0, #255
 	bl GameFlag_SetBit

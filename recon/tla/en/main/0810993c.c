@@ -17,7 +17,7 @@ extern char MsgHereYouGo;
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *menu = gMenuWork;
-    struct BattleUnit *unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
+    struct BtlUnit *unit = (struct BtlUnit *)UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *info = Item_Get(item_id);
     s32 replaced;

@@ -100,10 +100,10 @@ void Resource_LoadCode(u32 index, void *destination)
     do {
         size = (u32)Resource_PatchThumbBranchCodeSize;
     } while (0);
-    routine = (void (*)(void *, s32))Runtime_BumpAllocate(size);
+    routine = (void (*)(void *, s32))MemAlloc(size);
     Dma_Set((const void *)Resource_PatchThumbBranch, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(destination, end);
-    Sys_Free(routine);
+    MemFree(routine);
 }
 
 void Runtime_IgnoreInterrupt(void)

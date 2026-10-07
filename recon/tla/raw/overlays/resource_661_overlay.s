@@ -7670,7 +7670,7 @@ Func_02003da0:
 	asrs r0, r0, #16
 	bl VramBlock_LoadCached
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #240
 	lsls r0, r0, #2
 	bl Runtime_BumpAllocateAlternatePool

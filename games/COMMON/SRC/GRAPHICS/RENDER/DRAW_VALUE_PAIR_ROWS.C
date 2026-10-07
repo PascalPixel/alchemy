@@ -22,7 +22,7 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 s32 UiWork_SetParamNibbleFar(s32 color);
 
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 layer)
+void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 layer)
 {
     s16 val;
 

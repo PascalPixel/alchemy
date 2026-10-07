@@ -4,7 +4,7 @@
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 
-s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
+s32 BtlEnmList(s16 *unit_ids)
 {
     s16 *output;
     s32 count;
@@ -22,7 +22,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
         id = 0x80;
         limit += 0x80;
         for (; id < limit; id++) {
-            if (((struct BattleUnit *)Owner_GetState(id))->side != 0) {
+            if (((struct BtlUnit *)UnitGet(id))->side != 0) {
                 *output = id;
                 listed++;
                 output++;
@@ -47,7 +47,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     s32 unit_id;
     s16 hp;
     s32 active_count;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     output = unit_ids;
     living_count = 0;
@@ -64,7 +64,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
             do {
                 unit_id = *member;
                 member += 1;
-                hp = ((struct BattleUnit *)Owner_GetState(unit_id))->hp;
+                hp = ((struct BtlUnit *)UnitGet(unit_id))->hp;
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -81,7 +81,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         enemy_limit = enemy_capacity + 0x80;
         if (remaining < enemy_limit) {
             do {
-                unit = Owner_GetState(remaining);
+                unit = UnitGet(remaining);
                 if (unit->side != 0 && unit->hp > 0) {
                     if (output != NULL) {
                         *output = remaining;

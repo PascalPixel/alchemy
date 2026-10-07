@@ -13,10 +13,10 @@ struct MotionRecordScale {
     s32 scale;
 };
 
-static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
+static __inline__ struct BtlObj *BattleObject_FindSlot(s32 id)
 {
     u8 *work = (u8 *)Ram_HeapSlots->battle_work;
-    struct BattleObjectSlot *slots = (struct BattleObjectSlot *)(work + 0x84);
+    struct BtlObj *slots = (struct BtlObj *)(work + 0x84);
 
     if (id > 7)
         id -= 0x78;

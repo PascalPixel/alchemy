@@ -63,7 +63,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     s32 value;
 
     limit = ItemMenu_Count(menu->pane_owner[index]);
-    encoded = (s32)Owner_GetStateFar(menu->pane_owner[index]);
+    encoded = (s32)UnitGetFar(menu->pane_owner[index]);
     value = menu->selected_index_by_owner[menu->pane_owner[index]];
     if ((value + 1) > limit) {
         value = limit - 1;
@@ -201,7 +201,7 @@ s32 ItemMenu_RunList(s32 pane)
     s32 result;
     s32 redraw;
     s32 done;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     s32 prev;
     struct RenderOutput *icon;
     s32 work[5];
@@ -216,7 +216,7 @@ s32 ItemMenu_RunList(s32 pane)
     done = 0;
 
     while (done == 0 && GameFlag_IsSet(0x150) == 0) {
-        owner = Owner_GetStateFar(menu->pane_owner[pane]);
+        owner = UnitGetFar(menu->pane_owner[pane]);
         menu->item_count = ItemMenu_Collect(owner, menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->selected_item_icon->active = 13;
@@ -314,7 +314,7 @@ s32 ItemMenu_RunList(s32 pane)
                         menu->pane_owner[pane] = menu->owner_ids[tab];
                         menu->pane_index[pane] = tab;
                         menu->item_count = ItemMenu_Collect(
-                            Owner_GetStateFar(menu->pane_owner[pane]), menu->items, 0);
+                            UnitGetFar(menu->pane_owner[pane]), menu->items, 0);
                     } while (menu->item_count == 0);
                     for (i = 0; i <= 3; i++) {
                         menu->owner_y[i] = 30;

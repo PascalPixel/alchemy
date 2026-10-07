@@ -12,7 +12,7 @@ Func_080fae2c:
 	ldr r7, [r3]
 	mov r8, r1
 	adds r6, r0, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #226
 	lsls r2, r2, #1
 	adds r5, r7, r2

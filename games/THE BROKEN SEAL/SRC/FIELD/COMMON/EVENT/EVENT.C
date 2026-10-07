@@ -18,7 +18,7 @@
 
 extern struct EventRuntime *gEventWork;
 
-s32 Owner_GetStateFar(void);
+s32 UnitGetFar(void);
 s32 Party_AddActiveOwnerFar(s32 event_id);
 s32 GameFlag_TestFar(s32 group);
 
@@ -52,7 +52,7 @@ void Event_SetSceneEvents(s32 value)
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 {
-    Owner_GetStateFar();
+    UnitGetFar();
     Party_AddActiveOwnerFar(event_id);
     if (value != 0) {
         Party_ShowJoinedMessageFar(event_id, value);

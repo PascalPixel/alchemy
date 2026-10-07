@@ -48,8 +48,8 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     void *canvas;
     /* FAKEMATCH: an unused second blitter word; the native frame keeps an 8-byte draw slot (sp+48..55, the upper word never accessed), 84 bytes against 80 without it. */
     DrawRectangleFn draw[2];
-    struct BattleObjectSlot *first;
-    struct BattleObjectSlot *second;
+    struct BtlObj *first;
+    struct BtlObj *second;
     struct MotionObject *object;
     struct MotionObject *target;
     s32 x;
@@ -453,7 +453,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     s32 frame;
     DrawRectangle draw1;
     DrawRectangle draw0;
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     struct BattleBackgroundView *view;
     void **slots;
     void **cache;

@@ -13,7 +13,7 @@ struct GameStateOwners {
 extern struct GameStateOwners gGameState;
 extern struct OwnerState *gBattleOwnerStates;
 
-void *Owner_GetState(s32 owner)
+void *UnitGet(s32 owner)
 {
     struct OwnerState *states;
     register u32 offset asm("r3"); /* FAKEMATCH: the scaled index in r3 */

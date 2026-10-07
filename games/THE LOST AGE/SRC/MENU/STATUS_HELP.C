@@ -15,11 +15,11 @@ struct StatusOwner {
 #endif
 
 extern u8 MsgYourNameAndLevelExperience[];
-struct StatusOwner *Owner_GetState(s32 owner);
+struct StatusOwner *UnitGet(s32 owner);
 u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
 void UiText_DrawQuantity(s32 value, s32 digits);
-void *Runtime_BumpAllocate(s32 size);
-void Sys_Free(void *buffer);
+void *MemAlloc(s32 size);
+void MemFree(void *buffer);
 void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_RenderWideStringAtOffsetFar(void *buffer, void *destination, s32 offset, s32 terminator);
 
@@ -32,15 +32,15 @@ void Func_080ff2e8(void *window, s32 help, s32 full)
         help++;
     if (help == 1) {
         u8 *owner = menu + 0x216;
-        struct StatusOwner *state = Owner_GetState(*owner);
+        struct StatusOwner *state = UnitGet(*owner);
 
         if (state->level == 99)
             help = 8;
         else
             UiText_DrawQuantity(Owner_GetLevelThresholdFar(*owner, state->level + 1) - state->experience, 5);
     }
-    buffer = Runtime_BumpAllocate(HELP_LENGTH * 2);
+    buffer = MemAlloc(HELP_LENGTH * 2);
     UiText_CopyMessageStringFar(help + (s32)MsgYourNameAndLevelExperience, buffer, HELP_LENGTH);
     UiText_RenderWideStringAtOffsetFar(buffer, window, 0, -1);
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

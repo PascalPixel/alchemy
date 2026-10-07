@@ -43,8 +43,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     u32 visible_count;
     u8 row;
     s32 cursor;
-    struct BattleUnit *owner;
-    struct BattleAction *ability;
+    struct BtlUnit *owner;
+    struct BtlAct *ability;
     struct PsynergyMenuState *menu = gMenuWork;
 
     (void)unused;
@@ -80,8 +80,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     if (visible_count > row) {
         cursor = first_entry;
         do {
-            owner = Owner_GetStateFar(menu->owner_ids[0]);
-            ability = BattleAction_Get(0x3fff & menu->psynergies[cursor]);
+            owner = UnitGetFar(menu->owner_ids[0]);
+            ability = BtlActGet(0x3fff & menu->psynergies[cursor]);
 
             if (ability->pp_cost > owner->pp) {
                 UiWork_SetParamNibbleFar(2);
@@ -112,7 +112,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 s32 PsynergyMenu_RunList(s32 pane)
 {
     struct PsynergyMenuState *menu;
-    struct BattleAction *ability;
+    struct BtlAct *ability;
     struct RenderOutput *icon;
     s32 window;
     s32 changed;
@@ -123,7 +123,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     s32 result;
     s32 redraw;
     s32 done;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     s32 prev;
     s32 prompt;
     s32 work[5];
@@ -139,7 +139,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     done = 0;
 
     while (done == 0 && GameFlag_IsSet(0x150) == 0) {
-        owner = Owner_GetStateFar(menu->owner_ids[pane]);
+        owner = UnitGetFar(menu->owner_ids[pane]);
         if (menu->mode != 0) {
             menu->psynergy_count =
                 PsynergyMenu_CollectActions(owner, menu->psynergies, 1);
@@ -283,7 +283,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                     menu->selected_owner = menu->owner_table[tab];
                     menu->owner_ids[0] = menu->owner_table[tab];
                     menu->psynergy_count = PsynergyMenu_CollectActions(
-                        Owner_GetStateFar(menu->owner_ids[0]),
+                        UnitGetFar(menu->owner_ids[0]),
                         menu->psynergies, mode);
                 } while (menu->psynergy_count == 0);
                 menu->tab_index[pane] = tab;
@@ -353,7 +353,7 @@ s32 PsynergyMenu_RunList(s32 pane)
 
 s32 PsynergyMenu_IsActionRestricted(s32 no)
 {
-    struct BattleAction *action = BattleAction_Get((u32)(no << 18) >> 18);
+    struct BtlAct *action = BtlActGet((u32)(no << 18) >> 18);
     u32 flags;
 
     if (action->type_0c != 0)

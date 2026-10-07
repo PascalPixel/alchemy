@@ -7,13 +7,13 @@ Resource_FarCall005:
 	.thumb_func
 Trade_GetOfferStateFar:
 	overlay_veneer Trade_GetOfferState
-	.global Owner_RecalculateStatsFar
+	.global UnitCalcFar
 	.thumb_func
-Owner_RecalculateStatsFar:
+UnitCalcFar:
 	.global BattleUnit_Recalculate
 	.thumb_func
 BattleUnit_Recalculate:
-	overlay_veneer Owner_RecalculateStats
+	overlay_veneer UnitCalc
 	.global Item_Get
 	.thumb_func
 Item_Get:

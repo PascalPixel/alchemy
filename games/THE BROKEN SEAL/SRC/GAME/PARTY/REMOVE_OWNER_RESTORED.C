@@ -25,14 +25,14 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 
 void Party_RemoveOwnerRestored(s32 owner)
 {
-    struct BattleUnit *vitals;
+    struct BtlUnit *vitals;
     s32 i;
     s32 count;
     s32 standing;
 
     Party_RemoveActiveOwnerFar(owner);
     Event_ClearInvalidPackedValues();
-    vitals = Owner_GetStateFar(owner);
+    vitals = UnitGetFar(owner);
     /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
     do {
         vitals->hp = vitals->max_hp;
@@ -48,12 +48,12 @@ void Party_RemoveOwnerRestored(s32 owner)
     standing = 0;
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        vitals = Owner_GetStateFar(gGameState.active_owners[i]);
+        vitals = UnitGetFar(gGameState.active_owners[i]);
         if (vitals->hp != 0)
             standing++;
     }
     if (standing == 0) {
-        vitals = Owner_GetStateFar(gGameState.selected_actor);
+        vitals = UnitGetFar(gGameState.selected_actor);
         vitals->hp = 1;
         vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
         if (vitals->hp_gauge == 0 && vitals->hp != 0)

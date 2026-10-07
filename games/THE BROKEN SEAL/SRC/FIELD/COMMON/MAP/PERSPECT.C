@@ -293,7 +293,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     volatile u32 fill;
 
     variant = 0;
-    buffer = Runtime_BumpAllocate(0x200);
+    buffer = MemAlloc(0x200);
     state = gMapWork[0];
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;

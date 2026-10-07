@@ -21,8 +21,8 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
             s32 party_slot;
 
             for (party_slot = 0; party_slot < party_size; party_slot++) {
-                struct BattleUnit *member =
-                    Owner_GetStateFar(party_members[party_slot]);
+                struct BtlUnit *member =
+                    UnitGetFar(party_members[party_slot]);
 
                 totals[element] += member->djinn_owned_counts[element];
             }

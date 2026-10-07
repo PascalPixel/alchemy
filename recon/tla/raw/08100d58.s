@@ -4,7 +4,7 @@
 	.thumb_func
 Func_08100d58:
 	push {lr}
-	bl BattleAction_Get
+	bl BtlActGet
 	ldrb r3, [r0, #1]
 	movs r2, #15
 	ands r2, r3

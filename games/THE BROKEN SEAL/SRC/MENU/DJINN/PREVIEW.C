@@ -110,7 +110,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
     }
 
-    unit = Owner_GetStateFar(owner);
+    unit = UnitGetFar(owner);
     if (win != 0)
         UiWork_Finalize(win, 1);
 
@@ -121,8 +121,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     if (win == 0)
         return 0;
 
-    buf = (s16 *)Runtime_BumpAllocate(128);
-    snap = (struct BattleUnitRecord *)Runtime_BumpAllocate(332);
+    buf = (s16 *)MemAlloc(128);
+    snap = (struct BattleUnitRecord *)MemAlloc(332);
     list = (u16 *)Runtime_BumpAllocateAlternatePool(96);
     Iwram_CopyWords(snap, unit, 332);
 
@@ -132,7 +132,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         Djinn_DeactivateFar(owner, col, row);
     else
         Djinn_ActivateFar(owner, col, row);
-    Owner_RecalculateStatsFar(owner);
+    UnitCalcFar(owner);
 
     total = DjinnMenu_ListChangedDjinn((const struct OwnerActionSlot *)snap->grid, (const struct OwnerActionSlot *)unit->grid, list, &gained, &lost);
     pages = __divsi3(total - 1, 5) + 1;

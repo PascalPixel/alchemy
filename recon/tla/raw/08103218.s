@@ -18,7 +18,7 @@ Func_08103218:
 	str r1, [sp, #60]
 	str r2, [sp, #56]
 	str r3, [sp, #52]
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #192
 	str r0, [sp, #48]
 	lsls r3, r3, #18
@@ -62,7 +62,7 @@ Func_08103218:
 	lsls r2, r2, #16
 	lsrs r2, r2, #16
 	str r2, [sp, #20]
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_0810362c
 	ldr r1, [sp, #48]
 	str r0, [sp, #44]
@@ -292,9 +292,9 @@ Func_08103218:
 	bl Djinn_ActivateFar
 .L_0810346e:
 	ldr r0, [sp, #52]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r0, [sp, #52]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #212]
 	str r0, [sp, #48]
 	cmp r3, #0
@@ -837,7 +837,7 @@ Func_08103218:
 	bl UiText_DrawCharacterAtOffsetFar
 	mov r2, r8
 	ldrh r0, [r2]
-	bl BattleAction_Get
+	bl BtlActGet
 	ldr r3, [sp, #16]
 	ldrb r0, [r0, #9]
 	movs r1, #2
@@ -957,7 +957,7 @@ Func_08103218:
 	mov lr, r3
 	.2byte 0xf800
 	ldr r0, [sp, #44]
-	bl Sys_Free
+	bl MemFree
 	movs r0, #1
 	add sp, #168
 	pop {r3, r5, r6, r7}

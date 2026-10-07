@@ -39,7 +39,7 @@ s32 UpdateNameEntries(void)
 {
     u16 name_text[24];
     void *buffer;
-    struct BattleUnit *name_entry;
+    struct BtlUnit *name_entry;
     s32 named_count;
     s32 index;
     s32 len;
@@ -95,7 +95,7 @@ s32 UpdateNameEntries(void)
 s32 LinkBattle_SendParty(void)
 {
     u8 *buffer;
-    struct BattleSession *work;
+    struct BtlWork *work;
     s32 j;
     struct DjinnRecoveryList *list;
     s32 size;
@@ -107,13 +107,13 @@ s32 LinkBattle_SendParty(void)
     size = LINK_PARTY_UNIT_BYTES;
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
     mark = 0xff;
-    work = gBattleWork;
+    work = BtlWk;
     for (i = 7; i >= 0; i--)
         work->owner_slots[i] = mark;
     count = BattleParty_PrepareActiveOwners(owners);
     for (i = 0; i < count; i++) {
-        Iwram_CopyWords(buffer, Owner_GetStateFar(owners[i]), size);
-        ((struct BattleUnit *)buffer)->side = 2;
+        Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
+        ((struct BtlUnit *)buffer)->side = 2;
         work->owner_slots[owners[i]] = i - 128;
         if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
@@ -121,7 +121,7 @@ s32 LinkBattle_SendParty(void)
         WaitFrames(2);
     }
     for (; i <= 2; i++) {
-        ((struct BattleUnit *)buffer)->side = 0;
+        ((struct BtlUnit *)buffer)->side = 0;
         if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
         SerialRuntime_WaitForTransferA();

@@ -139,7 +139,7 @@ s32 Object_CheckMovementCollision();
 void Object_CommitPosition();
 void UiWork_PushValueSlot();
 s32 Resource_LoadFixedBlockBIntoFreeSlot();
-u16 *Owner_GetState();
+u16 *UnitGet();
 void Inventory_AddItem();
 void Inventory_Equip();
 s32 Party_CountActiveOwners();

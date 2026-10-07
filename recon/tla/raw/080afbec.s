@@ -33,7 +33,7 @@ Func_080afbec:
 	b .L_080afd9c
 .L_080afc20:
 	ldr r0, [sp, #12]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #166
 	ldr r3, .L_080afdac
 	lsls r1, r1, #1
@@ -197,7 +197,7 @@ Func_080afbec:
 	ldr r0, [sp, #12]
 	bl Owner_CalculateBaseElements
 	ldr r0, [sp, #12]
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r3, #149
 	lsls r3, r3, #1
 	adds r1, r5, r3

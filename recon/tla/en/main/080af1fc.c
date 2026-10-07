@@ -2,7 +2,7 @@
 
 s32 Inventory_CheckUnequip(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct OwnerInventoryState *inv = UnitGet(owner);
     s32 item_id = inv->inventory[slot] & ITEM_ID_MASK;
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 result = 0;

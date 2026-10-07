@@ -47,7 +47,7 @@ void BattlePresentation_WaitForAdvance(void);
 
 s32 Battle_ProcessRoundEnd(void)
 {
-    struct BattleSession *work;
+    struct BtlWork *work;
     s32 side;
     s32 sides;
     s32 count;
@@ -56,7 +56,7 @@ s32 Battle_ProcessRoundEnd(void)
     struct DjinnRecoveryEntry *timed_entry;
     struct DjinnRecoveryEntry *expired_entry;
 
-    work = gBattleWork;
+    work = BtlWk;
     sides = (work->two_sided != 0) + 1;
     for (side = 0; side < sides; side++) {
         list = &Trade_GetOfferStateFar(side)->list;
@@ -64,8 +64,8 @@ s32 Battle_ProcessRoundEnd(void)
         if (i < list->count) {
             timed_entry = list->entries;
             do {
-                if (timed_entry->turns > 0 && GetBattleObjectSlot(timed_entry->unit_id) != 0
-                    && Owner_GetStateFar(timed_entry->unit_id)->hp != 0) {
+                if (timed_entry->turns > 0 && BtlObjGet(timed_entry->unit_id) != 0
+                    && UnitGetFar(timed_entry->unit_id)->hp != 0) {
                     timed_entry->turns--;
                 }
                 i++;
@@ -80,7 +80,7 @@ s32 Battle_ProcessRoundEnd(void)
                     u8 id = expired_entry->unit_id;
                     s32 element;
 
-                    if (GetBattleObjectSlot(id) != 0) {
+                    if (BtlObjGet(id) != 0) {
                         BattleEventRuntime_Reset();
                         BattleEventRuntime_SchedulePhase(30);
                         BtlEvPush(BEV_UNIT, id);
@@ -90,12 +90,12 @@ s32 Battle_ProcessRoundEnd(void)
                         MES_PUSH(MsgDjinnSet);
                         BtlEvPush(BEV_OBJ_END, id);
                         Audio_PlayCue(212);
-                        Object_SetMode(GetBattleObjectSlot(id)->object, 3);
-                        ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
+                        Object_SetMode(BtlObjGet(id)->object, 3);
+                        ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, 32);
                         element = expired_entry->element;
                         Djinn_ActivateFar(id, element, expired_entry->index);
                         Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
-                        Owner_RecalculateStatsFar(id);
+                        UnitCalcFar(id);
                         BattleFx_PlayUnitElementEffect(id, element, 3, 0);
                         BattleEventRuntime_WaitForReady();
                     }
@@ -106,7 +106,7 @@ s32 Battle_ProcessRoundEnd(void)
             } while (i < list->count);
         }
     }
-    BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
+    BattlePresentation_ConfigurePaletteFade(2, BtlWk->background, 0);
     {
     s32 *group_list;
     struct BattleGroupOrder order = BattleParty_RoundEndGroupOrder;
@@ -125,7 +125,7 @@ s32 Battle_ProcessRoundEnd(void)
             s32 hp_amount;
             s32 pp_amount;
             s32 id = ids[j];
-            struct BattleUnit *unit = Owner_GetStateFar(id);
+            struct BtlUnit *unit = UnitGetFar(id);
 
             if (unit->ready_pose != 0) {
                 unit->ready_pose--;
@@ -152,7 +152,7 @@ s32 Battle_ProcessRoundEnd(void)
                     if (unit->pp + pp_amount > unit->max_pp) {
                         pp_amount = unit->max_pp - unit->pp;
                     }
-                    Owner_AdjustSecondValueFar(id, pp_amount);
+                    UnitEpAddFar(id, pp_amount);
                     UiWork_PushValueSlotFar(id, 1);
                     UiWork_PushValueSlotFar(pp_amount, 5);
                     if (unit->pp == unit->max_pp) {
@@ -165,75 +165,75 @@ s32 Battle_ProcessRoundEnd(void)
                 }
             }
             if (BattleUnit_TickAgilityModifier(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgAgiNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickAttackModifier(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgAtkNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickDefenseModifier(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgDefNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickResistanceModifier(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgResNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickDelusion(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgCureDelusion);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickConfusion(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgConscious);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCharm(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgConscious2);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickStun(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgCureStun);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickSleep(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgWakes);
                 BattlePresentation_WaitForAdvance();
             }
             if (Battle_AdvanceCounterAndCheckChance(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgCureSeal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickRefrain(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgRefrainEnd);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickReflect(id) != 0) {
-                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgReflectEnd);
                 BattlePresentation_WaitForAdvance();
@@ -244,10 +244,10 @@ s32 Battle_ProcessRoundEnd(void)
 }
 
 
-s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
+s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 {
     s32 id;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 both_sides;
     s32 counts[4];
     struct DjinnRecoveryList *list;
@@ -256,7 +256,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 
     id = plan->actor_id;
     both_sides = 0;
-    unit = Owner_GetStateFar(id);
+    unit = UnitGetFar(id);
     list = &Trade_GetOfferStateFar((id < 0 || id > 7))->list;
     for (best = 0; best < list->count; best++) {
         if (list->entries[best].unit_id == id && list->entries[best].turns == -1) {
@@ -313,12 +313,12 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         }
     }
     if (both_sides != 0) {
-        struct BattleUnit *before;
+        struct BtlUnit *before;
         s32 most;
         s32 i;
         most = 0;
-        before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
-        Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
+        before = Runtime_BumpAllocateAlternatePool(sizeof(struct BtlUnit));
+        Iwram_CopyWords(before, unit, sizeof(struct BtlUnit));
         best = -1;
         for (i = 0; i <= 3; i++) {
             if (counts[i] > most) {
@@ -341,13 +341,13 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 MES_PUSH(MsgEarthPowerUp + i);
                 BtlEvPush(BEV_OBJ_END, id);
                 Audio_PlayCue(212);
-                Object_SetMode(GetBattleObjectSlot(id)->object, 3);
-                ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
+                Object_SetMode(BtlObjGet(id)->object, 3);
+                ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, 32);
                 BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
                 BattleEventRuntime_WaitForReady();
             }
         }
-        Sys_Free(before);
+        MemFree(before);
     }
     if (both_sides != 0) {
         s8 *poison;
@@ -376,7 +376,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         poison = &unit->poison;
         if (*poison != 0) {
             s32 damage = unit->max_hp * *poison / 10;
-            struct BattleSession *state = gBattleWork;
+            struct BtlWork *state = BtlWk;
             BtlEvPush(BEV_OBJ_BGN, id);
             BtlEvPush(BEV_UNIT, id);
             BtlEvPush(BEV_NUM, damage);

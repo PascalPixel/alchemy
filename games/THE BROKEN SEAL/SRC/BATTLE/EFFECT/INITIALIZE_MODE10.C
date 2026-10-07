@@ -347,7 +347,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         if (frame >= 161 && frame <= 223) {
             for (i = 0; i != work->effect->count; i++) {
                 if (frame > i * 8 + 160) {
-                    struct BattleObjectSlot *slot =
+                    struct BtlObj *slot =
                         GetBattleObjectSlotFar(work->effect->actors[i]);
                     struct MotionObject *object = slot->object;
                     void *record;

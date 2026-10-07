@@ -20,8 +20,8 @@ extern struct FieldEffectState *gEventWork;
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustCoinsFar(s32);
-struct FieldObject *Owner_GetStateFar(s32);
-void Owner_RecalculateRatiosFar(s32);
+struct FieldObject *UnitGetFar(s32);
+void UnitRatioFar(s32);
 void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
@@ -86,7 +86,7 @@ s32 Inn_RoomPrice(s32 mode)
         base = global + 2;
         offset = 0x36C;
         do {
-            if (*(s16 *)((u8 *)Owner_GetStateFar(
+            if (*(s16 *)((u8 *)UnitGetFar(
                     *(s16 *)(base + offset)) + 56) != 0)
                 active++;
             index++;

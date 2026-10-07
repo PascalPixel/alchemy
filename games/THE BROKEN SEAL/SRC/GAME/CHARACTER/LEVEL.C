@@ -20,7 +20,7 @@ enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
 s32 Owner_RefreshClassActions(s32 owner)
 {
-    struct BattleUnit *st;
+    struct BtlUnit *st;
     u16 *abil;
     struct ClassDefinition *cls;
     struct ItemDefinition *def;
@@ -29,7 +29,7 @@ s32 Owner_RefreshClassActions(s32 owner)
     u16 mask;
     struct ClassAbility *cg;
 
-    st = Owner_GetState(owner);
+    st = UnitGet(owner);
     abil = (u16 *)st->action_slots;
     cls = Owner_GetRecordStride84(st->class_index);
     if (st->class_index == 0)
@@ -129,7 +129,7 @@ u32 Random16(void);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(state_index);
+    struct BtlUnit *state = (struct BtlUnit *)UnitGet(state_index);
     s32 key = value & OWNER_ACTION_ID_MASK;
     s32 found = -1;
     s32 index;
@@ -148,7 +148,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
         /* FAKEMATCH: the scalar member-address walk preserves halfword operand order; typed indexing shortens the loop by four bytes. */
         for (index = 0; index <= 30; index++) {
             s32 offset = index * sizeof(state->action_slots[0]) +
-                (s32)&((struct BattleUnit *)0)->action_slots;
+                (s32)&((struct BtlUnit *)0)->action_slots;
 
             if (*(u16 *)((u8 *)state + offset) == 0) {
                 *(u16 *)((u8 *)state + offset) = key;
@@ -185,7 +185,7 @@ struct CharacterDefinition *Character_GetDefinition(s32 index)
 
 void Owner_InitRecords(void)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     struct CharacterDefinition *tmpl;
     u16 name_buf[16];
     s32 owner;
@@ -195,7 +195,7 @@ void Owner_InitRecords(void)
     u8 *name;
 
     for (owner = 0; owner <= 7; owner++) {
-        state = (struct BattleUnit *)Owner_GetState(owner);
+        state = (struct BtlUnit *)UnitGet(owner);
         Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, name_buf);
         name = state->name;
         name[0] = name_buf[0];
@@ -213,7 +213,7 @@ void Owner_InitRecords(void)
 
     if (*remote != -1) {
         do {
-            state = (struct BattleUnit *)Owner_GetState(*remote);
+            state = (struct BtlUnit *)UnitGet(*remote);
             if (state != 0) {
                 state->class_id = *remote;
                 tmpl = Character_GetDefinition(state->class_id);
@@ -230,7 +230,7 @@ void Owner_InitRecords(void)
                 state->pp_gauge = 0x4000;
                 state->hp_gauge = 0x4000;
                 Party_AdvanceOwnerCountToTarget(*remote, tmpl->starting_level);
-                Owner_RecalculateStats(*remote);
+                UnitCalc(*remote);
             }
             remote++;
         } while (*remote != -1);
@@ -243,7 +243,7 @@ void Owner_LevelNoOp(void)
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
+    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
 
     if (state->class_index != 0) {
         if (level <= 0) {
@@ -258,14 +258,14 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 {
-    struct BattleUnit *st;
+    struct BtlUnit *st;
     struct LevelUpWork *work;
     u32 threshold;
     s16 band;
     s32 diff;
     s32 level;
 
-    st = (struct BattleUnit *)Owner_GetState(owner);
+    st = (struct BtlUnit *)UnitGet(owner);
     work = (struct LevelUpWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
     work->class_index = st->class_index;
     level = st->level;
@@ -320,7 +320,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         st->base_hp_regen = 0;
         st->base_pp_regen = 0;
         Owner_RefreshClassActions(owner);
-        Owner_RecalculateStats(owner);
+        UnitCalc(owner);
     }
     Runtime_BumpFree(work);
     return res;
@@ -328,9 +328,9 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 
 struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner_no, struct LevelUpResult *value)
 {
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
 
-    owner = (struct BattleUnit *)Owner_GetState(owner_no);
+    owner = (struct BtlUnit *)UnitGet(owner_no);
     if ((owner->experience >= Owner_GetLevelThreshold(owner_no, owner->level + 1)) &&
         (Owner_LevelUp(owner_no, value) != NULL)) {
         return value;

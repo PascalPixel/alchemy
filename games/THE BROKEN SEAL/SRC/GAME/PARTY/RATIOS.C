@@ -18,7 +18,7 @@
 
 s32 GameFlag_SetBit(s32 flag);
 
-void *Owner_GetState(s32);
+void *UnitGet(s32);
 
 void Party_SetFlag32AndRefreshMembers(void)
 {
@@ -26,9 +26,9 @@ void Party_SetFlag32AndRefreshMembers(void)
     Owner_RefreshDerivedData(0);
     Owner_RefreshDerivedData(1);
     Owner_RefreshDerivedData(5);
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(5);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(5);
 }
 
 void Party_ApplyStatePreset(void)
@@ -39,12 +39,12 @@ void Party_ApplyStatePreset(void)
     GameFlag_ClearBit(33);
     GameFlag_SetBit(0x901);
     Owner_RefreshDerivedData(5);
-    Owner_RecalculateStats(5);
+    UnitCalc(5);
     GameFlag_ClearBit(0x11b);
     GameFlag_SetBit(282);
 
     for (id = 0; id <= 1; id++) {
-        struct BattleUnit *unit = (struct BattleUnit *)Owner_GetState(id);
+        struct BtlUnit *unit = (struct BtlUnit *)UnitGet(id);
         s32 ratio;
         s32 rate;
         s32 slot;
@@ -93,7 +93,7 @@ void Party_ApplyStatePreset(void)
         }
 
         Owner_RefreshDerivedData(id);
-        Owner_RecalculateStats(id);
+        UnitCalc(id);
     }
 
     OwnerAction_Add(0, 140);
@@ -108,7 +108,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 {
     s32 count;
     s32 n;
-    struct BattleUnit *obj;
+    struct BtlUnit *obj;
     s32 t;
     s32 v14;
     s32 v16;
@@ -117,7 +117,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = Owner_GetState(gGameState.active_owners[n]);
+        obj = UnitGet(gGameState.active_owners[n]);
 
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
@@ -168,7 +168,7 @@ void Owner_RefreshRatiosOnFlag(void)
     u8 ownerId;
     s32 group;
     s32 doRefresh;
-    struct BattleUnit *obj;
+    struct BtlUnit *obj;
     s32 t;
     s32 v14;
     s32 v16;
@@ -197,7 +197,7 @@ void Owner_RefreshRatiosOnFlag(void)
             continue;
         }
 
-        obj = Owner_GetState(ownerId);
+        obj = UnitGet(ownerId);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             obj->pp = obj->max_pp;
@@ -241,15 +241,15 @@ void Owner_RatioNoOp(void)
 {
 }
 
-void Owner_RecalculateRatios(s32 owner_no)
+void UnitRatio(s32 owner_no)
 {
     s32 first;
     s32 second;
     s32 first_value;
     s32 second_value;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
 
-    owner = Owner_GetState(owner_no);
+    owner = UnitGet(owner_no);
     first = (owner->hp << 14) / owner->max_hp;
     first_value = 0x4000;
     if (first <= 0x4000) {
@@ -278,7 +278,7 @@ void Owner_RecalculateRatios(s32 owner_no)
     }
 }
 
-void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
+void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 {
     s32 value;
 

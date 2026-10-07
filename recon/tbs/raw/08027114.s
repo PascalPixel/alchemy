@@ -113,7 +113,7 @@ Battle_CollectPartyCommands:
 .L_080271f4:
 	.4byte 0x06006680
 .L_080271f8:
-	.4byte gBattleWork
+	.4byte BtlWk
 .L_080271fc:
 	.4byte gSerialTransfer + 0x4
 .L_08027200:
@@ -253,7 +253,7 @@ Battle_CollectPartyCommands:
 	cmp r6, #7
 	bne .L_08027340
 	movs r0, #12
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_080273c0
 	ldrb r3, [r3]
 	adds r6, r0, #0
@@ -374,7 +374,7 @@ Battle_CollectPartyCommands:
 	ldr r1, [sp, #84]
 	ldrh r0, [r0, r1]
 	str r0, [sp, #64]
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	ldr r3, .L_08027464
 	str r0, [sp, #72]
 	ldr r5, [r3]
@@ -475,7 +475,7 @@ Battle_CollectPartyCommands:
 	.4byte 0x00000000
 .L_080274c8:
 	movs r0, #12
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r0, #1
@@ -2061,7 +2061,7 @@ Battle_CollectPartyCommands:
 	bx r1
 	.2byte 0x0000
 .L_08028188:
-	.4byte gBattleWork
+	.4byte BtlWk
 .L_0802818c:
 	.4byte gLinkPeerSignatures
 .L_08028190:

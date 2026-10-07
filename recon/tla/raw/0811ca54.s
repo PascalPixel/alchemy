@@ -77,9 +77,9 @@ Func_0811ca54:
 	movs r3, #2
 	negs r3, r3
 	ands r0, r3
-	bl UiWindow_DrawPartyStatusContentsFar
+	bl PtyStDrawFar
 	ldr r0, [r6, #8]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r0, [r0]
 	movs r1, #3
 	mov r10, r0
@@ -117,7 +117,7 @@ Func_0811ca54:
 	lsls r3, r7, #1
 	adds r3, #36
 	ldrsh r0, [r2, r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, [r0]
 	movs r0, #0
 	ldr r1, [r3, #80]
@@ -180,7 +180,7 @@ Func_0811ca54:
 	str r2, [sp, #4]
 	str r2, [sp, #0]
 	ldrsh r0, [r2, r6]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	ldr r1, [sp, #4]
 	adds r7, #1
 	ldr r3, [r1, #20]
@@ -190,7 +190,7 @@ Func_0811ca54:
 	bne .L_0811cbb8
 .L_0811cbd0:
 	ldr r0, [r5, #8]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	movs r0, #0
 .L_0811cbd8:
 	add sp, #96

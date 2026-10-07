@@ -500,9 +500,9 @@ Func_0816c274:
 	bl Func_08196a7c
 .L_0816c67c:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r2, .L_0816c6d8
 	movs r3, #120
 	str r3, [r2, #12]

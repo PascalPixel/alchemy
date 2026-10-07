@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattlePresentation_SpawnActorObject
+	.global BtlObjMake
 	.thumb_func
-BattlePresentation_SpawnActorObject:
+BtlObjMake:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -26,7 +26,7 @@ BattlePresentation_SpawnActorObject:
 	bl Func_080200c0
 	mov r8, r0
 	mov r0, r9
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #0
 	mov r10, r0
 	mov r0, r9

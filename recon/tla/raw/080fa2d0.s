@@ -63,10 +63,10 @@ Func_080fa2d0:
 	ands r0, r3
 	bl Func_08100d40
 	ldrb r0, [r7]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r3, r8
 	ldrb r0, [r3]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	movs r0, #1
 .L_080fa35e:
 	pop {r3}

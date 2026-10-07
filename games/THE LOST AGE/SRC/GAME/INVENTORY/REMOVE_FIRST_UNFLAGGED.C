@@ -12,7 +12,7 @@
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner)
 {
-    struct OwnerInventoryState *state = Owner_GetState(owner);
+    struct OwnerInventoryState *state = UnitGet(owner);
     s32 result = 0;
     s32 i;
 

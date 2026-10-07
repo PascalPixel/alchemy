@@ -25,10 +25,10 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     s32 selection;
     struct ItemDefinition *item;
     struct ShopRuntime *shop;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     shop = gMenuWork;
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     entry_offset = (slot * 2) + 0xd8;
     item = Item_Get(*(u16 *)((u8 *)unit + entry_offset));
     result = 1;

@@ -52,6 +52,6 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align)
         offset += 32;
         top++;
     }
-    Sys_Free(canvas);
+    MemFree(canvas);
     return busy;
 }

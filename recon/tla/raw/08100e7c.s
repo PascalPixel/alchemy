@@ -200,7 +200,7 @@ Func_08100e7c:
 	lsls r2, r2, #1
 	adds r3, r7, r2
 	ldr r0, [r3]
-	bl Sys_Free
+	bl MemFree
 	movs r0, #220
 	bl Runtime_ReleaseHeapBlock
 	bl Event_ClearInvalidPackedValuesFar

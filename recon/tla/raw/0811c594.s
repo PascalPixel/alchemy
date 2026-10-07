@@ -7,7 +7,7 @@ Func_0811c594:
 	adds r7, r0, #0
 	movs r1, #0
 	ldrsh r0, [r7, r1]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	cmp r3, #0

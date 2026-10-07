@@ -128,8 +128,8 @@ void CommandTable_ConfigureCommandGroups(void)
     Djinn_Activate(2, 3, 3);
     Djinn_Activate(2, 3, 4);
     Djinn_Activate(2, 3, 5);
-    Owner_RecalculateStats(0);
-    Owner_RecalculateStats(1);
-    Owner_RecalculateStats(3);
-    Owner_RecalculateStats(2);
+    UnitCalc(0);
+    UnitCalc(1);
+    UnitCalc(3);
+    UnitCalc(2);
 }

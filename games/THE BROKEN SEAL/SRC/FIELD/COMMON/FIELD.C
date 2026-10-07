@@ -291,7 +291,7 @@ update_object:
         s32 action;
 
         action = 9;
-        if (Owner_GetStateFar(gGameState.selected_actor)->hp == 0)
+        if (UnitGetFar(gGameState.selected_actor)->hp == 0)
             action = 22;
         ObjectDispatch_ApplyArgumentToChildren(object, action);
     } else {

@@ -35,7 +35,7 @@ void BattleActor_UpdateSpritePriorities(void)
     if (ids[i] != BATTLE_UNIT_LIST_END) {
 again:
         {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 object = slot->object;
@@ -73,7 +73,7 @@ again:
     {
         count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
         for (i = 0; i < count; i++) {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 object = slot->object;
@@ -102,7 +102,7 @@ again:
     {
         count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
         for (i = 0; i < count; i++) {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 object = slot->object;
@@ -132,9 +132,9 @@ again:
 
 
 
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
+s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *output)
 {
-    struct BattleUnit *state = Owner_GetStateFar(id);
+    struct BtlUnit *state = UnitGetFar(id);
     s8 mode = state->poison;
     u32 flags = 0;
 
@@ -162,7 +162,7 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
     output->active_conditions = flags;
 }
 
-s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
+s32 BattleStatusIcon_Cycle(struct BtlObj *record)
 {
     struct AnimationEntry *old_effect;
     struct AnimationEntry *effect;
@@ -251,10 +251,10 @@ done:
 
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 value;
 
-    state = Owner_GetStateFar(id);
+    state = UnitGetFar(id);
     value = 1;
     if (state->hp != 0) {
         if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
@@ -265,6 +265,6 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
         value = 5 - value;
     }
 
-    Object_SetMode(GetBattleObjectSlot(id)->object, value);
-    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, (id & 3) + 14);
+    Object_SetMode(BtlObjGet(id)->object, value);
+    ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, (id & 3) + 14);
 }

@@ -98,7 +98,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     s32 cost;
     s32 status;
 
-    targetMode = BattleAction_Get(actionId)->type_0c;
+    targetMode = BtlActGet(actionId)->type_0c;
     actor = ACTION_ACTOR(encodedAction);
     ObjectTable_Get(gGameState.selected_actor);
     specialResult = 0;
@@ -141,14 +141,14 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         return BattleFx_ExecutePackedAbilityEffect(encodedAction);
 
     if (actor <= ACTOR_LAST_PARTY) {
-        cost = BattleAction_Get(actionId)->pp_cost;
-        if (Owner_GetStateFar(actor)->pp < cost) {
+        cost = BtlActGet(actionId)->pp_cost;
+        if (UnitGetFar(actor)->pp < cost) {
             Command_ShowActionMessage(actor, actionId, MsgNotEnoughPp);
             if (specialResult)
                 runtime->result_code = 0;
             return 0;
         }
-        Owner_AdjustSecondValueFar(actor, -cost);
+        UnitEpAddFar(actor, -cost);
     }
 
     primary = (const struct SceneEvent *)BattleFx_FindMatchingEvent(0x10000005, targetMode, &targetId);

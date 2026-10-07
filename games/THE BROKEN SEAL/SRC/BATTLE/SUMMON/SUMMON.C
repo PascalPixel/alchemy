@@ -109,7 +109,7 @@ u32 Item_EncodeBankedId(u32 value)
 
 void Summon_ClearWorkFields(void)
 {
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
     struct BattleSpoils *spoils = &work->spoils;
     u16 *items;
     s32 index;

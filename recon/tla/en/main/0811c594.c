@@ -22,7 +22,7 @@ s32 BattlePres_RunAction(s16 *action)
     u8 *actor;
 
     actor_id = action[0];
-    actor = Owner_GetStateFar(actor_id);
+    actor = UnitGetFar(actor_id);
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
 

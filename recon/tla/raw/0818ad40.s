@@ -669,9 +669,9 @@ Func_0818ad40:
 	adds r0, r5, #0
 	bl Func_08196a7c
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_0818b27a:
 	ldr r1, [sp, #44]
 	cmp r1, #1

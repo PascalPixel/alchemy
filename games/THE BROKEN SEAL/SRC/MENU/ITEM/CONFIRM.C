@@ -40,7 +40,7 @@ void ItemMenu_DrawItemHead(void)
     menu->selected_item_icon->y = 8;
     UiIcon_PrepareObject(menu->selected_item_icon);
     UiText_DrawStringAtOffsetFar(
-        Owner_GetStateFar(menu->pane_owner[0])->name,
+        UnitGetFar(menu->pane_owner[0])->name,
         (void *)menu->message_window,
         16,
         0);
@@ -143,8 +143,8 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
     s32 sel = 0;
     s32 changed = 1;
     struct InventoryMenuState *menu = gMenuWork;
-    struct BattleUnit *state = Owner_GetStateFar(menu->pane_owner[1]);
-    struct BattleUnit *saved;
+    struct BtlUnit *state = UnitGetFar(menu->pane_owner[1]);
+    struct BtlUnit *saved;
     s32 win;
     s32 item;
     s32 owner;
@@ -152,7 +152,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
     item = menu->selected_slots[1];
     owner = menu->pane_owner[1];
     ItemMenu_DrawEquipPreview(owner, item, 0, owner);
-    saved = Runtime_BumpAllocate(BATTLE_UNIT_SIZE);
+    saved = MemAlloc(BATTLE_UNIT_SIZE);
     CopyWords((WordCopyFn)Iwram_CopyWords, saved, state, BATTLE_UNIT_SIZE);
     win = (s32)menu->message_window;
     if ((u32)(Inventory_EquipFar(menu->pane_owner[1], menu->selected_slots[1]) + 2) <= 1) {
@@ -215,7 +215,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
     if (sel == 1)
         CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, BATTLE_UNIT_SIZE);
     Runtime_BumpFree(saved);
-    Owner_RecalculateStatsFar(menu->pane_owner[1]);
+    UnitCalcFar(menu->pane_owner[1]);
     Owner_RefreshClassActionsFar(menu->pane_owner[1]);
     return sel;
 }

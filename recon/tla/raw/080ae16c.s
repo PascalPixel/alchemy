@@ -18,7 +18,7 @@ Func_080ae16c:
 	lsls r1, r1, #2
 	adds r3, r6, r1
 	ldrb r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	adds r5, r0, #0
 	ldrh r1, [r5, #52]
 	ldrh r3, [r5, #54]

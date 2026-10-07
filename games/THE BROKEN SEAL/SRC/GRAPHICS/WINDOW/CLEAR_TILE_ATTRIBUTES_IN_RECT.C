@@ -50,7 +50,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
     u32 bits;
 
     work = (struct UiRenderWork *)gWindowWork[0];
-    canvas = Runtime_BumpAllocate(0x800);
+    canvas = MemAlloc(0x800);
     glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     attr = work->level << 12;
     ClearWords(pens, 16);

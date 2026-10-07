@@ -251,7 +251,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     s32 length = 0;
     u8 text[16];
     u8 *input = text + 1;
-    u8 *saved = (u8 *)Owner_GetStateFar(entry);
+    u8 *saved = (u8 *)UnitGetFar(entry);
     u8 *work = gWindowWork[0];
     s32 text_dirty = 1;
     s32 cursor_dirty = 1;
@@ -479,7 +479,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     s32 length = 0;
     u8 text[16];
     u8 *input = text + 1;
-    u8 *saved = (u8 *)Owner_GetStateFar(entry);
+    u8 *saved = (u8 *)UnitGetFar(entry);
     u8 *work = gWindowWork[0];
     s32 text_dirty = 1;
     s32 cursor_dirty = 1;

@@ -36,7 +36,7 @@ struct PsynergyMenuIcon {
     u8 sentinel;
 };
 
-struct BattleUnit;
+struct BtlUnit;
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
 void Audio_PlayCue(s32 cue);
 void ItemMenu_HideAllIcons(void);
@@ -82,7 +82,7 @@ s32 PsynergyMenu_SelectAction(void)
         ItemMenu_PosCategory();
         RenderOutput_RedrawSavedRectFar(menu->status_window);
         menu->psynergy_count = PsynergyMenu_CollectActions(
-            (struct BattleUnit *)Owner_GetStateFar(menu->owner_ids[0]), menu->psynergies, 0);
+            (struct BtlUnit *)UnitGetFar(menu->owner_ids[0]), menu->psynergies, 0);
         WaitFrames(1);
         Menu_BuildPageResult(&state, 0);
         PsynergyMenu_DrawPreparedPsynergyIcons(menu->status_window, menu->owner_ids[0]);
@@ -162,7 +162,7 @@ void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner_id)
 {
     struct PsynergyMenuState *menu = gMenuWork;
 
-    Owner_GetStateFar(owner_id);
+    UnitGetFar(owner_id);
     ItemMenu_HideAllIcons();
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
 }

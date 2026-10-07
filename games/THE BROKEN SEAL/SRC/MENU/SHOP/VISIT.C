@@ -194,9 +194,9 @@ s32 Battle_ApplyPresetItemsAndFlags(void)
     Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
     Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
     Inventory_AddItemFar(2, 0xe7);
-    Owner_GetStateFar(3)->poison = 1;
-    Owner_GetStateFar(5)->poison = 1;
-    Owner_GetStateFar(2)->evil_spirit = 1;
+    UnitGetFar(3)->poison = 1;
+    UnitGetFar(5)->poison = 1;
+    UnitGetFar(2)->evil_spirit = 1;
     Shop_Run(FINAL_ARG, 0x1e);
     return 0;
 }

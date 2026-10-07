@@ -19,7 +19,7 @@ struct MenuPageResult {
     s32 selected;
 };
 
-void *Owner_GetState(s32 owner);
+void *UnitGet(s32 owner);
 
 s32 Menu_BuildPageResult(struct MenuPageResult *result, s32 index)
 {
@@ -31,7 +31,7 @@ s32 Menu_BuildPageResult(struct MenuPageResult *result, s32 index)
     s32 row;
     s32 pages;
 
-    owner = Owner_GetState(menu->owners[index]);
+    owner = UnitGet(menu->owners[index]);
     count = menu->count;
     value = menu->selected[menu->owners[index]];
 

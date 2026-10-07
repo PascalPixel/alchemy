@@ -13,7 +13,7 @@
 struct TradeOfferState *Trade_GetOfferState(s32 which)
 {
     if (which != 0) {
-        return Owner_GetState(0x83);
+        return UnitGet(0x83);
     }
     return (struct TradeOfferState *)&gPartyState.unknown_000[0xc];
 }
@@ -30,7 +30,7 @@ u32 Party_GetAverageLevel(void)
         return 0;
     }
     for (i = 0; i < count; i++) {
-        total += ((struct BattleUnit *)Owner_GetState(
+        total += ((struct BtlUnit *)UnitGet(
             gPartyState.active_owners[i]))->level;
     }
     total = total / count;

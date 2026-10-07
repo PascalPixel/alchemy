@@ -1,11 +1,11 @@
 #include "BATTLE_PARTY.H"
 
-extern u8 *gBattleWork;
+extern u8 *BtlWk;
 
 s32 BattleParty_AssignMemberSlots(void)
 {
     u16 active_members[8];
-    u8 *battle_state = gBattleWork;
+    u8 *battle_state = BtlWk;
     s32 party_size = BattleParty_PrepareActiveOwners(active_members);
     s32 member_slot;
     s32 unit_id;

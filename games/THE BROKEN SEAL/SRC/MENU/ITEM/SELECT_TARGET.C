@@ -79,14 +79,14 @@ s32 ItemMenu_SelectTarget(s32 mode)
     shown = 0;
     UiWindow_SetBounds((struct RenderInput *)window, 13, 5, 17, 12);
     RenderOutput_RedrawSavedRectFar((s32)menu->item_window);
-    Owner_GetStateFar(menu->owner_ids[menu->pane_index[0]]);
+    UnitGetFar(menu->owner_ids[menu->pane_index[0]]);
     Scheduler_AddOrUpdateCallback(EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
             pending = 0;
             selection = (selection + count) % count;
             window = (s32)menu->item_window;
-            Owner_GetStateFar(menu->owner_ids[selection]);
+            UnitGetFar(menu->owner_ids[selection]);
             marker = (struct TargetMarker *)menu->pane_icons[1];
             marker->attributes.x = marker->x = ((menu->main_window->x + selection * 3) << 3) - 2;
             if (mode == 1) {

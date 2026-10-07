@@ -663,7 +663,7 @@ Func_020006b0:
 	lsls r5, r5, #5
 	mov r10, r0
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_02008900
 	bl Resource_GetTableEntry
@@ -677,7 +677,7 @@ Func_020006b0:
 	bl VramBlock_LoadCached
 	str r0, [sp, #4]
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	mov r5, r10
 	movs r1, #95
 	adds r5, #12
@@ -886,7 +886,7 @@ Func_020006b0:
 	mov r0, r11
 	bl Resource_ResetEntry
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	movs r0, #40
 	bl Battle_WaitMode0
 	movs r1, #0

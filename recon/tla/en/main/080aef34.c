@@ -5,11 +5,11 @@
 
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
 void Owner_RefreshClassActions(s32 owner);
-void Owner_RecalculateStats(s32 owner);
+void UnitCalc(s32 owner);
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct OwnerInventoryState *inv = UnitGet(owner);
     u32 item_id = inv->inventory[slot];
     struct ItemDefinition *item;
     u8 type;
@@ -40,6 +40,6 @@ s32 Inventory_Equip(s32 owner, s32 slot)
 
     inv->inventory[slot] |= INVENTORY_EQUIPPED;
     Owner_RefreshClassActions(owner);
-    Owner_RecalculateStats(owner);
+    UnitCalc(owner);
     return 0;
 }

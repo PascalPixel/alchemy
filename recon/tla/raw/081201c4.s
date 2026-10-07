@@ -162,13 +162,13 @@ BattleEv_DispatchQueued:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl UiWindow_DrawPartyStatusContentsFar
+	bl PtyStDrawFar
 	b .L_08120346
 .L_08120322:
 	lsls r5, r7, #2
 	adds r5, #64
 	ldr r0, [r6, r5]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	adds r1, r0, #0
 	ldr r0, [r6, r5]
 	bl BattleUnit_BuildStatusFlags

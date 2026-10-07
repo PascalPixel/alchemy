@@ -81,7 +81,7 @@ restart:
             }
             if (gKeysHeld & KEY_DOWN)
                 GameFlag_SetBitFar(364);
-            Owner_RecalculateStatsFar(0);
+            UnitCalcFar(0);
             gGameState.special = (s32)&ResourceId_SuharaGateBackdrop;
             if (encounter == 28)
                 GameFlag_SetBitFar(366);

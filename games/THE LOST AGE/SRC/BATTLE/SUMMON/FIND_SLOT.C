@@ -8,7 +8,7 @@ s32 Summon_FindSlot(void)
 
     for (i = 0; i <= 5; i++) {
         id = i + 0x80;
-        if (((u8 *)Owner_GetState(id))[0x12A] == 0)
+        if (((u8 *)UnitGet(id))[0x12A] == 0)
             break;
     }
     if (i == 6)

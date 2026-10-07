@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
+UnitGet:
 	push {lr}
 	cmp r0, #7
 	bhi .L_08016cb6

@@ -78,7 +78,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
             goto done;
 #endif
         size = (u32)UiText_DrawGlyphCodeSize;
-        draw = (GlyphRoutine)Runtime_BumpAllocate(size);
+        draw = (GlyphRoutine)MemAlloc(size);
         Dma_Set(UiText_DrawGlyphArm, draw, 0x84000000 | (size >> 2), REG_DMA3);
         result = draw(window, character, x, y, font);
 #if !EDITION_INTERNATIONAL

@@ -17,7 +17,7 @@ s32 Owner_GetValueIfLevelThresholdReached(s32 owner_no, s32 value)
     u32 *experience;
     s32 level;
 
-    owner = (struct Owner_080792c4 *)Owner_GetState(owner_no);
+    owner = (struct Owner_080792c4 *)UnitGet(owner_no);
     experience = &owner->value_124;
     level = owner->level;
     if (*experience >= Owner_GetLevelThreshold(owner_no, level + 1) && Owner_LevelUp(owner_no, value) != 0) {

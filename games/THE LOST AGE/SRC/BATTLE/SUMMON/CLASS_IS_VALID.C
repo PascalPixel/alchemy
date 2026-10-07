@@ -15,7 +15,7 @@
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
-    return GetBattleObjectSlot(id)->palette;
+    return BtlObjGet(id)->palette;
 }
 
 struct Layout {

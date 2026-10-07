@@ -872,9 +872,9 @@ Func_0818d5a8:
 	cmp r5, #2
 	bne .L_0818dbe4
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #12]
-	bl Sys_Free
+	bl MemFree
 .L_0818dc96:
 	ldr r0, [sp, #64]
 	cmp r0, #1

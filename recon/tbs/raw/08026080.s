@@ -162,7 +162,7 @@ BattleTarget_RunSelection:
 	mov r10, r6
 	b .L_080262b6
 .L_080261a8:
-	.4byte gBattleWork
+	.4byte BtlWk
 .L_080261ac:
 	.4byte 0x0000ffff
 .L_080261b0:
@@ -208,7 +208,7 @@ BattleTarget_RunSelection:
 	beq .L_080262ac
 	adds r0, r3, #0
 	str r4, [sp, #8]
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	ldr r2, [sp, #80]
 	adds r1, r0, #0
 	ldr r4, [sp, #8]
@@ -371,7 +371,7 @@ BattleTarget_RunSelection:
 	cmp r7, #1
 	bne .L_08026336
 	ldrh r0, [r6, r5]
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -791,7 +791,7 @@ BattleTarget_RunSelection:
 	.4byte 0x000000ff
 .L_08026648:
 	adds r0, r3, #0
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	ldr r3, [sp, #24]
 	adds r6, r0, #0
 	mov r1, r11
@@ -1360,7 +1360,7 @@ BattleTarget_RunSelection:
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
 	ldrh r0, [r1, r2]
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	ldr r3, [sp, #28]
 	ldr r4, [sp, #24]
 	add r5, sp, #108

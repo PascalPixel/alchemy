@@ -199,7 +199,7 @@ u32 SaveState_BuildSummaryHeader(void)
 {
     u16 owners[14];
     struct SaveSummary *summary;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     u8 *source;
     u8 *destination;
     u32 *word;
@@ -214,7 +214,7 @@ u32 SaveState_BuildSummaryHeader(void)
         copy[64] = gLoadedStateWord;
     }
     gGameState.saved_options = gOptionMirror;
-    owner = Owner_GetStateFar(gGameState.selected_actor);
+    owner = UnitGetFar(gGameState.selected_actor);
     destination = summary->name;
     source = owner->name;
     for (i = 11; i >= 0; i--)

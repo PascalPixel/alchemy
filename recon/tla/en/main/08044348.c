@@ -31,5 +31,5 @@ void UiWindow_DrawTilemapResource(struct UiWindow *window, const void *resource)
         vram += 32 - window->width;
         map += 32 - window->width;
     }
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

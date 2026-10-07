@@ -24,7 +24,7 @@ Func_080adc90:
 	adds r5, r0, #0
 .L_080adcb6:
 	ldrb r0, [r7]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #58
 	ldrsh r3, [r0, r2]
 	subs r5, #1

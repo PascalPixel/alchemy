@@ -59,8 +59,8 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
     u32 j;
     s32 count;
     s32 id;
-    struct BattleObjectSlot *object;
-    struct BattleSession *session;
+    struct BtlObj *object;
+    struct BtlWork *session;
     u16 *ids;
     s32 n;
 
@@ -121,7 +121,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         gBgScroll[0].y = 32;
         WaitFrames(1);
-        UiWindow_CreateWithLayoutBoundsFar(gBattleWork->party_status_mode);
+        UiWindow_CreateWithLayoutBoundsFar(BtlWk->party_status_mode);
         WaitFrames(20);
         QueueIoWriteDelay10(0x04000008, 2);
         QueueIoWriteDelay6(0x04000008, 0);
@@ -140,8 +140,8 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
             id = i + 120;
             if ((s32)i <= 7)
                 id = i;
-            object = GetBattleObjectSlot(id);
-            if (Owner_GetStateFar(id)->class_id != 148)
+            object = BtlObjGet(id);
+            if (UnitGetFar(id)->class_id != 148)
                 object->scale = 0xb333;
         }
         IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
@@ -160,7 +160,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         WaitFrames(1);
         WaitFrames(20);
-        UiWindow_CreateWithLayoutBoundsFar(gBattleWork->party_status_mode);
+        UiWindow_CreateWithLayoutBoundsFar(BtlWk->party_status_mode);
         QueueIoWriteDelay10(0x04000008, 2);
         QueueIoWriteDelay6(0x04000008, 0);
         REG_BLDCNT = 0x3f40;
@@ -203,7 +203,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
     /* FAKEMATCH: the one-pass IME save orders its stack address first; argument assignment and a u32 restore preserve load order. */
 
-    struct BattleSession *screen = gBattleWork;
+    struct BtlWork *screen = BtlWk;
     u16 *palette = screen->palette;
     volatile u32 ime;
 
@@ -272,9 +272,9 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
 
     if (fade == 0x80) {
-        Dma_Set(gBattleWork->palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
+        Dma_Set(BtlWk->palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
     } else if (fade != 0) {
-        u16 *source = gBattleWork->palette;
+        u16 *source = BtlWk->palette;
         u16 *destination = (u16 *)0x050000c0;
         s32 i;
         struct Half mask;

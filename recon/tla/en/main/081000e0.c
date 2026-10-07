@@ -7,7 +7,7 @@ void UiWindow_ClearInteriorTilesFar();
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawStringAtOffsetFar();
 void UiText_DrawNumberInWindowFar();
-s32 Owner_GetStateFar();
+s32 UnitGetFar();
 void Menu_DrawPageIndicator();
 void Menu_SetPageIcons();
 
@@ -30,7 +30,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     s32 base5_af7;
 
     p9 = *(s32 *)gMenuWork;
-    rec5 = Owner_GetStateFar(*(u8 *)((0x21a + p9)));
+    rec5 = UnitGetFar(*(u8 *)((0x21a + p9)));
     UiWindow_ClearInteriorTilesFar(a0, 128, 8, 224, 96);
     p8 = ((*(s32 *)(a2 + 8) << 2) + *(s32 *)(a2 + 8));
     p10 = ((u32)(s32)((s32)(*(s32 *)(a2 + 20) - (s32)p8) << 24) >> 24);

@@ -16,7 +16,7 @@ Func_080fcf14:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BattleAction_Get
+	bl BtlActGet
 	adds r5, r0, #0
 	ldrb r0, [r5, #6]
 	bl BattleFx_HasMatchingEvent5Far

@@ -206,7 +206,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
         work = *(gWorkSlot + 56);
     }
     work->action = action;
-    work->animation = BattleAction_Get(action)->type_0c;
+    work->animation = BtlActGet(action)->type_0c;
     running = scene->running;
     if (running != 0)
         return;

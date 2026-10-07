@@ -2,7 +2,7 @@
 #include "BATTLE_FORMATION.H"
 #include "SYSTEM.H"
 
-s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
+s32 BtlGrpRnd(s32 record_id)
 {
     s32 *choices_base;
     s32 choices[5];

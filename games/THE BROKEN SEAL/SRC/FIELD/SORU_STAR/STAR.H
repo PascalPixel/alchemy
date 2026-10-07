@@ -69,7 +69,7 @@ void PartyInventory_Discard();
 void Object_SetMoveTarget();
 void SoruStar_RiseActorFourteenSparks();
 void UiText_ShowCenteredMessage();
-void *Owner_GetState(u32 owner);
+void *UnitGet(u32 owner);
 void Engine_EventWaitForScreen();
 void Engine_CameraWaitForMove();
 void Engine_ActorSetSpeed();

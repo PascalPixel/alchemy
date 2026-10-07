@@ -327,7 +327,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     struct ScalePair wave;
     struct ScalePair drift;
     struct MotionObject *object;
-    struct BattleObjectSlot *context;
+    struct BtlObj *context;
     struct EffectStep *point;
     struct EffectStep *spark;
     struct EffectStep *mark;

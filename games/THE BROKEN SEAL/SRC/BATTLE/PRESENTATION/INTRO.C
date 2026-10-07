@@ -32,7 +32,7 @@ void BattlePresentation_UpdateCamera(void)
     void **slot = (void **)&gCameraWork;
     struct BattleCamera *state = slot[0];
     struct BattlePresentationTransition *transition = slot[32];
-    struct BattleSession *work = slot[-3];
+    struct BtlWork *work = slot[-3];
     struct FixedPointPosition local;
     s32 *pos;
     s16 delta;
@@ -83,13 +83,13 @@ void BattlePresentation_UpdateCamera(void)
 void BattleIntro_AnnounceEncounter(s32 enemy_count)
 {
     s16 enemies[8];
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     s16 *enemy;
     s32 announced;
 
-    battle = gBattleWork;
+    battle = BtlWk;
     UiWork_ClearValueNameTablesFar();
-    BattleParty_ListPresentEnemies(enemies);
+    BtlEnmList(enemies);
 
     announced = 0;
     if (enemy_count != 0) {
@@ -122,19 +122,19 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
 void BattleParty_CollectUnitList(void)
 {
     u16 buf[14];
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     s32 count;
     s32 i;
     s32 index;
     s32 kind;
 
-    battle = gBattleWork;
+    battle = BtlWk;
     count = BattleParty_PrepareActiveOwners(buf);
     for (i = 0; i < count; i++)
         battle->party_units[i] = buf[i];
     battle->party_units[count] = 0xff;
 
-    count = BattleParty_ListPresentEnemies(buf);
+    count = BtlEnmList(buf);
     kind = battle->battle_type;
     if (kind >= 0) {
         if (kind <= 1) {

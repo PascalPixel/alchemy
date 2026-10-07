@@ -27,5 +27,5 @@ void Title_LoadSprites(void)
     dma = (volatile s32 *)REG_DMA3;
     while (dma[2] < 0)
         ;
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

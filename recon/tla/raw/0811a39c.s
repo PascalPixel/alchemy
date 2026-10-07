@@ -29,7 +29,7 @@ Func_0811a39c:
 	cmp r0, #254
 	beq .L_0811a3e8
 	str r2, [sp, #0]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	ldr r2, [sp, #0]
@@ -66,7 +66,7 @@ Func_0811a39c:
 	cmp r0, #254
 	beq .L_0811a42c
 	str r2, [sp, #0]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	ldr r2, [sp, #0]

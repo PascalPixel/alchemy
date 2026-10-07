@@ -4,15 +4,15 @@
 #include "BATTLE_EVENT.H"
 #include "BATTLE_TYPES.H"
 
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
+struct BtlUnit *UnitGetFar(s32 unit_id);
 void BattleUnit_Recalculate(s32 unit_id);
-struct BattleAction *BattleAction_Get(s32 action_id);
-struct BattleAction *BattleAction_GetDirect(s32 action_id);
+struct BtlAct *BtlActGet(s32 action_id);
+struct BtlAct *BattleAction_GetDirect(s32 action_id);
 s32 GameFlag_TestFar(s32 flag_id);
-void Owner_RecalculateRatiosFar(s32 unit_id);
-s32 BattleRandom16Far(void);
-s32 BattleFx_IsReviveFar(s32 effect_id);
+void UnitRatioFar(s32 unit_id);
+s32 BtlRndFar(void);
+s32 BtlEfxRevChkFar(s32 effect_id);
 u32 Ability_CheckStatusOrSpecialId(s32 action_id);
-s32 Battle_ClassifyEntryKind(const struct BattleAction *entry);
+s32 Battle_ClassifyEntryKind(const struct BtlAct *entry);
 
 #endif

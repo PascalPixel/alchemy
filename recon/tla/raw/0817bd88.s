@@ -553,7 +553,7 @@ Func_0817bd88:
 	adds r0, r6, #0
 	bl Func_08196a7c
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_0817c202:
 	bl Func_081434f8
 	movs r1, #4

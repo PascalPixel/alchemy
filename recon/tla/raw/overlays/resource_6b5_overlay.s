@@ -508,7 +508,7 @@ Func_0200039c:
 	bgt .L_020084ec
 	mov r0, r8
 	adds r0, #128
-	bl Owner_GetState
+	bl UnitGet
 	adds r6, r0, #0
 	bl SerialRuntime_BeginTransferB
 	movs r3, #1
@@ -562,7 +562,7 @@ Func_0200039c:
 	b .L_02008516
 .L_020084ec:
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	movs r2, #170
 	lsls r2, r2, #1
 	mov r11, r2
@@ -581,7 +581,7 @@ Func_0200039c:
 	adds r7, r0, #0
 .L_02008516:
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	adds r0, r7, #0
 	add sp, #48
 	pop {r3, r5, r6, r7}
@@ -683,7 +683,7 @@ Func_02000578:
 	movs r3, #0
 	ldrh r0, [r1, r5]
 	mov r10, r3
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #170
 	adds r1, r0, #0
 	ldr r3, .L_020087b0
@@ -799,7 +799,7 @@ Func_02000578:
 	movs r5, #170
 	adds r0, r7, #0
 	lsls r5, r5, #1
-	bl Sys_Free
+	bl MemFree
 	adds r0, r5, #0
 	bl Runtime_BumpAllocateAlternatePool
 	adds r7, r0, #0
@@ -914,7 +914,7 @@ Func_02000578:
 	bl WaitFrames
 .L_0200879a:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
 	add sp, #32
 	pop {r3, r5, r6, r7}

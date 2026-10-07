@@ -10,12 +10,12 @@ void QueueIoWriteDelay2(u32, u32);
 void BattlePres_SetActorRecordMode(s32, s32);
 s32 Scheduler_AddOrUpdateCallback(u32, s32);
 
-extern u8 *gBattleWork;
+extern u8 *BtlWk;
 
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
     s16 active_actors[14];
-    u8 *battle = gBattleWork;
+    u8 *battle = BtlWk;
     u32 count;
     u32 i;
     volatile u16 *blend_y;

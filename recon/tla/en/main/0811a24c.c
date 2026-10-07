@@ -34,7 +34,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
             do {
                 unit_id = *member;
                 member += 1;
-                hp = FIELD_AT_OFFSET(Owner_GetStateFar(unit_id), s16, 0x38);
+                hp = FIELD_AT_OFFSET(UnitGetFar(unit_id), s16, 0x38);
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -51,7 +51,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         enemy_limit = enemy_capacity + 0x80;
         if (remaining < enemy_limit) {
             do {
-                unit = Owner_GetStateFar(remaining);
+                unit = UnitGetFar(remaining);
                 if ((FIELD_AT_OFFSET(unit, u8, 0x12A) != 0) && ((s32)FIELD_AT_OFFSET(unit, s16, 0x38) > 0)) {
                     if (output != NULL) {
                         *output = (u16)remaining;

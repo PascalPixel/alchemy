@@ -25,7 +25,7 @@ u32 gLinkLobbyCallFrames;
 
 
 extern volatile u16 gLinkStatus;
-u8 *Owner_GetState(s32 owner);
+u8 *UnitGet(s32 owner);
 
 s32 LinkLobby_CallIntoCircle(void)
 {
@@ -146,7 +146,7 @@ next:
     if (slot > 2) {
         goto second;
     }
-    rec = Owner_GetState(slot + 128);
+    rec = UnitGet(slot + 128);
     tries = 0;
     if ((ret = SerialRuntime_BeginTransferB(rec)) == -1) {
         goto failed;
@@ -252,7 +252,7 @@ s32 LinkLobby_SendPartyRecords(void)
     for (i = 0; i < count; i++) {
         /* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives the record copy's argument order; without it loop.c moves the failure out of the loop. */
         do {
-            Iwram_CopyWords(heap, Owner_GetState(owners[i]), size);
+            Iwram_CopyWords(heap, UnitGet(owners[i]), size);
             heap[0x12a] = 2;
             table[owners[i]] = i - 128;
             ret = SerialRuntime_BeginTransferA(heap, size);

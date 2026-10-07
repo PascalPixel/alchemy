@@ -67,7 +67,7 @@ void Audio_PlayCue(s32 soundId);
 void UpdateLinkSessionCountdown(void)
 {
     struct LinkCountdownState *state = gLinkCountdownWork;
-    struct BattleSession *runtime;
+    struct BtlWork *runtime;
     struct CountdownDisplayEntry *entry;
     u8 *active;
     struct LinkSignature *signature;
@@ -111,7 +111,7 @@ void UpdateLinkSessionCountdown(void)
         if (state->enabled == 0)
             goto done;
 
-        runtime = gBattleWork;
+        runtime = BtlWk;
         if (runtime->link_paused == 0)
             goto load_timer;
         state->timer = 0;
@@ -185,10 +185,10 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     s16 buffer[64];
     s32 work;
     s32 result;
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     s32 mode;
 
-    battle = gBattleWork;
+    battle = BtlWk;
     mode = gGameState.battle_start;
     if (gGameState.battle_start == 2 || mode <= 2 || (result = 1, mode > 4)) {
         result = 0;

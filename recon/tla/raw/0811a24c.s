@@ -44,7 +44,7 @@ Func_0811a24c:
 	adds r2, #2
 	adds r0, r6, #0
 	str r2, [sp, #0]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	ldr r2, [sp, #0]
@@ -74,7 +74,7 @@ Func_0811a24c:
 	bge .L_0811a300
 .L_0811a2d4:
 	adds r0, r5, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #149
 	lsls r2, r2, #1
 	adds r3, r0, r2

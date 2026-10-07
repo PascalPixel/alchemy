@@ -21,7 +21,7 @@ Func_080fae8c:
 	ldr r7, [r3]
 	mov r10, r1
 	adds r5, r0, #0
-	bl Owner_GetState
+	bl UnitGet
 	mov r2, r9
 	str r0, [sp, #0]
 	lsls r3, r2, #1
@@ -69,11 +69,11 @@ Func_080fae8c:
 	b .L_080faffe
 .L_080faf20:
 	adds r0, r6, #0
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #166
 	lsls r2, r2, #1
 	ldr r3, .L_080fb09c
@@ -111,11 +111,11 @@ Func_080fae8c:
 	b .L_080faffe
 .L_080faf78:
 	adds r0, r6, #0
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #166
 	lsls r2, r2, #1
 	ldr r3, .L_080fb09c
@@ -169,7 +169,7 @@ Func_080fae8c:
 	mov lr, r3
 	.2byte 0xf800
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	b .L_080fb08a
 .L_080faff8:
 	cmp r6, r5
@@ -188,11 +188,11 @@ Func_080fae8c:
 	b .L_080fb08a
 .L_080fb012:
 	adds r0, r6, #0
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #0]
 	movs r0, #166
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #166
 	lsls r2, r2, #1
 	ldr r3, .L_080fb09c
@@ -243,7 +243,7 @@ Func_080fae8c:
 	mov lr, r3
 	.2byte 0xf800
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 .L_080fb08a:
 	add sp, #4
 	pop {r3, r5, r6, r7}

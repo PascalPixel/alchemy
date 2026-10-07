@@ -1134,9 +1134,9 @@ Func_08190b74:
 	bne .L_08191416
 .L_0819147a:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	movs r0, #8
 	bl Func_08158d68
 	bl Func_081434f8

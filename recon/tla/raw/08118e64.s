@@ -23,7 +23,7 @@ Func_08118e64:
 	movs r7, #0
 .L_08118e8e:
 	ldrh r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #44
 	adds r2, r0, #0
 	adds r1, #255

@@ -16,7 +16,7 @@ s32 GameFlag_Test(s32 group);
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 {
-    Owner_GetState(event_id);
+    UnitGet(event_id);
     Party_AddActiveOwnerFar(event_id);
     if (value != 0) {
         Party_ShowJoinedMessageFar(event_id, value);

@@ -1,10 +1,10 @@
 #include "OWNER_STATE.H"
 
-void Owner_RecalculateRatios(s32);
+void UnitRatio(s32);
 
-s16 Owner_AdjustSecondValue(s32 owner, s32 delta)
+s16 UnitEpAdd(s32 owner, s32 delta)
 {
-    struct BattleUnit *state = Owner_GetState(owner);
+    struct BtlUnit *state = UnitGet(owner);
     s32 cur = state->pp;
     s32 max = state->max_pp;
     s32 value = cur + delta;
@@ -18,6 +18,6 @@ s16 Owner_AdjustSecondValue(s32 owner, s32 delta)
             result = value;
     }
     state->pp = result;
-    Owner_RecalculateRatios(owner);
+    UnitRatio(owner);
     return state->pp;
 }

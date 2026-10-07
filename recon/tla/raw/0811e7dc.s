@@ -8,7 +8,7 @@ Func_0811e7dc:
 	adds r3, r5, #0
 	adds r3, #48
 	ldrb r0, [r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, [r5, #44]
 	ldr r6, [r0]
 	cmp r3, #0
@@ -20,7 +20,7 @@ Func_0811e7dc:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [r5, #44]
-	bl Sys_Free
+	bl MemFree
 	movs r3, #0
 	movs r1, #0
 	adds r0, r6, #0

@@ -11,7 +11,7 @@ Func_0819690c:
 	mov r10, r1
 	ldr r5, .L_08196950
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -29,7 +29,7 @@ Func_0819690c:
 	mov lr, r6
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

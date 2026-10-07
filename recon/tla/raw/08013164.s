@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	movs r4, #3
 	lsls r4, r4, #24
 	movs r1, #4

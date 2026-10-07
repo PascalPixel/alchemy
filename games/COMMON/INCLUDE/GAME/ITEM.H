@@ -3,7 +3,7 @@
 
 #include "LAYOUT_GUARD.H"
 
-struct BattleUnit;
+struct BtlUnit;
 
 enum InventoryEncoding {
     ITEM_ID_MASK = 0x1ff,
@@ -139,9 +139,9 @@ LAYOUT_OFFSET_GUARD(
 
 struct ItemDefinition *Item_Get(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
-s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
-s32 RollWeaponUnleash(struct BattleUnit *owner);
-s32 RollWeaponUnleashFar(struct BattleUnit *owner);
+s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner);
+s32 RollWeaponUnleash(struct BtlUnit *owner);
+s32 RollWeaponUnleashFar(struct BtlUnit *owner);
 
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);

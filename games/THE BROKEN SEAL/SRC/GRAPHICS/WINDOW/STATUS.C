@@ -37,7 +37,7 @@ void UiWindow_FillFromScene(void *dst)
         Dma_Set((void *)&fill, dst, 0x810000a0, REG_DMA3);
     } else {
         u32 size = (u32)Tile_BuildMetatilesCodeSize;
-        RamRoutine code = (RamRoutine)Runtime_BumpAllocate(size);
+        RamRoutine code = (RamRoutine)MemAlloc(size);
 
         Dma_Set((void *)Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), REG_DMA3);
         code(dst, scene);
@@ -115,7 +115,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     UiWindow_BuildLayoutBounds(flags);
     window->window = UiWindow_Create(
         window->x, window->y, window->width, window->height, 6);
-    UiWindow_DrawPartyStatusContents(flags);
+    PtyStDraw(flags);
     *busy = zero;
 }
 
@@ -227,11 +227,11 @@ s32 __divsi3(s32, s32);
 s32 UiText_DrawPrefixedNumberAtOffset();
 s32 UiWindow_PutGlyph();
 
-void UiWindow_DrawPartyStatusContents(s32 flags)
+void PtyStDraw(s32 flags)
 {
     void **slot = (void **)Data_03001e90;
     struct PartyStatusWindow *layout = slot[0];
-    struct BattleSession *party = slot[-7];
+    struct BtlWork *party = slot[-7];
     struct RenderInput *window = (struct RenderInput *)layout->window;
     struct UiRenderWork *work = slot[-1];
     s32 x = 0;
@@ -282,7 +282,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
     if (flags & 2)
         x = 5;
     for (i = 0; i != count; i++) {
-        struct BattleUnit *unit = Owner_GetStateFar(owners[i]);
+        struct BtlUnit *unit = UnitGetFar(owners[i]);
         s32 hp = unit->hp;
         s32 maximum = unit->max_hp;
         s32 value;

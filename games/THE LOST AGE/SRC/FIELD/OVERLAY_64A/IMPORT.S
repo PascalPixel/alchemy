@@ -26,9 +26,9 @@ Scheduler_RemoveCallbackFar:
 	.thumb_func
 Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_020021f8
 	.thumb_func
@@ -62,10 +62,10 @@ Func_02002228:
 	.thumb_func
 SerialRuntime_BeginTransferB:
 	overlay_veneer Party_CheckFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -194,10 +194,10 @@ Func_02002330:
 	.thumb_func
 Trade_GetOfferState:
 	overlay_veneer Trade_GetOfferStateFar
-	.global Owner_RecalculateStats
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:

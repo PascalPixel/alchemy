@@ -78,10 +78,10 @@ u8 *ItemLevel_GetEvents(void)
 
 void SceneState_AddToRecordCount(s32 id, s32 amount)
 {
-    u8 *entry = Owner_GetState(id);
+    u8 *entry = UnitGet(id);
 
     Party_AdvanceOwnerCountToTarget(id, entry[15] + amount);
-    Owner_RecalculateStats(id);
+    UnitCalc(id);
 }
 
 void Scene_AddToListedRecordCounts(s32 amount)
@@ -111,7 +111,7 @@ void FieldScene_RunCountAdjustPanel(void)
     s32 flag;
     s32 msg;
 
-    record = Owner_GetState(gGameState.selected_actor);
+    record = UnitGet(gGameState.selected_actor);
     win = UiWindow_Create(0, 0, 30, 9, 2);
 
     msg = (s32)MsgDebugRaiseEveryonesLevel;
@@ -150,10 +150,10 @@ void FieldScene_RunCountAdjustPanel(void)
             Engine_TaskWait(1);
             UiWork_Finalize(win, 1);
 
-            Owner_RecalculateStats(0);
-            Owner_RecalculateStats(1);
-            Owner_RecalculateStats(3);
-            Owner_RecalculateStats(2);
+            UnitCalc(0);
+            UnitCalc(1);
+            UnitCalc(3);
+            UnitCalc(2);
             return;
         }
 

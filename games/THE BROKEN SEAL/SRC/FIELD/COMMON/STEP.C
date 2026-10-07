@@ -221,7 +221,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++)
-        hp[i] = Owner_GetStateFar(gGameState.active_owners[i])->hp;
+        hp[i] = UnitGetFar(gGameState.active_owners[i])->hp;
 
     if (work->mode == STEP_MODE_WORLD_MAP) {
         tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
@@ -306,7 +306,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         actor->velocity_y = 0x40000;
         BattleFx_ConfigureLinkedObject(selected, 0x102);
         for (i = 0; i < count; i++) {
-            owner = (struct StepOwner *)Owner_GetStateFar(gGameState.active_owners[i]);
+            owner = (struct StepOwner *)UnitGetFar(gGameState.active_owners[i]);
             if (owner->hp > 0) {
                 work->standing_count++;
             } else if (hp[i] != 0) {

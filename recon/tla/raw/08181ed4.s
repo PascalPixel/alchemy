@@ -562,9 +562,9 @@ Func_08181ed4:
 	adds r0, r5, #0
 	bl Func_08196a7c
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_08182332:
 	movs r1, #16
 	movs r0, #4

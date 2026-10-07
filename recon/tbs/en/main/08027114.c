@@ -140,7 +140,7 @@ void Menu_BuildLocalizedPatternTiles(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
 void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);
-s32 Battle_ClassifyEntryKind(const struct BattleAction *entry);
+s32 Battle_ClassifyEntryKind(const struct BtlAct *entry);
 s32 UiText_ShowLocalizedMessageAndWait(void);
 s32 UiText_DrawWaitingForOpponent(void);
 struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 id, s32 x, s32 y);
@@ -152,8 +152,8 @@ void UiWork_Finalize(struct UiWindow *win, s32 release);
 s32 UiWork_IsComplete(void);
 s32 Ui_LoadEntryForKind(s32 kind, s32 handle);
 
-struct BattleUnit *Runtime_GetObject(s32 actor);
-struct BattleAction *Ability_GetData(s32 id);
+struct BtlUnit *Runtime_GetObject(s32 actor);
+struct BtlAct *Ability_GetData(s32 id);
 struct ItemDefinition *Item_GetData(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 s32 Item_ClassifyUseAbility(s32 actor, s32 item);
@@ -166,7 +166,7 @@ s32 Battle_SelectAbility(s32 actor, s32 mode);
 s32 SummonMenu_SelectSummon(s32 a, s32 b, const u8 *standby);
 s32 BattleMenu_RunActionSelection(s32 actor, u16 *list, s32 count);
 s32 ItemList_SelectEntry(s32 actor, u16 *list, s32 count);
-void Sys_Free(void *block);
+void MemFree(void *block);
 
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 s32 Djinn_IsActiveFar(s32 actor, s32 element, s32 index);
@@ -179,15 +179,15 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 {
     const struct SummonDefinition *djinn;
     struct LinkRoundState *state;
-    struct BattleSession *link;
-    struct BattleSession *session;
+    struct BtlWork *link;
+    struct BtlWork *session;
     u16 *peer;
     u16 *sync;
     struct BattleActionRecord *ent;
-    struct BattleUnit *actor;
+    struct BtlUnit *actor;
     struct UiWindow *win;
     struct MenuSprite *slot;
-    struct BattleAction *ability;
+    struct BtlAct *ability;
     struct UiRenderWork *ui;
     u16 *scan;
     u16 hdr[2];
@@ -226,7 +226,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     Graphics_ExpandVramTilesByColorTable(0x06006000);
     Link_DrawShiftedTilePair(0x06006680);
     Menu_BuildLocalizedPatternTiles();
-    link = gBattleWork;
+    link = BtlWk;
     {
         u32 *word = state->result;
         s32 n = 7;
@@ -316,7 +316,7 @@ handshake_done:
             s32 sel;
             s32 handle;
 
-            block = Runtime_BumpAllocate(12);
+            block = MemAlloc(12);
             if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
                 sel = 2;
             } else {
@@ -325,7 +325,7 @@ handshake_done:
             handle = BattleParty_ListActorIdsFar(sel, block);
             WaitFrames(1);
             Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
-            Sys_Free(block);
+            MemFree(block);
             continue;
         }
         if (mode == 4) {
@@ -389,13 +389,13 @@ mark_visible:
                 void *block;
                 s32 handle;
 
-                block = Runtime_BumpAllocate(12);
+                block = MemAlloc(12);
                 handle = BattleParty_ListActorIdsFar(1, block);
                 state->entryActive[2] = 0;
                 WaitFrames(1);
                 Ui_RunOwnerStatusScreen(block, handle, actorId);
                 state->entryActive[2] = 1;
-                Sys_Free(block);
+                MemFree(block);
                 continue;
             }
             BattlePres_SetActorModesFar(hdr, 0);
@@ -508,7 +508,7 @@ psynergy_menu:
                 }
                 ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = Battle_ClassifyEntryKind((const struct BtlAct *)ability);
                 mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
@@ -576,7 +576,7 @@ djinn_menu:
                 } else {
                     Audio_PlayCue(114);
                 }
-                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = Battle_ClassifyEntryKind((const struct BtlAct *)ability);
                 mode = BattleTarget_RunSelection(actorId, ability->target_mode, ability->range, mode);
                 ent->range = ability->range;
                 state->entryActive[1] = 0;
@@ -597,7 +597,7 @@ djinn_menu:
             }
 
             case 15: {
-                struct BattleAction *ability;
+                struct BtlAct *ability;
                 struct UiWindow *hint;
                 s32 cost;
                 s32 element;
@@ -631,7 +631,7 @@ summon_menu:
                     ent->range = (u16)cost;
                     WaitFrames(1);
                     Audio_PlayCue(112);
-                    mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                    mode = Battle_ClassifyEntryKind((const struct BtlAct *)ability);
                     mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                     if (state->hintCount != 0) {
                         hint = UiText_ShowMessageAndWaitComplete(3150, 15, 8);
@@ -735,7 +735,7 @@ item_menu:
                                              win, 24, 0);
                 ent->range = (u16)cost;
                 Audio_PlayCue(112);
-                mode = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
+                mode = Battle_ClassifyEntryKind((const struct BtlAct *)ability);
                 mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost, mode);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
@@ -816,7 +816,7 @@ finish:
             UiText_RenderWideStringAtOffset(data, (struct UiWindow *)state->displayHandle, 0, 4);
         }
 
-        session = gBattleWork;
+        session = BtlWk;
         miss = 0;
         if (state->displayHandle == 0 && session->link_paused == 0) {
             state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);

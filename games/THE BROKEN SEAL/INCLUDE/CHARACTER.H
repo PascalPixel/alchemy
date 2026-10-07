@@ -5,7 +5,7 @@
 #include "OWNERVAL.H"
 #include "LAYOUT_GUARD.H"
 
-struct BattleUnit;
+struct BtlUnit;
 
 struct CharacterDefinition {
     u8 unknown_00[0x50];
@@ -119,12 +119,12 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
 struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner, struct LevelUpResult *result);
 struct LevelUpResult *OwnerAction_CheckLevelThreshold(s32 owner, struct LevelUpResult *result);
 void *Trade_GetOfferState(s32 which);
-void Owner_RecalculateStats(s32 owner);
+void UnitCalc(s32 owner);
 void Owner_RefreshDerivedData(s32 owner);
 s32 OwnerAction_Add(s32 owner, s32 action);
-void Owner_RecalculateRatios(s32 owner);
-void Owner_UpdateRatioPair(struct BattleUnit *owner, s32 hp);
-void Owner_UpdateSecondInputAndRatios(struct BattleUnit *owner, s32 pp);
-s16 Owner_AdjustSecondValue(s32 owner, s32 pp);
+void UnitRatio(s32 owner);
+void Owner_UpdateRatioPair(struct BtlUnit *owner, s32 hp);
+void Owner_UpdateSecondInputAndRatios(struct BtlUnit *owner, s32 pp);
+s16 UnitEpAdd(s32 owner, s32 pp);
 
 #endif

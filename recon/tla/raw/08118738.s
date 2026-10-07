@@ -73,7 +73,7 @@ DebugParty_LoadPreset:
 	ldrb r1, [r3, #1]
 	bl Party_AdvanceOwnerCountToTargetFar
 	mov r0, r8
-	bl Owner_GetState
+	bl UnitGet
 	movs r5, #140
 	adds r1, r0, #0
 	adds r2, r1, #0

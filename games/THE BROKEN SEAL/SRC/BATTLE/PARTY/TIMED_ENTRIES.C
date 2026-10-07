@@ -17,7 +17,7 @@ s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 
 s32 BattleUnit_TickReflect(s32 id)
 {
-    u8 *value = (u8 *)&Owner_GetStateFar(id)->reflect;
+    u8 *value = (u8 *)&UnitGetFar(id)->reflect;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
@@ -29,7 +29,7 @@ s32 BattleUnit_TickReflect(s32 id)
 
 s32 BattleUnit_TickAgilityModifier(s32 id)
 {
-    struct BattleUnit *unit = Owner_GetStateFar(id);
+    struct BtlUnit *unit = UnitGetFar(id);
     u8 *value = &unit->agility_modifier_turns;
     if (*value != 0) {
         (*value)--;
@@ -58,7 +58,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
         timed_entry = list->entries;
         do {
             if (timed_entry->turns > 0 &&
-                Owner_GetStateFar(timed_entry->unit_id)->hp != 0) {
+                UnitGetFar(timed_entry->unit_id)->hp != 0) {
                 timed_entry->turns--;
             }
             index++;
@@ -74,7 +74,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
 
                 Djinn_ActivateFar(id, expired_entry->element, expired_entry->index);
                 Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
-                Owner_RecalculateStatsFar(id);
+                UnitCalcFar(id);
                 removed = 1;
             } else {
                 expired_entry++;

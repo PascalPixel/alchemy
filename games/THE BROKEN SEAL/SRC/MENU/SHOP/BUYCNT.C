@@ -34,7 +34,7 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
     s32 next_offset;
     u8 *icon;
 
-    unit = (u8 *)Owner_GetStateFar(unit_id);
+    unit = (u8 *)UnitGetFar(unit_id);
     x = 8;
     y = 8;
     if (window != 0) {
@@ -84,7 +84,7 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     struct ItemDefinition *item;
     s32 quantity;
     s32 chance;
@@ -93,7 +93,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     s32 result;
 
     shop = gMenuWork;
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {

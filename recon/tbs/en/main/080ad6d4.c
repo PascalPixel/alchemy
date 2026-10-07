@@ -55,11 +55,11 @@ extern u8 Menu_BackdropFrameTile[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-struct BattleUnit *Owner_GetStateFar(s32);
+struct BtlUnit *UnitGetFar(s32);
 void WaitFrames(s32);
 void AudioCommand_PlayFar(s32);
 s32 Menu_GetModuloOfSum(s32, s32);
-void Owner_RecalculateStatsFar(s32);
+void UnitCalcFar(s32);
 
 void RenderOutput_RedrawSavedRectFar(s32);
 void RenderOutput_PrepareForRedrawFar(s32);
@@ -143,8 +143,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
     if (mode <= 1) {
         u16 *diff_work;
-        struct BattleUnit *unit_copy;
-        struct BattleUnit *unit;
+        struct BtlUnit *unit_copy;
+        struct BtlUnit *unit;
         s32 id;
         s32 first_element;
         s32 first_index;
@@ -166,7 +166,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         first_index = state->pair_index[0] & 31;
         first_flag = (u16)(state->pair_entries[0] & 0x8000);
 
-        unit = Owner_GetStateFar(id);
+        unit = UnitGetFar(id);
         Iwram_CopyWords(unit_copy, unit, size);
         Djinn_DeactivateFar(id, first_element, first_index);
         if (mode == 0) {
@@ -178,13 +178,13 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 Djinn_ActivateFar(id, second_element, second_index);
             }
         }
-        Owner_RecalculateStatsFar(id);
+        UnitCalcFar(id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, size);
 
         id = state->shown_owner[1];
-        unit = Owner_GetStateFar(id);
+        unit = UnitGetFar(id);
         Iwram_CopyWords(unit_copy, unit, size);
         if (mode == 0) {
             Djinn_DeactivateFar(id, second_element, second_index);
@@ -193,7 +193,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         if (first_flag != 0) {
             Djinn_ActivateFar(id, first_element, first_index);
         }
-        Owner_RecalculateStatsFar(id);
+        UnitCalcFar(id);
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, size);
@@ -201,8 +201,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Runtime_BumpFree(diff_work);
     } else if (mode - 2 <= 1) {
         u16 *diff_work;
-        struct BattleUnit *unit_copy;
-        struct BattleUnit *unit;
+        struct BtlUnit *unit_copy;
+        struct BtlUnit *unit;
         s32 first_id;
         s32 first_element;
         s32 first_index;
@@ -217,13 +217,13 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         first_index = state->pair_index[0] & 31;
         apply_second = (mode == 3);
 
-        unit = Owner_GetStateFar(first_id);
+        unit = UnitGetFar(first_id);
         Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
         Djinn_DeactivateFar(first_id, first_element, first_index);
         if (apply_second != 0) {
             Djinn_ActivateFar(first_id, first_element, first_index);
         }
-        Owner_RecalculateStatsFar(first_id);
+        UnitCalcFar(first_id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));

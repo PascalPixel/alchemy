@@ -3,12 +3,12 @@
 
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 i;
     s32 quantity;
 
     quantity = 0;
-    state = Owner_GetStateFar(owner);
+    state = UnitGetFar(owner);
     i = 0;
     do {
         if (state->inventory[i] != 0 && (state->inventory[i] & 0x1ff) == item) {

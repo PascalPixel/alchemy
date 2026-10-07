@@ -15,7 +15,7 @@ Func_0802a650:
 	lsls r0, r0, #2
 	mov r10, r1
 	adds r5, r5, r3
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #160
 	lsls r3, r3, #19
 	adds r6, r0, #0
@@ -41,7 +41,7 @@ Func_0802a650:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

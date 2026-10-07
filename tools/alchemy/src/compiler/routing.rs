@@ -117,8 +117,8 @@ pub enum CompilerFamily {
     Agbcc,
     AgbccFlash,
     AgbccArm,
-    /// ☀️ game ARM C (GAME_ARM_SOURCES): agbcc/camelot_arm at the library
-    /// ARM setting (AGENTS.md K1).
+    /// Game ARM C in either game (GAME_ARM_SOURCES): agbcc/camelot_arm at
+    /// the library ARM setting (AGENTS.md K1).
     GameArm,
 }
 impl CompilerFamily {
@@ -151,7 +151,7 @@ fn common_include_flags() -> impl Iterator<Item = String> {
     })
 }
 /// Include paths an agbcc-driver family searches after the game's own tree:
-/// ☀️ game ARM C reads the same shared modules as the rest of the game's C.
+/// game ARM C reads the same shared modules as the rest of its game's C.
 pub(crate) fn family_include_flags(family: CompilerFamily) -> Vec<String> {
     if family == CompilerFamily::GameArm {
         common_include_flags().collect()
@@ -261,7 +261,7 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
     if has(AGBCC_ARM_SOURCES, &source) {
         return CompilerFamily::AgbccArm;
     }
-    if target == CompilerTarget::Tbs && has(GAME_ARM_SOURCES, &source) {
+    if has(GAME_ARM_SOURCES, &source) {
         return CompilerFamily::GameArm;
     }
     CompilerFamily::Game
@@ -623,45 +623,49 @@ mod target_tests {
         }
     }
     #[test]
-    fn game_arm_compiles_only_tbs_game_arm_files_with_one_option_set() {
+    fn game_arm_compiles_game_arm_files_of_either_game_with_one_option_set() {
         assert!(camelot_arm_driver().ends_with("agbcc/camelot_arm"));
         assert_ne!(camelot_arm_driver(), agbcc_arm_driver());
         assert_eq!(
             driver_for_family(CompilerFamily::GameArm),
             Some(camelot_arm_driver())
         );
-        assert_eq!(
-            cflags_for_family(CompilerTarget::Tbs, CompilerFamily::GameArm),
-            agbcc_arm_cflags()
-        );
+        let games = [CompilerTarget::Tbs, CompilerTarget::Tla];
+        for target in games {
+            assert_eq!(cflags_for_family(target, CompilerFamily::GameArm), agbcc_arm_cflags());
+        }
         assert!(CompilerFamily::GameArm.is_arm());
         let mut files = std::collections::BTreeSet::new();
         for entry in GAME_ARM_SOURCES {
-            assert!(
-                entry.starts_with("games/THE BROKEN SEAL/SRC/") && entry.ends_with(".C"),
-                "{entry} is not ☀️ game C"
-            );
+            let owners: &[CompilerTarget] = if entry.starts_with("games/COMMON/SRC/") {
+                &games
+            } else if entry.starts_with("games/THE BROKEN SEAL/SRC/") {
+                &[CompilerTarget::Tbs]
+            } else if entry.starts_with("games/THE LOST AGE/SRC/") {
+                &[CompilerTarget::Tla]
+            } else {
+                panic!("{entry} is not game C")
+            };
+            assert!(entry.ends_with(".C"), "{entry} is not game C");
             assert!(!entry.contains("/SRC/SOUND/") && !entry.contains("/SRC/SYSTEM/SAVE/"));
             assert!(root().join(entry).is_file(), "missing routed source {entry}");
             assert!(files.insert(*entry), "duplicate route for {entry}");
             for table in [AGBCC_SOURCES, AGBCC_FLASH_SOURCES, AGBCC_ARM_SOURCES] {
                 assert!(!table.contains(entry), "{entry} has two routes");
             }
-            assert_eq!(
-                family_for_source(CompilerTarget::Tbs, entry),
-                CompilerFamily::GameArm
-            );
-            assert_eq!(family_for_source(CompilerTarget::Tla, entry), CompilerFamily::Game);
-            assert!(is_arm(CompilerTarget::Tbs, entry));
-            assert_eq!(
-                cflags_for_target_source(CompilerTarget::Tbs, entry),
-                agbcc_arm_cflags()
-            );
+            for target in games {
+                let routed = owners.contains(&target);
+                let family = if routed { CompilerFamily::GameArm } else { CompilerFamily::Game };
+                assert_eq!(family_for_source(target, entry), family, "{entry} in {target:?}");
+                assert_eq!(is_arm(target, entry), routed);
+                if routed {
+                    assert_eq!(cflags_for_target_source(target, entry), agbcc_arm_cflags());
+                }
+            }
         }
-        assert_eq!(
-            family_for_source(CompilerTarget::Tbs, "GRAPHICS/ANY_FILE.C"),
-            CompilerFamily::Game
-        );
+        for target in games {
+            assert_eq!(family_for_source(target, "GRAPHICS/ANY_FILE.C"), CompilerFamily::Game);
+        }
     }
     #[test]
     fn agbcc_families_keep_their_flag_sets() {

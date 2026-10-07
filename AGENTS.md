@@ -251,8 +251,8 @@ never a file or a function.
   file, as pret names its library files: pret's agbcc for MusicPlayer2000
   (`-O2`) and the flash library (`-O`, except two helper files whose bytes
   show `-O2`), and agbcc_arm for RAM-executed ARM code
-  (`-fomit-frame-pointer`). ☀️'s game ARM C, the files listed in
-  `GAME_ARM_SOURCES`, compiles with `agbcc/camelot_arm` at that same library
+  (`-fomit-frame-pointer`). Game ARM C of either game, the files listed
+  in `GAME_ARM_SOURCES`, compiles with `agbcc/camelot_arm` at that same library
   ARM setting: agbcc_arm's pinned gcc_arm (pret's agbcc, which has
   provenance) with one change built by bootstrap, its `arm_adjust_cost`
   replaced by agscc's own, so anti and output dependences cost nothing and
@@ -274,8 +274,10 @@ never a file or a function.
   under gcc_arm, but Tile_BuildMetatiles reshaped for agscc stays at 18:
   agscc in ARM mode differs from the native code in its loop and
   stack-slot habits throughout, not by one change a backend option could
-  carry, so the route is agbcc's. No other routing: never a per-file or
-  per-function compiler, option or flag for game code.
+  carry, so the route is agbcc's. ⚓️ keeps one copy of the class,
+  Tile_BuildMetatiles, whose ARM body is ☀️'s built code instruction for
+  instruction, so the route serves both games. No other routing: never a
+  per-file or per-function compiler, option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
   GCC's Thumb backend between the games, rebuilt as options in GCC's own

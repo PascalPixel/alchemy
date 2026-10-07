@@ -155,9 +155,6 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         Some(target) => target,
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
-    if camelot_arm && game != "tbs" {
-        return Err(format!("--camelot-arm compiles ☀️ game ARM C only\n{USAGE}"));
-    }
     Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, camelot_arm, heat, prefix })
 }
 
@@ -1042,7 +1039,7 @@ mod tests {
         assert!(parse_options(&args(&["08000000.c", "--bogus"])).is_err());
         assert!(!parse_options(&args(&["08000000.c"])).unwrap().camelot_arm);
         assert!(parse_options(&args(&["recon/tbs/en/main/0800a0f8.c", "--camelot-arm"])).unwrap().camelot_arm);
-        assert!(parse_options(&args(&["08000000.c", "--edition", "tla-en", "--camelot-arm"])).is_err());
+        assert!(parse_options(&args(&["08000000.c", "--edition", "tla-en", "--camelot-arm"])).unwrap().camelot_arm);
     }
 
     #[test]

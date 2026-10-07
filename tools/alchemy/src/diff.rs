@@ -29,7 +29,7 @@ the full twelve-edition ROM comparison remains the matching authority.
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
 Study output stays in obj/drafts/arm-study; no build routing is changed.
---camelot-arm compiles a ☀️ ARM draft as the build compiles game ARM C
+--camelot-arm compiles an ARM draft of either game as the build compiles game ARM C
 (GAME_ARM_SOURCES, AGENTS.md K1): agbcc/camelot_arm, agbcc_arm's pinned
 gcc_arm with agscc's arm_adjust_cost, at the library ARM setting, assembled
 as ARM. Credit comes only from source the build links. Output stays in
@@ -142,8 +142,8 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         "tbs"
     });
     let target = target.unwrap_or(decomp_target(Some(&format!("{game}-en")))?);
-    if camelot_arm && (arm_study || game != "tbs") {
-        return Err("--camelot-arm compiles ☀️ game ARM C only, and not with --arm".into());
+    if camelot_arm && arm_study {
+        return Err("--camelot-arm compiles game ARM C as the build does, not with --arm".into());
     }
     if heat && arm_study {
         return Err("--heat maps the game route's or camelot_arm's code; it does not combine with --arm".into());
@@ -183,11 +183,8 @@ pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm
     Ok(steps)
 }
 
-/// A ☀️ draft compiled as the build compiles a GAME_ARM_SOURCES file.
+/// A draft of either game compiled as the build compiles a GAME_ARM_SOURCES file.
 pub(crate) fn camelot_arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
-    if target.compiler != crate::compiler::routing::CompilerTarget::Tbs {
-        return Err("--camelot-arm compiles ☀️ game ARM C only".into());
-    }
     if family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
         return Err("--camelot-arm compiles game C only; library compiler routes are unchanged".into());
     }
@@ -803,11 +800,11 @@ mod tests {
     }
 
     #[test]
-    fn camelot_arm_is_the_tbs_game_arm_route_and_assembles_as_arm() {
+    fn camelot_arm_is_the_game_arm_route_and_assembles_as_arm() {
         let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
         assert!(parse(&args(&["recon/tbs/en/main/080158e8.c", "--camelot-arm"])).unwrap().camelot_arm);
         assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--arm"])).is_err());
-        assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--game", "tla"])).is_err());
+        assert_eq!(parse(&args(&["080388fc.c", "--camelot-arm", "--game", "tla"])).unwrap().game, "tla");
         let target = decomp_target(Some("tbs-en")).unwrap();
         let source = root().join("recon/tbs/en/main/08000000.c");
         let object = root().join(target.output_dir).join("obj/drafts/camelot-arm/test.o");
@@ -821,7 +818,10 @@ mod tests {
         let library = root().join("games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C");
         assert!(camelot_arm_steps(target, &library, &object).is_err());
         let tla = decomp_target(Some("tla-en")).unwrap();
-        assert!(camelot_arm_steps(tla, &source, &object).is_err());
+        let tla_source = root().join("recon/tla/en/main/08000000.c");
+        let tla_steps = camelot_arm_steps(tla, &tla_source, &object).unwrap();
+        assert!(tla_steps[1][0].ends_with("agbcc/camelot_arm"));
+        assert!(!tla_steps[2].iter().any(|flag| flag == "-mthumb"));
     }
 
     #[test]

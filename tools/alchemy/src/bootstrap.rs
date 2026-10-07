@@ -240,8 +240,8 @@ fn build_from_sources() -> Result<(), String> {
     })
 }
 
-/// Camelot's ARM compiler study for ☀️ game ARM C (AGENTS.md K1, K3; not
-/// admitted, no source routed): the pinned agbcc gcc_arm with upstream GCC's
+/// Camelot's ARM compiler for both games' ARM C (GAME_ARM_SOURCES, AGENTS.md
+/// K1): the pinned agbcc gcc_arm with upstream GCC's
 /// whole arm_adjust_cost rule set as agscc's 2000-07-31 arm.c has it, never a
 /// subset chosen by scores. Anti and output dependences cost nothing, and a
 /// call waits one cycle on a true dependence, even after a load.

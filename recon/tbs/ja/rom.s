@@ -182,7 +182,13 @@ UiText_DrawGlyphArm:
 	.section .rom.00021ece, "ax"
 	.incbin "baserom.gba", 0x00021ece, 0x00000902
 	.section .rom.000231dc, "ax"
-	.incbin "baserom.gba", 0x000231dc, 0x00002000
+	.global Ui_RunOwnerStatusScreen
+	.type Ui_RunOwnerStatusScreen, %function
+	.thumb_func
+Ui_RunOwnerStatusScreen:
+	.incbin "baserom.gba", 0x000231dc, 0x00000cf0
+	.section .rom.00023ecc, "ax"
+	.incbin "baserom.gba", 0x00023ecc, 0x00001310
 	.section .rom.000260dc, "ax"
 	.incbin "baserom.gba", 0x000260dc, 0x00000e00
 	.section .rom.00027170, "ax"

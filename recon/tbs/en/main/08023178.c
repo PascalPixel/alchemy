@@ -1,6 +1,14 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
  * Native 1392 instructions, draft 1392, common 1392, differ 0 (English).
- * Frame 352 bytes, as native.
+ * Frame 352 bytes, as native. Every edition differs 0 (diff --edition
+ * tbs-XX --symbol Ui_RunOwnerStatusScreen, each scaffold split at the
+ * function): German as English, French draws the level label at 51,
+ * Japanese (1389 instructions) has no MarkVisibleTileAttributes in the
+ * redraw or at the end, its values at 176 and a 0x40 text buffer, and
+ * Spanish and Italian (1458) pick the level and HP labels by
+ * System_GetLanguage, take the resistance help value's absolute value
+ * (its extra refs give code r7 there, as native) and need one tagged
+ * barrier in the face block.
  *
  * Session 9 2026-10-07: code = 0 after MemAlloc, as native, with code
  * declared after agiDelta: 24 -> 0. After MemAlloc, code (pseudo 51,
@@ -348,6 +356,15 @@
 #include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "HEAP_STATE.H"
+#include "EDITION.H"
+
+#if EDITION_INTERNATIONAL
+#define OWNER_STATUS_TEXT_MAX 0x80
+#define OWNER_STATUS_VALUE_X 184
+#else
+#define OWNER_STATUS_TEXT_MAX 0x40
+#define OWNER_STATUS_VALUE_X 176
+#endif
 
 struct StatusPixel {
     s32 x;
@@ -383,6 +400,9 @@ s32 Ui_LoadEntryForKind(s32 owner, s32 handle);
 s32 Owner_GetResistanceValueFar(s32 owner, s32 index);
 s32 Owner_GetLevelThresholdFar(s32 owner, s32 level);
 s32 Party_SumDjinnCountsFar(s32 request);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+s32 System_GetLanguage(void);
+#endif
 
 s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 {
@@ -630,6 +650,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
             objFace.oam.word.attr01 = 0xC0002400;
             objFace.oam.word.attr23 = 0;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+            /* FAKEMATCH: the zero lives in sl here; sched2 puts the attr23 store before the move into sl and the 0xFC00 load before the face tile load, which may alias that store; native moves into sl between the two stores and loads the tile first (4 instructions) */
+            asm("");
+#endif
             objFace.oam.f.tile = face->oam.f.tile;
             objFace.oam.f.x = 0xAC;
             objFace.oam.f.y = 56;
@@ -652,7 +676,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         if (redraw != 0) {
             object = UnitGetFar(owner);
+#if EDITION_INTERNATIONAL
             UiWindow_MarkVisibleTileAttributes();
+#endif
             Ui_FillVramBlockPattern();
 
             if ((redraw & 1) != 0) {
@@ -661,14 +687,55 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     winDesc->height, 0);
                 UiWindow_DrawDividerLine(winMain, 0, 14, 29, 14);
 
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                switch (System_GetLanguage()) {
+                case 2:
+                    UiText_DrawStringAtOffset((u8 *)object->name, (struct RenderInput *)winMain, 0, 0);
+                    UiText_DrawStringAtOffset((u8 *)OwnerStatus_NivString, (struct RenderInput *)winMain, 51, 0);
+                    UiText_DrawNumberInWindow(object->level, 2, (s32)winMain, 72, 0);
+                    break;
+                case 3:
+                    UiText_DrawStringAtOffset((u8 *)object->name, (struct RenderInput *)winMain, 0, 0);
+                    UiText_DrawStringAtOffset((u8 *)OwnerStatus_NvString, (struct RenderInput *)winMain, 56, 0);
+                    UiText_DrawNumberInWindow(object->level, 2, (s32)winMain, 72, 0);
+                    break;
+                default:
+                    UiText_DrawStringAtOffset((u8 *)object->name, (struct RenderInput *)winMain, 0, 0);
+                    UiText_DrawStringAtOffset((u8 *)OwnerStatus_LevelString, (struct RenderInput *)winMain, 56, 0);
+                    UiText_DrawNumberInWindow(object->level, 2, (s32)winMain, 72, 0);
+                    break;
+                }
+#else
                 UiText_DrawStringAtOffset((u8 *)object->name, (struct RenderInput *)winMain, 0, 0);
+#if defined(TBS_EDITION_FR)
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_LevelString, (struct RenderInput *)winMain, 51, 0);
+#else
                 UiText_DrawStringAtOffset((u8 *)OwnerStatus_LevelString, (struct RenderInput *)winMain, 56, 0);
+#endif
                 UiText_DrawNumberInWindow(object->level, 2, (s32)winMain, 72, 0);
+#endif
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp, (struct RenderInput *)winMain, 0, 8);
                 UiText_DrawNumberInWindow(
                     object->experience, 8, (s32)winMain, 40, 8);
 
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                switch (System_GetLanguage()) {
+                case 1:
+                    UiText_DrawStringAtOffset((u8 *)OwnerStatus_KpString, (struct RenderInput *)winMain, 40, 24);
+                    break;
+                case 2:
+                    UiText_DrawStringAtOffset((u8 *)OwnerStatus_PvString, (struct RenderInput *)winMain, 40, 24);
+                    break;
+                case 3:
+                    UiText_DrawStringAtOffset((u8 *)OwnerStatus_PvString, (struct RenderInput *)winMain, 40, 24);
+                    break;
+                case 4:
+                    UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)winMain, 40, 24);
+                    break;
+                }
+#else
                 UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)winMain, 40, 24);
+#endif
                 UiText_DrawNumberInWindow(
                     object->hp, 4, (s32)winMain, 56, 24);
                 UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 88, 24);
@@ -683,15 +750,15 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 10, (struct RenderInput *)winMain, 136, 16);
                 UiText_DrawNumberInWindow(
-                    object->atk, 3, (s32)winMain, 184, 16);
+                    object->atk, 3, (s32)winMain, OWNER_STATUS_VALUE_X, 16);
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 9, (struct RenderInput *)winMain, 136, 24);
                 UiText_DrawNumberInWindow(
-                    object->def, 3, (s32)winMain, 184, 24);
+                    object->def, 3, (s32)winMain, OWNER_STATUS_VALUE_X, 24);
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 8, (struct RenderInput *)winMain, 136, 32);
                 UiText_DrawNumberInWindow(
-                    object->agi, 3, (s32)winMain, 184, 32);
+                    object->agi, 3, (s32)winMain, OWNER_STATUS_VALUE_X, 32);
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 7, (struct RenderInput *)winMain, 136, 40);
-                UiText_DrawNumberInWindow(object->luck, 3, (s32)winMain, 184, 40);
+                UiText_DrawNumberInWindow(object->luck, 3, (s32)winMain, OWNER_STATUS_VALUE_X, 40);
 
                 UiText_DrawCharacterAtOffset(
                     (s32)&MsgClassName + object->class_index, (struct RenderInput *)winMain, 0, 48);
@@ -850,7 +917,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 }
             }
 
-            text = (u16 *)MemAlloc(0x100);
+            text = (u16 *)MemAlloc(OWNER_STATUS_TEXT_MAX * sizeof(*text));
             if ((u32)cur.entry > 13) {
                 iconIdx = sel[cur.entry - 14];
                 if (iconIdx == 0 && object->hp == 0) {
@@ -899,20 +966,25 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 case 13:
                 case 14:
                     code = object->res_lv * 20;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                    if (code < 0) {
+                        code = -code;
+                    }
+#endif
                     break;
                 default:
                     break;
                 }
                 UiWork_PushValueSlot(code, 5);
-                UiText_CopyMessageString(iconIdx + (s32)&MsgOwnerStatusConditionHelp, text, 0x80);
+                UiText_CopyMessageString(iconIdx + (s32)&MsgOwnerStatusConditionHelp, text, OWNER_STATUS_TEXT_MAX);
             } else if (cur.entry == 2 && object->level <= 98) {
                 UiWork_PushValueSlot(
                     Owner_GetLevelThresholdFar(owner, object->level + 1)
                         - object->experience,
                     5);
-                UiText_CopyMessageString((s32)&MsgOwnerStatusNextLevel, text, 0x80);
+                UiText_CopyMessageString((s32)&MsgOwnerStatusNextLevel, text, OWNER_STATUS_TEXT_MAX);
             } else {
-                UiText_CopyMessageString(cur.entry + (s32)&MsgOwnerStatusEntryHelp, text, 0x80);
+                UiText_CopyMessageString(cur.entry + (s32)&MsgOwnerStatusEntryHelp, text, OWNER_STATUS_TEXT_MAX);
             }
 
             UiText_RenderWideStringAtOffset(text, (struct UiWindow *)winDesc, 0, 4);
@@ -979,7 +1051,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     Resource_ResetEntry(handleFrame);
     Resource_ResetEntry(handleCursor);
     WaitFrames(1);
+#if EDITION_INTERNATIONAL
     UiWindow_MarkVisibleTileAttributes();
+#endif
     UiWork_Finalize(winMain, 1);
     UiWork_Finalize(winDesc, 1);
     PtyStDraw(BtlWk->pty_st);

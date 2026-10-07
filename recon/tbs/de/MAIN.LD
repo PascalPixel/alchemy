@@ -291,6 +291,7 @@ iwram :
     "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/PREVIEW.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.00021e3c)
+    "*/recon/tbs/de/rom.o"(.rom.00022b34)
     "*/games/COMMON/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/COPY_TILE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/BATTLE_LIST.o"(.text)

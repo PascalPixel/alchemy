@@ -135,11 +135,24 @@
  * - the frame == 160 background id is the resource id
  *   ResourceId_VioletSkyBackdrop (entry 59), which the native loads
  *   from the literal pool once for both calls: 379.
- * Remaining: the first draw shares one 48 for 48 - size and the
- * width argument, and the second keeps 48 in r4 across the first call
- * where the native rematerializes it and caller-saves the function
- * pointer in r4; the sqrt sums take r4/r5 where the native uses
- * r2/r1. */
+ * - on 379: index = 0 before the wave and drift inits: 595 (drift
+ *   inits first: 595); wave_x -= then += drift_x before wave_y: 388;
+ *   alive = 0 after shake.x: 404; a block-local copy of draw_rectangle
+ *   for the two-draw block: 379 (copy propagated away);
+ *   threshold declared in the mark loop body: 379.
+ * Remaining (379): the first draw shares one 48 for 48 - size and the
+ * width argument (the native uses two reload registers, r3 and r7, as
+ * for a spilled pseudo with a constant equivalence), and the two-draw
+ * block keeps 48 in r4 across the first call where the native
+ * rematerializes it and caller-saves the function pointer in r4; the
+ * distance loop's y square takes r7 where the native uses r2 (a
+ * reload register: local-alloc puts the mul output on its own input,
+ * and the earlyclobber reload rotates to another register); the wave
+ * block stores wave_y twice in the native (after the sine term and
+ * after the drift) but once here; the native loads
+ * runtime->effect->count before the wave inits at the first actor
+ * loop; the spark loop preheader reloads differ (&work through r0,
+ * slot 0 through r7). */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"

@@ -204,21 +204,8 @@ Func_0200079c:
 	.2byte 0x0000
 .L_02008914:
 	.4byte gPartyState
-	.section .text.x0200891c,"ax",%progbits
-	.global Func_0200091c
-	.thumb_func
-Func_0200091c:
-	push {lr}
-	bl Func_02000e0c
-	pop {pc}
-	.section .text.x02008924,"ax",%progbits
-	.global Func_02000924
-	.thumb_func
-Func_02000924:
-	push {lr}
-	bl Func_02000f24
-	pop {pc}
 	.section .text.x0200892c,"ax",%progbits
+	.balign 4
 	.global Func_0200092c
 	.thumb_func
 Func_0200092c:

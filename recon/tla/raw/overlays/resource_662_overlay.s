@@ -1695,29 +1695,8 @@ Func_02000cec:
 	bl Func_020018e8
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x02008d04,"ax",%progbits
-	.global Func_02000d04
-	.thumb_func
-Func_02000d04:
-	push {lr}
-	bl Func_02001870
-	movs r0, #0
-	bl Func_02001930
-	ldr r3, .L_02008d2c
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	movs r1, #2
-	ldr r0, [r3]
-	adds r1, #255
-	movs r2, #32
-	bl Func_020018d0
-	bl Func_02001878
-	pop {pc}
-	.2byte 0x0000
-.L_02008d2c:
-	.4byte gPartyState
 	.section .text.x02008d44,"ax",%progbits
+	.balign 4
 	.global Func_02000d44
 	.thumb_func
 Func_02000d44:

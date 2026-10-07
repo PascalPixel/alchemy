@@ -1,46 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	push {r5, lr}
-	adds r5, r1, #0
-	sub sp, #8
-	cmp r5, #8
-	bne .L_02008072
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #169
-	bl GameFlag_SetBit
-	movs r3, #2
-	str r3, [sp, #0]
-	movs r0, #0
-	movs r1, #2
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #4]
-	bl Func_02001060
-.L_02008072:
-	cmp r5, #10
-	bne .L_02008094
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #170
-	bl GameFlag_SetBit
-	movs r3, #14
-	movs r2, #38
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #0
-	movs r1, #32
-	movs r2, #1
-	movs r3, #1
-	bl Func_02001060
-.L_02008094:
-	add sp, #8
-	pop {r5, pc}
 	.section .text.x02008098,"ax",%progbits
+	.balign 4
 	.global Func_02000098
 	.thumb_func
 Func_02000098:
@@ -373,125 +334,8 @@ Func_0200032c:
 	strb r3, [r5]
 	movs r0, #0
 	pop {r5, pc}
-	.section .text.x02008358,"ax",%progbits
-	.global Func_02000358
-	.thumb_func
-Func_02000358:
-	push {lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	pop {pc}
-	.section .text.x02008364,"ax",%progbits
-	.global Func_02000364
-	.thumb_func
-Func_02000364:
-	push {lr}
-	movs r0, #129
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008374,"ax",%progbits
-	.global Func_02000374
-	.thumb_func
-Func_02000374:
-	push {lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	adds r0, #2
-	bl GameFlag_SetBit
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008384,"ax",%progbits
-	.global Func_02000384
-	.thumb_func
-Func_02000384:
-	push {lr}
-	movs r0, #130
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x0200839c,"ax",%progbits
-	.global Func_0200039c
-	.thumb_func
-Func_0200039c:
-	push {lr}
-	bl Func_02001080
-	movs r0, #0
-	bl Func_020011e0
-	movs r1, #200
-	movs r2, #1
-	movs r0, #22
-	lsls r1, r1, #1
-	negs r2, r2
-	bl Func_02001098
-	cmp r0, #0
-	bne .L_020083c4
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #115
-	bl GameFlag_ClearBit
-.L_020083c4:
-	bl Func_02001088
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x020083cc,"ax",%progbits
-	.global Func_020003cc
-	.thumb_func
-Func_020003cc:
-	push {r5, lr}
-	movs r5, #160
-	lsls r5, r5, #7
-	movs r1, #231
-	movs r2, #199
-	adds r3, r5, #0
-	movs r0, #19
-	lsls r1, r1, #16
-	lsls r2, r2, #16
-	bl Func_020010f0
-	movs r1, #220
-	movs r2, #191
-	adds r3, r5, #0
-	movs r0, #20
-	lsls r1, r1, #16
-	lsls r2, r2, #16
-	bl Func_020010f0
-	movs r1, #204
-	movs r2, #191
-	movs r0, #21
-	lsls r1, r1, #16
-	lsls r2, r2, #16
-	adds r3, r5, #0
-	bl Func_020010f0
-	pop {r5, pc}
-	.section .text.x02008404,"ax",%progbits
-	.global Func_02000404
-	.thumb_func
-Func_02000404:
-	push {lr}
-	movs r1, #200
-	movs r0, #22
-	lsls r1, r1, #1
-	bl Func_02001200
-	movs r3, #192
-	movs r1, #212
-	movs r2, #199
-	lsls r3, r3, #8
-	movs r0, #22
-	lsls r1, r1, #16
-	lsls r2, r2, #16
-	bl Func_020010f0
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #115
-	bl GameFlag_SetBit
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008430,"ax",%progbits
+	.balign 4
 	.global Func_02000430
 	.thumb_func
 Func_02000430:
@@ -1757,55 +1601,6 @@ Func_02000e04:
 	.2byte 0x0000
 .L_02008fe4:
 	.4byte gPartyState
-	.section .text.x02008fe8,"ax",%progbits
-	.global Func_02000fe8
-	.thumb_func
-Func_02000fe8:
-	push {lr}
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #169
-	sub sp, #8
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200900e
-	movs r3, #2
-	movs r2, #8
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #0
-	movs r1, #2
-	movs r2, #1
-	movs r3, #1
-	bl Func_02001060
-.L_0200900e:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #170
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02009030
-	movs r3, #14
-	movs r2, #38
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #0
-	movs r1, #32
-	movs r2, #1
-	movs r3, #1
-	bl Func_02001060
-.L_02009030:
-	movs r0, #0
-	add sp, #8
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02009038,"ax",%progbits
-	.global Func_02001038
-	.thumb_func
-Func_02001038:
-	push {lr}
-	bl Func_020011c0
-	pop {pc}
 	.section .rodata.x02009218,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:

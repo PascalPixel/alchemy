@@ -1,81 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008058,"ax",%progbits
-	.global Func_02000058
-	.thumb_func
-Func_02000058:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #102
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008082
-	ldr r0, .L_020080f8
-	bl Func_020028ac
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	movs r0, #10
-	movs r1, #4
-	bl Object_LinkObjectAndSetCallback
-	b .L_020080f6
-.L_02008082:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #101
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020080ba
-	bl Func_0200282c
-	movs r0, #0
-	bl Func_020028fc
-	ldr r0, .L_020080fc
-	bl Func_020028ac
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	movs r1, #192
-	adds r0, r5, #0
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	bl Func_02002834
-	b .L_020080f6
-.L_020080ba:
-	ldr r0, .L_02008100
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r5, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020080dc
-	bl Func_0200031c
-	b .L_020080f6
-.L_020080dc:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	movs r1, #128
-	adds r0, r5, #0
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-.L_020080f6:
-	pop {r5, pc}
-.L_020080f8:
-	.4byte MsgGoToLunpa
-.L_020080fc:
-	.4byte MsgIAmSo
-.L_02008100:
-	.4byte MsgAreYouTheTravelers
 	.section .text.x02008104,"ax",%progbits
+	.balign 4
 	.global Func_02000104
 	.thumb_func
 Func_02000104:
@@ -117,77 +43,8 @@ Func_02000104:
 	.4byte MsgPoorBeingBorn
 .L_02008150:
 	.4byte MsgIWasWhat
-	.section .text.x02008154,"ax",%progbits
-	.global Func_02000154
-	.thumb_func
-Func_02000154:
-	push {r5, r6, lr}
-	ldr r5, .L_0200819c
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r6, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_02008184
-	movs r0, #10
-	bl Battle_WaitMode0
-	adds r0, r5, #1
-	bl Func_020028ac
-	b .L_02008190
-.L_02008184:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #2
-	bl Func_020028ac
-.L_02008190:
-	adds r0, r6, #0
-	movs r1, #0
-	bl Func_020028c4
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200819c:
-	.4byte MsgAreYouTheWarriors
-	.section .text.x020081a0,"ax",%progbits
-	.global Func_020001a0
-	.thumb_func
-Func_020001a0:
-	push {r5, r6, lr}
-	ldr r5, .L_020081e8
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r6, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020081d0
-	movs r0, #10
-	bl Battle_WaitMode0
-	adds r0, r5, #1
-	bl Func_020028ac
-	b .L_020081dc
-.L_020081d0:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #2
-	bl Func_020028ac
-.L_020081dc:
-	adds r0, r6, #0
-	movs r1, #0
-	bl Func_020028c4
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_020081e8:
-	.4byte MsgDoYouSeek
 	.section .text.x020081ec,"ax",%progbits
+	.balign 4
 	.global Func_020001ec
 	.thumb_func
 Func_020001ec:

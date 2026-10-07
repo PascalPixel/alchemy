@@ -2,6 +2,27 @@
  * frames are 324 bytes. Every remaining difference is a spill slot offset
  * below sp+48 (see the hash analysis below); every instruction, register
  * and order matches.
+ * Session S07-08026080/4 (102, nothing kept):
+ * - dead register initializers reach GCSE too: each local initialized at
+ *   its declaration (= 0) adds one real insn after addressof and flow
+ *   deletes it; 29 of them (found ... result, i, j, n, y, total, matrix,
+ *   slotId, pending, cursor, redraw, slot, unit, who, head, window,
+ *   runtime, and the confirm block's id and k) give 1440 insns, 721
+ *   buckets, code unchanged (102); with three more efx.angle stores, 1446
+ *   and 725 buckets: differ 2, the same 2 as the efx.angle bed. entry = 0
+ *   (355) and cnt = 0 (118) change the code. So the slot problem is only
+ *   the count, but there are too few locals for an honest initializer
+ *   habit to supply 34 to 41; not kept (a device for the lead's call).
+ * - on that bed, the loop head: s32 id = ids[cursor] as the loop body's
+ *   first declaration 10 (the pending store moves below the loads); n =
+ *   ids[cursor] after pending = 0, 1004; pending = 0 after the call 12;
+ *   cursor[ids] 24 (address rebuilt from sfp, draft 1587).
+ * - RTL at the head (bed): gcse leaves (set 273 1421) (ids) and (set 275
+ *   1422) (cursor * 2) before insn 919; cse2 substitutes both into 919's
+ *   address and the copies die. The cursor * 2 computation (insns 5175,
+ *   5940) sits after loop-back label 5214 and before label 902, which the
+ *   preheader's jump 5211 enters, so the loads are a block of their own
+ *   in both builds.
  * Session S07-08026080/3 (102, nothing kept), measured on the 725-bucket
  *   bed (eighteen dead efx.angle stores, differ 2, diagnosis only):
  * - the last 2 are sched2's tie: in the bed's block from label 821 the

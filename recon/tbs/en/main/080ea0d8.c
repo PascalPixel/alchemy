@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 54 of 2455 (listing 2455, draft 2457, common 2429).
+/* 080ea0d8: differ 28 of 2455 (listing 2455, draft 2457, common 2442).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -64,17 +64,42 @@
  *   plain for, its zero start before the copied exit test (131).
  * - Palette fade: pal is a volatile u16 pointer (the native does not hoist
  *   red's SImode 31 out of the loop), blue and green shift (u16)c with a
- *   pool-loaded HImode 31 and red masks c directly; computing blue, red,
- * - The second loop's setup sets squash before shift and ring (round-robin
- *   reload registers r2 for 6, r3 for the zero, as the native) (54).
+ *   pool-loaded HImode 31 and red masks c directly (66).
  * - The frame 280 block clears ctrl->initial_value before writing
  *   BLDALPHA, so the ctrl load schedules first (125).
- *   green in that order is the nearest so far (66). Left: the native ties
- *   red's AND to the constant's register (movs r4, #31; ands r4, r2), as
- *   if c were still live after it; ours overwrites c (regmove).
+ * - The second loop's setup sets squash before shift and ring (round-robin
+ *   reload registers r2 for 6, r3 for the zero, as the native) (54).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
+ * Found in the 2026-10-08 session:
+ * - The frame 72..75 ring subtracts size >> 1: one shift is one movable,
+ *   so loop.c's first pass (threshold 15, less 3 per move) still finds the
+ *   cell table's address desirable and hoists it before 20, and the
+ *   preheader reloads take r2 for the table and r3 for 20 as the native's.
+ *   size / 2 expands to three movables and the table waits for the second
+ *   pass, after 20 (54 -> 46). A u16 size does the same.
+ * - The queue write takes q outside its one-pass block: the block's
+ *   NOTE_INSN_LOOP_BEG is a sched2 barrier, and the native loads q before
+ *   the A/B branch's frame = 150 store; the block still ends after the IME
+ *   restore, where the frame 64 block needs its barrier (46 -> 44). The
+ *   inner one-pass block around the IME read stays (60 without it).
+ * - Palette fade: the three components masked first and incremented after
+ *   (b++, g++, r++): each + 1 is then the 2-operand add on its own register
+ *   and red's AND ties to the constant's register, as the native (44 -> 28).
+ * Left (28):
+ * - The ring's half-widths: the native divides half * sx by 8 once, in
+ *   place (lsls r3, #3; cmp r3; bge; adds r3, #7). Two divisions in the
+ *   source leave the second's dead branch on the product, so cse2 swaps
+ *   the product into the copy's register and both the copy and the test
+ *   remain (2 rows each half, 18 branch offsets). One division (a dx local)
+ *   is the native's shape locally, but its shorter loop lets CSE share the
+ *   20 constant across both store groups, cx is inherited instead of loaded
+ *   twice, and half2 then outranks the counter i for r7 (1969 globally).
+ *   The extra branch the native's CSE saw is still unexplained.
+ * - Iwram_CopyWords after the ramp: the native schedules the call address
+ *   load between the two halves of 0x05000000 (sched2 picks the r0 shift
+ *   first here: equal priority, equal class, earlier LUID).
  * Earlier notes, still true:
  * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
@@ -158,26 +183,28 @@ extern u8 BattleFx9_ShardHeights[];
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARKS (&DUST[128])
 
-#define QUEUE_IO_WRITE(address, value, delay) do { \
-        struct IoWriteQueue *q;                                             \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        q = &gIoWriteQueue;                                                 \
+#define QUEUE_IO_WRITE(address, value, delay) { \
+        struct IoWriteQueue *q; \
+        u32 saved; \
+        s32 count; \
+ \
+        q = &gIoWriteQueue; \
         do { \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
-            *destination++ = (address);                                     \
-            *destination = (delay);                                         \
-        }                                                                   \
-        *ime = saved;                                                       \
-    } while (0)
+            do { \
+                saved = *ime; \
+            } while (0); \
+            *ime = (u16)ime; \
+            count = q->count; \
+            if (count <= 31) { \
+                u32 *destination = (u32 *)((u8 *)q + count * 12 + 4); \
+                *(u16 *)&q->count = count + 1; \
+                *destination++ = (value); \
+                *destination++ = (address); \
+                *destination = (delay); \
+            } \
+            *ime = saved; \
+        } while (0); \
+    }
 
 void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 {
@@ -637,9 +664,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             volatile u16 *pal = (volatile u16 *)0x05000002;
             for (i = 0; i != 63; i++, pal++) {
                 s32 c = *pal;
-                s32 b = (((u16)c >> 10) & 31) + 1;
-                s32 r = (c & 31) + 1;
-                s32 g = (((u16)c >> 5) & 31) + 1;
+                s32 b = ((u16)c >> 10) & 31;
+                s32 g = ((u16)c >> 5) & 31;
+                s32 r = c & 31;
+                b++;
+                g++;
+                r++;
                 if (b > 31) {
                     b = 31;
                 }
@@ -712,7 +742,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             s32 size = 10;
             for (i = 0; i != 256; i++) {
                 s32 angle = i << 8;
-                s32 x = ((Trig_Sin(angle) * r2) >> 16) - size / 2;
+                s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
                 s32 y = (Trig_Cos(angle) * r2) >> 17;
                 draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], x + 60, y + 50, size, size * 2);
             }

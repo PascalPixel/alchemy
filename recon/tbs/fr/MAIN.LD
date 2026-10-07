@@ -282,6 +282,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/GLYPH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.00020e0e)
+    "*/recon/tbs/fr/rom.o"(.rom.00020e10)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_RECT_HIGHLIGHT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINNDIF.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)

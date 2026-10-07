@@ -1,4 +1,16 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1974, differ 1918.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2034, differ 1520.
+ * Session 2026-10-07 (sun-080f4168): two volatile accesses explain the loop
+ * shapes. (1) The OAM shadow entries are volatile u32: loop.c then forms no
+ * DEST_ADDR givs for them, so every obj loop keeps native's offset givs
+ * (count * 8 + 200, + 204) and [sprites, off] stores with sprites reloaded:
+ * 1846 -> 1614, frame now 768 with every array at its native offset.
+ * (2) The tile store is a volatile halfword at 0x06003000 + i, i += 2, with
+ * its own x/y counters (native's inner counter is lo r1, j is r10
+ * everywhere else): combine cannot fold the address into the volatile
+ * strh, as native's separate adds shows: 1918 -> 1846.
+ * Declarations in native slot order (obj_palette, work, sprites, render,
+ * frame, state, bet, timer, kind, winnings, counter, digits, count):
+ * 1614 -> 1520.
  * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
  * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
  * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
@@ -123,8 +135,8 @@
 #include "text/MSG_IDS.H"
 
 struct LuckyDiceObj {
-    u32 attr01;
-    u32 attr2;
+    volatile u32 attr01;
+    volatile u32 attr2;
 };
 
 struct LuckyDiceSprites {
@@ -178,19 +190,21 @@ void LuckyDice_Run(void)
     s32 faces[2];
     s32 order[2];
     s32 matches[2];
-    struct BattleCamera *render;
+    u16 *obj_palette;
     struct BattleEffectWork *work;
-    struct EffectStep *die;
-    struct EffectStep *other;
-    s32 state;
+    struct LuckyDiceSprites *sprites;
+    struct BattleCamera *render;
     s32 frame;
+    s32 state;
+    s32 bet;
     s32 timer;
     s32 kind;
     s32 winnings;
     s32 counter;
-    s32 bet;
     s32 digits;
     s32 count;
+    struct EffectStep *die;
+    struct EffectStep *other;
     s32 stopped;
     s32 reset;
     s32 window;
@@ -204,7 +218,8 @@ void LuckyDice_Run(void)
     s32 e;
     s32 tile;
     s32 key;
-    s32 row;
+    s32 tx;
+    s32 ty;
     s32 base;
     s32 pos;
     s32 dx;
@@ -216,8 +231,6 @@ void LuckyDice_Run(void)
     s32 scale;
     s32 pairs;
     s16 value;
-    struct LuckyDiceSprites *sprites;
-    u16 *obj_palette;
 
     Runtime_AllocateHeapBlock(41, 0x60e);
     obj_palette = Runtime_AllocateHeapBlock(40, 0x200);
@@ -230,10 +243,10 @@ void LuckyDice_Run(void)
     gOamCopyEnabled = 0;
 
     i = 0;
-    for (row = 0; row != 20; row++) {
-        for (j = 0; j != 32; j++) {
-            ((u16 *)0x06003000)[i] = j + row * 30;
-            i++;
+    for (ty = 0; ty != 20; ty++) {
+        for (tx = 0; tx != 32; tx++) {
+            *(volatile u16 *)(0x06003000 + i) = tx + ty * 30;
+            i += 2;
         }
     }
 

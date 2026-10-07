@@ -3146,6 +3146,40 @@ Func_02001ba8:
 	.global Func_02001c44
 	.thumb_func
 Func_02001c44:
+	.ifdef TLA_EDITION_JA
+	push {r5, lr}
+	movs r5, #0
+.L_ja_02009c48:
+	adds r0, r5, #0
+	adds r0, #15
+	movs r1, #2
+	adds r5, #1
+	bl ObjectMotion_SetActionVariant
+	cmp r5, #17
+	bls .L_ja_02009c48
+	movs r0, #8
+	bl Func_02001e80
+	movs r0, #8
+	bl Object_GetById
+	movs r3, #0
+	str r3, [r0, #12]
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02009c86
+	bl Func_02001094
+	movs r0, #10
+	movs r1, #0
+	movs r2, #0
+	bl Func_02001e10
+	b .L_ja_02009c8a
+.L_ja_02009c86:
+	bl Func_02000f88
+.L_ja_02009c8a:
+	pop {r5, pc}
+	.else
 	push {r5, lr}
 	movs r5, #0
 .L_02009c48:
@@ -3229,6 +3263,7 @@ Func_02001c44:
 	.4byte 0x0000007b
 .L_02009cec:
 	.4byte 0x00000078
+	.endif
 	.section .rodata.x02009f18,"a",%progbits
 	.global Data_02001f18
 Data_02001f18:

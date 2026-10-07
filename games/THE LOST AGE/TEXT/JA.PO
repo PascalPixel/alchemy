@@ -33339,7 +33339,7 @@ msgctxt "message"
 msgid "08332"
 msgstr "わたしは おまねきにこたえ{line_break}あの中へ 入ることにしよう{line_break}お前たちは まっているがいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheBlackOrbWhereIs"
 msgid "08333"
 msgstr "くろすいしょうが・・・ない。{end_wait}"
 
@@ -33463,7 +33463,7 @@ msgctxt "message"
 msgid "08363"
 msgstr "アナの先に光が見えるから{line_break}へやになってるみたいじゃが・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMightBeAbleTo"
 msgid "08364"
 msgstr "くろすいしょうは お前たちに{line_break}かえしてやれるかもしれんな。{end_wait}"
 
@@ -33655,7 +33655,7 @@ msgctxt "MsgFieldAkafubuAndOeiaAreSo"
 msgid "08411"
 msgstr "オエイア様と アカフブとでは{line_break}あまりにも ちがいすぎるから{line_break}アカフブは オエイア様になれない{page_break}あぁ どうしてオエイア様は{line_break}なくなってしまったんだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHaveFollowedOeiaS"
 msgid "08412"
 msgstr "オエイア様の ことばどおりに{line_break}わたしは このへやにきたのだ。{end_wait}"
 
@@ -33671,15 +33671,15 @@ msgctxt "message"
 msgid "08415"
 msgstr "それが わからぬ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYourBlackOrbRestsIn"
 msgid "08416"
 msgstr "お前たちの くろすいしょうなら{line_break}しょうめんの像の手の中だ・・・{line_break}えんりょせず もっていくがいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOeiaWhatAmITo"
 msgid "08417"
 msgstr "オエイア様 わたしはこれから{line_break}どうすれば よいのでしょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhYoungWitchDoctorYou"
 msgid "08418"
 msgstr "くろまじゅつしをつぎし者よ{line_break}よくぞ けいやくのへやへ{line_break}たどりついたものだ・・・。{end_wait}"
 
@@ -33847,7 +33847,7 @@ msgctxt "message"
 msgid "08459"
 msgstr "そして そのくろまじゅつを{line_break}いつか このガンボマの中へ{line_break}とりにかえってこようぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCarriedTheMessageOfThe"
 msgid "08460"
 msgstr "{actor_name:5}たちはアカフブのもとへ{line_break}ガンボマのはなしを伝えに行った{line_break}そして はなしがおわったころには{line_break}夜もすっかり あけてしまっていた。{end_wait}"
 

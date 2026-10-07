@@ -3,20 +3,8 @@
 #include "FIELD_EFFECT.H"
 #include "FIELD_SCENE.H"
 
-extern const s32 *const gEffectScripts[];
+extern const s32 *gEffectScripts[];
 struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
-
-static inline struct FieldActor *Effect_CreateResident(s32 type, s32 x, s32 y, s32 z)
-{
-    /* FAKEMATCH: the inline result-copy lifetime preserves the eight-byte spawn frame; direct calls use four. */
-    return Object_CreateFar(type, x, y, z);
-}
-
-static inline void Effect_SetResidentScript(struct FieldActor *object, const s32 *script)
-{
-    /* FAKEMATCH: the inline script boundary keeps the table offset live until scale setup. */
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)script);
-}
 
 enum {
     EFFECT_DEFAULT_TYPE = 222,
@@ -29,12 +17,11 @@ enum {
 void __attribute__((section(section_name))) name( \
     s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, \
     u32 flags, const struct EffectOptions *options) \
-{ /* FAKEMATCH: the existing inline create/script calls preserve the eight-byte spawn frame and script-table load order; direct calls use four bytes. */ \
+{ \
     struct FieldActor *party = Actor_Get(ACTOR_PARTY_LEADER); \
     struct FieldEffect *effect; \
     struct FieldSprite *sprite; \
     const s32 *script; \
-    u32 table_offset; \
  \
     if ((flags & EFFECT_USE_TYPE) != 0 && options != 0) \
         effect = (struct FieldEffect *)create(options->type, x, y, z); \
@@ -45,8 +32,7 @@ void __attribute__((section(section_name))) name( \
  \
     sprite = effect->sprite; \
     Object_SetMode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK); \
-    table_offset = (flags & EFFECT_SCRIPT_MASK) << 2; \
-    set_script((struct FieldActor *)effect, gEffectScripts[table_offset >> 2]); \
+    set_script((void *)effect, gEffectScripts[flags & EFFECT_SCRIPT_MASK]); \
     effect->motion_flags = 0; \
     sprite->flags = 0; \
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle; \
@@ -71,7 +57,7 @@ void __attribute__((section(section_name))) name( \
         effect->scale_y = options->start_scale_y; \
     } \
     if ((flags & EFFECT_SCALE_TO_TARGET) != 0) { \
-        script = gEffectScripts[table_offset >> 2]; \
+        script = gEffectScripts[flags & EFFECT_SCRIPT_MASK]; \
         if ((flags & EFFECT_USE_START_SCALE) != 0) { \
             effect->scale_rate_x = (options->target_scale_x - effect->scale_x) / script[EFFECT_SCRIPT_REPEAT_COUNT]; \
             effect->scale_rate_y = (options->target_scale_y - effect->scale_y) / script[EFFECT_SCRIPT_REPEAT_COUNT]; \
@@ -82,7 +68,7 @@ void __attribute__((section(section_name))) name( \
     } \
     if ((flags & EFFECT_USE_SCRIPT) != 0) { \
         Object_SetMode((struct FieldActor *)effect, 1); \
-        set_script((struct FieldActor *)effect, options->script); \
+        set_script((void *)effect, options->script); \
     } \
     if ((flags & EFFECT_USE_ROTATION) != 0) \
         sprite->rotation = options->rotation; \
@@ -93,4 +79,4 @@ void __attribute__((section(section_name))) name( \
 }
 
 EFFECT_SPAWN(Effect_Spawn, Object_Create, Object_SetScript, ".text.effect_spawn")
-EFFECT_SPAWN(Effect_SpawnResident, Effect_CreateResident, Effect_SetResidentScript, ".text.effect_spawn_resident")
+EFFECT_SPAWN(Effect_SpawnResident, Object_CreateFar, ObjectDispatch_InitializeFar, ".text.effect_spawn_resident")

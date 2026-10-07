@@ -1,4 +1,11 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2032, differ 1658.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2032, differ 1644.
+ * The shadow depth boundary now clobbers memory instead of taking the
+ * stored depth as an operand. Both native stores remain, without the extra
+ * address use: projection/die/depth recover r5/r6/r7,1658 ->1644. Frame768
+ * and instruction count2032 are unchanged. Matrix-first still spills its
+ * advancing value:2039/1773/frame772. Assigning point x/y/z gives2031/1641
+ * but stores x before y unlike native; matrix-first with that order gives
+ * 2039/1777/frame772. Those two source-order trials are not retained.
  * Shadow screen coordinates now have loop-local sx/sy lifetimes. Native
  * reads both coordinates before the visibility test; reading proj directly
  * delayed x and rematerialized the projection address. Locals restore those
@@ -788,8 +795,8 @@ void LuckyDice_Run(void)
             }
             dep = proj[2] - 0x15e;
             depth[2 + i] = dep;
-            /* FAKEMATCH: native stores projected depth before adding height; plain consecutive assignments lose that first store (1675 vs 1665). */
-            __asm__ volatile("" : : "m"(depth[2 + i]));
+            /* FAKEMATCH: native stores projected depth before adding height; plain C deletes that store. Memory clobber keeps the store without an address operand, restoring r5/r6/r7 (1658 to1644). */
+            __asm__ volatile("" : : : "memory");
             dep += *((s16 *)&work->particles[i].y + 1);
             depth[2 + i] = dep;
             sx = proj[0];

@@ -22,8 +22,12 @@
  * register through the call, PRE replaces only that one, and combine
  * folds its single-use reaching register back), so it takes a first-pass
  * slot at 36 above summon (32), where native's cursor is the reaching
- * register, spilled with summon (36) and placed at 24. From 252: the
- * handle loop indexed 293 (381 buckets). Next after the slots: the draw
+ * register, spilled with summon (36) and placed at 24. GCSE's cprop
+ * replaces a copy's uses only in other blocks, so native's cursor uses
+ * were probably in a block after the one holding PRE's 383 = reaching
+ * copy. From 252: the handle loop indexed 293 (381 buckets); mask = 0
+ * after the cell reads 258, after the main window 262, before the
+ * description window 254 (all 379 buckets). Next after the slots: the draw
  * loop's scan keeps summon in r6 and summon + 4 in slot 32 (item (a)
  * below); native has id in r6, summon in slot 36 and required in r1.
  * Session 7: the draw loop's affordability scan counts with the column

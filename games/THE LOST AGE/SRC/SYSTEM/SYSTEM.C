@@ -42,7 +42,7 @@ void WaitFrames(s32 frames)
     s16 display;
     s16 backdrop;
 
-    for (i = 0; i < (u32)frames; i++) {
+    for (i = 0; i < frames; i++) {
         gSchedulerStatus = 1;
         Scheduler_RunCallbacksByKey(1152);
         gSchedulerStatus = 0;

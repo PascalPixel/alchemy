@@ -351,22 +351,22 @@ void BattleFx_RunMemberOrbit(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 256;
+    FIELD_AT_OFFSET(0x04000020, s16 *, 0) = 256;
     palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
     status = Iwram_CopyWords((void *)0x05000000, palette, 128);
-    status = Resource_DecodeType01((u8 *)palette + 128, work);
+    status = Resource_DecodeType01(palette + 128, work);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];
     status = BattleEffect_LoadWork(47, 7, 7, 15, 2);
     rect2 = heap_cache[8];
     rectangle_slot = rectangle;
     rectangle_slot[1] = rect2;
-    Scheduler_AddOrUpdateCallback((void *)BattleFx_ArmBg2AffineHBlankDma, 1152);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 1152);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     if (work->effect->side == 1) {
-        FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
+        FIELD_AT_OFFSET(0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
     } else {
         y_offset = 0;
@@ -446,8 +446,8 @@ void BattleFx_RunMemberOrbit(void *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Scheduler_RemoveCallback((void *)BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

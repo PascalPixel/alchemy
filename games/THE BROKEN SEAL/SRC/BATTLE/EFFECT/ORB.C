@@ -74,7 +74,7 @@ void CheckObjectMapTile(void)
             tile = (u8 *)((struct MapState *)tile)
                 ->layers[object->terrain_id].cells;
         } else
-            tile = (u8 *)gMapCellBuffer;
+            tile = gMapCellBuffer;
 
         x = object->x;
         if (x < 0)
@@ -86,7 +86,7 @@ void CheckObjectMapTile(void)
             if (y < 0)
                 y += 0xfffff;
 
-            tile = (u8 *)(tile +
+            tile = (tile +
                 ((tile_x + ((y >> 20) << 7)) << 2));
         }
     }
@@ -189,7 +189,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
 
     if (FIELD_AT_OFFSET(object, s32 *, 12) <= FIELD_AT_OFFSET(object, s32 *, 20)) {
         FIELD_AT_OFFSET(object, s16 *, 94) = phase;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
         p = NULL;
         FIELD_AT_OFFSET(object, void **, 108) = p;
         for (i = 0; i <= 2; i++) {
@@ -207,7 +207,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
             pp = &FIELD_AT_OFFSET(p, s16 *, 94);
             phase2 = 6;
             *pp = phase2;
-            ObjectDispatch_InitializeFar((struct DispatchObject *)p, BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar(p, BattleFx_CommonParticleScript);
         }
     }
 }
@@ -359,7 +359,7 @@ void RunBattleEffect05(void)
             particle = Object_Spawn(240, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
                 particle->altitude = spawn.y - 0x200000;
-                particle->callback = (void *)BattleFx_SpawnRandomAngleTriplet;
+                particle->callback = BattleFx_SpawnRandomAngleTriplet;
                 particle->flag = 2;
             }
             AudioCommand_PlayFar(132);
@@ -378,7 +378,7 @@ void RunBattleEffect05(void)
             Vector_AddPolarOffset(Random16() * 5 + 0x30000, Random16(), &spawn);
             particle = Object_Spawn(284, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
-                particle->callback = (void *)BattleFx_UpdateDriftingFallObject;
+                particle->callback = BattleFx_UpdateDriftingFallObject;
                 particle->flag = 0;
                 particle->sprite->mode = 2;
                 Object_SetMode((struct ObjectRuntime *)particle, 8);

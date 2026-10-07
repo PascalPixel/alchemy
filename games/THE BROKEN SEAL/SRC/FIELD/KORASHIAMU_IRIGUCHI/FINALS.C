@@ -38,7 +38,7 @@ void FieldScene_RunConditionalSceneSetup(void)
         Engine_ActorStartRepeatedMotion(RECORD_17, 2);
         Engine_EventSetMessage((s32)MsgKorashiamuSilence);
         Event_ShowMessage(RECORD_17, 0);
-        *(u8 *)(((u8 *)Engine_EventGetViewCenter()) + 85) = flag_8a4;
+        *(((u8 *)Engine_EventGetViewCenter()) + 85) = flag_8a4;
         Engine_TaskWait(1);
         Camera_SetSpeed(0x66666, 0xcccc);
         Camera_MoveTo(0x21c0000, -1, 0xd00000, 1);
@@ -182,7 +182,7 @@ void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
 
     if (Engine_GameFlagIsSet(0x8a4) != 0) {
         gEventWork->message =
-            (u16)(gEventWork->message + 1);
+            (gEventWork->message + 1);
     }
 
     FieldScene_CallPairWith10(17);
@@ -595,7 +595,7 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     Engine_ActorEnableActionCallback(ACTOR_GERALD, (s32)KorashiamuIriguchi_ActionTable3);
     Engine_ActorEnableActionCallback(ACTOR_IVAN, (s32)KorashiamuIriguchi_ActionTable3);
-    Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable3);
+    Object_SetActionCallbackAndRefreshById(3, KorashiamuIriguchi_ActionTable3);
     Engine_EventWait(20);
     SceneState_ForwardMaskedHalfwordWith10(0, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -682,13 +682,13 @@ void KorashiamuIriguchi_AnnounceFinals(void)
     FieldScene_CallPairWith10(8);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     {
-        u16 *target = (u16 *)&rec7->timer;
+        u16 *target = &rec7->timer;
         u16 shown = 720;
 
         *target = shown;
     }
     {
-        u16 *target = (u16 *)&rec7->work;
+        u16 *target = &rec7->work;
         u16 shown = 112;
 
         *target = shown;

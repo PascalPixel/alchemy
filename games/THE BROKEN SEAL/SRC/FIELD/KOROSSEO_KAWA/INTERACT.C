@@ -223,20 +223,20 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         if (state == 0) {
             if (state < count) {
                 for (i = 0; i < count; i++) {
-                    Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                    Party_RemoveActiveOwner((s8)buf[i]);
                 }
             }
             for (i = 0; i < count; i++) {
-                if ((s32)(s8)buf[i] != 0) {
-                    Party_AddActiveOwner((s32)(s8)buf[i]);
+                if ((s8)buf[i] != 0) {
+                    Party_AddActiveOwner((s8)buf[i]);
                 }
             }
             obj = Menu_OpenCharacterSelector();
             for (i = 0; i < count; i++) {
-                Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                Party_RemoveActiveOwner((s8)buf[i]);
             }
             for (i = 0; i < count; i++) {
-                Party_AddActiveOwner((s32)(s8)buf[i]);
+                Party_AddActiveOwner((s8)buf[i]);
             }
             if (obj != -1) {
                 goto L_main;

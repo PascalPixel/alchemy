@@ -44,7 +44,7 @@ void Party_ApplyStatePreset(void)
     GameFlag_SetBit(282);
 
     for (id = 0; id <= 1; id++) {
-        struct BattleUnit *unit = (struct BattleUnit *)Owner_GetState(id);
+        struct BattleUnit *unit = Owner_GetState(id);
         s32 ratio;
         s32 rate;
         s32 slot;

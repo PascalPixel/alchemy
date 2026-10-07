@@ -160,7 +160,7 @@ void ArutinYama_RestoreAreaThree(void)
 {
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
         Actor_SetPosition(9, 0, 0);
     } else {
         ArutinYama_StartPaletteAnim();
@@ -192,7 +192,7 @@ void ArutinYama_RestoreAreaFour(void)
     extern u8 Data_02000240[];
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
     } else {
         Map_CopyCellAttributes(52, 42, 1, 1, 53, 42);
     }
@@ -212,7 +212,7 @@ void ArutinYama_RestoreAreaFive(void)
     struct FieldActor *record;
 
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
         Actor_SetPosition(10, 0, 0);
     } else {
         if (GameFlag_IsSet(0x109) == 0) {
@@ -268,7 +268,7 @@ void ArutinYama_RestoreAreaSix(void)
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
+        *(u16 *)((gMapWork[0]) + 20) &= ~0x200;
     }
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);
@@ -493,7 +493,7 @@ void FieldScene_RunScene3a4SequenceG(void)
     volatile u32 *frame = &gFrameCount;
 
     if (*frame % 3 == 0) {
-        spark = (struct FieldActor *)Object_Create(200, (((u32)(Engine_RandomNext() * 48) >> 16) << 16) + 0x2fd0000, -0x400000, 0x2600000);
+        spark = Object_Create(200, (((u32)(Engine_RandomNext() * 48) >> 16) << 16) + 0x2fd0000, -0x400000, 0x2600000);
         if (spark != NULL) {
             if (*frame % 9 == 0) {
                 if ((u32)(Engine_RandomNext() << 1) >> 16 != 0)
@@ -965,9 +965,9 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
     angle &= object->facing;
     radius = object->y.fixed / 0x10000;
     radius = ArutinYama_RollRadii[(s16)object->timer - radius + 16];
-    timer = (s16 *)&object->work;
+    timer = &object->work;
     if (*timer != 0) {
-        if ((s16)--*timer == 20) {
+        if (--*timer == 20) {
             Engine_AudioPlayCue(184);
         }
         if (*timer == 0) {

@@ -105,7 +105,7 @@ s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 {
     u16 *counter = (u16 *)(object + 100);
-    *counter = (u16)(*counter + (((u32)Engine_RandomNext() * 100) >> 16));
+    *counter = (*counter + (((u32)Engine_RandomNext() * 100) >> 16));
     if ((s16)*counter > 1000) ObjectGroup_SetChildValue(object, 7);
     else ObjectGroup_SetChildValue(object, 10);
     if (*(s16 *)counter > 1200) { u16 z = 0; *counter = z; }
@@ -170,7 +170,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, request->cell_x, request->cell_z);
         Object_SetMode((struct FieldActor *)actor, 6);
         Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 1);
-        *flags = (u8)ret;
+        *flags = ret;
         Object_SetModeById(10, 7);
         actor->position_x += 0xffff0000;
         actor->position_z += 0xffff0000;
@@ -1083,9 +1083,9 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
 {
     p->field18 += 0x1eb8;
-    if (p->field38 == (s32)0x80000000
-        && p->field3c == (s32)0x80000000
-        && p->field40 == (s32)0x80000000) {
+    if (p->field38 == 0x80000000
+        && p->field3c == 0x80000000
+        && p->field40 == 0x80000000) {
         Engine_ObjectDispatchRelease(p);
     }
     return 1;
@@ -1170,7 +1170,7 @@ s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0)
     return 0;
 hit:
     Engine_AudioPlayCue(106);
-    ((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
+    ((s32 (*)())Engine_ObjectSetScript)(arg0, KorimaHashi_TriggerScript);
     KorimaHashi_TriggerPending = 1;
     return 0;
 }

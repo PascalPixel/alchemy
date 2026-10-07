@@ -61,14 +61,14 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     count = (object[20] * object[21]) / 64;
     row = 0;
 
-    if (row < (u32)count) {
+    if (row < count) {
         table = Map_TileDissolveOrder;
         high_mask = 0xFF00;
         index_mask = 0x3F;
         offset_mask = 0x3E;
 
-        for (; row < (u32)count; row++, destination += 32, position++) {
-            if ((u32)(position - 64) <= 63) {
+        for (; row < count; row++, destination += 32, position++) {
+            if ((position - 64) <= 63) {
                 u8 entry;
                 u16 *cell;
                 u32 parity;

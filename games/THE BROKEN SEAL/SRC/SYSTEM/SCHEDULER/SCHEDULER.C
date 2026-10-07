@@ -103,8 +103,8 @@ void Render_BuildOamList(void *work)
         size = (u32)LoadedRuntime_Size;
     } while (0);
     routine = (OamBuildRoutine)Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Render_BuildOamListKernel, (void *)routine,
+    Dma_Set(Render_BuildOamListKernel, routine,
             (size >> 2) | 0x84000000, REG_DMA3);
     routine(work);
-    Sys_Free((void *)routine);
+    Sys_Free(routine);
 }

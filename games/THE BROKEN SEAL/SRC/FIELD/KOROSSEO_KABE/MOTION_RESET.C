@@ -6,8 +6,8 @@ void StagedActor_ResetMotionAfterRefresh(s32 slot)
     ObjectDispatch_InitFromTable6(actor);
     actor->velocity_x = 0;
     actor->velocity_z = 0;
-    actor->target_x = (s32)0x80000000;
-    actor->target_z = (s32)0x80000000;
+    actor->target_x = 0x80000000;
+    actor->target_z = 0x80000000;
 }
 
 void SceneState_InitCursorWhenUnset(void)

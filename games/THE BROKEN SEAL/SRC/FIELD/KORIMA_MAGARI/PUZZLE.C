@@ -246,7 +246,7 @@ void Scene_RunKorimaMagariSequence(void)
     }
 
     KorimaMagari_ShakeChance = 0;
-    ((void (*)())Engine_TaskAddCallback)((s32)KorimaMagari_CaptureShakeScroll, 3200);
+    ((void (*)())Engine_TaskAddCallback)(KorimaMagari_CaptureShakeScroll, 3200);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
     /* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter address in r6 and r5. */
@@ -272,8 +272,8 @@ void Scene_RunKorimaMagariSequence(void)
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
     Engine_TaskWait(1);
-    ((void (*)())Engine_TaskRemoveCallback)((s32)KorimaMagari_CaptureShakeScroll);
-    *(u16 *)gKorimaMagariLayout ^= 1;
+    ((void (*)())Engine_TaskRemoveCallback)(KorimaMagari_CaptureShakeScroll);
+    *gKorimaMagariLayout ^= 1;
     Scene_RepaintBoardRecords();
     Engine_MapRedraw();
     Engine_EventEnd();
@@ -349,11 +349,11 @@ s32 KorimaMagari_SetupBoard(void)
     Map_CopyCellAttributeRect(0, 0, 32, 32, 0, 64);
     Map_CopyCellAttributeRect(32, 0, 32, 32, 0, 32);
     if (Engine_GameFlagIsSet(0x109) == 0) {
-        Dma_Set(KorimaMagari_DefaultRecords, ((u16 *)gKorimaMagariRecords), DMA_ENABLE32 | DMA_32BIT | 0x12, REG_DMA3);
+        Dma_Set(KorimaMagari_DefaultRecords, (gKorimaMagariRecords), DMA_ENABLE32 | DMA_32BIT | 0x12, REG_DMA3);
         *gKorimaMagariReturned = 0;
-        *(*(u16 * *)&gKorimaMagariLayout) = 1;
+        *(* &gKorimaMagariLayout) = 1;
     }
-    KorimaMagari_PlaceObjects(((u16 *)gKorimaMagariRecords));
+    KorimaMagari_PlaceObjects((gKorimaMagariRecords));
     ((s32 (*)(u16 *, s32))State_StampRecordCells)(KorimaMagari_DefaultRecords, 255);
     Scene_RepaintBoardRecords();
     Engine_ActorSetAnimation(9, 0);
@@ -411,7 +411,7 @@ void State_StampRecordCells(s16 *records, s32 value)
         for (i = 3; i >= 0; i--) {
             u8 *cell;
             cell = ((u8 *)gMapCellBuffer) + ((column + (row << 7)) << 2);
-            cell[2] = (u8)value;
+            cell[2] = value;
             if (along == 0) column++;
             else row++;
         }
@@ -451,7 +451,7 @@ s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
         struct MapCell *cell = &gMapCellBuffer[x + (z << 7)];
 
         if (cell->collision_code == 0xff
-            || *(u8 *)((cell->attribute_b << 2) + (s32)gMapCollision) != 0) {
+            || *((cell->attribute_b << 2) + gMapCollision) != 0) {
             return -1;
         }
         if (mode == 0) {
@@ -551,22 +551,22 @@ void Effect_AdjustPaletteColors(s32 amount)
 
 u16 Effect_AdjustColorChannels(u16 color, s32 adj)
 {
-    s16 green = (s16)((color >> 5) & 31);
-    s16 red = (s16)(color & 31);
-    s16 blue = (s16)((color >> 10) & 31);
+    s16 green = ((color >> 5) & 31);
+    s16 red = (color & 31);
+    s16 blue = ((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Math_DivideSigned(
+    red = (red + Math_DivideSigned(
         red,
-        (s32)((u32)adj << 2)
+        (adj << 2)
     ));
-    green = (s16)(green - Math_DivideSigned(green, adj));
-    blue = (s16)(blue - Math_DivideSigned(blue, adj));
+    green = (green - Math_DivideSigned(green, adj));
+    blue = (blue - Math_DivideSigned(blue, adj));
 
     if (red > 31)
         red = 31;
 
-    packed = (u32)(s32)red;
-    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
-    return (u16)packed;
+    packed = (s32)red;
+    packed |= ((s32)blue << 10) | ((s32)green << 5);
+    return packed;
 }

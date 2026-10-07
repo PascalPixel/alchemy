@@ -369,7 +369,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     BattleFx_BuildBuffer(0x10005, buffers, ((struct FieldBlendWork *)work)->to, 1);
     BattleFx_InterpolateBuffers(((struct FieldBlendWork *)work)->to, ((struct FieldBlendWork *)work)->from,
         ((struct FieldBlendWork *)work)->delta, 12);
-    BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
+    BattleFx_BuildBuffer(work, 0, buffers->target, 1);
     /* FAKEMATCH: int constants avoid pool loads; advancing the block pointer keeps the final add/store in r5. */
     frames = (u16 *)&((struct FieldBlendWork *)work)->timer;
     value = 600;
@@ -418,8 +418,8 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     target = work->to;
     BattleFx_BuildBuffer(to, buffers, target, 1);
     BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
-    BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
-    frames = (u16 *)&work->timer;
+    BattleFx_BuildBuffer(work, 0, buffers->target, 1);
+    frames = &work->timer;
     /* FAKEMATCH: int temporaries build halfword constants with mov instead of pool loads. */
     value = 120;
     *frames = value;

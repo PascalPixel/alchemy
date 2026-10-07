@@ -38,10 +38,10 @@ void StagedActor_PushActorAhead(void)
     dir = subject->facing >> 12;
 
     step = KorosseoKabe_DirectionSteps[dir];
-    pos.x = subject->x + (s32)(step & 0xffff0000);
+    pos.x = subject->x + (step & 0xffff0000);
     pos.y = subject->y;
     step <<= 16;
-    pos.z = subject->z + (s32)step;
+    pos.z = subject->z + step;
 
     target = (KabeSceneRecord *)SceneData_FindSlotAtPosition((s32 *)&pos, subject);
     if (target == 0) {
@@ -49,10 +49,10 @@ void StagedActor_PushActorAhead(void)
     }
 
     step = KorosseoKabe_DirectionSteps[dir];
-    pos.x = target->x + (s32)(step & 0xffff0000);
+    pos.x = target->x + (step & 0xffff0000);
     pos.y = target->y;
     step <<= 16;
-    pos.z = target->z + (s32)step;
+    pos.z = target->z + step;
 
     blocker = (KabeSceneRecord *)SceneData_FindSlotAtPosition((s32 *)&pos, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
@@ -72,10 +72,10 @@ void StagedActor_PushActorAhead(void)
     zero = 0;
 
     step = KorosseoKabe_DirectionSteps[dir];
-    pos.x = target->x + (s32)(step & 0xffff0000);
+    pos.x = target->x + (step & 0xffff0000);
     pos.y = target->y;
     step <<= 16;
-    pos.z = target->z + (s32)step;
+    pos.z = target->z + step;
 
     if (Object_CheckMovementCollision(target, &pos) > 0) {
         return;

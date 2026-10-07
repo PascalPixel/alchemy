@@ -155,7 +155,7 @@ void EventActor_RunHopAndLeapSequence(s32 arg)
             copy->mode = 0;
             copy->priority_flags = 2;
             copy->collision_flags |= 1;
-            copy->callback = (void *)ObjectMotion_MoveHalfwayTowardTarget;
+            copy->callback = ObjectMotion_MoveHalfwayTowardTarget;
             copy->facing = actor->facing;
             copy->sprite->priority = 0;
             Animation_ApplyChildValuesFar(copy, value);
@@ -191,7 +191,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
     state = gEventWork;
     if (GameFlag_TestFar(366) != 0) {
         selection = 0;
-        GameFlag_SetBitFar((u8 *)entries + page * 20 + 48);
+        GameFlag_SetBitFar(entries + page * 20 + 48);
     } else {
         selection = Djinn_AddToLeastLoadedOwnerFar(page, entries);
     }

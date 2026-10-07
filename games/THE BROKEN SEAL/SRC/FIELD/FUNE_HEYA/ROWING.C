@@ -150,7 +150,7 @@ s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
     struct FieldActor *obj = Object_GetById(0);
     u32 ofs = FuneHeya_TurnSteps[bucket];
     s32 x = obj->x.part.pixel + ((s32)ofs >> 16);
-    s32 z = obj->z.part.pixel + (s32)(s16)ofs;
+    s32 z = obj->z.part.pixel + (s16)ofs;
 
     if (FindActorNearPosition(x, z) != 0) {
         return 0;
@@ -355,7 +355,7 @@ void FieldScene_RunScene3b1SequenceC(void)
 {
     struct FieldActor *leader;
 
-    leader = (struct FieldActor *)Object_GetById(0);
+    leader = Object_GetById(0);
     if ((u16)(leader->facing - 0x2000) > 0xc000) {
         if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
             Engine_SanctumOpen(17);
@@ -395,15 +395,15 @@ void FuneHeya_RunFlagBranchSequence(void)
         Engine_GameFlagClear(0x8f0);
     } while (0);
     if (Engine_GameFlagIsSet(0x928) == 0) {
-        Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
+        Party_SetFields1ceAnd1d0(&SceneId_FuneHeya, 16);
         BattleFx_SetWeightedResult(62, 0);
     } else {
         if (Engine_GameFlagIsSet(0x929) == 0) {
-            Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 18);
+            Party_SetFields1ceAnd1d0(&SceneId_FuneHeya, 18);
             BattleFx_SetWeightedResult(62, 1);
         } else {
             if (Engine_GameFlagIsSet(0x92a) == 0) {
-                Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 20);
+                Party_SetFields1ceAnd1d0(&SceneId_FuneHeya, 20);
                 BattleFx_SetWeightedResult(62, 2);
             }
         }
@@ -419,7 +419,7 @@ void FieldScene_RunScene3b1SequenceD(void)
     if (GameFlag_IsSet(0x301) != 0) {
         Engine_EventBegin();
         Ui_SetRenderResultFromObject(8);
-        UiText_ShowCenteredMessage((s32)MsgFuneWhereGoingSlay, 1, 8);
+        UiText_ShowCenteredMessage(MsgFuneWhereGoingSlay, 1, 8);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
         FieldScene_CallPairWith10(0, 0x4000);
@@ -560,7 +560,7 @@ void FieldScene_RunThreeActorPresentation(void)
         Engine_EventWait(20);
         Actor_FaceDirection(12, FACING_SOUTH, 0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x26666, 0x13333);
-        ((struct FieldActor *)Object_GetById(0))->steering_flags &= 254;
+        (Object_GetById(0))->steering_flags &= 254;
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 520);
         Engine_EventWait(1);
         {
@@ -1380,7 +1380,7 @@ void SceneActor_SetFlagBit3ForActors28To35(void)
     for (; i <= 35; i++) {
         struct FieldActor *obj = Object_GetById(i);
         u32 v = obj->collision_flags;
-        obj->collision_flags = (u8)((v | bit) | zero);
+        obj->collision_flags = ((v | bit) | zero);
     }
 }
 
@@ -1722,7 +1722,7 @@ void FuneHeya_SetupFirstRowingPair(void)
     FieldScene_RunSceneStep(19, 11, 12);
     Engine_ActorSetAnimation(10, 6);
     Engine_ActorEnableActionCallback(12, FuneHeya_ActionScriptE);
-    base5_200e8e4 = (s32)((u8 *)FuneHeya_EntryActionScript);
+    base5_200e8e4 = (s32)(FuneHeya_EntryActionScript);
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
     Engine_ActorEnableActionCallback(38, base5_200e8e4);
@@ -1898,7 +1898,7 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
     if (Engine_GameFlagIsSet(0x929) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(1, 0);
         Engine_ActorSetPosition(obj, 0xeb << 17, 0xac << 16);
-        ((struct FieldActor *)Object_GetById(obj))->scale_x = 0xffff0000;
+        (Object_GetById(obj))->scale_x = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
         Engine_ActorSetPosition(11, 0, 0);
     } else {
@@ -1917,7 +1917,7 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
     if (Engine_GameFlagIsSet(0x92b) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(3, 0);
         Engine_ActorSetPosition(obj, 0xeb << 17, 0xcc << 16);
-        ((struct FieldActor *)Object_GetById(obj))->scale_x = 0xffff0000;
+        (Object_GetById(obj))->scale_x = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
         Engine_ActorSetPosition(13, 0, 0);
     } else {
@@ -1977,7 +1977,7 @@ void FieldScene_CallPairWith10(s32 a, u16 b)
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
     ObjectMotion_SetHorizontalPositionWithTerrain(a, b << 16, c << 16, d);
-    ((struct FieldActor *)Object_GetById(a))->facing = d;
+    (Object_GetById(a))->facing = d;
 }
 
 void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
@@ -2333,11 +2333,11 @@ void FuneHeya_SetupReplacementRower(void)
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(19, rec8, 12);
     Engine_ActorSetAnimation(10, 6);
-    base5_200e840 = (s32)((u8 *)FuneHeya_ActionScriptE);
+    base5_200e840 = (s32)(FuneHeya_ActionScriptE);
     Engine_ActorEnableActionCallback(rec8, base5_200e840);
     Engine_ActorDestroy(11);
     Engine_ActorEnableActionCallback(12, base5_200e840);
-    base5_200e8e4 = (s32)((u8 *)FuneHeya_EntryActionScript);
+    base5_200e8e4 = (s32)(FuneHeya_EntryActionScript);
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
     FieldScene_RunPositionTransferPresentation();
@@ -2399,7 +2399,7 @@ void FieldScene_RunPositionTransferPresentation(void)
     ConfigureSceneMotionFlags(0x1b80000, -1, 0x860000, 0x10000000);
     Engine_ActorEnableActionCallback(ACTOR_GERALD, FuneHeya_ProgressTableA);
     Engine_ActorEnableActionCallback(2, FuneHeya_ProgressTableA);
-    Object_SetActionCallbackAndRefreshById(3, (s32)FuneHeya_ProgressTableA);
+    Object_SetActionCallbackAndRefreshById(3, FuneHeya_ProgressTableA);
     Engine_EventWait(40);
     GameFlag_Set(0x301);
     FieldScene_RunSceneStep(23, 0, 0);
@@ -2529,12 +2529,12 @@ void FuneHeya_SetupReplacementPair(void)
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(19, rec8, rec2);
     Engine_ActorSetAnimation(10, 6);
-    base5_200e840 = (s32)((u8 *)FuneHeya_ActionScriptE);
+    base5_200e840 = (s32)(FuneHeya_ActionScriptE);
     Engine_ActorEnableActionCallback(rec8, base5_200e840);
     Engine_ActorDestroy(11);
     Engine_ActorEnableActionCallback(rec2, base5_200e840);
     Engine_ActorDestroy(12);
-    base5_200e8e4 = (s32)((u8 *)FuneHeya_EntryActionScript);
+    base5_200e8e4 = (s32)(FuneHeya_EntryActionScript);
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
     Engine_ActorSetChildValue(36, 3);

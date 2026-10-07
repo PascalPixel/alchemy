@@ -139,7 +139,7 @@ void AudioEngine_StopAllChannels(void)
     while (i > 0) {
         ((struct SoundNote *)channel)->state = 0;
         i--;
-        channel = (void *)((s32)channel + sizeof(struct SoundNote));
+        channel = (void *)(channel + sizeof(struct SoundNote));
     }
     channel = work->cgb_notes;
     if (channel != NULL) {
@@ -148,7 +148,7 @@ void AudioEngine_StopAllChannels(void)
             work->cgb_mute(i);
             ((struct CgbNote *)channel)->state = 0;
             i++;
-            channel = (void *)((s32)channel + sizeof(struct CgbNote));
+            channel = (channel + sizeof(struct CgbNote));
         }
     }
     work->lock = SOUND_LOCK;
@@ -651,7 +651,7 @@ void Cgb_UpdateChannels(void)
             else
                 *reg3 = (*reg3 & 8) | note->frequency;
             note->trigger = (note->trigger & 0xc0) + *((u8 *)&note->frequency + 1);
-            *reg4 = (s8)(note->trigger & byte_mask);
+            *reg4 = (note->trigger & byte_mask);
         }
 
         if (note->modified & CGB_NOTE_VOLUME_DIRTY) {

@@ -642,7 +642,7 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
     struct ObjectRuntime *object = work;
 
     Field_CheckConfiguredKeys();
-    object->step = (u16)object->step + 1;
+    object->step = object->step + 1;
     return 1;
 }
 

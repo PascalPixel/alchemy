@@ -19,8 +19,8 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
   struct ObjectRuntime *link;
 
   link = object->linked_object;
-  object->speed_limit = (s32)link->speed_limit;
-  object->acceleration = (s32)link->acceleration;
+  object->speed_limit = link->speed_limit;
+  object->acceleration = link->acceleration;
   dx = link->x - object->x;
   dz = link->z - object->z;
   dxh = dx >> 0x10;
@@ -34,7 +34,7 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
     mz = dz *n / len;
     Object_SetMoveTarget(object, object->x + mx, object->y, object->z + mz);
     ObjectDispatch_ApplyArgumentToChildren(object, 2);
-    object->step = (u16)(object->step + 1);
+    object->step = (object->step + 1);
     return 1;
   }
   ObjectDispatch_ApplyArgumentToChildren(object, 1);

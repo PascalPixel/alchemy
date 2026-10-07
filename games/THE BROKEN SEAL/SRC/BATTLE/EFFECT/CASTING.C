@@ -137,10 +137,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 
     slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
     slot = slots;
-    work = (struct BattleEffectWork *)*slot++;
+    work = *slot++;
     canvas = *slot;
     camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
-    sprites = (u8 *)slots[2];
+    sprites = slots[2];
     work->effect = command;
     if (kind == 11 || kind == 8 || kind == 32) {
         BattleFx_BeginTiledCanvas(0);
@@ -620,7 +620,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         s32 size = (i & 1) + 6;
                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                         projected.x >>= 1;
-                        blitters[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1], projected.x - (u32)size / 2, projected.y - size, size, size * 2);
+                        blitters[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1], projected.x - size / 2, projected.y - size, size, size * 2);
                         EffectStep_AdvanceWithGravity3D(step, 62, 0);
                         if (frame > i + 22) {
                             s32 dx = (caster->x - step->x) >> 8;

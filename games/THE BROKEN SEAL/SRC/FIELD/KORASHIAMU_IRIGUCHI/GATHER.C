@@ -126,7 +126,7 @@ void Scene_RunBranchingActorPresentation(void)
         FieldScene_CallPairWith10(17);
         Engine_ActorEnableActionCallback(1, KorashiamuIriguchi_ActionTable1);
         Engine_ActorEnableActionCallback(2, KorashiamuIriguchi_ActionTable1);
-        Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable1);
+        Object_SetActionCallbackAndRefreshById(3, KorashiamuIriguchi_ActionTable1);
         Engine_CameraSetSpeed(0x6666, 0xccc);
         Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
         Actor_SetSpeed(17, 0x10000, 0x8000);
@@ -179,7 +179,7 @@ void Scene_RunBranchingActorPresentation(void)
             FieldScene_CallPairWith10(17);
             Engine_ActorEnableActionCallback(1, KorashiamuIriguchi_ActionTable1);
             Engine_ActorEnableActionCallback(2, KorashiamuIriguchi_ActionTable1);
-            Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable1);
+            Object_SetActionCallbackAndRefreshById(3, KorashiamuIriguchi_ActionTable1);
             Engine_CameraSetSpeed(0x6666, 0xccc);
             Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
             Actor_SetSpeed(17, 0x10000, 0x8000);
@@ -202,9 +202,9 @@ void Scene_RunBranchingActorPresentation(void)
             Engine_ActorSetAnimation(3, 3);
             FieldScene_CallPairWith10(3);
             Engine_ActorEnableActionCallback(2, KorashiamuIriguchi_ActionTable2);
-            Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable2);
+            Object_SetActionCallbackAndRefreshById(3, KorashiamuIriguchi_ActionTable2);
             Engine_EventWait(20);
-            Object_SetActionCallbackAndRefreshById(0, (s32)KorashiamuIriguchi_ActionTable2);
+            Object_SetActionCallbackAndRefreshById(0, KorashiamuIriguchi_ActionTable2);
             Actor_WalkToAndWait(1, 262, 188);
             SceneState_ForwardMaskedHalfwordWith10(1, 0xc000);
             Engine_ActorSetAnimationAndWait(1, 3);
@@ -297,7 +297,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorFaceDirection(0, FACING_NORTHWEST, 0);
             Engine_ActorFaceDirection(12, 0xd000, 0);
             Engine_ActorFaceDirection(18, 0xb000, 0);
-            Object_SetActionCallbackAndRefreshById(14, (s32)KorashiamuIriguchi_ActionTable6);
+            Object_SetActionCallbackAndRefreshById(14, KorashiamuIriguchi_ActionTable6);
             Engine_EventWait(20);
             Engine_ActorFaceDirection(8, FACING_EAST, 0);
             Engine_ActorFaceDirection(11, FACING_WEST, 40);

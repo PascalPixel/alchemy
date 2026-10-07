@@ -202,13 +202,13 @@ void KorashiamuIriguchi_IntroduceSecondSeed(void)
     Engine_ActorRunRepeatedMotion(13, 1);
     Engine_EventShowMessage(13, 0);
     {
-        u16 *target = (u16 *)&rec7->timer;
+        u16 *target = &rec7->timer;
         u16 shown = 720;
 
         *target = shown;
     }
     {
-        u16 *target = (u16 *)&rec7->work;
+        u16 *target = &rec7->work;
         u16 shown = 112;
 
         *target = shown;

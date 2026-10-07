@@ -77,7 +77,7 @@ void Resource_LoadCode(u32 index, void *destination)
     s32 end;
     u32 size;
 
-    end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index), destination);
+    end = Resource_DecodeType01(Resource_GetTableEntry(index), destination);
     /* FAKEMATCH: the wrapper keeps the size load after the decode. */
     do {
         size = (u32)Resource_PatchThumbBranchCodeSize;

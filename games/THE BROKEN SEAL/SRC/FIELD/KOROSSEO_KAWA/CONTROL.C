@@ -90,11 +90,11 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     desc = Runtime_AllocateBlock(59, 0x7170);
     handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
-    *(u16 *)(desc + 222) = (u16)first;
-    *(u16 *)(desc + 224) = (u16)second;
-    *(u16 *)(desc + 226) = (u16)third;
-    *(u16 *)(desc + 228) = (u16)fourth;
-    *(u16 *)(desc + 230) = (u16)mode;
+    *(u16 *)(desc + 222) = first;
+    *(u16 *)(desc + 224) = second;
+    *(u16 *)(desc + 226) = third;
+    *(u16 *)(desc + 228) = fourth;
+    *(u16 *)(desc + 230) = mode;
     *(s32 *)(desc + 232) = centre;
     *(s32 *)(desc + 236) = extra;
 
@@ -113,7 +113,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     pal = Resource_FindFreeEntry();
-    *(u16 *)(desc + 216) = (u16)pal;
+    *(u16 *)(desc + 216) = pal;
     Engine_VramLoad((s16)pal, 512, handle);
 
     Scheduler_AddOrUpdateCallback((s32)Korosseo_DrawGauge + 1, 3190);

@@ -46,7 +46,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 
 void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
 {
-    u8 *src = Shop_GlyphBytes + ((u32)digit << 5);
+    u8 *src = Shop_GlyphBytes + (digit << 5);
     u8 *dst = tiles + Shop_GlyphRowOffsets[place] + 2;
     s32 count = 3;
 

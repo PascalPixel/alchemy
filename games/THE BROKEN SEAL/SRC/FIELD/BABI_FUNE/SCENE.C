@@ -295,5 +295,5 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_GameFlagSet(282);
-    Event_SetDestination((s32)&SceneId_Title, 9);
+    Event_SetDestination(&SceneId_Title, 9);
 }

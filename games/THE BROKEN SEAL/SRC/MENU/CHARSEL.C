@@ -166,7 +166,7 @@ s32 PsynergyMenu_SelectOwner(void)
             for (i = 0; i < MENU_ROW_COUNT; i++)
                 menu->row_positions[i] = 30;
             menu->row_positions[selection] = 26;
-            menu->psynergy_count = PsynergyMenu_CollectActions(Owner_GetStateFar(menu->owner_table[selection]), (u16 *)menu->psynergies, 0);
+            menu->psynergy_count = PsynergyMenu_CollectActions(Owner_GetStateFar(menu->owner_table[selection]), menu->psynergies, 0);
             PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
             Menu_PlaceEntryObjectsInGrid(96, 96, 8);
             Menu_HideEmptyEntryIcons(menu->psynergies);

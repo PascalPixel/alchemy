@@ -98,7 +98,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
         state->busy = 1;
     }
 
-    UiText_GetResourceDimensions(no, &x, &y, (u32 *)&width, (u32 *)&height);
+    UiText_GetResourceDimensions(no, &x, &y, &width, &height);
 
     x = (30 - width) >> 1;
     y = (12 - height) >> 1;

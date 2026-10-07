@@ -406,8 +406,8 @@ void MakyuriHeya_FadePaletteToWhite(void)
         done = 0;
         for (i = 0; i <= 7; i++) {
             r = *pal & 31;
-            g = (u16)(*pal >> 5) & 31;
-            b = (u16)(*pal >> 10) & 31;
+            g = (*pal >> 5) & 31;
+            b = (*pal >> 10) & 31;
             if (r == 31 && g == 31 && b == 31) {
                 done++;
             } else {
@@ -615,8 +615,8 @@ void MakyuriHeya_FadePaletteToBlack(void)
         done = 0;
         for (i = 0; i <= 6; i++) {
             r = *pal & 31;
-            g = (u16)(*pal >> 5) & 31;
-            b = (u16)(*pal >> 10) & 31;
+            g = (*pal >> 5) & 31;
+            b = (*pal >> 10) & 31;
             if (r > 0)
                 r--;
             if (g > 0)
@@ -758,10 +758,10 @@ void FieldScene_RunRandomEffectActorSequence(void)
         row_offset = (phase << 4);
         do {
             value = Engine_RandomNext();
-            x = ((((u32)(((value << 1) + value) << 4) >> 16) << 16) + 0x3000000);
+            x = ((((((value << 1) + value) << 4) >> 16) << 16) + 0x3000000);
             velocity_x = (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
             speed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
-            Effect_Spawn(x, 0, ((s32)(-((u32)particle >> 1) - row_offset) << 16) + 0xc00000, velocity_x, 0, speed, 0xd0001, effect);
+            Effect_Spawn(x, 0, ((-((u32)particle >> 1) - row_offset) << 16) + 0xc00000, velocity_x, 0, speed, 0xd0001, effect);
             particle = (particle + 1);
             Battle_WaitMode0(2);
         } while ((u32)particle <= 31);
@@ -1602,7 +1602,7 @@ void MakyuriHeya_RideLift(void)
     struct LiftLayer *layer;
     s32 speed;
 
-    layer = (struct LiftLayer *)(((u8 *)gMapWork[0]) + 356);
+    layer = (struct LiftLayer *)((gMapWork[0]) + 356);
     speed = 0x9c28;
     layer->offset = 0x04890000;
     layer->unknown_1c = 0;

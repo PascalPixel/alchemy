@@ -525,7 +525,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
             void *base = &gSaveBuffer;
 
             err = SaveState_ReadRecordPayload(value, base);
-            base = (char *)base + 0x1000;
+            base = base + 0x1000;
             err |= SaveState_ReadRecordPayload(value + 3, base);
             if (err != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);

@@ -333,7 +333,7 @@ void RamakanSabaku_ShowRandomPartyLine(s32 a0)
         }
     }
     Engine_EventBegin();
-    Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + MSGNO(MsgShianJiinIDoNotThinkMasterHama));
+    Engine_EventSetMessage((((p8 << 1) + p8) + v6) + MSGNO(MsgShianJiinIDoNotThinkMasterHama));
     Engine_EventShowMessage((v6 + 1), 0);
     Engine_EventEnd();
 }

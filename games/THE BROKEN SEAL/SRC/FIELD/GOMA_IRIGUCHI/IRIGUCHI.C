@@ -499,7 +499,7 @@ void GomaIriguchi_SetEntranceFlag(void)
     BattleFx_LoadActionEffectResources(78, 1);
     BattleFx_SetupObjectPair(2, 15);
     {
-        u8 *f = (u8 *)((s32)p5 + 1820);
+        u8 *f = (p5 + 1820);
         s32 t = 8;
 
         t |= *f;
@@ -610,7 +610,7 @@ void GomaIriguchi_GiveShamansRod(void)
     s32 id;
 
     id = 65;
-    member = (struct Member_387 *)Owner_GetState(2);
+    member = Owner_GetState(2);
     tries = 0;
 retry:
     if (++tries > 1000) {

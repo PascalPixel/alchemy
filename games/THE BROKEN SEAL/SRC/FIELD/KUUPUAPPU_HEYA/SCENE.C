@@ -903,7 +903,7 @@ void FieldScene_RunScene383SequenceB(void)
     actor24 = Object_GetById(24);
     actor25 = Object_GetById(25);
     Engine_EventBegin();
-    Scheduler_RemoveCallback((u32)((s32)SceneActor_FaceActors24And25TowardActorZero));
+    Scheduler_RemoveCallback(((s32)SceneActor_FaceActors24And25TowardActorZero));
     GameFlag_Clear(0x300);
     if ((s16)actor24->timer <= 3) {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptG);
@@ -998,7 +998,7 @@ void FieldScene_ConfigurePairedActors(void)
     SceneActor_SetModeZeroAndValue(24, 20);
     Actor_SetSpeed(24, 0x40000, 0x20000);
     Actor_SetSpeed(25, 0x38000, 0x1c000);
-    ((s32 (*)())Engine_ActorEnableActionCallback)(25, (s32)KuupuappuHeya_PairScriptO);
+    ((s32 (*)())Engine_ActorEnableActionCallback)(25, KuupuappuHeya_PairScriptO);
     Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
     {
@@ -1024,7 +1024,7 @@ void FieldScene_SelectActorPair(void)
 
     work = gEventWork;
     Engine_EventBegin();
-    Scheduler_RemoveCallback((u32)((s32)KuupuappuHeya_UpdateActorStops));
+    Scheduler_RemoveCallback(((s32)KuupuappuHeya_UpdateActorStops));
     GameFlag_Clear(0x107);
     GameFlag_Clear(0x250);
     Engine_ActorSetAnimation(24, 1);
@@ -1085,12 +1085,12 @@ void FieldScene_SelectActorPair(void)
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(40);
     record = (u8 *)Object_GetById(0);
-    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
+    (((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(1);
-    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
+    (((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(2);
 
-    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
+    (((struct FieldActor *)record)->sprite)->priority = 1;
     gEventWork->transition_frames = 24;
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
@@ -1136,11 +1136,11 @@ void KuupuappuHeya_RunBranchingDialogueScene(void)
     Actor_SetPosition(2, 0x1080000, 0x2e80000);
     Engine_ActorSetPosition(1, 0xe80000, 0x2e80000);
     record = (u8 *)Object_GetById(0);
-    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
+    (((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(1);
-    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
+    (((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(2);
-    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
+    (((struct FieldActor *)record)->sprite)->priority = 1;
     Engine_ActorFaceEachOther(0, 2, 0);
     FieldScene_RunSplitTripleSteps(1, 2, 30);
     Actor_SetPosition(24, 0x680000, 0x2b80000);
@@ -1284,7 +1284,7 @@ void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, c
 
     if ((s16)rec->timer == expected) {
         Engine_ActorEnableActionCallback(actor, desc);
-        rec->timer = (u16)next;
+        rec->timer = next;
     }
 }
 
@@ -1346,7 +1346,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             ((void (*)())Engine_ActorEnableActionCallback)(18, 1);
             Actor_FaceDirection(18, 0x4000, 0);
             OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
-            ((void (*)())Engine_TaskAddCallback)((s32)SceneState_SetFlagByActorPosition, 0xc80);
+            ((void (*)())Engine_TaskAddCallback)(SceneState_SetFlagByActorPosition, 0xc80);
         } else if (Engine_GameFlagIsSet(0x853) != 0) {
             Engine_ActorSetPosition(18, 0, 0);
         }
@@ -1355,7 +1355,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x852) != 0
             && Engine_GameFlagIsSet(0x853) == 0 && Engine_GameFlagIsSet(0x300) != 0) {
             Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-            ((void (*)())Engine_TaskAddCallback)((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
+            ((void (*)())Engine_TaskAddCallback)(SceneActor_FaceActors24And25TowardActorZero, 3200);
             break;
         }
         if (Engine_GameFlagIsSet(0x856) != 0) {
@@ -1368,9 +1368,9 @@ s32 KuupuappuHeya_ApplyEntryState(void)
                 Engine_MapCopyCellAttributes(14, 50, 3, 1, 14, 44);
                 break;
             }
-            ((struct ActorMode *)((u8 *)Object_GetById(24)))->mode = 5;
-            ((struct ActorMode *)((u8 *)Object_GetById(25)))->mode = 4;
-            ((void (*)())Engine_TaskAddCallback)((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
+            ((struct ActorMode *)(Object_GetById(24)))->mode = 5;
+            ((struct ActorMode *)(Object_GetById(25)))->mode = 4;
+            ((void (*)())Engine_TaskAddCallback)(SceneActor_FaceActors24And25TowardActorZero, 3200);
         }
         break;
     case 13:
@@ -1381,7 +1381,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         Engine_MapCopyCellsTo(54, 2, 35, 80, 2, 10);
         Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
         Engine_MapCopyCellsTo(54, 2, 46, 81, 4, 8);
-        ((struct ActorFlags *)((u8 *)Object_GetById(26)))->flags |= 4;
+        ((struct ActorFlags *)(Object_GetById(26)))->flags |= 4;
         Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
         if (Engine_GameFlagIsSet(0x859) != 0) {
             Actor_SetPosition(26, 0x2a40000, 0x19b0000);
@@ -1893,7 +1893,7 @@ void RunDialoguePromptScene(void)
     SceneActor_SetModeZeroAndValue(9, 20);
     Engine_ActorEnableActionCallback(14, KuupuappuHeya_VaultScriptC);
     Engine_EventWait(50);
-    ((s32 (*)())Engine_ActorEnableActionCallback)(9, (s32)KuupuappuHeya_VaultScriptD);
+    ((s32 (*)())Engine_ActorEnableActionCallback)(9, KuupuappuHeya_VaultScriptD);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_GERALD, 792, 456);
@@ -1950,7 +1950,7 @@ void RunDialoguePromptScene(void)
         struct FieldActor *rec;
         /* FAKEMATCH: the zero is spelled as a sum of a zero local with itself, which keeps the reference's register for it. */
         s32 t = 0;
-        u16 zero_sym = (u16)(t + t);
+        u16 zero_sym = (t + t);
 
         rec = Object_GetById(19);
         rec->motion_flags = zero_sym;
@@ -2380,11 +2380,11 @@ s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
     s32 dx;
     s32 dy;
 
-    if (target_x == (s32)0x80000000) {
+    if (target_x == 0x80000000) {
         target_x = rec->f8;
     }
     target_y = rec->f64;
-    if (target_y == (s32)0x80000000) {
+    if (target_y == 0x80000000) {
         target_y = rec->f16;
     }
 
@@ -2537,7 +2537,7 @@ move_second:
         }
     }
     if (blocked != 0) {
-        if ((u16)++KuupuappuHeya_StopTimer > 29)
+        if (++KuupuappuHeya_StopTimer > 29)
             work->raised_trigger = blocked + 200;
     } else {
         KuupuappuHeya_StopTimer = blocked;

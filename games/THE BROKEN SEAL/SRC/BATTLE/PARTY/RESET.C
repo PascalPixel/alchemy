@@ -39,7 +39,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
 
         do {
             unit = Owner_GetStateFar(owners[i]);
-            cursor = (u8 *)&unit->element_modifier[3];
+            cursor = &unit->element_modifier[3];
             remaining = 3;
 
             do {

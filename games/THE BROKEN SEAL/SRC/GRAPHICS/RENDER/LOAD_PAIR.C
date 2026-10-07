@@ -96,7 +96,7 @@ extern const u8 *RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
-    void *staging_buffer = (void *)Runtime_AllocateBlock(14, 1024);
+    void *staging_buffer = Runtime_AllocateBlock(14, 1024);
     const u8 *resource = RenderResource_PairSourceTable[group_index];
 
     if (resource_index <= 95) {

@@ -21,7 +21,7 @@ void BattleUnit_ResetGuardLevels(void)
     s32 count;
     s32 index;
 
-    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
+    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
     for (index = 0; index < count; index++) {
         struct BattleUnit *actor;
 

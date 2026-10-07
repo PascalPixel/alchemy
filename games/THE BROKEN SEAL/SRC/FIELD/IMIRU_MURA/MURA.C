@@ -94,7 +94,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *ImiruMura_GetExits(void)
 {
-    return (u8 *)ImiruMura_SceneTable;
+    return ImiruMura_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -237,7 +237,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Event_ShowMessageAndWait(8, 0, 20);
             Engine_ActorEnableActionCallback(0, ImiruMura_ActorScriptC);
             Actor_SetSpeed(8, 104857, 52428);
-            Object_SetActionCallbackAndRefreshById(8, (s32)ImiruMura_ActorScriptB);
+            Object_SetActionCallbackAndRefreshById(8, ImiruMura_ActorScriptB);
             Engine_EventWait(40);
             Engine_ActorJump(8, 2, 0);
             Engine_ActorStartRepeatedMotion(8, 2);
@@ -248,7 +248,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Engine_ActorStartRepeatedMotion(8, 2);
             Engine_EventShowMessage(8, 0);
             actor8_record = Object_GetById(8);
-            *(u8 *)((u8 *)actor8_record + ACTOR_FLAGS_OFFSET) ^= 0x2;
+            *((u8 *)actor8_record + ACTOR_FLAGS_OFFSET) ^= 0x2;
             GameFlag_Set(0x82c);
             Engine_EventEnd();
         }
@@ -416,7 +416,7 @@ void ImiruMura_RunWeaponShop(void)
             Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(20);
-            Object_SetActionCallbackAndRefreshById(12, (s32)ImiruMura_TurnScript);
+            Object_SetActionCallbackAndRefreshById(12, ImiruMura_TurnScript);
             Engine_EventSetMessage((s32)MsgMakyuriStoreClosedUntilWell);
             Engine_EventShowMessage(12, 0);
             Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
@@ -450,7 +450,7 @@ void ImiruMura_RunArmorShop(void)
             Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(20);
-            Object_SetActionCallbackAndRefreshById(13, (s32)ImiruMura_TurnScript);
+            Object_SetActionCallbackAndRefreshById(13, ImiruMura_TurnScript);
             Engine_EventSetMessage((s32)MsgMakyuriTooSickBusiness);
             Engine_EventShowMessage(13, 0);
             Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
@@ -750,7 +750,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Engine_EventWait(40);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    ((struct Work_399 *)((s32)Object_GetById(3)))->f100 = 0;
+    ((struct Work_399 *)(Object_GetById(3)))->f100 = 0;
     Engine_ActorEnableActionCallback(ACTOR_MIA, ImiruMura_MiaScriptA);
     while (*(s16 *)(((s32)Object_GetById(3)) + ACTOR_DONE_OFFSET) == 0) {
         Engine_TaskWait(1);
@@ -791,7 +791,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_ActorStop(ACTOR_GERALD);
     Engine_ActorStop(ACTOR_IVAN);
     Actor_SetSpeed(ACTOR_MIA, 0x30000, 0x18000);
-    ((struct Work_399 *)((s32)Object_GetById(3)))->f100 = 0;
+    ((struct Work_399 *)(Object_GetById(3)))->f100 = 0;
     Engine_ActorEnableActionCallback(ACTOR_MIA, ImiruMura_MiaScriptB);
     while (*(s16 *)(((s32)Object_GetById(3)) + ACTOR_DONE_OFFSET) == 0) {
         Engine_TaskWait(1);

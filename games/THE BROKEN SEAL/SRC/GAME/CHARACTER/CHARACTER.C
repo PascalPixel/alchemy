@@ -166,7 +166,7 @@ void Owner_RecalculateStats(s32 owner)
     s32 cap;
     s16 old;
 
-    work = (struct StatWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
+    work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
     st = Owner_GetState(owner);
     work->hp = st->base_hp;
     work->pp = st->base_pp;

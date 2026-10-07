@@ -99,7 +99,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             blend_y[-1] = sixteen;
         } while (0);
 
-        count = BattleParty_ListActorIds(3, (u16 *)active_actors);
+        count = BattleParty_ListActorIds(3, active_actors);
         for (i = 0; i < count; i++)
             BattlePres_SetActorRecordMode(active_actors[i], mode & 1);
 

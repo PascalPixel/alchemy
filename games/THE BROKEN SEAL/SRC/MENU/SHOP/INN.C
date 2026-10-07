@@ -115,7 +115,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     AudioCommand_WaitForStateByteClear();
     {
         u8 active_mode = 2;
-        u8 *entry = (u8 *)&shop->effects[0].state;
+        u8 *entry = &shop->effects[0].state;
         for (i = 23; i >= 0; i--) {
             if (*(s8 *)(entry + 5) != 0) {
                 *entry = active_mode;
@@ -131,7 +131,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     WaitFrames(20);
 
     {
-        u8 *flag_entry = (u8 *)&shop->effects[0].active;
+        u8 *flag_entry = &shop->effects[0].active;
         struct EffectSlot *entry2 =
             shop->effects;
         for (i = 23; i >= 0; i--) {

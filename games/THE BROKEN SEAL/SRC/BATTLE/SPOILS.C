@@ -165,15 +165,15 @@ void Battle_AwardSpoils(void)
     spoils = &gBattleWork->spoils;
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgExpGained);
+        UiText_ShowMessageAndWaitCoreFar(MsgExpGained);
         BattlePresentation_WaitForAdvance();
     }
     list = units;
     count = BattleParty_ListLivingUnits(1, list);
-    backup = (struct BattleUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+    backup = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
     for (i = 0; i < count; i++) {
         unit_id = list[i];
-        unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
+        unit = Owner_GetStateFar(unit_id);
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
             Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0) {
@@ -182,7 +182,7 @@ void Battle_AwardSpoils(void)
             UiWork_PushValueSlotFar(unit->class_index, 3);
             UiWork_PushValueSlotFar(list[i], 1);
             UiWork_PushValueSlotFar(unit->level, 5);
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgLevelUp);
+            UiText_ShowMessageAndWaitCoreFar(MsgLevelUp);
             BattlePresentation_WaitForAdvance();
             for (cnt = 0; cnt < 32; cnt++) {
                 learned = unit->action_slots[cnt].encoded_action;
@@ -197,39 +197,39 @@ void Battle_AwardSpoils(void)
                         UiWork_PushValueSlotFar(unit_id, 1);
                         UiWork_PushValueSlotFar(learned & OWNER_ACTION_ID_MASK, 4);
                         Audio_PlayCue(154);
-                        UiText_ShowMessageAndWaitCoreFar((s32)MsgAbilityMastered);
+                        UiText_ShowMessageAndWaitCoreFar(MsgAbilityMastered);
                         BattlePresentation_WaitForAdvance();
                     }
                 }
             }
             if (gains[2] != 0) {
                 UiWork_PushValueSlotFar(gains[2], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxHpRises);
+                UiText_ShowMessageAndWaitCoreFar(MsgMaxHpRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[3] != 0) {
                 UiWork_PushValueSlotFar(gains[3], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxPpRises);
+                UiText_ShowMessageAndWaitCoreFar(MsgMaxPpRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[4] != 0) {
                 UiWork_PushValueSlotFar(gains[4], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgAttackRises);
+                UiText_ShowMessageAndWaitCoreFar(MsgAttackRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[5] != 0) {
                 UiWork_PushValueSlotFar(gains[5], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgDefenseRises);
+                UiText_ShowMessageAndWaitCoreFar(MsgDefenseRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[6] != 0) {
                 UiWork_PushValueSlotFar(gains[6], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgAgilityRises);
+                UiText_ShowMessageAndWaitCoreFar(MsgAgilityRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[7] != 0) {
                 UiWork_PushValueSlotFar(gains[7], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgLuckRises);
+                UiText_ShowMessageAndWaitCoreFar(MsgLuckRises);
                 BattlePresentation_WaitForAdvance();
             }
         }
@@ -237,7 +237,7 @@ void Battle_AwardSpoils(void)
     Runtime_BumpFree(backup);
     if (spoils->coins != 0) {
         UiWork_PushValueSlotFar(spoils->coins, 5);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgCoinsGained);
+        UiText_ShowMessageAndWaitCoreFar(MsgCoinsGained);
         Party_AdjustCoinsFar(spoils->coins);
         BattlePresentation_WaitForAdvance();
     }
@@ -257,7 +257,7 @@ void Battle_AwardSpoils(void)
         if (best_slot == -1)
             break;
         UiWork_PushValueSlotFar(spoils->items[best_slot], 2);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgItemGained);
+        UiText_ShowMessageAndWaitCoreFar(MsgItemGained);
         BattlePresentation_WaitForAdvance();
         if (PartyInventory_AddFar(spoils->items[best_slot]) == -1) {
             *found = spoils->items[best_slot];

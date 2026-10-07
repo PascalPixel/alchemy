@@ -131,7 +131,7 @@ void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
 
     if (object != NULL) {
         object->linked_object = Object_GetById(linked_object_id);
-        ObjectMotion_SetActionCallback(object, (s32)ObjectMotion_LinkedActionScript);
+        ObjectMotion_SetActionCallback(object, ObjectMotion_LinkedActionScript);
     }
 }
 
@@ -483,14 +483,14 @@ void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
   particle->y = velocity_y;
   particle->target_y = velocity_y;
   particle->velocity_x =
-      (s32)(velocity_x - velocity_x / 18);
+      (velocity_x - velocity_x / 18);
 
   vz = velocity_z;
   if (velocity_z < 0) {
     vz += 15;
   }
   particle->velocity_z =
-      (s32)(velocity_z - (vz >> 4));
+      (velocity_z - (vz >> 4));
 
 }
 

@@ -83,7 +83,7 @@ s32 NameEntry_CountLetters(const u8 *name)
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    s16 *mirror = (s16 *)work->tilemap;
+    s16 *mirror = work->tilemap;
     s16 *buffer = Runtime_BumpAllocateAlternatePool(768);
     s16 *input = buffer;
     u32 cell;
@@ -514,7 +514,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
         }
     }
     input[14] = 0;
-    UiText_DrawString(saved, (s32)label, 0, 0);
+    UiText_DrawString(saved, label, 0, 0);
     column = 18;
     slot = Resource_FindFreeEntry();
     row = 10;
@@ -669,7 +669,7 @@ remove_character:
                 goto finish;
             }
             RenderOutput_PrepareForRedraw(label);
-            UiText_DrawString(input, (s32)label, 0, 0);
+            UiText_DrawString(input, label, 0, 0);
             text_dirty = 1;
             continue;
         }
@@ -733,7 +733,7 @@ remove_character:
                 cursor_dirty = 1;
             }
             RenderOutput_PrepareForRedraw(label);
-            UiText_DrawString(input, (s32)label, 0, 0);
+            UiText_DrawString(input, label, 0, 0);
             text_dirty = 1;
         }
     }

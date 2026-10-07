@@ -94,7 +94,7 @@ void SuharaHeya_AskBlownHere(s32 obj)
 void SuharaHeya_PlayCueAndRequestTouchedExit(void)
 {
     struct EventWork *state = gEventWork;
-    s16 *cnt = (s16 *)&state->touched_trigger;
+    s16 *cnt = &state->touched_trigger;
 
     Engine_EventRequestExit(*cnt);
     Engine_AudioPlayCue(123);

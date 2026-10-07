@@ -471,8 +471,8 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
         u8 *p = (u8 *)Object_GetById(11);
 
         ((struct FieldActor *)p)->motion_flags = 0;
-        ((struct FieldActor *)p)->terrain_height = (s32)0xfffe0000;
-        ((struct FieldActor *)p)->y.fixed = (s32)0xfffe0000;
+        ((struct FieldActor *)p)->terrain_height = 0xfffe0000;
+        ((struct FieldActor *)p)->y.fixed = 0xfffe0000;
     }
 
     Engine_EventEnd();
@@ -686,7 +686,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     mode = &record->motion_flags;
     saved = *mode;
 
-    target[0] = Object_GetById(0)->x.fixed + (s32)0xffe00000;
+    target[0] = Object_GetById(0)->x.fixed + 0xffe00000;
     target[1] = Object_GetById(0)->y.fixed;
     target[2] = Object_GetById(0)->z.fixed;
 
@@ -697,12 +697,12 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
         *mode = 0;
         Object_SetModeById(11, 7);
 
-        record->y.fixed += (s32)0xffff0000;
-        record->terrain_height += (s32)0xffff0000;
+        record->y.fixed += 0xffff0000;
+        record->terrain_height += 0xffff0000;
         WaitFrames(2);
 
-        record->y.fixed += (s32)0xffff0000;
-        record->terrain_height += (s32)0xffff0000;
+        record->y.fixed += 0xffff0000;
+        record->terrain_height += 0xffff0000;
         WaitFrames(10);
 
         record->y.fixed += 0x10000;
@@ -737,8 +737,8 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
         u8 *record = (u8 *)Object_GetById(13);
 
         ((struct FieldActor *)record)->motion_flags = 0;
-        ((struct FieldActor *)record)->terrain_height = (s32)0xfffe0000;
-        ((struct FieldActor *)record)->y.fixed = (s32)0xfffe0000;
+        ((struct FieldActor *)record)->terrain_height = 0xfffe0000;
+        ((struct FieldActor *)record)->y.fixed = 0xfffe0000;
     }
 
     Engine_EventEnd();
@@ -1064,7 +1064,7 @@ void MogoruMori_RunClosingChoreography(void)
     /* FAKEMATCH: an empty do-while here moves px into r1 after the other arguments of the call above. */
     do { } while (0);
     gGameState.battle_start = 3;
-    Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
+    Party_SetFields1ceAnd1d0(&SceneId_MogoruMori3, 15);
     BattleFx_SetWeightedResult(53, 1);
     Engine_EventEnd();
 }

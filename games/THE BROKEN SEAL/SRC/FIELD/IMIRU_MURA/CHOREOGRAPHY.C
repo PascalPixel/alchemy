@@ -122,7 +122,7 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
     s32 h;
     State *st;
 
-    obj = ((T *)Object_GetById(0));
+    obj = (Object_GetById(0));
     x = obj->unk8;
     cx = x >> 19;
     g = 512;
@@ -415,14 +415,14 @@ void StagedActor_RunHeadingProbeStep(void)
         x = probe[0];
         p = (u8 *)subject;
         p += 34;
-        goal = GetMapCellCollision((s32)*p, x, z);
-        Vector_AddPolarOffset((s32)0x100000, heading, probe);
+        goal = GetMapCellCollision(*p, x, z);
+        Vector_AddPolarOffset(0x100000, heading, probe);
 
-        marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
+        marker = GetMapCellCollision(*p, probe[0], probe[2]);
         if (marker == 255
-                || Map_GetTerrainHeight((s32)*p, probe[0], probe[2])
+                || Map_GetTerrainHeight(*p, probe[0], probe[2])
                     - subject->y > 0x80000) {
-            subject->heading = (u16)heading;
+            subject->heading = heading;
             goto tail;
         }
 
@@ -435,11 +435,11 @@ void StagedActor_RunHeadingProbeStep(void)
         Object_SetMode(subject, 2);
         ObjectDispatch_ApplyValueToChildren(subject, 48);
         Engine_ObjectCommitPosition(subject);
-        subject->callback = (void *)SceneActor_TurnTowardTableAngle;
+        subject->callback = SceneActor_TurnTowardTableAngle;
 
         goto advanceProbe;
 continueProbe:
-        if (Map_GetTerrainHeight((s32)*p, probe[0], probe[2])
+        if (Map_GetTerrainHeight(*p, probe[0], probe[2])
                 - subject->y > 0x80000) {
             goto finishProbe;
         }
@@ -455,7 +455,7 @@ continueProbe:
 
 advanceProbe:
         ImiruMura_AdvanceProbe(heading, probe);
-        marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
+        marker = GetMapCellCollision(*p, probe[0], probe[2]);
         if (marker != 255) {
             goto continueProbe;
         }

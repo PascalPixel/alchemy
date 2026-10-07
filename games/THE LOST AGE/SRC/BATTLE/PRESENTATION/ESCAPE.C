@@ -23,8 +23,8 @@ s32 BattleEscape_PlayRun(void *action)
     s32 member_slot;
 
     (void)action;
-    if (((u32)(Random16() << 4) >> 16) != 0) {
-        party_size = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, (u16 *)party_members);
+    if (((Random16() << 4) >> 16) != 0) {
+        party_size = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, party_members);
         animated = 0;
         if (party_size != 0) {
             member_slot = 0;

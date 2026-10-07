@@ -87,7 +87,7 @@ again:
                 }
                 case 2:
                 {
-                    list = (struct AnimationObject **)object->records;
+                    list = object->records;
                     for (j = 0; j < 4; j++) {
                         record = *list++;
                         if (record != 0)
@@ -116,7 +116,7 @@ again:
                 }
                 case 2:
                 {
-                    list = (struct AnimationObject **)object->records;
+                    list = object->records;
                     for (j = 0; j < 4; j++) {
                         record = *list++;
                         if (record != 0)

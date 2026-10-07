@@ -129,7 +129,7 @@ u32 Random16(void);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(state_index);
+    struct BattleUnit *state = Owner_GetState(state_index);
     s32 key = value & OWNER_ACTION_ID_MASK;
     s32 found = -1;
     s32 index;
@@ -195,7 +195,7 @@ void Owner_InitRecords(void)
     u8 *name;
 
     for (owner = 0; owner <= 7; owner++) {
-        state = (struct BattleUnit *)Owner_GetState(owner);
+        state = Owner_GetState(owner);
         Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, name_buf);
         name = state->name;
         name[0] = name_buf[0];
@@ -213,7 +213,7 @@ void Owner_InitRecords(void)
 
     if (*remote != -1) {
         do {
-            state = (struct BattleUnit *)Owner_GetState(*remote);
+            state = Owner_GetState(*remote);
             if (state != 0) {
                 state->class_id = *remote;
                 tmpl = Character_GetDefinition(state->class_id);
@@ -243,7 +243,7 @@ void Owner_LevelNoOp(void)
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
+    struct BattleUnit *state = Owner_GetState(owner);
 
     if (state->class_index != 0) {
         if (level <= 0) {
@@ -265,8 +265,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     s32 diff;
     s32 level;
 
-    st = (struct BattleUnit *)Owner_GetState(owner);
-    work = (struct LevelUpWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
+    st = Owner_GetState(owner);
+    work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
     work->class_index = st->class_index;
     level = st->level;
     work->level = level;
@@ -330,7 +330,7 @@ struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner_no, struct
 {
     struct BattleUnit *owner;
 
-    owner = (struct BattleUnit *)Owner_GetState(owner_no);
+    owner = Owner_GetState(owner_no);
     if ((owner->experience >= Owner_GetLevelThreshold(owner_no, owner->level + 1)) &&
         (Owner_LevelUp(owner_no, value) != NULL)) {
         return value;

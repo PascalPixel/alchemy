@@ -124,7 +124,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     skip = 0;
     affinity = 0;
     size = sizeof(struct BattleUnit);
-    copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
+    copy = Runtime_BumpAllocate(size);
 
     actor_id = plan->actor_id;
     target_id = plan->target_ids[slot];
@@ -240,7 +240,7 @@ after_power:
                 if (listed > 0) {
                     u16 *q;
 
-                    q = (u16 *)saved;
+                    q = saved;
                     count = listed;
                     do {
                         Actor_ResetMotionAtAnchor(*q++);

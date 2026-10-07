@@ -819,7 +819,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     } else {
         Graphics_PrepareTransferInIwramWork(eye, target);
     }
-    obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
+    obj = *(struct CameraObject **)(&gObjectSlots);
     obj += 63;
     unit = 0x10000;
     for (cnt = 63; cnt >= 0; cnt--, obj--) {

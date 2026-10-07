@@ -37,7 +37,7 @@ void UiWork_InitializeWithResourceCounters(void)
     volatile u32 fill;
 #endif
 
-    work = (struct UiRenderWork *)Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
+    work = Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
 #if EDITION_INTERNATIONAL
     fill = 0;
     Dma_Set((const void *)&fill, work, 0x850004bf, REG_DMA3);
@@ -78,7 +78,7 @@ void UiWork_Initialize(s32 kind)
         return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
     }
 
-    work = (struct UiRenderWork *)Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
+    work = Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
 #if EDITION_INTERNATIONAL
     fill = 0;
     Dma_Set(&fill, work, (0x85000000 | RENDER_WORK_SIZE / 4), REG_DMA3);

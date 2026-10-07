@@ -89,8 +89,8 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {
     s32 handler;
 
-    Korosseo_ModeTaskMode = (u16)mode;
-    Korosseo_ModeTaskParam = (u16)(param << 4);
+    Korosseo_ModeTaskMode = mode;
+    Korosseo_ModeTaskParam = (param << 4);
 
     Scheduler_AddOrUpdateCallback((s32)Korosseo_UpdateModeTask, 3200);
 

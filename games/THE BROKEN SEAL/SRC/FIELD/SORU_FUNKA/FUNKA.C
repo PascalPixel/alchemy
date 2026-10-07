@@ -150,7 +150,7 @@ void Scene_SaturosTakesHostages(void)
     base5_3001ec4 = (s32)gParticleWork;
     p7 = *(u8 **)base5_3001ec4;
     Engine_EventBegin();
-    *(s32 *)(((s32)p7 + 1036)) = 0;
+    *(s32 *)((p7 + 1036)) = 0;
     Audio_PlayCue(141);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x9c0000);
@@ -220,7 +220,7 @@ void Scene_SaturosTakesHostages(void)
     Actor_SetPosition(15, 0x1450000, 0x12e0000);
     record = Object_GetById(15);
     record[85] = 5;
-    *(s32 *)(((s32)p7 + 1036)) = 1;
+    *(s32 *)((p7 + 1036)) = 1;
     Audio_PlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
@@ -257,11 +257,11 @@ void Scene_SaturosTakesHostages(void)
     Engine_EventSetMessage((s32)MsgSoruSukuretaCouldThatBeThe);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
     FieldScene_RunVariantStep(1, 20, 0);
-    *(s32 *)(((s32)p7 + 1036)) = 0;
+    *(s32 *)((p7 + 1036)) = 0;
     Audio_PlayCue(141);
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(80);
-    *(s32 *)(((s32)p7 + 1036)) = 1;
+    *(s32 *)((p7 + 1036)) = 1;
     Audio_PlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
@@ -293,7 +293,7 @@ void Scene_SaturosTakesHostages(void)
     Actor_FaceDirection(ACTOR_GARCIA, 0x8000, 0);
     Actor_FaceDirection(ACTOR_ALEX, 0x8000, 0);
     record = Object_GetById(5);
-    Camera_MoveTo((*(s16 *)((s32)record + 10) << 16), -1, (*(s16 *)((s32)record + 18) << 16), 1);
+    Camera_MoveTo((*(s16 *)(record + 10) << 16), -1, (*(s16 *)(record + 18) << 16), 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_GARCIA, 2);
@@ -411,7 +411,7 @@ void Scene_SaturosTakesHostages(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_MENARDI, 475, 338);
     record = Object_GetById(11);
-    ((struct FacingObject *)record)->facing_flags = (u8)(254 & ((struct FacingObject *)record)->facing_flags);
+    ((struct FacingObject *)record)->facing_flags = (254 & ((struct FacingObject *)record)->facing_flags);
     Actor_WalkToAndWait(ACTOR_MENARDI, 475, 348);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
     Engine_ActorJump(ACTOR_JASMINE, 4, 0);
@@ -644,7 +644,7 @@ void SoruFunka_StepEmbers(void)
     s32 x;
     s32 z;
 
-    work = (*(u8 * *)gParticleWork);
+    work = (*gParticleWork);
     level = (u32)gEmberTimer / 10;
     if (level != 0) {
         *(s32 *)(work + 1036) = 0;
@@ -660,7 +660,7 @@ void SoruFunka_StepEmbers(void)
     for (i = 0; i < 16; i++) {
         if (gEmberState[i] != 0) {
             spark = (void *)Object_GetById(i + 16);
-            if (spark->target_x == (s32)0x80000000 && spark->target_z == (s32)0x80000000) {
+            if (spark->target_x == 0x80000000 && spark->target_z == 0x80000000) {
                 gEmberState[i]++;
                 if (gEmberState[i] == 2)
                     Object_SetMode(spark, 3);
@@ -1633,7 +1633,7 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
     volatile u32 *p = &gFrameCount;
 
     if (*p & 1) {
-        Engine_ObjectSetPartPalettes(a, (u32)Math_RemainderUnsigned(*p >> 1, 6));
+        Engine_ObjectSetPartPalettes(a, Math_RemainderUnsigned(*p >> 1, 6));
     }
     if ((*p & 15) == 0) {
         SoruFunka_SpawnEffectPair(a);
@@ -1647,7 +1647,7 @@ void SceneEffect_UpdateArcOverAnchor(struct Actor_02002e0c *self)
     s32 amplitude;
 
     anchor = self->anchor;
-    self->frame = (u16)(self->frame + 1);
+    self->frame = (self->frame + 1);
     frame = (s16)self->frame;
 
     if (frame > 31) {
@@ -1670,7 +1670,7 @@ void SceneEffect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj)
     s32 amp;
 
     anchor = obj->anchor;
-    obj->frame = (u16)(obj->frame + 1);
+    obj->frame = (obj->frame + 1);
     frame = (s16)obj->frame;
 
     if (frame > 31) {

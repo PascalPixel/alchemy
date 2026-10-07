@@ -57,7 +57,7 @@ s32 SaveState_ProcessSelectedSlot(void)
                 UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
                 result = -2;
             }
-            dst = (u8 *)buffer + (s32)gSaveStamp;
+            dst = buffer + (s32)gSaveStamp;
             dst -= (s32)gSaveBuffer;
             ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))(dst, gSaveStamp, 16);
             found = SaveState_WriteRecord(gSaveSlot, buffer);
@@ -117,7 +117,7 @@ s32 SaveState_CopySlotPair(void)
             void *upper;
 
             found = SaveState_ReadRecordPayload(value, lower);
-            upper = (u8 *)lower + 0x1000;
+            upper = lower + 0x1000;
             found |= SaveState_ReadRecordPayload(value + 3, upper);
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);

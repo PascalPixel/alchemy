@@ -331,9 +331,9 @@ void BattleFx_StartBufferInterpolation(s32 mode)
     if (buffers != NULL) {
         buffers->duration = mode;
         buffers->step = 0;
-        BattleFx_InterpolateBuffers((s16 *)buffers->current,
-                                        (s16 *)buffers->target,
-                                        (s16 *)buffers->delta,
+        BattleFx_InterpolateBuffers(buffers->current,
+                                        buffers->target,
+                                        buffers->delta,
                                         mode);
     }
 }

@@ -106,7 +106,7 @@ done:
     {
         s32 delay = 3200;
 
-        Scheduler_AddOrUpdateCallback((const void *)Menu_UpdateEntryObjectTransforms, delay);
+        Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay);
     }
 
     {

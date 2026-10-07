@@ -328,7 +328,7 @@ s32 Title_ShowIntro(s32 prompt)
         count = q->count;
         if (count <= 31) {
             u32 *destination = q->entries[count];
-            *(u16 *)&q->count = count + 1;
+            * &q->count = count + 1;
             *destination++ = 0xf740;
             *destination++ = 0x04000000;
             *destination = 0x20000;

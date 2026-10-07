@@ -80,7 +80,7 @@ void Scene_BagMarsStar(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 156);
     Engine_EventWait(10);
-    leader = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
@@ -851,7 +851,7 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(10);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    leader = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
         Actor_SetDestination(ACTOR_GERALD, leader->x.part.pixel, leader->z.part.pixel);
     }

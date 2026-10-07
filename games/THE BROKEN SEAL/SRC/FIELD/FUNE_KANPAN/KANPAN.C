@@ -158,7 +158,7 @@ s32 FuneKanpan_LayerSpeed[2] = { 0 };
 
 s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {
-    s16 *flag = (s16 *)&actor->work;
+    s16 *flag = &actor->work;
     s32 val;
     s32 tmp;
 
@@ -637,9 +637,9 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Camera_SetSpeed(0xcccc, 0x1999);
         Camera_MoveTo(0xb60000, -1, 0x2f80000, 1);
         Actor_SetSpeed(23, 0xcccc, 0x6666);
-        ((s32 (*)())Engine_ActorEnableActionCallback)(23, (s32)FuneKanpan_PresentationActionsA);
+        ((s32 (*)())Engine_ActorEnableActionCallback)(23, FuneKanpan_PresentationActionsA);
         Actor_SetSpeed(22, 0xcccc, 0x6666);
-        ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)FuneKanpan_PresentationActionsB);
+        ((s32 (*)())Engine_ActorEnableActionCallback)(22, FuneKanpan_PresentationActionsB);
         Actor_SetSpeed(20, 0xcccc, 0x6666);
         Actor_WalkToAndWait(20, 182, 760);
         Engine_ActorStartRepeatedMotion(20, 2);
@@ -999,7 +999,7 @@ void FuneKanpan_SetupRaisedCrewman(void)
     u8 bits;
 
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -1034,7 +1034,7 @@ void FuneKanpan_SetupDeckCrewman(void)
     struct FieldActor *record;
 
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -1063,9 +1063,9 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
     struct FieldActor *record;
     s32 v5;
 
-    *(s32 *)((s32)gMapWork[0] + 236) = 0x410000;
+    *(s32 *)(gMapWork[0] + 236) = 0x410000;
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptE);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScriptE);
     Engine_TaskWait(1);
     Engine_ActorDestroy(24);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -1140,7 +1140,7 @@ void FuneKanpan_SetupVisibleLeaderDeparture(void)
     struct FieldActor *record;
 
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x27c0000);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -1203,7 +1203,7 @@ void FuneKanpan_AnnouncePreparationsReady(s32 a0, s32 a1)
 void FieldScene_RunActorTwentyDialogueSequence(void)
 {
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
@@ -1228,9 +1228,9 @@ void FieldScene_RunShipDeckEventScript(void)
     s32 v;
 
     Battle_Reset();
-    Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     WaitFrames(1);
-    Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScriptB);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScriptB);
     WaitFrames(1);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 21, 16252928, 47710208);
     ObjectGroup_ConfigureChildValue(0, 15);
@@ -1242,7 +1242,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Call3(ObjectMotion_SetPositionAndReset, 21, 196, 678);
     Call3(ObjectMotion_SetPositionAndReset, 21, 182, 654);
     Motion_SetVarCbAndRefresh(21, 2);
-    Event_SetMessageId((s32)MsgFuneNoUseLate);
+    Event_SetMessageId(MsgFuneNoUseLate);
     FieldScene_RunStepThen10(40981);
     Actor_SetSpeed(0, 157286, 78643);
     FieldObjectMotion_ResetAndSetPosition(0, 154, 609);
@@ -1279,7 +1279,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Battle_WaitMode0(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    UiText_ShowCenteredMessage((s32)MsgFuneArrgh, 1, 0);
+    UiText_ShowCenteredMessage(MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Event_SetExitRequest(12);
 }
@@ -1290,9 +1290,9 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_EventBegin();
     Engine_ActorSetChildValue(0, 15);
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptC);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScriptC);
     Engine_TaskWait(1);
     Engine_ActorSetAnimation(31, 0);
     Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
@@ -1385,9 +1385,9 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetChildValue(0, 15);
     record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptD);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScriptD);
     Engine_TaskWait(1);
     Engine_ActorSetPosition(22, 0xb00000, 0x2b80000);
     record = Object_GetById(22);
@@ -1503,7 +1503,7 @@ void FieldScene_RunActorSequence(void)
     Engine_EventWait(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    UiText_ShowCenteredMessage((s32)MsgFuneArrgh, 1, 0);
+    UiText_ShowCenteredMessage(MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventRequestExit(14);
 }
@@ -1513,7 +1513,7 @@ void FuneKanpan_RunJumpScene(void)
     struct FieldActor *actor;
 
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScriptE);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScriptE);
     Engine_TaskWait(1);
     Engine_CameraFollowActor(25, 1);
     Engine_TaskWait(1);
@@ -1613,7 +1613,7 @@ void FuneKanpan_RunJumpScene(void)
         gGameState.saved_entrance = 30;
     } while (0);
     gGameState.battle_start = 3;
-    Party_SetFields1ceAnd1d0((s32)&SceneId_FuneKanpan, 16);
+    Party_SetFields1ceAnd1d0(&SceneId_FuneKanpan, 16);
     BattleFx_SetWeightedResult(62, 3);
     Engine_EventEnd();
 }
@@ -1623,7 +1623,7 @@ void FieldScene_ConfigureLeadActors(void)
     struct FieldActor *record;
 
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
+    Event_CallWithLastActiveObjectId(FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Actor_SetPosition(20, 0xb60000, 0x26a0000);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -1739,7 +1739,7 @@ void FieldScene_RunPartyRosterScene(void)
 
     found = 0;
     for (index = 0; index <= 3; index++) {
-        roster[index] = SceneState_FindFirstSetFlagOfGroup((s32)index);
+        roster[index] = SceneState_FindFirstSetFlagOfGroup(index);
         category[index] = 0;
     }
 

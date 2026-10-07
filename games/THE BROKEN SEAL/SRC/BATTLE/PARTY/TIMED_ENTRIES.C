@@ -17,7 +17,7 @@ s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 
 s32 BattleUnit_TickReflect(s32 id)
 {
-    u8 *value = (u8 *)&Owner_GetStateFar(id)->reflect;
+    u8 *value = &Owner_GetStateFar(id)->reflect;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {

@@ -314,9 +314,9 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     void *palette;
     s32 i;
 
-    work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(39, sizeof *work);
-    canvas = (void *)Runtime_AllocateHeapBlock(40, 0x4000);
-    sheet = (u8 *)Runtime_AllocateHeapBlock(41, 1550);
+    work = Runtime_AllocateHeapBlock(39, sizeof *work);
+    canvas = Runtime_AllocateHeapBlock(40, 0x4000);
+    sheet = Runtime_AllocateHeapBlock(41, 1550);
     camera = gCameraWork;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
@@ -383,14 +383,14 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
             i = frame / 2;
             n = i % 4;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            draw.lower = ((DrawRectangle *)Ram_WorkSlot)[47];
+            draw.lower = (Ram_WorkSlot)[47];
             draw.lower(canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
             n = frame / 4 % 3;
             glow = work->sheet + n * 1032 + 0x1100;
             draw.lower(canvas, glow, 40, ground.y - 36, 24, 43);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            draw.lower = ((DrawRectangle *)Ram_WorkSlot)[47];
+            draw.lower = (Ram_WorkSlot)[47];
             n = i % 4;
             draw.lower(canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
             draw.lower(canvas, glow, 64, ground.y - 36, 24, 43);

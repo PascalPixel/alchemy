@@ -242,9 +242,9 @@ void ToretoHeya_RunTableScene(void)
         }
         Engine_ActorEnableActionCallback(3, ToretoHeya_TableActions3);
     }
-    ((s32 (*)())Engine_ActorEnableActionCallback)(0, (s32)ToretoHeya_TableActions0);
-    ((s32 (*)())Engine_ActorEnableActionCallback)(1, (s32)ToretoHeya_TableActions1);
-    Object_SetActionCallbackAndRefreshById(2, (s32)ToretoHeya_TableActions2);
+    ((s32 (*)())Engine_ActorEnableActionCallback)(0, ToretoHeya_TableActions0);
+    ((s32 (*)())Engine_ActorEnableActionCallback)(1, ToretoHeya_TableActions1);
+    Object_SetActionCallbackAndRefreshById(2, ToretoHeya_TableActions2);
     Engine_EventWait(10);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
@@ -449,7 +449,7 @@ void FieldScene_RunFourActorEncounter(void)
     Event_ShowMessageAndWait(0x8009, 0, 10);
     ToretoHeya_PlayGesture(0);
     Event_ShowMessage(0x8009, 0);
-    Object_SetActionCallbackAndRefreshById(8, (s32)ToretoHeya_ActionTable1);
+    Object_SetActionCallbackAndRefreshById(8, ToretoHeya_ActionTable1);
     Engine_EventWait(40);
     Actor_ShowEmote(ACTOR_GERALD, 258, 60);
     Event_ShowMessage(0x8001, 0);
@@ -584,7 +584,7 @@ s32 ToretoHeya_EnterRoom(void)
 
 void ToretoPalette_CaptureBank(void)
 {
-    Dma_Set((const void *)0x05000000, *(void **)&Data_03001ed0, 0x84000070,
+    Dma_Set((const void *)0x05000000, * &Data_03001ed0, 0x84000070,
             REG_DMA3);
 }
 

@@ -38,7 +38,7 @@ void System_VBlankHandler(void)
     }
     if (gSerialExchangeActive != 0) {
         u16 *status = &gLinkStatus;
-        *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
+        *status = SerialRuntime_ExchangePayloads(&gSerialTransfer, gSerialPeerPayloads);
         SerialRuntime_StepBlockTransfer();
     }
     MusicPlayer_StepVolumeAndPitchTowardTargetsFar();

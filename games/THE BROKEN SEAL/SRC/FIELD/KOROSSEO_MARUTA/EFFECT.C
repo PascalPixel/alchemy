@@ -125,7 +125,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
         z = *(s32 *)(work + 236) - 0x100000;
         cue = (u16 *)(work + 226);
     }
-    wait = (s16 *)&actor->timer;
+    wait = &actor->timer;
     *wait = *cue;
     actor->acceleration = 0x4000;
     actor->speed = 0x10000;

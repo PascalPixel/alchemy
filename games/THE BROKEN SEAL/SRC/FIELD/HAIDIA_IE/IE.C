@@ -32,7 +32,7 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
 
     target = object->facing_target;
     if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        object->facing_flags = (0xFE & object->facing_flags);
         target_facing = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
         old_facing = object->facing;
         facing_delta = (s16)(target_facing - old_facing);
@@ -44,7 +44,7 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
             if (facing_delta < -0x1000) {
                 facing_delta = -0x1000;
             }
-            object->facing = (u16)(old_facing + facing_delta);
+            object->facing = (old_facing + facing_delta);
         }
     }
     return 1;
@@ -616,7 +616,7 @@ void FieldScene_RunElderAidEvent(void)
         Actor_FaceDirection(0, 0xc000, 0);
         Actor_FaceDirection(25, 0xc000, 60);
         Engine_ActorEnableActionCallback(0, (s32)HaidiaIe_LeaderStepActions);
-        Object_SetActionCallbackAndRefreshById(25, (s32)HaidiaIe_Actor25StepActions);
+        Object_SetActionCallbackAndRefreshById(25, HaidiaIe_Actor25StepActions);
         Engine_EventWait(20);
         Engine_ActorFaceDirection(0, 0, 0);
         Engine_ActorFaceDirection(25, 0, 10);
@@ -853,7 +853,7 @@ void FieldScene_RunGroupChoreography(void)
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(0, (s32)HaidiaIe_LeaderActions);
     Engine_EventWait(6);
-    Object_SetActionCallbackAndRefreshById(25, (s32)HaidiaIe_Actor25Actions);
+    Object_SetActionCallbackAndRefreshById(25, HaidiaIe_Actor25Actions);
     /* FAKEMATCH: the do/while loads the linked scene after the store. */
     do {
         gGameState.battle_start = 2;
@@ -932,7 +932,7 @@ void HaidiaIe_RunActorPairEffectScene(void)
     record = Object_GetById(24);
     record->bounce = 655;
     record->gravity = (v5 << 8);
-    Object_SetActionCallbackAndRefreshById(24, (s32)Data_0200ab2c);
+    Object_SetActionCallbackAndRefreshById(24, Data_0200ab2c);
     Engine_EventWait(40);
     BattleFx_SetBlock30ValuesMaxZero();
     BattleFx_SetBlock30Values12Zero();
@@ -1248,7 +1248,7 @@ void Scene_RunExtendedActorSequence(void)
     Object_GetById(0)->priority_flags |= v5;
     {
         struct FieldActor *actor = Object_GetById(1);
-        u8 value = (u8)(v5 | actor->priority_flags);
+        u8 value = (v5 | actor->priority_flags);
 
         actor->priority_flags = value;
     }
@@ -1303,7 +1303,7 @@ void OverlayObject_UpdateOnFrameBit1(s32 obj)
 
 void SceneEffect_UpdateByFrameBits(s32 no)
 {
-    volatile s32 *p = (volatile s32 *)&gFrameCount;
+    volatile s32 *p = &gFrameCount;
     if ((*p & 1) != 0) {
         s32 t = Math_RemainderUnsigned((u32)*p >> 1, 6);
         Engine_ObjectSetPartPalettes(no, t);
@@ -1315,7 +1315,7 @@ void SceneEffect_UpdateByFrameBits(s32 no)
 
 void SceneEffect_UpdateByFrameBit(s32 no)
 {
-    volatile s32 *p = (volatile s32 *)&gFrameCount;
+    volatile s32 *p = &gFrameCount;
     if ((*p & 1) != 0) {
         s32 t = Math_RemainderUnsigned((u32)*p >> 1, 6);
         Engine_ObjectSetPartPalettes(no, t);

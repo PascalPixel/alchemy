@@ -79,7 +79,7 @@ void Makyuri_RunActorMove(void)
     if (Makyuri_MoveAngles[(gKeysHeld >> 4) & 15] == -1)
         return;
     pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
-    pos[1].fixed = ((struct ObjectRuntime *)actor)->terrain_height;
+    pos[1].fixed = (actor)->terrain_height;
     pos[2].fixed = (actor->z.fixed & -0x100000) + 0x80000;
     from = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
     Vector_AddPolarOffset(0x200000, angle, pos);
@@ -102,7 +102,7 @@ void Makyuri_RunActorMove(void)
         obj = Engine_ObjectCreate(26, source->x.fixed, source->y.fixed, source->z.fixed);
         if (obj != NULL) {
             sprite = obj->sprite;
-            ((struct ObjectRuntime *)obj)->terrain_height = ((struct ObjectRuntime *)source)->terrain_height;
+            (obj)->terrain_height = (source)->terrain_height;
             Engine_ObjectSetScript(obj, Makyuri_RampScript);
             obj->motion_flags = 0;
             ((union FieldObject *)obj)->effect.spin = 0;

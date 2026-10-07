@@ -67,12 +67,12 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 
     cosine = Engine_MathCos(angle);
     along = anchor->x.fixed
-          + cosine *(*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
+          + cosine *(*(s32 *)(actor + 48) + *(actor + 98) + 6);
     *(s32 *)(actor + 8) = along;
 
     sine = Engine_MathSin(angle);
     across = anchor->z.fixed
-           + sine *(*(u8 *)(actor + 98) + 4);
+           + sine *(*(actor + 98) + 4);
     *(s32 *)(actor + 16) = across;
 
     *(s32 *)(actor + 56) = *(s32 *)(actor + 8);
@@ -80,8 +80,8 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 
     {
         s32 next = *pangle;
-        next += (s32)0xfffff800;
-        *pangle = (u16)next;
+        next += 0xfffff800;
+        *pangle = next;
     }
 }
 

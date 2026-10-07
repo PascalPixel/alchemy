@@ -200,7 +200,7 @@ void SceneDialogue_RunActor12Event(void)
     s16 angle;
 
     record = Actor_Get(ACTOR_PARTY_LEADER);
-    angle = (u16)((record->facing + 0x2000) & ~0x3fff);
+    angle = ((record->facing + 0x2000) & ~0x3fff);
     Engine_EventBegin();
     if (GameFlag_IsSet(0x8a7) != 0) {
         if (GameFlag_IsSet(0x8a9) != 0) {
@@ -318,7 +318,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 Event_ShowMessage(8, 0);
                 goto L_02000660;
             }
-            if ((u32)six00 <= (u32)*(s32 *)(base6_2000240 + 16)) {
+            if (six00 <= (u32)*(s32 *)(base6_2000240 + 16)) {
                 goto L_0200061e;
             }
             UiWork_Finalize(rec7, 2);
@@ -504,7 +504,7 @@ void FieldScene_ConfigureFlaggedActors(void)
         ((u8 *)actor->sprite)[9] |= 12;
         ((u8 *)actor->sprite)[38] = 0;
         zero = 0;
-        ((struct SpriteBytes *)actor->sprite)->rotation = 0xc000;
+        (actor->sprite)->rotation = 0xc000;
         actor = Object_GetById(11);
         actor->priority_flags = zero;
         ((u8 *)actor->sprite)[9] |= 12;

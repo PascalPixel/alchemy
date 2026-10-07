@@ -180,7 +180,7 @@ void Title_LoadSprites(s32 unused)
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     u8 *res;
 
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x9600);
+    buffer = Runtime_BumpAllocateAlternatePool(0x9600);
     res = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
@@ -190,7 +190,7 @@ void Title_LoadSprites(s32 unused)
     Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 0x1e00,
           (s32)(buffer + 0x7800));
 #else
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(1312);
+    buffer = Runtime_BumpAllocateAlternatePool(1312);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
@@ -318,7 +318,7 @@ void Title_LoadBackground(void)
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
     res += 448;
     DecodeBackground(res);
-    Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
+    Dma_Set(Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
     map = (u16 *)0x06003000;
     tile = 416;
     y = 0;

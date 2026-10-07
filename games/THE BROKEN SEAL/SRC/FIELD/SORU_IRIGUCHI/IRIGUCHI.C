@@ -217,7 +217,7 @@ void FieldScene_RunFlag821Dialogue(void)
 
             u16 *frame = (u16 *)(work + 370);
             s32 one = 1;
-            *frame = (u16)one;
+            *frame = one;
         }
     } else {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
@@ -451,7 +451,7 @@ void SoruIriguchi_PushFacedBlock(void)
         p[0].fixed = block->x.fixed + (step & -0x10000);
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
-        if (((s32 (*)())Object_CheckMovementCollision)((s32)block, (s32)p) <= 0) {
+        if (((s32 (*)())Object_CheckMovementCollision)(block, p) <= 0) {
             Object_SetMode(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);
@@ -504,7 +504,7 @@ s32 Scene_Initialize(void)
 void SoruIriguchi_ApplyEntryState(void)
 {
     GameFlag_Set(0x144);
-    *(s32 *)((*(u8 *volatile *)&gWork + 448)) = 0x100;
+    *(s32 *)((* &gWork + 448)) = 0x100;
     if (GameFlag_IsSet(0x814) != 0) {
         s32 *timer = &SoruIriguchi_CueTimer;
         s32 zero = 0;

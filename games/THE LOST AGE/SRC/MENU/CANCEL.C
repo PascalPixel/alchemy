@@ -60,7 +60,7 @@ void Menu_CancelSoundTick(void)
     if (input->pressed & mask) {
         Audio_PlayCue(113);
         GameFlag_SetBit(0x150);
-        Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
+        Scheduler_RemoveCallback(((s32)Menu_CancelSoundTick));
     }
     wait = (u32 *)(Ram_HeapSlots->window_tiles + 3632);
     while ((wait = (u32 *)*wait) != 0)
@@ -76,7 +76,7 @@ void Menu_CancelSoundReset(void)
 void Menu_EnsureCancelSound(void)
 {
     if (GameFlag_Test(0x150) == 0) {
-        Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
+        Scheduler_RemoveCallback(((s32)Menu_CancelSoundTick));
     }
 }
 

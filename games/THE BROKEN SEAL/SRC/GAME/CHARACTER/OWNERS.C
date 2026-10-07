@@ -322,7 +322,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
+    struct BattleUnit *state = Owner_GetState(owner);
     s32 values[4];
     s32 result = 0;
 
@@ -346,7 +346,7 @@ s32 Owner_GetDefaultElement(struct BattleUnit *state)
 
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
+    struct BattleUnit *state = Owner_GetState(owner);
     u32 index;
     u32 result;
     s32 values[4];

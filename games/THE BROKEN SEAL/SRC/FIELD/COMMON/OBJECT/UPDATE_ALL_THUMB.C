@@ -76,7 +76,7 @@ void Object_UpdateAllThumb(void)
             obj->wait--;
         } else {
             for (;;) {
-                cmd = (u32)script->word[(s16)obj->script_cursor];
+                cmd = script->word[(s16)obj->script_cursor];
                 if (cmd <= 63) {
                     if (ScriptObject_CommandTable[cmd](obj) == 0)
                         break;
@@ -187,7 +187,7 @@ void Object_UpdateAllThumb(void)
                 if ((obj->motion_flags & 1) != 0) {
                     vx = px + obj->velocity_x;
                     vz = pz + obj->velocity_z;
-                    ground = Map_GetTerrainHeight((s32)obj->terrain_id, vx, vz);
+                    ground = Map_GetTerrainHeight(obj->terrain_id, vx, vz);
                     vy = ground - obj->terrain_height;
                     if (ground - py > -0x40000)
                         py += vy;
@@ -229,7 +229,7 @@ void Object_UpdateAllThumb(void)
                 }
 
                 if ((obj->motion_flags & 4) != 0) {
-                    phase = (u32)(obj->vertical.phase & 0x3f);
+                    phase = (obj->vertical.phase & 0x3f);
                     if ((obj->motion_flags & 8) != 0)
                         obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
                     else

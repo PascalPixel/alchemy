@@ -71,7 +71,7 @@ again:
 
 void DisplayTransition_UpdateFrame(void)
 {
-    struct DisplayTransitionFrame *state = *(struct DisplayTransitionFrame **)Ram_DisplayWork;
+    struct DisplayTransitionFrame *state = *Ram_DisplayWork;
     s32 value;
     s32 blend;
     u32 i;

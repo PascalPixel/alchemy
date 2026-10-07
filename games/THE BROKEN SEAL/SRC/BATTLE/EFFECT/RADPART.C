@@ -266,10 +266,10 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
-    source_object->callback = (void *)BattleFx_AdvanceAngleWithRamp;
+    source_object->callback = BattleFx_AdvanceAngleWithRamp;
     source_object->timer = 0;
     WaitFrames(80);
-    source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;
+    source_object->callback = BattleFx_ShrinkObjectAndDestroySlow;
     Object_SetMode((struct ObjectRuntime *)source_object, 3);
 
     position.x = source_object->x;
@@ -277,11 +277,11 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     position.z = source_object->z;
     Camera_WorldToScreen(&position);
 
-    slot = (u8 *)effect_slots + 88;
+    slot = effect_slots + 88;
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 284, position.x, position.z);
-        EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdatePhasedRadialParticle);
+        EffectSlot_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
         EffectSlot_SetObjectMode(slot, 7);
         object_pointer = slot;
         value = *(s32 *)object_pointer;
@@ -291,7 +291,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         ((struct EffectSlot *)slot)->scale_x = value;
         remaining--;
         WaitFrames(1);
-        slot = (u8 *)slot + 72;
+        slot = slot + 72;
     } while (remaining >= 0);
 
     WaitFrames(60);
@@ -315,7 +315,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     }
 
     WaitFrames(60);
-    target_object->callback = (void *)BattleFx_SetObjectAlternatingWords;
+    target_object->callback = BattleFx_SetObjectAlternatingWords;
     WaitFrames(100);
 
     {
@@ -388,7 +388,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
     s32 state;
     u32 random;
 
-    source = (struct ObjectRuntime *)
+    source = 
         Object_GetById(gGameState.selected_actor);
     state = effect->state;
 
@@ -456,12 +456,12 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     Audio_PlayCue(152);
     ObjectMotion_Launch(arg, 4, 15);
     WaitFrames(30);
-    djinni->callback = (void *)BattleFx_AdvanceSpinAngle;
+    djinni->callback = BattleFx_AdvanceSpinAngle;
     Audio_PlayCue(153);
     ObjectMotion_Launch(arg, 8, 22);
     Audio_PlayCue(140);
     Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
-    djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
+    djinni->callback = BattleFx_ShrinkObjectAndDestroyFast;
     Object_SetMode((struct ObjectRuntime *)djinni, 3);
     WaitFrames(90);
     ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
@@ -475,11 +475,11 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     position[2] = djinni->z;
     Camera_WorldToScreen(position);
 
-    slot = (u8 *)effect_slots + 88;
+    slot = effect_slots + 88;
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 284, position[0], position[2]);
-        EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
+        EffectSlot_SetCallback(slot, BattleFx_UpdateRadialSpread);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
         ((struct EffectSlot *)slot)->scale_x = 0x8000;
@@ -520,7 +520,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
             djinni->scale_x = scale;
             djinni->timer = 100;
             djinni->angle = (remaining << 16) / 24;
-            djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
+            djinni->callback = BattleFx_UpdateDescendingOrbitObject;
             djinni->mode = 0;
             Object_SetMode((struct ObjectRuntime *)djinni, 7);
             Animation_ApplyChildValuesFar(djinni, 11);

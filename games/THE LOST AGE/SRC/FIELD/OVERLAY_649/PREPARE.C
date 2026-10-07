@@ -24,7 +24,7 @@ void Title_LoadSprites(void)
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
     Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
     VramBlock_LoadCached(gTitleVramBlock, 1280, buffer + 32);
-    dma = (volatile s32 *)REG_DMA3;
+    dma = REG_DMA3;
     while (dma[2] < 0)
         ;
     Sys_Free(buffer);

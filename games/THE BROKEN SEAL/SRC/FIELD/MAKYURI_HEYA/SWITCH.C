@@ -133,13 +133,13 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
     if (a0 != 0) {
         Audio_PlayCue(219);
     }
-    i = (u32)a1;
-    if (i < (u32)a2) {
+    i = a1;
+    if (i < a2) {
         do {
-            Map_CopyCellsTo(45 - (s32)(i << 1), 32, 44 - (s32)(i << 1), 32, (s32)(i + 1), 6);
-            Map_CopyCellsTo(45 - (s32)i, 51, 45 - (s32)i, 32, 1, 6);
-            v = 109 - (s32)i;
-            Map_CopyCellsTo(v, 32, 108 - (s32)i, 32, 1, 4);
+            Map_CopyCellsTo(45 - (i << 1), 32, 44 - (i << 1), 32, (i + 1), 6);
+            Map_CopyCellsTo(45 - i, 51, 45 - i, 32, 1, 6);
+            v = 109 - i;
+            Map_CopyCellsTo(v, 32, 108 - i, 32, 1, 4);
             Map_CopyCellsTo(v, 51, v, 32, 1, 4);
             if (a0 != 0) {
                 Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
@@ -147,7 +147,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
                 Battle_WaitMode0(a0);
             }
             i++;
-        } while (i < (u32)a2);
+        } while (i < a2);
     }
     Map_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
@@ -167,10 +167,10 @@ void MakyuriHeya_RunSequenceG(s32 a0)
     x = 41;
     y = 40;
     do {
-        Map_CopyCellsTo(y, 32, x, 32, 3 - (s32)i, six);
+        Map_CopyCellsTo(y, 32, x, 32, 3 - i, six);
         k = 2;
         Map_CopyCellsTo(39, 51, y, 32, 1, six);
-        pos = (s32)i + 106;
+        pos = i + 106;
         four = 4;
         Engine_MapCopyCellsTo(105, 51, pos, 32, k, four);
         if (a0 != 0) {
@@ -232,7 +232,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
             } else {
                 neg = -inner;
             }
-            SceneEffect_SpawnRandomEveryFourFrames(((s32)((s32)(neg - shift4) << 16) + 0x2d80000), 0, 0x2480000);
+            SceneEffect_SpawnRandomEveryFourFrames((((neg - shift4) << 16) + 0x2d80000), 0, 0x2480000);
             inner = (inner + 1);
             v8 = (v8 + -0x10000);
         } while ((u32)inner <= 7);
@@ -271,7 +271,7 @@ void MakyuriHeya_RunSequenceF(void)
         do {
             if ((inner & 1) != 0) {
                 raw = Engine_RandomNext();
-                shown = ((584 - (s32)((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
+                shown = ((584 - ((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
                 pos = (base - (outer << 19)) + 0x2d80000;
                 Effect_Spawn(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
                 Battle_WaitMode0(1);
@@ -398,7 +398,7 @@ void MakyuriHeya_TriggerFloorSwitch(void)
     Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
     Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
     Audio_PlayCue(217);
-    Engine_MapAnimateCells(((u16 *)MakyuriHeya_FloorSwitchCells), 10, 18);
+    Engine_MapAnimateCells((MakyuriHeya_FloorSwitchCells), 10, 18);
     Engine_EventEnd();
 }
 
@@ -422,7 +422,7 @@ void FieldScene_RunScene39cSequenceA(void)
 
 static __inline__ s32 Door_DriftStep(void)
 {
-    u32 drift = (u32)Engine_RandomNext();
+    u32 drift = Engine_RandomNext();
 
     return ((drift << 3) >> 16) * 0x3333;
 }

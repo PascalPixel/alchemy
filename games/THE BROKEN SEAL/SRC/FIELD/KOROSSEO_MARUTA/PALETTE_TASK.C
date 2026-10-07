@@ -5,9 +5,9 @@ void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, 
 {
     ColossoLogRollingStage_EnsurePaletteHandle();
 
-    Korosseo_MarkerX = (u16)first_value;
-    Korosseo_MarkerY = (u16)second_value;
-    Korosseo_MarkerPriority = (u16)(mode & 3);
+    Korosseo_MarkerX = first_value;
+    Korosseo_MarkerY = second_value;
+    Korosseo_MarkerPriority = (mode & 3);
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
@@ -20,11 +20,11 @@ void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, 
 
 void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode)
 {
-    Korosseo_MarkerEndX = (u16)first_value;
-    Korosseo_MarkerEndY = (u16)second_value;
+    Korosseo_MarkerEndX = first_value;
+    Korosseo_MarkerEndY = second_value;
     Korosseo_MarkerStartX = Korosseo_MarkerX;
     Korosseo_MarkerStartY = Korosseo_MarkerY;
-    Korosseo_MarkerSteps = (u16)mode;
+    Korosseo_MarkerSteps = mode;
     Korosseo_MarkerStep = 0;
 
     {

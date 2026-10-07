@@ -20,7 +20,7 @@ void UiIcon_CreateStatChangeArrow();
 
 void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct BattleUnit *base, s32 work)
 {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgPanelStatLabel, work, 0, 32);
+    UiText_DrawCharacterAtOffsetFar(MsgPanelStatLabel, work, 0, 32);
     UiText_DrawNumberAtOffsetFar(base->attack, 3, work, 16, 40);
     if (alt->attack != base->attack) {
         UiText_DrawNumberAtOffsetFar(alt->attack, 3, work, 64, 40);
@@ -30,7 +30,7 @@ void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct Battle
             UiIcon_CreateStatChangeArrow(work, 44, 36, 1);
         }
     }
-    UiText_DrawCharacterAtOffsetFar((s32)MsgPanelDefenseLabel, work, 0, 48);
+    UiText_DrawCharacterAtOffsetFar(MsgPanelDefenseLabel, work, 0, 48);
     UiText_DrawNumberAtOffsetFar(base->defense, 3, work, 16, 56);
     if (alt->defense != base->defense) {
         UiText_DrawNumberAtOffsetFar(alt->defense, 3, work, 64, 56);
@@ -40,7 +40,7 @@ void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct Battle
             UiIcon_CreateStatChangeArrow(work, 44, 52, 1);
         }
     }
-    UiText_DrawCharacterAtOffsetFar((s32)MsgAgilityLabel, work, 0, 64);
+    UiText_DrawCharacterAtOffsetFar(MsgAgilityLabel, work, 0, 64);
     UiText_DrawNumberAtOffsetFar(base->agility, 3, work, 16, 72);
     if (alt->agility != base->agility) {
         UiText_DrawNumberAtOffsetFar(alt->agility, 3, work, 64, 72);

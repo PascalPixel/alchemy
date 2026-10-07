@@ -189,7 +189,7 @@ void StoryScene_StartTransition(void)
     Engine_CameraSetSpeed(0x40000, 0x8000);
     {
         s32 transition_delay = 3200;
-        void *transition_callback = (void *)StoryScene_UpdateTransitionEffect;
+        void *transition_callback = StoryScene_UpdateTransitionEffect;
         Engine_TaskAddCallback(transition_callback, transition_delay);
     }
     Engine_ColorBufferApplySource(0, 0);
@@ -326,16 +326,16 @@ void WorldMap_SpawnActorEightPuff(void)
     struct FieldSprite *spr;
     u32 value;
 
-    if ((*(s32 *)&gFrameCount & 15) != 0)
+    if ((* &gFrameCount & 15) != 0)
         return;
     leader = Object_GetById(8);
-    obj = (struct FieldActor *)Engine_ObjectCreate(222, leader->x.fixed - 0x200000, leader->y.fixed, leader->z.fixed - 0x100000);
+    obj = Engine_ObjectCreate(222, leader->x.fixed - 0x200000, leader->y.fixed, leader->z.fixed - 0x100000);
     if (obj == 0)
         return;
     obj->scale_x = 0x8000;
     obj->scale_y = 0x8000;
     spr = obj->sprite;
-    if ((u16)((u32)Engine_RandomNext() * 2 >> 16)) {
+    if (((u32)Engine_RandomNext() * 2 >> 16)) {
         s32 back = (((u32)Engine_RandomNext() * 48) >> 16) << 16;
 
         obj->x.fixed -= back >> 1;
@@ -360,7 +360,7 @@ void WorldMap_RunOpeningRise(void)
     struct FieldActor *actor;
     s32 record;
 
-    actor = (struct FieldActor *)Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventWait(60);
     Engine_EventBegin();
     BattleFx_ScheduleRatioTransition(0x9999, 1);
@@ -398,9 +398,9 @@ void StoryScene_UpdateSelectedActorProgress(void)
     struct EventWork *scene;
     s32 progress;
 
-    actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
+    actor = Object_GetById(gGameState.selected_actor);
     scene = gEventWork;
-    actor->facing = (u16)(*(volatile s32 *)&gFrameCount << 12);
+    actor->facing = (* &gFrameCount << 12);
 
     progress = GameFlag_GetByte(0x2f8);
     if (progress != 0) {
@@ -470,7 +470,7 @@ void StoryScene_CompleteActor98(void)
     BattleFx_SetWeightedResult(98, 5);
     gGameState.battle_start = 3;
     BattleFx_SetWeightedResult(98, 7);
-    selected_actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
+    selected_actor = Object_GetById(gGameState.selected_actor);
     selected_actor->motion_flags = 2;
 }
 
@@ -521,7 +521,7 @@ void FieldScene_RunLateSequence(void)
     s32 sy;
     u32 mode;
 
-    record = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    record = Actor_Get(gGameState.selected_actor);
     sx = record->x.part.pixel;
     sy = record->z.part.pixel;
     if (gFrameCount % 3 == 0) {
@@ -547,7 +547,7 @@ void Scene_RunScene371SequenceA(s32 palette)
 {
     struct IoWriteQueue *q;
     volatile u16 *ime;
-    u8 *buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x4000);
+    u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
     Engine_TaskWait(1);
     Engine_GameFlagClear(0x109);
@@ -559,8 +559,8 @@ void Scene_RunScene371SequenceA(s32 palette)
         q = &gIoWriteQueue;
         ime = &REG_IME;
     } while (0);
-    QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
-    QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
+    QueueTransfer(gWorldMapPalettes + palette * 32, 0x050001c0, 0x80000010)
+    QueueTransfer(buffer, 0x06001000, 0x84000400)
     Engine_TaskAddCallback(SceneEffect_RestoreBlendRegisters, 3200);
     Engine_EventBegin();
     QueueFrame(buffer, 0x3a80)
@@ -641,7 +641,7 @@ void SceneActor_UpdateObjectByCounterBits(u8 *obj)
 void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
     if ((gFrameCount & 1) != 0) {
-        Engine_ObjectSetPartPalettes(obj, __umodsi3((s32)(gFrameCount >> 1), 6));
+        Engine_ObjectSetPartPalettes(obj, __umodsi3((gFrameCount >> 1), 6));
     }
     if ((gFrameCount & 15) == 0) {
         WorldMap_CreateLinkedEffects(obj);
@@ -664,7 +664,7 @@ void Effect_AnimateVerticalPositive(struct StoryVerticalEffectActor *effect)
     s32 vertical_amplitude;
 
     anchor_actor = effect->anchor;
-    effect->frame = (u16)(effect->frame + 1);
+    effect->frame = (effect->frame + 1);
     animation_frame = (s16)effect->frame;
 
     if (animation_frame > 31) {
@@ -687,7 +687,7 @@ void Effect_AnimateVerticalNegative(struct StoryVerticalEffectActor *effect)
     s32 vertical_amplitude;
 
     anchor_actor = effect->anchor;
-    effect->frame = (u16)(effect->frame + 1);
+    effect->frame = (effect->frame + 1);
     animation_frame = (s16)effect->frame;
 
     if (animation_frame > 31) {

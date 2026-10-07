@@ -273,13 +273,13 @@ s32 Field_RunScene(s32 entrance)
     gGameState.defeat_entrance = -1;
     Scheduler_ResetTaskTable();
     Djinn_ResolvePendingEvent(0);
-    if ((s16)gGameState.map == (s32)&SceneId_Clear) {
+    if (gGameState.map == (s32)&SceneId_Clear) {
         Map_InitializePerspectiveSceneFar();
         gGameState.perspective_scene = 1;
         mode = 3;
         BattleFx_SelectLocationRule(0);
     } else {
-        Map_LoadLayeredSceneFar((s16)gGameState.map);
+        Map_LoadLayeredSceneFar(gGameState.map);
         mode = 2;
         BattleFx_SelectLocationRule(1);
     }

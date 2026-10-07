@@ -17,7 +17,7 @@ void ReleaseBattleObjectRecords(s32 object_id)
             slot->effect_entry = 0;
             record_index = 0;
             while ((record = GetMotionRecord(object, record_index)) != NULL) {
-                ResourceObject_ReleaseFar((struct ResourceObjectWork *)record);
+                ResourceObject_ReleaseFar(record);
                 record_index += 1;
             }
             object->record_storage_kind = 0;

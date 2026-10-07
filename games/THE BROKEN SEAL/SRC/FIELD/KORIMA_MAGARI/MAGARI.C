@@ -46,7 +46,7 @@ void KorimaMagari_RedrawBoard(void)
 {
     Scene_PushBlockAlongRun(gKorimaMagariRecords);
     Map_CopyCellAttributeRect(0, 64, 32, 32, 0, 0);
-    ((s32 (*)())State_StampRecordCells)((s32)gKorimaMagariRecords, 0xff);
+    ((s32 (*)())State_StampRecordCells)(gKorimaMagariRecords, 0xff);
     State_ApplyRectByLayoutSelector();
 }
 

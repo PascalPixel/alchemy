@@ -198,7 +198,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
                 }
                 if ((frame - 92) <= 1U) {
                     rectangle[work->effect->side](
-                        canvas, (void *)gMapCellBuffer,
+                        canvas, gMapCellBuffer,
                         CounterReveal_PanelX[idx_a * 7 + 3],
                         CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
                 }

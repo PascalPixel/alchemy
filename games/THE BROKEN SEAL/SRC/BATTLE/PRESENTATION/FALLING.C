@@ -53,7 +53,7 @@ void BattlePres_ConfigureEffectDisplay(void)
 void BattleFx_AdvanceScrollOnInterval(void)
 {
     struct BattleEffectWork *work = gBattleFxWork;
-    u32 *counter = (u32 *)&work->scroll_timer;
+    u32 *counter = &work->scroll_timer;
 
     (*counter)++;
     if (*counter == work->scroll_interval) {
@@ -86,7 +86,7 @@ void BattleFx_ArmWin0HBlankDma(void)
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];
-    Dma_Set((void *)gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
+    Dma_Set(gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
 }
 
 

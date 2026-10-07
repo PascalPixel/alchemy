@@ -28,11 +28,11 @@ void *Object_ReplaceResourceEntry(void *src, void *alt)
     ret = NULL;
     if (obj != NULL) {
         if (alt == NULL) {
-            *((u8 *)obj + 29) = (u8)(*((u8 *)obj + 29) | 1);
+            *((u8 *)obj + 29) = (*((u8 *)obj + 29) | 1);
         } else {
             Resource_ResetEntry(obj->vram_block);
-            obj->vram_block = (u8)((struct FieldSprite *)alt)->vram_block;
-            *((u8 *)obj + 29) = (u8)(*((u8 *)obj + 29) | 1);
+            obj->vram_block = ((struct FieldSprite *)alt)->vram_block;
+            *((u8 *)obj + 29) = (*((u8 *)obj + 29) | 1);
             obj = alt;
         }
         ret = obj;

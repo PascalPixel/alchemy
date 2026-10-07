@@ -15,7 +15,7 @@ struct LeaderEffectWork {
 void MakyuriHeya_UpdateLeaderEffectTarget(void)
 {
     struct FieldActor *actor = Object_GetById(0);
-    struct LeaderEffectWork *work = *(struct LeaderEffectWork **)Ram_ActorEffectWork;
+    struct LeaderEffectWork *work = *Ram_ActorEffectWork;
 
     if (actor->terrain_id == 0 && actor->z.fixed >> 20 > 12 && actor->z.fixed >> 20 <= 18)
         work->target = NULL;

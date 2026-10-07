@@ -22,7 +22,7 @@ void TitlePalette_InitializeBuffers(void)
 
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)&TitlePalette_UpdateFade));
+    Scheduler_RemoveCallback(((s32)&TitlePalette_UpdateFade));
     Runtime_ReleaseHeapBlock(128);
 }
 
@@ -57,6 +57,6 @@ void Graphics_UpdatePaletteInterpolation(s32 value)
     if (state != NULL) {
         state->duration = value;
         state->step = 0;
-        Graphics_InterpolatePaletteBuffers((s16 *)state->current, (s16 *)state->target, (s16 *)state->delta, value);
+        Graphics_InterpolatePaletteBuffers(state->current, state->target, state->delta, value);
     }
 }

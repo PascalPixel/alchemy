@@ -15,7 +15,7 @@ u16 EraseAtmelFlashBlock(u16 sector)
     u16 retries;
     u16 count;
 
-    if ((u32)sector > 15)
+    if (sector > 15)
         return 0x80ff;
 
     CopyFlashReadRoutineToRam(savedCode);
@@ -24,7 +24,7 @@ u16 EraseAtmelFlashBlock(u16 sector)
         ((struct FlashInfo_0800711c *)Flash_ChipAtmelLayout)->control;
 
     current = sector << 4;
-    current = (u16)(current << 1);
+    current = (current << 1);
     count = 0;
 next_sector:
     retries = 2;
@@ -42,7 +42,7 @@ advance:
     if (result != 0)
         goto done;
     count += 1;
-    if ((u32)count <= 31)
+    if (count <= 31)
         goto next_sector;
 
 done:

@@ -921,7 +921,7 @@ void Scene_AlexTakesStars(void)
     Actor_WalkToAndWait(ACTOR_GERALD, 389, 468);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 60);
     Event_SayThenWait(1, 20);
-    UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
+    UiText_ShowCenteredMessage(MsgSoruPermitRelieveElemental + 4, 1, 10);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Object_GetById(ACTOR_GERALD);
     rec->steering_flags &= ~ACTOR_FACES_MOTION;

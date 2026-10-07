@@ -195,7 +195,7 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 {
 
     struct FieldActor *cand;
-    s32 highest = (s32)0xffb00000;
+    s32 highest = 0xffb00000;
     u8 *sel = 0;
     u32 i;
 
@@ -219,7 +219,7 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 
         cand_y = cand->y.fixed + 0x100000;
         if (highest <= cand_y) {
-            *(u16 *)(sel + 100) = (u16)no;
+            *(u16 *)(sel + 100) = no;
             highest = cand_y;
         }
     }

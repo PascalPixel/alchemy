@@ -52,7 +52,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     s32 row;
     s32 base;
 
-    menu = (struct PsynergyMenuState *)gMenuWork;
+    menu = gMenuWork;
     state->selected_index = state->page * PAGE_ROWS + state->row;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
     RenderOutput_RedrawSavedRectFar(menu->info_window);
@@ -82,24 +82,24 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
             row |= 1;
         }
         if (row == 3) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableAnywhere, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar(MsgUsableAnywhere, window, 0, 96);
         } else if (row == 2) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInField, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar(MsgUsableInField, window, 0, 96);
         } else if (row == 1) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInBattle, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar(MsgUsableInBattle, window, 0, 96);
         }
 #else
         UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInField, window, 0, 72);
+            UiText_DrawCharacterAtOffsetFar(MsgUsableInField, window, 0, 72);
             row = 1;
         }
         if ((ability->target_flags & 0x80) != 0) {
-            UiText_DrawCharacterAtOffsetFar((s32)MsgUsableInBattle, window, 0, row * 8 + 72);
+            UiText_DrawCharacterAtOffsetFar(MsgUsableInBattle, window, 0, row * 8 + 72);
             row++;
         }
-        UiText_DrawCharacterAtOffsetFar((s32)MsgCanBeUsed, window, 0, row * 8 + 72);
+        UiText_DrawCharacterAtOffsetFar(MsgCanBeUsed, window, 0, row * 8 + 72);
 #endif
     }
 

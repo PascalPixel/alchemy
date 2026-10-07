@@ -118,8 +118,8 @@ void DisplayTransition_UpdateScanlineTable(void)
         }
         v = DisplayTransition_NoiseWidths[v];
         for (i = 0; i < 160; i++) {
-            w = (Random16() * (u32)(241 - v)) >> 16;
-            dst[0] = (u16)((w << 8) | (w + v));
+            w = (Random16() * (241 - v)) >> 16;
+            dst[0] = ((w << 8) | (w + v));
             dst += 2;
         }
         break;
@@ -141,7 +141,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             if (cnt != 0) {
                 if (hi != 0) {
                     for (k = 0; k < cnt; k++) {
-                        dst[0] = (u16)hi;
+                        dst[0] = hi;
                         dst += 2;
                     }
                 } else {
@@ -150,7 +150,7 @@ void DisplayTransition_UpdateScanlineTable(void)
                     d = span->x1;
                     hi = span->y1;
                     for (k = 0; k < cnt; k++) {
-                        dst[0] = (u16)(((rr + (d - rr) * k / cnt) << 8)
+                        dst[0] = (((rr + (d - rr) * k / cnt) << 8)
                                        + (lo + (hi - lo) * k / cnt));
                         dst += 2;
                     }
@@ -174,7 +174,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             if (h > 255) {
                 h = 255;
             }
-            dst[0] = (u16)h;
+            dst[0] = h;
             dst += 2;
         }
         break;
@@ -207,7 +207,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             if (hi > 240) {
                 hi = 240;
             }
-            dst[0] = (u16)((lo << 8) + hi);
+            dst[0] = ((lo << 8) + hi);
             dst += 2;
         }
         break;
@@ -224,8 +224,8 @@ void DisplayTransition_UpdateScanlineTable(void)
         v = (u32)(240 * (v & 31)) >> 5;
         for (i = 0; i < 160; i += 2) {
             e = ((240 - v) << 8) + 240;
-            dst[0] = (u16)v;
-            dst[2] = (u16)e;
+            dst[0] = v;
+            dst[2] = e;
             dst += 4;
         }
         break;
@@ -269,7 +269,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             if (hi > 240) {
                 hi = 240;
             }
-            dst[0] = (u16)((lo << 8) + hi);
+            dst[0] = ((lo << 8) + hi);
             dst += 2;
         }
         break;
@@ -317,7 +317,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             if (hi > 240) {
                 hi = 240;
             }
-            dst[0] = (u16)((lo << 8) + hi);
+            dst[0] = ((lo << 8) + hi);
             dst += 2;
             k += 2;
         }
@@ -359,7 +359,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             if (hi > 240) {
                 hi = 240;
             }
-            dst[0] = (u16)((lo << 8) + hi);
+            dst[0] = ((lo << 8) + hi);
             dst += 2;
         }
         break;
@@ -400,7 +400,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             if (hi > 240) {
                 hi = 240;
             }
-            dst[0] = (u16)((lo << 8) + hi);
+            dst[0] = ((lo << 8) + hi);
             dst += 2;
         }
         break;

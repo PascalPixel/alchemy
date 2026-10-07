@@ -25,7 +25,7 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
     upper_frequency =
         Sound_PcmFrequencySteps[upper_frequency & 15] >> (upper_frequency >> 4);
 
-    return Audio_UmulHigh32(*(s32 *)((u8 *)wave + 4),
+    return Audio_UmulHigh32(*(s32 *)(wave + 4),
         lower_frequency
             + Audio_UmulHigh32(
                 upper_frequency - lower_frequency,

@@ -8,7 +8,7 @@ void KorosseoKabe_MarkSceneProgress(void)
 
     if (v != 0 && (work->psynergy_request >> 10) == v
         && Engine_GameFlagIsSet(321) != 0) {
-        u16 *p = (u16 *)&work->raised_trigger;
+        u16 *p = &work->raised_trigger;
         s32 t = 99;
 
         *p = t;
@@ -50,7 +50,7 @@ void KorosseoKabe_SelectNearestActor(void)
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Engine_EventShowMessage(best, 0);
-    q = (s32 *)&state->start_transition;
+    q = &state->start_transition;
     *q = 512;
     state->transition_frames = 15;
     Engine_EventWait(20);

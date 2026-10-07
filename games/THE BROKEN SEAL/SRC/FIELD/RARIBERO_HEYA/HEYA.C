@@ -229,7 +229,7 @@ void FieldScene_RunThreeCallSequence(void)
 void RariberoHeya_RequestTouchedExitAndPlayCue(void)
 {
     struct EventWork *work = gEventWork;
-    s16 *p = (s16 *)&work->touched_trigger;
+    s16 *p = &work->touched_trigger;
 
     Engine_EventRequestExit(*p);
     Engine_AudioPlayCue(123);

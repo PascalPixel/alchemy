@@ -539,7 +539,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     val = result;
     tbl = (u32 *)Text_PowersOfTen;
     sign = 32;
-    out = (s8 *)gNumberTextBuffer;
+    out = gNumberTextBuffer;
     if (val < 0) {
         val = -val;
         sign = 45;

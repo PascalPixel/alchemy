@@ -26,7 +26,7 @@ void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
     }
     case 2:
     {
-        records = (struct AnimationObject **)object->records;
+        records = object->records;
         i = 0;
         do {
             record = *records++;

@@ -47,16 +47,16 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 
     if (unit_id <= 7) {
         if (show_message != 0)
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgBitterBlow);
+            UiText_ShowMessageAndWaitCoreFar(MsgBitterBlow);
         UiWork_PushValueSlotFar(damage, 5);
         UiWork_PushValueSlotFar(unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgP);
+        UiText_ShowMessageAndWaitCoreFar(MsgDmgP);
     } else {
         if (show_message != 0)
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgCritical);
+            UiText_ShowMessageAndWaitCoreFar(MsgCritical);
         UiWork_PushValueSlotFar(damage, 5);
         UiWork_PushValueSlotFar(unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgE);
+        UiText_ShowMessageAndWaitCoreFar(MsgDmgE);
         UiWork_PushValueSlotFar(unit_id, 1);
     }
 
@@ -64,11 +64,11 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     if (unit_id <= 7) {
         if (character->hp <= 0) {
             UiWork_PushValueSlotFar(unit_id, 1);
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDown);
+            UiText_ShowMessageAndWaitCoreFar(MsgGoesDown);
         }
     } else if (character->hp <= 0) {
         UiWork_PushValueSlotFar(unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
+        UiText_ShowMessageAndWaitCoreFar(MsgDowned);
     }
 
     slot = GetBattleObjectSlot(unit_id);

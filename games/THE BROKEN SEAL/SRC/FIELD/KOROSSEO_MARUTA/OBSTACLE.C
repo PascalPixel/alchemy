@@ -14,9 +14,9 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
     table = (s16 *)&gGameState;
     slotValue = ((struct GameState *)table)->selected_actor;
     if (slotValue != 0) {
-        if ((s16)*(u16 *)&((struct EventWork *)state)->psynergy_request >> 10 == slotValue) {
+        if (* &((struct EventWork *)state)->psynergy_request >> 10 == slotValue) {
             if (Engine_GameFlagIsSet(0x141) != 0) {
-                field = (u16 *)&((struct EventWork *)state)->raised_trigger;
+                field = &((struct EventWork *)state)->raised_trigger;
                 value = 99;
                 *field = value;
             }

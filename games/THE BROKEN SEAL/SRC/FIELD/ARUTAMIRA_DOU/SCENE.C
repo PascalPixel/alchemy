@@ -1207,13 +1207,13 @@ s32 ArutamiraDou_ApplyEntryState(void)
     if (gGameState.scene == (s32)&SceneId_ArutamiraDou1) {
         if (gGameState.entrance == 1) {
             if (!Engine_GameFlagIsSet(0x109)) {
-                *(u8 *)((u32)gSceneState + 4) = 0;
+                *(u8 *)(gSceneState + 4) = 0;
             }
             Engine_GameFlagSet(0x201);
         }
         if (gGameState.entrance == 2) {
             if (!Engine_GameFlagIsSet(0x109)) {
-                *(u8 *)((u32)gSceneState + 4) = 5;
+                *(u8 *)(gSceneState + 4) = 5;
             }
             Engine_GameFlagSet(0x201);
         }
@@ -1266,7 +1266,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
                 race[2] = 4;
             }
         }
-        state = (s8 *)&gSceneState[1];
+        state = &gSceneState[1];
         if (state[0] == 99) {
             Map_CopyCellsTo(41, 55, 3, 2, 30, 55);
             Map_CopyCellAttributes(42, 8, 1, 1, 31, 8);
@@ -1317,7 +1317,7 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
     u8 *p;
     s32 state;
 
-    p = (u8 *)obj + 64;
+    p = obj + 64;
     state = *(s8 *)p;
     if (state == 0) {
         z = FIELD(obj, s32, 24);

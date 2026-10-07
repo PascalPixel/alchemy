@@ -40,7 +40,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 
     sourceCode = (u16 *)((s32)CountRemainingErasedFlashBytes ^ 1);
     destinationCode = (u16 *)ramCode;
-    remaining = (u16)((s32)RunFlashEraseVerifier -
+    remaining = ((s32)RunFlashEraseVerifier -
                       (s32)CountRemainingErasedFlashBytes);
     while (remaining != 0) {
         *destinationCode = *sourceCode;

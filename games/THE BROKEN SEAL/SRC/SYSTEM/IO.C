@@ -86,7 +86,7 @@ void IoWriteQueue_FlushPending(void)
             u8 routine_bytes[word_count << 2];
 
             routine = (QueueFlushRoutine)routine_bytes;
-            Dma_Set((const void *)Resource_ExecuteTransfer, (void *)routine,
+            Dma_Set(Resource_ExecuteTransfer, routine,
                     word_count | control, REG_DMA3);
             routine(queue, count);
             queue->count = zero;

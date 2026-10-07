@@ -67,9 +67,9 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-    canvas = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-    sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 1550);
+    work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+    canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+    sheet = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 1550);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     work->fade_frames = 24;

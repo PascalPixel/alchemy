@@ -178,9 +178,9 @@ s32 Shop_SelUse(s32 actor)
                 goto exit_loop;
             }
             if (status == -4) {
-                UiText_OpenMessageWindowFar((s32)MsgCannotDropIt, 8, 1, 2);
+                UiText_OpenMessageWindowFar(MsgCannotDropIt, 8, 1, 2);
             } else if (result == -3) {
-                UiText_OpenMessageWindowFar((s32)MsgCannotRemoveIt, 8, 1, 2);
+                UiText_OpenMessageWindowFar(MsgCannotRemoveIt, 8, 1, 2);
             }
             Audio_PlayCue(113);
             while (UiWork_IsCompleteFar() == 0)

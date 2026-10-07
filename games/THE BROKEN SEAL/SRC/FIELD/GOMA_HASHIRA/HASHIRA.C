@@ -122,7 +122,7 @@ void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flag
     *(s32 *)(obj + 108) = (s32)SceneEffect_AdvancePositionByAxisMode;
     *(s32 *)(obj + 48) = a3;
     *(s32 *)(obj + 52) = a4;
-    *(u16 *)(obj + 102) = *(u16 *)&layer;
+    *(u16 *)(obj + 102) = * &layer;
     sel = (u32)layer >> 16;
     switch (sel) {
     case 0:
@@ -174,7 +174,7 @@ void ConfigureSceneForActorEightColumn(void)
 
 void FieldScene_RunPrimarySequence(void)
 {
-    volatile s32 *state = (volatile s32 *)&gFrameCount;
+    volatile s32 *state = &gFrameCount;
     s32 flags;
     s32 a0;
     s32 a2;
@@ -184,16 +184,16 @@ void FieldScene_RunPrimarySequence(void)
 
     flags = *state & 7;
     if (flags == 0) {
-        rec7a = (u8 *)Object_GetById(9);
+        rec7a = Object_GetById(9);
         v1a = Engine_RandomNext();
         a0 = *(s32 *)(rec7a + 8);
-        a0 += (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
+        a0 += ((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
         rec4 = Object_GetById(9);
         reca = (s32)Object_GetById(9);
         a2 = *(s32 *)(reca + 16);
         a2 += 0x60000;
         v2a = Engine_RandomNext();
-        ta = (s32)((u32)((v2a << 2) + v2a) >> 16);
+        ta = ((u32)((v2a << 2) + v2a) >> 16);
         ua = (((ta << 1) + ta) << 2) + ta;
         na = ua << 6;
         na -= ua;
@@ -201,19 +201,19 @@ void FieldScene_RunPrimarySequence(void)
         na += ta;
         v3a = Engine_RandomNext();
         na = -na;
-        Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
+        Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, na, ((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
-            rec7b = (u8 *)Object_GetById(9);
+            rec7b = Object_GetById(9);
             v1b = Engine_RandomNext();
             a0 = *(s32 *)(rec7b + 8);
-            a0 += (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
+            a0 += ((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
             rec4 = Object_GetById(9);
             recb = (s32)Object_GetById(9);
             a2 = *(s32 *)(recb + 16);
             a2 += 0x60000;
             v2b = Engine_RandomNext();
-            tb = (s32)((u32)((v2b << 2) + v2b) >> 16);
+            tb = ((u32)((v2b << 2) + v2b) >> 16);
             ub = (((tb << 1) + tb) << 2) + tb;
             nb = ub << 6;
             nb -= ub;
@@ -221,7 +221,7 @@ void FieldScene_RunPrimarySequence(void)
             nb += tb;
             v3b = Engine_RandomNext();
             nb = -nb;
-            Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
+            Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, nb, ((u32)(v3b << 1) >> 16), flags);
         }
     }
 }

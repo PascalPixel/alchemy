@@ -68,7 +68,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *menu = gMenuWork;
-    struct BattleUnit *unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
+    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *info = Item_Get(item_id);
     s32 replaced;
@@ -101,7 +101,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     if (info->flags & 1) {
         Audio_PlayCue(103);
         UiWork_FinalizePendingCoreFar();
-        UiText_OpenMessageWindowFar((s32)MsgBecameCursed, 8, 4, 2);
+        UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);
         while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
         }

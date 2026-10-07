@@ -32,7 +32,7 @@ void WorldMap_DisembarkCarriage(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Object_GetById(10);
+    actor = Object_GetById(10);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);

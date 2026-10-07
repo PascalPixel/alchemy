@@ -117,7 +117,7 @@ loop:
     attr1 = spr->attr1;
     spr->attr1 = (attr1 & ~0x1ff) | x;
     *(u8 *)&spr->attr0 = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 + (offset->y >> 8) + 6;
-    Runtime_PushSlotEntry((s32 *)spr, 240);
+    Runtime_PushSlotEntry(spr, 240);
     if (!(gKeysHeld & KEY_B) && !(gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) && (frame <= 15 || !(gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS)))) {
         WaitFrames(1);
         frame++;
@@ -157,7 +157,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
         spr->tile = Resource_GetBuffer(slot, tiles);
         spr->x = pos.x + ((gFrameCount & 4) >> 1) - 4;
         spr->y = pos.y - ((gFrameCount & 4) >> 2) - 8;
-        Runtime_PushSlotEntry((s32 *)spr, 240);
+        Runtime_PushSlotEntry(spr, 240);
         if (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS))
             break;
         WaitFrames(1);

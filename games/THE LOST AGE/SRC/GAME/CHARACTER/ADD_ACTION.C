@@ -12,7 +12,7 @@
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
-    struct OwnerActionState *state = (struct OwnerActionState *)Owner_GetState(state_index);
+    struct OwnerActionState *state = Owner_GetState(state_index);
     s32 key = value & OWNER_ACTION_ID_MASK;
     s32 found = -1;
     s32 index;

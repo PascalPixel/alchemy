@@ -43,16 +43,16 @@ void SerialTest_Run(void)
         value--;
     } while (n >= 0);
     zero = 0;
-    Bios_CpuSet((const void *)&zero, (void *)gMapCellBuffer, 0x05000100);
+    Bios_CpuSet((const void *)&zero, gMapCellBuffer, 0x05000100);
     SerialRuntime_WaitForStatusMask(3);
 restart:
     SerialRuntime_BeginTransferB(gMapCellBuffer);
     for (;;) {
-        if ((*(volatile u32 *)&gKeysHeld) & 1)
+        if ((* &gKeysHeld) & 1)
             SerialRuntime_BeginTransferA((void *)Cart_Restart, 640);
         if ((*(volatile u32 *)&gKeysHeld) & 2)
             SerialRuntime_BeginTransferA((void *)(Rom_Start + 0x1000), 640);
-        if ((*(volatile u32 *)&gKeysHeld) & 8) {
+        if ((* &gKeysHeld) & 8) {
             tick = 9999;
             do {
                 tick--;
@@ -60,7 +60,7 @@ restart:
             } while (tick >= 0);
         }
         if (SERIAL_ACTIVE_B == 0) {
-            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
+            Dma_Set(gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
             goto restart;
         }
         WaitFrames(1);

@@ -261,7 +261,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     gBgScroll[1].x = scroll_x;
     BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 9; i++)
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)OBJECTS[i]);
+        ResourceObject_ReleaseFar(OBJECTS[i]);
     REG_BG2PA = 0x80;
     REG_DISPCNT = 0x7741;
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);

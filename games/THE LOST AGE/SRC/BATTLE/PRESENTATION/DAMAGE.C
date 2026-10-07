@@ -124,5 +124,5 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
         return 256;
     }
 
-    return living_units[(u32)(Random16() * living_count) >> 0x10];
+    return living_units[(Random16() * living_count) >> 0x10];
 }

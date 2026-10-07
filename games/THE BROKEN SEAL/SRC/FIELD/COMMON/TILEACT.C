@@ -58,11 +58,11 @@ s32 Field_RunTileAction(s32 tile)
     } else {
         descriptor = (const struct SceneEvent *)BattleFx_FindDescriptor(3, tile);
         if (descriptor != NULL) {
-            s32 flags = (s32)descriptor->control;
+            s32 flags = descriptor->control;
 
             condition = descriptor->condition;
             n = (flags >> 4) & 31;
-            if (((u16)descriptor->trigger & 0x400) == 0 && n != 0) {
+            if ((descriptor->trigger & 0x400) == 0 && n != 0) {
                 Battle_InitializeRenderObject();
                 UiText_ShowPositionedMessageAndWaitFar((s32)MsgTileChecked + n, 1);
                 GameFlag_SetBitFar(0x142);
@@ -90,13 +90,13 @@ s32 Field_RunTileAction(s32 tile)
                     if ((action & 0xf0000) == 0x10000 && leader <= 7)
                         allowed = 0;
                     if (allowed != 0) {
-                        if (((s32)descriptor->control & 0x1ff) == 19)
+                        if ((descriptor->control & 0x1ff) == 19)
                             EffectRuntime_SetMode4AndPlayCue(tile);
                         type = descriptor->value & 0xfff00000;
                         if (type == 0x300000) {
                             void *object;
 
-                            if (((s32)descriptor->control & 0x1ff) == 19)
+                            if ((descriptor->control & 0x1ff) == 19)
                                 EffectRuntime_SetMode2(tile);
                             object = EffectRuntime_GetCurrentObject(tile);
                             EffectRuntime_PrepareRisingObject(object);
@@ -118,7 +118,7 @@ s32 Field_RunTileAction(s32 tile)
                         } else if (type == 0x500000) {
                             struct EventRuntime *work = gEventWork;
 
-                            if (((s32)descriptor->control & 0x1ff) == 19)
+                            if ((descriptor->control & 0x1ff) == 19)
                                 EffectRuntime_SetMode7AndLaunch(tile);
                             if (condition != -1) {
                                 condition = gGameState.pending_djinn_event = condition | 0x1000;
@@ -136,7 +136,7 @@ s32 Field_RunTileAction(s32 tile)
 
                             object = BattleFx_StartRandomParticleEmitter(gGameState.selected_actor, 0);
                             WaitFrames(30);
-                            if (((s32)descriptor->control & 0x1ff) == 19)
+                            if ((descriptor->control & 0x1ff) == 19)
                                 EffectRuntime_SetMode2(tile);
                             EffectRuntime_PrepareRisingObject(object);
                             AudioCommand_PlayFar(83);
@@ -159,10 +159,10 @@ s32 Field_RunTileAction(s32 tile)
                                 UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem, 1);
                                 UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem + 4, 1);
                                 Object_DestroyIfPresent(object);
-                                if (((s32)descriptor->control & 0x1ff) == 19)
+                                if ((descriptor->control & 0x1ff) == 19)
                                     EffectRuntime_SetMode5AndPlayCue(tile);
                             } else {
-                                if (((s32)descriptor->control & 0x1ff) == 19)
+                                if ((descriptor->control & 0x1ff) == 19)
                                     EffectRuntime_SetMode2(tile);
                                 EffectRuntime_PrepareRisingObject(object);
                                 AudioCommand_PlayFar(83);

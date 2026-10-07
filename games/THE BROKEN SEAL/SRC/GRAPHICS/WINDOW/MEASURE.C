@@ -83,7 +83,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, u16 *spaci
 
 void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 {
-    UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), (u32 *)x, (u32 *)y, 0);
+    UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), x, y, 0);
 }
 
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)

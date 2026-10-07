@@ -97,9 +97,9 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
         do {
             UiWork_PushValueSlotFar((u16)*enemy++, 1);
             if (announced == enemy_count - 1)
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgLastEnemyAppeared);
+                UiText_ShowMessageAndWaitCoreFar(MsgLastEnemyAppeared);
             else
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgEnemyAppeared);
+                UiText_ShowMessageAndWaitCoreFar(MsgEnemyAppeared);
             announced++;
             BattlePresentation_WaitForAdvance();
         } while (announced != enemy_count);
@@ -109,12 +109,12 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     if (battle->encounter_mode == BATTLE_ENCOUNTER_PARTY_FIRST) {
         UiWork_ClearValueNameTablesFar();
         UiWork_PushValueSlotFar(0, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyStrikesFirst);
+        UiText_ShowMessageAndWaitCoreFar(MsgPartyStrikesFirst);
         BattlePresentation_WaitForAdvance();
     } else if (battle->encounter_mode == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
         UiWork_ClearValueNameTablesFar();
         UiWork_PushValueSlotFar(0, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgPartySurprised);
+        UiText_ShowMessageAndWaitCoreFar(MsgPartySurprised);
         BattlePresentation_WaitForAdvance();
     }
 }

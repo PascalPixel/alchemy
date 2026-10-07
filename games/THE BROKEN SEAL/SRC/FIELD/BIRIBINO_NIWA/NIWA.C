@@ -37,7 +37,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 
     target = object->facing_target;
     if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        object->facing_flags = (0xFE & object->facing_flags);
         tgt = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
         old = object->facing;
         delta = (s16)(tgt - old);
@@ -48,7 +48,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
-            object->facing = (u16)(old + delta);
+            object->facing = (old + delta);
         }
     }
     return 1;
@@ -235,11 +235,11 @@ s32 Scene_Initialize(void)
     fp = (u8 *)ent + 35;
     /* FAKEMATCH: one register carries the stored zero and then, decremented by 13, the ~0x0c handle mask, so the two are not folded into separate constants. */
     zero = 0;
-    *fp = (u8)zero;
+    *fp = zero;
 
     h = ent->h;
     zero -= 13;
-    h->flags09 = (u8)((h->flags09 & zero) | 0x04);
+    h->flags09 = ((h->flags09 & zero) | 0x04);
 
     if (gGameState.scene == (s32)&SceneId_BiribinoNiwa) {
         BiribinoNiwa_ApplyEntryState();
@@ -389,10 +389,10 @@ s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
 
     tilt = Engine_MathCos(entity->phase + 0x8000);
     if (tilt < 0) tilt += 7;
-    handle->field1e = (s16)(tilt >> 3);
+    handle->field1e = (tilt >> 3);
 
-    step = (s32)(((u32)Engine_RandomNext() << 9) >> 16)
-         + (s32)(((u32)Engine_RandomNext() << 9) >> 16);
+    step = (((u32)Engine_RandomNext() << 9) >> 16)
+         + (((u32)Engine_RandomNext() << 9) >> 16);
     entity->phase = entity->phase + step + 1024;
 
     return 0;
@@ -423,7 +423,7 @@ void InitializeOrbitingSceneEntity(s32 id)
     actor->flags_23 &= 0xfe;
     actor->visible = 1;
 
-    transfer = (u8 *)Engine_HeapAllocate(17, 1544);
+    transfer = Engine_HeapAllocate(17, 1544);
     Engine_ItemLoadIcon(ITEM_NUT);
     transfer += 1024;
     Engine_VramLoad(sprite->palette, 128, transfer);

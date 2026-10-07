@@ -49,7 +49,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
     s32 match_count = 0;
     struct FormationCandidate *pool =
-        (struct FormationCandidate *)Runtime_BumpAllocateAlternatePool(128);
+        Runtime_BumpAllocateAlternatePool(128);
     u16 party[8];
     s32 level_total = 0;
     s32 unit_count = BattleParty_PrepareActiveOwners(party);
@@ -134,7 +134,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     s32 floor;
     s32 i;
 
-    base = (struct BattleBaseStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
+    base = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
     state = Owner_GetStateFar(owner);
     Iwram_CopyWords(base, &state->base_hp, sizeof(struct BattleBaseStats));
 

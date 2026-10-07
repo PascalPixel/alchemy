@@ -248,7 +248,7 @@ void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
     state->child = second_object;
     state->angle = facing_quadrant;
     if (second_object != NULL) {
-        state->saved_callback = (void *)second_object->hook;
+        state->saved_callback = second_object->hook;
         state->saved_script = (const s32 *)second_object->script;
         {
             struct AnimationObject *animation =

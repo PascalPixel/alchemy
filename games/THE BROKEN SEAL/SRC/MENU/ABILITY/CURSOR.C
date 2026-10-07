@@ -111,7 +111,7 @@ void Menu_ReleaseEntryObjects(void)
     void **p;
     s32 i;
 
-    count = (u16)Party_ListActiveOwnersFar((s16 *)buf);
+    count = (u16)Party_ListActiveOwnersFar(buf);
     if (count != 0) {
         p = (void **)base->tab_objects;
         i = count;

@@ -135,7 +135,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         session = *(gWorkSlot + HEAP_SLOT_BATTLE);
         work->second_mode = 1;
         work->busy = 0;
-        count = BattleParty_ListActorIds(3, (u16 *)party);
+        count = BattleParty_ListActorIds(3, party);
         for (i = 0; i != count; i++) {
             id = i + 120;
             if ((s32)i <= 7)
@@ -165,10 +165,10 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         QueueIoWriteDelay6(0x04000008, 0);
         REG_BLDCNT = 0x3f40;
         ids = actors;
-        n = BattleParty_ListActorIds(3, (u16 *)ids);
+        n = BattleParty_ListActorIds(3, ids);
         actors[n] = 0xff;
         BattleActor_SpawnObjectsForList(ids, 0);
-        n = BattleParty_ListActorIds(1, (u16 *)ids);
+        n = BattleParty_ListActorIds(1, ids);
         for (i = 0; i != n; i++)
             BattlePres_SetActorRecordMode(ids[i], 1);
         for (i = 0; i != 16; i++) {

@@ -31,7 +31,7 @@ void Resource_LoadWorkHeader(void)
     const void *header;
     struct ResourceWork *work;
 
-    header = (const void *)Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
+    header = Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
     work = &Data_03007804;
     Dma_Set(header, work, 0x84000003, REG_DMA3);
     work->cursor = 0;
@@ -99,13 +99,13 @@ void Resource_LoadCode(u32 index, void *destination)
     s32 end;
     u32 size;
 
-    end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index), destination);
+    end = Resource_DecodeType01(Resource_GetTableEntry(index), destination);
     /* FAKEMATCH: the wrapper keeps the size load after the decode. */
     do {
         size = (u32)Resource_PatchThumbBranchCodeSize;
     } while (0);
     routine = (void (*)(void *, s32))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Resource_PatchThumbBranch, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    Dma_Set(Resource_PatchThumbBranch, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(destination, end);
     Sys_Free(routine);
 }

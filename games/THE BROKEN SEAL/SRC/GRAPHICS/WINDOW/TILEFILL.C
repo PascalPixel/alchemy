@@ -33,7 +33,7 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, 
 
     sum = x + window->x;
     x = sum + 1;
-    sum = y + ((struct UiWindow *)window)->y;
+    sum = y + (window)->y;
     y = sum + 1;
 
     if (x < 0) {

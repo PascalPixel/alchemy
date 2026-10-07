@@ -137,7 +137,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
         Engine_EventShowMessage(14, 0);
     } else {
         work = gEventWork;
-        work->message = (u16)(work->message + 1);
+        work->message = (work->message + 1);
         Engine_EventAskYesNo(14, 0);
     }
     Engine_EventEnd();

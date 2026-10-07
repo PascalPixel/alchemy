@@ -14,7 +14,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, 
     work = (struct UiRenderWork *)gWindowWork[0];
     start = x;
     if (text == NULL) {
-        text = (s16 *)work->entries;
+        text = work->entries;
         work->entries[work->count] = 0;
         work->count = (work->count + 1) & RENDER_ENTRY_MASK;
     }

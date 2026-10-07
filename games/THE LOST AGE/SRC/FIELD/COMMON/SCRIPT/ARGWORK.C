@@ -326,7 +326,7 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 opera
         state->comparison_result = value;
     } else if (operation == 1) {
         state->comparison_result =
-            (u8)((u32)state->comparison_result + (u32)value);
+            (state->comparison_result + value);
     } else {
         u8 current = state->comparison_result;
 

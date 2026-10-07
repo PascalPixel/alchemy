@@ -365,7 +365,7 @@ void HaidiaBabi_RunActorEightMessageScene(void)
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x203) != 0) {
-        Object_SetTargetAndCallback(8, 0x10000, (s32)gHaidiaBabiActor8Departure);
+        Object_SetTargetAndCallback(8, 0x10000, gHaidiaBabiActor8Departure);
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgHaidiaDontWorryBest);
         Engine_EventShowMessage(8, 0);
@@ -409,7 +409,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_TaskWait(1);
     Engine_CameraFollowActor(18, 1);
     clear = 0;
-    actor = (struct FieldActor *)Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
+    actor = Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
     actor->motion_flags = clear;
     sprite = actor->sprite;
     actor->y.fixed = 0x50000;
@@ -479,7 +479,7 @@ void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object)
     s32 amplitude;
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
-    self->timer = (u16)(self->timer + 1);
+    self->timer = (self->timer + 1);
     frame = (s16)self->timer;
 
     if (frame > 31) {
@@ -503,7 +503,7 @@ void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
     s32 amp;
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
-    obj->timer = (u16)(obj->timer + 1);
+    obj->timer = (obj->timer + 1);
     frame = (s16)obj->timer;
 
     if (frame > 31) {

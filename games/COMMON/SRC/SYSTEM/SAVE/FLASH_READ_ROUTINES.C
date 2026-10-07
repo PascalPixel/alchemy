@@ -20,7 +20,7 @@ void StopFlashTimer(void)
     *cursor = record;
 
     REG_IME = 0;
-    REG_IE &= ~(u16)(8 << gFlashTimerNum);
+    REG_IE &= ~(8 << gFlashTimerNum);
     REG_IME = gFlashSavedIme;
 }
 
@@ -39,9 +39,9 @@ void CopyFlashReadRoutineToRam(void *rawDestination)
 
     gFlashReadRoutine = (u8 (*)(u8 *))(destination + 1);
     source = (u8 *)ReadFlashByte;
-    source = (u8 *)((u32)source ^ (u32)1);
-    begin = ((u32)(u8 *)CopyFlashReadRoutineToRam -
-             (u32)(u8 *)ReadFlashByte) << 15;
+    source = (u8 *)((u32)source ^ 1);
+    begin = ((u8 *)CopyFlashReadRoutineToRam -
+             (u8 *)ReadFlashByte) << 15;
     count = begin;
     goto check;
 

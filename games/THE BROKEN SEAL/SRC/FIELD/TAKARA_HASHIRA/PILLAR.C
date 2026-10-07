@@ -158,8 +158,8 @@ void TakaraHashira_RaiseActorFourteen(void)
     pillar = Object_GetById(14);
     Object_GetById(13)->scale_x = 0x10000;
     Object_GetById(13)->scale_y = 0x10000;
-    ((struct FieldSpritePriority *)Object_GetById(13)->sprite)->priority = 2;
-    ((struct FieldSpritePriority *)pillar->sprite)->priority = 2;
+    (Object_GetById(13)->sprite)->priority = 2;
+    (pillar->sprite)->priority = 2;
     pillar->acceleration = 0x6666;
     pillar->speed = 0xcccc;
     FieldObject_SetPosition(pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
@@ -193,11 +193,11 @@ void SceneEffect_SpawnRandomizedParticle(void)
     d->rotation = mask;
     d->update = FieldScene_RunScene3b3SequenceE;
 
-    draw = (u32)Engine_RandomNext();
-    spread = -((s32)((draw * 5) >> 16) * 0x10000 + 0x60000);
+    draw = Engine_RandomNext();
+    spread = -(((draw * 5) >> 16) * 0x10000 + 0x60000);
     spread /= 2;
-    draw = (u32)Engine_RandomNext();
-    secondary = -((s32)((draw * 5) >> 16) * 0x10000 + 0x50000);
+    draw = Engine_RandomNext();
+    secondary = -(((draw * 5) >> 16) * 0x10000 + 0x50000);
 
     Effect_Spawn(PIXELS(324), PIXELS(48), PIXELS(228), spread, secondary, 0,
                  EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE
@@ -223,10 +223,10 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
     p->start_scale_x = 0xb333;
     p->start_scale_y = 0xb333;
 
-    x = actor->x.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
-    y = actor->y.fixed + ((s32)(((u32)Engine_RandomNext() * 17) >> 16) << 16);
-    z = actor->z.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
-    scale = Math_Divide((s32)(((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
+    x = actor->x.fixed + (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    y = actor->y.fixed + ((((u32)Engine_RandomNext() * 17) >> 16) << 16);
+    z = actor->z.fixed + (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    scale = Math_Divide((((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
 
     Effect_Spawn(x, y, z, 0, scale, phase, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, p);
     return 0;
@@ -260,7 +260,7 @@ void TakaraHashira_RunMapShiftScene(void)
         } else {
             Engine_EventWait(60);
         }
-        ((void (*)())Engine_TaskRemoveCallback)((s32)SceneEffect_SpawnRandomizedParticle);
+        ((void (*)())Engine_TaskRemoveCallback)(SceneEffect_SpawnRandomizedParticle);
         Engine_EventWait(20);
         Map_CopyCellsTo(72, 10, 60, 10, 1, 2);
         Engine_EventWait(20);
@@ -388,7 +388,7 @@ void SceneActor_CheckActors8To11NearSlotZero(void)
             && hero->z.fixed > actor->z.fixed - 0x180000) {
             if (hero->x.fixed - 0x100000 <= actor->x.fixed
                 && actor->x.fixed < hero->x.fixed + 0x100000) {
-                Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, ((struct FieldSpritePriority *)actor->sprite)->priority);
+                Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, (actor->sprite)->priority);
                 return;
             }
         } else {
@@ -499,7 +499,7 @@ s32 TakaraHashira_SetupArea(void)
             /* FAKEMATCH: retain the flag read before its merge. */
             u8 value = *(volatile u8 *)flags;
 
-            *flags = (u8)(value | 8);
+            *flags = (value | 8);
         }
         if (Engine_GameFlagIsSet(0x202) == 0) {
             Object_GetById(13)->scale_x = 0x18000;

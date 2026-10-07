@@ -36,7 +36,7 @@ void InventorySnapshot_Save(void)
         first = gGameState.first_shortcut;
         second = gGameState.second_shortcut;
         for (owner = 0; owner < 4; owner++) {
-            unit = (struct BattleUnit *)Owner_GetState(owner);
+            unit = Owner_GetState(owner);
             for (n = 0; n < 15; n++)
                 *save++ = unit->inventory[n];
             for (n = 0; n < 15; n++) {
@@ -44,7 +44,7 @@ void InventorySnapshot_Save(void)
                     unit->inventory[n] = 0;
             }
             n = 0;
-            inventory = (s16 *)unit->inventory;
+            inventory = unit->inventory;
             for (i = 0; i < 15; i++) {
                 if (inventory[i] != 0)
                     inventory[n++] = inventory[i];
@@ -88,8 +88,8 @@ void InventorySnapshot_Restore(void)
 
         gGameState.first_shortcut = *source++;
         gGameState.second_shortcut = *source++;
-        *(u16 *)((u8 *)gGameState.active_owners) = *source++;
-        *(u16 *)((u8 *)gGameState.active_owners + 2) = *source;
+        *(u16 *)(gGameState.active_owners) = *source++;
+        *(u16 *)(gGameState.active_owners + 2) = *source;
         source = gInventorySnapshot;
         *source = 0;
         GameFlag_ClearBit(0x952);

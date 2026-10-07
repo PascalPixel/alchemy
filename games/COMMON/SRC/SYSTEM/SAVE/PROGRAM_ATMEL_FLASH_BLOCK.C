@@ -19,7 +19,7 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
     u16 current;
     u16 retries;
 
-    if ((u32)sector > 15)
+    if (sector > 15)
         return 0x80ff;
 
     CopyFlashReadRoutineToRam(savedCode);

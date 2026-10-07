@@ -145,7 +145,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         } else {
             left = 0;
             top = 0;
-            UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
             left = x - width / 2;
             if (flags & 0x4000)
                 top = y - height - 1;
@@ -179,7 +179,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         /* FAKEMATCH: the -1 local preserves its register across measurement and reloads it afterward. */
         none = -1;
         if (ret != none) {
-            UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
             message = none;
             tail = top - 5;
             if (top <= y)
@@ -194,14 +194,14 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
             if (top < tail) {
                 s32 lines = height;
 
-                UiText_GetResourceDimensionsFar(none, &left, &top, (u32 *)&width, (u32 *)&height);
+                UiText_GetResourceDimensionsFar(none, &left, &top, &width, &height);
                 message = none;
                 extra = lines - height + 1;
             }
         } else if (top < y) {
             s32 lines = height;
 
-            UiText_GetResourceDimensionsFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
+            UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
             extra = lines - height + 1;
             message = ret;
         }
@@ -209,7 +209,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         none = Localization_LookupEntryIdFar(speaker);
         ret = -1;
         if (none != ret) {
-            UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
             tail = top - 5;
             /* FAKEMATCH: subtract before copying -1; source order alone reverses them. */
             asm ("" : "+r" (ret) : "r" (tail));
@@ -228,7 +228,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         if (top < y) {
             s32 lines = height;
 
-            UiText_GetResourceDimensionsFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
+            UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
             message = -1;
             extra = lines - height + 1;
         }

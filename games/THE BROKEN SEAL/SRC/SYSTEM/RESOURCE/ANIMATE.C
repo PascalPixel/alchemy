@@ -208,7 +208,7 @@ void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
     u32 i;
 
     if (state != NULL && handle != 0) {
-        ResourceMetadata_ClearRecord((void *)handle);
+        ResourceMetadata_ClearRecord(handle);
         for (slot = 0; slot <= 3; slot++) {
             if (handle == (s32)state->entries[slot])
                 break;
@@ -379,7 +379,7 @@ void ObjectSystem_Configure(s32 mode)
     VramBlock_LoadCached(93, 128, Object_ShadowTiles);
     size = (u32)Tile_CopyStridedCodeSize;
     table = Runtime_AllocateHeapBlock(53, size);
-    Dma_Set((const void *)Tile_CopyStrided, table, 0x84000000 | (size >> 2),
+    Dma_Set(Tile_CopyStrided, table, 0x84000000 | (size >> 2),
             REG_DMA3);
 }
 

@@ -12,7 +12,7 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 
     if (obj != 0 && obj->animation_kind == 1) {
         s32 cnt = 0;
-        u8 *anim = (u8 *)obj->animation;
+        u8 *anim = obj->animation;
 
         while (cnt <= 89) {
             WaitFrames(1);

@@ -14,7 +14,7 @@ void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
 
     obj = Engine_ObjectCreate(type, x, y, z);
     if (obj != 0) {
-        ((struct FieldSpritePriority *)obj->sprite)->priority = 0;
+        (obj->sprite)->priority = 0;
         ConfigureOverlayObject(obj, 14);
         Engine_ObjectSetBlendMode(obj, 1);
         return obj;
@@ -28,7 +28,7 @@ void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
 
     object = Engine_ObjectCreate(type, x, y, z);
     if (object != 0) {
-        ((struct FieldSpritePriority *)object->sprite)->priority = 1;
+        (object->sprite)->priority = 1;
         ConfigureOverlayObject(object, 15);
         object->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         return object;

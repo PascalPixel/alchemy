@@ -370,7 +370,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 size = (u32)Text_DecodeSymbolCodeSize;
             } while (0);
             code = Runtime_AllocateHeapBlock(50, size);
-            Dma_Set((const void *)Text_DecodeSymbol, code,
+            Dma_Set(Text_DecodeSymbol, code,
                 0x84000000 | (size >> 2), REG_DMA3);
         }
         decode = (s32 (*)(struct TextReader *))
@@ -381,7 +381,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #if defined(TBS_EDITION_EN)
             prev = ch;
 #endif
-            ch = (u32)decode(&st);
+            ch = decode(&st);
             if (ch > 255)
                 ch = 64;
 
@@ -474,7 +474,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         if (quote != 0)
                             ch = 142;
                     }
-                    entry[pos] = (u16)ch;
+                    entry[pos] = ch;
                     pos = (pos + 1) & RENDER_ENTRY_MASK;
 #if defined(TBS_EDITION_EN)
                     head = 0;
@@ -505,13 +505,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 8:
                     case 9:
                     case 29:
-                        entry[pos] = (u16)ch;
+                        entry[pos] = ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = decode(&st) + 0xFFFFU;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 22:
-                        value = (s32)UiRender_LookupNamedValue(5, clear);
+                        value = UiRender_LookupNamedValue(5, clear);
                         mag = value;
                         if (value < 0)
                             mag = -value;
@@ -766,7 +766,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         head = 1;
 #endif
                     default:
-                        entry[pos] = (u16)ch;
+                        entry[pos] = ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
 #if defined(TBS_EDITION_EN)
                         if (ch == 's' || ch == 'S')
@@ -781,13 +781,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
             cnt++;
         } while (running != 0 && cnt <= RENDER_ENTRY_MASK);
 
-        entry[pos] = (u16)ch;
+        entry[pos] = ch;
         pos = (pos + 1) & RENDER_ENTRY_MASK;
         entry[pos] = 0;
         next = (pos + 1) & RENDER_ENTRY_MASK;
-        work->count = (u16)next;
+        work->count = next;
         Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
-        work->message_start = (u16)start;
+        work->message_start = start;
     }
 
     if (clear != 0)
@@ -886,14 +886,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 size = (u32)Text_DecodeSymbolCodeSize;
             } while (0);
             code = Runtime_AllocateHeapBlock(50, size);
-            Dma_Set((const void *)Text_DecodeSymbol, code,
+            Dma_Set(Text_DecodeSymbol, code,
                 0x84000000 | (size >> 2), REG_DMA3);
         }
         decode = (s32 (*)(struct TextReader *))gWindowWork[50 - HEAP_SLOT_WINDOW];
         UiText_LookupMessage(&st, script);
         do {
             prev = ch;
-            ch = (u32)decode(&st);
+            ch = decode(&st);
             if (overflow != 0) {
                 if (ch < 32) {
                     switch (ch) {
@@ -971,7 +971,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         if (cnt > 10)
                             ch = 32;
                     }
-                    entry[pos] = (u16)ch;
+                    entry[pos] = ch;
                     pos = (pos + 1) & RENDER_ENTRY_MASK;
                     head = 0;
                 } else {
@@ -983,7 +983,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 8:
                     case 9:
-                        entry[pos] = (u16)ch;
+                        entry[pos] = ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = decode(&st) + 0xffffU;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
@@ -1072,7 +1072,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 3:
                         head = 1;
                     default:
-                        entry[pos] = (u16)ch;
+                        entry[pos] = ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     }
@@ -1080,13 +1080,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
             }
             cnt++;
         } while (running != 0 && cnt <= RENDER_ENTRY_MASK);
-        entry[pos] = (u16)ch;
+        entry[pos] = ch;
         pos = (pos + 1) & RENDER_ENTRY_MASK;
         entry[pos] = 0;
         next = (pos + 1) & RENDER_ENTRY_MASK;
-        work->count = (u16)next;
+        work->count = next;
         Runtime_ReleaseHeapBlock(50);
-        work->message_start = (u16)start;
+        work->message_start = start;
     }
     if (clear != 0)
         UiWork_ClearValueNameTables();

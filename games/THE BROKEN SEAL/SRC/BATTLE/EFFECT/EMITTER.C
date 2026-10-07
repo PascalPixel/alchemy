@@ -231,7 +231,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
     position.z = emitter->z;
     random_angle = Random16();
     Vector_AddPolarOffset(random_angle << 4, Random16(), &position);
-    object = (struct ObjectRuntime *)Object_Spawn(
+    object = Object_Spawn(
         285, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;
@@ -324,7 +324,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
         ItemIcon_LoadTilesFar(item);
 
         ((struct TileBits *)((u8 *)vis + 8))->tile =
-            VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 1024);
+            VramBlock_LoadCached(vis->slot, 128, buf + 1024);
 
         Runtime_ReleaseHeapBlock(17);
         obj->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
@@ -365,7 +365,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
         other = ObjectTable_Get(gGameState.selected_actor);
         if (flags & 1) {
             ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_ParticleEmitterScript);
+            ObjectDispatch_InitializeFar(object, BattleFx_ParticleEmitterScript);
             FIELD_AT_OFFSET(object, u32 *, 40) = 0x20000;
             FIELD_AT_OFFSET(object, u32 *, 72) = 0x4000;
             FIELD_AT_OFFSET(object, s32 *, 108) = (s32)&BattleFx_EmitRandomParticleFromEmitter;
@@ -411,7 +411,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
         visual->flags_b = mask;
 
         ItemIcon_LoadTilesFar(value);
-        VramBlock_LoadCached(visual->value_1c, 128, (u8 *)handle + 1024);
+        VramBlock_LoadCached(visual->value_1c, 128, handle + 1024);
         Runtime_ReleaseHeapBlock(17);
 
         if (flags & 1)
@@ -525,7 +525,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
     s32 z;
     s32 id;
 
-    list = *(u8 **)(((u8 *)gMapWork[0]) + 16);
+    list = *(u8 **)((gMapWork[0]) + 16);
     actor = ObjectTable_Get(gGameState.selected_actor);
     actor_x = actor->x >> 20;
     actor_z = actor->z >> 20;

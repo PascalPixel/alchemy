@@ -274,7 +274,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
     class_id = unit_record->class_id;
     actor->overlay = anim;
 
-    if (class_id <= 1 && Inventory_GetEquippedItemFar((struct BattleUnit *)unit_record, 1) == 15) {
+    if (class_id <= 1 && Inventory_GetEquippedItemFar(unit_record, 1) == 15) {
         if (unit_record->class_id == 0) {
             sprite = 480;
             actor->resource = sprite;

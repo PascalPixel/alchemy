@@ -44,7 +44,7 @@ void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
             REG_DMA3);
-    Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
+    Dma_Set(Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
             REG_DMA3);
     /* FAKEMATCH: the two do-while blocks keep the value-before-address order of the palette stores */
     do {
@@ -77,13 +77,13 @@ void Ui_LoadWindowGraphics(void)
         pal++;
         *pal = color;
     } while (0);
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
+    Dma_Set(System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
             REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
+    Dma_Set(System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)

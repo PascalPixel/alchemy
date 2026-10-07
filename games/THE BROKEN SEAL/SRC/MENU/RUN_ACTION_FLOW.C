@@ -71,7 +71,7 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     s32 result;
     s32 index;
 
-    menu = (struct CharacterMenuState *)gMenuWork;
+    menu = gMenuWork;
     index = menu->owner_index[slot];
     result = 0;
     cursor = menu->owner_cursors[slot];
@@ -79,7 +79,7 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     cursor->anim_step = 0;
     RenderOutput_RedrawSavedRectFar(menu->owner_window);
     if (GameFlag_IsSet(0x172))
-        UiWindow_DrawDividerLineFar((s32)menu->owner_window, 9, 1, 9, 3);
+        UiWindow_DrawDividerLineFar(menu->owner_window, 9, 1, 9, 3);
     if (index == -1)
         menu->owner_index[slot] = 0;
     else

@@ -7,6 +7,6 @@
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
 {
     if (slot->object)
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
+        ResourceObject_ReleaseFar(slot->object);
     Dma_Fill32(0, slot, sizeof *slot);
 }

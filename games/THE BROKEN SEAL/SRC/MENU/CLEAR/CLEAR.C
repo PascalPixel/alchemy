@@ -113,7 +113,7 @@ void Clear_LoadBackground(void)
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
     res += 448;
     DecodeBackground(res);
-    Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
+    Dma_Set(Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
     map = (u16 *)0x06003000;
     tile = 416;
     y = 0;

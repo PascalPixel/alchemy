@@ -341,8 +341,8 @@ void FieldScene_BuildMultiPhasePresentation(void)
     p8 = (s32)rec3 + 100;
     p10.v = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
-    *(s32 *)((s32)rec3 + 72) = 0x6666;
-    ((struct ActorMotion *)rec3)->callback = (s32)&(*(u8 *)SceneMotion_UpdateTimedActor);
+    *(s32 *)(rec3 + 72) = 0x6666;
+    ((struct ActorMotion *)rec3)->callback = (s32)&(*SceneMotion_UpdateTimedActor);
     Actor_SetSpeed(10, 0x13333, 0x9999);
     Actor_MoveToAndWait(10, 308, 291);
     Engine_ActorMoveToAndWait(10, 311, 215);
@@ -365,7 +365,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     ((struct ActorMotion *)rec3)->phase = 0;
     ((struct ActorMotion *)rec3)->step[0] = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
-    ((struct ActorMotion *)rec3)->callback = (s32)&(*(u8 *)SceneMotion_UpdateTimedActor);
+    ((struct ActorMotion *)rec3)->callback = (s32)&(*SceneMotion_UpdateTimedActor);
     Actor_MoveToAndWait(10, 320, 232);
     Actor_MoveToAndWait(10, 340, 262);
     Engine_ActorMoveToAndWait(10, 374, 262);
@@ -398,7 +398,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     ((struct ActorMotion *)rec3)->phase = 0;
     ((struct ActorMotion *)rec3)->step[0] = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
-    ((struct ActorMotion *)rec3)->callback = (s32)&(*(u8 *)SceneMotion_UpdateTimedActor);
+    ((struct ActorMotion *)rec3)->callback = (s32)&(*SceneMotion_UpdateTimedActor);
     Actor_MoveToAndWait(10, 329, 219);
     ((struct ActorMotion *)rec3)->callback = 0;
     Engine_ActorSetAnimation(10, 1);

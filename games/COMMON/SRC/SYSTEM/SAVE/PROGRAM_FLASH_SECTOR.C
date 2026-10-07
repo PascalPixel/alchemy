@@ -18,7 +18,7 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
     u16 result;
     u8 *destination;
 
-    if ((u32)sector > 15)
+    if (sector > 15)
         return 0x80FF;
 
     result = EraseFlashSector(sector);

@@ -39,7 +39,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 
     target = object->facing_target;
     if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        object->facing_flags = (0xFE & object->facing_flags);
         ang = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
         old = object->facing;
         delta = (s16)(ang - old);
@@ -50,7 +50,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
-            object->facing = (u16)(old + delta);
+            object->facing = (old + delta);
         }
     }
     return 1;
@@ -862,7 +862,7 @@ void HaidiaSukureta_RunActorSequence(void)
                 Engine_ActorSetAnimationAndWait(11, 3);
                 Call3(Object_SetTargetAndCallback, 0, 0x1000b, (s32)Sukureta_StrangerActions);
                 Call3(Object_SetTargetAndCallback, 1, 0x1000b, (s32)Sukureta_StrangerActions);
-                Object_SetActionCallbackAndRefreshById(11, (s32)Sukureta_Actor11RockslideActions);
+                Object_SetActionCallbackAndRefreshById(11, Sukureta_Actor11RockslideActions);
                 Engine_ActorStop(0);
                 Engine_ActorStop(1);
                 Actor_FaceDirection(0, FACING_SOUTH, 0);

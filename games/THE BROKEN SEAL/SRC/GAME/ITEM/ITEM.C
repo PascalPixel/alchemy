@@ -486,7 +486,7 @@ s32 ItemMenu_Run(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
-    saved = (struct ItemMenuSavedGraphics *)Runtime_BumpAllocateAlternatePool(0x2130);
+    saved = Runtime_BumpAllocateAlternatePool(0x2130);
     menu->saved = saved;
     saved->reserved_2128 = 0;
     saved->variant = 0;
@@ -676,7 +676,7 @@ s32 DjinnMenu_RunScreen(void)
                 s32 found;
                 u8 entry;
 
-                column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
+                column = (menu->selection[1] % DJINN_LIST_ROWS);
                 found = 0;
                 entry = menu->pair_entries[0];
                 for (i = 0; i < menu->backdrop->list.counts[column]; i++) {
@@ -728,7 +728,7 @@ s32 DjinnMenu_RunScreen(void)
                 s32 found;
                 u8 entry;
 
-                column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
+                column = (menu->selection[1] % DJINN_LIST_ROWS);
                 found = 0;
                 entry = menu->pair_entries[0];
                 for (i = 0; i < menu->backdrop->list.counts[column]; i++) {

@@ -16,7 +16,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 
     target = obj->facing_target;
     if (target != NULL) {
-        obj->facing_flags = (u8)(0xFE & obj->facing_flags);
+        obj->facing_flags = (0xFE & obj->facing_flags);
         angle = (u16)ArcTan2(target->position_z - obj->position_z, target->position_x - obj->position_x);
         old = obj->facing;
         delta = (s16)(angle - old);
@@ -28,7 +28,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
-            obj->facing = (u16)(old + delta);
+            obj->facing = (old + delta);
         }
     }
     return 1;
@@ -209,7 +209,7 @@ s32 Scene_RunSupplementalSequenceOne(void)
     extern u8 *gWork;
 
     struct FieldActor *record;
-    u8 **scene = (u8 **)&gWork;
+    u8 **scene = &gWork;
 
     *(s32 *)(scene[0] + 448) = 521;
     if (Engine_GameFlagIsSet(0x834) != 0) {

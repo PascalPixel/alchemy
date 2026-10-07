@@ -51,7 +51,7 @@ s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
             Object_SetMode(actor, 1);
             result = 1;
         }
-        if ((u8 *)target == Object_GetById(0) && (farRight == facing || farLeft == facing)) {
+        if (target == Object_GetById(0) && (farRight == facing || farLeft == facing)) {
             actor->active = 1;
             Object_SetMode(actor, 1);
             result = 1;
@@ -123,7 +123,7 @@ void TorebiMachi_OpenActorEightPassage(void)
     struct FieldActor *record;
 
     record = Object_GetById(8);
-    if ((s32)record != 0) {
+    if (record != 0) {
         record->collision_flags = 0;
     }
     record = Object_GetById(8);

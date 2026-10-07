@@ -85,7 +85,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
-    void *buffer = (void *)Runtime_BumpAllocate(size);
+    void *buffer = Runtime_BumpAllocate(size);
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
@@ -118,7 +118,7 @@ void Menu_AppendResourceEntry(s32 no)
 
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
 {
-    struct ResourceMenuWork *menu = ((struct ResourceMenuWork *)gMenuSelectWork);
+    struct ResourceMenuWork *menu = (gMenuSelectWork);
     s32 x;
     s32 i;
     s32 count;

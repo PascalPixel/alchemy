@@ -69,7 +69,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
             }
         } else {
 #if EDITION_INTERNATIONAL
-            if ((((struct UiWindow *)window)->flags & 8) == 0) {
+            if (((window)->flags & 8) == 0) {
                 next = *text;
 #if defined(TBS_EDITION_ES)
                 if (c > 32 && next > 32) {

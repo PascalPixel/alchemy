@@ -33,7 +33,7 @@ void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, stru
 
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
-    struct BattleEffectWork *work = (struct BattleEffectWork *)*(void **)gBattleFxWork;
+    struct BattleEffectWork *work = *(void **)gBattleFxWork;
     struct Scale normal = Formation_NormalScale;
     struct Scale small = Formation_SmallScale;
     struct Placement pos;

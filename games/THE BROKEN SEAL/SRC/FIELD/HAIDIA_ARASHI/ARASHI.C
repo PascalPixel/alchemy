@@ -39,9 +39,9 @@ s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
     if (loaded == 0) {
         ((struct FieldActor *)object)->facing = Engine_RandomNext();
         counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-        (*(s16 *)&((struct FieldActor *)object)->timer) = counter;
+        (* &((struct FieldActor *)object)->timer) = counter;
     }
-    (*(s16 *)&((struct FieldActor *)object)->timer) = counter - 1;
+    (* &((struct FieldActor *)object)->timer) = counter - 1;
     return 1;
 }
 
@@ -63,7 +63,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
     case 0:
         ((struct FieldActor *)state)->scale_x = 0x10000;
         ((struct FieldActor *)state)->scale_y = 0x10000;
-        (*(s16 *)&((struct FieldActor *)state)->timer) = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+        (* &((struct FieldActor *)state)->timer) = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
     (*(s16 *)&((struct FieldActor *)state)->timer)--;
@@ -905,7 +905,7 @@ void FieldScene_RunScene372SequenceA(void)
     Engine_ActorRunRepeatedMotion(20, 2);
     Engine_EventSetMessage((base + 4));
     Event_ShowMessageAndWait(20, 0, 20);
-    Object_SetActionCallbackAndRefreshById(20, (s32)HaidiaArashi_ActorTwentyScript);
+    Object_SetActionCallbackAndRefreshById(20, HaidiaArashi_ActorTwentyScript);
     GameFlag_Set(0x835);
     Engine_EventEnd();
 }
@@ -1021,10 +1021,10 @@ void FieldScene_RunScene372SequenceE(void)
         Camera_SetSpeed(0x6666, 0xccc);
         Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
         Actor_SetSpeed(22, 0x20000, 0x10000);
-        Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
+        Object_SetActionCallbackAndRefreshById(22, HaidiaArashi_ActorTwentyTwoScriptA);
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
         Engine_EventWait(30);
-        ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
+        ((s32 (*)())Engine_ActorEnableActionCallback)(22, HaidiaArashi_ActorTwentyTwoScriptB);
         Event_ShowMessage(22, 0);
         record = Actor_Get(22);
         record->scale_y = 0x10000;
@@ -1130,7 +1130,7 @@ void Scene_BoulderFalls(void)
 
     if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
         Engine_EventBegin();
-        Event_CallWithLastActiveObjectId((s32)HaidiaArashi_LastObjectCall);
+        Event_CallWithLastActiveObjectId(HaidiaArashi_LastObjectCall);
         SceneState_SetValue140Mode0();
         Engine_TaskWait(1);
         Audio_PlayCue(141);
@@ -1146,7 +1146,7 @@ void Scene_BoulderFalls(void)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
         Actor_SetSpeed(22, 0x20000, 0x10000);
         Engine_ActorEnableActionCallback(0, HaidiaArashi_LeaderScript);
-        Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScript);
+        Object_SetActionCallbackAndRefreshById(22, HaidiaArashi_ActorTwentyTwoScript);
         Object_RefreshSelectorById(0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
         Actor_ShowEmote(22, 256, 30);
@@ -1603,7 +1603,7 @@ void HaidiaArashi_RunRiverSearch(void)
     Actor_SetSpeed(26, 0x19999, 0xcccc);
     Actor_SetSpeed(9, 0x19999, 0xcccc);
     Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptA);
-    Object_SetActionCallbackAndRefreshById(9, (s32)HaidiaArashi_ActorNineScriptA);
+    Object_SetActionCallbackAndRefreshById(9, HaidiaArashi_ActorNineScriptA);
     Audio_PlayCue(158);
     Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps2, 38, 72);
     Engine_EventWait(10);

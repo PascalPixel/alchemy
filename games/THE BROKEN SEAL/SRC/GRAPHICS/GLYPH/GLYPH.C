@@ -129,9 +129,9 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         do {
             size = (u32)Tile_Decompress4bppCodeSize;
         } while (0);
-        code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
+        code = Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
-        Dma_Set((const void *)Tile_Decompress4bpp, code,
+        Dma_Set(Tile_Decompress4bpp, code,
             0x84000000 | size, REG_DMA3);
     }
     ((void (*)(const void *, u8 *))gWorkSlot[ROUTINE_BLOCK])(
@@ -141,17 +141,17 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         u32 size;
 
         size = (u32)Tile_ExpandMaskedCodeSize;
-        code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
+        code = Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
-        Dma_Set((const void *)Tile_ExpandMasked, code,
+        Dma_Set(Tile_ExpandMasked, code,
             0x84000000 | size, REG_DMA3);
     } else {
         u32 size;
 
         size = (u32)Tile_ExpandOpaqueCodeSize;
-        code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
+        code = Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
-        Dma_Set((const void *)Tile_ExpandOpaque, code,
+        Dma_Set(Tile_ExpandOpaque, code,
             0x84000000 | size, REG_DMA3);
     }
     ((void (*)(u8 *, u8 *, u32, u32))gWorkSlot[ROUTINE_BLOCK])(

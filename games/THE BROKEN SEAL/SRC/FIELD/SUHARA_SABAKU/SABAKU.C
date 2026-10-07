@@ -132,9 +132,9 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
     struct SceneWork_02000400 *scene;
     s32 progress;
 
-    actor = Object_GetById(((struct Selection_02000400 *)((s16 *)&gGameState))->actor_id);
-    scene = *(struct SceneWork_02000400 **)((u8 *)&gEventWork);
-    actor->presentation = (u16)(gFrameCount << 12);
+    actor = Object_GetById(((struct Selection_02000400 *)(&gGameState))->actor_id);
+    scene = *(struct SceneWork_02000400 **)(&gEventWork);
+    actor->presentation = (gFrameCount << 12);
 
     progress = GameFlag_GetByte(0x210);
     if (progress != 0) {
@@ -156,7 +156,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     u8 *p6;
     u8 *base;
 
-    base = (u8 *)((s16 *)&gGameState);
+    base = (u8 *)(&gGameState);
     p6 = *(u8 **)(base + 500);
     p10 = a0;
     rec7 = Object_GetById((s32)p6);
@@ -178,12 +178,12 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         Engine_ActorWaitForMove((s32)p6);
         rec7->velocity_y = rec2;
         rec7->motion_flags = 4;
-        *(u8 *)(base + 498) = 2;
+        *(base + 498) = 2;
         GameFlag_Set(0x20f);
         GameFlag_SetByte(0x218, p10);
         GameFlag_SetByte(0x210, 180);
         Engine_EventEnd();
-        *(u16 *)(*(u8 **)((u8 *)&gEventWork) + 380) = rec2;
+        *(u16 *)(*(u8 **)(&gEventWork) + 380) = rec2;
     }
 }
 
@@ -446,7 +446,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 
     if (gEventWork->raised_trigger == 99) {
         {
-            u16 *target = (u16 *)&gEventWork->raised_trigger;
+            u16 *target = &gEventWork->raised_trigger;
             u16 shown = 0;
 
             *target = shown;

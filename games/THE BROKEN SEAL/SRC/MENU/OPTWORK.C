@@ -77,7 +77,7 @@ void OptionMenu_InitializeWork(void)
     struct WorkspaceWork *work;
     volatile u32 zero;
 
-    work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 1576);
+    work = Runtime_AllocateBlock(20, 1576);
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
     work->option[0] = gGameState.palette_glow[0];

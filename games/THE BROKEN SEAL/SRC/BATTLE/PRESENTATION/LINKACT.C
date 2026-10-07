@@ -32,7 +32,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
     struct BattleSession *battle = gBattleWork;
     s32 result = 0;
     s32 allocation_size = (u32)(count * 16 + 19) / 20 * 20;
-    struct BattleLinkedActionState *state = (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
+    struct BattleLinkedActionState *state = Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
     s32 BattleLink_SendActions(void)

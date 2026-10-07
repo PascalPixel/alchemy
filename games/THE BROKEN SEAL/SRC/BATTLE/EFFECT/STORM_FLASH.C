@@ -86,9 +86,9 @@ void FieldFx_UpdateGroundParticles(void)
             particle->priority = 1;
             particle->x = x;
             particle->y = y;
-            particle->tile = work->tile_base + *(u16 *)frame;
+            particle->tile = work->tile_base + *frame;
             frame++;
-            particle->shape = *(u8 *)frame;
+            particle->shape = *frame;
             particle->size = *(u8 *)(frame + 1);
             Runtime_PushSlotEntry(particle, 240);
         }

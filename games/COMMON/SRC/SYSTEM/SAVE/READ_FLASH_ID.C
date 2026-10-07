@@ -26,7 +26,7 @@ s32 ReadFlashId(void)
             *delay = *delay - 1;
     }
 
-    result = (u16)readByte(0x0e000001) << 8;
+    result = readByte(0x0e000001) << 8;
     result |= readByte(0x0e000000);
 
     *(volatile u8 *)0x0e005555 = 170;

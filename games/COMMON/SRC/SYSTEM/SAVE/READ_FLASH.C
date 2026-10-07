@@ -31,5 +31,5 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size)
         count--;
     }
     core = (FlashReadCore)((u8 *)code + 1);
-    core((u32)((u8 *)0x0e000000 + (sector << Flash_ChipUnknown.sector_shift) + offset), destination, size);
+    core((0x0e000000 + (sector << Flash_ChipUnknown.sector_shift) + offset), destination, size);
 }

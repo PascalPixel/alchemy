@@ -292,7 +292,7 @@ s32 Inventory_Remove(s32 owner, s32 slot)
             s32 i;
 
             inv->inventory[slot] = 0;
-            list = (s16 *)inv->inventory;
+            list = inv->inventory;
             count = 0;
             for (i = 0; i < 15; i++) {
                 if (list[i] != 0)

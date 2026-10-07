@@ -147,7 +147,7 @@ next:
             if ((*repeat & KEY_UP) != 0) {
                 slot = (slot - 1) & 3;
             }
-            if ((*(volatile u32 *)&gKeysRepeat & KEY_DOWN) != 0) {
+            if ((* &gKeysRepeat & KEY_DOWN) != 0) {
                 slot = (slot + 1) & 3;
             }
             if ((*(volatile u32 *)&gKeysRepeat & KEY_LEFT) != 0) {
@@ -173,7 +173,7 @@ next:
             if (slot == 1) {
                 break;
             }
-            if ((*(volatile u32 *)&gKeysRepeat & KEY_L) != 0) {
+            if ((* &gKeysRepeat & KEY_L) != 0) {
                 ent[slot].animation--;
                 if (ent[slot].animation < 0) {
                     ent[slot].animation = 0;
@@ -305,9 +305,9 @@ next:
         if ((*repeat & KEY_SELECT) != 0) {
             Scheduler_ResetTaskTable();
             if ((*held & KEY_B) != 0) {
-                RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
+                RuntimeDispatch_ReturnZero(&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
             } else {
-                RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
+                RuntimeDispatch_ReturnZero(&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
             }
             goto restart;
         }

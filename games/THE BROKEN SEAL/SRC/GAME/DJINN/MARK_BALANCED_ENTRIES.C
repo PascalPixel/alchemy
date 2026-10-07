@@ -218,7 +218,7 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
     s32 balanced;
 
     work = gMenuWork;
-    Djinn_CountTurns((u8 *)counts);
+    Djinn_CountTurns(counts);
     counts[from] -= 1;
     counts[to] += 1;
     balanced = 1;

@@ -83,7 +83,7 @@ s32 Shop_MsgByMode(s32 value)
     s8 mode = gMenuWork->party_action;
 
     if (mode == 1) {
-        value += (u32)MsgCurePoisonService - (u32)MsgReviveService;
+        value += MsgCurePoisonService - MsgReviveService;
     }
     if (mode == 2) {
         value += (u32)MsgExorcismService - (u32)MsgReviveService;
@@ -137,7 +137,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct RenderOutput *cursor_anchor;
 
     Shop_InitializeCursorWork();
-    shop = ((struct ShopRuntime *)gMenuWork);
+    shop = (gMenuWork);
     shop->party_action = list_window;
 
     {
@@ -206,7 +206,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
 s32 Sanctum_RunPartyService(void)
 {
-    struct ShopRuntime *shop = ((struct ShopRuntime *)gMenuWork);
+    struct ShopRuntime *shop = (gMenuWork);
     s32 price_window;
     s32 redraw;
     s32 kind;

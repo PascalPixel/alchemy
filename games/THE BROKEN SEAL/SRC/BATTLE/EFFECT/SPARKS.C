@@ -126,7 +126,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != SparkGroups_Shapes[work->effect->variant * 5 + 1] * 8 + 56; frame++) {
-        struct CameraWork *camera = *(struct CameraWork **)(gWorkSlot + 12);
+        struct CameraWork *camera = *(gWorkSlot + 12);
 
         if (work->effect->variant == 2 && frame <= 51) {
             if (work->effect->side == 0)

@@ -244,7 +244,7 @@ s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
             break;
         }
         next_timer = (u32)(Engine_RandomNext() * 80) >> 0x10;
-        effect->action_timer = (s16)next_timer;
+        effect->action_timer = next_timer;
         if (next_timer != 0) {
             goto decrement_timer;
         }
@@ -543,7 +543,7 @@ void FieldScene_RunStagedGroupSequence(void)
     work = gEventWork;
     Engine_EventBegin();
     if (GameFlag_IsSet(0x910) != 0 && GameFlag_IsSet(0x911) == 0) {
-        Event_CallWithLastActiveObjectId((s32)KareiMachi_StagedGroupScript);
+        Event_CallWithLastActiveObjectId(KareiMachi_StagedGroupScript);
         Actor_SetPosition(20, PIXELS(252), PIXELS(272));
         Actor_SetPosition(27, PIXELS(284), PIXELS(264));
         Actor_SetPosition(28, PIXELS(284), PIXELS(280));
@@ -556,7 +556,7 @@ void FieldScene_RunStagedGroupSequence(void)
         Actor_SetPosition(21, PIXELS(364), PIXELS(272));
         Audio_PlayCue(17);
         Ui_SetRenderResultFromObject(20);
-        UiText_ShowCenteredMessage((s32)MsgKareiOkListeningLets, 1, 0);
+        UiText_ShowCenteredMessage(MsgKareiOkListeningLets, 1, 0);
         Audio_PlayCue(9);
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -692,7 +692,7 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorSetAnimationAndWait(21, ANIM_NOD);
         Actor_FaceDirection(21, FACING_EAST, 0);
         Actor_SetSpeed(20, 0x19999, 0xcccc);
-        Object_SetActionCallbackAndRefreshById(20, (s32)KareiMachi_DanceScriptB);
+        Object_SetActionCallbackAndRefreshById(20, KareiMachi_DanceScriptB);
         Actor_WalkToAndWait(20, 228, 296);
         Actor_FaceDirection(20, FACING_NORTH, 40);
         Actor_WalkToAndWait(20, 212, 296);
@@ -738,7 +738,7 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorRunRepeatedMotion(30, 1);
         Engine_EventSetMessage(message + 6);
         Event_ShowMessageAndWait(30, 0, 10);
-        Scheduler_RemoveCallback((u32)((s32)KareiMachi_AlternateDance));
+        Scheduler_RemoveCallback(((s32)KareiMachi_AlternateDance));
         Engine_ActorStop(20);
         Engine_ActorStop(21);
         Engine_TaskWait(1);
@@ -1331,7 +1331,7 @@ void KareiMachi_SpeedUpActors(s32 a0, s32 a1)
     }
     Actor_SetSpeed(20, 0x19999, 0xcccc);
     Actor_SetSpeed(21, 0x19999, 0xcccc);
-    ((s32 (*)())Engine_TaskAddCallback)((s32)KareiMachi_AlternateDance, 3200);
+    ((s32 (*)())Engine_TaskAddCallback)(KareiMachi_AlternateDance, 3200);
 }
 
 void KareiMachi_AlternateDance(void)
@@ -1813,7 +1813,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     exitActions = KareiMachi_Data03;
     Engine_ActorEnableActionCallback(ACTOR_GERALD, exitActions);
     Engine_ActorEnableActionCallback(ACTOR_IVAN, (s32)exitActions);
-    Object_SetActionCallbackAndRefreshById(3, (s32)exitActions);
+    Object_SetActionCallbackAndRefreshById(3, exitActions);
     Camera_MoveTo(0x19a0000, -1, 0x12c0000, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 416, 312);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 312);
@@ -1868,10 +1868,10 @@ void FieldScene_RunLateSequence(void)
     s32 k;
 
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    idx = (s32)((u32)leader->facing >> 12);
+    idx = (leader->facing >> 12);
     a = leader->x.part.pixel;
     w = KareiMachi_Data01[idx];
-    block = SceneActor_FindActorAtCell((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s32)(s16)w) >> 4);
+    block = SceneActor_FindActorAtCell((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s16)w) >> 4);
     if (block != NULL) {
         zero = 0;
         block->terrain_id = 2;
@@ -2049,7 +2049,7 @@ void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p)
     b = p->f28;
     p->f24 = a - a / 256;
     p->f28 = b - b / 16;
-    { s32 t = *(u16 *)h; t -= 1; *(u16 *)h = t; }
+    { s32 t = *(u16 *)h; t -= 1; *h = t; }
 }
 
 void FieldScene_RunSupplementalSequenceOne(s32 a0)
@@ -2090,19 +2090,19 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
     p8 = a2;
     value = Engine_RandomNext();
     rec7 = (u8 *)Engine_ObjectCreate(222, (a0 + -0x80000), (((((u32)(value << 3) >> 16) << 16) + a1) + 0x100000), p8);
-    if ((s32)rec7 != 0) {
+    if (rec7 != 0) {
         rec7[85] = (mask = 0);
-        link = (u8 *)*(s32 *)((s32)rec7 + 80);
+        link = (u8 *)*(s32 *)(rec7 + 80);
         mask -= 13;
         link[9] = ((link[9] & mask) | 8);
         ObjectGroup_SetChildValue((s32)rec7, 9);
         Engine_ActorSetSpriteFlags((s32)rec7, 0);
         value = Random_Next();
-        *(s32 *)((s32)rec7 + 36) = ((((u32)(value << 1) >> 16) - 1) << 16);
+        *(s32 *)(rec7 + 36) = ((((u32)(value << 1) >> 16) - 1) << 16);
         value = Random_Next();
-        *(s32 *)((s32)rec7 + 40) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
+        *(s32 *)(rec7 + 40) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
         {
-            u16 *target = (u16 *)((s32)rec7 + 100);
+            u16 *target = (u16 *)(rec7 + 100);
             u16 shown = 20;
 
             *target = shown;

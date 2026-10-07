@@ -131,7 +131,7 @@ void Battle_Reset(void)
         runtime->unknown_1da = 0xFFFF;
         runtime->unknown_1dc = -1;
         runtime->unknown_1de = -1;
-        Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 3200);
+        Scheduler_AddOrUpdateCallback(Battle_UpdateModeFromShoulderButtons, 3200);
         GameFlag_ClearBitFar(0x132);
         runtime->object_id = gGameState.selected_actor;
         runtime->unknown_1f8 = zero;

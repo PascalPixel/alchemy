@@ -25,7 +25,7 @@ struct PlacementTable {
 
 s32 BattleUnit_TickReflect(s32 id)
 {
-    u8 *value = (u8 *)&((struct BattleUnit *)Owner_GetState(id))->reflect;
+    u8 *value = &((struct BattleUnit *)Owner_GetState(id))->reflect;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {

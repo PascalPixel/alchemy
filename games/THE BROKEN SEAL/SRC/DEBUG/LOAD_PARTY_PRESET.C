@@ -62,7 +62,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
         Party_AddActiveOwnerFar(owner);
         Party_AdvanceOwnerCountToTargetFar(owner, Debug_PartyPresets[row].level);
-        state = (struct BattleUnit *)Owner_GetStateFar(owner);
+        state = Owner_GetStateFar(owner);
         for (i = 0; i < 4; i++) {
             state->djinn_owned_counts[i] = 0;
             state->djinn_active_counts[i] = 0;

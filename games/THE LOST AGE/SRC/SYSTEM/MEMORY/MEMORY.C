@@ -20,7 +20,7 @@ void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
             REG_DMA3);
-    Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
+    Dma_Set(Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
             REG_DMA3);
     /* FAKEMATCH: the do-while keeps the backdrop store's value before its address. */
     do {
@@ -53,13 +53,13 @@ void Ui_LoadWindowGraphics(void)
         pal++;
         *pal = color;
     }
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
+    Dma_Set(System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
             REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
+    Dma_Set(System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
@@ -135,7 +135,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
     kind_offset = kind;
     cached_address = *(u32 *)((u8 *)allocator_state + kind_offset);
     if (cached_address == 0) {
-        aligned_size = (u32)size + 3;
+        aligned_size = size + 3;
         address = allocator_state[0];
         /* FAKEMATCH: load the heap head before shifting the alignment value. */
         __asm__("" : : "r"(address), "r"(aligned_size));
@@ -180,7 +180,7 @@ void *Runtime_BumpAllocate(s32 size)
     /* FAKEMATCH: the r4 bound capture preserves the heap/head registers. */
     register u32 held asm("r4");
 
-    words = (u32)size + 3;
+    words = size + 3;
     address = state[1];
     /* FAKEMATCH: keep the unshifted value and incoming size live through the heap-head load. */
     __asm__("" : : "r"(address), "r"(words), "r"(size));
@@ -188,11 +188,11 @@ void *Runtime_BumpAllocate(s32 size)
     /* FAKEMATCH: capture the bound before the final alignment shift. */
     __asm__("" : "=r"(held), "+r"(words) : "0"((u32)(Ram_IwramHeapEnd - 1)));
     limit = held;
-    size = (s32)(words << 2);
-    next = address + (u32)size;
+    size = (words << 2);
+    next = address + size;
     if (next > limit) {
         address = state[0];
-        other = address + (u32)size;
+        other = address + size;
         if (other >= 0x02040000U) {
             return NULL;
         }
@@ -212,16 +212,16 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
     u32 address;
     u32 words;
 
-    words = (u32)size + 3;
+    words = size + 3;
     address = state[0];
     /* FAKEMATCH: keep the unshifted value and incoming size live through the heap-head load. */
     __asm__("" : : "r"(address), "r"(words), "r"(size));
     words >>= 2;
-    size = (s32)(words << 2);
-    next = address + (u32)size;
+    size = (words << 2);
+    next = address + size;
     if (next >= 0x02040000U) {
         address = state[1];
-        other = address + (u32)size;
+        other = address + size;
         if (other > (u32)(Ram_IwramHeapEnd - 1)) {
             return NULL;
         }

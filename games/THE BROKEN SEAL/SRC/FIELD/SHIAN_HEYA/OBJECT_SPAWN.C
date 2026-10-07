@@ -16,7 +16,7 @@ void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
     struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
     if (object != NULL) {
-        ((struct FieldSpritePriority *)object->sprite)->priority = 0;
+        (object->sprite)->priority = 0;
         object->motion_flags = 0;
         object->collision_flags = 8;
         Engine_ActorSetSpriteFlags(object, 0);
@@ -32,7 +32,7 @@ void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type)
     struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
     if (object != NULL) {
-        ((struct FieldSpritePriority *)object->sprite)->priority = 1;
+        (object->sprite)->priority = 1;
         object->motion_flags = 0;
         object->collision_flags = 8;
         Engine_ActorSetSpriteFlags(object, 0);

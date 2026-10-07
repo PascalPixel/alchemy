@@ -85,9 +85,9 @@ void BattleFx_RunBouncingSheep(void *object)
             member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-            record[0] = *(s32 *)((u8 *)member_object + 8);
+            record[0] = *(s32 *)(member_object + 8);
             record[1] = 160 << 14;
-            record[2] = *(s32 *)((u8 *)member_object + 16);
+            record[2] = *(s32 *)(member_object + 16);
             SceneTransform_ApplyPosition(record);
             if (frame == member * 16 + 64)
                 ObjectGroup_UpdateMembers(work->effect->actors[member], 0, 5, -1, 0);

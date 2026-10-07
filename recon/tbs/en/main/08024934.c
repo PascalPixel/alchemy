@@ -9,7 +9,9 @@
  * (native stores page first, the draft row first); the draw loop's scan
  * as standby[element] < summon->djinn_required[element] 161; five
  * minutes of permute found nothing below 154 (from 198 its 188 was the
- * page order plus noise temporaries). Remaining at
+ * page order plus noise temporaries); the cleanup loop with index <= 3
+ * 154, counted down over handles[3 - index] 152 (its two inits in
+ * native's order, but not a shape anyone writes, not kept). Remaining at
  * 154, in order: scheduling at the start (mask stored before counts, the
  * window call's stack argument late); the handle loop walks a pointer
  * where native has base r7, offset from 8 and mask r8; count - 1 built

@@ -1,12 +1,14 @@
-/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 209 of 920 (draft 921, common 816) with --symbol Func_020003cc.
- * Remaining: the help exit (WaitFrames(300), far jump to the menu head) sits right after the v6 != 0 test where the native keeps it after the page loop, so the password page's B exit lands after it and the native's branch over the test is missing; both link wait loops load 3 into r3 each pass where the native keeps the mask in a register (r5 = v5 in the greeting loop, 2 bytes the draft lacks before the case-4/5 pool; r1 caller-saved at [sp, #8] in the transfer loop, with the result in r4 at [sp, #4]); with v5 as the greeting-loop mask, v5 loses r5 to count (allocno 44 ranks before 41) and takes r4 with a caller save, and the save splits the loop entry (398); the glyph loop builds rec7 * 12 in r3 and copies it to x in r2, and shifts the row in place, where the native copies the row call's r0 to r3 and shifts there and builds x in r2; the record-select and case-1 stores put their 0x1c0/0x1c4 constants in other registers. Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
+/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 177 of 920 (draft 923, common 833) with --symbol Func_020003cc.
+ * Remaining: the LEFT and RIGHT page arms each call Func_02001e6e where the native cross-jumps LEFT into RIGHT's mov r1, r8 / bl (one shared call after the arms: 195); both link wait loops load 3 into r3 each pass where the native keeps the mask in a register (r5 = v5 in the greeting loop, 2 bytes the draft lacks before the case-4/5 pool; r1 caller-saved at [sp, #8] in the transfer loop, with the result in r4 at [sp, #4]); with v5 as the greeting-loop mask, v5 loses r5 to count (allocno 44 ranks before 41) and takes r4 with a caller save, and the save splits the loop entry (398); the glyph loop builds rec7 * 12 in r3 and copies it to x in r2, and shifts the row in place, where the native copies the row call's r0 to r3 and shifts there and builds x in r2; the record-select and case-1 stores put their 0x1c0/0x1c4 constants in other registers. Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
  * Trials (2026-10-07, session 2):
  * - 231 -> 221: the greetings stored as plain u16 through gSerialTransfer.payload and a 12-halfword peer row: the native's 0x30 is a pool load (thumb_movhi_insn takes a HImode constant through its "mn" alternative), and the struct stores expanded to an and/ior word update; the case-4/5 pool now sits after the greeting loop as native.
  * - 221 -> 221: gKeyState (volatile s32) and gLinkStatus (volatile u16) by name instead of raw addresses, as the native's relocations show; no change in code, kept.
  * - 221 -> 213: the page dots' x as v7 + 18 - page_count instead of a second counter: loop.c's giv makes the native's negs/adds start value.
  * - 213 -> 211: v7 as the page-dot counter: CSE keeps v7 (last use later than page's) in value = v7 + 0xf30b, as native.
  * - 211 -> 209: the glyph loop as for (v7 = page * 50, n = 0; v7 != v6; v7++, n++), comparing v7 with v6 at entry as native.
- * - no gain: v5 as the greeting-loop mask (399; with v7 as the transfer counter 395); v7 as the transfer counter alone (495); the row call into v3 shifted in place, in each arm or after (356).
+ * - 209 -> 181: the password section as if (v6 == 0) { ... } instead of an empty then-arm with an else: jump.c no longer pulls the help exit up before the page loop, so it sits after it and the B exit before the test, as native.
+ * - 181 -> 177: the save data pointer kept in a local (r5 from before the first call, as native) for the three calls, the two checksum bytes still stored through the array (through the pointer they fold to [r3, #1]: 186).
+ * - no gain: v5 as the greeting-loop mask (399; with v7 as the transfer counter 395); v7 as the transfer counter alone (495); the row call into v3 shifted in place, in each arm or after (356); one Func_02001e6e call after the LEFT and RIGHT arms, v7 = 1 before or after it (195).
  * Trials (2026-10-07):
  * - 463 -> 350: the glyph counter n apart from the link result v4, and password[v7] & 63 passed directly: v3 no longer conflicts with r3, the link result takes a caller-saved register, and page gets r11 with the encoded size in r9 and the page window in r10, as native.
  * - 350 -> 332: the missed-frame count kept in v5 (r5, as native).
@@ -563,23 +565,24 @@ s32 SaveMenu_Run(void)
     Func_02001d2e(v6, 2);
     goto L_020004a8;
     L_020009cc:;
-    if (v6 != 0) {
-    } else {
+    if (v6 == 0) {
         L_020009d2:;
         v6 = Value1(Func_020093d4, 1);
 
         if (v6 == -1) {
             goto L_020007dc;
         }
-        encoded_size = Value3(Func_020017d2, 0, v6, save_data);
         {
-            s16 sum = Func_02001cbe(encoded_size, save_data);
+            u8 *data = save_data;
+            s16 sum;
 
+            encoded_size = Value3(Func_020017d2, 0, v6, data);
+            sum = Func_02001cbe(encoded_size, data);
             save_data[encoded_size] = (u16)sum >> 8;
             save_data[encoded_size + 1] = sum;
             encoded_size += 2;
+            encoded_size = Value3(Func_02001bf8, data, encoded_size, password);
         }
-        encoded_size = Value3(Func_02001bf8, save_data, encoded_size, password);
         v6 = 2;
         Func_02001d6e();
         page_window = Func_02001dae(5, 4, 20, 12, v6);

@@ -8,13 +8,13 @@ s32 Func_02000ba4();
 s32 Inventory_PromptAndSetObjectMode();
 s32 Battle_WaitMode0();
 s32 Func_02000b3c();
-extern u8 MsgSoIHearYouCaught[];
+extern u8 MsgScene666No74[];
 
 void Func_020004f4(s32 a0)
 {
     s32 t3;
 
-    Call1(Func_02000b24, (s32)MsgSoIHearYouCaught);
+    Call1(Func_02000b24, (s32)MsgScene666No74);
     Call2(UiText_OpenMessageAtObject, a0, 0);
     t3 = Value2(Inventory_PromptAndSetObjectMode, Func_02000ba4(), 0);
     if (t3 == 0) {

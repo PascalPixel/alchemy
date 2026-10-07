@@ -13,6 +13,7 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_MOTION.H"
 #include "FIXED_MATH.H"
+#include "BATTLE_SESSION.H"
 
 #define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
 #define Object_SetPosition ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
@@ -112,4 +113,43 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 slot)
             WaitFrames(10);
         }
     }
+}
+
+struct SlotMotionRecord {
+    u8 unknown_00[12];
+    s32 height;
+};
+
+s32 Camera_ApplyTransformByFlag(void);
+s32 Func_0811c37c(s32 owner);
+
+s32 Func_0811c2b4(s32 slot, s32 *screen)
+{
+    struct MotionObject *object = GetBattleObjectSlot(slot)->object;
+    struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+    s32 scale;
+    /* FAKEMATCH: an unused vector the size of the native frame. */
+    s32 unused[3];
+
+    Camera_ApplyTransformByFlag();
+    scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+    screen[1] -= Iwram_MulQ16(scale, Func_0811c37c(slot) >> 16);
+    return 0;
+}
+
+void *Owner_GetState(s32 owner);
+
+s32 Func_0811c314(s32 slot, s32 *screen)
+{
+    struct MotionObject *object = GetBattleObjectSlot(slot)->object;
+    struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+    s32 scale;
+
+    Camera_ApplyTransformByFlag();
+    scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+    if (Summon_IsEntryFlagged(*(u16 *)((u8 *)Owner_GetState(slot) + 0x14a)) != 0)
+        screen[1] -= Iwram_MulQ16(scale, 24);
+    else
+        screen[1] -= Iwram_MulQ16(scale, 48);
+    return 0;
 }

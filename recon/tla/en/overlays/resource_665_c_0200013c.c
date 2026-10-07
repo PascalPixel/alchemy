@@ -9,8 +9,8 @@ s32 Func_02001d34();
 s32 Inventory_PromptAndSetObjectMode();
 s32 GameFlag_SetBit();
 s32 Func_02001c8c();
-extern u8 MsgIHearTheTidalWave[];
-extern u8 MsgIGuessWhatThoseMen[];
+extern u8 MsgScene665No03[];
+extern u8 MsgScene665No04[];
 
 void Func_0200013c(s32 a0)
 {
@@ -19,7 +19,7 @@ void Func_0200013c(s32 a0)
 
     t0 = Value1(GameFlag_Test, 0x8b0);
     if (t0 == 0) {
-        Call1(Func_02001c74, (s32)MsgIHearTheTidalWave);
+        Call1(Func_02001c74, (s32)MsgScene665No03);
         Call2(UiText_OpenMessageAtObject, a0, 0);
         t4 = Value2(Inventory_PromptAndSetObjectMode, Func_02001d34(), 0);
         if (t4 == 0) {
@@ -30,7 +30,7 @@ void Func_0200013c(s32 a0)
         }
         Call2(Func_02001c8c, a0, 0);
     } else {
-        Call1(Func_02001c74, (s32)MsgIGuessWhatThoseMen);
+        Call1(Func_02001c74, (s32)MsgScene665No04);
         Call2(Func_02001c8c, a0, 0);
     }
 }

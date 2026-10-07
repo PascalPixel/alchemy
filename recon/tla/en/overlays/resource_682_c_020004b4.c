@@ -9,8 +9,8 @@ s32 Func_02002bb4();
 s32 Inventory_PromptAndSetObjectMode();
 s32 Battle_WaitMode0();
 s32 Func_02002af4();
-extern u8 MsgBriggsTookALongTime[];
-extern u8 MsgYouVeTheLookOf[];
+extern u8 MsgScene682No30[];
+extern u8 MsgScene682No05[];
 
 void Func_020004b4(s32 a0)
 {
@@ -20,7 +20,7 @@ void Func_020004b4(s32 a0)
 
     t0 = Value1(GameFlag_Test, 0x97f);
     if (t0 != 0) {
-        Call1(Func_02002adc, (s32)MsgBriggsTookALongTime);
+        Call1(Func_02002adc, (s32)MsgScene682No30);
         Call2(UiText_OpenMessageAtObject, a0, 0);
         t4 = Value2(Inventory_PromptAndSetObjectMode, Func_02002bb4(), 0);
         if (t4 == 0) {
@@ -32,7 +32,7 @@ void Func_020004b4(s32 a0)
         }
         Call2(Func_02002af4, a0, 0);
     } else {
-        Call1(Func_02002adc, (s32)MsgYouVeTheLookOf);
+        Call1(Func_02002adc, (s32)MsgScene682No05);
         Call2(UiText_OpenMessageAtObject, a0, 0);
         t13 = Value2(Inventory_PromptAndSetObjectMode, Func_02002bb4(), 0);
         if (t13 == 0) {

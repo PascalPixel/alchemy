@@ -39,7 +39,7 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 Event_FinishScreenTransition();
 s32 Func_02005934();
 s32 Func_0200581c();
-extern u8 MsgWeDidItWeBeat[];
+extern u8 MsgWeDidItWe[];
 extern u8 Data_02005ff8[];
 extern u8 Data_02006088[];
 extern u8 Data_02005ff0[];
@@ -120,7 +120,7 @@ void Func_02002ae4(void)
     Call4(Motion_CamBounds, 0x2080000, 0x680000, 0x1380000, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Call1(Func_020058c4, (s32)MsgWeDidItWeBeat);
+    Call1(Func_020058c4, (s32)MsgWeDidItWe);
     Call2(Object_SetModeById, 7, 4);
     Call1(Battle_WaitMode0, 0x21);
     Call3(Func_020058d4, 7, 0, 0);

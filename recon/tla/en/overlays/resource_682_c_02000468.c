@@ -8,13 +8,13 @@ s32 Func_02002bb4();
 s32 Inventory_PromptAndSetObjectMode();
 s32 Battle_WaitMode0();
 s32 Func_02002af4();
-extern u8 MsgHeyYouJustCameTo[];
+extern u8 MsgScene682No29[];
 
 void Func_02000468(s32 a0)
 {
     s32 t3;
 
-    Call1(Func_02002adc, (s32)MsgHeyYouJustCameTo);
+    Call1(Func_02002adc, (s32)MsgScene682No29);
     Call2(UiText_OpenMessageAtObject, a0, 0);
     t3 = Value2(Inventory_PromptAndSetObjectMode, Func_02002bb4(), 0);
     if (t3 == 0) {

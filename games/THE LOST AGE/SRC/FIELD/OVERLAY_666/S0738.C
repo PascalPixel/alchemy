@@ -31,7 +31,7 @@ s32 ObjectMotion_EnableActionAndResetMotion();
 s32 Func_02000aec();
 s32 Func_02000bdc();
 s32 Func_02000a9c();
-extern u8 MsgLegendsSaidThatCrossboneIsle[];
+extern u8 MsgScene666No120[];
 extern u8 Data_02000be4[];
 
 void Func_02000738(void)
@@ -48,7 +48,7 @@ void Func_02000738(void)
             Call1(GameFlag_SetBit, 0x903);
             Func_02000a94();
             Call1(Func_02000b8c, 0);
-            Call1(Func_02000b24, (s32)MsgLegendsSaidThatCrossboneIsle);
+            Call1(Func_02000b24, (s32)MsgScene666No120);
             Call3(ObjectMotion_SetPositionAndReset, 4, 0x1f8, 0x148);
             Call2(Func_02000b4c, 4, 0x8000);
             Call4(Motion_CamBounds, 0x1980000, -1, 0x1480000, 1);
@@ -59,7 +59,12 @@ void Func_02000738(void)
             Call3(Func_02000b34, 0x1f, 0, 5);
             Func_02000b5c(0x20, 0x100, 0x1e);
             Call3(Func_02000b34, 0x20, 0, 5);
-            Call3(Func_02000b5c, 0x1f, 0x109, 0x1e);
+            {
+                s32 b = 0x109, c = 0x1e;
+                /* FAKEMATCH: the native schedule sets the first argument last. */
+                __asm__ volatile("" : "+l"(b), "+l"(c));
+                Call3(Func_02000b5c, 0x1f, b, c);
+            }
             Call3(Func_02000b34, 0x1f, 0, 5);
             Func_02000b5c(0x20, 0x102, 0x1e);
             Call3(Func_02000b34, 0x20, 0, 5);

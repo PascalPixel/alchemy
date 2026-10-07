@@ -8,13 +8,13 @@ s32 Func_02002bb4();
 s32 Inventory_PromptAndSetObjectMode();
 s32 Battle_WaitMode0();
 s32 Func_02002af4();
-extern u8 MsgTheChampaSailorsArenT[];
+extern u8 MsgScene682No11[];
 
 void Func_02000590(s32 a0)
 {
     s32 t3;
 
-    Call1(Func_02002adc, (s32)MsgTheChampaSailorsArenT);
+    Call1(Func_02002adc, (s32)MsgScene682No11);
     Call2(UiText_OpenMessageAtObject, a0, 0);
     t3 = Value2(Inventory_PromptAndSetObjectMode, Func_02002bb4(), 0);
     if (t3 == 0) {

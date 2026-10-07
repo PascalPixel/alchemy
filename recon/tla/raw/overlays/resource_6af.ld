@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_6af_overlay.o"(.text.x0200807e)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PREPARE_OBJECT.o"(.text)
         "*/resource_6af_overlay.o"(.text.x020080ce)
-        "*/resource_6af_overlay.o"(.text.x020080d0)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6AF/S00D0.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_6af_overlay.o"(.text.x0200815a)
         "*/resource_6af_overlay.o"(.text.x0200815c)

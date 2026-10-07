@@ -11,7 +11,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 a, s32 b);
 void Battle_WaitMode0(s32 a);
 void Func_02000a28(s32 a, s32 b);
 void Func_020009b8(void);
-extern u8 MsgDoYouLikeChildrenS[];
+extern u8 MsgScene677No10[];
 
 void Func_02000244(void)
 {
@@ -19,7 +19,7 @@ void Func_02000244(void)
 
     Func_020009b0();
     Call1(Func_02000a50, 0);
-    Call1(Func_02000a18, (s32)MsgDoYouLikeChildrenS);
+    Call1(Func_02000a18, (s32)MsgScene677No10);
     Call2(UiText_OpenMessageAtObject, 9, 0);
     t5 = Value2(Inventory_PromptAndSetObjectMode, Func_02000a58(), 0);
     if (t5 == 0) {

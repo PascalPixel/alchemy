@@ -10,8 +10,8 @@ s32 Func_0200451c();
 s32 Func_02004534();
 s32 Func_0200446c();
 extern u8 gPartyState[];
-extern u8 MsgIMissRunningAroundOutside[];
-extern u8 MsgThatBlizzardWasUnrealBut[];
+extern u8 MsgScene6A8No114[];
+extern u8 MsgScene6A8No118[];
 
 void Func_020007f4(void)
 {
@@ -23,9 +23,9 @@ void Func_020007f4(void)
     FIELD_AT((t0 + 0x63), u8, 0) = 1;
     if (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x166), s16, 0) == 0) {
         Call3(ObjectMotion_SetAngleToward, 0x11, FIELD_AT(gPartyState, s32, 532), 0);
-        Call1(Func_0200451c, (s32)MsgIMissRunningAroundOutside);
+        Call1(Func_0200451c, (s32)MsgScene6A8No114);
     } else {
-        Call1(Func_0200451c, (s32)MsgThatBlizzardWasUnrealBut);
+        Call1(Func_0200451c, (s32)MsgScene6A8No118);
     }
     Call2(Func_02004534, 0x11, 0);
     if (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x166), s16, 0) == 0) {

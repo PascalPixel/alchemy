@@ -10,8 +10,8 @@ s32 Func_0200451c();
 s32 Func_02004534();
 s32 Func_0200446c();
 extern u8 gPartyState[];
-extern u8 MsgIfIMGoingTo[];
-extern u8 MsgYouGetMoreExerciseRunning[];
+extern u8 MsgScene6A8No115[];
+extern u8 MsgScene6A8No119[];
 
 void Func_02000884(void)
 {
@@ -23,9 +23,9 @@ void Func_02000884(void)
     FIELD_AT((t0 + 0x63), u8, 0) = 1;
     if (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x166), s16, 0) == 0) {
         Call3(ObjectMotion_SetAngleToward, 0x12, FIELD_AT(gPartyState, s32, 532), 0);
-        Call1(Func_0200451c, (s32)MsgIfIMGoingTo);
+        Call1(Func_0200451c, (s32)MsgScene6A8No115);
     } else {
-        Call1(Func_0200451c, (s32)MsgYouGetMoreExerciseRunning);
+        Call1(Func_0200451c, (s32)MsgScene6A8No119);
     }
     Call2(Func_02004534, 0x12, 0);
     if (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x166), s16, 0) == 0) {

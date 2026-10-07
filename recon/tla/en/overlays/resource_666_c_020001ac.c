@@ -7,7 +7,7 @@ s32 Func_02000bc4();
 s32 Func_02000b24();
 s32 Func_02000b3c();
 extern u8 gPartyState[];
-extern u8 MsgDonTMentionTheTidal[];
+extern u8 MsgScene666No14[];
 
 void Func_020001ac(s32 a0)
 {
@@ -17,7 +17,7 @@ void Func_020001ac(s32 a0)
     if ((((FIELD_AT(t0, u16, 6) + 0x2000) & -16384) << 16) == -1073741824) {
         Call2(Func_02000bc4, 9, a0);
     } else {
-        Call1(Func_02000b24, (s32)MsgDonTMentionTheTidal);
+        Call1(Func_02000b24, (s32)MsgScene666No14);
         Call2(Func_02000b3c, a0, 0);
     }
 }

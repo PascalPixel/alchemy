@@ -16,6 +16,7 @@ extern u8 gPartyState[];
 void Func_020000d0(void)
 {
     s32 t0;
+    s32 actor = FIELD_AT(gPartyState, s32, 532);
 
     t0 = Value1(GameFlag_Test, 0x200);
     if (t0 == 0) {
@@ -24,8 +25,8 @@ void Func_020000d0(void)
     }
     Func_02001380();
     Call1(Func_020013f8, 0);
-    Call3(ObjectMotion_SetPositionAndReset, FIELD_AT(gPartyState, s32, 532), 0x78, 0x98);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0x4000, 0);
+    Call3(ObjectMotion_SetPositionAndReset, actor, 0x78, 0x98);
+    Call3(ObjectMotion_ArmCallback, actor, 0x4000, 0);
     Func_020001e4();
     Func_02001388();
 }

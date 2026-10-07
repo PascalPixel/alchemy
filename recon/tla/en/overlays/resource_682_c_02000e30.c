@@ -3,7 +3,6 @@
 
 #include "CALL.H"
 s32 GameFlag_Test();
-s32 .L_0200a99e();
 s32 GameFlag_SetBit();
 s32 Func_02002a44();
 s32 Func_02002b64();
@@ -40,7 +39,7 @@ s32 Func_02000d4c();
 s32 Func_02000e04();
 s32 ObjectMotion_ResetAndSetPosition();
 s32 Func_02002a4c();
-extern u8 MsgISeeYouVeCaught[];
+extern u8 MsgScene682No25[];
 extern u8 gPartyState[];
 
 void Func_02000e30(void)
@@ -62,12 +61,12 @@ void Func_02000e30(void)
 
     t0 = Value1(GameFlag_Test, 0x970);
     if (t0 == 0) {
-        .L_0200a99e();
+        return;
     }
     Call1(GameFlag_SetBit, 0x971);
     Func_02002a44();
     Call1(Func_02002b64, 0);
-    Call1(Func_02002adc, (s32)MsgISeeYouVeCaught);
+    Call1(Func_02002adc, (s32)MsgScene682No25);
     Call3(ObjectMotion_SetSpeedParameters, 0x19, 0xcccc, 0x6666);
     Call3(ObjectMotion_SetSpeedParameters, 0x1a, 0x10000, 0x8000);
     Call3(ObjectMotion_SetSpeedParameters, 0x1b, 0x10000, 0x8000);
@@ -76,7 +75,12 @@ void Func_02000e30(void)
     Call3(Func_02002a9c, 0x1b, 0xa80000, 0x2680000);
     Call1(Func_02002bc4, 0x4e);
     Call2(Func_02002af4, 0x19, 0);
-    Call3(Func_02002b1c, 4, 0x101, 0x14);
+    {
+        s32 b = 0x101, c = 0x14;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 4, b, c);
+    }
     Call3(ObjectMotion_SetPositionAndReset, 4, 0x138, 0x268);
     Call4(Motion_CamBounds, 0x1380000, -1, 0x2580000, 1);
     Func_02002b3c();
@@ -89,7 +93,12 @@ void Func_02000e30(void)
     Call4(Func_02002b74, 6, -16, 0x10, 0xc000);
     Call4(Func_02002b74, 0x1c, -32, 0, 0xd000);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0x1c);
-    Call3(Func_02002b1c, 6, 0x100, 0x1e);
+    {
+        s32 b = 0x100, c = 0x1e;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 6, b, c);
+    }
     Call2(Func_02002af4, 6, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
     Call1(Battle_WaitMode0, 0x14);
@@ -100,9 +109,9 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 0x1c, 0);
     Call3(ObjectMotion_ArmCallback, 0x1c, 0xd000, 0);
     Call2(Func_02002b04, 7, 0xc000);
-    Call3(Func_02002b1c, 7, 0x100, 0x1e);
+    Func_02002b1c(7, 0x100, 0x1e);
     Call2(Func_02002af4, 7, 0);
-    Call3(Func_02002b1c, 0x19, 0x101, 0x1e);
+    Func_02002b1c(0x19, 0x101, 0x1e);
     Call2(UiText_OpenMessageAtObject, 0x2019, 0);
     t42 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
     if (t42 == 0) {
@@ -117,20 +126,30 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 7, 0, 0);
     Call2(Func_02002b04, 4, 0x8000);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 7, 0x101, 0);
-    Call3(Func_02002b1c, 4, 0x101, 0);
-    Call3(Func_02002b1c, 0x1c, 0x101, 0x32);
-    Call3(Func_02002b1c, 5, 0x107, 0x1e);
+    {
+        s32 b = 0x101, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 7, b, c);
+    }
+    {
+        s32 b = 0x101, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 4, b, c);
+    }
+    Func_02002b1c(0x1c, 0x101, 0x32);
+    Func_02002b1c(5, 0x107, 0x1e);
     Call2(Func_02002af4, 0x2005, 0);
     Call3(ObjectMotion_ArmCallback, 0x1c, 0xd000, 0);
     Call3(ObjectMotion_ArmCallback, 7, 0xc000, 0);
     Call2(Func_02002b04, 4, 0xc000);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002b04, 0x19, 0x3000);
-    Call3(Func_02002b1c, 0x19, 0x109, 0x1e);
+    Func_02002b1c(0x19, 0x109, 0x1e);
     Call2(Func_02002af4, 0x2019, 0);
     Call1(Battle_WaitMode0, 5);
-    Call2(UiText_OpenMessageAtObject, 0x2019, 0);
+    UiText_OpenMessageAtObject(0x2019, 0);
     Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
     Call3(ObjectMotion_ArmCallback, 7, 0, 0);
     Call2(Func_02002b04, 0x1c, 0);
@@ -182,10 +201,30 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 0x1c, 0);
     Call3(ObjectMotion_SetPositionAndReset, 0x1a, 0x158, 0x268);
     Call1(Battle_WaitMode0, 5);
-    Call3(Func_02002b1c, 4, 0x102, 0);
-    Call3(Func_02002b1c, 5, 0x102, 0);
-    Call3(Func_02002b1c, 6, 0x102, 0);
-    Call3(Func_02002b1c, 7, 0x102, 0);
+    {
+        s32 b = 0x102, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 4, b, c);
+    }
+    {
+        s32 b = 0x102, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 5, b, c);
+    }
+    {
+        s32 b = 0x102, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 6, b, c);
+    }
+    {
+        s32 b = 0x102, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 7, b, c);
+    }
     Call3(Func_02002b1c, 0x1c, 0x102, 0x1e);
     Call2(Motion_SetVarCbAndRefresh, 6, 2);
     Call2(Func_02002af4, 6, 0);
@@ -215,10 +254,30 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 0x1c, 0x8000);
     Call3(ObjectMotion_SetPositionAndReset, 0x1b, 0xe8, 0x268);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 4, 0x101, 0);
-    Call3(Func_02002b1c, 5, 0x101, 0);
-    Call3(Func_02002b1c, 6, 0x101, 0);
-    Call3(Func_02002b1c, 7, 0x101, 0);
+    {
+        s32 b = 0x101, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 4, b, c);
+    }
+    {
+        s32 b = 0x101, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 5, b, c);
+    }
+    {
+        s32 b = 0x101, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 6, b, c);
+    }
+    {
+        s32 b = 0x101, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 7, b, c);
+    }
     Call3(Func_02002b1c, 0x1c, 0x101, 0x3c);
     Call3(Func_02002b1c, 0x19, 0x101, 0x1e);
     Call2(Func_02002af4, 0x2019, 0);
@@ -236,7 +295,12 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
     Call2(Func_02002b04, 6, 0);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 6, 0x103, 0);
+    {
+        s32 b = 0x103, c = 0;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 6, b, c);
+    }
     Call3(Func_02002b1c, 5, 0x103, 0x32);
     Call2(Func_02002b04, 0x19, 0x3000);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
@@ -258,7 +322,7 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 0x2019, 0);
     Call3(Func_02002b1c, 0x19, 0x105, 0x1e);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x1c, 0x106, 0x2a);
+    Func_02002b1c(0x1c, 0x106, 0x2a);
     Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, -16);
     Call2(Func_02002b04, 0x1c, 0xd000);
     Call2(Func_02002af4, 0x1c, 0);
@@ -320,7 +384,7 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 0x1b, 0);
     Call2(Func_02002b04, 0x19, 0x5000);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x1a, 0x105, 0x1e);
+    Func_02002b1c(0x1a, 0x105, 0x1e);
     Call2(Func_02002af4, 0x1a, 0);
     Call2(Func_02002b04, 0x19, 0x3000);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
@@ -346,7 +410,12 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 0x1c, 0x5000);
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 4);
     Call2(Func_02002af4, 0x201c, 0);
-    Call3(Func_02002b1c, 0x1a, 0x103, 0x2a);
+    {
+        s32 b = 0x103, c = 0x2a;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 0x1a, b, c);
+    }
     Call3(ObjectMotion_Launch, 0x1a, 6, 0xf);
     Call3(ObjectMotion_Launch, 0x1a, 6, 0x17);
     Call2(Func_02002af4, 0x1a, 0);
@@ -378,7 +447,7 @@ void Func_02000e30(void)
     Call3(Func_02002b1c, 6, 0x100, 0x14);
     Call2(Func_02002b04, 6, 0x8000);
     Call2(Func_02002af4, 0x2006, 0);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x1e);
+    Func_02002b1c(0x19, 0x108, 0x1e);
     Call2(Func_02002af4, 0x2019, 0);
     Call3(ObjectMotion_ArmCallback, 0x1a, 0xb000, 0);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0xd000, 0);
@@ -634,7 +703,12 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 6, 0);
     Call2(Motion_SetVarCbAndRefresh, 7, 2);
     Call2(Func_02002af4, 7, 0);
-    Call3(Func_02002b1c, 5, 0x100, 0x1e);
+    {
+        s32 b = 0x100, c = 0x1e;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 5, b, c);
+    }
     Call3(ObjectMotion_ArmCallback, 4, 0x6000, 0);
     Call2(Func_02002b04, 5, 0xa000);
     Call1(Battle_WaitMode0, 0xa);
@@ -672,7 +746,7 @@ void Func_02000e30(void)
     Call1(Battle_WaitMode0, 0x19);
     Call2(Func_02000c90, 5, 6);
     Call3(Func_02002b1c, 5, 0x101, 0);
-    Call3(Func_02002b1c, 6, 0x101, 0x28);
+    Func_02002b1c(6, 0x101, 0x28);
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
     Call2(Func_02002b04, 6, 0x8000);
     Call1(Battle_WaitMode0, 0xa);
@@ -688,20 +762,20 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 6, 0xe000);
     Call1(Battle_WaitMode0, 0xa);
     Call3(Func_02002b1c, 5, 0x107, 0);
-    Call3(Func_02002b1c, 6, 0x107, 0x1e);
+    Func_02002b1c(6, 0x107, 0x1e);
     Call11(Func_02000d4c, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
     Call2(Func_02002b04, 4, 0x6000);
     t613 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
     if (t613 == 0) {
         Call2(Func_02000e04, 5, 6);
         Call1(Battle_WaitMode0, 0xf);
-        Call3(Func_02002b1c, 0x1c, 0x102, 0x1e);
+        Func_02002b1c(0x1c, 0x102, 0x1e);
         Call2(Func_02002af4, 0x1c, 0);
         FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
     } else {
         Call2(Func_02000e04, 5, 6);
         Call1(Battle_WaitMode0, 0x23);
-        Call3(Func_02002b1c, 0x1c, 0x105, 0x1e);
+        Func_02002b1c(0x1c, 0x105, 0x1e);
         FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
         Call2(Func_02002af4, 0x1c, 0);
     }
@@ -724,7 +798,12 @@ void Func_02000e30(void)
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
     Call2(Func_02002af4, 0x1c, 0);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 0x1c, 0x101, 0x28);
+    {
+        s32 b = 0x101, c = 0x28;
+        /* FAKEMATCH: the native schedule sets the first argument last. */
+        __asm__ volatile("" : "+l"(b), "+l"(c));
+        Call3(Func_02002b1c, 0x1c, b, c);
+    }
     Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, -8);
     Call2(Func_02002b04, 0x1c, 0);
     Call1(Battle_WaitMode0, 5);

@@ -7,9 +7,9 @@ s32 GameFlag_SetBit();
 s32 Func_02000728();
 extern u8 gPartyState[];
 extern u8 MsgHelmBoostsPp[];
-extern u8 MsgBlank[];
-extern u8 MsgBlank2[];
-extern u8 MsgBlank3[];
+extern u8 MsgScene665No19[];
+extern u8 MsgScene682No52[];
+extern u8 MsgBlank5[];
 
 void Func_02000760(s32 a0, s32 a1)
 {
@@ -33,7 +33,7 @@ void Func_02000760(s32 a0, s32 a1)
             }
         }
     }
-    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank) {
+    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgScene665No19) {
         if (a1 == 0xa) {
             if ((FIELD_AT(t0, s32, 8) >> 19) == 0x21) {
                 Call1(GameFlag_SetBit, 0x308);
@@ -47,14 +47,14 @@ void Func_02000760(s32 a0, s32 a1)
             }
         }
     }
-    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank2) {
+    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgScene682No52) {
         if (a1 == 0xa) {
             if ((FIELD_AT(t0, s32, 8) >> 19) == 0x53) {
                 Call1(GameFlag_SetBit, 0x309);
             }
         }
     }
-    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank3) {
+    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank5) {
         if (a1 == 8) {
             if ((FIELD_AT(t0, s32, 8) >> 19) == 0x57) {
                 Call1(GameFlag_SetBit, 0x30d);

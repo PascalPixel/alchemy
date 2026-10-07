@@ -5,8 +5,8 @@
 extern u8 gPartyState[];
 extern u8 MsgShieldResistsFire[];
 extern u8 MsgShieldUseToRestoreHp[];
-extern u8 MsgBlank[];
-extern u8 MsgBlank2[];
+extern u8 MsgScene665No19[];
+extern u8 MsgScene682No52[];
 extern u8 MsgGloves[];
 extern u8 MsgGloves2[];
 
@@ -16,9 +16,9 @@ void Func_02000598(void)
     } else {
         if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgShieldUseToRestoreHp) {
         } else {
-            if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank) {
+            if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgScene665No19) {
             } else {
-                if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank2) {
+                if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgScene682No52) {
                 } else {
                     if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgGloves) {
                     } else {

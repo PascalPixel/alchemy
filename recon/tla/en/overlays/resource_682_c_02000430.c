@@ -7,7 +7,7 @@ s32 Func_02002adc();
 s32 Func_02002af4();
 s32 Func_02002b04();
 s32 Object_SetActionCallback();
-extern u8 MsgEoleoBriggsSSonHas[];
+extern u8 MsgScene682No07[];
 
 void Func_02000430(s32 a0)
 {
@@ -16,7 +16,7 @@ void Func_02000430(s32 a0)
     t0 = Object_GetById();
     FIELD_AT(t0, s32, 28) = 0x10000;
     FIELD_AT(t0, s32, 24) = 0x10000;
-    Call1(Func_02002adc, (s32)MsgEoleoBriggsSSonHas);
+    Call1(Func_02002adc, (s32)MsgScene682No07);
     Call2(Func_02002af4, a0, 0);
     Call2(Func_02002b04, a0, 0);
     Call2(Object_SetActionCallback, t0, 8);

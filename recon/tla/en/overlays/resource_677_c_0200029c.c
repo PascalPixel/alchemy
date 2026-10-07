@@ -10,7 +10,7 @@ s32 Func_02000a18();
 s32 Func_02000a28();
 s32 Func_020009b8();
 extern u8 gPartyState[];
-extern u8 MsgIfTheBlacksmithIsnT[];
+extern u8 MsgScene677No21[];
 
 void Func_0200029c(s32 a0)
 {
@@ -22,7 +22,7 @@ void Func_0200029c(s32 a0)
     } else {
         Func_020009b0();
         Call1(Func_02000a50, 0);
-        Call1(Func_02000a18, (s32)MsgIfTheBlacksmithIsnT);
+        Call1(Func_02000a18, (s32)MsgScene677No21);
         Call2(Func_02000a28, a0, 0);
         Func_020009b8();
     }

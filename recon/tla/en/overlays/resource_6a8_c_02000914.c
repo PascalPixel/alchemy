@@ -23,7 +23,7 @@ s32 Func_02004534();
 s32 Func_0200455c();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Func_0200446c();
-extern u8 MsgTheyReNotHere[];
+extern u8 MsgScene6A8No47[];
 
 void Func_02000914(void)
 {
@@ -39,7 +39,12 @@ void Func_02000914(void)
         Call6(Func_02004404, 0x59, 0, 0x4d, 0x10, 1, 2);
         Call1(GameFlag_SetBit, 0x200);
         Call1(Battle_WaitMode0, 0xa);
-        Call4(Func_020044d4, 8, 0x2080000, 0x1680000, 0x3000);
+        {
+            s32 y = 0x3000;
+            /* FAKEMATCH: the native schedule builds this argument first. */
+            __asm__ volatile("" : "+l"(y));
+            Call4(Func_020044d4, 8, 0x2080000, 0x1680000, y);
+        }
         t8 = Func_02004584();
         FIELD_AT((t8 + 0x55), u8, 0) = t0;
         Call2(Func_0200456c, 0x19999, 0x3333);
@@ -51,7 +56,7 @@ void Func_02000914(void)
         Call3(ObjectMotion_SetPositionAndReset, 8, 0x21c, 0x184);
         Call2(Func_0200454c, 8, 0);
         Call2(Object_SetModeById, 8, 4);
-        Call1(Func_0200451c, (s32)MsgTheyReNotHere);
+        Call1(Func_0200451c, (s32)MsgScene6A8No47);
         Call2(Func_02004534, 0x4008, 0);
         Func_0200455c(9, 0x101, 0);
         Call2(Func_02004534, 9, 0);

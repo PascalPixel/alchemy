@@ -23,7 +23,7 @@ s32 ObjectMotion_CommitPositionAndActivate();
 s32 Object_LinkObjectAndSetCallback();
 s32 Func_02002a9c();
 void Func_02002a4c(void);
-extern u8 MsgWhoaYouYouRe[];
+extern u8 MsgScene682No49[];
 
 void Func_02000188(void)
 {
@@ -34,7 +34,7 @@ void Func_02000188(void)
     Call1(GameFlag_SetBit, 0x973);
     Func_02002a44();
     Call1(Func_02002b64, 0);
-    Call1(Func_02002adc, (s32)MsgWhoaYouYouRe);
+    Call1(Func_02002adc, (s32)MsgScene682No49);
     Call3(ObjectMotion_ArmCallback, 0x20, 0x3000, 0);
     Call3(ObjectMotion_Launch, 0x20, 6, 0x14);
     Call3(Func_02002aec, 0x20, 0, 5);
@@ -65,7 +65,7 @@ void Func_02000188(void)
     t29 = Value1(Object_GetById, 0x21);
     FIELD_AT((t29 + 0x5a), u8, 0) = (1 | FIELD_AT((t29 + 0x5a), u8, 0));
     Call1(Battle_WaitMode0, 0xf);
-    Call3(Func_02002b1c, 0x20, 0x109, 0x1e);
+    Func_02002b1c(0x20, 0x109, 0x1e);
     Call3(Func_02002aec, 0x20, 0, 5);
     Call3(ObjectMotion_ArmCallback, 0x20, 0xb000, 0);
     Call2(Func_02002b04, 0x21, 0xd000);

@@ -12,7 +12,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 a, s32 b);
 void Battle_WaitMode0(s32 a);
 void Func_02000a28(s32 a, s32 b);
 void Func_020009b8(void);
-extern u8 MsgAhSoYouWantMe[];
+extern u8 MsgScene677No31[];
 
 void Func_02000480(void)
 {
@@ -21,7 +21,7 @@ void Func_02000480(void)
     Func_020009b0();
     Call1(Func_02000a50, 0);
     Call2(ObjectMotion_SetVariantCallback, 0xe, 2);
-    Call1(Func_02000a18, (s32)MsgAhSoYouWantMe);
+    Call1(Func_02000a18, (s32)MsgScene677No31);
     Call2(UiText_OpenMessageAtObject, 0xe, 0);
     t6 = Value2(Inventory_PromptAndSetObjectMode, Func_02000a58(), 0);
     if (t6 == 0) {

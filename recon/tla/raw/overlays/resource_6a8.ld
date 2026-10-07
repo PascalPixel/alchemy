@@ -50,7 +50,7 @@ SECTIONS
         "*/resource_6a8_overlay.o"(.text.x0200a614)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A8/PREPARE.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x0200a79c)
-        "*/resource_6a8_overlay.o"(.text.x0200a7e4)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A8/S27E4.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A8/S2878.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A8/S29A4.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A8/S29C8.o"(.text)

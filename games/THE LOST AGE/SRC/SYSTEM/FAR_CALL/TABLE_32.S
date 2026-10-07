@@ -40,7 +40,15 @@ Func_080c86d8:
 	.global Func_080c86e0
 	.thumb_func
 Func_080c86e0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080ed804
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080ed804
+	.else
 	overlay_veneer Func_080d9ab0
+	.endif
+	.endif
 	.global Func_080c86e8
 	.thumb_func
 Func_080c86e8:
@@ -48,7 +56,15 @@ Func_080c86e8:
 	.global Func_080c86f0
 	.thumb_func
 Func_080c86f0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d9ab0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d9ab0
+	.else
 	overlay_veneer Func_080ed804
+	.endif
+	.endif
 	.global Func_080c86f8
 	.thumb_func
 Func_080c86f8:

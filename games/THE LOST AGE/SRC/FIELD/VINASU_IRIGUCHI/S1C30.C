@@ -111,7 +111,7 @@ void Func_02001c30(void)
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 9);
     Call3(Func_0200290c, 9, 0, 0);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002964, 8, 0x105, 0x1e);
+    Func_02002964(8, 0x105, 0x1e);
     Call3(Func_0200294c, 8, 0, 0xa);
     Call2(Motion_SetModeAndWaitAnimation, 5, 3);
     Call1(Battle_WaitMode0, 0x1e);

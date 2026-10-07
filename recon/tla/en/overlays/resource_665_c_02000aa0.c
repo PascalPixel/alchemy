@@ -32,7 +32,7 @@ s32 ObjectMotion_SetVariantCallback();
 s32 Func_02001cac();
 s32 Object_RefreshSelectorById();
 s32 Func_02001bec();
-extern u8 MsgFinallyWeMadeIt[];
+extern u8 MsgScene665No10[];
 extern u8 Data_020033a0[];
 extern u8 Data_020033f8[];
 extern u8 Data_02003434[];
@@ -58,7 +58,7 @@ void Func_02000aa0(s32 a0)
     Call1(GameFlag_SetBit, 0x8b3);
     Func_02001be4();
     Call1(Func_02001cfc, 0);
-    Call1(Func_02001c74, (s32)MsgFinallyWeMadeIt);
+    Call1(Func_02001c74, (s32)MsgScene665No10);
     Call3(ObjectMotion_SetSpeedParameters, 0x1d, 0x10000, 0x8000);
     Call3(ObjectMotion_SetSpeedParameters, 0x1e, 0x10000, 0x8000);
     Call3(ObjectMotion_SetSpeedParameters, 0x1f, 0x10000, 0x8000);
@@ -113,7 +113,12 @@ void Func_02000aa0(s32 a0)
     Call2(Motion_SetVarCbAndRefresh, 0x1f, 2);
     Call1(Battle_WaitMode0, 0xa);
     Call3(Func_02001c84, 0x1f, 0, 0xa);
-    Call3(Func_02001ca4, 0x21, 0x102, 0x1e);
+    {
+        s32 y = 0x102, z = 0x1e;
+        /* FAKEMATCH: the native schedule sets the second and third arguments before the first. */
+        __asm__ volatile("" : "+l"(y), "+l"(z));
+        Call3(Func_02001ca4, 0x21, y, z);
+    }
     Call3(ObjectMotion_ArmCallback, 0x21, 0x3000, 0);
     Call1(Battle_WaitMode0, 0x28);
     Call2(Motion_SetVarCbAndRefresh, 0x21, 2);

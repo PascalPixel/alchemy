@@ -3,18 +3,18 @@
 
 #include "CALL.H"
 extern u8 gPartyState[];
-extern u8 MsgBlank[];
-extern u8 MsgBlank2[];
-extern u8 MsgBlank3[];
+extern u8 MsgScene665No19[];
+extern u8 MsgScene682No52[];
+extern u8 MsgBlank5[];
 extern u8 MsgHat2[];
 
 void Func_02000350(void)
 {
-    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank) {
+    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgScene665No19) {
     } else {
-        if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank2) {
+        if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgScene682No52) {
         } else {
-            if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank3) {
+            if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank5) {
             } else {
                 if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgHat2) {
                 } else {

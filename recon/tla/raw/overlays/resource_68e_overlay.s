@@ -51,44 +51,6 @@ Func_02000070:
 	.4byte 0xffff0000
 .L_020080cc:
 	.4byte Data_02001678
-	.section .text.x020080d0,"ax",%progbits
-	.global Func_020000d0
-	.thumb_func
-Func_020000d0:
-	push {r5, lr}
-	ldr r3, .L_02008120
-	movs r2, #133
-	lsls r2, r2, #2
-	movs r0, #128
-	adds r3, r3, r2
-	lsls r0, r0, #2
-	ldr r5, [r3]
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020080f4
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	bl Func_02000070
-.L_020080f4:
-	bl Func_02001380
-	movs r0, #0
-	bl Func_020013f8
-	adds r0, r5, #0
-	movs r1, #120
-	movs r2, #152
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #128
-	lsls r1, r1, #7
-	movs r2, #0
-	adds r0, r5, #0
-	bl ObjectMotion_ArmCallback
-	bl Func_020001e4
-	bl Func_02001388
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008120:
-	.4byte gPartyState
 	.section .text.x0200812c,"ax",%progbits
 	.global Func_0200012c
 	.thumb_func

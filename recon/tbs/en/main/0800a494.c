@@ -1,5 +1,100 @@
-/* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1,
-   agbcc/camelot_arm). Route decision (2026-10-07), this draft under agscc
+/* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1:
+   stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   2026-10-07 (S12 session 3): listing 307, draft 301, common 300, differ
+   8, from 12: wait's decrement reads its halfword through an asm ldrh
+   into a local of its own (FAKEMATCH). insn_cost gives an unrecognized
+   insn (an asm) cost 1, so its anti dependence on the branch ties the
+   cmp's; its output is set once and live out, so adjust_priority
+   raises it (birthing) above the cmp and sched1 puts it between the cmp
+   and the branch, where it takes r3 and sched2 keeps it (anti on r3).
+   What remains (8): six veneer instructions and z's load. z cannot
+   follow the frozen test's cmp under stock agbcc_arm even as an asm: in
+   sched2 (no birthing raise after reload) the cmp's priority is 3 (y's
+   load, its spill store to sp+12, the ldrb's anti dependence on r3)
+   against the asm's 2, and an asm z (set more than once, or copied from
+   a once-set temporary) also loses CSE's z == obj->z downstream: 102
+   both ways. Trials for wait, each without an instruction in asm: the
+   load in a local laundered by an empty asm tied "0" (s16 local: CSE
+   gives the test that load, ldrsh then mov, 21; u16 into s32, output
+   the same local: set twice, not raised, order unchanged, 12; output a
+   second local: CSE folds the test into the ldrh, 14); a volatile u16
+   load and the empty asm (21: sched1 orders it as listed, but the HImode
+   load and the SImode output do not tie, ldrh r2 then mov r3, r2);
+   halfword locals for both (24, lsl/asr extensions).
+   2026-10-07 (S12 session 2): listing 307, draft 301, common 298, differ
+   12, from 24, with S2 devices. Diagnosed with agbcc_arm -da and with
+   -fno-schedule-insns: the native's registers fit sched1 hoisting each
+   velocity load above the orr (lo then r1, the load r2), but its final
+   order keeps the load after the orr, which stock sched2 never gives
+   (load cost 2: it fills the slot; without sched1 the order is native
+   and lo r2). The same pattern runs through the other diffs: the
+   native leaves load delay slots unfilled (wait's ldrh after the cmp,
+   z after the frozen test's cmp). Devices: the acceleration's two
+   products through MulQ16R1 (lo fixed in r1) each followed by an
+   empty volatile asm taking the product as input (28 with the barrier
+   alone, lo r2; an empty barrier without the input 40, with r1 32);
+   the bounce through MulQ16R3 (bounce, lo and hi fixed in r3, r2, r3:
+   20 with only lo and hi, 30 with the bounce and lo, 12 with all
+   three). What remains (12): six veneer instructions; wait-- (ldrh r2
+   before the cmp, native r3 after); z's load in the frozen test's
+   delay slot.
+   Both scheduling differences left are out of reach under stock
+   agbcc_arm with any S2 device, shown in its sched.c (old backward
+   scheduler) and the sched1 dump (-dS): an insn with no dependent in
+   its block gets an anti dependence on the block's jump, insn_cost
+   charges an anti dependence the producer's full ready cost (a load:
+   2), and agbcc_arm's arm_adjust_cost lowers only load-after-store
+   costs, so a load is never placed between the compare and its jump
+   while the compare is ready (the dump: jump T-1, cmp T-2, the HI load
+   of wait queued to T-3). The native puts a load there twice: ldrh
+   after the cmp of wait, ldr sl after the cmp of frozen. Upstream
+   GCC's arm_adjust_cost returns 0 for anti and output dependences,
+   which allows both; that is a compiler question (K1, K3) for Pascal,
+   not a device. By hand, not measured: a forward list scheduler with
+   load cost 1 would give all three orders (wait, z and the
+   acceleration's load after the orr).
+   Trial: wait's decrement through a register s16 fixed in r3: 12,
+   unchanged (CSE keeps the HI load of the test block).
+   2026-10-07 (S12 session 1): listing 307, draft 301, common 292, differ
+   24, from 107. The smull asm made volatile, a scheduling barrier: each
+   velocity store stays before the next smull, so the speed-limit and
+   deceleration tails cross-jump as listed and the acceleration and
+   speed-limit blocks match (112 alone: reload's round-robin registers
+   moved and arrival cases 16 and 18 stopped sharing a tail); then case
+   17's sign test in the order cases 16 and 18 use, (obj->y - target) ^
+   (y - target), found by alchemy permute --arm (5 minutes): 24.
+   What remains (24): the six veneer instructions (an assembly file of
+   three 8-byte far-call stubs and their pool, after the function and
+   before Object_UpdateAllEnd, called by bl); wait-- loads its halfword
+   into r2 ahead of the cmp (native r3 after it: combine keeps the HImode
+   load of wait ahead of the ldrsh and sched1 puts it before the compare,
+   so it conflicts with the tested value); z's load fills the frozen
+   test's ldrb delay (native after the cmp); the acceleration's two
+   velocity loads are hoisted above the orr (native after it); the bounce
+   holds velocity_y in r3 and bounce in r1 (native r2, r3: smull r2, r3,
+   r3, r2). All are order or register choice.
+   The smull's constraints are now plain "=r", "=r", "r", "r" (24, as with
+   the two tied or early-clobbered alternatives; two alternatives tying
+   both outputs to the inputs: 94).
+   Trials (S12 session 1): smull, lsl and orr as one volatile asm 250,
+   non-volatile 244 (the native cross-jumps between the smull and its lsl,
+   so they are separate insns); volatile smull with both halves
+   early-clobbered or neither 112 each; an empty volatile asm after the
+   or inside MulQ16 98 (stack slots and registers move throughout);
+   velocity_x = velocity_x + MulQ16 (24), MulQ16 + velocity_x (28).
+   The bounce, diagnosed in the lreg dump: combine folds the load of
+   vertical.bounce into the smull asm as a memory input, so reload loads
+   it into r1 and global-alloc gives velocity_y r3; the native's bounce is
+   a block-local pseudo that local-alloc gives r3 first, leaving
+   velocity_y r2. More trials: MulQ16(velocity_y, bounce) 24 (smull r2,
+   r3, r3, r1); velocity_y tested through vz 63; z loaded first 72; y, x,
+   z 26; wait = wait - 1 24; the bounce through ratio first 24 (still
+   folded); alchemy permute --arm from 24, 5 minutes,
+   2 jobs: nothing below 24.
+   alchemy diff --arm --rtl fails (agbcc_arm's cpp0 refuses
+   -fsched-verbose=5); the dumps come from agbcc_arm -da on the .i.
+   Earlier sessions follow.
+   Route decision (2026-10-07), this draft under agscc
    -marm with the game options: differ 468; with -mno-apcs-frame 463; with
    -mno-apcs-frame -ffixed-fp 461.
    alchemy diff --camelot-arm, upstream's whole arm_adjust_cost
@@ -93,11 +188,35 @@ static __inline__ s32 MulQ16(s32 a, s32 b)
     s32 lo;
     s32 hi;
 
-    /* The native smull writes its low and high words to unpaired registers
-       (r1/r3, r2/r0); a 64-bit product takes a register pair. */
-    /* RdHi tied to Rs or early-clobbered: camelot_arm 195 to 172. */
-    /* FAKEMATCH: unpaired smull halves; agbcc_arm differ 479 as s64, 278 */
-    __asm__("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
+    /* The native smull writes unpaired halves (r1/r3, r2/r0, and r2/r3 over
+       r3/r2 at the bounce); a 64-bit product takes a register pair. */
+    /* FAKEMATCH: unpaired smull halves (s64 479, asm 278); volatile keeps stores before the next smull (107 to 24) */
+    __asm__ __volatile__("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b));
+    return ((u32)lo >> 16) | (hi << 16);
+}
+
+static __inline__ s32 MulQ16R3(s32 a, s32 b)
+{
+    /* FAKEMATCH: bounce in r3, not folded into the smull as a memory input (r1; 20 to 12 with lo and hi below) */
+    register s32 ra __asm__("r3") = a;
+    /* FAKEMATCH: bounce smull low half r2 (r3 without it) */
+    register s32 lo __asm__("r2");
+    /* FAKEMATCH: bounce smull high half r3 (r1 without it) */
+    register s32 hi __asm__("r3");
+
+    /* FAKEMATCH: unpaired smull halves, as MulQ16 */
+    __asm__ __volatile__("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(ra), "r"(b));
+    return ((u32)lo >> 16) | (hi << 16);
+}
+
+static __inline__ s32 MulQ16R1(s32 a, s32 b)
+{
+    /* FAKEMATCH: acceleration smull low half r1, as when sched1 hoists the velocity load over it (r2 behind the barrier; 28 to 20) */
+    register s32 lo __asm__("r1");
+    s32 hi;
+
+    /* FAKEMATCH: unpaired smull halves, as MulQ16 */
+    __asm__ __volatile__("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b));
     return ((u32)lo >> 16) | (hi << 16);
 }
 
@@ -123,6 +242,7 @@ void Object_UpdateAll(void)
     s16 n;
     u16 angle;
     s32 turn;
+    s32 w;
 
     obj = gObjectSlots;
     for (i = 0; i < 8; i++, obj++) {
@@ -135,8 +255,10 @@ void Object_UpdateAll(void)
         if (obj->paused != 0)
             continue;
 
+        /* FAKEMATCH: ldrh after wait's cmp, not before it (12 to 8): stock sched charges a compiled load 2 on its anti dependence to the branch, an asm 1 */
+        __asm__("ldrh %0, %1" : "=r"(w) : "m"(obj->wait));
         if (obj->wait != 0) {
-            obj->wait--;
+            obj->wait = w - 1;
         } else {
             do {
                 goto test;
@@ -173,8 +295,14 @@ void Object_UpdateAll(void)
                     z = obj->target_z;
                 } else {
                     ratio = rm(len, obj->acceleration);
-                    obj->velocity_x += MulQ16(ratio, dx);
-                    obj->velocity_z += MulQ16(ratio, dz);
+                    vx = MulQ16R1(ratio, dx);
+                    /* FAKEMATCH: velocity load after the orr, not hoisted above it (24 to 28 alone; an empty barrier 40) */
+                    __asm__ __volatile__("" : : "r"(vx));
+                    obj->velocity_x += vx;
+                    vz = MulQ16R1(ratio, dz);
+                    /* FAKEMATCH: velocity load after the orr, as above */
+                    __asm__ __volatile__("" : : "r"(vz));
+                    obj->velocity_z += vz;
                     vx = obj->velocity_x;
                     vz = obj->velocity_z;
                     len = sq(MulQ16(vx, vx) + MulQ16(vz, vz)) << 8;
@@ -210,7 +338,7 @@ void Object_UpdateAll(void)
                     obj->velocity_y -= obj->gravity;
                 if (y <= ground && obj->velocity_y < 0) {
                     y = ground;
-                    obj->velocity_y = -MulQ16(obj->vertical.bounce, obj->velocity_y);
+                    obj->velocity_y = -MulQ16R3(obj->vertical.bounce, obj->velocity_y);
                     if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
                         obj->velocity_y = 0;
                 }
@@ -229,7 +357,7 @@ void Object_UpdateAll(void)
             break;
         case 17:
             if (y == obj->target_y ||
-                ((y - obj->target_y) ^ (obj->y - obj->target_y)) < 0)
+                ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
                 reached = 1;
             break;
         case 18:

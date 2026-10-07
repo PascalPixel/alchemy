@@ -1,7 +1,11 @@
-/* 08026080: listing 1585, draft 1586, differ 135 (common 1518); both
+/* 08026080: listing 1585, draft 1585, differ 116 (common 1527); both
  * frames are 324 bytes. Nearly all that remains is the order of the spill
- * slots below sp+48 (see the hash analysis below), one store order near
- * the end, and one extra reload in the final selection search. The whole prologue through the first call now
+ * slots below sp+48 (see the hash analysis below), the pending loop's
+ * store order (native targetPos.x, slot->x, targetPos.y, slot->y, with
+ * slot->flags = 1 first in the else branch and every load before the
+ * stores; the draft stores both targetPos fields first), and movs r2, #0
+ * scheduled after movs r7, #5 in the clear loop (native before).
+ * The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
  * the gBattleWork address in r5 and adds 192 as the native does.
@@ -19,10 +23,17 @@
  *   cnt++): with the two changes above pos keeps fp and the 0 is
  *   rematerialized as native: 135, draft 1586. The selSlot/cnt FAKEMATCH
  *   is gone; the draft has no device left except infoWin in r9.
+ * - cursor = cursor + total - 1 in the step back (native adds cursor, then
+ *   total, and keeps total in r1 for the modulo), and repeat = 0 / 1 set
+ *   before pressed in the auto block (native r5 before r6): 116, draft
+ *   1585, the instruction counts equal.
  * Trials: on 477, native order for the side block's selSlot/cnt 597
  *   (frame 320: pos loses fp again, the 0 has 24/112 against pos 205/963);
  *   on 440, the clear loop as for (i = 5; i >= 0; i--) no change; the side
- *   block through n = 6 - i 1307.
+ *   block through n = 6 - i 1307. On 116, the pending loop's stores in
+ *   native source order (tx, sx, ty, sy; else flags first) 134 (the loads
+ *   then follow the stores); through nx/ny 857; through block locals x and
+ *   y 148.
  * Session T10-08026080/2 (from 624), kept:
  * - the cursor sine as Trig_Sin(...) / 32768, as the pending loop and the
  *   name drawing write it: the value stays in r0 as native, 624 (draft
@@ -633,12 +644,12 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         pressed = gKeyState;
         repeat = gKeysRepeat;
         if (gLinkCountdownWork->auto_enabled) {
-            pressed = 0;
             repeat = 0;
+            pressed = 0;
             if (gLinkCountdownWork->auto_delay == 0) {
                 gLinkCountdownWork->auto_delay = 60;
-                pressed = 1;
                 repeat = 1;
+                pressed = 1;
             } else {
                 gLinkCountdownWork->auto_delay--;
             }
@@ -677,7 +688,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             if (repeat & 0x60) {
                 AudioCommand_PlayFar(111);
                 do {
-                    cursor = total + cursor - 1;
+                    cursor = cursor + total - 1;
                     cursor %= total;
                 } while (ids[cursor] == 0xFE);
                 redraw |= 1;

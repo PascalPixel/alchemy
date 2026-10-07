@@ -1,5 +1,5 @@
-/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 177 of 920 (draft 923, common 833) with --symbol Func_020003cc.
- * Remaining: the LEFT and RIGHT page arms each call Func_02001e6e where the native cross-jumps LEFT into RIGHT's mov r1, r8 / bl (one shared call after the arms: 195); both link wait loops load 3 into r3 each pass where the native keeps the mask in a register (r5 = v5 in the greeting loop, 2 bytes the draft lacks before the case-4/5 pool; r1 caller-saved at [sp, #8] in the transfer loop, with the result in r4 at [sp, #4]); with v5 as the greeting-loop mask, v5 loses r5 to count (allocno 44 ranks before 41) and takes r4 with a caller save, and the save splits the loop entry (398); the glyph loop builds rec7 * 12 in r3 and copies it to x in r2, and shifts the row in place, where the native copies the row call's r0 to r3 and shifts there and builds x in r2; the record-select and case-1 stores put their 0x1c0/0x1c4 constants in other registers. Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
+/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 116 of 920 (draft 926, common 865) with --symbol Func_020003cc.
+ * Remaining: the LEFT and RIGHT page arms each call Func_02001e6e where the native cross-jumps LEFT into RIGHT's mov r1, r8 / bl (one shared call after the arms: 195); the draft is 6 instructions longer, so the far branches to the tail and the later pool loads are off by their distance; the glyph loop keeps page * 50 in ip and copies it to v7 where the native builds it in r0 and copies it to v6 and v7; the glyph loop builds rec7 * 12 in r3 and copies it to x in r2, and shifts the row in place, where the native copies the row call's r0 to r3 and shifts there and builds x in r2; the record-select and case-1 stores put their 0x1c0/0x1c4 constants in other registers. Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
  * Trials (2026-10-07, session 2):
  * - 231 -> 221: the greetings stored as plain u16 through gSerialTransfer.payload and a 12-halfword peer row: the native's 0x30 is a pool load (thumb_movhi_insn takes a HImode constant through its "mn" alternative), and the struct stores expanded to an and/ior word update; the case-4/5 pool now sits after the greeting loop as native.
  * - 221 -> 221: gKeyState (volatile s32) and gLinkStatus (volatile u16) by name instead of raw addresses, as the native's relocations show; no change in code, kept.
@@ -8,7 +8,13 @@
  * - 211 -> 209: the glyph loop as for (v7 = page * 50, n = 0; v7 != v6; v7++, n++), comparing v7 with v6 at entry as native.
  * - 209 -> 181: the password section as if (v6 == 0) { ... } instead of an empty then-arm with an else: jump.c no longer pulls the help exit up before the page loop, so it sits after it and the B exit before the test, as native.
  * - 181 -> 177: the save data pointer kept in a local (r5 from before the first call, as native) for the three calls, the two checksum bytes still stored through the array (through the pointer they fold to [r3, #1]: 186).
- * - no gain: v5 as the greeting-loop mask (399; with v7 as the transfer counter 395); v7 as the transfer counter alone (495); the row call into v3 shifted in place, in each arm or after (356); one Func_02001e6e call after the LEFT and RIGHT arms, v7 = 1 before or after it (195).
+ * - 177 -> 174: the transfer loop tests the mask variable v1 (r1, caller-saved at [sp, #8], as native).
+ * - 174 -> 171: Func_0200939c (the redraw prepare) called with the window alone: the native leaves the mask in r1, the draft rematerialized 3 for a second argument it does not take.
+ * - 171 -> 171: v7 as the transfer counter (r7, as native); no change alone, but it frees r5: count no longer conflicts with v5.
+ * - 171 -> 122: v5 as the greeting-loop mask: with count gone v5 keeps r5, a callee-saved register, so no caller save splits the loop.
+ * - 122 -> 120: v7 = 0 before v5 = 3, as the native orders them.
+ * - 120 -> 116: the peer greetings as for (v1 = 0; v1 != 4; v1++) over gLinkPeerSignatures[v1]: the row pointer is a giv set after the hoisted 0x30, as native.
+ * - no gain: v5 as the greeting-loop mask while count shared the transfer loop (399; with v7 as the transfer counter 395); v7 as the transfer counter alone (495); the row call into v3 shifted in place, in each arm or after (356); one Func_02001e6e call after the LEFT and RIGHT arms, v7 = 1 before or after it (195).
  * Trials (2026-10-07):
  * - 463 -> 350: the glyph counter n apart from the link result v4, and password[v7] & 63 passed directly: v3 no longer conflicts with r3, the link result takes a caller-saved register, and page gets r11 with the encoded size in r9 and the page window in r10, as native.
  * - 350 -> 332: the missed-frame count kept in v5 (r5, as native).
@@ -483,23 +489,18 @@ s32 SaveMenu_Run(void)
             sync[2] = 0x30;
             sync[3] = 0x30;
         }
-        v5 = 3;
         v7 = 0;
-        v1 = 0;
-        {
-            u16 *greeting = gLinkPeerSignatures[0].code;
+        v5 = 3;
+        for (v1 = 0; v1 != 4; v1++) {
+            u16 *greeting = gLinkPeerSignatures[v1].code;
 
-            do {
-                v1 = (v1 + 1);
-                greeting[0] = 0x30;
-                greeting[1] = 0x30;
-                greeting[2] = 0x30;
-                greeting[3] = 0x30;
-                greeting += 12;
-            } while (v1 != 4);
+            greeting[0] = 0x30;
+            greeting[1] = 0x30;
+            greeting[2] = 0x30;
+            greeting[3] = 0x30;
         }
         while ((gKeyState & KEY_B) == 0) {
-            if ((3 & gLinkStatus) == 3) {
+            if ((v5 & gLinkStatus) == v5) {
                 u32 control = REG_SIOCNT;
                 u32 peer = ((control << 26) >> 30) ^ 1;
                 u16 *received = gLinkPeerSignatures[peer].code;
@@ -532,9 +533,9 @@ s32 SaveMenu_Run(void)
         v5 = 0;
         v1 = 3;
         v4 = 1;
-        for (count = 0; count <= 0x927bf; count++) {
+        for (v7 = 0; v7 <= 0x927bf; v7++) {
             v5 = (v5 + 1);
-            if ((3 & gLinkStatus) == 3) {
+            if ((v1 & gLinkStatus) == v1) {
                 v5 = 0;
             }
             if (v5 == 10) {
@@ -549,7 +550,7 @@ s32 SaveMenu_Run(void)
     }
     L_0200095e:;
     if (v4 == 0) {
-        Func_0200939c(v6, v1);
+        Func_0200939c(v6);
         Call4(Func_02001d1e, (s32)MsgClearCommunicationError, v6, 0, 4);
             base7_3001c94 = 0x3001c94;
         v5 = 1;

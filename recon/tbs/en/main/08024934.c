@@ -593,16 +593,20 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     description = UiWindow_Create(0, 4, 30, 4, 42);
     counts = UiWindow_Create(20, 8, 10, 3, 6);
     mask = 0;
-    page = ((struct MenuCell *)gWindowWork[42])->page;
-    row = ((struct MenuCell *)gWindowWork[42])->row;
-    preferred = ((struct MenuCell *)gWindowWork[42])->preferred_row;
+    do {
+        page = ((struct MenuCell *)gWindowWork[42])->page;
+        row = ((struct MenuCell *)gWindowWork[42])->row;
+        preferred = ((struct MenuCell *)gWindowWork[42])->preferred_row;
+    } while (0);
     window = UiWindow_Create(13, 11, 17, 9, 6);
     for (index = 0; index < 4; index++) {
         s32 y = index * 2;
 
         sprite = &sprites[index];
-        sprites[index].oam.word.attr01 = MENU_SPRITE_SIZE_16;
-        sprites[index].oam.word.attr23 = 0;
+        do {
+            sprites[index].oam.word.attr01 = MENU_SPRITE_SIZE_16;
+            sprites[index].oam.word.attr23 = 0;
+        } while (0);
         sprite->oam.f.x = window->x * 8 + 8;
         sprite->oam.f.y = (y + window->y) * 8 + 4;
     }

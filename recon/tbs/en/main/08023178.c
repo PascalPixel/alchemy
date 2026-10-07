@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1361, differ 61.
+ * Native 1392 instructions, draft 1391, common 1362, differ 59.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
  * the stat pushes, the djinn rows and the condition list match.
@@ -7,9 +7,8 @@
  * native has lsl #24, bge); the condition loads' sign extension
  * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
  * saved/pointer pair (r5/r6 swapped) and code = 0 set before
- * Runtime_BumpAllocate where native sets it after; 112 scheduled later
- * in the icon loop setup; one long branch two bytes short (the one
- * instruction the condition loads lack).
+ * Runtime_BumpAllocate where native sets it after; one long branch two
+ * bytes short (the one instruction the condition loads lack).
  *
  * Session 5 2026-10-07: the up-key n-- after the 0x6F call 87 -> 85
  * (sched2 moves it across the call to native's slot, after the 0x6F
@@ -29,7 +28,11 @@
  * so native loads the byte into a register and extends it apart:
  * combine did not join them there. u8 *out with (s8)*out 61, and the
  * byte shifted << 24 >> 24 by hand 61 (no change: combine joins them
- * again).
+ * again). The icon loop through a block-local cache pointer, set in the
+ * for header after i, then x = 112, 61 -> 59: native's order (i = 0,
+ * the cache base into r8, then 112); vc set before the for with i = 0
+ * in its header 61. code = 0 after Runtime_BumpAllocate, retried on 61:
+ * 296 (global allocation cascades from the frame setup on).
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
@@ -846,18 +849,21 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         p = objIcon;
         q = tbl;
-        x = 112;
-        for (i = 0; i <= 10; i++) {
-            p->oam.word.attr01 = 0x40000400;
-            p->oam.word.attr23 = 0;
-            p->oam.f.tile = gVramBlockCache[*q++].offset >> 5;
-            p->oam.f.x = x;
-            p->oam.f.y = (u8)(winMain->y * 8 + 8);
-            if (sel[i] > 0) {
-                Runtime_PushSlotEntry((s32 *)p, 240);
+        {
+            struct VramBlockCacheEntry *vc;
+
+            for (i = 0, vc = gVramBlockCache, x = 112; i <= 10; i++) {
+                p->oam.word.attr01 = 0x40000400;
+                p->oam.word.attr23 = 0;
+                p->oam.f.tile = vc[*q++].offset >> 5;
+                p->oam.f.x = x;
+                p->oam.f.y = (u8)(winMain->y * 8 + 8);
+                if (sel[i] > 0) {
+                    Runtime_PushSlotEntry((s32 *)p, 240);
+                }
+                x += 15;
+                p++;
             }
-            x += 15;
-            p++;
         }
 
         if (gLinkCountdownWork->active == 0) {

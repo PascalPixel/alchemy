@@ -23,7 +23,9 @@
  * before mask; the draft mask first). The next differences after that
  * store pair: in the sprite setup loop native has index in r4 with y =
  * index << 1 computed first and &sprites in slot 28, the draft index r7
- * and &sprites in slot 8 (item (b) and (d) below).
+ * and &sprites in slot 8 (item (b) and (d) below). From 443: the setup
+ * loop without its y local (index * 2 inline) 443, same code; its
+ * attribute words through sprite as well 492.
  * Next: a natural shape that has the same effect (native also
  * has the skip-edge block after its first scan, so its exit was probably
  * not at depth 0, or the barrier was absent when loop.c ran); then the

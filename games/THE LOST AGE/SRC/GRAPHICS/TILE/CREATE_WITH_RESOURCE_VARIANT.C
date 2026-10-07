@@ -21,30 +21,30 @@ void UiIcon_CreateStatChangeArrow();
 void UiText_DrawStatComparison(const struct BtlUnit *alt, const struct BtlUnit *base, s32 work)
 {
     UiText_DrawCharacterAtOffsetFar((s32)MsgPanelStatLabel, work, 0, 32);
-    UiText_DrawNumberAtOffsetFar(base->attack, 3, work, 16, 40);
-    if (alt->attack != base->attack) {
-        UiText_DrawNumberAtOffsetFar(alt->attack, 3, work, 64, 40);
-        if (alt->attack > base->attack) {
+    UiText_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
+    if (alt->atk != base->atk) {
+        UiText_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
+        if (alt->atk > base->atk) {
             UiIcon_CreateStatChangeArrow(work, 44, 36, 0);
         } else {
             UiIcon_CreateStatChangeArrow(work, 44, 36, 1);
         }
     }
     UiText_DrawCharacterAtOffsetFar((s32)MsgPanelDefenseLabel, work, 0, 48);
-    UiText_DrawNumberAtOffsetFar(base->defense, 3, work, 16, 56);
-    if (alt->defense != base->defense) {
-        UiText_DrawNumberAtOffsetFar(alt->defense, 3, work, 64, 56);
-        if (alt->defense > base->defense) {
+    UiText_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
+    if (alt->def != base->def) {
+        UiText_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
+        if (alt->def > base->def) {
             UiIcon_CreateStatChangeArrow(work, 44, 52, 0);
         } else {
             UiIcon_CreateStatChangeArrow(work, 44, 52, 1);
         }
     }
     UiText_DrawCharacterAtOffsetFar((s32)MsgAgilityLabel, work, 0, 64);
-    UiText_DrawNumberAtOffsetFar(base->agility, 3, work, 16, 72);
-    if (alt->agility != base->agility) {
-        UiText_DrawNumberAtOffsetFar(alt->agility, 3, work, 64, 72);
-        if (alt->agility > base->agility) {
+    UiText_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
+    if (alt->agi != base->agi) {
+        UiText_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
+        if (alt->agi > base->agi) {
             UiIcon_CreateStatChangeArrow(work, 44, 68, 0);
         } else {
             UiIcon_CreateStatChangeArrow(work, 44, 68, 1);

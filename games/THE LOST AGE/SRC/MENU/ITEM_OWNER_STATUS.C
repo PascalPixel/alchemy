@@ -62,8 +62,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 22, window, 152, 8);
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 21, window, 152, 16);
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 20, window, 152, 24);
-    UiText_DrawNumberInWindowFar(unit->attack, 3, window, 200, 0);
-    UiText_DrawNumberInWindowFar(unit->defense, 3, window, 200, 8);
-    UiText_DrawNumberInWindowFar(unit->agility, 3, window, 200, 16);
+    UiText_DrawNumberInWindowFar(unit->atk, 3, window, 200, 0);
+    UiText_DrawNumberInWindowFar(unit->def, 3, window, 200, 8);
+    UiText_DrawNumberInWindowFar(unit->agi, 3, window, 200, 16);
     UiText_DrawNumberInWindowFar(unit->luck, 3, window, 200, 24);
 }

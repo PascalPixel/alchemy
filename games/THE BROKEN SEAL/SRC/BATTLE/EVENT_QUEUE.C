@@ -86,7 +86,7 @@ u32 BattleEv_DispatchQueued(void)
             BattleActor_ResetRuntimeFields(queue->operands[i]);
             BattleMotion_InitializeActorRecords(queue->operands[i]);
             break;
-        case BEV_REDRAW: PtyStDrawFar(BtlWk->party_status_mode); break;
+        case BEV_REDRAW: PtyStDrawFar(BtlWk->pty_st); break;
         case BEV_OBJ_END:
             BattleUnit_BuildStatusFlags(queue->operands[i], BtlObjGet(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);

@@ -105,10 +105,10 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
         ability = BtlActGet(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
         UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
         row = 0;
-        if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
+        if (ability->type_0c != 0 || (ability->tgt_flg & 0x40) != 0) {
             row = 2;
         }
-        if ((ability->target_flags & 0x80) != 0) {
+        if ((ability->tgt_flg & 0x80) != 0) {
             row |= 1;
         }
         if (row == 3) {
@@ -215,7 +215,7 @@ s32 PsynergyMenu_DrawListPage(
             UiText_DrawAt(msg, window, 88, y);
             UiText_DrawNumberAtOffsetFar(act->pp_cost, 2, window, 176, y);
 
-            range = act->range;
+            range = act->rng;
             if (range == 0xff) {
                 range = 11;
             } else {

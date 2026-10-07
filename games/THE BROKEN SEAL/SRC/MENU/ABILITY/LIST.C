@@ -358,7 +358,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 no)
 
     if (action->type_0c != 0)
         goto restricted;
-    flags = action->target_flags & 0xc0;
+    flags = action->tgt_flg & 0xc0;
     no = 1;
     if (flags != 0xc0)
         goto done;

@@ -24,7 +24,7 @@ void Owner_RefreshDerivedData(s32 owner_no)
     owner->class_index = Owner_DetermineClass(owner->enemy_id,
         owner->djinn_available, Inventory_GetEquippedItem(owner, 10));
     Owner_UpdateClassActions(owner_no);
-    Owner_CalculateBaseElements(owner_no, owner->base_elements);
+    Owner_CalculateBaseElements(owner_no, owner->base_elm);
 }
 
 void Owner_RefreshClassActions(s32 owner_no)

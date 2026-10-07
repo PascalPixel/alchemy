@@ -144,17 +144,17 @@ s32 BattleEffect_ApplyToTargets(
         target = UnitGetFar(0);
 
     /* FAKEMATCH: the dead test keeps the range load before the count guard and preserves target-index and power-load registers. */
-    if (effect->range == 0xff && later_target != 0)
+    if (effect->rng == 0xff && later_target != 0)
         result_code = 3;
 
     for (index = 0; index < runtime->party_count; index++) {
-        if (effect->range == 0xff) {
+        if (effect->rng == 0xff) {
             target_id = runtime->owner_ids[index];
             target = UnitGetFar(target_id);
         }
 
-        amount = effect->power;
-        switch (effect->target_flags & 0xf) {
+        amount = effect->pow;
+        switch (effect->tgt_flg & 0xf) {
         case BATTLE_DAMAGE_HP_HEAL:
             if (fixed_scale == 0) {
                 if (effect->damage_class != 4) {
@@ -162,7 +162,7 @@ s32 BattleEffect_ApplyToTargets(
 
                     source = UnitGetFar(source_id);
                     stat_offset = effect->damage_class;
-                    scale = source->elements[stat_offset].power;
+                    scale = source->elm[stat_offset].pow;
                 } else
                     scale = 100;
                 amount = BtlRcvCalc(amount, scale, 0x100);
@@ -187,7 +187,7 @@ s32 BattleEffect_ApplyToTargets(
                     }
                     UnitRatioFar(target_id);
                     changed = 1;
-                    if (effect->range == 0xff) {
+                    if (effect->rng == 0xff) {
                         later_target = 1;
                         result_code = 3;
                     }
@@ -258,7 +258,7 @@ s32 BattleEffect_ApplyToTargets(
                 }
                 UnitRatioFar(target_id);
                 changed = 1;
-                if (effect->range == 0xff) {
+                if (effect->rng == 0xff) {
                     later_target = 1;
                     result_code = 8;
                 }
@@ -276,7 +276,7 @@ s32 BattleEffect_ApplyToTargets(
             break;
         }
 
-        switch (effect->effect) {
+        switch (effect->efx) {
         case 1:
             if (target->hp <= 0 || target->hp == target->max_hp) {
                 if (later_target == 0)
@@ -359,7 +359,7 @@ s32 BattleEffect_ApplyToTargets(
             break;
         }
 
-        if (effect->range != 0xff)
+        if (effect->rng != 0xff)
             break;
     }
 
@@ -386,7 +386,7 @@ void Ability_PlayUseAnimation(s32 action)
     struct BtlAct *ability;
 
     ability = BtlActGet(action);
-    animation_type = 0xf & ability->target_flags;
+    animation_type = 0xf & ability->tgt_flg;
     switch (animation_type) {
     case 1:
         Audio_PlayCueReturnOne(0x7e);
@@ -395,7 +395,7 @@ void Ability_PlayUseAnimation(s32 action)
         Audio_PlayCueReturnOne(0x7e);
         return;
     default:
-        target_type = ability->effect - 1;
+        target_type = ability->efx - 1;
         switch (target_type) {
         case 4:
             Audio_PlayCueReturnOne(0x52);

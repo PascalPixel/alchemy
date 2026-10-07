@@ -154,7 +154,7 @@ read_saved_selection:
                 item_action = Ability_GetData(item->action_id);
                 action_id = item->action_id;
                 request->command = 2;
-                target_flags = item_action->target_flags;
+                target_flags = item_action->tgt_flg;
                 request->parameter = 0;
                 switch (target_flags) {
                 case 1:
@@ -176,7 +176,7 @@ disable_item:
         goto finish_target;
 
     action = Ability_GetData(action_id);
-    effect = action->effect;
+    effect = action->efx;
     switch (effect) {
     case 46:
         request->command = 3;
@@ -211,7 +211,7 @@ disable_item:
             goto next_candidate;
     }
     command = request->command;
-    if (command == 99 && (u8)actor->battle_end_state != 0)
+    if (command == 99 && (u8)actor->chouhatsu != 0)
         goto next_candidate;
     if (retry != 0 && (command == 3 || command == 7))
         goto next_candidate;
@@ -222,7 +222,7 @@ disable_item:
             request->command = 0;
     }
 
-    request->range = action->range;
+    request->rng = action->rng;
     target_mode = action->target_mode;
     switch (target_mode) {
     case 2:
@@ -428,7 +428,7 @@ void BattleEvent_Playback(void)
                         }
                         break;
                     case BEV_REDRAW:
-                        PtyStDrawFar(BtlWk->party_status_mode);
+                        PtyStDrawFar(BtlWk->pty_st);
                         break;
                     case BEV_OBJ_END:
                         {

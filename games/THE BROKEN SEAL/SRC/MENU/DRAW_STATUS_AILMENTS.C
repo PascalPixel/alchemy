@@ -114,8 +114,8 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
                 UiText_DrawStringInWindowFar(Menu_SlashString, window, i * 32 + 112, row * 8 + 8);
             }
             UiNumber_DrawAt(Owner_GetResistanceValueFar(unit, i), 2, window, i * 32 + 112, row * 8 + 16);
-            UiNumber_DrawAt(status->elements[i].power, 3, window, i * 32 + 104, row * 8 + 24);
-            UiNumber_DrawAt(status->elements[i].resist, 3, window, i * 32 + 104, row * 8 + 32);
+            UiNumber_DrawAt(status->elm[i].pow, 3, window, i * 32 + 104, row * 8 + 24);
+            UiNumber_DrawAt(status->elm[i].res, 3, window, i * 32 + 104, row * 8 + 32);
         }
     }
 }

@@ -19,7 +19,7 @@
  * case of its own in the rate switch (rate 12 set before the test, as the
  * listing does) to 510, the HP drain halving dealt in apwr (declared for
  * the whole function, so it keeps r7 as in the listing) to
- * 428, the PP restore reading action->effect directly (the listing loads
+ * 428, the PP restore reading action->efx directly (the listing loads
  * it again) and adding max_ep / 10 before reading maxu in case 77 to 424
  * (draft 3454, common 3240). BtlEvPush declared void for
  * this game (its body here sets no result, and void calls load r0 before r1,
@@ -75,7 +75,7 @@
  * lost; heal += apwr after amt = apwr keeps 505), the HP in hp0 (740) or
  * tmp (344); for the weapon case's signed
  * halving, (s16)def / 2 or (s16)scale / 2 (336: the sign is extended
- * first), (s16)target->defense read into def (382), defense read into tmp
+ * first), (s16)target->def read into def (382), defense read into tmp
  * (334), kind (no change) or apwr (560), value (382), power (383), guard
  * (332), count (no change), scale /= 2 and def /= 2 in place (no change):
  * the shift stays logical whichever variable holds the zero-extended
@@ -333,7 +333,7 @@
 #define ELM_BONUS()                                                           \
     {                                                                          \
         if (elm != 4)                                                        \
-            bonus = pow - target->elements[elm].resist;                    \
+            bonus = pow - target->elm[elm].res;                    \
     }
 
 #define MES_PUSH(m) BtlEvPush(BEV_MES, (u32)(m))
@@ -428,9 +428,9 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     if (act_no == 312 || act_no == 316)
         aid = plan->actor_id2;
     else
-        aid = plan->actor_id;
+        aid = plan->aid;
     tid = plan->tgt_no[slot];
-    act_no = plan->action_id;
+    act_no = plan->act_no;
     elm = plan->elm;
     adj = plan->tgt_adj[slot];
     crit = plan->tgt_crit[slot];
@@ -441,7 +441,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     Iwram_CopyWords(bak, target, size);
     switch (target->enemy_id) {
     case 221:
-        if (plan->command == 1 && (u32)(aid ^ tid) >> 7 != 0) {
+        if (plan->cmd == 1 && (u32)(aid ^ tid) >> 7 != 0) {
             BtlEvPush(BEV_OBJ_END, tid);
             BtlEvPush(BEV_UNIT, tid);
             MES_PUSH(MsgDissipated);
@@ -467,7 +467,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
         goto done;
     }
 
-    if (action->range != 255) {
+    if (action->rng != 255) {
         dist = plan->tgt_dist[slot];
         if (dist < 0)
             dist = -dist;
@@ -478,33 +478,33 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     if (elm != 4) {
         s32 i;
 
-        value = target->base_elements[elm].resist;
-        for (i = 0; i < 4 && value >= target->base_elements[i].resist; i++)
+        value = target->base_elm[elm].res;
+        for (i = 0; i < 4 && value >= target->base_elm[i].res; i++)
             ;
         if (i == 4)
             aff = -1;
 
-        for (i = 0; i < 4 && value <= target->base_elements[i].resist; i++)
+        for (i = 0; i < 4 && value <= target->base_elm[i].res; i++)
             ;
         if (i == 4)
             aff = 1;
     }
 
     if (plan->elm >= 0 && plan->elm <= 3) {
-        cmd = &plan->command;
+        cmd = &plan->cmd;
         if (*cmd != 2) {
-            pow = actor->elements[plan->elm].power;
+            pow = actor->elm[plan->elm].pow;
             goto pow_end;
         }
     } else
-        cmd = &plan->command;
+        cmd = &plan->cmd;
     pow = 100;
 pow_end:
 
-    if (plan->command == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0) {
+    if (plan->cmd == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0) {
         s32 chance;
 
-        chance = pow - target->elements[plan->elm].resist;
+        chance = pow - target->elm[plan->elm].res;
         chance += 30;
         chance *= 65536 / 100;
         if (chance > (BtlRndFar() & 0xffff))
@@ -517,20 +517,20 @@ pow_end:
         Battle_ApplyActionExtras(tid, 1, 0);
     if (act_no == 728)
         Battle_ApplyActionExtras(tid, 1, 1);
-    type = action->target_flags & 15;
+    type = action->tgt_flg & 15;
     {
         s32 res;
 
         res = plan->tgt_hit[slot];
         if (res == -1)
             hit = BtlHitChk(
-                aid, tid, elm, action->effect,
+                aid, tid, elm, action->efx,
                 HitTbl[dist]);
         else
             hit = res;
     }
-    if (action->effect == 50 || action->effect == 51
-        || action->effect == 86 || action->effect == 87) {
+    if (action->efx == 50 || action->efx == 51
+        || action->efx == 86 || action->efx == 87) {
         s32 cls;
         s32 ent;
         s32 chg;
@@ -538,14 +538,14 @@ pow_end:
         cls = actor->enemy_id;
         chg = -1;
         ent = EnmSlotGet();
-        if (action->effect == 51) {
-            cls = BtlGrpRnd(work->enemy_group);
-        } else if (action->effect == 86) {
+        if (action->efx == 51) {
+            cls = BtlGrpRnd(work->enm_grp);
+        } else if (action->efx == 86) {
             if (actor->enemy_id == 164)
                 cls = (BtlRndFar() & 3) + 378;
             else
                 cls = 81;
-        } else if (action->effect == 87) {
+        } else if (action->efx == 87) {
             if (work->queue_count != 0) {
                 cls = work->queued_summons[work->queue_head];
                 chg = work->queued_charges[work->queue_head];
@@ -559,24 +559,24 @@ pow_end:
                     EnmCntClr(cls);
             }
             BtlUnitSetFar(ent, cls, chg & 0x7fff);
-            if (action->effect == 87) {
+            if (action->efx == 87) {
                 work->queue_count--;
                 work->queue_head = (work->queue_head + 1) % 2;
             }
             if (actor->enemy_id == 164)
-                BattleParty_InsertUnitCentered(work->enemy_units, ent);
+                BattleParty_InsertUnitCentered(work->enm_no, ent);
             else
             {
                 s32 i;
 
                 for (i = 0; i < 6; i++) {
-                    if (work->enemy_units[i] == 254) {
-                        work->enemy_units[i] = ent;
+                    if (work->enm_no[i] == 254) {
+                        work->enm_no[i] = ent;
                         break;
                     }
-                    if (work->enemy_units[i] == 255) {
-                        work->enemy_units[i] = ent;
-                        work->enemy_units[i + 1] = 255;
+                    if (work->enm_no[i] == 255) {
+                        work->enm_no[i] = ent;
+                        work->enm_no[i + 1] = 255;
                         break;
                     }
                 }
@@ -598,7 +598,7 @@ pow_end:
                     ObjMotRst((u16)list[cnt]);
             }
             BtlEvPush(BEV_UNIT, ent);
-            if (action->effect == 87)
+            if (action->efx == 87)
                 MES_PUSH(MsgUpToFight);
             else
             if (act_no != 503)
@@ -613,7 +613,7 @@ pow_end:
     }
 
     if (hit != 0) {
-        if (action->effect == 53 || action->effect == 83) {
+        if (action->efx == 53 || action->efx == 83) {
             hit = 0;
             for (n = 0; n < 20; n++) {
                 if (work->actions[n].unit_id == tid) {
@@ -621,29 +621,29 @@ pow_end:
                     break;
                 }
             }
-        } else if (action->effect == 35) {
+        } else if (action->efx == 35) {
             half = 1;
-        } else if (action->effect == 34) {
+        } else if (action->efx == 34) {
             crush = 1;
-        } else if (action->effect == 27) {
+        } else if (action->efx == 27) {
             skip = 1;
-        } else if (action->effect == 55) {
+        } else if (action->efx == 55) {
             if (actor->hp != 0)
                 BtlEvPush(BEV_OBJ_EFX, aid);
-        } else if (action->effect == 32) {
+        } else if (action->efx == 32) {
             if (target->ep != 0)
                 type = 10;
             else
                 hit = 0;
-        } else if (action->effect == 90) {
+        } else if (action->efx == 90) {
             half = 2;
-        } else if (action->effect == 91) {
+        } else if (action->efx == 91) {
             half = 2;
         }
     }
 
-    if ((action->effect != 75 || slot == 0) && skip == 0
-        && (target->hp != 0 || BtlEfxRevChkFar(action->effect) != 0)) {
+    if ((action->efx != 75 || slot == 0) && skip == 0
+        && (target->hp != 0 || BtlEfxRevChkFar(action->efx) != 0)) {
         s32 ep;
         s32 cur;
 
@@ -656,7 +656,7 @@ pow_end:
             if (target->guard_lv == 4)
                 break;
             hp = target->hp;
-            def = target->defense;
+            def = target->def;
             scale = def;
             if (half != 0) {
                 if (half == 2)
@@ -669,19 +669,19 @@ pow_end:
                 ELM_BONUS();
                 if (pass == 0)
                     bonus = 0;
-                ap = action->power;
+                ap = action->pow;
                 if (type == 4)
-                    dmg = BtlAtkCalc(actor->attack, scale, 0,
+                    dmg = BtlAtkCalc(actor->atk, scale, 0,
                                           bonus)
                             * ap / 10;
                 else {
                     s32 atk;
 
-                    atk = actor->attack;
+                    atk = actor->atk;
                     if (act_no == 312 || act_no == 316) {
-                        atk = ((struct BtlUnit *)UnitGet(plan->actor_id))->attack;
+                        atk = ((struct BtlUnit *)UnitGet(plan->aid))->atk;
                         if (act_no == 312)
-                            atk += ((struct BtlUnit *)UnitGet(plan->actor_id2))->attack / 4;
+                            atk += ((struct BtlUnit *)UnitGet(plan->actor_id2))->atk / 4;
                     }
                     dmg = BtlAtkCalc(atk, scale, ap, bonus);
                 }
@@ -715,7 +715,7 @@ pow_end:
                             dmg = 1;
                     }
                 }
-                if (GameFlag_Test(366) != 0 && plan->command == 5
+                if (GameFlag_Test(366) != 0 && plan->cmd == 5
                     && hp <= dmg) {
                     dmg = hp - 1;
                 }
@@ -756,16 +756,16 @@ pow_end:
         {
             if (target->guard_lv == 4)
                 break;
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             ep = target->ep;
             ELM_BONUS();
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * EpLossTbl[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
-            if (action->effect == 32 && dmg > ep)
+            if (action->efx == 32 && dmg > ep)
                 dmg = ep;
             if (dmg > ep)
                 dmg = ep;
@@ -794,13 +794,13 @@ pow_end:
 
         case 1:
         {
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             cur = target->hp;
             if (cur == 0)
                 break;
 
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * HpRcvTbl[dist] / 100;
             dmg *= adj;
@@ -827,11 +827,11 @@ pow_end:
         {
             if (target->guard_lv == 4)
                 break;
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             ep = target->ep;
             ELM_BONUS();
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * EpDmgTbl[dist] / 100;
             dmg *= adj;
@@ -865,7 +865,7 @@ pow_end:
 
             if (target->guard_lv == 4)
                 break;
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             cur = target->hp;
             round = 1;
@@ -873,9 +873,9 @@ pow_end:
                 ELM_BONUS();
                 if (round == 0)
                     bonus = 0;
-                ap = action->power;
+                ap = action->pow;
                 if (act_no == 683 || act_no == 673 || act_no == 724
-                    || plan->command == 6 || plan->command == 10) {
+                    || plan->cmd == 6 || plan->cmd == 10) {
                     s32 rate;
 
                     rate = 0;
@@ -944,7 +944,7 @@ pow_end:
                 dmg += BtlRndFar() & 3;
                 GUARD_CUT();
                 if ((gPartyState.battle_rule_24b == 6
-                        || (GameFlag_Test(366) != 0 && plan->command == 6))
+                        || (GameFlag_Test(366) != 0 && plan->cmd == 6))
                     && cur > dmg) {
                     dmg = cur;
                 }
@@ -991,10 +991,10 @@ pow_end:
 
         case 11:
         {
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             ep = target->ep;
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * EpRcvTbl[dist] / 100;
             dmg *= adj;
@@ -1024,11 +1024,11 @@ pow_end:
             if (target->guard_lv == 4)
                 break;
             if (hit != 0) {
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             cur = target->hp;
             ELM_BONUS();
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlPowCalc(ap, bonus, 256);
             dmg *= adj;
             dmg = dmg * HpDmgTbl[dist] / 100;
@@ -1077,11 +1077,11 @@ pow_end:
         work->unknown_868 = 0;
     }
     BtlEvPush(BEV_UNIT, tid);
-    if ((action->effect != 75 || slot != 0)
-        && (BtlEfxRevChkFar(action->effect) != 0 || target->hp != 0
-            || BtlEfxDeadChk(action->effect) != 0)
+    if ((action->efx != 75 || slot != 0)
+        && (BtlEfxRevChkFar(action->efx) != 0 || target->hp != 0
+            || BtlEfxDeadChk(action->efx) != 0)
         && hit != 0) {
-        switch (action->effect) {
+        switch (action->efx) {
 
         case 64:
             if (target->maboroshi != 0) {
@@ -1171,7 +1171,7 @@ pow_end:
             pt = (u16 *)&target->hp;
             old = *pt--;
             heal = *(s16 *)(pt + 1);
-            if (action->effect == 76) {
+            if (action->efx == 76) {
                 s32 m;
 
                 maxu = (u16)target->max_hp;
@@ -1179,13 +1179,13 @@ pow_end:
                 asm("" ::: "memory");
                 m = target->max_hp;
                 heal += m * 2 / 5;
-            } else if (action->effect == 71) {
+            } else if (action->efx == 71) {
                 maxu = (u16)target->max_hp;
                 /* FAKEMATCH: barrier; the same for case 71 (90 to 82). */
                 asm("" ::: "memory");
                 maxv = target->max_hp;
                 heal += maxv * 7 / 10;
-            } else if (action->effect == 70) {
+            } else if (action->efx == 70) {
                 maxu = (u16)target->max_hp;
                 heal += (s16)maxu / 2;
                 /* FAKEMATCH: barrier; without it gcse shares maxu << 16 between this halving and the clamp, so ours shifts before the join in r1 where the ROM shifts at the join in r3, 118 without, 100 with. */
@@ -1195,7 +1195,7 @@ pow_end:
                 pt--;
                 maxu = *pt--;
                 maxv = *(s16 *)(pt + 1);
-                if (action->effect == 61) {
+                if (action->efx == 61) {
                     s32 p = maxv * 60;
                     /* FAKEMATCH: barrier; sched2 otherwise puts movs r1, #100 before the product's last shift and jump2 cannot share it with the division, 142 without, 139 with. */
                     asm("");
@@ -1237,11 +1237,11 @@ pow_end:
             pt = (u16 *)&target->ep;
             old = *pt--;
             heal = *(s16 *)(pt + 1);
-            if (action->effect == 77) {
+            if (action->efx == 77) {
                 maxv = target->max_ep;
                 maxu = (u16)target->max_ep;
                 heal += (s16)maxv / 10;
-            } else if (action->effect == 78) {
+            } else if (action->efx == 78) {
                 maxu = (u16)target->max_ep;
                 /* FAKEMATCH: barrier; the same for case 78 (82 to 76). */
                 asm("" ::: "memory");
@@ -1274,7 +1274,7 @@ pow_end:
             target->agi_lv = 8;
             target->agi_cnt = 5;
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->agility - bak->agility);
+            BtlEvPush(BEV_NUM, target->agi - bak->agi);
             MES_PUSH(MsgAgiUp);
             break;
 
@@ -1288,7 +1288,7 @@ pow_end:
         }
             target->agi_cnt = 5;
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->agility - target->agility);
+            BtlEvPush(BEV_NUM, bak->agi - target->agi);
             MES_PUSH(MsgAgiDown);
             break;
 
@@ -1296,7 +1296,7 @@ pow_end:
             target->atk_lv -= 1;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->attack - target->attack);
+            BtlEvPush(BEV_NUM, bak->atk - target->atk);
             MES_PUSH(MsgAtkDown);
             target->atk_cnt = 7;
             break;
@@ -1305,7 +1305,7 @@ pow_end:
             target->atk_lv -= 2;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->attack - target->attack);
+            BtlEvPush(BEV_NUM, bak->atk - target->atk);
             MES_PUSH(MsgAtkDown);
             target->atk_cnt = 7;
             break;
@@ -1314,7 +1314,7 @@ pow_end:
             target->atk_lv += 1;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->attack - bak->attack);
+            BtlEvPush(BEV_NUM, target->atk - bak->atk);
             MES_PUSH(MsgAtkUp);
             target->atk_cnt = 7;
             break;
@@ -1323,7 +1323,7 @@ pow_end:
             target->atk_lv += 2;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->attack - bak->attack);
+            BtlEvPush(BEV_NUM, target->atk - bak->atk);
             MES_PUSH(MsgAtkUp);
             target->atk_cnt = 7;
             break;
@@ -1332,7 +1332,7 @@ pow_end:
             target->def_lv -= 1;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->defense - target->defense);
+            BtlEvPush(BEV_NUM, bak->def - target->def);
             MES_PUSH(MsgDefDown);
             target->def_cnt = 7;
             break;
@@ -1341,7 +1341,7 @@ pow_end:
             target->def_lv -= 2;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->defense - target->defense);
+            BtlEvPush(BEV_NUM, bak->def - target->def);
             MES_PUSH(MsgDefDown);
             target->def_cnt = 7;
             break;
@@ -1350,7 +1350,7 @@ pow_end:
             target->def_lv += 1;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->defense - bak->defense);
+            BtlEvPush(BEV_NUM, target->def - bak->def);
             MES_PUSH(MsgDefUp);
             target->def_cnt = 7;
             break;
@@ -1359,7 +1359,7 @@ pow_end:
             target->def_lv += 2;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->defense - bak->defense);
+            BtlEvPush(BEV_NUM, target->def - bak->def);
             MES_PUSH(MsgDefUp);
             target->def_cnt = 7;
             break;
@@ -1508,7 +1508,7 @@ pow_end:
         case 31:
         case 60:
             dmg = actor->hp;
-            if (action->effect == 60)
+            if (action->efx == 60)
                 dealt /= 2;
             kind = dealt;
             dmg += kind;
@@ -1625,7 +1625,7 @@ pow_end:
 
         case 54:
             MES_PUSH(MsgChallenge);
-            target->battle_end_state = 1;
+            target->chouhatsu = 1;
             if (MIKATA_CHK(tid))
                 work->chal_flg |= 2;
             break;
@@ -1693,7 +1693,7 @@ pow_end:
 
 done:
     BtlEvPush(BEV_CLR, 0);
-    if (plan->command != 9 && (s8)target->unknown_142[1] != 0
+    if (plan->cmd != 9 && (s8)target->unknown_142[1] != 0
         && action->target_mode == 1 && target->hp != 0) {
         work->unknown_858 = tid;
         work->unknown_85c = aid;
@@ -1710,7 +1710,7 @@ done:
     }
     MemFree(bak);
     UnitCalcFar(tid);
-    PtyStDrawFar(Ram_HeapSlots->battle_work->party_status_mode);
+    PtyStDrawFar(Ram_HeapSlots->battle_work->pty_st);
     if (target->hp != 0)
         BtlEvPush(BEV_OBJ_END, tid);
     if (act_no != 403 && actor->akuryo != 0

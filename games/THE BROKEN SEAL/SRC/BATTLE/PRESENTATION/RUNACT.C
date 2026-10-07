@@ -59,7 +59,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         unit = UnitGetFar(unit_id);
         entry = &entries[index];
         entry->unit_id = unit_id;
-        entry->priority = unit->agility;
+        entry->priority = unit->agi;
         entry->command = 0;
         entry->parameter = 0;
         entry->target = 0x80;
@@ -73,9 +73,9 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
         unit = UnitGetFar(unit_id);
         entry->unit_id = unit_id;
-        entry->priority = unit->agility >> 1;
+        entry->priority = unit->agi >> 1;
         if (entry->priority != 0)
-            entry->priority += (Random16() * unit->agility) >> 16;
+            entry->priority += (Random16() * unit->agi) >> 16;
         entry->command = 0;
         entry->parameter = 0;
         entry->target = (Random16() * priority_range) >> 16;
@@ -411,7 +411,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
         work.count = BattleParty_ListLivingUnits(2, work.actors);
     else
         work.count = BattleParty_ListLivingUnits(1, work.actors);
-    PtyStDrawFar(BtlWk->party_status_mode & ~1);
+    PtyStDrawFar(BtlWk->pty_st & ~1);
     object = BtlObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);

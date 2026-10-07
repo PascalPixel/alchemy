@@ -72,7 +72,7 @@ s32 BattlePres_BuildOpponentEntries(
             s32 value;
 
             entry->unit_id = unit_id;
-            value = unit->agility;
+            value = unit->agi;
             entry->priority = value;
             if (copy_index != 0) {
                 entry->priority = (s16)value / 2;
@@ -112,7 +112,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
             UnitGetFar(entry->unit_id);
             action = BtlActGet(Djinn_GetDefinitionHeaderFar(
                 (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
-            if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
+            if (action->efx == 46 || action->efx == 47 || action->efx == 53) {
                 entry->priority += 10000;
             }
         }

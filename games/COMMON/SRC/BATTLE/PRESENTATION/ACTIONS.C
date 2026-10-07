@@ -197,7 +197,7 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 #endif
 
     if ((slot & 0x80) != 0)
-        return battle->enemy_units[slot & 0xf];
+        return battle->enm_no[slot & 0xf];
     return battle->party_units[slot & 0xf];
 }
 
@@ -221,7 +221,7 @@ s32 Battle_FindTaggedSlotByValue(u32 value)
         }
     }
     for (i = 0; ; i++) {
-        item = battle->enemy_units[i];
+        item = battle->enm_no[i];
         if (item == BATTLE_UNIT_LIST_END)
             return -1;
         if (item != BATTLE_UNIT_REMOVED && item == value)

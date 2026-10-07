@@ -139,14 +139,14 @@ void BattleParty_CollectUnitList(void)
     if (kind >= 0) {
         if (kind <= 1) {
             for (i = 0; i < count; i++)
-                battle->enemy_units[i] = buf[i];
+                battle->enm_no[i] = buf[i];
             goto done;
         }
     }
     for (i = 0; i < count; i++) {
         index = BattleParty_CenterOrderOffsets[i] + count / 2;
-        battle->enemy_units[index] = buf[i];
+        battle->enm_no[index] = buf[i];
     }
 done:
-    battle->enemy_units[count] = 0xff;
+    battle->enm_no[count] = 0xff;
 }

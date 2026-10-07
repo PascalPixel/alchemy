@@ -10,16 +10,16 @@ enum {
 };
 
 struct BtlPlan {
-    u8 actor_id;
+    u8 aid;
     s8 target_count;
     u8 tgt_no[BATTLE_TARGET_CAPACITY];
     s8 tgt_dist[BATTLE_TARGET_CAPACITY];
     s8 tgt_adj[BATTLE_TARGET_CAPACITY];
     s8 tgt_crit[BATTLE_TARGET_CAPACITY];
     s8 tgt_hit[BATTLE_TARGET_CAPACITY];
-    s16 command;
+    s16 cmd;
     u8 unknown_4a[2];
-    s32 action_id;
+    s32 act_no;
     s32 elm;
     s32 outcome;
     u32 presentation_flags;
@@ -41,7 +41,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattlePlan_ActionId,
     struct BtlPlan,
-    action_id,
+    act_no,
     0x4c);
 LAYOUT_OFFSET_GUARD(
     BattlePlan_SpiritDmg,

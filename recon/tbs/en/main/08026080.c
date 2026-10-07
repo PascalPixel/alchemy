@@ -396,8 +396,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         ids[0] = (u16)sel;
         cnt = 1;
     } else {
-        for (i = 0; i <= 5 && runtime->enemy_units[i] != 0xFF; i++) {
-            ids[cnt] = runtime->enemy_units[i];
+        for (i = 0; i <= 5 && runtime->enm_no[i] != 0xFF; i++) {
+            ids[cnt] = runtime->enm_no[i];
             cnt++;
         }
     }
@@ -817,8 +817,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 }
             }
             if (result < 0) {
-                for (k = 0; k <= 5 && runtime->enemy_units[k] != 0xFF; k++) {
-                    if (runtime->enemy_units[k] == id) {
+                for (k = 0; k <= 5 && runtime->enm_no[k] != 0xFF; k++) {
+                    if (runtime->enm_no[k] == id) {
                         result = 0x180 | k;
                         break;
                     }

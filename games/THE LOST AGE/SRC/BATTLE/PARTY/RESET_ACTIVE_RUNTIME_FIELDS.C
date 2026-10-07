@@ -60,7 +60,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
             unit->miugoki = 0;
             unit->agi_cnt = 0;
             unit->agi_lv = 0;
-            unit->battle_end_state = 0;
+            unit->chouhatsu = 0;
 
             BattleUnit_Recalculate(owners[i]);
             i++;

@@ -42,7 +42,7 @@ struct BattleBaseStats {
     u8 hp_regen;
     u8 ep_regen;
     u8 unknown_12[2];
-    struct BattleElementStats elements[4];
+    struct BattleElementStats elm[4];
 };
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
@@ -187,13 +187,13 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     state->base_agility = value;
 
     for (i = 0; i < 4; i++) {
-        value = state->base_elements[i].power + levels * 15;
-        floor = base->elements[i].power * 7 / 10;
+        value = state->base_elm[i].pow + levels * 15;
+        floor = base->elm[i].pow * 7 / 10;
         if (value < floor)
             value = floor;
         if (value > 200)
             value = 200;
-        state->base_elements[i].power = value;
+        state->base_elm[i].pow = value;
     }
 
     state->level += levels;

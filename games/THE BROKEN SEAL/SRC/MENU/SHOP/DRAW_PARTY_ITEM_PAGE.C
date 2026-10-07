@@ -71,7 +71,7 @@ s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
     message = (s32)MsgStatLabel;
     UiText_DrawCharacterAtOffsetFar(message, window, 32, 16);
     UiText_DrawCharacterAtOffsetFar(message + 1, window, 32, 24);
-    UiText_DrawNumberInWindowFar(unit->attack, 3, window, SHOP_STAT_X, 16);
-    UiText_DrawNumberInWindowFar(unit->defense, 3, window, SHOP_STAT_X, 24);
+    UiText_DrawNumberInWindowFar(unit->atk, 3, window, SHOP_STAT_X, 16);
+    UiText_DrawNumberInWindowFar(unit->def, 3, window, SHOP_STAT_X, 24);
     return 1;
 }

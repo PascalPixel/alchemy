@@ -42,5 +42,5 @@ void BattleMotion_RunValueSequence(s32 id)
         remaining--;
     } while (remaining >= 0);
 
-    PtyStDrawFar(Ram_HeapSlots->battle_work->party_status_mode);
+    PtyStDrawFar(Ram_HeapSlots->battle_work->pty_st);
 }

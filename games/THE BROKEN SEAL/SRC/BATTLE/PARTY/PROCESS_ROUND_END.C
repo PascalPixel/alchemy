@@ -254,7 +254,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
     s32 best;
     s32 order;
 
-    id = plan->actor_id;
+    id = plan->aid;
     both_sides = 0;
     unit = UnitGetFar(id);
     list = &Trade_GetOfferStateFar((id < 0 || id > 7))->list;
@@ -331,7 +331,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
         }
         BattleUnit_Recalculate(id);
         for (i = 0; i <= 3; i++) {
-            order = unit->elements[i].power - before->elements[i].power;
+            order = unit->elm[i].pow - before->elm[i].pow;
             if (order > 0) {
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(25);

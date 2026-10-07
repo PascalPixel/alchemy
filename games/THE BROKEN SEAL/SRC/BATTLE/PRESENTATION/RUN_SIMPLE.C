@@ -56,12 +56,12 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
     /* FAKEMATCH: r0 forgets the plan, so the first read reloads it */
     asm volatile("" : : : "r0");
     transition = gTransitionWork;
-    object = BtlObjGet(plan->actor_id)->object;
+    object = BtlObjGet(plan->aid)->object;
     z = object->z;
     x = object->x;
     angle = (u16)ArcTan2(x, z);
     adjusted = angle - 0x2000;
-    if (plan->actor_id > 7)
+    if (plan->aid > 7)
         adjusted = angle + 0x6000;
     adjusted &= 0x7fff;
     facing_angle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -77,7 +77,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
     BattlePres_SetActorModes(0, 0);
     BattlePres_BuildTargetList(plan, &work);
     if (work.kind == 0x87)
-        PtyStDrawFar(BtlWk->party_status_mode & ~1);
+        PtyStDrawFar(BtlWk->pty_st & ~1);
 
     unit = UnitGetFar(work.actor);
     UnitGetFar(work.actors[0]);
@@ -85,7 +85,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
     direct = plan->tgt_adj[0] == 0;
 
     animation = GetMotionRecord(
-        BtlObjGet(plan->actor_id)->object, 0);
+        BtlObjGet(plan->aid)->object, 0);
     divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
     BattleMotion_ApproachTarget(
         work.actor,
@@ -190,12 +190,12 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 
     transition = gTransitionWork;
     saved_input = input;
-    object = BtlObjGet(saved_input->actor_id)->object;
+    object = BtlObjGet(saved_input->aid)->object;
     z = object->z;
     x = object->x;
     angle = (u16)ArcTan2(x, z);
     adjusted = angle - 0x2000;
-    if (saved_input->actor_id > 7)
+    if (saved_input->aid > 7)
         adjusted = angle + 0x6000;
     adjusted &= 0x7fff;
     facing_angle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -215,7 +215,7 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 
     scripted = flags & 2;
     animation = GetMotionRecord(
-        BtlObjGet(saved_input->actor_id)->object, 0);
+        BtlObjGet(saved_input->aid)->object, 0);
     divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
     BattleMotion_ApproachTarget(
         work.actor,
@@ -257,7 +257,7 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused,
     struct BattlePresentationTransition *transition = gTransitionWork;
     s32 facing;
 
-    if (plan->actor_id > 4)
+    if (plan->aid > 4)
         facing = -0x2000;
     else
         facing = 0x2000;

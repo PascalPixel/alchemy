@@ -3,8 +3,8 @@
 #include "IWRAM_CALL.H"
 
 struct OwnerElementStats {
-    s16 power;
-    s16 resist;
+    s16 pow;
+    s16 res;
 };
 
 struct OwnerStats {
@@ -12,12 +12,12 @@ struct OwnerStats {
     s16 max_ep;
     s16 hp;
     s16 ep;
-    u16 attack;
-    u16 defense;
-    u16 agility;
+    u16 atk;
+    u16 def;
+    u16 agi;
     u8 luck;
     u8 unknown_0f[5];
-    struct OwnerElementStats elements[4];
+    struct OwnerElementStats elm[4];
 };
 
 struct OwnerState {
@@ -63,43 +63,43 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     state->stats.max_ep = value;
 
     floor = __divsi3(levels * 123, 10);
-    value = state->stats.attack;
+    value = state->stats.atk;
     value += floor;
-    floor = __divsi3(base->attack * 7, 10);
+    floor = __divsi3(base->atk * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.attack = value;
+    state->stats.atk = value;
 
     floor = __divsi3(levels * 33, 10);
-    value = state->stats.defense;
+    value = state->stats.def;
     value += floor;
-    floor = __divsi3(base->defense * 7, 10);
+    floor = __divsi3(base->def * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.defense = value;
+    state->stats.def = value;
 
     floor = __divsi3(levels * 51, 10);
-    value = state->stats.agility;
+    value = state->stats.agi;
     value += floor;
-    floor = __divsi3(base->agility * 7, 10);
+    floor = __divsi3(base->agi * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.agility = value;
+    state->stats.agi = value;
 
     for (i = 0; i < 4; i++) {
-        value = state->stats.elements[i].power + levels * 15;
-        floor = __divsi3(base->elements[i].power * 7, 10);
+        value = state->stats.elm[i].pow + levels * 15;
+        floor = __divsi3(base->elm[i].pow * 7, 10);
         if (value < floor)
             value = floor;
         if (value > 200)
             value = 200;
-        state->stats.elements[i].power = value;
+        state->stats.elm[i].pow = value;
     }
 
     state->level += levels;

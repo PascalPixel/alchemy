@@ -186,7 +186,7 @@
  * p, q reloads are native's, but the reduced x's 112 still comes before
  * the gVramBlockCache copy into r8 where native has it after). The
  * help block's r5/r6 swap is global allocation of saved and the
- * &object->agility address pseudo (r9 + 64): native gives the address r5.
+ * &object->agi address pseudo (r9 + 64): native gives the address r5.
  * saved declared after agiDelta, or block-local to the help block, 87
  * (no change).
  *
@@ -671,13 +671,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 10, (struct RenderInput *)winMain, 136, 16);
                 UiText_DrawNumberInWindow(
-                    object->attack, 3, (s32)winMain, 184, 16);
+                    object->atk, 3, (s32)winMain, 184, 16);
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 9, (struct RenderInput *)winMain, 136, 24);
                 UiText_DrawNumberInWindow(
-                    object->defense, 3, (s32)winMain, 184, 24);
+                    object->def, 3, (s32)winMain, 184, 24);
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 8, (struct RenderInput *)winMain, 136, 32);
                 UiText_DrawNumberInWindow(
-                    object->agility, 3, (s32)winMain, 184, 32);
+                    object->agi, 3, (s32)winMain, 184, 32);
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 7, (struct RenderInput *)winMain, 136, 40);
                 UiText_DrawNumberInWindow(object->luck, 3, (s32)winMain, 184, 40);
 
@@ -710,10 +710,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, j), 2,
                         (s32)winMain, 48 + j * 32, 80);
                     UiText_DrawNumberInWindow(
-                        object->elements[j].power, 3, (s32)winMain,
+                        object->elm[j].pow, 3, (s32)winMain,
                         40 + j * 32, 88);
                     UiText_DrawNumberInWindow(
-                        object->elements[j].resist, 3, (s32)winMain,
+                        object->elm[j].res, 3, (s32)winMain,
                         40 + j * 32, 96);
                 }
 
@@ -859,16 +859,16 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 saved = (struct BtlUnit *)MemAlloc(sizeof(*object));
                 Iwram_CopyWords(saved, object, sizeof(*object));
 
-                atkDelta = object->attack;
-                defDelta = object->defense;
-                agiDelta = object->agility;
+                atkDelta = object->atk;
+                defDelta = object->def;
+                agiDelta = object->agi;
                 object->atk_lv = 0;
                 object->def_lv = 0;
                 object->agi_lv = 0;
                 BattleUnit_Recalculate(owner);
-                atkDelta -= object->attack;
-                defDelta -= object->defense;
-                agiDelta -= object->agility;
+                atkDelta -= object->atk;
+                defDelta -= object->def;
+                agiDelta -= object->agi;
                 Iwram_CopyWords(object, saved, sizeof(*object));
                 MemFree(saved);
 
@@ -980,7 +980,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     UiWindow_MarkVisibleTileAttributes();
     UiWork_Finalize(winMain, 1);
     UiWork_Finalize(winDesc, 1);
-    PtyStDraw(BtlWk->party_status_mode);
+    PtyStDraw(BtlWk->pty_st);
     ((struct MenuCell **)&BtlWk)[HEAP_SLOT_WINDOW + 42 - HEAP_SLOT_BATTLE]->busy = 0;
     WaitFrames(1);
     return 0;

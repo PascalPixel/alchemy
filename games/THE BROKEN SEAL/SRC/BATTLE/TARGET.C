@@ -62,8 +62,8 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
         }
     } else {
         index = 0;
-        slot = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
-        tail = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
+        slot = (u32)&((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
+        tail = (u32)&((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
         offset = tail * 2;
         entry = (s16 *)(order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255) {
@@ -134,7 +134,7 @@ pick:
 #define CHECK_EFFECT_TARGET(unit, action, applies, damage_class)              \
     {                                                                         \
         (applies) = 0;                                                        \
-        switch ((action)->effect) {                                           \
+        switch ((action)->efx) {                                           \
         case EFX_ATK_UP2:                                                     \
         case EFX_ATK_UP1:                                                     \
             if ((unit)->atk_lv + 1 <= 4)                             \
@@ -234,10 +234,10 @@ pick:
             break;                                                            \
         }                                                                     \
         if ((unit)->hp == 0                                                   \
-            && BtlEfxRevChkFar((action)->effect) == 0)                  \
+            && BtlEfxRevChkFar((action)->efx) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
-            (damage_class) = ((action)->target_flags & 0x0f) - 1;             \
+            (damage_class) = ((action)->tgt_flg & 0x0f) - 1;             \
             switch (damage_class) {                                           \
             case 2:                                                           \
             case 3:                                                           \
@@ -246,7 +246,7 @@ pick:
                 break;                                                        \
             case 7:                                                           \
             case 8:                                                           \
-                if ((action)->power != 0 && (unit)->hp != 0)                  \
+                if ((action)->pow != 0 && (unit)->hp != 0)                  \
                     (applies)++;                                              \
                 break;                                                        \
             case 9:                                                           \
@@ -260,7 +260,7 @@ pick:
             case 1:                                                           \
             case 4:                                                           \
             case 5:                                                           \
-                if ((action)->power != 0 && (unit)->hp != 0)                  \
+                if ((action)->pow != 0 && (unit)->hp != 0)                  \
                     (applies)++;                                              \
                 break;                                                        \
             }                                                                 \
@@ -327,8 +327,8 @@ s32 BattleTarget_SelectForAction(
 
 scan_mirrored_order:
         target_index = 0;
-        while (turn_order->enemy_units[target_index] != 255) {
-            unit_id = turn_order->enemy_units[target_index];
+        while (turn_order->enm_no[target_index] != 255) {
+            unit_id = turn_order->enm_no[target_index];
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
@@ -362,10 +362,10 @@ scan_complete:
         return -1;
 
     if (action->target_mode == 1
-        && action->range == 1
+        && action->rng == 1
         && Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)
                 ->target_strategy != 2
-        && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
+        && (u32)((action->tgt_flg & 0x0f) - 3) <= 2) {
         selected = -1;
         for (target_index = 0;
              target_index < target_count;

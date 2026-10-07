@@ -16,19 +16,19 @@ struct OwnerActionSlot {
 };
 
 struct BattleElementStats {
-    s16 power;
-    s16 resist;
+    s16 pow;
+    s16 res;
 };
 
 struct BtlAct {
     u8 target_mode;
-    u8 target_flags;
+    u8 tgt_flg;
     u8 damage_class;
-    u8 effect;
+    u8 efx;
     u8 unknown_04[4];
-    u8 range;
+    u8 rng;
     u8 pp_cost;
-    u16 power;
+    u16 pow;
     u8 type_0c;
     u8 unknown_0d[3];
 };
@@ -53,20 +53,20 @@ struct BtlUnit {
     u8 base_hp_regen;
     u8 base_ep_regen;
     u8 unknown_022[2];
-    struct BattleElementStats base_elements[4];
+    struct BattleElementStats base_elm[4];
     s16 max_hp;
     s16 max_ep;
     s16 hp;
     s16 ep;
-    u16 attack;
-    u16 defense;
-    u16 agility;
+    u16 atk;
+    u16 def;
+    u16 agi;
     u8 luck;
     u8 action_entry_count;
     u8 hp_regen;
     u8 ep_regen;
     u8 unknown_046[2];
-    struct BattleElementStats elements[4];
+    struct BattleElementStats elm[4];
     struct OwnerActionSlot action_slots[32];
     u16 inventory[15];
     u8 unknown_0f6[2];
@@ -108,7 +108,7 @@ struct BtlUnit {
     u8 miugoki;
     u8 agi_cnt;
     s8 agi_lv;
-    s8 battle_end_state;
+    s8 chouhatsu;
     u8 unknown_149;
     u16 enemy_id;
 };
@@ -120,12 +120,12 @@ LAYOUT_SIZE_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattleAction_Effect,
     struct BtlAct,
-    effect,
+    efx,
     0x03);
 LAYOUT_OFFSET_GUARD(
     BattleAction_Power,
     struct BtlAct,
-    power,
+    pow,
     0x0a);
 LAYOUT_OFFSET_GUARD(
     BattleAction_Type,
@@ -146,10 +146,10 @@ LAYOUT_OFFSET_GUARD(BattleUnit_Hp, struct BtlUnit, hp, 0x038);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_BaseElements,
     struct BtlUnit,
-    base_elements,
+    base_elm,
     0x024);
 LAYOUT_OFFSET_GUARD(BattleUnit_Level, struct BtlUnit, level, 0x00f);
-LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BtlUnit, elements, 0x048);
+LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BtlUnit, elm, 0x048);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_ReadyPose,
     struct BtlUnit,

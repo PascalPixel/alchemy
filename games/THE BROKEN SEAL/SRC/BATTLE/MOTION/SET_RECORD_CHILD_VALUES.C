@@ -60,26 +60,26 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
     s32 i;
 
     if (plan->presentation_flags & 0x40000) {
-        transition->target_yaw = plan->actor_id <= 7 ? -0x2000 : 0x5000;
+        transition->target_yaw = plan->aid <= 7 ? -0x2000 : 0x5000;
         transition->frames = 60;
     } else {
-        struct MotionObject *actor = BtlObjGet(plan->actor_id)->object;
+        struct MotionObject *actor = BtlObjGet(plan->aid)->object;
         s32 angle = ArcTan2(actor->x, actor->z);
         s32 current;
 
-        if (plan->actor_id <= 7)
+        if (plan->aid <= 7)
             current = angle - 0x1800;
         else
             current = angle + 0x1800;
         current = (s16)current;
-        current += ((plan->actor_id <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        if (!((plan->actor_id <= 7) ^ (plan->tgt_no[0] <= 7)))
-            current = plan->actor_id <= 7 ? 0x2400 : -0x2400;
+        current += ((plan->aid <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
+        if (!((plan->aid <= 7) ^ (plan->tgt_no[0] <= 7)))
+            current = plan->aid <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;
     }
     if (plan->presentation_flags & 0x80000) {
-        transition->target_yaw = plan->actor_id <= 7 ? -0x2000 : 0x2000;
+        transition->target_yaw = plan->aid <= 7 ? -0x2000 : 0x2000;
         transition->frames = 60;
     }
 
@@ -88,7 +88,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
     if (scripted)
         work.flags = 1;
     BattlePres_SetActorModes(0, 0);
-    PtyStDrawFar(BtlWk->party_status_mode & ~1);
+    PtyStDrawFar(BtlWk->pty_st & ~1);
     object = BtlObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
@@ -112,7 +112,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
     }
     if (plan->failure != 0) {
         if (plan->failure == 1) {
-            BtlEvPush(0, plan->actor_id);
+            BtlEvPush(0, plan->aid);
             BtlEvPush(4, (s32)MsgPsynergyBlocked);
         } else {
             BtlEvPush(4, (s32)MsgCastLacksPp);

@@ -15,12 +15,12 @@ s32 EnmUpd(void)
     s32 count;
     s32 i;
 
-    for (i = 0; i < 6 && work->enemy_units[i] != 0xff; i++)
-        unit_ids[i] = work->enemy_units[i];
+    for (i = 0; i < 6 && work->enm_no[i] != 0xff; i++)
+        unit_ids[i] = work->enm_no[i];
     count = i;
     Summon_LayoutPositions(unit_ids, count, x, z);
     for (i = 0; i < count; i++) {
-        s32 id = work->enemy_units[i];
+        s32 id = work->enm_no[i];
 
         if (id != 0xfe) {
             struct BtlObj *object = BtlObjGet(id);

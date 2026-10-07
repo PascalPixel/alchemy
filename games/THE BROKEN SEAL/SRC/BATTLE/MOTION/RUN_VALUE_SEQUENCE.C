@@ -44,5 +44,5 @@ void BattleMotion_RunValueSequence(s32 id)
         remaining--;
     } while (remaining >= 0);
 
-    PtyStDrawFar(BtlWk->party_status_mode);
+    PtyStDrawFar(BtlWk->pty_st);
 }

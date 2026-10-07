@@ -1,0 +1,107 @@
+/* Func_02000064, Func_020000e0, Func_02000d08 and Func_02000d3c load scene ids 0xea and 0xeb from the literal pool: they wait for SceneId_ names in a ⚓️ SCENES.S table (O3).
+   Func_02000c14 differ 10: the native reloads gFrameCount's address for the second test instead of keeping it in r1. */
+#include "TYPES.H"
+#include "PARTY_STATE.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SPRITE.H"
+
+extern u8 Data_02001194[];
+extern u8 Data_020011ac[];
+extern u8 Data_020012cc[];
+extern u8 Data_0200147c[];
+extern u8 Data_0200159c[];
+extern u8 Data_0200165c[];
+extern u8 Data_0200171c[];
+extern u8 Data_02001728[];
+extern u8 Data_020018f0[];
+extern u32 gFrameCount;
+
+void Func_02001110(s32 a, s32 b, s32 c);
+void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Test(s32 flag);
+void Func_0200097c(void);
+void Func_02000dc4(void);
+void Func_02000ed0(void);
+struct FieldActor *Object_GetById(s32 id);
+void ObjectMotion_SetActionVariant(u32, s32);
+void Func_02000ff0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+
+u8 *Func_02000064(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == 0xea) {
+        if (GameFlag_Test(0x9b2))
+            return Data_0200147c;
+        if (GameFlag_Test(0x9d0))
+            return Data_020012cc;
+        return Data_020011ac;
+    }
+    if (scene == 0xeb) {
+        if (GameFlag_Test(0x9d0))
+            return Data_0200159c;
+        return Data_0200165c;
+    }
+    return Data_02001194;
+}
+
+u8 *Func_020000e0(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == 0xea)
+        return Data_02001728;
+    if (scene == 0xeb)
+        return Data_020018f0;
+    return Data_0200171c;
+}
+
+void Func_02000c14(void)
+{
+    s32 i;
+    s16 first;
+
+    if ((gFrameCount & 7) == 0) {
+        first = ((volatile u16 *)0x05000160)[9];
+        i = 9;
+    rotate_a:
+        ((volatile u16 *)0x05000160)[i] = ((volatile u16 *)0x05000160)[i - 1];
+        i--;
+        if (i != 4)
+            goto rotate_a;
+        ((volatile u16 *)0x05000160)[4] = first;
+    }
+    if ((gFrameCount & 7) == 0) {
+        first = ((volatile u16 *)0x05000160)[15];
+        i = 15;
+    rotate_b:
+        ((volatile u16 *)0x05000160)[i] = ((volatile u16 *)0x05000160)[i - 1];
+        i--;
+        if (i != 12)
+            goto rotate_b;
+        ((volatile u16 *)0x05000160)[12] = first;
+    }
+}
+
+s32 Func_02000d08(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == 0xea)
+        Func_02000dc4();
+    else if (scene == 0xeb)
+        Func_02000ed0();
+    return 0;
+}
+
+s32 Func_02000d3c(void)
+{
+    if (gPartyState.scene == 0xea && GameFlag_Test(0x9d0)) {
+        Func_02000ff0(54, 47, 4, 15, 10, 4);
+        Func_02000ff0(54, 38, 73, 7, 10, 4);
+        Func_02000ff0(54, 43, 21, 55, 10, 3);
+        Func_02000ff0(65, 43, 21, 20, 10, 3);
+        Func_02000ff0(4, 47, 4, 50, 10, 3);
+    }
+    return 0;
+}

@@ -44411,7 +44411,7 @@ msgctxt "message"
 msgid "11100"
 msgstr "What does it mean, when{line_break}ancient legends are turning{line_break}out to be true?{page_break}I just want the world to go{line_break}back to the way it was before.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGladYouKeptYourPromise"
 msgid "11101"
 msgstr "I'm glad you kept your{line_break}promise, {actor_name:5}.{end_wait}"
 
@@ -45083,7 +45083,7 @@ msgctxt "message"
 msgid "11268"
 msgstr "Goo... It's getting colder...{line_break}Gagoo... I want a blanket...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReturnedToMyNewHome"
 msgid "11269"
 msgstr "Ah, you've returned! What{line_break}brings you to my new home?{end_wait}"
 

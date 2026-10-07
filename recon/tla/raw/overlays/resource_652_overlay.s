@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008064,"ax",%progbits
+	.balign 4
 	.global Func_02000064
 	.thumb_func
 Func_02000064:
@@ -41,79 +42,8 @@ Func_02000064:
 .L_020080a4:
 	.4byte Data_02001204
 	.4byte 0x00004770
-	.section .text.x020080ac,"ax",%progbits
-	.global Func_020000ac
-	.thumb_func
-Func_020000ac:
-	push {r5, lr}
-	adds r5, r1, #0
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #50
-	adds r0, r5, #0
-	bl Func_02000d94
-	adds r0, r5, #0
-	movs r1, #6
-	movs r2, #15
-	bl ObjectMotion_Launch
-	adds r0, r5, #0
-	movs r1, #6
-	movs r2, #15
-	bl ObjectMotion_Launch
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008112
-	ldr r0, .L_02008148
-	bl Engine_EventSetMessage
-	adds r0, r5, #0
-	movs r1, #0
-	bl Engine_EventShowMessage
-	movs r1, #180
-	adds r0, r5, #0
-	lsls r1, r1, #1
-	movs r2, #72
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #128
-	adds r0, r5, #0
-	lsls r1, r1, #7
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	b .L_02008140
-.L_02008112:
-	ldr r0, .L_0200814c
-	bl Engine_EventSetMessage
-	adds r0, r5, #0
-	movs r1, #0
-	bl Engine_EventShowMessage
-	movs r1, #196
-	adds r0, r5, #0
-	lsls r1, r1, #1
-	movs r2, #104
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #128
-	adds r0, r5, #0
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_ClearBit
-.L_02008140:
-	movs r0, #20
-	bl Battle_WaitMode0
-	pop {r5, pc}
-.L_02008148:
-	.4byte MsgDeriHeyaGah
-.L_0200814c:
-	.4byte MsgDeriHeyaYarg
 	.section .text.x02008218,"ax",%progbits
+	.balign 4
 	.global Func_02000218
 	.thumb_func
 Func_02000218:
@@ -165,6 +95,7 @@ Func_02000218:
 .L_0200826c:
 	.4byte Data_020016e4
 	.section .text.x02008704,"ax",%progbits
+	.balign 4
 	.global Func_02000704
 	.thumb_func
 Func_02000704:
@@ -189,144 +120,8 @@ Func_02000704:
 	pop {r5, pc}
 .L_0200872c:
 	.4byte Data_02000e04
-	.section .text.x02008730,"ax",%progbits
-	.global Func_02000730
-	.thumb_func
-Func_02000730:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	movs r0, #9
-	bl Object_GetById
-	ldr r0, [r0, #72]
-	movs r5, #229
-	mov r8, r0
-	movs r0, #9
-	bl Object_GetById
-	ldr r6, [r0, #40]
-	movs r0, #9
-	bl Object_GetById
-	lsls r5, r5, #1
-	ldr r7, [r0, #12]
-	bl Engine_EventBegin
-	movs r0, #0
-	bl Engine_EventResolvePendingActions
-	adds r0, r5, #0
-	bl Func_02000d14
-	cmp r0, #0
-	blt .L_020087a0
-	movs r0, #9
-	bl Object_GetById
-	movs r1, #3
-	bl Func_02000da4
-	movs r0, #83
-	bl Func_02000dfc
-	adds r0, r5, #0
-	movs r1, #2
-	bl Func_02000ccc
-	movs r1, #1
-	ldr r0, .L_02008870
-	bl UiText_ShowPositionedMessageAndWait
-	adds r0, r5, #0
-	bl PartyInventory_Add
-	movs r0, #9
-	movs r1, #0
-	movs r2, #0
-	bl Func_02000d4c
-	movs r1, #232
-	movs r2, #194
-	b .L_020087d0
-.L_020087a0:
-	movs r0, #9
-	bl Object_GetById
-	movs r1, #3
-	bl Func_02000da4
-	movs r0, #83
-	bl Func_02000dfc
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_02000878
-	movs r3, #1
-	negs r3, r3
-	cmp r0, r3
-	beq .L_020087e4
-	movs r0, #9
-	movs r1, #0
-	movs r2, #0
-	bl Func_02000d4c
-	movs r1, #232
-	movs r2, #196
-.L_020087d0:
-	movs r0, #13
-	lsls r1, r1, #16
-	lsls r2, r2, #16
-	bl Func_02000d4c
-	movs r0, #162
-	lsls r0, r0, #4
-	bl GameFlag_SetBit
-	b .L_02008866
-.L_020087e4:
-	movs r2, #0
-	movs r1, #0
-	movs r0, #9
-	bl Func_02000d4c
-	movs r0, #1
-	bl Battle_WaitMode0
-	movs r0, #9
-	bl Object_GetById
-	str r6, [r0, #40]
-	movs r0, #9
-	bl Object_GetById
-	str r7, [r0, #12]
-	movs r0, #9
-	bl Object_GetById
-	mov r3, r8
-	str r3, [r0, #72]
-	movs r0, #9
-	bl Object_GetById
-	movs r3, #0
-	str r3, [r0, #108]
-	movs r0, #9
-	bl Object_GetById
-	bl Func_02000c9c
-	movs r1, #1
-	movs r0, #9
-	bl Engine_ActorSetSpritePriority
-	movs r0, #9
-	bl Object_GetById
-	movs r3, #2
-	adds r0, #85
-	strb r3, [r0]
-	movs r0, #9
-	bl Object_GetById
-	ldr r5, .L_02008874
-	str r5, [r0, #28]
-	movs r0, #9
-	bl Object_GetById
-	str r5, [r0, #24]
-	movs r0, #9
-	bl Object_GetById
-	adds r0, #89
-	ldrb r2, [r0]
-	movs r3, #4
-	orrs r3, r2
-	movs r1, #232
-	movs r2, #196
-	strb r3, [r0]
-	lsls r1, r1, #16
-	movs r0, #9
-	lsls r2, r2, #16
-	bl Func_02000d4c
-.L_02008866:
-	bl Engine_EventEnd
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-.L_02008870:
-	.4byte MsgItemReceived
-.L_02008874:
-	.4byte 0x00013333
 	.section .text.x02008878,"ax",%progbits
+	.balign 4
 	.global Func_02000878
 	.thumb_func
 Func_02000878:

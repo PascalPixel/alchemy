@@ -605,7 +605,6 @@
         "*/recon/tla/raw/0803f614.o"(.text)
         "*/recon/tla/raw/0803f620.o"(.text)
         "*/recon/tla/raw/0803f624.o"(.text)
-        "*/recon/tla/raw/0803f698.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/TOPSEL.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/TOPSEL_RUN.o"(.text)

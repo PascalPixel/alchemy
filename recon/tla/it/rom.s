@@ -1211,12 +1211,6 @@ Func_0803f620:
 	.thumb_func
 UiTextResource_Initialize:
 	.incbin "baserom.gba", 0x0003f67c, 0x00000074
-	.section .rom.0003f6f0, "ax"
-	.global UiTextResource_SetPosition
-	.type UiTextResource_SetPosition, %function
-	.thumb_func
-UiTextResource_SetPosition:
-	.incbin "baserom.gba", 0x0003f6f0, 0x00000028
 	.section .rom.0003f7d0, "ax"
 	.global Menu_RunTopSelection
 	.type Menu_RunTopSelection, %function
@@ -3354,11 +3348,11 @@ Func_080d1e60:
 Func_080d1eac:
 	.incbin "baserom.gba", 0x000d1eac, 0x0000002c
 	.section .rom.000d1ee8, "ax"
+	.balign 4
 	.global Func_080d1ee8
 	.type Func_080d1ee8, %function
 	.thumb_func
 Func_080d1ee8:
-	.balign 4
 	.incbin "baserom.gba", 0x000d1ee8, 0x00000024
 	.section .rom.000d1f20, "ax"
 	.incbin "baserom.gba", 0x000d1f20, 0x00000164

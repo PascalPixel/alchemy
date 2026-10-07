@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_UNIT_H
 #define ALCHEMY_BATTLE_UNIT_H
 
+#include "EDITION.H"
 #include "LAYOUT_GUARD.H"
 
 enum {

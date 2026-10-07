@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1383, common 1193, differ 389.
+ * Native 1392 instructions, draft 1401, common 1208, differ 377.
  * Frame now 352 bytes, as native, and the setup loops, the cursor
  * update, the face and cursor sprites, the djinn rows and the condition
  * list match up to register choice. Remaining: redraw in r11 where native
@@ -11,6 +11,18 @@
  * at sp+4 around calls (caller-save, lowest priority), the deltas atk sl,
  * def fp, agi r7; here code takes r7 and the deltas r8, sl, fp, and 332
  * gets no register.
+ *
+ * Modifier tests 2026-10-07 (session 2): native reads each modifier
+ * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
+ * load (combine keeps m's load), and recomputes (s8)m < 0 as m << 24
+ * in the next block. CSE1's skip-blocks path reuses the first sign
+ * extension for the second test here (.03.cse), so the < 0 test shares
+ * one ldrsb. u8 m, (s8)m > 0 and m & 0x80: 389 -> 377 (the > 0 test is
+ * native's; the & 0x80 test is an ands with 0x80 where native has lsl
+ * #24). Rejected: the field read directly for the > 0 test 389 (CSE
+ * equates the load with m's low byte); s8 m with m & 0x80 392; u8 m
+ * with m >= 0x80 389; the condition chain with goto instead of
+ * do-while(0) 541 (still merged); the cursor tile & 0x3FF 377 (no change).
  *
  * Diagnosis 2026-10-07: most of the earlier cascade was variables shared
  * across calls where the native's value lives only between two calls:
@@ -558,13 +570,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         if (object->attack_modifier_turns != 0) {
-                            s8 m = object->attack_modifier;
+                            u8 m = object->attack_modifier;
 
-                            if (m > 0) {
+                            if ((s8)m > 0) {
                                 *o++ = 9;
                                 i++;
                             }
-                            if (m < 0) {
+                            if (m & 0x80) {
                                 *o++ = 10;
                                 i++;
                             }
@@ -573,13 +585,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         if (object->defense_modifier_turns != 0) {
-                            s8 m = object->defense_modifier;
+                            u8 m = object->defense_modifier;
 
-                            if (m > 0) {
+                            if ((s8)m > 0) {
                                 *o++ = 11;
                                 i++;
                             }
-                            if (m < 0) {
+                            if (m & 0x80) {
                                 *o++ = 12;
                                 i++;
                             }
@@ -588,13 +600,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         if (object->res_modifier_turns != 0) {
-                            s8 m = object->res_modifier;
+                            u8 m = object->res_modifier;
 
-                            if (m > 0) {
+                            if ((s8)m > 0) {
                                 *o++ = 13;
                                 i++;
                             }
-                            if (m < 0) {
+                            if (m & 0x80) {
                                 *o++ = 14;
                                 i++;
                             }
@@ -603,13 +615,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         {
-                            s8 m = object->agility_modifier;
+                            u8 m = object->agility_modifier;
 
-                            if (m > 0) {
+                            if ((s8)m > 0) {
                                 *o++ = 17;
                                 i++;
                             }
-                            if (m < 0) {
+                            if (m & 0x80) {
                                 *o = 18;
                                 i++;
                             }

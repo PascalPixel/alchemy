@@ -207,14 +207,15 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
-                            s32 tmp3;
+                            s32 tmp;
                             /* FAKEMATCH: vram, ofs and mask restore two forms the bytes prove. Set ahead of the index, they are three more moves out of the column loop in loop.c's first pass, which drops its threshold so the tile pattern's row part stays in the column loop until the second pass: the row loop reduces the index giv first and copies it first (inits index r6, pattern r5; per row mov ip, r6 and str r5, [sp, #4]). volatile keeps the VRAM base add apart from the store it addresses. Without the three 24, without ofs 564, without mask 470, without volatile 112. */
                             volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + MADO_X;
                             s32 ofs = 0x100;
                             s32 mask = 3;
-                            vram[panel * 3 + cnt * 32 + (col & mask) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + ofs;
-                            tmp3 = col & mask;
-                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + MADO_X) = 0;
+                            /* FAKEMATCH: tmp is a forced temporary set twice, first to the tile, then to the column's index. It restores a form the bytes prove, the tile kept as a block inside the column loop: recomputed every column from the row pattern, the column and 0x100 (adds r3, r7, r0; adds r3, r3, r7). A register set twice is no giv, so loop.c leaves it there; as plain expressions, or as two variables, the tile becomes a giv of the column loop, reduced into its own register set before the loop and stepped each column. Without tmp here 267, in both modes 846. */
+                            vram[panel * 3 + cnt * 32 + (col & mask) - count * 3] = tmp = panel * 16 + cnt * 4 + col + ofs;
+                            tmp = col & mask;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp - count * 3 + MADO_X) = 0;
                         }
                     }
                 }
@@ -234,14 +235,15 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
-                            s32 tmp3;
+                            s32 tmp;
                             /* FAKEMATCH: as in mode 1: vram, ofs and mask keep the tile pattern in the column loop through loop.c's first pass, volatile keeps the VRAM add apart from its store. */
                             volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
                             s32 ofs = 0x100;
                             s32 mask = 3;
-                            vram[panel * 3 + cnt * 32 + (col & mask) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + ofs;
-                            tmp3 = col & mask;
-                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 20) = 0;
+                            /* FAKEMATCH: as in mode 1: tmp, a forced temporary set twice (the tile, then the column's index), is no giv, so the tile stays a block inside the column loop, recomputed every column (adds r3, r7, r0; adds r3, r3, r7) instead of reduced into its own register. Without tmp here 271, in both modes 846. */
+                            vram[panel * 3 + cnt * 32 + (col & mask) - count * 3] = tmp = panel * 16 + cnt * 4 + col + ofs;
+                            tmp = col & mask;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp - count * 3 + 20) = 0;
                         }
                     }
                 }
@@ -254,25 +256,21 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->previous = work->selection;
             UiText_DrawCharacter((u8 *)work, work->selection, work->kinds[work->selection]);
         }
-        cnt = 0;
         work->matrix = AffineMatrix_BuildForEffect(&work->affine);
-        if (cnt < work->count) {
-            do {
-                struct SelectionEntry *entry = &work->entries[cnt];
-                if (cnt == work->selection) {
-                    entry->sprite.oam.f.affine_index = work->matrix;
-                    entry->sprite.oam.f.affine = 3;
-                    entry->sprite.oam.f.x = entry->pos_x + scale * 7 / 512 - 14;
-                    entry->sprite.oam.f.y = entry->pos_y + scale * 3 / 256 - 20;
-                    Runtime_PushSlotEntry(entry, 0xf1);
-                } else {
-                    entry->sprite.oam.f.x = entry->pos_x;
-                    entry->sprite.oam.f.y = entry->pos_y;
-                    entry->sprite.oam.f.affine_index = 0;
-                    entry->sprite.oam.f.affine = 0;
-                }
-                cnt++;
-            } while (cnt < work->count);
+        for (cnt = 0; cnt < work->count; cnt++) {
+            struct SelectionEntry *entry = &work->entries[cnt];
+            if (cnt == work->selection) {
+                entry->sprite.oam.f.affine_index = work->matrix;
+                entry->sprite.oam.f.affine = 3;
+                entry->sprite.oam.f.x = entry->pos_x + scale * 7 / 512 - 14;
+                entry->sprite.oam.f.y = entry->pos_y + scale * 3 / 256 - 20;
+                Runtime_PushSlotEntry(entry, 0xf1);
+            } else {
+                entry->sprite.oam.f.x = entry->pos_x;
+                entry->sprite.oam.f.y = entry->pos_y;
+                entry->sprite.oam.f.affine_index = 0;
+                entry->sprite.oam.f.affine = 0;
+            }
         }
         keys = gKeyState;
         repeat = gKeysRepeat;
@@ -333,10 +331,10 @@ s32 Ui_RunSelectionScreen(s32 mode)
         }
         if (repeat & 0x90) {
             Audio_PlayCue(0x6f);
-            work->selection = __modsi3(work->selection + 1, work->count);
+            work->selection = (work->selection + 1) % work->count;
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
-            work->selection = __modsi3(work->selection + work->count - 1, work->count);
+            work->selection = (work->selection + work->count - 1) % work->count;
         } else if (gLinkCountdownWork->active == 0) {
             result = work->kinds[0];
             break;

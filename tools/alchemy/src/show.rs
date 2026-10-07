@@ -8,7 +8,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::path::Path;
 
-const USAGE: &str = r#"usage: alchemy show EDITION FUNCTION
+const USAGE: &str = r#"usage: alchemy show EDITION FUNCTION [--arm]
 After a build of EDITION (tbs-ja ... tla-it), prints FUNCTION (a symbol,
 or its run-time address in hex) as out/EDITION/EDITION.gba holds it beside
 the reference ROM out/EDITION/baserom.gba at the same place, one
@@ -17,7 +17,9 @@ pool words and jump tables print as .word, and calls, branches and pool
 words that hit a symbol carry its name. The function ends at the next
 symbol in its section, a static function the ELF names or its ELF size, or
 the section end. Code that runs from IWRAM is read where the ROM holds it.
-ARM code is disassembled with arm-none-eabi-objdump."#;
+ARM code is disassembled with arm-none-eabi-objdump. Use --arm for an ARM
+scaffold whose incbin has no instruction-set mapping symbols; this affects
+only the displayed disassembly, never compilation or the count."#;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct Line {
@@ -262,12 +264,16 @@ fn is_arm(elf: Option<&Elf>, section: &Placed, name: &str, start: u32) -> bool {
         .is_some_and(|s| s.name.starts_with("$a"))
 }
 
-pub fn run(arguments: &[String]) -> Result<(), String> {
+fn parse(arguments: &[String]) -> Result<(&str, &str, bool), String> {
     let positional: Vec<&String> = arguments.iter().filter(|a| !a.starts_with('-')).collect();
-    if positional.len() != 2 || arguments.iter().any(|a| a == "-h" || a == "--help") {
+    if positional.len() != 2 || arguments.iter().any(|a| a.starts_with('-') && a != "--arm") {
         return Err(USAGE.into());
     }
-    let (edition, wanted) = (positional[0].as_str(), positional[1].as_str());
+    Ok((positional[0].as_str(), positional[1].as_str(), arguments.iter().any(|a| a == "--arm")))
+}
+
+pub fn run(arguments: &[String]) -> Result<(), String> {
+    let (edition, wanted, force_arm) = parse(arguments)?;
     let target = decomp_target(Some(edition))?;
     let out = root().join(target.output_dir);
     let read = |name: &str| std::fs::read(out.join(name)).map_err(|e| format!("{}: {e}; build {edition} first", out.join(name).display()));
@@ -293,7 +299,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if (offset + (end - start)) as usize > built.len().min(reference.len()) {
         return Err(format!("{name} runs past the end of an image"));
     }
-    let arm = is_arm(elf.as_ref(), section, &name, start);
+    let arm = force_arm || is_arm(elf.as_ref(), section, &name, start);
+    if arm && (start & 3 != 0 || end & 3 != 0) {
+        return Err(format!("{name}: ARM disassembly needs word-aligned bounds"));
+    }
     let names = names(&map);
     let (ours, theirs) = if arm {
         (arm_lines(&out.join(format!("{edition}.gba")), &built, base, start, end)?, arm_lines(&out.join("baserom.gba"), &reference, base, start, end)?)
@@ -333,6 +342,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn explicit_arm_mode_is_for_display_only() {
+        let args = ["tbs-ja", "Glyph", "--arm"].map(String::from);
+        assert_eq!(parse(&args).unwrap(), ("tbs-ja", "Glyph", true));
+        assert_eq!(parse(&args[..2]).unwrap(), ("tbs-ja", "Glyph", false));
+        let invalid = ["tbs-ja", "Glyph", "--typo"].map(String::from);
+        assert!(parse(&invalid).is_err());
+        assert!(parse(&["--help".into()]).is_err());
+    }
 
     fn halves(words: &[u16]) -> Vec<u8> {
         words.iter().flat_map(|h| h.to_le_bytes()).collect()

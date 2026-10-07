@@ -55,7 +55,28 @@
  * rate switch's 409 test (the listing derives it from
  * 411 in r3; ours loads it fresh in r2), the summon message tail, the heal's
  * target copy (the listing copies r8 again in each branch; ours keeps one
- * copy in r4); then register order. */
+ * copy in r4); then register order. The 409 test costs two bytes (a fresh
+ * constant, not subs from 411), which moves every branch offset in the
+ * rate switch; most other differences are one load swapped with a
+ * neighbouring move, the load order K2 leaves open.
+ * Tried after the split, against 330: case 409 a case of its own with rate
+ * 12, before the 399 group or after 401 (348 both), 409 last among its
+ * labels (no change), 409 sharing 401's case (336: draft 3450, but rate 12
+ * is no longer set before the 401 test), default last or with 393 last,
+ * rate as u8 or s16 (no change), rate as the function's kind (509) or tmp
+ * (660); in the heal, case 76 reading max_hp directly or maxu before maxv
+ * (337 both), maxu before maxv in case 71 (648), 2 * maxv / 5 (no change);
+ * in the PP restore, old
+ * read before heal (332), the block's declaration order (no change); in
+ * the HP drain, a block-local amt (505: heal in r5 and amt in r6 as in the
+ * listing, but apwr then shares r6 and the listing's copy from r7 is
+ * lost; heal += apwr after amt = apwr keeps 505), the HP in hp0 (740) or
+ * tmp (344); for the weapon case's signed
+ * halving, (s16)def / 2 or (s16)scale / 2 (336: the sign is extended
+ * first), (s16)target->defense read into def (382), defense read into tmp
+ * (334), kind (no change) or apwr (560), scale /= 2 and def /= 2 in place
+ * (no change): the shift stays logical while every set of the value is a
+ * zero-extended load. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

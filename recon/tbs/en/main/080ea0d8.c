@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 238 of 2455 (listing 2455, draft 2455, common 2336).
+/* 080ea0d8: differ 196 of 2455 (listing 2455, draft 2453, common 2356).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -53,6 +53,8 @@
  *   masks the byte with an SImode ~12 hoisted to r8 (441 -> 273).
  * - draw[0] after the first loop reads gWorkSlot[46] as an array element (base
  *   plus 184, as the native), not the folded literal (238).
+ * - The particle placement writes place2[0] before place2[1] = 0xff0000:
+ *   the constant's shorter life keeps loop.c from hoisting it (196).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -846,8 +848,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                         scale.x = 0x800;
                     }
                     scale.y = scale.x;
-                    place2[1] = 0xff0000;
                     place2[0] = p->x;
+                    place2[1] = 0xff0000;
                     place2[2] = p->y + 0xff0000;
                     Object_ApplyProjectedPlacementFar(work->objects[i], place2, &scale, 0);
                     p->y -= p->velocity_y;

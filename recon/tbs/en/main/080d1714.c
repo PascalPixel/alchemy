@@ -1,5 +1,5 @@
-/* 080d1714: differ 173 of 1481 instructions (1480 generated, common
- * 1394). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 169 of 1481 instructions (1480 generated, common
+ * 1396). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -168,7 +168,10 @@
  *   loop: 190. The distance sum as x * x + (y * y + z * z): 173, the
  *   squares now in r0, r2 and r1 as the native; z * z first: 179;
  *   y * y first: 186; the sum assigned to dist before Iwram_Sqrt: 230.
- * Remaining (173): the distance sum adds x * x + y * y after z * z is
+ * - on 173: index = 0 before point = runtime->particles in the
+ *   frame <= 159 loop, as before the mark and spark pointers: 169;
+ *   point = &runtime->particles[0]: 173.
+ * Remaining (169): the distance sum adds x * x + y * y after z * z is
  * computed, then z * z through a copy in r3, where the draft adds
  * y * y + z * z first; the frame <= 159 particle loop preheader and
  * the mark and spark loop preheaders choose other reload registers
@@ -457,8 +460,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         }
 
         if (frame <= 159) {
-            point = runtime->particles;
             index = 0;
+            point = runtime->particles;
             do {
                 if (point->variant == 0) {
                     work.x = point->z * Trig_Sin(point->velocity_y);

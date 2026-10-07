@@ -1,6 +1,24 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 926, common 674, differ 524; frame 372
+ * Native 946 instructions, draft 925, common 714, differ 443; frame 372
  * as native's.
+ * Session 6: the main loop is for (;;) with two breaks, the first page
+ * loop back in its original form (tile = PAGE; if (index == page / 4)
+ * tile = SELECTED), and the loop and the WaitFrames(1) after it wrapped
+ * in a FAKEMATCH do { } while (0): 524 -> 443. The mechanism, read in the
+ * gcse dump (the input to loop.c): find_and_verify_loops moves a block
+ * that ends in an unconditional jump out of the loop, when a conditional
+ * jump skips it, to the nearest BARRIER at the exit target's loop depth,
+ * searched back from the target and then forward. The only depth-0
+ * barrier is 2649, after GCSE's jump block 2648 that split_edge emits
+ * after the first scan's NOTE_INSN_LOOP_END to get around the skip-edge
+ * block (insn 2594, &ordered for slot 32). With the exit label inside an
+ * enclosing loop no barrier has its depth, nothing moves, and the select
+ * block stays inline with result in r6 as native's. for (;;) alone 595
+ * (as session 5); for (;;) inside do/while (0) with the if/else page
+ * loop 446. Next: a natural shape that has the same effect (native also
+ * has the skip-edge block after its first scan, so its exit was probably
+ * not at depth 0, or the barrier was absent when loop.c ran); then the
+ * first divergence, from mask = 0 on.
  * Session 5: the first page-tile loop written if (index != page / 4)
  * tile = PAGE; else tile = SELECTED: 567 -> 524. GCSE then no longer
  * carries the loop test's (count + 3) / 4 into the body (it is
@@ -404,7 +422,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     ordered[used] = 32;
 
-loop:
+    /* FAKEMATCH: with the exit inside an enclosing loop, loop.c finds no
+       barrier at the exit's depth and keeps the select block inline, as
+       native does; without it the block moves after the first scan. */
+    do {
+    for (;;)
     {
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
@@ -479,9 +501,8 @@ loop:
             }
             if (count > 4) {
                 for (index = 0; index < (count + 3) / 4; index++) {
-                    if (index != page / 4)
-                        tile = index + SUMMON_PAGE_TILE;
-                    else
+                    tile = index + SUMMON_PAGE_TILE;
+                    if (index == page / 4)
                         tile = index + SUMMON_SELECTED_PAGE_TILE;
                     UiWindow_SetTilemapEntry(window, tile,
                         window->width - (count + 3) / 4 + index - 2, -1, 0);
@@ -544,12 +565,12 @@ loop:
         }
         if (pressed & 1) {
             result = ordered[page + row];
-            goto done;
+            break;
         }
         if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
             AudioCommand_PlayFar(113);
             result = -1;
-            goto done;
+            break;
         }
         if (repeated & 128) {
             AudioCommand_PlayFar(111);
@@ -602,9 +623,9 @@ loop:
         }
         WaitFrames(1);
     }
-    goto loop;
-done:
+
     WaitFrames(1);
+    } while (0);
     for (index = 0; index < 4; index++)
         Resource_ResetEntry(handles[index]);
     Resource_ResetEntry((u16)cursor_handle);

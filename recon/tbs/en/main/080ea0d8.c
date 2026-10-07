@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 154 of 2455 (listing 2455, draft 2455, common 2378).
+/* 080ea0d8: differ 131 of 2455 (listing 2455, draft 2454, common 2389).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -59,6 +59,9 @@
  *   the default, as the native's ble skips the other) and draws at
  *   top - 24 and top - 1 from top = frame - 4: the else join ends CSE's
  *   block, so top stays in r8 and top - 1 is (top - 24) + 23 (154).
+ * - The shake y goes through an s32 local (no HImode narrowing of the & 3,
+ *   whose constant would come from the pool) (137); the actor loop is a
+ *   plain for, its zero start before the copied exit test (131).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -821,10 +824,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame > 319) {
-            if (work->effect->count != 0) {
-                for (i = 0; i != work->effect->count; i++) {
-                    ObjectGroup_UpdateMembers(work->effect->actors[i], 14, 5, -1, 0);
-                }
+            for (i = 0; i != work->effect->count; i++) {
+                ObjectGroup_UpdateMembers(work->effect->actors[i], 14, 5, -1, 0);
             }
         }
 
@@ -894,7 +895,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         Runtime_ReleaseHeapBlock(47);
 
         if (frame > 63) {
-            gBgScroll[1].y = (Random16() & 3) + 30;
+            s32 shake = (Random16() & 3) + 30;
+
+            gBgScroll[1].y = shake;
         }
 
         work->transfer_pending = 1;

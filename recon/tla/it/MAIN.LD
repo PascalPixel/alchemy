@@ -1129,6 +1129,7 @@
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/CLEAR_LINK_PAYLOAD.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00119604)
     "*/recon/tla/it/rom.o"(.rom.0011974c)
+        "*/games/THE LOST AGE/SRC/BATTLE/TUTORIAL_FX.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/TUTORIAL_MESSAGE.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00119808)
     "*/games/THE LOST AGE/SRC/BATTLE/PARTY/PREPARE_ACTIVE_OWNERS.o"(.text)

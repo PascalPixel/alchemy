@@ -4748,7 +4748,7 @@ Func_08118f6c:
 	.type Func_08119734, %function
 	.thumb_func
 Func_08119734:
-	.incbin "baserom.gba", 0x0011974c, 0x0000009c
+	.incbin "baserom.gba", 0x0011974c, 0x00000074
 	.section .rom.00119808, "ax"
 	.global Func_081197f0
 	.type Func_081197f0, %function

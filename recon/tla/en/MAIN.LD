@@ -1933,7 +1933,7 @@
         "*/recon/tla/raw/081195ec.o"(.text)
         "*/recon/tla/raw/081196fc.o"(.text)
         "*/recon/tla/raw/08119734.o"(.text)
-        "*/recon/tla/raw/081197a8.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/TUTORIAL_FX.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/TUTORIAL_MESSAGE.o"(.text)
         "*/recon/tla/raw/081197f0.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/PARTY/PREPARE_ACTIVE_OWNERS.o"(.text)

@@ -1,8 +1,37 @@
 /* Draft: native 670 instructions, draft 670, common 670, differ 0, but
- * NOT adoptable yet: the two __asm__ __volatile__("" ::) CSE flushes
- * (step and burst address, see the fourth to seventh passes) change
- * instruction selection, not only order or registers (S2). The row
+ * NOT adoptable yet: two devices change instruction selection, not only
+ * order or registers (S2): the dead repeated hit test (step) and the
+ * __asm__ __volatile__("" ::) CSE flush (burst address). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Twelfth pass (2026-10-07): the step flush's mechanism is found and the
+ * asm is gone. cse_end_of_basic_block takes the AROUND path over the hit
+ * block only when no CODE_LABEL lies between the hit test's jump and the
+ * join (its no_labels_between_p scan counts any label, used or not).
+ * A label inside the hit block at CSE1 time, with code after it in the
+ * block, stops the AROUND path: CSE1's block from the k-loop top runs
+ * into the hit block and ends at the join (still one use from the hit
+ * test), so the variant test and step start a fresh table and recompute
+ * k << 3 and gShots + k * 448, which loop.c then reduces as native.
+ * The draft makes that label with a dead repeated test around the first
+ * call, if (frame == k * 8 + 17) ObjectGroup_UpdateMembers(...), which
+ * CSE1 folds (the outer test's fall-through merges frame with
+ * k * 8 + 17), so it leaves no code: 0 without the asm (451 without
+ * either). Still a device that changes selection, but it says what
+ * native's source had: a conditional inside the hit block, before
+ * BattleEventRuntime_BeginPhaseFar, that CSE1 resolves from the hit
+ * test (or the frame >= k * 8 test). thread_jumps does not touch it,
+ * because the branch after its label is no test. Natural candidates
+ * not yet tried: a condition in the hit block on frame or k that the
+ * enclosing tests decide, written as Camelot would.
+ * Twelfth-pass trials (each without the step asm): k set in the hit block
+ * by asm("" : "+r"(k)) 502 (k is no longer a biv; the step's loss is no
+ * invalidation of k); the two calls as two separate ifs with the same
+ * test 451 (thread_jumps sends the first test to the join, which then
+ * has two uses until CSE1 folds the second and rescans AROUND); the
+ * repeated test around the first call only 0; the inner test as
+ * if (frame >= k * 8), decided by the outer frame test, also 0. The 1,000-insn table flush
+ * in cse_basic_block does not reach here (CSE1's largest block in this
+ * function is under 200 insns).
  * Eleventh pass (2026-10-07): the step flush's cause, still not found.
  * thread_jumps runs after jump pass 1 and before CSE pass 1 (toplev.c),
  * so a repeated test is threaded away before CSE chooses its paths; in
@@ -498,13 +527,14 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                     struct EffectStep *shot = &gShots[k * 16];
 
                     if (frame == k * 8 + 17) {
-                        ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
+                        /* FAKEMATCH: dead repeated test, not admissible as is (it changes
+                           selection, see header): its label inside the hit block stops
+                           CSE pass 1 from skipping the block, so native's k << 3 and
+                           gShots + k * 448 are recomputed after it (451 -> 0). */
+                        if (frame == k * 8 + 17)
+                            ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
                         BattleEventRuntime_BeginPhaseFar(133);
                     }
-                    /* Diagnostic, not admissible as is (see header): native recomputes
-                       k << 3 and gShots + k * 448 after the hit block (205 -> 197 with
-                       the gShots[k * 16] forms; 231 -> 205 alone). */
-                    __asm__ __volatile__("" ::); /* FAKEMATCH: flushes CSE so step's k * 8 stays a separate giv */
                     if (gShots[k * 16].variant >= 0) {
                         s32 step = (frame - k * 8) / 3;
 

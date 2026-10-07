@@ -85,6 +85,25 @@
  * cannot enter a giv. The draft's loop dump processes loops last first, inner
  * before outer, so a copy hoisted from the main loop would come too late;
  * look for what makes sprites variant or new at the obj loops.
+ * Session 2026-10-07 (S16): differ 1918 re-scored. --rtl on the fill loop:
+ * the gcse dump already has native's shape (reg = count * 8 + 200 and
+ * count * 8 + 204, stores to (plus sprites reg)); loop.c then records both
+ * stores as DEST_ADDR givs with add (plus sprites 200/204), because
+ * loop_invariant_p (sprites) == 1 (set_in_loop 0), combines them and
+ * reduces to one pointer giv. Native kept only the two DEST_REG givs, so
+ * in native's loop pass sprites was not invariant (set in that loop, or a
+ * MEM load inside it that could not be hoisted). Every C spelling of the
+ * address gives the same RTL; the cause is sprites' value, not the index.
+ * Trial: *(u32 *)((u8 *)sprites + (count * 8 + 200)) fill loop: 1918, same.
+ * Trial: affine_a..d as u16 affine[4] (no volatile): 1928, worse.
+ * Trial (measurement only, not source): &sprites passed to an extern call:
+ * 1992; sprites becomes a frame MEM, loop hoists its load and still folds
+ * the fill loop; the affine loop gains native's two pool loads of 0.
+ * Trial: render, sprites, work, obj_palette as one local struct: 2394;
+ * the load is hoisted and folded as well.
+ * Trial: struct *volatile sprites: the gcse load is not mem/v and is
+ * hoisted (2053). Native also keeps window field addresses as pointers
+ * (&sprites->help_window at sp+64), formed once and reused.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

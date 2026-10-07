@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	push {r5, r6, lr}
-	ldr r5, .L_02008058
-	ldrh r6, [r5]
-	strh r5, [r5]
-	bl Func_0200191c
-	bl Func_02001914
-	strh r6, [r5]
-	pop {r5, r6, pc}
-.L_02008058:
-	.4byte 0x04000208
 	.section .text.x0200806c,"ax",%progbits
 	.global Func_0200006c
 	.thumb_func
@@ -1835,21 +1821,8 @@ Func_02000e4c:
 	.4byte MsgThereSNoSuch
 .L_02008f4c:
 	.4byte MsgTheSettingsAre
-	.section .text.x02008f50,"ax",%progbits
-	.global Func_02000f50
-	.thumb_func
-Func_02000f50:
-	push {r5, lr}
-	adds r5, r0, #0
-	bl Func_02001a14
-	movs r0, #0
-	bl Func_02001ab4
-	adds r0, r5, #0
-	bl Func_02001abc
-	bl Func_02001a1c
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x02008f6c,"ax",%progbits
+	.balign 4
 	.global Func_02000f6c
 	.thumb_func
 Func_02000f6c:

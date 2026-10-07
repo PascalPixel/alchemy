@@ -294,15 +294,6 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x0200833c,"ax",%progbits
-	.global Func_0200033c
-	.thumb_func
-Func_0200033c:
-	push {lr}
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	movs r0, #0
-	pop {pc}
 	.section .text.x0200835c,"ax",%progbits
 	.global Func_0200035c
 	.thumb_func
@@ -445,53 +436,6 @@ Func_02000408:
 	.4byte Data_02000e20
 .L_02008490:
 	.4byte Data_02000e5c
-	.section .text.x02008494,"ax",%progbits
-	.global Func_02000494
-	.thumb_func
-Func_02000494:
-	push {r5, lr}
-	movs r5, #9
-.L_02008498:
-	adds r0, r5, #0
-	bl Object_GetById
-	adds r1, r0, #0
-	adds r1, #98
-	movs r2, #0
-	movs r3, #1
-	adds r5, #1
-	strb r3, [r1]
-	str r2, [r0, #108]
-	cmp r5, #14
-	ble .L_02008498
-	pop {r5, pc}
-	.2byte 0x0000
-	.section .text.x020084b4,"ax",%progbits
-	.global Func_020004b4
-	.thumb_func
-Func_020004b4:
-	push {r5, lr}
-	adds r5, r0, #0
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	movs r0, #0
-	bl Map_GetTerrainHeight
-	ldr r3, .L_020084e0
-	str r0, [r5, #20]
-	cmp r0, r3
-	blt .L_020084d4
-	adds r0, r5, #0
-	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
-	b .L_020084dc
-.L_020084d4:
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-.L_020084dc:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020084e0:
-	.4byte 0xffe00000
 	.section .text.x020084e4,"ax",%progbits
 	.global Func_020004e4
 	.thumb_func
@@ -1508,54 +1452,6 @@ Func_02000b18:
 .L_02008ba0:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x02008ba4,"ax",%progbits
-	.global Func_02000ba4
-	.thumb_func
-Func_02000ba4:
-	push {r5, lr}
-	adds r5, r1, #0
-	bl Object_GetById
-	adds r4, r0, #0
-	cmp r4, #0
-	beq .L_02008bca
-	adds r3, r4, #0
-	adds r3, #100
-	strh r5, [r3]
-	ldr r1, .L_02008bcc
-	ldr r0, .L_02008bd0
-	ldrh r2, [r1]
-	movs r5, #0
-	ldrsh r3, [r1, r5]
-	adds r2, #1
-	lsls r3, r3, #2
-	str r4, [r0, r3]
-	strh r2, [r1]
-.L_02008bca:
-	pop {r5, pc}
-.L_02008bcc:
-	.4byte Data_02001cde
-.L_02008bd0:
-	.4byte Data_02001ce0
-	.section .text.x02008bd4,"ax",%progbits
-	.global Func_02000bd4
-	.thumb_func
-Func_02000bd4:
-	ldr r3, .L_02008bdc
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_02008bdc:
-	.4byte Data_02001de2
-	.section .text.x02008be0,"ax",%progbits
-	.global Func_02000be0
-	.thumb_func
-Func_02000be0:
-	ldr r3, .L_02008be8
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_02008be8:
-	.4byte Data_02001de4
 	.section .rodata.x02008d6c,"a",%progbits
 .L_02008d6c:
 	.4byte 0x00000000

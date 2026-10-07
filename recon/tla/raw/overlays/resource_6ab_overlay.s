@@ -1,28 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	push {lr}
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	movs r0, #0
-	pop {pc}
-	.section .text.x02008060,"ax",%progbits
-	.global Func_02000060
-	.thumb_func
-Func_02000060:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #208
-	lsls r2, r2, #4
-	adds r2, #56
-	adds r3, r3, r2
-	movs r2, #1
-	strb r2, [r3]
-	bx lr
 	.section .text.x02008074,"ax",%progbits
 	.global Func_02000074
 	.thumb_func
@@ -348,25 +325,6 @@ Func_0200024c:
 .L_020082c8:
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x020082d4,"ax",%progbits
-	.global Func_020002d4
-	.thumb_func
-Func_020002d4:
-	push {r5, lr}
-	bl Object_GetById
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020082f2
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	adds r3, r5, #0
-	adds r3, #89
-	movs r2, #0
-	strb r2, [r3]
-	subs r3, #4
-	strb r2, [r3]
-.L_020082f2:
-	pop {r5, pc}
 	.section .text.x020082f4,"ax",%progbits
 	.global Func_020002f4
 	.thumb_func
@@ -3614,29 +3572,6 @@ Func_02001d7c:
 	.4byte Data_020023c4 + 0x188
 .L_02009dcc:
 	.4byte IwramClearWords
-	.section .text.x02009dd0,"ax",%progbits
-	.global Func_02001dd0
-	.thumb_func
-Func_02001dd0:
-	push {r5, lr}
-	ldr r5, .L_02009de0
-	ldr r0, [r5, #112]
-	bl Func_020041ec
-	movs r3, #0
-	str r3, [r5, #112]
-	pop {r5, pc}
-.L_02009de0:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009de4,"ax",%progbits
-	.global Func_02001de4
-	.thumb_func
-Func_02001de4:
-	ldr r3, .L_02009dec
-	strh r0, [r3, #14]
-	bx lr
-	.2byte 0x0000
-.L_02009dec:
-	.4byte Data_020023c4 + 0x188
 	.section .text.x02009df0,"ax",%progbits
 	.global Func_02001df0
 	.thumb_func
@@ -3797,123 +3732,6 @@ Func_02001df0:
 	.4byte Data_020023c4 + 0x188
 .L_02009f20:
 	.4byte Func_02001bf8
-	.section .text.x02009f24,"ax",%progbits
-	.global Func_02001f24
-	.thumb_func
-Func_02001f24:
-	ldr r3, .L_02009f30
-	lsls r0, r0, #4
-	adds r0, r0, r3
-	movs r3, #20
-	ldrsh r0, [r0, r3]
-	bx lr
-.L_02009f30:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009f34,"ax",%progbits
-	.global Func_02001f34
-	.thumb_func
-Func_02001f34:
-	ldr r3, .L_02009f40
-	lsls r0, r0, #4
-	adds r0, r0, r3
-	strh r1, [r0, #20]
-	bx lr
-	.2byte 0x0000
-.L_02009f40:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009f44,"ax",%progbits
-	.global Func_02001f44
-	.thumb_func
-Func_02001f44:
-	ldr r3, .L_02009f4c
-	ldr r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_02009f4c:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009f50,"ax",%progbits
-	.global Func_02001f50
-	.thumb_func
-Func_02001f50:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	movs r0, #130
-	lsls r0, r0, #1
-	ldr r5, .L_02009f74
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02009f6e
-	ldr r3, [r5]
-	adds r3, #1
-	str r3, [r5]
-	cmp r3, r6
-	blt .L_02009f6e
-	str r0, [r5]
-.L_02009f6e:
-	ldr r0, [r5]
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02009f74:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009f78,"ax",%progbits
-	.global Func_02001f78
-	.thumb_func
-Func_02001f78:
-	ldr r3, .L_02009f94
-	lsls r0, r0, #4
-	adds r0, r0, r3
-	movs r3, #15
-	ands r3, r1
-	adds r0, #20
-	lsls r3, r3, #16
-	str r3, [r0, #12]
-	ldr r3, .L_02009f90
-	ands r1, r3
-	strh r1, [r0, #4]
-	bx lr
-.L_02009f90:
-	.4byte 0x000000f0
-.L_02009f94:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009f98,"ax",%progbits
-	.global Func_02001f98
-	.thumb_func
-Func_02001f98:
-	ldr r3, .L_02009fa4
-	lsls r0, r0, #4
-	adds r0, r0, r3
-	strh r1, [r0, #26]
-	bx lr
-	.2byte 0x0000
-.L_02009fa4:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009fa8,"ax",%progbits
-	.global Func_02001fa8
-	.thumb_func
-Func_02001fa8:
-	ldr r3, .L_02009fb4
-	lsls r0, r0, #4
-	adds r0, r0, r3
-	movs r3, #24
-	ldrsh r0, [r0, r3]
-	bx lr
-.L_02009fb4:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x02009fb8,"ax",%progbits
-	.global Func_02001fb8
-	.thumb_func
-Func_02001fb8:
-	push {lr}
-	ldr r2, .L_02009fc8
-	cmp r0, #3
-	bhi .L_02009fc6
-	lsls r3, r0, #2
-	adds r3, #84
-	strh r1, [r2, r3]
-.L_02009fc6:
-	pop {pc}
-.L_02009fc8:
-	.4byte Data_020023c4 + 0x188
 	.section .text.x02009fcc,"ax",%progbits
 	.global Func_02001fcc
 	.thumb_func
@@ -4090,31 +3908,6 @@ Func_020020b8:
 	.2byte 0x0000
 .L_0200a11c:
 	.4byte gPartyState
-	.section .text.x0200a120,"ax",%progbits
-	.global Func_02002120
-	.thumb_func
-Func_02002120:
-	push {lr}
-	ldr r3, .L_0200a144
-	ldr r2, [r3]
-	movs r3, #7
-	ands r2, r3
-	cmp r2, #0
-	beq .L_0200a134
-	cmp r2, #4
-	beq .L_0200a13c
-	b .L_0200a142
-.L_0200a134:
-	movs r1, #10
-	bl Animation_ApplyChildValues
-	b .L_0200a142
-.L_0200a13c:
-	movs r1, #0
-	bl Animation_ApplyChildValues
-.L_0200a142:
-	pop {pc}
-.L_0200a144:
-	.4byte gFrameCount
 	.section .text.x0200a148,"ax",%progbits
 	.global Func_02002148
 	.thumb_func
@@ -4381,22 +4174,6 @@ Func_02002148:
 	.4byte 0xfff80000
 .L_0200a350:
 	.4byte 0xffff0000
-	.section .text.x0200a354,"ax",%progbits
-	.global Func_02002354
-	.thumb_func
-Func_02002354:
-	push {lr}
-	ldr r3, .L_0200a368
-	movs r2, #4
-	ldrsh r3, [r3, r2]
-	cmp r3, #0
-	beq .L_0200a364
-	bl Func_02002148
-.L_0200a364:
-	pop {pc}
-	.2byte 0x0000
-.L_0200a368:
-	.4byte Data_020023c4 + 0x188
 	.section .text.x0200a36c,"ax",%progbits
 	.global Func_0200236c
 	.thumb_func
@@ -4554,35 +4331,6 @@ Func_0200236c:
 	.4byte Func_02002120
 .L_0200a4a8:
 	.4byte 0xfff00000
-	.section .text.x0200a4ac,"ax",%progbits
-	.global Func_020024ac
-	.thumb_func
-Func_020024ac:
-	push {lr}
-	ldr r3, .L_0200a4c4
-	movs r2, #4
-	ldrsh r3, [r3, r2]
-	cmp r3, #0
-	beq .L_0200a4c0
-	bl Func_0200236c
-	movs r0, #1
-	b .L_0200a4c2
-.L_0200a4c0:
-	movs r0, #0
-.L_0200a4c2:
-	pop {pc}
-.L_0200a4c4:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x0200a4c8,"ax",%progbits
-	.global Func_020024c8
-	.thumb_func
-Func_020024c8:
-	ldr r3, .L_0200a4d0
-	movs r2, #4
-	ldrsh r0, [r3, r2]
-	bx lr
-.L_0200a4d0:
-	.4byte Data_020023c4 + 0x188
 	.section .text.x0200a4d4,"ax",%progbits
 	.global Func_020024d4
 	.thumb_func
@@ -4878,20 +4626,8 @@ Func_02002658:
 	.4byte Data_020047b8
 .L_0200a734:
 	.4byte IwramMulQ16
-	.section .text.x0200a738,"ax",%progbits
-	.global Func_02002738
-	.thumb_func
-Func_02002738:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #130
-	lsls r0, r0, #1
-	bl GameFlag_Test
-	adds r5, #91
-	strb r0, [r5]
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x0200a74c,"ax",%progbits
+	.balign 4
 	.global Func_0200274c
 	.thumb_func
 Func_0200274c:
@@ -5611,24 +5347,8 @@ Func_02002c44:
 .L_0200ace4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200ace8,"ax",%progbits
-	.global Func_02002ce8
-	.thumb_func
-Func_02002ce8:
-	push {r5, lr}
-	adds r5, r0, #0
-	bl Func_02002ad0
-	movs r3, #0
-	str r3, [r5, #8]
-	str r3, [r5, #12]
-	str r3, [r5, #16]
-	str r3, [r5, #36]
-	str r3, [r5, #40]
-	str r3, [r5, #44]
-	movs r0, #0
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x0200ad04,"ax",%progbits
+	.balign 4
 	.global Func_02002d04
 	.thumb_func
 Func_02002d04:
@@ -6460,16 +6180,6 @@ Func_02003070:
 	.4byte Data_02004cf0
 .L_0200b380:
 	.4byte Func_02002d04
-	.section .text.x0200b384,"ax",%progbits
-	.global Func_02003384
-	.thumb_func
-Func_02003384:
-	ldr r3, .L_0200b38c
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_0200b38c:
-	.4byte Data_02004cf0
 	.section .text.x0200b390,"ax",%progbits
 	.global Func_02003390
 	.thumb_func

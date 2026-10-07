@@ -25,6 +25,13 @@
  * flip] then (*shard_draw)(...) 99. At 0: without the step flush 451,
  * without the burst flush 171, the count test through
  * SevenMode_Records[mode * 2] (no records, no row) 135.
+ * Flush leads at 0: the burst flush replaced by do { group = k * 4; }
+ * while (0) also scores 0 (no asm: the loop's notes or labels end CSE's
+ * extended block between group's set and group * 8, so the fold into
+ * k << 5 never happens). Not taken: still a device that changes
+ * selection, but it points at a loop boundary in native's burst body
+ * as the natural cause. The step flush replaced by do { the hit block }
+ * while (0) 451 (as without the flush).
  * Eighth pass (2026-10-07): the shard draw goes through a pointer,
  * DrawRectangle *shard_draw = &draw[flip] and (*shard_draw)(...), with a
  * forced temporary odd = i & 1 whose test follows flip (FAKEMATCH, a

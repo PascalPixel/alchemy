@@ -921,25 +921,6 @@ Func_02000794:
 	add sp, #56
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x020087e8,"ax",%progbits
-	.global Func_020007e8
-	.thumb_func
-Func_020007e8:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	movs r5, #60
-.L_020087ee:
-	cmp r5, #0
-	beq .L_02008800
-	movs r0, #1
-	bl WaitFrames
-	ldr r3, [r6, #40]
-	subs r5, #1
-	cmp r3, #0
-	bne .L_020087ee
-.L_02008800:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x02008818,"ax",%progbits
 	.global Func_02000818
 	.thumb_func
@@ -3173,7 +3154,7 @@ Func_020019a8:
 	strb r3, [r2]
 	movs r5, #0
 	adds r0, r7, #0
-	bl Func_020007e8
+	bl OverlayObject_WaitUntilIdle
 	movs r1, #0
 	movs r2, #0
 	str r5, [r7, #8]
@@ -4685,39 +4666,8 @@ Func_02001e64:
 	.4byte 0xfff00000
 	.section .text.x0200a746,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x0200a748,"ax",%progbits
-	.global Func_02002748
-	.thumb_func
-Func_02002748:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
-	.2byte 0x0000
 	.section .text.x0200a780,"ax",%progbits
+	.balign 4
 	.global Func_02002780
 	.thumb_func
 Func_02002780:
@@ -4946,7 +4896,7 @@ Func_02002780:
 .L_0200a93c:
 	.4byte Data_02004428
 .L_0200a940:
-	.4byte Func_02002748
+	.4byte Effect_MoveLocal
 .L_0200a944:
 	.4byte 0xffff0000
 	.section .text.x0200a948,"ax",%progbits

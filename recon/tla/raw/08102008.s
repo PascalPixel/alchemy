@@ -404,7 +404,7 @@ Func_08102008:
 	adds r3, r4, r7
 	ldrb r1, [r3]
 	mov r0, r11
-	bl Func_08104d14
+	bl Menu_SetPageArrowsB
 .L_0810230a:
 	ldr r0, [sp, #12]
 	mov r1, r11
@@ -455,7 +455,7 @@ Func_08102008:
 	ldr r0, [sp, #84]
 	movs r1, #0
 	movs r2, #200
-	bl Func_08105300
+	bl MenuIcon_SetPosition
 	b .L_081023de
 .L_08102372:
 	ldr r3, [sp, #20]
@@ -496,10 +496,10 @@ Func_08102008:
 	movs r2, #54
 .L_081023b4:
 	ldr r0, [sp, #84]
-	bl Func_08105300
+	bl MenuIcon_SetPosition
 	adds r1, r6, #0
 	ldr r0, [sp, #84]
-	bl Func_0810532c
+	bl MenuIcon_SetFrame
 	ldr r0, [sp, #68]
 	movs r3, #2
 	ands r3, r0
@@ -512,7 +512,7 @@ Func_08102008:
 	ldr r0, [sp, #84]
 	ldr r1, [sp, #28]
 	adds r2, r5, #0
-	bl Func_081052ac
+	bl MenuIcon_ReplaceObject
 .L_081023de:
 	ldr r1, [sp, #80]
 	mov r2, r11
@@ -2060,7 +2060,7 @@ Func_08102008:
 	movs r1, #128
 	ldr r0, [sp, #84]
 	lsls r1, r1, #7
-	bl Func_0810532c
+	bl MenuIcon_SetFrame
 	adds r0, r5, #0
 	add sp, #112
 	pop {r3, r5, r6, r7}

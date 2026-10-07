@@ -48,7 +48,7 @@ Func_080ff370:
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
 	adds r0, r7, #0
-	bl Func_080ff5bc
+	bl ItemMenu_DrawOwnerStatus
 	add r6, sp, #32
 	ldr r2, [sp, #28]
 	adds r0, r6, #0

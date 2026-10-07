@@ -40,7 +40,7 @@ Func_0810a2d8:
 	str r0, [sp, #0]
 	mov r3, r8
 	ldrh r0, [r3, r6]
-	bl Func_0810a2ac
+	bl Shop_GetItemPrice
 	ldrb r1, [r5, #12]
 	mov r9, r0
 	cmp r1, #2
@@ -118,7 +118,7 @@ Func_0810a2d8:
 	ldr r3, [sp, #8]
 	adds r1, r7, #0
 	ldr r0, [r3, #36]
-	bl Func_0810a004
+	bl Shop_DrawItemCount
 	movs r1, #2
 	mov r0, r10
 	bl UiText_DrawQuantity
@@ -156,7 +156,7 @@ Func_0810a2d8:
 	ldr r2, [sp, #8]
 	adds r1, r7, #0
 	ldr r0, [r2, #36]
-	bl Func_0810a004
+	bl Shop_DrawItemCount
 	movs r1, #2
 	mov r0, r10
 	bl UiText_DrawQuantity

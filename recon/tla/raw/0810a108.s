@@ -165,7 +165,7 @@ Func_0810a108:
 	ldr r2, [sp, #12]
 	mov r1, r8
 	ldr r0, [r2, #36]
-	bl Func_0810a004
+	bl Shop_DrawItemCount
 	ldr r3, [sp, #4]
 	cmp r3, #0
 	bne .L_0810a264

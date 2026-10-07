@@ -97,4 +97,4 @@ Func_081053a8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08105464:
-	.4byte Func_08105370
+	.4byte MenuIcon_PushSlots

@@ -418,7 +418,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_StagedParticlePath
 	resource , BattleFx_DualStreamPath
 	resource , Resource_Data197
-	resource , Resource_Data198
+	resource DefaultMapCells, Resource_Data198
 	resource , Resource_Data199
 	resource , WorldMap_PaletteA
 	resource , Resource_Data19B
@@ -630,7 +630,7 @@ Resource_DirectoryTable:
 	resource , Monster_PurpleBeastSprites
 	resource , Monster_RedWarriorSprites
 	resource , Monster_SwordGirlSprites
-	resource , Field_Map000
+	resource Map000, Field_Map000
 	resource , Resource_Data26D
 	resource , Resource_Data26E
 	resource , Resource_Data26F

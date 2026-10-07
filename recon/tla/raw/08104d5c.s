@@ -18,7 +18,7 @@ Func_08104d5c:
 	asrs r3, r3, #2
 	adds r0, r5, #0
 	lsls r6, r3, #2
-	bl Func_08104ccc
+	bl Menu_SetPageArrowsA
 	movs r3, #148
 	ldr r4, .L_08104d94
 	ldr r0, .L_08104d98

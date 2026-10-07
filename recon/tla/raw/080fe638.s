@@ -52,7 +52,7 @@ Func_080fe638:
 	ldr r3, [r3]
 	movs r0, #0
 	strb r5, [r3, #5]
-	bl Func_081054cc
+	bl MenuIcon_SetActive
 	ldr r0, [sp, #32]
 	movs r1, #184
 	ldr r3, [r0, #20]
@@ -282,7 +282,7 @@ Func_080fe638:
 	ldr r3, [r3]
 	movs r0, #1
 	strb r2, [r3, #5]
-	bl Func_081054cc
+	bl MenuIcon_SetActive
 	movs r0, #113
 	bl Audio_PlayCue
 	add sp, #36

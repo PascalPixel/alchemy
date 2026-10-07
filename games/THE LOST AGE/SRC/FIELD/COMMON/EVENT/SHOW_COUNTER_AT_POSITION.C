@@ -13,6 +13,13 @@
 #include "EVENTWRK.H"
 
 
+void Event_ShowCounterAtPosition();
+
+void EventRuntime_ShowCounter(s32 a, s32 b, s32 c, s32 d)
+{
+    Event_ShowCounterAtPosition(a, b, c, d);
+}
+
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
     s32 x0 = x;

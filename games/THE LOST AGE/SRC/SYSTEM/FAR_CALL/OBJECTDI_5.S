@@ -8,7 +8,7 @@ Map_ApplyWorkOriginAndSpanFar:
 	.global Map_UpdateCurrentTileBlockFar
 	.thumb_func
 Map_UpdateCurrentTileBlockFar:
-	overlay_veneer Func_0802c4d8
+	overlay_veneer Map_UpdateCurrentTileBlock
 	.global WorldMap_LoadGraphicsFar
 	.thumb_func
 WorldMap_LoadGraphicsFar:
@@ -40,7 +40,7 @@ WorldMap_UpdateViewFar:
 	.global Map_LoadDefaultCellsAndUpdateBlockFar
 	.thumb_func
 Map_LoadDefaultCellsAndUpdateBlockFar:
-	overlay_veneer Func_0802cb08
+	overlay_veneer Map_LoadDefaultCellsAndUpdateBlock
 	.global Map_PlayMetatileCopySequenceFar
 	.thumb_func
 Map_PlayMetatileCopySequenceFar:

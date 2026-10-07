@@ -140,7 +140,7 @@ Func_080c8190:
 	.global Func_080c8198
 	.thumb_func
 Func_080c8198:
-	overlay_veneer Func_080d406c
+	overlay_veneer EventRuntime_ShowMessageThenWait
 	.global EventRuntime_ShowMessageAndWaitFar
 	.thumb_func
 EventRuntime_ShowMessageAndWaitFar:
@@ -148,11 +148,11 @@ EventRuntime_ShowMessageAndWaitFar:
 	.global Func_080c81a8
 	.thumb_func
 Func_080c81a8:
-	overlay_veneer Func_080d4084
+	overlay_veneer EventRuntime_PromptInventoryMessage
 	.global Func_080c81b0
 	.thumb_func
 Func_080c81b0:
-	overlay_veneer Func_080d40d8
+	overlay_veneer EventRuntime_Noop
 	.global Func_080c81b8
 	.thumb_func
 Func_080c81b8:
@@ -160,7 +160,7 @@ Func_080c81b8:
 	.global Func_080c81c0
 	.thumb_func
 Func_080c81c0:
-	overlay_veneer Func_080d4178
+	overlay_veneer EventRuntime_ShowCounter
 	.global Event_ShowCounterAtPositionFar
 	.thumb_func
 Event_ShowCounterAtPositionFar:

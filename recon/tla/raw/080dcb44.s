@@ -108,7 +108,7 @@ Func_080dcb44:
 	ldrh r0, [r3]
 	bl Object_GetById
 	movs r1, #0
-	bl Func_080dcf2c
+	bl BattleFx_ApplyFlickerValue
 	movs r0, #203
 	lsls r0, r0, #1
 	adds r0, #255

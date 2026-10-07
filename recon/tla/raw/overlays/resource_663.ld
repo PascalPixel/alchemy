@@ -14,7 +14,7 @@ SECTIONS
         "*/resource_663_overlay.o"(.text.x0200833c)
         "*/resource_663_overlay.o"(.text.x02008348)
         "*/resource_663_overlay.o"(.text.x02008384)
-        "*/resource_663_overlay.o"(.text.x020083cc)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/WAIT_UNTIL_IDLE.o"(.text)
         "*/resource_663_overlay.o"(.text.x020083e8)
         "*/resource_663_overlay.o"(.text.x02008468)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_663/SCENE_TABLES.o"(.text)

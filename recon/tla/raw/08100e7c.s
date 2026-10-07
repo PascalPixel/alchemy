@@ -147,7 +147,7 @@ Func_08100e7c:
 	strh r5, [r3]
 	bl Func_081051a8
 	bl Func_0810106c
-	bl Func_0810526c
+	bl MenuIcon_ReleaseObjects
 	bl Menu_ResetTwoResourceEntries
 	movs r0, #1
 	bl WaitFrames

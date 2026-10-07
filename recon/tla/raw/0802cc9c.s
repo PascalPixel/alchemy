@@ -93,4 +93,4 @@ Func_0802cc9c:
 .L_0802cd44:
 	.4byte IwramClearWords
 .L_0802cd48:
-	.4byte Func_0802cb64
+	.4byte MapAnimation_Update

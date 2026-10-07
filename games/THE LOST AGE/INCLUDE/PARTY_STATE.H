@@ -20,7 +20,9 @@ struct PartyState {
     u16 pair_1ee[2];
     u16 pair_1f2[2];
     s16 special;
-    u8 unknown_1f8[0x18];
+    u8 unknown_1f8[2];
+    s16 map;
+    u8 unknown_1fc[0x14];
     s16 cue;
     u8 render_mode;
     u8 unknown_213;
@@ -38,6 +40,8 @@ struct PartyState {
     u32 saved_callback;
     u8 unknown_274[2];
     s16 owner_override;
+    u8 unknown_278[0x44];
+    u16 forge_item;
 };
 
 extern struct PartyState gPartyState;

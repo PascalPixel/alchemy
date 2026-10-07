@@ -128,7 +128,7 @@ Func_08109cac:
 	bne .L_08109dbe
 	ldr r1, [sp, #12]
 	ldrh r0, [r1, r7]
-	bl Func_0810a2ac
+	bl Shop_GetItemPrice
 	mov r1, r8
 	adds r2, r0, #0
 	movs r3, #2
@@ -138,7 +138,7 @@ Func_08109cac:
 	b .L_08109dd0
 .L_08109dbe:
 	mov r0, r8
-	bl Func_0810a748
+	bl Forge_GetMaterialChance
 	mov r1, r8
 	adds r2, r0, #0
 	movs r3, #3

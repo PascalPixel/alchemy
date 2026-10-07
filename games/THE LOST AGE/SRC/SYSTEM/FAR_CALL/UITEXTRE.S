@@ -4,7 +4,7 @@
 	.global UiWork_FinalizeSharedSlotFar
 	.thumb_func
 UiWork_FinalizeSharedSlotFar:
-	overlay_veneer Func_0803a530
+	overlay_veneer UiMessage_Close
 	.global UiWork_ResetFreeChannelFar
 	.thumb_func
 UiWork_ResetFreeChannelFar:

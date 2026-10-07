@@ -702,12 +702,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x000a5290, 0x00000570
-	.section .rom.000afe6c, "ax"
-	.global DjinnMenu_SelectDjinn
-	.type DjinnMenu_SelectDjinn, %function
-	.thumb_func
-DjinnMenu_SelectDjinn:
-	.incbin "baserom.gba", 0x000afe6c, 0x000012fc
 	.section .rom.000b1f40, "ax"
 	.global OwnerAction_RunCompareLoop
 	.type OwnerAction_RunCompareLoop, %function
@@ -990,14 +984,6 @@ Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000d4f14, 0x00000d38
 	.section .rom.000e6172, "ax"
 	.incbin "baserom.gba", 0x000e6172, 0x00000002
-	.section .rom.000eab38, "ax"
-	.incbin "baserom.gba", 0x000eab38, 0x000000cc
-	.section .rom.000eac04, "ax"
-	.global BattleEffect_RunParticleStreams
-	.type BattleEffect_RunParticleStreams, %function
-	.thumb_func
-BattleEffect_RunParticleStreams:
-	.incbin "baserom.gba", 0x000eac04, 0x00000e38
 	.section .rom.000ed8d8, "ax"
 	.global Unnamed_080ea0d8
 	.type Unnamed_080ea0d8, %function
@@ -1672,7 +1658,19 @@ ImpactBurst_CellHeights:
 	.incbin "baserom.gba", 0x000f265e, 0x00000008
 	.global ImpactBurst_CellSourceOffsets
 ImpactBurst_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000f2666, 0x00000072
+	.incbin "baserom.gba", 0x000f2666, 0x00000010
+	.global ParticleStreams_OrbitPoints
+ParticleStreams_OrbitPoints:
+	.incbin "baserom.gba", 0x000f2676, 0x0000002a
+	.global ParticleStreams_DropPoints
+ParticleStreams_DropPoints:
+	.incbin "baserom.gba", 0x000f26a0, 0x0000001c
+	.global ParticleStreams_FlashSheetOffsets
+ParticleStreams_FlashSheetOffsets:
+	.incbin "baserom.gba", 0x000f26bc, 0x0000000e
+	.global ParticleStreams_FlashSizes
+ParticleStreams_FlashSizes:
+	.incbin "baserom.gba", 0x000f26ca, 0x0000000e
 	.global CirclingScene_ObjectColumns
 CirclingScene_ObjectColumns:
 	.incbin "baserom.gba", 0x000f26d8, 0x00000009

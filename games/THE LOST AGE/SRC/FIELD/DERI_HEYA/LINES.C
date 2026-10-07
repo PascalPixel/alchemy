@@ -4,6 +4,8 @@
 #include "SCENE_CALL.H"
 #include "text/MSG_IDS.H"
 #include "DERI.H"
+#include "FIELD_SCENE.H"
+#include "SCENE_IDS.H"
 
 void Func_020000ac(s32 unused, s32 actor)
 {
@@ -65,4 +67,25 @@ void DeriHeya_BeginLeaderEvent(void)
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
     Engine_ActorSetSpritePriority(gPartyState.current_owner, 1);
+}
+
+extern const u8 Data_020016e4[];
+extern const u8 Data_02001924[];
+extern const u8 Data_02001990[];
+extern const u8 Data_02001c18[];
+
+const struct SceneEvent *Scene_GetEvents(void)
+{
+    s32 flag = GameFlag_Test(0x873);
+    struct PartyState *party = &gPartyState;
+    s32 id = (s32)&SceneId_DeriHeya2;
+
+    if (flag) {
+        if (party->scene == id)
+            return (const struct SceneEvent *)Data_02001c18;
+        return (const struct SceneEvent *)Data_02001990;
+    }
+    if (party->scene == id)
+        return (const struct SceneEvent *)Data_02001924;
+    return (const struct SceneEvent *)Data_020016e4;
 }

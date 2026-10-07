@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Scene_AssignViewFlags
 	.thumb_func
 Scene_AssignViewFlags:

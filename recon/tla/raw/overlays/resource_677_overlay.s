@@ -39,187 +39,6 @@ Func_0200004c:
 	.4byte Data_02000dac
 .L_02008088:
 	.4byte Data_02000c8c
-	.section .text.x0200808c,"ax",%progbits
-	.global Func_0200008c
-	.thumb_func
-Func_0200008c:
-	push {lr}
-	bl Func_020009b0
-	movs r0, #0
-	bl Func_02000a50
-	movs r0, #192
-	lsls r0, r0, #2
-	adds r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020080ae
-	ldr r0, .L_020080c4
-	bl Func_02000a18
-	b .L_020080b4
-.L_020080ae:
-	ldr r0, .L_020080c8
-	bl Func_02000a18
-.L_020080b4:
-	movs r0, #14
-	movs r1, #0
-	bl Func_02000a28
-	bl Func_020009b8
-	movs r0, #0
-	pop {pc}
-.L_020080c4:
-	.4byte 0x00002233
-.L_020080c8:
-	.4byte 0x00002228
-	.section .text.x020080cc,"ax",%progbits
-	.global Func_020000cc
-	.thumb_func
-Func_020000cc:
-	push {lr}
-	bl Func_020009b0
-	movs r0, #0
-	bl Func_02000a50
-	movs r0, #192
-	lsls r0, r0, #2
-	adds r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020080ee
-	ldr r0, .L_02008104
-	bl Func_02000a18
-	b .L_020080f4
-.L_020080ee:
-	ldr r0, .L_02008108
-	bl Func_02000a18
-.L_020080f4:
-	movs r0, #15
-	movs r1, #0
-	bl Func_02000a28
-	bl Func_020009b8
-	movs r0, #0
-	pop {pc}
-.L_02008104:
-	.4byte 0x00002234
-.L_02008108:
-	.4byte 0x00002229
-	.section .text.x0200810c,"ax",%progbits
-	.global Func_0200010c
-	.thumb_func
-Func_0200010c:
-	push {lr}
-	bl Func_020009b0
-	movs r0, #0
-	bl Func_02000a50
-	movs r0, #192
-	lsls r0, r0, #2
-	adds r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200812e
-	ldr r0, .L_02008144
-	bl Func_02000a18
-	b .L_02008134
-.L_0200812e:
-	ldr r0, .L_02008148
-	bl Func_02000a18
-.L_02008134:
-	movs r0, #16
-	movs r1, #0
-	bl Func_02000a28
-	bl Func_020009b8
-	movs r0, #0
-	pop {pc}
-.L_02008144:
-	.4byte 0x00002235
-.L_02008148:
-	.4byte 0x0000222a
-	.section .text.x0200814c,"ax",%progbits
-	.global Func_0200014c
-	.thumb_func
-Func_0200014c:
-	push {lr}
-	bl Func_020009b0
-	movs r0, #0
-	bl Func_02000a50
-	movs r0, #192
-	lsls r0, r0, #2
-	adds r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200816e
-	ldr r0, .L_02008184
-	bl Func_02000a18
-	b .L_02008174
-.L_0200816e:
-	ldr r0, .L_02008188
-	bl Func_02000a18
-.L_02008174:
-	movs r0, #16
-	movs r1, #0
-	bl Func_02000a28
-	bl Func_020009b8
-	movs r0, #0
-	pop {pc}
-.L_02008184:
-	.4byte 0x00002232
-.L_02008188:
-	.4byte 0x00002227
-	.section .text.x0200818c,"ax",%progbits
-	.global Func_0200018c
-	.thumb_func
-Func_0200018c:
-	push {lr}
-	bl Func_020009b0
-	movs r0, #0
-	bl Func_02000a50
-	ldr r0, .L_020081b0
-	bl Func_02000a18
-	movs r0, #10
-	movs r1, #0
-	bl Func_02000a28
-	bl Func_020009b8
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_020081b0:
-	.4byte 0x00002218
-	.section .text.x020081b4,"ax",%progbits
-	.global Func_020001b4
-	.thumb_func
-Func_020001b4:
-	push {lr}
-	bl Func_020009b0
-	movs r0, #0
-	bl Func_02000a50
-	ldr r0, .L_020081d8
-	bl Func_02000a18
-	movs r0, #11
-	movs r1, #0
-	bl Func_02000a28
-	bl Func_020009b8
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_020081d8:
-	.4byte 0x0000221a
-	.section .text.x020081dc,"ax",%progbits
-	.global Func_020001dc
-	.thumb_func
-Func_020001dc:
-	push {lr}
-	bl Func_020009b0
-	movs r0, #0
-	bl Func_02000a50
-	ldr r0, .L_02008200
-	bl Func_02000a18
-	movs r0, #12
-	movs r1, #0
-	bl Func_02000a28
-	bl Func_020009b8
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_02008200:
-	.4byte 0x0000221c
 	.section .text.x02008204,"ax",%progbits
 	.global Func_02000204
 	.thumb_func
@@ -296,7 +115,7 @@ Func_02000244:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008298:
-	.4byte 0x0000220a
+	.4byte MsgScene677No10
 	.section .text.x0200829c,"ax",%progbits
 	.global Func_0200029c
 	.thumb_func
@@ -343,7 +162,7 @@ Func_0200029c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082f8:
-	.4byte 0x00002217
+	.4byte MsgScene677No21
 	.section .text.x020082fc,"ax",%progbits
 	.global Func_020002fc
 	.thumb_func
@@ -390,7 +209,7 @@ Func_020002fc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008358:
-	.4byte 0x00002219
+	.4byte MsgScene677No23
 	.section .text.x0200835c,"ax",%progbits
 	.global Func_0200035c
 	.thumb_func
@@ -437,7 +256,7 @@ Func_0200035c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020083b8:
-	.4byte 0x0000221b
+	.4byte MsgScene677No25
 	.section .text.x020083bc,"ax",%progbits
 	.global Func_020003bc
 	.thumb_func
@@ -487,7 +306,7 @@ Func_020003bc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008420:
-	.4byte 0x0000221d
+	.4byte MsgScene677No27
 	.section .text.x02008424,"ax",%progbits
 	.global Func_02000424
 	.thumb_func
@@ -532,7 +351,7 @@ Func_02000424:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200847c:
-	.4byte 0x00002221
+	.4byte MsgScene65ENo27
 	.section .text.x02008480,"ax",%progbits
 	.global Func_02000480
 	.thumb_func
@@ -573,7 +392,7 @@ Func_02000480:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020084dc:
-	.4byte 0x00002223
+	.4byte MsgScene677No31
 	.section .text.x020084e0,"ax",%progbits
 	.global Func_020004e0
 	.thumb_func
@@ -619,6 +438,257 @@ Func_020004e0:
 	.global Func_02000524
 	.thumb_func
 Func_02000524:
+	.ifdef TLA_EDITION_JA
+	push {r5, lr}
+	bl Func_020004e0
+	cmp r0, #0
+	beq .L_ja_02008538
+	movs r0, #16
+	adds r0, #255
+	bl GameFlag_SetBit
+	b .L_ja_02008556
+.L_ja_02008538:
+	movs r0, #192
+	lsls r0, r0, #2
+	adds r0, #1
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_02008556
+	bl Func_02000a90
+	cmp r0, #0
+	bne .L_ja_02008556
+	movs r0, #16
+	adds r0, #255
+	bl GameFlag_ClearBit
+.L_ja_02008556:
+	movs r0, #16
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_02008598
+	ldr r5, .L_ja_02008760
+	adds r0, r5, #0
+	bl Func_02000a18
+	movs r1, #0
+	movs r0, #14
+	bl UiText_OpenMessageAtObject
+	bl Func_02000a58
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_ja_0200858a
+	movs r0, #10
+	bl Battle_WaitMode0
+	adds r0, r5, #1
+	b .L_ja_020085b4
+.L_ja_0200858a:
+	movs r0, #20
+	bl Battle_WaitMode0
+	adds r0, r5, #2
+	bl Func_02000a18
+	b .L_ja_020085b8
+.L_ja_02008598:
+	movs r0, #192
+	lsls r0, r0, #2
+	adds r0, #1
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_020085aa
+	ldr r0, .L_ja_02008764
+	b .L_ja_020085b4
+.L_ja_020085aa:
+	bl Func_02000a90
+	cmp r0, #0
+	beq .L_ja_020085c2
+	ldr r0, .L_ja_02008768
+.L_ja_020085b4:
+	bl Func_02000a18
+.L_ja_020085b8:
+	movs r0, #14
+	movs r1, #0
+	bl Func_02000a28
+	b .L_ja_0200875c
+.L_ja_020085c2:
+	ldr r5, .L_ja_0200876c
+	adds r0, r5, #0
+	bl Func_02000a18
+	movs r1, #0
+	movs r0, #14
+	bl UiText_OpenMessageAtObject
+	bl Func_02000a58
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	beq .L_ja_020085e2
+	b .L_ja_0200874e
+.L_ja_020085e2:
+	adds r0, r5, #1
+	bl Func_02000a18
+	movs r0, #14
+	movs r1, #0
+	bl Func_02000a28
+	movs r1, #192
+	lsls r1, r1, #8
+	movs r0, #14
+	bl Func_02000a60
+	movs r0, #14
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildFlags
+	ldr r5, .L_ja_02008770
+	movs r3, #133
+	lsls r3, r3, #2
+	adds r5, r5, r3
+	movs r1, #244
+	movs r2, #204
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	ldr r0, [r5, #0]
+	bl ObjectMotion_ResetAndSetPosition
+	ldr r0, [r5, #0]
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	ldr r0, [r5, #0]
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #252
+	movs r2, #204
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	movs r0, #14
+	bl ObjectMotion_ResetAndSetPosition
+	movs r0, #14
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	ldr r1, [r5, #0]
+	movs r0, #14
+	movs r2, #0
+	bl ObjectMotion_SetAngleToward
+	movs r0, #14
+	bl Func_02000a80
+	bl Func_02000a90
+	cmp r0, #0
+	beq .L_ja_02008718
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #7
+	lsls r2, r2, #6
+	movs r0, #14
+	adds r1, #102
+	adds r2, #51
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #142
+	movs r2, #204
+	lsls r1, r1, #2
+	lsls r2, r2, #1
+	movs r0, #14
+	bl ObjectMotion_ResetAndSetPositionInMode2
+	movs r0, #14
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r1, #142
+	movs r2, #180
+	lsls r1, r1, #2
+	lsls r2, r2, #1
+	movs r0, #14
+	bl ObjectMotion_ResetAndSetPositionInMode2
+	movs r0, #14
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r1, #158
+	movs r2, #173
+	movs r0, #16
+	lsls r1, r1, #2
+	lsls r2, r2, #1
+	bl ObjectMotion_ResetAndSetPositionInMode2
+	movs r1, #128
+	movs r2, #0
+	movs r0, #16
+	lsls r1, r1, #7
+	bl ObjectMotion_ArmCallback
+	movs r0, #16
+	movs r1, #0
+	bl Object_SetModeById
+	movs r1, #150
+	movs r2, #180
+	lsls r2, r2, #1
+	lsls r1, r1, #2
+	movs r0, #14
+	bl ObjectMotion_ResetAndSetPositionInMode2
+	movs r0, #14
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r0, #14
+	movs r1, #0
+	bl Object_SetModeById
+	movs r1, #128
+	movs r2, #0
+	lsls r1, r1, #7
+	movs r0, #14
+	bl ObjectMotion_ArmCallback
+	movs r0, #14
+	bl Object_GetById
+	movs r3, #129
+	adds r0, #89
+	strb r3, [r0, #0]
+	movs r0, #14
+	bl Object_GetById
+	movs r3, #1
+	adds r0, #35
+	strb r3, [r0, #0]
+	movs r1, #1
+	movs r0, #14
+	bl ObjectMotion_SetActionVariant
+	movs r0, #14
+	bl Object_GetById
+	adds r0, #35
+	ldrb r3, [r0, #0]
+	movs r5, #1
+	orrs r5, r3
+	strb r5, [r0, #0]
+	movs r0, #192
+	lsls r0, r0, #2
+	adds r0, #1
+	bl GameFlag_SetBit
+	b .L_ja_0200875c
+.L_ja_02008718:
+	movs r1, #236
+	movs r2, #199
+	adds r1, #255
+	lsls r2, r2, #1
+	movs r0, #14
+	bl ObjectMotion_ResetAndSetPosition
+	movs r0, #14
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r1, #128
+	lsls r1, r1, #7
+	movs r2, #0
+	movs r0, #14
+	bl ObjectMotion_ArmCallback
+	movs r0, #14
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildFlags
+	movs r0, #14
+	movs r1, #0
+	bl Func_02000a60
+	b .L_ja_0200875c
+.L_ja_0200874e:
+	adds r0, r5, #2
+	bl Func_02000a18
+	movs r0, #14
+	movs r1, #0
+	bl Func_02000a28
+.L_ja_0200875c:
+	pop {r5, pc}
+	.2byte 0x0000
+.L_ja_02008760:
+	.4byte 0x000012f9
+.L_ja_02008764:
+	.4byte 0x000012ff
+.L_ja_02008768:
+	.4byte 0x00001300
+.L_ja_0200876c:
+	.4byte 0x000012fc
+.L_ja_02008770:
+	.4byte gPartyState
+	.else
 	push {r5, lr}
 	bl Func_020004e0
 	cmp r0, #0
@@ -862,15 +932,16 @@ Func_02000524:
 .L_02008766:
 	pop {r5, pc}
 .L_02008768:
-	.4byte 0x00001307
+	.4byte MsgAhSoYou
 .L_0200876c:
-	.4byte 0x0000130d
+	.4byte MsgICanTWait
 .L_02008770:
-	.4byte 0x0000130e
+	.4byte MsgMyWifeHas
 .L_02008774:
-	.4byte 0x0000130a
+	.4byte MsgYouWantMe
 .L_02008778:
 	.4byte gPartyState
+	.endif
 	.section .text.x0200877c,"ax",%progbits
 	.global Func_0200077c
 	.thumb_func
@@ -972,19 +1043,126 @@ Func_0200077c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008858:
-	.4byte 0x0000130f
+	.4byte MsgThisThisIs
 .L_0200885c:
-	.4byte 0x00001310
+	.4byte MsgItTakesOur
 .L_02008860:
-	.4byte 0x00001311
+	.4byte MsgHereSThe
 .L_02008864:
 	.4byte gPartyState
 .L_02008868:
-	.4byte 0x00001316
+	.4byte MsgManSunshineWould
 	.section .text.x0200886c,"ax",%progbits
 	.global Func_0200086c
 	.thumb_func
 Func_0200086c:
+	.ifdef TLA_EDITION_JA
+	push {r5, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r1, #214
+	movs r2, #133
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	adds r3, r3, r1
+	adds r2, #255
+	str r2, [r3, #0]
+	ldr r3, .L_ja_02008940
+	subs r2, #41
+	adds r3, r3, r2
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	ldr r3, .L_ja_02008944
+	cmp r2, r3
+	bne .L_ja_020088de
+	movs r0, #192
+	lsls r0, r0, #2
+	adds r0, #1
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_020088c2
+	movs r1, #150
+	movs r2, #180
+	movs r0, #14
+	lsls r1, r1, #18
+	lsls r2, r2, #17
+	bl Func_020009f8
+	movs r1, #158
+	movs r2, #173
+	movs r0, #16
+	lsls r1, r1, #18
+	lsls r2, r2, #17
+	bl Func_020009f8
+	movs r1, #128
+	movs r0, #16
+	lsls r1, r1, #7
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	b .L_ja_020088ca
+.L_ja_020088c2:
+	movs r0, #14
+	movs r1, #0
+	bl Func_02000a60
+.L_ja_020088ca:
+	movs r0, #17
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildFlags
+	movs r0, #11
+	movs r1, #2
+	bl ObjectMotion_SetActionVariant
+.L_ja_020088de:
+	ldr r3, .L_ja_02008940
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	ldr r3, .L_ja_02008948
+	cmp r2, r3
+	bne .L_ja_0200893a
+	movs r0, #0
+	bl Func_02000a48
+	movs r1, #2
+	movs r0, #12
+	bl ObjectMotion_SetActionVariant
+	movs r0, #12
+	bl Object_GetById
+	adds r0, #89
+	ldrb r3, [r0, #0]
+	movs r5, #4
+	orrs r3, r5
+	strb r3, [r0, #0]
+	movs r1, #2
+	movs r0, #10
+	bl ObjectMotion_SetActionVariant
+	movs r0, #10
+	bl Object_GetById
+	adds r0, #89
+	ldrb r3, [r0, #0]
+	movs r1, #2
+	orrs r3, r5
+	strb r3, [r0, #0]
+	movs r0, #11
+	bl ObjectMotion_SetActionVariant
+	movs r0, #11
+	bl Object_GetById
+	adds r0, #89
+	ldrb r3, [r0, #0]
+	orrs r5, r3
+	strb r5, [r0, #0]
+.L_ja_0200893a:
+	movs r0, #0
+	pop {r5, pc}
+	.2byte 0x0000
+.L_ja_02008940:
+	.4byte gPartyState
+.L_ja_02008944:
+	.4byte 0x0000008d
+.L_ja_02008948:
+	.4byte 0x0000008e
+	.else
 	push {r5, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1093,6 +1271,7 @@ Func_0200086c:
 	.4byte 0x0000008d
 .L_02008958:
 	.4byte 0x0000008e
+	.endif
 	.section .rodata.x02008a98,"a",%progbits
 .L_02008a98:
 	.4byte 0x00000016
@@ -1238,7 +1417,8 @@ Data_02000ca4:
 	.4byte 0x00000001
 	.4byte 0x00980000
 	.4byte 0x00000000
-	.4byte 0x00880000
+	.2byte 0x0000
+	.2byte MsgFieldJenna
 	.4byte 0x00016000
 	.4byte 0xffff0074
 	.4byte .L_02008a98
@@ -1383,22 +1563,22 @@ Data_02000ea8:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002209
+	.4byte MsgScene677No09
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02000244
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000220f
+	.4byte MsgScene677No13
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002210
+	.4byte MsgScene677No14
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_020003bc
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000221e
+	.4byte MsgScene677No28
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_02000524
@@ -1413,22 +1593,22 @@ Data_02000ea8:
 	.4byte Func_02000524
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000220d
+	.4byte MsgScene677No11
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000220e
+	.4byte MsgScene677No12
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002211
+	.4byte MsgScene677No15
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002212
+	.4byte MsgScene677No16
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000221f
+	.4byte MsgScene677No29
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002220
+	.4byte MsgScene677No30
 	.4byte 0x00008d15
 	.4byte 0xffff000e
 	.4byte Func_0200008c
@@ -1443,7 +1623,8 @@ Data_02000ea8:
 	.4byte Func_0200008c
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403056
+	.2byte MsgScene677No40
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1460,10 +1641,10 @@ Data_02000fe0:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002213
+	.4byte MsgScene677No17
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002214
+	.4byte MsgScene677No18
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_0200029c
@@ -1484,19 +1665,19 @@ Data_02000fe0:
 	.4byte Func_0200035c
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002215
+	.4byte MsgScene677No19
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002216
+	.4byte MsgScene677No20
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002218
+	.4byte MsgScene677No22
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000221a
+	.4byte MsgScene677No24
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000221c
+	.4byte MsgScene677No26
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte Func_0200018c

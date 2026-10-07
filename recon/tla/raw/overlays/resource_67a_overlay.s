@@ -1,32 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	movs r3, #128
-	lsls r3, r3, #4
-	adds r3, #225
-	adds r1, r1, r3
-	adds r0, r1, #0
-	bl GameFlag_SetBit
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008070,"ax",%progbits
-	.global Func_02000070
-	.thumb_func
-Func_02000070:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	adds r2, #85
-	str r2, [r3]
-	movs r0, #0
-	bx lr
 	.section .rodata.x02008090,"a",%progbits
 .L_02008090:
 	.4byte 0x00000016

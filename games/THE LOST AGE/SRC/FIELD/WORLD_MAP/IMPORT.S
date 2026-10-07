@@ -189,7 +189,23 @@ Animation_ApplyChildValues:
 	.global Func_02004b88
 	.thumb_func
 Func_02004b88:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_0802db64Far
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_0802db64Far
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_0802db64Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_0802db64Far
+	.else
 	overlay_veneer Func_08020318
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02004b90
 	.thumb_func
 Func_02004b90:

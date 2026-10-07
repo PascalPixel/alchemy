@@ -1,4 +1,5 @@
 #include "SCRIPT.H"
+#include "TYPES.H"
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc Script_OperandHandlerTable[];
@@ -206,4 +207,15 @@ s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
         callback(work, 2, entry[1]);
     work->cursor += 3;
     return 1;
+}
+
+struct ScriptObject {
+    u8 unknown_00[0x6c];
+    s32 value;
+};
+
+void ScriptObject_SetValue(struct ScriptObject *object, s32 value)
+{
+    if (object != NULL)
+        object->value = value;
 }

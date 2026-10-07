@@ -7547,7 +7547,7 @@ msgctxt "message"
 msgid "01884"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDjinnEffect"
 msgid "01885"
 msgstr "Colpo che può spaccare un masso."
 
@@ -11575,11 +11575,11 @@ msgctxt "MsgDjinnSetAll"
 msgid "02891"
 msgstr "{button_icon:6}:Piazza tutti"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "02892"
 msgstr "{button_icon:6}:Tutti in standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "02893"
 msgstr "Scegli un Djinn."
 
@@ -11595,7 +11595,7 @@ msgctxt "message"
 msgid "02896"
 msgstr "{button_icon:4}:Piazza {button_icon:6}:Aiuto"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "02897"
 msgstr "Si sta riprendendo"
 
@@ -11639,7 +11639,7 @@ msgctxt "MsgPsynergyUnchanged"
 msgid "02907"
 msgstr "* Nessuna modifica"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "02908"
 msgstr "{button_icon:3}:Stato pers."
 
@@ -11659,23 +11659,23 @@ msgctxt "MsgUnleashEffect"
 msgid "02912"
 msgstr "Effetto in battaglia:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "02913"
 msgstr "Dai"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "02914"
 msgstr "Piazza"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "02915"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "02916"
 msgstr "Scambia"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "02917"
 msgstr "{argument_ability_name} di {argument_actor_name:1}"
 
@@ -11723,7 +11723,7 @@ msgctxt "message"
 msgid "02928"
 msgstr "Annullato"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "02929"
 msgstr "Recupero in corso"
 
@@ -12663,7 +12663,7 @@ msgctxt "MsgDjinnTutorialGive"
 msgid "03163"
 msgstr "Per dare il tuo Djinn{line_break}a qualcun altro,{line_break}spostalo così.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Dopo aver deciso a chi{line_break}dare il Djinn, piazzalo{line_break}su quel personaggio.{end_wait}"
 
@@ -12675,15 +12675,15 @@ msgctxt "message"
 msgid "03166"
 msgstr "Piazzare un Djinn cambia{line_break}i tuoi attributi e{line_break}forse anche la classe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialPowers"
 msgid "03167"
 msgstr "Ogni Djinn ha poteri{line_break}differenti.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleash"
 msgid "03168"
 msgstr "Dopo averci piazzati{line_break}potrai scatenarci,{line_break}usando i nostri poteri.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialDemonstrate"
 msgid "03169"
 msgstr "Ora ti dimostro la{line_break}potenza del mio attacco,{line_break}{actor_name:1}.{end_now}"
 
@@ -12707,11 +12707,11 @@ msgctxt "message"
 msgid "03174"
 msgstr "Poi potrai evocare{line_break}forze ancora{line_break}maggiori!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialRecovery"
 msgid "03175"
 msgstr "Dopo l'evocazione, il{line_break}Djinn deve ricaricarsi{line_break}per un po' di tempo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03176"
 msgstr "Dopo la ricarica saremo{line_break}nuovamente piazzati e{line_break}pronti per attaccare.{end_wait}"
 

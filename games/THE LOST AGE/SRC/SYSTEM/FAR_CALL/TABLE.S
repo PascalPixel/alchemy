@@ -69,21 +69,33 @@ Func_08020018:
 	.thumb_func
 Func_08020020:
 	overlay_veneer Func_0802254c
-	.global InitializeAnimationObjectsFar
-	.thumb_func
-InitializeAnimationObjectsFar:
 	.ifdef TLA_EDITION_DE
+	.global ResourceMetadata_RegisterFar
+	.thumb_func
+ResourceMetadata_RegisterFar:
 	overlay_veneer ResourceMetadata_Register
 	.else
 	.ifdef TLA_EDITION_ES
+	.global ResourceMetadata_RegisterFar
+	.thumb_func
+ResourceMetadata_RegisterFar:
 	overlay_veneer ResourceMetadata_Register
 	.else
 	.ifdef TLA_EDITION_FR
+	.global ResourceMetadata_RegisterFar
+	.thumb_func
+ResourceMetadata_RegisterFar:
 	overlay_veneer ResourceMetadata_Register
 	.else
 	.ifdef TLA_EDITION_IT
+	.global ResourceMetadata_RegisterFar
+	.thumb_func
+ResourceMetadata_RegisterFar:
 	overlay_veneer ResourceMetadata_Register
 	.else
+	.global InitializeAnimationObjectsFar
+	.thumb_func
+InitializeAnimationObjectsFar:
 	overlay_veneer InitializeAnimationObjects
 	.endif
 	.endif

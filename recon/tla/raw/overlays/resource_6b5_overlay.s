@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008044,"ax",%progbits
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	push {r5, r6, lr}
-	ldr r5, .L_02008058
-	ldrh r6, [r5]
-	strh r5, [r5]
-	bl Func_0200191c
-	bl Func_02001914
-	strh r6, [r5]
-	pop {r5, r6, pc}
-.L_02008058:
-	.4byte 0x04000208
 	.section .text.x0200806c,"ax",%progbits
 	.global Func_0200006c
 	.thumb_func
@@ -355,7 +341,7 @@ Func_020002d8:
 .L_0200833c:
 	.4byte Data_020022bc
 .L_02008340:
-	.4byte 0x000013ea
+	.4byte MsgIfYouWantToParticipate
 	.section .text.x02008344,"ax",%progbits
 	.global Func_02000344
 	.thumb_func
@@ -394,7 +380,7 @@ Func_02000344:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008398:
-	.4byte 0x000013e3
+	.4byte MsgTheLinkWas
 	.section .text.x0200839c,"ax",%progbits
 	.global Func_0200039c
 	.thumb_func
@@ -1333,13 +1319,13 @@ Func_02000864:
 	bl Party_SetFields1f2And1f4
 	b .L_02008b44
 .L_02008b20:
-	.4byte 0x000013e4
+	.4byte MsgAwaitingYourOpponent
 .L_02008b24:
 	.4byte Func_02000134
 .L_02008b28:
 	.4byte gPartyState
 .L_02008b2c:
-	.4byte 0x000013f7
+	.4byte MsgGoodLuck2
 .L_02008b30:
 	.4byte 0x00000138
 .L_02008b34:
@@ -1615,11 +1601,11 @@ Func_02000bb0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008d94:
-	.4byte 0x000013ec
+	.4byte MsgPleaseSpeakTo
 .L_02008d98:
 	.4byte gPartyState
 .L_02008d9c:
-	.4byte 0x000013f9
+	.4byte MsgYourOpponentHas
 	.section .text.x02008da0,"ax",%progbits
 	.global Func_02000da0
 	.thumb_func
@@ -1698,13 +1684,13 @@ Func_02000da0:
 .L_02008e38:
 	.4byte 0xffff5fff
 .L_02008e3c:
-	.4byte 0x0000145e
+	.4byte MsgItLooksLikeThisIs
 .L_02008e40:
-	.4byte 0x00001472
+	.4byte MsgIWillTell
 .L_02008e44:
-	.4byte 0x00001460
+	.4byte MsgItLooksLikeThisIsYour
 .L_02008e48:
-	.4byte 0x00001473
+	.4byte MsgIWillTellYou
 	.section .text.x02008e4c,"ax",%progbits
 	.global Func_02000e4c
 	.thumb_func
@@ -1826,30 +1812,17 @@ Func_02000e4c:
 .L_02008f38:
 	.4byte gPartyState
 .L_02008f3c:
-	.4byte 0x00000e2f
+	.4byte MsgChooseYourParameters
 .L_02008f40:
 	.4byte gInput
 .L_02008f44:
-	.4byte 0x00000e30
+	.4byte MsgWhatIsThis
 .L_02008f48:
-	.4byte 0x00000e31
+	.4byte MsgThereSNoSuch
 .L_02008f4c:
-	.4byte 0x00000e32
-	.section .text.x02008f50,"ax",%progbits
-	.global Func_02000f50
-	.thumb_func
-Func_02000f50:
-	push {r5, lr}
-	adds r5, r0, #0
-	bl Func_02001a14
-	movs r0, #0
-	bl Func_02001ab4
-	adds r0, r5, #0
-	bl Func_02001abc
-	bl Func_02001a1c
-	pop {r5, pc}
-	.2byte 0x0000
+	.4byte MsgTheSettingsAre
 	.section .text.x02008f6c,"ax",%progbits
+	.balign 4
 	.global Func_02000f6c
 	.thumb_func
 Func_02000f6c:
@@ -2069,7 +2042,7 @@ Func_02000fbc:
 .L_02009118:
 	.4byte gPartyState
 .L_0200911c:
-	.4byte 0x00001485
+	.4byte MsgYouHaveA
 .L_02009120:
 	.4byte gInput
 .L_02009124:
@@ -2077,7 +2050,7 @@ Func_02000fbc:
 .L_02009128:
 	.4byte Data_02003860
 .L_0200912c:
-	.4byte 0x00001486
+	.4byte MsgComeBackWhen
 	.section .text.x02009130,"ax",%progbits
 	.global Func_02001130
 	.thumb_func
@@ -2172,21 +2145,21 @@ Func_02001130:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_020091f0:
-	.4byte 0x0000140a
+	.4byte MsgItSOur
 .L_020091f4:
 	.4byte gPartyState
 .L_020091f8:
-	.4byte 0x00001432
+	.4byte MsgEverybodyDeservesA
 .L_020091fc:
-	.4byte 0x0000143a
+	.4byte MsgEverybodyDidGreat
 .L_02009200:
-	.4byte 0x00001442
+	.4byte MsgDonTBlame
 .L_02009204:
-	.4byte 0x0000144a
+	.4byte MsgYouWinSome
 .L_02009208:
-	.4byte 0x00001412
+	.4byte MsgOkWeRe
 .L_0200920c:
-	.4byte 0x0000141a
+	.4byte MsgILlFight
 	.section .text.x02009210,"ax",%progbits
 	.global Func_02001210
 	.thumb_func
@@ -2301,13 +2274,13 @@ Func_0200122c:
 .L_020092ec:
 	.4byte gInput
 .L_020092f0:
-	.4byte 0x00001482
+	.4byte MsgSometimesYourClass
 .L_020092f4:
-	.4byte 0x0000146a
+	.4byte MsgILlBe
 .L_020092f8:
-	.4byte 0x0000146b
+	.4byte MsgILikeMy
 .L_020092fc:
-	.4byte 0x00001468
+	.4byte MsgYouLookA
 .L_02009300:
 	.4byte gPartyState
 	.section .text.x02009304,"ax",%progbits
@@ -2367,13 +2340,13 @@ Func_02001304:
 .L_02009374:
 	.4byte gPartyState
 .L_02009378:
-	.4byte 0x00001479
+	.4byte MsgUpToThree
 .L_0200937c:
-	.4byte 0x00001477
+	.4byte MsgUpToThreeAllies
 .L_02009380:
-	.4byte 0x00001476
+	.4byte MsgUpToThreeAlliesCan
 .L_02009384:
-	.4byte 0x00001478
+	.4byte MsgYouCanChange
 	.section .text.x02009388,"ax",%progbits
 	.global Func_02001388
 	.thumb_func
@@ -2415,9 +2388,9 @@ Func_02001388:
 .L_020093d8:
 	.4byte gPartyState
 .L_020093dc:
-	.4byte 0x00001474
+	.4byte MsgYouVeWon
 .L_020093e0:
-	.4byte 0x00001475
+	.4byte MsgICanTWaitTo
 	.section .text.x020093ec,"ax",%progbits
 	.global Func_020013ec
 	.thumb_func
@@ -2429,7 +2402,7 @@ Func_020013ec:
 	bl UiText_ShowPositionedMessageAndWait
 	pop {pc}
 .L_020093fc:
-	.4byte 0x000013e7
+	.4byte MsgBattleResultsWere
 	.section .text.x02009400,"ax",%progbits
 	.global Func_02001400
 	.thumb_func
@@ -2441,7 +2414,7 @@ Func_02001400:
 	bl UiText_ShowPositionedMessageAndWait
 	pop {pc}
 .L_02009410:
-	.4byte 0x000013e9
+	.4byte MsgMonsterBattleResults
 	.section .text.x02009414,"ax",%progbits
 	.global Func_02001414
 	.thumb_func
@@ -2892,13 +2865,13 @@ Func_0200145c:
 .L_020097f4:
 	.4byte gPartyState
 .L_020097f8:
-	.4byte 0x000013fa
+	.4byte MsgNotBadWould
 .L_020097fc:
-	.4byte 0x000013f8
+	.4byte MsgYouWonBattle
 .L_02009800:
-	.4byte 0x000013f5
+	.4byte MsgYouWonBattlePlease
 .L_02009804:
-	.4byte 0x000013f6
+	.4byte MsgYouWonBattleI
 .L_02009808:
 	bl Func_02001914
 	movs r0, #185
@@ -2975,7 +2948,7 @@ Func_0200145c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020098b8:
-	.4byte 0x000013e5
+	.4byte MsgNoteYouCan
 .L_020098bc:
 	.4byte gAutoSleepEnabled
 .L_020098c0:
@@ -3441,10 +3414,10 @@ gSceneEvents:
 	.4byte Func_02000f50
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000013eb
+	.4byte MsgWelcomeToBattle
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000146c
+	.4byte MsgHmItComes
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_0200122c
@@ -3459,31 +3432,31 @@ gSceneEvents:
 	.4byte Func_02001304
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0000147a
+	.4byte MsgInTheLinked
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000147c
+	.4byte MsgSoYouWin
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x0000147d
+	.4byte MsgYouCouldUse
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0000147e
+	.4byte MsgShouldIEnter
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x0000147b
+	.4byte MsgMonsterBattleRules
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_02001388
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001482
+	.4byte MsgSometimesYourClass
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte Func_02000fbc
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001453
+	.4byte MsgIDonTHaveThe
 	.4byte 0x00000002
 	.4byte 0xffff000a
 	.4byte Func_02000864

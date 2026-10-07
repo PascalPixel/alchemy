@@ -250,36 +250,8 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x02008410,"ax",%progbits
-	.balign 4
-	.global Func_02000410
-	.thumb_func
-Func_02000410:
-	push {lr}
-	ldr r3, .L_0200842c
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008430
-	cmp r2, r3
-	bne .L_02008428
-	ldr r0, .L_02008434
-	b .L_0200842a
-.L_02008428:
-	ldr r0, .L_02008438
-.L_0200842a:
-	pop {pc}
-.L_0200842c:
-	.4byte gPartyState
-.L_02008430:
-	.4byte 0x000000c6
-.L_02008434:
-	.4byte Data_02002214
-.L_02008438:
-	.4byte Data_020021e4
 	.section .text.x0200843c,"ax",%progbits
+	.balign 4
 	.global Func_0200043c
 	.thumb_func
 Func_0200043c:
@@ -2268,49 +2240,8 @@ Func_02001108:
 	.4byte gPartyState
 .L_02009418:
 	.4byte 0x000000c6
-	.section .text.x0200960c,"ax",%progbits
-	.balign 4
-	.global Func_0200160c
-	.thumb_func
-Func_0200160c:
-	push {lr}
-	ldr r1, .L_0200963c
-	movs r0, #240
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, .L_02009640
-	cmp r2, r3
-	bne .L_02009624
-	ldr r0, .L_02009644
-	b .L_02009638
-.L_02009624:
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #4
-	bgt .L_02009636
-	ldr r0, .L_02009648
-	b .L_02009638
-.L_02009636:
-	ldr r0, .L_0200964c
-.L_02009638:
-	pop {pc}
-	.2byte 0x0000
-.L_0200963c:
-	.4byte gPartyState
-.L_02009640:
-	.4byte 0x000000c5
-.L_02009644:
-	.4byte Data_020022d0
-.L_02009648:
-	.4byte Data_0200242c
-.L_0200964c:
-	.4byte Data_0200251c
 	.section .text.x02009650,"ax",%progbits
+	.balign 4
 	.global Func_02001650
 	.thumb_func
 Func_02001650:

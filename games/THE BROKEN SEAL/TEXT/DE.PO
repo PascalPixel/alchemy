@@ -7547,7 +7547,7 @@ msgctxt "message"
 msgid "01884"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDjinnEffect"
 msgid "01885"
 msgstr "Schmetterschlag, spaltet Felsen."
 
@@ -11575,11 +11575,11 @@ msgctxt "MsgDjinnSetAll"
 msgid "02891"
 msgstr "{button_icon:6}:Alle verbünden"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "02892"
 msgstr "{button_icon:6}:Alle auf Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "02893"
 msgstr "Wähle einen Dschinn."
 
@@ -11595,7 +11595,7 @@ msgctxt "message"
 msgid "02896"
 msgstr "{button_icon:4}:Verbünden {button_icon:6}:Hilfe"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "02897"
 msgstr "Er erholt sich."
 
@@ -11639,7 +11639,7 @@ msgctxt "MsgPsynergyUnchanged"
 msgid "02907"
 msgstr "* Keine Veränd."
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "02908"
 msgstr "{button_icon:3}:Char. Status"
 
@@ -11659,23 +11659,23 @@ msgctxt "MsgUnleashEffect"
 msgid "02912"
 msgstr "Effekt, wenn im Kampf entfesselt:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "02913"
 msgstr "Geben"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "02914"
 msgstr "Verbünd."
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "02915"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "02916"
 msgstr "Tauschen"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "02917"
 msgstr "{argument_actor_name:1}{possessive_suffix}"
 
@@ -11723,7 +11723,7 @@ msgctxt "message"
 msgid "02928"
 msgstr "Abgebrochen"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "02929"
 msgstr "Erholt sich"
 
@@ -12663,7 +12663,7 @@ msgctxt "MsgDjinnTutorialGive"
 msgid "03163"
 msgstr "Um deinen Dschinn{line_break}jemand anderem zu{line_break}geben, bewege ihn so:{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Nachdem du ent-schieden hast,{line_break}wer den Dschinn erhalten soll,{line_break}kannst du ihn verbunden.{end_wait}"
 
@@ -12675,15 +12675,15 @@ msgctxt "message"
 msgid "03166"
 msgstr "Das Bündnis mit einem{page_break}Dschinn verändert deine{line_break}Attribute und mitunter{line_break}sogar deine Klasse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialPowers"
 msgid "03167"
 msgstr "Jeder Dschinn verfügt{line_break}über andere Kräfte.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleash"
 msgid "03168"
 msgstr "Sobald wir uns mit dir{line_break}verbündet haben, kannst{page_break}du uns im Kampf frei-{line_break}setzen und unsere Kräfte{line_break}für dich nutzen.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialDemonstrate"
 msgid "03169"
 msgstr "Lass mich dir eine Kost-{line_break}probe meiner Macht geben,{line_break}{actor_name:1}.{end_now}"
 
@@ -12707,11 +12707,11 @@ msgctxt "message"
 msgid "03174"
 msgstr "Dann kannst du noch{line_break}größere Kräfte frei-{line_break}setzen!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialRecovery"
 msgid "03175"
 msgstr "Nachdem ein Dschinn{page_break}beschworen wurde, braucht{line_break}er einige Zeit, um sich{line_break}wieder zu erholen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03176"
 msgstr "Sobald wir uns erholt{line_break}haben, verbünden wir uns{page_break}automatisch wieder mit dir{line_break}und sind bereit zum Angriff.{end_wait}"
 

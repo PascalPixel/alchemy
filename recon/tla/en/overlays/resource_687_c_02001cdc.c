@@ -1,0 +1,63 @@
+/* Near miss (87 of 197 instructions differ): the native keeps the
+ * palette fill's colour and base inside its loop, reloading both each pass,
+ * and builds the entrance offset in r0; the draft hoists them. Destined
+ * for the head of OVERLAY_687/FADE.C as the overlay's start. */
+#include "../../../../games/THE LOST AGE/SRC/FIELD/OVERLAY_687/OV687.H"
+#include "PARTY_STATE.H"
+#include "SCENE_IDS.H"
+
+extern u16 Data_020026c0[];
+
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Func_02000c50(void);
+void Func_02001650(void);
+void Func_02001a14(void);
+void Func_0200201c(s32 a, s32 b);
+
+s32 Func_02001cdc(void)
+{
+    ((struct Ov687EventWork *)Ram_HeapSlots->event_work)->screen_effect = 256;
+    if (gPartyState.scene == (s32)&SceneId_Ov687Room1) {
+        Data_020022c8 = gFrameCount;
+        Data_020022cc = 1;
+        Dma_Set((const void *)0x05000062, Data_020026c0, 0x8000000e, (volatile u32 *)0x040000d4);
+        if (GameFlag_Test(0x200)) {
+            u32 *state = gSceneState;
+            u32 i;
+
+            Data_020022c8 = *state++;
+            Data_020022cc = *state++;
+            gFrameCount = *state;
+            for (i = 1; i != 14; i++)
+                ((volatile u16 *)0x05000060)[i] = 0x5ccb;
+            Scheduler_AddOrUpdateCallback(Func_02000c50, 0x480);
+        }
+    } else if (gPartyState.scene == (s32)&SceneId_Ov687Room2) {
+        Data_020022c8 = gFrameCount;
+        Data_020022cc = 0;
+        if (gPartyState.entrance <= 4) {
+            if (!GameFlag_Test(0x940)) {
+                Dma_Set((const void *)0x05000062, Data_020026c0, 0x8000000e, (volatile u32 *)0x040000d4);
+            } else {
+                if (!GameFlag_Test(0xa90))
+                    Func_020018a8(21, 23, 9);
+                if (!GameFlag_Test(0xa91))
+                    Func_020018a8(37, 17, 10);
+                if (!GameFlag_Test(0xa93))
+                    Func_020018a8(47, 27, 12);
+                if (!GameFlag_Test(0xa94))
+                    Func_020018a8(59, 19, 13);
+                *(volatile u16 *)0x0500001e &= 0xffe0;
+                Dma_Set((const void *)0x05000000, Ram_HeapSlots->block_32, 0x84000070, (volatile u32 *)0x040000d4);
+                Func_0200201c(0x10000, 0);
+            }
+            if (gPartyState.entrance == 4 && !GameFlag_Test(265))
+                Func_02001a14();
+        } else {
+            if (!GameFlag_Test(0xa95))
+                Func_020018a8(89, 85, 9);
+        }
+    }
+    Scheduler_AddOrUpdateCallback(Func_02001650, 0xc80);
+    return 0;
+}

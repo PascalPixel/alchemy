@@ -1,81 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008058,"ax",%progbits
-	.global Func_02000058
-	.thumb_func
-Func_02000058:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #102
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008082
-	ldr r0, .L_020080f8
-	bl Func_020028ac
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	movs r0, #10
-	movs r1, #4
-	bl Object_LinkObjectAndSetCallback
-	b .L_020080f6
-.L_02008082:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #101
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020080ba
-	bl Func_0200282c
-	movs r0, #0
-	bl Func_020028fc
-	ldr r0, .L_020080fc
-	bl Func_020028ac
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	movs r1, #192
-	adds r0, r5, #0
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	bl Func_02002834
-	b .L_020080f6
-.L_020080ba:
-	ldr r0, .L_02008100
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r5, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020080dc
-	bl Func_0200031c
-	b .L_020080f6
-.L_020080dc:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	movs r1, #128
-	adds r0, r5, #0
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-.L_020080f6:
-	pop {r5, pc}
-.L_020080f8:
-	.4byte 0x00002780
-.L_020080fc:
-	.4byte 0x00002767
-.L_02008100:
-	.4byte 0x0000274d
 	.section .text.x02008104,"ax",%progbits
+	.balign 4
 	.global Func_02000104
 	.thumb_func
 Func_02000104:
@@ -112,141 +38,11 @@ Func_02000104:
 .L_02008146:
 	pop {r5, pc}
 .L_02008148:
-	.4byte 0x00002781
+	.4byte MsgScene68CNo12
 .L_0200814c:
-	.4byte 0x00002768
+	.4byte MsgScene68CNo09
 .L_02008150:
-	.4byte 0x0000274f
-	.section .text.x02008154,"ax",%progbits
-	.global Func_02000154
-	.thumb_func
-Func_02000154:
-	push {r5, r6, lr}
-	ldr r5, .L_0200819c
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r6, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_02008184
-	movs r0, #10
-	bl Battle_WaitMode0
-	adds r0, r5, #1
-	bl Func_020028ac
-	b .L_02008190
-.L_02008184:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #2
-	bl Func_020028ac
-.L_02008190:
-	adds r0, r6, #0
-	movs r1, #0
-	bl Func_020028c4
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200819c:
-	.4byte 0x00002783
-	.section .text.x020081a0,"ax",%progbits
-	.global Func_020001a0
-	.thumb_func
-Func_020001a0:
-	push {r5, r6, lr}
-	ldr r5, .L_020081e8
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r6, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020081d0
-	movs r0, #10
-	bl Battle_WaitMode0
-	adds r0, r5, #1
-	bl Func_020028ac
-	b .L_020081dc
-.L_020081d0:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #2
-	bl Func_020028ac
-.L_020081dc:
-	adds r0, r6, #0
-	movs r1, #0
-	bl Func_020028c4
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_020081e8:
-	.4byte 0x0000278a
-	.section .text.x020081ec,"ax",%progbits
-	.global Func_020001ec
-	.thumb_func
-Func_020001ec:
-	push {r5, r6, r7, lr}
-	adds r5, r1, #0
-	adds r0, r5, #0
-	bl Object_GetById
-	ldrh r7, [r0, #6]
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #103
-	bl GameFlag_SetBit
-	bl Func_0200282c
-	movs r0, #0
-	bl Func_020028fc
-	movs r1, #2
-	adds r1, #255
-	movs r2, #30
-	adds r0, r5, #0
-	bl Func_020028dc
-	movs r2, #20
-	movs r1, #4
-	adds r0, r5, #0
-	bl ObjectMotion_SetAngleToward
-	ldr r6, .L_02008278
-	adds r0, r6, #0
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r5, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_0200824e
-	movs r0, #10
-	bl Battle_WaitMode0
-	adds r0, r6, #1
-	bl Func_020028ac
-	b .L_0200825a
-.L_0200824e:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r6, #2
-	bl Func_020028ac
-.L_0200825a:
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	adds r0, r5, #0
-	adds r1, r7, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #10
-	bl Battle_WaitMode0
-	bl Func_02002834
-	pop {r5, r6, r7, pc}
-.L_02008278:
-	.4byte 0x0000278d
+	.4byte MsgScene68CNo06
 	.section .text.x02008284,"ax",%progbits
 	.global Func_02000284
 	.thumb_func
@@ -258,7 +54,11 @@ Func_02000284:
 	movs r2, #214
 	lsls r2, r2, #1
 	adds r3, r3, r2
+	.ifdef TLA_EDITION_JA
+	adds r2, #85
+	.else
 	adds r2, #93
+	.endif
 	str r2, [r3]
 	movs r0, #11
 	movs r1, #1
@@ -316,747 +116,8 @@ Func_02000284:
 	movs r0, #0
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x0200831c,"ax",%progbits
-	.global Func_0200031c
-	.thumb_func
-Func_0200031c:
-	push {lr}
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #101
-	bl GameFlag_SetBit
-	movs r0, #7
-	bl Party_RemoveActiveOwner
-	bl Func_0200282c
-	movs r0, #0
-	bl Func_020028fc
-	ldr r0, .L_02008734
-	bl Func_020028ac
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #192
-	movs r0, #10
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #4
-	movs r1, #112
-	movs r2, #128
-	bl ObjectMotion_SetPositionAndReset
-	movs r3, #176
-	movs r0, #12
-	movs r1, #16
-	movs r2, #0
-	lsls r3, r3, #8
-	bl Func_02002904
-	movs r2, #16
-	movs r3, #128
-	lsls r3, r3, #8
-	movs r0, #7
-	movs r1, #16
-	negs r2, r2
-	bl Func_02002904
-	movs r1, #192
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #7
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #3
-	movs r0, #7
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r0, #7
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #30
-	movs r0, #10
-	bl Func_020028dc
-	movs r1, #0
-	movs r2, #0
-	movs r0, #10
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #10
-	movs r1, #6
-	movs r2, #15
-	bl ObjectMotion_Launch
-	movs r0, #10
-	movs r1, #6
-	movs r2, #23
-	bl ObjectMotion_Launch
-	movs r2, #10
-	movs r0, #10
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #3
-	movs r0, #7
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r0, #7
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #45
-	movs r0, #12
-	bl Func_020028dc
-	movs r1, #128
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #12
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #12
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r2, #0
-	movs r1, #0
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #3
-	movs r0, #4
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #176
-	movs r0, #12
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #160
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #6
-	movs r2, #0
-	movs r0, #10
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #132
-	lsls r1, r1, #1
-	movs r2, #30
-	movs r0, #10
-	bl Func_020028dc
-	movs r0, #10
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #128
-	movs r0, #12
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #0
-	movs r2, #0
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r1, #176
-	movs r0, #12
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #160
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r0, #12
-	movs r1, #3
-	bl Object_SetModeById
-	movs r1, #3
-	movs r0, #4
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #7
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #45
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #7
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #129
-	lsls r1, r1, #1
-	movs r2, #40
-	movs r0, #10
-	bl Func_020028dc
-	movs r1, #0
-	movs r2, #0
-	movs r0, #10
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r2, #10
-	movs r0, #10
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #2
-	movs r0, #10
-	bl Motion_SetVarCbAndRefresh
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #192
-	lsls r1, r1, #6
-	movs r2, #0
-	movs r0, #10
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #45
-	movs r0, #7
-	bl Func_020028dc
-	movs r1, #224
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #35
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #7
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #35
-	bl Battle_WaitMode0
-	movs r1, #224
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #35
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #35
-	bl Battle_WaitMode0
-	movs r2, #10
-	movs r0, #7
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #2
-	movs r0, #10
-	bl Motion_SetVarCbAndRefresh
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #6
-	adds r1, #255
-	movs r2, #60
-	movs r0, #10
-	bl Func_020028dc
-	movs r1, #48
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #224
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #160
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #224
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #160
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r1, #24
-	negs r1, r1
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #6
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #192
-	lsls r1, r1, #7
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #6
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #128
-	lsls r1, r1, #7
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r1, #2
-	adds r1, #255
-	movs r2, #30
-	movs r0, #7
-	bl Func_020028dc
-	movs r0, #7
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #129
-	lsls r1, r1, #1
-	movs r2, #40
-	movs r0, #7
-	bl Func_020028dc
-	movs r0, #7
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #30
-	movs r0, #12
-	bl Func_020028dc
-	movs r1, #224
-	movs r0, #4
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #208
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #12
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #128
-	lsls r0, r0, #6
-	movs r2, #10
-	adds r0, #12
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #2
-	movs r0, #7
-	bl Motion_SetVarCbAndRefresh
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #192
-	lsls r1, r1, #7
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #10
-	adds r1, #255
-	movs r2, #30
-	movs r0, #7
-	bl Func_020028dc
-	movs r0, #7
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r2, #0
-	movs r1, #0
-	movs r0, #10
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #10
-	movs r1, #4
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #10
-	movs r1, #0
-	movs r2, #10
-	b .L_02008738
-	.2byte 0x0000
-.L_02008734:
-	.4byte 0x00002750
-.L_02008738:
-	bl Func_020028bc
-	movs r1, #128
-	movs r0, #12
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #0
-	movs r2, #0
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #50
-	bl Battle_WaitMode0
-	movs r1, #176
-	movs r0, #12
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #160
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #128
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #7
-	movs r1, #3
-	bl ObjectMotion_SetVariantCallback
-	movs r1, #129
-	lsls r1, r1, #1
-	movs r0, #7
-	bl Func_020028e4
-	movs r0, #50
-	bl Battle_WaitMode0
-	movs r1, #12
-	negs r1, r1
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #10
-	adds r1, #255
-	movs r2, #30
-	movs r0, #10
-	bl Func_020028dc
-	movs r2, #10
-	movs r0, #10
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #2
-	movs r0, #7
-	bl Motion_SetVarCbAndRefresh
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #3
-	movs r0, #10
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r2, #10
-	movs r0, #10
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #4
-	movs r0, #7
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #10
-	movs r1, #4
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #10
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #176
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #10
-	bl ObjectMotion_ArmCallback
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r2, #20
-	movs r0, #10
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #3
-	movs r0, #10
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r2, #10
-	movs r1, #0
-	movs r0, #10
-	bl Func_020028bc
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #9
-	movs r0, #7
-	bl Object_SetModeById
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r1, #224
-	movs r0, #4
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #208
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #12
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #7
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-	movs r1, #0
-	movs r2, #0
-	movs r0, #10
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r2, #10
-	movs r0, #10
-	movs r1, #0
-	bl Func_020028bc
-	movs r1, #1
-	movs r0, #7
-	bl Object_SetModeById
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #152
-	movs r2, #152
-	lsls r1, r1, #7
-	lsls r2, r2, #6
-	adds r1, #204
-	adds r2, #102
-	movs r0, #7
-	bl ObjectMotion_SetSpeedParameters
-	movs r0, #7
-	bl Object_GetById
-	adds r0, #90
-	ldrb r2, [r0]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r0]
-	movs r1, #12
-	movs r2, #0
-	movs r0, #7
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r0, #1
-	bl Battle_WaitMode0
-	movs r0, #7
-	bl Object_GetById
-	adds r0, #90
-	ldrb r2, [r0]
-	movs r3, #1
-	orrs r3, r2
-	strb r3, [r0]
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r0, #7
-	movs r1, #3
-	bl ObjectMotion_SetVariantCallback
-	movs r1, #129
-	lsls r1, r1, #1
-	movs r0, #7
-	bl Func_020028e4
-	movs r0, #55
-	bl Battle_WaitMode0
-	movs r0, #4
-	movs r1, #7
-	bl Object_LinkObjectAndSetCallback
-	movs r0, #12
-	movs r1, #7
-	bl Object_LinkObjectAndSetCallback
-	movs r0, #10
-	movs r1, #7
-	bl Object_LinkObjectAndSetCallback
-	movs r0, #7
-	ldr r1, .L_02008a4c
-	ldr r2, .L_02008a50
-	bl ObjectMotion_SetSpeedParameters
-	movs r1, #8
-	negs r1, r1
-	movs r2, #88
-	movs r0, #7
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r0, #4
-	bl ObjectMotion_EnableActionAndResetMotion
-	movs r0, #12
-	bl ObjectMotion_EnableActionAndResetMotion
-	movs r0, #10
-	bl ObjectMotion_EnableActionAndResetMotion
-	movs r1, #0
-	movs r2, #0
-	movs r0, #7
-	bl Func_02002874
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #10
-	adds r1, #255
-	movs r2, #30
-	movs r0, #12
-	bl Func_020028dc
-	movs r1, #128
-	movs r0, #12
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #0
-	movs r2, #0
-	movs r0, #4
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #128
-	lsls r0, r0, #6
-	movs r1, #0
-	adds r0, #12
-	bl UiText_OpenMessageAtObject
-	movs r0, #4
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020089be
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #128
-	lsls r0, r0, #6
-	movs r2, #10
-	adds r0, #12
-	movs r1, #0
-	bl Func_020028bc
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	b .L_020089e4
-.L_020089be:
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	movs r0, #128
-	adds r3, #1
-	lsls r0, r0, #6
-	strh r3, [r2]
-	adds r0, #12
-	movs r1, #0
-	movs r2, #10
-	bl Func_020028bc
-.L_020089e4:
-	movs r1, #3
-	movs r0, #12
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #3
-	movs r0, #4
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r2, #153
-	lsls r2, r2, #8
-	adds r2, #153
-	movs r0, #12
-	ldr r1, .L_02008a54
-	bl ObjectMotion_SetSpeedParameters
-	movs r0, #12
-	movs r1, #2
-	bl Object_SetModeById
-	ldr r3, .L_02008a58
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	cmp r0, #0
-	beq .L_02008a36
-	movs r3, #10
-	ldrsh r1, [r0, r3]
-	movs r3, #18
-	ldrsh r2, [r0, r3]
-	movs r0, #12
-	bl ObjectMotion_ResetAndSetPosition
-.L_02008a36:
-	movs r0, #12
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r0, #12
-	movs r1, #0
-	movs r2, #0
-	bl Func_02002874
-	bl Func_02002834
-	pop {pc}
-.L_02008a4c:
-	.4byte 0x00023333
-.L_02008a50:
-	.4byte 0x00011999
-.L_02008a54:
-	.4byte 0x00013333
-.L_02008a58:
-	.4byte gPartyState
 	.section .text.x02008a5c,"ax",%progbits
+	.balign 4
 	.global Func_02000a5c
 	.thumb_func
 Func_02000a5c:
@@ -1374,7 +435,7 @@ Func_02000a5c:
 	strh r3, [r2]
 	b .L_02008d7e
 .L_02008d54:
-	.4byte 0x00002769
+	.4byte MsgScene68CNo10
 .L_02008d58:
 	movs r0, #40
 	bl Battle_WaitMode0
@@ -2336,7 +1397,7 @@ Func_020013f0:
 	strh r3, [r2]
 	b .L_020095e2
 .L_020095bc:
-	.4byte 0x0000279b
+	.4byte MsgScene68CNo26
 .L_020095c0:
 	movs r0, #35
 	bl Battle_WaitMode0
@@ -4403,16 +3464,16 @@ gSceneEvents:
 	.4byte Func_020013f0
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002749
+	.4byte MsgScene68CNo01
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000274a
+	.4byte MsgScene68CNo02
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000274b
+	.4byte MsgScene68CNo03
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000274c
+	.4byte MsgScene68CNo04
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_02000058
@@ -4424,16 +3485,16 @@ gSceneEvents:
 	.4byte Func_02000154
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002786
+	.4byte MsgScene68CNo14
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002787
+	.4byte MsgScene68CNo15
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002788
+	.4byte MsgScene68CNo16
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002789
+	.4byte MsgScene68CNo17
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte Func_020001a0
@@ -4457,49 +3518,58 @@ gSceneEvents:
 	.4byte Func_020001ec
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002790
+	.4byte MsgScene68CNo20
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002791
+	.4byte MsgScene68CNo21
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002792
+	.4byte MsgScene68CNo22
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002793
+	.4byte MsgScene68CNo23
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002794
+	.4byte MsgScene68CNo24
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002795
+	.4byte MsgScene68CNo25
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x00403064
+	.2byte MsgScene68CNo27
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x00403065
+	.2byte MsgScene68CNo28
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x00403066
+	.2byte MsgScene68CNo29
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x00403067
+	.2byte MsgScene68CNo30
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x00403068
+	.2byte MsgScene68CNo31
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x00403069
+	.2byte MsgScene68CNo32
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x0040306a
+	.2byte MsgScene68CNo33
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x0040306b
+	.2byte MsgScene68CNo34
+	.2byte 0x0040
 	.4byte 0x000001c3
 	.4byte 0xffff00d0
-	.4byte 0x0040306d
+	.2byte MsgScene68CNo35
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

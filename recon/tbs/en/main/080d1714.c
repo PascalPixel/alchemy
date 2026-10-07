@@ -220,6 +220,14 @@
  *   runtime->particles[index + 60] as mark[index]: 560.
  * - on 44: the spark update loop as spark[index] from the map cell
  *   buffer, no spark++: 38, its preheader exact.
+ * - on 38: the mark loop walking mark++ again, the others indexed: 46
+ *   (the view + 12 and &base_angle slots swap back, and the threshold
+ *   preheader still sets 330 first and mark last).
+ *   The threshold loop's givs (loop dump): 330 + 12i, frame - 330 -
+ *   12i, the mark[index] address giv, 28i and 0x7720 + 28i, the last
+ *   two moved out of the burst loop.
+ * - on 38: permuter 4 minutes (seed 7, --heat, 2 jobs): 515
+ *   candidates, none below.
  * Remaining (38): the order in which loop.c initialises and steps
  * the strength-reduced givs of two loops, which sets reload's register
  * rotation there. The threshold loop preheader: the native sets mark

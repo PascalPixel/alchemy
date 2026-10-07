@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 537 of 2455 (listing 2455, draft 2434, common 2176).
+/* 080ea0d8: differ 529 of 2455 (listing 2455, draft 2440, common 2183).
  * Remaining: register allocation, scheduling, constant hoisting, repeated
  * loads and pool placement. The first particle and dust blocks now use
  * native's pointer, counter, size registers and spill offsets; several
@@ -26,7 +26,9 @@
  * declarations pending labels at their native bytes. BattleEffectWork, camera,
  * presentation, scroll and animation layouts now come from the shared headers.
  * RAM buffers, IWRAM entries, heap cells, callbacks and resources use existing
- * source names. The local IO queue macro is replaced by its common definition.
+ * source names. The local IO queue expansion follows the common queue layout,
+ * using the native numeric IME value and direct volatile accesses; the shared
+ * macro is unchanged until a broader match justifies extending its interface.
  * Trial: the named animation priority bitfield adds one instruction (2325);
  * its byte store is retained until the remaining allocation is understood.
  * Trial: a plain u32 fill (2324); volatile u32 fill (2257, kept).
@@ -254,7 +256,15 @@
  * bindings, and the second petal quarter binding, redundant; all removed
  * at 537. Removing the remaining circle radius-half binding gives 548,
  * second height 1089, second callback 1109, first callback 1209. Only
- * those measured devices remain, alongside the particle-height operand. */
+ * those measured devices remain, alongside the particle-height operand.
+ * Queue continuation: an inline wrapper around the common macro gives 774;
+ * its expanded body with a u32 numeric disable value gives 790. The same
+ * numeric body as a local macro gives 533. An outer one-pass for loop gives
+ * 732, an inner one-pass for around the saved IME read gives 541. Restoring
+ * the original nested do blocks and using direct volatile IME expressions
+ * instead of a pointer local gives 529, kept. Both forms write 520 and
+ * restore the halfword read before the queue update; count, entry order and
+ * hardware accesses are unchanged. The local macro remains draft-only. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -317,6 +327,32 @@ extern const u8 BattleFx9_ShardHeights[];
 
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARKS (&DUST[128])
+
+#define BattleFx9_QueueIoWrite(address, value, delay) \
+    { \
+        /* FAKEMATCH: native rebuilds 520 at each IME write; pointer-derived values retain the earlier address (537 differences). */ \
+        struct IoWriteQueue *q; \
+        u32 saved; \
+        u32 disable; \
+        s32 count; \
+        q = &gIoWriteQueue; \
+        do { \
+            do { \
+                saved = *(volatile u16 *)0x04000208; \
+            } while (0); \
+            disable = 0x208; \
+            *(volatile u16 *)0x04000208 = disable; \
+            count = q->count; \
+            if (count <= 31) { \
+                u32 *destination = (u32 *)((u8 *)q + count * 12 + 4); \
+                *(u16 *)&q->count = count + 1; \
+                *destination++ = value; \
+                *destination++ = address; \
+                *destination = delay; \
+            } \
+            *(volatile u16 *)0x04000208 = saved; \
+        } while (0); \
+    }
 
 void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 {
@@ -693,8 +729,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (gKeysRepeat & (KEY_A | KEY_B)) {
             if (frame >= 5 && frame < 150) {
                 frame = 150;
-                IO_WRITE_QUEUE_PUSH(0x04000020, 0x80, 0x20000);
-                IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
+                BattleFx9_QueueIoWrite(0x04000020, 0x80, 0x20000);
+                BattleFx9_QueueIoWrite(0x04000028, 0, 0x30000);
                 Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
             } else if (frame >= 155 && frame < 214) {
                 frame = 214;
@@ -704,8 +740,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame == 64) {
-            IO_WRITE_QUEUE_PUSH(0x04000020, 0x80, 0x20000);
-            IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
+            BattleFx9_QueueIoWrite(0x04000020, 0x80, 0x20000);
+            BattleFx9_QueueIoWrite(0x04000028, 0, 0x30000);
             fill = 0;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
             Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);

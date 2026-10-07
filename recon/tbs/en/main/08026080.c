@@ -33,7 +33,14 @@
  *   block through n = 6 - i 1307. On 116, the pending loop's stores in
  *   native source order (tx, sx, ty, sy; else flags first) 134 (the loads
  *   then follow the stores); through nx/ny 857; through block locals x and
- *   y 148.
+ *   y 148; the else branch as slot->flags = 1; slot->x = targetPos.x =
+ *   entry->x; slot->y = targetPos.y = entry->y + 8: 120 (sched2 sinks the
+ *   flags store below targetPos.x and slot->x and keeps the entry->y load
+ *   after them; native hoists both entry loads above every store).
+ * Spill slots now: GCSE's expression table has 707 buckets (max_cuid
+ *   1414 or 1415), so (plus sfp C) still hashes in C order; the native
+ *   order needs a bucket multiple between 13926 - 160 and 13926 - 112:
+ *   657, 689, 725, 727, 765 or 767 buckets.
  * Session T10-08026080/2 (from 624), kept:
  * - the cursor sine as Trig_Sin(...) / 32768, as the pending loop and the
  *   name drawing write it: the value stays in r0 as native, 624 (draft

@@ -2,7 +2,7 @@
 .syntax unified
 	.thumb
 	.section .text.x020083cc,"ax",%progbits
-	.ifndef TBS_EDITION_EN
+	.ifeq EDITION_INTERNATIONAL
 	.global SaveMenu_Run
 	.thumb_func
 SaveMenu_Run:

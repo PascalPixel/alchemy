@@ -1,8 +1,11 @@
-/* SaveMenu_Run (overlay resource_370 020083cc): English is adopted, SRC/MENU/CLEAR/CLEAR.C under #if defined(TBS_EDITION_EN) (2026-10-07); the listing's function stays for the other five editions under .ifndef TBS_EDITION_EN. This draft is the English body, kept as the start for their branches; it scored differ 0 of 920 against the English listing before adoption, and English is now judged by make compare-tbs-en (OK). With the listing's function under .ifndef TBS_EDITION_EN, alchemy diff --symbol SaveMenu_Run finds no listing instructions (listing 0), with --edition tbs-de or tbs-es too, so scoring another edition's branch needs that edition's listing assembled.
+/* SaveMenu_Run (overlay resource_370 020083cc): English, German, Spanish, French and Italian are adopted, SRC/MENU/CLEAR/CLEAR.C under #if EDITION_INTERNATIONAL (2026-10-07); the listing's function stays for Japanese only under .ifeq EDITION_INTERNATIONAL. This draft carries the edition branches CLEAR.C has, and scores differ 0 against the German, Spanish, French and Italian listings (920, 918, 920, 918 instructions) before adoption; those editions are now judged by make compare-editions (twelve OK).
  * Remaining:
- * - Editions: the listing differs per edition. Japanese (not EDITION_INTERNATIONAL) has a 488-byte frame (sub sp) and other pools; the link greeting compares the edition's letter (EN 85, DE 69, FR 70, ES 83, IT 73, JA 67); German and French move pools. Spanish and Italian end the link section with UiWork_Finalize(v6, 2) and WaitFrames(1) and no RenderOutput_PrepareForRedraw(v6), which cross-jumps into the case-0 tail (b Clear_FinalizeAndWait), and their case-4 test branches the other way (beq Clear_LoadFourthSlot); Japanese ends it as English does. Each needs its #if branch in CLEAR.C or stays on its scaffold (S4).
+ * - Japanese (differ 158 of 918 with the international body): the frame is 488 bytes (sub sp, #488) where the international one is 548, with save_data at sp + 288 where it is at sp + 348, so the password buffer is 60 bytes shorter (password[260]); the single-page help draws at x 0 where it is 80, and the many-page help window is UiWindow_Create(3, 16, 24, 3, v6); gWindowWork's dirty byte is RENDER_DIRTY_OFS; the rest is pool offsets that follow.
  * - Headers: in CLEAR.C the body still declares its callees unprototyped where CLEAR.C's headers lack them; the windows are s32 where the headers' type is struct UiWindow * (UiWindow_Create returns one, UiWork_Finalize and UiWindow_SetTilemapEntry take one). Give the windows their type and drop the declarations the headers already make, rescoring each.
  * - Ids: message 6 (the could-not-restore notice) is MsgSaveRecoveryFailed in the six TEXT/*.PO files. Its first use is that name; at its second the native adds 2 to the register holding MsgSaveDataCorrupted, so that use stays MsgSaveDataCorrupted + 2 under a FAKEMATCH tag (186 by name: both uses then cross-jump into one pool load and r5 and r6 trade places).
+ * Trials (2026-10-07, editions session 1):
+ * - DE 14, FR 18 -> 0: the English body differs only in constants: the link window UiWindow_Create(4, 5, 22, 8, 2), the sending window (4, 10, 22, 4, 2), the many-page help window (0, 16, 30, 3, v6), French's heading window (8, 0, 13, 4, v6), and the greeting's first letter (DE 69, FR 70); adopted, twelve OK.
+ * - ES 156, IT 156 -> 16 -> 0: the link section ends UiWork_Finalize(v6, 2); WaitFrames(1) without RenderOutput_PrepareForRedraw, and cross-jumping then merges it with the last page's tail (Clear_FinalizeAndWait) and turns the case-4 test as native; then the French windows and letters ES 83, IT 73; adopted, twelve OK.
  * Trials (2026-10-07, session 5):
  * - 0 -> 186: MsgSaveRecoveryFailed at both uses of message 6: the two pool loads cross-jump into one, the second no longer derives from MsgSaveDataCorrupted's register, and r5 and r6 trade the state pointer and the message base.
  * - 186 -> 0: the first use by name, the second as MsgSaveDataCorrupted + 2 (FAKEMATCH); adopted into CLEAR.C for English, twelve editions OK.
@@ -371,7 +374,11 @@ s32 SaveMenu_Run(void)
         if (v6 != 1) {
             goto L_020009cc;
         }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        v6 = UiWindow_Create(4, 5, 22, 8, 2);
+#else
         v6 = UiWindow_Create(6, 5, 18, 8, 2);
+#endif
         link_message = (s32)MsgClearSaveLabel;
 
         UiText_DrawResource(link_message, v6, 0, 4);
@@ -403,7 +410,19 @@ s32 SaveMenu_Run(void)
                 u32 peer = ((control << 26) >> 30) ^ 1;
                 u16 *received = gLinkPeerSignatures[peer].code;
 
+#if defined(TBS_EDITION_DE)
+                if (received[0] == 69) {
+#elif defined(TBS_EDITION_FR)
+                if (received[0] == 70) {
+#elif defined(TBS_EDITION_ES)
+                if (received[0] == 83) {
+#elif defined(TBS_EDITION_IT)
+                if (received[0] == 73) {
+#elif !EDITION_INTERNATIONAL
+                if (received[0] == 67) {
+#else
                 if (received[0] == 85) {
+#endif
                     if (received[1] == 86) {
                         if (received[2] == 84) {
                             if (received[3] == 83) {
@@ -422,7 +441,11 @@ s32 SaveMenu_Run(void)
         if (v7 == 0) {
             goto L_020007dc;
         }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        v6 = UiWindow_Create(4, 10, 22, 4, 2);
+#else
         v6 = UiWindow_Create(5, 10, 20, 4, 2);
+#endif
 
         UiText_DrawResource((s32)MsgClearSendingData, v6, 0, 4);
         WaitFrames(10);
@@ -458,8 +481,13 @@ s32 SaveMenu_Run(void)
     WaitFrames(10);
         SerialRuntime_RemoveIrqHandlers();
     WaitFrames(10);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    UiWork_Finalize(v6, 2);
+    WaitFrames(1);
+#else
     RenderOutput_PrepareForRedraw(v6);
     UiWork_Finalize(v6, 2);
+#endif
     goto L_020004a8;
     L_020009cc:;
     if (v6 == 0) {
@@ -485,7 +513,11 @@ s32 SaveMenu_Run(void)
         page_window = UiWindow_Create(5, 4, 20, 12, v6);
         page = 0;
         page_count = (__divsi3(encoded_size, 50) + 1);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        record = UiWindow_Create(8, 0, 13, 4, v6);
+#else
         record = UiWindow_Create(10, 0, 10, 4, v6);
+#endif
         page_message = (s32)MsgClearPasswordLabel;
         heading_window = record;
         UiText_DrawResource(page_message, heading_window, 6, 4);
@@ -495,7 +527,11 @@ s32 SaveMenu_Run(void)
             help_window = record;
             UiText_DrawCharacterAtOffset(page_message - 2, help_window, 80, 0);
         } else {
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            record = UiWindow_Create(0, 16, 30, 3, v6);
+#else
             record = UiWindow_Create(1, 16, 28, 3, v6);
+#endif
             help_window = record;
             UiText_DrawCharacterAtOffset(page_message - 1, help_window, 0, 0);
         }

@@ -282,7 +282,7 @@ s32 Scene_GetModeMask(void)
     return -((u32)(-mode | mode) >> 31);
 }
 
-#if defined(TBS_EDITION_EN)
+#if EDITION_INTERNATIONAL
 struct SaveMenuSceneState {
     u8 unknown_000[0x100];
     s32 word_100;
@@ -585,7 +585,11 @@ s32 SaveMenu_Run(void)
         if (v6 != 1) {
             goto L_020009cc;
         }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        v6 = UiWindow_Create(4, 5, 22, 8, 2);
+#else
         v6 = UiWindow_Create(6, 5, 18, 8, 2);
+#endif
         link_message = (s32)MsgClearSaveLabel;
 
         UiText_DrawResource(link_message, v6, 0, 4);
@@ -617,7 +621,19 @@ s32 SaveMenu_Run(void)
                 u32 peer = ((control << 26) >> 30) ^ 1;
                 u16 *received = gLinkPeerSignatures[peer].code;
 
+#if defined(TBS_EDITION_DE)
+                if (received[0] == 69) {
+#elif defined(TBS_EDITION_FR)
+                if (received[0] == 70) {
+#elif defined(TBS_EDITION_ES)
+                if (received[0] == 83) {
+#elif defined(TBS_EDITION_IT)
+                if (received[0] == 73) {
+#elif !EDITION_INTERNATIONAL
+                if (received[0] == 67) {
+#else
                 if (received[0] == 85) {
+#endif
                     if (received[1] == 86) {
                         if (received[2] == 84) {
                             if (received[3] == 83) {
@@ -636,7 +652,11 @@ s32 SaveMenu_Run(void)
         if (v7 == 0) {
             goto L_020007dc;
         }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        v6 = UiWindow_Create(4, 10, 22, 4, 2);
+#else
         v6 = UiWindow_Create(5, 10, 20, 4, 2);
+#endif
 
         UiText_DrawResource((s32)MsgClearSendingData, v6, 0, 4);
         WaitFrames(10);
@@ -672,8 +692,13 @@ s32 SaveMenu_Run(void)
     WaitFrames(10);
         SerialRuntime_RemoveIrqHandlers();
     WaitFrames(10);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    UiWork_Finalize(v6, 2);
+    WaitFrames(1);
+#else
     RenderOutput_PrepareForRedraw(v6);
     UiWork_Finalize(v6, 2);
+#endif
     goto L_020004a8;
     L_020009cc:;
     if (v6 == 0) {
@@ -699,7 +724,11 @@ s32 SaveMenu_Run(void)
         page_window = UiWindow_Create(5, 4, 20, 12, v6);
         page = 0;
         page_count = (__divsi3(encoded_size, 50) + 1);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        record = UiWindow_Create(8, 0, 13, 4, v6);
+#else
         record = UiWindow_Create(10, 0, 10, 4, v6);
+#endif
         page_message = (s32)MsgClearPasswordLabel;
         heading_window = record;
         UiText_DrawResource(page_message, heading_window, 6, 4);
@@ -709,7 +738,11 @@ s32 SaveMenu_Run(void)
             help_window = record;
             UiText_DrawCharacterAtOffset(page_message - 2, help_window, 80, 0);
         } else {
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            record = UiWindow_Create(0, 16, 30, 3, v6);
+#else
             record = UiWindow_Create(1, 16, 28, 3, v6);
+#endif
             help_window = record;
             UiText_DrawCharacterAtOffset(page_message - 1, help_window, 0, 0);
         }

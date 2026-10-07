@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 1901 of 2455 (listing 2455, draft 2452, common 1503).
+/* 080ea0d8: differ 1791 of 2455 (listing 2455, draft 2454, common 1559).
  * Structure: the sequence of conditional branches, jumps and calls now
  * matches the native's except one literal-pool jump; what remains is
  * register allocation, scheduling, constant hoisting and pool placement.
@@ -6,11 +6,12 @@
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
  * after the variable part, loop.c creates it in the inner loop's preheader
  * and cannot hoist it, and the whole ramp loop matches the native's.
- * Constants: the native reloads 0xff0000 in each petal placement and does
- * not hoist the IO queue's 0, &fill or 24 out of the 320-frame loop, where
- * ours hoists all four (loop.c: 0 with savings 11 life 39 in 1199 insns);
- * the palette fade masks with a pool-loaded 0x1f and widens
- * each colour as a halfword (lsls 16 / lsrs 26), ours with asrs.
+ * Constants: the particle height is now built inside the loop, in the
+ * native registers and order. loop.c still hoists the IO queue's 0,
+ * &fill and 24; reload rematerializes them, so the 320-frame loop's
+ * final preheader now contains only frame = 0 as native. The palette
+ * loop now has the native halfword widening, separate red mask and
+ * instruction/register sequence (pool placement still differs).
  * Locals: the native fill word sits at sp+140, between place and place2, so
  * it is a declared volatile word, not an addressed scalar (that put it at
  * sp+116 after pair). The frame is now the native's 184 bytes, and draw2
@@ -73,13 +74,29 @@
  * lower petal. This restores the 184-byte frame and draw2's sp+92 spill:
  * 2126 -> 1901. The same rewrite in the second petal block is 2521;
  * only reusing its lower y is 1906, neither kept.
- * Trial: a tagged empty-asm height operand keeps 0xff0000 in the particle
- * loop as native: 2126 -> 2116, or 1901 -> 1897 after the coordinate
- * rewrite; not kept. The goto frame loop with it was 2228.
+ * Trial: a nonvolatile empty-asm height operand: 2126 -> 2116, or
+ * 1901 -> 1897 after the coordinate rewrite; not kept. Its invariant
+ * asm can itself hoist, so it does not restore the native loop form.
+ * The goto frame loop with it was 2228.
  * Permuter, 3 minutes, two jobs, seed 47, heat, from 2126: weighted
  * 54790 -> 31510, differ 1916, but 63 rewrites remain (mostly unrelated
  * shared temporaries). Not carried; the ordinary coordinate rewrite
- * above recovers the native frame without those devices. */
+ * above recovers the native frame without those devices.
+ * Continuation (2026-10-07): volatile palette access and u16 casts on
+ * blue/green give 1894; extracting all channels before incrementing
+ * them gives 1862. The only local difference is then r6/r7 swapped;
+ * signed versus unsigned count is unchanged. A tagged r7 count gives
+ * 1850 and the native loop. Sharing this count with i4 gave 1926; one
+ * count for all object loops except ramp/rings gave 2257, not kept.
+ * Particle height: a dependency on p prevents hoisting but swaps the
+ * index/scale registers (1862); reading i22 in the operand instead
+ * restores r7/r8 (1797). A volatile operand on the 255 pixel value,
+ * with x loaded before the placement stores, gives native's mov 255,
+ * load x, shift 16 order (1791, kept). An additional empty volatile
+ * asm is unnecessary. Without the index input it is 1860. A one-pass
+ * scale-store block was 1887; fixing i22 to r7 altered induction
+ * structure (1892), neither kept. The particle placement's temporary
+ * still spills at sp+12 instead of native's sp+8. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -185,7 +202,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i14;
     s32 i15;
     s32 i16;
-    s32 i17;
+    /* FAKEMATCH: the palette counter uses r7 in the native loop; ordinary signed and unsigned counters swap r6/r7 with the shared mask (1862 -> 1850). */
+    register s32 i17 asm("r7");
     s32 i18;
     s32 i19;
     s32 i20;
@@ -618,12 +636,15 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame > 279) {
-            u16 *pal = (u16 *)0x05000002;
+            volatile u16 *pal = (volatile u16 *)0x05000002;
             for (i17 = 0; i17 != 63; i17++, pal++) {
                 s32 c = *pal;
-                s32 b = ((c >> 10) & 31) + 1;
-                s32 g = ((c >> 5) & 31) + 1;
-                s32 r = (c & 31) + 1;
+                s32 b = ((u16)c >> 10) & 31;
+                s32 g = ((u16)c >> 5) & 31;
+                s32 r = c & 31;
+                b++;
+                g++;
+                r++;
                 if (b > 31) {
                     b = 31;
                 }
@@ -845,14 +866,20 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             for (i22 = 0; i22 != 16; i22++) {
                 p = &work->particles[i22];
                 if (p->variant != 0) {
+                    s32 h;
+                    s32 px;
                     scale.x = p->z + (p->y >> 7);
                     if (scale.x < 0x800) {
                         scale.x = 0x800;
                     }
                     scale.y = scale.x;
-                    place2[1] = 0xff0000;
-                    place2[0] = p->x;
-                    place2[2] = p->y + 0xff0000;
+                    h = 255;
+                    /* FAKEMATCH: native rebuilds 255 per particle, loads x, then converts height to fixed point; the volatile operand keeps that order, and reading the index preserves its native r7 and scale's r8 (1860 -> 1791). */
+                    asm volatile("" : "+r"(h) : "r"(i22));
+                    px = p->x;
+                    place2[1] = h << 16;
+                    place2[0] = px;
+                    place2[2] = p->y + (h << 16);
                     Object_ApplyProjectedPlacementFar(work->objects[i22], place2, &scale, 0);
                     p->y -= p->velocity_y;
                     if (p->y < 0x100000) {

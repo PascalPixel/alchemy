@@ -740,8 +740,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;
-        cur->oam.word.attr01 = 0x40000000;
-        cur->oam.word.attr23 = 0;
+        ((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
+        ((u32 *)cur)[2] = 0;
         cur->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
         cur->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
         cur->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;

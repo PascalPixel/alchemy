@@ -178,6 +178,14 @@ impl Build {
     }
 }
 
+/// Every edition of these games.
+pub(crate) fn editions(games: &[DecompTarget]) -> Vec<DecompTarget> {
+    games
+        .iter()
+        .flat_map(|&game| TARGET_IDS.iter().map(|&id| target_for(id)).filter(move |t| t.compiler == game.compiler))
+        .collect()
+}
+
 /// The edits that leave the file's assembly and messages unchanged in every
 /// game it builds in, applied, and how many there were.
 pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget], found: Vec<Edit>) -> Result<(String, usize), String> {
@@ -189,12 +197,8 @@ pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget
     // defines can change what an edit outside any #if means (SCRIPT.C's
     // casts kept English and broke tbs-ja). A file one edition cannot
     // compile is skipped whole.
-    let targets: Vec<DecompTarget> = games
-        .iter()
-        .flat_map(|&game| TARGET_IDS.iter().map(|&id| target_for(id)).filter(move |t| t.compiler == game.compiler))
-        .collect();
     let mut builds = Vec::new();
-    for target in targets {
+    for target in editions(games) {
         let imports = crate::build_text::fresh_c_imports(root, target)?;
         let directory = tempfile::Builder::new().prefix("alchemy-trial-").tempdir().map_err(|e| e.to_string())?;
         let build = Build { target, imports, directory };

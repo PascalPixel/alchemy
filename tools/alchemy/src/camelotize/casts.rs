@@ -1,10 +1,18 @@
 //! Casts the compiler does not need. Candidates are found on the token
 //! stream: a value cast to one of the six integer types, or a pointer cast
-//! `(T *)`, in front of an operand. Each removal is proved by `trial`.
+//! `(T *)`, in front of an operand. An integer cast stays when its operand
+//! is an address, string, array or function by its declared type in any
+//! edition (`Env::number_of_address`), or when that type cannot be read:
+//! GCC 2.96 does not warn when an address meets a parameter list declared
+//! empty. Each other removal is proved by `trial`.
 
 use super::trial::{self, Edit};
+use crate::permute::ast::{Function, Stmt};
 use crate::permute::lex::{lex, Tok, Token};
+use crate::permute::parse::{locate, matching, parse_body, scan_definitions, scan_unit, Unit};
+use crate::permute::types::Env;
 use crate::targets::DecompTarget;
+use std::collections::{BTreeSet, HashMap};
 use std::path::Path;
 
 const VALUES: &[&str] = &["u8", "s8", "u16", "s16", "u32", "s32"];
@@ -90,8 +98,139 @@ pub(crate) fn candidates(text: &str) -> Vec<Edit> {
     trial::untagged(text, found)
 }
 
+/// The index of the last token of the unary expression starting at `k`.
+fn unary_end(tokens: &[Token], k: usize) -> Option<usize> {
+    let token = tokens.get(k)?;
+    match &token.tok {
+        Tok::Punct("-" | "+" | "~" | "!" | "*" | "&" | "++" | "--") => return unary_end(tokens, k + 1),
+        Tok::Punct("(") => {
+            if let Some(close) = cast_at(tokens, k) {
+                return unary_end(tokens, close + 1);
+            }
+        }
+        _ => {}
+    }
+    let mut end = match &token.tok {
+        Tok::Punct("(") => matching(tokens, k)?,
+        Tok::Ident(_) | Tok::Number(_) | Tok::Char(_) => k,
+        Tok::Str(_) => {
+            let mut end = k;
+            while matches!(tokens.get(end + 1).map(|t| &t.tok), Some(Tok::Str(_))) {
+                end += 1;
+            }
+            end
+        }
+        _ => return None,
+    };
+    loop {
+        match tokens.get(end + 1).map(|t| &t.tok) {
+            Some(Tok::Punct("[" | "(")) => end = matching(tokens, end + 1)?,
+            Some(Tok::Punct("." | "->")) if matches!(tokens.get(end + 2).map(|t| &t.tok), Some(Tok::Ident(_))) => end += 2,
+            Some(Tok::Punct("++" | "--")) => end += 1,
+            _ => return Some(end),
+        }
+    }
+}
+
+/// One edition's preprocessed unit: its declarations, the functions it
+/// defines, and each function's declarations once read.
+pub(crate) struct Edition {
+    text: String,
+    unit: Unit,
+    typedefs: BTreeSet<String>,
+    defined: BTreeSet<String>,
+    envs: HashMap<String, Option<Env>>,
+}
+
+impl Edition {
+    pub(crate) fn new(preprocessed: String) -> Result<Edition, String> {
+        let unit = scan_unit(&preprocessed)?;
+        let defined = scan_definitions(&lex(&preprocessed)?).into_iter().map(|d| d.0).collect();
+        Ok(Edition { typedefs: unit.typedef_names(), text: preprocessed, unit, defined, envs: HashMap::new() })
+    }
+
+    /// Whether the cast of `operand` in `function` (empty at file scope)
+    /// makes a number of an address here: `None` when this edition does not
+    /// define the function, true when the type cannot be read.
+    fn address(&mut self, function: &str, operand: &str) -> Option<bool> {
+        if !function.is_empty() && !self.defined.contains(function) {
+            return None;
+        }
+        let (unit, text, typedefs) = (&self.unit, &self.text, &self.typedefs);
+        let env = self.envs.entry(function.to_string()).or_insert_with(|| {
+            if function.is_empty() {
+                let none = Function { name: String::new(), header: String::new(), params: Vec::new(), body: Vec::new() };
+                return Some(Env::new(unit, &none));
+            }
+            locate(text, Some(function), typedefs).ok().map(|located| Env::new(unit, &located.function))
+        });
+        let Some(env) = env else {
+            return Some(true);
+        };
+        let names: Vec<&str> = self.typedefs.iter().map(String::as_str).collect();
+        let expr = match parse_body(&format!("{operand};"), &names).as_deref() {
+            Ok([Stmt::Expr(expr)]) => expr.clone(),
+            _ => return Some(true),
+        };
+        Some(env.number_of_address(&expr))
+    }
+}
+
+/// The candidates left once every integer cast of an address, string,
+/// array or function, or of an operand whose type no edition can read, is
+/// taken out. Pointer casts pass through.
+pub(crate) fn numeric(text: &str, editions: &mut [Edition], found: Vec<Edit>) -> Vec<Edit> {
+    let Ok(tokens) = lex(text) else {
+        return Vec::new();
+    };
+    let tokens = super::numbers::code(tokens);
+    let bodies: Vec<(String, usize, usize)> = scan_definitions(&tokens)
+        .into_iter()
+        .filter_map(|(name, _, _, _, open)| Some((name, tokens[open].start, tokens[matching(&tokens, open)?].end)))
+        .collect();
+    found
+        .into_iter()
+        .filter(|edit| {
+            let Some(open) = tokens.iter().position(|t| t.start == edit.start) else {
+                return false;
+            };
+            let Some(close) = cast_at(&tokens, open) else {
+                return false;
+            };
+            if !matches!(ident(&tokens[close - 1]), Some(name) if VALUES.contains(&name)) {
+                return true;
+            }
+            let Some(end) = unary_end(&tokens, close + 1) else {
+                return false;
+            };
+            let operand = &text[tokens[close + 1].start..tokens[end].end];
+            let function = bodies.iter().find(|(_, start, stop)| *start <= edit.start && edit.end <= *stop).map_or("", |b| b.0.as_str());
+            let mut read = false;
+            for edition in editions.iter_mut() {
+                match edition.address(function, operand) {
+                    Some(true) => return false,
+                    Some(false) => read = true,
+                    None => {}
+                }
+            }
+            read
+        })
+        .collect()
+}
+
 pub(crate) fn rewrite(root: &Path, file: &Path, text: &str, games: &[DecompTarget]) -> Result<(String, usize), String> {
-    trial::proved(root, file, text, games, candidates(text))
+    let found = candidates(text);
+    if found.is_empty() {
+        return Ok((text.to_string(), 0));
+    }
+    let relative = file.strip_prefix(root).unwrap_or(file).to_string_lossy().into_owned();
+    let mut editions = Vec::new();
+    for target in trial::editions(games) {
+        let preprocessed = crate::compiler::preprocess::Expansion::new(root, target)?.fresh(&relative)?;
+        editions.push(Edition::new(preprocessed)?);
+    }
+    let found = numeric(text, &mut editions, found);
+    trial::proved(root, file, text, games, found)
 }
 
 #[cfg(test)]
@@ -121,6 +260,42 @@ mod tests {
         assert_eq!(candidates(text)[0].start, text.find("(u8)f").unwrap());
         let block = "void F(void)\n{\n    /* FAKEMATCH: frame */\n    a = (u8)b;\n    if (a) {\n        c = (u16 *)d;\n    }\n}\n";
         assert!(spans(block).is_empty());
+    }
+
+    fn numeric_spans(text: &str, editions: &[&str]) -> Vec<String> {
+        let mut editions: Vec<Edition> = editions.iter().map(|e| Edition::new(e.to_string()).unwrap()).collect();
+        numeric(text, &mut editions, candidates(text)).iter().map(|c| text[c.start..].lines().next().unwrap().to_string()).collect()
+    }
+
+    #[test]
+    fn integer_casts_of_addresses_stay_by_declared_type() {
+        // ROWING.C and PLAY.C: messages and tables are arrays, and their
+        // callees are declared with empty parentheses, so GCC says nothing.
+        let text = "typedef int s32;\ntypedef unsigned char u8;\ntypedef unsigned short u16;\ntypedef unsigned int u32;\n\
+            extern const u8 MsgFuneWhereGoingSlay[];\nextern const u8 MsgTorebiGetRidItems[];\nextern u8 FuneHeya_ProgressTableA[];\n\
+            extern void UiText_ShowCenteredMessage();\nextern void Object_SetActionCallbackAndRefreshById();\nextern void Engine_EventSetMessage();\n\
+            extern void Callback(void);\nstruct Pair { u8 *p; u16 n; };\ns32 gTable[] = { (s32)Callback };\n\
+            void F(s32 a, struct Pair *pair)\n{\n    s32 n;\n    s32 message = (s32)MsgTorebiGetRidItems;\n\
+            UiText_ShowCenteredMessage((s32)MsgFuneWhereGoingSlay, 1, 8);\n\
+            Object_SetActionCallbackAndRefreshById(3, (s32)FuneHeya_ProgressTableA);\n\
+            Engine_EventSetMessage((s32)MsgTorebiGetRidItems);\n\
+            G((s32)\"text\", (s32)&n, (s32)Callback, (s32)pair->p, (u32)Unknown, (s32)(u8 *)pair);\n\
+            G((u8)n, (u16)pair->n, (s32)-a, (u8 *)pair, (s32)message);\n}\n";
+        assert_eq!(
+            numeric_spans(text, &[text]),
+            vec!["(u8)n, (u16)pair->n, (s32)-a, (u8 *)pair, (s32)message);", "(u16)pair->n, (s32)-a, (u8 *)pair, (s32)message);", "(s32)-a, (u8 *)pair, (s32)message);", "(u8 *)pair, (s32)message);", "(s32)message);"]
+        );
+    }
+
+    #[test]
+    fn every_edition_that_defines_the_function_must_read_a_number() {
+        let number = "typedef int s32;\nextern s32 gX;\nvoid F(void)\n{\n    G((s32)gX);\n}\n";
+        let address = "typedef int s32;\nextern char *gX;\nvoid F(void)\n{\n    G((s32)gX);\n}\n";
+        let without = "typedef int s32;\nextern char *gX;\n";
+        assert_eq!(numeric_spans(number, &[number]).len(), 1);
+        assert!(numeric_spans(number, &[number, address]).is_empty());
+        assert_eq!(numeric_spans(number, &[without, number]).len(), 1);
+        assert!(numeric_spans(number, &[without]).is_empty());
     }
 
     #[test]

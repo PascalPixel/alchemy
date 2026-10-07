@@ -6,15 +6,15 @@
 //! writes only under out/permute/.
 
 mod aim;
-mod ast;
+pub(crate) mod ast;
 mod effects;
 pub(crate) mod humanize;
 pub(crate) mod lex;
 mod mutate;
-mod parse;
+pub(crate) mod parse;
 pub(crate) mod perm;
 mod score;
-mod types;
+pub(crate) mod types;
 
 use crate::compiler::routing::root;
 use crate::targets::{decomp_target, DecompTarget};

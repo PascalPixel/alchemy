@@ -1,4 +1,47 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1974, differ 1918.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2030, differ 1892.
+ * Session 2026-10-07 (completion queue 2): the frame is 764, native 768;
+ * the initial draft was 1974 instructions, differ 1918, frame 756.
+ * Pointer declarations follow their allocation order again, followed by
+ * frame/state/bet/timer/kind/winnings/counter/digits/count: their spill slots
+ * now follow native's order, each at native minus 4. The last missing word
+ * is a spill, not another unused local; do not pad it into the frame.
+ * The opening tile loop is instruction-exact: i counts bytes, row and j
+ * have block scope, and the tagged dst/step constraints keep the address
+ * add outside strh and restore native's r2/r7 choices. Direct byte indexing
+ * with block-local counters was differ 1938; separating the add was 1932;
+ * dst in r2 was 1872, dst/step in r2/r7 was 1886 but made the loop exact.
+ * Advancing base before both resource decodes is the native source form
+ * (1886 unchanged, 1978 -> 1980 instructions); do-while main: unchanged.
+ * loop.c has two independent obstacles at each object loop: it folds the
+ * invariant sprites pointer into DEST_ADDR givs, then derives sequential
+ * offset givs from one another if their lifetimes do not overlap. Compute
+ * both/four named-field offsets first, then make a loop-local copy obj of
+ * sprites opaque through +rm. The offsets overlap, obj stays in the loop,
+ * and sprites remains invariant outside it, so help_window can stay hoisted.
+ * Faces/clear/affine loops: 2008 instructions, differ 1888, frame 756;
+ * all object loops: 2024, differ 1908, frame 764. Scoped stopped: unchanged.
+ * +r on sprites itself added a spill store (1981); +m moved it to a local
+ * frame object (2021); volatile integer sprite base was 2065. +rm on sprites
+ * itself removed parent-loop invariants and shrank the frame: not kept.
+ * The two discarded gKeysRepeat reads are present in the listing before
+ * gKeysHeld. (void) expressions give native's r7/r0/r3 load sequence exactly
+ * where assignments to key did not: 2025 instructions, differ 1911.
+ * EN.PO proves Coins 02310, Winnings 02311, Throw 02320, Quit 02321. Keeping
+ * Coins as a linker symbol and using +1/+10/+11 restores native's shared
+ * pool base without redefining any message name: 2030, differ 1892.
+ * Named-field OBJ_OFF expressions compile identically to arithmetic offsets.
+ * The affine loop still keeps its advancing depth pointer in r0 and obj in
+ * r4; native spills the former at sp+4, reloads sprites, and keeps its four
+ * halfword pointers in r7/r5/r4/r0. Fixed-register pointer trials were not
+ * kept: direct hard bindings let loop.c reuse a hard register; copying them
+ * back into ordinary pointers avoided that but added five copies (1881).
+ * Broad permute (4 min, 2 jobs, seed 19, --heat), from the initial draft:
+ * best weighted 48620/differ 1791, second 48720/1766. Neither kept: 93-96
+ * rewrites, including unrelated shared temporaries and redundant copy chains;
+ * a lower score there did not establish a readable native source form.
+ * Remaining: one spill word; affine allocation and zero loads; shared
+ * resource scratch constants; other register choices and message scheduling.
+ * Earlier attempts:
  * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
  * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
  * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
@@ -135,6 +178,8 @@ struct LuckyDiceSprites {
     s32 help_window;
 };
 
+#define OBJ_OFF(n, field) ((u32)&((struct LuckyDiceSprites *)0)->obj[n].field)
+
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 extern u8 gOamCopyEnabled;
@@ -178,20 +223,22 @@ void LuckyDice_Run(void)
     s32 faces[2];
     s32 order[2];
     s32 matches[2];
-    struct BattleCamera *render;
+    u16 *obj_palette;
     struct BattleEffectWork *work;
+    struct LuckyDiceSprites *sprites;
+    struct LuckyDiceSprites *obj;
+    struct BattleCamera *render;
     struct EffectStep *die;
     struct EffectStep *other;
-    s32 state;
     s32 frame;
+    s32 state;
+    s32 bet;
     s32 timer;
     s32 kind;
     s32 winnings;
     s32 counter;
-    s32 bet;
     s32 digits;
     s32 count;
-    s32 stopped;
     s32 reset;
     s32 window;
     s32 i;
@@ -216,8 +263,6 @@ void LuckyDice_Run(void)
     s32 scale;
     s32 pairs;
     s16 value;
-    struct LuckyDiceSprites *sprites;
-    u16 *obj_palette;
 
     Runtime_AllocateHeapBlock(41, 0x60e);
     obj_palette = Runtime_AllocateHeapBlock(40, 0x200);
@@ -230,22 +275,35 @@ void LuckyDice_Run(void)
     gOamCopyEnabled = 0;
 
     i = 0;
-    for (row = 0; row != 20; row++) {
-        for (j = 0; j != 32; j++) {
-            ((u16 *)0x06003000)[i] = j + row * 30;
-            i++;
+    {
+        s32 row;
+        s32 j;
+
+        for (row = 0; row != 20; row++) {
+            for (j = 0; j != 32; j++) {
+                /* FAKEMATCH: native holds the separate tile address in r2; direct indexing folds the add into strh. */
+                register u16 *dst asm("r2") = (u16 *)(0x06003000 + i);
+                /* FAKEMATCH: native holds the two-byte stride in r7 before the store. */
+                register s32 step asm("r7") = 2;
+                /* FAKEMATCH: keep the address add separate and restore native's r2/r7 scheduling. */
+                __asm__("" : "+r"(dst) : "r"(step));
+                *dst = j + row * 30;
+                i += step;
+            }
         }
     }
 
     base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
     Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((void *)(base + 0x1c0), (void *)0x02010000);
+    base += 0x1c0;
+    Resource_DecodeType01((void *)base, (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
     base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
     Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
     Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((void *)(base + 0x200), (void *)0x02010000);
+    base += 0x200;
+    Resource_DecodeType01((void *)base, (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
     Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
     Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
@@ -302,11 +360,11 @@ void LuckyDice_Run(void)
     UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
     sprites->help_window = window;
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
 
     frame = 0;
-    for (;;) {
+    do {
         reset = 0;
         if (frame <= 16) {
             Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, frame << 12, 256);
@@ -332,8 +390,14 @@ void LuckyDice_Run(void)
         sprites->obj[count].attr2 = 0x3a8;
         count++;
         for (i = 0; i != 2; i++) {
-            sprites->obj[count].attr01 = (32 + i * 16) | 0x40202000;
-            sprites->obj[count].attr2 = faces[i] * 8 + 0x3b0;
+            u32 off0 = OBJ_OFF(count, attr01);
+            u32 off1 = OBJ_OFF(count, attr2);
+
+            obj = sprites;
+            /* FAKEMATCH: native keeps the object base inside the loop and the two object offsets simultaneously live. */
+            __asm__ volatile("" : "+rm"(obj));
+            *(u32 *)((u8 *)obj + off0) = (32 + i * 16) | 0x40202000;
+            *(u32 *)((u8 *)obj + off1) = faces[i] * 8 + 0x3b0;
             count++;
         }
 
@@ -343,8 +407,13 @@ void LuckyDice_Run(void)
                     Audio_PlayCue(0x12f);
                 }
                 if (timer >= i * 5) {
-                    sprites->obj[count].attr01 = 0x80002040 | ((56 + i * 32) << 16);
-                    sprites->obj[count].attr2 = results[i] * 32 + 152;
+                    u32 off0 = OBJ_OFF(count, attr01);
+                    u32 off1 = OBJ_OFF(count, attr2);
+                    obj = sprites;
+                    /* FAKEMATCH: native retains independent object offsets. */
+                    __asm__ volatile("" : "+rm"(obj));
+                    *(u32 *)((u8 *)obj + off0) = 0x80002040 | ((56 + i * 32) << 16);
+                    *(u32 *)((u8 *)obj + off1) = results[i] * 32 + 152;
                     count++;
                 }
             }
@@ -354,8 +423,13 @@ void LuckyDice_Run(void)
                     tile = Data_080f5400[kind] * 8 + 152;
                     x = 0x278 - n * 16;
                     for (j = 0; j != n; j++) {
-                        sprites->obj[count].attr01 = (((x & 0x1ff) << 16) | 96) | 0x80002000;
-                        sprites->obj[count].attr2 = tile;
+                        u32 off0 = OBJ_OFF(count, attr01);
+                        u32 off1 = OBJ_OFF(count, attr2);
+                        obj = sprites;
+                        /* FAKEMATCH: native retains independent object offsets. */
+                        __asm__ volatile("" : "+rm"(obj));
+                        *(u32 *)((u8 *)obj + off0) = (((x & 0x1ff) << 16) | 96) | 0x80002000;
+                        *(u32 *)((u8 *)obj + off1) = tile;
                         count++;
                         tile += 32;
                         x += 32;
@@ -382,7 +456,7 @@ void LuckyDice_Run(void)
                 }
                 window = UiWindow_CreateFar(9 - digits / 2, 16, digits + 12, 3, 6);
                 sprites->winnings_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 1, window, 0, 0);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, sprites->winnings_window, digits * 8 + 48, 0);
                 UiText_DrawNumberInWindowFar(winnings, digits, sprites->winnings_window, 48, 0);
             }
@@ -398,8 +472,8 @@ void LuckyDice_Run(void)
                     state = 0;
                     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                     sprites->help_window = window;
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                     reset = 1;
                 }
             }
@@ -415,12 +489,16 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->winnings_window, 1);
                 window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                 sprites->help_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                 reset = 1;
             }
             counter++;
         } else if (state == 0 && frame > 17) {
+            /* FAKEMATCH: native retains two unused key-repeat reads before
+             * the held-key test; the blocks that used them have no code left. */
+            (void)gKeysRepeat;
+            (void)gKeysRepeat;
             if (gKeysHeld & KEY_UP) {
                 work->particles[0].y += 0x40000;
                 work->particles[1].y += 0x40000;
@@ -514,23 +592,34 @@ void LuckyDice_Run(void)
             x = proj[0] - d;
             y = proj[1] - d;
             if (y + 96 > -16) {
-                sprites->obj[count].attr01 = ((order[i] << 25) | (((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x40002300;
-                sprites->obj[count].attr2 = (Data_080f5408[die->variant / 1024] << 3) | 0x400;
+                u32 off0 = OBJ_OFF(count, attr01);
+                u32 off1 = OBJ_OFF(count, attr2);
+                obj = sprites;
+                /* FAKEMATCH: native retains independent object offsets. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + off0) = ((order[i] << 25) | (((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x40002300;
+                *(u32 *)((u8 *)obj + off1) = (Data_080f5408[die->variant / 1024] << 3) | 0x400;
                 count++;
             }
         }
 
         if (state == 0) {
             for (i = 0; i != 2; i++) {
+                u32 off0 = OBJ_OFF(count, attr01);
+                u32 off1 = OBJ_OFF(count, attr2);
+
                 Render_ProjectPoint(&work->particles[i], proj);
                 n = depth[order[i]] / 2 + 128;
                 x = proj[0] - __divsi3(0x800, n);
                 y = proj[1] + __divsi3(0x300, n);
-                sprites->obj[count].attr01 = ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
+                obj = sprites;
+                /* FAKEMATCH: native retains independent object offsets. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + off0) = ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
                 if (i == 1) {
-                    sprites->obj[count].attr01 |= 0x10000000;
+                    *(u32 *)((u8 *)obj + off0) |= 0x10000000;
                 }
-                sprites->obj[count].attr2 = 0x958;
+                *(u32 *)((u8 *)obj + off1) = 0x958;
                 count++;
             }
         }
@@ -549,13 +638,20 @@ void LuckyDice_Run(void)
             depth[2 + i] = proj[2] - 0x15e;
             depth[2 + i] += *((s16 *)&work->particles[i].y + 1);
             if (proj[1] + 88 > -16) {
-                sprites->obj[count].attr01 = ((((proj[0] + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((proj[1] + 0x158) & 255) | 0x40002300;
-                sprites->obj[count].attr2 = 0x890;
+                u32 off0 = OBJ_OFF(count, attr01);
+                u32 off1 = OBJ_OFF(count, attr2);
+                obj = sprites;
+                /* FAKEMATCH: native retains independent object offsets. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + off0) = ((((proj[0] + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((proj[1] + 0x158) & 255) | 0x40002300;
+                *(u32 *)((u8 *)obj + off1) = 0x890;
                 count++;
             }
         }
 
         if (state == 1) {
+            s32 stopped;
+
             stopped = 0;
             die = work->particles;
             for (i = 0; i != 2; i++) {
@@ -704,26 +800,40 @@ void LuckyDice_Run(void)
         }
 
         for (; count != 128; count++) {
-            sprites->obj[count].attr01 = 0x40f02000;
-            sprites->obj[count].attr2 = 0;
+            u32 off0 = OBJ_OFF(count, attr01);
+            u32 off1 = OBJ_OFF(count, attr2);
+
+            obj = sprites;
+            /* FAKEMATCH: native keeps the object base inside the loop and the two object offsets simultaneously live. */
+            __asm__ volatile("" : "+rm"(obj));
+            *(u32 *)((u8 *)obj + off0) = 0x40f02000;
+            *(u32 *)((u8 *)obj + off1) = 0;
         }
 
         for (i = 0; i != 4; i++) {
+            u32 offa = OBJ_OFF(i * 4 + 0, attr2);
+            u32 offb = OBJ_OFF(i * 4 + 1, attr2);
+            u32 offc = OBJ_OFF(i * 4 + 2, attr2);
+            u32 offd = OBJ_OFF(i * 4 + 3, attr2);
+
+            obj = sprites;
+            /* FAKEMATCH: native keeps the object base inside the loop and the four affine offsets simultaneously live. */
+            __asm__ volatile("" : "+rm"(obj));
             value = depth[i] / 2 + 128;
             affine_a = value;
             affine_b = 0;
             affine_c = 0;
             affine_d = value;
-            sprites->obj[i * 4 + 0].attr2 |= affine_a << 16;
-            sprites->obj[i * 4 + 1].attr2 |= affine_b << 16;
-            sprites->obj[i * 4 + 2].attr2 |= affine_c << 16;
-            sprites->obj[i * 4 + 3].attr2 |= affine_d << 16;
+            *(u32 *)((u8 *)obj + offa) |= affine_a << 16;
+            *(u32 *)((u8 *)obj + offb) |= affine_b << 16;
+            *(u32 *)((u8 *)obj + offc) |= affine_c << 16;
+            *(u32 *)((u8 *)obj + offd) |= affine_d << 16;
         }
 
         Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
         WaitFrames(1);
         frame++;
-    }
+    } while (1);
 
     for (i = 0; i != 17; i++) {
         scale = 0x10000 - (i << 12);

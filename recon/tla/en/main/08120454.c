@@ -91,7 +91,10 @@
  * exactly, but the head shares one ldrh between old and heal and
  * sign-extends it, where the listing loads ldrsh, the effect, then ldrh.
  * heal or old read through an s16 or u16 pointer keeps 320; the block's
- * declaration order changes nothing. */
+ * declaration order changes nothing. A memory-clobbering asm barrier
+ * after old splits the load and keeps r2 (327: old's ldrh then comes
+ * first, before the action load, where the listing has it last); after
+ * heal, with heal read first, 328; an empty asm("") changes nothing. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

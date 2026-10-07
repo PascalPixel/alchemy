@@ -1,3 +1,9 @@
+/* Final trials from54, removed: a late readonly pattern expression gives271
+ * and an extra stack slot; equivalent pattern shifts838, factored multiply54.
+ * Ordinary closing render/address locals and a C-only render/r3 binding
+ * remain54; readonly render/r3 gives58; readonly final-address/r2 remains54.
+ * A readonly step/r1 after ordinary cnt++ gives63 and one extra instruction.
+ */
 /* Trial from54, removed: mode1 disappearing panel boundary is unchanged54.
  * Explicit row pattern induction/r5 plus a memory-constrained row copy gives422.
  * Current RTL still ranks index-copy354 (9refs/17insns) above pattern-copy345

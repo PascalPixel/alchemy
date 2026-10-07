@@ -42,6 +42,9 @@ void Party_RemoveActiveOwner(s32 owner);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001c54(s32 value);
+void Event_StartScreenTransition(void);
+void VinasuChojo_RunSetupStep(void);
+void SceneState_RunActor13AtColumn42Setup(void);
 
 static inline void Vinasu_MesSet(s32 message)
 {
@@ -207,6 +210,64 @@ static inline void Vinasu_Countdown(s32 value)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02001c54(value);
+}
+
+void Func_02000b2c(void)
+{
+    struct EventWork *work;
+
+    Vinasu_ObjSetPos(4, 0x2c80000, 0x3300000);
+    Vinasu_ObjSetPos(5, 0x2b80000, 0x3480000);
+    Vinasu_ObjSetPos(8, 0x2d80000, 0x3480000);
+    Vinasu_ObjTurn(4, 0x4000, 0);
+    Vinasu_ObjTurn(5, 0xc000, 0);
+    Vinasu_ObjTurn(8, 0xc000, 0);
+    Vinasu_ObjSpeed(4, 0x10000, 0x8000);
+    Vinasu_ObjSpeed(5, 0x10000, 0x8000);
+    Vinasu_ObjSpeed(8, 0x10000, 0x8000);
+    Vinasu_ObjSpeed(9, 0x10000, 0x8000);
+    Vinasu_CamMove(0x2980000, -1, 0x3380000, 0);
+    work = Ram_HeapSlots->event_work;
+    work->screen_effect = 256;
+    work->delay = 60;
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Vinasu_Wait(20);
+    Vinasu_ObjModeWait(4, 3);
+    Vinasu_Wait(20);
+    Vinasu_ObjAnim(5, 3);
+    Vinasu_ObjModeWait(8, 3);
+    Vinasu_Wait(10);
+    Vinasu_ObjWalk(4, 664, 824);
+    Vinasu_ObjTurn(4, 0xc000, 0);
+    Vinasu_Wait(10);
+    Vinasu_ObjWalk(8, 712, 824);
+    Vinasu_ObjTurn(5, 0xa000, 0);
+    Vinasu_Wait(20);
+    VinasuChojo_RunSetupStep();
+    SceneState_RunActor13AtColumn42Setup();
+    Vinasu_Wait(20);
+    Vinasu_ObjWalk(8, 728, 840);
+    Vinasu_ObjTurn(8, 0xc000, 0);
+    Vinasu_ObjTurn(5, 0xc000, 0);
+    Vinasu_ObjWalk(4, 712, 816);
+    Vinasu_ObjTurn(4, 0x4000, 0);
+    Vinasu_Wait(30);
+    Vinasu_ObjModeWait(4, 3);
+    Vinasu_Wait(20);
+    Vinasu_ObjAnim(5, 3);
+    Vinasu_ObjModeWait(8, 3);
+    Vinasu_Wait(10);
+    Vinasu_ObjFollow(5, 4);
+    Vinasu_ObjFollow(8, 4);
+    Vinasu_ObjWalk(4, 744, 816);
+    Vinasu_ObjWalk(4, 744, 780);
+    Vinasu_Se(129);
+    Vinasu_ObjEffectSet(4, -1);
+    Vinasu_Wait(50);
+    Vinasu_ObjTurn(5, 0xc000, 0);
+    Vinasu_ObjTurn(8, 0xc000, 0);
+    Vinasu_ObjSetPos(4, 0, 0);
 }
 
 void Func_02000d30(void)

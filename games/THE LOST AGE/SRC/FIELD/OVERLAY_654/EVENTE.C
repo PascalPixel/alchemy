@@ -1,10 +1,5 @@
 #include "KABE.H"
 
-struct KabeSprite {
-    u8 unknown_00[0x12];
-    u16 rotation;
-};
-
 struct KabeSpot {
     s32 x;
     s32 z;

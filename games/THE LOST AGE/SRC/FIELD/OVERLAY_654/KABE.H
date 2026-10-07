@@ -31,6 +31,11 @@ struct KabeObject {
     void (*update)(struct KabeObject *object);
 };
 
+struct KabeSprite {
+    u8 unknown_00[0x12];
+    u16 rotation;
+};
+
 struct KabeEventWork {
     u8 unknown_000[0x154];
     s16 exit;

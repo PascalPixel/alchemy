@@ -82,6 +82,51 @@ static inline void Vinasu_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h
     Engine_MapCopyCellsTo(sx, sy, dx, dy, w, h);
 }
 
+void Func_020006ac(void)
+{
+    s32 leader = Engine_PartyGetLeaderActor();
+    struct VinasuActor *actor = Engine_ActorGet(leader);
+    s32 z;
+
+    Engine_EventBegin();
+    Engine_EventResolvePendingActions(0);
+    ObjectMotion_EnableActionAndSetCallback(leader, Data_02001dd8);
+    Object_RefreshSelectorById(leader);
+    Object_SetPartAttribute(Engine_ActorGet(leader), 6);
+    {
+        /* FAKEMATCH: the native copies the leader into r0 before it builds the acceleration. */
+        register s32 who __asm__("r0");
+
+        actor->speed = 0x40000;
+        who = leader;
+        ObjectMotion_SetSpeedParameters(who, 0x40000, 0x20000);
+    }
+    if (*(s32 *)&actor->z_low >> 20 <= 54) {
+        Engine_ActorGet(leader)->select_flags &= ~1;
+        z = 210;
+    } else {
+        Engine_ActorGet(leader)->select_flags &= ~1;
+        z = 238;
+    }
+    ObjectMotion_SetPositionAndReset(leader, actor->x_pixel, z * 4);
+    Engine_EventWait(1);
+    Engine_ActorGet(leader)->select_flags |= 1;
+    Engine_EventWait(20);
+    Object_SetPartAttribute(actor, 0);
+    actor->update = Func_020005a8;
+    Func_02001c34(leader, 258, 60);
+    Motion_SetModeAndWaitAnimation(leader, 4);
+    Object_SetPartAttribute(Engine_ActorGet(leader), 0);
+    Motion_SetModeAndWaitAnimation(leader, 4);
+    {
+        /* FAKEMATCH: the native builds the zero after the wait, not in a saved register. */
+        register void *none __asm__("r3") = 0;
+
+        actor->update = none;
+    }
+    Engine_EventEnd();
+}
+
 void Func_0200078c(void)
 {
     struct VinasuActor *leader = Engine_ActorGet(Engine_PartyGetLeaderActor());

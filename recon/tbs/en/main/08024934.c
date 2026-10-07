@@ -1,6 +1,32 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 946, common 926, differ 40; frame 372
- * as native's, and every compiler temporary's slot now at native's offset.
+ * Session 13: differ 0 in all six editions (Japanese 08024990: window at
+ * x 16 width 14, UiText_DecodeMessage(.., 32), cost columns from x 10).
+ * The last 40 rows were sched2 order. haifa's rank_for_schedule breaks
+ * priority ties by dependence class, then by the count of later insns
+ * that depend on an insn, then by original order; loop notes (a one-pass
+ * do { } while (0)) and volatile asm make an insn a barrier that every
+ * earlier insn precedes and every later one follows. One-pass blocks:
+ * the cell reads 40 -> 30 (asm barrier before the window call 32: the
+ * stack argument then still follows the register arguments), the setup
+ * loop's attribute words 30 -> 26 (as the twins), used = 0 inside the
+ * scan's block 26 -> 22, the dirty update 16 -> 6 (both arrow calls and
+ * the dirty loads), the nav stores 6 -> 2 (asm after them also 2), and
+ * the main loop's block ended after the cleanup 2 -> 0 (its LOOP_END had
+ * made the cleanup's pointer init a barrier ahead of the count). The
+ * mask loop indexed (s->djinn_required[element]) 22 -> 18: loop.c's giv
+ * init then lands after the hoisted 1 as in the native. The cursor's
+ * attribute words as ((u32 *)cur)[1] and [2] 18 -> 16: with strict
+ * aliasing they no longer alias cursor_position's slot (alias set of its
+ * DImode pseudo), so cur's reload has more dependents and goes first.
+ * Arrow trials before the dirty block: edge = -1 as in the twins 24 (GCSE
+ * cprop replaces it: the twins divide by 5 through __divsi3 with no
+ * branch, here (count + 3) / 4 splits the block); a pages local before
+ * edge 37; a fixed r5 edge 34 (r5 then barred from count + 3). Five of
+ * the six dead stores were not needed any more; result = 0 alone keeps
+ * the 379-bucket table (affordable alone 80, none 80).
+ * Session 12 start: native 946 instructions, draft 946, common 926,
+ * differ 40; frame 372 as native's, and every compiler temporary's slot
+ * at native's offset.
  * Session 11: the description reads its summon into a block-local s,
  * the draw loop's columns are indexed (summon->djinn_required[element])
  * and y = index * 2 follows the glyph call: 129 -> 88. Native's
@@ -580,11 +606,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     s32 pressed, repeated, result;
     s32 index;
 
-    /* FAKEMATCH: six dead stores. GCSE sizes its expression table from
-       the insn count (n / 2 | 1 buckets) and PRE numbers its reaching
-       registers in bucket order; 756 insns give 379 buckets, not 375, and
-       &ordered and &sprites then come before count - 1 as native's spill
-       slots show (369, 371, 381 and 383 order them the same). */
+    /* FAKEMATCH: register choice (spill slots) only: a dead store. GCSE
+       sizes its hash table from the function's length and PRE numbers its
+       reaching registers in bucket order; with this store the table has
+       379 buckets and &ordered and &sprites take their spill slots before
+       count - 1, as in the native frame (377 buckets without it, differ
+       80). */
     result = 0;
     render = (struct UiRenderWork *)gWindowWork[0];
     drawn_row = -1;
@@ -593,8 +620,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     description = UiWindow_Create(0, 4, 30, 4, 42);
     counts = UiWindow_Create(20, 8, 10, 3, 6);
     mask = 0;
+    /* FAKEMATCH: instruction order only: the one-pass block's loop notes
+       are scheduling barriers, so counts is stored before mask and the
+       window call's stack argument before its register arguments (differ
+       10 without it, the table held at 379 buckets). */
     do {
-        page = ((struct MenuCell *)gWindowWork[42])->page;
+        page =((struct MenuCell *)gWindowWork[42])->page;
         row = ((struct MenuCell *)gWindowWork[42])->row;
         preferred = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     } while (0);
@@ -607,6 +638,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         s32 y = index * 2;
 
         sprite = &sprites[index];
+        /* FAKEMATCH: instruction order only: the one-pass block keeps
+           y = index * 2 first, as in the twins' setup loops (differ 4). */
         do {
             sprites[index].oam.word.attr01 = MENU_SPRITE_SIZE_16;
             sprites[index].oam.word.attr23 = 0;
@@ -623,8 +656,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     do {
         s32 i;
 
+        /* FAKEMATCH: instruction order only: in the one-pass block count
+           and used are stored before count - 1 is built (differ 4). */
         used = 0;
-
         for (i = count - 1; i >= 0; i--) {
             const struct SummonDefinition *s;
             s32 n, k;
@@ -652,9 +686,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     ordered[used] = 32;
 
-    /* FAKEMATCH: with the exit inside an enclosing loop, loop.c finds no
-       barrier at the exit's depth and keeps the select block inline, as
-       native does; without it the block moves after the first scan. */
+    /* FAKEMATCH: instruction order only (block placement): with the exit
+       inside an enclosing loop, loop.c finds no barrier at the exit's
+       depth and keeps the select block inline, as the native does; the
+       block ends after the cleanup, so its loop sets the count before the
+       pointer (differ 2 when it ends before the cleanup). */
     do {
     for (;;)
     {
@@ -748,6 +784,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;
+        /* FAKEMATCH: instruction order only: as u32 words, not through the
+           union, these stores do not alias cursor_position, so cur is
+           reloaded before cursor_position.y is stored (differ 2). */
         ((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
         ((u32 *)cur)[2] = 0;
         cur->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
@@ -775,11 +814,16 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             }
             UiWindow_SetTilemapEntry(window, SUMMON_LEFT_ARROW_TILE, window->width - (count + 3) / 4 - 3, -1, 0);
             UiWindow_SetTilemapEntry(window, SUMMON_RIGHT_ARROW_TILE, window->width - 2, -1, 0);
+            /* FAKEMATCH: instruction order only: the one-pass block's
+               barrier orders both arrow calls' arguments and the dirty
+               flag's loads as in the native (differ 10). */
             do {
                 render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
             } while (0);
         }
         nav = gLinkCountdownWork;
+        /* FAKEMATCH: instruction order only: page, row and preferred are
+           stored in source order before the keys are read (differ 4). */
         do {
             nav->page = page;
             nav->row = row;

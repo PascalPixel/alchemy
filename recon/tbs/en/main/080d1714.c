@@ -1,5 +1,5 @@
-/* 080d1714: differ 378 of 1481 instructions (1477 generated, common
- * 1290).Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 182 of 1481 instructions (1481 generated, common
+ * 1390). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -145,14 +145,28 @@
  *   without a register, so reload rematerializes 48 at every use as
  *   the native: 404; with (width - size) * 48 in the first draw too:
  *   378, both single draws now exact.
- * Remaining (378): the two-draw block reloads the function pointer
- * from sp+84 for each call where the native loads it once into r4 and
- * caller-saves it at sp+8 (a pseudo of its own with a hard register); the
- * distance loop's y square takes r7 where the native uses r2 (a
+ * - on 378: drift adds or halvings in other orders, drift + wave
+ *   operand order, the sine terms through a temporary: 378 to 382; a
+ *   block-local draw_rectangle copy, src block-local or from
+ *   runtime->sheet, width set elsewhere: 378; alive = 0 after shake.y,
+ *   after shake.x or after the calls: 398 to 403.
+ * - wave and drift as two-field structs (struct ScalePair wave, drift,
+ *   in that order): 243 (drift before wave: 297). An 8-byte struct
+ *   that is never addressed is a DImode pseudo; each field store
+ *   computes into a new SImode pseudo and moves it into the subreg, so
+ *   the native's sine and drift results land in the operand's register
+ *   and wave.y is stored twice, and the spilled field reloads are not
+ *   inherited, as the native reloads drift.x and drift.y twice. The
+ *   rotation of reload registers after this block then matches too.
+ * - the two draw functions as one struct DrawPair draw (rect, then
+ *   rect_alt): 182, 1481 instructions as the native (rect_alt first:
+ *   204). A call through a field of the spilled DImode pseudo copies
+ *   the field into a new pseudo, which the two-draw block shares
+ *   across its first call: loaded once into r4 and caller-saved at
+ *   sp+8, as the native.
+ * Remaining (182): the distance loop's y square takes r7 where the native uses r2 (a
  * reload register: local-alloc puts the mul output on its own input,
- * and the earlyclobber reload rotates to another register); the wave
- * block stores wave_y twice in the native (after the sine term and
- * after the drift) but once here; the native loads
+ * and the earlyclobber reload rotates to another register); the native loads
  * runtime->effect->count before the wave inits at the first actor
  * loop; the spark loop preheader reloads differ (&work through r0,
  * slot 0 through r7). */
@@ -184,6 +198,11 @@ struct Placement {
     s32 y;
     s32 z;
     s32 unknown_0c;
+};
+
+struct DrawPair {
+    DrawRectangle rect;
+    DrawRectangle rect_alt;
 };
 
 struct ScalePair {
@@ -233,14 +252,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     void *draw_destination;
     void *view;
     struct BattleEffectWork *runtime;
-    DrawRectangle draw_rectangle_alt;
-    DrawRectangle draw_rectangle;
+    struct DrawPair draw;
     s32 frame;
     u8 *graphics;
-    s32 wave_y;
-    s32 wave_x;
-    s32 drift_y;
-    s32 drift_x;
+    struct ScalePair wave;
+    struct ScalePair drift;
     struct MotionObject *object;
     struct BattleObjectSlot *context;
     struct EffectStep *point;
@@ -275,9 +291,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
     BattleFx_BeginCanvasLayer(0);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw_rectangle = (DrawRectangle)cells[6];
+    draw.rect = (DrawRectangle)cells[6];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
-    draw_rectangle_alt = (DrawRectangle)cells[7];
+    draw.rect_alt = (DrawRectangle)cells[7];
 
     tbl = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
     Iwram_CopyWords((void *)0x05000000, tbl, 0x80);
@@ -289,10 +305,10 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     runtime->transfer_value = 50;
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    wave_x = 0x800000;
-    wave_y = 0x280000;
-    drift_x = 0;
-    drift_y = 0;
+    wave.x = 0x800000;
+    wave.y = 0x280000;
+    drift.x = 0;
+    drift.y = 0;
 
     index = 0;
     if (runtime->effect->count != 0) {
@@ -404,7 +420,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             size = frame * 2 - 32;
             if (size > 48)
                 size = 48;
-            draw_rectangle(
+            draw.rect(
                 draw_destination,
                 &runtime->sheet[frame / 4 % 3 * 3072
                     + (width - size) * 48],
@@ -418,7 +434,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             size = frame * 2 - 96;
             if (size > 64)
                 size = 64;
-            draw_rectangle(
+            draw.rect(
                 draw_destination,
                 &runtime->sheet[frame / 4 % 3 * 3072
                     + (64 - size) * 48],
@@ -430,8 +446,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
         if ((u32)(frame - 160) <= 239) {
             src = (u8 *)runtime + frame / 4 % 3 * 3072;
-            draw_rectangle(draw_destination, src, 8, 0, width, 64);
-            draw_rectangle(draw_destination, src, 8, 64, width, 64);
+            draw.rect(draw_destination, src, 8, 0, width, 64);
+            draw.rect(draw_destination, src, 8, 64, width, 64);
         }
 
         if (frame <= 159) {
@@ -445,7 +461,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                     EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                     screen.x >>= 1;
                     if (point->y <= 0x3fffff) {
-                        draw_rectangle(
+                        draw.rect(
                             draw_destination,
                             (u8 *)runtime + 0x2400,
                             screen.x - 12,
@@ -534,22 +550,22 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             if (frame - 160 <= 64)
                 size = 32;
 
-            wave_x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
-            wave_y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
-            wave_x += drift_x;
-            wave_y += drift_y;
-            drift_x /= 2;
-            drift_y /= 2;
+            wave.x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
+            wave.y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
+            wave.x += drift.x;
+            wave.y += drift.y;
+            drift.x /= 2;
+            drift.y /= 2;
 
             scale.x = 0x10000;
             scale.y = 0x10000;
             place.unknown_0c = 0;
             index = 0;
             do {
-                place.x = (Data_080ee15a[index] << 16) + wave_x + 0x280000;
+                place.x = (Data_080ee15a[index] << 16) + wave.x + 0x280000;
                 place.y = 0xff0000 + index * 0x400000;
                 place.z =
-                    ((Data_080ee163[index] + index * 64) << 16) + wave_y;
+                    ((Data_080ee163[index] + index * 64) << 16) + wave.y;
                 Object_ApplyProjectedPlacementFar(runtime->objects[index], &place, &scale, 0);
                 index++;
             } while (index != 9);
@@ -577,16 +593,16 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         if (dist != 0) {
                             EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
                             screen.x =
-                                (screen.x >> 17) + (wave_x >> 17) + 32;
+                                (screen.x >> 17) + (wave.x >> 17) + 32;
                             screen.y = (screen.y >> 16)
-                                + (wave_y >> 16) - 4;
+                                + (wave.y >> 16) - 4;
                             screen.depth >>= 16;
                             if (screen.depth <= 169)
                                 screen.depth = 170;
                             if (screen.depth > 350)
                                 screen.depth = 350;
                             span = 6 - (screen.depth - 170) / 36;
-                            draw_rectangle_alt(
+                            draw.rect_alt(
                                 draw_destination,
                                 graphics + ParticleStreams_CellOffsets[span - 1],
                                 screen.x - span / 2,
@@ -607,11 +623,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
                     if (alive > 0) {
                         span = alive / 10 + 1;
-                        draw_rectangle_alt(
+                        draw.rect_alt(
                             draw_destination,
                             graphics + ParticleStreams_CellOffsets[span - 1],
-                            (wave_x >> 17) - span / 2 + 32,
-                            (wave_y >> 16) - span - 4,
+                            (wave.x >> 17) - span / 2 + 32,
+                            (wave.y >> 16) - span - 4,
                             span,
                             span * 2);
                     }
@@ -654,7 +670,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                     screen.depth = 350;
                                 span =
                                     3 - (screen.depth - 170) / 90;
-                                draw_rectangle(
+                                draw.rect(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],
                                     screen.x - span / 2,
@@ -678,10 +694,10 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 do {
                     threshold = index * 12 + 330;
                     if (frame == threshold) {
-                        mark->x = (wave_x >> 17) + 32;
-                        mark->y = (wave_y >> 16) - 4;
-                        mark->velocity_x = (wave_x >> 17) + 32;
-                        mark->velocity_y = (wave_y >> 16) - 4;
+                        mark->x = (wave.x >> 17) + 32;
+                        mark->y = (wave.y >> 16) - 4;
+                        mark->velocity_x = (wave.x >> 17) + 32;
+                        mark->velocity_y = (wave.y >> 16) - 4;
 
                         slot = 0;
                         do {
@@ -689,8 +705,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             slot++;
                         } while (slot != 28);
 
-                        drift_x = 0x80000;
-                        drift_y = -0x20000;
+                        drift.x = 0x80000;
+                        drift.y = -0x20000;
                         runtime->shake_frames = 8;
                     }
 
@@ -700,7 +716,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         size = (frame - threshold) / 2;
                         if (size > 2)
                             size = 2;
-                        draw_rectangle_alt(
+                        draw.rect_alt(
                             draw_destination,
                             (u8 *)runtime + Data_080ee17e[size],
                             mark->x,
@@ -735,7 +751,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                     screen.depth = 350;
                                 span = 3
                                     - (screen.depth - 170) / 90;
-                                draw_rectangle(
+                                draw.rect(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],
                                     screen.x - span / 2,

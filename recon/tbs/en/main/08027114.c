@@ -1,5 +1,5 @@
-/* 08027114: differ 169 against the 1727-line parent listing (draft 1774,
- * common 1666), 46 of them the two nested helpers' lines (see below).
+/* 08027114: differ 150 against the 1727-line parent listing (draft 1773,
+ * common 1675), 46 of them the two nested helpers' lines (see below).
  * Frame 100 as native.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
@@ -42,6 +42,8 @@
  * - Item scans store list[cnt] = cur; pick[cnt++] = k;: with cnt++ on its own
  *   line the loop has 18 insns and loop.c reduces the pick giv only on its
  *   second pass, after the list giv (native inits pick r7 first, list r6).
+ * - Mode 4 sets count = 1 before ent = out: reload then takes r1 for the 1
+ *   and r2 for out, and ent stays inherited in r2 (one load fewer).
  * - The two init loops are plain for loops (loop.c reverses them as native);
  *   state->timer = -1 among the zero stores (sched2 puts the store last).
  * Remaining: register choices in the opening frame-slot order (&hdr below
@@ -360,8 +362,8 @@ handshake_done:
             if (UiText_ShowLocalizedMessageAndWait() != 0) {
                 continue;
             }
-            ent = out;
             count = 1;
+            ent = out;
             ent->unit_id = in[0];
             ent->priority = 0x7ffe;
             ent->command = 99;

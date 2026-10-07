@@ -8255,7 +8255,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "02061"
 msgstr "Waiting for opponent's input."
 
-msgctxt "message"
+msgctxt "MsgMysteryPersonName"
 msgid "02062"
 msgstr "Mystery Man"
 
@@ -8807,11 +8807,11 @@ msgctxt "MsgDjinnSet"
 msgid "02199"
 msgstr "{argument_ability_name} is set to {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02200"
 msgstr "Your Djinni is still recovering."
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02201"
 msgstr "Ready to summon."
 
@@ -8851,43 +8851,43 @@ msgctxt "message"
 msgid "02210"
 msgstr "You're strong!!!"
 
-msgctxt "message"
+msgctxt "MsgTargetNoEffect"
 msgid "02211"
 msgstr "No effect"
 
-msgctxt "message"
+msgctxt "MsgTargetCurePoison"
 msgid "02212"
 msgstr "Cure poison"
 
-msgctxt "message"
+msgctxt "MsgTargetCureDelusion"
 msgid "02213"
 msgstr "Remove delusion"
 
-msgctxt "message"
+msgctxt "MsgTargetCureStun"
 msgid "02214"
 msgstr "Remove stun"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSleep"
 msgid "02215"
 msgstr "Wake from sleep"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSeal"
 msgid "02216"
 msgstr "Break Psynergy seal"
 
-msgctxt "message"
+msgctxt "MsgTargetCureCurse"
 msgid "02217"
 msgstr "Dispel Grim Reaper"
 
-msgctxt "message"
+msgctxt "MsgTargetCureHaunt"
 msgid "02218"
 msgstr "Dispel evil spirit"
 
-msgctxt "message"
+msgctxt "MsgTargetDowned"
 msgid "02219"
 msgstr "Downed"
 
-msgctxt "message"
+msgctxt "MsgTargetSetDjinni"
 msgid "02220"
 msgstr "Set Djinni"
 
@@ -8903,7 +8903,7 @@ msgctxt "message"
 msgid "02223"
 msgstr "PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02224"
 msgstr "Attack"
 
@@ -9147,7 +9147,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02284"
 msgstr "It's broken."
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02285"
 msgstr "You have no Djinn."
 
@@ -9155,7 +9155,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02286"
 msgstr "Cannot be used during battle."
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02287"
 msgstr "Cannot use the same Djinni twice."
 
@@ -11927,19 +11927,19 @@ msgctxt "MsgPsynergyLost"
 msgid "02979"
 msgstr "* Psynergy Lost"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "02980"
 msgstr "Set"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "02981"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "02982"
 msgstr "Give"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "02983"
 msgstr "Trade"
 
@@ -12043,7 +12043,7 @@ msgctxt "message"
 msgid "03008"
 msgstr "Give it away"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "03009"
 msgstr "Is this OK?"
 
@@ -12559,11 +12559,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03137"
 msgstr "After choosing who will{line_break}take the Djinni, you{line_break}can set it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03138"
 msgstr "When your class changes,{line_break}the Psynergy you can use{line_break}may also change.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03139"
 msgstr "Setting a Djinni changes{line_break}your attributes and{line_break}maybe even your class.{end_wait}"
 

@@ -8815,11 +8815,11 @@ msgctxt "MsgDjinnSet"
 msgid "02201"
 msgstr "{argument_ability_name}が {argument_actor_name:230}セットされた!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02202"
 msgstr "リカバリー中です"
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02203"
 msgstr "しょうかん スタンバイじょうたいです"
 
@@ -8859,43 +8859,43 @@ msgctxt "message"
 msgid "02212"
 msgstr "あんたは つよい!!"
 
-msgctxt "message"
+msgctxt "MsgTargetNoEffect"
 msgid "02213"
 msgstr "こうかが ありません"
 
-msgctxt "message"
+msgctxt "MsgTargetCurePoison"
 msgid "02214"
 msgstr "どくの ちりょう"
 
-msgctxt "message"
+msgctxt "MsgTargetCureDelusion"
 msgid "02215"
 msgstr "まぼろしを けしさる"
 
-msgctxt "message"
+msgctxt "MsgTargetCureStun"
 msgid "02216"
 msgstr "しびれを なおす"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSleep"
 msgid "02217"
 msgstr "ねむりから さます"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSeal"
 msgid "02218"
 msgstr "エナジーふうじを やぶる"
 
-msgctxt "message"
+msgctxt "MsgTargetCureCurse"
 msgid "02219"
 msgstr "しりょうを とりはらう"
 
-msgctxt "message"
+msgctxt "MsgTargetCureHaunt"
 msgid "02220"
 msgstr "あくりょうを とりはらう"
 
-msgctxt "message"
+msgctxt "MsgTargetDowned"
 msgid "02221"
 msgstr "せんとうふのう"
 
-msgctxt "message"
+msgctxt "MsgTargetSetDjinni"
 msgid "02222"
 msgstr "セットします"
 
@@ -8911,7 +8911,7 @@ msgctxt "message"
 msgid "02225"
 msgstr "EP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02226"
 msgstr "こうげき"
 
@@ -9155,7 +9155,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02286"
 msgstr "こわれています"
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02287"
 msgstr "ジンをもっていません"
 
@@ -9163,7 +9163,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02288"
 msgstr "せんとう中はつかえません"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02289"
 msgstr "同じジンは2かい えらべません"
 
@@ -13507,19 +13507,19 @@ msgctxt "MsgPsynergyLost"
 msgid "03374"
 msgstr "*なくなるエナジー"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "03375"
 msgstr "セットします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "03376"
 msgstr "スタンバイにします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "03377"
 msgstr "わたします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "03378"
 msgstr "こうかんします"
 
@@ -13623,7 +13623,7 @@ msgctxt "message"
 msgid "03403"
 msgstr "わたします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "03404"
 msgstr "よろしいですか?"
 
@@ -14131,11 +14131,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03530"
 msgstr "ジンをもつ人がきまったら{line_break}ジンをセットして下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03531"
 msgstr "クラスが かわって{line_break}使えるエナジーも{line_break}かわるんですよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03532"
 msgstr "クラスが かわったり{line_break}のうりょくちも{line_break}たかくなったりするんです。{end_wait}"
 

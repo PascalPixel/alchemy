@@ -20,6 +20,7 @@
 #include "IO_REG.H"
 #include "UIWINDOW.H"
 #include "WINDOW.H"
+#include "GAME_STATE.H"
 extern struct DjinnMenuWork *gMenuWork;
 
 extern u8 MsgCurrentStatus[];
@@ -28,6 +29,524 @@ void UiText_DrawCharacterAtOffsetFar(s32 message,
     struct UiWindow *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(struct UiWindow *window,
     s32 tile, s32 x, s32 y, s32 palette);
+
+extern u8 MsgDjinnName[];
+extern u8 MsgDjinnPsyHelp[];
+extern u8 MsgDjinnStatusHelp[];
+extern u8 MsgDjinnCompareSet[];
+extern u8 MsgDjinnCompareStandby[];
+extern u8 MsgDjinnCompareGive[];
+extern u8 MsgDjinnCompareTrade[];
+extern u8 MsgDjinnCompareConfirm[];
+extern u8 MsgDjinnTutorialClassPsynergy[];
+extern u8 MsgDjinnTutorialSetChanges[];
+s32 UiWork_FinalizeFar(s32, s32);
+void UiText_DrawQuantity(s32, s32);
+s32 UiWork_SetParamNibbleFar(s32 color);
+s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
+s32 UiWork_IsCompleteFar(void);
+void Menu_RunPairedEntryAction(s32, s32);
+void FourObjectMotion_SetSlotPhase(s32, s32);
+s32 Trig_Sin(s32);
+s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
+
+s32 OwnerAction_RunCompareLoop(u32 mode)
+{
+    struct DjinnMenuWork *state;
+    struct DjinnMenuBackdrop *scene;
+    struct UiRenderWork *render;
+    struct UiWindow *list;
+    s32 count[2];
+    s32 cursor[2];
+    s32 anim;
+    u32 dirty;
+    s32 frame;
+    s32 page;
+    s32 entry;
+    s32 swap;
+    s32 step;
+    s32 row;
+    s32 result;
+    /* FAKEMATCH: regmove copies a live pseudo operand of each help-line and into its result (adds r3, r1, #0); native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31), which regmove leaves to reload only when the other operand is a hard register. attr in r2 as native. */
+    register u32 attr asm("r2");
+    /* FAKEMATCH: the shared 0 and the element mask 224 tie at allocation priority 769 (4 refs over 104 insns, 7 over 182) and 224 wins by pseudo number; native keeps 0 in sl and rebuilds 224 at each use. */
+    register s32 zero asm("sl");
+    s32 i;
+    s32 j;
+
+    state = gMenuWork;
+    anim = 0;
+    result = 0;
+    dirty = 1;
+    frame = 0;
+    cursor[0] = 0;
+    page = 2;
+    state->cursor->active = 13;
+    cursor[1] = 0;
+
+    for (j = 3; j >= 0; j--) {
+        state->owner_y[j] = 0xc8;
+    }
+    state->owner_x[state->selected_column[1]] = 0x78;
+    state->owner_y[state->selected_column[1]] = 0x20;
+    state->owner_x[state->selected_column[0]] = 0x10;
+    state->owner_y[state->selected_column[0]] = 0x20;
+
+    RenderOutput_ClearListFar((struct UiWindow *)state->list_window);
+    WaitFrames(1);
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->help_window, 1);
+    UiWindow_UpdateOrCreate(&state->help_window, 0, 0, 30, 5, 2);
+
+    count[0] = 1;
+    count[1] = 1;
+
+    if (mode <= 1) {
+        u16 *diff_work;
+        struct BtlUnit *unit_copy;
+        struct BtlUnit *unit;
+        s32 id;
+        s32 first_element;
+        s32 first_index;
+        s32 second_element;
+        s32 second_index;
+        s32 first_flag;
+        s32 second_flag;
+        s32 out_a;
+        s32 out_b;
+        s32 size;
+
+        diff_work = Runtime_BumpAllocateAlternatePool(96);
+        size = sizeof(*unit_copy);
+        unit_copy = Runtime_BumpAllocateAlternatePool(size);
+        second_element = 0;
+        second_index = 0;
+        id = state->shown_owner[0];
+        first_element = state->pair_element[0];
+        first_index = state->pair_index[0] & 31;
+        first_flag = (u16)(state->pair_entries[0] & 0x8000);
+
+        unit = UnitGetFar(id);
+        Iwram_CopyWords(unit_copy, unit, size);
+        Djinn_DeactivateFar(id, first_element, first_index);
+        if (mode == 0) {
+            second_element = state->pair_element[1];
+            second_index = state->pair_index[1] & 31;
+            second_flag = (u16)(state->pair_entries[1] & 0x8000);
+            Djinn_AddToOwnerFar(id, second_element, second_index);
+            if (second_flag != 0) {
+                Djinn_ActivateFar(id, second_element, second_index);
+            }
+        }
+        UnitCalcFar(id);
+        count[0] = OwnerAction_DiffSlots(
+            unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
+        Iwram_CopyWords(unit, unit_copy, size);
+
+        id = state->shown_owner[1];
+        unit = UnitGetFar(id);
+        Iwram_CopyWords(unit_copy, unit, size);
+        if (mode == 0) {
+            Djinn_DeactivateFar(id, second_element, second_index);
+        }
+        Djinn_AddToOwnerFar(id, first_element, first_index);
+        if (first_flag != 0) {
+            Djinn_ActivateFar(id, first_element, first_index);
+        }
+        UnitCalcFar(id);
+        count[1] = OwnerAction_DiffSlots(
+            unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
+        Iwram_CopyWords(unit, unit_copy, size);
+        Runtime_BumpFree(unit_copy);
+        Runtime_BumpFree(diff_work);
+    } else if (mode - 2 <= 1) {
+        u16 *diff_work;
+        struct BtlUnit *unit_copy;
+        struct BtlUnit *unit;
+        s32 first_id;
+        s32 first_element;
+        s32 first_index;
+        s32 apply_second;
+        s32 out_a;
+        s32 out_b;
+
+        diff_work = Runtime_BumpAllocateAlternatePool(96);
+        unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
+        first_id = state->shown_owner[0];
+        first_element = state->pair_element[0];
+        first_index = state->pair_index[0] & 31;
+        apply_second = (mode == 3);
+
+        unit = UnitGetFar(first_id);
+        Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
+        Djinn_DeactivateFar(first_id, first_element, first_index);
+        if (apply_second != 0) {
+            Djinn_ActivateFar(first_id, first_element, first_index);
+        }
+        UnitCalcFar(first_id);
+        count[0] = OwnerAction_DiffSlots(
+            unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
+        Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
+        count[1] = count[0];
+        page = 0;
+        Runtime_BumpFree(unit_copy);
+        Runtime_BumpFree(diff_work);
+    }
+
+    count[0] = ((count[0] - 1) / 5) + 1;
+    if (count[0] == 0) {
+        count[0] = 1;
+    }
+    count[1] = ((count[1] - 1) / 5) + 1;
+    if (count[1] == 0) {
+        count[1] = 1;
+    }
+
+    UiWindow_UpdateOrCreate(&state->window, 0, 5, 15, 15, 2);
+    UiWindow_UpdateOrCreate(&state->second_window, 15, 5, 15, 15, 2);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->help_window);
+
+    if (mode == 2) {
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareStandby, (struct UiWindow *)state->help_window, 96, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 96, 16);
+    } else if (mode == 3) {
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareSet, (struct UiWindow *)state->help_window, 96, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 96, 16);
+    } else if (mode == 0) {
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareTrade, (struct UiWindow *)state->help_window, 128, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 128, 8);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareGive, (struct UiWindow *)state->help_window, 128, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, (struct UiWindow *)state->help_window, 128, 8);
+    }
+
+    row = (mode == 1);
+    attr = state->pair_entries[0];
+    if ((attr & 0x8000) == 0) {
+        UiWork_SetParamNibbleFar(2);
+        attr = state->pair_entries[0];
+    }
+    UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + (s32)MsgDjinnName,
+        (struct UiWindow *)state->help_window, 48, row * 8);
+    UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, row, zero = 0);
+    UiWork_SetParamNibbleFar(15);
+
+    if (mode == 0) {
+        attr = state->pair_entries[1];
+        if ((attr & 0x8000) == 0) {
+            UiWork_SetParamNibbleFar(2);
+            attr = state->pair_entries[1];
+        }
+        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + (s32)MsgDjinnName,
+            (struct UiWindow *)state->help_window, 48, 16);
+        UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, ((state->pair_entries[1] & 0xe0) >> 5) + 0x5001, 5, 2, mode);
+        UiWork_SetParamNibbleFar(15);
+    } else if (mode - 2 <= 1) {
+        attr = state->pair_entries[0];
+        if ((attr & 0x8000) != 0) {
+            UiWork_SetParamNibbleFar(2);
+            attr = state->pair_entries[0];
+        }
+        UiText_DrawCharacterAtOffsetFar(((attr & 0xe0) >> 5) * 20 + (attr & 31) + (s32)MsgDjinnName,
+            (struct UiWindow *)state->help_window, 48, 16);
+        UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, ((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, 2, zero);
+        UiWork_SetParamNibbleFar(15);
+        UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window, 0xf296, 7, 1, zero);
+    }
+
+    for (;;) {
+        s32 input_edge;
+        s32 input_held;
+
+        render = (struct UiRenderWork *)gWindowWork[0];
+        scene = state->backdrop;
+        input_edge = gKeyState;
+        input_held = gKeysRepeat;
+
+        if (scene->tutorial_step != 0) {
+            s16 *saved;
+            s32 size;
+
+            size = 0x200;
+            saved = Runtime_BumpAllocateAlternatePool(size);
+            input_edge = 0;
+            input_held = 0;
+            scene->tutorial_timer += 1;
+
+            switch (scene->tutorial_step) {
+            case 5:
+            case 12:
+            case 23:
+                if (scene->tutorial_timer == 100) {
+                    input_held = 1;
+                    input_edge = 1;
+                    scene->tutorial_timer = 0;
+                    scene->tutorial_step += 1;
+                }
+                break;
+            case 10:
+                if (scene->tutorial_timer == 60) {
+                    s32 work;
+
+                    Iwram_CopyWords(saved, render, size);
+                    work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialSetChanges, 8, 0, 1);
+                    /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
+                    asm("");
+                    state->cursor->active = 1;
+                    UiMenu_SlideCursor(2, 96);
+                    gGameState.message_speed = 1;
+                    while (UiWork_IsCompleteFar() == 0) {
+                        WaitFrames(1);
+                    }
+                    UiWork_FinalizeFar(work, 1);
+                    Iwram_CopyWords(render, saved, size);
+                    UiWindow_MarkVisibleTileAttributesFar();
+                    render->dirty = 1;
+                    dirty = 1;
+                    scene->tutorial_timer = 0;
+                    scene->tutorial_step = 11;
+                    /* FAKEMATCH: the mov from r9 for active = 13 outranks the step store in sched2; an empty asm barrier keeps the store first as native. */
+                    asm("");
+                    state->cursor->active = 13;
+                }
+                break;
+            case 11:
+                if (scene->tutorial_timer == 60) {
+                    s32 work;
+
+                    Iwram_CopyWords(saved, render, size);
+                    work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialClassPsynergy, 8, 0, 1);
+                    /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
+                    asm("");
+                    state->cursor->active = 1;
+                    UiMenu_SlideCursor(106, 56);
+                    gGameState.message_speed = 1;
+                    while (UiWork_IsCompleteFar() == 0) {
+                        WaitFrames(1);
+                    }
+                    UiWork_FinalizeFar(work, 1);
+                    Iwram_CopyWords(render, saved, size);
+                    UiWindow_MarkVisibleTileAttributesFar();
+                    render->dirty = 1;
+                    WaitFrames(1);
+                    dirty = 1;
+                    scene->tutorial_timer = 0;
+                    scene->tutorial_step = 12;
+                    /* FAKEMATCH: the mov from r9 for active = 13 outranks the step store in sched2; an empty asm barrier keeps the store first as native. */
+                    asm("");
+                    state->cursor->active = 13;
+                }
+                break;
+            default:
+                break;
+            }
+            Runtime_BumpFree(saved);
+        }
+
+        if (dirty != 0) {
+            swap = 1;
+            if (mode <= 1) {
+                UiWindow_ClearInteriorTilesFar((struct RenderInput *)state->help_window, 128, 16, 224, 24);
+                if (page == 1) {
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, (struct UiWindow *)state->help_window, 128, 16);
+                } else {
+                    UiText_DrawQuantity(
+                        state->shown_owner[page != 2], 1);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, (struct UiWindow *)state->help_window, 128, 16);
+                }
+            }
+            render->menu_busy = 1;
+            RenderOutput_PrepareForRedrawFar(state->window);
+            RenderOutput_PrepareForRedrawFar(state->second_window);
+            if ((dirty >> 1) != 0) {
+                WaitFrames(1);
+            }
+
+            if (mode == 3) {
+                entry = 0;
+                swap = 0;
+            } else if (mode == 2) {
+                entry = 1;
+                swap = 0;
+            } else {
+                entry = 2;
+            }
+
+            switch (page) {
+            default:
+                Menu_RunPairedEntryAction(mode, 0);
+                break;
+            case 1:
+                if (mode == 1) {
+                    entry = 4;
+                }
+                DjinnMenu_DrawStatPreview(state->window, 0, 0,
+                    state->shown_owner[1], page, 0, entry, 0, 0);
+                DjinnMenu_DrawStatPreview(state->second_window, 0, 0,
+                    state->shown_owner[1], page, 0, entry,
+                    cursor[1] + 1, 0);
+                break;
+            case 0:
+                if (mode == 1) {
+                    entry = 1;
+                    swap = 0;
+                }
+                DjinnMenu_DrawStatPreview(state->window, 0, 0,
+                    state->pair_owner[0], page, swap, entry, page, 1);
+                DjinnMenu_DrawStatPreview(state->second_window, 0, 0,
+                    state->pair_owner[0], page, swap, entry,
+                    cursor[0] + 1, 1);
+                break;
+            }
+            render->menu_busy = 0;
+        }
+
+        if (page <= 1) {
+            list = (struct UiWindow *)state->second_window;
+            if (count[page] > 1) {
+                s32 top;
+
+                for (i = 0; i < count[page]; i++) {
+                    s32 tile;
+
+                    tile = 0xf031 + i;
+                    if (i > 9) {
+                        tile = 0xf030;
+                    }
+                    if (i == cursor[page]) {
+                        tile -= 0x1000;
+                    }
+                    UiWindow_SetTilemapEntryFar(list, tile,
+                        list->width - count[page] + i - 2,
+                        -1, 0);
+                }
+                top = -1;
+                UiWindow_SetTilemapEntryFar(list, 0xf128,
+                    list->width - count[page] - 3, top, 0);
+                UiWindow_SetTilemapEntryFar(list, 0xf129,
+                    list->width - 2, top, 0);
+                /* FAKEMATCH: a one-pass block. Its loop notes are a sched2 barrier carried by the block's first insn (the 0xea3 pool load): every set before it gains a dependent, so the bracket calls' arguments take native order (the dirty update's movs r3, #2 otherwise gave the second call's r3 copy one more dependent than its r0 copy), and the pool load is scheduled before ldrh as native. An asm barrier here fixed the arguments but put ldrh first (a true dependence on the asm's r7 makes it class 3). */
+                do {
+                    render->dirty |= 2 << (list->y >> 2);
+                } while (0);
+            }
+        }
+
+        frame = frame + 1;
+        step = (frame % 60) - 5;
+        if (step < 0) {
+            step = 0;
+        }
+        if (step > 29) {
+            step = 29;
+        }
+        FourObjectMotion_SetSlotPhase(0, (s32)0xffff4000);
+        FourObjectMotion_SetSlotPhase(1, (s32)0xffff4000);
+
+        if (mode <= 1) {
+            s32 rise;
+            s32 slide;
+
+            rise = -Iwram_MulQ16(16, Trig_Sin((step % 30) * 0x444));
+            if (rise < -6) {
+                rise = -6;
+            }
+            if (rise > 12) {
+                rise = 12;
+            }
+            slide = (step % 35) * 2;
+            FourObjectMotion_SetSlotPosition(0, slide + 34, rise + 20, 0);
+            if (mode == 0) {
+                FourObjectMotion_SetSlotPosition(1, 99 - slide, 36 - rise, 0);
+            }
+        } else {
+            FourObjectMotion_SetSlotPosition(0, 32, 30, 0);
+        }
+
+        if (dirty != 0) {
+            dirty = 0;
+            anim = Menu_GetModuloOfSum(anim, 2);
+        }
+        UiMenu_PositionCursor(anim * 56 + 80, 16);
+
+        if ((frame & 3) == 0) {
+            void *tile;
+            u32 fill;
+
+            tile = (void *)0x060052c0;
+            fill = 0x44444444;
+            if ((frame & 4) != 0) {
+                Iwram_CopyWords(tile, Menu_BackdropFrameTile, 32);
+            } else {
+                Iwram_FillWords(tile, 32, fill);
+            }
+        }
+
+        if ((input_edge & 1) != 0) {
+            if (anim == 0) {
+                result = 1;
+                break;
+            }
+            AudioCommand_PlayFar(113);
+            result = -1;
+            break;
+        } else if ((input_edge & 8) != 0) {
+            AudioCommand_PlayFar(113);
+            result = -2;
+            break;
+        } else if ((input_edge & 2) != 0) {
+            AudioCommand_PlayFar(113);
+            result = -1;
+            break;
+        } else if ((input_edge & 0x100) != 0) {
+            if (mode <= 1) {
+                page = ((page + 1) % 3);
+                dirty = 2;
+                AudioCommand_PlayFar(111);
+            }
+        } else if ((input_held & 32) != 0) {
+            if (page <= 1) {
+                cursor[page] = cursor[page] - 1;
+                cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
+                AudioCommand_PlayFar(111);
+                Runtime_SetMainState19();
+                dirty = 1;
+            }
+        } else if ((input_held & 16) != 0) {
+            if (page <= 1) {
+                AudioCommand_PlayFar(111);
+                Runtime_SetMainState19();
+                cursor[page] = cursor[page] + 1;
+                dirty = 1;
+                cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
+            }
+        }
+        WaitFrames(1);
+    }
+
+    {
+        /* FAKEMATCH: the two sets of each call tie in sched2 (priority 186, three dependents each) and expand_call emits r0 first, so LUID puts r0 first; native sets r1 first. The phase held in r1 is set before each call. */
+        register s32 phase asm("r1");
+
+        phase = 0;
+        FourObjectMotion_SetSlotPhase(0, phase);
+        phase = 0;
+        FourObjectMotion_SetSlotPhase(1, phase);
+    }
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+
+    ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->help_window, 1);
+    WaitFrames(1);
+    UiWindow_UpdateOrCreate(&state->help_window, 13, 0, 17, 5, 2);
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->window, 1);
+    UiWindow_CloseIfOpen((struct UiWindow **)&state->second_window, 1);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->list_window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->unknown_window_028);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->status_window);
+    ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
+    WaitFrames(1);
+    return result;
+}
 
 s32 DjinnMenu_ShowOwnerStatus(void)
 {

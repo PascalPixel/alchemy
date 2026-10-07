@@ -9243,7 +9243,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "02308"
 msgstr "Gegnerische Eingabe fehlt."
 
-msgctxt "message"
+msgctxt "MsgMysteryPersonName"
 msgid "02309"
 msgstr "Myst. Mann"
 
@@ -9795,11 +9795,11 @@ msgctxt "MsgDjinnSet"
 msgid "02446"
 msgstr "{argument_ability_name} verbündet sich mit {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02447"
 msgstr "Dein Dschinn erholt sich noch."
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02448"
 msgstr "Bereit zur Beschwörung."
 
@@ -9839,43 +9839,43 @@ msgctxt "message"
 msgid "02457"
 msgstr "Du bist stark!!!"
 
-msgctxt "message"
+msgctxt "MsgTargetNoEffect"
 msgid "02458"
 msgstr "Keine Wirkung"
 
-msgctxt "message"
+msgctxt "MsgTargetCurePoison"
 msgid "02459"
 msgstr "Heilt Vergift."
 
-msgctxt "message"
+msgctxt "MsgTargetCureDelusion"
 msgid "02460"
 msgstr "Klärt Täuschung"
 
-msgctxt "message"
+msgctxt "MsgTargetCureStun"
 msgid "02461"
 msgstr "Hebt Lähmung auf"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSleep"
 msgid "02462"
 msgstr "Erweckt Schlafende"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSeal"
 msgid "02463"
 msgstr "Bricht Psynergy-Siegel"
 
-msgctxt "message"
+msgctxt "MsgTargetCureCurse"
 msgid "02464"
 msgstr "Vertreibt den Tod"
 
-msgctxt "message"
+msgctxt "MsgTargetCureHaunt"
 msgid "02465"
 msgstr "Vertreibt böse Geister"
 
-msgctxt "message"
+msgctxt "MsgTargetDowned"
 msgid "02466"
 msgstr "Am Boden"
 
-msgctxt "message"
+msgctxt "MsgTargetSetDjinni"
 msgid "02467"
 msgstr "Bündnis"
 
@@ -9891,7 +9891,7 @@ msgctxt "message"
 msgid "02470"
 msgstr "PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02471"
 msgstr "Attacke"
 
@@ -10135,7 +10135,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "Es ist kaputt."
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02532"
 msgstr "Du hast keinen Dschinn."
 
@@ -10143,7 +10143,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "Im Kampf nicht einsetzbar."
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02534"
 msgstr "Dschinn nicht 2 x einsetzbar."
 
@@ -11619,19 +11619,19 @@ msgctxt "MsgPsynergyLost"
 msgid "02902"
 msgstr "* geht verloren"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "02903"
 msgstr "Verbünd."
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "02904"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "02905"
 msgstr "Geben"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "02906"
 msgstr "Tauschen"
 
@@ -11735,7 +11735,7 @@ msgctxt "message"
 msgid "02931"
 msgstr "Weggeben"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "02932"
 msgstr "Ist das O.K.?"
 
@@ -12667,11 +12667,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Nachdem du ent-schieden hast,{line_break}wer den Dschinn erhalten soll,{line_break}kannst du ihn verbunden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03165"
 msgstr "Ändert sich deine{line_break}Klasse, können sich{page_break}auch deine verfügbaren{line_break}Psynergien ändern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03166"
 msgstr "Das Bündnis mit einem{page_break}Dschinn verändert deine{line_break}Attribute und mitunter{line_break}sogar deine Klasse.{end_wait}"
 

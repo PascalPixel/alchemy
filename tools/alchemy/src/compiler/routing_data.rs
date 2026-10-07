@@ -50,4 +50,8 @@ pub static AGBCC_ARM_SOURCES: &[&str] = &[];
 /// Both games' ARM C: every game C file compiled as ARM goes through stock
 /// agbcc_arm at the library ARM setting, the same compiler as Nintendo's
 /// library ARM code, one option set for the whole class (AGENTS.md K1).
-pub static GAME_ARM_SOURCES: &[&str] = &["games/COMMON/SRC/GRAPHICS/TILE/METATILE.C"];
+pub static GAME_ARM_SOURCES: &[&str] = &[
+    "games/COMMON/SRC/GRAPHICS/TILE/METATILE.C",
+    "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/UPDATE.C",
+    "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/VERTICES.C",
+];

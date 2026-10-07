@@ -9243,7 +9243,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "02308"
 msgstr "Esperando el turno del oponente."
 
-msgctxt "message"
+msgctxt "MsgMysteryPersonName"
 msgid "02309"
 msgstr "Desconocido"
 
@@ -9795,11 +9795,11 @@ msgctxt "MsgDjinnSet"
 msgid "02446"
 msgstr "¡{argument_ability_name} se asigna a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02447"
 msgstr "El Djinn se está recuperando."
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02448"
 msgstr "Listo para invocar."
 
@@ -9839,43 +9839,43 @@ msgctxt "message"
 msgid "02457"
 msgstr "¡¡¡Eres muy fuerte!!!"
 
-msgctxt "message"
+msgctxt "MsgTargetNoEffect"
 msgid "02458"
 msgstr "Sin efecto"
 
-msgctxt "message"
+msgctxt "MsgTargetCurePoison"
 msgid "02459"
 msgstr "Cura el veneno"
 
-msgctxt "message"
+msgctxt "MsgTargetCureDelusion"
 msgid "02460"
 msgstr "Cura el delirio"
 
-msgctxt "message"
+msgctxt "MsgTargetCureStun"
 msgid "02461"
 msgstr "Elimina parálisis"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSleep"
 msgid "02462"
 msgstr "Despierta"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSeal"
 msgid "02463"
 msgstr "Desbloquea Psinergía"
 
-msgctxt "message"
+msgctxt "MsgTargetCureCurse"
 msgid "02464"
 msgstr "Ahuyenta a la Muerte"
 
-msgctxt "message"
+msgctxt "MsgTargetCureHaunt"
 msgid "02465"
 msgstr "Ahuyenta al espíritu"
 
-msgctxt "message"
+msgctxt "MsgTargetDowned"
 msgid "02466"
 msgstr "Cayó"
 
-msgctxt "message"
+msgctxt "MsgTargetSetDjinni"
 msgid "02467"
 msgstr "Asignar Djinn"
 
@@ -9891,7 +9891,7 @@ msgctxt "message"
 msgid "02470"
 msgstr "PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02471"
 msgstr "Ataque"
 
@@ -10135,7 +10135,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "Está inservible."
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02532"
 msgstr "No tiene Djinn."
 
@@ -10143,7 +10143,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "No funciona durante la batalla."
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02534"
 msgstr "No puede usar un Djinn dos veces."
 
@@ -11619,19 +11619,19 @@ msgctxt "MsgPsynergyLost"
 msgid "02902"
 msgstr "* Psi. perdida"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "02903"
 msgstr "Asignar"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "02904"
 msgstr "Preparar"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "02905"
 msgstr "Dar"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "02906"
 msgstr "Cambiar"
 
@@ -11735,7 +11735,7 @@ msgctxt "message"
 msgid "02931"
 msgstr "Entregar"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "02932"
 msgstr "¿Vale?"
 
@@ -12667,11 +12667,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Cuando hayas elegido{line_break}quién llevará el Djinn,{line_break}podrás asignarlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03165"
 msgstr "Cuando cambies de clase,{line_break}es posible que la{line_break}Psinergía también cambie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03166"
 msgstr "Al asignar un Djinn,{line_break}cambiarás tus atributos y{line_break}puede que también tu clase.{end_wait}"
 

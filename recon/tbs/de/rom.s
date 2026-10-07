@@ -57,18 +57,6 @@ ResourceSlot_ConversionTables:
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
 	.incbin "baserom.gba", 0x00008fb8, 0x00000400
-	.section .rom.000098f8, "ax"
-	.global Transform_UpdateVertices
-Transform_UpdateVertices:
-	.incbin "baserom.gba", 0x000098f8, 0x00000284
-	.global Transform_UpdateVerticesEnd
-Transform_UpdateVerticesEnd:
-	.section .rom.00009c94, "ax"
-	.global Object_UpdateAll
-Object_UpdateAll:
-	.incbin "baserom.gba", 0x00009c94, 0x000004e8
-	.global Object_UpdateAllEnd
-Object_UpdateAllEnd:
 	.section .rom.0000c2ca, "ax"
 	.incbin "baserom.gba", 0x0000c2ca, 0x00000002
 	.section .rom.00012720, "ax"
@@ -183,10 +171,6 @@ UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000142d0, 0x000002f4
 	.section .rom.00020b2e, "ax"
 	.incbin "baserom.gba", 0x00020b2e, 0x000008fe
-	.section .rom.00021e3c, "ax"
-	.incbin "baserom.gba", 0x00021e3c, 0x00002008
-	.section .rom.00024d44, "ax"
-	.incbin "baserom.gba", 0x00024d44, 0x00000e00
 	.section .rom.00025dd8, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function
@@ -355,7 +339,10 @@ Graphics_ExpandNibbleTable:
 	.incbin "baserom.gba", 0x000360f4, 0x00000040
 	.global Link_TimeLabelString
 Link_TimeLabelString:
-	.incbin "baserom.gba", 0x00036134, 0x00000028
+	.incbin "baserom.gba", 0x00036134, 0x00000008
+	.global DjinnMenu_BlinkTile
+DjinnMenu_BlinkTile:
+	.incbin "baserom.gba", 0x0003613c, 0x00000020
 	.global OwnerStatus_StatCursors
 OwnerStatus_StatCursors:
 	.incbin "baserom.gba", 0x0003615c, 0x00000080
@@ -376,7 +363,13 @@ OwnerStatus_SlashString:
 	.incbin "baserom.gba", 0x00036214, 0x00000004
 	.global OwnerStatus_PpString
 OwnerStatus_PpString:
-	.incbin "baserom.gba", 0x00036218, 0x0000000b
+	.incbin "baserom.gba", 0x00036218, 0x00000003
+	.global DjinnMenu_ElementXOffsets
+DjinnMenu_ElementXOffsets:
+	.incbin "baserom.gba", 0x0003621b, 0x00000004
+	.global DjinnMenu_ElementYOffsets
+DjinnMenu_ElementYOffsets:
+	.incbin "baserom.gba", 0x0003621f, 0x00000004
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
 	.incbin "baserom.gba", 0x00036223, 0x00000008
@@ -685,12 +678,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x000a38a0, 0x00000560
-	.section .rom.000b0550, "ax"
-	.global OwnerAction_RunCompareLoop
-	.type OwnerAction_RunCompareLoop, %function
-	.thumb_func
-OwnerAction_RunCompareLoop:
-	.incbin "baserom.gba", 0x000b0550, 0x00000c20
 	.section .rom.000b18c8, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:
@@ -953,12 +940,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000c9a38, 0x000013c8
-	.section .rom.000d16e0, "ax"
-	.global BattleFx_RunSevenMode
-	.type BattleFx_RunSevenMode, %function
-	.thumb_func
-BattleFx_RunSevenMode:
-	.incbin "baserom.gba", 0x000d16e0, 0x00000614
 	.section .rom.000e4772, "ax"
 	.incbin "baserom.gba", 0x000e4772, 0x00000002
 	.section .rom.000ebed8, "ax"
@@ -1139,7 +1120,19 @@ MemberBeam_HeadWidths:
 	.incbin "baserom.gba", 0x000efeb0, 0x00000003
 	.global MemberBeam_HeadHeights
 MemberBeam_HeadHeights:
-	.incbin "baserom.gba", 0x000efeb3, 0x00000059
+	.incbin "baserom.gba", 0x000efeb3, 0x00000003
+	.global SevenMode_Records
+SevenMode_Records:
+	.incbin "baserom.gba", 0x000efeb6, 0x0000000e
+	.global SevenMode_ShardWidths
+SevenMode_ShardWidths:
+	.incbin "baserom.gba", 0x000efec4, 0x00000012
+	.global SevenMode_ShardHeights
+SevenMode_ShardHeights:
+	.incbin "baserom.gba", 0x000efed6, 0x00000012
+	.global SevenMode_ShardOffsets
+SevenMode_ShardOffsets:
+	.incbin "baserom.gba", 0x000efee8, 0x00000024
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000eff0c, 0x0000000e

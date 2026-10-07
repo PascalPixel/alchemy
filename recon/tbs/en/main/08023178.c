@@ -29,7 +29,11 @@
  * on that form 182; s32 t and u8 m read in that order with t > 0 and
  * (s8)m < 0 643. Not found yet: why native's first test is not skipped
  * AROUND (it would need a second use of the label after the then-block,
- * a label inside it, or nine branches already on the path).
+ * a label inside it, or nine branches already on the path). Code = 0
+ * after Runtime_BumpAllocate on 40: 285. Editions (similar --editions,
+ * native against English): de identical (08021e3c), fr 1 (0802211c), ja
+ * 12 (080231dc), es and it 189 (080221b4, 08023120); diff --edition
+ * cannot bound these scaffold copies yet ("bounded Thumb function only").
  *
  * Session 6 2026-10-07: the second modifier test is native's (lsls r3,
  * r1, #24; cmp; bge) once the first test's sign-extended read of the

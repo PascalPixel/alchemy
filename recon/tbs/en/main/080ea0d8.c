@@ -1,7 +1,8 @@
-/* 080ea0d8: differ 1752 of 2455 (listing 2455, draft 2453, common 1578).
- * Structure: the sequence of conditional branches, jumps and calls now
- * matches the native's; what remains is
- * register allocation, scheduling, constant hoisting and pool placement.
+/* 080ea0d8: differ 1071 of 2455 (listing 2455, draft 2426, common 1905).
+ * Remaining: register allocation, scheduling, constant hoisting, repeated
+ * loads and pool placement. The first particle and dust blocks now use
+ * native's pointer, counter and size registers; their spill offsets and
+ * several scheduling decisions still differ.
  * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
  * after the variable part, loop.c creates it in the inner loop's preheader
@@ -135,7 +136,28 @@
  * none beat weighted 36140 / differ 1752. Narrowing the palette counter
  * to its block preserves 1752 and is kept; removing its register binding
  * gives 1764 without improving the first phase. A high-register position
- * operand in the first particle loop hits an agscc reload ICE, not kept. */
+ * operand in the first particle loop hits an agscc reload ICE, not kept.
+ * Scope continuation: a local depth copy preserving the clamp stores
+ * gives 1769 from 1752. Separating the two size lifetimes gives 1674;
+ * narrowing z and the dust size preserves it. A separate first counter
+ * gives 1754, a < 128 bound gives 1675. Field-local coordinate copies
+ * give 1731, complete local draw coordinates 1727; none are kept.
+ * Burst offset before the resource call and base addition afterward,
+ * including two pointer updates, leaves 1674 unchanged; an offset operand
+ * delays the addition but gives 1693, not kept.
+ * Local shard x/y give 1659. The native reloads shard width after cosine:
+ * removing the draft's unproven const qualifier restores that reload and
+ * gives 1573, with a 180-byte frame. Local final-loop coordinates give
+ * 1510; sharing their counter with setup gives 1497 and native's arithmetic
+ * registers. The callback still stays in fp. Narrowing it changes nothing;
+ * volatile gives 1488 but a wrong 188-byte frame. An fp clobber after its
+ * assignment spills it (1433); retaining the root declaration puts that
+ * spill at native's sp+92 and restores the 184-byte frame (1215).
+ * Local first-ring x/y give 1101, local second-ring x/y 1097, local arc
+ * x/y 1073. Removing the callback constraint then gives 1372. Moving it
+ * after the initial callback use gives 1071; merging the same clobber
+ * into the existing particle-height operand preserves 1071 and is kept.
+ * A plain palette count and explicit red-mask update give 1083, not kept. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -194,7 +216,7 @@ extern const Scale BattleFx9_UnitScale;
 extern const u8 BattleFx9_BurstHeights[];
 extern const u16 BattleFx9_BurstCells[];
 extern const u16 BattleFx9_ShardCells[];
-extern const u8 BattleFx9_ShardWidths[];
+extern u8 BattleFx9_ShardWidths[];
 extern const u8 BattleFx9_ShardHeights[];
 
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
@@ -240,17 +262,13 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i20;
     s32 i21;
     s32 i22;
-    s32 i23;
-    s32 i24;
     s32 j;
     s32 x;
     s32 y;
-    s32 size;
     s32 high;
     s32 speed;
     struct EffectStep *p;
     DrawRectangle blit;
-    s32 z;
     s32 amp;
 
     cache = &gBattleFxWork[1];
@@ -341,6 +359,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame < 0) {
+            s32 size;
+            s32 z;
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (i4 = 0; i4 != 128; i4++) {
@@ -381,6 +401,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         anchor[1] = 0;
         for (i4 = 0; i4 != 64; i4++) {
             if (frame > i4 / 4 + 80 && DUST[i4].x > 0) {
+                s32 size;
                 Render_ResetTransformState();
                 SceneTransform_ApplyRoll(DUST[i4].velocity_y);
                 SceneTransform_ApplyPitch(DUST[i4].velocity_x);
@@ -463,6 +484,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Runtime_ReleaseHeapBlock(47);
 
             for (i4 = 0; i4 != 6; i4++) {
+                s32 x, y;
                 s32 k = i4 & 3;
                 s32 angle = Random16() & 0xffff;
                 x = ((Trig_Sin(angle) * 16) >> 16) - BattleFx9_ShardWidths[k] / 2;
@@ -492,6 +514,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
                 for (i4 = 0; i4 != 128; i4++) {
+                    s32 x, y;
                     s32 angle = i4 << 9;
                     x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
                     y = (r * Trig_Cos(angle)) >> 17;
@@ -751,6 +774,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame >= 72 && frame < 76) {
             s32 r2 = (frame << 4) - 1136;
             for (i18 = 0; i18 != 256; i18++) {
+                s32 x, y;
                 s32 angle = i18 << 8;
                 x = ((r2 * Trig_Sin(angle)) >> 16) - 5;
                 y = (r2 * Trig_Cos(angle)) >> 17;
@@ -853,6 +877,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame >= 86 && frame < 150) {
             s32 angle = -0x4000;
             for (i20 = 0; i20 != 9; i20++, angle += 0x1000) {
+                s32 x, y;
                 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
                 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
                 draw(canvas, work->sheet + ((frame / 2 + i20) % 4) * 1728 + 0x4000, x + 44, y + 17, 32, 54);
@@ -906,8 +931,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                     }
                     scale.y = scale.x;
                     h = 255;
-                    /* FAKEMATCH: native rebuilds 255 per particle, loads x, then converts height to fixed point; the volatile operand keeps that order, and reading the index preserves its native r7 and scale's r8 (1860 -> 1791). */
-                    asm volatile("" : "+r"(h) : "r"(i22));
+                    /* FAKEMATCH: native rebuilds 255 per particle, loads x, then shifts by 16; the index input preserves its r7 and scale's r8 (1860 -> 1791). The fp clobber spills draw2 at native's sp+92 with a 184-byte frame; scopes alone keep it in fp (1372), volatile makes 188 bytes, this form gives 1071. */
+                    asm volatile("" : "+r"(h) : "r"(i22) : "r11");
                     px = p->x;
                     place2[1] = h << 16;
                     place2[0] = px;
@@ -932,16 +957,20 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             }
 
             if (frame <= 279) {
-                for (i23 = 0; i23 != 8; i23++) {
-                    x = (i23 & 1) * 20 - (Random16() & 15) + (i23 / 2) * 4 + shift / 2 - 16;
-                    y = (i23 / 2) * 32 - (Random16() & 15);
-                    draw2(canvas, work->sheet + ((frame / 2 + i23) % 4) * 1728 + 0x4000, x, y, 32, 54);
+                for (i = 0; i != 8; i++) {
+                    s32 x, y;
+
+                    x = (i & 1) * 20 - (Random16() & 15) + (i / 2) * 4 + shift / 2 - 16;
+                    y = (i / 2) * 32 - (Random16() & 15);
+                    draw2(canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000, x, y, 32, 54);
                 }
             } else {
-                for (i24 = 0; i24 != 8; i24++) {
-                    x = (i24 & 1) * 20 + (Random16() & 15) - (i24 / 2) * 4 + shift / 2 - 16;
-                    y = (i24 / 2) * 32 - (Random16() & 15);
-                    draw2(canvas, work->sheet + ((frame / 2 + i24) % 4) * 1728 + 0x4000, x, y, 32, 54);
+                for (i = 0; i != 8; i++) {
+                    s32 x, y;
+
+                    x = (i & 1) * 20 + (Random16() & 15) - (i / 2) * 4 + shift / 2 - 16;
+                    y = (i / 2) * 32 - (Random16() & 15);
+                    draw2(canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000, x, y, 32, 54);
                 }
             }
         }

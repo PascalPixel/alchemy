@@ -47,8 +47,8 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
 
 pub static AGBCC_ARM_SOURCES: &[&str] = &[];
 
-/// The Broken Seal's game ARM C through agbcc/camelot_arm (gcc_arm with
-/// upstream GCC's whole arm_adjust_cost) at the library ARM setting. Empty:
-/// camelot_arm is a study that K3 has not admitted (AGENTS.md K1), so no
-/// source is routed and only `alchemy diff/permute --camelot-arm` use it.
-pub static CAMELOT_ARM_SOURCES: &[&str] = &[];
+/// The Broken Seal's game ARM C: every game C file compiled as ARM goes
+/// through agbcc/camelot_arm (agbcc_arm's pinned gcc_arm with agscc's
+/// arm_adjust_cost) at the library ARM setting, one option set for the
+/// whole class (AGENTS.md K1; the lead's decision, 2026-10-07).
+pub static GAME_ARM_SOURCES: &[&str] = &[];

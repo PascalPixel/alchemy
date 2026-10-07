@@ -251,16 +251,30 @@ never a file or a function.
   file, as pret names its library files: pret's agbcc for MusicPlayer2000
   (`-O2`) and the flash library (`-O`, except two helper files whose bytes
   show `-O2`), and agbcc_arm for RAM-executed ARM code
-  (`-fomit-frame-pointer`). ☀️'s seven compiler-shaped game ARM functions
-  are a study, not a route: the hypothesis is that Camelot compiled them with
-  `agbcc/camelot_arm`, agbcc_arm's pinned gcc_arm with upstream GCC's whole
-  `arm_adjust_cost` (agscc's `arm.c`) built by bootstrap, at that library ARM
-  setting. What is proven: the setting's habits (no frame, saves from r5, no
-  r11, interworking returns) run through all seven, and the upstream rules
-  fill load/store slots stock gcc_arm leaves empty, but only
-  Tile_BuildMetatiles, 92 of their 851 instructions, matches under it.
-  `CAMELOT_ARM_SOURCES` stays empty and `--camelot-arm` earns no credit
-  until the study meets K3's bar. No other routing: never a per-file or
+  (`-fomit-frame-pointer`). ☀️'s game ARM C, the files listed in
+  `GAME_ARM_SOURCES`, compiles with `agbcc/camelot_arm` at that same library
+  ARM setting: agbcc_arm's pinned gcc_arm (pret's agbcc, which has
+  provenance) with one change built by bootstrap, its `arm_adjust_cost`
+  replaced by agscc's own, so anti and output dependences cost nothing and
+  load/store slots fill as in the native code. One compiler and one option
+  set for the whole class; only the instruction set is chosen per file, as a
+  Makefile does. The lead's decision under Pascal's delegation (Pascal,
+  2026-10-07: an ARM mode in agscc, or agbcc for its provenance, never
+  anyone else's compiler), measured over all seven compiler-shaped ARM
+  functions (no APCS frame, saves from r5, r11 never allocated, interworking
+  returns, filled load/store slots), differ per draft as IwramSqrt,
+  ColorBuffer_DarkenKernel, ColorBuffer_DarkenPartialKernel,
+  Transform_UpdateVertices, Object_UpdateAll, UiText_DrawGlyphArm,
+  Tile_BuildMetatiles: camelot_arm 38, 66, 90, 48, 117, 156, 0 (515);
+  stock agbcc_arm 38, 66, 90, 76, 107, 177, 6 (560); agscc `-marm` with
+  the game options 28, 64, 100, 183, 468, 377, 19 (1,239), and its nearest
+  stock setting, `-mno-apcs-frame -ffixed-fp` (agscc fixes r11 only with
+  the APCS frame, which every non-leaf ARM function would then build),
+  28, 64, 100, 166, 461, 377, 19 (1,215). The drafts were first shaped
+  under gcc_arm, but Tile_BuildMetatiles reshaped for agscc stays at 18:
+  agscc in ARM mode differs from the native code in its loop and
+  stack-slot habits throughout, not by one change a backend option could
+  carry, so the route is agbcc's. No other routing: never a per-file or
   per-function compiler, option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to

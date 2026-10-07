@@ -29,11 +29,11 @@ the full twelve-edition ROM comparison remains the matching authority.
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
 Study output stays in obj/drafts/arm-study; no build routing is changed.
---camelot-arm is an analysis-only study of a ☀️ draft with agbcc/camelot_arm
-(pinned gcc_arm with upstream GCC's whole arm_adjust_cost) at the library
-ARM setting, assembled as ARM. CAMELOT_ARM_SOURCES is empty: this is not an
-admitted build route and earns no credit, even at differ 0. Study output
-stays in obj/drafts/camelot-arm.
+--camelot-arm compiles a ☀️ ARM draft as the build compiles game ARM C
+(GAME_ARM_SOURCES, AGENTS.md K1): agbcc/camelot_arm, agbcc_arm's pinned
+gcc_arm with agscc's arm_adjust_cost, at the library ARM setting, assembled
+as ARM. Credit comes only from source the build links. Output stays in
+obj/drafts/camelot-arm.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in
 out/EDITION/obj/drafts/rtl/, named DRAFT.c.PASS, to find the pass where the
 draft's allocation or scheduling first leaves the listing's. The lreg and greg
@@ -47,7 +47,7 @@ scheduling cascade from early differences, so start there."#;
 
 const ARM_STUDY_NOTICE: &str = "ARM study only: pinned game compiler, -mthumb replaced by -marm; all other game options unchanged.\nNot an admitted build route; this comparison earns no credit.";
 
-pub(crate) const CAMELOT_ARM_STUDY_NOTICE: &str = "camelot_arm study only: pinned gcc_arm with upstream GCC's whole arm_adjust_cost, library ARM setting.\nNot an admitted build route; this comparison earns no credit.";
+pub(crate) const GAME_ARM_NOTICE: &str = "game ARM route (K1): agbcc/camelot_arm, pinned gcc_arm with agscc's arm_adjust_cost, library ARM setting.";
 
 struct Options {
     draft: PathBuf,
@@ -183,7 +183,7 @@ pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm
     Ok(steps)
 }
 
-/// A ☀️ draft compiled as a CAMELOT_ARM_SOURCES file is compiled by the build.
+/// A ☀️ draft compiled as the build compiles a GAME_ARM_SOURCES file.
 pub(crate) fn camelot_arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
     if target.compiler != crate::compiler::routing::CompilerTarget::Tbs {
         return Err("--camelot-arm compiles ☀️ game ARM C only".into());
@@ -191,7 +191,7 @@ pub(crate) fn camelot_arm_steps(target: DecompTarget, draft: &Path, object: &Pat
     if family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
         return Err("--camelot-arm compiles game C only; library compiler routes are unchanged".into());
     }
-    let steps = crate::build_rom::c_steps_routed(target, draft, object, Some(CompilerFamily::CamelotArm))?;
+    let steps = crate::build_rom::c_steps_routed(target, draft, object, Some(CompilerFamily::GameArm))?;
     Ok(with_draft_assembly(target, object, steps))
 }
 
@@ -586,7 +586,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         println!("{ARM_STUDY_NOTICE}");
     }
     if options.camelot_arm {
-        println!("{CAMELOT_ARM_STUDY_NOTICE}");
+        println!("{GAME_ARM_NOTICE}");
     }
     let root = root();
     let target = options.target;

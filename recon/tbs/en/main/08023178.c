@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1396, common 1190, differ 408.
+ * Native 1392 instructions, draft 1383, common 1193, differ 389.
  * Frame now 352 bytes, as native, and the setup loops, the cursor
  * update, the face and cursor sprites, the djinn rows and the condition
  * list match up to register choice. Remaining: redraw in r11 where native
@@ -35,7 +35,12 @@
  * pointer as a block-local (native r2) 524 -> 482; i for the condition
  * count instead of n (native r6) 482 -> 408. Rejected: code =
  * (extended == 0); code += 8 1055 (hoisted as neg/orr/lsr, 1 - x); j for
- * the condition help value 528, n 500, i 655.
+ * the condition help value 528, n 500, i 655. Each modifier read into
+ * an s8 block-local m for its two sign tests 408 -> 389 (u8 m with s8
+ * casts the same); not native: native loads the field twice, ldrb into
+ * r1 for the < 0 test and ldrb, lsl, asr into the address register for
+ * the > 0 test (the dest == base form of the sign-extending load), where
+ * m is one ldrsb with a zeroed index here, 9 instructions short.
  *
  * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
  * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,
@@ -549,11 +554,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         if (object->attack_modifier_turns != 0) {
-                            if ((s8)object->attack_modifier > 0) {
+                            s8 m = object->attack_modifier;
+
+                            if (m > 0) {
                                 *o++ = 9;
                                 i++;
                             }
-                            if ((s8)object->attack_modifier < 0) {
+                            if (m < 0) {
                                 *o++ = 10;
                                 i++;
                             }
@@ -562,11 +569,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         if (object->defense_modifier_turns != 0) {
-                            if ((s8)object->defense_modifier > 0) {
+                            s8 m = object->defense_modifier;
+
+                            if (m > 0) {
                                 *o++ = 11;
                                 i++;
                             }
-                            if ((s8)object->defense_modifier < 0) {
+                            if (m < 0) {
                                 *o++ = 12;
                                 i++;
                             }
@@ -575,11 +584,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         if (object->res_modifier_turns != 0) {
-                            if ((s8)object->res_modifier > 0) {
+                            s8 m = object->res_modifier;
+
+                            if (m > 0) {
                                 *o++ = 13;
                                 i++;
                             }
-                            if ((s8)object->res_modifier < 0) {
+                            if (m < 0) {
                                 *o++ = 14;
                                 i++;
                             }
@@ -587,13 +598,17 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         if (i > 7) {
                             break;
                         }
-                        if ((s8)object->agility_modifier > 0) {
-                            *o++ = 17;
-                            i++;
-                        }
-                        if ((s8)object->agility_modifier < 0) {
-                            *o = 18;
-                            i++;
+                        {
+                            s8 m = object->agility_modifier;
+
+                            if (m > 0) {
+                                *o++ = 17;
+                                i++;
+                            }
+                            if (m < 0) {
+                                *o = 18;
+                                i++;
+                            }
                         }
                     } while (0);
                 }

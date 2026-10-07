@@ -1749,7 +1749,7 @@ Func_02000edc:
 	bl Func_02004e64
 	pop {pc}
 .L_02008efc:
-	.4byte 0x00002300
+	.4byte MsgFieldMoveOutOfTheWay
 	.section .text.x02008f00,"ax",%progbits
 	.global Func_02000f00
 	.thumb_func
@@ -2064,7 +2064,7 @@ Func_02001048:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020091a4:
-	.4byte 0x000022fa
+	.4byte MsgFieldWhoAreYouHowDid
 .L_020091a8:
 	.4byte Data_02005610
 .L_020091ac:
@@ -2175,13 +2175,13 @@ Func_020011c8:
 	pop {pc}
 	.2byte 0x0000
 .L_02009298:
-	.4byte 0x000023eb
+	.4byte MsgFieldIMDoneForThat
 .L_0200929c:
-	.4byte 0x00002308
+	.4byte MsgFieldTheSerpentIsStillToo
 .L_020092a0:
 	.4byte Data_02005610
 .L_020092a4:
-	.4byte 0x000022fe
+	.4byte MsgFieldIfYouUnderstandThenGet
 .L_020092a8:
 	.4byte gPartyState
 	.section .text.x020092ac,"ax",%progbits
@@ -2226,11 +2226,11 @@ Func_020012ac:
 	bl Func_02004e64
 	pop {pc}
 .L_02009308:
-	.4byte 0x0000230a
+	.4byte MsgFieldWhoDoTheyThinkThey
 .L_0200930c:
 	.4byte Data_02005610
 .L_02009310:
-	.4byte 0x000022ff
+	.4byte MsgFieldHowManyCasksDoesIt
 	.section .text.x02009314,"ax",%progbits
 	.global Func_02001314
 	.thumb_func
@@ -3212,7 +3212,7 @@ Func_020019cc:
 .L_02009b50:
 	.4byte gPartyState
 .L_02009b54:
-	.4byte 0x000023e5
+	.4byte MsgFieldSearchedTheSlateThereIs
 .L_02009b58:
 	movs r5, #128
 	lsls r5, r5, #19
@@ -3711,7 +3711,7 @@ Func_02001ebc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009f5c:
-	.4byte 0x00002313
+	.4byte MsgFieldTheSerpentWithItsEyes
 .L_02009f60:
 	.4byte gPartyState
 .L_02009f64:
@@ -3816,7 +3816,7 @@ Func_02001fd8:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200a01c:
-	.4byte 0x000022f5
+	.4byte MsgFieldCheckedTheAltar
 	.section .text.x0200a020,"ax",%progbits
 	.global Func_02002020
 	.thumb_func
@@ -4057,7 +4057,7 @@ Func_02002020:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a254:
-	.4byte 0x000022f8
+	.4byte MsgFieldPlacedADollOnThe
 .L_0200a258:
 	.4byte gPartyState
 	.section .text.x0200a25c,"ax",%progbits
@@ -4317,7 +4317,7 @@ Func_0200225c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a4b0:
-	.4byte 0x000022f8
+	.4byte MsgFieldPlacedADollOnThe
 .L_0200a4b4:
 	.4byte gPartyState
 	.section .text.x0200a4b8,"ax",%progbits
@@ -4579,7 +4579,7 @@ Func_020024b8:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_0200a710:
-	.4byte 0x000022f8
+	.4byte MsgFieldPlacedADollOnThe
 .L_0200a714:
 	.4byte gPartyState
 	.section .text.x0200a718,"ax",%progbits
@@ -4839,7 +4839,7 @@ Func_02002718:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_0200a96c:
-	.4byte 0x000022f8
+	.4byte MsgFieldPlacedADollOnThe
 .L_0200a970:
 	.4byte gPartyState
 	.section .text.x0200a974,"ax",%progbits
@@ -6404,7 +6404,7 @@ Func_02002f64:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
-	.2byte 0x2303
+	.2byte MsgFieldAtLastTheSerpentHas
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0159
@@ -7082,7 +7082,7 @@ Func_02002f64:
 	.2byte 0xf9f2
 	.2byte 0xe004
 	.2byte 0x0000
-	.2byte 0x230c
+	.2byte MsgFieldItLooksLikeTheDragon
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0xffe0
@@ -7781,9 +7781,9 @@ Func_02002f64:
 	adds r3, r3, r1
 	str r3, [r6, #12]
 	b .L_0200c0a2
-	.2byte 0x2302
+	.2byte MsgFieldYouYouCannotFightThe
 	.2byte 0x0000
-	.2byte 0x230b
+	.2byte MsgFieldLikeISaidTheSerpent
 	.2byte 0x0000
 .L_0200c084:
 	.4byte 0x000000b2
@@ -10491,7 +10491,8 @@ Data_02005f30:
 	.4byte Func_020019cc
 	.4byte 0x00000053
 	.4byte 0xffff0032
-	.4byte 0x00402301
+	.2byte MsgFieldTheCupsAreOverflowingWith
+	.2byte 0x0040
 	.4byte 0x00000003
 	.4byte 0xffff0037
 	.4byte Func_02001ebc
@@ -10523,10 +10524,12 @@ Data_02005fcc:
 	.4byte Func_020019cc
 	.4byte 0x00000053
 	.4byte 0xffff0032
-	.4byte 0x00402301
+	.2byte MsgFieldTheCupsAreOverflowingWith
+	.2byte 0x0040
 	.4byte 0x00000003
 	.4byte 0xffff0037
-	.4byte 0x00402313
+	.2byte MsgFieldTheSerpentWithItsEyes
+	.2byte 0x0040
 	.4byte 0x00000053
 	.4byte 0x0e41004d
 	.4byte Func_02001fa0

@@ -344,100 +344,100 @@ Data_020003d8:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002406
+	.4byte MsgFieldThereSNotMuchSpace
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002407
+	.4byte MsgFieldEveryoneInChampaIsPoor
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002408
+	.4byte MsgFieldWhenMyFatherHeadsOut
 	.4byte 0x00008400
 	.4byte 0xffff000b
-	.4byte 0x00002409
+	.4byte MsgFieldMyDadWentOutTo
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000240a
+	.4byte MsgFieldTheseRaftsAreAllWe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000240b
+	.4byte MsgFieldIfDadHadnTBeen
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000240c
+	.4byte MsgFieldIHopeDadMakesIt
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000240d
+	.4byte MsgFieldFatherWorriesSoMuchAbout
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000240e
+	.4byte MsgFieldTheTidalWaveWasTerrible
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000240f
+	.4byte MsgFieldItLookedToMeLike
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002410
+	.4byte MsgFieldMostOfTheSailorsHere
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002411
+	.4byte MsgFieldTheFishAreVanishingI
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002412
+	.4byte MsgFieldSomethingMustHaveBlownUp
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002413
+	.4byte MsgFieldYouHaveToBeOne
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002414
+	.4byte MsgFieldWeVeSeenALot
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002415
+	.4byte MsgFieldAGroupOfTravelersCame
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002416
+	.4byte MsgFieldMoreVisitorsMeansMoreMoney
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002417
+	.4byte MsgFieldNowThatIThinkAbout
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002418
+	.4byte MsgFieldTheOceanHasBeenA
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002419
+	.4byte MsgFieldIVeHeardRumorsOf
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000241a
+	.4byte MsgFieldWeChampaRelyEntirelyOn
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000241b
+	.4byte MsgFieldAllTheSailorsAreSaying
 	.4byte 0x0000c400
 	.4byte 0xffff0013
 	.4byte Func_0200008c
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002431
+	.4byte MsgFieldIHaveSomeLovelyArtifacts
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002432
+	.4byte MsgFieldIfYouGoToThe
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002433
+	.4byte MsgFieldOurProductsCostWhatThey
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002434
+	.4byte MsgFieldTheStuffInTheRuins
 	.4byte 0x0000c400
 	.4byte 0xffff0015
 	.4byte Func_02000098
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002435
+	.4byte MsgFieldListenIfYouCameTo
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002436
+	.4byte MsgFieldWeUsedToDoGood
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002437
+	.4byte MsgFieldItSAShameThat
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002438
+	.4byte MsgFieldWatchingOurCatchesDwindleWith
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -463,100 +463,100 @@ Data_020005ac:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025dd
+	.4byte MsgFieldWeDonTNeedTo
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025de
+	.4byte MsgFieldItSTrueItS
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000025df
+	.4byte MsgFieldFatherSActingLikeA
 	.4byte 0x00008400
 	.4byte 0xffff000b
-	.4byte 0x000025e0
+	.4byte MsgFieldWhenBriggsReturnedWithThe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025e1
+	.4byte MsgFieldIDRatherSpendMy
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025e2
+	.4byte MsgFieldBriggsIsAHeroFor
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000025e3
+	.4byte MsgFieldIfFatherSitsAroundThe
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000025e4
+	.4byte MsgFieldQuittingTheirJobsMakesThe
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000025e5
+	.4byte MsgFieldIHearThatBriggsSold
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000025e6
+	.4byte MsgFieldWhileIMGratefulFor
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000025e7
+	.4byte MsgFieldBriggsReallySavedOurHides
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000025e8
+	.4byte MsgFieldTheNerveOfThatBriggs
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000025e9
+	.4byte MsgFieldIShouldJustSignUp
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000025ea
+	.4byte MsgFieldIRefuseToLiveIn
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000025eb
+	.4byte MsgFieldIVeBeenWonderingAbout
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000025ec
+	.4byte MsgFieldWeVillageEldersHaveGuided
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000025ed
+	.4byte MsgFieldANewImageForChampa
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000025ee
+	.4byte MsgFieldObservingBriggsRecentlyTheLimits
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000025ef
+	.4byte MsgFieldItSeemsTheEldersAre
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000025f0
+	.4byte MsgFieldIForOneThinkA
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000025f1
+	.4byte MsgFieldSureBriggsSavedTheVillage
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000025f2
+	.4byte MsgFieldSupportingAnEntireVillageThrough
 	.4byte 0x0000c400
 	.4byte 0xffff0013
 	.4byte Func_0200008c
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000026a8
+	.4byte MsgFieldTheJewelsBriggsFoundAre
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000026a9
+	.4byte MsgFieldThanksToBriggsTheChampa
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000026aa
+	.4byte MsgFieldBriggsSMenSaidThey
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000026ab
+	.4byte MsgFieldNowSTheTimeWe
 	.4byte 0x0000c400
 	.4byte 0xffff0015
 	.4byte Func_02000098
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x000026ac
+	.4byte MsgFieldWeStillHavenTBeen
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x000026ad
+	.4byte MsgFieldItSNiceNotHaving
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000026ae
+	.4byte MsgFieldMostPeopleHereWouldLove
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000026af
+	.4byte MsgFieldTheOnlyWayToFind
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -570,10 +570,10 @@ Data_02000780:
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000218d
+	.4byte MsgFieldDidYouKnowIndraMoved
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002191
+	.4byte MsgFieldIMSoGratefulOur
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

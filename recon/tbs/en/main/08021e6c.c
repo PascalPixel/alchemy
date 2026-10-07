@@ -1,3 +1,4 @@
+/* 2026-10-07 queue3 release counter: all six differ70, not matched. JA listing/draft1036, common1001; the five localizations listing/draft1037, common1002. A short tagged readonly zero/r0 restores the native release-counter initialization register (72 -> 70), but it is scheduled before the count address. An ordinary separate release counter gives98; fixed r8 gives82; a read/write zero/r0 gives74 and four extra instructions because the starting zero is no longer known. A readonly step/r1 with cnt += step gives76; retaining ordinary ++cnt with that step gives79. Those trials are removed. */
 /* 2026-10-07 queue3 edition layouts: all six differ72, not matched. JA listing/draft1036, common1000; EN/DE/ES/FR/IT listing/draft1037, common1001. JA's mode1 window is x23,width7, its sprites x179, blank-map offset5 and content at VRAMfd6e/mapx23; the localizations use x22,width8,x171,offset4,fd6c/mapx22. These native layout differences are now conditional C; JA was119. The five non-English scaffolds now name this function, leaving their preceding two padding bytes intact. Remaining72 in every edition are the shared allocation/order differences below. */
 /* Trial (queue3 from72, none kept): mode-1 row-local pattern292; readonly generic pattern input inside the column102; volatile row pattern407. Baseline index/pattern copies have identical global conflict sets and LO_REGS costs; index's9refs/17insns outrank pattern's9/18, and reload keeps pattern in ip while spilling index. Chaining the pattern expression reverses copy priority but also reverses row-biv priority, as measured above. */
 /* 2026-10-07 queue3 continuation: differ 72 (listing 1037, draft 1037, common 1001), not matched. Closing byte-offset addition restores native operand order (76 -> 74). Correcting WaitForPromptAtFar to the adopted target's s32 result restores tutorial argument order (74 -> 72); CountValidEntriesFar also takes its existing s32 result, unchanged score. Remaining: row copies exchanged between ip/sp+4, mode-1 gap*2 spill order, and register choices around the main-loop exit and closing setup. */
@@ -385,7 +386,14 @@ s32 Ui_RunSelectionScreen(s32 mode)
         gLinkCountdownWork->command_selection[1] = work->selection;
     else
         gLinkCountdownWork->command_selection[0] = work->selection;
-    for (cnt = 0; cnt < work->count; cnt++)
+    {
+        /* FAKEMATCH: Native initializes the shared release counter through r0. An ordinary separate counter gives98, fixed r8 gives82; this short readonly zero restores r0 (72 -> 70), although it is still scheduled early. */
+        register s32 n __asm__("r0") = 0;
+        /* FAKEMATCH: Retain the native zero register; read/write loses the known-zero loop start and gives74. */
+        __asm__("" : : "r"(n));
+        cnt = n;
+    }
+    for (; cnt < work->count; cnt++)
         Resource_ResetEntry(work->entries[cnt].resource);
     render->menu_busy = 1;
     UiWork_Finalize(work->window, 1);

@@ -1,4 +1,5 @@
 #include "KABE.H"
+#include "SCENE_IDS.H"
 
 struct KabeSpot {
     s32 x;
@@ -35,6 +36,45 @@ void Func_02002b50(void);
 void Func_02002c18(void);
 void Func_02002c50(void);
 void Func_02002c88(void);
+void Func_02003094(void);
+void Func_02003134(void);
+void Func_0200320c(void);
+void Func_02003354(void);
+void Func_0200338c(void);
+void Func_02003504(void);
+void Func_02003598(void);
+void Func_02003740(void);
+void Func_0200377c(void);
+void Func_0200380c(void);
+
+s32 Func_02002ec4(void)
+{
+    s16 scene;
+
+    ((struct KabeEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x204;
+    scene = gPartyState.scene;
+    if (scene == (s32)&SceneId_Kabe1)
+        Func_02003094();
+    else if (scene == (s32)&SceneId_Kabe2)
+        Func_02003134();
+    else if (scene == (s32)&SceneId_Kabe3)
+        Func_0200320c();
+    else if (scene == (s32)&SceneId_Kabe4)
+        Func_02003354();
+    else if (scene == (s32)&SceneId_Kabe5)
+        Func_0200338c();
+    else if (scene == (s32)&SceneId_Kabe6)
+        Func_02003504();
+    else if (scene == (s32)&SceneId_Kabe7)
+        Func_02003598();
+    else if (scene == (s32)&SceneId_Kabe8)
+        Func_02003740();
+    else if (scene == (s32)&SceneId_Kabe9)
+        Func_0200377c();
+    else if (scene == (s32)&SceneId_Kabe11)
+        Func_0200380c();
+    return 0;
+}
 
 struct KabeObject *Func_02002f88(s32 id)
 {

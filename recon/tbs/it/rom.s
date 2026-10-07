@@ -58,12 +58,6 @@ ResourceSlot_ConversionTables:
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
 	.incbin "baserom.gba", 0x000097b8, 0x00000400
-	.section .rom.0000a0f8, "ax"
-	.global Transform_UpdateVertices
-Transform_UpdateVertices:
-	.incbin "baserom.gba", 0x0000a0f8, 0x00000284
-	.global Transform_UpdateVerticesEnd
-Transform_UpdateVerticesEnd:
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
 	.section .rom.00012f20, "ax"
@@ -180,8 +174,6 @@ UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x00021e12, 0x000008fe
 	.section .rom.00023ec4, "ax"
 	.incbin "baserom.gba", 0x00023ec4, 0x00000ac4
-	.section .rom.000260d4, "ax"
-	.incbin "baserom.gba", 0x000260d4, 0x00000ed8
 	.section .rom.00027240, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function

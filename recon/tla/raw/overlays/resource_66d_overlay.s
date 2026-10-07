@@ -1059,7 +1059,7 @@ Data_02000b4c:
 	.4byte MsgScene66DNo24
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x00403041
+	.4byte MsgScene66DNo47 + 0x00400000
 	.4byte 0x10009a15
 	.4byte 0xffff0008
 	.4byte Func_02000088
@@ -1169,7 +1169,7 @@ Data_02000cfc:
 	.4byte MsgScene66DNo46
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x00403041
+	.4byte MsgScene66DNo47 + 0x00400000
 	.4byte 0x10009a15
 	.4byte 0xffff0008
 	.4byte Func_02000088

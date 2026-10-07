@@ -1443,7 +1443,7 @@ Data_02000ea8:
 	.4byte Func_0200008c
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403056
+	.4byte MsgScene677No40 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

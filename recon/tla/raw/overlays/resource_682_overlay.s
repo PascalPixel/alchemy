@@ -4891,7 +4891,7 @@ Data_0200320c:
 	.4byte Func_020000fc
 	.4byte 0x0000c403
 	.4byte 0xffff0018
-	.4byte 0x004024c0
+	.4byte MsgScene682No53 + 0x00400000
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_0200014c
@@ -5022,7 +5022,7 @@ Data_0200b410:
 	.4byte Func_020000fc
 	.4byte 0x0000c403
 	.4byte 0xffff0018
-	.4byte 0x004024c0
+	.4byte MsgScene682No53 + 0x00400000
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_0200014c

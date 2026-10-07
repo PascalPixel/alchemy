@@ -1013,16 +1013,16 @@ Data_02000a20:
 	.4byte Func_020004b0
 	.4byte 0x00000173
 	.4byte 0xffff00ce
-	.4byte 0x00403049
+	.4byte MsgScene65ENo35 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00cf
-	.4byte 0x0040304a
+	.4byte MsgScene65ENo36 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00d0
-	.4byte 0x0040304b
+	.4byte MsgScene65ENo37 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00d1
-	.4byte 0x00403057
+	.4byte MsgScene65ENo38 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

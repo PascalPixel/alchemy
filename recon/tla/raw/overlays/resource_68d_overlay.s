@@ -3584,31 +3584,31 @@ gSceneEvents:
 	.4byte MsgScene68DNo27
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x00403064
+	.4byte MsgScene68CNo27 + 0x00400000
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x00403065
+	.4byte MsgScene68CNo28 + 0x00400000
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x00403066
+	.4byte MsgScene68CNo29 + 0x00400000
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x00403067
+	.4byte MsgScene68CNo30 + 0x00400000
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x00403068
+	.4byte MsgScene68CNo31 + 0x00400000
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x00403069
+	.4byte MsgScene68CNo32 + 0x00400000
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x0040306a
+	.4byte MsgScene68CNo33 + 0x00400000
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x0040306b
+	.4byte MsgScene68CNo34 + 0x00400000
 	.4byte 0x000001c3
 	.4byte 0xffff00d0
-	.4byte 0x0040306d
+	.4byte MsgScene68CNo35 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

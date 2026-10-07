@@ -9240,16 +9240,16 @@ Data_02005a20:
 	.4byte Func_02000290
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305f
+	.4byte MsgScene6A8No154 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403060
+	.4byte MsgScene6A8No155 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x00403061
+	.4byte MsgScene6A8No156 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x00403062
+	.4byte MsgScene6A8No157 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9308,16 +9308,16 @@ Data_02005da4:
 	.4byte MsgScene6A8No130
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305f
+	.4byte MsgScene6A8No154 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403060
+	.4byte MsgScene6A8No155 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x00403061
+	.4byte MsgScene6A8No156 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x00403062
+	.4byte MsgScene6A8No157 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -35851,7 +35851,7 @@ msgctxt "MsgScene681No05"
 msgid "08960"
 msgstr "Move out of the way there.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No11"
 msgid "08961"
 msgstr "The cups are overflowing{line_break}with a river of Dragonsbane.{end_wait}"
 
@@ -37639,7 +37639,7 @@ msgctxt "message"
 msgid "09407"
 msgstr "It reads: Two Steps north of the{line_break}middle grave where the{line_break}letter had fallen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene682No53"
 msgid "09408"
 msgstr "Champa ahead!{end_wait}"
 
@@ -49403,123 +49403,123 @@ msgctxt "MsgDeriWellSeawater"
 msgid "12348"
 msgstr "It looks like seawater has{line_break}seeped into the well.{page_break}I doubt anyone will be using{line_break}it for quite a while.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No13"
 msgid "12349"
 msgstr "There's a passageway at{line_break}the bottom of the well!{page_break}I wonder if anyone else{line_break}knows about this...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65DNo21"
 msgid "12350"
 msgstr "It's completely full of water.{line_break}The bottom is really deep.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65FNo31"
 msgid "12351"
 msgstr "Meh? I saw the silhouette{line_break}of a man in the well!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene665No180"
 msgid "12352"
 msgstr "It looks like this well doesn't{line_break}get a lot of use.{page_break}I guess it's because it's so far{line_break}from the main part of town.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66DNo47"
 msgid "12353"
 msgstr "There's only a little bit of water{line_break}down at the bottom of the well.{page_break}As hot as it gets around here,{line_break}I bet the water evaporates fast.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A6No58"
 msgid "12354"
 msgstr "This well looks really old.{page_break}I'll bet this is exactly how it{line_break}looked back in ancient times.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No169"
 msgid "12355"
 msgstr "There are some potatoes{line_break}boiling in the pot.{page_break}Maybe they're making{line_break}potato salad.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No170"
 msgid "12356"
 msgstr "They're making nan.{page_break}It looks weird, though...{line_break}I guess in Madra, they add{line_break}nuts and raisins.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No171"
 msgid "12357"
 msgstr "All the spices are neatly{line_break}arranged.{page_break}No dining table in Madra would{line_break}be complete without them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No172"
 msgid "12358"
 msgstr "There's a chicken curry slowly{line_break}simmering on the stove.{page_break}Judging from the smell and{line_break}the deep red color, it must{line_break}have a lot of tomatoes in it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No173"
 msgid "12359"
 msgstr "A pot of Masala tea is{line_break}boiling on the stove.{page_break}It's full of milk, and it{line_break}has a nice, sweet smell.{line_break}It's driving me crazy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No174"
 msgid "12360"
 msgstr "They're making tandoori chicken.{page_break}In Madra, it's cooked on the{line_break}bone. It's one of the dishes{line_break}they're famous for.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo35"
 msgid "12361"
 msgstr "It's a roast chicken so big{line_break}that it's practically bursting{line_break}out of the oven!{page_break}Hmm... I wonder if it was{line_break}related to the chicken I saw{line_break}outside... I thought it was a pet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo36"
 msgid "12362"
 msgstr "Fresh eggs, over easy...{line_break}Some people call 'em{line_break}\"sunny side up\"!{page_break}When it comes to breakfast,{line_break}these are the best!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo37"
 msgid "12363"
 msgstr "That cheese looks fabulous.{page_break}I could really use a snack...{line_break}Maybe with some bread and°{line_break}Gah! I'm getting hungry!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No68"
 msgid "12364"
 msgstr "Eeeeew!{line_break}They're frying up bug larvae!!{page_break}It looks awful!{line_break}But it smells GREAT!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No69"
 msgid "12365"
 msgstr "It's lamb on the bone, broiled{line_break}over an open flame. The lamb is{line_break}golden brown and juicy.{page_break}They'd probably notice if{line_break}I took some... Too bad.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No70"
 msgid "12366"
 msgstr "Huh, what is that!?{line_break}Lobster grilled in the shell!{page_break}I'd like to experience this{line_break}luxurious culinary treat{line_break}at least once in my life!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No71"
 msgid "12367"
 msgstr "Newts skewered over an{line_break}open flame.{page_break}Are they making food or some{line_break}strange kind of medicine?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No72"
 msgid "12368"
 msgstr "There are lots of strange-{line_break}looking plants boiling in that{line_break}large pot.{page_break}It's got a familiar smell I just{line_break}can't quite put my finger on.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No121"
 msgid "12369"
 msgstr "Seasonal veggies boiling{line_break}with some lamb meat.{page_break}The oyster seasoning is{line_break}really tempting my tummy.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgScene666No122"
 msgid "12370"
 msgstr "There is a seafood pie baking{line_break}in the oven.{page_break}Its reputation for having a, er,{line_break}fragrant smell precedes it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No123"
 msgid "12371"
 msgstr "It looks like some kind{line_break}of seafood soup.{page_break}It smells like the ocean!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No124"
 msgid "12372"
 msgstr "It's Alhafra's famous{line_break}broiled lobster!{page_break}It's bigger than I could ever{line_break}possibly have imagined!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No125"
 msgid "12373"
 msgstr "That seafood stew has an{line_break}abundant variety of fish.{page_break}One bite of that, and I'd{line_break}be hooked!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene677No40"
 msgid "12374"
 msgstr "The steel resting in the flames{line_break}is glowing bright red.{page_break}This must be where they{line_break}forge sharp items.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo38"
 msgid "12375"
 msgstr "There's fish I've never seen{line_break}before gently simmering there.{page_break}I wonder what this foul soup{line_break}could possibly taste like...{line_break}I'm not sure I want to find out.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No206"
 msgid "12376"
 msgstr "There's a bright-red soup{line_break}full of beans and tomatoes{line_break}simmering.{page_break}That spicy smell is really{line_break}something else, but it might{line_break}burn my mouth a bit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No207"
 msgid "12377"
 msgstr "Ah, the smell of fresh corn{line_break}bread cooking in the oven!{page_break}One whiff, and I'm drooling{line_break}like a bulldog!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No208"
 msgid "12378"
 msgstr "Contigo's famous for these{line_break}cookies they make...{page_break}I've heard that, even if you{line_break}have the recipe, it still takes{line_break}years to learn to bake them.{end_wait}"
 
@@ -49535,71 +49535,71 @@ msgctxt "MsgShamanStrangeBoiledVegetables"
 msgid "12381"
 msgstr "I've never seen vegetables{line_break}like the ones boiling there.{page_break}Whoa! They really stink!{line_break}Do people actually eat those!?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene690No21"
 msgid "12382"
 msgstr "There's Kaltic stew made with{line_break}lamb meat and potatoes.{page_break}Looks pretty tasty, if you{line_break}like boiled meat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No154"
 msgid "12383"
 msgstr "Those boiling vegetables{line_break}look like weeds.{page_break}I'm pretty sure I won't{line_break}be eating any of those{line_break}anytime soon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No155"
 msgid "12384"
 msgstr "There's cheese in this stew.{page_break}Hey! There's mold growing on it!{line_break}Is it supposed to be like that?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No156"
 msgid "12385"
 msgstr "There is some strange{line_break}dish made using fish eggs.{page_break}There are strings coming from{line_break}them. I wonder if that's normal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No157"
 msgid "12386"
 msgstr "They've got some strange{line_break}meat I've never seen before.{page_break}Instead of using firewood,{line_break}they're cooking it with burning{line_break}antlers.{page_break}I wonder if the meat{line_break}and the antlers came{line_break}from the same animal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No03"
 msgid "12387"
 msgstr "It looks like there's a captain's{line_break}logbook in here.{page_break}There's something about an{line_break}unreported trip to Lemuria in{line_break}here... I guess they were rushed.{end_wait}  "
 
-msgctxt "message"
+msgctxt "MsgScene68CNo27"
 msgid "12388"
 msgstr "There's a book called \"The{line_break}Great Adventures of Lunpa.\"{line_break}...Written by Lunpa, no less.{page_break}\"When the great flood came,{line_break}we fled our homes by boat.{line_break}Waves engulfed our ships.{page_break}\"We came to in a strange{line_break}land called Lemuria.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo28"
 msgid "12389"
 msgstr "I found a letter from Babi.{line_break}On the outside, it reads,{line_break}\"To my dear friend Lunpa.\"{page_break}Babi wrote, \"Forgive me,{line_break}Lunpa, but I must leave the{line_break}island without you.\"{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgScene68CNo29"
 msgid "12390"
 msgstr "Here's a book called{line_break}\"The History of Lemuria.\"{page_break}An excerpt: \"Only traces of{line_break}the once-brilliant land of{line_break}Lemuria remain today.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo30"
 msgid "12391"
 msgstr "Here's a book called{line_break}\"Elemental Lighthouses.\"{page_break}It reads, \"The beacons of the{line_break}four elemental lighthouses{line_break}brighten the fringes of Weyard.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo31"
 msgid "12392"
 msgstr "Here's a book called \"The{line_break}Great Lemurian People.\"{page_break}\"The chosen master of{line_break}water will be a native{line_break}son of Lemuria.\" {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo32"
 msgid "12393"
 msgstr "Here's a book called{line_break}\"Alchemy and Ancient{line_break}Civilization: Part I.\"{page_break}\"Through the use of Alchemy,{line_break}civilization undergoes great{line_break}growth and improvement.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo33"
 msgid "12394"
 msgstr "Here's a book called{line_break}\"Alchemy and Ancient{line_break}Civilization: Part II.\"{page_break}\"Those who master Alchemy{line_break}shall master the world.\" {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo34"
 msgid "12395"
 msgstr "Here's a book called{line_break}\"The Diary of Hydros.\"{page_break}\"{actor_name:8} is most{line_break}definitely still alive. I pray{line_break}for his safe return.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No04"
 msgid "12396"
 msgstr "It's pleasantly cool.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo35"
 msgid "12397"
 msgstr "What in°!!! {control_15:4}{control_15:4}{page_break}{control_12:11}What's with all these bathrobes?!?{line_break}Where are the baths?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6B3No01"
 msgid "12398"
 msgstr "Finally! We've reached Vale.{end_wait}"
 

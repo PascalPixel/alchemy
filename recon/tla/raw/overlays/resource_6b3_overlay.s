@@ -709,7 +709,7 @@ Func_02000318:
 .L_0200866c:
 	.4byte Data_02000a28
 .L_02008670:
-	.4byte 0x0000306e
+	.4byte MsgScene6B3No01
 .L_02008674:
 	.4byte gBgScroll
 .L_02008678:

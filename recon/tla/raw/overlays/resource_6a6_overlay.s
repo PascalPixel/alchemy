@@ -2717,7 +2717,7 @@ Data_02001aec:
 	.4byte MsgScene6A6No26
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x00403042
+	.4byte MsgScene6A6No58 + 0x00400000
 	.4byte 0x0001cc14
 	.4byte 0xffff0014
 	.4byte Func_02000198

@@ -1472,7 +1472,7 @@ Data_020010d8:
 	.4byte Func_0200014c
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x0040303e
+	.4byte MsgScene65DNo21 + 0x00400000
 	.4byte 0x50008805
 	.4byte 0xffff0032
 	.4byte Func_020001e0

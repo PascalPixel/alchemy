@@ -4593,7 +4593,7 @@ Data_02002b3c:
 	.4byte MsgScene690No16
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305e
+	.4byte MsgScene690No21 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

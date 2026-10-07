@@ -9123,13 +9123,13 @@ Data_02005a44:
 	.4byte MsgScene694No187
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403058
+	.4byte MsgScene694No206 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403059
+	.4byte MsgScene694No207 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x0040305a
+	.4byte MsgScene694No208 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9149,13 +9149,13 @@ Data_02005e70:
 	.4byte Func_02002e18
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403058
+	.4byte MsgScene694No206 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403059
+	.4byte MsgScene694No207 + 0x00400000
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x0040305a
+	.4byte MsgScene694No208 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

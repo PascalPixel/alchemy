@@ -5900,10 +5900,10 @@ Data_020039d0:
 	.4byte Func_0200021c
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x00403063
+	.4byte MsgScene656No03 + 0x00400000
 	.4byte 0x000001c3
 	.4byte 0xffff00c9
-	.4byte 0x0040306c
+	.4byte MsgScene656No04 + 0x00400000
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

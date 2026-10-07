@@ -1,15 +1,26 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1638, common 1510, differ 258 (frame 336 and
+   listing 1640, draft 1640, common 1572, differ 136 (frame 336 and
    every frame-loop slot as native, sp+24 included).
    0x1fe0000 for the camera goes through an inline DivQ16 (FAKEMATCH,
    as RESOLVE.C's matched call): a direct RatioMulQ14 call lets CSE
    share one 0x1fe0000 pseudo across the call, which local-alloc puts
    in r5; the native builds it twice.
-   The ramp smoke calls' 32 (native: r6 for both calls): the second
-   loop pass hoists the ramp loop's 32 out of the frame loop with the
-   smoke's 32 matched to it (threshold 12 after the constant 2's move,
-   12 * savings 2 * life 19 = 456 >= 448 insns), so it takes no
-   register and is rebuilt at each use.
+   The ramp smoke calls' 32 (native: r6 for both calls): with the
+   second ramp loop's width as 32 - w * 2, the second loop pass hoists
+   that loop's 32 out of the frame loop with the smoke's 32 matched to
+   it (threshold 12 after the constant 2's move, 12 * savings 2 * life
+   19 = 456 >= 448 insns), so it takes no register and is rebuilt at
+   each use, and every later reload register rotates. The draft writes
+   the width as (16 - w) * 2: the smoke's 32 stays local in r6 as
+   native, at the cost of that preheader's three instructions (native
+   lsls, movs 32, subs; draft movs 16, subs, lsls). Writing 32 - w * 2
+   with the native's hoisting needs the frame loop's pass-2 insn count
+   above 456 or the 32's life below 19.
+   Remaining (136): that preheader; r8 and sl swapped in the ring,
+   three-streams, ring-burst and particle loops (global's choice among
+   call-saved high registers); the reload order of one 112 store; r5
+   and r7 swapped in the particle draw loop; two swapped registers in
+   the formation preheader.
    n = count * 2 - i * 48 - 256 in one expression gives the native's
    sp+24: with frame * 4, GCSE's PRE gives the three-streams preheader's
    frame << 2 the same reaching register as the smoke block's second
@@ -17,11 +28,6 @@
    and is no giv of the frame loop; count << 1 is an expression of its
    own, PRE hoists it once, and the frame loop reduces it to sp+24 and
    the inner giv to count * 2 - i * 48, adding -256 inside, as native.
-   Remaining (268): r8 and sl swapped in the ring, three-streams and
-   ring-burst loops; 0x1fe0000 kept in r5 across the RatioMulQ14 call
-   (native rebuilds it); the ramp smoke calls keep y in r6 and rebuild
-   32 (native: y in r8, 32 in r6 for both); reload registers of the
-   frame-loop latch; r5/r7 swapped in the particle draw loop.
    The ramp's two smoke calls take (frame - 151) * 20 - 12 for y, not
    h - 56: the native reloads the h giv from its slot for it (h - 56
    kept h in r8 through the ramp block).
@@ -148,7 +154,10 @@
      y as h - 56 on that: 659; n = count * 2 - i * 48 - 256: 268,
      adopted.
    - on 268: the camera's RatioMulQ14 through an inline DivQ16
-     (FAKEMATCH, as RESOLVE.C): 258, adopted. */
+     (FAKEMATCH, as RESOLVE.C): 258, adopted.
+   - on 258: second ramp loop width as (16 - w) * 2: 136, adopted;
+     first ramp loop width as 32 - (w + i) * 2: 274; &ramp[w] in the
+     second: 258, no change. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -450,7 +459,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 }
             }
             for (i = 0; i != h; i++) {
-                blit[0](dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
+                blit[0](dst, ramp + w, w + 48, i + 16, (16 - w) * 2, 1);
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
             SLOT(47)(dst, work, 32, (frame - 151) * 20 - 12, 32, 96);

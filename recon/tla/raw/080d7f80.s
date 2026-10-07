@@ -194,10 +194,10 @@ Func_080d7f80:
 .L_080d8134:
 	.4byte 0x00201090
 .L_080d8138:
-	.4byte Func_080d7d68
+	.4byte BattleFx_SpinUpAngle
 .L_080d813c:
 	.4byte Func_080d7d90
 .L_080d8140:
 	.4byte Func_080d7dbc
 .L_080d8144:
-	.4byte Func_080d7d48
+	.4byte BattleFx_SetObjectAlternatingWords

@@ -43587,7 +43587,7 @@ msgctxt "MsgItSKind"
 msgid "10894"
 msgstr "Mi è difficile immaginare{line_break}come sarà, vedere queste{line_break}ali muoversi davvero.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeStoneEmber"
 msgid "10895"
 msgstr "C'è qualcosa che brucia,{line_break}come un tizzone nella roccia.{end_wait}"
 
@@ -43599,7 +43599,7 @@ msgctxt "message"
 msgid "10897"
 msgstr "{actor_name:5} ottiene{line_break}una Sfera di magma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeTabletInscription"
 msgid "10898"
 msgstr "{actor_name:5} esamina la stele...{line_break}C'è scritto qualcosa.{page_break}Tu con la forza della Fiamma,{line_break}posa le mani su questa pietra.{page_break}Otterrai il potere{line_break}di usare Vampa...{end_wait}"
 

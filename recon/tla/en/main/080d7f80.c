@@ -1,17 +1,52 @@
+/* differ 14: ported from ☀️ RADPART.C; load order only */
 #include "TYPES.H"
-#include "FIXED_MATH.H"
-#include "OBJECT_DISPATCH.H"
+#include "SYSTEM.H"
+#include "ANIMSPR.H"
+#include "MOTION_OBJECT.H"
+#include "OBJECT_RUNTIME.H"
+#include "OBJDISP.H"
+#include "PARTY_STATE.H"
+#include "EFFECT_SLOT.H"
+#include "RAM_BUFFER.H"
 
-extern u8 gEffectWork[];
+struct EffectVector {
+    s32 x;
+    s32 y;
+    s32 z;
+};
 
-void BattleFx_AdvanceAngleWithRamp(void);
-void BattleFx_ShrinkObjectAndDestroySlow(void);
-void BattleEffect_UpdatePhasedRadialParticle(void);
-void BattleFx_SetObjectAlternatingWords(void);
+struct BattleFxScene;
 
-extern s32 gGameState[];
-void Motion_SetVarCbAndRefresh(s32, s32);
-void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *child, u32 value);
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))Animation_ApplyChildValuesToRecordFar)
+#define ObjectDispatch_ReleaseFar Object_Destroy
+#define BattleFx_PulseScales Data_080f0bfc
+#define gEffectWork Ram_HeapSlots->effect_work
+
+extern u32 gFrameTick;
+extern u32 Data_080f0bfc[];
+void Animation_ApplyChildValuesToRecordFar();
+void Object_Destroy();
+
+struct EffectOwner {
+    u8 unknown_00[8];
+    struct EffectVector position;
+    u8 unknown_14[0x3c];
+    struct AnimationObject *sprite;
+};
+
+struct ObjectRuntime *Object_GetById(u32 actor);
+void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
+void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
+void Audio_PlayCue(s32 cue);
+void Motion_SetVarCbAndRefresh();
+void Camera_WorldToScreen();
+void BattleFx_InitializeSlots(void);
+void Shop_RestoreSceneTilesFar(s32);
+void Shop_InitEffectFar(void);
+void EffectSlot_Initialize();
+void BattleFx_AdvanceSpinAngle();
+void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
+void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {
     u8 unknown_00[8];
@@ -26,6 +61,81 @@ struct PhasedRadialSequenceObject {
     u8 unknown_66[6];
     void *callback;
 };
+
+struct OrbitPosition {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+struct DescendingOrbitObject {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[80];
+    u16 timer;
+    s16 angle;
+};
+
+struct SpreadPosition {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+void Audio_PlayCue(s32);
+
+extern const s32 BattleFx_CommonParticleScript[];
+
+struct CaptureObject {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 base_y;
+    s32 scale_x;
+    s32 scale_y;
+    u8 unknown_20[8];
+    s32 gravity;
+    u8 unknown_2c[4];
+    s32 speed;
+    u8 unknown_34[33];
+    u8 mode;
+    u8 unknown_56[5];
+    u8 visible;
+    u8 unknown_5c[2];
+    u16 lifetime;
+    u8 unknown_60[4];
+    u16 timer;
+    u16 angle;
+    u8 unknown_68[4];
+    void *callback;
+};
+
+void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
+void Object_SetMode(struct ObjectRuntime *object, s32 mode);
+void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
+struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
+void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
+
+struct LinkedCaptureObject {
+    u8 padding000[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 padding014[84];
+    struct LinkedCaptureObject *target;
+};
+
+void BattleFx_SetObjectAlternatingWords(u8 *object);
+
+void BattleFx_SpinUpAngle(void *obj);
+
+void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
+
+void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 
 void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 {
@@ -43,13 +153,13 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     void *slot;
     s8 *slot_state;
 
-    source_object = Object_GetById(arg);
-    target_object = Object_GetById(gGameState[125]);
+    source_object = (struct PhasedRadialSequenceObject *)Object_GetById(arg);
+    target_object = (struct PhasedRadialSequenceObject *)Object_GetById(gPartyState.current_owner);
     if (source_object == NULL)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)gEffectWork;
+    effect_slots = gEffectWork;
     Shop_RestoreSceneTilesFar(0x201090);
     WaitFrames(30);
     ObjectMotion_ArmCallback(arg, 0x4000, 0);
@@ -62,11 +172,11 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
-    source_object->callback = (void *)BattleFx_AdvanceAngleWithRamp;
+    source_object->callback = (void *)BattleFx_SpinUpAngle;
     source_object->timer = 0;
     WaitFrames(80);
     source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;
-    Object_SetMode(source_object, 3);
+    Object_SetMode((struct ObjectRuntime *)source_object, 3);
 
     position.x = source_object->x;
     position.y = source_object->y;
@@ -80,20 +190,20 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdatePhasedRadialParticle);
         EffectSlot_SetObjectMode(slot, 7);
         object_pointer = slot;
-        Animation_ApplyChildValuesToRecordFar(
-            (struct DispatchChild *)*(void **)object_pointer, 10);
-        value = __udivsi3(Random16(), 3) + 0x10000;
-        *(s32 *)((u8 *)slot + 44) = value;
-        *(s32 *)((u8 *)slot + 40) = value;
+        value = *(s32 *)object_pointer;
+        ObjectGroup_SetChildValueUnlessFifteenFar(value, 10);
+        value = Random16() / 3 + 0x10000;
+        ((struct EffectSlot *)slot)->scale_y = value;
+        ((struct EffectSlot *)slot)->scale_x = value;
         remaining--;
         WaitFrames(1);
         slot = (u8 *)slot + 72;
     } while (remaining >= 0);
 
     WaitFrames(60);
-    ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 0);
     WaitFrames(20);
-    Object_SetMode(Object_GetById(gGameState[125]), 28);
+    Object_SetMode(Object_GetById(gPartyState.current_owner), 28);
     {
         s32 next_state;
 
@@ -138,3 +248,14 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Shop_InitEffectFar();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
+
+void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
+
+void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
+
+void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
+
+void BattleFx_RunVenusDjinnCapture(s32 arg);
+
+void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect);
+

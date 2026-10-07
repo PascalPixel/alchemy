@@ -109,7 +109,7 @@ Func_08100e7c:
 	adds r2, #255
 	adds r3, r7, r2
 	strb r0, [r3]
-	bl Func_08104a58
+	bl Resource_LoadPairedBlocksIfAvailable
 	movs r1, #3
 	movs r2, #0
 	movs r3, #7
@@ -148,7 +148,7 @@ Func_08100e7c:
 	bl Func_081051a8
 	bl Func_0810106c
 	bl Func_0810526c
-	bl Func_08104aa4
+	bl Menu_ResetTwoResourceEntries
 	movs r0, #1
 	bl WaitFrames
 	bl Func_080fa478

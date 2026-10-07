@@ -43615,7 +43615,7 @@ msgctxt "MsgItSKind"
 msgid "10901"
 msgstr "Es difícil imaginarse que estas{line_break}alas puedan batirse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeStoneEmber"
 msgid "10902"
 msgstr "En la roca hay algo que{line_break}brilla como una ascua.{end_wait}"
 
@@ -43627,7 +43627,7 @@ msgctxt "message"
 msgid "10904"
 msgstr "{actor_name:5} obtuvo{line_break}una Bola de lava.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeTabletInscription"
 msgid "10905"
 msgstr "{protagonist_name} examinó la tabla.{line_break}Tiene grabados unos{line_break}extraños caracteres.{page_break}\"Poseedor de la fuerza de las{line_break}Llamas, pon tus manos sobre{line_break}la roca.{page_break}Si eres merecedor, el poder{line_break}de Prender con fuego será{line_break}tuyo.\"{end_wait}"
 

@@ -1,8 +1,20 @@
-/* 08026080: listing 1585, draft 1595, differ 542 (common 1319); both
+/* 08026080: listing 1585, draft 1587, differ 440 (common 1366); both
  * frames are 324 bytes. The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
  * the gBattleWork address in r5 and adds 192 as the native does.
+ * Session T10-08026080/3 (from 542), kept:
+ * - the cursor's else-if branch stores tbl[0].x = pos.x without nx: nx no
+ *   longer lives where the shared constant 1 does, so the 1 takes r1 with
+ *   nx as native (was r4) and the whole cursor block matches apart from
+ *   spill offsets: 477.
+ * - each info window case divides once, anchor = pos.x / 8, and tests
+ *   anchor + N: with one use the loaded pos.x dies at the division's copy,
+ *   CSE keeps the copy, and the load goes straight into it (native ldr r3;
+ *   cmp r3; adds r3, #7, no register copy): 440, draft 1587. anchor is an
+ *   ordinary local now, so its switch-block FAKEMATCH is gone.
+ * Trials: on 477, native order for the side block's selSlot/cnt 597
+ *   (frame 320: pos loses fp again, the 0 has 24/112 against pos 205/963).
  * Session T10-08026080/2 (from 624), kept:
  * - the cursor sine as Trig_Sin(...) / 32768, as the pending loop and the
  *   name drawing write it: the value stays in r0 as native, 624 (draft
@@ -170,6 +182,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     s32 pending;
     s32 matrix;
     s32 found;
+    s32 anchor;
     s32 column;
     s32 rows;
     s32 count;
@@ -311,8 +324,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             tbl[0].y = (u8)ny;
             pos.y = ny;
         } else if ((u8)tbl[0].flags <= 3) {
-            nx = pos.x;
-            tbl[0].x = (u8)nx;
+            tbl[0].x = (u8)pos.x;
             pos.y = y;
             tbl[0].y = (u8)y;
             tbl[0].flags = 1;
@@ -387,12 +399,10 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         if (infoWin != 0)
             UiWork_Finalize(infoWin, 1);
         switch (kind) {
-            /* FAKEMATCH: share the consumed coordinate temporary between
-               these cases; ordinary direct expressions differ 1410 versus 1400 here. */
-            s32 anchor;
         case 7:
-            column = pos.x / 8 - 4;
-            if (pos.x / 8 + 4 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 4;
+            if (anchor + 4 > 29)
                 column = 22;
             infoWin = UiWindow_Create(column, 8, 9, 3, 6);
             UiWork_SetParamNibble(2);
@@ -400,8 +410,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiWork_SetParamNibble(15);
             goto frame_tail;
         case 1:
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 6 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
@@ -410,9 +421,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 2:
-            anchor = pos.x;
-            column = anchor / 8 - 7;
-            if (pos.x / 8 + 6 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
@@ -421,8 +432,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiText_DrawNumberInWindow(unit->max_pp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 5:
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 5 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 5 > 29)
                 column = 18;
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->hp != 0)
@@ -430,8 +442,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiText_DrawCharacterAtOffset(0x8AB, (struct RenderInput *)infoWin, 0, 0);
             goto frame_tail;
         case 3:
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 5 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 5 > 29)
                 column = 18;
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->poison == 0)
@@ -457,7 +470,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 rows = 4;
             anchor = pos.x / 8;
             column = anchor - 7;
-            if (pos.x / 8 + 9 > 29)
+            if (anchor + 9 > 29)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
@@ -505,8 +518,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             rows = 9 - count;
             if (rows <= 3)
                 rows = 4;
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 9 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 9 > 29)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;

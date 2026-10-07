@@ -1,3 +1,14 @@
+/* 2026-10-07 queue3 command-register correction: differ 1287 (listing 1727,
+ * draft 1814, common 1127), not matched. With the corrected case scopes,
+ * direct resource-result assignments preserve 1309 and remove the redundant
+ * tile local. A tagged mode/r6 binding then removes ten instructions of
+ * caller-save traffic and keeps the native 100-byte frame (1309 -> 1287).
+ * The command survives the tile loader; summon columns and retry scopes
+ * remain corrected. Ordinary shared mode-2/item handles give 1467; shared
+ * mode-7/mode-2 status buffers give 1357, both rejected. Still unmatched:
+ * &state remains in fp, loop boundaries, scheduling, pools, and other
+ * register choices; the nested helpers still add rows to this parent diff.
+ */
 /* Trial (queue3 after 1309): final cost loop as while (required <= available),
  * with an exit after j reaches 4 and the zero store after the loop: 1573.
  * Restored the for loop; no additional device or source change kept. */
@@ -214,8 +225,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     u16 hdr[2];
     s32 aux;
     s32 actorId;
-    s32 mode;
-    s32 tile;
+    /* FAKEMATCH: Native retains commands and menu selections in r6. Ordinary allocation puts mode in caller-saved r4; sharing the competing handles/buffers gives 1467/1357. Binding mode removes ten instructions of save traffic, 1309 -> 1287, with the native 100-byte frame. */
+    register s32 mode __asm__("r6");
     s32 kind;
     s32 param;
     s32 res1024;
@@ -388,8 +399,7 @@ handshake_done:
             slot = &COUNTDOWN->entries[2];
             slot->oam.word.attr01 = 0x80000400;
             slot->oam.word.attr23 = 0;
-            tile = Ui_LoadEntryForKind(actor->class_id, res512);
-            slot->oam.f.tile = tile;
+            slot->oam.f.tile = Ui_LoadEntryForKind(actor->class_id, res512);
             slot->oam.f.x = 0;
             slot->oam.f.y = 0x80;
             slot->oam.f.palette = 14;
@@ -434,8 +444,7 @@ mark_visible:
             slot = &COUNTDOWN->entries[0];
             slot->oam.word.attr23 = 0;
             slot->oam.word.attr01 = 0x80002400;
-            tile = Resource_LoadIndexedIntoBuffer(res1024, mode);
-            slot->oam.f.tile = tile;
+            slot->oam.f.tile = Resource_LoadIndexedIntoBuffer(res1024, mode);
             if (mode == 15) {
                 slot->oam.f.x = 128;
             } else {
@@ -509,8 +518,7 @@ psynergy_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                tile = Resource_LoadIndexedEntryToBuffer(param, handle);
-                slot->oam.f.tile = tile;
+                slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(param, handle);
                 state->entryActive[1] = 1;
                 ui->level = 5;
                 if ((s32)ability->pp_cost > (s32)actor->ep) {
@@ -754,8 +762,7 @@ item_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                tile = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
-                slot->oam.f.tile = tile;
+                slot->oam.f.tile = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
                 state->entryActive[1] = 1;
                 UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + 386,
                                              win, 24, 0);

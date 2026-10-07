@@ -1201,7 +1201,7 @@ Func_02000974:
 .L_02008a3c:
 	.4byte Func_02000770
 .L_02008a40:
-	.4byte 0x0000227b
+	.4byte MsgFieldWhatWhatJustHappened
 .L_02008a44:
 	.4byte gPartyState
 	.section .text.x02008a48,"ax",%progbits
@@ -1541,7 +1541,7 @@ Func_02000cb4:
 .L_02008d0c:
 	.4byte gPartyState
 .L_02008d10:
-	.4byte 0x00002280
+	.4byte MsgFieldWhyDoesMyFatherKeep
 .L_02008d14:
 	bl ObjectMotion_ArmCallback
 .L_02008d18:
@@ -1584,7 +1584,7 @@ Func_02000d20:
 .L_02008d64:
 	.4byte gPartyState
 .L_02008d68:
-	.4byte 0x00002282
+	.4byte MsgFieldICanTEverTell
 .L_02008d6c:
 	bl Func_02001ccc
 	movs r0, #0
@@ -1700,7 +1700,7 @@ Func_02000de0:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008e3c:
-	.4byte 0x00002291
+	.4byte MsgFieldWowYouLookJustLike
 	.section .text.x02008e40,"ax",%progbits
 	.global Func_02000e40
 	.thumb_func
@@ -1738,7 +1738,7 @@ Func_02000e40:
 	bl Func_02001ccc
 	pop {r5, r6, pc}
 .L_02008e94:
-	.4byte 0x00002292
+	.4byte MsgFieldYouGuysArenTThe
 	.section .text.x02008e98,"ax",%progbits
 	.global Func_02000e98
 	.thumb_func
@@ -1785,7 +1785,7 @@ Func_02000e98:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008ef4:
-	.4byte 0x0000228f
+	.4byte MsgFieldItDBeNiceIf
 	.section .text.x02008ef8,"ax",%progbits
 	.global Func_02000ef8
 	.thumb_func
@@ -3592,7 +3592,7 @@ Data_02002038:
 .L_0200a044:
 	.4byte 0x00000016
 	.4byte 0x0000001e
-	.4byte 0x00000081
+	.4byte MsgFieldOff
 	.4byte 0x00000016
 	.4byte 0x00000010
 	.4byte 0x00003333
@@ -3938,58 +3938,58 @@ Data_020024d0:
 	.4byte Func_020010d0
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002269
+	.4byte MsgFieldThisIsApojiiTheEasternmost
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000226a
+	.4byte MsgFieldWhateverYouDoDonT
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000226b
+	.4byte MsgFieldTheHugeWaterfallAtThe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000226c
+	.4byte MsgFieldOnAquaIslandYouCan
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000226d
+	.4byte MsgFieldHaveYouAnyIdeaWhat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000226e
+	.4byte MsgFieldIDonTKnowWhat2
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000226f
+	.4byte MsgFieldWhenTheyComeOfAge
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002270
+	.4byte MsgFieldDoYouThinkIfYou
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002271
+	.4byte MsgFieldIfThereSNothingOn
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002272
+	.4byte MsgFieldLookingOverGaiaFallsReally
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002273
+	.4byte MsgFieldTheCurrentsNearApojiiRun
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002274
+	.4byte MsgFieldAllOfTheOceanS
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002275
+	.4byte MsgFieldWhyWouldAnyoneBuildA
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002276
+	.4byte MsgFieldWellAtLeastGaiaFalls
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002277
+	.4byte MsgFieldApojiiHasSoManyNice
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002278
+	.4byte MsgFieldAquaIslandIsSupposedTo
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002279
+	.4byte MsgFieldIWonderWhereID
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000227a
+	.4byte MsgFieldAquaRockMustBeThe
 	.4byte 0x00002115
 	.4byte 0x095f0011
 	.4byte Func_020007a4
@@ -4039,28 +4039,28 @@ Data_02002698:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000227f
+	.4byte MsgFieldThereSThisGuyIn
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02000cb4
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002283
+	.4byte MsgFieldIAbsolutelyRefuseToLet
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002284
+	.4byte MsgFieldTheCurrentsAroundApojiiAre
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002285
+	.4byte MsgFieldIMNotAllowedTo
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002286
+	.4byte MsgFieldHeyMisterDidYouKnow
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000228b
+	.4byte MsgFieldThatOldAquaStoneIs
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000228c
+	.4byte MsgFieldHeSTooOldTo
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_02000e98
@@ -4072,43 +4072,43 @@ Data_02002698:
 	.4byte Func_02000e40
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002281
+	.4byte MsgFieldIJustWishHeD
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte Func_02000d20
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002287
+	.4byte MsgFieldISinkLikeARock
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002288
+	.4byte MsgFieldPoorBoyHisFatherSinks
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002289
+	.4byte MsgFieldItSStupidThatI
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000228a
+	.4byte MsgFieldWowHeSwamInThe
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000228d
+	.4byte MsgFieldYouUnlockTheAquaStone
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000228e
+	.4byte MsgFieldHeAlwaysWantedToClimb
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002290
+	.4byte MsgFieldNoOneShipsToGarapas
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002295
+	.4byte MsgFieldIMSureThatBoat
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002296
+	.4byte MsgFieldThoseGuysOnTheOther
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000021ae
+	.4byte MsgFieldTheTemperatureOfTheOcean
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000021b0
+	.4byte MsgFieldLongAgoPoseidonRuledOver
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -541,7 +541,7 @@ Func_020003ac:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008484:
-	.4byte 0x00001609
+	.4byte MsgFieldWaahhhItSThem
 .L_02008488:
 	.4byte gPartyState
 .L_0200848c:
@@ -683,7 +683,7 @@ Func_02000494:
 	bl Func_02000990
 	pop {r5, r6, pc}
 .L_020085d8:
-	.4byte 0x0000160d
+	.4byte MsgFieldHaThatWasAGood
 .L_020085dc:
 	.4byte gPartyState
 .L_020085e0:
@@ -1001,7 +1001,7 @@ Func_02000800:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020088c4:
-	.4byte 0x00001613
+	.4byte MsgFieldMyThatWasInvigoratingHe
 .L_020088c8:
 	.4byte gPartyState
 	.section .text.x020088cc,"ax",%progbits
@@ -1062,7 +1062,7 @@ Func_020008cc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008950:
-	.4byte 0x00001616
+	.4byte MsgFieldNotThatWayTheMeeting
 .L_02008954:
 	.4byte gPartyState
 	.section .rodata.x02008aa8,"a",%progbits
@@ -1477,7 +1477,7 @@ Data_02001078:
 	.4byte Func_020008cc
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000160c
+	.4byte MsgFieldOoooogMaybeIShouldnT
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1506,13 +1506,13 @@ Data_020010e4:
 	.4byte Func_020008cc
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001610
+	.4byte MsgFieldMaybeIShouldHaveEaten
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001611
+	.4byte MsgFieldAllRightSoMaybeYou
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001612
+	.4byte MsgFieldOhManThereGoesMy
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_02000038

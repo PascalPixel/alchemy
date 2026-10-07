@@ -340,7 +340,7 @@ Func_02000278:
 .L_020082e8:
 	.4byte Data_020021bc
 .L_020082ec:
-	.4byte 0x00002880
+	.4byte MsgFieldTheDoorIsLockedIt
 .L_020082f0:
 	.4byte Data_020021c4
 .L_020082f4:
@@ -416,11 +416,11 @@ Func_02000308:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_0200838c:
-	.4byte 0x00002735
+	.4byte MsgFieldItHasBeenManyMany
 .L_02008390:
 	.4byte gPartyState
 .L_02008394:
-	.4byte 0x00002742
+	.4byte MsgFieldEveryoneSpoilsMeSoMuch
 	.section .text.x02008398,"ax",%progbits
 	.global Func_02000398
 	.thumb_func
@@ -484,11 +484,11 @@ Func_02000398:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_0200841c:
-	.4byte 0x00002736
+	.4byte MsgFieldWeAreTheOnlyChildren
 .L_02008420:
 	.4byte gPartyState
 .L_02008424:
-	.4byte 0x00002743
+	.4byte MsgFieldAreThereOtherChildrenIn
 	.section .text.x02008428,"ax",%progbits
 	.global Func_02000428
 	.thumb_func
@@ -1071,11 +1071,11 @@ Func_0200062c:
 .L_020088d8:
 	.4byte gPartyState
 .L_020088dc:
-	.4byte 0x00002796
+	.4byte MsgFieldTheDoorDoesnTWant
 .L_020088e0:
-	.4byte 0x00002797
+	.4byte MsgFieldAreYouKidsSTraveling
 .L_020088e4:
-	.4byte 0x0000289d
+	.4byte MsgFieldWhatSTheMatterCan
 	.section .text.x020088e8,"ax",%progbits
 	.global Func_020008e8
 	.thumb_func
@@ -1115,7 +1115,7 @@ Func_020008e8:
 .L_0200892c:
 	.4byte gPartyState
 .L_02008930:
-	.4byte 0x000028a2
+	.4byte MsgFieldAndTheOthersDrankOf
 	.section .text.x02008934,"ax",%progbits
 	.global Func_02000934
 	.thumb_func
@@ -1243,9 +1243,9 @@ Func_02000934:
 .L_02008a54:
 	.4byte gPartyState
 .L_02008a58:
-	.4byte 0x000028ac
+	.4byte MsgFieldYouLookLikeYouRe
 .L_02008a5c:
-	.4byte 0x000028a9
+	.4byte MsgFieldDoYouWishToTest
 .L_02008a60:
 	.4byte 0x00013333
 	.section .text.x02008a6c,"ax",%progbits
@@ -1966,7 +1966,7 @@ Func_02000e7c:
 	bl Func_02001bd4
 	pop {r5, r6, r7, pc}
 .L_02009090:
-	.4byte 0x00002896
+	.4byte MsgFieldOh
 .L_02009094:
 	.4byte 0x00013333
 .L_02009098:
@@ -2048,7 +2048,7 @@ Func_0200109c:
 	pop {pc}
 	.2byte 0x0000
 .L_02009154:
-	.4byte 0x00002899
+	.4byte MsgFieldWhereAreYouGoingLet
 .L_02009158:
 	.4byte 0x00013333
 .L_0200915c:
@@ -2469,7 +2469,7 @@ Func_02001160:
 	b .L_02009578
 	.2byte 0x0000
 .L_02009574:
-	.4byte 0x00002708
+	.4byte MsgFieldThisPlaceIsRemarkableTruly
 .L_02009578:
 	movs r2, #0
 	movs r0, #12
@@ -3428,22 +3428,22 @@ gSceneEvents:
 	.4byte Func_0200109c
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000272f
+	.4byte MsgFieldICannotRememberTheLast
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002730
+	.4byte MsgFieldLemuriaHasNoDiseaseNo
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002731
+	.4byte MsgFieldInLemuriaWeDoNot
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002732
+	.4byte MsgFieldLifeNeverChangesHereIn
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002733
+	.4byte MsgFieldIOughtToFeelSurprised
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002734
+	.4byte MsgFieldHowOldAmIAgain
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_02000308
@@ -3452,37 +3452,37 @@ gSceneEvents:
 	.4byte Func_02000398
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002737
+	.4byte MsgFieldMeowMrrrfle
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002738
+	.4byte MsgFieldWoofRrrrrroof
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002739
+	.4byte MsgFieldMoo
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x0000273a
+	.4byte MsgFieldBukbukbuk
 	.4byte 0x00000000
 	.4byte 0xffff0007
-	.4byte 0x0000273b
+	.4byte MsgFieldText
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000273c
+	.4byte MsgFieldMoreOfTheSameToday
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000273d
+	.4byte MsgFieldIHavenTBeenSurprised
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000273e
+	.4byte MsgFieldIVeAgedSoSlowly
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000273f
+	.4byte MsgFieldSometimesIThinkTheBuildings
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002740
+	.4byte MsgFieldLongAgoAManNamed
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002741
+	.4byte MsgFieldKingHydrosIsFarOlder
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte Func_02000308
@@ -3491,82 +3491,82 @@ gSceneEvents:
 	.4byte Func_02000398
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002744
+	.4byte MsgFieldNoOneInLemuriaFeels
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002745
+	.4byte MsgFieldThereSSoMuchTreasure
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002746
+	.4byte MsgFieldLemuriansAreSoLazyThat
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002747
+	.4byte MsgFieldIfItWerenTFor2
 	.4byte 0x00008d15
 	.4byte 0xffff0007
-	.4byte 0x00002748
+	.4byte MsgFieldMotherWhyHaveYouLeft
 	.4byte 0x00000000
 	.4byte 0x196a0018
-	.4byte 0x0000286a
+	.4byte MsgFieldIVeNeverSeenLord
 	.4byte 0x00000000
 	.4byte 0x196a0019
-	.4byte 0x0000286b
+	.4byte MsgFieldLordConservatoHasOrderedUs
 	.4byte 0x00008d15
 	.4byte 0x196a0018
-	.4byte 0x0000286c
+	.4byte MsgFieldIMSureTheSenate
 	.4byte 0x00008d15
 	.4byte 0x196a0019
-	.4byte 0x0000286d
+	.4byte MsgFieldHowCouldLordConservatoExpect
 	.4byte 0x00000000
 	.4byte 0x19690018
-	.4byte 0x000027f2
+	.4byte MsgFieldKingHydrosAwaitsYouYou
 	.4byte 0x00000000
 	.4byte 0x19690019
-	.4byte 0x000027f3
+	.4byte MsgFieldHisHighnessTheKingHas
 	.4byte 0x00008d15
 	.4byte 0x19690018
-	.4byte 0x000027f4
+	.4byte MsgFieldTheyAreClearlyUsingPsynergy
 	.4byte 0x00008d15
 	.4byte 0x19690019
-	.4byte 0x000027f5
+	.4byte MsgFieldWhatDoesHisHighnessHave
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x0000272b
+	.4byte MsgFieldTheKingIsHoldingCounsel
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x0000272c
+	.4byte MsgFieldTheKingWillBeThrilled
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0000272d
+	.4byte MsgFieldHowMuchLongerWillConservato
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0000272e
+	.4byte MsgFieldIHadHeardWasBack
 	.4byte 0x00000000
 	.4byte 0x196a001a
-	.4byte 0x00002873
+	.4byte MsgFieldIfYouAndLunpaWere
 	.4byte 0x00008d15
 	.4byte 0x196a001a
-	.4byte 0x00002879
+	.4byte MsgFieldIKnowWhyLemuriaEnded
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x000027fb
+	.4byte MsgFieldTheSenateHoldsKingHydros
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00002801
+	.4byte MsgFieldITrustTheKingIf
 	.4byte 0x0000c400
 	.4byte 0xffff000b
-	.4byte 0x00002782
+	.4byte MsgFieldHouseOfTheSenate
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x000028a0
+	.4byte MsgFieldDrinkingFromThisSpringRestores
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x000028a1
+	.4byte MsgFieldTheseTurtlesHaveLivedIn
 	.4byte 0x00000000
 	.4byte 0xffff001e
 	.4byte Func_02000934
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x000028ad
+	.4byte MsgFieldNoOneIsLuckierThan
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte Func_020008e8

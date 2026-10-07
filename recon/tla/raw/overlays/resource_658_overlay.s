@@ -134,7 +134,7 @@ Func_02000108:
 .L_02008154:
 	.4byte gPartyState
 .L_02008158:
-	.4byte 0x00002118
+	.4byte MsgFieldItLooksLikeTheKibombo
 .L_0200815c:
 	movs r0, #128
 	lsls r0, r0, #4
@@ -156,9 +156,9 @@ Func_02000108:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008184:
-	.4byte 0x00001d4c
+	.4byte MsgFieldTheArmorerAndIAre
 .L_02008188:
-	.4byte 0x000018da
+	.4byte MsgFieldAfterTheChampaOpenedThe
 	.section .text.x0200818c,"ax",%progbits
 	.global Func_0200018c
 	.thumb_func
@@ -201,7 +201,7 @@ Func_0200018c:
 .L_020081d8:
 	.4byte gPartyState
 .L_020081dc:
-	.4byte 0x0000211a
+	.4byte MsgFieldPeopleAreSayingTheChampa
 .L_020081e0:
 	movs r0, #128
 	lsls r0, r0, #4
@@ -223,9 +223,9 @@ Func_0200018c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008208:
-	.4byte 0x00001d4e
+	.4byte MsgFieldIKnewThereWasSomething
 .L_0200820c:
-	.4byte 0x000018dc
+	.4byte MsgFieldOwOwOwIThink
 	.section .text.x02008210,"ax",%progbits
 	.global Func_02000210
 	.thumb_func
@@ -268,7 +268,7 @@ Func_02000210:
 .L_0200825c:
 	.4byte gPartyState
 .L_02008260:
-	.4byte 0x0000211c
+	.4byte MsgFieldMyBoyfriendShinSeemsSo
 .L_02008264:
 	movs r0, #128
 	lsls r0, r0, #4
@@ -290,9 +290,9 @@ Func_02000210:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200828c:
-	.4byte 0x00001d50
+	.4byte MsgFieldAllMyInjuriesHaveHealed
 .L_02008290:
-	.4byte 0x000018de
+	.4byte MsgFieldMySisterWasHurtWhen
 	.section .text.x02008294,"ax",%progbits
 	.global Func_02000294
 	.thumb_func
@@ -312,7 +312,7 @@ Func_02000294:
 	pop {pc}
 	.2byte 0x0000
 .L_020082b8:
-	.4byte 0x0000208f
+	.4byte MsgFieldIfYouDonTKnow
 	.section .text.x020082bc,"ax",%progbits
 	.global Func_020002bc
 	.thumb_func
@@ -359,7 +359,7 @@ Func_020002bc:
 .L_0200831a:
 	pop {pc}
 .L_0200831c:
-	.4byte 0x0000208c
+	.4byte MsgFieldHaveYouByChanceSeen
 	.section .text.x02008320,"ax",%progbits
 	.global Func_02000320
 	.thumb_func
@@ -393,7 +393,7 @@ Func_02000320:
 	pop {pc}
 	.2byte 0x0000
 .L_02008368:
-	.4byte 0x00002090
+	.4byte MsgFieldUsingPsynergyOnMeAre
 	.section .text.x0200836c,"ax",%progbits
 	.global Func_0200036c
 	.thumb_func
@@ -428,7 +428,7 @@ Func_0200036c:
 	pop {pc}
 	.2byte 0x0000
 .L_020083b4:
-	.4byte 0x00002092
+	.4byte MsgFieldWhereCouldMenardiHaveGone
 	.section .text.x020083b8,"ax",%progbits
 	.global Func_020003b8
 	.thumb_func
@@ -463,7 +463,7 @@ Func_020003b8:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008400:
-	.4byte 0x0000205d
+	.4byte MsgFieldEveryoneHereInMadraIs
 	.section .text.x02008404,"ax",%progbits
 	.global Func_02000404
 	.thumb_func
@@ -523,9 +523,9 @@ Func_02000404:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008488:
-	.4byte 0x00001870
+	.4byte MsgFieldYeahWellWeReWorkin
 .L_0200848c:
-	.4byte 0x0000186f
+	.4byte MsgFieldYouCominThroughHere
 	.section .text.x02008490,"ax",%progbits
 	.global Func_02000490
 	.thumb_func
@@ -585,9 +585,9 @@ Func_02000490:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008514:
-	.4byte 0x00001d09
+	.4byte MsgFieldYeahUhWeReSealing
 .L_02008518:
-	.4byte 0x00001d08
+	.4byte MsgFieldOhUhYouComingThrough
 	.section .text.x0200851c,"ax",%progbits
 	.global Func_0200051c
 	.thumb_func
@@ -999,7 +999,7 @@ Func_0200083c:
 	bl Func_02002b30
 	pop {r5, r6, pc}
 .L_02008890:
-	.4byte 0x000018d5
+	.4byte MsgFieldWasIJustDreamingWhen
 	.section .text.x02008894,"ax",%progbits
 	.global Func_02000894
 	.thumb_func
@@ -1088,9 +1088,9 @@ Func_02000894:
 	bl Func_02002b30
 	pop {r5, pc}
 .L_02008960:
-	.4byte 0x00001d12
+	.4byte MsgFieldHeyMisterAreYouThe
 .L_02008964:
-	.4byte 0x0000187b
+	.4byte MsgFieldDidYouComeHereOver
 	.section .text.x02008968,"ax",%progbits
 	.global Func_02000968
 	.thumb_func
@@ -1184,9 +1184,9 @@ Func_02000968:
 	bl Func_02002b30
 	pop {r5, pc}
 .L_02008a40:
-	.4byte 0x00001d12
+	.4byte MsgFieldHeyMisterAreYouThe
 .L_02008a44:
-	.4byte 0x0000187b
+	.4byte MsgFieldDidYouComeHereOver
 	.section .text.x02008a48,"ax",%progbits
 	.global Func_02000a48
 	.thumb_func
@@ -1244,7 +1244,7 @@ Func_02000a48:
 	pop {pc}
 	.2byte 0x0000
 .L_02008ac0:
-	.4byte 0x00002043
+	.4byte MsgFieldIsThereByAnyChance
 	.section .text.x02008ac4,"ax",%progbits
 	.global Func_02000ac4
 	.thumb_func
@@ -1662,7 +1662,7 @@ Func_02000ac4:
 	b .L_02008ed8
 	.2byte 0x0000
 .L_02008ed0:
-	.4byte 0x0000185f
+	.4byte MsgFieldYouThereHoldYourGround
 .L_02008ed4:
 	.4byte gPartyState
 .L_02008ed8:
@@ -2164,7 +2164,7 @@ Func_02000f80:
 	b .L_020093d4
 	.2byte 0x0000
 .L_020093b4:
-	.4byte 0x000018e8
+	.4byte MsgFieldHasEscaped
 .L_020093b8:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -2583,11 +2583,11 @@ Func_020014fc:
 	strh r3, [r2]
 	b .L_020097f0
 .L_020097bc:
-	.4byte 0x00001cf0
+	.4byte MsgFieldHeyYouLotHoldIt
 .L_020097c0:
 	.4byte gPartyState
 .L_020097c4:
-	.4byte 0x00001cfc
+	.4byte MsgFieldItWasThemWasnT
 .L_020097c8:
 	movs r0, #20
 	bl Battle_WaitMode0
@@ -2800,7 +2800,7 @@ Func_020014fc:
 	pop {pc}
 	.2byte 0x0000
 .L_020099d0:
-	.4byte 0x00001cff
+	.4byte MsgFieldWasAnythingStolen
 .L_020099d4:
 	.4byte gPartyState
 	.section .text.x020099d8,"ax",%progbits
@@ -3128,7 +3128,7 @@ Func_020019d8:
 	bl GameFlag_SetBit
 	b .L_02009d88
 .L_02009ce8:
-	.4byte 0x000020cd
+	.4byte MsgFieldWait
 .L_02009cec:
 	.4byte Data_02003308
 .L_02009cf0:
@@ -3509,7 +3509,7 @@ Func_020019d8:
 	bl Func_02002be8
 	b .L_0200a114
 .L_0200a0a8:
-	.4byte 0x00002186
+	.4byte MsgFieldTheMayorTriedToGive
 .L_0200a0ac:
 	ldr r0, .L_0200a438
 	bl Func_02002bd0
@@ -3863,9 +3863,9 @@ Func_020019d8:
 	b .L_0200a468
 	.2byte 0x0000
 .L_0200a438:
-	.4byte 0x000020e5
+	.4byte MsgFieldICanTBelieveIt
 .L_0200a43c:
-	.4byte 0x000020e7
+	.4byte MsgFieldWhoIsThis
 .L_0200a440:
 	movs r1, #4
 	adds r1, #255
@@ -5035,58 +5035,58 @@ Data_02003358:
 	.4byte Func_02000ac4
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001875
+	.4byte MsgFieldTheTownElderTookOff
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001876
+	.4byte MsgFieldYouPickedTheWrongTime
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001877
+	.4byte MsgFieldThatBigWaveMovedThe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001878
+	.4byte MsgFieldLetMeGuessYouWant
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001879
+	.4byte MsgFieldMaybeWeLlLearnBriggs
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000187a
+	.4byte MsgFieldIfICouldWalkTo
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_02000894
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000187e
+	.4byte MsgFieldItSLikeAllThree
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000187f
+	.4byte MsgFieldTheChampaWereSwarmingOver
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001880
+	.4byte MsgFieldThoseChampaCursDugA
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001881
+	.4byte MsgFieldIDoubtTheChampaCould
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001882
+	.4byte MsgFieldIGotSomeoneToShow
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001883
+	.4byte MsgFieldIDonTCareWhat
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001884
+	.4byte MsgFieldWeTookThatUnconsciousGuy
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001885
+	.4byte MsgFieldMyFriendWasOnGuard
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001886
+	.4byte MsgFieldMyPartnerWasGuardingThe
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x0000186b
+	.4byte MsgFieldThereSNoWayThose
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x0000186c
+	.4byte MsgFieldAllOfIndraShiftedAnd
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte Func_02000404
@@ -5095,7 +5095,7 @@ Data_02003358:
 	.4byte Func_0200083c
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x000018d4
+	.4byte MsgFieldEvenIfWeTriedTo
 	.4byte 0x00000000
 	.4byte 0xffff001d
 	.4byte Func_02000108
@@ -5110,82 +5110,82 @@ Data_02003358:
 	.4byte Func_02000210
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001887
+	.4byte MsgFieldEveryoneThinksBriggsFledTo
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001888
+	.4byte MsgFieldTheTownElderIsGetting
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001889
+	.4byte MsgFieldIfABigWaveCan
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000188a
+	.4byte MsgFieldItSABitOf
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000188b
+	.4byte MsgFieldThatChampaInTheCell
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000188c
+	.4byte MsgFieldIVeAlwaysWantedTo
 	.4byte 0x00008d15
 	.4byte 0x0300040e
 	.4byte Func_02000968
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000188d
+	.4byte MsgFieldWhoWasItWhoTold
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000188e
+	.4byte MsgFieldNowMadraIsPinnedBetween
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000188f
+	.4byte MsgFieldWhenISawThoseChampa
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001890
+	.4byte MsgFieldTheChampaMustHaveKnown
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001891
+	.4byte MsgFieldItSNotLikeThe
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001892
+	.4byte MsgFieldIMNotSureThe
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001893
+	.4byte MsgFieldILlNeverForgiveThose
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001894
+	.4byte MsgFieldILookedIntoThatMan
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001895
+	.4byte MsgFieldIWonderHowManyOf
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001896
+	.4byte MsgFieldIMissMyPartnerIt
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0000186d
+	.4byte MsgFieldItSSoWeirdThat
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0000186e
+	.4byte MsgFieldTheseAreRoughTimesWe
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001872
+	.4byte MsgFieldTheChampaDugThisHole
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x000018d9
+	.4byte MsgFieldItWasAllJustA
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x000018d8
+	.4byte MsgFieldMySoreBottomTellsMe
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x000018db
+	.4byte MsgFieldTheItemVendorGotWounded
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x000018dd
+	.4byte MsgFieldThoseLousyChampaNextTime
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x000018e0
+	.4byte MsgFieldBriggsAndHisMenAre
 	.4byte 0x00008d15
 	.4byte 0xffff0023
-	.4byte 0x000018e0
+	.4byte MsgFieldBriggsAndHisMenAre
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -5238,58 +5238,58 @@ Data_0200367c:
 	.4byte Func_020014fc
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001d0c
+	.4byte MsgFieldWeThinkTheKibomboCame
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001d0d
+	.4byte MsgFieldSoTheKibomboGotInto
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001d0e
+	.4byte MsgFieldTheKibomboCameInThrough
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001d0f
+	.4byte MsgFieldIHeardThatTheElder
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001d10
+	.4byte MsgFieldIGuessThatGuyWe
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001d11
+	.4byte MsgFieldGondowanSoundsLikeAFrightening
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_02000894
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001d15
+	.4byte MsgFieldICanTBelieveSomeone
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001d16
+	.4byte MsgFieldNowThatWeReSealing
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001d17
+	.4byte MsgFieldThereAreStillPlentyOf
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001d18
+	.4byte MsgFieldBriggsDidnTHaveNearly
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001d19
+	.4byte MsgFieldTheseCavesWereMySecret
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001d1a
+	.4byte MsgFieldThatGuyWasnTOne
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001d1b
+	.4byte MsgFieldOhWeReleasedHimAs
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001d1c
+	.4byte MsgFieldEveryoneYelledAtMeFor
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001d1d
+	.4byte MsgFieldYouShouldaSeenMyPartner
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001d04
+	.4byte MsgFieldFirstPiratesRaidOurTown
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001d05
+	.4byte MsgFieldMyGuessIsTheKibombo
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte Func_02000490
@@ -5304,70 +5304,70 @@ Data_0200367c:
 	.4byte Func_02000210
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001d1e
+	.4byte MsgFieldIfItWerenTFor
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001d1f
+	.4byte MsgFieldIfGondowanIsReallyThat
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001d20
+	.4byte MsgFieldItSStrangeItS
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001d21
+	.4byte MsgFieldTheMayorIsSupposedTo
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001d22
+	.4byte MsgFieldHeToldUsHeWas
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001d23
+	.4byte MsgFieldInGondowanTheyHaveEvil
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001d24
+	.4byte MsgFieldIHeardTheGuysWho
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001d25
+	.4byte MsgFieldIfTheyWereStrongEnough
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001d26
+	.4byte MsgFieldItWasSoConvenientBeing
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001d27
+	.4byte MsgFieldIWonderWhoDugThose
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001d28
+	.4byte MsgFieldWaitIfBriggsOnlyHas
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001d29
+	.4byte MsgFieldIVeNeverSeenAny
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001d2a
+	.4byte MsgFieldDidnTSeemLikeHe
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001d2b
+	.4byte MsgFieldWasSoHappyToGet
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001d2c
+	.4byte MsgFieldIDidnTHaveA
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001d2d
+	.4byte MsgFieldICanTBelieveNobody
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001d06
+	.4byte MsgFieldTheWayThingsHaveBeen
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001d07
+	.4byte MsgFieldIVeBeenStandingFor
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001d0b
+	.4byte MsgFieldWeSealedUpTheHole
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00001d4d
+	.4byte MsgFieldTheChampaWeaponsWeFound
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00001d4f
+	.4byte MsgFieldTheGroupThatAttackedFrom
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x00001d52
+	.4byte MsgFieldThatShinIsAlwaysBugging
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -5414,64 +5414,64 @@ Data_0200394c:
 	.4byte Func_0200036c
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002040
+	.4byte MsgFieldIDonTThinkThe
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002041
+	.4byte MsgFieldWeGoToAllThat
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002042
+	.4byte MsgFieldIHeardTheBoatThe
 	.4byte 0x00000000
 	.4byte 0x0301000b
 	.4byte Func_02000a48
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002046
+	.4byte MsgFieldThoseTravelersLookedWorriedAbout
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002047
+	.4byte MsgFieldIWonderIfTheLegends
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002048
+	.4byte MsgFieldIDonTKnowWhat
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002049
+	.4byte MsgFieldAGroupOfSharpLooking
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000204a
+	.4byte MsgFieldIfYouHaveABig
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000204b
+	.4byte MsgFieldIWasAtTheMayor
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0000204c
+	.4byte MsgFieldItSNotThatI
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000204d
+	.4byte MsgFieldTheMayorAskedMeTo
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x0000204e
+	.4byte MsgFieldItSeemsNoOneIs
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0000204f
+	.4byte MsgFieldSayThereWasAnotherGroup
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002050
+	.4byte MsgFieldIThoughtShinAndThe
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002051
+	.4byte MsgFieldWhenAndHisPartyHeard
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002052
+	.4byte MsgFieldUhhhnnnUhhhnnn
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x0000203c
+	.4byte MsgFieldTheMayorFinallyReturnedFrom
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x0000203d
+	.4byte MsgFieldHeyItSYouGuys
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001870
+	.4byte MsgFieldYeahWellWeReWorkin
 	.4byte 0x00000000
 	.4byte 0xffff001d
 	.4byte Func_02000108
@@ -5489,73 +5489,73 @@ Data_0200394c:
 	.4byte Func_020003b8
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002055
+	.4byte MsgFieldWhyWouldAnyoneBeHappy
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002056
+	.4byte MsgFieldTheyVeBeenHavingSo
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002057
+	.4byte MsgFieldEveryoneGetsTheUrgeTo
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002058
+	.4byte MsgFieldIWonderWhyThoseTravelers
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002059
+	.4byte MsgFieldWhatWasThatIslandAgain
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000205a
+	.4byte MsgFieldThePeopleOfMadraKnow
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000205b
+	.4byte MsgFieldThatIslandThatGroupWas
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000205c
+	.4byte MsgFieldHowBigWouldAShip
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002061
+	.4byte MsgFieldTheseNewBoatsApparentlyUse
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002062
+	.4byte MsgFieldIfABuildingHasBroken
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002063
+	.4byte MsgFieldSailorsAreSupposedToUse
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002064
+	.4byte MsgFieldOurMayorSDoneSo
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002065
+	.4byte MsgFieldIsTurningWaterToIce
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002066
+	.4byte MsgFieldMadraIsAlwaysSoHot
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002067
+	.4byte MsgFieldSoThisFellowMustBe
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002068
+	.4byte MsgFieldIKnewIShouldHave
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0000203e
+	.4byte MsgFieldHeWasGoneSoLong
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0000203f
+	.4byte MsgFieldHowMuchLongerDoWe
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00002119
+	.4byte MsgFieldThePiratesAndTheKibombo
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x0000211b
+	.4byte MsgFieldThatNightTheChampaCame
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x0000211e
+	.4byte MsgFieldShinSeemsTerrifiedOfI
 	.4byte 0x00008d15
 	.4byte 0xffff0021
 	.4byte Func_02000320
 	.4byte 0x00008d15
 	.4byte 0xffff0023
-	.4byte 0x00002060
+	.4byte MsgFieldWeReStillRecoveringFrom
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

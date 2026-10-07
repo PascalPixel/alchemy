@@ -55,7 +55,7 @@ Func_0200006c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020080b4:
-	.4byte 0x00001cac
+	.4byte MsgFieldWhatDoYouThinkOf
 	.section .text.x020080b8,"ax",%progbits
 	.global Func_020000b8
 	.thumb_func
@@ -117,7 +117,7 @@ Func_020000b8:
 	bl Func_020014c0
 	pop {r5, r6, pc}
 .L_02008144:
-	.4byte 0x00001cb5
+	.4byte MsgFieldLookeeHereCanTYou
 .L_02008148:
 	.4byte gPartyState
 .L_0200814c:
@@ -156,7 +156,7 @@ Func_02000150:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008198:
-	.4byte 0x00001cbb
+	.4byte MsgFieldAreYouTheBraveHero
 	.section .text.x0200819c,"ax",%progbits
 	.global Func_0200019c
 	.thumb_func
@@ -223,7 +223,7 @@ Func_0200019c:
 	bl Func_020014c0
 	pop {r5, pc}
 .L_02008230:
-	.4byte 0x00001cc1
+	.4byte MsgFieldDarnThatMayor
 .L_02008234:
 	.4byte gPartyState
 	.section .text.x02008238,"ax",%progbits
@@ -354,7 +354,7 @@ Func_02000238:
 	bl Func_020014c0
 	pop {r5, pc}
 .L_02008368:
-	.4byte 0x00001cc7
+	.4byte MsgFieldIMSureTheMayor
 .L_0200836c:
 	.4byte gPartyState
 	.section .text.x02008370,"ax",%progbits
@@ -532,7 +532,7 @@ Func_02000370:
 .L_02008504:
 	.4byte gPartyState
 .L_02008508:
-	.4byte 0x00001ccd
+	.4byte MsgFieldBriggsTellsMeThereAre
 	.section .text.x02008514,"ax",%progbits
 	.global Func_02000514
 	.thumb_func
@@ -677,7 +677,7 @@ Func_02000514:
 .L_02008644:
 	.4byte gPartyState
 .L_02008648:
-	.4byte 0x00001cb6
+	.4byte MsgFieldFromHereItJustLooks
 .L_0200864c:
 	.4byte gInput
 .L_02008650:
@@ -1098,7 +1098,7 @@ Func_02000658:
 	movs r0, #9
 	b .L_02008a68
 .L_02008a64:
-	.4byte 0x000024e9
+	.4byte MsgFieldThankYouAgainMayorYou
 .L_02008a68:
 	adds r1, #204
 	adds r2, #102
@@ -2423,58 +2423,58 @@ gSceneEvents:
 	.4byte 0x00000011
 	.4byte 0x00000000
 	.4byte 0x18a7000a
-	.4byte 0x00002511
+	.4byte MsgFieldEveryoneInTownIsTalking
 	.4byte 0x00008d15
 	.4byte 0x18a7000a
-	.4byte 0x00002523
+	.4byte MsgFieldIDonTKnowWhat3
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001cab
+	.4byte MsgFieldYouShouldGoToThe
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte Func_0200006c
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001caf
+	.4byte MsgFieldOurTownWasRifeWith
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001cb0
+	.4byte MsgFieldTheMountainsToTheEast
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001cb1
+	.4byte MsgFieldThereAreNumerousTalesAbout
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001cb2
+	.4byte MsgFieldWhyDoTheyAlwaysTell
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001cb3
+	.4byte MsgFieldThosePiratesNeverDidUs
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001cb4
+	.4byte MsgFieldThereSNoWayTo
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_020000b8
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001cb8
+	.4byte MsgFieldTheLongerISitHere
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001cb9
+	.4byte MsgFieldIDBeenSayingIndra
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001cba
+	.4byte MsgFieldISatAndGazedAt
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_02000150
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001cbe
+	.4byte MsgFieldIHeardThePiratesTalking
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001cbf
+	.4byte MsgFieldIWishSomeoneWouldGo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001cc0
+	.4byte MsgFieldIHopeTheWarriorsWho
 	.4byte 0x00000000
 	.4byte 0x08ba0012
 	.4byte Func_0200019c
@@ -2483,16 +2483,16 @@ gSceneEvents:
 	.4byte Func_0200019c
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001cc3
+	.4byte MsgFieldIMStartingToThink
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001cc4
+	.4byte MsgFieldHeSAlreadyBeenPaid
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001cc5
+	.4byte MsgFieldIfWeLeaveTheBoat
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001cc6
+	.4byte MsgFieldTheMoneyBriggsUsedTo
 	.4byte 0x00000000
 	.4byte 0x08bb0008
 	.4byte Func_02000238
@@ -2507,19 +2507,20 @@ gSceneEvents:
 	.4byte Func_02000370
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001cd8
+	.4byte MsgFieldIAmPlanningAGlorious
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001cd9
+	.4byte MsgFieldTheMayorWonTHelp
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001cda
+	.4byte MsgFieldThisIsSuchAFantastic
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001cdb
+	.4byte MsgFieldTheMayorHatesSeeingAnyone
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgFieldThatSeafoodStewHasAn
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -523,7 +523,7 @@ msgctxt "message"
 msgid "00128"
 msgstr "Lente"
 
-msgctxt "message"
+msgctxt "MsgFieldOff"
 msgid "00129"
 msgstr "Non"
 
@@ -24375,7 +24375,7 @@ msgctxt "message"
 msgid "06091"
 msgstr "Quelle honte! Je me suis{line_break}fait battre par une fille...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWaahhhItSThem"
 msgid "06092"
 msgstr "Aaah! C'est eux!{end_wait}"
 
@@ -24387,11 +24387,11 @@ msgctxt "message"
 msgid "06094"
 msgstr "Peu importe! Je peux tenir{line_break}tête à une fille et un vieillard!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOoooogMaybeIShouldnT"
 msgid "06095"
 msgstr "Peut-être l'ai-je sous-estimée...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHaThatWasAGood"
 msgid "06096"
 msgstr "Ah! Quelle bonne idée d'être{line_break}venus les attendre ici!{end_wait}"
 
@@ -24403,19 +24403,19 @@ msgctxt "message"
 msgid "06098"
 msgstr "Nous allons vous livrer{line_break}à notre chef Iodem!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMaybeIShouldHaveEaten"
 msgid "06099"
 msgstr "Peut-être aurais-je dû prendre{line_break}un petit déjeuner plus copieux.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllRightSoMaybeYou"
 msgid "06100"
 msgstr "Tout compte fait,{line_break}allez où bon vous{line_break}semble...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhManThereGoesMy"
 msgid "06101"
 msgstr "Oh non... Ma promotion vient{line_break}de me passer sous le nez...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyThatWasInvigoratingHe"
 msgid "06102"
 msgstr "Waouh! Je me sens ragaillardi!{line_break}Ce monstre n'était pas trop fort...{end_wait}"
 
@@ -24427,7 +24427,7 @@ msgctxt "message"
 msgid "06104"
 msgstr "Non, pas par là, {actor_name:6}!{line_break}Le lieu du rendez-vous{line_break}se trouve plus à l'ouest.{page_break}Nous devons descendre cette{line_break}route et trouver la caverne.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNotThatWayTheMeeting"
 msgid "06105"
 msgstr "Pas par là, {actor_name:6}!{line_break}Le lieu du rendez-vous{line_break}se trouve plus au sud.{page_break}Nous devons redescendre{line_break}et entrer dans cette caverne.{end_wait}"
 
@@ -26767,7 +26767,7 @@ msgctxt "message"
 msgid "06689"
 msgstr "Eh bien, ne perdons pas{line_break}notre temps ici...{page_break}Nous ferions mieux d'aller{line_break}chercher un bateau que{line_break}nous pourrons utiliser.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouThereHoldYourGround"
 msgid "06690"
 msgstr "Hé, vous!{line_break}N'avancez pas!{end_wait}"
 
@@ -26815,27 +26815,27 @@ msgctxt "message"
 msgid "06701"
 msgstr "C'est du passé maintenant...{line_break}Vous pouvez vous détendre{line_break}en toute tranquillité.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSNoWayThose"
 msgid "06702"
 msgstr "Il est impossible que ces{line_break}pirates reviennent ici...{page_break}Pas après qu'Indra ait si{line_break}violemment percuté Océnia.{page_break}Il paraît qu'on peut y aller{line_break}en marchant maintenant!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllOfIndraShiftedAnd"
 msgid "06703"
 msgstr "Indra a dérivé jusqu'à heurter{line_break}avec violence Océnia...{line_break}Tout le monde en parle.{page_break}Comme si nos problèmes{line_break}avec ces pirates de malheur{line_break}ne suffisaient pas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSSoWeirdThat"
 msgid "06704"
 msgstr "Et dire qu'il est maintenant{line_break}possible d'aller à Océnia{line_break}en marchant. C'est fou!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheseAreRoughTimesWe"
 msgid "06705"
 msgstr "Les temps sont durs...{line_break}Il nous faudrait plus de{line_break}gens pour nous aider.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouCominThroughHere"
 msgid "06706"
 msgstr "Vous voulez passer par là?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldYeahWellWeReWorkin"
 msgid "06707"
 msgstr "En fait...{pause_20_skippable} Le tunnel est{line_break}en cours de construction.{page_break}Donc, pour le moment, le seul{line_break}moyen d'accéder à Madra est{line_break}d'utiliser l'entrée principale.{end_wait}"
 
@@ -26843,7 +26843,7 @@ msgctxt "message"
 msgid "06708"
 msgstr "Ça tombe bien, car nous ne{line_break}laissons passer personne.{page_break}Si vous voulez aller à Madra,{line_break}vous devez emprunter{line_break}l'entrée principale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheChampaDugThisHole"
 msgid "06709"
 msgstr "Des hommes de Champa ont{line_break}creusé ce trou pour piller notre{line_break}village. Mais ce n'est pas tout...{page_break}Ce trou a révélé une galerie{line_break}qui s'étend sous le village.{end_wait}"
 
@@ -26855,31 +26855,31 @@ msgctxt "MsgFieldWhoDugCave"
 msgid "06711"
 msgstr "Qui a creusé cette galerie?{pause_20_skippable}{line_break}Et pourquoi?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheTownElderTookOff"
 msgid "06712"
 msgstr "Le conseiller du village est{line_break}parti négocier avec Briggs...{line_break}J'ignore où il est passé.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouPickedTheWrongTime"
 msgid "06713"
 msgstr "Vous n'avez pas choisi le bon{line_break}moment pour venir à Madra...{page_break}Des catastrophes ont frappé{line_break}le village, des attaques pirates,{line_break}des événements surnaturels...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatBigWaveMovedThe"
 msgid "06714"
 msgstr "Le raz de marée a déplacé{line_break}le continent d'Indra vers{line_break}le sud.{page_break}Nous sommes à présent{line_break}piégés entre Gondowan{line_break}et Océnia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLetMeGuessYouWant"
 msgid "06715"
 msgstr "Vous cherchez un bateau,{line_break}n'est-ce pas?{page_break}Comme je l'ai dit au dernier{line_break}visiteur, le raz de marée a{line_break}détruit tous nos bateaux!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMaybeWeLlLearnBriggs"
 msgid "06716"
 msgstr "Espérons que l'interrogatoire{line_break}des prisonniers Champa{line_break}sera fructueux.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfICouldWalkTo"
 msgid "06717"
 msgstr "Si je pouvais marcher jusqu'à{line_break}Océnia, je pourrais enfin voir{line_break}Rochair, près de Garoh.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDidYouComeHereOver"
 msgid "06718"
 msgstr "Avez-vous traversé le Plateau{line_break}du Dehkan pour venir jusqu'ici?{page_break}Oui? Vous avez donc vu le{line_break}bateau échoué près de la{line_break}caverne, non?{end_now}"
 
@@ -26891,103 +26891,103 @@ msgctxt "message"
 msgid "06720"
 msgstr "Vous n'avez rien vu? Etrange...{page_break}Peut-être qu'il a été{line_break}poussé par les vagues...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSLikeAllThree"
 msgid "06721"
 msgstr "C'est comme si les trois{line_break}continents s'étaient réunis{line_break}pour former un supercontinent!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheChampaWereSwarmingOver"
 msgid "06722"
 msgstr "Les Champas ont tenté{line_break}d'envahir le village...{page_break}Mais mes cris perçants{line_break}les ont effrayés!{line_break}C'est la vérité!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThoseChampaCursDugA"
 msgid "06723"
 msgstr "Ces maudits Champas ont{line_break}creusé ce tunnel pour{line_break}entrer dans Madra...{page_break}Mais c'était un piège. Leur{line_break}vrai plan était de s'infiltrer{line_break}dans la prison... C'est fou!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDoubtTheChampaCould"
 msgid "06724"
 msgstr "Je doute que les Champas{line_break}soient derrière ce plan...{page_break}Et qui sait... Le bateau que{line_break}nous avons repéré au nord{line_break}ne leur appartient peut-être pas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIGotSomeoneToShow"
 msgid "06725"
 msgstr "Quelqu'un m'a accompagnée{line_break}à l'intérieur... Le trou est{line_break}gigantesque!{page_break}Comment ont-ils pu creuser un{line_break}si gros trou en si peu de temps,{line_break}et sans que nous le remarquions...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTCareWhat"
 msgid "06726"
 msgstr "Je me moque de ce que{line_break}raconte notre conseiller...{page_break}Ce prisonnier Champa est{line_break}un rebut! Qu'il moisisse{line_break}en prison!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeTookThatUnconsciousGuy"
 msgid "06727"
 msgstr "On a trouvé un blessé léger{line_break}à bord du bateau. On l'a{line_break}écroué aussitôt.{page_break}Mais il nous répète qu'il{line_break}n'est pas un Champa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyFriendWasOnGuard"
 msgid "06728"
 msgstr "Mon ami était de garde{line_break}quand les hommes de{line_break}Briggs ont lancé l'assaut...{page_break}Qui laisserait une terreur{line_break}comme Briggs en liberté?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyPartnerWasGuardingThe"
 msgid "06729"
 msgstr "Mon collègue gardait{line_break}la prison...{page_break}Quand les Champas ont{line_break}attaqué, il a pris peur et{line_break}s'est enfui. Quelle honte!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEveryoneThinksBriggsFledTo"
 msgid "06730"
 msgstr "Briggs aurait fui vers{line_break}l'est après son évasion...{page_break}Le conseiller du village et{line_break}les autres sont eux aussi{line_break}partis dans cette direction.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheTownElderIsGetting"
 msgid "06731"
 msgstr "Le conseiller du village n'est{line_break}plus très jeune. J'espère que ce{line_break}voyage ne le fatiguera pas trop...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfABigWaveCan"
 msgid "06732"
 msgstr "Si une vague géante{line_break}peut déplacer un{line_break}continent...{page_break}Cela signifie qu'Indra{line_break}repose sur l'eau, non?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSABitOf"
 msgid "06733"
 msgstr "Hélas, le raz de marée a{line_break}détruit tous nos bateaux,{line_break}causant un sérieux problème...{page_break}Mais, quelque part, ce n'est{line_break}plus un problème...{page_break}Comme les trois continents{line_break}sont désormais rattachés, nous{line_break}n'avons plus besoin de bateaux.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatChampaInTheCell"
 msgid "06734"
 msgstr "Le Champa qui occupe cette{line_break}cellule me semble un peu{line_break}pâle pour un pirate...{page_break}Les pirates sont censés{line_break}avoir la peau mate...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeAlwaysWantedTo"
 msgid "06735"
 msgstr "J'aimerais tant visiter{line_break}Rochair... mais la route{line_break}menant à Garoh est si longue...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoWasItWhoTold"
 msgid "06736"
 msgstr "Qui m'a dit que le bateau{line_break}Champa était endommagé?{page_break}Je ne me rappelle plus...{line_break}Je parie que Briggs est allé{line_break}chercher un bateau à Océnia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNowMadraIsPinnedBetween"
 msgid "06737"
 msgstr "Madra est désormais coincé{line_break}entre deux continents!{page_break}Les habitants de Gondowan{line_break}peuvent venir visiter à pied!{line_break}C'est trop drôle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenISawThoseChampa"
 msgid "06738"
 msgstr "Quand j'ai vu ces Champas,{line_break}je n'ai pu m'empêcher de{line_break}pousser un cri de terreur...{page_break}J'ai dû les effrayer car{line_break}ils ont tous pris la fuite!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheChampaMustHaveKnown"
 msgid "06739"
 msgstr "Les Champas savaient{line_break}exactement où se{line_break}trouvait Briggs.{page_break}Mais où se sont-ils procuré{line_break}le plan de notre village?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSNotLikeThe"
 msgid "06740"
 msgstr "Imaginer des stratégies{line_break}élaborées n'est pas le{line_break}fort des Champas...{page_break}Je pense que ces deux raids{line_break}étaient une pure coïncidence.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMNotSureThe"
 msgid "06741"
 msgstr "Peut-être que ce trou n'a pas{line_break}été creusé par les Champas...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldILlNeverForgiveThose"
 msgid "06742"
 msgstr "Je ne pardonnerai jamais{line_break}à ces chiens tout le mal{line_break}qu'ils ont fait au village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldILookedIntoThatMan"
 msgid "06743"
 msgstr "Je l'ai regardé droit dans les{line_break}yeux. Cet homme semblait{line_break}si serein, si calme...{page_break}De si beaux yeux ne{line_break}sauraient mentir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWonderHowManyOf"
 msgid "06744"
 msgstr "Je me demande combien{line_break}il y avait de Champas{line_break}parmi les voleurs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMissMyPartnerIt"
 msgid "06745"
 msgstr "Mon collègue me manque...{line_break}Comme il a été lâche de{line_break}prendre la fuite.{page_break}Mais qui sait? Peut-être{line_break}aurais-je fait la même{line_break}chose à sa place...{end_wait}"
 
@@ -27235,11 +27235,11 @@ msgctxt "message"
 msgid "06806"
 msgstr "Quand serai-je donc libre?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEvenIfWeTriedTo"
 msgid "06807"
 msgstr "Même si nous racontions{line_break}ce que nous avons vu...{line_break}Qui nous croierait!?{page_break}Je vais le surveiller{line_break}avec un peu de distance,{line_break}ce sera plus sûr.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWasIJustDreamingWhen"
 msgid "06808"
 msgstr "Est-ce que je rêvais{line_break}quand ce pilier de{line_break}glace est apparu?{end_now}"
 
@@ -27251,31 +27251,31 @@ msgctxt "message"
 msgid "06810"
 msgstr "Comment!?{pause_20_skippable} Oh... Vous...{line_break}Vous plaisantez, n'est-ce pas?{line_break}C'est une... farce...{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgFieldMySoreBottomTellsMe"
 msgid "06811"
 msgstr "Mon petit doigt me dit{line_break}que c'était bien réel...{page_break}Mais je ferais mieux de{line_break}garder tout ça pour moi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItWasAllJustA"
 msgid "06812"
 msgstr "C'était un rêve... A force{line_break}de me le répéter, je vais{line_break}bien finir par le croire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAfterTheChampaOpenedThe"
 msgid "06813"
 msgstr "Après avoir ouvert les{line_break}cellules, les Champas{line_break}sont venus par ici...{page_break}Tous les marchands d'armes{line_break}se sont aussitôt saisi de{line_break}leurs épées pour se battre...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheItemVendorGotWounded"
 msgid "06814"
 msgstr "La marchande d'objets a été{line_break}blessée pendant le combat...{line_break}Elle n'est toujours pas guérie.{page_break}Son fiancé ne pardonnera{line_break}jamais au prisonnier ce{line_break}qu'il a fait...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOwOwOwIThink"
 msgid "06815"
 msgstr "Aïe Aïe Aïe...{line_break}Je crois que je me{line_break}suis fait un bleu...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThoseLousyChampaNextTime"
 msgid "06816"
 msgstr "Ces maudits Champas...{page_break}La prochaine fois que nous{line_break}nous croiserons, ce sont eux{line_break}qui seront couverts de bleus!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMySisterWasHurtWhen"
 msgid "06817"
 msgstr "Ma s¾ur a été blessée{line_break}quand les Champas{line_break}ont attaqué...{page_break}Elle s'en remettra mais{line_break}j'espère que Shin la vengera.{end_wait}"
 
@@ -27283,7 +27283,7 @@ msgctxt "message"
 msgid "06818"
 msgstr "Ohh... {text_effect:4}Ohhh...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsAndHisMenAre"
 msgid "06819"
 msgstr "Briggs et ses hommes{line_break}sont des brutes. Imaginez,{line_break}frapper une femme...{page_break}Quand j'y pense, ça{line_break}me rend furieuse!{end_wait}"
 
@@ -27315,7 +27315,7 @@ msgctxt "message"
 msgid "06826"
 msgstr "Le raid faisait partie{line_break}de l'épreuve. C'est{line_break}sûrement ça.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHasEscaped"
 msgid "06827"
 msgstr "{actor_name:8} s'est échappé!?{end_wait}"
 
@@ -31167,11 +31167,11 @@ msgctxt "message"
 msgid "07789"
 msgstr "De toute façon, la porte{line_break}qui mène au trésor du{line_break}maire est scellée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouShouldGoToThe"
 msgid "07790"
 msgstr "Vous devriez monter à la{line_break}tour de guet et jeter un{line_break}coup d'¾il vers le sud.{page_break}Par temps clair, vous pourrez{line_break}y apprécier une vue splendide{line_break}de Rochair.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatDoYouThinkOf"
 msgid "07791"
 msgstr "Comment trouvez-vous{line_break}Alhafra? Vous aimez?{end_now}"
 
@@ -31183,35 +31183,35 @@ msgctxt "message"
 msgid "07793"
 msgstr "Alors, pourquoi ne pas{line_break}aller du côté sud?{page_break}Le c¾ur d'Océnia est une{line_break}mine de merveilles pour{line_break}des guerriers comme vous.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOurTownWasRifeWith"
 msgid "07794"
 msgstr "Les pirates avaient envahi{line_break}notre paisible village.{page_break}Vous nous avez débarrassés{line_break}de ce fléau. Nous vous devons{line_break}une fière chandelle.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMountainsToTheEast"
 msgid "07795"
 msgstr "A l'est d'Alhafra se dresse{line_break}la chaîne de Balloo, qui{line_break}divise Océnia en deux.{page_break}La région située de l'autre{line_break}côté de Balloo est le{line_break}quartier est d'Océnia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereAreNumerousTalesAbout"
 msgid "07796"
 msgstr "Le pic rocheux de Rochair{line_break}est au c¾ur de maintes{line_break}légendes.{page_break}Rochair est si mystérieux{line_break}que beaucoup de gens{line_break}pensent qu'il abrite un secret.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyDoTheyAlwaysTell"
 msgid "07797"
 msgstr "Pourquoi me pressent-ils{line_break}d'envoyer les aventuriers{line_break}au sud d'Océnia?{page_break}Est-ce tellement excitant{line_break}de traverser le désert pour{line_break}aller ensuite vers le sud?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThosePiratesNeverDidUs"
 msgid "07798"
 msgstr "Ces pirates ne nous ont rien{line_break}fait. Peut-être parce qu'ils{line_break}préparaient un gros coup.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSNoWayTo"
 msgid "07799"
 msgstr "La traversée de la chaîne{line_break}de Balloo est impossible.{page_break}On dit que l'ouest d'Océnia{line_break}est un havre de paix{line_break}comparé à la partie est.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLookeeHereCanTYou"
 msgid "07800"
 msgstr "Regardez!{line_break}Est-ce que vous voyez{line_break}Rochair tout là-bas?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldFromHereItJustLooks"
 msgid "07801"
 msgstr "De loin, on dirait un vieux{line_break}rocher ordinaire, mais de{line_break}près, c'est autre chose!{page_break}La première fois, on pense:{line_break}\"Ah, ce rocher dégage{line_break}quelque chose de si austère!\"{end_wait}"
 
@@ -31219,19 +31219,19 @@ msgctxt "message"
 msgid "07802"
 msgstr "Aujourd'hui, le ciel est{line_break}relativement nuageux.{page_break}\"Pic de Vent\" est le surnom{line_break}donné à Rochair. Le ciel à cet{line_break}endroit ne se couvre jamais.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheLongerISitHere"
 msgid "07803"
 msgstr "Plus je contemple Rochair{line_break}et plus je suis admiratif.{page_break}Quelques secondes suffisent{line_break}pour vous convaincre qu'il{line_break}renferme de vieux secrets.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDBeenSayingIndra"
 msgid "07804"
 msgstr "J'avais remarqué qu'Indra{line_break}n'était plus à sa place.{line_break}Mais personne ne m'a cru.{page_break}J'ai retrouvé ma crédibilité{line_break}lorsque le maire de Madra{line_break}est venu à pied jusqu'ici.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISatAndGazedAt"
 msgid "07805"
 msgstr "Tous les jours, je venais ici{line_break}pour contempler le continent.{page_break}Donc, à force de le voir, je{line_break}savais exactement où ce{line_break}continent se trouvait!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouTheBraveHero"
 msgid "07806"
 msgstr "Est-ce toi le héros qui{line_break}a vaincu les pirates?{end_now}"
 
@@ -31243,19 +31243,19 @@ msgctxt "message"
 msgid "07808"
 msgstr "Je sais que c'est toi qui{line_break}as vaincu les pirates... Ne{line_break}sois donc pas si modeste...{page_break}Crois-moi, tu as fait preuve{line_break}de grande bravoure.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHeardThePiratesTalking"
 msgid "07809"
 msgstr "Les pirates parlaient avec{line_break}un tel mépris des guerriers{line_break}qui les ont vaincus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWishSomeoneWouldGo"
 msgid "07810"
 msgstr "Si seulement quelqu'un{line_break}pouvait purifier le village{line_break}maudit situé plus au sud.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHopeTheWarriorsWho"
 msgid "07811"
 msgstr "J'espère que les guerriers qui{line_break}ont battu les pirates ne viennent{line_break}pas de Garoh, la ville damnée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDarnThatMayor"
 msgid "07812"
 msgstr "Ce maire de malheur...{end_wait}"
 
@@ -31263,23 +31263,23 @@ msgctxt "message"
 msgid "07813"
 msgstr "Je pensais qu'il ordonnerait la{line_break}réparation immédiate du mât...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMStartingToThink"
 msgid "07814"
 msgstr "Je commence à croire que le{line_break}maire d'Alhafra n'a jamais eu{line_break}l'intention de réparer le bateau!{page_break}J'ai été naïf de croire qu'il{line_break}allait nous aider...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeSAlreadyBeenPaid"
 msgid "07815"
 msgstr "Il a été payé pour réparer{line_break}le bateau, mais c'était un{line_break}arrangement avec Briggs.{page_break}Il exigera sûrement un{line_break}second paiement pour les{line_break}réparations... Quel escroc...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfWeLeaveTheBoat"
 msgid "07816"
 msgstr "Si nous laissons le bateau{line_break}ici, le maire d'Alhafra gardera{line_break}le bateau ET l'argent.{page_break}Il y a certainement un moyen{line_break}de réparer ce bateau sans{line_break}l'aide d'Alhafra...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMoneyBriggsUsedTo"
 msgid "07817"
 msgstr "L'argent avec lequel Briggs{line_break}a acheté le bateau a été{line_break}volé à nos villageois...{page_break}Nous sommes donc en droit{line_break}d'attendre que le maire d'Alhafra{line_break}honore sa promesse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSureTheMayor"
 msgid "07818"
 msgstr "Je suis sûr que le maire avait{line_break}une bonne raison d'interrompre{line_break}la réparation du voilier...{end_wait}"
 
@@ -31303,7 +31303,7 @@ msgctxt "message"
 msgid "07823"
 msgstr "Madra devra payer de sa{line_break}poche tous les travaux{line_break}effectués sur le bateau.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsTellsMeThereAre"
 msgid "07824"
 msgstr "Briggs raconte qu'il a vu des villes{line_break}immenses sur un continent situé{line_break}au-delà de la Mer Orientale.{end_wait}"
 
@@ -31347,19 +31347,19 @@ msgctxt "message"
 msgid "07834"
 msgstr "Tu ne veux donc pas{line_break}exploiter le potentiel{line_break}de ce partenariat...{page_break}Tu devrais encore y{line_break}réfléchir... Tu pourrais{line_break}gagner très gros...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIAmPlanningAGlorious"
 msgid "07835"
 msgstr "Pour ce commerce, je{line_break}prévois de construire{line_break}un superbe voilier...{page_break}Je suis certain de notre{line_break}succès. Bientôt, nous{line_break}serons très très riches.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorWonTHelp"
 msgid "07836"
 msgstr "Sans soutien financier,{line_break}le maire ne touchera{line_break}pas au bateau.{page_break}Si le maire de Madra veut{line_break}que le bateau soit réparé,{line_break}il devra payer le prix.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThisIsSuchAFantastic"
 msgid "07837"
 msgstr "Et dire que cette idée{line_break}de génie est de moi...{page_break}Logiquement, c'est à moi{line_break}seul que doivent revenir{line_break}tous les profits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorHatesSeeingAnyone"
 msgid "07838"
 msgstr "Le maire veut mener la{line_break}vie dure aux Madrans.{page_break}Il n'a jamais supporté que{line_break}d'autres s'enrichissent à{line_break}sa place.{page_break}Hi hi hi... Quel filou!{end_wait}"
 
@@ -31443,7 +31443,7 @@ msgctxt "message"
 msgid "07858"
 msgstr "Nous sommes dans{line_break}l'impasse à cause{line_break}de ce rocher...{page_break}Nous avons fait notre{line_break}possible... Partons...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeyYouLotHoldIt"
 msgid "07859"
 msgstr "Hé! Vous! Ne partez pas!{end_wait}"
 
@@ -31491,7 +31491,7 @@ msgctxt "message"
 msgid "07870"
 msgstr "Juste après le{line_break}départ du maire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItWasThemWasnT"
 msgid "07871"
 msgstr "C'étaient eux, n'est-ce{line_break}pas, {actor_name:5}?{end_now}"
 
@@ -31503,7 +31503,7 @@ msgctxt "message"
 msgid "07873"
 msgstr "Souviens-toi, {actor_name:5}!{line_break}La caverne? Les hommes{line_break}que nous avons croisés?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWasAnythingStolen"
 msgid "07874"
 msgstr "Ils ont volé quelque chose?{end_wait}"
 
@@ -31523,27 +31523,27 @@ msgctxt "message"
 msgid "07878"
 msgstr "Comme vous nous avez{line_break}aidés avec les Champas,{line_break}je vous confie ce secret...{page_break}Les voleurs sont entrés{line_break}dans la maison du maire.{line_break}A votre place, j'irais voir.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgFieldFirstPiratesRaidOurTown"
 msgid "07879"
 msgstr "Tout le monde attaque le{line_break}village. Les Champas,{line_break}ensuite les Kibombos...{page_break}Depuis quelque temps,{line_break}tout va mal à Madra...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyGuessIsTheKibombo"
 msgid "07880"
 msgstr "Les Kikombos doivent{line_break}être très loin à cette{line_break}heure.{page_break}Mais vu les circonstances,{line_break}nous devrions poster des{line_break}gardes à l'entrée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheWayThingsHaveBeen"
 msgid "07881"
 msgstr "Tous ces événements{line_break}m'ont rendu nerveux et{line_break}insomniaque...{page_break}Les Dieux auraient-ils{line_break}maudit notre village?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeBeenStandingFor"
 msgid "07882"
 msgstr "Je n'en peux plus d'être{line_break}debout. Pourvu qu'on nous{line_break}apporte des tabourets.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhUhYouComingThrough"
 msgid "07883"
 msgstr "Oh... Vous voulez passer?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldYeahUhWeReSealing"
 msgid "07884"
 msgstr "Oui mais... Nous sommes en{line_break}train de reboucher le trou,{line_break}donc, vous nous dérangez.{page_break}Si vous voulez aller à Madra,{line_break}pourquoi ne pas passer par{line_break}l'entrée principale?{end_wait}"
 
@@ -31551,35 +31551,35 @@ msgctxt "message"
 msgid "07885"
 msgstr "Tant mieux, car nous{line_break}ne pouvions pas vous{line_break}laisser passer...{page_break}Et puis, si les gens veulent{line_break}aller à Madra, qu'ils passent{line_break}par l'entrée principale!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeSealedUpTheHole"
 msgid "07886"
 msgstr "Reboucher le trou n'a{line_break}pas suffi à rassurer{line_break}les villageois...{page_break}Peut-être devrions-nous{line_break}aussi condamner l'accès{line_break}aux catacombes...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeThinkTheKibomboCame"
 msgid "07887"
 msgstr "Les Kibombos ont sans doute{line_break}traversé le nouveau pont{line_break}naturel pour atteindre Indra.{page_break}Devant la {text_effect:2}possibilité{reset_text_style}{line_break}d'attaquer Madra, ils n'ont{line_break}pas hésité...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSoTheKibomboGotInto"
 msgid "07888"
 msgstr "Donc... Les Kibombos sont allés{line_break}à Madra depuis Gondowan?{page_break}Dans ce cas, nous pouvons{line_break}nous rendre à Gondowan{line_break}depuis Madra, non?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheKibomboCameInThrough"
 msgid "07889"
 msgstr "Les Kibombos sont passés{line_break}par le rempart ouest, qui{line_break}est partiellement détruit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHeardThatTheElder"
 msgid "07890"
 msgstr "On dit que notre conseiller a{line_break}trouvé un bateau à Alhafra...{line_break}Allez savoir si c'est vrai...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIGuessThatGuyWe"
 msgid "07891"
 msgstr "Après tout, ce prisonnier{line_break}n'était peut-être pas le{line_break}complice de Briggs...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGondowanSoundsLikeAFrightening"
 msgid "07892"
 msgstr "Gondowan semble être un{line_break}endroit très glauque. Je n'y{line_break}mettrai jamais les pieds.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeyMisterAreYouThe"
 msgid "07893"
 msgstr "Hé, monsieur! C'est vous{line_break}qui avez vaincu Briggs?{end_now}"
 
@@ -31591,103 +31591,103 @@ msgctxt "message"
 msgid "07895"
 msgstr "Non? On dit partout que le{line_break}héros est un jeune guerrier...{line_break}Moi, j'ai cru que c'était vous.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICanTBelieveSomeone"
 msgid "07896"
 msgstr "Et dire que les pirates{line_break}ont été battus...{line_break}C'est incroyable!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNowThatWeReSealing"
 msgid "07897"
 msgstr "Les deux entrées de la{line_break}caverne ont été bouchées.{line_break}Plus de mauvaise surprise!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereAreStillPlentyOf"
 msgid "07898"
 msgstr "Il y a tant de choses{line_break}intéressantes à étudier{line_break}dans cette caverne.{page_break}Je ne reboucherai rien{line_break}tant que je n'aurai pas{line_break}tout contemplé.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsDidnTHaveNearly"
 msgid "07899"
 msgstr "La bande de Briggs ne{line_break}comptait pas tant{line_break}d'hommes que ça.{page_break}Mais ça ne l'a pas{line_break}empêché de semer{line_break}la pagaille au village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheseCavesWereMySecret"
 msgid "07900"
 msgstr "Cette caverne était{line_break}ma cachette.{page_break}J'espère qu'ils n'ont pas{line_break}scellé toutes les entrées.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatGuyWasnTOne"
 msgid "07901"
 msgstr "En fin de compte, {actor_name:8}{line_break}n'appartenait pas à la{line_break}bande de Briggs.{page_break}Nous n'aurions pas dû{line_break}l'écrouer sans preuve.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhWeReleasedHimAs"
 msgid "07902"
 msgstr "Oh, {actor_name:8}? Nous avons reçu{line_break}l'ordre de le libérer sans délai.{page_break}On l'a vu aller chez le maire.{line_break}Ensuite, il a quitté la ville.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEveryoneYelledAtMeFor"
 msgid "07903"
 msgstr "J'ai été réprimandé pour{line_break}avoir pris la fuite. Je me{line_break}battrai la prochaine fois!{page_break}Mais ces monstres m'ont{line_break}déjà fait une terrible{line_break}bosse à la tête. Aïe!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouShouldaSeenMyPartner"
 msgid "07904"
 msgstr "Mon partenaire a réagi{line_break}de façon exemplaire!{page_break}Il s'est battu avec un tel{line_break}acharnement! Vraiment...{line_break}Quel courage!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfItWerenTFor"
 msgid "07905"
 msgstr "Le raz de marée est la{line_break}cause de ces terribles{line_break}événements...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfGondowanIsReallyThat"
 msgid "07906"
 msgstr "Si Gondowan est vraiment{line_break}plus grand qu'Indra, il serait{line_break}intéressant de l'explorer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSStrangeItS"
 msgid "07907"
 msgstr "Etrange... On dirait que les{line_break}Kibombos savaient que le{line_break}mur était détruit...{page_break}A part des pirates, je ne vois{line_break}pas de qui ils pouvaient{line_break}tenir cette information.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorIsSupposedTo"
 msgid "07908"
 msgstr "Le maire est censé{line_break}revenir avec un bateau.{line_break}Je m'impatiente...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeToldUsHeWas"
 msgid "07909"
 msgstr "Il criait son innocence, mais{line_break}nous l'avons jeté en prison.{line_break}Elle est belle la justice!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInGondowanTheyHaveEvil"
 msgid "07910"
 msgstr "Les habitants de Gondowan{line_break}sont dotés des pouvoirs{line_break}les plus diaboliques!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHeardTheGuysWho"
 msgid "07911"
 msgstr "Il paraît que Briggs s'est{line_break}fait battre par une bande{line_break}de gamins chétifs...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfTheyWereStrongEnough"
 msgid "07912"
 msgstr "S'ils ont vaincu Briggs,{line_break}ils devaient être très{line_break}grands et très forts!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItWasSoConvenientBeing"
 msgid "07913"
 msgstr "Avec la caverne, c'était{line_break}si simple de s'en aller{line_break}discrètement.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWonderWhoDugThose"
 msgid "07914"
 msgstr "Je me demande qui a creusé{line_break}ce monde souterrain et dans{line_break}quel but...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWaitIfBriggsOnlyHas"
 msgid "07915"
 msgstr "Mais Briggs et ses quatre{line_break}hommes n'auraient jamais{line_break}pu nous embobiner seuls...{page_break}De toute évidence,{line_break}on les a aidés...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeNeverSeenAny"
 msgid "07916"
 msgstr "Jusqu'à ce jour, je n'ai{line_break}pas vu de monstre à{line_break}l'entrée de la caverne...{page_break}J'aimerais tant jeter un{line_break}¾il à l'intérieur pour voir{line_break}s'il y a des monstres...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDidnTSeemLikeHe"
 msgid "07917"
 msgstr "{actor_name:8} a quitté la{line_break}ville l'air très aigri.{page_break}Je crois qu'il n'a pas du{line_break}tout apprécié d'être jeté{line_break}en prison sans raison.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWasSoHappyToGet"
 msgid "07918"
 msgstr "{actor_name:8} était si heureux{line_break}de retrouver sa liberté...{page_break}Mais son entrevue avec la{line_break}femme du maire l'a contrarié.{line_break}Je me demande pourquoi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDidnTHaveA"
 msgid "07919"
 msgstr "Pas une seule occasion{line_break}de fuir. Les Kibombos{line_break}étaient partout!{page_break}Je me suis battu parce{line_break}que je n'avais pas le choix.{line_break}Mais c'est mon secret!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICanTBelieveNobody"
 msgid "07920"
 msgstr "Mon partenaire a tenu tête{line_break}aux Kibombos et personne{line_break}ne le félicite.{page_break}Pourtant, c'est évident qu'il{line_break}faut beaucoup de courage{line_break}pour se battre contre eux!{end_wait}"
 
@@ -31811,23 +31811,23 @@ msgctxt "message"
 msgid "07950"
 msgstr "Ce {actor_name:8} était un{line_break}homme bien étrange.{page_break}Shin en avait une peur bleue.{line_break}Il l'a relâché aussitôt que{line_break}son innocence fut prouvée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheArmorerAndIAre"
 msgid "07951"
 msgstr "Avec l'armurier, je fouille pour{line_break}rassembler l'équipement que{line_break}les Kibombos ont laissé.{page_break}Ils ont jeté diverses armes{line_break}étranges qui nous en diront{line_break}plus sur leurs attaques...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheChampaWeaponsWeFound"
 msgid "07952"
 msgstr "Les armes champas que nous{line_break}avons trouvées tantôt sont{line_break}similaires aux armes kibombos.{page_break}Et ce n'est pas un hasard...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIKnewThereWasSomething"
 msgid "07953"
 msgstr "J'ai trouvé étrange que{line_break}des pirates décident de{line_break}nous attaquer...{page_break}Les armes que nous{line_break}avons découvertes sont{line_break}la clé du mystère...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheGroupThatAttackedFrom"
 msgid "07954"
 msgstr "Le groupe qui a lancé l'offensive{line_break}du côté est n'a pas utilisé les{line_break}mêmes armes que le groupe ouest.{page_break}S'ils faisaient partie de la même{line_break}bande, pourquoi posséderaient-ils{line_break}des armes différentes?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllMyInjuriesHaveHealed"
 msgid "07955"
 msgstr "Je me suis remise assez{line_break}vite de mes blessures...{page_break}Je me suis bien reposée,{line_break}mais maintenant, place{line_break}au travail.{end_wait}"
 
@@ -31835,7 +31835,7 @@ msgctxt "message"
 msgid "07956"
 msgstr "Je suis contente que ma{line_break}s¾ur soit rétablie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatShinIsAlwaysBugging"
 msgid "07957"
 msgstr "Shin m'agace. Il voudrait{line_break}que je reste au lit et que{line_break}je me repose.{page_break}Je préfère le travail{line_break}au farniente.{end_wait}"
 
@@ -32059,11 +32059,11 @@ msgctxt "message"
 msgid "08012"
 msgstr "La majorité l'emporte!{line_break}Retournons à Kibombo{line_break}pour aider {actor_name:8}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWelcomeToNaribweItS"
 msgid "08013"
 msgstr "Bienvenue à Naribwe.{line_break}Quelle chaleur... Vous{line_break}devriez vous reposer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheKibomboWentOnAn"
 msgid "08014"
 msgstr "Les Kibombos sont partis{line_break}en expédition du côté est,{line_break}mais ils sont déjà rentrés.{page_break}Savez-vous quel était le{line_break}but de ce petit voyage?{end_now}"
 
@@ -32075,23 +32075,23 @@ msgctxt "message"
 msgid "08016"
 msgstr "Non? Il est très rare que les{line_break}Kibombos quittent leur village.{line_break}C'est assez troublant...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheKibomboNeverMoveIn"
 msgid "08017"
 msgstr "Cette expédition a sans{line_break}doute été ordonnée par{line_break}Akafubu...{page_break}Ce sorcier a une très mauvaise{line_break}influence sur les Kibombos.{line_break}Jadis, leur tribu était calme.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWouldNotVentureFar"
 msgid "08018"
 msgstr "Si j'étais vous, je renoncerais{line_break}à aller plus au nord...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBeenDangerousOut"
 msgid "08019"
 msgstr "Le danger nous menace{line_break}depuis que les joyaux{line_break}sont tombés du ciel.{page_break}Depuis ce jour, toutes les{line_break}créatures sont devenues{line_break}puissantes et dangereuses.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenOeiaWasTheirWitch"
 msgid "08020"
 msgstr "Quand le sorcier Oéia était{line_break}à leur tête, les Kibombos{line_break}étaient paisibles.{page_break}Depuis qu'Akafubu a pris sa{line_break}place, la guerre est devenue{line_break}leur seul mot d'ordre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCanYouTellMeWhere"
 msgid "08021"
 msgstr "Pouvez-vous me dire{line_break}d'où vous venez?{end_now}"
 
@@ -32103,11 +32103,11 @@ msgctxt "message"
 msgid "08023"
 msgstr "Vous ne voulez rien me{line_break}dire? Est-ce un secret?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSAlwaysHotHere"
 msgid "08024"
 msgstr "A Naribwe, nous devons{line_break}supporter cette chaleur{line_break}accablante toute l'année.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouDonTPlanOn"
 msgid "08025"
 msgstr "Vous allez à Kibombo,{line_break}monsieur?{end_now}"
 
@@ -32119,47 +32119,47 @@ msgctxt "message"
 msgid "08027"
 msgstr "Vous avez bien raison.{line_break}Mieux vaut s'écarter{line_break}d'un endroit pareil.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOnTheFarSideOf"
 msgid "08028"
 msgstr "De l'autre côté de la rivière,{line_break}il y a une montagne qu'on{line_break}appelle Mont Magma.{page_break}Ce lieu sacré existe depuis{line_break}la nuit des temps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICanHardlyStandThe"
 msgid "08029"
 msgstr "Même moi qui suis né ici,{line_break}je ne supporte pas cette{line_break}chaleur étouffante!{page_break}Ça ne doit pas tourner rond{line_break}dans la tête des voyageurs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAkafubuIsAlmostCertainlyLooking"
 msgid "08030"
 msgstr "Akafubu est avide de{line_break}pierres précieuses.{page_break}Je ne comprends pas{line_break}pourquoi un sorcier a{line_break}tant besoin de joyaux.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItIsAwfulToThe"
 msgid "08031"
 msgstr "Le nord de Naribwe est une{line_break}région hostile... Il y fait chaud{line_break}et les bêtes sont enragées.{page_break}Et c'est là-bas que vivent{line_break}les Kibombos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatWasTheDayThe"
 msgid "08032"
 msgstr "Ce jour-là, le vent soufflait{line_break}très fort, et le ciel était{line_break}tout noir.{page_break}Soudain, de curieuses pierres{line_break}nous tombèrent sur la tête.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldKibomboMagicWasOnceWidely"
 msgid "08033"
 msgstr "Jadis, on admirait la magie{line_break}des Kibombos. Aujourd'hui,{line_break}tout le monde la craint.{page_break}Tout a changé le jour où{line_break}Akafubu a succédé au{line_break}défunt Oéia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheWarriorWhoPassedThrough"
 msgid "08034"
 msgstr "Le guerrier qui est passé par{line_break}là tout à l'heure venait d'une{line_break}île située au milieu de la mer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToGetToKibomboYou"
 msgid "08035"
 msgstr "Pour aller à Kibombo, il{line_break}vous faut traverser les{line_break}montagnes de Kibombo.{page_break}Mon grand-père disait{line_break}qu'il existait un chemin{line_break}près du corps de garde.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSometimesYouCanHearExplosions"
 msgid "08036"
 msgstr "Parfois, on entend des{line_break}explosions provenant{line_break}du Mont Magma.{page_break}Je me demande ce{line_break}qui se passe là-bas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenIClimbedTheKibombo"
 msgid "08037"
 msgstr "Pour gravir les montagnes{line_break}de Kibombo, j'ai dû d'abord{line_break}chercher une brèche...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIRememberWhenIFound"
 msgid "08038"
 msgstr "J'ai trouvé un passage...{line_break}dont l'existence n'était{line_break}pas même soupçonnée!{page_break}Je ne suis pas sûr de{line_break}pouvoir retrouver cette{line_break}brèche...{end_wait}"
 
@@ -32547,11 +32547,11 @@ msgctxt "message"
 msgid "08134"
 msgstr "Chaque fois que je vais voir{line_break}le diseur de bonne aventure,{line_break}je lui fais don d'une armure.{page_break}Ça a l'air de porter chance.{line_break}Je trouve pleins de raretés!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoOneCanSeeThe"
 msgid "08135"
 msgstr "Personne ne peut entrevoir{line_break}l'avenir, sauf notre diseur{line_break}de bonne aventure.{page_break}Juste par la contemplation{line_break}d'objets, il peut dire quel{line_break}chemin vous devez suivre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEvenIfIWantedMy"
 msgid "08136"
 msgstr "Je ne pourrai jamais connaître{line_break}mon avenir, car je n'ai pas{line_break}d'arme à présenter au devin.{page_break}S'il était disposé à prendre{line_break}en compte d'autres objets, il{line_break}aurait une sacrée clientèle!{end_wait}"
 
@@ -32575,83 +32575,83 @@ msgctxt "message"
 msgid "08141"
 msgstr "!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIAmButAHumble"
 msgid "08142"
 msgstr "Je suis un humble pèlerin{line_break}qui veut faire le bien au{line_break}c¾ur de Gondowan.{page_break}Ainsi, les voyageurs ne sont{line_break}pas livrés à eux-mêmes{line_break}sur ces terres sauvages.{end_wait}."
 
-msgctxt "message"
+msgctxt "MsgFieldAnywhereICanDoSome"
 msgid "08143"
 msgstr "Quand l'occasion de faire le{line_break}bien se présente, je passe à{line_break}l'action sans une plainte.{page_break}Quoique... j'apprécierais s'il{line_break}faisait un peu moins chaud.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDonTTellMeYou"
 msgid "08144"
 msgstr "Ne me dites pas que vous{line_break}revenez de Kibombo!{page_break}Vous avez dû faire preuve{line_break}d'un grand courage pour{line_break}survivre à tous ces périls!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDidnTSeeAny"
 msgid "08145"
 msgstr "Les soldats kibombos au pied{line_break}de la montagne ont disparu.{line_break}Où sont-ils donc passés?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISawSmokeRisingFrom"
 msgid "08146"
 msgstr "De la fumée semblait{line_break}provenir de Kibombo...{line_break}Etait-ce un feu de bois?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSomeSoldiersCameThroughHere"
 msgid "08147"
 msgstr "Des soldats étaient à{line_break}la recherche d'un certain{line_break}{actor_name:8}.{page_break}Ils étaient contrariés de{line_break}voir que j'ignorais de qui{line_break}ils voulaient parler.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheSmokeComingFromThe"
 msgid "08148"
 msgstr "La fumée qui s'échappe des{line_break}montagnes de Kibombo{line_break}vient d'un feu messager.{page_break}Ce n'est pas évident de{line_break}déchiffrer les signaux, car{line_break}ils sont émis par un débutant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheFortuneTellerPredictedThat"
 msgid "08149"
 msgstr "Le devin a prédit que{line_break}les Kibombos allaient{line_break}bientôt se sédentariser.{page_break}J'espère vraiment{line_break}qu'il dit vrai...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAManCameThroughA"
 msgid "08150"
 msgstr "Un étranger est venu. Il{line_break}allait à Kibombo et il n'est{line_break}pas encore rentré.{page_break}Je crois qu'il s'est fait{line_break}prendre par les soldats{line_break}qui gardent les montagnes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMentionedMagmaRockTo"
 msgid "08151"
 msgstr "L'autre jour, je parlais du{line_break}Mont Magma à un voyageur.{line_break}Il semblait très intrigué.{page_break}Je crois même l'avoir vu{line_break}partir dans cette direction.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoWouldTravelToKibombo"
 msgid "08152"
 msgstr "Qui serait assez fou pour{line_break}aller à Kibombo? Pour le{line_break}moment, c'est trop risqué.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoGladThe"
 msgid "08153"
 msgstr "Je suis contente que les{line_break}Kibombos aient cessé{line_break}de hanter nos collines...{page_break}Ils étaient ici... et{line_break}là-bas... ils étaient{line_break}partout!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatSmokeSBeenRising"
 msgid "08154"
 msgstr "Une fumée épaisse continue de{line_break}s'échapper de Kibombo... Je{line_break}doute que ce ne soit qu'un feu.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatKindOfAName"
 msgid "08155"
 msgstr "{actor_name:8}, un prénom courant{line_break}qui semble être porté{line_break}par un être peu commun.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheSignalsSaySomethingHas"
 msgid "08156"
 msgstr "Les signaux indiqueraient-ils{line_break}qu'on vient de finir... ou{line_break}choisir... quelque chose?{page_break}Leur signification n'est pas{line_break}évidente. Si seulement le{line_break}message était plus clair.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheFortuneTellerHasNever"
 msgid "08157"
 msgstr "Le devin ne s'est{line_break}jusque-là jamais{line_break}trompé...{page_break}Mais je doute que les{line_break}Kibombos ne se{line_break}calment un jour.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfTheManTheyWere"
 msgid "08158"
 msgstr "Si l'homme qu'ils cherchaient{line_break}est allé à Kibombo, ils{line_break}feraient mieux d'attendre.{page_break}Kibombo est à déconseiller{line_break}aux étrangers pour le moment.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTThinkAnyone"
 msgid "08159"
 msgstr "Le Mont Magma n'est pas{line_break}accessible pour l'instant.{line_break}La rivière est trop profonde.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOuchSomeBigBruteCame"
 msgid "08160"
 msgstr "Une brute épaisse{line_break}cherchait une femme{line_break}appelée Ph¾nixia.{page_break}Quand je lui ai dit que je{line_break}ne la connaissais pas, il{line_break}s'est énervé et m'a poussée!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatHasGoneWrongWith"
 msgid "08161"
 msgstr "Où sont passées les valeurs{line_break}de ce monde? Les personnes{line_break}âgées ont le droit au respect!{end_wait}"
 
@@ -32707,11 +32707,11 @@ msgctxt "message"
 msgid "08174"
 msgstr "J'offre toujours une armure{line_break}au devin, car j'ai l'impression{line_break}que ça me porte bonheur.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStrangersToOurTownWould"
 msgid "08175"
 msgstr "Je conseille vivement{line_break}aux étrangers de faire{line_break}un saut chez le devin.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThoseWhoBecomeLostShould"
 msgid "08176"
 msgstr "Ceux qui se sentent perdus{line_break}devraient présenter leurs{line_break}plus précieux objets au devin.{end_wait}"
 
@@ -32735,11 +32735,11 @@ msgctxt "message"
 msgid "08181"
 msgstr "!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSStrangeAsHot"
 msgid "08182"
 msgstr "Tandis qu'il fait très chaud{line_break}à Gondowan, le temps se{line_break}refroidit si vous allez au sud.{page_break}Toundra est un désert{line_break}polaire qui mérite bien{line_break}son nom.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheColdOfTundariaStifles"
 msgid "08183"
 msgstr "A Toundra, le grand{line_break}froid incommode tous{line_break}les êtres vivants.{page_break}La chaleur de Gondowan{line_break}est douce comparée à{line_break}ces terres polaires.{end_wait}"
 
@@ -34819,35 +34819,35 @@ msgctxt "message"
 msgid "08702"
 msgstr "Akafubu aurait tant changé{line_break}juste à cause de la cérémonie?{line_break}J'ai du mal à le croire!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorFinallyReturnedFrom"
 msgid "08703"
 msgstr "Le maire est enfin{line_break}rentré d'Alhafra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeyItSYouGuys"
 msgid "08704"
 msgstr "Hé! Vous êtes là! Quel{line_break}plaisir de vous revoir!{page_break}Vous souhaitez aller à{line_break}Madra? Mais je vous{line_break}en prie, passez!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeWasGoneSoLong"
 msgid "08705"
 msgstr "Il s'est absenté si longtemps.{line_break}Je me demandais si nous{line_break}le reverrions un jour.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHowMuchLongerDoWe"
 msgid "08706"
 msgstr "Jusqu'à quand allons-nous{line_break}devoir monter la garde?{page_break}Plus aucune menace ne{line_break}pèse sur nous! Tout le{line_break}monde nous a déjà attaqués!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTThinkThe"
 msgid "08707"
 msgstr "Le maire n'a sûrement pas{line_break}obtenu la réparation de son{line_break}bateau... Il s'est impatienté.{page_break}Dès qu'il aura rassemblé{line_break}suffisamment d'hommes, il{line_break}y retournera pour le réparer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeGoToAllThat"
 msgid "08708"
 msgstr "Nous avons tant peiné pour{line_break}obtenir le bateau de Briggs et{line_break}il n'est toujours pas réparé?{page_break}Le maire a réuni le conseil{line_break}pour élaborer le plan des{line_break}travaux.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHeardTheBoatThe"
 msgid "08709"
 msgstr "Il paraît que le bateau du{line_break}maire est nettement mieux{line_break}que notre vieux radeau!{page_break}Avec ce nouveau bateau,{line_break}il serait possible de{line_break}naviguer sur l'océan!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIsThereByAnyChance"
 msgid "08710"
 msgstr "Y aurait-il une jeune fille du{line_break}nom de {actor_name:6} parmi vous?{end_now}"
 
@@ -34859,55 +34859,55 @@ msgctxt "message"
 msgid "08712"
 msgstr "Oh... Eh bien, si vous rencontrez{line_break}une {actor_name:6} en chemin,{line_break}dites-lui que {actor_name:1} la cherche.{page_break}Vous semblez être souvent en{line_break}vadrouille. Peut-être que vous{line_break}croiserez {actor_name:6}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThoseTravelersLookedWorriedAbout"
 msgid "08713"
 msgstr "Ces voyageurs se faisaient{line_break}du souci pour vous.{page_break}A votre place, je partirais{line_break}à leur rencontre, juste{line_break}pour les rassurer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWonderIfTheLegends"
 msgid "08714"
 msgstr "Faut-il croire toutes ces{line_break}légendes? Cette île moderne{line_break}perdue, est-elle réelle?{page_break}Si cet endroit existe, je veux{line_break}absolument l'explorer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTKnowWhat"
 msgid "08715"
 msgstr "Je me demande s'ils s'en{line_break}sortiront en mer. Ils ne{line_break}savent même pas naviguer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAGroupOfSharpLooking"
 msgid "08716"
 msgstr "Un groupe de voyageurs{line_break}très forts est venu{line_break}ici récemment.{page_break}Ils cherchaient une île{line_break}appelée Lémuria.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouHaveABig"
 msgid "08717"
 msgstr "Avec un bateau robuste, on{line_break}peut naviguer dans le monde{line_break}entier! C'est fou, non?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWasAtTheMayor"
 msgid "08718"
 msgstr "J'étais chez le maire et je{line_break}les regardais débattre de{line_break}la réparation du bateau.{page_break}Pourquoi ce mât est-il{line_break}aussi indispensable au bon{line_break}fonctionnement du navire?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSNotThatI"
 msgid "08719"
 msgstr "Si le mât est irréparable,{line_break}il ne sert à rien de{line_break}retourner à Alhafra, non?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorAskedMeTo"
 msgid "08720"
 msgstr "Le maire voudrait que je{line_break}l'accompagne à Alhafra{line_break}mais je suis réticent...{page_break}Si ce bateau dépend de{line_break}la force du vent, est-il{line_break}vraiment fiable?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSeemsNoOneIs"
 msgid "08721"
 msgstr "Personne ne se réjouit que{line_break}le maire ait obtenu ce beau{line_break}bateau. Le pauvre maire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSayThereWasAnotherGroup"
 msgid "08722"
 msgstr "Des hommes dotés des mêmes{line_break}pouvoirs que {actor_name:8}{line_break}sont venus nous rendre visite.{page_break}Quelles sont les chances de{line_break}rencontrer deux groupes{line_break}dotés de cette magie?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIThoughtShinAndThe"
 msgid "08723"
 msgstr "Au départ, j'étais sceptique.{line_break}Mais Shin et les autres ont{line_break}fini par me convaincre.{page_break}Cette magie s'appelle Psynergie.{line_break}Elle peut changer de l'eau en{line_break}glace.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenAndHisPartyHeard"
 msgid "08724"
 msgstr "{actor_name:1} et ses amis étaient{line_break}choqués quand ils ont entendu{line_break}parler de {actor_name:8}.{page_break}Ils sont partis vous{line_break}rejoindre à Gondowan.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldUhhhnnnUhhhnnn"
 msgid "08725"
 msgstr "Uhhhnnn... UHHHNNN!{end_wait}"
 
@@ -34919,39 +34919,39 @@ msgctxt "message"
 msgid "08727"
 msgstr "Comment est-ce possible de{line_break}former de la glace par la pensée?{page_break}Imaginez l'étendue de vos{line_break}pouvoirs si vous pouviez{line_break}réaliser toutes vos pensées!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldAnyoneBeHappy"
 msgid "08728"
 msgstr "Qui voudrait d'un{line_break}bateau cassé?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheyVeBeenHavingSo"
 msgid "08729"
 msgstr "Depuis quelque temps, ils{line_break}accumulent les réunions! L'état{line_break}du bateau doit être pitoyable!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEveryoneGetsTheUrgeTo"
 msgid "08730"
 msgstr "L'exploration est une activité{line_break}en vogue. Tout le monde veut{line_break}visiter les terres neuves...{page_break}Moi aussi, j'aimerais bien{line_break}tenter l'aventure et faire{line_break}le tour du monde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWonderWhyThoseTravelers"
 msgid "08731"
 msgstr "Je me demande pourquoi ces{line_break}voyageurs étaient si pressés.{page_break}Ils avaient l'air si grave, comme{line_break}si le destin du monde reposait{line_break}sur leurs épaules.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatWasThatIslandAgain"
 msgid "08732"
 msgstr "Quel était le nom de l'île?{line_break}Je l'ai au bout de la langue...{line_break}Lémoria? Lémurla? Lulu?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThePeopleOfMadraKnow"
 msgid "08733"
 msgstr "Le peuple de Madra connaît bien{line_break}nos terres... Mais le monde{line_break}extérieur est un mystère.{page_break}Quel idiot serait prêt à{line_break}naviguer dans un monde{line_break}complètement inconnu?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatIslandThatGroupWas"
 msgid "08734"
 msgstr "L'île que ce groupe voulait{line_break}atteindre ne m'était pas{line_break}totalement inconnue...{page_break}Quand j'étais jeune, grand-{line_break}père me contait des histoires{line_break}sur une île au trésor...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHowBigWouldAShip"
 msgid "08735"
 msgstr "Un bateau qui peut naviguer{line_break}partout est probablement{line_break}plus gros qu'une baleine!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEveryoneHereInMadraIs"
 msgid "08736"
 msgstr "Les Kibombos ont traumatisé{line_break}le peuple de Madra. Est-ce{line_break}qu'ils vous terrorisent aussi?{end_now}"
 
@@ -34963,39 +34963,39 @@ msgctxt "message"
 msgid "08738"
 msgstr "Vous êtes sûrement{line_break}au courant...{page_break}Les signaux du feu{line_break}messager ont annoncé{line_break}une trêve!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeReStillRecoveringFrom"
 msgid "08739"
 msgstr "Les séquelles du raid des{line_break}Kibombos sont encore visibles.{page_break}Les peurs des habitants sont{line_break}tout à fait compréhensibles...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheseNewBoatsApparentlyUse"
 msgid "08740"
 msgstr "Ces nouveaux bateaux se{line_break}servent de l'énergie éolienne{line_break}pour traverser les océans...{page_break}Comment un énorme mât placé{line_break}au centre du bateau peut-il{line_break}canaliser la force du vent?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfABuildingHasBroken"
 msgid "08741"
 msgstr "Si les piliers d'une maison{line_break}sont détruits, l'édifice ne{line_break}vaut plus rien...{page_break}N'en est-il pas de même pour{line_break}un navire avec un mât cassé?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSailorsAreSupposedToUse"
 msgid "08742"
 msgstr "Les marins sont supposés{line_break}utiliser des rames pour{line_break}faire avancer le bateau...{page_break}A quoi bon avoir des{line_break}marins sur un bateau{line_break}poussé par le vent?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOurMayorSDoneSo"
 msgid "08743"
 msgstr "Pour une fois que le{line_break}maire fait quelque{line_break}chose pour nous!{page_break}Nous devrions le remercier{line_break}pour ce bateau.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIsTurningWaterToIce"
 msgid "08744"
 msgstr "Est-ce que changer de{line_break}l'eau en glace fait vraiment{line_break}appel à la magie?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMadraIsAlwaysSoHot"
 msgid "08745"
 msgstr "Il fait si chaud à Madra. Si{line_break}nous pouvions fabriquer de{line_break}la glace, il ferait plus... frais.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSoThisFellowMustBe"
 msgid "08746"
 msgstr "{actor_name:8} et {actor_name:1} sont{line_break}probablement des amis...{page_break} Sinon, pourquoi iraient-ils{line_break}jusqu'à Gondowan pour lui?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIKnewIShouldHave"
 msgid "08747"
 msgstr "J'aurais dû leur demander{line_break}comment on fait de la glace.{end_wait}"
 
@@ -35139,7 +35139,7 @@ msgctxt "message"
 msgid "08782"
 msgstr "Depuis l'incident avec{line_break}{actor_name:8}, nous attirons{line_break}de drôles de visiteurs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHaveYouByChanceSeen"
 msgid "08783"
 msgstr "Avez-vous croisé une jeune{line_break}fille appelée Ph¾nixia?{end_now}"
 
@@ -35151,11 +35151,11 @@ msgctxt "message"
 msgid "08785"
 msgstr "Je vais vous faire passer{line_break}l'envie de mentir. Disparaissez{line_break}sur-le-champ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouDonTKnow"
 msgid "08786"
 msgstr "Si vous ne connaissez pas{line_break}ma s¾ur, alors nous n'avons{line_break}rien à nous dire. Disparaissez!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldUsingPsynergyOnMeAre"
 msgid "08787"
 msgstr "Utiliser de la Psynergie contre{line_break}moi? Etes-vous si stupides{line_break}pour ne pas avoir peur?{end_wait}"
 
@@ -35163,7 +35163,7 @@ msgctxt "message"
 msgid "08788"
 msgstr "Je n'ai pas le temps de{line_break}jouer avec vous. Cessez{line_break}de m'importuner!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhereCouldMenardiHaveGone"
 msgid "08789"
 msgstr "Je me demande où est{line_break}allée Ph¾nixia... Où{line_break}es-tu, ma chère s¾ur?{end_wait}"
 
@@ -35399,7 +35399,7 @@ msgctxt "message"
 msgid "08847"
 msgstr "Je suis si contente que papa{line_break}soit rentré sain et sauf.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWait"
 msgid "08848"
 msgstr "{actor_name:5}, attends!{end_wait}"
 
@@ -35495,7 +35495,7 @@ msgctxt "message"
 msgid "08871"
 msgstr "Elle ne vous aurait jamais{line_break}abandonnés... et pourtant...{line_break}vous êtes seuls...{pause_20_skippable}{page_break}Donc, c'est vrai? Elle est...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICanTBelieveIt"
 msgid "08872"
 msgstr "C'est impossible...{line_break}Salamandar et ma s¾ur{line_break}sont invincibles...{end_wait}"
 
@@ -35503,7 +35503,7 @@ msgctxt "message"
 msgid "08873"
 msgstr "Mais vous baissez les yeux...{line_break}Et l'expression sur vos{line_break}visages... Alors, c'est... vrai.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoIsThis"
 msgid "08874"
 msgstr "Qui est ce {actor_name:1}?{end_wait}"
 
@@ -35699,23 +35699,23 @@ msgctxt "message"
 msgid "08922"
 msgstr "Je comprends pourquoi Shin{line_break}a une peur panique de {actor_name:8}.{line_break}Mais il devrait relativiser.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItLooksLikeTheKibombo"
 msgid "08923"
 msgstr "Les Kibombos étaient{line_break}derrière toutes les{line_break}attaques du village...{page_break}Les armes de Kibombo sont{line_break}uniques. On en a trouvé{line_break}plusieurs après les raids.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThePiratesAndTheKibombo"
 msgid "08924"
 msgstr "Les pirates et les Kibombos{line_break}avaient certainement fait{line_break}alliance. Incroyable!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPeopleAreSayingTheChampa"
 msgid "08925"
 msgstr "On dit que les Champas et{line_break}les Kibombos collaboraient.{line_break}Mais ce n'est qu'une rumeur...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatNightTheChampaCame"
 msgid "08926"
 msgstr "Cette nuit-là, les Champas{line_break}attaquèrent par l'est et{line_break}les Kibombos par l'ouest.{page_break}Ça ne ressemble pas{line_break}à de la coopération.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyBoyfriendShinSeemsSo"
 msgid "08927"
 msgstr "Mon fiancé, Shin, est si{line_break}déprimé ces temps-ci...{line_break}J'espère qu'il va bien.{end_wait}"
 
@@ -35723,7 +35723,7 @@ msgctxt "message"
 msgid "08928"
 msgstr "J'ai dit à ma s¾ur de ne{line_break}pas s'en faire. Shin est fort.{line_break}Du moins... normalement...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldShinSeemsTerrifiedOfI"
 msgid "08929"
 msgstr "{actor_name:8} semble être la bête{line_break}noire de Shin. Je me demande ce{line_break}qui a bien pu se passer entre eux.{page_break}Bref, je vois pourquoi{line_break}il est si irritable en{line_break}ce moment.{end_wait}"
 
@@ -36139,7 +36139,7 @@ msgctxt "message"
 msgid "09032"
 msgstr "Il reste immobile...{line_break}Peut-être une panne.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorTriedToGive"
 msgid "09033"
 msgstr "Le maire voulait donner{line_break}{argument_item_name:1} à {actor_name:5}, mais{line_break}{actor_name:5} était déjà surchargé.{end_wait}"
 
@@ -36299,7 +36299,7 @@ msgctxt "message"
 msgid "09072"
 msgstr "Jadis, on pouvait explorer{line_break}les fonds marins et trouver{line_break}toutes sortes de trésors.{page_break}Ces merveilles étaient{line_break}les présents de l'océan...{line_break}Des présents pour moi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheTemperatureOfTheOcean"
 msgid "09073"
 msgstr "L'océan se réchauffe. Ce sont{line_break}les eaux de la Mer du Temps{line_break}qui sont les plus chaudes.{page_break}J'espère que Poséidon n'a{line_break}pas refait surface! Ce dieu{line_break}a mué en monstre odieux!{end_wait}"
 
@@ -36307,7 +36307,7 @@ msgctxt "message"
 msgid "09074"
 msgstr "Je me souviens comment nous{line_break}repérions les trésors grâce à{line_break}leur ombre sur l'écueil.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLongAgoPoseidonRuledOver"
 msgid "09075"
 msgstr "Lorsqu'il était le roi des{line_break}mers, Poséidon contrôlait{line_break}tous les océans.{page_break}La légende raconte que{line_break}seul un trident peut{line_break}vaincre ce monstre.{end_wait}"
 
@@ -37047,79 +37047,79 @@ msgctxt "message"
 msgid "09259"
 msgstr "C'est tout. Ce sont les jeux{line_break}associés aux trois chansons.{page_break}Si tu veux encore jouer,{line_break}je suis partant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThisIsApojiiTheEasternmost"
 msgid "09260"
 msgstr "Apojii est l'île située le plus{line_break}à l'est de la Mer Orientale!{page_break}Vous avez sûrement fait ce{line_break}long voyage pour admirer{line_break}les chutes de Gaia!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhateverYouDoDonT"
 msgid "09261"
 msgstr "Quoi qu'il advienne, ne{line_break}vous aventurez pas sur{line_break}la rive est de la mer...{page_break}C'est là-bas que le monde se{line_break}termine. Les chutes vous{line_break}emporteront dans le néant!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheHugeWaterfallAtThe"
 msgid "09262"
 msgstr "La cascade située à la lisière{line_break}du monde est connue sous{line_break}le nom de Chutes de Gaia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOnAquaIslandYouCan"
 msgid "09263"
 msgstr "L'île Aqua est protégée{line_break}par le gardien moaï.{page_break}Ce moaï interdit{line_break}l'ascension du pic{line_break}rocheux.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHaveYouAnyIdeaWhat"
 msgid "09264"
 msgstr "Ce n'est vraiment pas drôle{line_break}de vivre à la lisière du monde!{line_break}Un faux pas, et c'est fini!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTKnowWhat2"
 msgid "09265"
 msgstr "J'ignore ce qui vous amène{line_break}à Apojii, mais à votre place,{line_break}je ne ferais pas de bêtise.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenTheyComeOfAge"
 msgid "09266"
 msgstr "Au moment venu, les hommes{line_break}d'Apojii se rendent sur l'île{line_break}Aqua. Moi aussi j'irai?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoYouThinkIfYou"
 msgid "09267"
 msgstr "Si les chutes de Gaia nous{line_break}emportent, est-ce que nous{line_break}tombons à l'infini?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfThereSNothingOn"
 msgid "09268"
 msgstr "S'il n'y a rien sur l'île{line_break}Aqua, pourquoi ces{line_break}moaïs la gardent-ils?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLookingOverGaiaFallsReally"
 msgid "09269"
 msgstr "A côté des chutes de{line_break}Gaia, on se sent si{line_break}petit et insignifiant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheCurrentsNearApojiiRun"
 msgid "09270"
 msgstr "Les courants près d'Apojii{line_break}sont rapides car les chutes{line_break}de Gaia sont toutes proches.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllOfTheOceanS"
 msgid "09271"
 msgstr "Les eaux de toutes les mers{line_break}sont entraînées vers les chutes{line_break}de Gaia... Mais où vont-elles?{page_break}Et qu'arrivera-t-il quand{line_break}les mers seront vides?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldAnyoneBuildA"
 msgid "09272"
 msgstr "Pourquoi construire une{line_break}statue pour garder l'île{line_break}Aqua s'il n'y a rien à garder?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWellAtLeastGaiaFalls"
 msgid "09273"
 msgstr "Au moins, les chutes de{line_break}Gaia mettent un terme{line_break}à de stupides débats.{page_break}S'il existe une lisière et{line_break}un précipice, le monde{line_break}est fatalement PLAT!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldApojiiHasSoManyNice"
 msgid "09274"
 msgstr "Il y a des endroits magnifiques{line_break}à Apojii... Les chutes de Gaia{line_break}à l'est et l'île Aqua au sud.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAquaIslandIsSupposedTo"
 msgid "09275"
 msgstr "Il paraît que l'île Aqua est{line_break}truffée de dangers, c'est{line_break}pourquoi elle m'attire autant!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWonderWhereID"
 msgid "09276"
 msgstr "Je me demande où mènent{line_break}les chutes de Gaia...{page_break}J'aimerais tant savoir mais{line_break}je ne veux pas l'apprendre{line_break}de première main!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAquaRockMustBeThe"
 msgid "09277"
 msgstr "Rocheau doit être le secret{line_break}de l'île Aqua. Un jour, je{line_break}ferai l'ascension de ce pic.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatWhatJustHappened"
 msgid "09278"
 msgstr "Que...{line_break}Que s'est-il passé?{end_wait}"
 
@@ -37135,83 +37135,83 @@ msgctxt "message"
 msgid "09281"
 msgstr "Puisque c'est ainsi... Nous{line_break}devrions faire part de tous{line_break}nos désirs à ce rocher.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSThisGuyIn"
 msgid "09282"
 msgstr "Il y a un homme en ville{line_break}qui passe son temps à{line_break}contempler la Pierre d'eau.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyDoesMyFatherKeep"
 msgid "09283"
 msgstr "Pourquoi mon père{line_break}passe-t-il son temps à{line_break}contempler cette pierre?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIJustWishHeD"
 msgid "09284"
 msgstr "Je voudrais qu'il passe{line_break}plus de temps à la maison{line_break}et qu'il arrête ses sottises!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICanTEverTell"
 msgid "09285"
 msgstr "Mes parents sont tellement{line_break}lunatiques. Mais, au moins,{line_break}ils ne se querellent pas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIAbsolutelyRefuseToLet"
 msgid "09286"
 msgstr "Mon fils pourra nager{line_break}dans l'océan quand il{line_break}sera majeur. Pas avant!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheCurrentsAroundApojiiAre"
 msgid "09287"
 msgstr "Les courants autour d'Apojii{line_break}sont complètement déchaînés.{page_break}Il faut être fou pour laisser{line_break}des enfants s'y baigner.{page_break}Ils sont si puissants qu'ils{line_break}emporteraient même un adulte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMNotAllowedTo"
 msgid "09288"
 msgstr "Je n'ai pas le droit de me{line_break}baigner dans l'océan.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeyMisterDidYouKnow"
 msgid "09289"
 msgstr "Hé, monsieur! Savez-vous{line_break}que vous êtes devenu le{line_break}héros de tous les enfants?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISinkLikeARock"
 msgid "09290"
 msgstr "Je coule comme du plomb.{line_break}Mon fils est si gêné chaque{line_break}fois que j'essaie de nager.{page_break}Il n'est pas meilleur que{line_break}moi, mais il insiste pour{line_break}s'entraîner et s'améliorer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPoorBoyHisFatherSinks"
 msgid "09291"
 msgstr "Pauvre garçon... Son père ne sait{line_break}pas nager, et c'est héréditaire.{line_break}Il n'a pas le droit de se baigner!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSStupidThatI"
 msgid "09292"
 msgstr "C'est stupide de m'interdire{line_break}la baignade juste parce que{line_break}papa ne sait pas nager...{page_break}Un jour, je lui montrerai, et{line_break}tout le monde verra!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWowHeSwamInThe"
 msgid "09293"
 msgstr "Waouh! Il a nagé dans l'océan{line_break}et a survécu aux courants!{line_break}Il regarde dans ma direction!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatOldAquaStoneIs"
 msgid "09294"
 msgstr "Cette ancienne Pierre d'eau est{line_break}censée être la clé qui ouvrira{line_break}les portes de l'île Aqua.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeSTooOldTo"
 msgid "09295"
 msgstr "Il est maintenant si vieux, mais{line_break}mon mari rêvait de gravir le{line_break}sommet de Rocheau.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouUnlockTheAquaStone"
 msgid "09296"
 msgstr "Pour activer la Pierre d'eau, il{line_break}faut l'humidifier. Mais l'asperger{line_break}d'eau de source ne marche pas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeAlwaysWantedToClimb"
 msgid "09297"
 msgstr "Il a toujours rêvé de{line_break}gravir la montagne qui{line_break}domine l'île Aqua.{page_break}Mais il a consacré sa vie{line_break}à l'étude de la Pierre d'eau.{line_break}Comme c'est étrange...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItDBeNiceIf"
 msgid "09298"
 msgstr "Ah, si on pouvait importer{line_break}des objets qui plairaient{line_break}aux visiteurs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoOneShipsToGarapas"
 msgid "09299"
 msgstr "Si Garapas ne reçoit aucune{line_break}livraison, les marchandises{line_break}doivent se faire rares.{page_break}Mais j'imagine que Garapas{line_break}fabrique ses propres objets.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWowYouLookJustLike"
 msgid "09300"
 msgstr "Waouh! Vous ressemblez à{line_break}l'homme qui a débarqué à{line_break}bord d'un superbe bateau!{page_break}Il a dormi des jours durant...{line_break}Il devait venir de loin.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouGuysArenTThe"
 msgid "09301"
 msgstr "Est-ce que ce bateau{line_break}vous appartient?{end_now}"
 
@@ -37223,11 +37223,11 @@ msgctxt "message"
 msgid "09303"
 msgstr "Quelle impolitesse de se{line_break}moquer d'une femme âgée!{page_break}Si ce n'est pas votre bateau,{line_break}comment êtes-vous venus{line_break}jusqu'ici?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSureThatBoat"
 msgid "09304"
 msgstr "Ce bateau a l'air{line_break}très confortable...{page_break}Mais il ne pourrait rivaliser{line_break}avec un lit douillet et{line_break}sec sur la terre ferme.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThoseGuysOnTheOther"
 msgid "09305"
 msgstr "Les hommes de l'autre{line_break}bateau semblaient{line_break}très fortunés...{end_wait}"
 
@@ -39607,7 +39607,7 @@ msgctxt "message"
 msgid "09899"
 msgstr "C'est très gentil, monsieur le{line_break}maire. C'est avec plaisir que...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThankYouAgainMayorYou"
 msgid "09900"
 msgstr "Merci encore monsieur{line_break}le maire. Votre manoir{line_break}est très confortable.{end_wait}"
 
@@ -39767,7 +39767,7 @@ msgctxt "message"
 msgid "09939"
 msgstr "Un simple coup{line_break}d'¾il me suffira.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEveryoneInTownIsTalking"
 msgid "09940"
 msgstr "Le bateau a enfin été{line_break}réparé! Ça vaut la peine{line_break}d'aller voir ça de plus près.{end_wait}"
 
@@ -39839,7 +39839,7 @@ msgctxt "message"
 msgid "09957"
 msgstr "Les gros bateaux ont une plus{line_break}grande capacité de transport.{page_break}Cependant, ils exploitent{line_break}moins bien la force du vent.{page_break}C'est un fait que le maire{line_break}ne semble pas comprendre...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTKnowWhat3"
 msgid "09958"
 msgstr "Pourquoi cet empressement{line_break}général? Nous pourrons voir{line_break}notre bateau tous les jours!{end_wait}"
 
@@ -41779,7 +41779,7 @@ msgctxt "MsgLemuriaStayExploringAlternate"
 msgid "10442"
 msgstr "Déjà égaré, {actor_name:5}? Cette{line_break}route mène au port! Il est{line_break}trop tôt pour s'en aller!{page_break}Nous venons d'arriver à{line_break}Lémuria. Et nous n'avons{line_break}encore presque rien visité!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThisPlaceIsRemarkableTruly"
 msgid "10443"
 msgstr "Cet endroit est sublime...{line_break}Vraiment sublime...{end_wait}"
 
@@ -41919,123 +41919,123 @@ msgctxt "message"
 msgid "10477"
 msgstr "Et si nous allions explorer{line_break}Lémuria pendant ce temps?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheKingIsHoldingCounsel"
 msgid "10478"
 msgstr "Le roi est en réunion avec{line_break}Monseigneur Conservato.{page_break}Cet entretien peut durer{line_break}très très longtemps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheKingWillBeThrilled"
 msgid "10479"
 msgstr "Le roi sera ravi d'apprendre{line_break}que {actor_name:8} est rentré.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHowMuchLongerWillConservato"
 msgid "10480"
 msgstr "Conservato va-t-il bientôt{line_break}s'en aller? Ils discutent{line_break}depuis si longtemps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHadHeardWasBack"
 msgid "10481"
 msgstr "On m'a dit que {actor_name:8}{line_break}était rentré, mais je n'y ai pas{line_break}cru jusqu'à le voir en personne...{page_break}Tu sembles avoir pris de{line_break}l'assurance, {actor_name:8}. Tout le{line_break}monde l'a remarqué.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICannotRememberTheLast"
 msgid "10482"
 msgstr "Voilà des lustres que{line_break}Lémuria n'a reçu de{line_break}visiteurs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLemuriaHasNoDiseaseNo"
 msgid "10483"
 msgstr "Lémuria ne connaît ni{line_break}fléau ni guerre... La ville{line_break}ressemble à un paradis.{page_break}Pourtant, personne ne{line_break}souhaite y rester, pas{line_break}même moi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInLemuriaWeDoNot"
 msgid "10484"
 msgstr "A Lémuria, on ne vieillit{line_break}pas. Ce fait singulier{line_break}intrigue les étrangers.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLifeNeverChangesHereIn"
 msgid "10485"
 msgstr "La vie est monotone{line_break}à Lémuria. Tous les{line_break}jours se ressemblent.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIOughtToFeelSurprised"
 msgid "10486"
 msgstr "Je devrais être surpris de{line_break}voir des visiteurs, mais je ne{line_break}sais plus exprimer la surprise.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHowOldAmIAgain"
 msgid "10487"
 msgstr "Quel âge j'ai déjà? J'ai cessé{line_break}de compter le jour de mes{line_break}200 ans, voilà très longtemps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItHasBeenManyMany"
 msgid "10488"
 msgstr "La dernière naissance à{line_break}Lémuria remonte à des{line_break}temps très anciens.{page_break}Les Lémurians adorent les{line_break}enfants, mais l'enfance{line_break}est éphémère.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeAreTheOnlyChildren"
 msgid "10489"
 msgstr "Nous sommes les seuls{line_break}enfants de Lémuria. Nous{line_break}n'avons personne avec qui jouer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMeowMrrrfle"
 msgid "10490"
 msgstr "Miaou... Miaou...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWoofRrrrrroof"
 msgid "10491"
 msgstr "Whaf! ...rrrr... Whaf!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMoo"
 msgid "10492"
 msgstr "Meuh...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBukbukbuk"
 msgid "10493"
 msgstr "Cotcotcot...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldText"
 msgid "10494"
 msgstr "...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMoreOfTheSameToday"
 msgid "10495"
 msgstr "Tout le temps la même{line_break}chose. Rien ne change.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHavenTBeenSurprised"
 msgid "10496"
 msgstr "La vie à Lémuria ne suscite{line_break}aucune émotion. Que ferais-je{line_break}si quelque chose se produisait?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeAgedSoSlowly"
 msgid "10497"
 msgstr "J'ai vieilli si lentement.{line_break}Je ne crains plus la mort,{line_break}et encore moins la vie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSometimesIThinkTheBuildings"
 msgid "10498"
 msgstr "Parfois, j'ai l'impression que{line_break}nos maisons vieillissent{line_break}plus vite que nous.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLongAgoAManNamed"
 msgid "10499"
 msgstr "Jadis, un homme appelé{line_break}Lunpa débarqua sur notre{line_break}île. Nous fûmes très surpris.{page_break}Quelqu'un l'accompagnait,{line_break}mais il s'enfuit très vite.{line_break}Comment s'appelait-il?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldKingHydrosIsFarOlder"
 msgid "10500"
 msgstr "Le roi Hydros est beaucoup{line_break}plus vieux que moi... Quel{line_break}âge a-t-il déjà?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEveryoneSpoilsMeSoMuch"
 msgid "10501"
 msgstr "Tout le monde me gâte...{line_break}Je ne veux pas grandir!{page_break}Hélas, dans 20 ou 30 ans,{line_break}je serai un adulte. Mais bon,{line_break}ce sera un changement.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreThereOtherChildrenIn"
 msgid "10502"
 msgstr "Y a-t-il d'autres enfants{line_break}au-delà de la Mer du Temps?{line_break}Et d'autres gens aussi?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoOneInLemuriaFeels"
 msgid "10503"
 msgstr "Personne à Lémuria n'est{line_break}animé d'une passion. Tous les{line_break}villageois sont soporifiques.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSSoMuchTreasure"
 msgid "10504"
 msgstr "Tant de trésors sont enfouis{line_break}dans nos terres qu'il suffit de{line_break}creuser pour en trouver un.{page_break}Mais pourquoi ne vois-je{line_break}personne pelle en main?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLemuriansAreSoLazyThat"
 msgid "10505"
 msgstr "Les Lémurians sont si{line_break}paresseux que j'ai l'air{line_break}d'une boule d'énergie.{page_break}Et ils vivent si longtemps!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfItWerenTFor2"
 msgid "10506"
 msgstr "Sans les résidents du{line_break}château, les Lémurians se{line_break}laisseraient mourir de faim.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMotherWhyHaveYouLeft"
 msgid "10507"
 msgstr "Oh mère... Pourquoi{line_break}m'as-tu abandonné...{end_wait}"
 
@@ -42267,7 +42267,7 @@ msgctxt "message"
 msgid "10564"
 msgstr "Lunpa a beaucoup aidé le{line_break}roi sur ce thème. Il a tant{line_break}de choses à leur dire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHouseOfTheSenate"
 msgid "10565"
 msgstr "Sénat{end_wait}"
 
@@ -42347,11 +42347,11 @@ msgctxt "message"
 msgid "10584"
 msgstr "Bien que nous ne préparions{line_break}plus de potion, les eaux locales{line_break}continuent de nous soutenir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheDoorDoesnTWant"
 msgid "10585"
 msgstr "La porte est bloquée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouKidsSTraveling"
 msgid "10586"
 msgstr "Etes-vous les compagnons{line_break}de voyage de {actor_name:8}?{end_wait}"
 
@@ -42715,19 +42715,19 @@ msgctxt "message"
 msgid "10676"
 msgstr "Viens, {actor_name:5}!{line_break}Allons au palais!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldKingHydrosAwaitsYouYou"
 msgid "10677"
 msgstr "Le roi Hydros vous attend.{line_break}L'entrée est libre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHisHighnessTheKingHas"
 msgid "10678"
 msgstr "Sa Majesté, le roi, nous{line_break}a autorisés à vous laisser{line_break}passer. Soyez les bienvenus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheyAreClearlyUsingPsynergy"
 msgid "10679"
 msgstr "S'ils utilisent de la Psynergie,{line_break}ce sont donc des Mystiques...{page_break}Mais sont-ils si importants{line_break}que Sa Majesté s'empresse{line_break}de les recevoir?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatDoesHisHighnessHave"
 msgid "10680"
 msgstr "Sa Majesté est peu{line_break}prévoyante! {actor_name:8}, ses{line_break}amis et Lunpa sont tous ici.{end_wait}"
 
@@ -42751,7 +42751,7 @@ msgctxt "message"
 msgid "10685"
 msgstr "Le roi Hydros est le plus{line_break}sage des rois lémurians...{page_break}Mais je comprends pourquoi{line_break}Conservato et le Sénat sont{line_break}opposés aux projets du roi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheSenateHoldsKingHydros"
 msgid "10686"
 msgstr "Le Sénat a peu d'estime pour{line_break}notre roi, car il a choisi Lunpa{line_break}comme homme de confiance.{end_wait}"
 
@@ -42775,7 +42775,7 @@ msgctxt "message"
 msgid "10691"
 msgstr "Sa Majesté craint le{line_break}déclin de Lémuria.{line_break}N'importe quoi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldITrustTheKingIf"
 msgid "10692"
 msgstr "Je fais confiance à notre{line_break}roi. C'est ce Lunpa qui{line_break}lui monte la tête.{end_wait}"
 
@@ -43195,19 +43195,19 @@ msgctxt "message"
 msgid "10796"
 msgstr "Je me doute que ta{line_break}route sera parsemée{line_break}de grands dangers...{page_break}Mais je compte{line_break}sur toi, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeNeverSeenLord"
 msgid "10797"
 msgstr "C'est la première fois que{line_break}Monseigneur Conservato{line_break}est rouge de colère.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLordConservatoHasOrderedUs"
 msgid "10798"
 msgstr "Monseigneur Conservato{line_break}nous a chargés de contrer{line_break}votre départ...{page_break}J'ignore la raison{line_break}de cet ordre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSureTheSenate"
 msgid "10799"
 msgstr "Le Sénat est en droit de{line_break}s'exprimer sur le sujet.{line_break}Que se passe-t-il ici?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHowCouldLordConservatoExpect"
 msgid "10800"
 msgstr "Monseigneur Conservato{line_break}prétend que le roi Hydros{line_break}a ordonné à {actor_name:8}...{page_break}De détruire le monde.{line_break}C'est invraisemblable.{end_wait}"
 
@@ -43231,7 +43231,7 @@ msgctxt "message"
 msgid "10805"
 msgstr "Si Hydros prévoit encore{line_break}de restaurer l'Alchimie, je{line_break}joindrai le camp adverse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouAndLunpaWere"
 msgid "10806"
 msgstr "Si Lunpa et vous-mêmes{line_break}quittiez Lémuria, nous{line_break}retrouverions notre quiétude.{end_wait}"
 
@@ -43255,7 +43255,7 @@ msgctxt "message"
 msgid "10811"
 msgstr "La paix fait mon bonheur.{line_break}C'est la preuve que j'ai{line_break}atteint un grand âge...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIKnowWhyLemuriaEnded"
 msgid "10812"
 msgstr "Je comprends pourquoi{line_break}Lémuria a cessé tout{line_break}contact avec l'extérieur...{page_break}Lémuria veut la paix. Elle{line_break}se préserve du changement.{end_wait}"
 
@@ -43283,7 +43283,7 @@ msgctxt "message"
 msgid "10818"
 msgstr "Les actions du roi vont{line_break}à l'encontre de l'opinion{line_break}publique. Quel traître!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheDoorIsLockedIt"
 msgid "10819"
 msgstr "La porte est verrouillée.{line_break}Il semble qu'une réunion{line_break}très animée se tient ici...{end_wait}"
 
@@ -43371,7 +43371,7 @@ msgctxt "message"
 msgid "10840"
 msgstr "Ferais-tu toi aussi partie{line_break}du complot, {actor_name:5}?{line_break}Je ne vous dirai rien!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldOh"
 msgid "10841"
 msgstr "Oh!{end_wait}"
 
@@ -43383,7 +43383,7 @@ msgctxt "message"
 msgid "10843"
 msgstr "{actor_name:5}! Regarde!{line_break}Ce palais est magnifique!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhereAreYouGoingLet"
 msgid "10844"
 msgstr "Où vas-tu, {actor_name:5}? Allons{line_break}donc voir ça de plus près!{end_wait}"
 
@@ -43399,7 +43399,7 @@ msgctxt "message"
 msgid "10847"
 msgstr "Ne vous précipitez pas{line_break}à cause de moi. Profitons{line_break}de ce moment de repos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatSTheMatterCan"
 msgid "10848"
 msgstr "Quel est le problème?{line_break}La montée est difficile?{line_break}... Bien. Juste un instant.{end_wait}"
 
@@ -43411,15 +43411,15 @@ msgctxt "message"
 msgid "10850"
 msgstr "Là-bas! Ce n'est pas mieux?{line_break}Maintenant, montez par là.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDrinkingFromThisSpringRestores"
 msgid "10851"
 msgstr "Boire à cette fontaine{line_break}restaure force et vitalité!{line_break}Vous voulez essayer?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheseTurtlesHaveLivedIn"
 msgid "10852"
 msgstr "Ces tortues vivent dans{line_break}ces eaux magiques depuis{line_break}des temps très anciens.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAndTheOthersDrankOf"
 msgid "10853"
 msgstr "{actor_name:5} et les autres{line_break}boivent à la fontaine.{page_break}Leurs PV et PP sont{line_break}totalement restaurés!{end_wait}"
 
@@ -43447,7 +43447,7 @@ msgctxt "message"
 msgid "10859"
 msgstr "Il s'est tellement amusé{line_break}qu'il voulait construire une{line_break}fontaine identique chez lui.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoYouWishToTest"
 msgid "10860"
 msgstr "Désirez-vous tester votre{line_break}chance à la Fontaine de{line_break}Lémuria?{end_now}"
 
@@ -43459,11 +43459,11 @@ msgctxt "message"
 msgid "10862"
 msgstr "Allez-y. Tentez{line_break}votre chance!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouLookLikeYouRe"
 msgid "10863"
 msgstr "La bonne fortune semble{line_break}être de votre côté.{page_break}Il flotte autour de vous{line_break}une aura très positive!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoOneIsLuckierThan"
 msgid "10864"
 msgstr "Heureux est l'homme qui{line_break}croit en son étoile et qui a{line_break}des amis qui croient en lui.{end_wait}"
 
@@ -51223,7 +51223,7 @@ msgctxt "message"
 msgid "12803"
 msgstr "Il semble que ce puits{line_break}soit peu exploité.{page_break}Le fait qu'il soit aussi{line_break}éloigné du village doit{line_break}en être la cause.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSOnlyALittle"
 msgid "12804"
 msgstr "Il n'y a qu'un peu d'eau{line_break}au fond du puits.{page_break}Avec une chaleur pareille,{line_break}l'eau doit s'évaporer en{line_break}un rien de temps.{end_wait}"
 
@@ -51303,7 +51303,7 @@ msgctxt "message"
 msgid "12823"
 msgstr "Il s'agit du fameux homard{line_break}grillé d'Alhafra!{page_break}Je n'en ai jamais{line_break}vu d'aussi gros!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatSeafoodStewHasAn"
 msgid "12824"
 msgstr "Ce ragoût de poissons est{line_break}riche en ingrédients variés.{page_break}Une bouchée et vous êtes{line_break}au septième ciel!{end_wait}"
 

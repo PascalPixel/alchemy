@@ -1,68 +1,53 @@
-/* 080ea0d8: differ 2162 of 2455 (listing 2455, draft 2437, common 1365).
- * Structure: the sequence of conditional branches, jumps and calls now
- * matches the native's except one literal-pool jump; what remains is
- * register allocation, scheduling, constant hoisting and pool placement.
+/* 080ea0d8: differ 1553 of 2455 (listing 2455, draft 2438, common 1670).
+ * Frame: 184 as native. The spill slots from sp+104 (canvas) down to sp+32
+ * (shift) now sit where the native's do; the native also spills the second
+ * petal block's cell (sp+28), which ours keeps in a register.
+ * Found this session:
+ * - draw is DrawRectangle draw[2] (DImode, one 8-byte slot at sp+88):
+ *   draw[0] the blitter, draw[1] the alternate one set each frame of the
+ *   second loop. That alone explained the native's 184-byte frame (its
+ *   "draw2" at sp+92 is draw[1]) and the copies of draw[0] the petal
+ *   blocks call through (subreg reads CSE'd into one pseudo).
+ * - IME: the native rematerialises 0x04000208 at every use and stores the
+ *   constant 0x208, so ime is a function-level variable set once and
+ *   spilled (as CANVAS.C's QUEUE_DISPLAY_CONTROL); the queue pointer stays
+ *   per push (native keeps it in r1 across both pushes).
+ * - x and y are block locals of each Trig/shard loop: as one function-wide
+ *   pair their combined lifetime lowered their priority and every loop's
+ *   counter, angle and x came out rotated (native: x r5, angle r6,
+ *   counter r7, y r3 in every such loop). 2050 -> 1553.
+ * - Second petal block: d + 38 rather than frame * 2 - 126, so call four
+ *   reuses d / 4 + 49 without a dangling d >= 0 branch that kept d alive.
+ * - loop.c: ours hoists 0, &fill and 24 out of the 320-frame loop in its
+ *   first pass and 22 and 44 in its second; the native keeps 44 in a
+ *   register in both petal blocks (r10, r8), so it did not hoist 44.
+ * - The alternate blitter as ((DrawRectangle *)gWorkSlot)[47] (the
+ *   native's single literal gWorkSlot+188) moves loop 1's hoisting and a
+ *   global pseudo then evicts every local-alloc pseudo from r8 (2066);
+ *   kept as gTransitionWork[3] for now.
+ * Earlier notes, still true:
  * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
  * after the variable part, loop.c creates it in the inner loop's preheader
  * and cannot hoist it, and the whole ramp loop matches the native's.
- * Constants: the native reloads 0xff0000 in each petal placement and does
- * not hoist the IO queue's 0, &fill or 24 out of the 320-frame loop, where
- * ours hoists all four (loop.c: 0 with savings 11 life 39 in 1199 insns);
- * the palette fade masks with a pool-loaded 0x1f and widens
- * each colour as a halfword (lsls 16 / lsrs 26), ours with asrs.
- * Locals: the native fill word sits at sp+140, between place and place2, so
- * it is a declared volatile word, not an addressed scalar (that put it at
- * sp+116 after pair). The local arrays now sit where the native's do, but
- * the frame is 180 against 184: the native also spills draw2 (sp+92, loaded
- * once per frame, reloaded before each call), where ours keeps it in fp; in
- * the petal blocks the native keeps draw in sl and spills the petal cell
- * (sp+28), and builds d as frame * 2 then subtracts 164.
- * Register allocation and remaining stack slots
- * still differ widely; the BattleFx9 data names remain draft
- * declarations pending labels at their native bytes. BattleEffectWork, camera,
- * presentation, scroll and animation layouts now come from the shared headers.
- * RAM buffers, IWRAM entries, heap cells, callbacks and resources use existing
- * source names. The local IO queue macro is replaced by its common definition.
- * Trial: the named animation priority bitfield adds one instruction (2325);
+ * The palette fade masks with a pool-loaded 0x1f and widens each colour as
+ * a halfword (lsls 16 / lsrs 26), ours with asrs.
+ * The native fill word sits at sp+140, between place and place2, so it is a
+ * declared volatile word.
+ * Trial: the named animation priority bitfield adds one instruction;
  * its byte store is retained until the remaining allocation is understood.
- * Trial: a plain u32 fill (2324); volatile u32 fill (2257, kept).
- * Trial: draw2 declared last instead of after ctrl (2257, no change).
- * Trial: petal cell written in each call, not a block local: second petal
- * block 2253, both blocks 2252 (kept).
- * Trial: palette colour as s32, not u16 (u16 loads with ldrsh): 2238, kept;
- * u16 with red computed first: 2252. Through a volatile u16 pointer with
- * a u16 colour: ldrh and the pool-loaded 0x1f mask appear as native, but
- * red still masks the shifted colour (0x1f0000) instead of the loaded
- * one (2202, not kept); (u16)c for blue and green only: 2202.
+ * Trial: petal cell written in each call, not a block local (kept).
+ * Trial: palette colour as s32, not u16 (u16 loads with ldrsh), kept.
  * Trial: spark velocities from their own zero variable, not the ramp
- * limit: the counter takes r7 and the zero r8 as native's (2207, kept);
- * literal 0 and 255 are not hoisted and 255 becomes lsls/subs (2264).
- * Trial: ramp limit as 64 - i * 7 in the inner loop: the native's copy of
- * it into ip appears (kept); limit and offset both from i: 2248; a 770
- * variable: 2217; &sheet[pos + 0x2710]: no change.
- * Trial: respawn x tests frame <= 279 first, as the native branches (2206).
- * Trial: frame > 85 and frame <= 213 as nested ifs: the native tests them
- * separately, not as one unsigned range (2201, kept).
- * Trial: one counter i for every loop: it spills (2485).
- * Trial: draw reloaded through slots: 2219; respawn y tests inverted: 2230.
- * Trial: draw2 read as gTransitionWork[3], the native literal's spelling:
- * still no spill, frame 180 (2231).
- * Permuter, 6 minutes from 2238: 2145 only through temporaries, do-while
- * loop forms and dropped parentheses, none carried.
- * Trial: ramp store as work->sheet[pos + j + 0x2710]: 2209;
- * (work->sheet + pos + j)[0x2710]: 2222; ramp[i][j] in a [8][770] array
- * at 0x2710: 2174, kept, and the petal cell as &ramp[n][offset]: 2174.
+ * limit: the counter takes r7 and the zero r8 as native's (kept).
+ * Trial: ramp limit as 64 - i * 7 in the inner loop (kept).
+ * Trial: respawn x tests frame <= 279 first, as the native branches.
+ * Trial: frame > 85 and frame <= 213 as nested ifs (kept).
+ * Trial: one counter i for every loop: it spills.
  * Trial: the petal ring radius frame * 10 - 1424 computed once in the frame
- * body, between n and the transfer value as the native orders them: it
- * becomes a reduced giv of the frame loop as native's sp+12 (2162, kept);
- * its preheader still stores it in a different slot.
- * Lead: the native's 320-frame loop preheader holds nothing but frame = 0;
- * loop.c moved nothing out of that loop (each block rebuilds &fill with
- * add sp, #140 and stores fill at [sp, #140] directly). Ours moves 0, &fill
- * and 24 out of it. Diagnostic only, not source: the loop as a label and
- * goto gives the native's 184-byte frame but 2294 overall; as do-while
- * the code is identical (2162). */
+ * body: it becomes a reduced giv of the frame loop as native's sp+12 (kept).
+ * Trial: loop 2 as a label and goto: frame 184 but worse overall; the
+ * frame difference was draw[1], not loop.c. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -127,6 +112,27 @@ extern const u8 BattleFx9_ShardHeights[];
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARKS (&DUST[128])
 
+#define QUEUE_IO_WRITE(address, value, delay) do { \
+        struct IoWriteQueue *q;                                             \
+        u32 saved;                                                          \
+        s32 count;                                                          \
+                                                                            \
+        q = &gIoWriteQueue;                                                 \
+        do { \
+            saved = *ime;                                                   \
+        } while (0);                                                        \
+        *ime = (u16)ime;                                                    \
+        count = q->count;                                                   \
+        if (count <= 31) {                                                  \
+            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
+            *(u16 *)&q->count = count + 1;                                  \
+            *destination++ = (value);                                       \
+            *destination++ = (address);                                     \
+            *destination = (delay);                                         \
+        }                                                                   \
+        *ime = saved;                                                       \
+    } while (0)
+
 void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 {
     s32 anchor[3];
@@ -139,8 +145,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     void *canvas;
     struct BattleEffectWork *work;
     struct BattlePresentationWork *ctrl;
-    DrawRectangle draw2;
-    DrawRectangle draw;
+    DrawRectangle draw[2];
     s32 frame;
     u8 *ramp;
     struct BattleCamera *camera;
@@ -184,8 +189,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i24;
     s32 i25;
     s32 j;
-    s32 x;
-    s32 y;
     s32 size;
     s32 high;
     s32 speed;
@@ -193,8 +196,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     DrawRectangle blit;
     s32 z;
     s32 amp;
+    volatile u16 *ime;
 
     cache = &gBattleFxWork[1];
+    ime = (volatile u16 *)0x04000208;
     canvas = cache[0];
     work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
     ctrl = cache[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
@@ -207,7 +212,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     *(u16 *)0x05000000 = 0;
     *(u16 *)0x05000002 = 0;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    draw = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+    draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(0, 0);
@@ -304,7 +309,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 if (far < z) {
                     far = z;
                 }
-                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
+                draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
                     size * 2);
                 if (frame == 64) {
                     SPARKS[i4].velocity_x += (Trig_Sin(SPARKS[i4].variant) * 255) >> 3;
@@ -342,7 +347,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 size = __divsi3(scene[2], 20) + 2;
                 scene[0] += 60;
                 scene[1] += 80;
-                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
+                draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
                     size * 2);
             }
         }
@@ -406,9 +411,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             for (i9 = 0; i9 != 6; i9++) {
                 s32 k = i9 & 3;
                 s32 angle = Random16() & 0xffff;
-                x = ((Trig_Sin(angle) * 16) >> 16) - BattleFx9_ShardWidths[k] / 2;
-                y = ((Trig_Cos(angle) * 16) >> 16) - BattleFx9_ShardHeights[k] / 2;
-                draw(canvas, work->sheet + BattleFx9_ShardCells[k], x + 60, y + 80, BattleFx9_ShardWidths[k],
+                s32 x = ((Trig_Sin(angle) * 16) >> 16) - BattleFx9_ShardWidths[k] / 2;
+                s32 y = ((Trig_Cos(angle) * 16) >> 16) - BattleFx9_ShardHeights[k] / 2;
+                draw[0](canvas, work->sheet + BattleFx9_ShardCells[k], x + 60, y + 80, BattleFx9_ShardWidths[k],
                     BattleFx9_ShardHeights[k]);
             }
         }
@@ -434,8 +439,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
                 for (i10 = 0; i10 != 128; i10++) {
                     s32 angle = i10 << 9;
-                    x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
-                    y = (r * Trig_Cos(angle)) >> 17;
+                    s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
+                    s32 y = (r * Trig_Cos(angle)) >> 17;
                     blit(canvas, cell, x + 60, y + 72, 8, 16);
                 }
                 Runtime_ReleaseHeapBlock(47);
@@ -464,7 +469,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     Runtime_ReleaseHeapBlock(46);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER];
+    draw[0] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER];
     Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet, work->sheet + 0x4000, 1, 1);
 
     {
@@ -522,8 +527,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (gKeysRepeat & (KEY_A | KEY_B)) {
             if (frame >= 5 && frame < 150) {
                 frame = 150;
-                IO_WRITE_QUEUE_PUSH(0x04000020, 0x80, 0x20000);
-                IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
+                QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);
+                QUEUE_IO_WRITE(0x04000028, 0, 0x30000);
                 Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
             } else if (frame >= 155 && frame < 214) {
                 frame = 214;
@@ -533,8 +538,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame == 64) {
-            IO_WRITE_QUEUE_PUSH(0x04000020, 0x80, 0x20000);
-            IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
+            QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);
+            QUEUE_IO_WRITE(0x04000028, 0, 0x30000);
             fill = 0;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
             Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
@@ -652,39 +657,39 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame >= 64 && frame < 66) {
-            draw(canvas, work->sheet + 0x6000, 52, 51, 16, 17);
+            draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);
         }
         if (frame >= 66 && frame < 68) {
-            draw(canvas, work->sheet + 0x6110, 48, 40, 24, 41);
+            draw[0](canvas, work->sheet + 0x6110, 48, 40, 24, 41);
         }
         if (frame >= 68 && frame < 76) {
             s32 d = 76 - frame;
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 2, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 2, d + 38, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 2 + 49, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 2 + 49, d + 38, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, 49 - d / 2, 38 - d, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, 49 - d / 2, d + 38, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, d / 2 + 49, 38 - d, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, d / 2 + 49, d + 38, 22, 44);
         }
         if (frame >= 78 && frame < 80) {
-            draw(canvas, work->sheet + 0x6000, 52, 51, 16, 17);
+            draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);
         }
         if (frame >= 80 && frame < 82) {
-            draw(canvas, work->sheet + 0x6110, 48, 40, 24, 41);
+            draw[0](canvas, work->sheet + 0x6110, 48, 40, 24, 41);
         }
         if (frame >= 82 && frame < 86) {
             s32 d = frame * 2 - 164;
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 4, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 4, frame * 2 - 126, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 4 + 49, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 4 + 49, frame * 2 - 126, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, 49 - d / 4, 38 - d, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, 49 - d / 4, d + 38, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, d / 4 + 49, 38 - d, 22, 44);
+            draw[0](canvas, work->sheet + 0x64e8, d / 4 + 49, d + 38, 22, 44);
         }
 
         if (frame >= 72 && frame < 76) {
             s32 r2 = (frame << 4) - 1136;
             for (i18 = 0; i18 != 256; i18++) {
                 s32 angle = i18 << 8;
-                x = ((r2 * Trig_Sin(angle)) >> 16) - 5;
-                y = (r2 * Trig_Cos(angle)) >> 17;
-                draw(canvas, ramp + ParticleStreams_CellOffsets[9], x + 60, y + 50, 10, 20);
+                s32 x = ((r2 * Trig_Sin(angle)) >> 16) - 5;
+                s32 y = (r2 * Trig_Cos(angle)) >> 17;
+                draw[0](canvas, ramp + ParticleStreams_CellOffsets[9], x + 60, y + 50, 10, 20);
             }
         }
 
@@ -783,16 +788,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame >= 86 && frame < 150) {
             s32 angle = -0x4000;
             for (i20 = 0; i20 != 9; i20++, angle += 0x1000) {
-                x = ((frame - 86) * Trig_Sin(angle)) >> 16;
-                y = ((frame - 70) * Trig_Cos(angle)) >> 16;
-                draw(canvas, work->sheet + ((frame / 2 + i20) % 4) * 1728 + 0x4000, x + 44, y + 17, 32, 54);
+                s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
+                s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
+                draw[0](canvas, work->sheet + ((frame / 2 + i20) % 4) * 1728 + 0x4000, x + 44, y + 17, 32, 54);
             }
         }
 
         BattleEffect_LoadWork(47, 7, 7, 3, 3);
-        draw2 = ((DrawRectangle *)gWorkSlot)[47];
+        draw[1] = ((DrawRectangle *)gWorkSlot)[47];
         if (frame > 85) {
-            draw2(canvas, work, 0, 0, 120, 120);
+            draw[1](canvas, work, 0, 0, 120, 120);
         }
 
         if (frame > 279) {
@@ -857,15 +862,15 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
             if (frame <= 279) {
                 for (i23 = 0; i23 != 8; i23++) {
-                    x = (i23 & 1) * 20 - (Random16() & 15) + (i23 / 2) * 4 + shift / 2 - 16;
-                    y = (i23 / 2) * 32 - (Random16() & 15);
-                    draw2(canvas, work->sheet + ((frame / 2 + i23) % 4) * 1728 + 0x4000, x, y, 32, 54);
+                    s32 x = (i23 & 1) * 20 - (Random16() & 15) + (i23 / 2) * 4 + shift / 2 - 16;
+                    s32 y = (i23 / 2) * 32 - (Random16() & 15);
+                    draw[1](canvas, work->sheet + ((frame / 2 + i23) % 4) * 1728 + 0x4000, x, y, 32, 54);
                 }
             } else {
                 for (i24 = 0; i24 != 8; i24++) {
-                    x = (i24 & 1) * 20 + (Random16() & 15) - (i24 / 2) * 4 + shift / 2 - 16;
-                    y = (i24 / 2) * 32 - (Random16() & 15);
-                    draw2(canvas, work->sheet + ((frame / 2 + i24) % 4) * 1728 + 0x4000, x, y, 32, 54);
+                    s32 x = (i24 & 1) * 20 + (Random16() & 15) - (i24 / 2) * 4 + shift / 2 - 16;
+                    s32 y = (i24 / 2) * 32 - (Random16() & 15);
+                    draw[1](canvas, work->sheet + ((frame / 2 + i24) % 4) * 1728 + 0x4000, x, y, 32, 54);
                 }
             }
         }

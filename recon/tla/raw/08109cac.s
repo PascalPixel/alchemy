@@ -95,7 +95,7 @@ Func_08109cac:
 	adds r2, #8
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #5

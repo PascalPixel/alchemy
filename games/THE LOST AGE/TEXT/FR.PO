@@ -239,7 +239,7 @@ msgctxt "MsgAbilityLearned"
 msgid "00057"
 msgstr "{argument_actor_name:1} a appris{line_break}{argument_ability_name}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCommandName"
 msgid "00058"
 msgstr "Attaquer"
 
@@ -27531,11 +27531,11 @@ msgctxt "MsgFieldDoorWontBudge"
 msgid "06880"
 msgstr "La porte ne s'ouvre pas...{line_break}Elle doit être verrouillée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBeenALong"
 msgid "06881"
 msgstr "Les voyageurs ont boudé{line_break}Mikasalla pendant si{line_break}longtemps...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouLookingForSomeone"
 msgid "06882"
 msgstr "Vous cherchez quelqu'un?{end_now}"
 
@@ -27547,59 +27547,59 @@ msgctxt "message"
 msgid "06884"
 msgstr "Bien entendu...{line_break}Si peu d'étrangers{line_break}osent s'aventurer ici.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWentOutToInvestigate"
 msgid "06885"
 msgstr "Je suis allé inspecter le{line_break}territoire après le séisme...{page_break}Il semble qu'un continent{line_break}étranger soit venu se{line_break}rattacher au nôtre...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouReGoingDeeper"
 msgid "06886"
 msgstr "Je vous avertis: si vous{line_break}traversez Océnia, vous{line_break}aurez des problèmes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInTheHeartOfOsenia"
 msgid "06887"
 msgstr "Au c¾ur d'Océnia se{line_break}trouve un lieu sacré,{line_break}Rochair...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouWantToGo"
 msgid "06888"
 msgstr "Deux routes mènent au{line_break}c¾ur d'Océnia...{page_break}Vous pouvez atteindre{line_break}cette région par le sud{line_break}ou par le nord...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouLookAcrossThe"
 msgid "06889"
 msgstr "De l'autre côté de l'océan,{line_break}au sud, se trouve Toundra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldATownCalledGarohLies"
 msgid "06890"
 msgstr "Un village appelé Garoh{line_break}se trouve à l'est d'ici...{page_break}Mais... ses habitants ne{line_break}sont pas très... humains...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldAnyoneTravelAll"
 msgid "06891"
 msgstr "Pourquoi faire un si long{line_break}voyage pour visiter un village{line_break}aussi ordinaire que le nôtre?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldILikeThisTimeOf"
 msgid "06892"
 msgstr "C'est ma saison préférée...{page_break}Le temps est tellement{line_break}plus agréable. Je déteste{line_break}l'hiver...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOseniaWasBigAlreadyBut"
 msgid "06893"
 msgstr "Océnia était déjà très{line_break}vaste avant. Maintenant{line_break}qu'il est réuni à Indra...{page_break}Il est gigantesque!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoWayIDLeave"
 msgid "06894"
 msgstr "Pas question de quitter le village...{page_break}Je risque de m'égarer et de{line_break}servir de hors-d'¾uvre{line_break}à quelque monstre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAirSRockHasStood"
 msgid "06895"
 msgstr "Rochair est né en même{line_break}temps que notre monde...{page_break}Mais personne ne sait{line_break}ce que cela signifie...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSWeirdThatYou"
 msgid "06896"
 msgstr "C'est quand même étrange{line_break}de ne pas pouvoir parcourir{line_break}Océnia depuis le sud...{page_break}Car, depuis le nord,{line_break}c'est du gâteau!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBitterColdIn"
 msgid "06897"
 msgstr "Il fait vraiment très{line_break}froid à Toundra...{line_break}Il y neige toute l'année.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThePeopleInGarohAre"
 msgid "06898"
 msgstr "Les habitants de Garoh{line_break}sont très velus.{page_break}Ce sont des gens bizarres,{line_break}mais ils sont gentils{line_break}et très chaleureux.{end_wait}"
 
@@ -27635,19 +27635,19 @@ msgctxt "message"
 msgid "06906"
 msgstr "J'aime beaucoup explorer{line_break}le terrain derrière la maison.{line_break}C'est ma cachette!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBukBukBuk"
 msgid "06907"
 msgstr "Cot cot cot...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBahBaaaaaaa"
 msgid "06908"
 msgstr "{text_effect:4}Bêêêêê!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheGroundHereIsSo"
 msgid "06909"
 msgstr "Le sol à cet endroit est{line_break}si mou! Je vais gratter{line_break}et creuser!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhYeahMmmIJust"
 msgid "06910"
 msgstr "Miam-miam!{line_break}C'est de la bonne{line_break}herbêêê!{end_wait}"
 
@@ -51211,7 +51211,7 @@ msgctxt "message"
 msgid "12800"
 msgstr "Il y a un passage{line_break}au fond du puits!{page_break}Je me demande si{line_break}quelqu'un le sait...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSCompletelyFullOf"
 msgid "12801"
 msgstr "Il est rempli à ras bord.{line_break}Il a l'air très profond.{end_wait}"
 

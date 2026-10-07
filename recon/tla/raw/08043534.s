@@ -35,7 +35,7 @@ Func_08043534:
 	movs r3, #0
 	ldrsh r0, [r2, r3]
 	adds r1, r7, #0
-	bl Func_08015e44
+	bl SaveState_ReadRecordPayload
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_08043590

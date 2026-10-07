@@ -90,7 +90,7 @@ Func_08109ad8:
 	movs r2, #0
 	subs r1, #12
 	mov r0, r10
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	movs r3, #3
 	mov r2, r9
 	strb r3, [r2]

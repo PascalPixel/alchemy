@@ -73,7 +73,8 @@ Resource_Overlay65C:
 	.incbin "overlays/resource_65c.lz"
 	.global Resource_Overlay65D
 Resource_Overlay65D:
-	.incbin "baserom.gba", 0x00ee14d4, 0x000006e4
+	.incbin "overlays/resource_65d.lz"
+	.incbin "baserom.gba", 0x00ee1bb6, 0x00000002
 	.global Resource_Overlay65E
 Resource_Overlay65E:
 	.incbin "baserom.gba", 0x00ee1bb8, 0x0000056c

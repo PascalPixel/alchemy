@@ -28,7 +28,11 @@ struct PartyState {
     u8 unknown_213;
     s32 current_owner;
     u8 active_owners[8];
-    u8 unknown_220[0x20];
+    u8 unknown_220[0xa];
+    u8 battle_fx_enabled;
+    u8 unknown_22b;
+    u8 event_mode;
+    u8 unknown_22d[0x13];
     u16 packed_events[2];
     u8 unknown_244[7];
     u8 battle_rule_24b;
@@ -38,7 +42,8 @@ struct PartyState {
     s8 pending_third;
     u8 unknown_26d[3];
     u32 saved_callback;
-    u8 unknown_274[2];
+    u8 counter_274;
+    u8 unknown_275;
     s16 owner_override;
     u8 unknown_278[0x44];
     u16 forge_item;

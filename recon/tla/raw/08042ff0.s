@@ -80,7 +80,7 @@ Func_08042ff0:
 	ldr r0, .L_080430c0
 	bl SerialRuntime_QueueCommand
 	adds r0, r6, #0
-	bl Func_08015e8c
+	bl SaveState_DeleteRecord
 	adds r6, r0, #0
 	movs r0, #0
 	bl SerialRuntime_QueueCommand

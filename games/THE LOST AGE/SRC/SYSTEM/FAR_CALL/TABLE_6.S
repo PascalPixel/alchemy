@@ -8,4 +8,4 @@ Runtime_SetWorkTripleIfNonNegativeFar:
 	.global Func_08020230
 	.thumb_func
 Func_08020230:
-	overlay_veneer Func_0802dcd8
+	overlay_veneer Map_WaitWorkValuesBelow256

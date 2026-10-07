@@ -71,7 +71,7 @@ Func_0810a03c:
 	strb r3, [r2]
 	movs r1, #128
 	movs r2, #48
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	mov r1, r10
 	mov r2, r11
 	movs r0, #0
@@ -84,7 +84,7 @@ Func_0810a03c:
 	movs r0, #0
 	mov r1, r8
 	adds r2, r6, #0
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 .L_0810a0f4:
 	ldr r0, [sp, #0]
 	add sp, #4

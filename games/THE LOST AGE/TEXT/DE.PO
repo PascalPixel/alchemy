@@ -27703,11 +27703,11 @@ msgctxt "MsgFieldDoorWontBudge"
 msgid "06923"
 msgstr "Die Tür rührt sich nicht.{line_break}Muss wohl verschlossen sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBeenALong"
 msgid "06924"
 msgstr "Es ist lange her, seit es{line_break}Besucher nach Mikasalla{line_break}verschlagen hat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouLookingForSomeone"
 msgid "06925"
 msgstr "Seid ihr auf der Suche nach{line_break}jemandem?{end_now}"
 
@@ -27719,59 +27719,59 @@ msgctxt "message"
 msgid "06927"
 msgstr "Hätte mich auch gewundert.{line_break}Nicht viele Fremde kommen{line_break}in unser Dorf.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWentOutToInvestigate"
 msgid "06928"
 msgstr "Nach dem Erdbeben habe ich{line_break}die Gegend erforscht.{page_break}Es scheint, als wäre ein völlig{line_break}fremdes Land mit unserem{line_break}zusammengestoßen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouReGoingDeeper"
 msgid "06929"
 msgstr "Wenn ihr tiefer nach Osenia{line_break}vordringen wollt, dann seid auf{line_break}jede Menge Ärger gefasst!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInTheHeartOfOsenia"
 msgid "06930"
 msgstr "Im Herzen Osenias befindet{line_break}sich ein heiliger Ort:{line_break}Der Bora-Felsen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouWantToGo"
 msgid "06931"
 msgstr "Wenn du ins Herz von Osenia{line_break}vordringen willst, gibt es für{line_break}dich zwei Möglichkeiten.{page_break}Du kannst dich vom Süden her{line_break}nähern, oder du versuchst es{line_break}vom Norden her.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouLookAcrossThe"
 msgid "06932"
 msgstr "Wenn ihr über den Ozean im{line_break}Süden blickt, könnt ihr bis{line_break}nach Tundaria sehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldATownCalledGarohLies"
 msgid "06933"
 msgstr "Eine Stadt namens Garoh liegt{line_break}östlich von uns.{page_break}Aber ihre Bewohner sind...{line_break}nicht unbedingt menschlich...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldAnyoneTravelAll"
 msgid "06934"
 msgstr "Warum nimmt jemand eine so{line_break}strapaziöse Reise auf sich,{page_break}nur um unser rückständiges{line_break}Nest zu besuchen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldILikeThisTimeOf"
 msgid "06935"
 msgstr "Diese Jahreszeit mag ich von{line_break}allen am liebsten!{page_break}Es ist so viel angenehmer und{line_break}milder, als im strengen Winter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOseniaWasBigAlreadyBut"
 msgid "06936"
 msgstr "Osenia war vorher schon sehr{line_break}groß. Doch jetzt, da wir mit Indra{line_break}verbunden sind,{page_break}ist es geradezu riesig!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoWayIDLeave"
 msgid "06937"
 msgstr "Auf keinen Fall werde ich die{line_break}Stadt verlassen!{page_break}Wenn ich mich auf den Straßen{line_break}da draußen verlaufe, bin ich bald{line_break}ein Monsterimbiss!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAirSRockHasStood"
 msgid "06938"
 msgstr "Der Bora-Felsen steht schon, seit{line_break}die Welt aus dem Brodem der{line_break}Unendlichkeit entstand.{page_break}...Aber was das zu bedeuten hat,{line_break}weiß keiner so genau.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSWeirdThatYou"
 msgid "06939"
 msgstr "Schon eigenartig, dass man vom{line_break}Süden aus Osenia nicht umrunden{line_break}kann.{page_break}Denn wenn man vom Norden{line_break}kommt, stellt dieses Vorhaben{line_break}kein Problem dar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBitterColdIn"
 msgid "06940"
 msgstr "In Tundaria ist es bitter kalt!{line_break}Dort schneit es auch das ganze{line_break}Jahr über.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThePeopleInGarohAre"
 msgid "06941"
 msgstr "Die Leute in Garoh sind{line_break}ziemlich pelzig.{page_break}Sie sehen irgendwie eigenartig{line_break}aus, aber auch knuddelig.{page_break}Außerdem sind sie alle{line_break}sehr nett.{end_wait}"
 
@@ -27807,19 +27807,19 @@ msgctxt "message"
 msgid "06949"
 msgstr "Ich spiele gerne 'Forscher' hinter{line_break}unserem Haus. Das ist mein{line_break}geheimes Versteck!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBukBukBuk"
 msgid "06950"
 msgstr "Gack... gack... gack...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBahBaaaaaaa"
 msgid "06951"
 msgstr "Mäh! {text_effect:4}Mää-äää-äääh!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheGroundHereIsSo"
 msgid "06952"
 msgstr "Der Boden hier ist so weich!{line_break}Ich würde zu gerne versuchen,{line_break}an dieser Stelle zu scharren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhYeahMmmIJust"
 msgid "06953"
 msgstr "Oh, ja! Mmmmh!{line_break}Ich liebe es, das saftige Gras{line_break}in mich hineinzuschlingen!{end_wait}"
 
@@ -51383,7 +51383,7 @@ msgctxt "message"
 msgid "12843"
 msgstr "Am Grunde des Brunnens{line_break}befindet sich ein Tunnel.{page_break}Ich frage mich, ob noch{line_break}jemand davon weiß.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSCompletelyFullOf"
 msgid "12844"
 msgstr "Bis oben hin voller Wasser.{line_break}Der Grund scheint sehr tief{line_break}unten zu sein.{end_wait}"
 

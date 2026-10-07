@@ -26819,11 +26819,11 @@ msgctxt "MsgFieldDoorWontBudge"
 msgid "06702"
 msgstr "とびらはかたくとざされている{line_break}カギが かかっているようだ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBeenALong"
 msgid "06703"
 msgstr "このミーカサラの村に{line_break}人がくるなんて・・・{line_break}ひさしぶりだなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouLookingForSomeone"
 msgid "06704"
 msgstr "もしかして あなた{line_break}人でも さがしてるの?{end_now}"
 
@@ -26835,59 +26835,59 @@ msgctxt "message"
 msgid "06706"
 msgstr "そうよね ここのところ{line_break}この村には だれも{line_break}おとずれていないもの。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWentOutToInvestigate"
 msgid "06707"
 msgstr "この前 すごいショックが{line_break}オセニア大陸にあったので{line_break}西の海を見てきたんだよ{page_break}そしたら この大陸に{line_break}ピッタリ べつの大陸が{line_break}くっついて いたんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouReGoingDeeper"
 msgid "06708"
 msgstr "ここより おくに行くには{line_break}それなりの キケンを{line_break}かくごして行くことだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInTheHeartOfOsenia"
 msgid "06709"
 msgstr "オセニア西大陸の おくには{line_break}エアーズロックとよばれる{line_break}しんぴの 岩山があるんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouWantToGo"
 msgid "06710"
 msgstr "オセニア西大陸の おくへ{line_break}どうしても 行きたいのなら{line_break}ほうほうが ふたつあるわいな{page_break}大陸の南がわと 北がわと{line_break}どちらからでも グルッと{line_break}まわりこむことじゃな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouLookAcrossThe"
 msgid "06711"
 msgstr "南の海のむこうに見えるのが{line_break}サウスアイランドっていうんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldATownCalledGarohLies"
 msgid "06712"
 msgstr "ポピーチーという村が{line_break}オセニア西大陸のおくに{line_break}あるんだけどさあ・・・{page_break}あそこに すんでいるのは{line_break}人だけじゃないみたいよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldAnyoneTravelAll"
 msgid "06713"
 msgstr "こんなに ひろい大陸だから{line_break}ちっぽけなミーカサラには{line_break}だれも やってこないんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldILikeThisTimeOf"
 msgid "06714"
 msgstr "ああ さむい冬がさって{line_break}すごく あたたかいわ{page_break}やっぱり わたしは{line_break}1年のきせつの中で{line_break}いまごろが1ばんスキね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOseniaWasBigAlreadyBut"
 msgid "06715"
 msgstr "べつの大陸がくっついて{line_break}ひろいオセニア大陸が{line_break}もっと ひろくなるぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoWayIDLeave"
 msgid "06716"
 msgstr "この先で 道にまよったら{line_break}アッというまにモンスターの{line_break}えじきに なっちまうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAirSRockHasStood"
 msgid "06717"
 msgstr "エアーズロックという岩山は{line_break}神がつくられた岩山だと{line_break}いわれとるんじゃが・・・{page_break}その つくられたもくてきは{line_break}だれにも わからないんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSWeirdThatYou"
 msgid "06718"
 msgstr "なぜか オセニア西大陸は{line_break}南まわりでは 大陸の中を{line_break}1しゅうできぬのじゃ{page_break}北まわりなら グルッと{line_break}まわれるというのにのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBitterColdIn"
 msgid "06719"
 msgstr "サウスアイランドって{line_break}1年中 雪がふっている{line_break}さむいばしょなんだなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThePeopleInGarohAre"
 msgid "06720"
 msgstr "ポピーチーという村には{line_break}からだ中 けむくじゃらの{line_break}じゅう人が すんでいるわ{page_break}見かけは おそろしいけど{line_break}こころは やさしいそうね。{end_wait}"
 
@@ -26923,19 +26923,19 @@ msgctxt "message"
 msgid "06728"
 msgstr "ボクの ぼうけんのばしょが{line_break}ウチの ウラにあるんだけど{line_break}ぜったい だれにもいわないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBukBukBuk"
 msgid "06729"
 msgstr "コケッ コケッ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBahBaaaaaaa"
 msgid "06730"
 msgstr "メェー メェー ンメェー!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheGroundHereIsSo"
 msgid "06731"
 msgstr "このあたりの土は つっつくと{line_break}じめんにアナがあきそうなほど{line_break}やわらかいんだ コケッ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhYeahMmmIJust"
 msgid "06732"
 msgstr "くさをたべているときが{line_break}いちばんしあわせなんだ{line_break}モグモグ・・・ウメェー!{end_wait}"
 
@@ -50643,7 +50643,7 @@ msgctxt "message"
 msgid "12658"
 msgstr "いどのそこにつうろがある{page_break}ここに つうろがあるなんて{line_break}みんなは しってるのかな{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSCompletelyFullOf"
 msgid "12659"
 msgstr "水が なみなみとあって{line_break}そこは かなりひろいぞ{end_wait}"
 

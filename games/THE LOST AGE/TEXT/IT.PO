@@ -27531,11 +27531,11 @@ msgctxt "MsgFieldDoorWontBudge"
 msgid "06880"
 msgstr "La porta non si apre...{line_break}Dev'essere chiusa a chiave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBeenALong"
 msgid "06881"
 msgstr "È tanto tempo che{line_break}non riceviamo visite{line_break}a Mikasalla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouLookingForSomeone"
 msgid "06882"
 msgstr "Cercate{line_break}qualcuno?{end_now}"
 
@@ -27547,59 +27547,59 @@ msgctxt "message"
 msgid "06884"
 msgstr "Lo immaginavo...{line_break}Non ci sono molti stranieri{line_break}che passano di qui.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWentOutToInvestigate"
 msgid "06885"
 msgstr "Sono andato a investigare{line_break}dopo il terremoto...{page_break}Sembra che un altro continente{line_break}abbia colliso con il nostro...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouReGoingDeeper"
 msgid "06886"
 msgstr "Se vi inoltrate in Osenia,{line_break}è meglio che vi prepariate{line_break}al peggio.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInTheHeartOfOsenia"
 msgid "06887"
 msgstr "Nel cuore di Osenia{line_break}giace un luogo sacro,{line_break}la Roccia dell'Aria...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouWantToGo"
 msgid "06888"
 msgstr "Se volete arrivare al{line_break}cuore di Osenia,{line_break}avete due strade...{page_break}Potete passare{line_break}da sud, o scendere{line_break}da nord...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouLookAcrossThe"
 msgid "06889"
 msgstr "Se guardate l'oceano{line_break}verso sud, potete{line_break}scorgere Tundaria.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldATownCalledGarohLies"
 msgid "06890"
 msgstr "Un villaggio chiamato Garoh{line_break}si trova a est di qui...{page_break}Ma... i suoi abitanti non{line_break}sono proprio... umani...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldAnyoneTravelAll"
 msgid "06891"
 msgstr "Perché qualcuno{line_break}affronta un viaggio così{line_break}lungo solo per venire qui?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldILikeThisTimeOf"
 msgid "06892"
 msgstr "Questo è il mio periodo dell'anno{line_break}preferito...{page_break}È tanto più{line_break}piacevole del{line_break}duro inverno...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOseniaWasBigAlreadyBut"
 msgid "06893"
 msgstr "Osenia era grande,{line_break}ma ora che è{line_break}unita a Indra...{page_break}È enorme!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoWayIDLeave"
 msgid "06894"
 msgstr "Non lascerei mai la città...{page_break}Se mi perdessi su quelle{line_break}strade diventerei{line_break}cibo per mostri.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAirSRockHasStood"
 msgid "06895"
 msgstr "La Roccia dell'Aria è{line_break}là dall'inizio del mondo...{page_break}Nessuno però, sa cosa{line_break}voglia dire tutto ciò...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSWeirdThatYou"
 msgid "06896"
 msgstr "È stranissimo che{line_break}non si possa raggiungere{line_break}Osenia da sud...{page_break}Da nord è{line_break}facilissimo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSBitterColdIn"
 msgid "06897"
 msgstr "È freddissimo a{line_break}Tundaria... Nevica{line_break}tutto l'anno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThePeopleInGarohAre"
 msgid "06898"
 msgstr "La gente di Garoh{line_break}è molto pelosa.{page_break}Sono strani e...{line_break}quasi teneri, molto{line_break}simpatici comunque.{end_wait}"
 
@@ -27635,19 +27635,19 @@ msgctxt "message"
 msgid "06906"
 msgstr "Mi piace così tanto{line_break}esplorare dietro la casa...{line_break}È il mio nascondiglio segreto!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBukBukBuk"
 msgid "06907"
 msgstr "Co coo co...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBahBaaaaaaa"
 msgid "06908"
 msgstr "Bee! {text_effect:4}Beeeee!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheGroundHereIsSo"
 msgid "06909"
 msgstr "Il terreno qui è così{line_break}soffice! Che voglia di{line_break}scavare che ho, Cooo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhYeahMmmIJust"
 msgid "06910"
 msgstr "Mmm...{line_break}Adoro mangiare{line_break}l'erba! Yum!{end_wait}"
 
@@ -51211,7 +51211,7 @@ msgctxt "message"
 msgid "12800"
 msgstr "C'è un passaggio{line_break}in fondo al pozzo!{page_break}Chissà se anche altri{line_break}lo sanno...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSCompletelyFullOf"
 msgid "12801"
 msgstr "È pieno d'acqua.{line_break}Il fondo è profondo.{end_wait}"
 

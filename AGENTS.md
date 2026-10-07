@@ -205,7 +205,7 @@ or functions is exactly this cheating.
   - The bytes prove layers, units and calls; the ROM keeps no names (only
     credits text and ⚓️'s build stamp `020610172024`). Names, numbering and
     comments are reconstruction: never present them as recovered.
-  - The showcase is `Battle_ResolveTargetAction` in
+  - The showcase is `BtlTgtExec` in
     `games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft

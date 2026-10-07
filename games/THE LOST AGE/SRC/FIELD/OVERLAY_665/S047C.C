@@ -7,7 +7,7 @@ s32 Func_02001be4();
 s32 Func_02001cfc();
 s32 Func_02001c74();
 s32 Motion_CamBounds();
-s32 Func_02001ccc();
+void Func_02001ccc(void);
 s32 Battle_WaitMode0();
 s32 Motion_SetVarCbAndRefresh();
 s32 Func_02001c84();

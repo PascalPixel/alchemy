@@ -2,16 +2,16 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 Func_020009b0();
-s32 Func_02000a50();
-s32 ObjectMotion_SetVariantCallback();
-s32 Func_02000a18();
-s32 UiText_OpenMessageAtObject();
-s32 Func_02000a58();
-s32 Inventory_PromptAndSetObjectMode();
-s32 Battle_WaitMode0();
-s32 Func_02000a28();
-s32 Func_020009b8();
+void Func_020009b0(void);
+void Func_02000a50(s32 a);
+void ObjectMotion_SetVariantCallback(s32 a, s32 b);
+void Func_02000a18(s32 a);
+void UiText_OpenMessageAtObject(s32 a, s32 b);
+s32 Func_02000a58(void);
+s32 Inventory_PromptAndSetObjectMode(s32 a, s32 b);
+void Battle_WaitMode0(s32 a);
+void Func_02000a28(s32 a, s32 b);
+void Func_020009b8(void);
 extern u8 MsgAhSoYouWantMe[];
 
 void Func_02000480(void)

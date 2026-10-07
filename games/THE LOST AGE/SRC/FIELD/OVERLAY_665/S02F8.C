@@ -2,19 +2,19 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 GameFlag_SetBit();
-s32 PartyInventory_Remove();
-s32 Func_02001be4();
-s32 Func_02001cfc();
-s32 Func_02001c74();
-s32 Battle_WaitMode0();
-s32 ObjectMotion_SetAngleToward();
-s32 Func_02001c84();
-s32 Object_SetModeById();
-s32 ObjectMotion_Launch();
-s32 Func_02000398();
-s32 ObjectMotion_ArmCallback();
-s32 Func_02001bec();
+void GameFlag_SetBit(s32 a);
+void PartyInventory_Remove(s32 a);
+void Func_02001be4(void);
+void Func_02001cfc(s32 a);
+void Func_02001c74(s32 a);
+void Battle_WaitMode0(s32 a);
+void ObjectMotion_SetAngleToward(s32 a, s32 b, s32 c);
+void Func_02001c84(s32 a, s32 b, s32 c);
+void Object_SetModeById(s32 a, s32 b);
+void ObjectMotion_Launch(s32 a, s32 b, s32 c);
+void Func_02000398(s32 a);
+void ObjectMotion_ArmCallback(s32 a, s32 b, s32 c);
+void Func_02001bec(void);
 extern u8 MsgThanksMister[];
 extern u8 gPartyState[];
 

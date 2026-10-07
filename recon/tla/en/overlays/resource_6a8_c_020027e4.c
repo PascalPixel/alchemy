@@ -2,13 +2,13 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 GameFlag_Test();
-s32 Func_0200279c();
-s32 WaitFrames();
-s32 ObjectMotion_EnableActionAndSetCallback();
-s32 ObjectMotion_SetActionVariant();
-s32 Object_GetById();
-s32 Object_SetPartAttribute();
+s32 GameFlag_Test(s32 a);
+void Func_0200279c(s32 a, s32 b, s32 c, s32 d);
+void WaitFrames(s32 a);
+void ObjectMotion_EnableActionAndSetCallback(s32 a, s32 b);
+void ObjectMotion_SetActionVariant(s32 a, s32 b);
+s32 Object_GetById(s32 a);
+void Object_SetPartAttribute(s32 a, s32 b);
 extern u8 Data_020047ac[];
 extern u8 Data_02004848[];
 extern u8 Data_020048e4[];

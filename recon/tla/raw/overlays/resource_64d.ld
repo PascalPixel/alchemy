@@ -13,7 +13,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/S0440.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02008510)
         "*/resource_64d_overlay.o"(.text.x02009a2c)
-        "*/resource_64d_overlay.o"(.text.x02009bb0)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/S1BB0.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02009c30)
         "*/resource_64d_overlay.o"(.text.x02009fd0)
         "*/resource_64d_overlay.o"(.text.x0200a3a4)

@@ -1607,23 +1607,6 @@ Func_02000d18:
 	.4byte Data_02005118
 .L_02008ed8:
 	.4byte Data_02005168
-	.section .text.x02008edc,"ax",%progbits
-	.global Func_02000edc
-	.thumb_func
-Func_02000edc:
-	push {lr}
-	bl Func_02004e5c
-	movs r0, #0
-	bl Func_02004fcc
-	ldr r0, .L_02008efc
-	bl Func_02004f0c
-	movs r0, #10
-	movs r1, #0
-	bl Func_02004f14
-	bl Func_02004e64
-	pop {pc}
-.L_02008efc:
-	.4byte 0x00002300
 	.section .text.x02008f00,"ax",%progbits
 	.global Func_02000f00
 	.thumb_func

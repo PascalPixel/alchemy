@@ -2,19 +2,19 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 Func_020028b4();
-s32 Func_020029cc();
-s32 Func_0200293c();
-s32 Func_020029d4();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 Func_0200294c();
-s32 Object_SetModeById();
-s32 Object_GetById();
-s32 ObjectMotion_ResetAndSetPosition();
-s32 Func_0200290c();
-s32 Battle_WaitMode0();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 Func_020028bc();
+void Func_020028b4(void);
+void Func_020029cc(s32 a);
+void Func_0200293c(s32 a);
+void Func_020029d4(s32 a, s32 b, s32 c, s32 d);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32 a);
+void Func_0200294c(s32 a, s32 b, s32 c);
+void Object_SetModeById(s32 a, s32 b);
+s32 Object_GetById(s32 a);
+void ObjectMotion_ResetAndSetPosition(s32 a, s32 b, s32 c);
+void Func_0200290c(s32 a, s32 b, s32 c);
+void Battle_WaitMode0(s32 a);
+void ObjectMotion_CommitPositionAndActivate(s32 a, s32 b, s32 c);
+void Func_020028bc(void);
 extern u8 MsgNotThatWayTheMeeting[];
 
 void Func_02001bb0(void)

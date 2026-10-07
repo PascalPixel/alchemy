@@ -570,22 +570,6 @@ Func_02000508:
 	.4byte Data_02004194
 .L_02008544:
 	.4byte Data_02004314
-	.section .text.x02008548,"ax",%progbits
-	.global Func_02000548
-	.thumb_func
-Func_02000548:
-	push {lr}
-	bl Func_02003bc8
-	movs r0, #0
-	bl Func_02003c88
-	ldr r0, .L_02008564
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02003bd0
-	pop {pc}
-	.2byte 0x0000
-.L_02008564:
-	.4byte MsgFieldWindStoneWarning
 	.section .text.x02008620,"ax",%progbits
 	.global Func_02000620
 	.thumb_func

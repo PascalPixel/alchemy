@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "Ich werde mein Bestes geben!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "05653"
 msgstr "?"
 
@@ -27819,7 +27819,7 @@ msgctxt "message"
 msgid "06952"
 msgstr "Der Boden hier ist so weich!{line_break}Ich würde zu gerne versuchen,{line_break}an dieser Stelle zu scharren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouVeFinallyCome"
 msgid "06953"
 msgstr "Oh, ja! Mmmmh!{line_break}Ich liebe es, das saftige Gras{line_break}in mich hineinzuschlingen!{end_wait}"
 
@@ -28943,7 +28943,7 @@ msgctxt "message"
 msgid "07233"
 msgstr "Der Aleph-Berg? Dann ist es also{line_break}wahr! Unsere Legenden berichten,{line_break}dass dieser Berg schon seit{page_break}den Kindheitstagen unserer{line_break}Welt besteht!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThanksMister"
 msgid "07234"
 msgstr "Wenn der Aleph-Berg tatsächlich{line_break}existiert, dann sind unsere{line_break}Legenden wahr!{end_wait}"
 
@@ -28983,7 +28983,7 @@ msgctxt "message"
 msgid "07243"
 msgstr "Die mystischen Steine des{line_break}Aleph-Bergs... Die Psynergy-{line_break}Steine...{page_break}Sie stehen in enger Verbindung{line_break}zu den Kräften von Vales{line_break}Bewohnern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyLookAtThis"
 msgid "07244"
 msgstr "'Psynergy-Steine' sagt ihr?{end_wait}"
 
@@ -34919,7 +34919,7 @@ msgctxt "message"
 msgid "08727"
 msgstr "Seit Akafubu unser Medizinmann{line_break}ist, benimmt er sich viel netter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfSunshineSetHisMind"
 msgid "08728"
 msgstr "Ich schwöre es! Nie wieder{line_break}werde ich mich so verausgaben.{end_wait}"
 
@@ -34927,7 +34927,7 @@ msgctxt "message"
 msgid "08729"
 msgstr "Akafubu ist so griesgrämig.{line_break}Ob jetzt seine Frustration{line_break}die Oberhand gewinnt?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIShouldnTTellHim"
 msgid "08730"
 msgstr "In Gondowan wird die Macht der{line_break}Kibombo-Krieger von vielen{line_break}gefürchtet.{page_break}Dabei wollen wir gar nicht{line_break}gefürchtet sein!{page_break}Jetzt hat Kibombo die Gelegenheit,{line_break}seinen Ruf zu ändern.{end_wait}"
 
@@ -34935,7 +34935,7 @@ msgctxt "message"
 msgid "08731"
 msgstr "Wir glauben, dass es an der Zeit{line_break}ist die anderen Dörfer darüber{line_break}zu informieren,{page_break}dass Akafubu die Zeremonie{line_break}beendet hat.{page_break}Sie werden sicher glücklich{line_break}darüber sein, dass wir keine{line_break}Bedrohung mehr für sie sind.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesSunshineWantIn"
 msgid "08732"
 msgstr "Es wird nicht leicht sein sie davon{line_break}zu überzeugen, dass wir uns nun{line_break}völlig geändert haben.{page_break}Aber wir werden es versuchen.{end_wait}"
 
@@ -34979,19 +34979,19 @@ msgctxt "message"
 msgid "08742"
 msgstr "Argh! Dieses Bett treibt mich{line_break}in den Wahnsinn!{page_break}Es fühlt sich an, als würden{line_break}lauter Wanzen über mich{line_break}hinweg krabbeln!{page_break}Wenn es mich juckt, reibe ich{line_break}mich immer selbst von oben{line_break}bis unten mit dem Puder ein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDadSNotDoingAny"
 msgid "08743"
 msgstr "Ich liebe Kibombos berühmtes{line_break}gegrilltes Monster-Steak! Mit{line_break}extrascharfer Kräutersauce!{page_break}Eine lokale Spezialität, die{line_break}Freude bereitet.{page_break}Allerdings nicht annähernd so{line_break}viel Spaß, wie man nach getaner{line_break}Verdauungsarbeit hat...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItSNotRaining"
 msgid "08744"
 msgstr "Die Zeremonie ist nun zu Ende{line_break}und in Kibombo herrscht wieder{line_break}Frieden.{page_break}Das Schicksal der Kibombo hängt{line_break}nun von Akafubus Qualitäten als{line_break}Anführer ab.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSAPrettyStubborn"
 msgid "08745"
 msgstr "Ich kann nicht glauben, dass sich{line_break}Akafubu nur geändert hat, weil er{line_break}die Zeremonie gemeistert hat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneThinksDadIsStubborn"
 msgid "08746"
 msgstr "Der Bürgermeister ist{line_break}endlich wieder aus Alhafra{line_break}zurückgekehrt!{end_wait}"
 
@@ -35023,19 +35023,19 @@ msgctxt "message"
 msgid "08753"
 msgstr "Ist zufällig ein Mädchen namens{line_break}{actor_name:6} bei euch?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItSSoWeirdBut"
 msgid "08754"
 msgstr "Ah! Da waren ein paar Leute, die{line_break}nach dir gesucht haben!{page_break}Sie waren zu viert und sahen{line_break}ziemlich mitgenommen aus.{page_break}Aber ihr Schiff war überaus{line_break}beeindruckend.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenALong"
 msgid "08755"
 msgstr "Oh... Nun, wenn ihr auf jemanden{line_break}namens {actor_name:6} stoßen{line_break}solltet,{page_break}lasst sie doch bitte wissen, dass{line_break}ein gewisser {actor_name:1} nach ihr{line_break}sucht.{page_break}Ihr seht aus, als würdet ihr viel{line_break}herumkommen. Vielleicht trefft{line_break}ihr ja diese {actor_name:6}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHappenedToSunshineHe"
 msgid "08756"
 msgstr "Diese Reisenden schienen sehr{line_break}besorgt um dich zu sein.{page_break}Du solltest sie schnell finden,{line_break}damit sie wissen, dass es dir{line_break}gut geht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatMyDadS"
 msgid "08757"
 msgstr "Ob die Legenden wohl wahr sind?{page_break}Ob es wirklich diese großartige{line_break}Zivilisation auf einer fernen Insel{line_break}gibt?{page_break}Denn wenn die Geschichten wahr{line_break}sind, möchte ich diese Insel{line_break}unbedingt selbst sehen.{end_wait}"
 
@@ -35847,7 +35847,7 @@ msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "Wir sollten weitermachen, so wie{line_break}es auch Saturos und Menardi{line_break}getan hätten. Ja, {actor_name:6}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoveOutOfTheWay"
 msgid "08960"
 msgstr "{actor_name:7}? {actor_name:8}?{line_break}Seid ihr bereit?{end_wait}"
 

@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "I never knew fighting could{line_break}be so fun!{pause_20_skippable} Ah, but we'd better{line_break}get on to the peninsula...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "05653"
 msgstr "Not that way, {actor_name:6}!{line_break}The meeting spot{line_break}is west of here.{page_break}We must go down that{line_break}road and into the hills.{end_wait}"
 
@@ -27691,7 +27691,7 @@ msgctxt "MsgAughWithAllTheseDemanding"
 msgid "06920"
 msgstr "Augh! With all these demanding{line_break}houseguests, I feel like I've{line_break}lost control of my own house!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArenTYouThirstyMy"
 msgid "06921"
 msgstr "Aren't you thirsty,{line_break}my dear?{end_wait}"
 
@@ -27819,7 +27819,7 @@ msgctxt "message"
 msgid "06952"
 msgstr "I heard there's only one person{line_break}staying in the room next door.{page_break}Can't they just move one more{line_break}person into that room? Like me?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouVeFinallyCome"
 msgid "06953"
 msgstr "So, you've finally come.{end_wait}"
 
@@ -28943,7 +28943,7 @@ msgctxt "message"
 msgid "07233"
 msgstr "I wish someone would{line_break}just bring me some food...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThanksMister"
 msgid "07234"
 msgstr "Thanks, mister.{end_wait}"
 
@@ -28983,7 +28983,7 @@ msgctxt "message"
 msgid "07243"
 msgstr "All my neighbors are going{line_break}to work together to help{line_break}rebuild my house.{page_break}A friend in need really{line_break}is a friend indeed!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyLookAtThis"
 msgid "07244"
 msgstr "Why, look at this!{end_wait}"
 
@@ -34919,7 +34919,7 @@ msgctxt "message"
 msgid "08727"
 msgstr "If the blacksmith isn't willing to{line_break}work, then how am I supposed{line_break}to get fine weapons to sell?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfSunshineSetHisMind"
 msgid "08728"
 msgstr "If Sunshine set his mind to it,{line_break}he could make a lot of money!{line_break}What a waste of talent...{end_wait}"
 
@@ -34927,7 +34927,7 @@ msgctxt "message"
 msgid "08729"
 msgstr "If you want plain old, boring{line_break}armor, have a look around.{page_break}If you're looking for some{line_break}of Sunshine's work, you'll{line_break}have to come back later.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIShouldnTTellHim"
 msgid "08730"
 msgstr "I shouldn't tell him how boring{line_break}all this stuff is. I wish Sunshine{line_break}would get back to work!{end_wait}"
 
@@ -34935,7 +34935,7 @@ msgctxt "message"
 msgid "08731"
 msgstr "If you're looking for Taopo{line_break}Swamp, head west around{line_break}the northern mountain range.{page_break}Sunshine sometimes goes{line_break}up there by himself on long{line_break}trips. It's a dangerous place.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesSunshineWantIn"
 msgid "08732"
 msgstr "What does Sunshine want{line_break}in Taopo Swamp?{page_break}There's nothing up there{line_break}but bugs and some odd{line_break}mountain fish.{end_wait}"
 
@@ -34979,19 +34979,19 @@ msgctxt "message"
 msgid "08742"
 msgstr "This is Sunshine's house. He's the{line_break}local blacksmith.{page_break}I'm afraid he's not taking on{line_break}any jobs right now, though.{line_break}He's just not...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDadSNotDoingAny"
 msgid "08743"
 msgstr "Dad's not doing any work right{line_break}now, but I'm making some basic{line_break}things for the villagers.{page_break}Maybe someday, I'll be able to{line_break}smith unique weapons, like my{line_break}dad. That's why I keep practicing!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItSNotRaining"
 msgid "08744"
 msgstr "If it's not raining, I can't get{line_break}into Taopo Swamp.{page_break}And if I can't get to Taopo, then{line_break}I can't get the stuff I need to{line_break}work, so there's no point!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSAPrettyStubborn"
 msgid "08745"
 msgstr "Sunshine's a pretty stubborn guy.{line_break}If he says he isn't going to{line_break}work, then he's not gonna work.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneThinksDadIsStubborn"
 msgid "08746"
 msgstr "Everyone thinks Dad is stubborn,{line_break}but he's not...{page_break}He's a true artist, and so what{line_break}if he gets a little temperamental{line_break}from time to time?{end_wait}"
 
@@ -35023,19 +35023,19 @@ msgctxt "message"
 msgid "08753"
 msgstr "It takes our Sunshine a long{line_break}time to finish the items he{line_break}works on.{page_break}Maybe you could just...wait{line_break}a little while before coming{line_break}to pick it up...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSSoWeirdBut"
 msgid "08754"
 msgstr "It's so weird, but something{line_break}really inspired my father to{line_break}work! He's beaming with joy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenALong"
 msgid "08755"
 msgstr "It's been a long time since{line_break}I've been able to work. I'm so{line_break}excited! What should I make?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHappenedToSunshineHe"
 msgid "08756"
 msgstr "What happened to Sunshine?{line_break}He's so happy, and he just{line_break}talks about work all the time!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatMyDadS"
 msgid "08757"
 msgstr "Now that my dad's working again,{line_break}I have to watch his every move{line_break}to see what I can learn from him.{end_wait}"
 
@@ -35847,7 +35847,7 @@ msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "How many casks does it take{line_break}to weaken this stupid serpent?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoveOutOfTheWay"
 msgid "08960"
 msgstr "Move out of the way there.{end_wait}"
 

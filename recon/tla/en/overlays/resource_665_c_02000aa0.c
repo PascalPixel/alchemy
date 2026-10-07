@@ -13,7 +13,7 @@ s32 Func_02001c84();
 s32 ObjectMotion_ArmCallback();
 s32 Battle_WaitMode0();
 s32 Motion_CamBounds();
-s32 Func_02001ccc();
+void Func_02001ccc(void);
 s32 ObjectMotion_OffsetPositionAndReset();
 s32 Object_SetModeById();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();

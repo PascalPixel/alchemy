@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "Qué combate tan impresionante.{line_break}Estuve todo el rato saltando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "05653"
 msgstr "No te culpes. Sólo fue{line_break}una mala estrategia.{end_wait}"
 
@@ -27691,7 +27691,7 @@ msgctxt "MsgAughWithAllTheseDemanding"
 msgid "06920"
 msgstr "¿Cómo será lo{line_break}imposible de ver?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArenTYouThirstyMy"
 msgid "06921"
 msgstr "No puedo permitirle{line_break}escalarla de nuevo.{line_break}¿Y si se hace daño?{end_wait}"
 
@@ -27819,7 +27819,7 @@ msgctxt "message"
 msgid "06952"
 msgstr "Pensad en ellos como en{line_break}una raza de hombres con{line_break}poderes especiales...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouVeFinallyCome"
 msgid "06953"
 msgstr "¿Algo parecido{line_break}a los Adeptos?{end_wait}"
 
@@ -28943,7 +28943,7 @@ msgctxt "message"
 msgid "07233"
 msgstr "{actor_name:7}.{line_break}Encantada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThanksMister"
 msgid "07234"
 msgstr "¡Oh! ¿No nos hemos presentado{line_break}debidamente, maestro Maha?{end_wait}"
 
@@ -28983,7 +28983,7 @@ msgctxt "message"
 msgid "07243"
 msgstr "¿Un \"Djinn\"? ¿Es así{line_break}como los llamáis?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyLookAtThis"
 msgid "07244"
 msgstr "Cuando está contigo,{line_break}aumenta tu poder.{line_break}Es muy útil.{end_wait}"
 
@@ -34919,7 +34919,7 @@ msgctxt "message"
 msgid "08727"
 msgstr "El alcalde me pidió que lo{line_break}acompañara a Alhafra, pero{line_break}no estoy seguro...{page_break}Si ese barco se ayuda de la{line_break}fuerza del viento para navegar,{line_break}no me ofrece mucha confianza...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfSunshineSetHisMind"
 msgid "08728"
 msgstr "A nadie le alegra que el alcalde{line_break}haya conseguido ese flamante{line_break}barco. Pobre alcalde...{end_wait}"
 
@@ -34927,7 +34927,7 @@ msgctxt "message"
 msgid "08729"
 msgstr "Mira, hablando de ti, {actor_name:8}. Pasó{line_break}otro grupo de viajeros con{line_break}poderes similares a los tuyos.{page_break}Por alguna extraña razón,{line_break}este tipo de personas{line_break}abundan últimamente...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIShouldnTTellHim"
 msgid "08730"
 msgstr "Creí que Shin estaba mintiendo,{line_break}pero, después de ver lo que vi,{line_break}me creería cualquier cosa.{page_break}Lo llamaban Psinergía y decían{line_break}que podía transformar el agua{line_break}en hielo.{end_wait}"
 
@@ -34935,7 +34935,7 @@ msgctxt "message"
 msgid "08731"
 msgstr "Cuando {actor_name:1} y su grupo oyeron{line_break}hablar de {actor_name:8}, se quedaron{line_break}de piedra.{page_break}Decían que irían a{line_break}Gondowan a buscarte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesSunshineWantIn"
 msgid "08732"
 msgstr "¡Mmmmmm... MMMMMMMM!{end_wait}"
 
@@ -34979,19 +34979,19 @@ msgctxt "message"
 msgid "08742"
 msgstr "¿Cómo de grande sería un barco{line_break}que pudiera ir a cualquier parte?{line_break}¡Seguro que mayor que una ballena!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDadSNotDoingAny"
 msgid "08743"
 msgstr "Todos tenemos miedo a los{line_break}kibombos. ¿A ti también te{line_break}asustan?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgIfItSNotRaining"
 msgid "08744"
 msgstr "Vi el miedo en tus ojos en el{line_break}instante en que pronuncié{line_break}\"kibombos\". Pero no te preocupes.{page_break}Avistamos una señal de humo{line_break}que informaba de que habían{line_break}dejado su actitud belicista.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSAPrettyStubborn"
 msgid "08745"
 msgstr "Has tenido que oír lo que{line_break}dicen de su proclamación...{page_break}Nosotros sólo vimos las{line_break}señales de humo... ¡Han{line_break}anunciado una tregua!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneThinksDadIsStubborn"
 msgid "08746"
 msgstr "Todavía estamos recuperándonos{line_break}del asalto de los kibombos...{page_break}La gente no puede recuperarse{line_break}tan rápidamente...{end_wait}"
 
@@ -35023,19 +35023,19 @@ msgctxt "message"
 msgid "08753"
 msgstr "Así que este compañero de{line_break}{actor_name:8} es amigo de {actor_name:1}...{page_break}Si no lo fuera, no habrían ido{line_break}a buscarlo a Gondowan...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSSoWeirdBut"
 msgid "08754"
 msgstr "Lo sabía. Tenía que haberle{line_break}preguntado cómo hace para{line_break}crear hielo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenALong"
 msgid "08755"
 msgstr "Se cuenta que unos poderosos{line_break}guerreros pasaron por aquí no{line_break}hace mucho.{page_break}Ojalá los hubiera conocido.{page_break}Parece que sus poderes eran{line_break}excepcionales. Seguro que podría{line_break}haberles sacado provecho.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHappenedToSunshineHe"
 msgid "08756"
 msgstr "Con la calma, los madrenses{line_break}están volviendo a sus tareas{line_break}cotidianas.{page_break}Parece que incluso ya han{line_break}ideado un plan para sacar{line_break}beneficio del poder de {actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatMyDadS"
 msgid "08757"
 msgstr "¿Y si viajáramos con {actor_name:1}{line_break}para exhibir sus poderes?{line_break}¡Nos haríamos de oro!{end_wait}"
 
@@ -35847,7 +35847,7 @@ msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "No creo que Kraden{line_break}se refiriera a eso...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoveOutOfTheWay"
 msgid "08960"
 msgstr "Te has olvidado, ¿no, {actor_name:8}?{line_break}¿Recuerdas lo de Kibombo?{line_break}Las palabras de Kraden...{end_wait}"
 

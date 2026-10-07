@@ -2,25 +2,25 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 GameFlag_SetBit();
-s32 Func_02001be4();
-s32 Func_02001cfc();
-s32 Func_02001c74();
-s32 Battle_WaitMode0();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ArmCallback();
-s32 Func_02001ca4();
-s32 Func_02001c84();
-s32 Motion_SetModeAndWaitAnimation();
-s32 Motion_SetVarCbAndRefresh();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 ObjectMotion_SetVariantCallback();
-s32 Func_02001cac();
-s32 Object_GetById();
-s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
-s32 Func_02001c3c();
-s32 Func_02001bec();
+void GameFlag_SetBit(s32 a);
+void Func_02001be4(void);
+void Func_02001cfc(s32 a);
+void Func_02001c74(s32 a);
+void Battle_WaitMode0(s32 a);
+void ObjectMotion_SetPositionAndReset(s32 a, s32 b, s32 c);
+void ObjectMotion_ArmCallback(s32 a, s32 b, s32 c);
+void Func_02001ca4(s32 a, s32 b, s32 c);
+void Func_02001c84(s32 a, s32 b, s32 c);
+void Motion_SetModeAndWaitAnimation(s32 a, s32 b);
+void Motion_SetVarCbAndRefresh(s32 a, s32 b);
+void ObjectMotion_CommitPositionAndActivate(s32 a, s32 b, s32 c);
+void ObjectMotion_SetVariantCallback(s32 a, s32 b);
+void Func_02001cac(s32 a, s32 b);
+s32 Object_GetById(s32 a);
+void UiText_OpenMessageAtObject(s32 a, s32 b);
+s32 Inventory_PromptAndSetObjectMode(s32 a, s32 b);
+void Func_02001c3c(s32 a, s32 b, s32 c);
+void Func_02001bec(void);
 extern u8 MsgOooThisAinTGood[];
 extern u8 gPartyState[];
 

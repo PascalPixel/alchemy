@@ -3,9 +3,9 @@
 
 #include "CALL.H"
 s32 Object_GetById();
-s32 Func_02000c40();
-s32 Func_02002bc4();
-s32 Battle_WaitMode0();
+void Func_02000c40(s32 a, s32 b, s32 c, s32 d, s32 e);
+void Func_02002bc4(s32 a);
+void Battle_WaitMode0(s32 a);
 
 void Func_02000c90(s32 a0, s32 a1)
 {

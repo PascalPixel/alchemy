@@ -24,7 +24,7 @@ s32 Motion_SetModeAndWaitAnimation();
 s32 Func_02002b04();
 s32 Object_LinkPair();
 s32 ObjectMotion_Launch();
-s32 Func_0200060c();
+void Func_0200060c(void);
 s32 Object_SetModeById();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_OffsetPositionAndReset();

@@ -27,7 +27,7 @@ s32 Object_LinkObjectAndSetCallback();
 s32 ObjectMotion_OffsetPositionAndReset();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 ObjectMotion_ResetAndSetPosition();
-s32 Func_020028bc();
+void Func_020028bc(void);
 extern u8 MsgAreAreYouAllRight[];
 
 void Func_02001c30(void)

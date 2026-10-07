@@ -22,7 +22,7 @@ s32 ObjectMotion_OffsetPositionAndReset();
 s32 ObjectMotion_CommitPositionAndActivate();
 s32 Object_LinkObjectAndSetCallback();
 s32 Func_02002a9c();
-s32 Func_02002a4c();
+void Func_02002a4c(void);
 extern u8 MsgWhoaYouYouRe[];
 
 void Func_02000188(void)

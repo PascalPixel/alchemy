@@ -12,7 +12,7 @@ s32 Func_020044d4();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
 s32 Func_0200456c();
-s32 Func_0200457c();
+void Func_0200457c(void);
 s32 Battle_WaitMode0();
 s32 Func_0200451c();
 s32 Func_02004534();

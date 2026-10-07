@@ -2586,61 +2586,6 @@ Func_02001a2c:
 	.4byte 0x00000004
 .L_02009bac:
 	.4byte gPartyState
-	.section .text.x02009bb0,"ax",%progbits
-	.global Func_02001bb0
-	.thumb_func
-Func_02001bb0:
-	push {lr}
-	bl Func_020028b4
-	movs r0, #0
-	bl Func_020029cc
-	ldr r0, .L_02009c2c
-	bl Func_0200293c
-	movs r3, #128
-	lsls r3, r3, #8
-	movs r1, #16
-	movs r2, #0
-	movs r0, #8
-	bl Func_020029d4
-	movs r0, #8
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	movs r2, #10
-	bl Func_0200294c
-	movs r0, #8
-	movs r1, #2
-	bl Object_SetModeById
-	movs r0, #5
-	bl Object_GetById
-	cmp r0, #0
-	beq .L_02009c04
-	movs r3, #10
-	ldrsh r1, [r0, r3]
-	movs r3, #18
-	ldrsh r2, [r0, r3]
-	movs r0, #8
-	bl ObjectMotion_ResetAndSetPosition
-.L_02009c04:
-	movs r0, #8
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r1, #0
-	movs r2, #0
-	movs r0, #8
-	bl Func_0200290c
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #16
-	movs r0, #5
-	negs r1, r1
-	movs r2, #0
-	bl ObjectMotion_CommitPositionAndActivate
-	bl Func_020028bc
-	pop {pc}
-.L_02009c2c:
-	.4byte 0x00001615
 	.section .text.x02009c30,"ax",%progbits
 	.global Func_02001c30
 	.thumb_func

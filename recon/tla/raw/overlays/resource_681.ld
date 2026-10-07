@@ -41,7 +41,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_681/S0CD8.o"(.text)
         "*/resource_681_overlay.o"(.text.x02008cf8)
         "*/resource_681_overlay.o"(.text.x02008d18)
-        "*/resource_681_overlay.o"(.text.x02008edc)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_681/S0EDC.o"(.text)
         "*/resource_681_overlay.o"(.text.x02008f00)
         "*/resource_681_overlay.o"(.text.x02008fac)
         "*/resource_681_overlay.o"(.text.x02009048)

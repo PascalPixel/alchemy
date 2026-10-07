@@ -26,7 +26,7 @@ SECTIONS
         "*/resource_682_overlay.o"(.text.x02008c40)
         "*/resource_682_overlay.o"(.text.x02008c90)
         "*/resource_682_overlay.o"(.text.x02008d4c)
-        "*/resource_682_overlay.o"(.text.x02008e04)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_682/S0E04.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_682/S0E24.o"(.text)
         "*/resource_682_overlay.o"(.text.x02008e30)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_682/IMPORT.o"(.text)

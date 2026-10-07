@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "そうとう つかれてたんですね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "05653"
 msgstr "このまま ねかせてあげましょう。{end_wait}"
 
@@ -27691,7 +27691,7 @@ msgctxt "MsgAughWithAllTheseDemanding"
 msgid "06920"
 msgstr "マハ様から きいてるし{line_break}きょうは やどの金は{line_break}もらわないことにするよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArenTYouThirstyMy"
 msgid "06921"
 msgstr "それじゃ 気をつけてな。{end_wait}"
 
@@ -27819,7 +27819,7 @@ msgctxt "message"
 msgid "06952"
 msgstr "あんたたちかい・・・{line_break}イマジンをおぼえたのは?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoYouVeFinallyCome"
 msgid "06953"
 msgstr "うーむ エアーズロックは{line_break}ポピーチーの村人のため{line_break}あるはずじゃったのに・・・{page_break}こんなに わかくたって{line_break}おぼえられるんじゃ・・・{line_break}ワシ・・・力がぬけたわい。{end_wait}"
 
@@ -28943,7 +28943,7 @@ msgctxt "message"
 msgid "07233"
 msgstr "まさか 同じアラフラの町の者が{line_break}うちに とまることになるなんて{line_break}おもってもいなかったことだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThanksMister"
 msgid "07234"
 msgstr "まともなりょうりを出すため{line_break}町長 町の者のとまる金を{line_break}出してくれないもんかねぇ{page_break}せっかく しんせつのつもりで{line_break}とめてやってるのに これじゃ{line_break}あたしたち わる者みたいだよ。{end_wait}"
 
@@ -28983,7 +28983,7 @@ msgctxt "message"
 msgid "07243"
 msgstr "あんな ひどい町長のものでも{line_break}人のものをぬすむなんてのは{line_break}やっちゃいけないことだものね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyLookAtThis"
 msgid "07244"
 msgstr "おかに立ってる町長の宮殿は{line_break}地下がどうくつになってるって{line_break}きいたんだけどホントかなあ。{end_wait}"
 
@@ -34919,7 +34919,7 @@ msgctxt "message"
 msgid "08727"
 msgstr "{actor_name:1}とは その戦士のことだ{line_break}そして そいつらはきっと{line_break}お前たちをおってるんだろ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfSunshineSetHisMind"
 msgid "08728"
 msgstr "そうか それならば この先{line_break}いずれ{actor_name:1}にあえそうだね。{end_wait}"
 
@@ -34927,7 +34927,7 @@ msgctxt "message"
 msgid "08729"
 msgstr "あんた ねえさんたちのこと・・・{line_break}{actor_name:5}をうたがわないんかいな?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIShouldnTTellHim"
 msgid "08730"
 msgstr "あたしも戦士だよ 戦士のつよさは{line_break}ひと目見りゃ わかるってもんさ。{end_wait}"
 
@@ -34935,7 +34935,7 @@ msgctxt "message"
 msgid "08731"
 msgstr "その力じゃ さか立ちしても{line_break}ねえさんたちは たおせないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesSunshineWantIn"
 msgid "08732"
 msgstr "それに すくなくとも{actor_name:5}は{line_break}ねえさんたちをうらぎれないさ。{end_wait}"
 
@@ -34979,19 +34979,19 @@ msgctxt "message"
 msgid "08742"
 msgstr "ききわけの いい子だこと・・・{line_break}だけど もしもしんぱいだったら{line_break}とちゅうまで 手伝おうか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDadSNotDoingAny"
 msgid "08743"
 msgstr "なさけないこと おいいでないよ{line_break}だけど そんなにしんぱいなら{line_break}とちゅうまで 手伝おうか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItSNotRaining"
 msgid "08744"
 msgstr "いいや けっこうじゃ・・・{line_break}みんなで力をあわせながら{line_break}ジュピターへ行ってみせる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSAPrettyStubborn"
 msgid "08745"
 msgstr "そう わかったわ・・・{line_break}それじゃ たのんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneThinksDadIsStubborn"
 msgid "08746"
 msgstr "あたしたちは {actor_name:1}を{line_break}見つけ出しに行くわ・・・。{end_wait}"
 
@@ -35023,19 +35023,19 @@ msgctxt "message"
 msgid "08753"
 msgstr "そんなことをしてるヒマ・・・{line_break}いま ないわよ それに・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSSoWeirdBut"
 msgid "08754"
 msgstr "いま {actor_name:1}たちとあったら{line_break}戦いになる かのうせいは{line_break}たかいじゃろうのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenALong"
 msgid "08755"
 msgstr "どうしてです・・・?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHappenedToSunshineHe"
 msgid "08756"
 msgstr "われわれの やろうとすることを{line_break}かれらは とめようとしてる・・・{line_break}これでは 戦いにもなるじゃろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatMyDadS"
 msgid "08757"
 msgstr "{actor_name:1}と あなたって{line_break}こいびとでしょ・・・{line_break}なんとか ならないの?{end_wait}"
 
@@ -35847,7 +35847,7 @@ msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "あれあれー キミから{line_break}おいしそうなミルクの{line_break}においがするんだワン!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoveOutOfTheWay"
 msgid "08960"
 msgstr "ハァ ハァ どうかボクに{line_break}ミルクをくれないかなワン{page_break}かわりにボクがつかまえた{line_break}これを あげるんだワン。{end_wait}"
 

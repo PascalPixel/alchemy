@@ -2,11 +2,11 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 Func_02004e5c();
-s32 Func_02004fcc();
-s32 Func_02004f0c();
-s32 Func_02004f14();
-s32 Func_02004e64();
+void Func_02004e5c(void);
+void Func_02004fcc(s32 a);
+void Func_02004f0c(s32 a);
+void Func_02004f14(s32 a, s32 b);
+void Func_02004e64(void);
 extern u8 MsgMoveOutOfTheWay[];
 
 void Func_02000edc(void)

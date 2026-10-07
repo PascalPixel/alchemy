@@ -19,7 +19,7 @@ s32 ObjectMotion_OffsetPositionAndReset();
 s32 Party_SetFields1eeAnd1f0();
 s32 Party_SetFields1f2And1f4();
 s32 Func_020029a4();
-s32 Func_020028bc();
+void Func_020028bc(void);
 extern u8 MsgWhyDoIGottaBe[];
 extern u8 MsgPostReunionData[];
 extern u8 gPartyState[];

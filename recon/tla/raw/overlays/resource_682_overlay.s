@@ -1439,22 +1439,6 @@ Func_02000d4c:
 	mov r9, r5
 	mov r10, r6
 	pop {r5, r6, r7, pc}
-	.section .text.x02008e04,"ax",%progbits
-	.global Func_02000e04
-	.thumb_func
-Func_02000e04:
-	push {r5, r6, lr}
-	adds r5, r1, #0
-	bl ObjectTable_ReadActiveValue
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl ObjectTable_ReadActiveValue
-	adds r5, r0, #0
-	adds r0, r6, #0
-	bl UiWork_FinalizeEntityMatchingLocalizedId
-	adds r0, r5, #0
-	bl UiWork_FinalizeEntityMatchingLocalizedId
-	pop {r5, r6, pc}
 	.section .text.x02008e30,"ax",%progbits
 	.global Func_02000e30
 	.thumb_func

@@ -18,7 +18,7 @@ s32 Func_02000b5c();
 s32 ObjectMotion_SetVariantCallback();
 s32 Func_02000b64();
 s32 Object_SetModeById();
-s32 Func_02000a9c();
+void Func_02000a9c(void);
 extern u8 gPartyState[];
 extern u8 MsgArenTYouThirstyMy[];
 

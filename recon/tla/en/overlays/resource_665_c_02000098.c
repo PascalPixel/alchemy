@@ -2,19 +2,19 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 Func_02001be4();
-s32 Func_02001cfc();
-s32 Func_02001d4c();
-s32 Func_02001bc4();
-s32 Object_GetById();
-s32 ObjectMotion_SetSpeedParameters();
-s32 Object_SetModeById();
-s32 ObjectMotion_CenterOnColumn();
-s32 Battle_WaitMode0();
-s32 Func_02001cd4();
-s32 Event_FinishScreenTransition();
-s32 Event_WaitTransitionFrames();
-s32 Func_02001bec();
+void Func_02001be4(void);
+void Func_02001cfc(s32 a);
+void Func_02001d4c(s32 a);
+void Func_02001bc4(s32 a, s32 b, s32 c);
+s32 Object_GetById(s32 a);
+void ObjectMotion_SetSpeedParameters(s32 a, s32 b, s32 c);
+void Object_SetModeById(s32 a, s32 b);
+void ObjectMotion_CenterOnColumn(s32 a, s32 b, s32 c);
+void Battle_WaitMode0(s32 a);
+void Func_02001cd4(s32 a);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Func_02001bec(void);
 extern u8 gPartyState[];
 
 void Func_02000098(s32 a0, s32 a1)

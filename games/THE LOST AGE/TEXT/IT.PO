@@ -21535,7 +21535,7 @@ msgctxt "message"
 msgid "05381"
 msgstr "Tante parole e poi{line_break}non hai abbastanza soldi.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgFixingThisWill"
 msgid "05382"
 msgstr "Riparare {argument_item_name:1}{line_break}costerà {argument_signed_number} monet{control:13}{end_wait}, OK?{end_now}"
 
@@ -21591,7 +21591,7 @@ msgctxt "message"
 msgid "05395"
 msgstr "Sindaco di Alhafra{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFortuneTeller2"
 msgid "05396"
 msgstr "Divinatore{end_wait}"
 
@@ -21679,11 +21679,11 @@ msgctxt "message"
 msgid "05417"
 msgstr "Anziano di Prox{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgConfirmGraphic2"
 msgid "05418"
 msgstr "Confirm graphic{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsaac2"
 msgid "05419"
 msgstr "Isaac{end_wait}"
 
@@ -21707,7 +21707,7 @@ msgctxt "message"
 msgid "05424"
 msgstr "Sara{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPiers2"
 msgid "05425"
 msgstr "Piers{end_wait}"
 
@@ -26667,7 +26667,7 @@ msgctxt "MsgDeriHeyaBoringVillage"
 msgid "06664"
 msgstr "Probabilmente Daila è{line_break}molto noiosa per i viaggiatori.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLookItS"
 msgid "06665"
 msgstr "Guardate...{line_break}è la nave di Adexia!{end_wait}"
 
@@ -26759,11 +26759,11 @@ msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06687"
 msgstr "È stato un buon raid, ma{line_break}dopo tanto lavoro non{line_break}abbiamo trovato nulla...{page_break}Mi chiedo cosa sia successo{line_break}a quelle persone fuggite di{line_break}prigione quando siamo arrivati.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDoorIsHeld"
 msgid "06688"
 msgstr "La porta è chiusa da{line_break}una grande forza.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellThereS"
 msgid "06689"
 msgstr "Beh, non c'è ragione{line_break}di rimanere qui{line_break}tutto il giorno.{page_break}Andiamo e vediamo di{line_break}trovare una nave{line_break}che possiamo usare.{end_wait}"
 
@@ -35803,7 +35803,7 @@ msgctxt "MsgHmIWonder"
 msgid "08948"
 msgstr "Hmm... chissà{line_break}se l'onda è stata causata{line_break}da un'eruzione sottomarina...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyShipAt"
 msgid "08949"
 msgstr "La mia nave! Finalmente...{line_break}rivedo la mia nave.{end_wait}"
 
@@ -35995,11 +35995,11 @@ msgctxt "message"
 msgid "08996"
 msgstr "Oh, grazie!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThenLetS"
 msgid "08997"
 msgstr "Non perdiamo tempo!{line_break}Dobbiamo subito{line_break}dirigerci a Madra!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAtLastI"
 msgid "08998"
 msgstr "Finalmente, di nuovo sulla mia nave.{end_wait}"
 
@@ -36663,11 +36663,11 @@ msgctxt "MsgYeppAlwaysSang"
 msgid "09163"
 msgstr "Yepp cantava sempre{line_break}delle canzoncine bellissime{line_break}insieme ai bambini.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppHadThree"
 msgid "09164"
 msgstr "Yepp cantava tre canzoni.{line_break}Ognuna era per una{line_break}situazione diversa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoYouLike"
 msgid "09165"
 msgstr "Ti piacciono le canzoncine?{end_now}"
 
@@ -36679,83 +36679,83 @@ msgctxt "message"
 msgid "09167"
 msgstr "Hai ragione. Odio{line_break}quelle canzoni.{page_break}Uno di questi giorni{line_break}ne scriverò una, e sarà{line_break}molto meglio di quelle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSongsAre"
 msgid "09168"
 msgstr "Le canzoni dovrebbero{line_break}significare qualcosa,{line_break}ma nessuno sa cosa...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhyYepp"
 msgid "09169"
 msgstr "Chissà perché Yepp voleva{line_break}che i bambini imparassero{line_break}le canzoni che cantava...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenReally"
 msgid "09170"
 msgstr "Negli ultimi tempi è stato{line_break}davvero secco. Anche{line_break}la Palude Taopo è asciutta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReSupposed"
 msgid "09171"
 msgstr "Dovrebbe essere la{line_break}stagione delle piogge,{line_break}ma non vedo pioggia...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTaopoSwamp"
 msgid "09172"
 msgstr "Se la Palude Taopo si{line_break}prosciuga, avremo problemi di{line_break}siccità per tutto l'anno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTStand"
 msgid "09173"
 msgstr "Non mi piace questa siccità!{line_break}Per quanto ancora il{line_break}tempo sarà così?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineHasStarted"
 msgid "09174"
 msgstr "Beltempo si lamenta{line_break}perché non può lavorare.{line_break}Dice che manca la pioggia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurBlacksmithSunshine"
 msgid "09175"
 msgstr "Il fabbro, Beltempo, fa{line_break}degli strumenti che non{line_break}si trovano altrove.{page_break}Non lo diresti guardandolo...{line_break}o parlandogli... Ma è un{line_break}gran lavoratore...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatKindOfPerson"
 msgid "09176"
 msgstr "Chi mai lavora solo{line_break}quando piove?{page_break}Capisco che Beltempo adori{line_break}le vacanze, ma ci vorrebbe{line_break}una scusa migliore.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSALittle"
 msgid "09177"
 msgstr "Beltempo è un po' strano.{line_break}Sparisce nella Palude Taopo{line_break}per giorni interi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheBlacksmith"
 msgid "09178"
 msgstr "Se il fabbro non lavora,{line_break}io dove le prendo{line_break}le armi da vendere?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfSunshineSet"
 msgid "09179"
 msgstr "Se Beltempo si decidesse,{line_break}potrebbe diventare ricco!{line_break}Che talento sprecato...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWantPlain"
 msgid "09180"
 msgstr "Se vuoi delle normalissime{line_break}armature, guardati in giro.{page_break}Se cerchi le armature{line_break}di Beltempo, dovrai{line_break}tornare più tardi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIShouldnT"
 msgid "09181"
 msgstr "Non dovrei dirgli quanto{line_break}sono banali queste cose.{line_break}Vorrei che tornasse Beltempo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouReLookingFor"
 msgid "09182"
 msgstr "Se cerchi la Palude Taopo,{line_break}vai a ovest oltre le{line_break}montagne settentrionali.{page_break}Beltempo a volte{line_break}ci va da solo per molto{line_break}tempo. È pericoloso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesSunshine"
 msgid "09183"
 msgstr "Cosa cerca Beltempo nella{line_break}Palude Taopo?{page_break}Non c'è altro che{line_break}qualche insetto e{line_break}i pesci di montagna.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSABitStrange"
 msgid "09184"
 msgstr "È difficile avere una{line_break}locanda in una città{line_break}che non ha mai turisti.{page_break}A volte i locali vengono{line_break}qui. Per loro è come{line_break}una vacanza, immagino.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTaopoSwampHas"
 msgid "09185"
 msgstr "La Palude Taopo è asciutta,{line_break}ora è inaccessibile.{page_break}Quel che è peggio, senza{line_break}acqua non possiamo prendere{line_break}più i deliziosi pesci di montagna.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYallamWasAlways"
 msgid "09186"
 msgstr "Yallam è stata sempre una{line_break}città povera. Per sopravvivere{line_break}abbiamo dovuto lavorare sodo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereWerenT"
 msgid "09187"
 msgstr "Dopo che la palude si è{line_break}prosciugata non c'erano più pesci.{line_break}Non ne prenderemo più molti.{end_wait}"
 
@@ -36767,7 +36767,7 @@ msgctxt "MsgOnceThisWas"
 msgid "09189"
 msgstr "Un tempo questo era un{line_break}villaggio felice. Ora c'è solo{line_break}povertà e disperazione.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAhSoYouWant"
 msgid "09190"
 msgstr "Vuoi che crei per te{line_break}qualcosa di speciale?{end_now}"
 
@@ -36783,19 +36783,19 @@ msgctxt "message"
 msgid "09193"
 msgstr "Questa è la casa di Beltempo,{line_break}il fabbro locale.{page_break}Ora però, non prende{line_break}ordinazioni.{line_break}Non so perché...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDadSNot"
 msgid "09194"
 msgstr "Papà non lavora ora,{line_break}ma io fabbrico le cose{line_break}di base per il villaggio.{page_break}Forse un giorno, potrò{line_break}forgiare armi uniche{line_break}come mio padre. Faccio pratica!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItS"
 msgid "09195"
 msgstr "Se non piove, non posso{line_break}raggiungere la Palude Taopo.{page_break}E se non posso raggiungerla,{line_break}non posso prendere le cose{line_break}che mi servono per lavorare!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSA"
 msgid "09196"
 msgstr "Beltempo è un tipo ostinato.{line_break}Se dice che non lavora,{line_break}allora non lavora.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneThinksDad"
 msgid "09197"
 msgstr "Tutti pensano che papà{line_break}sia ostinato, ma...{page_break}Lui è un artista e quindi{line_break}è normale che faccia{line_break}così di tanto in tanto!{end_wait}"
 
@@ -36827,19 +36827,19 @@ msgctxt "message"
 msgid "09204"
 msgstr "Il nostro Beltempo impiega{line_break}sempre molto a terminare{line_break}il suo lavoro.{page_break}Forse dovresti aspettare{line_break}un poco prima di venire{line_break}a vedere...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSSoWeirdBut"
 msgid "09205"
 msgstr "Qualcosa ha ispirato{line_break}mio padre a lavorare.{line_break}Fa i salti di gioia!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenA"
 msgid "09206"
 msgstr "È da tanto che non{line_break}lavoro. Sono felice!{line_break}Cosa potrei fare?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHappenedTo"
 msgid "09207"
 msgstr "Che è successo a Beltempo?{line_break}È così felice e parla di{line_break}lavoro tutto il tempo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatMy"
 msgid "09208"
 msgstr "Ora che mio padre lavora,{line_break}devo osservarne ogni mossa{line_break}per apprendere ciò che posso.{end_wait}"
 
@@ -37619,7 +37619,7 @@ msgctxt "message"
 msgid "09402"
 msgstr "Sembra che qualcosa possa{line_break}essere piazzato qui.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPlacedADoll"
 msgid "09403"
 msgstr "{protagonist_name} mette l'idolo{line_break}sull'altare.{end_wait}"
 
@@ -37627,7 +37627,7 @@ msgctxt "message"
 msgid "09404"
 msgstr "Però, non succede nulla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoAreYou"
 msgid "09405"
 msgstr "Chi siete?{line_break}Come siete arrivati qui?{end_wait}"
 
@@ -37643,19 +37643,19 @@ msgctxt "message"
 msgid "09408"
 msgstr "Una volta che è annebbiato,{line_break}potrò colpire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouUnderstand"
 msgid "09409"
 msgstr "Se capite allora{line_break}fatemi strada.{line_break}Mettetevi là.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowManyCasks"
 msgid "09410"
 msgstr "Quanti fusti ci vorranno per{line_break}indebolire il serpente?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoveOutOf"
 msgid "09411"
 msgstr "Mettetevi là.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheCupsAre"
 msgid "09412"
 msgstr "La coppa è ricolma{line_break}di Acquadraga.{end_wait}"
 
@@ -37683,7 +37683,7 @@ msgctxt "message"
 msgid "09418"
 msgstr "Anche dopo l'Acquadraga{line_break}è ancora troppo forte.{line_break}Non posso batterlo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentIsStill"
 msgid "09419"
 msgstr "Il serpente è ancora troppo forte.{page_break}Se ci fosse un modo{line_break}per indebolirlo ancora...{end_wait}"
 
@@ -37691,7 +37691,7 @@ msgctxt "message"
 msgid "09420"
 msgstr "La coppa è ricolma{line_break}di Acquadraga.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoDoThey"
 msgid "09421"
 msgstr "Chi si credono di essere?{line_break}Sono io l'unico che può{line_break}salvare Kushinada.{end_wait}"
 
@@ -37727,7 +37727,7 @@ msgctxt "message"
 msgid "09429"
 msgstr "Da Kushinada, naturalmente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentWith"
 msgid "09430"
 msgstr "Il serpente, con gli occhi chiusi,{line_break}sembra quasi vivo.{end_wait}"
 
@@ -38567,7 +38567,7 @@ msgctxt "MsgThatDragonWanted"
 msgid "09639"
 msgstr "Il drago voleva una nuova{line_break}moglie ogni anno! Le ragazze{line_break}dovevano piacergli.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSearchedTheSlate"
 msgid "09640"
 msgstr "{actor_name:5} esamina la stele.{line_break}C'è un'iscrizione.{page_break}Tu che hai la forza della{line_break}Terra, posa le mani sulla pietra.{page_break}Ti darò il potere di{line_break}mescolarti alla terra, il{line_break}potere di Sabbia!{end_wait}"
 
@@ -38591,7 +38591,7 @@ msgctxt "MsgICanT"
 msgid "09645"
 msgstr "Non sento niente...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMDone"
 msgid "09646"
 msgstr "Sono finito... il drago mi{line_break}ha ucciso...{end_wait}"
 
@@ -41435,7 +41435,7 @@ msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "10356"
 msgstr "Tutti in città pensano di{line_break}poter vivere senza{line_break}dover più lavorare.{page_break}Hanno abbandonato il{line_break}proprio lavoro e si appoggiano{line_break}troppo al tesoro di Briggs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHoldOnTo"
 msgid "10357"
 msgstr "Tieni saldo il timone!{line_break}Vuoi che le onde{line_break}ci ingoino!?{end_wait}"
 
@@ -43587,7 +43587,7 @@ msgctxt "MsgItSKind"
 msgid "10894"
 msgstr "Mi è difficile immaginare{line_break}come sarà, vedere queste{line_break}ali muoversi davvero.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeStoneEmber"
 msgid "10895"
 msgstr "C'è qualcosa che brucia,{line_break}come un tizzone nella roccia.{end_wait}"
 
@@ -43599,7 +43599,7 @@ msgctxt "message"
 msgid "10897"
 msgstr "{actor_name:5} ottiene{line_break}una Sfera di magma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeTabletInscription"
 msgid "10898"
 msgstr "{actor_name:5} esamina la stele...{line_break}C'è scritto qualcosa.{page_break}Tu con la forza della Fiamma,{line_break}posa le mani su questa pietra.{page_break}Otterrai il potere{line_break}di usare Vampa...{end_wait}"
 
@@ -48315,7 +48315,7 @@ msgctxt "MsgIfTheyWereStrong"
 msgid "12076"
 msgstr "Se sono stati così forti da{line_break}sconfiggere Saturos e Adexia,{line_break}allora forse possono farcela...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyWhyAm"
 msgid "12077"
 msgstr "Perché... sono qui disteso?{end_wait}"
 
@@ -48399,23 +48399,23 @@ msgctxt "message"
 msgid "12097"
 msgstr "Contiamo su di te...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSTooLate"
 msgid "12098"
 msgstr "È troppo tardi per noi...{line_break}Affrettati, accendi il faro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourHandSo"
 msgid "12099"
 msgstr "Le tue mani... così calde...{line_break}La gente ha mani così{line_break}calde... Avevo dimenticato...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoTired"
 msgid "12100"
 msgstr "Sono così stanco... La nebbia{line_break}sale davanti ai miei occhi... Non{line_break}posso morire... il faro... acceso...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoCold"
 msgid "12101"
 msgstr "Fa così freddo, più di{line_break}quanto credessi possibile...{line_break}Tutto perché il faro è spento...{page_break}Devo vivere... abbastanza{line_break}per vederlo acceso...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWhoHoldThe"
 msgid "12102"
 msgstr "Tu che tieni l'astro,{line_break}apri il cuore e ascolta...{page_break}Se vuoi salire al cielo,{line_break}donalo a me.{end_wait}"
 
@@ -49343,15 +49343,15 @@ msgctxt "message"
 msgid "12333"
 msgstr "Non c'è tempo per le domande!{line_break}Prendeteli! Prendeteli{line_break}e andate!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSASpace"
 msgid "12334"
 msgstr "C'è uno spazio che{line_break}dev'essere riempito.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotTheMars"
 msgid "12335"
 msgstr "{actor_name:5} ottiene l'Astro Marte!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUsedTheMars"
 msgid "12336"
 msgstr "{actor_name:5} usa l'Astro Marte!{end_wait}"
 
@@ -51307,7 +51307,7 @@ msgctxt "MsgThatSeafoodStew"
 msgid "12824"
 msgstr "La zuppa ha una{line_break}grande varietà di pesce.{page_break}Un solo boccone{line_break}e non potrei smettere!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSteelResting"
 msgid "12825"
 msgstr "L'acciaio che riposa fra le{line_break}fiamme è rosso fuoco.{page_break}Dev'essere qui che forgiano{line_break}gli oggetti.{end_wait}"
 

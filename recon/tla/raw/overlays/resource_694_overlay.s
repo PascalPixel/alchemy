@@ -4634,22 +4634,86 @@ Func_02001d50:
 	bl Object_SetModeById
 	movs r0, #10
 	bl Battle_WaitMode0
+	.ifdef TLA_EDITION_JA
+	movs r2, #9
+	.else
 	movs r3, #10
+	.endif
+	.ifdef TLA_EDITION_JA
+	movs r1, #20
+	.else
 	movs r2, #8
+	.endif
+	.ifdef TLA_EDITION_JA
+	movs r0, #18
+	.else
 	movs r1, #9
+	.endif
+	.ifdef TLA_EDITION_JA
+	movs r4, #12
+	.else
 	movs r0, #20
+	.endif
+	.ifdef TLA_EDITION_JA
+	str r2, [sp, #8]
+	.else
 	movs r4, #18
+	.endif
+	.ifdef TLA_EDITION_JA
+	str r1, [sp, #12]
+	.else
 	str r3, [sp, #0]
+	.endif
+	.ifdef TLA_EDITION_JA
+	str r0, [sp, #16]
+	.else
 	str r2, [sp, #4]
-	str r1, [sp, #8]
-	str r0, [sp, #12]
-	str r3, [sp, #20]
-	str r3, [sp, #24]
-	movs r0, #0
+	.endif
+	.ifdef TLA_EDITION_JA
 	movs r3, #8
+	.else
+	str r1, [sp, #8]
+	.endif
+	.ifdef TLA_EDITION_JA
+	movs r5, #10
+	.else
+	str r0, [sp, #12]
+	.endif
+	.ifdef TLA_EDITION_JA
+	movs r0, #0
+	.else
+	str r3, [sp, #20]
+	.endif
+	.ifdef TLA_EDITION_JA
 	movs r1, #5
+	.else
+	str r3, [sp, #24]
+	.endif
+	.ifdef TLA_EDITION_JA
 	movs r2, #5
+	.else
+	movs r0, #0
+	.endif
+	.ifdef TLA_EDITION_JA
+	str r5, [sp, #0]
+	.else
+	movs r3, #8
+	.endif
+	.ifdef TLA_EDITION_JA
+	str r3, [sp, #4]
+	.else
+	movs r1, #5
+	.endif
+	.ifdef TLA_EDITION_JA
+	str r5, [sp, #24]
+	.else
+	movs r2, #5
+	.endif
+	.ifdef TLA_EDITION_JA
+	str r4, [sp, #20]
+	.else
 	str r4, [sp, #16]
+	.endif
 	bl Func_02004164
 	movs r1, #128
 	movs r0, #0

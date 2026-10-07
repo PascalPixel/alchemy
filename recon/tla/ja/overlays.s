@@ -169,7 +169,8 @@ Resource_Overlay678:
 	.incbin "baserom.gba", 0x00f091e4, 0x00001eb4
 	.global Resource_Overlay679
 Resource_Overlay679:
-	.incbin "baserom.gba", 0x00f0b098, 0x000018e4
+	.incbin "overlays/resource_679.lz"
+	.incbin "baserom.gba", 0x00f0c97a, 0x00000002
 	.global Resource_Overlay67A
 Resource_Overlay67A:
 	.incbin "overlays/resource_67a.lz"
@@ -202,14 +203,15 @@ Resource_Overlay682:
 	.incbin "baserom.gba", 0x00f18d24, 0x000014bc
 	.global Resource_Overlay683
 Resource_Overlay683:
-	.incbin "baserom.gba", 0x00f1a1e0, 0x0000035c
+	.incbin "overlays/resource_683.lz"
 	.global Resource_Overlay684
 Resource_Overlay684:
 	.incbin "overlays/resource_684.lz"
 	.incbin "baserom.gba", 0x00f1a60a, 0x00000002
 	.global Resource_Overlay685
 Resource_Overlay685:
-	.incbin "baserom.gba", 0x00f1a60c, 0x00001ff8
+	.incbin "overlays/resource_685.lz"
+	.incbin "baserom.gba", 0x00f1c601, 0x00000003
 	.global Resource_Overlay686
 Resource_Overlay686:
 	.incbin "baserom.gba", 0x00f1c604, 0x00001fe8
@@ -233,7 +235,8 @@ Resource_Overlay68B:
 	.incbin "baserom.gba", 0x00f2241a, 0x00000002
 	.global Resource_Overlay68C
 Resource_Overlay68C:
-	.incbin "baserom.gba", 0x00f2241c, 0x00001228
+	.incbin "overlays/resource_68c.lz"
+	.incbin "baserom.gba", 0x00f23642, 0x00000002
 	.global Resource_Overlay68D
 Resource_Overlay68D:
 	.incbin "overlays/resource_68d.lz"
@@ -261,7 +264,8 @@ Resource_Overlay693:
 	.incbin "baserom.gba", 0x00f31035, 0x00000003
 	.global Resource_Overlay694
 Resource_Overlay694:
-	.incbin "baserom.gba", 0x00f31038, 0x00002e04
+	.incbin "overlays/resource_694.lz"
+	.incbin "baserom.gba", 0x00f33e3a, 0x00000002
 	.global Resource_Overlay695
 Resource_Overlay695:
 	.incbin "baserom.gba", 0x00f33e3c, 0x00000b1c
@@ -371,7 +375,8 @@ Resource_Overlay6B2:
 	.incbin "baserom.gba", 0x00f73d87, 0x00000001
 	.global Resource_Overlay6B3
 Resource_Overlay6B3:
-	.incbin "baserom.gba", 0x00f73d88, 0x00000554
+	.incbin "overlays/resource_6b3.lz"
+	.incbin "baserom.gba", 0x00f742da, 0x00000002
 	.global Resource_Overlay6B4
 Resource_Overlay6B4:
 	.incbin "overlays/resource_6b4.lz"

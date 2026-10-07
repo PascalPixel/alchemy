@@ -3592,7 +3592,11 @@ Data_02002038:
 .L_0200a044:
 	.4byte 0x00000016
 	.4byte 0x0000001e
+	.ifdef TLA_EDITION_JA
+	.4byte 0x00000083
+	.else
 	.4byte 0x00000081
+	.endif
 	.4byte 0x00000016
 	.4byte 0x00000010
 	.4byte 0x00003333

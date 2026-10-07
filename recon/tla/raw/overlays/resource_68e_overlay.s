@@ -223,7 +223,11 @@ Func_020001e4:
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0
+	.ifdef TLA_EDITION_FR
+	movs r2, #19
+	.else
 	movs r2, #17
+	.endif
 	movs r3, #4
 	movs r0, #0
 	bl UiWindow_Create
@@ -239,7 +243,11 @@ Func_020001e4:
 	mov r0, r9
 	movs r1, #6
 	adds r2, r6, #0
+	.ifdef TLA_EDITION_FR
+	movs r3, #88
+	.else
 	movs r3, #72
+	.endif
 	bl UiText_DrawNumberInWindow
 	adds r0, r5, #1
 	adds r1, r6, #0
@@ -249,7 +257,11 @@ Func_020001e4:
 	movs r3, #8
 	str r3, [sp, #0]
 	adds r2, r6, #0
+	.ifdef TLA_EDITION_FR
+	movs r3, #88
+	.else
 	movs r3, #72
+	.endif
 	movs r1, #6
 	mov r0, r10
 	bl UiText_DrawNumberInWindow

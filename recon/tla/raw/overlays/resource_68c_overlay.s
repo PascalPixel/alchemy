@@ -258,7 +258,11 @@ Func_02000284:
 	movs r2, #214
 	lsls r2, r2, #1
 	adds r3, r3, r2
+	.ifdef TLA_EDITION_JA
+	adds r2, #85
+	.else
 	adds r2, #93
+	.endif
 	str r2, [r3]
 	movs r0, #11
 	movs r1, #1

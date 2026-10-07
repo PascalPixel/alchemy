@@ -14531,19 +14531,19 @@ msgctxt "message"
 msgid "03630"
 msgstr "Lose - {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChooseYourParameters"
 msgid "03631"
 msgstr "Choose your parameters here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatIsThis"
 msgid "03632"
 msgstr "What is this, just a tease?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoSuch"
 msgid "03633"
 msgstr "There's no such parameter.{line_break}Ask Mr. Sugimoto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSettingsAre"
 msgid "03634"
 msgstr "The settings are made.{line_break}The rest is up to you.{end_wait}"
 
@@ -20371,15 +20371,15 @@ msgctxt "MsgSorryPalBut"
 msgid "05090"
 msgstr "Sorry, pal, but you've gotta{line_break}have more coins to play.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLinkWas"
 msgid "05091"
 msgstr "The link was{line_break}disconnected.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAwaitingYourOpponent"
 msgid "05092"
 msgstr "Awaiting your opponent...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgNoteYouCan"
 msgid "05093"
 msgstr "Note: you can't use{line_break}the sleep function in{line_break}battle stages!{end_wait}"
 
@@ -20387,7 +20387,7 @@ msgctxt "message"
 msgid "05094"
 msgstr "Saving battle results.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBattleResultsWere"
 msgid "05095"
 msgstr "Battle results were saved.{end_wait}"
 
@@ -20395,19 +20395,19 @@ msgctxt "message"
 msgid "05096"
 msgstr "Saving Monster Battle{line_break}results.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleResults"
 msgid "05097"
 msgstr "Monster Battle results{line_break}were saved.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWantToParticipate"
 msgid "05098"
 msgstr "If you want to{line_break}participate, please{line_break}step into the circle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWelcomeToBattle"
 msgid "05099"
 msgstr "Welcome to Battle Arena,{line_break}where the elite meet to{line_break}battle one another!{page_break}Test your skills in{line_break}Linked Battles and{line_break}Monster Battles!{page_break}Speak to the girl{line_break}at the counter if you're{line_break}looking for a fight!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPleaseSpeakTo"
 msgid "05100"
 msgstr "Please speak to me{line_break}when you want to{line_break}fight in a battle.{end_wait}"
 
@@ -20443,27 +20443,27 @@ msgctxt "message"
 msgid "05108"
 msgstr "The monster has finished{line_break}its preparations.{page_break}Please finish your{line_break}preparations, then{line_break}enter the circle.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattlePlease"
 msgid "05109"
 msgstr "You won {argument_signed_number}{line_break}battle{plural_suffix}.{page_break}Please speak to me{line_break}when you wish to{line_break}battle again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattleI"
 msgid "05110"
 msgstr "You won {argument_signed_number}{line_break}battle{plural_suffix}.{page_break}I told you our{line_break}monsters were tough!{line_break}Please try again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoodLuck2"
 msgid "05111"
 msgstr "Good luck!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattle"
 msgid "05112"
 msgstr "You won {argument_signed_number}{line_break}battle{plural_suffix}.{line_break}You broke the record!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourOpponentHas"
 msgid "05113"
 msgstr "Your opponent{line_break}has arrived!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotBadWould"
 msgid "05114"
 msgstr "Not bad! Would you{line_break}like to fight{line_break}the next monster?{end_now}"
 
@@ -20527,7 +20527,7 @@ msgctxt "message"
 msgid "05129"
 msgstr "Unbelievable!!! The next{line_break}monster is beyond your{line_break}imagination!{page_break}You will fight, won't{line_break}you?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItSOur"
 msgid "05130"
 msgstr "It's our turn.{line_break}Let's go, {actor_name:5}.{end_wait}"
 
@@ -20559,7 +20559,7 @@ msgctxt "message"
 msgid "05137"
 msgstr "All right, {actor_name:5}, we'll{line_break}do it together!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOkWeRe"
 msgid "05138"
 msgstr "OK, we're set, {actor_name:5}.{line_break}But remember, you're calling{line_break}the shots, all right?.{end_wait}"
 
@@ -20591,7 +20591,7 @@ msgctxt "message"
 msgid "05145"
 msgstr "Are you trying to tell me{line_break}something, {actor_name:5}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlFight"
 msgid "05146"
 msgstr "I'll fight enough for{line_break}both of us...{end_wait}"
 
@@ -20687,7 +20687,7 @@ msgctxt "message"
 msgid "05169"
 msgstr "I just hope your aim{line_break}doesn't falter...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDeservesA"
 msgid "05170"
 msgstr "Everybody deserves a little{line_break}credit for this victory!{end_wait}"
 
@@ -20719,7 +20719,7 @@ msgctxt "message"
 msgid "05177"
 msgstr "I gave it my best effort,{line_break}as you could see.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDidGreat"
 msgid "05178"
 msgstr "Everybody did great! I didn't{line_break}worry at all about you!{end_wait}"
 
@@ -20751,7 +20751,7 @@ msgctxt "message"
 msgid "05185"
 msgstr "That was a stunning battle.{line_break}I was on the edge of my seat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDonTBlame"
 msgid "05186"
 msgstr "Don't blame yourself... It{line_break}was just a bad strategy.{end_wait}"
 
@@ -20783,7 +20783,7 @@ msgctxt "message"
 msgid "05193"
 msgstr "Maybe it would have been{line_break}better if I just hadn't come...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWinSome"
 msgid "05194"
 msgstr "You win some, you lose some.{line_break}That's the nature of competition.{end_wait}"
 
@@ -20819,7 +20819,7 @@ msgctxt "message"
 msgid "05202"
 msgstr "I'm just going to watch.{line_break}But you guys are going{line_break}to battle, aren't you?{page_break}Well, do your best.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTHaveThe"
 msgid "05203"
 msgstr "{text_effect:4}I don't have the guts to fight{line_break}in the battle arena. I'll just{line_break}be sitting here, if that's OK.{end_wait}"
 
@@ -20863,7 +20863,7 @@ msgctxt "message"
 msgid "05213"
 msgstr "Should I enter or not?{line_break}I'm so stressed about this...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIs"
 msgid "05214"
 msgstr "It looks like this is{line_break}your first time here.{page_break}I will teach you{line_break}what it is like to{line_break}fight in a battle.{end_wait}"
 
@@ -20871,7 +20871,7 @@ msgctxt "message"
 msgid "05215"
 msgstr "You've won {argument_signed_number}{line_break}Linked Battle{plural_suffix}. Keep up{line_break}the good work!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIsYour"
 msgid "05216"
 msgstr "It looks like this is{line_break}your first time here.{page_break}You can ask me about{line_break}the results of your{line_break}battle. Okay?{end_wait}"
 
@@ -20903,7 +20903,7 @@ msgctxt "message"
 msgid "05223"
 msgstr "What happened, you guys?{line_break}Try harder.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLookA"
 msgid "05224"
 msgstr "You look a little scrawny,{line_break}but guys like you are often{line_break}surprisingly strong...{end_wait}"
 
@@ -20911,15 +20911,15 @@ msgctxt "message"
 msgid "05225"
 msgstr "Fighting a guy with a build{line_break}like that would really wear{line_break}me out! Whew!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlBe"
 msgid "05226"
 msgstr "I'll be rooting for you!{line_break}Do your best!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILikeMy"
 msgid "05227"
 msgstr "I like my men macho.{line_break}You...don't work out{line_break}much, do you?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHmItComes"
 msgid "05228"
 msgstr "Hm... It comes in like this...{line_break}Then you do this, and...{line_break}Whoa, that's not right...{end_wait}"
 
@@ -20943,55 +20943,55 @@ msgctxt "message"
 msgid "05233"
 msgstr "You have to train more.{page_break}Put your heart into{line_break}it when you fight.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWillTell"
 msgid "05234"
 msgstr "I will tell you your{line_break}total wins when you{line_break}finish the linked finals.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWillTellYou"
 msgid "05235"
 msgstr "I will tell you your{line_break}consecutive wins when{line_break}you finish the finals.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouVeWon"
 msgid "05236"
 msgstr "You've won {argument_signed_number}{line_break}consecutive Monster{line_break}Battle{plural_suffix}.{page_break}Keep up the good work!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTWaitTo"
 msgid "05237"
 msgstr "I can't wait to see how{line_break}many Monster Battles{line_break}you win.{page_break}I'll be counting{line_break}your victories!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAlliesCan"
 msgid "05238"
 msgstr "Up to three allies{line_break}can fight in the{line_break}linked finals.{page_break}There are four in your{line_break}party, so the rightmost{line_break}ally will have to pass.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAllies"
 msgid "05239"
 msgstr "Up to three allies{line_break}can fight in the{line_break}linked finals...{page_break}So all of you can{line_break}fight!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCanChange"
 msgid "05240"
 msgstr "You can change the order{line_break}of your party in the{line_break}status screen.{page_break}But you knew that, right?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThree"
 msgid "05241"
 msgstr "Up to three allies can join{line_break}you in a Link Mode battle.{page_break}Your party has eight allies{line_break}total, so only the three allies{line_break}on the left of the list can fight.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInTheLinked"
 msgid "05242"
 msgstr "In the linked finals, you{line_break}can't delay after your{line_break}opponent selects a move.{page_break}If you don't choose your{line_break}command within 15 seconds,{line_break}you automatically defend.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleRules"
 msgid "05243"
 msgstr "Monster Battle rules say{line_break}you all must fight as a{line_break}team against a monster.{page_break}If you're fighting as a{line_break}team, you can use the{line_break}same tactics...{page_break}you used in your travels.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouWin"
 msgid "05244"
 msgstr "So you win against one guy,{line_break}and then you lose against{line_break}the next.{page_break}Depending on the foe,{line_break}you've got to change up{line_break}your tactics.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCouldUse"
 msgid "05245"
 msgstr "You could use Psynergy, Djinn,{line_break}even summons and items! There{line_break}are a lot of battle strategies...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShouldIEnter"
 msgid "05246"
 msgstr "Should I enter or not?{line_break}I'm so stressed about this...{end_wait}"
 
@@ -21007,7 +21007,7 @@ msgctxt "message"
 msgid "05249"
 msgstr "Remove Djinn you rarely{line_break}use so you can{line_break}summon quickly.{page_break}I'm impatient, so I{line_break}prefer to fight in{line_break}short battles.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSometimesYourClass"
 msgid "05250"
 msgstr "Sometimes, your class changes{line_break}when you unleash a Djinni.{page_break}You need to watch that, because{line_break}it can get you into some real{line_break}trouble if you're not careful.{end_wait}"
 
@@ -21019,11 +21019,11 @@ msgctxt "message"
 msgid "05252"
 msgstr "I could enter, but I'd{line_break}just get hurt if I{line_break}did... That'd be stupid.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveA"
 msgid "05253"
 msgstr "You have a song request?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgComeBackWhen"
 msgid "05254"
 msgstr "Come back when you're{line_break}ready to rock!{end_wait}"
 
@@ -34859,11 +34859,11 @@ msgctxt "MsgYeppAlwaysSang"
 msgid "08712"
 msgstr "Yepp always sang such{line_break}wonderful children's songs{line_break}whenever he played with them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppHadThree"
 msgid "08713"
 msgstr "Yepp had three different songs{line_break}he used to sing. Each song{line_break}was about a different situation.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoYouLike"
 msgid "08714"
 msgstr "Do you like children's songs?{end_now}"
 
@@ -34875,83 +34875,83 @@ msgctxt "message"
 msgid "08716"
 msgstr "Yeah, you're totally right.{line_break}I just hate those songs.{page_break}One of these days, I'll{line_break}write one, and it'll be so{line_break}much better than this!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSongsAre"
 msgid "08717"
 msgstr "The songs are supposed to mean{line_break}something, but none of the other{line_break}kids knows what...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhyYepp"
 msgid "08718"
 msgstr "I wonder why Yepp wanted{line_break}the children to learn those{line_break}songs he used to sing...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenReally"
 msgid "08719"
 msgstr "It's been really dry the past{line_break}few months. Even Taopo{line_break}Swamp has dried up.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReSupposed"
 msgid "08720"
 msgstr "We're supposed to be right in{line_break}the middle of the rainy season,{line_break}but I don't see any rain...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTaopoSwamp"
 msgid "08721"
 msgstr "When Taopo Swamp dries up,{line_break}we're in for some serious{line_break}drought problems this year.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTStand"
 msgid "08722"
 msgstr "I can't stand this drought!{line_break}How long is the weather{line_break}going to be like this?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineHasStarted"
 msgid "08723"
 msgstr "Sunshine has started complaining{line_break}that he can't work lately. He{line_break}blames it on the lack of rain.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurBlacksmithSunshine"
 msgid "08724"
 msgstr "Our blacksmith, Sunshine, makes{line_break}the kinds of items you can't{line_break}find anywhere else.{page_break}You wouldn't know it to look{line_break}at him...or to talk to him...but{line_break}he's an amazing worker...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatKindOfPerson"
 msgid "08725"
 msgstr "What kind of person only wants{line_break}to work when it's raining?{page_break}I know Sunshine likes to enjoy{line_break}his days off, but he needs to{line_break}find a better excuse not to work.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSALittle"
 msgid "08726"
 msgstr "Sunshine's a little eccentric. He{line_break}disappears into Taopo Swamp{line_break}for days at a time...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheBlacksmith"
 msgid "08727"
 msgstr "If the blacksmith isn't willing to{line_break}work, then how am I supposed{line_break}to get fine weapons to sell?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfSunshineSet"
 msgid "08728"
 msgstr "If Sunshine set his mind to it,{line_break}he could make a lot of money!{line_break}What a waste of talent...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWantPlain"
 msgid "08729"
 msgstr "If you want plain old, boring{line_break}armor, have a look around.{page_break}If you're looking for some{line_break}of Sunshine's work, you'll{line_break}have to come back later.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIShouldnT"
 msgid "08730"
 msgstr "I shouldn't tell him how boring{line_break}all this stuff is. I wish Sunshine{line_break}would get back to work!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouReLookingFor"
 msgid "08731"
 msgstr "If you're looking for Taopo{line_break}Swamp, head west around{line_break}the northern mountain range.{page_break}Sunshine sometimes goes{line_break}up there by himself on long{line_break}trips. It's a dangerous place.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesSunshine"
 msgid "08732"
 msgstr "What does Sunshine want{line_break}in Taopo Swamp?{page_break}There's nothing up there{line_break}but bugs and some odd{line_break}mountain fish.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSABitStrange"
 msgid "08733"
 msgstr "It's a bit strange trying to{line_break}run an inn in a city that{line_break}never gets tourists, isn't it?{page_break}Well, sometimes, the locals{line_break}like to stay here. It's like a{line_break}little vacation for them, I guess.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTaopoSwampHas"
 msgid "08734"
 msgstr "Taopo Swamp has dried up, and{line_break}now it's inaccessible.{page_break}What's worse, with no water,{line_break}we can no longer get any more{line_break}delicious Yallam mountain fish.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYallamWasAlways"
 msgid "08735"
 msgstr "Yallam was always such a{line_break}poor town. We had to work{line_break}hard just to break even.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereWerenT"
 msgid "08736"
 msgstr "There weren't a lot of mountain{line_break}fish after the swamp dried up.{line_break}We probably won't catch many.{end_wait}"
 
@@ -34963,7 +34963,7 @@ msgctxt "MsgOnceThisWas"
 msgid "08738"
 msgstr "Once, this was a thriving village.{line_break}Now, I look around, and I only{line_break}see abject poverty and despair.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAhSoYouWant"
 msgid "08739"
 msgstr "Ah, so you want me to make{line_break}you a little something special?{end_now}"
 
@@ -34979,19 +34979,19 @@ msgctxt "message"
 msgid "08742"
 msgstr "This is Sunshine's house. He's the{line_break}local blacksmith.{page_break}I'm afraid he's not taking on{line_break}any jobs right now, though.{line_break}He's just not...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDadSNot"
 msgid "08743"
 msgstr "Dad's not doing any work right{line_break}now, but I'm making some basic{line_break}things for the villagers.{page_break}Maybe someday, I'll be able to{line_break}smith unique weapons, like my{line_break}dad. That's why I keep practicing!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItS"
 msgid "08744"
 msgstr "If it's not raining, I can't get{line_break}into Taopo Swamp.{page_break}And if I can't get to Taopo, then{line_break}I can't get the stuff I need to{line_break}work, so there's no point!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineSA"
 msgid "08745"
 msgstr "Sunshine's a pretty stubborn guy.{line_break}If he says he isn't going to{line_break}work, then he's not gonna work.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneThinksDad"
 msgid "08746"
 msgstr "Everyone thinks Dad is stubborn,{line_break}but he's not...{page_break}He's a true artist, and so what{line_break}if he gets a little temperamental{line_break}from time to time?{end_wait}"
 
@@ -35023,19 +35023,19 @@ msgctxt "message"
 msgid "08753"
 msgstr "It takes our Sunshine a long{line_break}time to finish the items he{line_break}works on.{page_break}Maybe you could just...wait{line_break}a little while before coming{line_break}to pick it up...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSSoWeirdBut"
 msgid "08754"
 msgstr "It's so weird, but something{line_break}really inspired my father to{line_break}work! He's beaming with joy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenA"
 msgid "08755"
 msgstr "It's been a long time since{line_break}I've been able to work. I'm so{line_break}excited! What should I make?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHappenedTo"
 msgid "08756"
 msgstr "What happened to Sunshine?{line_break}He's so happy, and he just{line_break}talks about work all the time!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatMy"
 msgid "08757"
 msgstr "Now that my dad's working again,{line_break}I have to watch his every move{line_break}to see what I can learn from him.{end_wait}"
 
@@ -35815,7 +35815,7 @@ msgctxt "message"
 msgid "08951"
 msgstr "It looks like something{line_break}can be placed here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPlacedADoll"
 msgid "08952"
 msgstr "{protagonist_name} placed a doll{line_break}on the altar.{end_wait}"
 
@@ -35823,7 +35823,7 @@ msgctxt "message"
 msgid "08953"
 msgstr "However, nothing happened.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoAreYou"
 msgid "08954"
 msgstr "Who are you?{line_break}How did you get here?{end_wait}"
 
@@ -35839,19 +35839,19 @@ msgctxt "message"
 msgid "08957"
 msgstr "Once it's groggy,{line_break}that's when I'll strike...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouUnderstand"
 msgid "08958"
 msgstr "If you understand, then get{line_break}out of my way.{line_break}Stand over there.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowManyCasks"
 msgid "08959"
 msgstr "How many casks does it take{line_break}to weaken this stupid serpent?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoveOutOf"
 msgid "08960"
 msgstr "Move out of the way there.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheCupsAre"
 msgid "08961"
 msgstr "The cups are overflowing{line_break}with a river of Dragonsbane.{end_wait}"
 
@@ -35879,7 +35879,7 @@ msgctxt "message"
 msgid "08967"
 msgstr "Feeding the serpent Dragonsbane{line_break}isn't weakening it enough for{line_break}me to beat it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentIsStill"
 msgid "08968"
 msgstr "The serpent is still too strong.{page_break}If only there were a way to{line_break}weaken it further...{end_wait}"
 
@@ -35887,7 +35887,7 @@ msgctxt "message"
 msgid "08969"
 msgstr "The cups are overflowing{line_break}with a river of Dragonsbane.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoDoThey"
 msgid "08970"
 msgstr "Who do they think they are?{line_break}I'm the only one who{line_break}can save Kushinada.{end_wait}"
 
@@ -35923,7 +35923,7 @@ msgctxt "message"
 msgid "08978"
 msgstr "To Kushinada, of course.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentWith"
 msgid "08979"
 msgstr "The serpent, with its eyes closed,{line_break}looks almost alive.{end_wait}"
 
@@ -36763,7 +36763,7 @@ msgctxt "MsgThatDragonWanted"
 msgid "09188"
 msgstr "That dragon wanted a new{line_break}wife each and every year!{line_break}He must really like girls.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSearchedTheSlate"
 msgid "09189"
 msgstr "{actor_name:5} searched the slate.{line_break}There is an inscription.{page_break}Wielder of Earth's might,{line_break}Lay your hands upon this stone.{page_break}I shall grant thee the power{line_break}to melt into the earth, the{line_break}power of Sand!{end_wait}"
 
@@ -36787,7 +36787,7 @@ msgctxt "MsgICanT"
 msgid "09194"
 msgstr "I can't feel anything...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMDone"
 msgid "09195"
 msgstr "I'm done for... That dragon{line_break}has finished me off...{end_wait}"
 
@@ -46511,7 +46511,7 @@ msgctxt "MsgIfTheyWereStrong"
 msgid "11625"
 msgstr "If they were strong enough to{line_break}defeat Saturos and Menardi,{line_break}perhaps they can do the job...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyWhyAm"
 msgid "11626"
 msgstr "Why... Why am I lying here?{end_wait}"
 
@@ -46595,23 +46595,23 @@ msgctxt "message"
 msgid "11646"
 msgstr "We're counting on you...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSTooLate"
 msgid "11647"
 msgstr "It's too late for us now...{line_break}Hurry, light the beacon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourHandSo"
 msgid "11648"
 msgstr "Your hand...so warm...{line_break}People have such warm{line_break}hands... I had forgotten...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoTired"
 msgid "11649"
 msgstr "I'm so tired... A fog is rising{line_break}before my eyes... No! Can't{line_break}die until the beacon...is lit...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoCold"
 msgid "11650"
 msgstr "I'm so cold, colder than I ever{line_break}thought possible... All because{line_break}Mars Lighthouse remains unlit...{page_break}I have to stay alive...long{line_break}enough to see its light...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWhoHoldThe"
 msgid "11651"
 msgstr "You who hold the star,{line_break}open your heart and listen...{page_break}If you wish to reach the heavens,{line_break}give your star to me.{end_wait}"
 
@@ -47539,15 +47539,15 @@ msgctxt "message"
 msgid "11882"
 msgstr "There's no time for questions!{line_break}Just carry them!{line_break}Carry them and go!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSASpace"
 msgid "11883"
 msgstr "There's a space for you{line_break}to place something.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotTheMars"
 msgid "11884"
 msgstr "{actor_name:5} got the Mars Star!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUsedTheMars"
 msgid "11885"
 msgstr "{actor_name:5} used the Mars Star!{end_wait}"
 
@@ -49503,7 +49503,7 @@ msgctxt "MsgThatSeafoodStew"
 msgid "12373"
 msgstr "That seafood stew has an{line_break}abundant variety of fish.{page_break}One bite of that, and I'd{line_break}be hooked!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSteelResting"
 msgid "12374"
 msgstr "The steel resting in the flames{line_break}is glowing bright red.{page_break}This must be where they{line_break}forge sharp items.{end_wait}"
 

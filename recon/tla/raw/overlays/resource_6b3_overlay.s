@@ -390,7 +390,11 @@ Func_02000318:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #60]
+	.ifdef TLA_EDITION_JA
+	movs r2, #136
+	.else
 	movs r2, #152
+	.endif
 	lsls r2, r2, #5
 	adds r2, #140
 	strb r5, [r3, #6]

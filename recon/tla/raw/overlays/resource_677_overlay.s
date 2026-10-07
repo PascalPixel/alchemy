@@ -67,9 +67,9 @@ Func_0200008c:
 	movs r0, #0
 	pop {pc}
 .L_020080c4:
-	.4byte 0x00002233
+	.4byte MsgItSBeenA
 .L_020080c8:
-	.4byte 0x00002228
+	.4byte MsgIfItS
 	.section .text.x020080cc,"ax",%progbits
 	.global Func_020000cc
 	.thumb_func
@@ -98,9 +98,9 @@ Func_020000cc:
 	movs r0, #0
 	pop {pc}
 .L_02008104:
-	.4byte 0x00002234
+	.4byte MsgWhatHappenedTo
 .L_02008108:
-	.4byte 0x00002229
+	.4byte MsgSunshineSA
 	.section .text.x0200810c,"ax",%progbits
 	.global Func_0200010c
 	.thumb_func
@@ -129,9 +129,9 @@ Func_0200010c:
 	movs r0, #0
 	pop {pc}
 .L_02008144:
-	.4byte 0x00002235
+	.4byte MsgNowThatMy
 .L_02008148:
-	.4byte 0x0000222a
+	.4byte MsgEveryoneThinksDad
 	.section .text.x0200814c,"ax",%progbits
 	.global Func_0200014c
 	.thumb_func
@@ -160,9 +160,9 @@ Func_0200014c:
 	movs r0, #0
 	pop {pc}
 .L_02008184:
-	.4byte 0x00002232
+	.4byte MsgItSSoWeirdBut
 .L_02008188:
-	.4byte 0x00002227
+	.4byte MsgDadSNot
 	.section .text.x0200818c,"ax",%progbits
 	.global Func_0200018c
 	.thumb_func
@@ -181,7 +181,7 @@ Func_0200018c:
 	pop {pc}
 	.2byte 0x0000
 .L_020081b0:
-	.4byte 0x00002218
+	.4byte MsgIfSunshineSet
 	.section .text.x020081b4,"ax",%progbits
 	.global Func_020001b4
 	.thumb_func
@@ -200,7 +200,7 @@ Func_020001b4:
 	pop {pc}
 	.2byte 0x0000
 .L_020081d8:
-	.4byte 0x0000221a
+	.4byte MsgIShouldnT
 	.section .text.x020081dc,"ax",%progbits
 	.global Func_020001dc
 	.thumb_func
@@ -219,7 +219,7 @@ Func_020001dc:
 	pop {pc}
 	.2byte 0x0000
 .L_02008200:
-	.4byte 0x0000221c
+	.4byte MsgWhatDoesSunshine
 	.section .text.x02008204,"ax",%progbits
 	.global Func_02000204
 	.thumb_func
@@ -296,7 +296,7 @@ Func_02000244:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008298:
-	.4byte 0x0000220a
+	.4byte MsgDoYouLike
 	.section .text.x0200829c,"ax",%progbits
 	.global Func_0200029c
 	.thumb_func
@@ -343,7 +343,7 @@ Func_0200029c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082f8:
-	.4byte 0x00002217
+	.4byte MsgIfTheBlacksmith
 	.section .text.x020082fc,"ax",%progbits
 	.global Func_020002fc
 	.thumb_func
@@ -390,7 +390,7 @@ Func_020002fc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008358:
-	.4byte 0x00002219
+	.4byte MsgIfYouWantPlain
 	.section .text.x0200835c,"ax",%progbits
 	.global Func_0200035c
 	.thumb_func
@@ -437,7 +437,7 @@ Func_0200035c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020083b8:
-	.4byte 0x0000221b
+	.4byte MsgIfYouReLookingFor
 	.section .text.x020083bc,"ax",%progbits
 	.global Func_020003bc
 	.thumb_func
@@ -487,7 +487,7 @@ Func_020003bc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008420:
-	.4byte 0x0000221d
+	.4byte MsgItSABitStrange
 	.section .text.x02008424,"ax",%progbits
 	.global Func_02000424
 	.thumb_func
@@ -532,7 +532,7 @@ Func_02000424:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200847c:
-	.4byte 0x00002221
+	.4byte MsgEvenOutIn
 	.section .text.x02008480,"ax",%progbits
 	.global Func_02000480
 	.thumb_func
@@ -573,7 +573,7 @@ Func_02000480:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020084dc:
-	.4byte 0x00002223
+	.4byte MsgAhSoYouWant
 	.section .text.x020084e0,"ax",%progbits
 	.global Func_020004e0
 	.thumb_func
@@ -862,13 +862,13 @@ Func_02000524:
 .L_02008766:
 	pop {r5, pc}
 .L_02008768:
-	.4byte 0x00001307
+	.4byte MsgAhSoYou
 .L_0200876c:
-	.4byte 0x0000130d
+	.4byte MsgICanTWait
 .L_02008770:
-	.4byte 0x0000130e
+	.4byte MsgMyWifeHas
 .L_02008774:
-	.4byte 0x0000130a
+	.4byte MsgYouWantMe
 .L_02008778:
 	.4byte gPartyState
 	.section .text.x0200877c,"ax",%progbits
@@ -972,15 +972,15 @@ Func_0200077c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008858:
-	.4byte 0x0000130f
+	.4byte MsgThisThisIs
 .L_0200885c:
-	.4byte 0x00001310
+	.4byte MsgItTakesOur
 .L_02008860:
-	.4byte 0x00001311
+	.4byte MsgHereSThe
 .L_02008864:
 	.4byte gPartyState
 .L_02008868:
-	.4byte 0x00001316
+	.4byte MsgManSunshineWould
 	.section .text.x0200886c,"ax",%progbits
 	.global Func_0200086c
 	.thumb_func
@@ -1238,7 +1238,23 @@ Data_02000ca4:
 	.4byte 0x00000001
 	.4byte 0x00980000
 	.4byte 0x00000000
+	.ifdef TLA_EDITION_DE
+	.4byte 0x008c0000
+	.else
+	.ifdef TLA_EDITION_ES
+	.4byte 0x008c0000
+	.else
+	.ifdef TLA_EDITION_FR
+	.4byte 0x008c0000
+	.else
+	.ifdef TLA_EDITION_IT
+	.4byte 0x008c0000
+	.else
 	.4byte 0x00880000
+	.endif
+	.endif
+	.endif
+	.endif
 	.4byte 0x00016000
 	.4byte 0xffff0074
 	.4byte .L_02008a98
@@ -1383,22 +1399,22 @@ Data_02000ea8:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002209
+	.4byte MsgYeppHadThree
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02000244
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000220f
+	.4byte MsgItSBeenReally
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002210
+	.4byte MsgWeReSupposed
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_020003bc
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000221e
+	.4byte MsgTaopoSwampHas
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_02000524
@@ -1413,22 +1429,22 @@ Data_02000ea8:
 	.4byte Func_02000524
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000220d
+	.4byte MsgTheSongsAre
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000220e
+	.4byte MsgIWonderWhyYepp
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002211
+	.4byte MsgWhenTaopoSwamp
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002212
+	.4byte MsgICanTStand
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000221f
+	.4byte MsgYallamWasAlways
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002220
+	.4byte MsgThereWerenT
 	.4byte 0x00008d15
 	.4byte 0xffff000e
 	.4byte Func_0200008c
@@ -1443,7 +1459,7 @@ Data_02000ea8:
 	.4byte Func_0200008c
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403056
+	.2byte MsgTheSteelResting, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1460,10 +1476,10 @@ Data_02000fe0:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002213
+	.4byte MsgSunshineHasStarted
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002214
+	.4byte MsgOurBlacksmithSunshine
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_0200029c
@@ -1484,19 +1500,19 @@ Data_02000fe0:
 	.4byte Func_0200035c
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002215
+	.4byte MsgWhatKindOfPerson
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002216
+	.4byte MsgSunshineSALittle
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002218
+	.4byte MsgIfSunshineSet
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000221a
+	.4byte MsgIShouldnT
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000221c
+	.4byte MsgWhatDoesSunshine
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte Func_0200018c

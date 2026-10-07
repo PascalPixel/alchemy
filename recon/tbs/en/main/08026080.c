@@ -20,7 +20,11 @@
  *   find_reloads_address_1's REG/REG case and choose_reload_regs next.
  * - at 765: head = entries after the call 14 (pos and head addresses
  *   swap r5/r6); the id in n before pending = 0: 1002. Permuter 5 min over
- *   head/pending/the call (1826 candidates): no gain.
+ *   head/pending/the call (1826 candidates): no gain. At 725, the main
+ *   loop as do { ... } while (redraw != 0): the same 2. Elsewhere (the
+ *   name drawing, the confirm block) native reloads ids then cursor*2, so
+ *   only the loop head emits the index first; a separate pseudo copied
+ *   into r3 before insn 838 would explain it (untested).
  * - flow (life) deletes 106 insns after cse2, 67 of them present at GCSE;
  *   combine deletes 157 more. Live lengths come from life, so insns that
  *   flow deletes leave pos's priority alone, while tails that jump2

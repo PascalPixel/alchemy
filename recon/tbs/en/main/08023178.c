@@ -10,7 +10,37 @@
  * Runtime_BumpAllocate where native sets it after; one long branch two
  * bytes short (the one instruction the condition loads lack).
  *
- * Session 5 2026-10-07: the up-key n-- after the 0x6F call 87 -> 85
+ * Session 6 2026-10-07: the second modifier test is native's (lsls r3,
+ * r1, #24; cmp; bge) once the first test's sign-extended read of the
+ * field comes before m's read: s32 t = field; u8 m = field; t > 0, then
+ * (s8)m < 0, attack only, 59 -> 126. Cause: CSE's LOAD_EXTEND_OP lookup
+ * (cse.c, "See if a MEM has already been loaded with a widening
+ * operation") turns any QI read of the field after m's zero-extending
+ * read into (subreg:QI m), fold_rtx's paradoxical SUBREG case then makes
+ * the first test's shift (ashift m 24), the second test's, and CSE or
+ * GCSE joins them. Read first, the field keeps its own QI register and
+ * the two shifts differ. The cost: the shared address (object + 309)
+ * then lives 5 luids (read, two shifts, m's read) and loop.c hoists it
+ * out of the do-while(0) (loop.08: 191 real insns; life 5 x savings 2
+ * moved, life 2 x 2 not desirable), so the address sits in r0 before the
+ * loop and the read is mov/ldrsb with dest != base. Native reads m
+ * (ldrb r1) and then the field with dest == base, so its address dies
+ * at the second read: native read the field for the first test after m
+ * without that fold; no source form found yet. Rejected: m read first,
+ * then t, 92 (folded); s8 *mp with t = *mp, m = *mp 126 (as t, m); no m,
+ * the field read in both tests 73 (the second test's lsl #24 is native's,
+ * but gcse.c counts any store a kill of every load, so PRE reloads the
+ * field after the then-block's store: native's second test reads no
+ * memory), the same with o = sel + i 75; s32 m = field & 0xFF with the
+ * field read in the first test and (s8)m < 0, 184 (both reads stay in
+ * place and the second test is native's, but combine puts the
+ * sign-extending read, m's intermediate, before m's ldrb: mov/ldrsb with
+ * dest != base, and o moves from r2 to r1). Condition loads: the byte read
+ * into s32 c first 59, *q++ read into h first 59, *out++ in the call 59
+ * (no change: combine still joins the QI read and both shifts into one
+ * sign_extend; native's three instructions into r0 were never joined).
+ *
+ * Session 5 2026-10-07:the up-key n-- after the 0x6F call 87 -> 85
  * (sched2 moves it across the call to native's slot, after the 0x6F
  * argument). The face pool: the face x literal 172 is a movhi pool
  * load (pool_range 64, the pool's head); arm_reorg counts 58 bytes from

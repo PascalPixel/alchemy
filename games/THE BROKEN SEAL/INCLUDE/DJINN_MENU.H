@@ -24,7 +24,7 @@ struct DjinnMenuBackdrop {
     u8 tiles[0x2000];
     u16 palette[64];
     s32 tutorial_timer;
-    s32 tutorial_step;
+    long tutorial_step;
 };
 
 struct DjinnMenuWork {

@@ -21,7 +21,10 @@
  * before dmg = apwr changes nothing. The weapon case halves defense with a
  * signed shift sequence in the listing (lsrs #31, adds, asrs) where ours
  * shifts logically: def / 2 and scale /= 2 give the same logical shift,
- * defense read through the function-level value 382. The listing reads maxu before
+ * defense read through the function-level value 382. With the void
+ * BattleEv_Push, plain hp reads at the top of the heal still lose: signed
+ * first 351, unsigned first 347, and plain max_hp reads in every branch too
+ * 639. The listing reads maxu before
  * the division call and shares the add after it with 78 and 7%: reading
  * maxu first instead merges both loads (723); direct reads with maxv as
  * before give 435. Tried and worse: a while loop

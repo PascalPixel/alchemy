@@ -1,4 +1,4 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2045, differ 285.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2046, differ 58.
  * Frame 768 with every array and spill slot at its native offset; the
  * remaining difference is mostly register choice (reload's round-robin
  * spill registers follow from everything before) and a few open shapes.
@@ -44,20 +44,21 @@
  * - The shadow loop adds work->particles[i].y >> 16 to depth[2 + i]; combine
  *   narrows it to native's ldrsh and the int access keeps the first store.
  *
+ * - The map-cell decodes go through an inline wrapper: the call inside it
+ *   gets its destination without expand_call's precomputed pseudo, so CSE
+ *   has no register holding 0x02010000 and native's four pool loads follow
+ *   (a direct call keeps it in r5: 113 -> 58).
+ * - Collision: the sum dx * dx + dy * dy + dz * dz is not dist (native
+ *   computes it in r0 for the call); speed squares through vx/vz; the
+ *   (n / 1024) % 3 test as if / else if; the shadow index (i + 2) << 25
+ *   first in its OR, so its giv lives long enough for loop.c to reduce it.
+ *
  * Open:
- * - The 0x02010000 decode buffer: native rematerialises it from the pool at
- *   all four uses (its pseudo got no register); the draft keeps it in r5.
- * - Sort: native stores order[0] from i (r11 = 0) and has a separate zero
- *   for j; the draft folds both to one zero.
- * - Shadow loop: native reduces (i + 2) << 25 to a giv (r9 += 1 << 25); the
- *   draft's is "not worth while" (34 vs 75).
- * - The affine loop's depth pointer: native's global allocation gave it a
- *   register that reload then spilled to sp+4 (after the caller-save
- *   slots); the draft leaves it to the initial spill.
- * - Affine halfwords: native stores four halfwords to sp+166..160 and
- *   reloads each with ldrh; the zeros come from two literal-pool loads of 0.
- *   The draft's volatile u16 locals are tagged FAKEMATCH; whether that is
- *   an admissible device or real source is not settled.
+ * - Kind loop preheader: native computes 632 - n * 16 after the table loads
+ *   (632 in r3, n * 16 in r2); the draft hoists it first (r2, r1).
+ * - State 2 key A, else arm: reload registers for state = 0 and reset = 1
+ *   (native r0, r7; draft r7, r3).
+ * - Shadow loop: the proj[0] load and the -16 compare take other registers.
  *
  * Earlier trials (kept where still informative):
  * - Native locals, top down: palette 256, depth 240, results 224, point 212,
@@ -122,6 +123,11 @@ void UiWork_FinalizeFar(s32 window, s32 mode);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
 void Audio_PlayCue(s32 cue);
+
+static __inline__ void LuckyDice_Decode(void *source, void *destination)
+{
+    Resource_DecodeType01(source, destination);
+}
 
 void LuckyDice_Run(void)
 {
@@ -205,13 +211,13 @@ void LuckyDice_Run(void)
     Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
     base += 0x1c0;
-    Resource_DecodeType01((void *)base, (void *)0x02010000);
+    LuckyDice_Decode((void *)base, (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
     base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
     Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
     Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
     base += 0x200;
-    Resource_DecodeType01((void *)base, (void *)0x02010000);
+    LuckyDice_Decode((void *)base, (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
     Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
     Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
@@ -514,7 +520,7 @@ void LuckyDice_Run(void)
             depth[2 + i] = proj[2] - 0x15e;
             depth[2 + i] += work->particles[i].y >> 16;
             if (proj[1] + 88 > -16) {
-                sprites->obj[count].attr01 = ((((proj[0] + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((proj[1] + 0x158) & 255) | 0x40002300;
+                sprites->obj[count].attr01 = (((i + 2) << 25) | (((proj[0] + 0x270) & 0x1ff) << 16)) | ((proj[1] + 0x158) & 255) | 0x40002300;
                 sprites->obj[count].attr2 = 0x890;
                 count++;
             }
@@ -535,9 +541,8 @@ void LuckyDice_Run(void)
                         dx = (die->x - other->x) >> 16;
                         dy = (die->y - other->y) >> 16;
                         dz = (die->z - other->z) >> 16;
-                        dist = dx * dx + dy * dy + dz * dz;
-                        if (dist <= 0x9c3) {
-                            dist = Iwram_Sqrt(dist);
+                        if (dx * dx + dy * dy + dz * dz <= 0x9c3) {
+                            dist = Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
                             die->velocity_x += (dx << 15) / dist;
                             die->velocity_y += (dy << 15) / dist;
                             die->velocity_z += (dz << 15) / dist;
@@ -568,10 +573,15 @@ void LuckyDice_Run(void)
                     die->y = 0;
                     die->velocity_y = -die->velocity_y * 48 / 64;
                     if ((Random16() & 3) == 0) {
-                        speed = Iwram_Sqrt((die->velocity_x >> 8) * (die->velocity_x >> 8) + (die->velocity_z >> 8) * (die->velocity_z >> 8)) * 56 / 64;
+                        s32 vx;
+                        s32 vz;
+
+                        vx = die->velocity_x >> 8;
+                        vz = die->velocity_z >> 8;
+                        speed = Iwram_Sqrt(vx * vx + vz * vz) * 56 / 64;
                         angle = Random16() & 0xffff;
-                        die->velocity_x = speed * Trig_Sin(angle) >> 8;
-                        die->velocity_z = speed * Trig_Cos(angle) >> 8;
+                        die->velocity_x = Trig_Sin(angle) * speed >> 8;
+                        die->velocity_z = Trig_Cos(angle) * speed >> 8;
                     } else {
                         die->velocity_x = die->velocity_x * 56 / 64;
                         die->velocity_z = die->velocity_z * 56 / 64;
@@ -585,13 +595,11 @@ void LuckyDice_Run(void)
                         die->velocity_z = 0;
                         spin[i] = 0;
                         n = die->variant;
-                        switch (n / 1024 % 3) {
-                        case 1:
+                        e = n / 1024 % 3;
+                        if (e == 1) {
                             die->variant = n + 0x800;
-                            break;
-                        case 2:
+                        } else if (e == 2) {
                             die->variant = n + 0x400;
-                            break;
                         }
                     }
                 }

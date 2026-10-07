@@ -1,4 +1,9 @@
 /* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1665.
+ * Render_ProjectPoint now uses its current GFXUTIL.C/FIELD.H signature,
+ * s32 * rather than void *, with the named x members passed as input.
+ * All generated instructions remain identical. The neighboring projected
+ * sprite renderer assigns its ground coordinates x/y/z; that order here
+ * gives2032/1666, or2040/1810/frame772 with matrix-first packing. Not kept.
  * The projection input uses the existing FixedPointPosition type: its
  * verified x/y/z offsets0/4/8 and size12 fit this fixed-point input exactly.
  * Generated instructions are unchanged from point[3]. Matrix-first stays
@@ -319,7 +324,7 @@ void Camera_ResetSceneDefaults(void);
 void Scheduler_ResetTaskTable(void);
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count);
 void Render_ResetTransformState(void);
-s32 Render_ProjectPoint(void *point, s32 *out);
+s32 Render_ProjectPoint(s32 *point, s32 *out);
 u32 __umodsi3(u32 numerator, u32 denominator);
 void FarCall_WindowTable(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
@@ -710,7 +715,7 @@ void LuckyDice_Run(void)
 
         for (i = 0; i != 2; i++) {
             die = &work->particles[order[i]];
-            Render_ProjectPoint(die, proj);
+            Render_ProjectPoint(&die->x, proj);
             if (proj[2] < 0x15e) {
                 proj[2] = 0x15e;
             }
@@ -738,7 +743,7 @@ void LuckyDice_Run(void)
                 u32 off0 = OBJ_OFF(count, attr01);
                 u32 off1 = OBJ_OFF(count, attr2);
 
-                Render_ProjectPoint(&work->particles[i], proj);
+                Render_ProjectPoint(&work->particles[i].x, proj);
                 n = depth[order[i]] / 2 + 128;
                 x = proj[0] - __divsi3(0x800, n);
                 y = proj[1] + __divsi3(0x300, n);
@@ -760,7 +765,7 @@ void LuckyDice_Run(void)
             point.y = 0;
             point.x = work->particles[i].x;
             point.z = work->particles[i].z;
-            Render_ProjectPoint(&point, proj);
+            Render_ProjectPoint(&point.x, proj);
             if (proj[2] < 0x15e) {
                 proj[2] = 0x15e;
             }

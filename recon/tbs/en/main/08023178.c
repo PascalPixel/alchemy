@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1349, differ 85.
+ * Native 1392 instructions, draft 1391, common 1360, differ 63.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
  * the stat pushes, the djinn rows and the condition list match.
@@ -7,13 +7,22 @@
  * native has lsl #24, bge); the condition loads' sign extension
  * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
  * saved/pointer pair (r5/r6 swapped) and code = 0 set before
- * Runtime_BumpAllocate where native sets it after; one literal pool
- * placed two instructions later (and the branch offsets it moves); 112
- * scheduled later in the icon loop setup.
+ * Runtime_BumpAllocate where native sets it after; 112 scheduled later
+ * in the icon loop setup; one long branch two bytes short (the one
+ * instruction the condition loads lack).
  *
  * Session 5 2026-10-07: the up-key n-- after the 0x6F call 87 -> 85
  * (sched2 moves it across the call to native's slot, after the 0x6F
- * argument).
+ * argument). The face pool: the face x literal 172 is a movhi pool
+ * load (pool_range 64, the pool's head); arm_reorg counts 58 bytes from
+ * it to the gFrameCount load (ldrh 4, bl 4, the rest 2), under 64 - 4,
+ * so gFrameCount joins the pool and the barrier follows it. Native puts
+ * gFrameCount in the next pool and the barrier after the cursor tile
+ * strh: it counts at least 2 bytes more there, or loads 172 through
+ * zero_extendhisi2 (pool_range 60); no source form found for either.
+ * An empty asm after the cursor's attr23 store (counted 4 bytes) 85 ->
+ * 63, FAKEMATCH-tagged; after the face push it reorders the cursor's
+ * attr23 store, 67.
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
@@ -506,6 +515,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         objCursor.oam.word.attr01 = 0x40000400;
         objCursor.oam.word.attr23 = 0;
+        /* FAKEMATCH: arm_reorg counts this empty asm as 4 bytes, so the gFrameCount literal falls past the face x literal's 64-byte ldrh range and opens the next pool, as native; the pool and its branch move two instructions earlier, 85 -> 63 */
+        asm("");
         objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles);
         objCursor.oam.f.x = (pix.x + winMain->x * 8
                           - ((gFrameCount & 4) >> 2))

@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 2162 of 2455 (listing 2455, draft 2437, common 1365).
+/* 080ea0d8: differ 1901 of 2455 (listing 2455, draft 2452, common 1503).
  * Structure: the sequence of conditional branches, jumps and calls now
  * matches the native's except one literal-pool jump; what remains is
  * register allocation, scheduling, constant hoisting and pool placement.
@@ -13,9 +13,9 @@
  * each colour as a halfword (lsls 16 / lsrs 26), ours with asrs.
  * Locals: the native fill word sits at sp+140, between place and place2, so
  * it is a declared volatile word, not an addressed scalar (that put it at
- * sp+116 after pair). The local arrays now sit where the native's do, but
- * the frame is 180 against 184: the native also spills draw2 (sp+92, loaded
- * once per frame, reloaded before each call), where ours keeps it in fp; in
+ * sp+116 after pair). The frame is now the native's 184 bytes, and draw2
+ * occupies the native's sp+92 slot and reloads before each call. The local
+ * arrays consequently sit at their native offsets. In
  * the petal blocks the native keeps draw in sl and spills the petal cell
  * (sp+28), and builds d as frame * 2 then subtracts 164.
  * Register allocation and remaining stack slots
@@ -62,7 +62,24 @@
  * add sp, #140 and stores fill at [sp, #140] directly). Ours moves 0, &fill
  * and 24 out of it. Diagnostic only, not source: the loop as a label and
  * goto gives the native's 184-byte frame but 2294 overall; as do-while
- * the code is identical (2162). */
+ * the code is identical (2162).
+ * Trial (2026-10-07): one counter for the 160-frame phase's seven
+ * sequential subloops: 2162 -> 2126, kept. Also sharing the second
+ * phase's counter: 2232, not kept. Volatile draw2: 2242; a one-pass
+ * block around the second frame loop: 2160; neither kept. Narrowing
+ * draw2 to frame scope and volatile hardware writes leave 2126 unchanged.
+ * Petals (kept): the first four placements compute x and y before each
+ * draw, reusing the left x for its lower petal and the right x for its
+ * lower petal. This restores the 184-byte frame and draw2's sp+92 spill:
+ * 2126 -> 1901. The same rewrite in the second petal block is 2521;
+ * only reusing its lower y is 1906, neither kept.
+ * Trial: a tagged empty-asm height operand keeps 0xff0000 in the particle
+ * loop as native: 2126 -> 2116, or 1901 -> 1897 after the coordinate
+ * rewrite; not kept. The goto frame loop with it was 2228.
+ * Permuter, 3 minutes, two jobs, seed 47, heat, from 2126: weighted
+ * 54790 -> 31510, differ 1916, but 63 rewrites remain (mostly unrelated
+ * shared temporaries). Not carried; the ordinary coordinate rewrite
+ * above recovers the native frame without those devices. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -162,12 +179,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i2;
     s32 i3;
     s32 i4;
-    s32 i5;
-    s32 i6;
-    s32 i7;
-    s32 i8;
-    s32 i9;
-    s32 i10;
     s32 i11;
     s32 i12;
     s32 i13;
@@ -320,16 +331,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         anchor[2] = 0;
         anchor[1] = 0;
-        for (i5 = 0; i5 != 64; i5++) {
-            if (frame > i5 / 4 + 80 && DUST[i5].x > 0) {
+        for (i4 = 0; i4 != 64; i4++) {
+            if (frame > i4 / 4 + 80 && DUST[i4].x > 0) {
                 Render_ResetTransformState();
-                SceneTransform_ApplyRoll(DUST[i5].velocity_y);
-                SceneTransform_ApplyPitch(DUST[i5].velocity_x);
-                SceneTransform_ApplyYaw(DUST[i5].velocity_y + (frame << 9));
-                anchor[0] = DUST[i5].x;
-                DUST[i5].x -= 2;
-                if (DUST[i5].x < 0) {
-                    DUST[i5].x = 0;
+                SceneTransform_ApplyRoll(DUST[i4].velocity_y);
+                SceneTransform_ApplyPitch(DUST[i4].velocity_x);
+                SceneTransform_ApplyYaw(DUST[i4].velocity_y + (frame << 9));
+                anchor[0] = DUST[i4].x;
+                DUST[i4].x -= 2;
+                if (DUST[i4].x < 0) {
+                    DUST[i4].x = 0;
                 }
                 EffectPosition_ApplyBaseAndYOffset((struct EffectStep *)anchor, (struct EffectPosition *)scene);
                 if (scene[2] < -60) {
@@ -350,10 +361,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         pair = BattleFx9_UnitScale;
         place[3] = 0;
         place[1] = 0;
-        for (i6 = 0; i6 != 16; i6++) {
-            place[0] = ((i6 % 4) << 21) + (152 << 15);
-            place[2] = ((i6 / 4) << 21) + depth;
-            Object_ApplyProjectedPlacementFar(work->objects[i6], place, &pair, 0);
+        for (i4 = 0; i4 != 16; i4++) {
+            place[0] = ((i4 % 4) << 21) + (152 << 15);
+            place[2] = ((i4 / 4) << 21) + depth;
+            Object_ApplyProjectedPlacementFar(work->objects[i4], place, &pair, 0);
         }
 
         depth += zoom;
@@ -371,13 +382,13 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame == 72) {
-            for (i7 = 0; i7 != 16; i7++) {
-                AnimationObjects_SelectAnimationFar(work->objects[i7], i7 + 16);
+            for (i4 = 0; i4 != 16; i4++) {
+                AnimationObjects_SelectAnimationFar(work->objects[i4], i4 + 16);
             }
         }
         if (frame == 76) {
-            for (i8 = 0; i8 != 16; i8++) {
-                AnimationObjects_SelectAnimationFar(work->objects[i8], i8 + 32);
+            for (i4 = 0; i4 != 16; i4++) {
+                AnimationObjects_SelectAnimationFar(work->objects[i4], i4 + 32);
             }
         }
 
@@ -403,8 +414,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
 
-            for (i9 = 0; i9 != 6; i9++) {
-                s32 k = i9 & 3;
+            for (i4 = 0; i4 != 6; i4++) {
+                s32 k = i4 & 3;
                 s32 angle = Random16() & 0xffff;
                 x = ((Trig_Sin(angle) * 16) >> 16) - BattleFx9_ShardWidths[k] / 2;
                 y = ((Trig_Cos(angle) * 16) >> 16) - BattleFx9_ShardHeights[k] / 2;
@@ -432,8 +443,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
-                for (i10 = 0; i10 != 128; i10++) {
-                    s32 angle = i10 << 9;
+                for (i4 = 0; i4 != 128; i4++) {
+                    s32 angle = i4 << 9;
                     x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
                     y = (r * Trig_Cos(angle)) >> 17;
                     blit(canvas, cell, x + 60, y + 72, 8, 16);
@@ -659,10 +670,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
         if (frame >= 68 && frame < 76) {
             s32 d = 76 - frame;
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 2, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 2, d + 38, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 2 + 49, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 2 + 49, d + 38, 22, 44);
+            x = 49 - d / 2;
+            y = 38 - d;
+            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
+            y = d + 38;
+            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
+            x = d / 2 + 49;
+            y = 38 - d;
+            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
+            y = d + 38;
+            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
         }
         if (frame >= 78 && frame < 80) {
             draw(canvas, work->sheet + 0x6000, 52, 51, 16, 17);

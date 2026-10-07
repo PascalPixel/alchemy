@@ -1,4 +1,20 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2034, differ 1680.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1675.
+ * Keep squared distance in a separate local d2: native builds it directly
+ * in the square-root argument r0, then keeps the resulting distance in r5.
+ * Reusing dist kept both values in r5 and added an argument copy. Splitting
+ * those units removes that instruction: 2034/1680 -> 2033/1675.
+ * Further rejected trials from 1680: short resource increment bindings in
+ * r0/r1 select native's registers but add palette-address materialization,
+ * 2038/1720. A physics-condition source search (seed43, two jobs, interrupted
+ * at 16 distinct candidates) only adds a redundant bool, differ1668 at the
+ * same weighted26330. A two-minute spin-region search (seed47, two jobs,
+ * 2841 candidates) gives weighted26260/differ1680 by moving the decrement
+ * after the stopped check, opposite native's ordering. Neither is kept.
+ * Empty and memory barriers before the variant addition are unchanged1680.
+ * An opaque byte index at that access gives2034/1686 and restores base+index,
+ * but the following decrement reconstructs its address instead of reusing
+ * the cursor. Combine that with an explicit loop-local step pointer:
+ * 2032/1706; with an independently advancing cursor:2031/1707. Not kept.
  * Resource setup now names its changing destination: decode into work RAM,
  * then DMA to VRAM. This restores native's repeated work-RAM address loads
  * instead of retaining that constant in r5; frame remains 768. A scoped
@@ -747,12 +763,14 @@ void LuckyDice_Run(void)
                 other = work->particles;
                 for (j = 0; j != 2; j++) {
                     if (i != j) {
+                        s32 d2;
+
                         dx = (die->x - other->x) >> 16;
                         dy = (die->y - other->y) >> 16;
                         dz = (die->z - other->z) >> 16;
-                        dist = dx * dx + dy * dy + dz * dz;
-                        if (dist <= 0x9c3) {
-                            dist = Iwram_Sqrt(dist);
+                        d2 = dx * dx + dy * dy + dz * dz;
+                        if (d2 <= 0x9c3) {
+                            dist = Iwram_Sqrt(d2);
                             die->velocity_x += __divsi3(dx << 15, dist);
                             die->velocity_y += __divsi3(dy << 15, dist);
                             die->velocity_z += __divsi3(dz << 15, dist);

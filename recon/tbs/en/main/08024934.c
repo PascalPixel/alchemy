@@ -616,9 +616,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         sprites[index].oam.f.tile = Resource_GetBuffer(slot, -1);
     }
     count = Trade_ListFlaggedEntriesFar(available);
-    used = 0;
-    {
+    do {
         s32 i;
+
+        used = 0;
 
         for (i = count - 1; i >= 0; i--) {
             const struct SummonDefinition *s;
@@ -635,7 +636,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 available[i] = 32;
             }
         }
-    }
+    } while (0);
     {
         s32 i, k;
 
@@ -668,9 +669,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
                 drawn_row = row;
                 mask = 0;
-                required = s->djinn_required;
                 for (element = 0; element <= 3; element++) {
-                    if (*required++ != 0)
+                    if (s->djinn_required[element] != 0)
                         mask |= 1 << element;
                 }
             }

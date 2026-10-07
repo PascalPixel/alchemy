@@ -819,6 +819,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/SETUP.o"(.text)
     . = ALIGN(4);
     "*/recon/tla/ja/rom.o"(.rom.000d2374)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/OBJECT_HOOK.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d23aa)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PACKED_ID.o"(.text)

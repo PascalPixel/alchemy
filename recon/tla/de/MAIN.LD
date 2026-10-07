@@ -817,7 +817,7 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/SETUP.o"(.text)
     . = ALIGN(4);
     "*/recon/tla/de/rom.o"(.rom.000df394)
-    "*/recon/tla/de/rom.o"(.rom.000df398)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/OBJECT_HOOK.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000df3ca)
     "*/recon/tla/de/rom.o"(.rom.000df3cc)

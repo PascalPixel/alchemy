@@ -2805,13 +2805,6 @@ Func_080d20fc:
 EventRuntime_UpdateWaitMode:
 	.incbin "baserom.gba", 0x000d71f4, 0x0000004c
 	.section .rom.000d7394, "ax"
-	.incbin "baserom.gba", 0x000d7394, 0x00000004
-	.section .rom.000d7398, "ax"
-	.global Event_RunObjectHookAndWait
-	.type Event_RunObjectHookAndWait, %function
-	.thumb_func
-Event_RunObjectHookAndWait:
-	.incbin "baserom.gba", 0x000d7398, 0x00000020
 	.section .rom.000d73ca, "ax"
 	.incbin "baserom.gba", 0x000d73ca, 0x00000002
 	.section .rom.000d73cc, "ax"

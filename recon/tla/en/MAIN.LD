@@ -1158,8 +1158,7 @@
         "*/recon/tla/raw/080d21f4.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/SETUP.o"(.text)
         . = ALIGN(4);
-        "*/recon/tla/raw/080d2394.o"(.text)
-        "*/recon/tla/raw/080d2398.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/OBJECT_HOOK.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)
         "*/recon/tla/raw/080d23ca.o"(.text)
         "*/recon/tla/raw/080d23cc.o"(.text)

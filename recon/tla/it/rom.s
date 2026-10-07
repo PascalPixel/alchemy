@@ -3198,7 +3198,10 @@ Event_ReadSpawnCoordinates:
 	.incbin "baserom.gba", 0x000ca9cc, 0x00000060
 	.global Func_080caa2c
 Func_080caa2c:
-	.incbin "baserom.gba", 0x000caa2c, 0x00000294
+	.incbin "baserom.gba", 0x000caa2c, 0x00000020
+	.global Func_080caa4c
+Func_080caa4c:
+	.incbin "baserom.gba", 0x000caa4c, 0x00000274
 	.global ObjectTable_FindLastActiveId
 	.type ObjectTable_FindLastActiveId, %function
 	.thumb_func
@@ -3445,7 +3448,6 @@ Func_080d4714:
 EventRuntime_UpdateWaitMode:
 	.incbin "baserom.gba", 0x000d21f4, 0x0000004c
 	.section .rom.000d2394, "ax"
-	.incbin "baserom.gba", 0x000d2394, 0x00000024
 	.section .rom.000d23ca, "ax"
 	.incbin "baserom.gba", 0x000d23ca, 0x0000000e
 	.section .rom.000d25c8, "ax"

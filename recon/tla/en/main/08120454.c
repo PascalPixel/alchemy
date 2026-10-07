@@ -207,6 +207,9 @@
  * FAKEMATCH, 100 (draft 3450, common 3400): case 70 and the join match
  * with the listing's single ldrh. A plain asm("") after the halving
  * keeps gcse's sharing (118).
+ * Tried against 100: case 76 reading max_hp and maxu through stat_ptr
+ * (stat_ptr--; m = *(s16 *)stat_ptr; maxu = *stat_ptr;) 119; a local
+ * copy of target for case 76's reads no change (copy-propagated).
  * Left at 100: the drain's halving (above); the heal's target copies and offsets in 76, 71, 78 and the 7%
  * (reload registers in another rotation: the listing's offset scratch
  * takes r3 first, as if allocated before the base's reload); two far

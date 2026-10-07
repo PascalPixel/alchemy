@@ -293,6 +293,21 @@ pub(crate) fn numeric(text: &str, editions: &mut [Edition], found: Vec<Edit>) ->
             };
             let operand = &text[tokens[close + 1].start..tokens[end].end];
             let pointer = !matches!(ident(&tokens[close - 1]), Some(name) if VALUES.contains(&name));
+            if pointer && open >= 1 && punct(&tokens[open - 1]) == Some("*") && (open < 2 || !operand_end(&tokens[open - 2])) {
+                // `*(T *)p` loses its cast only when every edition declares
+                // p as `T *`: otherwise the access changes type
+                // (`*(u16 *)q` through an `s16 *q`).
+                let cast: String = tokens[open + 1..close].iter().map(|t| &text[t.start..t.end]).collect::<Vec<_>>().join(" ");
+                let mut read = false;
+                for edition in editions.iter_mut() {
+                    match edition.spelled(function, operand) {
+                        Some(Some(spelled)) if spelled.split_whitespace().collect::<Vec<_>>().join(" ") == cast => read = true,
+                        Some(_) => return false,
+                        None => {}
+                    }
+                }
+                return read;
+            }
             let mut read = false;
             for edition in editions.iter_mut() {
                 // A pointer cast of a function stays (`Dma_Set((void *)F, ...)`
@@ -415,6 +430,14 @@ mod tests {
         same_candidates("p = (u8 *)q + 4;\nx = ((u8 *)q)[4];\ny = *((u8 *)q + 2);\nz = 2 + (u8 *)q;\n(u8 *)q += 1;\n");
         let text = "typedef unsigned int u32;\nextern void Function(void);\nextern void Dma_Set();\nextern u32 gWords[];\nvoid F(u32 *dst)\n{\n    Dma_Set((void *)Function, dst, 0x84000003, 3);\n    Dma_Set((void *)gWords, dst, 0x84000003, 3);\n}\n";
         assert_eq!(numeric_spans(text, &[text]), vec!["(void *)gWords, dst, 0x84000003, 3);"]);
+    }
+
+    /// The session-3 dry run: ☀️ FIELD/KUUPUAPPU_HEYA/HEYA.C:501 stored
+    /// through `*q` for `*(u16 *)q` with `s16 *q`.
+    #[test]
+    fn a_dereferenced_pointer_cast_goes_only_when_it_names_the_declared_type() {
+        let text = "typedef short s16;\ntypedef unsigned short u16;\nvoid F(s16 *q, u16 *r, u16 n)\n{\n    *(u16 *)q = n;\n    *(u16 *)r = n;\n    *(u16 *)q = *(u16 *)q + 1;\n}\n";
+        assert_eq!(numeric_spans(text, &[text]), vec!["(u16 *)r = n;"]);
     }
 
     fn same_candidates(text: &str) {

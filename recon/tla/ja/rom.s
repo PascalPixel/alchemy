@@ -1695,25 +1695,25 @@ Party_RemoveActiveOwnerFar:
 	.thumb_func
 Item_GetEquippedElementFar:
 	.incbin "baserom.gba", 0x000a8118, 0x00000008
-	.global Battle_HitCheck
-	.type Battle_HitCheck, %function
+	.global BtlHitChk
+	.type BtlHitChk, %function
 	.thumb_func
-Battle_HitCheck:
+BtlHitChk:
 	.incbin "baserom.gba", 0x000a8120, 0x00000008
-	.global Battle_CalcAttack
-	.type Battle_CalcAttack, %function
+	.global BtlAtkCalc
+	.type BtlAtkCalc, %function
 	.thumb_func
-Battle_CalcAttack:
+BtlAtkCalc:
 	.incbin "baserom.gba", 0x000a8128, 0x00000008
-	.global Battle_CalcPower
-	.type Battle_CalcPower, %function
+	.global BtlPowCalc
+	.type BtlPowCalc, %function
 	.thumb_func
-Battle_CalcPower:
+BtlPowCalc:
 	.incbin "baserom.gba", 0x000a8130, 0x00000008
-	.global Battle_CalcRestore
-	.type Battle_CalcRestore, %function
+	.global BtlRcvCalc
+	.type BtlRcvCalc, %function
 	.thumb_func
-Battle_CalcRestore:
+BtlRcvCalc:
 	.incbin "baserom.gba", 0x000a8138, 0x00000008
 	.global Owner_GetRecordFar
 	.type Owner_GetRecordFar, %function

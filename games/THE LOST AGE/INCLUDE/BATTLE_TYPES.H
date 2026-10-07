@@ -13,19 +13,19 @@ struct BattlePlan {
     u8 actor_id;
     s8 target_count;
     u8 actor_id2;
-    u8 target_ids[BATTLE_TARGET_CAPACITY];
+    u8 tgt_no[BATTLE_TARGET_CAPACITY];
     s8 target_offset0;
-    s8 target_offsets[BATTLE_TARGET_CAPACITY];
+    s8 tgt_dist[BATTLE_TARGET_CAPACITY];
     s8 target_adjustment0;
-    s8 target_adjustments[BATTLE_TARGET_CAPACITY];
+    s8 tgt_adj[BATTLE_TARGET_CAPACITY];
     s8 target_modifier0;
-    s8 target_modifiers[BATTLE_TARGET_CAPACITY];
+    s8 tgt_crit[BATTLE_TARGET_CAPACITY];
     s8 target_result0;
-    s8 target_results[BATTLE_TARGET_CAPACITY];
+    s8 tgt_hit[BATTLE_TARGET_CAPACITY];
     u8 unknown_48[2];
     s16 command;
     s32 action_id;
-    s32 range_index;
+    s32 elm;
     s32 outcome;
     u32 presentation_flags;
     s32 failure;
@@ -39,11 +39,11 @@ struct ActionDefinition {
 LAYOUT_SIZE_GUARD(ActionDefinition_Size, struct ActionDefinition, 12);
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
 LAYOUT_OFFSET_GUARD(BattlePlan_ActorId2, struct BattlePlan, actor_id2, 0x02);
-LAYOUT_OFFSET_GUARD(BattlePlan_TargetIds, struct BattlePlan, target_ids, 0x03);
+LAYOUT_OFFSET_GUARD(BattlePlan_TgtNo, struct BattlePlan, tgt_no, 0x03);
 LAYOUT_OFFSET_GUARD(
-    BattlePlan_TargetAdjustments,
+    BattlePlan_TgtAdj,
     struct BattlePlan,
-    target_adjustments,
+    tgt_adj,
     0x1f);
 LAYOUT_OFFSET_GUARD(BattlePlan_Command, struct BattlePlan, command, 0x4a);
 LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BattlePlan, action_id, 0x4c);

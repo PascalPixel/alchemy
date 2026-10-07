@@ -67,16 +67,16 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         }
         switch (mode) {
         case 0:
-            plan->target_offsets[0] = mode;
+            plan->tgt_dist[0] = mode;
             plan->target_count = 1;
-            plan->target_ids[0] = target;
-            plan->target_adjustments[0] = 1;
+            plan->tgt_no[0] = target;
+            plan->tgt_adj[0] = 1;
             break;
         case 4:
-            plan->target_offsets[0] = 0;
+            plan->tgt_dist[0] = 0;
             plan->target_count = 1;
-            plan->target_ids[0] = target;
-            plan->target_adjustments[0] = 1;
+            plan->tgt_no[0] = target;
+            plan->tgt_adj[0] = 1;
             break;
         default:
             count = 0;
@@ -103,9 +103,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                             continue;
                         if (!allow_defeated && Owner_GetStateFar(unit)->hp == 0)
                             continue;
-                        plan->target_adjustments[count] = 1;
-                        plan->target_offsets[count] = index - center;
-                        plan->target_ids[count] = unit;
+                        plan->tgt_adj[count] = 1;
+                        plan->tgt_dist[count] = index - center;
+                        plan->tgt_no[count] = unit;
                         count++;
                     } else {
                         if (index >= allies)
@@ -115,9 +115,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                             continue;
                         if (!allow_defeated && Owner_GetStateFar(unit)->hp == 0)
                             continue;
-                        plan->target_adjustments[count] = 1;
-                        plan->target_offsets[count] = index - center;
-                        plan->target_ids[count] = unit;
+                        plan->tgt_adj[count] = 1;
+                        plan->tgt_dist[count] = index - center;
+                        plan->tgt_no[count] = unit;
                         count++;
                     }
                 }
@@ -140,7 +140,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
     plan->target_count = 0;
     plan->presentation_flags = 0;
     plan->failure = 0;
-    plan->range_index = 4;
+    plan->elm = 4;
     UiWork_ClearValueNameTablesFar();
     if (actor->hp == 0)
         return -2;
@@ -197,9 +197,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         s32 i;
 
         for (i = 0; i < 14; i++)
-            plan->target_modifiers[i] = 0;
+            plan->tgt_crit[i] = 0;
         for (i = 0; i < 14; i++)
-            plan->target_results[i] = -1;
+            plan->tgt_hit[i] = -1;
     }
     switch (command->command) {
     case 99:
@@ -414,7 +414,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUnleashesDjinn);
-            plan->range_index = ability->damage_class;
+            plan->elm = ability->damage_class;
         }
         break;
     case 6:
@@ -459,10 +459,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         break;
     }
     if (action == 1) {
-        struct BattleUnit *defender = Owner_GetStateFar(plan->target_ids[0]);
+        struct BattleUnit *defender = Owner_GetStateFar(plan->tgt_no[0]);
 
         plan->action_id = 1;
-        plan->range_index = Item_GetEquippedElementFar(command->unit_id);
+        plan->elm = Item_GetEquippedElementFar(command->unit_id);
         plan->outcome = 2;
         if (actor->class_index == 0) {
             plan->presentation_flags = Battle_GetSpriteFlagNibble(actor->class_id) | 0x4000;
@@ -494,22 +494,22 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 || defender->cannot_move != 0 || defender->charm != 0)
                 break;
             if (actor->delusion != 0 && (BattleRandom16Far() & 255) <= 152)
-                plan->target_adjustments[0] = 0;
+                plan->tgt_adj[0] = 0;
             if ((BattleRandom16Far() & 31) == 0)
-                plan->target_adjustments[0] = 0;
+                plan->tgt_adj[0] = 0;
         } while (0);
         if (GameFlag_IsSet(366))
-            plan->target_adjustments[0] = 0;
+            plan->tgt_adj[0] = 0;
         if (defender->hp != 0) {
             if ((BattleRandom16Far() & 31) == 0)
-                plan->target_modifiers[0] = 1;
+                plan->tgt_crit[0] = 1;
             else if ((Equipment_GetUnleashRateBonusFar(actor) << 16) / 200 > (BattleRandom16Far() & 0xffff))
-                plan->target_modifiers[0] = 1;
+                plan->tgt_crit[0] = 1;
         }
     } else {
         struct BattleAction *ability = Ability_GetData(action);
 
-        plan->range_index = ability->damage_class;
+        plan->elm = ability->damage_class;
         plan->presentation_flags = 0;
         plan->action_id = action;
         if (ability->effect == 65 || ability->effect == 41 || ability->effect == 42
@@ -531,7 +531,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 s32 i;
 
                 for (i = 0; i < plan->target_count; i++)
-                    plan->target_adjustments[i] += amount;
+                    plan->tgt_adj[i] += amount;
             }
         } else if (ability->effect >= 36 && ability->effect <= 40) {
             s32 mask;
@@ -558,19 +558,19 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 s32 i;
 
                 for (i = 0; i < plan->target_count; i++)
-                    plan->target_modifiers[i] = 2;
+                    plan->tgt_crit[i] = 2;
             }
         } else if (action == 178) {
             s32 i;
 
             for (i = 0; i < plan->target_count; i++)
-                plan->target_results[i] = Battle_HitCheck(command->unit_id, plan->target_ids[i],
+                plan->tgt_hit[i] = BtlHitChk(command->unit_id, plan->tgt_no[i],
                     ability->damage_class, ability->effect, 100);
         }
         if (action >= 0 && action <= 0x206) {
             plan->presentation_flags = Battle_ActionFlags[action];
-            if (plan->target_adjustments[0] > 1)
-                plan->presentation_flags = Battle_ActionFlags[action] + (plan->target_adjustments[0] << 12) - 0x1000;
+            if (plan->tgt_adj[0] > 1)
+                plan->presentation_flags = Battle_ActionFlags[action] + (plan->tgt_adj[0] << 12) - 0x1000;
         }
         if ((action >= 0 && action <= 0x205) && Battle_ActionStatus[action] != 0)
             plan->outcome = Battle_ActionStatus[action];
@@ -585,7 +585,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             plan->outcome = 1;
         if (BattleFx_IsReviveFar(ability->effect))
             plan->presentation_flags |= 0x10000;
-        if (action == 178 && plan->target_results[0] != 0)
+        if (action == 178 && plan->tgt_hit[0] != 0)
             plan->presentation_flags |= 0x1000;
     }
     if (command->command == 2 && plan->outcome != 5 && plan->outcome != 9)

@@ -12,15 +12,15 @@ enum {
 struct BattlePlan {
     u8 actor_id;
     s8 target_count;
-    u8 target_ids[BATTLE_TARGET_CAPACITY];
-    s8 target_offsets[BATTLE_TARGET_CAPACITY];
-    s8 target_adjustments[BATTLE_TARGET_CAPACITY];
-    s8 target_modifiers[BATTLE_TARGET_CAPACITY];
-    s8 target_results[BATTLE_TARGET_CAPACITY];
+    u8 tgt_no[BATTLE_TARGET_CAPACITY];
+    s8 tgt_dist[BATTLE_TARGET_CAPACITY];
+    s8 tgt_adj[BATTLE_TARGET_CAPACITY];
+    s8 tgt_crit[BATTLE_TARGET_CAPACITY];
+    s8 tgt_hit[BATTLE_TARGET_CAPACITY];
     s16 command;
     u8 unknown_4a[2];
     s32 action_id;
-    s32 range_index;
+    s32 elm;
     s32 outcome;
     u32 presentation_flags;
     s32 failure;
@@ -29,14 +29,14 @@ struct BattlePlan {
 
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
 LAYOUT_OFFSET_GUARD(
-    BattlePlan_TargetIds,
+    BattlePlan_TgtNo,
     struct BattlePlan,
-    target_ids,
+    tgt_no,
     0x02);
 LAYOUT_OFFSET_GUARD(
-    BattlePlan_TargetAdjustments,
+    BattlePlan_TgtAdj,
     struct BattlePlan,
-    target_adjustments,
+    tgt_adj,
     0x1e);
 LAYOUT_OFFSET_GUARD(
     BattlePlan_ActionId,

@@ -73,7 +73,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
             current = angle + 0x1800;
         current = (s16)current;
         current += ((plan->actor_id <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        if (!((plan->actor_id <= 7) ^ (plan->target_ids[0] <= 7)))
+        if (!((plan->actor_id <= 7) ^ (plan->tgt_no[0] <= 7)))
             current = plan->actor_id <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;
@@ -94,10 +94,10 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
     AudioCommand_PlayFar(0x9a);
     if (mode & 2)
-        BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 1, 0);
+        BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 1, 0);
     else if (!scripted)
-        BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
-    if (plan->target_ids[0] <= 7)
+        BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
+    if (plan->tgt_no[0] <= 7)
         work.side = 1;
     else
         work.side = 0;

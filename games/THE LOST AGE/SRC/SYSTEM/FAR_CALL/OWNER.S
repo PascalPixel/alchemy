@@ -49,21 +49,21 @@ Party_RemoveActiveOwnerFar:
 	.thumb_func
 Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
-	.global Battle_HitCheck
+	.global BtlHitChk
 	.thumb_func
-Battle_HitCheck:
+BtlHitChk:
 	overlay_veneer Func_080b075c
-	.global Battle_CalcAttack
+	.global BtlAtkCalc
 	.thumb_func
-Battle_CalcAttack:
+BtlAtkCalc:
 	overlay_veneer Owner_ScaleAdjustedAmount
-	.global Battle_CalcPower
+	.global BtlPowCalc
 	.thumb_func
-Battle_CalcPower:
+BtlPowCalc:
 	overlay_veneer Owner_ScaleValueByCurve
-	.global Battle_CalcRestore
+	.global BtlRcvCalc
 	.thumb_func
-Battle_CalcRestore:
+BtlRcvCalc:
 	overlay_veneer Owner_ScaleValueByOffsetCurve
 	.global Owner_GetRecordFar
 	.thumb_func

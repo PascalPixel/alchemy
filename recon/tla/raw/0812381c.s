@@ -1764,7 +1764,7 @@ Func_0812381c:
 	ldrb r2, [r3, #2]
 	ldrb r3, [r3, #3]
 	str r4, [sp, #0]
-	bl Battle_HitCheck
+	bl BtlHitChk
 	ldr r1, [r6]
 	adds r2, r5, #0
 	adds r2, #56

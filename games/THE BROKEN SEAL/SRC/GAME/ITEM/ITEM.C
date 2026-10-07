@@ -165,7 +165,7 @@ s32 BattleEffect_ApplyToTargets(
                     scale = source->elements[stat_offset].power;
                 } else
                     scale = 100;
-                amount = Battle_CalcRestore(amount, scale, 0x100);
+                amount = BtlRcvCalc(amount, scale, 0x100);
             }
 
             if (target->hp <= 0) {

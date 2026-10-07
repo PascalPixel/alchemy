@@ -81,8 +81,8 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 
     unit = Owner_GetStateFar(work.actor);
     Owner_GetStateFar(work.actors[0]);
-    scripted = plan->target_modifiers[0];
-    direct = plan->target_adjustments[0] == 0;
+    scripted = plan->tgt_crit[0];
+    direct = plan->tgt_adj[0] == 0;
 
     animation = GetMotionRecord(
         GetBattleObjectSlot(plan->actor_id)->object, 0);
@@ -114,7 +114,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
-        BtlEvPush(0, plan->target_ids[0]);
+        BtlEvPush(0, plan->tgt_no[0]);
         BtlEvPush(4, (s32)MsgNimblyDodgesBlow);
         BattleEv_DispatchQueued();
         Actor_ResetMotionAtAnchor(work.actors[0]);
@@ -211,7 +211,7 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     BattlePres_SetActorModes(0, 0);
     BattlePres_BuildTargetList(saved_input, &work);
     Owner_GetStateFar(work.actor);
-    Owner_GetStateFar(saved_input->target_ids[0]);
+    Owner_GetStateFar(saved_input->tgt_no[0]);
 
     scripted = flags & 2;
     animation = GetMotionRecord(
@@ -219,27 +219,27 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
     BattleMotion_ApproachTarget(
         work.actor,
-        saved_input->target_ids[0],
+        saved_input->tgt_no[0],
         divisor,
         0);
     ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.actor)->object, 16);
-    GetBattleObjectSlot(saved_input->target_ids[0]);
+    GetBattleObjectSlot(saved_input->tgt_no[0]);
 
-    if (saved_input->target_ids[0] <= 7)
+    if (saved_input->tgt_no[0] <= 7)
         work.side = 1;
     else
         work.side = 0;
     if (scripted != 0) {
         WaitFrames(10);
-        BattleMotion_ResetObjectAtScaledAnchor(saved_input->target_ids[0]);
+        BattleMotion_ResetObjectAtScaledAnchor(saved_input->tgt_no[0]);
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
-        Actor_ResetMotionAtAnchor(saved_input->target_ids[0]);
+        Actor_ResetMotionAtAnchor(saved_input->tgt_no[0]);
     } else {
         BattleFx_DispatchByIdRangeFar(&work);
         BattleEv_DispatchQueued();
-        Actor_ResetMotionAtAnchor(saved_input->target_ids[0]);
+        Actor_ResetMotionAtAnchor(saved_input->tgt_no[0]);
     }
     Actor_ResetMotionAtAnchor(work.actor);
     return 0;
@@ -268,7 +268,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     object = GetBattleObjectSlot(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-    if (plan->target_ids[0] <= 7)
+    if (plan->tgt_no[0] <= 7)
         work.side = 1;
     else
         work.side = 0;

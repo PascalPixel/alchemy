@@ -126,11 +126,11 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     bak = Runtime_BumpAllocate(size);
 
     aid = plan->actor_id;
-    tid = plan->target_ids[slot];
+    tid = plan->tgt_no[slot];
     act_no = plan->action_id;
-    elm = plan->range_index;
-    adj = plan->target_adjustments[slot];
-    crit = plan->target_modifiers[slot];
+    elm = plan->elm;
+    adj = plan->tgt_adj[slot];
+    crit = plan->tgt_crit[slot];
 
     action = BattleAction_Get(act_no);
     actor = Owner_GetStateFar(aid);
@@ -138,7 +138,7 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     Iwram_CopyWords(bak, target, size);
 
     if (action->range != 255) {
-        dist = plan->target_offsets[slot];
+        dist = plan->tgt_dist[slot];
         if (dist < 0)
             dist = -dist;
     } else {
@@ -160,21 +160,21 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
             aff = 1;
     }
 
-    if (plan->range_index >= 0 && plan->range_index <= 3) {
+    if (plan->elm >= 0 && plan->elm <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
-            pow = actor->elements[plan->range_index].power;
-            goto after_power;
+            pow = actor->elements[plan->elm].power;
+            goto pow_end;
         }
     } else
         cmd = &plan->command;
     pow = 100;
-after_power:
+pow_end:
 
-    if (plan->command == 5 && (plan->range_index >= 0 && plan->range_index <= 3) && aff > 0) {
+    if (plan->command == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0) {
         s32 chance;
 
-        chance = pow - target->elements[plan->range_index].resist;
+        chance = pow - target->elements[plan->elm].resist;
         chance += 30;
         chance *= 65536 / 100;
         if (chance > (BattleRandom16Far() & 0xffff))
@@ -185,9 +185,9 @@ after_power:
     {
         s32 res;
 
-        res = plan->target_results[slot];
+        res = plan->tgt_hit[slot];
         if (res == -1)
-            hit = Battle_HitCheck(
+            hit = BtlHitChk(
                 aid, tid, elm, action->effect,
                 HitFalloff[dist]);
         else
@@ -304,11 +304,11 @@ after_power:
                     bonus = 0;
                 ap = action->power;
                 if (type == 4)
-                    dmg = Battle_CalcAttack(actor->attack, scale, 0,
+                    dmg = BtlAtkCalc(actor->attack, scale, 0,
                                           bonus)
                             * ap / 10;
                 else {
-                    dmg = Battle_CalcAttack(actor->attack, scale, ap,
+                    dmg = BtlAtkCalc(actor->attack, scale, ap,
                                             bonus);
                 }
                 dmg *= adj;
@@ -374,14 +374,14 @@ after_power:
             break;
         }
 
-        case 10:
+        case 10:        /* EPダメージ */
         {
             if (action->power == 0)
                 break;
             pp = target->pp;
             ELM_BONUS();
             ap = action->power;
-            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * PpLossFalloff[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
@@ -410,14 +410,14 @@ after_power:
             break;
         }
 
-        case 1:
+        case 1:         /* HPかいふく */
         {
             if (action->power == 0)
                 break;
             cur = target->hp;
 
             ap = action->power;
-            dmg = Battle_CalcRestore(ap, elm == 4 ? 100 : pow, 256);
+            dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * HpHealFalloff[dist] / 100;
             dmg *= adj;
             dmg += BattleRandom16Far() & 3;
@@ -446,7 +446,7 @@ after_power:
             pp = target->pp;
             ELM_BONUS();
             ap = action->power;
-            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * PpDmgFalloff[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
@@ -520,7 +520,7 @@ after_power:
                     }
                     ap += target->max_hp * rate / 100;
                 }
-                dmg = Battle_CalcPower(ap, bonus, 256);
+                dmg = BtlPowCalc(ap, bonus, 256);
                 dmg *= adj;
                 switch (type & 15) {
                 case 5:
@@ -575,13 +575,13 @@ after_power:
             break;
         }
 
-        case 11:
+        case 11:        /* EPかいふく */
         {
             if (action->power == 0)
                 break;
             pp = target->pp;
             ap = action->power;
-            dmg = Battle_CalcRestore(ap, elm == 4 ? 100 : pow, 256);
+            dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * PpHealFalloff[dist] / 100;
             dmg *= adj;
             pp += dmg;
@@ -613,7 +613,7 @@ after_power:
             cur = target->hp;
             ELM_BONUS();
             ap = action->power;
-            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = BtlPowCalc(ap, bonus, 256);
             dmg *= adj;
             dmg = dmg * HpDmgFalloff[dist] / 100;
             GUARD_CUT();
@@ -653,7 +653,7 @@ after_power:
 
     BtlEvPush(BEV_UNIT, tid);
     if ((BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0
-            || BattleFx_CanAffectDefeatedUnit(action->effect) != 0)
+            || BtlEfxDeadChk(action->effect) != 0)
         && hit != 0) {
         switch (action->effect) {
 
@@ -720,8 +720,8 @@ after_power:
             MES_PUSH(MsgCureCurse);
             break;
 
-        case 61:
-        case 62:
+        case 61:        /* HPかいふく */
+        case 62:        /* HPかいふく */
         {
             s32 old;
             s32 maxu;
@@ -756,7 +756,7 @@ after_power:
             break;
         }
 
-        case 63:
+        case 63:        /* EPかいふく */
         {
             s32 old;
             s32 maxv;
@@ -782,7 +782,7 @@ after_power:
             break;
         }
 
-        case 59:
+        case 59:        /* すばやさアップ */
             target->agility_modifier = 8;
             target->agility_modifier_turns = 5;
             Owner_RecalculateStatsFar(tid);
@@ -790,7 +790,7 @@ after_power:
             MES_PUSH(MsgAgiUp);
             break;
 
-        case 58:
+        case 58:        /* すばやさダウン */
             am = &target->agility_modifier;
         {
             u8 v;
@@ -804,7 +804,7 @@ after_power:
             MES_PUSH(MsgAgiDown);
             break;
 
-        case 9:
+        case 9:         /* こうげき下がる */
             target->attack_modifier -= 1;
             STEP_LIM(target->attack_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -813,7 +813,7 @@ after_power:
             target->attack_modifier_turns = 7;
             break;
 
-        case 8:
+        case 8:         /* こうげき下がる */
             target->attack_modifier -= 2;
             STEP_LIM(target->attack_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -822,7 +822,7 @@ after_power:
             target->attack_modifier_turns = 7;
             break;
 
-        case 7:
+        case 7:         /* こうげき上がる */
             target->attack_modifier += 1;
             STEP_LIM(target->attack_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -831,7 +831,7 @@ after_power:
             target->attack_modifier_turns = 7;
             break;
 
-        case 6:
+        case 6:         /* こうげき上がる */
             target->attack_modifier += 2;
             STEP_LIM(target->attack_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -840,7 +840,7 @@ after_power:
             target->attack_modifier_turns = 7;
             break;
 
-        case 13:
+        case 13:        /* ぼうぎょ下がる */
             target->defense_modifier -= 1;
             STEP_LIM(target->defense_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -849,7 +849,7 @@ after_power:
             target->defense_modifier_turns = 7;
             break;
 
-        case 12:
+        case 12:        /* ぼうぎょ下がる */
             target->defense_modifier -= 2;
             STEP_LIM(target->defense_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -858,7 +858,7 @@ after_power:
             target->defense_modifier_turns = 7;
             break;
 
-        case 11:
+        case 11:        /* ぼうぎょ上がる */
             target->defense_modifier += 1;
             STEP_LIM(target->defense_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -867,7 +867,7 @@ after_power:
             target->defense_modifier_turns = 7;
             break;
 
-        case 10:
+        case 10:        /* ぼうぎょ上がる */
             target->defense_modifier += 2;
             STEP_LIM(target->defense_modifier);
             Owner_RecalculateStatsFar(tid);
@@ -876,7 +876,7 @@ after_power:
             target->defense_modifier_turns = 7;
             break;
 
-        case 5:
+        case 5:         /* ふっき */
             if (target->hp != 0)
                 break;
             MES_PUSH(MsgRevived);
@@ -884,7 +884,7 @@ after_power:
             Owner_RecalculateRatiosFar(tid);
             break;
 
-        case 56:
+        case 56:        /* ふっき */
             if (target->hp != 0)
                 break;
             MES_PUSH(MsgRevived);
@@ -892,7 +892,7 @@ after_power:
             Owner_RecalculateRatiosFar(tid);
             break;
 
-        case 57:
+        case 57:        /* ふっき */
             if (target->hp != 0)
                 break;
             MES_PUSH(MsgRevived);
@@ -900,17 +900,17 @@ after_power:
             Owner_RecalculateRatiosFar(tid);
             break;
 
-        case 3:
+        case 3:         /* 毒がきえる */
             if (target->poison != 0)
                 MES_PUSH(MsgCurePoison);
             target->poison = 0;
             break;
 
-        case 17:
+        case 17:        /* たいせいダウン */
             RES_STEP(-1, (bak->res_modifier - target->res_modifier) * 20, MsgResDown);
             break;
 
-        case 16:
+        case 16:        /* たいせいダウン */
         {
             target->res_modifier -= 2;
             if (-4 > target->res_modifier)
@@ -923,11 +923,11 @@ after_power:
         }
             break;
 
-        case 15:
+        case 15:        /* たいせいアップ */
             RES_STEP(1, (target->res_modifier - bak->res_modifier) * 20, MsgResUp);
             break;
 
-        case 14:
+        case 14:        /* たいせいアップ */
         {
             target->res_modifier += 2;
             if (*(rm = &target->res_modifier) < -4)
@@ -940,51 +940,51 @@ after_power:
         }
             break;
 
-        case 18:
+        case 18:        /* 毒 */
             if (target->poison != 0)
                 break;
             MES_PUSH(MsgPoisoned);
             target->poison = 1;
             break;
 
-        case 19:
+        case 19:        /* もう毒 */
             if (target->poison > 1)
                 break;
             MES_PUSH(MsgVenom);
             target->poison = 2;
             break;
 
-        case 20:
+        case 20:        /* まぼろし */
             STAT_SET(target->delusion, MsgDelusion);
             break;
 
-        case 21:
+        case 21:        /* こんらん */
             STAT_SET(target->confusion, MsgConfused);
             break;
 
-        case 22:
+        case 22:        /* こころをうばう */
             STAT_SET(target->charm, MsgCharmed);
             break;
 
-        case 23:
+        case 23:        /* しびれ */
             STAT_SET(target->stun, MsgStunned);
             break;
 
-        case 24:
+        case 24:        /* ねむり */
             STAT_SET(target->sleep, MsgAsleep);
             break;
 
-        case 25:
+        case 25:        /* エナジーふうじ */
             MES_SIDE(MsgPsyBlock, MsgPsySeal);
             target->psy_seal |= 7;
             break;
 
-        case 67:
+        case 67:        /* エナジーふうじ */
             MES_SIDE(MsgPsyBlock, MsgPsySeal);
             target->psy_seal |= 16;
             break;
 
-        case 27:
+        case 27:        /* せんとうふのう */
             BtlEvPush(BEV_OBJ_RES, tid);
             if (target->side == MIKATA)
                 MES_PUSH(MsgKoDown);
@@ -996,11 +996,11 @@ after_power:
             Owner_RecalculateRatiosFar(tid);
             break;
 
-        case 29:
+        case 29:        /* リフレイン */
             STAT_SET(target->refrain, MsgRefrain);
             break;
 
-        case 30:
+        case 30:        /* リフレクト */
             STAT_SET(target->reflect, MsgReflect);
             break;
 
@@ -1056,7 +1056,7 @@ after_power:
             break;
         }
 
-        case 69:
+        case 69:        /* EPをうばう */
             dmg = dealt / 10;
             if (target->pp < dmg)
                 dmg = target->pp;
@@ -1069,7 +1069,7 @@ after_power:
             Owner_AdjustSecondValueFar(aid, dmg);
             break;
 
-        case 33:
+        case 33:        /* つよさがもどる */
             if (target->attack_modifier > 0) {
                 target->attack_modifier = 0;
                 target->attack_modifier_turns = 0;
@@ -1091,12 +1091,12 @@ after_power:
             MES_PUSH(MsgBuffsReset);
             break;
 
-        case 26:
+        case 26:        /* あくりょう */
             MES_PUSH(MsgEvilSpirit);
             target->evil_spirit = 1;
             break;
 
-        case 28:
+        case 28:        /* しりょう */
             if (target->death_count == 0) {
                 MES_PUSH(MsgDeathCurse);
                 target->death_count = 7;
@@ -1109,25 +1109,25 @@ after_power:
             MES_PUSH(MsgDeathCount);
             break;
 
-        case 66:
+        case 66:        /* そなえ */
             MES_PUSH(MsgReadies);
             target->ready_pose = 2;
             break;
 
-        case 54:
+        case 54:        /* ちょうはつ */
             MES_PUSH(MsgChallenge);
             target->battle_end_state = 1;
             if (MIKATA_CHK(tid))
                 work->chal_flg |= 2;
             break;
 
-        case 53:
+        case 53:        /* みうごき */
 
             MES_PUSH(MsgImmobile);
             target->cannot_move = 1;
             break;
 
-        case 46:
+        case 46:        /* まもりのオーラ */
 
             MES_PUSH(MsgAura);
             if (target->guard_level > 0)
@@ -1135,7 +1135,7 @@ after_power:
             target->guard_level = 1;
             break;
 
-        case 47:
+        case 47:        /* まもりのオーラ */
 
             MES_PUSH(MsgAura2);
             if (target->guard_level > 1)

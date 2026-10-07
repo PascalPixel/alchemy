@@ -1,8 +1,9 @@
 /* BtlTgtExec, tla-en 0x08120454.
  * alchemy diff: listing 3450 instructions, draft 3450, common 3415,
- * differ 70.
+ * differ 70 (2026-10-07, after taking ☀️'s camelotized names, numbers
+ * and macros: no change).
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
- * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
+ * SEAL/SRC/BATTLE/TGTEXEC.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
  * and moved here, where they stay until every edition of this game matches.
  * Then one source in games/COMMON carries only the real differences under
@@ -428,11 +429,11 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
         aid = plan->actor_id2;
     else
         aid = plan->actor_id;
-    tid = plan->target_ids[slot];
+    tid = plan->tgt_no[slot];
     act_no = plan->action_id;
-    elm = plan->range_index;
-    adj = plan->target_adjustments[slot];
-    crit = plan->target_modifiers[slot];
+    elm = plan->elm;
+    adj = plan->tgt_adj[slot];
+    crit = plan->tgt_crit[slot];
 
     action = BattleAction_Get(act_no);
     actor = Owner_GetState(aid);
@@ -467,7 +468,7 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     }
 
     if (action->range != 255) {
-        dist = plan->target_offsets[slot];
+        dist = plan->tgt_dist[slot];
         if (dist < 0)
             dist = -dist;
     } else {
@@ -489,21 +490,21 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
             aff = 1;
     }
 
-    if (plan->range_index >= 0 && plan->range_index <= 3) {
+    if (plan->elm >= 0 && plan->elm <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
-            pow = actor->elements[plan->range_index].power;
-            goto after_power;
+            pow = actor->elements[plan->elm].power;
+            goto pow_end;
         }
     } else
         cmd = &plan->command;
     pow = 100;
-after_power:
+pow_end:
 
-    if (plan->command == 5 && (plan->range_index >= 0 && plan->range_index <= 3) && aff > 0) {
+    if (plan->command == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0) {
         s32 chance;
 
-        chance = pow - target->elements[plan->range_index].resist;
+        chance = pow - target->elements[plan->elm].resist;
         chance += 30;
         chance *= 65536 / 100;
         if (chance > (BattleRandom16Far() & 0xffff))
@@ -520,9 +521,9 @@ after_power:
     {
         s32 res;
 
-        res = plan->target_results[slot];
+        res = plan->tgt_hit[slot];
         if (res == -1)
-            hit = Battle_HitCheck(
+            hit = BtlHitChk(
                 aid, tid, elm, action->effect,
                 HitFalloff[dist]);
         else
@@ -673,7 +674,7 @@ after_power:
                     bonus = 0;
                 ap = action->power;
                 if (type == 4)
-                    dmg = Battle_CalcAttack(actor->attack, scale, 0,
+                    dmg = BtlAtkCalc(actor->attack, scale, 0,
                                           bonus)
                             * ap / 10;
                 else {
@@ -685,7 +686,7 @@ after_power:
                         if (act_no == 312)
                             atk += ((struct BattleUnit *)Owner_GetState(plan->actor_id2))->attack / 4;
                     }
-                    dmg = Battle_CalcAttack(atk, scale, ap, bonus);
+                    dmg = BtlAtkCalc(atk, scale, ap, bonus);
                 }
                 dmg *= adj;
                 if (crit != 0) {
@@ -763,7 +764,7 @@ after_power:
             pp = target->pp;
             ELM_BONUS();
             ap = action->power;
-            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * PpLossFalloff[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
@@ -803,7 +804,7 @@ after_power:
                 break;
 
             ap = action->power;
-            dmg = Battle_CalcRestore(ap, elm == 4 ? 100 : pow, 256);
+            dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * HpHealFalloff[dist] / 100;
             dmg *= adj;
             dmg += BattleRandom16Far() & 3;
@@ -834,7 +835,7 @@ after_power:
             pp = target->pp;
             ELM_BONUS();
             ap = action->power;
-            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * PpDmgFalloff[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
@@ -930,7 +931,7 @@ after_power:
                         value = 10000;
                     ap += value * rate / 100;
                 }
-                dmg = Battle_CalcPower(ap, bonus, 256);
+                dmg = BtlPowCalc(ap, bonus, 256);
                 dmg *= adj;
                 switch (type & 15) {
                 case 5:
@@ -997,7 +998,7 @@ after_power:
                 break;
             pp = target->pp;
             ap = action->power;
-            dmg = Battle_CalcRestore(ap, elm == 4 ? 100 : pow, 256);
+            dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * PpHealFalloff[dist] / 100;
             dmg *= adj;
             pp += dmg;
@@ -1031,7 +1032,7 @@ after_power:
             cur = target->hp;
             ELM_BONUS();
             ap = action->power;
-            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = BtlPowCalc(ap, bonus, 256);
             dmg *= adj;
             dmg = dmg * HpDmgFalloff[dist] / 100;
             GUARD_CUT();
@@ -1081,7 +1082,7 @@ after_power:
     BtlEvPush(BEV_UNIT, tid);
     if ((action->effect != 75 || slot != 0)
         && (BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0
-            || BattleFx_CanAffectDefeatedUnit(action->effect) != 0)
+            || BtlEfxDeadChk(action->effect) != 0)
         && hit != 0) {
         switch (action->effect) {
 

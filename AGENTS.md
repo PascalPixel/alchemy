@@ -206,7 +206,7 @@ or functions is exactly this cheating.
     credits text and ⚓️'s build stamp `020610172024`). Names, numbering and
     comments are reconstruction: never present them as recovered.
   - The showcase is `BtlTgtExec` in
-    `games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C`.
+    `games/THE BROKEN SEAL/SRC/BATTLE/TGTEXEC.C`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in

@@ -143,7 +143,7 @@ s32 BattlePres_BuildTargetList(
     work->actor = plan->actor_id;
     i = 0;
     if (i < plan->target_count) {
-        target = plan->target_ids;
+        target = plan->tgt_no;
         dst = work->actors;
         do {
             if (Owner_GetStateFar(*target)->hp != 0 ||
@@ -156,10 +156,10 @@ s32 BattlePres_BuildTargetList(
         } while (i < plan->target_count);
     }
     if (count == 0) {
-        work->actors[0] = plan->target_ids[0];
+        work->actors[0] = plan->tgt_no[0];
         count = 1;
     }
-    work->first_target = plan->target_ids[0];
+    work->first_target = plan->tgt_no[0];
     work->count = count;
     work->initial_value = 1;
 }
@@ -238,7 +238,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
 
     BattlePres_BuildTargetList(plan, &work);
     actor = plan->actor_id;
-    target = plan->target_ids[0];
+    target = plan->tgt_no[0];
     if (plan->presentation_flags & 0x8000) {
         struct BattlePresentationTransition *transition;
         s32 yaw;
@@ -274,7 +274,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
         }
     }
     AudioCommand_PlayFar(0x9a);
-    BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
+    BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
     if (mode & 1)
         BattlePres_SetActorRecordMode(actor, 1);
     for (i = 0; i != 16; i++) {
@@ -304,7 +304,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
         units[kept] = BATTLE_UNIT_LIST_END;
         BattleActor_SpawnObjectsForList((s16 *)units, 0);
         for (n = 0; n < plan->target_count; n++)
-            units[n] = plan->target_ids[n];
+            units[n] = plan->tgt_no[n];
         units[n] = BATTLE_UNIT_LIST_END;
         for (i = 0; i != work.count; i++) {
             struct AnimationObject *animation;
@@ -320,7 +320,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
             else
                 work.side = 1;
         } else {
-            if (plan->target_ids[0] <= 7)
+            if (plan->tgt_no[0] <= 7)
                 work.side = 1;
             else
                 work.side = 0;

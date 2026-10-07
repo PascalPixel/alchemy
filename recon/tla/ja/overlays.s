@@ -330,7 +330,8 @@ Resource_Overlay6A4:
 	.incbin "baserom.gba", 0x00f56125, 0x00000003
 	.global Resource_Overlay6A5
 Resource_Overlay6A5:
-	.incbin "baserom.gba", 0x00f56128, 0x000037a0
+	.incbin "overlays/resource_6a5.lz"
+	.incbin "baserom.gba", 0x00f598c5, 0x00000003
 	.global Resource_Overlay6A6
 Resource_Overlay6A6:
 	.incbin "overlays/resource_6a6.lz"

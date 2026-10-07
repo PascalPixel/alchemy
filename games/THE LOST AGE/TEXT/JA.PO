@@ -45019,7 +45019,7 @@ msgctxt "message"
 msgid "11252"
 msgstr "あなたは おチビさんのくせして{line_break}ずいぶん ガンバリ屋さんなのね{line_break}見どころあるぞ {actor_name:3}・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouReLate"
 msgid "11253"
 msgstr "おそいぞ {actor_name:5}!{end_wait}"
 
@@ -45027,27 +45027,27 @@ msgctxt "message"
 msgid "11254"
 msgstr "さあ さっそく灯台に{line_break}火をともしてもらおう!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOnceYouVeLitThe"
 msgid "11255"
 msgstr "{actor_name:1}たちをたすけたことは{line_break}灯台に火をともすことで・・・{line_break}ちょうけしに してあげるわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOnceJupiterIsLitOnly"
 msgid "11256"
 msgstr "ジュピター灯台がともったなら{line_break}のこる灯台はマーズ灯台のみ{line_break}さあ 灯台に火をともすんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOnceJupiterIsLitWe"
 msgid "11257"
 msgstr "ジュピター灯台に火がともれば{line_break}お前たちに もうようはない{line_break}ほほ 見ているがいい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoEvenThinkAboutResisting"
 msgid "11258"
 msgstr "われわれに はむかうのなら{line_break}こちらにも かんがえがある{page_break}灯台に火をともしたあと・・・{line_break}きっと こうかいさせてやるぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSeemsToBeA"
 msgid "11259"
 msgstr "エレメンタルスターを{line_break}入れることができそうだ{page_break}ジュピタースターを{line_break}入れますか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeHaveIgnitedTheBeacon"
 msgid "11260"
 msgstr "ボクたち 灯台の火を・・・{line_break}ちゃんと ともしましたよ{line_break}そこをとおして下さい・・・。{end_wait}"
 
@@ -45135,7 +45135,7 @@ msgctxt "message"
 msgid "11281"
 msgstr "さあ これであんしんしたろう{line_break}こころおきなく 死ぬがいい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldText7"
 msgid "11282"
 msgstr "兄さん!{end_wait}"
 
@@ -45159,7 +45159,7 @@ msgctxt "message"
 msgid "11287"
 msgstr "わたしも戦うわ 兄さん!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldText8"
 msgid "11288"
 msgstr "{actor_name:6}!{end_wait}"
 
@@ -45183,7 +45183,7 @@ msgctxt "message"
 msgid "11293"
 msgstr "{actor_name:1}たちは たすかったわ{line_break}あんしんして戦いましょう!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeDidItWeBeat"
 msgid "11294"
 msgstr "なんとか ヤツら・・・{line_break}たおすことができました。{end_wait}"
 
@@ -45359,7 +45359,7 @@ msgctxt "message"
 msgid "11337"
 msgstr "オレたちは 先に行ってるけど{line_break}ぜったいに にげるなよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWasnTTheOnlySurprise"
 msgid "11338"
 msgstr "{actor_name:1}たちといい・・・{line_break}こいつら みんな・・・{line_break}てごわかったわね。{end_wait}"
 

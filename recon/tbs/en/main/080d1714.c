@@ -1,5 +1,5 @@
-/* 080d1714: differ 182 of 1481 instructions (1481 generated, common
- * 1390). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 173 of 1481 instructions (1480 generated, common
+ * 1394). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -164,12 +164,18 @@
  *   the field into a new pseudo, which the two-draw block shares
  *   across its first call: loaded once into r4 and caller-saved at
  *   sp+8, as the native.
- * Remaining (182): the distance loop's y square takes r7 where the native uses r2 (a
- * reload register: local-alloc puts the mul output on its own input,
- * and the earlyclobber reload rotates to another register); the native loads
- * runtime->effect->count before the wave inits at the first actor
- * loop; the spark loop preheader reloads differ (&work through r0,
- * slot 0 through r7). */
+ * - on 182: the frame == 160 radius and spin loop as a for or while
+ *   loop: 190. The distance sum as x * x + (y * y + z * z): 173, the
+ *   squares now in r0, r2 and r1 as the native; z * z first: 179;
+ *   y * y first: 186; the sum assigned to dist before Iwram_Sqrt: 230.
+ * Remaining (173): the distance sum adds x * x + y * y after z * z is
+ * computed, then z * z through a copy in r3, where the draft adds
+ * y * y + z * z first; the frame <= 159 particle loop preheader and
+ * the mark and spark loop preheaders choose other reload registers
+ * (reload's rotation: &work through r0 and slot 0 through r7 in the
+ * native's spark preheader); the native loads runtime->effect->count
+ * before the wave inits at the first actor loop and reloads
+ * runtime->effect inside the frame == 160 radius loop guard. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -586,10 +592,10 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         point = &runtime->particles[index];
                         dist = Iwram_Sqrt(
                             (point->x >> 8) * (point->x >> 8)
-                                + (point->y >> 8)
+                                + ((point->y >> 8)
                                     * (point->y >> 8)
                                 + (point->z >> 8)
-                                    * (point->z >> 8)) >> 9;
+                                    * (point->z >> 8))) >> 9;
                         if (dist != 0) {
                             EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
                             screen.x =

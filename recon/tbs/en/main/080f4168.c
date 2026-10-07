@@ -1,4 +1,23 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2035, differ 1731.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2034, differ 1680.
+ * Resource setup now names its changing destination: decode into work RAM,
+ * then DMA to VRAM. This restores native's repeated work-RAM address loads
+ * instead of retaining that constant in r5; frame remains 768. A scoped
+ * four-minute resource-source search (seed33, two jobs) reached 2033/1645,
+ * but redundant casts and resource-result copy chains were removed; the
+ * readable destination form is 2034/1680. One shared dst and two separate
+ * destinations compile identically; initializing dst before base advances
+ * is also identical. A post-decode r5..r11 clobber only moved the retained
+ * constant to r7 (1731 -> 1729), so was rejected. Whole-function permute
+ * cannot rewrite inline assembly; the source search excluded those blocks.
+ * Affine trials from 1680, not kept: explicit halfword term before obj load
+ * 2029/1663, but removes native's high-register copies and six loop instructions;
+ * reuse global x 2025/1823; +h output triggers a reload_cse compiler ICE.
+ * A scoped fixed sl term gives 2036/1706 and native's depth spill at sp+4,
+ * but shifts all low pointer registers. Add r1 clobber: 2036/1666, restores
+ * pointer registers but moves depth back to sp+32. Explicit base reloads
+ * between each high-offset affine read/write: 2036/1700 with the clobber,
+ * 2036/1714 without it. Explicit depth cursor: 2033/1765. Keep the verified
+ * affine form while its remaining lifetime and spill ordering is unresolved.
  * Split affine pointer constraints: 1754 -> 1746, all four halfword
  * pointers and four object offsets now use native's registers. An input
  * instead of an output for pa alone was unchanged at 1754. Initialize
@@ -324,6 +343,7 @@ void LuckyDice_Run(void)
     s32 scale;
     s32 pairs;
     s16 value;
+    void *dst;
 
     Runtime_AllocateHeapBlock(41, 0x60e);
     obj_palette = Runtime_AllocateHeapBlock(40, 0x200);
@@ -358,14 +378,18 @@ void LuckyDice_Run(void)
     Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
     base += 0x1c0;
-    Resource_DecodeType01((void *)base, (void *)0x02010000);
-    Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
+    dst = (void *)0x02010000;
+    Resource_DecodeType01((void *)base, dst);
+    dst = (void *)0x06004000;
+    Dma_Set((void *)0x02010000, dst, 0x84002580, (volatile u32 *)0x040000d4);
     base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
     Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
     Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
     base += 0x200;
-    Resource_DecodeType01((void *)base, (void *)0x02010000);
-    Dma_Set((void *)0x02010000, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
+    dst = (void *)0x02010000;
+    Resource_DecodeType01((void *)base, dst);
+    dst = (void *)0x06010000;
+    Dma_Set((void *)0x02010000, dst, 0x84001f00, (volatile u32 *)0x040000d4);
     Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
     Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
 

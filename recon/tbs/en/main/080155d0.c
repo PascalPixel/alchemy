@@ -1,6 +1,12 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
- * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 133, differ 127.
+ * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 138, differ 117.
+ *   127 to 117: row = 0 first in the pass setup, before next and bits (permute's reorder);
+ *   bits = rows[0] before next = rows + 1: no change (117).
+ *   Still to do: idx takes r0 (native ip), code r2 then ip (native lr in both), x and the
+ *   VRAM base swap r9 and sl. Diagnosis (greg): 43 (idx) inherits preference r0 through
+ *   expand_preferences, 43 -> 111 -> 50 (ofs) -> gw; win (32) gets no register in global, so
+ *   its reload for the width cannot inherit r0 while idx holds it.
  *   161 to 127: each glyph row loaded into bits and shifted in place, bits = *next++;
  *   bits <<= 16, so the halfword load and the shift share bits' pseudo, as native's
  *   ldrh ip, [r1], #2 ... lsl ip, ip, #16 (a separate load temporary was local-allocated r2
@@ -192,10 +198,10 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
                 y--;
             }
         }
+        row = 0;
         next = rows + 1;
         bits = rows[0];
         bits <<= 16;
-        row = 0;
         while (y + row < 32) {
             ty = (y + row) >> 3;
             sub = ((y + row) & 7) * 2;

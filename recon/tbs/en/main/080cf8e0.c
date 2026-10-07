@@ -29,7 +29,14 @@
  * test 451 (thread_jumps sends the first test to the join, which then
  * has two uses until CSE1 folds the second and rescans AROUND); the
  * repeated test around the first call only 0; the inner test as
- * if (frame >= k * 8), decided by the outer frame test, also 0. The 1,000-insn table flush
+ * if (frame >= k * 8), decided by the outer frame test, also 0; the
+ * redundant test in the hit condition instead,
+ * if (frame >= k * 8 && frame == k * 8 + 17), 451 (its jump goes to the
+ * join, so no label lies inside the hit block). Burst: the same kind of
+ * CSE1-decided test after group's set, if (group != k * 4) burst = 0,
+ * 171 as without the flush: a label CSE1 folds lets cse_basic_block run
+ * on past it with its table, so the burst needs a block end that keeps
+ * a use from outside (or a loop end). The 1,000-insn table flush
  * in cse_basic_block does not reach here (CSE1's largest block in this
  * function is under 200 insns).
  * Eleventh pass (2026-10-07): the step flush's cause, still not found.

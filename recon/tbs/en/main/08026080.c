@@ -2,6 +2,32 @@
  * frames are 324 bytes. Every remaining difference is a spill slot offset
  * below sp+48 (see the hash analysis below); every instruction, register
  * and order matches.
+ * Session S07-08026080/3 (102, nothing kept), measured on the 725-bucket
+ *   bed (eighteen dead efx.angle stores, differ 2, diagnosis only):
+ * - the last 2 are sched2's tie: in the bed's block from label 821 the
+ *   reloads 6118 (r2 <- ids) and 6121 (r3 <- cursor * 2) both have
+ *   priority 121 and five forward dependents (6118: 838 845 874 885 909,
+ *   r2's next set is the ldrh at 885; 6121: 838 845 848 874 909, r3's
+ *   next set is 848), neither depends on the last scheduled store 6115,
+ *   so rank_for_schedule falls to INSN_LUID and keeps reload's emission
+ *   order. find_reloads_address_1's REG/REG case pushes op0 (ids, as
+ *   base, BASE_REGS) before op1 (cursor * 2, index, LO_REGS); LO_REGS
+ *   sorts first in reload_order, which is why the index takes r3 and the
+ *   base r2, but emit_reload_insns emits by reload number. (plus cursor*2
+ *   ids) would print [r2, r3] with r2 = cursor * 2, so the native RTL is
+ *   (plus ids cursor*2) as here, and its r3 load is likely no reload of
+ *   this insn but insn 836 (set (reg 275) (reg 1411)) surviving to local
+ *   alloc, which gives 275 r3, so 836 loads 1411's slot first. cse2
+ *   folds 836 here because 1411 is the qty's first reg; make_regs_eqv
+ *   makes 275 canonical only when 275 outlives the block and 1411. Find
+ *   the source shape that keeps that copy (or adds a sixth dependent to
+ *   the r3 load).
+ * - trials at the loop head: *(ids + cursor) 118 and cursor[ids] 118 on
+ *   the draft (the address is rebuilt from sfp, draft 1587); n = cursor
+ *   then ids[n] on the bed: 2 (cse1 folds n into cursor); y replaced by
+ *   pos.y in the cursor block: 446 on the draft, buckets unchanged (707).
+ *   Permuter 5 min, PERM_RANDOMIZE over head/pending/the call/the two
+ *   word stores/tile on the bed: 2,389 candidates, no gain.
  * Session S07-08026080/2 (102), kept:
  * - case 4 tests unit->delusion ... unit->death_count directly, as case 6
  *   does; the five pointer locals pd..pc are gone. Code identical (102,

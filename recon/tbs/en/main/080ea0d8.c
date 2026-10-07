@@ -1,8 +1,16 @@
-/* 080ea0d8: differ 1426 of 2455 (listing 2455, draft 2441, common 1735).
+/* 080ea0d8: differ 784 of 2455 (listing 2455, draft 2445, common 2058).
  * Frame: 184 as native. The spill slots from sp+104 (canvas) down to sp+32
  * (shift) now sit where the native's do; the native also spills the second
  * petal block's cell (sp+28), which ours keeps in a register.
- * Found this session:
+ * Found in the 2026-10-07 session, in order of effect:
+ * - One counter i serves every loop except the ramp's inner j: all 24 of
+ *   the native's loop counters are r7. Separate counters each carry the
+ *   doubled lifetime of a constant-initialised pseudo (update_equiv_regs
+ *   doubles REG_LIVE_LENGTH for the REG_EQUAL 0 start before the
+ *   increment clears the equivalence) and lost r7 loop by loop; one
+ *   shared counter gets r7 once for the whole function. With the ring
+ *   loop's two halves as separate variables (half, half2; one shared half
+ *   outranked the counter for r7): 1426 -> 784.
  * - draw is DrawRectangle draw[2] (DImode, one 8-byte slot at sp+88):
  *   draw[0] the blitter, draw[1] the alternate one set each frame of the
  *   second loop. That alone explained the native's 184-byte frame (its
@@ -12,10 +20,15 @@
  *   constant 0x208, so ime is a function-level variable set once and
  *   spilled (as CANVAS.C's QUEUE_DISPLAY_CONTROL); the queue pointer stays
  *   per push (native keeps it in r1 across both pushes).
- * - x and y are block locals of each Trig/shard loop: as one function-wide
- *   pair their combined lifetime lowered their priority and every loop's
- *   counter, angle and x came out rotated (native: x r5, angle r6,
- *   counter r7, y r3 in every such loop). 2050 -> 1553.
+ * - x, y, size, z and amp are block locals of their loops (the native keeps
+ *   size in r4 in one loop and r0 in another): function-wide, their
+ *   combined lifetimes reordered every loop's registers. 2050 -> 1426 with
+ *   the next two.
+ * - The i18 ring draws use size = 10 (5 and 20 hoisted, 10 rematerialised)
+ *   and multiply Trig_Sin(angle) * r2, which puts the radius first as the
+ *   native's mul does; r2 * Trig_Sin(angle) puts the call result first.
+ * - amp as a local of the spark loop body: loop.c then hoists 255 and the
+ *   zero after the counter's start, as the native schedules them.
  * - Second petal block: d + 38 rather than frame * 2 - 126, so call four
  *   reuses d / 4 + 49 without a dangling d >= 0 branch that kept d alive.
  * - loop.c: ours hoists 0, &fill and 24 out of the 320-frame loop in its
@@ -25,6 +38,9 @@
  *   native's single literal gWorkSlot+188) moves loop 1's hoisting and a
  *   global pseudo then evicts every local-alloc pseudo from r8 (2066);
  *   kept as gTransitionWork[3] for now.
+ * - The reload registers of the prologue's constants (r1/r2/r4) match only
+ *   when the function's set of spill registers matches: a quick global
+ *   check after any change.
  * Earlier notes, still true:
  * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
@@ -43,7 +59,8 @@
  * Trial: ramp limit as 64 - i * 7 in the inner loop (kept).
  * Trial: respawn x tests frame <= 279 first, as the native branches.
  * Trial: frame > 85 and frame <= 213 as nested ifs (kept).
- * Trial: one counter i for every loop: it spills.
+ * Trial: one counter i for every loop: it spilled while x and y were
+ * function-wide; with them local it is the 784 form above.
  * Trial: the petal ring radius frame * 10 - 1424 computed once in the frame
  * body: it becomes a reduced giv of the frame loop as native's sp+12 (kept).
  * Trial: loop 2 as a label and goto: frame 184 but worse overall; the
@@ -162,31 +179,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 ring;
     s32 rings;
     s32 shift;
-    s32 i1;
-    s32 i2;
-    s32 i3;
-    s32 i4;
-    s32 i5;
-    s32 i6;
-    s32 i7;
-    s32 i8;
-    s32 i9;
-    s32 i10;
-    s32 i11;
-    s32 i12;
-    s32 i13;
-    s32 i14;
-    s32 i15;
-    s32 i16;
-    s32 i17;
-    s32 i18;
-    s32 i19;
-    s32 i20;
-    s32 i21;
-    s32 i22;
-    s32 i23;
-    s32 i24;
-    s32 i25;
+    s32 i;
     s32 j;
     s32 high;
     struct EffectStep *p;
@@ -232,39 +225,39 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
-    for (i1 = 0; i1 != 8; i1++) {
+    for (i = 0; i != 8; i++) {
         u8 *src = ramp;
         for (j = 0; j != 770; j++) {
             s32 v = *src++;
-            if (v > 64 - i1 * 7) {
-                v = 64 - i1 * 7;
+            if (v > 64 - i * 7) {
+                v = 64 - i * 7;
             }
             if (v < 0) {
                 v = 0;
             }
-            ((struct BattleFx9Work *)work)->ramp[i1][j] = v;
+            ((struct BattleFx9Work *)work)->ramp[i][j] = v;
         }
     }
 
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
 
-    for (i2 = 0; i2 != 128; i2++) {
-        DUST[i2].x = (Random16() & 15) + 72;
-        DUST[i2].velocity_x = Random16() & 0xffff;
-        DUST[i2].velocity_y = Random16() & 0xffff;
-        DUST[i2].velocity_y = Random16() & 0xffff;
+    for (i = 0; i != 128; i++) {
+        DUST[i].x = (Random16() & 15) + 72;
+        DUST[i].velocity_x = Random16() & 0xffff;
+        DUST[i].velocity_y = Random16() & 0xffff;
+        DUST[i].velocity_y = Random16() & 0xffff;
     }
 
-    for (i3 = 0; i3 != 128; i3++) {
+    for (i = 0; i != 128; i++) {
         s32 angle = Random16() & 0xffff;
         s32 amp = 255;
         s32 speed = 0;
-        SPARKS[i3].x = (Trig_Sin(angle) * amp) >> 2;
-        SPARKS[i3].z = (Trig_Cos(angle) * amp) >> 2;
-        SPARKS[i3].y = ((Random16() & 63) + 32) << 16;
-        SPARKS[i3].velocity_x = speed;
-        SPARKS[i3].velocity_y = speed;
-        SPARKS[i3].variant = angle;
+        SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
+        SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
+        SPARKS[i].y = ((Random16() & 63) + 32) << 16;
+        SPARKS[i].velocity_x = speed;
+        SPARKS[i].velocity_y = speed;
+        SPARKS[i].variant = angle;
     }
 
     work->transfer_mode = 2;
@@ -284,12 +277,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame < 0) {
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-            for (i4 = 0; i4 != 128; i4++) {
+            for (i = 0; i != 128; i++) {
                 s32 z;
                 s32 size;
 
-                EffectStep_AdvanceWithGravity3D(&SPARKS[i4], 60, -0x400);
-                EffectPosition_ApplyBaseAndYOffset(&SPARKS[i4], (struct EffectPosition *)scene);
+                EffectStep_AdvanceWithGravity3D(&SPARKS[i], 60, -0x400);
+                EffectPosition_ApplyBaseAndYOffset(&SPARKS[i], (struct EffectPosition *)scene);
                 scene[0] >>= 1;
                 scene[1] -= 120;
                 if (scene[2] < 100) {
@@ -310,8 +303,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
                     size * 2);
                 if (frame == 64) {
-                    SPARKS[i4].velocity_x += (Trig_Sin(SPARKS[i4].variant) * 255) >> 3;
-                    SPARKS[i4].velocity_y += (Trig_Cos(SPARKS[i4].variant) * 255) >> 3;
+                    SPARKS[i].velocity_x += (Trig_Sin(SPARKS[i].variant) * 255) >> 3;
+                    SPARKS[i].velocity_y += (Trig_Cos(SPARKS[i].variant) * 255) >> 3;
                 }
             }
         }
@@ -323,18 +316,18 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         anchor[2] = 0;
         anchor[1] = 0;
-        for (i5 = 0; i5 != 64; i5++) {
-            if (frame > i5 / 4 + 80 && DUST[i5].x > 0) {
+        for (i = 0; i != 64; i++) {
+            if (frame > i / 4 + 80 && DUST[i].x > 0) {
                 s32 size;
 
                 Render_ResetTransformState();
-                SceneTransform_ApplyRoll(DUST[i5].velocity_y);
-                SceneTransform_ApplyPitch(DUST[i5].velocity_x);
-                SceneTransform_ApplyYaw(DUST[i5].velocity_y + (frame << 9));
-                anchor[0] = DUST[i5].x;
-                DUST[i5].x -= 2;
-                if (DUST[i5].x < 0) {
-                    DUST[i5].x = 0;
+                SceneTransform_ApplyRoll(DUST[i].velocity_y);
+                SceneTransform_ApplyPitch(DUST[i].velocity_x);
+                SceneTransform_ApplyYaw(DUST[i].velocity_y + (frame << 9));
+                anchor[0] = DUST[i].x;
+                DUST[i].x -= 2;
+                if (DUST[i].x < 0) {
+                    DUST[i].x = 0;
                 }
                 EffectPosition_ApplyBaseAndYOffset((struct EffectStep *)anchor, (struct EffectPosition *)scene);
                 if (scene[2] < -60) {
@@ -355,10 +348,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         pair = BattleFx9_UnitScale;
         place[3] = 0;
         place[1] = 0;
-        for (i6 = 0; i6 != 16; i6++) {
-            place[0] = ((i6 % 4) << 21) + (152 << 15);
-            place[2] = ((i6 / 4) << 21) + depth;
-            Object_ApplyProjectedPlacementFar(work->objects[i6], place, &pair, 0);
+        for (i = 0; i != 16; i++) {
+            place[0] = ((i % 4) << 21) + (152 << 15);
+            place[2] = ((i / 4) << 21) + depth;
+            Object_ApplyProjectedPlacementFar(work->objects[i], place, &pair, 0);
         }
 
         depth += zoom;
@@ -376,13 +369,13 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame == 72) {
-            for (i7 = 0; i7 != 16; i7++) {
-                AnimationObjects_SelectAnimationFar(work->objects[i7], i7 + 16);
+            for (i = 0; i != 16; i++) {
+                AnimationObjects_SelectAnimationFar(work->objects[i], i + 16);
             }
         }
         if (frame == 76) {
-            for (i8 = 0; i8 != 16; i8++) {
-                AnimationObjects_SelectAnimationFar(work->objects[i8], i8 + 32);
+            for (i = 0; i != 16; i++) {
+                AnimationObjects_SelectAnimationFar(work->objects[i], i + 32);
             }
         }
 
@@ -408,8 +401,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
 
-            for (i9 = 0; i9 != 6; i9++) {
-                s32 k = i9 & 3;
+            for (i = 0; i != 6; i++) {
+                s32 k = i & 3;
                 s32 angle = Random16() & 0xffff;
                 s32 x = ((Trig_Sin(angle) * 16) >> 16) - BattleFx9_ShardWidths[k] / 2;
                 s32 y = ((Trig_Cos(angle) * 16) >> 16) - BattleFx9_ShardHeights[k] / 2;
@@ -437,8 +430,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
-                for (i10 = 0; i10 != 128; i10++) {
-                    s32 angle = i10 << 9;
+                for (i = 0; i != 128; i++) {
+                    s32 angle = i << 9;
                     s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
                     s32 y = (r * Trig_Cos(angle)) >> 17;
                     blit(canvas, cell, x + 60, y + 72, 8, 16);
@@ -453,17 +446,17 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     Iwram_FillWords(canvas, 0x4000, 0);
 
-    for (i11 = 0; i11 != 16; i11++) {
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i11]);
+    for (i = 0; i != 16; i++) {
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
 
-    for (i12 = 0; i12 != 16; i12++) {
+    for (i = 0; i != 16; i++) {
         struct AnimationObject *obj = (struct AnimationObject *)ResourceObject_CreateFar(0x186);
-        work->objects[i12] = obj;
+        work->objects[i] = obj;
         if (obj != 0) {
             obj->flags = 0;
-            AnimationObjects_SelectAnimationFar(obj, __modsi3(i12, 3));
-            ((u8 *)work->objects[i12])[9] &= ~12;
+            AnimationObjects_SelectAnimationFar(obj, __modsi3(i, 3));
+            ((u8 *)work->objects[i])[9] &= ~12;
         }
     }
 
@@ -474,7 +467,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     {
         u8 *c = ramp;
-        for (i13 = 0; i13 != 770; i13++, c++) {
+        for (i = 0; i != 770; i++, c++) {
             if (*c > 32) {
                 *c += 224;
             } else if (*c != 0) {
@@ -548,7 +541,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame == 66) {
             u16 *pal = (u16 *)0x050000c0;
-            for (i14 = 0; i14 != 128; i14++, pal++) {
+            for (i = 0; i != 128; i++, pal++) {
                 *pal ^= 0x7fff;
             }
         }
@@ -581,8 +574,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             fill = 0x3f3f3f3f;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
             BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-            for (i15 = 0; i15 != 16; i15++) {
-                p = &work->particles[i15];
+            for (i = 0; i != 16; i++) {
+                p = &work->particles[i];
                 p->x = ((Random16() & 63) + 32) << 16;
                 p->y = ((Random16() & 31) + 96) << 16;
                 p->velocity_y = ((Random16() & 15) + 16) << 15;
@@ -599,8 +592,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
             *(u16 *)0x04000052 = 0x1010;
             ctrl->initial_value = 0;
-            for (i16 = 0; i16 != 16; i16++) {
-                p = &work->particles[i16];
+            for (i = 0; i != 16; i++) {
+                p = &work->particles[i];
                 p->x = ((Random16() & 63) + 256) << 16;
                 p->y = ((Random16() & 31) + 96) << 16;
                 p->velocity_y = ((Random16() & 15) + 16) << 15;
@@ -613,7 +606,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame > 279) {
             u16 *pal = (u16 *)0x05000002;
-            for (i17 = 0; i17 != 63; i17++, pal++) {
+            for (i = 0; i != 63; i++, pal++) {
                 s32 c = *pal;
                 s32 b = ((c >> 10) & 31) + 1;
                 s32 g = ((c >> 5) & 31) + 1;
@@ -686,8 +679,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame >= 72 && frame < 76) {
             s32 r2 = (frame << 4) - 1136;
             s32 size = 10;
-            for (i18 = 0; i18 != 256; i18++) {
-                s32 angle = i18 << 8;
+            for (i = 0; i != 256; i++) {
+                s32 angle = i << 8;
                 s32 x = ((Trig_Sin(angle) * r2) >> 16) - size / 2;
                 s32 y = (Trig_Cos(angle) * r2) >> 17;
                 draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], x + 60, y + 50, size, size * 2);
@@ -696,12 +689,13 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame > 85) {
             if (frame <= 213) {
-                for (i19 = 0; i19 != rings; i19++, ring++) {
+                for (i = 0; i != rings; i++, ring++) {
                     s32 radius = ring;
                     s32 slope = 0;
                     s32 err = ring;
                     while (radius >= slope) {
                         s32 half;
+                        s32 half2;
                         s32 left;
                         s32 right;
                         s32 top;
@@ -741,9 +735,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                         work->sheet[bottom * 120 + left] = 20;
                         work->sheet[top * 120 + left] = 20;
     
-                        half = slope / 2;
-                        right = cx + (half * sx) / 8;
-                        left = cx - (half * sx) / 8;
+                        half2 = slope / 2;
+                        right = cx + (half2 * sx) / 8;
+                        left = cx - (half2 * sx) / 8;
                         bottom = cy + (radius * squash) / 8;
                         top = cy - (radius * sx) / 8;
                         if (left < 0) {
@@ -762,8 +756,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                         work->sheet[top * 120 + right] = 20;
                         work->sheet[bottom * 120 + left] = 20;
                         work->sheet[top * 120 + left] = 20;
-                        right = cx + half + 1;
-                        left = cx - half + 1;
+                        right = cx + half2 + 1;
+                        left = cx - half2 + 1;
                         if (left < 0) {
                             left = 0;
                         }
@@ -788,10 +782,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame >= 86 && frame < 150) {
             s32 angle = -0x4000;
-            for (i20 = 0; i20 != 9; i20++, angle += 0x1000) {
+            for (i = 0; i != 9; i++, angle += 0x1000) {
                 s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
                 s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
-                draw[0](canvas, work->sheet + ((frame / 2 + i20) % 4) * 1728 + 0x4000, x + 44, y + 17, 32, 54);
+                draw[0](canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000, x + 44, y + 17, 32, 54);
             }
         }
 
@@ -807,8 +801,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame > 319) {
             if (work->effect->count != 0) {
-                for (i21 = 0; i21 != work->effect->count; i21++) {
-                    ObjectGroup_UpdateMembers(work->effect->actors[i21], 14, 5, -1, 0);
+                for (i = 0; i != work->effect->count; i++) {
+                    ObjectGroup_UpdateMembers(work->effect->actors[i], 14, 5, -1, 0);
                 }
             }
         }
@@ -831,8 +825,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame > 213) {
             place2[3] = 0;
             place2[1] = 0;
-            for (i22 = 0; i22 != 16; i22++) {
-                p = &work->particles[i22];
+            for (i = 0; i != 16; i++) {
+                p = &work->particles[i];
                 if (p->variant != 0) {
                     scale.x = p->z + (p->y >> 7);
                     if (scale.x < 0x800) {
@@ -842,7 +836,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                     place2[1] = 0xff0000;
                     place2[0] = p->x;
                     place2[2] = p->y + 0xff0000;
-                    Object_ApplyProjectedPlacementFar(work->objects[i22], place2, &scale, 0);
+                    Object_ApplyProjectedPlacementFar(work->objects[i], place2, &scale, 0);
                     p->y -= p->velocity_y;
                     if (p->y < 0x100000) {
                         if (frame <= 279) {
@@ -862,16 +856,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             }
 
             if (frame <= 279) {
-                for (i23 = 0; i23 != 8; i23++) {
-                    s32 x = (i23 & 1) * 20 - (Random16() & 15) + (i23 / 2) * 4 + shift / 2 - 16;
-                    s32 y = (i23 / 2) * 32 - (Random16() & 15);
-                    draw[1](canvas, work->sheet + ((frame / 2 + i23) % 4) * 1728 + 0x4000, x, y, 32, 54);
+                for (i = 0; i != 8; i++) {
+                    s32 x = (i & 1) * 20 - (Random16() & 15) + (i / 2) * 4 + shift / 2 - 16;
+                    s32 y = (i / 2) * 32 - (Random16() & 15);
+                    draw[1](canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000, x, y, 32, 54);
                 }
             } else {
-                for (i24 = 0; i24 != 8; i24++) {
-                    s32 x = (i24 & 1) * 20 + (Random16() & 15) - (i24 / 2) * 4 + shift / 2 - 16;
-                    s32 y = (i24 / 2) * 32 - (Random16() & 15);
-                    draw[1](canvas, work->sheet + ((frame / 2 + i24) % 4) * 1728 + 0x4000, x, y, 32, 54);
+                for (i = 0; i != 8; i++) {
+                    s32 x = (i & 1) * 20 + (Random16() & 15) - (i / 2) * 4 + shift / 2 - 16;
+                    s32 y = (i / 2) * 32 - (Random16() & 15);
+                    draw[1](canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000, x, y, 32, 54);
                 }
             }
         }
@@ -886,8 +880,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         WaitFrames(1);
     }
 
-    for (i25 = 0; i25 != 16; i25++) {
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i25]);
+    for (i = 0; i != 16; i++) {
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
 
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);

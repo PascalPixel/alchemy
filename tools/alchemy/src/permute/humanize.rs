@@ -15,6 +15,7 @@
 use super::ast::{BinOp, Decl, Expr, Function, Init, Stmt, UnOp};
 use super::mutate::Rng;
 use super::parse::{locate, scan_unit, Unit};
+use super::types::Env;
 use crate::compiler::routing::root;
 use crate::targets::{decomp_target, DecompTarget};
 use std::path::{Path, PathBuf};
@@ -28,9 +29,11 @@ it (editions whose preprocessed file is the same are compiled once), and
 kept only when each object file is byte-identical to the current
 spelling's, the compiler's warnings are the same (sorted, without line
 numbers), and alchemy worst's score of the function falls (then narrow
-locals, lines and characters break ties); so a cast that makes a number of
-a pointer, array or function stays, as GCC warns without it. Rewrites: drop
-a value cast (not one of an address or string) or a pointer cast, fold a
+locals, lines and characters break ties). An integer cast whose operand is
+a string, an address, or declared a pointer, array or function stays,
+whatever the callee's prototype, decided by the operand's declared type in
+the preprocessed file (an unknown type stays too). Rewrites: drop any
+other value cast or a pointer cast, fold a
 single-use temporary into its use, merge a
 declaration with its first assignment, widen a u8, s8, u16 or s16 local to
 s32, compound assignment, ++ and --, a negated comparison, a
@@ -40,7 +43,9 @@ that is alchemy camelotize numbers. Left as written: the
 statement after a FAKEMATCH comment on its own line, the statement a
 FAKEMATCH comment ends the line of, a whole block whose opening line carries
 one, any statement with asm, volatile or register, statements inside #if,
-#define bodies, and a function defined more than once across #if branches.
+#define bodies, and a function defined more than once across #if branches;
+a rewrite carried into the file's lines must also stay outside the code
+alchemy camelotize treats as tagged (one definition for both commands).
 Candidates are tried in an order drawn from --seed, J at a time; the first
 in that order that passes is kept, so a seed repeats exactly. Without
 --function every function in FILE.C is humanized in turn. FILE.C is written
@@ -461,14 +466,17 @@ fn pure_place(expr: &Expr) -> bool {
     }
 }
 
-fn expr_rewrite(kind: Rewrite, expr: &mut Expr, cursor: &mut Cursor) {
+fn expr_rewrite(kind: Rewrite, expr: &mut Expr, cursor: &mut Cursor, types: Option<&Env>) {
     match kind {
         Rewrite::ValueCast | Rewrite::PointerCast => {
             if let Expr::Cast(ty, inner) = expr {
                 let pointer = ty.tokens.iter().any(|t| t == "*");
-                // An address or a string made a number keeps its cast: without
-                // it the conversion is implicit, which C89 does not allow.
-                let address = matches!(**inner, Expr::Unary(UnOp::AddrOf, _) | Expr::Str(_));
+                // An address, string, array or function made a number keeps its
+                // cast, decided by the operand's declared type (Env::number_of_address).
+                let address = match types {
+                    Some(env) => env.number_of_address(inner),
+                    None => matches!(**inner, Expr::Unary(UnOp::AddrOf, _) | Expr::Str(_)),
+                };
                 let fits = if kind == Rewrite::PointerCast { pointer } else { !pointer && !address && is_value_type(&ty.tokens) };
                 if fits && cursor.hit() {
                     *expr = (**inner).clone();
@@ -752,7 +760,7 @@ fn statement_level(kind: Rewrite) -> bool {
 
 /// Apply rewrite `kind` at its `target`th site; returns how many sites
 /// the walk saw (the count, when `target` is past them all).
-pub fn apply(kind: Rewrite, function: &mut Function, target: usize) -> usize {
+pub fn apply(kind: Rewrite, function: &mut Function, target: usize, types: Option<&Env>) -> usize {
     let mut cursor = Cursor { target, seen: 0 };
     if statement_level(kind) {
         let body = function.body.clone();
@@ -780,7 +788,7 @@ pub fn apply(kind: Rewrite, function: &mut Function, target: usize) -> usize {
             &mut |expr| {
                 let mut cursor = cell.borrow_mut();
                 if !cursor.done() {
-                    expr_rewrite(kind, expr, &mut cursor);
+                    expr_rewrite(kind, expr, &mut cursor, types);
                 }
                 true
             },
@@ -791,10 +799,10 @@ pub fn apply(kind: Rewrite, function: &mut Function, target: usize) -> usize {
 }
 
 /// Every (rewrite, site) of a function, in an order drawn from `rng`.
-pub fn candidates(function: &Function, rng: &mut Rng) -> Vec<(Rewrite, usize)> {
+pub fn candidates(function: &Function, types: Option<&Env>, rng: &mut Rng) -> Vec<(Rewrite, usize)> {
     let mut all = Vec::new();
     for kind in Rewrite::ALL {
-        let sites = apply(kind, &mut function.clone(), usize::MAX);
+        let sites = apply(kind, &mut function.clone(), usize::MAX, types);
         all.extend((0..sites).map(|site| (kind, site)));
     }
     for i in (1..all.len()).rev() {
@@ -1152,6 +1160,19 @@ fn splice(text: &str, start: usize, end: usize, function: &Function) -> String {
 
 /// Humanize one function of `text`; returns the new file text and the
 /// readings before and after.
+/// Whether the text that changes from `before` to `after` lies outside
+/// every range `camelotize`'s tagged module protects in `before`: the one
+/// definition of tagged code (a tag's statement, or the whole block a tag on
+/// its first line opens, and every statement holding asm), read in the
+/// file's own lines.
+fn outside_tagged(before: &str, after: &str) -> bool {
+    let (a, b) = (before.as_bytes(), after.as_bytes());
+    let prefix = a.iter().zip(b).take_while(|(x, y)| x == y).count();
+    let suffix = a[prefix..].iter().rev().zip(b[prefix..].iter().rev()).take_while(|(x, y)| x == y).count();
+    let (start, end) = (prefix, a.len() - suffix);
+    !crate::camelotize::tagged::covered(&crate::camelotize::tagged::ranges(before), start, end)
+}
+
 fn humanize_function(options: &Options, jobs: &[Check], unit: &Unit, text: &str, name: &str) -> Result<(String, Reading, Reading, Vec<Rewrite>), String> {
     let typedefs = unit.typedef_names();
     let (masked, mask) = Mask::new(text);
@@ -1176,9 +1197,10 @@ fn humanize_function(options: &Options, jobs: &[Check], unit: &Unit, text: &str,
     let deadline = Instant::now() + Duration::from_secs_f64(options.minutes * 60.0);
     'climb: while Instant::now() < deadline {
         let mut tries: Vec<(Rewrite, Function, Reading)> = Vec::new();
-        for (kind, site) in candidates(&best, &mut rng) {
+        let types = Env::new(unit, &best);
+        for (kind, site) in candidates(&best, Some(&types), &mut rng) {
             let mut candidate = best.clone();
-            apply(kind, &mut candidate, site);
+            apply(kind, &mut candidate, site, Some(&types));
             let r = reading(&candidate);
             if candidate != best && r < best_reading {
                 tries.push((kind, candidate, r));
@@ -1221,6 +1243,7 @@ fn humanize_function(options: &Options, jobs: &[Check], unit: &Unit, text: &str,
     for (kind, state) in kept.iter().zip(&trail) {
         let printed = splice(&masked, start, end, state);
         let next = super::transplant(&carried, &previous, &printed)
+            .filter(|next| outside_tagged(&mask.unmask(&carried), &mask.unmask(next)))
             .filter(|next| locate(next, Some(name), &typedefs).is_ok() && jobs[0].same(&mask.unmask(next)));
         if let Some(next) = next {
             carried = next;
@@ -1311,9 +1334,9 @@ mod tests {
         let (mut best, mut kept) = (function.clone(), Vec::new());
         'climb: loop {
             let current = reading(&best);
-            for (kind, site) in candidates(&best, &mut rng) {
+            for (kind, site) in candidates(&best, None, &mut rng) {
                 let mut candidate = best.clone();
-                apply(kind, &mut candidate, site);
+                apply(kind, &mut candidate, site, None);
                 if candidate != best && reading(&candidate) < current && same(&candidate) {
                     best = candidate;
                     kept.push(kind);
@@ -1332,6 +1355,35 @@ void Work_Step(struct Work *work)
     Work_Set(work, t + 0x1c);
 }
 ";
+
+    /// Reviewers' lines (FUNE_HEYA/ROWING.C, TOREBI_IZUMI/PLAY.C): the
+    /// callees are declared with empty parentheses, so GCC says nothing
+    /// when the cast goes; the operand's declared type keeps it.
+    #[test]
+    fn integer_casts_of_addresses_stay_by_declared_type() {
+        let unit = scan_unit(
+            "typedef int s32;\ntypedef unsigned char u8;\nextern const u8 MsgFuneWhereGoingSlay[];\nextern const u8 *MsgTorebiStepRightTry;\nextern s32 FuneHeya_ProgressTableA();\nvoid UiText_ShowCenteredMessage();\n",
+        )
+        .unwrap();
+        let text = "void F(void)\n{\n    u8 n;\n    UiText_ShowCenteredMessage((s32)MsgFuneWhereGoingSlay, 1, 8);\n    G(3, (s32)FuneHeya_ProgressTableA, (s32)MsgTorebiStepRightTry);\n    G((s32)\"s\", (s32)&n, (s32)Unknown, (s32)n);\n}\n";
+        let function = parse(text);
+        let env = Env::new(&unit, &function);
+        assert_eq!(apply(Rewrite::ValueCast, &mut function.clone(), usize::MAX, Some(&env)), 1);
+        let mut dropped = function.clone();
+        apply(Rewrite::ValueCast, &mut dropped, 0, Some(&env));
+        assert_ne!(dropped, function);
+    }
+
+    /// One definition of tagged code: camelotize's, read in the file's own
+    /// lines. A tag on a block's first line covers the block.
+    #[test]
+    fn carried_rewrites_stay_outside_tagged_code() {
+        let before = "void F(void)\n{\n    a = (u8)b;\n    if (c) {\n        /* FAKEMATCH: order */\n        d = (u8)e;\n        f = (u8)g;\n    }\n    h = (u8)i; /* FAKEMATCH: r4 */\n}\n";
+        assert!(outside_tagged(before, &before.replacen("a = (u8)b", "a = b", 1)));
+        assert!(!outside_tagged(before, &before.replacen("f = (u8)g", "f = g", 1)));
+        assert!(!outside_tagged(before, &before.replacen("d = (u8)e", "d = e", 1)));
+        assert!(!outside_tagged(before, &before.replacen("h = (u8)i", "h = i", 1)));
+    }
 
     #[test]
     fn a_removable_cast_and_temporary_go() {
@@ -1550,10 +1602,10 @@ void Work_Take(s32 value);
             // Every value cast rewrite the search would try drops this cast.
             let (masked, mask) = Mask::new(&text);
             let function = parse(&masked);
-            let sites = apply(Rewrite::ValueCast, &mut function.clone(), usize::MAX);
+            let sites = apply(Rewrite::ValueCast, &mut function.clone(), usize::MAX, None);
             assert_eq!(sites, 1, "{body}");
             let mut dropped = function.clone();
-            apply(Rewrite::ValueCast, &mut dropped, 0);
+            apply(Rewrite::ValueCast, &mut dropped, 0, None);
             let located = locate(&masked, Some("Probe"), &typedefs()).unwrap();
             let candidate = mask.unmask(&splice(&masked, located.start, located.end, &dropped));
             assert!(!candidate.contains(cast), "{candidate}");
@@ -1726,9 +1778,9 @@ void Work_Many(struct Work *work)
         assert_eq!(a, b);
         assert_eq!(ka, kb);
         let mut rng = Rng::new(7);
-        let first = candidates(&function, &mut rng);
+        let first = candidates(&function, None, &mut rng);
         let mut rng = Rng::new(7);
-        assert_eq!(first, candidates(&function, &mut rng));
+        assert_eq!(first, candidates(&function, None, &mut rng));
         let printed = a.print();
         assert!(!printed.contains("while (0)"), "{printed}");
         assert!(printed.contains("work->d != 0x123"), "{printed}");

@@ -7,7 +7,7 @@ mod numbers;
 mod registers;
 mod source;
 mod stabs;
-mod tagged;
+pub(crate) mod tagged;
 pub(crate) mod trial;
 
 use crate::compiler::routing::{family_for_source, root, CompilerFamily, COMMON_INCLUDE_MODULES};

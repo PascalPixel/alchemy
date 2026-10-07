@@ -77,7 +77,7 @@ Camelotize
   camelotize    mechanical rewrites: actors, events, registers,
                 declarations, barriers
   humanize      plainer C for a matching function, its object byte-identical
-  keep        keep only the edits that leave all twelve editions identical
+  keep          keep only the edits that leave all twelve editions identical
 
 Work in parallel
   queues        split not-yet-C work into queues that cannot collide

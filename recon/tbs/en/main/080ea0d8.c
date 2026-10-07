@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 66 of 2455 (listing 2455, draft 2457, common 2423).
+/* 080ea0d8: differ 54 of 2455 (listing 2455, draft 2457, common 2429).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -65,6 +65,8 @@
  * - Palette fade: pal is a volatile u16 pointer (the native does not hoist
  *   red's SImode 31 out of the loop), blue and green shift (u16)c with a
  *   pool-loaded HImode 31 and red masks c directly; computing blue, red,
+ * - The second loop's setup sets squash before shift and ring (round-robin
+ *   reload registers r2 for 6, r3 for the zero, as the native) (54).
  * - The frame 280 block clears ctrl->initial_value before writing
  *   BLDALPHA, so the ctrl load schedules first (125).
  *   green in that order is the nearest so far (66). Left: the native ties
@@ -515,9 +517,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     cx = 60;
     cy = 44;
+    squash = 6;
     shift = 0;
     ring = 0;
-    squash = 6;
     sx = 8;
     rings = 2;
     work->transfer_mode = 2;

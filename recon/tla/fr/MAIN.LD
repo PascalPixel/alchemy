@@ -1350,6 +1350,8 @@
     "*/recon/tla/fr/rom.o"(.rom.0014c992)
     "*/recon/tla/fr/rom.o"(.rom.0014c994)
     "*/recon/tla/fr/rom.o"(.rom.0014cb60)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SPAWN_LIVING.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.0014cca8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/TILED_CANVAS_BEGIN.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0014ce30)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SHARD_MODE.o"(.text)

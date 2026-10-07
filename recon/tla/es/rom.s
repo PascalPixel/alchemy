@@ -4061,7 +4061,12 @@ BattleEffect_InitializeSharedScene:
 	.type BattleFx_PrepareBufferInterpolation, %function
 	.thumb_func
 BattleFx_PrepareBufferInterpolation:
-	.incbin "baserom.gba", 0x000e5378, 0x0000008c
+	.incbin "baserom.gba", 0x000e5378, 0x0000000c
+	.global Camera_WorldToScreen
+	.type Camera_WorldToScreen, %function
+	.thumb_func
+Camera_WorldToScreen:
+	.incbin "baserom.gba", 0x000e5384, 0x00000080
 	.global BattleFx_LoadActionEffectResources
 	.type BattleFx_LoadActionEffectResources, %function
 	.thumb_func
@@ -4239,7 +4244,13 @@ Func_080e42d4:
 	.incbin "baserom.gba", 0x000ed2c8, 0x000002cc
 	.section .rom.000ed59c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000ed59c, 0x00002b50
+	.incbin "baserom.gba", 0x000ed59c, 0x00001748
+	.section .rom.000eed48, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000eed48, 0x00000634
+	.section .rom.000ef3f4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000ef3f4, 0x00000cf8
 	.section .rom.000f00ec, "ax"
 	.global Func_080e3698
 	.type Func_080e3698, %function
@@ -5190,7 +5201,10 @@ Func_0814c994:
 	.type Func_0814cb60, %function
 	.thumb_func
 Func_0814cb60:
-	.incbin "baserom.gba", 0x0014cb60, 0x000002c0
+	.incbin "baserom.gba", 0x0014cb60, 0x000000ec
+	.section .rom.0014cca8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0014cca8, 0x00000178
 	.section .rom.0014ce30, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0014ce30, 0x00001c0c

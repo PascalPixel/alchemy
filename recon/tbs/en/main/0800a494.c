@@ -17,6 +17,23 @@
    three). What remains (12): six veneer instructions; wait-- (ldrh r2
    before the cmp, native r3 after); z's load in the frozen test's
    delay slot.
+   Both scheduling differences left are out of reach under stock
+   agbcc_arm with any S2 device, shown in its sched.c (old backward
+   scheduler) and the sched1 dump (-dS): an insn with no dependent in
+   its block gets an anti dependence on the block's jump, insn_cost
+   charges an anti dependence the producer's full ready cost (a load:
+   2), and agbcc_arm's arm_adjust_cost lowers only load-after-store
+   costs, so a load is never placed between the compare and its jump
+   while the compare is ready (the dump: jump T-1, cmp T-2, the HI load
+   of wait queued to T-3). The native puts a load there twice: ldrh
+   after the cmp of wait, ldr sl after the cmp of frozen. Upstream
+   GCC's arm_adjust_cost returns 0 for anti and output dependences,
+   which allows both; that is a compiler question (K1, K3) for Pascal,
+   not a device. By hand, not measured: a forward list scheduler with
+   load cost 1 would give all three orders (wait, z and the
+   acceleration's load after the orr).
+   Trial: wait's decrement through a register s16 fixed in r3: 12,
+   unchanged (CSE keeps the HI load of the test block).
    2026-10-07 (S12 session 1): listing 307, draft 301, common 292, differ
    24, from 107. The smull asm made volatile, a scheduling barrier: each
    velocity store stays before the next smull, so the speed-limit and

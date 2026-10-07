@@ -83,6 +83,8 @@
  * the gVramBlockCache copy into r8 where native has it after). The
  * help block's r5/r6 swap is global allocation of saved and the
  * &object->agility address pseudo (r9 + 64): native gives the address r5.
+ * saved declared after agiDelta, or block-local to the help block, 87
+ * (no change).
  *
  * Register diagnosis 2026-10-07 (session 2, lreg/greg dumps): with
  * -fcall-used-r4 the call-saved low registers are r5, r6, r7. In the

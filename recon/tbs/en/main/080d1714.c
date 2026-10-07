@@ -1,5 +1,5 @@
-/* 080d1714: differ 888 of 1481 instructions (1471 generated, common
- * 1032). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 793 of 1481 instructions (1472 generated, common
+ * 1080). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
@@ -55,6 +55,17 @@
  *   first statement, which loop hoists as the native: 892, frame 356.
  * - threshold declared in the frame > 255 block, a later pseudo as
  *   the native's low slot suggests: 888; center_x there too: 888.
+ * - the per-frame actor loop as for (index = 0; index != count;
+ *   index++): the native recomputes runtime + 0x7828 at the test, the
+ *   top and the latch from one constant pseudo (r2) and never hoists
+ *   the address; as a do-while loop moved it out (savings 3): 1023
+ *   alone (frame 352, index * 2 then took fp instead of its sp+56
+ *   slot).
+ * - step merged into slot, one counter for every inner loop as the
+ *   native's fp shows: 887, frame 356.
+ * - the 9-object placement loop counts with index, the native's r9:
+ *   793 (slot's priority now falls below index's, so global.c gives
+ *   index r9 and slot fp as the native).
  * Remaining: frame - threshold is not reduced to a giv (native
  * sp+20); the sqrt sums take r4/r5 where the native uses r2/r1. */
 #include "CANVAS.H"
@@ -151,7 +162,6 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     u8 *src;
     s32 index;
     s32 slot;
-    s32 step;
     s32 size;
     s32 span;
     s32 dist;
@@ -252,58 +262,54 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         if (frame == 372)
             AudioCommand_PlayFar(212);
 
-        index = 0;
-        if (runtime->effect->count != 0) {
-            do {
-                if (frame > index * 16) {
-                    context = GetBattleObjectSlotFar(
-                        runtime->effect->actors[index]);
-                    object = (struct MotionObject *)context->object;
-                    object->x =
-                        (radius[index] * Trig_Sin(heading[index])) >> 1;
-                    object->z =
-                        (radius[index] * Trig_Cos(heading[index])) >> 1;
+        for (index = 0; index != runtime->effect->count; index++) {
+            if (frame > index * 16) {
+                context = GetBattleObjectSlotFar(
+                    runtime->effect->actors[index]);
+                object = (struct MotionObject *)context->object;
+                object->x =
+                    (radius[index] * Trig_Sin(heading[index])) >> 1;
+                object->z =
+                    (radius[index] * Trig_Cos(heading[index])) >> 1;
 
-                    if (frame <= 159) {
-                        if (frame > index * 16 + 16)
-                            spin[index] += 48;
-                        if (radius[index] <= 31)
-                            object->y += 0x60000;
-                        else
-                            object->y += 0x8000;
-                        if (object->y > 0x7c0000)
-                            object->y = 0x7c0000;
-                    }
-
-                    if (frame <= 490) {
-                        heading[index] += spin[index];
-                        if (heading[index] > 0x10000)
-                            heading[index] -= 0x10000;
-                        object->angle += spin[index] / 4;
-                    }
-
-                    if (frame == 395)
-                        object->vertical_motion_strength = 0xab85;
-
-                    slot = 0;
-                    do {
-                        if (frame == Data_080ee16c[slot]) {
-                            object->velocity_y = 0;
-                            ObjectGroup_UpdateMembers(
-                                runtime->effect->actors[index],
-                                7,
-                                5,
-                                index,
-                                8);
-                        }
-                        slot++;
-                    } while (slot != 4);
-
-                    if (radius[index] > 16)
-                        radius[index] -= 2;
+                if (frame <= 159) {
+                    if (frame > index * 16 + 16)
+                        spin[index] += 48;
+                    if (radius[index] <= 31)
+                        object->y += 0x60000;
+                    else
+                        object->y += 0x8000;
+                    if (object->y > 0x7c0000)
+                        object->y = 0x7c0000;
                 }
-                index++;
-            } while (index != runtime->effect->count);
+
+                if (frame <= 490) {
+                    heading[index] += spin[index];
+                    if (heading[index] > 0x10000)
+                        heading[index] -= 0x10000;
+                    object->angle += spin[index] / 4;
+                }
+
+                if (frame == 395)
+                    object->vertical_motion_strength = 0xab85;
+
+                slot = 0;
+                do {
+                    if (frame == Data_080ee16c[slot]) {
+                        object->velocity_y = 0;
+                        ObjectGroup_UpdateMembers(
+                            runtime->effect->actors[index],
+                            7,
+                            5,
+                            index,
+                            8);
+                    }
+                    slot++;
+                } while (slot != 4);
+
+                if (radius[index] > 16)
+                    radius[index] -= 2;
+            }
         }
 
         if ((u32)(frame - 16) <= 143) {
@@ -451,15 +457,15 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             scale.x = 0x10000;
             scale.y = 0x10000;
             place.unknown_0c = 0;
-            slot = 0;
+            index = 0;
             do {
-                place.x = (Data_080ee15a[slot] << 16) + wave_x + 0x280000;
-                place.y = 0xff0000 + slot * 0x400000;
+                place.x = (Data_080ee15a[index] << 16) + wave_x + 0x280000;
+                place.y = 0xff0000 + index * 0x400000;
                 place.z =
-                    ((Data_080ee163[slot] + slot * 64) << 16) + wave_y;
-                Object_ApplyProjectedPlacementFar(runtime->objects[slot], &place, &scale, 0);
-                slot++;
-            } while (slot != 9);
+                    ((Data_080ee163[index] + index * 64) << 16) + wave_y;
+                Object_ApplyProjectedPlacementFar(runtime->objects[index], &place, &scale, 0);
+                index++;
+            } while (index != 9);
 
             if (frame > 255) {
                 s32 threshold;
@@ -589,11 +595,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         mark->x = center_x;
                         mark->velocity_x = center_x;
 
-                        step = 0;
+                        slot = 0;
                         do {
-                            runtime->particles[step + 32].variant = 4;
-                            step++;
-                        } while (step != 28);
+                            runtime->particles[slot + 32].variant = 4;
+                            slot++;
+                        } while (slot != 28);
 
                         runtime->shake_frames = 8;
                         drift_x = 0x80000;
@@ -619,13 +625,13 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             SceneTransform_ApplyYaw(-4096);
 
                             spark = &runtime->particles[32];
-                            step = 0;
+                            slot = 0;
                             do {
                                 work.x = 0;
                                 work.y = spark->variant
-                                    * Trig_Cos(step * 2340);
+                                    * Trig_Cos(slot * 2340);
                                 work.z = spark->variant
-                                    * Trig_Sin(step * 2340);
+                                    * Trig_Sin(slot * 2340);
                                 spark->variant += 2;
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
@@ -646,9 +652,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                     screen.y - span,
                                     span,
                                     span * 2);
-                                step++;
+                                slot++;
                                 spark++;
-                            } while (step != 28);
+                            } while (slot != 28);
                         }
                     }
                     index++;

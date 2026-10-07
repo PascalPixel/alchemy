@@ -4,7 +4,7 @@ use std::fmt::Write as _;
 use std::path::PathBuf;
 
 const USAGE: &str = "usage: alchemy worst --out FILE [--root DIR] [--show N]\n\
-Ranks every function in ROOT/games/**/*.C by weighted mechanical signals\n\
+Ranks every function in ROOT/games/**/*.[cC] by weighted mechanical signals\n\
 (FAKEMATCH devices, inline asm, byte-offset pointer arithmetic, placeholder\n\
 names, dereferenced casts, one-pass blocks, goto, volatile, hex literals,\n\
 value casts), writes them worst first to FILE and prints the first N.";
@@ -44,7 +44,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let clean: Vec<_> = part.iter().filter(|r| r.score == 0).collect();
         let clean_lines: usize = clean.iter().map(|r| r.lines).sum();
         println!(
-            "{label} camelotized: {:.1}% of {} functions, {:.1}% of their lines",
+            "{label} no weighted mechanical signals: {:.1}% of {} functions, {:.1}% of their lines",
             100.0 * clean.len() as f64 / part.len().max(1) as f64,
             part.len(),
             100.0 * clean_lines as f64 / lines.max(1) as f64

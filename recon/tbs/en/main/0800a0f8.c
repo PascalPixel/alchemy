@@ -1,5 +1,106 @@
 /* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
-   (K1, agbcc/camelot_arm). Route decision (2026-10-07), this draft under
+   (K1: stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   Stock agbcc_arm (2026-10-07, session 3): listing 157, draft 157,
+   common 127, differ 60. Five empty non-volatile asm devices (FAKEMATCH,
+   in the loops) make both loop tails match: in gcc_arm's sched.c,
+   insn_cost sets LINK_COST_FREE on any link whose consumer fails recog,
+   so an asm that rewrites a live register in place turns a costly anti
+   dependence (ldm r6 -> add r6) into two links of cost 1, an asm that
+   reads memory after the stm becomes bpl's only predecessor so the stm
+   no longer waits its store cost above the branch, and in the else loop
+   one asm on v fills the third cycle the strh needs above the ldm.
+   Still unreachable, with the mechanism: the prologue. priority() is
+   the longest cost path from the block's head; mov r5, r1 (6) and
+   ldr r9 (33) are the first writers of r5 and r9 after the push, so
+   each anti-depends on it at the push's cost (5) and has priority 5,
+   like sub sp (576) and its clobber (577); rank_for_schedule then takes
+   the higher LUID, 6 and 33, first in the backward pass. A link is free
+   only when its consumer is unrecognized, so 6 and 33 would have to be
+   asm instructions themselves (33 is a pool load, so it cannot); an
+   empty asm placed after them reads them at priority 5 and also beats
+   576 on LUID, and an asm before them would be dead (deleted) or, if
+   volatile, a barrier depending on 576. Neither has a latency that
+   could hold it back (6 costs 1; 33's consumers are the call and an
+   asm, whose link is free). The same holds for mov r0, r8 above str
+   r8, [r2] before the Sin call: the call depends on the pending store
+   directly at its store cost. Other remaining rows: to->z in r4 for ip
+   and the half in r2 for r1, with the two smulls interleaved
+   differently; the loop's x in r1 for r2 (ldm r7, {r2, r4}), (s16)t
+   reloaded by ldrsh instead of extended into lr, and the k load above
+   the u stores (k's alias set, see camelot_arm below); the odd-frame
+   y's ldr r2, [sp] and ldr r1, [r7, #12] above ldrsh r3, which the
+   anti dependence of ldrsh r3 on str r3, [r6, #8] (hard register r3,
+   cost 2) puts there and no source device reaches.
+   Session 3 trials, from 76:
+   - Else loop: asm on out between out[1] = out[0] and out += 2: 76
+     (ldm and add r6 reorder, stm still waits); with v and out[1]'s
+     memory in one asm: 74; the memory read through a block-local next
+     = out + 1: 74 (CSE folds it to r6 + 16, so the out asm anti-depends
+     on it); "m"(*v) instead: 72; plus an asm on v before v++: 68.
+   - First loop: the same three asms: 126 (v and out swap r6 and r7
+     throughout); the memory asm on out: 64; on cs: 64, the tail from
+     str r3 on matches; without the asm on v before v++ (here it took
+     the add ip slot): 60.
+   - Odd-frame y as v->u / 4 + ((oz + v->dz) >> 8) + v->v / 2: 68; an
+     asm on v between out->x and out->y: 60, unchanged.
+   - On 60, a = (s16)t before out->a = v->u = t, then a <<= 8; a *= k
+     (the camelot_arm 52 form's loop alone): 97, draft 158; z = to->z
+     - from->z in one expression: 66 (to->z then loads into r1 and to->x
+     into ip, swapped as under camelot_arm).
+   Stock agbcc_arm (2026-10-07, session 1): listing 157, draft 157,
+   common 119, differ 76 (14 register, 20 reordered, 4 inserted, 4
+   deleted). Not reachable from source under this route: the prologue.
+   The listing runs mov r5, r1; ldr r9, =WaitFramesFar; sub sp, sp, #8,
+   two body insns above the frame's sub sp. gcc_arm's sched.c schedules
+   each block backwards, by priority, then by class, then LUID. In
+   sched2 (alchemy diff --arm --rtl: 0800a0f8.c.sched2) the push (574) has
+   priority 1; sub sp (576) and its mem clobber (577) have 5; mov r5,
+   r1 (6) and the r9 load (33) also have 5, solely through a REG_DEP_ANTI
+   on the push, which stock arm_adjust_cost charges the push's full
+   store4 cost (5). At equal priority and class the prologue's lower
+   LUID places sub sp first; only the latency queue could hold 6 or 33
+   back, and neither waits on a user placed just after it (6 feeds
+   ldr r1, [r5] at cost 1; 33 feeds only the far call's ldr ip). A
+   barrier depends on the sub sp as well, and any pseudo in a
+   callee-saved register anti-depends on the push the same way, so no
+   order of statements, block, barrier or register variable is known
+   to move those two above it. Session 2 (2026-10-07): no source and
+   no option set of stock gcc_arm reaches it. The prologue is RTL
+   emitted ahead of the body, so without sched2 sub sp precedes every
+   body insn. With sched2, 6 and 576 each have the push as their only
+   predecessor, at the same cost: INSN_COST of the push (store4, at
+   least 5 on every -mcpu; arm_adjust_cost changes only a load after a
+   store), so
+   their priorities are equal. 6 becomes ready together with 577 (r5's
+   users are loads, which depend on the clobber), 6's own cost is 1 so
+   rank_for_schedule puts both in class 3, and the higher LUID (6) is
+   taken first in the backward pass, placing it below the frame. Only a
+   rule that makes an anti dependence cheaper than the true one lowers
+   6 and 33 under 576. Editions: the 0x284 bytes are the same code in
+   all six (German differs only in the pool words of gScanlineAngle,
+   gProjection + 0xc and gFrameCount, which it places 0x10 later), so
+   one C body serves all six once it matches; per-edition --arm scoring
+   is not needed for it. Under the camelot_arm trials below, with
+   2.96's arm_adjust_cost (anti/output dependences free; sched.c clamps
+   them to 1, so 6 and 33 drop to priority 1), "the prologue matches
+   the listing up to the half constant". So this listing appears to
+   need that scheduling cost in the route (a K3 question for Pascal),
+   not an S2 device. Every stock form tried below keeps push; sub sp
+   first.
+   Stock trials, from 76:
+   - Session 3/4 form (x = to->x - from->x; z = to->z - from->z; loop
+     block-local x; a = (s16)t; out->a = v->u = t; a <<= 8; a *= k;
+     union Word k): 83; the prologue then matches but for sub sp and
+     the r9 load, and the loop loads z, x by two ldr (x in ip), no ldm.
+     Without the block-local x: 97; z = v->z before x = v->x: 83.
+   - Only the one-expression x and z in the prologue: 89.
+   - v->dx = -(a + FIXED_MUL(z, -sn)): 80.
+   - far = WaitFramesFar as the first statement, calls through far[n]:
+     76, identical; the r9 load still lands after ldr r3, [r0].
+   - alchemy permute --arm --heat, 5 minutes, 2 jobs: best weighted
+     2190 -> 1950 at differ 77; lowest differ 74, only a temporary
+     shared by the odd-frame out->x and out->y; neither taken.
+   Route decision (2026-10-07), this draft under
    agscc -marm with the game options: differ 183; with -mno-apcs-frame
    190; with -mno-apcs-frame -ffixed-fp 166.
    alchemy diff --camelot-arm, upstream's whole arm_adjust_cost
@@ -240,6 +341,10 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
             out->y = (oz + v->dz) >> 8;
             v++;
             out[1] = out[0];
+            /* FAKEMATCH: reads memory after the stm so bpl waits on this free link, not on the stm's store cost; stm then sits right above bpl (with the next device, differ 68 -> 60) */
+            asm("" : "=r"(cs) : "0"(cs), "m"(*v));
+            /* FAKEMATCH: rewrites out in place so add r6 no longer waits on the ldm's cost through the anti dependence; add r6 then sits between ldm and stm */
+            asm("" : "=r"(out) : "0"(out));
             out += 2;
         }
     } else {
@@ -253,8 +358,14 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
             }
             out->a = v->u;
             out->b = v->v;
+            /* FAKEMATCH: one empty cycle between strh and ldm, which the strh's store cost of 3 needs, so subs rises above strh as listed (differ 72 -> 68) */
+            asm("" : "=r"(v) : "0"(v));
             v++;
             out[1] = out[0];
+            /* FAKEMATCH: reads memory after the stm so bpl waits on this free link, not on the stm's store cost; stm then sits right above bpl (with the next device, differ 76 -> 72) */
+            asm("" : "=r"(v) : "0"(v), "m"(*v));
+            /* FAKEMATCH: rewrites out in place so add r6 no longer waits on the ldm's cost through the anti dependence; add r6 then sits between ldm and stm */
+            asm("" : "=r"(out) : "0"(out));
             out += 2;
         }
     }

@@ -46,7 +46,7 @@ Func_02000078:
 	pop {pc}
 	.2byte 0x0000
 .L_0200809c:
-	.4byte 0x00001949
+	.4byte MsgScene65ENo18
 	.section .text.x020080a0,"ax",%progbits
 	.global Func_020000a0
 	.thumb_func
@@ -65,7 +65,7 @@ Func_020000a0:
 	pop {pc}
 	.2byte 0x0000
 .L_020080c4:
-	.4byte 0x0000229a
+	.4byte MsgScene65ENo32
 	.section .text.x020080c8,"ax",%progbits
 	.global Func_020000c8
 	.thumb_func
@@ -131,7 +131,7 @@ Func_020000f4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008148:
-	.4byte 0x00001932
+	.4byte MsgScene65ENo03
 	.section .text.x0200814c,"ax",%progbits
 	.global Func_0200014c
 	.thumb_func
@@ -173,7 +173,7 @@ Func_0200014c:
 .L_02008196:
 	pop {r5, pc}
 .L_02008198:
-	.4byte 0x00001940
+	.4byte MsgScene65ENo11
 	.section .text.x0200819c,"ax",%progbits
 	.global Func_0200019c
 	.thumb_func
@@ -220,7 +220,7 @@ Func_0200019c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020081f8:
-	.4byte 0x00001943
+	.4byte MsgScene65ENo14
 	.section .text.x020081fc,"ax",%progbits
 	.global Func_020001fc
 	.thumb_func
@@ -284,7 +284,7 @@ Func_020001fc:
 .L_02008282:
 	pop {r5, r6, pc}
 .L_02008284:
-	.4byte 0x00001946
+	.4byte MsgScene65ENo17
 	.section .text.x02008288,"ax",%progbits
 	.global Func_02000288
 	.thumb_func
@@ -329,7 +329,7 @@ Func_02000288:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082e0:
-	.4byte 0x00002297
+	.4byte MsgScene65ENo29
 	.section .text.x020082e4,"ax",%progbits
 	.global Func_020002e4
 	.thumb_func
@@ -374,7 +374,7 @@ Func_020002e4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200833c:
-	.4byte 0x00002221
+	.4byte MsgScene65ENo27
 	.section .text.x02008340,"ax",%progbits
 	.global Func_02000340
 	.thumb_func
@@ -557,9 +557,9 @@ Func_02000470:
 	pop {pc}
 	.2byte 0x0000
 .L_020084a8:
-	.4byte 0x0000194f
+	.4byte MsgScene65ENo20
 .L_020084ac:
-	.4byte 0x00001950
+	.4byte MsgScene65ENo21
 	.section .text.x020084b0,"ax",%progbits
 	.global Func_020004b0
 	.thumb_func
@@ -583,7 +583,7 @@ Func_020004b0:
 	pop {pc}
 	.2byte 0x0000
 .L_020084d8:
-	.4byte 0x00001951
+	.4byte MsgScene65ENo22
 	.section .text.x020084dc,"ax",%progbits
 	.global Func_020004dc
 	.thumb_func
@@ -668,7 +668,7 @@ Func_020004dc:
 	bl Func_020005cc
 	pop {r5, pc}
 .L_0200859c:
-	.4byte 0x0000194a
+	.4byte MsgScene65ENo19
 .L_020085a0:
 	.4byte gPartyState
 	.section .rodata.x02008654,"a",%progbits
@@ -947,82 +947,86 @@ Data_02000a20:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001930
+	.4byte MsgScene65ENo01
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001931
+	.4byte MsgScene65ENo02
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_020000f4
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000193c
+	.4byte MsgScene65ENo07
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000193d
+	.4byte MsgScene65ENo08
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_0200014c
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001942
+	.4byte MsgScene65ENo13
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_0200019c
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002194
+	.4byte MsgScene65ENo23
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002195
+	.4byte MsgScene65ENo24
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_02000470
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001935
+	.4byte MsgScene65ENo04
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001936
+	.4byte MsgScene65ENo05
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001937
+	.4byte MsgScene65ENo06
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000193e
+	.4byte MsgScene65ENo09
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000193f
+	.4byte MsgScene65ENo10
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001941
+	.4byte MsgScene65ENo12
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001944
+	.4byte MsgScene65ENo15
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001945
+	.4byte MsgScene65ENo16
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002197
+	.4byte MsgScene65ENo25
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002198
+	.4byte MsgScene65ENo26
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte Func_020004b0
 	.4byte 0x00000173
 	.4byte 0xffff00ce
-	.4byte 0x00403049
+	.2byte MsgScene65ENo35
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cf
-	.4byte 0x0040304a
+	.2byte MsgScene65ENo36
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d0
-	.4byte 0x0040304b
+	.2byte MsgScene65ENo37
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d1
-	.4byte 0x00403057
+	.2byte MsgScene65ENo38
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1054,10 +1058,10 @@ Data_02000bac:
 	.4byte Func_02000288
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002298
+	.4byte MsgScene65ENo30
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002299
+	.4byte MsgScene65ENo31
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_020002e4
@@ -1066,19 +1070,19 @@ Data_02000bac:
 	.4byte Func_020001fc
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001949
+	.4byte MsgScene65ENo18
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000229a
+	.4byte MsgScene65ENo32
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000229b
+	.4byte MsgScene65ENo33
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000229c
+	.4byte MsgScene65ENo34
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002222
+	.4byte MsgScene65ENo28
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte Func_02000078

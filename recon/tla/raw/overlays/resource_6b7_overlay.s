@@ -352,9 +352,41 @@ Func_020002cc:
 	movs r0, #0
 	str r5, [sp, #0]
 	bl UiWindow_Create
+	.ifdef TLA_EDITION_DE
+	movs r1, #9
+	.else
+	.ifdef TLA_EDITION_ES
+	movs r1, #9
+	.else
+	.ifdef TLA_EDITION_FR
+	movs r1, #9
+	.else
+	.ifdef TLA_EDITION_IT
+	movs r1, #9
+	.else
 	movs r1, #8
+	.endif
+	.endif
+	.endif
+	.endif
 	adds r7, r0, #0
+	.ifdef TLA_EDITION_DE
+	movs r2, #18
+	.else
+	.ifdef TLA_EDITION_ES
+	movs r2, #18
+	.else
+	.ifdef TLA_EDITION_FR
+	movs r2, #18
+	.else
+	.ifdef TLA_EDITION_IT
+	movs r2, #18
+	.else
 	movs r2, #13
+	.endif
+	.endif
+	.endif
+	.endif
 	movs r3, #10
 	movs r0, #0
 	str r5, [sp, #0]

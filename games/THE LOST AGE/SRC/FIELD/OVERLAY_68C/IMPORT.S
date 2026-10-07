@@ -161,7 +161,15 @@ Func_020028f4:
 	.global Func_020028fc
 	.thumb_func
 Func_020028fc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_02002904
 	.thumb_func
 Func_02002904:

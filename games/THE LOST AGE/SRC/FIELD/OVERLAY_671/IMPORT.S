@@ -105,7 +105,23 @@ GameFlag_ClearBit:
 	.global Func_0200561c
 	.thumb_func
 Func_0200561c:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08022b80Far
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08022b80Far
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08022b80Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08022b80Far
+	.else
 	overlay_veneer Func_08020038
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02005624
 	.thumb_func
 Func_02005624:

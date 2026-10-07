@@ -21,20 +21,6 @@ Func_0200004c:
 	.4byte Data_02002efc
 .L_02008068:
 	.4byte Data_02002c5c
-	.section .text.x0200806c,"ax",%progbits
-	.global Func_0200006c
-	.thumb_func
-Func_0200006c:
-	ldr r3, [r0, #24]
-	ldr r2, .L_0200807c
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	bx lr
-.L_0200807c:
-	.4byte 0xfffffa00
 	.section .text.x02008080,"ax",%progbits
 	.global Func_02000080
 	.thumb_func
@@ -133,41 +119,8 @@ Func_020000fc:
 	.4byte gPartyState
 .L_02008148:
 	.4byte Func_0200006c
-	.section .text.x0200814c,"ax",%progbits
-	.global Func_0200014c
-	.thumb_func
-Func_0200014c:
-	push {lr}
-	movs r1, #196
-	movs r2, #142
-	lsls r1, r1, #17
-	lsls r2, r2, #18
-	movs r0, #64
-	bl Func_02002b5c
-	movs r0, #64
-	bl Object_GetById
-	movs r3, #0
-	adds r0, #85
-	strb r3, [r0]
-	movs r0, #64
-	bl Object_GetById
-	movs r3, #128
-	lsls r3, r3, #14
-	str r3, [r0, #12]
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008178,"ax",%progbits
-	.global Func_02000178
-	.thumb_func
-Func_02000178:
-	push {lr}
-	movs r0, #64
-	movs r1, #0
-	movs r2, #0
-	bl Func_02002b5c
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008188,"ax",%progbits
+	.balign 4
 	.global Func_02000188
 	.thumb_func
 Func_02000188:
@@ -444,7 +397,7 @@ Func_02000188:
 	bl Func_02002a4c
 	pop {r5, pc}
 .L_02008428:
-	.4byte 0x000025f3
+	.4byte MsgScene682No49
 .L_0200842c:
 	.4byte 0x00013333
 	.section .text.x02008430,"ax",%progbits
@@ -473,7 +426,7 @@ Func_02000430:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008464:
-	.4byte 0x000023f4
+	.4byte MsgScene682No07
 	.section .text.x02008468,"ax",%progbits
 	.global Func_02000468
 	.thumb_func
@@ -508,7 +461,7 @@ Func_02000468:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020084b0:
-	.4byte 0x000025c5
+	.4byte MsgScene682No29
 	.section .text.x020084b4,"ax",%progbits
 	.global Func_020004b4
 	.thumb_func
@@ -577,40 +530,9 @@ Func_020004b4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200854c:
-	.4byte 0x000025c8
+	.4byte MsgScene682No30
 .L_02008550:
-	.4byte 0x000023f0
-	.section .text.x02008554,"ax",%progbits
-	.global Func_02000554
-	.thumb_func
-Func_02000554:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #114
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008578
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #114
-	bl GameFlag_SetBit
-	ldr r0, .L_02008588
-	bl Func_02002adc
-	b .L_0200857e
-.L_02008578:
-	ldr r0, .L_0200858c
-	bl Func_02002adc
-.L_0200857e:
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_02002af4
-	pop {r5, pc}
-.L_02008588:
-	.4byte 0x000025cf
-.L_0200858c:
-	.4byte 0x000025d0
+	.4byte MsgScene682No05
 	.section .text.x02008590,"ax",%progbits
 	.global Func_02000590
 	.thumb_func
@@ -645,31 +567,7 @@ Func_02000590:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020085d8:
-	.4byte 0x000023f8
-	.section .text.x020085dc,"ax",%progbits
-	.global Func_020005dc
-	.thumb_func
-Func_020005dc:
-	push {r5, lr}
-	adds r5, r0, #0
-	bl Func_02002a44
-	movs r0, #0
-	bl Func_02002b64
-	movs r1, #160
-	movs r2, #1
-	adds r0, r5, #0
-	adds r1, #255
-	negs r2, r2
-	bl Func_02002a5c
-	cmp r0, #0
-	bne .L_02008606
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #116
-	bl GameFlag_ClearBit
-.L_02008606:
-	bl Func_02002a4c
-	pop {r5, pc}
+	.4byte MsgScene682No11
 	.section .text.x0200860c,"ax",%progbits
 	.global Func_0200060c
 	.thumb_func
@@ -697,6 +595,428 @@ Func_0200060c:
 	.global Func_02000638
 	.thumb_func
 Func_02000638:
+	.ifdef TLA_EDITION_JA
+	push {lr}
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #34
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200864a
+	b .L_ja_02008a4e
+.L_ja_0200864a:
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #117
+	bl GameFlag_SetBit
+	bl Func_02002a44
+	movs r0, #0
+	bl Func_02002b64
+	ldr r0, .L_ja_020086fc
+	bl Func_02002adc
+	movs r3, #192
+	movs r1, #157
+	lsls r3, r3, #8
+	movs r0, #29
+	lsls r1, r1, #17
+	ldr r2, .L_ja_02008700
+	bl Func_02002aa4
+	movs r0, #29
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r1, #157
+	movs r2, #145
+	movs r0, #4
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #128
+	movs r2, #0
+	lsls r1, r1, #7
+	movs r0, #4
+	bl ObjectMotion_ArmCallback
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #1
+	movs r0, #29
+	bl Object_AttachWorkTargetToObject
+	bl Func_02002b3c
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #157
+	movs r2, #156
+	movs r0, #29
+	lsls r1, r1, #1
+	lsls r2, r2, #2
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #2
+	adds r1, #255
+	movs r2, #30
+	movs r0, #29
+	bl Func_02002b1c
+	movs r1, #0
+	movs r0, #29
+	bl UiText_OpenMessageAtObject
+	movs r0, #4
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_ja_02008704
+	movs r2, #5
+	movs r0, #29
+	movs r1, #0
+	bl Func_02002aec
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2, #0]
+	adds r3, #1
+	strh r3, [r2, #0]
+	b .L_ja_02008720
+.L_ja_020086fc:
+	.4byte 0x000030b7
+.L_ja_02008700:
+	.4byte 0x02a70000
+.L_ja_02008704:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2, #0]
+	movs r0, #29
+	adds r3, #1
+	strh r3, [r2, #0]
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+.L_ja_02008720:
+	movs r1, #10
+	adds r1, #255
+	movs r2, #30
+	movs r0, #29
+	bl Func_02002b1c
+	movs r3, #128
+	lsls r3, r3, #7
+	movs r1, #16
+	movs r2, #0
+	movs r0, #30
+	bl Func_02002b74
+	movs r0, #30
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #2
+	adds r1, #255
+	movs r2, #30
+	movs r0, #30
+	bl Func_02002b1c
+	movs r2, #5
+	movs r0, #30
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #2
+	movs r0, #29
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #5
+	bl Battle_WaitMode0
+	movs r2, #5
+	movs r0, #29
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #3
+	movs r0, #30
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #128
+	lsls r1, r1, #7
+	movs r0, #29
+	bl Func_02002b04
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #192
+	lsls r1, r1, #8
+	movs r0, #29
+	bl Func_02002b04
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #128
+	lsls r1, r1, #7
+	movs r0, #29
+	bl Func_02002b04
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r1, #192
+	movs r0, #29
+	lsls r1, r1, #8
+	bl Func_02002b04
+	movs r0, #29
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r1, #4
+	movs r2, #0
+	movs r0, #30
+	bl Object_LinkPair
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #128
+	movs r0, #30
+	lsls r1, r1, #7
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #128
+	movs r2, #0
+	lsls r1, r1, #7
+	movs r0, #4
+	bl ObjectMotion_ArmCallback
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r0, #30
+	movs r1, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #30
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r1, #8
+	adds r1, #255
+	movs r2, #30
+	movs r0, #29
+	bl Func_02002b1c
+	movs r0, #29
+	movs r1, #2
+	movs r2, #0
+	bl ObjectMotion_Launch
+	movs r0, #29
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r1, #2
+	adds r1, #255
+	movs r2, #30
+	movs r0, #30
+	bl Func_02002b1c
+	movs r2, #5
+	movs r0, #30
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #2
+	movs r0, #29
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #5
+	bl Battle_WaitMode0
+	movs r0, #29
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r0, #29
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r1, #132
+	lsls r1, r1, #1
+	movs r2, #30
+	movs r0, #30
+	bl Func_02002b1c
+	movs r0, #30
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r2, #20
+	movs r0, #29
+	bl Func_02002b1c
+	movs r2, #5
+	movs r0, #29
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #3
+	movs r0, #30
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r0, #30
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r2, #5
+	movs r0, #29
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #128
+	lsls r1, r1, #7
+	movs r0, #29
+	bl Func_02002b04
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #132
+	lsls r1, r1, #1
+	movs r2, #30
+	movs r0, #30
+	bl Func_02002b1c
+	movs r2, #5
+	movs r0, #30
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #192
+	lsls r1, r1, #8
+	movs r0, #29
+	bl Func_02002b04
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #132
+	lsls r1, r1, #1
+	movs r2, #30
+	movs r0, #29
+	bl Func_02002b1c
+	movs r2, #5
+	movs r0, #29
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #3
+	movs r0, #30
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #2
+	movs r0, #29
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #5
+	bl Battle_WaitMode0
+	movs r0, #29
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	bl Func_0200060c
+	movs r1, #4
+	movs r2, #0
+	movs r0, #30
+	bl Object_LinkPair
+	movs r0, #40
+	bl Battle_WaitMode0
+	movs r1, #128
+	movs r0, #30
+	lsls r1, r1, #7
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #128
+	lsls r1, r1, #7
+	movs r2, #0
+	movs r0, #4
+	bl ObjectMotion_ArmCallback
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r2, #5
+	movs r0, #30
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #3
+	movs r0, #29
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r0, #29
+	movs r1, #0
+	movs r2, #5
+	bl Func_02002aec
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #30
+	movs r0, #30
+	bl Func_02002b1c
+	movs r2, #5
+	movs r0, #30
+	movs r1, #0
+	bl Func_02002aec
+	movs r1, #3
+	movs r0, #29
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r2, #5
+	movs r0, #29
+	movs r1, #0
+	bl Func_02002aec
+	movs r0, #4
+	movs r1, #3
+	bl Object_SetModeById
+	movs r1, #3
+	movs r0, #30
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r1, #3
+	movs r0, #29
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r0, #4
+	movs r1, #1
+	bl Object_AttachWorkTargetToObject
+	movs r2, #153
+	lsls r2, r2, #8
+	movs r0, #29
+	ldr r1, .L_ja_02008a50
+	adds r2, #153
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #0
+	movs r2, #100
+	movs r0, #29
+	bl ObjectMotion_OffsetPositionAndReset
+	movs r0, #10
+	bl Battle_WaitMode0
+	movs r2, #0
+	movs r1, #30
+	movs r0, #4
+	bl Object_LinkPair
+	movs r0, #30
+	bl Battle_WaitMode0
+	movs r0, #30
+	movs r1, #3
+	bl Object_SetModeById
+	movs r1, #3
+	movs r0, #4
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #30
+	bl Battle_WaitMode0
+	movs r0, #30
+	movs r1, #2
+	bl Object_SetModeById
+	movs r0, #4
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_ja_02008a30
+	movs r3, #10
+	ldrsh r1, [r0, r3]
+	movs r3, #18
+	ldrsh r2, [r0, r3]
+	movs r0, #30
+	bl ObjectMotion_ResetAndSetPosition
+.L_ja_02008a30:
+	movs r0, #30
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r0, #30
+	movs r1, #0
+	movs r2, #0
+	bl Func_02002a9c
+	movs r0, #29
+	movs r1, #0
+	movs r2, #0
+	bl Func_02002a9c
+	bl Func_02002a4c
+.L_ja_02008a4e:
+	pop {pc}
+.L_ja_02008a50:
+	.4byte 0x00013333
+	.else
 	push {lr}
 	movs r0, #128
 	lsls r0, r0, #4
@@ -785,7 +1105,7 @@ Func_02000638:
 	strh r3, [r2]
 	b .L_0200872c
 .L_02008708:
-	.4byte 0x00002f82
+	.4byte MsgScene682No52
 .L_0200870c:
 	.4byte 0x02a70000
 .L_02008710:
@@ -1123,6 +1443,7 @@ Func_02000638:
 	pop {pc}
 .L_02008a5c:
 	.4byte 0x00013333
+	.endif
 	.section .text.x02008a60,"ax",%progbits
 	.global Func_02000a60
 	.thumb_func
@@ -1327,38 +1648,6 @@ Func_02000b18:
 	.2byte 0x0000
 .L_02008c00:
 	.4byte Func_02000a80
-	.section .text.x02008c04,"ax",%progbits
-	.global Func_02000c04
-	.thumb_func
-Func_02000c04:
-	push {r5, r6, lr}
-	movs r0, #136
-	lsls r0, r0, #4
-	adds r0, #255
-	sub sp, #8
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008c3a
-	movs r5, #16
-	movs r6, #23
-	movs r0, #11
-	movs r1, #51
-	movs r2, #5
-	movs r3, #4
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl Func_02002a0c
-	movs r0, #11
-	movs r1, #51
-	movs r2, #5
-	movs r3, #6
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl Func_02002a04
-.L_02008c3a:
-	movs r0, #0
-	add sp, #8
-	pop {r5, r6, pc}
 	.section .text.x02008c40,"ax",%progbits
 	.global Func_02000c40
 	.thumb_func
@@ -1573,31 +1862,6 @@ Func_02000d4c:
 	mov r9, r5
 	mov r10, r6
 	pop {r5, r6, r7, pc}
-	.section .text.x02008e04,"ax",%progbits
-	.global Func_02000e04
-	.thumb_func
-Func_02000e04:
-	push {r5, r6, lr}
-	adds r5, r1, #0
-	bl ObjectTable_ReadActiveValue
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl ObjectTable_ReadActiveValue
-	adds r5, r0, #0
-	adds r0, r6, #0
-	bl UiWork_FinalizeEntityMatchingLocalizedId
-	adds r0, r5, #0
-	bl UiWork_FinalizeEntityMatchingLocalizedId
-	pop {r5, r6, pc}
-	.section .text.x02008e24,"ax",%progbits
-	.global Func_02000e24
-	.thumb_func
-Func_02000e24:
-	push {lr}
-	movs r0, #151
-	lsls r0, r0, #4
-	bl GameFlag_SetBit
-	pop {pc}
 	.section .text.x02008e30,"ax",%progbits
 	.global Func_02000e30
 	.thumb_func
@@ -1940,7 +2204,7 @@ Func_02000e30:
 	b .L_020091a2
 	.2byte 0x0000
 .L_02009160:
-	.4byte 0x0000243b
+	.4byte MsgScene682No25
 .L_02009164:
 	movs r0, #40
 	bl Battle_WaitMode0
@@ -4891,7 +5155,8 @@ Data_0200320c:
 	.4byte Func_020000fc
 	.4byte 0x0000c403
 	.4byte 0xffff0018
-	.4byte 0x004024c0
+	.2byte MsgScene682No53
+	.2byte 0x0040
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_0200014c
@@ -4909,76 +5174,76 @@ Data_0200320c:
 	.4byte Func_02000e30
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000023ec
+	.4byte MsgScene682No01
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000023ed
+	.4byte MsgScene682No02
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000023ee
+	.4byte MsgScene682No03
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000023ef
+	.4byte MsgScene682No04
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_020004b4
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000023f3
+	.4byte MsgScene682No06
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_02000430
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000023f5
+	.4byte MsgScene682No08
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000023f6
+	.4byte MsgScene682No09
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x000023f7
+	.4byte MsgScene682No10
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_02000590
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000023fb
+	.4byte MsgScene682No12
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000023fc
+	.4byte MsgScene682No13
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000023fd
+	.4byte MsgScene682No14
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000023fe
+	.4byte MsgScene682No15
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000023ff
+	.4byte MsgScene682No16
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002400
+	.4byte MsgScene682No17
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002401
+	.4byte MsgScene682No18
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002402
+	.4byte MsgScene682No19
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002403
+	.4byte MsgScene682No20
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002404
+	.4byte MsgScene682No21
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002405
+	.4byte MsgScene682No22
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00002423
+	.4byte MsgScene682No23
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0000242c
+	.4byte MsgScene682No24
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte Func_020005dc
@@ -5022,7 +5287,8 @@ Data_0200b410:
 	.4byte Func_020000fc
 	.4byte 0x0000c403
 	.4byte 0xffff0018
-	.4byte 0x004024c0
+	.2byte MsgScene682No53
+	.2byte 0x0040
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_0200014c
@@ -5043,13 +5309,13 @@ Data_0200b410:
 	.4byte Func_02000188
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000025c2
+	.4byte MsgScene682No26
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000025c3
+	.4byte MsgScene682No27
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000025c4
+	.4byte MsgScene682No28
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_02000468
@@ -5058,61 +5324,61 @@ Data_0200b410:
 	.4byte Func_020004b4
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000025cb
+	.4byte MsgScene682No31
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000025cc
+	.4byte MsgScene682No32
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000025cd
+	.4byte MsgScene682No33
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000025ce
+	.4byte MsgScene682No34
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte Func_02000554
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x000025d1
+	.4byte MsgScene682No37
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000025d2
+	.4byte MsgScene682No38
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000025d3
+	.4byte MsgScene682No39
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000025d4
+	.4byte MsgScene682No40
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000025d5
+	.4byte MsgScene682No41
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000025d6
+	.4byte MsgScene682No42
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000025d7
+	.4byte MsgScene682No43
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000025d8
+	.4byte MsgScene682No44
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000025d9
+	.4byte MsgScene682No45
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000025da
+	.4byte MsgScene682No46
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000025db
+	.4byte MsgScene682No47
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000025dc
+	.4byte MsgScene682No48
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x0000268c
+	.4byte MsgScene682No50
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0000269c
+	.4byte MsgScene682No51
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte Func_020005dc

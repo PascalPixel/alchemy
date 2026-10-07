@@ -1,4 +1,7 @@
+/* Near miss: listing 82 instructions, draft 82, common 77, differ 10; the rest differs in instruction order. */
 #include "TYPES.H"
+#include "INPUT.H"
+#include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
@@ -34,9 +37,9 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     void *state;
     s32 mode;
 
-    state = gBattleWork;
-    mode = gGameState[0x22B];
-    if (gGameState[0x22B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
+    state = Ram_HeapSlots->battle_work;
+    mode = gGameState[0x24B];
+    if (gGameState[0x24B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
         result = 0;
     }
     if (result == 0) {
@@ -54,8 +57,8 @@ active:
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {
             WaitFrames(1);
-        } while ((gKeyState & (KEY_A | KEY_B)) == 0 &&
-                 *(s32 *)((u8 *)gLinkCountdownWork + 0x4C) != 0);
+        } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&
+                 *(s32 *)((u8 *)((void **)Ram_HeapSlots)[57] + 0x4C) != 0);
         UiWork_Finalize(work, 1);
     }
     return result;

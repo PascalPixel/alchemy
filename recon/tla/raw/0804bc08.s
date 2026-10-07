@@ -485,7 +485,7 @@ Func_0804bc08:
 .L_0804bfc4:
 	.4byte gLinkPeerSignatures
 .L_0804bfc8:
-	.4byte Func_0804b6a0
+	.4byte UpdateLinkSessionCountdown
 .L_0804bfcc:
 	.4byte gPartyState
 .L_0804bfd0:
@@ -2061,7 +2061,7 @@ Func_0804bc08:
 .L_0804cc80:
 	.4byte Data_02003a74
 .L_0804cc84:
-	.4byte Func_0804b6a0
+	.4byte UpdateLinkSessionCountdown
 .L_0804cc88:
 	ldr r3, [r2, #80]
 	cmp r3, #0

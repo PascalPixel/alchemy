@@ -164,3 +164,5 @@ Tile_Decompress4bppLoop:
 .L_08038d88:
 	pop	{r5, r6}
 	bx	lr
+	.global Tile_Decompress4bppEnd
+Tile_Decompress4bppEnd:

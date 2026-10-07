@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Owner_GetLevelThreshold
 	.thumb_func
 Owner_GetLevelThreshold:

@@ -423,7 +423,7 @@ extern u8 UiIcon_PsynergyIconPointers[];
 void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
-void Func_0803dd24(void);
+void Resource_ClearOwnerListAndCounters(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift);
 s32 ItemIcon_Compose(s32, s32);
 void OwnerAction_AddFar(void);

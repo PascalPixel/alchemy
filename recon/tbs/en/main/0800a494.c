@@ -27,6 +27,15 @@
    early-clobbered or neither 112 each; an empty volatile asm after the
    or inside MulQ16 98 (stack slots and registers move throughout);
    velocity_x = velocity_x + MulQ16 (24), MulQ16 + velocity_x (28).
+   The bounce, diagnosed in the lreg dump: combine folds the load of
+   vertical.bounce into the smull asm as a memory input, so reload loads
+   it into r1 and global-alloc gives velocity_y r3; the native's bounce is
+   a block-local pseudo that local-alloc gives r3 first, leaving
+   velocity_y r2. More trials: MulQ16(velocity_y, bounce) 24 (smull r2,
+   r3, r3, r1); velocity_y tested through vz 63; z loaded first 72; y, x,
+   z 26; wait = wait - 1 24; the bounce through ratio first 24 (still
+   folded); alchemy permute --arm from 24, 5 minutes,
+   2 jobs: nothing below 24.
    alchemy diff --arm --rtl fails (agbcc_arm's cpp0 refuses
    -fsched-verbose=5); the dumps come from agbcc_arm -da on the .i.
    Earlier sessions follow.

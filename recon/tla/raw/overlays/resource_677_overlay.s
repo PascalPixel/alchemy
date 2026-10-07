@@ -115,7 +115,7 @@ Func_02000244:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008298:
-	.4byte 0x0000220a
+	.4byte MsgDoYouLikeChildrenS
 	.section .text.x0200829c,"ax",%progbits
 	.global Func_0200029c
 	.thumb_func
@@ -162,7 +162,7 @@ Func_0200029c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082f8:
-	.4byte 0x00002217
+	.4byte MsgIfTheBlacksmithIsnT
 	.section .text.x020082fc,"ax",%progbits
 	.global Func_020002fc
 	.thumb_func
@@ -209,7 +209,7 @@ Func_020002fc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008358:
-	.4byte 0x00002219
+	.4byte MsgIfYouWantPlainOld
 	.section .text.x0200835c,"ax",%progbits
 	.global Func_0200035c
 	.thumb_func
@@ -256,7 +256,7 @@ Func_0200035c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020083b8:
-	.4byte 0x0000221b
+	.4byte MsgIfYouReLookingFor
 	.section .text.x020083bc,"ax",%progbits
 	.global Func_020003bc
 	.thumb_func
@@ -306,7 +306,7 @@ Func_020003bc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008420:
-	.4byte 0x0000221d
+	.4byte MsgItSABitStrange
 	.section .text.x02008424,"ax",%progbits
 	.global Func_02000424
 	.thumb_func
@@ -351,7 +351,7 @@ Func_02000424:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200847c:
-	.4byte 0x00002221
+	.4byte MsgEvenOutInTheseFar
 	.section .text.x02008480,"ax",%progbits
 	.global Func_02000480
 	.thumb_func
@@ -392,7 +392,7 @@ Func_02000480:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020084dc:
-	.4byte 0x00002223
+	.4byte MsgAhSoYouWantMe
 	.section .text.x020084e0,"ax",%progbits
 	.global Func_020004e0
 	.thumb_func
@@ -681,13 +681,13 @@ Func_02000524:
 .L_02008766:
 	pop {r5, pc}
 .L_02008768:
-	.4byte 0x00001307
+	.4byte MsgAhSoYouReLooking
 .L_0200876c:
-	.4byte 0x0000130d
+	.4byte MsgICanTWaitTo
 .L_02008770:
-	.4byte 0x0000130e
+	.4byte MsgMyWifeHasTheItem
 .L_02008774:
-	.4byte 0x0000130a
+	.4byte MsgYouWantMeToMake
 .L_02008778:
 	.4byte gPartyState
 	.section .text.x0200877c,"ax",%progbits
@@ -791,15 +791,15 @@ Func_0200077c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008858:
-	.4byte 0x0000130f
+	.4byte MsgThisThisIsTheBlacksmith
 .L_0200885c:
-	.4byte 0x00001310
+	.4byte MsgItTakesOurSunshineA
 .L_02008860:
-	.4byte 0x00001311
+	.4byte MsgHereSTheItemYou
 .L_02008864:
 	.4byte gPartyState
 .L_02008868:
-	.4byte 0x00001316
+	.4byte MsgManSunshineWouldBeRich
 	.section .text.x0200886c,"ax",%progbits
 	.global Func_0200086c
 	.thumb_func
@@ -1057,7 +1057,23 @@ Data_02000ca4:
 	.4byte 0x00000001
 	.4byte 0x00980000
 	.4byte 0x00000000
+	.ifdef TLA_EDITION_DE
+	.4byte 0x008c0000
+	.else
+	.ifdef TLA_EDITION_ES
+	.4byte 0x008c0000
+	.else
+	.ifdef TLA_EDITION_FR
+	.4byte 0x008c0000
+	.else
+	.ifdef TLA_EDITION_IT
+	.4byte 0x008c0000
+	.else
 	.4byte 0x00880000
+	.endif
+	.endif
+	.endif
+	.endif
 	.4byte 0x00016000
 	.4byte 0xffff0074
 	.4byte .L_02008a98
@@ -1202,22 +1218,22 @@ Data_02000ea8:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002209
+	.4byte MsgYeppHadThreeDifferentSongs
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02000244
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000220f
+	.4byte MsgItSBeenReallyDry
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002210
+	.4byte MsgWeReSupposedToBe
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_020003bc
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000221e
+	.4byte MsgTaopoSwampHasDriedUp
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_02000524
@@ -1232,22 +1248,22 @@ Data_02000ea8:
 	.4byte Func_02000524
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000220d
+	.4byte MsgTheSongsAreSupposedTo
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000220e
+	.4byte MsgIWonderWhyYeppWanted
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002211
+	.4byte MsgWhenTaopoSwampDriesUp
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002212
+	.4byte MsgICanTStandThis
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000221f
+	.4byte MsgYallamWasAlwaysSuchA
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002220
+	.4byte MsgThereWerenTALot
 	.4byte 0x00008d15
 	.4byte 0xffff000e
 	.4byte Func_0200008c
@@ -1262,7 +1278,8 @@ Data_02000ea8:
 	.4byte Func_0200008c
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403056
+	.2byte MsgTheSteelRestingInThe
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1279,10 +1296,10 @@ Data_02000fe0:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002213
+	.4byte MsgSunshineHasStartedComplainingThat
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002214
+	.4byte MsgOurBlacksmithSunshineMakesThe
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_0200029c
@@ -1303,19 +1320,19 @@ Data_02000fe0:
 	.4byte Func_0200035c
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002215
+	.4byte MsgWhatKindOfPersonOnly
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002216
+	.4byte MsgSunshineSALittleEccentric
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002218
+	.4byte MsgIfSunshineSetHisMind
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000221a
+	.4byte MsgIShouldnTTellHim
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000221c
+	.4byte MsgWhatDoesSunshineWantIn
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte Func_0200018c

@@ -1921,7 +1921,7 @@ Func_02001048:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020091a4:
-	.4byte 0x000022fa
+	.4byte MsgWhoAreYouHowDid
 .L_020091a8:
 	.4byte Data_02005610
 .L_020091ac:
@@ -2032,13 +2032,13 @@ Func_020011c8:
 	pop {pc}
 	.2byte 0x0000
 .L_02009298:
-	.4byte 0x000023eb
+	.4byte MsgIMDoneForThat
 .L_0200929c:
-	.4byte 0x00002308
+	.4byte MsgTheSerpentIsStillToo
 .L_020092a0:
 	.4byte Data_02005610
 .L_020092a4:
-	.4byte 0x000022fe
+	.4byte MsgIfYouUnderstandThenGet
 .L_020092a8:
 	.4byte gPartyState
 	.section .text.x0200936c,"ax",%progbits
@@ -2981,7 +2981,7 @@ Func_020019cc:
 .L_02009b50:
 	.4byte gPartyState
 .L_02009b54:
-	.4byte 0x000023e5
+	.4byte MsgSearchedTheSlateThereIs
 .L_02009b58:
 	movs r5, #128
 	lsls r5, r5, #19
@@ -3433,7 +3433,7 @@ Func_02001ebc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009f5c:
-	.4byte 0x00002313
+	.4byte MsgTheSerpentWithItsEyes
 .L_02009f60:
 	.4byte gPartyState
 .L_02009f64:
@@ -3475,7 +3475,7 @@ Func_02001fd8:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200a01c:
-	.4byte 0x000022f5
+	.4byte MsgCheckedTheAltar
 	.section .text.x0200a020,"ax",%progbits
 	.global Func_02002020
 	.thumb_func
@@ -3716,7 +3716,7 @@ Func_02002020:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a254:
-	.4byte 0x000022f8
+	.4byte MsgPlacedADollOnThe
 .L_0200a258:
 	.4byte gPartyState
 	.section .text.x0200a25c,"ax",%progbits
@@ -3976,7 +3976,7 @@ Func_0200225c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a4b0:
-	.4byte 0x000022f8
+	.4byte MsgPlacedADollOnThe
 .L_0200a4b4:
 	.4byte gPartyState
 	.section .text.x0200a4b8,"ax",%progbits
@@ -4238,7 +4238,7 @@ Func_020024b8:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_0200a710:
-	.4byte 0x000022f8
+	.4byte MsgPlacedADollOnThe
 .L_0200a714:
 	.4byte gPartyState
 	.section .text.x0200a718,"ax",%progbits
@@ -4498,7 +4498,7 @@ Func_02002718:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_0200a96c:
-	.4byte 0x000022f8
+	.4byte MsgPlacedADollOnThe
 .L_0200a970:
 	.4byte gPartyState
 	.section .text.x0200a974,"ax",%progbits
@@ -5973,8 +5973,7 @@ Func_02002f64:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
-	.2byte 0x2303
-	.2byte 0x0000
+	.4byte MsgAtLastTheSerpentHas
 	.2byte 0x0000
 	.2byte 0x0159
 	.2byte 0x0000
@@ -6651,8 +6650,7 @@ Func_02002f64:
 	.2byte 0xf9f2
 	.2byte 0xe004
 	.2byte 0x0000
-	.2byte 0x230c
-	.2byte 0x0000
+	.4byte MsgItLooksLikeTheDragon
 	.2byte 0x0000
 	.2byte 0xffe0
 	.2byte 0x200b
@@ -7350,10 +7348,8 @@ Func_02002f64:
 	adds r3, r3, r1
 	str r3, [r6, #12]
 	b .L_0200c0a2
-	.2byte 0x2302
-	.2byte 0x0000
-	.2byte 0x230b
-	.2byte 0x0000
+	.4byte MsgYouYouCannotFightThe
+	.4byte MsgLikeISaidTheSerpent
 .L_0200c084:
 	.4byte 0x000000b2
 .L_0200c088:
@@ -10038,7 +10034,8 @@ Data_02005f30:
 	.4byte Func_020019cc
 	.4byte 0x00000053
 	.4byte 0xffff0032
-	.4byte 0x00402301
+	.2byte MsgTheCupsAreOverflowingWith
+	.2byte 0x0040
 	.4byte 0x00000003
 	.4byte 0xffff0037
 	.4byte Func_02001ebc
@@ -10070,10 +10067,12 @@ Data_02005fcc:
 	.4byte Func_020019cc
 	.4byte 0x00000053
 	.4byte 0xffff0032
-	.4byte 0x00402301
+	.2byte MsgTheCupsAreOverflowingWith
+	.2byte 0x0040
 	.4byte 0x00000003
 	.4byte 0xffff0037
-	.4byte 0x00402313
+	.2byte MsgTheSerpentWithItsEyes
+	.2byte 0x0040
 	.4byte 0x00000053
 	.4byte 0x0e41004d
 	.4byte Func_02001fa0

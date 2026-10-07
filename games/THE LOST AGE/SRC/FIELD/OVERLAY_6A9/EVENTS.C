@@ -6,6 +6,13 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+void Func_02001094();
+void Func_020010ac();
+void Func_020010dc();
+void Func_020010e4();
+void Func_0200113c();
+void GameFlag_SetBit();
+
 void Battle_WaitMode0();
 void Func_02000d68();
 void ObjectMotion_CommitPositionAndActivate();
@@ -61,5 +68,17 @@ void Func_02000ea0(void)
     Call6((void (*)())Func_02001094, 30, 110, 48, 110, 9, 13);
     Call6((void (*)())Func_020010ac, 52, 110, 1, 1, 52, 111);
 L_02008eee:
+    return;
+}
+
+void Func_02000ef4(void)
+{
+    ((void (*)())Func_020010dc)();
+    Call1((void (*)())Func_0200113c, 0);
+    Call6((void (*)())Func_020010ac, 31, 43, 9, 11, 48, 47);
+    Call6((void (*)())Func_02001094, 30, 110, 48, 110, 9, 13);
+    Call6((void (*)())Func_020010ac, 52, 110, 1, 1, 52, 111);
+    Call1((void (*)())GameFlag_SetBit, 0x917);
+    ((void (*)())Func_020010e4)();
     return;
 }

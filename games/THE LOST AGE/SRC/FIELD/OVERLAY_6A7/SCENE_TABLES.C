@@ -15,6 +15,15 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+
+
+s32 Func_02000038(s32 arg0)
+{
+    *(u8 *)((u8 *)*(s32 *)((u8 *)arg0 + 80) + 26) = 0;
+    *(u8 *)((u8 *)(arg0 + 34) + 0) = 1;
+    return 1;
+}
+
 void Battle_WaitMode0();
 void Func_02000a30();
 void Func_02000a38();

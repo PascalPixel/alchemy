@@ -35,7 +35,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/EVENTS2.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x02008d68)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A9/EVENTS.o"(.text)
-        "*/resource_6a9_overlay.o"(.text.x02008ef4)
         "*/resource_6a9_overlay.o"(.text.x02008f50)
         "*/resource_6a9_overlay.o"(.text.x02008f98)
         "*/resource_6a9_overlay.o"(.text.x02008fe4)

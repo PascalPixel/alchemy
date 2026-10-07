@@ -1,17 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r2, [r0, #80]
-	movs r3, #0
-	strb r3, [r2, #26]
-	adds r0, #34
-	movs r3, #1
-	strb r3, [r0]
-	movs r0, #1
-	bx lr
 	.section .text.x020081d8,"ax",%progbits
 	.balign 4
 	.global Func_020001d8

@@ -3,7 +3,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A7/ENTRY.o"(.text)
-        "*/resource_6a7_overlay.o"(.text.x02008038)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A7/SCENE_TABLES.o"(.text)
         "*/resource_6a7_overlay.o"(.text.x020081d8)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A7/SCENE_EVENTS.o"(.text)

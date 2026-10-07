@@ -191,24 +191,8 @@ Func_02000340:
 	.4byte 0x00000039
 .L_0200844c:
 	.4byte 0x0000003a
-	.section .text.x02008454,"ax",%progbits
-	.global Func_02000454
-	.thumb_func
-Func_02000454:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r0, #48
-	adds r2, #93
-	str r2, [r3]
-	adds r0, #255
-	bl GameFlag_ClearBit
-	pop {pc}
 	.section .text.x02008470,"ax",%progbits
+	.balign 4
 	.global Func_02000470
 	.thumb_func
 Func_02000470:

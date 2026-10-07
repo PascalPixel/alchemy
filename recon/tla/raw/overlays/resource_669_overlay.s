@@ -40,87 +40,8 @@ Func_02000058:
 .L_02008088:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x0200808c,"ax",%progbits
-	.global Func_0200008c
-	.thumb_func
-Func_0200008c:
-	push {r5, r6, lr}
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #1
-	bl GameFlag_SetBit
-	ldr r5, .L_02008124
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r5, r5, r3
-	ldr r0, [r5]
-	bl Object_GetById
-	movs r6, #192
-	lsls r6, r6, #11
-	str r6, [r0, #40]
-	movs r1, #128
-	movs r2, #128
-	ldr r0, [r5]
-	lsls r1, r1, #10
-	lsls r2, r2, #9
-	bl ObjectMotion_SetSpeedParameters
-	movs r2, #244
-	ldr r0, [r5]
-	movs r1, #136
-	lsls r2, r2, #1
-	bl ObjectMotion_ResetAndSetPositionInMode2
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r2, #236
-	movs r0, #15
-	movs r1, #120
-	lsls r2, r2, #1
-	bl ObjectMotion_ResetAndSetPosition
-	movs r2, #220
-	adds r2, #255
-	movs r1, #136
-	movs r0, #14
-	bl ObjectMotion_SetPositionAndCommit
-	movs r0, #15
-	bl Object_GetById
-	str r6, [r0, #40]
-	movs r0, #156
-	lsls r0, r0, #1
-	adds r0, #255
-	bl Func_020032a8
-	ldr r0, [r5]
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	ldr r0, [r5]
-	movs r1, #1
-	bl Object_SetModeById
-	movs r1, #192
-	lsls r1, r1, #8
-	movs r2, #0
-	ldr r0, [r5]
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #15
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r0, #159
-	bl Func_020032a8
-	pop {r5, r6, pc}
-.L_02008124:
-	.4byte gPartyState
-	.section .text.x02008128,"ax",%progbits
-	.global Func_02000128
-	.thumb_func
-Func_02000128:
-	push {lr}
-	movs r2, #144
-	movs r1, #202
-	lsls r2, r2, #4
-	adds r1, #255
-	adds r2, #2
-	bl Func_02003148
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x0200813c,"ax",%progbits
+	.balign 4
 	.global Func_0200013c
 	.thumb_func
 Func_0200013c:

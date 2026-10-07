@@ -1637,51 +1637,8 @@ Func_02000d68:
 	add sp, #8
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x02008ef4,"ax",%progbits
-	.balign 4
-	.global Func_02000ef4
-	.thumb_func
-Func_02000ef4:
-	push {lr}
-	sub sp, #8
-	bl Func_020010dc
-	movs r0, #0
-	bl Func_0200113c
-	movs r3, #48
-	movs r2, #47
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #31
-	movs r1, #43
-	movs r2, #9
-	movs r3, #11
-	bl Func_020010ac
-	movs r3, #9
-	movs r2, #13
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #30
-	movs r1, #110
-	movs r2, #48
-	movs r3, #110
-	bl Func_02001094
-	movs r3, #52
-	movs r2, #111
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r1, #110
-	movs r2, #1
-	movs r3, #1
-	movs r0, #52
-	bl Func_020010ac
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #23
-	bl GameFlag_SetBit
-	bl Func_020010e4
-	add sp, #8
-	pop {pc}
 	.section .text.x02008f50,"ax",%progbits
+	.balign 4
 	.global Func_02000f50
 	.thumb_func
 Func_02000f50:

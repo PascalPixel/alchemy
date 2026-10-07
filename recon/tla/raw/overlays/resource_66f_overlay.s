@@ -1289,7 +1289,7 @@ Func_02000960:
 	pop {pc}
 	.2byte 0x0000
 .L_02008ac8:
-	.4byte 0x00001d64
+	.4byte MsgIsTheWay
 .L_02008acc:
 	.4byte gPartyState
 .L_02008ad0:
@@ -1573,7 +1573,7 @@ Func_02000af0:
 .L_02008d78:
 	.4byte 0x01150000
 .L_02008d7c:
-	.4byte 0x00001d71
+	.4byte MsgHereTheIntruder
 	.section .text.x02008d80,"ax",%progbits
 	.global Func_02000d80
 	.thumb_func
@@ -1650,7 +1650,7 @@ Func_02000da8:
 .L_02008e20:
 	.4byte gPartyState
 .L_02008e24:
-	.4byte 0x00001d6f
+	.4byte MsgGuardsAnIntruder
 	.section .text.x02008e28,"ax",%progbits
 	.global Func_02000e28
 	.thumb_func
@@ -1704,7 +1704,7 @@ Func_02000e28:
 .L_02008ea0:
 	.4byte gPartyState
 .L_02008ea4:
-	.4byte 0x00001d78
+	.4byte MsgGrrrrrRrrruffRrufff
 	.section .text.x02008ea8,"ax",%progbits
 	.global Func_02000ea8
 	.thumb_func
@@ -2598,19 +2598,19 @@ Data_02001ae4:
 	.4byte Func_020001a0
 	.4byte 0x00000000
 	.4byte 0x1202000a
-	.4byte 0x00001d7b
+	.4byte MsgSniffSniffLick
 	.4byte 0x00008d15
 	.4byte 0x1202000a
-	.4byte 0x00001d7d
+	.4byte MsgABoneThat
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001d7e
+	.4byte MsgThisRockIs
 	.4byte 0x00000000
 	.4byte 0x1200000f
-	.4byte 0x00001d7a
+	.4byte MsgHeyWhoS
 	.4byte 0x00008d15
 	.4byte 0x1200000f
-	.4byte 0x00001d7c
+	.4byte MsgItSDark
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_02000038

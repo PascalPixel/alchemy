@@ -780,7 +780,7 @@ Func_02000660:
 .L_020086ec:
 	.4byte gPartyState
 .L_020086f0:
-	.4byte 0x00001d7f
+	.4byte MsgRrruffRrruff2
 	.section .text.x020086f4,"ax",%progbits
 	.global Func_020006f4
 	.thumb_func
@@ -1082,7 +1082,7 @@ Func_020007d8:
 .L_02008980:
 	.4byte gPartyState
 .L_02008984:
-	.4byte 0x00001d86
+	.4byte MsgWhereDoYou
 	.section .text.x02008988,"ax",%progbits
 	.global Func_02000988
 	.thumb_func
@@ -2540,22 +2540,22 @@ Data_020019f0:
 	.4byte Func_02000660
 	.4byte 0x00008d15
 	.4byte 0x08860010
-	.4byte 0x00001d80
+	.4byte MsgDigHereYou
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001d81
+	.4byte MsgIKnewIt
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001d82
+	.4byte MsgITriedTo
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001d83
+	.4byte MsgIWonderWho
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001d84
+	.4byte MsgIfTheOther
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001d85
+	.4byte MsgILongTo
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte Func_02000058

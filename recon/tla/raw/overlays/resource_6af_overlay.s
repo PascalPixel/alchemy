@@ -2481,7 +2481,7 @@ Data_020018f4:
 	.4byte 0x00000602
 	.4byte 0x0205002a
 	.4byte Func_02000f4c
-	.4byte 0x00000400
+	.4byte MsgRustySword2
 	.4byte 0xffff0017
 	.4byte Func_02000864
 	.4byte 0x00008c15

@@ -205,11 +205,27 @@ Func_02000ebc:
 	.global Func_02000ec4
 	.thumb_func
 Func_02000ec4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Camera_WorldToScreenFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Camera_WorldToScreenFar
+	.else
 	overlay_veneer Func_080c85c0
+	.endif
+	.endif
 	.global Func_02000ecc
 	.thumb_func
 Func_02000ecc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8750
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8750
+	.else
 	overlay_veneer Func_080c8760
+	.endif
+	.endif
 	.global Func_02000ed4
 	.thumb_func
 Func_02000ed4:
@@ -237,7 +253,15 @@ Func_02000edc:
 	.global Func_02000ee4
 	.thumb_func
 Func_02000ee4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87b0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87b0
+	.else
 	overlay_veneer Func_080c87c0
+	.endif
+	.endif
 	.global Func_02000eec
 	.thumb_func
 Func_02000eec:
@@ -277,15 +301,39 @@ Func_02000efc:
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8870
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8870
+	.else
 	overlay_veneer Func_080c8880
+	.endif
+	.endif
 	.global Func_02000f0c
 	.thumb_func
 Func_02000f0c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8878
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8878
+	.else
 	overlay_veneer Func_080c8888
+	.endif
+	.endif
 	.global Func_02000f14
 	.thumb_func
 Func_02000f14:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8938
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8938
+	.else
 	overlay_veneer Func_080c8948
+	.endif
+	.endif
 	.global Func_02000f1c
 	.thumb_func
 Func_02000f1c:

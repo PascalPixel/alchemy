@@ -4103,7 +4103,7 @@ msgctxt "message"
 msgid "01023"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgRustySword2"
 msgid "01024"
 msgstr "{article_class:2}Rusty Sword"
 
@@ -17715,7 +17715,7 @@ msgctxt "message"
 msgid "04426"
 msgstr "Turn auto-sleep on or off."
 
-msgctxt "message"
+msgctxt "MsgYouWentUp"
 msgid "04427"
 msgstr "You went up a level!{end_wait}"
 
@@ -20215,7 +20215,7 @@ msgctxt "message"
 msgid "05051"
 msgstr "Would you like to give{line_break}Tolbi Spring a try?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWhatWillYou"
 msgid "05052"
 msgstr "What will you throw?{end_now}"
 
@@ -20227,7 +20227,7 @@ msgctxt "message"
 msgid "05054"
 msgstr "You have no Lucky Medals!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonCoin"
 msgid "05055"
 msgstr "You won{line_break}{argument_signed_number} coin{plural_suffix}!{end_wait}"
 
@@ -20239,7 +20239,7 @@ msgctxt "message"
 msgid "05057"
 msgstr "{protagonist_name} gave up!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCoins2"
 msgid "05058"
 msgstr "Coins"
 
@@ -20251,7 +20251,7 @@ msgctxt "message"
 msgid "05060"
 msgstr "#"
 
-msgctxt "message"
+msgctxt "MsgToss2"
 msgid "05061"
 msgstr "{button_icon:1}: Toss"
 
@@ -22571,7 +22571,7 @@ msgctxt "message"
 msgid "05640"
 msgstr "Ugggh. I can't believe I{line_break}got beaten by a girl...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWaahhhItS"
 msgid "05641"
 msgstr "Waahhh! It's them!{end_wait}"
 
@@ -22583,11 +22583,11 @@ msgctxt "message"
 msgid "05643"
 msgstr "Who cares! I can handle{line_break}some girl and her grandpa!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOoooogMaybeI"
 msgid "05644"
 msgstr "Ooooog. Maybe I shouldn't{line_break}have underestimated her...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaThatWas"
 msgid "05645"
 msgstr "Ha! That was a good idea,{line_break}waiting here for 'em!{end_wait}"
 
@@ -22599,19 +22599,19 @@ msgctxt "message"
 msgid "05647"
 msgstr "Except with us, back{line_break}to Master Iodem!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMaybeIShould"
 msgid "05648"
 msgstr "Maybe I should have{line_break}eaten a bigger breakfast.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllRightSo"
 msgid "05649"
 msgstr "All right, so maybe you{line_break}are going somewhere{line_break}after all...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhManThere"
 msgid "05650"
 msgstr "Oh, man... There goes{line_break}my big promotion...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyThatWas"
 msgid "05651"
 msgstr "My! That was invigorating!{line_break}He wasn't too strong...{end_wait}"
 
@@ -22623,7 +22623,7 @@ msgctxt "message"
 msgid "05653"
 msgstr "Not that way, {actor_name:6}!{line_break}The meeting spot{line_break}is west of here.{page_break}We must go down that{line_break}road and into the hills.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWay"
 msgid "05654"
 msgstr "Not that way, {actor_name:6}!{line_break}The meeting spot{line_break}is down this way.{page_break}We must climb down here{line_break}and go into that cave.{end_wait}"
 
@@ -27231,7 +27231,7 @@ msgctxt "MsgThereSSomething"
 msgid "06805"
 msgstr "There's something inside{line_break}the cracked ice...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeFollowedThe"
 msgid "06806"
 msgstr "We followed the pirates{line_break}here from Madra...{page_break}Are you going to{line_break}Alhafra, too?{end_now}"
 
@@ -27243,19 +27243,19 @@ msgctxt "message"
 msgid "06808"
 msgstr "You guys are lucky. We've{line_break}gotta find some way{line_break}through this desert.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThatAccursed"
 msgid "06809"
 msgstr "If that accursed pirate Briggs{line_break}hadn't smashed the bridge,{line_break}we wouldn't be here!{page_break}Maybe we won't find him,{line_break}but I promise you {actor_name:8}{line_break}will pay the price for him!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOooohThisDesert"
 msgid "06810"
 msgstr "{text_effect:4}Ooooh...{reset_text_style} This desert...{line_break}It's so hot out here!{line_break}I feel dizzy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWaterMyThroat"
 msgid "06811"
 msgstr "Water... My throat is{line_break}so parched! *Gasp!*{line_break}...It's no use...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCanTWe"
 msgid "06812"
 msgstr "Can't we just forget{line_break}about Briggs?{end_wait}"
 
@@ -27267,47 +27267,47 @@ msgctxt "message"
 msgid "06814"
 msgstr "There must be some{line_break}way through this desert!{line_break}We must press onward!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAsYouCan"
 msgid "06815"
 msgstr "As you can see, the{line_break}elder is quite insistent{line_break}on finding a way through.{page_break}He feels the only way{line_break}to Alhafra is through{line_break}this desert...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisIsWhere"
 msgid "06816"
 msgstr "This is where my son{line_break}must prove himself{line_break}as mayor...{page_break}So, Son. How are you{line_break}planning to get us{line_break}through this desert{page_break}and on to Alhafra?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFatherHowAm"
 msgid "06817"
 msgstr "Father, how am I supposed{line_break}to get us through the{line_break}desert?{page_break}I think you're over-{line_break}estimating my abilities.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsAndThe"
 msgid "06818"
 msgstr "Briggs and the Champa{line_break}are nowhere to be seen.{end_wait}I wonder if they actually{line_break}made it to Alhafra...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatIsSo"
 msgid "06819"
 msgstr "That {actor_name:8} is SO one of{line_break}the Champa... We don't need{line_break}Briggs to prove it.{page_break}When we get back home,{line_break}he's gonna pay for{line_break}helping Briggs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSureItS"
 msgid "06820"
 msgstr "Sure, it's hot. But it's{line_break}a dry heat...{pause_20_skippable}and{line_break}I can't stand it!{page_break}I want to go somewhere{line_break}cool and just relax!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSA"
 msgid "06821"
 msgstr "There's a spring over{line_break}there, but we can't{line_break}reach it...{page_break}I can hear Fate{line_break}mocking us.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeReached"
 msgid "06822"
 msgstr "We've reached a{line_break}dead end...{page_break}I just want to go{line_break}home to Madra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMySonIs"
 msgid "06823"
 msgstr "My son is in quite{line_break}a fix, but I'm not{line_break}going to help him.{page_break}Only by overcoming{line_break}adversity can he ever{line_break}become a strong leader.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyFatherS"
 msgid "06824"
 msgstr "My father's always telling{line_break}me to overcome adversity,{line_break}but he never tells me how!{page_break}I don't understand why{line_break}we can't just go home and{line_break}forget about Alhafra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyLookUp"
 msgid "06825"
 msgstr "Hey! Look! Up there!{end_wait}"
 
@@ -27335,63 +27335,63 @@ msgctxt "message"
 msgid "06831"
 msgstr "Hey! I found it!{line_break}I found a way through!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAtLastWe"
 msgid "06832"
 msgstr "At last, we can get{line_break}through this accursed{line_break}desert!{page_break}Except that the elder{line_break}and the others need{line_break}to rest before we go.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasCertain"
 msgid "06833"
 msgstr "I was certain this was a{line_break}dead end. What's wrong{line_break}with this desert?{page_break}This is only delaying{line_break}{actor_name:8}'s punishment...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMJust"
 msgid "06834"
 msgstr "I'm just glad we're{line_break}finally able to rest.{page_break}It doesn't feel like{line_break}my brain is on fire{line_break}anymore...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhManThis"
 msgid "06835"
 msgstr "Oh, man! This is the{line_break}best water I've ever{line_break}tasted! Yowza!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOseniaIsSo"
 msgid "06836"
 msgstr "Osenia is so much{line_break}larger than I'd thought...{page_break}I wonder how much{line_break}farther it is to Alhafra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMySonHas"
 msgid "06837"
 msgstr "My son...has passed his{line_break}first test as mayor.{page_break}I'll have to congratulate{line_break}him. Eventually. Now, to{line_break}see if his luck holds up.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfWeRemain"
 msgid "06838"
 msgstr "If we remain here much{line_break}longer, Briggs will be{line_break}beyond our reach...{page_break}We have to press on{line_break}just a little farther...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhNotAgain"
 msgid "06839"
 msgstr "Oh, not again!{line_break}Don't tell me they{line_break}want to rest again!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyJobIs"
 msgid "06840"
 msgstr "My job is to find{line_break}evidence that {actor_name:8}{line_break}is a Champa.{page_break}The elder is with us,{line_break}so I wouldn't dream{line_break}of lying...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMaybeWeShould"
 msgid "06841"
 msgstr "Maybe we should have{line_break}the mayor go on ahead{line_break}while we rest here...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTWant"
 msgid "06842"
 msgstr "I don't want to leave!{line_break}At least let me fill up{line_break}on water before we go.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowMuchLonger"
 msgid "06843"
 msgstr "How much longer will{line_break}we be walking, anyway?{page_break}I feel like we've walked{line_break}off the edge of the{line_break}world as it is...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRegardlessOfWhat"
 msgid "06844"
 msgstr "Regardless of what{line_break}happens next, know that{line_break}you have done well, my son.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHoooICan"
 msgid "06845"
 msgstr "Hooo... I can't believe{line_break}we're going to all this{line_break}trouble for a stranger...{page_break}I'm still not convinced that{line_break}{actor_name:8} isn't one of{line_break}Briggs's henchmen...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNorthAlhafraSouth"
 msgid "06846"
 msgstr "North: Alhafra{line_break}South: Air's Rock{page_break}Warning: Beyond this{line_break}point, there is no{line_break}route back.{end_wait}"
 
@@ -27919,11 +27919,11 @@ msgctxt "message"
 msgid "06977"
 msgstr "The people of Garoh brought{line_break}the curse upon themselves for{line_break}worshipping their wicked god...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverythingSSo"
 msgid "06978"
 msgstr "Everything's so boring here...{line_break}Why doesn't anybody do{line_break}anything...criminal?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTKnow"
 msgid "06979"
 msgstr "I don't know why there are so{line_break}many outsiders in Alhafra now,{line_break}but it's bound to mean trouble.{end_wait}"
 
@@ -29155,7 +29155,7 @@ msgctxt "message"
 msgid "07286"
 msgstr "I think this man might{line_break}even be able to defeat{line_break}the horrible werewolves...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHereTo"
 msgid "07287"
 msgstr "You here to see Briggs?{end_wait}"
 
@@ -29259,11 +29259,11 @@ msgctxt "message"
 msgid "07312"
 msgstr "WAHHH!"
 
-msgctxt "message"
+msgctxt "MsgIVeBeen"
 msgid "07313"
 msgstr "I've been WAY too busy ever{line_break}since you captured Briggs{line_break}and his pirate crew.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhStoppedBy"
 msgid "07314"
 msgstr "Oh, stopped by for a{line_break}visit, did you?{end_now}"
 
@@ -29275,43 +29275,43 @@ msgctxt "message"
 msgid "07316"
 msgstr "Ah, so you just came here{line_break}to check up on us?{page_break}Hah! Well, as you can see,{line_break}we're not causing any trouble!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHatePrison"
 msgid "07317"
 msgstr "I hate prison. The food is terrible...{page_break}My bed is hard and lumpy...{line_break}It's even worse than being{line_break}a pirate was.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSoundsLike"
 msgid "07318"
 msgstr "It sounds like the mayor of{line_break}Alhafra lost interest in fixing{line_break}that boat.{page_break}I guess that means it will{line_break}be a while before the mast{line_break}gets raised again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverythingWouldHave"
 msgid "07319"
 msgstr "Everything would have been{line_break}fine if it hadn't been for{line_break}you meddling kids!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgISawYou"
 msgid "07320"
 msgstr "I saw you staring at{line_break}Eoleo... But you couldn't{line_break}have figured out...{page_break}N-No! Of course not!{line_break}Nobody could see that.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSSo"
 msgid "07321"
 msgstr "It's so boring here when{line_break}there's no one to guard. I'm{line_break}glad I've got some company.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHasStrangePowers"
 msgid "07322"
 msgstr "{actor_name:5} has strange{line_break}powers of his own, so we can't{line_break}let him see what Eoleo can do.{page_break}If he does, he might ruin our{line_break}only chance to escape...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMNotStaying"
 msgid "07323"
 msgstr "I'm not staying in this stupid{line_break}cell forever. I'll get outta{line_break}here one way or another!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyDon"
 msgid "07324"
 msgstr "If they don't fix that{line_break}boat, then it's not going{line_break}anywhere.{page_break}I bet Alhafra's greedy mayor{line_break}doesn't like seeing Madra{line_break}profit from all of this.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhWhatS"
 msgid "07325"
 msgstr "Oh, what's that punk {actor_name:5}{line_break}doing again? I wish that{line_break}troublemaker'd just scram!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearSome"
 msgid "07326"
 msgstr "I hear some people can see{line_break}Eoleo's power... I want to see{line_break}for myself! How does he do it?{end_wait}"
 
@@ -30103,7 +30103,7 @@ msgctxt "message"
 msgid "07523"
 msgstr "The Kibombo attacked in the{line_break}wee hours of the morning...{page_break}Why weren't they asleep, like{line_break}all us respectable people?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsTheWay"
 msgid "07524"
 msgstr "Is the way clear?{end_wait}"
 
@@ -30147,7 +30147,7 @@ msgctxt "message"
 msgid "07534"
 msgstr "If anyone interrupts Akafubu's{line_break}ceremony, he will hold you{line_break}responsible...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGuardsAnIntruder"
 msgid "07535"
 msgstr "Guards! An intruder!{end_wait}"
 
@@ -30155,7 +30155,7 @@ msgctxt "message"
 msgid "07536"
 msgstr "Someone is trying to{line_break}pass! To arms, Kibombo{line_break}warriors! To arms!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHereTheIntruder"
 msgid "07537"
 msgstr "Here! The intruder is here!{end_wait}"
 
@@ -30183,7 +30183,7 @@ msgctxt "message"
 msgid "07543"
 msgstr "Outsiders are not allowed{line_break}to enter Kibombo. Begone!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGrrrrrRrrruffRrufff"
 msgid "07544"
 msgstr "Grrrrr!{line_break}Rrrruff! Rrufff!{end_wait}"
 
@@ -30191,55 +30191,55 @@ msgctxt "message"
 msgid "07545"
 msgstr "An intruder! Repel the intruder{line_break}immediately!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyWhoS"
 msgid "07546"
 msgstr "Hey! Who's there!? Get{line_break}me out of this crate!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSniffSniffLick"
 msgid "07547"
 msgstr "Sniff sniff...{line_break}Lick lick lick!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSDark"
 msgid "07548"
 msgstr "It's dark! It's cramped!{line_break}Somebody get me out!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgABoneThat"
 msgid "07549"
 msgstr "A bone! That's my favruff!{line_break}Lick lick... It's deruffcious!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisRockIs"
 msgid "07550"
 msgstr "This rock is in my way.{line_break}I want to get to the other side.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRrruffRrruff2"
 msgid "07551"
 msgstr "Rrruff! Rrruff!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDigHereYou"
 msgid "07552"
 msgstr "Dig here, you dig? Rrruff!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIKnewIt"
 msgid "07553"
 msgstr "I knew it! I knew there was{line_break}something there, and he{line_break}dug it up! Look at that!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgITriedTo"
 msgid "07554"
 msgstr "I tried to go to Gondowan to{line_break}find my fellow tribesmen, but{line_break}the ropes were taken down.{page_break}I can't go back to Kibombo{line_break}until someone realizes that{line_break}I'm missing and comes for me.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWho"
 msgid "07555"
 msgstr "I wonder who removed the{line_break}rope from the other side...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheOther"
 msgid "07556"
 msgstr "If the other warriors knew we{line_break}could not return to Kibombo,{line_break}they would be distraught.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILongTo"
 msgid "07557"
 msgstr "I long to see my homeland{line_break}again. This Indra lacks the{line_break}savage beauty of Gondowan.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereDoYou"
 msgid "07558"
 msgstr "{actor_name:5}! Where do you{line_break}intend to go?{page_break}We should try to help{line_break}{actor_name:8} recover his{line_break}black orb.{end_wait}"
 
@@ -30359,35 +30359,35 @@ msgctxt "message"
 msgid "07587"
 msgstr "I remember when I found that{line_break}path above the pass... Not even{line_break}the Kibombo knew about it!{page_break}I'm not even sure I could{line_break}find the way to the higher{line_break}pass anymore...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheFortuneTeller"
 msgid "07588"
 msgstr "The fortune-teller lives{line_break}at the highest house in{line_break}Naribwe...{page_break}He's the closest thing{line_break}we have to a mayor.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReA"
 msgid "07589"
 msgstr "We're a small village, but if{line_break}we all cooperate, we can get{line_break}almost anything done.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheFortuneTellerIn"
 msgid "07590"
 msgstr "The fortune-teller in Naribwe{line_break}has quite a reputation...{line_break}His predictions are so accurate!{page_break}He's always done them for us{line_break}alone, so I don't understand{line_break}how he got so famous.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAsLongAs"
 msgid "07591"
 msgstr "As long as we listen to the{line_break}words of the fortune-teller,{line_break}we won't have any worries...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouDesire"
 msgid "07592"
 msgstr "If you desire a reading,{line_break}stand before the table...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPlacedOnThe"
 msgid "07593"
 msgstr "{actor_name:5} placed {argument_item_name:2}{line_break}on the table.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmA"
 msgid "07594"
 msgstr "I am a teller of fortunes.{line_break}Would you have a reading?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgThenStandBack"
 msgid "07595"
 msgstr "Then stand back.{end_wait}"
 
@@ -30403,11 +30403,11 @@ msgctxt "message"
 msgid "07598"
 msgstr "Many want things they cannot{line_break}afford. If you do not have the{line_break}money, you will have no reading.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVeryWellShow"
 msgid "07599"
 msgstr "Very well. Show me one{line_break}of your items.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreYouPrepared"
 msgid "07600"
 msgstr "Are you prepared?{end_now}"
 
@@ -30415,7 +30415,7 @@ msgctxt "message"
 msgid "07601"
 msgstr "{actor_name:5} changed his mind{line_break}and took back the item.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShallIGive"
 msgid "07602"
 msgstr "Shall I give you another{line_break}reading for a different item?{end_now}"
 
@@ -30431,7 +30431,7 @@ msgctxt "message"
 msgid "07605"
 msgstr "I see...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBeyondTheWeapon"
 msgid "07606"
 msgstr "Beyond the weapon you set{line_break}down lies a terrible foe.{end_wait}"
 
@@ -30447,27 +30447,27 @@ msgctxt "message"
 msgid "07609"
 msgstr "None in the eastern world{line_break}can stand against the power{line_break}you possess.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIFeelA"
 msgid "07610"
 msgstr "I feel a shining power glowing{line_break}beyond the item before me.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouAreLost"
 msgid "07611"
 msgstr "You are lost in your way...{line_break}Another continent needs{line_break}your attention, another land.{page_break}A towering rock amid a{line_break}sea of sand. Return there{line_break}and find your way again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgADistantIsle"
 msgid "07612"
 msgstr "A distant isle lies far to{line_break}the northeast... Sail there.{page_break}High atop a rocky peak, a{line_break}power awaits you...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgISeeA"
 msgid "07613"
 msgstr "I see a paradise awaiting{line_break}you... An island in the east.{page_break}But even paradise must have{line_break}its trials... Scale the peak and{line_break}earn your power.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgATinyFigure"
 msgid "07614"
 msgstr "A tiny figure stands against{line_break}a wasteland wrought in snow...{line_break}The southern edge of the world.{page_break}It is you... In the icy plains,{line_break}you will find ancient ruins{line_break}and ancient power.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgISeeYou"
 msgid "07615"
 msgstr "I see you lost in mists, lost{line_break}in time, lost in the seas...{page_break}And there, I see you gaining{line_break}an ancient, fearsome power.{end_wait}"
 
@@ -30475,35 +30475,35 @@ msgctxt "message"
 msgid "07616"
 msgstr "The eastern lands hold{line_break}little for you now. You will{line_break}not remain here long...{page_break}I see you opening a channel{line_break}between the continents and{line_break}sailing the Western Sea!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBeyondTheItem"
 msgid "07617"
 msgstr "Beyond the item before me,{line_break}I see a path for you to follow.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgISeeYouInside"
 msgid "07618"
 msgstr "I see you inside a sacred icon.{line_break}By listening to the voices,{line_break}you will earn a precious item.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouMustForge"
 msgid "07619"
 msgstr "You must forge a weapon to{line_break}defeat a mortal enemy.{line_break}Seek out the pieces!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWillRaise"
 msgid "07620"
 msgstr "You will raise a mighty column{line_break}and gain assistance where it{line_break}is least expected.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWillGain"
 msgid "07621"
 msgstr "You will gain tremendous help{line_break}from a village on the eastern{line_break}reaches of the northern lands.{page_break}Seek them out.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveThe"
 msgid "07622"
 msgstr "You have the weapon you{line_break}need to defeat the sea beast.{page_break}Go to the sea of mists{line_break}and face your foe!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheObjectThat"
 msgid "07623"
 msgstr "The object that you seek lies{line_break}somewhere in the west.{page_break}Why do you linger in the{line_break}eastern world? If your work is{line_break}done, the west beckons you.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheObjectYou"
 msgid "07624"
 msgstr "The object you have placed{line_break}before me wields a mighty{line_break}power over a terrible foe.{end_wait}"
 
@@ -30539,207 +30539,207 @@ msgctxt "message"
 msgid "07632"
 msgstr "From the garb you have{line_break}placed before me, I sense the{line_break}presence of the one you await.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheEast"
 msgid "07633"
 msgstr "To the east lies a continent{line_break}moved from its foundation. The{line_break}one you seek waits in the wood.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorth"
 msgid "07634"
 msgstr "To the north...inside the sacred{line_break}icon, the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthBeneath"
 msgid "07635"
 msgstr "To the north...beneath the{line_break}sacred icon...the one you{line_break}seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastBy"
 msgid "07636"
 msgstr "Head east by southeast... In a{line_break}cave on the southernmost{line_break}continent in the Eastern Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastByNortheast"
 msgid "07637"
 msgstr "Head east by northeast... In a{line_break}cave on a tiny islet, the{line_break}one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadNorthBy"
 msgid "07638"
 msgstr "Head north by northwest... In a{line_break}forest on the northernmost{line_break}continent in the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthwest"
 msgid "07639"
 msgstr "To the northwest...in the ruins{line_break}on the southern continent{line_break}in the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadWestBy"
 msgid "07640"
 msgstr "Head west by northwest... In an{line_break}inlet on the southern continent{line_break}in the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthIn"
 msgid "07641"
 msgstr "To the north...in the village{line_break}that knows no spring...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastBySoutheast"
 msgid "07642"
 msgstr "Head east by southeast... In{line_break}the desert on the southern{line_break}land in the Eastern Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastByNortheastIn"
 msgid "07643"
 msgstr "Head east by northeast... In a{line_break}cave on the continent that{line_break}shifted from its foundations...{page_break}The one you seek awaits...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheSoutheast"
 msgid "07644"
 msgstr "To the southeast...in the{line_break}plains of the southern continent{line_break}in the Eastern Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheSouth"
 msgid "07645"
 msgstr "To the south...in the forest...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheEastBeside"
 msgid "07646"
 msgstr "To the east...beside the{line_break}boulder on the tiny islet...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastByNortheastInThe"
 msgid "07647"
 msgstr "Head east by northeast...{line_break}...In the town envolped in mist...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthSomewhere"
 msgid "07648"
 msgstr "To the north...somewhere{line_break}on a small island...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadNorthByNorthwest"
 msgid "07649"
 msgstr "Head north by northwest...{line_break}In a cave on the northern{line_break}continent in the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthInRuins"
 msgid "07650"
 msgstr "To the north... In ruins chilled{line_break}by icy winds...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastByNortheastInA"
 msgid "07651"
 msgstr "Head east by northeast... In a{line_break}cave on a tiny islet...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheEastIn"
 msgid "07652"
 msgstr "To the east...in the mountain{line_break}paths on the continent that{line_break}shifted from its foundations...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheSoutheastIn"
 msgid "07653"
 msgstr "To the southeast...in a village{line_break}lulled by the bleating of sheep,{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadSouthBy"
 msgid "07654"
 msgstr "Head south by southeast... On{line_break}the cliffs of a continent that{line_break}shifted from its foundations...{page_break}The one you seek awaits...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastBySoutheastIn"
 msgid "07655"
 msgstr "Head east by southeast... In{line_break}a town on a continent that{line_break}shifted from its foundation...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastByNortheastOn"
 msgid "07656"
 msgstr "Head east by northeast... On the{line_break}island where the sun rises...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadSouthBySoutheast"
 msgid "07657"
 msgstr "Head south by southeast... In the{line_break}ruins on the island of winter...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthwestIn"
 msgid "07658"
 msgstr "To the northwest...in the{line_break}forest on the southern{line_break}island in the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthwestAlong"
 msgid "07659"
 msgstr "To the northwest...along the{line_break}coast of the northern{line_break}continent of the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthwestBeside"
 msgid "07660"
 msgstr "To the northwest...beside the{line_break}ruins on the southern continent{line_break}in the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadNorthByNorthwestAt"
 msgid "07661"
 msgstr "Head north by northwest...{line_break}At the great rock on this{line_break}continent...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthInThe"
 msgid "07662"
 msgstr "To the north...in the ruins{line_break}chilled by icy winds...{line_break}the one you seek awaits...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastByNortheastInACave"
 msgid "07663"
 msgstr "Head east by northeast... In a{line_break}cave on the continent that{line_break}shifted from its foundations...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastBySoutheastInThe"
 msgid "07664"
 msgstr "Head east by southeast... In the{line_break}desert on the southern land...{line_break}the one you seek awaits...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadEastBySoutheastInA"
 msgid "07665"
 msgstr "Head east by southeast... In a{line_break}cave on the southern continent{line_break}in the Eastern Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthInTheMountain"
 msgid "07666"
 msgstr "To the north...in the mountain{line_break}paths of this continent...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheEastSomewhere"
 msgid "07667"
 msgstr "To the east... Somewhere{line_break}on a tiny islet...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheEastInThe"
 msgid "07668"
 msgstr "To the east... In the forest{line_break}on the isle of winter...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadNorthByNorthwestIn"
 msgid "07669"
 msgstr "Head north by northwest...{line_break}In a village on the northern{line_break}continent in the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInTheNorthwest"
 msgid "07670"
 msgstr "In the northwest...in the ruins{line_break}on the southern continent in{line_break}the Western Sea...{page_break}The one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadNorthByNorthwestNear"
 msgid "07671"
 msgstr "Head north by northwest... Near{line_break}the spring before the rugged{line_break}path...the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToTheNorthInTheRuins"
 msgid "07672"
 msgstr "To the north...in the ruins{line_break}lying in the village...{line_break}the one you seek awaits.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeadNorthByNortheast"
 msgid "07673"
 msgstr "Head north by northeast... On{line_break}the island where the treasure{line_break}lies...the one you seek awaits...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInTheItem"
 msgid "07674"
 msgstr "In the item you have placed{line_break}before me, I can see nothing{line_break}of the future...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyFatherIs"
 msgid "07675"
 msgstr "My father is a fortune-teller,{line_break}not a witch doctor.{page_break}There are a great many{line_break}differences between him{line_break}and Akafubu of Kibombo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgByPaintingOur"
 msgid "07676"
 msgstr "By painting our bodies, we{line_break}bring about good luck.{line_break}You should try it, too.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheItemsThat"
 msgid "07677"
 msgstr "The items that one carries are{line_break}filled with one's hopes and{line_break}desires.{page_break}I can sense these desires,{line_break}and I can see answers{line_break}hidden within them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyFatherMay"
 msgid "07678"
 msgstr "My father may not be a witch{line_break}doctor, but he could easily{line_break}defeat Akafubu.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBodyPaintingAlso"
 msgid "07679"
 msgstr "Body painting also protects{line_break}us from the magic of the{line_break}witch doctor, or so I'm told.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouAre"
 msgid "07680"
 msgstr "If you are burdened with many{line_break}concerns, take a weapon{line_break}to the fortune-teller.{page_break}He can read your future{line_break}by studying the weapons{line_break}that you carry.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanLook"
 msgid "07681"
 msgstr "I can look at any weapon and{line_break}see the monsters it faced,{line_break}but I cannot read its future.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouShouldVisit"
 msgid "07682"
 msgstr "You should visit the fortune-{line_break}teller while you are in our{line_break}village.{page_break}By looking at the items you{line_break}possess, he can see what it{line_break}is that troubles you.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWheneverIGetMy"
 msgid "07683"
 msgstr "Whenever I get my fortune{line_break}read, I offer up some armor.{page_break}I think this might be why{line_break}I find so many rare and{line_break}valuable artifacts.{end_wait}"
 
@@ -30751,19 +30751,19 @@ msgctxt "message"
 msgid "07685"
 msgstr "Even if I wanted my fortune{line_break}told, I don't have any armor{line_break}or weapons to show him.{page_break}If he were only willing to{line_break}look at other items, I'm sure{line_break}he'd get more business.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouLike"
 msgid "07686"
 msgstr "If you like adventure, you{line_break}should head out west{line_break}across the river...{page_break}Oh, wait... With all the rain{line_break}we've had lately, the river is{line_break}probably too deep to cross.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurCookingIs"
 msgid "07687"
 msgstr "Our cooking is famous all{line_break}across Gondowan.{page_break}If you find you like it,{line_break}come back soon! We change{line_break}our menu every season.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheRiverIs"
 msgid "07688"
 msgstr "The river is probably very{line_break}dangerous right now.{page_break}It's filled with monsters{line_break}when the waters are{line_break}running high.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurSpicesAre"
 msgid "07689"
 msgstr "Our spices are our secret.{line_break}Everyone loves spicy food,{line_break}even if they regret it later.{page_break}And I'll thump the first{line_break}person that tries to tell{line_break}me otherwise!{end_wait}"
 
@@ -30851,55 +30851,55 @@ msgctxt "message"
 msgid "07710"
 msgstr "What has gone wrong with{line_break}the world? People have no{line_break}respect for their elders!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIGuessThose"
 msgid "07711"
 msgstr "I guess those warriors learned{line_break}much about their future from{line_break}the fortune-teller.{page_break}You should do the same.{line_break}Bring your items to him,{line_break}just as they did.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurFortuneTeller"
 msgid "07712"
 msgstr "Our fortune-teller has been{line_break}saying some horrible things{line_break}lately.{page_break}He's been telling everyone{line_break}that \"our peace shall soon{line_break}sleep.\" It's not very comforting.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePowerOf"
 msgid "07713"
 msgstr "The power of the fortune-teller{line_break}is great. Anyone who listens to{line_break}his advice benefits greatly.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheFortuneTellerSaid"
 msgid "07714"
 msgstr "The fortune-teller said that the{line_break}power of nature would rekindle{line_break}the advance of civilization.{page_break}But which is better, an{line_break}advanced civilization, or{line_break}a peaceful one?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTroubleResides"
 msgid "07715"
 msgstr "If trouble resides in your{line_break}heart, I suggest you speak{line_break}with my father.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReadingFortunesIn"
 msgid "07716"
 msgstr "Reading fortunes in people's{line_break}items takes a lot of energy, so{line_break}he's not always willing to do it.{page_break}But if you have 20 coins on{line_break}you, he might be a little more{line_break}willing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItemsPlacedBefore"
 msgid "07717"
 msgstr "Items placed before me are filled{line_break}with the desires of those{line_break}who place them there.{page_break}If I can sense those desires, I{line_break}can answer that which they seek.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFatherShouldCharge"
 msgid "07718"
 msgstr "Father should charge{line_break}more for his readings.{page_break}People profit from what he{line_break}tells them. Why shouldn't{line_break}he profit from telling them?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAfterFatherS"
 msgid "07719"
 msgstr "After Father's been reading{line_break}all day, he sleeps like a baby.{line_break}A really loud, snoring baby.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWheneverIGet"
 msgid "07720"
 msgstr "Whenever I get customers{line_break}from out of town, I always{line_break}tell them the same thing...{page_break}\"The fortune-teller sees all.\"{line_break}Nobody can resist trying{line_break}it at least once.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenILook"
 msgid "07721"
 msgstr "When I look at weapons, I{line_break}can instantly tell what{line_break}monsters they have fought.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgIfYouWish"
 msgid "07722"
 msgstr "If you wish to know anything,{line_break}go to the fortune-teller. He's{line_break}fast, accurate, and affordable.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILikeOffering"
 msgid "07723"
 msgstr "I like offering armor to the{line_break}fortune-teller. It usually{line_break}gets me good results.{end_wait}"
 
@@ -30911,19 +30911,19 @@ msgctxt "message"
 msgid "07725"
 msgstr "Those who become lost should{line_break}offer the fortune-teller one{line_break}of their hard-earned items.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfIsTraveling"
 msgid "07726"
 msgstr "If {actor_name:8} is traveling{line_break}in your group, please give{line_break}him this message:{page_break}{actor_name:1} and his companions{line_break}would like to speak{line_break}with him.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgISeeSo"
 msgid "07727"
 msgstr "I see so many travelers...{line_break}How am I supposed to{line_break}remember who {actor_name:8} is?{page_break}And why would anyone come{line_break}all the way to Gondowan to{line_break}find him? What does {actor_name:1} want?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHePaidMe"
 msgid "07728"
 msgstr "He paid me a lot of money{line_break}to pass this message on, but{line_break}how would he know if I didn't?{page_break}Ah, I'm too honest for my own{line_break}good. I'll keep passing {actor_name:1}'s{line_break}message on to my guests.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyWouldTravel"
 msgid "07729"
 msgstr "Why would {actor_name:1} travel{line_break}all this way in search of a{line_break}man he has never met?{page_break}What could it be that drives{line_break}him to look for this{line_break}{actor_name:8}?{end_wait}"
 
@@ -32135,7 +32135,7 @@ msgctxt "message"
 msgid "08031"
 msgstr "I shall answer his call! I shall{line_break}enter the Great Gabomba!{line_break}Wait for me, my people!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheBlackOrb"
 msgid "08032"
 msgstr "The black orb... Where is it?{end_wait}"
 
@@ -32259,7 +32259,7 @@ msgctxt "message"
 msgid "08062"
 msgstr "We saw a light through there,{line_break}so we suspect there must be{line_break}another room behind the wall...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMightBe"
 msgid "08063"
 msgstr "I might be able to{line_break}retrieve the orb.{end_wait}"
 
@@ -32451,7 +32451,7 @@ msgctxt "message"
 msgid "08110"
 msgstr "Akafubu and Oeia are so{line_break}different... How can he ever{line_break}hope to replace Oeia?{page_break}Ah, why did Oeia have{line_break}to die? What are we to do?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHaveFollowed"
 msgid "08111"
 msgstr "I have followed Oeia's{line_break}instructions and entered{line_break}the final chamber!{end_wait}"
 
@@ -32467,15 +32467,15 @@ msgctxt "message"
 msgid "08114"
 msgstr "I do not know...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourBlackOrb"
 msgid "08115"
 msgstr "Your black orb rests in the hands{line_break}of the statue before you. Go on,{line_break}take it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOeiaWhatAm"
 msgid "08116"
 msgstr "Oeia... What am I to do now?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhYoungWitch"
 msgid "08117"
 msgstr "Oh, young witch doctor... You{line_break}have succeeded in your task.{line_break}You have found this chamber.{end_wait}"
 
@@ -32643,7 +32643,7 @@ msgctxt "message"
 msgid "08158"
 msgstr "Then, maybe we can come back{line_break}inside this Gabomba statue{line_break}some other time to get it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCarriedTheMessage"
 msgid "08159"
 msgstr "{actor_name:5} carried the message{line_break}of the Gabomba to Akafubu.{page_break}By the time {actor_name:5} finished{line_break}his story, dawn had broken.{end_wait}"
 
@@ -34359,35 +34359,35 @@ msgctxt "message"
 msgid "08587"
 msgstr "These shoals would not make{line_break}a good place to land.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverSinceThe"
 msgid "08588"
 msgstr "Ever since the tidal wave moved{line_break}Indra, we haven't been able to go{line_break}to Gondowan's western shores.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDidYouKnow"
 msgid "08589"
 msgstr "Did you know Indra moved?{line_break}It was quite a shock to all{line_break}of us here...{page_break}We haven't been able to use{line_break}the waterways to the south{line_break}ever since.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyPopS"
 msgid "08590"
 msgstr "My pop's the best sailor in{line_break}all the Eastern Sea!{page_break}That's why he can go anywhere,{line_break}even in that tiny boat of his!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReLucky"
 msgid "08591"
 msgstr "You're lucky, mister. You get to{line_break}ride your boat out on the open{line_break}sea all you want...{page_break}My dad'll be done with his boat{line_break}soon, and together, we'll be able{line_break}to sail anywhere we want...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheWaterwaysNorth"
 msgid "08592"
 msgstr "The waterways north of Tundaria{line_break}would have been the perfect{line_break}place to teach my sons to sail...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoGrateful"
 msgid "08593"
 msgstr "I'm so grateful our little island{line_break}wasn't damaged in the tidal{line_break}wave... It was a miracle.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTWaitUntil"
 msgid "08594"
 msgstr "I can't wait until Dad teaches{line_break}me how to sail...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTWaitUntilThe"
 msgid "08595"
 msgstr "I can't wait until the day{line_break}I can sail far away with{line_break}Dad and Kirt...{end_wait}"
 
@@ -34399,7 +34399,7 @@ msgctxt "message"
 msgid "08597"
 msgstr "You must be cold, dressed in{line_break}those thin clothes... Come warm{line_break}yourselves by the fire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyMomSays"
 msgid "08598"
 msgstr "My mom says there's this{line_break}strange tower on the northern{line_break}cape of Tundaria.{end_wait}"
 
@@ -34411,15 +34411,15 @@ msgctxt "message"
 msgid "08600"
 msgstr "Around here, it doesn't matter{line_break}what season it is...{line_break}It's always the cold season.{page_break}I can't even go outside without{line_break}first covering myself in fur.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoInWeyard"
 msgid "08601"
 msgstr "Who in Weyard would have{line_break}built a tower in the middle{line_break}of that frozen nowhere?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIJustWant"
 msgid "08602"
 msgstr "I just want to know what's on{line_break}the other side of that sea{line_break}of fog...{page_break}No one has ever crossed{line_break}through it, but one day, I just{line_break}know I'll do it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSeaOf"
 msgid "08603"
 msgstr "The Sea of Time... A massive bank{line_break}of fog that lies over the sea... All{line_break}sailors fear it, and rightly so!{page_break}I don't know if I'll ever make it{line_break}through, but I'm certain my son{line_break}will do it someday.{end_wait}"
 
@@ -34435,11 +34435,11 @@ msgctxt "MsgSeaOfTimeThreeGenerations"
 msgid "08606"
 msgstr "Ours is sad lineage...{page_break}Three generations of sons{line_break}have sworn their lives to trying{line_break}to pass through the sea of fog.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDadAndGrandpa"
 msgid "08607"
 msgstr "Dad and Grandpa haven't been{line_break}able to cross the Sea of Time.{line_break}They're so old now...{page_break}I will be the one to make{line_break}their dreams come true.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIRememberOnce"
 msgid "08608"
 msgstr "I remember once, an entire fleet{line_break}of ships entered the Sea of Time.{line_break}They vanished into the mists.{page_break}Every last one of the vessels{line_break}was destroyed by the currents.{end_wait}"
 
@@ -34455,7 +34455,7 @@ msgctxt "MsgSeaOfTimeGiveUp"
 msgid "08611"
 msgstr "And just what will happen once{line_break}they get through the sea of fog?{line_break}I wish they would just give up.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeLikeThis"
 msgid "08612"
 msgstr "We like this island. A lot...{line_break}That's why we're here...{line_break}Because we like it.{page_break}We sure aren't looking{line_break}for Treasure Isle! Nope!{end_wait}"
 
@@ -34467,7 +34467,7 @@ msgctxt "message"
 msgid "08614"
 msgstr "Don't listen to that guy. He{line_break}didn't say anything about{line_break}Treasure Isle. Nothing at all.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLookWeRe"
 msgid "08615"
 msgstr "Look, we're busy...{line_break}We can't talk now...{line_break}Catch us some other time...{end_wait}"
 
@@ -34475,7 +34475,7 @@ msgctxt "message"
 msgid "08616"
 msgstr "...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheEasternSea"
 msgid "08617"
 msgstr "The Eastern Sea is huge, even{line_break}if you don't add the Sea of Time,{line_break}which I guess you've got to do.{end_wait}"
 
@@ -34483,47 +34483,47 @@ msgctxt "message"
 msgid "08618"
 msgstr "You don't look like much of a{line_break}sailor. You're not a treasure{line_break}hunter, are you?{page_break}Because you won't find any{line_break}in the waters around here, let{line_break}me tell you!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfWeRe"
 msgid "08619"
 msgstr "If we're supposed to be partners{line_break}in this crazy treasure hunt, why{line_break}am I the one doing all the cooking?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSureThereAre"
 msgid "08620"
 msgstr "Sure, there are legends about{line_break}how there's treasure hidden{line_break}north of the Sea of Time.{page_break}But have WE found any?{line_break}I just hope it's not on the sea-{line_break}floor! What would we do then?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouUsedTo"
 msgid "08621"
 msgstr "You used to be able to dive{line_break}into the ocean and find all{line_break}sorts of treasure in the reefs.{page_break}I liked to think all that stuff{line_break}was a gift from the deep...{line_break}A gift for me!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheTemperatureOf"
 msgid "08622"
 msgstr "The temperature of the ocean{line_break}has been rising. The waters{line_break}are hottest at the Sea of Time.{page_break}I sure hope Poseidon hasn't{line_break}surfaced again! He was once a{line_break}king, but now, he's a monster!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIRememberHow"
 msgid "08623"
 msgstr "I remember how we used to{line_break}dredge up treasure by looking{line_break}for shadows in the reefs...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLongAgoPoseidon"
 msgid "08624"
 msgstr "Long ago, Poseidon ruled{line_break}over all the oceans as the{line_break}one true king of the sea.{page_break}Legends say the only way to{line_break}defeat him is to stab him{line_break}with a trident...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPenPen3"
 msgid "08625"
 msgstr "Pen pen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPenPenPehnnn"
 msgid "08626"
 msgstr "Pen pen pehnnn!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyDarlingPengulina"
 msgid "08627"
 msgstr "My darling Pengulina hurt{line_break}her leg on the far shore and{line_break}can't swim back.{page_break}Somebody, please... Help her!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhhMyLeg"
 msgid "08628"
 msgstr "Ohh... My leg... I can't get{line_break}back to my dearest Pengus...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThankYouSo"
 msgid "08629"
 msgstr "Thank you so much for saving{line_break}my sweet Pengulina.{page_break}Allow me to give you this{line_break}in return for your help.{end_wait}"
 
@@ -34531,7 +34531,7 @@ msgctxt "message"
 msgid "08630"
 msgstr "{actor_name:5} got a beautiful stone{line_break}from Pengus as a reward for{line_break}saving dear little Pengulina.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPenPen2"
 msgid "08631"
 msgstr "Pen pen.{end_wait}"
 
@@ -34539,39 +34539,39 @@ msgctxt "message"
 msgid "08632"
 msgstr "Pen pen pehnnn.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoHappy"
 msgid "08633"
 msgstr "I'm so happy my lovely{line_break}little Pengulina is all right.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoGlad"
 msgid "08634"
 msgstr "I'm so glad to be back on{line_break}this side again, with my{line_break}precious Pengus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPenPenPen"
 msgid "08635"
 msgstr "Pen pen pen...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPenPenPehnnnn"
 msgid "08636"
 msgstr "Pen pen pehnnnn.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereIsNothing"
 msgid "08637"
 msgstr "There is nothing better than{line_break}spending a day playing in the{line_break}snow with my pretty Pengulina.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPengusIsPretty"
 msgid "08638"
 msgstr "Pengus is pretty pleasant, and{line_break}I like that he likes me...{page_break}But he's always chasing me{line_break}around! I feel like I'm being{line_break}smothered...and I don't like it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChirpChirp2"
 msgid "08639"
 msgstr "Chirp chirp!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILoveFeeling"
 msgid "08640"
 msgstr "I love feeling fancy! I want{line_break}a really fancy accessory{line_break}to make me feel extra fancy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhMyThat"
 msgid "08641"
 msgstr "Oh my! That stone you have!{line_break}It's divine! Simply divine!{page_break}I must have it! MUST! I'll give{line_break}you my very fancy neckerchief{line_break}for that fancy stone of yours!{end_wait}"
 
@@ -34583,19 +34583,19 @@ msgctxt "message"
 msgid "08643"
 msgstr "Chirp chirp!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoYou"
 msgid "08644"
 msgstr "What do you think? Don't I{line_break}look fancy? I sure feel fancy!{line_break}And that's all that matters!{page_break}But I think this looks{line_break}fabulous on me! I love{line_break}fancy accessories!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMooMoo2"
 msgid "08645"
 msgstr "Moo! Moo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenFeeling"
 msgid "08646"
 msgstr "I've been feeling so low{line_break}lately... I long to feel the{line_break}utter joy of...something.{page_break}I just don't know what.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhThatRed"
 msgid "08647"
 msgstr "Oh! That red neckerchief{line_break}is quite nice indeed.{line_break}That would lift my spirits.{end_wait}"
 
@@ -34607,7 +34607,7 @@ msgctxt "message"
 msgid "08649"
 msgstr "{actor_name:5} tied the neckerchief{line_break}to the tree.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreYouGiving"
 msgid "08650"
 msgstr "Are you giving that lovely{line_break}thing to moooooi?{end_wait}"
 
@@ -34619,7 +34619,7 @@ msgctxt "message"
 msgid "08652"
 msgstr "{actor_name:5} traded the red neckerchief{line_break}for some fresh milk.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYupANice"
 msgid "08653"
 msgstr "Yup. A nice, red neckerchief{line_break}will never steer you wrong!{end_wait}"
 
@@ -34631,15 +34631,15 @@ msgctxt "message"
 msgid "08655"
 msgstr "Are you giving that red{line_break}neckerchief to moooooi?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArffArff2"
 msgid "08656"
 msgstr "Arff! Arff!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheWaterHere"
 msgid "08657"
 msgstr "The water here is so salty!{line_break}I wish someone would bring{line_break}me something tasty to drink.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSniffSniffI"
 msgid "08658"
 msgstr "Sniff! Sniff! I smell fresh milk!{end_wait}"
 
@@ -34647,27 +34647,27 @@ msgctxt "message"
 msgid "08659"
 msgstr "Hah hah hah! Are you going{line_break}to give me that milk? Are{line_break}you? Huh? Huh!?{page_break}I'll trade you this for it!{line_break}I caught it myself!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTradedHisMilk"
 msgid "08660"
 msgstr "{actor_name:5} traded his milk{line_break}for the dog's turtle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTLike"
 msgid "08661"
 msgstr "I don't like to waste. I'll{line_break}just take little tiny laps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTWantTo"
 msgid "08662"
 msgstr "I don't want to waste, so{line_break}I'm just taking little laps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlank3"
 msgid "08663"
 msgstr "...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoVeryVery"
 msgid "08664"
 msgstr "I'm so very...very lonely.{line_break}I could sure use a friend.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoVery"
 msgid "08665"
 msgstr "I'm so very sad and lonely.{line_break}I wish I had a friend to{line_break}call my own...{end_wait}"
 
@@ -34683,11 +34683,11 @@ msgctxt "message"
 msgid "08668"
 msgstr "No? Oh... Then lonely I shall stay.{line_break}But if you change your mind,{line_break}you know where to find me.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhYouRe"
 msgid "08669"
 msgstr "Oh! You're really going to let{line_break}me take care of your li'l turtle?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAtLongLast"
 msgid "08670"
 msgstr "At long last, I have a friend!{line_break}Lonesome George I am no more!{line_break}I'm so happy!{end_wait}"
 
@@ -34735,11 +34735,11 @@ msgctxt "message"
 msgid "08681"
 msgstr "Take your time! I don't{line_break}like to rush...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYup2"
 msgid "08682"
 msgstr "Yup!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWantToGo"
 msgid "08683"
 msgstr "Want to go to my{line_break}secret spot again?{end_wait}"
 
@@ -34755,7 +34755,7 @@ msgctxt "message"
 msgid "08686"
 msgstr "And we're off!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellHereWe"
 msgid "08687"
 msgstr "Well, here we are.{end_wait}"
 
@@ -34767,7 +34767,7 @@ msgctxt "message"
 msgid "08689"
 msgstr "Yup!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouAllSet"
 msgid "08690"
 msgstr "You all set to go back{line_break}to the island?{end_wait}"
 
@@ -34775,7 +34775,7 @@ msgctxt "message"
 msgid "08691"
 msgstr "Then back we go!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHereWeAre"
 msgid "08692"
 msgstr "Here we are!{end_wait}"
 
@@ -34787,75 +34787,75 @@ msgctxt "message"
 msgid "08694"
 msgstr "Take your time! I don't{line_break}like to rush...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmHere"
 msgid "08695"
 msgstr "I am here to tend to any travelers{line_break}who come to this place.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMayTheseTravelers"
 msgid "08696"
 msgstr "May these travelers' journey{line_break}end in peace and safety...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYallamDoesnT"
 msgid "08697"
 msgstr "Yallam doesn't get many{line_break}visitors. Hasn't for a long time.{page_break}I'd love to know a little about{line_break}what's going on in the outside{line_break}world.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurMasterBoatsman"
 msgid "08698"
 msgstr "Our master boatsman, Yepp, died.{line_break}Now, all we have to remember{line_break}him are the songs he wrote.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYeppWere"
 msgid "08699"
 msgstr "If Yepp were alive today, our{line_break}village would be thriving. He{line_break}brought us lots of work.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppFoundThis"
 msgid "08700"
 msgstr "Yepp found this huge bed of pearls{line_break}and sold them in another town.{page_break}Then, he bought all kinds of{line_break}things we needed in Yallam.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereUsedTo"
 msgid "08701"
 msgstr "There used to be a lot of{line_break}pearl divers here in Yallam. I{line_break}used to do some diving myself!{page_break}Yup... They were all younger{line_break}than me, but I still gave 'em{line_break}a good run for the money.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenWeLost"
 msgid "08702"
 msgstr "When we lost Yepp, all of{line_break}Yallam practically fell to pieces.{page_break}Our blacksmith, Sunshine, is our{line_break}only claim to fame now... He's{line_break}the best in all the lands...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppWasThe"
 msgid "08703"
 msgstr "Yepp was the one who taught{line_break}me how to handle a boat.{line_break}That was right before he died...{page_break}He'd promised to teach me{line_break}how to dive for pearls...{line_break}Poor Yepp. I really miss him.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppToldMe"
 msgid "08704"
 msgstr "Yepp told me the only thing{line_break}he could teach me was how{line_break}to sail and how to sing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppWasTheOne"
 msgid "08705"
 msgstr "Yepp was the one who{line_break}visited the lands beyond{line_break}eastern Osenia.{page_break}Since he died, we've had{line_break}no news from the outside{line_break}world at all.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSingingWithYepp"
 msgid "08706"
 msgstr "Singing with Yepp and all the{line_break}children in the village helped{line_break}us remember the songs.{page_break}It's funny how we all{line_break}memorized every one{line_break}of Yepp's songs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThosePearlsYepp"
 msgid "08707"
 msgstr "Those pearls Yepp brought back{line_break}from the sea were the most{line_break}marvelous things I've ever seen.{page_break}If he were still with us,{line_break}Yallam wouldn't be in this{line_break}terrible fix.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppNeverTold"
 msgid "08708"
 msgstr "Yepp never told any of{line_break}us where he found his{line_break}bed of pearls, but...{page_break}I suspect it's somewhere{line_break}near the center of the Eastern{line_break}Sea. He knew that area well.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppWasAmazing"
 msgid "08709"
 msgstr "Yepp was amazing. He could{line_break}cut clean through the Sea of{line_break}Time with utter ease.{page_break}He read those waves like no{line_break}other sailor on Weyard. He{line_break}was a true man of the sea.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSunshineIsA"
 msgid "08710"
 msgstr "Sunshine is a famous{line_break}blacksmith... The most{line_break}famous in Osenia...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeSearched"
 msgid "08711"
 msgstr "I've searched the seas from{line_break}north to south, and I just can't{line_break}find those pearls...{page_break}I wonder if the pearls from his{line_break}secret place are all gone...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppAlwaysSang"
 msgid "08712"
 msgstr "Yepp always sang such{line_break}wonderful children's songs{line_break}whenever he played with them.{end_wait}"
 
@@ -35075,7 +35075,7 @@ msgctxt "message"
 msgid "08766"
 msgstr "My dad's work is just insane!{line_break}It'll take me years to be{line_break}that good!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoYouWant"
 msgid "08767"
 msgstr "Do you want to hear one of{line_break}the songs Yepp wrote?{end_now}"
 
@@ -35083,31 +35083,31 @@ msgctxt "message"
 msgid "08768"
 msgstr "This is where all the kids{line_break}in Yallam come to play...{page_break}Nobody complains when we{line_break}play around out here...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunningAroundIn"
 msgid "08769"
 msgstr "Running around in circles{line_break}here while singing one of{line_break}Yepp's songs is pretty tough.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSAGame"
 msgid "08770"
 msgstr "There's a game that goes along{line_break}with the song, but it's tough. I{line_break}want to play something else.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppWroteAll"
 msgid "08771"
 msgstr "Yepp wrote all of his children's{line_break}songs while he was out here{line_break}in his own private space.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeppSSongs"
 msgid "08772"
 msgstr "Yepp's songs are a lot of fun,{line_break}because he made this game{line_break}that goes along with them...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSALot"
 msgid "08773"
 msgstr "There's a lot of stuff to remember{line_break}for each song. It's tough to play{line_break}without making any mistakes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIOnceHeard"
 msgid "08774"
 msgstr "I once heard that children's{line_break}songs and stories have{line_break}hidden meanings.{page_break}I wonder if Yepp has hidden{line_break}anything in his songs...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheStoryIs"
 msgid "08775"
 msgstr "The story is that all these objects{line_break}around here were brought here{line_break}by Yepp long, long ago.{page_break}If you look around, you'll see{line_break}that everything was arranged{line_break}in accordance with his songs...{end_wait}"
 
@@ -35159,7 +35159,7 @@ msgctxt "message"
 msgid "08787"
 msgstr "The story is that all these objects{line_break}around here were brought here{line_break}by Yepp long, long ago.{page_break}If you look around, you'll see{line_break}that everything was arranged{line_break}in accordance with his songs...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHereLetMe"
 msgid "08788"
 msgstr "Here, let me show you!{end_wait}"
 
@@ -35191,7 +35191,7 @@ msgctxt "message"
 msgid "08795"
 msgstr "Well, that's just fine then. Give{line_break}me a holler if you ever do.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWant"
 msgid "08796"
 msgstr "If you want to go to the moon,{line_break}if you want to go to the moon.{end_wait}"
 
@@ -35219,7 +35219,7 @@ msgctxt "message"
 msgid "08802"
 msgstr "Well, that's just fine then. Give{line_break}me a holler if you ever do.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWantTo"
 msgid "08803"
 msgstr "If you want to go to the sun,{line_break}if you want to go to the sun.{end_wait}"
 
@@ -35243,79 +35243,79 @@ msgctxt "message"
 msgid "08808"
 msgstr "That's it. That's all the games{line_break}we have for the songs...{page_break}If you want to play some{line_break}more, just give me a holler.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisIsApojii"
 msgid "08809"
 msgstr "This is Apojii, the easternmost{line_break}island in the Eastern Sea!{page_break}Wherever you're from, you've{line_break}come a long way. You must{line_break}be here to see Gaia Falls!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhateverYouDo"
 msgid "08810"
 msgstr "Whatever you do, don't sail{line_break}out to the eastern edge{line_break}of the sea...{page_break}That's where the world ends.{line_break}No one knows where the falls{line_break}go, but you won't come back!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheHugeWaterfall"
 msgid "08811"
 msgstr "The huge waterfall at the{line_break}edge of the world is known{line_break}as Gaia Falls.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnAquaIsland"
 msgid "08812"
 msgstr "On Aqua Island, you can see{line_break}the guardian moai.{page_break}Because of the moai, no one{line_break}can climb the craggy mountain.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaveYouAny"
 msgid "08813"
 msgstr "Have you any idea what it's like{line_break}living on the edge of the world?{line_break}One wrong step, and down you go!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTKnowWhat"
 msgid "08814"
 msgstr "I don't know what brings you{line_break}to Apojii, but you'd better not{line_break}be planning anything stupid.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTheyCome"
 msgid "08815"
 msgstr "When they come of age,{line_break}all the men of Apojii go{line_break}to Aqua Island. Will I, too?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoYouThink"
 msgid "08816"
 msgstr "Do you think if you fall off{line_break}of Gaia Falls that you keep{line_break}on falling forever and ever?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThereS"
 msgid "08817"
 msgstr "If there's nothing on Aqua{line_break}Island, then what are those{line_break}moai guarding, anyway?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLookingOverGaia"
 msgid "08818"
 msgstr "Looking over Gaia Falls{line_break}really makes you feel{line_break}small and insignificant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheCurrentsNear"
 msgid "08819"
 msgstr "The currents near Apojii run{line_break}swiftly because we're so near{line_break}to Gaia Falls.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllOfThe"
 msgid "08820"
 msgstr "All of the ocean's water is{line_break}spilling over Gaia Falls... Where{line_break}does it all go?{page_break}And more importantly, what{line_break}happens when all the water's{line_break}gone over the edge?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyWouldAnyone"
 msgid "08821"
 msgstr "Why would anyone build{line_break}a guardian statue out on{line_break}Aqua Island? What's to guard?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellAtLeast"
 msgid "08822"
 msgstr "Well, at least Gaia Falls will{line_break}put an end to a few silly{line_break}arguments.{page_break}After all, if it's got an edge{line_break}and you can fall off it, the{line_break}world is clearly FLAT!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgApojiiHasSo"
 msgid "08823"
 msgstr "Apojii has so many nice{line_break}sights... Gaia Falls to the east,{line_break}and Aqua Island to the south.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAquaIslandIs"
 msgid "08824"
 msgstr "Aqua Island is supposed to{line_break}be dangerous, but that's why{line_break}I want to go!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhere"
 msgid "08825"
 msgstr "I wonder where I'd be if I{line_break}fell off Gaia Falls...{page_break}I'd like to know, but I don't{line_break}want to find out firsthand!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAquaRockMust"
 msgid "08826"
 msgstr "Aqua Rock must be the secret{line_break}hidden on Aqua Island. One day,{line_break}I'll have to scale its peak.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWhatJust"
 msgid "08827"
 msgstr "What...{line_break}What just happened?{end_wait}"
 
@@ -35331,83 +35331,83 @@ msgctxt "message"
 msgid "08830"
 msgstr "Well, OK then... Maybe we should{line_break}try putting some more of our{line_break}wishes into the rock.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSThis"
 msgid "08831"
 msgstr "There's this guy in town who{line_break}spends his time at the spring,{line_break}staring at the Aqua Stone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoesMy"
 msgid "08832"
 msgstr "Why does my father keep{line_break}staring at that rock every day?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIJustWish"
 msgid "08833"
 msgstr "I just wish he'd spend{line_break}some time at home. I'm{line_break}fed up with his nonsense!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTEver"
 msgid "08834"
 msgstr "I can't ever tell what kind{line_break}of mood Mom and Dad are{line_break}in. At least they're not fighting.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAbsolutelyRefuse"
 msgid "08835"
 msgstr "I absolutely refuse to let{line_break}my son swim in the ocean{line_break}until he is an adult.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheCurrentsAround"
 msgid "08836"
 msgstr "The currents around Apojii{line_break}are just too strong to let{line_break}children swim on their own.{page_break}They're too strong for a lot{line_break}of the adults, too... They can{line_break}just wash a person away!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMNotAllowed"
 msgid "08837"
 msgstr "I'm not allowed to go{line_break}into the ocean.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyMisterDid"
 msgid "08838"
 msgstr "Hey, mister! Did you know{line_break}that all the kids are calling{line_break}you their hero?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgISinkLike"
 msgid "08839"
 msgstr "I sink like a rock. It always{line_break}embarrasses my son to see{line_break}me try to swim.{page_break}I'm afraid he's no better than{line_break}I am, but he still wants to{line_break}practice and get better!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPoorBoyHis"
 msgid "08840"
 msgstr "Poor boy... His father sinks like{line_break}a rock, and I know it's genetic.{line_break}So he's not allowed to swim!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSStupid"
 msgid "08841"
 msgstr "It's stupid that I'm not{line_break}allowed to swim just because{line_break}Dad doesn't know how...{page_break}Someday, I'll show him...{line_break}I'll show them all!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWowHeSwam"
 msgid "08842"
 msgstr "Wow! He swam in the ocean{line_break}and survived the currents!{line_break}And he's looking at me!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatOldAqua"
 msgid "08843"
 msgstr "That old Aqua Stone is{line_break}supposed to be the key to{line_break}getting onto Aqua Island.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeSToo"
 msgid "08844"
 msgstr "He's too old to try now,{line_break}but my husband used to{line_break}dream of scaling Aqua Rock.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouUnlockThe"
 msgid "08845"
 msgstr "You unlock the Aqua Stone by{line_break}making it damp, but splashing{line_break}springwater on it won't work.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeAlwaysWanted"
 msgid "08846"
 msgstr "He always wanted to climb{line_break}to the peak of the mountain{line_break}on Aqua Island.{page_break}But he spent all his time{line_break}studying that Aqua Stone{line_break}instead. I always wondered why.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItDBe"
 msgid "08847"
 msgstr "It'd be nice if we could{line_break}import some items that{line_break}our visitors would like.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoOneShips"
 msgid "08848"
 msgstr "No one ships to Garapas so{line_break}I wonder if wares are scarce.{page_break}On the other hand, I suppose some{line_break}wares are unique to Garapas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWowYouLook"
 msgid "08849"
 msgstr "Wow! You look just like the guy{line_break}who showed up in the fancy boat.{page_break}He slept for a long time... He{line_break}must've had a really long trip.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGuysAren"
 msgid "08850"
 msgstr "You guys aren't the warriors{line_break}who came in that boat, are you?{end_now}"
 
@@ -35419,11 +35419,11 @@ msgctxt "message"
 msgid "08852"
 msgstr "It's not nice to tease an old{line_break}lady! If that's not your boat,{line_break}then how did you get here?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSure"
 msgid "08853"
 msgstr "I'm sure that boat is{line_break}quite comfortable...{page_break}But no matter how nice your{line_break}boat is, you can't beat sleeping{line_break}in a nice, dry bed on land.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseGuysOn"
 msgid "08854"
 msgstr "Those guys on the other{line_break}boat must have been pretty{line_break}well off...{end_wait}"
 
@@ -35483,39 +35483,39 @@ msgctxt "message"
 msgid "08868"
 msgstr "You placed the {argument_item_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeHad"
 msgid "08869"
 msgstr "We've had a lot of trouble{line_break}here in Izumo lately.{page_break}I don't want to scare you,{line_break}but...you should leave, and fast.{line_break}Right now. Seriously. Run.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyNameS"
 msgid "08870"
 msgstr "My name's Okuni. I'm a great{line_break}dancer... Except I don't feel{line_break}much like dancing these days.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeDoesn"
 msgid "08871"
 msgstr "Lady Uzume doesn't want{line_break}to sacrifice Kushinada.{page_break}But that's the only way{line_break}to appease the serpent...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaSGoing"
 msgid "08872"
 msgstr "Susa's going to try to kill the{line_break}serpent and save his beloved{line_break}Kushinada. He's so fearless!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAsAChild"
 msgid "08873"
 msgstr "As a child, Susa was as wild as{line_break}could be and brought his elder{line_break}sibling, Lady Uzume, much strife.{page_break}Kushinada is the one who tamed{line_break}his wild ways. Of course, no one{line_break}wants to see her sacrificed.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChoosingTheNext"
 msgid "08874"
 msgstr "Choosing the next sacrifice{line_break}by lottery seems such a{line_break}harsh method.{page_break}I am far too old to understand{line_break}the ideas of these modern times.{line_break}They seem far too extreme.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDaughtersOf"
 msgid "08875"
 msgstr "The daughters of the family in{line_break}that home requested that we use{line_break}a lottery to choose the victims.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgABraveWarrior"
 msgid "08876"
 msgstr "A brave warrior will appear to{line_break}defeat the serpent by the next{line_break}full moon...{page_break}It's just a legend, though. No one{line_break}believes that. No one.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeeThisRing"
 msgid "08877"
 msgstr "See this ring of giant stones?{line_break}They've been here for ages.{line_break}No one knows who put them here.{page_break}See how they make{line_break}this beautiful circle?{line_break}Except for that one, right?{end_now}"
 
@@ -35527,7 +35527,7 @@ msgctxt "message"
 msgid "08879"
 msgstr "You're...not terribly{line_break}observant, are you?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMisalignedStone"
 msgid "08880"
 msgstr "The misaligned stone! It's{line_break}back in its original position!{line_break}How did this happen!?{end_wait}"
 
@@ -35535,43 +35535,43 @@ msgctxt "message"
 msgid "08881"
 msgstr "Hmmm... Either Susa or Kushinada{line_break}must have moved it when{line_break}I wasn't looking.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCanYouImagine"
 msgid "08882"
 msgstr "Can you imagine what it must{line_break}be like to have the power to move{line_break}stones without touching them?{page_break}That anyone should possess{line_break}that power is truly amazing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheGreatSerpent"
 msgid "08883"
 msgstr "The Great Serpent of Mikage{line_break}has awakened... What does it all{line_break}mean?{page_break}That dragon is the guardian of{line_break}the island, so why is it treating{line_break}us so cruelly?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMNotGoing"
 msgid "08884"
 msgstr "I'm not going to be sacrificed,{line_break}but that doesn't mean I'm happy.{page_break}My dear friend Kushinada{line_break}doesn't deserve this, either...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSureThat"
 msgid "08885"
 msgstr "I'm sure that kindhearted{line_break}Lady Uzume doesn't want{line_break}to sacrifice anyone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatIfLosing"
 msgid "08886"
 msgstr "What if losing Kushinada makes{line_break}Susa return to his wild ways?{line_break}I hope he fights the serpent...{page_break}If he loses, at least he won't{line_break}have to bear living without{line_break}Kushinada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeLoves"
 msgid "08887"
 msgstr "Lady Uzume loves her brother{line_break}dearly... I'm sure she'd take{line_break}Kushinada's place if she could.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSacrificesAsGreat"
 msgid "08888"
 msgstr "Sacrifices as great as this{line_break}should not be determined by{line_break}chance alone...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKushinadaSAlways"
 msgid "08889"
 msgstr "Kushinada's always had bad{line_break}luck at games of chance. I'll bet{line_break}those girls were counting on it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyWonT"
 msgid "08890"
 msgstr "Why won't anybody listen{line_break}to Lady Uzume?{page_break}They've always trusted her,{line_break}at least up until now...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoesLady"
 msgid "08891"
 msgstr "Why does Lady Uzume have{line_break}me guarding these ruins?{line_break}What a waste of time...{end_wait}"
 
@@ -35647,19 +35647,19 @@ msgctxt "message"
 msgid "08909"
 msgstr "There's no way to get sunlight{line_break}into the serpent's cave on{line_break}Mt. Mikage. Just no way...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYeahSusaCame"
 msgid "08910"
 msgstr "Yeah, Susa came through{line_break}here on his way to save{line_break}Kushinada.{page_break}The jerk knocked me flat{line_break}and just kept on going...{line_break}He was totally wild...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEvenIfSusa"
 msgid "08911"
 msgstr "Even if Susa tried to rescue{line_break}Kushinada, she wouldn't just{line_break}run away with him.{page_break}I think she still believes that{line_break}a hero will appear and defeat{line_break}the serpent. That must be it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouKnowI"
 msgid "08912"
 msgstr "You know, I can't stand Susa,{line_break}but I understand how he feels.{line_break}Kushinada's a really sweet girl.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeSays"
 msgid "08913"
 msgstr "Lady Uzume says that a hero{line_break}would appear, but I don't know...{line_break}There's no hero coming...{page_break}If Susa came running past{line_break}me with Kushinada, I wouldn't{line_break}stop them.{end_wait}"
 
@@ -35955,39 +35955,39 @@ msgctxt "MsgKushinadaSSafe"
 msgid "08986"
 msgstr "Kushinada's safe...{line_break}She's safe!{line_break}Nothing else matters.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseScreamsFrom"
 msgid "08987"
 msgstr "Those screams from{line_break}Mt. Mikage... They must{line_break}have come from the serpent.{page_break}That means Susa must{line_break}have saved Kushinada!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeRePlanning"
 msgid "08988"
 msgstr "We're planning a festival{line_break}to celebrate the end of the{line_break}serpent's reign of terror!{page_break}Lady Uzume is paying{line_break}for the whole thing, so{line_break}bring your dancin' feet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaHasChanged"
 msgid "08989"
 msgstr "Susa has changed so much{line_break}from the wild youth we once{line_break}feared. He's saved our village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKushinadaHasBeen"
 msgid "08990"
 msgstr "Kushinada has been spared?{line_break}I'm thrilled beyond words! She{line_break}did not deserve such a fate...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeHeardPeople"
 msgid "08991"
 msgstr "I've heard people saying that{line_break}Susa had the help of other{line_break}heroes... Are you they?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaHasGrown"
 msgid "08992"
 msgstr "Susa has grown so much{line_break}to fight for his beloved{line_break}Kushinada so gallantly.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaHasPut"
 msgid "08993"
 msgstr "Susa has put the serpent{line_break}back to rest, but not everyone{line_break}seems happy...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumePredicted"
 msgid "08994"
 msgstr "Lady Uzume predicted that{line_break}a great hero would appear{line_break}to save Kushinada.{page_break}Nobody thought that hero{line_break}would be Susa!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeeThisRingOf"
 msgid "08995"
 msgstr "See this ring of giant stones?{line_break}They've been here for ages.{line_break}No one knows who put them here.{page_break}See how they make{line_break}this beautiful circle?{line_break}Except for that one, right?{end_now}"
 
@@ -36007,71 +36007,71 @@ msgctxt "message"
 msgid "08999"
 msgstr "Hmmm... Either Susa or Kushinada{line_break}must have moved it when{line_break}I wasn't looking.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgButItS"
 msgid "09000"
 msgstr "But it's a festival!{line_break}Why do I have to keep{line_break}guarding the stone circle?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHadAlways"
 msgid "09001"
 msgstr "I had always thought Susa was{line_break}nothing but a troublemaker, but{line_break}he's proven himself a hero now!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisCelebrationWill"
 msgid "09002"
 msgstr "This celebration will rival the{line_break}one that woke the serpent in{line_break}the first place!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSOdd"
 msgid "09003"
 msgstr "It's odd to think that so{line_break}many in the village once{line_break}despised Susa...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKushinadaIsSuch"
 msgid "09004"
 msgstr "Kushinada is such a sweet{line_break}girl. She should never have{line_break}been chosen in the lottery.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWouldMake"
 msgid "09005"
 msgstr "What would make anyone{line_break}want to race up Mt. Mikage{line_break}and into the serpent's lair?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllTheGirls"
 msgid "09006"
 msgstr "All the girls must be so relieved{line_break}now that that awful lottery{line_break}has been ended forever.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneSBeen"
 msgid "09007"
 msgstr "Everyone's been wondering{line_break}why the serpent wanted{line_break}a sacrifice... Was he lonely?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoSusaReally"
 msgid "09008"
 msgstr "So...Susa really was as much{line_break}of a hero as Lady Uzume{line_break}claimed... How disappointing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaDidA"
 msgid "09009"
 msgstr "Susa did a momentous thing,{line_break}battling the serpent. So why do{line_break}I not want to congratulate him?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderIf"
 msgid "09010"
 msgstr "I wonder if there's someone out{line_break}there who would sacrifice his{line_break}life for me. Will I ever find him?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDancingLikeThis"
 msgid "09011"
 msgstr "Dancing like this{line_break}is pure bliss.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneSaysThat"
 msgid "09012"
 msgstr "Everyone says that Susa is{line_break}the one to thank for returning{line_break}peace to our small village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeMayNever"
 msgid "09013"
 msgstr "We may never know what{line_break}was responsible for waking{line_break}the serpent from its slumber...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurIslandIs"
 msgid "09014"
 msgstr "Our island is safe at last!{line_break}It's time for us to celebrate{line_break}and enjoy ourselves again!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentTaught"
 msgid "09015"
 msgstr "The serpent taught us one{line_break}thing: Celebrate while you{line_break}can, but keep your eyes open!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeAnd"
 msgid "09016"
 msgstr "Lady Uzume and the others{line_break}aren't really blood relatives.{line_break}Does that surprise you?{end_now}"
 
@@ -36083,47 +36083,47 @@ msgctxt "message"
 msgid "09018"
 msgstr "I'm just glad that Lady{line_break}Uzume used her powers{line_break}for the good of us all.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllAnyoneTalks"
 msgid "09019"
 msgstr "All anyone talks about is how Susa{line_break}risked his life to save Kushinada.{line_break}I'm so jealous...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgADragonA"
 msgid "09020"
 msgstr "A dragon, a hero, a damsel{line_break}in distress... That's got all the{line_break}makings for a fairy tale...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaSaidThe"
 msgid "09021"
 msgstr "Susa said the serpent wasn't{line_break}all that tough... He makes quite{line_break}a dashing hero!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeNeedTo"
 msgid "09022"
 msgstr "We need to figure out what woke{line_break}the serpent...{line_break}After the festival, maybe...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDancingIsGood"
 msgid "09023"
 msgstr "Dancing is good for the soul!{page_break}Oooog... But too much{line_break}dancing...makes...me...{line_break}dizzy.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatSusaUsed"
 msgid "09024"
 msgstr "That Susa used my dagger to{line_break}defeat the serpent.{page_break}He would never have won{line_break}if not for my dagger! And{line_break}he gets all the credit!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAsLongAsWe"
 msgid "09025"
 msgstr "As long as we have Lady{line_break}Uzume, Kushinada, and Susa{line_break}here, Izumo will be safe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouReLooking"
 msgid "09026"
 msgstr "If you're looking for Kushinada,{line_break}Lady Uzume escorted her to{line_break}the mansion.{page_break}Now that Susa has defeated{line_break}the serpent, Kushinada is no{line_break}longer being held as a sacrifice.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDidYouHear"
 msgid "09027"
 msgstr "Did you hear how Susa{line_break}defeated the serpent and{line_break}rescued Kushinada?{page_break}How come she doesn't{line_break}seem any happier now{line_break}that she's free?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeAndKushinada"
 msgid "09028"
 msgstr "Lady Uzume and Kushinada{line_break}are as close as sisters.{line_break}It must be nice...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKushinadaMustBe"
 msgid "09029"
 msgstr "Kushinada must be upset that{line_break}Susa defied his sister and{line_break}risked his life for her.{page_break}She worries about him{line_break}so much.{end_wait}"
 
@@ -36555,7 +36555,7 @@ msgctxt "message"
 msgid "09136"
 msgstr "Trying again, {actor_name:5}?{line_break}What a pest.{page_break}You can see my mind, but{line_break}you are incapable of{line_break}peering into my heart.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWait2"
 msgid "09137"
 msgstr "{actor_name:5}, wait!{end_wait}"
 
@@ -36579,11 +36579,11 @@ msgctxt "message"
 msgid "09142"
 msgstr "Are you sure about that?{line_break}I was only hoping to show{line_break}you my appreciation.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWouldYouBe"
 msgid "09143"
 msgstr "Would you be willing{line_break}to accept a token{line_break}of my gratitude?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgThisTokenIsn"
 msgid "09144"
 msgstr "This token isn't something{line_break}I possess. It's a legend, one{line_break}that might be of use to you.{end_wait}"
 
@@ -36611,7 +36611,7 @@ msgctxt "message"
 msgid "09150"
 msgstr "I hope you are successful{line_break}in your quest.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLegendSays"
 msgid "09151"
 msgstr "The legend says that the Cloud{line_break}Brand is a powerful weapon{line_break}for fighting dragons.{page_break}I trust you'll test the legend,{line_break}should the time come.{end_wait}"
 
@@ -36895,91 +36895,91 @@ msgctxt "message"
 msgid "09221"
 msgstr "If Briggs would just bring the{line_break}treasure he found back to{line_break}Champa, we could all prosper.{page_break}Then we could put this pirate{line_break}business behind us for good.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNot"
 msgid "09222"
 msgstr "There's not much space in the{line_break}cliff caves. That's why we have{line_break}to live out here on the boats.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneInChampa"
 msgid "09223"
 msgstr "Everyone in Champa is poor,{line_break}but the poorest of us all live{line_break}on rafts... I want to live on land.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenMyFather"
 msgid "09224"
 msgstr "When my father heads out{line_break}to sea, he takes our home{line_break}with him and leaves us cold.{page_break}But when he comes home{line_break}with an empty net, that{line_break}leaves us cold AND hungry.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyDadWent"
 msgid "09225"
 msgstr "My dad went out to fish, but there{line_break}were no fish to be caught, so he{line_break}had to come back empty-handed.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseRaftsAre"
 msgid "09226"
 msgstr "These rafts are all we have!{line_break}There's no place left for us{line_break}on dry land!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfDadHadn"
 msgid "09227"
 msgstr "If Dad hadn't been opposed to{line_break}Briggs becoming a pirate, we'd{line_break}still be living on land...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHopeDad"
 msgid "09228"
 msgstr "I hope Dad makes it back before{line_break}dark... I don't want to have to{line_break}sleep on shore with no shelter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFatherWorriesSo"
 msgid "09229"
 msgstr "Father worries so much{line_break}about the lack of fish...{page_break}He used to come back with fish{line_break}jumping out of his nets. Why{line_break}can't he catch fish anymore?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheTidalWave"
 msgid "09230"
 msgstr "The tidal wave was terrible...{line_break}It... It nearly swallowed me{line_break}whole!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLookedTo"
 msgid "09231"
 msgstr "It looked to me like the wave{line_break}came from the Sea of Time.{line_break}What's in there? What caused it?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMostOfThe"
 msgid "09232"
 msgstr "Most of the sailors here live in{line_break}the cliff dwellings, but I don't{line_break}like those caves. They're dank!{page_break}And what's worse, the people{line_break}living in the harbor really{line_break}resent the cliff-dwellers.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheFishAre"
 msgid "09233"
 msgstr "The fish are vanishing. I'm{line_break}sailing farther and farther{line_break}for fewer and fewer fish.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSomethingMustHave"
 msgid "09234"
 msgstr "Something must have blown up{line_break}in the Sea of Time. That would{line_break}explain the tidal wave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveTo"
 msgid "09235"
 msgstr "You have to be one of the{line_break}pirates to live in the cliffs...{line_break}I just can't do it...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeSeen"
 msgid "09236"
 msgstr "We've seen a lot of traveling{line_break}warriors in Champa of late.{page_break}We never used to... I wonder{line_break}if it's just a coincidence that{line_break}we've seen so many lately...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAGroupOf"
 msgid "09237"
 msgstr "A group of travelers came here{line_break}looking for a {actor_name:5}.{page_break}He seems to be a fairly{line_break}popular guy.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoreVisitorsMeans"
 msgid "09238"
 msgstr "More visitors means more{line_break}money for our village... Maybe{line_break}we'll even get tourists soon!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatI"
 msgid "09239"
 msgstr "Now that I think about it,{line_break}someone else was looking{line_break}for a {actor_name:5}, too.{page_break}I'll bet that guy is probably{line_break}still somewhere in town...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheOceanHas"
 msgid "09240"
 msgstr "The ocean has been a lot{line_break}warmer lately, and the fish{line_break}population is decreasing.{page_break}It's not natural for the{line_break}ocean to be so warm.{line_break}What's causing it?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeHeardRumors"
 msgid "09241"
 msgstr "I've heard rumors of a terrible{line_break}tidal wave striking the lands{line_break}south of us.{page_break}I sure hope Briggs and his{line_break}men weren't engulfed by it...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeChampaRely"
 msgid "09242"
 msgstr "We Champa rely entirely on the{line_break}ocean for our survival. It's all{line_break}we've ever known...{page_break}I wish the Eastern Sea would{line_break}return to its bountiful days of{line_break}overflowing nets and smooth seas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllTheSailors"
 msgid "09243"
 msgstr "All the sailors are saying{line_break}the tidal wave down south{line_break}was unbelievably huge.{page_break}If Briggs were caught up in{line_break}it, I don't think he could{line_break}have survived.{end_wait}"
 
@@ -37067,35 +37067,35 @@ msgctxt "message"
 msgid "09264"
 msgstr "Eoleo is the only boy in town{line_break}who will amount to anything...{line_break}He will be mine!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHaveSome"
 msgid "09265"
 msgstr "I have some lovely artifacts,{line_break}but it's only because I've been{line_break}to the Ankohl Ruins.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouGo"
 msgid "09266"
 msgstr "If you go to the Ankohl Ruins,{line_break}you might find some nice{line_break}artifacts for yourself.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurProductsCost"
 msgid "09267"
 msgstr "Our products cost what they cost{line_break}for a reason: they're all rare and{line_break}valuable treasures from Ankohl.{page_break}If I risk my life to get something{line_break}nice, of course I'm going to ask{line_break}a higher price for it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheStuffIn"
 msgid "09268"
 msgstr "The stuff in the ruins just sits{line_break}there waiting for someone to{line_break}come along and take it.{page_break}But if it's broken, I'm the only{line_break}guy in town who can fix it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgListenIfYou"
 msgid "09269"
 msgstr "Listen, if you came to Champa{line_break}looking for good seafood, you{line_break}came to the wrong place.{page_break}We haven't had a decent{line_break}catch in months. It's like{line_break}all the fish are just...gone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeUsedTo"
 msgid "09270"
 msgstr "We used to do good trade{line_break}with an island east of us. They{line_break}bought all our surplus fish.{page_break}We don't have any surplus{line_break}anymore. We don't even have{line_break}enough for ourselves.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSA"
 msgid "09271"
 msgstr "It's a shame that we can't{line_break}offer any fish to our customers.{page_break}Ah, how I long for the days{line_break}when we had fish enough{line_break}for everyone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWatchingOurCatches"
 msgid "09272"
 msgstr "Watching our catches dwindle{line_break}with every day... It's a nightmare!{line_break}Where have all the fish gone?{end_wait}"
 
@@ -38107,23 +38107,23 @@ msgctxt "message"
 msgid "09524"
 msgstr "Without smaller ships, how{line_break}can we catch the fish we{line_break}need to eat?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOooogOw2"
 msgid "09525"
 msgstr "Oooog... Ow...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoThese"
 msgid "09526"
 msgstr "Why do these things{line_break}always happen to me?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStupidBriggs2"
 msgid "09527"
 msgstr "Stupid Briggs...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsSPirates"
 msgid "09528"
 msgstr "Briggs's pirates... They{line_break}attacked us and...{line_break}The ship... The ship...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIJustCame"
 msgid "09529"
 msgstr "I just came down to see the{line_break}repaired mast, and they jumped{line_break}on me from out of nowhere.{end_wait}"
 
@@ -38639,11 +38639,11 @@ msgctxt "message"
 msgid "09657"
 msgstr "They were so confident when{line_break}they caught him before, but they{line_break}were careless and let him escape!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBeforeIKnew"
 msgid "09658"
 msgstr "Before I knew it, Chaucha stole{line_break}the keys to the jail, and Briggs{line_break}and his crew had them.{page_break}I never looked away! Not once!{line_break}I never let my guard down!{line_break}How did this happen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoMatterHow"
 msgid "09659"
 msgstr "No matter how many times I go{line_break}over it, nothing seems right.{line_break}I'm just not convinced...{page_break}Wait a sec... Did Eoleo have a{line_break}hand in this? He was standing{line_break}behind me the entire time...{end_wait}"
 
@@ -38779,91 +38779,91 @@ msgctxt "message"
 msgid "09692"
 msgstr "Nobody really likes to play the{line_break}role of a pirate.{page_break}I'm sure everyone is glad they{line_break}don't have to anymore.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeDonT"
 msgid "09693"
 msgstr "We don't need to live off{line_break}fish anymore, so we don't{line_break}need any fishermen, do we?{page_break}That does it. I'm not{line_break}working anymore. What{line_break}would be the point?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSTrue"
 msgid "09694"
 msgstr "It's true! It's true! Briggs did{line_break}return with the jewels!{page_break}He's really going to have more{line_break}friends than he did before!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFatherSActing"
 msgid "09695"
 msgstr "Father's acting like a child, and it{line_break}seems he quit his job. He plans{line_break}on lounging around at home...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenBriggsReturned"
 msgid "09696"
 msgstr "When Briggs returned with the{line_break}jewels, the adults quit working.{line_break}I hope I don't become like them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDRather"
 msgid "09697"
 msgstr "I'd rather spend my time sleeping{line_break}than passing it chasing fish that{line_break}can't be caught.{page_break}Why go after food, when Briggs{line_break}can give it to you?{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgBriggsIsA"
 msgid "09698"
 msgstr "Briggs is a hero for saving the{line_break}village. But will Father lose his{line_break}motivation to be productive?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfFatherSits"
 msgid "09699"
 msgstr "If Father sits around the house, he{line_break}will lose all respectability. It's{line_break}better to fish than to do nothing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgQuittingTheirJobs"
 msgid "09700"
 msgstr "Quitting their jobs makes the{line_break}adults just like us kids. It's{line_break}getting really weird around here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearThat"
 msgid "09701"
 msgstr "I hear that Briggs sold the{line_break}jewels he found for cash and{line_break}then acquired a boat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhileIM"
 msgid "09702"
 msgstr "While I'm grateful for the food,{line_break}it's somewhat annoying knowing{line_break}that Briggs saved the day.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsReallySaved"
 msgid "09703"
 msgstr "Briggs really saved our hides{line_break}this time, but I'm not about to{line_break}join his crew!{page_break}Yeah, maybe I do owe him for{line_break}this, but I'll find a way to{line_break}pay him back legitimately.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheNerveOf"
 msgid "09704"
 msgstr "The nerve of that Briggs!{line_break}He's gone for a bit, and he{line_break}comes back in a bigger boat!{page_break}I'll bet he only did it{line_break}to show us up, too!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIShouldJust"
 msgid "09705"
 msgstr "I should just sign up with{line_break}Briggs's crew and stop all{line_break}my complaining.{page_break}Oh, but my shipmates would{line_break}never forgive me if I bailed{line_break}on them like that.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIRefuseTo"
 msgid "09706"
 msgstr "I refuse to live in the cliffs, and{line_break}therefore I am against Briggs.{page_break}I have accepted his food, but that{line_break}is as far as I will let myself slip.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenWondering"
 msgid "09707"
 msgstr "I've been wondering about{line_break}finding a chief for Champa,{line_break}since we don't have one.{page_break}If so, then Briggs would be the{line_break}favorite, since he's given{line_break}so much to the village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVillageElders"
 msgid "09708"
 msgstr "We village elders have guided{line_break}Champa for so many years...{page_break}Yes, times are changing. Perhaps{line_break}it's time Champa's leadership{line_break}was given to the sailors.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgANewImage"
 msgid "09709"
 msgstr "A new image for Champa will{line_break}reflect the time we live in...{line_break}Any new visitors will like it...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgObservingBriggsRecently"
 msgid "09710"
 msgstr "Observing Briggs recently,{line_break}the limits of Champa as a{line_break}village are very apparent.{page_break}From now on, the village will{line_break}develop through trade. I guess{line_break}that's the era we've come to.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSeemsThe"
 msgid "09711"
 msgstr "It seems the elders are{line_break}considering appointing Briggs{line_break}the first-ever chief of Champa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIForOne"
 msgid "09712"
 msgstr "I, for one, think a person who can{line_break}bring the people of Champa{line_break}together will do us some good.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSureBriggsSaved"
 msgid "09713"
 msgstr "Sure, Briggs saved the village.{line_break}But saving it from despair is not{line_break}the same as governing it...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSupportingAnEntire"
 msgid "09714"
 msgstr "Supporting an entire village{line_break}through fishing from the sea{line_break}is next to impossible.{page_break}We need new sources of income.{line_break}Briggs is on the right path, finding{line_break}us all those lovely jewels.{end_wait} "
 
@@ -39591,35 +39591,35 @@ msgctxt "message"
 msgid "09895"
 msgstr "At least we got some of{line_break}the jewels before that stupid{line_break}switch blocked us off.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheJewelsBriggs"
 msgid "09896"
 msgstr "The jewels Briggs found{line_break}are truly remarkable.{page_break}I wonder if there are any{line_break}more like these in that cave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThanksToBriggs"
 msgid "09897"
 msgstr "Thanks to Briggs, the Champa{line_break}can eat again!{page_break}Unfortunately, all that food is{line_break}going to run out someday.{line_break}Then, what do we do?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsSMen"
 msgid "09898"
 msgstr "Briggs's men said they found{line_break}amazing weapons and things{line_break}in the cave, too...{page_break}I wish I'd been there. I would{line_break}like to have seen them...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowSThe"
 msgid "09899"
 msgstr "Now's the time we ought to{line_break}be working hardest. While we{line_break}can eat, Champa can flourish.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeStillHaven"
 msgid "09900"
 msgstr "We still haven't been able{line_break}to catch any fish for dinner.{page_break}Not to worry, though. We'll{line_break}serve up the meat that{line_break}Briggs bought for us!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSNice"
 msgid "09901"
 msgstr "It's nice not having to{line_break}work, but it gets a little{line_break}boring after a while.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMostPeopleHere"
 msgid "09902"
 msgstr "Most people here would love{line_break}a nice fish meal, but having{line_break}red meat is a nice change.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheOnlyWay"
 msgid "09903"
 msgstr "The only way to find your{line_break}special purpose in life{line_break}is to work hard.{end_wait}"
 
@@ -39975,7 +39975,7 @@ msgctxt "MsgLemuriaStayExploringAlternate"
 msgid "09991"
 msgstr "Lost already, {actor_name:5}? That's{line_break}the way to the boat dock! You{line_break}can't want to return already!{page_break}We've only just gotten to{line_break}Lemuria. We can't leave yet!{line_break}There's still so much to see!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisPlaceIs"
 msgid "09992"
 msgstr "This place is remarkable...{line_break}Truly remarkable...{end_wait}"
 
@@ -40115,123 +40115,123 @@ msgctxt "message"
 msgid "10026"
 msgstr "Why don't we spend our{line_break}time looking around Lemuria{line_break}until then...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheKingIs"
 msgid "10027"
 msgstr "The king is holding counsel with{line_break}Lord Conservato right now.{page_break}It might be a while before{line_break}you can see him.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheKingWill"
 msgid "10028"
 msgstr "The king will be thrilled to hear{line_break}his trusted {actor_name:8} has{line_break}returned.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowMuchLongerWill"
 msgid "10029"
 msgstr "How much longer will Conservato{line_break}be in there? They've been talking{line_break}for ages now.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHadHeard"
 msgid "10030"
 msgstr "I had heard {actor_name:8} was{line_break}back, but I didn't believe it until{line_break}now...{page_break}You seem much more confident,{line_break}{actor_name:8}. Everyone has been{line_break}noticing it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICannotRemember"
 msgid "10031"
 msgstr "I cannot remember the last{line_break}time we had visitors in Lemuria.{line_break}Not in a great while, certainly.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaHasNo"
 msgid "10032"
 msgstr "Lemuria has no disease, no{line_break}war... Anyone who saw it would{line_break}think it a paradise.{page_break}And yet...all who come to our{line_break}city seek to leave soon after{line_break}arriving. I, too, wish to leave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInLemuriaWe"
 msgid "10033"
 msgstr "In Lemuria, we do not grow old.{line_break}It must seem quite odd to{line_break}those from the outside world.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLifeNeverChanges"
 msgid "10034"
 msgstr "Life never changes here in{line_break}Lemuria. It can get rather{line_break}dull, you'll find.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIOughtTo"
 msgid "10035"
 msgstr "I ought to feel surprised to{line_break}see outsiders here, but I can't{line_break}remember how to be surprised.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowOldAm"
 msgid "10036"
 msgstr "How old am I again? I quit{line_break}counting after I turned two{line_break}hundred, and that was long ago.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItHasBeen"
 msgid "10037"
 msgstr "It has been many, many years{line_break}since a new child was born{line_break}in Lemuria.{page_break}Lemurians love children, but{line_break}they only remain children for{line_break}such a short time.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeAreThe"
 msgid "10038"
 msgstr "We are the only children in{line_break}Lemuria. I often wish there were{line_break}other children to play with.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMeowMrrrfle2"
 msgid "10039"
 msgstr "Meow... Mrrrfle...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWoofRrrrrroof2"
 msgid "10040"
 msgstr "Woof! ...rrrrrROOF!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoo2"
 msgid "10041"
 msgstr "Moo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBukbukbuk2"
 msgid "10042"
 msgstr "Bukbukbuk...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlank4"
 msgid "10043"
 msgstr "...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoreOfThe"
 msgid "10044"
 msgstr "More of the same, today and{line_break}every day. Nothing around{line_break}here ever changes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHavenT"
 msgid "10045"
 msgstr "I haven't been surprised in{line_break}ages. I don't know what I'd{line_break}do if something happened.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeAged"
 msgid "10046"
 msgstr "I've aged so slowly, I no longer{line_break}fear death, but at the same time,{line_break}I have no motivation at all.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSometimesIThink"
 msgid "10047"
 msgstr "Sometimes, I think the buildings{line_break}fall apart faster than we age.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLongAgoA"
 msgid "10048"
 msgstr "Long ago, a man named Lunpa{line_break}drifted to our island. That was{line_break}quite a surprise.{page_break}Someone else came with him,{line_break}but he fled so quickly.{line_break}What was his name again?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKingHydrosIs"
 msgid "10049"
 msgstr "King Hydros is far older{line_break}even than I am...{line_break}How old is he?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneSpoilsMe"
 msgid "10050"
 msgstr "Everyone spoils me so much...{line_break}I don't ever want to grow up!{page_break}But in another 20 or 30 years,{line_break}I will be an adult. Oh well. At{line_break}least it's some kind of change.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreThereOther"
 msgid "10051"
 msgstr "Are there other children in the{line_break}lands beyond the Sea of Time?{line_break}Are there other people?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoOneIn"
 msgid "10052"
 msgstr "No one in Lemuria feels any{line_break}passion for anything. They're{line_break}lazier than a cat in a sunbeam.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSSo"
 msgid "10053"
 msgstr "There's so much treasure buried{line_break}here that you could dig almost{line_break}anywhere and find something...{page_break}So why doesn't anybody{line_break}here dig?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriansAreSo"
 msgid "10054"
 msgstr "Lemurians are so lazy that{line_break}they make me look like a{line_break}dynamo. And they live so long!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItWeren"
 msgid "10055"
 msgstr "If it weren't for the people in{line_break}the castle, the Lemurians would{line_break}probably let themselves starve.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMotherWhyHave"
 msgid "10056"
 msgstr "Mother... Why have you{line_break}left me...{end_wait}"
 
@@ -40463,7 +40463,7 @@ msgctxt "message"
 msgid "10113"
 msgstr "Lunpa has given the king{line_break}tremendous aid on this matter.{line_break}He will have much to tell them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHouseOfThe"
 msgid "10114"
 msgstr "House of the Senate{end_wait}"
 
@@ -40543,11 +40543,11 @@ msgctxt "message"
 msgid "10133"
 msgstr "Even though we no longer{line_break}prepare the draught, the water{line_break}of our spring sustains us...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDoorDoesn"
 msgid "10134"
 msgstr "The door doesn't want to open.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreYouKids"
 msgid "10135"
 msgstr "Are you kids {actor_name:8}'s{line_break}traveling companions?{end_wait}"
 
@@ -40911,19 +40911,19 @@ msgctxt "message"
 msgid "10225"
 msgstr "But come, {actor_name:5}!{line_break}To the king's palace we go!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKingHydrosAwaits"
 msgid "10226"
 msgstr "King Hydros awaits you.{line_break}You are free to enter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHisHighnessThe"
 msgid "10227"
 msgstr "His Highness, the king, has{line_break}instructed that we let you{line_break}pass. You are welcome here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyAreClearly"
 msgid "10228"
 msgstr "They are clearly using Psynergy,{line_break}which makes them Adepts...{page_break}But are they so important that{line_break}His Highness must make time{line_break}for them right away?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesHis"
 msgid "10229"
 msgstr "What does His Highness have{line_break}in mind? {actor_name:8}, his{line_break}friends, and Lunpa are all here.{end_wait}"
 
@@ -40947,7 +40947,7 @@ msgctxt "message"
 msgid "10234"
 msgstr "King Hydros is the wisest of{line_break}all the Lemurian kings...{page_break}But I understand why{line_break}Conservato and his senate{line_break}oppose the king's plans.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSenateHolds"
 msgid "10235"
 msgstr "The senate holds King Hydros in{line_break}poor regard because he favors{line_break}Lunpa's wisdom over their own.{end_wait}"
 
@@ -40971,7 +40971,7 @@ msgctxt "message"
 msgid "10240"
 msgstr "His Highness is worried that{line_break}Lemuria will wither away.{line_break}What a ridiculous notion!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgITrustThe"
 msgid "10241"
 msgstr "I trust the king. If His Majesty{line_break}is wrong, the fault lies with{line_break}Lunpa, not with him.{end_wait}"
 
@@ -41391,19 +41391,19 @@ msgctxt "message"
 msgid "10345"
 msgstr "I have no doubt that your journey{line_break}will be fraught with ever-{line_break}increasing danger...{page_break}But we are counting on{line_break}you, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeNever"
 msgid "10346"
 msgstr "I've never seen Lord Conservato{line_break}so angry before...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLordConservatoHas"
 msgid "10347"
 msgstr "Lord Conservato has ordered{line_break}us to prevent you from leaving{line_break}the island...{page_break}But I cannot see why he would{line_break}do something like that.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSureThe"
 msgid "10348"
 msgstr "I'm sure the senate has{line_break}something to say about this.{line_break}What's going on around here?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowCouldLord"
 msgid "10349"
 msgstr "How could Lord Conservato{line_break}expect someone like me to{line_break}believe that King Hydros...{page_break}Would order {actor_name:8} to{line_break}destroy the world?{end_wait}"
 
@@ -41427,7 +41427,7 @@ msgctxt "message"
 msgid "10354"
 msgstr "If Hydros plans to unleash{line_break}Alchemy upon the world{line_break}again, then I am against it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouAnd"
 msgid "10355"
 msgstr "If you and Lunpa were all to{line_break}leave Lemuria, I think we'd have{line_break}peace and quiet here again.{end_wait}"
 
@@ -41451,7 +41451,7 @@ msgctxt "message"
 msgid "10360"
 msgstr "As long as I can live in peace,{line_break}I am happy. I suppose that is a{line_break}sign of growing old...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIKnowWhy"
 msgid "10361"
 msgstr "I know why Lemuria ended{line_break}all its dealings with the{line_break}outside world...{page_break}Lemurians want peace.{line_break}We desire no change.{end_wait}"
 
@@ -41479,7 +41479,7 @@ msgctxt "message"
 msgid "10367"
 msgstr "The actions of King Hydros{line_break}are treasonous. They betray{line_break}the will of his people.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDoorIs"
 msgid "10368"
 msgstr "The door is locked... It sounds{line_break}as if there's a raucous caucus{line_break}going on inside...{end_wait}"
 
@@ -41567,7 +41567,7 @@ msgctxt "message"
 msgid "10389"
 msgstr "You're in this too, aren't you,{line_break}{actor_name:5}? I've had it with your{line_break}conspiracies! I will not tell you!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgOh2"
 msgid "10390"
 msgstr "Oh!{end_wait}"
 
@@ -41579,7 +41579,7 @@ msgctxt "message"
 msgid "10392"
 msgstr "{actor_name:5}! Look over here!{line_break}This palace is magnificient!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereAreYou"
 msgid "10393"
 msgstr "Where are you going, {actor_name:5}?{line_break}Let's take a longer look around!{end_wait}"
 
@@ -41595,7 +41595,7 @@ msgctxt "message"
 msgid "10396"
 msgstr "Please don't rush on my{line_break}account. Let's enjoy our stay.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatSThe"
 msgid "10397"
 msgstr "What's the matter?{line_break}Can't you climb up?{line_break}...Fine. Just a moment.{end_wait}"
 
@@ -41607,43 +41607,43 @@ msgctxt "message"
 msgid "10399"
 msgstr "There! Is that better?{line_break}Now climb up here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDrinkingFromThis"
 msgid "10400"
 msgstr "Drinking from this spring{line_break}restores vigor and vitality!{line_break}Want a sip?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseTurtlesHave"
 msgid "10401"
 msgstr "These turtles have lived in{line_break}the spring forever... It must be{line_break}the water that does it...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndTheOthers"
 msgid "10402"
 msgstr "{actor_name:5} and the others{line_break}drank of the spring.{page_break}Their HP and PP were{line_break}fully replenished!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReadTheSignThe"
 msgid "10403"
 msgstr "{actor_name:5} read the sign:{page_break}The Spring of Lemuria{line_break}Face away and toss in a{line_break}coin to test your luck.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReadTheSign"
 msgid "10404"
 msgstr "{actor_name:5} read the sign:{page_break}The Spring of Lemuria{line_break}Toss in a Lucky Medal{line_break}to improve your luck.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouFace"
 msgid "10405"
 msgstr "If you face away from the spring,{line_break}toss in a coin, and land it in the{line_break}target, good fortune will come.{page_break}You've traveled a long way{line_break}to be here. You should give{line_break}it a try.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDLove"
 msgid "10406"
 msgstr "I'd love to test my luck, but{line_break}I've used up all my coins. Maybe{line_break}I'll take one out of the spring!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIRememberAn"
 msgid "10407"
 msgstr "I remember an outsider who came{line_break}to Lemuria and then spent {text_effect:2}days{reset_text_style}{line_break}testing his luck at the spring!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeHadSuch"
 msgid "10408"
 msgstr "He had such a good time, he{line_break}said he was going to build a{line_break}spring like this in his hometown.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoYouWish"
 msgid "10409"
 msgstr "Do you wish to test your luck{line_break}at the Spring of Lemuria?{end_now}"
 
@@ -41655,11 +41655,11 @@ msgctxt "message"
 msgid "10411"
 msgstr "Go ahead.{line_break}Test your luck!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLookLike"
 msgid "10412"
 msgstr "You look like you're in for{line_break}a spell of good luck.{page_break}After all, your aura glows{line_break}brightly about you!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoOneIs"
 msgid "10413"
 msgstr "No one is luckier than him{line_break}who believes in his luck and{line_break}has friends who believe in him.{end_wait}"
 
@@ -41751,35 +41751,35 @@ msgctxt "message"
 msgid "10435"
 msgstr "My buddy thinks I'm nuts{line_break}to risk my life for a look{line_break}at the falls.{page_break}Actually, I just want to get{line_break}my hands on some treasure{line_break}I saw on the way there.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeMade"
 msgid "10436"
 msgstr "We've made these wings and{line_break}carried them here just to{line_break}fulfill a great prophecy.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeMustBe"
 msgid "10437"
 msgstr "We must be prepared to{line_break}attach these wings to{line_break}the sacred vessel.{page_break}It is said that we will know{line_break}the time has come when{line_break}Mt. Jupiter is in flames.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeBroughtThese"
 msgid "10438"
 msgstr "We brought these wings from{line_break}Contigo, and now we're guarding{line_break}them.{page_break}If they were damaged or{line_break}broken, the prophecy might{line_break}never be fulfilled.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderIfThese"
 msgid "10439"
 msgstr "I wonder if these giant wings{line_break}will really make it fly... I'd{line_break}like to see that.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeFirstHeard"
 msgid "10440"
 msgstr "We first heard the prophecy{line_break}three years ago... The wings{line_break}have come a long way since then.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseWingsAre"
 msgid "10441"
 msgstr "These wings are so heavy{line_break}that they would sink an{line_break}ordinary ship.{page_break}I wonder what kind of ship{line_break}the sacred vessel is.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDoubtAnyone"
 msgid "10442"
 msgstr "I doubt anyone could hurt{line_break}these sturdy wings, but we{line_break}must guard them just the same.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSKind"
 msgid "10443"
 msgstr "It's kind of hard to imagine{line_break}what these wings would look{line_break}like actually flapping.{end_wait}"
 
@@ -43811,7 +43811,7 @@ msgctxt "message"
 msgid "10950"
 msgstr "You're pretty tough for your{line_break}age... I'm impressed, {actor_name:3}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReLate"
 msgid "10951"
 msgstr "You're late, {actor_name:5}!{end_wait}"
 
@@ -43819,27 +43819,27 @@ msgctxt "message"
 msgid "10952"
 msgstr "Now light the beacon!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceYouVe"
 msgid "10953"
 msgstr "Once you've lit the beacon,{line_break}we might even forgive you{line_break}for saving {actor_name:1} back there.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceJupiterIs"
 msgid "10954"
 msgstr "Once Jupiter is lit, only{line_break}Mars remains! Now, light{line_break}the beacon!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceJupiterIsLit"
 msgid "10955"
 msgstr "Once Jupiter is lit, we'll have no{line_break}need for you. Just watch...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoEvenThink"
 msgid "10956"
 msgstr "Do even think about{line_break}resisting us... We have{line_break}our own ideas about that.{page_break}Once the beacon is lit,{line_break}your usefulness will have{line_break}run out for good.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSeemsTo"
 msgid "10957"
 msgstr "There seems to be a wide{line_break}hole for the Elemental Star.{page_break}Cast the Jupiter Star in?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWeHaveIgnited"
 msgid "10958"
 msgstr "We have ignited the beacon...{line_break}The third lighthouse is lit...{line_break}Now let us go...{end_wait}"
 
@@ -43927,7 +43927,7 @@ msgctxt "message"
 msgid "10979"
 msgstr "Don't worry! They'll be fine!{line_break}Now prepare for the end!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlank5"
 msgid "10980"
 msgstr "{actor_name:5}!{end_wait}"
 
@@ -43951,7 +43951,7 @@ msgctxt "message"
 msgid "10985"
 msgstr "Don't worry, {actor_name:5}!{line_break}I'm here to help!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlank6"
 msgid "10986"
 msgstr "{actor_name:6}!{end_wait}"
 
@@ -43975,7 +43975,7 @@ msgctxt "message"
 msgid "10991"
 msgstr "{actor_name:1} and the others{line_break}are safe! Now let's take care{line_break}of these two rats!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeDidItWe"
 msgid "10992"
 msgstr "We did it...{line_break}We beat them...{end_wait}"
 
@@ -44151,7 +44151,7 @@ msgctxt "message"
 msgid "11035"
 msgstr "We'll be expecting you. Don't{line_break}think you can sneak out of this!{line_break}You owe us an explanation!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWasnTThe"
 msgid "11036"
 msgstr "{actor_name:1} wasn't the only{line_break}surprise. They were all far more{line_break}powerful than I'd expected.{end_wait}"
 
@@ -44775,23 +44775,23 @@ msgctxt "message"
 msgid "11191"
 msgstr "Perhaps if I see a miracle{line_break}with my own eyes, my faith{line_break}will be restored once more...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaReturnedTo"
 msgid "11192"
 msgstr "Hamma returned to Contigo{line_break}after all these years... Right{line_break}when we finished the wings!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWasYourBoat"
 msgid "11193"
 msgstr "Was your boat really the same{line_break}one in the geoglyph? What's{line_break}that all about?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneSWaiting"
 msgid "11194"
 msgstr "Everyone's waiting down by{line_break}the beach.{page_break}They all want to see the boat{line_break}fly with their own eyes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAMassiveRock"
 msgid "11195"
 msgstr "A massive rock blocked the{line_break}entrance to the inlet after the{line_break}lighthouse beacon was lit...{page_break}If that ship's ever going to{line_break}leave the inlet, it's gonna{line_break}have to fly to do it.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereDoYouThink"
 msgid "11196"
 msgstr "Where do you think you're going?{end_wait}"
 
@@ -44815,79 +44815,79 @@ msgctxt "message"
 msgid "11201"
 msgstr "Thanks, buddy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheVillagersAre"
 msgid "11202"
 msgstr "The villagers are all waiting to{line_break}see the ship fly. So how's about{line_break}getting on with the flying!?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaWouldnT"
 msgid "11203"
 msgstr "Hamma wouldn't let us get{line_break}any closer, so we're waiting{line_break}here to watch the ship leave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenPeopleWork"
 msgid "11204"
 msgstr "When people work together,{line_break}even a little spiritual power{line_break}can work great wonders.{page_break}We sent everyone back to{line_break}the village so that their hopes{line_break}would not impair your flight.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeBeen"
 msgid "11205"
 msgstr "We've been working forever{line_break}on getting these wings{line_break}onto the boat!{page_break}We're not used to working like{line_break}this... It's making me dizzy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoBuiltThe"
 msgid "11206"
 msgstr "Who built the boat from the{line_break}geoglyph, anyway?{page_break}Is there another tribe that's{line_break}descended from the Anemos{line_break}besides our tribe in Contigo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaIsThe"
 msgid "11207"
 msgstr "Hamma is the new leader of{line_break}Contigo. She bears the powers{line_break}of the Anemos, after all.{page_break}But I still think she shouldn't{line_break}be ordering us to help fix{line_break}up your boat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThatBoat"
 msgid "11208"
 msgstr "If that boat's gonna get out{line_break}of the inlet, it's gonna have{line_break}to fly. I want to see that.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSAmazing"
 msgid "11209"
 msgstr "It's amazing to think that my{line_break}hard work is going to help{line_break}make that boat fly.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaSaysThat"
 msgid "11210"
 msgstr "Hamma says that our own{line_break}hopes and dreams might{line_break}prevent the boat from flying.{page_break}It's as though, by wanting it{line_break}too much, we'll actually{line_break}prevent it from happening.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeCanT"
 msgid "11211"
 msgstr "We can't get too close to{line_break}the boat, or it might not fly...{page_break}We've just got to have{line_break}everyone watch from afar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSAlmost"
 msgid "11212"
 msgstr "It's almost time... Time to{line_break}watch a legend become reality!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfEveryoneWill"
 msgid "11213"
 msgstr "If everyone will just obey{line_break}Hamma's request, the ship{line_break}will surely fly.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTheWinged"
 msgid "11214"
 msgstr "When the winged ship of Anemos{line_break}flies once again, the whole land{line_break}shall be made free...{page_break}That's what the legend says,{line_break}anyway... But what land needs{line_break}freeing? We seem free enough...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceYouRemove"
 msgid "11215"
 msgstr "Once you remove the stone{line_break}anchors weighing the ship{line_break}down, it should fly...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDayHas"
 msgid "11216"
 msgstr "The day has finally come that{line_break}the ship will fly on the Wings{line_break}of Anemos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheAnemosWere"
 msgid "11217"
 msgstr "The Anemos were powerful,{line_break}sure, but can their power really{line_break}make a great ship fly?{page_break}No... No, I must not doubt...{line_break}I must have faith that it will{line_break}fly. It is meant to be.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseWarriorsWill"
 msgid "11218"
 msgstr "These warriors will know what{line_break}to do... They'll know how to{line_break}save the land...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearThatThe"
 msgid "11219"
 msgstr "I hear that the warriors brought{line_break}the Hover Jade back with them...{page_break}Now, that's something that I'd{line_break}really like to see.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenWaiting"
 msgid "11220"
 msgstr "I've been waiting for you,{line_break}{actor_name:5}.{end_wait}"
 
@@ -44943,11 +44943,11 @@ msgctxt "message"
 msgid "11233"
 msgstr "All of Contigo is watching...{line_break}Show them your power, and{line_break}make your vessel fly!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseYourPsynergy"
 msgid "11234"
 msgstr "Use your Psynergy to raise{line_break}your ship and fly over reefs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTravelSafelyThe"
 msgid "11235"
 msgstr "Travel safely, {actor_name:3}...{line_break}The world depends on you.{end_wait}"
 
@@ -45387,35 +45387,35 @@ msgctxt "message"
 msgid "11344"
 msgstr "{actor_name:3} was supposed to be{line_break}a great, manly hero... I guess not{line_break}all the legends came true...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenWatching"
 msgid "11345"
 msgstr "I've been watching the skies,{line_break}hoping I could catch another{line_break}glimpse of the flying ship.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhat"
 msgid "11346"
 msgstr "I wonder what's on the other{line_break}side of the ocean... I should be{line_break}happy where I am, but...{page_break}Whenever I think about that{line_break}flying ship, I want to leave{line_break}home, to explore the world!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllOfOur"
 msgid "11347"
 msgstr "All of our myths and legends{line_break}have taught us that the sea{line_break}is a dangerous, fearsome power.{page_break}But on the day the ship{line_break}left, the sea was so calm{line_break}and romantic looking...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReGoingNorth"
 msgid "11348"
 msgstr "You're going north? I hear it's{line_break}always winter in the lands{line_break}to the north, so bundle up!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWheneverILook"
 msgid "11349"
 msgstr "Whenever I look at the sky,{line_break}I think about that flying ship,{line_break}and I want to travel the world.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWishI"
 msgid "11350"
 msgstr "I wish I could travel to the{line_break}end of the sea on that{line_break}beautiful flying ship.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneInContigo"
 msgid "11351"
 msgstr "Everyone in Contigo used{line_break}to be afraid of the ocean.{page_break}But now, everyone who saw the{line_break}ship take off sees the sea{line_break}filled with wonder and romance.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeDecided"
 msgid "11352"
 msgstr "I've decided to become...{line_break}an adventurer!{page_break}One day, when {actor_name:3} and his{line_break}companions return, I will join{line_break}them on their amazing ship!{end_wait}"
 
@@ -45595,7 +45595,7 @@ msgctxt "message"
 msgid "11396"
 msgstr "Well, we should be going...{line_break}Let's hurry on, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyWait2"
 msgid "11397"
 msgstr "Hey, wait!{end_wait}"
 

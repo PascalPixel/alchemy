@@ -67,16 +67,18 @@
  * (660); in the heal, case 76 reading max_hp directly or maxu before maxv
  * (337 both), maxu before maxv in case 71 (648), 2 * maxv / 5 (no change);
  * in the PP restore, old
- * read before heal (332), the block's declaration order (no change); in
+ * read before heal (332), the block's declaration order and pp read
+ * through s16 and u16 pointers (no change); in
  * the HP drain, a block-local amt (505: heal in r5 and amt in r6 as in the
  * listing, but apwr then shares r6 and the listing's copy from r7 is
  * lost; heal += apwr after amt = apwr keeps 505), the HP in hp0 (740) or
  * tmp (344); for the weapon case's signed
  * halving, (s16)def / 2 or (s16)scale / 2 (336: the sign is extended
  * first), (s16)target->defense read into def (382), defense read into tmp
- * (334), kind (no change) or apwr (560), scale /= 2 and def /= 2 in place
- * (no change): the shift stays logical while every set of the value is a
- * zero-extended load. */
+ * (334), kind (no change) or apwr (560), value (382), power (383), guard
+ * (332), count (no change), scale /= 2 and def /= 2 in place (no change):
+ * the shift stays logical whichever variable holds the zero-extended
+ * load, even one set elsewhere from signed values (power, value). */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

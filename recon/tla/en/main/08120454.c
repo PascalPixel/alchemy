@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3348,
- * differ 204.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3361,
+ * differ 178.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -114,7 +114,13 @@
  * def, the field divided directly, def as u16, or half == 1 and
  * half == 2 tests all stay logical (226 or worse); def as s16 276.
  * Against 204, in the heal: case 76 (and 71) reading max_hp straight into
- * the product, or maxu read after the add, 239 to 241 (draft 3451). */
+ * the product, or maxu read after the add, 239 to 241 (draft 3451).
+ * The HP drain matches with the new HP in dmg and the amount in kind
+ * (dmg = actor->hp; kind = apwr; dmg += kind; ...), 178 (common 3361):
+ * dmg keeps r5 as everywhere else, and the amount, a second function-level
+ * variable, takes r6 with its copy from apwr in r7. The same with the
+ * amount in tmp 393, count 406, power 439, value 2112; the new HP and
+ * amount swapped in their old names (heal the amount) 379. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -1306,31 +1312,27 @@ after_power:
 
         case EFX_DRAIN_HP:
         case EFX_DRAIN_HP_HALF:
-        {
-            s32 heal;
-
-            heal = actor->hp;
+            dmg = actor->hp;
             apwr = dealt;
             if (action->effect == EFX_DRAIN_HP_HALF)
                 apwr /= 2;
-            dmg = apwr;
-            heal += dmg;
-            if (heal > actor->max_hp) {
-                heal = actor->max_hp;
-                dmg = heal - actor->hp;
+            kind = apwr;
+            dmg += kind;
+            if (dmg > actor->max_hp) {
+                dmg = actor->max_hp;
+                kind = dmg - actor->hp;
             }
             BattleEv_Push(BATTLE_EVENT_RESET, 0);
             BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
-            if (heal == actor->max_hp)
+            if (dmg == actor->max_hp)
                 MES_PUSH(MsgHpFull);
             else {
-                BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+                BattleEv_Push(BATTLE_EVENT_VALUE, kind);
                 MES_PUSH(MsgHpRecover);
             }
-            actor->hp = heal;
+            actor->hp = dmg;
             Owner_RecalculateRatiosFar(actor_id);
             break;
-        }
 
         case EFX_DRAIN_PP:
         {

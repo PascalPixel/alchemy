@@ -1,7 +1,15 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 846, differ 198; frame 372
+ * Native 946 instructions, draft 944, common 859, differ 172; frame 372
  * as native's, and every compiler temporary's slot now at native's offset.
- * Session 9: the cursor is drawn through sprite = &cursor, set at the top
+ * Session 9: the highlight loop's blink is a block local beside its
+ * element and tile, not the function's affordable: 198 -> 172, blink r6
+ * and element r5 as native's. From 198: the handle loop indexed 237 (its
+ * body then matches, base r7, offset from 8, mask r8, but the entry jump
+ * goes and the setup loop's registers change); the draw loop's columns
+ * indexed (summon->djinn_required[element]) 689; the mask loop indexed
+ * 587. From 172: id block-local in the draw loop 244; affordable
+ * block-local there 172 (same code).
+ * The cursor is drawn through sprite = &cursor, set at the top
  * of the main loop: 252 -> 198. PRE makes &cursor's reaching register
  * (hash order between &sprites and count - 1) and turns sprite's set into
  * a copy from it; GCSE's last cprop replaces the cursor uses, which sit in
@@ -604,12 +612,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         sprite->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
         sprite->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
         Runtime_PushSlotEntry((s32 *)sprite, 242);
-        affordable = gFrameCount & 8;
         {
-            s32 element, tile;
+            s32 element, tile, blink;
 
+            blink = gFrameCount & 8;
             for (element = 0; element <= 3; element++) {
-                tile = 15 - (affordable != 0);
+                tile = 15 - (blink != 0);
                 if ((1 << element & mask) == 0)
                     tile = 15;
                 Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1, tile);

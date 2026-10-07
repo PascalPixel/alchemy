@@ -1,5 +1,5 @@
-/* 08027114: differ 195 against the 1727-line parent listing (draft 1774,
- * common 1653), 46 of them the two nested helpers' lines (see below).
+/* 08027114: differ 169 against the 1727-line parent listing (draft 1774,
+ * common 1666), 46 of them the two nested helpers' lines (see below).
  * Frame 100 as native.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
@@ -39,6 +39,9 @@
  *   (an if/else join inverts the native retry jump).
  * - Psynergy: list = state->list; pick = state->pick; then x = 48 (list
  *   r8 before pick r10, as native).
+ * - Item scans store list[cnt] = cur; pick[cnt++] = k;: with cnt++ on its own
+ *   line the loop has 18 insns and loop.c reduces the pick giv only on its
+ *   second pass, after the list giv (native inits pick r7 first, list r6).
  * - The two init loops are plain for loops (loop.c reverses them as native);
  *   state->timer = -1 among the zero stores (sched2 puts the store last).
  * Remaining: register choices in the opening frame-slot order (&hdr below
@@ -730,8 +733,7 @@ item_menu:
                         Item_GetData(cur);
                         if (Item_ClassifyUseAbility(actorId, cur) == 0) {
                             list[cnt] = cur;
-                            pick[cnt] = k;
-                            cnt++;
+                            pick[cnt++] = k;
                         }
                         k++;
                         if (k == 15) {
@@ -747,8 +749,7 @@ item_menu:
                         Item_GetData(cur);
                         if (Item_ClassifyUseAbility(actorId, cur) != 0) {
                             list[cnt] = cur;
-                            pick[cnt] = k;
-                            cnt++;
+                            pick[cnt++] = k;
                         }
                         k++;
                         if (k == 15) {

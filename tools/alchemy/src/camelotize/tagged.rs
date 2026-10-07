@@ -50,12 +50,33 @@ fn statement_start(tokens: &[Token], at: usize) -> usize {
         match punct(before) {
             Some(")" | "]") => depth += 1,
             Some("(" | "[") => depth -= 1,
+            // An `if` branch closes before `else`, and a `do` body before its
+            // `while`: the statement goes on before that block.
+            Some("}") if depth <= 0 && continues(tokens, k) => {
+                k = matching(tokens, k - 1).unwrap_or(k - 1);
+                continue;
+            }
+            Some(";") if depth <= 0 && is(&tokens[k], "else") => {}
             Some(";" | "{" | "}") if depth <= 0 => return k,
             _ => {}
         }
         k -= 1;
     }
     0
+}
+
+fn is(token: &Token, word: &str) -> bool {
+    matches!(&token.tok, Tok::Ident(n) if n == word)
+}
+
+/// Whether the statement before `at` goes on past the `}` at `at - 1`: an
+/// `else` follows it, or it closes a `do` body and `while` follows.
+fn continues(tokens: &[Token], at: usize) -> bool {
+    is(&tokens[at], "else")
+        || (is(&tokens[at], "while")
+            && matching(tokens, at - 1)
+                .and_then(|open| open.checked_sub(1))
+                .is_some_and(|before| is(&tokens[before], "do")))
 }
 
 /// The last token of the statement starting at `at`, with its blocks, `else`
@@ -68,6 +89,8 @@ fn statement_end(tokens: &[Token], at: usize) -> usize {
         match punct(&tokens[k]) {
             Some("(" | "[") => depth += 1,
             Some(")" | "]") => depth -= 1,
+            // A braceless branch ends at its `;`, but an `else` carries on.
+            Some(";") if depth <= 0 && tokens.get(k + 1).is_some_and(|t| is(t, "else")) => {}
             Some(";") if depth <= 0 => return k,
             Some("}") if depth <= 0 => return k.saturating_sub(1).max(at),
             Some("{") if depth <= 0 => {
@@ -160,6 +183,22 @@ mod tests {
         assert_eq!(spans(first), vec!["void F(void)\n{\n    /* FAKEMATCH: frame */\n    u8 a;\n    a = 0x10;\n}"]);
         let opens = "{\n    if (a) { /* FAKEMATCH: order */\n        b = 0x10;\n    } else {\n        c = 1;\n    }\n    d;\n}\n";
         assert_eq!(spans(opens), vec!["if (a) { /* FAKEMATCH: order */\n        b = 0x10;\n    } else {\n        c = 1;\n    }"]);
+    }
+
+    #[test]
+    fn a_trailing_tag_after_a_do_loop_covers_its_body() {
+        let text = "{\n    a = 1;\n    do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: order */\n    do { Io_SetBlendAlpha(0x80c); } while (0);\n}\n";
+        assert_eq!(spans(text), vec!["do { Io_SetBlendControl(0x3f42); } while (0);"]);
+        let after_if = "{\n    if (a) {\n        b;\n    }\n    while (c) d = 0x10; /* FAKEMATCH: r5 */\n}\n";
+        assert_eq!(spans(after_if), vec!["while (c) d = 0x10;"]);
+    }
+
+    #[test]
+    fn a_leading_tag_covers_a_braceless_else_chain() {
+        let text = "{\n    x;\n    /* FAKEMATCH: each copy loads its routine */\n    if (v == 1)\n        Call3(f, 0x10, 1);\n    else if (v == 2)\n        Call3(f, 0x20, 2);\n    e = 0x30;\n}\n";
+        assert_eq!(spans(text), vec!["if (v == 1)\n        Call3(f, 0x10, 1);\n    else if (v == 2)\n        Call3(f, 0x20, 2);"]);
+        let trailing = "{\n    if (a)\n        b = 1;\n    else\n        c = 0x10; /* FAKEMATCH: r4 */\n}\n";
+        assert_eq!(spans(trailing), vec!["if (a)\n        b = 1;\n    else\n        c = 0x10;"]);
     }
 
     #[test]

@@ -61,8 +61,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
        sizes its hash table from the function's length and PRE numbers its
        reaching registers in bucket order; with this store the table has
        379 buckets and &ordered and &sprites take their spill slots before
-       count - 1, as in the native frame (377 buckets without it, differ
-       80). */
+       count - 1, as in the native frame (377 buckets without it: 80 rows
+       differ, every one a spill slot's offset). */
     result = 0;
     render = (struct UiRenderWork *)gWindowWork[0];
     drawn_row = -1;

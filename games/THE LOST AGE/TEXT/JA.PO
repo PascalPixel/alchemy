@@ -47719,7 +47719,7 @@ msgctxt "message"
 msgid "11927"
 msgstr "サテュロスたちをたおすほど{line_break}つよい戦士たちなのだから・・・{line_break}きっと うまくやってくれる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWhyAmILying"
 msgid "11928"
 msgstr "どうして オレは・・・{line_break}ここに たおれている?{end_wait}"
 
@@ -47803,23 +47803,23 @@ msgctxt "message"
 msgid "11948"
 msgstr "それじゃ たのんだぜ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSTooLateFor"
 msgid "11949"
 msgstr "オレたちは もうダメだ・・・{line_break}気にせず 灯台の火をたのむ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYourHandSoWarmPeople"
 msgid "11950"
 msgstr "なんて あたたかい手・・・{line_break}人の手のあたたかさなんて{line_break}ずっと わすれていた・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoTiredA"
 msgid "11951"
 msgstr "くそう 目がかすんできた・・・{line_break}だが 灯台の火がともるのを{line_break}見るまでは 死にきれない・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoColdColder"
 msgid "11952"
 msgstr "こんなに さむいのは・・・{line_break}灯台がともっていないからね{page_break}どうやら このいのち・・・{line_break}灯台がともるまでは・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouWhoHoldTheStar2"
 msgid "11953"
 msgstr "星をもつ者よ{line_break}心して きけ{page_break}天空へと のぞむならば{line_break}われに 星をささげよ{end_wait}"
 
@@ -48747,11 +48747,11 @@ msgctxt "message"
 msgid "12184"
 msgstr "いいから かつぐんじゃ・・・{line_break}そしたら すぐ にげるんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSASpaceFor"
 msgid "12185"
 msgstr "なにかを おけそうな{line_break}スペースがある{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGotTheMarsStar"
 msgid "12186"
 msgstr "{actor_name:5}は {line_break}マーズスターを手にいれた!{end_wait}"
 

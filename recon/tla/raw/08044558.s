@@ -253,7 +253,7 @@ Func_08044558:
 	mov r2, r8
 	adds r3, r5, #0
 	mov r0, r10
-	bl Func_080443d8
+	bl UiWindow_SetTilemapFlagRect
 	movs r0, #1
 	bl WaitFrames
 	movs r2, #1
@@ -264,7 +264,7 @@ Func_08044558:
 	adds r3, r5, #0
 	adds r1, r7, #0
 	mov r2, r8
-	bl Func_080443d8
+	bl UiWindow_SetTilemapFlagRect
 	mov r3, r11
 	cmp r3, #0
 	beq .L_080447a6

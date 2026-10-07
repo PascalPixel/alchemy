@@ -50,38 +50,9 @@ Sys_Free:
 	.type Func_0801319c, %function
 	.thumb_func
 Func_0801319c:
-	.incbin "baserom.gba", 0x0001319c, 0x0000011c
-	.section .rom.000132b8, "ax"
-	.global Func_080132b8
-	.type Func_080132b8, %function
-	.thumb_func
-Func_080132b8:
-	.incbin "baserom.gba", 0x000132b8, 0x00000004
-	.section .rom.000132bc, "ax"
-	.global Func_080132bc
-	.type Func_080132bc, %function
-	.thumb_func
-Func_080132bc:
-	.incbin "baserom.gba", 0x000132bc, 0x00000004
-	.section .rom.000132c0, "ax"
-	.global Func_080132c0
-	.type Func_080132c0, %function
-	.thumb_func
-Func_080132c0:
-	.incbin "baserom.gba", 0x000132c0, 0x00000004
-	.section .rom.000132c4, "ax"
-	.global Func_080132c4
-	.type Func_080132c4, %function
-	.thumb_func
-Func_080132c4:
-	.incbin "baserom.gba", 0x000132c4, 0x00000004
-	.section .rom.000132c8, "ax"
-	.global Func_080132c8
-	.type Func_080132c8, %function
-	.thumb_func
-Func_080132c8:
-	.incbin "baserom.gba", 0x000132c8, 0x00000004
+	.incbin "baserom.gba", 0x0001319c, 0x00000108
 	.section .rom.000132d0, "ax"
+	.balign 4
 	.global Func_080132d0
 	.type Func_080132d0, %function
 	.thumb_func
@@ -1515,7 +1486,7 @@ Func_080438c8:
 	.balign 4
 	.incbin "baserom.gba", 0x00043ba8, 0x00000188
 	.section .rom.00043e1c, "ax"
-	.incbin "baserom.gba", 0x00043e1c, 0x000007ec
+	.incbin "baserom.gba", 0x00043e1c, 0x00000764
 	.section .rom.00044640, "ax"
 	.global Func_08044558
 	.type Func_08044558, %function
@@ -3911,8 +3882,6 @@ Func_080dca84:
 	.thumb_func
 Func_080dcadc:
 	.incbin "baserom.gba", 0x000dca98, 0x0000042c
-	.section .rom.000dcee8, "ax"
-	.incbin "baserom.gba", 0x000dcee8, 0x00000028
 	.section .rom.000dd010, "ax"
 	.global Func_080dd054
 	.type Func_080dd054, %function
@@ -4108,7 +4077,10 @@ ObjectGroup_BlinkChildValues:
 	.incbin "baserom.gba", 0x000f0798, 0x000005c8
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
-	.incbin "baserom.gba", 0x000f0d60, 0x00000050
+	.incbin "baserom.gba", 0x000f0d60, 0x00000048
+	.global Data_080f0e9c
+Data_080f0e9c:
+	.incbin "baserom.gba", 0x000f0da8, 0x00000008
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
 	.incbin "baserom.gba", 0x000f0db0, 0x00000020

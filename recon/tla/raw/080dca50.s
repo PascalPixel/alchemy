@@ -16,7 +16,7 @@ Func_080dca50:
 	ldrh r0, [r5]
 	bl Object_GetById
 	movs r1, #1
-	bl Func_080dcf2c
+	bl BattleFx_ApplyFlickerValue
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #88
 	bl Runtime_ReleaseHeapBlock

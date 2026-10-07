@@ -41,6 +41,10 @@
  * r1 for the < 0 test and ldrb, lsl, asr into the address register for
  * the > 0 test (the dest == base form of the sign-extending load), where
  * m is one ldrsb with a zeroed index here, 9 instructions short.
+ * The loop-end check loads gLinkCountdownWork in native (its literal),
+ * not gWindowWork + 168: written as gLinkCountdownWork->active 389 -> 444,
+ * as the array-address spill slots then shift by 8 (sp+8/12 -> 16/20);
+ * kept as gWindowWork[42] until the spill order is understood.
  *
  * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
  * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,

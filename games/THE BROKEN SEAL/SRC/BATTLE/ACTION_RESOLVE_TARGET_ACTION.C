@@ -386,16 +386,8 @@ after_power:
                 s32 listed;
 
                 listed = BattleParty_ListPresentEnemies(saved);
-                if (listed > 0) {
-                    u16 *q;
-
-                    q = (u16 *)saved;
-                    count = listed;
-                    do {
-                        Actor_ResetMotionAtAnchor(*q++);
-                        count--;
-                    } while (count != 0);
-                }
+                for (count = 0; count < listed; count++)
+                    Actor_ResetMotionAtAnchor((u16)saved[count]);
             }
             BattleEv_Push(BATTLE_EVENT_UNIT, rec);
 #if GAME_TLA

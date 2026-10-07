@@ -1,44 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	bl Func_020010e0
-	movs r0, #0
-	bl Func_02001180
-	ldr r0, .L_02008078
-	bl Func_02001138
-	movs r0, #10
-	movs r1, #0
-	bl Func_02001148
-	bl Func_020010e8
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_02008078:
-	.4byte 0x00001dfd
-	.section .text.x0200807c,"ax",%progbits
-	.global Func_0200007c
-	.thumb_func
-Func_0200007c:
-	push {lr}
-	bl Func_020010e0
-	movs r0, #0
-	bl Func_02001180
-	ldr r0, .L_020080a0
-	bl Func_02001138
-	movs r0, #10
-	movs r1, #0
-	bl Func_02001148
-	bl Func_020010e8
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_020080a0:
-	.4byte 0x00001e25
 	.section .text.x020080a4,"ax",%progbits
+	.balign 4
 	.global Func_020000a4
 	.thumb_func
 Func_020000a4:

@@ -20327,7 +20327,7 @@ msgctxt "message"
 msgid "05079"
 msgstr "If you win the hi-lo game, you{line_break}double your winnings! You can{line_break}do this up to five times.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoTellMePalHave"
 msgid "05080"
 msgstr "So, tell me, pal... Have you{line_break}ever played Superdice before?{end_now}"
 
@@ -30715,7 +30715,7 @@ msgctxt "message"
 msgid "07676"
 msgstr "By painting our bodies, we{line_break}bring about good luck.{line_break}You should try it, too.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheItemsThatOneCarries"
 msgid "07677"
 msgstr "The items that one carries are{line_break}filled with one's hopes and{line_break}desires.{page_break}I can sense these desires,{line_break}and I can see answers{line_break}hidden within them.{end_wait}"
 
@@ -30875,7 +30875,7 @@ msgctxt "message"
 msgid "07716"
 msgstr "Reading fortunes in people's{line_break}items takes a lot of energy, so{line_break}he's not always willing to do it.{page_break}But if you have 20 coins on{line_break}you, he might be a little more{line_break}willing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItemsPlacedBeforeMeAre"
 msgid "07717"
 msgstr "Items placed before me are filled{line_break}with the desires of those{line_break}who place them there.{page_break}If I can sense those desires, I{line_break}can answer that which they seek.{end_wait}"
 
@@ -41811,7 +41811,7 @@ msgctxt "message"
 msgid "10450"
 msgstr "{actor_name:6} received the{line_break}fire Psynergy Blaze.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoYouKnowAnythingAbout"
 msgid "10451"
 msgstr "Do you know anything about a{line_break}legend about these people who{line_break}could control the wind and air?{end_now}"
 
@@ -42095,7 +42095,7 @@ msgctxt "message"
 msgid "10521"
 msgstr "How long have we been{line_break}working on these stupid{line_break}wings?{page_break}When I see that boat{line_break}soaring through the{line_break}skies, I think I'll cry.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaveYouTakenAGood"
 msgid "10522"
 msgstr "Have you taken a good look{line_break}at the Anemos geoglyph?{end_now}"
 
@@ -42135,23 +42135,23 @@ msgctxt "message"
 msgid "10531"
 msgstr "Someone told me that Hammet{line_break}went to a town called Kalay{line_break}and did quite well for himself.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgExaminedTheWallThereAre"
 msgid "10532"
 msgstr "{actor_name:5} examined the wall.{line_break}There are characters carved{line_break}into it.{page_break}Hmmm... I keep staring at it,{line_break}but it's not making any{line_break}more sense.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgExaminedTheSignTheCharacters"
 msgid "10533"
 msgstr "{actor_name:5} examined the sign.{line_break}The characters from the wall{line_break}are translated there.{page_break}Some them are gates, and{line_break}some them are roads.{page_break}Search with your heart to{line_break}find the truest path.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgTurnTheSlotAndGet"
 msgid "10534"
 msgstr "Turn the slot and get a prize!{line_break}The lottery slots are over here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDropSomeCashAndDouble"
 msgid "10535"
 msgstr "Drop some cash and double up!{line_break}The hi-lo dice are over here!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouNeverKnowWhatThe"
 msgid "10536"
 msgstr "You never know what the{line_break}dice will do next! Come and{line_break}give our dice a toss!{end_wait}"
 

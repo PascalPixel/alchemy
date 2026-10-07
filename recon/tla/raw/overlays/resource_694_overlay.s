@@ -1072,120 +1072,8 @@ Func_02000874:
 	.4byte Data_02005ed0
 .L_020088e8:
 	.4byte Data_020054e0
-	.section .text.x020088ec,"ax",%progbits
-	.global Func_020008ec
-	.thumb_func
-Func_020008ec:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_02008908
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02004074
-	pop {pc}
-	.2byte 0x0000
-.L_02008908:
-	.4byte 0x00002924
-	.section .text.x0200890c,"ax",%progbits
-	.global Func_0200090c
-	.thumb_func
-Func_0200090c:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_02008928
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02004074
-	pop {pc}
-	.2byte 0x0000
-.L_02008928:
-	.4byte 0x00002925
-	.section .text.x0200892c,"ax",%progbits
-	.global Func_0200092c
-	.thumb_func
-Func_0200092c:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_02008948
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02004074
-	pop {pc}
-	.2byte 0x0000
-.L_02008948:
-	.4byte 0x00002926
-	.section .text.x0200894c,"ax",%progbits
-	.global Func_0200094c
-	.thumb_func
-Func_0200094c:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_02008968
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02004074
-	pop {pc}
-	.2byte 0x0000
-.L_02008968:
-	.4byte 0x00002927
-	.section .text.x0200896c,"ax",%progbits
-	.global Func_0200096c
-	.thumb_func
-Func_0200096c:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_02008988
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02004074
-	pop {pc}
-	.2byte 0x0000
-.L_02008988:
-	.4byte 0x00002928
-	.section .text.x0200898c,"ax",%progbits
-	.global Func_0200098c
-	.thumb_func
-Func_0200098c:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_020089a8
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02004074
-	pop {pc}
-	.2byte 0x0000
-.L_020089a8:
-	.4byte 0x00002936
-	.section .text.x020089ac,"ax",%progbits
-	.global Func_020009ac
-	.thumb_func
-Func_020009ac:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_020089cc
-	bl Func_0200412c
-	movs r1, #0
-	movs r0, #8
-	bl Func_0200414c
-	bl Func_02004074
-	pop {pc}
-.L_020089cc:
-	.4byte 0x000028d3
 	.section .text.x020089d0,"ax",%progbits
+	.balign 4
 	.global Func_020009d0
 	.thumb_func
 Func_020009d0:
@@ -1781,24 +1669,8 @@ Func_02000e50:
 	.4byte 0x00002bb6
 .L_02008eb4:
 	.4byte 0x0000290c
-	.section .text.x02008eb8,"ax",%progbits
-	.global Func_02000eb8
-	.thumb_func
-Func_02000eb8:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_02008ed8
-	bl Func_0200412c
-	movs r1, #0
-	movs r0, #10
-	bl Func_0200414c
-	bl Func_02004074
-	pop {pc}
-.L_02008ed8:
-	.4byte 0x000013d8
 	.section .text.x02008edc,"ax",%progbits
+	.balign 4
 	.global Func_02000edc
 	.thumb_func
 Func_02000edc:
@@ -1964,24 +1836,8 @@ Func_0200102c:
 	.2byte 0x0000
 .L_0200906c:
 	.4byte 0x000013b6
-	.section .text.x02009070,"ax",%progbits
-	.global Func_02001070
-	.thumb_func
-Func_02001070:
-	push {lr}
-	bl Func_0200406c
-	movs r0, #0
-	bl Func_02004204
-	ldr r0, .L_02009090
-	bl Func_0200412c
-	movs r1, #0
-	movs r0, #14
-	bl Func_0200414c
-	bl Func_02004074
-	pop {pc}
-.L_02009090:
-	.4byte 0x0000291a
 	.section .text.x02009094,"ax",%progbits
+	.balign 4
 	.global Func_02001094
 	.thumb_func
 Func_02001094:

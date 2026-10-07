@@ -1,6 +1,235 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 918, common 587, differ 690; frame 372
- * as native's.
+ * Native 946 instructions, draft 944, common 868, differ 154; frame 372
+ * as native's, and every compiler temporary's slot now at native's offset.
+ * Session 9: the two page changes set page before row again (page = 0;
+ * row = preferred and page -= 4; row = preferred), as session 4's base
+ * had them before a merge reversed them: 172 -> 154. From 172: the
+ * initial cell reads as page, mask = 0, preferred, row 180 (with the page
+ * order as well 162). From 154: nav->row stored before nav->page 160
+ * (native stores page first, the draft row first); the draw loop's scan
+ * as standby[element] < summon->djinn_required[element] 161; five
+ * minutes of permute found nothing below 154 (from 198 its 188 was the
+ * page order plus noise temporaries); the cleanup loop with index <= 3
+ * 154, counted down over handles[3 - index] 152 (its two inits in
+ * native's order, but not a shape anyone writes, not kept). Remaining at
+ * 154, in order: scheduling at the start (mask stored before counts, the
+ * window call's stack argument late); the handle loop walks a pointer
+ * where native has base r7, offset from 8 and mask r8; count - 1 built
+ * in r0 where native keeps count in r0 and builds it in r3; the draw
+ * loop keeps id in r8, summon in r6 and summon + 4 in slot 36 where
+ * native has id r6, summon in slot 36 and the scan's pointer r1 fresh
+ * from summon (item (a) below); then small orderings in the arrows, the
+ * nav stores and the cleanup loop.
+ * The highlight loop's blink is a block local beside its
+ * element and tile, not the function's affordable: 198 -> 172, blink r6
+ * and element r5 as native's. From 198: the handle loop indexed 237 (its
+ * body then matches, base r7, offset from 8, mask r8, but the entry jump
+ * goes and the setup loop's registers change); the draw loop's columns
+ * indexed (summon->djinn_required[element]) 689; the mask loop indexed
+ * 587. From 172: id block-local in the draw loop 244; affordable
+ * block-local there 172 (same code).
+ * The cursor is drawn through sprite = &cursor, set at the top
+ * of the main loop: 252 -> 198. PRE makes &cursor's reaching register
+ * (hash order between &sprites and count - 1) and turns sprite's set into
+ * a copy from it; GCSE's last cprop replaces the cursor uses, which sit in
+ * later blocks, with the reaching register, and the copy dies, so the
+ * cursor lives in that register's slot 24 as native's. The same set just
+ * before the push loop 210; without the six dead stores 276 (one 276, two
+ * to five 278): still 379 buckets needed.
+ * Session 8: the compiler temporaries' slot order is GCSE's. PRE creates
+ * its reaching registers in pre_delete, walking the expression table by
+ * bucket, and hash_expr is linear: (plus (reg N) (const_int c)) hashes
+ * to 13901 + N + c, (ashift (reg N) (const_int c)) to 13913 + N + c, so
+ * with sfp 25, count 36, row 41 and cursor_handle 43: &glyph 13642,
+ * &ordered 13794, &sprites 13866, &cursor 13914, count - 1 13936,
+ * row * 2 13955, cursor_handle << 16 13972, taken mod n / 2 | 1 buckets
+ * (n = max_cuid, 750 here: 375 buckets, wrapping between &sprites and
+ * &cursor). Native's slots need the wrap between &glyph and &ordered:
+ * 369, 371, 379, 381 or 383 buckets, so native had 736-743 or 756-767
+ * insns at GCSE. Six dead stores (FAKEMATCH, 756 insns, 379 buckets)
+ * give native's order for &ordered, &sprites, count - 1, row * 2,
+ * cursor_handle << 16 and &glyph: 280 -> 252 (five stores 377 buckets,
+ * 282; eight 379, sixteen 383, twelve 381, all 252). The device stands
+ * for an unknown source difference of that many insns and moves with
+ * any change in insn count: check the bucket count in the gcse dump
+ * (alchemy diff --rtl) after each trial. Still differing: &cursor keeps
+ * expand's pseudo (CSE folds every cursor field access into insn 1388's
+ * register through the call, PRE replaces only that one, and combine
+ * folds its single-use reaching register back), so it takes a first-pass
+ * slot at 36 above summon (32), where native's cursor is the reaching
+ * register, spilled with summon (36) and placed at 24. GCSE's cprop
+ * replaces a copy's uses only in other blocks, so native's cursor uses
+ * were probably in a block after the one holding PRE's 383 = reaching
+ * copy. From 252: the handle loop indexed 293 (381 buckets); mask = 0
+ * after the cell reads 258, after the main window 262, before the
+ * description window 254 (all 379 buckets); a block-local summon for
+ * the draw loop 571. Next after the slots: the draw
+ * loop's scan keeps summon in r6 and summon + 4 in slot 32 (item (a)
+ * below); native has id in r6, summon in slot 36 and required in r1.
+ * Session 7: the draw loop's affordability scan counts with the column
+ * loop's element (no n): 443 -> 280. Diagnosed in greg: index (pseudo
+ * 62, 126 refs over 496 insns, 6 * 126 / 496 = 1.524) was allocated just
+ * before the column element (pseudo 231, 19 refs over 54 insns, 1.407),
+ * took the free r7 and left element r4. One element for scan and columns
+ * outranks index, takes r7 as native's, and index, with r5-r7 taken,
+ * falls to r4 with its caller-saves at sp+4 as native's. Session 5 tried
+ * the same at 524 (819), when the first page loop's tile still held r4;
+ * since session 6 that tile is r1. Remaining at 280, first: mask stored
+ * before counts and the window call's stack argument stored late
+ * (scheduling); the compiler temporaries' slots again differ (draft
+ * sprites 8, ordered 12, count - 1 28; native sprites 28, ordered 32,
+ * count - 1 20) and the handle loop walks a sprite pointer where native
+ * keeps base r7 plus an offset giv from 8 and the tile mask in r8.
+ * Slots top down, draft: cursor_handle << 16 36, summon 32, count - 1 28,
+ * row * 2 24, cursor 20, &glyph 16, ordered 12, sprites 8; native:
+ * summon 36, ordered 32, sprites 28, cursor 24, count - 1 20, row * 2 16,
+ * cursor_handle << 16 12, &glyph 8 (reload numbers them by pseudo, so
+ * native made &ordered and &sprites early and the shift late). From 280:
+ * the handle loop indexed (sprites[index].oam.f.tile) 323.
+ * Session 6: the main loop is for (;;) with two breaks, the first page
+ * loop back in its original form (tile = PAGE; if (index == page / 4)
+ * tile = SELECTED), and the loop and the WaitFrames(1) after it wrapped
+ * in a FAKEMATCH do { } while (0): 524 -> 443. The mechanism, read in the
+ * gcse dump (the input to loop.c): find_and_verify_loops moves a block
+ * that ends in an unconditional jump out of the loop, when a conditional
+ * jump skips it, to the nearest BARRIER at the exit target's loop depth,
+ * searched back from the target and then forward. The only depth-0
+ * barrier is 2649, after GCSE's jump block 2648 that split_edge emits
+ * after the first scan's NOTE_INSN_LOOP_END to get around the skip-edge
+ * block (insn 2594, &ordered for slot 32). With the exit label inside an
+ * enclosing loop no barrier has its depth, nothing moves, and the select
+ * block stays inline with result in r6 as native's. for (;;) alone 595
+ * (as session 5); for (;;) inside do/while (0) with the if/else page
+ * loop 446; the do/while (0) around the for (;;) alone, WaitFrames(1)
+ * after it, 595 (the break's target needs a real insn inside the
+ * enclosing loop, or jump.c retargets it past the loop end); around the
+ * loop and the whole cleanup 443, as kept. From 443: mask = 0 after the
+ * cell reads 449, before the counts window 447 (native stores counts
+ * before mask; the draft mask first). The next differences after that
+ * store pair: in the sprite setup loop native has index in r4 with y =
+ * index << 1 computed first and &sprites in slot 28, the draft index r7
+ * and &sprites in slot 8 (item (b) and (d) below). From 443: the setup
+ * loop without its y local (index * 2 inline) 443, same code; its
+ * attribute words through sprite as well 492.
+ * Next: a natural shape that has the same effect (native also
+ * has the skip-edge block after its first scan, so its exit was probably
+ * not at depth 0, or the barrier was absent when loop.c ran); then the
+ * first divergence, from mask = 0 on.
+ * Session 5: the first page-tile loop written if (index != page / 4)
+ * tile = PAGE; else tile = SELECTED: 567 -> 524. GCSE then no longer
+ * carries the loop test's (count + 3) / 4 into the body (it is
+ * recomputed there, where native reuses it in r0), but every compiler
+ * temporary's slot comes out at native's offset (summon 36, ordered 32,
+ * sprites 28, cursor 24, row * 2 16, cursor_handle << 16 12), which
+ * resolves most of (d) below. Tile is still r4 and index r7. The same
+ * test as if (index == page / 4) ... else 526, as a conditional
+ * expression 526; the call's x as index + width - quotient - 2 567. From
+ * 524: element shared by the draw loop's scan and columns 819; an edge
+ * = -1 block local for the arrows 524 unchanged. From 567: an edge = -1
+ * block local for the first page loop's call 570 (its 0 then takes r3
+ * and the -1 becomes subs r3, #1 by move2add, as in native's second
+ * page loop and in BattleMenu_RunActionSelection's first, but native's
+ * first loop keeps the 0 in r0 and builds -1 with movs; negs).
+ * Session 5 diagnosis, the next step: native's main loop is a real loop
+ * (loop notes), as BattleMenu_RunActionSelection's for (;;) is. With the
+ * goto loop / done replaced by for (;;) and two breaks, and the first
+ * page loop in its original form (tile = PAGE; if (index == page / 4)
+ * tile = SELECTED), that page loop matches native instruction for
+ * instruction except index (r7 against native's r4 with its caller-save
+ * at sp+4): tile r1, quotient r0, window reloaded into r3, the 0 in r0
+ * and -1 by movs; negs. The reason: loop.c hoists the main loop's
+ * argument 0 (insn 1184, pseudo 331, savings 5) and global-alloc leaves
+ * it in no register, so reload materializes it where needed (the twin's
+ * pseudo 205 is the same) and r1 is free for tile. The row * 2 giv of
+ * the key handling is then a loop giv too, as native's slot 16 shows.
+ * Total 595 (do { } while (1) and while (1) 595 too), because
+ * find_and_verify_loops moves the `result = ordered[page + row]; break;`
+ * block out of the loop (b.n -1238) to the first depth-0 barrier before
+ * it: the jump over the skip-path block that stores &ordered after the
+ * first scan (mov rX, sp; adds rX, #240; str), which GCSE creates before
+ * loop.c runs. Native has the same skip-path block but keeps the A block
+ * inline, so in native that barrier did not exist yet when loop.c looked
+ * (perhaps loop.c made it from the first scan), or the A block did not
+ * qualify (a label at its start, or its guard not a plain conditional
+ * jump around it). Solve that and keep for (;;). With for (;;) and the
+ * if/else page loop 606. A block local n = count + 3 for the page loop
+ * bound makes that loop non-phony too (GCSE's count + 3 insertion after
+ * LOOP_BEG is what makes it phony), but gives n + 3 for the negative
+ * adjust where native has count + 6: first loop 577, second loop 585.
+ * Session 4: the highlight loop has its own tile, the two page-tile loops
+ * share the function's tile as ItemList_SelectEntry (BATTLE_LIST.C, the
+ * matched twin) does: 575 -> 567 (a tile per loop also 567).
+ * Diagnosed with flow.c's weights (refs count loop_depth + 1 over the
+ * CFG's natural loops, goto loops included) and global.c's find_reg:
+ * index (126 refs, 510 insns, 14 calls, 6 * 126 / 510 = 1.482) is
+ * allocated before the column element (1.407), takes r7 and leaves
+ * element the caller-saved r4. Native's scan counter and column element
+ * share r7, which one element for both gives (37 refs, 88 insns, 2.10,
+ * takes r7), but then index falls to r8 (835): the first page-tile
+ * loop's tile (9 refs, 16 insns, 1.69) already holds r4, and index's
+ * caller-save attempt needs r4 free. With that loop's page test removed
+ * (diagnostic only) index takes r4 with saves at sp+4 as native's, 697.
+ * Native's tile is r1 and its quotient (count + 3) / 4 r0; the draft's
+ * tile conflicts with r1 because local-alloc gives the stack argument's
+ * 0 (a REG_EQUIV pseudo) r1 while tile is live, so the quotient takes r1
+ * and tile r4. Native's stack zeros carry no register: in its second
+ * page loop "movs r3, #0; str r3, [sp]; ... subs r3, #1" is reload's
+ * constant 0 and move2add turning the -1 reload into a subtract, and in
+ * the first loop its 0 is reloaded into r0 after the quotient dies. Both
+ * page loops are phony to loop.c (entry jump target outside the loop),
+ * so nothing there is hoisted. Item (e) below is the same move2add:
+ * native reaches menu_busy's offset with adds r1, #3 from dirty's reload
+ * in r1. In the draft expand writes dirty = 1 as a read-modify-write
+ * (load, and 0, ior 1: insns 1244-1258 of the rtl dump, although the
+ * fields are plain u8), CSE reuses that and-mask 0 as menu_busy's value,
+ * local-alloc gives it r1 from before the first store, and the second
+ * offset's reload must take r2. Native's 0 is fresh after the first
+ * store. The matched twins compile the same two lines with a fresh 0
+ * (BattleMenu_RunActionSelection: K r1, K + 3 r2, 0 r0; ItemList_
+ * SelectEntry: 0 r1), so the shared 0 comes from this draft's context,
+ * and the r1 for K + 3 then needs reload's spill-register rotation to
+ * land on r1. With shared element: tiles
+ * shared by the page loops 835, page tile if/else or a conditional
+ * argument 821, tile = index + (test ? selected : page) 821. From 567:
+ * an edge = -1 variable for the arrows (as the twin has) 567, unchanged;
+ * a function-wide zero for the first page loop's argument 864.
+ * Session 3, third step: the highlight loop's test written
+ * (1 << element & mask) == 0 keeps native's movs 1; lsls; ands; cmp, where
+ * (mask & (1 << element)) == 0 is folded to (mask >> element) & 1 (asrs):
+ * 598 -> 575; a bit temporary or a u32 cast give the same 575, and
+ * !(mask & ...) 598, a conditional expression or if/else 602. Remaining
+ * there: affordable r5 / element r6 / tile r4 against native's r6 / r5 /
+ * r2, and gFrameCount's address reused from the cursor where native
+ * reloads it from the pool. Flag stores through a u8 pointer 612,
+ * (&render->dirty)[3] 598; fixed-register element asm("r7") 597 but
+ * miscompiles (index shares r7), not kept; first loop's attributes all
+ * through sprite 647; sprite[index] tile loop 651; index = 0 before the
+ * counts columns 844; required[element] columns 852; element shared by
+ * the columns and the highlight loop 856; y * 8 for the name row 598.
+ * Since the y step drawn_page, row and page sit in native's r9, r10, r11
+ * ((c) below is resolved). From 575: mask = 0 after the cell reads 581,
+ * before the counts window 579, after the main window 585 (native stores
+ * counts before mask, the draft mask first); nav->row before nav->page
+ * 581 (native stores page first, the draft row first).
+ * Session 3, second step: y = index * 2 set after the scan, before the
+ * glyph load, 663 -> 598, although native computes index * 2 after the
+ * load and shares it with the tile store's index * 3; y beside the tile
+ * store (before or after it) 663 unchanged; y before the scan's
+ * affordable 640; y at the top of the pass 644; col = 0 beside the new y
+ * 619.
+ * Session 3: the draw loop's columns counted (col = 0 at the top of each
+ * pass, col * 2 + 13 and col * 2 + 14, col++) give native's giv start
+ * (lsls r3, rX, #1; adds r5, r3, #0; adds r5, #13) and its hoisted 0 for
+ * the stack argument: 690 -> 663. col = 0 anywhere after the scan (before
+ * the glyph, the tile store, the name or the columns) 687. Remaining
+ * cascade there: element takes r4 with caller-saves and index r7, where
+ * native has the reverse; their priorities (lreg) are close, element
+ * 4 * 19 / 54 against index 6 * 126 / 510, so index is allocated first.
+ * From 663: the draw loop on its own counter i 907; element shared by
+ * the scan and the columns 870; the page-tile loops on element 909; the
+ * display loop on element 663 unchanged; the init and reset loops on
+ * element 669; indexed summon->djinn_required[element] columns 984;
+ * indexed handle and tile loop 819.
  * Remaining, in order: (a) the draw loop's affordability scan has its
  * first test duplicated by jump.c before loop.c runs, so CSE folds element
  * 0 into summon + 4 (insn 2490), GCSE shares it with the column loop's
@@ -119,6 +348,68 @@
  * one outside the display loop 920; a short handle left 914 unchanged.
  * A one-pass attribute-store block moved the y shift into native order, 912,
  * but was removed while the wider source shape remains unsettled.
+ *
+ * Older branch (eb6368caac, cea7c0c246; its body scored 709 at this merge,
+ * this one 524), its trials on its own base from 901:
+ * 901 -> 887: the djinn test is `if (*required <= *supply) do { ... } while
+ * (*required <= *supply);`. Native's loop head is element++ with no folded
+ * first `element > 3` test; plain while, for(;;cond;incr) and ++element forms
+ * all fold it (901). Indexed required[element] > supply[element] gave the
+ * native loop body but an indexed pre-test (876 with the counted first pass,
+ * kept out: native pre-test is through the pointers). The first passes are
+ * counted (index = count - 1 .. 0, then 0 .. count - 1) and `(count - 1) / 4`
+ * is written inline: GCSE then keeps count - 1 in one pseudo (native slot 20)
+ * and rounds a negative one as count + 2, as native does; with last it was
+ * last + 3. Native order of spilled scalars as declarations, on this base:
+ * 891 (row/page/drawn_page beside drawn_row or after summon alike).
+ * Native slot 16 is a GCSE/PRE pseudo row * 2, stored after every row change.
+ * 887 -> 833: the two first passes count with their own i, not index. Native
+ * keeps index in r4 (caller-saved, slot 4) in every other loop, but the copy
+ * pass counts down in r2, so it is another variable; i only in the copy pass
+ * 890, only in the first pass 850. Still differing there: native keeps id in
+ * r6 and src in r5, required in r0 and element in r4; the draft has id in r4
+ * (caller-saved), src r6, required r5, element r0. The same id/index swap
+ * recurs in the draw loop (native index r4, id r6; draft index r7, id r4).
+ * In greg the draft allocates index (higher priority) before id. From 833:
+ * i also in the sprite setup loops 885, in the push loop 929, in the page
+ * loops 950 (index is one variable in all of them, as native's r4 shows);
+ * declaring index, i or id first, or id as u8, 833; the cleanup loop as
+ * for (index = 0; index < 4; index++) Resource_ResetEntry(handles[index])
+ * compiles the same as the counted pointer form and is kept; y set right
+ * after Ability_LoadGlyph 833, at the top of the draw body 1014.
+ * 833 -> 805: the blink value gFrameCount & 8 is its own variable (native r6,
+ * the djinn highlight counter r5); in affordable it took r5, in id 869, in
+ * result 805 as well. From 805: the outer element in the mask, count, draw
+ * or highlight loops 816/884/868/884; a separate summon for the description
+ * 887; a separate id for the first pass 876; the draw loop as a for with
+ * break, or visible[index] = 1; index++, both 805 (same code).
+ * 805 -> 774: the sprite push loop is indexed (visible[index], &sprites[index]),
+ * so index counts up as native (still in r7, native r4); pointer walks let
+ * loop.c reverse it to 3..0. From 774: the handle loop indexed
+ * (sprites[index].oam.f.tile, with or without a slot local) 861, against
+ * native's base + offset giv there; the sprite setup loop indexed and without
+ * its y local compiles the same (774) and is kept.
+ * 774 -> 760: the page changes set page before row (page = 0; row =
+ * preferred and page -= 4; row = preferred); the navigation code now
+ * differs only in stack slot offsets. From 760: scalar declarations with
+ * cursor_handle..element first 762.
+ * 760 -> 759: mask is u32. As s32, combine rewrote the highlight test
+ * mask & (1 << element) into (mask >> element) & 1 (asrs); native keeps
+ * movs #1, lsls, ands, as the unsigned mask does. From 760: the test as
+ * !(mask & (1 << element)) 760; as if/else 764.
+ * 759 -> 709: tile is a block local in each of its three loops (both page
+ * loops and the highlight loop). As one function-wide variable it was a
+ * global pseudo in r4; native has it in r1 and r2 in those loops.
+ * A loop is skipped when GCSE inserts an insn between NOTE_INSN_LOOP_BEG
+ * and its label ("phony", as the two page loops here are from count + 3);
+ * in that draft PRE's &glyph insertion lands before the note on a split
+ * edge instead.
+ * Other trials from 774: the first pass's required, supply and element as
+ * block locals give native's test registers there (required r0, element r4,
+ * supply r1) but 786; the draw loop's test pointers as block locals as well
+ * 803; a block-local summon and required for the description 846; the
+ * setup loop as a sprite pointer walk with the handle loop indexed (native's
+ * address forms in both loops) 854, frame 384.
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -168,6 +459,17 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     s32 pressed, repeated, result;
     s32 index;
 
+    /* FAKEMATCH: six dead stores. GCSE sizes its expression table from
+       the insn count (n / 2 | 1 buckets) and PRE numbers its reaching
+       registers in bucket order; 756 insns give 379 buckets, not 375, and
+       &ordered and &sprites then come before count - 1 as native's spill
+       slots show (369, 371, 381 and 383 order them the same). */
+    pressed = 0;
+    repeated = 0;
+    result = 0;
+    tile = 0;
+    affordable = 0;
+    id = 0;
     render = (struct UiRenderWork *)gWindowWork[0];
     drawn_row = -1;
     drawn_page = -1;
@@ -227,8 +529,13 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     ordered[used] = 32;
 
-loop:
+    /* FAKEMATCH: with the exit inside an enclosing loop, loop.c finds no
+       barrier at the exit's depth and keeps the select block inline, as
+       native does; without it the block moves after the first scan. */
+    do {
+    for (;;)
     {
+        sprite = &cursor;
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
@@ -262,17 +569,18 @@ loop:
                 }
                 {
                     s32 element, col, y;
-                    s32 n;
 
                     index = 0;
                     if ((id = ordered[page + index]) != 32) {
                     next:
+                        col = 0;
                         summon = SummonDefinition_Get(id);
-                        for (n = 0; n <= 3; n++) {
-                            if (summon->djinn_required[n] > standby[n])
+                        for (element = 0; element <= 3; element++) {
+                            if (summon->djinn_required[element] > standby[element])
                                 break;
                         }
-                        affordable = n == 4;
+                        affordable = element == 4;
+                        y = index * 2;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
                         sprites[index].oam.f.tile = glyph;
                         if (!affordable)
@@ -280,13 +588,11 @@ loop:
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
                             (struct RenderInput *)window, 16, index * 16);
                         required = summon->djinn_required;
-                        col = 13;
-                        y = index * 2;
                         for (element = 0; element <= 3; element++) {
                             if (*required != 0) {
-                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col, y, 0);
-                                UiWindow_PutGlyph(window, *required + 48, col + 1, y, 0);
-                                col += 2;
+                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col * 2 + 13, y, 0);
+                                UiWindow_PutGlyph(window, *required + 48, col * 2 + 14, y, 0);
+                                col++;
                             }
                             required++;
                         }
@@ -319,19 +625,19 @@ loop:
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;
-        cursor.oam.word.attr01 = 0x40000000;
-        cursor.oam.word.attr23 = 0;
-        cursor.oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
-        cursor.oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
-        cursor.oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
-        Runtime_PushSlotEntry((s32 *)&cursor, 242);
-        affordable = gFrameCount & 8;
+        sprite->oam.word.attr01 = 0x40000000;
+        sprite->oam.word.attr23 = 0;
+        sprite->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
+        sprite->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
+        sprite->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
+        Runtime_PushSlotEntry((s32 *)sprite, 242);
         {
-            s32 element;
+            s32 element, tile, blink;
 
+            blink = gFrameCount & 8;
             for (element = 0; element <= 3; element++) {
-                tile = 15 - (affordable != 0);
-                if ((mask & (1 << element)) == 0)
+                tile = 15 - (blink != 0);
+                if ((1 << element & mask) == 0)
                     tile = 15;
                 Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1, tile);
             }
@@ -366,12 +672,12 @@ loop:
         }
         if (pressed & 1) {
             result = ordered[page + row];
-            goto done;
+            break;
         }
         if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
             AudioCommand_PlayFar(113);
             result = -1;
-            goto done;
+            break;
         }
         if (repeated & 128) {
             AudioCommand_PlayFar(111);
@@ -394,8 +700,8 @@ loop:
             Runtime_SetMainState19();
             if (page + 4 >= count) {
                 if (page != 0) {
-                    row = preferred;
                     page = 0;
+                    row = preferred;
                 }
             } else {
                 page += 4;
@@ -410,8 +716,8 @@ loop:
             AudioCommand_PlayFar(111);
             Runtime_SetMainState19();
             if (page != 0) {
-                row = preferred;
                 page -= 4;
+                row = preferred;
             } else {
                 page = ((count - 1) / 4) * 4;
                 row = preferred;
@@ -424,9 +730,9 @@ loop:
         }
         WaitFrames(1);
     }
-    goto loop;
-done:
+
     WaitFrames(1);
+    } while (0);
     for (index = 0; index < 4; index++)
         Resource_ResetEntry(handles[index]);
     Resource_ResetEntry((u16)cursor_handle);

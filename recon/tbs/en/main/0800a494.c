@@ -1,5 +1,26 @@
 /* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1:
    stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   2026-10-07 (S12 session 3): listing 307, draft 301, common 300, differ
+   8, from 12: wait's decrement reads its halfword through an asm ldrh
+   into a local of its own (FAKEMATCH). insn_cost gives an unrecognized
+   insn (an asm) cost 1, so its anti dependence on the branch ties the
+   cmp's; its output is set once and live out, so adjust_priority
+   raises it (birthing) above the cmp and sched1 puts it between the cmp
+   and the branch, where it takes r3 and sched2 keeps it (anti on r3).
+   What remains (8): six veneer instructions and z's load. z cannot
+   follow the frozen test's cmp under stock agbcc_arm even as an asm: in
+   sched2 (no birthing raise after reload) the cmp's priority is 3 (y's
+   load, its spill store to sp+12, the ldrb's anti dependence on r3)
+   against the asm's 2, and an asm z (set more than once, or copied from
+   a once-set temporary) also loses CSE's z == obj->z downstream: 102
+   both ways. Trials for wait, each without an instruction in asm: the
+   load in a local laundered by an empty asm tied "0" (s16 local: CSE
+   gives the test that load, ldrsh then mov, 21; u16 into s32, output
+   the same local: set twice, not raised, order unchanged, 12; output a
+   second local: CSE folds the test into the ldrh, 14); a volatile u16
+   load and the empty asm (21: sched1 orders it as listed, but the HImode
+   load and the SImode output do not tie, ldrh r2 then mov r3, r2);
+   halfword locals for both (24, lsl/asr extensions).
    2026-10-07 (S12 session 2): listing 307, draft 301, common 298, differ
    12, from 24, with S2 devices. Diagnosed with agbcc_arm -da and with
    -fno-schedule-insns: the native's registers fit sched1 hoisting each
@@ -221,6 +242,7 @@ void Object_UpdateAll(void)
     s16 n;
     u16 angle;
     s32 turn;
+    s32 w;
 
     obj = gObjectSlots;
     for (i = 0; i < 8; i++, obj++) {
@@ -233,8 +255,10 @@ void Object_UpdateAll(void)
         if (obj->paused != 0)
             continue;
 
+        /* FAKEMATCH: ldrh after wait's cmp, not before it (12 to 8): stock sched charges a compiled load 2 on its anti dependence to the branch, an asm 1 */
+        __asm__("ldrh %0, %1" : "=r"(w) : "m"(obj->wait));
         if (obj->wait != 0) {
-            obj->wait--;
+            obj->wait = w - 1;
         } else {
             do {
                 goto test;

@@ -1,3 +1,5 @@
+/* Stubborn (2026-10-07, S10-08021e6c session 4): differ 357 -> 237 (listing 1037, draft 1038, common 919). Not matched. count is one variable for both content loops, declared at the rebuild block (s32 count; then count = work->count inside each panel loop): its pseudo now outranks work in global.c's priority (floor_log2(n) * n / live: count 15 refs over 43 insns, 1.05; work 88 over 698, 0.756; count * 3 9 over 38, 0.71), so work takes r9 as native everywhere. Left: count in sl and count * 3 in fp (native fp and sl: native ranks count * 3 above work and count below it), the mode-0 content loop's exit test still reloads work->count through 432 to a spill at sp+24 (native cmp lr, fp), the index and pattern row bivs swapped (native index r6, pattern r5), the 0 stored to gBgScroll[1].x shared with rebuild = 0 (native a pool 0), the stack slots below scale 4 or 8 lower than native, the literal pool after the mode-1 blank loop. */
+/* Trial (S10 session 4, from 357): mode-0 count at block scope (s32 count; count = work->count in the panel loop): 357; mode-0 as count = work->count; for (panel = 0; panel < count; ...): 339 (draft 1030); the same in mode 1 too: 370; count shared by both modes at the rebuild block: 237 (kept); count shared and panel shared too: 237; count shared but either mode's own s32 count = work->count: 357 each; i or num (function scope) as count: 237 and 332; work->selection + work->count - 1 in the up-repeat modulus on 237: 258 (native's operand order, but one instruction fewer elsewhere); (panel - count) * 3 in both stores: 659; a separate ofs = count * 3: 916. */
 /* Stubborn (2026-10-07, S10-08021e6c session 3): differ 369 -> 357 (listing 1037, draft 1038, common 859). Not matched. Both content loops are now written whole inside the column loop, vram[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100, then tmp3 = col & 3 for the tilemap store *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 22 or 20): this is native's content-loop code in everything but register names. The column loop's invariant index and pattern are hoisted into the row loop, reduced there as givs of cnt and, being used across the column loop, kept as per-row copies (mov ip, rN; str rN, [sp, #4]); tmp3, set twice, is no giv, so the value stays (copy + col) + 256 with movs #128; lsls #1 inside; count * 6 is spilled and panel * 2 is a stack giv, as native. The permuter scaffolding tmp7, tmp2, the u16 * temporary and the tile_row, tile_index and pattern bivs are gone. Left: work in sl and the content loops' count * 3 in r9 (native the reverse, about 150 register rows), the index and pattern row bivs swapped (native index r6, pattern r5), the main-loop 0 for gBgScroll[1].x shared with rebuild = 0 as movs r1, #0 (native loads it from the pool: a spilled hoisted 0), stack slots 4 lower than native from &work->count down, and the mode-0 content loop's exit test loading work->count through a hoisted 432 (native cmp lr, fp with count). */
 /* Trial (S10 session 3, from 369): mode-1 content loop whole with tmp3 = value as its own statement before the store: 601; the value chained into the store (address expanded first, native's order): 571; the mode-0 content loop the same: 474; tmp7 removed: 416; the mode-0 blank loop in the mode-1 pointer form: 378; work->count + work->selection - 1 in the up-repeat modulus: 357 (on the 369 body: 376). Worse or equal on 378: tmp7 restored 438; the mode-0 content loop as do-while 399; index or value terms in any order 378 (fold); the tilemap store as tilemap[panel * 3 + cnt * 32 + tmp3 - count * 3 + 0x236] 650. alchemy permute 5 min (2 jobs, seed 21) from 378: weighted 5830 -> 5170 at differ 378 (do-while mode-0 plus the modulus swap), of which only the swap carried. */
 /* Stubborn (2026-10-07, S10-08021e6c session 2): differ 369 (listing 1037, draft 1036, common 852), body unchanged. New: the tutorial messages are named in all six editions, so the draft compiles everywhere (Editions line); a per-row pattern giv of cnt gives native's unreduced in-loop value, but not yet native's per-row copies or panel * 2 giv (Trial line, session 2). */
@@ -185,6 +187,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         gBgScroll[1].x = 0;
         gBgScroll[1].y = 32;
         if (rebuild != 0) {
+            s32 count;
             rebuild = 0;
             render->menu_busy = 1;
             if (mode) {
@@ -197,7 +200,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
-                    s32 count = work->count;
+                    count = work->count;
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
@@ -218,7 +221,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
-                    s32 count = work->count;
+                    count = work->count;
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {

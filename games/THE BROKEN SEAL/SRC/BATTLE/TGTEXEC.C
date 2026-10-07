@@ -1028,7 +1028,7 @@ pow_end:
             MES_PUSH(MsgChallenge);
             target->chouhatsu = 1;
             if (MIKATA_CHK(tid))
-                work->chal_flg |= 2;
+                work->chouhatsu_flg |= 2;
             break;
 
         case 53:        /* みうごき */
@@ -1082,6 +1082,6 @@ pow_end:
         share = dealt >> 2;
         if (share == 0)
             share = 1;
-        plan->spirit_dmg += share;
+        plan->akuryo_dmg += share;
     }
 }

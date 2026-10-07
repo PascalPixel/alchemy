@@ -24,7 +24,7 @@ struct BtlPlan {
     s32 outcome;
     u32 presentation_flags;
     s32 failure;
-    u32 spirit_dmg;
+    u32 akuryo_dmg;
 };
 
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BtlPlan, BATTLE_PLAN_SIZE);
@@ -46,7 +46,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattlePlan_SpiritDmg,
     struct BtlPlan,
-    spirit_dmg,
+    akuryo_dmg,
     0x60);
 
 #endif

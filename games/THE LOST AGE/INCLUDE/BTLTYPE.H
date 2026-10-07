@@ -29,7 +29,7 @@ struct BtlPlan {
     s32 outcome;
     u32 presentation_flags;
     s32 failure;
-    u32 spirit_dmg;
+    u32 akuryo_dmg;
 };
 
 struct ActionDefinition {
@@ -50,7 +50,7 @@ LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BtlPlan, act_no, 0x4c);
 LAYOUT_OFFSET_GUARD(
     BattlePlan_SpiritDmg,
     struct BtlPlan,
-    spirit_dmg,
+    akuryo_dmg,
     0x60);
 
 #endif

@@ -352,12 +352,12 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
     if (both_sides != 0) {
         s8 *poison;
         BattleEventRuntime_Reset();
-        if (plan->spirit_dmg != 0) {
+        if (plan->akuryo_dmg != 0) {
             BtlEvPush(BEV_OBJ_BGN, id);
             BtlEvPush(BEV_UNIT, id);
-            BtlEvPush(BEV_NUM, plan->spirit_dmg);
+            BtlEvPush(BEV_NUM, plan->akuryo_dmg);
             MES_PUSH(MsgCurseDamage);
-            if (Owner_AdjustFirstValueFar(id, -plan->spirit_dmg) == 0) {
+            if (Owner_AdjustFirstValueFar(id, -plan->akuryo_dmg) == 0) {
                 s32 text;
                 BtlEvPush(BEV_OBJ_RES, id);
                 BtlEvPush(BEV_UNIT, id);

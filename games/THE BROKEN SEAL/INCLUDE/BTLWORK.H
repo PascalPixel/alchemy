@@ -61,7 +61,7 @@ struct BtlWork {
     u8 summon_count;
     u8 pty_st;
     u8 battle_type;
-    u8 chal_flg;
+    u8 chouhatsu_flg;
     u8 two_sided;
     u8 encounter_mode;
     u8 escape_failures;
@@ -99,7 +99,7 @@ LAYOUT_OFFSET_GUARD(
     struct BtlWork,
     pty_st,
     0x041);
-LAYOUT_OFFSET_GUARD(BattleSession_ChalFlg, struct BtlWork, chal_flg, 0x043);
+LAYOUT_OFFSET_GUARD(BtlWork_ChouhatsuFlg, struct BtlWork, chouhatsu_flg, 0x043);
 LAYOUT_OFFSET_GUARD(
     BattleSession_PartyUnits,
     struct BtlWork,

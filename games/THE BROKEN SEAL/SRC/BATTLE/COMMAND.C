@@ -135,7 +135,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
 
     target = Battle_GetTaggedSlotValue(command->target);
     BattleEventRuntime_Reset();
-    plan->spirit_dmg = 0;
+    plan->akuryo_dmg = 0;
     plan->aid = command->unit_id;
     plan->target_count = 0;
     plan->presentation_flags = 0;

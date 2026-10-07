@@ -1,7 +1,51 @@
-/* 08026080: listing 1585, draft 1585, differ 102 (common 1534); both
- * frames are 324 bytes. Every remaining difference is a spill slot offset
- * below sp+48 (see the hash analysis below); every instruction, register
- * and order matches.
+/* 08026080: listing 1585, draft 1585, differ 0 in English; Japanese,
+ * German, French, Spanish and Italian each differ only in the two rows the
+ * scaffold comparison drops beside a literal pool (alchemy diff 2).
+ * Session S08-08026080/1 (from 102), kept:
+ * - Spanish and Italian (0xed8 bytes, 107 insns longer) ask
+ *   System_GetLanguage for the info windows: case 7 by language (IT
+ *   10 wide, ES 11, else 9), case 1's HP label by language (KP, PV, PV,
+ *   HP; cases 2 and 3 written apart, as the native tests 2 first), cases
+ *   4 and 6 17 wide for Spanish. French case 7 is +5/21; Japanese case 7
+ *   8 wide, cases 4 and 6 14 wide at +7/16, the name copy 10 long. The
+ *   message numbers differ by edition, so they are named in every PO
+ *   (MsgTarget*, MsgMysteryPersonName) and referenced as symbols: German
+ *   0x9a0 would otherwise be built with movs/lsls where the native loads
+ *   it from the pool.
+ * - each info window case declares its own anchor: with the language calls
+ *   one shared anchor lives in r5 in every case, the native keeps it in
+ *   r3 where no call intervenes.
+ * - the spill slot order is GCSE's: its expression table has n / 2 | 1
+ *   buckets for n real insns at its entry, and PRE numbers its reaching
+ *   registers (tbl, entries, ids, cursor * 2, &efx, selSlot) in bucket
+ *   order, which is the order reload gives them slots. The native order
+ *   needs 689, 725 or 727 buckets (max_cuid 1376-1379 or 1448-1455); the
+ *   draft has 1417. No reshape found the 34; seventeen tagged dead
+ *   efx.angle stores (2 insns each, deleted by flow) bring it to 1451
+ *   (725 buckets), as CLASSIFY_USE_ABILITY.C's dead store does; Spanish
+ *   and Italian then have 1558 (779 buckets), which their native order
+ *   (efx, pos, selSlot, tbl, entries, ids, cursor * 2 in one lap) needs
+ *   as well. Every edition matched this way apart from the loop head.
+ * - the loop head loads cursor * 2 (r3) before the ids address (r2): as
+ *   ids[cursor] both are reloads of the one ldrh and reload emits the
+ *   base first, sched2 ties them (priority 121, five dependents each) and
+ *   keeps that order. A volatile empty asm on the byte offset makes the
+ *   r3 load its own insn first (tagged); an input-only asm, a fixed r3
+ *   variable (CSE folds it) and one-pass blocks around every span of the
+ *   head (loop notes are barriers, but both loads still follow them) do
+ *   not. The Lost Age's twin (0804a85c) shows the same order.
+ * - the info window: Spanish and Italian keep it in r10 and sel in r9, the
+ *   other editions in r9 and sel in r10; as an ordinary local it is
+ *   spilled (English) or swapped (Spanish), so the fixed register is per
+ *   edition.
+ * - the step back loop as one while condition, and the second sprite word
+ *   stored as 0: no change.
+ * Measured, not kept: the no-effect tail written out in cases 5, 3, 4, 6
+ *   (as a macro) matches Spanish but costs English pos its r11 (447);
+ *   initializing every scalar at its declaration adds 27 insns, a chain
+ *   of seventeen dead scalar stores 17, an empty one-pass block at most 10
+ *   (case 4, after rows), an inline helper for the sine -3; local type
+ *   changes (u8/u16/s16) add 2 at most without changing code.
  * Session S07-08026080/4 (102, nothing kept):
  * - dead register initializers reach GCSE too: each local initialized at
  *   its declaration (= 0) adds one real insn after addressof and flow
@@ -314,6 +358,7 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 #include "HEAP_STATE.H"
+#include "text/MSG_IDS.H"
 
 struct CursorSlot {
     u8 x;
@@ -328,6 +373,10 @@ s32 UiText_GetWideStringWidth(u16 *text);
 void UiText_DrawNumberInWindow(
     s32 value, s32 digits, s32 work, s32 x, s32 y);
 void Ui_ClearVramBlock(void);
+
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+s32 System_GetLanguage(void);
+#endif
 
 s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 {
@@ -345,7 +394,13 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct BtlUnit *unit;
     struct BtlWork *runtime;
     struct UiWindow *window;
-    register struct UiWindow *infoWin asm("r9"); /* FAKEMATCH: the ordinary window lifetime differs 1464; native r9 reduces it to 1400 without changing instruction count. */
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    /* FAKEMATCH: register choice only: as an ordinary local the info window takes r9 and sel r10 (differ 98); the native has the window in r10 and sel in r9. */
+    register struct UiWindow *infoWin asm("r10");
+#else
+    /* FAKEMATCH: register choice only: as an ordinary local the info window is spilled and the frame shrinks to 320 bytes (differ 492); the native keeps it in r9. */
+    register struct UiWindow *infoWin asm("r9");
+#endif
     s32 cursor;
     s32 cnt;
     s32 total;
@@ -354,7 +409,6 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     s32 pending;
     s32 matrix;
     s32 found;
-    s32 anchor;
     s32 column;
     s32 rows;
     s32 count;
@@ -452,13 +506,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     }
     if (cursor < 0)
         cursor = (cnt - 1) / 2;
-    while (1) {
-        if (ids[cursor] == 0xFE)
-            goto step_back;
-        if (GameFlag_TestFar(0x16C) && mode == 1 && UnitGetFar(ids[cursor])->hp == 0)
-            goto step_back;
-        break;
-    step_back:
+    while (ids[cursor] == 0xFE
+           || (GameFlag_TestFar(0x16C) && mode == 1 && UnitGetFar(ids[cursor])->hp == 0)) {
         cursor = cursor + cnt - 1;
         cursor %= cnt;
     }
@@ -472,9 +521,15 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     while (1) {
         head = entries;
         pending = 0;
-        BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
+        {
+            s32 t = cursor * 2;
+
+            /* FAKEMATCH: instruction order only: the empty asm takes cursor * 2 from its spill slot into r3 before the ids address is loaded, as the native does; through ids[cursor] both are reloads of the one load, base first (differ 2). */
+            __asm__ volatile ("" : "+r" (t));
+            BattleMotion_ProjectConditionalPositionFar(*(u16 *)((u8 *)ids + t), (s32 *)&pos);
+        }
         ((s32 *)head)[1] = 0x40002000;
-        ((s32 *)head)[2] = pending;
+        ((s32 *)head)[2] = 0;
         head->tile = Resource_GetBuffer(slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Menu_AnimatedCursorTiles);
         pos.y += Trig_Sin(gFrameCount << 12) / 32768;
         y = pos.y;
@@ -509,6 +564,33 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             efx.scale_x = 176;
             efx.scale_y = 176;
         }
+        efx.angle = 0;
+        /* FAKEMATCH: register choice (spill slots) only: seventeen dead
+           stores, two insns each until flow deletes them. GCSE sizes its
+           expression table from the insn count (n / 2 | 1 buckets) and
+           PRE numbers its reaching registers in bucket order, which is the
+           order their spill slots are assigned; with these the count is
+           1451 and the table 725 buckets, so tbl, entries, ids and
+           cursor * 2 take sp+36, 32, 28 and 24 before &efx (20) and
+           selSlot (16) as in the native frame (1417 and 709 buckets
+           without them: every remaining row is a spill slot's offset;
+           ES and IT, 107 insns longer, reach 779). */
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
         efx.angle = 0;
         matrix = AffineMatrix_BuildForEffect(&efx);
         if ((redraw & 1) == 0)
@@ -559,56 +641,117 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiWork_Finalize(infoWin, 1);
         switch (kind) {
         case 7:
-            anchor = pos.x / 8;
-            column = anchor - 4;
-            if (anchor + 4 > 29)
-                column = 22;
-            infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 4;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                if (System_GetLanguage() == 4) {
+                    if (anchor + 6 > 29)
+                        column = 20;
+                    infoWin = UiWindow_Create(column, 8, 10, 3, 6);
+                } else if (System_GetLanguage() == 3) {
+                    if (anchor + 7 > 29)
+                        column = 19;
+                    infoWin = UiWindow_Create(column, 8, 11, 3, 6);
+                } else {
+                    if (anchor + 5 > 29)
+                        column = 21;
+                    infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+                }
+#elif defined(TBS_EDITION_FR)
+                if (anchor + 5 > 29)
+                    column = 21;
+                infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+#elif defined(TBS_EDITION_JA)
+                if (anchor + 4 > 29)
+                    column = 22;
+                infoWin = UiWindow_Create(column, 8, 8, 3, 6);
+#else
+                if (anchor + 4 > 29)
+                    column = 22;
+                infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+#endif
+            }
             UiWork_SetParamNibble(2);
-            UiText_DrawCharacterAtOffset(0x8AC, (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)MsgTargetSetDjinni, (struct RenderInput *)infoWin, 0, 0);
             UiWork_SetParamNibble(15);
             goto frame_tail;
         case 1:
-            anchor = pos.x / 8;
-            column = anchor - 7;
-            if (anchor + 6 > 29)
-                column = 17;
-            infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 6 > 29)
+                    column = 17;
+                infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+            }
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+            switch (System_GetLanguage()) {
+            case 1:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_KpString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            case 2:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            case 3:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            case 4:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            }
+#else
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
+#endif
             UiText_DrawNumberInWindow(unit->hp, 4, (s32)infoWin, 16, 0);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 2:
-            anchor = pos.x / 8;
-            column = anchor - 7;
-            if (anchor + 6 > 29)
-                column = 17;
-            infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 6 > 29)
+                    column = 17;
+                infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+            }
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
             UiText_DrawNumberInWindow(unit->ep, 4, (s32)infoWin, 16, 0);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_ep, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 5:
-            anchor = pos.x / 8;
-            column = anchor - 7;
-            if (anchor + 5 > 29)
-                column = 18;
-            infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 5 > 29)
+                    column = 18;
+                infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+            }
             if (unit->hp != 0)
                 goto no_condition;
-            UiText_DrawCharacterAtOffset(0x8AB, (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)MsgTargetDowned, (struct RenderInput *)infoWin, 0, 0);
             goto frame_tail;
         case 3:
-            anchor = pos.x / 8;
-            column = anchor - 7;
-            if (anchor + 5 > 29)
-                column = 18;
-            infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 5 > 29)
+                    column = 18;
+                infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+            }
             if (unit->doku == 0)
                 goto no_condition;
-            UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
             goto frame_tail;
         case 4:
             count = 0;
@@ -627,30 +770,50 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             rows = 9 - count;
             if (rows <= 3)
                 rows = 4;
-            anchor = pos.x / 8;
-            column = anchor - 7;
-            if (anchor + 9 > 29)
-                column = 14;
-            infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                if (System_GetLanguage() == 3) {
+                    if (anchor + 10 > 29)
+                        column = 13;
+                    infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
+                } else {
+                    if (anchor + 9 > 29)
+                        column = 14;
+                    infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+                }
+#elif defined(TBS_EDITION_JA)
+                if (anchor + 7 > 29)
+                    column = 16;
+                infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
+#else
+                if (anchor + 9 > 29)
+                    column = 14;
+                infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+#endif
+            }
             count = 0;
             if (unit->maboroshi != 0) {
-                UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, 0);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
             if (unit->shibire != 0) {
-                UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->nemuri != 0) {
-                UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->fuuji != 0) {
-                UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
                 ++count;
             }
             if (unit->shiryo != 0) {
-                UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (count == 0)
@@ -677,38 +840,58 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             rows = 9 - count;
             if (rows <= 3)
                 rows = 4;
-            anchor = pos.x / 8;
-            column = anchor - 7;
-            if (anchor + 9 > 29)
-                column = 14;
-            infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                if (System_GetLanguage() == 3) {
+                    if (anchor + 10 > 29)
+                        column = 13;
+                    infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
+                } else {
+                    if (anchor + 9 > 29)
+                        column = 14;
+                    infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+                }
+#elif defined(TBS_EDITION_JA)
+                if (anchor + 7 > 29)
+                    column = 16;
+                infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
+#else
+                if (anchor + 9 > 29)
+                    column = 14;
+                infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+#endif
+            }
             count = 0;
             if (unit->doku != 0) {
-                UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
             if (unit->maboroshi != 0) {
-                UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->shibire != 0) {
-                UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->nemuri != 0) {
-                UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->fuuji != 0) {
-                UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->shiryo != 0) {
-                UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->akuryo != 0) {
-                UiText_DrawCharacterAtOffset(0x8AA, (struct RenderInput *)infoWin, 0, 8 * count);
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureHaunt, (struct RenderInput *)infoWin, 0, 8 * count);
                 count++;
             }
             if (count == 0)
@@ -720,7 +903,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         goto frame_tail;
     no_condition:
         UiWork_SetParamNibble(2);
-        UiText_DrawCharacterAtOffset(0x8A3, (struct RenderInput *)infoWin, 0, 0);
+        UiText_DrawCharacterAtOffset((s32)MsgTargetNoEffect, (struct RenderInput *)infoWin, 0, 0);
         UiWork_SetParamNibble(15);
         goto frame_tail;
     draw_name:
@@ -730,10 +913,15 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
         namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
         if (who->class_id == 125 || who->class_id == 122) {
-            width = 0x80E;
+            width = (s32)MsgMysteryPersonName;
             if (who->class_id == 125)
                 width++;
+#if defined(TBS_EDITION_JA)
+            UiText_CopyMessageString(width, name, 10);
+#else
             UiText_CopyMessageString(width, name, 14);
+#endif
+
         } else {
             for (i = 0; i <= 13; i++) {
                 name[i] = n = who->name[i];

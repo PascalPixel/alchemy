@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 1791 of 2455 (listing 2455, draft 2454, common 1559).
+/* 080ea0d8: differ 1769 of 2455 (listing 2455, draft 2454, common 1570).
  * Structure: the sequence of conditional branches, jumps and calls now
  * matches the native's except one literal-pool jump; what remains is
  * register allocation, scheduling, constant hoisting and pool placement.
@@ -96,7 +96,32 @@
  * asm is unnecessary. Without the index input it is 1860. A one-pass
  * scale-store block was 1887; fixing i22 to r7 altered induction
  * structure (1892), neither kept. The particle placement's temporary
- * still spills at sp+12 instead of native's sp+8. */
+ * still spills at sp+12 instead of native's sp+8.
+ * Counter continuation: the setup and cleanup loops now share i.
+ * Reusing the spark setup counter in the final release loop gives 1785,
+ * also sharing it with the intervening release/create/ramp loops gives
+ * 1769 and their native r7 counters. The two initial counters can join
+ * it without changing code. Named EffectPosition fields and correct
+ * helper argument types likewise preserve code, and are kept.
+ * Rejected counter trials: every counter fixed to r7 gave 2138, every
+ * counter plain gave 2254; sharing the two phases gave 2052. Sharing
+ * setup with the first phase gave 2033; sharing the ramp's inner j with
+ * the first phase gave 1809. A fixed first-phase counter gave 1752 but
+ * invalidated its reduced addresses, so it is not a usable improvement.
+ * A fixed release counter likewise invalidates reduction unless the
+ * pointer is incremented explicitly; ordinary counter reuse above
+ * obtains the same native loop without a device. An input-only counter
+ * asm does nothing. Sharing just the last two drawing counters is unchanged.
+ * Position trials: a call-only pointer gives 1793, using it for fields
+ * gives 1789; narrowing the count and explicit particle increments do
+ * not improve that. A fixed pointer gives 1815; an empty pointer operand
+ * after the setup calls gives 1774 from 1769, a constrained r8 operand
+ * gives 1779. A constrained r7 counter with explicit particle increments
+ * gives 1835 and a 180-byte frame; a narrower particle lifetime is unchanged.
+ * Last drawing loops: moving -16 into the draw argument gives 1791,
+ * a separate x -= 16 gives 1803; also sharing their counter with setup
+ * gives 2259. Local x/y give 1986, or 2034 with -16 in the argument;
+ * a fixed shared r7 counter gives 2041. None of these are kept. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -164,7 +189,7 @@ extern const u8 BattleFx9_ShardHeights[];
 void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 {
     s32 anchor[3];
-    s32 scene[3];
+    struct EffectPosition scene;
     s32 place[4];
     volatile u32 fill;
     s32 place2[4];
@@ -192,13 +217,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 rings;
     s32 shift;
     s32 i;
-    s32 i1;
-    s32 i2;
-    s32 i3;
     s32 i4;
-    s32 i11;
-    s32 i12;
-    s32 i13;
     s32 i14;
     s32 i15;
     s32 i16;
@@ -211,7 +230,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i22;
     s32 i23;
     s32 i24;
-    s32 i25;
     s32 j;
     s32 x;
     s32 y;
@@ -261,39 +279,39 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
-    for (i1 = 0; i1 != 8; i1++) {
+    for (i = 0; i != 8; i++) {
         u8 *src = ramp;
         for (j = 0; j != 770; j++) {
             s32 v = *src++;
-            if (v > 64 - i1 * 7) {
-                v = 64 - i1 * 7;
+            if (v > 64 - i * 7) {
+                v = 64 - i * 7;
             }
             if (v < 0) {
                 v = 0;
             }
-            ((struct BattleFx9Work *)work)->ramp[i1][j] = v;
+            ((struct BattleFx9Work *)work)->ramp[i][j] = v;
         }
     }
 
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
 
-    for (i2 = 0; i2 != 128; i2++) {
-        DUST[i2].x = (Random16() & 15) + 72;
-        DUST[i2].velocity_x = Random16() & 0xffff;
-        DUST[i2].velocity_y = Random16() & 0xffff;
-        DUST[i2].velocity_y = Random16() & 0xffff;
+    for (i = 0; i != 128; i++) {
+        DUST[i].x = (Random16() & 15) + 72;
+        DUST[i].velocity_x = Random16() & 0xffff;
+        DUST[i].velocity_y = Random16() & 0xffff;
+        DUST[i].velocity_y = Random16() & 0xffff;
     }
 
     amp = 255;
     speed = 0;
-    for (i3 = 0; i3 != 128; i3++) {
+    for (i = 0; i != 128; i++) {
         s32 angle = Random16() & 0xffff;
-        SPARKS[i3].x = (Trig_Sin(angle) * amp) >> 2;
-        SPARKS[i3].z = (Trig_Cos(angle) * amp) >> 2;
-        SPARKS[i3].y = ((Random16() & 63) + 32) << 16;
-        SPARKS[i3].velocity_x = speed;
-        SPARKS[i3].velocity_y = speed;
-        SPARKS[i3].variant = angle;
+        SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
+        SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
+        SPARKS[i].y = ((Random16() & 63) + 32) << 16;
+        SPARKS[i].velocity_x = speed;
+        SPARKS[i].velocity_y = speed;
+        SPARKS[i].variant = angle;
     }
 
     work->transfer_mode = 2;
@@ -315,17 +333,17 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (i4 = 0; i4 != 128; i4++) {
                 EffectStep_AdvanceWithGravity3D(&SPARKS[i4], 60, -0x400);
-                EffectPosition_ApplyBaseAndYOffset(&SPARKS[i4], (struct EffectPosition *)scene);
-                scene[0] >>= 1;
-                scene[1] -= 120;
-                if (scene[2] < 100) {
-                    scene[2] = 100;
+                EffectPosition_ApplyBaseAndYOffset((s32 *)&SPARKS[i4], &scene);
+                scene.x >>= 1;
+                scene.y -= 120;
+                if (scene.depth < 100) {
+                    scene.depth = 100;
                 }
-                if (scene[2] > 900) {
-                    scene[2] = 900;
+                if (scene.depth > 900) {
+                    scene.depth = 900;
                 }
-                z = scene[2] - 100;
-                scene[2] = z;
+                z = scene.depth - 100;
+                scene.depth = z;
                 size = __divsi3(z, 100) + 1;
                 if (near > z) {
                     near = z;
@@ -333,7 +351,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 if (far < z) {
                     far = z;
                 }
-                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
+                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene.x - size / 2, scene.y - size, size,
                     size * 2);
                 if (frame == 64) {
                     SPARKS[i4].velocity_x += (Trig_Sin(SPARKS[i4].variant) * 255) >> 3;
@@ -360,18 +378,18 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 if (DUST[i4].x < 0) {
                     DUST[i4].x = 0;
                 }
-                EffectPosition_ApplyBaseAndYOffset((struct EffectStep *)anchor, (struct EffectPosition *)scene);
-                if (scene[2] < -60) {
-                    scene[2] = -60;
+                EffectPosition_ApplyBaseAndYOffset(anchor, &scene);
+                if (scene.depth < -60) {
+                    scene.depth = -60;
                 }
-                if (scene[2] > 60) {
-                    scene[2] = 60;
+                if (scene.depth > 60) {
+                    scene.depth = 60;
                 }
-                scene[2] += 60;
-                size = __divsi3(scene[2], 20) + 2;
-                scene[0] += 60;
-                scene[1] += 80;
-                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
+                scene.depth += 60;
+                size = __divsi3(scene.depth, 20) + 2;
+                scene.x += 60;
+                scene.y += 80;
+                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene.x - size / 2, scene.y - size, size,
                     size * 2);
             }
         }
@@ -477,17 +495,17 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     Iwram_FillWords(canvas, 0x4000, 0);
 
-    for (i11 = 0; i11 != 16; i11++) {
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i11]);
+    for (i = 0; i != 16; i++) {
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
 
-    for (i12 = 0; i12 != 16; i12++) {
+    for (i = 0; i != 16; i++) {
         struct AnimationObject *obj = (struct AnimationObject *)ResourceObject_CreateFar(0x186);
-        work->objects[i12] = obj;
+        work->objects[i] = obj;
         if (obj != 0) {
             obj->flags = 0;
-            AnimationObjects_SelectAnimationFar(obj, __modsi3(i12, 3));
-            ((u8 *)work->objects[i12])[9] &= ~12;
+            AnimationObjects_SelectAnimationFar(obj, __modsi3(i, 3));
+            ((u8 *)work->objects[i])[9] &= ~12;
         }
     }
 
@@ -498,7 +516,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     {
         u8 *c = ramp;
-        for (i13 = 0; i13 != 770; i13++, c++) {
+        for (i = 0; i != 770; i++, c++) {
             if (*c > 32) {
                 *c += 224;
             } else if (*c != 0) {
@@ -924,8 +942,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         WaitFrames(1);
     }
 
-    for (i25 = 0; i25 != 16; i25++) {
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i25]);
+    for (i = 0; i != 16; i++) {
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
 
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);

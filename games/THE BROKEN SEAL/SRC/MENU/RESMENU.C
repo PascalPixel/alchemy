@@ -109,7 +109,7 @@ void AffineEffect_UpdateFrame(void)
         buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
-        window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
+        window = (struct WindowBuffer *)(buffers + buffers[1337] * 644);
         x = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + (x + span) + 23;
@@ -143,7 +143,7 @@ void AffineEffect_UpdateFrame(void)
         buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
-        window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
+        window = (struct WindowBuffer *)(buffers + buffers[1337] * 644);
         x = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + (x + span) + 23;

@@ -60,9 +60,9 @@ void CopyAndOffsetCoordinatePreset(void)
     *destination++ = *source++;
     *destination = *source;
     coordinates = (u16 *)TakaraHashira_ShakenScroll;
-    coordinates[1] += 0xc0;
-    coordinates[3] += 0xc0;
-    coordinates[5] += 0xc0;
+    coordinates[1] += 192;
+    coordinates[3] += 192;
+    coordinates[5] += 192;
 }
 
 void FieldScene_RunScene3b3SequenceA(void)

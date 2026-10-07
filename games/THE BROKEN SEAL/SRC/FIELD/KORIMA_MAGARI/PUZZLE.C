@@ -168,9 +168,9 @@ void KorimaMagari_CaptureShakeScroll(void)
     *dst++ = *src++;
     *dst = *src;
     p = (u16 *)KorimaMagari_ShakeScroll;
-    p[1] += 0xb0;
-    p[3] += 0xb0;
-    p[5] += 0xb0;
+    p[1] += 176;
+    p[3] += 176;
+    p[5] += 176;
 }
 
 void Scene_RunKorimaMagariSequence(void)

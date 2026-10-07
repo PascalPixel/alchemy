@@ -64,7 +64,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
     Engine_EventWait(30);
-    Engine_AudioPlayCue(mode + 0x5a);
+    Engine_AudioPlayCue(mode + 90);
     Korosseo_LoadPortrait(mode);
     ColossoLogRollingStage_InitializeModeTask(1, 0);
     Engine_EventWait(120);

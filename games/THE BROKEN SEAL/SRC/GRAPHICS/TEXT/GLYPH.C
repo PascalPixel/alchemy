@@ -59,7 +59,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     remapped = Runtime_BumpAllocate(0x400);
     src = decoded->input;
     dst = remapped;
-    for (i = 0; i < 0x400; i++) {
+    for (i = 0; i < 1024; i++) {
         index = *src++;
         if (palette->slot[index] == 255) {
             palette->slot[index] = palette->count;
@@ -85,12 +85,12 @@ void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
     offset = index * 28;
     entry = base + offset + 0x104;
     ((s32 (*)())UiText_LoadRemappedGlyph)(base, value, index * 16, index * 16);
-    store_offset = offset + 0x11C;
+    store_offset = offset + 284;
     *(u32 *)(base + store_offset) = value;
     /* FAKEMATCH: the empty do-while around this store only moves the scheduler; the reference sets the constant after the value store. */
     do { *(u32 *)(entry + 4) = 0x80002000; } while (0);
     *(u32 *)(entry + 8) = 0;
-    load_offset = offset + 0x110;
+    load_offset = offset + 272;
     ((CharacterCell *)(entry + 8))->code =
         Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
 }

@@ -73,7 +73,7 @@ s32 NameEntry_CountLetters(const u8 *name)
 
     count = 0;
     for (; *name != 0; name++) {
-        if ((u8)(*name - 0xde) > 1)
+        if ((u8)(*name - 222) > 1)
             count++;
     }
     return count;
@@ -508,7 +508,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             if (character != 0) {
                 bytes++;
                 length++;
-                if ((u8)(character - 0xde) <= 1)
+                if ((u8)(character - 222) <= 1)
                     length--;
             }
         }
@@ -660,7 +660,7 @@ remove_character:
                 bytes--;
                 character = input[bytes];
                 input[bytes] = 0;
-                if ((u8)(character - 0xde) <= 1) {
+                if ((u8)(character - 222) <= 1) {
                     bytes--;
                     input[bytes] = 0;
                 }
@@ -725,7 +725,7 @@ remove_character:
             bytes++;
             input[bytes] = 0;
             length++;
-            if ((u8)(character - 0xde) <= 1)
+            if ((u8)(character - 222) <= 1)
                 length--;
             if (length == 5) {
                 column = 18;

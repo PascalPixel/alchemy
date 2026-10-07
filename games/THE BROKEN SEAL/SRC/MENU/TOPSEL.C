@@ -93,7 +93,7 @@ loop:
     UiWindow_OpenMode1AndWaitFrame();
     sel = Menu_SelectTopEntry(sel);
 #if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 1;
+    state[3274] = 1;
     if (*(s16 *)(state + 0xcb8) != 0) {
         BattleFx_ClearRandomParticlesFar();
         WaitFrames(1);
@@ -133,7 +133,7 @@ loop:
     }
 
 #if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 0;
+    state[3274] = 0;
 #endif
     return ret;
 }

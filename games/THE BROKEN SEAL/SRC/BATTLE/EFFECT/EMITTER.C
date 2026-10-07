@@ -253,7 +253,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
     struct EfxObj *obj;
 
     s32 work = (s32)gEventWork;
-    u32 off = (obj_id * 4) + 0x14;
+    u32 off = (obj_id * 4) + 20;
 
     s32 src_z = (s32)*(struct EfxSrc **)(work + off);
     struct EfxPos pos;

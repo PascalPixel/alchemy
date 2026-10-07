@@ -143,7 +143,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 
     duration = DualTable_ColumnCounts[work->effect->variant] * 4 + 56;
 
-    age = gMapCellBuffer + 0x18;
+    age = gMapCellBuffer + 24;
     i = 0;
     do {
         i += 1;

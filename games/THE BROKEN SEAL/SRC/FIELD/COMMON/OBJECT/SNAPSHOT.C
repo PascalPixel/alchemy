@@ -39,7 +39,7 @@ void *ObjectTable_Get(u32 index)
     u32 offset;
     if (index > 0xbf)
         return 0;
-    offset = (index * 4) + 0x14;
+    offset = (index * 4) + 20;
     return *(void **)(base + offset);
 }
 

@@ -193,7 +193,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
                 mask = 0x80;
                 for (bit = 7; bit >= 0; bit--) {
                     if (bits & mask) {
-                        dst[0x101] = 1;
+                        dst[257] = 1;
                         dst[0] = 15;
                     }
                     dst++;

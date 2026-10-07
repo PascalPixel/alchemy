@@ -2307,8 +2307,8 @@ void OverlayObject_ConfigureObject22WithResource17(s32 a)
         m = -m;
         q[5] &= m;
         q[9] &= 15;
-        o[0x55] = z;
-        o[0x5c] = 1;
+        o[85] = z;
+        o[92] = 1;
         v = Runtime_AllocateHeapBlock(17, 0x608);
         Engine_ItemLoadIcon(a);
         v += 0x400;

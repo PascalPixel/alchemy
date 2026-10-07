@@ -420,28 +420,28 @@ s32 ArcTan2(s32 x, s32 y)
             result = 0;
 
             value = *table;
-            table -= 0x40;
+            table -= 64;
             if (ratio > value) {
                 result = 0x2000;
-                table += 0x80;
+                table += 128;
             }
             value = *table;
-            table -= 0x20;
+            table -= 32;
             if (ratio > value) {
                 result |= 0x1000;
-                table += 0x40;
+                table += 64;
             }
             value = *table;
-            table -= 0x10;
+            table -= 16;
             if (ratio > value) {
                 result |= 0x800;
-                table += 0x20;
+                table += 32;
             }
             value = *table;
             table -= 8;
             if (ratio > value) {
                 result |= 0x400;
-                table += 0x10;
+                table += 16;
             }
             value = *table;
             table -= 4;
@@ -565,7 +565,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
             count -= 1;
         } while (count != 0);
     }
-    out[0] = val + 0x30;
+    out[0] = val + 48;
     out[1] = 0;
 }
 

@@ -518,12 +518,12 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     Owner_AdjustSecondValue(2, -35);
     Owner_AdjustSecondValue(3, -20);
     record = Owner_GetState(0);
-    record[0x131] = 1;
-    record += 0x140;
+    record[305] = 1;
+    record += 320;
     *record = 1;
     record = Owner_GetState(1);
-    record[0x130] = 1;
-    record[0x131] = 2;
+    record[304] = 1;
+    record[305] = 2;
     Owner_RecalculateStats(0);
     Owner_RecalculateStats(1);
     Owner_RecalculateStats(3);

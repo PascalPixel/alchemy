@@ -24,7 +24,7 @@ void BattleFx_SpinUpAngle(void *obj)
 {
     u32 step;
 
-    step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
+    step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 80;
     FIELD_AT_OFFSET(obj, u16 *, 6) = (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + step + 0x1000);
     if (step < 0x1000U) {
         FIELD_AT_OFFSET(obj, s16 *, 0x64) = (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);

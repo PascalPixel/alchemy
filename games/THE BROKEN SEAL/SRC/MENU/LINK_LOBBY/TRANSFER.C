@@ -113,7 +113,7 @@ test1:
         result = -1;
         goto done;
     }
-    if (rec[0x12a] != 0) {
+    if (rec[298] != 0) {
         result++;
     }
     Engine_TaskWait(2);
@@ -293,7 +293,7 @@ test:
     i++;
 next:
     if (i <= 2) {
-        heap[0x12a] = tries = 0;
+        heap[298] = tries = 0;
         if ((ret = SerialRuntime_BeginTransferA(heap, size)) != -1) {
             goto test;
         }

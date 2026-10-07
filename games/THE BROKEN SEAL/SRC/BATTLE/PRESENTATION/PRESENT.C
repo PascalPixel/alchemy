@@ -96,7 +96,7 @@ void BattlePres_AdvanceTransitionTimer(void)
         camera->yaw = 45 * frame * 8 + 0xaf80;
     next = (*timer = *timer + 1);
     if (next <= 0x50U) {
-        BattlePres_SetupTransitionScene(0, 0, 0, 0xb4 - next);
+        BattlePres_SetupTransitionScene(0, 0, 0, 180 - next);
         return;
     }
     BattlePres_SetupTransitionScene(0, 0, 0, 0x64);

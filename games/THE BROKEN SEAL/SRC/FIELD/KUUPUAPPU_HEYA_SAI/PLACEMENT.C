@@ -357,8 +357,8 @@ void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
         m = -m;
         q[5] &= m;
         q[9] &= 15;
-        o[0x55] = z;
-        o[0x5c] = 1;
+        o[85] = z;
+        o[92] = 1;
         v = Engine_HeapAllocate(17, 0x608);
         Engine_ItemLoadIcon(a);
         v += 0x400;

@@ -26,17 +26,17 @@ s32 UiText_GetWideStringWidth(u16 *text)
                 width += 4;
             } else if (c <= 0xFFU) {
 #if defined(WIDE_WIDTH_FIXED)
-                width += 0xA;
+                width += 10;
 #else
-                idx = c - 0xDE;
+                idx = c - 222;
                 if (idx > 1U) {
-                    idx += 0xBE;
+                    idx += 190;
                     width += ((const struct FontGlyph *)
                         (idx * sizeof(struct FontGlyph) +
                         (const u8 *)UiText_Glyphs))->width;
                 }
             } else {
-                width += 0xA;
+                width += 10;
 #endif
             }
             c = *p;

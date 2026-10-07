@@ -2152,7 +2152,7 @@ void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
     Engine_PsynergyBegin(141, 1);
     globalCtx = *(u8 **)gEffectWork;
     Engine_PsynergySetTarget(arg0, arg1);
-    globalCtx[0x23] = 0;
+    globalCtx[35] = 0;
     Engine_PsynergyRaiseHands();
     Engine_PsynergyPlayEffect(1);
     Engine_TaskWait(1);

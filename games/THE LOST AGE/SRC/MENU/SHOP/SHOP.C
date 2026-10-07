@@ -128,10 +128,10 @@ void Shop_RestoreSceneTiles(s32 layer)
 void Shop_InitEffect(void)
 {
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    Func_080c8368((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    Func_080c8368((s32)Ram_HeapSlots->event_work + 546, 1);
     BattleFx_ApplyColorToSourceBufferFar(16);
 #else
-    BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->event_work + 546, 1);
     BattleFx_StartBufferInterpolationFar(16);
 #endif
 }

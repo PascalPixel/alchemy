@@ -70,7 +70,7 @@ void RamakanSabaku_RunSandstorm(void)
     }
     display = *Ram_DisplayWork;
     if (display != NULL) {
-        s16 *line = (s16 *)(display + display[0x539] * 644);
+        s16 *line = (s16 *)(display + display[1337] * 644);
         s32 shift = (s16)(counter << 3);
 
         line = (s16 *)((u8 *)line + 38);
@@ -141,7 +141,7 @@ void RamakanSabaku_RunSandstorm(void)
     }
     destination = buffer;
     source = buffer + 0x480;
-    for (i = 0; i < 0x480; i++) {
+    for (i = 0; i < 1152; i++) {
         u8 value = *source++;
 
         if (value != 0) {

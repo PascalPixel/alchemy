@@ -864,7 +864,7 @@ void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
         effect->angle_y += 0x147;
         effect->step++;
     } else {
-        Resource_ResetEntry(effect->owner[0x1c]);
+        Resource_ResetEntry(effect->owner[28]);
         Engine_ObjectDispatchRelease(effect);
     }
 }

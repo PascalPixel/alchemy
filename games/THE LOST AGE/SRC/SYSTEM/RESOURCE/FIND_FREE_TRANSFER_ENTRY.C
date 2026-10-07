@@ -25,7 +25,7 @@ loop_2:
         }
         i = i + 1;
         p += 0x1A;
-        off = off + 0x34;
+        off = off + 52;
         if (i == 5) {
             goto block_10;
         }
@@ -40,7 +40,7 @@ loop_7:
     if (v == 0) {
         return ret;
     }
-    ret += 0x34;
+    ret += 52;
     j += 1;
     if (j == 7) {
 block_10:

@@ -217,7 +217,7 @@ u8 *SceneEffect_GetSecondaryData(void)
 s32 SceneEffect_PrepareState(void)
 {
     if (Engine_GameFlagIsSet(0x895) != 0)
-        gShianMuraPlacements[0xbe] = 0;
+        gShianMuraPlacements[190] = 0;
     return (s32)gShianMuraPlacements;
 }
 

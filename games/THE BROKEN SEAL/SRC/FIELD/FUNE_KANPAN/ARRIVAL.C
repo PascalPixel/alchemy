@@ -101,7 +101,7 @@ void SceneState_ConfigureEntries8Through19(void)
     SceneEffect_AdvanceSlotByValueBand(8, 0);
     FuneKanpan_SlotPhase[0] = 0;
     SceneEffect_AdvanceSlotByValueBand(9, 1);
-    FuneKanpan_SlotPhase[1] += 0x80;
+    FuneKanpan_SlotPhase[1] += 128;
     SceneEffect_AdvanceSlotByValueBand(10, 2);
     FuneKanpan_SlotPhase[2] += 0x100;
     SceneEffect_AdvanceSlotByValueBand(11, 3);

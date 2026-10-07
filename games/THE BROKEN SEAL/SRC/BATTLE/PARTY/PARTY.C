@@ -158,7 +158,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
         }
         battle->link_side = (REG_SIOCNT << 26) >> 30;
         dest = gBattleOwnerStates;
-        for (pos = 0; pos <= 0x7c7; pos++)
+        for (pos = 0; pos <= 1991; pos++)
             *dest++ = gActorSpriteSlots[pos];
         object = GameFlag_GetByteFar(0x3f0);
         BattleParty_AssignMemberSlots();
@@ -394,7 +394,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
             entry_limit = 3;
         }
         id = 0x80;
-        entry_limit += 0x80;
+        entry_limit += 128;
         for (; id < entry_limit; id += 1) {
             if (Owner_GetStateFar(id)->status_12a != 0) {
                 *output = id;
@@ -452,7 +452,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     }
     if (side_mask & BATTLE_SIDE_ENEMIES) {
         remaining = 0x80;
-        enemy_limit = enemy_capacity + 0x80;
+        enemy_limit = enemy_capacity + 128;
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetStateFar(remaining);

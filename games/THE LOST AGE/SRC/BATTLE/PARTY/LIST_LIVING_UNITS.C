@@ -78,7 +78,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     }
     if (side_mask & BATTLE_SIDE_ENEMIES) {
         remaining = 0x80;
-        enemy_limit = enemy_capacity + 0x80;
+        enemy_limit = enemy_capacity + 128;
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetState(remaining);

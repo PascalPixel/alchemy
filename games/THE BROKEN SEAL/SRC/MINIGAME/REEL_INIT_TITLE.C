@@ -613,7 +613,7 @@ void ReelGame_InitTitle(void)
     state = ((struct ReelWork **)gBattleFxWork)[6];
     work = ((struct BattleEffectWork **)gBattleFxWork)[0];
     left = 0;
-    for (i = 0; i != 0x800; i++)
+    for (i = 0; i != 2048; i++)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = 0;
 
     letter = work->particles;

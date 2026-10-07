@@ -5,7 +5,7 @@ s32 BattlePlacement_ContainsId(s16 *entries, s32 id)
     u32 i;
 
     if (id > 7)
-        id += 0x78;
+        id += 120;
     i = 0;
     do {
         u16 value = *entries++;

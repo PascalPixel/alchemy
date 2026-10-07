@@ -45,7 +45,7 @@ void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
         index = 0;
     }
     object = *slot;
-    object->y = (index / columns) * 0x10 + origin_y;
-    object->x = (index % columns) * 0x10 + origin_x;
+    object->y = (index / columns) * 16 + origin_y;
+    object->x = (index % columns) * 16 + origin_x;
     UiIcon_PrepareObject(object);
 }

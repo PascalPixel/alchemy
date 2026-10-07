@@ -106,9 +106,9 @@ void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
         no = 0;
     }
     obj->y =
-        (no / phase * 0x10) + origin_y;
+        (no / phase * 16) + origin_y;
     obj->x =
-        (no % phase * 0x10) + origin_x;
+        (no % phase * 16) + origin_x;
     UiIcon_PrepareObject(obj);
 }
 

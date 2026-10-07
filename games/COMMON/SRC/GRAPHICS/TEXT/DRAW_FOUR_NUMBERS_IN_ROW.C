@@ -12,7 +12,7 @@ void UiText_DrawFourNumbersInRow(struct RenderInput *work, struct NumberRow *row
 
     if (work != 0) {
         for (i = 0; i < 4; i++)
-            UiText_DrawNumberAtOffset(row->values[i], 2, work, i * 0x18, 0x10);
+            UiText_DrawNumberAtOffset(row->values[i], 2, work, i * 24, 0x10);
     }
 }
 

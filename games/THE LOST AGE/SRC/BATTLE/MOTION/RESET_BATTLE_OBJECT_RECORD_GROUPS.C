@@ -76,7 +76,7 @@ void BattleMotion_DestroyAllSlotObjects(void)
 
     i = 0;
     do {
-        no = i + 0x78;
+        no = i + 120;
         if (i <= 7) {
             no = i;
         }

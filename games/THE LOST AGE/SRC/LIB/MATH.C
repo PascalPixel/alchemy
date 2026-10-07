@@ -46,31 +46,31 @@ s32 ArcTan2(s32 x, s32 y)
             bit = 0x2000;
 
             value = *table;
-            table -= 0x40;
+            table -= 64;
             if (ratio > value) {
                 result += bit;
-                table += 0x80;
+                table += 128;
             }
             value = *table;
             bit >>= 1;
-            table -= 0x20;
+            table -= 32;
             if (ratio > value) {
                 result += bit;
-                table += 0x40;
+                table += 64;
             }
             value = *table;
             bit >>= 1;
-            table -= 0x10;
+            table -= 16;
             if (ratio > value) {
                 result += bit;
-                table += 0x20;
+                table += 32;
             }
             value = *table;
             bit >>= 1;
             table -= 8;
             if (ratio > value) {
                 result += bit;
-                table += 0x10;
+                table += 16;
             }
             value = *table;
             bit >>= 1;

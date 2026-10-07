@@ -29,7 +29,7 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
   if (len > 0x10)
   {
     dx2 = dx;
-    n = len - 0x10;
+    n = len - 16;
     mx = dx2 *n / len;
     mz = dz *n / len;
     Object_SetMoveTarget(object, (object->x) + mx, object->y, (object->z) + mz);

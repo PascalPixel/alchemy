@@ -15,7 +15,7 @@ struct TradeOfferState *Trade_GetOfferState(s32 which)
     if (which != 0) {
         return Owner_GetState(0x83);
     }
-    return (struct TradeOfferState *)&gPartyState.unknown_000[0xc];
+    return (struct TradeOfferState *)&gPartyState.unknown_000[12];
 }
 
 u32 Party_GetAverageLevel(void)

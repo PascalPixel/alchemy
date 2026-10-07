@@ -240,10 +240,10 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 
     if (Engine_GameFlagIsSet(0x200) != 0) {
         SceneEffect_SetupBlendByFlag201();
-        work[0x34] = 1;
+        work[52] = 1;
     }
     tbl = (s16 *)&gGameState;
-    if (tbl[0xe0] == (s32)&SceneId_ArutamiraDou6) {
+    if (tbl[224] == (s32)&SceneId_ArutamiraDou6) {
         Engine_ActorSetChildValue(16, 6);
         Engine_ActorSetChildValue(17, 6);
         Engine_ActorSetChildValue(18, 6);
@@ -304,7 +304,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
     v.z = p->z.fixed;
 
     if (Object_CheckMovementCollision(p, &v) > 0) {
-        obj[0x35] = 1;
+        obj[53] = 1;
     }
 }
 

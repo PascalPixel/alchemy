@@ -59,7 +59,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 
     destination = (u16 *)(0x06010000
         + ResourceTableEntries[object[0x10]].offset);
-    count = (object[0x14] * object[0x15]) / 64;
+    count = (object[20] * object[0x15]) / 64;
     row = 0;
 
     if (row < (u32)count) {

@@ -283,7 +283,7 @@ s32 FieldScene_SetupActor27OnEntry(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     actor = (u8 *)Object_GetById(27);
 
-    actor[0x23] = bits = 0;
+    actor[35] = bits = 0;
     record = *(u8 **)(actor + 0x50);
     bits -= 13;
     bits &= record[9];

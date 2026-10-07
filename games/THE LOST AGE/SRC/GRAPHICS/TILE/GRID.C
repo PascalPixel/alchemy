@@ -68,7 +68,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
             if (value < metadata->animation_count) {
                 entry->value_04 = metadata->draw_kind;
                 entry->value_10 = entry->table_0c[value];
-                entry->x = count * 0x10;
+                entry->x = count * 16;
                 entry->value_15 = 0x10;
                 entry->value_14 = index;
                 entry->value_17 = index;
@@ -78,7 +78,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
             *(s16 *)(work + 18) = index;
         }
         count += 1;
-        work += 0x38;
+        work += 56;
     } while (count <= 9);
 }
 

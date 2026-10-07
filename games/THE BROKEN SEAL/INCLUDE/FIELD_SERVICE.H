@@ -257,6 +257,13 @@ static inline void FieldMotion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz
     Motion_LaunchFromFocusedObject(actor, dx, dz, facing);
 }
 
+void Object_SetTargetAndCallback();
+
+static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target, const u8 *actions)
+{
+    Object_SetTargetAndCallback(object, target, actions);
+}
+
 struct FieldActor * Object_CreateFar();
 
 static inline struct FieldActor * FieldObject_CreateFar(s32 type, s32 x, s32 y, s32 z)

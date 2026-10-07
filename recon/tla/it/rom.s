@@ -2265,7 +2265,9 @@ Owner_UpdateClassActions:
 	.section .rom.000af79e, "ax"
 	.incbin "baserom.gba", 0x000af79e, 0x0000000a
 	.section .rom.000af7b8, "ax"
-	.incbin "baserom.gba", 0x000af7b8, 0x00000124
+	.incbin "baserom.gba", 0x000af7b8, 0x00000120
+	.section .rom.000af8dc, "ax"
+	.balign 4
 	.global Owner_GetLevelThreshold
 	.type Owner_GetLevelThreshold, %function
 	.thumb_func
@@ -3263,7 +3265,10 @@ Func_080d25c8:
 	.type Func_080d0520, %function
 	.thumb_func
 Func_080d0520:
-	.incbin "baserom.gba", 0x000ccec8, 0x00000a54
+	.incbin "baserom.gba", 0x000ccec8, 0x000006bc
+	.global Func_080cd584
+Func_080cd584:
+	.incbin "baserom.gba", 0x000cd584, 0x00000398
 	.section .rom.000cd91c, "ax"
 	.global Func_080cc54c
 	.type Func_080cc54c, %function
@@ -3272,6 +3277,8 @@ Func_080cc54c:
 	.incbin "baserom.gba", 0x000cd91c, 0x0000013c
 	.section .rom.000cda84, "ax"
 	.balign 4
+	.global Func_080cda84
+Func_080cda84:
 	.incbin "baserom.gba", 0x000cda84, 0x0000003c
 	.section .rom.000cdac0, "ax"
 	.global Func_080cdac0
@@ -4295,7 +4302,10 @@ Func_080e7818:
 	.section .rom.000e7830, "ax"
 	.global Func_080e783c
 Func_080e783c:
-	.incbin "baserom.gba", 0x000e7830, 0x000022b0
+	.incbin "baserom.gba", 0x000e7830, 0x00001544
+	.section .rom.000e8da4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000e8da4, 0x00000d3c
 	.section .rom.000e9ae8, "ax"
 	.balign 4
 	.global Func_080e9af4
@@ -4380,12 +4390,6 @@ Func_080d3a10:
 	.global Func_080eb01c
 Func_080eb01c:
 	.incbin "baserom.gba", 0x000eb010, 0x0000027c
-	.section .rom.000eb28c, "ax"
-	.global Func_080eaf98
-	.type Func_080eaf98, %function
-	.thumb_func
-Func_080eaf98:
-	.incbin "baserom.gba", 0x000eb28c, 0x00000030
 	.section .rom.000eb2cc, "ax"
 	.incbin "baserom.gba", 0x000eb2cc, 0x00000018
 	.section .rom.000eb30c, "ax"

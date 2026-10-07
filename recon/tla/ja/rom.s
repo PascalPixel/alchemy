@@ -3086,20 +3086,25 @@ BattleAction_FindDescriptor:
 	.type SceneEvent_FindActiveRecord, %function
 	.thumb_func
 SceneEvent_FindActiveRecord:
+	.global Func_080ccd78
+	.type Func_080ccd78, %function
+	.thumb_func
+Func_080ccd78:
 	.incbin "baserom.gba", 0x000ccd70, 0x0000010c
 	.section .rom.000cce8c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000cce8c, 0x00000a88
+	.incbin "baserom.gba", 0x000cce8c, 0x000006f0
+	.section .rom.000cd5b4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000cd5b4, 0x00000360
 	.section .rom.000cd914, "ax"
 	.global Func_080cd91c
 	.type Func_080cd91c, %function
 	.thumb_func
 Func_080cd91c:
 	.incbin "baserom.gba", 0x000cd914, 0x0000013c
-	.section .rom.000cda7c, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000cda7c, 0x0000003c
 	.section .rom.000cdab8, "ax"
+	.balign 4
 	.global Func_080cdac0
 Func_080cdac0:
 	.incbin "baserom.gba", 0x000cdab8, 0x00000138
@@ -4130,7 +4135,10 @@ Func_080e74d8:
 	.type Func_080e7844, %function
 	.thumb_func
 Func_080e7844:
-	.incbin "baserom.gba", 0x000e7800, 0x00002230
+	.incbin "baserom.gba", 0x000e7800, 0x000014c4
+	.section .rom.000e8cf4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000e8cf4, 0x00000d3c
 	.section .rom.000e9a38, "ax"
 	.balign 4
 	.global Func_080e9af4
@@ -4140,11 +4148,14 @@ Func_080e9af4:
 	.incbin "baserom.gba", 0x000e9a38, 0x00000db4
 	.section .rom.000ea818, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000ea818, 0x00000748
+	.incbin "baserom.gba", 0x000ea818, 0x0000029c
+	.section .rom.000eaadc, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000eaadc, 0x00000484
 	.section .rom.000eaf60, "ax"
 	.global Func_080eb01c
 Func_080eb01c:
-	.incbin "baserom.gba", 0x000eaf60, 0x000002ac
+	.incbin "baserom.gba", 0x000eaf60, 0x0000027c
 	.section .rom.000eb21c, "ax"
 	.incbin "baserom.gba", 0x000eb21c, 0x00000018
 	.section .rom.000eb25c, "ax"

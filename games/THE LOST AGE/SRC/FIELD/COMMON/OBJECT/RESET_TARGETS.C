@@ -5,9 +5,7 @@ void ObjectMotion_ResetTargetsAndVelocity(u32 object_id)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL) {
-        s32 value = 1;
-        value |= object->action_flags;
-        object->action_flags = value;
+        object->action_flags = (u8)(object->action_flags | 1);
         Object_ResetMotion(object);
         object->target_x = 0x80000000;
         object->target_y = 0x80000000;
@@ -15,6 +13,6 @@ void ObjectMotion_ResetTargetsAndVelocity(u32 object_id)
         object->velocity_x = 0;
         object->velocity_y = 0;
         object->velocity_z = 0;
-        object->motion_flags = 0;
+        object->unknown_56 = 0;
     }
 }

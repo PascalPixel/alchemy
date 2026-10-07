@@ -137,6 +137,20 @@
  * spread = 1 reloads through r7 against native r6 (reload rotation; r6 is
  * free there in the greg dump), then the ids address spill at 16 against
  * native 28.
+ * Parallel session of 2026-10-06 (on 8b95cd7680, merged; its body 1335
+ *   against this body's 116, so this body is kept): kind case 5 first and
+ *   the top-only gBattleWork cell base, both carried above. Its trials
+ *   (base 1335): (u16) cast of the sleep word 1335; sel r10 device 1363;
+ *   head declared after matrix or last 1335, after window 1401, first
+ *   1409; no head (entries directly) 1438; ids/tbl as pointer locals over
+ *   buffers 1432-1442; gWorkSlot[9]/[57] at the top 1341, everywhere 1352;
+ *   &gWorkSlot[9] base 1335; slots + sel parameter 1342; slots + mode r8
+ *   1335; slots + mode r8 + sel r10 1361; press search through j 1377,
+ *   block-local id 1361, nx 1377, width 1393; permuter 5 min seed 11
+ *   --heat: weighted 29540 -> 24980 but differ 1455. It noted agscc's
+ *   Thumb andsi3 turns a constant 0xFFFF mask into extzv, so the native
+ *   mask was not a CONST_INT at expand time (now reproduced by the ||
+ *   chain above).
  * Earlier history (differ 1400 -> 1332):
  * Spill slots follow declaration order: the native keeps runtime 76,
  * window 72, cursor 68, cnt 64, redraw 56, slotId 52, pending 48, matrix 44,

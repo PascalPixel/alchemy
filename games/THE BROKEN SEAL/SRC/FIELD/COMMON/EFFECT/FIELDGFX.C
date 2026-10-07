@@ -419,7 +419,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     BattleFx_BuildBuffer(to, buffers, target, 1);
     BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
-    frames = (u16 *)&work->timer;
+    frames = &work->timer;
     /* FAKEMATCH: int temporaries build halfword constants with mov instead of pool loads. */
     value = 120;
     *frames = value;

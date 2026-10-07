@@ -37,7 +37,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
     window = NULL;
     entry = UiText_BuildRenderEntries(message, 1);
     if (work->entries[entry] != 0) {
-        UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width, (u32 *)&height);
+        UiText_GetResourceDimensions(message, &x, &y, &width, &height);
         x = (30 - width) >> 1;
         y = ((15 - height) >> 1) + y_offset;
         if (mode != 0)
@@ -79,7 +79,7 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
         size = (u32)UiText_LookupMessageCodeSize;
     } while (0);
     routine = (void (*)(struct TextReader *, s32))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)UiText_LookupMessageArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    Dma_Set(UiText_LookupMessageArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(reader, message);
     Sys_Free(routine);
 }

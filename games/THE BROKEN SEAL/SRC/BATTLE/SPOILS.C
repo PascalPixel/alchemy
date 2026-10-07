@@ -170,10 +170,10 @@ void Battle_AwardSpoils(void)
     }
     list = units;
     count = BattleParty_ListLivingUnits(1, list);
-    backup = (struct BattleUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+    backup = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
     for (i = 0; i < count; i++) {
         unit_id = list[i];
-        unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
+        unit = Owner_GetStateFar(unit_id);
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
             Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0) {

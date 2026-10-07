@@ -141,7 +141,7 @@ static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, 
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 {
-    u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x900);
+    u8 *buf = Runtime_BumpAllocateAlternatePool(0x900);
     s32 x = 0;
     s32 width = 192;
     const u8 *font = DisplayScroll_Font;

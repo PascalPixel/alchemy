@@ -94,7 +94,7 @@ void Resource_DecompressHalfwords(const void *source, void *destination)
 {
     u32 words = (u32)Resource_DecompressHalfwordsCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)Resource_DecodeHalfwordLz, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(Resource_DecodeHalfwordLz, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(const void *, void *))routine)(source, destination);
 }
 
@@ -109,7 +109,7 @@ s32 Resource_DecodeType01(const void *source, void *destination)
         size = (u32)Resource_DecodeType01CodeSize;
     } while (0);
     routine = (s32 (*)(const void *, void *))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Resource_DecodeType01Arm, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    Dma_Set(Resource_DecodeType01Arm, routine, 0x84000000 | (size >> 2), REG_DMA3);
     /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
@@ -129,7 +129,7 @@ s32 Resource_DecodeType2(const void *source, void *destination)
         size = (u32)Resource_Decode2CodeSize;
     } while (0);
     routine = (s32 (*)(const void *, void *))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Resource_Decode2, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    Dma_Set(Resource_Decode2, routine, 0x84000000 | (size >> 2), REG_DMA3);
     /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
@@ -149,7 +149,7 @@ s32 Resource_DecodeByteLz(const void *source, void *destination)
         size = (u32)Resource_DecodeByteLzCodeSize;
     } while (0);
     routine = (s32 (*)(const void *, void *))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Resource_DecodeByteLzArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    Dma_Set(Resource_DecodeByteLzArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
     /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
@@ -162,7 +162,7 @@ void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup, u32 bytes
 {
     u32 words = (u32)ColorBuffer_BackupAndBrightenCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_BrightenKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_BrightenKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -170,7 +170,7 @@ void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndDarkenCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_DarkenKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_DarkenKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -178,7 +178,7 @@ void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndScaleThreeQuartersCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_ScaleThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_ScaleThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -186,7 +186,7 @@ void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndHalveCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_HalveKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_HalveKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -194,7 +194,7 @@ void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup, u3
 {
     u32 words = (u32)ColorBuffer_BackupAndBrightenPartialCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_BrightenPartialKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_BrightenPartialKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -202,7 +202,7 @@ void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup, u32 
 {
     u32 words = (u32)ColorBuffer_BackupAndDarkenPartialCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_DarkenPartialKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_DarkenPartialKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -210,7 +210,7 @@ void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup, u32 
 {
     u32 words = (u32)ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -218,6 +218,6 @@ void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndHalveNonzeroCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_HalveNonzeroKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_HalveNonzeroKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }

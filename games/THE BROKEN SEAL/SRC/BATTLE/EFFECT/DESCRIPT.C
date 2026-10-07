@@ -157,7 +157,7 @@ u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
 {
     struct EffectDescriptorRuntime *runtime =
-        (struct EffectDescriptorRuntime *)gEventWork;
+        gEventWork;
     struct EffectDescriptor *descriptor = runtime->descriptors;
     s32 state_index = 250;
     s32 flags;
@@ -359,7 +359,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
 
     desc = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(2, arg0);
     ret = -1;
-    work = *(EffectDescriptorWorkView **)&gEventWork;
+    work = * &gEventWork;
     if ((desc != 0) && (desc->result != 0)) {
         if (desc->flags & 0x200) {
             work->limit = 0;
@@ -393,7 +393,7 @@ block_17:
 
 s32 Battle_DispatchInputEvent(s32 event)
 {
-    struct RuntimeState_0808d8f0 *state = (struct RuntimeState_0808d8f0 *)gEventWork;
+    struct RuntimeState_0808d8f0 *state = gEventWork;
     s32 selected_object = ((struct GlobalData_0808d8f0 *)&gGameState)->selected_object;
 
     switch (event) {

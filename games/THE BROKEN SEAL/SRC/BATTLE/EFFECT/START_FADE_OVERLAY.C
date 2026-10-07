@@ -129,7 +129,7 @@ void BattleFx_StartFadeOverlay(void *object)
     volatile u16 *blend;
     s32 value;
 
-    work = (u32 *)Runtime_AllocateBlock(36, 28);
+    work = Runtime_AllocateBlock(36, 28);
     tiles = Runtime_AllocateHeapBlock(14, 0x400);
     fill = 0x11111111;
     Dma_Set((const void *)&fill, tiles, 0x85000080, REG_DMA3);

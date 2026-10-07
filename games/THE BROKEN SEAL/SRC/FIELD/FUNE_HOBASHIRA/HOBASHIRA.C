@@ -77,7 +77,7 @@ s32 Object_PlaceFromCameraOffset(struct Object *object)
 
 s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 {
-    u32 sample = (u32)(Random16() << 6) >> 16;
+    u32 sample = (Random16() << 6) >> 16;
 
     if (sample == 6) {
         s32 value = 0xd000;
@@ -108,13 +108,13 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
     if (*state == 9) {
         actor->drift = 0;
     } else if (*state != 0) {
-        actor->drift -= (u32)(Random16() << 11) >> 16;
+        actor->drift -= (Random16() << 11) >> 16;
         if (actor->drift < -0xc000) {
             next = 0;
             *state = next;
         }
     } else {
-        actor->drift += (u32)(Random16() << 11) >> 16;
+        actor->drift += (Random16() << 11) >> 16;
         if (actor->drift > 0xc000) {
             next = 1;
             *state = next;
@@ -127,13 +127,13 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
     if (*state == 9) {
         actor->y = 0;
     } else if (*state != 0) {
-        actor->y -= (u32)(Random16() * 3 << 14) >> 16;
+        actor->y -= (Random16() * 3 << 14) >> 16;
         if (actor->y < 0) {
             next = 0;
             *state = next;
         }
     } else {
-        actor->y += (u32)(Random16() * 3 << 14) >> 16;
+        actor->y += (Random16() * 3 << 14) >> 16;
         if (actor->y > 0x100000) {
             next = 1;
             *state = next;
@@ -720,8 +720,8 @@ void FuneHobashira_UpdateSway(void)
     *pos += dy;
     FuneHobashira_DriftX += dx;
     FuneHobashira_DriftY += dy;
-    FuneHobashira_SwayX += (u32)(Random16() * 3 << 7) >> 16;
-    FuneHobashira_SwayY += (u32)(Random16() << 9) >> 16;
+    FuneHobashira_SwayX += (Random16() * 3 << 7) >> 16;
+    FuneHobashira_SwayY += (Random16() << 9) >> 16;
     FuneHobashira_SwayX &= 0xffff;
     FuneHobashira_SwayY &= 0xffff;
 }

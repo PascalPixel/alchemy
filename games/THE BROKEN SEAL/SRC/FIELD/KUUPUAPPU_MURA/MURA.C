@@ -100,7 +100,7 @@ s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
     s32 selector = 18;
     struct FieldActor *leader;
 
-    if (*(s32 *)(entity + 56) == (s32)0x80000000)
+    if (*(s32 *)(entity + 56) == 0x80000000)
         return 0;
 
     leader = Object_GetById(ACTOR_PARTY_LEADER);

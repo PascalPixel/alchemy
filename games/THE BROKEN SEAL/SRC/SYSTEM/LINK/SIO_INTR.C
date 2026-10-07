@@ -39,7 +39,7 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
         for (k = 0; k <= 13; k++)
             sum += packet[k];
         if (flags[i] == 1 && (s16)sum == -1) {
-            Dma_Set(gSerialRuntime.pending_buffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, (volatile u32 *)DMA3);
+            Dma_Set(gSerialRuntime.pending_buffer[i] + 2, payload + i * 24, 0x84000006, (volatile u32 *)DMA3);
             gSerialRuntime.current_mask |= 1 << i;
         }
         if ((s16)sum == -1)

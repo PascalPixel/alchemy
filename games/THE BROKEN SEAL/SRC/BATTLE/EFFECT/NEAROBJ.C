@@ -131,7 +131,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 
     bestId = -1;
     bestDistance = BattleFx_MapKeyThroughTable(battleMode);
-    source = (struct ObjectRuntime *)ObjectTable_Get(sourceId);
+    source = ObjectTable_Get(sourceId);
     if (source == 0)
         return bestId;
 
@@ -140,7 +140,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
         if (candidateId == sourceId)
             continue;
 
-        candidate = (struct ObjectRuntime *)ObjectTable_Get(candidateId);
+        candidate = ObjectTable_Get(candidateId);
         if (candidate == 0 || (candidate->unknown_59 & 8) != 0)
             continue;
 

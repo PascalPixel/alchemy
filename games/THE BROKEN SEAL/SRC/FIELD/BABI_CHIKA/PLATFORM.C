@@ -166,7 +166,7 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
     Engine_GameFlagSet(0x200);
     if (Engine_GameFlagIsSet(0x201) != 0) {
         Object_GetById(14)->rise_counter = 0;
-        Object_GetById(14)->collision_flags &= (u8)0xf7;
+        Object_GetById(14)->collision_flags &= 0xf7;
     } else {
         Object_GetById(14)->rise_counter = 1;
         flags = Object_GetById(14);
@@ -185,7 +185,7 @@ void BabiChika_ConfigureActorFourteenRise(void)
     Engine_GameFlagSet(0x201);
     if (Engine_GameFlagIsSet(0x200) != 0) {
         Object_GetById(14)->rise_counter = 0;
-        Object_GetById(14)->collision_flags &= (u8)0xf7;
+        Object_GetById(14)->collision_flags &= 0xf7;
     } else {
         Object_GetById(14)->rise_counter = 1;
         p = Object_GetById(14);
@@ -449,7 +449,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 
     {
         u8 *flag = &Object_GetById(9)->priority_flags;
-        *flag &= (u8)0xfd;
+        *flag &= 0xfd;
     }
 
     Engine_GameFlagSet(0x204);
@@ -521,7 +521,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
         if (best > Object_GetById(slot)->y.fixed + 0x100000) continue;
 
         best = Object_GetById(slot)->y.fixed + 0x100000;
-        Object_GetById(subject)->timer = (u16)slot;
+        Object_GetById(subject)->timer = slot;
     }
 
     ObjectMotion_SetSpeedParameters(subject, 0x40000, 0x20000);

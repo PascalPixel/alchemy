@@ -370,7 +370,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 size = (u32)Text_DecodeSymbolCodeSize;
             } while (0);
             code = Runtime_AllocateHeapBlock(50, size);
-            Dma_Set((const void *)Text_DecodeSymbol, code,
+            Dma_Set(Text_DecodeSymbol, code,
                 0x84000000 | (size >> 2), REG_DMA3);
         }
         decode = (s32 (*)(struct TextReader *))
@@ -511,7 +511,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 22:
-                        value = (s32)UiRender_LookupNamedValue(5, clear);
+                        value = UiRender_LookupNamedValue(5, clear);
                         mag = value;
                         if (value < 0)
                             mag = -value;
@@ -886,7 +886,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 size = (u32)Text_DecodeSymbolCodeSize;
             } while (0);
             code = Runtime_AllocateHeapBlock(50, size);
-            Dma_Set((const void *)Text_DecodeSymbol, code,
+            Dma_Set(Text_DecodeSymbol, code,
                 0x84000000 | (size >> 2), REG_DMA3);
         }
         decode = (s32 (*)(struct TextReader *))gWindowWork[50 - HEAP_SLOT_WINDOW];

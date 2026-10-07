@@ -517,7 +517,7 @@ void KuupuappuDou_EnableGroupAutomaticPriority(void)
 
 void KuupuappuDou_RunRumble(void)
 {
-    struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
+    struct MapShake *shake = (struct MapShake *)((gMapWork[0]) + 0x164);
     s32 frames;
     s32 eva;
     s32 evb;

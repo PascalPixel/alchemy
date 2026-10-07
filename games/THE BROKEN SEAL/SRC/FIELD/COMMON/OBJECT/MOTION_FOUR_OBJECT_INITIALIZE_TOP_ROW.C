@@ -79,13 +79,13 @@ void FourObjectMotion_UpdateAllPositions(void)
 
         if (object != 0) {
             u32 vertical = VERTICAL_ORIGIN -
-                ((u32)(s32)state->vertical_origins[index] << 16);
+                ((s32)state->vertical_origins[index] << 16);
             ((struct FieldSprite *)object)->priority = 0;
             motion[0] = FIXED_ONE;
             motion[1] = FIXED_ONE;
-            request[0] = (u32)(s32)state->positions_x[index] << 16;
+            request[0] = (s32)state->positions_x[index] << 16;
             request[1] = vertical;
-            request[2] = ((u32)(s32)state->positions_y[index] << 16) + vertical;
+            request[2] = ((s32)state->positions_y[index] << 16) + vertical;
             request[3] = 0;
             Object_ApplyProjectedPlacementFar(object, request, motion, 0x4000);
         }
@@ -112,7 +112,7 @@ void FourObjectMotion_UpdateBottomRow(void)
         u32 obj = (u32)work->objects[i];
 
         if (obj != 0) {
-            u32 y = (241u << 17) - ((u32)(s32)work->vertical_origins[i] << 16);
+            u32 y = (241u << 17) - ((s32)work->vertical_origins[i] << 16);
             s32 phase;
             s32 limit;
             /* FAKEMATCH: the row's second read lives in r2, as the native allocates it. */
@@ -124,13 +124,13 @@ void FourObjectMotion_UpdateBottomRow(void)
                 motion[0] = -phase;
                 motion[1] = -phase;
             } else {
-                motion[0] = phase + (s32)(0x10000 - phase) / 3;
+                motion[0] = phase + (0x10000 - phase) / 3;
                 motion[1] = motion[0];
                 work->phases[i] = motion[0];
             }
-            request[0] = (u32)(s32)work->positions_x[i] << 16;
+            request[0] = (s32)work->positions_x[i] << 16;
             request[1] = y;
-            request[2] = ((u32)(s32)work->positions_y[i] << 16) + y;
+            request[2] = ((s32)work->positions_y[i] << 16) + y;
             request[3] = 0;
             py = work->positions_y[i];
             limit = 0x8000;

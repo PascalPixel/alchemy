@@ -349,7 +349,7 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     pos[0] = actor->x.fixed;
     pos[1] = actor->y.fixed - 0x100000;
     pos[2] = actor->z.fixed;
-    piece = (struct FieldActor *)SceneData_FindSlotAtPosition(pos, 0);
+    piece = SceneData_FindSlotAtPosition(pos, 0);
     sprite = (struct TrackSprite *)piece->sprite;
     if (sprite->animations[0]->id == 0x100) {
         s32 vx = actor->velocity_x;

@@ -94,7 +94,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *ImiruMura_GetExits(void)
 {
-    return (u8 *)ImiruMura_SceneTable;
+    return ImiruMura_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -248,7 +248,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Engine_ActorStartRepeatedMotion(8, 2);
             Engine_EventShowMessage(8, 0);
             actor8_record = Object_GetById(8);
-            *(u8 *)((u8 *)actor8_record + ACTOR_FLAGS_OFFSET) ^= 0x2;
+            *((u8 *)actor8_record + ACTOR_FLAGS_OFFSET) ^= 0x2;
             GameFlag_Set(0x82c);
             Engine_EventEnd();
         }

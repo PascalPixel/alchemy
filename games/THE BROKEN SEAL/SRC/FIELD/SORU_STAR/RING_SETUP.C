@@ -223,5 +223,5 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
         } while (i != count);
     }
     list->count = count;
-    Engine_TaskAddCallback((void *)Soru_UpdateRing, 0xc80);
+    Engine_TaskAddCallback(Soru_UpdateRing, 0xc80);
 }

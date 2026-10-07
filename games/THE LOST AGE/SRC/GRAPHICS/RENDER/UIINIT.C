@@ -28,7 +28,7 @@ void UiWork_InitializeWithResourceCounters(void)
 {
     struct UiRenderWork *work;
 
-    work = (struct UiRenderWork *)Runtime_AllocateBlock(60, sizeof(struct UiRenderWork));
+    work = Runtime_AllocateBlock(60, sizeof(struct UiRenderWork));
     Iwram_ClearWords(work, sizeof(struct UiRenderWork));
     work->dirty = 1;
     work->glyph_resource = 99;
@@ -54,7 +54,7 @@ void UiWork_Initialize(s32 kind)
         return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
     }
 
-    work = (struct UiRenderWork *)Runtime_AllocateBlock(60, sizeof(struct UiRenderWork));
+    work = Runtime_AllocateBlock(60, sizeof(struct UiRenderWork));
     Iwram_ClearWords(work, sizeof(struct UiRenderWork));
     work->dirty = 1;
     work->glyph_resource = 99;

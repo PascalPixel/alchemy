@@ -107,7 +107,7 @@ void VinasuChojo_FaceActor(s32 actor, s32 facing);
 
 s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
 {
-    s16 *counter = (s16 *)&actor->timer;
+    s16 *counter = &actor->timer;
 
     switch (*counter) {
     case 6:
@@ -157,7 +157,7 @@ void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
     struct FieldSprite *sprite = actor->sprite;
     u16 rotation = sprite->rotation;
 
-    if ((s32)((rotation + 0xffff) << 16) < 0) {
+    if (((rotation + 0xffff) << 16) < 0) {
         {
             s32 t = rotation - 0xa00;
             sprite->rotation = t;
@@ -169,7 +169,7 @@ s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *actor)
 {
     u16 *q = &actor->work;
     s32 c = *q;
-    s16 v = *(s16 *)q;
+    s16 v = *q;
 
     if (v == 0) {
         {
@@ -357,7 +357,7 @@ s32 Scene_Initialize(void)
     Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
-    v = (s32)0xffff0000;
+    v = 0xffff0000;
     Object_GetById(10)->scale_x = v;
     Object_GetById(11)->scale_x = v;
     i = 12;
@@ -1136,12 +1136,12 @@ void Scene_RunActorEntrySequence(void)
 
 void SceneEffect_UpdateObjectByFrameParity(s32 a)
 {
-    if (*(s32 *)&gFrameCount & 2) {
+    if (* &gFrameCount & 2) {
         Engine_ObjectSetPartPalettes(a, 7);
     } else {
         Engine_ObjectSetPartPalettes(a, 0);
     }
-    if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
+    if (Math_RemainderUnsigned(* &gFrameCount, 15) == 0) {
         VinasuChojo_SpawnLinkedPairEffects(a);
     }
 }

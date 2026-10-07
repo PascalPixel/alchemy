@@ -66,5 +66,5 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
         &shop->cursor,
         x,
         y,
-        (s8)shop->mode);
+        shop->mode);
 }

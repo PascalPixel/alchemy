@@ -250,7 +250,7 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
 {
     volatile u32 zero;
     if (slot->object)
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
+        ResourceObject_ReleaseFar(slot->object);
     zero = 0;
     Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), REG_DMA3);
 }

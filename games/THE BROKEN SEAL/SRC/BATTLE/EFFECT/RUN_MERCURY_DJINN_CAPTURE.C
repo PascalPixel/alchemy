@@ -122,7 +122,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
             copy->mode = 0;
             copy->priority_flags = 2;
             copy->collision_flags |= 1;
-            copy->callback = (void *)BattleFx_HalveDistanceToTarget;
+            copy->callback = BattleFx_HalveDistanceToTarget;
             copy->facing = djinni->facing;
             Animation_ApplyChildValuesFar(copy, 9);
             Object_SetMode(copy, 0);
@@ -157,7 +157,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     position.z = djinni->z;
     Camera_WorldToScreen(&position.x);
 
-    slot = (u8 *)effect_slots + 88;
+    slot = effect_slots + 88;
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 240, position.x, position.z);

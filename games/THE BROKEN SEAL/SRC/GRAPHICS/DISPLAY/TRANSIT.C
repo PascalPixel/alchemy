@@ -104,7 +104,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     case 4: {
         struct DisplayTransitionState *state;
 
-        display = (struct DisplayTransitionWindow *)*work;
+        display = *work;
         state = DisplayTransition_AllocateAndClearState();
         display->first_line = 80;
         display->second_line = 80;
@@ -217,9 +217,9 @@ void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
 void DisplayTransition_Update(void)
 {
     struct DisplayTransitionFrame *state =
-        *(struct DisplayTransitionFrame **)Ram_DisplayWork;
+        *Ram_DisplayWork;
     struct DisplayTransitionWindow *display =
-        *(struct DisplayTransitionWindow **)Ram_MapWork;
+        *Ram_MapWork;
     s8 *duration = &state->duration;
     u32 display_value;
 
@@ -254,9 +254,9 @@ void DisplayTransition_Update(void)
 void DisplayTransition_UpdateFromCentre(void)
 {
     struct DisplayTransitionFrame *state =
-        *(struct DisplayTransitionFrame **)Ram_DisplayWork;
+        *Ram_DisplayWork;
     struct DisplayTransitionWindow *window =
-        *(struct DisplayTransitionWindow **)Ram_MapWork;
+        *Ram_MapWork;
     s8 *duration = &state->duration;
     u16 value;
 

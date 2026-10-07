@@ -133,7 +133,7 @@ s32 Map_LoadLayeredScene(s32 index)
     entry = &Map_LayeredScenes[index];
     work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
     Iwram_ClearWords(work, sizeof(struct MapScrollWork));
-    header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
+    header = Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
     src = (u8 *)header + header->tiles;
     Tilemap_DecodeStagedBuffer(Resource_DecodeType01(src, Ram_MapCellBuffer + 1));
     src = (u8 *)header + header->collision;
@@ -359,12 +359,12 @@ void Map_UpdateLayerScroll(void)
         if (layer->speed_x != 0) {
             layer->phase_x += layer->speed_x;
             base_x = (base_x + layer->phase_x) &
-                (((u32)layer->mask_x << 19) | 0x7ffff);
+                ((layer->mask_x << 19) | 0x7ffff);
         }
         if (layer->speed_y != 0) {
             layer->phase_y += layer->speed_y;
             base_y = (base_y + layer->phase_y) &
-                (((u32)layer->mask_y << 19) | 0x7ffff);
+                ((layer->mask_y << 19) | 0x7ffff);
         }
         base_x += layer->offset_x;
         base_y += layer->offset_y;

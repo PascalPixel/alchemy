@@ -17,7 +17,7 @@ extern s32 Encounter_SelectEnemyGroup();
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
-    u8 *table = (u8 *)Ram_HeapSlots->event_work + 0x18c;
+    u8 *table = Ram_HeapSlots->event_work + 0x18c;
 
     return Encounter_SelectEnemyGroup(table[index]);
 }

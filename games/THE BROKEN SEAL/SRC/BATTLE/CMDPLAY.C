@@ -483,7 +483,7 @@ void BattleEvent_Playback(void)
                 state->phase = 2;
                 state->timer = 0;
             } else {
-                Runtime_PushSlotEntry((s32 *)entry, 240);
+                Runtime_PushSlotEntry(entry, 240);
                 return;
             }
         } else if (state->phase == 10) {

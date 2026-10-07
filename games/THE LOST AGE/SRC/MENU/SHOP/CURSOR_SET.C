@@ -62,8 +62,8 @@ void Shop_SetCursor(
 {
     struct RenderOutput *anchor = cursor->anchor;
 
-    cursor->x = (u16)anchor->x;
-    cursor->y = (u16)anchor->y;
+    cursor->x = anchor->x;
+    cursor->y = anchor->y;
     cursor->target_x = target_x;
     cursor->target_y = target_y;
     cursor->kind = kind;

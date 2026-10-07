@@ -19,11 +19,11 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     descriptor = Runtime_AllocateBlock(59, 0x7170);
     handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
-    *(u16 *)(descriptor + 222) = (u16)first_actor;
-    *(u16 *)(descriptor + 224) = (u16)second_actor;
-    *(u16 *)(descriptor + 226) = (u16)third_actor;
-    *(u16 *)(descriptor + 228) = (u16)fourth_actor;
-    *(u16 *)(descriptor + 230) = (u16)mode;
+    *(u16 *)(descriptor + 222) = first_actor;
+    *(u16 *)(descriptor + 224) = second_actor;
+    *(u16 *)(descriptor + 226) = third_actor;
+    *(u16 *)(descriptor + 228) = fourth_actor;
+    *(u16 *)(descriptor + 230) = mode;
     *(s32 *)(descriptor + 232) = centre;
     *(s32 *)(descriptor + 236) = extra;
 
@@ -42,7 +42,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     extent = Resource_FindFreeEntry();
-    *(u16 *)(descriptor + 216) = (u16)extent;
+    *(u16 *)(descriptor + 216) = extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
     Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 0xc76);

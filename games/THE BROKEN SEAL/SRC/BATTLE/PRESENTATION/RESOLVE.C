@@ -117,7 +117,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     BattleMotion_DestroyAllSlotObjects();
     BattleUnit_ProcessTurnEnd(&battle->plan);
     BattleActor_CommitPlacement();
-    count = BattleParty_ListActorIds(3, (u16 *)ids);
+    count = BattleParty_ListActorIds(3, ids);
     for (i = 0; i < count; i++)
         Actor_ResetMotionAtAnchor(ids[i]);
     request->unit_id = 0xff;
@@ -302,7 +302,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
             }
         }
         units[kept] = BATTLE_UNIT_LIST_END;
-        BattleActor_SpawnObjectsForList((s16 *)units, 0);
+        BattleActor_SpawnObjectsForList(units, 0);
         for (n = 0; n < plan->target_count; n++)
             units[n] = plan->target_ids[n];
         units[n] = BATTLE_UNIT_LIST_END;

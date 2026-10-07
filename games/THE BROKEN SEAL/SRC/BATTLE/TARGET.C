@@ -65,9 +65,9 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
         slot = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
         tail = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
         offset = tail * 2;
-        entry = (s16 *)(order->items + 1);
+        entry = (order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255) {
-            cursor = (u16 *)entry;
+            cursor = entry;
             do {
                 if ((s16)cursor[slot] != 254) {
                     positions[count] = index | 0x180;

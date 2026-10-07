@@ -337,7 +337,7 @@ void TakaraHashira_UpdatePillarActors(void)
                 /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
                 *(u8 *)&actor->priority_flags &= 254;
                 TakaraHashira_LowerActorToLedge(id, 1);
-                *(u8 *)&actor->priority_flags |= 1;
+                * &actor->priority_flags |= 1;
             } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
                 SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
                 Engine_AudioPlayCue(189);
@@ -348,7 +348,7 @@ void TakaraHashira_UpdatePillarActors(void)
                 actor->x = 0;
                 actor->y = 0;
                 actor->z = 0;
-                *(u8 *)&actor->priority_flags |= 1;
+                * &actor->priority_flags |= 1;
             } else {
                 OverlayObject_WaitUntilSettledAndReset((struct FieldActor *)actor);
             }

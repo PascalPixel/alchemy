@@ -158,7 +158,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
     if (rate == 0)
         return 0;
     if (GameFlag_IsSet(5) != 0) {
-        level = (s32)Owner_GetStateFar(5)->experience;
+        level = Owner_GetStateFar(5)->experience;
         if (level > 130)
             return 0;
     }

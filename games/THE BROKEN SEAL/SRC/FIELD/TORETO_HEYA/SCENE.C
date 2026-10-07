@@ -584,7 +584,7 @@ s32 ToretoHeya_EnterRoom(void)
 
 void ToretoPalette_CaptureBank(void)
 {
-    Dma_Set((const void *)0x05000000, *(void **)&Data_03001ed0, 0x84000070,
+    Dma_Set((const void *)0x05000000, * &Data_03001ed0, 0x84000070,
             REG_DMA3);
 }
 

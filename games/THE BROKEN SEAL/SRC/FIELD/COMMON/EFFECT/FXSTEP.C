@@ -96,7 +96,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
     object = GetBattleObjectSlotFar(unit)->object;
     info = GetMotionRecordFar(object, 0);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+    Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera->pos);
     scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
     screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
     return 0;
@@ -298,7 +298,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
             draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
                 anchor.x - 16, anchor.y - 24, 40, 48);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera->pos);
         if (frame >= 4 && frame <= 31) {
             for (i = 0; i != 64; i++) {
                 s32 pair = i / 2;
@@ -516,7 +516,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
         else if (frame <= 7)
             draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera->pos);
         if (frame >= 4 && frame <= 31) {
             for (i = 0; i != 64; i++) {
                 s32 pair = i / 2;

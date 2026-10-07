@@ -31,12 +31,12 @@ void Resource_LoadPairedBlocksIfAvailable(void)
 
     active_state = Ram_HeapSlots->menu_runtime;
     first_slot = Resource_FindFreeEntry();
-    active_state->resource_slots[0] = (s16)first_slot;
+    active_state->resource_slots[0] = first_slot;
     if (first_slot != -1) {
         VramBlock_LoadResourceFar(first_slot, 0x80, (s32)&ResourceId_ItemMenuTilesA);
     }
     second_slot = Resource_FindFreeEntry();
-    active_state->resource_slots[1] = (s16)second_slot;
+    active_state->resource_slots[1] = second_slot;
     if (second_slot != -1) {
         VramBlock_LoadResourceFar(second_slot, 0x80, (s32)&ResourceId_ItemMenuTilesB);
     }

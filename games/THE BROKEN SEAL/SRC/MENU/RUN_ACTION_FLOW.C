@@ -71,7 +71,7 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     s32 result;
     s32 index;
 
-    menu = (struct CharacterMenuState *)gMenuWork;
+    menu = gMenuWork;
     index = menu->owner_index[slot];
     result = 0;
     cursor = menu->owner_cursors[slot];

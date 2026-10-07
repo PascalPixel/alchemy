@@ -295,7 +295,7 @@ s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
     struct BattleUnit *state =
-        (struct BattleUnit *)Owner_GetState(owner);
+        Owner_GetState(owner);
     struct DjinnRecoveryList *table;
     s32 i;
     s32 status;
@@ -334,7 +334,7 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
     struct BattleUnit *state =
-        (struct BattleUnit *)Owner_GetState(owner);
+        Owner_GetState(owner);
     s32 result = Trade_CanOfferDjinn(owner, index, bit);
 
     if (result != 0) {
@@ -352,7 +352,7 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
     struct BattleUnit *state =
-        (struct BattleUnit *)Owner_GetState(owner);
+        Owner_GetState(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {
@@ -396,7 +396,7 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
     table->entries[count].unit_id = kind;
     table->entries[count].turns = -1;
     table->count = count + 1;
-    return (u32 *)&table->count;
+    return &table->count;
 }
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
@@ -469,7 +469,7 @@ s32 Party_SumDjinnCounts(s32 index)
 {
     u16 owners[16];
     s32 result = 0;
-    s32 count = Party_ListActiveOwners((s16 *)owners);
+    s32 count = Party_ListActiveOwners(owners);
 
     if (result < count) {
         u16 *owner = owners;

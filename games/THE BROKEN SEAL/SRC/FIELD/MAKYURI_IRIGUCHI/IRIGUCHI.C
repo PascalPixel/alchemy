@@ -246,7 +246,7 @@ void MakyuriIriguchi_ArriveWithSparks(void)
     s32 flag;
     s32 record;
 
-    actor = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     flag = GameFlag_IsSet(0x109);
     if (flag == 0) {
         Engine_EventBegin();

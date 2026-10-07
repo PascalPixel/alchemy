@@ -501,6 +501,6 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     for (i = 0; i != 11; i++)
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+        ResourceObject_ReleaseFar(work->objects[i]);
     BattleFx_EndCanvasLayer();
 }

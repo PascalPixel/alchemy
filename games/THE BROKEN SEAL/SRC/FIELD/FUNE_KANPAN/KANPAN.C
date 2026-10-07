@@ -158,7 +158,7 @@ s32 FuneKanpan_LayerSpeed[2] = { 0 };
 
 s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {
-    s16 *flag = (s16 *)&actor->work;
+    s16 *flag = &actor->work;
     s32 val;
     s32 tmp;
 
@@ -1739,7 +1739,7 @@ void FieldScene_RunPartyRosterScene(void)
 
     found = 0;
     for (index = 0; index <= 3; index++) {
-        roster[index] = SceneState_FindFirstSetFlagOfGroup((s32)index);
+        roster[index] = SceneState_FindFirstSetFlagOfGroup(index);
         category[index] = 0;
     }
 

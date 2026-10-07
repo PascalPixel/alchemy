@@ -35,7 +35,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 
     target = object->facing_target;
     if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        object->facing_flags = (0xFE & object->facing_flags);
         angle = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
         old = object->facing;
         delta = (s16)(angle - old);
@@ -47,7 +47,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
-            object->facing = (u16)(old + delta);
+            object->facing = (old + delta);
         }
     }
     return 1;
@@ -433,7 +433,7 @@ void FieldScene_RunEarlySequence(void)
     do {
         Engine_TaskWait(1);
         v = *(u16 *)ArutinYama_RiseTimer + 1;
-        *(u16 *)ArutinYama_RiseTimer = (u16)v;
+        *(u16 *)ArutinYama_RiseTimer = v;
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
@@ -468,7 +468,7 @@ void FieldScene_RunScene3a4SequenceH(void)
     do {
         Engine_TaskWait(1);
         v = *(u16 *)ArutinYama_RiseTimer + 1;
-        *(u16 *)ArutinYama_RiseTimer = (u16)v;
+        *(u16 *)ArutinYama_RiseTimer = v;
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
@@ -505,7 +505,7 @@ void FieldScene_RunScene3a4SequenceI(void)
     do {
         Engine_TaskWait(1);
         v = *(u16 *)ArutinYama_RiseTimer + 1;
-        *(u16 *)ArutinYama_RiseTimer = (u16)v;
+        *(u16 *)ArutinYama_RiseTimer = v;
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);

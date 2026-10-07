@@ -329,7 +329,7 @@ void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
     Engine_ObjectSetPosition(log, column, 0, row);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(pusher, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480), log);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 480), log);
     Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
     Object_SetMode(leader, 2);
     Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0, leader->z.fixed + dz);
@@ -449,7 +449,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         rec8->z.fixed = yb;
     }
     if (KorosseoKabe_SpectatorTimer != 0
-        && rec7->target_x == (s32)0x80000000) {
+        && rec7->target_x == 0x80000000) {
         if (KorosseoKabe_SpectatorPhase == 0) {
             Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
         } else {

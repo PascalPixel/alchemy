@@ -483,14 +483,14 @@ void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
   particle->y = velocity_y;
   particle->target_y = velocity_y;
   particle->velocity_x =
-      (s32)(velocity_x - velocity_x / 0x12);
+      (velocity_x - velocity_x / 0x12);
 
   vz = velocity_z;
   if (velocity_z < 0) {
     vz += 0xF;
   }
   particle->velocity_z =
-      (s32)(velocity_z - (vz >> 4));
+      (velocity_z - (vz >> 4));
 
 }
 

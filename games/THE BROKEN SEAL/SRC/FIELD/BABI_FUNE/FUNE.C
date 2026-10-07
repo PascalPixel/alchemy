@@ -98,7 +98,7 @@ void BabiFune_UpdateDriftingObject(u8 *obj)
         ((struct FieldActor *)obj)->x.fixed += drift;
         ((struct FieldActor *)obj)->y.fixed += 0xcccc;
     } else if (*(s16 *)&((struct FieldActor *)obj)->work != 0) {
-        *(s16 *)&((struct FieldActor *)obj)->work = 0;
+        * &((struct FieldActor *)obj)->work = 0;
         Object_SetMode(obj, 1);
         {
             u16 *p = (u16 *)(obj + 94);

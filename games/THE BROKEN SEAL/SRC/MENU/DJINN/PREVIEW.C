@@ -121,9 +121,9 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     if (win == 0)
         return 0;
 
-    buf = (s16 *)Runtime_BumpAllocate(128);
-    snap = (struct BattleUnitRecord *)Runtime_BumpAllocate(332);
-    list = (u16 *)Runtime_BumpAllocateAlternatePool(96);
+    buf = Runtime_BumpAllocate(128);
+    snap = Runtime_BumpAllocate(332);
+    list = Runtime_BumpAllocateAlternatePool(96);
     Iwram_CopyWords(snap, unit, 332);
 
     col = (code >> 8) & 15;

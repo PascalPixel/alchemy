@@ -46,7 +46,7 @@ void RamakanSabaku_UpdateTravelDust(void)
     s32 phase;
     actor = Object_GetById(gGameState.selected_actor);
     event = gEventWork;
-    if (actor->target_x == (s32)0x80000000) {
+    if (actor->target_x == 0x80000000) {
         return;
     }
     gGameState.hazard_steps++;

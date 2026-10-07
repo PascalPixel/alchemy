@@ -101,7 +101,7 @@ void HaidiaArashi_UpdatePulsingGlow(void)
     source = Object_GetById(19);
     glow = Object_GetById(27);
     sprite = glow->sprite;
-    timer = &((struct Pulse *)source)->timer;
+    timer = &(source)->timer;
     if (*timer != 0) {
         if (*timer == 60) {
             Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -324,7 +324,7 @@ void SceneActor_SetModeByFrameBit1(s32 o)
         Engine_ObjectSetPartPalettes(o, 0);
     }
     {
-        volatile s32 *q = (volatile s32 *)&gFrameCount;
+        volatile s32 *q = &gFrameCount;
         v = (HaidiaArashi_ShakeShift << 3) + 16;
         if (Math_RemainderUnsigned(*q, v) == 0) {
             HaidiaArashi_SpawnEffectPair((union PairObject *)o);
@@ -334,12 +334,12 @@ void SceneActor_SetModeByFrameBit1(s32 o)
 
 void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
 {
-    volatile s32 *fc = (volatile s32 *)&gFrameCount;
+    volatile s32 *fc = &gFrameCount;
     s32 t;
     s32 n;
 
     if ((*fc & 1) != 0) {
-        t = (s32)((u32)*fc >> 1);
+        t = ((u32)*fc >> 1);
         Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
     }
     n = (HaidiaArashi_ShakeShift << 3) + 16;
@@ -350,11 +350,11 @@ void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
 
 void HaidiaArashi_CycleObjectPalettes(s32 o)
 {
-    volatile s32 *p = (s32 *)&gFrameCount;
+    volatile s32 *p = &gFrameCount;
     s32 t;
 
     if ((*p & 1) != 0) {
-        t = (s32)((u32)*p >> 1);
+        t = ((u32)*p >> 1);
         Engine_ObjectSetPartPalettes(o, Math_RemainderUnsigned(t, 6));
     }
 }

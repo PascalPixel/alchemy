@@ -82,14 +82,14 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 dz = bz;
     s32 h;
 
-    obj = (struct SceneObject *)Object_GetById(gCell[125]);
+    obj = Object_GetById(gCell[125]);
     dx <<= 20;
     dz <<= 20;
 
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Map_GetTerrainHeight((s32)obj->layer, obj->x, obj->z);
+        h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }
@@ -98,7 +98,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Map_GetTerrainHeight((s32)obj->layer, obj->x, obj->z);
+        h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }
@@ -255,7 +255,7 @@ void Effect_UpdateBg3HofsByVcount(void)
 
 void Effect_SetBg3HofsSplit(void)
 {
-    union SceneCell *work = (union SceneCell *)(((u8 *)gMapWork[0]) + 260);
+    union SceneCell *work = ((gMapWork[0]) + 260);
     s32 hofs;
 
     sSplitLine = 192 - work[1].h[1];

@@ -88,9 +88,9 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {
     KorosseoKawa_EnsureMarkerSlot();
 
-    Korosseo_MarkerX = (u16)x;
-    Korosseo_MarkerY = (u16)y;
-    Korosseo_MarkerPriority = (u16)(style & 3);
+    Korosseo_MarkerX = x;
+    Korosseo_MarkerY = y;
+    Korosseo_MarkerPriority = (style & 3);
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
@@ -99,11 +99,11 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
 {
-    Korosseo_MarkerEndX = (u16)x;
-    Korosseo_MarkerEndY = (u16)y;
+    Korosseo_MarkerEndX = x;
+    Korosseo_MarkerEndY = y;
     Korosseo_MarkerStartX = Korosseo_MarkerX;
     Korosseo_MarkerStartY = Korosseo_MarkerY;
-    Korosseo_MarkerSteps = (u16)duration;
+    Korosseo_MarkerSteps = duration;
     Korosseo_MarkerStep = 0;
 
     Scheduler_AddOrUpdateCallback((s32)Korosseo_UpdateMarker, 0xc80);

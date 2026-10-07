@@ -80,7 +80,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
         } while (*input != 0);
     }
     *output = 0;
-    UiText_RenderWideStringAtOffset((u16 *)buffer, (struct UiWindow *)arg1, arg2, arg3);
+    UiText_RenderWideStringAtOffset(buffer, (struct UiWindow *)arg1, arg2, arg3);
     Runtime_BumpFree(buffer);
 }
 
@@ -120,7 +120,7 @@ void UiText_DrawStringAtOffset(
         src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
-            (u16 *)buffer,
+            buffer,
             (u16 *)src,
             (u16 *)dst,
             phase);
@@ -141,7 +141,7 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     *output = 0;
     x >>= 3;
     y >>= 3;
-    UiText_RenderWideStringInWindow((s16 *)buffer, (struct UiWindow *)arg1, x, y);
+    UiText_RenderWideStringInWindow(buffer, arg1, x, y);
     Runtime_BumpFree(buffer);
 }
 
@@ -222,7 +222,7 @@ void UiText_DrawPrefixedNumberAtOffset(
         src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
-            (u16 *)output,
+            output,
             (u16 *)src,
             (u16 *)dst,
             phase);

@@ -406,8 +406,8 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     ztbl = (u8 *)TorebiIzumi_ActorTileZ;
 
     do {
-        *(s32 *)(rec + 0) = (s32)*xtbl << 16;
-        *(s32 *)(rec + 8) = (s32)*ztbl << 16;
+        *(s32 *)(rec + 0) = *xtbl << 16;
+        *(s32 *)(rec + 8) = *ztbl << 16;
         *(s32 *)(rec + 4) = 0;
         *(u16 *)(rec + 12) = *htbl;
         *(u16 *)(rec + 14) = 0;
@@ -422,7 +422,7 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
         rec += 24;
     } while (i != 4);
 
-    ride->trail[0].x = (s32)0xffe20000;
+    ride->trail[0].x = 0xffe20000;
     ride->trail[0].y = 0;
     ride->trail[0].z = 0x640000;
     ride->velocity.x = 0;

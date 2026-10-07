@@ -41,13 +41,13 @@ void ItemMenu_DrawItemHead(void)
     UiIcon_PrepareObject(menu->selected_item_icon);
     UiText_DrawStringAtOffsetFar(
         Owner_GetStateFar(menu->pane_owner[0])->name,
-        (void *)menu->message_window,
+        menu->message_window,
         16,
         0);
     UiText_DrawCharacterAtOffsetFar(
         (menu->selected_items[0] & ITEM_ID_MASK) +
             (s32)MsgItemName,
-        (void *)menu->message_window,
+        menu->message_window,
         16,
         8);
 }
@@ -65,7 +65,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
     slot = a0 & ITEM_ID_MASK;
     Item_Get(slot);
-    UiText_DrawAt(slot + (s32)((u8 *)MsgItemName), win, 24, 0);
+    UiText_DrawAt(slot + (s32)(MsgItemName), win, 24, 0);
     text = (s32)MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
     UiText_DrawAt(text, win, 0, 16);

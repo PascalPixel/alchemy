@@ -186,8 +186,8 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
         sprite->size = 2;
         sprite->frame->visible = zero;
     }
-    objects[0]->callback = (void *)BattleFx_UpdateDescendingParticleNegativeArc;
+    objects[0]->callback = BattleFx_UpdateDescendingParticleNegativeArc;
     objects[0]->sprite->attr.byte.variant = 0;
-    objects[1]->callback = (void *)BattleFx_UpdateDescendingParticlePositiveArc;
+    objects[1]->callback = BattleFx_UpdateDescendingParticlePositiveArc;
     objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }

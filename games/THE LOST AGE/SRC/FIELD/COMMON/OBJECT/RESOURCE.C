@@ -37,11 +37,11 @@ void *Object_ReplaceResourceEntry(void *src, void *alt)
     ret = NULL;
     if (obj != NULL) {
         if (alt == NULL) {
-            *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
+            *((u8 *)obj + 0x11) = (*((u8 *)obj + 0x11) | 1);
         } else {
             Resource_ResetEntry(obj->vram_block);
             obj->vram_block = ((struct ResourceSprite *)alt)->vram_block;
-            *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
+            *((u8 *)obj + 0x11) = (*((u8 *)obj + 0x11) | 1);
             obj = alt;
         }
         ret = obj;

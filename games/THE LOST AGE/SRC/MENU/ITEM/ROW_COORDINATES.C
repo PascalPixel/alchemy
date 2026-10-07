@@ -12,7 +12,7 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
     u8 *current;
     s32 value;
     s32 count;
-    current = (u8 *)Ram_HeapSlots->menu_runtime + 0x118;
+    current = Ram_HeapSlots->menu_runtime + 0x118;
     arg0 += 61;
     value = 0x20;
     count = 3;

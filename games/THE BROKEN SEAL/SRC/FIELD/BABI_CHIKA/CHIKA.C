@@ -42,7 +42,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     actor->speedX = 0x00030000;
     actor->speedY = 0x00020000;
     actor->speedZ = 0x00040000;
-    actor->flags &= (u8)0x7e;
+    actor->flags &= 0x7e;
 
     Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
@@ -217,7 +217,7 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
     }
     track->state = 0;
     track->value = limit;
-    track->mark = (s32) 0x80000000;
+    track->mark = 0x80000000;
 }
 
 void Effect_AdvanceMotion(struct MotionEffect *effect)

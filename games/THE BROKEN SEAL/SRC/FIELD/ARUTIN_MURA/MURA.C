@@ -93,7 +93,7 @@ void FieldScene_RunActorEightPromptDialogue(void)
         Engine_EventShowMessage(8, 0);
     } else {
         work = gEventWork;
-        work->message = (u16)(work->message + 1);
+        work->message = (work->message + 1);
         Engine_EventAskYesNo(8, 0);
     }
 
@@ -327,7 +327,7 @@ void FieldScene_RunEarlySequence(void)
         }
     }
     tbl = ArutinMura_TriggerTable;
-    idx = (s32)((*(u16 *)&work->touched_trigger - 2) << 16) >> 16;
+    idx = ((*(u16 *)&work->touched_trigger - 2) << 16) >> 16;
     off = idx << 3;
     o4 = off + 4;
     a = *(s16 *)(tbl + o4);
@@ -596,7 +596,7 @@ void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
     s32 clear = 0;
     u8 *attached;
 
-    *state = (u8)clear;
+    *state = clear;
     attached = actor->attached;
     clear -= 13;
     attached[9] = (clear & attached[9]) | 4;

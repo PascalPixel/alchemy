@@ -713,7 +713,7 @@ void ReelGame_Run(void)
         for (i = 0; i != 30; i++) {
             if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
                 Dma_Set(tiles + (k * 30 + i) * 32,
-                    (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
+                    (BG_CHAR_BLOCK(2) + 0x3500 + j), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
                 j += 32;
             }
         }

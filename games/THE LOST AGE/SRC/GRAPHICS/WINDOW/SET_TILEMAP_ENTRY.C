@@ -22,9 +22,9 @@ void UiWindow_SetTilemapEntry(
 
     y += 1;
     x += 1;
-    if ((u32)y > (u32)(window->height - 1))
+    if (y > (u32)(window->height - 1))
         return;
-    if ((u32)x > (u32)(window->width - 1))
+    if (x > (u32)(window->width - 1))
         return;
 
     switch (mode) {

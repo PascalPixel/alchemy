@@ -78,12 +78,12 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
     mode = flags & 3;
     switch (mode) {
     case 1:
-        Object_SetMode((struct ObjectRuntime *)child, 1);
+        Object_SetMode(child, 1);
         object->resource = child;
         child->counter = 1;
         break;
     case 2:
-        Object_SetMode((struct ObjectRuntime *)child, 2);
+        Object_SetMode(child, 2);
         ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)Data_0809fd38);
         child->counter = 1;
         break;
@@ -181,7 +181,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object)
                 turn_step = 0x1000;
             if (turn_step < -0x1000)
                 turn_step = -0x1000;
-            object->angle = (u16)(current_angle + turn_step);
+            object->angle = (current_angle + turn_step);
         }
     }
     return 1;
@@ -189,7 +189,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object)
 
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
 {
-    switch ((u32)(kind - 1)) {
+    switch ((kind - 1)) {
     case 0:
         kind = (s32)ObjectMotion_ActionKind1Script;
         break;
@@ -215,7 +215,7 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
     default:
         break;
     }
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)kind);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, kind);
 }
 
 struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self, s32 id)

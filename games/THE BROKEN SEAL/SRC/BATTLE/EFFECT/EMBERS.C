@@ -374,7 +374,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
     if (mode == 0) {
         BattleEffect_RunImpactBurst(3, focus.x, focus.y);
         for (i = 0; i != 8; i++)
-            ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+            ResourceObject_ReleaseFar(work->objects[i]);
     }
     BattleFx_EndCanvasLayer();
 }
@@ -570,7 +570,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
         Runtime_ReleaseHeapBlock(46);
         BattleEffect_RunImpactBurst(1, focus.x, focus.y);
         for (k = 0; k != 12; k++)
-            ResourceObject_ReleaseFar((struct ResourceObjectWork *)((void **)(work->sheet + 0x77d8))[k]);
+            ResourceObject_ReleaseFar(((void **)(work->sheet + 0x77d8))[k]);
     }
     BattleFx_EndCanvasLayer();
 }

@@ -66,15 +66,15 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     u8 packed_pixels;
     u32 result;
 
-    cell = (((u32)(y_step / 8) & 63) << 6) +
-        ((u32)(x_step / 8) & 63);
-    pixel_offset = (((u32)(y_step / 2) & 3) << 1) +
-        ((u32)(x_step / 4) & 1);
+    cell = (((y_step / 8) & 63) << 6) +
+        ((x_step / 8) & 63);
+    pixel_offset = (((y_step / 2) & 3) << 1) +
+        ((x_step / 4) & 1);
 
     tile = BG_SCREEN_BLOCK(10)[cell];
-    packed_pixels = *(Ram_MapCollision + 0x800 + ((u32)tile << 3) + pixel_offset);
+    packed_pixels = *(Ram_MapCollision + 0x800 + (tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
-        if ((u32)x_step & 2)
+        if (x_step & 2)
             result = packed_pixels >> 4;
         else
             result = packed_pixels & 15;
@@ -83,9 +83,9 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     }
 
     tile = BG_SCREEN_BLOCK(8)[cell];
-    packed_pixels = *(Ram_MapCollision + ((u32)tile << 3) + pixel_offset);
+    packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
-        if ((u32)x_step & 2)
+        if (x_step & 2)
             result = packed_pixels >> 4;
         else
             result = packed_pixels & 15;
@@ -98,7 +98,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
 
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position)
 {
-    if ((u32)(GetWorldMapCollision(position) - 5) <= 7U) {
+    if ((GetWorldMapCollision(position) - 5) <= 7U) {
         return 0;
     }
     return -1;
@@ -185,7 +185,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     /* FAKEMATCH: the do-whiles order the size load and the call. */
     do { size = (u32)TileMap_DrawRowsCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((const void *)TileMap_DrawRows, code, DMA_ENABLE32 | DMA_32BIT | size >> 2, REG_DMA3);
+    Dma_Set(TileMap_DrawRows, code, DMA_ENABLE32 | DMA_32BIT | size >> 2, REG_DMA3);
     do { ((void (*)(s32, s32, void *, void *))gWorkSlot[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
     Runtime_ReleaseHeapBlock(49);
 }

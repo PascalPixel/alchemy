@@ -30,5 +30,5 @@ void Func_080eb01c(void *work);
 
 void Func_080dba44(void)
 {
-    Func_080eb01c((u8 *)Ram_HeapSlots->effect_work + 0x7c8);
+    Func_080eb01c(Ram_HeapSlots->effect_work + 0x7c8);
 }

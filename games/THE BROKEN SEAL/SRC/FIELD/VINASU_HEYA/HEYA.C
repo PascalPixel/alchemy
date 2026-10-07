@@ -194,13 +194,13 @@ s32 SceneEffect_SpawnRandomEveryEightFramesB(struct Object_020005e4 *object)
     s32 phase, x, y, speed;
     phase = gFrameCount & 7;
     if (phase != 0) goto done;
-    params.unk00 = 3 - (s32)((u32)(Engine_RandomNext() * 2) >> 16);
+    params.unk00 = 3 - ((u32)(Engine_RandomNext() * 2) >> 16);
     params.color1 = 0x6666;
     params.color2 = 0x6666;
     params.mode = 14;
-    x = object->x + (((s32)((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (s32)((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
-    speed = Math_Divide(((s32)((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
+    x = object->x + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
+    speed = Math_Divide((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
     Effect_Spawn(x, y, object->z, 0, speed, phase, 0x000b0000, &params);
 done:
     return 0;
@@ -222,7 +222,7 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct Object_020006a0 *obj)
     params.color2 = 0x0000cccc;
     params.unk00 = 0;
 
-    speed = (s32)((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
+    speed = ((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
     phase = gFrameCount & 15;
 
     Effect_Spawn(
@@ -241,7 +241,7 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct Object_020006a0 *obj)
         params.color2 = 0x00008000;
         Effect_Spawn(
             obj->x
-                + (((s32)((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
+                + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
             obj->y,
             obj->z,
             0,
@@ -1051,7 +1051,7 @@ void Scene_RunActorLeapSequence(void)
     rec7 = Object_GetById(0);
     Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    state = (u8 *)&rec7->motion_flags;
+    state = &rec7->motion_flags;
     zero = 0;
     *state = zero;
 #endif

@@ -49,7 +49,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    heap = (void **)gBattleFxWork;
+    heap = gBattleFxWork;
     p = heap;
     work = *p++;
     canvas = *p;

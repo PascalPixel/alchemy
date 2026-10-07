@@ -52,7 +52,7 @@ void SceneState_RaiseTriggerOnPsynergyTarget(void)
 
     if (sel != 0 && (work->psynergy_request >> 10) == sel
         && Engine_GameFlagIsSet(321) != 0) {
-        u16 *p = (u16 *)&work->raised_trigger;
+        u16 *p = &work->raised_trigger;
         s32 val = 99;
 
         *p = val;

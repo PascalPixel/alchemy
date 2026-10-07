@@ -60,7 +60,7 @@ void BattleFx_SetupResourcesAndWindow(void)
     u32 tile;
     u32 attr2;
 
-    pal = (u32 *)Runtime_BumpAllocateAlternatePool(32);
+    pal = Runtime_BumpAllocateAlternatePool(32);
     work = &gMapCellBuffer;
     oam = (u32 *)work->entries;
     object = Object_GetById(gGameState.selected_actor);

@@ -119,7 +119,7 @@ void BattleUnit_ResetGuardLevels(void)
     s32 count;
     s32 index;
 
-    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
+    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
     for (index = 0; index < count; index++) {
         struct BattleUnit *actor;
 
@@ -180,8 +180,8 @@ s32 BattleEscape_CheckSuccess(void)
 s32 BattlePres_BuildUnitEntries(
     struct BattleActionRecord *entries)
 {
-    u16 *excluded_units = (u16 *)Runtime_BumpAllocateAlternatePool(17);
-    u16 *unit_ids = (u16 *)Runtime_BumpAllocateAlternatePool(9);
+    u16 *excluded_units = Runtime_BumpAllocateAlternatePool(17);
+    u16 *unit_ids = Runtime_BumpAllocateAlternatePool(9);
     s32 unit_count = BattleParty_ListLivingUnits(1, unit_ids);
     s32 excluded_count = 0;
     s32 entry_count = 0;

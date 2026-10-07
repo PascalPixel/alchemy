@@ -26,7 +26,7 @@ s32 BattleUnit_TickAttackModifier(s32 unit_id)
         s32 zero;
         state->attack_modifier_turns--;
         zero = 0;
-        if ((s8)state->attack_modifier_turns == 0) {
+        if (state->attack_modifier_turns == 0) {
             state->attack_modifier = zero;
             return 1;
         }
@@ -169,7 +169,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
     packed = unit->psy_seal;
     turns = packed & 0xFF;
     if (turns != 0) {
-        if ((u32)turns > 7U) {
+        if (turns > 7U) {
             turns += 0xF8;
             unit->psy_seal = turns;
             packed = turns;
@@ -183,7 +183,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
         remaining = packed;
         if (remaining == 0)
             return expired;
-        if ((u32)remaining <= 7U &&
+        if (remaining <= 7U &&
             BattleUnit_RollCounterEarlyEnd(id, unit->psy_seal, 0x1E) != 0) {
             unit->psy_seal = 0U;
             return 1;

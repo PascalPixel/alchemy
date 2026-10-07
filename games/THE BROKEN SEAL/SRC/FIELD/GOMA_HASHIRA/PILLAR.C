@@ -128,13 +128,13 @@ void FieldScene_RunPillarSequence(void)
         rec7 = ((s32 (*)())Object_GetById)(9);
         v1 = Engine_RandomNext();
         a0 = *(s32 *)(rec7 + 8);
-        a0 += (s32)((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);
+        a0 += ((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);
         rec4 = Object_GetById(9);
         r7 = (s32)Object_GetById(9);
         a2 = *(s32 *)(r7 + 16);
         a2 += 0x60000;
         v2 = Engine_RandomNext();
-        t = (s32)((u32)((v2 << 2) + v2) >> 16);
+        t = ((u32)((v2 << 2) + v2) >> 16);
         u = (((t << 1) + t) << 2) + t;
         n = u << 6;
         n -= u;
@@ -142,7 +142,7 @@ void FieldScene_RunPillarSequence(void)
         n += t;
         v3 = Engine_RandomNext();
         n = -n;
-        Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, zero, n, (s32)((u32)(v3 << 1) >> 16), zero);
+        Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, zero, n, ((u32)(v3 << 1) >> 16), zero);
         Battle_WaitMode0(20);
         Audio_PlayCue(154);
         Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);

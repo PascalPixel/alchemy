@@ -39,10 +39,10 @@ void ColossoLogRollingStage_PushStagedActor(void)
     direction = subject->facing >> 12;
 
     step = StagedActor_DirectionSteps[direction];
-    position.x = subject->x + (s32)(step & 0xffff0000);
+    position.x = subject->x + (step & 0xffff0000);
     position.y = subject->y;
     step <<= 16;
-    position.z = subject->z + (s32)step;
+    position.z = subject->z + step;
 
     target = FindActorAtWholeTilePosition(&position, subject);
     if (target == 0) {
@@ -50,10 +50,10 @@ void ColossoLogRollingStage_PushStagedActor(void)
     }
 
     step = StagedActor_DirectionSteps[direction];
-    position.x = target->x + (s32)(step & 0xffff0000);
+    position.x = target->x + (step & 0xffff0000);
     position.y = target->y;
     step <<= 16;
-    position.z = target->z + (s32)step;
+    position.z = target->z + step;
 
     blocker = FindActorAtWholeTilePosition(&position, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
@@ -73,10 +73,10 @@ void ColossoLogRollingStage_PushStagedActor(void)
     zero = 0;
 
     step = StagedActor_DirectionSteps[direction];
-    position.x = target->x + (s32)(step & 0xffff0000);
+    position.x = target->x + (step & 0xffff0000);
     position.y = target->y;
     step <<= 16;
-    position.z = target->z + (s32)step;
+    position.z = target->z + step;
 
     if (Object_CheckMovementCollision(target, &position) > 0) {
         return;

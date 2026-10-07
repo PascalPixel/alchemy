@@ -30,7 +30,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
     p = gMapWork[0];
     if (obj != 0) {
         p->origin = &target->x;
-        ObjectDispatch_InitFromTable4WithArgumentFar(target, (void *)obj);
+        ObjectDispatch_InitFromTable4WithArgumentFar(target, obj);
         if (flag == 0) {
             target->x = obj->x;
             target->y = obj->y;
@@ -47,7 +47,7 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
 {
     struct EventWork *owner = Runtime_AllocateBlock(0x1b, 0xccc);
     ((struct ObjectRuntime *)owner->view_center)->speed_limit = first;
-    ((struct ObjectRuntime *)owner->view_center)->acceleration = second;
+    (owner->view_center)->acceleration = second;
 }
 
 void Object_ResetMotion(void *);

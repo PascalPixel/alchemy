@@ -32,7 +32,7 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
 
     while ((group = GetMotionRecordFar(set->object, group_index)) != NULL) {
         if (state_slot != -1) {
-            state->actor_timers[state_slot] = ((u8 *)&state_value)[0];
+            state->actor_timers[state_slot] = (&state_value)[0];
         }
         if (set->fading == 0) {
             if (object_value != -1) {

@@ -45,7 +45,7 @@ s32 SceneActor_FaceActorZero(struct FieldActor *obj)
     s32 dz = target->z.fixed - obj->z.fixed;
     s32 dx = target->x.fixed - obj->x.fixed;
 
-    obj->facing = (s16)ArcTan2(dz, dx);
+    obj->facing = ArcTan2(dz, dx);
     return 0;
 }
 

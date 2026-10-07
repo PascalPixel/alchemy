@@ -117,7 +117,7 @@ void *SceneData_SelectPlacementTableBySubstate(void)
 
         sub = *(s16 *)((u8 *)Data_02000240 + off);
     }
-    switch ((s32)sub) {
+    switch (sub) {
     case 1:
     case 2:
         return ShindenHeya_PlacementB;
@@ -238,7 +238,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Engine_EventOpenMessage(8, 0);
             if (Engine_EventChooseYesNo(0, 0) == 0) {
                 Engine_EventWait(20);
-                if (((struct FacingObject *)Object_GetById(8))->facing >= 0xa000 && ((struct FacingObject *)Object_GetById(8))->facing <= 0xe000) {
+                if ((Object_GetById(8))->facing >= 0xa000 && (Object_GetById(8))->facing <= 0xe000) {
                     Actor_SetSpeed(8, 0x8000, 0x4000);
                     Engine_ActorFaceDirection(8, 0, 0);
                     Engine_EventWait(10);
@@ -1440,7 +1440,7 @@ void SceneEffect_StepEllipseOrbit(u8 *obj)
     ((struct FieldActor *)obj)->target_z = z;
     ((struct FieldActor *)obj)->target_x = tmp;
 
-    *angle = (u16)(*angle + ((struct FieldActor *)obj)->work);
+    *angle = (*angle + ((struct FieldActor *)obj)->work);
 }
 
 void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)

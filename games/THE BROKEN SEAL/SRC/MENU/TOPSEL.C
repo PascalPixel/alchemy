@@ -40,7 +40,7 @@ void Menu_LoadSelectedResource(void)
     if (selection->kind != 1 && selection->kind != 6)
         return;
 
-    buffer = (GlyphTransfer *)Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
+    buffer = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
     transfer = &state->records[15];
     no = selection->base;
     tbl = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);

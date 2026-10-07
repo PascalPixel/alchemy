@@ -54,7 +54,7 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
         repeat_count = &interpreter->repeat_count;
         next_count = *repeat_count + 1;
         *repeat_count = next_count;
-        if ((s32)(u8)next_count < (s32)(s16)repeat_limit) {
+        if ((u8)next_count < (s16)repeat_limit) {
             interpreter->cursor = Script_FindLabel(interpreter, jump_key);
         } else {
             *repeat_count = 0;

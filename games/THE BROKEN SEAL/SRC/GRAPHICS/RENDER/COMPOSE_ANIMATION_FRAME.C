@@ -51,11 +51,11 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
     s32 tile;
 
     changed = 0;
-    ctx = (struct ObjectSystemWork *)gMenuCtrlWork[0];
+    ctx = gMenuCtrlWork[0];
     held = 1;
     draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
     if (draw == 0) {
-        block = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
+        block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
         Dma_Set(Render_DecodeFrame, block,
                 (((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) | (DMA_ENABLE32 | DMA_32BIT),
                 REG_DMA3);
@@ -171,7 +171,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 
     if (obj->dirty != 0) {
         size = obj->width * obj->height;
-        buf = (u8 *)Runtime_BumpAllocate(size);
+        buf = Runtime_BumpAllocate(size);
         Iwram_ClearWords(buf, size);
 
         n = -1;
@@ -216,7 +216,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
                 Resource_DecodeType01(e->frames[e->frame], buf);
             } else if (e->mode == 3) {
                 if (e->param != 0) {
-                    tmp = (u8 *)Runtime_BumpAllocate(0x400);
+                    tmp = Runtime_BumpAllocate(0x400);
                     draw(Resource_DecompressLz(e->frames[e->frame], tmp),
                          buf, e->param);
                     Runtime_BumpFree(tmp);
@@ -240,7 +240,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
             u8 *src;
             u8 *dst;
 
-            mask = (u8 *)Runtime_BumpAllocate(size);
+            mask = Runtime_BumpAllocate(size);
             w = obj->width;
             h = obj->height;
             edge = ctx->edge;

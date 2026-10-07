@@ -52,7 +52,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     s32 i;
     u32 index;
 
-    decoded = (GlyphTransfer *)Runtime_AllocateHeapBlock(17, sizeof(*decoded));
+    decoded = Runtime_AllocateHeapBlock(17, sizeof(*decoded));
     font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
     decoded->encoded = font + ((u16 *)font)[glyph];
     Resource_DecodeByteLz(decoded->encoded, decoded);

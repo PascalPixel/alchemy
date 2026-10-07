@@ -335,7 +335,7 @@ void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
     spark->y.fixed += (s16)spark->timer << 12;
     spark->target_y = spark->y.fixed;
     scale = 0;
-    switch ((u16)((s16)spark->work >> 2) & 3) {
+    switch (((s16)spark->work >> 2) & 3) {
     case 0:
         scale = 0x10000;
         break;

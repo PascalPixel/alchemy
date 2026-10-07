@@ -201,7 +201,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     extern s32 KorosseoKawa_Countdown;
 
     s32 value = 66;
-    s32 *mode = (s32 *)&KorosseoKawa_Countdown;
+    s32 *mode = &KorosseoKawa_Countdown;
 
     *mode = value;
     Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
@@ -974,7 +974,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             first->acceleration = 0x6666;
             first->speed = 0xcccc;
             Engine_ObjectSetPosition(first, first->x.fixed, 0x180000, first->z.fixed);
-            second = (struct FieldActor *)Actor_Get(14);
+            second = Actor_Get(14);
             second->motion_flags = 0;
             second->acceleration = 0x6666;
             second->speed = 0xcccc;

@@ -570,7 +570,7 @@ void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
     Engine_EventSetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
-    ((struct FieldActor *)record)->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
+    (record)->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
     Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
     Engine_EventEnd();
 }
@@ -1556,7 +1556,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    ((struct FieldActor *)Engine_EventGetViewCenter())->motion_flags = 0;
+    (Engine_EventGetViewCenter())->motion_flags = 0;
     Engine_TaskWait(1);
     Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -2573,14 +2573,14 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
             result = 1;
             *(u8 *)&obj->rise_counter = result;
         } else {
-            *(u8 *)&obj->paused = 0;
+            * &obj->paused = 0;
             Object_SetMode(obj, 2);
-            *(u8 *)&obj->rise_counter = 0;
+            * &obj->rise_counter = 0;
         }
     } else {
-        *(u8 *)&obj->paused = 0;
+        * &obj->paused = 0;
         Object_SetMode(obj, 2);
-        *(u8 *)&obj->rise_counter = 0;
+        * &obj->rise_counter = 0;
     }
     return result;
 }
@@ -2588,7 +2588,7 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
 s32 SceneActor_RunStep18WhenTargetSet(s32 *p)
 {
     struct FieldActor *t = Object_GetById(ACTOR_PARTY_LEADER);
-    if (p[14] == (s32)0x80000000 && p[16] == (s32)0x80000000)
+    if (p[14] == 0x80000000 && p[16] == 0x80000000)
         return 0;
     HaidiaMura_TestFacing((struct FieldActor *)p, t, 18, 0);
     return 0;
@@ -2645,7 +2645,7 @@ void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
             s32 vertical_speed;
 
             Engine_ActorSetSpriteFlags(particle, 0);
-            Engine_ObjectSetScript(particle, (const void *)&gDustBurstScript[1]);
+            Engine_ObjectSetScript(particle, &gDustBurstScript[1]);
 
             vertical_speed = Engine_RandomNext() + 0x10000;
             particle->field34 = 0x10000;
@@ -2667,9 +2667,9 @@ void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
     emitter->x = 0;
     emitter->y = 0;
     emitter->z = 0;
-    emitter->field38 = (s32)0x80000000;
-    emitter->field3c = (s32)0x80000000;
-    emitter->field40 = (s32)0x80000000;
+    emitter->field38 = 0x80000000;
+    emitter->field3c = 0x80000000;
+    emitter->field40 = 0x80000000;
     emitter->field24 = 0;
     emitter->field28 = 0;
     emitter->field2c = 0;
@@ -2735,7 +2735,7 @@ void HaidiaMura_OpenVillagerLane(void)
 
 void Effect_PlayStepSound(void)
 {
-    if ((*(u32 *)&gFrameCount & 15) == 0)
+    if ((* &gFrameCount & 15) == 0)
         Engine_AudioPlayCue(0x83);
 }
 

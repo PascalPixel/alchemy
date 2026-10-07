@@ -39,7 +39,7 @@ void UiWindow_FillFromScene(void *dst)
         u32 size = (u32)Tile_BuildMetatilesCodeSize;
         RamRoutine code = (RamRoutine)Runtime_BumpAllocate(size);
 
-        Dma_Set((void *)Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), REG_DMA3);
+        Dma_Set(Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), REG_DMA3);
         code(dst, scene);
         Runtime_BumpFree(code);
     }
@@ -109,7 +109,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     s8 *busy;
 
     window = Runtime_AllocateBlock(16, sizeof(*window));
-    busy = (s8 *)&((struct UiRenderWork *)gWindowWork[0])->menu_busy;
+    busy = &((struct UiRenderWork *)gWindowWork[0])->menu_busy;
     zero = 0;
     *busy = 1;
     UiWindow_BuildLayoutBounds(flags);

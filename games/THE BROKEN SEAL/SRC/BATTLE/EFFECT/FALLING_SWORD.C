@@ -50,7 +50,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
     s32 origin;
     s32 i;
 
-    heap = (void **)gBattleFxWork;
+    heap = gBattleFxWork;
     p = heap;
     work = *p++;
     canvas = *p;

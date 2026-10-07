@@ -15,7 +15,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
     if (flag != 0) {
         ((struct UiRenderWork *)work)->alt = 1;
         flag = 0;
-        for (i = 0x80, p = (s8 *)((struct UiRenderWork *)work)->tile_attributes + 0x80; i <= 0xFF; i += 1) {
+        for (i = 0x80, p = ((struct UiRenderWork *)work)->tile_attributes + 0x80; i <= 0xFF; i += 1) {
             *p = flag;
             p += 1;
         }
@@ -23,7 +23,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
     }
     ((struct UiRenderWork *)work)->alt = 0;
     flag = 0;
-    q = (s8 *)((struct UiRenderWork *)work)->tile_attributes + 0x80;
+    q = ((struct UiRenderWork *)work)->tile_attributes + 0x80;
     j = 0x7F;
     do {
         j -= 1;

@@ -168,7 +168,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     struct BattleUnit *owner;
 
     menu = gMenuWork;
-    owner = (struct BattleUnit *)Owner_GetStateFar(owner_id);
+    owner = Owner_GetStateFar(owner_id);
     psynergies = menu->psynergies;
     menu->psynergy_count =
         PsynergyMenu_CollectActions(owner, psynergies, 2);
@@ -322,7 +322,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
         if (wide == 0)
             UiText_DrawStringAtOffsetFar(
                 Owner_GetStateFar(gGameState.first_shortcut >> 10),
-                (s32 *)window, 80, 0);
+                window, 80, 0);
     } else {
         UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyL, (s32 *)window, 0, 0);
     }
@@ -340,7 +340,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
         if (wide == 0)
             UiText_DrawStringAtOffsetFar(
                 Owner_GetStateFar(gGameState.second_shortcut >> 10),
-                (s32 *)window, 80, 8);
+                window, 80, 8);
         UiWork_SetParamNibbleFar(15);
     } else {
         UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyR, (s32 *)window, 0, 8);
@@ -385,7 +385,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
                 (s32 *)window, 16, 0);
         UiText_DrawStringAtOffsetFar(
             Owner_GetStateFar(gGameState.first_shortcut >> 10),
-            (s32 *)window, 80, 0);
+            window, 80, 0);
     } else {
         UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyL, (s32 *)window, 24, 0);
     }
@@ -412,7 +412,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
                 (s32 *)window, 16, 8);
         UiText_DrawStringAtOffsetFar(
             Owner_GetStateFar(gGameState.second_shortcut >> 10),
-            (s32 *)window, 80, 8);
+            window, 80, 8);
         UiWork_SetParamNibbleFar(15);
     } else {
         UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutEmptyR, (s32 *)window, 24, 8);

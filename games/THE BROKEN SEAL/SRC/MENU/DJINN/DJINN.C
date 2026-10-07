@@ -141,7 +141,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     take_element = menu->pair_element[take];
     take_index = menu->pair_index[take];
     take_set = menu->pair_entries[take] & 0x8000;
-    saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(struct BattleUnit));
+    saved = Runtime_BumpAllocate(sizeof(struct BattleUnit));
     Unit_Copy(saved, state);
 
     if (page == 0) {

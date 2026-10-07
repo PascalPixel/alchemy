@@ -58,7 +58,7 @@ void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y)
 {
     obj->oam.f.x = x;
     obj->oam.f.y = y;
-    Runtime_PushSlotEntry((s32 *)obj, 0xFC);
+    Runtime_PushSlotEntry(obj, 0xFC);
 }
 
 void UiTextResource_Release(s32 value)

@@ -181,7 +181,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
 
     camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
     camera->terrain_height = object->terrain_height;
-    ObjectDispatch_InitFromTable4WithArgumentFar((struct DispatchObject *)camera, (s32)object);
+    ObjectDispatch_InitFromTable4WithArgumentFar(camera, (s32)object);
     if (work->mode == 3) {
         struct AnimationEntry *meta = (struct AnimationEntry *)
             ResourceMetadata_RegisterFar(object->animation, 23);

@@ -104,7 +104,7 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
     if (spark == 0)
         return;
     spark->motion_flags = 0;
-    ((struct FieldSpritePriority *)spark->sprite)->priority = 1;
+    (spark->sprite)->priority = 1;
     Engine_ActorSetSpriteFlags(spark, 0);
     Object_SetMode(spark, 1);
     spark->timer = 0;
@@ -120,7 +120,7 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
     else
         Engine_ObjectSetPartPalettes(actor, 7);
     if ((s16)actor->work == 0) {
-        angle = (s16 *)&actor->timer;
+        angle = &actor->timer;
         actor->x.fixed = 0x15d00000;
         actor->y.fixed = Iwram_MulQ16(Engine_MathSin(*angle << 3), 0x40000) + 0x100000;
         actor->z.fixed = 0x5300000;

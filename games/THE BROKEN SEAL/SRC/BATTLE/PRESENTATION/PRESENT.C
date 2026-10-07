@@ -54,7 +54,7 @@ void BattlePres_UpdateHBlankScroll(void)
     s32 control;
 
     if (((struct BattleBackgroundView *)*(void **)((u8 *)gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND * sizeof(void *)))->mode == 2) {
-        records = *(struct BattleAffineHdma **)&gWorkSlot[10];
+        records = * &gWorkSlot[10];
         record = records->lines[records->page];
         control = record[0];
         /* FAKEMATCH: the do-while keeps the BG2CNT address load after the record read. */
@@ -82,9 +82,9 @@ void BattlePres_AdvanceTransitionTimer(void)
     u32 frame;
     u32 next;
 
-    timer = *(u32 **)Ram_Disp;
+    timer = *Ram_Disp;
     frame = *timer;
-    camera = *(struct BattleCamera **)Ram_CameraWork;
+    camera = *Ram_CameraWork;
     scroll = 0x34 - frame;
     if (scroll > 0x20)
         scroll = 0x20;

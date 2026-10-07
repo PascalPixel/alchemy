@@ -143,7 +143,7 @@ void EV12_MOVE(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Actor_Get(12);
+    actor = Actor_Get(12);
     if ((actor->z.fixed >> 20) > 22) {
         Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -406,7 +406,7 @@ void FieldScene_UpdateActorPairInteraction(void)
     struct ObjectRuntime *actor = Actor_Get(9);
     struct ObjectRuntime *other = Actor_Get(10);
     struct MapLayerScroll *layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-    s16 *scene = *(s16 **)&gMapWork[19];
+    s16 *scene = * &gMapWork[19];
 
     if (gFrameCount & 1) {
         layer->speed_x = 1;
@@ -501,7 +501,7 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 
     struct ObjectRuntime *actor = Actor_Get(17);
     struct MapLayerScroll *layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-    s16 *scene = *(s16 **)&gMapWork[19];
+    s16 *scene = * &gMapWork[19];
 
     Engine_EventGetViewCenter();
     if (gFrameCount & 1) {
@@ -567,7 +567,7 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 
     struct ObjectRuntime *actor = Actor_Get(18);
     struct MapLayerScroll *layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-    s16 *scene = *(s16 **)&gMapWork[19];
+    s16 *scene = * &gMapWork[19];
 
     if (gFrameCount & 1) {
         layer->speed_x = 1;
@@ -1255,15 +1255,15 @@ void RunpaJo_GatherPartyAroundActorTwelve(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Actor_Get(0);
+    actor = Actor_Get(0);
     if (actor != NULL) {
         Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Actor_Get(0);
+    actor = Actor_Get(0);
     if (actor != NULL) {
         Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Actor_Get(0);
+    actor = Actor_Get(0);
     if (actor != NULL) {
         Actor_SetPosition(ACTOR_GERALD, actor->x.fixed, actor->z.fixed);
     }

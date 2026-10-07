@@ -51,7 +51,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     s32 i;
     s8 *flags;
 
-    flags = (s8 *)gMapCellBuffer;
+    flags = gMapCellBuffer;
     work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
     canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
     work->effect = effect;

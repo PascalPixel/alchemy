@@ -100,7 +100,7 @@ void MenuSelection_DrawFrame(void)
                     e->mode = 1;
                 }
             }
-            Runtime_PushSlotEntry((s32 *)e, slot);
+            Runtime_PushSlotEntry(e, slot);
         }
         node = node->next;
         cnt++;
@@ -132,7 +132,7 @@ void MenuSelection_DrawFrame(void)
         if (GameFlag_IsSet(0x103) != 0) {
             te->mode = 1;
         }
-        Runtime_PushSlotEntry((s32 *)te, 248);
+        Runtime_PushSlotEntry(te, 248);
     }
     MenuSelection_DrawSideMarker(state, 0);
     MenuSelection_DrawSideMarker(state, 1);
@@ -170,7 +170,7 @@ void MenuSelection_DrawFrame(void)
                 e->mode = 1;
             }
         }
-        Runtime_PushSlotEntry((s32 *)e, 240);
+        Runtime_PushSlotEntry(e, 240);
         node = node->next;
     }
     if (cursor->kind != 0) {
@@ -204,7 +204,7 @@ void MenuSelection_DrawFrame(void)
                 cursor_entry->mode = 0;
             }
         }
-        Runtime_PushSlotEntry((s32 *)cursor_entry, 248);
+        Runtime_PushSlotEntry(cursor_entry, 248);
     }
     state->status += 1;
 }
@@ -238,7 +238,7 @@ void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index)
         else
             entry->mode = 0;
     }
-    Runtime_PushSlotEntry((s32 *)entry, 238);
+    Runtime_PushSlotEntry(entry, 238);
     if (state->records[index].base != 0)
         state->records[index].base--;
 }
@@ -345,7 +345,7 @@ void Menu_SetupSelectionBothSides(void)
 {
     struct SelectionScreen *state;
 
-    state = (struct SelectionScreen *)gResQueueWork;
+    state = gResQueueWork;
     Menu_SetupSelectionSide(state, 0);
     Menu_SetupSelectionSide(state, 1);
 }

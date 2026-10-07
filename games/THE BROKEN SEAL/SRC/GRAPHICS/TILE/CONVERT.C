@@ -63,7 +63,7 @@ void Tilemap_ConvertBuffer(void)
 
         do {
             routine = (ConvertFn)Runtime_BumpAllocate(code_size);
-            Dma_Set((void *)Tile_ConvertMap, routine, 0x84000000 | (code_size >> 2),
+            Dma_Set(Tile_ConvertMap, routine, 0x84000000 | (code_size >> 2),
                     REG_DMA3);
         } while (0);
     }

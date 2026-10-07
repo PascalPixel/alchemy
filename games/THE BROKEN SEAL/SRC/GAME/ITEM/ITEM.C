@@ -486,7 +486,7 @@ s32 ItemMenu_Run(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
-    saved = (struct ItemMenuSavedGraphics *)Runtime_BumpAllocateAlternatePool(0x2130);
+    saved = Runtime_BumpAllocateAlternatePool(0x2130);
     menu->saved = saved;
     saved->reserved_2128 = 0;
     saved->variant = 0;

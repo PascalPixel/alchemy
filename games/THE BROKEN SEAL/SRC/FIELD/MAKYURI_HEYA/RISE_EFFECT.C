@@ -30,7 +30,7 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
     if (sprite != 0) {
         AnimationObjects_SelectAnimation(sprite, 2);
         sprite->flags = 0;
-        ((struct FieldSpritePriority *)sprite)->priority = 3;
+        (sprite)->priority = 3;
     }
 }
 
@@ -59,7 +59,7 @@ s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o)
     s16 n;
 
     *c = *c + 1;
-    n = (s16)*c;
+    n = *c;
     if (n > 16) {
         return 0;
     }
@@ -74,7 +74,7 @@ s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
     s16 n;
 
     *c = *c + 1;
-    n = (s16)*c;
+    n = *c;
     if (n > 16) {
         return 0;
     }

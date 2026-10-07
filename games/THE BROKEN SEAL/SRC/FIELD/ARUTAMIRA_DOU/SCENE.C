@@ -1266,7 +1266,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
                 race[2] = 4;
             }
         }
-        state = (s8 *)&gSceneState[1];
+        state = &gSceneState[1];
         if (state[0] == 99) {
             Map_CopyCellsTo(41, 55, 3, 2, 30, 55);
             Map_CopyCellAttributes(42, 8, 1, 1, 31, 8);
@@ -1317,7 +1317,7 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
     u8 *p;
     s32 state;
 
-    p = (u8 *)obj + 0x40;
+    p = obj + 0x40;
     state = *(s8 *)p;
     if (state == 0) {
         z = FIELD(obj, s32, 0x18);

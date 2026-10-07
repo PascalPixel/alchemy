@@ -75,12 +75,12 @@ void Ui_SetRenderResultFromObject(s32 arg0)
     s32 ret;
 
     if (arg0 == 0x80000000) {
-        *(s16 *)&state->result[0] = (value = 0);
-        *(s16 *)&state->result[1] = value;
+        * &state->result[0] = (value = 0);
+        * &state->result[1] = value;
     } else {
         ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
         value = Ui_RenderResultValues[gGameState.unknown_207[5]];
-        *(s16 *)&state->result[0] = ret;
-        *(s16 *)&state->result[1] = value;
+        * &state->result[0] = ret;
+        * &state->result[1] = value;
     }
 }

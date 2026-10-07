@@ -24,7 +24,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 
         do {
             u16 *out = (u16 *)((u8 *)dst + dst_ofs);
-            u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
+            u16 *src = (u16 *)(0x06000600 + (row << 5));
             s32 col = 0;
 
             do {

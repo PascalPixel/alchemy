@@ -61,7 +61,7 @@ void ObjectTable_Snapshot(void)
     if (((struct EventRuntime *)gEventWork)->mode_19e == 3)
         limit = 8;
     for (i = 0; i < limit; i++) {
-        object = (struct ObjectRuntime *)ObjectTable_Get(i);
+        object = ObjectTable_Get(i);
         if (object == NULL)
             continue;
         *indices++ = i;

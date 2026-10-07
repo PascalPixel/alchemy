@@ -480,33 +480,33 @@ void SceneActor_StepActor24AnimationByFacing(void)
     Engine_EventShowMessage(24, 0);
     Engine_ActorSetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
-        q = (s16 *)&p->timer;
+        q = &p->timer;
         v = *q;
         if (v <= 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
-            *(u16 *)q = *(u16 *)q + 1;
+            *q = *q + 1;
             goto clamp;
         }
     } else {
-        q = (s16 *)&p->timer;
+        q = &p->timer;
         v = *q;
         if (v > 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
-            *(u16 *)q = *(u16 *)q + 1;
+            *q = *q + 1;
             goto clamp;
         }
     }
     Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
     n = *(u16 *)q - 1;
-    *(u16 *)q = n;
+    *q = n;
 clamp:
     if (*q > 5) {
         n = 0;
-        *(u16 *)q = n;
+        *q = n;
     }
     if (*q < 0) {
         n = 5;
-        *(u16 *)q = n;
+        *q = n;
     }
     Object_RefreshSelectorById(24);
     Engine_EventEnd();

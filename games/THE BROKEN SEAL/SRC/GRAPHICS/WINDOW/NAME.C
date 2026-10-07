@@ -83,7 +83,7 @@ s32 NameEntry_CountLetters(const u8 *name)
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    s16 *mirror = (s16 *)work->tilemap;
+    s16 *mirror = work->tilemap;
     s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *input = buffer;
     u32 cell;

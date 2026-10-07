@@ -87,7 +87,7 @@ void VinasuChojo_UpdateBeamActors(void)
             second->scale_x += 0x200;
             second->scale_y += 0x200;
         } else {
-            if ((*(s32 *)&gFrameCount & 2) != 0) {
+            if ((* &gFrameCount & 2) != 0) {
                 Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 15);
                 Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 0);
             } else {
@@ -1144,7 +1144,7 @@ void VinasuChojo_RunTransitionStep(void)
     }
     if (spawn) {
         rise = ((u32)(Random_Next() * 80) >> 16) << 16;
-        effect = Object_Create(284, center->x.fixed, center->y.fixed - rise + (s32)0xfff80000, center->z.fixed);
+        effect = Object_Create(284, center->x.fixed, center->y.fixed - rise + 0xfff80000, center->z.fixed);
         if (effect != 0) {
             sprite = effect->sprite;
             Object_SetScript(effect, VinasuChojo_RiseParticleScript);
@@ -1175,7 +1175,7 @@ void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
     if (actor->rise_enabled != 0) {
         u8 counter = actor->rise_counter;
 
-        actor->y.fixed = actor->rise_base_y + ((u32)(counter >> 2) << 16);
+        actor->y.fixed = actor->rise_base_y + ((counter >> 2) << 16);
 
         SceneActor_ParkRecord(actor);
 
@@ -1200,7 +1200,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     center = Actor_Get(23);
     map = gMapWork[0];
     drift = (u32)(Random_Next() * 48) >> 16 << 16;
-    if ((s16)(map->view_y >> 16) <= 129) {
+    if ((map->view_y >> 16) <= 129) {
         if (gFrameCount & 1) {
             Actor_SetPosition(23, 152 << 17, 164 << 16);
             Actor_Get(23)->scale_x = 0x10000;

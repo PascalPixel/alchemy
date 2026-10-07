@@ -5,8 +5,8 @@ void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 {
     s32 handler;
 
-    Korosseo_ModeTaskMode = (u16)mode;
-    Korosseo_ModeTaskParam = (u16)(param << 4);
+    Korosseo_ModeTaskMode = mode;
+    Korosseo_ModeTaskParam = (param << 4);
 
     {
         s32 budget = 0xc80;
@@ -56,7 +56,7 @@ void KorosseoKabe_RunScriptedTransition(s32 mode)
     Engine_EventWaitForScreen();
     {
         s16 *base = (s16 *)&KorosseoKabe_ModeRecordDefault;
-        *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
+        *(s16 *)((u8 *)base + 30) = (mode * 60);
     }
     Engine_EventWait(30);
     Engine_AudioPlayCue(mode + 90);

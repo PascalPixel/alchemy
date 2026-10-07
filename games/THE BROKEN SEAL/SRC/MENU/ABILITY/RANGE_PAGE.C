@@ -52,7 +52,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     s32 row;
     s32 base;
 
-    menu = (struct PsynergyMenuState *)gMenuWork;
+    menu = gMenuWork;
     state->selected_index = state->page * PAGE_ROWS + state->row;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
     RenderOutput_RedrawSavedRectFar(menu->info_window);

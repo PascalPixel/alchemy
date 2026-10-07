@@ -15,7 +15,7 @@ s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
     FIELD(rec, s32, 12) = 0xcccc;
     FIELD(rec, s32, 0) = 0;
     value = Engine_RandomNext();
-    magic = -(s32)(((u32)(value << 3) >> 16) * 0x3333);
+    magic = -(((u32)(value << 3) >> 16) * 0x3333);
     Effect_Spawn((a0->x.fixed + ((8 - (gFrameCount & 15)) << 16)), (a0->y.fixed + 0x1a0000), a0->z.fixed, 0, magic, 0, 0xb0000, rec);
     return 0;
 }

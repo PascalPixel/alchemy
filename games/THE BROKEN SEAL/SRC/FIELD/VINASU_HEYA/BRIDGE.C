@@ -212,7 +212,7 @@ void Scene_RunScene3c8SequenceA(void)
             continue;
 
         priority = leader->sprite->priority;
-        if ((u32)(leader->z.fixed >> 20) <= gVinasuPillarCells[slot].z) {
+        if ((leader->z.fixed >> 20) <= gVinasuPillarCells[slot].z) {
             effect = OverlayObject_PrepareObjectWithCommand15(actor->x.fixed, actor->y.fixed,
                                    actor->z.fixed - 0x40000, 20);
             Actor_SetSpritePriority(0, 3);

@@ -468,7 +468,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     BattleEventRuntime_BeginPhaseFar(134);
     BattleEffect_RunImpactBurst(2, 0x800000, height);
     for (i = 0; i != 8; i++)
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+        ResourceObject_ReleaseFar(work->objects[i]);
     BattleFx_EndCanvasLayer();
 }
 
@@ -797,7 +797,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     }
 
     for (i = 0; i != 9; i++) {
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+        ResourceObject_ReleaseFar(work->objects[i]);
     }
     BattleEffect_SetupBlendedDisplay();
     REG_BLDALPHA = 0x1010;

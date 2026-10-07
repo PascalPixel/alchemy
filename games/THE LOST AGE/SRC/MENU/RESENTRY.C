@@ -21,7 +21,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style)
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
-    void *buffer = (void *)Runtime_BumpAllocate(size);
+    void *buffer = Runtime_BumpAllocate(size);
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
     Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);

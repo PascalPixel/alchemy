@@ -123,10 +123,10 @@ void StagedActor_PushActorAhead(void)
     dir = subject->facing >> 12;
 
     step = KorosseoKawa_DirectionSteps[dir];
-    pos.x = subject->x.fixed + (s32)(step & 0xffff0000);
+    pos.x = subject->x.fixed + (step & 0xffff0000);
     pos.y = subject->y.fixed;
     step <<= 16;
-    pos.z = subject->z.fixed + (s32)step;
+    pos.z = subject->z.fixed + step;
 
     target = SceneActor_FindSlotAtTilePosition(&pos, subject);
     if (target == 0) {
@@ -134,10 +134,10 @@ void StagedActor_PushActorAhead(void)
     }
 
     step = KorosseoKawa_DirectionSteps[dir];
-    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.x = target->x.fixed + (step & 0xffff0000);
     pos.y = target->y.fixed;
     step <<= 16;
-    pos.z = target->z.fixed + (s32)step;
+    pos.z = target->z.fixed + step;
 
     blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
     if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
@@ -157,10 +157,10 @@ void StagedActor_PushActorAhead(void)
     zero = 0;
 
     step = KorosseoKawa_DirectionSteps[dir];
-    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.x = target->x.fixed + (step & 0xffff0000);
     pos.y = target->y.fixed;
     step <<= 16;
-    pos.z = target->z.fixed + (s32)step;
+    pos.z = target->z.fixed + step;
 
     if (Object_CheckMovementCollision(target, &pos) > 0) {
         return;

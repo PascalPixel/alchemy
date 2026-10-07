@@ -18,9 +18,9 @@ void Runtime_InstallIwramAndIrqs(void)
         *ime = zero;
     } while (0);
     iwram = IwramIrqMain;
-    Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
+    Dma_Set(IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
     Data_03007ffc = iwram;
-    Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
+    Dma_Set(Runtime_IrqHandlers, gIrqHandlers, 0x8400000e, REG_DMA3);
     REG_DISPSTAT = zero;
     value = 0xc3ff;
     REG_KEYCNT = value;

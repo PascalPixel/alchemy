@@ -35,7 +35,7 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
     if (first == 98 && second == 0)
         gGameState.special = (s32)&ResourceId_VinasuChojoStormBackdrop;
     if (runtime->mode_19e == 3)
-        BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.object_id) + 8);
+        BattleFx_LookupResult(ObjectTable_Get(gGameState.object_id) + 8);
     BattleFx_SelectBattleCue(first, second);
 }
 
@@ -58,7 +58,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     if (state->mode_19e == 3) {
         void *object = ObjectTable_Get(shared->object_id);
 
-        BattleFx_LookupResult((u8 *)object + 8);
+        BattleFx_LookupResult(object + 8);
     }
     BattleFx_SelectBattleCue(0, 0);
 }

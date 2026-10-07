@@ -30,12 +30,12 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 
     if (object->flags == 0) {
         second = object->target_x;
-        if (second != (s32)0x80000000)
+        if (second != 0x80000000)
             return 0;
         first = object->target_y;
     } else {
         first = object->target_x;
-        second = (s32)0x80000000;
+        second = 0x80000000;
     }
     if (first != second || object->target_z != first)
         return 0;

@@ -129,7 +129,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     s32 work[5];
     struct MenuResult state;
 
-    menu = ((struct PsynergyMenuState *)gMenuWork);
+    menu = (gMenuWork);
     result = 0;
     prev = 0;
     prompt = 0;

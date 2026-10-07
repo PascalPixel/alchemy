@@ -105,7 +105,7 @@ s32 LinkBattle_SendParty(void)
     u16 owners[8];
 
     size = LINK_PARTY_UNIT_BYTES;
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+    buffer = Runtime_BumpAllocateAlternatePool(size);
     mark = 0xff;
     work = gBattleWork;
     for (i = 7; i >= 0; i--)
@@ -129,7 +129,7 @@ s32 LinkBattle_SendParty(void)
     }
     size = LINK_PARTY_OFFER_BYTES;
     Runtime_BumpFree(buffer);
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+    buffer = Runtime_BumpAllocateAlternatePool(size);
     /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
     do {
         Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);

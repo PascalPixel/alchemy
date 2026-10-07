@@ -19,14 +19,14 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
     }
 
     if (topic == 5) {
-        topic = (s32)((unsigned int)(Engine_RandomNext() * 5) >> 16);
+        topic = ((unsigned int)(Engine_RandomNext() * 5) >> 16);
     }
 
     cursor = gCell[308 + topic];
 
     variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
-    gCell[308 + topic] = (s8)variant;
+    gCell[308 + topic] = variant;
 
     return TorebiIzumi_TopicIds[topic * 3 + variant];
 }

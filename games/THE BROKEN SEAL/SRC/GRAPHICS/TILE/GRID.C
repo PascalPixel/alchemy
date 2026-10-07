@@ -248,7 +248,7 @@ void Battle_PlaceActorsByFormationKind(void)
     }
 
     for (i = 0; i < count; i++) {
-        Render_ApplyProjectedPlacement(actor, &table[i].x, (s32 *)&scale, angle);
+        Render_ApplyProjectedPlacement(actor, &table[i].x, &scale, angle);
         actor++;
         angle += step;
         if (i & 1)

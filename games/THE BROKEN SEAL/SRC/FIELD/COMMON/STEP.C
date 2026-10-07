@@ -137,7 +137,7 @@ u8 GetFocusedObjectCollision(void)
                 y += 0xfffff;
 
             tile = (u8 *)((u32)tile +
-                ((tile_x + ((u32)(y >> 20) << 7)) << 2));
+                ((tile_x + ((y >> 20) << 7)) << 2));
         }
     }
 
@@ -181,7 +181,7 @@ loop:
             x < REGION_FIXED(max_x)&&
             z >= REGION_FIXED(min_z)&&
             z < REGION_FIXED(max_z)) {
-            runtime->value_170 = (u16)selected_value;
+            runtime->value_170 = selected_value;
             Audio_PlayCue(123);
             Battle_InitializeRenderObject();
             return;

@@ -127,8 +127,8 @@ s32 Menu_ComputeEntryValues(void *tbl)
     state = *(struct DjinnMenuWork **)gMenuWork;
     i = 0;
     if (i < FIELD_AT_OFFSET(state, u8, 0x219)) {
-        dst = (s8 *)tbl + 0xA0;
-        src = (u16 *)((u8 *)state + 0x208);
+        dst = tbl + 0xA0;
+        src = (state + 0x208);
         p = tbl;
         do {
             v = Djinn_ListOwnerEntries(p, *src, -1);
@@ -137,7 +137,7 @@ s32 Menu_ComputeEntryValues(void *tbl)
             *dst = v;
             src += 1;
             dst += 1;
-            p = (u8 *)p + 0x14;
+            p = p + 0x14;
         } while (i < cnt);
     }
 }

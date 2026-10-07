@@ -14,7 +14,7 @@ s32 Party_SumDjinnCounts(s32 index)
 {
     u16 owners[16];
     s32 result = 0;
-    s32 count = Party_ListActiveOwners((s16 *)owners);
+    s32 count = Party_ListActiveOwners(owners);
 
     if (result < count) {
         u16 *owner = owners;
@@ -41,7 +41,7 @@ s32 Party_SumDjinnCounts(s32 index)
 void Djinn_ActivateOfferedForParty(void)
 {
     u16 owners[16];
-    s32 count = Party_ListActiveOwners((s16 *)owners);
+    s32 count = Party_ListActiveOwners(owners);
     s32 i;
     s32 element;
     s32 djinn;

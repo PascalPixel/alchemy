@@ -77,10 +77,10 @@ s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
     tilt = Engine_MathCos(record->angle + 0x8000);
     if (tilt < 0)
         tilt += 7;
-    sprite[15] = (u16)(tilt >> 3);
+    sprite[15] = (tilt >> 3);
 
-    jitter = (s32)(((u32)Engine_RandomNext() << 9) >> 16);
-    jitter += (s32)(((u32)Engine_RandomNext() << 9) >> 16);
+    jitter = (((u32)Engine_RandomNext() << 9) >> 16);
+    jitter += (((u32)Engine_RandomNext() << 9) >> 16);
     record->angle += jitter + 1024;
 
     return 0;

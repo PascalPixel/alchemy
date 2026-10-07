@@ -160,7 +160,7 @@ s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u
             struct MapCell *cell = cells + (row << 7);
 
             for (column = 0; column < width; column++) {
-                cell->collision_code = (u8)value;
+                cell->collision_code = value;
                 cell++;
             }
         }

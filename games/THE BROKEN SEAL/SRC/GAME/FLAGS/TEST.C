@@ -9,7 +9,7 @@ s32 GameFlag_Test(s32 flag)
 
     flag_mask = 1 << (7 & flag);
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag_value = flag_bytes[flag] & flag_mask;
     return (u32)((0 - flag_value) | flag_value) >> 0x1F;
 }
@@ -20,7 +20,7 @@ s32 GameFlag_SetBit(s32 flag)
     u8 *flag_bytes;
 
     flag_mask = 1 << (7 & flag);
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     flag_bytes[flag] |= flag_mask;
     return flag;
@@ -32,7 +32,7 @@ void GameFlag_ClearBit(s32 flag)
     u8 *flag_bytes;
 
     flag_mask = ~(1 << (7 & flag));
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     flag_bytes[flag] &= flag_mask;
 }
@@ -46,7 +46,7 @@ u32 GameFlag_Toggle(s32 flag)
     s32 flag_value;
 
     flag_mask = 1 << (7 & flag);
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     flag_bytes[flag] ^= flag_mask;
     flag_value = flag_bytes[flag] & flag_mask;
@@ -74,7 +74,7 @@ u8 GameFlag_IncrementByte(s32 flag)
 {
     u8 *flag_bytes;
 
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     if (flag_bytes[flag] <= 0xFE) {
         flag_bytes[flag]++;
@@ -86,7 +86,7 @@ u8 GameFlag_DecrementByte(s32 flag)
 {
     u8 *flag_bytes;
 
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     if (flag_bytes[flag] != 0) {
         flag_bytes[flag] += 0xFF;
@@ -114,7 +114,7 @@ void GameFlag_SetNibble(s32 flag, s32 value)
     s32 field_mask = 0xF;
     s32 shift = 4 & flag;
     s32 mask = field_mask << shift;
-    u8 *bytes = (u8 *)GameFlagBytes;
+    u8 *bytes = GameFlagBytes;
 
     flag = ((u32)flag << 0x14) >> 0x17;
     bytes[flag] = (bytes[flag] & ~mask) |

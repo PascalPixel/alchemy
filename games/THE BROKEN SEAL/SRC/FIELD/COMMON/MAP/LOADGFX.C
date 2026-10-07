@@ -35,7 +35,7 @@ void MapAnimation_PresentFrame(void)
     do {
         REG_BG1CNT = control;
     } while (0);
-    Dma_Set((const void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
+    Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
 void MapAnimation_Start(void)
@@ -62,7 +62,7 @@ void Map_ShowBg1FromBuffer(void)
     u16 *bg1cnt = (u16 *)&REG_BG1CNT;
 
     do { *bg1cnt = mode; } while (0); /* FAKEMATCH: the wrap orders the store before the DMA operands. */
-    Dma_Set((const void *)gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000,
+    Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000,
             REG_DMA3);
 }
 

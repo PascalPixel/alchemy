@@ -84,7 +84,7 @@ void Func_080d390c(u32 id)
 
     object->motion_flags = 0;
     object->collision_flags = 0;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
+    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
 }
 
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)

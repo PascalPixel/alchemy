@@ -151,7 +151,7 @@ void KareiKyuden_LeaveThroughDoor(void)
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (gGameState.scene == (s32)(u32)&SceneId_KareiKyuden) {
+    if (gGameState.scene == (u32)&SceneId_KareiKyuden) {
         FieldScene_DispatchSceneByIndex();
     }
     return 0;

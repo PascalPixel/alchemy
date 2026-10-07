@@ -277,7 +277,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     BattleEventRuntime_BeginPhaseFar(134);
     BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 15; i++)
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+        ResourceObject_ReleaseFar(work->objects[i]);
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -308,7 +308,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     s32 i;
     s32 j;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -549,7 +549,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     s32 size;
     u8 *burst;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

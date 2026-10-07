@@ -5,8 +5,8 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
     s32 handler;
 
-    Korosseo_ModeTaskMode = (u16)mode;
-    Korosseo_ModeTaskParam = (u16)(parameter << 4);
+    Korosseo_ModeTaskMode = mode;
+    Korosseo_ModeTaskParam = (parameter << 4);
 
     {
         s32 budget = 0xc80;
@@ -61,7 +61,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
     Engine_EventWaitForScreen();
     {
         s16 *base = (s16 *)&gColossoModeScriptDefault;
-        *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
+        *(s16 *)((u8 *)base + 30) = (mode * 60);
     }
     Engine_EventWait(30);
     Engine_AudioPlayCue(mode + 90);

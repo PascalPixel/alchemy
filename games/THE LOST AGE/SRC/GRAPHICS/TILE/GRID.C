@@ -74,7 +74,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
                 entry->value_17 = index;
                 entry->value_16 = 0xFF;
             }
-            work[23] = (u8)metadata->adjust_y;
+            work[23] = metadata->adjust_y;
             *(s16 *)(work + 18) = index;
         }
         count += 1;

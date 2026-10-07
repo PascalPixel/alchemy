@@ -24,7 +24,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 
     object = GetBattleObjectSlot(id)->object;
     if ((object != NULL) && ((0xF & object->record_storage_kind) == 1)) {
-        entry = ResourceMetadata_RegisterFar((struct AnimationObject *)object->records, 0x11b);
+        entry = ResourceMetadata_RegisterFar(object->records, 0x11b);
         if (entry != 0) {
             effect = (struct AnimationEntry *)entry;
             Animation_SetWorkEntryFar(effect, 1);

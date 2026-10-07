@@ -39,9 +39,9 @@ s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
     if (loaded == 0) {
         ((struct FieldActor *)object)->facing = Engine_RandomNext();
         counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-        (*(s16 *)&((struct FieldActor *)object)->timer) = counter;
+        (* &((struct FieldActor *)object)->timer) = counter;
     }
-    (*(s16 *)&((struct FieldActor *)object)->timer) = counter - 1;
+    (* &((struct FieldActor *)object)->timer) = counter - 1;
     return 1;
 }
 
@@ -63,7 +63,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
     case 0:
         ((struct FieldActor *)state)->scale_x = 0x10000;
         ((struct FieldActor *)state)->scale_y = 0x10000;
-        (*(s16 *)&((struct FieldActor *)state)->timer) = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+        (* &((struct FieldActor *)state)->timer) = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
     (*(s16 *)&((struct FieldActor *)state)->timer)--;

@@ -114,7 +114,7 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
     base = *args++;
     range = *args++;
     limit = *args / 0x10000;
-    angle = (s16)object->script_value;
+    angle = object->script_value;
     limit *= limit;
     tries = 0;
     dx = object->x / 0x10000 - object->home_x;
@@ -227,10 +227,10 @@ void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        state->script_address += (u32)value * 4;
+        state->script_address += value * 4;
         return;
     }
-    state->comparison_result = state->script_address == (u32)value;
+    state->comparison_result = state->script_address == value;
 }
 
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value)
@@ -239,7 +239,7 @@ void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 
         state->cursor = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
         state->cursor =
-            (u16)((u32)(s32)(s16)state->cursor + (u32)value);
+            ((s32)(s16)state->cursor + value);
     } else {
         state->comparison_result = (s16)state->cursor == (s16)value;
     }
@@ -251,7 +251,7 @@ void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state, s32 opera
         state->unsigned_halfword = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
         state->unsigned_halfword =
-            (u16)((u32)state->unsigned_halfword + (u32)value);
+            (state->unsigned_halfword + value);
     } else {
         state->comparison_result = state->unsigned_halfword == (u16)value;
     }
@@ -303,7 +303,7 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        state->halfword_20 = (u16)((u32)state->halfword_20 + (u32)value);
+        state->halfword_20 = (state->halfword_20 + value);
         return;
     }
     state->comparison_result = state->halfword_20 == (s16)value;
@@ -498,10 +498,10 @@ void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        state->address_50 += (u32)value * 4;
+        state->address_50 += value * 4;
         return;
     }
-    state->comparison_result = state->address_50 == (u32)value;
+    state->comparison_result = state->address_50 == value;
 }
 
 void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 value)
@@ -509,7 +509,7 @@ void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_54 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_54 = (u8)((u32)state->byte_54 + (u32)value);
+        state->byte_54 = (state->byte_54 + value);
     } else {
         state->comparison_result = state->byte_54 == (u8)value;
     }
@@ -520,7 +520,7 @@ void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_55 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_55 = (u8)((u32)state->byte_55 + (u32)value);
+        state->byte_55 = (state->byte_55 + value);
     } else {
         state->comparison_result = state->byte_55 == (u8)value;
     }
@@ -531,7 +531,7 @@ void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation,
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_56 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_56 = (u8)((u32)state->byte_56 + (u32)value);
+        state->byte_56 = (state->byte_56 + value);
     } else {
         state->comparison_result = state->byte_56 == (u8)value;
     }
@@ -543,7 +543,7 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 opera
         state->comparison_result = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
         state->comparison_result =
-            (u8)((u32)state->comparison_result + (u32)value);
+            (state->comparison_result + value);
     } else {
         state->comparison_result = state->comparison_result == (u8)value;
     }
@@ -554,7 +554,7 @@ void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_58 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_58 = (u8)((u32)state->byte_58 + (u32)value);
+        state->byte_58 = (state->byte_58 + value);
     } else {
         state->comparison_result = state->byte_58 == (u8)value;
     }
@@ -565,7 +565,7 @@ void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state, s32 operati
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_59 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_59 = (u8)((u32)state->byte_59 + (u32)value);
+        state->byte_59 = (state->byte_59 + value);
     } else {
         state->comparison_result = state->byte_59 == (u8)value;
     }
@@ -576,7 +576,7 @@ void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state, s32 operatio
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_5a = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_5a = (u8)((u32)state->byte_5a + (u32)value);
+        state->byte_5a = (state->byte_5a + value);
     } else {
         state->comparison_result = state->byte_5a == (u8)value;
     }
@@ -587,7 +587,7 @@ void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation, s32 
     if (operation == SCRIPT_OPERAND_SET) {
         state->byte_5b = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_5b = (u8)((u32)state->byte_5b + (u32)value);
+        state->byte_5b = (state->byte_5b + value);
     } else {
         state->comparison_result = state->byte_5b == (u8)value;
     }
@@ -623,7 +623,7 @@ void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work, s32 operat
         work->signed_halfword_64 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
         work->signed_halfword_64 =
-            (u16)work->signed_halfword_64 + value;
+            work->signed_halfword_64 + value;
     } else {
         work->comparison_result = work->signed_halfword_64 == (s16)value;
     }
@@ -635,7 +635,7 @@ void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work, s32 operat
         work->signed_halfword_66 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
         work->signed_halfword_66 =
-            (u16)work->signed_halfword_66 + value;
+            work->signed_halfword_66 + value;
     } else {
         work->comparison_result = work->signed_halfword_66 == (s16)value;
     }
@@ -648,10 +648,10 @@ void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 v
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_68 += (u32)value;
+        work->word_68 += value;
         return;
     }
-    work->comparison_result = work->word_68 == (u32)value;
+    work->comparison_result = work->word_68 == value;
 }
 
 void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation, s32 value)
@@ -661,10 +661,10 @@ void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_6c += (u32)value;
+        work->word_6c += value;
         return;
     }
-    work->comparison_result = work->word_6c == (u32)value;
+    work->comparison_result = work->word_6c == value;
 }
 
 void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation, s32 value)
@@ -691,7 +691,7 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 v
 
 s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
-    s16 index = (s16)work->cursor;
+    s16 index = work->cursor;
     const s32 *command = (const s32 *)work->script_address + index + 1;
     OperandFunc handler = Script_OperandHandlerTable[command[0]];
 
@@ -703,7 +703,7 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
-    s16 index = (s16)work->cursor;
+    s16 index = work->cursor;
     const s32 *command = (const s32 *)work->script_address + index + 1;
     OperandFunc handler = Script_OperandHandlerTable[command[0]];
 
@@ -715,7 +715,7 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
-    s16 index = (s16)work->cursor;
+    s16 index = work->cursor;
     const s32 *command = (const s32 *)work->script_address + index + 1;
     OperandFunc handler = Script_OperandHandlerTable[command[0]];
 
@@ -750,12 +750,12 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     struct FieldStepWork *work = (struct FieldStepWork *)gWork;
 
     if (GameFlag_TestFar(0x107) != 0) {
-        StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
+        StoreHalfword(&work->raised_trigger, 0xFA);
     } else if (work->mode == 3) {
         if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x100) {
-            StoreHalfword((s16 *)&work->raised_trigger, 0xFC88);
+            StoreHalfword(&work->raised_trigger, 0xFC88);
         } else if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x200) {
-            StoreHalfword((s16 *)&work->raised_trigger, 0xFC87);
+            StoreHalfword(&work->raised_trigger, 0xFC87);
         }
     } else {
         switch (selector) {

@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 558 of 2455 (listing 2455, draft 2451, common 2174).
+/* 080ea0d8: differ 441 of 2455 (listing 2455, draft 2450, common 2232).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -43,6 +43,12 @@
  *   after Trig_Cos rather than keeping it across the call, and k then
  *   takes r4 under caller-save, not r1. With the previous: 784 -> 566.
  * - The 116..144 block calls through the same literal (566 -> 558).
+ * - slots = gWorkSlot is set at the top of the first loop's body: loop.c
+ *   hoists it after the scene addresses, in the native's order (536).
+ * - The burst and petal cells are byte offsets computed before LoadWork and
+ *   added to work->sheet at the call, as the native adds work after the
+ *   call (518, 492); the petal draws pass high, high * 2 with high a local
+ *   8 (rematerialised), the burst block its own high (441).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -186,7 +192,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 shift;
     s32 i;
     s32 j;
-    s32 high;
     struct EffectStep *p;
     DrawRectangle blit;
     volatile u16 *ime;
@@ -269,8 +274,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     work->transfer_value = 50;
     *(u16 *)0x0400000c = 0x784;
 
-    slots = (DrawRectangle *)gWorkSlot;
     for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B))); frame++) {
+        slots = (DrawRectangle *)gWorkSlot;
         if (frame == 143) {
             Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
             Audio_PlayCue(145);
@@ -385,25 +390,26 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame >= 116 && frame < 144) {
-            u8 *cell;
+            s32 high;
+            s32 cell;
             s32 n = (frame - 116) / 4;
             if (n > 6) {
                 n = 6;
             }
             high = BattleFx9_BurstHeights[n];
-            cell = work->sheet + BattleFx9_BurstCells[n] + 0x600;
+            cell = BattleFx9_BurstCells[n] + 0x600;
 
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + cell, 60 - high, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60, 80 - high * 2, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + cell, 60, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60 - high, 80, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + cell, 60 - high, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60, 80, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + cell, 60, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
 
             for (i = 0; i != 6; i++) {
@@ -431,15 +437,15 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             r = frame * 10 - 1424;
             work->transfer_value = 75;
             if (n <= 6) {
-                u8 *cell = &((struct BattleFx9Work *)work)->ramp[n][ParticleStreams_CellOffsets[7]];
-                high = 8;
+                s32 cell = n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
+                s32 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
                 for (i = 0; i != 128; i++) {
                     s32 angle = i << 9;
                     s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
                     s32 y = (r * Trig_Cos(angle)) >> 17;
-                    blit(canvas, cell, x + 60, y + 72, 8, 16);
+                    blit(canvas, work->sheet + cell, x + 60, y + 72, high, high * 2);
                 }
                 Runtime_ReleaseHeapBlock(47);
             }

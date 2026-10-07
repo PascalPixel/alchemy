@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 901, differ 88; frame 372
+ * Native 946 instructions, draft 944, common 902, differ 86; frame 372
  * as native's, and every compiler temporary's slot now at native's offset.
  * Session 11: the description reads its summon into a block-local s,
  * the draw loop's columns are indexed (summon->djinn_required[element])
@@ -38,7 +38,16 @@
  * the same set only when visible 121; the push loop walking sprite
  * (sprite = sprites; ...; sprite++) 114 (setup loop and tile store
  * native, but loop.c then reverses the push loop's index to 3..0).
- * Five minutes of permute from 88 found nothing below it.
+ * Five minutes of permute from 88 found nothing below it. The counts
+ * window's glyph column written element * 2 + 1 (no col counter): 88 ->
+ * 86, 379 buckets (loop.c's giv from 1 by 2 is native's r6); col = 1 in
+ * the for header instead 88. Remaining at 86, in order: mask stored
+ * before counts and the window call's stack argument late; the setup
+ * loop's index * 2 late (native first); count - 1 built before count is
+ * stored (native after); the mask loop's adds r6, #4 before movs r2, #0;
+ * the tile store (indexed in native, see above); cursor_position.y
+ * stored late; the arrows' -1 and width order; nav->row stored before
+ * nav->page; then literal pools and branch distances.
  * alchemy similar --editions: de, es, fr and it hold this function
  * relocated (identical code), ja differs by 4 instructions (at 08024990);
  * alchemy diff --edition still refuses the scaffold for every edition.
@@ -635,13 +644,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             if (page != drawn_page) {
                 RenderOutput_RedrawSavedRect(window);
                 {
-                    s32 element, col;
+                    s32 element;
 
-                    col = 1;
                     for (element = 0; element <= 3; element++) {
                         UiWindow_SetTilemapEntry(counts, element + SUMMON_ELEMENT_TILE, element * 2, 0, 0);
-                        UiWindow_PutGlyph(counts, standby[element] + 48, col, 0, 0);
-                        col += 2;
+                        UiWindow_PutGlyph(counts, standby[element] + 48, element * 2 + 1, 0, 0);
                     }
                 }
                 {

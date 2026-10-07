@@ -20,6 +20,31 @@ void Func_02000154(void);
 void Scene_SetArrivalFlags(s32 value);
 void Func_020003a4(s32 value);
 
+void Func_02000190(void)
+{
+    s32 flag = 512;
+
+    /* FAKEMATCH: ⚓️ builds the flag again for the second call */
+    asm("" : "+l"(flag));
+    if (!GameFlag_Test(flag)) {
+        GameFlag_SetBit(512);
+        Func_020000b4(1);
+    }
+}
+
+void Func_020001b0(void)
+{
+    s32 flag = 512;
+
+    /* FAKEMATCH: ⚓️ builds the flag again for the second call */
+    asm("" : "+l"(flag));
+    if (GameFlag_Test(flag) == 1) {
+        GameFlag_ClearBit(512);
+        Func_02000108();
+    }
+    Func_02000154();
+}
+
 void Func_020001d0(void)
 {
     WaitFrames(10);

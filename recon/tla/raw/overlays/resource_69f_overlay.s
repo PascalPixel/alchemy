@@ -110,41 +110,6 @@ Func_02000154:
 .L_0200818c:
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x02008190,"ax",%progbits
-	.global Func_02000190
-	.thumb_func
-Func_02000190:
-	push {lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020081ac
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	movs r0, #1
-	bl Func_020000b4
-.L_020081ac:
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x020081b0,"ax",%progbits
-	.global Func_020001b0
-	.thumb_func
-Func_020001b0:
-	push {lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #1
-	bne .L_020081ca
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_ClearBit
-	bl Func_02000108
-.L_020081ca:
-	bl Func_02000154
-	pop {pc}
 	.section .text.x020081e8,"ax",%progbits
 	.global Func_020001e8
 	.thumb_func

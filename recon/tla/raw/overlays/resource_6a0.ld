@@ -8,8 +8,6 @@ SECTIONS
         "*/resource_6a0_overlay.o"(.text.x02008060)
         "*/resource_6a0_overlay.o"(.text.x020080b4)
         "*/resource_6a0_overlay.o"(.text.x02008100)
-        "*/resource_6a0_overlay.o"(.text.x0200813c)
-        "*/resource_6a0_overlay.o"(.text.x02008160)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A0/WAIT.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02008194)
         "*/resource_6a0_overlay.o"(.text.x02008290)

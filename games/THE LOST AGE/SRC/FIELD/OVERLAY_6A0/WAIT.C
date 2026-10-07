@@ -22,6 +22,31 @@ void Func_02002c0c(s32 value);
 void Func_02001a48(const u8 *data, s32 a, s32 b);
 void Func_02002bec(void);
 
+void Func_0200013c(void)
+{
+    s32 flag = 514;
+
+    /* FAKEMATCH: ⚓️ builds the flag again for the second call */
+    asm("" : "+l"(flag));
+    if (!GameFlag_Test(flag)) {
+        GameFlag_SetBit(514);
+        Func_02000060(1);
+    }
+}
+
+void Func_02000160(void)
+{
+    s32 flag = 514;
+
+    /* FAKEMATCH: ⚓️ builds the flag again for the second call */
+    asm("" : "+l"(flag));
+    if (GameFlag_Test(flag) == 1) {
+        GameFlag_ClearBit(514);
+        Func_020000b4();
+    }
+    Func_02000100();
+}
+
 void Func_02000184(void)
 {
     WaitFrames(10);

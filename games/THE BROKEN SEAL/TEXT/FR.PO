@@ -9243,7 +9243,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "02308"
 msgstr "Tour de l'adversaire."
 
-msgctxt "message"
+msgctxt "MsgMysteryPersonName"
 msgid "02309"
 msgstr "Inconnu"
 
@@ -9839,43 +9839,43 @@ msgctxt "message"
 msgid "02457"
 msgstr "Quelle puissance!!!"
 
-msgctxt "message"
+msgctxt "MsgTargetNoEffect"
 msgid "02458"
 msgstr "Sans effet"
 
-msgctxt "message"
+msgctxt "MsgTargetCurePoison"
 msgid "02459"
 msgstr "Poison éliminé"
 
-msgctxt "message"
+msgctxt "MsgTargetCureDelusion"
 msgid "02460"
 msgstr "Annule Duperie"
 
-msgctxt "message"
+msgctxt "MsgTargetCureStun"
 msgid "02461"
 msgstr "Annule Paralysie"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSleep"
 msgid "02462"
 msgstr "Réveille"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSeal"
 msgid "02463"
 msgstr "Brise le sceau"
 
-msgctxt "message"
+msgctxt "MsgTargetCureCurse"
 msgid "02464"
 msgstr "Bannit la Faucheuse"
 
-msgctxt "message"
+msgctxt "MsgTargetCureHaunt"
 msgid "02465"
 msgstr "Bannit l'esprit"
 
-msgctxt "message"
+msgctxt "MsgTargetDowned"
 msgid "02466"
 msgstr "KO"
 
-msgctxt "message"
+msgctxt "MsgTargetSetDjinni"
 msgid "02467"
 msgstr "Lier Djinn"
 

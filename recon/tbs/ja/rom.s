@@ -171,8 +171,6 @@ UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x00021ece, 0x00000902
 	.section .rom.00023ecc, "ax"
 	.incbin "baserom.gba", 0x00023ecc, 0x00000ac4
-	.section .rom.000260dc, "ax"
-	.incbin "baserom.gba", 0x000260dc, 0x00000e00
 	.section .rom.00027170, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function

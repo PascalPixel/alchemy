@@ -9243,7 +9243,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "02308"
 msgstr "Esperando el turno del oponente."
 
-msgctxt "message"
+msgctxt "MsgMysteryPersonName"
 msgid "02309"
 msgstr "Desconocido"
 
@@ -9839,43 +9839,43 @@ msgctxt "message"
 msgid "02457"
 msgstr "¡¡¡Eres muy fuerte!!!"
 
-msgctxt "message"
+msgctxt "MsgTargetNoEffect"
 msgid "02458"
 msgstr "Sin efecto"
 
-msgctxt "message"
+msgctxt "MsgTargetCurePoison"
 msgid "02459"
 msgstr "Cura el veneno"
 
-msgctxt "message"
+msgctxt "MsgTargetCureDelusion"
 msgid "02460"
 msgstr "Cura el delirio"
 
-msgctxt "message"
+msgctxt "MsgTargetCureStun"
 msgid "02461"
 msgstr "Elimina parálisis"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSleep"
 msgid "02462"
 msgstr "Despierta"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSeal"
 msgid "02463"
 msgstr "Desbloquea Psinergía"
 
-msgctxt "message"
+msgctxt "MsgTargetCureCurse"
 msgid "02464"
 msgstr "Ahuyenta a la Muerte"
 
-msgctxt "message"
+msgctxt "MsgTargetCureHaunt"
 msgid "02465"
 msgstr "Ahuyenta al espíritu"
 
-msgctxt "message"
+msgctxt "MsgTargetDowned"
 msgid "02466"
 msgstr "Cayó"
 
-msgctxt "message"
+msgctxt "MsgTargetSetDjinni"
 msgid "02467"
 msgstr "Asignar Djinn"
 

@@ -140,7 +140,7 @@ s32 BattlePres_BuildTargetList(
     flags = plan->presentation_flags;
     work->kind = flags & 0xfff;
     work->variant = (flags & 0x3000) >> 12;
-    work->actor = plan->actor_id;
+    work->actor = plan->aid;
     i = 0;
     if (i < plan->target_count) {
         target = plan->tgt_no;
@@ -175,7 +175,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
     presentation->active = 1;
     BattlePres_SetActorModes(0, 0);
 
-    if (plan->actor_id <= 7) {
+    if (plan->aid <= 7) {
         /* FAKEMATCH: an opaque copy keeps cse from folding party_mode to the constant zero */
         asm("mov %0, %1" : "=r"(party_mode) : "r"(completed));
 
@@ -205,12 +205,12 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
     } else if (((Random16() * 10) >> 16) <= 6) {
         s16 event[2];
 
-        event[0] = plan->actor_id;
+        event[0] = plan->aid;
         event[1] = 0xff;
         BattleMotion_SetupEscapeObject(event[0]);
         WaitFrames(8);
-        BattleActor_RemoveFromLists(plan->actor_id);
-        ActivateBattleObjectSlot(plan->actor_id);
+        BattleActor_RemoveFromLists(plan->aid);
+        ActivateBattleObjectSlot(plan->aid);
     } else {
         UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
         BattlePresentation_WaitForAdvance();
@@ -237,7 +237,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
     void **slots = (void **)&BtlWk;
 
     BattlePres_BuildTargetList(plan, &work);
-    actor = plan->actor_id;
+    actor = plan->aid;
     target = plan->tgt_no[0];
     if (plan->presentation_flags & 0x8000) {
         struct BattlePresentationTransition *transition;
@@ -283,7 +283,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
     }
     if (plan->failure != 0) {
         if (plan->failure == 1) {
-            BtlEvPush(0, plan->actor_id);
+            BtlEvPush(0, plan->aid);
             BtlEvPush(4, (s32)MsgPsynergyBlocked);
         } else {
             BtlEvPush(4, (s32)MsgCastLacksPp);

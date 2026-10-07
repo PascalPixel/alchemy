@@ -16,19 +16,19 @@ struct OwnerActionSlot {
 };
 
 struct BattleElementStats {
-    s16 power;
-    s16 resist;
+    s16 pow;
+    s16 res;
 };
 
 struct BtlAct {
     u8 target_mode;
     u8 tgt_flg;
     u8 damage_class;
-    u8 effect;
+    u8 efx;
     u8 unknown_04[4];
-    u8 range;
+    u8 rng;
     u8 pp_cost;
-    u16 power;
+    u16 pow;
     u8 type_0c;
     u8 unknown_0d[3];
 };
@@ -120,12 +120,12 @@ LAYOUT_SIZE_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattleAction_Effect,
     struct BtlAct,
-    effect,
+    efx,
     0x03);
 LAYOUT_OFFSET_GUARD(
     BattleAction_Power,
     struct BtlAct,
-    power,
+    pow,
     0x0a);
 LAYOUT_OFFSET_GUARD(
     BattleAction_Type,

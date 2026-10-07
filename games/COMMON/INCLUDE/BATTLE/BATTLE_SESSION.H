@@ -33,7 +33,7 @@ struct BattleActionRecord {
     s16 command;
     s16 parameter;
     s16 target;
-    s16 range;
+    s16 rng;
     s16 unknown_0e;
 };
 

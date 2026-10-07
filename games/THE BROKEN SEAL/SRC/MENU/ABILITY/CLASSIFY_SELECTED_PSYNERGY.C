@@ -28,7 +28,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
         return 0;
     }
     ret = 2;
-    if (psynergy->range != 0xff) {
+    if (psynergy->rng != 0xff) {
         u8 kind = psynergy->target_mode;
         diff = kind ^ 2;
         ret = (0 - diff) | diff;

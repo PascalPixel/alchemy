@@ -134,7 +134,7 @@ pick:
 #define CHECK_EFFECT_TARGET(unit, action, applies, damage_class)              \
     {                                                                         \
         (applies) = 0;                                                        \
-        switch ((action)->effect) {                                           \
+        switch ((action)->efx) {                                           \
         case EFX_ATK_UP2:                                                     \
         case EFX_ATK_UP1:                                                     \
             if ((unit)->atk_lv + 1 <= 4)                             \
@@ -234,7 +234,7 @@ pick:
             break;                                                            \
         }                                                                     \
         if ((unit)->hp == 0                                                   \
-            && BtlEfxRevChkFar((action)->effect) == 0)                  \
+            && BtlEfxRevChkFar((action)->efx) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
             (damage_class) = ((action)->tgt_flg & 0x0f) - 1;             \
@@ -246,7 +246,7 @@ pick:
                 break;                                                        \
             case 7:                                                           \
             case 8:                                                           \
-                if ((action)->power != 0 && (unit)->hp != 0)                  \
+                if ((action)->pow != 0 && (unit)->hp != 0)                  \
                     (applies)++;                                              \
                 break;                                                        \
             case 9:                                                           \
@@ -260,7 +260,7 @@ pick:
             case 1:                                                           \
             case 4:                                                           \
             case 5:                                                           \
-                if ((action)->power != 0 && (unit)->hp != 0)                  \
+                if ((action)->pow != 0 && (unit)->hp != 0)                  \
                     (applies)++;                                              \
                 break;                                                        \
             }                                                                 \
@@ -362,7 +362,7 @@ scan_complete:
         return -1;
 
     if (action->target_mode == 1
-        && action->range == 1
+        && action->rng == 1
         && Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)
                 ->target_strategy != 2
         && (u32)((action->tgt_flg & 0x0f) - 3) <= 2) {

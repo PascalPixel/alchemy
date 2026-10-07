@@ -166,7 +166,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                             window, action->damage_class + 0x5001, 15, i * 2, 0);
                     }
 
-                    range = action->range;
+                    range = action->rng;
                     if (range == 255) {
                         range = 11;
                     } else {

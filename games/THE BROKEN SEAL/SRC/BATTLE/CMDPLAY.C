@@ -176,7 +176,7 @@ disable_item:
         goto finish_target;
 
     action = Ability_GetData(action_id);
-    effect = action->effect;
+    effect = action->efx;
     switch (effect) {
     case 46:
         request->command = 3;
@@ -222,7 +222,7 @@ disable_item:
             request->command = 0;
     }
 
-    request->range = action->range;
+    request->rng = action->rng;
     target_mode = action->target_mode;
     switch (target_mode) {
     case 2:

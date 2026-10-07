@@ -29,7 +29,7 @@
 #define ELM_BONUS() \
     { \
         if (elm != 4) \
-            bonus = pow - target->elm[elm].resist; \
+            bonus = pow - target->elm[elm].res; \
     }
 
 #define MES_PUSH(m)     BtlEvPush(BEV_MES, (u32)(m))
@@ -116,9 +116,9 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     size = sizeof(struct BtlUnit);
     bak = MemAlloc(size);
 
-    aid = plan->actor_id;
+    aid = plan->aid;
     tid = plan->tgt_no[slot];
-    act_no = plan->action_id;
+    act_no = plan->act_no;
     elm = plan->elm;
     adj = plan->tgt_adj[slot];
     crit = plan->tgt_crit[slot];
@@ -128,7 +128,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     target = UnitGetFar(tid);
     Iwram_CopyWords(bak, target, size);
 
-    if (action->range != 255) {
+    if (action->rng != 255) {
         dist = plan->tgt_dist[slot];
         if (dist < 0)
             dist = -dist;
@@ -139,33 +139,33 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     if (elm != 4) {
         s32 i;
 
-        value = target->base_elm[elm].resist;
-        for (i = 0; i < 4 && value >= target->base_elm[i].resist; i++)
+        value = target->base_elm[elm].res;
+        for (i = 0; i < 4 && value >= target->base_elm[i].res; i++)
             ;
         if (i == 4)
             aff = -1;
 
-        for (i = 0; i < 4 && value <= target->base_elm[i].resist; i++)
+        for (i = 0; i < 4 && value <= target->base_elm[i].res; i++)
             ;
         if (i == 4)
             aff = 1;
     }
 
     if (plan->elm >= 0 && plan->elm <= 3) {
-        cmd = &plan->command;
+        cmd = &plan->cmd;
         if (*cmd != 2) {
-            pow = actor->elm[plan->elm].power;
+            pow = actor->elm[plan->elm].pow;
             goto pow_end;
         }
     } else
-        cmd = &plan->command;
+        cmd = &plan->cmd;
     pow = 100;
 pow_end:
 
-    if (plan->command == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0) {
+    if (plan->cmd == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0) {
         s32 chance;
 
-        chance = pow - target->elm[plan->elm].resist;
+        chance = pow - target->elm[plan->elm].res;
         chance += 30;
         chance *= 65536 / 100;
         if (chance > (BtlRndFar() & 0xffff))
@@ -179,18 +179,18 @@ pow_end:
         res = plan->tgt_hit[slot];
         if (res == -1)
             hit = BtlHitChk(
-                aid, tid, elm, action->effect,
+                aid, tid, elm, action->efx,
                 HitTbl[dist]);
         else
             hit = res;
     }
-    if (action->effect == 50 || action->effect == 51) {
+    if (action->efx == 50 || action->efx == 51) {
         s32 cls;
         s32 ent;
 
         cls = actor->class_id;
         ent = EnmSlotGet();
-        if (action->effect == 51)
+        if (action->efx == 51)
             cls = BtlGrpRnd(work->enm_grp);
         if (hit != 0 && EnmChk(cls) != 0 && ent >= 0) {
             s32 chg;
@@ -243,7 +243,7 @@ pow_end:
     }
 
     if (hit != 0) {
-        if (action->effect == 53) {
+        if (action->efx == 53) {
             hit = 0;
             for (n = 0; n < 20; n++) {
                 if (work->actions[n].unit_id == tid) {
@@ -251,16 +251,16 @@ pow_end:
                     break;
                 }
             }
-        } else if (action->effect == 35) {
+        } else if (action->efx == 35) {
             half = 1;
-        } else if (action->effect == 34) {
+        } else if (action->efx == 34) {
             crush = 1;
-        } else if (action->effect == 27) {
+        } else if (action->efx == 27) {
             skip = 1;
-        } else if (action->effect == 55) {
+        } else if (action->efx == 55) {
             if (actor->hp != 0)
                 BtlEvPush(BEV_OBJ_EFX, aid);
-        } else if (action->effect == 32) {
+        } else if (action->efx == 32) {
             if (target->ep != 0)
                 type = 10;
             else
@@ -269,7 +269,7 @@ pow_end:
     }
 
     if (skip == 0
-        && (target->hp != 0 || BtlEfxRevChkFar(action->effect) != 0)) {
+        && (target->hp != 0 || BtlEfxRevChkFar(action->efx) != 0)) {
         s32 ep;
         s32 cur;
         s32 ap;
@@ -290,7 +290,7 @@ pow_end:
                 ELM_BONUS();
                 if (pass == 0)
                     bonus = 0;
-                ap = action->power;
+                ap = action->pow;
                 if (type == 4)
                     dmg = BtlAtkCalc(actor->attack, scale, 0,
                                           bonus)
@@ -364,16 +364,16 @@ pow_end:
 
         case 10:        /* EPダメージ */
         {
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             ep = target->ep;
             ELM_BONUS();
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * EpLossTbl[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
-            if (action->effect == 32 && dmg > ep)
+            if (action->efx == 32 && dmg > ep)
                 dmg = ep;
 
             BtlEvPush(BEV_OBJ_BGN, tid);
@@ -400,11 +400,11 @@ pow_end:
 
         case 1:         /* HPかいふく */
         {
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             cur = target->hp;
 
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * HpRcvTbl[dist] / 100;
             dmg *= adj;
@@ -429,11 +429,11 @@ pow_end:
 
         case -1:
         {
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             ep = target->ep;
             ELM_BONUS();
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlPowCalc(ap, bonus, 256);
             dmg = dmg * EpDmgTbl[dist] / 100;
             dmg *= adj;
@@ -465,7 +465,7 @@ pow_end:
         {
             s32 round;
 
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             cur = target->hp;
             round = 1;
@@ -473,7 +473,7 @@ pow_end:
                 ELM_BONUS();
                 if (round == 0)
                     bonus = 0;
-                ap = action->power;
+                ap = action->pow;
                 if (*cmd == 6) {
                     s32 item;
 
@@ -565,10 +565,10 @@ pow_end:
 
         case 11:        /* EPかいふく */
         {
-            if (action->power == 0)
+            if (action->pow == 0)
                 break;
             ep = target->ep;
-            ap = action->power;
+            ap = action->pow;
             dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
             dmg = dmg * EpRcvTbl[dist] / 100;
             dmg *= adj;
@@ -596,11 +596,11 @@ pow_end:
 
         case 2:
             if (hit != 0) {
-                if (action->power == 0)
+                if (action->pow == 0)
                     break;
                 cur = target->hp;
                 ELM_BONUS();
-                ap = action->power;
+                ap = action->pow;
                 dmg = BtlPowCalc(ap, bonus, 256);
                 dmg *= adj;
                 dmg = dmg * HpDmgTbl[dist] / 100;
@@ -640,10 +640,10 @@ pow_end:
     }
 
     BtlEvPush(BEV_UNIT, tid);
-    if ((BtlEfxRevChkFar(action->effect) != 0 || target->hp != 0
-            || BtlEfxDeadChk(action->effect) != 0)
+    if ((BtlEfxRevChkFar(action->efx) != 0 || target->hp != 0
+            || BtlEfxDeadChk(action->efx) != 0)
         && hit != 0) {
-        switch (action->effect) {
+        switch (action->efx) {
 
         case 64:
             if (target->maboroshi != 0) {
@@ -724,7 +724,7 @@ pow_end:
             pt--;
             maxu = *pt--;
             maxv = *(s16 *)(pt + 1);
-            if (action->effect == 61)
+            if (action->efx == 61)
                 heal += maxv * 60 / 100;
             else
                 heal += maxv * 30 / 100;
@@ -999,7 +999,7 @@ pow_end:
 
             heal = actor->hp;
             dmg = dealt;
-            if (action->effect == 60)
+            if (action->efx == 60)
                 dmg /= 2;
             heal += dmg;
             if (heal > actor->max_hp) {

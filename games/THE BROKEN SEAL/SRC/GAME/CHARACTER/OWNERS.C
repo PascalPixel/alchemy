@@ -27,8 +27,8 @@ struct TradeFlags {
 };
 
 struct ElementLevelBonus {
-    u16 power;
-    u16 resist;
+    u16 pow;
+    u16 res;
 };
 
 extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
@@ -386,9 +386,9 @@ copied:
         if (tens < 0)
             tens = 0;
 
-        destination[i][0] = Element_PowerResistByLevel[tens].power + ones;
+        destination[i][0] = Element_PowerResistByLevel[tens].pow + ones;
         destination[i][1] =
-            ((volatile const struct ElementLevelBonus *)Element_PowerResistByLevel)[tens].resist + ones;
+            ((volatile const struct ElementLevelBonus *)Element_PowerResistByLevel)[tens].res + ones;
         i++;
     } while (i < 4);
     return result;

@@ -3,8 +3,8 @@
 #include "IWRAM_CALL.H"
 
 struct OwnerElementStats {
-    s16 power;
-    s16 resist;
+    s16 pow;
+    s16 res;
 };
 
 struct OwnerStats {
@@ -93,13 +93,13 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     state->stats.agility = value;
 
     for (i = 0; i < 4; i++) {
-        value = state->stats.elm[i].power + levels * 15;
-        floor = __divsi3(base->elm[i].power * 7, 10);
+        value = state->stats.elm[i].pow + levels * 15;
+        floor = __divsi3(base->elm[i].pow * 7, 10);
         if (value < floor)
             value = floor;
         if (value > 200)
             value = 200;
-        state->stats.elm[i].power = value;
+        state->stats.elm[i].pow = value;
     }
 
     state->level += levels;

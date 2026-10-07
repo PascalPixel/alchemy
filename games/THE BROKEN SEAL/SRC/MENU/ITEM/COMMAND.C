@@ -158,7 +158,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
                 u8 flags = action->tgt_flg;
 
                 if ((flags & 0x40) != 0) {
-                    u8 range = action->range;
+                    u8 range = action->rng;
                     result = (range == 0xff) ? 2 : 1;
                 } else {
                     result = (flags & mask) ? -1 : 0;

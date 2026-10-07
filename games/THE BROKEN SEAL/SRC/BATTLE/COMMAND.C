@@ -58,7 +58,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
         s32 index;
         s32 unit;
 
-        switch (action->effect) {
+        switch (action->efx) {
         case 5:
         case 56:
         case 57:
@@ -87,7 +87,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
                 ;
             enemies = index;
             center = command->target & 15;
-            range = command->range;
+            range = command->rng;
             {
                 s32 first = center - range + 1;
                 s32 last = center + range - 1;
@@ -136,7 +136,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
     target = Battle_GetTaggedSlotValue(command->target);
     BattleEventRuntime_Reset();
     plan->spirit_dmg = 0;
-    plan->actor_id = command->unit_id;
+    plan->aid = command->unit_id;
     plan->target_count = 0;
     plan->presentation_flags = 0;
     plan->failure = 0;
@@ -461,7 +461,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
     if (action == 1) {
         struct BtlUnit *defender = UnitGetFar(plan->tgt_no[0]);
 
-        plan->action_id = 1;
+        plan->act_no = 1;
         plan->elm = Item_GetEquippedElementFar(command->unit_id);
         plan->outcome = 2;
         if (actor->class_index == 0) {
@@ -511,19 +511,19 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
 
         plan->elm = ability->damage_class;
         plan->presentation_flags = 0;
-        plan->action_id = action;
-        if (ability->effect == 65 || ability->effect == 41 || ability->effect == 42
-            || ability->effect == 43 || ability->effect == 44 || ability->effect == 68) {
+        plan->act_no = action;
+        if (ability->efx == 65 || ability->efx == 41 || ability->efx == 42
+            || ability->efx == 43 || ability->efx == 44 || ability->efx == 68) {
             s32 chance;
             s32 amount;
 
-            if (ability->effect == 65 || ability->effect == 68)
+            if (ability->efx == 65 || ability->efx == 68)
                 chance = 153;
-            else if (ability->effect == 41 || ability->effect == 43)
+            else if (ability->efx == 41 || ability->efx == 43)
                 chance = 32;
             else
                 chance = 64;
-            if (ability->effect == 65 || ability->effect == 41 || ability->effect == 42)
+            if (ability->efx == 65 || ability->efx == 41 || ability->efx == 42)
                 amount = 1;
             else
                 amount = 2;
@@ -533,10 +533,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
                 for (i = 0; i < plan->target_count; i++)
                     plan->tgt_adj[i] += amount;
             }
-        } else if (ability->effect >= 36 && ability->effect <= 40) {
+        } else if (ability->efx >= 36 && ability->efx <= 40) {
             s32 mask;
 
-            switch (ability->effect) {
+            switch (ability->efx) {
             case 36:
                 mask = 63;
                 break;
@@ -565,7 +565,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
 
             for (i = 0; i < plan->target_count; i++)
                 plan->tgt_hit[i] = BtlHitChk(command->unit_id, plan->tgt_no[i],
-                    ability->damage_class, ability->effect, 100);
+                    ability->damage_class, ability->efx, 100);
         }
         if (action >= 0 && action <= 0x206) {
             plan->presentation_flags = Battle_ActionFlags[action];
@@ -583,13 +583,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
                 plan->outcome = 3;
         } else
             plan->outcome = 1;
-        if (BtlEfxRevChkFar(ability->effect))
+        if (BtlEfxRevChkFar(ability->efx))
             plan->presentation_flags |= 0x10000;
         if (action == 178 && plan->tgt_hit[0] != 0)
             plan->presentation_flags |= 0x1000;
     }
     if (command->command == 2 && plan->outcome != 5 && plan->outcome != 9)
         plan->outcome = 4;
-    plan->command = command->command;
+    plan->cmd = command->command;
     return 0;
 }

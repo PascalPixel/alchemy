@@ -25,8 +25,8 @@ struct TradeFlags {
 };
 
 struct ElementLevelBonus {
-    u16 power;
-    u16 resist;
+    u16 pow;
+    u16 res;
 };
 
 extern const struct ElementLevelBonus Element_PowerResistByLevel[16];

@@ -18,7 +18,7 @@ s32 Battle_ClassifyEntryKind(const struct BtlAct *entry)
     if (low == 0xB) {
         ret = 2;
     }
-    b3 = (s8)entry->effect;
+    b3 = (s8)entry->efx;
     kind = b3;
     k = kind;
     if (k == 3) {
@@ -30,7 +30,7 @@ s32 Battle_ClassifyEntryKind(const struct BtlAct *entry)
     if (k == 0x40) {
         ret = 6;
     }
-    if (BtlEfxRevChkFar(entry->effect) != 0) {
+    if (BtlEfxRevChkFar(entry->efx) != 0) {
         ret = 5;
     }
     return ret;

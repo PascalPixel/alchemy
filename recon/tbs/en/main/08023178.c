@@ -635,10 +635,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, j), 2,
                         (s32)winMain, 48 + j * 32, 80);
                     UiText_DrawNumberInWindow(
-                        object->elm[j].power, 3, (s32)winMain,
+                        object->elm[j].pow, 3, (s32)winMain,
                         40 + j * 32, 88);
                     UiText_DrawNumberInWindow(
-                        object->elm[j].resist, 3, (s32)winMain,
+                        object->elm[j].res, 3, (s32)winMain,
                         40 + j * 32, 96);
                 }
 

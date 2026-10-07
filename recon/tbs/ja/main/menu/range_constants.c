@@ -215,7 +215,7 @@ s32 PsynergyMenu_DrawListPage(
             UiText_DrawAt(msg, window, 88, y);
             UiText_DrawNumberAtOffsetFar(act->pp_cost, 2, window, 176, y);
 
-            range = act->range;
+            range = act->rng;
             if (range == 0xff) {
                 range = 11;
             } else {

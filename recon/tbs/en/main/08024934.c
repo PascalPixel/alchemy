@@ -234,6 +234,68 @@
  * one outside the display loop 920; a short handle left 914 unchanged.
  * A one-pass attribute-store block moved the y shift into native order, 912,
  * but was removed while the wider source shape remains unsettled.
+ *
+ * Older branch (eb6368caac, cea7c0c246; its body scored 709 at this merge,
+ * this one 524), its trials on its own base from 901:
+ * 901 -> 887: the djinn test is `if (*required <= *supply) do { ... } while
+ * (*required <= *supply);`. Native's loop head is element++ with no folded
+ * first `element > 3` test; plain while, for(;;cond;incr) and ++element forms
+ * all fold it (901). Indexed required[element] > supply[element] gave the
+ * native loop body but an indexed pre-test (876 with the counted first pass,
+ * kept out: native pre-test is through the pointers). The first passes are
+ * counted (index = count - 1 .. 0, then 0 .. count - 1) and `(count - 1) / 4`
+ * is written inline: GCSE then keeps count - 1 in one pseudo (native slot 20)
+ * and rounds a negative one as count + 2, as native does; with last it was
+ * last + 3. Native order of spilled scalars as declarations, on this base:
+ * 891 (row/page/drawn_page beside drawn_row or after summon alike).
+ * Native slot 16 is a GCSE/PRE pseudo row * 2, stored after every row change.
+ * 887 -> 833: the two first passes count with their own i, not index. Native
+ * keeps index in r4 (caller-saved, slot 4) in every other loop, but the copy
+ * pass counts down in r2, so it is another variable; i only in the copy pass
+ * 890, only in the first pass 850. Still differing there: native keeps id in
+ * r6 and src in r5, required in r0 and element in r4; the draft has id in r4
+ * (caller-saved), src r6, required r5, element r0. The same id/index swap
+ * recurs in the draw loop (native index r4, id r6; draft index r7, id r4).
+ * In greg the draft allocates index (higher priority) before id. From 833:
+ * i also in the sprite setup loops 885, in the push loop 929, in the page
+ * loops 950 (index is one variable in all of them, as native's r4 shows);
+ * declaring index, i or id first, or id as u8, 833; the cleanup loop as
+ * for (index = 0; index < 4; index++) Resource_ResetEntry(handles[index])
+ * compiles the same as the counted pointer form and is kept; y set right
+ * after Ability_LoadGlyph 833, at the top of the draw body 1014.
+ * 833 -> 805: the blink value gFrameCount & 8 is its own variable (native r6,
+ * the djinn highlight counter r5); in affordable it took r5, in id 869, in
+ * result 805 as well. From 805: the outer element in the mask, count, draw
+ * or highlight loops 816/884/868/884; a separate summon for the description
+ * 887; a separate id for the first pass 876; the draw loop as a for with
+ * break, or visible[index] = 1; index++, both 805 (same code).
+ * 805 -> 774: the sprite push loop is indexed (visible[index], &sprites[index]),
+ * so index counts up as native (still in r7, native r4); pointer walks let
+ * loop.c reverse it to 3..0. From 774: the handle loop indexed
+ * (sprites[index].oam.f.tile, with or without a slot local) 861, against
+ * native's base + offset giv there; the sprite setup loop indexed and without
+ * its y local compiles the same (774) and is kept.
+ * 774 -> 760: the page changes set page before row (page = 0; row =
+ * preferred and page -= 4; row = preferred); the navigation code now
+ * differs only in stack slot offsets. From 760: scalar declarations with
+ * cursor_handle..element first 762.
+ * 760 -> 759: mask is u32. As s32, combine rewrote the highlight test
+ * mask & (1 << element) into (mask >> element) & 1 (asrs); native keeps
+ * movs #1, lsls, ands, as the unsigned mask does. From 760: the test as
+ * !(mask & (1 << element)) 760; as if/else 764.
+ * 759 -> 709: tile is a block local in each of its three loops (both page
+ * loops and the highlight loop). As one function-wide variable it was a
+ * global pseudo in r4; native has it in r1 and r2 in those loops.
+ * A loop is skipped when GCSE inserts an insn between NOTE_INSN_LOOP_BEG
+ * and its label ("phony", as the two page loops here are from count + 3);
+ * in that draft PRE's &glyph insertion lands before the note on a split
+ * edge instead.
+ * Other trials from 774: the first pass's required, supply and element as
+ * block locals give native's test registers there (required r0, element r4,
+ * supply r1) but 786; the draw loop's test pointers as block locals as well
+ * 803; a block-local summon and required for the description 846; the
+ * setup loop as a sprite pointer walk with the handle loop indexed (native's
+ * address forms in both loops) 854, frame 384.
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"

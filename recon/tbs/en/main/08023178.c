@@ -1,13 +1,16 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1392, common 1380, differ 24.
- * Frame 352 bytes, as native. The setup loops, the cursor update, the
- * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
- * the stat pushes, the djinn rows, the condition list with its four
- * modifier tests and the condition loads match.
- * Remaining: the help block's saved/pointer pair (r5/r6 swapped) and
- * code = 0 set before MemAlloc where native sets it after.
+ * Native 1392 instructions, draft 1392, common 1392, differ 0 (English).
+ * Frame 352 bytes, as native.
  *
- * Session 9 2026-10-07: the modifiers read the field in each test, as
+ * Session 9 2026-10-07: code = 0 after MemAlloc, as native, with code
+ * declared after agiDelta: 24 -> 0. After MemAlloc, code (pseudo 51,
+ * 26 weighted refs) lives 104 insns, so global.c ranks it 104 / 104 =
+ * 1.0, level with agiDelta (30 / 30), and the lower pseudo number won
+ * the tie: code took r7 and every saved register shifted (269). Declared
+ * after agiDelta, code loses the tie, finds no saved register free and
+ * takes r4 with caller saves at sp+4, as native; local-alloc then ranks
+ * the &object->agi address above saved, which gives it r5 and saved r6.
+ * Earlier in session 9: the modifiers read the field in each test, as
  * object->atk_lv > 0 then object->atk_lv < 0, without m: 40 -> 24, all
  * four native (ldrb r1 kept for the second test, the sign-extending
  * read with dest == base for the first, lsl #24 and bge). GCSE's PRE
@@ -406,7 +409,6 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 defDelta;
     s32 i;
     s32 j;
-    s32 code;
     s32 atkDelta;
     s32 redraw;
     struct BtlUnit *object;
@@ -414,6 +416,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     const struct OwnerStatusStatCursor *stat;
     struct MenuSprite *p;
     s32 agiDelta;
+    s32 code;
     s32 n;
     struct MenuCell *screen;
     s32 x;
@@ -854,8 +857,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     iconIdx = 16;
                 }
 
-                code = 0;
                 saved = (struct BtlUnit *)MemAlloc(sizeof(*object));
+                code = 0;
                 Iwram_CopyWords(saved, object, sizeof(*object));
 
                 atkDelta = object->atk;

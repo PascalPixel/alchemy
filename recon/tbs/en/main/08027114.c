@@ -1,5 +1,5 @@
-/* 08027114: differ 1504 against the 1727-line parent listing (draft 1819,
- * common 1021; was 2131).
+/* 08027114: differ 1403 against the 1727-line parent listing (draft 1822,
+ * common 1073; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -54,7 +54,27 @@
  * instead of through slot: 1508 (1678 on 1616). The frame figures above
  * date from 1802; recheck them. The djinn case's own counter j: 1504
  * (1966 in the old order). Next: djinn's register, the round end at
- * next_round, and the djinn and summon loops. */
+ * next_round, and the djinn and summon loops.
+ * 2026-10-07 T15-08027114 s1: DrawLocalizedResource defined in the closing
+ * handshake's block, where it is called, instead of at the top: state
+ * stays a pseudo until the nested function captures it, so put_var_into_stack
+ * fixes up the allocator's store after the call and the &state address is
+ * formed after Runtime_AllocateBlock as native: 1483. A window of its own in
+ * the djinn case (native fp): 1477; in the psynergy case too: 1476. The
+ * djinn case's own sprite slot (native r8, its counter then r7 as native):
+ * 1417. Block-local handle and block in the mode-7 branch: 1405; in the
+ * mode -2 branch: 1403; the djinn case's handle block-local: 1403.
+ * Worse, reverted: block-local djinn 1666; djinn as a fixed r9 (frame then
+ * 100 as native, but registers reshuffle) 1579 on 1504; uncast allocator
+ * result 1504 (unchanged); own window in the item case 1514 and in the
+ * summon case 1425; own ability in the djinn case 1638; own slot in the
+ * psynergy case 1517, in the item case 1445; permuting the declaration
+ * order (500 candidates) found nothing below 1504.
+ * Remaining causes: djinn still spills (frame 104 against 100: out, in and
+ * count 4 bytes high): ok (prio 5*35/89) outranks djinn (5*38/158), so ok
+ * takes r9 where native has djinn in r9 and ok caller-saved in r4. mode
+ * (pseudo 52, 437 refs) is native r6 throughout but conflicts here with
+ * local-alloc hard regs r5, r6 and r8 and lands in caller-saved r4. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -162,7 +182,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     struct UiRenderWork *ui;
     u16 *scan;
     u16 hdr[2];
-    void *block;
     s32 aux;
     s32 actorId;
     s32 mode;
@@ -178,7 +197,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 index;
     s32 ok;
     s32 i;
-    s32 handle;
     s32 k;
     s32 cur;
     s32 order;
@@ -189,13 +207,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
         data[0] = 0xff;
         BattleLayout_HighlightPartyPanels(data);
         BattlePres_SetActorModesFar(data, 1);
-    }
-
-    s32 DrawLocalizedResource(void)
-    {
-        u16 data[64];
-        UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 52);
-        UiText_RenderWideStringAtOffset(data, (struct UiWindow *)state->displayHandle, 0, 4);
     }
 
     aux = 256;
@@ -294,6 +305,9 @@ handshake_done:
             mode = 14;
         }
         if (mode == 7) {
+            void *block;
+            s32 handle;
+
             block = Runtime_BumpAllocate(12);
             if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
                 sel = 2;
@@ -364,6 +378,9 @@ mark_visible:
             mode = Ui_RunSelectionScreen(1);
             WaitFrames(1);
             if (mode == -2) {
+                void *block;
+                s32 handle;
+
                 block = Runtime_BumpAllocate(12);
                 handle = BattleParty_ListActorIdsFar(1, block);
                 state->entryActive[2] = 0;
@@ -414,6 +431,7 @@ mark_visible:
                 goto commit;
 
             case 1: {
+                struct UiWindow *win;
                 s32 handle;
 
                 Audio_PlayCue(112);
@@ -495,6 +513,9 @@ psynergy_menu:
             }
 
             case 16: {
+                struct UiWindow *win;
+                struct MenuSprite *slot;
+                s32 handle;
                 s32 j;
 
                 Audio_PlayCue(112);
@@ -772,6 +793,13 @@ finish:
     Resource_ResetEntry(res1024);
     Scheduler_RemoveCallback(UpdateLinkSessionCountdown);
     if (state->enabled != 0) {
+        s32 DrawLocalizedResource(void)
+        {
+            u16 data[64];
+            UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 52);
+            UiText_RenderWideStringAtOffset(data, (struct UiWindow *)state->displayHandle, 0, 4);
+        }
+
         session = gBattleWork;
         miss = 0;
         if (state->displayHandle == 0 && session->link_paused == 0) {

@@ -10,37 +10,37 @@
 #include "TYPES.H"
 
 
-void BattleFx_RunSevenModeMode4(s32 arg0)
+void BattleFx_RunSevenModeMode4(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunSevenMode(arg0, 4);
+    BattleFx_RunSevenMode(effect, 4);
 }
 
-void BattleFx_RunSevenModeMode5(s32 arg0)
+void BattleFx_RunSevenModeMode5(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunSevenMode(arg0, 5);
+    BattleFx_RunSevenMode(effect, 5);
 }
 
-void BattleFx_RunSevenModeMode0(s32 arg0)
+void BattleFx_RunSevenModeMode0(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunSevenMode(arg0, 0);
+    BattleFx_RunSevenMode(effect, 0);
 }
 
-void BattleFx_RunSevenModeMode1(s32 arg0)
+void BattleFx_RunSevenModeMode1(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunSevenMode(arg0, 1);
+    BattleFx_RunSevenMode(effect, 1);
 }
 
-void BattleFx_RunSevenModeMode6(s32 arg0)
+void BattleFx_RunSevenModeMode6(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunSevenMode(arg0, 6);
+    BattleFx_RunSevenMode(effect, 6);
 }
 
-void BattleFx_RunSevenModeMode2(s32 arg0)
+void BattleFx_RunSevenModeMode2(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunSevenMode(arg0, 2);
+    BattleFx_RunSevenMode(effect, 2);
 }
 
-void BattleFx_RunSevenModeMode3(s32 arg0)
+void BattleFx_RunSevenModeMode3(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunSevenMode(arg0, 3);
+    BattleFx_RunSevenMode(effect, 3);
 }

@@ -1139,7 +1139,19 @@ MemberBeam_HeadWidths:
 	.incbin "baserom.gba", 0x000efeb0, 0x00000003
 	.global MemberBeam_HeadHeights
 MemberBeam_HeadHeights:
-	.incbin "baserom.gba", 0x000efeb3, 0x00000059
+	.incbin "baserom.gba", 0x000efeb3, 0x00000003
+	.global SevenMode_Records
+SevenMode_Records:
+	.incbin "baserom.gba", 0x000efeb6, 0x0000000e
+	.global SevenMode_ShardWidths
+SevenMode_ShardWidths:
+	.incbin "baserom.gba", 0x000efec4, 0x00000012
+	.global SevenMode_ShardHeights
+SevenMode_ShardHeights:
+	.incbin "baserom.gba", 0x000efed6, 0x00000012
+	.global SevenMode_ShardOffsets
+SevenMode_ShardOffsets:
+	.incbin "baserom.gba", 0x000efee8, 0x00000024
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000eff0c, 0x0000000e

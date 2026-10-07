@@ -1083,17 +1083,17 @@ MemberBeam_HeadWidths:
 	.global MemberBeam_HeadHeights
 MemberBeam_HeadHeights:
 	.incbin "baserom.gba", 0x000ee0b3, 0x00000003
-	.global Data_080ee0b6
-Data_080ee0b6:
+	.global SevenMode_Records
+SevenMode_Records:
 	.incbin "baserom.gba", 0x000ee0b6, 0x0000000e
-	.global Data_080ee0c4
-Data_080ee0c4:
+	.global SevenMode_ShardWidths
+SevenMode_ShardWidths:
 	.incbin "baserom.gba", 0x000ee0c4, 0x00000012
-	.global Data_080ee0d6
-Data_080ee0d6:
+	.global SevenMode_ShardHeights
+SevenMode_ShardHeights:
 	.incbin "baserom.gba", 0x000ee0d6, 0x00000012
-	.global Data_080ee0e8
-Data_080ee0e8:
+	.global SevenMode_ShardOffsets
+SevenMode_ShardOffsets:
 	.incbin "baserom.gba", 0x000ee0e8, 0x00000024
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:

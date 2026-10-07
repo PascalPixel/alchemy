@@ -468,7 +468,7 @@ BattleFx_RunSevenMode:
 .L_080cfc78:
 	.4byte gWorkSlot
 .L_080cfc7c:
-	.4byte Data_080ee0b6
+	.4byte SevenMode_Records
 .L_080cfc80:
 	.4byte 0x00007784
 .L_080cfc84:
@@ -767,17 +767,17 @@ BattleFx_RunSevenMode:
 .L_080cfed0:
 	.4byte 0xffff8000
 .L_080cfed4:
-	.4byte Data_080ee0b6
+	.4byte SevenMode_Records
 .L_080cfed8:
 	.4byte gMapCellBuffer + 0x1c00
 .L_080cfedc:
 	.4byte 0x00007828
 .L_080cfee0:
-	.4byte Data_080ee0e8
+	.4byte SevenMode_ShardOffsets
 .L_080cfee4:
-	.4byte Data_080ee0c4
+	.4byte SevenMode_ShardWidths
 .L_080cfee8:
-	.4byte Data_080ee0d6
+	.4byte SevenMode_ShardHeights
 .L_080cfeec:
 	.4byte 0x00007824
 .L_080cfef0:

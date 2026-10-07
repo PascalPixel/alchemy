@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "EDITION.H"
 
 void Tile_BuildMetatiles(u16 *dst, u16 *src)
 {
@@ -50,7 +51,9 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
                     break;
                 case 0xf007:
                 case 0xf016:
+#if EDITION_INTERNATIONAL
                 case 0xf01a:
+#endif
                     a = col * 8;
                     b = a + 8;
                     d = a;
@@ -73,7 +76,9 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
                     break;
                 case 0xf007:
                 case 0xf017:
+#if EDITION_INTERNATIONAL
                 case 0xf01b:
+#endif
                     f = col * 8 + 8;
                     b = f;
                     e = f;

@@ -191,14 +191,23 @@
  *   180 (expand interleaves products and adds); the three squares as
  *   statements xx, yy, zz, then Iwram_Sqrt(xx + yy + zz): 123, the
  *   native's three products, x + y, then z through its copy in r3.
+ * - on 123: mark = &runtime->particles[60] before index = 0: 140.
  * Remaining (123): two spill slots swapped (view + 12 at sp+36 and
- * &base_angle at sp+40 in the native); the frame <= 159 particle loop
+ * &base_angle at sp+40 in the native). Both are gcse PRE reaching
+ * registers, created in hash bucket order: view + 12 (bucket 110)
+ * takes reg 1159 before sfp - 192 (bucket 525) takes 1172, and with
+ * the frame growing downward the lower regno gets the higher slot.
+ * The native's order fits view + 12 hoisted later, by loop.c rather
+ * than PRE; the frame <= 159 particle loop
  * preheader and the mark and spark loop preheaders choose other
  * reload registers (reload's rotation: &work through r0 and slot 0
  * through r7 in the native's spark preheader); the threshold loop
  * preheader sets mark (runtime + 0x7710) before the threshold givs,
- * where the draft sets it last, and loads one more literal (1482
- * generated). */
+ * where the draft sets it last; the one extra instruction (1482
+ * generated) is &work in the burst spark preheader, which the native
+ * builds as add r0, sp, #152 then mov r8, r0, and the draft as
+ * movs r2, #152, add r2, sp, mov r8, r2 (the native's frame <= 159
+ * preheader uses the two-instruction form too). */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"

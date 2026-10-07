@@ -1,6 +1,12 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 919, common 601, differ 663; frame 372
+ * Native 946 instructions, draft 920, common 634, differ 598; frame 372
  * as native's.
+ * Session 3, second step: y = index * 2 set after the scan, before the
+ * glyph load, 663 -> 598, although native computes index * 2 after the
+ * load and shares it with the tile store's index * 3; y beside the tile
+ * store (before or after it) 663 unchanged; y before the scan's
+ * affordable 640; y at the top of the pass 644; col = 0 beside the new y
+ * 619.
  * Session 3: the draw loop's columns counted (col = 0 at the top of each
  * pass, col * 2 + 13 and col * 2 + 14, col++) give native's giv start
  * (lsls r3, rX, #1; adds r5, r3, #0; adds r5, #13) and its hoisted 0 for
@@ -287,6 +293,7 @@ loop:
                                 break;
                         }
                         affordable = n == 4;
+                        y = index * 2;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
                         sprites[index].oam.f.tile = glyph;
                         if (!affordable)
@@ -294,7 +301,6 @@ loop:
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
                             (struct RenderInput *)window, 16, index * 16);
                         required = summon->djinn_required;
-                        y = index * 2;
                         for (element = 0; element <= 3; element++) {
                             if (*required != 0) {
                                 UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col * 2 + 13, y, 0);

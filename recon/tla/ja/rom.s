@@ -187,44 +187,12 @@ Resource_FindFreeEntry:
 	.thumb_func
 Scheduler_SetCallbackMask:
 	.incbin "baserom.gba", 0x0001471c, 0x00000040
-	.section .rom.000149f8, "ax"
-	.global Text_FormatHexToWork
-	.type Text_FormatHexToWork, %function
-	.thumb_func
-Text_FormatHexToWork:
-	.incbin "baserom.gba", 0x000149f8, 0x0000002c
-	.section .rom.00014a24, "ax"
-	.global Text_FormatSignedDecimalToWork
-	.type Text_FormatSignedDecimalToWork, %function
-	.thumb_func
-Text_FormatSignedDecimalToWork:
-	.incbin "baserom.gba", 0x00014a24, 0x00000084
-	.section .rom.00014aa8, "ax"
-	.global Func_08014aa8
-	.type Func_08014aa8, %function
-	.thumb_func
-Func_08014aa8:
-	.incbin "baserom.gba", 0x00014aa8, 0x00000038
-	.section .rom.00014ae0, "ax"
-	.global Runtime_WriteDebugTextTiles
-	.type Runtime_WriteDebugTextTiles, %function
-	.thumb_func
-Runtime_WriteDebugTextTiles:
-	.incbin "baserom.gba", 0x00014ae0, 0x00000050
 	.section .rom.00014b70, "ax"
 	.global Func_08014b70
 	.type Func_08014b70, %function
 	.thumb_func
 Func_08014b70:
 	.incbin "baserom.gba", 0x00014b70, 0x0000003c
-	.section .rom.00014de0, "ax"
-	.incbin "baserom.gba", 0x00014de0, 0x00000004
-	.section .rom.00014de4, "ax"
-	.global Render_ResetTransformState
-	.type Render_ResetTransformState, %function
-	.thumb_func
-Render_ResetTransformState:
-	.incbin "baserom.gba", 0x00014de4, 0x00000038
 	.section .rom.00014ee0, "ax"
 	.global Func_08014ee0
 	.type Func_08014ee0, %function
@@ -421,7 +389,10 @@ Ui_WindowPalette:
 	.incbin "baserom.gba", 0x00017af0, 0x00000020
 	.global System_BasicColorPalette
 System_BasicColorPalette:
-	.incbin "baserom.gba", 0x00017b10, 0x000001d8
+	.incbin "baserom.gba", 0x00017b10, 0x000001c0
+	.global Data_08017cd0
+Data_08017cd0:
+	.incbin "baserom.gba", 0x00017cd0, 0x00000018
 	.section .rom.00017d08, "ax"
 	.incbin "baserom.gba", 0x00017d08, 0x0000005c
 	.global Flash_Chips
@@ -1720,12 +1691,6 @@ Menu_RunSelection:
 	.thumb_func
 Menu_DrawFlagBitTable:
 	.incbin "baserom.gba", 0x0004e0a0, 0x000000c4
-	.section .rom.0004e164, "ax"
-	.global Menu_HandleFlagGridInput
-	.type Menu_HandleFlagGridInput, %function
-	.thumb_func
-Menu_HandleFlagGridInput:
-	.incbin "baserom.gba", 0x0004e164, 0x00000140
 	.section .rom.0004e2ce, "ax"
 	.incbin "baserom.gba", 0x0004e2ce, 0x00000002
 	.section .rom.0004e2d0, "ax"
@@ -3398,12 +3363,6 @@ Func_080d296c:
 	.align 2, 0
 Func_080d2b4c:
 	.incbin "baserom.gba", 0x000d2b2c, 0x000000b8
-	.section .rom.000d2c44, "ax"
-	.global Func_080d2c64
-	.type Func_080d2c64, %function
-	.thumb_func
-Func_080d2c64:
-	.incbin "baserom.gba", 0x000d2c44, 0x00000034
 	.section .rom.000d2c7c, "ax"
 	.balign 4
 	.global Func_080d2c9c
@@ -3459,37 +3418,14 @@ ObjectMotion_WaitForAnimationChange:
 	.thumb_func
 BattleFx_RunRisingObjectSequence:
 	.incbin "baserom.gba", 0x000d3440, 0x0000013c
-	.section .rom.000d35de, "ax"
-	.incbin "baserom.gba", 0x000d35de, 0x00000002
-	.section .rom.000d35e0, "ax"
-	.global FacingObject_TurnPairToFaceEachOther
-	.type FacingObject_TurnPairToFaceEachOther, %function
-	.thumb_func
-FacingObject_TurnPairToFaceEachOther:
-	.incbin "baserom.gba", 0x000d35e0, 0x000000a8
-	.section .rom.000d3688, "ax"
-	.global ObjectTable_DestroyById
-	.type ObjectTable_DestroyById, %function
-	.thumb_func
-ObjectTable_DestroyById:
-	.incbin "baserom.gba", 0x000d3688, 0x00000020
 	.section .rom.000d3760, "ax"
 	.global Func_080d3780
 	.type Func_080d3780, %function
 	.thumb_func
 Func_080d3780:
 	.incbin "baserom.gba", 0x000d3760, 0x00000054
-	.section .rom.000d38ec, "ax"
-	.global Func_080d390c
-	.type Func_080d390c, %function
-	.thumb_func
-Func_080d390c:
-	.incbin "baserom.gba", 0x000d38ec, 0x0000001c
-	.global Func_080d3928
-	.type Func_080d3928, %function
-	.thumb_func
-Func_080d3928:
-	.incbin "baserom.gba", 0x000d3908, 0x00000018
+	.section .rom.000d3920, "ax"
+	.balign 4
 	.global Func_080d3940
 	.type Func_080d3940, %function
 	.thumb_func
@@ -5252,12 +5188,6 @@ Func_081c0f3c:
 	.thumb_func
 Func_081c0f44:
 	.incbin "baserom.gba", 0x001c0f44, 0x00000014
-	.section .rom.001c0f70, "ax"
-	.global Func_081c0f70
-	.type Func_081c0f70, %function
-	.thumb_func
-Func_081c0f70:
-	.incbin "baserom.gba", 0x001c0f70, 0x00000014
 	.section .rom.001c1000, "ax"
 	.global AudioEngine_SuspendDirectSoundWrapper
 	.type AudioEngine_SuspendDirectSoundWrapper, %function

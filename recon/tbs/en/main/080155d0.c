@@ -1,5 +1,23 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Japanese branch (2026-10-07): listing193, draft193, common183, differ20.
+ *   Reconstructed from its own scaffold: supplied font has ten one-bit rows,
+ *   dakuten adjusts its index/position/advance; wide kanji have twelve rows
+ *   and fixed advance10. Current linker places UiText_KanjiGlyphs at the
+ *   native pool target. Natural branch90; explicit narrow-byte offset61;
+ *   the measured unused real-type local restores frame36 to100 (55).
+ *   Narrow-row/r2 boundary42; in-place font index subtraction38; initial
+ *   next-row/r0 boundary34; nextrow/lr plus column/r5 boundaries32; zero/r3
+ *   boundary restores coordinate order and flag reload (24); pass-reset/r1
+ *   boundary22; font/lr input boundary with deferred coordinates20.
+ *   Remaining: parameter-copy/store order, several font setup/store orders,
+ *   the VRAM-base setup, narrow-row store/load, final row shift/store.
+ *   Trials: coordinate input boundary from34 unchanged; adding memory/cc48;
+ *   nextrow/lr without col/r5 gives60. Explicit flags/r2 from24 gives34 by
+ *   changing font colour allocation. Fixed x/r8,y/r7 alone unchanged22;
+ *   combined coordinate/ch memory boundary36; adding font/lr22; deferring
+ *   coordinates until after font20, then ordinary x/y keeps20. Removed
+ *   rejected devices. International branches remain separate and unchanged.
  * Stock agbcc_arm (2026-10-07, completion session, latest): English listing
  *   196, draft196, common189, differ14. A short incoming-x/r2 boundary
  *   retains x until font is loaded, restoring their native order (16 to14).
@@ -183,6 +201,7 @@ struct UiTextWideGlyph {
 
 extern u8 UiSprite_CursorFrameTiles[];
 extern struct UiTextGlyph UiText_Glyphs[];
+extern const u8 UiText_KanjiGlyphs[];
 
 #define UiText_PlotPixel(width, px, ty, sub, color) \
 { \
@@ -205,6 +224,164 @@ extern struct UiTextGlyph UiText_Glyphs[];
 
 s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8 *font)
 {
+#if defined(TBS_EDITION_JA)
+    /* FAKEMATCH: native reserves 100 bytes, the live locals use 36; two real wide-glyph records reserve the remaining 64 bytes (alchemy sizes). */
+    struct UiTextWideGlyph unused[2];
+    u16 *rows;
+    s32 ret;
+    u32 width;
+    u32 gw;
+    s32 bits;
+    u32 row;
+    u32 pass;
+    /* FAKEMATCH: native column uses r5; the next-row boundary otherwise swaps column and colour between r4/r5 (60 differences). */
+    register u32 col asm("r5");
+    u32 x;
+    u32 y;
+    /* FAKEMATCH: native font uses lr; the input-copy boundary otherwise swaps font and dakuten between ip/lr (36 differences). */
+    register u8 *f asm("lr") = font;
+
+    /* FAKEMATCH: native loads font before copying coordinates; the combined boundary alone puts the copies first (22 to20). */
+    asm("" : "+r"(f));
+    x = xpos;
+    y = ypos;
+    /* FAKEMATCH: native copies coordinates before the width load and character test; the ordinary setup delays both copies. */
+    asm("" : "+r"(x), "+r"(y), "+r"(ch) : "r"(f) : "memory");
+    width = win->width;
+    if (ch < 256 || (f != 0 && ch - 222 < 2)) {
+        if (f != 0) {
+            u32 color = 0x1111;
+            s32 w = 8;
+            u8 *src;
+            u32 b;
+            u32 px;
+            u32 sub;
+            u32 ty;
+
+            x++;
+            if (ch - 222 < 2) {
+                ch += 32;
+                x -= 2;
+                y--;
+                w = 2;
+            }
+            ch -= 32;
+            src = f + ch * 10;
+            row = 0;
+            b = *src++;
+            while (y + row < 32) {
+                col = 0;
+                if (b != 0) {
+                    ty = (y + row) >> 3;
+                    sub = ((y + row) & 7) * 2;
+                    do {
+                        if (b & 1) {
+                            px = x + col;
+                            /* FAKEMATCH: UiText_PlotPixel retains native's shift before the VRAM-base add. */
+                            UiText_PlotPixel(width, px, ty, sub, color);
+                        }
+                        col++;
+                    } while ((b >>= 1) != 0);
+                }
+                if (++row >= 10)
+                    break;
+                b = *src++;
+            }
+            return w;
+        }
+        {
+            u32 ofs = (ch - 32) * 26;
+            struct UiTextGlyph *glyph = (struct UiTextGlyph *)((u8 *)UiText_Glyphs + ofs);
+            /* FAKEMATCH: native narrow rows use r2 and are stored before the width load; ordinary C merges the pointer stores. */
+            register u16 *p asm("r2") = glyph->rows;
+            /* FAKEMATCH: retain the native narrow-row pointer register. */
+            asm("" : "+r"(p));
+            rows = p;
+            gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
+        }
+    } else {
+        gw = 10;
+        rows = (u16 *)(UiText_KanjiGlyphs + (ch - 256) * 24);
+    }
+    if (ch - 222 < 2) {
+        /* FAKEMATCH: native stores zero width through r3 after the coordinate adjustment; ordinary C uses r2 before adjusting y. */
+        register s32 zero asm("r3");
+        x -= 3;
+        y -= 2;
+        zero = 0;
+        /* FAKEMATCH: retain the native zero-store register. */
+        asm("" : : "r"(zero));
+        ret = zero;
+    } else {
+        ret = gw;
+    }
+    {
+        u16 *next;
+        /* FAKEMATCH: native creates the next-row head in r0; the ordinary loop-hoisted expression uses r3. */
+        register u16 *p asm("r0") = rows;
+        /* FAKEMATCH: native resets pass in r1 between loading rows and adding one row. */
+        register u32 i asm("r1");
+        u16 *head;
+        /* FAKEMATCH: retain the native head-pointer reload register. */
+        asm("" : "+r"(p) : : "r1");
+        i = 0;
+        /* FAKEMATCH: native resets pass before adding one row. */
+        asm("" : "+r"(p) : "r"(i));
+        head = p + 1;
+    for (pass = i; pass < 4; pass++) {
+        u32 ty;
+        u32 color;
+        u32 px;
+        u32 sub;
+
+        color = pass == 3 ? 0x1111 : 0x5555;
+        if (win->flags & 64) {
+            if (pass < 2) {
+                if (pass == 1)
+                    x += 2;
+                else
+                    x--;
+            } else if (pass == 2) {
+                x--;
+                y++;
+            } else {
+                y--;
+            }
+        }
+        row = 0;
+        next = head;
+        bits = rows[0];
+        bits <<= 16;
+        while (y + row < 32) {
+            /* FAKEMATCH: native keeps the next shadow row in lr before computing tile coordinates; ordinary C delays its add. */
+            register u32 nextrow asm("lr");
+            col = 0;
+            /* FAKEMATCH: native resets the column before the next-row add. */
+            asm("" : : "r"(col));
+            nextrow = row + 1;
+            /* FAKEMATCH: retain the native next-row scheduling boundary. */
+            asm("" : : "r"(nextrow));
+            ty = (y + row) >> 3;
+            sub = ((y + row) & 7) * 2;
+            while (col < 14) {
+                if (bits < 0) {
+                    px = x + col;
+                    /* FAKEMATCH: UiText_PlotPixel retains native's shift before the VRAM-base add. */
+                    UiText_PlotPixel(width, px, ty, sub, color);
+                }
+                if ((bits <<= 1) == 0)
+                    break;
+                col++;
+            }
+            if (++row >= 12)
+                break;
+            bits = *next++;
+            bits <<= 16;
+        }
+    }
+    }
+    return ret;
+#else
     u16 *rows;
     s32 ret;
     u32 width;
@@ -436,4 +613,5 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     }
     }
     return ret;
+#endif
 }

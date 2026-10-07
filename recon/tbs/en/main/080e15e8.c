@@ -1,5 +1,5 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1640, common 1624, differ 32 (frame 336 and
+   listing 1640, draft 1640, common 1629, differ 22 (frame 336 and
    every frame-loop slot as native, sp+24 included).
    The particle draw loop walks its own pointer q: the native's draw
    loop pointer is r5 while the bursts' p is r7, so they are two
@@ -27,12 +27,11 @@
    lsls, movs 32, subs; draft movs 16, subs, lsls). Writing 32 - w * 2
    with the native's hoisting needs the frame loop's pass-2 insn count
    above 456 or the 32's life below 19.
-   Remaining (32): that preheader; the ring store's address (native:
+   Remaining (22): that preheader; the ring store's address (native:
    offset + work, then + 10000; draft: offset + 10000, then + work;
    a literal 10000 gives the native's order but loop.c hoists it out
    of the ring loop into r6); the reload registers of the 112 store
-   in the burst's first blit and of the formation preheader (cam_x
-   >> 17 and i = 0 in r3 and r2 natively, swapped here); in the smoke
+   in the burst's first blit; in the smoke
    burst's blit, lsls of i % 3 * 0x1440 scheduled before rx - 3 and
    ry + 32 (native after them).
    n = count * 2 - i * 48 - 256 in one expression gives the native's
@@ -188,7 +187,9 @@
      ring burst's s = size + 1 first in its loop body (the native
      schedules s + 1 before the vec address): 32, adopted.
    - on 32: the smoke burst's sheet as &work->sheet[i % 3 * 0x1440]:
-     32, no change. */
+     32, no change; the formation's base set in the loop's
+     initializer after i = 0 (for (i = 0, base = cam_x >> 17; ...)):
+     22, adopted. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -713,8 +714,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             BattleFx_PlaceFormationObjects(0, cam_x, cam_y);
         }
         if ((u32)(frame - 16) <= 127) {
-            s32 base = cam_x >> 17;
-            for (i = 0; i != 3; i++) {
+            s32 base;
+            for (i = 0, base = cam_x >> 17; i != 3; i++) {
                 s32 k = i & 3;
                 s32 angle = Random16() & 0xffff;
                 s32 x = ((Trig_Sin(angle) << 3) >> 16) + base - (BattleFx_GlintCellWidths[k] >> 1);

@@ -1,5 +1,5 @@
-/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 116 of 920 (draft 926, common 865) with --symbol Func_020003cc.
- * Remaining: the LEFT and RIGHT page arms each call Func_02001e6e where the native cross-jumps LEFT into RIGHT's mov r1, r8 / bl (one shared call after the arms: 195); the draft is 6 instructions longer, so the far branches to the tail and the later pool loads are off by their distance; the glyph loop keeps page * 50 in ip and copies it to v7 where the native builds it in r0 and copies it to v6 and v7; the glyph loop builds rec7 * 12 in r3 and copies it to x in r2, and shifts the row in place, where the native copies the row call's r0 to r3 and shifts there and builds x in r2; the record-select and case-1 stores put their 0x1c0/0x1c4 constants in other registers. Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
+/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 108 of 920 (draft 926, common 869) with --symbol Func_020003cc.
+ * Remaining: the LEFT and RIGHT page arms each call Func_02001e6e where the native cross-jumps LEFT into RIGHT's mov r1, r8 / bl (one shared call after the arms: 195); the draft is 6 instructions longer, so the far branches to the tail and the later pool loads are off by their distance; in the glyph loop n (r4) is restored at the end of each arm and saved again before the draw call, where the native restores it only after that call; the glyph loop builds rec7 * 12 in r3 and copies it to x in r2, and shifts the row in place, where the native copies the row call's r0 to r3 and shifts there and builds x in r2; the record-select and case-1 stores put their 0x1c0/0x1c4 constants in other registers. Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
  * Trials (2026-10-07, session 2):
  * - 231 -> 221: the greetings stored as plain u16 through gSerialTransfer.payload and a 12-halfword peer row: the native's 0x30 is a pool load (thumb_movhi_insn takes a HImode constant through its "mn" alternative), and the struct stores expanded to an and/ior word update; the case-4/5 pool now sits after the greeting loop as native.
  * - 221 -> 221: gKeyState (volatile s32) and gLinkStatus (volatile u16) by name instead of raw addresses, as the native's relocations show; no change in code, kept.
@@ -14,6 +14,8 @@
  * - 171 -> 122: v5 as the greeting-loop mask: with count gone v5 keeps r5, a callee-saved register, so no caller save splits the loop.
  * - 122 -> 120: v7 = 0 before v5 = 3, as the native orders them.
  * - 120 -> 116: the peer greetings as for (v1 = 0; v1 != 4; v1++) over gLinkPeerSignatures[v1]: the row pointer is a giv set after the hoisted 0x30, as native.
+ * - 116 -> 108: the page end as v6 = page * 50 + 50: page * 50 is its own temporary (r0), copied to v6 and later to v7, as native.
+ * - no gain: the row call into rec (108) or into v3 shifted after the arms (243); the column test on the call directly (108).
  * - no gain: v5 as the greeting-loop mask while count shared the transfer loop (399; with v7 as the transfer counter 395); v7 as the transfer counter alone (495); the row call into v3 shifted in place, in each arm or after (356); one Func_02001e6e call after the LEFT and RIGHT arms, v7 = 1 before or after it (195).
  * Trials (2026-10-07):
  * - 463 -> 350: the glyph counter n apart from the link result v4, and password[v7] & 63 passed directly: v3 no longer conflicts with r3, the link result takes a caller-saved register, and page gets r11 with the encoded size in r9 and the page window in r10, as native.
@@ -679,8 +681,7 @@ s32 SaveMenu_Run(void)
                 Func_020093e4(page_window, 0xf129, 18, -1, 0);
                 *(u8 *)((*(s32 *)0x03001e8c + 0xea3)) |= (2 << ((u32)*(u16 *)(page_window + 14) >> 2));
             }
-            v6 = (page * 50);
-            v6 = (v6 + 50);
+            v6 = page * 50 + 50;
             if (v6 > encoded_size) {
                 v6 = encoded_size;
             }

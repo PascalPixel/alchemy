@@ -591,8 +591,12 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
     Audio_PlayCue(141);
 
-    /* FAKEMATCH: the rock count resets inside the loop test, after the frame limit and before the skip keys are tested. */
-    for (frame = 0; frame != 288 && (count = 16, !(gKeysRepeat & (KEY_A | KEY_B)) || frame <= 16); frame++) {
+    for (frame = 0; frame != 288; frame++) {
+        count = 16;
+        if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16) {
+            break;
+        }
+
         if (frame >= 0 && frame < 16) {
             u16 *phase = (u16 *)gMapCellBuffer;
             if (frame == 1) {

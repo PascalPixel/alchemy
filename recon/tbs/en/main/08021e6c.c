@@ -1,4 +1,5 @@
-/* Stubborn (2026-10-07, T08-08021e6c session 1, second run): differ 776 (listing 1037, draft 1011, common 636). Not matched. */
+/* Stubborn (2026-10-07, T08-08021e6c session 1, second run): differ 636 (listing 1037, draft 1025, common 713). Not matched. Still permuter scaffolding, to be replaced by real source shapes: tmp7 = mode != 0 kept from before the position loop to the command_selection test (as mode != 0 there: 658 -> 710 before the cleanup), tmp2/tmp3/tmp4 temporaries shared inside the content col loops, the u16 * temporary for 0x0600fd68, and the mode-1 blank and content col loops as while. */
+/* Trial (2026-10-07): bisecting the 658 candidate below: removing the scale - 256 chain 657, the gBgScroll pointer 657, rebuild != 0 temporary 659, the four temporaries of the redraw test 643, keys & 1 643, the mode != 0 and repeat & 0x90 temporaries 619, the work->count chain 619; the AffineMatrix_BuildForEffect result shared with runtime->auto_enabled is worth 17 (619 with it, 636 without), dropped as noise. */
 /* Trial (2026-10-07): the mode-1 blank and closing loops index each row as tile_row = &render->tilemap[panel * 3 + cnt * 32] (native's panel*2 giv plus panel): 787 -> 785 -> 776. The same in the mode-0 blank loop: 868, reverted. The mode-1 content loop in the permuter's mode-0 form: 899, reverted. */
 /* Trial (2026-10-07): alchemy permute 8 min from 922 gave 799; its noise removed by measurement: 787. What carried: the position loop as cnt = 0; if (cnt < count) do { ... } while (as a for or while: 853); the content tiles through s32 tile = 0x100 + pattern, then tile + col (direct 0x100 + pattern + col: 933); the mode-0 content panels as a do-while with panel++ before the rows and one temporary for 0x100 + pattern and count * 3 (as the mode-1 for loops: 928, for loops with the shared temporary: 875); cnt = 0 before the redraw test, the sprite loop as if/do-while (a for loop there: 821). Noise, removed at no cost or a gain: tmp4 for scale - 256, the gBgScroll cast, a temporary for keys & 0x300, the mode-1 blank and closing loops as do-while (787 as for), the resource loop as while, a temporary shared between work->count and the sprite test (removing it: 799 -> 790). */
 /* Trial (2026-10-07): per-row index loops (tile_row = &render->tilemap[panel * 3 + cnt * 32] inside the row loop) reproduce native's panel*2 giv plus panel in the blank and closing loops: 922 -> 925, 924. With tile_row, tile_index, pattern, panel and col at function scope shared by all tile loops the frame becomes native's 60 and the slots of mode, render, rebuild and trade_count match, but scale keeps a register (native spills it to sp+36) and the content loops lose strength reduction: 938. Inner copies (s32 index = tile_index, tile = pattern in the row): 922, unchanged. */
@@ -89,6 +90,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     s32 keys, repeat;
     s32 slot;
     s32 i, num;
+    s32 tmp7;
 
     render = (struct UiRenderWork *)gWindowWork[0];
     slot = Resource_LoadIntoFreeSlot(0x400);
@@ -138,6 +140,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     work->affine.scale_y = 304;
     work->affine.angle = 0;
     cnt = 0;
+    tmp7 = mode != 0;
     if (cnt < work->count) {
         do {
             s32 x = (cnt - work->count) * 24;
@@ -161,14 +164,19 @@ s32 Ui_RunSelectionScreen(s32 mode)
         if (rebuild != 0) {
             rebuild = 0;
             render->menu_busy = 1;
-            if (mode != 0) {
+            if (mode) {
                 s32 panel;
                 for (panel = 0; panel < 6 - work->count; panel++) {
-                    for (cnt = 0; cnt <= 2; cnt++) {
+                    cnt = 0;
+                    while (cnt <= 2) {
                         u16 *tile_row = &render->tilemap[panel * 3 + cnt * 32];
                         s32 col;
-                        for (col = 0; col <= 2; col++)
+                        col = 0;
+                        while (col <= 2) {
                             tile_row[0x224 + (col & 3)] = 0xf07f;
+                            col++;
+                        }
+                        cnt++;
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
@@ -178,10 +186,15 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     u16 *tile_row = &render->tilemap[tile_index];
                     for (cnt = 0; cnt <= 2; cnt++, tile_row += 32, tile_index += 32, pattern += 4) {
                         s32 col;
-                        for (col = 0; col <= 2; col++) {
+                        col = 0;
+                        while (col <= 2) {
                             s32 tile = 0x100 + pattern;
-                            ((u16 *)0x0600fd6c)[tile_index + (col & 3) - count * 3] = tile + col;
-                            *(tile_row + (col & 3) - count * 3 + 0x236) = 0;
+                            s32 tmp3;
+                            tmp3 = tile + col;
+                            ((u16 *)0x0600fd6c)[tile_index + (col & 3) - count * 3] = tmp3;
+                            tmp3 = col & 3;
+                            *(tile_row + tmp3 - count * 3 + 0x236) = 0;
+                            col++;
                         }
                     }
                 }
@@ -189,10 +202,14 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 s32 panel;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     u16 *tile_row = &render->tilemap[panel * 3];
-                    for (cnt = 0; cnt <= 2; cnt++, tile_row += 32) {
-                        s32 col;
-                        for (col = 0; col <= 2; col++)
-                            tile_row[0x222 + (col & 3)] = 0xf07f;
+                    cnt = 0;
+                    if (cnt <= 2) {
+                        do {
+                            s32 col;
+                            for (col = 0; col <= 2; col++)
+                                tile_row[0x222 + (col & 3)] = 0xf07f;
+                            cnt++, tile_row += 32;
+                        } while (cnt <= 2);
                     }
                 }
                 panel = 0;
@@ -203,27 +220,30 @@ s32 Ui_RunSelectionScreen(s32 mode)
                         s32 pattern = panel * 16;
                         u16 *tile_row = &render->tilemap[tile_index];
                         cnt = 0;
-                        panel++;
                         while (cnt <= 2) {
                             s32 col;
                             col = 0;
                             if (col <= 2) {
                                 do {
                                     s32 tmp2;
+                                    u16 *tmp;
+                                    s32 tmp4;
+                                    tmp4 = col & 3;
                                     tmp2 = 0x100 + pattern;
-                                    ((u16 *)0x0600fd68)[tile_index + (col & 3) - count * 3] = tmp2 + col;
+                                    tmp = (u16 *)0x0600fd68;
+                                    tmp[tile_index + (col & 3) - count * 3] = tmp2 + col;
                                     tmp2 = count * 3;
-                                    *(tile_row + (col & 3) - tmp2 + 0x234) = 0;
+                                    *(tile_row + tmp4 - tmp2 + 0x234) = 0;
                                     col++;
                                 } while (col <= 2);
                             }
                             cnt++, tile_row += 32, tile_index += 32, pattern += 4;
                         }
+                        panel++;
                     } while (panel < work->count);
                 }
             }
         }
-        cnt = 0;
         if (work->previous != work->selection) {
             RenderOutput_PrepareForRedraw(work->window);
             UiText_DrawCharacterAtOffset(work->entries[work->selection].kind + (s32)&MsgCommandName,
@@ -231,6 +251,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->previous = work->selection;
             UiText_DrawCharacter((u8 *)work, work->selection, work->kinds[work->selection]);
         }
+        cnt = 0;
         work->matrix = AffineMatrix_BuildForEffect(&work->affine);
         if (cnt < work->count) {
             do {
@@ -251,8 +272,8 @@ s32 Ui_RunSelectionScreen(s32 mode)
             } while (cnt < work->count);
         }
         keys = gKeyState;
-        runtime = gLinkCountdownWork;
         repeat = gKeysRepeat;
+        runtime = gLinkCountdownWork;
         if (runtime->auto_enabled != 0) {
             keys = repeat = 0;
             if (runtime->auto_delay == 0) {
@@ -317,7 +338,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         render->menu_busy = 0;
         WaitFrames(1);
     }
-    if (mode != 0)
+    if (tmp7)
         gLinkCountdownWork->command_selection[1] = work->selection;
     else
         gLinkCountdownWork->command_selection[0] = work->selection;

@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3400,
- * differ 100.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3414,
+ * differ 72.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -211,10 +211,28 @@
  * (stat_ptr--; m = *(s16 *)stat_ptr; maxu = *stat_ptr;) 119; a local
  * copy of target for case 76's reads no change (copy-propagated); in
  * the drain, kind = dealt then kind = dealt / 2 in the if, 193.
- * Left at 100: the drain's halving (above); the heal's target copies and offsets in 76, 71, 78 and the 7%
- * (reload registers in another rotation: the listing's offset scratch
- * takes r3 first, as if allocated before the base's reload); two far
- * branches to the end that ours sends back to an earlier copy; and
+ * The two far branches back (-6086, -7822) were alchemy diff misreading
+ * a b.n before a relocated literal word; with diff fixed they match,
+ * 96 (common 3402), with no source change.
+ * The heal's reloads (76, 71, 78 and the 7%): the listing's RTL reads
+ * maxu (ldrh) before the signed read and sched2 then moves the ldrsh
+ * above it, so reload took the base first. maxu read first with an
+ * asm("" ::: "memory") barrier before the signed read, tagged FAKEMATCH,
+ * gives the listing's registers in all four, 72 (common 3414): 76 alone
+ * 90, with 71 82, with 78 76. The barrier also stops sched2, so each
+ * ldrh stays before its ldrsh (10 lines). Without a barrier maxu first
+ * shares one load (176); m read volatile 94 (ldrh plus shifts);
+ * asm("") 98; an asm "+r" tie on maxu after both reads 93; maxu read
+ * through stat_ptr, or m through it, 104; m through a byte offset 167;
+ * maxu = *stat_ptr-- with m through stat_ptr + 1, 86.
+ * In the drain against 96: apwr = dealt, then apwr = dealt / 2 in the
+ * if and kind = apwr, 333 (apwr and kind share r6, and cse reads apwr
+ * for dealt); apwr /= 2 in place 333; the halving in an if/else on apwr
+ * 403, or on hp0 412.
+ * Left at 72: the drain's halving (above: the listing loads dealt into
+ * r7 before the test, copies it to r0 for the halving and copies r7 to
+ * r6 for the amount, as if the halving read a spilled dealt whose reload
+ * inherits r7); the four ldrh the barrier holds before their ldrsh; and
  * about 20 single loads swapped with a neighbour (K2's load order). */
 #include "BATTLE.H"
 #include "DEBUG.H"
@@ -1098,12 +1116,16 @@ after_power:
             if (action->effect == 76) {
                 s32 m;
 
-                m = target->max_hp;
                 maxu = (u16)target->max_hp;
+                /* FAKEMATCH: barrier; with maxu read first it keeps cse from sharing one load between the two reads, so reload takes the base before the offset as the ROM does (96 to 90); sched2 then keeps the ldrh first, where the ROM moves it after the ldrsh. */
+                asm("" ::: "memory");
+                m = target->max_hp;
                 heal += m * 2 / 5;
             } else if (action->effect == 71) {
-                maxv = target->max_hp;
                 maxu = (u16)target->max_hp;
+                /* FAKEMATCH: barrier; the same for case 71 (90 to 82). */
+                asm("" ::: "memory");
+                maxv = target->max_hp;
                 heal += maxv * 7 / 10;
             } else if (action->effect == 70) {
                 maxu = (u16)target->max_hp;
@@ -1162,12 +1184,16 @@ after_power:
                 maxu = (u16)target->max_pp;
                 heal += (s16)maxv / 10;
             } else if (action->effect == 78) {
-                maxv = target->max_pp;
                 maxu = (u16)target->max_pp;
+                /* FAKEMATCH: barrier; the same for case 78 (82 to 76). */
+                asm("" ::: "memory");
+                maxv = target->max_pp;
                 heal += maxv * 3 / 10;
             } else {
-                maxv = target->max_pp;
                 maxu = (u16)target->max_pp;
+                /* FAKEMATCH: barrier; the same for the 7% (76 to 72). */
+                asm("" ::: "memory");
+                maxv = target->max_pp;
                 heal += maxv * 7 / 100;
             }
             if (heal > (s16)maxu)

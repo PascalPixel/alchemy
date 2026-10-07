@@ -46,10 +46,14 @@ void UiWork_SetParamNibbleFar(s32 value);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x0, s32 y0, s32 x1, s32 y1);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 
-#if EDITION_INTERNATIONAL
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
+#if EDITION_INTERNATIONAL
+#define CURSOR_WIDTH 6
+#else
+#define CURSOR_WIDTH 5
+#endif
 #undef Djinn_DeactivateFar
 #define Djinn_ActivateFar ((s32 (*)(s32, s32, s32))Djinn_ActivateFar)
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
@@ -130,8 +134,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         source_cursor = state->selection[0];
         fromX = (u16)__umodsi3(source_cursor, 10);
         fromY = (u16)__udivsi3(source_cursor, 10);
-        Menu_DrawAtWindowOffset(state->list_window, fromX * 7 + 1, fromY + 2, 6, 1, 14);
-        UiWindow_ApplyRectAtObjectOrigin(state->list_window, fromX * 7 + 1, 2, 6, 7, 6);
+        Menu_DrawAtWindowOffset(state->list_window, fromX * 7 + 1, fromY + 2, CURSOR_WIDTH, 1, 14);
+        UiWindow_ApplyRectAtObjectOrigin(state->list_window, fromX * 7 + 1, 2, CURSOR_WIDTH, 7, 6);
         for (n = 0; n < state->owner_count; n++) {
             if (n == state->selected_column[0]) {
                 if (state->pair_entries[0] & 0x8000)
@@ -240,11 +244,15 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             RenderOutput_ClearListFar(state->list_window);
             if (sel != -1) {
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgUnleashEffect, state->list_window, 0, 80);
+#if EDITION_INTERNATIONAL
                 UiWindow_ClearInteriorTilesFar(state->list_window, 0, 96, 224, 104);
                 UiText_DrawCharacterAtOffsetFar(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + (s32)MsgDjinnEffect, state->list_window, 0, 96);
+#else
+                UiText_DrawResourceFar(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + (s32)MsgDjinnEffect, state->list_window, 0, 96);
+#endif
             }
             if (!(buf[x] & 1))
-                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 14);
+                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, CURSOR_WIDTH, 1, 14);
             gWindowWork->dirty = 1;
         }
         if (buf[x] & 1)
@@ -542,7 +550,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 redraw = 1;
             } else {
                 result = 10;
-                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
+                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, CURSOR_WIDTH, 1, 15);
                 AudioCommand_PlayFar(112);
                 break;
             }
@@ -551,7 +559,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             AudioCommand_PlayFar(111);
             if (buf[x] & 4)
                 continue;
-            Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
+            Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, CURSOR_WIDTH, 1, 15);
             if (buf[x] & 4)
                 continue;
             if (buf[x] & 1) {
@@ -575,7 +583,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             AudioCommand_PlayFar(111);
             if (buf[x] & 4)
                 continue;
-            Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
+            Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, CURSOR_WIDTH, 1, 15);
             y++;
             count = lists->list.counts[x];
             if (count == 0)
@@ -594,7 +602,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         if (repeat & 0x20) {
             AudioCommand_PlayFar(111);
             if (!(buf[x] & 4))
-                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
+                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, CURSOR_WIDTH, 1, 15);
             x--;
             x = Menu_GetModuloOfSum(x, state->owner_count);
             if (mode == 0) {
@@ -616,7 +624,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         if (repeat & 0x10) {
             AudioCommand_PlayFar(111);
             if (!(buf[x] & 4))
-                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, 6, 1, 15);
+                Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, CURSOR_WIDTH, 1, 15);
             x++;
             x = Menu_GetModuloOfSum(x, state->owner_count);
             if (mode == 0) {
@@ -649,7 +657,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 }
 #undef Djinn_ActivateFar
 #define Djinn_DeactivateFar ((void (*)(s32,s32,s32))Djinn_DeactivateFar)
-#endif
 
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {

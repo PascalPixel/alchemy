@@ -24863,7 +24863,7 @@ msgctxt "MsgDeriHeyaBoringVillage"
 msgid "06213"
 msgstr "Daila's probably pretty{line_break}boring for travelers.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLookItSMenardiS"
 msgid "06214"
 msgstr "Look...{line_break}It's Menardi's ship!{end_wait}"
 
@@ -24955,11 +24955,11 @@ msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06236"
 msgstr "It was a good raid, but{line_break}after all that work, we{line_break}didn't find a thing...{page_break}I wonder what happened{line_break}to those people who fled{line_break}from the jail we broke into.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheDoorIsHeldClosed"
 msgid "06237"
 msgstr "The door is held closed{line_break}by a powerful force.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWellThereSNoPoint"
 msgid "06238"
 msgstr "Well, there's no point{line_break}in hanging around here{line_break}all day.{page_break}Let's go see about{line_break}finding ourselves a{line_break}ship we can use.{end_wait}"
 
@@ -33999,7 +33999,7 @@ msgctxt "MsgFieldHmIWonderIfThe"
 msgid "08497"
 msgstr "Hm... I wonder if the tidal{line_break}wave might have been caused{line_break}by an undersea eruption...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyShipAtLongLast"
 msgid "08498"
 msgstr "My ship! At long last...{line_break}I have returned to my ship.{end_wait}"
 
@@ -34191,11 +34191,11 @@ msgctxt "message"
 msgid "08545"
 msgstr "Oh, thank you!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThenLetSWasteNo"
 msgid "08546"
 msgstr "Then let's waste no time!{line_break}We should set out for{line_break}Madra at once!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAtLastIMBack"
 msgid "08547"
 msgstr "At last, I'm back on my ship.{end_wait}"
 
@@ -39631,7 +39631,7 @@ msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "09905"
 msgstr "All the people in town think{line_break}they can live without ever{line_break}having to work again.{page_break}They've quit their jobs,{line_break}and they rely too heavily{line_break}on Briggs's find.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHoldOnToThatTiller"
 msgid "09906"
 msgstr "Hold on to that tiller!{line_break}Do you want us to get{line_break}swallowed by the waves!?{end_wait}"
 

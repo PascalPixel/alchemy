@@ -25955,7 +25955,7 @@ msgctxt "MsgDeriHeyaBoringVillage"
 msgid "06486"
 msgstr "デリィは たびの戦士には{line_break}きっと たいくつであろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLookItSMenardiS"
 msgid "06487"
 msgstr "見よ これは・・・{line_break}メナーディたちの船じゃ!{end_wait}"
 
@@ -26047,11 +26047,11 @@ msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06509"
 msgstr "あれだけの さわぎがおきて{line_break}なにもないなんて・・・{line_break}おかしいと おもったよ{page_break}そうだ オレたちがこわした{line_break}ろうやからにげたヤツ・・・{line_break}どこに行っただろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheDoorIsHeldClosed"
 msgid "06510"
 msgstr "とびらは ふしぎな力で{line_break}かたく とざされている。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWellThereSNoPoint"
 msgid "06511"
 msgstr "いつまで ここにいても{line_break}じかんがムダなだけじゃ。{page_break}さあ 船を手に入れるため{line_break}出発するとしよう。{end_wait}"
 
@@ -35203,7 +35203,7 @@ msgctxt "message"
 msgid "08798"
 msgstr "まさか あの時の大つなみは{line_break}海ていの火山がばくはつして{line_break}おきたものだったのかな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyShipAtLongLast"
 msgid "08799"
 msgstr "船だ ボクの船に・・・{line_break}とうとう かえってきたぞ。{end_wait}"
 
@@ -35395,11 +35395,11 @@ msgctxt "message"
 msgid "08846"
 msgstr "わあ ありがとう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThenLetSWasteNo"
 msgid "08847"
 msgstr "マドラの町長のいえに行こうよ{line_break}それから出発だ {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAtLastIMBack"
 msgid "08848"
 msgstr "とうとう 船にもどってきた。{end_wait}"
 
@@ -35431,7 +35431,7 @@ msgctxt "message"
 msgid "08855"
 msgstr "それじゃ くろすいしょうを{line_break}船に セットするよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTakeTheTiller"
 msgid "08856"
 msgstr "カジはキミがとれよ {actor_name:5}!{end_wait}"
 
@@ -40835,7 +40835,7 @@ msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "10206"
 msgstr "はたらかずとも くらしていけると{line_break}村の者たちが おもってしまって{line_break}みんな はたらくのをやめたのです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHoldOnToThatTiller"
 msgid "10207"
 msgstr "しっかり そうじゅうしてよ{line_break}もうちょっとで うずしおに{line_break}のまれるところだったじゃない。{end_wait}"
 

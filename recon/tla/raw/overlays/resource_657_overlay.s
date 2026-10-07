@@ -161,7 +161,7 @@ Func_02000168:
 	pop {pc}
 	.2byte 0x0000
 .L_02008184:
-	.4byte 0x0000185d
+	.4byte MsgFieldTheDoorIsHeldClosed
 	.section .text.x02008188,"ax",%progbits
 	.global Func_02000188
 	.thumb_func
@@ -775,7 +775,7 @@ Func_020002cc:
 .L_020086dc:
 	.4byte 0x021e0000
 .L_020086e0:
-	.4byte 0x0000216b
+	.4byte MsgFieldTakeTheTiller
 	.section .text.x020086e4,"ax",%progbits
 	.global Func_020006e4
 	.thumb_func
@@ -1207,7 +1207,7 @@ Func_020006e4:
 	bl ObjectMotion_ResetAndSetPosition
 	b .L_02008b28
 .L_02008b10:
-	.4byte 0x000026b2
+	.4byte MsgFieldHoldOnToThatTiller
 .L_02008b14:
 	.4byte Data_020024b4
 .L_02008b18:
@@ -1802,7 +1802,7 @@ Func_02000ce0:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200904c:
-	.4byte 0x00001846
+	.4byte MsgFieldLookItSMenardiS
 .L_02009050:
 	.4byte 0x00019999
 .L_02009054:
@@ -1937,7 +1937,7 @@ Func_02001074:
 .L_02009170:
 	.4byte gPartyState
 .L_02009174:
-	.4byte 0x0000185e
+	.4byte MsgFieldWellThereSNoPoint
 	.section .text.x02009178,"ax",%progbits
 	.global Func_02001178
 	.thumb_func
@@ -2306,7 +2306,7 @@ Func_0200128c:
 .L_020094b0:
 	.4byte 0x00019999
 .L_020094b4:
-	.4byte 0x00002163
+	.4byte MsgFieldAtLastIMBack
 .L_020094b8:
 	.4byte Data_02002120
 .L_020094bc:
@@ -2598,7 +2598,7 @@ Func_020014c0:
 	strh r3, [r2]
 	b .L_020097ca
 .L_02009770:
-	.4byte 0x00002132
+	.4byte MsgFieldMyShipAtLongLast
 .L_02009774:
 	.4byte 0x00026666
 .L_02009778:
@@ -3356,7 +3356,7 @@ Func_02001da0:
 .L_02009e94:
 	.4byte gPartyState
 .L_02009e98:
-	.4byte 0x00002162
+	.4byte MsgFieldThenLetSWasteNo
 	.section .rodata.x0200a0dc,"a",%progbits
 	.global Data_020020dc
 Data_020020dc:

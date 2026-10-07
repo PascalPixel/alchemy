@@ -1,6 +1,22 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 919, common 645, differ 575; frame 372
+ * Native 946 instructions, draft 919, common 649, differ 567; frame 372
  * as native's.
+ * Session 4: each tile loop (both page-tile loops and the highlight loop)
+ * declares its own tile: 575 -> 567. Diagnosed with flow.c's weights
+ * (refs count loop_depth + 1 from the CFG's natural loops, goto loops
+ * included) and global.c's find_reg: index (126 refs, 510 insns, 14 calls,
+ * 1.482) is allocated before the column element (1.407), takes r7 and
+ * leaves element the caller-saved r4. Native's scan counter and column
+ * element share r7, which one element for both gives (element 37 refs,
+ * 88 insns, 2.10, takes r7), but then index goes to r8, 835: the
+ * first page-tile loop's tile (9 refs, 16 insns, 1.69) takes r4 first
+ * and blocks caller-saves. With that tile's test removed (diagnostic
+ * only) index takes r4 as native's, 697. Native's tile is r1 and the
+ * loop quotient (count + 3) / 4 r0; in the draft the quotient (9 refs,
+ * 11 insns, 2.45) is allocated before tile and takes r1, so tile falls
+ * to r4. Shared element with the two page loops sharing one tile 835;
+ * page tile as if/else or a conditional argument 821 (with shared
+ * element).
  * Session 3, third step: the highlight loop's test written
  * (1 << element & mask) == 0 keeps native's movs 1; lsls; ands; cmp, where
  * (mask & (1 << element)) == 0 is folded to (mask >> element) & 1 (asrs):
@@ -201,7 +217,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     struct MenuSprite *sprite;
     const u8 *required, *supply;
     s32 used, element;
-    s32 id, tile, affordable;
+    s32 id, affordable;
     s32 pressed, repeated, result;
     s32 index;
 
@@ -338,6 +354,8 @@ loop:
                 drawn_page = page;
             }
             if (count > 4) {
+                s32 tile;
+
                 for (index = 0; index < (count + 3) / 4; index++) {
                     tile = index + SUMMON_PAGE_TILE;
                     if (index == page / 4)
@@ -364,7 +382,7 @@ loop:
         Runtime_PushSlotEntry((s32 *)&cursor, 242);
         affordable = gFrameCount & 8;
         {
-            s32 element;
+            s32 element, tile;
 
             for (element = 0; element <= 3; element++) {
                 tile = 15 - (affordable != 0);
@@ -374,6 +392,8 @@ loop:
             }
         }
         if (count > 4) {
+            s32 tile;
+
             for (index = 0; index < (count + 3) / 4; index++) {
                 tile = index + SUMMON_PAGE_TILE;
                 if ((gFrameCount & 15) <= 11 && index == page / 4)

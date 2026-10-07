@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 196 of 2455 (listing 2455, draft 2453, common 2356).
+/* 080ea0d8: differ 154 of 2455 (listing 2455, draft 2455, common 2378).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -55,6 +55,10 @@
  *   plus 184, as the native), not the folded literal (238).
  * - The particle placement writes place2[0] before place2[1] = 0xff0000:
  *   the constant's shorter life keeps loop.c from hoisting it (196).
+ * - The frame <= 63 block picks its sheet with if-else (the then arm becomes
+ *   the default, as the native's ble skips the other) and draws at
+ *   top - 24 and top - 1 from top = frame - 4: the else join ends CSE's
+ *   block, so top stays in r8 and top - 1 is (top - 24) + 23 (154).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -645,22 +649,24 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame <= 63) {
-            u8 *sheet = work->sheet + 0x4000;
-            s32 top = frame - 28;
-            if ((frame & 7) > 3) {
+            u8 *sheet;
+            s32 top = frame - 4;
+            if ((frame & 7) < 4) {
+                sheet = work->sheet + 0x4000;
+            } else {
                 sheet = work->sheet + 0x4240;
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top - 24 + 24, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top - 24, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top - 24, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top + 23, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top - 1, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top + 23, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top - 1, 24, 24);
             Runtime_ReleaseHeapBlock(47);
         }
 

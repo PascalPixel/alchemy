@@ -1,4 +1,16 @@
 /* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1665.
+ * Shadow follow-ups, none kept: observing the whole depth array in the
+ * memory input2037/1805; matrix local inside the draw2040/1808/frame772;
+ * named point pointer2039/1807, opaque before projection2041/1819, short
+ * fixed-r4 copy2043/1821, ordinary register keyword2039/1807. The fixed
+ * trial copies r4 back to a saved register rather than spilling around the
+ * call. Unsigned inline matrix arithmetic is unchanged1665; distributing
+ * the shift/add gives2035/1663 but constructs its extra constant inside
+ * the loop, not native's advancing value. Function-scope mat2040/1808,
+ * an explicit packed counter2040/1800, both frame772. Matrix-first OR also
+ * restores its induction but spills2040/1808/frame772; matrix-last OR is
+ * unchanged2033/1665. Native's point pointer, matrix and depth-address
+ * lifetimes must be recovered together; no additional binding is kept.
  * Shadow depth keeps native's two stores: projected depth first, then depth
  * plus the die's height. Plain consecutive assignments delete the first
  * store. A memory-input boundary preserves it (2034/1670), but reloading

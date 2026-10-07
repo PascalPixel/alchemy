@@ -60,6 +60,28 @@ fn prepare(here: &Path, main: &Path) -> Result<(), String> {
         // cp -c clones on APFS, so a copy costs no space until it changes.
         let parent_arg = format!("{}/", parent.display());
         run_in(here, "cp", &["-c", "-R", &source.to_string_lossy(), &parent_arg])?;
+        drop_maps(&here.join(&cache))?;
+    }
+    Ok(())
+}
+
+/// Removes the copied linker maps under `dir`: they name the main checkout's
+/// objects by absolute path, and the link cache would otherwise keep them, so
+/// the count would read the main checkout's objects. Without them the first
+/// build relinks here.
+fn drop_maps(dir: &Path) -> Result<(), String> {
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return Ok(());
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            if path.file_name().is_some_and(|name| name == "overlays") {
+                drop_maps(&path)?;
+            }
+        } else if path.extension().is_some_and(|ext| ext == "map") {
+            std::fs::remove_file(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+        }
     }
     Ok(())
 }
@@ -90,6 +112,21 @@ mod tests {
         for edition in ["tbs-ja", "tbs-en", "tbs-it", "tla-ja", "tla-en", "tla-it"] {
             assert!(caches.contains(&format!("out/{edition}")), "{edition}");
         }
+    }
+
+    #[test]
+    fn copied_maps_are_dropped_so_the_first_build_relinks() {
+        let dir = tempfile::tempdir().unwrap();
+        let edition = dir.path().join("out/tbs-en");
+        std::fs::create_dir_all(edition.join("overlays")).unwrap();
+        for file in ["tbs-en.map", "tbs-en.gba", "overlays/resource_370.map", "overlays/resource_370.lz"] {
+            std::fs::write(edition.join(file), "x").unwrap();
+        }
+        drop_maps(&edition).unwrap();
+        assert!(!edition.join("tbs-en.map").exists());
+        assert!(!edition.join("overlays/resource_370.map").exists());
+        assert!(edition.join("tbs-en.gba").exists());
+        assert!(edition.join("overlays/resource_370.lz").exists());
     }
 
     #[test]

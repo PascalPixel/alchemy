@@ -9,6 +9,27 @@
  * swapped) and code = 0 set before Runtime_BumpAllocate where native
  * sets it after.
  *
+ * Session 8 2026-10-07: (s8)m < 0 for the second tests on 40: 182 (one
+ * ldrsb for both tests). The CSE1 dump's block list shows every path
+ * from the list's labels (the do-while(0) start and each skipped
+ * then-block) reaching each second test with the first then-block
+ * AROUND (the 8th entry from the list's start), so PATHLENGTH does not
+ * end it. Even without CSE1 the merge would follow: gcse.c's
+ * want_to_gcse_p takes any expression but a register or constant, and
+ * the first test's (ashift m 24) dominates the second's with m unchanged,
+ * so PRE deletes the second. Native's first test therefore shifted no
+ * m at GCSE time: its sign extension came from a second QI read of the
+ * field that CSE's LOAD_EXTEND_OP lookup did not fold into m's subreg,
+ * and combine then put that read (sign_extend mem, at the ashiftrt)
+ * after m's ldrb. Diagnostics: each first test in do { } while (0) 182
+ * (jump1 drops the empty loop's notes, so no NOTE_INSN_LOOP_END ends
+ * the path); attack only as s32 t = turns, if (t != 0 && (s8)(m = field)
+ * > 0) then if (t != 0 && (s8)m < 0), 91 (jump1 threads the t == 0 jump
+ * past the second then-block and deletes the second t test, so the
+ * label is used once again before CSE1); s32 t = field, u8 m = field,
+ * t > 0 then (s8)m < 0 on 40, 643. Not found: a source whose second read
+ * of the field follows m's read without the fold.
+ *
  * Session 7 2026-10-07: the condition loads as a plain
  * for (j = 0; j < i; j++) f(sel[j], tbl[j]) 59 -> 40: loop.c reduces
  * both addresses and reverses j itself (native's i > 0 guard, count-down

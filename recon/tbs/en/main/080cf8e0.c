@@ -1,4 +1,35 @@
-/* Draft: native 670 instructions, draft 671, common 555, differ 231.
+/* Draft: native 670 instructions, draft 671, common 572, differ 197.
+ * Sixth pass (2026-10-07): native's delay is loop.c's reduced giv of k * 8,
+ * not a variable. The draft writes k * 8 inline (no delay local).
+ * - Reducing it needs benefit above the add cost (2 - 2 = 0 for one k << 3,
+ *   "not worth while, 0 vs 167"); two separate k << 3 givs combine (2 + 2 - 2)
+ *   and are reduced. So native's step, (frame - k * 8) / 3, computes k << 3
+ *   afresh: CSE pass 1 did not carry the loop top's k << 3 past the hit
+ *   block (frame == k * 8 + 17). With the flush there, delay and the shot
+ *   pointer take native's slots (sp+12 below sp+16, giv pseudos made after
+ *   shot's) and native's tail order (shot += 448, delay += 8, k++).
+ * - Native's variant test and EffectPosition_ApplyBaseAndYOffset argument
+ *   use the reduced shot giv (reloaded from sp+16), not the shot pointer
+ *   in r7: gShots + k * 448 is also recomputed there; written as
+ *   gShots[k * 16] after the flush, they match (205 -> 203).
+ * - The burst address's lost group << 3 fold (below) is the same lost CSE
+ *   knowledge in the same region; one natural cause probably explains all
+ *   three. Not found: a split frame test 520, a for loop without the flush
+ *   476, shot declared inside the variant block 201.
+ * - Frame slots: camera + 12 (expression 92) and k << 2 (expression 133)
+ *   share GCSE hash bucket 50, so PRE made camera + 12's reaching reg first
+ *   (sp+20 above k << 2). Declaring camera after source (one pseudo later,
+ *   bucket 51) gives native's order, k << 2 at sp+24 and camera->pos at
+ *   sp+20 (203 -> 197).
+ * Remaining at 197, besides the two flushes: reload rotation from the
+ * burst count's SevenMode_Records load (native: address r0, index r1; the
+ * draft's address pseudo takes r3, the index r1) through the burst block
+ * and the k-loop tail; the draw loop's r8/r9 pool loads and flip << 2 in
+ * r7; one branch two bytes longer (b.n +784 vs +782).
+ * Sixth-pass trials: k * 8 inline without the step flush 467; with it 205;
+ * ApplyBase(&gShots[k * 16]) 203; flush moved before the variant test with
+ * gShots[k * 16].variant 203; camera after source 197; unused delay
+ * removed 197; without the burst flush 253.
  * Fifth pass (2026-10-06): delay += 8 before k++ (232 -> 231, and 273 ->
  * 269 without the asm; native's tail updates the shot pointer, then delay,
  * then k). The burst address
@@ -179,12 +210,11 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     s32 frame;
     s32 k;
     s32 total;
-    struct BattleCamera *camera;
     struct MotionObject *source;
+    struct BattleCamera *camera;
     u8 *palette;
     s32 i;
     s32 height;
-    s32 delay;
 
     heap_cache = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
     cursor = heap_cache;
@@ -275,21 +305,24 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         k = 0;
         if (work->effect->count != 0) {
-            delay = 0;
             do {
-                if (frame >= delay) {
+                if (frame >= k * 8) {
                     struct EffectStep *shot = &gShots[k * 16];
 
-                    if (frame == delay + 17) {
+                    if (frame == k * 8 + 17) {
                         ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
                         BattleEventRuntime_BeginPhaseFar(133);
                     }
-                    if (shot->variant >= 0) {
-                        s32 step = (frame - delay) / 3;
+                    /* Diagnostic, not admissible as is (see header): native recomputes
+                       k << 3 and gShots + k * 448 after the hit block (205 -> 197 with
+                       the gShots[k * 16] forms; 231 -> 205 alone). */
+                    __asm__ __volatile__("" ::); /* FAKEMATCH: flushes CSE so step's k * 8 stays a separate giv */
+                    if (gShots[k * 16].variant >= 0) {
+                        s32 step = (frame - k * 8) / 3;
 
                         if (step > 9)
                             step = 9;
-                        EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)&gShots[k * 16], &position);
                         position.x >>= 1;
                         if (step > 4)
                             draw[0](canvas, work->sheet + step * 768, position.x - 16, position.y - 12, 32, 24);
@@ -332,7 +365,6 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                         }
                     }
                 }
-                delay += 8;
                 k++;
             } while (k != work->effect->count);
         }

@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3448, common 3336,
- * differ 226.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3348,
+ * differ 204.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -104,7 +104,17 @@
  * group the second test goes early and 409 becomes a reload in r2. Every
  * split of the six into two groups that parts 408 from 410 gives 226;
  * 410 and 408 together in a group of their own 290, 410 alone 322, 408
- * alone 341 (a lone case's rate is set before its test). */
+ * alone 341 (a lone case's rate is set before its test).
+ * The weapon case's halving matches as the else of the half == 2 test
+ * (if (half == 2) scale = 0; else scale = def / 2;), 204 (draft 3450,
+ * common 3348): the else starts at a label, so combine no longer knows
+ * def is not negative and keeps the signed shift sequence, and the
+ * compiler still emits the halving before the test as the listing does.
+ * In the same order as before, def / 2, scale /= 2 with or without
+ * def, the field divided directly, def as u16, or half == 1 and
+ * half == 2 tests all stay logical (226 or worse); def as s16 276.
+ * Against 204, in the heal: case 76 (and 71) reading max_hp straight into
+ * the product, or maxu read after the add, 239 to 241 (draft 3451). */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -472,9 +482,10 @@ after_power:
             def = target->defense;
             scale = def;
             if (half != 0) {
-                scale = (u32)def >> 1;
                 if (half == 2)
                     scale = 0;
+                else
+                    scale = def / 2;
             }
             pass = 1;
             do {

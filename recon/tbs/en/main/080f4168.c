@@ -1,4 +1,21 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2036, differ 1776.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2036, differ 1754.
+ * Affine obj now has block scope: 1776 -> 1754; b/c/d halfword pointers
+ * take native's r5/r4/r0. The first pointer and offset remain swapped,
+ * r6/r7 instead of native's r7/r6. Sharing obj across the earlier object
+ * loops remains better: scoping every copy shrinks the frame to 764 and
+ * scores 2039/1935. Added affine input pa: 1766; pa at function scope:
+ * 1766; fixed r7 temporary even with a regular copy-back corrupts the
+ * depth giv in generated code, rejected. Explicit offa counter: 1758;
+ * omit its low-register input: 1884 and frame 764; input-only pointer
+ * constraints: 1758 with pa/pb/pc/pd in r7/r6/r5/r4 and offa in r0.
+ * Input order does not change that; explicit offa with input-only gives
+ * 1758 with the same register order as the output form. Not kept.
+ * Fade-out counter increment moved before the second palette call or into
+ * the scale expression: 1776 unchanged. A captured next counter before
+ * WaitFrames: 1796, bound to r7: 1772; a loop-local scale: 1776. Not kept.
+ * Fill count increment before the last object store: 1847, loses off1 giv.
+ * Keep obj live through the count increment: 1830, fill body matches but
+ * earlier allocation regresses; fill-local obj: 1847. Not kept.
  * Session 2026-10-07 (completion queue 2, affine continuation): the frame
  * now matches native's 768. Four ordinary halfword pointers constrained to
  * low registers, with the first object offset also low at the loop boundary,
@@ -837,6 +854,7 @@ void LuckyDice_Run(void)
         }
 
         {
+            struct LuckyDiceSprites *obj;
             volatile u16 *pa = &affine_a;
             volatile u16 *pb = &affine_b;
             volatile u16 *pc = &affine_c;

@@ -9891,7 +9891,7 @@ msgctxt "message"
 msgid "02470"
 msgstr "PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02471"
 msgstr "Attacco"
 
@@ -11619,19 +11619,19 @@ msgctxt "MsgPsynergyLost"
 msgid "02902"
 msgstr "* Psinergia persa"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "02903"
 msgstr "Piazza"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "02904"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "02905"
 msgstr "Dai"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "02906"
 msgstr "Scambia"
 
@@ -11735,7 +11735,7 @@ msgctxt "message"
 msgid "02931"
 msgstr "Dare via"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "02932"
 msgstr "Va bene così?"
 
@@ -12667,11 +12667,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Dopo aver deciso a chi{line_break}dare il Djinn, piazzalo{line_break}su quel personaggio.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03165"
 msgstr "Quando cambia la tua{line_break}classe, può modificarsi{line_break}anche la tua Psinergia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03166"
 msgstr "Piazzare un Djinn cambia{line_break}i tuoi attributi e{line_break}forse anche la classe.{end_wait}"
 

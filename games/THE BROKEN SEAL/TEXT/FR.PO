@@ -9891,7 +9891,7 @@ msgctxt "message"
 msgid "02470"
 msgstr "PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02471"
 msgstr "Attaque"
 
@@ -11619,19 +11619,19 @@ msgctxt "MsgPsynergyLost"
 msgid "02902"
 msgstr "* Psynergie perdue"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "02903"
 msgstr "Lier"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "02904"
 msgstr "En attente"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "02905"
 msgstr "Donner"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "02906"
 msgstr "Echanger"
 
@@ -11735,7 +11735,7 @@ msgctxt "message"
 msgid "02931"
 msgstr "Donner"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "02932"
 msgstr "Confirmer?"
 
@@ -12667,11 +12667,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Après avoir choisi qui{line_break}récupère le Djinn, vous{line_break}pouvez le lier.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03165"
 msgstr "Quand votre classe change,{line_break}votre Psynergie peut{line_break}également changer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03166"
 msgstr "Lier un Djinn change vos{line_break}caractéristiques et peut{line_break}changer votre classe.{end_wait}"
 

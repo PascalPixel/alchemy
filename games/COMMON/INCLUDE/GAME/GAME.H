@@ -78,7 +78,7 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 s32 Owner_GetResistanceValue(s32 owner, s32 index);
 void Owner_InitRecords(void);
 s32 Owner_LookupFourColumnTable(s32 row, s32 column);
-s32 OwnerAction_RunCompareLoop(s32 mode);
+s32 OwnerAction_RunCompareLoop(u32 mode);
 void Party_Apply(s32, u16 *);
 void Party_ApplyStatePreset(void);
 s32 Party_CheckMemberValueTotal(s32 id);

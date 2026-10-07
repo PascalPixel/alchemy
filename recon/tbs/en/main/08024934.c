@@ -1,7 +1,12 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 859, differ 172; frame 372
+ * Native 946 instructions, draft 944, common 868, differ 154; frame 372
  * as native's, and every compiler temporary's slot now at native's offset.
- * Session 9: the highlight loop's blink is a block local beside its
+ * Session 9: the two page changes set page before row again (page = 0;
+ * row = preferred and page -= 4; row = preferred), as session 4's base
+ * had them before a merge reversed them: 172 -> 154. From 172: the
+ * initial cell reads as page, mask = 0, preferred, row 180 (with the page
+ * order as well 162).
+ * The highlight loop's blink is a block local beside its
  * element and tile, not the function's affordable: 198 -> 172, blink r6
  * and element r5 as native's. From 198: the handle loop indexed 237 (its
  * body then matches, base r7, offset from 8, mask r8, but the entry jump
@@ -681,8 +686,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             Runtime_SetMainState19();
             if (page + 4 >= count) {
                 if (page != 0) {
-                    row = preferred;
                     page = 0;
+                    row = preferred;
                 }
             } else {
                 page += 4;
@@ -697,8 +702,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             AudioCommand_PlayFar(111);
             Runtime_SetMainState19();
             if (page != 0) {
-                row = preferred;
                 page -= 4;
+                row = preferred;
             } else {
                 page = ((count - 1) / 4) * 4;
                 row = preferred;

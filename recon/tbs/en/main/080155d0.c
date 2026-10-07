@@ -1,11 +1,32 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
- * Stock agbcc_arm (2026-10-07, completion session): listing 196, draft 196,
+ * Stock agbcc_arm (2026-10-07, completion session, latest): English listing
+ *   196, draft 196, common 179, differ 34. From76, tagged ofs/r3 gives72;
+ *   code/lr and col/lr give75 but remove the extra code copy. Separate
+ *   constrained narrow/r1 and wide/r0 rows restore the two stores and shared
+ *   width load; y/r7 plus a value boundary restore the loop allocation (46).
+ *   Tagged nextrow/r4 and column-reset boundaries restore row setup (42).
+ *   Pixel cell/r0, part/r3 and shift/r1 operands retain the native shift
+ *   before the VRAM-base add (34). Each is allocation or scheduling only.
+ *   Remaining: prologue scheduling, colour initialization, zero return,
+ *   first next-row pointer, and final next-row load/test scheduling.
+ *   DE/ES/FR/IT source branch: no English bounds/dakuten tests; any non-null
+ *   font selects the 8-pixel path, and both glyph paths read their own width.
+ *   Initially187 listing/186 draft/114 common/differ145 in all four; current
+ *   German comparison129. Japanese still needs its distinct source branch.
+ *   Additional trials from76: rows from glyph-end no change; volatile rows
+ *   152; isolated pixel-shift local274; narrow rows memory barrier104.
+ *   From46: ordinary nextrow local105; unbound row+1 asm operand110;
+ *   fixed nextrow used as the increment54; keep ordinary increment46,
+ *   then constrain column reset first42. Ordinary y68; r8 clobber60.
+ *   From34: scoped or statement-expression first-colour/r1 constraint46;
+ *   not retained. The original colour declarations remain.
+ * Stock agbcc_arm (2026-10-07, completion session, earlier): listing 196, draft 196,
  *   common 158, differ 76. x in native r9 gives 117 -> 97; width loaded in
  *   incoming r0 through a tagged local and empty constraint removes the
  *   window reload and puts idx in native ip (97 -> 82). Starting each pixel
- *   column before row calculations, as a while loop, gives 78; preserving
- *   condition codes across the width boundary gives 76.
+ *   column before row calculations, as a while loop, gives 78; a cc clobber
+ *   keeps the comparison after the width load and gives 76.
  *   Remaining: initial scheduling, code's r2/lr join, glyph address/width
  *   allocation and shared rows store, colour initialization, next-row
  *   scheduling, pixel address scheduling, and the last row-pointer reload.
@@ -21,6 +42,8 @@
  *   sub before ty 134; idx read/write in width barrier 124; cc clobber 76.
  *   From76: separate pos/part/shift locals in pixel macro 248; mask before
  *   destination declaration 282. Original pixel expression retained.
+ *   Three-minute prefix search, seed23/jobs2 with the width asm ignored:
+ *   only four distinct candidates compiled; no improvement over76.
  * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 138, differ 117.
  *   127 to 117: row = 0 first in the pass setup, before next and bits (permute's reorder);
  *   bits = rows[0] before next = rows + 1: no change (117).
@@ -98,6 +121,7 @@
  * wide glyph; x and the VRAM base swap r9 and sl; pass and row swap r1 and r2; colour constant
  * initialisation order. agscc ARM adds an APCS frame native lacks. */
 #include "TYPES.H"
+#include "EDITION.H"
 
 struct UiTextWindow {
     u8 unk0[10];
@@ -123,13 +147,23 @@ extern struct UiTextGlyph UiText_Glyphs[];
 #define UiText_PlotPixel(width, px, ty, sub, color) \
 { \
     u8 *vram = (u8 *)0x06002500; \
-    u16 *dst = (u16 *)((u32)(vram + ((px >> 3) * (width - 2) + ty) * 32) | ((sub | ((px & 7) >> 2)) << 1)); \
-    u32 mask = 15 << ((px & 3) * 4); \
+    /* FAKEMATCH: native computes the shift before adding the VRAM base; separate ordinary locals give 274 differences. */ \
+    register u32 cell asm("r0") = (px >> 3) * (width - 2) + ty; \
+    /* FAKEMATCH: native reuses r3 for the within-tile halfword. */ \
+    register u32 part asm("r3") = sub | ((px & 7) >> 2); \
+    /* FAKEMATCH: native replaces px with its nibble shift in r1. */ \
+    register u32 shift asm("r1") = (px & 3) * 4; \
+    u16 *dst; \
+    u32 mask; \
+    /* FAKEMATCH: keep the measured pixel shift before the VRAM-base add. */ \
+    asm("" : "+r"(cell) : "r"(part), "r"(shift)); \
+    dst = (u16 *)((u32)(vram + cell * 32) | (part << 1)); \
+    mask = 15 << shift; \
  \
     *dst = (*dst & ~mask) | (mask & color); \
 }
 
-s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *font)
+s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8 *font)
 {
     u16 *rows;
     s32 ret;
@@ -139,15 +173,26 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *f
     s32 bits;
     u32 idx;
     u32 row;
-    u32 code;
+    /* FAKEMATCH: native keeps the dakuten code in lr across the glyph join, avoiding the ordinary r2-to-lr copy. */
+    register u32 code asm("lr");
     u32 pass;
-    u32 col;
+    /* FAKEMATCH: native reuses lr for the column after the dakuten test. */
+    register u32 col asm("lr");
     struct UiTextGlyph *glyph;
     struct UiTextWideGlyph *wide;
-    u32 ofs;
+    /* FAKEMATCH: native retains the glyph offset in r3; ordinary allocation ties it to the return width in r0. */
+    register u32 ofs asm("r3");
     /* FAKEMATCH: native x uses r9; ordinary allocation swaps r9/sl in both paths (117 differences). */
     register u32 x asm("r9") = xpos;
+    /* FAKEMATCH: native y uses r7; constrained row pointers otherwise swap r7/r8 through both loops. */
+    register u32 y asm("r7") = ypos;
 
+    /* FAKEMATCH: keep y in its native register; without this boundary GCC also keeps ypos in r4 (51 differences). */
+    asm("" : "+r"(y));
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    width = win->width;
+    if (ch < 256 || font != 0) {
+#else
     idx = ch - 32;
     {
         /* FAKEMATCH: native width uses incoming r0; ordinary allocation reloads win and takes r2 (97 differences). */
@@ -159,19 +204,31 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *f
     if (idx > 111)
         return 1;
     if (ch < 256 || (font != 0 && ch - 222 < 2)) {
+#endif
         if (font != 0) {
             u8 *src = font + ch * 32;
             u32 c1 = 0x1111;
             u32 c3 = 0x3333;
             u8 *wp = UiSprite_CursorFrameTiles + 0x800;
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            s32 w = wp[ch - 32];
+#else
             s32 w = wp[idx];
+#endif
             u32 px;
             u32 sub;
             u32 color;
             u32 ty;
 
             for (row = 0; row < 8 && y + row < 32; row++) {
+                /* FAKEMATCH: native keeps the next row in r4 across the pixel loop; ordinary nextrow changes allocation (105). */
+                register u32 nextrow asm("r4");
                 col = 0;
+                /* FAKEMATCH: the native column reset precedes the next-row add. */
+                asm("" : : "r"(col));
+                nextrow = row + 1;
+                /* FAKEMATCH: native schedules next row before the tile coordinates; a source nextrow local gives 105 differences. */
+                asm("" : : "r"(nextrow));
                 ty = (y + row) >> 3;
                 sub = ((y + row) & 7) * 2;
                 while (col < 8) {
@@ -182,6 +239,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *f
                     if ((b & 13) == 1) {
                         color = (b & 15) == 1 ? c1 : c3;
                         px = x + col;
+                        /* FAKEMATCH: UiText_PlotPixel constrains the native shift-before-address order (42 to34). */
                         if (px >> 3 < 30)
                             UiText_PlotPixel(width, px, ty, sub, color);
                     }
@@ -190,16 +248,43 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *f
             }
             return w;
         }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        ofs = (ch - 32) * 26;
+#else
         code = ch - 222;
         ofs = idx * 26;
+#endif
         glyph = (struct UiTextGlyph *)((u8 *)UiText_Glyphs + ofs);
-        rows = glyph->rows;
+        {
+            /* FAKEMATCH: native narrow rows use r1 and are stored before the shared width load. */
+            register u16 *p asm("r1") = glyph->rows;
+            /* FAKEMATCH: retain the narrow rows register before the join. */
+            asm("" : "+r"(p));
+            rows = p;
+        }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
+#endif
     } else {
+#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
         code = ch - 222;
+#endif
         ofs = (ch - 32) * 32;
         wide = (struct UiTextWideGlyph *)((u8 *)UiText_Glyphs + ofs);
-        rows = wide->rows;
+        {
+            /* FAKEMATCH: native wide rows use r0 and are stored before the shared width load. */
+            register u16 *p asm("r0") = wide->rows;
+            /* FAKEMATCH: retain the wide rows register before the join. */
+            asm("" : "+r"(p));
+            rows = p;
+        }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
+#endif
     }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    ret = gw;
+#else
     gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
     if (code < 2) {
         x -= 3;
@@ -208,6 +293,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *f
     } else {
         ret = gw;
     }
+#endif
     for (pass = 0; pass < 4; pass++) {
         u16 *next;
         u32 ty;
@@ -234,12 +320,20 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *f
         bits = rows[0];
         bits <<= 16;
         while (y + row < 32) {
+            /* FAKEMATCH: native keeps the next row in r4 across the pixel loop; ordinary nextrow changes allocation (105). */
+            register u32 nextrow asm("r4");
             col = 0;
+            /* FAKEMATCH: the native column reset precedes the next-row add. */
+            asm("" : : "r"(col));
+            nextrow = row + 1;
+            /* FAKEMATCH: native schedules next row before the tile coordinates; a source nextrow local gives 105 differences. */
+            asm("" : : "r"(nextrow));
             ty = (y + row) >> 3;
             sub = ((y + row) & 7) * 2;
             while (col < 14) {
                 if (bits < 0) {
                     px = x + col;
+                    /* FAKEMATCH: UiText_PlotPixel constrains the native shift-before-address order (42 to34). */
                     UiText_PlotPixel(width, px, ty, sub, color);
                 }
                 if ((bits <<= 1) == 0)

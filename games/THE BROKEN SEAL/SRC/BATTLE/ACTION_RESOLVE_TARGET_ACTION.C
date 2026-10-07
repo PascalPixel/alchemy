@@ -1208,7 +1208,7 @@ after_power:
             break;
 
         case EFX_ATK_DOWN1:
-            target->attack_modifier += -1;
+            target->attack_modifier -= 1;
             CLAMP_MOD(target->attack_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
@@ -1217,7 +1217,7 @@ after_power:
             break;
 
         case EFX_ATK_DOWN2:
-            target->attack_modifier += -2;
+            target->attack_modifier -= 2;
             CLAMP_MOD(target->attack_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
@@ -1244,7 +1244,7 @@ after_power:
             break;
 
         case EFX_DEF_DOWN1:
-            target->defense_modifier += -1;
+            target->defense_modifier -= 1;
             CLAMP_MOD(target->defense_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
@@ -1253,7 +1253,7 @@ after_power:
             break;
 
         case EFX_DEF_DOWN2:
-            target->defense_modifier += -2;
+            target->defense_modifier -= 2;
             CLAMP_MOD(target->defense_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
@@ -1325,7 +1325,7 @@ after_power:
 
         case EFX_RES_DOWN2:
         {
-            target->res_modifier += -2;
+            target->res_modifier -= 2;
             if (-4 > target->res_modifier)
                 target->res_modifier = -4;
             if (target->res_modifier > 4)

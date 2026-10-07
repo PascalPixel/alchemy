@@ -1,5 +1,13 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * English prologue (2026-10-08): listing196, draft196, common190, differ12.
+ *   A single tagged incoming-y move restores its native position between
+ *   the register save and frame allocation (14 to12). Ordinary parameter
+ *   and register-lifetime forms below failed; splitting the y and font/x
+ *   boundaries, with or without memory clobber, stays14. The compiler's
+ *   scheduler records prove no stack dependency prevented this move: it
+ *   tied with the stack clobber at priority5 and picked the reversed order.
+ *   Remaining: width spill, first colour register, row reset, tail spill.
  * Further trials (2026-10-07): no improvement among all 5040 orders of
  *   seven English locals, or all six independent JA font-setup orders.
  *   JA const font colour69. EN long-lived colour/r1 gives76; direct mutable
@@ -45,7 +53,7 @@
  *   combined coordinate/ch memory boundary36; adding font/lr22; deferring
  *   coordinates until after font20, then ordinary x/y keeps20. Removed
  *   rejected devices. International branches remain separate and unchanged.
- * Stock agbcc_arm (2026-10-07, completion session, latest): English listing
+ * Stock agbcc_arm (2026-10-07, completion session, previous): English listing
  *   196, draft196, common189, differ14. A short incoming-x/r2 boundary
  *   retains x until font is loaded, restoring their native order (16 to14).
  *   Remaining: y copy versus frame allocation, width store versus bounds
@@ -429,7 +437,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     register u32 x asm("r9");
 #if defined(TBS_EDITION_EN)
     /* FAKEMATCH: native y uses r7; constrained row pointers otherwise swap r7/r8 through both loops. */
-    register u32 y asm("r7") = ypos;
+    register u32 y asm("r7");
 #else
     /* FAKEMATCH: continental native y uses r8; the English binding swaps r7/r8 through both loops (127 differences). */
     register u32 y asm("r8") = ypos;
@@ -438,6 +446,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     /* FAKEMATCH: native retains incoming x in r2 until after loading font from the stack. */
     register u32 xi asm("r2") = xpos;
 
+    /* FAKEMATCH: native copies incoming y to r7 before frame allocation; ordinary parameter/register forms and empty boundaries reverse this pair (14 differences, this copy gives12). */
+    asm("mov %0, %1" : "=r"(y) : "r"(ypos));
     /* FAKEMATCH: native moves y out of the incoming font register before preparing x. */
     asm("" : "+r"(y), "+r"(xi) : "r"(font));
     x = xi;

@@ -1,4 +1,4 @@
-/* 08026080: listing 1585, draft 1598, differ 669 (common 1257); both
+/* 08026080: listing 1585, draft 1597, differ 624 (common 1279); both
  * frames are 324 bytes. The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
@@ -15,15 +15,22 @@
  *   at sp+8), r6 joins the reload rotation as native (spread = 1 through
  *   r6), and the pending loop spills slot at sp+4 and caller-saves the
  *   &targetPos copy in r4 at sp+8 as native.
- * Next divergence: reload-time spill slots are ordered differently: the
- *   tbl address (sp+212) spills at sp+20 against native 36 and the ids
- *   address (sp+308) at 16 against native 28; head is at native 32.
+ * - the name drawing's unit as its own local who: 624 (declared after
+ *   unit or after pc, the same).
+ * Next divergence: reload-time spill slots below 48 are ordered
+ *   differently. Native (use counts): 12 selIds giv (4), 16 selSlot base
+ *   (2), 20 (3), 24 (8), 28 ids address sp+308 (21), 32 head (7), 36 tbl
+ *   address sp+212 (10), 40 and 44 (2 each); draft: 12 (7), 16 ids (22),
+ *   20 tbl (12), 24 (2), 28 (3), 32 (2), 36 (2), 40 (7), 44 (2). The draft
+ *   has no selIds giv: it shifts i each time.
  * Trials on the way: st alone 1186 (frame 320: one caller-save slot fewer);
  *   entry = &head[i] in the pending loop: alone 1149, with st 1046, with
  *   st and side 826 (so entry stays a stepped pointer); targetPos through
  *   a pointer tp (in the call argument, at the loop top, or before the
  *   loop): 1155 alone, 1044/1046/1036 with st and head[i], no change with
- *   side (dropped); unit without st on 669: 1041. Permuter 5 min over the
+ *   side (dropped); unit without st on 669: 1041; on 624, the name
+ *   character in nx instead of n 630, the pending loop counting with j
+ *   1119. Permuter 5 min over the
  *   pending loop (st and head[i], 1046): 18 candidates, no gain.
  * The pending loop still differs: native computes entry = head + 1 after
  *   the i < cnt guard and steps a selIds byte offset (from 2) spilled at
@@ -150,6 +157,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     u8 *pl;
     u8 *pp;
     u8 *pc;
+    struct BattleUnit *who;
 
     runtime = gBattleWork;
     cnt = 0;
@@ -517,17 +525,17 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     draw_name:
         if (spread == 0xFF)
             goto frame_tail;
-        unit = Owner_GetStateFar(ids[cursor]);
+        who = Owner_GetStateFar(ids[cursor]);
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
         namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
-        if (unit->class_id == 125 || unit->class_id == 122) {
+        if (who->class_id == 125 || who->class_id == 122) {
             width = 0x80E;
-            if (unit->class_id == 125)
+            if (who->class_id == 125)
                 width++;
             UiText_CopyMessageString(width, name, 14);
         } else {
             for (i = 0; i <= 13; i++) {
-                name[i] = n = unit->name[i];
+                name[i] = n = who->name[i];
                 if (!n)
                     break;
             }
@@ -548,7 +556,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         if (pending != 0) {
             entry = head + 1;
             for (i = 1; i < cnt; i++, entry++) {
-                slot =&tbl[selSlot[i]];
+                slot = &tbl[selSlot[i]];
                 BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
                 targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;

@@ -1,5 +1,5 @@
-/* 080d1714: differ 379 of 1481 instructions (1476 generated, common
- * 1289). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 378 of 1481 instructions (1477 generated, common
+ * 1290).Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -140,11 +140,14 @@
  *   alive = 0 after shake.x: 404; a block-local copy of draw_rectangle
  *   for the two-draw block: 379 (copy propagated away);
  *   threshold declared in the mark loop body: 379.
- * Remaining (379): the first draw shares one 48 for 48 - size and the
- * width argument (the native uses two reload registers, r3 and r7, as
- * for a spilled pseudo with a constant equivalence), and the two-draw
- * block keeps 48 in r4 across the first call where the native
- * rematerializes it and caller-saves the function pointer in r4; the
+ * - width = 48 set once before the frame loop, for the four draw
+ *   widths: a pseudo set once to a constant that global.c leaves
+ *   without a register, so reload rematerializes 48 at every use as
+ *   the native: 404; with (width - size) * 48 in the first draw too:
+ *   378, both single draws now exact.
+ * Remaining (378): the two-draw block reloads the function pointer
+ * from sp+84 for each call where the native loads it once into r4 and
+ * caller-saves it at sp+8 (a pseudo of its own with a hard register); the
  * distance loop's y square takes r7 where the native uses r2 (a
  * reload register: local-alloc puts the mul output on its own input,
  * and the earlyclobber reload rotates to another register); the wave
@@ -251,6 +254,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     s32 span;
     s32 dist;
     s32 alive;
+    s32 width;
     s32 heading[8];
     s32 radius[8];
     s32 spin[8];
@@ -320,6 +324,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         index++;
     } while (index != 64);
 
+    width = 48;
     frame = 0;
     do {
         if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
@@ -402,10 +407,10 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             draw_rectangle(
                 draw_destination,
                 &runtime->sheet[frame / 4 % 3 * 3072
-                    + (48 - size) * 48],
+                    + (width - size) * 48],
                 32,
                 112 - size,
-                48,
+                width,
                 size);
         }
 
@@ -419,14 +424,14 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                     + (64 - size) * 48],
                 32,
                 64 - size,
-                48,
+                width,
                 size);
         }
 
         if ((u32)(frame - 160) <= 239) {
             src = (u8 *)runtime + frame / 4 % 3 * 3072;
-            draw_rectangle(draw_destination, src, 8, 0, 48, 64);
-            draw_rectangle(draw_destination, src, 8, 64, 48, 64);
+            draw_rectangle(draw_destination, src, 8, 0, width, 64);
+            draw_rectangle(draw_destination, src, 8, 64, width, 64);
         }
 
         if (frame <= 159) {

@@ -11,7 +11,7 @@ s32 Func_02004534();
 s32 Func_0200446c();
 extern u8 gPartyState[];
 extern u8 MsgWeeeeWhatFunNowThat[];
-extern u8 MsgNowThatTheLighthouseIs[];
+extern u8 MsgScene6A8No117[];
 
 void Func_02000764(void)
 {
@@ -25,7 +25,7 @@ void Func_02000764(void)
         Call3(ObjectMotion_SetAngleToward, 0x10, FIELD_AT(gPartyState, s32, 532), 0);
         Call1(Func_0200451c, (s32)MsgWeeeeWhatFunNowThat);
     } else {
-        Call1(Func_0200451c, (s32)MsgNowThatTheLighthouseIs);
+        Call1(Func_0200451c, (s32)MsgScene6A8No117);
     }
     Call2(Func_02004534, 0x10, 0);
     if (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x166), s16, 0) == 0) {

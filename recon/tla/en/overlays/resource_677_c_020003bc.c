@@ -11,7 +11,7 @@ s32 Func_02000a18();
 s32 Func_02000a28();
 s32 Func_020009b8();
 extern u8 gPartyState[];
-extern u8 MsgItSABitStrange[];
+extern u8 MsgScene677No27[];
 
 void Func_020003bc(s32 a0)
 {
@@ -24,7 +24,7 @@ void Func_020003bc(s32 a0)
     } else {
         Func_020009b0();
         Call1(Func_02000a50, 0);
-        Call1(Func_02000a18, (s32)MsgItSABitStrange);
+        Call1(Func_02000a18, (s32)MsgScene677No27);
         Call2(Func_02000a28, a0, 0);
         Func_020009b8();
     }

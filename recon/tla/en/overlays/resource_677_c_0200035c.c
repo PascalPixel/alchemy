@@ -10,7 +10,7 @@ s32 Func_02000a18();
 s32 Func_02000a28();
 s32 Func_020009b8();
 extern u8 gPartyState[];
-extern u8 MsgIfYouReLookingFor[];
+extern u8 MsgScene677No25[];
 
 void Func_0200035c(s32 a0)
 {
@@ -22,7 +22,7 @@ void Func_0200035c(s32 a0)
     } else {
         Func_020009b0();
         Call1(Func_02000a50, 0);
-        Call1(Func_02000a18, (s32)MsgIfYouReLookingFor);
+        Call1(Func_02000a18, (s32)MsgScene677No25);
         Call2(Func_02000a28, a0, 0);
         Func_020009b8();
     }

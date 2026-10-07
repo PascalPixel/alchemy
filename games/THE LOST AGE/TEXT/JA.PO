@@ -14535,19 +14535,19 @@ msgctxt "message"
 msgid "03631"
 msgstr "まけー{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChooseYourParameters"
 msgid "03632"
 msgstr "パラメータセットのせんたくをするんだな{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatIsThis"
 msgid "03633"
 msgstr "なんだ ひやかしかい{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoSuch"
 msgid "03634"
 msgstr "そんなパラメータないぞ{line_break}すぎもとさんにきいてみなさい{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSettingsAre"
 msgid "03635"
 msgstr "せっていできたぞ{line_break}あとはお前のセッティングしだいだ{end_wait}"
 
@@ -20315,15 +20315,15 @@ msgctxt "MsgScene694No34"
 msgid "05076"
 msgstr "お客さん コインがたりないから{line_break}マッチングダイスは あそべないね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLinkWas"
 msgid "05077"
 msgstr "つうしんが せつだんされました。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAwaitingYourOpponent"
 msgid "05078"
 msgstr "あいてを まっています。{end_now}"
 
-msgctxt "message"
+msgctxt "MsgNoteYouCan"
 msgid "05079"
 msgstr "バトルステージでは{line_break}スリープきのうは 使えません{line_break}ちゅういして下さいね!{end_wait}"
 
@@ -20331,7 +20331,7 @@ msgctxt "message"
 msgid "05080"
 msgstr "たいせんけっかを きろくします{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBattleResultsWere"
 msgid "05081"
 msgstr "たいせんけっかを きろくしました。{end_wait}"
 
@@ -20339,19 +20339,19 @@ msgctxt "message"
 msgid "05082"
 msgstr "モンスターバトルのけっかを{line_break}きろくします{end_now}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleResults"
 msgid "05083"
 msgstr "モンスターバトルのけっかを{line_break}きろくしました。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWantToParticipate"
 msgid "05084"
 msgstr "せんしゅの方は にゅうじょう{line_break}サークルに お入りください!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWelcomeToBattle"
 msgid "05085"
 msgstr "戦いずきの つわものがつどう{line_break}バトルステージへ ようこそ!{page_break}ここでは ケーブルたいせんや{line_break}モンスターあいての バトルで{line_break}うでだめしが できるんだよ!{page_break}バトルがしたければ{line_break}うけつけの おねえさんに{line_break}こえをかけて下さいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPleaseSpeakTo"
 msgid "05086"
 msgstr "たいせんを する時は{line_break}わたしに こえをかけて下さい。{end_wait}"
 
@@ -20387,27 +20387,27 @@ msgctxt "message"
 msgid "05094"
 msgstr "モンスターのじゅんびはオーケーです{page_break}はやく あなたもじゅんびをすませて{line_break}にゅうじょうサークルに入って下さいね!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattlePlease"
 msgid "05095"
 msgstr "こんかいの かちすうは{line_break}{argument_signed_number}かいでした{page_break}また バトルをする時には{line_break}わたしに こえをかけて下さいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattleI"
 msgid "05096"
 msgstr "こんかいの かちすうは{line_break}{argument_signed_number}かいでした{page_break}うふふ ウチのモンスター{line_break}つよかったでしょう?{line_break}また ちょうせんして下さいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoodLuck2"
 msgid "05097"
 msgstr "それじゃ がんばって下さいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattle"
 msgid "05098"
 msgstr "こんかいの かちすうは{line_break}{argument_signed_number}かいでした{line_break}さいこうきろくです!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourOpponentHas"
 msgid "05099"
 msgstr "あら あいての方が{line_break}ちょうどいま きましたよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotBadWould"
 msgid "05100"
 msgstr "まあまあ やりますね{line_break}つぎの モンスターと{line_break}戦いますか?{end_now}"
 
@@ -20471,7 +20471,7 @@ msgctxt "message"
 msgid "05115"
 msgstr "キャー おみごと!!!{line_break}でも こんどのモンスターは{line_break}メチャクチャつよいですよ{page_break}もちろん 戦いますよね?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItSOur"
 msgid "05116"
 msgstr "オレたちの でばんだ{line_break}さあ行こう {actor_name:5}。{end_wait}"
 
@@ -20503,7 +20503,7 @@ msgctxt "message"
 msgid "05123"
 msgstr "いいですよ いっしょに{line_break}たたかいましょう {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOkWeRe"
 msgid "05124"
 msgstr "よし いいだろう {actor_name:5}{line_break}ここは きみにまかせたぞ。{end_wait}"
 
@@ -20535,7 +20535,7 @@ msgctxt "message"
 msgid "05131"
 msgstr "まっていろというのは もしかして{line_break}ぼくが たよりにならないという{line_break}いみじゃないですよね {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlFight"
 msgid "05132"
 msgstr "お前の分まで たたかってくるよ。{end_wait}"
 
@@ -20631,7 +20631,7 @@ msgctxt "message"
 msgid "05155"
 msgstr "かげながら みなさんの{line_break}けんとうを いのっています。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDeservesA"
 msgid "05156"
 msgstr "このしょうりは{line_break}チームワークのおかげさ。{end_wait}"
 
@@ -20663,7 +20663,7 @@ msgctxt "message"
 msgid "05163"
 msgstr "ボクも せいいっぱい{line_break}がんばりましたよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDidGreat"
 msgid "05164"
 msgstr "みんな つよかったな{line_break}あんしんして 見ていられたよ。{end_wait}"
 
@@ -20695,7 +20695,7 @@ msgctxt "message"
 msgid "05171"
 msgstr "たたかっているのを見てるだけで{line_break}こっちがドキドキしちゃいましたよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDonTBlame"
 msgid "05172"
 msgstr "さくせんミスだったか・・・{line_break}つぎは まけられないぞ。{end_wait}"
 
@@ -20727,7 +20727,7 @@ msgctxt "message"
 msgid "05179"
 msgstr "やっぱり ボクなんかが{line_break}出ない方が よかったかも。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWinSome"
 msgid "05180"
 msgstr "かつ時もあれば・・・{line_break}まける時もある・・・{line_break}それがしょうぶというものさ。{end_wait}"
 
@@ -20763,7 +20763,7 @@ msgctxt "message"
 msgid "05188"
 msgstr "オレは 見るだけだけど{line_break}あんたたちは 出るんだろ{page_break}まあ せいぜい・・・{line_break}がんばってくれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTHaveThe"
 msgid "05189"
 msgstr "{text_effect:4}たたかう ゆうきが{line_break}出なくって ずっと{line_break}ここに いるんだよ。{end_wait}"
 
@@ -20807,7 +20807,7 @@ msgctxt "message"
 msgid "05199"
 msgstr "エントリーするべきか{line_break}するべきでないか・・・{line_break}うーん なやむところだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIs"
 msgid "05200"
 msgstr "あんた どうやら{line_break}ここは はじめてみたいだな{page_break}ここで 戦いの{line_break}きびしさってものを{line_break}まなぶと いいぜ。{end_wait}"
 
@@ -20815,7 +20815,7 @@ msgctxt "message"
 msgid "05201"
 msgstr "あんたはこれまで ケーブルたいせんで{line_break}{argument_signed_number}しょうしてるぜ{line_break}これからも がんばれよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIsYour"
 msgid "05202"
 msgstr "あんた どうやら{line_break}ここは はじめてみたいだな{page_break}あんたの しあいけっかは{line_break}オレに きいてくれれば{line_break}わかるから ヨロシクな。{end_wait}"
 
@@ -20847,7 +20847,7 @@ msgctxt "message"
 msgid "05209"
 msgstr "どうしたんじゃ? あんたたち{line_break}もっともっと がんばりなされ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLookA"
 msgid "05210"
 msgstr "あなた ほそめだけど{line_break}けっこう こんな人が{line_break}つよかったりするのよね。{end_wait}"
 
@@ -20855,15 +20855,15 @@ msgctxt "message"
 msgid "05211"
 msgstr "あら そうかしら・・・{line_break}そんなからだじゃ たたかっても{line_break}すぐに スタミナがきれそうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlBe"
 msgid "05212"
 msgstr "わたし あなたのことを{line_break}おうえんしてるから・・・{line_break}がんばってちょうだいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILikeMy"
 msgid "05213"
 msgstr "わたし マッチョな人がすきよ{line_break}だって あなたみたいなタイプじゃ{line_break}ちょっと たよりないじゃない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHmItComes"
 msgid "05214"
 msgstr "うーん こうくるだろ・・・{line_break}そしたら・・・こうするだろ{line_break}・・・あー これじゃダメだ。{end_wait}"
 
@@ -20887,55 +20887,55 @@ msgctxt "message"
 msgid "05219"
 msgstr "きみたちは まだまだ{line_break}しゅぎょうが たりないぞ{page_break}せいれいの力を うまく{line_break}ひきだして 戦うのだ。{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgIWillTell"
 msgid "05220"
 msgstr "ケーブルたいせんで かてば{line_break}ごうけいの かちすうを{line_break}おしえてやるから がんばれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWillTellYou"
 msgid "05221"
 msgstr "ケーブルたいせんで かてば{line_break}いまの れんぞくかちすうを{line_break}おしえてやるから がんばれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouVeWon"
 msgid "05222"
 msgstr "お主はこれまで モンスターバトルで{line_break}{argument_signed_number}れんしょうしたことがあるぞ{line_break}これからも がんばるんじゃ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTWaitTo"
 msgid "05223"
 msgstr "お主がモンスターバトルで{line_break}どれだけかてるか たのしみじゃ{line_break}かちすうは わしがかぞえるぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAlliesCan"
 msgid "05224"
 msgstr "ケーブルたいせんは{line_break}3人まで出られるんだよ{page_break}お兄ちゃんたちは 4人だから{line_break}たいれつの いちばん{line_break}みぎの人は おやすみだね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAllies"
 msgid "05225"
 msgstr "ケーブルたいせんは{line_break}3人まで出られるんだよ{page_break}お兄ちゃんたちは{line_break}ぜんいんで 戦えるね!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCanChange"
 msgid "05226"
 msgstr "たいれつの へんこうは{line_break}ステータスがめんで{line_break}できるようになってるよ{page_break}もちろん知ってるよね?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThree"
 msgid "05227"
 msgstr "ケーブルたいせんは{line_break}3人まで出られるんだよ{page_break}お兄ちゃんたちは 8人だから{line_break}たいれつの ひだりの人たちが{line_break}しゅつじょう できるね!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInTheLinked"
 msgid "05228"
 msgstr "ケーブルたいせんでは{line_break}あいてが行動をきめたら{line_break}モタモタしてちゃダメよ{page_break}それから 15びょういないに{line_break}入力がおわらないと あなたの{line_break}行動が ぼうぎょになっちゃうの。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleRules"
 msgid "05229"
 msgstr "モンスターバトルは モンスターと{line_break}なかまぜんいんで戦うルールなのよ{page_break}なかまぜんいんで戦うから{line_break}ぼうけんでの せんりゃくが{line_break}そっくりそのまま いかせるわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouWin"
 msgid "05230"
 msgstr "この前は ボロがちしたのに{line_break}こんかいは ボロまけだった・・・{page_break}あいてによっては せんじゅつを{line_break}かえるひつようが あるのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCouldUse"
 msgid "05231"
 msgstr "ジンを使うか エナジーを使うか{line_break}たたかい方は いろいろあるなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShouldIEnter"
 msgid "05232"
 msgstr "エントリーするべきか{line_break}するべきでないか・・・{line_break}うーん なやむところだ。{end_wait}"
 
@@ -20951,7 +20951,7 @@ msgctxt "message"
 msgid "05235"
 msgstr "使わない行動をもっているジンは{line_break}はずしておいて できるだけはやく{line_break}しょうかんを使うようにしてるのさ{page_break}オレは 気がみじかいから{line_break}チマチマやるより そういう{line_break}たんきけっせんがすきなんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSometimesYourClass"
 msgid "05236"
 msgstr "しょうかんを 出すために{line_break}ジンを ときはなつと{line_break}クラスが かわることがある{page_break}そのせいで ひどい目にあった{line_break}けいけんが お前もあるだろ。{end_wait}"
 
@@ -20963,11 +20963,11 @@ msgctxt "message"
 msgid "05238"
 msgstr "オレでもエントリーできるけど{line_break}いまの オレが出たって・・・{line_break}ケガするだけ バカバカしいな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveA"
 msgid "05239"
 msgstr "きょくの リクエストをしたいのね?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgComeBackWhen"
 msgid "05240"
 msgstr "ききたくなったら またいらしてね。{end_wait}"
 

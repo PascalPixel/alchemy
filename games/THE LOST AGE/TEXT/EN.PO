@@ -14531,19 +14531,19 @@ msgctxt "message"
 msgid "03630"
 msgstr "Lose - {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChooseYourParameters"
 msgid "03631"
 msgstr "Choose your parameters here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatIsThis"
 msgid "03632"
 msgstr "What is this, just a tease?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoSuch"
 msgid "03633"
 msgstr "There's no such parameter.{line_break}Ask Mr. Sugimoto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSettingsAre"
 msgid "03634"
 msgstr "The settings are made.{line_break}The rest is up to you.{end_wait}"
 
@@ -20371,15 +20371,15 @@ msgctxt "MsgScene694No34"
 msgid "05090"
 msgstr "Sorry, pal, but you've gotta{line_break}have more coins to play.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLinkWas"
 msgid "05091"
 msgstr "The link was{line_break}disconnected.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAwaitingYourOpponent"
 msgid "05092"
 msgstr "Awaiting your opponent...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgNoteYouCan"
 msgid "05093"
 msgstr "Note: you can't use{line_break}the sleep function in{line_break}battle stages!{end_wait}"
 
@@ -20387,7 +20387,7 @@ msgctxt "message"
 msgid "05094"
 msgstr "Saving battle results.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBattleResultsWere"
 msgid "05095"
 msgstr "Battle results were saved.{end_wait}"
 
@@ -20395,19 +20395,19 @@ msgctxt "message"
 msgid "05096"
 msgstr "Saving Monster Battle{line_break}results.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleResults"
 msgid "05097"
 msgstr "Monster Battle results{line_break}were saved.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWantToParticipate"
 msgid "05098"
 msgstr "If you want to{line_break}participate, please{line_break}step into the circle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWelcomeToBattle"
 msgid "05099"
 msgstr "Welcome to Battle Arena,{line_break}where the elite meet to{line_break}battle one another!{page_break}Test your skills in{line_break}Linked Battles and{line_break}Monster Battles!{page_break}Speak to the girl{line_break}at the counter if you're{line_break}looking for a fight!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPleaseSpeakTo"
 msgid "05100"
 msgstr "Please speak to me{line_break}when you want to{line_break}fight in a battle.{end_wait}"
 
@@ -20443,27 +20443,27 @@ msgctxt "message"
 msgid "05108"
 msgstr "The monster has finished{line_break}its preparations.{page_break}Please finish your{line_break}preparations, then{line_break}enter the circle.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattlePlease"
 msgid "05109"
 msgstr "You won {argument_signed_number}{line_break}battle{plural_suffix}.{page_break}Please speak to me{line_break}when you wish to{line_break}battle again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattleI"
 msgid "05110"
 msgstr "You won {argument_signed_number}{line_break}battle{plural_suffix}.{page_break}I told you our{line_break}monsters were tough!{line_break}Please try again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoodLuck2"
 msgid "05111"
 msgstr "Good luck!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattle"
 msgid "05112"
 msgstr "You won {argument_signed_number}{line_break}battle{plural_suffix}.{line_break}You broke the record!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourOpponentHas"
 msgid "05113"
 msgstr "Your opponent{line_break}has arrived!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotBadWould"
 msgid "05114"
 msgstr "Not bad! Would you{line_break}like to fight{line_break}the next monster?{end_now}"
 
@@ -20527,7 +20527,7 @@ msgctxt "message"
 msgid "05129"
 msgstr "Unbelievable!!! The next{line_break}monster is beyond your{line_break}imagination!{page_break}You will fight, won't{line_break}you?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItSOur"
 msgid "05130"
 msgstr "It's our turn.{line_break}Let's go, {actor_name:5}.{end_wait}"
 
@@ -20559,7 +20559,7 @@ msgctxt "message"
 msgid "05137"
 msgstr "All right, {actor_name:5}, we'll{line_break}do it together!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOkWeRe"
 msgid "05138"
 msgstr "OK, we're set, {actor_name:5}.{line_break}But remember, you're calling{line_break}the shots, all right?.{end_wait}"
 
@@ -20591,7 +20591,7 @@ msgctxt "message"
 msgid "05145"
 msgstr "Are you trying to tell me{line_break}something, {actor_name:5}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlFight"
 msgid "05146"
 msgstr "I'll fight enough for{line_break}both of us...{end_wait}"
 
@@ -20687,7 +20687,7 @@ msgctxt "message"
 msgid "05169"
 msgstr "I just hope your aim{line_break}doesn't falter...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDeservesA"
 msgid "05170"
 msgstr "Everybody deserves a little{line_break}credit for this victory!{end_wait}"
 
@@ -20719,7 +20719,7 @@ msgctxt "message"
 msgid "05177"
 msgstr "I gave it my best effort,{line_break}as you could see.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDidGreat"
 msgid "05178"
 msgstr "Everybody did great! I didn't{line_break}worry at all about you!{end_wait}"
 
@@ -20751,7 +20751,7 @@ msgctxt "message"
 msgid "05185"
 msgstr "That was a stunning battle.{line_break}I was on the edge of my seat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDonTBlame"
 msgid "05186"
 msgstr "Don't blame yourself... It{line_break}was just a bad strategy.{end_wait}"
 
@@ -20783,7 +20783,7 @@ msgctxt "message"
 msgid "05193"
 msgstr "Maybe it would have been{line_break}better if I just hadn't come...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWinSome"
 msgid "05194"
 msgstr "You win some, you lose some.{line_break}That's the nature of competition.{end_wait}"
 
@@ -20819,7 +20819,7 @@ msgctxt "message"
 msgid "05202"
 msgstr "I'm just going to watch.{line_break}But you guys are going{line_break}to battle, aren't you?{page_break}Well, do your best.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTHaveThe"
 msgid "05203"
 msgstr "{text_effect:4}I don't have the guts to fight{line_break}in the battle arena. I'll just{line_break}be sitting here, if that's OK.{end_wait}"
 
@@ -20863,7 +20863,7 @@ msgctxt "message"
 msgid "05213"
 msgstr "Should I enter or not?{line_break}I'm so stressed about this...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIs"
 msgid "05214"
 msgstr "It looks like this is{line_break}your first time here.{page_break}I will teach you{line_break}what it is like to{line_break}fight in a battle.{end_wait}"
 
@@ -20871,7 +20871,7 @@ msgctxt "message"
 msgid "05215"
 msgstr "You've won {argument_signed_number}{line_break}Linked Battle{plural_suffix}. Keep up{line_break}the good work!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIsYour"
 msgid "05216"
 msgstr "It looks like this is{line_break}your first time here.{page_break}You can ask me about{line_break}the results of your{line_break}battle. Okay?{end_wait}"
 
@@ -20903,7 +20903,7 @@ msgctxt "message"
 msgid "05223"
 msgstr "What happened, you guys?{line_break}Try harder.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLookA"
 msgid "05224"
 msgstr "You look a little scrawny,{line_break}but guys like you are often{line_break}surprisingly strong...{end_wait}"
 
@@ -20911,15 +20911,15 @@ msgctxt "message"
 msgid "05225"
 msgstr "Fighting a guy with a build{line_break}like that would really wear{line_break}me out! Whew!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlBe"
 msgid "05226"
 msgstr "I'll be rooting for you!{line_break}Do your best!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILikeMy"
 msgid "05227"
 msgstr "I like my men macho.{line_break}You...don't work out{line_break}much, do you?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHmItComes"
 msgid "05228"
 msgstr "Hm... It comes in like this...{line_break}Then you do this, and...{line_break}Whoa, that's not right...{end_wait}"
 
@@ -20943,55 +20943,55 @@ msgctxt "message"
 msgid "05233"
 msgstr "You have to train more.{page_break}Put your heart into{line_break}it when you fight.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWillTell"
 msgid "05234"
 msgstr "I will tell you your{line_break}total wins when you{line_break}finish the linked finals.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWillTellYou"
 msgid "05235"
 msgstr "I will tell you your{line_break}consecutive wins when{line_break}you finish the finals.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouVeWon"
 msgid "05236"
 msgstr "You've won {argument_signed_number}{line_break}consecutive Monster{line_break}Battle{plural_suffix}.{page_break}Keep up the good work!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTWaitTo"
 msgid "05237"
 msgstr "I can't wait to see how{line_break}many Monster Battles{line_break}you win.{page_break}I'll be counting{line_break}your victories!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAlliesCan"
 msgid "05238"
 msgstr "Up to three allies{line_break}can fight in the{line_break}linked finals.{page_break}There are four in your{line_break}party, so the rightmost{line_break}ally will have to pass.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAllies"
 msgid "05239"
 msgstr "Up to three allies{line_break}can fight in the{line_break}linked finals...{page_break}So all of you can{line_break}fight!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCanChange"
 msgid "05240"
 msgstr "You can change the order{line_break}of your party in the{line_break}status screen.{page_break}But you knew that, right?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThree"
 msgid "05241"
 msgstr "Up to three allies can join{line_break}you in a Link Mode battle.{page_break}Your party has eight allies{line_break}total, so only the three allies{line_break}on the left of the list can fight.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInTheLinked"
 msgid "05242"
 msgstr "In the linked finals, you{line_break}can't delay after your{line_break}opponent selects a move.{page_break}If you don't choose your{line_break}command within 15 seconds,{line_break}you automatically defend.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleRules"
 msgid "05243"
 msgstr "Monster Battle rules say{line_break}you all must fight as a{line_break}team against a monster.{page_break}If you're fighting as a{line_break}team, you can use the{line_break}same tactics...{page_break}you used in your travels.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouWin"
 msgid "05244"
 msgstr "So you win against one guy,{line_break}and then you lose against{line_break}the next.{page_break}Depending on the foe,{line_break}you've got to change up{line_break}your tactics.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCouldUse"
 msgid "05245"
 msgstr "You could use Psynergy, Djinn,{line_break}even summons and items! There{line_break}are a lot of battle strategies...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShouldIEnter"
 msgid "05246"
 msgstr "Should I enter or not?{line_break}I'm so stressed about this...{end_wait}"
 
@@ -21007,7 +21007,7 @@ msgctxt "message"
 msgid "05249"
 msgstr "Remove Djinn you rarely{line_break}use so you can{line_break}summon quickly.{page_break}I'm impatient, so I{line_break}prefer to fight in{line_break}short battles.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSometimesYourClass"
 msgid "05250"
 msgstr "Sometimes, your class changes{line_break}when you unleash a Djinni.{page_break}You need to watch that, because{line_break}it can get you into some real{line_break}trouble if you're not careful.{end_wait}"
 
@@ -21019,11 +21019,11 @@ msgctxt "message"
 msgid "05252"
 msgstr "I could enter, but I'd{line_break}just get hurt if I{line_break}did... That'd be stupid.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveA"
 msgid "05253"
 msgstr "You have a song request?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgComeBackWhen"
 msgid "05254"
 msgstr "Come back when you're{line_break}ready to rock!{end_wait}"
 

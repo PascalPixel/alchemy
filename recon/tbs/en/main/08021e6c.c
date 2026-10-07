@@ -1,3 +1,5 @@
+/* 2026-10-07 queue3 invariant correction: differ 76 (listing 1037, draft 1037, common 999), not matched. Preserving a scroll zero outside the main loop restores its native pool load and the mode-1 pool placement (155 -> 93). The upward selection wrap in native's selection + count order now removes its extra pointer reload (93 -> 76). Left: row copies exchanged between ip/sp+4, the mode-1 gap*2 spill order, one tutorial argument's order, register choices after the main-loop join and closing address operands. */
+/* Trial (queue3 from 155/76, none kept): content-loop-only permute, 4 minutes, 2 jobs, seed 103, 12,678 candidates, no improvement (heat unavailable for the macro-wrapped function). Reusing i for the invariant zero also 76; a u16 zero 138. A short-lived closing tile constant in r6 gives 81; an ordinary tile local across UiWork_Finalize gives 115. Column + pattern gives 80; unsigned row index 76. Removing the closing address constraint gives 99; read/write versus readonly constraints both 76. */
 /* 2026-10-07 queue3 lifetime correction: differ 155 (listing 1037, draft 1036, common 959), not matched. Separate per-mode count locals and shared gap = count * 3 inside the column loops restore native count/fp, gap/sl and work/r9 together (169 -> 155), without another device. Gap computed at panel scope gives 651; before the pattern or in the indexed-store expression stays 155. Left: row copies exchanged between ip/sp+4, the mode-1 gap*2 spill's order, the main-loop zero, closing address operands and literal-pool placement. */
 /* Trial (queue3 from 155, none kept): chained pattern computation restores index/ip and pattern/sp+4 but exchanges the row induction registers r5/r6 (163). A mode-1 row-local pattern with a memory input 319, with a read/write register constraint 344; a pattern shared by both modes 510. The chained form's index biv has 15 refs/26 insns, pattern 15/27, so index wins r5; precomputing pattern reverses that order but also reverses which row copy survives reload. */
 /* 2026-10-07 queue3 continuation: differ 169 (listing 1037, draft 1036, common 952), not matched. A readonly address constraint retains the closing tile loop's native separate add before strh (172 -> 169); naming the pointer alone gives 174. The preceding add still reverses its commutative operands. Count/sl versus count*3/fp, row copies, the main-loop zero and literal-pool placement remain. */
@@ -125,6 +127,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     s32 keys, repeat;
     s32 slot;
     s32 i, num;
+    s32 scroll_x;
 
     render = (struct UiRenderWork *)gWindowWork[0];
     slot = Resource_LoadIntoFreeSlot(0x400);
@@ -187,12 +190,17 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
+    /* FAKEMATCH: Native carries the scroll zero into this loop and reloads it
+     * from the pool. Recreating 0 inside is not moved by loop.c (life 9,
+     * savings 4) and later shares rebuild's zero; this outer lifetime restores
+     * the native pool load and its placement, differ 155 -> 93. */
+    scroll_x = 0;
     for (;;) {
         scale = Ui_BounceScales[(gFrameCount * 2) & 31];
         scale = (scale - 256) / 4 + 304;
         work->affine.scale_x = scale;
         work->affine.scale_y = scale;
-        gBgScroll[1].x = 0;
+        gBgScroll[1].x = scroll_x;
         gBgScroll[1].y = 32;
         if (rebuild != 0) {
             s32 gap;
@@ -341,7 +349,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->selection = __modsi3(work->selection + 1, work->count);
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
-            work->selection = __modsi3(work->count + work->selection - 1, work->count);
+            work->selection = __modsi3(work->selection + work->count - 1, work->count);
         } else if (gLinkCountdownWork->active == 0) {
             result = work->kinds[0];
             break;

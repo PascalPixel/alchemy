@@ -1,5 +1,43 @@
 /* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
-   (K1, agbcc/camelot_arm). Route decision (2026-10-07), this draft under
+   (K1: stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   Stock agbcc_arm (2026-10-07, session 1): listing 157, draft 157,
+   common 119, differ 76 (14 register, 20 reordered, 4 inserted, 4
+   deleted). Not reachable from source under this route: the prologue.
+   The listing runs mov r5, r1; ldr r9, =WaitFramesFar; sub sp, sp, #8,
+   two body insns above the frame's sub sp. gcc_arm's sched.c schedules
+   each block backwards, by priority, then by class, then LUID. In
+   sched2 (alchemy diff --arm --rtl: 0800a0f8.c.sched2) the push (574) has
+   priority 1; sub sp (576) and its mem clobber (577) have 5; mov r5,
+   r1 (6) and the r9 load (33) also have 5, solely through a REG_DEP_ANTI
+   on the push, which stock arm_adjust_cost charges the push's full
+   store4 cost (5). At equal priority and class the prologue's lower
+   LUID places sub sp first; only the latency queue could hold 6 or 33
+   back, and neither waits on a user placed just after it (6 feeds
+   ldr r1, [r5] at cost 1; 33 feeds only the far call's ldr ip). A
+   barrier depends on the sub sp as well, and any pseudo in a
+   callee-saved register anti-depends on the push the same way, so no
+   order of statements, block, barrier or register variable is known
+   to move those two above it. Under the camelot_arm trials below, with
+   2.96's arm_adjust_cost (anti/output dependences free; sched.c clamps
+   them to 1, so 6 and 33 drop to priority 1), "the prologue matches
+   the listing up to the half constant". So this listing appears to
+   need that scheduling cost in the route (a K3 question for Pascal),
+   not an S2 device. Every stock form tried below keeps push; sub sp
+   first.
+   Stock trials, from 76:
+   - Session 3/4 form (x = to->x - from->x; z = to->z - from->z; loop
+     block-local x; a = (s16)t; out->a = v->u = t; a <<= 8; a *= k;
+     union Word k): 83; the prologue then matches but for sub sp and
+     the r9 load, and the loop loads z, x by two ldr (x in ip), no ldm.
+     Without the block-local x: 97; z = v->z before x = v->x: 83.
+   - Only the one-expression x and z in the prologue: 89.
+   - v->dx = -(a + FIXED_MUL(z, -sn)): 80.
+   - far = WaitFramesFar as the first statement, calls through far[n]:
+     76, identical; the r9 load still lands after ldr r3, [r0].
+   - alchemy permute --arm --heat, 5 minutes, 2 jobs: best weighted
+     2190 -> 1950 at differ 77; lowest differ 74, only a temporary
+     shared by the odd-frame out->x and out->y; neither taken.
+   Route decision (2026-10-07), this draft under
    agscc -marm with the game options: differ 183; with -mno-apcs-frame
    190; with -mno-apcs-frame -ffixed-fp 166.
    alchemy diff --camelot-arm, upstream's whole arm_adjust_cost

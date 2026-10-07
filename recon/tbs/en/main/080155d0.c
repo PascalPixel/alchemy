@@ -1,6 +1,23 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
  * Stock agbcc_arm (2026-10-07, completion session, latest): English listing
+ *   196, draft196, common189, differ14. A short incoming-x/r2 boundary
+ *   retains x until font is loaded, restoring their native order (16 to14).
+ *   Remaining: y copy versus frame allocation, width store versus bounds
+ *   compare, first colour's register, font-row reset, final shift/store.
+ *   Trials from16: delayed width store18; explicit bounds local21;
+ *   ordinary width29; read-only width/cc35; incoming-window/r0 constraint18;
+ *   volatile width boundary16; guarded do/while172. Ordinary y with
+ *   constrained ty/r8, sub/r8 and line/r3 gives41. From14: u16 colours37,
+ *   u16 width131; next=p+1 then bits=*p29; split postincrement unchanged;
+ *   pointer CSE dead boundary73; multiply instead of shift unchanged;
+ *   pointer read/write after shift49. Row-reset read/write32; read-only16;
+ *   row/table memory boundary14 but moves the width spill before cmp.
+ *   All 24 setup declaration orders leave weighted390/differ14. Colour/r1
+ *   read-only with r2/r3 clobbers74; read/write26, regardless of later
+ *   assignment placement; paired colour/r1,r2 outputs52; source memory
+ *   operand77. Plain register keyword unchanged. Rejected trials removed.
+ * Stock agbcc_arm (2026-10-07, completion session, previous): English listing
  *   196, draft196, common188, differ16. From34: scoped initial next pointer
  *   in r2, with next declared before head, gives30. Read-only r1 constraints
  *   before/after the final postincrement preserve its spill and give26;
@@ -209,10 +226,18 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     register u32 x asm("r9");
     /* FAKEMATCH: native y uses r7; constrained row pointers otherwise swap r7/r8 through both loops. */
     register u32 y asm("r7") = ypos;
+#if defined(TBS_EDITION_EN)
+    /* FAKEMATCH: native retains incoming x in r2 until after loading font from the stack. */
+    register u32 xi asm("r2") = xpos;
 
+    /* FAKEMATCH: native moves y out of the incoming font register before preparing x. */
+    asm("" : "+r"(y), "+r"(xi) : "r"(font));
+    x = xi;
+#else
     /* FAKEMATCH: native moves y out of the incoming font register before preparing x. */
     asm("" : "+r"(y));
     x = xpos;
+#endif
     /* FAKEMATCH: native prepares font, x and y before computing the glyph index; the ordinary setup is reordered (26 differences). */
     asm("" : "+r"(y), "+r"(ch) : "r"(font), "r"(x));
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

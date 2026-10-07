@@ -81,15 +81,23 @@ Func_02000604:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
 	overlay_veneer Event_StartScreenTransitionFar
+	.endif
+	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitTransitionFramesFar
 	.endif

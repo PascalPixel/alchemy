@@ -33703,7 +33703,7 @@ msgctxt "message"
 msgid "08423"
 msgstr "OK, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaFocusEnergies"
 msgid "08424"
 msgstr "Concentre tes énergies!{end_wait}"
 
@@ -33739,7 +33739,7 @@ msgctxt "message"
 msgid "08432"
 msgstr "Nous devons persévérer!{line_break}Plus fort les tambours!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaUnderstandsChannel"
 msgid "08433"
 msgstr "Mais c'est bien sûr!{end_wait}"
 
@@ -33843,7 +33843,7 @@ msgctxt "message"
 msgid "08458"
 msgstr "Unissez votre foi et{line_break}dansez pour honorer{line_break}le Grand Gabomba!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaAcceptOffering"
 msgid "08459"
 msgstr "Oh Grand Gabomba!{line_break}Je t'en prie, accepte{line_break}notre humble présent.{end_wait}"
 
@@ -34019,7 +34019,7 @@ msgctxt "message"
 msgid "08502"
 msgstr "Qui me dit que vous n'êtes{line_break}pas des imposteurs? Je suis{line_break}Akafubu, le sorcier de Kibombo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaSawEnergyFlow"
 msgid "08503"
 msgstr "Oui, nous le savons... Nous{line_break}avons vu votre magie{line_break}circuler près de nous.{end_wait}"
 
@@ -34451,7 +34451,7 @@ msgctxt "message"
 msgid "08610"
 msgstr "{actor_name:5} a transmis le{line_break}message de Gabomba{line_break}à Akafubu.{page_break}Quand {actor_name:5} finit son{line_break}histoire, il faisait nuit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaChannelTiming"
 msgid "08611"
 msgstr "La réparation du circuit{line_break}devrait faire l'affaire...{page_break}Tâchons de voir à quel moment{line_break}les deux charges magiques{line_break}atteignent la statue du milieu.{end_wait}"
 
@@ -44411,7 +44411,7 @@ msgctxt "MsgShamanTrialRulesAreSimple"
 msgid "11100"
 msgstr "Les règles sont simples.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadTrapInstructions"
 msgid "11101"
 msgstr "La pièce est jonchée de{line_break}pièges que seul le pouvoir{line_break}de Contigo peut déjouer.{end_wait}"
 
@@ -44575,19 +44575,19 @@ msgctxt "message"
 msgid "11141"
 msgstr "Alors, allons-y.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadPlaceItemPrompt"
 msgid "11142"
 msgstr "Placer cet objet dans le coffre?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadChestBlocked"
 msgid "11143"
 msgstr "Quelque chose bloque{line_break}l'ouverture du coffre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadStoredItem"
 msgid "11144"
 msgstr "{protagonist_name} place {argument_item_name:1}{line_break}dans le coffre. Cet objet{line_break}appartient à {argument_actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadGiveUpPrompt"
 msgid "11145"
 msgstr "Souhaitez-vous{line_break}abandonner?{end_now}"
 
@@ -44603,7 +44603,7 @@ msgctxt "MsgShamanMoapaAdvisesLeaving"
 msgid "11148"
 msgstr "Il serait plus sage de renoncer.{line_break}A la fin du parcours, je vous{line_break}battrai de toute façon.{page_break}Vous feriez mieux de quitter{line_break}Shaman sans délai.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSlowArrival"
 msgid "11149"
 msgstr "Vous avez un peu traîné, mais{line_break}vous avez réussi l'épreuve{line_break}de la Route du courage.{end_wait}"
 
@@ -44615,7 +44615,7 @@ msgctxt "message"
 msgid "11151"
 msgstr "En garde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSwiftChallenge"
 msgid "11152"
 msgstr "Que d'agilité! Tu mérites{line_break}de m'affronter!{end_wait}"
 
@@ -44627,11 +44627,11 @@ msgctxt "message"
 msgid "11154"
 msgstr "En garde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadLeaveVillage"
 msgid "11155"
 msgstr "Vous avez perdu. Quittez{line_break}immédiatement notre village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadHeroesProven"
 msgid "11156"
 msgstr "D'accord, d'accord. Vous{line_break}avez prouvé votre force.{line_break}Vous êtes de vrais héros.{end_wait}"
 

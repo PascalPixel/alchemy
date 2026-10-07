@@ -169,19 +169,51 @@ ObjectMotion_ArmCallback:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
 	overlay_veneer Event_StartScreenTransitionFar
+	.endif
+	.endif
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
+	.else
 	overlay_veneer Func_080c83e0
+	.endif
+	.endif
 	.global Func_020013f8
 	.thumb_func
 Func_020013f8:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_02001400
 	.thumb_func
 Func_02001400:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8918
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8918
+	.else
 	overlay_veneer Func_080c8928
+	.endif
+	.endif
 	.global Func_02001408
 	.thumb_func
 Func_02001408:

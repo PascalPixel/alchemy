@@ -33703,7 +33703,7 @@ msgctxt "message"
 msgid "08423"
 msgstr "Forza, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaFocusEnergies"
 msgid "08424"
 msgstr "Concentratevi!{end_wait}"
 
@@ -33739,7 +33739,7 @@ msgctxt "message"
 msgid "08432"
 msgstr "Dobbiamo continuare!{line_break}Tamburi! Più tamburi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaUnderstandsChannel"
 msgid "08433"
 msgstr "Ah! Ecco come funziona!{end_wait}"
 
@@ -33843,7 +33843,7 @@ msgctxt "message"
 msgid "08458"
 msgstr "Unite i cuori,{line_break}e danzate per il{line_break}Gran Gabomba!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaAcceptOffering"
 msgid "08459"
 msgstr "O Gran Gabomba!{line_break}Accetta questo{line_break}umile dono!{end_wait}"
 
@@ -34019,7 +34019,7 @@ msgctxt "message"
 msgid "08502"
 msgstr "Perché dovrei credervi?{line_break}Sono Akafubu, il prescelto,{line_break}il capo stregone di Kibombo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaSawEnergyFlow"
 msgid "08503"
 msgstr "Lo sappiamo... Abbiamo visto{line_break}la tua energia magica arrivare.{end_wait}"
 
@@ -34451,7 +34451,7 @@ msgctxt "message"
 msgid "08610"
 msgstr "{actor_name:5} porta il messaggio{line_break}del Gabomba ad Akafubu.{page_break}Il sole è già sorto,{line_break}quando {actor_name:5} finisce.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaChannelTiming"
 msgid "08611"
 msgstr "Riparare il canale{line_break}dovrebbe bastare...{page_break}Forse dobbiamo guardare{line_break}quando le due cariche magiche{line_break}raggiungono la statua nel mezzo.{end_wait}"
 
@@ -44411,7 +44411,7 @@ msgctxt "MsgShamanTrialRulesAreSimple"
 msgid "11100"
 msgstr "Le regole sono semplici.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadTrapInstructions"
 msgid "11101"
 msgstr "Ogni stanza è piena di trappole{line_break}ed insidie. Usate il potere{line_break}di Contigo per evitarle.{end_wait}"
 
@@ -44575,19 +44575,19 @@ msgctxt "message"
 msgid "11141"
 msgstr "Iniziamo, allora.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadPlaceItemPrompt"
 msgid "11142"
 msgstr "Vuoi mettere un oggetto{line_break}nella cassa?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadChestBlocked"
 msgid "11143"
 msgstr "La cassa non si apre. C'è{line_break}qualcosa che la tiene chiusa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadStoredItem"
 msgid "11144"
 msgstr "{protagonist_name} mette {argument_item_name:1}{line_break}di {argument_actor_name:1} nella cassa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadGiveUpPrompt"
 msgid "11145"
 msgstr "Vuoi arrenderti?{end_now}"
 
@@ -44603,7 +44603,7 @@ msgctxt "MsgShamanMoapaAdvisesLeaving"
 msgid "11148"
 msgstr "Fareste bene ad arrendervi.{line_break}Anche se raggiungete la{line_break}cima, non riuscirete a battermi.{page_break}Fareste bene a lasciare{line_break}subito il Villaggio Sciamanico.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSlowArrival"
 msgid "11149"
 msgstr "Siete stati lenti, ma{line_break}avete percorso la Via{line_break}delle Prove fino alla cima!{end_wait}"
 
@@ -44615,7 +44615,7 @@ msgctxt "message"
 msgid "11151"
 msgstr "Che la battaglia abbia inizio!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSwiftChallenge"
 msgid "11152"
 msgstr "Siete stati veloci! Potreste{line_break}dimostrarvi degni avversari!{end_wait}"
 
@@ -44627,11 +44627,11 @@ msgctxt "message"
 msgid "11154"
 msgstr "Che la battaglia abbia inizio!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadLeaveVillage"
 msgid "11155"
 msgstr "Avete perso. Ora andatevene{line_break}dal Villaggio Sciamanico.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadHeroesProven"
 msgid "11156"
 msgstr "Complimenti. Avete dimostrato{line_break}la vostra forza. Siete{line_break}davvero degli eroi.{end_wait}"
 

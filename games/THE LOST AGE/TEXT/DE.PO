@@ -33875,7 +33875,7 @@ msgctxt "message"
 msgid "08466"
 msgstr "In Ordnung, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaFocusEnergies"
 msgid "08467"
 msgstr "Sammelt eure Energien!{end_wait}"
 
@@ -33911,7 +33911,7 @@ msgctxt "message"
 msgid "08475"
 msgstr "Wir müssen weitermachen!{line_break}Trommeln! Mehr Trommeln!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaUnderstandsChannel"
 msgid "08476"
 msgstr "Ah! So funktioniert das also!{end_wait}"
 
@@ -34015,7 +34015,7 @@ msgctxt "message"
 msgid "08501"
 msgstr "Vereint eure Herzen und tanzt{line_break}für den Großen Gabomba!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaAcceptOffering"
 msgid "08502"
 msgstr "Oh, Großer Gabomba! Bitte nimm{line_break}unsere bescheidene Gabe an!{end_wait}"
 
@@ -34191,7 +34191,7 @@ msgctxt "message"
 msgid "08545"
 msgstr "Warum sollte ich euch glauben?{line_break}Ich bin Akafubu, der erwählte{line_break}Medizinmann der Kibombo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaSawEnergyFlow"
 msgid "08546"
 msgstr "Ja, das wissen wir. Wir sahen, wie{line_break}deine Magie an uns vorbeizog.{end_wait}"
 
@@ -34623,7 +34623,7 @@ msgctxt "message"
 msgid "08653"
 msgstr "{actor_name:5} überbrachte{line_break}Gabombas Botschaft an Akafubu.{page_break}Als {actor_name:5} mit seiner Geschichte{line_break}ein Ende fand, war der Morgen{line_break}bereits angebrochen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaChannelTiming"
 msgid "08654"
 msgstr "Es scheint, als würde es völlig{line_break}ausreichen, den Kreislauf{line_break}wiederherzustellen.{page_break}Wir sollten uns genau ansehen,{line_break}wann die magischen Ladungen{line_break}die Statue in der Mitte erreichen.{end_wait}"
 
@@ -44583,7 +44583,7 @@ msgctxt "MsgShamanTrialRulesAreSimple"
 msgid "11143"
 msgstr "Die Regeln sind einfach.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadTrapInstructions"
 msgid "11144"
 msgstr "Der Raum ist voller Fallen und{line_break}Fußangeln. Nutzt die Macht von{line_break}Contigo, um sie zu vermeiden.{end_wait}"
 
@@ -44747,19 +44747,19 @@ msgctxt "message"
 msgid "11184"
 msgstr "Dann lasst uns beginnen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadPlaceItemPrompt"
 msgid "11185"
 msgstr "Soll ein Gegenstand in die{line_break}Truhe gelegt werden?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadChestBlocked"
 msgid "11186"
 msgstr "Die Truhe lässt sich nicht{line_break}öffnen. Sie wird durch irgend-{line_break}etwas geschlossen gehalten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadStoredItem"
 msgid "11187"
 msgstr "{protagonist_name} legt {argument_actor_name:1}{possessive_suffix}{line_break}{argument_item_name:1} in die Truhe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadGiveUpPrompt"
 msgid "11188"
 msgstr "Möchtest du aufgeben?{end_now}"
 
@@ -44775,7 +44775,7 @@ msgctxt "MsgShamanMoapaAdvisesLeaving"
 msgid "11191"
 msgstr "Es wäre weise, den Rückzug{line_break}anzutreten. Selbst wenn ihr den{line_break}Gipfel erreicht,{page_break}könnt ihr mich nicht besiegen.{page_break}Ihr würdet gut daran tun, das{line_break}Schamanendorf sofort zu{line_break}verlassen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSlowArrival"
 msgid "11192"
 msgstr "Ihr wart zwar langsam, doch habt{line_break}ihr es geschafft, die Straße der{line_break}Prüfungen bis zum Gipfel des{page_break}Berges zu begehen.{end_wait}"
 
@@ -44787,7 +44787,7 @@ msgctxt "message"
 msgid "11194"
 msgstr "Lasst den Kampf beginnen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSwiftChallenge"
 msgid "11195"
 msgstr "Ihr wart sehr schnell! Vielleicht{line_break}stellt ihr doch eine gewisse{line_break}Herausforderung dar!{end_wait}"
 
@@ -44799,11 +44799,11 @@ msgctxt "message"
 msgid "11197"
 msgstr "Lasst den Kampf beginnen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadLeaveVillage"
 msgid "11198"
 msgstr "Ihr habt verloren. Verlasst nun{line_break}das Schamanendorf.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadHeroesProven"
 msgid "11199"
 msgstr "Schon gut, schon gut! Ihr habt{line_break}eure Stärke bewiesen und ihr{line_break}seid in der Tat wahre Helden.{end_wait}"
 

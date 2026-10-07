@@ -82,9 +82,11 @@ void Func_0200119c(s32 id, s32 value)
     struct FieldActor *object = Object_GetById(id);
 
     if (object != NULL) {
+        s16 *count = &Data_0200275e;
+
         object->timer = value;
-        Data_02002760[Data_0200275e] = object;
-        Data_0200275e++;
+        Data_02002760[*count] = object;
+        (*count)++;
     }
 }
 

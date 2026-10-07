@@ -1,5 +1,29 @@
 /* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1:
    stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   2026-10-07 (S12 session 4): listing 307, draft 301, common 301, differ
+   6, from 8: only the six veneer instructions remain; the C matches.
+   z's load follows the frozen test's cmp: frozen's ldrb is an asm with a
+   memory clobber, and z is read by an asm into a once-set temporary held
+   in sl (z0) and copied into z at the head of both arms (FAKEMATCH, all
+   three). This corrects sessions 2 and 3, which held the order out of
+   reach. From agbcc_arm's sched.c and the sched/sched2 dumps: an asm
+   costs 1 on every dependence (INSN_COST 1, and a link into an
+   unrecognized insn is free), so in sched2 the frozen asm lowers the
+   cmp's priority from 4 (y's load, its spill store, the ldrb's anti
+   dependence on r3, each 2) to 2; z's asm reads after the spill store
+   (2) and stands after the cmp in sched1's order, so it wins the tie on
+   LUID and takes the slot before the branch. sched1 puts it there
+   because its output is set once and live out (birthing raise); the
+   frozen asm's memory clobber keeps the x and y loads ahead of it, so
+   y's spill takes r3 before frozen does. Measured: frozen compiled 100;
+   no memory clobber 100 (y loaded after the cmp into r2, and reload's
+   round robin moves throughout); an empty volatile asm before a plain
+   frozen asm instead of the clobber 6; z0 not fixed 43 (r0, then mov
+   sl, r0); the copy before the if 8; the asm straight into z 8. The
+   earlier devices are all still needed: without wait's ldrh 10,
+   MulQ16R1 and its barriers 10, MulQ16R3 14. IwramSqrt and
+   IwramRatioMulQ14 called through Iwram_Sqrt and Iwram_RatioMulQ14
+   (fixed addresses) instead of sq and rm: 192.
    2026-10-07 (S12 session 3): listing 307, draft 301, common 300, differ
    8, from 12: wait's decrement reads its halfword through an asm ldrh
    into a local of its own (FAKEMATCH). insn_cost gives an unrecognized
@@ -243,6 +267,9 @@ void Object_UpdateAll(void)
     u16 angle;
     s32 turn;
     s32 w;
+    /* FAKEMATCH: z's asm load set once (birthing in sched1), in sl (43 unfixed: r0, then mov sl, r0) */
+    register s32 z0 __asm__("sl");
+    u32 f;
 
     obj = gObjectSlots;
     for (i = 0; i < 8; i++, obj++) {
@@ -275,9 +302,12 @@ void Object_UpdateAll(void)
 
         x = obj->x;
         y = obj->y;
-        z = obj->z;
-
-        if (obj->frozen == 0) {
+        /* FAKEMATCH: frozen through an asm (cost 1) drops the cmp's sched2 priority from 4 to z's 2; its memory clobber keeps x and y ahead in sched1 (100 compiled or unclobbered) */
+        __asm__("ldrb %0, %1" : "=r"(f) : "m"(obj->frozen) : "memory");
+        /* FAKEMATCH: z loaded after the frozen test's cmp, not before it (8 to 6): an asm set once, copied into z in both arms */
+        __asm__("ldr %0, %1" : "=r"(z0) : "m"(obj->z));
+        if (f == 0) {
+            z = z0;
             reached = 0;
             if (obj->target_x != TARGET_UNSET) {
                 sq = IwramSqrt;
@@ -343,6 +373,8 @@ void Object_UpdateAll(void)
                         obj->velocity_y = 0;
                 }
             }
+        } else {
+            z = z0;
         }
 
         x += obj->velocity_x;

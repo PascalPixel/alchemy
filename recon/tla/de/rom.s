@@ -3814,25 +3814,26 @@ Func_08108aa8:
 	.section .rom.0011128c, "ax"
 	.incbin "baserom.gba", 0x0011128c, 0x0000080c
 	.section .rom.00111ad8, "ax"
-	.incbin "baserom.gba", 0x00111ad8, 0x00000d30
-	.section .rom.00112808, "ax"
-	.global Func_0810a804
-	.type Func_0810a804, %function
+	.global Func_08109ad8
+	.type Func_08109ad8, %function
 	.thumb_func
-Func_0810a804:
-	.incbin "baserom.gba", 0x00112808, 0x00000030
-	.section .rom.00112838, "ax"
-	.global Func_0810a834
-	.type Func_0810a834, %function
+Func_08109ad8:
+	.incbin "baserom.gba", 0x00111ad8, 0x000001d4
+	.global Func_08109cac
+	.type Func_08109cac, %function
 	.thumb_func
-Func_0810a834:
-	.incbin "baserom.gba", 0x00112838, 0x00000018
-	.section .rom.00112850, "ax"
-	.global Func_0810a84c
-	.type Func_0810a84c, %function
+Func_08109cac:
+	.incbin "baserom.gba", 0x00111cac, 0x00000604
+	.section .rom.001122dc, "ax"
+	.incbin "baserom.gba", 0x001122dc, 0x00000394
+	.section .rom.00112674, "ax"
+	.incbin "baserom.gba", 0x00112674, 0x00000088
+	.section .rom.00112710, "ax"
+	.global Forge_FindRecipe
+	.type Forge_FindRecipe, %function
 	.thumb_func
-Func_0810a84c:
-	.incbin "baserom.gba", 0x00112850, 0x00000018
+Forge_FindRecipe:
+	.incbin "baserom.gba", 0x00112710, 0x0000003c
 	.section .rom.001128f0, "ax"
 	.incbin "baserom.gba", 0x001128f0, 0x000005b8
 	.section .rom.00112f28, "ax"
@@ -3848,7 +3849,12 @@ Func_0810b79c:
 	.type Func_0810b7a8, %function
 	.thumb_func
 Func_0810b7a8:
-	.incbin "baserom.gba", 0x001137ac, 0x00000870
+	.incbin "baserom.gba", 0x001137ac, 0x00000800
+	.global Func_0810bf98
+	.type Func_0810bf98, %function
+	.thumb_func
+Func_0810bf98:
+	.incbin "baserom.gba", 0x00113fac, 0x00000070
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x0011401c, 0x00000140
@@ -3860,7 +3866,10 @@ Shop_SelectorOffsets:
 	.incbin "baserom.gba", 0x0011435c, 0x0000003c
 	.global Shop_GlyphRowOffsets
 Shop_GlyphRowOffsets:
-	.incbin "baserom.gba", 0x00114398, 0x00003c68
+	.incbin "baserom.gba", 0x00114398, 0x00000070
+	.global Data_0810c3f4
+Data_0810c3f4:
+	.incbin "baserom.gba", 0x00114408, 0x00003bf8
 	.section .rom.00118000, "ax"
 	.global Resource_FarCall009
 Resource_FarCall009:

@@ -82,7 +82,7 @@ Func_0810993c:
 	cmp r0, #0
 	beq .L_081099ea
 	mov r1, r8
-	bl Func_0810a004
+	bl Shop_DrawItemCount
 .L_081099ea:
 	mov r3, r10
 	ldrb r2, [r3, #3]

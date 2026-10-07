@@ -4403,25 +4403,22 @@ Func_08108aa8:
 	.section .rom.0010928a, "ax"
 	.incbin "baserom.gba", 0x0010928a, 0x0000081e
 	.section .rom.00109ae8, "ax"
-	.incbin "baserom.gba", 0x00109ae8, 0x00000d2c
-	.section .rom.0010a814, "ax"
-	.global Func_0810a804
-	.type Func_0810a804, %function
+	.global Func_08109ad8
+	.type Func_08109ad8, %function
 	.thumb_func
-Func_0810a804:
-	.incbin "baserom.gba", 0x0010a814, 0x00000030
-	.section .rom.0010a844, "ax"
-	.global Func_0810a834
-	.type Func_0810a834, %function
+Func_08109ad8:
+	.incbin "baserom.gba", 0x00109ae8, 0x000001d4
+	.global Func_08109cac
+	.type Func_08109cac, %function
 	.thumb_func
-Func_0810a834:
-	.incbin "baserom.gba", 0x0010a844, 0x00000018
-	.section .rom.0010a85c, "ax"
-	.global Func_0810a84c
-	.type Func_0810a84c, %function
+Func_08109cac:
+	.incbin "baserom.gba", 0x00109cbc, 0x00000a4c
+	.section .rom.0010a71c, "ax"
+	.global Forge_FindRecipe
+	.type Forge_FindRecipe, %function
 	.thumb_func
-Func_0810a84c:
-	.incbin "baserom.gba", 0x0010a85c, 0x00000018
+Forge_FindRecipe:
+	.incbin "baserom.gba", 0x0010a71c, 0x0000003c
 	.section .rom.0010a8fc, "ax"
 	.incbin "baserom.gba", 0x0010a8fc, 0x000005b8
 	.section .rom.0010af34, "ax"
@@ -4439,7 +4436,12 @@ Func_0810b79c:
 	.type Func_0810b7a8, %function
 	.thumb_func
 Func_0810b7a8:
-	.incbin "baserom.gba", 0x0010b7b8, 0x00000864
+	.incbin "baserom.gba", 0x0010b7b8, 0x000007f4
+	.global Func_0810bf98
+	.type Func_0810bf98, %function
+	.thumb_func
+Func_0810bf98:
+	.incbin "baserom.gba", 0x0010bfac, 0x00000070
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x0010c01c, 0x00000140
@@ -4451,7 +4453,10 @@ Shop_SelectorOffsets:
 	.incbin "baserom.gba", 0x0010c35c, 0x0000003c
 	.global Shop_GlyphRowOffsets
 Shop_GlyphRowOffsets:
-	.incbin "baserom.gba", 0x0010c398, 0x0000bc68
+	.incbin "baserom.gba", 0x0010c398, 0x00000070
+	.global Data_0810c3f4
+Data_0810c3f4:
+	.incbin "baserom.gba", 0x0010c408, 0x0000bbf8
 	.section .rom.00118000, "ax"
 	.global Resource_FarCall009
 Resource_FarCall009:

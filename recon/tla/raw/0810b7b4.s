@@ -146,7 +146,7 @@ Func_0810b7b4:
 	bl Func_0810928c
 	ldr r0, [r7, #36]
 	mov r1, r9
-	bl Func_0810a004
+	bl Shop_DrawItemCount
 	movs r2, #0
 	mov r8, r2
 .L_0810b8e8:

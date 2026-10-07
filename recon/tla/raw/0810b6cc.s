@@ -25,13 +25,13 @@ Func_0810b6cc:
 	adds r6, #255
 	ands r6, r3
 	adds r0, r6, #0
-	bl Func_0810a748
+	bl Forge_GetMaterialChance
 	movs r3, #1
 	adds r5, r0, #0
 	negs r3, r3
 	adds r0, r6, #0
 	mov r8, r3
-	bl Func_0810a748
+	bl Forge_GetMaterialChance
 	cmp r0, #0
 	bne .L_0810b718
 	ldr r0, .L_0810b780
@@ -76,11 +76,11 @@ Func_0810b6cc:
 	mov r2, r9
 	ldr r0, [r2, #36]
 	adds r1, r7, #0
-	bl Func_0810a004
+	bl Shop_DrawItemCount
 	adds r0, r6, #0
-	bl Func_0810a760
+	bl Forge_RollResult
 	adds r6, r0, #0
-	bl Func_0810a834
+	bl Forge_SetItem
 	movs r3, #0
 	mov r8, r3
 .L_0810b774:

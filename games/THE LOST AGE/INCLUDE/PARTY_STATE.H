@@ -40,6 +40,8 @@ struct PartyState {
     u32 saved_callback;
     u8 unknown_274[2];
     s16 owner_override;
+    u8 unknown_278[0x44];
+    u16 forge_item;
 };
 
 extern struct PartyState gPartyState;

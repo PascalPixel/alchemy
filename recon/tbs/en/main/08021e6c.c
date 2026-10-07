@@ -1,3 +1,16 @@
+/* 2026-10-07 queue3 cleanup copies: all six differ56, not matched. JA
+ * listing/draft1036, common1008; localizations listing/draft1037, common1009.
+ * Short mode/r7 binding restores the cleanup mode copy/compare (70 -> 66).
+ * A scoped reset zero restores address allocation/order (66 -> 60); binding
+ * that zero to r6 restores the two remaining reset instructions (60 -> 56).
+ * Neither new binding needs an asm constraint. Remaining: content-loop
+ * row-copy allocation, release initializer scheduling and increment register,
+ * closing flag address registers, and closing constants/counter scheduling.
+ * Trials from56, removed: deleting the release zero's readonly constraint65
+ * (five extra instructions), plain cnt=0 gives58, readonly zero after plain
+ * initialization63; scoped closing one60, one/r3 unchanged56; increment/r1
+ * without a constraint68 (four extra instructions).
+ */
 /* Trial (queue3 from70, none kept): seed mode-1 pattern before the column loop and restore its base at the loop end311. Chained pattern calculation in both modes78: copies become native but row induction registers still swap. A narrow readonly row-pattern/r5 handoff on that chained form251. Inline tile-store wrapper234 with separate pointer additions,106 with the original grouped index,106 with reversed parameter order; removed. TLA's current listing080457d0 has the same native pattern/r5 and index/r6 with copies to sp4/ip, but has no C draft. Restored the70 form. */
 /* 2026-10-07 queue3 release counter: all six differ70, not matched. JA listing/draft1036, common1001; the five localizations listing/draft1037, common1002. A short tagged readonly zero/r0 restores the native release-counter initialization register (72 -> 70), but it is scheduled before the count address. An ordinary separate release counter gives98; fixed r8 gives82; a read/write zero/r0 gives74 and four extra instructions because the starting zero is no longer known. A readonly step/r1 with cnt += step gives76; retaining ordinary ++cnt with that step gives79. Those trials are removed. */
 /* 2026-10-07 queue3 edition layouts: all six differ72, not matched. JA listing/draft1036, common1000; EN/DE/ES/FR/IT listing/draft1037, common1001. JA's mode1 window is x23,width7, its sprites x179, blank-map offset5 and content at VRAMfd6e/mapx23; the localizations use x22,width8,x171,offset4,fd6c/mapx22. These native layout differences are now conditional C; JA was119. The five non-English scaffolds now name this function, leaving their preceding two padding bytes intact. Remaining72 in every edition are the shared allocation/order differences below. */
@@ -380,13 +393,21 @@ s32 Ui_RunSelectionScreen(s32 mode)
             break;
         }
         QueueIoWriteDelay2(0x04000000, 0x1741);
-        render->menu_busy = 0;
+        {
+            /* FAKEMATCH: Native keeps the menu reset zero in r6. A scoped ordinary zero restores address registers/order but uses r2, differ60; this short binding restores the copy/store registers, differ56. */
+            register s32 zero __asm__("r6") = 0;
+            render->menu_busy = zero;
+        }
         WaitFrames(1);
     }
-    if (mode != 0)
-        gLinkCountdownWork->command_selection[1] = work->selection;
-    else
-        gLinkCountdownWork->command_selection[0] = work->selection;
+    {
+        /* FAKEMATCH: The native cleanup reloads mode into r7. A block-local ordinary copy retains r5 and differ70; this short binding restores the copy and compare registers, differ66. No asm constraint is needed. */
+        register s32 m __asm__("r7") = mode;
+        if (m != 0)
+            gLinkCountdownWork->command_selection[1] = work->selection;
+        else
+            gLinkCountdownWork->command_selection[0] = work->selection;
+    }
     {
         /* FAKEMATCH: Native initializes the shared release counter through r0. An ordinary separate counter gives98, fixed r8 gives82; this short readonly zero restores r0 (72 -> 70), although it is still scheduled early. */
         register s32 n __asm__("r0") = 0;

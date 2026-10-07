@@ -163,31 +163,31 @@ s32 BattleFx_RollSuccess(
         return 0;
     }
 
-    if (effect_id == 3 && *(s8 *)(state + (u32)&((struct BtlUnit *)0)->poison) == 0) {
+    if (effect_id == 3 && *(s8 *)(state + (u32)&((struct BtlUnit *)0)->doku) == 0) {
         goto fail;
     }
 
     goto action4_check;
 action4_tail:
-    if (state[(u32)&((struct BtlUnit *)0)->stun] == 0 && state[(u32)&((struct BtlUnit *)0)->sleep] == 0 &&
-        state[(u32)&((struct BtlUnit *)0)->psy_seal] == 0 && state[(u32)&((struct BtlUnit *)0)->death_count] == 0) {
+    if (state[(u32)&((struct BtlUnit *)0)->shibire] == 0 && state[(u32)&((struct BtlUnit *)0)->nemuri] == 0 &&
+        state[(u32)&((struct BtlUnit *)0)->fuuji] == 0 && state[(u32)&((struct BtlUnit *)0)->shiryo] == 0) {
         goto fail;
     }
     goto action4_done;
 action4_check:
     if (effect_id == 4) {
-        if (state[(u32)&((struct BtlUnit *)0)->delusion] == 0 && state[(u32)&((struct BtlUnit *)0)->confusion] == 0 && state[(u32)&((struct BtlUnit *)0)->charm] == 0) {
+        if (state[(u32)&((struct BtlUnit *)0)->maboroshi] == 0 && state[(u32)&((struct BtlUnit *)0)->konran] == 0 && state[(u32)&((struct BtlUnit *)0)->charm] == 0) {
             goto action4_tail;
         }
     }
 
 action4_done:
-    poison = (s8 *)(state + (u32)&((struct BtlUnit *)0)->poison);
-    delusion = state + (u32)&((struct BtlUnit *)0)->delusion;
-    confusion = state + (u32)&((struct BtlUnit *)0)->confusion;
+    poison = (s8 *)(state + (u32)&((struct BtlUnit *)0)->doku);
+    delusion = state + (u32)&((struct BtlUnit *)0)->maboroshi;
+    confusion = state + (u32)&((struct BtlUnit *)0)->konran;
     charm = state + (u32)&((struct BtlUnit *)0)->charm;
-    stun = state + (u32)&((struct BtlUnit *)0)->stun;
-    sleep = state + (u32)&((struct BtlUnit *)0)->sleep;
+    stun = state + (u32)&((struct BtlUnit *)0)->shibire;
+    sleep = state + (u32)&((struct BtlUnit *)0)->nemuri;
     if (effect_id == 0x40 &&
         *poison == 0 &&
         *delusion == 0 &&
@@ -195,13 +195,13 @@ action4_done:
         *charm == 0 &&
         *stun == 0 &&
         *sleep == 0 &&
-        state[(u32)&((struct BtlUnit *)0)->psy_seal] == 0 &&
-        state[(u32)&((struct BtlUnit *)0)->death_count] == 0 &&
-        state[(u32)&((struct BtlUnit *)0)->evil_spirit] == 0) {
+        state[(u32)&((struct BtlUnit *)0)->fuuji] == 0 &&
+        state[(u32)&((struct BtlUnit *)0)->shiryo] == 0 &&
+        state[(u32)&((struct BtlUnit *)0)->akuryo] == 0) {
         return 0;
     }
 
-    if (effect_id == 0x1C && state[(u32)&((struct BtlUnit *)0)->death_count] == 1) {
+    if (effect_id == 0x1C && state[(u32)&((struct BtlUnit *)0)->shiryo] == 1) {
         return 0;
     }
 

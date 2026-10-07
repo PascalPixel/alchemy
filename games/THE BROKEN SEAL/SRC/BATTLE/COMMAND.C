@@ -126,8 +126,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
             if (count <= 0) {
                 UiText_DrawQuantity(command->unit_id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
-                if (actor->guard_level == 0)
-                    actor->guard_level = 1;
+                if (actor->guard_lv == 0)
+                    actor->guard_lv = 1;
                 return -1;
             }
         }
@@ -169,18 +169,18 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
         return -2;
     }
     UiWork_ClearValueNameTablesFar();
-    if (actor->cannot_move) {
-        actor->cannot_move = 0;
+    if (actor->miugoki) {
+        actor->miugoki = 0;
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgUnableToMove);
         return -1;
     }
-    if (actor->sleep) {
+    if (actor->nemuri) {
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgIsAsleep);
         return -1;
     }
-    if (actor->stun) {
+    if (actor->shibire) {
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgIsParalyzed);
         return -1;
@@ -237,22 +237,22 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)MsgActorCasts);
-            if (actor->pp < ability->pp_cost) {
+            if (actor->ep < ability->pp_cost) {
                 plan->failure = 2;
                 ok = 0;
             }
-            if (actor->psy_seal) {
+            if (actor->fuuji) {
                 plan->failure = 1;
                 ok = 0;
             }
             if (ok) {
                 plan->failure = 0;
-                actor->pp -= ability->pp_cost;
+                actor->ep -= ability->pp_cost;
                 UnitRatioFar(command->unit_id);
-                if (actor->pp < 0)
-                    actor->pp = 0;
-                if (actor->pp > actor->max_pp)
-                    actor->pp = actor->max_pp;
+                if (actor->ep < 0)
+                    actor->ep = 0;
+                if (actor->ep > actor->max_ep)
+                    actor->ep = actor->max_ep;
             }
         }
         break;
@@ -270,8 +270,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
             if (action == 0 || (actor->inventory[command->parameter] & 0x400)) {
                 UiText_DrawQuantity(command->unit_id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
-                if (actor->guard_level == 0)
-                    actor->guard_level = 1;
+                if (actor->guard_lv == 0)
+                    actor->guard_lv = 1;
                 return -1;
             }
             if (BattleCommand_SelectTargets(action) == -1)
@@ -490,10 +490,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
         UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
         /* FAKEMATCH: the one-pass block keeps the native test order; the same tests as one if condition change 44 instructions. */
         do {
-            if (defender->hp == 0 || defender->sleep != 0 || defender->stun != 0
-                || defender->cannot_move != 0 || defender->charm != 0)
+            if (defender->hp == 0 || defender->nemuri != 0 || defender->shibire != 0
+                || defender->miugoki != 0 || defender->charm != 0)
                 break;
-            if (actor->delusion != 0 && (BtlRndFar() & 255) <= 152)
+            if (actor->maboroshi != 0 && (BtlRndFar() & 255) <= 152)
                 plan->tgt_adj[0] = 0;
             if ((BtlRndFar() & 31) == 0)
                 plan->tgt_adj[0] = 0;

@@ -142,7 +142,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     if (actor <= ACTOR_LAST_PARTY) {
         cost = BtlActGet(actionId)->pp_cost;
-        if (UnitGetFar(actor)->pp < cost) {
+        if (UnitGetFar(actor)->ep < cost) {
             Command_ShowActionMessage(actor, actionId, MsgNotEnoughPp);
             if (specialResult)
                 runtime->result_code = 0;

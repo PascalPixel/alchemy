@@ -312,10 +312,10 @@ void PtyStDraw(s32 flags)
             work->level = 14;
             if (work->menu_state != 0)
                 work->level = 5;
-            UiText_DrawPrefixedNumberAtOffset(unit->pp, window, (x + i * 6) * 8, y * 8 + 16, 1);
-            if (unit->max_pp != 0) {
-                current = unit->pp;
-                value = __divsi3(current * 40, unit->max_pp);
+            UiText_DrawPrefixedNumberAtOffset(unit->ep, window, (x + i * 6) * 8, y * 8 + 16, 1);
+            if (unit->max_ep != 0) {
+                current = unit->ep;
+                value = __divsi3(current * 40, unit->max_ep);
                 if (value == 0 && current != 0)
                     value = 1;
                 UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 3, value);

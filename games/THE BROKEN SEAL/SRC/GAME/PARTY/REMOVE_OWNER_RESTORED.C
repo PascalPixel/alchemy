@@ -36,15 +36,15 @@ void Party_RemoveOwnerRestored(s32 owner)
     /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
     do {
         vitals->hp = vitals->max_hp;
-        vitals->pp = vitals->max_pp;
+        vitals->ep = vitals->max_ep;
     } while (0);
     vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
     if (vitals->hp_gauge == 0 && vitals->hp != 0)
         vitals->hp_gauge = 1;
-    vitals->pp_gauge = Vitals_Ratio(vitals->pp, vitals->max_pp);
-    if (vitals->pp_gauge == 0 && vitals->pp != 0)
-        vitals->pp_gauge = 1;
-    vitals->poison = 0;
+    vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
+    if (vitals->ep_gauge == 0 && vitals->ep != 0)
+        vitals->ep_gauge = 1;
+    vitals->doku = 0;
     standing = 0;
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
@@ -58,8 +58,8 @@ void Party_RemoveOwnerRestored(s32 owner)
         vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
         if (vitals->hp_gauge == 0 && vitals->hp != 0)
             vitals->hp_gauge = 1;
-        vitals->pp_gauge = Vitals_Ratio(vitals->pp, vitals->max_pp);
-        if (vitals->pp_gauge == 0 && vitals->pp != 0)
-            vitals->pp_gauge = 1;
+        vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
+        if (vitals->ep_gauge == 0 && vitals->ep != 0)
+            vitals->ep_gauge = 1;
     }
 }

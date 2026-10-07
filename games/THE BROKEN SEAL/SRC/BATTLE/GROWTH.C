@@ -31,16 +31,16 @@ struct FormationCandidate {
 
 struct BattleBaseStats {
     s16 base_hp;
-    s16 base_pp;
+    s16 base_ep;
     s16 hp_gauge;
-    s16 pp_gauge;
+    s16 ep_gauge;
     u16 base_attack;
     u16 base_defense;
     u16 base_agility;
     u8 base_luck;
     u8 action_count;
     u8 hp_regen;
-    u8 pp_regen;
+    u8 ep_regen;
     u8 unknown_12[2];
     struct BattleElementStats elements[4];
 };
@@ -147,14 +147,14 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
         value = 9999;
     state->base_hp = value;
 
-    value = state->base_pp;
+    value = state->base_ep;
     value += levels * 15 / 10;
-    floor = base->base_pp * 7 / 10;
+    floor = base->base_ep * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    state->base_pp = value;
+    state->base_ep = value;
 
     floor = levels * 123 / 10;
     value = state->base_attack;

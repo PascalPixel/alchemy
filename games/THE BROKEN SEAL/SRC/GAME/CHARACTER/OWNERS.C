@@ -77,18 +77,18 @@ s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->base_hp = enemy->hp;
     unit->hp = enemy->hp;
     unit->max_hp = enemy->hp;
-    unit->base_pp = enemy->pp;
-    unit->pp = enemy->pp;
-    unit->max_pp = enemy->pp;
+    unit->base_ep = enemy->ep;
+    unit->ep = enemy->ep;
+    unit->max_ep = enemy->ep;
     unit->hp_gauge = 0x4000;
-    unit->pp_gauge = 0x4000;
+    unit->ep_gauge = 0x4000;
     unit->base_attack = enemy->attack;
     unit->base_defense = enemy->defense;
     unit->base_agility = enemy->agility;
     unit->base_luck = enemy->luck;
     unit->base_action_count = enemy->turns;
     unit->base_hp_regen = enemy->hp_regen;
-    unit->base_pp_regen = enemy->pp_regen;
+    unit->base_ep_regen = enemy->ep_regen;
     UiText_DecodeMessageFar(index + (s32)MsgEnemyName, name, 15);
     for (i = 0; i < 14 && name[i] != 0; i++)
         unit->name[i] = name[i];

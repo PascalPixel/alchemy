@@ -90,44 +90,44 @@ pick:
 
 #define COUNT_PARTIAL_CURES(unit, count)                                      \
     {                                                                         \
-        if ((unit)->delusion != 0)                                            \
+        if ((unit)->maboroshi != 0)                                            \
             (count)++;                                                        \
-        if ((u8)(unit)->confusion != 0)                                       \
+        if ((u8)(unit)->konran != 0)                                       \
             (count)++;                                                        \
         if ((unit)->charm != 0)                                               \
             (count)++;                                                        \
-        if ((unit)->sleep != 0)                                               \
+        if ((unit)->nemuri != 0)                                               \
             (count)++;                                                        \
-        if ((unit)->psy_seal != 0)                                            \
+        if ((unit)->fuuji != 0)                                            \
             (count)++;                                                        \
-        if ((unit)->death_count != 0)                                         \
+        if ((unit)->shiryo != 0)                                         \
             (count)++;                                                        \
     }
 
 #define COUNT_ALL_CURES(unit, count)                                          \
     {                                                                         \
         COUNT_PARTIAL_CURES((unit), (count));                                 \
-        if ((unit)->evil_spirit != 0)                                         \
+        if ((unit)->akuryo != 0)                                         \
             (count)++;                                                        \
-        if ((unit)->poison != 0)                                              \
+        if ((unit)->doku != 0)                                              \
             (count)++;                                                        \
     }
 
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                 \
     {                                                                         \
-        if ((unit)->attack_modifier > 0)                                      \
+        if ((unit)->atk_lv > 0)                                      \
             (count)++;                                                        \
-        if ((unit)->defense_modifier > 0)                                     \
+        if ((unit)->def_lv > 0)                                     \
             (count)++;                                                        \
-        if ((unit)->res_modifier > 0)                                         \
+        if ((unit)->res_lv > 0)                                         \
             (count)++;                                                        \
-        if ((unit)->element_modifier[0] > 0)                                   \
+        if ((unit)->elm_lv[0] > 0)                                   \
             (count)++;                                                        \
-        if ((unit)->element_modifier[1] > 0)                                   \
+        if ((unit)->elm_lv[1] > 0)                                   \
             (count)++;                                                        \
-        if ((unit)->element_modifier[2] > 0)                                   \
+        if ((unit)->elm_lv[2] > 0)                                   \
             (count)++;                                                        \
-        if ((unit)->element_modifier[3] > 0)                                   \
+        if ((unit)->elm_lv[3] > 0)                                   \
             (count)++;                                                        \
     }
 
@@ -137,48 +137,48 @@ pick:
         switch ((action)->effect) {                                           \
         case EFX_ATK_UP2:                                                     \
         case EFX_ATK_UP1:                                                     \
-            if ((unit)->attack_modifier + 1 <= 4)                             \
+            if ((unit)->atk_lv + 1 <= 4)                             \
                 (applies) = 1;                                                \
-            if ((unit)->attack_modifier_turns == 1)                           \
+            if ((unit)->atk_cnt == 1)                           \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_ATK_DOWN2:                                                   \
         case EFX_ATK_DOWN1:                                                   \
-            if ((unit)->attack_modifier - 1 >= -4)                            \
+            if ((unit)->atk_lv - 1 >= -4)                            \
                 (applies) = 1;                                                \
-            if ((unit)->attack_modifier_turns == 1)                           \
+            if ((unit)->atk_cnt == 1)                           \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_DEF_UP2:                                                     \
         case EFX_DEF_UP1:                                                     \
-            if ((unit)->defense_modifier + 1 <= 4)                            \
+            if ((unit)->def_lv + 1 <= 4)                            \
                 (applies) = 1;                                                \
-            if ((unit)->defense_modifier_turns == 1)                          \
+            if ((unit)->def_cnt == 1)                          \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_DEF_DOWN2:                                                   \
         case EFX_DEF_DOWN1:                                                   \
-            if ((unit)->defense_modifier - 1 >= -4)                           \
+            if ((unit)->def_lv - 1 >= -4)                           \
                 (applies) = 1;                                                \
-            if ((unit)->defense_modifier_turns == 1)                          \
+            if ((unit)->def_cnt == 1)                          \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_RES_UP2:                                                     \
         case EFX_RES_UP1:                                                     \
-            if ((unit)->res_modifier + 1 <= 4)                                \
+            if ((unit)->res_lv + 1 <= 4)                                \
                 (applies) = 1;                                                \
-            if ((unit)->res_modifier_turns == 1)                              \
+            if ((unit)->res_cnt == 1)                              \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_RES_DOWN2:                                                   \
         case EFX_RES_DOWN1:                                                   \
-            if ((unit)->res_modifier - 1 >= -4)                               \
+            if ((unit)->res_lv - 1 >= -4)                               \
                 (applies) = 1;                                                \
-            if ((unit)->res_modifier_turns == 1)                              \
+            if ((unit)->res_cnt == 1)                              \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_CURE_POISON:                                                 \
-            if ((unit)->poison != 0)                                          \
+            if ((unit)->doku != 0)                                          \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_CURE_PART:                                                   \
@@ -196,27 +196,27 @@ pick:
             COUNT_ALL_CURES((unit), (applies));                               \
             break;                                                            \
         case EFX_DEATH_CURSE:                                                 \
-            if ((unit)->death_count == 0)                                     \
+            if ((unit)->shiryo == 0)                                     \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_POISON:                                                      \
-            if ((unit)->poison == 0)                                          \
+            if ((unit)->doku == 0)                                          \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_VENOM:                                                       \
-            if ((unit)->poison <= 1)                                          \
+            if ((unit)->doku <= 1)                                          \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_STUN:                                                        \
-            if ((unit)->stun == 0)                                            \
+            if ((unit)->shibire == 0)                                            \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_SLEEP:                                                       \
-            if ((unit)->sleep == 0)                                           \
+            if ((unit)->nemuri == 0)                                           \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_EVIL_SPIRIT:                                                 \
-            if ((unit)->evil_spirit == 0)                                     \
+            if ((unit)->akuryo == 0)                                     \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_REVIVE_FULL:                                                 \
@@ -250,7 +250,7 @@ pick:
                     (applies)++;                                              \
                 break;                                                        \
             case 9:                                                           \
-                if ((unit)->pp != 0)                                          \
+                if ((unit)->ep != 0)                                          \
                     (applies)++;                                              \
                 break;                                                        \
             case 0:                                                           \

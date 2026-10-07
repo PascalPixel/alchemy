@@ -213,7 +213,7 @@ s32 BattleEffect_ApplyToTargets(
                 changed = 1;
                 break;
             case 0x105:
-                target->base_pp += amount + random_adjust;
+                target->base_ep += amount + random_adjust;
                 result_code = 0x11;
                 changed = 1;
                 break;
@@ -243,14 +243,14 @@ s32 BattleEffect_ApplyToTargets(
             break;
 
         case BATTLE_DAMAGE_PP_HEAL:
-            if (target->pp == target->max_pp) {
+            if (target->ep == target->max_ep) {
                 if (later_target == 0)
                     result_code = 7;
             } else {
-                target->pp += amount;
-                if (target->pp > target->max_pp) {
-                    amount -= target->pp - target->max_pp;
-                    target->pp = target->max_pp;
+                target->ep += amount;
+                if (target->ep > target->max_ep) {
+                    amount -= target->ep - target->max_ep;
+                    target->ep = target->max_ep;
                     if (later_target == 0)
                         result_code = 5;
                 } else if (later_target == 0) {
@@ -296,13 +296,13 @@ s32 BattleEffect_ApplyToTargets(
             break;
 
         case 2:
-            if (target->pp == target->max_pp) {
+            if (target->ep == target->max_ep) {
                 if (later_target == 0)
                     result_code = 7;
             } else {
-                target->pp += amount;
-                if (target->pp > target->max_pp) {
-                    target->pp = target->max_pp;
+                target->ep += amount;
+                if (target->ep > target->max_ep) {
+                    target->ep = target->max_ep;
                     if (later_target == 0)
                         result_code = 5;
                 } else if (later_target == 0) {
@@ -348,8 +348,8 @@ s32 BattleEffect_ApplyToTargets(
             break;
 
         case EFX_CURE_POISON:
-            if (target->poison != 0) {
-                target->poison = 0;
+            if (target->doku != 0) {
+                target->doku = 0;
                 changed = 1;
                 if (later_target == 0)
                     result_code = 0xa;

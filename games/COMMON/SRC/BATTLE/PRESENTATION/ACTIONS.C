@@ -162,10 +162,10 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
             if (action->command == 3 || action->command == 7) {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
                 character = UnitGet(action->unit_id);
-                character->guard_level = action->command == 3 ? 1 : 3;
+                character->guard_lv = action->command == 3 ? 1 : 3;
 #else
                 character = UnitGetFar(action->unit_id);
-                character->guard_level = action->command == 3 ? 1 : 2;
+                character->guard_lv = action->command == 3 ? 1 : 2;
 #endif
             }
             action++;

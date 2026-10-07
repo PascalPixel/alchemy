@@ -145,9 +145,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
                     if ((action->target_flags & ACTION_USABLE_IN_BATTLE) == 0) {
                         UiWork_SetParamNibble(4);
-                    } else if (action->pp_cost > unit->pp) {
+                    } else if (action->pp_cost > unit->ep) {
                         UiWork_SetParamNibble(2);
-                    } else if (unit->psy_seal != 0) {
+                    } else if (unit->fuuji != 0) {
                         UiWork_SetParamNibble(9);
                     }
 

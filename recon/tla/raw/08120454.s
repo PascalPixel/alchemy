@@ -458,7 +458,7 @@ BtlTgtExec:
 .L_081207cc:
 	.4byte 0xfffffd30
 .L_081207d0:
-	.4byte HitFalloff
+	.4byte HitTbl
 .L_081207d4:
 	movs r2, #0
 	str r2, [sp, #40]
@@ -1433,19 +1433,19 @@ BtlTgtExec:
 .L_08120f48:
 	.4byte 0x00000c70
 .L_08120f4c:
-	.4byte PpLossFalloff
+	.4byte EpLossTbl
 .L_08120f50:
 	.4byte 0x00000c76
 .L_08120f54:
 	.4byte 0x00000c75
 .L_08120f58:
-	.4byte HpHealFalloff
+	.4byte HpRcvTbl
 .L_08120f5c:
 	.4byte 0x00000c6c
 .L_08120f60:
 	.4byte 0x00000c69
 .L_08120f64:
-	.4byte PpDmgFalloff
+	.4byte EpDmgTbl
 .L_08120f68:
 	.4byte 0x00000c73
 .L_08120f6c:
@@ -2097,11 +2097,11 @@ BtlTgtExec:
 	bl UnitRatioFar
 	b .L_08121480
 .L_08121430:
-	.4byte HpDmgFalloff5
+	.4byte HpDmgTbl5
 .L_08121434:
-	.4byte HpDmgFalloff8
+	.4byte HpDmgTbl8
 .L_08121438:
-	.4byte HpDmgFalloff6
+	.4byte HpDmgTbl6
 .L_0812143c:
 	.4byte gPartyState
 .L_08121440:
@@ -2113,13 +2113,13 @@ BtlTgtExec:
 .L_0812144c:
 	.4byte 0x00000c70
 .L_08121450:
-	.4byte PpHealFalloff
+	.4byte EpRcvTbl
 .L_08121454:
 	.4byte 0x00000c6d
 .L_08121458:
 	.4byte 0x00000c6a
 .L_0812145c:
-	.4byte HpDmgFalloff
+	.4byte HpDmgTbl
 .L_08121460:
 	.4byte 0x00000c73
 .L_08121464:

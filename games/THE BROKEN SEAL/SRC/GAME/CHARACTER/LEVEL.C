@@ -227,7 +227,7 @@ void Owner_InitRecords(void)
                 }
 
                 Owner_RefreshDerivedData(*remote);
-                state->pp_gauge = 0x4000;
+                state->ep_gauge = 0x4000;
                 state->hp_gauge = 0x4000;
                 Party_AdvanceOwnerCountToTarget(*remote, tmpl->starting_level);
                 UnitCalc(*remote);
@@ -273,7 +273,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     res->level = level;
     res->ability = 0xffff;
     res->hp = 0;
-    res->pp = 0;
+    res->ep = 0;
     res->attack = 0;
     res->defense = 0;
     res->agility = 0;
@@ -287,7 +287,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         work->growth = Character_GetDefinition(owner);
         if (res->level == 1) {
             res->hp += work->growth->hp[0];
-            res->pp += work->growth->pp[0];
+            res->ep += work->growth->ep[0];
             res->attack += work->growth->attack[0];
             res->defense += work->growth->defense[0];
             res->agility += work->growth->agility[0];
@@ -300,8 +300,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
             band = 4;
         diff = work->growth->hp[band + 1] - work->growth->hp[band];
         res->hp += ((Random16() * 20 >> 16) + diff) / 20;
-        diff = work->growth->pp[band + 1] - work->growth->pp[band];
-        res->pp += ((Random16() * 20 >> 16) + diff) / 20;
+        diff = work->growth->ep[band + 1] - work->growth->ep[band];
+        res->ep += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->attack[band + 1] - work->growth->attack[band];
         res->attack += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->defense[band + 1] - work->growth->defense[band];
@@ -311,14 +311,14 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         diff = work->growth->luck[band + 1] - work->growth->luck[band];
         res->luck += ((Random16() * 20 >> 16) + diff) / 20;
         st->base_hp += res->hp;
-        st->base_pp += res->pp;
+        st->base_ep += res->ep;
         st->base_attack += res->attack;
         st->base_defense += res->defense;
         st->base_agility += res->agility;
         st->base_luck += res->luck;
         st->base_action_count = 1;
         st->base_hp_regen = 0;
-        st->base_pp_regen = 0;
+        st->base_ep_regen = 0;
         Owner_RefreshClassActions(owner);
         UnitCalc(owner);
     }

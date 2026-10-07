@@ -193,7 +193,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
             while (index != -1) {
                 struct BtlUnit *unit = UnitGetFar(unit_ids[index]);
 
-                if (unit->stun == 0 && unit->sleep == 0) {
+                if (unit->shibire == 0 && unit->nemuri == 0) {
                     BattleMotion_SetupEscapeObject(unit_ids[index]);
                     WaitFrames(8);
                 }

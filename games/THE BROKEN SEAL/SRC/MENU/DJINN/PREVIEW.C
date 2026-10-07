@@ -38,7 +38,7 @@ struct AbilityData {
 struct BattleUnitRecord {
     u8 field_00[0x38];
     s16 hp;
-    s16 pp;
+    s16 ep;
     u16 atk;
     u16 def;
     u16 agi;
@@ -157,7 +157,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 #else
         UiText_RenderWideStringInWindow(buf + 7, win, 5, 1);
 #endif
-        oldPp = snap->pp;
+        oldPp = snap->ep;
         UiText_FormatNumberToHalfwords(buf, oldPp);
 #if !EDITION_INTERNATIONAL
         UiText_RenderWideStringInWindow(buf + 7, win, 4, 2);
@@ -270,11 +270,11 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             DjinnMenu_DrawStatArrow(80, 14, val);
         }
 
-        UiText_FormatNumberToHalfwords(buf, unit->pp);
+        UiText_FormatNumberToHalfwords(buf, unit->ep);
         UiText_RenderWideStringInWindow(buf + 7, win, 11, 2);
-        if (unit->pp != oldPp) {
+        if (unit->ep != oldPp) {
             val = 0;
-            if (unit->pp > oldPp)
+            if (unit->ep > oldPp)
                 val = 1;
             DjinnMenu_DrawStatArrow(80, 22, val);
         }

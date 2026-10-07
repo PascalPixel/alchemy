@@ -107,7 +107,7 @@ s32 BattleParty_ApplyStatusDamage(void)
         struct BtlUnit *unit = UnitGetFar(gGameState.active_owners[i]);
         s32 amount;
 
-        switch (unit->poison) {
+        switch (unit->doku) {
         case 1:
             amount = -((unit->max_hp + 10) / 20);
             if (amount == 0)
@@ -408,9 +408,9 @@ s32 Field_RunScene(s32 entrance)
                             if (vitals->hp_gauge == 0 && vitals->hp != 0)
                                 vitals->hp_gauge = 1;
                         } while (0);
-                        vitals->pp_gauge = Vitals_Clamp((vitals->pp << 14) / vitals->max_pp);
-                        if (vitals->pp_gauge == 0 && vitals->pp != 0)
-                            vitals->pp_gauge = 1;
+                        vitals->ep_gauge = Vitals_Clamp((vitals->ep << 14) / vitals->max_ep);
+                        if (vitals->ep_gauge == 0 && vitals->ep != 0)
+                            vitals->ep_gauge = 1;
                         gGameState.scene = gGameState.saved_scene;
                         gGameState.entrance = gGameState.saved_entrance;
                         Battle_ClearObjectFlag5bWhenMode3();

@@ -67,8 +67,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 #else
     UiText_DrawStringInWindowFar(Menu_PpString, window, 40, 24);
 #endif
-    UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
-    UiText_DrawNumberInWindowFar(unit->max_pp, 4, window, 112, 24);
+    UiText_DrawNumberInWindowFar(unit->ep, 4, window, 72, 24);
+    UiText_DrawNumberInWindowFar(unit->max_ep, 4, window, 112, 24);
     UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 24);
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
     UiText_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);

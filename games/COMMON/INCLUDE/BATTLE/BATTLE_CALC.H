@@ -3,15 +3,15 @@
 
 #include "TYPES.H"
 
-extern u8 HitFalloff[];
-extern s32 PpLossFalloff[];
-extern s32 HpHealFalloff[];
-extern s32 PpDmgFalloff[];
-extern s32 HpDmgFalloff5[];
-extern s32 HpDmgFalloff8[];
-extern s32 HpDmgFalloff6[];
-extern s32 PpHealFalloff[];
-extern s32 HpDmgFalloff[];
+extern u8 HitTbl[];
+extern s32 EpLossTbl[];
+extern s32 HpRcvTbl[];
+extern s32 EpDmgTbl[];
+extern s32 HpDmgTbl5[];
+extern s32 HpDmgTbl8[];
+extern s32 HpDmgTbl6[];
+extern s32 EpRcvTbl[];
+extern s32 HpDmgTbl[];
 
 s32 BtlHitChk(s32 actor, s32 target, s32 range, s32 effect, s32 table);
 s32 BtlAtkCalc(s32 amount, s32 reduction, s32 adjustment, s32 selector);

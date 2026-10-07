@@ -77,7 +77,7 @@ s32 BattleParty_ApplyStatusDamage(void)
             struct BtlUnit *object = UnitGet(*entry);
             s32 amount;
 
-            switch (object->poison) {
+            switch (object->doku) {
             case 1:
                 amount = -((object->max_hp + 10) / 20);
                 if (amount == 0)

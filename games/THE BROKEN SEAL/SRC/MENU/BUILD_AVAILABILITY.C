@@ -34,7 +34,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         count = 1;
     }
 
-    mode = state->poison;
+    mode = state->doku;
     if (mode != 0) {
         if (mode == 1)
             output[CHARACTER_POISON] = mode;
@@ -46,7 +46,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         output[CHARACTER_CURSE] = 1;
         count++;
     }
-    if (state->evil_spirit != 0) {
+    if (state->akuryo != 0) {
         output[CHARACTER_HAUNT] = 1;
         count++;
     }

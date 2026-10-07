@@ -83,9 +83,9 @@ static __inline__ void Unit_UpdateGauges(struct BtlUnit *unit)
     unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
     if (unit->hp_gauge == 0 && unit->hp != 0)
         unit->hp_gauge = 1;
-    unit->pp_gauge = Vitals_Ratio(unit->pp, unit->max_pp);
-    if (unit->pp_gauge == 0 && unit->pp != 0)
-        unit->pp_gauge = 1;
+    unit->ep_gauge = Vitals_Ratio(unit->ep, unit->max_ep);
+    if (unit->ep_gauge == 0 && unit->ep != 0)
+        unit->ep_gauge = 1;
 }
 
 void Party_SetReturnPoint(s32 reason)
@@ -108,7 +108,7 @@ void Party_SetReturnPoint(s32 reason)
                 /* FAKEMATCH: the one-pass block keeps both copies ahead of the ratio */
                 do {
                     unit->hp = unit->max_hp;
-                    unit->pp = unit->max_pp;
+                    unit->ep = unit->max_ep;
                 } while (0);
                 Unit_UpdateGauges(unit);
             }

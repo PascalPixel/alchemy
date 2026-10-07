@@ -32,7 +32,7 @@ struct StepOwner {
     u8 unknown_000[0x38];
     s16 hp;
     u8 unknown_03a[0x131 - 0x3a];
-    u8 poison;
+    u8 doku;
 };
 
 enum StepTileEvent {
@@ -312,7 +312,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             } else if (hp[i] != 0) {
                 work->fallen[work->fallen_count++] = gGameState.active_owners[i];
                 work->raised_trigger = 0xffff;
-                owner->poison = 0;
+                owner->doku = 0;
             }
         }
     }

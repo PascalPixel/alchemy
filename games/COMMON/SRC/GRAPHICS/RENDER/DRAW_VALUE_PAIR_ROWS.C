@@ -42,9 +42,9 @@ void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 layer)
     UiWork_SetParamNibbleFar(15);
     UiText_DrawStringAtOffsetFar((s32)Ui_PpString, layer, 0, 48);
     UiText_DrawStringInWindowFar((s32)Ui_SlashString, layer, 48, 48);
-    val = unit->pp;
+    val = unit->ep;
     UiText_DrawNumberRightAlignedFar(val, layer, 48, 48);
-    val = unit->max_pp;
+    val = unit->max_ep;
     UiText_DrawNumberRightAlignedFar(val, layer, 88, 48);
 #else
     UiText_DrawStringInWindowFar((s32)Ui_HpRowString, layer, 0, 40);
@@ -60,9 +60,9 @@ void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 layer)
     UiText_DrawNumberAtOffsetFar(val, 4, layer, 16, 40);
     UiWork_SetParamNibbleFar(15);
     UiText_DrawStringInWindowFar((s32)Ui_EpRowString, layer, 0, 48);
-    val = unit->pp;
+    val = unit->ep;
     UiText_DrawNumberAtOffsetFar(val, 4, layer, 16, 48);
-    val = unit->max_pp;
+    val = unit->max_ep;
     UiText_DrawNumberInWindowFar(val, 4, layer, 56, 48);
 #endif
 }

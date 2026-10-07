@@ -241,7 +241,7 @@ void Inn_PlaySleep(s32 room_price)
         object = UnitGetFar(objects[index]);
         if (object->hp != 0) {
             object->hp = object->max_hp;
-            object->pp = object->max_pp;
+            object->ep = object->max_ep;
             UnitRatioFar(objects[index]);
         }
     }

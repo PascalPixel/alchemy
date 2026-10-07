@@ -492,9 +492,9 @@ psynergy_menu:
                 slot->oam.f.tile = mode;
                 state->entryActive[1] = 1;
                 ui->level = 5;
-                if ((s32)ability->pp_cost > (s32)actor->pp) {
+                if ((s32)ability->pp_cost > (s32)actor->ep) {
                     UiWork_SetParamNibble(2);
-                } else if (actor->psy_seal != 0) {
+                } else if (actor->fuuji != 0) {
                     UiWork_SetParamNibble(9);
                 }
                 UiText_DrawCharacterAtOffset(param + 819, (struct RenderInput *)win, 16, 0);

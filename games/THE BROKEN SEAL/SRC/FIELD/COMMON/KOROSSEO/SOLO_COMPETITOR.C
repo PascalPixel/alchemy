@@ -30,8 +30,8 @@ void Korosseo_SelectSoloCompetitor(s32 id)
     Engine_ObjectAttachWorkTarget(id, 0);
     unit = Engine_OwnerGetState(id);
     unit->hp = unit->max_hp;
-    unit->pp = unit->max_pp;
-    unit->poison = 0;
+    unit->ep = unit->max_ep;
+    unit->doku = 0;
     v = (unit->hp << 14) / unit->max_hp;
     t = 0x4000;
     if (v <= 0x4000) {
@@ -43,16 +43,16 @@ void Korosseo_SelectSoloCompetitor(s32 id)
     if ((u16)t == 0 && unit->hp != 0) {
         unit->hp_gauge = 1;
     }
-    v = (unit->pp << 14) / unit->max_pp;
+    v = (unit->ep << 14) / unit->max_ep;
     t = 0x4000;
     if (v <= 0x4000) {
         t = 0;
         if (v >= 0)
             t = v;
     }
-    unit->pp_gauge = t;
-    if ((u16)t == 0 && unit->pp != 0) {
-        unit->pp_gauge = 1;
+    unit->ep_gauge = t;
+    if ((u16)t == 0 && unit->ep != 0) {
+        unit->ep_gauge = 1;
     }
     Engine_EventClearInvalidPackedValues();
 }

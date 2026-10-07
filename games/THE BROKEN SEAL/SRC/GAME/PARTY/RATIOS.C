@@ -52,7 +52,7 @@ void Party_ApplyStatePreset(void)
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             unit->hp = unit->max_hp;
-            unit->pp = unit->max_pp;
+            unit->ep = unit->max_ep;
         } while (0);
         {
             s16 max_hp = unit->max_hp;
@@ -71,7 +71,7 @@ void Party_ApplyStatePreset(void)
             unit->hp_gauge = 1;
         }
 
-        ratio = (unit->pp << 14) / unit->max_pp;
+        ratio = (unit->ep << 14) / unit->max_ep;
         rate = 0x4000;
         if (ratio <= rate) {
             rate = 0;
@@ -79,9 +79,9 @@ void Party_ApplyStatePreset(void)
                 rate = ratio;
             }
         }
-        unit->pp_gauge = rate;
-        if ((rate << 16) == 0 && unit->pp != 0) {
-            unit->pp_gauge = 1;
+        unit->ep_gauge = rate;
+        if ((rate << 16) == 0 && unit->ep != 0) {
+            unit->ep_gauge = 1;
         }
 
         for (slot = 0; slot <= 14; slot++) {
@@ -122,7 +122,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             obj->hp = obj->max_hp;
-            obj->pp = obj->max_pp;
+            obj->ep = obj->max_ep;
         } while (0);
 
         v34 = obj->max_hp;
@@ -140,7 +140,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
             obj->hp_gauge = one;
         }
 
-        t = (obj->pp << 14) / (obj->max_pp);
+        t = (obj->ep << 14) / (obj->max_ep);
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;
@@ -148,15 +148,15 @@ void Owner_RefreshActiveRatios(s32 arg0)
                 v16 = t;
             }
         }
-        obj->pp_gauge = v16;
-        if (((v16 << 16) == 0) && (obj->pp != 0)) {
+        obj->ep_gauge = v16;
+        if (((v16 << 16) == 0) && (obj->ep != 0)) {
             one = 1;
-            obj->pp_gauge = one;
+            obj->ep_gauge = one;
         }
 
         if (arg0 == 1) {
-            obj->poison = 0;
-            obj->evil_spirit = 0;
+            obj->doku = 0;
+            obj->akuryo = 0;
         }
     }
 }
@@ -200,7 +200,7 @@ void Owner_RefreshRatiosOnFlag(void)
         obj = UnitGet(ownerId);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
-            obj->pp = obj->max_pp;
+            obj->ep = obj->max_ep;
         } while (0);
 
         v38 = obj->hp;
@@ -219,8 +219,8 @@ void Owner_RefreshRatiosOnFlag(void)
             obj->hp_gauge = one;
         }
 
-        v3A = obj->pp;
-        v36 = obj->max_pp;
+        v3A = obj->ep;
+        v36 = obj->max_ep;
         t = (v3A << 14) / v36;
         v16 = 0x4000;
         if (t <= 0x4000) {
@@ -229,10 +229,10 @@ void Owner_RefreshRatiosOnFlag(void)
                 v16 = t;
             }
         }
-        obj->pp_gauge = v16;
-        if (((v16 << 16) == 0) && (obj->pp != 0)) {
+        obj->ep_gauge = v16;
+        if (((v16 << 16) == 0) && (obj->ep != 0)) {
             one = 1;
-            obj->pp_gauge = one;
+            obj->ep_gauge = one;
         }
     }
 }
@@ -263,7 +263,7 @@ void UnitRatio(s32 owner_no)
         first_value = 1;
         owner->hp_gauge = first_value;
     }
-    second = (owner->pp << 14) / owner->max_pp;
+    second = (owner->ep << 14) / owner->max_ep;
     second_value = 0x4000;
     if (second <= 0x4000) {
         second_value = 0;
@@ -271,10 +271,10 @@ void UnitRatio(s32 owner_no)
             second_value = second;
         }
     }
-    owner->pp_gauge = second_value;
-    if (((second_value << 16) == 0) && (owner->pp != 0)) {
+    owner->ep_gauge = second_value;
+    if (((second_value << 16) == 0) && (owner->ep != 0)) {
         second_value = 1;
-        owner->pp_gauge = second_value;
+        owner->ep_gauge = second_value;
     }
 }
 
@@ -308,7 +308,7 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
         }
     }
 
-    value = (state->pp << 14) / state->max_pp;
+    value = (state->ep << 14) / state->max_ep;
     {
         s32 output = 0x4000;
 
@@ -318,9 +318,9 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
                 output = value;
             }
         }
-        state->pp_gauge = output;
-        if ((output << 16) == 0 && state->pp != 0) {
-            state->pp_gauge = 1;
+        state->ep_gauge = output;
+        if ((output << 16) == 0 && state->ep != 0) {
+            state->ep_gauge = 1;
         }
     }
 }

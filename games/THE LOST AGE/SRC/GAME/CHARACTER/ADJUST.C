@@ -5,8 +5,8 @@ void UnitRatio(s32);
 s16 UnitEpAdd(s32 owner, s32 delta)
 {
     struct BtlUnit *state = UnitGet(owner);
-    s32 cur = state->pp;
-    s32 max = state->max_pp;
+    s32 cur = state->ep;
+    s32 max = state->max_ep;
     s32 value = cur + delta;
     s32 result;
 
@@ -17,7 +17,7 @@ s16 UnitEpAdd(s32 owner, s32 delta)
         if (value >= 0)
             result = value;
     }
-    state->pp = result;
+    state->ep = result;
     UnitRatio(owner);
-    return state->pp;
+    return state->ep;
 }

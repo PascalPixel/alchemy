@@ -127,8 +127,8 @@ s32 Battle_ProcessRoundEnd(void)
             s32 id = ids[j];
             struct BtlUnit *unit = UnitGetFar(id);
 
-            if (unit->ready_pose != 0) {
-                unit->ready_pose--;
+            if (unit->sonae != 0) {
+                unit->sonae--;
             }
             if (unit->hp != 0) {
                 if (unit->hp_regen != 0 && unit->hp != unit->max_hp) {
@@ -147,15 +147,15 @@ s32 Battle_ProcessRoundEnd(void)
                     Audio_PlayCue(175);
                     BattlePresentation_WaitForAdvance();
                 }
-                if (unit->pp_regen != 0 && unit->pp != unit->max_pp) {
-                    pp_amount = unit->pp_regen;
-                    if (unit->pp + pp_amount > unit->max_pp) {
-                        pp_amount = unit->max_pp - unit->pp;
+                if (unit->ep_regen != 0 && unit->ep != unit->max_ep) {
+                    pp_amount = unit->ep_regen;
+                    if (unit->ep + pp_amount > unit->max_ep) {
+                        pp_amount = unit->max_ep - unit->ep;
                     }
                     UnitEpAddFar(id, pp_amount);
                     UiWork_PushValueSlotFar(id, 1);
                     UiWork_PushValueSlotFar(pp_amount, 5);
-                    if (unit->pp == unit->max_pp) {
+                    if (unit->ep == unit->max_ep) {
                         UiText_ShowMessageAndWaitCoreFar((s32)MsgPpFull);
                     } else {
                         UiText_ShowMessageAndWaitCoreFar((s32)MsgPpRecover);
@@ -326,8 +326,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
                 best = i;
             }
         }
-        if (best >= 0 && unit->element_modifier[best] < most) {
-            unit->element_modifier[best] = most;
+        if (best >= 0 && unit->elm_lv[best] < most) {
+            unit->elm_lv[best] = most;
         }
         BattleUnit_Recalculate(id);
         for (i = 0; i <= 3; i++) {
@@ -373,7 +373,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
         }
         BattleEv_DispatchQueued();
         BattleEventRuntime_Reset();
-        poison = &unit->poison;
+        poison = &unit->doku;
         if (*poison != 0) {
             s32 damage = unit->max_hp * *poison / 10;
             struct BtlWork *state = BtlWk;
@@ -402,8 +402,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
         }
         BattleEv_DispatchQueued();
         BattleEventRuntime_Reset();
-        if (unit->death_count != 0) {
-            if (--unit->death_count == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
+        if (unit->shiryo != 0) {
+            if (--unit->shiryo == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
                 BtlEvPush(BEV_UNIT, id);
                 MES_PUSH(MsgReaperCalls);
                 BtlEvPush(BEV_OBJ_BGN, id);

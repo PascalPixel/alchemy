@@ -78,7 +78,7 @@ s32 BattlePres_BuildOpponentEntries(
                 entry->priority = (s16)value / 2;
             }
 
-            if (unit->sleep != 0 || unit->stun != 0) {
+            if (unit->nemuri != 0 || unit->shibire != 0) {
                 entry->command = 8;
                 entry->parameter = 0;
                 entry->target = 0x100;

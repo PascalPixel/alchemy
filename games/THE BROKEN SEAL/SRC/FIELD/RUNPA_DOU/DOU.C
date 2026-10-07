@@ -584,7 +584,7 @@ void WagonChoice_Run(void)
 {
     s32 wagon;
     s32 insisted;
-    s32 confusion;
+    s32 konran;
 
     wagon = (s32)MsgRunpaLetsTakeWagon;
     Engine_EventSetMessage(wagon + WAGON_BUNZA_LEADS_THE_WAY);
@@ -630,10 +630,10 @@ check_nothing_left:
             if (Mia_AsksIfRidingAfterAll()) {
                 goto ask_about_business;
             }
-            confusion = (s32)MsgRunpaTotallyConfusedChanged;
-            Engine_EventSetMessage(confusion + CONFUSION_IVAN_IS_CONFUSED);
+            konran = (s32)MsgRunpaTotallyConfusedChanged;
+            Engine_EventSetMessage(konran + CONFUSION_IVAN_IS_CONFUSED);
             Engine_EventShowMessage(ACTOR_IVAN, 0);
-            Engine_EventSetMessage(confusion + CONFUSION_GERALD_ASKS_AGAIN);
+            Engine_EventSetMessage(konran + CONFUSION_GERALD_ASKS_AGAIN);
             Engine_EventOpenMessage(ACTOR_GERALD, 0);
             goto ask_to_ride;
 ride:

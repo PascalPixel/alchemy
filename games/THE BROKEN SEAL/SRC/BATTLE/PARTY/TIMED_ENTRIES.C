@@ -30,11 +30,11 @@ s32 BattleUnit_TickReflect(s32 id)
 s32 BattleUnit_TickAgilityModifier(s32 id)
 {
     struct BtlUnit *unit = UnitGetFar(id);
-    u8 *value = &unit->agility_modifier_turns;
+    u8 *value = &unit->agi_cnt;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
-            unit->agility_modifier = 0;
+            unit->agi_lv = 0;
             return 1;
         }
     }

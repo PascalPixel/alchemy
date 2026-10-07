@@ -83,7 +83,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             owner = UnitGetFar(menu->owner_ids[0]);
             ability = BtlActGet(0x3fff & menu->psynergies[cursor]);
 
-            if (ability->pp_cost > owner->pp) {
+            if (ability->pp_cost > owner->ep) {
                 UiWork_SetParamNibbleFar(2);
             } else if (PsynergyMenu_IsActionRestricted(0x3fff & menu->psynergies[cursor]) != 0) {
                 UiWork_SetParamNibbleFar(4);
@@ -247,7 +247,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                 }
                 ability = Ability_GetData(
                     menu->psynergies[state.selected_index] & ACTION_ID_MASK);
-                if (ability->pp_cost > owner->pp) {
+                if (ability->pp_cost > owner->ep) {
                     Audio_PlayCue(114);
                     goto no_accept;
                 }

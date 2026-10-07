@@ -42,29 +42,29 @@ struct BtlUnit {
     u8 name[0x0f];
     u8 level;
     s16 base_hp;
-    s16 base_pp;
+    s16 base_ep;
     s16 hp_gauge;
-    s16 pp_gauge;
+    s16 ep_gauge;
     u16 base_attack;
     u16 base_defense;
     u16 base_agility;
     u8 base_luck;
     u8 base_action_count;
     u8 base_hp_regen;
-    u8 base_pp_regen;
+    u8 base_ep_regen;
     u8 unknown_022[2];
     struct BattleElementStats base_elements[4];
     s16 max_hp;
-    s16 max_pp;
+    s16 max_ep;
     s16 hp;
-    s16 pp;
+    s16 ep;
     u16 attack;
     u16 defense;
     u16 agility;
     u8 luck;
     u8 action_entry_count;
     u8 hp_regen;
-    u8 pp_regen;
+    u8 ep_regen;
     u8 unknown_046[2];
     struct BattleElementStats elements[4];
     struct OwnerActionSlot action_slots[32];
@@ -80,34 +80,34 @@ struct BtlUnit {
     u8 class_index;
     u8 side;
 #if GAME_TLA
-    u8 guard_level;
+    u8 guard_lv;
 #else
-    s8 guard_level;
+    s8 guard_lv;
 #endif
-    s8 element_modifier[4];
+    s8 elm_lv[4];
     s8 restraint;
-    s8 poison;
-    u8 attack_modifier_turns;
-    s8 attack_modifier;
-    u8 defense_modifier_turns;
-    s8 defense_modifier;
-    u8 res_modifier_turns;
-    s8 res_modifier;
-    u8 delusion;
-    s8 confusion;
+    s8 doku;
+    u8 atk_cnt;
+    s8 atk_lv;
+    u8 def_cnt;
+    s8 def_lv;
+    u8 res_cnt;
+    s8 res_lv;
+    u8 maboroshi;
+    s8 konran;
     u8 charm;
-    u8 stun;
-    u8 sleep;
-    u8 psy_seal;
+    u8 shibire;
+    u8 nemuri;
+    u8 fuuji;
     u8 refrain;
     s8 reflect;
-    u8 evil_spirit;
-    u8 death_count;
+    u8 akuryo;
+    u8 shiryo;
     u8 unknown_142[2];
-    u8 ready_pose;
-    u8 cannot_move;
-    u8 agility_modifier_turns;
-    s8 agility_modifier;
+    u8 sonae;
+    u8 miugoki;
+    u8 agi_cnt;
+    s8 agi_lv;
     s8 battle_end_state;
     u8 unknown_149;
     u16 enemy_id;
@@ -153,7 +153,7 @@ LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BtlUnit, elements, 0x048);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_ReadyPose,
     struct BtlUnit,
-    ready_pose,
+    sonae,
     0x144);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Inventory,
@@ -173,7 +173,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattleUnit_GuardLevel,
     struct BtlUnit,
-    guard_level,
+    guard_lv,
     0x12b);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Status13a,
@@ -183,7 +183,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Status140,
     struct BtlUnit,
-    evil_spirit,
+    akuryo,
     0x140);
 
 LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BtlUnit, enemy_id, 0x14a);

@@ -313,20 +313,20 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     }
                     break;
                 case 3:
-                    if (st->poison != 0)
+                    if (st->doku != 0)
                         found = 1;
                     break;
                 case 4:
-                    if (st->delusion != 0 || st->stun != 0
-                        || st->sleep != 0 || st->psy_seal != 0
-                        || st->death_count != 0)
+                    if (st->maboroshi != 0 || st->shibire != 0
+                        || st->nemuri != 0 || st->fuuji != 0
+                        || st->shiryo != 0)
                         found = 1;
                     break;
                 case 6:
-                    if (st->delusion != 0 || st->stun != 0
-                        || st->sleep != 0 || st->psy_seal != 0
-                        || st->death_count != 0 || st->poison != 0
-                        || st->evil_spirit != 0)
+                    if (st->maboroshi != 0 || st->shibire != 0
+                        || st->nemuri != 0 || st->fuuji != 0
+                        || st->shiryo != 0 || st->doku != 0
+                        || st->akuryo != 0)
                         found = 1;
                     break;
                 }
@@ -481,9 +481,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
-            UiText_DrawNumberInWindow(unit->pp, 4, (s32)infoWin, 16, 0);
+            UiText_DrawNumberInWindow(unit->ep, 4, (s32)infoWin, 16, 0);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
-            UiText_DrawNumberInWindow(unit->max_pp, 4, (s32)infoWin, 56, 0);
+            UiText_DrawNumberInWindow(unit->max_ep, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 5:
             anchor = pos.x / 8;
@@ -501,21 +501,21 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             if (anchor + 5 > 29)
                 column = 18;
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
-            if (unit->poison == 0)
+            if (unit->doku == 0)
                 goto no_condition;
             UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
             goto frame_tail;
         case 4:
             count = 0;
-            if (*(pd = &unit->delusion) != 0)
+            if (*(pd = &unit->maboroshi) != 0)
                 count = 1;
-            if (*(ps = &unit->stun) != 0)
+            if (*(ps = &unit->shibire) != 0)
                 count++;
-            if (*(pl = &unit->sleep) != 0)
+            if (*(pl = &unit->nemuri) != 0)
                 count++;
-            if (*(pp = &unit->psy_seal) != 0)
+            if (*(pp = &unit->fuuji) != 0)
                 count++;
-            if (*(pc = &unit->death_count) != 0)
+            if (*(pc = &unit->shiryo) != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -553,19 +553,19 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             goto frame_tail;
         case 6:
             count = 0;
-            if (unit->poison != 0)
+            if (unit->doku != 0)
                 count = 1;
-            if (unit->delusion != 0)
+            if (unit->maboroshi != 0)
                 count++;
-            if (unit->stun != 0)
+            if (unit->shibire != 0)
                 count++;
-            if (unit->sleep != 0)
+            if (unit->nemuri != 0)
                 count++;
-            if (unit->psy_seal != 0)
+            if (unit->fuuji != 0)
                 count++;
-            if (unit->death_count != 0)
+            if (unit->shiryo != 0)
                 count++;
-            if (unit->evil_spirit != 0)
+            if (unit->akuryo != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -578,31 +578,31 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
-            if (unit->poison != 0) {
+            if (unit->doku != 0) {
                 UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
-            if (unit->delusion != 0) {
+            if (unit->maboroshi != 0) {
                 UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->stun != 0) {
+            if (unit->shibire != 0) {
                 UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->sleep != 0) {
+            if (unit->nemuri != 0) {
                 UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->psy_seal != 0) {
+            if (unit->fuuji != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->death_count != 0) {
+            if (unit->shiryo != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->evil_spirit != 0) {
+            if (unit->akuryo != 0) {
                 UiText_DrawCharacterAtOffset(0x8AA, (struct RenderInput *)infoWin, 0, 8 * count);
                 count++;
             }

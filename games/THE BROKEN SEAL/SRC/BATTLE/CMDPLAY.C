@@ -205,9 +205,9 @@ disable_item:
     if (request->command != 2 && Ability_CheckStatusOrSpecialId(action_id) != 0) {
         request->command = 1;
         request->parameter = action_id;
-        if (action->pp_cost > actor->pp && profile->target_strategy != 0)
+        if (action->pp_cost > actor->ep && profile->target_strategy != 0)
             goto next_candidate;
-        if (actor->psy_seal != 0 && profile->target_strategy == 2)
+        if (actor->fuuji != 0 && profile->target_strategy == 2)
             goto next_candidate;
     }
     command = request->command;

@@ -13,13 +13,13 @@ struct ItemOwner {
     u8 stat_1e;
     u8 padding_01f[0x15];
     s16 max_hp;
-    s16 max_pp;
+    s16 max_ep;
     s16 hp;
-    s16 pp;
+    s16 ep;
     u8 padding_03c[0x9c];
     u16 items[15];
     u8 padding_0f6[0x3b];
-    s8 poison;
+    s8 doku;
 };
 
 struct ItemData {

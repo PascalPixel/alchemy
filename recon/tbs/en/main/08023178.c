@@ -589,10 +589,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     object->max_hp, 4, (s32)winMain, 96, 24);
                 UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)winMain, 40, 32);
                 UiText_DrawNumberInWindow(
-                    object->pp, 4, (s32)winMain, 56, 32);
+                    object->ep, 4, (s32)winMain, 56, 32);
                 UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 88, 32);
                 UiText_DrawNumberInWindow(
-                    object->max_pp, 4, (s32)winMain, 96, 32);
+                    object->max_ep, 4, (s32)winMain, 96, 32);
 
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 10, (struct RenderInput *)winMain, 136, 16);
                 UiText_DrawNumberInWindow(
@@ -659,64 +659,64 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         if (i > 7) {
                             break;
                         }
-                        if (object->death_count != 0) {
+                        if (object->shiryo != 0) {
                             *o++ = 8;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->poison == 1) {
+                        if (object->doku == 1) {
                             *o++ = 1;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->poison == 2) {
+                        if (object->doku == 2) {
                             *o++ = 2;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->psy_seal != 0) {
+                        if (object->fuuji != 0) {
                             *o++ = 4;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->stun != 0) {
+                        if (object->shibire != 0) {
                             *o++ = 3;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->sleep != 0) {
+                        if (object->nemuri != 0) {
                             *o++ = 5;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->evil_spirit != 0) {
+                        if (object->akuryo != 0) {
                             *o++ = 7;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->delusion != 0) {
+                        if (object->maboroshi != 0) {
                             *o++ = 6;
                             i++;
                         }
                         if (i > 7) {
                             break;
                         }
-                        if (object->attack_modifier_turns != 0) {
-                            u8 m = object->attack_modifier;
+                        if (object->atk_cnt != 0) {
+                            u8 m = object->atk_lv;
 
                             if ((s8)m > 0) {
                                 *o++ = 9;
@@ -730,8 +730,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         if (i > 7) {
                             break;
                         }
-                        if (object->defense_modifier_turns != 0) {
-                            u8 m = object->defense_modifier;
+                        if (object->def_cnt != 0) {
+                            u8 m = object->def_lv;
 
                             if ((s8)m > 0) {
                                 *o++ = 11;
@@ -745,8 +745,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         if (i > 7) {
                             break;
                         }
-                        if (object->res_modifier_turns != 0) {
-                            u8 m = object->res_modifier;
+                        if (object->res_cnt != 0) {
+                            u8 m = object->res_lv;
 
                             if ((s8)m > 0) {
                                 *o++ = 13;
@@ -761,7 +761,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                             break;
                         }
                         {
-                            u8 m = object->agility_modifier;
+                            u8 m = object->agi_lv;
 
                             if ((s8)m > 0) {
                                 *o++ = 17;
@@ -816,9 +816,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 atkDelta = object->attack;
                 defDelta = object->defense;
                 agiDelta = object->agility;
-                object->attack_modifier = 0;
-                object->defense_modifier = 0;
-                object->agility_modifier = 0;
+                object->atk_lv = 0;
+                object->def_lv = 0;
+                object->agi_lv = 0;
                 BattleUnit_Recalculate(owner);
                 atkDelta -= object->attack;
                 defDelta -= object->defense;
@@ -828,7 +828,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 switch (iconIdx) {
                 case 8:
-                    code = object->death_count;
+                    code = object->shiryo;
                     break;
                 case 9:
                     code = atkDelta;
@@ -850,7 +850,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     break;
                 case 13:
                 case 14:
-                    code = object->res_modifier * 20;
+                    code = object->res_lv * 20;
                     break;
                 default:
                     break;

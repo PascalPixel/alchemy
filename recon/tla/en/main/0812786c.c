@@ -9,9 +9,9 @@ struct OwnerElementStats {
 
 struct OwnerStats {
     s16 max_hp;
-    s16 max_pp;
+    s16 max_ep;
     s16 hp;
-    s16 pp;
+    s16 ep;
     u16 attack;
     u16 defense;
     u16 agility;
@@ -53,14 +53,14 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
         value = 9999;
     stats->max_hp = value;
 
-    value = state->stats.max_pp;
+    value = state->stats.max_ep;
     value += __divsi3(levels * 15, 10);
-    floor = __divsi3(base->max_pp * 7, 10);
+    floor = __divsi3(base->max_ep * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    state->stats.max_pp = value;
+    state->stats.max_ep = value;
 
     floor = __divsi3(levels * 123, 10);
     value = state->stats.attack;

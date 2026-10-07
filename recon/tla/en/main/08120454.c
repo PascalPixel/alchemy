@@ -18,7 +18,10 @@
  * Then tried for the HP drain, where the listing keeps heal in r5 and the
  * amount in r6 (ours the reverse): the amount in tmp (384), in a
  * block-local amt (505), hp read after the halving (557); heal += apwr
- * before dmg = apwr changes nothing. The listing reads maxu before
+ * before dmg = apwr changes nothing. The weapon case halves defense with a
+ * signed shift sequence in the listing (lsrs #31, adds, asrs) where ours
+ * shifts logically: def / 2 and scale /= 2 give the same logical shift,
+ * defense read through the function-level value 382. The listing reads maxu before
  * the division call and shares the add after it with 78 and 7%: reading
  * maxu first instead merges both loads (723); direct reads with maxv as
  * before give 435. Tried and worse: a while loop

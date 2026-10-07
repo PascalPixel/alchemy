@@ -128,47 +128,6 @@ Func_020000fc:
 	pop {r5, pc}
 .L_02008134:
 	.4byte 0x0000135f
-	.section .text.x02008138,"ax",%progbits
-	.global Func_02000138
-	.thumb_func
-Func_02000138:
-	push {lr}
-	ldr r3, .L_02008154
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #94
-	ble .L_0200814e
-	ldr r0, .L_02008158
-	b .L_02008150
-.L_0200814e:
-	ldr r0, .L_0200815c
-.L_02008150:
-	pop {pc}
-	.2byte 0x0000
-.L_02008154:
-	.4byte gPartyState
-.L_02008158:
-	.4byte Data_02000f10
-.L_0200815c:
-	.4byte Data_02000ebc
-	.section .text.x02008160,"ax",%progbits
-	.global Func_02000160
-	.thumb_func
-Func_02000160:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r6, r1, #0
-	bl Owner_GetState
-	ldrb r1, [r0, #15]
-	adds r0, r5, #0
-	adds r1, r1, r6
-	bl Party_AdvanceOwnerCountToTarget
-	adds r0, r5, #0
-	bl Owner_RecalculateStats
-	pop {r5, r6, pc}
 	.section .text.x0200817c,"ax",%progbits
 	.global Func_0200017c
 	.thumb_func
@@ -655,25 +614,6 @@ Func_020002cc:
 	.4byte Data_0200076c
 .L_0200856c:
 	.4byte gInput
-	.section .text.x02008570,"ax",%progbits
-	.global Func_02000570
-	.thumb_func
-Func_02000570:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r1, [r3, #108]
-	movs r3, #214
-	lsls r3, r3, #1
-	adds r2, r1, r3
-	adds r3, #85
-	str r3, [r2]
-	subs r3, #77
-	adds r2, r1, r3
-	movs r3, #24
-	str r3, [r2]
-	bl Func_02000724
-	pop {pc}
 	.section .text.x02008590,"ax",%progbits
 	.global Func_02000590
 	.thumb_func
@@ -713,57 +653,6 @@ Func_02000590:
 	.4byte gPartyState
 .L_020085d4:
 	.4byte 0x0001b333
-	.section .text.x020085d8,"ax",%progbits
-	.global Func_020005d8
-	.thumb_func
-Func_020005d8:
-	push {lr}
-	bl Func_020006e4
-	movs r0, #0
-	bl Func_0200072c
-	movs r0, #10
-	movs r1, #2
-	bl Object_SetModeById
-	movs r1, #4
-	movs r0, #11
-	bl Object_SetModeById
-	movs r0, #10
-	bl ObjectMotion_WaitForAnimationChange
-	movs r1, #156
-	movs r2, #208
-	movs r0, #11
-	lsls r1, r1, #17
-	lsls r2, r2, #17
-	bl Func_020006fc
-	bl Func_020006ec
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008610,"ax",%progbits
-	.global Func_02000610
-	.thumb_func
-Func_02000610:
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #224
-	ldr r3, [r3]
-	movs r2, #1
-	adds r3, #53
-	strb r2, [r3]
-	bx lr
-	.section .text.x02008624,"ax",%progbits
-	.global Func_02000624
-	.thumb_func
-Func_02000624:
-	push {lr}
-	bl Func_020006a4
-	pop {pc}
-	.section .text.x0200862c,"ax",%progbits
-	.global Func_0200062c
-	.thumb_func
-Func_0200062c:
-	push {lr}
-	bl Func_020006ac
-	pop {pc}
 	.section .rodata.x02008744,"a",%progbits
 	.global Data_02000744
 Data_02000744:

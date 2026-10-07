@@ -15,7 +15,15 @@
  * Trials: if/else for the burst count (no pointer) 199; records also in
  * the burst loop's test 84; s8 *records = &SevenMode_Records[mode * 2]
  * with *records 80; burst = gBursts before the for 80; direct
- * draw[flip](...) 390; (*p)(...) with p = &draw[flip] 390.
+ * draw[flip](...) 390; (*p)(...) with p = &draw[flip] 390. At 68:
+ * *(records + mode * 2) 68; records = &SevenMode_Records[mode * 2] with
+ * *records 68; shard_draw or flip declared first 68; direct draw[flip]
+ * call 396 (652 instructions: r4 re-enters reload's rotation from the
+ * first mode test on, as in the fourth pass).
+ * Next: the two CSE flushes still block adoption (one natural cause for
+ * the lost k << 3, gShots + k * 448 and group << 3 knowledge after the hit
+ * block); then the shard draw's flip << 2 in r7 with draw[flip] loaded at
+ * the call, which only the direct call gives, without losing r4.
  * Sixth pass (2026-10-07): native's delay is loop.c's reduced giv of k * 8,
  * not a variable. The draft writes k * 8 inline (no delay local).
  * - Reducing it needs benefit above the add cost (2 - 2 = 0 for one k << 3,

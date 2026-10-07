@@ -23,7 +23,13 @@
  * then-block: here cse_end_of_basic_block skips the then-block (AROUND,
  * label with one use, no label inside), marks the next block QImode and
  * so processes the second test only on the path that knows the ashift.
- * s8 m with m > 0, m < 0 182 (one ldrsb for both).
+ * s8 m with m > 0, m < 0 182 (one ldrsb for both). The condition list
+ * as sel[i++] = code, without the write pointer and its FAKEMATCH, 40
+ * (no change: loop.c reduces sel + i itself, i first as native); s8 m
+ * on that form 182; s32 t and u8 m read in that order with t > 0 and
+ * (s8)m < 0 643. Not found yet: why native's first test is not skipped
+ * AROUND (it would need a second use of the label after the then-block,
+ * a label inside it, or nine branches already on the path).
  *
  * Session 6 2026-10-07: the second modifier test is native's (lsls r3,
  * r1, #24; cmp; bge) once the first test's sign-extended read of the
@@ -691,133 +697,111 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     sel[0] = 16;
                     i = 1;
                 }
-                {
-                    /* FAKEMATCH: native adds the count first (adds r2, r6, r3); &sel[i], sel + i and i + sel all add sel first, 89 -> 87 */
-                    s8 *o = (s8 *)(i + (s32)sel);
+                do {
+                    if (object->restraint != 0) {
+                        sel[i++] = 15;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->death_count != 0) {
+                        sel[i++] = 8;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->poison == 1) {
+                        sel[i++] = 1;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->poison == 2) {
+                        sel[i++] = 2;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->psy_seal != 0) {
+                        sel[i++] = 4;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->stun != 0) {
+                        sel[i++] = 3;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->sleep != 0) {
+                        sel[i++] = 5;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->evil_spirit != 0) {
+                        sel[i++] = 7;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->delusion != 0) {
+                        sel[i++] = 6;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->attack_modifier_turns != 0) {
+                        u8 m = object->attack_modifier;
 
-                    do {
-                        if (object->restraint != 0) {
-                            *o++ = 15;
-                            i++;
+                        if ((s8)m > 0) {
+                            sel[i++] = 9;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 10;
                         }
-                        if (object->death_count != 0) {
-                            *o++ = 8;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->poison == 1) {
-                            *o++ = 1;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->poison == 2) {
-                            *o++ = 2;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->psy_seal != 0) {
-                            *o++ = 4;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->stun != 0) {
-                            *o++ = 3;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->sleep != 0) {
-                            *o++ = 5;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->evil_spirit != 0) {
-                            *o++ = 7;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->delusion != 0) {
-                            *o++ = 6;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->attack_modifier_turns != 0) {
-                            u8 m = object->attack_modifier;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->defense_modifier_turns != 0) {
+                        u8 m = object->defense_modifier;
 
-                            if ((s8)m > 0) {
-                                *o++ = 9;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o++ = 10;
-                                i++;
-                            }
+                        if ((s8)m > 0) {
+                            sel[i++] = 11;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 12;
                         }
-                        if (object->defense_modifier_turns != 0) {
-                            u8 m = object->defense_modifier;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->res_modifier_turns != 0) {
+                        u8 m = object->res_modifier;
 
-                            if ((s8)m > 0) {
-                                *o++ = 11;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o++ = 12;
-                                i++;
-                            }
+                        if ((s8)m > 0) {
+                            sel[i++] = 13;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 14;
                         }
-                        if (object->res_modifier_turns != 0) {
-                            u8 m = object->res_modifier;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    {
+                        u8 m = object->agility_modifier;
 
-                            if ((s8)m > 0) {
-                                *o++ = 13;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o++ = 14;
-                                i++;
-                            }
+                        if ((s8)m > 0) {
+                            sel[i++] = 17;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 18;
                         }
-                        {
-                            u8 m = object->agility_modifier;
-
-                            if ((s8)m > 0) {
-                                *o++ = 17;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o = 18;
-                                i++;
-                            }
-                        }
-                    } while (0);
-                }
+                    }
+                } while (0);
 
                 for (j = 0; j < i; j++) {
                     Resource_LoadTableEntryToBuffer(sel[j], tbl[j]);

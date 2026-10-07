@@ -4,6 +4,27 @@
  * selection, not only order or registers (S2): the
  * __asm__ __volatile__("" ::) CSE flush (burst address). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Fourteenth pass (2026-10-07): the burst flush's mechanism is the step's.
+ * Native PRE hoisted k << 2 but not group << 3, so group's set and
+ * group << 3 shared one GCSE basic block (group killed group << 3) while
+ * CSE1 saw them in two blocks: the boundary between them existed at CSE1
+ * and was gone by the jump pass that follows it. Two kinds of source make
+ * such a boundary: a loop end (any one-pass loop, even an empty
+ * do { } while (0)), or an if/else that CSE1 decides, whose then-arm's
+ * jump to the join keeps the join label used (cse_basic_block's
+ * --LABEL_NUSES (to) == to_usage test then ends the block there; with no
+ * else arm the folded jump was the join's only use and CSE runs on past
+ * it, which is why the twelfth pass's if (group != k * 4) burst = 0 gave
+ * 171). The body's CSE1 block starts empty at the loop's top label, so a
+ * test CSE1 can decide there can only be about group, k or i, i.e. a
+ * tautology; no natural decided test was found.
+ * Fourteenth-pass trials (burst flush replaced, step as the thirteenth
+ * pass): if (group == k * 4) burst = 0; else burst = gBursts; 0 (the
+ * mechanism, not source); an empty do { } while (0) between group's set
+ * and the address 0 (a device that changes selection); group =
+ * BurstGroup(k), a static __inline__ returning k * 4, 171 (integration
+ * leaves no label); the loop test i != count && (count == 4 || count == 16)
+ * 339.
  * Thirteenth pass (2026-10-07): the step's dead repeated test is replaced
  * by Camelot's own hit-sound habit. After the hit's
  * ObjectGroup_UpdateMembers, the sibling effects choose the sound by a

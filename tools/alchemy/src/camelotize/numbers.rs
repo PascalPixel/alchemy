@@ -150,17 +150,35 @@ fn says_flag(name: &str) -> bool {
     name.to_ascii_lowercase().contains("flag")
 }
 
-/// The scene commands: the all-caps function-like macros an EVENT.H defines,
-/// except the flag commands, whose arguments are flag ids.
+/// Scene command parameters that hold quantities: actor numbers, pixel
+/// coordinates and frame counts. Emotes, messages, sounds, modes,
+/// directions and speeds are ids or units and keep their base.
+const QUANTITY_PARAMETERS: &[&str] = &["no", "to", "x", "z", "t"];
+
+/// The quantity arguments of the scene commands, as `NAME/index`: the
+/// parameters of the all-caps function-like macros an EVENT.H defines that
+/// hold actor numbers, coordinates and frames (every argument of `WAIT`).
+/// The flag commands, whose arguments are flag ids, have none.
 pub(crate) fn commands(event_h: &str) -> Vec<String> {
-    event_h
-        .lines()
-        .filter_map(|line| {
-            let rest = line.trim_start().strip_prefix('#')?.trim_start().strip_prefix("define")?.trim_start();
-            let name: String = rest.chars().take_while(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || *c == '_').collect();
-            (!name.is_empty() && rest[name.len()..].starts_with('(') && !says_flag(&name)).then_some(name)
-        })
-        .collect()
+    let mut out = Vec::new();
+    for line in event_h.lines() {
+        let Some(rest) = line.trim_start().strip_prefix('#').and_then(|r| r.trim_start().strip_prefix("define")).map(str::trim_start) else {
+            continue;
+        };
+        let name: String = rest.chars().take_while(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || *c == '_').collect();
+        let Some(parameters) = rest[name.len()..].strip_prefix('(').and_then(|r| r.split_once(')')).map(|(p, _)| p) else {
+            continue;
+        };
+        if name.is_empty() || says_flag(&name) {
+            continue;
+        }
+        for (index, parameter) in parameters.split(',').map(str::trim).enumerate() {
+            if name == "WAIT" || QUANTITY_PARAMETERS.contains(&parameter) {
+                out.push(format!("{name}/{index}"));
+            }
+        }
+    }
+    out
 }
 
 /// The scene commands of ☀️'s EVENT.H.
@@ -252,12 +270,16 @@ fn command_argument(tokens: &[Token], groups: &[Option<usize>], i: usize, comman
     let Some(open) = groups[i] else {
         return false;
     };
-    if punct(&tokens[open]) != Some("(") || !open.checked_sub(1).and_then(|k| ident(&tokens[k])).is_some_and(|n| commands.iter().any(|c| c == n)) {
+    let Some(name) = open.checked_sub(1).and_then(|k| ident(&tokens[k])) else {
+        return false;
+    };
+    if punct(&tokens[open]) != Some("(") {
         return false;
     }
     let first = if i >= 1 && punct(&tokens[i - 1]) == Some("-") { i - 1 } else { i };
     let opens = first.checked_sub(1).is_some_and(|k| k == open || (groups[k] == Some(open) && punct(&tokens[k]) == Some(",")));
-    opens && tokens.get(i + 1).and_then(punct).is_some_and(|p| matches!(p, "," | ")"))
+    let index = (open + 1..first).filter(|&k| groups[k] == Some(open) && punct(&tokens[k]) == Some(",")).count();
+    opens && tokens.get(i + 1).and_then(punct).is_some_and(|p| matches!(p, "," | ")")) && commands.iter().any(|c| *c == format!("{name}/{index}"))
 }
 
 /// A loop bound compared with the counter its `for` steps:
@@ -297,6 +319,55 @@ fn loop_bound(tokens: &[Token], groups: &[Option<usize>], i: usize) -> bool {
     steps && !touches_bits(tokens, step)
 }
 
+/// Whether token `i` sits in the brackets of a declarator (`u8 pad[0x24]`,
+/// `u16 pages[2][0x3c0]`): a size, written as the layout's offsets are.
+fn in_declarator(tokens: &[Token], groups: &[Option<usize>], i: usize) -> bool {
+    let mut group = groups[i];
+    while let Some(open) = group {
+        if punct(&tokens[open]) == Some("[") {
+            let mut k = open;
+            while k >= 1 && punct(&tokens[k - 1]) == Some("]") {
+                let mut depth = 0;
+                let mut j = k - 1;
+                loop {
+                    match punct(&tokens[j]) {
+                        Some("]") => depth += 1,
+                        Some("[") => {
+                            depth -= 1;
+                            if depth == 0 {
+                                break;
+                            }
+                        }
+                        _ => {}
+                    }
+                    if j == 0 {
+                        return true;
+                    }
+                    j -= 1;
+                }
+                k = j;
+            }
+            if k >= 2 && ident(&tokens[k - 1]).is_some() && (ident(&tokens[k - 2]).is_some() || punct(&tokens[k - 2]) == Some("*")) {
+                return true;
+            }
+        }
+        group = groups[open];
+    }
+    false
+}
+
+/// A statement that casts to a pointer: its offsets are byte offsets into a
+/// layout, written in hex as the layout is.
+fn address_arithmetic(tokens: &[Token], span: Range<usize>) -> bool {
+    span.clone().any(|k| punct(&tokens[k]) == Some("*") && tokens.get(k + 1).and_then(punct) == Some(")"))
+}
+
+/// A name whose values are in fixed-point or angle units, written in hex.
+fn in_units(name: &str) -> bool {
+    let lower = name.to_ascii_lowercase();
+    ["scale", "angle", "rot", "speed", "vel", "accel", "dir", "alpha", "fixed", "frac"].iter().any(|word| lower.contains(word))
+}
+
 /// A constant index into a named array: `a[0x1F]`, `b[2][0x3]`.
 fn constant_index(tokens: &[Token], i: usize) -> bool {
     if i < 2 || punct(&tokens[i - 1]) != Some("[") || tokens.get(i + 1).and_then(punct) != Some("]") {
@@ -320,10 +391,10 @@ fn arithmetic(tokens: &[Token], i: usize, tainted: &HashSet<String>) -> bool {
         return false;
     }
     let span = statement(tokens, i);
-    if in_case_label(tokens, span.clone(), i) || touches_bits(tokens, span.clone()) {
+    if in_case_label(tokens, span.clone(), i) || touches_bits(tokens, span.clone()) || address_arithmetic(tokens, span.clone()) {
         return false;
     }
-    !names(tokens, span).any(|n| tainted.contains(n) || flag_name(n))
+    !names(tokens, span).any(|n| tainted.contains(n) || flag_name(n) || in_units(n))
 }
 
 /// Values beside a fixed-point constant in the same argument or initializer
@@ -349,7 +420,13 @@ fn quantity(tokens: &[Token], groups: &[Option<usize>], i: usize, h: &Hex, comma
     if flag_argument(tokens, groups, i) || beside_fixed_point(tokens, groups, i) {
         return false;
     }
-    command_argument(tokens, groups, i, commands) || loop_bound(tokens, groups, i) || constant_index(tokens, i) || arithmetic(tokens, i, tainted)
+    if in_declarator(tokens, groups, i) {
+        return false;
+    }
+    // Arithmetic only below 0x400 and off whole multiples of 0x100, which
+    // are fixed-point steps.
+    let small = h.value < 0x400 && h.value % 0x100 != 0;
+    command_argument(tokens, groups, i, commands) || loop_bound(tokens, groups, i) || constant_index(tokens, i) || (small && arithmetic(tokens, i, tainted))
 }
 
 /// The text with its quantities in decimal, and how many changed. `commands`
@@ -402,8 +479,13 @@ mod tests {
     #[test]
     fn scene_commands_are_event_h_macros_but_the_flag_ones() {
         let found = scene();
-        assert!(found.iter().any(|c| c == "OBJ_POS_SET") && found.iter().any(|c| c == "WAIT"), "{found:?}");
-        assert!(!found.iter().any(|c| c.starts_with("FLAG") || c == "EVENT_H"), "{found:?}");
+        for quantity in ["OBJ_POS_SET/0", "OBJ_POS_SET/1", "OBJ_POS_SET/2", "WAIT/0", "OBJ_EMO/2", "OBJ_FACE/1"] {
+            assert!(found.iter().any(|c| c == quantity), "{quantity} {found:?}");
+        }
+        assert!(!found.iter().any(|c| c.starts_with("FLAG") || c.starts_with("EVENT_H") || c.starts_with("SE/")), "{found:?}");
+        assert!(!found.iter().any(|c| matches!(c.as_str(), "OBJ_EMO/1" | "OBJ_SPD/1" | "OBJ_DIR/1" | "MES_SET/0")), "{found:?}");
+        same("OBJ_EMO(14, 0x100, 0);\nSE(0x7B);\nOBJ_DIR(13, 0x20, 0);\n");
+        assert_eq!(convert("OBJ_EMO(14, 0x100, 0x3c);\n").0, "OBJ_EMO(14, 0x100, 60);\n");
     }
 
     #[test]
@@ -433,6 +515,14 @@ mod tests {
         same("p = (u16 *)0x04000000 + 0x10;\nq = 0x03007FF0;\nspeed = s + 0x18000;\nx = y + 0xFF;\nREG_BLDALPHA = 0x1010;\n");
         same("OBJ_SPD(8, 0x19999, 0x6666);\nOBJ_SPD(12, 0x10000, 0x8);\nOBJ_WALK(9, 0x80c, 0x0808);\n");
         assert_eq!(convert("OBJ_WALK(9, 0x15f8, 0x6f8);\n").0, "OBJ_WALK(9, 0x15f8, 1784);\n");
+    }
+
+    #[test]
+    fn layout_sizes_offsets_and_units_stay_hex() {
+        same("struct S {\n    u8 pad24[0x50 - 0x24];\n    u16 pages[2][0x3c0];\n};\nu8 *unknown_534[0x10];\n");
+        same("slot = (u16 *)(state + 0x534);\n*(s32 *)(base[19] + 0x1c0) = 0x209;\n");
+        same("o->scale_y -= 0x80;\nrecord->angle -= 0x80;\nsize += 0xc00;\ntransfer += 0x100;\n");
+        assert_eq!(convert("work[0x294] = 8;\nid += 0x78;\n").0, "work[660] = 8;\nid += 120;\n");
     }
 
     #[test]

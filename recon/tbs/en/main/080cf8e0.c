@@ -28,7 +28,11 @@
  * before the odd test 435 (440 without odd); at 48: (u32)flip 48,
  * plain position.x 257, records[mode * 2] without row 52, without
  * records 177. Permuter (5 minutes, PERM_RANDOMIZE over the shard
- * block, pointer form): odd first and its test after flip, 48.
+ * block, pointer form): odd first and its test after flip, 48. Second
+ * permuter run (5 minutes, seed 7, from 48): a second forced temporary
+ * tmp = burst->velocity_x before the odd test, with flip ^= 1 after it,
+ * 44; not taken: one more device for four instructions, and native's
+ * order (i & 1 tested before flip) is still not reproduced.
  * Seventh pass (2026-10-07): the burst count indexes records with a row
  * temporary (FAKEMATCH, 68 -> 64, a permuter hint): records[mode * 2]
  * expands to (plus (mult mode 2) records), the multiply first as RTL

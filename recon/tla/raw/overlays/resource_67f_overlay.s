@@ -2099,53 +2099,8 @@ Func_02001148:
 	.2byte 0x0000
 .L_02009180:
 	.4byte Data_02001696
-	.section .text.x02009184,"ax",%progbits
-	.global Func_02001184
-	.thumb_func
-Func_02001184:
-	push {r5, lr}
-	ldr r3, .L_020091b4
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	adds r5, r0, #0
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	asrs r1, r1, #20
-	asrs r2, r2, #20
-	movs r0, #2
-	bl Func_02000eac
-	asrs r0, r0, #8
-	cmp r0, #232
-	bne .L_020091b2
-	adds r2, r5, #0
-	adds r2, #34
-	movs r3, #2
-	strb r3, [r2]
-.L_020091b2:
-	pop {r5, pc}
-.L_020091b4:
-	.4byte gPartyState
-	.section .text.x020091b8,"ax",%progbits
-	.global Func_020011b8
-	.thumb_func
-Func_020011b8:
-	push {lr}
-	ldr r3, .L_020091d0
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	movs r3, #0
-	adds r0, #34
-	strb r3, [r0]
-	pop {pc}
-.L_020091d0:
-	.4byte gPartyState
 	.section .text.x020091d4,"ax",%progbits
+	.balign 4
 	.global Func_020011d4
 	.thumb_func
 Func_020011d4:

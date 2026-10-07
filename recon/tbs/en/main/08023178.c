@@ -1,11 +1,22 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1401, common 1082, differ 629.
- * Frame now 352 bytes, as native, and the setup loops match. Remaining:
- * redraw in r11 where native has r10, the face/cursor zero in r10 where
- * native has r7 (native: 0x3FF in r8, the zero in r7; here the 0x3FF
- * pseudo is block-local, local-alloc gives it r7 first), the djinn tile
- * code (native: (extended == 0) by branch, then + 8, inside the loop),
- * then register choices through the loop body.
+ * Native 1392 instructions, draft 1396, common 1190, differ 408.
+ * Frame now 352 bytes, as native, and the setup loops, the cursor
+ * update, the face and cursor sprites, the djinn rows and the condition
+ * list match up to register choice. Remaining: redraw in r11 where native
+ * has r10; the face/cursor zero in r10 where native has r7 (native: 0x3FF
+ * in r8 copied to a low register at its use, the zero in r7; here the
+ * 0x3FF is rematerialized at the cursor); the stat value pushes after the
+ * condition list (native keeps 24 in r8); and the condition help block:
+ * native keeps 332 in r8 across Runtime_BumpAllocate, code in r4 saved
+ * at sp+4 around calls (caller-save, lowest priority), the deltas atk sl,
+ * def fp, agi r7; here code takes r7 and the deltas r8, sl, fp, and 332
+ * gets no register.
+ *
+ * Diagnosis 2026-10-07: most of the earlier cascade was variables shared
+ * across calls where the native's value lives only between two calls:
+ * every block-local below moved a value from a call-saved register to the
+ * call-clobbered one native uses, and freed a call-saved register for the
+ * long-lived values.
  *
  * Trials 2026-10-07: objName tile stored without "& 0x3FF" (the 10-bit
  * field masks in HImode, so 0x3FF and 8 lead the first pool and the pool
@@ -13,10 +24,18 @@
  * the cursor tile likewise, 732 (no change, kept for symmetry); the face
  * record fetched before the attribute stores (native calls
  * GetBattleObjectSlotFar first) through p 732; the owner search value
- * as a block-local (native r3: code crosses calls, the search value
- * does not) 732 -> 675; the face record through a block-local pointer
- * (native keeps it in r2, p crosses calls) 675 -> 629. Rejected: code = (extended == 0); code
- * += 8 1055 (the store flag is hoisted as neg/orr/lsr, 1 - x).
+ * as a block-local (native r3) 732 -> 675; the face record through a
+ * block-local pointer (native r2) 675 -> 629; n = cur.pos[cur.mode] after
+ * cur.mode = 2 (native indexes by the mode register) 629 -> 599; the stat
+ * cursor index as a block-local (native r2) 599 -> 570; the status
+ * message as a ?: argument (native loads it straight into r0) 570 -> 565;
+ * the djinn tile code as a block-local 565 -> 536, written as 1, cleared
+ * when extended, then + 8 (native's branch; 8/9 if/else becomes
+ * 9 - (extended != 0) in jump) 536 -> 524; the condition list's write
+ * pointer as a block-local (native r2) 524 -> 482; i for the condition
+ * count instead of n (native r6) 482 -> 408. Rejected: code =
+ * (extended == 0); code += 8 1055 (hoisted as neg/orr/lsr, 1 - x); j for
+ * the condition help value 528, n 500, i 655.
  *
  * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
  * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,
@@ -264,7 +283,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         n = 0;
                         if (cur.mode == 1) {
                             cur.mode = 2;
-                            n = cur.pos[2];
+                            n = cur.pos[cur.mode];
                         }
                     }
                 } else if ((keys & 0x40) != 0) {
@@ -275,7 +294,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         n = cur.limit - 1;
                         if (cur.mode == 1) {
                             cur.mode = 2;
-                            n = cur.pos[2];
+                            n = cur.pos[cur.mode];
                         }
                     }
                 } else if ((keys & 0x31) != 0) {
@@ -292,7 +311,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 }
                 cur.pos[cur.mode] = (s8)n;
             } else if (cur.mode == 2) {
-                n = cur.pos[2];
+                n = cur.pos[cur.mode];
                 if (n >= cur.limit) {
                     n = cur.limit - 1;
                 }
@@ -326,11 +345,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         }
 
         if (cur.mode == 0) {
-            i = cur.pos[cur.mode];
+            s32 k = cur.pos[cur.mode];
+
             if (extended == 0) {
-                i += 9;
+                k += 9;
             }
-            stat = &OwnerStatus_StatCursors[i];
+            stat = &OwnerStatus_StatCursors[k];
             cur.entry = stat->entry;
             cur.col = stat->column;
             cur.row = stat->row;
@@ -430,13 +450,14 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 3, (struct RenderInput *)winMain, 0, 96);
 
                 for (j = 0; j <= 3; j++) {
+                    s32 pal;
+
+                    pal = 1;
                     if (extended != 0) {
-                        code = 8;
-                    } else {
-                        code = 9;
+                        pal = 0;
                     }
                     UiWindow_SetTilemapEntry(
-                        winMain, 0x5001 + j, 7 + j * 4, code, 0);
+                        winMain, 0x5001 + j, 7 + j * 4, pal + 8, 0);
                     if (extended != 0) {
                         UiText_DrawNumberInWindow(object->djinn_active_counts[j], 1,
                             (s32)winMain, 40 + j * 32, 72);
@@ -455,127 +476,130 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         40 + j * 32, 96);
                 }
 
-                n = 0;
+                i = 0;
                 if (object->hp == 0) {
                     sel[0] = 16;
-                    n = 1;
+                    i = 1;
                 }
-                out = &sel[n];
-                do {
-                    if (object->restraint != 0) {
-                        *out++ = 15;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->death_count != 0) {
-                        *out++ = 8;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->poison == 1) {
-                        *out++ = 1;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->poison == 2) {
-                        *out++ = 2;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->psy_seal != 0) {
-                        *out++ = 4;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->stun != 0) {
-                        *out++ = 3;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->sleep != 0) {
-                        *out++ = 5;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->evil_spirit != 0) {
-                        *out++ = 7;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->delusion != 0) {
-                        *out++ = 6;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->attack_modifier_turns != 0) {
-                        if ((s8)object->attack_modifier > 0) {
-                            *out++ = 9;
-                            n++;
-                        }
-                        if ((s8)object->attack_modifier < 0) {
-                            *out++ = 10;
-                            n++;
-                        }
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->defense_modifier_turns != 0) {
-                        if ((s8)object->defense_modifier > 0) {
-                            *out++ = 11;
-                            n++;
-                        }
-                        if ((s8)object->defense_modifier < 0) {
-                            *out++ = 12;
-                            n++;
-                        }
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->res_modifier_turns != 0) {
-                        if ((s8)object->res_modifier > 0) {
-                            *out++ = 13;
-                            n++;
-                        }
-                        if ((s8)object->res_modifier < 0) {
-                            *out++ = 14;
-                            n++;
-                        }
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if ((s8)object->agility_modifier > 0) {
-                        *out++ = 17;
-                        n++;
-                    }
-                    if ((s8)object->agility_modifier < 0) {
-                        *out = 18;
-                        n++;
-                    }
-                } while (0);
+                {
+                    s8 *o = &sel[i];
 
-                if (n > 0) {
-                    j = n;
+                    do {
+                        if (object->restraint != 0) {
+                            *o++ = 15;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->death_count != 0) {
+                            *o++ = 8;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->poison == 1) {
+                            *o++ = 1;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->poison == 2) {
+                            *o++ = 2;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->psy_seal != 0) {
+                            *o++ = 4;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->stun != 0) {
+                            *o++ = 3;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->sleep != 0) {
+                            *o++ = 5;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->evil_spirit != 0) {
+                            *o++ = 7;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->delusion != 0) {
+                            *o++ = 6;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->attack_modifier_turns != 0) {
+                            if ((s8)object->attack_modifier > 0) {
+                                *o++ = 9;
+                                i++;
+                            }
+                            if ((s8)object->attack_modifier < 0) {
+                                *o++ = 10;
+                                i++;
+                            }
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->defense_modifier_turns != 0) {
+                            if ((s8)object->defense_modifier > 0) {
+                                *o++ = 11;
+                                i++;
+                            }
+                            if ((s8)object->defense_modifier < 0) {
+                                *o++ = 12;
+                                i++;
+                            }
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->res_modifier_turns != 0) {
+                            if ((s8)object->res_modifier > 0) {
+                                *o++ = 13;
+                                i++;
+                            }
+                            if ((s8)object->res_modifier < 0) {
+                                *o++ = 14;
+                                i++;
+                            }
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if ((s8)object->agility_modifier > 0) {
+                            *o++ = 17;
+                            i++;
+                        }
+                        if ((s8)object->agility_modifier < 0) {
+                            *o = 18;
+                            i++;
+                        }
+                    } while (0);
+                }
+
+                if (i > 0) {
+                    j = i;
                     out = sel;
                     q = tbl;
                     do {
@@ -584,23 +608,20 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         out++;
                     } while (j != 0);
                 }
-                if (n == 0) {
+                if (i == 0) {
                     sel[0] = 0;
-                    n = 1;
+                    i = 1;
                 }
-                if (n <= 10) {
-                    for (j = n; j < 11; j++) {
+                if (i <= 10) {
+                    for (j = i; j < 11; j++) {
                         sel[j] = -1;
                     }
                 }
-                cnt = n;
+                cnt = i;
                 if (sel[0] == 0) {
-                    if (object->hp != 0) {
-                        code = (s32)&MsgOwnerStatusNormal;
-                    } else {
-                        code = (s32)&MsgOwnerStatusDowned;
-                    }
-                    UiText_DrawCharacterAtOffset(code, (struct RenderInput *)winMain, 112, 0);
+                    UiText_DrawCharacterAtOffset(
+                        object->hp != 0 ? (s32)&MsgOwnerStatusNormal : (s32)&MsgOwnerStatusDowned,
+                        (struct RenderInput *)winMain, 112, 0);
                 }
             }
 

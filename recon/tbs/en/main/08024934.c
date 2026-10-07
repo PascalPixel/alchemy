@@ -14,6 +14,11 @@
  * through sprite 647; sprite[index] tile loop 651; index = 0 before the
  * counts columns 844; required[element] columns 852; element shared by
  * the columns and the highlight loop 856; y * 8 for the name row 598.
+ * Since the y step drawn_page, row and page sit in native's r9, r10, r11
+ * ((c) below is resolved). From 575: mask = 0 after the cell reads 581,
+ * before the counts window 579, after the main window 585 (native stores
+ * counts before mask, the draft mask first); nav->row before nav->page
+ * 581 (native stores page first, the draft row first).
  * Session 3, second step: y = index * 2 set after the scan, before the
  * glyph load, 663 -> 598, although native computes index * 2 after the
  * load and shares it with the tile store's index * 3; y beside the tile

@@ -1,10 +1,15 @@
-/* 080ea0d8: differ 2201 of 2455 (listing 2455, draft 2438, common 1346).
+/* 080ea0d8: differ 2162 of 2455 (listing 2455, draft 2437, common 1365).
  * Structure: the sequence of conditional branches, jumps and calls now
  * matches the native's except one literal-pool jump; what remains is
  * register allocation, scheduling, constant hoisting and pool placement.
- * Constants: the native reloads 0x2710 in each pass of the ramp loop and
- * 0xff0000 in each petal placement, where ours hoists both into high
- * registers; the palette fade masks with a pool-loaded 0x1f and widens
+ * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
+ * work + 0x2710, indexed [i][j]: the constant then folds into the address
+ * after the variable part, loop.c creates it in the inner loop's preheader
+ * and cannot hoist it, and the whole ramp loop matches the native's.
+ * Constants: the native reloads 0xff0000 in each petal placement and does
+ * not hoist the IO queue's 0, &fill or 24 out of the 320-frame loop, where
+ * ours hoists all four (loop.c: 0 with savings 11 life 39 in 1199 insns);
+ * the palette fade masks with a pool-loaded 0x1f and widens
  * each colour as a halfword (lsls 16 / lsrs 26), ours with asrs.
  * Locals: the native fill word sits at sp+140, between place and place2, so
  * it is a declared volatile word, not an addressed scalar (that put it at
@@ -44,7 +49,14 @@
  * Trial: draw2 read as gTransitionWork[3], the native literal's spelling:
  * still no spill, frame 180 (2231).
  * Permuter, 6 minutes from 2238: 2145 only through temporaries, do-while
- * loop forms and dropped parentheses, none carried. */
+ * loop forms and dropped parentheses, none carried.
+ * Trial: ramp store as work->sheet[pos + j + 0x2710]: 2209;
+ * (work->sheet + pos + j)[0x2710]: 2222; ramp[i][j] in a [8][770] array
+ * at 0x2710: 2174, kept, and the petal cell as &ramp[n][offset]: 2174.
+ * Trial: the petal ring radius frame * 10 - 1424 computed once in the frame
+ * body, between n and the transfer value as the native orders them: it
+ * becomes a reduced giv of the frame loop as native's sp+12 (2162, kept);
+ * its preheader still stores it in a different slot. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -92,6 +104,11 @@ typedef struct Scale {
     s32 x;
     s32 y;
 } Scale;
+
+struct BattleFx9Work {
+    u8 sheet[0x2710];
+    u8 ramp[8][770];
+};
 
 extern const u16 ParticleStreams_CellOffsets[];
 extern const Scale BattleFx9_UnitScale;
@@ -161,7 +178,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i24;
     s32 i25;
     s32 j;
-    s32 pos;
     s32 x;
     s32 y;
     s32 size;
@@ -210,9 +226,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
-    for (i1 = 0, pos = 0; i1 != 8; i1++, pos += 770) {
+    for (i1 = 0; i1 != 8; i1++) {
         u8 *src = ramp;
-        u8 *dst = work->sheet + pos + 0x2710;
         for (j = 0; j != 770; j++) {
             s32 v = *src++;
             if (v > 64 - i1 * 7) {
@@ -221,7 +236,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             if (v < 0) {
                 v = 0;
             }
-            *dst++ = v;
+            ((struct BattleFx9Work *)work)->ramp[i1][j] = v;
         }
     }
 
@@ -395,6 +410,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame > 143) {
             s32 top = (frame << 4) - 2272;
             s32 n;
+            s32 r;
             BattleEffect_LoadWork(47, 7, 7, 3, 3);
             (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work, 36, top, 24, 64);
             Runtime_ReleaseHeapBlock(47);
@@ -403,16 +419,17 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Runtime_ReleaseHeapBlock(47);
 
             n = (frame - 144) / 2;
+            r = frame * 10 - 1424;
             work->transfer_value = 75;
             if (n <= 6) {
-                u8 *cell = work->sheet + n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
+                u8 *cell = &((struct BattleFx9Work *)work)->ramp[n][ParticleStreams_CellOffsets[7]];
                 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
                 for (i10 = 0; i10 != 128; i10++) {
                     s32 angle = i10 << 9;
-                    x = (((frame * 10 - 1424) * Trig_Sin(angle)) >> 16) - high / 2;
-                    y = ((frame * 10 - 1424) * Trig_Cos(angle)) >> 17;
+                    x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
+                    y = (r * Trig_Cos(angle)) >> 17;
                     blit(canvas, cell, x + 60, y + 72, 8, 16);
                 }
                 Runtime_ReleaseHeapBlock(47);

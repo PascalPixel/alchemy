@@ -8859,43 +8859,43 @@ msgctxt "message"
 msgid "02212"
 msgstr "あんたは つよい!!"
 
-msgctxt "message"
+msgctxt "MsgTargetNoEffect"
 msgid "02213"
 msgstr "こうかが ありません"
 
-msgctxt "message"
+msgctxt "MsgTargetCurePoison"
 msgid "02214"
 msgstr "どくの ちりょう"
 
-msgctxt "message"
+msgctxt "MsgTargetCureDelusion"
 msgid "02215"
 msgstr "まぼろしを けしさる"
 
-msgctxt "message"
+msgctxt "MsgTargetCureStun"
 msgid "02216"
 msgstr "しびれを なおす"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSleep"
 msgid "02217"
 msgstr "ねむりから さます"
 
-msgctxt "message"
+msgctxt "MsgTargetCureSeal"
 msgid "02218"
 msgstr "エナジーふうじを やぶる"
 
-msgctxt "message"
+msgctxt "MsgTargetCureCurse"
 msgid "02219"
 msgstr "しりょうを とりはらう"
 
-msgctxt "message"
+msgctxt "MsgTargetCureHaunt"
 msgid "02220"
 msgstr "あくりょうを とりはらう"
 
-msgctxt "message"
+msgctxt "MsgTargetDowned"
 msgid "02221"
 msgstr "せんとうふのう"
 
-msgctxt "message"
+msgctxt "MsgTargetSetDjinni"
 msgid "02222"
 msgstr "セットします"
 

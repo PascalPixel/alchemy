@@ -1,5 +1,10 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Follow-ups from12 (2026-10-08), not retained: a single tail-shift asm,
+ *   with or without the row-coordinate input, stays12 but moves the compare
+ *   after the shift/spill. Explicit character limits32..143 are unchanged.
+ *   A colour/r1 high-byte move with ordinary add gives24; retaining width
+ *   in r0 restores colour/r2 but adds a width reload and gives25.
  * English prologue (2026-10-08): listing196, draft196, common190, differ12.
  *   A single tagged incoming-y move restores its native position between
  *   the register save and frame allocation (14 to12). Ordinary parameter

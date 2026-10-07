@@ -14,6 +14,8 @@ void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
     menu->width = width + 2;
     menu->resource_base = resource_base;
     menu->row = row;
+    /* FAKEMATCH: ⚓️ stores the row before it addresses the count */
+    asm("" : "+r"(menu) : "m"(menu->row));
     count = menu->count;
     x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
     for (i = 0; i < menu->count; i++) {

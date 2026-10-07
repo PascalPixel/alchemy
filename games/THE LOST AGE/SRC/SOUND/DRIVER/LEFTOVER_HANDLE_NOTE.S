@@ -200,7 +200,7 @@ MusicTrack_HandleNoteLeftover:
 	cmp	r0, r1
 	beq.n	.L_081c02fe
 	adds	r1, r5, #0
-	bl	Func_081c03d8
+	bl	MusicTrack_ClearModulationStateLeftover
 .L_081c02fe:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0

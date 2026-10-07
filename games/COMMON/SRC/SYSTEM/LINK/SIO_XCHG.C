@@ -74,4 +74,52 @@ void SerialRuntime_PrepareSendPacket(void *payload)
     if (state->mode != 0 && state->transfer_enabled != 0)
         REG_TM3CNT_H = 0x000000c0;
 }
+#else
+void SerialRuntime_PrepareSendPacket(void *payload)
+{
+    volatile struct SerialRuntime *state;
+    u32 index;
+    u32 checksum;
+
+    state = SERIAL_RUNTIME;
+    {
+        u8 *packet;
+        u8 current_mask;
+        u8 received_mask;
+
+        packet = (u8 *)state->send_buffer[0];
+        packet[0] = state->sequence;
+        current_mask = state->current_mask;
+        received_mask = state->received_mask;
+        checksum = 0;
+        /* FAKEMATCH: ⚓️ clears the checksum only after reading both masks */
+        *(volatile u16 *)(packet + 2) = checksum;
+        packet[1] = received_mask ^ current_mask;
+        Dma_Set(payload, packet + 4, 0x84000006, REG_DMA3);
+    }
+    {
+        u16 *packet;
+        u32 value;
+
+        packet = state->send_buffer[0];
+        for (index = 0; index <= 13; index++) {
+            value = *packet;
+            packet++;
+            checksum += value;
+        }
+    }
+    {
+        u32 inverse;
+        struct SerialPacket *packet;
+
+        inverse = ~checksum;
+        packet = (struct SerialPacket *)state->send_buffer[0];
+        packet->checksum = inverse;
+    }
+    if (state->mode != 0)
+        REG_TM3CNT_H = 0;
+    state->send_index = -1;
+    if (state->mode != 0 && state->transfer_enabled != 0)
+        REG_TM3CNT_H = 0x000000c0;
+}
 #endif

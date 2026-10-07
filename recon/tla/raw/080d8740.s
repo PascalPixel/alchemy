@@ -122,7 +122,7 @@ Func_080d8740:
 	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r1, r10
 	ldr r0, [r5, #80]
-	bl Func_080dc0d8
+	bl Object_ReplaceResourceEntry
 	mov r1, r8
 	str r1, [r5, #104]
 	mov r10, r0

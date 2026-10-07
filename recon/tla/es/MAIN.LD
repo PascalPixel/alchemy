@@ -994,6 +994,8 @@
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/CLEANUP_RESOURCES_AND_WINDOW.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000f5160)
     "*/recon/tla/es/rom.o"(.rom.000f67f8)
+        "*/games/THE LOST AGE/SRC/FIELD/SCENES.o"(.rodata)
+        "*/recon/tla/es/rom.o"(.rom.000fb1c4)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_38.o"(.text .rodata .data .padding)
     "*/recon/tla/es/rom.o"(.rom.000fe028)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_39.o"(.text .rodata .data .padding)

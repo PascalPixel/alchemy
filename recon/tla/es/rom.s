@@ -4339,9 +4339,8 @@ BattleFx_EightWayHeadingWords:
 	.global BattleFx_RandomChildValues
 BattleFx_RandomChildValues:
 	.incbin "baserom.gba", 0x000f9f20, 0x0000087c
-	.global Field_SceneTable
-Field_SceneTable:
-	.incbin "baserom.gba", 0x000fa79c, 0x00001b28
+	.section .rom.000fb1c4, "ax"
+	.incbin "baserom.gba", 0x000fb1c4, 0x00001100
 	.global Object_OffsetMotionScript
 Object_OffsetMotionScript:
 	.incbin "baserom.gba", 0x000fc2c4, 0x00000030

@@ -972,6 +972,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000ebed8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/CLEANUP_RESOURCES_AND_WINDOW.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ec0b0)
+        "*/games/THE LOST AGE/SRC/FIELD/SCENES.o"(.rodata)
+        "*/recon/tla/ja/rom.o"(.rom.000f20dc)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_38.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/UIICON_2.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_39.o"(.text .rodata .data .padding)

@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1339, differ 105.
+ * Native 1392 instructions, draft 1391, common 1347, differ 89.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
  * the stat pushes, the djinn rows and the condition list match.
@@ -8,8 +8,10 @@
  * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
  * saved/pointer pair (r5/r6 swapped) and code = 0 set before
  * Runtime_BumpAllocate where native sets it after; the up-key n--
- * scheduled before the 0x6F argument; one literal pool placed two
- * instructions later; and register choice in the icon loop setup.
+ * scheduled before the 0x6F argument; the condition write pointer's
+ * add operands swapped; one literal pool placed two instructions
+ * later (and the branch offsets it moves); 112 scheduled later in the
+ * icon loop setup.
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
@@ -51,6 +53,17 @@
  * block 708, after the modifier stores 785; the agility delta read
  * first 682; n-- before keys = 0, or n -= 1, 120 (no change); the
  * condition write pointer as sel + i or i + sel 120 (no change).
+ * redraw = 0 before base->dirty = 1 105 -> 95; the icon loop's
+ * p = objIcon before q = tbl 95 -> 93; the closing reset loop through
+ * a block-local pointer (native r5, q's r7 before) 93 -> 89.
+ * Rejected after 105: code = 0
+ * after Runtime_BumpAllocate 318 (native's order, but the 332 pseudo
+ * loses r8 again); j-- before the call in the condition loads 107;
+ * n-- then the call then keys = 0 107; the agility modifier cleared
+ * first 107; *out++ in the call 105, saved without the cast or the
+ * copies sized by the struct 105 (no change); x = 112 first 105.
+ * After 89: the write pointer as o = sel; o += i, or &i[sel], 89 (no
+ * change: the add keeps sel first where native has i first).
  *
  * Register diagnosis 2026-10-07 (session 2, lreg/greg dumps): with
  * -fcall-used-r4 the call-saved low registers are r5, r6, r7. In the
@@ -770,12 +783,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
             UiText_RenderWideStringAtOffset(text, (struct UiWindow *)winDesc, 0, 4);
             Sys_Free(text);
-            base->dirty = 1;
             redraw = 0;
+            base->dirty = 1;
         }
 
-        q = tbl;
         p = objIcon;
+        q = tbl;
         x = 112;
         for (i = 0; i <= 10; i++) {
             p->oam.word.attr01 = 0x40000400;
@@ -819,9 +832,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         WaitFrames(1);
     }
 
-    q = tbl;
-    for (i = 10; i >= 0; i--) {
-        Resource_ResetEntry(*q++);
+    {
+        s32 *h = tbl;
+
+        for (i = 10; i >= 0; i--) {
+            Resource_ResetEntry(*h++);
+        }
     }
     Resource_ResetEntry(handleFrame);
     Resource_ResetEntry(handleCursor);

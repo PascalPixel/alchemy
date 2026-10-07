@@ -16,6 +16,32 @@
  * and the -1 becomes subs r3, #1 by move2add, as in native's second
  * page loop and in BattleMenu_RunActionSelection's first, but native's
  * first loop keeps the 0 in r0 and builds -1 with movs; negs).
+ * Session 5 diagnosis, the next step: native's main loop is a real loop
+ * (loop notes), as BattleMenu_RunActionSelection's for (;;) is. With the
+ * goto loop / done replaced by for (;;) and two breaks, and the first
+ * page loop in its original form (tile = PAGE; if (index == page / 4)
+ * tile = SELECTED), that page loop matches native instruction for
+ * instruction except index (r7 against native's r4 with its caller-save
+ * at sp+4): tile r1, quotient r0, window reloaded into r3, the 0 in r0
+ * and -1 by movs; negs. The reason: loop.c hoists the main loop's
+ * argument 0 (insn 1184, pseudo 331, savings 5) and global-alloc leaves
+ * it in no register, so reload materializes it where needed (the twin's
+ * pseudo 205 is the same) and r1 is free for tile. The row * 2 giv of
+ * the key handling is then a loop giv too, as native's slot 16 shows.
+ * Total 595 (do { } while (1) and while (1) 595 too), because
+ * find_and_verify_loops moves the `result = ordered[page + row]; break;`
+ * block out of the loop (b.n -1238) to the first depth-0 barrier before
+ * it: the jump over the skip-path block that stores &ordered after the
+ * first scan (mov rX, sp; adds rX, #240; str), which GCSE creates before
+ * loop.c runs. Native has the same skip-path block but keeps the A block
+ * inline, so in native that barrier did not exist yet when loop.c looked
+ * (perhaps loop.c made it from the first scan), or the A block did not
+ * qualify (a label at its start, or its guard not a plain conditional
+ * jump around it). Solve that and keep for (;;). With for (;;) and the
+ * if/else page loop 606. A block local n = count + 3 for the page loop
+ * bound makes that loop non-phony too (GCSE's count + 3 insertion after
+ * LOOP_BEG is what makes it phony), but gives n + 3 for the negative
+ * adjust where native has count + 6: first loop 577, second loop 585.
  * Session 4: the highlight loop has its own tile, the two page-tile loops
  * share the function's tile as ItemList_SelectEntry (BATTLE_LIST.C, the
  * matched twin) does: 575 -> 567 (a tile per loop also 567).

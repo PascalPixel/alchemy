@@ -317,18 +317,17 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 Engine_EventWait(10);
                 Event_ShowMessage(8, 0);
                 goto L_02000660;
-            } else {
-                if ((u32)six00 <= (u32)*(s32 *)(base6_2000240 + 16)) {
-                    goto L_0200061e;
-                }
-                UiWork_Finalize(rec7, 2);
-                Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-                Engine_EventWait(10);
-                gEventWork->message++;
-                Audio_PlayCue(113);
-                Event_ShowMessage(8, 0);
-                goto L_02000660;
             }
+            if ((u32)six00 <= (u32)*(s32 *)(base6_2000240 + 16)) {
+                goto L_0200061e;
+            }
+            UiWork_Finalize(rec7, 2);
+            Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+            Engine_EventWait(10);
+            gEventWork->message++;
+            Audio_PlayCue(113);
+            Event_ShowMessage(8, 0);
+            goto L_02000660;
             L_0200061e:;
             UiWork_Finalize(rec7, 2);
             Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

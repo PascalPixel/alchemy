@@ -80,7 +80,7 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 
     {
         s32 next = *pangle;
-        next = next + (s32)0xfffff800;
+        next += (s32)0xfffff800;
         *pangle = (u16)next;
     }
 }

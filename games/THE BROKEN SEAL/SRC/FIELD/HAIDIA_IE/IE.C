@@ -186,7 +186,7 @@ void Villager_ShowOffPsynergy(void)
                 } else {
                     *origin += 0x10000;
                 }
-                shakes = shakes + 1;
+                shakes++;
             }
             Engine_EventWait(1);
         }
@@ -213,7 +213,7 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
         } else {
             struct EventWork *work = gEventWork;
 
-            work->message = work->message + 1;
+            work->message++;
             Engine_EventAskYesNo(15, 0);
         }
     } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -1022,8 +1022,8 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
     Engine_EventWait(40);
     base5_200ac00 = HaidiaIe_FaceTargetActions;
-    Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)(base5_200ac00));
-    Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)(base5_200ac00));
+    Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)base5_200ac00);
+    Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)base5_200ac00);
     Object_RefreshSelectorById(30);
     Engine_ActorStop(11);
     Engine_ActorStop(12);
@@ -1330,7 +1330,7 @@ void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
     s32 offset;
 
     anchor = effect->anchor;
-    effect->frame = effect->frame + 1;
+    effect->frame++;
     frame = (s16)effect->frame;
     if (frame > 31) {
         Engine_ObjectDispatchRelease(effect);
@@ -1341,8 +1341,8 @@ void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
     effect->amplitude_y = amplitude;
     effect->x = anchor->x;
     offset = 0x10000;
-    effect->y = effect->y + offset;
-    offset = offset - amplitude;
+    effect->y += offset;
+    offset -= amplitude;
     effect->z = anchor->z + (offset * 4 + offset) + 0x80000;
 }
 
@@ -1354,7 +1354,7 @@ void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
     s32 offset;
 
     anchor = effect->anchor;
-    effect->frame = effect->frame + 1;
+    effect->frame++;
     frame = (s16)effect->frame;
     if (frame > 31) {
         Engine_ObjectDispatchRelease(effect);
@@ -1365,8 +1365,8 @@ void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
     effect->amplitude_y = -amplitude;
     effect->x = anchor->x;
     offset = 0x10000;
-    effect->y = effect->y + offset;
-    offset = offset - amplitude;
+    effect->y += offset;
+    offset -= amplitude;
     effect->z = anchor->z - (offset * 4 + offset) + 0x100000;
 }
 

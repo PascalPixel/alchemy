@@ -23,9 +23,9 @@ loop_2:
         if (*p == 0) {
             return state + off + 0x1D4;
         }
-        i = i + 1;
+        i++;
         p += 0x1A;
-        off = off + 52;
+        off += 52;
         if (i == 5) {
             goto block_10;
         }

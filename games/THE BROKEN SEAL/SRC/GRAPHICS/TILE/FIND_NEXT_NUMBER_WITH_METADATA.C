@@ -155,13 +155,13 @@ next:
             }
             if ((*(volatile u32 *)&gKeysRepeat & KEY_RIGHT) != 0) {
                 mode++;
-                mode = mode & 3;
+                mode &= 3;
             }
         }
 
         if ((gKeyState & KEY_START) != 0) {
             tbl = gSpriteObjects;
-            flag = flag ^ 1;
+            flag ^= 1;
             for (i = 0; i <= 9; i++) {
                 tbl->flags = flag;
                 tbl++;
@@ -296,7 +296,7 @@ next:
                     goto next;
                 }
             } else if (slot != 0) {
-                ent[slot].on = ent[slot].on ^ 1;
+                ent[slot].on ^= 1;
                 Ui_SetGridColumnPriority(slot, ent[slot].on != 0 ? ent[slot].priority : 8);
                 goto next;
             }

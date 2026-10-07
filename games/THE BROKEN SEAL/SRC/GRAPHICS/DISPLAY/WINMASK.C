@@ -114,7 +114,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
         v = DisplayTransition_NoiseWidths[v];
         for (i = 0; i < 160; i++) {
@@ -188,7 +188,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             *dst++ = 0x7f7f;
             v = 64 - v;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - 80;
@@ -245,12 +245,12 @@ void DisplayTransition_UpdateScanlineTable(void)
         if ((v & 32) == 0) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
         if (gFrameCount & 1) {
             v = 0;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;
@@ -287,9 +287,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;
@@ -338,9 +338,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;
@@ -379,9 +379,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;

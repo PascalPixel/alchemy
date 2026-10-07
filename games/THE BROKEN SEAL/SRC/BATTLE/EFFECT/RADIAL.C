@@ -143,7 +143,8 @@ top:
         effect->max_speed = 0x40000;
         effect->flag42 = state;
         goto advance;
-    } else if (state == 1) {
+    }
+    if (state == 1) {
         if (BattleFx_HasReachedTarget(effect)!= 0)
             return;
         *state_pointer = *state_pointer + 1;

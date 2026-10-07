@@ -421,7 +421,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
                 continue;
             }
         } else {
-            xb = xb - xa;
+            xb -= xa;
             if (xb > 0x9ffff) {
                 continue;
             }
@@ -434,7 +434,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
                 continue;
             }
         } else {
-            yb = yb - ya;
+            yb -= ya;
             if (yb > 0x9ffff) {
                 continue;
             }
@@ -444,7 +444,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         } else {
             yb = rec8->z.fixed;
             yd = rec7->velocity_z;
-            yb = yb + yd;
+            yb += yd;
         }
         rec8->z.fixed = yb;
     }

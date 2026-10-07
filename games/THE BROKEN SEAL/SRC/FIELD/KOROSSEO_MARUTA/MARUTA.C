@@ -402,8 +402,8 @@ s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z)
         return -2;
     }
     actor = Object_GetById(15);
-    x = x >> 20;
-    z = z >> 20;
+    x >>= 20;
+    z >>= 20;
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }

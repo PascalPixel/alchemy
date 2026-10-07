@@ -85,7 +85,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
         if (gGameState.entrance == 2 || gGameState.entrance == 3) {
             Object_GetById(10)->terrain_id = 2;
             actor = Object_GetById(10);
-            actor->y.fixed = actor->y.fixed - 1;
+            actor->y.fixed--;
             Object_GetById(10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             Goma_CopyCellAttributes(36, 48, 5, 1, 36, 14);
         }

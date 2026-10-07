@@ -305,7 +305,8 @@ s32 Sanctum_RunPartyService(void)
                 continue;
             }
             break;
-        } else if ((gKeyState & KEY_B) != 0) {
+        }
+        if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
             break;
         } else {

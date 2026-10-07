@@ -140,7 +140,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
             obj->hp_gauge = one;
         }
 
-        t = (obj->pp << 14) / (obj->max_pp);
+        t = (obj->pp << 14) / obj->max_pp;
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;

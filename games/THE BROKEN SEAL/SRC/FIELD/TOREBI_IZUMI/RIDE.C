@@ -80,7 +80,7 @@ void FieldScene_RunSecondaryScript(void)
                 ride->velocity.z += 6553 * dz / len;
                 ride->velocity.x = ride->velocity.x * 253 / 256;
                 ride->velocity.z = ride->velocity.z * 253 / 256;
-                ride->frames = ride->frames - 1;
+                ride->frames--;
             } else {
                 ride->velocity.x = ride->velocity.x * 220 / 256;
                 ride->velocity.z = ride->velocity.z * 220 / 256;
@@ -206,20 +206,20 @@ void FieldScene_RunSecondaryScript(void)
         rec = &TorebiIzumi_ActorRecords[i];
 
         if (rec->react > 0) {
-            rec->react = rec->react - 1;
+            rec->react--;
         }
         if (rec->cool > 0) {
-            rec->cool = rec->cool - 1;
+            rec->cool--;
         }
 
         if (i <= 1) {
             mode = rec->mode;
             step = 0x10000;
             if (mode == 1) {
-                step = step * 2;
+                step *= 2;
             }
             if (mode == 2) {
-                step = step * 3;
+                step *= 3;
             }
             if (rec->react > 0) {
                 if (i == 0) {
@@ -235,9 +235,9 @@ void FieldScene_RunSecondaryScript(void)
                 }
                 if (rec->hold == 0) {
                     if (rec->heading == 0) {
-                        rec->x = rec->x + step;
+                        rec->x += step;
                     } else {
-                        rec->x = rec->x - step;
+                        rec->x -= step;
                     }
                     if (rec->x <= 0x400000) {
                         rec->heading = 0;
@@ -252,17 +252,17 @@ void FieldScene_RunSecondaryScript(void)
                         }
                     }
                 } else {
-                    rec->hold = rec->hold - 1;
+                    rec->hold--;
                 }
             }
         } else if (i == 2) {
             mode = rec->mode;
             step = -64;
             if (mode == 1) {
-                step = step * 2;
+                step *= 2;
             }
             if (mode == 2) {
-                step = step * 3;
+                step *= 3;
             }
             if (rec->react > 0) {
                 Object_SetMode(Object_GetById(20), 3);
@@ -272,29 +272,29 @@ void FieldScene_RunSecondaryScript(void)
                 rec->z = Engine_MathCos(rec->heading) * 40 + 0x480000;
                 phase = (u16)rec->heading + step;
                 rec->heading = phase;
-                rec->hold = rec->hold + 1;
+                rec->hold++;
             }
         } else {
             phase = rec->hold & 511;
             mode = rec->mode;
             step = 64;
             if (mode == 1) {
-                step = step * 2;
+                step *= 2;
             }
             if (mode == 2) {
-                step = step * 3;
+                step *= 3;
             }
             if (rec->react > 0) {
                 Object_SetMode(Object_GetById(21), 3);
             } else if (phase <= 383) {
                 rec->x = Engine_MathSin(rec->heading) * 52 + 0x700000;
                 rec->z = Engine_MathCos(rec->heading) * 24 + 0x480000;
-                rec->heading = rec->heading + step;
+                rec->heading += step;
                 Object_SetMode(Object_GetById(21), 2);
             } else {
                 Object_SetMode(Object_GetById(21), 3);
             }
-            rec->hold = rec->hold + 1;
+            rec->hold++;
         }
 
         if (rec->cool == 0 && ride->trail[0].y == 0) {
@@ -314,12 +314,12 @@ void FieldScene_RunSecondaryScript(void)
                     if (rec->heading == 0) {
                         if (ride->velocity.x < speed) {
                             ride->velocity.x = speed;
-                            ride->frames = ride->frames - 100;
+                            ride->frames -= 100;
                         }
                     } else {
                         if (ride->velocity.x > -speed) {
                             ride->velocity.x = -speed;
-                            ride->frames = ride->frames - 100;
+                            ride->frames -= 100;
                         }
                     }
                 } else {
@@ -328,7 +328,7 @@ void FieldScene_RunSecondaryScript(void)
                     len = Iwram_Sqrt(dist);
                     ride->velocity.x = -dx * speed / len;
                     ride->velocity.z = -dz * speed / len;
-                    ride->frames = ride->frames - 100;
+                    ride->frames -= 100;
                 }
                 Engine_AudioPlayCue(301);
                 next_mode = (rec->mode + 1) % 3;
@@ -387,7 +387,7 @@ void FieldScene_RunSecondaryScript(void)
     }
 
     if (ride->hold != -1) {
-        ride->hold = ride->hold + 1;
+        ride->hold++;
     }
 }
 

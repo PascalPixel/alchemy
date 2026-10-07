@@ -288,14 +288,13 @@ s32 FuneHeya_GetStepScript(void)
                     FuneHeya_StepScriptC[46] = 1;
                 }
                 if (Engine_GameFlagIsSet(0x925) != 0) {
-                    if (!(Engine_GameFlagIsSet(0x8a0) != 0)) {
+                    if (Engine_GameFlagIsSet(0x8a0) == 0) {
                         FuneHeya_StepScriptC[22] = 0;
                     }
                 }
                 return (s32)FuneHeya_StepScriptC;
-            } else {
-                return (s32)FuneHeya_StepScriptA;
             }
+            return (s32)FuneHeya_StepScriptA;
         } else {
             return (s32)FuneHeya_StepScriptB;
         }

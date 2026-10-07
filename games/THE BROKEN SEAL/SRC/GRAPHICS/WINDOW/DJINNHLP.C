@@ -140,7 +140,8 @@ s32 DjinnMenu_ShowHelp(void)
                 selection = Menu_GetModuloOfSum(selection, 7);
                 Audio_PlayCue(111);
                 break;
-            } else if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
+            }
+            if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
                 selection--;
                 selection = Menu_GetModuloOfSum(selection, 7);
                 Audio_PlayCue(111);
@@ -159,9 +160,8 @@ s32 DjinnMenu_ShowHelp(void)
                     selection = Menu_GetModuloOfSum(selection, 7);
                     Audio_PlayCue(112);
                     break;
-                } else {
-                    Audio_PlayCue(111);
                 }
+                Audio_PlayCue(111);
             }
         }
         if (work->glyph_resource != 99) {

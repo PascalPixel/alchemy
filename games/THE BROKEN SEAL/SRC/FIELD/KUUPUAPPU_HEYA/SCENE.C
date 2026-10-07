@@ -646,7 +646,7 @@ void FieldScene_RunVaultClosingSequence(void)
     Engine_EventWait(20);
     base = (s32)MsgKuupuappuVaultCutFree;
     Engine_MessageShowCentered(base, 1);
-    base = base + 1;
+    base++;
     Engine_EventSetMessage(base);
     Engine_EventWait(30);
     Engine_ActorSetAnimation(8, 1);
@@ -788,7 +788,7 @@ void FieldScene_RunVaultClosingSequence(void)
         Engine_ActorRunRepeatedMotion(10, 2);
         Engine_EventWait(20);
         Engine_EventShowMessage(10, 0);
-        base = base - 3;
+        base -= 3;
         Engine_EventSetMessage(base);
     }
     Actor_ShowEmote(11, 259, 0);
@@ -1298,8 +1298,8 @@ void SceneState_SetFlagByActorPosition(void)
     struct FieldActor *p1 = Object_GetById(0);
     x = rx >> 20;
     z = p1->z.fixed;
-    x = x - 34;
-    z = z >> 20;
+    x -= 34;
+    z >>= 20;
 
     if ((u32)x <= 1 && z > 40 && z <= 42) {
         Engine_GameFlagSet(148 << 2);

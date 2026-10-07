@@ -111,7 +111,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 
             Owner_GetStateFar(entry->unit_id);
             action = BattleAction_Get(Djinn_GetDefinitionHeaderFar(
-                (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
+                entry->parameter >> 8 & 15, entry->parameter & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
                 entry->priority += 10000;
             }

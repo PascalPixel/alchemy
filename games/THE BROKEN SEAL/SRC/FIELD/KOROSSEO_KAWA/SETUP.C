@@ -94,7 +94,7 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Korosseo_UpdateMarker, 0xc80);
 }
 
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
@@ -106,7 +106,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
     Korosseo_MarkerSteps = (u16)duration;
     Korosseo_MarkerStep = 0;
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Korosseo_UpdateMarker, 0xc80);
 }
 
 void KorosseoKawa_ReleaseMarker(void)

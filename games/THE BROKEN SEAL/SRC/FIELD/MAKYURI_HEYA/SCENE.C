@@ -187,7 +187,8 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 SceneEffect_SpawnParticleRowsByMode(1);
             MakyuriHeya_OpenStoneDoor(2);
             goto wait;
-        } else if (column == 48) {
+        }
+        if (column == 48) {
             Engine_GameFlagSet(0x31a);
             Engine_GameFlagClear(0x31b);
             Engine_GameFlagClear(0x319);

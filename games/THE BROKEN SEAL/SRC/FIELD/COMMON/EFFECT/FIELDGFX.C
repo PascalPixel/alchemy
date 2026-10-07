@@ -217,7 +217,7 @@ void FieldMotes_Start(void)
         mote++;
     }
     do { s32 v; v = 0x3f00; reg = &REG_BLDCNT; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
-    Scheduler_AddOrUpdateCallback((s32)(FieldMotes_Update), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)FieldMotes_Update, 0xc80);
 }
 
 void FieldEffect_UpdateSparkles(void)
@@ -349,7 +349,7 @@ loop:
     p++;
     if (i < 32)
         goto loop;
-    Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)FieldEffect_UpdateSparkles, 0xc80);
 }
 
 void BattleFx_StartTwelveFrameBlend(void)
@@ -377,7 +377,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     work = (u8 *)&((struct FieldBlendWork *)work)->enabled;
     one = 1;
     *(u16 *)work = one;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateStormFlash, 0xc80);
 }
 
 void BattleFx_SetBlock30ValuesMaxZero(void)
@@ -425,5 +425,5 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     *frames = value;
     value = 0;
     work->enabled = value;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateStormFlash, 0xc80);
 }

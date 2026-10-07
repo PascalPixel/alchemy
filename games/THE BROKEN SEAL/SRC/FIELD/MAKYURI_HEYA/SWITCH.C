@@ -146,7 +146,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
                 Work_SetValuesIfNonNegative(-1, -1, 0xe666);
                 Battle_WaitMode0(a0);
             }
-            i = i + 1;
+            i++;
         } while (i < (u32)a2);
     }
     Map_CopyCellAttributes(42, 52, 4, 5, 42, 33);
@@ -178,9 +178,9 @@ void MakyuriHeya_RunSequenceG(s32 a0)
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Battle_WaitMode0(a0);
         }
-        i = i + 1;
-        x = x + 2;
-        y = y + 2;
+        i++;
+        x += 2;
+        y += 2;
     } while (i <= 2);
     Audio_PlayCue(0x120);
     Map_CopyCellAttributes(106, 33, 4, 5, 42, 33);
@@ -276,11 +276,11 @@ void MakyuriHeya_RunSequenceF(void)
                 Effect_Spawn(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
                 Battle_WaitMode0(1);
             }
-            inner = inner + 1;
+            inner++;
             base = base + -0x20000;
         } while ((u32)inner <= 7);
         Engine_MapCopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
-        outer = outer + 1;
+        outer++;
     } while ((u32)outer <= 2);
     Engine_TaskRemoveCallback((s32)MakyuriHeya_SprayAtFountain);
 }

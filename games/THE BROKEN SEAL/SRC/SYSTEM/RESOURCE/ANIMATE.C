@@ -328,7 +328,7 @@ s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group, s32 val
     s32 cnt;
 
     if (n != 0) {
-        val = val << 4;
+        val <<= 4;
         p = group->entries;
         cnt = n;
         do {

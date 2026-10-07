@@ -14,7 +14,7 @@ void SerialRuntime_DisableTransfer(void)
     struct SerialRuntime *state;
 
     REG_IME = 0;
-    REG_IE = REG_IE & 0xff3f;
+    REG_IE &= 0xff3f;
     REG_IME = 1;
     REG_SIOCNT16 = 0x2003;
     REG_TM3CNT = 0x0000c963;

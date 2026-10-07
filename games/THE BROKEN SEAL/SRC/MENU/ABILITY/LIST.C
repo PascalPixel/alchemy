@@ -275,9 +275,9 @@ s32 PsynergyMenu_RunList(s32 pane)
                 tab = menu->tab_index[pane];
                 do {
                     if ((gKeysRepeat & KEY_R) != 0) {
-                        tab = tab + 1;
+                        tab++;
                     } else {
-                        tab = tab - 1;
+                        tab--;
                     }
                     tab = (tab + menu->owner_count) % menu->owner_count;
                     menu->selected_owner = menu->owner_table[tab];

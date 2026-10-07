@@ -196,7 +196,7 @@ void Object_UpdateAllThumb(void)
                     half = obj->acceleration / 2;
                     if (vy > half)
                         vy = half;
-                    vy = vy * 3;
+                    vy *= 3;
                     if (vy != 0 && (obj->motion_flags & 0x10) == 0) {
                         dx = obj->velocity_x;
                         dy = obj->velocity_y;
@@ -308,7 +308,7 @@ void Object_UpdateAllThumb(void)
                 limit = -0x1000;
                 if (work < limit)
                     work = limit;
-                obj->facing = obj->facing + work;
+                obj->facing += work;
             }
         }
     }

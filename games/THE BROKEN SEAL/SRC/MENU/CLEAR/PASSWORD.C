@@ -295,7 +295,7 @@ u16 SceneData_GetBufferCrc16(u32 count, u8 *p)
                 if ((crc & 0x8000) != 0) {
                     crc = (crc << 1) + 0xFFFFEFDF;
                 } else {
-                    crc = crc << 1;
+                    crc <<= 1;
                 }
                 j++;
             } while (j != 8);

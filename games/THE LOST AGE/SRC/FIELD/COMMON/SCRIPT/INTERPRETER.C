@@ -58,7 +58,7 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
             interpreter->cursor = Script_FindLabel(interpreter, jump_key);
         } else {
             *repeat_count = 0;
-            interpreter->cursor = interpreter->cursor + 3;
+            interpreter->cursor += 3;
         }
     }
     return 1;

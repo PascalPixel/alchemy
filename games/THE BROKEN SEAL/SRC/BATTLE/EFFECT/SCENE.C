@@ -140,12 +140,12 @@ void EventObject_Initialize(void)
     event_value = (s16)event_state->action;
     event_index = event_value;
     Object_SetMode(event_object, 0x14);
-    FIELD_AT_OFFSET(event_object, u32 *, 0x38) = *(s32 *)((u8 *)(event_object) + 8);
+    FIELD_AT_OFFSET(event_object, u32 *, 0x38) = *(s32 *)((u8 *)event_object + 8);
     FIELD_AT_OFFSET(event_object, s32 *, 0x3C) = FIELD_AT_OFFSET(event_object, s32 *, 0xC);
     FIELD_AT_OFFSET(event_object, s32 *, 0x40) = FIELD_AT_OFFSET(event_object, s32 *, 0x10);
     FIELD_AT_OFFSET(event_object, u32 *, 0x24) = 0;
     FIELD_AT_OFFSET(event_object, u32 *, 0x28) = 0;
-    *(s32 *)((u8 *)(event_object) + 0x2C) = 0;
+    *(s32 *)((u8 *)event_object + 0x2C) = 0;
     if (event_state->visible != 0) {
         Audio_PlayCue(212);
         FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_1;

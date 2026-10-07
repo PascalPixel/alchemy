@@ -1,7 +1,30 @@
-/* 08026080: listing 1585, draft 1585, differ 106 (common 1532); both
+/* 08026080: listing 1585, draft 1585, differ 102 (common 1534); both
  * frames are 324 bytes. Every remaining difference is a spill slot offset
  * below sp+48 (see the hash analysis below); every instruction, register
  * and order matches.
+ * Session S07-08026080/1 (from 106), kept:
+ * - head = entries as the main loop's first statement: (plus sfp -88) is
+ *   now computed in the loop, PRE hoists it and numbers its reaching
+ *   register in bucket order, as native: 102. The six spilled PRE
+ *   pseudos now sit in native order apart from one rotation: draft efx 36,
+ *   selSlot 32, tbl 28, head 24, ids 20, cursor * 2 16 against native tbl
+ *   36, head 32, ids 28, cursor * 2 24, efx 20, selSlot 16 (the bucket
+ *   wrap, 707 buckets: max_cuid 1414 or 1415, 1411 real insns after
+ *   addressof).
+ * Diagnostic, not kept: with head in the loop, eighteen extra dead
+ *   efx.angle = 0 stores before the real one (two insns each at GCSE,
+ *   flow deletes them) give 725 buckets and differ 2; thirty-seven give
+ *   745 buckets, 102. So the table size is the whole slot problem. The
+ *   last 2 at 725: the main loop's first ids[cursor] load reloads its two
+ *   spilled address pseudos base first (ldr r2, [sp, #28]; ldr r3,
+ *   [sp, #24]) where native loads the index first; lreg has (plus (reg
+ *   ids) (reg cursor*2)), so native likely has the operands the other way
+ *   round there. pending = 0 before head = entries: same 2.
+ *   Next: an honest source shape with about 18 more dead stores (36 to 41
+ *   real insns at GCSE that flow or combine remove), or 32 to 35 fewer.
+ *   Bitfield writes into the same byte or halfword give exactly that
+ *   pattern (CSE folds each read-modify-write, flow kills the overwritten
+ *   store), so the native may write the sprite entries' fields one by one.
  * Session T10-08026080/4 (from 116), kept:
  * - the clear loop as for (i = 0; i < 6; i++) tbl[i].flags = 0: loop's
  *   dbra reversal (one store to a giv of i) turns it into the native
@@ -362,8 +385,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         tbl[0].y = 0x80;
     }
     window = UiWindow_Create(0, 12, 30, 4, 74);
-    head = entries;
     while (1) {
+        head = entries;
         pending = 0;
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
         ((s32 *)head)[1] = 0x40002000;

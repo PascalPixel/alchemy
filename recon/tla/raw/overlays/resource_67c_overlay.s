@@ -662,6 +662,8 @@ Func_020005f8:
 	.global Func_0200061c
 	.thumb_func
 Func_0200061c:
+	.ifdef TLA_EDITION_JA
+	.else
 	push {r5, r6, r7, lr}
 	adds r6, r0, #0
 	adds r7, r6, #0
@@ -680,10 +682,52 @@ Func_0200061c:
 	bl WaitFrames
 	strb r5, [r7]
 	pop {r5, r6, r7, pc}
+	.endif
 	.section .text.x02008644,"ax",%progbits
 	.global Func_02000644
 	.thumb_func
 Func_02000644:
+	.ifdef TLA_EDITION_JA
+	push {r5, r6, r7, lr}
+	mov r7, r8
+	push {r7}
+	adds r7, r1, #0
+	adds r0, r7, #0
+	sub sp, #8
+	bl Object_GetById
+	cmp r7, #9
+	bne .L_ja_02008668
+	ldr r3, [r0, #8]
+	asrs r6, r3, #20
+	cmp r6, #39
+	bne .L_ja_02008668
+	adds r5, r0, #0
+	movs r3, #0
+	adds r5, #85
+	mov r8, r3
+	movs r3, #3
+	strb r3, [r5, #0]
+	movs r0, #15
+	bl WaitFrames
+	movs r0, #144
+	mov r3, r8
+	lsls r0, r0, #4
+	strb r3, [r5, #0]
+	adds r0, #92
+	bl GameFlag_SetBit
+	movs r0, #41
+	movs r1, #9
+	movs r2, #1
+	movs r3, #1
+	str r6, [sp, #0]
+	str r7, [sp, #4]
+	bl Func_02003d1c
+.L_ja_02008668:
+	add sp, #8
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6, r7, pc}
+	.else
 	push {r5, r6, r7, lr}
 	adds r5, r1, #0
 	adds r0, r5, #0
@@ -716,6 +760,7 @@ Func_02000644:
 .L_0200868c:
 	add sp, #8
 	pop {r5, r6, r7, pc}
+	.endif
 	.section .text.x02008690,"ax",%progbits
 	.global Func_02000690
 	.thumb_func

@@ -28311,7 +28311,7 @@ msgctxt "message"
 msgid "07075"
 msgstr "{actor_name:7}は せきばんにふれてみた。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCheckedThePsynergyStone"
 msgid "07076"
 msgstr "{actor_name:5}は エナジーロックをしらべた{end_wait}"
 
@@ -36655,7 +36655,7 @@ msgctxt "MsgFieldIWonderWhatItS"
 msgid "09161"
 msgstr "大陸って どんなところなのか{line_break}いちどでいい 見てみたいなあ{line_break}そのためなら なんでもするわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCheckedTheTabletItLooks"
 msgid "09162"
 msgstr "{protagonist_name}は せきばんをしらべた{line_break}なにやら もじがきざまれている{page_break}水の力を あやつりし者よ{line_break}このせきばんに ふれてみよ{page_break}さすれば われはなんじに{line_break}水をけしさる かわきの力{line_break}ドライを さずけよう。{end_wait}"
 
@@ -36667,7 +36667,7 @@ msgctxt "message"
 msgid "09164"
 msgstr "{actor_name:8}は せきばんにふれてみた。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatWentWrongWhatAre"
 msgid "09165"
 msgstr "こんなことになるなんて・・・{line_break}どうしましょう {actor_name:5}!{end_wait}"
 
@@ -36675,7 +36675,7 @@ msgctxt "message"
 msgid "09166"
 msgstr "もしかして ボクたちの力が{line_break}ためされているのかもしれません。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCheckedTheColumn"
 msgid "09167"
 msgstr "{protagonist_name}は だいざをしらべた{page_break}"
 

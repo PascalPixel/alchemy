@@ -140,6 +140,12 @@ static inline void Kabe_ObjWalk(s32 actor, s32 x, s32 z)
     ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
+static inline void Kabe_ObjCommit(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetPositionAndCommit(actor, x, z);
+}
+
 static inline void Kabe_ObjTurn(s32 actor, s32 angle, s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */

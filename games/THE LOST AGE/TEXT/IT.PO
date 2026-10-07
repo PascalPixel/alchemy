@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Rianima"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Cura Veleno"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Cappello"
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Cappello"
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Corona: + Fortuna"
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Copricapo: + Agilità"
 
@@ -27687,7 +27687,7 @@ msgctxt "message"
 msgid "06919"
 msgstr "Non c'è ragione per andare{line_break}a Garoh a meno che non ci si{line_break}diriga alla Roccia dell'Aria...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAughWithAllTheseDemanding"
 msgid "06920"
 msgstr "Perché i viaggiatori{line_break}sono sempre di fretta?{page_break}Come diceva mia mamma,{line_break}\"Chi va piano...\"{end_wait}"
 
@@ -27711,7 +27711,7 @@ msgctxt "message"
 msgid "06925"
 msgstr "Perdonate i miei modi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellISayItSeems"
 msgid "06926"
 msgstr "No, per favore...{line_break}Non abbiate paura di me.{end_wait}"
 
@@ -27903,7 +27903,7 @@ msgctxt "message"
 msgid "06973"
 msgstr "Eh, eh, hrrr...{line_break}Stavo solo chiamando il{line_break}mio cane... Sono bravo, eh?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReallyIDoWishYou"
 msgid "06974"
 msgstr "Ehi voi...{line_break}I forestieri non{line_break}dovrebbero uscire di notte...{page_break}Gli ospiti sono benvenuti{line_break}a Garoh, ma è meglio{line_break}che stiano al chiuso di notte.{end_wait}"
 
@@ -28807,7 +28807,7 @@ msgctxt "message"
 msgid "07199"
 msgstr "Sono un popolo dai{line_break}molti talenti... Ma c'è{line_break}dell'altro...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesASailorLike"
 msgid "07200"
 msgstr "Le pietre mistiche sul{line_break}Monte Aleph... Le Pietre{line_break}psinergiche...{page_break}Sono direttamente collegate{line_break}ai loro poteri.{end_wait}"
 
@@ -28883,7 +28883,7 @@ msgctxt "message"
 msgid "07218"
 msgstr "Quindi, perché non avrebbe{line_break}potuto trasportare fino a Garoh{line_break}particelle della pietra?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeAllStartedWorking"
 msgid "07219"
 msgstr "Ha ragione!"
 
@@ -35843,7 +35843,7 @@ msgctxt "message"
 msgid "08958"
 msgstr "Se non vuoi, noi cercheremo{line_break}un'altra nave e proveremo{line_break}ad arrivare a Lemuria da soli.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "Vero, {actor_name:5}?{end_now}"
 
@@ -35887,7 +35887,7 @@ msgctxt "message"
 msgid "08969"
 msgstr "Andremo a Lemuria, Kraden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoDoTheyThinkThey"
 msgid "08970"
 msgstr "Lo sapevo, era troppo...{end_wait}"
 
@@ -38723,11 +38723,11 @@ msgctxt "message"
 msgid "09678"
 msgstr "Se papà non si fosse{line_break}opposto alla pirateria di Briggs,{line_break}ora vivremmo sulla terra...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgObabaIsTheLastPossessor"
 msgid "09679"
 msgstr "Spero che papà torni prima{line_break}del buio... Non voglio dover{line_break}dormire all'aperto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDThinkObabaWould"
 msgid "09680"
 msgstr "Papà si preoccupa{line_break}per l'assenza di pesce...{page_break}Prima tornava{line_break}carico, perché ora{line_break}non ne cattura più?{end_wait}"
 
@@ -41615,7 +41615,7 @@ msgctxt "message"
 msgid "10401"
 msgstr "Bah! Più anziano?!{line_break}Inconcepibile!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndTheOthersDrankOf"
 msgid "10402"
 msgstr "Ehm... veramente, Kraden, loro{line_break}due insieme probabilmente{line_break}sono più vecchi di voi...{end_wait}"
 
@@ -46075,7 +46075,7 @@ msgctxt "message"
 msgid "11516"
 msgstr "Non possono morire! {actor_name:5}{line_break}deve ancora rispondere{line_break}a un mucchio di domande!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLikeIgloosRight"
 msgid "11517"
 msgstr "Se salvate {actor_name:5}, vi{line_break}diremo tutto...{end_wait}"
 
@@ -46191,7 +46191,7 @@ msgctxt "message"
 msgid "11545"
 msgstr "Non c'è più nessuno in{line_break}città. Trasportano{line_break}le ali...{page_break}A quest'ora forse,{line_break}avranno anche finito di{line_break}montarle sulla nave.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGoAwayForA"
 msgid "11546"
 msgstr "Quella è la vostra nave?{line_break}È uguale a quella{line_break}dei geoglifi.{end_wait}"
 
@@ -46203,7 +46203,7 @@ msgctxt "message"
 msgid "11548"
 msgstr "Sembra che{line_break}siano turbati. Oh beh...{line_break}Non sarò io ad aiutarli.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourParentsHaveGoneAway"
 msgid "11549"
 msgstr "Le profezie sono vere...{line_break}Viviamo in tempi{line_break}molto strani.{end_wait}"
 
@@ -46219,7 +46219,7 @@ msgctxt "message"
 msgid "11552"
 msgstr "Sono felice che tu abbia{line_break}mantenuto la promessa, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearAgatioAndKarst"
 msgid "11553"
 msgstr "Bene, sentiamo cosa{line_break}ha da dirci!{end_wait}"
 
@@ -47955,7 +47955,7 @@ msgctxt "message"
 msgid "11986"
 msgstr "Sembra che siano{line_break}spariti senza lasciare{line_break}traccia... che strano.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourFosterGrandmotherKnewThat"
 msgid "11987"
 msgstr "Non credi che...{end_wait}"
 
@@ -47967,7 +47967,7 @@ msgctxt "message"
 msgid "11989"
 msgstr "Già, probabilmente hai ragione.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeHadNoIdeaThere"
 msgid "11990"
 msgstr "Puelle andrà su tutte le{line_break}furie, però, quando saprà che{line_break}non li abbiamo liberati.{end_wait}"
 
@@ -47983,7 +47983,7 @@ msgctxt "message"
 msgid "11993"
 msgstr "{actor_name:5} è tornato per{line_break}i suoi genitori e{line_break}loro non ci sono...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheLighthouseHas"
 msgid "11994"
 msgstr "Puelle voleva liberare i{line_break}genitori di {actor_name:5} prima{line_break}che Prox fosse distrutta...{page_break}Ma se non riusciamo a trovarli,{line_break}come possiamo liberarli?{end_wait}"
 
@@ -49831,7 +49831,7 @@ msgctxt "message"
 msgid "12455"
 msgstr "D'altra parte ora che{line_break}l'Alchimia è libera, forse{line_break}dovrei studiarla...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmTheGuardianOf"
 msgid "12456"
 msgstr "Se mi allenassi abbastanza,{line_break}forse sarei forte come{line_break}lo erano Adexia e Karst...{end_wait}"
 

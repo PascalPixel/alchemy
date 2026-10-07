@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Revive"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Cure Poison"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Hat"
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Hat"
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Crown: Boosts Luck"
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Hat: Boosts Agility"
 
@@ -27687,7 +27687,7 @@ msgctxt "message"
 msgid "06919"
 msgstr "We're taking care of some{line_break}people whose house was{line_break}destroyed by the tidal wave.{page_break}But...they're just so demanding!{line_break}My wife feels so overwhelmed{line_break}that she can't take it anymore!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAughWithAllTheseDemanding"
 msgid "06920"
 msgstr "Augh! With all these demanding{line_break}houseguests, I feel like I've{line_break}lost control of my own house!{end_wait}"
 
@@ -27711,7 +27711,7 @@ msgctxt "message"
 msgid "06925"
 msgstr "If you want tea, you can go{line_break}right ahead and fix it yourself!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellISayItSeems"
 msgid "06926"
 msgstr "Well! I say! It seems the lady{line_break}of the house is no lady at all!{end_wait}"
 
@@ -27903,7 +27903,7 @@ msgctxt "message"
 msgid "06973"
 msgstr "That warrior next door{line_break}is so suave and handsome,{line_break}just how I like 'em.{page_break}I hope we can be friends.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReallyIDoWishYou"
 msgid "06974"
 msgstr "Really, I do wish you would{line_break}quit using your Mind Read{line_break}on me...{page_break}Trust me, my thoughts will{line_break}become all too clear in{line_break}due time...{end_wait}"
 
@@ -28807,7 +28807,7 @@ msgctxt "message"
 msgid "07199"
 msgstr "They told me they'd help{line_break}get that mast fixed up.{page_break}Would someone please explain{line_break}to me why suddenly they all{line_break}decided to fix houses instead?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesASailorLike"
 msgid "07200"
 msgstr "What does a sailor like{line_break}me know about building{line_break}houses, anyway?{end_wait}"
 
@@ -28883,7 +28883,7 @@ msgctxt "message"
 msgid "07218"
 msgstr "Those guys were just trying{line_break}to win our trust so they could{line_break}take advantage of us!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeAllStartedWorking"
 msgid "07219"
 msgstr "We've all started working{line_break}together to repair the houses!{end_wait}"
 
@@ -35843,7 +35843,7 @@ msgctxt "message"
 msgid "08958"
 msgstr "If you understand, then get{line_break}out of my way.{line_break}Stand over there.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "How many casks does it take{line_break}to weaken this stupid serpent?{end_wait}"
 
@@ -35887,7 +35887,7 @@ msgctxt "message"
 msgid "08969"
 msgstr "The cups are overflowing{line_break}with a river of Dragonsbane.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoDoTheyThinkThey"
 msgid "08970"
 msgstr "Who do they think they are?{line_break}I'm the only one who{line_break}can save Kushinada.{end_wait}"
 
@@ -38723,11 +38723,11 @@ msgctxt "message"
 msgid "09678"
 msgstr "Briggs fought the odds to{line_break}bring us jewels and food!{line_break}He's an amazing leader!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgObabaIsTheLastPossessor"
 msgid "09679"
 msgstr "Obaba is the last possessor of{line_break}the ancient secrets of Ankhol,{line_break}a long-lost civilization...{page_break}There's nothing she can't fix,{line_break}no matter how broken it is.{line_break}She's quite the blacksmith!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDThinkObabaWould"
 msgid "09680"
 msgstr "You'd think Obaba would be{line_break}glad that Briggs was back.{line_break}She acts like nothing's changed.{end_wait}"
 
@@ -41615,7 +41615,7 @@ msgctxt "message"
 msgid "10401"
 msgstr "These turtles have lived in{line_break}the spring forever... It must be{line_break}the water that does it...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndTheOthersDrankOf"
 msgid "10402"
 msgstr "{actor_name:5} and the others{line_break}drank of the spring.{page_break}Their HP and PP were{line_break}fully replenished!{end_wait}"
 
@@ -46075,7 +46075,7 @@ msgctxt "message"
 msgid "11516"
 msgstr "Three years ago, we sent our{line_break}finest to Sol Sanctum. All but{line_break}two were killed in a trap.{page_break}The people of Vale couldn't{line_break}possibly understand how dire{line_break}our need was...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLikeIgloosRight"
 msgid "11517"
 msgstr "{actor_name:5}, you like igloos, right?{end_wait}"
 
@@ -46191,7 +46191,7 @@ msgctxt "message"
 msgid "11545"
 msgstr "When you left Prox, you were{line_break}so young that you could barely{line_break}lift a sword!{page_break}Now, look at you! You could{line_break}handle any weapon with ease!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGoAwayForA"
 msgid "11546"
 msgstr "You go away for a little{line_break}while, and you come back{line_break}a strong and mighty warrior!{page_break}I'm so proud of you!{end_wait}"
 
@@ -46203,7 +46203,7 @@ msgctxt "message"
 msgid "11548"
 msgstr "{actor_name:5} looks so confident,{line_break}so bold... You can see it in{line_break}his eyes...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourParentsHaveGoneAway"
 msgid "11549"
 msgstr "{actor_name:5}, your parents have{line_break}gone away... They were very{line_break}worried about you.{end_wait}"
 
@@ -46219,7 +46219,7 @@ msgctxt "message"
 msgid "11552"
 msgstr "{actor_name:5}'s parents were{line_break}so worried about him that{line_break}they were wasting away...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearAgatioAndKarst"
 msgid "11553"
 msgstr "I hear Agatio and Karst have{line_break}gone to Mars Lighthouse...{page_break}What if their actions only{line_break}cause more turmoil? How can{line_break}we be sure they're right?{end_wait}"
 
@@ -47955,7 +47955,7 @@ msgctxt "message"
 msgid "11986"
 msgstr "Thank you so much, {actor_name:5}!{line_break}If you hadn't returned to us,{line_break}we wouldn't be here now!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourFosterGrandmotherKnewThat"
 msgid "11987"
 msgstr "Your foster grandmother knew{line_break}that you would return. She{line_break}always said you were reliable.{end_wait}"
 
@@ -47967,7 +47967,7 @@ msgctxt "message"
 msgid "11989"
 msgstr "It's too bad {actor_name:5} can't{line_break}stick around... He'd make the{line_break}perfect son-in-law.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeHadNoIdeaThere"
 msgid "11990"
 msgstr "We had no idea there would{line_break}be such a terrible earthquake{line_break}when the beacon was lit.{page_break}My wife tumbled right into my{line_break}arms... It was like we were{line_break}teenagers all over again!{end_wait}"
 
@@ -47983,7 +47983,7 @@ msgctxt "message"
 msgid "11993"
 msgstr "When the earthquake hit,{line_break}{actor_name:5} and his friends{line_break}were high up on the lighthouse.{page_break}If that had been me up there,{line_break}I think my heart would have{line_break}stopped from fear!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheLighthouseHas"
 msgid "11994"
 msgstr "Now that the lighthouse has{line_break}been lit, I fear for what will{line_break}happen to Weyard.{end_wait}"
 
@@ -49831,7 +49831,7 @@ msgctxt "message"
 msgid "12455"
 msgstr "So did you...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmTheGuardianOf"
 msgid "12456"
 msgstr "I am the guardian of water.{line_break}If you would claim my power,{line_break}you must prove your worth.{end_wait}"
 

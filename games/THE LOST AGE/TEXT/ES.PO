@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Resucitar"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Curar Veneno"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Yelmo."
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Gorro."
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Corona. Sube la suerte."
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Capucha. Sube la agilidad."
 
@@ -27687,7 +27687,7 @@ msgctxt "message"
 msgid "06919"
 msgstr "Mi marido ha intentado{line_break}escalar la Roca del Aire{line_break}muchas veces...{page_break}Ojalá supiera lo que{line_break}ha visto en ese{line_break}pedazo de piedra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAughWithAllTheseDemanding"
 msgid "06920"
 msgstr "¿Cómo será lo{line_break}imposible de ver?{end_wait}"
 
@@ -27711,7 +27711,7 @@ msgctxt "message"
 msgid "06925"
 msgstr "Habéis recorrido un largo{line_break}camino, amigos. Quedaos un{line_break}poco y descansad los pies.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellISayItSeems"
 msgid "06926"
 msgstr "No hay razones para ir a{line_break}Garoh, a no ser que vayan{line_break}a la Roca del Aire...{end_wait}"
 
@@ -27903,7 +27903,7 @@ msgctxt "message"
 msgid "06973"
 msgstr "¡Así que en marcha! ¡Busquemos{line_break}hombres lobo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReallyIDoWishYou"
 msgid "06974"
 msgstr "Así que, mmm... ¿decís que{line_break}habéis visto un hombre lobo?{end_now}"
 
@@ -28807,7 +28807,7 @@ msgctxt "message"
 msgid "07199"
 msgstr "Pues existe...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesASailorLike"
 msgid "07200"
 msgstr "Estos dos chicos proceden de{line_break}la aldea que hay en la falda del{line_break}Monte Aleph llamada Tale.{end_wait}"
 
@@ -28883,7 +28883,7 @@ msgctxt "message"
 msgid "07218"
 msgstr "Había vientos huracanados en{line_break}la Roca del Aire... Esos vientos{line_break}pueden llevarlo muy lejos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeAllStartedWorking"
 msgid "07219"
 msgstr "¿Llevarlo? ¿Llevar qué?{end_wait}"
 
@@ -35843,7 +35843,7 @@ msgctxt "message"
 msgid "08958"
 msgstr "Estoy emocionado... No os{line_break}imagináis cuánto lo echaba{line_break}de menos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "No creo que Kraden{line_break}se refiriera a eso...{end_wait}"
 
@@ -35887,7 +35887,7 @@ msgctxt "message"
 msgid "08969"
 msgstr "¡{actor_name:7} tiene razón!{line_break}¡Dejad que hable {actor_name:8}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoDoTheyThinkThey"
 msgid "08970"
 msgstr "Estoy de acuerdo con {actor_name:5}.{line_break}No debemos presionar{line_break}a {actor_name:8}, Kraden.{end_wait}"
 
@@ -38723,11 +38723,11 @@ msgctxt "message"
 msgid "09678"
 msgstr "Obaba se ha encerrado en su{line_break}habitación hasta que su nieto,{line_break}Briggs, regrese a casa.{page_break}Está muy preocupada...{line_break}Ni siquiera ha comido.{line_break}Espero que esté bien.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgObabaIsTheLastPossessor"
 msgid "09679"
 msgstr "Si Briggs trajera el tesoro{line_break}que ha encontrado, Champa{line_break}prosperaría al fin.{page_break}Entonces podríamos{line_break}olvidarnos de ser piratas{line_break}y todas esas historias.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDThinkObabaWould"
 msgid "09680"
 msgstr "No hay mucho espacio en las{line_break}cuevas de las montañas. Por{line_break}eso tenemos que vivir aquí.{end_wait}"
 
@@ -41615,7 +41615,7 @@ msgctxt "message"
 msgid "10401"
 msgstr "¡{actor_name:8}, seguro que eres{line_break}un hombre de palabra, pero las{line_break}órdenes del Rey siguen rigiendo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndTheOthersDrankOf"
 msgid "10402"
 msgstr "Debes comprender que no{line_break}podemos ignorar las órdenes,{line_break}{actor_name:8}.{end_wait}"
 
@@ -46075,7 +46075,7 @@ msgctxt "message"
 msgid "11516"
 msgstr "Tu poder de predicción debe{line_break}de haber crecido más de lo{line_break}que imaginas, {actor_name:3}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLikeIgloosRight"
 msgid "11517"
 msgstr "¡Maldición! ¡Han debido de{line_break}coger el ascensor para escapar!{end_wait}"
 
@@ -46191,7 +46191,7 @@ msgctxt "message"
 msgid "11545"
 msgstr "Pero no sabía que fuera{line_break}tan espectacular.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGoAwayForA"
 msgid "11546"
 msgstr "No estarás planeando escapar{line_break}de {actor_name:1} otra vez, ¿verdad?{end_wait}"
 
@@ -46203,7 +46203,7 @@ msgctxt "message"
 msgid "11548"
 msgstr "Además, quieren dialogar,{line_break}no luchar...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourParentsHaveGoneAway"
 msgid "11549"
 msgstr "Nos esperan. Volvamos{line_break}a Mitdir.{end_wait}"
 
@@ -46219,7 +46219,7 @@ msgctxt "message"
 msgid "11552"
 msgstr "Ya se han ido todos de la{line_break}ciudad. Están transportando{line_break}las alas...{page_break}A decir verdad, ya las habrán{line_break}colocado en el barco.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearAgatioAndKarst"
 msgid "11553"
 msgstr "¿Es ése tu barco? Parece{line_break}exactamente el mismo que{line_break}el de los geoglifos.{end_wait}"
 
@@ -47955,7 +47955,7 @@ msgctxt "message"
 msgid "11986"
 msgstr "La gente que Saturos rescató{line_break}en la tormenta de Vale tiene{line_break}que estar en su habitación.{page_break}¡Una vez que el Faro de Marte{line_break}haya sido encendido, los{line_break}liberaremos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourFosterGrandmotherKnewThat"
 msgid "11987"
 msgstr "No lo olvides, {actor_name:5}. Tu madre{line_break}y tu padre están en la parte{line_break}norte de Prox.{end_wait}"
 
@@ -47967,7 +47967,7 @@ msgctxt "message"
 msgid "11989"
 msgstr "Marte es el último faro que{line_break}queda por encender.{page_break}Cuando nos encarguemos de{line_break}él, liberaremos a la gente de{line_break}Tale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeHadNoIdeaThere"
 msgid "11990"
 msgstr "Saturos usó a los padres de{line_break}{actor_name:5} para forzarlo a que se{line_break}uniera a su misión.{page_break}Corren tiempos difíciles; nos{line_break}vemos obligados a coaccionar para{line_break}que se unan a nuestra causa.{end_wait}"
 
@@ -47983,7 +47983,7 @@ msgctxt "message"
 msgid "11993"
 msgstr "Todos dicen que han{line_break}desaparecido sin dejar{line_break}rastro... Qué extraño.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheLighthouseHas"
 msgid "11994"
 msgstr "No pensarás que ellos...{end_wait}"
 
@@ -49831,7 +49831,7 @@ msgctxt "message"
 msgid "12455"
 msgstr "Si te preocupa el fuego{line_break}del faro, no lo hagas...{line_break}Sigue encendido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmTheGuardianOf"
 msgid "12456"
 msgstr "No dejo de pensar que no valgo{line_break}para ser soldado. Siempre dije{line_break}que lo mío era tricotar...{end_wait}"
 

@@ -107,24 +107,6 @@ Func_0200010c:
 	.2byte 0x0000
 .L_02008120:
 	.4byte Data_0200277c
-	.section .text.x02008124,"ax",%progbits
-	.global Func_02000124
-	.thumb_func
-Func_02000124:
-	push {lr}
-	adds r1, r0, #0
-	movs r0, #7
-	bl Func_02001d44
-	pop {pc}
-	.section .text.x02008130,"ax",%progbits
-	.global Func_02000130
-	.thumb_func
-Func_02000130:
-	push {lr}
-	adds r1, r0, #0
-	movs r0, #8
-	bl Func_02001d44
-	pop {pc}
 	.section .text.x0200813c,"ax",%progbits
 	.global Func_0200013c
 	.thumb_func
@@ -244,107 +226,6 @@ Func_020001f0:
 	.2byte 0x0000
 .L_02008238:
 	.4byte 0x00001b44
-	.section .text.x0200823c,"ax",%progbits
-	.global Func_0200023c
-	.thumb_func
-Func_0200023c:
-	push {lr}
-	movs r0, #1
-	bl Func_02001958
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008248,"ax",%progbits
-	.global Func_02000248
-	.thumb_func
-Func_02000248:
-	push {lr}
-	movs r0, #0
-	bl Func_02001958
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008254,"ax",%progbits
-	.global Func_02000254
-	.thumb_func
-Func_02000254:
-	push {lr}
-	movs r0, #25
-	movs r1, #2
-	bl ObjectMotion_SetActionVariant
-	pop {pc}
-	.section .text.x02008260,"ax",%progbits
-	.global Func_02000260
-	.thumb_func
-Func_02000260:
-	push {lr}
-	movs r0, #25
-	movs r1, #3
-	bl ObjectMotion_SetActionVariant
-	pop {pc}
-	.section .text.x0200826c,"ax",%progbits
-	.global Func_0200026c
-	.thumb_func
-Func_0200026c:
-	push {r5, lr}
-	adds r5, r1, #0
-	ldr r0, .L_02008284
-	bl Func_02001d2c
-	adds r0, r5, #0
-	bl Object_GetById
-	movs r3, #0
-	adds r0, #35
-	strb r3, [r0]
-	pop {r5, pc}
-.L_02008284:
-	.4byte Data_02001d54
-	.section .text.x02008288,"ax",%progbits
-	.global Func_02000288
-	.thumb_func
-Func_02000288:
-	push {lr}
-	ldr r0, .L_020082f0
-	bl Func_02001c74
-	movs r0, #24
-	movs r1, #0
-	movs r2, #10
-	bl Func_02001c84
-	ldr r1, .L_020082f4
-	movs r2, #0
-	movs r0, #19
-	bl ObjectMotion_ArmCallback
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r1, #8
-	adds r1, #255
-	movs r2, #30
-	movs r0, #19
-	bl Func_02001ca4
-	movs r2, #10
-	movs r0, #19
-	movs r1, #0
-	bl Func_02001c84
-	movs r0, #24
-	movs r1, #3
-	bl ObjectMotion_SetVariantCallback
-	movs r1, #129
-	lsls r1, r1, #1
-	movs r0, #24
-	bl Func_02001cac
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r1, #128
-	movs r0, #19
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #24
-	movs r1, #0
-	movs r2, #0
-	bl Func_02001c84
-	pop {pc}
-.L_020082f0:
-	.4byte 0x00001c20
-.L_020082f4:
-	.4byte 0xffffff00
 	.section .text.x020082f8,"ax",%progbits
 	.global Func_020002f8
 	.thumb_func
@@ -820,33 +701,8 @@ Func_0200066c:
 	.4byte 0x00001ca5
 .L_0200875c:
 	.4byte gPartyState
-	.section .text.x02008760,"ax",%progbits
-	.global Func_02000760
-	.thumb_func
-Func_02000760:
-	push {lr}
-	movs r1, #184
-	movs r2, #138
-	movs r0, #64
-	lsls r1, r1, #16
-	lsls r2, r2, #18
-	bl Func_02001cf4
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008774,"ax",%progbits
-	.global Func_02000774
-	.thumb_func
-Func_02000774:
-	push {lr}
-	movs r1, #1
-	movs r2, #1
-	movs r0, #64
-	negs r1, r1
-	negs r2, r2
-	bl Func_02001cf4
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008788,"ax",%progbits
+	.balign 4
 	.global Func_02000788
 	.thumb_func
 Func_02000788:
@@ -1195,13 +1051,6 @@ Func_02000a18:
 	.2byte 0x0000
 .L_02008a94:
 	.4byte 0x05000116
-	.section .text.x02008a98,"ax",%progbits
-	.global Func_02000a98
-	.thumb_func
-Func_02000a98:
-	push {lr}
-	bl Func_02001d3c
-	pop {pc}
 	.section .text.x02008aa0,"ax",%progbits
 	.global Func_02000aa0
 	.thumb_func

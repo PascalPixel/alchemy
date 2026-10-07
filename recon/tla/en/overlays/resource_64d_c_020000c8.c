@@ -1,37 +1,27 @@
 #include "TYPES.H"
-#include "OBJECT_RUNTIME.H"
+#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-struct ObjectRuntime *Object_GetById(u32 id);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
-void Func_02002a34(s32 a, s32 b);
-void Func_02002a44(void);
-void Func_02002a4c(void);
-void Func_02002a54(void);
-void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
-void Engine_AudioPlayCue(s32 cue);
-void Field_BeginPaletteTransition(s32 mode);
-void Field_EndActorSpriteEffect(s32 mode);
-void Func_020023a4(void *object);
-void Func_0200260c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_020026f4(struct ObjectRuntime *object);
-void VinasuIriguchi_StopSparks(void);
+#include "CALL.H"
+s32 Object_GetById();
+s32 Func_020026f4();
+s32 ObjectMotion_CommitPositionAndActivate();
+s32 Battle_WaitMode0();
+s32 VinasuIriguchi_StopSparks();
+extern u8 VinasuIriguchi_UpdateSparkTrail[];
 
-void VinasuIriguchi_UpdateSparkTrail(struct ObjectRuntime *object);
-
-void Func_020000c8(s32 id)
+void Func_020000c8(s32 a0)
 {
-    struct ObjectRuntime *object = Object_GetById(id);
-    u8 *visible;
+    s32 t0;
 
-    Func_020026f4(object);
-    *(void **)object->unknown_6c = VinasuIriguchi_UpdateSparkTrail;
-    visible = &object->unknown_23;
-    *visible = 0;
-    ObjectMotion_CommitPositionAndActivate(id, 96, -96);
-    ObjectMotion_CommitPositionAndActivate(id, -96, 96);
-    *(void **)object->unknown_6c = 0;
-    *visible = 1;
-    Battle_WaitMode0(30);
+    t0 = Object_GetById();
+    Func_020026f4();
+    FIELD_AT(t0, s32, 108) = (s32)VinasuIriguchi_UpdateSparkTrail;
+    FIELD_AT((t0 + 0x23), u8, 0) = 0;
+    Call3(ObjectMotion_CommitPositionAndActivate, a0, 0x60, -96);
+    Call3(ObjectMotion_CommitPositionAndActivate, a0, -96, 0x60);
+    FIELD_AT(t0, s32, 108) = 0;
+    FIELD_AT((t0 + 0x23), u8, 0) = 1;
+    Call1(Battle_WaitMode0, 0x1e);
     VinasuIriguchi_StopSparks();
 }
+

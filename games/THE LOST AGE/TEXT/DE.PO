@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Beleben"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Entgiften"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Hut"
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Hut"
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Krone: Hebt Glück"
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Hut: Hebt Geschwindigkeit"
 
@@ -27711,7 +27711,7 @@ msgctxt "message"
 msgid "06925"
 msgstr "Seid ihr auf der Suche nach{line_break}jemandem?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWellISayItSeems"
 msgid "06926"
 msgstr "Nun, wenn ihr jemanden sucht,{line_break}dann solltet ihr vielleicht besser{line_break}an einem anderen Ort suchen.{end_wait}"
 
@@ -27903,7 +27903,7 @@ msgctxt "message"
 msgid "06973"
 msgstr "Ich glaube, {actor_name:1} hält{line_break}sich momentan irgendwo in der{line_break}Östlichen See auf.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReallyIDoWishYou"
 msgid "06974"
 msgstr "{actor_name:1}{possessive_suffix} Feinde sammeln{line_break}sich gerade, um ihn zu vernichten{line_break}und ihre Schande zu tilgen.{end_wait}"
 
@@ -28807,7 +28807,7 @@ msgctxt "message"
 msgid "07199"
 msgstr "Du möchtest also den Grund{line_break}dafür wissen, warum wir die{line_break}Fähigkeit besitzen,{page_break}uns in Bestien zu verwandeln?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesASailorLike"
 msgid "07200"
 msgstr "Äh... Nun, {pause_20_skippable}ich, äh...{line_break}Eigentlich, ja!{end_wait}"
 
@@ -28883,7 +28883,7 @@ msgctxt "message"
 msgid "07218"
 msgstr "...habe ich erkannt, dass{line_break}schwächere Kreaturen nur{line_break}überleben konnten,{page_break}indem sie sich weiterent-{line_break}wickelt, verändert haben.{page_break}Stimmst du mir da nicht zu?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeAllStartedWorking"
 msgid "07219"
 msgstr "Denk doch mal nach. Wenn{line_break}Menschen ihre Körper nicht{line_break}durch das Tragen von Waffen{page_break}und Rüstungen verändern{line_break}würden, dann wären auch sie{line_break}nur schwache Kreaturen.{end_wait}"
 
@@ -35843,7 +35843,7 @@ msgctxt "message"
 msgid "08958"
 msgstr "Sie waren stark genug, um gegen{line_break}Saturos und Menardi antreten zu{line_break}können.{page_break}So leicht lassen sie sich nicht{line_break}unterkriegen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowManyCasksDoesIt"
 msgid "08959"
 msgstr "Wir sollten weitermachen, so wie{line_break}es auch Saturos und Menardi{line_break}getan hätten. Ja, {actor_name:6}?{end_wait}"
 
@@ -35887,7 +35887,7 @@ msgctxt "message"
 msgid "08969"
 msgstr "In jener Nacht kamen die Champa{line_break}aus dem Osten, die Kibombo{line_break}aber aus dem Westen.{page_break}Das klingt mir nicht nach einer{line_break}Allianz.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoDoTheyThinkThey"
 msgid "08970"
 msgstr "Shin, mein Freund, wirkt in{line_break}letzter Zeit so geknickt. Ich{line_break}hoffe, es geht ihm gut.{end_wait}"
 
@@ -38723,11 +38723,11 @@ msgctxt "message"
 msgid "09678"
 msgstr "Die Schlange wurde besiegt!{line_break}Daher müssen wir niemanden{line_break}mehr opfern!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgObabaIsTheLastPossessor"
 msgid "09679"
 msgstr "Wenn man ein Opfer ist, dann{line_break}muss man den Drachen{line_break}heiraten, oder?{page_break}Schrecklich, wenn ich mir so{line_break}vorstelle, was man für ein{line_break}so großes Scheusal kochen muss!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDThinkObabaWould"
 msgid "09680"
 msgstr "Ich danke den Mächten, die da{line_break}sind, dass ich nicht als Opfer{line_break}gewählt worden bin.{end_wait}"
 
@@ -41615,7 +41615,7 @@ msgctxt "message"
 msgid "10401"
 msgstr "Ich weiß, du bist besorgt,{line_break}{actor_name:7}, aber er gibt{line_break}wirklich sein Bestes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndTheOthersDrankOf"
 msgid "10402"
 msgstr "Das war wirklich ein sehr{line_break}starker Strudel.{page_break}Aber ich bezweifle, dass er das{line_break}Schiff hätte versenken oder{line_break}zerstören können.{end_wait}"
 
@@ -46075,7 +46075,7 @@ msgctxt "message"
 msgid "11516"
 msgstr "Oh, Mann! Sie sind uns entwischt!{line_break}Was für blöde Gesichtsbaracken!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLikeIgloosRight"
 msgid "11517"
 msgstr "Also gut, {actor_name:5}! Wir wollen{line_break}wissen, was hier vor sich geht!{end_wait}"
 
@@ -46191,7 +46191,7 @@ msgctxt "message"
 msgid "11545"
 msgstr "Wir nehmen den Aufzug. Da das{line_break}Leuchtfeuer brennt, sollte er{line_break}wieder voll funktionstüchtig sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGoAwayForA"
 msgid "11546"
 msgstr "Uns bleibt keine andere Wahl.{line_break}Gehen wir!{end_wait}"
 
@@ -46203,7 +46203,7 @@ msgctxt "message"
 msgid "11548"
 msgstr "{actor_name:5}! {actor_name:6}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourParentsHaveGoneAway"
 msgid "11549"
 msgstr "Was ist geschehen?{end_wait}"
 
@@ -46219,7 +46219,7 @@ msgctxt "message"
 msgid "11552"
 msgstr "Nun, dann sind deine hell-{line_break}seherischen Fähigkeiten wohl{line_break}weitaus stärker,{page_break}als du es angenommen hattest,{line_break}{actor_name:3}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearAgatioAndKarst"
 msgid "11553"
 msgstr "Verdammt! Sie müssen mit dem{line_break}Aufzug entkommen sein!{end_wait}"
 
@@ -47955,7 +47955,7 @@ msgctxt "message"
 msgid "11986"
 msgstr "Sobald der letzte Leuchtturm{line_break}aktiviert worden ist, sollte der{line_break}Wind wieder abflauen.{page_break}Aber momentan wird er immer{line_break}noch stärker!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourFosterGrandmotherKnewThat"
 msgid "11987"
 msgstr "Hagartio und Dinaria haben mir{line_break}gesagt, dass {actor_name:5}{line_break}fortgelaufen ist,{page_break}weil die Reise zu gefährlich{line_break}wurde.{end_wait}"
 
@@ -47967,7 +47967,7 @@ msgctxt "message"
 msgid "11989"
 msgstr "Seit Hagartio vom Jupiter-{line_break}Leuchtturm zurückgekehrt ist,{line_break}ist der Wind stärker denn je!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeHadNoIdeaThere"
 msgid "11990"
 msgstr "Es ist hier zwar immer sehr{line_break}kalt, aber zum ersten Mal sehe{line_break}ich,{page_break}wie der Fluss vom Schnee{line_break}völlig bedeckt wird.{page_break}Was geschieht, wenn Hagartio{line_break}den Mars-Leuchtturm nicht{line_break}rechtzeitig erreicht?{end_wait}"
 
@@ -47983,7 +47983,7 @@ msgctxt "message"
 msgid "11993"
 msgstr "Wenn {actor_name:5} so schnell zum{line_break}Adepten werden konnte, dann{line_break}kann ich das auch!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheLighthouseHas"
 msgid "11994"
 msgstr "Wenn sich das Wetter nicht bald{line_break}ändert, werden wir bald unter{line_break}dem Schnee begraben sein!{end_wait}"
 
@@ -49831,7 +49831,7 @@ msgctxt "message"
 msgid "12455"
 msgstr "Die Alchemie wurde befreit. Wir{line_break}müssen damit beginnen, sie hier{line_break}in Prox ernsthaft zu studieren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmTheGuardianOf"
 msgid "12456"
 msgstr "Da die Alchemie jetzt wieder{line_break}frei ist, ist es so, als würde{line_break}Weyard wieder aufwachen!{page_break}Wie wird sich die Welt nun{line_break}verändern?{end_wait}"
 

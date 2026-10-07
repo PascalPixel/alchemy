@@ -17,7 +17,23 @@
    barrier depends on the sub sp as well, and any pseudo in a
    callee-saved register anti-depends on the push the same way, so no
    order of statements, block, barrier or register variable is known
-   to move those two above it. Under the camelot_arm trials below, with
+   to move those two above it. Session 2 (2026-10-07): no source and
+   no option set of stock gcc_arm reaches it. The prologue is RTL
+   emitted ahead of the body, so without sched2 sub sp precedes every
+   body insn. With sched2, 6 and 576 each have the push as their only
+   predecessor, at the same cost: INSN_COST of the push (store4, at
+   least 5 on every -mcpu; arm_adjust_cost changes only a load after a
+   store), so
+   their priorities are equal. 6 becomes ready together with 577 (r5's
+   users are loads, which depend on the clobber), 6's own cost is 1 so
+   rank_for_schedule puts both in class 3, and the higher LUID (6) is
+   taken first in the backward pass, placing it below the frame. Only a
+   rule that makes an anti dependence cheaper than the true one lowers
+   6 and 33 under 576. Editions: the 0x284 bytes are the same code in
+   all six (German differs only in the pool words of gScanlineAngle,
+   gProjection + 0xc and gFrameCount, which it places 0x10 later), so
+   one C body serves all six once it matches; per-edition --arm scoring
+   is not needed for it. Under the camelot_arm trials below, with
    2.96's arm_adjust_cost (anti/output dependences free; sched.c clamps
    them to 1, so 6 and 33 drop to priority 1), "the prologue matches
    the listing up to the half constant". So this listing appears to

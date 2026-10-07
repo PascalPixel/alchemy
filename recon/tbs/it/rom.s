@@ -180,12 +180,6 @@ UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x00021e12, 0x000008fe
 	.section .rom.00023ec4, "ax"
 	.incbin "baserom.gba", 0x00023ec4, 0x00000ac4
-	.section .rom.000260d4, "ax"
-	.global BattleTarget_RunSelection
-	.type BattleTarget_RunSelection, %function
-	.thumb_func
-BattleTarget_RunSelection:
-	.incbin "baserom.gba", 0x000260d4, 0x00000ed8
 	.section .rom.00027240, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function

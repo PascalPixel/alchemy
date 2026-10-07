@@ -291,7 +291,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/COPY_TILE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/BATTLE_LIST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LIST.o"(.text)
-        "*/recon/tbs/raw/08026080.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/COUNTDWN.o"(.text)
         "*/games/COMMON/SRC/BATTLE/CLASSIFY_ENTRY_KIND.o"(.text)
         "*/games/COMMON/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.o"(.text)

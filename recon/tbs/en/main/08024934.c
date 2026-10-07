@@ -1,6 +1,21 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 919, common 649, differ 567; frame 372
+ * Native 946 instructions, draft 926, common 674, differ 524; frame 372
  * as native's.
+ * Session 5: the first page-tile loop written if (index != page / 4)
+ * tile = PAGE; else tile = SELECTED: 567 -> 524. GCSE then no longer
+ * carries the loop test's (count + 3) / 4 into the body (it is
+ * recomputed there, where native reuses it in r0), but every compiler
+ * temporary's slot comes out at native's offset (summon 36, ordered 32,
+ * sprites 28, cursor 24, row * 2 16, cursor_handle << 16 12), which
+ * resolves most of (d) below. Tile is still r4 and index r7. The same
+ * test as if (index == page / 4) ... else 526, as a conditional
+ * expression 526; the call's x as index + width - quotient - 2 567. From
+ * 524: element shared by the draw loop's scan and columns 819; an edge
+ * = -1 block local for the arrows 524 unchanged. From 567: an edge = -1
+ * block local for the first page loop's call 570 (its 0 then takes r3
+ * and the -1 becomes subs r3, #1 by move2add, as in native's second
+ * page loop and in BattleMenu_RunActionSelection's first, but native's
+ * first loop keeps the 0 in r0 and builds -1 with movs; negs).
  * Session 4: the highlight loop has its own tile, the two page-tile loops
  * share the function's tile as ItemList_SelectEntry (BATTLE_LIST.C, the
  * matched twin) does: 575 -> 567 (a tile per loop also 567).
@@ -376,8 +391,9 @@ loop:
             }
             if (count > 4) {
                 for (index = 0; index < (count + 3) / 4; index++) {
-                    tile = index + SUMMON_PAGE_TILE;
-                    if (index == page / 4)
+                    if (index != page / 4)
+                        tile = index + SUMMON_PAGE_TILE;
+                    else
                         tile = index + SUMMON_SELECTED_PAGE_TILE;
                     UiWindow_SetTilemapEntry(window, tile,
                         window->width - (count + 3) / 4 + index - 2, -1, 0);

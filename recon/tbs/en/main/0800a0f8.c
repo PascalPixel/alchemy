@@ -1,7 +1,7 @@
 /* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
    (K1: stock agbcc_arm at the library ARM setting, alchemy diff --arm).
    Stock agbcc_arm (2026-10-07, session 4): listing 157, draft 157,
-   common 156, differ 2, from 60. Steps after 36:
+   common 157, differ 0, from 60. Steps after 36:
    - 36 -> 10: block 0's orr as an asm, so its output reload (ox and oz
      are spilled) comes from reload's round robin over the spill registers
      (r1, r2, r3) rather than from combine_reloads, which hands a compiled
@@ -15,8 +15,9 @@
    - 8 -> 4: y's v->u read by an asm (the anti dependence on str r3 costs
      1, not 2); 4 -> 2: Sin's argument through an asm (the call then waits
      on the asm at cost 1, so the store is not queued below the mov).
-   Left (2): the odd-frame y's ldr r2, [sp] below cmp r3, #0 where the
-   listing has it above. Measured mechanism: the listing is the schedule a
+   - 2 -> 0: v->u / 4's cmp and addlt as one asm (sched2 then places
+     them as one insn) and y's v->u pinned to r3. Before it, the odd-frame
+     y's ldr r2, [sp] sat below cmp r3, #0. Measured mechanism: the listing is the schedule a
    free anti dependence gives (2.96's arm_adjust_cost): there str r3 ->
    ldrsh r3 costs 1 while ldrsh -> cmp keeps the load's 2, so cmp outranks
    the oz reload. Under stock costs every source of a free link is an
@@ -477,11 +478,14 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to_arg, st
             if (gFrameCount & 1) {
                 out->x = ((ox + v->dx) >> 8) + v->v / 4 + v->u / 2;
                 {
-                    s32 vu;
+                    /* FAKEMATCH: y's v->u in r3, as listed; through the two asms below local-alloc gives it r2 and the reloaded oz r3, and the two out->y stores then cross-jump (2 to 0) */
+                    register s32 vu asm("r3");
 
-                    /* FAKEMATCH: y's v->u read by an asm, so its anti dependence on str r3, [r6, #8] costs 1, not the store's 2: ldrsh r3 then follows the store as listed (6 to 2; the ldr r2, [sp] it leaves above cmp needs the load to keep its own cost 2) */
+                    /* FAKEMATCH: y's v->u read by an asm, so its anti dependence on str r3, [r6, #8] costs 1, not the store's 2: ldrsh r3 then follows the store as listed (6 to 2) */
                     asm("ldrsh %0, [%1, #16]" : "=r"(vu) : "r"(v));
-                    out->y = ((oz + v->dz) >> 8) + vu / 4 + v->v / 2;
+                    /* FAKEMATCH: v->u / 4's compare and conditional add as one asm, so sched2 places them as one insn: the oz reload, a load, then wins its tie with the ldrsh asm on function-unit hazard and sits between ldrsh and cmp as listed (2 to 0; split, cmp ties with the reload and loses) */
+                    asm("cmp %0, #0\n\taddlt %0, %0, #3" : "=r"(vu) : "0"(vu) : "cc");
+                    out->y = ((oz + v->dz) >> 8) + (vu >> 2) + v->v / 2;
                 }
             } else {
                 out->x = (ox + v->dx) >> 8;

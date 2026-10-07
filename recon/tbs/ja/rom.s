@@ -675,12 +675,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.000a24e0, "ax"
-	.global DjinnMenu_SelectDjinn
-	.type DjinnMenu_SelectDjinn, %function
-	.thumb_func
-DjinnMenu_SelectDjinn:
-	.incbin "baserom.gba", 0x000a24e0, 0x00001308
 	.section .rom.000a45f4, "ax"
 	.global OwnerAction_RunCompareLoop
 	.type OwnerAction_RunCompareLoop, %function

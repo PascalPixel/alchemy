@@ -7547,7 +7547,7 @@ msgctxt "message"
 msgid "01884"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDjinnEffect"
 msgid "01885"
 msgstr "Frappe capable de fendre la pierre."
 
@@ -11575,11 +11575,11 @@ msgctxt "MsgDjinnSetAll"
 msgid "02891"
 msgstr "{button_icon:6}:Lier tous"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "02892"
 msgstr "{button_icon:6}:Tous en attente"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "02893"
 msgstr "Choisir Djinn."
 
@@ -11595,7 +11595,7 @@ msgctxt "message"
 msgid "02896"
 msgstr "{button_icon:4}:Lier {button_icon:6}:Aide"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "02897"
 msgstr "Il récupère"
 
@@ -11639,7 +11639,7 @@ msgctxt "MsgPsynergyUnchanged"
 msgid "02907"
 msgstr "* Sans changement"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "02908"
 msgstr "{button_icon:3}:Statut perso"
 
@@ -11659,23 +11659,23 @@ msgctxt "MsgUnleashEffect"
 msgid "02912"
 msgstr "Effet d'utilisation en combat:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "02913"
 msgstr "Donner"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "02914"
 msgstr "Lier"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "02915"
 msgstr "Attente"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "02916"
 msgstr "Echanger"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "02917"
 msgstr "{argument_ability_name} de {argument_actor_name:1}"
 
@@ -11723,7 +11723,7 @@ msgctxt "message"
 msgid "02928"
 msgstr "Annulé"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "02929"
 msgstr "En récupération"
 
@@ -12663,7 +12663,7 @@ msgctxt "MsgDjinnTutorialGive"
 msgid "03163"
 msgstr "Pour donner votre{line_break}Djinn, déplacez-le{line_break}comme cela.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Après avoir choisi qui{line_break}récupère le Djinn, vous{line_break}pouvez le lier.{end_wait}"
 
@@ -12675,15 +12675,15 @@ msgctxt "message"
 msgid "03166"
 msgstr "Lier un Djinn change vos{line_break}caractéristiques et peut{line_break}changer votre classe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialPowers"
 msgid "03167"
 msgstr "Chaque Djinn a des{line_break}pouvoirs différents.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleash"
 msgid "03168"
 msgstr "Une fois liés, vous{line_break}pouvez utiliser nos{line_break}pouvoirs.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialDemonstrate"
 msgid "03169"
 msgstr "Laissez-moi vous{line_break}montrer mon pouvoir,{line_break}{actor_name:1}.{end_now}"
 
@@ -12707,11 +12707,11 @@ msgctxt "message"
 msgid "03174"
 msgstr "Vous pourrez invoquer{line_break}des créatures puissantes!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialRecovery"
 msgid "03175"
 msgstr "Après avoir été invoqué,{line_break}le Djinn doit récupérer{line_break}pendant quelques temps.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03176"
 msgstr "Après avoir récupéré, nous{line_break}nous lierons à nouveau,{line_break}prêts à agir.{end_wait}"
 

@@ -506,7 +506,6 @@
     "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/BACKDROP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/DJINNHLP.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000afe6c)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_INITIALIZE_TOP_ROW.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/SLOTS.o"(.text)

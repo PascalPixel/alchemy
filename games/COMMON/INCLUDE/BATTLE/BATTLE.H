@@ -654,6 +654,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *object);
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
 void BattleFx_RunVenusDjinnCapture(s32 arg);
+void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *effect);
 void BattleFx_ScheduleCloakedMapCheck(void);
 void BattleFx_SelectLocationRule(s32 check);
 void BattleFx_SelectResultPointer(s32 arg0);
@@ -966,7 +967,6 @@ void UiWindow_CreateWithLayoutBoundsFar(s32 value);
 void UiWork_InitializeFar(s32 mode);
 void UiWork_ResetFreeChannelFar(void);
 void UiWork_SetBusyFlagsFar(s32);
-void Unnamed_080d1714(s32 *);
 void Unnamed_080ea0d8(s32 *);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 #endif

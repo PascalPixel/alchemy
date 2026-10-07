@@ -637,7 +637,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/REVEAL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TRIANGLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STARS.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000d3514)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VORTEX.o"(.text)

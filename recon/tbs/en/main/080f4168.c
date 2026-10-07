@@ -1,4 +1,4 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2039, differ 1291.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2045, differ 285.
  * Frame 768 with every array and spill slot at its native offset; the
  * remaining difference is mostly register choice (reload's round-robin
  * spill registers follow from everything before) and a few open shapes.
@@ -38,6 +38,9 @@
  * - The die loop has its own px/py: native's die-loop x/y are r2/r0 while
  *   the marker loop's are r5/r2, so they are not the same pseudos (shared
  *   x/y took a callee-saved register and spilled &depth: 1601 -> 1291).
+ *   Likewise the kind loop's kx/ky: its 96 sits in ip as native's once
+ *   it is not the marker loop's y, and the global allocation falls into
+ *   place (base += 0x1c0 as native: 1291 -> 1279; kx/ky: -> 285).
  * - The shadow loop adds work->particles[i].y >> 16 to depth[2 + i]; combine
  *   narrows it to native's ldrsh and the int access keeps the first store.
  *
@@ -201,12 +204,14 @@ void LuckyDice_Run(void)
     base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
     Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((void *)(base + 0x1c0), (void *)0x02010000);
+    base += 0x1c0;
+    Resource_DecodeType01((void *)base, (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
     base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
     Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
     Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((void *)(base + 0x200), (void *)0x02010000);
+    base += 0x200;
+    Resource_DecodeType01((void *)base, (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
     Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
     Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
@@ -311,9 +316,12 @@ void LuckyDice_Run(void)
             }
             if (timer > 19 && kind >= 0) {
                 for (i = 0; i != Data_080f53fc[kind]; i++) {
-                    x = 0x278 - Data_080f53fc[kind] * 16;
-                    y = 96;
-                    sprites->obj[count].attr01 = ((((x + i * 32) & 0x1ff) << 16) | y) | 0x80002000;
+                    s32 kx;
+                    s32 ky;
+
+                    kx = 0x278 - Data_080f53fc[kind] * 16;
+                    ky = 96;
+                    sprites->obj[count].attr01 = ((((kx + i * 32) & 0x1ff) << 16) | ky) | 0x80002000;
                     sprites->obj[count].attr2 = Data_080f5400[kind] * 8 + 152 + i * 32;
                     count++;
                 }

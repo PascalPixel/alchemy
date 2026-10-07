@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3361,
- * differ 178.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3363,
+ * differ 174.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -120,7 +120,23 @@
  * dmg keeps r5 as everywhere else, and the amount, a second function-level
  * variable, takes r6 with its copy from apwr in r7. The same with the
  * amount in tmp 393, count 406, power 439, value 2112; the new HP and
- * amount swapped in their old names (heal the amount) 379. */
+ * amount swapped in their old names (heal the amount) 379.
+ * In the heal, case 76 reading max_hp into a local of its own (m), 174
+ * (common 3363): the product then loads straight into r0 as in the
+ * listing; its target copy and offset still take r3 and r2 where the
+ * listing has r2 and r3, and a later tail is 2 bytes longer. The same
+ * local in case 71 as well 174, in 71 alone 178; heal held in dmg in the
+ * heal or the PP restore no change (they share r5 already); kind for
+ * old or maxv, or apwr for 76's maxv, worse (184 to 249).
+ * Left at 174: the heal's target copies and offsets in 76, 71 and 70
+ * (reload registers in another rotation) and the 60/30 tails' shared
+ * movs r1, #100 (2 bytes; the product set in each branch and divided
+ * once after them, in tmp, maxv, value, kind or apwr, 227 to 240); the PP
+ * restore head, where the listing loads
+ * ldrsh, the effect, then ldrh and ours shares one ldrh (a volatile s16
+ * read of heal gets the second ldrh but loses the ldrsh, 226 then);
+ * two far branches to the end that ours sends back to an earlier copy;
+ * and about 20 single loads swapped with a neighbour (K2's load order). */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -999,9 +1015,11 @@ after_power:
             old = *stat_ptr--;
             heal = *(s16 *)(stat_ptr + 1);
             if (action->effect == 76) {
-                maxv = target->max_hp;
+                s32 m;
+
+                m = target->max_hp;
                 maxu = (u16)target->max_hp;
-                heal += maxv * 2 / 5;
+                heal += m * 2 / 5;
             } else if (action->effect == 71) {
                 maxv = target->max_hp;
                 maxu = (u16)target->max_hp;

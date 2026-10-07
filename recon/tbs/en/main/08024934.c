@@ -1,6 +1,37 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 868, differ 154; frame 372
+ * Native 946 instructions, draft 947, common 882, differ 129; frame 372
  * as native's, and every compiler temporary's slot now at native's offset.
+ * Session 10: the handle loop is indexed (sprites[index].oam.f.tile, as
+ * native's base r7, offset from 8 and mask r8 show), the cursor is drawn
+ * through its own pointer cur (cur = &cursor at the top of the main
+ * loop, GCSE's reaching register in slot 24 as before) and sprite is set
+ * in the setup loop and again in the draw loop's tile store (sprite =
+ * &sprites[index]; sprite->oam.f.tile = glyph): 154 -> 130; count - 1 is
+ * now built in r3 as native's. Diagnosed in the loop dump: loop.c runs
+ * twice and its second pass moves a constant when 2 * (1 + 11) * savings
+ * * life >= the loop's real insns, so the setup loop must keep 25 insns
+ * (24 hoists 0x1ff into r6 and every register there changes). The setup
+ * loop's sprite = &sprites[index] (insn 162) and its index * 12 giv stay
+ * only while sprite has a use left after GCSE; with the handle loop
+ * indexed and the cursor's uses replaced by GCSE's cprop, cse2 deletes
+ * them as trivially dead (indexed handle loop alone 193; through sprite
+ * = &sprites[index] there as well 199). The cursor through sprite set
+ * once before the main loop keeps them (156) but makes the cursor a
+ * user variable, spilled by pseudo number at 36 above the GCSE
+ * temporaries; native's cursor is the reaching register at 24. Also from
+ * 154 or 130: sprite = &cursor just before the cursor code 189; the setup
+ * loop as a sprite walk 271 (377 buckets); its attribute words through
+ * sprite 207; the push loop as a sprite walk (and the draw loop indexed)
+ * 184. Remaining at 130: scheduling at the start as before; the setup
+ * loop's index * 2 computed late (native first); item (a) below in the
+ * draw loop; the draw loop's tile store, where native has the indexed
+ * form (base reloaded from slot 28 twice, offset (index * 2 + index) * 4
+ * + 8 with index * 2 in r8 after the glyph call) and the draft sprite +
+ * 8 from y's index * 2 in r9 before the call. Native's indexed tile
+ * store needs another live use of sprite to keep the setup loop at 25.
+ * Five minutes of permute from 130: the draw loop's summon fetched
+ * before col = 0, 129 (kept; id then r6 as native's, summon still
+ * in r8 with summon + 4 in slot 36).
  * Session 9: the two page changes set page before row again (page = 0;
  * row = preferred and page -= 4; row = preferred), as session 4's base
  * had them before a merge reversed them: 172 -> 154. From 172: the
@@ -452,7 +483,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     struct MenuPoint cursor_position;
     const struct SummonDefinition *summon;
     struct MenuCell *nav;
-    struct MenuSprite *sprite;
+    struct MenuSprite *sprite, *cur;
     const u8 *required, *supply;
     s32 used, element;
     s32 id, tile, affordable;
@@ -490,12 +521,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         sprite->oam.f.x = window->x * 8 + 8;
         sprite->oam.f.y = (y + window->y) * 8 + 4;
     }
-    sprite = sprites;
     for (index = 0; index < 4; index++) {
         s32 slot = Resource_LoadIntoFreeSlot(128);
         handles[index] = slot;
-        sprite->oam.f.tile = Resource_GetBuffer(slot, -1);
-        sprite++;
+        sprites[index].oam.f.tile = Resource_GetBuffer(slot, -1);
     }
     count = Trade_ListFlaggedEntriesFar(available);
     used = 0;
@@ -535,7 +564,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     do {
     for (;;)
     {
-        sprite = &cursor;
+        cur = &cursor;
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
@@ -573,8 +602,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                     index = 0;
                     if ((id = ordered[page + index]) != 32) {
                     next:
-                        col = 0;
                         summon = SummonDefinition_Get(id);
+                        col = 0;
                         for (element = 0; element <= 3; element++) {
                             if (summon->djinn_required[element] > standby[element])
                                 break;
@@ -582,7 +611,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                         affordable = element == 4;
                         y = index * 2;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
-                        sprites[index].oam.f.tile = glyph;
+                        sprite = &sprites[index];
+                        sprite->oam.f.tile = glyph;
                         if (!affordable)
                             UiWork_SetParamNibble(2);
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
@@ -625,12 +655,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;
-        sprite->oam.word.attr01 = 0x40000000;
-        sprite->oam.word.attr23 = 0;
-        sprite->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
-        sprite->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
-        sprite->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
-        Runtime_PushSlotEntry((s32 *)sprite, 242);
+        cur->oam.word.attr01 = 0x40000000;
+        cur->oam.word.attr23 = 0;
+        cur->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
+        cur->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
+        cur->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
+        Runtime_PushSlotEntry((s32 *)cur, 242);
         {
             s32 element, tile, blink;
 

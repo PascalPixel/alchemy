@@ -282,7 +282,6 @@ s32 Scene_GetModeMask(void)
     return -((u32)(-mode | mode) >> 31);
 }
 
-#if EDITION_INTERNATIONAL
 struct SaveMenuSceneState {
     u8 unknown_000[0x100];
     s32 word_100;
@@ -403,7 +402,11 @@ s32 SaveMenu_Run(void)
     s32 help_window;
     s32 heading_window;
     u8 save_data[200];
+#if EDITION_INTERNATIONAL
     u8 password[320];
+#else
+    u8 password[260];
+#endif
     u8 glyph[4];
 
     started = 0;
@@ -736,10 +739,16 @@ s32 SaveMenu_Run(void)
         if (page_count == 1) {
             record = UiWindow_Create(5, 16, 20, 3, v6);
             help_window = record;
+#if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffset(page_message - 2, help_window, 80, 0);
+#else
+            UiText_DrawCharacterAtOffset(page_message - 2, help_window, 0, 0);
+#endif
         } else {
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             record = UiWindow_Create(0, 16, 30, 3, v6);
+#elif !EDITION_INTERNATIONAL
+            record = UiWindow_Create(3, 16, 24, 3, v6);
 #else
             record = UiWindow_Create(1, 16, 28, 3, v6);
 #endif
@@ -823,7 +832,7 @@ s32 SaveMenu_Run(void)
                 v5 = 0;
                 UiWindow_SetTilemapEntry(page_window, 0xf128, (17 - (s32)page_count), -1, 0);
                 UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
-                gWindowWork[0][0xea3] |= (2 << ((u32)*(u16 *)(page_window + 14) >> 2));
+                gWindowWork[0][RENDER_DIRTY_OFS] |= (2 << ((u32)*(u16 *)(page_window + 14) >> 2));
             }
             v6 = page * 50 + 50;
             if (v6 > encoded_size) {
@@ -867,4 +876,3 @@ s32 SaveMenu_Run(void)
     L_Return:;
     return 0;
 }
-#endif

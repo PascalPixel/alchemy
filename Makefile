@@ -48,7 +48,7 @@ help:
 	  'make figure          redraw PROGRESS.png and PROGRESS_CHART.png from the verified count' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
 	  'make similar         the nearest C twins of every not-yet-C function in either game, into out/reports/similar.tsv' \
-	  'make worst           rank maintained C by how mechanical it reads; the camelotized share' \
+	  'make worst           rank mechanical cleanup signals' \
 	  'alchemy diff DRAFT.c compare a C draft with the listing it would replace (tools/out/cargo-target/release/alchemy)' \
 	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions' \
 	  'alchemy queues --workers N --out-dir DIR  split not-yet-C work into queues by module run or overlay'

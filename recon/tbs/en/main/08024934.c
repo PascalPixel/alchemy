@@ -772,9 +772,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             } while (0);
         }
         nav = gLinkCountdownWork;
-        nav->page = page;
-        nav->row = row;
-        nav->preferred_row = preferred;
+        do {
+            nav->page = page;
+            nav->row = row;
+            nav->preferred_row = preferred;
+        } while (0);
         pressed = gKeyState;
         repeated = gKeysRepeat;
         if (nav->auto_enabled != 0) {
@@ -850,7 +852,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
 
     WaitFrames(1);
-    } while (0);
     for (index = 0; index < 4; index++)
         Resource_ResetEntry(handles[index]);
     Resource_ResetEntry((u16)cursor_handle);
@@ -858,5 +859,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     UiWork_Finalize(description, 1);
     UiWork_Finalize(window, 1);
     WaitFrames(1);
+    } while (0);
     return result;
 }

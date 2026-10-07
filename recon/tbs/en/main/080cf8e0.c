@@ -1,4 +1,12 @@
-/* Draft: native 670 instructions, draft 671, common 572, differ 197.
+/* Draft: native 670 instructions, draft 670, common 630, differ 80.
+ * Sixth pass, later (2026-10-07): the burst count reads SevenMode_Records
+ * through a local s8 *records (197 -> 80): the reload rotation through the
+ * burst block and the k-loop tail now match. Remaining at 80: the burst
+ * count's registers (native: address r0, index r1, 4 in r2; draft address
+ * r2, index r1, 4 in r0), the draw loop's two pool pointers in r8/r9
+ * swapped, the position pointer in r7 where native has r6 with
+ * flip << 2 in r7 loaded at the call, and the frame-loop tail registers.
+ * Trial: if/else for the burst count (no pointer) 199.
  * Sixth pass (2026-10-07): native's delay is loop.c's reduced giv of k * 8,
  * not a variable. The draft writes k * 8 inline (no delay local).
  * - Reducing it needs benefit above the add cost (2 - 2 = 0 for one k << 3,
@@ -332,11 +340,12 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                             EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
                         if (shot->y < 0) {
                             s32 count;
+                            s8 *records = SevenMode_Records;
 
                             shot->y = 0;
                             shot->variant = 1;
                             count = 4;
-                            if (SevenMode_Records[mode * 2] != 0)
+                            if (records[mode * 2] != 0)
                                 count = 16;
                             for (i = 0; i != count; i++) {
                                 struct EffectStep *burst;

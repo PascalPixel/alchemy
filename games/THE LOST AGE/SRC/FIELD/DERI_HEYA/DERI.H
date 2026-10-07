@@ -14,6 +14,7 @@ void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02000d4c(s32 actor, s32 x, s32 z);
 void Func_02000d94(s32 actor, s32 jump, s32 frames);
+void Func_02000cac(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
 
 static inline s32 Deri_FlagChk(s32 flag)
 {
@@ -85,6 +86,12 @@ static inline void Deri_Jump(s32 actor, s32 height, s32 frames)
     register s32 a __asm__("r0") = actor;
 
     Func_02000d94(a, h, f);
+}
+
+static inline void Deri_CopyCells(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02000cac(src_x, src_y, dest_x, dest_y, width, height);
 }
 
 #endif

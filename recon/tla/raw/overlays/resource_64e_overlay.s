@@ -235,6 +235,7 @@ Func_02000150:
 .L_02008310:
 	.4byte 0xffff0000
 	.section .text.x0200834c,"ax",%progbits
+	.balign 4
 	.global Func_0200034c
 	.thumb_func
 Func_0200034c:
@@ -520,6 +521,7 @@ Func_02000510:
 	.4byte gMapCellBuffer
 	.4byte 0x00004770
 	.section .text.x020085a8,"ax",%progbits
+	.balign 4
 	.global Func_020005a8
 	.thumb_func
 Func_020005a8:
@@ -603,6 +605,7 @@ Func_020005a8:
 .L_0200864c:
 	.4byte gFrameCount
 	.section .text.x020086ac,"ax",%progbits
+	.balign 4
 	.global Func_020006ac
 	.thumb_func
 Func_020006ac:
@@ -698,116 +701,8 @@ Func_020006ac:
 	.4byte Data_02001dd8
 .L_02008788:
 	.4byte Func_020005a8
-	.section .text.x0200878c,"ax",%progbits
-	.global Func_0200078c
-	.thumb_func
-Func_0200078c:
-	push {r5, lr}
-	sub sp, #8
-	bl Engine_PartyGetLeaderActor
-	bl Engine_ActorGet
-	adds r5, r0, #0
-	movs r1, #10
-	ldrsh r3, [r5, r1]
-	movs r1, #18
-	ldrsh r2, [r5, r1]
-	ldr r1, .L_0200886c
-	adds r3, r3, r1
-	cmp r3, #7
-	bhi .L_020087ba
-	movs r3, #197
-	lsls r3, r3, #2
-	cmp r2, r3
-	blt .L_020087ba
-	movs r1, #199
-	lsls r1, r1, #2
-	cmp r2, r1
-	blt .L_020087fe
-.L_020087ba:
-	movs r3, #1
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r0, #53
-	movs r1, #50
-	movs r2, #42
-	movs r3, #49
-	bl Engine_MapCopyCellsTo
-	movs r3, #3
-	movs r2, #5
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r1, #117
-	movs r2, #41
-	movs r3, #117
-	movs r0, #55
-	bl Engine_MapCopyCellsTo
-	movs r0, #129
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_ClearBit
-	adds r0, r5, #0
-	adds r0, #85
-	ldrb r1, [r0]
-	movs r3, #1
-	movs r2, #0
-	orrs r3, r1
-	strb r3, [r0]
-	str r2, [r5, #20]
-	str r2, [r5, #12]
-	b .L_02008868
-.L_020087fe:
-	movs r0, #129
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008868
-	bl Engine_EventBegin
-	movs r0, #0
-	bl Engine_EventResolvePendingActions
-	movs r0, #5
-	bl Engine_EventWait
-	movs r3, #1
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r0, #52
-	movs r1, #50
-	movs r2, #42
-	movs r3, #49
-	bl Engine_MapCopyCellsTo
-	movs r3, #3
-	movs r2, #5
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r1, #117
-	movs r2, #41
-	movs r3, #117
-	movs r0, #52
-	bl Engine_MapCopyCellsTo
-	movs r0, #129
-	lsls r0, r0, #1
-	adds r0, #255
-	bl Engine_GameFlagSet
-	movs r0, #161
-	bl Engine_AudioPlayCue
-	adds r1, r5, #0
-	adds r1, #85
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-	ldr r3, .L_02008870
-	str r3, [r5, #20]
-	str r3, [r5, #12]
-	bl Engine_EventEnd
-.L_02008868:
-	add sp, #8
-	pop {r5, pc}
-.L_0200886c:
-	.4byte 0xfffffd5c
-.L_02008870:
-	.4byte 0xfffe0000
 	.section .text.x02008a54,"ax",%progbits
+	.balign 4
 	.if EDITION_INTERNATIONAL
 	.global VinasuChojo_Start
 	.thumb_func
@@ -916,6 +811,7 @@ VinasuChojo_Start:
 	.endif
 	.endif
 	.section .text.x02008b2c,"ax",%progbits
+	.balign 4
 	.global Func_02000b2c
 	.thumb_func
 Func_02000b2c:

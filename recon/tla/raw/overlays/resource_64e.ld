@@ -16,7 +16,7 @@ SECTIONS
         "*/resource_64e_overlay.o"(.text.x020085a8)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/SCENE_TABLES.o"(.text)
         "*/resource_64e_overlay.o"(.text.x020086ac)
-        "*/resource_64e_overlay.o"(.text.x0200878c)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/FLOOR.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/PUSH.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/STATUE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/SCENE_EVENTS.o"(.text)

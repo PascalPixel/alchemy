@@ -29,7 +29,11 @@
  * fields are plain u8), CSE reuses that and-mask 0 as menu_busy's value,
  * local-alloc gives it r1 from before the first store, and the second
  * offset's reload must take r2. Native's 0 is fresh after the first
- * store. With shared element: tiles
+ * store. The matched twins compile the same two lines with a fresh 0
+ * (BattleMenu_RunActionSelection: K r1, K + 3 r2, 0 r0; ItemList_
+ * SelectEntry: 0 r1), so the shared 0 comes from this draft's context,
+ * and the r1 for K + 3 then needs reload's spill-register rotation to
+ * land on r1. With shared element: tiles
  * shared by the page loops 835, page tile if/else or a conditional
  * argument 821, tile = index + (test ? selected : page) 821. From 567:
  * an edge = -1 variable for the arrows (as the twin has) 567, unchanged;

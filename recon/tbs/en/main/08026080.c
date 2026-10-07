@@ -2,6 +2,30 @@
  * frames are 324 bytes. Every remaining difference is a spill slot offset
  * below sp+48 (see the hash analysis below); every instruction, register
  * and order matches.
+ * Session S07-08026080/2 (102), kept:
+ * - case 4 tests unit->delusion ... unit->death_count directly, as case 6
+ *   does; the five pointer locals pd..pc are gone. Code identical (102,
+ *   1411 insns after addressof): CSE keeps the field addresses in
+ *   registers by itself.
+ * Measured, not kept:
+ * - the last 2 are not a bucket effect: with 58 dead efx.angle stores
+ *   (about 765 buckets, also a native slot order) the slots match and the
+ *   same 2 remain, as at 725 and 727. In greg, insn 838 (zero_extend (mem
+ *   (plus ids cursor*2))) takes reloads r2 <- ids slot (6073) and r3 <-
+ *   cursor*2 slot (6076); sched2 ranks the two equal (priority 121, five
+ *   dependents each) and keeps reload order, so native's reload emitted
+ *   the cursor*2 load first with the same registers. Thumb's
+ *   BASE_REG_CLASS is BASE_REGS and INDEX_REG_CLASS LO_REGS, so
+ *   reload_order follows which operand is reloaded as base; read
+ *   find_reloads_address_1's REG/REG case and choose_reload_regs next.
+ * - at 765: head = entries after the call 14 (pos and head addresses
+ *   swap r5/r6); the id in n before pending = 0: 1002. Permuter 5 min over
+ *   head/pending/the call (1826 candidates): no gain.
+ * - flow (life) deletes 106 insns after cse2, 67 of them present at GCSE;
+ *   combine deletes 157 more. Live lengths come from life, so insns that
+ *   flow deletes leave pos's priority alone, while tails that jump2
+ *   merges stay through global and lengthen pos (the cross-jump lead's
+ *   problem).
  * Session S07-08026080/1 (from 106), kept:
  * - head = entries as the main loop's first statement: (plus sfp -88) is
  *   now computed in the loop, PRE hoists it and numbers its reaching
@@ -296,11 +320,6 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct CursorSlot *slot;
     struct SelectionSprite *entry;
     struct SelectionSprite *head;
-    u8 *pd;
-    u8 *ps;
-    u8 *pl;
-    u8 *pp;
-    u8 *pc;
     struct BattleUnit *who;
 
     runtime = gBattleWork;
@@ -542,15 +561,15 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             goto frame_tail;
         case 4:
             count = 0;
-            if (*(pd = &unit->delusion) != 0)
+            if (unit->delusion != 0)
                 count = 1;
-            if (*(ps = &unit->stun) != 0)
+            if (unit->stun != 0)
                 count++;
-            if (*(pl = &unit->sleep) != 0)
+            if (unit->sleep != 0)
                 count++;
-            if (*(pp = &unit->psy_seal) != 0)
+            if (unit->psy_seal != 0)
                 count++;
-            if (*(pc = &unit->death_count) != 0)
+            if (unit->death_count != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -563,23 +582,23 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
-            if (*pd != 0) {
+            if (unit->delusion != 0) {
                 UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
-            if (*ps != 0) {
+            if (unit->stun != 0) {
                 UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (*pl != 0) {
+            if (unit->sleep != 0) {
                 UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (*pp != 0) {
+            if (unit->psy_seal != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
                 ++count;
             }
-            if (*pc != 0) {
+            if (unit->death_count != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }

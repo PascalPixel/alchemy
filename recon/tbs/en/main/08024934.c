@@ -1,5 +1,5 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 902, differ 86; frame 372
+ * Native 946 instructions, draft 946, common 926, differ 40; frame 372
  * as native's, and every compiler temporary's slot now at native's offset.
  * Session 11: the description reads its summon into a block-local s,
  * the draw loop's columns are indexed (summon->djinn_required[element])
@@ -52,6 +52,34 @@
  * alchemy similar --editions: de, es, fr and it hold this function
  * relocated (identical code), ja differs by 4 instructions (at 08024990);
  * alchemy diff --edition still refuses the scaffold for every edition.
+ * Session 12, why: --edition needs that edition built first (its
+ * out/tbs-xx/tbs-xx.map), and then the function is still unlabelled in
+ * each edition's rom.s incbin, so 08024934 resolves to another symbol in
+ * de (BattleMenu_RunActionSelection) and ja's 08024990 to no bounded
+ * Thumb function; alchemy label copies only exact English bytes, which
+ * the relocated copies do not have. 86 -> 40, 379 buckets (259
+ * entries): the tile store indexed (sprites[index].oam.f.tile = glyph)
+ * and the cursor pushed through sprite (sprite = &cursor;
+ * Runtime_PushSlotEntry(sprite, 242)), as the twin pushes its rows
+ * through spr. That push is the surviving use of sprite the setup loop
+ * needed: it keeps loop pass 1's copy alive into pass 2 (25 insns), and
+ * combine folds the single-use copy afterwards, so the push reloads the
+ * reaching register from slot 24 as native's. Draft 946 instructions as
+ * native's; the setup loop, the draw loop and the cursor block match to
+ * the instruction. sprite = cur for the push instead also 40. Other
+ * trials from 86: the whole cursor block through sprite = cur 105 (cse1
+ * makes sprite the first register of the copy's class, its life being
+ * the longer, so the cursor reads through sprite in r5 where native
+ * reloads slot 24 at every access); that with the push through cur 119
+ * (cse1 folds sprite into cur, sprite dies before loop.c and the setup
+ * loop hoists both constants); sprite = &cursor once before the main
+ * loop with only the push through it 118. Remaining at 40, all sched2
+ * order: mask stored before counts, the window call's stack argument
+ * late; the setup loop's index * 2 late; count - 1 built before count is
+ * stored; the mask loop's adds r6, #4 before movs r2, #0;
+ * cursor_position.y stored after the cursor pointer's reload; the
+ * arrows' -1 copy and width order and their pool loads; nav->row stored
+ * before nav->page; the cleanup's add r5, sp, #96.
  * Session 10: the handle loop is indexed (sprites[index].oam.f.tile, as
  * native's base r7, offset from 8 and mask r8 show), the cursor is drawn
  * through its own pointer cur (cur = &cursor at the top of the main
@@ -667,8 +695,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                         affordable = element == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
                         y = index * 2;
-                        sprite = &sprites[index];
-                        sprite->oam.f.tile = glyph;
+                        sprites[index].oam.f.tile = glyph;
                         if (!affordable)
                             UiWork_SetParamNibble(2);
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
@@ -714,7 +741,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         cur->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
         cur->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
         cur->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
-        Runtime_PushSlotEntry((s32 *)cur, 242);
+        sprite = &cursor;
+        Runtime_PushSlotEntry((s32 *)sprite, 242);
         {
             s32 element, tile, blink;
 

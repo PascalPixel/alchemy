@@ -1,121 +1,70 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2034, differ 1520.
- * Session 2026-10-07 (sun-080f4168): two volatile accesses explain the loop
- * shapes. (1) The OAM shadow entries are volatile u32: loop.c then forms no
- * DEST_ADDR givs for them, so every obj loop keeps native's offset givs
- * (count * 8 + 200, + 204) and [sprites, off] stores with sprites reloaded:
- * 1846 -> 1614, frame now 768 with every array at its native offset.
- * (2) The tile store is a volatile halfword at 0x06003000 + i, i += 2, with
- * its own x/y counters (native's inner counter is lo r1, j is r10
- * everywhere else): combine cannot fold the address into the volatile
- * strh, as native's separate adds shows: 1918 -> 1846.
- * Declarations in native slot order (obj_palette, work, sprites, render,
- * frame, state, bet, timer, kind, winnings, counter, digits, count):
- * 1614 -> 1520.
- * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
- * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
- * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
- * The minimally repaired private-layout draft differed 1938 (1978 instructions).
- * Remove its unsupported unused s32[8], volatile affine locals and discarded
- * key reads rather than retaining unproven steering. The natural frame is 716
- * bytes; native is 768. Loop/register allocation and frame layout remain open.
- * Stubborn (2026-10-06): re-scored differ 1977; not first-try. Score+parked from sun100 queue-3.
- * Native locals, top down: palette 256, depth 240, results 224, point 212,
- * proj 200, 32 unused bytes 168..200, affine halfwords a..d at 166..160
- * (each strh then reloaded with ldrh), spin 152, flash 144, faces 136,
- * order 128, matches 120; spills begin at 116 (obj_palette, work, sprites,
- * render at 116..104). The ldr of 0 for affine_b/affine_c is a pool load.
- * Trial (2026-10-06): volatile affine_a..d plus unused s32[8] after proj,
- * both FAKEMATCH-tagged: differ 1977 -> 1966, frame 716 -> 756. All locals
- * now sit at native offsets minus 12; the 12 bytes are most likely three
- * more spill slots below the four pointer spills (register allocation).
- * Native's affine loop keeps four offset givs (204, 212, 220, 228, +32 each)
- * and reloads sprites per access; the draft forms one sprites+204 pointer.
- * Trial: tile loop as [i++] = j + row * 30: differ 1966, unchanged.
- * Trial: sprites as a volatile pointer: differ 2099, worse.
- * Trial: affine loop through x = i * 4 and obj[x + k]: differ 1966, unchanged.
- * Session 2026-10-06 21h: one shared `die` pointer lives across the whole
- * function, so global.c ranks it below the hoisted 127/31 constants; native
- * gives each particle loop a fresh giv (r5, then 127 in r6, 31 in r7).
- * Trial: init loop through work->particles[i]: 1966 -> 1939 (loop matches).
- * Trial: bet loop (state 0, KEY_A) indexed too: 1944, worse; kept on die.
- * Trial: state 0 marker loop indexed: 1939 -> 1931. Shadow loop: -> 1930.
- * Trial: physics loop indexed: 2446, far worse; kept on die.
- * Trial: tile loop as row * 30 + j, as < bounds, through tile = row * 30,
- * as *(u16 *)(0x06003000 + i * 2), through pos: 1930..1932; as x/y: 1964;
- * as byte offset i += 2: 1966. Pseudo order alone moves 30+ instructions.
- * Trial: greedy declaration order (one line moved per round): render first,
- * sprites and obj_palette last: 1930 -> 1918; no single move improves more.
- * Trial: fill loop as ((u32 *)sprites)[50 + count * 2] and through a u32
- * w[] member at offset 0: 1918, identical code. struct *volatile sprites: 2053.
- * Open: native's sprites->obj[count] loops (fill, state 0 markers, affine)
- * keep offset givs that include every constant (count * 8 + 200, + 204) and
- * add sprites per access ([base, off], base reloaded from sp+108); the draft
- * folds sprites into one pointer giv. loop.c folds any invariant register
- * into a giv (simplify_giv_expr returns it as USE); combine_givs_p can then
- * express an address giv as (plus offset_giv sprites) only when no constant
- * is left outside the offset. Find the source form that puts the field
- * offset inside the index; that likely also explains native's 3 extra spills.
- * Parallel session (2026-10-06, T14), its best body differ 1945 not kept; its trials:
- * Session 2026-10-06 (T14): opcode-level LCS (registers and offsets ignored)
- * now matches 1774 of 2046; the rest of the differ is allocation and frame.
- * Trial: the kind loop counts with i, as native's r11 does for every loop
- * that holds no other i: 1966 -> 1964.
- * Trial: locals declared frame, state, bet, timer, kind, winnings, counter,
- * digits, count, then die/other: spill slots take native's order (each at
- * native minus 12): 1964, unchanged.
- * Trial: messages as numbers (MSGNO): 1964 -> 1959. Native loads one pool
- * constant and derives the others (Coins = Winnings - 1, Throw + 1 = Quit,
- * Coins + 10, Coins + 11): CSE's related-value reuse of one base symbol, so
- * all four are written MsgLuckyDiceCoins + 0/1/10/11: 1959 -> 1941.
- * Trial: the two discarded gKeysRepeat loads native makes before the KEY_UP
- * test restored as key = gKeysRepeat twice: 1941 -> 1945; the dead loads get
- * r0 (native r3), so sched2 cannot hoist the gKeysHeld address load above
- * them. Kept: the loads are in the bytes. key = gKeysHeld as a third: 1945.
- * Trial: tile loop inner counter x instead of j: 1990, worse.
- * Trial: tile loop as *(u16 *)(0x06003000 + i) with i += 2: fp holds i as
- * native, but j moves to sl and the store becomes reg+reg: 2056, worse.
- * Spills (greg): both spill the 13 locals obj_palette..count first; the draft
- * then spills stopped, a hoisted 0, &help_window, &flash, &faces, &spin,
- * render+12 and copies; native has three more slots, render+12 between &flash
- * and &faces, two unknown slots between &help_window and &flash.
- * Open, likely the main cause: in every obj loop (faces, results, kind,
- * shadows, clear, affine) native keeps offset givs (count * 8 + 200 ...) and
- * addresses sprites (reloaded from its slot) + giv, reg+reg; the draft folds
- * sprites into one pointer giv with immediate offsets. Native's faces loop
- * reloads sprites inside the loop and keeps separate attr01/attr2 offset givs
- * (240, 244), so for native's loop pass sprites was not an invariant pseudo.
- * Trial: sprites address taken ((void)&sprites): load still hoisted, pointer
- * giv kept: 2038, worse. Same as u32 spr cast at each use: 2061, worse.
- * Native keeps stopped at sp+56, three slots below count (68), after
- * &help_window (64) and one more temporary: its pseudo is made after the
- * init code, as a block-scoped local would be. Trial: s32 stopped declared
- * inside if (state == 1): the draft's slot moves to count - 12 as native's,
- * differ 1947 (+2). Trial: dx, dy, dz, dist inside if (i != j): 1947, same.
- * Trial: die/other declared after render, or j before i: 1945, unchanged.
- * Lead to test (loop.c, simplify_giv_expr): a register made by the loop pass
- * itself (>= max_reg_before_loop), or one not invariant in the inner loop,
- * cannot enter a giv. The draft's loop dump processes loops last first, inner
- * before outer, so a copy hoisted from the main loop would come too late;
- * look for what makes sprites variant or new at the obj loops.
- * Session 2026-10-07 (S16): differ 1918 re-scored. --rtl on the fill loop:
- * the gcse dump already has native's shape (reg = count * 8 + 200 and
- * count * 8 + 204, stores to (plus sprites reg)); loop.c then records both
- * stores as DEST_ADDR givs with add (plus sprites 200/204), because
- * loop_invariant_p (sprites) == 1 (set_in_loop 0), combines them and
- * reduces to one pointer giv. Native kept only the two DEST_REG givs, so
- * in native's loop pass sprites was not invariant (set in that loop, or a
- * MEM load inside it that could not be hoisted). Every C spelling of the
- * address gives the same RTL; the cause is sprites' value, not the index.
- * Trial: *(u32 *)((u8 *)sprites + (count * 8 + 200)) fill loop: 1918, same.
- * Trial: affine_a..d as u16 affine[4] (no volatile): 1928, worse.
- * Trial (measurement only, not source): &sprites passed to an extern call:
- * 1992; sprites becomes a frame MEM, loop hoists its load and still folds
- * the fill loop; the affine loop gains native's two pool loads of 0.
- * Trial: render, sprites, work, obj_palette as one local struct: 2394;
- * the load is hoisted and folded as well.
- * Trial: struct *volatile sprites: the gcse load is not mem/v and is
- * hoisted (2053). Native also keeps window field addresses as pointers
- * (&sprites->help_window at sp+64), formed once and reused.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2039, differ 1291.
+ * Frame 768 with every array and spill slot at its native offset; the
+ * remaining difference is mostly register choice (reload's round-robin
+ * spill registers follow from everything before) and a few open shapes.
+ *
+ * Source shapes the bytes prove (session 2026-10-07, sun-080f4168):
+ * - The OAM shadow entries are volatile u32. loop.c then forms no DEST_ADDR
+ *   givs for them, so every obj loop keeps native's offset givs
+ *   (count * 8 + 200, + 204) and [sprites, off] stores with sprites
+ *   reloaded from its slot (1846 -> 1614).
+ * - The BG map store is *(volatile u16 *)(0x06003000 + i), i += 2, with its
+ *   own x/y counters (SETUP_CANVAS_TILE_MAP.C writes VRAM the same way);
+ *   combine cannot fold the address into the volatile strh (1918 -> 1846).
+ * - Declarations in native slot order: obj_palette, work, sprites, render,
+ *   frame, state, bet, timer, kind, winnings, counter, digits, count; the
+ *   hoisted &help_window and &depth temps come next, then stopped, which is
+ *   declared in the state 1 block (1614 -> 1520).
+ * - Messages relative to one symbol: Coins + 0/1/10/11 (CSE derives
+ *   Winnings - 1, Throw + 1 and Coins + 10/11 as native does).
+ * - digits as an if/else-if chain on <= 9/99/999/9999: the dead labels
+ *   between the arms end reload inheritance, so winnings is reloaded for
+ *   each compare as in native.
+ * - Two discarded gKeysRepeat reads before the KEY_UP test.
+ * - The kind tiles loop counts with i to Data_080f53fc[kind] itself (the
+ *   loop bound is hoisted and copied as native's r5); x = 0x278 - n * 16 and
+ *   y = 96 are set inside the loop, so loop.c hoists them after the entry
+ *   test, keeps the MINUS as the giv's base (subs) and ORs 96 and
+ *   0x80002000 separately.
+ * - order[] is filled by a two-pass loop (completely unrolled) and sorted by
+ *   a one-pass i loop (removed in loop pass 2), so key is 1 and the j loop
+ *   starts at 0 as in native.
+ * - Divisions and modulos are C operators (libcalls): the die loop then
+ *   keeps order[i] across __divsi3 for << 25 as native does.
+ * - The bet loop and the physics loop address the dice through
+ *   die = &work->particles[i] (and other = &work->particles[j]); loop.c
+ *   reduces each to its own pointer giv with base offset 0 (native r6, r7,
+ *   r9), not one shared biv.
+ * - The die loop has its own px/py: native's die-loop x/y are r2/r0 while
+ *   the marker loop's are r5/r2, so they are not the same pseudos (shared
+ *   x/y took a callee-saved register and spilled &depth: 1601 -> 1291).
+ * - The shadow loop adds work->particles[i].y >> 16 to depth[2 + i]; combine
+ *   narrows it to native's ldrsh and the int access keeps the first store.
+ *
+ * Open:
+ * - The 0x02010000 decode buffer: native rematerialises it from the pool at
+ *   all four uses (its pseudo got no register); the draft keeps it in r5.
+ * - Sort: native stores order[0] from i (r11 = 0) and has a separate zero
+ *   for j; the draft folds both to one zero.
+ * - Shadow loop: native reduces (i + 2) << 25 to a giv (r9 += 1 << 25); the
+ *   draft's is "not worth while" (34 vs 75).
+ * - The affine loop's depth pointer: native's global allocation gave it a
+ *   register that reload then spilled to sp+4 (after the caller-save
+ *   slots); the draft leaves it to the initial spill.
+ * - Affine halfwords: native stores four halfwords to sp+166..160 and
+ *   reloads each with ldrh; the zeros come from two literal-pool loads of 0.
+ *   The draft's volatile u16 locals are tagged FAKEMATCH; whether that is
+ *   an admissible device or real source is not settled.
+ *
+ * Earlier trials (kept where still informative):
+ * - Native locals, top down: palette 256, depth 240, results 224, point 212,
+ *   proj 200, 32 unused bytes 168..200, affine halfwords at 166..160, spin
+ *   152, flash 144, faces 136, order 128, matches 120; spills from 116.
+ * - Tile loop as row * 30 + j, < bounds, through pos, as x/y: 1930..1966.
+ * - sprites as a volatile pointer, as an extern-escaped local, or render,
+ *   sprites, work and obj_palette as one local struct: all worse; the cause
+ *   of native's offset givs was the volatile OAM stores.
+ * - u16 affine[4] instead of four halfword locals: worse.
  */
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -205,7 +154,6 @@ void LuckyDice_Run(void)
     s32 count;
     struct EffectStep *die;
     struct EffectStep *other;
-    s32 stopped;
     s32 reset;
     s32 window;
     s32 i;
@@ -297,9 +245,9 @@ void LuckyDice_Run(void)
     }
     results[0] = results[1] = results[2] = results[3] = 0;
     flash[0] = flash[1] = 0;
-    faces[0] = __umodsi3(Random16(), 6);
+    faces[0] = Random16() % 6;
     do {
-        faces[1] = __umodsi3(Random16(), 6);
+        faces[1] = Random16() % 6;
     } while (faces[0] == faces[1]);
     work->particles[0].x = 0x280000;
     work->particles[0].y = 0x600000;
@@ -311,12 +259,12 @@ void LuckyDice_Run(void)
     FarCall_WindowTable();
     window = UiWindow_CreateFar(18, 0, 12, 3, 6);
     sprites->coins_window = window;
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins, window, 48, 0);
     UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
     sprites->help_window = window;
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 10, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
 
     frame = 0;
     for (;;) {
@@ -362,17 +310,12 @@ void LuckyDice_Run(void)
                 }
             }
             if (timer > 19 && kind >= 0) {
-                n = Data_080f53fc[kind];
-                if (n != 0) {
-                    tile = Data_080f5400[kind] * 8 + 152;
-                    x = 0x278 - n * 16;
-                    for (j = 0; j != n; j++) {
-                        sprites->obj[count].attr01 = (((x & 0x1ff) << 16) | 96) | 0x80002000;
-                        sprites->obj[count].attr2 = tile;
-                        count++;
-                        tile += 32;
-                        x += 32;
-                    }
+                for (i = 0; i != Data_080f53fc[kind]; i++) {
+                    x = 0x278 - Data_080f53fc[kind] * 16;
+                    y = 96;
+                    sprites->obj[count].attr01 = ((((x + i * 32) & 0x1ff) << 16) | y) | 0x80002000;
+                    sprites->obj[count].attr2 = Data_080f5400[kind] * 8 + 152 + i * 32;
+                    count++;
                 }
             }
         }
@@ -380,23 +323,21 @@ void LuckyDice_Run(void)
         if (state == 2) {
             if (timer == 20 && winnings > 0) {
                 Party_AdjustCoinsFar(winnings);
-                digits = 1;
-                if (winnings > 9) {
+                if (winnings <= 9) {
+                    digits = 1;
+                } else if (winnings <= 99) {
                     digits = 2;
-                    if (winnings > 99) {
-                        digits = 3;
-                        if (winnings > 999) {
-                            digits = 4;
-                            if (winnings > 9999) {
-                                digits = 5;
-                            }
-                        }
-                    }
+                } else if (winnings <= 999) {
+                    digits = 3;
+                } else if (winnings <= 9999) {
+                    digits = 4;
+                } else {
+                    digits = 5;
                 }
                 window = UiWindow_CreateFar(9 - digits / 2, 16, digits + 12, 3, 6);
                 sprites->winnings_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, sprites->winnings_window, digits * 8 + 48, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 1, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins, sprites->winnings_window, digits * 8 + 48, 0);
                 UiText_DrawNumberInWindowFar(winnings, digits, sprites->winnings_window, 48, 0);
             }
             if (counter > 0) {
@@ -411,8 +352,8 @@ void LuckyDice_Run(void)
                     state = 0;
                     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                     sprites->help_window = window;
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 10, window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                     reset = 1;
                 }
             }
@@ -428,12 +369,14 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->winnings_window, 1);
                 window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                 sprites->help_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 10, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                 reset = 1;
             }
             counter++;
         } else if (state == 0 && frame > 17) {
+            (void)gKeysRepeat;
+            (void)gKeysRepeat;
             if (gKeysHeld & KEY_UP) {
                 work->particles[0].y += 0x40000;
                 work->particles[1].y += 0x40000;
@@ -473,19 +416,17 @@ void LuckyDice_Run(void)
                 }
                 Party_AdjustCoinsFar(-bet);
                 UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
-                die = work->particles;
                 for (i = 0; i != 2; i++) {
+                    die = &work->particles[i];
                     if (i > 1) {
                         die->z = -0xb40000;
                         die->y = 0x600000;
                     }
                     die->velocity_x = ((Random16() & 127) - 64) << 12;
                     die->velocity_y = ((Random16() & 15) + 48) << 13;
-                    n = Random16() & 63;
-                    die->velocity_z = ((n + 140) << 12) + __divsi3(die->y, 6);
-                    die->variant = __umodsi3(Random16(), 0x4800);
+                    die->velocity_z = (((Random16() & 63) + 140) << 12) + die->y / 6;
+                    die->variant = Random16() % 0x4800;
                     spin[i] = 300;
-                    die++;
                 }
             }
         }
@@ -497,14 +438,15 @@ void LuckyDice_Run(void)
             work->particles[1].x = -0x280000;
             work->particles[1].y = 0x600000;
             work->particles[1].z = -0xa00000;
-            faces[0] = __umodsi3(Random16(), 6);
+            faces[0] = Random16() % 6;
             do {
-                faces[1] = __umodsi3(Random16(), 6);
+                faces[1] = Random16() % 6;
             } while (faces[0] == faces[1]);
         }
 
-        order[0] = 0;
-        order[1] = 1;
+        for (i = 0; i != 2; i++) {
+            order[i] = i;
+        }
         for (i = 1; i < 2; i++) {
             key = order[i];
             for (j = i - 1; j >= 0 && work->particles[order[j]].z > work->particles[key].z; j--) {
@@ -514,6 +456,9 @@ void LuckyDice_Run(void)
         }
 
         for (i = 0; i != 2; i++) {
+            s32 px;
+            s32 py;
+
             die = &work->particles[order[i]];
             Render_ProjectPoint(die, proj);
             if (proj[2] < 0x15e) {
@@ -523,11 +468,11 @@ void LuckyDice_Run(void)
                 proj[2] = 0x28a;
             }
             depth[order[i]] = proj[2] - 0x15e;
-            d = __divsi3(0x800, depth[order[i]] / 2 + 128);
-            x = proj[0] - d;
-            y = proj[1] - d;
-            if (y + 96 > -16) {
-                sprites->obj[count].attr01 = ((order[i] << 25) | (((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x40002300;
+            d = 0x800 / (depth[order[i]] / 2 + 128);
+            px = proj[0] - d;
+            py = proj[1] - d;
+            if (py + 96 > -16) {
+                sprites->obj[count].attr01 = ((order[i] << 25) | (((px + 0x278) & 0x1ff) << 16) | ((py + 0x160) & 255)) | 0x40002300;
                 sprites->obj[count].attr2 = (Data_080f5408[die->variant / 1024] << 3) | 0x400;
                 count++;
             }
@@ -536,9 +481,8 @@ void LuckyDice_Run(void)
         if (state == 0) {
             for (i = 0; i != 2; i++) {
                 Render_ProjectPoint(&work->particles[i], proj);
-                n = depth[order[i]] / 2 + 128;
-                x = proj[0] - __divsi3(0x800, n);
-                y = proj[1] + __divsi3(0x300, n);
+                x = proj[0] - 0x800 / (depth[order[i]] / 2 + 128);
+                y = proj[1] + 0x300 / (depth[order[i]] / 2 + 128);
                 sprites->obj[count].attr01 = ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
                 if (i == 1) {
                     sprites->obj[count].attr01 |= 0x10000000;
@@ -560,7 +504,7 @@ void LuckyDice_Run(void)
                 proj[2] = 0x28a;
             }
             depth[2 + i] = proj[2] - 0x15e;
-            depth[2 + i] += *((s16 *)&work->particles[i].y + 1);
+            depth[2 + i] += work->particles[i].y >> 16;
             if (proj[1] + 88 > -16) {
                 sprites->obj[count].attr01 = ((((proj[0] + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((proj[1] + 0x158) & 255) | 0x40002300;
                 sprites->obj[count].attr2 = 0x890;
@@ -569,14 +513,16 @@ void LuckyDice_Run(void)
         }
 
         if (state == 1) {
+            s32 stopped;
+
             stopped = 0;
-            die = work->particles;
             for (i = 0; i != 2; i++) {
+                die = &work->particles[i];
                 die->x += die->velocity_x;
                 die->y += die->velocity_y;
                 die->z += die->velocity_z;
-                other = work->particles;
                 for (j = 0; j != 2; j++) {
+                    other = &work->particles[j];
                     if (i != j) {
                         dx = (die->x - other->x) >> 16;
                         dy = (die->y - other->y) >> 16;
@@ -584,12 +530,11 @@ void LuckyDice_Run(void)
                         dist = dx * dx + dy * dy + dz * dz;
                         if (dist <= 0x9c3) {
                             dist = Iwram_Sqrt(dist);
-                            die->velocity_x += __divsi3(dx << 15, dist);
-                            die->velocity_y += __divsi3(dy << 15, dist);
-                            die->velocity_z += __divsi3(dz << 15, dist);
+                            die->velocity_x += (dx << 15) / dist;
+                            die->velocity_y += (dy << 15) / dist;
+                            die->velocity_z += (dz << 15) / dist;
                         }
                     }
-                    other++;
                 }
                 if (die->x < -0xc80000) {
                     die->x = -0xc80000;
@@ -632,7 +577,7 @@ void LuckyDice_Run(void)
                         die->velocity_z = 0;
                         spin[i] = 0;
                         n = die->variant;
-                        switch (__modsi3(n / 1024, 3)) {
+                        switch (n / 1024 % 3) {
                         case 1:
                             die->variant = n + 0x800;
                             break;
@@ -653,7 +598,7 @@ void LuckyDice_Run(void)
                     spin[i]--;
                 }
                 if (die->velocity_x == 0 && die->velocity_y == 0 && die->velocity_z == 0 && die->y == 0) {
-                    results[i] = __divsi3(die->variant, 0xc00);
+                    results[i] = die->variant / 0xc00;
                     for (j = 0; j != 6; j++) {
                         if (die->z > Data_080f541a[j] << 16) {
                             results[i + 2] = j;
@@ -662,7 +607,6 @@ void LuckyDice_Run(void)
                     }
                     stopped++;
                 }
-                die++;
             }
 
             if (stopped == 2) {

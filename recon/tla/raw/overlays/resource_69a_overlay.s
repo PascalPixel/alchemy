@@ -1,15 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	movs r0, #6
-	bl Func_02001b84
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008060,"ax",%progbits
+	.balign 4
 	.global Func_02000060
 	.thumb_func
 Func_02000060:
@@ -76,73 +68,8 @@ Func_02000060:
 	add sp, #8
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x020080ec,"ax",%progbits
-	.global Func_020000ec
-	.thumb_func
-Func_020000ec:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	movs r0, #134
-	sub sp, #8
-	bl Func_02001bd4
-	movs r3, #29
-	str r3, [sp, #4]
-	movs r5, #79
-	mov r8, r3
-	movs r0, #81
-	movs r1, #20
-	movs r2, #2
-	movs r3, #3
-	str r5, [sp, #0]
-	bl Func_02001aec
-	movs r6, #37
-	movs r1, #20
-	movs r2, #2
-	movs r3, #3
-	movs r0, #81
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl Func_02001aec
-	movs r0, #6
-	bl WaitFrames
-	mov r3, r8
-	str r3, [sp, #4]
-	movs r0, #87
-	movs r1, #20
-	movs r2, #2
-	movs r3, #3
-	str r5, [sp, #0]
-	bl Func_02001aec
-	movs r0, #87
-	movs r1, #20
-	movs r2, #2
-	movs r3, #3
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl Func_02001aec
-	movs r3, #31
-	str r3, [sp, #4]
-	movs r5, #15
-	movs r0, #23
-	movs r1, #22
-	movs r2, #2
-	movs r3, #1
-	str r5, [sp, #0]
-	bl Func_02001ae4
-	movs r3, #39
-	str r3, [sp, #4]
-	movs r0, #23
-	movs r1, #22
-	movs r2, #2
-	movs r3, #1
-	str r5, [sp, #0]
-	bl Func_02001ae4
-	add sp, #8
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
 	.section .text.x02008178,"ax",%progbits
+	.balign 4
 	.global Func_02000178
 	.thumb_func
 Func_02000178:
@@ -208,17 +135,8 @@ Func_020001d4:
 .L_020081ee:
 	bl Func_02000178
 	pop {pc}
-	.section .text.x020081f4,"ax",%progbits
-	.global Func_020001f4
-	.thumb_func
-Func_020001f4:
-	push {lr}
-	movs r0, #10
-	bl WaitFrames
-	bl Func_02000178
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x0200820c,"ax",%progbits
+	.balign 4
 	.global Func_0200020c
 	.thumb_func
 Func_0200020c:

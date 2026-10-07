@@ -252,9 +252,6 @@ pow_end:
     }
 
     if (hit != 0) {
-        s32 efx;
-
-        efx = action->effect;
         if (action->effect == 53) {
             hit = 0;
             for (n = 0; n < 20; n++) {

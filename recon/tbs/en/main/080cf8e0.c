@@ -25,6 +25,10 @@
  * SENTOU_KOUKA_GOUSEI_BUILD.C); this one would change selection (k << 5
  * and a reduced pointer without it), which S2 does not admit.
  * Fifteenth-pass trials (no flush): const s32 group = k * 4 171.
+ * Permuter (5 minutes, --heat, no flush): 45, by one temporary shared
+ * between the index (tmp = group * 8 + i) and the z copy, so the index is
+ * set twice and loop.c finds no giv; CSE1 still makes k << 5 (the burst
+ * preheader is the whole 45). Not taken: noise, and the fold remains.
  * Fourteenth pass (2026-10-07): the burst flush's mechanism is the step's.
  * Native PRE hoisted k << 2 but not group << 3, so group's set and
  * group << 3 shared one GCSE basic block (group killed group << 3) while

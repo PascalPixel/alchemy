@@ -4,6 +4,13 @@
  * selection, not only order or registers (S2): the
  * __asm__ __volatile__("" ::) CSE flush (burst address). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Sixteenth pass (2026-10-07): the burst loop in the k loop's own form,
+ * i = 0; if (count != 0) do { ... i++; } while (i != count);, without the
+ * flush 171 (the body's CSE1 block still starts at the loop's top label,
+ * so group = k * 4 and group * 8 share it). Still blocked on Pascal's
+ * ruling: a one-pass do { } while (0) or a test CSE1 decides (the step's
+ * frame >= k * 8 + 17 if/else is one) are the only forms found for both
+ * boundaries, and both change selection.
  * Fifteenth pass (2026-10-07): the burst boundary's possible sources,
  * read from cse.c. cse_end_of_basic_block ends a path only at a
  * CODE_LABEL, a NOTE_INSN_LOOP_END or a NOTE_INSN_SETJMP; cse_basic_block

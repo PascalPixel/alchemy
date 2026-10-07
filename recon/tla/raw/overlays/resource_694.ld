@@ -83,7 +83,7 @@ SECTIONS
         "*/resource_694_overlay.o"(.text.x02009d20)
         "*/resource_694_overlay.o"(.text.x02009d38)
         "*/resource_694_overlay.o"(.text.x02009d50)
-        "*/resource_694_overlay.o"(.text.x0200ae18)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_694/RETURN.o"(.text)
         "*/resource_694_overlay.o"(.text.x0200b698)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_694/PREPARE.o"(.text)
         "*/resource_694_overlay.o"(.text.x0200b6f0)

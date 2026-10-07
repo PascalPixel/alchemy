@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3452, common 3287,
- * differ 328.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3290,
+ * differ 320.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -85,7 +85,13 @@
  * shape, ldrh before the call and a branch to the shared add, leaving only
  * register choices there (its target copy stays in r2 from the head; ours
  * is copied again into r0). (s16)(maxv / 10) gives 341, maxv / 10 kept in
- * maxv then (s16)maxv 337, and maxu read before maxv 635. */
+ * maxv then (s16)maxv 337, and maxu read before maxv 635. With that case,
+ * old read before heal at the PP restore's head gives 320 (draft 3450):
+ * the head's copy of the target now stays in r2 and case 77 matches
+ * exactly, but the head shares one ldrh between old and heal and
+ * sign-extends it, where the listing loads ldrsh, the effect, then ldrh.
+ * heal or old read through an s16 or u16 pointer keeps 320; the block's
+ * declaration order changes nothing. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -1005,8 +1011,8 @@ after_power:
             s32 heal;
             s32 maxu;
 
-            heal = target->pp;
             old = (u16)target->pp;
+            heal = target->pp;
             if (action->effect == 77) {
                 maxv = target->max_pp;
                 maxu = (u16)target->max_pp;

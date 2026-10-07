@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3379,
- * differ 142.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3400,
+ * differ 100.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -182,16 +182,36 @@
  * keeps it last in both and shares it. Alchemy permute over the heal
  * (PERM_RANDOMIZE from stat_ptr to the clamp, 11 minutes, about 6,000
  * candidates) found nothing below 142.
- * Left at 142: the drain's halving (above); the heal's target copies
- * and offsets in 76, 71 and 70
- * (reload registers in another rotation) and the 60/30 tails' shared
- * movs r1, #100 (2 bytes; the product set in each branch and divided
- * once after them, in tmp, maxv, value, kind or apwr, 227 to 240); the PP
- * restore head, where the listing loads
- * ldrsh, the effect, then ldrh and ours shares one ldrh (a volatile s16
- * read of heal gets the second ldrh but loses the ldrsh, 226 then);
- * two far branches to the end that ours sends back to an earlier copy;
- * and about 20 single loads swapped with a neighbour (K2's load order). */
+ * The 60/30 tail matches with the product in a local p of each branch
+ * and an empty asm("") barrier between it and the division, tagged
+ * FAKEMATCH, 139 (draft 3449, common 3380): sched2 then keeps
+ * movs r1, #100 after the product's last shift and jump2 shares it with
+ * the call, as the listing does. Without the barrier, the multiplier as
+ * a ?: (fold distributes it), or a non-volatile asm "0" tie on p, it
+ * stays 142; the product divided once after the branches, in a
+ * block-local p, shares the tail but takes maxv into r2 and the shift
+ * into r3, and heal and maxu swap r5 and r6 (195); in maxv 208.
+ * With it, the PP restore head's pointer walk (above), 118 (draft 3450,
+ * common 3391): the head and the later (s16)old match.
+ * Case 70 reading max_hp into a u16 local m (maxu = m; heal += (s16)m
+ * / 2;), 114 (draft 3452, common 3394): with (s16)maxu, gcse shares
+ * maxu << 16 between case 70 and the clamp, so ours computes it before
+ * the join in r1, where the listing computes it at the join in r3; m
+ * keeps the two apart and the join matches, but its load becomes ldrsh
+ * with maxu rebuilt by lsrs (2 instructions longer). The same with m
+ * as u16 read through a u16 pointer 114; maxu read first and m = maxu
+ * 131; maxu = m after the halving 118; m as s16, read first 118 or
+ * after maxu 118; m as s32 137; (s16)target->max_hp / 2 read before
+ * maxu 125 (two ldrh, but the rest of 70 and the join match).
+ * An asm "+r" barrier on maxu after case 70's halving instead, tagged
+ * FAKEMATCH, 100 (draft 3450, common 3400): case 70 and the join match
+ * with the listing's single ldrh. A plain asm("") after the halving
+ * keeps gcse's sharing (118).
+ * Left at 100: the drain's halving (above); the heal's target copies and offsets in 76, 71, 78 and the 7%
+ * (reload registers in another rotation: the listing's offset scratch
+ * takes r3 first, as if allocated before the base's reload); two far
+ * branches to the end that ours sends back to an earlier copy; and
+ * about 20 single loads swapped with a neighbour (K2's load order). */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -1084,15 +1104,24 @@ after_power:
             } else if (action->effect == 70) {
                 maxu = (u16)target->max_hp;
                 heal += (s16)maxu / 2;
+                /* FAKEMATCH: barrier; without it gcse shares maxu << 16 between this halving and the clamp, so ours shifts before the join in r1 where the ROM shifts at the join in r3, 118 without, 100 with. */
+                asm("" : "+r"(maxu));
             } else
             {
                 stat_ptr--;
                 maxu = *stat_ptr--;
                 maxv = *(s16 *)(stat_ptr + 1);
-                if (action->effect == EFX_HEAL_60)
-                    heal += maxv * 60 / 100;
-                else
-                    heal += maxv * 30 / 100;
+                if (action->effect == EFX_HEAL_60) {
+                    s32 p = maxv * 60;
+                    /* FAKEMATCH: barrier; sched2 otherwise puts movs r1, #100 before the product's last shift and jump2 cannot share it with the division, 142 without, 139 with. */
+                    asm("");
+                    heal += p / 100;
+                } else {
+                    s32 p = maxv * 30;
+                    /* FAKEMATCH: barrier; the same for the 30% branch, whose tail jump2 shares with the 60% one. */
+                    asm("");
+                    heal += p / 100;
+                }
             }
             if (heal > (s16)maxu)
                 heal = (s16)maxu;
@@ -1118,9 +1147,12 @@ after_power:
             s32 maxv;
             s32 heal;
             s32 maxu;
+            u16 *stat_ptr;
 
-            old = (u16)target->pp;
-            heal = target->pp;
+            /* FAKEMATCH: walking a pointer down from pp reads it twice, signed and unsigned, as the ROM does; plain field reads share one load. */
+            stat_ptr = (u16 *)&target->pp;
+            old = *stat_ptr--;
+            heal = *(s16 *)(stat_ptr + 1);
             if (action->effect == 77) {
                 maxv = target->max_pp;
                 maxu = (u16)target->max_pp;

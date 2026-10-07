@@ -1,4 +1,11 @@
-/* 080ea0d8: differ 2252 of 2455 (listing 2455, draft 2441, common 1322).
+/* 080ea0d8: differ 2201 of 2455 (listing 2455, draft 2438, common 1346).
+ * Structure: the sequence of conditional branches, jumps and calls now
+ * matches the native's except one literal-pool jump; what remains is
+ * register allocation, scheduling, constant hoisting and pool placement.
+ * Constants: the native reloads 0x2710 in each pass of the ramp loop and
+ * 0xff0000 in each petal placement, where ours hoists both into high
+ * registers; the palette fade masks with a pool-loaded 0x1f and widens
+ * each colour as a halfword (lsls 16 / lsrs 26), ours with asrs.
  * Locals: the native fill word sits at sp+140, between place and place2, so
  * it is a declared volatile word, not an addressed scalar (that put it at
  * sp+116 after pair). The local arrays now sit where the native's do, but
@@ -6,8 +13,8 @@
  * once per frame, reloaded before each call), where ours keeps it in fp; in
  * the petal blocks the native keeps draw in sl and spills the petal cell
  * (sp+28), and builds d as frame * 2 then subtracts 164.
- * Register allocation, remaining stack slots and
- * branch layout still differ widely; the BattleFx9 data names remain draft
+ * Register allocation and remaining stack slots
+ * still differ widely; the BattleFx9 data names remain draft
  * declarations pending labels at their native bytes. BattleEffectWork, camera,
  * presentation, scroll and animation layouts now come from the shared headers.
  * RAM buffers, IWRAM entries, heap cells, callbacks and resources use existing
@@ -17,7 +24,24 @@
  * Trial: a plain u32 fill (2324); volatile u32 fill (2257, kept).
  * Trial: draw2 declared last instead of after ctrl (2257, no change).
  * Trial: petal cell written in each call, not a block local: second petal
- * block 2253, both blocks 2252 (kept). */
+ * block 2253, both blocks 2252 (kept).
+ * Trial: palette colour as s32, not u16 (u16 loads with ldrsh): 2238, kept;
+ * u16 with red computed first: 2252.
+ * Trial: spark velocities from their own zero variable, not the ramp
+ * limit: the counter takes r7 and the zero r8 as native's (2207, kept);
+ * literal 0 and 255 are not hoisted and 255 becomes lsls/subs (2264).
+ * Trial: ramp limit as 64 - i * 7 in the inner loop: the native's copy of
+ * it into ip appears (kept); limit and offset both from i: 2248; a 770
+ * variable: 2217; &sheet[pos + 0x2710]: no change.
+ * Trial: respawn x tests frame <= 279 first, as the native branches (2206).
+ * Trial: frame > 85 and frame <= 213 as nested ifs: the native tests them
+ * separately, not as one unsigned range (2201, kept).
+ * Trial: one counter i for every loop: it spills (2485).
+ * Trial: draw reloaded through slots: 2219; respawn y tests inverted: 2230.
+ * Trial: draw2 read as gTransitionWork[3], the native literal's spelling:
+ * still no spill, frame 180 (2231).
+ * Permuter, 6 minutes from 2238: 2145 only through temporaries, do-while
+ * loop forms and dropped parentheses, none carried. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -134,13 +158,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i24;
     s32 i25;
     s32 j;
-    s32 lim;
     s32 pos;
     s32 x;
     s32 y;
     s32 size;
     s32 high;
-    s32 wide;
+    s32 speed;
     struct EffectStep *p;
     DrawRectangle blit;
     s32 z;
@@ -184,13 +207,13 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
-    for (i1 = 0, pos = 0, lim = 64; i1 != 8; i1++, pos += 770, lim -= 7) {
+    for (i1 = 0, pos = 0; i1 != 8; i1++, pos += 770) {
         u8 *src = ramp;
         u8 *dst = work->sheet + pos + 0x2710;
         for (j = 0; j != 770; j++) {
             s32 v = *src++;
-            if (v > lim) {
-                v = lim;
+            if (v > 64 - i1 * 7) {
+                v = 64 - i1 * 7;
             }
             if (v < 0) {
                 v = 0;
@@ -209,14 +232,14 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     }
 
     amp = 255;
-    lim = 0;
+    speed = 0;
     for (i3 = 0; i3 != 128; i3++) {
         s32 angle = Random16() & 0xffff;
         SPARKS[i3].x = (Trig_Sin(angle) * amp) >> 2;
         SPARKS[i3].z = (Trig_Cos(angle) * amp) >> 2;
         SPARKS[i3].y = ((Random16() & 63) + 32) << 16;
-        SPARKS[i3].velocity_x = lim;
-        SPARKS[i3].velocity_y = lim;
+        SPARKS[i3].velocity_x = speed;
+        SPARKS[i3].velocity_y = speed;
         SPARKS[i3].variant = angle;
     }
 
@@ -560,7 +583,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame > 279) {
             u16 *pal = (u16 *)0x05000002;
             for (i17 = 0; i17 != 63; i17++, pal++) {
-                u16 c = *pal;
+                s32 c = *pal;
                 s32 b = ((c >> 10) & 31) + 1;
                 s32 g = ((c >> 5) & 31) + 1;
                 s32 r = (c & 31) + 1;
@@ -639,92 +662,94 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             }
         }
 
-        if (frame > 85 && frame <= 213 && rings != 0) {
-            for (i19 = 0; i19 != rings; i19++, ring++) {
-                s32 radius = ring;
-                s32 slope = 0;
-                s32 err = ring;
-                while (radius >= slope) {
-                    s32 half;
-                    s32 left;
-                    s32 right;
-                    s32 top;
-                    s32 bottom;
-
-                    half = radius / 2;
-                    right = cx + (half * sx) / 8;
-                    left = cx - (half * sx) / 8;
-                    bottom = cy + (slope * squash) / 8;
-                    top = cy - (slope * sx) / 8;
-                    if (top < 0) {
-                        top = 0;
+        if (frame > 85) {
+            if (frame <= 213) {
+                for (i19 = 0; i19 != rings; i19++, ring++) {
+                    s32 radius = ring;
+                    s32 slope = 0;
+                    s32 err = ring;
+                    while (radius >= slope) {
+                        s32 half;
+                        s32 left;
+                        s32 right;
+                        s32 top;
+                        s32 bottom;
+    
+                        half = radius / 2;
+                        right = cx + (half * sx) / 8;
+                        left = cx - (half * sx) / 8;
+                        bottom = cy + (slope * squash) / 8;
+                        top = cy - (slope * sx) / 8;
+                        if (top < 0) {
+                            top = 0;
+                        }
+                        if (bottom > 119) {
+                            bottom = 119;
+                        }
+                        if (left < 0) {
+                            left = 0;
+                        }
+                        if (right > 119) {
+                            right = 119;
+                        }
+                        work->sheet[bottom * 120 + right] = 20;
+                        work->sheet[top * 120 + right] = 20;
+                        work->sheet[bottom * 120 + left] = 20;
+                        work->sheet[top * 120 + left] = 20;
+                        right = cx + half + 1;
+                        left = cx - half + 1;
+                        if (left < 0) {
+                            left = 0;
+                        }
+                        if (right > 119) {
+                            right = 119;
+                        }
+                        work->sheet[bottom * 120 + right] = 20;
+                        work->sheet[top * 120 + right] = 20;
+                        work->sheet[bottom * 120 + left] = 20;
+                        work->sheet[top * 120 + left] = 20;
+    
+                        half = slope / 2;
+                        right = cx + (half * sx) / 8;
+                        left = cx - (half * sx) / 8;
+                        bottom = cy + (radius * squash) / 8;
+                        top = cy - (radius * sx) / 8;
+                        if (left < 0) {
+                            left = 0;
+                        }
+                        if (right > 119) {
+                            right = 119;
+                        }
+                        if (top < 0) {
+                            top = 0;
+                        }
+                        if (bottom > 119) {
+                            bottom = 119;
+                        }
+                        work->sheet[bottom * 120 + right] = 20;
+                        work->sheet[top * 120 + right] = 20;
+                        work->sheet[bottom * 120 + left] = 20;
+                        work->sheet[top * 120 + left] = 20;
+                        right = cx + half + 1;
+                        left = cx - half + 1;
+                        if (left < 0) {
+                            left = 0;
+                        }
+                        if (right > 119) {
+                            right = 119;
+                        }
+                        work->sheet[bottom * 120 + right] = 20;
+                        work->sheet[top * 120 + right] = 20;
+                        work->sheet[bottom * 120 + left] = 20;
+                        work->sheet[top * 120 + left] = 20;
+    
+                        err = err - slope * 2 - 1;
+                        if (err < 0) {
+                            err = err + radius * 2 - 2;
+                            radius--;
+                        }
+                        slope++;
                     }
-                    if (bottom > 119) {
-                        bottom = 119;
-                    }
-                    if (left < 0) {
-                        left = 0;
-                    }
-                    if (right > 119) {
-                        right = 119;
-                    }
-                    work->sheet[bottom * 120 + right] = 20;
-                    work->sheet[top * 120 + right] = 20;
-                    work->sheet[bottom * 120 + left] = 20;
-                    work->sheet[top * 120 + left] = 20;
-                    right = cx + half + 1;
-                    left = cx - half + 1;
-                    if (left < 0) {
-                        left = 0;
-                    }
-                    if (right > 119) {
-                        right = 119;
-                    }
-                    work->sheet[bottom * 120 + right] = 20;
-                    work->sheet[top * 120 + right] = 20;
-                    work->sheet[bottom * 120 + left] = 20;
-                    work->sheet[top * 120 + left] = 20;
-
-                    half = slope / 2;
-                    right = cx + (half * sx) / 8;
-                    left = cx - (half * sx) / 8;
-                    bottom = cy + (radius * squash) / 8;
-                    top = cy - (radius * sx) / 8;
-                    if (left < 0) {
-                        left = 0;
-                    }
-                    if (right > 119) {
-                        right = 119;
-                    }
-                    if (top < 0) {
-                        top = 0;
-                    }
-                    if (bottom > 119) {
-                        bottom = 119;
-                    }
-                    work->sheet[bottom * 120 + right] = 20;
-                    work->sheet[top * 120 + right] = 20;
-                    work->sheet[bottom * 120 + left] = 20;
-                    work->sheet[top * 120 + left] = 20;
-                    right = cx + half + 1;
-                    left = cx - half + 1;
-                    if (left < 0) {
-                        left = 0;
-                    }
-                    if (right > 119) {
-                        right = 119;
-                    }
-                    work->sheet[bottom * 120 + right] = 20;
-                    work->sheet[top * 120 + right] = 20;
-                    work->sheet[bottom * 120 + left] = 20;
-                    work->sheet[top * 120 + left] = 20;
-
-                    err = err - slope * 2 - 1;
-                    if (err < 0) {
-                        err = err + radius * 2 - 2;
-                        radius--;
-                    }
-                    slope++;
                 }
             }
         }
@@ -788,10 +813,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                     Object_ApplyProjectedPlacementFar(work->objects[i22], place2, &scale, 0);
                     p->y -= p->velocity_y;
                     if (p->y < 0x100000) {
-                        if (frame > 279) {
-                            p->x = ((Random16() & 63) + shift - 32) << 16;
-                        } else {
+                        if (frame <= 279) {
                             p->x = ((Random16() & 63) + shift + 32) << 16;
+                        } else {
+                            p->x = ((Random16() & 63) + shift - 32) << 16;
                         }
                         if (frame > 301) {
                             p->variant = 0;

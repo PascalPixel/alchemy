@@ -1681,20 +1681,6 @@ Func_02000c44:
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
-	.section .text.x02008cec,"ax",%progbits
-	.global Func_02000cec
-	.thumb_func
-Func_02000cec:
-	push {lr}
-	movs r0, #185
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r0, #17
-	movs r1, #17
-	bl Func_020018e8
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008d44,"ax",%progbits
 	.balign 4
 	.global Func_02000d44
@@ -1808,53 +1794,8 @@ Func_02000de0:
 	.4byte gPartyState
 .L_02008e10:
 	.4byte 0x0000004f
-	.section .text.x02008e14,"ax",%progbits
-	.global Func_02000e14
-	.thumb_func
-Func_02000e14:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #192
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008e3a
-	cmp r5, #3
-	bne .L_02008e3a
-	movs r0, #11
-	movs r1, #0
-	movs r2, #0
-	bl Func_020018a8
-	movs r0, #192
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-.L_02008e3a:
-	pop {r5, pc}
-	.section .text.x02008e3c,"ax",%progbits
-	.global Func_02000e3c
-	.thumb_func
-Func_02000e3c:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #192
-	lsls r0, r0, #2
-	adds r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008e66
-	cmp r5, #3
-	bne .L_02008e66
-	movs r0, #15
-	movs r1, #0
-	movs r2, #0
-	bl Func_020018a8
-	movs r0, #192
-	lsls r0, r0, #2
-	adds r0, #1
-	bl GameFlag_SetBit
-.L_02008e66:
-	pop {r5, pc}
 	.section .text.x02008e68,"ax",%progbits
+	.balign 4
 	.global Func_02000e68
 	.thumb_func
 Func_02000e68:

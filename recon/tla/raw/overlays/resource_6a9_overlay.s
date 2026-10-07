@@ -1554,55 +1554,8 @@ Func_02000cdc:
 	.2byte 0x0000
 .L_02008d0c:
 	.4byte gPartyState
-	.section .text.x02008d10,"ax",%progbits
-	.global Func_02000d10
-	.thumb_func
-Func_02000d10:
-	push {lr}
-	movs r0, #139
-	lsls r0, r0, #4
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008d24
-	bl Func_02000d28
-.L_02008d24:
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008d28,"ax",%progbits
-	.global Func_02000d28
-	.thumb_func
-Func_02000d28:
-	push {lr}
-	sub sp, #8
-	movs r3, #3
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r0, #35
-	movs r1, #12
-	movs r2, #18
-	movs r3, #12
-	bl Func_02001094
-	movs r3, #18
-	movs r2, #12
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #35
-	movs r1, #12
-	movs r2, #3
-	movs r3, #3
-	bl Func_020010ac
-	movs r3, #1
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r0, #84
-	movs r1, #13
-	movs r2, #83
-	movs r3, #13
-	bl Func_02001094
-	add sp, #8
-	pop {pc}
 	.section .text.x02008d68,"ax",%progbits
+	.balign 4
 	.global Func_02000d68
 	.thumb_func
 Func_02000d68:

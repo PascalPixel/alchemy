@@ -15,6 +15,16 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+void Func_020018e8();
+void GameFlag_SetBit();
+
+void Func_02000cec(void)
+{
+    Value1((s32 (*)())GameFlag_SetBit, 0x271);
+    Call2((void (*)())Func_020018e8, 17, 17);
+    return;
+}
+
 void Func_02001870();
 void Func_02001878();
 void Func_020018d0();

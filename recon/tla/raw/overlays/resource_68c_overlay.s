@@ -43,67 +43,6 @@ Func_02000104:
 	.4byte MsgPoorBeingBorn
 .L_02008150:
 	.4byte MsgIWasWhat
-	.section .text.x020081ec,"ax",%progbits
-	.balign 4
-	.global Func_020001ec
-	.thumb_func
-Func_020001ec:
-	push {r5, r6, r7, lr}
-	adds r5, r1, #0
-	adds r0, r5, #0
-	bl Object_GetById
-	ldrh r7, [r0, #6]
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #103
-	bl GameFlag_SetBit
-	bl Func_0200282c
-	movs r0, #0
-	bl Func_020028fc
-	movs r1, #2
-	adds r1, #255
-	movs r2, #30
-	adds r0, r5, #0
-	bl Func_020028dc
-	movs r2, #20
-	movs r1, #4
-	adds r0, r5, #0
-	bl ObjectMotion_SetAngleToward
-	ldr r6, .L_02008278
-	adds r0, r6, #0
-	bl Func_020028ac
-	movs r1, #0
-	adds r0, r5, #0
-	bl UiText_OpenMessageAtObject
-	bl Func_0200291c
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_0200824e
-	movs r0, #10
-	bl Battle_WaitMode0
-	adds r0, r6, #1
-	bl Func_020028ac
-	b .L_0200825a
-.L_0200824e:
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r6, #2
-	bl Func_020028ac
-.L_0200825a:
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	adds r0, r5, #0
-	adds r1, r7, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #10
-	bl Battle_WaitMode0
-	bl Func_02002834
-	pop {r5, r6, r7, pc}
-.L_02008278:
-	.4byte MsgWasThatSome
 	.section .text.x02008284,"ax",%progbits
 	.global Func_02000284
 	.thumb_func

@@ -6,7 +6,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68C/SCENE_TABLES.o"(.text)
         "*/resource_68c_overlay.o"(.text.x02008104)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68C/EVENTS.o"(.text)
-        "*/resource_68c_overlay.o"(.text.x020081ec)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68C/SCENE_EVENTS.o"(.text)
         "*/resource_68c_overlay.o"(.text.x02008284)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_68C/PREPARE.o"(.text)

@@ -1,4 +1,15 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2032, differ 1644.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2034, differ 1636.
+ * The first affine access now retains native's sl copy and later r1 reload.
+ * A short shifted value in r2, C copy to sl, empty memory boundary observing
+ * both values, then scoped base/r2 makes that complete access instruction
+ * exact:2032/1644 ->2034/1636, frame768. All four halfword pointers and offset
+ * givs stay correct; the term/base bindings die before the second access.
+ * Earlier real-mov trials: unconstrained input2034/1654, input/r2 plus memory
+ * 2034/1648, scoped base/r2 2034/1638. C plus empty boundary without observing
+ * the shifted input uses r3,2034/1642; observing it gives the retained1636.
+ * No real instruction asm is retained. Resource base is now u8 * as the
+ * pointer API and byte advances require; removing integer casts changes
+ * no generated instructions. Resource ids remain whole linker symbols.
  * The shadow depth boundary now clobbers memory instead of taking the
  * stored depth as an operand. Both native stores remain, without the extra
  * address use: projection/die/depth recover r5/r6/r7,1658 ->1644. Frame768
@@ -401,7 +412,7 @@ void LuckyDice_Run(void)
     s32 tile;
     s32 key;
     s32 row;
-    s32 base;
+    u8 *base;
     s32 pos;
     s32 dx;
     s32 dy;
@@ -443,20 +454,20 @@ void LuckyDice_Run(void)
         }
     }
 
-    base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
-    Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
+    base = Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
+    Dma_Set(base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
     base += 0x1c0;
     dst = (void *)0x02010000;
-    Resource_DecodeType01((void *)base, dst);
+    Resource_DecodeType01(base, dst);
     dst = (void *)0x06004000;
     Dma_Set((void *)0x02010000, dst, 0x84002580, (volatile u32 *)0x040000d4);
-    base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
-    Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
+    base = Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
+    Dma_Set(base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
+    Dma_Set(base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
     base += 0x200;
     dst = (void *)0x02010000;
-    Resource_DecodeType01((void *)base, dst);
+    Resource_DecodeType01(base, dst);
     dst = (void *)0x06010000;
     Dma_Set((void *)0x02010000, dst, 0x84001f00, (volatile u32 *)0x040000d4);
     Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
@@ -998,10 +1009,22 @@ void LuckyDice_Run(void)
                 *pb = 0;
                 *pc = 0;
                 *pd = value;
-                obj = sprites;
-                /* FAKEMATCH: native reloads the object base for each affine field. */
-                __asm__ volatile("" : "+rm"(obj));
-                *(u32 *)((u8 *)obj + offa) |= *pa << 16;
+                {
+                    /* FAKEMATCH: native saves the first shifted affine value in sl; ordinary source omits this high-register copy and its later reload. */
+                    register u32 term asm("sl");
+                    /* FAKEMATCH: native forms that shifted halfword in r2 before reusing r2 for the object base. */
+                    register u32 shifted asm("r2") = (u32)*pa << 16;
+                    /* FAKEMATCH: native then reloads the first object's base in r2; the shared affine base otherwise stays in r1. */
+                    register struct LuckyDiceSprites *p asm("r2");
+
+                    term = shifted;
+                    /* FAKEMATCH: both values stay live across native's copy, then the base reload follows; the first access becomes exact (1644 to1636). */
+                    __asm__("" : "+r"(term) : "r"(shifted) : "memory");
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the object base for each affine field. */
+                    __asm__ volatile("" : "+r"(p));
+                    *(u32 *)((u8 *)p + offa) |= term;
+                }
                 obj = sprites;
                 /* FAKEMATCH: native reloads the object base for each affine field. */
                 __asm__ volatile("" : "+rm"(obj));

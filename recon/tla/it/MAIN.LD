@@ -837,7 +837,6 @@
     "*/recon/tla/it/rom.o"(.rom.000d20a4)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/SETUP.o"(.text)
     . = ALIGN(4);
-    "*/recon/tla/it/rom.o"(.rom.000d2394)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/OBJECT_HOOK.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000d23ca)
@@ -1441,7 +1440,6 @@
     "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD_TO_5.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.0016a29c)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/VARIANT_A.o"(.text)
         "*/recon/tla/it/rom.o"(.rom.0016a2d8)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/VARIANT_B.o"(.text)

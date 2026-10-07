@@ -64,12 +64,6 @@ Transform_UpdateVertices:
 	.incbin "baserom.gba", 0x0000a0f8, 0x00000284
 	.global Transform_UpdateVerticesEnd
 Transform_UpdateVerticesEnd:
-	.section .rom.0000a494, "ax"
-	.global Object_UpdateAll
-Object_UpdateAll:
-	.incbin "baserom.gba", 0x0000a494, 0x000004e8
-	.global Object_UpdateAllEnd
-Object_UpdateAllEnd:
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
 	.section .rom.00012f20, "ax"

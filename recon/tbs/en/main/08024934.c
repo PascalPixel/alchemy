@@ -5,7 +5,19 @@
  * row = preferred and page -= 4; row = preferred), as session 4's base
  * had them before a merge reversed them: 172 -> 154. From 172: the
  * initial cell reads as page, mask = 0, preferred, row 180 (with the page
- * order as well 162).
+ * order as well 162). From 154: nav->row stored before nav->page 160
+ * (native stores page first, the draft row first); the draw loop's scan
+ * as standby[element] < summon->djinn_required[element] 161; five
+ * minutes of permute found nothing below 154 (from 198 its 188 was the
+ * page order plus noise temporaries). Remaining at
+ * 154, in order: scheduling at the start (mask stored before counts, the
+ * window call's stack argument late); the handle loop walks a pointer
+ * where native has base r7, offset from 8 and mask r8; count - 1 built
+ * in r0 where native keeps count in r0 and builds it in r3; the draw
+ * loop keeps id in r8, summon in r6 and summon + 4 in slot 36 where
+ * native has id r6, summon in slot 36 and the scan's pointer r1 fresh
+ * from summon (item (a) below); then small orderings in the arrows, the
+ * nav stores and the cleanup loop.
  * The highlight loop's blink is a block local beside its
  * element and tile, not the function's affordable: 198 -> 172, blink r6
  * and element r5 as native's. From 198: the handle loop indexed 237 (its

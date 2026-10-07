@@ -2076,7 +2076,7 @@
         "*/recon/tla/raw/08126218.o"(.text)
         "*/recon/tla/raw/0812628c.o"(.text)
         "*/recon/tla/raw/081263c4.o"(.text)
-        "*/recon/tla/raw/081263f0.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/TRANSWRK.o"(.text)
         "*/recon/tla/raw/081263fc.o"(.text)
         "*/recon/tla/raw/08126548.o"(.text)
         "*/recon/tla/raw/08126700.o"(.text)

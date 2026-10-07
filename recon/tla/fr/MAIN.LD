@@ -1283,6 +1283,7 @@
         "*/recon/tla/fr/rom.o"(.rom.00125d8c)
     "*/recon/tla/fr/rom.o"(.rom.00126230)
     "*/recon/tla/fr/rom.o"(.rom.001262a4)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/TRANSWRK.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00126414)
     "*/recon/tla/fr/rom.o"(.rom.0012681c)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)

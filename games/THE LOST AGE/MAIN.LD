@@ -1200,6 +1200,7 @@ SECTIONS
         "*/recon/tla/ja/rom.o"(.rom.00125d70)
     "*/recon/tla/ja/rom.o"(.rom.00126214)
     "*/recon/tla/ja/rom.o"(.rom.00126288)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/TRANSWRK.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001263f8)
     "*/recon/tla/ja/rom.o"(.rom.00126800)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)

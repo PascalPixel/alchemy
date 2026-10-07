@@ -29723,11 +29723,11 @@ msgctxt "MsgFieldThePeopleOfGarohBrought"
 msgid "07428"
 msgstr "La gente di Garoh ha portato{line_break}su di sé la maledizione,{line_break}adorando il loro dio folle...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEverythingSSoBoringHere"
 msgid "07429"
 msgstr "Tutto è così noioso qui...{line_break}perché qualcuno non fa{line_break}niente di... criminale?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTKnowWhy3"
 msgid "07430"
 msgstr "Non so perché ci siano{line_break}così tanti stranieri ad Alhafra,{line_break}ma non promette bene.{end_wait}"
 
@@ -29871,7 +29871,7 @@ msgctxt "MsgFieldWhenIThinkAboutHow"
 msgid "07465"
 msgstr "Quando penso a quanto ci{line_break}vorrà per tornare a casa,{line_break}Champa mi manca più di prima.{page_break}Sono contento che nessuno a casa{line_break}sospetti che siamo pirati.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorOfMadraHere"
 msgid "07466"
 msgstr "Il sindaco di Madra? Qui?{end_wait}"
 
@@ -30015,7 +30015,7 @@ msgctxt "message"
 msgid "07501"
 msgstr "Siete voi signorini{line_break}saccenti che{line_break}prenderete una lezione!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWellThatTakesCareOf"
 msgid "07502"
 msgstr "E questo risolve la questione!{end_wait}"
 
@@ -30547,7 +30547,7 @@ msgctxt "message"
 msgid "07634"
 msgstr "Sei contrario? Poiché{line_break}sembra che tu abbia{line_break}altre idee, andiamo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGooGooGaGa"
 msgid "07635"
 msgstr "Goo goo ga ga!{end_wait}"
 
@@ -30555,15 +30555,15 @@ msgctxt "message"
 msgid "07636"
 msgstr "Eoleo ha iniziato da poco{line_break}a farlo... Dopo che una gemma{line_break}caduta dal cielo l'ha colpito.{page_break}Ha superato una febbre terribile,{line_break}e quando si è ripreso{line_break}aveva questo potere.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEoleoAndIAreGoing"
 msgid "07637"
 msgstr "Eoleo ed io andremo a visitare{line_break}Briggs ogni giorno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMGonnaUseMy"
 msgid "07638"
 msgstr "Userò la mia magia{line_break}per liberare papà.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfEoleoGetsTheHang"
 msgid "07639"
 msgstr "Se Eoleo imparasse a usarla,{line_break}allora forse Briggs potrebbe...{end_wait}"
 
@@ -30959,7 +30959,7 @@ msgctxt "MsgFieldIThinkThisManMight"
 msgid "07737"
 msgstr "Credo che quest'uomo{line_break}potrebbe anche sconfiggere{line_break}i pericolosi lupi mannari...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouHereToSeeBriggs"
 msgid "07738"
 msgstr "Siete qui per vedere Briggs?{end_wait}"
 
@@ -31063,11 +31063,11 @@ msgctxt "message"
 msgid "07763"
 msgstr "WAAAH!"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeBeenWayToo"
 msgid "07764"
 msgstr "Sono stato COSÌ occupato da{line_break}quando avete catturato Briggs{line_break}e la sua ciurma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhStoppedByForA"
 msgid "07765"
 msgstr "Oh, vi siete fermati{line_break}a farmi visita?{end_now}"
 
@@ -31079,43 +31079,43 @@ msgctxt "message"
 msgid "07767"
 msgstr "Quindi siete venuti{line_break}per controllarci?{page_break}Ah! Come potete vedere,{line_break}non stiamo causando problemi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHatePrisonTheFood"
 msgid "07768"
 msgstr "Odio la prigione. Il cibo fa schifo...{page_break}La mia branda è così dura...{line_break}È anche peggio di quando{line_break}ero un pirata.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSoundsLikeTheMayor"
 msgid "07769"
 msgstr "Pare che il sindaco di{line_break}Alhafra non voglia più riparare{line_break}la nave.{page_break}Immagino che passerà{line_break}del tempo prima che{line_break}l'albero venga alzato.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEverythingWouldHaveBeenFine"
 msgid "07770"
 msgstr "Sarebbe andato tutto bene{line_break}se non ci foste stati voi{line_break}ragazzini!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISawYouStaringAt"
 msgid "07771"
 msgstr "Ho visto che guardavate{line_break}Eoleo... Ma non potete{line_break}aver capito...{page_break}N-No! Certo che no!{line_break}Nessuno può.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSSoBoringHere"
 msgid "07772"
 msgstr "È così noioso quando sono{line_break}da solo. Mi fa piacere{line_break}avere compagnia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHasStrangePowersOfHis"
 msgid "07773"
 msgstr "Anche {actor_name:5} ha degli strani{line_break}poteri, meglio che non veda{line_break}ciò che Eoleo può fare.{page_break}Altrimenti potrebbe cercare{line_break}di bloccare la nostra fuga...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMNotStayingIn"
 msgid "07774"
 msgstr "Non rimarrò in questa cella{line_break}per sempre. In un modo o{line_break}nell'altro uscirò di qui!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfTheyDonTFix"
 msgid "07775"
 msgstr "Se non riparano{line_break}la nave non si andrà{line_break}da nessuna parte.{page_break}Scommetto che l'avido sindaco{line_break}di Alhafra non vuole che{line_break}Madra ci guadagni.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhWhatSThatPunk"
 msgid "07776"
 msgstr "Oh, cosa cerca ancora {actor_name:5}{line_break}qui? Spero che sparisca!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHearSomePeopleCan"
 msgid "07777"
 msgstr "Ho sentito che alcuni vedono{line_break}il potere di Eoleo... Anch'io{line_break}vorrei! Ma come?{end_wait}"
 
@@ -40443,11 +40443,11 @@ msgctxt "MsgFieldTheyWereSoConfidentWhen"
 msgid "10108"
 msgstr "Erano così contenti di averlo{line_break}catturato, ma hanno fatto{line_break}poca attenzione ed è fuggito!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBeforeIKnewItChaucha"
 msgid "10109"
 msgstr "Prima che me ne accorgessi,{line_break}Chaucha ha rubato le chiavi{line_break}e Briggs e i suoi sono fuggiti.{page_break}Non mi sono distratto! Mai!{line_break}Non ho abbassato la guardia!{line_break}Come è successo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoMatterHowManyTimes"
 msgid "10110"
 msgstr "Non importa quante volte{line_break}ci ripensi. Non sono{line_break}convinto...{page_break}Un momento... forse Eoleo{line_break}c'entra qualcosa? Mi è{line_break}sempre stato dietro...{end_wait}"
 

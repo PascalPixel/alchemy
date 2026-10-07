@@ -87,7 +87,7 @@ Func_020000a0:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020080e8:
-	.4byte 0x00001c92
+	.4byte MsgFieldOhStoppedByForA
 	.section .text.x020080ec,"ax",%progbits
 	.global Func_020000ec
 	.thumb_func
@@ -1413,7 +1413,7 @@ Func_02000818:
 	b .L_02008ca8
 	.2byte 0x0000
 .L_02008c9c:
-	.4byte 0x00001c77
+	.4byte MsgFieldYouHereToSeeBriggs
 .L_02008ca0:
 	.4byte Data_02001610
 .L_02008ca4:
@@ -2537,52 +2537,52 @@ Data_02001a90:
 	.4byte Func_02000818
 	.4byte 0x00000000
 	.4byte 0x08a70017
-	.4byte 0x00001b42
+	.4byte MsgFieldEverythingSSoBoringHere
 	.4byte 0x00008d15
 	.4byte 0x08a70017
-	.4byte 0x00001b43
+	.4byte MsgFieldIDonTKnowWhy3
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x000025ba
+	.4byte MsgFieldBeforeIKnewItChaucha
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x000025bb
+	.4byte MsgFieldNoMatterHowManyTimes
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001c91
+	.4byte MsgFieldIVeBeenWayToo
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_020000a0
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001c95
+	.4byte MsgFieldIHatePrisonTheFood
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001c96
+	.4byte MsgFieldItSoundsLikeTheMayor
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001c97
+	.4byte MsgFieldEverythingWouldHaveBeenFine
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001c98
+	.4byte MsgFieldISawYouStaringAt
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001c99
+	.4byte MsgFieldItSSoBoringHere
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001c9a
+	.4byte MsgFieldHasStrangePowersOfHis
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001c9b
+	.4byte MsgFieldIMNotStayingIn
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001c9c
+	.4byte MsgFieldIfTheyDonTFix
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001c9d
+	.4byte MsgFieldOhWhatSThatPunk
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001c9e
+	.4byte MsgFieldIHearSomePeopleCan
 	.4byte 0x00008515
 	.4byte 0x0200000a
 	.4byte 0x00000000

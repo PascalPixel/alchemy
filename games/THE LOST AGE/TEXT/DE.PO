@@ -29895,11 +29895,11 @@ msgctxt "MsgFieldThePeopleOfGarohBrought"
 msgid "07471"
 msgstr "Das Volk von Garoh hat den{line_break}Fluch selbst auf sich geladen,{page_break}weil sie ihre lasterhafte{line_break}Gottheit verehren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEverythingSSoBoringHere"
 msgid "07472"
 msgstr "Hier ist alles so langweilig...{line_break}Warum macht hier nicht endlich{line_break}jemand mal was... Verbotenes?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTKnowWhy3"
 msgid "07473"
 msgstr "Ich weiß nicht, warum gerade so{line_break}viele Fremde in Alhafra sind,{page_break}aber das bedeutet sicher nichts{line_break}Gutes...{end_wait}"
 
@@ -30043,7 +30043,7 @@ msgctxt "MsgFieldWhenIThinkAboutHow"
 msgid "07508"
 msgstr "Wenn ich daran denke, wie lange{line_break}es noch dauert, bis wir zu Hause{line_break}sind,{page_break}vermisse ich Champa umso mehr!{page_break}Ich bin nur froh darüber, dass{line_break}in Champa niemand weiß, dass{line_break}wir Piraten sind.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorOfMadraHere"
 msgid "07509"
 msgstr "Der Bürgermeister von Madra?{line_break}Hier?{end_wait}"
 
@@ -30187,7 +30187,7 @@ msgctxt "message"
 msgid "07544"
 msgstr "Hütet eure Zungen, ihr selbst-{line_break}gerechten kleinen Gören!{page_break}Ihr seid diejenigen, für die nun{line_break}eine Lektion fällig wird!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWellThatTakesCareOf"
 msgid "07545"
 msgstr "Gut, so viel dazu!{end_wait}"
 
@@ -30719,7 +30719,7 @@ msgctxt "message"
 msgid "07677"
 msgstr "Du bist dagegen? Nun, da du{line_break}offensichtlich deine eigenen{line_break}Ideen hast, lass uns gehen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGooGooGaGa"
 msgid "07678"
 msgstr "Gu-gu-ga-ga!{end_wait}"
 
@@ -30727,15 +30727,15 @@ msgctxt "message"
 msgid "07679"
 msgstr "Eoleo besitzt diese Fähigkeit{line_break}erst seit kurzem. Erst seit dieser{line_break}Stein vom Himmel fiel und ihn{page_break}am Kopf traf. Danach litt er an{line_break}einem schrecklichen Fieber.{line_break}Als er wieder gesund war,{page_break}verfügte er plötzlich über diese{line_break}Gabe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEoleoAndIAreGoing"
 msgid "07680"
 msgstr "Eoleo und ich werden Briggs{line_break}jeden Tag besuchen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMGonnaUseMy"
 msgid "07681"
 msgstr "Ich werde meine Magie einsetzen,{line_break}um Papa zu befreien!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfEoleoGetsTheHang"
 msgid "07682"
 msgstr "Wenn Eoleo lernt, seine Fähigkeiten{line_break}zu beherrschen, kann Briggs{line_break}vielleicht...{end_wait}"
 
@@ -31131,7 +31131,7 @@ msgctxt "MsgFieldIThinkThisManMight"
 msgid "07780"
 msgstr "Ich glaube, dieser Mann könnte{line_break}sogar die schrecklichen Werwölfe{line_break}besiegen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouHereToSeeBriggs"
 msgid "07781"
 msgstr "Seid ihr hier, um Briggs zu sehen?{end_wait}"
 
@@ -31235,11 +31235,11 @@ msgctxt "message"
 msgid "07806"
 msgstr "WUÄÄÄH!!!"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeBeenWayToo"
 msgid "07807"
 msgstr "Seit ihr Briggs und seine{line_break}Piratenbande gefasst habt,{line_break}habe ich VIEL ZU VIEL zu tun!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhStoppedByForA"
 msgid "07808"
 msgstr "Oh, hattet ihr Sehnsucht nach{line_break}meinem hübschen Gesicht?{end_now}"
 
@@ -31251,43 +31251,43 @@ msgctxt "message"
 msgid "07810"
 msgstr "Dann seid ihr also nur hier, um{line_break}zu sehen, ob wir noch hinter{line_break}Gittern sitzen?{page_break}Ha! Wie ihr sehen könnt, treiben{line_break}wir keinen Unfug!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHatePrisonTheFood"
 msgid "07811"
 msgstr "Ich hasse das Gefängnis! Das{line_break}Essen ist schrecklich, mein Bett{line_break}ist hart und zerlumpt...{page_break}Da hatte ich ja als Pirat noch{line_break}mehr Luxus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSoundsLikeTheMayor"
 msgid "07812"
 msgstr "Es klingt, als hätte der Bürger-{line_break}meister von Alhafra sein Inte-{line_break}resse daran verloren,{page_break}das Boot zu reparieren.{page_break}Das bedeutet, dass wohl noch{line_break}etwas Zeit vergehen wird, bis{line_break}der Mast repariert ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEverythingWouldHaveBeenFine"
 msgid "07813"
 msgstr "Alles wäre in Ordnung gewesen,{line_break}wenn ihr Fratzen euch nicht{line_break}eingemischt hättet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISawYouStaringAt"
 msgid "07814"
 msgstr "Ich habe gesehen, wie ihr Eoleo{line_break}angestarrt habt. Aber ihr könnt{line_break}es unmöglich wissen...{page_break}N-Nein! Natürlich nicht!{line_break}Niemand könnte das wissen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSSoBoringHere"
 msgid "07815"
 msgstr "Es ist so langweilig hier, wenn{line_break}man niemanden zu bewachen hat.{page_break}Ich bin froh, dass ich jetzt{line_break}Gesellschaft habe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHasStrangePowersOfHis"
 msgid "07816"
 msgstr "{actor_name:5} verfügt selbst über{line_break}merkwürdige Kräfte. Wir dürfen{line_break}nicht zulassen,{page_break}dass er sieht, was Eoleo tun kann.{page_break}Wenn er es herausfindet, ruiniert{line_break}er vielleicht unsere einzige{line_break}Chance zur Flucht!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMNotStayingIn"
 msgid "07817"
 msgstr "Ich werde nicht für immer in{line_break}dieser blöden Zelle bleiben!{page_break}Auf irgendeine Art und Weise{line_break}werde ich schon einen Weg{line_break}nach draußen finden!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfTheyDonTFix"
 msgid "07818"
 msgstr "Wenn das Boot nicht repariert{line_break}wird, fährt es nirgendwohin!{page_break}Ich wette, der habgierige{line_break}Bürgermeister von Alhafra{line_break}sieht es gar nicht gern,{page_break}wenn Madra ein Vorteil aus{line_break}der Sache erwächst.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhWhatSThatPunk"
 msgid "07819"
 msgstr "Oh, was macht denn {actor_name:5}{line_break}jetzt schon wieder, der Trottel?{page_break}Ich wünschte, dieser{line_break}Störenfried würde sich{line_break}endlich verp...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHearSomePeopleCan"
 msgid "07820"
 msgstr "Ich hörte, manche Menschen{line_break}können Eoleos Kräfte sehen.{line_break}Ich will sie auch sehen können!{page_break}Wie macht er das nur?{end_wait}"
 
@@ -40615,11 +40615,11 @@ msgctxt "MsgFieldTheyWereSoConfidentWhen"
 msgid "10151"
 msgstr "Als man ihn fasste, waren alle{line_break}so zuversichtlich.{page_break}Aber sie haben nicht aufgepasst{line_break}und er ist wieder entkommen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBeforeIKnewItChaucha"
 msgid "10152"
 msgstr "Bevor ich es bemerkte, hatte{line_break}Dja-Odja auch schon die{line_break}Schlüssel zum Gefängnis!{page_break}Natürlich hat sie sie sofort{line_break}Briggs und seinen Leuten{line_break}gegeben.{page_break}Kein einziges Mal habe ich sie{line_break}aus den Augen gelassen! Nicht{line_break}einmal! Ich bin immer wachsam!{page_break}Wie konnte das nur geschehen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoMatterHowManyTimes"
 msgid "10153"
 msgstr "Egal, wie oft ich es mir durch{line_break}den Kopf gehen lasse, irgend-{line_break}etwas passt einfach nicht!{page_break}Moment mal... Hatte Eoleo{line_break}vielleicht etwas damit zu{line_break}tun?{page_break}Er stand die ganze Zeit über{line_break}hinter mir...{end_wait}"
 

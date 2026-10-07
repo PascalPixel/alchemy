@@ -29163,7 +29163,7 @@ msgctxt "MsgFieldWhenIThinkAboutHow"
 msgid "07288"
 msgstr "ああ かえれないとおもうと{line_break}よけいチャンパに かえりたい{page_break}しかし チャンパ村のみんなは{line_break}オレたちが かいぞくだなんて{line_break}知らないんだよなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheMayorOfMadraHere"
 msgid "07289"
 msgstr "マドラの町長だと!{end_wait}"
 
@@ -29307,7 +29307,7 @@ msgctxt "message"
 msgid "07324"
 msgstr "ふん しゃらくさいヤツらめ{line_break}オレをたおすつもりらしいが{line_break}かえりうちに してやるぜ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWellThatTakesCareOf"
 msgid "07325"
 msgstr "ふう やっつけたわね。{end_wait}"
 
@@ -29839,7 +29839,7 @@ msgctxt "message"
 msgid "07457"
 msgstr "はんたいなのね 兄さんには{line_break}かんがえがあるみたいだから{line_break}わたしたち それにしたがうわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGooGooGaGa"
 msgid "07458"
 msgstr "バブバブ バブバブ。{end_wait}"
 
@@ -29847,15 +29847,15 @@ msgctxt "message"
 msgid "07459"
 msgstr "レオレオが その力をもったのは{line_break}すこし前 空からおちてきた宝石が{line_break}ぶつかった時からなのよ{page_break}こうねつを出したレオレオが{line_break}ねむりから めざめてみると{line_break}この力をさずかってたのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEoleoAndIAreGoing"
 msgid "07460"
 msgstr "わたし レオレオをつれて{line_break}まいにち パヤヤームに{line_break}あいに行くことにするわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMGonnaUseMy"
 msgid "07461"
 msgstr "ボクの力をうまく使ったら{line_break}パパをたすけられまちゅよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfEoleoGetsTheHang"
 msgid "07462"
 msgstr "レオレオが うまくやれれば{line_break}きっとパヤヤームのことを・・・。{end_wait}"
 

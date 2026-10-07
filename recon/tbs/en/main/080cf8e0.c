@@ -1,4 +1,25 @@
-/* Draft: native 670 instructions, draft 670, common 636, differ 68.
+/* Draft: native 670 instructions, draft 670, common 638, differ 64.
+ * Seventh pass (2026-10-07): the burst count indexes records with a row
+ * temporary (FAKEMATCH, 68 -> 64, a permuter hint): records[mode * 2]
+ * expands to (plus (mult mode 2) records), the multiply first as RTL
+ * canonical order puts it, so reload loads the row into r0 and the table
+ * into r1; with a plain register index the address keeps records first
+ * and native's load order (table r0, row r1). The global
+ * SevenMode_Records[mode * 2] keeps native's order too, which is why only
+ * the uses of the local pointer swap: with the count through the global and
+ * the burst velocity test through records, the swap moves to the velocity
+ * test (68). The shard draw and both loop tails remain (r4 at the call).
+ * Seventh-pass trials: (mode * 2)[records] 68; group set in the burst
+ * for's init and increment (for (i = 0, group = k * 4; ...; i++,
+ * group = k * 4)) without the burst flush 92: the address stays unreduced
+ * as native, but k << 2 lands before the count guard and group << 3 at the
+ * loop tail. Without the step flush the hit block's join label (1 use) is
+ * skipped AROUND by CSE's path following (cse_end_of_basic_block,
+ * skip_blocks), which carries k << 3 (reg 214) and shot (reg 215) past
+ * the hit block to the variant test and step: native's loss needs that
+ * label to have a second use, a code label inside the hit block, or a
+ * NOTE_INSN_LOOP_END between the join and the variant test; no natural
+ * source for any of them found yet.
  * Sixth pass, later (2026-10-07): the burst count reads SevenMode_Records
  * through a local s8 *records (197 -> 80): the reload rotation through the
  * burst block and the k-loop tail now match. Whether the pointer is
@@ -360,10 +381,15 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                         if (shot->y < 0) {
                             s32 count;
                             s8 *records = SevenMode_Records;
+                            s32 row;
 
                             shot->y = 0;
                             shot->variant = 1;
-                            if (records[mode * 2] == 0)
+                            /* FAKEMATCH: native loads the table address before the row
+                               (r0, r1); records[mode * 2] puts the multiply first in the
+                               address and reload loads the row first (68 -> 64). */
+                            row = mode * 2;
+                            if (records[row] == 0)
                                 count = 4;
                             else
                                 count = 16;

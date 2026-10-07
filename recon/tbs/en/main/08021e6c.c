@@ -1,3 +1,4 @@
+/* Stubborn (2026-10-07, S11-08021e6c session 5): differ 237 -> 59 (listing 1037, draft 1036, common 1007). Not matched. Three causes found and fixed. (1) The 0 stored to gBgScroll[1].x is native's hoisted, spilled 0 (reload's HImode reload of a REG_EQUIV 0 takes *thumb_movhi_insn's "mn" alternative, a pool ldrh), so the pool 0 and the first pool's place after the if (mode) branch follow once loop.c moves the main loop's combined 0 (scale_x's mask 0, both content zeros, menu_busy = 0): it needs threshold 15 * savings 4 * lifetime >= 619 insns, and loop.c's luids count NOTE_INSN_BLOCK_BEG/END, so the scale code in a block with its frame counter and the gBgScroll stores in a block with their pointer give lifetime 11 (unblocked 9, not desirable; y before x also gives 11 but stores y first). (2) count is a variable of each mode's block and each mode's count = work->count sits in its row loop: separate counts drop below work in global.c's priority (native count in fp, count * 3 in sl, work in r9), and the mode-0 body no longer begins with the 432 that cse_around_loop replaced, so its exit test compares count as in mode 1. (3) message declared where it is used (the auto_enabled == 1 block) keeps a hard register through global, so reload spills it after &selection (sp+20) as native; and work->selection + work->count - 1 in the up-repeat modulus. Left: the content loops' index and pattern row bivs swapped (native index r6, pattern r5, both modes), and the closing loop's last add folded into strh r6, [r3, r7] (native adds r3, r7; strh [r3]), which is the one instruction short. */
 /* Stubborn (2026-10-07, S10-08021e6c session 4): differ 357 -> 237 (listing 1037, draft 1038, common 919). Not matched. count is one variable for both content loops, declared at the rebuild block (s32 count; then count = work->count inside each panel loop): its pseudo now outranks work in global.c's priority (floor_log2(n) * n / live: count 15 refs over 43 insns, 1.05; work 88 over 698, 0.756; count * 3 9 over 38, 0.71), so work takes r9 as native everywhere. Left: count in sl and count * 3 in fp (native fp and sl: native ranks count * 3 above work and count below it), the mode-0 content loop's exit test still reloads work->count through 432 to a spill at sp+24 (native cmp lr, fp), the index and pattern row bivs swapped (native index r6, pattern r5), the 0 stored to gBgScroll[1].x shared with rebuild = 0 (native a pool 0), the stack slots below scale 4 or 8 lower than native, the literal pool after the mode-1 blank loop. */
 /* Trial (S10 session 4, from 357): mode-0 count at block scope (s32 count; count = work->count in the panel loop): 357; mode-0 as count = work->count; for (panel = 0; panel < count; ...): 339 (draft 1030); the same in mode 1 too: 370; count shared by both modes at the rebuild block: 237 (kept); count shared and panel shared too: 237; count shared but either mode's own s32 count = work->count: 357 each; i or num (function scope) as count: 237 and 332; work->selection + work->count - 1 in the up-repeat modulus on 237: 258 (native's operand order, but one instruction fewer elsewhere); (panel - count) * 3 in both stores: 659; a separate ofs = count * 3: 916. */
 /* Diagnosis (S10 session 4, at 237): the mode-0 exit-test reload is cse.c's cse_around_loop (cse1). The mode-0 panel loop's end test is followed directly by its NOTE_INSN_LOOP_END, so cse_basic_block ends there and copies the end test's 432 register (reg 409) into the loop preheader; the body's count load then reuses that 432 and loop.c hoists the end test's work->count load to its own spill. The mode-1 loop's end test is followed by the jump over the else branch, so no around-loop, and its end test CSEs into count (cmp lr, fp), as native does in both. Native's mode-0 loop therefore either ends in a jump at cse1 time or its extended block alters a jump (cse_jumps_altered), and the source shape that gives that is still unknown. If found, work also loses the mode-0 refs (mov r4, r9; ldr [r4, r2]) and may fall below count * 3 in priority, native's order. Trials on 237: mode-0 limit as work->count > panel 243; mode-0 blank limit as work->count + panel < 6 256; mode-0 panels as panel = 0; if (...) do { ... panel++; } while (panel < work->count) 267; a trailing empty statement 237; the branches swapped as if (mode == 0) { mode 0 } else { mode 1 } 281 (lays mode 0 out first, unlike native); alchemy permute 5 min, 2 jobs, seed 41, --heat: no candidate beat 237. */
@@ -113,7 +114,6 @@ s32 Ui_RunSelectionScreen(s32 mode)
     struct SelectionWork *work;
     struct MenuCell *runtime;
     s32 rebuild, trade_count, scale, result;
-    struct UiWindow *message;
     s32 cnt;
     s32 keys, repeat;
     s32 slot;
@@ -181,18 +181,24 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
-        scale = Ui_BounceScales[(gFrameCount * 2) & 31];
-        scale = (scale - 256) / 4 + 304;
-        work->affine.scale_x = scale;
-        work->affine.scale_y = scale;
-        gBgScroll[1].x = 0;
-        gBgScroll[1].y = 32;
+        {
+            s32 frame = gFrameCount;
+            scale = Ui_BounceScales[(frame * 2) & 31];
+            scale = (scale - 256) / 4 + 304;
+            work->affine.scale_x = scale;
+            work->affine.scale_y = scale;
+        }
+        {
+            struct BgScroll *bg = gBgScroll;
+            bg[1].x = 0;
+            bg[1].y = 32;
+        }
         if (rebuild != 0) {
-            s32 count;
             rebuild = 0;
             render->menu_busy = 1;
             if (mode) {
                 s32 panel;
+                s32 count;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
@@ -214,6 +220,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 }
             } else {
                 s32 panel;
+                s32 count;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
@@ -222,9 +229,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
-                    count = work->count;
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
+                        count = work->count;
                         for (col = 0; col <= 2; col++) {
                             s32 tmp3;
                             ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100;
@@ -278,6 +285,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     s32 kind = work->kinds[work->selection];
                     if (kind == 16 || (trade_count == 0 && kind == 15)) {
                         if (runtime->auto_enabled == 1) {
+                            struct UiWindow *message;
                             if (kind == 15)
                                 message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialUnleashCommand, 15, 8);
                             else if (kind == 16)
@@ -320,7 +328,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->selection = __modsi3(work->selection + 1, work->count);
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
-            work->selection = __modsi3(work->count + work->selection - 1, work->count);
+            work->selection = __modsi3(work->selection + work->count - 1, work->count);
         } else if (gLinkCountdownWork->active == 0) {
             result = work->kinds[0];
             break;

@@ -9307,7 +9307,7 @@ msgctxt "MsgHpRecover"
 msgid "02324"
 msgstr "{argument_actor_name:1} récupère {argument_signed_number} PV!"
 
-msgctxt "MsgPpRecover"
+msgctxt "MsgEpRecover"
 msgid "02325"
 msgstr "{argument_actor_name:1} récupère {argument_signed_number} PP!"
 
@@ -9319,7 +9319,7 @@ msgctxt "MsgHpFull"
 msgid "02327"
 msgstr "{argument_actor_name:1} a récupéré tous ses PV!"
 
-msgctxt "MsgPpFull"
+msgctxt "MsgEpFull"
 msgid "02328"
 msgstr "{argument_actor_name:1} a récupéré tous ses PP!"
 
@@ -9351,11 +9351,11 @@ msgctxt "MsgReaperCalls"
 msgid "02335"
 msgstr "La Faucheuse appelle {argument_actor_name:1}!"
 
-msgctxt "MsgPpLossE"
+msgctxt "MsgEpLossE"
 msgid "02336"
 msgstr "{argument_actor_name:1} perd {argument_signed_number} PP!"
 
-msgctxt "MsgPpLossP"
+msgctxt "MsgEpLossP"
 msgid "02337"
 msgstr "{argument_actor_name:1} perd {argument_signed_number} PP!"
 

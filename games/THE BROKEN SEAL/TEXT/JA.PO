@@ -8319,7 +8319,7 @@ msgctxt "MsgHpRecover"
 msgid "02077"
 msgstr "{argument_actor_name:234} HPが{argument_signed_number}かいふくした!"
 
-msgctxt "MsgPpRecover"
+msgctxt "MsgEpRecover"
 msgid "02078"
 msgstr "{argument_actor_name:234} EPが{argument_signed_number}かいふくした!"
 
@@ -8331,7 +8331,7 @@ msgctxt "MsgHpFull"
 msgid "02080"
 msgstr "{argument_actor_name:234} HPが ぜんかいした!"
 
-msgctxt "MsgPpFull"
+msgctxt "MsgEpFull"
 msgid "02081"
 msgstr "{argument_actor_name:234} EPが ぜんかいした!"
 
@@ -8363,11 +8363,11 @@ msgctxt "MsgReaperCalls"
 msgid "02088"
 msgstr "{argument_actor_name:234} しりょうのよびごえをきいた!"
 
-msgctxt "MsgPpLossE"
+msgctxt "MsgEpLossE"
 msgid "02089"
 msgstr "{argument_actor_name:230} {argument_signed_number}の EPダメージ!"
 
-msgctxt "MsgPpLossP"
+msgctxt "MsgEpLossP"
 msgid "02090"
 msgstr "{argument_actor_name:234} {argument_signed_number}の EPダメージ!"
 

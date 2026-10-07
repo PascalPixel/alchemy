@@ -12719,7 +12719,7 @@ msgctxt "MsgHpRecover"
 msgid "03177"
 msgstr "{argument_actor_name:234} HPが{argument_signed_number}かいふくした!"
 
-msgctxt "MsgPpRecover"
+msgctxt "MsgEpRecover"
 msgid "03178"
 msgstr "{argument_actor_name:234} EPが{argument_signed_number}かいふくした!"
 
@@ -12731,7 +12731,7 @@ msgctxt "MsgHpFull"
 msgid "03180"
 msgstr "{argument_actor_name:234} HPが ぜんかいした!"
 
-msgctxt "MsgPpFull"
+msgctxt "MsgEpFull"
 msgid "03181"
 msgstr "{argument_actor_name:234} EPが ぜんかいした!"
 
@@ -12763,11 +12763,11 @@ msgctxt "message"
 msgid "03188"
 msgstr "{argument_actor_name:234} しりょうのよびごえをきいた!"
 
-msgctxt "MsgPpLossE"
+msgctxt "MsgEpLossE"
 msgid "03189"
 msgstr "{argument_actor_name:230} {argument_signed_number}の EPダメージ!"
 
-msgctxt "MsgPpLossP"
+msgctxt "MsgEpLossP"
 msgid "03190"
 msgstr "{argument_actor_name:234} {argument_signed_number}の EPダメージ!"
 

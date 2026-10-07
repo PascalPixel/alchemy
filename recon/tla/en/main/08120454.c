@@ -777,9 +777,9 @@ pow_end:
                 s32 mes;
 
                 if (MIKATA_CHK(tid))
-                    mes = (s32)MsgPpLossP;
+                    mes = (s32)MsgEpLossP;
                 else
-                    mes = (s32)MsgPpLossE;
+                    mes = (s32)MsgEpLossE;
                 BtlEvPush(BEV_MES, mes);
                 ep -= dmg;
             }
@@ -1005,10 +1005,10 @@ pow_end:
             }
             BtlEvPush(BEV_UNIT, tid);
             if (ep == target->max_ep)
-                MES_PUSH(MsgPpFull);
+                MES_PUSH(MsgEpFull);
             else {
                 BtlEvPush(BEV_NUM, dmg);
-                MES_PUSH(MsgPpRecover);
+                MES_PUSH(MsgEpRecover);
             }
             target->ep = ep;
             UnitRatioFar(tid);
@@ -1260,10 +1260,10 @@ pow_end:
             if (tmp == 0 && type != 11)
                 break;
             if (heal == (s16)maxu)
-                MES_PUSH(MsgPpFull);
+                MES_PUSH(MsgEpFull);
             else {
                 BtlEvPush(BEV_NUM, tmp);
-                MES_PUSH(MsgPpRecover);
+                MES_PUSH(MsgEpRecover);
             }
             target->ep = heal;
             UnitRatioFar(tid);
@@ -1543,10 +1543,10 @@ pow_end:
             BtlEvPush(BEV_CLR, 0);
             BtlEvPush(BEV_UNIT, aid);
             if (heal == actor->max_ep)
-                MES_PUSH(MsgPpFull);
+                MES_PUSH(MsgEpFull);
             else {
                 BtlEvPush(BEV_NUM, amt);
-                MES_PUSH(MsgPpRecover);
+                MES_PUSH(MsgEpRecover);
             }
             actor->ep = heal;
             UnitRatioFar(aid);

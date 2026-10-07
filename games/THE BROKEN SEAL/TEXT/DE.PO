@@ -9307,7 +9307,7 @@ msgctxt "MsgHpRecover"
 msgid "02324"
 msgstr "{argument_actor_name:1} erhält {argument_signed_number} KP!"
 
-msgctxt "MsgPpRecover"
+msgctxt "MsgEpRecover"
 msgid "02325"
 msgstr "{argument_actor_name:1} erhält {argument_signed_number} PP!"
 
@@ -9319,7 +9319,7 @@ msgctxt "MsgHpFull"
 msgid "02327"
 msgstr "{argument_actor_name:1}{possessive_suffix} KP sind wieder hergestellt!"
 
-msgctxt "MsgPpFull"
+msgctxt "MsgEpFull"
 msgid "02328"
 msgstr "{argument_actor_name:1}{possessive_suffix} PP sind wieder hergestellt!"
 
@@ -9351,11 +9351,11 @@ msgctxt "MsgReaperCalls"
 msgid "02335"
 msgstr "Der Sensenmann ruft nach {argument_actor_name:1}!"
 
-msgctxt "MsgPpLossE"
+msgctxt "MsgEpLossE"
 msgid "02336"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 
-msgctxt "MsgPpLossP"
+msgctxt "MsgEpLossP"
 msgid "02337"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 

@@ -156,9 +156,9 @@ s32 Battle_ProcessRoundEnd(void)
                     UiWork_PushValueSlotFar(id, 1);
                     UiWork_PushValueSlotFar(pp_amount, 5);
                     if (unit->ep == unit->max_ep) {
-                        UiText_ShowMessageAndWaitCoreFar((s32)MsgPpFull);
+                        UiText_ShowMessageAndWaitCoreFar((s32)MsgEpFull);
                     } else {
-                        UiText_ShowMessageAndWaitCoreFar((s32)MsgPpRecover);
+                        UiText_ShowMessageAndWaitCoreFar((s32)MsgEpRecover);
                     }
                     Audio_PlayCue(175);
                     BattlePresentation_WaitForAdvance();

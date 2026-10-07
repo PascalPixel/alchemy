@@ -14563,7 +14563,7 @@ msgctxt "MsgHpRecover"
 msgid "03638"
 msgstr "{argument_actor_name:1} erhält {argument_signed_number} KP!"
 
-msgctxt "MsgPpRecover"
+msgctxt "MsgEpRecover"
 msgid "03639"
 msgstr "{argument_actor_name:1} erhält {argument_signed_number} PP!"
 
@@ -14575,7 +14575,7 @@ msgctxt "MsgHpFull"
 msgid "03641"
 msgstr "{argument_actor_name:1}{possessive_suffix} KP sind wiederhergestellt!"
 
-msgctxt "MsgPpFull"
+msgctxt "MsgEpFull"
 msgid "03642"
 msgstr "{argument_actor_name:1}{possessive_suffix} PP sind wiederhergestellt!"
 
@@ -14607,11 +14607,11 @@ msgctxt "message"
 msgid "03649"
 msgstr "Der Sensenmann ruft nach {argument_actor_name:1}!"
 
-msgctxt "MsgPpLossE"
+msgctxt "MsgEpLossE"
 msgid "03650"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 
-msgctxt "MsgPpLossP"
+msgctxt "MsgEpLossP"
 msgid "03651"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 

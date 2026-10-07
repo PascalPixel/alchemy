@@ -1,10 +1,36 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2030, differ 1892.
- * Session 2026-10-07 (completion queue 2): the frame is 764, native 768;
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2036, differ 1776.
+ * Session 2026-10-07 (completion queue 2, affine continuation): the frame
+ * now matches native's 768. Four ordinary halfword pointers constrained to
+ * low registers, with the first object offset also low at the loop boundary,
+ * restore the depth-pointer spill without hard-register variable overlap.
+ * The depth pointer currently spills at sp+32, native sp+4. Giving each
+ * object access its own loop-local copy adds native's repeated base loads:
+ * 2036 instructions/differ 1776, from 2030/1892 at the previous checkpoint.
+ * All 13 principal local spill slots and the arrays now have native offsets.
+ * Trial: +m on affine obj: 2049/2023, wrong pointer slot; separate obj copies
+ * alone: 2034/1904, frame 764. Taking &sprites and using it directly in the
+ * affine loop: 2038/1820, but sprites split between sp+64 and sp+60.
+ * Direct affine sprites without address-taking: 2005/1863, offset givs fold.
+ * Hard-register pointer variables inside the loop also overlap offset givs;
+ * earlyclobber inputs do not cure the generated value corruption. Rejected.
+ * Ordinary low pointer constraints alone: 2032/1898, frame 764; add the low
+ * first-offset input: 2034/1780, frame 768; separate object copies: 2036/1776.
+ * Clobber r1: 2030/1756, but moves all four offsets high; making offa an
+ * output: 2028/1766, but replaces its giv with a multiply each iteration.
+ * Separate full-word zero temporaries: 2029/1767, immediate move and copy
+ * instead of native's two pool loads. These lower-scoring forms are not kept.
+ * The assembled affine zero loads are now both full-word pool loads, as
+ * native; the compiler's .s spells ldrh but the assembled diff shows ldr.
+ * Remaining affine differences: halfword-address register order, base
+ * reloads during each read-modify-write, and the depth-pointer spill's
+ * placement. Both affine loop backedges are -146 bytes; the whole native
+ * function still has 10 more instructions.
+ * Previous checkpoint: the frame was 764, native 768;
  * the initial draft was 1974 instructions, differ 1918, frame 756.
  * Pointer declarations follow their allocation order again, followed by
  * frame/state/bet/timer/kind/winnings/counter/digits/count: their spill slots
- * now follow native's order, each at native minus 4. The last missing word
- * is a spill, not another unused local; do not pad it into the frame.
+ * followed native's order, each at native minus 4. The missing word was
+ * the affine depth-pointer spill, not another unused local.
  * The opening tile loop is instruction-exact: i counts bytes, row and j
  * have block scope, and the tagged dst/step constraints keep the address
  * add outside strh and restore native's r2/r7 choices. Direct byte indexing
@@ -810,24 +836,42 @@ void LuckyDice_Run(void)
             *(u32 *)((u8 *)obj + off1) = 0;
         }
 
-        for (i = 0; i != 4; i++) {
-            u32 offa = OBJ_OFF(i * 4 + 0, attr2);
-            u32 offb = OBJ_OFF(i * 4 + 1, attr2);
-            u32 offc = OBJ_OFF(i * 4 + 2, attr2);
-            u32 offd = OBJ_OFF(i * 4 + 3, attr2);
+        {
+            volatile u16 *pa = &affine_a;
+            volatile u16 *pb = &affine_b;
+            volatile u16 *pc = &affine_c;
+            volatile u16 *pd = &affine_d;
 
-            obj = sprites;
-            /* FAKEMATCH: native keeps the object base inside the loop and the four affine offsets simultaneously live. */
-            __asm__ volatile("" : "+rm"(obj));
-            value = depth[i] / 2 + 128;
-            affine_a = value;
-            affine_b = 0;
-            affine_c = 0;
-            affine_d = value;
-            *(u32 *)((u8 *)obj + offa) |= affine_a << 16;
-            *(u32 *)((u8 *)obj + offb) |= affine_b << 16;
-            *(u32 *)((u8 *)obj + offc) |= affine_c << 16;
-            *(u32 *)((u8 *)obj + offd) |= affine_d << 16;
+            for (i = 0; i != 4; i++) {
+                u32 offa = OBJ_OFF(i * 4 + 0, attr2);
+                u32 offb = OBJ_OFF(i * 4 + 1, attr2);
+                u32 offc = OBJ_OFF(i * 4 + 2, attr2);
+                u32 offd = OBJ_OFF(i * 4 + 3, attr2);
+
+                /* FAKEMATCH: native keeps four halfword pointers and the first object offset in low registers; restores the depth-pointer spill and 768-byte frame (764 without). */
+                __asm__ volatile("" : "+l"(pa), "+l"(pb), "+l"(pc), "+l"(pd) : "l"(offa));
+                value = depth[i] / 2 + 128;
+                *pa = value;
+                *pb = 0;
+                *pc = 0;
+                *pd = value;
+                obj = sprites;
+                /* FAKEMATCH: native reloads the object base for each affine field. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + offa) |= *pa << 16;
+                obj = sprites;
+                /* FAKEMATCH: native reloads the object base for each affine field. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + offb) |= *pb << 16;
+                obj = sprites;
+                /* FAKEMATCH: native reloads the object base for each affine field. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + offc) |= *pc << 16;
+                obj = sprites;
+                /* FAKEMATCH: native reloads the object base for each affine field. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + offd) |= *pd << 16;
+            }
         }
 
         Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);

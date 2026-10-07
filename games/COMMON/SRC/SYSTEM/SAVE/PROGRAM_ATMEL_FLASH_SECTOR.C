@@ -26,9 +26,9 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
         0x0e000000 + (slot << Flash_ChipAtmelLayout.shift));
     saved_ime = REG_IME;
     REG_IME = 0;
-    *(volatile u8 *)0x0e005555 = 0xaa;
-    *(volatile u8 *)0x0e002aaa = 0x55;
-    *(volatile u8 *)0x0e005555 = 0xa0;
+    *(volatile u8 *)0x0e005555 = 170;
+    *(volatile u8 *)0x0e002aaa = 85;
+    *(volatile u8 *)0x0e005555 = 160;
 
     remaining = Flash_ChipAtmelLayout.size;
     if (remaining != 0) {

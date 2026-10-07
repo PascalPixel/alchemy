@@ -43,10 +43,10 @@ struct EncounterZone {
 };
 
 struct FieldPartyState {
-    u8 unknown_000[0x1c0];
+    u8 unknown_000[448];
     s16 scene;
     s16 entrance;
-    u8 unknown_1c4[0x74];
+    u8 unknown_1c4[116];
     s32 encounter_steps;
     u8 unknown_23c[8];
     s32 encounters_off;

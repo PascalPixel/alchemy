@@ -176,7 +176,7 @@ begin_transfer:
     saved_interrupt_master = *ime;
     *ime = (u32)ime;
     do {
-        state->status = 0x80;
+        state->status = 128;
         SERIAL_VALUE_A = transfer;
         gSerialBlockSequence = 0;
         *active = value;

@@ -406,8 +406,8 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
         saved_x = shop->cursor.target_x;
         saved_y = shop->cursor.target_y;
         shop->cursor.anchor->active = 4;
-        shop->mode = 0xc;
-        Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
+        shop->mode = 12;
+        Shop_PlaceCursor(NULL, EFFECT_X, 48);
         result = Shop_SelectQuantity(0, selection, effect);
         WaitFrames(1);
         UiIcon_PrepareObjectFar(shop->cursor.anchor);

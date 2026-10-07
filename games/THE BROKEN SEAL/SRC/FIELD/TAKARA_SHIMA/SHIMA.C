@@ -106,7 +106,7 @@ struct Vec {
 };
 
 struct EffectParams {
-    u8 filler00[0x24];
+    u8 filler00[36];
     s32 callback;
 };
 
@@ -536,7 +536,7 @@ void TakaraShima_RunAreaEntry(void)
     if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0) {
         Engine_EventBegin();
         Party_SetFields1ceAnd1d0(gGameState.scene, 5);
-        ((u8 *)((s16 (*)[1])&gGameState))[0x22b] = 3;
+        ((u8 *)((s16 (*)[1])&gGameState))[555] = 3;
         switch (gGameState.scene - (s32)&SceneId_TakaraShima6) {
         case 0:
             BattleFx_SetWeightedResult(63, 0);
@@ -803,18 +803,18 @@ void SetSceneActorModes(int actor_id)
 
 void InitializeEscapeSceneActors(void)
 {
-    MarkGridLeftOfSceneActor(8, 0x11, 0x1E, 0x15);
-    MarkGridLeftOfSceneActor(0xA, 0x11, 0x1F, 0x16);
-    MarkGridAboveSceneActor(0xB, 0x14, 0x1E, 0x17);
-    MarkGridAboveSceneActor(0xC, 0x15, 0x1E, 0x18);
-    MarkGridAboveSceneActor(0xD, 0x16, 0x1E, 0x19);
-    MarkGridAboveSceneActor(0xF, 0x17, 0x1E, 0x1A);
-    MarkGridLeftOfSceneActor(0x11, 0, 0x1E, 0x1F);
-    MarkGridLeftOfSceneActor(0x12, 0, 0x1F, 0x20);
-    MarkGridLeftOfSceneActor(9, 0, 0x20, 0x21);
-    MarkGridAboveSceneActor(0x13, 4, 0x1E, 0x22);
-    MarkGridAboveSceneActor(0xE, 5, 0x1E, 0x23);
-    MarkGridAboveSceneActor(0x10, 6, 0x1E, 0x24);
+    MarkGridLeftOfSceneActor(8, 17, 30, 21);
+    MarkGridLeftOfSceneActor(10, 17, 31, 22);
+    MarkGridAboveSceneActor(11, 20, 30, 23);
+    MarkGridAboveSceneActor(12, 21, 30, 24);
+    MarkGridAboveSceneActor(13, 22, 30, 25);
+    MarkGridAboveSceneActor(15, 23, 30, 26);
+    MarkGridLeftOfSceneActor(17, 0, 30, 31);
+    MarkGridLeftOfSceneActor(18, 0, 31, 32);
+    MarkGridLeftOfSceneActor(9, 0, 32, 33);
+    MarkGridAboveSceneActor(19, 4, 30, 34);
+    MarkGridAboveSceneActor(14, 5, 30, 35);
+    MarkGridAboveSceneActor(16, 6, 30, 36);
 }
 
 void ActivateSceneActor8(void)
@@ -2047,7 +2047,7 @@ s32 UpdateSwayingSceneObject(struct S *object)
     sprite->f1e = (u16)(Engine_MathCos(object->f30 + 0x8000) / 8);
     random_a = Engine_RandomNext();
     random_b = Engine_RandomNext();
-    object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 0x400;
+    object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 1024;
     return 0;
 }
 
@@ -2076,9 +2076,9 @@ void InitializeSwayingSceneObject(void)
     actor->flags_23 &= 0xfe;
     actor->visible = 1;
 
-    transfer = AllocateEffectTransfer(17, 0x608);
+    transfer = AllocateEffectTransfer(17, 1544);
     Engine_ItemLoadIcon(ITEM_NUT);
-    transfer += 0x400;
+    transfer += 1024;
     Engine_VramLoad(sprite->palette, 128, transfer);
     Engine_HeapRelease(17);
 

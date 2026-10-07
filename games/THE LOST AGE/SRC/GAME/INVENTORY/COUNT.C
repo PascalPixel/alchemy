@@ -35,7 +35,7 @@ struct ActionDefinition *BattleAction_GetDirect(s32 action_id)
     u32 entry_index = action_id & 0x3fff;
     struct ActionDefinition *table;
 
-    if (entry_index > 0x2de)
+    if (entry_index > 734)
         entry_index = 0;
     table = BattleAction_DefinitionTable;
     return &table[entry_index];

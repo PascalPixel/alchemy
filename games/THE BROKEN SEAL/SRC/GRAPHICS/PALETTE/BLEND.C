@@ -66,14 +66,14 @@ void DisplayTransition_InitializeState(s32 value)
     struct DisplayTransitionState *state;
     volatile u32 zero;
 
-    state = Runtime_AllocateBlock(0x1f, sizeof(*state));
+    state = Runtime_AllocateBlock(31, sizeof(*state));
     zero = 0;
     Dma_Set(&zero, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
     DisplayTransition_FillTilemapAndSolidTile(0);
     state->mode = value;
     state->value = 0;
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
-    WaitFrames(0x78);
+    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 3200);
+    WaitFrames(120);
 }
 
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames)
@@ -85,7 +85,7 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 
     if (frames > 0) {
         divide = Iwram_SignedDivide;
-        index = 0x53F;
+        index = 1343;
         do {
             first = *source;
             second = *target;

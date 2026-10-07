@@ -24,7 +24,7 @@ void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 
 struct EventPromptWork {
     struct EventRuntime event;
-    u8 unknown_200[0xac2];
+    u8 unknown_200[2754];
     s16 resource_base;
     s16 width;
 };

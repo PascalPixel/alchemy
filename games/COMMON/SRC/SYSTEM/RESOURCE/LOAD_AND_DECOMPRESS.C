@@ -9,9 +9,9 @@ void Resource_LoadAndDecompress(s32 resource_id, void *destination,
     if (copy_palette != 0) {
         s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
-        copy((void *)0x05000000, resource, 0x80);
+        copy((void *)0x05000000, resource, 128);
     }
     if (skip_palette != 0)
-        resource += 0x80;
+        resource += 128;
     Resource_DecodeType01(resource, destination);
 }

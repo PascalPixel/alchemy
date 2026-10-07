@@ -81,7 +81,7 @@ void BattleFx_RunTargetBursts(void *object)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != 96; frame++) {
         s32 member;
@@ -111,14 +111,14 @@ void BattleFx_RunTargetBursts(void *object)
                     EffectPosition_ApplyBaseAndYOffset((s32 *)p, &screen);
                     screen.x >>= 1;
                     if (i == 5) {
-                        EffectStep_AdvanceWithGravity3D(p, 62, 0x800);
+                        EffectStep_AdvanceWithGravity3D(p, 62, 2048);
                         ((DrawRectangleFn)rectangle_a)(canvas,
                             work->sheet + cel * 0x480 + 0x1b00,
                             screen.x - 12, screen.y - 36, 24, 48);
                     } else {
-                        EffectStep_AdvanceWithGravity3D(p, 60, 0x200);
+                        EffectStep_AdvanceWithGravity3D(p, 60, 512);
                         ((DrawRectangleFn)rectangle_b)(canvas,
-                            work->sheet + cel * 0x480,
+                            work->sheet + cel * 1152,
                             screen.x - 12, screen.y - 36, 24, 48);
                     }
                     p->variant += 1;

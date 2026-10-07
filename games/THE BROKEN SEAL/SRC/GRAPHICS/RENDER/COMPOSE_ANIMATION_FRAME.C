@@ -216,7 +216,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
                 Resource_DecodeType01(e->frames[e->frame], buf);
             } else if (e->mode == 3) {
                 if (e->param != 0) {
-                    tmp = (u8 *)Runtime_BumpAllocate(0x400);
+                    tmp = (u8 *)Runtime_BumpAllocate(1024);
                     draw(Resource_DecompressLz(e->frames[e->frame], tmp),
                          buf, e->param);
                     Runtime_BumpFree(tmp);

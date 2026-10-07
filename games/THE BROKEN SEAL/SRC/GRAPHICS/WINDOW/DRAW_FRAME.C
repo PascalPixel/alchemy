@@ -62,14 +62,14 @@ void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_w
         for (row = 1; row < height - 1; row++) {
             cursor++;
             for (col = 1; col < width - 1; col++)
-                *cursor++ = ((0x127 + row + (col - 1) * (height - 2)) & 0xfff) | 0xf000;
+                *cursor++ = ((295 + row + (col - 1) * (height - 2)) & 0xfff) | 0xf000;
             cursor++;
             cursor += 32 - width;
         }
     } else {
         for (row = 1; row < height - 1; row++) {
             for (col = 0; col < width; col++)
-                *cursor++ = ((0x127 + row + col * (height - 2)) & 0xfff) | 0xf000;
+                *cursor++ = ((295 + row + col * (height - 2)) & 0xfff) | 0xf000;
             cursor += 32 - width;
         }
     }

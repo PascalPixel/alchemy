@@ -177,7 +177,7 @@ void Battle_AwardSpoils(void)
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
             Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0) {
-            Audio_PlayCue(0x59);
+            Audio_PlayCue(89);
             UiWork_ClearValueNameTablesFar();
             UiWork_PushValueSlotFar(unit->class_index, 3);
             UiWork_PushValueSlotFar(list[i], 1);
@@ -196,7 +196,7 @@ void Battle_AwardSpoils(void)
                         UiWork_PushValueSlotFar(unit->class_index, 3);
                         UiWork_PushValueSlotFar(unit_id, 1);
                         UiWork_PushValueSlotFar(learned & OWNER_ACTION_ID_MASK, 4);
-                        Audio_PlayCue(0x9a);
+                        Audio_PlayCue(154);
                         UiText_ShowMessageAndWaitCoreFar((s32)MsgAbilityMastered);
                         BattlePresentation_WaitForAdvance();
                     }

@@ -36,15 +36,15 @@ struct AbilityData {
 };
 
 struct BattleUnitRecord {
-    u8 field_00[0x38];
+    u8 field_00[56];
     s16 hp;
     s16 pp;
     u16 atk;
     u16 def;
     u16 agi;
     u8 luk;
-    u8 field_43[0x58 - 0x43];
-    u8 grid[0x129 - 0x58];
+    u8 field_43[88 - 67];
+    u8 grid[297 - 88];
     u8 element;
 };
 

@@ -48,13 +48,13 @@ void State_ApplyValues9And1And0Then44(void)
 
 void State_ApplyValues10And2And0Then58(void)
 {
-    BattleFx_RunPageEffectForSlot(0xA, 2, 0);
+    BattleFx_RunPageEffectForSlot(10, 2, 0);
     Engine_GameFlagClear(0x58);
 }
 
 void State_ApplyValues11And3And0Then6c(void)
 {
-    BattleFx_RunPageEffectForSlot(0xB, 3, 0);
+    BattleFx_RunPageEffectForSlot(11, 3, 0);
     Engine_GameFlagClear(0x6C);
 }
 

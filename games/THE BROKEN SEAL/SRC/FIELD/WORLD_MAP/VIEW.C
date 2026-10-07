@@ -51,8 +51,8 @@ void Map_RenderPaletteMappedRow(u32 value)
         map += 4;
     } while (counter <= 31);
 
-    destination += 0xfc0;
-    map += 0xf80;
+    destination += 4032;
+    map += 3968;
     counter = 0;
     do {
         CopyEntry(map, destination);

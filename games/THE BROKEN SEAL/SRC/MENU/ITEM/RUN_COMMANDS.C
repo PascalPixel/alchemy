@@ -430,7 +430,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         (s32)MsgEquippedIt, 15, 14);
                     item = Item_Get(menu->selected_items[0]);
                     if ((item->flags & ITEM_CURSED) != 0) {
-                        Audio_PlayCue(0x67);
+                        Audio_PlayCue(103);
                         RenderOutput_ClearListFar(menu->info_window);
                         InventoryMenu_ShowModalMessage(
                             (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 14);
@@ -551,7 +551,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                             (s32)MsgEquippedIt, 15, 14);
                         item = Item_Get(menu->selected_items[0]);
                         if ((item->flags & ITEM_CURSED) != 0) {
-                            Audio_PlayCue(0x67);
+                            Audio_PlayCue(103);
                             RenderOutput_ClearListFar(menu->info_window);
                             InventoryMenu_ShowModalMessage(
                                 (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 14);
@@ -601,7 +601,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 8);
             item = Item_Get(menu->selected_items[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
-                Audio_PlayCue(0x67);
+                Audio_PlayCue(103);
                 RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage(
                     (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 8);

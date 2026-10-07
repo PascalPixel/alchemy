@@ -17,9 +17,9 @@ s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2)
 {
     GlyphTransfer *work;
 
-    work = Runtime_AllocateHeapBlock(0x44, sizeof(GlyphTransfer));
+    work = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
     ItemIcon_Compose(arg0, arg1);
-    VramBlock_LoadCached(arg2, 0x80, work->tiles);
-    Runtime_ReleaseHeapBlock(0x44);
+    VramBlock_LoadCached(arg2, 128, work->tiles);
+    Runtime_ReleaseHeapBlock(68);
     return 1;
 }

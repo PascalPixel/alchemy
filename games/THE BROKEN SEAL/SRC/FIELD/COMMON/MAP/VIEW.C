@@ -177,7 +177,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
 
 void BattleFx_RunVisibilityTransition(void)
 {
-    struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
+    struct EventWork *field = Runtime_AllocateBlock(27, 3276);
 
     if (field->mode == 3) {
         Scheduler_EnableUnmaskedOverlayCallbacks();

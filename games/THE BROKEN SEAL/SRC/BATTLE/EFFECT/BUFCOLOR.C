@@ -282,19 +282,19 @@ void BattleEffect_InitializeBuffers(void)
     volatile s32 zero;
     struct BattleEffectBuffers *buffer;
 
-    buffer = Runtime_AllocateBlock(0x20, sizeof(*buffer));
+    buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
     zero = 0;
     Dma_Set(&zero, buffer, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof(*buffer) >> 2), REG_DMA3);
     Dma_Set((void *)BG_PLTT, &buffer->palette[0], DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
-    Dma_Set((void *)OBJ_PLTT, &buffer->palette[0xe0], DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, &buffer->palette[224], DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
     BattleFx_BuildBuffer(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target, 0);
-    Scheduler_AddOrUpdateCallback((void (*)(void))BattlePalette_UpdateBlend, 0xc8f);
+    Scheduler_AddOrUpdateCallback((void (*)(void))BattlePalette_UpdateBlend, 3215);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void)
 {
     Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
-    Runtime_ReleaseHeapBlock(0x20);
+    Runtime_ReleaseHeapBlock(32);
 }
 
 void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode)

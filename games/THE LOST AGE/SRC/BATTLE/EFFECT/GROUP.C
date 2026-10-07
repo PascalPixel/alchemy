@@ -28,5 +28,5 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
             ObjectDispatch_ApplyValueToChildrenFar(object, action);
         }
         object_id++;
-    } while (object_id <= 0x50);
+    } while (object_id <= 80);
 }

@@ -71,7 +71,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (y = 0; y != 64; y++) {
         for (x = 0; x != 64; x++) {
@@ -120,7 +120,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 
     draw[0](canvas, work, 0, 0, 128, 128);
     work->transfer_pending = 1;
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 1152);
 
     for (frame = 0; frame != 96; frame++) {
         if (frame <= 8) {
@@ -131,12 +131,12 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
             wave = frame * 2;
         }
         if (frame > 88)
-            REG_BLDALPHA = (0xc0 - frame * 2) | 0x1000;
+            REG_BLDALPHA = (192 - frame * 2) | 0x1000;
 
         line = work->bg2_x;
         for (i = 0, angle = -(wave << 9); i != 160; i++) {
             *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
-            angle += 0x200;
+            angle += 512;
         }
 
         if (frame > 127) {
@@ -228,7 +228,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     life = &((struct EffectStep *)gMapCellBuffer)->variant;
     for (i = 0; i != 1024; i++) {

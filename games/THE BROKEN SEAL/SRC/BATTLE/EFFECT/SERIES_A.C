@@ -215,7 +215,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         limit = 128;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != total; frame++) {
         struct BattleCamera *camera = gCameraWork;

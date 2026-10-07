@@ -185,7 +185,7 @@ void UiWork_AnimateSpriteSlots(void)
             }
             switch (output->mode) {
             case 2:
-                if (work->glyph_resource != 0x60) {
+                if (work->glyph_resource != 96) {
                     const u8 *tiles = &UiSprite_CursorFrameTiles[phase * 128];
 
                     sprite->attr2.f.tile = VramBlock_LoadCached(
@@ -278,7 +278,7 @@ void UiWork_AnimateSpriteSlots(void)
                 break;
             }
             if (output->mode == 2) {
-                if (work->glyph_resource != 0x60)
+                if (work->glyph_resource != 96)
                     Runtime_PushSlotEntry(sprite, output->priority);
             } else if (output->mode != 13) {
                 Runtime_PushSlotEntry(sprite, output->priority);

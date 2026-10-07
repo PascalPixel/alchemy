@@ -38,9 +38,9 @@ struct EffectDescriptor {
 struct EffectDescriptorRuntime {
     u8 unused_00[16];
     struct EffectDescriptor *descriptors;
-    u8 unused_14[0x15c];
+    u8 unused_14[348];
     s16 queued_result;
-    u8 unused_172[0x2a];
+    u8 unused_172[42];
     s16 limit;
 };
 
@@ -67,7 +67,7 @@ struct BattleActionObject {
     s32 x;
     s32 y;
     s32 z;
-    u8 unused_14[0x10];
+    u8 unused_14[16];
     s32 velocity_x;
     s32 velocity_y;
     s32 velocity_z;
@@ -75,7 +75,7 @@ struct BattleActionObject {
     s32 target_x;
     s32 target_y;
     s32 target_z;
-    u8 unused_44[0x16];
+    u8 unused_44[22];
     u8 flags_5a;
     u8 busy_5b;
     u8 unused_5c[8];
@@ -97,21 +97,21 @@ typedef struct {
     s32 flags;
     u8 unk_04[4];
     s32 result;
-    u8 unk_0c[0x170 - 0xC];
+    u8 unk_0c[368 - 12];
     s16 queued_result;
-    u8 unk_172[0x19C - 0x172];
+    u8 unk_172[412 - 370];
     s16 limit;
 } EffectDescriptorWorkView;
 
 void Audio_PlayCue(s32);
 
 struct RuntimeState_0808d8f0 {
-    u8 padding0[0x19C];
+    u8 padding0[412];
     s16 delay;
 };
 
 struct GlobalData_0808d8f0 {
-    u8 padding0[0x1F4];
+    u8 padding0[500];
     s32 selected_object;
 };
 
@@ -182,16 +182,16 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
             case 0:
                 accepted = 1;
                 break;
-            case 0x200:
+            case 512:
                 if (runtime->limit > threshold) {
                     accepted = 1;
                 }
                 break;
-            case 0x400:
+            case 1024:
                 flags &= 0xf000;
                 accepted = (u16)((flags - reference) + 0x1fff) <= 0x3ffe;
                 break;
-            case 0x600:
+            case 1536:
                 if (runtime->limit > threshold) {
                     flags &= 0xf000;
                     accepted =
@@ -379,9 +379,9 @@ s32 BattleAction_RunDescriptor(s32 arg0)
         if (desc2 != 0) {
             kind = desc2->flags & 0x30;
             switch (kind) {
-            case 0: Audio_PlayCue(0x7B); break;
-            case 32: Audio_PlayCue(0x80); ObjectEffect_BeginContextEffect26(); break;
-            case 48: Audio_PlayCue(0x81); ObjectEffect_BeginContextEffect25(); break;
+            case 0: Audio_PlayCue(123); break;
+            case 32: Audio_PlayCue(128); ObjectEffect_BeginContextEffect26(); break;
+            case 48: Audio_PlayCue(129); ObjectEffect_BeginContextEffect25(); break;
             }
             work->queued_result = desc2->result;
 block_17:
@@ -397,20 +397,20 @@ s32 Battle_DispatchInputEvent(s32 event)
     s32 selected_object = ((struct GlobalData_0808d8f0 *)&gGameState)->selected_object;
 
     switch (event) {
-    case 0xFC:
+    case 252:
         if (state->delay > 12 && (gKeysHeld & KEY_DOWN)) {
             BattleFx_RunRisingObjectSequence(selected_object, 6, 0);
             state->delay = 0;
         }
         break;
-    case 0xF9:
-    case 0xFE:
+    case 249:
+    case 254:
         if (state->delay > 12) {
             Field_TryJumpForward();
             state->delay = 0;
         }
         break;
-    case 0xFD:
+    case 253:
         if (state->delay > 12) {
             if (gKeysHeld & KEY_DOWN) {
                 FieldEffect_UpdateGridPlacement();

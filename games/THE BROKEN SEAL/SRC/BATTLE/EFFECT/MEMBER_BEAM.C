@@ -116,7 +116,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
     REG_BG2X = offset << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != work->effect->count * 16 + 116; frame++) {
         struct BattleCamera *camera = gCameraWork;

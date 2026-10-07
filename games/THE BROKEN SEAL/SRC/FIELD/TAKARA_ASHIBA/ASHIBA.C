@@ -153,14 +153,14 @@ void TakaraAshiba_StartActorFifteenJump(void)
         Engine_CameraMoveToActor(15, 1);
         Engine_CameraWaitForMove();
         Actor_FaceDirection(15, 0, 20);
-        Actor_SetAttachedEffect(15, 0x102);
+        Actor_SetAttachedEffect(15, 258);
         Engine_ActorRunRepeatedMotion(15, 2);
         Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
         record = Object_GetById(15);
         record->velocity_y = 0x80000;
-        Actor_WalkToAndWait(15, 0x248, 0x2a8);
+        Actor_WalkToAndWait(15, 584, 680);
         Actor_FaceDirection(15, 0x4000, 20);
         Engine_EventEnd();
     }
@@ -181,21 +181,21 @@ void TakaraAshiba_RunActorFifteenSprint(void)
             Engine_CameraMoveToActor(15, 1);
             Engine_CameraWaitForMove();
             Actor_FaceDirection(15, 0x4000, 20);
-            Actor_SetAttachedEffect(15, 0x102);
+            Actor_SetAttachedEffect(15, 258);
             Engine_ActorRunRepeatedMotion(15, 2);
             Engine_EventWait(20);
             Actor_SetSpeed(15, 0x10000, 0x8000);
             Audio_PlayCue(152);
             record = Object_GetById(15);
             record->velocity_y = 0xa0000;
-            Actor_WalkToAndWait(15, 0x248, 0x298);
+            Actor_WalkToAndWait(15, 584, 664);
             Actor_FaceDirection(15, 0x4000, 20);
-            Actor_SetAttachedEffect(15, 0x102);
+            Actor_SetAttachedEffect(15, 258);
             Engine_EventWait(30);
             Actor_SetSpeed(15, 0x80000, 0x4000);
-            Actor_WalkToAndWait(15, 0x298, 0x298);
-            Actor_WalkToAndWait(15, 0x2e8, 0x298);
-            Actor_WalkToAndWait(15, 0x338, 0x298);
+            Actor_WalkToAndWait(15, 664, 664);
+            Actor_WalkToAndWait(15, 744, 664);
+            Actor_WalkToAndWait(15, 824, 664);
             Engine_EventWait(10);
             Audio_PlayCue(208);
             Work_SetValuesIfNonNegative(0x40000, 0x20000, 0x10000);
@@ -227,30 +227,30 @@ void TakaraAshiba_ReturnActorFifteen(void)
         record = Object_GetById(15);
         record->velocity_y = 0x80000;
         Actor_FaceDirection(15, 0x8000, 30);
-        Actor_SetAttachedEffect(15, 0x102);
+        Actor_SetAttachedEffect(15, 258);
         Engine_ActorRunRepeatedMotion(15, 2);
         Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
         record = Object_GetById(15);
         record->velocity_y = 0x40000;
-        Actor_WalkToAndWait(15, 0x370, 0x2a8);
+        Actor_WalkToAndWait(15, 880, 680);
         Engine_EventWait(10);
-        Actor_SetAttachedEffect(15, 0x101);
+        Actor_SetAttachedEffect(15, 257);
         Actor_SetSpeed(15, 0x20000, 0x10000);
-        Actor_WalkToAndWait(15, 0x370, 0x2b8);
-        Actor_WalkToAndWait(15, 0x372, 0x2c0);
-        Actor_WalkToAndWait(15, 0x370, 0x2c8);
-        Actor_WalkToAndWait(15, 0x36e, 0x2d0);
-        Actor_WalkToAndWait(15, 0x370, 0x2d8);
-        Actor_WalkToAndWait(15, 0x372, 0x2e0);
-        Actor_WalkToAndWait(15, 0x370, 0x2e8);
-        Actor_WalkToAndWait(15, 0x36e, 0x2f0);
-        Actor_WalkToAndWait(15, 0x370, 0x2f8);
+        Actor_WalkToAndWait(15, 880, 696);
+        Actor_WalkToAndWait(15, 882, 704);
+        Actor_WalkToAndWait(15, 880, 712);
+        Actor_WalkToAndWait(15, 878, 720);
+        Actor_WalkToAndWait(15, 880, 728);
+        Actor_WalkToAndWait(15, 882, 736);
+        Actor_WalkToAndWait(15, 880, 744);
+        Actor_WalkToAndWait(15, 878, 752);
+        Actor_WalkToAndWait(15, 880, 760);
         Actor_SetPosition(15, 0x3580000, 0x3380000);
         Engine_EventWait(10);
         Actor_FaceDirection(15, 0xc000, 20);
-        Actor_SetAttachedEffect(15, 0x100);
+        Actor_SetAttachedEffect(15, 256);
         record = Object_GetById(15);
         record->update = (void (*)(union FieldObject *))SceneActor_FaceTowardActorZero;
         Engine_EventEnd();
@@ -358,7 +358,7 @@ void FieldScene_RunScene3b4SequenceC(void)
         if (GameFlag_IsSet(0x9c4) == 0) {
             if (PartyInventory_FindOwner(243) != -1) {
                 GameFlag_Set(0x9c4);
-                TakaraAshiba_OpenPlatformPassage(0x100);
+                TakaraAshiba_OpenPlatformPassage(256);
                 PartyInventory_Remove(243);
             }
         }
@@ -475,7 +475,7 @@ void FieldScene_RunStep10ValueEe9(void)
     Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-    Engine_ActorSetPosition(0xA, 0, 0);
+    Engine_ActorSetPosition(10, 0, 0);
     Engine_GameFlagSet(0xEE9);
 }
 
@@ -484,7 +484,7 @@ void FieldScene_RunStep11ValueEea(void)
     Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-    Engine_ActorSetPosition(0xB, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
     Engine_GameFlagSet(0xEEA);
 }
 
@@ -493,7 +493,7 @@ void FieldScene_RunStep12ValueEeb(void)
     Engine_ItemShowFound(ITEM_RED_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_RED_KEY, 0);
-    Engine_ActorSetPosition(0xC, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
     Engine_GameFlagSet(0xEEB);
 }
 
@@ -535,7 +535,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetDestinationOffset(8, 0, 24);
 #endif
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetDestination(8, 0x168, 152);
+    Actor_SetDestination(8, 360, 152);
     Engine_ActorWaitForMove(8);
     Engine_EventEnd();
     GameFlag_Clear(0x220);
@@ -579,7 +579,7 @@ void FieldScene_RunScene3b4SequenceA(void)
     Engine_EventWait(4);
     Actor_SetDestinationOffset(9, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetDestination(9, 168, 0x108);
+    Actor_SetDestination(9, 168, 264);
     Engine_ActorWaitForMove(9);
     Engine_EventEnd();
     GameFlag_Clear(0x220);
@@ -646,7 +646,7 @@ void FieldScene_RunPrimarySequence(void)
         Audio_PlayCue(188);
         Actor_SetDestinationOffset(10, 0, 16);
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-        Actor_SetDestination(10, 0x108, 0x168);
+        Actor_SetDestination(10, 264, 360);
         Engine_ActorWaitForMove(10);
         Engine_EventWait(10);
         Engine_EventEnd();
@@ -686,7 +686,7 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
         AudioCommand_Play(188);
         ObjectMotion_OffsetPositionAndResetMotion(11, 0, 16);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
-        ObjectMotion_ResetAndSetPosition(11, 0x158, 0x168);
+        ObjectMotion_ResetAndSetPosition(11, 344, 360);
         ObjectMotion_CommitCurrentPositionAndActivate(11);
         Battle_WaitMode0(10);
         BattleFx_FinishAction();
@@ -730,7 +730,7 @@ void FieldScene_RunScene3b4SequenceB(void)
     Audio_PlayCue(188);
     Actor_SetDestinationOffset(12, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetDestination(12, 0x138, 232);
+    Actor_SetDestination(12, 312, 232);
     Engine_ActorWaitForMove(12);
     Engine_EventEnd();
     GameFlag_Clear(0x220);
@@ -746,7 +746,7 @@ void SetBlendAlphaCoefficients(void)
 
 void SceneEffect_SetBlendAlpha0607(void)
 {
-    u16 value = 0x0607;
+    u16 value = 1543;
 
     REG_BLDALPHA = value;
 }

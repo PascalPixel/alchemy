@@ -94,7 +94,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
             Menu_PlaceEntryObjectInGrid(obj, i, origin_x, origin_y, phase);
         }
         i += 1;
-    } while (i <= 0x1F);
+    } while (i <= 31);
 }
 
 void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
@@ -102,13 +102,13 @@ void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
     s32 no;
 
     no = index;
-    if (no > 0x1F) {
+    if (no > 31) {
         no = 0;
     }
     obj->y =
-        (no / phase * 0x10) + origin_y;
+        (no / phase * 16) + origin_y;
     obj->x =
-        (no % phase * 0x10) + origin_x;
+        (no % phase * 16) + origin_x;
     UiIcon_PrepareObject(obj);
 }
 

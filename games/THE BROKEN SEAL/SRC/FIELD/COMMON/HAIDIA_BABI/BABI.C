@@ -51,7 +51,7 @@ s32 HaidiaBabi_SelectPlacements(void)
     u8 *b = (u8 *)&gGameState;
     s32 *tbl;
 
-    if (*(s16 *)(b + 0x1c2) == 19)
+    if (*(s16 *)(b + 450) == 19)
         return (s32)gHaidiaBabiPlacements4;
     if (Engine_GameFlagIsSet(0x87a) != 0)
         tbl = gHaidiaBabiPlacements3;
@@ -110,7 +110,7 @@ void HaidiaBabi_RunHeyBoyScene(void)
     Engine_EventSetMessage((s32)MsgHaidiaHeyBoy);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
     Event_ShowMessageAndWait(16, 0, 6);
-    Actor_ShowEmote(16, 0x102, 0);
+    Actor_ShowEmote(16, 258, 0);
     Engine_ActorStartRepeatedMotion(16, 1);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(16, 4);
@@ -130,15 +130,15 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     struct EventWork *work;
 
     Engine_EventBegin();
-    Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
+    Engine_ActorFaceActor(14, ACTOR_PARTY_LEADER, 10);
     Engine_EventSetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
-    Engine_EventOpenMessage(0xE, 0);
+    Engine_EventOpenMessage(14, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Engine_EventShowMessage(0xE, 0);
+        Engine_EventShowMessage(14, 0);
     } else {
         work = gEventWork;
         work->message = (u16)(work->message + 1);
-        Engine_EventAskYesNo(0xE, 0);
+        Engine_EventAskYesNo(14, 0);
     }
     Engine_EventEnd();
 }
@@ -156,67 +156,67 @@ void HaidiaBabi_CloseScreenAndExit(s32 object)
 
 void SceneState_SetValue123Mode1(void)
 {
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
     HaidiaBabi_CloseScreenAndExit(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
     HaidiaBabi_CloseScreenAndExit(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
     HaidiaBabi_CloseScreenAndExit(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
     HaidiaBabi_CloseScreenAndExit(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
-    Engine_AudioPlayCue(0x80);
+    Engine_AudioPlayCue(128);
     HaidiaBabi_CloseScreenAndExit(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
     HaidiaBabi_CloseScreenAndExit(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
-    Engine_AudioPlayCue(0x80);
+    Engine_AudioPlayCue(128);
     HaidiaBabi_CloseScreenAndExit(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
-    Engine_AudioPlayCue(0x81);
+    Engine_AudioPlayCue(129);
     HaidiaBabi_CloseScreenAndExit(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
-    Engine_AudioPlayCue(0x81);
+    Engine_AudioPlayCue(129);
     HaidiaBabi_CloseScreenAndExit(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
     HaidiaBabi_CloseScreenAndExit(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
     HaidiaBabi_CloseScreenAndExit(11);
 }
 

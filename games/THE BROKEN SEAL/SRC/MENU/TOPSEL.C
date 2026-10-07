@@ -55,7 +55,7 @@ void Menu_LoadSelectedResource(void)
     if (transfer->kind == 0)
         transfer->slot = Resource_FindFreeEntry();
     transfer->tile =
-        VramBlock_LoadCached(transfer->slot, 0x400, buffer);
+        VramBlock_LoadCached(transfer->slot, 1024, buffer);
     transfer->kind = 1;
     transfer->base = no;
     transfer->scale = 40;
@@ -93,8 +93,8 @@ loop:
     UiWindow_OpenMode1AndWaitFrame();
     sel = Menu_SelectTopEntry(sel);
 #if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 1;
-    if (*(s16 *)(state + 0xcb8) != 0) {
+    state[3274] = 1;
+    if (*(s16 *)(state + 3256) != 0) {
         BattleFx_ClearRandomParticlesFar();
         WaitFrames(1);
     }
@@ -106,7 +106,7 @@ loop:
         ret = Object_GetTriggerTileAheadOfCurrentFar();
         if (ret == 0)
             ret = 0xff;
-        *(u16 *)(state + 0x17a) = ret;
+        *(u16 *)(state + 378) = ret;
         break;
     case 1:
         ret = Menu_OpenConfirmPromptFar();
@@ -133,7 +133,7 @@ loop:
     }
 
 #if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 0;
+    state[3274] = 0;
 #endif
     return ret;
 }

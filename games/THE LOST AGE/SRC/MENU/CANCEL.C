@@ -62,7 +62,7 @@ void Menu_CancelSoundTick(void)
         GameFlag_SetBit(0x150);
         Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
     }
-    wait = (u32 *)(Ram_HeapSlots->window_tiles + 0xE30);
+    wait = (u32 *)(Ram_HeapSlots->window_tiles + 3632);
     while ((wait = (u32 *)*wait) != 0)
         ;
 }
@@ -70,7 +70,7 @@ void Menu_CancelSoundTick(void)
 void Menu_CancelSoundReset(void)
 {
     GameFlag_ClearBit(0x150);
-    Scheduler_AddOrUpdateCallback((s32)Menu_CancelSoundTick, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)Menu_CancelSoundTick, 1152);
 }
 
 void Menu_EnsureCancelSound(void)

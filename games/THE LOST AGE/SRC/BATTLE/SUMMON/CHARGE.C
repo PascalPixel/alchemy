@@ -6,7 +6,7 @@
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
 struct SummonChargeState {
-    u8 unknown_00[0x10];
+    u8 unknown_00[16];
     u16 class_ids[6];
     u32 used_masks[6];
     s8 channels[6];
@@ -16,9 +16,9 @@ struct SummonChargeState {
 
 struct BattleActorDefinition {
     u8 name[14];
-    u8 unknown_0e[0x11b];
+    u8 unknown_0e[283];
     u8 unavailable;
-    u8 unknown_12a[0x20];
+    u8 unknown_12a[32];
     u16 class_id;
 };
 
@@ -67,7 +67,7 @@ s32 Summon_ResetCharge(s32 enemy_id)
     object_index = 0;
     marker = LIST_MARKER_CHAR;
 scan_objects:
-    summon = Owner_GetState(object_index + 0x80);
+    summon = Owner_GetState(object_index + 128);
     occupied = summon->status_12a;
     if (occupied != 1) goto next_object;
     if (summon->enemy_id != enemy_id) goto next_object;

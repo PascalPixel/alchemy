@@ -62,18 +62,18 @@ s32 BattleFx_StepRatioTransition(void)
     s32 delta;
 
     work = gMapWork[0];
-    if ((*(u8 **)(Runtime_AllocateBlock(27, 0xccc) + 480))[91] != 0)
+    if ((*(u8 **)(Runtime_AllocateBlock(27, 3276) + 480))[91] != 0)
         return;
-    duration = (s16 *)(work + 0x358);
+    duration = (s16 *)(work + 856);
     if (*duration == 0)
         return;
-    from = (s32 *)(work + 0x350);
-    delta = *(s32 *)(work + 0x354) - *from;
-    step = (s16 *)(work + 0x35a);
+    from = (s32 *)(work + 848);
+    delta = *(s32 *)(work + 852) - *from;
+    step = (s16 *)(work + 858);
     (*step)++;
     offset = *from + __divsi3(delta * *step, *duration);
-    *(s32 *)(work + 0x34c) = Iwram_MulQ16(*(s32 *)(work + 0x348), offset);
-    *(u32 *)gScanlinePitch = *(u16 *)(work + 0x118) + 1;
+    *(s32 *)(work + 844) = Iwram_MulQ16(*(s32 *)(work + 840), offset);
+    *(u32 *)gScanlinePitch = *(u16 *)(work + 280) + 1;
     if (*step == *duration) {
         *duration = 0;
         Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
@@ -86,7 +86,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     s32 handle;
     s32 result;
 
-    handle = (s32)Runtime_AllocateBlock(27, 0xccc);
+    handle = (s32)Runtime_AllocateBlock(27, 3276);
     if (*(s16 *)(handle + 414) != 3)
         return;
     {
@@ -97,7 +97,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     state->current = result;
     state->kind = arg1;
     state->flags = 0;
-    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 0xc94);
+    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 3220);
 }
 
 void Event_WaitForZoomTransition(void)
@@ -105,13 +105,13 @@ void Event_WaitForZoomTransition(void)
     s32 frames;
     u8 *work = gMapWork[0];
 
-    if (((struct EventWork *)Runtime_AllocateBlock(0x1b, 0xccc))->mode == 3) {
+    if (((struct EventWork *)Runtime_AllocateBlock(27, 3276))->mode == 3) {
         frames = 0;
         if (*(s16 *)&((struct PerspectiveWork *)work)->zoom_transition_frames != 0) {
             do {
                 WaitFrames(1);
                 frames++;
-            } while (frames <= 0x12b && *(s16 *)&((struct PerspectiveWork *)work)->zoom_transition_frames != 0);
+            } while (frames <= 299 && *(s16 *)&((struct PerspectiveWork *)work)->zoom_transition_frames != 0);
         }
     }
 }
@@ -120,15 +120,15 @@ s32 BattleFx_CopyLinkedObjectPosition(void *obj)
 {
     void *link;
 
-    link = FIELD_AT_OFFSET(obj, void **, 0x68);
+    link = FIELD_AT_OFFSET(obj, void **, 104);
     if (link != NULL) {
-        FIELD_AT_OFFSET(obj, s8 *, 0x55) = 0;
+        FIELD_AT_OFFSET(obj, s8 *, 85) = 0;
         FIELD_AT_OFFSET(obj, s32 *, 8) = FIELD_AT_OFFSET(link, s32 *, 8);
-        FIELD_AT_OFFSET(obj, s32 *, 0xc) = FIELD_AT_OFFSET(link, s32 *, 0xc)
-            + ((s8)Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(FIELD_AT_OFFSET(obj, s16 *, 0x66)))->box_x << 16)
+        FIELD_AT_OFFSET(obj, s32 *, 12) = FIELD_AT_OFFSET(link, s32 *, 12)
+            + ((s8)Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(FIELD_AT_OFFSET(obj, s16 *, 102)))->box_x << 16)
             + 0x80000;
-        FIELD_AT_OFFSET(obj, s32 *, 0x14) = FIELD_AT_OFFSET(link, s32 *, 0x14);
-        FIELD_AT_OFFSET(obj, s32 *, 0x10) = FIELD_AT_OFFSET(link, s32 *, 0x10);
+        FIELD_AT_OFFSET(obj, s32 *, 20) = FIELD_AT_OFFSET(link, s32 *, 20);
+        FIELD_AT_OFFSET(obj, s32 *, 16) = FIELD_AT_OFFSET(link, s32 *, 16);
     }
     return 0;
 }

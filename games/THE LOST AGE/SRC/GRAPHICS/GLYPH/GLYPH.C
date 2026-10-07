@@ -34,7 +34,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     u8 *entry;
     u32 index;
 
-    work = Runtime_AllocateHeapBlock(68, 0x608);
+    work = Runtime_AllocateHeapBlock(68, 1544);
     table = Resource_GetTableEntry((s32)&ResourceId_Icons);
     if (icon <= 127)
         index = icon;
@@ -47,7 +47,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     UiGlyph_DecodeWithHeapRoutines(work, 0);
     if (reuse == 0)
         *slot = Resource_FindFreeEntry();
-    *tile = VramBlock_LoadCached(*slot, 0x200, work->tiles);
+    *tile = VramBlock_LoadCached(*slot, 512, work->tiles);
     Runtime_ReleaseHeapBlock(68);
     Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, REG_DMA3);
 }

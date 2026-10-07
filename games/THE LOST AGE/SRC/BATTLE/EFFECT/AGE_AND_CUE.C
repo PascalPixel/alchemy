@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 
 struct TimedObject {
-    u8 unknown_00[0x64];
+    u8 unknown_00[100];
     s16 age;
     u8 unknown_66[6];
     void *update;

@@ -121,7 +121,7 @@ void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
-    Engine_EventShowMessage(0xC, 0);
+    Engine_EventShowMessage(12, 0);
     Engine_GameFlagSet(0x910);
     Engine_EventEnd();
 }

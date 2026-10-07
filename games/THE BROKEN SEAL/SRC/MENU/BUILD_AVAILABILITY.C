@@ -112,7 +112,7 @@ void Menu_BuildPatternTiles(void)
 
     for (set = 0; set < 2; set++) {
         for (n = 0; n < 6; n++) {
-            u32 *tile = vram + set * 0x60 + n * 0x10;
+            u32 *tile = vram + set * 96 + n * 16;
             s32 x;
 
             Iwram_FillWords(tile, 64, 0x44444444);

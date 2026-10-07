@@ -86,7 +86,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 
     if (current < limit) {
         u32 mask = 0x3ff;
-        u32 removal = base + 0x124;
+        u32 removal = base + 292;
 
         do {
             u32 slot = base + current;

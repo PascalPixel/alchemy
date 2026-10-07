@@ -186,7 +186,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         work->transfer_mode = 2;
         work->transfer_value = 75;
     }
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (i = 0; i != 64; i++) {
         SPARKS[i].tick = -1;
@@ -225,15 +225,15 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     do {
         pick = frame % WORK_EFX->count;
         if (frame == 4) {
-            Audio_PlayCue(0x88);
+            Audio_PlayCue(136);
         }
         if (mode != 6) {
             if (frame == 24) {
-                BattleEventRuntime_BeginPhaseFar(0x86);
+                BattleEventRuntime_BeginPhaseFar(134);
             }
         } else {
             if (frame == 60) {
-                BattleEventRuntime_BeginPhaseFar(0x86);
+                BattleEventRuntime_BeginPhaseFar(134);
             }
         }
 
@@ -373,7 +373,7 @@ void BattleFx_RunSwirlingStars(void *object)
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     record[0] = 0;
     record[1] = 160 << 15;
     record[2] = 0;
@@ -410,8 +410,8 @@ void BattleFx_RunSwirlingStars(void *object)
                 Graphics_RestoreTransferWork();
                 if (pos.depth < 250)
                     pos.depth = 250;
-                if (pos.depth > 0x27a)
-                    pos.depth = 0x27a;
+                if (pos.depth > 634)
+                    pos.depth = 634;
                 size = 9 - (pos.depth - 250) / 64;
                 draw[0](canvas,
                     work->sheet + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),

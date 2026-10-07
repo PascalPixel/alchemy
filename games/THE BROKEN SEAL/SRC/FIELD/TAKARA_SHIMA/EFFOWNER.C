@@ -91,7 +91,7 @@ struct Vec {
 };
 
 struct EffectParams {
-    u8 filler00[0x24];
+    u8 filler00[36];
     s32 callback;
 };
 

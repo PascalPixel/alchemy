@@ -40,10 +40,10 @@ void FourObjectMotion_InitializeTopRow(void)
             AnimationObjects_SelectAnimationFar(object, 2);
         }
         state->objects[index] = object;
-        state->positions_x[index] = 0x10;
-        state->positions_y[index] = 0x20;
+        state->positions_x[index] = 16;
+        state->positions_y[index] = 32;
     }
-    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateAllPositions), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateAllPositions), 3200);
 }
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)

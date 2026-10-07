@@ -141,7 +141,7 @@ static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, 
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 {
-    u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x900);
+    u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(2304);
     s32 x = 0;
     s32 width = 192;
     const u8 *font = DisplayScroll_Font;
@@ -162,11 +162,11 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
     if (text == NULL)
         return -1;
     if (!GameFlag_TestFar(0x200)) {
-        Iwram_FillWords(buf, 0x900, 0);
+        Iwram_FillWords(buf, 2304, 0);
         GameFlag_SetBitFar(0x200);
     } else {
-        DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
-        Iwram_FillWords(buf + 0x100, 0x800, 0);
+        DisplayScroll_CopyWords(buf, buf + 2048, 256);
+        Iwram_FillWords(buf + 256, 2048, 0);
     }
 
     p = text;
@@ -193,7 +193,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
                 mask = 0x80;
                 for (bit = 7; bit >= 0; bit--) {
                     if (bits & mask) {
-                        dst[0x101] = 1;
+                        dst[257] = 1;
                         dst[0] = 15;
                     }
                     dst++;
@@ -225,14 +225,14 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
         s32 tile = slot + row;
         u32 *words = (u32 *)buf + row;
 
-        *(u32 *)(0x06010000 + tile * 32) = words[0x000];
-        *(u32 *)(0x06010004 + tile * 32) = words[0x040];
-        *(u32 *)(0x06010008 + tile * 32) = words[0x080];
-        *(u32 *)(0x0601000c + tile * 32) = words[0x0c0];
-        *(u32 *)(0x06010010 + tile * 32) = words[0x100];
-        *(u32 *)(0x06010014 + tile * 32) = words[0x140];
-        *(u32 *)(0x06010018 + tile * 32) = words[0x180];
-        *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
+        *(u32 *)(0x06010000 + tile * 32) = words[0];
+        *(u32 *)(0x06010004 + tile * 32) = words[64];
+        *(u32 *)(0x06010008 + tile * 32) = words[128];
+        *(u32 *)(0x0601000c + tile * 32) = words[192];
+        *(u32 *)(0x06010010 + tile * 32) = words[256];
+        *(u32 *)(0x06010014 + tile * 32) = words[320];
+        *(u32 *)(0x06010018 + tile * 32) = words[384];
+        *(u32 *)(0x0601001c + tile * 32) = words[448];
     }
     Runtime_BumpFree(buf);
     return 0;

@@ -43,7 +43,7 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 }
 
 struct MetadataSlotState {
-    u8 unknown_00[0x0c];
+    u8 unknown_00[12];
     s32 scale;
     u8 unknown_10[4];
     u8 width;
@@ -52,7 +52,7 @@ struct MetadataSlotState {
     s8 offset_y;
     u8 unknown_18[3];
     u8 count;
-    u8 unknown_1c[0x0c];
+    u8 unknown_1c[12];
     s32 slots[4];
 };
 
@@ -152,7 +152,7 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
             value = (s32)work->scripts[no];
             work->kind = info->draw_kind;
             work->script = (u8 *)value;
-            work->step = 0x10;
+            work->step = 16;
             if (hi == 0) {
                 work->pos = hi;
                 work->timer = hi;
@@ -162,13 +162,13 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 }
 
 struct AnimationGroup {
-    u8 unknown_00[0x16];
+    u8 unknown_00[22];
     s8 offset_x;
     s8 offset_y;
     u8 last_no;
     u8 unknown_19[2];
     u8 count;
-    u8 unknown_1c[0x0c];
+    u8 unknown_1c[12];
     struct AnimationEntry *entries[4];
 };
 
@@ -201,7 +201,7 @@ entry_loop:
             selected_animation = (s32)entry->scripts[flags];
             entry->kind = metadata->draw_kind;
             entry->script = (u8 *)selected_animation;
-            entry->step = 0x10;
+            entry->step = 16;
             if (high_bit == 0) {
                 entry->pos = 0;
                 entry->timer = 0;

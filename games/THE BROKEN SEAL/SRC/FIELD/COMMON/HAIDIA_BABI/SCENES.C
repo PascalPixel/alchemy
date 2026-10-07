@@ -56,7 +56,7 @@ union PairObject {
     union FieldObject object;
     s32 words[28];
     struct {
-        u8 unknown_00[0x68];
+        u8 unknown_00[104];
         union PairObject *parent;
     } link;
 };
@@ -127,7 +127,7 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_EventOpenScreen();
     Object_RefreshSelectorById(8);
     Engine_AudioPlayCue(158);
-    Actor_ShowEmote(8, 0x100, 0);
+    Actor_ShowEmote(8, 256, 0);
     Engine_ActorRunRepeatedMotion(8, 2);
     Actor_FaceDirection(8, FACING_SOUTH, 10);
     Camera_SetSpeed(0x40000, 0x8000);
@@ -173,8 +173,8 @@ ramp:
     Engine_EventWait(10);
     Actor_FaceDirection(8, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Actor_SetAttachedEffect(8, 0x102);
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+    Actor_SetAttachedEffect(8, 258);
+    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 258);
     Engine_EventWait(80);
     Engine_ActorSetPosition(9, 0, 0);
     Engine_ActorFaceEachOther(8, 0, 20);
@@ -227,9 +227,9 @@ void HaidiaBabi_RunInnkeeperTalk(void)
 void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
     Engine_EventBegin();
-    Engine_ActorFaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
+    Engine_ActorFaceActor(16, ACTOR_PARTY_LEADER, 10);
     Engine_EventSetMessage((s32)MsgHaidiaYouveGrownSoMuch);
-    Engine_EventShowMessage(0x10, 0);
+    Engine_EventShowMessage(16, 0);
     Engine_ActorFaceDirection(0x10, 0xB000, 0xA);
     Engine_GameFlagSet(0x301);
     Engine_EventEnd();
@@ -239,7 +239,7 @@ void SceneDialogue_RunActorThirteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
-    Engine_EventShowMessage(0xD, 0);
+    Engine_EventShowMessage(13, 0);
     Engine_GameFlagSet(0x81C);
     Engine_EventEnd();
 }
@@ -248,7 +248,7 @@ void SceneDialogue_RunActor16LineAndFlag81c(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
-    Engine_EventShowMessage(0x10, 0);
+    Engine_EventShowMessage(16, 0);
     Engine_GameFlagSet(0x81C);
     Engine_EventEnd();
 }
@@ -260,18 +260,18 @@ void HaidiaBabi_RunSickbedVisit(void)
 
     Engine_EventBegin();
     Actor_SetSpeed(0, 0x9999, 0x4ccc);
-    Actor_WalkToAndWait(0, 0x239, 0x189);
+    Actor_WalkToAndWait(0, 569, 393);
     Actor_FaceDirection(0, 0x4000, 40);
     Engine_ActorStartRepeatedMotion(8, 2);
     Engine_EventSetMessage((s32)MsgHaidiaCoughCoughWho);
     Engine_EventShowMessageAndWait(8, 0, 80);
-    Actor_ShowEmote(8, 0x101, 60);
+    Actor_ShowEmote(8, 257, 60);
     Engine_ActorStartRepeatedMotion(8, 1);
     Engine_EventShowMessageAndWait(8, 0, 60);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(80);
     Actor_SetSpeed(8, 0xcccc, 0x6666);
-    Engine_ActorSetDestination(8, 0x248, 0x196);
+    Engine_ActorSetDestination(8, 584, 406);
     Map_SetLayerEntryFlag(11);
     Map_ClearLayerEntryFlag(12);
     Engine_ActorSetAnimation(8, 12);
@@ -279,11 +279,11 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(40);
     Engine_EventShowMessageAndWait(8, 0, 40);
-    Actor_ShowEmote(8, 0x108, 40);
+    Actor_ShowEmote(8, 264, 40);
     Engine_EventShowMessageAndWait(8, 0, 40);
-    Actor_ShowEmote(0, 0x105, 60);
+    Actor_ShowEmote(0, 261, 60);
     Engine_ActorSetAnimationAndWait(8, 13);
-    Actor_ShowEmote(8, 0x103, 0);
+    Actor_ShowEmote(8, 259, 0);
     Engine_ActorSetAnimation(8, 11);
     Engine_EventWait(40);
     Engine_EventShowMessageAndWait(8, 0, 40);
@@ -292,18 +292,18 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventShowMessageAndWait(8, 0, 20);
     Engine_ActorSetAnimationAndWait(8, 12);
     Engine_EventWait(20);
-    Actor_ShowEmote(0, 0x102, 60);
+    Actor_ShowEmote(0, 258, 60);
     Engine_ActorSetAnimation(8, 13);
     Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         gEventWork->message += 1;
     }
     if (GameFlag_IsSet(0x81c) != 0) {
-        Actor_ShowEmote(8, 0x102, 60);
+        Actor_ShowEmote(8, 258, 60);
     }
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
-    Actor_ShowEmote(8, 0x107, 60);
+    Actor_ShowEmote(8, 263, 60);
     msg = (s32)MsgHaidiaWhoToldIll;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(8, 0);
@@ -311,11 +311,11 @@ void HaidiaBabi_RunSickbedVisit(void)
         gEventWork->message += 1;
     }
     if (Engine_GameFlagIsSet(0x81c) != 0) {
-        Actor_ShowEmote(8, 0x102, 60);
+        Actor_ShowEmote(8, 258, 60);
     }
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
-    Engine_ActorShowEmote(8, 0x107, 60);
+    Engine_ActorShowEmote(8, 263, 60);
     Engine_EventSetMessage(msg + 3);
     Engine_EventShowMessage(8, 0);
     Engine_ActorRunRepeatedMotion(8, 1);
@@ -332,12 +332,12 @@ void HaidiaBabi_RunSickbedVisit(void)
     record->facing = 0;
     Engine_TaskWait(1);
     Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
-    Actor_SetDestination(0, 0x22e, 0x184);
+    Actor_SetDestination(0, 558, 388);
     Actor_SetSpeed(8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);
-    Engine_ActorMoveToAndWait(8, 0x24a, 0x190);
+    Engine_ActorMoveToAndWait(8, 586, 400);
     Engine_EventWait(40);
-    Actor_WalkToAndWait(8, 0x244, 0x17e);
+    Actor_WalkToAndWait(8, 580, 382);
     Actor_FaceDirection(8, 0x8000, 40);
     Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorFaceDirection(8, 0xc000, 8);
@@ -349,7 +349,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorJump(8, 4, 20);
     Engine_EventShowMessageAndWait(8, 0, 40);
     Actor_SetSpeed(8, 0x6666, 0x3333);
-    Actor_WalkToAndWait(8, 0x23c, 0x180);
+    Actor_WalkToAndWait(8, 572, 384);
     Engine_EventShowMessageAndWait(8, 0, 20);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(20);
@@ -423,9 +423,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
     Actor_SetSpeed(18, 0x10000, 0x8000);
-    Actor_WalkToAndWait(18, 0x1e0, 176);
-    Actor_WalkToAndWait(18, 0x1a4, 164);
-    Actor_WalkToAndWait(18, 0x146, 185);
+    Actor_WalkToAndWait(18, 480, 176);
+    Actor_WalkToAndWait(18, 420, 164);
+    Actor_WalkToAndWait(18, 326, 185);
     Actor_FaceDirection(18, 0x4000, 10);
     Engine_ObjectSetScript(actor, gHaidiaBabiBagLiftScript);
     ObjectDispatch_WaitForValue16(actor);
@@ -575,7 +575,7 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 
 void SceneState_SetValue140Mode0(void)
 {
-    Engine_PsynergyBegin(0x8C, 0);
+    Engine_PsynergyBegin(140, 0);
 }
 
 void FieldScene_RunSingleStep(void)
@@ -595,8 +595,8 @@ void FieldScene_RunStep17(void)
 
 void FieldScene_RunSixStepSequence17e4(void)
 {
-    Engine_PsynergyBegin(0x94, 1);
-    Engine_PsynergySetTarget(8, 0x11);
+    Engine_PsynergyBegin(148, 1);
+    Engine_PsynergySetTarget(8, 17);
     Engine_PsynergyRaiseHands();
     Engine_PsynergyPlayEffect(1);
     Engine_PsynergyLowerHands();

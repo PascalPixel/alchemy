@@ -15,7 +15,7 @@
 
 void Scheduler_ScheduleCallbackAAfterFrames(void)
 {
-    Scheduler_AddOrUpdateCallback((s32)PaletteGlow_UpdateSine, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)PaletteGlow_UpdateSine, 1152);
 }
 
 void Scheduler_ScheduleCallbackA(void)

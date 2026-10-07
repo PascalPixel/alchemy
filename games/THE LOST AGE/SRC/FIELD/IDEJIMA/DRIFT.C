@@ -5,13 +5,13 @@
 struct MapLayer {
     u8 unknown_00[6];
     s16 y;
-    u8 unknown_08[0x10];
+    u8 unknown_08[16];
     s32 unknown_18;
     s32 unknown_1c;
 };
 
 struct MapWork {
-    u8 unknown_000[0x108];
+    u8 unknown_000[264];
     struct MapLayer layer;
 };
 

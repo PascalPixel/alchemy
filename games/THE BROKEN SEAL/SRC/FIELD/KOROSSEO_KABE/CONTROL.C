@@ -40,7 +40,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(u16 *)(descriptor + 216) = (u16)extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
-    Engine_TaskAddCallback(Korosseo_DrawGauge, 0xc76);
+    Engine_TaskAddCallback(Korosseo_DrawGauge, 3190);
 
     Runtime_BumpFree(handle);
 }
@@ -58,5 +58,5 @@ void SceneState_InitControlRecordAndStartTask(s32 resource)
         m->f8 = 0;
         m->f6 = 0;
     }
-    Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
+    Engine_TaskAddCallback(Korosseo_UpdatePathRival, 3205);
 }

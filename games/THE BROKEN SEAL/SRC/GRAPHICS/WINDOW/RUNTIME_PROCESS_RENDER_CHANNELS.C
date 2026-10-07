@@ -173,14 +173,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
             case TEXT_NEWLINE:
                 ch->x = ch->start_x;
                 if (ch->work->flags & 8) {
-                    if (ch->y > 0xcff) {
+                    if (ch->y > 3327) {
                         UiWork_ResetChannelTransition(ch);
                         count = 1;
                     } else {
-                        ch->y += 0xd00;
+                        ch->y += 3328;
                     }
                 } else {
-                    ch->y += 0xf00;
+                    ch->y += 3840;
                     if (ch->line <= 2)
                         ch->line++;
                 }

@@ -63,7 +63,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
         Dma_Set((void *)BitDecoder_DecodeImage, decoder, 0x84000000 | (size >> 2), REG_DMA3);
     } while (0);
     {
-        u32 offset = 0x100;
+        u32 offset = 256;
         void *vram;
 
         /* FAKEMATCH: the empty statement keeps the tile offset a load of its own, ahead of the VRAM address. */
@@ -82,7 +82,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
     BattlePresentation_BuildTilemap((void *)0x0600f800);
     Iwram_ClearWords((void *)0x0600ffc0, 64);
     if (view->mode == 0)
-        Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
+        Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 1279);
     view->mode = mode;
     if (mode == 1)
         REG_BG1CNT = 0x1f83;

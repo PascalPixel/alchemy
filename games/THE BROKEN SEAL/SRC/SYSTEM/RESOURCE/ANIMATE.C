@@ -80,7 +80,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
         for (; text < end; text++) {
             u32 c = *text;
 
-            if (c <= 0xdf) {
+            if (c <= 223) {
                 c = table[c];
                 *text = c;
             }
@@ -261,7 +261,7 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
             value = (s32)work->scripts[no];
             work->kind = info->draw_kind;
             work->script = (u8 *)value;
-            work->step = 0x10;
+            work->step = 16;
             if (hi == 0) {
                 work->pos = hi;
                 work->timer = hi;

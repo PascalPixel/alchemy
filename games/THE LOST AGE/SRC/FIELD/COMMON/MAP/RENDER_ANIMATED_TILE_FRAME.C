@@ -13,15 +13,15 @@
 #include "VRAM_TAB.H"
 
 struct AnimTrack {
-    u8 unknown_00[0x10];
+    u8 unknown_00[16];
     u8 *script;
     u8 index;
 };
 
 struct AnimObject {
-    u8 unknown_00[0x18];
+    u8 unknown_00[24];
     u8 frame;
-    u8 unknown_19[0xf];
+    u8 unknown_19[15];
     struct AnimTrack *track;
 };
 
@@ -57,8 +57,8 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     u8 offset_mask;
 
     destination = (u16 *)(0x06010000
-        + ResourceTableEntries[object[0x10]].offset);
-    count = (object[0x14] * object[0x15]) / 64;
+        + ResourceTableEntries[object[16]].offset);
+    count = (object[20] * object[21]) / 64;
     row = 0;
 
     if (row < (u32)count) {
@@ -68,7 +68,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
         offset_mask = 0x3E;
 
         for (; row < (u32)count; row++, destination += 32, position++) {
-            if ((u32)(position - 0x40) <= 0x3F) {
+            if ((u32)(position - 64) <= 63) {
                 u8 entry;
                 u16 *cell;
                 u32 parity;

@@ -92,7 +92,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
     object = GetBattleObjectSlot(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
-    AudioCommand_PlayFar(0x9a);
+    AudioCommand_PlayFar(154);
     if (mode & 2)
         BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 1, 0);
     else if (!scripted)
@@ -120,7 +120,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();
     } else {
-        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 3200);
         if (work.kind) {
             if (plan->presentation_flags & 0x4000)
                 BattleFx_DispatchByIdRangeFar((s32 *)&work);

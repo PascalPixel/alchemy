@@ -191,15 +191,15 @@ void FieldMotes_Start(void)
     volatile u32 zero;
     volatile u16 *reg;
 
-    work = Runtime_AllocateBlock(29, 0x410);
+    work = Runtime_AllocateBlock(29, 1040);
     mote = work->motes;
     { register u32 z asm("r1") = 0; /* FAKEMATCH: the cleared word goes through r1 */
     zero = z; }
     Dma_Set((void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
-    tiles = Runtime_AllocateBlock(14, 0x400);
+    tiles = Runtime_AllocateBlock(14, 1024);
     Resource_DecodeByteLz(FieldFx_MoteTiles, tiles);
     work->resource = Resource_FindFreeEntry();
-    work->vram = VramBlock_LoadCached(work->resource, 0x300, tiles);
+    work->vram = VramBlock_LoadCached(work->resource, 768, tiles);
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
         s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
@@ -217,7 +217,7 @@ void FieldMotes_Start(void)
         mote++;
     }
     do { s32 v; v = 0x3f00; reg = &REG_BLDCNT; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
-    Scheduler_AddOrUpdateCallback((s32)(FieldMotes_Update), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FieldMotes_Update), 3200);
 }
 
 void FieldEffect_UpdateSparkles(void)
@@ -308,17 +308,17 @@ void FieldEffect_UpdateSparkles(void)
 
 void FieldEffect_InitSparkles(void)
 {
-    struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
+    struct DustWork *work = Runtime_AllocateBlock(29, 1040);
     struct DustParticle *p = work->particles;
     u8 *buf;
     u32 i;
     s32 clear;
 
     ClearDustWork(work);
-    buf = Runtime_AllocateBlock(14, 0x400);
+    buf = Runtime_AllocateBlock(14, 1024);
     Resource_DecodeByteLz(Data_080a00b8, buf);
     work->vram_entry = Resource_FindFreeEntry();
-    work->tile_base = VramBlock_LoadCached(work->vram_entry, 0x200, buf);
+    work->tile_base = VramBlock_LoadCached(work->vram_entry, 512, buf);
     Runtime_ReleaseHeapBlock(14);
     i = 0;
     clear = 0;
@@ -349,7 +349,7 @@ loop:
     p++;
     if (i < 32)
         goto loop;
-    Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 3200);
 }
 
 void BattleFx_StartTwelveFrameBlend(void)
@@ -377,7 +377,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     work = (u8 *)&((struct FieldBlendWork *)work)->enabled;
     one = 1;
     *(u16 *)work = one;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 3200);
 }
 
 void BattleFx_SetBlock30ValuesMaxZero(void)
@@ -425,5 +425,5 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     *frames = value;
     value = 0;
     work->enabled = value;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 3200);
 }

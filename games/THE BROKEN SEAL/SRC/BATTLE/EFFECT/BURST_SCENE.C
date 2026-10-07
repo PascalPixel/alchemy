@@ -100,7 +100,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_position);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 768; i++) {
         struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -193,7 +193,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                 size++;
                 draw[(i / 2) & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-                EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
+                EffectStep_AdvanceWithGravity3D(mote, 60, -1024);
                 if (mote->y < 0x80000)
                     mote->velocity_y = -mote->velocity_y / 2;
                 mote->variant--;
@@ -332,7 +332,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     REG_BLDALPHA = 0x1010;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     for (i = 0; i != 11; i++) {
         struct EffectStep *rock = &work->particles[10 + i];
 

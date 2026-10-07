@@ -24,7 +24,7 @@ s32 Ui_CreateOutputFromResourceSlot(
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    if (slot != 0x60) {
+    if (slot != 96) {
         Resource_LoadIndexedEntryToBuffer(resource, slot);
         RenderOutput_Create(slot, 0x40000000, input, arg1, arg2);
     }

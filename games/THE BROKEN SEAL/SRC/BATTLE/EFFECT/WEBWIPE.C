@@ -74,7 +74,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     Audio_PlayCue(143);
     frame = 0;
     step = 1;
@@ -83,7 +83,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
         if (frame <= 8)
             REG_BLDALPHA = (frame << 1) | 0x1000;
         if (frame > 53)
-            REG_BLDALPHA = (0x7c - (frame << 1)) | 0x1000;
+            REG_BLDALPHA = (124 - (frame << 1)) | 0x1000;
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, step);
         ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 41, size, size);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);

@@ -77,7 +77,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     sparks = (struct EffectStep *)gMapCellBuffer;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     count = LightningPillar_Counts[work->effect->variant];
 
     for (frame = 0; frame != count * 8 - count + 48; frame++) {
@@ -88,7 +88,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
             if (frame <= 55)
                 speed = 256;
             else
-                speed = 0x2c0 - frame * 8;
+                speed = 704 - frame * 8;
             if (work->effect->side == 1)
                 camera->scroll -= speed;
             else

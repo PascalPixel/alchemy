@@ -194,7 +194,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
     s32 cleared;
     volatile u32 zero;
 
-    list = Runtime_AllocateBlock(33, 0x194);
+    list = Runtime_AllocateBlock(33, 404);
     zero = 0;
     entry = list->entries;
     Dma_Set((const void *)&zero, list, 0x85000065, REG_DMA3);
@@ -223,5 +223,5 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
         } while (i != count);
     }
     list->count = count;
-    Engine_TaskAddCallback((void *)Soru_UpdateRing, 0xc80);
+    Engine_TaskAddCallback((void *)Soru_UpdateRing, 3200);
 }

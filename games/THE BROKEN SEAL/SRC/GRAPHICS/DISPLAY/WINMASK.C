@@ -420,8 +420,8 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode)
     state->value = 0;
     state->mask = 0x3f3f;
     state->active = 1;
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-    Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 3200);
+    Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 1152);
 }
 
 void BattleFx_EnableTwoCallbacks(void)

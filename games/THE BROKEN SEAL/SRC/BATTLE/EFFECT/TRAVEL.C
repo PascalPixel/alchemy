@@ -79,7 +79,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     position[0] = actor->x;
     position[1] = 0;
     position[2] = actor->z;

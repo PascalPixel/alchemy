@@ -60,9 +60,9 @@ void CopyAndOffsetCoordinatePreset(void)
     *destination++ = *source++;
     *destination = *source;
     coordinates = (u16 *)TakaraHashira_ShakenScroll;
-    coordinates[1] += 0xc0;
-    coordinates[3] += 0xc0;
-    coordinates[5] += 0xc0;
+    coordinates[1] += 192;
+    coordinates[3] += 192;
+    coordinates[5] += 192;
 }
 
 void FieldScene_RunScene3b3SequenceA(void)
@@ -80,7 +80,7 @@ void FieldScene_RunScene3b3SequenceA(void)
         Map_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
     }
     TakaraHashira_ShakeChance = 0;
-    Engine_TaskAddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
+    Engine_TaskAddCallback(CopyAndOffsetCoordinatePreset, 3200);
     WaitFrames(1);
     Runtime_SetIrqHandler(1, 0, TakaraHashira_JitterBackgroundScroll);
     Engine_AudioPlayCue(231);
@@ -88,7 +88,7 @@ void FieldScene_RunScene3b3SequenceA(void)
     do {
         WaitFrames(1);
     } while (++TakaraHashira_ShakeChance <= 100);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     if (Engine_GameFlagIsSet(0x200) == 0) {
         Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
         Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
@@ -214,7 +214,7 @@ s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
     s32 hit;
     u32 id;
 
-    if (((s8 *)gEventWork)[0xcc7] == 1) {
+    if (((s8 *)gEventWork)[3271] == 1) {
         actor->sprite->priority = leader->sprite->priority;
         actor->collision_flags |= 1;
         return 0;
@@ -296,7 +296,7 @@ struct PillarActor {
     u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;
-    u8 unknown_2c[0x29];
+    u8 unknown_2c[41];
     u8 motion_flags;
 };
 

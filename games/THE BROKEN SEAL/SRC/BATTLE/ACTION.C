@@ -21,8 +21,8 @@
 #include "text/MSG_IDS.H"
 
 struct BattleCommandRuntime {
-    u8 pad000[0x170]; s16 result_code; u8 pad172[0x2c]; s16 battle_mode;
-    u8 pad1a0[0xb26]; u8 resolving_action;
+    u8 pad000[368]; s16 result_code; u8 pad172[44]; s16 battle_mode;
+    u8 pad1a0[2854]; u8 resolving_action;
 };
 
 extern struct BattleRuntime *gEventWork;
@@ -61,7 +61,7 @@ void BattleEffect_CleanupSceneObjects(void);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 struct MarkerMap {
-    u8 unknown_00[0x10];
+    u8 unknown_00[16];
     u8 *markers;
 };
 
@@ -74,7 +74,7 @@ struct MarkerSlot {
 };
 
 struct MarkerWork {
-    u8 unknown_000[0x11c];
+    u8 unknown_000[284];
     struct MarkerSlot slots[10];
 };
 
@@ -111,16 +111,16 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         Command_ShowActionMessage(actor, actionId, MsgNothingHappened);
         return 0;
     }
-    if (runtime->battle_mode == 3 && actionId == 0x90) {
-        Command_ShowActionMessage(actor, 0x90, MsgNothingHappened);
+    if (runtime->battle_mode == 3 && actionId == 144) {
+        Command_ShowActionMessage(actor, 144, MsgNothingHappened);
         return 0;
     }
-    if (actionId == 0x95) {
+    if (actionId == 149) {
         if (GameFlag_TestFar(0x144)) {
-            Command_ShowActionMessage(actor, 0x95, MsgDoesNotWorkHere);
+            Command_ShowActionMessage(actor, 149, MsgDoesNotWorkHere);
             return 0;
         }
-        UiWork_PushValueSlotFar(0x95, 4);
+        UiWork_PushValueSlotFar(149, 4);
         UiText_ShowPositionedMessageAndWaitFar((s32)MsgUseAbilityConfirm, 13);
         status = Object_CallSpawnRoutineAtOrigin(1);
         UiWork_FinalizePendingCoreFar();

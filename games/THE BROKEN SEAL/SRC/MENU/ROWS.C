@@ -30,7 +30,7 @@ void UiText_DrawString(u8 *str, s32 work, s32 x, s32 y);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 
 struct MenuDefaults {
-    u8 padding_000[0x1C8];
+    u8 padding_000[456];
     s16 primary;
     s16 secondary;
 };
@@ -47,7 +47,7 @@ extern volatile u32 gKeysHeld;
 
 void Scheduler_ScheduleCallbackCAfterFrames(void)
 {
-    Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
+    Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 3200);
 }
 
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)

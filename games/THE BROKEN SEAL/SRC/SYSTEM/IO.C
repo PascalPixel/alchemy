@@ -79,7 +79,7 @@ void IoWriteQueue_FlushPending(void)
         u32 size = (u32)TransferCommandExecutor_Size;
         u32 word_count = size >> 2;
         u32 zero = 0;
-        u32 control = 0x84;
+        u32 control = 132;
 
         control <<= 24;
         {

@@ -23,9 +23,9 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
         *object_flags = updated_flags;
         object->velocity_y = vertical_velocity;
         if (speed > 5) {
-            Audio_PlayCue(0x99);
+            Audio_PlayCue(153);
         } else {
-            Audio_PlayCue(0x98);
+            Audio_PlayCue(152);
         }
         EventRuntime_Wait(event_id);
     }
@@ -63,7 +63,7 @@ void Object_DriftAndDamp(struct ObjectRuntime *object)
     drift_z = object->acceleration;
     object->x = pos + drift_x;
     object->z += drift_z;
-    object->y += 0x400;
+    object->y += 1024;
     object->speed_limit = drift_x - drift_x / 18;
     object->acceleration = drift_z - drift_z / 16;
 }

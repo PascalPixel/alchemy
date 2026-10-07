@@ -46,9 +46,9 @@ void ItemMenu_DrawStat(
 }
 
 struct ItemMenuWindows {
-    u8 unknown_00[0x24];
+    u8 unknown_00[36];
     struct RenderInput *item_window;
-    u8 unknown_28[0xc8];
+    u8 unknown_28[200];
     struct RenderInput *message_window;
 };
 

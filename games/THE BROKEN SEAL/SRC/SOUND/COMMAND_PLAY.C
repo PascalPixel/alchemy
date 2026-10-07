@@ -58,8 +58,8 @@ void AudioCommand_Play(s32 id)
         if (flags & AUDIO_CUE_START_SILENT)
             gMusicVolume = 0;
         else
-            gMusicVolume = 0x100;
-        gMusicVolumeTarget = 0x100;
+            gMusicVolume = 256;
+        gMusicVolumeTarget = 256;
         gMusicVolumeStep = 4;
         gMusicFadeRequested = 0;
     }

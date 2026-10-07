@@ -108,7 +108,7 @@ void Camera_ConfigureScene(s32 pos)
 
     gProjection.center_y = pos + 120;
     secondary->active = 1;
-    BattleCamera_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
+    BattleCamera_SetRange(240 << 15, (118 - pos) << 16, 0, 128 << 4, 128 << 10);
     secondary->flag = 1;
     secondary->active = 0;
 }
@@ -146,7 +146,7 @@ s32 BattleEscape_CheckSuccess(void)
         escaped = 1;
     } else {
         failed_attempts = &escape_state->escape_failures;
-        chance = 0x1388 + (escape_state->escape_failures * 0x7D0);
+        chance = 0x1388 + (escape_state->escape_failures * 2000);
         living_count = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
             living_units);
@@ -155,7 +155,7 @@ s32 BattleEscape_CheckSuccess(void)
             level_total += Owner_GetStateFar(
                 living_units[unit_index])->level;
         }
-        chance += level_total * 0x1F4 / living_count;
+        chance += level_total * 500 / living_count;
         living_count = BattleParty_ListLivingUnits(
             BATTLE_SIDE_ENEMIES,
             living_units);
@@ -164,7 +164,7 @@ s32 BattleEscape_CheckSuccess(void)
             level_total += Owner_GetStateFar(
                 living_units[unit_index])->level;
         }
-        chance -= level_total * 0x1F4 / living_count;
+        chance -= level_total * 500 / living_count;
         if ((chance > 0) &&
             (((0x2710 * Random16()) >> 0x10) < chance)) {
             escaped = 1;
@@ -199,7 +199,7 @@ s32 BattlePres_BuildUnitEntries(
                 entry->priority = unit->agility;
                 entry->command = 8;
                 entry->parameter = 0;
-                entry->target = 0x180;
+                entry->target = 384;
                 entry_count++;
             } else {
                 excluded_units[excluded_count++] = unit_ids[unit_index];

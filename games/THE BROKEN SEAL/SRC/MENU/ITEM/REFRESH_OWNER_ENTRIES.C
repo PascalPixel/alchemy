@@ -11,9 +11,9 @@ void ItemMenu_RefreshEntry(s32 layout)
     struct InventoryMenuState *menu;
 
     menu = gMenuWork;
-    origin_y = 0x38;
+    origin_y = 56;
     if (layout != 1) {
-        origin_y = 0x28;
+        origin_y = 40;
     }
     slot = menu->entry_icons;
     index = 0;
@@ -21,9 +21,9 @@ void ItemMenu_RefreshEntry(s32 layout)
     do {
         object = *scan++;
         if (object != NULL) {
-            ItemMenu_PosOwner(slot, index, 0x74, origin_y, 5);
+            ItemMenu_PosOwner(slot, index, 116, origin_y, 5);
         }
         index++;
         slot++;
-    } while (index <= 0xE);
+    } while (index <= 14);
 }

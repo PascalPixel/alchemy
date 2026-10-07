@@ -85,7 +85,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     for (i = 0; i != 256; i++) {
@@ -94,7 +94,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 
         mote = &gMotes[i];
 
-        speed = 0x3ff;
+        speed = 1023;
         speed &= Random16();
         angle = Random16() & 0xffff;
         mote->x = source->x;
@@ -130,7 +130,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
                 size = 6 - (position.depth - 314) / 64;
                 draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-                EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
+                EffectStep_AdvanceWithGravity3D(mote, 62, 1024);
                 if (mode == 1) {
                     if (source->x < 0)
                         mote->velocity_x += 0x2000;

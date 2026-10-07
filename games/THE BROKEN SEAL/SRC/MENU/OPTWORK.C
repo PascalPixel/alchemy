@@ -44,7 +44,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     }
     VramBlock_LoadCached(
         (u8)work->marker[0].output->index,
-        0x100,
+        256,
         Resource_GetTableEntry(src0));
 
     if (sel == 1) {
@@ -55,7 +55,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     }
     VramBlock_LoadCached(
         (u8)work->marker[1].output->index,
-        0x100,
+        256,
         Resource_GetTableEntry(src1));
 
     if (sel > 1) {
@@ -77,7 +77,7 @@ void OptionMenu_InitializeWork(void)
     struct WorkspaceWork *work;
     volatile u32 zero;
 
-    work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 0x628);
+    work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 1576);
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
     work->option[0] = gGameState.palette_glow[0];
@@ -90,11 +90,11 @@ void OptionMenu_InitializeWork(void)
     work->option_count[3] = 2;
     work->option[4] = gGameState.saved_options;
     work->option_count[4] = 2;
-    Scheduler_AddOrUpdateCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance, 0xc80);
+    Scheduler_AddOrUpdateCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance, 3200);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
 {
     Scheduler_RemoveCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance);
-    Runtime_ReleaseHeapBlock(0x14);
+    Runtime_ReleaseHeapBlock(20);
 }

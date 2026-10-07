@@ -29,7 +29,7 @@ s32 Resource_DecodeByteLz(const void *source, void *destination);
 
 void MapAnimation_PresentFrame(void)
 {
-    s32 control = 0x682;
+    s32 control = 1666;
 
     /* FAKEMATCH: the do-while keeps the BG1CNT store before the DMA source and destination loads. */
     do {
@@ -58,7 +58,7 @@ void MapAnimation_Start(void)
 
 void Map_ShowBg1FromBuffer(void)
 {
-    u32 mode = 0x501;
+    u32 mode = 1281;
     u16 *bg1cnt = (u16 *)&REG_BG1CNT;
 
     do { *bg1cnt = mode; } while (0); /* FAKEMATCH: the wrap orders the store before the DMA operands. */
@@ -102,7 +102,7 @@ void Map_LoadDefaultCellsAndUpdateBlock(void)
     struct PerspectiveWork *work = gMapWork[0];
     Data_03001cfc = Map_ShowBg1FromBuffer;
     work->window_top = 0;
-    work->window_bottom = 0x9f;
+    work->window_bottom = 159;
     WaitFrames(1);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
     Map_UpdateCurrentTileBlock();

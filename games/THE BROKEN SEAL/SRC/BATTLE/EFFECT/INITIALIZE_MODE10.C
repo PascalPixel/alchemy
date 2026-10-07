@@ -53,7 +53,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     work->effect = effect;
-    BattleFx_SpawnObjects(8, 0x177, 1);
+    BattleFx_SpawnObjects(8, 375, 1);
 
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 1024; i++)
@@ -81,7 +81,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     REG_BG2X = -0x2000;
 
     for (i = 0; i != 16; i++) {
@@ -199,7 +199,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                     s32 k;
 
                     if (i > 5)
-                        sheet = work->sheet + 0x6c0;
+                        sheet = work->sheet + 1728;
                     top = (rise - vine->variant) * vine->velocity_y;
                     for (wrap = top; wrap > 184; wrap -= 64)
                         ;
@@ -392,7 +392,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
             work->transfer_mode = 2;
             work->transfer_value = 75;
             Scheduler_AddOrUpdateCallback(
-                BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+                BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
             for (i = 0; i != work->effect->count; i++) {
                 struct MotionObject *object =
                     GetBattleObjectSlotFar(work->effect->actors[i])->object;
@@ -508,11 +508,11 @@ struct Mode10Work {
     struct EffectStep sparks[64];
     s32 transfer_mode;
     s32 transfer_value;
-    u8 unknown_7788[0x20];
+    u8 unknown_7788[32];
     s32 shake;
-    u8 unknown_77ac[0x2c];
+    u8 unknown_77ac[44];
     void *objects[9];
-    u8 unknown_77fc[0x28];
+    u8 unknown_77fc[40];
     s32 transfer_pending;
     struct BattleEffectArgument *effect;
 };
@@ -556,7 +556,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     REG_WININ = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
     REG_WIN0H = 0xf0f0;
@@ -570,7 +570,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     BattleFx_SelectLivingTargets(work->effect);
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-    BattleFx_SpawnObjects(9, 0x174, 1);
+    BattleFx_SpawnObjects(9, 372, 1);
     REG_DISPCNT = 0x7741;
     REG_BG2PA = 0x80;
     REG_BLDALPHA = 0x1010;
@@ -801,7 +801,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     }
     BattleEffect_SetupBlendedDisplay();
     REG_BLDALPHA = 0x1010;
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
 
     for (i = 0; i != 64; i++) {
         work->sparks[i].x = ((Random16() & 127) + 64) << 16;
@@ -999,7 +999,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
         if (frame == 32)

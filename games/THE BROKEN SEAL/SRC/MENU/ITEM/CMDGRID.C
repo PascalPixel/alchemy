@@ -43,9 +43,9 @@ s32 ItemMenu_CmdCursorY(s32 column, s32 row)
     s32 y;
 
     (void)column;
-    y = 0x1E;
+    y = 30;
     if (row != 0) {
-        y = 0x26;
+        y = 38;
     }
     return y;
 }
@@ -81,7 +81,7 @@ s32 ItemMenu_ChooseCmd(void)
         message_window = (s32)menu->message_window;
         ItemMenu_SetMsgWin7();
         RenderOutput_RedrawSavedRectFar(message_window);
-        UiWindow_DrawDividerLineFar(message_window, 0, 3, 0x10, 3);
+        UiWindow_DrawDividerLineFar(message_window, 0, 3, 16, 3);
         ItemMenu_DrawItemHead();
         ItemMenu_DrawCmd(command_states, message_window);
 #if EDITION_INTERNATIONAL
@@ -146,7 +146,7 @@ s32 ItemMenu_ChooseCmd(void)
                 menu->equip_preview = 1;
                 ItemMenu_DrawEquipPreview(menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
                 if (index == 3) {
-                    Scheduler_AddOrUpdateCallback(&EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
+                    Scheduler_AddOrUpdateCallback(&EquipmentMenu_UpdateCompatibilityIndicators, 3200);
                 }
             } else if (index != 0) {
                 menu->equip_preview = 0;

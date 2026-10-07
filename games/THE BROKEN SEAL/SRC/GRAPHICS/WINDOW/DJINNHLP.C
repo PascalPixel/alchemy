@@ -190,9 +190,9 @@ s32 DjinnMenu_ShowHelp(void)
     if (result == -2) {
         UiWindow_Clear(menu->help_window);
         UiWindow_Clear(menu->list_window);
-        UiWindow_Clear(*(s32 *)(menu->unknown_000 + 0x10));
+        UiWindow_Clear(*(s32 *)(menu->unknown_000 + 16));
         ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
     }
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 3200);
     return result;
 }

@@ -82,7 +82,7 @@ void RunBattleEffect03(void)
             object->scale_y = 0xb333;
             object->scale_x = 0xb333;
             object->callback = BattleFx_UpdateShrinkingOrbitObject;
-            object->angle = 0x78;
+            object->angle = 120;
             object->phase = i << 13;
             object->mode = 4;
             last = Object_ReplaceResourceEntry(object->visual, last);
@@ -91,9 +91,9 @@ void RunBattleEffect03(void)
     }
 
     link_marker = last->marker;
-    Audio_PlayCue(0x82);
+    Audio_PlayCue(130);
     WaitFrames(110);
-    target = Object_Spawn(0xe9, 0, 0, 0);
+    target = Object_Spawn(233, 0, 0, 0);
     /* FAKEMATCH: the ROM keeps object as a second copy of the new spark (r5 beside r6); a plain object = target is copy-propagated away by gcse. */
     asm("" : "=r"(object) : "0"(target));
     if (target != 0) {
@@ -106,7 +106,7 @@ void RunBattleEffect03(void)
         Animation_ApplyChildValuesFar(target, 7);
     }
 
-    Audio_PlayCue(0x83);
+    Audio_PlayCue(131);
     WaitFrames(12);
     if (target != 0) {
         for (i = 0; i < 30; i++) {
@@ -119,7 +119,7 @@ void RunBattleEffect03(void)
     }
 
     Animation_ApplyChildValuesFar(object, 0);
-    Audio_PlayCue(0x54);
+    Audio_PlayCue(84);
     if (object != 0) {
         target->callback = BattleFx_RunSparkEmitter;
         target->angle = 0;
@@ -137,7 +137,7 @@ void RunBattleEffect03(void)
         Object_CommitPosition(target);
         ObjectDispatch_ReleaseFar(target);
     }
-    if (link_marker != 0x60)
+    if (link_marker != 96)
         Resource_ResetEntry(link_marker);
     if (state->finish_callback != 0)
         state->finish_callback();

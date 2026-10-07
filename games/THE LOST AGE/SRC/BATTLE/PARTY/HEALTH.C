@@ -33,7 +33,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     s32 value;
     struct BattleUnit *unit;
     if (amount < 0) {
-        BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
+        BattleFx_ApplyColorToSourceBuffer(511, 0);
         BattleFx_StartBufferInterpolation(4);
         if (amount < -10)
             Audio_PlayCue(134);
@@ -104,7 +104,7 @@ s32 BattleParty_ApplyStatusDamage(void)
     }
 
     if (result != 0) {
-        BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
+        BattleFx_ApplyColorToSourceBuffer(511, 0);
         BattleFx_StartBufferInterpolation(4);
         Audio_PlayCue(133);
     }

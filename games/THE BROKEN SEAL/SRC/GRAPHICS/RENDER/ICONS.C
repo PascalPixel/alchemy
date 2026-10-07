@@ -48,8 +48,8 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
     if (flag == 0) {
         *slot = Resource_FindFreeEntry();
     }
-    *ret = VramBlock_LoadCached(*slot, 0x80, work->tiles);
-    Runtime_ReleaseHeapBlock(0x11);
+    *ret = VramBlock_LoadCached(*slot, 128, work->tiles);
+    Runtime_ReleaseHeapBlock(17);
 }
 
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)

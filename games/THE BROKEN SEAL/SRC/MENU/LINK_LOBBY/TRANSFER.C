@@ -87,7 +87,7 @@ s32 LinkLobby_ReceivePartyRecords(void)
     s32 n;
     s32 i;
 
-    size = 0x154;
+    size = 340;
     heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     result = 0;
     timeout = 900;
@@ -113,7 +113,7 @@ test1:
         result = -1;
         goto done;
     }
-    if (rec[0x12a] != 0) {
+    if (rec[298] != 0) {
         result++;
     }
     Engine_TaskWait(2);
@@ -154,7 +154,7 @@ next:
     goto test1;
 wait2:
     ret = SERIAL_VALUE_B;
-    if (ret > 0x140) {
+    if (ret > 320) {
         result = -1;
         goto done;
     }
@@ -169,7 +169,7 @@ test2:
     if (SerialRuntime_GetActiveTransfers() != 0) {
         goto wait2;
     }
-    if (SERIAL_VALUE_B != 0x140) {
+    if (SERIAL_VALUE_B != 320) {
         result = -1;
     } else {
         Engine_TaskWait(2);
@@ -177,7 +177,7 @@ test2:
     goto done;
 second:
     Runtime_BumpFree(heap);
-    size = 0x140;
+    size = 320;
     heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     tries = 0;
     if ((ret = SerialRuntime_BeginTransferB(Trade_GetOfferState(1))) != -1) {
@@ -240,7 +240,7 @@ s32 LinkLobby_SendPartyRecords(void)
     u32 size;
     struct LinkOfferList *list;
 
-    size = 0x154;
+    size = 340;
     heap = Runtime_BumpAllocateAlternatePool(size);
     result = 0;
     timeout = 600;
@@ -293,7 +293,7 @@ test:
     i++;
 next:
     if (i <= 2) {
-        heap[0x12a] = tries = 0;
+        heap[298] = tries = 0;
         if ((ret = SerialRuntime_BeginTransferA(heap, size)) != -1) {
             goto test;
         }
@@ -301,7 +301,7 @@ next:
         goto done;
     }
     Runtime_BumpFree(heap);
-    size = 0x140;
+    size = 320;
     heap = Runtime_BumpAllocateAlternatePool(size);
     /* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and keeps the list base's copy first after the call. */
     do {

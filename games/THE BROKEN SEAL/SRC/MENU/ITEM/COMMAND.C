@@ -90,40 +90,40 @@ void ItemMenu_DrawCmd(const s8 *command_states, s32 window)
     s32 value;
     u32 message;
 
-    UiWork_SetParamNibbleFar(0xf);
+    UiWork_SetParamNibbleFar(15);
     value = command_states[ITEM_COMMAND_USE];
     disabled = -1;
     if (value == disabled)
-        UiWork_SetParamNibbleFar(0xe);
+        UiWork_SetParamNibbleFar(14);
 
     message = (u32)MsgItemCommandUse;
-    UiText_DrawCharacterAtOffsetFar(message, window, 0, 0x18);
-    UiWork_SetParamNibbleFar(0xf);
+    UiText_DrawCharacterAtOffsetFar(message, window, 0, 24);
+    UiWork_SetParamNibbleFar(15);
     if (command_states[ITEM_COMMAND_EQUIP] == disabled)
-        UiWork_SetParamNibbleFar(0xe);
+        UiWork_SetParamNibbleFar(14);
 
-    UiText_DrawCharacterAtOffsetFar(message + 1, window, ITEM_TEXT_X, 0x18);
-    UiWork_SetParamNibbleFar(0xf);
+    UiText_DrawCharacterAtOffsetFar(message + 1, window, ITEM_TEXT_X, 24);
+    UiWork_SetParamNibbleFar(15);
     if (command_states[ITEM_COMMAND_GIVE] == disabled)
-        UiWork_SetParamNibbleFar(0xe);
+        UiWork_SetParamNibbleFar(14);
 
-    UiText_DrawCharacterAtOffsetFar(message + 2, window, 0, 0x20);
-    UiWork_SetParamNibbleFar(0xf);
+    UiText_DrawCharacterAtOffsetFar(message + 2, window, 0, 32);
+    UiWork_SetParamNibbleFar(15);
     if (command_states[ITEM_COMMAND_DROP] == disabled)
-        UiWork_SetParamNibbleFar(0xe);
+        UiWork_SetParamNibbleFar(14);
 
-    UiText_DrawCharacterAtOffsetFar(message + 3, window, 0x50, 0x20);
-    UiWork_SetParamNibbleFar(0xf);
+    UiText_DrawCharacterAtOffsetFar(message + 3, window, 80, 32);
+    UiWork_SetParamNibbleFar(15);
     if (command_states[ITEM_COMMAND_INSPECT] == disabled)
-        UiWork_SetParamNibbleFar(0xe);
+        UiWork_SetParamNibbleFar(14);
 
-    UiText_DrawCharacterAtOffsetFar(message + 4, window, 0x50, 0x18);
-    UiWork_SetParamNibbleFar(0xf);
+    UiText_DrawCharacterAtOffsetFar(message + 4, window, 80, 24);
+    UiWork_SetParamNibbleFar(15);
     if (command_states[ITEM_COMMAND_REMOVE] == disabled)
-        UiWork_SetParamNibbleFar(0xe);
+        UiWork_SetParamNibbleFar(14);
 
-    UiText_DrawCharacterAtOffsetFar(message + 5, window, ITEM_TEXT_X, 0x20);
-    UiWork_SetParamNibbleFar(0xf);
+    UiText_DrawCharacterAtOffsetFar(message + 5, window, ITEM_TEXT_X, 32);
+    UiWork_SetParamNibbleFar(15);
 }
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)

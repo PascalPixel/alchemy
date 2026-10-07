@@ -2,7 +2,7 @@
 #include "SYSTEM.H"
 
 struct BusyObject {
-    u8 unknown_00[0x28];
+    u8 unknown_00[40];
     s32 busy;
 };
 

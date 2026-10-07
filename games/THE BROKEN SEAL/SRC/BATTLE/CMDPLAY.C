@@ -144,7 +144,7 @@ read_saved_selection:
             item_available = 0;
             if (profile->target_strategy == 0) {
                 request->command = 2;
-                request->parameter = 0x1fd;
+                request->parameter = 509;
                 return;
             }
         }
@@ -309,7 +309,7 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
     events->timer = frames;
     events->phase = BATTLE_PLAYBACK_DISPATCH;
     gBattleWork->plan.target_count = 0;
-    return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+    return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 3200);
 }
 
 extern volatile u32 gFrameCount;
@@ -507,7 +507,7 @@ void BattleEvent_Playback(void)
             state->phase = 2;
             state->timer = 0;
         } else if (state->phase == 11) {
-            if (state->timer == 0 || state->timer >= 0x400) {
+            if (state->timer == 0 || state->timer >= 1024) {
                 s32 frame = 6;
 
                 if (state->timer == 0 && state->flags != 0) {
@@ -519,9 +519,9 @@ void BattleEvent_Playback(void)
                             kind = 0;
                         AudioCommand_PlayFar(kind + 146);
                     }
-                    state->timer = 0x400;
+                    state->timer = 1024;
                 }
-                if (state->timer > 0x41d)
+                if (state->timer > 1053)
                     state->timer = 0;
                 if (state->timer == 0) {
                     s32 kind = Summon_GetLayoutKind(Owner_GetStateFar(state->actor_id)->class_id);
@@ -529,8 +529,8 @@ void BattleEvent_Playback(void)
                     if (kind >= 0)
                         AudioCommand_PlayFar(kind + 146);
                 }
-                if (state->timer >= 0x400)
-                    frame = (state->timer - 0x400) / 8 % 5 + 1;
+                if (state->timer >= 1024)
+                    frame = (state->timer - 1024) / 8 % 5 + 1;
                 if (frame == 6 || (state->timer & 7) == 0) {
                     struct AnimationObject *record;
                     s32 n;

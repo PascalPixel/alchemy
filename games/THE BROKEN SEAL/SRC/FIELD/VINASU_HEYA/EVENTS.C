@@ -58,7 +58,7 @@ void FieldScene_RunApproachAndSpawnEffect(void)
 {
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 712);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
     (void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
     BattleFx_RunRisingObjectSequence(0, 6, 0);
@@ -371,13 +371,13 @@ s32 Scene_RunEntrySetup(void)
                 Map_CopyCells(53, 12, 3, 13, 26, 12);
                 Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
                 Engine_TaskWait(1);
-                Engine_TaskAddCallback(SceneState_CallWith432And32, 0xc80);
+                Engine_TaskAddCallback(SceneState_CallWith432And32, 3200);
             }
             if (Engine_GameFlagIsSet(0x307)) {
                 Map_CopyCells(58, 12, 3, 13, 34, 12);
                 Map_CopyCellsTo(81, 41, 97, 14, 5, 2);
                 Engine_TaskWait(1);
-                Engine_TaskAddCallback(FieldScene_CallWith560And44, 0xc80);
+                Engine_TaskAddCallback(FieldScene_CallWith560And44, 3200);
             }
             if (gGameState.entrance == 11)
                 FieldScene_RunOpeningAuxiliarySequence();
@@ -548,7 +548,7 @@ s32 Scene_RunEntrySetup(void)
         case 15:
         case 16:
             Engine_TaskWait(1);
-            Engine_TaskAddCallback(SceneState_ApplyStepToSlots15To18, 0xc80);
+            Engine_TaskAddCallback(SceneState_ApplyStepToSlots15To18, 3200);
             actor = Object_GetById(14);
             actor->motion_flags = 0;
             actor->y.fixed = 0;
@@ -670,7 +670,7 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
         }
     }
     if (hit < 0) {
-        Engine_ActorSetAttachedEffect(id, 0x102);
+        Engine_ActorSetAttachedEffect(id, 258);
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
         Object_SetMode(actor, 7);
         Engine_ObjectCommitPosition(actor);

@@ -89,9 +89,9 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
 
     if (GameFlag_TestFar(0x20) != 0) {
         if (character == 0)
-            character = 0x12;
+            character = 18;
         if (character == 1)
-            character = 0x13;
+            character = 19;
     }
 
     character_id = Localization_LookupEntryId(character);
@@ -106,6 +106,6 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
             }
         }
         current = state->state_values[slot];
-        UiGlyph_LoadEntryWithPalette(character_id, value, &current, &result, slot + 0xe, 1);
+        UiGlyph_LoadEntryWithPalette(character_id, value, &current, &result, slot + 14, 1);
     }
 }

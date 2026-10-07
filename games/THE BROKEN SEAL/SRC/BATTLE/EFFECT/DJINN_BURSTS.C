@@ -58,11 +58,11 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-    Graphics_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
-    Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
+    Graphics_TransposeCopy(cells, work->sheet + 680, 17, 104);
+    Graphics_TransposeCopy(cells + 1768, work->sheet + 2448, 34, 65);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     for (i = 0; i != 8; i++)
         work->particles[i].variant = -1;
     for (i = 0; i != 512; i++)
@@ -75,7 +75,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
         for (i = 0; i != 5; i++) {
             step = &work->particles[i];
             if (step->variant != -1) {
-                callbacks[0](canvas, work->sheet + 0x990, step->x - 16, step->y - 17, 65, 34);
+                callbacks[0](canvas, work->sheet + 2448, step->x - 16, step->y - 17, 65, 34);
                 step->x -= 12;
                 step->variant++;
                 if (step->variant == 5) {
@@ -173,10 +173,10 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(0, draw);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work->sheet, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet, work->sheet + 0x320, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet, work->sheet + 800, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     for (i = 0; i != 32; i++) {
         step = &work->particles[i];
         step->x = (Random16() & 63) + 64;
@@ -199,7 +199,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
         for (i = 0; i != 8; i++) {
             step = &work->particles[i];
             if (frame >= i * 4 + 8 && step->y <= 95) {
-                callbacks[0](canvas, work->sheet + 0x320, step->x - 20, step->y - 32, 40, 64);
+                callbacks[0](canvas, work->sheet + 800, step->x - 20, step->y - 32, 40, 64);
                 step->x -= 6;
                 step->y += 12;
                 if (step->y > 95) {
@@ -240,7 +240,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);
-        angle -= 0x800;
+        angle -= 2048;
         frame++;
     } while (frame != 96);
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);

@@ -20,18 +20,18 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_UiIconTiles);
     return slot;
 }
 
 void Resource_CopyFixedBlockB(s32 slot)
 {
-    VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_UiIconTiles);
 }
 
 void Resource_CopyFixedBlockA(s32 slot)
 {
-    VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiFixedBlockATiles);
+    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_UiFixedBlockATiles);
 }
 
 #if EDITION_INTERNATIONAL

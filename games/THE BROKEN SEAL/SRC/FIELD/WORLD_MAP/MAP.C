@@ -39,7 +39,7 @@ void StoryProgress_TriggerEvent0808(void)
 
     if (gGameState.encounter_steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         if ((u32)Engine_RandomNext() < 0x8000) {
-            BattleFx_SetPhaseRequest(0x808, 3);
+            BattleFx_SetPhaseRequest(2056, 3);
             work->encounter_bias = 0;
         } else {
             gGameState.encounter_steps = work->encounter_threshold;
@@ -54,7 +54,7 @@ void StoryProgress_TriggerEvent0809(void)
     struct EventWork *work = gEventWork;
 
     if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
-        BattleFx_SetPhaseRequest(0x809, 42);
+        BattleFx_SetPhaseRequest(2057, 42);
         work->encounter_bias = 0;
     }
 }
@@ -66,7 +66,7 @@ void StoryProgress_TriggerEvent080A(void)
     struct EventWork *work = gEventWork;
 
     if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
-        BattleFx_SetPhaseRequest(0x80a, 24);
+        BattleFx_SetPhaseRequest(2058, 24);
         work->encounter_bias = 0;
     }
 }
@@ -99,8 +99,8 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
     x = actor->x.fixed;
     y = actor->y.fixed;
     z = actor->z.fixed;
-    spark = Engine_ObjectCreate(0x11d, x, y, z);
-    Engine_AudioPlayCue(0xf6);
+    spark = Engine_ObjectCreate(285, x, y, z);
+    Engine_AudioPlayCue(246);
     if (spark == 0)
         return;
     spark->motion_flags = 0;
@@ -126,7 +126,7 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
         actor->z.fixed = 0x5300000;
         Vector_AddPolarOffset(0x100000, *angle, &actor->x);
         actor->facing = *angle + 0x4000;
-        *angle += 0x400;
+        *angle += 1024;
     }
 }
 
@@ -263,7 +263,7 @@ void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after
     } else {
         work->requested_exit = exit_after;
     }
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
 }
 
 void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after)
@@ -280,33 +280,33 @@ void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after
     } else {
         work->requested_exit = exit_after;
     }
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
 }
 
 void SceneState_SetValues130_6_47(void)
 {
-    StoryScene_SetBranchValueFromX(0x82, 6, 0x2F);
+    StoryScene_SetBranchValueFromX(130, 6, 47);
 }
 
 void SceneState_ApplyValues150And46And11(void)
 {
-    StoryScene_SetBranchValueFromZ(0x96, 0x2E, 0x0B);
+    StoryScene_SetBranchValueFromZ(150, 46, 11);
 }
 
 void SceneState_ApplyValues116And56And21(void)
 {
-    StoryScene_SetBranchValueFromZ(0x74, 0x38, 0x15);
+    StoryScene_SetBranchValueFromZ(116, 56, 21);
 }
 
 void SceneState_ApplyValues151And25And54(void)
 {
-    StoryScene_SetBranchValueFromZ(0x97, 0x19, 0x36);
+    StoryScene_SetBranchValueFromZ(151, 25, 54);
 }
 
 void FieldScene_RunStep7D3B1E(void)
 {
 
-    StoryScene_SetBranchValueFromZ(0x7D, 0x3B, 0x1E);
+    StoryScene_SetBranchValueFromZ(125, 59, 30);
 }
 
 struct SceneEvent *WorldMap_GetEvents(void)
@@ -410,12 +410,12 @@ s32 WorldMap_EnterScene(void)
         Engine_EventRequestExit(112);
     } else {
         Engine_GameFlagSet(0x144);
-        gEventWork->start_transition = 0x400;
+        gEventWork->start_transition = 1024;
         gEventWork->transition_frames = 16;
         Engine_TaskWait(1);
         Engine_CameraSetSpeed(0x80000, 0x10000);
         Engine_GameFlagClear(0x12f);
-        Engine_TaskAddCallback(MapActor_UpdateContact, 0xc80);
+        Engine_TaskAddCallback(MapActor_UpdateContact, 3200);
         if (Engine_GameFlagIsSet(0x90a) == 0) {
             FieldMap_SetWindowCellTile(128, 256, 176, 56);
         }
@@ -481,7 +481,7 @@ s32 WorldMap_EnterScene(void)
             Engine_GameFlagSet(0x11c);
             if (GameFlag_GetByte(0x2f8) != 0) {
                 gGameState.movement_mode = 2;
-                Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
+                Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 3200);
             }
             break;
         case 75:
@@ -577,7 +577,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskWait(1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
     Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x16fc, 0x628);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x16fc, 1576);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_SetPosition(8, 0x16d80000, 0x6280000);
     Engine_TaskWait(1);
@@ -596,16 +596,16 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_ActorEnableActionCallback(12, gTransferArrive12);
     Engine_EventWait(20);
     Object_SetActionCallbackAndRefreshById(13, gTransferArrive13);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x1704, 0x640);
+    Actor_WalkToAndWait(ACTOR_GERALD, 0x1704, 1600);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xa000, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 60);
     Actor_SetPosition(8, 0x16d80000, 0x6380000);
     Engine_TaskWait(1);
     Engine_EventSetMessage((s32)MsgWorldMapWeCantStayAnotherMinute);
@@ -626,7 +626,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
     Object_SetActionCallbackAndRefreshById(13, gTransferDepart13);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Engine_EventWait(20);
     Battle_ClearObjectFlag5bWhenMode3();
     Engine_ActorSetAnimation(10, 1);
@@ -640,13 +640,13 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetPosition(9, 0x16080000, 0x6d80000);
     Engine_TaskWait(1);
     Actor_SetSpeed(9, 0x13333, 0x9999);
-    Actor_WalkToAndWait(9, 0x1608, 0x6c8);
-    Actor_WalkToAndWait(9, 0x15f8, 0x6c8);
-    Actor_WalkToAndWait(9, 0x15f8, 0x6f8);
+    Actor_WalkToAndWait(9, 0x1608, 1736);
+    Actor_WalkToAndWait(9, 0x15f8, 1736);
+    Actor_WalkToAndWait(9, 0x15f8, 1784);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(9, 2);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(9, 0x102);
+    Actor_SetAttachedEffect(9, 258);
     Engine_EventWait(60);
     Actor_FaceDirection(9, 0, 20);
     Engine_ActorStartRepeatedMotion(9, 3);
@@ -657,38 +657,38 @@ void FieldScene_RunActorTransferSequence(void)
     record = Actor_Get(8);
     Engine_ActorSetSpriteFlags(record, 1);
     Actor_SetSpeed(8, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(8, 0x1608, 0x6f8);
+    Actor_WalkToAndWait(8, 0x1608, 1784);
     Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(0x2008, 0, 10);
     Actor_FaceDirection(8, 0x3000, 60);
     Actor_FaceDirection(8, 0x8000, 10);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(8, 258);
     Engine_EventWait(60);
     Actor_FaceDirection(9, 0x3000, 0);
     Actor_FaceDirection(8, 0x3000, 40);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(8, 258);
     Engine_EventWait(60);
     Engine_ActorStartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(0x2008, 0, 40);
     Engine_ActorRunRepeatedMotion(9, 1);
     Actor_FaceDirection(9, 0, 10);
     Event_ShowMessageAndWait(9, 0, 10);
-    Actor_ShowEmote(8, 0x105, 60);
+    Actor_ShowEmote(8, 261, 60);
     Event_ShowMessageAndWait(0x2008, 0, 10);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_ActorSetAnimationAndWait(8, 3);
     Event_ShowMessageAndWait(0x2008, 0, 10);
-    Actor_ShowEmote(9, 0x101, 60);
+    Actor_ShowEmote(9, 257, 60);
     Event_ShowMessageAndWait(9, 0, 20);
     Engine_ActorSetAnimationAndWait(8, 3);
     Battle_ClearObjectFlag5bWhenMode3();
     Audio_PlayCue(107);
     Camera_SetSpeed(0x40000, 0x40000);
     WorldMap_ShakeTransferStartCamera();
-    Audio_PlayCue(0x121);
-    Actor_ShowEmote(8, 0x100, 0);
-    Actor_ShowEmote(9, 0x100, 0);
+    Audio_PlayCue(289);
+    Actor_ShowEmote(8, 256, 0);
+    Actor_ShowEmote(9, 256, 0);
     Actor_FaceDirection(8, 0x8000, 0);
     Actor_FaceDirection(9, 0, 40);
     Actor_FaceDirection(8, 0xb000, 0);
@@ -713,7 +713,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskWait(1);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
-    Engine_TaskAddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
+    Engine_TaskAddCallback(WorldMap_UpdateTransferredActorLanding, 3200);
     do {
         Engine_TaskWait(1);
     } while ((s16)actor->timer == 0);
@@ -735,8 +735,8 @@ void FieldScene_RunActorTransferSequence(void)
     Camera_MoveTo(0x16080000, -1, 0x6f80000, 1);
     Engine_CameraWaitForMove();
     Battle_SetObjectFlag5bWhenMode3();
-    Actor_SetAttachedEffect(9, 0x102);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(9, 258);
+    Actor_SetAttachedEffect(8, 258);
     Engine_EventWait(60);
     Engine_TaskRemoveCallback(WorldMap_UpdateTransferredActorLanding);
     Engine_TaskWait(1);
@@ -754,17 +754,17 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_ActorRunRepeatedMotion(8, 1);
     Actor_FaceDirection(8, 0x8000, 10);
     Event_ShowMessageAndWait(0x2008, 0, 10);
-    Actor_SetAttachedEffect(9, 0x102);
+    Actor_SetAttachedEffect(9, 258);
     Engine_EventWait(80);
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(9, 1);
     Engine_ActorSetAnimationAndWait(9, 3);
-    Actor_WalkToAndWait(8, 0x1618, 0x6f8);
+    Actor_WalkToAndWait(8, 0x1618, 1784);
     Actor_SetPosition(8, 0, 0);
-    Actor_WalkToAndWait(9, 0x15f8, 0x6c8);
-    Actor_WalkToAndWait(9, 0x1608, 0x6c8);
-    Actor_WalkToAndWait(9, 0x1608, 0x6d8);
+    Actor_WalkToAndWait(9, 0x15f8, 1736);
+    Actor_WalkToAndWait(9, 0x1608, 1736);
+    Actor_WalkToAndWait(9, 0x1608, 1752);
     Actor_SetPosition(9, 0, 0);
     Audio_PlayCue(141);
     Engine_ActorEnableActionCallback(10, gTransferReturn10);
@@ -795,7 +795,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Object_RefreshSelectorById(13);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Camera_SetSpeed(0x40000, 0x8000);
     Camera_MoveTo(0x16f80000, -1, 0x6480000, 1);
     Engine_CameraWaitForMove();
@@ -814,7 +814,7 @@ void FieldScene_RunActorTransferSequence(void)
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x16d8, 0x628);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x16d8, 1576);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x85a);
@@ -912,7 +912,7 @@ void WorldMap_TransferToExit102(void)
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x6666, 0x3333);
-    Actor_WalkToAndWait(8, 0x14a8, 0x918);
+    Actor_WalkToAndWait(8, 0x14a8, 2328);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1052,7 +1052,7 @@ void WorldMap_CompleteTransfer(void)
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x6666, 0x3333);
-    Actor_WalkToAndWait(8, 0x13c8, 0x918);
+    Actor_WalkToAndWait(8, 0x13c8, 2328);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x93e);
@@ -1122,7 +1122,7 @@ void WorldMap_MeetVenusDjinni(void)
         Battle_SetObjectFlag5bWhenMode3();
         Actor_FaceActor(0, DJINNI, 0);
         Event_Wait(10);
-        Actor_ShowEmote(0, 0x101, 60);
+        Actor_ShowEmote(0, 257, 60);
         djinni->work = 1;
         Actor_FaceActor(DJINNI, 0, 0);
         Task_Wait(16);
@@ -1140,8 +1140,8 @@ void WorldMap_MeetVenusDjinni(void)
         djinni->terrain_height = 0;
         FieldObject_SetPosition(djinni, 0x15d00000, 0, 0x5300000);
         for (i = 0; i < 16; i++) {
-            djinni->scale_x += 0x800;
-            djinni->scale_y += 0x800;
+            djinni->scale_x += 2048;
+            djinni->scale_y += 2048;
             Task_Wait(1);
         }
         Actor_FaceActor(DJINNI, 0, 0);
@@ -1166,17 +1166,17 @@ void WorldMap_MeetVenusDjinni(void)
         Engine_ObjectSetPartPalettes(djinni, 0);
         Actor_RunRepeatedMotion(DJINNI, 2);
         Event_ShowMessage(DJINNI, 0);
-        Actor_ShowEmote(0, 0x102, 30);
+        Actor_ShowEmote(0, 258, 30);
         Event_ShowMessage(DJINNI, 0);
-        Actor_ShowEmote(0, 0x101, 30);
+        Actor_ShowEmote(0, 257, 30);
         Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
         Actor_SetAnimation(0, 22);
         Event_ShowMessage(DJINNI, 0);
-        Actor_ShowEmote(0, 0x101, 40);
+        Actor_ShowEmote(0, 257, 40);
         Actor_Jump(DJINNI, 4, 30);
         UiWork_PushValueSlot(300, 4);
         Event_ShowMessage(DJINNI, 0);
-        Actor_ShowEmote(0, 0x100, 30);
+        Actor_ShowEmote(0, 256, 30);
         Event_ShowMessage(DJINNI, 0);
         Actor_RunRepeatedMotion(0, 2);
         Event_ShowMessage(DJINNI, 0);
@@ -1200,7 +1200,7 @@ void WorldMap_MeetVenusDjinni(void)
         }
         Actor_SetAnimation(0, 22);
         Event_ShowMessage(DJINNI, 0);
-        Actor_ShowEmote(DJINNI, 0x102, 30);
+        Actor_ShowEmote(DJINNI, 258, 30);
         Actor_FaceActor(DJINNI, 0, 0);
         Actor_RunRepeatedMotion(DJINNI, 2);
         Event_ShowMessage(DJINNI, 0);
@@ -1304,7 +1304,7 @@ learn:
     Actor_Jump(DJINNI, 2, 20);
     Actor_Jump(DJINNI, 2, 20);
     Actor_SetAnimationAndWait(0, 3);
-    Actor_ShowEmote(DJINNI, 0x100, 30);
+    Actor_ShowEmote(DJINNI, 256, 30);
     Event_ShowMessage(DJINNI, 0);
     GameFlag_Set(0x16f);
     GameFlag_Set(0x171);

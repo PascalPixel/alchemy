@@ -143,7 +143,7 @@ void TorebiIzumi_PayToPlay(void)
         Engine_ActorWalkToAndWait(0, 120, 152);
         Engine_ActorFaceDirection(0, 0x8000, 0);
         Engine_EventWait(20);
-        Event_RequestDestination(0x1fd, 0);
+        Event_RequestDestination(509, 0);
         Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 13);
     } else {
         gEventWork->message++;

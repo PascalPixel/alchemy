@@ -29,14 +29,14 @@ show_price:
 #endif
     message -= 3;
 #if defined(TBS_EDITION_FR)
-    UiText_DrawNumberInWindowFar(price, 5, window, 0x18, 8);
-    UiText_DrawCharacterAtOffsetFar(message, window, 0x40, 8);
+    UiText_DrawNumberInWindowFar(price, 5, window, 24, 8);
+    UiText_DrawCharacterAtOffsetFar(message, window, 64, 8);
 #elif defined(TBS_EDITION_ES)
-    UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
-    UiText_DrawCharacterAtOffsetFar(message, window, 0x50, 8);
+    UiText_DrawNumberInWindowFar(price, 5, window, 32, 8);
+    UiText_DrawCharacterAtOffsetFar(message, window, 80, 8);
 #else
-    UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
-    UiText_DrawCharacterAtOffsetFar(message, window, 0x48, 8);
+    UiText_DrawNumberInWindowFar(price, 5, window, 32, 8);
+    UiText_DrawCharacterAtOffsetFar(message, window, 72, 8);
 #endif
     goto done;
 draw:

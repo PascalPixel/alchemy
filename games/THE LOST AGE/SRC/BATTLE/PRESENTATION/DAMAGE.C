@@ -76,7 +76,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 }
 
 struct BattleObjectAnimation {
-    u8 unknown_00[0x28];
+    u8 unknown_00[40];
     struct AnimationEntry *entry;
 };
 
@@ -121,7 +121,7 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
     }
 
     if (living_count == 0) {
-        return 0x100;
+        return 256;
     }
 
     return living_units[(u32)(Random16() * living_count) >> 0x10];

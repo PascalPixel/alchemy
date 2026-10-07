@@ -70,7 +70,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     struct BattleUnit *unit;
 
     if (amount < 0) {
-        BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
+        BattleFx_ApplyColorToSourceBuffer(511, 0);
         BattleFx_StartBufferInterpolation(4);
         if (amount < -10)
             Audio_PlayCue(SOUND_HEAVY_IMPACT);
@@ -130,7 +130,7 @@ s32 BattleParty_ApplyStatusDamage(void)
     }
 
     if (result != 0) {
-        BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
+        BattleFx_ApplyColorToSourceBuffer(511, 0);
         BattleFx_StartBufferInterpolation(4);
         Audio_PlayCue(133);
     }
@@ -143,14 +143,14 @@ void Battle_SetObjectFlag5bWhenMode3(void)
     struct EventRuntime *work;
     void *blk;
 
-    work = Runtime_AllocateBlock(0x1B, 0xCCC);
+    work = Runtime_AllocateBlock(27, 3276);
     if (work->mode_19e == 3) {
-        blk = Runtime_AllocateBlock(0x1F, 0x540);
-        if ((blk != NULL) && (FIELD_AT_OFFSET(blk, s8 *, 0x53D) != 0)) {
-            FIELD_AT_OFFSET(blk, s8 *, 0x53A) = 0;
-            FIELD_AT_OFFSET(blk, s8 *, 0x53B) = 0;
-            FIELD_AT_OFFSET(blk, s8 *, 0x53C) = 1;
-            FIELD_AT_OFFSET(blk, s8 *, 0x53D) = 0;
+        blk = Runtime_AllocateBlock(31, 1344);
+        if ((blk != NULL) && (FIELD_AT_OFFSET(blk, s8 *, 1341) != 0)) {
+            FIELD_AT_OFFSET(blk, s8 *, 1338) = 0;
+            FIELD_AT_OFFSET(blk, s8 *, 1339) = 0;
+            FIELD_AT_OFFSET(blk, s8 *, 1340) = 1;
+            FIELD_AT_OFFSET(blk, s8 *, 1341) = 0;
         }
         ((struct ObjectRuntime *)((struct EventWork *)work)->view_center)->movement_state = 1;
         Map_ResumeAnimationFar();
@@ -161,7 +161,7 @@ void Battle_ClearObjectFlag5bWhenMode3(void)
 {
     struct EventRuntime *work;
 
-    work = Runtime_AllocateBlock(0x1B, 0xCCC);
+    work = Runtime_AllocateBlock(27, 3276);
     if (work->mode_19e == 3) {
         Map_LoadAreaGraphicsFar();
         ((struct ObjectRuntime *)((struct EventWork *)work)->view_center)->movement_state = 0;
@@ -169,7 +169,7 @@ void Battle_ClearObjectFlag5bWhenMode3(void)
 }
 
 struct FieldWork {
-    u8 unknown_000[0x10];
+    u8 unknown_000[16];
     s32 view;
     struct FieldActor *actors[86];
     s16 action;
@@ -201,7 +201,7 @@ struct FieldWork {
     u16 unknown_1c4;
     u16 transition_active;
     s32 transition_frames;
-    u8 unknown_1cc[0xaea];
+    u8 unknown_1cc[2794];
     u16 busy;
     u8 unknown_cb8[8];
     u16 unknown_cc0;
@@ -304,10 +304,10 @@ s32 Field_RunScene(s32 entrance)
     Battle_PlaceMapMarkers();
     BattleEffect_InitializeBuffers();
     BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
-    work->transition = 0x100;
+    work->transition = 256;
     work->transition_frames = 16;
     work->transition_active = 0;
-    work->unknown_1b0 = 0x199;
+    work->unknown_1b0 = 409;
     work->unknown_1b4 = 0;
     if (gGameState.scene_variant == 2) {
         work->unknown_1b0 = 0;

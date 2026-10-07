@@ -33,18 +33,18 @@ void BattlePresentation_BuildTilemap(s32 *destination)
     s32 entry;
     u32 index;
 
-    FillWords(destination, 0x100, -1);
-    destination += 0x40;
-    FillWords(destination, 0x80, 0x03ff03ff);
+    FillWords(destination, 256, -1);
+    destination += 64;
+    FillWords(destination, 128, 0x03ff03ff);
     entry = (0x0201 << 16) | 0x0200;
-    destination += 0x20;
+    destination += 32;
     index = 0;
     do {
         index++;
         *destination++ = entry;
         entry += 0x00020002;
     } while (index <= 239);
-    FillWords(destination, 0x280, 0x03ff03ff);
+    FillWords(destination, 640, 0x03ff03ff);
 }
 
 void BattlePres_UpdateHBlankScroll(void)
@@ -85,21 +85,21 @@ void BattlePres_AdvanceTransitionTimer(void)
     timer = *(u32 **)Ram_Disp;
     frame = *timer;
     camera = *(struct BattleCamera **)Ram_CameraWork;
-    scroll = 0x34 - frame;
-    if (scroll > 0x20)
-        scroll = 0x20;
+    scroll = 52 - frame;
+    if (scroll > 32)
+        scroll = 32;
     offset = (struct BgScroll *)Ram_BgScroll;
     if (scroll < 0)
         scroll = 0;
     offset->y = scroll;
-    if (frame <= 0x50U)
+    if (frame <= 80U)
         camera->yaw = 45 * frame * 8 + 0xaf80;
     next = (*timer = *timer + 1);
-    if (next <= 0x50U) {
-        BattlePres_SetupTransitionScene(0, 0, 0, 0xb4 - next);
+    if (next <= 80U) {
+        BattlePres_SetupTransitionScene(0, 0, 0, 180 - next);
         return;
     }
-    BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
+    BattlePres_SetupTransitionScene(0, 0, 0, 100);
 }
 
 void BattlePres_DrawTransitionRows(void)

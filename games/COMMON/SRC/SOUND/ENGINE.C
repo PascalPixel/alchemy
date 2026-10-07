@@ -70,7 +70,7 @@ void AudioEngine_SetPcmRate(u32 mode)
     work->rate = mode;
     frame = Sound_FrameLengths[mode - 1];
     work->frame_samples = frame;
-    work->transfer_period = __divsi3(0x630, frame);
+    work->transfer_period = __divsi3(1584, frame);
     work->output_rate = __divsi3(0x91D1B * frame + 5000, 10000);
     work->rate_step = (__divsi3(0x1000000, work->output_rate) + 1) >> 1;
     REG_TM0CNT_H = 0;
@@ -519,7 +519,7 @@ void Cgb_UpdateChannels(void)
                     goto init_envelope;
                 case 3:
                     if (note->wave != note->loaded_wave) {
-                        *reg0 = 0x40;
+                        *reg0 = 64;
                         REG_WAVE_RAM[0] = note->wave[0];
                         REG_WAVE_RAM[1] = note->wave[1];
                         REG_WAVE_RAM[2] = note->wave[2];
@@ -529,9 +529,9 @@ void Cgb_UpdateChannels(void)
                     *reg0 = 0;
                     *reg1 = note->length;
                     if (note->length)
-                        note->trigger = 0xc0;
+                        note->trigger = 192;
                     else
-                        note->trigger = 0x80;
+                        note->trigger = 128;
                     break;
                 default:
                     *reg1 = note->length;
@@ -539,7 +539,7 @@ void Cgb_UpdateChannels(void)
                 init_envelope:
                     envelope = note->attack + 8;
                     if (note->length)
-                        note->trigger = 0x40;
+                        note->trigger = 64;
                     else
                         note->trigger = 0;
                     break;
@@ -640,9 +640,9 @@ void Cgb_UpdateChannels(void)
             if (channel < 4 && (note->kind & 8)) {
                 s32 bias = REG_SOUNDBIAS_H;
 
-                if (bias < 0x40)
+                if (bias < 64)
                     note->frequency = (note->frequency + 2) & 0x7fc;
-                else if (bias < 0x80)
+                else if (bias < 128)
                     note->frequency = (note->frequency + 1) & 0x7fe;
             }
             if (channel != 4)
@@ -658,7 +658,7 @@ void Cgb_UpdateChannels(void)
             if (channel == 3) {
                 *reg2 = Sound_Cgb3LevelCodes[note->level];
                 if (note->trigger & 0x80) {
-                    *reg0 = 0x80;
+                    *reg0 = 128;
                     *reg4 = note->trigger;
                     note->trigger &= 0x7f;
                 }

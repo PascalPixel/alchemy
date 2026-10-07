@@ -33,7 +33,7 @@ struct MapLayer {
 };
 
 struct MapState {
-    u8 pad000[0x130];
+    u8 pad000[304];
     struct MapLayer layers[1];
 };
 

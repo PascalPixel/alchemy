@@ -79,8 +79,8 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
     other->home_y = node->home_y;
     other->dx = 0;
     other->dy = 0;
-    other->scale = 0x100;
-    other->scale_end = 0x100;
+    other->scale = 256;
+    other->scale_end = 256;
     sprite = &other->sprite;
     sprite->mode = 0;
     sprite->colors = 0;

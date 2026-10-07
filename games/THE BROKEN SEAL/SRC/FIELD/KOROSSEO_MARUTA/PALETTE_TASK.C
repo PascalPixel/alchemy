@@ -12,7 +12,7 @@ void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, 
     Korosseo_MarkerSteps = 0;
 
     {
-        s32 budget = 0xc80;
+        s32 budget = 3200;
         s32 task = (s32)Korosseo_UpdateMarker;
         Engine_TaskAddCallback(task, budget);
     }
@@ -28,7 +28,7 @@ void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 secon
     Korosseo_MarkerStep = 0;
 
     {
-        s32 budget = 0xc80;
+        s32 budget = 3200;
         s32 task = (s32)Korosseo_UpdateMarker;
         Engine_TaskAddCallback(task, budget);
     }

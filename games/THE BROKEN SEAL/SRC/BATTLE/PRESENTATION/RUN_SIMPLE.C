@@ -76,7 +76,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 
     BattlePres_SetActorModes(0, 0);
     BattlePres_BuildTargetList(plan, &work);
-    if (work.kind == 0x87)
+    if (work.kind == 135)
         UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
 
     unit = Owner_GetStateFar(work.actor);
@@ -154,7 +154,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
             }
         }
 
-        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 3200);
         if (work.kind != 0) {
             if (plan->presentation_flags & 0x4000)
                 BattleFx_DispatchByIdRangeFar(&work);
@@ -282,7 +282,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
             work.params[i][j] = animation->entries[j]->param;
     }
 
-    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 3200);
     if (work.kind != 0) {
         s32 fade;
 
@@ -300,7 +300,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
             }
             WaitFrames(1);
             i++;
-            fade += 0x444;
+            fade += 1092;
         } while (i < 20);
         if (plan->presentation_flags & 0x4000)
             BattleFx_DispatchByIdRangeFar(&work);
@@ -343,7 +343,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
         }
     } else if (def->use_type == 4) {
         if ((item & ITEM_ID_MASK) == 0xb8)
-            item = 0xb9;
+            item = 185;
         unit->inventory[selection->parameter] = item;
     }
     return 0;

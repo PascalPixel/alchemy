@@ -30,7 +30,7 @@ void EffectSlot_Update(struct EffectSlot *effect)
 }
 
 struct ScaledSprite {
-    u8 unknown_00[0xc];
+    u8 unknown_00[12];
     s32 scale;
 };
 

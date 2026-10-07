@@ -81,7 +81,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Engine_EventShowMessage(best_slot, 0);
     frame = &state->start_transition;
-    *frame = 0x200;
+    *frame = 512;
     state->transition_frames = 15;
     Engine_EventWait(20);
     Engine_EventCloseScreen();

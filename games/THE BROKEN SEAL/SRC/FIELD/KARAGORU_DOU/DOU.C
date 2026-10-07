@@ -277,7 +277,7 @@ void StagedActorPairScene_RotateActorPart(u8 *actor)
 {
     u8 *sprite_part = *(u8 **)(actor + 80);
 
-    *(u16 *)(sprite_part + 30) -= 0x400;
+    *(u16 *)(sprite_part + 30) -= 1024;
 }
 
 void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
@@ -305,7 +305,7 @@ void StagedActorPairScene_RunSpinningLeap(s32 id)
     work->object.actor.motion_flags = 0;
     for (cnt = 0; cnt < 9; cnt++) {
         Engine_TaskWait(1);
-        work->object.actor.sprite->rotation -= 0x100;
+        work->object.actor.sprite->rotation -= 256;
         work->object.actor.x.fixed -= Engine_MathCos(work->object.actor.sprite->rotation) / 2;
         work->staged.target_x = 0x80000000;
     }

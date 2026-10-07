@@ -15,7 +15,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAction *entry)
     if (low == 1) {
         ret = 1;
     }
-    if (low == 0xB) {
+    if (low == 11) {
         ret = 2;
     }
     b3 = (s8)entry->effect;
@@ -27,7 +27,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAction *entry)
     if (k == 4) {
         ret = 4;
     }
-    if (k == 0x40) {
+    if (k == 64) {
         ret = 6;
     }
     if (BattleFx_IsReviveFar(entry->effect) != 0) {

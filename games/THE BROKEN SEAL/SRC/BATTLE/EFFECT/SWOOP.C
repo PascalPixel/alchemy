@@ -95,15 +95,15 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     BattlePres_ConfigureEffectDisplay();
     PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
-    Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0x480);
+    Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 1152);
     Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     REG_WININ = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
     REG_WIN0H = 0xf0f0;
     BattleFx_SelectLivingTargets(work->effect);
-    BattleFx_SpawnObjects(8, 0x17a, 1);
+    BattleFx_SpawnObjects(8, 378, 1);
     gProjection.center_y = 240;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
@@ -147,7 +147,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         s32 a = Random16() & 0xffff;
         PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x800000;
         PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
-        PARTICLES[i].velocity_x = (-(Random16() & 0x1fff) - 0x800) << 5;
+        PARTICLES[i].velocity_x = (-(Random16() & 0x1fff) - 2048) << 5;
         PARTICLES[i].velocity_y = (-(Random16() & 0xfff) - 0x1800) << 5;
         PARTICLES[i].variant = 0;
     }
@@ -175,7 +175,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     noise[k] = Random16() & 63;
                 }
                 *phase = 0;
-                Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0x480);
+                Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 1152);
             }
             *phase += step;
             step += 3;
@@ -363,12 +363,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             if (z > 2) {
                 z = 2;
             }
-            blit[1](dst, work->sheet + z * 9 * 256 + 0x400, 63, 18, 48, 48);
+            blit[1](dst, work->sheet + z * 9 * 256 + 1024, 63, 18, 48, 48);
         }
         if (frame > 221) {
             s32 z;
             z = (frame - 222) / 2 % 4 + 3;
-            blit[0](dst, work->sheet + z * 9 * 256 + 0x400, 72, 30, 48, 48);
+            blit[0](dst, work->sheet + z * 9 * 256 + 1024, 72, 30, 48, 48);
             if (z == 5) {
                 blit[0](dst, work->sheet + 0x1600, 66, 22, 48, 48);
             }
@@ -418,7 +418,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         work->particles[i].x = seat[0] / 2;
     }
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1, 1);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     REG_BG2PA = 0x80;
     REG_BLDALPHA = 0x1010;
 
@@ -436,7 +436,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                 s32 wobble = frame * 16 % 104;
                 blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 216, 17, 104);
                 blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 112, 17, 104 - wobble);
-                blit[1](dst, work->sheet + 0x6e8, q4->x - 17, q4->y - 65, 34, 65);
+                blit[1](dst, work->sheet + 1768, q4->x - 17, q4->y - 65, 34, 65);
                 if (q4->y <= 111) {
                     q4->y += 16;
                 } else {
@@ -450,7 +450,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     }
                     for (j = 0; j != 1024; j++) {
                         if (PARTICLES[j].variant == 0) {
-                            s32 r = 0x3ff;
+                            s32 r = 1023;
                             s32 a;
                             r &= Random16();
                             a = (Random16() & 0x7fff) - 0x4000;

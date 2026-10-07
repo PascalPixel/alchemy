@@ -60,7 +60,7 @@ s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused, s32 x, s32
     result = 0;
     entry_no = Resource_FindFreeEntry();
     if (entry_no != 0) {
-        VramBlock_LoadCached(entry_no, 0x80, UiIcon_ResourceTiles);
+        VramBlock_LoadCached(entry_no, 128, UiIcon_ResourceTiles);
         result = (s32)RenderOutput_CreateFar(entry_no, 0x40000000, window, x, y);
     }
     return result;
@@ -75,7 +75,7 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
   icon = 0;
   icon = 0;
   slot = Resource_FindFreeEntry();
-  resource_mode = 0x80;
+  resource_mode = 128;
   if (slot != 0)
   {
     VramBlock_LoadCached(slot, copy_mode = resource_mode, UiIcon_ResourceTiles);

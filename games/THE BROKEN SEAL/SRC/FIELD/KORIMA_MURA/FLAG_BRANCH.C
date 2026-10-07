@@ -25,7 +25,7 @@ struct Ent {
     s32 f08;
     u8 pad0c[4];
     s32 f10;
-    u8 pad14[0x46];
+    u8 pad14[70];
     u8 f5a;
     u8 pad5b[13];
     struct Ent *f68;
@@ -35,7 +35,7 @@ struct Rec { u16 f00, f02, f04, f06; };
 
 struct Ent_02000800 {
     s32 f00, f04, f08, f0c;
-    u8 pad10[0x45];
+    u8 pad10[69];
     u8 f55;
 };
 

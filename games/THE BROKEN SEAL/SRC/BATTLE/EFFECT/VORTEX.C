@@ -87,16 +87,16 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     }
     WORK_FIELD(work, 0x77ac) = 0;
     WORK_FIELD(work, 0x77b0) = 0;
-    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
+    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 1152);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     AudioCommand_PlayFar(164);
 
     for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++) {
         camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
         if (frame >= 17 && frame < 64)
-            WORK_FIELD(work, 0x77ac) = 0x180;
+            WORK_FIELD(work, 0x77ac) = 384;
         else
             WORK_FIELD(work, 0x77ac) = 0;
         if (frame == VortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
@@ -110,9 +110,9 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
                 pos.x >>= 1;
                 if (pos.depth < 160)
                     pos.depth = 160;
-                if (pos.depth > 0x31f)
-                    pos.depth = 0x31f;
-                draw[0](canvas, work->sheet + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
+                if (pos.depth > 799)
+                    pos.depth = 799;
+                draw[0](canvas, work->sheet + 3072, pos.x - 6, pos.y - 12, 12, 24);
                 point->x += point->velocity_x;
                 point->y += point->velocity_y;
                 point->z += point->velocity_z;
@@ -203,7 +203,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     REG_BLDALPHA = 0x1000;
     WaitFrames(1);
     AudioCommand_PlayFar(141);
@@ -223,15 +223,15 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
         if (frame <= 16)
             REG_BLDALPHA = frame | 0x1000;
         if (frame > 63)
-            REG_BLDALPHA = (0x4f - frame) | 0x1000;
+            REG_BLDALPHA = (79 - frame) | 0x1000;
         for (i = 0; i != Tornado_Shapes[work->effect->variant * 3]; i++) {
             x = ((Tornado_Shapes[work->effect->variant * 3 + 1]
                     * Trig_Sin((frame << 11) + i * 0x4000) + wave) >> 16) + 40;
             y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
             segment = (frame / 2) % 3;
-            draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
-            draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
-            draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
+            draw[0](canvas, work->sheet + segment * 2560 + 3158, x, y + 16, 40, 32);
+            draw[0](canvas, work->sheet + segment * 1280 + 0x2a56, x, y + 48, 40, 32);
+            draw[0](canvas, work->sheet + segment * 2560 + 0x1156, x, y + 80, 40, 32);
             for (j = 0; j != 4; j++) {
                 point = &work->particles[i * 4 + j];
                 if (point->variant >= 0) {

@@ -85,7 +85,7 @@ void DisplayBlend_StartScript(u16 *script)
         started = 1;
     }
     if (started)
-        Scheduler_AddOrUpdateCallback((s32)(DisplayBlend_RunScript), 0x480);
+        Scheduler_AddOrUpdateCallback((s32)(DisplayBlend_RunScript), 1152);
 }
 
 void DisplayBlend_EnableRunScript(void)

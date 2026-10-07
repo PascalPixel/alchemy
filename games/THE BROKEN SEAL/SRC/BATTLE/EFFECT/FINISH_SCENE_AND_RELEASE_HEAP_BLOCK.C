@@ -33,7 +33,7 @@ struct FxSprite {
     u32 unknown_09_0 : 2;
     u32 mode : 2;
     u32 unknown_09_4 : 4;
-    u8 unknown_0a[0x1c];
+    u8 unknown_0a[28];
     u8 palette;
 };
 
@@ -82,9 +82,9 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
     work = *(void **)((u32)&gBattleBgFxWork);
     Ui_SetBank15PaletteAndClearRenderMode();
     Scheduler_RemoveCallback(BattleFx_UpdateWaveScene);
-    Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16, 0x290)), 1);
+    Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16, 656)), 1);
     BattleFx_PrepareBufferInterpolation();
-    Runtime_ReleaseHeapBlock(0x16);
+    Runtime_ReleaseHeapBlock(22);
 }
 
 void BattleFx_UpdateWaveScene(void)
@@ -130,7 +130,7 @@ void BattleFx_UpdateWaveScene(void)
             meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->target_id));
             to.y = target->y + ((s8)meta->box_x << 16) - 0x20000;
             to.z = target->z;
-            object = Object_CreateFar(0x119, to.x, to.y, to.z);
+            object = Object_CreateFar(281, to.x, to.y, to.z);
             if (object != 0) {
                 sprite = object->sprite;
                 object->visible = 0;

@@ -3,7 +3,7 @@
 #include "RENDER_INPUT.H"
 
 struct ItemListMenu {
-    u8 unknown_000[0xf0];
+    u8 unknown_000[240];
     struct RenderOutput *message_window;
 };
 
@@ -15,10 +15,10 @@ s32 ItemMenu_IsSpecial(s32 item_id)
     s32 result;
     s32 first;
 
-    if (item_id > 0xC4) {
+    if (item_id > 196) {
         goto L0;
     }
-    first = 0xC1;
+    first = 193;
     if (item_id < first) {
         goto L0;
     }

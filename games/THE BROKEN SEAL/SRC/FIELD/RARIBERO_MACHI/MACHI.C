@@ -65,14 +65,14 @@ enum {
 
 enum {
     HEAP_ITEM_ICON = 17,
-    ITEM_ICON_BUFFER_SIZE = 0x608,
-    ITEM_ICON_TILES = 0x400,
+    ITEM_ICON_BUFFER_SIZE = 1544,
+    ITEM_ICON_TILES = 1024,
     ITEM_ICON_TILE_BYTES = 128
 };
 
 void SceneActor_SetActor23Params2And6(void)
 {
-    BattleFx_RunPageEffectForSlot(0x17, 2, 6);
+    BattleFx_RunPageEffectForSlot(23, 2, 6);
 }
 
 u8 *SceneData_GetScriptTable(void)
@@ -189,7 +189,7 @@ void Scene_RunPrimarySequence(void)
     Call4(Motion_LaunchFromFocusedObject, 22, 8, -16, 0xc000);
     Engine_ActorWaitForMove(22);
     Engine_EventWait(20);
-    Actor_ShowEmote(22, 0x102, 60);
+    Actor_ShowEmote(22, 258, 60);
     Actor_SetSpeed(22, 0x10000, 0x8000);
     Actor_WalkByAndWait(22, 0, -16);
     Engine_EventWait(10);
@@ -232,7 +232,7 @@ void Scene_RunPrimarySequence(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 30);
     Engine_ActorSetAnimation(9, 1);
     Engine_EventWait(10);
-    Actor_ShowEmote(22, 0x108, 40);
+    Actor_ShowEmote(22, 264, 40);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -248,7 +248,7 @@ void Scene_RunPrimarySequence(void)
     Engine_EventWait(30);
     Event_ShowMessage(9, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(22, 0x102, 50);
+    Actor_ShowEmote(22, 258, 50);
     Actor_FaceActor(22, 9, 20);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
@@ -263,9 +263,9 @@ void Scene_RunPrimarySequence(void)
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(20);
     Engine_EventWait(20);
-    Actor_ShowEmote(22, 0x102, 50);
+    Actor_ShowEmote(22, 258, 50);
     Actor_SetSpeed(22, 0x1cccc, 0xe666);
-    Actor_WalkToAndWait(22, 0x100, 0x168);
+    Actor_WalkToAndWait(22, 256, 360);
     Engine_EventWait(10);
     Actor_FaceDirection(22, 0, 0);
     Engine_EventWait(30);
@@ -279,7 +279,7 @@ void Scene_RunPrimarySequence(void)
     Engine_EventWait(20);
     Event_ShowMessage(9, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(22, 0x100, 40);
+    Actor_ShowEmote(22, 256, 40);
     Actor_FaceDirection(22, 0x2000, 0);
     Engine_EventWait(20);
     Event_ShowMessage(22, 0);
@@ -291,7 +291,7 @@ void Scene_RunPrimarySequence(void)
     Engine_ActorRunRepeatedMotion(22, 2);
     Engine_EventWait(20);
     Actor_SetSpeed(22, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(22, 0x100, 0x180);
+    Actor_WalkToAndWait(22, 256, 384);
     Actor_FaceDirection(22, 0, 0);
     Engine_EventWait(20);
     Event_ShowMessage(22, 0);
@@ -311,8 +311,8 @@ void Scene_RunPrimarySequence(void)
     Engine_EventWait(10);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 80);
-    Actor_ShowEmote(22, 0x101, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 80);
+    Actor_ShowEmote(22, 257, 80);
     Actor_FaceActor(22, 8, 40);
     Actor_FaceActor(22, 9, 40);
     Actor_FaceDirection(22, 0x4000, 0);
@@ -366,7 +366,7 @@ void FieldScene_RunSecondarySequence(void)
     GameFlag_Set(0x9ba);
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRariberoWhereGoingRobinIodemAsked);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 0x178);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 376);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Call4(Motion_LaunchFromFocusedObject, 1, -32, 0, 0);
     Call4(Motion_LaunchFromFocusedObject, 3, -16, 16, 0xe000);
@@ -391,7 +391,7 @@ void FieldScene_RunSecondarySequence(void)
         Event_ShowMessage(ACTOR_MIA, 0);
     }
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_IVAN, 0x108, 40);
+    Actor_ShowEmote(ACTOR_IVAN, 264, 40);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -459,10 +459,10 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(22, 0x102, 40);
+    Actor_ShowEmote(22, 258, 40);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_IVAN, 0x100, 40);
+    Actor_ShowEmote(ACTOR_IVAN, 256, 40);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(22, 3);
@@ -482,7 +482,7 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventWait(30);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
+    Actor_ShowEmote(ACTOR_MIA, 258, 40);
     Event_ShowMessage(ACTOR_MIA, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(22, 3);
@@ -506,17 +506,17 @@ void FieldScene_RunSecondarySequence(void)
         Event_ShowMessage(22, 0);
     }
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_IVAN, 0x102, 40);
+    Actor_ShowEmote(ACTOR_IVAN, 258, 40);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_ShowEmote(22, 0x106, 50);
+    Actor_ShowEmote(22, 262, 50);
     Event_ShowMessage(22, 0);
     Engine_EventWait(20);
     Actor_SetPosition(25, 0x580000, 0x14c0000);
     Event_ShowMessage(-1, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
+    Actor_ShowEmote(ACTOR_MIA, 256, 40);
     Engine_ActorJump(ACTOR_MIA, 4, 13);
     Engine_ActorJump(ACTOR_MIA, 4, 30);
     Event_ShowMessage(ACTOR_MIA, 0);
@@ -537,7 +537,7 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventWait(30);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 40);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(22, 2);
@@ -564,7 +564,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_FaceDirection(22, 0x4100, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);
-    Actor_ShowEmote(22, 0x100, 40);
+    Actor_ShowEmote(22, 256, 40);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(22, 3);
@@ -654,10 +654,10 @@ void FieldScene_RunScene3c6SequenceA(void)
     Engine_EventWait(20);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x100, 55);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 0);
+    Actor_ShowEmote(ACTOR_MIA, 256, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 256, 55);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Engine_EventWait(20);
@@ -667,7 +667,7 @@ void FieldScene_RunScene3c6SequenceA(void)
     Engine_EventWait(20);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
+    Actor_ShowEmote(ACTOR_MIA, 258, 40);
     Event_ShowMessage(ACTOR_MIA, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);

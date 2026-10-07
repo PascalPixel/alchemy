@@ -363,7 +363,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Engine_EventChooseYesNo(0, 0);
     display = *(u8 **)gDisplayTransition;
     {
-        u16 *slot = (u16 *)(display + 0x52a);
+        u16 *slot = (u16 *)(display + 1322);
         s32 value = 32;
 
         *slot = value;
@@ -378,7 +378,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         Engine_TaskWait(7);
     }
     {
-        u16 *slot = (u16 *)(display + 0x536);
+        u16 *slot = (u16 *)(display + 1334);
         s32 value = 0x3f3f;
 
         *slot = value;
@@ -691,13 +691,13 @@ void FieldScene_RunExtendedActorPresentation(void)
         Engine_TaskWait(7);
     }
     {
-        u16 *slot = (u16 *)(display + 0x52a);
+        u16 *slot = (u16 *)(display + 1322);
         s32 value = 5;
 
         *slot = value;
     }
     {
-        u16 *slot = (u16 *)(display + 0x536);
+        u16 *slot = (u16 *)(display + 1334);
         s32 value = 31;
 
         *slot = value;
@@ -708,7 +708,7 @@ void FieldScene_RunExtendedActorPresentation(void)
 
         value = 0x3f42;
         REG_BLDCNT = value;
-        value = 0xc04;
+        value = 3076;
         REG_BLDALPHA = value;
     }
     /* FAKEMATCH: the reference loads r0 before r1 for this Camera_MoveToActor call; ordinary C loads them the other way (2 halfwords). The do/while block is a scheduling construct, not recovered source. */
@@ -860,14 +860,14 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     FieldMotion_LaunchFromFocusedObject(2, 16, 16, 0xc000);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(20);
-    Actor_ShowEmote(2, 0x102, 0);
+    Actor_ShowEmote(2, 258, 0);
     Engine_EventWait(40);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Engine_ActorRunRepeatedMotion(3, 2);
     Engine_EventWait(20);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(8, 0x100, 40);
+    Actor_ShowEmote(8, 256, 40);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_IVAN, 50);
@@ -876,7 +876,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(30);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(8, 258);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
@@ -887,24 +887,24 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(8, 0x100, 40);
+    Actor_ShowEmote(8, 256, 40);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
     Engine_EventWait(20);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(8, 0x105, 40);
+    Actor_ShowEmote(8, 261, 40);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 40);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Engine_ActorFaceDirection(1, 0xc000, 0);
     Engine_EventWait(20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(8, 0x102, 40);
+    Actor_ShowEmote(8, 258, 40);
     Event_ShowMessage(8, 0);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
@@ -912,13 +912,13 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(30);
-    Actor_ShowEmote(8, 0x106, 40);
+    Actor_ShowEmote(8, 262, 40);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
-    Engine_ActorShowEmote(2, 0x101, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 0);
+    Actor_ShowEmote(ACTOR_MIA, 257, 0);
+    Engine_ActorShowEmote(2, 257, 0);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(2, 2);
     Engine_EventWait(20);
@@ -926,7 +926,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 40);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(8, 2);
@@ -936,14 +936,14 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(8, 0x102, 40);
+    Actor_ShowEmote(8, 258, 40);
     Event_OpenMessage(8, 0);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventSetMessage((s32)MsgArutamiraKiddingHaventActually);
         Engine_EventWait(20);
-        Actor_ShowEmote(ACTOR_GERALD, 0x100, 40);
+        Actor_ShowEmote(ACTOR_GERALD, 256, 40);
         Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
         Actor_WalkByAndWait(1, 0, -16);
         Engine_EventWait(10);
@@ -963,7 +963,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
 
     line = (s32)MsgArutamiraSaidCouldntMove;
     Engine_EventSetMessage(line);
-    Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
+    Actor_ShowEmote(ACTOR_IVAN, 259, 40);
     Actor_SetSpeed(ACTOR_IVAN, 0x20000, 0x10000);
     Actor_WalkByAndWait(2, 0, -16);
     Engine_EventWait(10);
@@ -1002,14 +1002,14 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     line += 7;
     Engine_EventSetMessage(line);
     Engine_EventWait(30);
-    Actor_ShowEmote(8, 0x100, 40);
+    Actor_ShowEmote(8, 256, 40);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(2, 3);
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(8, 0x108, 40);
+    Actor_ShowEmote(8, 264, 40);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(2, 3);
@@ -1026,7 +1026,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 40);
+    Actor_ShowEmote(ACTOR_MIA, 257, 40);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
@@ -1053,13 +1053,13 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(8, 0x108, 50);
+    Actor_ShowEmote(8, 264, 50);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 40);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(8, 0x102, 40);
+    Actor_ShowEmote(8, 258, 40);
     Event_ShowMessage(8, 0);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
@@ -1317,24 +1317,24 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
     u8 *p;
     s32 state;
 
-    p = (u8 *)obj + 0x40;
+    p = (u8 *)obj + 64;
     state = *(s8 *)p;
     if (state == 0) {
-        z = FIELD(obj, s32, 0x18);
-        x = FIELD(obj, s32, 0x14);
+        z = FIELD(obj, s32, 24);
+        x = FIELD(obj, s32, 20);
         FIELD(obj, s32, 8) = z;
         position[2] = z;
         FIELD(obj, s32, 4) = x;
         position[0] = x;
         Vector_AddPolarOffset(0x780000, Engine_RandomNext(), position);
-        FIELD(obj, s32, 0xC) = position[0];
-        FIELD(obj, s32, 0x10) = position[2];
-        FIELD(obj, s32, 0x24) = 0x50000;
-        FIELD(obj, s32, 0x20) = 0x50000;
-        FIELD(obj, u8, 0x42) = state;
+        FIELD(obj, s32, 12) = position[0];
+        FIELD(obj, s32, 16) = position[2];
+        FIELD(obj, s32, 36) = 0x50000;
+        FIELD(obj, s32, 32) = 0x50000;
+        FIELD(obj, u8, 66) = state;
         (*p)++;
         if ((*(s32 *)gFrameTick & 3) == 0)
-            Engine_AudioPlayCue(0x86);
+            Engine_AudioPlayCue(134);
     } else if (state == 1) {
         if (BattleFx_HasReachedTarget(obj) == 0) {
             s32 value = *p;

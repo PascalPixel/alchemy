@@ -227,10 +227,10 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
         for (column = 0; column < width; column++) {
             u32 tile = *cursor++ & 0x3FF;
 
-            if ((tile - 0x80) <= 0x7F ||
+            if ((tile - 128) <= 0x7F ||
                 (alternate != 0 &&
-                 tile > 0x1FF &&
-                 tile <= 0x27F)) {
+                 tile > 511 &&
+                 tile <= 639)) {
                 u32 index = ((tile & 0xFF) ^ 0x80);
                 ((struct UiRenderWork *)base)->tile_attributes[index] &= 0xFC;
             }
@@ -252,8 +252,8 @@ void UiWindow_MarkVisibleTileAttributes(void)
         for (x = 0; x < width; x++) {
             u32 tile = *cursor++ & 0x3ff;
 
-            if ((tile - 0x80) <= 0x7f ||
-                (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
+            if ((tile - 128) <= 0x7f ||
+                (alternate != 0 && tile > 511 && tile <= 639)) {
                 u32 index = ((tile & 0xff) ^ 0x80);
 
                 ((struct UiRenderWork *)base)->tile_attributes[index] |= 2;

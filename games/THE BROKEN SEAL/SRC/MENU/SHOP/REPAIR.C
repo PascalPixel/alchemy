@@ -249,7 +249,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
         if ((gKeyState & KEY_A) != 0) {
             slot = Inventory_AddItemFar(unit_id, shop->selected_item);
             if (slot < 0) {
-                Audio_PlayCue(0x71);
+                Audio_PlayCue(113);
                 UiWork_PushValueSlotFar(unit_id, 1);
                 UiWork_PushValueSlotFar(shop->selected_item, 2);
                 if (Inventory_CountFar(unit_id) == 15)
@@ -259,7 +259,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
                 continue;
             }
             Inventory_RemoveFar(unit_id, slot);
-            Audio_PlayCue(0x65);
+            Audio_PlayCue(101);
             UiMessage_ShowAndRestoreState((s32)MsgHereYouGo);
             Inventory_AddItemFar(unit_id, shop->selected_item);
             Party_AdjustSixDigitCounterBFar(-price);
@@ -268,16 +268,16 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
         }
         if ((gKeyState & KEY_B) != 0) {
             UiMessage_ShowAndRestoreState((s32)MsgDontWantIt);
-            Audio_PlayCue(0x71);
+            Audio_PlayCue(113);
             goto done;
         }
         if (((gKeysRepeat) & KEY_LEFT) != 0) {
-            Audio_PlayCue(0x6f);
+            Audio_PlayCue(111);
             selected_index--;
             redraw = 1;
         }
         if (((gKeysRepeat) & KEY_RIGHT) != 0) {
-            Audio_PlayCue(0x6f);
+            Audio_PlayCue(111);
             selected_index++;
             redraw = 1;
         }
@@ -300,7 +300,7 @@ void EventTable_ApplyRowAbilities(s32 row_no)
     s32 count;
     s32 flag;
 
-    flag = row_no + 0x400;
+    flag = row_no + 1024;
     if (GameFlag_TestFar(flag) == 0) {
         GameFlag_SetBitFar(flag);
         count = 0;

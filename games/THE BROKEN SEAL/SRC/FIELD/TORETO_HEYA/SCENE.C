@@ -64,7 +64,7 @@ struct Swirl {
 
 
 struct Spark {
-    u8 unknown_00[0x64];
+    u8 unknown_00[100];
     u16 phase;
     u16 angle;
 };
@@ -135,7 +135,7 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
     Event_SetDestination((s32)&SceneId_ToretoHeya, entrance);
     Engine_ActorSetAnimation(leader, 27);
     Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
-    Actor_SetAttachedEffect(leader, 0x101);
+    Actor_SetAttachedEffect(leader, 257);
     Engine_EventWait(30);
     Camera_MoveTo(-1, -1, -1, 0);
     actor->motion_flags = 2;
@@ -154,47 +154,47 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
         Engine_GameFlagSet(0x122);
 }
 
-void FieldScene_RunStep200(void) { ToretoHeya_HandleFloorSwitch(0x200, 64, 35, 21); }
+void FieldScene_RunStep200(void) { ToretoHeya_HandleFloorSwitch(512, 64, 35, 21); }
 
-void FieldScene_RunStep201(void) { ToretoHeya_HandleFloorSwitch(0x201, 65, 35, 22); }
+void FieldScene_RunStep201(void) { ToretoHeya_HandleFloorSwitch(513, 65, 35, 22); }
 
-void FieldScene_RunStep202(void) { ToretoHeya_HandleFloorSwitch(0x202, 66, 35, 23); }
+void FieldScene_RunStep202(void) { ToretoHeya_HandleFloorSwitch(514, 66, 35, 23); }
 
-void FieldScene_RunStep203(void) { ToretoHeya_HandleFloorSwitch(0x203, 67, 35, 24); }
+void FieldScene_RunStep203(void) { ToretoHeya_HandleFloorSwitch(515, 67, 35, 24); }
 
-void FieldScene_RunStep204(void) { ToretoHeya_HandleFloorSwitch(0x204, 68, 35, 25); }
+void FieldScene_RunStep204(void) { ToretoHeya_HandleFloorSwitch(516, 68, 35, 25); }
 
-void FieldScene_RunStep205(void) { ToretoHeya_HandleFloorSwitch(0x205, 69, 35, 26); }
+void FieldScene_RunStep205(void) { ToretoHeya_HandleFloorSwitch(517, 69, 35, 26); }
 
-void FieldScene_RunStep206(void) { ToretoHeya_HandleFloorSwitch(0x206, 70, 35, 27); }
+void FieldScene_RunStep206(void) { ToretoHeya_HandleFloorSwitch(518, 70, 35, 27); }
 
-void FieldScene_RunStep207(void) { ToretoHeya_HandleFloorSwitch(0x207, 71, 35, 28); }
+void FieldScene_RunStep207(void) { ToretoHeya_HandleFloorSwitch(519, 71, 35, 28); }
 
-void FieldScene_RunStep208(void) { ToretoHeya_HandleFloorSwitch(0x208, 72, 35, 29); }
+void FieldScene_RunStep208(void) { ToretoHeya_HandleFloorSwitch(520, 72, 35, 29); }
 
-void FieldScene_RunStep209(void) { ToretoHeya_HandleFloorSwitch(0x209, 73, 35, 31); }
+void FieldScene_RunStep209(void) { ToretoHeya_HandleFloorSwitch(521, 73, 35, 31); }
 
-void FieldScene_RunStep20a(void) { ToretoHeya_HandleFloorSwitch(0x20a, 74, 35, 32); }
+void FieldScene_RunStep20a(void) { ToretoHeya_HandleFloorSwitch(522, 74, 35, 32); }
 
-void FieldScene_RunStep20b(void) { ToretoHeya_HandleFloorSwitch(0x20b, 79, 35, 50); }
+void FieldScene_RunStep20b(void) { ToretoHeya_HandleFloorSwitch(523, 79, 35, 50); }
 
-void FieldScene_RunStep20c(void) { ToretoHeya_HandleFloorSwitch(0x20c, 75, 35, 51); }
+void FieldScene_RunStep20c(void) { ToretoHeya_HandleFloorSwitch(524, 75, 35, 51); }
 
-void FieldScene_RunStep20d(void) { ToretoHeya_HandleFloorSwitch(0x20d, 76, 35, 52); }
+void FieldScene_RunStep20d(void) { ToretoHeya_HandleFloorSwitch(525, 76, 35, 52); }
 
-void FieldScene_RunStep20e(void) { ToretoHeya_HandleFloorSwitch(0x20e, 77, 35, 53); }
+void FieldScene_RunStep20e(void) { ToretoHeya_HandleFloorSwitch(526, 77, 35, 53); }
 
-void FieldScene_RunStep20f(void) { ToretoHeya_HandleFloorSwitch(0x20f, 78, 35, 54); }
+void FieldScene_RunStep20f(void) { ToretoHeya_HandleFloorSwitch(527, 78, 35, 54); }
 
-void FieldScene_RunStep210(void) { ToretoHeya_HandleFloorSwitch(0x210, 80, 35, 55); }
+void FieldScene_RunStep210(void) { ToretoHeya_HandleFloorSwitch(528, 80, 35, 55); }
 
-void FieldScene_RunStep211(void) { ToretoHeya_HandleFloorSwitch(0x211, 81, 35, 56); }
+void FieldScene_RunStep211(void) { ToretoHeya_HandleFloorSwitch(529, 81, 35, 56); }
 
-void FieldScene_RunStep212(void) { ToretoHeya_HandleFloorSwitch(0x212, 82, 35, 57); }
+void FieldScene_RunStep212(void) { ToretoHeya_HandleFloorSwitch(530, 82, 35, 57); }
 
-void FieldScene_RunStep213(void) { ToretoHeya_HandleFloorSwitch(0x213, 83, 35, 58); }
+void FieldScene_RunStep213(void) { ToretoHeya_HandleFloorSwitch(531, 83, 35, 58); }
 
-void FieldScene_RunStep214(void) { ToretoHeya_HandleFloorSwitch(0x214, 84, 35, 59); }
+void FieldScene_RunStep214(void) { ToretoHeya_HandleFloorSwitch(532, 84, 35, 59); }
 
 void SceneState_ClearStoryVariantWhenIdle(void)
 {
@@ -260,10 +260,10 @@ void ToretoHeya_RunTableScene(void)
     Engine_ActorStartRepeatedMotion(1, 2);
     Engine_ActorStartRepeatedMotion(3, 2);
     Engine_ActorStartRepeatedMotion(2, 2);
-    Actor_ShowEmote(0, 0x100, 0);
-    Actor_ShowEmote(1, 0x100, 0);
-    Actor_ShowEmote(3, 0x100, 0);
-    Engine_ActorShowEmote(2, 0x100, 60);
+    Actor_ShowEmote(0, 256, 0);
+    Actor_ShowEmote(1, 256, 0);
+    Actor_ShowEmote(3, 256, 0);
+    Engine_ActorShowEmote(2, 256, 60);
     ToretoHeya_PlayGesture(11);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     Engine_ActorStartRepeatedMotion(0, 1);
@@ -271,10 +271,10 @@ void ToretoHeya_RunTableScene(void)
     Engine_ActorStartRepeatedMotion(3, 1);
     Engine_ActorRunRepeatedMotion(2, 1);
     Event_ShowMessage(0x8008, 0);
-    Actor_SetAttachedEffect(0, 0x102);
-    Actor_SetAttachedEffect(1, 0x102);
-    Actor_SetAttachedEffect(3, 0x102);
-    Engine_ActorSetAttachedEffect(2, 0x102);
+    Actor_SetAttachedEffect(0, 258);
+    Actor_SetAttachedEffect(1, 258);
+    Actor_SetAttachedEffect(3, 258);
+    Engine_ActorSetAttachedEffect(2, 258);
     Engine_EventWait(40);
     ToretoHeya_PlayGesture(11);
     Engine_EventShowMessage(0x8008, 0);
@@ -360,10 +360,10 @@ void FieldScene_RunFourActorEncounter(void)
     Audio_PlayCue(21);
     ToretoHeya_PlayGesture(4);
     Event_ShowMessageAndWait(0x8009, 0, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 0);
+    Actor_ShowEmote(ACTOR_MIA, 257, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 80);
     Event_ShowMessage(0x8009, 0);
     Engine_EventWait(40);
     Event_ShowMessageAndWait(0x8009, 0, 20);
@@ -376,10 +376,10 @@ void FieldScene_RunFourActorEncounter(void)
     ToretoHeya_PlayGesture(0);
     Engine_EventWait(40);
     Event_ShowMessageAndWait(0x8009, 0, 20);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
-    Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 258);
+    Actor_SetAttachedEffect(ACTOR_MIA, 258);
+    Actor_SetAttachedEffect(ACTOR_IVAN, 258);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 10);
@@ -404,11 +404,11 @@ void FieldScene_RunFourActorEncounter(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        Actor_ShowEmote(ACTOR_GERALD, 0x103, 20);
+        Actor_ShowEmote(ACTOR_GERALD, 259, 20);
         Engine_ActorSetAnimation(ACTOR_GERALD, 4);
         Engine_EventSetMessage((s32)MsgToretoDoingNowsNot);
         Event_ShowMessage(0x8001, 0);
-        Actor_ShowEmote(ACTOR_IVAN, 0x103, 10);
+        Actor_ShowEmote(ACTOR_IVAN, 259, 10);
         Engine_ActorSetAnimation(ACTOR_IVAN, 3);
         Event_ShowMessage(0x8002, 0);
     }
@@ -438,7 +438,7 @@ void FieldScene_RunFourActorEncounter(void)
         base5_200962d = (s32)ToretoHeya_SpawnSwirlSparks;
         bank[2] = 0x340000;
     }
-    Call2(Engine_TaskAddCallback, base5_200962d, 0xc80);
+    Call2(Engine_TaskAddCallback, base5_200962d, 3200);
     Engine_EventWait(220);
     Engine_TaskRemoveCallback(base5_200962d);
     ColorBuffer_ApplyTarget(0x10000, 1);
@@ -451,9 +451,9 @@ void FieldScene_RunFourActorEncounter(void)
     Event_ShowMessage(0x8009, 0);
     Object_SetActionCallbackAndRefreshById(8, (s32)ToretoHeya_ActionTable1);
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 60);
     Event_ShowMessage(0x8001, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x102, 10);
+    Actor_ShowEmote(ACTOR_IVAN, 258, 10);
     Event_ShowMessage(0x8002, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 10);
@@ -479,7 +479,7 @@ void FieldScene_RunFourActorEncounter(void)
     Engine_EventWait(20);
     Object_GetById(0)->priority_flags |= 1;
     GameFlag_Set(0x844);
-    Engine_TaskAddCallback((s32)ToretoPalette_ApplyTint, 0xc80);
+    Engine_TaskAddCallback((s32)ToretoPalette_ApplyTint, 3200);
     Engine_EventEnd();
 }
 
@@ -747,8 +747,8 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj)
         obj->y = pos.y;
         obj->z = pos.z;
         if (obj->timer <= 39) {
-            obj->scaleX += -0x51e;
-            obj->scaleY += -0x51e;
+            obj->scaleX += -1310;
+            obj->scaleY += -1310;
         }
         obj->timer++;
     } else {
@@ -778,7 +778,7 @@ void ToretoHeya_SpawnSwirlSparks(void)
     case 40:
         Engine_AudioPlayCue(220);
         for (i = 0; i < 6 - wave; i++) {
-            spark = Engine_ObjectCreate(0x11d, (*(struct Vec3 *)ToretoHeya_SparkOrigin).x, (*(struct Vec3 *)ToretoHeya_SparkOrigin).y, (*(struct Vec3 *)ToretoHeya_SparkOrigin).z);
+            spark = Engine_ObjectCreate(285, (*(struct Vec3 *)ToretoHeya_SparkOrigin).x, (*(struct Vec3 *)ToretoHeya_SparkOrigin).y, (*(struct Vec3 *)ToretoHeya_SparkOrigin).z);
             if (spark != 0) {
                 previous = Object_ReplaceResourceEntry(spark->sprite, previous);
                 spark->motion_flags = 0;
@@ -795,7 +795,7 @@ void ToretoHeya_SpawnSwirlSparks(void)
             }
         }
     case 44:
-        Engine_AudioPlayCue(0x121);
+        Engine_AudioPlayCue(289);
         /* FAKEMATCH: the counter pointer is taken again here so it is dead across the spark loop, where the loop index takes its register. */
         counter = &ToretoHeya_SparkCounter;
         break;
@@ -891,12 +891,12 @@ void ToretoHeya_RunLandingDustScene(void)
         Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, x, v->y, z, 0x1090001, p);
     }
     Engine_AudioPlayCue(188);
-    Actor_SetAttachedEffect(0, 0x101);
+    Actor_SetAttachedEffect(0, 257);
     Engine_ActorSetAnimation(0, 22);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
-    Engine_ActorSetAttachedEffect(0, 0x100);
+    Engine_ActorSetAttachedEffect(0, 256);
     Object_GetById(0)->gravity = 0x10000;
     Object_GetById(0)->bounce = 0x4000;
     Engine_EventEnd();

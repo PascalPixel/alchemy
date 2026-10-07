@@ -22,10 +22,10 @@
 #define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
 
 enum {
-    SCENE_BLANK = 0x1fb,
-    SCENE_TABLE_LOAD = 0x1fc,
-    SCENE_TABLE_RUN = 0x1fd,
-    SCENE_BATTLE = 0x1fe
+    SCENE_BLANK = 507,
+    SCENE_TABLE_LOAD = 508,
+    SCENE_TABLE_RUN = 509,
+    SCENE_BATTLE = 510
 };
 
 extern u8 gDebugMode;
@@ -90,7 +90,7 @@ start:
         if (GameFlag_TestFar(0x101))
             GameFlag_ClearBitFar(0x101);
         else
-            Audio_PlayCue(0x120);
+            Audio_PlayCue(288);
         record = &table[gGameState.scene];
         entrance = gGameState.entrance;
         {

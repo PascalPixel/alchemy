@@ -64,7 +64,7 @@ void Scene_BagMarsStar(void)
             Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
         }
     }
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
     Engine_EventWait(20);
@@ -227,7 +227,7 @@ void Scene_EnterStarRoom(void)
     *leader_sprite = 0;
     rising->scale_x = 0x1999;
     rising->scale_y = 0x1999;
-    Actor_SetChildValue(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 256);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1d70000, 0x1220000);
     leader_motion = &rising->motion_flags;
     *leader_motion = 0;
@@ -242,10 +242,10 @@ void Scene_EnterStarRoom(void)
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     for (i = 0; i != 90; i++) {
         rising->y.fixed += -0x1999;
-        rising->scale_x += 0x28f;
-        rising->scale_y += 0x28f;
-        glow->scale_x += 0x28f;
-        glow->scale_y += 0x28f;
+        rising->scale_x += 655;
+        rising->scale_y += 655;
+        glow->scale_x += 655;
+        glow->scale_y += 655;
         Engine_EventWait(1);
     }
     *leader_motion = 5;
@@ -275,7 +275,7 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(20);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1d7, 0x136);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 471, 310);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(20);
@@ -290,14 +290,14 @@ void Scene_EnterStarRoom(void)
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_JASMINE, 0x8000, 0x4000);
-    Actor_WalkTo(ACTOR_JASMINE, 0x1c5, 0x12e);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x1e9, 0x12e);
+    Actor_WalkTo(ACTOR_JASMINE, 453, 302);
+    Actor_WalkToAndWait(ACTOR_GERALD, 489, 302);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
     Actor_FaceDirection(ACTOR_GERALD, 0x3000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTHWEST, 10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x100, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 256, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 0);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
     Engine_ActorJump(ACTOR_JASMINE, 2, 0);
     Engine_ActorJump(ACTOR_GERALD, 2, 40);
@@ -305,16 +305,16 @@ void Scene_EnterStarRoom(void)
     Engine_ActorStartRepeatedMotion(ACTOR_JASMINE, 3);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Engine_EventWait(40);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_JASMINE, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
+    Actor_SetAttachedEffect(ACTOR_JASMINE, 258);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 258);
     Engine_EventWait(60);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_JASMINE, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1d7, 0x15a);
-    Actor_WalkTo(ACTOR_JASMINE, 0x1af, 0x152);
-    Actor_WalkTo(ACTOR_GERALD, 0x1ff, 0x152);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 471, 346);
+    Actor_WalkTo(ACTOR_JASMINE, 431, 338);
+    Actor_WalkTo(ACTOR_GERALD, 511, 338);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_ActorWaitForMove(ACTOR_JASMINE);
@@ -342,7 +342,7 @@ void Scene_EnterStarRoom(void)
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
+    Actor_ShowEmote(ACTOR_JASMINE, 257, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x3000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTHWEST, 60);
@@ -353,7 +353,7 @@ void Scene_EnterStarRoom(void)
     rising->scale_y = 0x1999;
     glow->scale_x = 0x1999;
     glow->scale_y = 0x1999;
-    Actor_SetChildValue(ACTOR_SUKURETA, 0x100);
+    Actor_SetChildValue(ACTOR_SUKURETA, 256);
     Actor_SetPosition(ACTOR_SUKURETA, 0x1d70000, 0x1220000);
     sukureta_motion = &rising->motion_flags;
     *sukureta_motion = zero;
@@ -375,10 +375,10 @@ void Scene_EnterStarRoom(void)
     Engine_ActorSetSpritePriority(ACTOR_SUKURETA, 2);
     for (i = 0; i != 90; i++) {
         rising->y.fixed += -0x1999;
-        rising->scale_x += 0x28f;
-        rising->scale_y += 0x28f;
-        glow->scale_x += 0x28f;
-        glow->scale_y += 0x28f;
+        rising->scale_x += 655;
+        rising->scale_y += 655;
+        glow->scale_x += 655;
+        glow->scale_y += 655;
         Engine_EventWait(1);
     }
     *sukureta_motion = 5;
@@ -404,9 +404,9 @@ void Scene_EnterStarRoom(void)
     Actor_SetPosition(8, 0, 0);
     Engine_EventWait(30);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x13333, 0x9999);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x132);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 471, 306);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_SUKURETA, 0x100, 0);
+    Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
     Engine_ActorJump(ACTOR_SUKURETA, 2, 80);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 3);
     Engine_EventWait(30);
@@ -421,7 +421,7 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(30);
     Event_SayThenWait(9, 20);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x26666, 0x13333);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1a7, 0x132);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 423, 306);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xb000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 0);
@@ -430,7 +430,7 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
     Engine_EventWait(40);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x207, 0x132);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 519, 306);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xd000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHEAST, 0);
@@ -445,14 +445,14 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 40);
     Event_SayThenWait(1, 40);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 20);
     Event_SayThenWait(say_4009, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHEAST, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 257, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
     Event_SayThenWait(say_4009, 10);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
@@ -464,7 +464,7 @@ void Scene_EnterStarRoom(void)
     Camera_SetSpeed(0x8000, 0x1000);
     Camera_MoveTo(0x2150000, -1, 0x1530000, 1);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x8000, 0x4000);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x215, 0x153);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 533, 339);
     Engine_CameraWaitForMove();
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_EAST, 0);
@@ -476,20 +476,20 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(30);
     Engine_CameraFollowActor(ACTOR_SUKURETA, 1);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x19999, 0xcccc);
-    Actor_WalkTo(ACTOR_SUKURETA, 0x1c7, 0x168);
+    Actor_WalkTo(ACTOR_SUKURETA, 455, 360);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x5000, 0);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1c7, 0x168);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 455, 360);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 30);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 3);
     Engine_EventWait(30);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x168);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 471, 360);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 30);
-    Actor_ShowEmote(ACTOR_SUKURETA, 0x100, 0);
+    Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Engine_EventWait(30);
     Event_SayThenWait(9, 30);
@@ -497,12 +497,12 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(20);
     Event_SayThenWait(9, 30);
     Actor_SetSpeed(ACTOR_JASMINE, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(ACTOR_JASMINE, 0x1b8, 0x15a);
+    Actor_WalkToAndWait(ACTOR_JASMINE, 440, 346);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTHEAST, 10);
     Event_SayThenWait(5, 20);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x1ef, 0x15a);
+    Actor_WalkToAndWait(ACTOR_GERALD, 495, 346);
     Engine_CameraWaitForMove();
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 10);
@@ -523,7 +523,7 @@ void Scene_EnterStarRoom(void)
     Event_SayThenWait(9, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Event_SayThenWait(9, 10);
-    Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_SUKURETA, 258);
     Engine_EventWait(40);
     Event_SayThenWait(9, 10);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_SOUTHEAST, 20);
@@ -605,11 +605,11 @@ void Scene_EnterStarRoom(void)
     Camera_MoveTo(0x1d70000, -1, 0x1720000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
-    Actor_ShowEmote(ACTOR_SUKURETA, 0x104, 60);
+    Actor_ShowEmote(ACTOR_SUKURETA, 260, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 40);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x102, 40);
+    Actor_ShowEmote(ACTOR_JASMINE, 258, 40);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
     Event_SayThenWait(5, 20);
     Engine_ActorJump(ACTOR_SUKURETA, 4, 0);
@@ -618,9 +618,9 @@ void Scene_EnterStarRoom(void)
     Event_SayThenWait(0xa009, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_SUKURETA, 3);
     Event_SayThenWait(0xa009, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 60);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 20);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 4);
     Event_OpenMessage(0x8009, 0);
@@ -634,15 +634,15 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 20);
     Engine_ActorJump(ACTOR_SUKURETA, 4, 40);
     Event_SayThenWait(0x8009, 10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 80);
-    Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 80);
+    Actor_SetAttachedEffect(ACTOR_SUKURETA, 258);
     Engine_EventWait(40);
     Event_SayThenWait(0x8009, 40);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x106, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x106, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 262, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 262, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 262, 60);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 20);
     Event_OpenMessage(0x8009, 0);
@@ -668,10 +668,10 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
     Event_SayThenWait(0x8009, 40);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x105, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x105, 120);
-    Actor_ShowEmote(ACTOR_GERALD, 0x107, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 261, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 261, 120);
+    Actor_ShowEmote(ACTOR_GERALD, 263, 0);
     Engine_ActorJump(ACTOR_GERALD, 4, 40);
     Event_SayThenWait(1, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
@@ -691,9 +691,9 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x5000, 40);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_JASMINE, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
+    Actor_SetAttachedEffect(ACTOR_JASMINE, 258);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 258);
     Engine_EventWait(80);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
     Engine_EventWait(20);
@@ -705,37 +705,37 @@ void Scene_EnterStarRoom(void)
     rising->acceleration = 0x20000;
     Audio_PlayCue(153);
     rising->velocity_y = (height << 11);
-    Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x18b);
+    Actor_MoveToAndWait(ACTOR_SUKURETA, 471, 395);
     Engine_TaskWait(6);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x4ccc, 0x2666);
     sukureta_flags = &rising->steering_flags;
     *sukureta_flags &= 254;
-    Actor_SetDestination(ACTOR_SUKURETA, 0x1d9, 0x18b);
+    Actor_SetDestination(ACTOR_SUKURETA, 473, 395);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
-    Actor_SetDestination(ACTOR_SUKURETA, 0x1d5, 0x18b);
+    Actor_SetDestination(ACTOR_SUKURETA, 469, 395);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
-    Actor_SetDestination(ACTOR_SUKURETA, 0x1d7, 0x18b);
+    Actor_SetDestination(ACTOR_SUKURETA, 471, 395);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Event_SayThenWait(9, 10);
     Actor_SetSpeed(ACTOR_SUKURETA, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x19b);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 471, 411);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x4ccc, 0x2666);
     *sukureta_flags &= 254;
-    Actor_SetDestination(ACTOR_SUKURETA, 0x1da, 0x19b);
+    Actor_SetDestination(ACTOR_SUKURETA, 474, 411);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 3);
-    Actor_SetDestination(ACTOR_SUKURETA, 0x1d4, 0x19b);
+    Actor_SetDestination(ACTOR_SUKURETA, 468, 411);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 3);
-    Actor_SetDestination(ACTOR_SUKURETA, 0x1d7, 0x19b);
+    Actor_SetDestination(ACTOR_SUKURETA, 471, 411);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
-    Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_SUKURETA, 258);
     Engine_ActorStartRepeatedMotion(ACTOR_SUKURETA, 3);
     Event_SayThenWait(9, 10);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x3333, 0x1999);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x18b);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 471, 395);
     Engine_ActorEnableActionCallback(ACTOR_SUKURETA, 1);
     Engine_EventWait(30);
     {
@@ -748,21 +748,21 @@ void Scene_EnterStarRoom(void)
     rising->acceleration = 0x20000;
     Audio_PlayCue(153);
     rising->velocity_y = (height << 11);
-    Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x168);
+    Actor_MoveToAndWait(ACTOR_SUKURETA, 471, 360);
     Engine_TaskWait(6);
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 80);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x102, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 80);
+    Actor_ShowEmote(ACTOR_SUKURETA, 258, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 258, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 80);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x107, 40);
+    Actor_ShowEmote(ACTOR_JASMINE, 263, 40);
     Event_SayThenWait(5, 20);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
     Event_SayThenWait(0xa009, 30);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_EAST, 30);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x106, 60);
+    Actor_ShowEmote(ACTOR_JASMINE, 262, 60);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTHEAST, 30);
     Event_SayThenWait(5, 20);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
@@ -792,7 +792,7 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     while (Engine_EventChooseYesNo(0, 0) != 0) {
         Engine_EventSetMessage((s32)MsgSoruJasmineWontYouPlease);
-        Actor_ShowEmote(ACTOR_JASMINE, 0x107, 0);
+        Actor_ShowEmote(ACTOR_JASMINE, 263, 0);
         Engine_ActorJump(ACTOR_JASMINE, 4, 60);
         Event_OpenMessage(ACTOR_JASMINE, 0);
     }
@@ -808,14 +808,14 @@ void Scene_EnterStarRoom(void)
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 30);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x3333, 0x1999);
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d7, 0x160);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 471, 352);
     Engine_EventWait(20);
     say_8009 = 0x8009;
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Engine_EventWait(20);
     Event_SayThenWait(say_8009, 60);
     *sukureta_flags &= 254;
-    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1c8, 0x168);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 456, 360);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
     Engine_EventWait(20);
@@ -824,15 +824,15 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 30);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 60);
     Event_SayThenWait(1, 10);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xd000, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
     Event_SayThenWait(say_8009, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 40);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 40);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Event_SayThenWait(say_8009, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -986,7 +986,7 @@ void Scene_GiveMythrilBags(void)
     s32 second;
     s32 cnt;
 
-    Engine_AudioPlayCue(0x53);
+    Engine_AudioPlayCue(83);
     Engine_ItemShowFound(ITEM_MYTHRIL_BAG, 3);
     Engine_MessageShowCentered((s32)MsgSoruGotFourMythrilBags, 1);
     do {
@@ -1021,7 +1021,7 @@ void SoruStar_RiseActorFourteenSparks(void)
     p = &params;
     p->count = 1;
     p->kind = 5;
-    p->tile = 0x11c;
+    p->tile = 284;
     p->spread = 0x6666;
     p->rise = 0x30000;
     for (i = 0; i <= 31; i++) {
@@ -1034,7 +1034,7 @@ void SoruStar_RiseActorFourteenSparks(void)
             Effect_Spawn(x, actor->y + ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + 0x200000, actor->z, 0, -0x40000, 0, 0x1b0000, p);
         }
         if (i == 20)
-            Engine_ActorSetChildValue(14, 0x100);
+            Engine_ActorSetChildValue(14, 256);
     }
     Engine_ActorSetChildValue(14, 0);
     ((void (*)(struct Actor *, s32))Engine_ActorSetSpriteFlags)((struct Actor *)Object_GetById(14), 1);

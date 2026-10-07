@@ -10,7 +10,7 @@
 #include "TYPES.H"
 
 struct UiPanel {
-    u8 unknown_00[0xc];
+    u8 unknown_00[12];
     s16 x;
     s16 y;
 };

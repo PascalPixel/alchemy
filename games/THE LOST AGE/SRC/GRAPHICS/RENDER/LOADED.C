@@ -24,7 +24,7 @@ struct RenderOutput *RenderOutput_CreateLoaded(
 
     no = Resource_FindFreeEntry();
     result = NULL;
-    if (no != 0x60) {
+    if (no != 96) {
         UiIcon_CopyResourceToSlot(arg0, arg1, no);
         result = RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
     }

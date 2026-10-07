@@ -15,7 +15,7 @@ void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 {
     EffectRecord_020004c4 *record = work->record;
 
-    record->angle -= 0x800;
+    record->angle -= 2048;
 }
 
 void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height)

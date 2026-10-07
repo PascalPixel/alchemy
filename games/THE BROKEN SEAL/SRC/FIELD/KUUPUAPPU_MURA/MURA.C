@@ -167,10 +167,10 @@ void KuupuappuMura_SayFarewellToIvan(void)
     }
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     if (p5->touched_trigger == 20) {
-        Actor_WalkToAndWait(ACTOR_IVAN, 0x190, 0x1c0);
+        Actor_WalkToAndWait(ACTOR_IVAN, 400, 448);
     } else {
         Camera_SetSpeed(0xcccc, 0x1999);
-        Camera_MoveTo(PIXELS(0xE0), -1, PIXELS(0xA2), 1);
+        Camera_MoveTo(PIXELS(224), -1, PIXELS(162), 1);
         Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
         Engine_CameraWaitForMove();
     }
@@ -328,7 +328,7 @@ void Villager_LookForRoofer(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuFixingRoofCant);
     SceneActor_ApplyActorCueThenWait(21, 0, 2);
-    Engine_ActorShowEmote(21, 0x103, 0);
+    Engine_ActorShowEmote(21, 259, 0);
     Engine_EventWait(30);
     Engine_EventOpenMessage(21, 0);
     Engine_EventEnd();

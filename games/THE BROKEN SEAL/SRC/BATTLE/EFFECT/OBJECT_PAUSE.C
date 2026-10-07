@@ -36,7 +36,7 @@ void BattleEffect_PauseObject(s32 id)
         gGameState.paused_update = (u32)object->update;
         gGameState.paused_pose = 0;
         if (object->active == 1) {
-            entry = *(u8 **)((u8 *)object->sprite + 0x28);
+            entry = *(u8 **)((u8 *)object->sprite + 40);
             if (entry != NULL) {
                 gGameState.paused_pose = entry[5];
             }

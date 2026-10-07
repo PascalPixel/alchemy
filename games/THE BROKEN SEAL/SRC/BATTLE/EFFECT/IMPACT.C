@@ -83,7 +83,7 @@ again:
         Vector_AddPolarOffset(0x40000, Random16(), &value);
         effect->target_x = value.x;
         effect->target_z = value.z;
-        effect->max_turn_step = 0x800;
+        effect->max_turn_step = 2048;
         effect->flag42 = 1;
         effect->state++;
         return;
@@ -112,7 +112,7 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *source)
     }
 
     for (i = 0; i < 12; i++) {
-        fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
+        fragment = Object_Spawn(285, position.x, position.y, position.z);
         if (fragment != NULL) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)fragment, BattleFx_FragmentScript);
             fragment->speed_limit = Random16() + 0x10000;

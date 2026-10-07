@@ -30,7 +30,7 @@ struct SpriteBytes {
 
 void SceneState_ApplyValues14And0And5(void)
 {
-    BattleFx_RunPageEffectForSlot(0xE, 0, 5);
+    BattleFx_RunPageEffectForSlot(14, 0, 5);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -97,9 +97,9 @@ void KareiTorebi_MoveGuardAside(void)
 
     Engine_EventBegin();
     GameFlag_Set(0x8aa);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x128);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 296);
     Actor_SetSpeed(8, 0x13333, 0x9999);
-    Actor_WalkToAndWait(8, 0x198, 0x128);
+    Actor_WalkToAndWait(8, 408, 296);
     Actor_FaceDirection(8, 0x8000, 0);
     Engine_EventWait(20);
     Engine_EventEnd();
@@ -214,7 +214,7 @@ void SceneDialogue_RunActor12Event(void)
             Engine_EventWait(10);
             Engine_EventSetMessage((s32)MsgKareiWantGoAshore + 1);
             Event_ShowMessage(12, 0);
-            Actor_WalkToAndWait(12, 88, 0x508);
+            Actor_WalkToAndWait(12, 88, 1288);
             Actor_FaceDirection(12, 0x4000, 0);
             Engine_EventWait(20);
             GameFlag_Set(0x8a9);
@@ -232,16 +232,16 @@ void SceneDialogue_RunActor12Event(void)
             owner = PartyInventory_FindOwner(235);
             slot = Inventory_Find(owner, 235);
             Engine_ActorSetAnimationAndWait(12, 3);
-            Actor_WalkToAndWait(12, 88, 0x508);
+            Actor_WalkToAndWait(12, 88, 1288);
             Actor_FaceDirection(12, 0x4000, 0);
             gEventWork->message++;
             Event_ShowMessage(12, 0);
             Inventory_Discard(owner, slot);
             GameFlag_Set(0x8a7);
             record = Actor_Get(ACTOR_PARTY_LEADER);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, record->x.part.pixel, 0x518);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 0x518);
-            Actor_WalkToAndWait(12, 88, 0x518);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, record->x.part.pixel, 1304);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 1304);
+            Actor_WalkToAndWait(12, 88, 1304);
             Actor_FaceDirection(12, 0, 0);
         } else {
             Event_ShowMessage(12, 0);
@@ -282,7 +282,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 msg;
 #endif
 
-    six00 = 0x258;
+    six00 = 600;
     Engine_EventBegin();
     if (GameFlag_IsSet(0x8a5) != 0) {
         Engine_EventSetMessage((s32)MsgKareiHandInTicketPlank);
@@ -374,14 +374,14 @@ void KareiTorebi_DeliverParentsMessage(void)
         Engine_EventEnd();
     } else {
         Engine_EventWait(20);
-        Actor_ShowEmote(11, 0x100, 50);
+        Actor_ShowEmote(11, 256, 50);
         Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgKareiSilkRoadBlocked);
         Event_ShowMessage(11, 0);
         if (GameFlag_IsSet(0x8a6) != 0) {
             Engine_EventWait(20);
-            Actor_ShowEmote(11, 0x102, 40);
+            Actor_ShowEmote(11, 258, 40);
             Event_OpenMessage(11, 0);
             if (Engine_EventChooseYesNo(0, 0) == 0) {
                 Engine_EventWait(20);
@@ -412,7 +412,7 @@ void KareiTorebi_LeaveScene(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
     if (gGameState.scene == (s32)&SceneId_KareiTorebi1) {
-        Actor_WalkTo(ACTOR_PARTY_LEADER, 0x130, 0x570);
+        Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
         Map_AnimateCells(KareiTorebi_LeaveCells1, 78, 86);
     } else {
         if (gGameState.scene == (s32)&SceneId_KareiTorebi3) {
@@ -575,7 +575,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_EventSetMessage((s32)MsgKareiIncredibleOcean);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(ACTOR_GERALD, 232, 0x590);
+    Actor_WalkToAndWait(ACTOR_GERALD, 232, 1424);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     Camera_MoveTo(0xb80000, -1, 0x5a00000, 1);
     Engine_CameraWaitForMove();
@@ -587,9 +587,9 @@ void FieldScene_RunScene3aeSequenceA(void)
     Camera_MoveTo(0x1080000, -1, 0x5a80000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Actor_ShowEmote(8, 0x100, 50);
+    Actor_ShowEmote(8, 256, 50);
     Actor_SetSpeed(8, 0x13333, 0x9999);
-    Actor_WalkToAndWait(8, 0x108, 0x590);
+    Actor_WalkToAndWait(8, 264, 1424);
     Actor_FaceDirection(8, 0x8000, 0);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_GERALD, 0, 0);
@@ -599,7 +599,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_EventWait(10);
     Event_ShowMessage(8, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 40);
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     Engine_EventWait(50);
@@ -608,7 +608,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     Engine_EventWait(30);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x5b8);
+    Actor_WalkToAndWait(ACTOR_GERALD, 264, 1464);
     Actor_FaceDirection(ACTOR_GERALD, 0, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Actor_FaceDirection(8, 0x4000, 0);
@@ -662,10 +662,10 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Actor_ShowEmote(13, 0x102, 50);
+    Actor_ShowEmote(13, 258, 50);
     Event_ShowMessage(13, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(10, 0x107, 50);
+    Actor_ShowEmote(10, 263, 50);
     Actor_FaceDirection(10, FACING_EAST, 0);
     Engine_ActorJump(10, 4, 13);
     Engine_ActorJump(10, 4, 30);
@@ -679,7 +679,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(13, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(10, 0x103, 55);
+    Actor_ShowEmote(10, 259, 55);
     Actor_SetSpeed(10, 0x20000, 0x10000);
     Actor_WalkByAndWait(10, 16, 0);
     Engine_ActorJump(10, 7, 0);
@@ -692,7 +692,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Engine_EventWait(10);
     Engine_ActorSetAnimation(10, 1);
     Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
-    Actor_SetAttachedEffect(13, 0x102);
+    Actor_SetAttachedEffect(13, 258);
     Engine_ActorStartRepeatedMotion(13, 2);
     Audio_PlayCue(155);
     Engine_EventWait(10);
@@ -708,7 +708,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Engine_EventWait(20);
     Event_ShowMessage(10, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(13, 0x102, 70);
+    Actor_ShowEmote(13, 258, 70);
     Actor_SetSpeed(16, 0x10000, 0x8000);
     Actor_WalkByAndWait(16, -8, 0);
     Actor_FaceDirection(16, FACING_SOUTH + FACING_STEP, 0);
@@ -731,7 +731,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Engine_EventWait(10);
     Actor_FaceDirection(11, FACING_NORTHEAST, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(11, 0x102, 50);
+    Actor_ShowEmote(11, 258, 50);
     Event_ShowMessage(11, 0);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(13, 2);
@@ -757,7 +757,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_FaceDirection(16, FACING_WEST, 0);
     Event_ShowMessage(16, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(10, 0x102, 50);
+    Actor_ShowEmote(10, 258, 50);
     Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkByAndWait(10, -8, 0);
@@ -800,7 +800,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
     Audio_PlayCue(159);
     Engine_EventWait(20);
-    Actor_ShowEmote(11, 0x102, 50);
+    Actor_ShowEmote(11, 258, 50);
     Actor_SetSpeed(11, 0x18000, 0xc000);
     Actor_WalkByAndWait(11, 24, 0);
     Actor_FaceDirection(11, FACING_NORTH, 0);

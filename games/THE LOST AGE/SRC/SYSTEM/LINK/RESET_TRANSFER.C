@@ -18,7 +18,7 @@ void BattleLink_ResetTransferState(void)
     } while (0);
     zero = 0;
     state = &gSerialTransfer;
-    state->status = 0x80;
+    state->status = 128;
     *(u8 *)&state->peer_flags = zero;
     gSerialSendSource = zero;
     *(u8 *)&state->flags = zero;

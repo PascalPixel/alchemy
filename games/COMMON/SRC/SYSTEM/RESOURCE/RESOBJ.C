@@ -68,8 +68,8 @@ struct ResourceObject *ResourceObject_Create(s32 id)
     found->rotation = 0;
     found->flags = 1;
     switch ((u32)((metadata->width << 8) + metadata->height)) {
-    case 0x0808: shape = 0; break;
-    case 0x0810: shape = 0x8000; break;
+    case 2056: shape = 0; break;
+    case 2064: shape = 0x8000; break;
     case 0x1008: shape = 0x4000; break;
     case 0x1010: shape = 0x40000000; break;
     case 0x1020: shape = 0x80008000; break;

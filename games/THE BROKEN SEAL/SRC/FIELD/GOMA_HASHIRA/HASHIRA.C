@@ -37,13 +37,13 @@ struct PillarEffect {
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x1c];
+    u8 unknown_14[28];
     s32 rate_first;
     s32 rate_second;
     s32 target_x;
     s32 target_y;
     s32 target_z;
-    u8 unknown_44[0x22];
+    u8 unknown_44[34];
     s16 plane;
 };
 

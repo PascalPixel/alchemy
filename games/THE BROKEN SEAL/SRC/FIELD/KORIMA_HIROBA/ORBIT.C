@@ -111,9 +111,9 @@ void SceneEffect_InitOrbitingParticle(s32 id)
     actor->flags_23 &= 0xfe;
     actor->visible = 1;
 
-    transfer = Engine_HeapAllocate(17, 0x608);
+    transfer = Engine_HeapAllocate(17, 1544);
     Engine_ItemLoadIcon(ITEM_NUT);
-    transfer += 0x400;
+    transfer += 1024;
     Engine_VramLoad(sprite->pal, 128, transfer);
     Engine_HeapRelease(17);
 

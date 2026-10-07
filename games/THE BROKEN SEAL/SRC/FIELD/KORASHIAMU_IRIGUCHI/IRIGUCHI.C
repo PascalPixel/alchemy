@@ -167,7 +167,7 @@ void KorashiamuIriguchi_TryLuckyGuess(void)
             Event_OpenMessage(16, 0);
             if (Engine_EventChooseYesNo(0, 0) == 0) {
                 gEventWork->message++;
-                Actor_ShowEmote(16, 0x100, 40);
+                Actor_ShowEmote(16, 256, 40);
                 Event_OpenMessage(16, 0);
                 if (Engine_EventChooseYesNo(0, 0) == 0) {
                     gEventWork->message++;
@@ -203,7 +203,7 @@ void KorashiamuIriguchi_IntroduceSecondSeed(void)
     Engine_EventShowMessage(13, 0);
     {
         u16 *target = (u16 *)&rec7->timer;
-        u16 shown = 0x2d0;
+        u16 shown = 720;
 
         *target = shown;
     }
@@ -223,11 +223,11 @@ void KorashiamuIriguchi_FrightenActorFourteen(void)
     s32 record;
 
     Engine_EventBegin();
-    Actor_SetAttachedEffect(14, 0x102);
+    Actor_SetAttachedEffect(14, 258);
     Engine_ActorRunRepeatedMotion(14, 2);
     Engine_EventSetMessage((s32)MsgKorashiamuWaahDontFrightenMe);
     FieldScene_CallPairWith10(14);
-    Actor_ShowEmote(14, 0x102, 40);
+    Actor_ShowEmote(14, 258, 40);
     Event_ShowMessage(14, 0);
     Engine_EventEnd();
 }
@@ -264,7 +264,7 @@ void KorashiamuIriguchi_CheerForDekka(void)
         Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
         Engine_ActorSetAnimation(17, 4);
         FieldScene_CallPairWith10(17);
-        Actor_ShowEmote(17, 0x105, 40);
+        Actor_ShowEmote(17, 261, 40);
         FieldScene_CallPairWith10(17);
         SceneState_ForwardMaskedHalfwordWith10(17, 0x5000);
         GameFlag_Set(0x3c1);

@@ -74,7 +74,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     BattleEffect_WipeCanvas(1, 0);
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 379, 2);
@@ -246,7 +246,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
                 s32 speed;
                 s32 angle;
 
-                speed = 0x3ff;
+                speed = 1023;
                 speed &= Random16();
                 angle = Random16() & 0xffff;
                 spark->x = 0x200000;
@@ -338,7 +338,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (j = 0; j != 40; j++) {
         struct EffectStep *ember = &work->particles[8 + j];
@@ -390,10 +390,10 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
             AudioCommand_PlayFar(136);
         if (work->effect->side == 0) {
             if (frame <= 63)
-                camera->yaw -= 0x100;
+                camera->yaw -= 256;
         } else {
             if (frame <= 63)
-                camera->yaw += 0x100;
+                camera->yaw += 256;
         }
         BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
         if (frame <= 17) {
@@ -459,7 +459,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
             lift = drift / 4 + 2;
             trail[0].x = position.x - 12;
             trail[0].y = position.y - 20;
-            draw[0](canvas, &work->sheet[lift * 0x480],
+            draw[0](canvas, &work->sheet[lift * 1152],
                 trail[0].x - 6, trail[0].y - 2, 24, 48);
         }
         if (frame == 83) {
@@ -483,7 +483,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
                     size = 9 - (position.depth - 160) / 64;
                     if (i > 47) {
                         if (ember->variant <= 11) {
-                            draw[0](canvas, Ram_MapCellBuffer + ember->variant / 2 * 0x800,
+                            draw[0](canvas, Ram_MapCellBuffer + ember->variant / 2 * 2048,
                                 position.x - 16, position.y - 32, 32, 64);
                             ember->variant++;
                         }
@@ -582,15 +582,15 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     } while (i != 64);
 
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &origin);
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     work->transfer_mode = 2;
     work->transfer_value = 75;
 
     for (frame = 0; frame != 64; frame++) {
         if (frame == 8)
-            BattleEventRuntime_BeginPhaseFar(0x86);
+            BattleEventRuntime_BeginPhaseFar(134);
         if (work->effect->variant != 0 && frame == 8)
-            Audio_PlayCue(0xd4);
+            Audio_PlayCue(212);
         EffectPosition_ApplyStepAndYOffset(work->effect->actor, &position);
         if (frame >= 6 && frame <= 11) {
             if (work->effect->side == 0)
@@ -599,9 +599,9 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
             routine[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
             if (work->effect->side == 0)
-                routine[0](canvas, work->sheet + (frame - 6) * 0xd80, position.x / 2 - 24, position.y - 24, 48, 72);
+                routine[0](canvas, work->sheet + (frame - 6) * 3456, position.x / 2 - 24, position.y - 24, 48, 72);
             else
-                routine[0](canvas, work->sheet + (frame - 6) * 0xd80, position.x / 2, position.y - 24, 48, 72);
+                routine[0](canvas, work->sheet + (frame - 6) * 3456, position.x / 2, position.y - 24, 48, 72);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
         if (frame >= 16 && frame <= 47) {
@@ -616,7 +616,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                 strip = 0;
             else
                 strip = 0x2580;
-            routine[0](canvas, Ram_MapCellBuffer + strip + step * 0xc80, origin.x / 2 - 20, origin.y - 48, 40, 80);
+            routine[0](canvas, Ram_MapCellBuffer + strip + step * 3200, origin.x / 2 - 20, origin.y - 48, 40, 80);
             BattleFx_RunNoEffectFrames(10000);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
@@ -640,7 +640,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                     size = (life >> 3) + 2;
                     routine[(i / 2) & 1](canvas, cells + ParticleStreams_CellOffsets[size - 1], out.x - size / 2, out.y - size,
                         size, size * 2);
-                    EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
+                    EffectStep_AdvanceWithGravity3D(shard, 60, -1024);
                     shard->variant--;
                 }
             }

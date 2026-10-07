@@ -40,7 +40,7 @@ s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinat
 
 
 struct MapShake {
-    u8 unknown_00[0x18];
+    u8 unknown_00[24];
     s32 direction_x;
     s32 direction_z;
     u8 unknown_20[4];
@@ -124,13 +124,13 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
 {
-    s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
+    s32 **slots = (s32 **)((u8 *)gEventWork + 20);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
         s32 *p = slots[i];
 
-        if (cx == (p[2] >> 20) && cz == (p[4] >> 20) && *((u8 *)p + 0x59) != 0) {
+        if (cx == (p[2] >> 20) && cz == (p[4] >> 20) && *((u8 *)p + 89) != 0) {
             return p;
         }
     }
@@ -517,7 +517,7 @@ void KuupuappuDou_EnableGroupAutomaticPriority(void)
 
 void KuupuappuDou_RunRumble(void)
 {
-    struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
+    struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 356);
     s32 frames;
     s32 eva;
     s32 evb;
@@ -534,7 +534,7 @@ void KuupuappuDou_RunRumble(void)
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Audio_PlayCue(163);
-    for (frames = 0x1df; frames >= 0; frames--) {
+    for (frames = 479; frames >= 0; frames--) {
         u32 drift = (u32)(Random_Next() << 11) >> 16;
 
         shake->scroll = (double)shake->scroll - (4718.592 - (double)drift);
@@ -554,7 +554,7 @@ void KuupuappuDou_RunRumble(void)
         frames++;
     } while (frames <= 69);
     Map_CopyCells(19, 83, 15, 8, 19, 91);
-    Audio_PlayCue(0x120);
+    Audio_PlayCue(288);
     Engine_MapRedraw();
     Engine_MapRenderWaitForValues();
     Engine_EventEnd();
@@ -632,7 +632,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         index = KuupuappuDou_ScheduleIndex;
         if (KuupuappuDou_ScheduleFrames[index] == KuupuappuDou_ScheduleTimer) {
             rec7 = Actor_Get((index + 11));
-            rec7->gravity = 0xa3d;
+            rec7->gravity = 2621;
             if (++KuupuappuDou_ScheduleIndex > 3) {
                 KuupuappuDou_ScheduleIndex = 0;
             }
@@ -681,7 +681,7 @@ void FieldScene_RunScene3a7SequenceD(void)
             record = Math_RemainderUnsigned(record, 6);
             *selected = record;
             rec7 = Object_GetById((record + 10));
-            rec7->gravity = 0xa3d;
+            rec7->gravity = 2621;
         }
         for (i = 0; i <= 5; i++) {
             rec7 = Object_GetById((i + 10));
@@ -769,7 +769,7 @@ void SceneActor_InitSlots10To15AndStartTask(void)
     } while (remaining >= 0);
 
     {
-        s32 rank = 0xc80;
+        s32 rank = 3200;
 
         Scheduler_AddOrUpdateCallback((s32)FieldScene_RunScene3a7SequenceD, rank);
     }
@@ -794,7 +794,7 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
     } while (i <= 3);
 
     {
-        s32 rate = 0xc80;
+        s32 rate = 3200;
 
         Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, rate);
     }
@@ -871,7 +871,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
                 Engine_ActorSetAnimation(21, 5);
                 SceneActor_MarkSlot21AndSetFlag205();
             }
-            Scheduler_AddOrUpdateCallback((s32)SceneState_DispatchByActorZeroDepth, 0xc80);
+            Scheduler_AddOrUpdateCallback((s32)SceneState_DispatchByActorZeroDepth, 3200);
             break;
         case 10:
         case 11:

@@ -1,7 +1,7 @@
 #include "OBJECT_RUNTIME.H"
 
 struct BattleRenderObject {
-    u8 unknown_00[0x50];
+    u8 unknown_00[80];
     struct BattleAnimationState *animation;
     u8 kind;
 };

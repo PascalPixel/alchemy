@@ -45,10 +45,10 @@ s32 Resource37c_Run(void)
     s32 scale_y = 0x10000;
     s32 scale_z = 0x10000;
 
-    RESOURCE37C_RUNTIME->setup_request_1c0 = 0x204;
+    RESOURCE37C_RUNTIME->setup_request_1c0 = 516;
     Resource37c_SetSetupFlag(0x144);
-    if (Resource37c_TestSetupGate(0x814) != 0) {
-        Resource37c_QueueSoundCue(0x8D);
+    if (Resource37c_TestSetupGate(2068) != 0) {
+        Resource37c_QueueSoundCue(141);
         Resource37c_SetViewScale(scale_x, scale_y, scale_z);
         Resource37c_FinalizeSetup();
     }

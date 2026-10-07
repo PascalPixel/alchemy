@@ -19,11 +19,11 @@
 #define BattleFx_RunEventAction ((void (*)(s32,s32,s32))BattleFx_RunEventAction)
 
 struct EffectState {
-    u8 unknown_000[0x52a];
+    u8 unknown_000[1322];
     u16 frame;
     s32 x;
     s32 height;
-    u8 unknown_534[0xcb8 - 0x534];
+    u8 unknown_534[3256 - 1332];
     u16 active;
     u16 duration;
     s16 center_x;
@@ -85,5 +85,5 @@ void RunBattleEffect08(void)
         work->frame = frame;
         frame++;
     } while (frame <= 18);
-    Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 3200);
 }

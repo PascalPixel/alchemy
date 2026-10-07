@@ -10,7 +10,7 @@ void Graphics_InterpolatePaletteBuffers(s16 *source, s16 *target, s16 *step, s32
 
     if (frames > 0) {
         divide = Iwram_SignedDivide;
-        index = 0x5FF;
+        index = 1535;
         do {
             first = *source;
             second = *target;

@@ -316,7 +316,7 @@ s32 BattleTarget_SelectForAction(
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
-                    order_positions[candidate_count] = 0x100;
+                    order_positions[candidate_count] = 256;
                     order_positions[candidate_count] |= target_index;
                     candidate_count++;
                 }
@@ -332,7 +332,7 @@ scan_mirrored_order:
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
-                    order_positions[candidate_count] = 0x180;
+                    order_positions[candidate_count] = 384;
                     order_positions[candidate_count] |= target_index;
                     candidate_count++;
                 }

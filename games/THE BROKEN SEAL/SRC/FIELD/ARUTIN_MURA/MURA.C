@@ -426,8 +426,8 @@ void FieldScene_RunScene3a3SequenceC(void)
     *(s32 *)((u8 *)motion + 72) = 0x6666;
     motion->callback = SceneMotion_UpdateTimedActor;
     Actor_SetSpeed(18, 0x13333, 0x9999);
-    Actor_MoveToAndWait(18, 28, 0x1cc);
-    Actor_MoveToAndWait(18, 24, 0x1c0);
+    Actor_MoveToAndWait(18, 28, 460);
+    Actor_MoveToAndWait(18, 24, 448);
     Audio_PlayCue(229);
     Engine_ActorDestroy(18);
     Work_SetValuesIfNonNegative(0, 0x10000, 0x10000);
@@ -517,7 +517,7 @@ placed:
         BattleFx_SetQueuedSoundAndPlay(170);
         Actor_SetChildValue(18, 2);
         Engine_ActorSetAnimation(18, 3);
-        Engine_TaskAddCallback(SceneEffect_SpawnDriftingParticle, 0xc80);
+        Engine_TaskAddCallback(SceneEffect_SpawnDriftingParticle, 3200);
     }
     if (gGameState.entrance == 3) {
         GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -613,11 +613,11 @@ void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
     if (work->timer <= 3) {
         work->z += -((Random16() * 0x8000) >> 16) - 0x10000;
         work->scale_x += 0x2666;
-        work->scale_y += -0xa3d;
+        work->scale_y += -2621;
     } else {
         work->z += 0x20000;
-        work->scale_x += 0x7ae;
-        work->scale_y += 0x7ae;
+        work->scale_x += 1966;
+        work->scale_y += 1966;
     }
     if ((Random16() * work->timer) >> 16 == 0)
         ObjectGroup_SetChildValue(work, 7);

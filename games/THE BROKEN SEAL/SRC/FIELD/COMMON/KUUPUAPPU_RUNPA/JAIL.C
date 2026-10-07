@@ -60,9 +60,9 @@ enum JailActor {
 };
 
 enum JailSprite {
-    SPRITE_THIEF_LEADER = 0x3f,
-    SPRITE_THIEF = 0x40,
-    SPRITE_PRISONER = 0x74
+    SPRITE_THIEF_LEADER = 63,
+    SPRITE_THIEF = 64,
+    SPRITE_PRISONER = 116
 };
 
 enum {

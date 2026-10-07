@@ -112,7 +112,7 @@ void MapAnimation_StartChannels(const u16 *script)
         command = *script++;
     }
     if (count != 0)
-        Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
+        Scheduler_AddOrUpdateCallback(MapAnimation_Update, 3200);
 }
 
 void Map_EnableUpdateCallback(void)

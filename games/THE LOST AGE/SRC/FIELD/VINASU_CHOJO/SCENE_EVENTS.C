@@ -32,7 +32,7 @@ s32 VinasuChojo_Idle(void)
 }
 
 struct SetupWork {
-    u8 unknown_00[0x24];
+    u8 unknown_00[36];
     s32 (*idle)(void);
 };
 
@@ -50,7 +50,7 @@ void VinasuChojo_RunSetupStep(void)
 }
 
 struct AerieEventWork {
-    u8 unknown_000[0x1ac];
+    u8 unknown_000[428];
     s32 mode;
 };
 
@@ -58,7 +58,7 @@ struct AerieEventWork {
 #if !EDITION_INTERNATIONAL
 s32 VinasuChojo_Start(void)
 {
-    ((struct AerieEventWork *)Ram_HeapSlots->event_work)->mode = 0x204;
+    ((struct AerieEventWork *)Ram_HeapSlots->event_work)->mode = 516;
     if (gPartyState.entrance == ENTRANCE_OPENING) {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);

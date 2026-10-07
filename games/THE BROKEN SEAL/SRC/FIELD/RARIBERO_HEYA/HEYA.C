@@ -173,7 +173,7 @@ void RariberoScene_PlayPoseSequence(void)
     Engine_ResetSceneEffectCounter();
     Engine_EventSetMessage((s32)MsgRariberoImSorry);
     Engine_EventWait(50);
-    Actor_ShowEmote(14, 0x102, 50);
+    Actor_ShowEmote(14, 258, 50);
     Actor_FaceActor(14, ACTOR_PARTY_LEADER, 20);
     Event_ShowMessage(14, 0);
     Engine_EventWait(10);
@@ -203,17 +203,17 @@ void FieldScene_RunSequenceA(void)
     Engine_GameFlagSet(0x9BC);
     Engine_EventBegin();
     Engine_ResetSceneEffectCounter();
-    Engine_EventWait(0xA);
+    Engine_EventWait(10);
     Engine_CameraMoveTo(0x780000, -1, 0x600000, 1);
     Engine_CameraWaitForMove();
-    Engine_EventWait(0x1E);
+    Engine_EventWait(30);
     Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
-    Engine_EventShowMessage(0xC, 0);
-    Engine_EventWait(0xA);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
-    Engine_EventWait(0x1E);
+    Engine_EventShowMessage(12, 0);
+    Engine_EventWait(10);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+    Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Engine_EventWait(0x1E);
+    Engine_EventWait(30);
     Engine_EventEnd();
 }
 
@@ -223,7 +223,7 @@ void FieldScene_RunThreeCallSequence(void)
 
     Engine_GameFlagSet(0x9BC);
     Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
-    Engine_EventShowMessage(0xC, 0);
+    Engine_EventShowMessage(12, 0);
 }
 
 void RariberoHeya_RequestTouchedExitAndPlayCue(void)
@@ -232,7 +232,7 @@ void RariberoHeya_RequestTouchedExitAndPlayCue(void)
     s16 *p = (s16 *)&work->touched_trigger;
 
     Engine_EventRequestExit(*p);
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
 }
 
 u8 *RariberoHeya_GetEvents(void)
@@ -596,7 +596,7 @@ void FieldScene_RunSecondaryScript(void)
     Engine_EventWait(10);
 
     Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 261, 60);
     Engine_EventWait(10);
     Engine_ActorFaceDirection(ACTOR_GERALD, 0xc000, 0);
     Engine_EventWait(20);

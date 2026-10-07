@@ -6,7 +6,7 @@ struct ObjectSprite {
     u8 attr0_high;
     u8 unknown_06;
     u8 attr1_high;
-    u8 unknown_08[0xf];
+    u8 unknown_08[15];
     u8 y_offset;
 };
 

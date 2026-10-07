@@ -28,7 +28,7 @@
 #define gKeysRepeat (*(u32 *)&gKeysRepeat)
 
 struct KeyMoveEventWork {
-    u8 unknown_000[0x19c];
+    u8 unknown_000[412];
     u16 blocked_steps;
 };
 
@@ -597,10 +597,10 @@ movement_done:
     work = gMapWork[0];
     rate = WorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
     step = (s16)(rate - work->yaw) / 8;
-    if (step > 0x200)
-        step = 0x200;
-    if (step < -0x200)
-        step = -0x200;
+    if (step > 512)
+        step = 512;
+    if (step < -512)
+        step = -512;
     if (step > -16 && step < 16)
         step = rate - work->yaw;
     work->yaw += step;

@@ -24,7 +24,7 @@ struct PairedObjectList {
 };
 
 struct PairedObjectTable {
-    u8 padding0[0x18];
+    u8 padding0[24];
     s32 count;
 };
 
@@ -109,7 +109,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
                 }
                 if ((resource = slot->effect) != 0) {
                     if (res->width == 32)
-                        resource = 0x1ff;
+                        resource = 511;
                     entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(res, resource);
                     slot->effect_entry = entry;
                     entry->priority = 0;

@@ -63,7 +63,7 @@ void RunBattleEffect07(void)
         position.x = scene->x;
         position.y = scene->y + 0x100000;
         position.z = scene->z;
-        obj = Object_Spawn(0x11d, position.x, position.y, position.z);
+        obj = Object_Spawn(285, position.x, position.y, position.z);
         if (obj != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
             obj->speed_limit = Random16() + 0x20000;
@@ -94,7 +94,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle
         scale = obj->scale_x;
         if (scale < 0x10000) {
             do {
-                scale += 0x800;
+                scale += 2048;
                 obj->scale_y = scale;
                 obj->scale_x = scale;
                 obj->angle += 0x2000;

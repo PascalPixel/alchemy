@@ -52,7 +52,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
     s32 msg;
 #endif
 
-    buffer = Runtime_AllocateBlock(14, 0x400);
+    buffer = Runtime_AllocateBlock(14, 1024);
     changed = 1;
     maximum -= minimum;
     result = -1;
@@ -61,7 +61,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
     if (window != 0) {
         slot = Resource_FindFreeEntry();
         if (slot != 96) {
-            VramBlock_LoadCached(slot, 0x100, 0);
+            VramBlock_LoadCached(slot, 256, 0);
             RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0, 0);
             sprite = RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 32, 0);
             sprite->table.bits.index += 4;
@@ -94,7 +94,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                     Shop_FillSelector(minimum + maximum, 0, buffer);
                     Shop_FillSelector(minimum + count + 1, 10, buffer);
                     Shop_FillSelector(minimum, 2, buffer);
-                    VramBlock_LoadCached(slot, 0x100, buffer);
+                    VramBlock_LoadCached(slot, 256, buffer);
                     result = count + 1;
 #if EDITION_INTERNATIONAL
                     UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);

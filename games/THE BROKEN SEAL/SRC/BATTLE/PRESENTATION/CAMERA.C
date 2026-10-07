@@ -43,7 +43,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
     u32 i;
     u32 count;
 
-    horizon = 0x800;
+    horizon = 2048;
     wrap = 0;
     if (scale >= 0x10000) {
         wrap = 0x2000;

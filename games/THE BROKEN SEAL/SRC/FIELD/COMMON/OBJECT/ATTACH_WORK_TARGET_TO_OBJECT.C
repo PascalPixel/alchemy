@@ -25,7 +25,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
     struct MapScrollWork *p;
 
     obj = ObjectTable_Get(id);
-    work = Runtime_AllocateBlock(0x1B, 0xCCC);
+    work = Runtime_AllocateBlock(27, 3276);
     target = (struct ObjectRuntime *)work->view_center;
     p = gMapWork[0];
     if (obj != 0) {
@@ -45,7 +45,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 
 void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
 {
-    struct EventWork *owner = Runtime_AllocateBlock(0x1b, 0xccc);
+    struct EventWork *owner = Runtime_AllocateBlock(27, 3276);
     ((struct ObjectRuntime *)owner->view_center)->speed_limit = first;
     ((struct ObjectRuntime *)owner->view_center)->acceleration = second;
 }
@@ -73,7 +73,7 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     position_y = requested_y;
     should_use_setter = use_setter;
     position_z = requested_z;
-    runtime_block = Runtime_AllocateBlock(0x1B, 0xCCC);
+    runtime_block = Runtime_AllocateBlock(27, 3276);
     object = (struct ObjectRuntime *)runtime_block->view_center;
     camera_state = gMapWork[0];
     minimum_x = camera_state->min_x + 0x780000;
@@ -122,7 +122,7 @@ void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
     struct ObjectRuntime *obj;
 
     obj = ObjectTable_Get();
-    Runtime_AllocateBlock(0x1B, 0xCCC);
+    Runtime_AllocateBlock(27, 3276);
     if (obj != NULL) {
         Motion_CamBounds(obj->x, -1, obj->z, arg1);
     }
@@ -133,13 +133,13 @@ void Object_CommitPosition(struct ObjectRuntime *);
 void BattleFx_CommitObjectPositionAndWait(void)
 {
     Object_CommitPosition((struct ObjectRuntime *)
-        ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center);
+        ((struct EventWork *)Runtime_AllocateBlock(27, 3276))->view_center);
     Battle_WaitMode0(2);
 }
 
 s32 Battle_GetWorkObject1e0(void)
 {
-    return (s32)((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center;
+    return (s32)((struct EventWork *)Runtime_AllocateBlock(27, 3276))->view_center;
 }
 
 void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target, s32 keep_current_position)
@@ -147,7 +147,7 @@ void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target, s32 keep_current_
     struct ObjectRuntime *object;
 
     object = (struct ObjectRuntime *)
-        ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center;
+        ((struct EventWork *)Runtime_AllocateBlock(27, 3276))->view_center;
     if (target != NULL) {
         ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
         object->linked_object = target;

@@ -32,12 +32,12 @@ void KuupuappuHeya_StartActorStops(void)
     Actor_SetSpeed(0, 0xcccc, 0x6666);
     Actor_SetSpeed(1, 0xcccc, 0x6666);
     Actor_SetSpeed(2, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(0, 248, 0x2b8);
+    Actor_WalkToAndWait(0, 248, 696);
     Actor_SetPosition(1, 0xf80000, 0x2b80000);
     Actor_SetPosition(2, 0xf80000, 0x2b80000);
-    Actor_WalkTo(0, 200, 0x2b8);
-    Actor_WalkTo(1, 248, 0x2c8);
-    Actor_WalkToAndWait(2, 232, 0x2b8);
+    Actor_WalkTo(0, 200, 696);
+    Actor_WalkTo(1, 248, 712);
+    Actor_WalkToAndWait(2, 232, 696);
     Engine_ActorWaitForMove(1);
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(2, 0x8000, 0);
@@ -55,7 +55,7 @@ void KuupuappuHeya_StartActorStops(void)
         zero.v = 0;
         *timer = zero.v;
     }
-    FieldScheduler_AddOrUpdateCallback((s32)KuupuappuHeya_UpdateActorStops, 0xc94);
+    FieldScheduler_AddOrUpdateCallback((s32)KuupuappuHeya_UpdateActorStops, 3220);
     GameFlag_Clear(0x1ff);
     Engine_EventEnd();
     Engine_AudioPlayCue(9);

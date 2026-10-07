@@ -33,7 +33,7 @@ struct ArcObject {
     u8 pad14[4];
     s32 scale_x;
     s32 scale_y;
-    u8 pad20[0x44];
+    u8 pad20[68];
     u16 counter;
     u8 pad66[2];
     struct ArcObject *linked_object;
@@ -76,7 +76,7 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
             ObjectDispatch_ApplyValueToChildrenFar(object, action);
         }
         object_id++;
-    } while (object_id <= 0x42);
+    } while (object_id <= 66);
 }
 
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)

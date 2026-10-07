@@ -29,7 +29,7 @@ void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 s32 PartyInventory_RemoveFar(s32);
 
 struct TimedNoticeWork {
-    u8 unknown_000[0x230];
+    u8 unknown_000[560];
     struct UiWindow *window;
     u16 countdown;
 };
@@ -82,7 +82,7 @@ void UiTimedNotice_Create(void)
     timer = &work->countdown;
     frames = 90; /* FAKEMATCH: a word temporary keeps 90 out of the HImode pool. */
     *timer = frames;
-    Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
+    Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 3200);
 }
 
 void UiTimedNotice_Tick(void)

@@ -29,7 +29,7 @@ void ItemMenu_Close(void);
 s32 Menu_OpenCharacterSelector(void)
 {
     struct CharacterMenuState *state =
-        (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 0x0a70);
+        (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 2672);
     s32 result;
     s32 index;
 

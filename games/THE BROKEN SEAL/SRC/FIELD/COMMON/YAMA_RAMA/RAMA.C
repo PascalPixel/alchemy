@@ -52,7 +52,7 @@ s32 OverlayObject_SetFacingTowardObject10(void *self)
     struct FieldActor *actor = self;
     struct FieldActor *obj;
 
-    obj = Object_GetById(0xA);
+    obj = Object_GetById(10);
     actor->facing = ArcTan2(obj->z.fixed - actor->z.fixed,
         obj->x.fixed - actor->x.fixed);
     return 0;
@@ -174,7 +174,7 @@ void FieldScene_RunScene3a2SequenceA(void)
     Engine_ActorRunRepeatedMotion(8, 2);
     Actor_FaceDirection(8, 0x5000, 20);
     Event_ShowMessageAndWait(8, 0, 20);
-    Actor_ShowEmote(ACTOR_IVAN, 0x102, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 258, 60);
     Engine_EventWait(120);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Engine_EventWait(20);
@@ -183,12 +183,12 @@ void FieldScene_RunScene3a2SequenceA(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Actor_FaceDirection(ACTOR_MIA, 0, 20);
-        Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
+        Actor_ShowEmote(ACTOR_MIA, 257, 60);
         Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
         Actor_FaceDirection(ACTOR_IVAN, 0xe000, 0);
         Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
-        Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
+        Actor_SetAttachedEffect(ACTOR_GERALD, 258);
         Engine_EventWait(60);
         Actor_FaceDirection(ACTOR_GERALD, 0x8000, 20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
@@ -200,7 +200,7 @@ void FieldScene_RunScene3a2SequenceA(void)
         Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
-        Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
+        Actor_ShowEmote(ACTOR_GERALD, 258, 60);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
         Actor_FaceDirection(ACTOR_IVAN, 0xe000, 0);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
@@ -274,14 +274,14 @@ void FieldScene_RunScene3a2SequenceA(void)
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 60);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceDirection(ACTOR_IVAN, 0xe000, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 0);
+    Actor_ShowEmote(ACTOR_MIA, 258, 60);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
@@ -380,11 +380,11 @@ void Scene_RunEventTransition(void)
         record->update = (void (*)(union FieldObject *))OverlayObject_SetFacingTowardObject10;
         record = Object_GetById(0);
         if ((record->z.fixed >> 20) == 13) {
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 200);
         }
         Actor_SetSpeed(10, 0x20000, 0x10000);
         Engine_ActorSetSpritePriority(10, 2);
-        Actor_WalkToAndWait(10, 0x198, 216);
+        Actor_WalkToAndWait(10, 408, 216);
         {
             struct FieldActor *record = Object_GetById(10);
 
@@ -394,7 +394,7 @@ void Scene_RunEventTransition(void)
         Actor_FaceDirection(10, 0x8000, 20);
         Event_ShowMessageAndWait(10, 0, 20);
         Engine_ActorStartRepeatedMotion(10, 2);
-        Actor_SetAttachedEffect(10, 0x102);
+        Actor_SetAttachedEffect(10, 258);
         Engine_EventWait(60);
         Event_ShowMessageAndWait(10, 0, 20);
         Engine_ActorEnableActionCallback(10, YamaRama_HsuAction);
@@ -413,8 +413,8 @@ void Scene_RunEventTransition(void)
         Engine_ActorRunRepeatedMotion(10, 2);
         Engine_EventWait(20);
         Actor_FaceDirection(10, 0x5000, 120);
-        Actor_ShowEmote(10, 0x105, 60);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
+        Actor_ShowEmote(10, 261, 60);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 60);
         Engine_ActorSetAnimationAndWait(10, 4);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(10, 0, 20);
@@ -426,7 +426,7 @@ void Scene_RunActorCue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgYamaDoDoWarriorShouldReturn);
-    Actor_ShowEmote(10, 0x105, 60);
+    Actor_ShowEmote(10, 261, 60);
     Event_OpenMessage(10, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         Scene_AdvanceStep(1);
@@ -461,12 +461,12 @@ void Scene_RunActorExchange(void)
     Event_ShowMessageAndWait(10, 0, 20);
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(60);
-    Actor_ShowEmote(8, 0x102, 60);
+    Actor_ShowEmote(8, 258, 60);
     Engine_ActorSetAnimationAndWait(8, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(8, 0, 20);
     Engine_ActorStartRepeatedMotion(10, 2);
-    Actor_SetAttachedEffect(10, 0x102);
+    Actor_SetAttachedEffect(10, 258);
     Engine_EventWait(60);
     Actor_FaceDirection(10, 0xb000, 20);
     Engine_ActorSetAnimation(9, 5);
@@ -481,12 +481,12 @@ void Scene_RunActorSequence(void)
     s32 mask;
 
     Engine_EventBegin();
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(8, 258);
     Engine_ActorStartRepeatedMotion(8, 2);
     Engine_EventWait(60);
     Engine_EventSetMessage((s32)MsgYamaRobinDidLiftBoulder);
     Event_ShowMessageAndWait(8, 0, 20);
-    Actor_SetAttachedEffect(10, 0x102);
+    Actor_SetAttachedEffect(10, 258);
     Engine_ActorJump(10, 4, 0);
     Engine_EventWait(60);
     Event_ShowMessageAndWait(10, 0, 20);
@@ -496,8 +496,8 @@ void Scene_RunActorSequence(void)
     Actor_FaceDirection(10, 0xd000, 20);
     Engine_ActorSetAnimationAndWait(10, 3);
     Engine_EventWait(20);
-    Actor_WalkTo(8, 178, 0x114);
-    Actor_WalkToAndWait(10, 172, 0x11c);
+    Actor_WalkTo(8, 178, 276);
+    Actor_WalkToAndWait(10, 172, 284);
     Engine_ActorWaitForMove(8);
     Actor_FaceDirection(8, 0x5000, 0);
     Actor_FaceDirection(10, 0xb000, 0);
@@ -572,7 +572,7 @@ void Scene_RunActorSequence(void)
         record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Actor_SetSpeed(10, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(10, 168, 0x128);
+    Actor_WalkToAndWait(10, 168, 296);
     Actor_FaceDirection(10, 0xd000, 20);
     Engine_ActorSetAnimation(10, 5);
     Engine_ActorSetAnimationAndWait(8, 3);

@@ -78,7 +78,7 @@ struct RenderOutput *RenderOutput_CreateLoaded(
 
     no = Resource_FindFreeEntry();
     result = NULL;
-    if (no != 0x60) {
+    if (no != 96) {
         UiIcon_CopyResourceToSlot(code, layers, no);
         result = RenderOutput_Create(no, 0x40000000, input, x, y);
     }
@@ -96,7 +96,7 @@ struct RenderOutput *RenderOutput_CreateWithTransform(
     struct RenderOutput *result;
 
     count = Resource_FindFreeEntry();
-    if (count == 0x60) {
+    if (count == 96) {
         return NULL;
     }
     Ui_BuildPairedPatternsToSlot(icon, 1, &count, &unused, 1);
@@ -116,7 +116,7 @@ struct RenderOutput *RenderOutput_CreateFromTable(
 
     slot = Resource_FindFreeEntry();
     output = NULL;
-    if (slot != 0x60) {
+    if (slot != 96) {
         RenderResource_LoadTableEntry(table_entry, 0, slot);
         output = RenderOutput_Create(slot, 0x40000000, input, x, y);
     }

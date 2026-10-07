@@ -53,12 +53,12 @@ struct EntranceView {
 };
 
 struct ViewServices {
-    u8 unknown_00[0x0c];
+    u8 unknown_00[12];
     struct EntranceView *(*entrance_views)(void);
 };
 
 struct MapScrollWork {
-    u8 unknown_000[0xec];
+    u8 unknown_000[236];
     s32 left;
     s32 top;
     s32 right;
@@ -112,10 +112,10 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
         pos.y = obj->pos.y;
         pos.z = obj->pos.z;
         Vector_AddPolarOffset(0x100000, obj->angle, &pos);
-        if (*(s16 *)(state + 0x19e) == 3) {
+        if (*(s16 *)(state + 414) == 3) {
             cell = Ram_MapBlocks + ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
         } else {
-            base = *(u8 **)(map + 0x130);
+            base = *(u8 **)(map + 304);
             cell = base + (((pos.x / 0x100000) + ((pos.z / 0x100000) << 7)) << 2);
         }
         kind = cell[2];
@@ -189,7 +189,7 @@ void Debug_RunPaletteEditor(void)
 
     Resource_DecompressHalfwords(Debug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
-    tile = (palette << 12) + 0xd1;
+    tile = (palette << 12) + 209;
     colors = &PALETTE[palette * 16 + 1];
     map = EDITOR_MAP;
     p = map;

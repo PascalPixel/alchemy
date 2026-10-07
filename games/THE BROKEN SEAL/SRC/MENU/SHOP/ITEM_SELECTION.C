@@ -60,11 +60,11 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         WaitFrames(1);
         if ((gKeyState & KEY_A) != 0) {
             if (Inventory_CountFar(unit_id) == 0) {
-                Audio_PlayCue(0x71);
+                Audio_PlayCue(113);
                 continue;
             }
 
-            Audio_PlayCue(0x70);
+            Audio_PlayCue(112);
             item_slot = Shop_SelUse(unit_id);
             if (item_slot == -1) {
                 shop->cursor.anchor->active = 4;
@@ -79,7 +79,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         }
 
         if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(0x71);
+            Audio_PlayCue(113);
             *selected_unit = -1;
             *selected_item = -1;
             result = -1;
@@ -87,12 +87,12 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         }
 
         if ((gKeysRepeat & KEY_LEFT) != 0) {
-            Audio_PlayCue(0x6f);
+            Audio_PlayCue(111);
             selected_index--;
             redraw = 1;
         }
         if ((gKeysRepeat & KEY_RIGHT) != 0) {
-            Audio_PlayCue(0x6f);
+            Audio_PlayCue(111);
             selected_index++;
             redraw = 1;
         }

@@ -18,13 +18,13 @@
 
 
 struct SelectionWorkspace {
-    u8 unknown_000[0x46];
+    u8 unknown_000[70];
     u16 first_active;
     u16 first_resource;
-    u8 unknown_04a[0x352 - 0x4a];
+    u8 unknown_04a[850 - 74];
     u16 second_active;
     u16 second_resource;
-    u8 unknown_356[0xff4 - 0x356];
+    u8 unknown_356[4084 - 854];
     struct UiWindow *window;
     u8 unknown_ff8[12];
 };
@@ -34,7 +34,7 @@ void Menu_AllocateSelectionWorkspace(void)
     struct SelectionWorkspace *work;
     u32 zero;
 
-    work = Runtime_AllocateBlock(0x13, 0x1004);
+    work = Runtime_AllocateBlock(19, 0x1004);
     zero = 0;
     work->first_active = zero;
     work->second_active = zero;
@@ -58,7 +58,7 @@ void Ui_FinalizeWorkAndReleaseHeap13(void)
         p = (u16 *)((u8 *)p + 2);
         Resource_ResetEntry(*p);
     }
-    Runtime_ReleaseHeapBlock(0x13);
+    Runtime_ReleaseHeapBlock(19);
 }
 
 void GraphicsPalette_ReservedNoOpC9BC(void)

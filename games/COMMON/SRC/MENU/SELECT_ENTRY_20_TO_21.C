@@ -25,9 +25,9 @@ s32 Menu_SelectEntry20To21(s32 arg0)
     s32 ret;
 
     AffineEffect_InitializeWork();
-    Menu_AppendResourceEntry(0x20);
-    Menu_AppendResourceEntry(0x21);
-    Menu_CenterResourceEntries(0x11, PAIR_COLUMN, 0);
+    Menu_AppendResourceEntry(32);
+    Menu_AppendResourceEntry(33);
+    Menu_CenterResourceEntries(17, PAIR_COLUMN, 0);
     ret = Menu_RunResourceSelectionLoop(arg0);
     Menu_EndResourceSelection();
     return ret;

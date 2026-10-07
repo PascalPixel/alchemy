@@ -56,7 +56,7 @@ s32 AbilityMenu_BuildAvailableList(void)
             output++;
         }
         index++;
-    } while (index <= 0x1ff);
+    } while (index <= 511);
     state->stock_item_ids[count] = 0;
     state->stock_count = count;
     return count;
@@ -73,7 +73,7 @@ void Shop_InitializeCursorWork(void)
     volatile s32 zero;
     s32 slot;
 
-    work = Runtime_AllocateHeapBlock(55, 0xa70);
+    work = Runtime_AllocateHeapBlock(55, 2672);
     Battle_ResetEffectCounterFar();
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x8500029c, REG_DMA3);
@@ -97,7 +97,7 @@ void Shop_InitializeCursorWork(void)
     slot = Resource_FindFreeEntry();
     work->stat_up_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_SmallUpArrowTiles);
-    Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
+    Scheduler_AddOrUpdateCallback(Shop_StepCursor, 3200);
 }
 
 void Inn_Cleanup(void)
@@ -113,7 +113,7 @@ void Inn_Cleanup(void)
     Resource_ResetEntry(state->gem_icon);
     Resource_ResetEntry(state->stat_up_icon);
     Resource_ResetEntry(state->stat_down_icon);
-    Runtime_ReleaseHeapBlock(0x37);
+    Runtime_ReleaseHeapBlock(55);
 }
 
 s32 Shop_Run(s32 row, s32 keeper_id)
@@ -190,14 +190,14 @@ done:
 s32 Battle_ApplyPresetItemsAndFlags(void)
 {
     gGameState.coins = 0x30d40;
-    gGameState.shop_gifts = 0x1c;
-    Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
-    Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
-    Inventory_AddItemFar(2, 0xe7);
+    gGameState.shop_gifts = 28;
+    Inventory_EquipFar(1, Inventory_AddItemFar(1, 1165));
+    Inventory_EquipFar(0, Inventory_AddItemFar(0, 1035));
+    Inventory_AddItemFar(2, 231);
     Owner_GetStateFar(3)->poison = 1;
     Owner_GetStateFar(5)->poison = 1;
     Owner_GetStateFar(2)->evil_spirit = 1;
-    Shop_Run(FINAL_ARG, 0x1e);
+    Shop_Run(FINAL_ARG, 30);
     return 0;
 }
 

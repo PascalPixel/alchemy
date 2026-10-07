@@ -68,15 +68,15 @@ void BattleFx_SetupResourcesAndWindow(void)
     fill = 0;
     Dma_Set((const void *)&fill, pal, 0x85000020, REG_DMA3);
     pal[0] = 255;
-    pal[1] = 0x1ff;
+    pal[1] = 511;
     pal[2] = 272;
     pal[8] = 68;
     pal[9] = 324;
     pal[10] = 272;
     pal[16] = 119;
-    pal[17] = 0x177;
+    pal[17] = 375;
     pal[18] = 272;
-    pal[24] = 0xff0;
+    pal[24] = 4080;
     pal[25] = 0xffff;
     pal[26] = 0x1ffff;
     pal[27] = 0x11ff0;

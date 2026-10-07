@@ -44,7 +44,7 @@ u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
         object[89] = 8;
         Engine_ActorSetSpriteFlags(object, 0);
         ObjectGroup_SetChildValue(object, 15);
-        low = 0xfe;
+        low = 254;
         low = low & object[35];
         object[35] = (u8)(low | 2);
         result = object;

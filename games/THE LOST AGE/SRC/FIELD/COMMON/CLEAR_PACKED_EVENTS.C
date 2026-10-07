@@ -20,7 +20,7 @@ struct OwnerVitals {
     s16 max_pp;
     s16 hp;
     s16 pp;
-    u8 unknown_03c[0x131 - 60];
+    u8 unknown_03c[305 - 60];
     u8 status;
 };
 

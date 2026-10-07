@@ -247,7 +247,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
 
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
-    if ((u32)interpreter->delay > 0x3B) {
+    if ((u32)interpreter->delay > 59) {
         interpreter->delay = 0;
         interpreter->cursor = (u16)interpreter->cursor + 1;
         return 1;
@@ -292,7 +292,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
             return index + 1;
         }
         index++;
-    } while (index <= 0x3FF);
+    } while (index <= 1023);
     return 0;
 }
 
@@ -569,7 +569,7 @@ s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
 }
 
 struct MapScrollBounds {
-    u8 unknown_00[0xec];
+    u8 unknown_00[236];
     s32 left;
     s32 top;
     s32 right;

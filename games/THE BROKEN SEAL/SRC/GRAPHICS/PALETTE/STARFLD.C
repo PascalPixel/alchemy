@@ -90,8 +90,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
         angle = i * 0x5555;
         ring->x = Iwram_MulQ16(Trig_Cos(angle), radius);
         ring->y = Iwram_MulQ16(Trig_Sin(angle), radius);
-        ring->vel_x = Iwram_MulQ16(Trig_Cos(angle), 0x200);
-        ring->vel_y = Iwram_MulQ16(Trig_Sin(angle), 0x200);
+        ring->vel_x = Iwram_MulQ16(Trig_Cos(angle), 512);
+        ring->vel_y = Iwram_MulQ16(Trig_Sin(angle), 512);
         ring->age = 0;
     }
     work->frames = 0;
@@ -124,7 +124,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
         REG_BG2Y = zero;
     } while (0);
     do {
-        scale = 0x100;
+        scale = 256;
         REG_BG2PA = scale;
         REG_BG2PB = zero;
         REG_BG2PC = zero;
@@ -132,8 +132,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
     } while (0);
     FarCall_EffectTable(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
     FarCall_EffectTable(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
-    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_UpdateStarField, 0xc80);
-    return Scheduler_AddOrUpdateCallback((SchedulerCallback)Graphics_UploadVramBlock, 0xc80);
+    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_UpdateStarField, 3200);
+    return Scheduler_AddOrUpdateCallback((SchedulerCallback)Graphics_UploadVramBlock, 3200);
 }
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused)

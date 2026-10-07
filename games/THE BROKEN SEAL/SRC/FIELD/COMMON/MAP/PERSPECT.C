@@ -75,7 +75,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
     if (update == 0 && tile == *shown)
         return 0;
     *shown = tile;
-    buffer = Runtime_AllocateHeapBlock(14, 0x400);
+    buffer = Runtime_AllocateHeapBlock(14, 1024);
     Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
 
     source = buffer;
@@ -146,10 +146,10 @@ s32 Map_InitializePerspectiveScene(void)
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
     work->fade = 0x1f00;
-    work->fade_step = 0x80;
+    work->fade_step = 128;
     Io_Set16(0xa80a, &REG_BG3CNT);
     Io_Set16(0xaa0e, &REG_BG2CNT);
-    Io_Set16(0x0501, &REG_BG1CNT);
+    Io_Set16(1281, &REG_BG1CNT);
     /* FAKEMATCH: loop note keeps BG2PA's constant after its address */
     do {
         Io_Put16(&REG_BG2PA, 0x100);
@@ -240,8 +240,8 @@ s32 Map_InitializePerspectiveScene(void)
     gBgScroll[3].y = 0;
     work->window_top = 0;
     work->window_bottom = 159;
-    Scheduler_AddOrUpdateCallback(WorldMap_UpdateView, 0xc85);
-    Scheduler_AddOrUpdateCallback(MapAnimation_ApplyAffineFrame, 0x480);
+    Scheduler_AddOrUpdateCallback(WorldMap_UpdateView, 3205);
+    Scheduler_AddOrUpdateCallback(MapAnimation_ApplyAffineFrame, 1152);
     for (i = 255; i >= 0; i--)
         work->tile_ids[i] = i;
 }
@@ -274,7 +274,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
 
     if (ABS(origin_x - px) <= 1 && ABS(origin_y - py) <= 1) {
         Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
-        Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x140, 1);
+        Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 320, 1);
     }
 }
 
@@ -293,7 +293,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     volatile u32 fill;
 
     variant = 0;
-    buffer = Runtime_BumpAllocate(0x200);
+    buffer = Runtime_BumpAllocate(512);
     state = gMapWork[0];
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;
@@ -325,12 +325,12 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
         cursor++;
     }
     if (variant == 1) {
-        state->tile_ids[10] = 0x10a;
-        state->tile_ids[11] = 0x10b;
-        state->tile_ids[12] = 0x10c;
-        state->tile_ids[26] = 0x11a;
-        state->tile_ids[27] = 0x11b;
-        state->tile_ids[28] = 0x11c;
+        state->tile_ids[10] = 266;
+        state->tile_ids[11] = 267;
+        state->tile_ids[12] = 268;
+        state->tile_ids[26] = 282;
+        state->tile_ids[27] = 283;
+        state->tile_ids[28] = 284;
         Map_UpdateCurrentTileBlock();
     }
     Runtime_BumpFree(buffer);

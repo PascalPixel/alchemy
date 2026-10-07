@@ -51,11 +51,11 @@ void UiWork_InitializeWithResourceCounters(void)
     fill = 0xf000f000;
     Dma_Set((const void *)&fill, work, 0x85000140, REG_DMA3);
 #else
-    FillWords(Iwram_FillWords, work, 0x500, 0xf000f000);
+    FillWords(Iwram_FillWords, work, 1280, 0xf000f000);
 #endif
     UiWork_InitFreeList();
     UiWork_SetTwoEntriesTo999();
-    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
+    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 1152);
     UiWork_InitCountersWithResourceAndScheduleRefresh();
 }
 
@@ -96,10 +96,10 @@ void UiWork_Initialize(s32 kind)
     fill = 0xf000f000;
     Dma_Set(&fill, work, 0x85000140, REG_DMA3);
 #else
-    FillWords(Iwram_FillWords, work, 0x500, 0xf000f000);
+    FillWords(Iwram_FillWords, work, 1280, 0xf000f000);
 #endif
     UiWork_InitFreeList();
-    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
+    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 1152);
     UiWork_InitCountersAndScheduleRefresh(kind);
     UiWork_CopyTileTail(0xf013, 128);
     UiWork_CopyTileTail(0xf014, 129);

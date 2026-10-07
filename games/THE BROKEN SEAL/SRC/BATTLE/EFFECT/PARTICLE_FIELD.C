@@ -111,7 +111,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
     draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != ParticleField_Counts[variant][FIELD_FRAMES]; frame++) {
         struct BattleCamera *camera;

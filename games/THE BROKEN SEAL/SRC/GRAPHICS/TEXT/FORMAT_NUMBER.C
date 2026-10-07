@@ -115,9 +115,9 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     if (mode != 0) {
         entry[pos] = ' ';
         pos = (pos + 1) & 0x1ff;
-        entry[pos] = 0x0a;
+        entry[pos] = 10;
         pos = (pos + 1) & 0x1ff;
-        entry[pos] = 0x0a;
+        entry[pos] = 10;
         pos = (pos + 1) & 0x1ff;
     }
 #if defined(TBS_EDITION_ES)
@@ -150,7 +150,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
             if ((c8 = *p++) == 0)
                 break;
             if (cnt == 0 && *suffix == 2)
-                c8 -= 0x20;
+                c8 -= 32;
             entry[pos] = c8;
             pos = (pos + 1) & 0x1ff;
         }
@@ -172,9 +172,9 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 #endif
     }
     if (mode != 0) {
-        entry[pos] = 0x0a;
+        entry[pos] = 10;
         pos = (pos + 1) & 0x1ff;
-        entry[pos] = 0x08;
+        entry[pos] = 8;
         pos = (pos + 1) & 0x1ff;
         entry[pos] = ' ';
         pos = (pos + 1) & 0x1ff;
@@ -198,9 +198,9 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     if (mode != 0) {
         entry[pos] = ' ';
         pos = (pos + 1) & 0x1ff;
-        entry[pos] = 0x0a;
+        entry[pos] = 10;
         pos = (pos + 1) & 0x1ff;
-        entry[pos] = 0x0a;
+        entry[pos] = 10;
         pos = (pos + 1) & 0x1ff;
     }
     if (no == 1 || (no == 3 && plural == 0)) {
@@ -247,9 +247,9 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
         pos = (pos + 1) & 0x1ff;
     }
     if (mode != 0) {
-        entry[pos] = 0x0a;
+        entry[pos] = 10;
         pos = (pos + 1) & 0x1ff;
-        entry[pos] = 0x08;
+        entry[pos] = 8;
         pos = (pos + 1) & 0x1ff;
         entry[pos] = ' ';
         pos = (pos + 1) & 0x1ff;
@@ -735,7 +735,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                             if ((c8 = *word++) == 0)
                                 break;
                             if (i == 0 && suffix == 2)
-                                c8 -= 0x20;
+                                c8 -= 32;
                             entry[pos] = c8;
                             pos = (pos + 1) & RENDER_ENTRY_MASK;
                         }

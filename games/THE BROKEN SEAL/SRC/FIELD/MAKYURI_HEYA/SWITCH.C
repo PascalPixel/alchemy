@@ -21,7 +21,7 @@ void MakyuriHeya_WalkLeaderIn(void)
 
     work = gEventWork;
     Engine_EventBegin();
-    Engine_TaskAddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
+    Engine_TaskAddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 3200);
     Actor_SetSpeed(0, 0x28000, 0x14000);
     Object_SetModeById(0, 1);
     Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -71,7 +71,7 @@ void FieldScene_RunActorElevenAtTile5And13(void)
         p = Object_GetById(11);
         p->target_y = Object_GetById(11)->y.fixed;
         Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
-        Audio_PlayCue(0xd9);
+        Audio_PlayCue(217);
         Engine_MapAnimateCells(MakyuriHeya_GateCells, 9, 7);
         {
             s32 s0 = 9;
@@ -182,7 +182,7 @@ void MakyuriHeya_RunSequenceG(s32 a0)
         x = x + 2;
         y = y + 2;
     } while (i <= 2);
-    Audio_PlayCue(0x120);
+    Audio_PlayCue(288);
     Map_CopyCellAttributes(106, 33, 4, 5, 42, 33);
     Engine_MapRenderWaitForValues();
 }
@@ -244,7 +244,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Battle_WaitMode0(a0);
     FieldScene_RunOpeningAuxiliarySequence(0, next, (next + 1));
     Audio_PlayCue(211);
-    Engine_TaskAddCallback((s32)MakyuriHeya_SprayAtFountain, 0xc80);
+    Engine_TaskAddCallback((s32)MakyuriHeya_SprayAtFountain, 3200);
     Engine_MapRenderWaitForValues();
 }
 
@@ -271,7 +271,7 @@ void MakyuriHeya_RunSequenceF(void)
         do {
             if ((inner & 1) != 0) {
                 raw = Engine_RandomNext();
-                shown = ((0x248 - (s32)((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
+                shown = ((584 - (s32)((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
                 pos = (base - (outer << 19)) + 0x2d80000;
                 Effect_Spawn(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
                 Battle_WaitMode0(1);
@@ -368,7 +368,7 @@ void SceneState_RunWhenActor8AtTile10x23(void)
         p = (s32 *)Object_GetById(8);
         p[15] = Object_GetById(8)->y.fixed;
         Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
-        Audio_PlayCue(0xd9);
+        Audio_PlayCue(217);
         Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
         Map_CopyCellAttributeRect(10, 16, 1, 1, x, 19);
         Engine_GameFlagSet(0x878);

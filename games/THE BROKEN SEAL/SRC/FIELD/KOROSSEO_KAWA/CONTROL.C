@@ -18,7 +18,7 @@
 #include "OBJECT_RUNTIME.H"
 
 enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
+    MSG_ROBIN_GOT = 2410,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
     MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
     MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
@@ -116,7 +116,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     *(u16 *)(desc + 216) = (u16)pal;
     Engine_VramLoad((s16)pal, 512, handle);
 
-    Scheduler_AddOrUpdateCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
+    Scheduler_AddOrUpdateCallback((s32)Korosseo_DrawGauge + 1, 3190);
 
     Runtime_BumpFree(handle);
 }
@@ -134,5 +134,5 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
         recorder->still = 0;
         recorder->pos = 0;
     }
-    ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(Korosseo_UpdatePathRival, 0xc85);
+    ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(Korosseo_UpdatePathRival, 3205);
 }

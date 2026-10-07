@@ -19,7 +19,7 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot)
 
     work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
     Ui_PrepareTransferFromTableEntry(icon);
-    VramBlock_LoadCached(slot, 0x80, work->tiles);
-    Runtime_ReleaseHeapBlock(0x11);
+    VramBlock_LoadCached(slot, 128, work->tiles);
+    Runtime_ReleaseHeapBlock(17);
     return 1;
 }

@@ -74,7 +74,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     s32 slot;
     struct RenderOutput *sprite;
 
-    buf = Runtime_AllocateBlock(56, 0x400);
+    buf = Runtime_AllocateBlock(56, 1024);
     sprite = 0;
     Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
     Shop_CopyGlyphs(value % 10, buf, 0);
@@ -97,7 +97,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     }
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
-        VramBlock_LoadCached(slot, 0x100, buf);
+        VramBlock_LoadCached(slot, 256, buf);
         sprite = RenderOutput_CreateFar(slot, 0x80008000, (struct RenderInput *)window, x, y);
     }
     Runtime_ReleaseHeapBlock(56);
@@ -112,10 +112,10 @@ void Shop_RestoreSceneTiles(s32 layer)
 {
     u8 *map = Ram_HeapSlots->event_work;
     u8 *work = Ram_HeapSlots->block_32;
-    u8 *saved = work + 0xe00;
+    u8 *saved = work + 3584;
 
-    Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
-    Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
+    Dma_Set(saved, map + 546, 0x84000150, REG_DMA3);
+    Dma_Set(saved, work + 896, 0x840002a0, REG_DMA3);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Func_080c8368(layer, 1);
     BattleFx_ApplyColorToSourceBufferFar(16);
@@ -128,10 +128,10 @@ void Shop_RestoreSceneTiles(s32 layer)
 void Shop_InitEffect(void)
 {
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    Func_080c8368((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    Func_080c8368((s32)Ram_HeapSlots->event_work + 546, 1);
     BattleFx_ApplyColorToSourceBufferFar(16);
 #else
-    BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->event_work + 546, 1);
     BattleFx_StartBufferInterpolationFar(16);
 #endif
 }

@@ -184,7 +184,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Engine_MapRedraw();
             Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
             Engine_EventWait(20);
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
             Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
             Engine_EventWait(20);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
@@ -417,7 +417,7 @@ void Scene_UpdateFormationActor14Flags(void)
 s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
 {
 
-    s32 **slots = (s32 **)(gWork + 0x14);
+    s32 **slots = (s32 **)(gWork + 20);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
@@ -506,12 +506,12 @@ s32 Scene_Initialize(void)
 void SoruIriguchi_ApplyEntryState(void)
 {
     GameFlag_Set(0x144);
-    *(s32 *)((*(u8 *volatile *)&gWork + 0x1c0)) = 0x100;
+    *(s32 *)((*(u8 *volatile *)&gWork + 448)) = 0x100;
     if (GameFlag_IsSet(0x814) != 0) {
         s32 *timer = &SoruIriguchi_CueTimer;
         s32 zero = 0;
         *timer = zero;
-        Call2(Engine_TaskAddCallback, (s32)Scene_UpdateCueTimer, 0xc80);
+        Call2(Engine_TaskAddCallback, (s32)Scene_UpdateCueTimer, 3200);
     }
     if (GameFlag_IsSet(0x879) != 0) {
         Map_CopyCellAttributes(5, 6, 1, 1, 6, 6);
@@ -776,18 +776,18 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
 
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 20);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 20);
     Engine_EventSetMessage((s32)MsgSoruWrongSukureta);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-    Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
+    Actor_ShowEmote(ACTOR_SUKURETA, 258, 60);
     Engine_ActorStartRepeatedMotion(ACTOR_SUKURETA, 2);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     Engine_ActorStartRepeatedMotion(ACTOR_JASMINE, 2);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Actor_SetAttachedEffect(5, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 258);
+    Actor_SetAttachedEffect(5, 258);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
@@ -810,7 +810,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 20);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventWait(10);
-    Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_SUKURETA, 258);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST, 20);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_EAST, 20);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 60);
@@ -834,7 +834,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
         Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 60);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 40);
         Engine_ActorRunRepeatedMotion(1, 1);
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(1, 3);
@@ -925,7 +925,7 @@ void Scene_RunTransitionCue(void)
     Actor_FaceDirection(8, FACING_EAST, 30);
     Engine_EventSetMessage((s32)MsgSoruMoreStatuesOutOfReach);
     Event_ShowMessageAndWait(0x4008, 0, 10);
-    Actor_ShowEmote(8, 0x100, 40);
+    Actor_ShowEmote(8, 256, 40);
     Engine_ActorRunRepeatedMotion(8, 1);
     Actor_FaceDirection(8, 0x5000, 20);
     Event_ShowMessageAndWait(0x4008, 0, 10);

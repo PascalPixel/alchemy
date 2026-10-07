@@ -39,7 +39,7 @@ void Audio_PlayCue(s32);
 void Event_StartScreenTransitionFar(void);
 
 enum InnMessageId {
-    INN_MESSAGE_WELCOME = 0xd1c,
+    INN_MESSAGE_WELCOME = 3356,
     INN_MESSAGE_STAY_COMPLETE,
     INN_MESSAGE_NOT_ENOUGH_COINS,
     INN_MESSAGE_GOODBYE,
@@ -96,7 +96,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     i = 0;
     effect = shop->effects;
     do {
-        EffectSlot_InitializeFar(effect, 0x11c, position.x, position.z);
+        EffectSlot_InitializeFar(effect, 284, position.x, position.z);
         EffectSlot_SetCallbackFar(effect, BattleFx_UpdateRadialMotion);
         EffectSlot_SetObjectModeFar(effect, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(
@@ -247,7 +247,7 @@ void Inn_PlaySleep(s32 room_price)
     }
 
     state = gEventWork;
-    state->value_1c0 = 0x209;
+    state->value_1c0 = 521;
     state->value_1c8 = 60;
     WaitFrames(20);
     Event_FinishScreenTransitionFar();

@@ -35,7 +35,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     menu->pane_icons[0]->active = 13;
     if (y != -1) {
         UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
-        if (UiWindow_UpdateOrCreate((s32 *)&menu->modal_window, x, y, width, height, 0x102) == 0)
+        if (UiWindow_UpdateOrCreate((s32 *)&menu->modal_window, x, y, width, height, 258) == 0)
             UiWindow_SetBounds((struct RenderInput *)menu->modal_window, x, y, width, height);
         window = (s32)menu->modal_window;
     } else {

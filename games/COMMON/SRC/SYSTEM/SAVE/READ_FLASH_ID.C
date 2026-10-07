@@ -14,9 +14,9 @@ s32 ReadFlashId(void)
     CopyFlashReadRoutineToRam(locals.buffer);
     readByte = (FlashByteRead)(locals.buffer + 1);
 
-    *(volatile u8 *)0x0e005555 = 0xaa;
-    *(volatile u8 *)0x0e002aaa = 0x55;
-    *(volatile u8 *)0x0e005555 = 0x90;
+    *(volatile u8 *)0x0e005555 = 170;
+    *(volatile u8 *)0x0e002aaa = 85;
+    *(volatile u8 *)0x0e005555 = 144;
 
     {
         volatile u16 *delay = &locals.delay;
@@ -29,9 +29,9 @@ s32 ReadFlashId(void)
     result = (u16)readByte(0x0e000001) << 8;
     result |= readByte(0x0e000000);
 
-    *(volatile u8 *)0x0e005555 = 0xaa;
-    *(volatile u8 *)0x0e002aaa = 0x55;
-    *(volatile u8 *)0x0e005555 = 0xf0;
+    *(volatile u8 *)0x0e005555 = 170;
+    *(volatile u8 *)0x0e002aaa = 85;
+    *(volatile u8 *)0x0e005555 = 240;
 
     {
         volatile u16 *delay = &locals.delay;

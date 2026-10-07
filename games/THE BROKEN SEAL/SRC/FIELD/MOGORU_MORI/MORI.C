@@ -63,7 +63,7 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
         p->speed = 0x30000;
         p->acceleration = 0x20000;
         p->velocity_y = 0x40000;
-        m = 0x7e;
+        m = 126;
         m &= *f;
         *f = m;
         Engine_ActorSetSpriteFlags(p, 0);
@@ -339,7 +339,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(30);
     Engine_ActorStartRepeatedMotion(11, 2);
-    Engine_ActorShowEmote(11, 0x103, 0);
+    Engine_ActorShowEmote(11, 259, 0);
     Audio_PlayCue(147);
     Battle_WaitMode0(60);
 
@@ -492,7 +492,7 @@ void MogoruMori_RunBranchHopScene(void)
     Engine_ActorFaceEachOther(12, 0, 0);
     Battle_WaitMode0(20);
     Engine_ActorStartRepeatedMotion(12, 2);
-    Engine_ActorSetAttachedEffect(12, 0x102);
+    Engine_ActorSetAttachedEffect(12, 258);
     Battle_WaitMode0(60);
     MogoruMori_HopActorTo(12, 0x1a8, 120, 0x30000);
     Engine_ActorFaceActor(0, 12, 0);
@@ -789,14 +789,14 @@ void FieldScene_RunScene39fSequenceA(void)
     big = 0x80000;
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(15, 0);
-    MogoruMori_HopActorTo(15, 0x1d8, 104, big);
+    MogoruMori_HopActorTo(15, 472, 104, big);
     Battle_WaitMode0(10);
     Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + big), 0, 0, 0, 1, 0);
     Engine_CameraFollowActor(15, 1);
     Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(30);
     Engine_ActorStartRepeatedMotion(15, 2);
-    Engine_ActorShowEmote(15, 0x103, 0);
+    Engine_ActorShowEmote(15, 259, 0);
     Audio_PlayCue(147);
     Battle_WaitMode0(60);
     first = Object_GetById(ACTOR_PARTY_LEADER);
@@ -808,7 +808,7 @@ void FieldScene_RunScene39fSequenceA(void)
     Engine_GameFlagSet(0x307);
     /* FAKEMATCH: the game-state address held in a forced temporary keeps it apart from the byte offset. */
     base3_2000240 = (s32)&gGameState;
-    *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    *(u8 *)((base3_2000240 + 555)) = 3;
     BattleFx_SetWeightedResult(53, 0);
     Engine_EventEnd();
 }
@@ -979,7 +979,7 @@ void MogoruMori_RunActorEighteenEscape(void)
     Battle_WaitMode0(10);
     Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0, 1, 0);
     Actor_FaceDirection(18, 0xc000, 40);
-    Actor_SetAttachedEffect(18, 0x102);
+    Actor_SetAttachedEffect(18, 258);
     Engine_ActorRunRepeatedMotion(18, 2);
     Engine_CameraFollowActor(18, 1);
     MogoruMori_HopActorTo(18, 136, 0x1b8, 0x60000);
@@ -1345,7 +1345,7 @@ s32 UpdateOrbitingSceneObject(s32 *p)
     q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
     a = Engine_RandomNext();
     b = Engine_RandomNext();
-    p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
+    p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 1024;
     return 0;
 }
 
@@ -1374,9 +1374,9 @@ void InitializeOrbitingEffect(s32 id)
     actor->flags_23 &= 0xfe;
     actor->visible = 1;
 
-    transfer = AllocateEffectTransfer(17, 0x608);
+    transfer = AllocateEffectTransfer(17, 1544);
     Engine_ItemLoadIcon(ITEM_NUT);
-    transfer += 0x400;
+    transfer += 1024;
     Engine_VramLoad(sprite->palette, 128, transfer);
     Engine_HeapRelease(17);
 

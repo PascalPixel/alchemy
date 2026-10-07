@@ -30,13 +30,13 @@
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
 typedef struct {
-    u8  reserved000[0xcb8];
+    u8  reserved000[3256];
     s16 active;
     s16 transition_timer;
 } SceneTransitionState;
 
 typedef struct {
-    u8  reserved000[0x53c];
+    u8  reserved000[1340];
     u8 transition_status;
     u8 transition_mode;
     u8 transition_phase;
@@ -86,8 +86,8 @@ void ResetSceneTransitionEffect(void)
 {
     struct BattleFxScene **cell = &gEffectWork;
     struct BattleFxScene *ctx = *cell;
-    SceneTransitionScene *scene = *(SceneTransitionScene **)((u8 *)cell - 0x64);
-    SceneTransitionState *state = *(SceneTransitionState **)((u8 *)cell - 0x74);
+    SceneTransitionScene *scene = *(SceneTransitionScene **)((u8 *)cell - 100);
+    SceneTransitionState *state = *(SceneTransitionState **)((u8 *)cell - 116);
     s16 zero;
     s32 size;
     void *resource;
@@ -133,7 +133,7 @@ void BattleFx_RunBurstParticleMainObject(void)
         ObjectDispatch_SetSingleChildFlagsFar(object, 0);
         object->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         WaitFrames(10);
-        Audio_PlayCue(0x7e);
+        Audio_PlayCue(126);
         WaitFrames(40);
         BattleFx_PrepareBufferInterpolation();
     }
@@ -160,7 +160,7 @@ void BattleFx_RunBurstParticles(void)
         Vector_AddPolarOffset(random_value, Random16(), p);
         p->values[1] = state->y;
         object = Object_Spawn(
-            0xD9,
+            217,
             p->values[0],
             p->values[1],
             p->values[2]
@@ -172,7 +172,7 @@ void BattleFx_RunBurstParticles(void)
         WaitFrames(((Random16() * 2) >> 16) + 2);
         entry_count--;
     } while (entry_count >= 0);
-    WaitFrames(0x1E);
+    WaitFrames(30);
     BattleFx_PrepareBufferInterpolation();
 }
 
@@ -209,7 +209,7 @@ void BattleEffect_SpawnBurstParticleField(void)
         }
 
         object = Object_Spawn(
-            0x11c, position[0], position[1], position[2]);
+            284, position[0], position[1], position[2]);
         visual = &((struct BurstParticleVisualGroup *)object->sprite)->primary;
         child = &((struct BurstParticleVisualGroup *)object->sprite)->child;
         child->flip = visual->flip;
@@ -239,7 +239,7 @@ void BattleEffect_SpawnBurstParticleField(void)
             Object_SetPosition(
                 object, position[0], position[1], position[2]);
         }
-        Audio_PlayCue(0x83);
+        Audio_PlayCue(131);
         WaitFrames(2);
     }
     WaitFrames(8);

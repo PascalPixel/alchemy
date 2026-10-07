@@ -19,7 +19,7 @@ s32 Object_ClearChildFlags(struct ObjectRuntime *obj)
 }
 
 struct ObjectFlags23 {
-    u8 unknown_00[0x23];
+    u8 unknown_00[35];
     u8 flags_23;
 };
 

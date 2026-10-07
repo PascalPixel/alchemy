@@ -53,18 +53,18 @@ s32 Scene_PlaceActor8OnGate300(void)
     s32 pos_z = 0x880000;
 
     work = gEventWork;
-    work->setup_request_1c0 = 0x204;
-    work->setup_value_1c8 = 0x18;
-    if (Resource388_TestSetupGate(0x300) != 0) {
+    work->setup_request_1c0 = 516;
+    work->setup_value_1c8 = 24;
+    if (Resource388_TestSetupGate(768) != 0) {
         Resource388_SetSlotPosition(8, pos_x, pos_z);
         Resource388_SetSlotMode(8, 2);
         Resource388_SetSlotOption((s32)Object_GetById(8), 0);
         ((struct Resource388SlotView *)Object_GetById(8))->unknown_23 = 2;
         state = 0;
         ((struct Resource388SlotView *)Object_GetById(8))->unknown_59 = state;
-        arg5 = 0xB;
+        arg5 = 11;
         arg6 = 6;
-        Resource388_QueueSlotCommand(0xB, 0x24, 5, 5, arg5, arg6);
+        Resource388_QueueSlotCommand(11, 36, 5, 5, arg5, arg6);
     }
     return 0;
 }

@@ -90,7 +90,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
     s32 equipped;
 
     if (mode == 1)
-        style = 0x100;
+        style = 256;
     switch (Item_Get(item & ITEM_ID_MASK)->type) {
     case 0:
         Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);

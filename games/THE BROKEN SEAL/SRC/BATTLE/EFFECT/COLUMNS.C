@@ -59,9 +59,9 @@ struct PillarWork {
     u8 sheet[0x7780];
     s32 transfer_mode;
     s32 transfer_value;
-    u8 unknown_7788[0x20];
+    u8 unknown_7788[32];
     s32 shake;
-    u8 unknown_77ac[0x78];
+    u8 unknown_77ac[120];
     s32 transfer_pending;
     struct BattleEffectArgument *effect;
 };
@@ -143,13 +143,13 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 
     duration = DualTable_ColumnCounts[work->effect->variant] * 4 + 56;
 
-    age = gMapCellBuffer + 0x18;
+    age = gMapCellBuffer + 24;
     i = 0;
     do {
         i += 1;
         *(s32 *)age = -1;
         age += sizeof(struct DualPuff);
-    } while (i != 0x400);
+    } while (i != 1024);
 
     i = 0;
     seed = (struct DualColumn *)work->particles;
@@ -171,7 +171,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     frame = 0;
     if (duration != 0) {
@@ -180,7 +180,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
         fade_end = duration - 4;
         do {
             if (frame == cue_frame) {
-                BattleEventRuntime_BeginPhaseFar(0x84);
+                BattleEventRuntime_BeginPhaseFar(132);
             }
             if (frame >= fade_start && frame < fade_end) {
                 REG_BLDCNT = 0x3F44;
@@ -233,7 +233,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
                             do {
                                 if (frame == react_frame) {
                                     if (!(i & 1)) {
-                                        Audio_PlayCue(0x85);
+                                        Audio_PlayCue(133);
                                     }
                                     ObjectGroup_UpdateMembers(work->effect->actors[n], 7, 5, n, 3);
                                 }
@@ -270,7 +270,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
                     image = puff_age / 2;
                     puff_cells = 0x1e59;
                     if (mode != 0) {
-                        puff_cells = 0xaff;
+                        puff_cells = 2815;
                     }
                     ((DrawRectangleFn)rectangle[0])(
                         canvas,
@@ -291,7 +291,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
                 }
                 puff++;
                 i += 1;
-            } while (i != 0x200);
+            } while (i != 512);
 
             Camera_ApplyShake(4, 4);
             ObjectGroup_TickMemberTimers();
@@ -345,7 +345,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     } while (i != 16);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     frame = 0;
     do {
         if (frame == 32) {
@@ -420,7 +420,7 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *efx)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     blit47 = ((DrawRectangle *)cache)[47 - 39];
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     total = BattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
     for (i = 0; i != 1024; i++) {
@@ -467,9 +467,9 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *efx)
                         w = 8;
                     }
                     if (BattleFxPillar_Kinds[i] & 1) {
-                        blit47(dst, work->sheet + 0xf00, BattleFxPillar_X[i] - w, 108 - h, 32, h);
+                        blit47(dst, work->sheet + 3840, BattleFxPillar_X[i] - w, 108 - h, 32, h);
                     } else {
-                        blit46(dst, work->sheet + 0xf00, BattleFxPillar_X[i] + w, 108 - h, 32, h);
+                        blit46(dst, work->sheet + 3840, BattleFxPillar_X[i] + w, 108 - h, 32, h);
                     }
                 }
                 if (frame == start + 1) {

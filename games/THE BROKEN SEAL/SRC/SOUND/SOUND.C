@@ -69,7 +69,7 @@ void AudioTest_RunParameterController(void)
         if (gKeysRepeat & KEY_START)
             AudioCommand_Play(17);
         if (gKeysRepeat & KEY_SELECT)
-            AudioCommand_Play(0x121);
+            AudioCommand_Play(289);
 
         WaitFrames(1);
     }
@@ -83,11 +83,11 @@ void Audio_InitializeRuntimeDefaults(void)
     Audio_Initialize();
     gAudioSecondaryState = 0xff;
     RomBytes_02003000 = 0;
-    gMusicVolumeTarget = 0x100;
-    gMusicVolume = 0x100;
+    gMusicVolumeTarget = 256;
+    gMusicVolume = 256;
     gMusicVolumeStep = 4;
-    gMusicPitchTarget = 0x100;
-    gMusicPitch = 0x100;
+    gMusicPitchTarget = 256;
+    gMusicPitch = 256;
     gMusicPitchStep = 4;
     gMusicFadeRequested = 0;
     Audio_CommandMask = 0;
@@ -183,7 +183,7 @@ void AudioCommand_WaitForCompletion(void)
 
 s32 AudioCommand_GetWidth(s32 command)
 {
-    if (command == 0x46 || command == 0x4b || command == 0x43)
+    if (command == 70 || command == 75 || command == 67)
         return 3;
     return 2;
 }

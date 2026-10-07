@@ -491,7 +491,7 @@ s32 LinkLobby_RunRoundResult(void)
         LinkLobby_WriteSlotValue(4);
     }
     callback = LinkLobby_PollPeerReady;
-    Engine_TaskAddCallback(callback, 0xc80);
+    Engine_TaskAddCallback(callback, 3200);
     Scheduler_SetCallbackMask(callback, 1);
     if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {
         Owner_RefreshActiveRatios(1);

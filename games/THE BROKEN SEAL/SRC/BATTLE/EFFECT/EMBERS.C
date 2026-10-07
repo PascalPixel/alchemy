@@ -98,7 +98,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
         CopyPalette(Iwram_CopyWords, (void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     if (mode == 0)
         direction = 1;
     else if (work->effect->side == 1)
@@ -271,7 +271,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
                     ((s16 *)&spark->x)[1], ((s16 *)&spark->y)[1] - size, size, size * 2);
                 spark->x += spark->velocity_x * direction;
                 spark->y += spark->velocity_y;
-                spark->velocity_y += -0x400;
+                spark->velocity_y += -1024;
                 spark->variant++;
                 if (spark->variant == 48)
                     spark->variant = -1;
@@ -295,7 +295,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
                         else
                             drop->velocity_x += -0x2000;
                     } else {
-                        drop->velocity_y += -0x400;
+                        drop->velocity_y += -1024;
                     }
                     drop->variant++;
                     if (drop->variant == 256)
@@ -402,11 +402,11 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
     Resource_DecodeType01(palette, work);
     palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
     palette += 128;
-    Resource_DecodeType01(palette, work->sheet + 0x6e4);
+    Resource_DecodeType01(palette, work->sheet + 1764);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     {
         struct Point2D focus;
         struct Point2D velocity;
@@ -502,9 +502,9 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
                 for (k = 0; k != 3; k++) {
                     s32 span = (frame * 16 - 256 + k * 25) % 104;
 
-                    draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+                    draw[0](canvas, work->sheet + 1764, EmberColumns_Columns[k * 2] - 17,
                         EmberColumns_Columns[k * 2 + 1] - span - 104, 34, 104);
-                    draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+                    draw[0](canvas, work->sheet + 1764, EmberColumns_Columns[k * 2] - 17,
                         EmberColumns_Columns[k * 2 + 1] - span, 34, span);
                 }
             }

@@ -15,7 +15,7 @@
 
 void Scheduler_ScheduleCallbackBAfterFrames(void)
 {
-    Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
+    Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 3200);
 }
 
 

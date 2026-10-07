@@ -25,7 +25,7 @@ void BattleFx_UpdateSpinAngle(struct FieldActor *object)
 {
     u32 step;
 
-    step = (s16)object->timer * 0x50;
+    step = (s16)object->timer * 80;
     object->facing = object->facing + step + 0x1000;
     if (step < 0x1000)
         object->timer = object->timer + 1;
@@ -35,8 +35,8 @@ void BattleFx_UpdateDescendingObject(struct FieldActor *object)
 {
     u32 scale;
 
-    object->scale_y -= 0x280;
-    scale = object->scale_x - 0x280;
+    object->scale_y -= 640;
+    scale = object->scale_x - 640;
     object->facing = object->facing + 0x2000;
     object->y.fixed = object->y.fixed + 0x10000;
     object->scale_x = scale;
@@ -95,7 +95,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         effect->state++;
 
         if ((gFrameCount & 2) != 0)
-            Audio_PlayCue(0xf6);
+            Audio_PlayCue(246);
     } else if (state == 1) {
         if (BattleFx_HasReachedTarget(effect) == 0)
             effect->state--;
@@ -128,10 +128,10 @@ void BattleFx_RunEffect15(void)
     ObjectMotion_ArmCallback(scene->first_object_id, 0x4000, 0);
     WaitFrames(30);
     main_object->update = (void (*)(union FieldObject *))ObjectGroup_ApplyRandomChildValues;
-    Audio_PlayCue(0x83);
+    Audio_PlayCue(131);
     Object_SetMode(main_object, 28);
     WaitFrames(40);
-    Audio_PlayCue(0xdc);
+    Audio_PlayCue(220);
     Animation_ApplyChildValuesFar(main_object, 0);
     Object_SetMode(main_object, 3);
     main_object->update = (void (*)(union FieldObject *))BattleFx_UpdateSpinAngle;
@@ -149,7 +149,7 @@ void BattleFx_RunEffect15(void)
     slot = scene->slots;
     do {
         s32 speed;
-        EffectSlot_Initialize(slot, 0x11c, position.x, position.z);
+        EffectSlot_Initialize(slot, 284, position.x, position.z);
         EffectSlot_SetCallback(slot, BattleFx_UpdateRadialLaunch);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, (Random16() * 7) >> 16);

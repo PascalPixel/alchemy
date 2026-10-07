@@ -78,7 +78,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     if (work->effect->side == 1)
         REG_BG2X = -0x7000;
 
@@ -133,7 +133,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                                 mote->z -= 2;
                             if (mote->y < 0x300000)
                                 mote->y += 0x50000;
-                            mote->x += 0x200;
+                            mote->x += 512;
                         }
                     } else {
                         mote->z += 8;

@@ -63,7 +63,7 @@ block_10:
 
 void Resource_ScheduleOwnerResetDelayed(void)
 {
-    Scheduler_AddOrUpdateCallback(MenuSelection_DrawFrame, 0xC80);
+    Scheduler_AddOrUpdateCallback(MenuSelection_DrawFrame, 3200);
 }
 
 void Resource_ScheduleOwnerReset(void)

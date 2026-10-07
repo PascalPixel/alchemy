@@ -43,7 +43,7 @@ void FieldScene_RunActor13Departure(void)
 {
     Engine_TaskRemoveCallback(GomaHashira_DriveActor13Idle);
     Engine_EventBegin();
-    Actor_ShowEmote(13, 0x100, 30);
+    Actor_ShowEmote(13, 256, 30);
     Engine_ActorRunRepeatedMotion(13, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Engine_EventSetMessage((s32)MsgGomaGotWowThatsPrettyImpressive);
@@ -52,9 +52,9 @@ void FieldScene_RunActor13Departure(void)
     Battle_WaitMode0(30);
     Object_GetById(10)->priority_flags &= ~ACTOR_PRIORITY_UNDERFOOT;
     Goma_SetSpeed(13, 0x20000, 0x10000);
-    Actor_WalkToAndWait(13, 0x258, 216);
-    Actor_WalkToAndWait(13, 0x258, 248);
-    Actor_WalkToAndWait(13, 0x238, 0x128);
+    Actor_WalkToAndWait(13, 600, 216);
+    Actor_WalkToAndWait(13, 600, 248);
+    Actor_WalkToAndWait(13, 568, 296);
     Actor_SetPosition(13, 0, 0);
     Object_GetById(10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(0x869);
@@ -96,13 +96,13 @@ s32 FieldScene_SetupPillarsOnEntry(void)
         Actor_SetPosition(9, 0x1800000, 0xc00000);
         Battle_WaitMode0(60);
         Object_GetById(9)->terrain_id = 2;
-        Actor_MoveToAndWait(9, 0x198, 192);
+        Actor_MoveToAndWait(9, 408, 192);
         Battle_WaitMode0(60);
         FieldScene_RunPillarSequence();
     }
     if (gGameState.pending_djinn_event != 0) {
         GomaHashira_Actor13Frames = 0;
-        Call2(Engine_TaskAddCallback, (s32)GomaHashira_DriveActor13Idle, 0xc80);
+        Call2(Engine_TaskAddCallback, (s32)GomaHashira_DriveActor13Idle, 3200);
     }
     return 0;
 }

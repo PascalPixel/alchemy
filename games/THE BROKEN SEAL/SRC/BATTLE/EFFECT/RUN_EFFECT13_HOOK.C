@@ -58,11 +58,11 @@ void RunBattleEffect13(void)
     spawn.x = scene->x;
     spawn.y = scene->y + 0x200000;
     spawn.z = scene->z;
-    object = Object_Spawn(0xd7, spawn.x, spawn.y, spawn.z);
+    object = Object_Spawn(215, spawn.x, spawn.y, spawn.z);
     if (object == 0)
         return;
     BattleEffect_InitializeSharedScene();
-    AudioCommand_PlayFar(0x8a);
+    AudioCommand_PlayFar(138);
     object->angle = main_object->angle;
     object->speed_limit = 0x14ccc;
     object->motion_flags = 0;
@@ -89,7 +89,7 @@ void RunBattleEffect13(void)
         WaitFrames(1);
     }
     Object_SetMode(object, 5);
-    AudioCommand_PlayFar(0x84);
+    AudioCommand_PlayFar(132);
     if (secondary != 0)
         Object_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y, -0x90000);
     WaitFrames(20);
@@ -98,7 +98,7 @@ void RunBattleEffect13(void)
         WaitFrames(1);
     }
     WaitFrames(10);
-    AudioCommand_PlayFar(0x72);
+    AudioCommand_PlayFar(114);
     step = 0;
     do {
         s32 scale;

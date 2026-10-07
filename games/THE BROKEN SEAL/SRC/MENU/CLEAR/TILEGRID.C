@@ -13,7 +13,7 @@ void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
     s32 offset;
 
     shadow = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
-    saved = (s32)Runtime_BumpAllocateAlternatePool(0x300);
+    saved = (s32)Runtime_BumpAllocateAlternatePool(768);
     Resource_DecodeType01(value, saved);
     offset = (window->y * 32 + window->x) * 2;
     vram = (u16 *)(0x06002000 + offset);
@@ -34,7 +34,7 @@ void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 void SaveMenu_FillTileBlock(const struct RenderInput *window)
 {
     s16 *mirror = (s16 *)((struct UiRenderWork *)gWindowWork[0])->tilemap;
-    s16 *buffer = (s16 *)Runtime_BumpAllocateAlternatePool(0x300);
+    s16 *buffer = (s16 *)Runtime_BumpAllocateAlternatePool(768);
     s16 *vram;
     s32 cell;
     s32 row;

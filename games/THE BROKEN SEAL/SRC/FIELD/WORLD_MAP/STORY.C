@@ -24,7 +24,7 @@
 enum {
     TRANSITION_EFFECT_TYPE = 222,
     TRANSITION_EFFECT_LEFT = 0x17b0,
-    TRANSITION_EFFECT_TOP = 0x0c4c,
+    TRANSITION_EFFECT_TOP = 3148,
     TRANSITION_EFFECT_WIDTH = 40,
     TRANSITION_EFFECT_DEPTH = 30
 };
@@ -228,16 +228,16 @@ void StoryScene_UpdateTransitionEffect(void)
     if (gFrameCount % 3 == 0) {
         switch (((u32)Engine_RandomNext() << 2) >> 16) {
         case 0:
-            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c69), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(3177), 1);
             break;
         case 1:
-            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c67), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(3175), 1);
             break;
         case 2:
-            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c69), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(3177), 1);
             break;
         case 3:
-            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c67), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(3175), 1);
             break;
         }
     }
@@ -265,17 +265,17 @@ void FieldScene_RunActorEightApproach(void)
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Engine_CameraFollowActor(ACTOR, 1);
     Engine_TaskWait(1);
-    SCENE_PHASE = 0x100;
+    SCENE_PHASE = 256;
     Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR, 0x6666, 0x3333);
-    Actor_MoveToAndWait(ACTOR, 0x12d8, 0x2c8);
-    Actor_MoveToAndWait(ACTOR, 0x12a8, 0x268);
+    Actor_MoveToAndWait(ACTOR, 0x12d8, 712);
+    Actor_MoveToAndWait(ACTOR, 0x12a8, 616);
     Actor_SetSpeed(ACTOR, 0x4ccc, 0x2666);
-    Actor_MoveToAndWait(ACTOR, 0x12a8, 0x1d8);
+    Actor_MoveToAndWait(ACTOR, 0x12a8, 472);
     Actor_SetSpeed(ACTOR, 0x3333, 0x1999);
-    Actor_MoveToAndWait(ACTOR, 0x1298, 0x1c8);
+    Actor_MoveToAndWait(ACTOR, 0x1298, 456);
     Actor_SetSpeed(ACTOR, 0x1999, 0xccc);
-    Actor_MoveToAndWait(ACTOR, 0x1298, 0x1b8);
+    Actor_MoveToAndWait(ACTOR, 0x1298, 440);
     Engine_ActorSetAnimation(ACTOR, 1);
     Engine_EventWait(40);
     Engine_EventCloseScreen();
@@ -376,14 +376,14 @@ void WorldMap_RunOpeningRise(void)
     Actor_SetSpeed(8, 0x6666, 0x3333);
     actor->timer = 0;
     Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
-    Engine_TaskAddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
+    Engine_TaskAddCallback((s32)WorldMap_SpawnActorEightPuff, 3200);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplyTarget(0x10003, 1);
     gEventWork->transition_frames = 32;
     Engine_EventOpenScreen();
     Engine_EventWait(120);
     BattleFx_ScheduleRatioTransition(0x16666, 0x12c);
-    Engine_EventWait(0x10e);
+    Engine_EventWait(270);
     gEventWork->transition_frames = 16;
     PLTT_BACKDROP = 0x7fff;
     Engine_EventCloseScreen();
@@ -425,7 +425,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
     rec2 = GameFlag_IsSet(0x2f0);
     if (rec2 == 0) {
         Engine_EventBegin();
-        Actor_SetAttachedEffect(id, 0x101);
+        Actor_SetAttachedEffect(id, 257);
         Engine_ActorSetAnimation(id, 9);
         record = Object_GetById(a0);
         if (record != 0) {
@@ -433,7 +433,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         }
         Engine_ActorWaitForMove(id);
         Audio_PlayCue(244);
-        Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
+        Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 3200);
         actor->motion_flags = rec2;
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
         Engine_ActorWaitForMove(id);
@@ -561,7 +561,7 @@ void Scene_RunScene371SequenceA(s32 palette)
     } while (0);
     QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
     QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
-    Engine_TaskAddCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
+    Engine_TaskAddCallback(SceneEffect_RestoreBlendRegisters, 3200);
     Engine_EventBegin();
     QueueFrame(buffer, 0x3a80)
     Object_GetById(gGameState.selected_actor)->active = 0;
@@ -570,25 +570,25 @@ void Scene_RunScene371SequenceA(s32 palette)
     Engine_EventWaitForScreen();
     Engine_AudioPlayCue(246);
 
-    gWorldMapBlend = 0xe00;
+    gWorldMapBlend = 3584;
     QueueFrame(buffer, 0x3480)
     Engine_EventWait(2);
-    gWorldMapBlend = 0xd00;
+    gWorldMapBlend = 3328;
     QueueFrame(buffer, 0x2e80)
     Engine_EventWait(2);
-    gWorldMapBlend = 0xc00;
+    gWorldMapBlend = 3072;
     QueueFrame(buffer, 0x2880)
     Engine_EventWait(2);
-    gWorldMapBlend = 0xb00;
+    gWorldMapBlend = 2816;
     QueueFrame(buffer, 0x2280)
     Engine_EventWait(2);
-    gWorldMapBlend = 0xa00;
+    gWorldMapBlend = 2560;
     QueueFrame(buffer, 0x1c80)
     Engine_EventWait(2);
-    gWorldMapBlend = 0x900;
+    gWorldMapBlend = 2304;
     QueueFrame(buffer, 0x1680)
     Engine_EventWait(2);
-    gWorldMapBlend = 0x800;
+    gWorldMapBlend = 2048;
     QueueFrame(buffer, 0x1080)
     Engine_EventWait(140);
 
@@ -598,25 +598,25 @@ void Scene_RunScene371SequenceA(s32 palette)
     Engine_EventWait(4);
     QueueFrame(buffer, 0x2280)
     Engine_EventWait(4);
-    gWorldMapBlend = 0x900;
+    gWorldMapBlend = 2304;
     QueueFrame(buffer, 0x2880)
     Engine_EventWait(4);
-    gWorldMapBlend = 0xa00;
+    gWorldMapBlend = 2560;
     QueueFrame(buffer, 0x2e80)
     Engine_EventWait(4);
-    gWorldMapBlend = 0xb00;
+    gWorldMapBlend = 2816;
     QueueFrame(buffer, 0x3480)
     Engine_EventWait(4);
-    gWorldMapBlend = 0xc00;
+    gWorldMapBlend = 3072;
     QueueFrame(buffer, 0x3a80)
     Map_LoadAreaGraphics();
-    Engine_TaskAddCallback(FieldScene_RunLateSequence, 0xc80);
+    Engine_TaskAddCallback(FieldScene_RunLateSequence, 3200);
     Engine_AudioPlayCue(141);
-    gWorldMapBlend = 0xd00;
+    gWorldMapBlend = 3328;
     Engine_EventWait(4);
-    gWorldMapBlend = 0xe00;
+    gWorldMapBlend = 3584;
     Engine_EventWait(4);
-    gWorldMapBlend = 0xf00;
+    gWorldMapBlend = 3840;
     Engine_EventWait(4);
     gWorldMapBlend = 0x1000;
     Engine_EventWait(45);

@@ -220,7 +220,7 @@ void FieldScene_RunEarlySequence(void)
             record->motion_flags = 0;
         }
     }
-    v5 = (s32)((s32)(*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
+    v5 = (s32)((s32)(*(u16 *)(p7 + 364) - 3) << 16) >> 16;
     if (v5 == 6) {
         Audio_PlayCue(188);
     } else {
@@ -269,21 +269,21 @@ void FieldScene_RunScene38bSequenceC(void)
         Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
         rec7->motion_flags = 0;
         rec->scale_x = -0x10000;
-        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 111, 196);
         rec->scale_x = 0x10000;
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
         Engine_EventWait(20);
         rec->scale_x = -0x10000;
-        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 121, 190);
         rec->scale_x = 0x10000;
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
         Engine_EventWait(20);
         rec->scale_x = -0x10000;
-        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 132, 186);
         rec->scale_x = 0x10000;
@@ -327,22 +327,22 @@ void BiribinoMura_ReceiveJillsGift(void)
             record = Actor_Get(12);
             if (record->x.fixed > rec7->x.fixed) {
                 Actor_FaceDirection(13, 0x5000, 20);
-                Actor_ShowEmote(13, 0x100, 20);
+                Actor_ShowEmote(13, 256, 20);
                 Engine_EventSetMessage((s32)MsgBiribinoYoureGuy);
                 Event_ShowMessageAndWait(13, 0, 10);
-                Actor_ShowEmote(12, 0x100, 0);
+                Actor_ShowEmote(12, 256, 0);
             } else {
                 Actor_FaceDirection(12, 0x3000, 20);
-                Actor_ShowEmote(12, 0x100, 20);
+                Actor_ShowEmote(12, 256, 20);
                 Engine_EventSetMessage((s32)MsgBiribinoYoureGuy);
                 Event_ShowMessageAndWait(12, 0, 10);
-                Actor_ShowEmote(13, 0x100, 0);
+                Actor_ShowEmote(13, 256, 0);
             }
-            Actor_ShowEmote(14, 0x100, 0);
+            Actor_ShowEmote(14, 256, 0);
             Actor_FaceDirection(14, 0x3000, 0);
             Actor_FaceDirection(12, 0x5000, 0);
             Actor_FaceDirection(13, 0x3000, 0);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x10c, 184);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 40);
             Engine_ActorRunRepeatedMotion(13, 2);
             Event_ShowMessageAndWait(13, 0, 10);
@@ -350,7 +350,7 @@ void BiribinoMura_ReceiveJillsGift(void)
             Actor_FaceDirection(14, 0x3000, 20);
             Actor_FaceDirection(12, 0x8000, 20);
             Engine_ActorSetAnimationAndWait(12, 3);
-            Actor_SetAttachedEffect(14, 0x102);
+            Actor_SetAttachedEffect(14, 258);
             Engine_EventWait(40);
             Actor_FaceDirection(14, 0x3000, 10);
             Actor_FaceDirection(12, 0x5000, 0);
@@ -363,7 +363,7 @@ void BiribinoMura_ReceiveJillsGift(void)
             Event_ShowMessage(14, 0);
             Actor_SetSpeed(14, 0x9999, 0x4ccc);
             Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
-            Actor_WalkToAndWait(14, 0x10a, 172);
+            Actor_WalkToAndWait(14, 266, 172);
             Engine_EventWait(1);
             Object_GetById(14)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_EventWait(10);
@@ -378,7 +378,7 @@ void BiribinoMura_ReceiveJillsGift(void)
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             Actor_SetSpeed(14, 0x10000, 0x8000);
             Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
-            Actor_WalkToAndWait(14, 0x106, 156);
+            Actor_WalkToAndWait(14, 262, 156);
             Engine_EventWait(1);
             {
                 u8 *record = Actor_Get(14);
@@ -496,14 +496,14 @@ void Scene_UpdatePuzzleActors(void)
     if (p9 == 16) {
         if (p10 == 13) {
             Engine_EventBegin();
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 20);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
             Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
             if (row == 13) {
-                Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x106, 196);
+                Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 262, 196);
                 Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
             } else {
-                Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x11e, 218);
+                Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 286, 218);
                 Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
             }
             Engine_EventEnd();

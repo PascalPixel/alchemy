@@ -15,11 +15,11 @@
 extern struct EventRuntime *gEventWork;
 
 struct ResultWork {
-    u8 unknown_000[0x1d6];
+    u8 unknown_000[470];
     u16 special;
-    u8 unknown_1d8[0x1c];
+    u8 unknown_1d8[28];
     u32 object_id;
-    u8 unknown_1f8[0x3c];
+    u8 unknown_1f8[60];
     u16 request;
 };
 
@@ -53,7 +53,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
         EventActor_RunHopAndLeapSequence(flags);
 
     shared = &gGameState;
-    shared->request = (value + 0x12c) | high;
+    shared->request = (value + 300) | high;
     state->value_17c = BattleFx_GetPhaseResult(value);
     if (state->mode_19e == 3) {
         void *object = ObjectTable_Get(shared->object_id);

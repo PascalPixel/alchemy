@@ -12,16 +12,16 @@
 struct ObjectPart {
     u8 unknown_00[5];
     u8 attribute;
-    u8 unknown_06[0xa];
+    u8 unknown_06[10];
     void *graphics;
 };
 
 struct ObjectPartList {
-    u8 unknown_00[0x19];
+    u8 unknown_00[25];
     u8 dirty;
     u8 unknown_1a;
     u8 count;
-    u8 unknown_1c[0xc];
+    u8 unknown_1c[12];
     struct ObjectPart *parts[1];
 };
 

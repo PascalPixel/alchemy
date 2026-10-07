@@ -57,26 +57,26 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
     s32 fifth2;
 
     index0 = 0;
-    fifth0 = 0xA8;
+    fifth0 = 168;
     output0 = &state->entry_icons[0];
     do {
-        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, (struct RenderInput *)arg1, 0xF8, fifth0);
+        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, (struct RenderInput *)arg1, 248, fifth0);
         index0++;
     } while (index0 <= 7);
 
     index1 = 8;
-    fifth1 = 0xA8;
+    fifth1 = 168;
     output1 = &state->entry_icons[8];
     do {
-        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, (struct RenderInput *)arg1, 0x100, fifth1);
+        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, (struct RenderInput *)arg1, 256, fifth1);
         index1++;
     } while (index1 <= 15);
 
     index2 = 16;
-    fifth2 = 0xA8;
+    fifth2 = 168;
     output2 = &state->entry_icons[16];
     do {
-        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, (struct RenderInput *)arg1, 0x100, fifth2);
+        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, (struct RenderInput *)arg1, 256, fifth2);
         index2++;
     } while (index2 <= 31);
 }
@@ -126,7 +126,7 @@ void ItemMenu_Close(void)
     ItemMenu_HideAllIcons();
     WaitFrames(1);
     cursor = menu->cursor;
-    cursor->active = 0xD;
+    cursor->active = 13;
     UiWindow_CloseIfOpen(&menu->main_window, 1);
     UiWindow_CloseIfOpen(&menu->item_window, 1);
     UiWindow_CloseIfOpen(&menu->message_window, 1);

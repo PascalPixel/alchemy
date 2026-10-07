@@ -168,9 +168,9 @@ void KorimaMagari_CaptureShakeScroll(void)
     *dst++ = *src++;
     *dst = *src;
     p = (u16 *)KorimaMagari_ShakeScroll;
-    p[1] += 0xb0;
-    p[3] += 0xb0;
-    p[5] += 0xb0;
+    p[1] += 176;
+    p[3] += 176;
+    p[5] += 176;
 }
 
 void Scene_RunKorimaMagariSequence(void)
@@ -246,7 +246,7 @@ void Scene_RunKorimaMagariSequence(void)
     }
 
     KorimaMagari_ShakeChance = 0;
-    ((void (*)())Engine_TaskAddCallback)((s32)KorimaMagari_CaptureShakeScroll, 0xc80);
+    ((void (*)())Engine_TaskAddCallback)((s32)KorimaMagari_CaptureShakeScroll, 3200);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
     /* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter address in r6 and r5. */
@@ -259,7 +259,7 @@ void Scene_RunKorimaMagariSequence(void)
         v3 = (KorimaMagari_ShakeChance + 1);
         KorimaMagari_ShakeChance += 1;
     } while (v3 <= 100);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     if (*gKorimaMagariLayout == 0) {
         Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 19);
         Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);
@@ -298,7 +298,7 @@ void KorimaMagari_RunReturnSequence(void)
     Engine_ActorSetAnimation(0, 1);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
-    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(288);
     v5 = 9;
     Engine_AudioPlayCue(213);
     Map_CopyCellAttributeRect(5, 9, 1, 4, 6, v5);
@@ -326,7 +326,7 @@ void KorimaMagari_RunDepartSequence(void)
     Engine_ActorSetAnimation(0, 1);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
-    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(288);
     v5 = 9;
     Engine_AudioPlayCue(213);
     Map_CopyCellAttributeRect(5, 9, 1, 4, 4, v5);
@@ -520,14 +520,14 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
     Object_SetPosition(actor, x, 0, z);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 3276) + 480), actor);
     Actor_SetSpeed(0, 0x4ccc, 0x3333);
     Actor_SetDestinationOffset(0, KorimaMagari_PushStepX[quarter], KorimaMagari_PushStepZ[quarter]);
     Engine_EventWait(24);
     Engine_ActorSetAnimation(0, 1);
     Object_CommitPosition(actor);
     Object_SetMode(actor, 1);
-    Audio_PlayCue(0x120);
+    Audio_PlayCue(288);
     Audio_PlayCue(213);
     Engine_EventWait(15);
     Engine_EventEnd();

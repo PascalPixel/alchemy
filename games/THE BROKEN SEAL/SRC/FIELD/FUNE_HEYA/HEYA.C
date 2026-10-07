@@ -92,9 +92,9 @@ void FieldScene_CallPairWith10();
 void ObjectMotion_SetActionVariant();
 
 struct Walker {
-    u8 unknown_00[0x4c];
+    u8 unknown_00[76];
     s32 countdown;
-    u8 unknown_50[0x16];
+    u8 unknown_50[22];
     s16 step;
 };
 
@@ -481,13 +481,13 @@ void SceneState_RunFlagBranchedActor8Setup(void)
         Engine_ActorSetPosition(obj, 0, 0);
         Engine_EventEnd();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x990);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 2448);
     } else if (Engine_GameFlagIsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x917);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 2327);
     } else if (Engine_GameFlagIsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x935);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 2357);
     } else {
-        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x92c);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 2348);
     }
 }
 
@@ -510,13 +510,13 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
         Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x992);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 2450);
     } else if (Engine_GameFlagIsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x919);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 2329);
     } else if (Engine_GameFlagIsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x937);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 2359);
     } else {
-        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x92e);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 2350);
     }
 }
 
@@ -524,7 +524,7 @@ void FieldScene_RunActor11FlagDialogue(void)
 {
     if (Engine_GameFlagIsSet(0x8A0) != 0) {
         Engine_EventBegin();
-        Engine_ActorSetAttachedEffect(11, 0x102);
+        Engine_ActorSetAttachedEffect(11, 258);
         Engine_EventWait(40);
         Engine_EventSetMessage((s32)MsgFuneDontFeelDontTalkMe);
         Engine_EventShowMessage(11, 0);
@@ -546,13 +546,13 @@ void FieldScene_RunActor11FlagDialogue(void)
         Engine_ActorSetPosition(actor, 0, 0);
         Engine_EventEnd();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x993);
+        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 2451);
     } else if (Engine_GameFlagIsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x91a);
+        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 2330);
     } else if (Engine_GameFlagIsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x938);
+        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 2360);
     } else {
-        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x92f);
+        FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 2351);
     }
 }
 
@@ -687,13 +687,13 @@ void SceneDialogue_RunActorThirteenFlag300Branch(void)
         Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x995);
+        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 2453);
     } else if (Engine_GameFlagIsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x91c);
+        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 2332);
     } else if (Engine_GameFlagIsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x93a);
+        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 2362);
     } else {
-        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x931);
+        FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 2353);
     }
 }
 
@@ -716,13 +716,13 @@ void FieldScene_RunFlag300BranchDialogue(void)
         Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x996);
+        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 2454);
     } else if (Engine_GameFlagIsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x91d);
+        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 2333);
     } else if (Engine_GameFlagIsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x93b);
+        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 2363);
     } else {
-        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x932);
+        FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 2354);
     }
 }
 
@@ -745,13 +745,13 @@ void FieldScene_RunActor15FlagDialogue(void)
         Engine_ActorSetPosition(o, 0, 0);
         Engine_EventEnd();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x997);
+        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 2455);
     } else if (Engine_GameFlagIsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x91e);
+        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 2334);
     } else if (Engine_GameFlagIsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x93c);
+        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 2364);
     } else {
-        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x933);
+        FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 2355);
     }
 }
 
@@ -779,13 +779,13 @@ void FieldScene_RunActor16FlagDialogue(void)
         Engine_EventEnd();
     } else {
         if (Engine_GameFlagIsSet(0x92b) != 0) {
-            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x998);
+            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 2456);
         } else if (Engine_GameFlagIsSet(0x92a) != 0) {
-            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x91f);
+            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 2335);
         } else if (Engine_GameFlagIsSet(0x929) != 0) {
-            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x93d);
+            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 2365);
         } else {
-            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x934);
+            FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 2356);
         }
     }
 }

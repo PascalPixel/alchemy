@@ -59,7 +59,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     BattleEffect_LoadWork(47, 7, 7, 7, 3);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 0x60e, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 1550, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (work->effect->variant == 2) {
         if (work->effect->side == 1)
@@ -76,7 +76,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
         s32 speed;
         s32 angle;
 
-        speed = (Random16() & 0x3ff) + 0x100;
+        speed = (Random16() & 0x3ff) + 256;
         angle = (Random16() & 0x7fff) - 0x4000;
         spark->x = 0x4000;
         spark->y = 0x7000;
@@ -87,7 +87,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     Audio_PlayCue(138);
 
     for (frame = 0; frame != 64; frame++) {
@@ -106,10 +106,10 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
                 x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
                 y = -((Trig_Cos(angle) << 3) >> 16) - 8;
                 if (work->effect->variant == 0)
-                    draw[0](canvas, work->sheet + (Random16() & 3) * 2880 + 0x60e,
+                    draw[0](canvas, work->sheet + (Random16() & 3) * 2880 + 1550,
                         x + (Random16() & 7) - 16, y, 24, 120);
                 else
-                    draw[bolt & 1](canvas, work->sheet + (Random16() & 3) * 2880 + 0x60e,
+                    draw[bolt & 1](canvas, work->sheet + (Random16() & 3) * 2880 + 1550,
                         x + (Random16() & 7) - 16, y, 24, 120);
                 for (i = 0; i != SPARK_COUNT; i++) {
                     struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -139,7 +139,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 
             if (spark->variant > 0) {
                 spark->variant--;
-                EffectStep_AdvanceWithGravity2D(spark, 60, -0x800);
+                EffectStep_AdvanceWithGravity2D(spark, 60, -2048);
                 if (spark->y > 0x780000) {
                     spark->velocity_y = -spark->velocity_y / 2;
                 } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {

@@ -41,7 +41,7 @@ s32 Title_ShowSplashScreen(s32 mode)
     Audio_PlayCue(110);
     gOamCopyEnabled = 1;
     resource = (s32)&ResourceId_NintendoLogo;
-    blank = 0x1ff;
+    blank = 511;
     Scheduler_ResetTaskTable();
     Blend_SetDarkenTarget16(1);
     Bg0_ClearTilemap();
@@ -150,9 +150,9 @@ s32 Title_ShowAnimatedSplash(void)
     Resource_DecodeType01(Resource_GetTableEntry(resource), decode);
     buffer = decode;
     Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x1c0 / 4, REG_DMA3);
-    buffer += 0x1c0;
+    buffer += 448;
     Dma_Set(buffer, (void *)0x06003000, DMA_ENABLE32 | DMA_32BIT | 0x800 / 4, REG_DMA3);
-    buffer += 0x800;
+    buffer += 2048;
     Dma_Set(buffer, BG_CHAR_BLOCK(1), DMA_ENABLE32 | DMA_32BIT | 0x4000 / 4, REG_DMA3);
     buffer += 0x4000;
     for (i = 0; i < 4; i++) {

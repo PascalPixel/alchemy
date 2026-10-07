@@ -14,7 +14,7 @@
 #include "KAWA.H"
 
 enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
+    MSG_ROBIN_GOT = 2410,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
     MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
     MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,

@@ -113,7 +113,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + 0x59d8, 0, 0);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (i = 0; i != 64; i++) {
         s32 speed = (Random16() & 255) + 256;
@@ -146,9 +146,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
     for (frame = 0; frame != 72; frame++) {
         if (frame == 4)
-            Audio_PlayCue(0x9a);
+            Audio_PlayCue(154);
         if (frame == 32)
-            Audio_PlayCue(0xd4);
+            Audio_PlayCue(212);
         if (frame <= 47) {
             s32 cell = (frame - 8) / 5;
             u32 width;
@@ -206,7 +206,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
                 cell = (frame - 36) / 7;
                 px = HI(shard->x);
                 py = HI(shard->y);
-                flare(canvas, work->sheet + cell * 0x120 + 0x59d8,
+                flare(canvas, work->sheet + cell * 288 + 0x59d8,
                     px - 6, py - 12, 12, 24);
             }
         }

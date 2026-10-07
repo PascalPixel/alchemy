@@ -99,12 +99,12 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     } else {
         work->transfer_value = 50;
     }
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    Audio_PlayCue(0x88);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
+    Audio_PlayCue(136);
     frame = 0;
     do {
         if (frame == 24) {
-            BattleEventRuntime_BeginPhaseFar(0x85);
+            BattleEventRuntime_BeginPhaseFar(133);
         }
         i = 0;
         cur = (Puff *)(work->sheet + 0x7080);

@@ -69,7 +69,7 @@ struct ReelWork {
 };
 
 struct ReelSave {
-    u8 unknown_000[0x120];
+    u8 unknown_000[288];
     s8 won_prizes[16];
 };
 
@@ -105,7 +105,7 @@ void ReelGame_RunFrame(void)
     work = ((struct ReelWork **)gBattleFxWork)[6];
     fx = ((struct BattleEffectWork **)gBattleFxWork)[0];
     n = 0;
-    blend = 0x400;
+    blend = 1024;
 
     Random16();
 
@@ -174,7 +174,7 @@ void ReelGame_RunFrame(void)
             for (k = 0; k != work->bet; k++)
                 PartyInventory_RemoveFar(228);
             UiWork_FinalizeFar(work->sub_window, 1);
-            AudioCommand_PlayFar(0x130);
+            AudioCommand_PlayFar(304);
         }
     } else if (work->state == 5) {
         all = 0;
@@ -195,10 +195,10 @@ void ReelGame_RunFrame(void)
                     work->reels[i].stop = -1;
                 }
             } else if (work->cursor <= 4) {
-                AudioCommand_PlayFar(0x131);
+                AudioCommand_PlayFar(305);
                 work->reels[work->cursor].held ^= 1;
             } else if (all == 0) {
-                AudioCommand_PlayFar(0x130);
+                AudioCommand_PlayFar(304);
                 work->state = 1;
                 work->cursor = 0;
                 for (i = 0; i != 5; i++)
@@ -319,14 +319,14 @@ void ReelGame_RunFrame(void)
             UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
         }
         if (work->timer == 16)
-            AudioCommand_PlayFar(0x132);
+            AudioCommand_PlayFar(306);
         if (work->timer > 56) {
             if (fx->frame > 31 || (work->pressed & KEY_R)) {
                 fx->frame = 0;
                 for (i = 0; i != 5; i++) {
                     if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
                         work->reels[i].stop = (Random16() & 3) + 4;
-                        AudioCommand_PlayFar(0x133);
+                        AudioCommand_PlayFar(307);
                         break;
                     }
                 }
@@ -472,10 +472,10 @@ build_objects:
             y = 32;
         }
         work->obj[n].attr01 = ((x - 12) << 16) | blend | (y + 8) | 0x80006000;
-        work->obj[n].attr2 = (v << 4) + 0x2b0;
+        work->obj[n].attr2 = (v << 4) + 688;
         n++;
         work->obj[n].attr01 = ((x + 12) << 16) | blend | (y + 8) | 0x90006000;
-        work->obj[n].attr2 = (v << 4) + 0x2b0;
+        work->obj[n].attr2 = (v << 4) + 688;
         n++;
         work->obj[n].attr01 = (x << 16) | blend | y | 0x80002000;
         work->obj[n].attr2 = 0x1f0;
@@ -488,8 +488,8 @@ build_objects:
 
 #if defined(TBS_EDITION_ES)
             if (i == 0)
-                work->obj[n].attr01 = (((*(s16 *)((u8 *)&p->x + 2) + 0x1f0) & 0x1ff) << 16) | blend |
-                                      ((*(s16 *)((u8 *)&p->y + 2) + 0x108) & 255) | 0xb0000000;
+                work->obj[n].attr01 = (((*(s16 *)((u8 *)&p->x + 2) + 496) & 0x1ff) << 16) | blend |
+                                      ((*(s16 *)((u8 *)&p->y + 2) + 264) & 255) | 0xb0000000;
             else
 #endif
             work->obj[n].attr01 =(*(s16 *)((u8 *)&p->x + 2) << 16) | blend |
@@ -534,14 +534,14 @@ build_objects:
     for (i = 0; i != 5; i++) {
         work->obj[n].attr01 = blend | ((i * 16 + 32) << 16) | 0x80006003;
         if (i == work->spins)
-            work->obj[n].attr2 = (i * 32 + 0x210) | 0x400;
+            work->obj[n].attr2 = (i * 32 + 528) | 0x400;
         else
-            work->obj[n].attr2 = (i * 32 + 0x220) | 0x400;
+            work->obj[n].attr2 = (i * 32 + 544) | 0x400;
         n++;
     }
 
     for (col = 0; col != 7; col++) {
-        work->obj[n].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
+        work->obj[n].attr01 = (((516 - ((col & 1) << 3)) & 0x1ff) << 16) |
                               blend | (col * 16 + 5) | 0x80002000;
         if (col > 3 - work->bet && col < work->bet + 3)
             work->obj[n].attr2 = 0x5d0;
@@ -613,7 +613,7 @@ void ReelGame_InitTitle(void)
     state = ((struct ReelWork **)gBattleFxWork)[6];
     work = ((struct BattleEffectWork **)gBattleFxWork)[0];
     left = 0;
-    for (i = 0; i != 0x800; i++)
+    for (i = 0; i != 2048; i++)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = 0;
 
     letter = work->particles;
@@ -634,7 +634,7 @@ void ReelGame_InitTitle(void)
         state->scanline_offsets[i] = 0;
 
     for (i = 0; i != 40; i++) {
-        angle = i * 0x199;
+        angle = i * 409;
         state->scanline_offsets[23 + i] = (u32)(Trig_Cos(angle) * 3) >> 15;
         state->scanline_offsets[110 - i] = (u32)(Trig_Cos(angle) * 3) >> 15;
     }
@@ -676,7 +676,7 @@ void ReelGame_Run(void)
     s32 j;
     s32 k;
 
-    sheet = Runtime_AllocateHeapBlock(41, 0x60e);
+    sheet = Runtime_AllocateHeapBlock(41, 1550);
     canvas = Runtime_AllocateHeapBlock(40, 0x8000);
     work = Runtime_AllocateBlock(39, sizeof(struct BattleEffectWork));
     state = Runtime_AllocateBlock(45, sizeof(struct ReelWork));
@@ -718,12 +718,12 @@ void ReelGame_Run(void)
             }
         }
     }
-    Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 0x500, 0x300);
+    Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 1280, 768);
     j = 0;
     for (k = 0; k != 20; k++) {
         for (i = 0; i != 32; i++, j += 2) {
             if (k < 2 || k > 16)
-                *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = 0xbf;
+                *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = 191;
             else
                 *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = k * 32 + i + 148;
         }
@@ -752,7 +752,7 @@ void ReelGame_Run(void)
     REG_WIN1V = 0xa0;
 
     {
-        u16 *shade = (u16 *)(work->sheet + 0x200);
+        u16 *shade = (u16 *)(work->sheet + 512);
         s32 size = 0x8000;
 
         state->state = 0;
@@ -815,8 +815,8 @@ void ReelGame_Run(void)
         Dma_Set(canvas, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x8000 / 4, REG_DMA3);
         Dma_Set((void *)BG_PLTT, work, DMA_ENABLE32 | DMA_32BIT | 0x80, REG_DMA3);
         Dma_Set((void *)OBJ_PLTT, shade, DMA_ENABLE32 | DMA_32BIT | 0x80, REG_DMA3);
-        Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
-        Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
+        Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 256);
+        Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 256);
         REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON
         | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
         if (PartyInventory_CountItemFar(228) == 1) {
@@ -834,13 +834,13 @@ void ReelGame_Run(void)
             UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
         }
         work->transfer_pending = 0;
-        Scheduler_AddOrUpdateCallback(ReelGame_RunFrame, 0x480);
-        Scheduler_AddOrUpdateCallback(BattlePres_ProcessPendingTileTransfer, 0x480);
+        Scheduler_AddOrUpdateCallback(ReelGame_RunFrame, 1152);
+        Scheduler_AddOrUpdateCallback(BattlePres_ProcessPendingTileTransfer, 1152);
 
         for (frame = 0; state->state != 10; frame++) {
             if (frame <= 16) {
-                Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
-                Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12, 0x100);
+                Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 256);
+                Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12, 256);
             }
             if (state->state == 3) {
                 s32 phase = frame % 80;

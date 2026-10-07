@@ -122,7 +122,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
     state = *(u8 **)state;
     work->transfer_value = 50;
     draw_b = (DrawRectangle)state;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     if (mode == 2) {
         work->shake_frames = 0;

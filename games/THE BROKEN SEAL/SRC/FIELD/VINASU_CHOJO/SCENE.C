@@ -82,10 +82,10 @@ void VinasuChojo_UpdateBeamActors(void)
             if (first->scale_x >= 0x14000) {
                 goto slide;
             }
-            first->scale_x += 0x200;
-            first->scale_y += 0x200;
-            second->scale_x += 0x200;
-            second->scale_y += 0x200;
+            first->scale_x += 512;
+            first->scale_y += 512;
+            second->scale_x += 512;
+            second->scale_y += 512;
         } else {
             if ((*(s32 *)&gFrameCount & 2) != 0) {
                 Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 15);
@@ -350,7 +350,7 @@ void FieldScene_RunMultiActorPresentation(void)
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
     request_a = 0x1001;
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x141, 174);
+    Actor_WalkToAndWait(ACTOR_GERALD, 321, 174);
     VinasuChojo_FaceActor(1, 0x2000);
     VinasuChojo_ShowMessage(request_a);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
@@ -358,7 +358,7 @@ void FieldScene_RunMultiActorPresentation(void)
     VinasuChojo_FaceActor(3, 0xc000);
     VinasuChojo_FaceActor(1, 0x4000);
     VinasuChojo_ShowMessage(request_a);
-    Actor_ShowEmote(ACTOR_GERALD, 0x105, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 261, 40);
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 20);
     VinasuChojo_ShowMessage(request_a);
     Actor_FaceDirection(ACTOR_GERALD, 0xa000, 40);
@@ -370,18 +370,18 @@ void FieldScene_RunMultiActorPresentation(void)
     VinasuChojo_ShowMessage(3);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 80);
     Actor_FaceDirection(ACTOR_MIA, 0x6000, 80);
-    Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
+    Actor_ShowEmote(ACTOR_MIA, 256, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 60);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     VinasuChojo_FaceActor(2, 0xc000);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 60);
     Actor_FaceDirection(ACTOR_IVAN, 0x6000, 40);
     Engine_ActorJump(ACTOR_IVAN, 4, 60);
     VinasuChojo_FaceActor(1, 0x2000);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 40);
     VinasuChojo_ShowMessage(request_a);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 40);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 0);
     Engine_ActorJump(ACTOR_GERALD, 4, 40);
     VinasuChojo_ShowMessage(1);
     Actor_SetSpeed(21, 0xcccc, 0x6666);
@@ -392,7 +392,7 @@ void FieldScene_RunMultiActorPresentation(void)
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
     Audio_PlayCue(23);
-    Actor_SetAttachedEffect(21, 0x102);
+    Actor_SetAttachedEffect(21, 258);
     VinasuChojo_ShowMessage(21);
     Engine_ActorRunRepeatedMotion(21, 1);
     Engine_EventWait(20);
@@ -401,7 +401,7 @@ void FieldScene_RunMultiActorPresentation(void)
     VinasuChojo_ShowMessage(21);
     Actor_FaceDirection(21, 0x3000, 20);
     VinasuChojo_ShowMessage(21);
-    Actor_SetAttachedEffect(6, 0x102);
+    Actor_SetAttachedEffect(6, 258);
     request_b = 0x2003;
     Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
@@ -417,11 +417,11 @@ void FieldScene_RunMultiActorPresentation(void)
     VinasuChojo_ShowMessage(request_b);
     Engine_ActorSetAnimationAndWait(21, 4);
     VinasuChojo_ShowMessage(21);
-    Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
+    Actor_SetAttachedEffect(ACTOR_IVAN, 258);
     VinasuChojo_ShowMessage(0x2002);
     Engine_ActorSetAnimation(21, 3);
     VinasuChojo_ShowMessage(21);
-    Actor_ShowEmote(ACTOR_GERALD, 0x103, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 259, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     VinasuChojo_ShowMessage(1);
     Engine_ActorSetAnimation(21, 4);
@@ -429,7 +429,7 @@ void FieldScene_RunMultiActorPresentation(void)
     Actor_FaceDirection(21, 0x5000, 20);
     Engine_ActorJump(ACTOR_MIA, 4, 20);
     Event_ShowMessageAndWait(request_b, 0, 20);
-    Actor_ShowEmote(21, 0x103, 40);
+    Actor_ShowEmote(21, 259, 40);
 }
 
 void VinasuChojo_RunActorTransition(void)
@@ -440,14 +440,14 @@ void VinasuChojo_RunActorTransition(void)
     struct FieldActor *actor;
 
     Engine_AudioPlayCue(19);
-    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(288);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
-    Actor_ShowEmote(21, 0x100, 0);
-    Actor_ShowEmote(6, 0x100, 10);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 256, 0);
+    Actor_ShowEmote(ACTOR_MIA, 256, 0);
+    Actor_ShowEmote(21, 256, 0);
+    Actor_ShowEmote(6, 256, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -560,12 +560,12 @@ void VinasuChojo_RunActorTransition(void)
     Engine_ColorBufferInterpolate(120);
     Engine_TaskWait(120);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Object_GetById(24)->scale_y = 0x51e;
+    Object_GetById(24)->scale_y = 1310;
     Engine_ActorEnableActionCallback(25, VinasuChojo_BeamCloseAction);
     Engine_ActorEnableActionCallback(26, VinasuChojo_BeamCloseAction);
     Engine_ActorEnableActionCallback(27, VinasuChojo_BeamCloseAction);
     Object_SetActionCallbackAndRefreshById(28, VinasuChojo_BeamCloseAction);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_ActorSetChildValue(24, 15);
     Engine_EventWait(20);
     Object_SetActionCallbackAndRefreshById(24, VinasuChojo_BeamEndAction);
@@ -573,14 +573,14 @@ void VinasuChojo_RunActorTransition(void)
     Engine_ActorJump(ACTOR_IVAN, 2, 20);
     VinasuChojo_ShowMessage(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 20);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 258);
     Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     VinasuChojo_ShowMessage(ACTOR_GERALD);
     Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
     Engine_ActorWalkToAndWait(ACTOR_MIA, 326, 220);
     Engine_EventWait(40);
-    Engine_ActorSetAttachedEffect(ACTOR_MIA, 0x102);
+    Engine_ActorSetAttachedEffect(ACTOR_MIA, 258);
     VinasuChojo_ShowMessage(ACTOR_MIA);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     actor->rise_counter = 0;
@@ -727,10 +727,10 @@ void VinasuChojo_TryToPreventFall(void)
     Event_ShowMessageAndWait(0x2015, 0, 40);
     Engine_ActorRunRepeatedMotion(6, 3);
     VinasuChojo_ShowMessage(6);
-    Actor_SetAttachedEffect(21, 0x102);
+    Actor_SetAttachedEffect(21, 258);
     Engine_EventWait(60);
     Event_ShowMessageAndWait(0x2015, 0, 80);
-    Actor_SetAttachedEffect(6, 0x102);
+    Actor_SetAttachedEffect(6, 258);
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(6, 2);
     VinasuChojo_ShowMessage(6);
@@ -744,7 +744,7 @@ void Scene_RunExtendedActorTransition(void)
 
     step_pending = 0;
     Engine_EventSetMessage((s32)MsgVinasuWhyHappeningProtectVenusLighthouse);
-    Actor_SetAttachedEffect(21, 0x102);
+    Actor_SetAttachedEffect(21, 258);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x2015, 0, 20);
     Engine_ActorRunRepeatedMotion(6, 2);
@@ -759,7 +759,7 @@ void Scene_RunExtendedActorTransition(void)
     Engine_ActorRunRepeatedMotion(6, 2);
     Engine_ActorEnableActionCallback(6, VinasuChojo_StepBackAction);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(21, 0x102);
+    Actor_SetAttachedEffect(21, 258);
     Engine_ActorStartRepeatedMotion(21, 3);
     Object_RefreshSelectorById(6);
     Engine_EventWait(160);
@@ -797,12 +797,12 @@ void Scene_RunExtendedActorTransition(void)
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 60);
     Object_GetById(ACTOR_PARTY_LEADER)->timer = 10;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, VinasuChojo_ScaleStepAction);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 80);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 80);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 40);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     Engine_EventWait(20);
     VinasuChojo_ShowMessage(ACTOR_IVAN);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
+    Actor_ShowEmote(ACTOR_MIA, 258, 40);
     VinasuChojo_ShowMessage(ACTOR_MIA);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_GERALD), 1);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
@@ -836,7 +836,7 @@ void Scene_RunExtendedActorTransition(void)
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
     VinasuChojo_ShowMessage(ACTOR_MIA);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 20);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 20);
     VinasuChojo_FaceActor(ACTOR_GERALD, FACING_SOUTH);
     VinasuChojo_ShowMessage(ACTOR_GERALD);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -851,7 +851,7 @@ void Scene_RunExtendedActorTransition(void)
     actor->scale_x = 0x10000;
     actor->scale_y = 0x10000;
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 80);
     VinasuChojo_FaceActor(ACTOR_GERALD, FACING_SOUTHEAST);
     Engine_ActorJump(ACTOR_GERALD, 4, 0);
     VinasuChojo_ShowMessage(ACTOR_GERALD);
@@ -879,14 +879,14 @@ void Scene_RunExtendedActorTransition(void)
         gEventWork->message += 3;
     }
     VinasuChojo_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
     Engine_EventWait(80);
     Audio_PlayCue(17);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 20);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 20);
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST, 20);
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 40);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 20);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 40);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 40);
     VinasuChojo_ShowMessage(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST, 20);
@@ -896,7 +896,7 @@ void Scene_RunExtendedActorTransition(void)
     Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 40);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
-    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_MIA, 258);
     Engine_EventWait(60);
     VinasuChojo_ShowMessage(ACTOR_MIA);
     Audio_PlayCue(141);
@@ -931,10 +931,10 @@ void Scene_RunExtendedActorTransition(void)
     Camera_MoveTo(PIXELS(338), PIXELS(32), PIXELS(180), 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 256, 0);
+    Actor_ShowEmote(ACTOR_MIA, 256, 0);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
     Engine_ActorJump(ACTOR_GERALD, 6, 0);
     Engine_ActorJump(ACTOR_IVAN, 6, 0);
@@ -978,24 +978,24 @@ void Scene_RunExtendedActorTransition(void)
     Camera_MoveTo(PIXELS(322), PIXELS(32), PIXELS(180), 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
-    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 258);
+    Actor_SetAttachedEffect(ACTOR_IVAN, 258);
+    Actor_SetAttachedEffect(ACTOR_MIA, 258);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
     Engine_ActorJump(ACTOR_GERALD, 6, 0);
     Engine_ActorJump(ACTOR_IVAN, 6, 0);
     Engine_ActorJump(ACTOR_MIA, 6, 0);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(80);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Engine_EventWait(40);
     Engine_ActorStop(ACTOR_PARTY_LEADER);
     Engine_ActorStop(ACTOR_GERALD);
     Engine_ActorStop(ACTOR_IVAN);
     Engine_ActorStop(ACTOR_MIA);
     Engine_EventWait(120);
-    Actor_ShowEmote(ACTOR_IVAN, 0x105, 120);
+    Actor_ShowEmote(ACTOR_IVAN, 261, 120);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     VinasuChojo_ShowMessage(ACTOR_IVAN);
@@ -1250,5 +1250,5 @@ void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
     object->effect.z = (Engine_MathSin(spin) << 4) + 0xa40000;
     *(s32 *)((u8 *)object + 56) = object->effect.x;
     *(s32 *)((u8 *)object + 64) = object->effect.z;
-    object->effect.spin -= 0x200;
+    object->effect.spin -= 512;
 }

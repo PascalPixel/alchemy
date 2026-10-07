@@ -31,7 +31,7 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_ActorRunRepeatedMotion(17, 1);
     Actor_FaceDirection(17, 0x3000, 20);
     Engine_ActorFaceDirection(17, FACING_EAST, 60);
-    Actor_ShowEmote(17, 0x100, 40);
+    Actor_ShowEmote(17, 256, 40);
     SceneState_ForwardMaskedHalfwordWith10(17, 0x3000);
     Engine_EventSetMessage((s32)MsgKorashiamuHeyYouRe);
     Engine_ActorStartRepeatedMotion(17, 2);
@@ -44,15 +44,15 @@ void Scene_RunBranchingActorPresentation(void)
     Camera_MoveTo(0x1000000, -1, 0xac0000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Actor_ShowEmote(18, 0x102, 40);
+    Actor_ShowEmote(18, 258, 40);
     FieldScene_CallPairWith10(18);
     Engine_ActorSetAnimationAndWait(17, 3);
     FieldScene_CallPairWith10(17);
-    Actor_SetAttachedEffect(19, 0x102);
+    Actor_SetAttachedEffect(19, 258);
     Engine_EventWait(40);
     SceneState_ForwardMaskedHalfwordWith10(19, 0);
     FieldScene_CallPairWith10(19);
-    Actor_ShowEmote(20, 0x103, 40);
+    Actor_ShowEmote(20, 259, 40);
     SceneState_ForwardMaskedHalfwordWith10(20, 0);
     Engine_ActorStartRepeatedMotion(20, 2);
     Engine_EventShowMessageAndWait(20, 0, 20);
@@ -82,9 +82,9 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_ActorFaceDirection(19, 0x3000, 0);
     SceneState_ForwardMaskedHalfwordWith10(20, 0x3000);
     Actor_SetSpeed(17, 0x9999, 0x4ccc);
-    Actor_WalkToAndWait(17, 0x102, 172);
+    Actor_WalkToAndWait(17, 258, 172);
     Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(0, 0x106, 188);
+    Actor_WalkToAndWait(0, 262, 188);
     Actor_FaceDirection(0, FACING_NORTH, 0);
     record = Object_GetById(0);
     if (record != 0) {
@@ -102,8 +102,8 @@ void Scene_RunBranchingActorPresentation(void)
     Actor_SetSpeed(2, 0xcccc, 0x6666);
     Actor_SetSpeed(3, 0xcccc, 0x6666);
     Engine_ActorWalkTo(1, 246, 200);
-    Actor_WalkTo(2, 0x106, 200);
-    Actor_WalkToAndWait(3, 0x116, 200);
+    Actor_WalkTo(2, 262, 200);
+    Actor_WalkToAndWait(3, 278, 200);
     Engine_ActorSetAnimation(2, 1);
     Engine_ActorSetAnimation(1, 1);
     Actor_FaceDirection(1, FACING_NORTH, 0);
@@ -140,20 +140,20 @@ void Scene_RunBranchingActorPresentation(void)
         Engine_EventWaitForScreen();
     } else {
         Event_SkipMessages(1);
-        Actor_ShowEmote(17, 0x102, 40);
+        Actor_ShowEmote(17, 258, 40);
         FieldScene_CallPairWith10(17);
-        Actor_ShowEmote(18, 0x102, 40);
+        Actor_ShowEmote(18, 258, 40);
         FieldScene_CallPairWith10(18);
-        Actor_ShowEmote(19, 0x102, 40);
+        Actor_ShowEmote(19, 258, 40);
         FieldScene_CallPairWith10(19);
-        Actor_ShowEmote(20, 0x102, 40);
+        Actor_ShowEmote(20, 258, 40);
         FieldScene_CallPairWith10(19);
         Engine_ActorSetAnimationAndWait(17, 4);
         FieldScene_CallPairWith10(17);
         Engine_ActorRunRepeatedMotion(2, 1);
         Engine_EventWait(20);
         FieldScene_CallPairWith10(2);
-        Actor_ShowEmote(3, 0x102, 40);
+        Actor_ShowEmote(3, 258, 40);
         FieldScene_CallPairWith10(3);
         Actor_FaceDirection(17, 0xb000, 0);
         Engine_ActorFaceDirection(19, FACING_WEST, 0);
@@ -165,7 +165,7 @@ void Scene_RunBranchingActorPresentation(void)
         Engine_ActorSetAnimation(18, 3);
         Engine_ActorSetAnimation(19, 3);
         Engine_ActorSetAnimationAndWait(20, 3);
-        Actor_ShowEmote(3, 0x100, 60);
+        Actor_ShowEmote(3, 256, 60);
         Call2(SceneState_ForwardMaskedHalfwordWith10, 3, 0xa000);
         FieldScene_CallPairWith10(3);
         Engine_ActorSetAnimation(1, 4);
@@ -196,7 +196,7 @@ void Scene_RunBranchingActorPresentation(void)
             Engine_EventWait(20);
             Engine_ActorStartRepeatedMotion(1, 2);
             Engine_EventShowMessageAndWait(1, 0, 20);
-            Engine_ActorShowEmote(2, 0x102, 60);
+            Engine_ActorShowEmote(2, 258, 60);
             FieldScene_CallPairWith10(2);
             SceneState_ForwardMaskedHalfwordWith10(3, 0x8000);
             Engine_ActorSetAnimation(3, 3);
@@ -205,7 +205,7 @@ void Scene_RunBranchingActorPresentation(void)
             Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable2);
             Engine_EventWait(20);
             Object_SetActionCallbackAndRefreshById(0, (s32)KorashiamuIriguchi_ActionTable2);
-            Actor_WalkToAndWait(1, 0x106, 188);
+            Actor_WalkToAndWait(1, 262, 188);
             SceneState_ForwardMaskedHalfwordWith10(1, 0xc000);
             Engine_ActorSetAnimationAndWait(1, 3);
             FieldScene_CallPairWith10(1);
@@ -237,7 +237,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
         Engine_GameFlagSet(0x235);
         Engine_EventBegin();
         Actor_SetSpeed(0, 0x10000, 0x8000);
-        Actor_WalkToAndWait(0, 0x368, 120);
+        Actor_WalkToAndWait(0, 872, 120);
         SceneState_ForwardMaskedHalfwordWith10(0, 0xa000);
         Camera_SetSpeed(0x19999, 0x3333);
         Camera_MoveTo(0x3300000, -1, 0x700000, 1);
@@ -270,7 +270,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorStartRepeatedMotion(18, 2);
             FieldScene_CallPairWith10(0x4012);
             SceneState_ForwardMaskedHalfwordWith10(11, 0x3000);
-            Engine_ActorSetAttachedEffect(11, 0x102);
+            Engine_ActorSetAttachedEffect(11, 258);
             Engine_EventWait(60);
             Engine_ActorStartRepeatedMotion(11, 2);
             FieldScene_CallPairWith10(0x800b);
@@ -309,7 +309,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             FieldScene_CallPairWith10(8);
             Engine_ActorSetSpeed(8, 0x10000, 0x8000);
             Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
-            Engine_ActorWalkToAndWait(8, 0x318, 72);
+            Engine_ActorWalkToAndWait(8, 792, 72);
             Engine_EventWait(1);
             Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
             SceneState_ForwardMaskedHalfwordWith10(8, 0);

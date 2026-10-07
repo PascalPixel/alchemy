@@ -125,11 +125,11 @@ void UiWork_DrawByAttributes(struct UiWindow *window)
             UiWindow_DrawFrame(x, y, width, height);
             fill = Iwram_FillWords;
             dst = (void *)0x06002500;
-            fill(dst, 0xF00, 0x44444444);
+            fill(dst, 3840, 0x44444444);
         } else {
             fill = Iwram_FillWords;
             dst = (void *)0x06002500;
-            fill(dst, 0xF00, 0);
+            fill(dst, 3840, 0);
         }
         UiWindow_MapTextCanvasTiles(x, y, width, height, 0);
     } else {

@@ -27,7 +27,7 @@ struct SceneActor {
     u8 unk_00[6];
     u16 facing;
     s32 x, y, z;
-    u8 unk_14[0x47];
+    u8 unk_14[71];
     u8 active;
 };
 
@@ -88,15 +88,15 @@ void FieldScene_RunActor23SequenceOnceByFlag867(void)
     Audio_PlayCue(100);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x867) == 0) {
-        Actor_SetAttachedEffect(23, 0x102);
+        Actor_SetAttachedEffect(23, 258);
         Engine_ActorJump(23, 4, 0);
         Engine_EventWait(12);
         Engine_ActorJump(23, 4, 0);
         Engine_EventWait(20);
         ActorPresentation_MoveActorToPositionAndWait(23, 0x188, 104, 0x70000);
         Engine_EventWait(20);
-        Actor_WalkToAndWait(23, 0x198, 104);
-        Actor_WalkToAndWait(23, 0x198, 120);
+        Actor_WalkToAndWait(23, 408, 104);
+        Actor_WalkToAndWait(23, 408, 120);
         GameFlag_Set(0x867);
     }
     Engine_EventEnd();
@@ -112,7 +112,7 @@ void FieldScene_RunActor19MotionSequence(void)
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(19, 2);
     Actor_SetSpeed(19, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(19, 216, 0x198);
+    Actor_WalkToAndWait(19, 216, 408);
     Engine_EventWait(10);
     Actor_FaceDirection(19, 0x4000, 20);
     Engine_ActorJump(19, 6, 0);
@@ -121,7 +121,7 @@ void FieldScene_RunActor19MotionSequence(void)
     Engine_EventWait(30);
     Engine_ActorJump(19, 6, 0);
     Engine_EventWait(30);
-    Actor_WalkToAndWait(19, 216, 0x188);
+    Actor_WalkToAndWait(19, 216, 392);
     Engine_EventWait(10);
     Actor_FaceDirection(19, 0x4000, 20);
     GameFlag_Set(0x858);
@@ -344,7 +344,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
         x += base_x;
         base_y = leader->motion.y;
         z += base_z;
-        leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, base_y, z);
+        leaf = (union DriftingObject *)Engine_ObjectCreate(172, x, base_y, z);
     }
     if (leaf == NULL)
         return;

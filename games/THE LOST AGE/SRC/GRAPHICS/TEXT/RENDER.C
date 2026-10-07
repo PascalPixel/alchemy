@@ -14,7 +14,7 @@
 
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 {
-    u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
+    u16 *buffer = Runtime_BumpAllocateAlternatePool(512);
     u16 *output = buffer;
 
     while (*text != 0) {

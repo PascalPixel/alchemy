@@ -31,10 +31,10 @@ void RunPartyCountInteractionCopyB(s32 actorId)
         if (Engine_EventAskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
-            Engine_ActorWalkTo(actorId, x, y + 0x40);
+            Engine_ActorWalkTo(actorId, x, y + 64);
             Engine_EventWait(15);
             Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 32);
             Engine_EventCloseScreen();
             Engine_EventWaitForScreen();
             Engine_EventRequestExit(11);

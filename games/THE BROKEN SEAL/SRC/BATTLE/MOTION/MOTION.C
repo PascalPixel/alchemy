@@ -183,7 +183,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 
     slot = GetBattleObjectSlot(id);
     object = slot->object;
-    if (Owner_GetStateFar(id)->class_id != 0x94) {
+    if (Owner_GetStateFar(id)->class_id != 148) {
         object->acceleration = BattleMotion_VariantAcceleration[variant];
         object->speed_limit = BattleMotion_VariantSpeedLimit[variant];
         if (object->y == 0 || variant > 4)

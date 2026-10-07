@@ -45,7 +45,7 @@ s32 Scene_FadeColorFromWhite(void)
             /* FAKEMATCH: the one-pass loop keeps the store before the call's arguments. */
             *(u16 *)0x050001e6 = color;
         } while (0);
-        DisplayTransition_Finish(0x401, 16);
+        DisplayTransition_Finish(1025, 16);
         work->status_1c6 = 0;
         WaitFrames(16);
         for (i = 0; i < 16; i++) {
@@ -58,7 +58,7 @@ s32 Scene_FadeColorFromWhite(void)
         s32 color = 0x7fff;
 
         PLTT_BACKDROP = color;
-        DisplayTransition_Finish(0x207, 16);
+        DisplayTransition_Finish(519, 16);
         work->status_1c6 = 0;
         WaitFrames(16);
         for (i = 0; i < 16; i++) {
@@ -98,13 +98,13 @@ void ObjectEffect_PrepareContextEffect(s32 value)
 
 void ObjectEffect_BeginContextEffect26(void)
 {
-    ObjectEffect_PrepareContextEffect(0x1A);
+    ObjectEffect_PrepareContextEffect(26);
     GameFlag_SetBitFar(0x120);
 }
 
 void ObjectEffect_BeginContextEffect25(void)
 {
-    ObjectEffect_PrepareContextEffect(0x19);
+    ObjectEffect_PrepareContextEffect(25);
     GameFlag_SetBitFar(0x121);
 }
 

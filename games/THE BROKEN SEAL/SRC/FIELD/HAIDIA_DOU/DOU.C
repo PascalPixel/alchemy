@@ -247,15 +247,15 @@ void FieldScene_RunScene3a6SequenceA(void)
         Engine_CameraWaitForMove();
         Battle_WaitMode0(60);
         Actor_FaceDirection(8, 0xc000, 20);
-        Actor_SetAttachedEffect(8, 0x102);
+        Actor_SetAttachedEffect(8, 258);
         Engine_ActorRunRepeatedMotion(8, 2);
         Battle_WaitMode0(20);
         Actor_SetMotionSpeed(8, 0x10000, 0x8000);
-        Actor_WalkToAndWait(8, 0x318, 248);
+        Actor_WalkToAndWait(8, 792, 248);
         Audio_PlayCue(152);
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
-        Actor_WalkToAndWait(8, 0x318, 0x118);
+        Actor_WalkToAndWait(8, 792, 280);
         Battle_WaitMode0(20);
         Actor_FaceDirection(8, 0xc000, 20);
         Battle_WaitMode0(30);
@@ -274,13 +274,13 @@ void FieldScene_RunScene3a6SequenceB(void)
             GameFlag_Set(0x201);
             GameFlag_Set(0x302);
             Engine_EventBegin();
-            Actor_SetAttachedEffect(8, 0x102);
+            Actor_SetAttachedEffect(8, 258);
             Engine_ActorRunRepeatedMotion(8, 2);
             Battle_WaitMode0(20);
             Actor_SetMotionSpeed(8, 0x20000, 0x10000);
-            Actor_WalkToAndWait(8, 0x2f8, 0x118);
-            Actor_WalkToAndWait(8, 0x2f8, 0x138);
-            Actor_WalkToAndWait(8, 0x318, 0x138);
+            Actor_WalkToAndWait(8, 760, 280);
+            Actor_WalkToAndWait(8, 760, 312);
+            Actor_WalkToAndWait(8, 792, 312);
             Battle_WaitMode0(10);
             Actor_FaceDirection(8, 0xc000, 20);
             record = Actor_Get(8);
@@ -303,7 +303,7 @@ void FieldScene_RunScene3a6SequenceC(void)
 
     p5 = gEventWork;
     if (Engine_GameFlagIsSet(0x302) != 0) {
-        off24a = 0x24a;
+        off24a = 586;
         if (*(s16 *)((s32)&gGameState + off24a) != 8) {
             idx = p5->touched_trigger;
             rec8 = Object_GetById(8);

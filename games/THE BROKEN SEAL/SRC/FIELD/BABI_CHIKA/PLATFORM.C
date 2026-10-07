@@ -494,7 +494,7 @@ void BabiChika_SettleSteps(s32 wait)
     Object_GetById(10)->y.fixed = Data_0200b350[(s16)Object_GetById(10)->timer];
     Object_GetById(11)->y.fixed = Data_0200b350[(s16)Object_GetById(11)->timer];
     if (wait != 0) {
-        Audio_PlayCue(0x121);
+        Audio_PlayCue(289);
     }
     for (i = 0; i < 5; i++) {
         if (Object_GetById(i + 10)->y.fixed / 0x10000 < 0 && Object_GetById(i + 10)->y.fixed / 0x10000 > -30) {
@@ -934,7 +934,7 @@ s32 FieldScene_InitializeActorGroups(void)
             Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
             Object_GetById(8)->update = ACTOR_UPDATE_IDLE;
             Object_GetById(9)->update = ACTOR_UPDATE_IDLE;
-            Engine_TaskAddCallback(SCENE_TASK, 0xc80);
+            Engine_TaskAddCallback(SCENE_TASK, 3200);
             break;
         case 5:
         case 6:
@@ -953,7 +953,7 @@ s32 FieldScene_InitializeActorGroups(void)
             Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
             Object_GetById(10)->update = ACTOR_UPDATE_IDLE;
             Object_GetById(11)->update = ACTOR_UPDATE_IDLE;
-            Engine_TaskAddCallback(SCENE_TASK, 0xc80);
+            Engine_TaskAddCallback(SCENE_TASK, 3200);
             break;
         case 10:
         case 11:
@@ -1010,7 +1010,7 @@ s32 FieldScene_InitializeActorGroups(void)
             Object_GetById(12)->update = ACTOR_UPDATE_IDLE;
             Object_GetById(13)->update = ACTOR_UPDATE_IDLE;
             Object_GetById(14)->update = ACTOR_UPDATE_IDLE;
-            Engine_TaskAddCallback(SCENE_TASK, 0xc80);
+            Engine_TaskAddCallback(SCENE_TASK, 3200);
             break;
         }
     } else {
@@ -1110,7 +1110,7 @@ s32 FieldScene_InitializeActorGroups(void)
         case 12:
             Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
             FieldScene_RunLateSequenceHead();
-            Engine_TaskAddCallback(SCENE_TASK, 0xc80);
+            Engine_TaskAddCallback(SCENE_TASK, 3200);
             break;
         case 13:
         case 14:

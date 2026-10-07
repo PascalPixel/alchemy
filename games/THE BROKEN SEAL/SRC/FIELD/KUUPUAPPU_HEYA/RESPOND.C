@@ -18,7 +18,7 @@ void Object_RefreshSelectorById(s32 actor);
 struct Responder {
     u8 unknown_00[6];
     u16 facing;
-    u8 unknown_08[0x5c];
+    u8 unknown_08[92];
     s16 stop;
 };
 

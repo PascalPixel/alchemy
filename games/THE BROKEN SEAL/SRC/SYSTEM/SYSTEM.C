@@ -98,9 +98,9 @@ void WaitFrames(s32 frames)
     }
     for (i = 0; i < frames; i++) {
         gSchedulerStatus = 1;
-        Runtime_InvokeCallbacksByKey(0xc80);
+        Runtime_InvokeCallbacksByKey(3200);
         gSchedulerStatus = 0;
-        Render_BuildOamList(Runtime_AllocateHeapBlock(52, 0x400));
+        Render_BuildOamList(Runtime_AllocateHeapBlock(52, 1024));
         gFrameRenderPending = 1;
         if (gCpuLoadDisplayEnabled) {
             line = *(u16 *)&REG_VCOUNT;

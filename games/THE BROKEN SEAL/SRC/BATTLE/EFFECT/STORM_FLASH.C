@@ -163,10 +163,10 @@ void FieldFx_StartGroundParticles(void)
     fill = (u32)words;
     Dma_Set((const void *)&fill, work, 0x85000000 | (sizeof(struct GroundParticleWork) / 4),
         REG_DMA3);
-    words = Runtime_AllocateBlock(14, 0x400);
+    words = Runtime_AllocateBlock(14, 1024);
     Resource_DecodeByteLz(FieldFx_GroundParticleTiles, words);
     work->entry = Resource_FindFreeEntry();
-    work->tile_base = VramBlock_LoadCached(work->entry, 0x300, words);
+    work->tile_base = VramBlock_LoadCached(work->entry, 768, words);
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
         s32 x;
@@ -192,5 +192,5 @@ void FieldFx_StartGroundParticles(void)
         *++blend = value;
         *++blend = 0;
     } while (0);
-    Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 3200);
 }

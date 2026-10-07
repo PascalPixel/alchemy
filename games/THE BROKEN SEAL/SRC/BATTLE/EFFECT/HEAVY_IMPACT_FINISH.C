@@ -45,7 +45,7 @@ void BattleFx_FinishHeavyImpact(s32 id)
         Audio_PlayCue(0xad);
         Motion_SetVarCbAndRefresh(id, 1);
     } while (0);
-    Audio_PlayCue(0xae);
+    Audio_PlayCue(174);
     Motion_SetVarCbAndRefresh(id, 1);
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
@@ -83,7 +83,7 @@ void BattleFx_FinishHeavyImpact(s32 id)
     WaitFrames(20);
     Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
     WaitFrames(40);
-    Audio_PlayCue(0xa4);
+    Audio_PlayCue(164);
     WaitFrames(100);
     Shop_InitEffectFar();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();

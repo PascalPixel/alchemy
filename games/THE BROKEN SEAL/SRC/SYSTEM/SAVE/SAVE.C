@@ -67,7 +67,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     s32 i;
     s32 y;
 
-    work = Runtime_AllocateHeapBlock(55, 0xa70);
+    work = Runtime_AllocateHeapBlock(55, 2672);
     save = *(gWorkSlot + HEAP_SLOT_SAVE);
     status = NULL;
     djinn = NULL;
@@ -120,7 +120,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     }
 
     zero = 0;
-    Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
+    Dma_Set(&zero, work, 0x85000000 | (2672 / 4), REG_DMA3);
     Scheduler_ScheduleCallbackAAfterFrames();
     list = UiWindow_Create(1, 2, 28, 7, 2);
     summary = save->summary;
@@ -272,7 +272,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     s32 tile;
     struct RenderOutput *anchor;
 
-    work = Runtime_AllocateHeapBlock(55, 0xa70);
+    work = Runtime_AllocateHeapBlock(55, 2672);
     save = *(gWorkSlot + HEAP_SLOT_SAVE);
     status = NULL;
     djinn = NULL;
@@ -328,7 +328,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     }
 
     zero = 0;
-    Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
+    Dma_Set(&zero, work, 0x85000000 | (2672 / 4), REG_DMA3);
     list = UiWindow_Create(1, 2, 28, 7, 2);
 
     for (i = 0, summary = save->summary; i < 3; i++, summary++) {

@@ -96,13 +96,13 @@ s32 Battle_RunEncounter(s32 enemy_group)
 
     camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
     battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleSession));
-    owner_states = Runtime_AllocateBlock(54, 0x7c8);
+    owner_states = Runtime_AllocateBlock(54, 1992);
     transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
-    Runtime_AllocateBlock(11, 0x280);
+    Runtime_AllocateBlock(11, 640);
     target = camera->pos;
     /* FAKEMATCH: the setup's zero held in result, a global pseudo, so global allocation gives it r7 as listed. */
     result = 0;
-    Iwram_ClearWords(owner_states, 0x7c8);
+    Iwram_ClearWords(owner_states, 1992);
     Scheduler_ResetTaskTable();
     transition->frames = result;
     transition->target_yaw = 0x2000;
@@ -121,8 +121,8 @@ s32 Battle_RunEncounter(s32 enemy_group)
     display = Runtime_AllocateBlock(37, sizeof(struct BattleDisplayWork));
     Dma3Fill(fill, display, sizeof(struct BattleDisplayWork));
     battle->background = Event_GetSpecialValueFar();
-    Runtime_AllocateBlock(4, 0xe00);
-    Runtime_AllocateBlock(3, 0x600);
+    Runtime_AllocateBlock(4, 3584);
+    Runtime_AllocateBlock(3, 1536);
     ObjectSystem_InitializeFar(4);
     if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) != 0)
         UiWork_InitializeFar(1);
@@ -158,13 +158,13 @@ s32 Battle_RunEncounter(s32 enemy_group)
         }
         battle->link_side = (REG_SIOCNT << 26) >> 30;
         dest = gBattleOwnerStates;
-        for (pos = 0; pos <= 0x7c7; pos++)
+        for (pos = 0; pos <= 1991; pos++)
             *dest++ = gActorSpriteSlots[pos];
         object = GameFlag_GetByteFar(0x3f0);
         BattleParty_AssignMemberSlots();
         battle->battle_type = 0;
     }
-    Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 3199);
 
     cue = gGameState.scene_cue;
     if (cue != 0) {
@@ -209,7 +209,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     BattlePres_RunEntryTransition(object, enemy_group);
     transition->flag = 0;
     gCpuLoadDisplayEnabled = 0;
-    Scheduler_AddOrUpdateCallback(BattleActor_UpdateSpritePriorities, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleActor_UpdateSpritePriorities, 3200);
 
     for (;;) {
         Battle_ReservedNoOp9B2C();
@@ -221,7 +221,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
         transition->target_yaw = 0x2800;
         transition->frames = 60;
         UiWindow_DrawPartyStatusContentsFar(battle->party_status_mode);
-        Iwram_ClearWords(battle->actions, 0x140);
+        Iwram_ClearWords(battle->actions, 320);
         Resource_ResetEntry(battle->prompt_slot);
         if (GameFlag_IsSet(FLAG_AUTO_BATTLE) == 0) {
             Runtime_GetRemainingIwram();
@@ -336,7 +336,7 @@ interrupted:
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);
     Blend_WaitForTransition();
-    result = 0x3e7;
+    result = 999;
 
 finished:
     BattleParty_ResetActiveRuntimeFields();
@@ -393,8 +393,8 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
         if (GameFlag_TestFar(0x16C) != 0) {
             entry_limit = 3;
         }
-        id = 0x80;
-        entry_limit += 0x80;
+        id = 128;
+        entry_limit += 128;
         for (; id < entry_limit; id += 1) {
             if (Owner_GetStateFar(id)->status_12a != 0) {
                 *output = id;
@@ -451,8 +451,8 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         }
     }
     if (side_mask & BATTLE_SIDE_ENEMIES) {
-        remaining = 0x80;
-        enemy_limit = enemy_capacity + 0x80;
+        remaining = 128;
+        enemy_limit = enemy_capacity + 128;
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetStateFar(remaining);

@@ -29,7 +29,7 @@ s32 Resource_LoadByMode(s32 mode, s32 value)
         result = Resource_FindFreeEntry();
         if (result == VRAM_CACHE_ENTRY_COUNT)
             return -1;
-        UiIcon_CopyResourceToSlot(value, 0x1a, result);
+        UiIcon_CopyResourceToSlot(value, 26, result);
         break;
     case 9:
         result = Resource_FindFreeEntry();
@@ -112,8 +112,8 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s3
     node->slot = src;
     node->tile = tile;
     node->kind = kind;
-    node->scale = 0x100;
-    node->scale_end = 0x100;
+    node->scale = 256;
+    node->scale_end = 256;
 
     obj = &node->sprite;
     obj->mode = 0;

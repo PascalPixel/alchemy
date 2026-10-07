@@ -46,7 +46,7 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control)
             *(volatile s16 *)(0x06003800 + offset) = pair;
         }
         for (col = 0; col != 8; col++, offset += 2) {
-            *(volatile u16 *)(0x06003800 + offset) = 0xf0f;
+            *(volatile u16 *)(0x06003800 + offset) = 3855;
         }
     }
 }

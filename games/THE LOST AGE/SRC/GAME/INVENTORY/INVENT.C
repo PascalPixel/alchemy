@@ -16,7 +16,7 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 
         while (cnt <= 89) {
             WaitFrames(1);
-            if (value != anim[0x18]) {
+            if (value != anim[24]) {
                 break;
             }
             cnt++;

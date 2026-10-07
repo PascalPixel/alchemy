@@ -93,7 +93,7 @@ void Object_EffectSpawnCallback(void)
         height = other;
     if (height > 0 && height > floor) {
         ((u32 *)mark)[1] = 0x40000800;
-        ((u32 *)mark)[2] = 0x400;
+        ((u32 *)mark)[2] = 1024;
         mark->priority = 0;
         mark->tile = tile;
         mark->mode = 1;
@@ -130,12 +130,12 @@ void BattleFx_StartFadeOverlay(void *object)
     s32 value;
 
     work = (u32 *)Runtime_AllocateBlock(36, 28);
-    tiles = Runtime_AllocateHeapBlock(14, 0x400);
+    tiles = Runtime_AllocateHeapBlock(14, 1024);
     fill = 0x11111111;
     Dma_Set((const void *)&fill, tiles, 0x85000080, REG_DMA3);
-    VramBlock_LoadCached(94, 0x200, tiles);
+    VramBlock_LoadCached(94, 512, tiles);
     Runtime_ReleaseHeapBlock(14);
-    Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
+    Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 3200);
     /* FAKEMATCH: the blend values pass through an int and one register pointer so GCC builds them with mov and steps the address. */
     value = 0x3f9e;
     blend = &REG_BLDCNT;

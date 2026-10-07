@@ -29,9 +29,9 @@ void Audio_PlayCue(s32 sound_id);
 extern u8 gMapCellBuffer[];
 
 struct StepOwner {
-    u8 unknown_000[0x38];
+    u8 unknown_000[56];
     s16 hp;
-    u8 unknown_03a[0x131 - 0x3a];
+    u8 unknown_03a[305 - 58];
     u8 poison;
 };
 

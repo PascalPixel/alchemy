@@ -50,7 +50,7 @@ void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed)
         player->lock++;
         player->fade_counter = speed;
         player->fade_period = speed;
-        player->fade_volume = 0x100;
+        player->fade_volume = 256;
         player->lock = SOUND_LOCK;
     }
 }
@@ -235,7 +235,7 @@ void MusicPlayer_FadeOutPause(struct SoundPlayer *player, u16 speed)
         player->lock++;
         player->fade_counter = speed;
         player->fade_period = speed;
-        player->fade_volume = 0x101;
+        player->fade_volume = 257;
         player->lock = SOUND_LOCK;
     }
 }
@@ -263,7 +263,7 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
                 AudioCommand_InvokeSlot35(track);
                 track->flags = SOUND_TRACK_ACTIVE;
                 track->bend_range = 2;
-                track->volume_scale = 0x40;
+                track->volume_scale = 64;
                 track->lfo_speed = 22;
                 track->voice.kind = 1;
             }

@@ -64,7 +64,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     REG_BG2X = (64 - first.x) << 8;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     rows = ShatterRocks_RockCounts[work->effect->variant];
     for (i = 0; i != rows; i++) {
         rock = &work->particles[i];
@@ -96,7 +96,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
                 for (j = 0; j != 21; j++) {
                     shard = &((struct EffectStep *)Ram_MapCellBuffer)[i * 21 + j];
                     cell = (j % 5) * 3 + shard->variant / 96 % 3;
-                    blit(canvas, work->sheet + ShatterRocks_ShardCells[cell] + 0x83c,
+                    blit(canvas, work->sheet + ShatterRocks_ShardCells[cell] + 2108,
                         HI(shard->x) - ((width = ShatterRocks_ShardWidths[cell]) >> 1),
                         HI(shard->y) - ((height = ShatterRocks_ShardHeights[cell]) >> 1),
                         width, height);

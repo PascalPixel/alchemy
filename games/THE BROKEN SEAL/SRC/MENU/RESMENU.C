@@ -109,7 +109,7 @@ void AffineEffect_UpdateFrame(void)
         buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
-        window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
+        window = (struct WindowBuffer *)(buffers + buffers[1337] * 644);
         x = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + (x + span) + 23;
@@ -143,7 +143,7 @@ void AffineEffect_UpdateFrame(void)
         buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
-        window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
+        window = (struct WindowBuffer *)(buffers + buffers[1337] * 644);
         x = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + (x + span) + 23;
@@ -178,7 +178,7 @@ void *AffineEffect_InitializeWork(void)
     work = Runtime_AllocateBlock(58, 152);
     zero = 0;
     Dma_Set(&zero, work, 0x85000026, REG_DMA3);
-    Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 0xc76);
+    Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 3190);
     return work;
 }
 
@@ -199,7 +199,7 @@ void Menu_EndResourceSelection(void)
         Resource_ResetEntry(work->entries[i].slot);
         i += 1;
     }
-    Runtime_ReleaseHeapBlock(0x3A);
+    Runtime_ReleaseHeapBlock(58);
     WaitFrames(1U);
 }
 

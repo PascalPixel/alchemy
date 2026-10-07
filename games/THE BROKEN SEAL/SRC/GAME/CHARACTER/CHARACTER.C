@@ -79,7 +79,7 @@ void Owner_RefreshAndResetZero(void)
 void *Trade_GetOfferState(s32 arg0)
 {
     if (arg0 != 0) {
-        return Owner_GetState(0x83);
+        return Owner_GetState(131);
     }
     return &gGameState.unknown_008[4];
 }
@@ -115,8 +115,8 @@ void *Owner_GetState(u32 owner)
         unit = &states[owner];
         return unit;
     }
-    if (owner - 0x80 < 6 && gBattleOwnerStates != NULL) {
-        unit = &gBattleOwnerStates[owner - 0x80];
+    if (owner - 128 < 6 && gBattleOwnerStates != NULL) {
+        unit = &gBattleOwnerStates[owner - 128];
         return unit;
     }
     return NULL;
@@ -127,7 +127,7 @@ const u8 *Owner_GetRecord(s32 selector)
     u32 record_index;
 
     record_index = selector - 8;
-    if (record_index > 0xF9U) {
+    if (record_index > 249U) {
         record_index = 0;
     }
     return (const u8 *)&Enemy_Definitions[record_index];
@@ -555,7 +555,7 @@ extern u8 GameFlagBytes[];
 extern u8 gSceneState[];
 
 struct SceneStateTail {
-    u8 unknown_000[0x100];
+    u8 unknown_000[256];
     u32 play_time;
     u8 unknown_104;
 };
@@ -575,7 +575,7 @@ void GameState_InitDefaults(void)
     START_DMA(&zero, GameFlagBytes, 0x85000080);
     ((struct SceneStateTail *)gSceneState)->unknown_104 = 0xff;
     zero = 0;
-    START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
+    START_DMA(&zero, gSaveStamp + 28, 0x85000298);
     Owner_InitRecords();
     gGameState.a_keys = KEY_A;
     gGameState.b_keys = KEY_B;

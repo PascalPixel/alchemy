@@ -27,7 +27,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
     for (;;) {
         c = *text++;
         if (c > 0xff)
-            c = 0x40;
+            c = 64;
         if (c == 0)
             break;
 #else
@@ -94,10 +94,10 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 #endif
             }
 #else
-            if (*text == 0xde) {
+            if (*text == 222) {
                 c |= 0x4000;
                 text++;
-            } else if (*text == 0xdf) {
+            } else if (*text == 223) {
                 c |= 0x8000;
                 text++;
             }

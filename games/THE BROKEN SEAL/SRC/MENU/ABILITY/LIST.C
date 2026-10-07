@@ -65,15 +65,15 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     }
 
 #if EDITION_INTERNATIONAL
-    Menu_SetPageIcons(5, first_entry, window, 0x70, 0x22);
+    Menu_SetPageIcons(5, first_entry, window, 112, 34);
 #else
-    Menu_SetPageIcons(5, first_entry, window, 0x78, 0x22);
+    Menu_SetPageIcons(5, first_entry, window, 120, 34);
 #endif
     Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 15);
 #if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x60, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 96, 0);
 #else
-    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x48, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 72, 0);
 #endif
 
     row = 0;

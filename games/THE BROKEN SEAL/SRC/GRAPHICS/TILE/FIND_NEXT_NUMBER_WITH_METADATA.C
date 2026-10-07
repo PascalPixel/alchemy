@@ -78,7 +78,7 @@ void Ui_RunIconMonitor(void)
     ent[0].on = 1;
     gDebugMode = 2;
     REG_BLDCNT = 0x3F42;
-    PLTT_BACKDROP = 0x01E0;
+    PLTT_BACKDROP = 480;
     REG_DISPCNT = 0x1140;
     Blend_SetDarkenTarget0(1);
 

@@ -81,9 +81,9 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
     Vector_AddPolarOffset(drift_magnitude, Random16(), &position);
 
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    object = Object_Spawn(0x2a1, position.x, position.y, position.z);
+    object = Object_Spawn(673, position.x, position.y, position.z);
 #else
-    object = Object_Spawn(0x11d, position.x, position.y, position.z);
+    object = Object_Spawn(285, position.x, position.y, position.z);
 #endif
     if (object != 0) {
         object->mode_55 = 2;

@@ -46,10 +46,10 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
 
     state = gMenuWork;
     i = 0;
-    param = 0xA8;
+    param = 168;
     slot = state->category_icons;
     do {
-        obj = RenderOutput_CreateFromResourceFar(2, i, (struct RenderInput *)resource, 0xF8, param);
+        obj = RenderOutput_CreateFromResourceFar(2, i, (struct RenderInput *)resource, 248, param);
         i += 1;
         *slot = obj;
         slot += 1;

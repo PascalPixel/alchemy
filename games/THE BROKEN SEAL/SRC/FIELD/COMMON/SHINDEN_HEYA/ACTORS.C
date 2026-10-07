@@ -157,8 +157,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
     Engine_EventWait(10);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
+    Actor_ShowEmote(0, 258, 0);
+    Actor_ShowEmote(1, 258, 0);
     Engine_EventWait(60);
     Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
     Engine_EventWait(10);
@@ -187,10 +187,10 @@ void FieldScene_RunPairedActorChoreography(void)
     Object_GetById(12)->update = NULL;
     Object_GetById(8)->update = NULL;
     Engine_ActorStartRepeatedMotion(8, 2);
-    Engine_ActorShowEmote(8, 0x100, 0);
+    Engine_ActorShowEmote(8, 256, 0);
     Engine_EventWait(60);
     Engine_ActorSetAnimation(8, 0);
-    Engine_ActorShowEmote(0, 0x102, 0);
+    Engine_ActorShowEmote(0, 258, 0);
     Engine_EventWait(60);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
     Engine_EventWait(10);
@@ -312,9 +312,9 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         spr->palette = 0;
         obj->velocity_y = 0x20000;
         ((struct FieldEffect *)obj)->velocity_y = 0x4000;
-        buf = Runtime_AllocateHeapBlock(17, 0x608);
+        buf = Runtime_AllocateHeapBlock(17, 1544);
         Ui_PrepareTransferForItem(item);
-        VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
+        VramBlock_LoadCached(spr->vram_block, 128, buf + 1024);
         Runtime_ReleaseHeapBlock(17);
         /* FAKEMATCH: this initializer order keeps the sprite zero in r5 instead of r3. */
         for (i = 0, flag = &obj->motion_flags, z = 0; i < 60; i++) {

@@ -13,7 +13,7 @@
 
 void SceneState_SetValues31_2_4(void)
 {
-    BattleFx_RunPageEffectForSlot(0x1F, 2, 4);
+    BattleFx_RunPageEffectForSlot(31, 2, 4);
 }
 
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
@@ -295,7 +295,7 @@ void SceneDialogue_RunActor27Message1fa3(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiInnsFullStaying);
-    Engine_EventShowMessage(0x1B, 0);
+    Engine_EventShowMessage(27, 0);
     Engine_EventEnd();
 }
 
@@ -428,7 +428,7 @@ void FieldScene_RunScene3b5SequenceA(void)
     s32 record;
 
     Engine_EventBegin();
-    Actor_WalkToAndWait(0, 0x130, 0x138);
+    Actor_WalkToAndWait(0, 304, 312);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorFaceDirection(28, 0x4000, 0);
     Engine_EventWait(20);
@@ -438,8 +438,8 @@ void FieldScene_RunScene3b5SequenceA(void)
         gEventWork->message++;
         Engine_EventShowMessage(28, 0);
         Actor_SetSpeed(28, 0x10000, 0x8000);
-        Actor_WalkToAndWait(28, 0x140, 0x130);
-        Actor_WalkToAndWait(28, 0x13c, 0x148);
+        Actor_WalkToAndWait(28, 320, 304);
+        Actor_WalkToAndWait(28, 316, 328);
         Engine_ActorFaceDirection(28, 0xa000, 0);
         Engine_GameFlagSet(0x8c1);
     } else {
@@ -479,7 +479,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_SetPosition(32, 0x5f0000, 0x280000);
     Engine_ActorWalkTo(29, 72, 248);
     Engine_ActorWalkTo(30, 56, 248);
-    Actor_WalkToAndWait(0, 64, 0x108);
+    Actor_WalkToAndWait(0, 64, 264);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorWaitForMove(29);
     Engine_ActorSetAnimation(29, 1);
@@ -488,8 +488,8 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorFaceActor(29, 0, 0);
     Engine_ActorFaceActor(30, 0, 0);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(29, 0x102);
-    Actor_SetAttachedEffect(30, 0x102);
+    Actor_SetAttachedEffect(29, 258);
+    Actor_SetAttachedEffect(30, 258);
     Engine_ActorStartRepeatedMotion(29, 2);
     Engine_ActorRunRepeatedMotion(30, 2);
     Engine_EventWait(20);

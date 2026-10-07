@@ -54,10 +54,10 @@ void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
 enum PromptMessage {
-    MSG_ROBIN_CHECKED_CHEST = 0x929,
-    MSG_ROBIN_CHECKED_BARREL = 0x92b,
-    MSG_BUT_CHEST_WAS_EMPTY = 0x949,
-    MSG_BUT_DIDNT_FIND_ANYTHING = 0x94b,
+    MSG_ROBIN_CHECKED_CHEST = 2345,
+    MSG_ROBIN_CHECKED_BARREL = 2347,
+    MSG_BUT_CHEST_WAS_EMPTY = 2377,
+    MSG_BUT_DIDNT_FIND_ANYTHING = 2379,
     MSG_IF_ONLY_THESE_ROCKS_WERE = 0x1243,
     MSG_OK_MISTER_LET_ME_SEE = 0x1245,
     MSG_MISTER_FUN_SEE_STRANGE_NEW = 0x1247,
@@ -439,7 +439,7 @@ void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 void FieldScene_RunFlag856DialogueBranch(void)
 {
     s32 g;
-    g = 0x851;
+    g = 2129;
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x856) != 0) {
         if (Engine_GameFlagIsSet(g) == 0) {

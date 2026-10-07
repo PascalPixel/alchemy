@@ -9,7 +9,7 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
     Korosseo_ModeTaskParam = (u16)(parameter << 4);
 
     {
-        s32 budget = 0xc80;
+        s32 budget = 3200;
         s32 task = (s32)Korosseo_UpdateModeTask;
         Engine_TaskAddCallback(task, budget);
     }
@@ -47,7 +47,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Engine_EventWait(30);
-        Engine_AudioPlayCue(0x59);
+        Engine_AudioPlayCue(89);
         Korosseo_LoadPortrait(0);
         ColossoLogRollingStage_InitializeModeTask(1, 0);
         Engine_EventWait(120);
@@ -55,7 +55,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
         return;
     }
 
-    Engine_AudioPlayCue(0xf7);
+    Engine_AudioPlayCue(247);
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -64,7 +64,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
     Engine_EventWait(30);
-    Engine_AudioPlayCue(mode + 0x5a);
+    Engine_AudioPlayCue(mode + 90);
     Korosseo_LoadPortrait(mode);
     ColossoLogRollingStage_InitializeModeTask(1, 0);
     Engine_EventWait(120);
@@ -76,21 +76,21 @@ check_transition:
     if (AudioCommand_GetStateByte() != 0)
         goto wait_transition;
 
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Korosseo_LoadPortrait(5);
     ColossoLogRollingStage_InitializeModeTask(2, 0);
-    Engine_AudioPlayCue(0xec);
+    Engine_AudioPlayCue(236);
     Engine_EventWait(60);
     ColossoLogRollingStage_InitializeModeTask(2, 1);
-    Engine_AudioPlayCue(0xec);
+    Engine_AudioPlayCue(236);
     Engine_EventWait(60);
     Korosseo_LoadPortrait(6);
     ColossoLogRollingStage_InitializeModeTask(2, 0);
-    Engine_AudioPlayCue(0xec);
+    Engine_AudioPlayCue(236);
     Engine_EventWait(60);
     Korosseo_LoadPortrait(7);
     ColossoLogRollingStage_InitializeModeTask(4, 0);
-    Engine_AudioPlayCue(0xed);
+    Engine_AudioPlayCue(237);
     Audio_PlayCueFromEventWork();
     Engine_EventEnd();
     Engine_GameFlagSet(0x123);
@@ -125,13 +125,13 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
         Engine_EventWait(a0 * 60 + 60);
         kind = 8;
     }
-    Engine_ActorShowEmote(kind, 0x105, 0);
+    Engine_ActorShowEmote(kind, 261, 0);
     while (AudioCommand_GetStateByte()!= 0) {
         Engine_TaskWait(1);
     }
     Engine_AudioPlayCue(19);
     Engine_EventWait(30);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
 }

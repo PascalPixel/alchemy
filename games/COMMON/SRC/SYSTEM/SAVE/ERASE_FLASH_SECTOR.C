@@ -37,13 +37,13 @@ u16 EraseFlashSector(u16 sector)
     target = (volatile u8 *)((sector << chip->sectorShift) + 0x0E000000);
 
     command = (volatile u8 *)0x0E005555;
-    *command = 0xAA;
+    *command = 170;
     unlock = (volatile u8 *)0x0E002AAA;
-    *unlock = 0x55;
-    *command = 0x80;
-    *command = 0xAA;
-    *unlock = 0x55;
-    *target = 0x30;
+    *unlock = 85;
+    *command = 128;
+    *command = 170;
+    *unlock = 85;
+    *target = 48;
 
     CopyFlashReadRoutineToRam(savedCode);
 

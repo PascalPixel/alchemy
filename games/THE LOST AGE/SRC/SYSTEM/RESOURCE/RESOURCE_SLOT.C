@@ -76,7 +76,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
         for (; text < end; text++) {
             u32 c = *text;
 
-            if (c <= 0xdf) {
+            if (c <= 223) {
                 c = table[c];
                 *text = c;
             }

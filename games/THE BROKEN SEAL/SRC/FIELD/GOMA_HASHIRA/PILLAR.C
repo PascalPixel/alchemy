@@ -105,7 +105,7 @@ void FieldScene_RunPillarSequence(void)
         Engine_ActorSetPosition(11, 0x19e0000, 0xf00000);
         Battle_WaitMode0(10);
         base = (s32)FieldScene_RunPrimarySequence;
-        Engine_TaskAddCallback(base, 0xc80);
+        Engine_TaskAddCallback(base, 3200);
         Audio_PlayCue(141);
         ObjectMotion_OffsetPositionAndResetMotion(9, 1, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
@@ -118,8 +118,8 @@ void FieldScene_RunPillarSequence(void)
         *(s32 *)(r5 + 72) = 0x9999;
         Battle_WaitMode0(3);
         ObjectMotion_SetSpeedParameters(9, 0x28000, 0x4000);
-        Audio_PlayCue(0x120);
-        Engine_ActorSetDestination(9, 0x1a0, 200);
+        Audio_PlayCue(288);
+        Engine_ActorSetDestination(9, 416, 200);
         r6 = (s32)Object_GetById(9);
         Engine_ActorSetSpriteFlags(r6, 0);
         Engine_TaskRemoveCallback(base);

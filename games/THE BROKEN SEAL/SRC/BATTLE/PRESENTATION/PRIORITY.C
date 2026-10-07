@@ -81,7 +81,7 @@ s32 BattlePres_BuildOpponentEntries(
             if (unit->sleep != 0 || unit->stun != 0) {
                 entry->command = 8;
                 entry->parameter = 0;
-                entry->target = 0x100;
+                entry->target = 256;
             } else {
                 BattleCommand_SelectAutomatic(entry, 0);
             }

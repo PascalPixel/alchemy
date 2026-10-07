@@ -22,7 +22,7 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
     s32 index;
     WordCopy copy;
 
-    phase = frame * 0x400;
+    phase = frame * 1024;
     red_offset = (Trig_Sin(phase + red_phase) * 16) >> 15;
     green_offset = (Trig_Sin(phase + green_phase) * 16) >> 15;
     blue_offset = (Trig_Sin(phase + blue_phase) * 16) >> 15;

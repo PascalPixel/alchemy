@@ -108,14 +108,14 @@ void Clear_LoadBackground(void)
     Engine_BlendSetDarkenTarget16(0);
     REG_BG2CNT = 0x681;
     gBgScroll[5] = 0;
-    blank = 0x1ff;
+    blank = 511;
     res = Engine_ResourceGetTableEntry(id);
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
-    res += 0x1c0;
+    res += 448;
     DecodeBackground(res);
     Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
     map = (u16 *)0x06003000;
-    tile = 0x1a0;
+    tile = 416;
     y = 0;
 col:
     {
@@ -250,16 +250,16 @@ void Clear_NameEntryCharacter(s32 cell, u8 *text)
     else if (cell <= 44)
         text[0] = cell - 47;
     else if (cell == 45)
-        text[0] = 0x86;
+        text[0] = 134;
     else {
         if (cell <= 55)
             text[0] = cell + 104;
         else if (cell == 56)
-            text[0] = 0xe0;
+            text[0] = 224;
         else if (cell == 57)
-            text[0] = 0xe3;
+            text[0] = 227;
         else if (cell == 58)
-            text[0] = 0xe4;
+            text[0] = 228;
         else
             text[0] = cell - 81;
         text[1] = TEXT_MARK_DAKUTEN;

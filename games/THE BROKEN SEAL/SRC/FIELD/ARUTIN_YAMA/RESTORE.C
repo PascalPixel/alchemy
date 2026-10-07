@@ -316,7 +316,7 @@ void ArutinYama_RestoreAreaSeven(void)
             record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
-    Engine_TaskAddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
+    Engine_TaskAddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 3200);
     if (GameFlag_IsSet(0x327) != 0) {
         Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
         Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
@@ -442,11 +442,11 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
             break;
         }
         leaf->scale_x += 0x1999;
-        leaf->scale_y -= 0xccc;
+        leaf->scale_y -= 3276;
     } else {
         leaf->z.fixed += 0x13333;
-        leaf->scale_x += 0x7ae;
-        leaf->scale_y += 0x7ae;
+        leaf->scale_x += 1966;
+        leaf->scale_y += 1966;
     }
     if ((u32)((s16)leaf->timer * Engine_RandomNext()) >> 16 == 0)
         ObjectGroup_SetChildValue(leaf, 7);
@@ -483,7 +483,7 @@ void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
     ArutinYama_LeafMode = facing;
 
     BattleFx_SetQueuedSoundAndPlay(170);
-    Engine_TaskAddCallback(ArutinYama_SpawnLeaf, 0xc80);
+    Engine_TaskAddCallback(ArutinYama_SpawnLeaf, 3200);
 }
 
 void FieldScene_RunScene3a4SequenceG(void)
@@ -514,7 +514,7 @@ void FieldScene_RunScene3a4SequenceG(void)
             Engine_ObjectSetScript(spark, (const s32 *)ArutinYama_SparkScript);
             spark->velocity_x = (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16;
             spark->velocity_y = 0x80000;
-            spark->velocity_z = ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300;
+            spark->velocity_z = ((u32)(Engine_RandomNext() * 1536) >> 16) - 768;
         }
     }
 }
@@ -728,29 +728,29 @@ void RunEventScript01(void)
     Engine_EventSetMessage((s32)MsgArutinGuardianStatuesWereCreatedLong);
     Event_ShowMessage(ACTOR_MIA, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 60);
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 40);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 0);
+    Actor_ShowEmote(ACTOR_MIA, 257, 40);
     Audio_PlayCue(190);
     Actor_SetChildValue(8, 7);
     Engine_EventWait(10);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 256, 0);
+    Actor_ShowEmote(ACTOR_MIA, 256, 40);
     Audio_PlayCue(103);
     update = (s32)SceneActor_SetActor8ModeByCounterBit;
-    Call2(Engine_TaskAddCallback, update, 0xc80);
+    Call2(Engine_TaskAddCallback, update, 3200);
     celebrate = (s32)ArutinYama_CelebrateScript;
     Engine_ActorEnableActionCallback(9, celebrate);
     Object_SetActionCallbackAndRefreshById(8, celebrate);
@@ -893,7 +893,7 @@ void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
     n = 0;
     Engine_AudioPlayCue(184);
     while (n < 16) {
-        angle += 0x400;
+        angle += 1024;
         p[0].fixed = x;
         p[2].fixed = z;
         Vector_AddPolarOffset(0x180000, angle, p);
@@ -928,7 +928,7 @@ void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
     n = 0;
     Engine_AudioPlayCue(184);
     while (n < 16) {
-        angle -= 0x400;
+        angle -= 1024;
         p[0].fixed = x;
         p[2].fixed = z;
         Vector_AddPolarOffset(0x180000, angle, p);
@@ -945,7 +945,7 @@ void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
 {
     record = (u16 *)((char *)record + 102);
     {
-        s32 value = 0x21;
+        s32 value = 33;
 
         *record = value;
     }
@@ -1030,7 +1030,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
     Camera_SetSpeed(0x100000, 0x20000);
     object->facing = heading;
     object->speed = 0x20000;
-    object->acceleration = 0xccc;
+    object->acceleration = 3276;
     zero.v = 0;
     object->paused = zero.v;
     object->timer = object->y.fixed / 0x10000;
@@ -1093,5 +1093,5 @@ void ArutinYama_StartPaletteAnim(void)
     zero.v = 0;
     ArutinYama_PaletteStep = zero.v;
     ArutinYama_PaletteHold = zero.v;
-    Engine_TaskAddCallback((s32)&ArutinYama_StepPaletteAnim, 0xc80);
+    Engine_TaskAddCallback((s32)&ArutinYama_StepPaletteAnim, 3200);
 }

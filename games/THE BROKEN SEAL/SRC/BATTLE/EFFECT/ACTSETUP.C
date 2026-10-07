@@ -69,13 +69,13 @@ struct ArcObject {
     s32 terrain_height;
     s32 scale_x;
     s32 scale_y;
-    u8 pad20[0x23 - 0x20];
+    u8 pad20[35 - 32];
     u8 priority_flags;
-    u8 pad24[0x50 - 0x24];
+    u8 pad24[80 - 36];
     struct ArcSprite *sprite;
     u8 pad54[1];
     u8 motion_flags;
-    u8 pad56[0x64 - 0x56];
+    u8 pad56[100 - 86];
     u16 counter;
     u8 pad66[2];
     struct ArcObject *linked_object;
@@ -96,7 +96,7 @@ struct EffectOrigin {
 };
 
 struct BattleSceneState {
-    u8 padding000[0xcc0];
+    u8 padding000[3264];
     u16 unknown_cc0;
     u8 padding0cc2[4];
     s8 running;
@@ -180,7 +180,7 @@ void BattleFx_UpdateAllEffectSlots(void)
     s32 cnt;
 
     p = (s32)gEffectWork->slots;
-    cnt = 0x17;
+    cnt = 23;
     do {
         cnt -= 1;
         EffectSlot_Update((struct EffectSlot *)p);
@@ -210,7 +210,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     running = scene->running;
     if (running != 0)
         return;
-    work->free_blocks = 0x200 - ResourceTable_CountFreeBlocks();
+    work->free_blocks = 512 - ResourceTable_CountFreeBlocks();
     work->mode = mode;
     work->visible = 1;
     work->enabled = 1;
@@ -228,7 +228,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
         scene->unknown_cc0 = running;
     work->tile_slot = Resource_FindFreeEntry();
     VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 3200);
 }
 
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)

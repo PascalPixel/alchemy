@@ -567,12 +567,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 plan->target_results[i] = Battle_HitCheck(command->unit_id, plan->target_ids[i],
                     ability->damage_class, ability->effect, 100);
         }
-        if (action >= 0 && action <= 0x206) {
+        if (action >= 0 && action <= 518) {
             plan->presentation_flags = Battle_ActionFlags[action];
             if (plan->target_adjustments[0] > 1)
                 plan->presentation_flags = Battle_ActionFlags[action] + (plan->target_adjustments[0] << 12) - 0x1000;
         }
-        if ((action >= 0 && action <= 0x205) && Battle_ActionStatus[action] != 0)
+        if ((action >= 0 && action <= 517) && Battle_ActionStatus[action] != 0)
             plan->outcome = Battle_ActionStatus[action];
         else if (Ability_CheckStatusOrSpecialId(action))
             plan->outcome = 3;

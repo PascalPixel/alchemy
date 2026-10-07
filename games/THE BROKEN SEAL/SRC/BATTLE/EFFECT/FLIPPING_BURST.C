@@ -72,7 +72,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = heap_cache[7];
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     first = GetBattleObjectSlotFar(work->effect->actor);
     second = GetBattleObjectSlotFar(work->effect->actors[0]);
     object = first->object;
@@ -204,7 +204,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
     REG_BG2X = (64 - position.x) << 8;
     for (i = 0; i != 64; i++) {
@@ -240,7 +240,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
                 REG_BLDCNT = 0;
         }
         if (frame > 103) {
-            REG_BLDALPHA = (0x78 - frame) | 0x1000;
+            REG_BLDALPHA = (120 - frame) | 0x1000;
             if (frame == 104)
                 REG_BLDCNT = 0x3f44;
         }
@@ -316,7 +316,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 
     work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(39, sizeof *work);
     canvas = (void *)Runtime_AllocateHeapBlock(40, 0x4000);
-    sheet = (u8 *)Runtime_AllocateHeapBlock(41, 0x60e);
+    sheet = (u8 *)Runtime_AllocateHeapBlock(41, 1550);
     camera = gCameraWork;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
@@ -359,7 +359,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     __asm__("");
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw.upper = gWorkSlot[46];
     work->effect->variant++;
@@ -373,7 +373,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
         EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &ground);
         REG_BG2X = (64 - ground.x) << 8;
         if (frame > 49)
-            REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
+            REG_BLDALPHA = (112 - frame * 2) | 0x1000;
         if (frame == 16)
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
         if (frame <= 55) {
@@ -408,7 +408,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
                 point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
                 point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
                 point[1] = fleck->y;
-                fleck->x += 0x400;
+                fleck->x += 1024;
                 fleck->y += 0x50000;
                 fleck->z += 64;
                 EffectPosition_ApplyBaseAndYOffset(point, &position);

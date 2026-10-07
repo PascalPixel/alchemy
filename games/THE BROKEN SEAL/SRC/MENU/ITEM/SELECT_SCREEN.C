@@ -23,9 +23,9 @@
 #define Link_DrawShiftedTilePairFar ((void (*)(void*))Link_DrawShiftedTilePairFar)
 
 struct AssetSelectionResult {
-    s32 unknown_000[0x60];
+    s32 unknown_000[96];
     u16 unknown_180;
-    u8 unknown_182[0x18];
+    u8 unknown_182[24];
     u16 unknown_19a;
 };
 
@@ -70,7 +70,7 @@ s32 RunAssetSelectionScreen(void)
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
 #endif
-    screen = (struct InventoryMenuState *)Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+    screen = (struct InventoryMenuState *)Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 2672);
     cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_MENU_CONTROL];
     ((struct ObjectSystemWork *)cache[0])->suspended = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);

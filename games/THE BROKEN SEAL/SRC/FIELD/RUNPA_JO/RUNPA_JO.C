@@ -131,7 +131,7 @@ void EV50_START(void)
 {
 
     OBJ_SPD(12, 0x10000, 0x8000);
-    Actor_SetDestination(12, 248, 0x178);
+    Actor_SetDestination(12, 248, 376);
     ObjectMotion_CommitCurrentPositionAndActivate(12);
     SE(215);
     WAIT(60);
@@ -171,9 +171,9 @@ void PlaceSceneObjectPairFromTableA(s32 table_index)
     s32 position_x = gRunpaJoPairTableA[table_index * 2];
     s32 position_z = gRunpaJoPairTableA[table_index * 2 + 1];
 
-    Engine_MapCopyCells(0, 0x4d, 1, 3, position_x, position_z);
-    Engine_MapCopyCells(1, 0x4d, 1, 1, position_x + 1, position_z);
-    Engine_MapCopyCells(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
+    Engine_MapCopyCells(0, 77, 1, 3, position_x, position_z);
+    Engine_MapCopyCells(1, 77, 1, 1, position_x + 1, position_z);
+    Engine_MapCopyCells(position_x, position_z - 48, 1, 1, position_x, position_z - 46);
 }
 
 void EV40_A(void)
@@ -236,9 +236,9 @@ void PlaceSceneObjectPairFromTableB(s32 table_index)
     s32 position_x = gRunpaJoPairTableB[table_index * 2];
     s32 position_z = gRunpaJoPairTableB[table_index * 2 + 1];
 
-    Engine_MapCopyCells(0x37, 0x79, 1, 3, position_x, position_z);
-    Engine_MapCopyCells(0x38, 0x79, 1, 1, position_x + 1, position_z);
-    Engine_MapCopyCells(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Engine_MapCopyCells(55, 121, 1, 3, position_x, position_z);
+    Engine_MapCopyCells(56, 121, 1, 1, position_x + 1, position_z);
+    Engine_MapCopyCells(position_x, position_z - 63, 1, 1, position_x, position_z - 62);
 }
 
 void EV40_D(void)
@@ -264,9 +264,9 @@ void PlaceSceneObjectPairFromTableC(s32 table_index)
     s32 position_x = gRunpaJoPairTableC[table_index * 2];
     s32 position_z = gRunpaJoPairTableC[table_index * 2 + 1];
 
-    Engine_MapCopyCells(1, 0x50, 1, 3, position_x, position_z);
-    Engine_MapCopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
-    Map_CopyCellAttributeRect(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Engine_MapCopyCells(1, 80, 1, 3, position_x, position_z);
+    Engine_MapCopyCells(2, 80, 1, 1, position_x + 1, position_z);
+    Map_CopyCellAttributeRect(position_x, position_z - 63, 1, 1, position_x, position_z - 62);
 }
 
 void EV40_C(void)
@@ -337,7 +337,7 @@ s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
         OBJ_MODE(actor_id, 2);
         started = 1;
     } else {
-        SE(0x7d);
+        SE(125);
         OBJ_MODE(actor_id, 5);
     }
     Engine_ObjectDispatchRelease(interaction);
@@ -364,7 +364,7 @@ void NoOpSceneCallbackD(void)
 void EV08_KAGI(void)
 {
 
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
+    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 264, 792);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     WAIT(10);
@@ -955,7 +955,7 @@ void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
     MES_SET(intruder);
     MES_PUT(a0, 0);
     WAIT(120);
-    OBJ_EMO(a0, 0x101, 60);
+    OBJ_EMO(a0, 257, 60);
     MES_SET((intruder + 1));
     MES_PUT(a0, 0);
     Engine_ActorRunRepeatedMotion(a0, 1);
@@ -1022,14 +1022,14 @@ void EV31_BANPEI(void)
     OBJ_MODE(13, 1);
     OBJ_MODE(14, 1);
     SE(113);
-    OBJ_EMO(12, 0x100, 0);
+    OBJ_EMO(12, 256, 0);
     WAIT(30);
     OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
     line = (s32)MsgRunpaWho3;
     MES_SET(line);
     MES_PUT(12, 0);
-    OBJ_EMO(13, 0x100, 0);
-    OBJ_EMO(14, 0x100, 0);
+    OBJ_EMO(13, 256, 0);
+    OBJ_EMO(14, 256, 0);
     OBJ_FACE(13, ACTOR_PARTY_LEADER, 0);
     OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
     OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
@@ -1139,14 +1139,14 @@ void EV51_MAIN(void)
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
     OBJ_MODE(ACTOR_PARTY_LEADER, 1);
     SE(113);
-    OBJ_EMO(21, 0x100, 0);
-    OBJ_EMO(13, 0x100, 60);
+    OBJ_EMO(21, 256, 0);
+    OBJ_EMO(13, 256, 60);
     OBJ_FACE(21, ACTOR_PARTY_LEADER, 0);
     OBJ_FACE(13, ACTOR_PARTY_LEADER, 0);
     msg = (s32)MsgRunpaWho2;
     MES_SET(msg);
     MES_PUT(13, 0);
-    OBJ_EMO(ACTOR_PARTY_LEADER, 0x102, 30);
+    OBJ_EMO(ACTOR_PARTY_LEADER, 258, 30);
     MES_SET(msg + 1);
     MES_PUT(13, 0);
     Engine_EventCloseScreen();
@@ -1177,7 +1177,7 @@ void ConfigureInteractionRegionC(void)
 void EV52_IDO(void)
 {
 
-    if (*(s16 *)(((u8*)gEventWork) + 0xcb8) != 0) {
+    if (*(s16 *)(((u8*)gEventWork) + 3256) != 0) {
         if (FLAG_CHK(0x947) == 0) {
             Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
             SE(188);
@@ -1195,7 +1195,7 @@ void EV52_IDO(void)
 void EV51_SUB(void)
 {
 
-    if (*(s16 *)(((u8*)gEventWork) + 0xcb8) != 0) {
+    if (*(s16 *)(((u8*)gEventWork) + 3256) != 0) {
         if (FLAG_CHK(0x948) == 0) {
             Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
             SE(188);
@@ -1291,16 +1291,16 @@ void RunpaJo_ActivateLeverTrap(void)
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
     SE(141);
     WAIT(80);
-    SE(0x120);
+    SE(288);
     WAIT(5);
     SE(145);
     Map_CopyCells(16, 75, 7, 4, 26, 55);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    OBJ_EMO(ACTOR_PARTY_LEADER, 0x100, 0);
-    OBJ_EMO(ACTOR_GERALD, 0x100, 0);
-    OBJ_EMO(ACTOR_IVAN, 0x100, 0);
-    OBJ_EMO(ACTOR_MIA, 0x100, 0);
-    OBJ_EMO(12, 0x100, 0);
+    OBJ_EMO(ACTOR_PARTY_LEADER, 256, 0);
+    OBJ_EMO(ACTOR_GERALD, 256, 0);
+    OBJ_EMO(ACTOR_IVAN, 256, 0);
+    OBJ_EMO(ACTOR_MIA, 256, 0);
+    OBJ_EMO(12, 256, 0);
     WAIT(60);
 }
 
@@ -1649,12 +1649,12 @@ void FieldScene_RunMainScriptSequence(void)
     script_a = (s32)MsgRunpaUhnnGetOff;
     MES_SET(script_a);
     MES_PUT(13, 0);
-    OBJ_EMO(ACTOR_GERALD, 0x101, 60);
+    OBJ_EMO(ACTOR_GERALD, 257, 60);
     MES_SET((script_a + 1));
     MES_PUT(ACTOR_GERALD, 0);
-    OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 1);
-    OBJ_EMO(ACTOR_IVAN, 0x101, 1);
-    OBJ_EMO(ACTOR_MIA, 0x101, 1);
+    OBJ_EMO(ACTOR_PARTY_LEADER, 257, 1);
+    OBJ_EMO(ACTOR_IVAN, 257, 1);
+    OBJ_EMO(ACTOR_MIA, 257, 1);
     WAIT(60);
     OBJ_FACE(12, 13, 0);
     WAIT(60);
@@ -1681,13 +1681,13 @@ void FieldScene_RunMainScriptSequence(void)
     Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
     MES_SET((script_a + 5));
     MES_PUT(ACTOR_IVAN, 0);
-    OBJ_EMO(ACTOR_MIA, 0x105, 0);
+    OBJ_EMO(ACTOR_MIA, 261, 0);
     OBJ_MODE(ACTOR_MIA, 4);
     WAIT(80);
     OBJ_MODE(ACTOR_MIA, 1);
     MES_SET((script_a + 6));
     MES_PUT(ACTOR_MIA, 0);
-    OBJ_EMO(12, 0x102, 65);
+    OBJ_EMO(12, 258, 65);
     Engine_ActorStartRepeatedMotion(12, 2);
     WAIT(100);
     MES_SET((script_a + 7));
@@ -1787,7 +1787,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_SetDestinationOffset(11, -24, 0);
     Actor_SetDestinationOffset(15, -24, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
-    SE(0x120);
+    SE(288);
     WAIT(60);
     OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
     OBJ_DIR(ACTOR_GERALD, 0xc000, 0);
@@ -1840,12 +1840,12 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(20);
     Engine_ActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
     WAIT(10);
-    OBJ_EMO(ACTOR_MIA, 0x101, 80);
+    OBJ_EMO(ACTOR_MIA, 257, 80);
     OBJ_FACE(ACTOR_MIA, 13, 0);
     OBJ_FACE(ACTOR_IVAN, 13, 0);
     MES_SET((script_b + 2));
     MES_PUT(ACTOR_MIA, 0);
-    OBJ_EMO(13, 0x102, 70);
+    OBJ_EMO(13, 258, 70);
     Engine_ActorStartRepeatedMotion(13, 2);
     WAIT(60);
     OBJ_MODE(13, 5);
@@ -1853,29 +1853,29 @@ void FieldScene_RunMainScriptSequence(void)
     MES_SET((script_b + 3));
     MES_PUT(13, 0);
     OBJ_MODE(13, 7);
-    OBJ_EMO(ACTOR_IVAN, 0x108, 40);
+    OBJ_EMO(ACTOR_IVAN, 264, 40);
     MES_SET((script_b + 4));
     MES_PUT(ACTOR_IVAN, 0);
     Engine_ActorSetAnimationAndWait(12, 3);
-    OBJ_EMO(ACTOR_GERALD, 0x103, 60);
+    OBJ_EMO(ACTOR_GERALD, 259, 60);
     OBJ_WALK(ACTOR_GERALD, 440, 208);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     OBJ_FACE(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     MES_SET((script_b + 5));
     MES_PUT(ACTOR_GERALD, 0);
     WAIT(20);
-    OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 0);
-    OBJ_EMO(ACTOR_IVAN, 0x101, 0);
-    OBJ_EMO(ACTOR_MIA, 0x101, 0);
-    OBJ_EMO(12, 0x101, 0);
+    OBJ_EMO(ACTOR_PARTY_LEADER, 257, 0);
+    OBJ_EMO(ACTOR_IVAN, 257, 0);
+    OBJ_EMO(ACTOR_MIA, 257, 0);
+    OBJ_EMO(12, 257, 0);
     WAIT(70);
     OBJ_FACE(ACTOR_GERALD, ACTOR_IVAN, 0);
-    OBJ_EMO(ACTOR_GERALD, 0x102, 75);
+    OBJ_EMO(ACTOR_GERALD, 258, 75);
     OBJ_FACE(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     OBJ_MODE(ACTOR_GERALD, 4);
     MES_SET((script_b + 6));
     MES_PUT(ACTOR_GERALD, 0);
-    OBJ_EMO(12, 0x101, 0);
+    OBJ_EMO(12, 257, 0);
     WAIT(60);
     MES_SET((script_b + 7));
     MES_PUT(12, 0);
@@ -1904,7 +1904,7 @@ void FieldScene_RunMainScriptSequence(void)
     MES_SET((script_b + 12));
     MES_PUT(ACTOR_GERALD, 0);
     WAIT(30);
-    OBJ_EMO(ACTOR_MIA, 0x100, 80);
+    OBJ_EMO(ACTOR_MIA, 256, 80);
     OBJ_FACE(ACTOR_MIA, ACTOR_GERALD, 0);
     MES_SET((script_b + 13));
     MES_PUT(ACTOR_MIA, 0);
@@ -1916,14 +1916,14 @@ void FieldScene_RunMainScriptSequence(void)
     OBJ_FACE(ACTOR_GERALD, 13, 0);
     OBJ_FACE(ACTOR_MIA, 13, 0);
     WAIT(120);
-    OBJ_EMO(13, 0x102, 30);
+    OBJ_EMO(13, 258, 30);
     Engine_ActorStartRepeatedMotion(13, 1);
     WAIT(120);
     Engine_ActorStartRepeatedMotion(12, 1);
     WAIT(60);
     MES_SET((script_b + 15));
     MES_PUT(12, 0);
-    OBJ_EMO(ACTOR_GERALD, 0x107, 110);
+    OBJ_EMO(ACTOR_GERALD, 263, 110);
     OBJ_WALK(ACTOR_GERALD, 456, 212);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     OBJ_MODE(ACTOR_GERALD, 1);
@@ -1953,7 +1953,7 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(70);
     MES_SET((script_b + 19));
     MES_PUT(13, 0);
-    OBJ_EMO(ACTOR_MIA, 0x100, 60);
+    OBJ_EMO(ACTOR_MIA, 256, 60);
     MES_SET((script_b + 20));
     MES_PUT(ACTOR_MIA, 0);
     OBJ_FACE(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
@@ -1996,7 +1996,7 @@ void FieldScene_RunMainScriptSequence(void)
     MES_PUT(14, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(14);
     OBJ_DIR(14, 0xd000, 0);
-    OBJ_EMO(13, 0x102, 80);
+    OBJ_EMO(13, 258, 80);
     OBJ_MODE(14, 4);
     WAIT(89);
     MES_SET((script_c + 2));
@@ -2005,7 +2005,7 @@ void FieldScene_RunMainScriptSequence(void)
     Engine_ActorSetAnimationAndWait(14, 3);
     MES_SET((script_c + 3));
     MES_PUT(14, 0);
-    OBJ_EMO(13, 0x100, 80);
+    OBJ_EMO(13, 256, 80);
     OBJ_MODE(14, 4);
     WAIT(80);
     OBJ_DIR(14, 0x3000, 0);
@@ -2022,17 +2022,17 @@ void FieldScene_RunMainScriptSequence(void)
     MES_SET((script_c + 6));
     MES_PUT(14, 0);
     Engine_ActorStartRepeatedMotion(13, 1);
-    OBJ_EMO(13, 0x102, 80);
+    OBJ_EMO(13, 258, 80);
     MES_SET((script_c + 7));
     MES_PUT(13, 0);
-    OBJ_EMO(14, 0x103, 60);
+    OBJ_EMO(14, 259, 60);
     MES_SET((script_c + 8));
     MES_PUT(14, 0);
     Engine_ActorSetAnimationAndWait(14, 3);
     MES_SET((script_c + 9));
     MES_PUT(14, 0);
     WAIT(20);
-    Actor_SetAttachedEffect(13, 0x101);
+    Actor_SetAttachedEffect(13, 257);
     WAIT(80);
     Actor_SetAttachedEffect(13, 0);
     OBJ_WALK(14, 496, 240);
@@ -2051,10 +2051,10 @@ void FieldScene_RunMainScriptSequence(void)
     MES_SET((script_c + 12));
     MES_PUT(14, 0);
     OBJ_MODE(14, 3);
-    OBJ_EMO(12, 0x102, 60);
+    OBJ_EMO(12, 258, 60);
     MES_SET((script_c + 13));
     MES_PUT(12, 0);
-    OBJ_EMO(14, 0x100, 70);
+    OBJ_EMO(14, 256, 70);
     MES_SET((script_c + 14));
     MES_PUT(14, 0);
     OBJ_MODE(12, 3);
@@ -2067,10 +2067,10 @@ void FieldScene_RunMainScriptSequence(void)
     OBJ_MODE(ACTOR_GERALD, 3);
     OBJ_MODE(ACTOR_MIA, 3);
     WAIT(120);
-    OBJ_EMO(14, 0x108, 180);
+    OBJ_EMO(14, 264, 180);
     MES_SET((script_c + 15));
     MES_PUT(14, 0);
-    OBJ_EMO(12, 0x101, 80);
+    OBJ_EMO(12, 257, 80);
     MES_SET((script_c + 16));
     MES_PUT(12, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
@@ -2085,10 +2085,10 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(60);
     MES_SET((script_c + 17));
     MES_PUT(14, 0);
-    OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 0);
-    OBJ_EMO(ACTOR_GERALD, 0x101, 0);
-    OBJ_EMO(ACTOR_IVAN, 0x101, 0);
-    OBJ_EMO(ACTOR_MIA, 0x101, 0);
+    OBJ_EMO(ACTOR_PARTY_LEADER, 257, 0);
+    OBJ_EMO(ACTOR_GERALD, 257, 0);
+    OBJ_EMO(ACTOR_IVAN, 257, 0);
+    OBJ_EMO(ACTOR_MIA, 257, 0);
     WAIT(100);
     MES_SET((script_c + 18));
     MES_PUT(ACTOR_GERALD, 0);
@@ -2100,16 +2100,16 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(20);
     MES_SET((script_c + 20));
     MES_PUT(14, 0);
-    OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 0);
-    OBJ_EMO(ACTOR_GERALD, 0x101, 0);
-    OBJ_EMO(ACTOR_IVAN, 0x101, 0);
-    OBJ_EMO(ACTOR_MIA, 0x101, 0);
+    OBJ_EMO(ACTOR_PARTY_LEADER, 257, 0);
+    OBJ_EMO(ACTOR_GERALD, 257, 0);
+    OBJ_EMO(ACTOR_IVAN, 257, 0);
+    OBJ_EMO(ACTOR_MIA, 257, 0);
     WAIT(120);
     OBJ_MODE(14, 4);
     WAIT(120);
     MES_SET((script_c + 21));
     MES_PUT(14, 0);
-    OBJ_EMO(14, 0x102, 90);
+    OBJ_EMO(14, 258, 90);
     MES_SET((script_c + 22));
     MES_PUT(14, 0);
     OBJ_MODE(ACTOR_PARTY_LEADER, 3);
@@ -2122,7 +2122,7 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(120);
     MES_SET((script_c + 23));
     MES_PUT(14, 0);
-    OBJ_EMO(12, 0x100, 60);
+    OBJ_EMO(12, 256, 60);
     MES_SET((script_c + 24));
     MES_PUT(12, 0);
     OBJ_FACE(14, 12, 0);
@@ -2143,7 +2143,7 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(20);
     MES_SET((script_c + 28));
     MES_PUT(14, 0);
-    OBJ_EMO(ACTOR_IVAN, 0x101, 90);
+    OBJ_EMO(ACTOR_IVAN, 257, 90);
     MES_SET((script_c + 29));
     MES_PUT(ACTOR_IVAN, 0);
     OBJ_DIR(14, 0x5000, 0);
@@ -2160,14 +2160,14 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(20);
     MES_SET((script_c + 32));
     MES_PUT(14, 0);
-    OBJ_EMO(ACTOR_GERALD, 0x100, 70);
+    OBJ_EMO(ACTOR_GERALD, 256, 70);
     MES_SET((script_c + 33));
     MES_PUT(ACTOR_GERALD, 0);
     OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
     WAIT(30);
     MES_SET((script_c + 34));
     MES_PUT(14, 0);
-    OBJ_EMO(ACTOR_MIA, 0x100, 80);
+    OBJ_EMO(ACTOR_MIA, 256, 80);
     MES_SET((script_c + 35));
     MES_PUT(ACTOR_MIA, 0);
     Engine_ActorSetAnimationAndWait(14, 3);
@@ -2322,7 +2322,7 @@ void EV21_MAIN(void)
 
     s32 msg;
 
-    OBJ_EMO(21, 0x101, 30);
+    OBJ_EMO(21, 257, 30);
     OBJ_DIR(21, 0xd000, 0);
     WAIT(50);
     OBJ_DIR(21, 0xb000, 0);
@@ -2358,7 +2358,7 @@ void EV25_DONPA(void)
             MES_OPEN(25, 0);
             EV_END();
         } else {
-            OBJ_EMO(25, 0x102, 30);
+            OBJ_EMO(25, 258, 30);
             OBJ_FACE(25, ACTOR_PARTY_LEADER, 0);
             msg = (s32)MsgRunpaShhhPleaseDont;
             MES_SET(msg);
@@ -2369,14 +2369,14 @@ void EV25_DONPA(void)
             WAIT(60);
             Engine_CameraMoveToActor(0, 1);
             WAIT(20);
-            OBJ_EMO(25, 0x105, 60);
+            OBJ_EMO(25, 261, 60);
             MES_SET(msg + 1);
             MES_PUT(25, 0);
-            OBJ_EMO(25, 0x107, 60);
+            OBJ_EMO(25, 263, 60);
             MES_SET(msg + 2);
             MES_PUT(25, 0);
             WAIT(70);
-            OBJ_EMO(25, 0x100, 60);
+            OBJ_EMO(25, 256, 60);
             OBJ_FACE(25, ACTOR_PARTY_LEADER, 0);
             MES_SET(msg + 3);
             MES_OPEN(25, 0);
@@ -2388,7 +2388,7 @@ void EV25_DONPA(void)
                 MES_OPEN(25, 0);
             }
             WAIT(60);
-            OBJ_EMO(25, 0x105, 60);
+            OBJ_EMO(25, 261, 60);
             msg2 = (s32)MsgRunpaDonpaKnowsCoddled;
             MES_SET(msg2);
             MES_OPEN(25, 0);
@@ -2539,7 +2539,7 @@ void EV20_MAIN(void)
             msg = (s32)MsgRunpaWhWhWho;
             MES_SET(msg);
             MES_PUT(20, 0);
-            OBJ_EMO(20, 0x102, 30);
+            OBJ_EMO(20, 258, 30);
             MES_SET(msg + 1);
             MES_PUT(20, 0);
             WAIT(30);
@@ -2549,7 +2549,7 @@ void EV20_MAIN(void)
         msg2 = (s32)MsgRunpaDontLookNearly;
         MES_SET(msg2);
         MES_PUT(20, 0);
-        OBJ_EMO(20, 0x101, 40);
+        OBJ_EMO(20, 257, 40);
         MES_SET(msg2 + 1);
         MES_OPEN(20, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {

@@ -70,26 +70,26 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s
 
     if (selected != 0) {
         if (selected->work == 0) {
-            selected->y = 0xA00;
-            val04 = 0x300;
+            selected->y = 2560;
+            val04 = 768;
             selected->work = work;
             goto reset_x;
         }
         if (preserve == 0) {
             if (selected->y == 0) {
-                selected->y = 0xA00;
-            } else if (selected->y < 0xD00) {
-                selected->y += 0xD00;
+                selected->y = 2560;
+            } else if (selected->y < 3328) {
+                selected->y += 3328;
             } else {
                 UiWork_ResetChannelTransition(selected);
             }
-            val04 = 0x300;
+            val04 = 768;
 reset_x:
             selected->x = val04;
         }
 
         zero = 0;
-        selected->start_x = 0x300;
+        selected->start_x = 768;
         selected->work->state = zero;
         selected->colour = 15;
         selected->line_spacing = 10;
@@ -112,14 +112,14 @@ s32 Ui_ClearVramBlock(void)
 {
     s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
 
-    return fill((void *)0x06002500, 0xF00, 0);
+    return fill((void *)0x06002500, 3840, 0);
 }
 
 s32 Ui_FillVramBlockPattern(void)
 {
     s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
 
-    return fill((void *)0x06002500, 0xF00, 0x44444444);
+    return fill((void *)0x06002500, 3840, 0x44444444);
 }
 
 void UiWork_ResetFreeChannel(void)
@@ -142,9 +142,9 @@ void UiWork_ResetFreeChannel(void)
         }
         sel->x = 0;
         sel->countdown = 0;
-        sel->colour = 0xF;
+        sel->colour = 15;
         sel->outline = 0;
-        sel->line_spacing = 0xA;
+        sel->line_spacing = 10;
     }
 }
 

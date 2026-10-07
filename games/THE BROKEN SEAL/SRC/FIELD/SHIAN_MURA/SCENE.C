@@ -217,7 +217,7 @@ u8 *SceneEffect_GetSecondaryData(void)
 s32 SceneEffect_PrepareState(void)
 {
     if (Engine_GameFlagIsSet(0x895) != 0)
-        gShianMuraPlacements[0xbe] = 0;
+        gShianMuraPlacements[190] = 0;
     return (s32)gShianMuraPlacements;
 }
 
@@ -320,10 +320,10 @@ void FieldScene_RunPrimarySequence(void)
         scale_x += 0x1999;
         puddle->scale_x = scale_x;
     } while (scale_x <= 0xffff);
-    Actor_ShowEmote(18, 0x105, 70);
+    Actor_ShowEmote(18, 261, 70);
     Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(18, 0x103, 0);
+    Actor_ShowEmote(18, 259, 0);
     Engine_ActorStartRepeatedMotion(18, 2);
     Engine_EventWait(70);
     Engine_EventSetMessage((s32)MsgShianDoingMadeMeSpillMy);
@@ -348,7 +348,7 @@ void FieldScene_RunPrimarySequence(void)
         record = Actor_Get(18);
         Actor_WalkToAndWait(18, record->x.part.pixel, 232);
     }
-    Actor_WalkToAndWait(18, 0x118, 232);
+    Actor_WalkToAndWait(18, 280, 232);
     GameFlag_Set(FLAG_SHIAN_WATER_SPILLED);
     Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventEnd();
@@ -421,21 +421,21 @@ void ShianMura_RunNpcMeetScene(void)
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x3333, 0x1999, 0, 0x20001, 0);
         Engine_AudioPlayCue(132);
         cb = (s32)SceneEffect_SpawnPeriodicEffect;
-        Value2(Engine_TaskAddCallback, cb, 0xc80);
+        Value2(Engine_TaskAddCallback, cb, 3200);
         Object_GetById(14)->velocity_y = 0x60000;
         Object_GetById(14)->gravity = 0x10000;
         Object_GetById(14)->bounce = 0;
         Actor_SetSpeed(14, 0x30000, 0x18000);
-        Actor_SetDestination(14, 168, 0x138);
+        Actor_SetDestination(14, 168, 312);
         Engine_ActorWaitForMove(14);
         Engine_AudioPlayCue(134);
         Engine_ActorEnableActionCallback(19, (s32)ShianMura_Actor19Motion);
-        Engine_TaskAddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
-        params.sprite = 0x11b;
+        Engine_TaskAddCallback((s32)SceneEffect_AdvanceRotatingSprite, 3200);
+        params.sprite = 283;
         params.callback = (s32)ShianMura_EffectScript;
         params.facing = 0x4000;
         Effect_Spawn(0xa80000, 0, 0x14c0000, 0, 0, 0, 0x720000, &params);
-        Actor_SetDestination(14, 146, 0x138);
+        Actor_SetDestination(14, 146, 312);
         Engine_ActorWaitForMove(14);
         Engine_TaskRemoveCallback((void (*)(void))cb);
         Effect_Spawn(0x900000, 0, 0x1380000, 0, 0, 0, 0x20001, 0);
@@ -579,7 +579,7 @@ void Scene_RunActorNineteenScript(void)
     Engine_EventBegin();
     ((s32 (*)())Engine_ActorEnableActionCallback)(19, (s32)ShianMura_Actor19Motion);
     cb = (s32)SceneEffect_AdvanceRotatingSprite;
-    ((s32 (*)())Engine_TaskAddCallback)(cb, 0xc80);
+    ((s32 (*)())Engine_TaskAddCallback)(cb, 3200);
     Object_RefreshSelectorById(19);
     Engine_AudioPlayCue(124);
     Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);
@@ -623,16 +623,16 @@ void ShianMura_EscortActorEighteen(void)
     *(s32 *)(record + 48) = 0;
     record = Actor_Get(18);
     *(s32 *)(record + 52) = 0;
-    Actor_ShowEmote(18, 0x103, 0);
+    Actor_ShowEmote(18, 259, 0);
     Engine_ActorStartRepeatedMotion(18, 2);
     Engine_EventWait(60);
     Actor_SetSpeed(18, 0x18000, 0xc000);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-    Actor_WalkTo(18, 0x118, 232);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 232);
+    Actor_WalkTo(18, 280, 232);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
     Engine_ActorWaitForMove(18);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
     Engine_ActorEnableActionCallback(18, ShianMura_ActionTable);
     record = Actor_Get(18);
     *(s32 *)(record + 108) = (s32)ShianMura_WatchGateTrigger;

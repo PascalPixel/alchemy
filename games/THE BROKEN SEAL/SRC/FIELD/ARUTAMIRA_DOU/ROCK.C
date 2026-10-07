@@ -74,7 +74,7 @@ void ArutamiraDou_TurnRock(s32 action)
                     actor->scale_y = size;
                     actor->scale_x = size;
                     Task_Wait(1);
-                    size += 0xc00;
+                    size += 3072;
                 } while (actor->scale_x <= 0xffff);
                 angle -= 0x3333;
             }
@@ -113,7 +113,7 @@ void ArutamiraDou_TurnRock(s32 action)
         rock[1] = ((s8)(((u32)(Random_Next() << 2) >> 16) + previous + 1) + 5) % 5;
         ArutamiraDou_Wheel->phase = 0;
         ArutamiraDou_Wheel->ticks = 0;
-        ArutamiraDou_Wheel->speed = 0x200;
+        ArutamiraDou_Wheel->speed = 512;
         ArutamiraDou_Wheel->travel = 0x3000;
         Task_AddCallback(ArutamiraDou_SpinActorWheel, TASK_PRIORITY_SCENE);
         if (rounds <= 2) {
@@ -145,7 +145,7 @@ void ArutamiraDou_TurnRock(s32 action)
                     angle -= 0x3333;
                 }
                 reach -= 0x3333;
-                angle += 0xc00;
+                angle += 3072;
                 Task_Wait(1);
             } while (reach > 0);
             for (i = 0; i <= 4; i++) {

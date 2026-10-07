@@ -98,7 +98,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
         work->particles[member].variant = 0;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     heights = RockWall_Heights;
     work->shake_frames = 128;
     Audio_PlayCue(141);

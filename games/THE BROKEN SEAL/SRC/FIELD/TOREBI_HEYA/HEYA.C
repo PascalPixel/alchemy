@@ -70,8 +70,8 @@ void TorebiHeya_StartWindowTransition(void)
 
     u8 *state = Data_03001ebc;
 
-    *(s32 *)(state + 0x1C0) = 0x201;
-    *(s32 *)(state + 0x1C8) = 24;
+    *(s32 *)(state + 448) = 513;
+    *(s32 *)(state + 456) = 24;
     ((void (*)(void))Engine_EventRequestExit)();
 }
 
@@ -91,7 +91,7 @@ void FieldScene_RunPrimarySequence(void)
             record->motion_flags = 0;
         }
     }
-    p6 = p6 + 0x16c;
+    p6 = p6 + 364;
     n = *(s16 *)p6 - 14;
     Engine_AudioPlayCue(158);
     Map_AnimateCells(Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
@@ -110,7 +110,7 @@ void FieldScene_RunScene3b6SequenceA(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiHeyWhatsThis);
     Engine_EventWait(40);
-    rec7 = Engine_ObjectCreate(0x11c, 0x2580000, 0, 0x3380000);
+    rec7 = Engine_ObjectCreate(284, 0x2580000, 0, 0x3380000);
     Engine_ActorSetSpriteFlags(rec7, 0);
     Object_SetMode(rec7, 6);
     Engine_EventWait(10);
@@ -118,18 +118,18 @@ void FieldScene_RunScene3b6SequenceA(void)
     Engine_EventWait(40);
     Engine_ObjectDispatchRelease(rec7);
     Engine_EventWait(2);
-    Actor_ShowEmote(25, 0x100, 50);
+    Actor_ShowEmote(25, 256, 50);
     Actor_SetSpeed(25, 0x10000, 0x8000);
-    Actor_WalkToAndWait(25, 0x258, 0x350);
+    Actor_WalkToAndWait(25, 600, 848);
     Actor_FaceDirection(25, 0xc000, 0);
     Engine_EventWait(40);
     Event_ShowMessage(25, 0);
     Engine_ActorRunRepeatedMotion(25, 2);
     Engine_EventWait(30);
-    Actor_WalkToAndWait(25, 0x238, 0x350);
+    Actor_WalkToAndWait(25, 568, 848);
     Actor_FaceDirection(25, 0xc000, 0);
     Engine_EventWait(30);
-    Actor_ShowEmote(25, 0x108, 50);
+    Actor_ShowEmote(25, 264, 50);
     Engine_EventWait(20);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
     Engine_EventWait(20);
@@ -139,13 +139,13 @@ void FieldScene_RunScene3b6SequenceA(void)
     Engine_EventWait(20);
     Event_ShowMessage(25, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 50);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 50);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(25, 4);
     Engine_EventWait(20);
     Event_ShowMessage(25, 0);
     Engine_EventWait(30);
-    Actor_ShowEmote(25, 0x102, 50);
+    Actor_ShowEmote(25, 258, 50);
     Event_ShowMessage(25, 0);
     Actor_SetSpeed(25, 0x16666, 0xb333);
     Actor_WalkByAndWait(25, 16, 0);
@@ -176,7 +176,7 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     Engine_EventShowMessage(31, 0);
     Engine_EventWait(10);
 
-    Engine_ActorShowEmote(32, 0x102, 50);
+    Engine_ActorShowEmote(32, 258, 50);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(32, 3);
     Engine_EventWait(30);
@@ -284,7 +284,7 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
     } else {
         Engine_EventSetMessage((s32)MsgTorebiLookStrongGo);
         Engine_EventShowMessage(no, 0);
-        Engine_ActorShowEmote(no, 0x106, 0);
+        Engine_ActorShowEmote(no, 262, 0);
         Engine_EventWait(40);
         Engine_EventShowMessage(no, 0);
     }
@@ -409,7 +409,7 @@ void TorebiHeya_ComplainAboutScam(s32 a0)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
-    Actor_ShowEmote(31, 0x103, 40);
+    Actor_ShowEmote(31, 259, 40);
     Event_ShowMessage(a0, 0);
     Engine_EventEnd();
 }

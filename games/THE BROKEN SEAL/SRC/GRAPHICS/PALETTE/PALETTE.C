@@ -25,7 +25,7 @@ struct MenuWorkspaceEntry {
 
 void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
 {
-    struct MenuWorkspaceEntry *entry = (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
+    struct MenuWorkspaceEntry *entry = (struct MenuWorkspaceEntry *)((u8 *)work + 1024);
     u16 zero = 0;
 
     entry->state = zero;

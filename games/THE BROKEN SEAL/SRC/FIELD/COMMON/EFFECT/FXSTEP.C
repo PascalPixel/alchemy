@@ -116,7 +116,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
     s32 kind;
     s32 value;
 
-    value = 0x60e;
+    value = 1550;
     Runtime_AllocateBlock(41, value);
     Runtime_AllocateHeapBlock(39, 0x782c);
     Runtime_AllocateHeapBlock(40, 0x4000);
@@ -217,7 +217,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     REG_BG1CNT = 0x1f81;
     EffectPosition_ApplyAnimationAndYOffset(work->effect->actors[0], &anchor);
     if (work->effect->side == 0)
@@ -263,19 +263,19 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
         if (kind == 4) {
             if (frame <= 11) {
                 if (work->effect->side == 0)
-                    draw[1](canvas, work->sheet + (5 - frame / 2) * 0x300,
+                    draw[1](canvas, work->sheet + (5 - frame / 2) * 768,
                         pos.x + shake - 48, pos.y - 8, 48, 16);
                 else
-                    draw[1](canvas, work->sheet + (5 - frame / 2) * 0x300,
+                    draw[1](canvas, work->sheet + (5 - frame / 2) * 768,
                         pos.x + shake, pos.y - 8, 48, 16);
             }
         } else if ((u32)kind <= 2 || kind == 5) {
             if (frame <= 11) {
                 if (work->effect->side == 0)
-                    draw[1](canvas, work->sheet + frame / 2 * 0xd80,
+                    draw[1](canvas, work->sheet + frame / 2 * 3456,
                         pos.x + shake - 48, pos.y - 40, 48, 72);
                 else
-                    draw[1](canvas, work->sheet + frame / 2 * 0xd80,
+                    draw[1](canvas, work->sheet + frame / 2 * 3456,
                         pos.x + shake, pos.y - 40, 48, 72);
             }
         } else {
@@ -295,7 +295,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
             }
         }
         if (frame >= 4 && frame <= 15)
-            draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
+            draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 1920,
                 anchor.x - 16, anchor.y - 24, 40, 48);
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
@@ -312,7 +312,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
                     size += 2;
                     draw[pair & 1](canvas, sheet + BattleFx6_FlareCells[size - 1],
                         point.x - size, point.y - size, size * 2, size * 2);
-                    EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
+                    EffectStep_AdvanceWithGravity3D(spark, 60, -1024);
                     spark->variant--;
                 }
             }
@@ -396,7 +396,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     WaitFrames(1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     if (big == 1) {
         object = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -427,7 +427,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
         gBgScroll[1].y = 80;
         work->fade_frames = 24;
         work->fade_step = 0;
-        Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 3200);
         AudioCommand_PlayFar(212);
         for (frame = 0; frame != 32; frame++) {
             BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
@@ -531,7 +531,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
                     spot.y += 16;
                     draw[pair & 1](canvas, sheet + BattleFx6_FlareCells[size - 1],
                         spot.x - size, spot.y - size, size * 2, size * 2);
-                    EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
+                    EffectStep_AdvanceWithGravity3D(spark, 60, -1024);
                     spark->variant--;
                 }
             }

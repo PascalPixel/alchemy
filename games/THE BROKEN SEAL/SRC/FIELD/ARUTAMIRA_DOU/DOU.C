@@ -44,7 +44,7 @@ void ArutamiraDou_UpdateScalePulse();
 
 void FieldScene_SetActor13Value41(void)
 {
-    BattleFx_SetPhaseRequest(13, 0x41);
+    BattleFx_SetPhaseRequest(13, 65);
 }
 
 u8 *ArutamiraDou_GetEntrances(void)
@@ -93,23 +93,23 @@ void ArutamiraDou_ApplyFadeBlend(void)
 
         REG_BLDALPHA = alpha;
     } else if (level == 1) {
-        s32 alpha = 0xe00;
+        s32 alpha = 3584;
 
         REG_BLDALPHA = alpha;
     } else if (level == 2) {
-        s32 alpha = 0xc00;
+        s32 alpha = 3072;
 
         REG_BLDALPHA = alpha;
     } else if (level == 3) {
-        s32 alpha = 0xa00;
+        s32 alpha = 2560;
 
         REG_BLDALPHA = alpha;
     } else if (level == 4) {
-        s32 alpha = 0x800;
+        s32 alpha = 2048;
 
         REG_BLDALPHA = alpha;
     } else {
-        s32 alpha = 0x600;
+        s32 alpha = 1536;
 
         REG_BLDALPHA = alpha;
     }
@@ -122,7 +122,7 @@ void ArutamiraDou_SetFadeLevel(s32 level)
 
     work = (u8 *)gEventWork;
     *fade = level;
-    if (*(s16 *)(work + 0xcb8) == 0) {
+    if (*(s16 *)(work + 3256) == 0) {
         ArutamiraDou_ApplyFadeBlend();
     }
 }
@@ -164,38 +164,38 @@ void SceneEffect_SetupBlendByFlag201(void)
 
     {
         u8 *tmp = *base;
-        *(s32 *)(tmp + 0x1c0) = 0x100;
-        *(s32 *)(tmp + 0x1c8) = 24;
+        *(s32 *)(tmp + 448) = 256;
+        *(s32 *)(tmp + 456) = 24;
     }
     Engine_TaskWait(1);
-    DisplayTransition_InitializeBattleEffectState(0x4d);
+    DisplayTransition_InitializeBattleEffectState(77);
     state = base[4];
     {
-        u16 *slot = (u16 *)(state + 0x52a);
+        u16 *slot = (u16 *)(state + 1322);
         s32 c = 5;
         *slot = c;
     }
     if (Engine_GameFlagIsSet(0x201) != 0) {
         {
-            u16 *slot = (u16 *)(state + 0x534);
+            u16 *slot = (u16 *)(state + 1332);
             s32 c = 0x1d1d;
             *slot = c;
         }
         {
-            u16 *slot = (u16 *)(state + 0x536);
-            s32 c = 0x3f;
+            u16 *slot = (u16 *)(state + 1334);
+            s32 c = 63;
             *slot = c;
         }
         ArutamiraDou_ApplyFadeBlend();
         return;
     } else {
         {
-            u16 *slot = (u16 *)(state + 0x534);
+            u16 *slot = (u16 *)(state + 1332);
             s32 c = 0x3f3f;
             *slot = c;
         }
         {
-            u16 *slot = (u16 *)(state + 0x536);
+            u16 *slot = (u16 *)(state + 1334);
             s32 c = 31;
             *slot = c;
         }
@@ -205,7 +205,7 @@ void SceneEffect_SetupBlendByFlag201(void)
         REG_BLDCNT = a;
     }
     {
-        s32 b = 0xc04;
+        s32 b = 3076;
         REG_BLDALPHA = b;
     }
 }
@@ -240,10 +240,10 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 
     if (Engine_GameFlagIsSet(0x200) != 0) {
         SceneEffect_SetupBlendByFlag201();
-        work[0x34] = 1;
+        work[52] = 1;
     }
     tbl = (s16 *)&gGameState;
-    if (tbl[0xe0] == (s32)&SceneId_ArutamiraDou6) {
+    if (tbl[224] == (s32)&SceneId_ArutamiraDou6) {
         Engine_ActorSetChildValue(16, 6);
         Engine_ActorSetChildValue(17, 6);
         Engine_ActorSetChildValue(18, 6);
@@ -304,7 +304,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
     v.z = p->z.fixed;
 
     if (Object_CheckMovementCollision(p, &v) > 0) {
-        obj[0x35] = 1;
+        obj[53] = 1;
     }
 }
 
@@ -314,13 +314,13 @@ void FieldScene_RunActorElevenCellSetup(void)
     struct FieldActor *p = Object_GetById(11);
     s32 t;
 
-    obj += 0x35;
+    obj += 53;
     t = *obj;
     t = (s8)t;
     if (t == 0) {
-        s32 a = 0x49;
-        s32 b = 0x11;
-        Engine_MapCopyCellAttributes(0x4c, 0x10, 1, 1, a, b);
+        s32 a = 73;
+        s32 b = 17;
+        Engine_MapCopyCellAttributes(76, 16, 1, 1, a, b);
         if (p != 0) {
             s32 c = 2;
             p->motion_flags = c;

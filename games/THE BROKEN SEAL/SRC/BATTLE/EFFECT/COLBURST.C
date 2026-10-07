@@ -65,7 +65,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     if (variant == 1)
         BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0x80000);
     else
@@ -136,11 +136,11 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet + 0x460, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet + 1120, 1, 0);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &position);
     REG_BG2X = (64 - position.x) << 8;
     for (i = 0, spark = work->particles; i != 16; i++) {
@@ -195,7 +195,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
                 py = HI(p->y);
                 if (cell > 6)
                     cell = 6;
-                source = work->sheet + RisingBurst_SparkCells[cell] + 0x460;
+                source = work->sheet + RisingBurst_SparkCells[cell] + 1120;
                 size = RisingBurst_SparkSizes[cell];
                 draw[0](canvas, source, px - size / 2, py - size / 2, size, size);
                 p->variant++;

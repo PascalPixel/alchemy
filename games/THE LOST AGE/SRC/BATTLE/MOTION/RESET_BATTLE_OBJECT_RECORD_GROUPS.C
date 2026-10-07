@@ -51,8 +51,8 @@ static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
     struct BattleObjectSlot *slots = ((struct BattleSession *)work)->slots;
 
     if (id > 7)
-        id -= 0x78;
-    id += 0x74;
+        id -= 120;
+    id += 116;
     if (work[id] == 0xff)
         return NULL;
     return &slots[work[id]];
@@ -76,7 +76,7 @@ void BattleMotion_DestroyAllSlotObjects(void)
 
     i = 0;
     do {
-        no = i + 0x78;
+        no = i + 120;
         if (i <= 7) {
             no = i;
         }
@@ -87,5 +87,5 @@ void BattleMotion_DestroyAllSlotObjects(void)
             slot->active = 0;
         }
         i += 1;
-    } while (i <= 0xD);
+    } while (i <= 13);
 }

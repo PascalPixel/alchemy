@@ -83,10 +83,10 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         sprites[i].oam.f.tile = Resource_GetBuffer(handles[i], -1);
     }
 
-    Vram_CopyTile(0xf018, 0x200);
-    Vram_CopyTile(0xf018, 0x201);
-    Vram_CopyTile(0xf019, 0x210);
-    Vram_CopyTile(0xf019, 0x211);
+    Vram_CopyTile(0xf018, 512);
+    Vram_CopyTile(0xf018, 513);
+    Vram_CopyTile(0xf019, 528);
+    Vram_CopyTile(0xf019, 529);
 
     spr = &cursor;
     for (;;) {

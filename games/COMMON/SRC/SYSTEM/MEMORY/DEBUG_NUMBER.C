@@ -30,7 +30,7 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
 
     count = width;
     if ((count - 1) > 9U) {
-        count = 0xA;
+        count = 10;
     }
     Text_FormatSignedDecimalToWork(value);
     Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - count));

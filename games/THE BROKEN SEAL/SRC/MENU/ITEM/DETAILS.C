@@ -104,7 +104,7 @@ done:
     RenderOutput_RedrawSavedRectFar(menu->main_window);
     Palette_LightenBankHighlight(14);
     {
-        s32 delay = 0xc80;
+        s32 delay = 3200;
 
         Scheduler_AddOrUpdateCallback((const void *)Menu_UpdateEntryObjectTransforms, delay);
     }

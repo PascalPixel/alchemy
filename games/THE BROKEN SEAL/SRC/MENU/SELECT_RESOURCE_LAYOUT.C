@@ -48,7 +48,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
     Menu_CenterResourceEntries(17, 5, 0);
 #endif
     if (mode != 0) {
-        Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 3190);
         work->previous_mode = 0xffff;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
         window = UiWindow_Create(7, 0, 17, 4, 2);
@@ -82,7 +82,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
         UiText_DrawResource(msg, work->lower_window, 0, 16);
 #endif
     } else {
-        Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 3190);
         work->previous_mode = 0xffff;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
         window = UiWindow_Create(6, 0, 18, 4, 2);

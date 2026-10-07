@@ -54,7 +54,7 @@ void Menu_InitializeSelectedWorkspace(void)
 {
     void *work;
     volatile u32 zero;
-    work = Runtime_AllocateBlock(20, 0x628);
+    work = Runtime_AllocateBlock(20, 1576);
     zero = 0;
     Dma_Set(&zero, work, 0x8500018a, REG_DMA3);
     Scheduler_AddOrUpdateCallback(Menu_RunSelectedWorkspaceEntry, 3200);
@@ -63,7 +63,7 @@ void Menu_InitializeSelectedWorkspace(void)
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void)
 {
     Scheduler_RemoveCallback(&Menu_RunSelectedWorkspaceEntry);
-    Runtime_ReleaseHeapBlock(0x14);
+    Runtime_ReleaseHeapBlock(20);
 }
 
 struct RenderInput *Menu_CreateWorkspaceWindows(void)

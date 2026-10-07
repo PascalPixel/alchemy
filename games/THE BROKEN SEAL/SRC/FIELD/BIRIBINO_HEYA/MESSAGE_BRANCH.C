@@ -209,7 +209,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
         Actor_FaceDirection(21, 0x8000, 20);
         Event_ShowMessage(21, 0);
         Engine_ActorStartRepeatedMotion(22, 2);
-        Actor_SetAttachedEffect(22, 0x102);
+        Actor_SetAttachedEffect(22, 258);
         Engine_EventWait(60);
         Event_ShowMessage(22, 0);
         Engine_EventWait(10);
@@ -228,10 +228,10 @@ void FieldScene_ConfigureActor22Scene(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoReallyThinkHeadChefHas);
-    Engine_EventShowMessage(0x16, 0);
-    Engine_ActorFaceActor(0x16, ACTOR_PARTY_LEADER, 0);
-    Engine_EventShowMessage(0x16, 0);
-    Engine_ActorFaceDirection(0x16, 0, 0xA);
+    Engine_EventShowMessage(22, 0);
+    Engine_ActorFaceActor(22, ACTOR_PARTY_LEADER, 0);
+    Engine_EventShowMessage(22, 0);
+    Engine_ActorFaceDirection(22, 0, 10);
     Engine_EventEnd();
 }
 
@@ -283,8 +283,8 @@ s32 FieldScene_SetupActor27OnEntry(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     actor = (u8 *)Object_GetById(27);
 
-    actor[0x23] = bits = 0;
-    record = *(u8 **)(actor + 0x50);
+    actor[35] = bits = 0;
+    record = *(u8 **)(actor + 80);
     bits -= 13;
     bits &= record[9];
     bits |= 8;

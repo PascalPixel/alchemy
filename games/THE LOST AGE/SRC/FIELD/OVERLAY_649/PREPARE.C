@@ -18,12 +18,12 @@ void Title_LoadSprites(void)
     u8 *buffer;
     volatile s32 *dma;
 
-    buffer = Runtime_BumpAllocateAlternatePool(0x520);
+    buffer = Runtime_BumpAllocateAlternatePool(1312);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
     Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
-    VramBlock_LoadCached(gTitleVramBlock, 0x500, buffer + 32);
+    VramBlock_LoadCached(gTitleVramBlock, 1280, buffer + 32);
     dma = (volatile s32 *)REG_DMA3;
     while (dma[2] < 0)
         ;

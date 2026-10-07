@@ -49,10 +49,10 @@ s32 Scene_InitSceneRequestAndCameraZoom(void)
     s32 zoom_z = 0x10000;
 
     runtime = gEventWork;
-    runtime->scene_request_1c0 = 0x204;
-    runtime->scene_setup_word_1c8 = 0x10;
+    runtime->scene_request_1c0 = 516;
+    runtime->scene_setup_word_1c8 = 16;
     if (TestSceneFlag(0x814) != 0) {
-        QueueSceneSound(0x8D);
+        QueueSceneSound(141);
         SetCameraZoom(zoom_x, zoom_y, zoom_z);
         InitializeSceneRecordBuffer();
     }

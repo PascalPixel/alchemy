@@ -18,7 +18,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
         obj->motion_flags = 0;
         obj->collision_flags = 8;
         Engine_ActorSetSpriteFlags(obj, 0);
-        ObjectGroup_SetChildValue(obj, 0xE);
+        ObjectGroup_SetChildValue(obj, 14);
         Engine_ObjectSetBlendMode(obj, 1);
         return obj;
     }

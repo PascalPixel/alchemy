@@ -111,10 +111,10 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     else
         total = work->effect->count * 8 + 32;
     if (!(mode <= 1 || mode == 3))
-        Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+        Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 1152);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     Audio_PlayCue(142);
 
     for (frame = 0; frame != total; frame++) {
@@ -134,7 +134,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
         }
         row = work->bg2_x;
         for (i = 0; i != 160; i++)
-            *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
+            *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 2048) << 2)) >> 10;
 
         for (member = 0; member != work->effect->count; member++) {
             struct MotionObject *object =
@@ -197,7 +197,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                                 draw[1](canvas, work->sheet + cel * 1600,
                                     screen.x - 20, screen.y - 20, 40, 40);
                             else if (mode == 6)
-                                draw[1](canvas, work->sheet + 0xc00,
+                                draw[1](canvas, work->sheet + 3072,
                                     screen.x - 6, screen.y - 12, 12, 24);
                             else if (mode == 4)
                                 draw[1](canvas, work->sheet,

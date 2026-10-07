@@ -93,7 +93,7 @@ void BattleFx_UpdateAllSlots(void)
     s32 remaining_slots;
 
     slot = gEffectWork->slots;
-    remaining_slots = 0x17;
+    remaining_slots = 23;
     do {
         remaining_slots -= 1;
         EffectSlot_Update(slot);

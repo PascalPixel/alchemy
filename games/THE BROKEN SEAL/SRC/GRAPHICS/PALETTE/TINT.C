@@ -319,7 +319,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         }
     } else {
         if (half == 2)
-            mode += 0x600;
+            mode += 1536;
         Dma_Set((const void *)mode, dst, ((cnt * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
     }
 }

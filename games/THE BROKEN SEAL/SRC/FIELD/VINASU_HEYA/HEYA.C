@@ -165,7 +165,7 @@ void SceneActor_ApplySlotsMatchingKind212(void)
 
     for (i = 8; i <= 65; i++) {
         actor = actors[i - 8];
-        if ((s16)actor->timer >> 4 == 0x212)
+        if ((s16)actor->timer >> 4 == 530)
             ObjectGroup_SetChildValue(actor, actor->timer & 15);
     }
 }
@@ -440,12 +440,12 @@ void FieldScene_RunSupplementalSequenceOne(void)
                       velocity[2], 0x1090001, &options);
     }
     Audio_PlayCue(188);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 257);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 256);
     BattleFx_PlayQueuedSound();
     actor->gravity = 0x10000;
     actor->bounce = 0x4000;
@@ -809,7 +809,7 @@ void FieldScene_RunLeaderSurpriseApproach(void)
     SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steering_flags, 1);
     Engine_EventWait(20);
     actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEveryEightFramesB;
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
@@ -900,11 +900,11 @@ void FieldScene_RunFlag986ActorOneScene(void)
     s32 h;
     s32 k;
 
-    g = 0x986;
+    g = 2438;
     m1 = 0xcccc;
     m2 = 0x6666;
-    h = 0x100;
-    k = 0x338;
+    h = 256;
+    k = 824;
     Engine_EventBegin();
     o = Object_GetById(12);
     if (o->unk8 >> 20 == 53) {
@@ -1011,13 +1011,13 @@ void FieldScene_SetupActorTenCamera(void)
 {
     u8 *state = *(u8 **)&gEventWork;
     {
-        u16 *target = (u16 *)(state + 0xcba);
+        u16 *target = (u16 *)(state + 3258);
         u16 shown = 0;
 
         *target = shown;
     }
     {
-        u16 *target = (u16 *)(state + 0xcb6);
+        u16 *target = (u16 *)(state + 3254);
         u16 shown = 1;
 
         *target = shown;
@@ -1064,11 +1064,11 @@ void Scene_RunActorLeapSequence(void)
         rec7->facing = shown;
     }
     Actor_SetSpeed(0, 0x30000, 0x18000);
-    Engine_ActorMoveToAndWait(0, rec7->x.part.pixel, 0x228);
+    Engine_ActorMoveToAndWait(0, rec7->x.part.pixel, 552);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(0, 22);
     Engine_EventWait(30);
-    Actor_SetAttachedEffect(0, 0x102);
+    Actor_SetAttachedEffect(0, 258);
     Engine_ActorRunRepeatedMotion(0, 2);
     Engine_EventWait(20);
     {

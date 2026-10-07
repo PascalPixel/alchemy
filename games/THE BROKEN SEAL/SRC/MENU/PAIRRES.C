@@ -26,12 +26,12 @@ void Resource_LoadPairedBlocksIfAvailable(void)
     first_slot = Resource_FindFreeEntry();
     active_state->resource_slots[0] = first_slot;
     if (first_slot != -1) {
-        VramBlock_LoadCached(first_slot, 0x80, Data_080aed4c);
+        VramBlock_LoadCached(first_slot, 128, Data_080aed4c);
     }
     second_slot = Resource_FindFreeEntry();
     active_state->resource_slots[1] = second_slot;
     if (second_slot != -1) {
-        VramBlock_LoadCached(second_slot, 0x80, Data_080aedcc);
+        VramBlock_LoadCached(second_slot, 128, Data_080aedcc);
     }
 }
 
@@ -51,10 +51,10 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
     s32 buffer;
     s32 allocation;
 
-    allocation = (s32)Runtime_AllocateBlock(0x11, 0x608);
+    allocation = (s32)Runtime_AllocateBlock(17, 1544);
     selected_slot = slot;
     Ability_LoadGlyphFar(resource_id, 0, &selected_slot, &resource_info, 1);
-    buffer = Resource_GetBuffer(slot, allocation + 0x400);
-    Runtime_ReleaseHeapBlock(0x11);
+    buffer = Resource_GetBuffer(slot, allocation + 1024);
+    Runtime_ReleaseHeapBlock(17);
     return buffer;
 }

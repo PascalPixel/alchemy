@@ -22,7 +22,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
 
     cell = ((work->y + offset_y + 1) << 5)
         + (work->x + offset_x) + 1;
-    if (cell < 0x280) {
+    if (cell < 640) {
         s32 src;
         s32 dst;
 

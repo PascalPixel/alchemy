@@ -388,15 +388,15 @@ void FieldScene_RunActor21SequenceOnce(void)
     Audio_PlayCue(100);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x867) == 0) {
-        Actor_SetAttachedEffect(21, 0x102);
+        Actor_SetAttachedEffect(21, 258);
         Engine_ActorJump(21, 4, 0);
         Engine_EventWait(12);
         Engine_ActorJump(21, 4, 0);
         Engine_EventWait(20);
         ActorPresentation_MoveActorToPositionAndWait(21, 0x188, 104, 0x70000);
         Engine_EventWait(20);
-        Actor_WalkToAndWait(21, 0x198, 104);
-        Actor_WalkToAndWait(21, 0x198, 120);
+        Actor_WalkToAndWait(21, 408, 104);
+        Actor_WalkToAndWait(21, 408, 120);
         GameFlag_Set(0x867);
     }
     Engine_EventEnd();

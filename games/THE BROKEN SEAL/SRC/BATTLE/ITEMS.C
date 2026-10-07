@@ -32,9 +32,9 @@ s32 GetFocusedObjectCollision(void);
 extern struct BattleRuntime *gEventWork;
 
 struct ItemCommandRuntime {
-    u8 unknown_000[0x170];
+    u8 unknown_000[368];
     s16 result_code;
-    u8 unknown_172[0xb54];
+    u8 unknown_172[2900];
     u8 resolving_action;
 };
 

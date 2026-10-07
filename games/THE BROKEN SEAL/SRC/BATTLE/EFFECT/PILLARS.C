@@ -88,7 +88,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != 96; frame++) {
         camera = gCameraWork;
@@ -118,9 +118,9 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
                     draw[pillar & 1](canvas, work, screen.x - 17,
                         screen.y - scroll, 34, scroll);
                     if (frame & 1) {
-                        draw[0](canvas, work->sheet + 0xdd0, screen.x - 20,
+                        draw[0](canvas, work->sheet + 3536, screen.x - 20,
                             screen.y - 24, 20, 37);
-                        draw[1](canvas, work->sheet + 0xdd0, screen.x,
+                        draw[1](canvas, work->sheet + 3536, screen.x,
                             screen.y - 24, 20, 37);
                     } else {
                         draw[0](canvas, work->sheet + 0x10b4, screen.x - 20,

@@ -18,7 +18,7 @@ union PairObject {
     union FieldObject object;
     s32 words[28];
     struct {
-        u8 unknown_00[0x68];
+        u8 unknown_00[104];
         union PairObject *parent;
     } link;
 };

@@ -41,16 +41,16 @@ struct ParticlePosition {
 #define OBJECT_0808EEE4_OFFSET(type, field) \
     ((u32)&(((type *)0)->field))
 typedef char ParticlePosition_size[
-    sizeof(struct ParticlePosition) == 0x0c ? 1 : -1
+    sizeof(struct ParticlePosition) == 12 ? 1 : -1
 ];
 typedef char ParticleEmitter_travel_offset_offset[
-    OBJECT_0808EEE4_OFFSET(struct ObjectRuntime, velocity_y) == 0x28 ? 1 : -1
+    OBJECT_0808EEE4_OFFSET(struct ObjectRuntime, velocity_y) == 40 ? 1 : -1
 ];
 typedef char ParticleEmitter_active_offset[
-    OBJECT_0808EEE4_OFFSET(struct ObjectRuntime, flags) == 0x55 ? 1 : -1
+    OBJECT_0808EEE4_OFFSET(struct ObjectRuntime, flags) == 85 ? 1 : -1
 ];
 typedef char ParticleEffectObject_child_offset[
-    OBJECT_0808EEE4_OFFSET(struct ObjectRuntime, animation) == 0x50 ? 1 : -1
+    OBJECT_0808EEE4_OFFSET(struct ObjectRuntime, animation) == 80 ? 1 : -1
 ];
 extern void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 extern void Object_SetMode(struct ObjectRuntime *, s32);
@@ -87,9 +87,9 @@ struct TileBits {
 
 struct EfxObj {
     s32 data;
-    u8 pad0[0x24];
+    u8 pad0[36];
     u32 travel;
-    u8 pad1[0x1c];
+    u8 pad1[28];
     u32 dy;
     u8 pad2[4];
     struct EfxVisual *vis;
@@ -180,7 +180,7 @@ s32 ArcTan2(s32, s32);
 void BattleFx_EmitRandomParticle(void)
 {
     struct ObjectRuntime *object = ObjectTable_Get(gGameState.selected_actor);
-    struct ParticleCell *cell = (struct ParticleCell *)(gEventWork + 0x11c);
+    struct ParticleCell *cell = (struct ParticleCell *)(gEventWork + 284);
     s32 i = 0;
     s32 x;
     s32 z;
@@ -232,7 +232,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
     random_angle = Random16();
     Vector_AddPolarOffset(random_angle << 4, Random16(), &position);
     object = (struct ObjectRuntime *)Object_Spawn(
-        0x11D, position.x, position.y, position.z);
+        285, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;
         u8 flags;
@@ -253,7 +253,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
     struct EfxObj *obj;
 
     s32 work = (s32)gEventWork;
-    u32 off = (obj_id * 4) + 0x14;
+    u32 off = (obj_id * 4) + 20;
 
     s32 src_z = (s32)*(struct EfxSrc **)(work + off);
     struct EfxPos pos;
@@ -320,11 +320,11 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
         obj->travel = 0x20000;
         obj->dy = 0x4000;
 
-        buf = Runtime_AllocateHeapBlock(17, 0x608);
+        buf = Runtime_AllocateHeapBlock(17, 1544);
         ItemIcon_LoadTilesFar(item);
 
         ((struct TileBits *)((u8 *)vis + 8))->tile =
-            VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
+            VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 1024);
 
         Runtime_ReleaseHeapBlock(17);
         obj->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
@@ -366,9 +366,9 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
         if (flags & 1) {
             ObjectDispatch_SetSingleChildFlagsFar(object, 0);
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_ParticleEmitterScript);
-            FIELD_AT_OFFSET(object, u32 *, 0x28) = 0x20000;
-            FIELD_AT_OFFSET(object, u32 *, 0x48) = 0x4000;
-            FIELD_AT_OFFSET(object, s32 *, 0x6C) = (s32)&BattleFx_EmitRandomParticleFromEmitter;
+            FIELD_AT_OFFSET(object, u32 *, 40) = 0x20000;
+            FIELD_AT_OFFSET(object, u32 *, 72) = 0x4000;
+            FIELD_AT_OFFSET(object, s32 *, 108) = (s32)&BattleFx_EmitRandomParticleFromEmitter;
         }
         if (flags == 3) {
             WaitFrames(60);
@@ -387,7 +387,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 {
     struct EffectResource_0808f1c0 *resource =
         ObjectTable_Get(gGameState.selected_actor);
-    void *handle = Runtime_AllocateHeapBlock(17, 0x608);
+    void *handle = Runtime_AllocateHeapBlock(17, 1544);
     struct EffectObject_0808f1c0 *object = Object_CreateFar(
         22, resource->x, resource->y + 0x240000, resource->z);
 
@@ -411,7 +411,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
         visual->flags_b = mask;
 
         ItemIcon_LoadTilesFar(value);
-        VramBlock_LoadCached(visual->value_1c, 128, (u8 *)handle + 0x400);
+        VramBlock_LoadCached(visual->value_1c, 128, (u8 *)handle + 1024);
         Runtime_ReleaseHeapBlock(17);
 
         if (flags & 1)
@@ -437,7 +437,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 
 struct ParticleSlot {
     s32 script;
-    u8 pad[0x6c];
+    u8 pad[108];
 };
 
 extern u8 *gEventWork;
@@ -484,7 +484,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
     rnd = Random16();
     Vector_AddPolarOffset(rnd << 4, Random16(), &values);
     object = Object_Spawn(
-        0x11D, values.first, values.second, values.third);
+        285, values.first, values.second, values.third);
     if (object != 0) {
         s32 mask;
         u8 flags;
@@ -507,7 +507,7 @@ u32 EffectRuntime_IsActive(void)
     struct EffectRuntime *runtime = gEventWork;
 
     if (runtime != NULL) {
-        count = *(s16 *)((u8 *)runtime + 0xcb8);
+        count = *(s16 *)((u8 *)runtime + 3256);
         active = (0 - count) | count;
         active >>= 31;
     }

@@ -29,13 +29,13 @@ struct State_08099d18 {
 #define STATE_08099D18_OFFSET(type, field) \
     ((u32)&(((type *)0)->field))
 typedef char Vector_08099d18_size[
-    sizeof(struct Vector_08099d18) == 0x0c ? 1 : -1
+    sizeof(struct Vector_08099d18) == 12 ? 1 : -1
 ];
 typedef char Source_08099d18_x_offset[
     STATE_08099D18_OFFSET(struct Source_08099d18, x) == 8 ? 1 : -1
 ];
 typedef char State_08099d18_source_offset[
-    STATE_08099D18_OFFSET(struct State_08099d18, source) == 0x14 ? 1 : -1
+    STATE_08099D18_OFFSET(struct State_08099d18, source) == 20 ? 1 : -1
 ];
 
 extern struct State_08099d18 *gEffectWork;
@@ -61,7 +61,7 @@ void BattleFx_SpawnFallingParticles(void)
     Vector_AddPolarOffset(angle * 16, Random16(), &position);
 
     object = Object_Spawn(
-        0x11d,
+        285,
         position.x,
         position.y,
         position.z);

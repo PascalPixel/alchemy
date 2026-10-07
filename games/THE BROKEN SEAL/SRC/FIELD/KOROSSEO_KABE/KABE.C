@@ -83,14 +83,14 @@ void SceneState_ConfigureRegionByActorElevenColumn(void)
     work = Object_GetById(11);
     if ((work->x.fixed >> 20) == 36) {
         Engine_GameFlagSet(0x335);
-        v0 = 0x23;
-        v1 = 0x4D;
-        Engine_MapCopyCellAttributes(0x23, 0x4E, 1, 1, v0, v1);
+        v0 = 35;
+        v1 = 77;
+        Engine_MapCopyCellAttributes(35, 78, 1, 1, v0, v1);
     } else {
         Engine_GameFlagClear(0x335);
-        v0 = 0x23;
-        v1 = 0x4D;
-        Engine_MapCopyCellAttributes(0x22, 0x4D, 1, 1, v0, v1);
+        v0 = 35;
+        v1 = 77;
+        Engine_MapCopyCellAttributes(34, 77, 1, 1, v0, v1);
     }
 }
 
@@ -155,7 +155,7 @@ void KorosseoKabe_SpinActorAway(void)
         spin += 36;
     }
     FieldObject_SetPosition(rec2, 0x14a0000, -0x100000, 0x1080000);
-    for (spin2 = 0x168, frames2 = 21; frames2 >= 0; frames2--) {
+    for (spin2 = 360, frames2 = 21; frames2 >= 0; frames2--) {
         ((struct FieldSprite *)p6)->rotation -= spin2;
         Engine_TaskWait(1);
         spin2 += 36;
@@ -329,7 +329,7 @@ void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
     Engine_ObjectSetPosition(log, column, 0, row);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(pusher, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480), log);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)((u8 *)Runtime_AllocateBlock(27, 3276) + 480), log);
     Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
     Object_SetMode(leader, 2);
     Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0, leader->z.fixed + dz);
@@ -505,7 +505,7 @@ void FieldScene_PlaceSpectatorRow(void)
 
 void KorosseoKabe_StartSupplementalSceneTask(void)
 {
-    Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
+    Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 3205);
     Engine_GameFlagClear(0x104);
 }
 
@@ -560,9 +560,9 @@ void KorosseoKabe_RunStageStart(void)
         v5 = (v5 - 1);
     } while (v5 >= 0);
     Actor_SetSpeed(8, 0x10000, 0x8000);
-    Actor_WalkTo(8, 88, 0x100);
+    Actor_WalkTo(8, 88, 256);
     Actor_SetSpeed(0, 0x10000, 0x8000);
-    Actor_WalkToAndWait(0, 120, 0x100);
+    Actor_WalkToAndWait(0, 120, 256);
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorFaceEachOther(0, 8, 0);
     Engine_EventWait(10);
@@ -571,8 +571,8 @@ void KorosseoKabe_RunStageStart(void)
     Engine_EventWait(20);
     Actor_SetSpeed(0, 0x20000, 0x10000);
     Actor_SetSpeed(8, 0x20000, 0x10000);
-    Actor_WalkTo(0, 112, 0x100);
-    Engine_ActorWalkToAndWait(8, 96, 0x100);
+    Actor_WalkTo(0, 112, 256);
+    Engine_ActorWalkToAndWait(8, 96, 256);
     Engine_ActorSetAnimation(0, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
@@ -883,17 +883,17 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             /* FAKEMATCH: called as returning int, these set r0 last and share constants; void calls set r0 first. */
             ((s32 (*)())SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x508, 184);
-            ((s32 (*)())SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x508, 216);
-            ((s32 (*)())SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x4c8, 216);
+            ((s32 (*)())SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 1288, 216);
+            ((s32 (*)())SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 1224, 216);
             Engine_EventShowMessage(speaker, 0);
             /* FAKEMATCH: called as returning int, these set r0 last and share constants; void calls set r0 first. */
             ((s32 (*)())SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x4c8, 248);
-            SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4a8, 248);
+            SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 1192, 248);
             Engine_EventWait(3);
             actor = Object_GetById(ACTOR_PARTY_LEADER);
             actor->velocity_y = 0x40000;
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
-            Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+            Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 258);
             Engine_EventWait(30);
             Engine_EventShowMessage(speaker, 0);
             Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
@@ -930,12 +930,12 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Value2(Engine_EventShowMessage, a0, 0);
             KorosseoKabe_StartSupplementalSceneTask();
             Event_ShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x438, 0x108);
+            Korosseo_FadeInCompetitor(0, 1080, 264);
             Engine_EventWait(15);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(SceneActor_PlaceWithScale14000, 0, 0x438, 216);
-            SceneActor_PlaceWithScale14000(0, 0x428, 216);
+            SceneActor_PlaceWithScale14000(0, 1064, 216);
             SceneState_WaitForStatusWords();
             Engine_LeaderCheckAhead();
             Camera_MoveTo(-1, -1, -1, 0);
@@ -977,7 +977,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Camera_MoveTo(0x2f00000, -1, 0xe00000, 1);
             Engine_CameraWaitForMove();
             Event_ShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x358, 0x108);
+            Korosseo_FadeInCompetitor(0, 856, 264);
             Engine_EventWait(10);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -985,7 +985,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(SceneActor_PlaceWithScale14000, 0, 0x358, 232);
             Event_ShowMessage(a0, 0);
-            SceneActor_PlaceWithScale14000(0, 0x348, 232);
+            SceneActor_PlaceWithScale14000(0, 840, 232);
             Engine_EventWait(10);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(SceneActor_MovePairByTileOffset, 33, -64, 0);
@@ -993,7 +993,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
             Engine_EventWait(10);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x2f8, 232);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 760, 232);
             Engine_EventWait(10);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
             Event_ShowMessage(a0, 0);

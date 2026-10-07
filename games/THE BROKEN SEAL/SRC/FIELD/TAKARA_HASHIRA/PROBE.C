@@ -22,7 +22,7 @@ struct MapLayer {
 };
 
 struct MapState {
-    u8 pad000[0x130];
+    u8 pad000[304];
     struct MapLayer layers[1];
 };
 
@@ -41,8 +41,8 @@ void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
         cnt--;
     }
 
-    *(u32 *)(obj + 0x28) = 0;
-    *(u32 *)(obj + 0x3c) = 0x80000000;
+    *(u32 *)(obj + 40) = 0;
+    *(u32 *)(obj + 60) = 0x80000000;
     *(u32 *)(obj + 12) = *(u32 *)(obj + 20);
 }
 
@@ -123,8 +123,8 @@ check:
         probe->position_z = a;
     }
     probe->position_x >>= 20;
-    *left = *(s32 *)(map + 0x13c) >> 20;
-    *top = *(s32 *)(map + 0x140) >> 20;
+    *left = *(s32 *)(map + 316) >> 20;
+    *top = *(s32 *)(map + 320) >> 20;
     return 1;
 }
 

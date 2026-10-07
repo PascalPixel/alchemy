@@ -39,7 +39,7 @@ s32 _call_via_r3(void *, void *, s32, void *);
 
 static inline void Owner_Copy(void *dst, void *src)
 {
-    _call_via_r3(dst, src, 0x14c, IwramCopyWords);
+    _call_via_r3(dst, src, 332, IwramCopyWords);
 }
 
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
@@ -129,7 +129,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
 #endif
             break;
         }
-        backup = Runtime_BumpAllocate(0x14c);
+        backup = Runtime_BumpAllocate(332);
         Owner_Copy(backup, unit);
         if (state->equip_preview)
             unit->inventory[slot] &= 0xfdff;

@@ -116,7 +116,7 @@ void SceneState_CallWith432And32(void)
 
 void FieldScene_CallWith560And44(void)
 {
-    VinasuHeya_SpawnRandomParticles(0x230, 44);
+    VinasuHeya_SpawnRandomParticles(560, 44);
 }
 
 void Scene_RunParticleWaveSequence(void)
@@ -279,7 +279,7 @@ void FieldScene_RunLeaderDropSequence(void)
     Engine_EventWait(30);
     leader->motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Engine_EventWait(24);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 257);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
     leader->motion_flags &= ~ACTOR_FOLLOWS_TERRAIN;
     spray->y.fixed += -3 << 16;
@@ -303,7 +303,7 @@ void FieldScene_RunLeaderDropSequence(void)
     leader->terrain_height += 1 << 16;
     leader->motion_flags = 0;
     spray->motion_flags = 0;
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 256);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(40);
     leader->update = (void *)VinasuHeya_UpdateRisingSpray;
@@ -311,7 +311,7 @@ void FieldScene_RunLeaderDropSequence(void)
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Engine_ActorSetSpritePriority(20, 1);
     Audio_PlayCue(17);
-    Audio_PlayCue(0x134);
+    Audio_PlayCue(308);
     GameFlag_Set(0x101);
     for (i = 0; i < 128; i++) {
         leader->y.fixed += 1 << 16;
@@ -327,7 +327,7 @@ struct TrackAnimation {
 };
 
 struct TrackSprite {
-    u8 unknown_00[0x24];
+    u8 unknown_00[36];
     u8 shape;
     u8 unknown_25[3];
     struct TrackAnimation *animations[4];
@@ -351,7 +351,7 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     pos[2] = actor->z.fixed;
     piece = (struct FieldActor *)SceneData_FindSlotAtPosition(pos, 0);
     sprite = (struct TrackSprite *)piece->sprite;
-    if (sprite->animations[0]->id == 0x100) {
+    if (sprite->animations[0]->id == 256) {
         s32 vx = actor->velocity_x;
         s32 ax = vx < 0 ? -vx : vx;
         s32 vz = actor->velocity_z;

@@ -141,7 +141,7 @@ s32 TorebiIzumi_OpenScene(void)
     if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: each do/while loads the value before the register address */
-        do { Io_SetBlendAlpha(0x80c); } while (0);
+        do { Io_SetBlendAlpha(2060); } while (0);
         Engine_ActorSetAnimation(24, 2);
         Engine_ActorSetAnimation(25, 2);
         Object_GetById(24)->scale_x = -0x10000;

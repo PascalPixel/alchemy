@@ -95,10 +95,10 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     UiWindow_OpenMode1AndWaitFrame();
     AffineEffect_InitializeWork();
     Menu_AppendResourceEntry(1);
-    Menu_AppendResourceEntry(0xF);
+    Menu_AppendResourceEntry(15);
     Menu_AppendResourceEntry(2);
     Menu_AppendResourceEntry(7);
-    Menu_CenterResourceEntries(0x11, ANIMATE_ENTRIES_ROW, 0);
+    Menu_CenterResourceEntries(17, ANIMATE_ENTRIES_ROW, 0);
     arg1 = Menu_SelectResource(arg0, arg1 - 1);
     Menu_EndResourceSelection();
     UiWork_CloseAndRelease();
@@ -123,31 +123,31 @@ s32 Menu_SelectSaveSlotAction(void)
     }
     if (type == 3) {
         group = 1;
-    } else if (type == 0x67) {
+    } else if (type == 103) {
         group = 2;
-    } else if (type > 0x64) {
+    } else if (type > 100) {
         group = 3;
     } else {
         initial = 1;
     }
     AffineEffect_InitializeWork();
     if ((group == 0) || (group == 3)) {
-        Menu_AppendResourceEntry(0x15);
+        Menu_AppendResourceEntry(21);
     }
     if (group <= 1U) {
-        Menu_AppendResourceEntry(0x16);
+        Menu_AppendResourceEntry(22);
     }
     if ((group == 0) || (group == 3)) {
-        Menu_AppendResourceEntry(0x17);
+        Menu_AppendResourceEntry(23);
     }
-    Menu_AppendResourceEntry(0x18);
+    Menu_AppendResourceEntry(24);
     if ((*(s16 *)gTitleExtraOptionEnabled) != 0) {
-        Menu_AppendResourceEntry(0x1D);
+        Menu_AppendResourceEntry(29);
     }
     if (gTitleSendOptionEnabled != 0) {
-        Menu_AppendResourceEntry(0x1E);
+        Menu_AppendResourceEntry(30);
     }
-    Menu_CenterResourceEntries(0x11, TYPE_MENU_WIDTH, 0);
+    Menu_CenterResourceEntries(17, TYPE_MENU_WIDTH, 0);
     ret = Menu_RunResourceSelectionLoop(initial);
     Menu_EndResourceSelection();
     if (ret >= 0) {

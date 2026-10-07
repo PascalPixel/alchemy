@@ -2,7 +2,7 @@
 #include "RAM_BUFFER.H"
 
 struct BattleEffectCounterState {
-    u8 unk_000[0x154];
+    u8 unk_000[340];
     s16 counters[12];
 };
 

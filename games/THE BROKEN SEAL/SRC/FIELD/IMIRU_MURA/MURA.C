@@ -106,9 +106,9 @@ const struct ScenePlacement *Scene_GetPlacements(void)
         FieldScene_PrepareActors(script);
         if (Engine_GameFlagIsSet(0x881) != 0) {
             script[262] = 0;
-            *(s32 *)(script + 0x50) = 182 << 16;
-            *(s32 *)(script + 0x58) = 564 << 16;
-            *(s32 *)(script + 0x4c) = 2;
+            *(s32 *)(script + 80) = 182 << 16;
+            *(s32 *)(script + 88) = 564 << 16;
+            *(s32 *)(script + 76) = 2;
         }
         return (const struct ScenePlacement *)script;
     }
@@ -560,7 +560,7 @@ s32 ImiruMura_ApplyEntryState(void)
         }
         leader->timer = 0;
         leader->work = 0;
-        Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene399SequenceA, 0xc80);
+        Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene399SequenceA, 3200);
         Engine_TaskAddCallback(SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
         Engine_ActorSetSpritePriority(11, 1);
         if (Engine_GameFlagIsSet(0x203)) {
@@ -702,7 +702,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     tbl = (s32)ImiruMura_TurnScript;
     Engine_ActorEnableActionCallback(9, tbl);
     Engine_EventWait(40);
-    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_MIA, 258);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
     Engine_EventSetMessage(MSGNO(MsgImiruHowFeeling));
@@ -721,10 +721,10 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_ActorEnableActionCallback(9, tbl);
 
     ImiruMura_CastPsynergyAtActorNine();
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
+    Actor_ShowEmote(ACTOR_MIA, 257, 60);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 40);
     Event_ShowMessageAndWait(9, 0, 20);
-    Actor_ShowEmote(8, 0x105, 60);
+    Actor_ShowEmote(8, 261, 60);
     Engine_ActorSetAnimation(9, 7);
     Map_AnimateCells((s32)ImiruMura_CellStepsA, 10, 69);
     Engine_EventWait(10);
@@ -741,7 +741,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_FaceDirection(8, 0, 20);
     Engine_ActorSetAnimationAndWait(8, 3);
     Event_ShowMessageAndWait(8, 0, 10);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 30);
+    Actor_ShowEmote(ACTOR_MIA, 257, 30);
     Actor_FaceDirection(ACTOR_MIA, 0x8000, 10);
     Engine_ActorSetAnimation(ACTOR_MIA, 4);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
@@ -757,7 +757,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     }
     Camera_MoveTo(0x8c0000, -1, 0xc60000, 1);
     Object_RefreshSelectorById(3);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 80);
+    Actor_ShowEmote(ACTOR_MIA, 257, 80);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 40);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
     Engine_EventWait(10);
@@ -772,7 +772,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     ColorBuffer_ApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
-    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_MIA, 258);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_MIA, 0, 10);
     Actor_SetSpeed(ACTOR_MIA, 0x20000, 0x10000);
@@ -782,10 +782,10 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Event_ShowMessage(ACTOR_MIA, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
-    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_SetAttachedEffect(ACTOR_MIA, 258);
     Engine_EventWait(40);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 40);
-    Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
+    Actor_ShowEmote(ACTOR_MIA, 256, 40);
     Event_ShowMessage(ACTOR_MIA, 0);
     Engine_ActorStop(ACTOR_PARTY_LEADER);
     Engine_ActorStop(ACTOR_GERALD);
@@ -870,7 +870,7 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
         pos[2] = actor->z.fixed;
         radius = Engine_RandomNext();
         Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
-        spark = Engine_ObjectCreate(0x11d, pos[0], pos[1], pos[2]);
+        spark = Engine_ObjectCreate(285, pos[0], pos[1], pos[2]);
         if (spark != NULL) {
             spark->sprite->priority = 0;
             Engine_ActorSetSpriteFlags(spark, 0);

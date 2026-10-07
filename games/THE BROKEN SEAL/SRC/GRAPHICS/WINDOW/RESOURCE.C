@@ -95,11 +95,11 @@ struct RenderOutput *RenderResource_CreateFrame(
 
     index = Resource_FindFreeEntry();
     entity = NULL;
-    if (index != 0x60) {
+    if (index != 96) {
         RenderResource_LoadFrame(arg0, index, arg1);
         entity = RenderOutput_Create(index, 0x80000000, arg2, arg3, arg4);
         ((u8 *)&entity->packed)[1] |= 0x20;
-        entity->sentinel = 0xfb;
+        entity->sentinel = 251;
     }
     return entity;
 }
@@ -120,8 +120,8 @@ void Ui_ApplyTableScaleToObject(struct UiScaleSprite *obj)
         obj->affine_22 = AffineMatrix_BuildForEffect(&efx);
         obj->mode_21 = 3;
         obj->pos_22 = obj->src_6 + 0xfff0;
-        obj->out_20 = obj->src_8 + 0xf0;
-        obj->out_15 = 0xfc;
+        obj->out_20 = obj->src_8 + 240;
+        obj->out_15 = 252;
     }
 }
 
@@ -133,7 +133,7 @@ s32 Menu_BuildLocalizedPatternTiles(void)
 
     for (set = 0; set < 2; set++) {
         for (n = 0; n < 6; n++) {
-            u32 *tile = vram + set * 0x60 + n * 0x10;
+            u32 *tile = vram + set * 96 + n * 16;
             s32 x;
 
             Iwram_FillWords(tile, 64, 0x44444444);
@@ -278,7 +278,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
     work = Runtime_AllocateBlock(17, sizeof(*work));
     Ui_PrepareTransferFromTableEntry(resource);
     result = Resource_GetBuffer(index, (s32)work->tiles);
-    Runtime_ReleaseHeapBlock(0x11);
+    Runtime_ReleaseHeapBlock(17);
     return result;
 }
 
@@ -288,9 +288,9 @@ s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
     GlyphTransfer *work;
 
     work = Runtime_AllocateBlock(17, sizeof(*work));
-    ItemIcon_Compose(resource, 0x1a);
+    ItemIcon_Compose(resource, 26);
     result = Resource_GetBuffer(index, (s32)work->tiles);
-    Runtime_ReleaseHeapBlock(0x11);
+    Runtime_ReleaseHeapBlock(17);
     return result;
 }
 
@@ -305,7 +305,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
     cur = index;
     Ability_LoadGlyph(resource, 0, &cur, &out, 1);
     ret = Resource_GetBuffer(index, (s32)work->tiles);
-    Runtime_ReleaseHeapBlock(0x11);
+    Runtime_ReleaseHeapBlock(17);
     return ret;
 }
 
@@ -323,13 +323,13 @@ s32 Ui_LoadEntryForKind(u32 kind, s32 value)
     if (GameFlag_TestFar(0x20) != 0) {
         switch (no) {
         case 0:
-            no = 0x38;
+            no = 56;
             break;
         case 1:
-            no = 0x39;
+            no = 57;
             break;
         }
     }
-    UiGlyph_LoadEntryWithPalette(no, 0, &cur, &out, 0xE, 1);
+    UiGlyph_LoadEntryWithPalette(no, 0, &cur, &out, 14, 1);
     return out;
 }

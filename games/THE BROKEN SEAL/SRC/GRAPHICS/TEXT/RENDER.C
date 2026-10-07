@@ -51,7 +51,7 @@ void UiText_DrawCharacterAtOffset(
 
     cell = ((position->y + (offset_y >> 3) + 1) << 5)
         + (position->x + (offset_x >> 3)) + 1;
-    if (cell < 0x280U) {
+    if (cell < 640U) {
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
         text = canvas->entries;
@@ -70,7 +70,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
     u8 *input;
 
     input = text;
-    buffer = Runtime_BumpAllocateAlternatePool(0x200);
+    buffer = Runtime_BumpAllocateAlternatePool(512);
     output = buffer;
     if (*input != 0) {
         do {
@@ -99,7 +99,7 @@ void UiText_DrawStringAtOffset(
     s32 dst;
     s32 phase;
 
-    buffer = Runtime_BumpAllocateAlternatePool(0x200);
+    buffer = Runtime_BumpAllocateAlternatePool(512);
     canvas = (struct UiRenderWork *)gWindowWork[0];
     output = buffer;
     if (*text != 0) {
@@ -113,7 +113,7 @@ void UiText_DrawStringAtOffset(
 
     cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
         + (work->x + ((u32)offset_x >> 3)) + 1;
-    if (cell < 0x280) {
+    if (cell < 640) {
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
@@ -130,7 +130,7 @@ void UiText_DrawStringAtOffset(
 
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 {
-    u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
+    u16 *buffer = Runtime_BumpAllocateAlternatePool(512);
     u16 *output = buffer;
 
     while (*text != 0) {
@@ -215,7 +215,7 @@ void UiText_DrawPrefixedNumberAtOffset(
 
     cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
         + (work->x + ((u32)offset_x >> 3)) + 1;
-    if (cell < 0x280) {
+    if (cell < 640) {
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;

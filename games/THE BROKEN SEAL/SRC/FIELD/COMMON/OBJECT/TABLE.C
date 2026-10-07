@@ -147,7 +147,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
 
     work = (struct FieldStepWork *)gEventWork;
     leader = gGameState.selected_actor;
-    entry = (struct ScenePlacement *)((u8 *)work + 0x200);
+    entry = (struct ScenePlacement *)((u8 *)work + 512);
     entry[0] = Data_0809f810[0];
     entry[1] = Data_0809f810[1];
     for (pos = 0; pos < 4; pos++)
@@ -167,7 +167,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
     pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
     cell = &MAP_CELLS[pos];
     above = &MAP_CELLS[pos - 128];
-    if (gGameState.y != 0 && cell->collision_code == 0xfd && above->collision_code == 0xfd) {
+    if (gGameState.y != 0 && cell->collision_code == 253 && above->collision_code == 253) {
         gGameState.movement_mode = 1;
         hgt = Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;
         object->y += hgt;
@@ -216,5 +216,5 @@ s32 ObjectTable_FindLastActiveId(void)
 
 void *ObjectTable_GetSlotAddress(u32 index)
 {
-    return (u8 *)gEventWork + 0x14 + index * sizeof(void *);
+    return (u8 *)gEventWork + 20 + index * sizeof(void *);
 }

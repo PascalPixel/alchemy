@@ -21,7 +21,7 @@ u32 BattleEventRuntime_Reset(void)
     events->event_index = 0;
     events->timer = 0;
     events->queue.target_index = 0;
-    events->pending_cue = 0x86;
+    events->pending_cue = 134;
     events->flags = 0;
 }
 

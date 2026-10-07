@@ -34,7 +34,7 @@ void Bg0_ClearTilemap(void)
         gDebugTextCursor = (u16 *)0x06002000;
     } while (0);
     {
-        s32 control = 0x400;
+        s32 control = 1024;
 
         REG_BG0CNT = control;
     }

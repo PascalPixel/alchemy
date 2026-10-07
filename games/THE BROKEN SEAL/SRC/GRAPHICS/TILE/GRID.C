@@ -168,8 +168,8 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
             if (value < metadata->animation_count) {
                 entry->kind = metadata->draw_kind;
                 entry->script = entry->scripts[value];
-                entry->timer = count * 0x10;
-                entry->step = 0x10;
+                entry->timer = count * 16;
+                entry->step = 16;
                 entry->pos = index;
                 entry->frame_base = index;
                 entry->frame = 0xff;

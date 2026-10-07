@@ -84,14 +84,14 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 
     work->camera_delta = 0;
     work->camera_phase = 0;
-    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
+    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 1152);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != (HomingEmbers_Counts[work->effect->variant] >> 1) + 132; frame++) {
         if (frame > 16 && frame < 80)
-            work->camera_delta = 0x100;
+            work->camera_delta = 256;
         else
             work->camera_delta = 0;
         if (frame == (HomingEmbers_Counts[work->effect->variant] >> 1) + 108)

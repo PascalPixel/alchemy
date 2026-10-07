@@ -796,7 +796,7 @@ s32 FloatingNut_Update(union FieldObject *object)
     sprite->rotation = Engine_MathCos(nut->angle + 0x8000) / 8;
     first = Engine_RandomNext();
     second = Engine_RandomNext();
-    nut->angle = nut->angle + (((u32)first << 9 >> 16) + ((u32)second << 9 >> 16)) + 0x400;
+    nut->angle = nut->angle + (((u32)first << 9 >> 16) + ((u32)second << 9 >> 16)) + 1024;
     return 0;
 }
 

@@ -10,7 +10,7 @@ void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 void UiText_DrawQuantityPairWithCue(s32 first, s32 second)
 {
     OwnerAction_AddFar();
-    Audio_PlayCue(0x53);
+    Audio_PlayCue(83);
     UiText_DrawQuantity(first, 1);
     UiText_DrawQuantity(second, 4);
     UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);

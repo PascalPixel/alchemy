@@ -82,7 +82,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
         offset_mask = 0x3E;
 
         for (; row < count; row++, destination += 32, position++) {
-            if ((position - 0x40) <= 0x3F) {
+            if ((position - 64) <= 63) {
                 u8 entry;
                 u16 *cell;
                 u32 parity;
@@ -184,13 +184,13 @@ void ObjectSystem_Initialize(s32 mode)
     fill = 0;
     Dma_Set((const void *)&fill, state, 0x85000017, REG_DMA3);
     if (mode == 4)
-        Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 3210);
     else
-        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 3210);
     if (mode >= 3 && mode <= 4) {
-        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 3200);
     } else {
-        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 3200);
         Data_03001d1c = 0;
         Data_03001cc0 = 0;
     }
@@ -505,14 +505,14 @@ void ObjectDispatch_WaitForValue16(void *raw_object)
     s32 cnt;
 
     cnt = 0;
-    if (object->script[object->cursor] != 0x10) {
+    if (object->script[object->cursor] != 16) {
         do {
             WaitFrames(1);
             cnt++;
-            if (cnt > 0x12b) {
+            if (cnt > 299) {
                 break;
             }
-        } while (object->script[object->cursor] != 0x10);
+        } while (object->script[object->cursor] != 16);
     }
 }
 
@@ -592,7 +592,7 @@ struct CameraSprite {
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[0x0a];
+    u8 unknown_0a[10];
     u16 second_tile : 10;
     u16 second_priority : 2;
     u16 second_palette : 4;
@@ -617,12 +617,12 @@ struct CameraObject {
     u8 unk_20[2];
     u8 layer;
     u8 flags;
-    u8 unk_24[0x2c];
+    u8 unk_24[44];
     void *sprite;
     u8 kind;
     u8 unk_55[7];
     u8 held;
-    u8 unk_5d[0x13];
+    u8 unk_5d[19];
 };
 
 struct CameraLayer {
@@ -631,10 +631,10 @@ struct CameraLayer {
 };
 
 struct CameraState {
-    u8 unk_000[0xe4];
+    u8 unk_000[228];
     s32 x;
     s32 z;
-    u8 unk_0ec[0x44];
+    u8 unk_0ec[68];
     struct CameraLayer layers[1];
 };
 
@@ -797,7 +797,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     /* FAKEMATCH: unused; the native frame keeps room for two points above the scales. */
     struct CameraPoint spare[2];
 
-    camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
+    camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 28);
     sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
     /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
     do { size = (u32)Render_DecodeFrameCodeSize; } while (0);

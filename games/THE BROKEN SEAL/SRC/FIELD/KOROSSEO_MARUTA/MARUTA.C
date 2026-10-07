@@ -126,7 +126,7 @@ void ColossoLogRollingStage_ResetAndRunSceneTask(void)
 
 void ColossoLogRollingStage_StartSceneTask(void)
 {
-    Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
+    Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 3200);
 }
 
 void ColossoLogRollingStage_WaitForSceneTask(void)
@@ -506,7 +506,7 @@ moved:
     Object_SetPosition(log, x, 0, z);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(actor, 2);
-    work = Runtime_AllocateBlock(27, 0xccc);
+    work = Runtime_AllocateBlock(27, 3276);
     ObjectDispatch_InitFromTable4WithArgument(work->view_center, log);
     Actor_SetSpeed(actor, 0x8000, acceleration);
     Audio_PlayCue(239);
@@ -526,11 +526,11 @@ moved:
         column = 84;
         Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
         Map_CopyCellAttributes(86, 9, 1, 1, column, 12);
-        Audio_PlayCue(0x120);
+        Audio_PlayCue(288);
         Audio_PlayCue(240);
     } else {
         Object_SetMode(log, 1);
-        Audio_PlayCue(0x120);
+        Audio_PlayCue(288);
         Audio_PlayCue(213);
         column = x >> 20;
         Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
@@ -691,9 +691,9 @@ void KorosseoMaruta_RunStageStart(void)
         Object_RefreshSelectorById(8);
     }
     Actor_SetSpeed(8, 0x10000, 0x8000);
-    Actor_WalkTo(8, 0x5f8, 192);
+    Actor_WalkTo(8, 1528, 192);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x5d8, 192);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
     Engine_EventWait(10);
@@ -702,8 +702,8 @@ void KorosseoMaruta_RunStageStart(void)
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_SetSpeed(8, 0x20000, 0x10000);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x5e0, 192);
-    Actor_WalkToAndWait(8, 0x5f0, 192);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
+    Actor_WalkToAndWait(8, 1520, 192);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
@@ -965,8 +965,8 @@ s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
 {
     particle->x += particle->velocity_x << 8;
     particle->y += particle->velocity_y << 8;
-    particle->scale_x += 0x666;
-    particle->scale_y += 0x666;
+    particle->scale_x += 1638;
+    particle->scale_y += 1638;
     particle->velocity_x += 5;
     particle->velocity_y -= 1;
     return 0;
@@ -1104,15 +1104,15 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionB);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(20);
-    Actor_WalkToAndWait(1, 0x5e0, 176);
+    Actor_WalkToAndWait(1, 1504, 176);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
-    Engine_ActorShowEmote(1, 0x100, 20);
+    Engine_ActorShowEmote(1, 256, 20);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Object_LinkObjectAndSetCallback(1, 2);
     Engine_EventWait(30);
-    Actor_WalkToAndWait(ACTOR_IVAN, 0x5d0, 176);
-    Actor_WalkTo(ACTOR_GERALD, 0x5f0, 184);
-    Actor_WalkToAndWait(ACTOR_IVAN, 0x5e0, 176);
+    Actor_WalkToAndWait(ACTOR_IVAN, 1488, 176);
+    Actor_WalkTo(ACTOR_GERALD, 1520, 184);
+    Actor_WalkToAndWait(ACTOR_IVAN, 1504, 176);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x4000, 10);
@@ -1125,10 +1125,10 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_ShowMessage(ACTOR_MIA, 0);
     Object_LinkObjectAndSetCallback(1, 3);
     Object_LinkObjectAndSetCallback(2, 3);
-    Actor_WalkToAndWait(ACTOR_MIA, 0x5d0, 184);
+    Actor_WalkToAndWait(ACTOR_MIA, 1488, 184);
     Object_LinkObjectAndSetCallback(2, 0);
     Object_LinkObjectAndSetCallback(1, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 60);
     Object_LinkObjectAndSetCallback(2, 1);
     Object_LinkObjectAndSetCallback(1, 2);
     Engine_EventWait(40);
@@ -1155,62 +1155,62 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Engine_EventWait(60);
     callback_target = (s32)ColossoLogRollingStage_SpawnPeriodicParticle;
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Call2(Engine_TaskAddCallback, callback_target, 3200);
     Engine_EventWait(5);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(55);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 60);
+    Call2(Engine_TaskAddCallback, callback_target, 3200);
     Engine_EventWait(20);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 60);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Call2(Engine_TaskAddCallback, callback_target, 3200);
     Engine_EventWait(35);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(25);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 60);
+    Actor_ShowEmote(ACTOR_MIA, 258, 60);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Call2(Engine_TaskAddCallback, callback_target, 3200);
     Engine_EventWait(35);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(25);
-    Actor_ShowEmote(2, 0x102, 60);
+    Actor_ShowEmote(2, 258, 60);
     Object_LinkObjectAndSetCallback(3, 2);
     Object_LinkObjectAndSetCallback(2, 3);
     Engine_EventWait(60);
     Object_LinkObjectAndSetCallback(3, 0);
     Object_LinkObjectAndSetCallback(2, 0);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Call2(Engine_TaskAddCallback, callback_target, 3200);
     Engine_EventWait(35);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(25);
-    Actor_ShowEmote(ACTOR_MIA, 0x108, 60);
+    Actor_ShowEmote(ACTOR_MIA, 264, 60);
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 3);
     Engine_ActorStartRepeatedMotion(2, 3);
     Engine_ActorRunRepeatedMotion(3, 3);
     Object_LinkObjectAndSetCallback(3, 2);
     Object_LinkObjectAndSetCallback(1, 2);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Call2(Engine_TaskAddCallback, callback_target, 3200);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     Engine_ActorSetAnimation(ACTOR_IVAN, 3);
     Engine_ActorSetAnimation(ACTOR_MIA, 3);
     Engine_EventWait(60);
-    Actor_WalkTo(ACTOR_MIA, 0x5b8, 200);
+    Actor_WalkTo(ACTOR_MIA, 1464, 200);
     Engine_EventWait(5);
-    Actor_WalkTo(ACTOR_IVAN, 0x558, 184);
+    Actor_WalkTo(ACTOR_IVAN, 1368, 184);
     Engine_EventWait(3);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x5e8, 184);
-    Actor_WalkTo(ACTOR_GERALD, 0x558, 184);
+    Actor_WalkToAndWait(ACTOR_GERALD, 1512, 184);
+    Actor_WalkTo(ACTOR_GERALD, 1368, 184);
     Engine_ActorWaitForMove(ACTOR_MIA);
     Engine_ActorSetAnimation(3, 1);
     Object_LinkObjectAndSetCallback(3, 0);
     Engine_EventWait(60);
-    Actor_WalkToAndWait(ACTOR_MIA, 0x598, 200);
-    Actor_WalkTo(ACTOR_MIA, 0x558, 184);
+    Actor_WalkToAndWait(ACTOR_MIA, 1432, 200);
+    Actor_WalkTo(ACTOR_MIA, 1368, 184);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);

@@ -31,7 +31,7 @@ s32 BattlePres_RunMosaicFadeOut(void)
     *reg = bg2cnt | 0x40;
     bg3cnt = *++reg;
     *reg = bg3cnt | 0x40;
-    reg += 0x21;
+    reg += 33;
     *reg = 0x3eee;
 
     Blend_SetDarkenTarget16(16);

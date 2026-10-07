@@ -34,7 +34,7 @@ void BattleFx_RunCanvasMode3WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x1c);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 28);
     Func_0818f620(effect, 3);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }

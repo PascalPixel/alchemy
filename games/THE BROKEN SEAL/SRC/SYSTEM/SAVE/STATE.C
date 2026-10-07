@@ -35,13 +35,13 @@ u32 SaveState_SelectWriteSlot(s32 mode)
             empty[count++] = index;
         }
         index += 1;
-    } while (index <= 0xFU);
-    index = 0x10;
+    } while (index <= 15U);
+    index = 16;
     if (count != 0) {
         if (count == 1) {
             index = empty[0];
-            if (SaveState_FindLatestSlot(mode) == 0x10) {
-                index = 0x10;
+            if (SaveState_FindLatestSlot(mode) == 16) {
+                index = 16;
             }
         } else {
             index = Random16() % count;
@@ -168,7 +168,7 @@ u32 SaveState_DeleteRecord(s32 record_id)
     s32 deletion_result;
 
     index = SaveState_FindLatestSlot(record_id);
-    if (index > 0xFU) {
+    if (index > 15U) {
         return 1U;
     }
     deletion_result = SaveState_InvalidateSlot(index);
@@ -183,7 +183,7 @@ s32 SaveState_ChecksumWorkspace(void)
     s32 sum;
 
     work = gSaveWorkspace;
-    limit = 0xFE7;
+    limit = 4071;
     sum = 0;
     offset = 0;
     do {
@@ -208,7 +208,7 @@ u32 SaveState_FindLatestSlot(s32 record_id)
     u32 i;
 
     work = gSaveWorkspace;
-    latest_slot = 0x10;
+    latest_slot = 16;
     latest_sequence = 0;
     for (i = 0; i <= 15; i++) {
         if (work->occupied[i] != 0 && record_id == work->record_id[i]) {
@@ -233,14 +233,14 @@ s32 SaveState_InvalidateSlot(s32 index)
     WAIT_DMA();
     START_DMA(Save_HeaderTemplate, &header, 0x84000002);
     WAIT_DMA();
-    header.record_id = 0x10;
+    header.record_id = 16;
     header.sequence = 0;
     START_DMA(&header, &work->slot.record.header, 0x84000004);
     WAIT_DMA();
     if (SaveState_WriteWorkspaceSlot(index) != 0)
         return 1;
     work->occupied[index] = 0;
-    work->record_id[index] = 0x10;
+    work->record_id[index] = 16;
     work->sequence[index] = 0;
     return 0;
 }
@@ -301,7 +301,7 @@ s32 SaveState_LoadSummaryRecords(void)
         }
         index = SaveState_FindLatestSlot(group + 3);
         if (index <= 15)
-            ReadFlash(index, 0x110, summary->unknown_38, sizeof(summary->unknown_38));
+            ReadFlash(index, 272, summary->unknown_38, sizeof(summary->unknown_38));
         else
             *(u32 *)summary->unknown_38 = 0;
         group++;

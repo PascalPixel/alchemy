@@ -126,7 +126,7 @@ void MenuSelection_DrawFrame(void)
             te->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             te->affine = 3;
             te->x = te->x + 0xfff0;
-            te->y = te->y + 0xf0;
+            te->y = te->y + 240;
             transfer->scale = transfer->scale + transfer->scale_step;
         }
         if (GameFlag_IsSet(0x103) != 0) {
@@ -155,7 +155,7 @@ void MenuSelection_DrawFrame(void)
             e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             e->affine = 3;
             e->x = e->x + 0xfff8;
-            e->y = e->y + 0xf8;
+            e->y = e->y + 248;
         } else {
             e->affine = 0;
             e->param = 0;
@@ -178,7 +178,7 @@ void MenuSelection_DrawFrame(void)
         {
             void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
 
-            cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
+            cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 256, src);
         }
         if (cursor->target_x != cursor->x) {
             tmp = (cursor->target_x - cursor->x) >> 1;

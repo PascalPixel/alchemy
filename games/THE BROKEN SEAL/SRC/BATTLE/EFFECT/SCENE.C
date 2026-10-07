@@ -36,7 +36,7 @@
 extern struct BattleFxScene *gEffectWork;
 
 struct BattleEffectRuntime {
-    u8 reserved_000[0xcc0];
+    u8 reserved_000[3264];
     s16 restore_requested;
     u8 reserved_cc2[4];
     s8 teardown_blocked;
@@ -120,7 +120,7 @@ void BattleEffect_CleanupSceneObjects(void)
         if (scene->animation != 8)
             runtime->restore_requested = 1;
         BattleFx_PlayQueuedSound();
-        Runtime_ReleaseHeapBlock(0x38);
+        Runtime_ReleaseHeapBlock(56);
     }
 }
 
@@ -139,16 +139,16 @@ void EventObject_Initialize(void)
     event_object = event_state->main_object;
     event_value = (s16)event_state->action;
     event_index = event_value;
-    Object_SetMode(event_object, 0x14);
-    FIELD_AT_OFFSET(event_object, u32 *, 0x38) = *(s32 *)((u8 *)(event_object) + 8);
-    FIELD_AT_OFFSET(event_object, s32 *, 0x3C) = FIELD_AT_OFFSET(event_object, s32 *, 0xC);
-    FIELD_AT_OFFSET(event_object, s32 *, 0x40) = FIELD_AT_OFFSET(event_object, s32 *, 0x10);
-    FIELD_AT_OFFSET(event_object, u32 *, 0x24) = 0;
-    FIELD_AT_OFFSET(event_object, u32 *, 0x28) = 0;
-    *(s32 *)((u8 *)(event_object) + 0x2C) = 0;
+    Object_SetMode(event_object, 20);
+    FIELD_AT_OFFSET(event_object, u32 *, 56) = *(s32 *)((u8 *)(event_object) + 8);
+    FIELD_AT_OFFSET(event_object, s32 *, 60) = FIELD_AT_OFFSET(event_object, s32 *, 12);
+    FIELD_AT_OFFSET(event_object, s32 *, 64) = FIELD_AT_OFFSET(event_object, s32 *, 16);
+    FIELD_AT_OFFSET(event_object, u32 *, 36) = 0;
+    FIELD_AT_OFFSET(event_object, u32 *, 40) = 0;
+    *(s32 *)((u8 *)(event_object) + 44) = 0;
     if (event_state->visible != 0) {
         Audio_PlayCue(212);
-        FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_1;
+        FIELD_AT_OFFSET(event_object, s32 *, 108) = CALLBACK_1;
     }
     if (event_state->active != 0) {
         ObjectGroup_SetActionForOthers(event_object, 1, 0);
@@ -158,17 +158,17 @@ void EventObject_Initialize(void)
         } else {
             UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, event_state->message_mode);
         }
-        ObjectGroup_SetActionForOthers(event_object, 0, 0x10);
+        ObjectGroup_SetActionForOthers(event_object, 0, 16);
     }
     if (GameFlag_TestFar(0x140) != 0) {
         if (event_state->visible != 0) {
-            FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_2;
+            FIELD_AT_OFFSET(event_object, s32 *, 108) = CALLBACK_2;
         }
-        Object_SetMode(event_object, 0x15);
+        Object_SetMode(event_object, 21);
     } else {
         EffectRuntime_StopCurrentObject();
     }
-    FIELD_AT_OFFSET(render_state, s8 *, 0xCC7) = 1;
+    FIELD_AT_OFFSET(render_state, s8 *, 3271) = 1;
 }
 
 void BattleEffect_InitializeSharedScene(void)
@@ -179,9 +179,9 @@ void BattleEffect_InitializeSharedScene(void)
 
     scene = *(gWorkSlot + HEAP_SLOT_EVENT);
     work = *(gWorkSlot + 32);
-    Dma_Set(&work->target[0x2a0], scene + 0x776, 0x84000150, REG_DMA3);
-    if (*(s16 *)(scene + 0xcb8) == 0)
-        Dma_Set(work->target, scene + 0x236, 0x84000150, REG_DMA3);
+    Dma_Set(&work->target[672], scene + 1910, 0x84000150, REG_DMA3);
+    if (*(s16 *)(scene + 3256) == 0)
+        Dma_Set(work->target, scene + 566, 0x84000150, REG_DMA3);
     Dma_Set(work->target, work->current, 0x84000000 | (sizeof work->current / 4), REG_DMA3);
 
     no = gFrameCount & 7;
@@ -203,9 +203,9 @@ void BattleFx_PrepareBufferInterpolation(void)
     u8 *state;
 
     state = (u8 *)Data_03001ebc;
-    value = (s32)(state + 0x236);
+    value = (s32)(state + 566);
     BattleFx_ApplyColorToTargetBuffer(value, 2);
-    if (FIELD_AT_OFFSET(state, s16 *, 0xCB8) != 0) {
+    if (FIELD_AT_OFFSET(state, s16 *, 3256) != 0) {
         BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
     } else {
         BattleFx_ApplyColorToTargetBuffer(value, 1);
@@ -241,18 +241,18 @@ void RunSceneTransitionEffect(s32 x, s32 y)
     u8 *work;
     volatile u32 zero;
 
-    work = Runtime_AllocateBlock(22, 0x298);
+    work = Runtime_AllocateBlock(22, 664);
     BattleEffect_InitializeSharedScene();
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x850000a6, REG_DMA3);
-    *(u16 *)(work + 0x28e) = __umodsi3(gFrameCount << 1, 360);
+    *(u16 *)(work + 654) = __umodsi3(gFrameCount << 1, 360);
     BattleFx_AdvanceHueCycle();
-    BattleFx_ApplyColorToTargetBuffer(((s8)work[0x28d] << 10) | ((s8)work[0x28c] << 5) |
-                                      (s8)work[0x28b] | 0x200000, 1);
+    BattleFx_ApplyColorToTargetBuffer(((s8)work[653] << 10) | ((s8)work[652] << 5) |
+                                      (s8)work[651] | 0x200000, 1);
     BattleFx_StartBufferInterpolation(8);
-    *(u16 *)(work + 0x290) = x;
-    *(u16 *)(work + 0x292) = y;
-    work[0x294] = 8;
+    *(u16 *)(work + 656) = x;
+    *(u16 *)(work + 658) = y;
+    work[660] = 8;
     Ui_FillBank15PaletteGrey();
-    Scheduler_AddOrUpdateCallback((void (*)(void))BattleFx_UpdateWaveScene, 0xc80);
+    Scheduler_AddOrUpdateCallback((void (*)(void))BattleFx_UpdateWaveScene, 3200);
 }

@@ -23,7 +23,7 @@ struct RenderOutput *RenderOutput_CreateWithTransform(
     struct RenderOutput *result;
 
     count = Resource_FindFreeEntry();
-    if (count == 0x60) {
+    if (count == 96) {
         return NULL;
     }
     Ui_BuildPairedPatternsToSlot(arg0, 1, &count, &unused, 1);

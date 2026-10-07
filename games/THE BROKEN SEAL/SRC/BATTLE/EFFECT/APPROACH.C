@@ -158,7 +158,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
         work->transfer_mode = 2;
         work->transfer_value = 50;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     shots = Volley_Modes[mode * 5];
     steps = Volley_Modes[mode * 5 + 1];

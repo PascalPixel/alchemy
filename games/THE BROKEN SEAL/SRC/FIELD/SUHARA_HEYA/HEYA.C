@@ -97,7 +97,7 @@ void SuharaHeya_PlayCueAndRequestTouchedExit(void)
     s16 *cnt = (s16 *)&state->touched_trigger;
 
     Engine_EventRequestExit(*cnt);
-    Engine_AudioPlayCue(0x7B);
+    Engine_AudioPlayCue(123);
 }
 
 void Scene_RunPrimaryScript(void)

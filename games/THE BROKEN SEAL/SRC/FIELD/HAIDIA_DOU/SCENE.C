@@ -40,9 +40,9 @@ s32 HaidiaDou_RunSceneScript(void)
 {
     s32 *request = &gEventWork->start_transition;
 
-    *request = 0x204;
+    *request = 516;
     if (gGameState.scene == (s32)&SceneId_HaidiaDou1) {
-        *request = 0x100;
+        *request = 256;
         WaitFrames(1);
         Engine_ActorSetSpritePriority(11, 3);
         Engine_ActorSetSpritePriority(12, 3);
@@ -119,7 +119,7 @@ void FieldScene_RunShiftAndSetFlag301(void)
     Engine_GameFlagSet(0x301);
     WaitFrames(2);
     DialogueLayout_ConfigureRowsByFlag301();
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
 }
 
 void FieldScene_RunActor11Transition301(void)
@@ -131,7 +131,7 @@ void FieldScene_RunActor11Transition301(void)
     Engine_GameFlagClear(0x301);
     WaitFrames(2);
     DialogueLayout_ConfigureRowsByFlag301();
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
 }
 
 void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)

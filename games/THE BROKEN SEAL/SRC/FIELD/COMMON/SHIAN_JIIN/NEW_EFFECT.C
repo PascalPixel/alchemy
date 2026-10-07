@@ -21,7 +21,7 @@ void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
         overlay_object->motion_flags = 0;
         overlay_object->collision_flags = 8;
         Engine_ActorSetSpriteFlags(overlay_object, 0);
-        ObjectGroup_SetChildValue(overlay_object, 0xE);
+        ObjectGroup_SetChildValue(overlay_object, 14);
         Engine_ObjectSetBlendMode(overlay_object, 1);
         return overlay_object;
     }

@@ -124,10 +124,10 @@ void RamakanSabaku_FaceNearestActor(void)
     Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorFaceActor(0, best, 0);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(0, 0x102);
+    Actor_SetAttachedEffect(0, 258);
     Engine_ActorStartRepeatedMotion(0, 2);
     Engine_EventWait(60);
-    Actor_SetAttachedEffect(0, 0x101);
+    Actor_SetAttachedEffect(0, 257);
     actor = Actor_Get(0);
     record = Object_GetById(0);
     actor->facing = (record->facing + 0x8000) & -0x1000;
@@ -141,9 +141,9 @@ void RamakanSabaku_FaceNearestActor(void)
         Engine_ActorSetDestination(0, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_EventWait(60);
-    Actor_ShowEmote(best, 0x104, 0);
+    Actor_ShowEmote(best, 260, 0);
     Engine_EventWait(60);
-    Actor_SetAttachedEffect(0, 0x100);
+    Actor_SetAttachedEffect(0, 256);
     Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     record = Object_GetById(0);
     *(s32 *)((u8 *)record + 108) = 0;
@@ -181,7 +181,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
                      ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd, 0x800000, &params);
     }
     if (hit < 0) {
-        Actor_SetAttachedEffect(id, 0x102);
+        Actor_SetAttachedEffect(id, 258);
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
         Object_SetMode(actor, 7);
         Engine_ObjectCommitPosition(actor);
@@ -233,8 +233,8 @@ void RamakanSabaku_PlayStartledRetreat(void)
         if (rec8 == 0) {
             GameFlag_Set(0x200);
             RamakanSabaku_SetSandPhase(1);
-            shown_addr = (u16 *)(p5 + 0xcba);
-            shown = 0x258;
+            shown_addr = (u16 *)(p5 + 3258);
+            shown = 600;
             *shown_addr = shown;
             record = Object_GetById(ACTOR_PARTY_LEADER);
             record->velocity_x = rec8;
@@ -248,7 +248,7 @@ void RamakanSabaku_PlayStartledRetreat(void)
             Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
             Engine_EventWait(40);
             Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
             Engine_EventWait(40);
             Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             rect[0] = rec8;
@@ -280,14 +280,14 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 {
     s32 v5;
 
-    gGameState.hazard_limit = 0x258;
+    gGameState.hazard_limit = 600;
     gGameState.hazard_mode = 0;
-    gGameState.hazard_damage = 0x119;
+    gGameState.hazard_damage = 281;
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku4) {
     } else {
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         RamakanSabaku_ClaimSandEffectVram();
-        Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
+        Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 3200);
         if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {
             Map_CopyCells(22, 7, 4, 2, 64, 126);
             Engine_MapCopyCells(8, 10, 4, 2, 68, 126);

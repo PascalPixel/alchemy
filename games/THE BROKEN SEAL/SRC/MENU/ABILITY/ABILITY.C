@@ -173,14 +173,14 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     menu->psynergy_count =
         PsynergyMenu_CollectActions(owner, psynergies, 2);
     RenderOutput_RedrawSavedRectFar(menu->psynergy_window);
-    PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
+    PsynergyMenu_RefreshOwnerEntries(108, 32, 8);
     PsynergyMenu_DrawPsynergyIcons(psynergies);
     if (menu->psynergy_count == 0) {
         UiText_DrawCharacterAtOffsetFar(
             (s32)MsgPsynergyMenuEmpty,
             (s32 *)menu->psynergy_window,
             0,
-            0x18);
+            24);
     }
 }
 

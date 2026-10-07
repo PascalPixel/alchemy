@@ -15,9 +15,9 @@
 void Blend_SetDarkenTarget16(s32 duration)
 {
     gBlendBrighten = 0;
-    gBlendLayers = 0x3e;
+    gBlendLayers = 62;
     gBlendStartLevel = gBlendTargetLevel;
-    gBlendTargetLevel = 0x10;
+    gBlendTargetLevel = 16;
     gBlendDuration = duration;
     gBlendFramesLeft = gBlendDuration;
 }
@@ -25,7 +25,7 @@ void Blend_SetDarkenTarget16(s32 duration)
 void Blend_SetDarkenTarget0(s32 duration)
 {
     gBlendBrighten = 0;
-    gBlendLayers = 0x3e;
+    gBlendLayers = 62;
     gBlendStartLevel = gBlendTargetLevel;
     gBlendTargetLevel = 0;
     gBlendDuration = duration;
@@ -35,9 +35,9 @@ void Blend_SetDarkenTarget0(s32 duration)
 void Blend_SetBrightenTarget16(s32 duration)
 {
     gBlendBrighten = 1;
-    gBlendLayers = 0x3e;
+    gBlendLayers = 62;
     gBlendStartLevel = gBlendTargetLevel;
-    gBlendTargetLevel = 0x10;
+    gBlendTargetLevel = 16;
     gBlendDuration = duration;
     gBlendFramesLeft = gBlendDuration;
 }
@@ -45,7 +45,7 @@ void Blend_SetBrightenTarget16(s32 duration)
 void Blend_SetBrightenTarget0(s32 duration)
 {
     gBlendBrighten = 1;
-    gBlendLayers = 0x3e;
+    gBlendLayers = 62;
     gBlendStartLevel = gBlendTargetLevel;
     gBlendTargetLevel = 0;
     gBlendDuration = duration;
@@ -56,7 +56,7 @@ void Blend_ConfigureTransition(s8 mode, s32 coefficient, u32 start, s32 target, 
 {
     gBlendBrighten = mode;
     gBlendLayers = coefficient & 0x3f;
-    if (start > 0x10U) {
+    if (start > 16U) {
         gBlendStartLevel = gBlendTargetLevel;
     } else {
         gBlendStartLevel = start;

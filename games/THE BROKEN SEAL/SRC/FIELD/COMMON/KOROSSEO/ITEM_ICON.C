@@ -30,9 +30,9 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
         one = obj->active;
         if (one == 1) {
             spr = (struct AnimationObject *)obj->sprite;
-            base = (s32)Runtime_AllocateHeapBlock(17, 0x608);
+            base = (s32)Runtime_AllocateHeapBlock(17, 1544);
             none = 0;
-            base += 0x400;
+            base += 1024;
             zero = none;
             Dma_Set((const void *)&zero, (void *)base, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x20, REG_DMA3);
             ItemIcon_LoadTilesFar(item);

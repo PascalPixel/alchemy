@@ -18,16 +18,16 @@
 #include "RESOURCE.H"
 
 struct PlacementDescriptor {
-    u8 pad_00[0x2c];
+    u8 pad_00[44];
     s8 kinds[4];
     u8 pad_30[3];
     s8 variant;
 };
 
 struct PlacementState {
-    u8 pad_000[0x114];
+    u8 pad_000[276];
     struct AnimationObject *objects[4];
-    u8 pad_124[0x10];
+    u8 pad_124[16];
     s16 x[4];
     u8 pad_13c[8];
     s16 y[4];
@@ -60,8 +60,8 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
         }
 
         state->objects[i] = object;
-        state->x[i] = (x + origin->x + i * 3) * 8 + 0x10;
-        state->y[i] = (y + origin->y) * 8 + 0x10;
+        state->x[i] = (x + origin->x + i * 3) * 8 + 16;
+        state->y[i] = (y + origin->y) * 8 + 16;
         state->scale[i] = 0x10000;
     }
 
@@ -126,8 +126,8 @@ void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y)
             }
 
             state->objects[i] = object;
-            state->positions_x[i] = (origin->x + x + i * 3) * 8 + 0x10;
-            state->positions_y[i] = (origin->y + y) * 8 + 0x10;
+            state->positions_x[i] = (origin->x + x + i * 3) * 8 + 16;
+            state->positions_y[i] = (origin->y + y) * 8 + 16;
         }
 
         Scheduler_AddOrUpdateCallback(Menu_UpdateSecondObjectRowPositions, 200 << 4);

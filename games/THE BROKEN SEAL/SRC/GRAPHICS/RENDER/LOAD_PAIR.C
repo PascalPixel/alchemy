@@ -96,12 +96,12 @@ extern const u8 *RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
-    void *staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
+    void *staging_buffer = (void *)Runtime_AllocateBlock(14, 1024);
     const u8 *resource = RenderResource_PairSourceTable[group_index];
 
-    if (resource_index <= 0x5F) {
+    if (resource_index <= 95) {
         Resource_DecodeByteLz(resource, staging_buffer);
-        VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
+        VramBlock_LoadCached(resource_index, 512, staging_buffer);
         Runtime_ReleaseHeapBlock(14);
     }
 }
@@ -122,9 +122,9 @@ struct RenderOutput *RenderResource_CreatePair(
 
     RenderResource_LoadPair(group, index);
     first = RenderOutput_Create(index, 0x80004000, input, x, y);
-    first->sentinel = 0xFD;
+    first->sentinel = 253;
     second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
-    second->sentinel = 0xFD;
+    second->sentinel = 253;
     second->table.bits.index += 8;
     return first;
 }

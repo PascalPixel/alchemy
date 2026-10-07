@@ -43,7 +43,7 @@ void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)
     s32 value = Resource_FindFreeEntry();
 
     *slot = value;
-    object->oam.f.tile = VramBlock_LoadCached(value, 0x80, data);
+    object->oam.f.tile = VramBlock_LoadCached(value, 128, data);
     object->oam.f.mode = 0;
     object->oam.f.mosaic = 0;
     object->oam.f.colors = 1;
@@ -58,7 +58,7 @@ void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y)
 {
     obj->oam.f.x = x;
     obj->oam.f.y = y;
-    Runtime_PushSlotEntry((s32 *)obj, 0xFC);
+    Runtime_PushSlotEntry((s32 *)obj, 252);
 }
 
 void UiTextResource_Release(s32 value)

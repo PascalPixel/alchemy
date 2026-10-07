@@ -180,7 +180,7 @@ s32 Menu_RunWorkspaceOptions(void)
 
             for (i = 0; i <= 2; i++) {
                 frame = work->frame[0][i];
-                frame->sentinel = 0xfb;
+                frame->sentinel = 251;
                 UiIcon_PrepareObjectFar(frame);
                 index = (u8)work->frame[0][i]->index;
                 dim = 0;
@@ -190,7 +190,7 @@ s32 Menu_RunWorkspaceOptions(void)
             }
             for (i = 0; i <= 1; i++) {
                 frame = work->frame[1][i];
-                frame->sentinel = 0xfb;
+                frame->sentinel = 251;
                 UiIcon_PrepareObjectFar(frame);
                 index = (u8)work->frame[1][i]->index;
                 dim = 0;
@@ -200,7 +200,7 @@ s32 Menu_RunWorkspaceOptions(void)
             }
             for (i = 0; i <= 1; i++) {
                 frame = work->frame[2][i];
-                frame->sentinel = 0xfb;
+                frame->sentinel = 251;
                 UiIcon_PrepareObjectFar(frame);
                 index = (u8)work->frame[2][i]->index;
                 dim = 0;

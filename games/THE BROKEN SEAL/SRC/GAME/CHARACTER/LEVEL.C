@@ -122,7 +122,7 @@ struct LevelUpWork {
     s32 class_index;
     s32 level;
     struct CharacterDefinition *growth;
-    u8 unknown_0c[0x20];
+    u8 unknown_0c[32];
 };
 
 u32 Random16(void);

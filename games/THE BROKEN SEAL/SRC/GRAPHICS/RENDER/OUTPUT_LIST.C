@@ -36,7 +36,7 @@ void RenderOutput_Release(struct RenderOutput *entry)
         if ((u8)entry->kind == 2) {
             u8 *dst = gWindowWork[0];
             s32 idx = (((u8 *)&entry->table)[1] >> 4) * 2 + RENDER_PALETTE_TBL_OFS;
-            *(u16 *)(dst + idx) = 0x3E7;
+            *(u16 *)(dst + idx) = 999;
         }
     }
     entry->active = 0;

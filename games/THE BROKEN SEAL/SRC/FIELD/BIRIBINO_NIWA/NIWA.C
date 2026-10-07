@@ -84,7 +84,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 void FieldScene_RunStepWithValueFd2(void)
 {
     Engine_EventBegin();
-    Engine_ActorSetPosition(0xD, 0, 0);
+    Engine_ActorSetPosition(13, 0, 0);
     Engine_GameFlagSet(0xFD2);
     Engine_ItemShowFound(ITEM_NUT, 3);
     Engine_PartyGiveItem(ITEM_NUT, 0);
@@ -139,7 +139,7 @@ void BiribinoNiwa_RunGardenEvent(void)
             if (GameFlag_IsSet(0x201) == 0) {
                 Engine_EventSetMessage((s32)MsgBiribinoWhere);
                 Engine_EventShowMessageAndWait(12, 0, 10);
-                Actor_ShowEmote(12, 0x107, 40);
+                Actor_ShowEmote(12, 263, 40);
                 Engine_EventShowMessageAndWait(12, 0, 10);
                 Engine_ActorRunRepeatedMotion(12, 2);
                 Engine_GameFlagSet(0x201);
@@ -160,16 +160,16 @@ void BiribinoNiwa_RunGardenEvent(void)
         Engine_EventShowMessageAndWait(12, 0, 10);
         if (Object_GetById(0)->z.fixed < 0x10e0000) {
             Actor_SetSpeed(12, 0xcccc, 0x6666);
-            Actor_WalkToAndWait(0, 0x15a, 0x112);
-            Actor_WalkToAndWait(0, 0x148, 0x11a);
+            Actor_WalkToAndWait(0, 346, 274);
+            Actor_WalkToAndWait(0, 328, 282);
             Actor_FaceDirection(0, 0xc000, 0);
         }
         Actor_FaceDirection(11, 0x1000, 0);
         Actor_FaceDirection(12, 0x7000, 20);
-        Actor_ShowEmote(11, 0x102, 20);
+        Actor_ShowEmote(11, 258, 20);
         Engine_ActorStartRepeatedMotion(11, 1);
         Engine_EventShowMessageAndWait(11, 0, 10);
-        Actor_ShowEmote(12, 0x108, 60);
+        Actor_ShowEmote(12, 264, 60);
         Engine_ActorStartRepeatedMotion(12, 1);
         Engine_EventShowMessageAndWait(12, 0, 20);
         Engine_ActorSetAnimation(11, 3);
@@ -181,15 +181,15 @@ void BiribinoNiwa_RunGardenEvent(void)
         Actor_FaceDirection(11, 0xf000, 0);
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
         Object_GetById(12)->steering_flags &= ~ACTOR_FACES_MOTION;
-        Actor_WalkToAndWait(12, 0x15a, 0x107);
+        Actor_WalkToAndWait(12, 346, 263);
         Engine_EventWait(1);
         Object_GetById(12)->steering_flags |= ACTOR_FACES_MOTION;
         Actor_SetSpeed(11, 0x9999, 0x4ccc);
-        Actor_WalkToAndWait(11, 0x148, 0x107);
-        Actor_WalkToAndWait(11, 0x148, 252);
+        Actor_WalkToAndWait(11, 328, 263);
+        Actor_WalkToAndWait(11, 328, 252);
         Actor_FaceDirection(11, 0xc000, 10);
         FieldScene_OpenGate();
-        Actor_WalkToAndWait(11, 0x148, 246);
+        Actor_WalkToAndWait(11, 328, 246);
         /* FAKEMATCH: called without its prototype, the actor id loads after the two zeros. */
         ((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
         /* FAKEMATCH: the do/while keeps this call after the argument setup of the previous one. */
@@ -296,15 +296,15 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_CameraSetSpeed(0x3333, 0x666);
     Engine_CameraMoveTo(0x1400000, -1, 0x1220000, 1);
     Actor_SetSpeed(0, 0x9999, 0x4ccc);
-    Actor_WalkToAndWait(0, 0x140, 0x136);
+    Actor_WalkToAndWait(0, 320, 310);
     Actor_FaceDirection(11, 0x3000, 10);
     Engine_ActorStartRepeatedMotion(11, 2);
-    Actor_ShowEmote(11, 0x100, 60);
+    Actor_ShowEmote(11, 256, 60);
     Engine_EventSetMessage((s32)MsgBiribinoOhItS);
     Engine_EventShowMessageAndWait(11, 0, 10);
     Actor_FaceDirection(12, 0x5000, 10);
     Engine_ActorStartRepeatedMotion(12, 2);
-    Actor_ShowEmote(12, 0x100, 60);
+    Actor_ShowEmote(12, 256, 60);
     Engine_EventShowMessageAndWait(12, 0, 20);
     Actor_FaceDirection(11, 0x1000, 0);
     Actor_FaceDirection(12, 0x7000, 40);
@@ -316,7 +316,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_EventOpenMessage(12, 0);
     Actor_FaceDirection(0, 0xe000, 0);
     while (Engine_EventChooseYesNo(0, 0) != 0) {
-        Engine_ActorShowEmote(12, 0x100, 60);
+        Engine_ActorShowEmote(12, 256, 60);
         Engine_EventSetMessage((s32)MsgBiribinoNotTrueWitnesses);
         Engine_EventShowMessageAndWait(12, 0, 10);
         Engine_ActorStartRepeatedMotion(12, 2);
@@ -332,15 +332,15 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_EventSetMessage((s32)MsgBiribinoUnderArrest);
     Engine_EventShowMessageAndWait(11, 0, 10);
     Actor_SetSpeed(11, 0x10000, 0x8000);
-    Actor_WalkToAndWait(11, 0x13a, 0x118);
+    Actor_WalkToAndWait(11, 314, 280);
     Actor_FaceDirection(0, 0xc000, 20);
     Engine_EventShowMessageAndWait(11, 0, 40);
-    Actor_SetAttachedEffect(0, 0x102);
+    Actor_SetAttachedEffect(0, 258);
     Engine_EventWait(60);
     if (Engine_GameFlagIsSet(0x84a) == 0) {
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
         Object_GetById(12)->steering_flags &= 254;
-        Engine_ActorWalkToAndWait(12, 0x15a, 0x107);
+        Engine_ActorWalkToAndWait(12, 346, 263);
         Engine_EventWait(1);
         {
             struct FieldActor *record = Object_GetById(12);
@@ -350,13 +350,13 @@ void BiribinoNiwa_RunGardenScene(void)
     }
     Actor_SetSpeed(11, 0xcccc, 0x6666);
     Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_WalkTo(11, 0x148, 0x106);
-    Actor_WalkToAndWait(0, 0x148, 0x116);
+    Actor_WalkTo(11, 328, 262);
+    Actor_WalkToAndWait(0, 328, 278);
     Engine_ActorSetAnimation(11, 1);
     FieldScene_OpenGate();
     Engine_EventWait(40);
-    Actor_WalkTo(0, 0x148, 242);
-    Actor_WalkToAndWait(11, 0x148, 242);
+    Actor_WalkTo(0, 328, 242);
+    Actor_WalkToAndWait(11, 328, 242);
     Engine_ActorSetPosition(11, 0, 0);
     Engine_ActorWaitForMove(0);
     Engine_ActorSetPosition(0, 0, 0);
@@ -369,8 +369,8 @@ void BiribinoNiwa_RunGardenScene(void)
 
 void FieldScene_OpenGate(void)
 {
-    Engine_AudioPlayCue(0xBC);
-    Engine_MapAnimateCells(Niwa_GateCells, 0x34, 0xB);
+    Engine_AudioPlayCue(188);
+    Engine_MapAnimateCells(Niwa_GateCells, 52, 11);
     Engine_GameFlagSet(0x200);
 }
 
@@ -423,9 +423,9 @@ void InitializeOrbitingSceneEntity(s32 id)
     actor->flags_23 &= 0xfe;
     actor->visible = 1;
 
-    transfer = (u8 *)Engine_HeapAllocate(17, 0x608);
+    transfer = (u8 *)Engine_HeapAllocate(17, 1544);
     Engine_ItemLoadIcon(ITEM_NUT);
-    transfer += 0x400;
+    transfer += 1024;
     Engine_VramLoad(sprite->palette, 128, transfer);
     Engine_HeapRelease(17);
 

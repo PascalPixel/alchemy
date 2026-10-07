@@ -18,7 +18,7 @@
 #include "IO_REG.H"
 
 struct MakyuriObject {
-    u8 unknown_00[0x64];
+    u8 unknown_00[100];
     u16 timer;
     u8 unknown_66[2];
     struct ObjectRuntime *owner;

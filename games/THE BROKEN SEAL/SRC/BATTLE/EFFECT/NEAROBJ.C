@@ -209,9 +209,9 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
     object = Object_GetById(target);
     result = 0;
     if (object != 0) {
-        Audio_PlayCue(0x7C);
+        Audio_PlayCue(124);
         Object_SetMode(object, 4);
-        WaitFrames(0xC);
+        WaitFrames(12);
         result = BattleFx_StartRandomParticleEmitter(effect, mode);
     }
     return result;

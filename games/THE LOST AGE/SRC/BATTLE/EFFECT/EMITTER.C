@@ -40,7 +40,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
     position.z = emitter->position.z;
     random_angle = Random16();
     Vector_AddPolarOffset(random_angle << 4, Random16(), &position);
-    object = Object_Spawn(0x2a1, position.x, position.y, position.z);
+    object = Object_Spawn(673, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;
         u8 flags;

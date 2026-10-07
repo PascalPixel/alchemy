@@ -21,11 +21,11 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
     s32 buffer;
     u8 *allocation;
 
-    allocation = Runtime_AllocateBlock(0x44, 0x608);
+    allocation = Runtime_AllocateBlock(68, 1544);
     selected_slot = slot;
     Ability_LoadGlyphFar(resource_id, 0, &selected_slot, &resource_info, 1);
-    buffer = Resource_GetBuffer(slot, (s32)(allocation + 0x400));
-    Runtime_ReleaseHeapBlock(0x44);
+    buffer = Resource_GetBuffer(slot, (s32)(allocation + 1024));
+    Runtime_ReleaseHeapBlock(68);
     return buffer;
 }
 
@@ -34,7 +34,7 @@ s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s3
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    if (slot != 0x60) {
+    if (slot != 96) {
         UiIcon_LoadResourceIntoSlot(resource_id, slot);
         RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
     }

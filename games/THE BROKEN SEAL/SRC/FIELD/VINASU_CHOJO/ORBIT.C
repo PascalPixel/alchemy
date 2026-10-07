@@ -27,13 +27,13 @@ union ChojoOrbitEffect {
         s32 x;
         s32 y;
         s32 z;
-        u8 unknown_14[0x1c];
+        u8 unknown_14[28];
         s32 radius;
         u8 unknown_34[4];
         s32 saved_x;
         s32 unknown_3c;
         s32 saved_z;
-        u8 unknown_44[0x20];
+        u8 unknown_44[32];
         u16 angle;
         u16 unknown_66;
     } orbit;
@@ -52,7 +52,7 @@ void SceneEffect_UpdateOrbitAroundActor(union ChojoOrbitEffect *effect)
     effect->orbit.z = center->z.fixed + (Engine_MathSin(angle) << 1);
     effect->orbit.saved_x = effect->orbit.x;
     effect->orbit.saved_z = effect->orbit.z;
-    effect->orbit.angle -= 0x800;
+    effect->orbit.angle -= 2048;
 }
 
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)

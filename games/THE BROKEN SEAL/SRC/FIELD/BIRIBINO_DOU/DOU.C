@@ -160,10 +160,10 @@ void FieldScene_RunActorFifteenScene(void)
     void Engine_AudioPlayCue(s32);
 
     Engine_EventBegin();
-    Engine_ActorSetChildValue(0xF, 0);
-    Engine_EventWait(0x28);
-    Engine_AudioPlayCue(0xD2);
-    Engine_ActorSetAnimationAndWait(0xF, 6);
+    Engine_ActorSetChildValue(15, 0);
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(210);
+    Engine_ActorSetAnimationAndWait(15, 6);
     Engine_EventEnd();
 }
 
@@ -173,10 +173,10 @@ void FieldScene_RunActorSixteenScene(void)
     void Engine_AudioPlayCue(s32);
 
     Engine_EventBegin();
-    Engine_ActorSetChildValue(0x10, 0);
-    Engine_EventWait(0x28);
-    Engine_AudioPlayCue(0xD2);
-    Engine_ActorSetAnimationAndWait(0x10, 6);
+    Engine_ActorSetChildValue(16, 0);
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(210);
+    Engine_ActorSetAnimationAndWait(16, 6);
     Engine_EventEnd();
 }
 
@@ -185,10 +185,10 @@ void FieldScene_RunActor17Steps28AndD2(void)
     void Engine_EventEnd(void);
 
     Engine_EventBegin();
-    Engine_ActorSetChildValue(0x11, 0);
-    Engine_EventWait(0x28);
-    Engine_AudioPlayCue(0xD2);
-    Engine_ActorSetAnimationAndWait(0x11, 6);
+    Engine_ActorSetChildValue(17, 0);
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(210);
+    Engine_ActorSetAnimationAndWait(17, 6);
     Engine_EventEnd();
 }
 
@@ -264,12 +264,12 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
 
 void BiribinoDou_SetMapWorkFlag(void)
 {
-    FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 1;
+    FIELD_AT_OFFSET(gMapWork[0], s8 *, 23) = 1;
 }
 
 void BiribinoDou_ClearMapWorkFlag(void)
 {
-    FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 0;
+    FIELD_AT_OFFSET(gMapWork[0], s8 *, 23) = 0;
 }
 
 s32 Scene_Initialize(void)

@@ -79,7 +79,7 @@ s32 WaitForFlashWrite(u8 value, s32 argument, u8 expected)
 
 failure:
     if (*(u16 *)(gFlash + 20) == 0x1cc2)
-        *(u8 *)0x0e005555 = 0xf0;
+        *(u8 *)0x0e005555 = 240;
     result = packed >> 16;
     goto done;
 

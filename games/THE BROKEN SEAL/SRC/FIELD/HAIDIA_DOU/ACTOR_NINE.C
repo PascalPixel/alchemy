@@ -14,7 +14,7 @@ void HaidiaDou_ToppleActorNine(void)
     Battle_WaitMode0(15);
     ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
     Battle_WaitMode0(4);
-    Audio_PlayCue(0x120);
+    Audio_PlayCue(288);
     Audio_PlayCue(239);
     Actor_SetMotionSpeed(9, 0x8000, 0x1999);
     Object_SetModeById(9, 2);
@@ -26,7 +26,7 @@ void HaidiaDou_ToppleActorNine(void)
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     ObjectMotion_CommitCurrentPositionAndActivate(9);
-    Audio_PlayCue(0x120);
+    Audio_PlayCue(288);
     Audio_PlayCue(213);
     Object_SetModeById(9, 3);
     Object_GetById(9)->motion_flags = 3;

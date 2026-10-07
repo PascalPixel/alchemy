@@ -273,7 +273,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
             Object_SetMode(object, 3);
         }
     }
-    AudioCommand_PlayFar(0x9a);
+    AudioCommand_PlayFar(154);
     BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
     if (mode & 1)
         BattlePres_SetActorRecordMode(actor, 1);
@@ -327,7 +327,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
         }
         if (plan->presentation_flags & 0x20000)
             work.side ^= 1;
-        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 3200);
         if (plan->presentation_flags & 0x8000)
             BattleFx_InitializeModeFar((s32 *)&work);
         else if (plan->presentation_flags & 0x4000)

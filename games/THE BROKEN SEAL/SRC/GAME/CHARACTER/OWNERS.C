@@ -502,5 +502,5 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
         value /= 2;
         break;
     }
-    return value + 0x100;
+    return value + 256;
 }

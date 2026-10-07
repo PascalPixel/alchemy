@@ -56,7 +56,7 @@ void EventRuntime_Begin(void)
     state->message_actor = 0xffff;
     state->choice = -1;
     state->message_state = -1;
-    Scheduler_AddOrUpdateCallback((s32)EventRuntime_UpdateWaitMode, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)EventRuntime_UpdateWaitMode, 1152);
     GameFlag_ClearBit(0x132);
     {
         struct PartyState *party = &gPartyState;

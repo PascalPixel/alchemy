@@ -119,7 +119,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         }
         WaitFrames(1);
         QueueIoWriteDelay2(0x04000050, 0);
-        Scheduler_AddOrUpdateCallback(Graphics_AdvancePaletteCycle, 0x480);
+        Scheduler_AddOrUpdateCallback(Graphics_AdvancePaletteCycle, 1152);
     }
 }
 

@@ -13,15 +13,15 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
     u8 *v = Object_GetById(0);
     Engine_EventBegin();
-    Audio_PlayCue(0xe4);
-    FIELD_AT_OFFSET(v, s32, 0x6c) = (s32)MakyuriHeya_TrailSparks;
-    FIELD_AT_OFFSET(v, s32, 0x30) = 0x3333;
+    Audio_PlayCue(228);
+    FIELD_AT_OFFSET(v, s32, 108) = (s32)MakyuriHeya_TrailSparks;
+    FIELD_AT_OFFSET(v, s32, 48) = 0x3333;
     Object_SetModeById(0, 2);
     ObjectMotion_OffsetPositionAndResetMotion(0, 0, -6);
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     Engine_ActorSetChildValue(0, 15);
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-    FIELD_AT_OFFSET(v, s32, 0x6c) = 0;
+    FIELD_AT_OFFSET(v, s32, 108) = 0;
     Battle_WaitMode0(30);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -74,7 +74,7 @@ void MakyuriHeya_ExitWhenChannelsOpen(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
-        Audio_PlayCue(0x121);
+        Audio_PlayCue(289);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_MapRenderWaitForValues();
         Engine_EventRequestExit(13);

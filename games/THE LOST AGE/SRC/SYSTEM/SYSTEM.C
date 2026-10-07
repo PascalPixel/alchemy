@@ -44,10 +44,10 @@ void WaitFrames(s32 frames)
 
     for (i = 0; i < (u32)frames; i++) {
         gSchedulerStatus = 1;
-        Scheduler_RunCallbacksByKey(0x480);
+        Scheduler_RunCallbacksByKey(1152);
         gSchedulerStatus = 0;
         if (gRenderOamEnabled) {
-            Render_BuildOamList(Runtime_AllocateHeapBlock(80, 0x400));
+            Render_BuildOamList(Runtime_AllocateHeapBlock(80, 1024));
         } else {
             gOamUsage.used = 0;
             gOamUsage.limit = 256;

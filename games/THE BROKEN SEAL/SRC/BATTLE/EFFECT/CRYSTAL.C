@@ -55,7 +55,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     for (j = 0; j != Crystal_Counts[work->effect->variant * 2]; j++) {
         seed = &work->particles[j];
         x = Random16() & 31;
@@ -81,7 +81,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
             if (frame <= 95)
                 speed = 192;
             else
-                speed = 0x9c0 - frame * 24;
+                speed = 2496 - frame * 24;
             if (work->effect->side == 0)
                 camera->scroll -= speed;
             else
@@ -101,7 +101,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
                         cell = (j % 5) * 3 + (sparks[i * 16 + j].variant / 96) % 3;
                         spark = &sparks[i * 16 + j];
                         draw[j <= 2](canvas,
-                            work->sheet + Crystal_ShardOffsets[cell] + 0x800,
+                            work->sheet + Crystal_ShardOffsets[cell] + 2048,
                             ((s16 *)&spark->x)[1] - Crystal_ShardWidths[cell] / 2,
                             ((s16 *)&spark->y)[1] - Crystal_ShardHeights[cell] / 2,
                             Crystal_ShardWidths[cell], Crystal_ShardHeights[cell]);

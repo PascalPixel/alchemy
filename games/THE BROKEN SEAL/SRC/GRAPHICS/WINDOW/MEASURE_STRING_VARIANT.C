@@ -48,15 +48,15 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
                 line_width += glyph;
             }
 #else
-            if (c != 0xde && c != 0xdf) {
+            if (c != 222 && c != 223) {
                 if (c == 32) {
                     line_width += 7;
                 } else {
-                    if (c == 0xa5)
+                    if (c == 165)
                         trailing = -1;
-                    else if (c == 0x21)
+                    else if (c == 33)
                         trailing = -3;
-                    else if (c == 0xa1 || c == 0xa4)
+                    else if (c == 161 || c == 164)
                         trailing = -6;
                     else
                         trailing = 0;
@@ -145,13 +145,13 @@ done:
                     gap = 0;
                 gap = __divsi3(gap << 8, counts[i] - 1);
 #if EDITION_INTERNATIONAL
-                if (gap < 0 || gap > 0xc00)
-                    gap = 0x200;
+                if (gap < 0 || gap > 3072)
+                    gap = 512;
 #else
-                if (gap < 0 || gap > 0x800)
+                if (gap < 0 || gap > 2048)
                     gap = 0;
-                if (gap < 0 || gap > 0x100)
-                    gap = 0x100;
+                if (gap < 0 || gap > 256)
+                    gap = 256;
 #endif
                 *spacing++ = gap;
             }
@@ -223,15 +223,15 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height,
                 width += glyph;
             }
 #else
-            if (code != 0xde && code != 0xdf) {
+            if (code != 222 && code != 223) {
                 if (code == 32) {
                     width += 7;
                 } else {
-                    if (code == 0xa5)
+                    if (code == 165)
                         trailing = -1;
-                    else if (code == 0x21)
+                    else if (code == 33)
                         trailing = -3;
-                    else if (code == 0xa1 || code == 0xa4)
+                    else if (code == 161 || code == 164)
                         trailing = -6;
                     else
                         trailing = 0;
@@ -331,10 +331,10 @@ done:
                     gap = 0;
                 gap = (gap << 8) / (counts[j] - 1);
 #if !EDITION_INTERNATIONAL
-                if (gap < 0 || gap > 0x800)
+                if (gap < 0 || gap > 2048)
                     gap = 0;
-                if (gap < 0 || gap > 0x100)
-                    gap = 0x100;
+                if (gap < 0 || gap > 256)
+                    gap = 256;
 #endif
                 *spacing++ = gap;
             }

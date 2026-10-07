@@ -69,7 +69,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 
     work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
     canvas = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-    sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+    sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 1550);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     work->fade_frames = 24;
@@ -101,7 +101,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     for (i = 0; i != 128; i++) {
         gFlecks[i].y = 0x800000;
         gFlecks[i].x = Random16() & 0xffff;
-        gFlecks[i].z = (Random16() & 0x1ff) + 0x400;
+        gFlecks[i].z = (Random16() & 0x1ff) + 1024;
         gFlecks[i].variant = -i;
     }
     for (i = 0; i != 64; i++) {
@@ -111,7 +111,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
     draw.upper = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     AudioCommand_PlayFar(140);
@@ -120,7 +120,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
         EffectPosition_ApplyStepAndYOffset(effect->actor, &ground);
         REG_BG2X = (64 - ground.x) << 8;
         if (frame > 49)
-            REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
+            REG_BLDALPHA = (112 - frame * 2) | 0x1000;
         if (frame == 26) {
             AudioCommand_PlayFar(212);
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
@@ -261,8 +261,8 @@ void BattlePresentation_PrepareScene(s32 kind)
     work->frame = 0;
     work->transfer_mode = 3;
     work->transfer_value = 0x06060606;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_DrawStreaks, 0xC80);
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_DrawStreaks, 3200);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 }
 
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
@@ -330,7 +330,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
     if (work->effect->side == 0)
@@ -354,10 +354,10 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
         }
         if (frame == 8) {
             if (mode == 0) {
-                BattleEventRuntime_BeginPhaseFar(0x85);
+                BattleEventRuntime_BeginPhaseFar(133);
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
             } else {
-                AudioCommand_PlayFar(0x86);
+                AudioCommand_PlayFar(134);
                 ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
             }
             work->shake_frames = 8;
@@ -370,7 +370,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
             }
             if (frame == 65) {
                 work->shake_frames = 4;
-                BattleEventRuntime_BeginPhaseFar(0x86);
+                BattleEventRuntime_BeginPhaseFar(134);
             }
         }
         Camera_ApplyShake(8, 8);

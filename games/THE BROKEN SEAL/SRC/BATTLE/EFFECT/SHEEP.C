@@ -71,7 +71,7 @@ void BattleFx_RunBouncingSheep(void *object)
         REG_BG2X = -0x7000;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     Audio_PlayCue(142);
     for (frame = 0; frame != 148; frame++) {
         struct BattleCamera *camera;
@@ -154,7 +154,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     draw[0] = (DrawRectangle)slot[6];
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     for (i = 0; i != work->effect->count; i++) {
         work->particles[i].variant = Random16() & 63;
     }

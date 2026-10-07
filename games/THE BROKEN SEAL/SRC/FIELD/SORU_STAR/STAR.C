@@ -148,7 +148,7 @@ void Scene_BagVenusStar(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(20);
@@ -246,7 +246,7 @@ void Scene_BagMercuryStar(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(20);
@@ -356,7 +356,7 @@ void Scene_BagJupiterStar(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(20);
@@ -375,40 +375,40 @@ void FieldScene_StagePairedActors(void)
 
     Audio_PlayCue(17);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 231, 0x1ea);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 231, 490);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(180);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(80);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 60);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 0x1df);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 479);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x101, 0x1eb);
+    Actor_WalkToAndWait(ACTOR_GERALD, 257, 491);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 80);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x109, 0x1c5);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x11a, 0x1d5);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 265, 453);
+    Actor_WalkToAndWait(ACTOR_GERALD, 282, 469);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 40);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 0);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
     Engine_ActorJump(ACTOR_GERALD, 6, 60);
     Actor_SetPosition(ACTOR_JASMINE, 0x1db0000, 0x14c0000);
@@ -440,7 +440,7 @@ void FieldScene_RunElementalStarDemand(void)
     Event_SayThenWait(10, 10);
     Engine_ActorSetAnimation(11, 4);
     Event_SayThenWait(11, 30);
-    Actor_ShowEmote(9, 0x102, 60);
+    Actor_ShowEmote(9, 258, 60);
     Engine_ActorJump(9, 4, 10);
     Engine_ActorJump(9, 6, 30);
     Event_SayThenWait(9, 10);
@@ -450,10 +450,10 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorRunRepeatedMotion(11, 1);
     Actor_FaceDirection(11, 0xd000, 20);
     Event_SayThenWait(11, 30);
-    Actor_ShowEmote(9, 0x102, 60);
+    Actor_ShowEmote(9, 258, 60);
     Engine_ActorFaceDirection(5, FACING_EAST, 0);
     Actor_FaceDirection(9, 0x7000, 80);
-    Actor_ShowEmote(5, 0x102, 40);
+    Actor_ShowEmote(5, 258, 40);
     Event_SayThenWait(5, 20);
     Engine_ActorRunRepeatedMotion(9, 2);
     Engine_ActorSetAnimation(9, 4);
@@ -467,15 +467,15 @@ void FieldScene_RunElementalStarDemand(void)
     star->scale_y = 0x1999;
     glow->scale_x = 0x1999;
     glow->scale_y = 0x1999;
-    Actor_SetChildValue(12, 0x100);
+    Actor_SetChildValue(12, 256);
     Actor_SetPosition(12, 0x1d70000, 0x1220000);
     motion_flags = &star->motion_flags;
     *motion_flags = zero;
     star->y.fixed = 0x280000;
     Engine_EventWait(1);
     Event_SayThenWait(12, 10);
-    Actor_ShowEmote(5, 0x100, 0);
-    Actor_ShowEmote(9, 0x100, 30);
+    Actor_ShowEmote(5, 256, 0);
+    Actor_ShowEmote(9, 256, 30);
     Actor_FaceDirection(5, FACING_NORTH, 0);
     Actor_FaceDirection(9, 0xb000, 10);
     Actor_FaceDirection(11, 0xd000, 0);
@@ -488,10 +488,10 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorSetSpritePriority(12, 2);
     for (i = 0; i != 90; i++) {
         star->y.fixed -= 0x1999;
-        star->scale_x += 0x28f;
-        star->scale_y += 0x28f;
-        glow->scale_x += 0x28f;
-        glow->scale_y += 0x28f;
+        star->scale_x += 655;
+        star->scale_y += 655;
+        glow->scale_x += 655;
+        glow->scale_y += 655;
         Engine_EventWait(1);
     }
     *motion_flags = 5;
@@ -515,7 +515,7 @@ void FieldScene_RunElementalStarDemand(void)
     }
     Engine_ActorSetChildValue(12, 0);
     Actor_SetSpeed(12, 0x8000, 0x4000);
-    Actor_WalkToAndWait(12, 0x1d7, 0x132);
+    Actor_WalkToAndWait(12, 471, 306);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(12, 2);
     Event_SayThenWait(0x400c, 20);
@@ -531,7 +531,7 @@ void FieldScene_RunElementalStarDemand(void)
     Actor_FaceDirection(10, 0x5000, 0);
     Actor_FaceDirection(11, 0x5000, 10);
     Event_SayThenWait(10, 30);
-    Engine_ActorSetAttachedEffect(12, 0x102);
+    Engine_ActorSetAttachedEffect(12, 258);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(11, 1);
     Engine_EventWait(10);
@@ -599,7 +599,7 @@ void Scene_OfferGuarantee(void)
     Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
     Event_SayThenWait(11, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_GARCIA_MASKED, 2);
-    Actor_SetAttachedEffect(ACTOR_GARCIA_MASKED, 0x102);
+    Actor_SetAttachedEffect(ACTOR_GARCIA_MASKED, 258);
     Engine_EventWait(60);
     Event_SayThenWait(12, 10);
     Actor_FaceActor(ACTOR_SATUROS, ACTOR_GARCIA_MASKED, 0);
@@ -623,8 +623,8 @@ void Scene_OfferGuarantee(void)
     Actor_FaceDirection(ACTOR_SATUROS, 0xb000, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
     Event_SayThenWait(10, 10);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x100, 20);
-    Actor_SetAttachedEffect(ACTOR_GARCIA_MASKED, 0x102);
+    Actor_ShowEmote(ACTOR_JASMINE, 256, 20);
+    Actor_SetAttachedEffect(ACTOR_GARCIA_MASKED, 258);
     Engine_ActorRunRepeatedMotion(ACTOR_GARCIA_MASKED, 3);
     Engine_EventWait(40);
     Actor_SetPosition(ACTOR_GERALD, 0x15a0000, 0x1b80000);
@@ -642,7 +642,7 @@ void Scene_OfferGuarantee(void)
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Event_AskYesNo(ACTOR_GERALD, 0);
     Engine_EventWait(10);
@@ -759,7 +759,7 @@ void Scene_UnmaskGarcia(void)
     Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
     Event_SayThenWait(10, 10);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 80);
-    Actor_ShowEmote(ACTOR_SUKURETA, 0x105, 80);
+    Actor_ShowEmote(ACTOR_SUKURETA, 261, 80);
     Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
     Actor_FaceDirection(ACTOR_MENARDI, 0x5000, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_MENARDI, 2);
@@ -778,8 +778,8 @@ void Scene_UnmaskGarcia(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 244, 0x1de);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x104, 0x1ea);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 244, 478);
+    Actor_WalkToAndWait(ACTOR_GERALD, 260, 490);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
@@ -805,7 +805,7 @@ void Scene_UnmaskGarcia(void)
         Engine_EventWait(10);
         if (cnt <= 2) {
             Event_SayThenWait(1, 30);
-            Actor_WalkToAndWait(ACTOR_GERALD, 252, 0x1e6);
+            Actor_WalkToAndWait(ACTOR_GERALD, 252, 486);
             Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
             Engine_EventWait(10);
             UiText_ShowCenteredMessage((mes_a + 1), 1, 0);
@@ -825,10 +825,10 @@ void Scene_UnmaskGarcia(void)
             Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
             obj = Object_GetById(ACTOR_PARTY_LEADER);
             obj->steering_flags &= ~ACTOR_FACES_MOTION;
-            Actor_WalkToAndWait(ACTOR_GERALD, 244, 0x1de);
+            Actor_WalkToAndWait(ACTOR_GERALD, 244, 478);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
-            Actor_SetDestination(ACTOR_PARTY_LEADER, 218, 0x1d7);
+            Actor_SetDestination(ACTOR_PARTY_LEADER, 218, 471);
             Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
             UiText_ShowCenteredMessage((mes_b + 1), 1, 0);
             Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -856,32 +856,32 @@ void Scene_UnmaskGarcia(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     obj = Object_GetById(ACTOR_GERALD);
     obj->steering_flags &= ~ACTOR_FACES_MOTION;
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
+    Actor_WalkToAndWait(ACTOR_GERALD, 264, 482);
     {
         /* FAKEMATCH: a result temporary, not a compound or-assign: the reference merges the byte into the mask's register, which the two-address ORR does only when the result is its own object. */
         u8 flags = obj->steering_flags | 1;
 
         obj->steering_flags = flags;
     }
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x116, 0x1e0);
+    Actor_WalkToAndWait(ACTOR_GERALD, 278, 480);
     obj->speed = 0x30000;
     obj->acceleration = 0x20000;
     Audio_PlayCue(153);
     obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
-    Actor_MoveToAndWait(ACTOR_GERALD, 0x138, 0x1d6);
+    Actor_MoveToAndWait(ACTOR_GERALD, 312, 470);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
     obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
-    Actor_MoveToAndWait(ACTOR_GERALD, 0x156, 0x1d6);
+    Actor_MoveToAndWait(ACTOR_GERALD, 342, 470);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
     obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
-    Actor_MoveToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
+    Actor_MoveToAndWait(ACTOR_GERALD, 376, 470);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
 }
 
@@ -902,7 +902,7 @@ void Scene_AlexTakesStars(void)
     SoruStar_RiseActorFourteenSparks();
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_ShowEmote(ACTOR_GERALD, 0x100, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 256, 40);
     Actor_FaceDirection(ACTOR_ALEX, 0x5000, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
     Engine_EventWait(20);
@@ -918,7 +918,7 @@ void Scene_AlexTakesStars(void)
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     Engine_EventWait(40);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x185, 0x1d4);
+    Actor_WalkToAndWait(ACTOR_GERALD, 389, 468);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 60);
     Event_SayThenWait(1, 20);
     UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
@@ -926,21 +926,21 @@ void Scene_AlexTakesStars(void)
     rec = Object_GetById(ACTOR_GERALD);
     rec->steering_flags &= ~ACTOR_FACES_MOTION;
     none = 0;
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
+    Actor_WalkToAndWait(ACTOR_GERALD, 376, 470);
     Engine_EventWait(30);
     rec->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgSoruPermitRelieveElemental + 5);
     Event_SayThenWait(14, 20);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
     Event_SayThenWait(14, 20);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 20);
-    Actor_SetChildValue(ACTOR_ALEX, 0x100);
+    Actor_SetChildValue(ACTOR_ALEX, 256);
     record = Actor_Get(ACTOR_ALEX);
     Engine_ActorSetSpriteFlags(record, 0);
     rec = Object_GetById(ACTOR_ALEX);
@@ -953,14 +953,14 @@ void Scene_AlexTakesStars(void)
     rec->motion_flags = 5;
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     Event_SayThenWait(1, 10);
-    Actor_ShowEmote(ACTOR_ALEX, 0x101, 60);
+    Actor_ShowEmote(ACTOR_ALEX, 257, 60);
     Actor_FaceDirection(ACTOR_ALEX, 0x5000, 10);
     Event_SayThenWait(1, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 1);
     Event_SayThenWait(14, 20);
-    Actor_ShowEmote(ACTOR_GERALD, 0x103, 20);
+    Actor_ShowEmote(ACTOR_GERALD, 259, 20);
     Event_SayThenWait(1, 30);
-    Actor_ShowEmote(ACTOR_ALEX, 0x105, 80);
+    Actor_ShowEmote(ACTOR_ALEX, 261, 80);
     Actor_FaceDirection(ACTOR_ALEX, 0xd000, 40);
     Actor_FaceDirection(ACTOR_SATUROS, 0x5000, 10);
     Engine_EventCloseScreen();
@@ -1014,7 +1014,7 @@ void Scene_AlexTakesStars(void)
     Engine_CameraFollowActor(ACTOR_GERALD, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
-    Actor_ShowEmote(ACTOR_GERALD, 0x103, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 259, 40);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Engine_EventWait(20);
     rec = Object_GetById(ACTOR_GERALD);
@@ -1024,19 +1024,19 @@ void Scene_AlexTakesStars(void)
     Audio_PlayCue(153);
     rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
-    Actor_MoveToAndWait(ACTOR_GERALD, 0x156, 0x1d6);
+    Actor_MoveToAndWait(ACTOR_GERALD, 342, 470);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
     rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
-    Actor_MoveToAndWait(ACTOR_GERALD, 0x138, 0x1d6);
+    Actor_MoveToAndWait(ACTOR_GERALD, 312, 470);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
     rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
-    Actor_MoveToAndWait(ACTOR_GERALD, 0x116, 0x1e0);
+    Actor_MoveToAndWait(ACTOR_GERALD, 278, 480);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Camera_SetSpeed(0x8000, 0x1000);
@@ -1071,7 +1071,7 @@ struct StarFollower {
     u8 unknown_10[8];
     s32 scale_x;
     s32 scale_y;
-    u8 unknown_20[0x35];
+    u8 unknown_20[53];
     u8 motion_flags;
     u8 unknown_56[4];
     u8 flags;

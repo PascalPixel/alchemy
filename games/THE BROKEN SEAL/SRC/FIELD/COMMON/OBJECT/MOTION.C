@@ -21,7 +21,7 @@
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 struct FieldCueWork {
-    u8 padding[0xcc8];
+    u8 padding[3272];
     s16 queued_sound;
 };
 
@@ -68,9 +68,9 @@ void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 {
     gEventWork->queued_sound = sound_id;
     if ((s16)sound_id == -1) {
-        sound_id = 0x121;
+        sound_id = 289;
     }
-    Audio_PlayCue(0x12a);
+    Audio_PlayCue(298);
     Audio_PlayCue(sound_id);
 }
 
@@ -435,9 +435,9 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
         *object_flags = updated_flags;
         object->velocity_y = vertical_velocity;
         if (speed > 5) {
-            Audio_PlayCue(0x99);
+            Audio_PlayCue(153);
         } else {
-            Audio_PlayCue(0x98);
+            Audio_PlayCue(152);
         }
         Battle_WaitMode0(event_id);
     }
@@ -479,15 +479,15 @@ void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
   z = (particle->z) + velocity_z;
   particle->z = z;
   particle->target_z = z;
-  velocity_y = (particle->y) + 0x400;
+  velocity_y = (particle->y) + 1024;
   particle->y = velocity_y;
   particle->target_y = velocity_y;
   particle->velocity_x =
-      (s32)(velocity_x - velocity_x / 0x12);
+      (s32)(velocity_x - velocity_x / 18);
 
   vz = velocity_z;
   if (velocity_z < 0) {
-    vz += 0xF;
+    vz += 15;
   }
   particle->velocity_z =
       (s32)(velocity_z - (vz >> 4));
@@ -540,7 +540,7 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
     object = Object_GetById(sequence_arg);
     base_z = object->z;
     if (object != 0) {
-        Audio_PlayCue(0x121);
+        Audio_PlayCue(289);
         Object_SetMode(object, mode_or_frame);
         WaitFrames(10);
         object_flags = &object->flags;
@@ -554,7 +554,7 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
         Object_SetPosition(object, object->x, object->y,
             base_z + 0xC0000);
         WaitFrames(6);
-        Audio_PlayCue(0xD9);
+        Audio_PlayCue(217);
         mode_or_frame = 0;
         ObjectMotion_ArmCallback(sequence_arg, 0x5000, 0);
         *object_flags = 0;
@@ -567,7 +567,7 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
                 BattleFx_SpawnBurstParticle((struct BurstParticle *)object, optional_action);
             }
             mode_or_frame++;
-        } while ((u32)mode_or_frame <= 0xD);
+        } while ((u32)mode_or_frame <= 13);
         *object_flags = 3;
         object->velocity_y = 0x30000;
         Object_SetPosition(object, object->x, object->y,
@@ -578,7 +578,7 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
 wait_for_target_y:
             WaitFrames(1);
             mode_or_frame++;
-            if ((u32)mode_or_frame <= 0xB3) {
+            if ((u32)mode_or_frame <= 179) {
                 if (object->y > object->terrain_height) {
                     goto wait_for_target_y;
                 }

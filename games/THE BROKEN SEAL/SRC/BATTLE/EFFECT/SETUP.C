@@ -34,7 +34,7 @@ struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
         do {
             index += 1;
             entry++;
-            if (index > 0x81)
+            if (index > 129)
                 break;
         } while (entry->id != id);
     }
@@ -61,7 +61,7 @@ s32 BattleFx_GetResourceId(u32 id)
         (value = BattleFx_FindDefinition(id)->value) == 0xFF) {
         return 0;
     }
-    return value + 0x100;
+    return value + 256;
 }
 
 u8 BattleFx_GetFlags(void)
@@ -105,7 +105,7 @@ void Battle_InitializeRenderObject(void)
     object->unknown_24 = 0;
     object->unknown_2c = 0;
     if (gGameState.movement_mode == 1) {
-        Object_SetMode((s32)object, 0xC);
+        Object_SetMode((s32)object, 12);
         return;
     }
     Object_SetMode((s32)object, 1);
@@ -126,12 +126,12 @@ void Battle_Reset(void)
         s32 zero = 0;
         runtime->unknown_cc2 = zero;
         runtime->unknown_cc4 = zero;
-        runtime->unknown_1c8 = 0x10;
+        runtime->unknown_1c8 = 16;
         runtime->mode_1cc = zero;
         runtime->unknown_1da = 0xFFFF;
         runtime->unknown_1dc = -1;
         runtime->unknown_1de = -1;
-        Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
+        Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 3200);
         GameFlag_ClearBitFar(0x132);
         runtime->object_id = gGameState.selected_actor;
         runtime->unknown_1f8 = zero;

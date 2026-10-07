@@ -5,9 +5,9 @@
 #include "B5_CONTEXT.H"
 
 struct SaveSummary {
-    u8 unknown_00[0x1c];
+    u8 unknown_00[28];
     u8 level;
-    u8 unknown_1d[0x23];
+    u8 unknown_1d[35];
 };
 
 struct SaveWorkspace {

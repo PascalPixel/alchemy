@@ -53,7 +53,7 @@ s32 CharacterSelector_RunRearrange(void)
     Owner_GetStateFar(work->owner_ids[cursor]);
     for (i = 0; i < 4; i++) {
         work->row_x[i] = 130 + i * 32;
-        work->row_y[i] = 0x80;
+        work->row_y[i] = 128;
     }
     Palette_LightenBankHighlight(14);
     Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
@@ -80,18 +80,18 @@ s32 CharacterSelector_RunRearrange(void)
         UiMenu_PositionCursor(cursor * 24 - 10, 16);
         WaitFrames(1);
         if (gKeyState & KEY_A) {
-            Audio_PlayCue(0x70);
+            Audio_PlayCue(112);
             result = 1;
             break;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(0x71);
+            Audio_PlayCue(113);
             result = -1;
             break;
         }
         if (gKeysRepeat & KEY_R) {
             if (CharacterSelector_MoveEntry(cursor, 1)) {
-                Audio_PlayCue(0x70);
+                Audio_PlayCue(112);
                 cursor++;
                 Menu_ReleaseEntryObjects();
                 PsynergyMenu_InitializeEntryObjects(work->owner_window, 2, 2, 8, 0);
@@ -99,12 +99,12 @@ s32 CharacterSelector_RunRearrange(void)
                     work->owner_y[i] = 30;
                 work->owner_y[cursor] = 26;
             } else {
-                Audio_PlayCue(0x72);
+                Audio_PlayCue(114);
             }
             WaitFrames(1);
         } else if (gKeysRepeat & KEY_L) {
             if (CharacterSelector_MoveEntry(cursor, 0)) {
-                Audio_PlayCue(0x70);
+                Audio_PlayCue(112);
                 cursor--;
                 Menu_ReleaseEntryObjects();
                 PsynergyMenu_InitializeEntryObjects(work->owner_window, 2, 2, 8, 0);
@@ -112,7 +112,7 @@ s32 CharacterSelector_RunRearrange(void)
                     work->owner_y[i] = 30;
                 work->owner_y[cursor] = 26;
             } else {
-                Audio_PlayCue(0x72);
+                Audio_PlayCue(114);
             }
             WaitFrames(1);
         } else if ((gKeyState & KEY_SELECT) && GameFlag_TestFar(48)) {
@@ -120,14 +120,14 @@ s32 CharacterSelector_RunRearrange(void)
             redraw = 1;
         } else {
             if (gKeysRepeat & KEY_LEFT) {
-                Audio_PlayCue(0x6f);
+                Audio_PlayCue(111);
                 if (count > 1) {
                     cursor--;
                     redraw = 1;
                 }
             }
             if (gKeysRepeat & KEY_RIGHT) {
-                Audio_PlayCue(0x6f);
+                Audio_PlayCue(111);
                 if (count > 1) {
                     redraw = 1;
                     cursor++;
@@ -287,17 +287,17 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame)
     created = 0;
     handle = (s32)state->status_window;
     if (handle == 0) {
-        created = UiWindow_UpdateOrCreate((s32 *)&state->status_window, 0, 5, 0x1E, 0xF, 2);
+        created = UiWindow_UpdateOrCreate((s32 *)&state->status_window, 0, 5, 30, 15, 2);
         handle = (s32)state->status_window;
     }
     if (created != 0) {
         object = SideObject_CreateFar(resource, 0, 0, handle, 0, 0);
         state->status_cursor = object;
-        if ((object->sentinel = 0xF0, state->page) == 3) {
+        if ((object->sentinel = 240, state->page) == 3) {
             Menu_SpawnIconEntries((struct InventoryMenuState *)state, handle);
         }
         Menu_CreateEightEntryObjects(handle);
-        CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource, 0x100);
+        CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource, 256);
         return;
     }
     CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource, 0);
@@ -436,7 +436,7 @@ s32 CharacterMenu_SelectCommand(void)
     RenderOutput_ClearListFar((s32)menu->help_window);
     RenderOutput_RedrawSavedRectFar((s32)menu->help_window);
     UiWindow_ClearInteriorTilesFar((s32)menu->status_window, 64, 56, 224, 96);
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 3200);
     for (i = 3; i >= 0; i--)
         menu->row_y[i] = 128;
     ItemMenu_ResetCategory();

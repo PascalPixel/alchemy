@@ -47,7 +47,7 @@ void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
     first = Trig_Sin(half);
     result = Iwram_RatioMulQ14(
         first,
-        Trig_Cos(half)* 0x50
+        Trig_Cos(half)* 80
     );
     gProjection.near = param1;
     gProjection.focal = result;

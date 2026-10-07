@@ -27,7 +27,7 @@ extern s32 Korosseo_ModeTaskPosition;
 void Korosseo_UpdateModeTask(void);
 
 enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
+    MSG_ROBIN_GOT = 2410,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
     MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
     MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
@@ -92,7 +92,7 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
     Korosseo_ModeTaskMode = (u16)mode;
     Korosseo_ModeTaskParam = (u16)(param << 4);
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateModeTask), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateModeTask), 3200);
 
     handler = (s32)KorosseoKawa_RoundSpans;
     if (mode == 2) {
@@ -142,7 +142,7 @@ void FieldScene_RunTwoArmSequence(s32 a)
         while (AudioCommand_GetStateByte() != 0) {
             Engine_TaskWait(1);
         }
-        Engine_AudioPlayCue(0x121);
+        Engine_AudioPlayCue(289);
         Korosseo_LoadPortrait(5);
         SceneData_SelectBlockAndResetCounters(2, 0);
         Engine_AudioPlayCue(236);
@@ -191,13 +191,13 @@ void FieldScene_RunLateSequence(s32 a0)
         Engine_EventWait(a0 * 60 + 60);
         kind = 8;
     }
-    Engine_ActorShowEmote(kind, 0x105, 0);
+    Engine_ActorShowEmote(kind, 261, 0);
     while (AudioCommand_GetStateByte()!= 0) {
         Engine_TaskWait(1);
     }
     Engine_AudioPlayCue(19);
     Engine_EventWait(30);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
 }

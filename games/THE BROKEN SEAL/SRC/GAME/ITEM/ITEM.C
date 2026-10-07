@@ -37,7 +37,7 @@ void UiWork_PushValueSlotFar(s32, s32);
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 struct ItemMenuModeState {
-    u8 reserved_000[0x20c];
+    u8 reserved_000[524];
     u8 mode;
 };
 
@@ -47,7 +47,7 @@ struct ItemMenuDisplayState {
 };
 
 struct ItemMenuSavedGraphics {
-    u8 reserved_000[0xa8];
+    u8 reserved_000[168];
     u8 tiles[0x2000];
     u16 palette[64];
     void *reserved_2128;
@@ -55,18 +55,18 @@ struct ItemMenuSavedGraphics {
 };
 
 struct ItemMenuWork {
-    u8 reserved_000[0x1c];
+    u8 reserved_000[28];
     u8 selection;
     u8 target;
-    u8 reserved_01e[0xee];
+    u8 reserved_01e[238];
     s32 window;
-    u8 reserved_110[0x64];
+    u8 reserved_110[100];
     u16 slot;
     u16 target_slot;
     u16 item;
     u8 reserved_17a[10];
     struct ItemMenuSavedGraphics *saved;
-    u8 reserved_188[0x80];
+    u8 reserved_188[128];
     u16 owners[8];
     u8 reserved_218;
     u8 count;
@@ -99,8 +99,8 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
                 ItemMenu_Collect(owner, work->items, 0);
         }
         if (item->use_type == 4) {
-            if (item_id == 0xb8)
-                item_id = 0xb9;
+            if (item_id == 184)
+                item_id = 185;
             owner->inventory[slot] = item_id;
         }
         result = 0;
@@ -165,7 +165,7 @@ s32 BattleEffect_ApplyToTargets(
                     scale = source->elements[stat_offset].power;
                 } else
                     scale = 100;
-                amount = Battle_CalcRestore(amount, scale, 0x100);
+                amount = Battle_CalcRestore(amount, scale, 256);
             }
 
             if (target->hp <= 0) {
@@ -207,36 +207,36 @@ s32 BattleEffect_ApplyToTargets(
             }
 
             switch (effect_id & 0x3fff) {
-            case 0x104:
+            case 260:
                 target->base_hp += amount + random_adjust;
-                result_code = 0x10;
+                result_code = 16;
                 changed = 1;
                 break;
-            case 0x105:
+            case 261:
                 target->base_pp += amount + random_adjust;
-                result_code = 0x11;
+                result_code = 17;
                 changed = 1;
                 break;
-            case 0x108:
+            case 264:
                 target->base_agility += amount + random_adjust;
-                result_code = 0x12;
+                result_code = 18;
                 changed = 1;
                 break;
-            case 0x109:
+            case 265:
                 target->base_luck += amount;
-                result_code = 0x13;
+                result_code = 19;
                 changed = 1;
                 break;
-            case 0x106:
+            case 262:
                 target->base_attack += amount + random_adjust;
                 UiWork_PushValueSlotFar(3, 5);
-                result_code = 0x14;
+                result_code = 20;
                 changed = 1;
                 break;
-            case 0x107:
+            case 263:
                 target->base_defense += amount + random_adjust;
                 UiWork_PushValueSlotFar(4, 5);
-                result_code = 0x15;
+                result_code = 21;
                 changed = 1;
                 break;
             }
@@ -319,9 +319,9 @@ s32 BattleEffect_ApplyToTargets(
                 Owner_RecalculateRatiosFar(target_id);
                 changed = 1;
                 if (later_target == 0)
-                    result_code = 0xc;
+                    result_code = 12;
             } else if (later_target == 0) {
-                result_code = 0xd;
+                result_code = 13;
             }
             break;
 
@@ -330,9 +330,9 @@ s32 BattleEffect_ApplyToTargets(
                 target->hp = target->max_hp / 2;
                 Owner_RecalculateRatiosFar(target_id);
                 if (later_target == 0)
-                    result_code = 0xc;
+                    result_code = 12;
             } else if (later_target == 0) {
-                result_code = 0xd;
+                result_code = 13;
             }
             break;
 
@@ -341,9 +341,9 @@ s32 BattleEffect_ApplyToTargets(
                 target->hp = target->max_hp * 7 / 10;
                 Owner_RecalculateRatiosFar(target_id);
                 if (later_target == 0)
-                    result_code = 0xc;
+                    result_code = 12;
             } else if (later_target == 0) {
-                result_code = 0xd;
+                result_code = 13;
             }
             break;
 
@@ -352,9 +352,9 @@ s32 BattleEffect_ApplyToTargets(
                 target->poison = 0;
                 changed = 1;
                 if (later_target == 0)
-                    result_code = 0xa;
+                    result_code = 10;
             } else if (later_target == 0) {
-                result_code = 0xb;
+                result_code = 11;
             }
             break;
         }
@@ -389,19 +389,19 @@ void Ability_PlayUseAnimation(s32 action)
     animation_type = 0xf & ability->target_flags;
     switch (animation_type) {
     case 1:
-        Audio_PlayCueReturnOne(0x7e);
+        Audio_PlayCueReturnOne(126);
 
     case 11:
-        Audio_PlayCueReturnOne(0x7e);
+        Audio_PlayCueReturnOne(126);
         return;
     default:
         target_type = ability->effect - 1;
         switch (target_type) {
         case 4:
-            Audio_PlayCueReturnOne(0x52);
+            Audio_PlayCueReturnOne(82);
             return;
         case 2:
-            Audio_PlayCueReturnOne(0x54);
+            Audio_PlayCueReturnOne(84);
             return;
         default:
         case 3:
@@ -430,7 +430,7 @@ void Ability_PlayUseAnimation(s32 action)
         case 27:
         case 28:
         case 29:
-            Audio_PlayCueReturnOne(0x5b);
+            Audio_PlayCueReturnOne(91);
 
         case 0:
         case 1:
@@ -457,15 +457,15 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
     u8 *current;
     s32 value;
     s32 count;
-    current = ((u8 *)gMenuWork) + 0x134;
-    arg0 += 0x3D;
-    value = 0x20;
+    current = ((u8 *)gMenuWork) + 308;
+    arg0 += 61;
+    value = 32;
     count = 3;
     do {
         count--;
         *(s16 *)current = value;
-        *(s16 *)(current + 0x10) = arg0;
-        value += 0x38;
+        *(s16 *)(current + 16) = arg0;
+        value += 56;
         current += 2;
     } while (count >= 0);
     return arg0;
@@ -479,7 +479,7 @@ s32 ItemMenu_Run(void)
     struct ItemMenuSavedGraphics *saved;
     s32 zero;
 
-    menu = Runtime_AllocateHeapBlock(55, 0xa70);
+    menu = Runtime_AllocateHeapBlock(55, 2672);
     old_mode = gGameState.mode;
     gGameState.mode = 2;
     state = gMenuCtrlWork->busy = 1;

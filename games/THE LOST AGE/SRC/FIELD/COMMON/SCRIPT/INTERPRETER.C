@@ -33,6 +33,6 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
             return index + 1;
         }
         index++;
-    } while (index <= 0x3FF);
+    } while (index <= 1023);
     return 0;
 }

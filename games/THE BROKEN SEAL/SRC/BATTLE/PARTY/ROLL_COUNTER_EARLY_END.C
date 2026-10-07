@@ -11,7 +11,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
     struct BattleUnit *state = Owner_GetStateFar(unit_id);
 
     if (turns <= 5) {
-        s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
+        s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 655;
         if (threshold >= (BattleRandom16Far() & 0xffff))
             return 1;
     }
@@ -170,7 +170,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
     turns = packed & 0xFF;
     if (turns != 0) {
         if (turns > 7U) {
-            turns += 0xF8;
+            turns += 248;
             unit->psy_seal = turns;
             packed = turns;
         }
@@ -183,7 +183,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
         remaining = packed;
         if (remaining != 0) {
             if (remaining <= 7U &&
-                BattleUnit_RollCounterEarlyEnd(id, unit->psy_seal, 0x1E) != 0) {
+                BattleUnit_RollCounterEarlyEnd(id, unit->psy_seal, 30) != 0) {
                 unit->psy_seal = 0U;
                 return 1;
             }

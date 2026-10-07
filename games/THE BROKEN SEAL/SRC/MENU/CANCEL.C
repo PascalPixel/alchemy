@@ -56,7 +56,7 @@ void Menu_CancelSoundTick(void)
 void Menu_CancelSoundReset(void)
 {
     GameFlag_ClearBitFar(0x150);
-    Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 0xC80);
+    Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 3200);
 }
 
 void Menu_EnsureCancelSound(void)

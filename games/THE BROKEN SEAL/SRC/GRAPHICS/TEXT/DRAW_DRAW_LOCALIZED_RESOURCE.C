@@ -15,7 +15,7 @@
 #include "text/MSG_IDS.H"
 struct UiWindow;
 struct MessageContext {
-    u8 unknown_00[0x44];
+    u8 unknown_00[68];
     struct UiWindow *window;
 };
 

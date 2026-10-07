@@ -63,10 +63,10 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
     s32 result;
     u8 *work;
 
-    work = Runtime_AllocateBlock(0x44, 0x608);
+    work = Runtime_AllocateBlock(68, 1544);
     Ui_PrepareTransferFromTableEntry(resource);
-    result = Resource_GetBuffer(index, (s32)(work + 0x400));
-    Runtime_ReleaseHeapBlock(0x44);
+    result = Resource_GetBuffer(index, (s32)(work + 1024));
+    Runtime_ReleaseHeapBlock(68);
     return result;
 }
 
@@ -75,10 +75,10 @@ s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
     s32 result;
     u8 *work;
 
-    work = Runtime_AllocateBlock(0x44, 0x608);
-    ItemIcon_Compose(resource, 0x1a);
-    result = Resource_GetBuffer(index, (s32)(work + 0x400));
-    Runtime_ReleaseHeapBlock(0x44);
+    work = Runtime_AllocateBlock(68, 1544);
+    ItemIcon_Compose(resource, 26);
+    result = Resource_GetBuffer(index, (s32)(work + 1024));
+    Runtime_ReleaseHeapBlock(68);
     return result;
 }
 
@@ -89,10 +89,10 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
     s32 ret;
     u8 *work;
 
-    work = Runtime_AllocateBlock(0x44, 0x608);
+    work = Runtime_AllocateBlock(68, 1544);
     cur = index;
     Ability_LoadGlyph(resource, 0, &cur, &out, 1);
-    ret = Resource_GetBuffer(index, (s32)(work + 0x400));
-    Runtime_ReleaseHeapBlock(0x44);
+    ret = Resource_GetBuffer(index, (s32)(work + 1024));
+    Runtime_ReleaseHeapBlock(68);
     return ret;
 }

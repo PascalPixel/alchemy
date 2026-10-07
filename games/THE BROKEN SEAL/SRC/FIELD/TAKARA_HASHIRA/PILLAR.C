@@ -246,7 +246,7 @@ void TakaraHashira_RunMapShiftScene(void)
         Engine_EventWait(20);
         Map_CopyCellsTo(73, 10, 60, 10, 1, 2);
         Engine_EventWait(20);
-        Engine_TaskAddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
+        Engine_TaskAddCallback((s32)SceneEffect_SpawnRandomizedParticle, 3200);
         Engine_EventWait(40);
         if (GameFlag_IsSet(0x201) != 0) {
             Object_GetById(12)->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEffectEveryEightFrames;
@@ -455,7 +455,7 @@ s32 TakaraHashira_SetupArea(void)
                 entry[0] = 0;
                 entry[1] = 0;
                 entry[2] = 0;
-                entry[4] = i + 0x200;
+                entry[4] = i + 512;
                 entry += 5;
             }
         }

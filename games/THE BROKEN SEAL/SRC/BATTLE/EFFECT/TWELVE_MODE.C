@@ -58,7 +58,7 @@ void BattleFx_RunTwelveModeMode1(struct BattleEffectArgument *effect)
 
 void BattleFx_RunTwelveModeMode10(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunTwelveMode(effect, 0xA);
+    BattleFx_RunTwelveMode(effect, 10);
 }
 
 void BattleFx_RunTwelveModeMode5(struct BattleEffectArgument *effect)
@@ -98,7 +98,7 @@ void BattleFx_RunTwelveModeMode2(struct BattleEffectArgument *effect)
 
 void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunTwelveMode(effect, 0xB);
+    BattleFx_RunTwelveMode(effect, 11);
 }
 
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)

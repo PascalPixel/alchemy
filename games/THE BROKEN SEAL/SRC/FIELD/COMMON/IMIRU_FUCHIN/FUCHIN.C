@@ -65,7 +65,7 @@ void SceneState_ApplyValues8And2And1(void)
 
 void SceneState_ApplyValues11And62(void)
 {
-    BattleFx_SetPhaseRequest(0xB, 0x3E);
+    BattleFx_SetPhaseRequest(11, 62);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -171,10 +171,10 @@ void ActorPresentation_SetupActorEightForFlag301(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, 0x70, 0);
-    SceneActor_PlacePairAtOffset(8, 0x70, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(8, 112, 0);
+    SceneActor_PlacePairAtOffset(8, 112, 0);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x301);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupOne();
@@ -185,10 +185,10 @@ void SceneState_RunSlot8OffsetStep(void)
     s32 offset = 112;
 
     offset = -offset;
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(8, offset, 0);
     SceneActor_PlacePairAtOffset(8, offset, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x301);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupOne();
@@ -196,9 +196,9 @@ void SceneState_RunSlot8OffsetStep(void)
 
 void FieldScene_RunActor9Transition302(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(9, 0, 64);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x302);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupOne();
@@ -208,9 +208,9 @@ void ActorPresentation_SetupActorNineForFlag302(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(9, 0, -64);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x302);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupOne();
@@ -220,9 +220,9 @@ void ActorPresentation_SetupActorTenForFlag303(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(10, 0, 64);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x303);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupOne();
@@ -230,9 +230,9 @@ void ActorPresentation_SetupActorTenForFlag303(void)
 
 void FieldScene_RunActor10Transition303(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, -64);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(10, 0, -64);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x303);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupOne();
@@ -240,9 +240,9 @@ void FieldScene_RunActor10Transition303(void)
 
 void FieldScene_RunActor8Transition304(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, 0x90, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(8, 144, 0);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x304);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
@@ -250,9 +250,9 @@ void FieldScene_RunActor8Transition304(void)
 
 void FieldScene_RunActor8Transition304And305(void)
 {
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(8, -144, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x304);
     Engine_GameFlagSet(0x305);
     Engine_TaskWait(2);
@@ -261,9 +261,9 @@ void FieldScene_RunActor8Transition304And305(void)
 
 void FieldScene_RunActor8Transition305(void)
 {
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(8, -14, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x305);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
@@ -271,7 +271,7 @@ void FieldScene_RunActor8Transition305(void)
 
 void FieldScene_RunActor8FlaggedSequence(void)
 {
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue((s32) 241);
 
     if (Engine_GameFlagIsSet((s32) 0x306) != 0) {
         SceneActor_PlacePairAtOffset(8, 16, 0);
@@ -282,7 +282,7 @@ void FieldScene_RunActor8FlaggedSequence(void)
         Engine_GameFlagSet((s32) 0x304);
     }
 
-    Engine_AudioPlayCue((s32) 0x121);
+    Engine_AudioPlayCue((s32) 289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
 }
@@ -291,9 +291,9 @@ void ActorPresentation_SetupActorNineForFlag306(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(9, 0, 64);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x306);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
@@ -301,9 +301,9 @@ void ActorPresentation_SetupActorNineForFlag306(void)
 
 void FieldScene_RunActor9Flag306Sequence(void)
 {
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(9, 0, -64);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x306);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
@@ -313,10 +313,10 @@ void ActorPresentation_SetupActorTenForFlag307(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(10, 0, 144);
     SceneActor_PlacePairAtOffset(10, 0, 128);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x307);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
@@ -328,11 +328,11 @@ void FieldScene_RunActorTenDepthSequence(void)
 
     s32 depth = -96;
 
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue((s32) 241);
     SceneActor_PlacePairAtOffset(10, 0, depth);
     SceneActor_PlacePairAtOffset(10, 0, depth);
     SceneActor_PlacePairAtOffset(10, 0, -80);
-    Engine_AudioPlayCue((s32) 0x121);
+    Engine_AudioPlayCue((s32) 289);
     Engine_GameFlagSet((s32) 0x307);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
@@ -340,7 +340,7 @@ void FieldScene_RunActorTenDepthSequence(void)
 
 void FieldScene_PlaceActorEightByFlags(void)
 {
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue((s32) 241);
 
     if (Engine_GameFlagIsSet((s32) 0x310) != 0 || Engine_GameFlagIsSet((s32) 0x30D) != 0) {
         SceneActor_PlacePairAtOffset(8, -48, 0);
@@ -352,18 +352,18 @@ void FieldScene_PlaceActorEightByFlags(void)
         Engine_GameFlagClear((s32) 0x309);
     }
 
-    Engine_AudioPlayCue((s32) 0x121);
+    Engine_AudioPlayCue((s32) 289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor8Transition308And309(void)
 {
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     Engine_GameFlagClear(0x308);
     Engine_GameFlagClear(0x309);
-    SceneActor_PlacePairAtOffset(8, 0x30, 0);
-    Engine_AudioPlayCue(0x121);
+    SceneActor_PlacePairAtOffset(8, 48, 0);
+    Engine_AudioPlayCue(289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -379,13 +379,13 @@ void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
         return;
     }
 
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue((s32) 241);
 
     Engine_GameFlagSet((s32) 0x308);
     Engine_GameFlagClear((s32) 0x309);
 
     SceneActor_PlacePairAtOffset(8, -48, 0);
-    Engine_AudioPlayCue((s32) 0x121);
+    Engine_AudioPlayCue((s32) 289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -394,11 +394,11 @@ void ActorPresentation_SetupActorEightForFlags308And309(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     Engine_GameFlagClear(0x308);
     Engine_GameFlagClear(0x309);
-    SceneActor_PlacePairAtOffset(8, 0x60, 0);
-    Engine_AudioPlayCue(0x121);
+    SceneActor_PlacePairAtOffset(8, 96, 0);
+    Engine_AudioPlayCue(289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -407,9 +407,9 @@ void ActorPresentation_SetupActorNineForFlag30a(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(9, -32, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x30A);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
@@ -417,9 +417,9 @@ void ActorPresentation_SetupActorNineForFlag30a(void)
 
 void FieldScene_RunActor9Transition30A(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0x20, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(9, 32, 0);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x30A);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
@@ -441,14 +441,14 @@ void FieldScene_PlaceActorTenByFlags(void)
         Engine_GameFlagClear(0x30d);
         Engine_GameFlagClear(0x30e);
     }
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunFlag308DialogueBranch(void)
 {
-    Engine_AudioPlayCue(0xf1);
+    Engine_AudioPlayCue(241);
 
     if (Engine_GameFlagIsSet(0x308) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 16);
@@ -476,7 +476,7 @@ void FieldScene_RunFlag308DialogueBranch(void)
         Engine_GameFlagClear(0x30d);
         Engine_GameFlagClear(0x30e);
     }
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -485,7 +485,7 @@ void FieldScene_RunActor10Transition30BTo30E(void)
 {
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(10, 0, -16);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x30b);
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagClear(0x30d);
@@ -496,7 +496,7 @@ void FieldScene_RunActor10Transition30BTo30E(void)
 
 void FieldScene_RunFlag311DialogueBranch(void)
 {
-    Engine_AudioPlayCue(0xf1);
+    Engine_AudioPlayCue(241);
     if (Engine_GameFlagIsSet(0x311) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 48);
         Engine_GameFlagClear(0x30b);
@@ -518,7 +518,7 @@ void FieldScene_RunFlag311DialogueBranch(void)
         Engine_GameFlagClear(0x30d);
         Engine_GameFlagClear(0x30e);
     }
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -527,9 +527,9 @@ void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, -64);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(10, 0, -64);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x30B);
     Engine_GameFlagClear(0x30D);
     Engine_TaskWait(2);
@@ -540,7 +540,7 @@ void FieldScene_RunActor10Flags30bTo30eSequenceA(void)
 {
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(10, 0, 64);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagClear(0x30d);
@@ -553,7 +553,7 @@ void FieldScene_RunActor10Flags30bTo30eSequenceB(void)
 {
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(10, 0, -80);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x30b);
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagClear(0x30d);
@@ -564,9 +564,9 @@ void FieldScene_RunActor10Flags30bTo30eSequenceB(void)
 
 void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(10, 0, 64);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x30B);
     Engine_GameFlagClear(0x30C);
     Engine_GameFlagClear(0x30D);
@@ -577,7 +577,7 @@ void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 
 void FieldScene_RunActorElevenFlaggedSteps(void)
 {
-    Engine_AudioPlayCue(0xf1);
+    Engine_AudioPlayCue(241);
 
     if (Engine_GameFlagIsSet(0x308) != 0 || Engine_GameFlagIsSet(0x30d) != 0) {
         SceneActor_PlacePairAtOffset(11, 0, -64);
@@ -599,7 +599,7 @@ void FieldScene_RunActorElevenFlaggedSteps(void)
         Engine_GameFlagClear(0x311);
         Engine_GameFlagClear(0x312);
     }
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -617,16 +617,16 @@ void FieldScene_RunActor11Offset128Sequence(void)
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(11, 0, 128);
     FieldScene_RunSteps30FTo312();
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor11Flags30fTo312Sequence(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xB, 0, -16);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(11, 0, -16);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x30F);
     Engine_GameFlagClear(0x310);
     Engine_GameFlagClear(0x311);
@@ -641,7 +641,7 @@ void ActorPresentation_SetupActorElevenAt0_112(void)
 
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(11, 0, 112);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     FieldScene_RunSteps30FTo312();
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
@@ -651,9 +651,9 @@ void ActorPresentation_SetupActorElevenAt0_64(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xB, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(11, 0, 64);
+    Engine_AudioPlayCue(289);
     FieldScene_RunSteps30FTo312();
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
@@ -663,9 +663,9 @@ void ActorPresentation_SetupActorElevenAt0_80(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xB, 0, 0x50);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(11, 0, 80);
+    Engine_AudioPlayCue(289);
     FieldScene_RunSteps30FTo312();
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
@@ -675,7 +675,7 @@ void FieldScene_RunActor11Transition(void)
 {
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(11, 0, 48);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     FieldScene_RunSteps30FTo312();
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
@@ -685,9 +685,9 @@ void ActorPresentation_SetupActorEightForFlag313(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, 0, 0x70);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(8, 0, 112);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x313);
     Engine_TaskWait(2);
     FieldScene_RunFlagBranchedLayoutSteps();
@@ -695,9 +695,9 @@ void ActorPresentation_SetupActorEightForFlag313(void)
 
 void FieldScene_RunActor8Transition313(void)
 {
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(8, 0, -112);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x313);
     Engine_TaskWait(2);
     FieldScene_RunFlagBranchedLayoutSteps();
@@ -705,9 +705,9 @@ void FieldScene_RunActor8Transition313(void)
 
 void FieldScene_RunActor9Flag314Sequence(void)
 {
-    Engine_AudioPlayCue(0xF1);
+    Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(9, -128, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x314);
     Engine_TaskWait(2);
     FieldScene_RunFlagBranchedLayoutSteps();
@@ -717,9 +717,9 @@ void ActorPresentation_SetupActorNineForFlag314(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0x80, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(241);
+    SceneActor_PlacePairAtOffset(9, 128, 0);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x314);
     Engine_TaskWait(2);
     FieldScene_RunFlagBranchedLayoutSteps();
@@ -731,7 +731,7 @@ void ActorPresentation_SetupActorTenForFlag315(void)
 
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(10, 160, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagSet(0x315);
     Engine_TaskWait(2);
     FieldScene_RunFlagBranchedLayoutSteps();
@@ -741,7 +741,7 @@ void FieldScene_RunActor10Flag315Sequence(void)
 {
     Engine_AudioPlayCue(241);
     SceneActor_PlacePairAtOffset(10, -160, 0);
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(289);
     Engine_GameFlagClear(0x315);
     Engine_TaskWait(2);
     FieldScene_RunFlagBranchedLayoutSteps();
@@ -1080,7 +1080,7 @@ void FieldScene_RunScene39aSequenceA(void)
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x108, 196);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 264, 196);
     Engine_EventEnd();
 }
 
@@ -1227,7 +1227,7 @@ void ImiruFuchin_TakeDragonsEye(void)
         Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye, 3);
     }
 
-    Engine_PartyGiveItem((s32) 0xE6, 0);
+    Engine_PartyGiveItem((s32) 230, 0);
     Engine_GameFlagSet((s32) 0xF13);
 
     if (gImiruFuchinDragonsEye != NULL) {
@@ -1349,7 +1349,7 @@ void FieldScene_RunFourPassCallbackSequence(void)
 
     Engine_TaskWait(30);
 
-    Engine_TaskAddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
+    Engine_TaskAddCallback(ImiruFuchin_BlowCaveMouthDust, 3200);
     Engine_TaskWait(40);
     Engine_ColorBufferApplyTarget(0x201090, 1);
     Engine_ColorBufferInterpolate(40);
@@ -1399,7 +1399,7 @@ void SceneState_SetWorkspace370ByFlag820(void)
         Engine_MessageShowCentered((s32)MsgFuchinDragonRedEyes, 1);
     } else {
         Engine_MessageShowCentered((s32)MsgFuchinEyelessDragon, 1);
-        if (PartyInventory_FindOwner(0xe6) != -1) {
+        if (PartyInventory_FindOwner(230) != -1) {
             gEventWork->unknown_172 = 1;
         }
     }
@@ -1451,7 +1451,7 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
         direction = -0x1000;
     actor->facing = facing + direction;
     Object_SetMode(actor, 2);
-    ObjectDispatch_ApplyValueToChildren(actor, 0x30);
+    ObjectDispatch_ApplyValueToChildren(actor, 48);
 }
 
 void SceneActor_StepSubjectAlongHeading(void)

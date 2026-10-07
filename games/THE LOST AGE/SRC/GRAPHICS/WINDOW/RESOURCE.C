@@ -44,11 +44,11 @@ struct RenderOutput *RenderResource_CreateFrame(
 
     index = Resource_FindFreeEntry();
     entity = NULL;
-    if (index != 0x60) {
+    if (index != 96) {
         RenderResource_LoadFrame(arg0, index, arg1);
         entity = RenderOutput_Create(index, 0x80000000, arg2, arg3, arg4);
         ((u8 *)&entity->packed)[1] |= 0x20;
-        entity->sentinel = 0xfb;
+        entity->sentinel = 251;
     }
     return entity;
 }

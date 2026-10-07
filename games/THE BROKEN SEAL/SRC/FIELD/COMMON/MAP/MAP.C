@@ -218,7 +218,7 @@ s32 Map_LoadLayeredScene(s32 index)
             backdrop = *(s16 *)BG_PLTT;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
             *(s16 *)buf = backdrop;
-            Iwram_CopyWords((void *)BG_PLTT, buf, 0x1c0);
+            Iwram_CopyWords((void *)BG_PLTT, buf, 448);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
             Iwram_CopyWords(BG_CHAR_BLOCK(1), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
@@ -234,7 +234,7 @@ s32 Map_LoadLayeredScene(s32 index)
     REG_BLDCNT = cnt;
     cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
     REG_DISPCNT = cnt;
-    Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
+    Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 3205);
     return 2;
 }
 

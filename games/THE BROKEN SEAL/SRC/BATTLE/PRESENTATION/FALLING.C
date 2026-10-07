@@ -155,31 +155,31 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
             if (i >= 8 && i <= 103)
-                line[i] = (0xf0 - i) | ((0x70 - i) << 8);
+                line[i] = (240 - i) | ((112 - i) << 8);
             else if (i <= 135)
-                line[i] = 0x888;
+                line[i] = 2184;
             else
-                line[i] = 0x100;
+                line[i] = 256;
         }
     } else {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
             if (i >= 8 && i <= 95)
-                line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
+                line[i] = (i - 8 + 160) | ((i + 24) << 8);
             else if (i <= 135)
                 line[i] = 0x78f8;
             else
-                line[i] = 0x100;
+                line[i] = 256;
         }
     }
 
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 1152);
     work->transfer_mode = 2;
     if (work->effect->variant == 1)
         work->transfer_value = 75;
     else
         work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != FallingShards_Counts[work->effect->variant * 2 + 1]; frame++) {
         if (frame == FallingShards_Counts[work->effect->variant * 2 + 1] - 16)
@@ -191,7 +191,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
                 s32 y = shard->y / 8;
 
                 draw[work->effect->variant == 2 ? 1 : 0](canvas, work, x, y, 32, 32);
-                if (shard->y <= 0x27f) {
+                if (shard->y <= 639) {
                     if (work->effect->side == 0)
                         shard->x -= 64;
                     else
@@ -212,7 +212,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 
                 if (shard->variant >= 1 && shard->variant <= 14) {
                     draw[work->effect->variant == 2 ? 1 : 0](canvas,
-                        work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y, 32, 32);
+                        work->sheet + 1024 + ((shard->variant / 3) << 10), x, y, 32, 32);
                 }
                 if (shard->variant >= 9 && shard->variant <= 11) {
                     for (k = 0; k != 32; k++) {
@@ -290,7 +290,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2001);
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet + 1540, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
     BattlePres_ConfigureEffectDisplay();
     REG_BLDCNT = 0x3f44;
@@ -324,11 +324,11 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
             if (i >= 8 && i <= 103)
-                line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
+                line[i] = ((52 - i / 2) << 8) | (180 - i / 2);
             else if (i <= 135)
-                line[i] = 0x80;
+                line[i] = 128;
             else
-                line[i] = 0x100;
+                line[i] = 256;
         }
     } else {
         line = (u16 *)gMapCellBuffer;
@@ -338,11 +338,11 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
             else if (i <= 135)
                 line[i] = 0x70f0;
             else
-                line[i] = 0x100;
+                line[i] = 256;
         }
     }
 
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 1152);
     if (work->effect->variant == 0) {
         work->transfer_mode = 1;
         work->transfer_value = 0;
@@ -353,7 +353,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
         work->transfer_mode = 2;
         work->transfer_value = 75;
     }
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (frame = 0; frame != FallingBolts_Counts[work->effect->variant * 4 + 3]; frame++) {
         if (frame == FallingBolts_Counts[work->effect->variant * 4 + 3] - 64)
@@ -366,8 +366,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
             x = bolt->x / 8;
             y = bolt->y / 8;
             if (bolt->variant == -1) {
-                draw_bolt(canvas, work->sheet + 0x604, x, y, 24, 24);
-                if (bolt->y <= 0x27f) {
+                draw_bolt(canvas, work->sheet + 1540, x, y, 24, 24);
+                if (bolt->y <= 639) {
                     if (work->effect->side == 0)
                         bolt->x -= 32;
                     else
@@ -382,7 +382,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
                         spark->y = y << 16;
                         spark->velocity_x = ((Random16() & 255) - 128) << 9;
                         if (work->effect->variant == 2)
-                            spark->velocity_y = ((Random16() & 0x1ff) - 0x180) << 10;
+                            spark->velocity_y = ((Random16() & 0x1ff) - 384) << 10;
                         else
                             spark->velocity_y = ((Random16() & 255) - 255) << 10;
                         spark->variant = (Random16() & 15) + 16;
@@ -394,9 +394,9 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
                 }
             } else {
                 if (bolt->variant >= 0 && bolt->variant <= 3)
-                    draw_bolt(canvas, work->sheet + 0x844, x, y, 24, 24);
+                    draw_bolt(canvas, work->sheet + 2116, x, y, 24, 24);
                 else if (bolt->variant <= 7)
-                    draw_bolt(canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);
+                    draw_bolt(canvas, work->sheet + 2692, x - 9, y - 9, 42, 42);
                 if (bolt->variant <= 14)
                     bolt->variant++;
             }

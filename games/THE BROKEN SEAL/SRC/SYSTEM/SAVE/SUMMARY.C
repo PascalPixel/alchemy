@@ -37,7 +37,7 @@ void UiText_ShowPositionedMessageAndWait(s32, s32);
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
     UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
-    Runtime_ReleaseHeapBlock(0x10);
+    Runtime_ReleaseHeapBlock(16);
 }
 
 void UiWindow_SetTileAttributeBitRect(
@@ -93,7 +93,7 @@ void *Text_FormatPlayTime(s32 value, u8 *out)
     u8 *s;
     u8 *p;
 
-    time = (u32)value / 0xe10;
+    time = (u32)value / 3600;
     if (time > 0xea5f)
         time = 0xea5f;
 
@@ -131,7 +131,7 @@ u32 SaveState_FindFreeSummarySlot(void)
         if (p->level == 0)
             return i;
     }
-    return 0x3E7;
+    return 999;
 }
 
 s32 SaveState_CountRecordsExcludingFlagged(s32 flag)

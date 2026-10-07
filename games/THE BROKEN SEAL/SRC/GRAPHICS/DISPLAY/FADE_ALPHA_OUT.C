@@ -19,5 +19,5 @@ void Graphics_FadeAlphaOut(void)
       }
       while (0);
     }
-    while (alpha_step <= 0x10);
+    while (alpha_step <= 16);
 }

@@ -4,7 +4,7 @@ extern s16 gCell[];
 
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self)
 {
-    s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
+    s32 **slots = (s32 **)((u8 *)gEventWork + 20);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
@@ -92,9 +92,9 @@ void StagedActor_PushActorAhead(void)
     subject->rate_z = 0x3333;
     Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
 
-    Engine_AudioPlayCue(0xee);
+    Engine_AudioPlayCue(238);
     Object_CommitPosition(target);
-    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(288);
 
     target->x = pos.x;
     target->z = pos.z;

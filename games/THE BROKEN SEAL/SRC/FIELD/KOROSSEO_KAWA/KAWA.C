@@ -25,7 +25,7 @@
 #define FieldScene_BuildSceneDescriptorAndInstallTask ((s32 (*)(s32,s32,s32,s32,s32,s32,s32))FieldScene_BuildSceneDescriptorAndInstallTask)
 
 enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
+    MSG_ROBIN_GOT = 2410,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
     MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
     MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
@@ -204,7 +204,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     s32 *mode = (s32 *)&KorosseoKawa_Countdown;
 
     *mode = value;
-    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
+    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 3200);
 }
 
 void KorosseoKawa_WaitForCountdown(void)
@@ -437,7 +437,7 @@ void KorosseoKawa_RaisePipes(void)
     Object_SetMoveTarget(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(leader_id, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 480), actor);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 3276) + 480), actor);
     Actor_SetSpeed(leader_id, 0x4ccc, 0x3333);
     Object_SetMoveTarget(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
     Engine_ActorWaitForMove(leader_id);
@@ -524,9 +524,9 @@ void KorosseoKawa_RunStageStart(void)
         n = n - 1;
     } while (n >= 0);
     Actor_SetSpeed(8, 0x10000, 0x8000);
-    Actor_WalkTo(8, 0x528, 192);
+    Actor_WalkTo(8, 1320, 192);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x508, 192);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorFaceEachOther(0, 8, 0);
     Engine_EventWait(10);
@@ -535,8 +535,8 @@ void KorosseoKawa_RunStageStart(void)
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_SetSpeed(8, 0x20000, 0x10000);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x510, 192);
-    Actor_WalkToAndWait(8, 0x520, 192);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
+    Actor_WalkToAndWait(8, 1312, 192);
     Engine_ActorSetAnimation(0, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
@@ -761,21 +761,21 @@ void FieldScene_RunCommandSequence(s32 a0)
     Engine_EventWaitForScreen();
     Engine_EventSetMessage((s32)MsgKorosseoSiteFirstFinalsBattle);
     Event_ShowMessage(a0, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
+    Actor_ShowEmote(ACTOR_MIA, 257, 60);
     Event_ShowMessage(ACTOR_MIA, 0);
     Engine_ActorStartRepeatedMotion(a0, 3);
     Event_ShowMessage(a0, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 60);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Actor_FaceActor(a0, ACTOR_IVAN, 0);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(a0, 3);
     Event_ShowMessage(a0, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 60);
     Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
+    Actor_ShowEmote(ACTOR_MIA, 257, 60);
     Event_ShowMessage(ACTOR_MIA, 0);
-    Actor_ShowEmote(a0, 0x102, 60);
+    Actor_ShowEmote(a0, 258, 60);
     if (Event_AskYesNo(a0, 0) == 0) {
         do {
             Engine_EventSetMessage((s32)MsgKorosseoWarriorsEnterFinalsWithoutAny);
@@ -876,9 +876,9 @@ void KorosseoKawa_RunStageIntro(s32 scene)
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                s32 x = 0xa4;
+                s32 x = 164;
                 s32 y = 1;
-                s32 z = 0xa8;
+                s32 z = 168;
 
                 /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
                 asm("" : "+r"(x), "+r"(y), "+r"(z));
@@ -890,12 +890,12 @@ void KorosseoKawa_RunStageIntro(s32 scene)
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
             Engine_EventWait(30);
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
             Engine_EventShowMessage(scene, 0);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
             Engine_EventWait(30);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 262, 60);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             OverlayObject_PlaceWithScale14000(0, 296, 184);
             OverlayObject_PlaceWithScale14000(0, 296, 152);
@@ -1016,9 +1016,9 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                s32 x = 0xd2;
+                s32 x = 210;
                 s32 y = 1;
-                s32 z = 0xd8;
+                s32 z = 216;
 
                 /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
                 asm("" : "+r"(x), "+r"(y), "+r"(z));
@@ -1036,7 +1036,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
             Engine_EventWait(30);
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
             Event_ShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1064,9 +1064,9 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
         Camera_SetSpeed(0x30000, 0x6000);
         {
-            s32 x = 0x88;
+            s32 x = 136;
             s32 y = 1;
-            s32 z = 0xa8;
+            s32 z = 168;
 
             /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
             asm("" : "+r"(x), "+r"(y), "+r"(z));
@@ -1082,7 +1082,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 262, 60);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
         OverlayObject_PlaceWithScale14000(0, 1000, 192);
         OverlayObject_PlaceWithScale14000(0, 1000, 176);
@@ -1097,7 +1097,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
         Engine_EventWait(10);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 30);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
         Event_ShowMessage(scene, 0);
         Korosseo_RestoreCompetitor(0);
         Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);

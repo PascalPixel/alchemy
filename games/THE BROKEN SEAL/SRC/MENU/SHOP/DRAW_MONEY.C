@@ -16,7 +16,7 @@ void Shop_DrawMoney(void)
     if (window != 0) {
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
-        UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0x20, 8);
+        UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 32, 8);
 #else
         s32 msg = (s32)MsgYourCoins;
 

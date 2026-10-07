@@ -40,7 +40,7 @@ extern s32 gKeysHeld;
 extern s32 gKeysRepeat;
 
 static u16 sTransferHeader[16];
-static u8 sTransferData[0x60];
+static u8 sTransferData[96];
 static s32 sSplitLine;
 static u16 sHofsAbove;
 static u16 sHofsBelow;
@@ -51,7 +51,7 @@ void BattleFx_SetPhaseRequest(s32, s32);
 
 void State_SetActorEightValue3d(void)
 {
-    BattleFx_SetPhaseRequest(8, 0x3D);
+    BattleFx_SetPhaseRequest(8, 61);
 }
 
 u8 *ToretoEda_GetEntrances(void)
@@ -139,8 +139,8 @@ void ToretoEda_PlayCueAndSelectTouchedExit(void)
     u8 *state = gWork;
     s16 *cnt;
 
-    Audio_PlayCue(0x7B);
-    cnt = (s16 *)(state + 0x16C);
+    Audio_PlayCue(123);
+    cnt = (s16 *)(state + 364);
     Event_SetExitRequest(*cnt);
 }
 
@@ -155,17 +155,17 @@ void Effect_SetAlphaBlendForScene9(void)
 
     disp = *(u8 **)gDisplayTransition;
     {
-        u16 *slot = (u16 *)(disp + 0x534);
+        u16 *slot = (u16 *)(disp + 1332);
         int value = 0x3f3f;
         *slot = value;
     }
     {
-        u16 *slot = (u16 *)(disp + 0x536);
+        u16 *slot = (u16 *)(disp + 1334);
         int value = 31;
         *slot = value;
     }
     {
-        u16 *slot = (u16 *)(disp + 0x52a);
+        u16 *slot = (u16 *)(disp + 1322);
         int value = 10;
         *slot = value;
     }
@@ -220,17 +220,17 @@ s32 ToretoEda_InitializeBackdropTransition(void)
 
     disp = base[4];
     {
-        u16 *slot = (u16 *)(disp + 0x534);
+        u16 *slot = (u16 *)(disp + 1332);
         int value = 0x3f3f;
         *slot = value;
     }
     {
-        u16 *slot = (u16 *)(disp + 0x536);
+        u16 *slot = (u16 *)(disp + 1334);
         int value = 31;
         *slot = value;
     }
     {
-        u16 *slot = (u16 *)(disp + 0x52a);
+        u16 *slot = (u16 *)(disp + 1322);
         int value = 10;
         *slot = value;
     }
@@ -266,5 +266,5 @@ void Effect_SetBg3HofsSplit(void)
 void ToretoEda_StartBg3Split(void)
 {
     Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-    Scheduler_AddOrUpdateCallback((s32)(Effect_SetBg3HofsSplit), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Effect_SetBg3HofsSplit), 3200);
 }

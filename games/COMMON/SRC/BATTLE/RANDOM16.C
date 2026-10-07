@@ -26,7 +26,7 @@ u32 BattleRandom16(void)
 
 u32 BattleRandomPercent(void)
 {
-    return (BattleRandom16() * 0x64) >> 0x10;
+    return (BattleRandom16() * 100) >> 0x10;
 }
 
 
@@ -42,7 +42,7 @@ s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 sel
     }
     product = Curve_LookupScaledValue(result, 1) * (amount + (adjustment * 2));
     if (product < 0) {
-        product += 0x1FF;
+        product += 511;
     }
     result = product >> 9;
     if (result < 0) {
@@ -68,7 +68,7 @@ s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 selector, s32 multiplier)
     u32 product;
 
     product = Curve_LookupScaledValue(
-        selector * 2 - 0xC8, 0) * value;
+        selector * 2 - 200, 0) * value;
     product = multiplier * product;
     result = product;
     if (result < 0) {

@@ -29,7 +29,7 @@ extern u16 Korosseo_MarkerStep;
 void Korosseo_UpdateMarker(void);
 
 enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
+    MSG_ROBIN_GOT = 2410,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
     MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
     MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
@@ -94,7 +94,7 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 3200);
 }
 
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
@@ -106,7 +106,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
     Korosseo_MarkerSteps = (u16)duration;
     Korosseo_MarkerStep = 0;
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 3200);
 }
 
 void KorosseoKawa_ReleaseMarker(void)

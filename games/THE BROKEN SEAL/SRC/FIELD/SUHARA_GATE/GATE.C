@@ -21,7 +21,7 @@
 
 void Scene_SetActor13Value1A(void)
 {
-    BattleFx_SetPhaseRequest(0xD, 0x1A);
+    BattleFx_SetPhaseRequest(13, 26);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -144,7 +144,7 @@ void Scene_RunScene3c3SequenceC(void)
     s32 arg;
     s32 v5;
 
-    arg = *(s16 *)(*(u8 **)gWork + 0x16c);
+    arg = *(s16 *)(*(u8 **)gWork + 364);
     Actor_Get(0)->motion_flags = 0;
     v5 = 2;
     Audio_PlayCue(158);
@@ -198,7 +198,7 @@ void Scene_RunScene3c3SequenceA(void)
 
     Engine_EventBegin();
     Actor_SetSpeed(0, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(0, 120, 0x1b6);
+    Actor_WalkToAndWait(0, 120, 438);
     Actor_FaceDirection(0, 0xc000, 0);
     record = Actor_Get(0);
     if (record != 0) {
@@ -206,9 +206,9 @@ void Scene_RunScene3c3SequenceA(void)
     }
     Engine_TaskWait(1);
     Actor_SetSpeed(11, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(11, 108, 0x1af);
+    Actor_WalkToAndWait(11, 108, 431);
     Actor_FaceDirection(11, 0xd000, 10);
-    Actor_ShowEmote(11, 0x100, 20);
+    Actor_ShowEmote(11, 256, 20);
     Actor_FaceDirection(11, 0xd000, 20);
     Actor_FaceDirection(11, 0, 40);
     Actor_FaceDirection(11, 0xd000, 40);
@@ -216,34 +216,34 @@ void Scene_RunScene3c3SequenceA(void)
     Engine_ActorStartRepeatedMotion(11, 2);
     Engine_EventSetMessage((s32)MsgSuharaMeaning);
     Event_ShowMessageAndWait(11, 0, 40);
-    Actor_ShowEmote(8, 0x100, 0);
+    Actor_ShowEmote(8, 256, 0);
     Engine_ActorRunRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 10);
-    Actor_WalkToAndWait(11, 132, 0x1a4);
+    Actor_WalkToAndWait(11, 132, 420);
     Actor_FaceDirection(11, 0xd000, 0);
     Actor_FaceDirection(0, 0xe000, 0);
-    Actor_WalkToAndWait(11, 138, 0x1a0);
+    Actor_WalkToAndWait(11, 138, 416);
     Actor_FaceDirection(11, 0xb000, 10);
     Engine_ActorStartRepeatedMotion(11, 2);
     Event_ShowMessageAndWait(11, 0, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 40);
-    Actor_ShowEmote(9, 0x100, 20);
+    Actor_ShowEmote(9, 256, 20);
     Engine_ActorRunRepeatedMotion(9, 2);
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_FaceDirection(0, 0xc000, 0);
-    Actor_WalkToAndWait(11, 144, 0x1a4);
+    Actor_WalkToAndWait(11, 144, 420);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(9, 2);
     Event_ShowMessageAndWait(9, 0, 20);
-    Actor_SetAttachedEffect(9, 0x102);
+    Actor_SetAttachedEffect(9, 258);
     Engine_ActorStartRepeatedMotion(9, 3);
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_FaceDirection(11, 0x5000, 20);
     Event_AskYesNo(11, 0);
     if (GameFlag_IsSet(0x9b0) != 0) {
         Actor_FaceDirection(11, 0xd000, 40);
-        Actor_SetAttachedEffect(11, 0x102);
+        Actor_SetAttachedEffect(11, 258);
         Engine_EventWait(40);
         Event_ShowMessageAndWait(11, 0, 10);
     } else {
@@ -251,14 +251,14 @@ void Scene_RunScene3c3SequenceA(void)
     }
     Actor_FaceDirection(11, 0x5000, 10);
     Event_ShowMessageAndWait(11, 0, 40);
-    Actor_ShowEmote(11, 0x100, 40);
+    Actor_ShowEmote(11, 256, 40);
     Actor_FaceDirection(11, 0xb000, 10);
     Event_ShowMessageAndWait(11, 0, 10);
-    Actor_WalkToAndWait(11, 138, 0x1a0);
+    Actor_WalkToAndWait(11, 138, 416);
     Actor_FaceDirection(11, 0xb000, 20);
     Engine_ActorStartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 10);
-    Actor_SetAttachedEffect(11, 0x102);
+    Actor_SetAttachedEffect(11, 258);
     Engine_ActorRunRepeatedMotion(11, 1);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(11, 0, 20);

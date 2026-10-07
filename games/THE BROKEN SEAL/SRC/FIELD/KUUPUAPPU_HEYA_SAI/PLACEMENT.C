@@ -36,7 +36,7 @@ void SceneState_CheckPositionWindow(void)
 
     v0 = ((struct Resource386FirstView *)Object_GetById(0))->sample_08;
     v1 = (s32)((struct Resource386SecondView *)Object_GetById(0))->sample_10 >> 0x14;
-    if (((u32)((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A)) {
+    if (((u32)((v0 >> 0x14) - 34) <= 1U) && (v1 > 40) && (v1 <= 42)) {
         Engine_GameFlagSet(0x250);
         return;
     }
@@ -108,7 +108,7 @@ void FieldScene_RunActor16Sequence(void)
     Engine_ActorSetAnimationAndWait(16, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(16, 0, 20);
-    Actor_ShowEmote(16, 0x102, 60);
+    Actor_ShowEmote(16, 258, 60);
     Event_ShowMessageAndWait(16, 0, 30);
     Event_OpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
@@ -330,7 +330,7 @@ s32 FieldScene_InitSceneStateByStep(void)
         Object_GetById(8)->terrain_height = zero;
     } else if (scene == 7 || scene == 11) {
         OverlayObject_InitObject22(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-        Engine_TaskAddCallback(SceneState_CheckPositionWindow, 0xc80);
+        Engine_TaskAddCallback(SceneState_CheckPositionWindow, 3200);
     }
 
     return 0;
@@ -348,7 +348,7 @@ void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
     z = 0;
     o = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
     if (o != 0) {
-        q = *(u8 **)(o + 0x50);
+        q = *(u8 **)(o + 80);
         p = q + 38;
         *p = z;
         p += 1;
@@ -357,12 +357,12 @@ void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
         m = -m;
         q[5] &= m;
         q[9] &= 15;
-        o[0x55] = z;
-        o[0x5c] = 1;
-        v = Engine_HeapAllocate(17, 0x608);
+        o[85] = z;
+        o[92] = 1;
+        v = Engine_HeapAllocate(17, 1544);
         Engine_ItemLoadIcon(a);
-        v += 0x400;
-        Engine_VramLoad(q[28], 0x80, v);
+        v += 1024;
+        Engine_VramLoad(q[28], 128, v);
         Engine_HeapRelease(17);
     }
 }

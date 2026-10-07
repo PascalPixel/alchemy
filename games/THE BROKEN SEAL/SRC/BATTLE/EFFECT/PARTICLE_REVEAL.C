@@ -67,10 +67,10 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     draw[1] = heap_cache[8];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet + 0x2f8, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet + 760, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     for (i = 0; i != 32; i++) {
         step = &work->particles[i];
         step->x = Random16() & 63;
@@ -93,7 +93,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
         for (i = 0; i != 10; i++) {
             step = &work->particles[i];
             if (frame >= i * 4 + 16) {
-                draw[0](canvas, work->sheet + 0x9e0, step->x - 17, step->y - 32, 34, 65);
+                draw[0](canvas, work->sheet + 2528, step->x - 17, step->y - 32, 34, 65);
                 if (frame == i * 4 + 16) {
                     for (j = 0; j != 16; j++) {
                         s32 direction;
@@ -134,7 +134,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);
-        angle -= 0x800;
+        angle -= 2048;
         frame++;
     } while (frame != 96);
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
@@ -173,10 +173,10 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(0, draw);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 800, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     burst_offset = 0;
     member = 0;
@@ -211,14 +211,14 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
         burst_offset += 16 * sizeof(struct EffectStep);
     } while (member != 9);
 
-    Audio_PlayCue(0x88);
+    Audio_PlayCue(136);
     frame = 0;
     curtain_y = -172;
     do {
         if (frame == 56)
-            BattleEventRuntime_BeginPhaseFar(0x85);
+            BattleEventRuntime_BeginPhaseFar(133);
         if (frame <= 23)
-            callbacks[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40, 40);
+            callbacks[0](canvas, work->sheet + 800 + (frame / 4) * 1600, 40, 20, 40, 40);
         if (frame == 20)
             Iwram_CopyWords((void *)BG_PLTT,
                 Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
@@ -229,7 +229,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
                 callbacks[0](canvas, work->sheet, 50, 20, 20, 40);
         }
         if (frame == 32) {
-            Audio_PlayCue(0x91);
+            Audio_PlayCue(145);
             work->shake_frames = 8;
             Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
         }
@@ -265,9 +265,9 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
                     x - ((u32)size >> 1), HI(step->y) - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
                 angle = step->z;
-                step->z = angle + 0x800;
+                step->z = angle + 2048;
                 if (step->z > 0xffff)
-                    step->z = angle + 0x800 - 0xffff;
+                    step->z = angle + 2048 - 0xffff;
             }
             member++;
             step++;
@@ -324,7 +324,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], spawn);
 
     for (i = 0; i != PARTICLE_COUNT; i++) {
@@ -332,7 +332,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
         s32 speed;
 
         angle = (Random16() & 0x7fff) + 0x4000;
-        speed = (Random16() & 0x1ff) + 0x80;
+        speed = (Random16() & 0x1ff) + 128;
         gMapCellBuffer[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
         gMapCellBuffer[i].y = (spawn[1] + 8) << 16;
         gMapCellBuffer[i].velocity_x = (Trig_Sin(angle) * speed) >> 9;
@@ -346,7 +346,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
         if (frame > 47)
             REG_BLDALPHA = (64 - frame) | 0x1000;
         if (frame == 1) {
-            Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet + 0x400, 1, 1);
+            Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet + 1024, 1, 1);
             Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet + 0x65c0, 1, 0);
         }
 
@@ -372,7 +372,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
                 s32 h;
 
                 cell = (p->z / 128) & 3;
-                routine[i & 1](canvas, work->sheet + 0x400 + ParticleReveal_CellSourceOffsets[cell],
+                routine[i & 1](canvas, work->sheet + 1024 + ParticleReveal_CellSourceOffsets[cell],
                     HI(p->x) - (w = ParticleReveal_CellWidths[cell]) / 2,
                     HI(p->y) - (h = ParticleReveal_CellHeights[cell]) / 2, w, h);
                 EffectStep_AdvanceWithGravity3D(p, 63, 0x1000);
@@ -381,7 +381,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 
         if (frame == 8) {
             work->shake_frames = frame;
-            BattleEventRuntime_BeginPhaseFar(0x86);
+            BattleEventRuntime_BeginPhaseFar(134);
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 16);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
         }
@@ -442,7 +442,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet + 0x65c0, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 8; i++) {

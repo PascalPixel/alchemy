@@ -279,7 +279,7 @@ next_state:
         effect->target_x = effect->origin_x;
         effect->target_z = effect->origin_z;
         {
-            u32 value = 0x400;
+            u32 value = 1024;
 
             effect->max_turn_step = value;
         }
@@ -328,7 +328,7 @@ void *BattleFx_StartItemBreak(void *object)
     u32 jitter;
 
     angle = (source->angle + 0x2000) & 0xc000;
-    parent = Object_Spawn(0xd7, source->x, source->y + (16 << 16), source->z);
+    parent = Object_Spawn(215, source->x, source->y + (16 << 16), source->z);
     if (parent == 0)
         return 0;
     parent->scale_y = 0x4000;
@@ -341,14 +341,14 @@ void *BattleFx_StartItemBreak(void *object)
     Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
     for (i = 7; i >= 0; i--) {
-        child = Object_Spawn(0x11d, source->x, source->y + (16 << 16), source->z);
+        child = Object_Spawn(285, source->x, source->y + (16 << 16), source->z);
         if (child != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);
             speed = Random16() + 0x10000;
             child->acceleration = 0x10000;
             child->speed_limit = speed;
             child->motion_flags = 2;
-            child->vertical_motion_strength = 0x51e;
+            child->vertical_motion_strength = 1310;
             spread = Random16();
             child->velocity_y = spread - Random16();
             distance = Random16() * 24 + (8 << 16);
@@ -394,14 +394,14 @@ void UpdateRisingParticleBurst(void *object)
     for (i = 30; i >= 0; i--) {
         source->y += 1 << 16;
         source->angle += 0x2000;
-        source->scale_x += -0x800;
-        source->scale_y += -0x800;
+        source->scale_x += -2048;
+        source->scale_y += -2048;
         WaitFrames(1);
     }
     i = 7;
     unit = 0x10000;
     for (; i >= 0; i--) {
-        child = Object_Spawn(0x11d, source->x, source->y, source->z);
+        child = Object_Spawn(285, source->x, source->y, source->z);
         if (child != 0) {
             s32 speed;
 
@@ -410,7 +410,7 @@ void UpdateRisingParticleBurst(void *object)
             child->acceleration = unit;
             child->speed_limit = speed + unit;
             child->motion_flags = 2;
-            child->vertical_motion_strength = 0xa3d;
+            child->vertical_motion_strength = 2621;
             spread = Random16();
             child->velocity_y = spread - Random16();
             distance = Random16() * 24;
@@ -456,14 +456,14 @@ void FieldEffect_WatchLeaderDistance(void)
 
     work = gEventWork;
     actor = ObjectTable_Get(gGameState.selected_actor);
-    if (*(s16 *)(work + 0xcc0) != 0) {
-        timer = (s16 *)(work + 0xcba);
+    if (*(s16 *)(work + 3264) != 0) {
+        timer = (s16 *)(work + 3258);
         if (*timer != 0)
             (*timer)--;
     }
-    dx = Iwram_MulQ16(*(s16 *)(work + 0xcbc) - actor->x / 0x10000, 0xd105);
-    dz = *(s16 *)(work + 0xcbe) - (actor->z - actor->y) / 0x10000;
-    if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 0xcba) == 0) {
+    dx = Iwram_MulQ16(*(s16 *)(work + 3260) - actor->x / 0x10000, 0xd105);
+    dz = *(s16 *)(work + 3262) - (actor->z - actor->y) / 0x10000;
+    if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 3258) == 0) {
         u16 *slot = (u16 *)(work + 382);
         u32 request = 0x2090;
 

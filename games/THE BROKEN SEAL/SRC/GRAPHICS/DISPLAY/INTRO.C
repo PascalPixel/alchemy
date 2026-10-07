@@ -44,7 +44,7 @@ struct IntroWork {
     union {
         volatile u32 objects[120][2];
         struct {
-            u8 unknown_18[0x68];
+            u8 unknown_18[104];
             struct IntroSprite sprites[8];
         } prompt;
     } area;
@@ -95,7 +95,7 @@ void Title_PlaceIntroSprites(void)
     }
     base = 48 - gBgScroll[1].y;
     top = 144 - work->rise;
-    if (work->frame < 0x118) {
+    if (work->frame < 280) {
         if ((work->tick & 1) == 0) {
             PLACE(0, 16);
             QUAD(n, 16, 0x40000000, 232);
@@ -127,7 +127,7 @@ void Title_PlaceIntroSprites(void)
     line = 32 - gBgScroll[1].y;
     WRAP256(line);
     ENTRY(12, 0) = line | 0xc05c2000;
-    ENTRY(12, 1) = 0x800;
+    ENTRY(12, 1) = 2048;
     Dma_Set(&ENTRY(12, 0), (void *)(0x07000000 + n * 8), 0x84000002, REG_DMA3);
     Dma_Set(&ENTRY(0, 0), (void *)0x07000000, 0x84000008, REG_DMA3);
 }
@@ -147,13 +147,13 @@ void Title_LoadIntroBackgrounds(void)
     data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
     Dma_Set(data, (void *)OBJ_PLTT, 0x84000080, REG_DMA3);
     OBJ_PLTT[0] = 0;
-    data += 0x200;
+    data += 512;
     Resource_DecodeByteLz(data, Ram_MapCellBuffer);
     Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x80000f00, REG_DMA3);
     data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
     Dma_Set(data, (void *)BG_PLTT, 0x84000080, REG_DMA3);
     BG_PLTT[0] = 0;
-    data += 0x200;
+    data += 512;
     Resource_DecodeByteLz(data, Ram_MapCellBuffer);
     Dma_Set(Ram_MapCellBuffer + 0x2940, (void *)0x06000000, 0x80002760, REG_DMA3);
     Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
@@ -161,7 +161,7 @@ void Title_LoadIntroBackgrounds(void)
     /* FAKEMATCH: goto loops and a tile counted in its high half keep the increment's constant inside each strip, where the loop pass would hoist it. */
     blank = 0x1ff;
     map = (u16 *)0x0600f000;
-    tile = 0x267;
+    tile = 615;
     y = 0;
 front_top:
     x = 29;
@@ -178,7 +178,7 @@ front_top_cell:
     *map++ = blank;
     if (++y <= 10)
         goto front_top;
-    tile = 0x13b;
+    tile = 315;
     y = 11;
 front_rest:
     x = 29;
@@ -299,7 +299,7 @@ s32 Title_ShowIntro(s32 prompt)
     s32 blank;
 
     result = 0;
-    blank = 0x1ff;
+    blank = 511;
     saved = gCpuLoadDisplayEnabled;
     work = Runtime_AllocateHeapBlock(43, 224);
     Bg0_ClearTilemap();
@@ -336,7 +336,7 @@ s32 Title_ShowIntro(s32 prompt)
         *ime = old;
     }
     Graphics_UpdatePaletteInterpolation(60);
-    Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 0x480);
+    Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 1152);
 
     for (;;) {
         s32 frame;
@@ -381,9 +381,9 @@ s32 Title_ShowIntro(s32 prompt)
                         map = (u16 *)0x0600f6c0;
                         for (i = 0; i < 5; i++) {
                             for (j = 0; j < 30; j++)
-                                *map++ = 0x13b;
-                            *map++ = 0x13b;
-                            *map++ = 0x13b;
+                                *map++ = 315;
+                            *map++ = 315;
+                            *map++ = 315;
                         }
                     }
                     work->front_rows++;
@@ -406,11 +406,11 @@ s32 Title_ShowIntro(s32 prompt)
             data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
             Dma_Set(data, (void *)BG_PLTT, 0x84000078, REG_DMA3);
             BG_PLTT[0] = 0;
-            data += 0x200;
+            data += 512;
             Resource_DecodeByteLz(data, Ram_MapCellBuffer);
             Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x80004b00, REG_DMA3);
             map = (u16 *)0x06003000;
-            tile = 0x100;
+            tile = 256;
             i = 0;
             break;
         }
@@ -435,7 +435,7 @@ s32 Title_ShowIntro(s32 prompt)
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
     if (prompt != 0) {
-        u8 *buffer = Runtime_AllocateBlock(14, 0x400);
+        u8 *buffer = Runtime_AllocateBlock(14, 1024);
         struct IntroSprite *sprite = work->area.prompt.sprites;
 
         Resource_DecodeByteLz(Title_PromptTiles, buffer);

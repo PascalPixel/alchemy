@@ -86,7 +86,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
     draw[1] = heap_cache[8];
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (i = 0; i != 1024; i++)
         gChips[i].life = 0;
@@ -158,7 +158,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
                     s32 speed;
                     s32 angle;
 
-                    speed = 0x3ff;
+                    speed = 1023;
                     speed &= Random16();
                     angle = Random16() & 0xffff;
                     chip->x = position.x << 16;
@@ -253,10 +253,10 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
     draw.upper = heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
     draw.lower = heap_cache[8];
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 1152);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     for (i = 0; i != 512; i++) {
         gSkulls[i].x = ((Random16() & 255) - 127) << 15;
@@ -351,7 +351,7 @@ void BattleFx_RunMemberOrbit(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
+    FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 256;
     palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
     status = Iwram_CopyWords((void *)0x05000000, palette, 128);
     status = Resource_DecodeType01((u8 *)palette + 128, work);
@@ -361,10 +361,10 @@ void BattleFx_RunMemberOrbit(void *object)
     rect2 = heap_cache[8];
     rectangle_slot = rectangle;
     rectangle_slot[1] = rect2;
-    Scheduler_AddOrUpdateCallback((void *)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)BattleFx_ArmBg2AffineHBlankDma, 1152);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     if (work->effect->side == 1) {
         FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
@@ -522,10 +522,10 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
         }
     }
 
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 1152);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     AudioCommand_PlayFar(146);
 
     for (frame = 0; frame != MemberBurst_Counts[mode * 2 + 1] + work->effect->count * 20; frame++) {
@@ -572,7 +572,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
                             mote->velocity_x += dx;
                             mote->velocity_y += dy;
                             mote->velocity_z += dz;
-                            if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
+                            if ((dx >= -4095 && dx <= 4095) && (dz >= -4095 && dz <= 4095))
                                 mote->variant = -1;
                         }
                     }

@@ -31,8 +31,8 @@ void UiWork_ResetFreeChannel(void)
         }
         sel->x = 0;
         sel->countdown = 0;
-        sel->colour = 0xF;
+        sel->colour = 15;
         sel->outline = 0;
-        sel->line_spacing = 0xA;
+        sel->line_spacing = 10;
     }
 }

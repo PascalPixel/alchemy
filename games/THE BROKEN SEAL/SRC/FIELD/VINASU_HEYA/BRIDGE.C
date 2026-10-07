@@ -17,7 +17,7 @@
 #define SceneEffect_SpawnEffect284AtCell ((struct SwitchEffect * (*)(s32,s32,const void*))SceneEffect_SpawnEffect284AtCell)
 
 struct MapWork {
-    u8 unknown_00[0x164];
+    u8 unknown_00[356];
     struct ScrollLayer layer;
 };
 
@@ -266,13 +266,13 @@ void Scene_RunScene3c8SequenceA(void)
             Camera_SetSpeed(0x10000, 0x2000);
             Object_PlaceCurrentWithinCameraBounds(14, 1);
             Camera_WaitForMove();
-            first = SceneEffect_SpawnEffect284AtCell(136, 0x308, gVinasuFirstGateScript);
+            first = SceneEffect_SpawnEffect284AtCell(136, 776, gVinasuFirstGateScript);
             Event_Wait(30);
             Camera_SetSpeed(0x6666, 0xccc);
             Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
             ObjectDispatch_WaitForValue16(first);
             Object_SetScript((struct FieldActor *)first, gVinasuFirstGateOpenScript);
-            second = SceneEffect_SpawnEffect284AtCell(216, 0x2f8, gVinasuSecondGateScript);
+            second = SceneEffect_SpawnEffect284AtCell(216, 760, gVinasuSecondGateScript);
             while (first->active != 0 || second->active != 0) {
                 if (first->finished != 0 || second->finished != 0) {
                     Event_Wait(30);

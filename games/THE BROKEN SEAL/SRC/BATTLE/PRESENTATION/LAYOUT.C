@@ -270,7 +270,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
     actor->effect_entry = 0;
     actor->active = 0;
     actor->fading = 0;
-    actor->effect = 0x1fe;
+    actor->effect = 510;
     class_id = unit_record->class_id;
     actor->overlay = anim;
 
@@ -346,7 +346,7 @@ s32 Summon_FindSlot(void)
     s32 id;
 
     for (i = 0; i <= 5; i++) {
-        id = i + 0x80;
+        id = i + 128;
         if (Owner_GetStateFar(id)->status_12a == 0)
             break;
     }
@@ -371,7 +371,7 @@ s32 Summon_Refresh(void)
     for (i = 0; i < count; i++) {
         s32 id = work->enemy_units[i];
 
-        if (id != 0xfe) {
+        if (id != 254) {
             struct BattleObjectSlot *object = GetBattleObjectSlot(id);
 
             object->anchor_x = x[i] << 16;
@@ -418,7 +418,7 @@ void BattleUnit_RefreshPlacement(void)
     for (i = 0; i < count; i++, stand++) {
         s32 id = work->enemy_units[i];
 
-        if (id != 0xfe)
+        if (id != 254)
             BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, x[stand], z[stand]);
     }
 }

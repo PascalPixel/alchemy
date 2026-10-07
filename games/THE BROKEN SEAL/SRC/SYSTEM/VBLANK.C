@@ -55,7 +55,7 @@ void System_VBlankHandler(void)
         Data_03001cfc = 0;
         hook();
     }
-    Runtime_InvokeCallbacksByKey(0x480);
+    Runtime_InvokeCallbacksByKey(1152);
     keys = REG_KEYINPUT ^ KEYS_MASK;
     {
         u32 pressed = keys & ~gKeysHeld;

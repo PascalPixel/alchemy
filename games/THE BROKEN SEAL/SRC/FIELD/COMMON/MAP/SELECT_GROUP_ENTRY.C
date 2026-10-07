@@ -31,7 +31,7 @@ void MapGroupTable_SelectEntry(s32 kind)
         if (id & 0xfffff000)
             continue;
         id &= 0xfff;
-        if (id == 0x1ff)
+        if (id == 511)
             break;
         if (id != cur)
             continue;
@@ -44,7 +44,7 @@ void MapGroupTable_SelectEntry(s32 kind)
             flag = word & 0x10000000;
             if (flag)
                 flag = *p++;
-            if (id == 0x1ff || entry_kind == 0) {
+            if (id == 511 || entry_kind == 0) {
                 result = *start & 0x1ff;
                 break;
             }

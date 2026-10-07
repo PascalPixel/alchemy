@@ -66,7 +66,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 
     work = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     timer = Runtime_AllocateHeapBlock(42, 4);
-    if (kind != 0x15b) {
+    if (kind != 347) {
         {
 
             /* FAKEMATCH: the channel address is pinned to r3 so the display control can be addressed from it. */
@@ -117,7 +117,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         BattlePres_SetupTransitionScene(0, 0, 0, 180);
         *timer = start;
         Scheduler_AddOrUpdateCallback(BattlePres_AdvanceTransitionTimer, 3200);
-        Scheduler_AddOrUpdateCallback(BattlePres_DrawTransitionRows, 0x480);
+        Scheduler_AddOrUpdateCallback(BattlePres_DrawTransitionRows, 1152);
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         gBgScroll[0].y = 32;
         WaitFrames(1);

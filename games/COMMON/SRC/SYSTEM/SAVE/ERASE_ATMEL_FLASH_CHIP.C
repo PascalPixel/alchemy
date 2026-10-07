@@ -3,7 +3,7 @@
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 struct FlashConfig08007028 {
-    u8 unknown_00[0x24];
+    u8 unknown_00[36];
     u16 wait;
 };
 
@@ -23,13 +23,13 @@ u16 EraseAtmelFlashChip(void)
         ((struct FlashConfig08007028 *)Flash_ChipAtmelLayout)->wait;
 
     command = (volatile u8 *)0x0E005555;
-    *command = 0xAA;
+    *command = 170;
     unlock = (volatile u8 *)0x0E002AAA;
-    *unlock = 0x55;
-    *command = 0x80;
-    *command = 0xAA;
-    *unlock = 0x55;
-    *command = 0x10;
+    *unlock = 85;
+    *command = 128;
+    *command = 170;
+    *unlock = 85;
+    *command = 16;
 
     result = Flash_Handler3(3, (u8 *)0x0E000000, 255);
 

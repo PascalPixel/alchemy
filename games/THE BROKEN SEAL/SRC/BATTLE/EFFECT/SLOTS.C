@@ -55,7 +55,7 @@ void RunBattleEffect16(void)
         s32 zero = 0;
 
         *tile_slot = slot;
-        VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
+        VramBlock_LoadCached((s16)slot, 256, BattleFx_ArcSparkTiles);
         gGameState.avoid_distance = 0x09600000;
         gGameState.avoid_by_item = GameFlag_TestFar(0x145);
         Animation_ApplyChildValuesFar(object, zero);
@@ -63,7 +63,7 @@ void RunBattleEffect16(void)
         object->phase = zero;
         object->step = zero;
     }
-    Audio_PlayCue(0x8c);
+    Audio_PlayCue(140);
     WaitFrames(15);
     object->phase = 1;
     WaitFrames(10);
@@ -78,9 +78,9 @@ void RunBattleEffect16(void)
     }
     object->callback = NULL;
     object->angle = angle;
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 3200);
     WaitFrames(15);
-    Audio_PlayCue(0xae);
+    Audio_PlayCue(174);
     WaitFrames(55);
     Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
     if (gGameState.cloaked != 0)

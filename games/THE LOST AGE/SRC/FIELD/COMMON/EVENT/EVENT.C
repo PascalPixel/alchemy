@@ -13,7 +13,7 @@
 
 
 struct EventWordWork {
-    u8 unknown_00[0x10];
+    u8 unknown_00[16];
     s32 word_10;
 };
 

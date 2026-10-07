@@ -26,7 +26,7 @@
 
 
 struct OwnerState {
-    u8 unknown_00[0x34];
+    u8 unknown_00[52];
     u16 max_hp;
     u16 max_pp;
     u16 hp;
@@ -201,11 +201,11 @@ void FieldScene_RunBranchedSteps2006(s32 a)
     Engine_EventOpenMessage(a, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
-        Engine_ActorShowEmote(a, 0x102, 0x28);
+        Engine_ActorShowEmote(a, 258, 40);
         Engine_EventSetMessage(k + 1);
     } else {
         Engine_EventWait(10);
-        Engine_ActorShowEmote(a, 0x105, 0x28);
+        Engine_ActorShowEmote(a, 261, 40);
         Engine_EventSetMessage(k + 2);
     }
     Engine_EventShowMessage(a, 0);
@@ -258,7 +258,7 @@ void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
         GameFlag_Set(0x968);
         Psynergy_Cancel();
         Event_Wait(50);
-        Actor_ShowEmote(a1, 0x100, 70);
+        Actor_ShowEmote(a1, 256, 70);
         Actor_FaceActor(a1, ACTOR_PARTY_LEADER, 40);
         Event_ShowMessage(a1, 0);
         Event_Wait(30);
@@ -380,17 +380,17 @@ void FieldScene_RunScene3b8SequenceB(void)
     Event_Wait(30);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(10);
-    Actor_ShowEmote(0, 0x105, 60);
+    Actor_ShowEmote(0, 261, 60);
     Event_Wait(20);
-    Actor_ShowEmote(1, 0x102, 60);
+    Actor_ShowEmote(1, 258, 60);
     Event_ShowMessage(1, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(1, 4);
     Event_Wait(20);
     Event_ShowMessage(1, 0);
     Event_Wait(10);
-    Actor_ShowEmote(0, 0x102, 80);
-    Actor_ShowEmote(2, 0x106, 60);
+    Actor_ShowEmote(0, 258, 80);
+    Actor_ShowEmote(2, 262, 60);
     Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(2, 4);
@@ -920,23 +920,23 @@ void FieldScene_RunBranchingActorSequence(void)
     Task_Wait(1);
     DisplayTransition_InitializeBattleEffectState(9);
     work = gWork[4];
-    SetHalf((u16 *)(work + 0x52a), 0);
-    SetHalf((u16 *)(work + 0x534), 0x1f1f);
-    SetHalf((u16 *)(work + 0x536), 1);
+    SetHalf((u16 *)(work + 1322), 0);
+    SetHalf((u16 *)(work + 1332), 0x1f1f);
+    SetHalf((u16 *)(work + 1334), 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     for (step = 1; step <= 5; step++) {
         Task_Wait(3);
-        *(u16 *)(work + 0x52a) = step;
+        *(u16 *)(work + 1322) = step;
     }
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(30);
     for (step = 5; step <= 31; step++) {
         Task_Wait(3);
-        *(u16 *)(work + 0x52a) = step;
+        *(u16 *)(work + 1322) = step;
     }
-    SetHalf((u16 *)(work + 0x536), 31);
+    SetHalf((u16 *)(work + 1334), 31);
     event = (struct EventWork *)gWork[0];
     event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     event->transition_frames = 24;
@@ -1189,7 +1189,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Camera_WaitForMove();
     Event_Wait(40);
     Actor_SetSpeed(0, 0x10000, 0x8000);
-    Actor_WalkToAndWait(0, 208, 0x2f8);
+    Actor_WalkToAndWait(0, 208, 760);
     Event_Wait(10);
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
     FieldMotion_LaunchFromFocusedObject(1, -16, 16, 0xc000);
@@ -1334,7 +1334,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_FaceActor(2, 1, 30);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
-    Actor_ShowEmote(1, 0x106, 50);
+    Actor_ShowEmote(1, 262, 50);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
@@ -1364,7 +1364,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(2, 0x101, 40);
+    Actor_ShowEmote(2, 257, 40);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(14, 2);
@@ -1385,7 +1385,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     }
 
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x102, 40);
+    Actor_ShowEmote(20, 258, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(20);
     Actor_SetAnimation(0, 3);
@@ -1398,14 +1398,14 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x102, 40);
+    Actor_ShowEmote(20, 258, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(20, 4);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
-    Actor_ShowEmote(0, 0x102, 40);
+    Actor_ShowEmote(0, 258, 40);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 4);
     Event_Wait(20);
@@ -1424,10 +1424,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(30);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(3, 0x100, 40);
+    Actor_ShowEmote(3, 256, 40);
     Event_ShowMessage(3, 0);
     Event_Wait(10);
-    Actor_ShowEmote(14, 0x102, 50);
+    Actor_ShowEmote(14, 258, 50);
     Actor_FaceActor(20, 14, 50);
     Event_Wait(10);
     Actor_RunRepeatedMotion(14, 2);
@@ -1451,10 +1451,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Actor_FaceDirection(14, FACING_WEST, 0);
     Event_Wait(40);
-    Actor_ShowEmote(14, 0x105, 60);
+    Actor_ShowEmote(14, 261, 60);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(2, 0x100, 40);
+    Actor_ShowEmote(2, 256, 40);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
     Actor_FaceEachOther(14, 2, 40);
@@ -1510,7 +1510,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(30);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(3, 0x101, 40);
+    Actor_ShowEmote(3, 257, 40);
     Event_ShowMessage(3, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(14, 2);
@@ -1526,13 +1526,13 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(20);
-    Actor_ShowEmote(14, 0x105, 70);
+    Actor_ShowEmote(14, 261, 70);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(1, 0x101, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
-    Actor_ShowEmote(2, 0x101, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
+    Actor_ShowEmote(1, 257, 0);
+    Actor_ShowEmote(ACTOR_MIA, 257, 0);
+    Actor_ShowEmote(2, 257, 40);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 4);
     Event_Wait(20);
@@ -1549,7 +1549,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 40);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 40);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
@@ -1564,7 +1564,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
-    Actor_ShowEmote(14, 0x101, 40);
+    Actor_ShowEmote(14, 257, 40);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -1614,10 +1614,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(40);
     Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_Wait(30);
-    Actor_ShowEmote(14, 0x102, 40);
+    Actor_ShowEmote(14, 258, 40);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x102, 40);
+    Actor_ShowEmote(20, 258, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(20);
     Actor_FaceEachOther(14, 20, 40);
@@ -1625,7 +1625,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_SetAttachedEffect(20, 0x102);
+    Actor_SetAttachedEffect(20, 258);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
@@ -1638,7 +1638,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_FaceDirection(14, FACING_SOUTH, 0);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x100, 60);
+    Actor_ShowEmote(20, 256, 60);
     Actor_FaceActor(20, 14, 0);
     Actor_FaceDirection(0, FACING_NORTH, 0);
     Actor_FaceDirection(1, FACING_NORTH, 0);
@@ -1649,10 +1649,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(30);
-    Actor_ShowEmote(14, 0x105, 40);
+    Actor_ShowEmote(14, 261, 40);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x101, 60);
+    Actor_ShowEmote(20, 257, 60);
     Actor_SetSpeed(20, 0x13333, 0x9999);
     Actor_WalkByAndWait(20, 0, -24);
     Actor_FaceDirection(20, FACING_EAST, 0);
@@ -1672,7 +1672,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x102, 40);
+    Actor_ShowEmote(20, 258, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
@@ -1689,7 +1689,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(30);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(3, 0x102, 40);
+    Actor_ShowEmote(3, 258, 40);
     Event_ShowMessage(3, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
@@ -1716,16 +1716,16 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(20);
-    Actor_ShowEmote(0, 0x101, 0);
-    Actor_ShowEmote(1, 0x101, 0);
-    Actor_ShowEmote(3, 0x101, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 50);
+    Actor_ShowEmote(0, 257, 0);
+    Actor_ShowEmote(1, 257, 0);
+    Actor_ShowEmote(3, 257, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 50);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(30);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x102, 40);
+    Actor_ShowEmote(20, 258, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_FaceEachOther(14, 20, 30);
@@ -1745,7 +1745,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x101, 40);
+    Actor_ShowEmote(20, 257, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
@@ -1754,7 +1754,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(2, 0x101, 40);
+    Actor_ShowEmote(2, 257, 40);
     Event_ShowMessage(2, 0);
     Event_Wait(10);
     Actor_FaceDirection(14, FACING_SOUTH, 0);
@@ -1767,7 +1767,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
-    Actor_ShowEmote(14, 0x102, 40);
+    Actor_ShowEmote(14, 258, 40);
     Event_ShowMessage(14, 0);
     Event_Wait(20);
     Actor_SetAnimation(0, 3);
@@ -1776,13 +1776,13 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(30);
     Event_Wait(20);
-    Actor_ShowEmote(14, 0x105, 60);
+    Actor_ShowEmote(14, 261, 60);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(1, 0x101, 40);
+    Actor_ShowEmote(1, 257, 40);
     Event_ShowMessage(1, 0);
     Event_Wait(10);
-    Actor_ShowEmote(14, 0x100, 40);
+    Actor_ShowEmote(14, 256, 40);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
     Actor_FaceEachOther(1, 0, 50);
@@ -1794,23 +1794,23 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(30);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(3, 0x101, 40);
+    Actor_ShowEmote(3, 257, 40);
     Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 4);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(0, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
-    Actor_ShowEmote(2, 0x101, 0);
-    Actor_ShowEmote(3, 0x101, 40);
+    Actor_ShowEmote(0, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 0);
+    Actor_ShowEmote(2, 257, 0);
+    Actor_ShowEmote(3, 257, 40);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 4);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(2, 0x100, 40);
+    Actor_ShowEmote(2, 256, 40);
     Event_OpenMessage(2, 0);
     if (Event_ChooseYesNo(14, 0) == 0) {
         Event_Wait(10);
@@ -1877,7 +1877,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_OpenMessage(20, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
-        Actor_ShowEmote(1, 0x102, 40);
+        Actor_ShowEmote(1, 258, 40);
         Event_ShowMessage(1, 0);
         gEventWork->message++;
     } else {
@@ -1891,7 +1891,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x100, 40);
+    Actor_ShowEmote(20, 256, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(20);
     Actor_SetAnimation(0, 3);
@@ -1900,12 +1900,12 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_ShowEmote(14, 0x100, 40);
+    Actor_ShowEmote(14, 256, 40);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
     Actor_FaceActor(20, 14, 40);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x102, 40);
+    Actor_ShowEmote(20, 258, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_FaceActor(14, 20, 40);
@@ -1922,8 +1922,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 80);
-    Actor_ShowEmote(20, 0x102, 70);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 80);
+    Actor_ShowEmote(20, 258, 70);
     Actor_SetAnimationAndWait(14, 4);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
@@ -1936,7 +1936,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_FaceDirection(2, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x106, 50);
+    Actor_ShowEmote(20, 262, 50);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(14, 3);
@@ -1944,16 +1944,16 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
-    Actor_ShowEmote(14, 0x108, 40);
+    Actor_ShowEmote(14, 264, 40);
     Event_OpenMessage(14, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
-        Actor_ShowEmote(14, 0x100, 40);
+        Actor_ShowEmote(14, 256, 40);
         Event_ShowMessage(14, 0);
         gEventWork->message++;
     } else {
         Event_Wait(10);
-        Actor_ShowEmote(14, 0x100, 40);
+        Actor_ShowEmote(14, 256, 40);
         gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
@@ -1971,12 +1971,12 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_FaceActor(20, 14, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
-    Actor_ShowEmote(14, 0x100, 40);
+    Actor_ShowEmote(14, 256, 40);
     Actor_FaceDirection(14, FACING_WEST, 0);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
     Event_Wait(10);
-    Actor_ShowEmote(20, 0x100, 40);
+    Actor_ShowEmote(20, 256, 40);
     Event_ShowMessage(20, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(14, 2);
@@ -2262,9 +2262,9 @@ s32 TorebiKyuden_ApplyEntryState(void)
                 sprite->part_count = set;
                 sprite->full_color = 0;
                 sprite->palette = 0;
-                buf = Heap_Allocate(17, 0x608);
+                buf = Heap_Allocate(17, 1544);
                 Item_LoadIcon(205);
-                Vram_Load(sprite->vram_block, 128, buf + 0x400);
+                Vram_Load(sprite->vram_block, 128, buf + 1024);
                 Heap_Release(17);
             }
             if (gGameState.entrance == 33 && !GameFlag_IsSet(0x96f)) {

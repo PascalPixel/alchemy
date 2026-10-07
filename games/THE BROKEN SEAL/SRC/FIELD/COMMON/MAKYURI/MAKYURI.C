@@ -155,7 +155,7 @@ void Makyuri_RunActorMove(void)
                 break;
             WaitFrames(1);
         }
-        Audio_PlayCue(0x120);
+        Audio_PlayCue(288);
         WaitFrames(1);
         actor->x.fixed = state->target_x;
         actor->z.fixed = state->target_z;

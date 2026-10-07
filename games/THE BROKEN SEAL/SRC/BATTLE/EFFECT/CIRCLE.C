@@ -95,7 +95,7 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
     effect->angle += 0xfff0;
     if (effect->pause != 0) {
         effect->pause--;
-        effect->angle += 0x800;
+        effect->angle += 2048;
     } else if ((Random16() << 5) >> 16 == 0) {
         effect->pause = ((Random16() << 4) >> 16) + 8;
     }
@@ -118,7 +118,7 @@ void BattleFx_CircleAnchor(struct OrbitEffect *effect)
     dz = Iwram_MulQ16(radius, Trig_Sin(angle));
     effect->x = anchor->x + dx;
     effect->z = anchor->z + dz;
-    effect->angle += 0x800;
+    effect->angle += 2048;
     if (++effect->timer == 121) {
         effect->update = BattleFx_WanderAroundAnchor;
         effect->timer = 0;
@@ -133,7 +133,7 @@ void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj)
 {
     s32 scale;
 
-    scale = obj->scale_x - 0x80;
+    scale = obj->scale_x - 128;
     obj->scale_y = scale;
     obj->scale_x = scale;
     if (scale < 0x8000) {

@@ -1,14 +1,14 @@
 #include "TYPES.H"
 
 struct OwnerGrowthRecord {
-    u8 unknown_00[0x50];
+    u8 unknown_00[80];
     s16 hp[6];
     s16 pp[6];
     u16 attack[6];
     u16 defense[6];
     u16 agility[6];
     u8 luck[6];
-    u8 unknown_92[0x22];
+    u8 unknown_92[34];
 };
 
 extern struct OwnerGrowthRecord Owner_GrowthRecords[8];

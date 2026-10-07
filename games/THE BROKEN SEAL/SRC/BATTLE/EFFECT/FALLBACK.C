@@ -44,7 +44,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
     s32 index;
 
     scene->y = target->y;
-    object = Object_Spawn(0xfa, 0, 0, 0);
+    object = Object_Spawn(250, 0, 0, 0);
     step = 0;
     Object_SetMode(object, 0);
     if (object == 0)
@@ -75,13 +75,13 @@ void BattleEffect_RunFallbackObjectTransition(void)
 
     WaitFrames(5);
     Object_SetMode(object, 1);
-    Audio_PlayCue(0x6c);
+    Audio_PlayCue(108);
     WaitFrames(10);
-    Audio_PlayCue(0x6c);
+    Audio_PlayCue(108);
     WaitFrames(10);
-    Audio_PlayCue(0x6c);
+    Audio_PlayCue(108);
     WaitFrames(10);
-    Audio_PlayCue(0x6d);
+    Audio_PlayCue(109);
 
     record = &scene->slots[0];
     for (index = 0; index < 16; index++) {
@@ -90,7 +90,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
         position.z = object->z;
         Camera_WorldToScreen(&position.x);
         Vector_AddPolarOffset(0x40000, Random16(), &position.x);
-        EffectSlot_Initialize(record, 0x11d, position.x, position.z);
+        EffectSlot_Initialize(record, 285, position.x, position.z);
         EffectSlot_SetCallback(record, BattleFx_UpdateRadialCamera);
         ObjectGroup_SetChildValueUnlessFifteenFar(record->object, 7);
         record++;

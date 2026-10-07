@@ -68,8 +68,8 @@ void BattleFx_RunSeriesBMode4(struct BattleEffectArgument *effect)
 }
 
 enum SeriesBSheet {
-    SERIES_B_FLARES = 0x0000,
-    SERIES_B_BURST = 0x060e,
+    SERIES_B_FLARES = 0,
+    SERIES_B_BURST = 1550,
     SERIES_B_PICTURE = 0x2b8e,
     SERIES_B_DJINNI = 0x65c0
 };
@@ -174,7 +174,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     REG_BG2X = shift << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     if (work->effect->side == 1)
         flags = 7;
     else

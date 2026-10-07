@@ -51,9 +51,9 @@ void BattleEffect_RunMode5WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolley(effect, 5);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }
 
 void BattleFx_RunMode6WithAction(struct BattleEffectArgument *effect)
@@ -62,9 +62,9 @@ void BattleFx_RunMode6WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolley(effect, 6);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }
 
 void BattleFx_RunMode7(struct BattleEffectArgument *effect)
@@ -78,9 +78,9 @@ void BattleFx_RunMode9WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolley(effect, 9);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }
 
 void BattleFx_RunMode12WithAction(struct BattleEffectArgument *effect)
@@ -89,9 +89,9 @@ void BattleFx_RunMode12WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolley(effect, 12);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }
 
 void BattleFx_RunMode13WithAction(struct BattleEffectArgument *effect)
@@ -100,9 +100,9 @@ void BattleFx_RunMode13WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolley(effect, 13);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }
 
 void BattleFx_RunMode14WithAction(struct BattleEffectArgument *effect)
@@ -111,9 +111,9 @@ void BattleFx_RunMode14WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolley(effect, 14);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }
 
 void BattleFx_RunMode15(struct BattleEffectArgument *effect)

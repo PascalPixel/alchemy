@@ -64,45 +64,45 @@ s32 BattleFx_GetBaseSuccessRate(s32 effect_id)
     switch (entry_index) {
     case 4:
     case 5:
-        return 0x46;
+        return 70;
     case 8:
     case 9:
-        return 0x4B;
+        return 75;
     case 14:
-        return 0x1E;
+        return 30;
     case 15:
-        return 0x28;
+        return 40;
     case 16:
-        return 0x2D;
+        return 45;
     case 10:
     case 11:
     case 17:
-        return 0x37;
+        return 55;
     case 18:
-        return 0x19;
+        return 25;
     case 19:
-        return 0x14;
+        return 20;
     case 12:
     case 23:
-        return 0x41;
+        return 65;
     case 13:
     case 26:
-        return 0x23;
+        return 35;
     case 27:
-        return 0x32;
+        return 50;
     case 48:
-        battle_result = 0x3C;
+        battle_result = 60;
         goto block_18;
     case 49:
-        battle_result = 0x5A;
+        battle_result = 90;
         goto block_18;
     case 0:
     case 1:
     case 20:
     case 24:
-        return 0x3C;
+        return 60;
     default:
-        battle_result = 0x64;
+        battle_result = 100;
         break;
     }
 block_18:
@@ -115,7 +115,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
     s32 i;
 
     if (target->class_index == 0) {
-        entries = Owner_GetRecord(target->class_id) + 0x48;
+        entries = Owner_GetRecord(target->class_id) + 72;
         for (i = 0; i < 3; i++) {
             if (*entries == effect_id)
                 return 1;
@@ -133,7 +133,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
 
 s32 BattleFx_IsRevive(s32 effect_id)
 {
-    if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39)) {
+    if ((effect_id == 5) || (effect_id == 56) || (effect_id == 57)) {
         return 1;
     }
     return 0;
@@ -236,10 +236,10 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
     s32 entry;
 
     entry = 0;
-    if ((group <= 3U) && (index <= 0x13U)) {
-        entry = (group * 0x14) + index;
+    if ((group <= 3U) && (index <= 19U)) {
+        entry = (group * 20) + index;
     }
-    return (const u16 *)((u8 *)Djinn_DefinitionTable + entry * 0xC);
+    return (const u16 *)((u8 *)Djinn_DefinitionTable + entry * 12);
 }
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)

@@ -49,7 +49,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, 
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             x++;
 #else
-            if ((u16)(c - 0xde) > 1)
+            if ((u16)(c - 222) > 1)
                 x++;
 #endif
         }

@@ -15,7 +15,7 @@
 struct SparkWork {
     u8 unknown_0000[0x2102];
     u16 tile_base;
-    u8 unknown_2104[0x80];
+    u8 unknown_2104[128];
     s16 resource;
 };
 

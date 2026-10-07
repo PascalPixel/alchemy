@@ -72,7 +72,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
         ((u32)(x_step / 4) & 1);
 
     tile = BG_SCREEN_BLOCK(10)[cell];
-    packed_pixels = *(Ram_MapCollision + 0x800 + ((u32)tile << 3) + pixel_offset);
+    packed_pixels = *(Ram_MapCollision + 2048 + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
         if ((u32)x_step & 2)
             result = packed_pixels >> 4;

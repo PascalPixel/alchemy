@@ -21,7 +21,7 @@ struct AbilityListEntry {
 };
 
 struct ShortcutState {
-    u32 unknown_000[0x220 / 4];
+    u32 unknown_000[544 / 4];
     volatile u16 first;
     u16 second;
 };

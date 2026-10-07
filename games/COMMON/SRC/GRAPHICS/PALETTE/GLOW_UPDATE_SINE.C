@@ -17,7 +17,7 @@ void PaletteGlow_UpdateSine(void)
     palette = (volatile u16 *)0x050001D0;
     index = 0;
     do {
-        value = Trig_Sin((*phase + index * 8) * 0x300);
+        value = Trig_Sin((*phase + index * 8) * 768);
         if (value < 0) {
             value += 0x3FFF;
         }

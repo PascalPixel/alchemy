@@ -28,7 +28,7 @@ struct EffectParticle {
     u8 reserved_14[4];
     s32 scale_x;
     s32 scale_y;
-    u8 reserved_20[0x64 - 0x20];
+    u8 reserved_20[100 - 32];
     s16 timer;
     s16 phase;
     struct EffectParticle *parent;
@@ -65,7 +65,7 @@ void RunBattleEffect14(void)
     target.x = scene->x;
     target.y = scene->y - 0x40000;
     target.z = scene->z;
-    object = Object_Spawn(0xda, 0, 0, 0);
+    object = Object_Spawn(218, 0, 0, 0);
     if (object == 0) {
         return;
     }
@@ -84,7 +84,7 @@ void RunBattleEffect14(void)
     } while (step < steps);
     object->scale_x = 0x1b333;
     object->scale_y = 0x14ccc;
-    Audio_PlayCue(0xa3);
+    Audio_PlayCue(163);
     WaitFrames(20);
     if (scene->enabled == 0) {
         if (secondary_object != 0)
@@ -98,7 +98,7 @@ void RunBattleEffect14(void)
             particle_position.z = object->z;
             magnitude = Random16() * 5 + 0x30000;
             Vector_AddPolarOffset(magnitude, Random16(), &particle_position);
-            particle = Object_Spawn(0xf9, particle_position.x, particle_position.y, particle_position.z);
+            particle = Object_Spawn(249, particle_position.x, particle_position.y, particle_position.z);
             if (particle != 0) {
                 particle->callback = BattleFx_CircleAnchor;
                 particle->parent = object;
@@ -114,7 +114,7 @@ void RunBattleEffect14(void)
     }
     Object_SetMode(object, 1);
     WaitFrames(30);
-    Audio_PlayCue(0x88);
+    Audio_PlayCue(136);
     WaitFrames(20);
     ObjectDispatch_ReleaseFar(object);
     BattleFx_PrepareBufferInterpolation();

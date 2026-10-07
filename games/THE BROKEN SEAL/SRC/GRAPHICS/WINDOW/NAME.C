@@ -39,7 +39,7 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    VramBlock_LoadCached(slot, 0x80, Resource_FixedBlockBTiles);
+    VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
     return slot;
 }
 
@@ -54,9 +54,9 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
 {
     const u8 *range;
 
-    if (mark < 0xde || mark > 223)
+    if (mark < 222 || mark > 223)
         return 1;
-    if (mark == 0xde)
+    if (mark == 222)
         range = NameEntry_DakutenRanges;
     else
         range = NameEntry_HandakutenRanges;
@@ -73,7 +73,7 @@ s32 NameEntry_CountLetters(const u8 *name)
 
     count = 0;
     for (; *name != 0; name++) {
-        if ((u8)(*name - 0xde) > 1)
+        if ((u8)(*name - 222) > 1)
             count++;
     }
     return count;
@@ -84,7 +84,7 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *so
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     s16 *mirror = (s16 *)work->tilemap;
-    s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
+    s16 *buffer = Runtime_BumpAllocateAlternatePool(768);
     s16 *input = buffer;
     u32 cell;
     s16 *vram;
@@ -154,12 +154,12 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
 
 void Resource_CopyFixedBlockB(s32 arg0)
 {
-    VramBlock_LoadCached(arg0, 0x80, RomBytes_080310a4);
+    VramBlock_LoadCached(arg0, 128, RomBytes_080310a4);
 }
 
 void Resource_CopyFixedBlockA(s32 arg0)
 {
-    VramBlock_LoadCached(arg0, 0x80, RomBytes_080317e4);
+    VramBlock_LoadCached(arg0, 128, RomBytes_080317e4);
 }
 
 #if EDITION_INTERNATIONAL
@@ -508,7 +508,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             if (character != 0) {
                 bytes++;
                 length++;
-                if ((u8)(character - 0xde) <= 1)
+                if ((u8)(character - 222) <= 1)
                     length--;
             }
         }
@@ -660,7 +660,7 @@ remove_character:
                 bytes--;
                 character = input[bytes];
                 input[bytes] = 0;
-                if ((u8)(character - 0xde) <= 1) {
+                if ((u8)(character - 222) <= 1) {
                     bytes--;
                     input[bytes] = 0;
                 }
@@ -710,11 +710,11 @@ remove_character:
 
             cell = ((window->y + row + 1) << 5) + tx;
             character = work[cell * 2];
-            if (character == 0xfe)
-                character = 0xde;
+            if (character == 254)
+                character = 222;
             if (character == 0xff)
-                character = 0xdf;
-            if (length == 5 && (u8)(character - 0xde) > 1)
+                character = 223;
+            if (length == 5 && (u8)(character - 222) > 1)
                 continue;
             dst = input + bytes;
             if (!NameEntry_AcceptsMark(character, input[bytes - 1])) {
@@ -725,7 +725,7 @@ remove_character:
             bytes++;
             input[bytes] = 0;
             length++;
-            if ((u8)(character - 0xde) <= 1)
+            if ((u8)(character - 222) <= 1)
                 length--;
             if (length == 5) {
                 column = 18;

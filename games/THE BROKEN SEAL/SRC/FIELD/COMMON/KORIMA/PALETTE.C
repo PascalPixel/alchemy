@@ -28,7 +28,7 @@ void KorimaPalette_Capture(void)
     u16 *buf = Data_03001ed0->palette;
 
     Dma_Set((const void *)BG_PLTT, buf, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
-    Dma_Set((const void *)OBJ_PLTT, buf + 0xe0, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+    Dma_Set((const void *)OBJ_PLTT, buf + 224, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
     Engine_ColorBufferApplySource(0x10000, 0);
 }
 

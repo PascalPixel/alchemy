@@ -200,7 +200,7 @@ void BabiFune_UpdateWaves(void)
         z += Random_Next() * 160;
         z += 0x1e0000;
         pos->z = z;
-        actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
+        actor = Object_Create(503, pos->x, pos->y, pos->z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->timer = 60;

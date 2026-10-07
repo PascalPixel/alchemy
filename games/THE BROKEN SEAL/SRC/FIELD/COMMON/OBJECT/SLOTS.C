@@ -35,10 +35,10 @@ void FourObjectMotion_InitializeBottomRow(void)
             AnimationObjects_SelectAnimationFar(object, 2);
         state->objects[index] = object;
         state->phases[index] = 0x10000;
-        state->positions_x[index] = 0x10;
-        state->positions_y[index] = 0xc8;
+        state->positions_x[index] = 16;
+        state->positions_y[index] = 200;
     }
-    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateBottomRow), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateBottomRow), 3200);
 }
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
@@ -48,7 +48,7 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
     if (state->objects[index] != NULL) {
         state->positions_x[index] = x;
         state->positions_y[index] = negative != 0 ? y | (s32)0xffff8000 : y;
-        return 0x23c + index * 2;
+        return 572 + index * 2;
     }
     return index;
 }

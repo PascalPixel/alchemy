@@ -8,7 +8,7 @@ s32 ResourceTable_CountFreeBlocks(void)
 {
     u8 *marker = ResourceBlockOwners;
     s32 free_count = 0;
-    s32 remaining = 0x200;
+    s32 remaining = 512;
 
     do {
         if (*marker++ == 0xff) {
@@ -28,11 +28,11 @@ void *Object_ReplaceResourceEntry(void *src, void *alt)
     ret = NULL;
     if (obj != NULL) {
         if (alt == NULL) {
-            *((u8 *)obj + 0x1d) = (u8)(*((u8 *)obj + 0x1d) | 1);
+            *((u8 *)obj + 29) = (u8)(*((u8 *)obj + 29) | 1);
         } else {
             Resource_ResetEntry(obj->vram_block);
             obj->vram_block = (u8)((struct FieldSprite *)alt)->vram_block;
-            *((u8 *)obj + 0x1d) = (u8)(*((u8 *)obj + 0x1d) | 1);
+            *((u8 *)obj + 29) = (u8)(*((u8 *)obj + 29) | 1);
             obj = alt;
         }
         ret = obj;

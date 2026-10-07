@@ -60,10 +60,10 @@ s32 ItemMenu_IsSpecial(s32 item_id)
     s32 result;
     s32 first;
 
-    if (item_id > 0xC4) {
+    if (item_id > 196) {
         goto L0;
     }
-    first = 0xC1;
+    first = 193;
     if (item_id < first) {
         goto L0;
     }
@@ -105,7 +105,7 @@ s32 ItemMenu_Count(s32 owner_id)
 
     count = 0;
     slots = Owner_GetStateFar(owner_id)->inventory;
-    remaining = 0xE;
+    remaining = 14;
     do {
         item_id = ITEM_ID_MASK & *slots;
         slots += 1;

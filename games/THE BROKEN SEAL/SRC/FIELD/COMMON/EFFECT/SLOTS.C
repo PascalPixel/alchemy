@@ -49,8 +49,8 @@ void EffectRuntime_SetMode5AndPlayCue(s32 id)
         object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 5);
-        Audio_PlayCue(0x7d);
-        WaitFrames(0xc);
+        Audio_PlayCue(125);
+        WaitFrames(12);
     }
 }
 
@@ -64,10 +64,10 @@ void EffectRuntime_SetMode7AndLaunch(s32 id)
     if (slot != -1) {
         slot_data = &gEventWork->slots[slot];
         object = slot_data->object;
-        WaitFrames(0x12);
+        WaitFrames(18);
         if (object != NULL)
             Object_SetMode(object, 7);
-        Audio_PlayCue(0x92);
+        Audio_PlayCue(146);
         if (object != NULL) {
             object->velocity_y = 0x80000;
             ObjectDispatch_SetSingleChildFlagsFar(object, 1);
@@ -87,8 +87,8 @@ void EffectRuntime_SetMode4AndPlayCue(s32 id)
         object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 4);
-        Audio_PlayCue(0x7c);
-        WaitFrames(0xc);
+        Audio_PlayCue(124);
+        WaitFrames(12);
     }
 }
 

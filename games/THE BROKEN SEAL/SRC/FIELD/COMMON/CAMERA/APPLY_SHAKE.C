@@ -42,12 +42,12 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
         offset_y = ((shake_range - 1) & Random16()) - half_range;
         display_position = gBgScroll;
         offset_x = random_x - half_range;
-        display_y = offset_y + 0x20;
+        display_y = offset_y + 32;
         display_position[1].x = offset_x;
         display_position[1].y = display_y;
         display_center = &gProjection;
-        display_center->center_x = 0x78 - offset_x;
-        display_center->center_y = 0x78 - offset_y;
+        display_center->center_x = 120 - offset_x;
+        display_center->center_y = 120 - offset_y;
         *remaining_frames -= 1;
         return;
     }
@@ -57,6 +57,6 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
     restored_position = work->saved_bg1_y;
     disp_p[1].y = restored_position;
     center_p = &gProjection;
-    center_p->center_x = 0x78;
-    center_p->center_y = 0x78;
+    center_p->center_x = 120;
+    center_p->center_y = 120;
 }

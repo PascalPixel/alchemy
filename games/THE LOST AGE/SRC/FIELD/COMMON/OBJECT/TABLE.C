@@ -28,7 +28,7 @@ struct ObjectRuntime *ObjectTable_Get(u32 object_id)
 {
     struct EventWork *work = Ram_HeapSlots->event_work;
 
-    if (object_id > 0xbf)
+    if (object_id > 191)
         return NULL;
     return work->objects[object_id];
 }

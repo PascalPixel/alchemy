@@ -18,7 +18,7 @@ void DisplayScroll_InitializeHBlankDma(
     struct DisplayScrollWork *work;
     volatile u32 zero;
 
-    work = Runtime_AllocateBlock(34, 0xf20);
+    work = Runtime_AllocateBlock(34, 3872);
     zero = 0;
     Dma_Set(&zero, work, 0x850003c8, REG_DMA3);
     WaitDma(REG_DMA3);

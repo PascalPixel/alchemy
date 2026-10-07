@@ -82,10 +82,10 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
         sprites[i].oam.f.tile = Resource_GetBuffer(handles[i], -1);
     }
 
-    Vram_CopyTile(0xf018, 0x200);
-    Vram_CopyTile(0xf018, 0x201);
-    Vram_CopyTile(0xf019, 0x210);
-    Vram_CopyTile(0xf019, 0x211);
+    Vram_CopyTile(0xf018, 512);
+    Vram_CopyTile(0xf018, 513);
+    Vram_CopyTile(0xf019, 528);
+    Vram_CopyTile(0xf019, 529);
 
     cur = &cursor;
     for (;;) {

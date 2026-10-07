@@ -71,12 +71,12 @@ void BabiFune_ScheduleFade(void)
     u8 *buf;
     volatile u32 fill;
 
-    buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
+    buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 256);
     BabiFune_FadeSlot = Resource_FindFreeEntry();
     fill = 0x11111111;
     Dma_Set((const void *)&fill, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x40, REG_DMA3);
-    VramBlock_LoadCached(BabiFune_FadeSlot, 0x100, (s32)buf);
+    VramBlock_LoadCached(BabiFune_FadeSlot, 256, (s32)buf);
 
-    BabiFune_FadeStep = 0x30;
-    Scheduler_AddOrUpdateCallback((s32)(BabiFune_StepFade), 0xc80);
+    BabiFune_FadeStep = 48;
+    Scheduler_AddOrUpdateCallback((s32)(BabiFune_StepFade), 3200);
 }

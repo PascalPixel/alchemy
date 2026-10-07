@@ -132,7 +132,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32
     half_height = sprite->height >> 1;
     size = 8;
     flip = Sprite_ComposeAnimationFrame(sprite, mode);
-    base = (z + 0x400) & -0x800;
+    base = (z + 1024) & -2048;
     scale_x = Iwram_MulQ16(base, *scale++);
     scale_y = Iwram_MulQ16(base, *scale);
     if (scale_x > 0x1f7ff)
@@ -169,7 +169,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32
     sprite->part[0].affine = affine;
     sprite->part[0].affine_index = z;
     if (depth == 0) {
-        slot = (0x200 - screen[2]) / 2 + 128;
+        slot = (512 - screen[2]) / 2 + 128;
         if (slot <= 0)
             slot = 1;
         Runtime_PushSlotEntry(sprite, slot);

@@ -92,7 +92,7 @@ void DisplayBlend_StartScript(u16 *script)
         started = 1;
     }
     if (started)
-        Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
+        Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 3200);
 }
 
 void DisplayBlend_EnableRunScript(void)
@@ -156,5 +156,5 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
 void Runtime_ScheduleCallbackAndReleaseBlock28(void)
 {
     Scheduler_RemoveCallback(PaletteQueue_StepCycles);
-    Runtime_ReleaseHeapBlock(0x1C);
+    Runtime_ReleaseHeapBlock(28);
 }

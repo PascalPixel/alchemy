@@ -14,7 +14,7 @@
 #include "CALL.H"
 
 struct MapWork {
-    u8 unknown_00[0x164];
+    u8 unknown_00[356];
     struct ScrollLayer layer;
 };
 

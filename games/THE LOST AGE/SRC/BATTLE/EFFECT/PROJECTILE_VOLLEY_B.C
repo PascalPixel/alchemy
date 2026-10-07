@@ -131,9 +131,9 @@ void BattleFx_RunVolleyBMode10WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolleyB(effect, 10);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }
 
 void BattleFx_RunVolleyBMode11WithAction(struct BattleEffectArgument *effect)
@@ -142,7 +142,7 @@ void BattleFx_RunVolleyBMode11WithAction(struct BattleEffectArgument *effect)
 
     object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
     Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
     BattleFx_RunProjectileVolleyB(effect, 11);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 }

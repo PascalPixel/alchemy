@@ -123,7 +123,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
             chance = 30;
 
         shop->mode = 12;
-        Shop_PlaceCursor(0, ACTION_Y, 0x30);
+        Shop_PlaceCursor(0, ACTION_Y, 48);
         result = Shop_SelectQuantity(quantity, chance, item->price);
     }
     return result;

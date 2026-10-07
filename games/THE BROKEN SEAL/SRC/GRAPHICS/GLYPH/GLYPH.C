@@ -75,8 +75,8 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
     if (reuse == 0)
         *src = Resource_FindFreeEntry();
 
-    *dst = VramBlock_LoadCached(*src, 0x80, work->tiles);
-    Runtime_ReleaseHeapBlock(0x11);
+    *dst = VramBlock_LoadCached(*src, 128, work->tiles);
+    Runtime_ReleaseHeapBlock(17);
 }
 
 void Ui_PrepareTransferFromTableEntry(u32 index)
@@ -109,7 +109,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     UiGlyph_DecodeWithHeapRoutines(work, 0);
     if (reuse == 0)
         *slot = Resource_FindFreeEntry();
-    *tile = VramBlock_LoadCached(*slot, 0x200, work->tiles);
+    *tile = VramBlock_LoadCached(*slot, 512, work->tiles);
     Runtime_ReleaseHeapBlock(17);
     Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, REG_DMA3);
 }

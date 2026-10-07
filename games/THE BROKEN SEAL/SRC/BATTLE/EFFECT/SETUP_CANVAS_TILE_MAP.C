@@ -32,7 +32,7 @@ static __inline__ void FillWords(FillFn fill, void *dst, s32 size, s32 value)
 }
 
 struct BattleScreen {
-    u8 unknown_000[0x648];
+    u8 unknown_000[1608];
     u16 palette_fade;
 };
 
@@ -58,14 +58,14 @@ void BattleFx_SetupCanvasTileMap(void)
     gBgScroll[3] = 32;
     layer->offset = 0;
     ClearWords(Iwram_ClearWords, (void *)0x06003fc0, 64);
-    FillWords(Iwram_FillWords, (void *)0x0600f900, 0x200, -1);
+    FillWords(Iwram_FillWords, (void *)0x0600f900, 512, -1);
     off = 0;
     for (row = 0; row != 16; row++) {
         for (col = 0; col != 32; col++, off += 2) {
             if (col > 15)
                 *(volatile u16 *)(0x0600fb00 + off) = 0xff;
             else
-                *(volatile u16 *)(0x0600fb00 + off) = row * 16 + 0x100 + col;
+                *(volatile u16 *)(0x0600fb00 + off) = row * 16 + 256 + col;
         }
     }
     REG_DISPCNT = 0x7741;

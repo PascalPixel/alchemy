@@ -15,7 +15,7 @@
 
 void PsynergyMenu_RefreshOwnerEntriesDefault(void)
 {
-    PsynergyMenu_RefreshOwnerEntries(0x6C, 0x28, 8);
+    PsynergyMenu_RefreshOwnerEntries(108, 40, 8);
 }
 
 void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
@@ -33,7 +33,7 @@ void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
         }
         index++;
         slot++;
-    } while (index <= 0x1F);
+    } while (index <= 31);
 }
 
 void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
@@ -41,11 +41,11 @@ void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
     s32 columns) {
     struct RenderOutput *object;
 
-    if (index > 0x1F) {
+    if (index > 31) {
         index = 0;
     }
     object = *slot;
-    object->y = (index / columns) * 0x10 + origin_y;
-    object->x = (index % columns) * 0x10 + origin_x;
+    object->y = (index / columns) * 16 + origin_y;
+    object->x = (index % columns) * 16 + origin_x;
     UiIcon_PrepareObject(object);
 }

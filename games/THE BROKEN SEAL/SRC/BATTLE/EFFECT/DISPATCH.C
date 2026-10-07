@@ -37,7 +37,7 @@ extern u8 gMapCellBuffer[];
 
 void BattleFx_InitializeMode(s32 *arg0)
 {
-    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 770);
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
@@ -94,7 +94,7 @@ void BattleFx_DispatchMode(s32 *state)
     s32 index;
     struct BattleEffectWork *work;
 
-    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 770);
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
@@ -120,7 +120,7 @@ void BattleFx_BuildWindowEdgeTable(void)
     s32 right;
 
     edge = (u16 *)gMapCellBuffer;
-    line = (u16 *)(Ram_MapCellBuffer + 0x82);
+    line = (u16 *)(Ram_MapCellBuffer + 130);
     inset = Ram_MapCellBuffer + 2;
     for (i = 0; i != 160; i++) {
         if (i >= 8 && i <= 135) {
@@ -139,7 +139,7 @@ void BattleFx_BuildWindowEdgeTable(void)
         channel[5] &= 0xc5ff;
         channel[5] &= 0x7fff;
         (void)channel[5];
-        Dma_Set(gMapCellBuffer + 0x82, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
+        Dma_Set(gMapCellBuffer + 130, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
     }
 }
 

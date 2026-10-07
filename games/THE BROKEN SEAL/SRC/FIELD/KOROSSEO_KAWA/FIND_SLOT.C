@@ -19,7 +19,7 @@
 #define Object_SetMoveTarget ((void (*)(struct FieldActor *, s32, s32, s32))Object_SetMoveTarget)
 
 enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
+    MSG_ROBIN_GOT = 2410,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
     MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
     MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
@@ -177,9 +177,9 @@ void StagedActor_PushActorAhead(void)
     subject->acceleration = 0x3333;
     Object_SetMoveTarget(subject, pos.x, pos.y, pos.z);
 
-    Engine_AudioPlayCue(0xee);
+    Engine_AudioPlayCue(238);
     Script_WaitForEventTimeout(target);
-    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(288);
 
     target->x.fixed = pos.x;
     target->z.fixed = pos.z;

@@ -25,10 +25,10 @@ void BattleEffect_InitializeBuffers(void)
     zero = 0;
     Dma_Set(&zero, buffer, 0x85000a81, REG_DMA3);
     Dma_Set((void *)0x05000000, buffer, 0x84000070, REG_DMA3);
-    Dma_Set((void *)0x05000200, (u8 *)buffer->palette + 0x1c0, 0x84000070,
+    Dma_Set((void *)0x05000200, (u8 *)buffer->palette + 448, 0x84000070,
             REG_DMA3);
     BattleFx_BuildBuffer(0x10000, buffer, buffer->target, 0);
-    Scheduler_AddOrUpdateCallback((s32)BattlePalette_UpdateBlend, 0x48f);
+    Scheduler_AddOrUpdateCallback((s32)BattlePalette_UpdateBlend, 1167);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void)

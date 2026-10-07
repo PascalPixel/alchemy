@@ -420,28 +420,28 @@ s32 ArcTan2(s32 x, s32 y)
             result = 0;
 
             value = *table;
-            table -= 0x40;
+            table -= 64;
             if (ratio > value) {
                 result = 0x2000;
-                table += 0x80;
+                table += 128;
             }
             value = *table;
-            table -= 0x20;
+            table -= 32;
             if (ratio > value) {
                 result |= 0x1000;
-                table += 0x40;
+                table += 64;
             }
             value = *table;
-            table -= 0x10;
+            table -= 16;
             if (ratio > value) {
                 result |= 0x800;
-                table += 0x20;
+                table += 32;
             }
             value = *table;
             table -= 8;
             if (ratio > value) {
                 result |= 0x400;
-                table += 0x10;
+                table += 16;
             }
             value = *table;
             table -= 4;
@@ -484,7 +484,7 @@ s32 Math_IntegerSqrt(s32 value)
 
     remainder = value;
     result = 0;
-    bit = 0xf;
+    bit = 15;
     do {
         trial = (result << (bit + 1)) + (1 << (bit * 2));
         if (trial <= remainder) {
@@ -538,18 +538,18 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     result = arg0;
     val = result;
     tbl = (u32 *)Text_PowersOfTen;
-    sign = 0x20;
+    sign = 32;
     out = (s8 *)gNumberTextBuffer;
     if (val < 0) {
         val = -val;
-        sign = 0x2D;
+        sign = 45;
     }
     word = *tbl++;
     count = 9;
     if (val < word) {
         do {
             count -= 1;
-            *out++ = 0x20;
+            *out++ = 32;
             if (count == 0) break;
             word = *tbl++;
         } while (val < word);
@@ -560,12 +560,12 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
         do {
             word = *tbl++;
             result = val / word;
-            *out++ = result + 0x30;
+            *out++ = result + 48;
             val -= result * word;
             count -= 1;
         } while (count != 0);
     }
-    out[0] = val + 0x30;
+    out[0] = val + 48;
     out[1] = 0;
 }
 

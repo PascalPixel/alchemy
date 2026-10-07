@@ -45,7 +45,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     *(u16 *)(descriptor + 216) = (u16)extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
-    Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
+    Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 3190);
 
     Runtime_BumpFree(handle);
 }
@@ -63,5 +63,5 @@ void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
         control->timer = 0;
         control->phase = 0;
     }
-    Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
+    Engine_TaskAddCallback(Korosseo_UpdatePathRival, 3205);
 }

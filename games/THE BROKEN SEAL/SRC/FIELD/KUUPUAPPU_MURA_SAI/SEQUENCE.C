@@ -121,7 +121,7 @@ void FieldScene_RunActor18MotionSequence(void)
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(18, 2);
     Actor_SetSpeed(18, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(18, 216, 0x198);
+    Actor_WalkToAndWait(18, 216, 408);
     Engine_EventWait(10);
     Actor_FaceDirection(18, 0x4000, 20);
     Engine_ActorJump(18, 6, 0);
@@ -130,7 +130,7 @@ void FieldScene_RunActor18MotionSequence(void)
     Engine_EventWait(30);
     Engine_ActorJump(18, 6, 0);
     Engine_EventWait(30);
-    Actor_WalkToAndWait(18, 216, 0x188);
+    Actor_WalkToAndWait(18, 216, 392);
     Engine_EventWait(10);
     Actor_FaceDirection(18, 0x4000, 20);
     GameFlag_Set(0x858);

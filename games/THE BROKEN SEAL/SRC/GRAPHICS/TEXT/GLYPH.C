@@ -29,7 +29,7 @@ typedef struct
 
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 {
-    GlyphTransfer *buffer = Runtime_AllocateHeapBlock(0x11, sizeof(GlyphTransfer));
+    GlyphTransfer *buffer = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
     u8 **slot = &buffer->encoded;
     void *target = (void *)((u32)base + base[arg1]);
@@ -38,7 +38,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
     *slot = target;
     Resource_DecodeByteLz(target, buffer);
     ret = Resource_GetBuffer(arg0, (s32)buffer);
-    Runtime_ReleaseHeapBlock(0x11);
+    Runtime_ReleaseHeapBlock(17);
     return ret;
 }
 
@@ -56,10 +56,10 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
     decoded->encoded = font + ((u16 *)font)[glyph];
     Resource_DecodeByteLz(decoded->encoded, decoded);
-    remapped = Runtime_BumpAllocate(0x400);
+    remapped = Runtime_BumpAllocate(1024);
     src = decoded->input;
     dst = remapped;
-    for (i = 0; i < 0x400; i++) {
+    for (i = 0; i < 1024; i++) {
         index = *src++;
         if (palette->slot[index] == 255) {
             palette->slot[index] = palette->count;
@@ -83,14 +83,14 @@ void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
     s32 load_offset;
 
     offset = index * 28;
-    entry = base + offset + 0x104;
+    entry = base + offset + 260;
     ((s32 (*)())UiText_LoadRemappedGlyph)(base, value, index * 16, index * 16);
-    store_offset = offset + 0x11C;
+    store_offset = offset + 284;
     *(u32 *)(base + store_offset) = value;
     /* FAKEMATCH: the empty do-while around this store only moves the scheduler; the reference sets the constant after the value store. */
     do { *(u32 *)(entry + 4) = 0x80002000; } while (0);
     *(u32 *)(entry + 8) = 0;
-    load_offset = offset + 0x110;
+    load_offset = offset + 272;
     ((CharacterCell *)(entry + 8))->code =
         Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
 }

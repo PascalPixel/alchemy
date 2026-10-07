@@ -17,7 +17,7 @@ s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s3
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    if (slot != 0x60) {
+    if (slot != 96) {
         UiIcon_LoadResourceIntoSlot(resource_id, slot);
         RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
     }

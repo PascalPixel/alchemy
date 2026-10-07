@@ -14,9 +14,9 @@
 #define RenderOutput_CreateFromResourceFar ((void * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateFromResourceFar)
 
 struct IconMenuState {
-    u8 padding_000[0x24];
+    u8 padding_000[36];
     s32 handle;
-    u8 padding_028[0x24];
+    u8 padding_028[36];
     void *entries[32];
 };
 
@@ -34,24 +34,24 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1)
     s32 fifth2;
 
     index0 = 0;
-    fifth0 = 0xA8;
+    fifth0 = 168;
     output0 = &state->entries[0];
     do {
-        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, arg1, 0xF8, fifth0);
+        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, arg1, 248, fifth0);
         index0++;
     } while (index0 <= 7);
     index1 = 8;
-    fifth1 = 0xA8;
+    fifth1 = 168;
     output1 = &state->entries[8];
     do {
-        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, arg1, 0x100, fifth1);
+        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, arg1, 256, fifth1);
         index1++;
     } while (index1 <= 15);
     index2 = 16;
-    fifth2 = 0xA8;
+    fifth2 = 168;
     output2 = &state->entries[16];
     do {
-        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, arg1, 0x100, fifth2);
+        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, arg1, 256, fifth2);
         index2++;
     } while (index2 <= 31);
 }

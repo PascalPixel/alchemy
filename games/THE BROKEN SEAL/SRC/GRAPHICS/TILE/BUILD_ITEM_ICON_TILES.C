@@ -46,8 +46,8 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
     if (reuse == 0)
         *src = Resource_FindFreeEntry();
 
-    *dst = VramBlock_LoadCached(*src, 0x80, work->tiles);
-    Runtime_ReleaseHeapBlock(0x11);
+    *dst = VramBlock_LoadCached(*src, 128, work->tiles);
+    Runtime_ReleaseHeapBlock(17);
 }
 
 extern GlyphTransfer *gGlyphWork;

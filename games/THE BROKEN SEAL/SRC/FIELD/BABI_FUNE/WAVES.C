@@ -48,7 +48,7 @@ struct MapWork {
 #define SET_PRIORITY(actor, n) ((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
 
 struct ScrollWork {
-    u16 pages[2][0x3c0];
+    u16 pages[2][960];
     u8 page;
     u8 mode;
     u16 phase;
@@ -116,7 +116,7 @@ void BabiFune_RunDeparture(void)
     }
     {
         u16 bright = 0x1010;
-        u16 dim = 0x810;
+        u16 dim = 2064;
 
         for (flash = 0; flash < 3; flash++) {
             Audio_PlayCue(212);

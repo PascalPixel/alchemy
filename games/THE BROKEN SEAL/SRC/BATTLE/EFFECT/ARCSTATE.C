@@ -61,17 +61,17 @@ void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *object)
     }
 
     if (phase == 1)
-        object->angle += 0xC00;
+        object->angle += 3072;
 }
 
 void FieldEvent_ShowStatusMessage(void)
 {
     gGameState.avoid_distance = 0;
     if (gGameState.avoid_by_item == 0) {
-        UiText_DrawQuantity(0x96, 4);
+        UiText_DrawQuantity(150, 4);
         UiText_DrawMessage(MsgAbilityWoreOff, 1);
         return;
     }
-    UiText_DrawQuantity(0xEC, 2);
+    UiText_DrawQuantity(236, 2);
     UiText_DrawMessage(MsgItemWoreOff, 1);
 }

@@ -24,10 +24,10 @@ struct PasswordStats {
 };
 
 struct PasswordOwner {
-    u8 unknown_00[0x0f];
+    u8 unknown_00[15];
     u8 rank;
     struct PasswordStats stats;
-    u8 unknown_20[0xb8];
+    u8 unknown_20[184];
     u16 items[15];
     u8 unknown_f6[2];
     u32 values[4];

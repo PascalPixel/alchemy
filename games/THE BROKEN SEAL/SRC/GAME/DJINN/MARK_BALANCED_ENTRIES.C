@@ -164,7 +164,7 @@ s32 DjinnMenu_ShowOwnerStatus(void)
         }
         WaitFrames(1);
     }
-    Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 3200);
     ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;
     UiWindow_CloseIfOpen((struct UiWindow **)&menu->help_window, 1);
     WaitFrames(1);

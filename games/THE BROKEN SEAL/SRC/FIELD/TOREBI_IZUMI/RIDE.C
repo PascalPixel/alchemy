@@ -434,7 +434,7 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     Object_SetMode(Object_GetById(21), 2);
 
     {
-        s32 budget = 0xc83;
+        s32 budget = 3203;
         void (*task)(void) = FieldScene_RunSecondaryScript;
 
         Engine_TaskAddCallback(task, budget);

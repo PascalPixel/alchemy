@@ -15,14 +15,14 @@
 #include "FIELD_EVENT.H"
 
 struct FieldEffectState {
-    u8 padding0[0x1AC];
+    u8 padding0[428];
     s32 effect;
     u8 padding1B0[4];
     s32 delay;
 };
 
 struct FieldObject {
-    u8 padding0[0x34];
+    u8 padding0[52];
     u16 saved_x;
     u16 saved_y;
     s16 x;
@@ -55,7 +55,7 @@ void Inn_PlaySleep(s32 room_price)
     }
 
     state = Ram_HeapSlots->event_work;
-    state->effect = 0x209;
+    state->effect = 521;
     state->delay = 60;
     WaitFrames(20);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)

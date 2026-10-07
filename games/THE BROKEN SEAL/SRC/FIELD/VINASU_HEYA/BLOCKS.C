@@ -179,7 +179,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     a->y.fixed = gVinasuBlockHeights[(s16)a->timer];
     b->y.fixed = gVinasuBlockHeights[(s16)b->timer];
     if (wait != 0) {
-        Engine_AudioPlayCue(0x121);
+        Engine_AudioPlayCue(289);
     }
     for (i = 0; i < 5; i++) {
         struct FieldActor *actor = Object_GetById(i + 8);
@@ -238,7 +238,7 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 struct FieldActor *Battle_GetWorkObject1e0(void);
 
 struct FloatingBlock {
-    u8 unknown_00[0x64];
+    u8 unknown_00[100];
     s16 height_index;
 };
 

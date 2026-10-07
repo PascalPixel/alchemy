@@ -15,13 +15,13 @@
 u32 Random16(void);
 
 struct FallingObject {
-    u8 unknown_00[0xc];
+    u8 unknown_00[12];
     s32 y;
     u8 unknown_10[4];
     s32 floor;
-    u8 unknown_18[0x46];
+    u8 unknown_18[70];
     s16 dispatch_state;
-    u8 unknown_60[0xc];
+    u8 unknown_60[12];
     void *update;
 };
 

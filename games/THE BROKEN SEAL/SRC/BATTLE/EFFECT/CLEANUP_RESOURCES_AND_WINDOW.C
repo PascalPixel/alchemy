@@ -30,7 +30,7 @@ void BattleFx_CleanupResourcesAndWindow(void)
 {
     Resource_ResetEntry(*(u16 *)(gMapCellBuffer + 0));
     Resource_ResetEntry(*(u16 *)(gMapCellBuffer + 2));
-    UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 0x1c), 2);
+    UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 28), 2);
 }
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \

@@ -28,7 +28,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
     /* FAKEMATCH: the size temporary schedules the slot store after the call. */
     slot = Resource_FindFreeEntry();
     {
-        s32 size = 0x480;
+        s32 size = 1152;
 
         *slotp = slot;
         Engine_VramLoad((s16)slot, size, 0);
@@ -36,7 +36,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
     zero.v = 0;
     RamakanSabaku_SandCounter = zero.v;
     RamakanSabaku_SandPhase = zero.v;
-    Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 0xc76);
+    Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 3190);
 }
 
 void RamakanSabaku_SetSandPhase(u16 value)

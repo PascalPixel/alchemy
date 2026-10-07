@@ -2,7 +2,7 @@
 
 s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 {
-    s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
+    s32 **slots = (s32 **)((u8 *)gEventWork + 20);
     u32 actor_index;
 
     for (actor_index = 8; actor_index <= 65; actor_index++) {
@@ -93,9 +93,9 @@ void ColossoLogRollingStage_PushStagedActor(void)
     subject->rate_z = 0x3333;
     Object_SetPosition(subject, position.x, position.y, position.z);
 
-    Engine_AudioPlayCue(0xee);
+    Engine_AudioPlayCue(238);
     Object_CommitPosition(target);
-    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(288);
 
     target->x = position.x;
     target->z = position.z;

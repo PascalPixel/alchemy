@@ -62,7 +62,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         entry->priority = unit->agility;
         entry->command = 0;
         entry->parameter = 0;
-        entry->target = 0x80;
+        entry->target = 128;
         count++;
     }
     second_count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unit_ids);
@@ -265,7 +265,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 
     if (target_id >= 0 && target_id <= 7) {
         side_count = BattleParty_ListLivingUnits(2, visible_units);
-        side_start = 0x80;
+        side_start = 128;
     } else {
         side_count = BattleParty_ListLivingUnits(1, visible_units);
         side_start = 0;
@@ -291,7 +291,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
     if (target_id > 0x7f) {
         u32 count = BattleParty_ListLivingUnits(2, visible_units);
         for (index = 0; living_count != count; index++) {
-            u32 unit = index + 0x80;
+            u32 unit = index + 128;
             if (Owner_GetStateFar(unit)->hp > 0) {
                 visible_units[living_count++] = unit;
             }
@@ -333,7 +333,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
     for (index = 0; index != side_count; index++) {
         BattlePres_SetActorRecordMode(index + side_start, 0);
     }
-    BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
+    BattlePres_SetupTransitionScene(0, 0, 0, 100);
     WaitFrames(3);
     return 0;
 }

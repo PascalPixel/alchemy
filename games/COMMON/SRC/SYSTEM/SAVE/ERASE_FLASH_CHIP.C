@@ -25,12 +25,12 @@ u16 EraseFlashChip(void)
         (REG_WAITCNT & 0xFFFC) |
         gFlash->control;
 
-    *(volatile u8 *)0x0E005555 = 0xAA;
-    *(volatile u8 *)0x0E002AAA = 0x55;
-    *(volatile u8 *)0x0E005555 = 0x80;
-    *(volatile u8 *)0x0E005555 = 0xAA;
-    *(volatile u8 *)0x0E002AAA = 0x55;
-    *(volatile u8 *)0x0E005555 = 0x10;
+    *(volatile u8 *)0x0E005555 = 170;
+    *(volatile u8 *)0x0E002AAA = 85;
+    *(volatile u8 *)0x0E005555 = 128;
+    *(volatile u8 *)0x0E005555 = 170;
+    *(volatile u8 *)0x0E002AAA = 85;
+    *(volatile u8 *)0x0E005555 = 16;
 
     CopyFlashReadRoutineToRam(savedCode);
 

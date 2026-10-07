@@ -4,7 +4,7 @@
 #include "RAM_BUFFER.H"
 
 struct UiWindowState {
-    u8 unknown_00[0x14];
+    u8 unknown_00[20];
     u16 state;
     u16 flags;
     s32 pending_value;

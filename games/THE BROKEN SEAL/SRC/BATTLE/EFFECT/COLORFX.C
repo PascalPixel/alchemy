@@ -185,7 +185,7 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 {
     s32 dx = x1 - x0;
     s32 dy = y1 - y0;
-    s32 frac = 0x80;
+    s32 frac = 128;
     u8 *canvas = *(gBattleFxWork + 1);
     s32 step;
     s32 i;

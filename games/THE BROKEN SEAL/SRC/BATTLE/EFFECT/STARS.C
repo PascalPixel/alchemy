@@ -75,7 +75,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -102,7 +102,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
             if (frame <= 39)
                 speed = 128;
             else
-                speed = 0x300 - frame * 16;
+                speed = 768 - frame * 16;
             if (work->effect->side == 0)
                 view->yaw -= speed;
             else
@@ -224,7 +224,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 50;
     draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;

@@ -325,7 +325,7 @@ void RamakanSabaku_ShowRandomPartyLine(s32 a0)
     for (i = 0; i <= 2; i++) {
         value = Engine_RandomNext();
         v6 = (u32)((value << 1) + value) >> 16;
-        v5 = v6 + 0x303;
+        v5 = v6 + 771;
         record = Engine_GameFlagIsSet(v5);
         if (record == 0) {
             Engine_GameFlagSet(v5);
@@ -342,7 +342,7 @@ void RamakanSabaku_RaiseQuarterTriggers(void)
 {
     struct EventWork *work = (struct EventWork *)gWork;
     u8 *state = (u8 *)&gGameState;
-    s32 percent = *(s16 *)(state + 0x232) * 100 / *(s16 *)(state + 0x22c);
+    s32 percent = *(s16 *)(state + 562) * 100 / *(s16 *)(state + 556);
 
     if (GameFlag_IsSet(0x201) != 0)
         return;
@@ -466,9 +466,9 @@ void RamakanSabaku_SweepBack(void)
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &options);
     }
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x104, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 260, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
-    hold = (u16 *)(work + 0xcba);
+    hold = (u16 *)(work + 3258);
     progress = &gGameState.hazard_steps;
     zero = 0;
     do {
@@ -500,11 +500,11 @@ void RamakanSabaku_SweepBack(void)
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &puff);
     }
-    Audio_PlayCue(0x120);
+    Audio_PlayCue(288);
     Audio_PlayCue(152);
     Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(10);
-    *(u16 *)(work + 0xcba) = frames;
+    *(u16 *)(work + 3258) = frames;
     RamakanSabaku_SetSandPhase(0);
 }

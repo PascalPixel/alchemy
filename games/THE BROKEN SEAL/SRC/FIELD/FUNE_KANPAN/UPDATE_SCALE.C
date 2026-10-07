@@ -57,9 +57,9 @@ s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 }
 
 struct HoverGull {
-    u8 unknown_00[0x4c];
+    u8 unknown_00[76];
     s32 drift;
-    u8 unknown_50[0x12];
+    u8 unknown_50[18];
     u8 step;
     u8 right_side;
     s16 drifting_left;
@@ -93,7 +93,7 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
                 if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
                     Actor_Get(21)->velocity_y = 0x20000;
                 } else {
-                    Actor_ShowEmote(21, 0x103, 0);
+                    Actor_ShowEmote(21, 259, 0);
                     Actor_Get(21)->velocity_y = 0x60000;
                 }
             }
@@ -178,7 +178,7 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
                 if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
                     Actor_Get(22)->velocity_y = 0x20000;
                 } else {
-                    Actor_ShowEmote(22, 0x103, 0);
+                    Actor_ShowEmote(22, 259, 0);
                     Actor_Get(22)->velocity_y = 0x60000;
                 }
             }

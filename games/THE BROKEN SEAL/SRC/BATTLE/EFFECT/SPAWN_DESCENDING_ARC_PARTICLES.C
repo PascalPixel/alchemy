@@ -21,12 +21,12 @@ struct ArcParticle {
     s32 floor;
     s32 scale_x;
     s32 scale_y;
-    u8 unknown_20[0x48];
+    u8 unknown_20[72];
     struct ArcParticle *source;
 };
 
 struct BattleEffect16GlobalState {
-    u8 unknown_000[0x1DA];
+    u8 unknown_000[474];
     s16 scene;
 };
 
@@ -52,7 +52,7 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
         return;
     }
 
-    scale = particle->scale_x + 0xC00;
+    scale = particle->scale_x + 3072;
     if (scale > 0x10000)
         scale = 0x10000;
     particle->scale_x = scale;
@@ -80,7 +80,7 @@ void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
         return;
     }
 
-    scale = particle->scale_x + 0xC00;
+    scale = particle->scale_x + 3072;
     if (scale > 0x10000)
         scale = 0x10000;
     particle->scale_x = scale;
@@ -135,11 +135,11 @@ struct ArcObject {
     s32 unknown_14;
     s32 scale_x;
     s32 scale_y;
-    u8 padding20[0x30];
+    u8 padding20[48];
     struct ArcSprite *sprite;
     u8 padding54;
     u8 unknown_55;
-    u8 padding56[0x0e];
+    u8 padding56[14];
     u16 unknown_64;
     u8 padding66[2];
     struct ArcObject *source;

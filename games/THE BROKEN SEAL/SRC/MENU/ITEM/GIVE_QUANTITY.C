@@ -40,7 +40,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
     s32 other_count;
     s32 count;
     struct InventoryMenuState *menu = gMenuWork;
-    void *tiles = Runtime_AllocateBlock(14, 0x400);
+    void *tiles = Runtime_AllocateBlock(14, 1024);
     s32 window;
     struct RenderOutput *object;
 

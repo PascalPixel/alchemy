@@ -105,12 +105,12 @@ void FieldScene_RunSupplementalSequenceOne(void)
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, &options);
     }
     Audio_PlayCue(188);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 257);
     Object_SetModeById(ACTOR_PARTY_LEADER, 22);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 256);
     Object_GetById(0)->gravity = 0x10000;
     Object_GetById(0)->bounce = 0x4000;
     Engine_EventEnd();
@@ -204,7 +204,7 @@ void BabiIriguchi_JumpFromLedge(void)
     if ((rec7->z.fixed >> 20) == 20) {
         rec7->target_x = -0x80000000;
         rec7->target_z = -0x80000000;
-        Actor_ShowEmote(0, 0x100, 20);
+        Actor_ShowEmote(0, 256, 20);
         Actor_SetSpeed(0, 0x20000, 0x10000);
         Engine_ActorJump(0, 4, 0);
 { u16 dir = rec7->facing; if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff) goto step_down; }
@@ -314,7 +314,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_ResetEffectCounter();
     Engine_EventSetMessage((s32)MsgBabiYoureSureTheyWentThrough);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 352);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Battle_WaitMode0(10);
     FieldMotion_LaunchFromFocusedObject(10, 16, 0, 0xc000);
@@ -350,7 +350,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Engine_ActorStartRepeatedMotion(13, 2);
     Engine_ActorRunRepeatedMotion(12, 2);
     Battle_WaitMode0(40);
-    Actor_ShowEmote(12, 0x102, 50);
+    Actor_ShowEmote(12, 258, 50);
     Event_ShowMessage(12, 0);
     Battle_WaitMode0(10);
     Actor_FaceDirection(13, FACING_EAST, 0);
@@ -369,14 +369,14 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(11, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(13, 0x107, 40);
+    Actor_ShowEmote(13, 263, 40);
     Battle_WaitMode0(10);
     Actor_FaceDirection(13, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(13, 0x101, 75);
-    Actor_ShowEmote(14, 0x101, 60);
+    Actor_ShowEmote(13, 257, 75);
+    Actor_ShowEmote(14, 257, 60);
     Actor_FaceDirection(12, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Actor_FaceDirection(11, FACING_SOUTH, 0);
@@ -395,7 +395,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(14, 0x105, 60);
+    Actor_ShowEmote(14, 261, 60);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
@@ -427,7 +427,7 @@ void FieldScene_RunBranchingActorSequence(void)
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
-    Actor_ShowEmote(14, 0x101, 60);
+    Actor_ShowEmote(14, 257, 60);
     Actor_SetSpeed(14, 0x10000, 0x8000);
     Actor_WalkByAndWait(14, 0, 16);
     Battle_WaitMode0(20);
@@ -441,7 +441,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
+    Actor_ShowEmote(ACTOR_MIA, 258, 40);
     Event_ShowMessage(ACTOR_MIA, 0);
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
@@ -452,7 +452,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(30);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(14, 0x100, 40);
+    Actor_ShowEmote(14, 256, 40);
     Event_OpenMessage(14, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
@@ -468,7 +468,7 @@ void FieldScene_RunBranchingActorSequence(void)
         Event_ShowMessage(14, 0);
     }
     Battle_WaitMode0(10);
-    Actor_ShowEmote(10, 0x102, 50);
+    Actor_ShowEmote(10, 258, 50);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(13, 2);
@@ -481,13 +481,13 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_SetSpeed(12, 0x14ccc, 0xa666);
     Actor_WalkByAndWait(12, 0, 16);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(12, 0x107, 50);
+    Actor_ShowEmote(12, 263, 50);
     Event_ShowMessage(12, 0);
     Battle_WaitMode0(10);
     Engine_ActorSetAnimationAndWait(14, 3);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
-    Actor_ShowEmote(10, 0x102, 60);
+    Actor_ShowEmote(10, 258, 60);
     Actor_FaceDirection(10, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(10, 0);
@@ -533,8 +533,8 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_WalkByAndWait(13, 32, 0);
     Actor_WalkBy(12, 0, 16);
     Actor_WalkByAndWait(13, 16, 0);
-    Actor_WalkTo(13, 0x158, 0x138);
-    Actor_WalkToAndWait(12, 0x158, 0x150);
+    Actor_WalkTo(13, 344, 312);
+    Actor_WalkToAndWait(12, 344, 336);
     Object_SetModeById(13, 1);
     Actor_FaceDirection(12, FACING_WEST, 0);
     Actor_FaceDirection(13, FACING_WEST, 0);
@@ -544,11 +544,11 @@ void FieldScene_RunBranchingActorSequence(void)
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
     Actor_SetSpeed(14, 0x10000, 0x8000);
-    Actor_WalkToAndWait(14, 0x148, 0x138);
+    Actor_WalkToAndWait(14, 328, 312);
     Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(30);
     Actor_SetSpeed(11, 0x10000, 0x8000);
-    Actor_WalkToAndWait(11, 0x148, 0x148);
+    Actor_WalkToAndWait(11, 328, 328);
     Actor_FaceDirection(11, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
@@ -588,7 +588,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_ResetEffectCounter();
     Engine_EventSetMessage((s32)MsgBabiTheDoor);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x138);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 312);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Battle_WaitMode0(10);
     Motion_LaunchFromFocusedObject(1, 0, 16, 0);
@@ -603,15 +603,15 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(10);
     Actor_FaceDirection(10, 0xb000, 0);
     Battle_WaitMode0(10);
-    Actor_ShowEmote(10, 0x100, 40);
+    Actor_ShowEmote(10, 256, 40);
     Event_ShowMessage(10, 0);
     Engine_ActorJump(10, 4, 13);
     Engine_ActorJump(10, 4, 30);
     Battle_WaitMode0(10);
-    Actor_ShowEmote(11, 0x100, 0);
-    Actor_ShowEmote(12, 0x100, 0);
-    Actor_ShowEmote(13, 0x100, 0);
-    Actor_ShowEmote(14, 0x100, 40);
+    Actor_ShowEmote(11, 256, 0);
+    Actor_ShowEmote(12, 256, 0);
+    Actor_ShowEmote(13, 256, 0);
+    Actor_ShowEmote(14, 256, 40);
     Battle_WaitMode0(10);
     Actor_FaceDirection(14, 0xb000, 0);
     Actor_FaceDirection(11, 0xb000, 0);
@@ -622,10 +622,10 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(13, 0x102, 40);
+    Actor_ShowEmote(13, 258, 40);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(12, 0x101, 50);
+    Actor_ShowEmote(12, 257, 50);
     Actor_FaceDirection(12, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(12, 0);
@@ -643,7 +643,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Battle_WaitMode0(10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 40);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(10, 4);
@@ -682,7 +682,7 @@ void FieldScene_RunActorEventSequence(void)
     GameFlag_Clear(0x301);
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_EventBegin();
-    Actor_ShowEmote(10, 0x102, 40);
+    Actor_ShowEmote(10, 258, 40);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
     Actor_FaceDirection(14, 0xb000, 0);
@@ -694,14 +694,14 @@ void FieldScene_RunActorEventSequence(void)
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Battle_WaitMode0(30);
-    Actor_ShowEmote(11, 0x100, 0);
-    Actor_ShowEmote(12, 0x100, 0);
-    Actor_ShowEmote(13, 0x100, 0);
-    Actor_ShowEmote(14, 0x100, 70);
+    Actor_ShowEmote(11, 256, 0);
+    Actor_ShowEmote(12, 256, 0);
+    Actor_ShowEmote(13, 256, 0);
+    Actor_ShowEmote(14, 256, 70);
     Camera_MoveTo(0x1180000, -1, 0x1380000, 1);
     Engine_CameraWaitForMove();
     Battle_WaitMode0(10);
-    Actor_ShowEmote(12, 0x102, 40);
+    Actor_ShowEmote(12, 258, 40);
     Event_ShowMessage(12, 0);
     Battle_WaitMode0(10);
     Engine_ActorSetAnimationAndWait(13, 4);
@@ -718,7 +718,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(30);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
     Battle_WaitMode0(30);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
+    Actor_ShowEmote(ACTOR_MIA, 258, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(ACTOR_MIA, 0);
@@ -727,7 +727,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(14, 0x103, 50);
+    Actor_ShowEmote(14, 259, 50);
     Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Event_OpenMessage(14, 0);
@@ -774,7 +774,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(40);
     Actor_FaceDirection(10, 0x5000, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(10, 0x101, 60);
+    Actor_ShowEmote(10, 257, 60);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
         Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
@@ -793,7 +793,7 @@ void FieldScene_RunActorEventSequence(void)
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
-    Actor_ShowEmote(14, 0x102, 50);
+    Actor_ShowEmote(14, 258, 50);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(15);
     Engine_ActorSetAnimationAndWait(10, 3);
@@ -813,7 +813,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(25);
     Engine_ActorRunRepeatedMotion(10, 2);
     Battle_WaitMode0(20);
-    Actor_WalkToAndWait(10, 0x138, 0x138);
+    Actor_WalkToAndWait(10, 312, 312);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(10, FACING_WEST, 0);
     Battle_WaitMode0(25);
@@ -890,8 +890,8 @@ void BabiIriguchi_OpenTruthDoor(void)
         GameFlag_Set(0x985);
         Audio_PlayCue(157);
         Engine_EventBegin();
-        Actor_SetDestination(8, 0x118, 240);
-        Actor_SetDestination(9, 0x148, 240);
+        Actor_SetDestination(8, 280, 240);
+        Actor_SetDestination(9, 328, 240);
         ObjectMotion_CommitCurrentPositionAndActivate(8);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
         Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
@@ -908,8 +908,8 @@ void BabiIriguchi_CloseTruthDoor(void)
         GameFlag_Clear(0x985);
         Audio_PlayCue(157);
         Engine_EventBegin();
-        Actor_SetDestination(8, 0x128, 240);
-        Actor_SetDestination(9, 0x138, 240);
+        Actor_SetDestination(8, 296, 240);
+        Actor_SetDestination(9, 312, 240);
         ObjectMotion_CommitCurrentPositionAndActivate(8);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
         Map_CopyCellAttributes(0, 14, 4, 1, 17, 14);
@@ -928,7 +928,7 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
     s16 *seeing;
 
     Engine_EventBegin();
-    seeing = (s16 *)(work + 0xcb8);
+    seeing = (s16 *)(work + 3256);
     if (seeing[0] != 0) {
         if (Engine_GameFlagIsSet(0x985) == 0) {
             /* FAKEMATCH: forced temporaries; the destination stays in two saved registers across both copies, where plain constants are built again for each call. */
@@ -1134,9 +1134,9 @@ struct RowActor {
     union FieldCoordinate x;
     union FieldCoordinate y;
     union FieldCoordinate z;
-    u8 unknown_14[0x0f];
+    u8 unknown_14[15];
     u8 priority_flags;
-    u8 unknown_24[0x2c];
+    u8 unknown_24[44];
     struct FieldSprite *sprite;
     u8 unknown_54[5];
     u8 collision_flags;

@@ -28,7 +28,7 @@ s32 gKorimaKiTransitionStep __attribute__((section(".bss")));
 
 
 struct Spark {
-    u8 unknown_00[0x64];
+    u8 unknown_00[100];
     u16 phase;
     u16 angle;
 };
@@ -194,7 +194,7 @@ void RunEventScript01(void)
     Engine_TaskWait(40);
     Audio_PlayCue(17);
     gKorimaKiSparkSound = 1;
-    Engine_TaskAddCallback(PaletteScene_SpawnEffect, 0xc80);
+    Engine_TaskAddCallback(PaletteScene_SpawnEffect, 3200);
     Engine_TaskWait(30);
     gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
@@ -206,7 +206,7 @@ void RunEventScript01(void)
     rec8->velocity_y = 0x50000;
     rec8->gravity = 0x4000;
     rec8->bounce = 0xa000;
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x14f, 0x102);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 335, 258);
     while (rec8->velocity_y >= 0) {
         Engine_TaskWait(1);
     }
@@ -257,7 +257,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     const s32 *finalActions;
 
     actorThreeEnabled = GameFlag_IsSet(3);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 212);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Audio_PlayCue(17);
     Engine_MessageShowCentered((s32)MsgKorimaWaterHermesSeepedIntoTret, 1);
@@ -288,7 +288,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_TaskWait(40);
     transitionState = &gKorimaKiTransitionStep;
     *transitionState = 0;
-    Engine_TaskAddCallback(PaletteScene_AdvanceTransition, 0xc80);
+    Engine_TaskAddCallback(PaletteScene_AdvanceTransition, 3200);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 20);
     Camera_SetSpeed(0x33333, 0x6666);
@@ -349,10 +349,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 1);
     Engine_EventWait(20);
     Event_ShowMessage(8, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x105, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x105, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 261, 0);
+    Actor_ShowEmote(ACTOR_MIA, 261, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 261, 40);
     Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
@@ -388,9 +388,9 @@ void PaletteScene_RunActorTransitionSequence(void)
         Event_ShowMessage(0x8008, 0);
     } else {
         gEventWork->message += 2;
-        Actor_ShowEmote(ACTOR_MIA, 0x103, 0);
-        Actor_ShowEmote(ACTOR_GERALD, 0x103, 0);
-        Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
+        Actor_ShowEmote(ACTOR_MIA, 259, 0);
+        Actor_ShowEmote(ACTOR_GERALD, 259, 0);
+        Actor_ShowEmote(ACTOR_IVAN, 259, 40);
         Engine_ActorSetAnimation(ACTOR_GERALD, 4);
         Event_ShowMessage(ACTOR_GERALD, 0);
         if (actorThreeEnabled != 0) {
@@ -424,7 +424,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     gKorimaKiSparkOrigin[1] = 0x300000;
     effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
     gKorimaKiSparkOrigin[2] = 0xcd0000;
-    Engine_TaskAddCallback(effectCallback, 0xc80);
+    Engine_TaskAddCallback(effectCallback, 3200);
     Engine_EventWait(100);
     Engine_TaskRemoveCallback(effectCallback);
     ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -451,7 +451,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 10);
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
+        Actor_ShowEmote(ACTOR_GERALD, 258, 40);
     } else {
         Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
         gEventWork->message += 1;
@@ -481,10 +481,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 2);
     Engine_EventWait(20);
     Event_ShowMessage(0x8008, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x102, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 0);
+    Actor_ShowEmote(ACTOR_MIA, 258, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 258, 80);
     KorimaKi_PlayGesture(11, 5);
     Engine_EventWait(60);
     KorimaKi_PlayGesture(11, 3);
@@ -525,14 +525,14 @@ void PaletteScene_RunActorTransitionSequence(void)
     gKorimaKiSparkOrigin[1] = 0x140000;
     effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
     gKorimaKiSparkOrigin[2] = 0x1020000;
-    Engine_TaskAddCallback(effectCallback, 0xc80);
+    Engine_TaskAddCallback(effectCallback, 3200);
     Engine_EventWait(100);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
-    Actor_ShowEmote(ACTOR_IVAN, 0x100, 20);
+    Actor_ShowEmote(ACTOR_IVAN, 256, 20);
     Event_ShowMessageAndWait(0x8002, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
@@ -540,7 +540,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 4);
     Engine_EventWait(20);
     Event_ShowMessage(0x8008, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 257, 60);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
     Event_ShowMessageAndWait(0x8002, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -860,11 +860,11 @@ void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
         effect->x = position[0];
         effect->y = position[1];
         effect->z = position[2];
-        effect->angle_x += 0x147;
-        effect->angle_y += 0x147;
+        effect->angle_x += 327;
+        effect->angle_y += 327;
         effect->step++;
     } else {
-        Resource_ResetEntry(effect->owner[0x1c]);
+        Resource_ResetEntry(effect->owner[28]);
         Engine_ObjectDispatchRelease(effect);
     }
 }
@@ -884,7 +884,7 @@ void KorimaKi_SpawnOrbitSparks(void)
     case 40:
         Engine_AudioPlayCue(220);
         for (i = 0; i <= 5; i++) {
-            spark = Engine_ObjectCreate(0x11d, gKorimaKiSparkOrigin[0], gKorimaKiSparkOrigin[1], gKorimaKiSparkOrigin[2]);
+            spark = Engine_ObjectCreate(285, gKorimaKiSparkOrigin[0], gKorimaKiSparkOrigin[1], gKorimaKiSparkOrigin[2]);
             if (spark != 0) {
                 previous = Object_ReplaceResourceEntry(spark->sprite, previous);
                 spark->motion_flags = 0;

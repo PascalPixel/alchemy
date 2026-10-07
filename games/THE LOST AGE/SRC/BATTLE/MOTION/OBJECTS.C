@@ -17,7 +17,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 }
 
 struct AnimationEntryGroup {
-    u8 unknown_00[0x28];
+    u8 unknown_00[40];
     struct AnimationEntry *entries[4];
 };
 

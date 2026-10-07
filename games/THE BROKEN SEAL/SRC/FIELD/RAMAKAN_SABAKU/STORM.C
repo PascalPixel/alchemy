@@ -70,7 +70,7 @@ void RamakanSabaku_RunSandstorm(void)
     }
     display = *Ram_DisplayWork;
     if (display != NULL) {
-        s16 *line = (s16 *)(display + display[0x539] * 644);
+        s16 *line = (s16 *)(display + display[1337] * 644);
         s32 shift = (s16)(counter << 3);
 
         line = (s16 *)((u8 *)line + 38);
@@ -80,7 +80,7 @@ void RamakanSabaku_RunSandstorm(void)
         }
     }
 
-    buffer = Runtime_BumpAllocate(0x900);
+    buffer = Runtime_BumpAllocate(2304);
     Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, REG_DMA3);
     colors = (s16 *)(buffer + 12);
     color = colors;
@@ -140,8 +140,8 @@ void RamakanSabaku_RunSandstorm(void)
         column[8] = ((u32 *)buffer)[8];
     }
     destination = buffer;
-    source = buffer + 0x480;
-    for (i = 0; i < 0x480; i++) {
+    source = buffer + 1152;
+    for (i = 0; i < 1152; i++) {
         u8 value = *source++;
 
         if (value != 0) {
@@ -149,7 +149,7 @@ void RamakanSabaku_RunSandstorm(void)
         }
         destination++;
     }
-    Engine_VramLoad(RamakanSabaku_SandVramSlot, 0x480, buffer);
+    Engine_VramLoad(RamakanSabaku_SandVramSlot, 1152, buffer);
 
     attributes = 0x80008000;
     sprite = RamakanSabaku_SandWork;

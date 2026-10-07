@@ -53,13 +53,13 @@ extern const Scale StagedParticles_UnitScale;
 #define HI(v) (((s16 *)&(v))[1])
 
 enum SlashSheetCell {
-    SLASH_FLASH_1 = 0x0000,
-    SLASH_FLASH_2 = 0x0188,
-    SLASH_FLASH_3_TOP = 0x057c,
-    SLASH_FLASH_3_BOTTOM = 0x07d4,
-    SLASH_FLASH_4_TOP = 0x0aaa,
-    SLASH_FLASH_4_MIDDLE = 0x0c90,
-    SLASH_FLASH_4_BOTTOM = 0x0e74,
+    SLASH_FLASH_1 = 0,
+    SLASH_FLASH_2 = 392,
+    SLASH_FLASH_3_TOP = 1404,
+    SLASH_FLASH_3_BOTTOM = 2004,
+    SLASH_FLASH_4_TOP = 2730,
+    SLASH_FLASH_4_MIDDLE = 3216,
+    SLASH_FLASH_4_BOTTOM = 3700,
     SLASH_FLASH_5_TOP = 0x1088,
     SLASH_FLASH_5_MIDDLE = 0x11f8,
     SLASH_FLASH_5_BOTTOM = 0x147c,
@@ -103,7 +103,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     BG_PLTT[0] = 0;
     BG_PLTT[1] = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 370, 1);
@@ -126,7 +126,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     work->scroll_interval = 4;
     work->scroll_step_x = -1;
     work->scroll_step_y = 0;
-    Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 1152);
     presentation->busy = 1;
     BattleEffect_WipeCanvas(0, 1);
     REG_DISPCNT = 0x7741;

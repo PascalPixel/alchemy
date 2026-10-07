@@ -51,9 +51,9 @@ void BattleFx_AdvanceHueCycle(void)
     u8 *p1;
     u8 *p2;
 
-    BattleFx_ComputeHueChannels((*(u16 *)(base + 0x28E)) << 16, &out1, &out2, &out3);
+    BattleFx_ComputeHueChannels((*(u16 *)(base + 654)) << 16, &out1, &out2, &out3);
 
-    offset = 0x28B;
+    offset = 651;
     p0 = base + offset;
     *p0 = (out1 >> 18) + 4;
     offset += 1;
@@ -63,14 +63,14 @@ void BattleFx_AdvanceHueCycle(void)
     p2 = base + offset;
     *p2 = (out3 >> 18) + 4;
 
-    *(u16 *)(base + 0x28E) += 4;
+    *(u16 *)(base + 654) += 4;
 
     *p0 &= 0x1F;
     *p1 &= 0x1F;
     *p2 &= 0x1F;
 
-    if (*(u16 *)(base + 0x28E) >= 360) {
-        *(u16 *)(base + 0x28E) = 0;
+    if (*(u16 *)(base + 654) >= 360) {
+        *(u16 *)(base + 654) = 0;
     }
 }
 
@@ -158,7 +158,7 @@ void Ui_FillBank15PaletteGrey(void)
     *p = 0x739C;
     p += 1;
     *p = 0x739C;
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 1152);
 }
 
 void Ui_SetBank15PaletteAndClearRenderMode(void)

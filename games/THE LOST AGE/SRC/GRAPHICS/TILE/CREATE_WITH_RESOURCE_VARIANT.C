@@ -60,7 +60,7 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
     icon = 0;
     slot = Resource_FindFreeEntry();
     if (slot != 0) {
-        VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+        VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_UiIconTiles);
         icon = (s32)RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
     }
     return icon;

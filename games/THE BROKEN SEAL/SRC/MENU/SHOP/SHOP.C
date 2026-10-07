@@ -71,7 +71,7 @@ struct ShopCursorSprite3 {
     u8 unknown_04[2];
     u16 x;
     u16 y;
-    u8 unknown_0a[0x0a];
+    u8 unknown_0a[10];
     struct SpriteAttr2 oam;
 };
 
@@ -124,7 +124,7 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     if (flag != 0) {
         no += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
     }
-    (*slot)->active = 0xDU;
+    (*slot)->active = 13U;
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
     while (UiWork_IsCompleteFar() == 0) {
@@ -220,7 +220,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     s32 slot;
     struct RenderOutput *sprite;
 
-    buf = Runtime_AllocateBlock(14, 0x400);
+    buf = Runtime_AllocateBlock(14, 1024);
     sprite = 0;
     Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
     Shop_CopyGlyphs(value % 10, buf, 0);
@@ -243,7 +243,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     }
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
-        VramBlock_LoadCached(slot, 0x100, buf);
+        VramBlock_LoadCached(slot, 256, buf);
         sprite = RenderOutput_CreateFar(slot, 0x80008000, (struct RenderInput *)window, x, y);
     }
     Runtime_ReleaseHeapBlock(14);
@@ -255,18 +255,18 @@ void Shop_RestoreSceneTiles(s32 layer)
     u32 *scene = (u32 *)gEventWork;
     u8 *work = (u8 *)scene[5];
     u8 *map = (u8 *)scene[0];
-    u8 *saved = work + 0xe00;
+    u8 *saved = work + 3584;
 
-    Dma_Set(saved, map + 0x236, 0x84000150, REG_DMA3);
-    Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
+    Dma_Set(saved, map + 566, 0x84000150, REG_DMA3);
+    Dma_Set(saved, work + 896, 0x840002a0, REG_DMA3);
     BattleFx_ApplyColorToTargetBufferFar(layer, 1);
     BattleFx_StartBufferInterpolationFar(16);
 }
 
 void Shop_InitEffect(void)
 {
-    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)gEventWork + 0x236, 1);
-    BattleFx_StartBufferInterpolationFar(0x10);
+    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)gEventWork + 566, 1);
+    BattleFx_StartBufferInterpolationFar(16);
 }
 
 void ShopCursor_Advance(struct ShopCursor *cursor)

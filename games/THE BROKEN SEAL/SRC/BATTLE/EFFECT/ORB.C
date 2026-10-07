@@ -91,7 +91,7 @@ void CheckObjectMapTile(void)
         }
     }
 
-    if (tile[2] != 0xfb)
+    if (tile[2] != 251)
         ((struct EventWork *)runtime)->psynergy_request = 0x2092;
 }
 
@@ -138,7 +138,7 @@ void MapEvent_RunTileTriggerSequence(void)
 void BattleFx_ScheduleCloakedMapCheck(void)
 {
     if (gGameState.cloaked != 0) {
-        Scheduler_AddOrUpdateCallback((SchedulerCallback)CheckObjectMapTile, 0xc80);
+        Scheduler_AddOrUpdateCallback((SchedulerCallback)CheckObjectMapTile, 3200);
     }
 }
 
@@ -151,7 +151,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     u32 cycle;
     void (*callback)(void);
 
-    Audio_PlayCue(0x82);
+    Audio_PlayCue(130);
     Object_SetMode(object, 0);
     *(void **)(object + 108) = 0;
     cycle = 0;
@@ -170,7 +170,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     record->flag_b = 2;
     record->flag_a = 1;
     callback = CheckObjectMapTile;
-    Scheduler_AddOrUpdateCallback(callback, 0xc80);
+    Scheduler_AddOrUpdateCallback(callback, 3200);
     gGameState.cloaked = 1;
     callback();
     if (state->psynergy_request == 0x2092) {
@@ -187,24 +187,24 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
     s32 phase2;
     s16 *pp;
 
-    if (FIELD_AT_OFFSET(object, s32 *, 0xC) <= FIELD_AT_OFFSET(object, s32 *, 0x14)) {
-        FIELD_AT_OFFSET(object, s16 *, 0x5E) = phase;
+    if (FIELD_AT_OFFSET(object, s32 *, 12) <= FIELD_AT_OFFSET(object, s32 *, 20)) {
+        FIELD_AT_OFFSET(object, s16 *, 94) = phase;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
         p = NULL;
-        FIELD_AT_OFFSET(object, void **, 0x6C) = p;
+        FIELD_AT_OFFSET(object, void **, 108) = p;
         for (i = 0; i <= 2; i++) {
-            p = Object_Spawn(0xF0, FIELD_AT_OFFSET(object, s32 *, 8), FIELD_AT_OFFSET(object, s32 *, 0xC), FIELD_AT_OFFSET(object, s32 *, 0x10));
+            p = Object_Spawn(240, FIELD_AT_OFFSET(object, s32 *, 8), FIELD_AT_OFFSET(object, s32 *, 12), FIELD_AT_OFFSET(object, s32 *, 16));
             if (p == NULL) {
                 break;
             }
-            FIELD_AT_OFFSET(p, s32 *, 0x1C) = 0x8000;
-            FIELD_AT_OFFSET(p, s32 *, 0x18) = 0x8000;
-            FIELD_AT_OFFSET(p, s8 *, 0x55) = 2;
-            FIELD_AT_OFFSET(p, s32 *, 0x28) = 0x10000;
-            FIELD_AT_OFFSET(p, s32 *, 0x30) = Random16() + 0x13333;
+            FIELD_AT_OFFSET(p, s32 *, 28) = 0x8000;
+            FIELD_AT_OFFSET(p, s32 *, 24) = 0x8000;
+            FIELD_AT_OFFSET(p, s8 *, 85) = 2;
+            FIELD_AT_OFFSET(p, s32 *, 40) = 0x10000;
+            FIELD_AT_OFFSET(p, s32 *, 48) = Random16() + 0x13333;
             Motion_SetTargetPositionFromMagnitudeAngle(
                 p, 0x200000, Random16());
-            pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);
+            pp = &FIELD_AT_OFFSET(p, s16 *, 94);
             phase2 = 6;
             *pp = phase2;
             ObjectDispatch_InitializeFar((struct DispatchObject *)p, BattleFx_CommonParticleScript);
@@ -251,11 +251,11 @@ struct Effect05Object {
     s32 x, y, z;
     s32 altitude;
     s32 scale_x, scale_y;
-    u8 reserved_20[0x30];
+    u8 reserved_20[48];
     struct Effect05Sprite *sprite;
     u8 reserved_54;
     u8 flag;
-    u8 reserved_56[0x16];
+    u8 reserved_56[22];
     void *callback;
 };
 
@@ -266,9 +266,9 @@ struct Effect05State {
     s32 initialized;
     u8 reserved_18[8];
     u8 high_arc;
-    u8 reserved_21[0x13];
+    u8 reserved_21[19];
     u8 variant;
-    u8 reserved_35[0x10];
+    u8 reserved_35[16];
     u8 alternate;
 };
 
@@ -299,11 +299,11 @@ void RunBattleEffect05(void)
     s32 y;
     struct Effect05Object *particle;
 
-    main = Object_Spawn(0xef, i = 0, 0, 0);
+    main = Object_Spawn(239, i = 0, 0, 0);
     if (main == 0)
         return;
     BattleEffect_InitializeSharedScene();
-    AudioCommand_PlayFar(0x8a);
+    AudioCommand_PlayFar(138);
     if (state->initialized == 0) {
         state->x = target->position.x;
         state->z = target->position.z;
@@ -356,13 +356,13 @@ void RunBattleEffect05(void)
                 spawn.y = main->y;
                 spawn.z = main->z;
             }
-            particle = Object_Spawn(0xf0, spawn.x, spawn.y, spawn.z);
+            particle = Object_Spawn(240, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
                 particle->altitude = spawn.y - 0x200000;
                 particle->callback = (void *)BattleFx_SpawnRandomAngleTriplet;
                 particle->flag = 2;
             }
-            AudioCommand_PlayFar(0x84);
+            AudioCommand_PlayFar(132);
             WaitFrames(6);
         }
         WaitFrames(10);
@@ -376,7 +376,7 @@ void RunBattleEffect05(void)
             spawn.y = main->y;
             spawn.z = main->z;
             Vector_AddPolarOffset(Random16() * 5 + 0x30000, Random16(), &spawn);
-            particle = Object_Spawn(0x11c, spawn.x, spawn.y, spawn.z);
+            particle = Object_Spawn(284, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
                 particle->callback = (void *)BattleFx_UpdateDriftingFallObject;
                 particle->flag = 0;

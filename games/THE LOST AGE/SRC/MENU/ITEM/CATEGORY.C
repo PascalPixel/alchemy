@@ -17,7 +17,7 @@ void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
 
 struct CategoryMenuState {
-    u8 unknown_000[0x1c4];
+    u8 unknown_000[452];
     u16 items[15];
 };
 

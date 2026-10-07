@@ -21,7 +21,7 @@
 #define Object_InitializeMode ((s32 (*)(struct FieldSprite*,s32))Object_InitializeMode)
 
 struct Pulse {
-    u8 unknown_00[0x64];
+    u8 unknown_00[100];
     s16 timer;
     s16 beat;
 };
@@ -40,7 +40,7 @@ union PairObject {
     union FieldObject object;
     s32 words[28];
     struct {
-        u8 unknown_00[0x68];
+        u8 unknown_00[104];
         union PairObject *parent;
     } link;
 };
@@ -125,12 +125,12 @@ void HaidiaArashi_UpdatePulsingGlow(void)
         switch (((struct Pulse *)source)->beat) {
         case 1:
         case 5:
-            glow->scale_x += 0xa3d;
-            glow->scale_y += 0xa3d;
+            glow->scale_x += 2621;
+            glow->scale_y += 2621;
             break;
         case 4:
-            glow->scale_x += 0x51e;
-            glow->scale_y += 0x51e;
+            glow->scale_x += 1310;
+            glow->scale_y += 1310;
             break;
         case 2:
         case 3:
@@ -138,8 +138,8 @@ void HaidiaArashi_UpdatePulsingGlow(void)
         case 7:
         case 8:
         case 9:
-            glow->scale_x += -0x7ae;
-            glow->scale_y += -0x7ae;
+            glow->scale_x += -1966;
+            glow->scale_y += -1966;
             break;
         }
         sprite->scale = glow->scale_x;
@@ -234,7 +234,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_ActorStop(ACTOR_ID);
     Scheduler_RemoveCallback((s32)HaidiaArashi_CopyLeaderSpritePriority);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 480, 1392);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
     Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -256,8 +256,8 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Actor_FaceDirection(ACTOR_ID, 0x1000, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
     Actor_SetSpeed(ACTOR_ID, 0x20000, 0x10000);
-    Actor_WalkToAndWait(ACTOR_ID, 165, 0x514);
-    Actor_WalkToAndWait(ACTOR_ID, 195, 0x598);
+    Actor_WalkToAndWait(ACTOR_ID, 165, 1300);
+    Actor_WalkToAndWait(ACTOR_ID, 195, 1432);
     GameFlag_Set(0x842);
 }
 

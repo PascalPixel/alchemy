@@ -11,7 +11,7 @@ s32 SaveState_InitializeWorkspace(void)
     volatile u32 zero;
     u32 index;
 
-    work = Runtime_AllocateBlock(0x33, sizeof(*work));
+    work = Runtime_AllocateBlock(51, sizeof(*work));
     zero = 0;
     START_DMA(&zero, work, 0x85000440);
     SetFlashTimerIntr(2, &gIrqHandlers[5]);
@@ -30,7 +30,7 @@ s32 SaveState_InitializeWorkspace(void)
         u8 id;
 
         work->occupied[index] = 0;
-        work->record_id[index] = 0x10;
+        work->record_id[index] = 16;
         work->sequence[index] = 0;
         status = SaveState_ReadSlotAndCheckChecksum(index);
         START_DMA(&work->slot, &header, 0x84000004);

@@ -26,7 +26,7 @@ struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id)
     s32 index;
 
     if (object_id > 7) {
-        object_id -= 0x78;
+        object_id -= 120;
     }
     index = object_id;
     if (work->placement[index] == 0xFF) {

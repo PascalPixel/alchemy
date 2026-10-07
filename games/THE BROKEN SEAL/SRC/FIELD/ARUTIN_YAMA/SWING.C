@@ -22,7 +22,7 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     Audio_PlayCue(141);
     Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
     Event_Wait(10);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Event_Wait(20);
 
@@ -72,7 +72,7 @@ settled:
     Audio_PlayCue(183);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Event_Wait(20);
-    Audio_PlayCue(0x121);
+    Audio_PlayCue(289);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     FieldScene_RunSharedSetPiece(5);
     Event_End();

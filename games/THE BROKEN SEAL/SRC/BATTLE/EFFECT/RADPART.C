@@ -32,7 +32,7 @@ void ObjectDispatch_ReleaseFar();
 struct EffectOwner {
     u8 unknown_00[8];
     struct EffectVector position;
-    u8 unknown_14[0x3c];
+    u8 unknown_14[60];
     struct AnimationObject *sprite;
 };
 
@@ -138,10 +138,10 @@ void BattleFx_AdvanceAngleWithRamp(void *obj)
 {
     u32 step;
 
-    step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
+    step = FIELD_AT_OFFSET(obj, s16 *, 100) * 80;
     ((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + step + 0x1000;
     if (step < 0x1000U) {
-        FIELD_AT_OFFSET(obj, s16 *, 0x64) = FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1;
+        FIELD_AT_OFFSET(obj, s16 *, 100) = FIELD_AT_OFFSET(obj, s16 *, 100) + 1;
     }
 }
 
@@ -420,7 +420,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
         effect->state++;
 
         if ((gFrameTick & 1) != 0)
-            Audio_PlayCue(0x90);
+            Audio_PlayCue(144);
     } else if (state == 1) {
         if (BattleFx_HasReachedTarget(effect) == 0)
             effect->state--;

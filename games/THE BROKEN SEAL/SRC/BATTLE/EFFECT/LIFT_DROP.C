@@ -133,7 +133,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     right->x = p->x - 0x100000;
     right->velocity_x = 0;
     target->callback = ObjectGroup_ApplyRandomChildValues;
-    Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 3200);
     AudioCommand_PlayFar(130);
     target->flag = 4;
     ObjectDispatch_SetSingleChildFlagsFar(target, 0);
@@ -237,7 +237,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         struct FxObject **walk = shards;
 
         for (i = 0; i < 20; i++) {
-            object = Object_Spawn(0x11d, p->x, p->y, p->z);
+            object = Object_Spawn(285, p->x, p->y, p->z);
             *walk++ = object;
             if (object != NULL) {
                 ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_FragmentScript);

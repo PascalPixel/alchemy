@@ -58,13 +58,13 @@ u8 *ItemLevel_GetPlacements(void)
 void FieldScene_RunActor13Mode102Step(void)
 {
     Engine_EventSetMessage(MsgDebugWontStopYou);
-    Call3(Engine_ActorShowEmote, 13, 0x102, 0);
+    Call3(Engine_ActorShowEmote, 13, 258, 0);
     Engine_EventShowMessage(13, 0);
 }
 
 void FieldScene_RunActor13Mode105Step(void)
 {
-    Engine_ActorShowEmote(13, 0x105, 0);
+    Engine_ActorShowEmote(13, 261, 0);
     Engine_EventSetMessage(MsgDebugWontStopYou);
     Engine_EventShowMessage(13, 0);
 }
@@ -392,7 +392,7 @@ done:
 
 void SceneState_SetWorkWords1c0And1c8(void)
 {
-    gEventWork->start_transition = 0x201;
+    gEventWork->start_transition = 513;
     gEventWork->transition_frames = 24;
     Engine_EventRequestExit();
 }

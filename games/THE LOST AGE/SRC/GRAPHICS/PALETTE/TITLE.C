@@ -23,7 +23,7 @@ void TitlePalette_InitializeBuffers(void)
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 {
     Scheduler_RemoveCallback((u32)((s32)&TitlePalette_UpdateFade));
-    Runtime_ReleaseHeapBlock(0x80);
+    Runtime_ReleaseHeapBlock(128);
 }
 
 void Graphics_TransformLargePalette(s32 index, s32 transform)

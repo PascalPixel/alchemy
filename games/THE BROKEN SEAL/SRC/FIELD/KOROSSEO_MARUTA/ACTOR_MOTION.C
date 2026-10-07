@@ -35,7 +35,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
             /* FAKEMATCH: through Value3 the coordinates load before r0; a direct call sets r0 first. */
             Value3((s32 (*)())Korosseo_FadeInCompetitor, 0, 0x330, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
             battle_owner_69();
@@ -133,18 +133,18 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
             /* FAKEMATCH: through Value3 the coordinates load before r0; a direct call sets r0 first. */
             Value3((s32 (*)())Korosseo_FadeInCompetitor, 0, 0x3d8, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-            ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
+            ColossoLogRollingStage_PositionAndActivateActor(0, 992, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
-            ColossoLogRollingStage_PositionActor(0, 0x460, 184);
+            ColossoLogRollingStage_PositionActor(0, 1120, 184);
             Engine_EventWait(120);
-            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 257);
             Engine_EventWait(120);
             ColossoLogRollingStage_ResetActorMotion(0);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
-            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 256);
 #endif
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 0);
             actor = Object_GetById(0);
             for (i = 119; i >= 0; i--) {
                 if (actor->x.fixed > 0x3e00000) {
@@ -152,8 +152,8 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
                 }
                 Engine_TaskWait(1);
             }
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x103, 60);
-            ColossoLogRollingStage_PositionActor(0, 0x460, 184);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 259, 60);
+            ColossoLogRollingStage_PositionActor(0, 1120, 184);
             Event_ShowMessage(event, 0);
             ColossoLogRollingStage_ResetActorMotion(0);
             gGameState.movement_mode = 1;
@@ -190,13 +190,13 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Engine_EventShowMessage(actor, 0);
-        ColossoLogRollingStage_StartPaletteTask(0xb4, 0x58, 0);
+        ColossoLogRollingStage_StartPaletteTask(180, 88, 0);
         Engine_EventWait(60);
         Engine_EventShowMessage(actor, 0);
-        ColossoLogRollingStage_StartPaletteTaskFromState(0x20, 0x54, 10);
+        ColossoLogRollingStage_StartPaletteTaskFromState(32, 84, 10);
         Engine_EventWait(30);
         Engine_EventShowMessage(actor, 0);
-        ColossoLogRollingStage_StartPaletteTaskFromState(0x60, 0x54, 30);
+        ColossoLogRollingStage_StartPaletteTaskFromState(96, 84, 30);
         Engine_EventWait(60);
         Engine_EventShowMessage(actor, 0);
         ColossoLogRollingStage_StopPaletteTask();

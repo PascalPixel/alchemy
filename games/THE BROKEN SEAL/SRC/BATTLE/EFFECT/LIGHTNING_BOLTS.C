@@ -50,7 +50,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw[0] = heap_cache[7];
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 0xc56, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 3158, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     for (j = 0; j != 1024; j++)
         ((struct EffectStep *)Ram_MapCellBuffer)[j].variant = 0;
@@ -58,7 +58,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
         work->particles[j].variant = -1;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     Audio_PlayCue(138);
     for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
         if (frame == 24)
@@ -84,7 +84,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
                 if (height > 104)
                     height = 104;
                 for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 3]; j++) {
-                    draw[0](canvas, work->sheet + (((i + frame + j) / 2) & 3) * 2880 + 0xc56,
+                    draw[0](canvas, work->sheet + (((i + frame + j) / 2) & 3) * 2880 + 3158,
                         position.x - 12, 0, 24, height);
                 }
                 if (frame == start + 2) {

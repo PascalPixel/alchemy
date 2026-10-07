@@ -750,7 +750,7 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     struct FieldStepWork *work = (struct FieldStepWork *)gWork;
 
     if (GameFlag_TestFar(0x107) != 0) {
-        StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
+        StoreHalfword((s16 *)&work->raised_trigger, 250);
     } else if (work->mode == 3) {
         if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x100) {
             StoreHalfword((s16 *)&work->raised_trigger, 0xFC88);

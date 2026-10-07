@@ -35,8 +35,8 @@ void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
     i = 0;
     v16 = 2;
     v04 = 1;
-    def00 = 0x69;
-    alt00 = 0x6E;
+    def00 = 105;
+    alt00 = 110;
     do {
         entry->unknown_16 = v16;
         entry->unknown_04 = v04;
@@ -45,8 +45,8 @@ void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
             entry->unknown_00 = alt00;
         }
         i++;
-        entry = (struct Resource390TableEntry *)((u8 *)entry + 0x18);
-    } while (i <= 0xE);
+        entry = (struct Resource390TableEntry *)((u8 *)entry + 24);
+    } while (i <= 14);
 }
 
 u8 *SceneData_GetPrimaryTable(void)

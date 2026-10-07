@@ -12,7 +12,7 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
     Korosseo_MarkerSteps = 0;
 
     {
-        s32 budget = 0xc80;
+        s32 budget = 3200;
         Engine_TaskAddCallback(Korosseo_UpdateMarker, budget);
     }
 }
@@ -27,7 +27,7 @@ void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
     Korosseo_MarkerStep = 0;
 
     {
-        s32 frame_budget = 0xc80;
+        s32 frame_budget = 3200;
         Engine_TaskAddCallback(Korosseo_UpdateMarker, frame_budget);
     }
 }
@@ -72,7 +72,7 @@ void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
         u8 zero = 0;
         obj->speed = scale;
         obj->acceleration = scale >> 1;
-        p += 0x5b;
+        p += 91;
         *p = zero;
     }
 

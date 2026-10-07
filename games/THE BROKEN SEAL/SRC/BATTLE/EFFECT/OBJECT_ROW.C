@@ -87,24 +87,24 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     BattlePres_ConfigureEffectDisplay();
-    REG16(0x0400000c) = 0x784;
+    REG16(0x0400000c) = 1924;
     REG16(0x05000000) = 0;
     REG16(0x05000002) = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     BattleEffect_WipeCanvas(1, 0);
-    BattleFx_SpawnObjects(9, 0x175, 1);
+    BattleFx_SpawnObjects(9, 373, 1);
     gProjection.center_y = 240;
     BattleFx_SelectLivingTargets(work->effect);
     REG16(0x04000048) = 0x2737;
-    REG16(0x04000040) = 0xca;
+    REG16(0x04000040) = 202;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
     BattleEffect_WipeCanvas(1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
     REG16(0x04000000) = 0x7741;
-    REG16(0x04000020) = 0x80;
+    REG16(0x04000020) = 128;
     REG16(0x04000052) = 0x100e;
     REG16(0x04000050) = 0x3f44;
 
@@ -130,7 +130,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
     blit = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    REG16(0x0400000c) = 0x786;
+    REG16(0x0400000c) = 1926;
 
     for (frame = 0; frame != 120; frame++) {
         wave = 0;
@@ -228,7 +228,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             work->transfer_value = 50;
         }
         if (frame == 28) {
-            REG16(0x0400000c) = 0x784;
+            REG16(0x0400000c) = 1924;
         }
 
         if (frame > 17) {
@@ -266,7 +266,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             i = 0;
             y = 0;
             do {
-                blit(canvas, work->sheet + (Random16() & 3) * 0x600, 120 - rise, y, 48, 32);
+                blit(canvas, work->sheet + (Random16() & 3) * 1536, 120 - rise, y, 48, 32);
                 i++;
                 y += 18;
             } while (i != 6);
@@ -285,7 +285,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     gBgScroll[1].x = saved_x;
     control->active = 0;
     BattleEffect_SetupBlendedDisplay();
-    REG16(0x04000040) = 0xf0;
+    REG16(0x04000040) = 240;
 
     i = 0;
     do {
@@ -321,7 +321,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    REG16(0x0400000c) = 0x784;
+    REG16(0x0400000c) = 1924;
     REG16(0x04000052) = 0x1010;
 
     frame = 0;
@@ -423,7 +423,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             i = 0;
             y = -8;
             do {
-                blit(canvas, work->sheet + (Random16() & 3) * 0x600,
+                blit(canvas, work->sheet + (Random16() & 3) * 1536,
                     jitter[i] - slide + 120, y, 48, 32);
                 i++;
                 y += 8;

@@ -82,10 +82,10 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     rectangle[0] = (DrawRectangleFn)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
     rectangle[1] = (DrawRectangleFn)heap_cache[8];
-    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 1152);
     work->transfer_mode = 1;
     work->transfer_value = zero_val;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 1152);
     draw_enabled = 1;
     if (work->effect->side == 1) {
         curve[0] = -0x500000;
@@ -163,7 +163,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
         for (; i != 160; i++) {
             *scanline++ =
                 row_base - ((Trig_Sin(angle) * amp) >> 10);
-            angle += 0x800;
+            angle += 2048;
         }
         if (draw_enabled != 0) {
             if (work->effect->side == 0) {

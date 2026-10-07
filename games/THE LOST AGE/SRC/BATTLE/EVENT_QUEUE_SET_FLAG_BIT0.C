@@ -35,7 +35,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 }
 
 struct BattleEventFlagWork {
-    u8 unknown_00[0x16c];
+    u8 unknown_00[364];
     u32 flags;
 };
 

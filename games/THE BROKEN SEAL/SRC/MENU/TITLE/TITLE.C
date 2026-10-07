@@ -185,17 +185,17 @@ void Title_LoadSprites(s32 unused)
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Dma_Set(res, (void *)0x05000200, 0x84000070, DMA3);
-    res += 0x1c0;
+    res += 448;
     Resource_DecodeType01(res, buffer);
     Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 0x1e00,
           (s32)(buffer + 0x7800));
 #else
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x520);
+    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(1312);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
     Dma_Set(buffer, (void *)0x050003e0, 0x84000008, DMA3);
-    Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 0x500, (s32)(buffer + 32));
+    Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 1280, (s32)(buffer + 32));
 #endif
     dma = DMA3;
     while (dma[2] & 0x80000000)
@@ -249,7 +249,7 @@ localized_sprite:
     w = gTitleSprites[0].attr;
     tile = gVramBlockCache[gTitleVramBlock].offset >> 5;
     i = 0;
-    y = 0x88;
+    y = 136;
 loop:
     {
         x = 232 - (18 - i) * 8;
@@ -313,14 +313,14 @@ void Title_LoadBackground(void)
     Blend_SetDarkenTarget16(0);
     REG_BG2CNT = 0x681;
     gBgScroll[5] = 0;
-    blank = 0x1ff;
+    blank = 511;
     res = Resource_GetTableEntry(id);
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
-    res += 0x1c0;
+    res += 448;
     DecodeBackground(res);
     Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
     map = (u16 *)0x06003000;
-    tile = 0x1a0;
+    tile = 416;
     y = 0;
 col:
     {

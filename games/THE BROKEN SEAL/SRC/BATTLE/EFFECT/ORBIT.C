@@ -91,14 +91,14 @@ void RunBattleEffect04(void)
     scene = gEffectWork;
     child = scene->child;
     BattleEffect_InitializeSharedScene();
-    Audio_PlayCue(0x82);
+    Audio_PlayCue(130);
     slot = scene->slots;
 
     for (index = 0; index <= 11; index++) {
         target = scene->main_object;
         RaisedPosition(target, &pos);
         Camera_WorldToScreen(&pos);
-        EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
+        EffectSlot_Initialize(slot, 284, pos.x, pos.z);
         EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar((s32)slot->object, 9);
@@ -113,7 +113,7 @@ void RunBattleEffect04(void)
     pos.y = target->y.fixed + 0x100000;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(0x80000, scene->angle, &pos);
-    object = Object_Spawn(0xd7, pos.x, pos.y, pos.z);
+    object = Object_Spawn(215, pos.x, pos.y, pos.z);
     if (object == NULL) {
         BattleFx_PrepareBufferInterpolation();
         return;
@@ -129,7 +129,7 @@ void RunBattleEffect04(void)
     scale = object->scale_x;
     if (scale < 0x10000) {
         do {
-            scale += 0x500;
+            scale += 1280;
             object->scale_y = scale;
             object->scale_x = scale;
             WaitFrames(1);
@@ -139,7 +139,7 @@ void RunBattleEffect04(void)
     WaitFrames(3);
     resource = NULL;
     for (index = 2; index >= 0; index--) {
-        copy = spawned[index] = Object_Spawn(0xd7, object->x.fixed, object->y.fixed, object->z.fixed);
+        copy = spawned[index] = Object_Spawn(215, object->x.fixed, object->y.fixed, object->z.fixed);
         if (copy != NULL) {
             copy->scale_y = 0xf000;
             copy->scale_x = 0xf000;
@@ -304,12 +304,12 @@ void BattleFx_RunOrbitingParticles(void)
     scene = gEffectWork;
     main_particle = scene->child;
     BattleEffect_InitializeSharedScene();
-    Audio_PlayCue(0x73);
+    Audio_PlayCue(115);
 
     p = &position;
     entry_count = 15;
     do {
-        particle = Object_Spawn(0xe8, 0, 0, 0);
+        particle = Object_Spawn(232, 0, 0, 0);
         if (particle != NULL) {
             u32 initial_scale;
             s32 magnitude;
@@ -342,11 +342,11 @@ void BattleFx_RunOrbitingParticles(void)
     } while (entry_count >= 0);
 
     WaitFrames(10);
-    Audio_PlayCue(0x73);
+    Audio_PlayCue(115);
     WaitFrames(50);
 
     if (main_particle != NULL && scene->enabled == 0) {
-        Audio_PlayCue(0xd4);
+        Audio_PlayCue(212);
 
         entry_count = 15;
         do {
@@ -358,7 +358,7 @@ void BattleFx_RunOrbitingParticles(void)
         } while (entry_count >= 0);
 
         if (scene->child_option == 0) {
-            Audio_PlayCue(0xdc);
+            Audio_PlayCue(220);
             Object_SetMode(main_particle, 2);
         }
 
@@ -431,7 +431,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *object)
         position[1] = object->y + 0x20000;
         position[2] = object->z;
         Vector_AddPolarOffset(Random16() * 6, Random16(), position);
-        spark = Object_Spawn(0x11d, position[0], position[1], position[2]);
+        spark = Object_Spawn(285, position[0], position[1], position[2]);
         if (spark != 0) {
             spark->update = BattleFx_SwayParticle;
             spark->scale_x = spark->scale_y = 0x9999;

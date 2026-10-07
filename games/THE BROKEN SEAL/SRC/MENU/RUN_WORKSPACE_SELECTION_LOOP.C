@@ -65,13 +65,13 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     work = gSelectionWork;
     window = Menu_CreateWorkspaceWindows();
 #if EDITION_INTERNATIONAL
-    y = -0x18;
+    y = -24;
     if (gDebugMode != 0) {
-        y = -0x10;
+        y = -16;
     }
-    pair = RenderResource_CreatePair(6, window, 0x28, y);
+    pair = RenderResource_CreatePair(6, window, 40, y);
 #else
-    pair = RenderResource_CreatePair(6, window, 0x28, -0x18);
+    pair = RenderResource_CreatePair(6, window, 40, -24);
 #endif
     WaitFrames(1);
     page = work->page;
@@ -93,7 +93,7 @@ redraw_menu:
             tbl = Menu_WorkspaceIconFrames;
             do {
                 icon = work->icon[i];
-                icon->sentinel = 0xFB;
+                icon->sentinel = 251;
                 UiIcon_PrepareObjectFar(icon);
                 index = (u8)icon->index;
                 dim = 0;
@@ -107,7 +107,7 @@ redraw_menu:
         }
         top = window->y;
         x = window->x * 8;
-        y = (((page * 3) + top) * 8) + 0x10;
+        y = (((page * 3) + top) * 8) + 16;
         Shop_SetCursorFar(
             &work->cursor,
             x,
@@ -145,7 +145,7 @@ redraw_menu:
 
 struct UiTileSlotWork {
     u8 unknown_000[RENDER_TILE_ATTR_OFS];
-    u8 used[0x100];
+    u8 used[256];
     u16 next;
 };
 

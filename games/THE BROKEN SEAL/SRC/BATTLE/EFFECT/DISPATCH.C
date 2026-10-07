@@ -27,6 +27,7 @@
 #define BattleEffect_RunStagedParticles ((void (*)(s32*))BattleEffect_RunStagedParticles)
 #define BattleFx_InitializeMode6 ((void (*)(s32*))BattleFx_InitializeMode6)
 #define BattleFx_InitializeMode10 ((void (*)(s32*))BattleFx_InitializeMode10)
+#define BattleFx_InitializeMode12 ((void (*)(s32*))BattleFx_InitializeMode12)
 
 
 typedef void (*Callback)(s32 *);

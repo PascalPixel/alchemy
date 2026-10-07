@@ -695,7 +695,6 @@ SECTIONS
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_REVEAL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_SHAKE.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000d85e8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SHATTER_ROCKS.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d9972)

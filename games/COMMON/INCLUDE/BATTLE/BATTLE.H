@@ -579,7 +579,7 @@ s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high);
 #ifndef OWN_BattleFx_InitializeMode10
 void BattleFx_InitializeMode10(struct BattleEffectArgument *efx);
 #endif
-void BattleFx_InitializeMode12(s32 *);
+void BattleFx_InitializeMode12(struct BattleEffectArgument *efx);
 #ifndef OWN_BattleFx_InitializeMode6
 void BattleFx_InitializeMode6(struct BattleEffectArgument *efx);
 #endif

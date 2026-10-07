@@ -1,5 +1,50 @@
 /* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
    (K1: stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   Stock agbcc_arm (2026-10-07, session 4): listing 157, draft 157,
+   common 139, differ 36, from 60.
+   - Prologue (60 -> 56): sched2 links an insn to its predecessor at cost
+     1 when the consumer is unrecognized (insn_cost, LINK_COST_FREE), so
+     the parameter copy written as asm("mov %0, %1") with the asm clobbering
+     r9, and the far-call table in a register variable in r9, give both
+     the mov and the WaitFramesFar load priority 1 (from 5): push; mov r5,
+     r1; ldr r9; sub sp as listed. Without the r9 clobber (58) the load
+     stays below; with the clobber but far an ordinary pseudo, sched1 moves
+     the load above the asm, far conflicts with r9 and the allocation
+     shifts (148).
+   - x = to->x - from->x; z = to->z - from->z and a block-local loop x
+     (57): the prologue to the ArcTan call matches.
+   - Loop: a = (s16)t before out->a = v->u = t; union Word k after the u
+     stores; b = ((s16)u << 8) * -k; a = (a << 8) * k (a separate a << 8
+     pseudo gives lsl r3, lr, #8; a <<= 8; a *= k reuses one register);
+     v->dx = -(a + FIXED_MUL(z, -sn)) for add r1, lr, r1.
+   - FixedMul with RdHi as asm operand 0 ("=r,&r") so local-alloc ties RdHi
+     with a dying Rs (block_alloc ties operand 0 only when it is not
+     earlyclobber): the loop's x lands in r2 and the whole first loop
+     matches but for the oz reload register (49).
+   - Block 0's two smulls need the opposite (RdLo first, FixedMulPre): with
+     RdHi first, oz's RdHi ties with the dying 0x8000 (Rm) and reload
+     copies it out (ldr r5, [r5, #8]; smull r0, r5; mov r2, r5). A sched1
+     barrier after oz (asm volatile("")) keeps the gScanlineAngle load and
+     compare after oz's orr: oz's orr is a birthing insn (adjust_priority
+     gives it max priority), so sched1 otherwise puts the compare first and
+     the load's r3 blocks oz's RdLo. Then half is r1, ox's smull r0, r3 and
+     oz's RdHi r2 as listed (36).
+   Remaining (36): block 0's two output reloads of the spilled ox and oz
+   (orr r0 / orr ip where the listing has r2 / r1: combine_reloads gives
+   the output the first dying input, r0, the listing a fresh register) and
+   oz's RdLo ip for r3; the mov r0, r8 / str r8, [r2] pair before the Sin
+   call (the call waits the store's cost 2, so the mov is placed between);
+   the reload registers of ox and oz loads in both loops and the ldrh pair
+   in the else loop (r2 / r3 for r1 / r2), which follow reload's round
+   robin over the spill registers; the odd-frame y's ldr r2, [sp] and ldr
+   r1, [r7, #12] above ldrsh r3.
+   Session 4 trials:
+   - ox and oz volatile: 66; as a local array (o[1], o[0]): 42, the orr
+     still takes the dying r0; FixedMul as one asm with the lsl and orr:
+     52; FIXED_MUL(0x8000, ...) for ox and oz (constant input): 43, two
+     movs; ox = to->x; ox = FIXED_MUL(half, ox): unchanged.
+   Earlier sessions, before the prologue device (their differ counts are
+   for the drafts of the time):
    Stock agbcc_arm (2026-10-07, session 3): listing 157, draft 157,
    common 127, differ 60. Five empty non-volatile asm devices (FAKEMATCH,
    in the loops) make both loop tails match: in gcc_arm's sched.c,
@@ -275,24 +320,41 @@ extern struct FarCallStub WaitFramesFar[];
 extern u32 gScanlineAngle;
 
 extern u32 gFrameCount;
-
 static __inline__ s32 FixedMul(s32 a, s32 b)
 {
     s32 lo;
     s32 hi;
 
-    /* FAKEMATCH: register choice; RdLo early-clobbered, RdHi either tied to
-       Rs (when b dies, as listed) or early-clobbered; camelot_arm 104 to 99. */
+    /* FAKEMATCH: register choice; RdHi is operand 0 so local-alloc ties it
+       with Rs when Rs dies (the loop's sn * x takes x's register, as listed);
+       RdLo early-clobbered; stock 52 to 36 with FixedMulPre below. */
     CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
-    asm volatile("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
+    asm volatile("smull %1, %0, %2, %3" : "=r,&r"(hi), "=&r,&r"(lo) : "r,r"(a), "0,r"(b));
     return (u32)lo >> 16 | hi << 16;
 }
 #define FIXED_MUL(a, b) FixedMul(a, b)
 
+static __inline__ s32 FixedMulPre(s32 a, s32 b)
+{
+    s32 lo;
+    s32 hi;
+
+    /* FAKEMATCH: register choice; the same smull with RdLo as operand 0, so
+       local-alloc ties nothing: with FixedMul's order RdHi of oz's smull
+       takes the dying 0x8000 (Rm) and reload copies it out (differ 49). */
+    CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
+    asm volatile("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
+    return (u32)lo >> 16 | hi << 16;
+}
+
+union Word {
+    s32 i;
+};
+
 typedef s32 (*ArcTan2Fn)(s32, s32);
 typedef s32 (*TrigFn)(s32);
 
-void Transform_UpdateVertices(struct Position *from, struct Position *to, struct Vertex *v, struct VertexPair *out)
+void Transform_UpdateVertices(struct Position *from, struct Position *to_arg, struct Vertex *v, struct VertexPair *out)
 {
     u32 angle;
     s32 ox;
@@ -308,34 +370,44 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
     s32 *center;
     s32 z;
     s32 x;
+    struct Position *to;
+    /* FAKEMATCH: the far-call table lives in r9 so the mov below can clobber it; its load then follows the mov's free link, not the push's store cost */
+    register struct FarCallStub *far asm("r9");
 
-    x = to->x;
-    z = to->z;
-    z -= from->z;
-    x -= from->x;
-    angle = (u16)((ArcTan2Fn)WaitFramesFar[8].target)(x >> 4, z >> 4);
+    /* FAKEMATCH: the parameter copy as an asm, so sched2 links it to the push at cost 1 (an unrecognized consumer) and places it and the r9 load above sub sp as listed; any recognized first writer of a saved register waits the push's cost 5 */
+    asm("mov %0, %1" : "=r"(to) : "r"(to_arg) : "r9");
+    far = WaitFramesFar;
+
+    x = to->x - from->x;
+    z = to->z - from->z;
+    angle = (u16)((ArcTan2Fn)far[8].target)(x >> 4, z >> 4);
     {
         s32 half = 0x8000;
-        ox = FIXED_MUL(half, to->x);
-        oz = FIXED_MUL(half, to->z);
+        ox = FixedMulPre(half, to->x);
+        oz = FixedMulPre(half, to->z);
     }
+    /* FAKEMATCH: sched1 barrier; without it oz's orr, a birthing insn, outranks the compare and the gScanlineAngle load lands between smull and orr, taking r3 from oz's RdLo */
+    asm volatile("");
     if (angle != gScanlineAngle) {
         gScanlineAngle = angle;
-        sn = ((TrigFn)WaitFramesFar[11].target)(angle);
-        cs = ((TrigFn)WaitFramesFar[12].target)(angle);
+        sn = ((TrigFn)far[11].target)(angle);
+        cs = ((TrigFn)far[12].target)(angle);
         center = &gProjection.center_x;
         for (i = 0; i < 160; i++) {
-            x = v->x;
+            s32 x = v->x;
+
             z = v->z;
             t = -(FIXED_MUL(cs, x) / 256);
+            a = (s16)t;
             out->a = v->u = t;
             u = FIXED_MUL(sn, x) / 256;
             v->v = u;
             out->b = u;
-            k = *center;
-            a = (out->a << 8) * k;
-            v->dx = -(FIXED_MUL(z, -sn) + a);
+            /* FAKEMATCH: k read in alias set 0, so its load conflicts with the short stores of v and out and stays below both u stores, as listed */
+            k = ((union Word *)center)->i;
             b = ((s16)u << 8) * -k;
+            a = (a << 8) * k;
+            v->dx = -(a + FIXED_MUL(z, -sn));
             v->dz = b + FIXED_MUL(z, cs);
             out->x = (ox + v->dx) >> 8;
             out->y = (oz + v->dz) >> 8;

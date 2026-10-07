@@ -20,11 +20,25 @@
  *   [sp, #24]) where native loads the index first; lreg has (plus (reg
  *   ids) (reg cursor*2)), so native likely has the operands the other way
  *   round there. pending = 0 before head = entries: same 2.
- *   Next: an honest source shape with about 18 more dead stores (36 to 41
- *   real insns at GCSE that flow or combine remove), or 32 to 35 fewer.
- *   Bitfield writes into the same byte or halfword give exactly that
- *   pattern (CSE folds each read-modify-write, flow kills the overwritten
- *   store), so the native may write the sprite entries' fields one by one.
+ *   Twenty stores give 727 buckets and differ 2 as well (1451 insns after
+ *   addressof). Target: 1445 to 1452 real insns after addressof (725 or
+ *   727 buckets) against 1411 now, or 1373 to 1376 (689).
+ * - the spread loop as for (i = 0; (u32)i < spread; i++): no change (102,
+ *   1411 insns), kept as the plainer form.
+ * Lead, not kept: jump2 cross-jumps (JUMP_CROSS_JUMP after reload), so a
+ *   tail the native wrote out in every case is merged into one copy in
+ *   the output, but every copy counts at GCSE. The no-condition drawing
+ *   (nibble 2, 0x8A3, nibble 15) written out in cases 5, 3, 4 and 6
+ *   instead of goto no_condition: 1443 insns, 723 buckets, differ 447;
+ *   in cases 4 and 6 only: 1432, 717, 449. Both lengthen pos's live range
+ *   so pos spills and loses fp (draft 1586: one register copy more,
+ *   frame 320), the old pos/0 priority problem. Next: the tail written
+ *   out in all four cases plus 2 to 9 more such insns, with pos kept in
+ *   fp; check case 7's own nibble 2/15 pair and the other gotos
+ *   (frame_tail, draw_name, step_back) for tails the native wrote out.
+ * Bitfield stores cannot explain the extra insns: SLOW_BYTE_ACCESS is 0,
+ *   so field writes take the narrowest mode, while native stores the
+ *   entry's word at +4 whole.
  * Session T10-08026080/4 (from 116), kept:
  * - the clear loop as for (i = 0; i < 6; i++) tbl[i].flags = 0: loop's
  *   dbra reversal (one store to a giv of i) turns it into the native
@@ -432,9 +446,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         cnt = 0;
         for (i = 0; i < 6; i++)
             tbl[i].flags &= (u8)~2;
-        i = 0;
-        if ((u32)i < spread) {
-            do {
+        for (i = 0; (u32)i < spread; i++) {
+            {
                 n = cursor + i;
                 if (n < total && ids[n] != 0xFE) {
                     selIds[cnt] = ids[n];
@@ -456,8 +469,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     selSlot[cnt] = (u8)(6 - i);
                     cnt++;
                 }
-                i++;
-            } while ((u32)i < spread);
+            }
         }
         for (i = 0; i < 6; i++) {
             if ((tbl[i].flags & 2) == 0)

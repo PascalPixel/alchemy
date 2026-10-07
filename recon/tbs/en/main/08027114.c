@@ -1,3 +1,6 @@
+/* Trial (queue3 after 1309): final cost loop as while (required <= available),
+ * with an exit after j reaches 4 and the zero store after the loop: 1573.
+ * Restored the for loop; no additional device or source change kept. */
 /* 2026-10-07 queue3: differ 1309 (listing 1727, draft 1824, common 1121).
  * Corrected three source behaviors against the current listing: the command
  * selected in mode survives Resource_LoadIndexedIntoBuffer (only its r0 result

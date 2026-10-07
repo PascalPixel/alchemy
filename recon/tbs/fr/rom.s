@@ -1738,12 +1738,20 @@ Palette_ChannelCurveLight:
 	.global Palette_ChannelCurveContrast
 Palette_ChannelCurveContrast:
 	.incbin "baserom.gba", 0x000f6a64, 0x0000059c
-	.section .rom.000f7168, "ax"
-	.global LuckyDice_Run
-	.type LuckyDice_Run, %function
-	.thumb_func
-LuckyDice_Run:
-	.incbin "baserom.gba", 0x000f7168, 0x00001e98
+	.section .rom.000f83dc, "ax"
+	.incbin "baserom.gba", 0x000f83dc, 0x00000020
+	.global Data_080f53fc
+Data_080f53fc:
+	.incbin "baserom.gba", 0x000f83fc, 0x00000004
+	.global Data_080f5400
+Data_080f5400:
+	.incbin "baserom.gba", 0x000f8400, 0x00000008
+	.global Data_080f5408
+Data_080f5408:
+	.incbin "baserom.gba", 0x000f8408, 0x00000012
+	.global Data_080f541a
+Data_080f541a:
+	.incbin "baserom.gba", 0x000f841a, 0x00000be6
 	.section .rom.000fb708, "ax"
 	.global ReelGame_SparkCellOffsets
 ReelGame_SparkCellOffsets:

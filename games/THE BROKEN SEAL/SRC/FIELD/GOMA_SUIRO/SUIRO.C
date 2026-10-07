@@ -9,10 +9,10 @@
 #include "SYSTEM.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "GOMA.H"
-#include "CALL.H"
 #include "SCENE_IDS.H"
 
 
@@ -58,7 +58,7 @@ void FieldScene_RunActor8AtCell24Sequence(void)
     if (value == 24) {
         SceneEffect_RunActorBurst(8);
         Object_GetById(8)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-        Call6(Map_CopyCellAttributeRect, 19, 74, 9, 3, 19, 17);
+        Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
         target = Object_GetById(8);
         Engine_ActorSetSpriteFlags((s32)target, 0);
         GameFlag_SetBit(0x864);
@@ -89,7 +89,7 @@ s32 FieldScene_PlaceActor8OnEntry(void)
                 Engine_ActorSetSpriteFlags(record, 0);
                 *((u8 *)Object_GetById(8) + 35) |= 2;
                 Object_SetModeById(8, 2);
-                Call6(Map_CopyCellAttributeRect, 19, 74, 9, 3, 19, 17);
+                Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
             }
         }
     }

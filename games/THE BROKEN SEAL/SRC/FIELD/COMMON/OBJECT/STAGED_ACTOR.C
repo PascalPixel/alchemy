@@ -12,36 +12,21 @@
 #include "STAGED_ACTOR.H"
 #include "FIXED_POINT_POSITION.H"
 #include "IWRAM_CALL.H"
-#include "CALL.H"
 #include "FIELDRUN.H"
 #include "MAP.H"
 #include "MAP_SCROLL.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
+#include "FIELD_EVENT.H"
 extern u8 gMapCellBuffer[];
 
 extern u8 *gWork;
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
-extern void WaitFrames(s32);
-extern void Object_SetMode(void *, s32);
 extern void Object_SetPosition(void *, s32, s32, s32);
 extern void Object_CommitPosition(void *);
 extern s32 Object_CheckMovementCollision(void *, s32 *);
-extern void *Object_GetById(u32);
-extern void Battle_WaitMode0(s32);
-extern void ObjectMotion_SetSpeedParameters(s32, s32, s32);
-extern void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
-extern void ObjectMotion_CommitCurrentPositionAndActivate(s32);
-extern void Object_SetModeById(s32, s32);
 extern void BattleFx_PlayQueuedSound(void);
-extern void Audio_PlayCue(s32);
-
-static __inline__ void ConfigureStagedActorMotion(
-    s32 actor_id, s32 movement_rate, s32 movement_step)
-{
-    /* FAKEMATCH: a direct call loads rate and step before actor 0; this boundary sets r0 before those literals. */
-    ObjectMotion_SetSpeedParameters(actor_id, movement_rate, movement_step);
-}
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
@@ -334,7 +319,6 @@ found:
 
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
-    /* FAKEMATCH: the integer cell read keeps incoming probe spills before the cache load. */
     struct MapScrollWork *workspace;
     struct StagedActor *actor;
     struct StagedActorProbePosition original_position;
@@ -422,7 +406,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
                        probe.position_z);
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     Object_SetModeById(0, 2);
-    ConfigureStagedActorMotion(0, 0x4ccc, 0x1999);
+    Actor_SetSpeed(0, 0x4ccc, 0x1999);
 
     {
         s32 packed_orientation = StagedActor_DirectionSteps[direction];
@@ -449,6 +433,8 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         u8 *table = (u8 *)StagedActor_FootprintBounds;
         s32 horizontal_origin;
         s32 vertical_origin;
+        s32 dest_x;
+        s32 dest_z;
 
         {
             s32 table_offset = probe.footprint_index << 4;
@@ -464,8 +450,10 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         }
         horizontal_origin = workspace->layers[1].offset_x >> 20;
         vertical_origin = workspace->layers[1].offset_y >> 20;
+        dest_x = horizontal_origin + probe.position_x;
+        dest_z = vertical_origin + probe.position_z;
 
-        Call6(Map_CopyCellAttributeRect, probe.position_x, probe.position_z, horizontal_extent, vertical_extent, horizontal_origin + probe.position_x, vertical_origin + probe.position_z);
+        Map_CopyCellAttributeRect(probe.position_x, probe.position_z, horizontal_extent, vertical_extent, dest_x, dest_z);
         StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z,
                                                horizontal_extent, vertical_extent, 255);
         StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z,

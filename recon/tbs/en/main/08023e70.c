@@ -1,3 +1,4 @@
+/* Thirteenth pass (2026-10-07, 39 to 2). Search: the native first probe is selected[k] with k folded to 0 late (combine, from r1's last value) and its 228 in a pseudo (movs r2, #228; no reload), and the native loop is [k++; k > 7 exits; probe] entered after that probe, with no duplicated exit test. Writing the probe out as selected[k] before for (;;) { k++; if (k > 7) break; probe } gives exactly that shape, with no jump.c duplicate test to fold (a for loop's copied test k > 7 stays, the 28 form below). k's copy k = redraw survives only with: k in r1 (a pseudo k is a biv loop.c strength-reduces, 37), a CSE1 block end after the clear call (an empty one-pass block; without it CSE1 deletes the second zero, 29), a second redraw = 0 in the search block (gcse cprop skips a copy whose source is set earlier in its block; cse2 deletes it as a no-op, 29 without), and a volatile asm("" :) that flushes cse2 before the copy (29 without). The flush and the redundant zero are only order/register devices under S2 as amended (Pascal, 2026-10-07): they decide that the ldr r1, [sp, #28] exists, so this form needs a ruling before adoption. Probe as selected[0] 16 (adds r3, #228; ldr r3, [r3] instead of the index register). Id bases: asm("" : "+r"(n) : "r"(base)) at all three sites (12 to 6): base stays a pseudo in r3 (combine cannot fold a register the asm also reads), and its load now feeds the add at cost 2 instead of an asm (a link into an unrecognised insn is free in haifa's insn_cost), so it ties lsls at priority 38 and wins on dependants. 0xf335 call: an empty one-pass block after it (6 to 2): its loop notes make the dirty update a sched2 barrier, so the post-call writes of r1, r2, r3 stop counting as dependants of the argument insns and rank_for_schedule gives str, r0 copy, subs r2, ldr r1, subs r3 as native. Remaining (2): cursor x, mov r2, sl (the reload of row for row * 2) and subs r3, #2 tie at priority 70, class 3, three dependants each, and luid puts subs first; trials: x - 2 split into two statements 35, (list_win->y + row * 2) 16, -2 + x * 8 2 (same), row * 2 first 14, an asm("" : : "l"(row)) use between the shift and the subtract 2 (mov r2, sl then lands in the ldrh delay slot before lsls). Rule: S2 now admits an empty one-pass block that restores a block boundary the bytes prove (Pascal, 2026-10-07). */
 /* Twelfth pass (2026-10-07, 39, no gain). Messages: each PO file numbers its own edition's messages, so the four ids are per edition: en 02285 "You have no Djinn.", 02287 "Cannot use the same Djinni twice.", 02200 "Your Djinni is still recovering.", 02201 "Ready to summon."; ja 02287 ジンをもっていません, 02289 同じジンは2かい えらべません, 02202 リカバリー中です, 02203 しょうかん スタンバイじょうたいです (all eight are unnamed "message" entries); in DE, ES, FR and IT the ids 02285, 02287, 02200 and 02201 hold other text (class names, "?"), so those four copies carry their own ids in their pools, still to be read from each copy before the names are added to those PO files. Trials: for (k = is_used = redraw; ...) with no separate is_used = 0 39 (same code: CSE folds both to 0); k = redraw; for (;;) { probe; if (++k > 7) break; } 132 (the loop starts with the probe's exit, so no first probe is peeled before it and the native's movs r2, #228 probe is lost). */
 /* Eleventh pass (2026-10-07, 39, no gain). Editions located (alchemy similar --editions over all twelve builds; alchemy diff cannot score them, as each sits inside an unbounded scaffold run): tbs-ja 08023ecc, tbs-de 08022b34, tbs-es 08022f58, tbs-fr 08022e14, tbs-it 08023ec4, each 2756 bytes. de, es, fr and it are relocated copies of the English: only literal-pool words and call targets differ, so one English body serves them once its message ids are names. tbs-ja differs from the English in 8 instructions, all edition values: the CopyMessageString count is 32 for 52 at all five calls (TEXT_COUNT under EDITION_INTERNATIONAL, as COUNTDWN.C has it), and UiText_DrawNumberAtOffset takes 2 and 40 for 1 and 48. Its pool differs in the four message ids, each 2 higher in ja (en 0x8ed "You have no Djinn.", 0x8ef "Cannot use the same Djinni twice.", 0x898 "Your Djinni is still recovering.", 0x899 "Ready to summon."; all are unnamed "message" entries in the PO files, so adoption names them in all six), in ctx->dirty and ctx->menu_busy at 0xf33/0xf36 for 0xea3/0xea6 (WINDOW.H's edition layout), and in relocated data. The 0x666 and 0x45f id bases are the same in ja. CSE, read again in cse.c: cse_end_of_basic_block ends a scan only at a CODE_LABEL reached by fall-through (and, in CSE1, at NOTE_INSN_LOOP_END); a branch is followed only when its label has one use (behind a BARRIER, or around a skipped block, where invalidate_skipped_block is used instead of record_jump_equiv). By the source's structure every path that reaches the search also passes the join's redraw = 0, since the redraw block starts at the label the loop-top tests jump to. cse_basic_block also flushes its table after 1000 insns of one path, but the search lies well under 1000 insns after that label, so the flush does not explain the native copy either. reload_cse_simplify_set (reload1.c) puts only a constant or a register in place of a source, never a stack slot, so the native ldr r1, [sp, #28] confirms that k = (reg redraw) reached reload. Combine (combinable_i3pat) refuses the 0xf335 width - 2 at the r2 move because the move before it sets r1 (sets_function_arg_p on prev_nonnote_insn); the argument moves are emitted in register order (r0 copy, r1, r2 in the sixth pass dump), so the r2 move always follows the r1 move. So the native copy needs three things at once: CSE1 and cse2 must not see redraw = 0 in the copy's extended block, which takes a label at the start of the search block (or a CSE1 loop end plus a cse2 flush, as the 28 trial does), and gcse cprop must not fold the copy, which it skips only when redraw is set earlier in the copy's own block. Trials: do { UiWork_ClearValueNameTables(); } while (0) with for (k = redraw; ...) and no other change 81 (CSE1 stops at the loop end, but cprop folds the copy and the copied test from the join's zero); alchemy permute rejects this draft (it does not permute inline assembly); a 5-minute run on a scratch copy with the asm wrapped in PERM_IGNORE and the clear call, is_used = 0 and the search in PERM_RANDOMIZE compiled 2,001 candidates and none beat the draft (39, weighted 610). */
 /* Tenth pass (2026-10-07, 39, no gain). This agscc runs jump, cse, addressof, gcse, loop, cse2, cfg, life, combine, ce, regmove, lreg, greg, flow2, ce2, sched2, jump2: cross-jumping comes after sched2. In the .gcse dump the search's duplicated first probe (insns 3292-3300, offset 228 already folded) sits before NOTE_INSN_LOOP_BEG in bb 31 with the clear call, is_used = 0 and k's init (insn 542), so whatever folds the probe sees the k init in the same block; the native copy needs a pass that knows k = 0 for the probe but keeps k = (reg redraw), not found. Trials: redraw = 0 at the end of the sub_sel != 0 arm, else redraw = sub_sel, with for (k = redraw; ...) 97 (CSE folds sub_sel to 0 from the jump equivalence, the two arms keep r2 and r3 so jump2 does not cross-jump them, and k is still movs r1, #0). A CSE flush is asm("" :) (an operand asm with no outputs is a volatile ASM_OPERANDS, and cse_insn calls flush_hash_table on it; plain asm("") is an ASM_INPUT and does not). is_used = 0; asm("" :); for (k = redraw; ...) 81: CSE1 keeps the copy and writes the duplicated test as redraw > 7, but gcse cprop folds both from the join block's redraw = 0. The same with redraw = 0 moved from the join into the search block before the flush 85: for the first time the native ldr r1, [sp, #28] and the folded movs r2, #228 probe both appear (cprop skips the copy because redraw is set earlier in its block, and folds the probe in the block after the duplicated test through k = redraw and that block's zero), but the zero is stored after the clear call instead of before the cnt test, and the duplicated test stays (cmp r3, #7; bgt). Keeping both zeros 81 (CSE1 deletes the second as a no-op set). So the native shape needs a zero set in the search block that CSE1 keeps and a later pass deletes, plus a fold of the duplicated test. The first half is found: CSE1 (not cse2) ends its run at a NOTE_INSN_LOOP_END (cse_end_of_basic_block, ! after_loop), so with the join's redraw = 0 kept, the clear call wrapped as do { ... } while (0), then is_used = 0; redraw = 0; asm("" :); for (k = redraw; ...): CSE1 keeps the second zero, cprop skips the copy and folds the probe, cse2 deletes the second zero as a no-op, and the native store before the cnt test, ldr r1, [sp, #28] and movs r2, #228 all appear (72). What remains there is the duplicated exit test (ldr r1, [sp, #28]; cmp r1, #7; bgt before the probe): it sits in the copy's block after the flush, so neither CSE pass knows k and cprop skips it; the native needs a block boundary or a CSE fact between the copy and that test. With k also a fixed-register variable, register s32 k asm("r1"), that form scores 28 (29 without the asm("" :) flush): the only search-site difference left is that duplicated test (ldr r1, [sp, #28]; cmp r1, #7; bgt.n +42 before the probe, the native has the load after the probe and no test), and with its 6 bytes the pool offsets, plus the known lsls r5 (0x45f), 0xf335 and cursor x schedule pairs. The 39 body is kept because the do-while (0), the redundant second redraw = 0 and the flush decide which instructions exist, which S2 does not allow a device to do; the next step is a plain source shape with the same effect (a CSE1-only boundary and a zero set in the search block), and a fold of the duplicated test. At the 0x45f site a block-local yy = j * 16 before the base 39 (same code), after the hold 375. Editions: tbs-ja and tbs-de have no Battle_SelectAbility symbol (08023e70 there is other code), so per-edition scores need the copies located first (alchemy similar --editions over all twelve builds). */
@@ -165,13 +166,27 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             }
             redraw = 0;
             if (cnt != 0) {
-                s32 k;
+                /* FAKEMATCH: k in r1 as native; a pseudo k is a biv loop.c strength-reduces in the loop below (adds r2, #4; 2 -> 37) */
+                register s32 k asm("r1");
                 UiWork_ClearValueNameTables();
+                /* FAKEMATCH: one-pass block, a CSE1 block end: without it CSE1 deletes the second redraw = 0 as a no-op (2 -> 29) */
+                do { } while (0);
                 is_used = 0;
-                for (k = 0; k <= 7; k++) {
-                    if ((u32)MENU_STATE->selected[k] == cur) {
-                        is_used = 1;
-                        break;
+                /* FAKEMATCH: redundant; gcse cprop leaves k = redraw alone only when redraw is set earlier in its block, and cse2 then deletes this as a no-op (2 -> 29) */
+                redraw = 0;
+                /* FAKEMATCH: a volatile asm flushes cse2's table, so k = redraw stays the native ldr r1, [sp, #28] instead of folding to 0 (2 -> 29) */
+                asm("" :);
+                k = redraw;
+                if ((u32)MENU_STATE->selected[k] == cur) {
+                    is_used = 1;
+                } else {
+                    for (;;) {
+                        k++;
+                        if (k > 7) break;
+                        if ((u32)MENU_STATE->selected[k] == cur) {
+                            is_used = 1;
+                            break;
+                        }
                     }
                 }
                 if (is_used != 0) {
@@ -187,8 +202,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                         {
                             s32 n = (s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff));
                             s32 base = 0x666;
-                            /* FAKEMATCH: held from after the 255 mask dies, the id base takes r3 as in the native; inline it is a rotation reload (r1/r2) */
-                            asm("" : "+r"(base));
+                            /* FAKEMATCH: base is an input of this hold on n, so combine cannot fold it into the add (inline it is a rotation reload, r1/r2) and it takes r3 as native; its load feeds the add directly and gains a dependant, so sched2 puts it before lsls as native */
+                            asm("" : "+r"(n) : "r"(base));
                             UiText_CopyMessageString(n + base, buf, 52);
                         }
                         if (detail_win != 0) {
@@ -206,8 +221,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     {
                         s32 n = (s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff));
                         s32 base = 0x666;
-                        /* FAKEMATCH: held from after the 255 mask dies, the id base takes r3 as in the native; inline it is a rotation reload (r1/r2) */
-                        asm("" : "+r"(base));
+                        /* FAKEMATCH: base is an input of this hold on n, so combine cannot fold it into the add (inline it is a rotation reload, r1/r2) and it takes r3 as native; its load feeds the add directly and gains a dependant, so sched2 puts it before lsls as native */
+                        asm("" : "+r"(n) : "r"(base));
                         UiText_CopyMessageString(n + base, buf, 52);
                     }
                 }
@@ -236,8 +251,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     {
                         s32 n = (s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff));
                         s32 base = 0x45f;
-                        /* FAKEMATCH: held from after the 255 mask dies, the id base takes r3 as in the native; inline it is a rotation reload (r1/r2) */
-                        asm("" : "+r"(base));
+                        /* FAKEMATCH: base is an input of this hold on n, so combine cannot fold it into the add (inline it is a rotation reload, r1/r2) and it takes r3 as native; its load feeds the add directly and gains a dependant, so sched2 puts it before lsls as native */
+                        asm("" : "+r"(n) : "r"(base));
                         UiText_DrawCharacterAtOffset(n + base, (struct RenderInput *)list_win, 8, j * 16);
                     }
                     if (code & 0x3e0000) {
@@ -369,6 +384,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     UiWindow_SetTilemapEntry(detail_win, 0xf334, detail_win->width - sub_cnt - 3, -1,
                                   0);
                     UiWindow_SetTilemapEntry(detail_win, 0xf335, detail_win->width - 2, -1, 0);
+                    /* FAKEMATCH: one-pass block, a block end: its loop notes make the dirty update a sched2 barrier, so the post-call writes of r1, r2 and r3 no longer count as dependants and the 0xf335 arguments take the native order (subs r2, #2 after the r0 copy; 6 -> 2) */
+                    do { } while (0);
                     ctx->dirty |= (u8)(2 << (detail_win->y >> 2));
                 }
                 if (sub_sel == 0 && sub_cnt != 0) {

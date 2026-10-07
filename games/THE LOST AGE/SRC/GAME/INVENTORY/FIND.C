@@ -1,5 +1,18 @@
 #include "INVENTORY.H"
 
+s32 Inventory_Find(s32 owner, s32 item_id)
+{
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    s32 slot;
+
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+        if ((inv->inventory[slot] & ITEM_ID_MASK) == item_id) {
+            return slot;
+        }
+    }
+    return -1;
+}
+
 s32 PartyInventory_FindOwner(s32 item_id)
 {
     s16 owners[10];

@@ -1,19 +1,25 @@
-#include "RUNTIME_MEM.H"
-#include "OBJECT_LOOKUP.H"
+/* differ 8: the native spills the event block and stores the column bounds before the next constant's shift; only ARM9TDMI store scheduling differs */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
-#include "SCENE.H"
-#include "OBJECT_EFFECT.H"
+#include "RAM_BUFFER.H"
+#include "EVENTWRK.H"
+#include "MAP.H"
 #include "OBJECT_RUNTIME.H"
-void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
-void Map_ApplyWorkOriginAndSpanFar(void);
-extern u8 gCam[];
 
 void WaitFrames(s32);
 
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {
     s32 should_use_setter;
-    void *runtime_block;
+    struct EventWork *runtime_block;
     s32 minimum_x;
     s32 minimum_z;
     s32 maximum_x;
@@ -22,31 +28,31 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     s32 position_x;
     s32 position_z;
     s32 position_y;
-    void *camera_state;
-    void *object;
+    struct MapWork *map;
+    struct ObjectRuntime *object;
 
     position_x = requested_x;
     position_y = requested_y;
     should_use_setter = use_setter;
     position_z = requested_z;
-    runtime_block = Runtime_AllocateBlock(0x1B, 0xCCC);
-    object = FIELD_AT_OFFSET(runtime_block, void **, 0x1E0);
-    camera_state = *(void **)((u32)&gCam);
-    minimum_x = FIELD_AT_OFFSET(camera_state, s32, 0xEC) + 0x780000;
-    object_z_offset = FIELD_AT_OFFSET(object, s32, 0xC);
-    minimum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF0) + object_z_offset + 0x600000;
-    maximum_x = FIELD_AT_OFFSET(camera_state, s32, 0xF4) + 0xFF880000;
-    maximum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF8) + object_z_offset + 0xFFC00000;
-    FIELD_AT_OFFSET(camera_state, void **, 0) = (void *)(object + 8);
+    runtime_block = Runtime_AllocateBlock(108, 0xd50);
+    object = runtime_block->view_center;
+    map = Ram_HeapSlots->map_work;
+    minimum_x = map->min_x + 0x780000;
+    object_z_offset = object->y;
+    minimum_z = map->min_z + object_z_offset + 0x600000;
+    maximum_x = map->max_x + 0xFF880000;
+    maximum_z = map->max_z + object_z_offset + 0xFFC00000;
+    map->origin = &object->x;
     Object_ResetMotion(object);
     if (position_x == -1) {
-        position_x = FIELD_AT_OFFSET(object, s32, 8);
+        position_x = object->x;
     }
     if (position_y == -1) {
-        position_y = FIELD_AT_OFFSET(object, s32, 0xC);
+        position_y = object->y;
     }
     if (position_z == -1) {
-        position_z = FIELD_AT_OFFSET(object, s32, 0x10);
+        position_z = object->z;
     }
     if (position_x < minimum_x) {
         position_x = minimum_x;
@@ -61,11 +67,11 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
         position_z = maximum_z;
     }
     if (should_use_setter == 0) {
-        FIELD_AT_OFFSET(object, s32, 8) = position_x;
-        FIELD_AT_OFFSET(object, s32, 0xC) = position_y;
-        FIELD_AT_OFFSET(object, s32, 0x10) = position_z;
-        WaitFrames(1U);
-        if (FIELD_AT_OFFSET(runtime_block, s16, 0x19E) != 3) {
+        object->x = position_x;
+        object->y = position_y;
+        object->z = position_z;
+        WaitFrames(1);
+        if (runtime_block->control_mode != 3) {
             Map_ApplyWorkOriginAndSpanFar();
         }
     } else {

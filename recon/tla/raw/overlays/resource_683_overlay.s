@@ -344,100 +344,100 @@ Data_020003d8:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002406
+	.4byte MsgThereSNot
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002407
+	.4byte MsgEveryoneInChampa
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002408
+	.4byte MsgWhenMyFather
 	.4byte 0x00008400
 	.4byte 0xffff000b
-	.4byte 0x00002409
+	.4byte MsgMyDadWent
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000240a
+	.4byte MsgTheseRaftsAre
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000240b
+	.4byte MsgIfDadHadn
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000240c
+	.4byte MsgIHopeDad
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000240d
+	.4byte MsgFatherWorriesSo
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000240e
+	.4byte MsgTheTidalWave
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000240f
+	.4byte MsgItLookedTo
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002410
+	.4byte MsgMostOfThe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002411
+	.4byte MsgTheFishAre
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002412
+	.4byte MsgSomethingMustHave
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002413
+	.4byte MsgYouHaveTo
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002414
+	.4byte MsgWeVeSeen
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002415
+	.4byte MsgAGroupOf
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002416
+	.4byte MsgMoreVisitorsMeans
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002417
+	.4byte MsgNowThatI
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002418
+	.4byte MsgTheOceanHas
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002419
+	.4byte MsgIVeHeardRumors
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000241a
+	.4byte MsgWeChampaRely
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000241b
+	.4byte MsgAllTheSailors
 	.4byte 0x0000c400
 	.4byte 0xffff0013
 	.4byte Func_0200008c
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002431
+	.4byte MsgIHaveSome
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002432
+	.4byte MsgIfYouGo
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002433
+	.4byte MsgOurProductsCost
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002434
+	.4byte MsgTheStuffIn
 	.4byte 0x0000c400
 	.4byte 0xffff0015
 	.4byte Func_02000098
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002435
+	.4byte MsgListenIfYou
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002436
+	.4byte MsgWeUsedTo
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002437
+	.4byte MsgItSA
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002438
+	.4byte MsgWatchingOurCatches
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -463,100 +463,100 @@ Data_020005ac:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025dd
+	.4byte MsgWeDonT
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025de
+	.4byte MsgItSTrue
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000025df
+	.4byte MsgFatherSActing
 	.4byte 0x00008400
 	.4byte 0xffff000b
-	.4byte 0x000025e0
+	.4byte MsgWhenBriggsReturned
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025e1
+	.4byte MsgIDRather
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025e2
+	.4byte MsgBriggsIsA
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000025e3
+	.4byte MsgIfFatherSits
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000025e4
+	.4byte MsgQuittingTheirJobs
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000025e5
+	.4byte MsgIHearThat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000025e6
+	.4byte MsgWhileIM
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000025e7
+	.4byte MsgBriggsReallySaved
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000025e8
+	.4byte MsgTheNerveOf
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000025e9
+	.4byte MsgIShouldJust
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000025ea
+	.4byte MsgIRefuseTo
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000025eb
+	.4byte MsgIVeBeenWondering
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000025ec
+	.4byte MsgWeVillageElders
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000025ed
+	.4byte MsgANewImage
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000025ee
+	.4byte MsgObservingBriggsRecently
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000025ef
+	.4byte MsgItSeemsThe
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000025f0
+	.4byte MsgIForOne
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000025f1
+	.4byte MsgSureBriggsSaved
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000025f2
+	.4byte MsgSupportingAnEntire
 	.4byte 0x0000c400
 	.4byte 0xffff0013
 	.4byte Func_0200008c
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000026a8
+	.4byte MsgTheJewelsBriggs
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000026a9
+	.4byte MsgThanksToBriggs
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000026aa
+	.4byte MsgBriggsSMen
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000026ab
+	.4byte MsgNowSThe
 	.4byte 0x0000c400
 	.4byte 0xffff0015
 	.4byte Func_02000098
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x000026ac
+	.4byte MsgWeStillHaven
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x000026ad
+	.4byte MsgItSNice
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000026ae
+	.4byte MsgMostPeopleHere
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000026af
+	.4byte MsgTheOnlyWay
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -570,10 +570,10 @@ Data_02000780:
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000218d
+	.4byte MsgDidYouKnow
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002191
+	.4byte MsgIMSoGrateful
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

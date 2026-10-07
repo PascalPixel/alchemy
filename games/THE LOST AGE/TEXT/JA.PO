@@ -7,7 +7,7 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 408\n"
 "X-Alchemy-Target: tla-ja\n"
 
-msgctxt "message"
+msgctxt "MsgRustySword2"
 msgid "00000"
 msgstr "(きろくされてません)"
 
@@ -16775,7 +16775,7 @@ msgctxt "message"
 msgid "04191"
 msgstr "こ"
 
-msgctxt "message"
+msgctxt "MsgItemCommandUse"
 msgid "04192"
 msgstr "つかう"
 
@@ -17719,7 +17719,7 @@ msgctxt "message"
 msgid "04427"
 msgstr "つよそうなそうびひんゲット{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRaiseEveryoneS"
 msgid "04428"
 msgstr "みんなのレベルをあげます"
 
@@ -18687,7 +18687,7 @@ msgctxt "message"
 msgid "04669"
 msgstr "さびてます"
 
-msgctxt "message"
+msgctxt "MsgWeaponShopWelcome"
 msgid "04670"
 msgstr "おう いらっしゃい!{line_break}ウチの武器を 見てってくれよ。{end_now}"
 
@@ -18859,7 +18859,7 @@ msgctxt "message"
 msgid "04712"
 msgstr "なんだよ! いらないのかい {page_break}"
 
-msgctxt "message"
+msgctxt "MsgArmorShopWelcome"
 msgid "04713"
 msgstr "防具のことなら なんなりと{line_break}わたしに おもうしつけ下さい。{end_now}"
 
@@ -19031,7 +19031,7 @@ msgctxt "message"
 msgid "04755"
 msgstr "おや! ひつようないのですね{page_break}"
 
-msgctxt "message"
+msgctxt "MsgItemShopWelcome"
 msgid "04756"
 msgstr "いらっしゃいませ!{line_break}道具のごようは こちらでどうぞ。{end_now}"
 
@@ -19499,7 +19499,7 @@ msgctxt "message"
 msgid "04872"
 msgstr "うちの人 もっとやる気なら{line_break}お金もちにだってなれるのに{line_break}もったいないはなしだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGeneralStoreWelcome"
 msgid "04873"
 msgstr "いらっしゃい! ウチは{line_break}なんでもそろう よろずやよ{line_break}じっくり 見てってちょうだいね。{end_now}"
 
@@ -19639,7 +19639,7 @@ msgctxt "message"
 msgid "04907"
 msgstr "あら せっかくだけど・・・{line_break}お金がたりないみたいよ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgFixingThisWill"
 msgid "04908"
 msgstr "{argument_item_name:233}しゅうりだけど{line_break}{argument_signed_number}コインで いいかしら?{end_now}"
 
@@ -19695,7 +19695,7 @@ msgctxt "message"
 msgid "04921"
 msgstr "アラフラ町長{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFortuneTeller2"
 msgid "04922"
 msgstr "まじないし{end_wait}"
 
@@ -19783,11 +19783,11 @@ msgctxt "message"
 msgid "04943"
 msgstr "プロクス村のちょうろう{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgConfirmGraphic2"
 msgid "04944"
 msgstr "かおグラかくにん{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsaac2"
 msgid "04945"
 msgstr "ロビン{end_wait}"
 
@@ -19811,7 +19811,7 @@ msgctxt "message"
 msgid "04950"
 msgstr "シバ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPiers2"
 msgid "04951"
 msgstr "ピカード{end_wait}"
 
@@ -23335,7 +23335,7 @@ msgctxt "message"
 msgid "05831"
 msgstr "{argument_item_name:134}見つけた{page_break}さらに そこの方に{line_break}{argument_item_name:134}見つけた。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereTheyAre"
 msgid "05832"
 msgstr "あっ ヤツらが{line_break}あらわれたぞ!{end_wait}"
 
@@ -23599,7 +23599,7 @@ msgctxt "message"
 msgid "05897"
 msgstr "さあ 行くんじゃ・・・{line_break}まちあわせの 出島へ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreAreYou"
 msgid "05898"
 msgstr "だ だいじょうぶか{line_break}{actor_name:6}や・・・。{end_wait}"
 
@@ -23643,7 +23643,7 @@ msgctxt "message"
 msgid "05908"
 msgstr "{actor_name:6}たちは船の方ににげなさい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoI"
 msgid "05909"
 msgstr "おうえんが くるまで{line_break}ここで ふせいでろと{line_break}いわれたけど・・・{end_wait}"
 
@@ -23659,11 +23659,11 @@ msgctxt "message"
 msgid "05912"
 msgstr "それじゃ・・・ おまえらに{line_break}おれの ほんとうの力を{line_break}見せてやるとするか。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUggghICan"
 msgid "05913"
 msgstr "ウググ こんな女の子に{line_break}やられちまうなんて{line_break}オレっていったい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWaahhhItS"
 msgid "05914"
 msgstr "やや お前たちは・・・。{end_wait}"
 
@@ -23675,11 +23675,11 @@ msgctxt "message"
 msgid "05916"
 msgstr "女の子に じじいなら{line_break}こわくはないぜ{line_break}とっつかまえてやる!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOoooogMaybeI"
 msgid "05917"
 msgstr "アイタタ 女の子だとおもって{line_break}ゆだんしたのが しっぱいだ{line_break}くそう このつぎをおぼえてろ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaThatWas"
 msgid "05918"
 msgstr "ここで みはっていて{line_break}せいかいだったな。{end_wait}"
 
@@ -23691,19 +23691,19 @@ msgctxt "message"
 msgid "05920"
 msgstr "おまえらを とらえて{line_break}ヨデム様の 前に{line_break}さしだしてやる!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMaybeIShould"
 msgid "05921"
 msgstr "ムムム オレの力は{line_break}こんなはずでは・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllRightSo"
 msgid "05922"
 msgstr "にげられなかったのは{line_break}オレの方だったりして{line_break}まったく トホホ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhManThere"
 msgid "05923"
 msgstr "アイテテ せっかくの{line_break}てがらの チャンスが{line_break}水のあわになっちまった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyThatWas"
 msgid "05924"
 msgstr "なんじゃ モンスター・・・{line_break}よわいやつじゃったのう?{end_wait}"
 
@@ -23711,11 +23711,11 @@ msgctxt "message"
 msgid "05925"
 msgstr "まあ よわいヤツで{line_break}さいわいじゃったわい{line_break}さあ 出島へいそごうぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayThe"
 msgid "05926"
 msgstr "どこへ行く気じゃ {actor_name:6}{line_break}まちあわせの 出島へは{line_break}ここから西へ むかうんじゃ{page_break}そして ガケを下って{line_break}どうくつの入り口をはいり{line_break}そこをぬければ すぐじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWay"
 msgid "05927"
 msgstr "どこへ行く気じゃ {actor_name:6}{line_break}まちあわせの 出島へは{line_break}すぐこの下へ いかねばならん{page_break}そして 下ったさきにある{line_break}どうくつの入り口をはいり{line_break}そこを ぬければすぐじゃ{end_wait}"
 
@@ -25955,7 +25955,7 @@ msgctxt "MsgDeriHeyaBoringVillage"
 msgid "06486"
 msgstr "デリィは たびの戦士には{line_break}きっと たいくつであろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLookItS"
 msgid "06487"
 msgstr "見よ これは・・・{line_break}メナーディたちの船じゃ!{end_wait}"
 
@@ -26047,15 +26047,15 @@ msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06509"
 msgstr "あれだけの さわぎがおきて{line_break}なにもないなんて・・・{line_break}おかしいと おもったよ{page_break}そうだ オレたちがこわした{line_break}ろうやからにげたヤツ・・・{line_break}どこに行っただろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDoorIsHeld"
 msgid "06510"
 msgstr "とびらは ふしぎな力で{line_break}かたく とざされている。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellThereS"
 msgid "06511"
 msgstr "いつまで ここにいても{line_break}じかんがムダなだけじゃ。{page_break}さあ 船を手に入れるため{line_break}出発するとしよう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouThereHold"
 msgid "06512"
 msgstr "おっと あんたたち{line_break}ちょっと まってくれ!{end_wait}"
 
@@ -26103,27 +26103,27 @@ msgctxt "message"
 msgid "06523"
 msgstr "そういうわけであんたたちは{line_break}なにも しんぱいしないで{line_break}町で ゆっくりしてくれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoWay"
 msgid "06524"
 msgstr "いま こんなじけんがおきて{line_break}それどころじゃないけど・・・{page_break}インドラ大陸がオセニア大陸に{line_break}つながったことだし・・・{line_break}行ってみても いいよなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllOfIndra"
 msgid "06525"
 msgstr "町で くわしくきけるだろうが{line_break}インドラ大陸が いどうして{line_break}オセニア大陸とくっついたんだ{page_break}それだけでも 大じけんなのに{line_break}ふたつのじけんが同時におきて{line_break}町は パニックじょうたいさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSSoWeird"
 msgid "06526"
 msgstr "船で海をわたらなくても{line_break}オセニア大陸へ行けるなんて{line_break}すごい時代になったもんだぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseAreRough"
 msgid "06527"
 msgstr "こんな大じけんばかりだから{line_break}人手なんか いくらあっても{line_break}たりやしないよなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCominThrough"
 msgid "06528"
 msgstr "あっ ここ とおります?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgYeahWellWe"
 msgid "06529"
 msgstr "ごめんなさい いま・・・{line_break}アナの中は そうさ中です{page_break}それがおわるまでは・・・{line_break}マドラに入るのでしたら{line_break}入口をりようして下さい。{end_wait}"
 
@@ -26131,7 +26131,7 @@ msgctxt "message"
 msgid "06530"
 msgstr "とおるわけないって{line_break}とうぜんですよね{page_break}マドラに入るのだったら{line_break}入口をりようしますよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheChampaDug"
 msgid "06531"
 msgstr "このアナ・・・じつは{line_break}チャンパが ほっただけの{line_break}アナじゃなかったんだよね{page_break}チャンパがアナをほったから{line_break}町の下にある どうくつが{line_break}見つかっちゃったんだよ。{end_wait}"
 
@@ -26143,31 +26143,31 @@ msgctxt "MsgFieldWhoDugCave"
 msgid "06533"
 msgstr "だれが いつごろ・・・{line_break}どういうもくてきで{line_break}ほったアナなのかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheTownElder"
 msgid "06534"
 msgstr "いまごろ 長ろうたちは{line_break}パヤヤームをおいかけて{line_break}どこまで 行っただろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouPickedThe"
 msgid "06535"
 msgstr "みなさん たいへんな時に{line_break}マドラに きたものですね{page_break}いま しぜんのさいがいと{line_break}チャンパのしゅうげきとで{line_break}町は 大さわぎですよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatBigWave"
 msgid "06536"
 msgstr "なんと あの大つなみで{line_break}このインドラ大陸が{line_break}南へ いどうしたんだ{page_break}そしてゴンドワナとオセニアの{line_break}2大陸のあいだに つっこんで{line_break}とまったというワケなのさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLetMeGuess"
 msgid "06537"
 msgstr "あんたも まさか・・・{line_break}船がほしいんなんて{line_break}いうんじゃないわよね{page_break}大つなみのおかげで{line_break}船なんか マドラには{line_break}もう なくなったわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMaybeWeLl"
 msgid "06538"
 msgstr "つかまえたチャンパぞくから{line_break}きっとパヤヤームの行方が{line_break}わかるじゃろうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfICould"
 msgid "06539"
 msgstr "オセニアへあるいて行けるなら{line_break}ポピーチー地方にあるという{line_break}エアーズロックが見たいのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDidYouCome"
 msgid "06540"
 msgstr "お兄ちゃん もしかしたら{line_break}あのデカン高原をこえて{line_break}マドラに きたんだね{page_break}高原をぬけたあたりの海に{line_break}船が とまってたでしょ?{end_now}"
 
@@ -26179,103 +26179,103 @@ msgctxt "message"
 msgid "06542"
 msgstr "えっ 見なかったなんて{line_break}ヘンだなあ・・・{page_break}まさか おきの方にでも{line_break}ながされちゃったかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSLike"
 msgid "06543"
 msgstr "3つに わかれてた大陸が{line_break}ひとつに なったみたい{line_break}これって すっごーい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheChampaWere"
 msgid "06544"
 msgstr "このへんに チャンパが{line_break}かたまっていたんじゃ{page_break}ワシが大ごえでさけんだら{line_break}おどろいて にげてったよ{line_break}けっさくじゃな わっはっは。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseChampaCurs"
 msgid "06545"
 msgstr "チャンパのヤツら・・・{line_break}アナをほって ここから{line_break}町に入ったらしい・・・{page_break}それが おとりだったなんて{line_break}まったくスゴイさくせんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDoubtThe"
 msgid "06546"
 msgstr "パヤヤームの手下たちだけで{line_break}こんなスゴイさくせんを{line_break}立てられるとは おもえない{page_break}うーん 北東の船にしても{line_break}あれはぜったいに・・・{line_break}チャンパの船じゃないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIGotSomeone"
 msgid "06547"
 msgstr "わたし 見せてもらったけど{line_break}このアナの中 ひろいのよね{page_break}こんな ひろいアナは{line_break}みじかいじかんじゃ{line_break}とても ほれないわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTCare"
 msgid "06548"
 msgstr "長ろうが なんていったって{line_break}オレは あいつのこと・・・{line_break}チャンパぞくだとおもうぜ{page_break}それが ちがうってわかれば{line_break}いつだって ヤツのことは{line_break}かいほうしてやるよ うん。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeTookThat"
 msgid "06549"
 msgstr "船で 気ぜつしてた人が{line_break}ここの中に入れられてるわ{page_break}チャンパぞくじゃないって{line_break}その人・・・いってるのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyFriendWas"
 msgid "06550"
 msgstr "パヤヤームをうばわれたのは{line_break}このろうやをしゅびしていた{line_break}オレのせきにんじゃないぜ{page_break}あ あんな おおぜいだぜ{line_break}だれだって にげだすって!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyPartnerWas"
 msgid "06551"
 msgstr "あいぼうが このろうやを{line_break}まもってたんだけど・・・{page_break}チャンパぞくの しゅうげきで{line_break}にげだしやがったんだよ・・・{line_break}けっ なさけないやろうだぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneThinksBriggs"
 msgid "06552"
 msgstr "パヤヤームが にげて行ったのは{line_break}東の方だっていう はなしだから{line_break}おそらく オセニア大陸だろう{page_break}ということは 長ろうたちも{line_break}オセニア大陸へ行ったのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheTownElderIs"
 msgid "06553"
 msgstr "長ろうは お年だというのに{line_break}えんせいたいに くわわって{line_break}だいじょうぶなのかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfABig"
 msgid "06554"
 msgstr "大つなみが 発生したため{line_break}インドラ大陸も動いたんだろ{page_break}・・・ってことは もしかして{line_break}インドラ大陸って 水の上に{line_break}うかんでたってことかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSABit"
 msgid "06555"
 msgstr "大つなみで船がなくなったのは{line_break}こまったことではあるけれど{line_break}べんりになったこともあるわ{page_break}3つの大陸が くっついたから{line_break}それぞれの大陸へ行くのには{line_break}船がいらないってことですもの。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatChampaIn"
 msgid "06556"
 msgstr "あのパヤヤームの手下は{line_break}やけにチャンパにしては{line_break}はだが しろかったのう{page_break}あんな しろいチャンパぞくも{line_break}中には いるってことじゃな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeAlways"
 msgid "06557"
 msgstr "ポピーチーのエアーズロックは{line_break}ふしぎな岩山らしいから・・・{line_break}むかしから見たかったんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoWasIt"
 msgid "06558"
 msgstr "東の海にあるチャンパの船は{line_break}つなみで こわれちゃってて{line_break}動かないってきいた・・・{page_break}だからパヤヤームたちは{line_break}あの船にのってにげずに{line_break}オセニアへにげたんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowMadraIs"
 msgid "06559"
 msgstr "マドラは 3つの大陸の{line_break}ちょうど まん中なんだわ{page_break}ゴンドワナやオセニアの人が{line_break}いっぱい やってくるわよ{line_break}ああ たのしみだなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenISaw"
 msgid "06560"
 msgstr "ワシ チャンパを見た時に{line_break}ホントはビックリして・・・{line_break}ひめいを上げてしまったんじゃ{page_break}そしたらヤツらは かってに{line_break}おどろいて にげだしたわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheChampaMust"
 msgid "06561"
 msgstr "チャンパのヤツら・・・{line_break}パヤヤームの いばしょを{line_break}あらかじめ知ってたのかな{page_break}ヤツらは どうやって{line_break}町をていさつしてたんだ?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSNot"
 msgid "06562"
 msgstr "チャンパは さくせんなんか{line_break}立ててくるヤツらじゃない{page_break}このじけんは きっと・・・{line_break}ぐうぜん おきたんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMNotSure"
 msgid "06563"
 msgstr "このアナって どう見ても{line_break}チャンパがほっただけの{line_break}アナじゃないとおもうな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlNever"
 msgid "06564"
 msgstr "チャンパのヤツらめ{line_break}町をあらしやがって{line_break}ゆるせないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILookedInto"
 msgid "06565"
 msgstr "あの人の目を見たけど{line_break}とても すんでいたわ{page_break}あんな きれいな目の人が{line_break}ウソをつくとはおもえない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderHowMany"
 msgid "06566"
 msgstr "あの時 チャンパのヤツら{line_break}ホントは どのくらい{line_break}いたんだろう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMissMy"
 msgid "06567"
 msgstr "にげだした あいぼうのことを{line_break}ボロクソに いっちまってるけど{line_break}ちょっと こころがいたむなあ{page_break}オレが ヤツのたちばだったら{line_break}オレだって にげ出してるもんな。{end_wait}"
 
@@ -26523,11 +26523,11 @@ msgctxt "message"
 msgid "06628"
 msgstr "ボクは いつになったら{line_break}じゆうになれるんだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEvenIfWe"
 msgid "06629"
 msgstr "さっきのことをはなしても{line_break}だれも しんようしないぞ{page_break}こうなったら{actor_name:8}が{line_break}ろうやをにげないように{line_break}ここで見はってやる!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWasIJust"
 msgid "06630"
 msgstr "さっき 目の前に・・・{line_break}氷が あらわれたのは{line_break}ユメだったのかな?{end_now}"
 
@@ -26539,31 +26539,31 @@ msgctxt "message"
 msgid "06632"
 msgstr "ホントのことだなんて{line_break}あんた オレのことを{line_break}からかってるだろ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMySoreBottom"
 msgid "06633"
 msgstr "この オシリのいたみは{line_break}あれが げんじつだったと{line_break}オレに おしえる・・・{page_break}だけど だれもそれを{line_break}しんじてくれない・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItWasAll"
 msgid "06634"
 msgstr "あれは ユメだよ・・・{line_break}ぜったいユメだよ・・・{line_break}そうさ そうだったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAfterTheChampa"
 msgid "06635"
 msgstr "あの日 チャンパたちは{line_break}ろうやをやぶったあとに{line_break}ここらまで きたんだよ{page_break}それで みせの者は{line_break}ヤツらと みんなで{line_break}戦うハメになったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheItemVendor"
 msgid "06636"
 msgstr "道具屋さんは かわいそうに{line_break}チャンパにケガさせられて{line_break}ねこんじゃってるんだよな{page_break}あれじゃ かのじょのこい人は{line_break}あの ろうやの男のことを{line_break}ぜったい ゆるせないだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOwOwOw"
 msgid "06637"
 msgstr "アイタタ チャンパたちに{line_break}なぐられた おつむのコブが{line_break}いまでも ジンジンするぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseLousyChampa"
 msgid "06638"
 msgstr "ちきしょう チャンパめ{line_break}つぎ ヤツらにあったら{line_break}オレがコブをつくってやる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMySisterWas"
 msgid "06639"
 msgstr "ねえちゃん チャンパぞくに{line_break}ケガをさせられちゃって{line_break}いま ねこんでいるのよ{page_break}きっと ねえちゃんのかたきは{line_break}こい人のシンが うってくれるわ。{end_wait}"
 
@@ -26571,7 +26571,7 @@ msgctxt "message"
 msgid "06640"
 msgstr "うーん うーん・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsAndHis"
 msgid "06641"
 msgstr "かよわい女をなぐるなんて{line_break}パヤヤームと手下たちは{line_break}さいていの男だわ・・・{page_break}ああ ヤツらをおもいだすと{line_break}ムカムカと はらがたつ。{end_wait}"
 
@@ -26603,7 +26603,7 @@ msgctxt "message"
 msgid "06648"
 msgstr "チャンパの しゅうげきも{line_break}やっぱり 神のごいし・・・{line_break}なんじゃろうかのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHasEscaped2"
 msgid "06649"
 msgstr "{actor_name:8}が ろうやから{line_break}にげてしまったなんて!{end_wait}"
 
@@ -29055,7 +29055,7 @@ msgctxt "message"
 msgid "07261"
 msgstr "ここから先は だれもとおすなと{line_break}きつく 町長にいわれているから{line_break}ぜったい とおさないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSIt"
 msgid "07262"
 msgstr "や やっぱりダメだ!{end_wait}"
 
@@ -29103,7 +29103,7 @@ msgctxt "message"
 msgid "07273"
 msgstr "ああ カヌーができるまで{line_break}まってるしか ないかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatSYour"
 msgid "07274"
 msgstr "なんだ お前?{end_wait}"
 
@@ -29135,35 +29135,35 @@ msgctxt "message"
 msgid "07281"
 msgstr "しかし ハン船がアラフラでも{line_break}つくられるようになったので{line_break}オレたちも おどろいてるのさ{page_break}いずれ あたり前のようにして{line_break}ハン船が海をわたる時代に{line_break}なるのかもしれないよなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWePaidBig"
 msgid "07282"
 msgstr "船は金を出して買ったんだから{line_break}もう オレたちのものなんだ{line_break}だれにも もんくはいわせない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeSentMy"
 msgid "07283"
 msgstr "買いモノに行った なかまが{line_break}かおいろをかえて もどったぜ{page_break}そういえば あいつ・・・{line_break}パヤヤームのへやへ行って{line_break}あれから もどってこないな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfWeCould"
 msgid "07284"
 msgstr "マストさえ立てることができれば{line_break}チャンパに かえれるのになあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPeopleCallUs"
 msgid "07285"
 msgstr "チャンパはハン船があるからこそ{line_break}かいようぞくなんて よばれ・・・{line_break}オレたちも あばれまわれてたんだ{page_break}しかし アラフラのような町からも{line_break}ハン船が うみだされるようじゃ{line_break}かいぞくパヤヤームもおわりかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtIt"
 msgid "07286"
 msgstr "たおれたマストを立たせるなんて{line_break}かんたんだと おもってたけど{line_break}とんでもない まちがいだったぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatLousyRat"
 msgid "07287"
 msgstr "あのヤロー なにかあったなら{line_break}オレたちに はなしてから{line_break}行ってくれればよかったんだ{page_break}なにが あったのか・・・{line_break}気になってしょうがないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenIThink"
 msgid "07288"
 msgstr "ああ かえれないとおもうと{line_break}よけいチャンパに かえりたい{page_break}しかし チャンパ村のみんなは{line_break}オレたちが かいぞくだなんて{line_break}知らないんだよなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMayorOf"
 msgid "07289"
 msgstr "マドラの町長だと!{end_wait}"
 
@@ -29307,7 +29307,7 @@ msgctxt "message"
 msgid "07324"
 msgstr "ふん しゃらくさいヤツらめ{line_break}オレをたおすつもりらしいが{line_break}かえりうちに してやるぜ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellThatTakes"
 msgid "07325"
 msgstr "ふう やっつけたわね。{end_wait}"
 
@@ -29839,7 +29839,7 @@ msgctxt "message"
 msgid "07457"
 msgstr "はんたいなのね 兄さんには{line_break}かんがえがあるみたいだから{line_break}わたしたち それにしたがうわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGooGooGa"
 msgid "07458"
 msgstr "バブバブ バブバブ。{end_wait}"
 
@@ -29847,15 +29847,15 @@ msgctxt "message"
 msgid "07459"
 msgstr "レオレオが その力をもったのは{line_break}すこし前 空からおちてきた宝石が{line_break}ぶつかった時からなのよ{page_break}こうねつを出したレオレオが{line_break}ねむりから めざめてみると{line_break}この力をさずかってたのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEoleoAndI"
 msgid "07460"
 msgstr "わたし レオレオをつれて{line_break}まいにち パヤヤームに{line_break}あいに行くことにするわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMGonna"
 msgid "07461"
 msgstr "ボクの力をうまく使ったら{line_break}パパをたすけられまちゅよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfEoleoGets"
 msgid "07462"
 msgstr "レオレオが うまくやれれば{line_break}きっとパヤヤームのことを・・・。{end_wait}"
 
@@ -30655,7 +30655,7 @@ msgctxt "message"
 msgid "07661"
 msgstr "人がもうかるのが大きらいな町長が{line_break}マドラの町が もうかるはなしを{line_break}だまって見てるわけがないんじゃ{page_break}ふむむ 町長をてきにまわすと{line_break}ホントに おそろしいのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDoPlan"
 msgid "07662"
 msgstr "マストをなおすのを{line_break}手伝うつもりじゃな?{end_wait}"
 
@@ -30675,7 +30675,7 @@ msgctxt "message"
 msgid "07666"
 msgstr "そうときまれば さっそく{line_break}やってみることにしようぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreYouFinished"
 msgid "07667"
 msgstr "もう やめるのかな{line_break}{actor_name:5}よ?{end_now}"
 
@@ -30711,7 +30711,7 @@ msgctxt "message"
 msgid "07675"
 msgstr "しかし船がなおらないのでは{line_break}それも ムリのようじゃのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoIThink"
 msgid "07676"
 msgstr "いま それはあきらめることにして{line_break}ここをたび立とうぞ {actor_name:5}よ。{end_wait}"
 
@@ -30731,11 +30731,11 @@ msgctxt "message"
 msgid "07680"
 msgstr "この町の町長とちがって{line_break}マドラの町長たちは{line_break}はたらきものじゃわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTKnowWhatWe"
 msgid "07681"
 msgstr "この ヒビの入った大きな岩は{line_break}どうにもならなそうね・・・{line_break}もう あきらめてかえらない?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyYouLot"
 msgid "07682"
 msgstr "おっと あんたたち{line_break}ちょっと まってくれ!{end_wait}"
 
@@ -30783,7 +30783,7 @@ msgctxt "message"
 msgid "07693"
 msgstr "町長たちが 出かけてから{line_break}すぐのころだったな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItWasThem"
 msgid "07694"
 msgstr "あいつらじゃな {actor_name:5}?{end_now}"
 
@@ -30795,7 +30795,7 @@ msgctxt "message"
 msgid "07696"
 msgstr "わすれたのか {actor_name:5}よ{line_break}ちかくの どうくつで見た{line_break}ヤツらに まちがいあるまい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWasAnythingStolen"
 msgid "07697"
 msgstr "いったいキボンボのヤツらの{line_break}もくてきは なんじゃな?{end_wait}"
 
@@ -30815,27 +30815,27 @@ msgctxt "message"
 msgid "07701"
 msgstr "くわしいことが知りたければ{line_break}ひがいをうけた町長のいえへ{line_break}行ってみるといいぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFirstPiratesRaid"
 msgid "07702"
 msgstr "この前 パヤヤームの手下に{line_break}おそわれたばかりだってのに{line_break}こんどはキボンボだってさ{page_break}さいきん このマドラの町は{line_break}まったく ついてねぇなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyGuessIs"
 msgid "07703"
 msgstr "もうキボンボのヤツらは{line_break}とっくに かえっちまったろ{page_break}それなのに マドラの入口を{line_break}ガードするいみってあるのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheWayThings"
 msgid "07704"
 msgstr "町に さいなんがつづくんじゃ{line_break}おちおち ねてもいらんないよ{line_break}おはらいでも するべきかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenStanding"
 msgid "07705"
 msgstr "この前 ここをガードするため{line_break}ずっと立ちっぱなしだったし{line_break}もう いいかげんにやめたいぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhUhYou"
 msgid "07706"
 msgstr "あっ ここ とおります?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgYeahUhWe"
 msgid "07707"
 msgstr "このアナは こちらがわから{line_break}とおれないようにするため{line_break}ふさいでいるところなんです{page_break}マドラの町に入るつもりでしたら{line_break}入口の方に まわって下さい。{end_wait}"
 
@@ -30843,35 +30843,35 @@ msgctxt "message"
 msgid "07708"
 msgstr "とおるわけないって{line_break}とうぜんですよね{page_break}マドラに入るのだったら{line_break}入口をりようしますよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeSealedUp"
 msgid "07709"
 msgstr "このアナは ふさいだけど{line_break}町中の方が そのままでは{line_break}なんだか 気もちわるいぞ{page_break}どうせだったら 地下の遺跡も{line_break}みんな うめちゃえばいいのに。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeThinkThe"
 msgid "07710"
 msgstr "インドラ大陸が 大いどうして{line_break}ゴンドワナ大陸とくっついたから{line_break}キボンボは やってこれたんだよ{page_break}だけど このマドラの町のことを{line_break}しゅうげきしなくてもいいよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoTheKibombo"
 msgid "07711"
 msgstr "ゴンドワナ大陸からマドラの町まで{line_break}キボンボがやってこれたってことは{line_break}こっちも むこうへ行けるのよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheKibomboCame"
 msgid "07712"
 msgstr "キボンボは 町の西がわから{line_break}こわれたカベをのりこえて{line_break}この町へ 入ってきたんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHeardThatThe"
 msgid "07713"
 msgstr "長ろうたちが船を手に入れたって{line_break}アラフラから かえってきた者が{line_break}いってたんだけど ホントかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIGuessThat"
 msgid "07714"
 msgstr "ろうやに入れられていた男は{line_break}パヤヤームの手下などでは{line_break}なかったようじゃのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGondowanSoundsLike"
 msgid "07715"
 msgstr "きくところではゴンドワナ大陸は{line_break}おそろしいところらしいぞい{line_break}あたしゃ 行きたくないのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyMisterAre"
 msgid "07716"
 msgstr "パヤヤームをやっつけたのは{line_break}ひょっとして お兄ちゃん?{end_now}"
 
@@ -30883,103 +30883,103 @@ msgctxt "message"
 msgid "07718"
 msgstr "そうか ちがうのかあ・・・{line_break}パヤヤームをやっつけたという{line_break}わかい戦士って どんな人かな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTBelieveSomeone"
 msgid "07719"
 msgstr "パヤヤームをやっつけた{line_break}人がいるんですって・・・{line_break}それって すっごーい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatWe"
 msgid "07720"
 msgstr "もう このそとがわのアナは{line_break}ふさいでしまったんじゃから{line_break}だれも入っては これんのじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereAreStill"
 msgid "07721"
 msgstr "まだ この地下のどうくつは{line_break}しらべてみたいことだらけです{page_break}それがおわるまで このアナは{line_break}ふさぐわけには いきませんよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsDidnT"
 msgid "07722"
 msgstr "パヤヤームの手下たちって{line_break}おもっていたより ずっと{line_break}すくなかったそうだよ{page_break}そんな すくない人ずうなのに{line_break}町を東と西の りょうがわから{line_break}よく おそうことができたなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseCavesWere"
 msgid "07723"
 msgstr "このアナは わたしたちの{line_break}ひみつの あそびばなのよ{page_break}いつまでも ふさがないで{line_break}あけておいてほしいなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatGuyWasn"
 msgid "07724"
 msgstr "あの{actor_name:8}という男は{line_break}パヤヤームの手下では{line_break}なかったんだそうだよ{page_break}ろうやに 入れちまうなんて{line_break}かれには わるいことをした。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhWeReleased"
 msgid "07725"
 msgstr "ああ あの{actor_name:8}だったら{line_break}とっくに しゃくほうよ{page_break}町長のいえへ よってから{line_break}町を出ていったはずだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneYelledAt"
 msgid "07726"
 msgstr "この前は にげだしたなんて{line_break}さんざん みんなにいわれたから{line_break}こんどは にげないで戦ったんだ{page_break}イテテ だけど・・・このとおり{line_break}コブができるほど おもいきり{line_break}あたまをなぐられちまったぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouShouldaSeen"
 msgid "07727"
 msgstr "こんかいは あいぼうのことを{line_break}オレ 見なおしちまったよ{page_break}けがをしてまで 戦うなんて{line_break}すごい ゆうきだとおもうぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItWerenT"
 msgid "07728"
 msgstr "大つなみさえ なかったら{line_break}こんなじけんは おこらずに{line_break}へいわで いられたのになあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfGondowanIs"
 msgid "07729"
 msgstr "このインドラ大陸なんかよりも{line_break}ずっと大きなゴンドワナ大陸は{line_break}とても気になる大陸だわ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSStrangeIt"
 msgid "07730"
 msgstr "キボンボは まるで町の西のカベが{line_break}こわれてるのを知っているみたいに{line_break}しずかに 入ってきたらしいぞ{page_break}まさか パヤヤームの手下たちに{line_break}あそこのカベが こわれてるって{line_break}きいたワケじゃないよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMayorIs"
 msgid "07731"
 msgstr "長ろうたちは 手に入れた船で{line_break}もどってくるらしいけど・・・{line_break}それは いつのことなのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeToldUs"
 msgid "07732"
 msgstr "むじつをうったえていたのに{line_break}ろうやに 入れられてたんじゃ{line_break}あの男も かわいそうじゃったな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInGondowanThey"
 msgid "07733"
 msgstr "なんでもゴンドワナ大陸では{line_break}くろまじゅつという力によって{line_break}のろわれてしまうらしいのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHeardThe"
 msgid "07734"
 msgstr "パヤヤームをやっつけた戦士は{line_break}それほど つよそうには見えない{line_break}4人ぐみだったらしいけど・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyWere"
 msgid "07735"
 msgstr "パヤヤームを たおすくらいだから{line_break}きっと その人って せのたかさが{line_break}パヤヤームの2ばいはあるんだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItWasSo"
 msgid "07736"
 msgstr "このアナから どうくつをぬけ{line_break}むこうがわに 出られるのは{line_break}べんりだったんじゃがのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhoDug"
 msgid "07737"
 msgstr "いったい 地下のどうくつは{line_break}だれが いつ なんのために{line_break}つくったものなのだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWaitIfBriggs"
 msgid "07738"
 msgstr "ホントにパヤヤームの手下が{line_break}4人しか いなかったのなら{line_break}2手にわかれるのはムリだぞ{page_break}人ずうに まちがいないなら{line_break}あの夜 ヤツらいがいにも{line_break}町をおそった者がいたんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeNeverSeenAny"
 msgid "07739"
 msgstr "この下の 大きなどうくつは{line_break}入口のあたりであそんでれば{line_break}モンスターも出ないのよ{page_break}おくの方はモンスターが出るから{line_break}行ってみたいけど行けないの・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDidnTSeem"
 msgid "07740"
 msgstr "ろうやを出ていく時の{actor_name:8}は{line_break}なんだか げんきがなかったなあ{page_break}よほど ろうやに入れられてたのが{line_break}ショックだったんじゃないかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWasSoHappy"
 msgid "07741"
 msgstr "{actor_name:8} しゃくほうされて{line_break}すごく よろこんでいたわ{page_break}でも町長のおくさんと はなしたら{line_break}すっかり おちこんじゃって・・・{line_break}おくさんは なにをいったのかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDidnT"
 msgid "07742"
 msgstr "あの夜 キボンボがやってきた時{line_break}ぜんぜん わかんなかったから{line_break}にげおくれちまったんだよな{page_break}そのせいで 戦うことになったとは{line_break}いまさら いうわけにもいかないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTBelieveNobody"
 msgid "07743"
 msgstr "こんかい あいぼうのヤツが{line_break}あんなに がんばったのに{line_break}あまりウワサになってないな{page_break}キボンボをあいてに戦ったのを{line_break}すごいことだと おもってるのは{line_break}まさかオレだけなのかなあ・・・。{end_wait}"
 
@@ -31103,23 +31103,23 @@ msgctxt "message"
 msgid "07773"
 msgstr "しかし あの{actor_name:8}って男は{line_break}ふしぎなヤツだったよなあ{page_break}シンはヤツをおそれてたから{line_break}むじつだと わかったとたん{line_break}ヤツをろうから出したのさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheArmorerAnd"
 msgid "07774"
 msgstr "このオレと 防具屋さんとで{line_break}キボンボのおとしてったモノを{line_break}いま しらべてるんだけどさ{page_break}このじけんの いがいなじじつが{line_break}あきらかになるかもしれないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheChampaWeapons"
 msgid "07775"
 msgstr "ぜんかい 西のカベのちかくで{line_break}見つかったチャンパの武器と{line_break}キボンボの武器が同じだった{page_break}キボンボとチャンパの武器が{line_break}まったく 同じだなんて・・・{line_break}ぜったい ありえないはなしさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIKnewThere"
 msgid "07776"
 msgstr "パヤヤームの時 どうもオレは{line_break}おかしいと おもってたんだが{line_break}そのナゾが とけそうなのさ{page_break}その手がかりになるものが{line_break}ヤツらが おとしていった{line_break}道具や武器ってわけなんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheGroupThat"
 msgid "07777"
 msgstr "パヤヤームの手下がおそった夜{line_break}ヤツらがおとしていったモノが{line_break}なっとくいかなかったんだよ{page_break}東のヤツらと西のヤツらの道具が{line_break}ぜんぜん ちがうものだなんて{line_break}どうかんがえても おかしいぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllMyInjuries"
 msgid "07778"
 msgstr "チャンパに なぐられたキズも{line_break}すっかり よくなりましたのよ{page_break}さあ しばらくやすんだから{line_break}しっかり はたらきましょう。{end_wait}"
 
@@ -31127,7 +31127,7 @@ msgctxt "message"
 msgid "07779"
 msgstr "ねえちゃんが げんきになって{line_break}わたし すごくうれしいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatShinIs"
 msgid "07780"
 msgstr "シンたら もっとやすんでろって{line_break}しつこいので こまっちゃうわ{page_break}わたしは ねているよりも{line_break}はたらくのが たのしいのに。{end_wait}"
 
@@ -31307,35 +31307,35 @@ msgctxt "message"
 msgid "07824"
 msgstr "この岩が じゃまだワン{line_break}むこうに いきたいワン!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRrruffRrruff2"
 msgid "07825"
 msgstr "ワンワンワン!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDigHereYou"
 msgid "07826"
 msgstr "ここほれ ワンワン!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIKnewIt"
 msgid "07827"
 msgstr "あやしいとは おもったけど{line_break}すごいの ほりあてちゃったワン!{line_break}ほんとにもう ワンだふる!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgITriedTo"
 msgid "07828"
 msgstr "キボンボの なかまをむかえに{line_break}ゴンドワナへ行こうとしたけど{line_break}ロープが はずされてるんだよ{page_break}これじゃ なかまがくるまでは{line_break}キボンボにも もどれないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWho"
 msgid "07829"
 msgstr "大陸をわたるためのロープを{line_break}むこうがわへ はずしたのは{line_break}いったい だれのしわざだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheOther"
 msgid "07830"
 msgstr "キボンボにもどれないことを{line_break}どうくつの なかまが知ったら{line_break}ヤツら かなしむだろうな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILongTo"
 msgid "07831"
 msgstr "村へ かえれないとわかったら{line_break}こころぼそくなってきたぞ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereDoYou"
 msgid "07832"
 msgstr "{actor_name:5}よ どこに行くつもりじゃ?{line_break}{actor_name:8}がくろすいしょうを{line_break}とりもどすのをたすけようぞ。{end_wait}"
 
@@ -34219,35 +34219,35 @@ msgctxt "message"
 msgid "08552"
 msgstr "ぎしきが せいこうしたからって{line_break}アカフブの せいかくがかわるとは{line_break}とても おもえないことだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMayorFinally"
 msgid "08553"
 msgstr "アラフラの町へ行ったきりだった{line_break}町長たちが かえってきたんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyItS"
 msgid "08554"
 msgstr "オレたち あんたたちが{line_break}あやしくないってことは{line_break}よく わかってるぜ{page_break}マドラの町に 入りたいんだろ{line_break}えんりょなく 入ってくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeWasGone"
 msgid "08555"
 msgstr "町長たち 町を出たきりだから{line_break}かえってこないんじゃないかと{line_break}ちょっぴり しんぱいしたぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowMuchLongerDo"
 msgid "08556"
 msgstr "ああ この町の入口のけいびは{line_break}いいかげん おわらないかな{page_break}なにも おこらないんじゃ{line_break}ガードしてる いみがないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTThink"
 msgid "08557"
 msgstr "町長たちが かえってきたのは{line_break}手に入れた船のしゅうりが{line_break}うまくいかないからなんだとさ{page_break}なんでも 船をなおす人手を{line_break}このマドラで あつめたら{line_break}むこうへ もどるそうだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeGoTo"
 msgid "08558"
 msgstr "せっかく パヤヤームから{line_break}船をとり上げたらしいのに{line_break}それが なおらないそうよ{page_break}どうやったら なおせるかを{line_break}みんな そうだんするために{line_break}町長のいえに あつまってるわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHeardTheBoat"
 msgid "08559"
 msgstr "町長が手に入れた船ってのは{line_break}町がもってたオンボロとちがい{line_break}すごい船らしいじゃないか!{page_break}その船なら海のむこうの大陸へも{line_break}行くことができるらしいんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsThereBy"
 msgid "08560"
 msgstr "ひょっとして あんたたちの中に{line_break}{actor_name:6}さんっているかしら?{end_now}"
 
@@ -34259,55 +34259,55 @@ msgctxt "message"
 msgid "08562"
 msgstr "{actor_name:6}さんを見かけたら{line_break}{actor_name:1}たちがさがしてるって{line_break}伝えてくれと いわれたわ{page_break}だけど そんな人たち・・・{line_break}マドラには こなかったわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseTravelersLooked"
 msgid "08563"
 msgstr "あの人たち あなたたちを{line_break}すごく しんぱいしてたわ{page_break}はやく げんきなすがたを見せて{line_break}あんしんさせて おあげなさいな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderIfThe"
 msgid "08564"
 msgstr "あの 大イースト海のまん中には{line_break}はるかに 文明のすすんだ島が{line_break}あるって伝説はホントかのう・・・{page_break}もしも そんな島があるのなら{line_break}ぜひ 行ってみたいのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTKnowWhatWill"
 msgid "08565"
 msgstr "海のことなんか知らないくせに{line_break}みんなして 海 海って・・・{line_break}どうなっても知らないからのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAGroupOfSharp"
 msgid "08566"
 msgstr "かっこいい戦士のお兄ちゃんが{line_break}この前 やってきたんだよね{page_break}なんでも レムリアって島を{line_break}さがしてるっていってたなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouHaveA"
 msgid "08567"
 msgstr "大きな船があれば せかい中{line_break}どこへでも 行けるんですって{line_break}それって すっごーい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasAt"
 msgid "08568"
 msgstr "町長との はなしあいがおわり{line_break}もどってきたところなんじゃが{line_break}けつろんは でなかったわい{page_break}マストというはしらを立てるのが{line_break}そんなに だいじなのかのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSNotThat"
 msgid "08569"
 msgstr "アラフラの町へ 行くのはいいけど{line_break}マストが なおらないんだったら{line_break}行ったってムダだとおもうなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMayorAsked"
 msgid "08570"
 msgstr "町長に アラフラに行こうって{line_break}さそわれちゃったんだけど・・・{page_break}その船が風の力で はしるのなら{line_break}オレ そんな船のそうじゅうには{line_break}ぜんぜん じしんがないんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSeemsNo"
 msgid "08571"
 msgstr "町長が大きな船を手に入れても{line_break}だれも うれしくないみたい{line_break}町長たちが かわいそうだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSayThereWas"
 msgid "08572"
 msgstr "{actor_name:8}のはなしをしてたら{line_break}たびの戦士たちがあらわれて{line_break}ヤツと同じ力を見せたのさ{page_break}おそろしい力を使うヤツが{line_break}ほかにも いたんだなって{line_break}みんなで おどろいていたよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtShin"
 msgid "08573"
 msgstr "シンたちの いってたことは{line_break}ウソだとおもってたんだけど{line_break}あれを見て しんようしたわ{page_break}その力はエナジーといって{line_break}水を氷にかえるのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenAndHis"
 msgid "08574"
 msgstr "{actor_name:1}という戦士たちは{line_break}{actor_name:8}のはなしをきき{line_break}とても おどろいていたよ{page_break}かれをおってゴンドワナ大陸へ{line_break}行ってみるって いってたなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUhhhnnnUhhhnnn2"
 msgid "08575"
 msgstr "うーん うーん・・・。{end_wait}"
 
@@ -34319,39 +34319,39 @@ msgctxt "message"
 msgid "08577"
 msgstr "氷よ できろと ねがうと{line_break}氷ができるなんてはなしは{line_break}かんがえてみりゃありえないぜ{page_break}そんなことが かなうのなら{line_break}生きるのも らくだろうけどさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyWouldAnyoneBe"
 msgid "08578"
 msgstr "しゅうりをしなきゃいけない船を{line_break}手に入れたって いわれても・・・{line_break}だれも すなおによろこべないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyVeBeenHaving"
 msgid "08579"
 msgstr "まいにち はなしあうぐらいじゃ{line_break}パヤヤームの船って そうとうに{line_break}オンボロの船なんじゃないかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneGetsThe"
 msgid "08580"
 msgstr "男は いくつになったって{line_break}ぼうけんというものに{line_break}あこがれをかんじるのさ{page_break}町長の手に入れたという船で{line_break}それができたら さいこうさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhy"
 msgid "08581"
 msgstr "あの つよそうな戦士たちは{line_break}先をいそいでる風だったけど{line_break}なにをいそいでたんだろうね{page_break}それに 世界のうんめいを{line_break}せおってでも いるように{line_break}しんこくな かんじだったわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWasThat"
 msgid "08582"
 msgstr "大イースト海の伝説の島の名は{line_break}たしか・・・たしか そうじゃ{line_break}レムロラとかなんとかいったぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePeopleOf"
 msgid "08583"
 msgstr "マドラの町の者たちは しょせんは{line_break}陸のことしかわからないんじゃ{page_break}大きな船が手に入ったからと{line_break}海をわたれると おもったら{line_break}大きなまちがいじゃぞ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatIslandThat"
 msgid "08584"
 msgstr "あの戦士のお兄ちゃんたちが{line_break}さがしてた海のまん中の島って{line_break}たしか きいた名前だったぞ{page_break}ありゃ あれはあかちゃんの時{line_break}ジイちゃんが はなしてくれた{line_break}宝の島の名前じゃないか・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowBigWould"
 msgid "08585"
 msgstr "大きな船って見たことないけど{line_break}どこへでも行けるくらいだから{line_break}きっと クジラより大きいんだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneHereIn"
 msgid "08586"
 msgstr "この町の人はみな キボンボを{line_break}こわがっているみたいですが{line_break}あなたも おそろしいですか?{end_now}"
 
@@ -34363,39 +34363,39 @@ msgctxt "message"
 msgid "08588"
 msgstr "そうです かれらはもはや{line_break}おそろしい そんざいでは{line_break}なくなったのですよ{page_break}かれらの のろしを見れば{line_break}かれらが戦いをやめたのが{line_break}みんなにもわかるでしょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReStill"
 msgid "08589"
 msgstr "ついさいきん この町を{line_break}キボンボがおそったらしい{page_break}まあ そんなことをされたら{line_break}だれだって かれらのことを{line_break}こわがるのも しかたないな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseNewBoats"
 msgid "08590"
 msgstr "はん船という あたらしい船は{line_break}風の力をりようすることにより{line_break}とおくまで行けるそうじゃ・・・{page_break}その風の力を うけるのには{line_break}はしらが ひつようじゃと・・・{line_break}いっているいみが わからんわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfABuilding"
 msgid "08591"
 msgstr "はしらがおれた たてものは{line_break}使いモノにならないだろ・・・{page_break}だったら はしらがおれた船も{line_break}使いモノにならないはずだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSailorsAreSupposed"
 msgid "08592"
 msgstr "オレたち 船のりだったら{line_break}オールをこぐ船のかじなら{line_break}とることは とくいだよ・・・{page_break}しかし風の力で動く船のかじは{line_break}どうやってとったらいいんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurMayorS"
 msgid "08593"
 msgstr "あの たよりない町長が{line_break}がんばってきたんだから{line_break}ほめてあげればいいのにな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsTurningWater"
 msgid "08594"
 msgstr "水を氷にするような力は{line_break}とくべつな力だとおもったが{line_break}そうでもないのかなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadraIsAlways"
 msgid "08595"
 msgstr "マドラは あついところだから{line_break}氷をつくる力があったら・・・{line_break}きっと すずしくていいわねぇ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoThisFellow"
 msgid "08596"
 msgstr "やっぱり{actor_name:8}って男は{line_break}{actor_name:1}という戦士たちの{line_break}なかまだったのかな・・・{page_break}そうでなくちゃゴンドワナまで{line_break}ヤツを おって行かないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIKnewI"
 msgid "08597"
 msgstr "ああ やっぱり あいつらに{line_break}氷のつくり方ってヤツを{line_break}きいておけばよかった・・・。{end_wait}"
 
@@ -34539,7 +34539,7 @@ msgctxt "message"
 msgid "08632"
 msgstr "{actor_name:8}が やってきてから{line_break}ホント おかしなヤツらが{line_break}町にやってくるようになった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaveYouBy"
 msgid "08633"
 msgstr "メナーディという女を{line_break}見なかったかしら?{end_now}"
 
@@ -34551,11 +34551,11 @@ msgctxt "message"
 msgid "08635"
 msgstr "それ以上 いったら{line_break}あんたをゆるさないよ{line_break}あっちへ行っておしまい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouDon"
 msgid "08636"
 msgstr "ねえさんを知らないというなら{line_break}あんたに ようなんかないわ{line_break}あっちへ行っておしまい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUsingPsynergyOn"
 msgid "08637"
 msgstr "あたしにエナジーを使うとは{line_break}あんた こわいもの知らずね。{end_wait}"
 
@@ -34563,7 +34563,7 @@ msgctxt "message"
 msgid "08638"
 msgstr "あんたと あそんでいる{line_break}ヒマなど いまはないのよ{line_break}あっちへ行っておしまい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereCouldMenardi"
 msgid "08639"
 msgstr "ふう いったいメナーディは{line_break}どこに行ったのかしら・・・{line_break}あたしの ねえさん・・・。{end_wait}"
 
@@ -34799,7 +34799,7 @@ msgctxt "message"
 msgid "08697"
 msgstr "パパが ぶじにかえってきたから{line_break}わたし それだけでうれしいな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWait3"
 msgid "08698"
 msgstr "まって下さい {actor_name:5}!{end_wait}"
 
@@ -34895,7 +34895,7 @@ msgctxt "message"
 msgid "08721"
 msgstr "つれてこられないというなら{line_break}やっぱり ねえさんたちは{line_break}たおされてしまったんだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTBelieveIt"
 msgid "08722"
 msgstr "ねえさんたちが たおされるとは{line_break}しんじられないはなしだけど・・・。{end_wait}"
 
@@ -34903,7 +34903,7 @@ msgctxt "message"
 msgid "08723"
 msgstr "あんたたちの かおを見てれば{line_break}ホントのことだとわかるよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoIsThis"
 msgid "08724"
 msgstr "だれなんだい その{actor_name:1}とは?{end_wait}"
 
@@ -35099,23 +35099,23 @@ msgctxt "message"
 msgid "08772"
 msgstr "シンが{actor_name:8}をおそれるのは{line_break}とうぜんだとは おもうけど{line_break}ちょっと おおげさだよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThe"
 msgid "08773"
 msgstr "どうやら あのパヤヤームが{line_break}うばわれた夜のじけんには{line_break}キボンボがからんでいたようだ{page_break}あの夜 げんばにあった武器に{line_break}キボンボの武器があったんだ{line_break}ぜったいに まちがいないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePiratesAnd"
 msgid "08774"
 msgstr "キボンボたちとチャンパとが{line_break}手をむすんでいたなんて・・・{line_break}すごい 発見なんだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPeopleAreSaying"
 msgid "08775"
 msgstr "パヤヤームの手下の中には{line_break}キボンボぞくの者がいたと{line_break}オレは にらんでるんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatNightThe"
 msgid "08776"
 msgstr "パヤヤームの手下がおそった夜{line_break}東からチャンパの者が町に入り{line_break}西からはキボンボが入ったらしい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyBoyfriendShin"
 msgid "08777"
 msgstr "わたしの こいびとのシンは{line_break}ここのところ なんだか・・・{line_break}げんきがなくて しんぱいだわ。{end_wait}"
 
@@ -35123,7 +35123,7 @@ msgctxt "message"
 msgid "08778"
 msgstr "いくじなしの シンのヤツなんか{line_break}ねえちゃん しんぱいしなくても{line_break}いいとおもうんだけどなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShinSeemsTerrified"
 msgid "08779"
 msgstr "シンは どうやら{actor_name:8}と{line_break}なにかあったらしいのだけど{line_break}いったい なにがあったのかな{page_break}いずれにしても そのことで{line_break}かれは げんきがないんだわ。{end_wait}"
 
@@ -35203,7 +35203,7 @@ msgctxt "message"
 msgid "08798"
 msgstr "まさか あの時の大つなみは{line_break}海ていの火山がばくはつして{line_break}おきたものだったのかな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyShipAt"
 msgid "08799"
 msgstr "船だ ボクの船に・・・{line_break}とうとう かえってきたぞ。{end_wait}"
 
@@ -35395,11 +35395,11 @@ msgctxt "message"
 msgid "08846"
 msgstr "わあ ありがとう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThenLetS"
 msgid "08847"
 msgstr "マドラの町長のいえに行こうよ{line_break}それから出発だ {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAtLastI"
 msgid "08848"
 msgstr "とうとう 船にもどってきた。{end_wait}"
 
@@ -35431,7 +35431,7 @@ msgctxt "message"
 msgid "08855"
 msgstr "それじゃ くろすいしょうを{line_break}船に セットするよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTakeTheTiller"
 msgid "08856"
 msgstr "カジはキミがとれよ {actor_name:5}!{end_wait}"
 
@@ -35539,7 +35539,7 @@ msgctxt "message"
 msgid "08882"
 msgstr "はんのうがない 動力が{line_break}さどうしていないようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMayorTried"
 msgid "08883"
 msgstr "町長は{argument_item_name:134}{line_break}{actor_name:5}にわたそうとしたが{line_break}もちものがいっぱいだった。{end_wait}"
 
@@ -36779,75 +36779,75 @@ msgctxt "message"
 msgid "09192"
 msgstr "ウズメ様は なにをかんがえて{line_break}オレに 古代の遺跡なんかを{line_break}見はらせてるのかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOkuniKushinadaAnd"
 msgid "09193"
 msgstr "イケニエを きめるためのクジは{line_break}わたしたちとオクニとクシナダと{line_break}ウズメ様とで ひいたのよ・・・{page_break}まさか あのクシナダがひくなんて{line_break}人のうんめいなんて ホント・・・{line_break}わからないものだわねぇ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfLadyUzume"
 msgid "09194"
 msgstr "もしも イケニエのくじびきの時{line_break}ウズメ様があたってしまってたら{line_break}あの方でもイケニエになったのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoRelieved"
 msgid "09195"
 msgstr "ことしは イケニエにならなくて{line_break}ちょっぴり ホッとしたけど{line_break}また らいねん クジびきだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaSBeen"
 msgid "09196"
 msgstr "クシナダがイケニエになったら{line_break}スサはさみしくなっちゃうわね{page_break}むかしのスサは きらいだったけど{line_break}いまのスサだったら わたし・・・{line_break}つきあってあげてもいいわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeS"
 msgid "09197"
 msgstr "ウズメ様は この村をおさめる{line_break}じゅうような人だから・・・{line_break}だれか かわってたんだろうな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIOnlySuggested"
 msgid "09198"
 msgstr "イケニエになりたくないからって{line_break}クジびきをていあんしたんだけど{line_break}クジがはずれて よかったあ{page_break}それにしてもクシナダって{line_break}ホント クジによわいわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatIWant"
 msgid "09199"
 msgstr "伝説のまもり神であるオロチが{line_break}なぜ いま めざめたのか・・・{line_break}そのわけが知りたいんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAWhileBack"
 msgid "09200"
 msgstr "すこし前 大陸で火山がばくはつし{line_break}そのご 北西と南南西の方がくで{line_break}つよい光を見たあとのこと・・・{page_break}とつぜん オロチがよみがえり{line_break}イズモ村はパニックじゃわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatDragonsbaneSeems"
 msgid "09201"
 msgstr "オロチは さけが大こうぶつじゃ{line_break}つぎのまん月のイケニエの日まで{line_break}あばれないで いてくれるじゃろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTFind"
 msgid "09202"
 msgstr "ワシがあずかった たんけんが{line_break}見つからないのじゃけど・・・{line_break}まさか スサのヤツが・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmOld"
 msgid "09203"
 msgstr "ワシ この世にみれんもないし{line_break}イケニエに なってもいいのに{line_break}どうしてワシではダメなんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentCan"
 msgid "09204"
 msgstr "オロチは たいようによわいから{line_break}夜にしか村へあらわれないんじゃ{line_break}それは伝説のとおりじゃのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentIs"
 msgid "09205"
 msgstr "オロチはジパン島がアブない時{line_break}めざめるはずだったんじゃ{page_break}すると いま ジパン島には{line_break}キケンがせまっておるのかのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderIfAll"
 msgid "09206"
 msgstr "まさか このところのいへんが{line_break}フジ山でねむっていたオロチを{line_break}おこしてしまったのかのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentWill"
 msgid "09207"
 msgstr "オロチは さけを出されれば{line_break}いくらでも のんでしまうから{line_break}なくなってしまわんじゃろうな{page_break}イズモのさけは フジ山のすそに{line_break}みんな はこんでしまったから{line_break}これ以上 どうにもならんぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAccordingToLegend"
 msgid "09208"
 msgstr "あれだけが ふたたびオロチを{line_break}ねむらせる力をもっていると{line_break}伝説にある たんけんじゃ・・・{page_break}スサは あのたんけんを使い{line_break}クシナダをたすける気じゃぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurGuardianSerpent"
 msgid "09209"
 msgstr "オロチは ドラゴンのくせに{line_break}イケニエによこすのなら・・・{line_break}わかいむすめが いいのかのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNo"
 msgid "09210"
 msgstr "オロチはフジ山のどうくつじゃ{line_break}たいようの光をあてたくとも{line_break}それじゃ あてようがないのう。{end_wait}"
 
@@ -36871,7 +36871,7 @@ msgctxt "message"
 msgid "09215"
 msgstr "しくしく・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaDonT"
 msgid "09216"
 msgstr "スサ それ以上は{line_break}ちかづいてはダメ・・・。{end_wait}"
 
@@ -36891,11 +36891,11 @@ msgctxt "message"
 msgid "09220"
 msgstr "わたしは このままこうして{line_break}まん月の日まで 戦士をまつの。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaPleaseDon"
 msgid "09221"
 msgstr "スサ ダメよ わたしを・・・{line_break}もう そっとしておいて・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSusaSNot"
 msgid "09222"
 msgstr "スサは ここにはいませんよ{line_break}たぶん フジ山に行ったのです。{end_wait}"
 
@@ -36911,99 +36911,99 @@ msgctxt "message"
 msgid "09225"
 msgstr "オロチをたおしてくれる戦士は{line_break}かならず あらわれるのに・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheSerpent"
 msgid "09226"
 msgstr "あの子がオロチにたおされたら{line_break}わたしは ひとりぼっちよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoPoint"
 msgid "09227"
 msgstr "こうして おどりをやっても{line_break}オクニがいないとダメね・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentAttacked"
 msgid "09228"
 msgstr "オロチは 村がまつりの夜に{line_break}とつぜん あらわれたのです{page_break}あの時 おさけの入ったタルが{line_break}ひろばに ならんでいなければ{line_break}どうなっていたことやら・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentAte"
 msgid "09229"
 msgstr "オロチは まつりのさけをのむと{line_break}やみの中に きえていきおった{line_break}もう まつりは だいなしじゃよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentLives"
 msgid "09230"
 msgstr "オロチのすむ フジ山は・・・{line_break}死がない山といういみなんじゃ{page_break}オロチは あの山にすむかぎり{line_break}ぜったい 死にはしないじゃろ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIPrayThat"
 msgid "09231"
 msgstr "神よ どうか まもり神の{line_break}オロチのいかりをしずめて{line_break}スサをおまもり下さい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOkuniSSuch"
 msgid "09232"
 msgstr "オクニが いっしょにおどれば{line_break}もっと たのしいのになあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSerpentWould"
 msgid "09233"
 msgstr "あの夜 オロチはまつりのさけを{line_break}ぜんぶ のみほしていったのよ{line_break}大ざけのみにも ほどがあるわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBeforeTheSerpent"
 msgid "09234"
 msgstr "まつりのさけをのむ前のオロチは{line_break}あんなにおそろしかったのに・・・{line_break}のんだらきげんがよくなりおった{page_break}オロチってのは ねっからの{line_break}さけのみに ちがいないわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLegendHasIt"
 msgid "09235"
 msgstr "フジ山には しんぴの力があると{line_break}伝説にも かたられておるが・・・{page_break}ひょっとするとオロチが死なぬのも{line_break}その力のためかもしれんのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIzumoSLeaders"
 msgid "09236"
 msgstr "このイズモ村をおさめる者は{line_break}とくべつな力のもち主だと{line_break}むかしからきまっています{page_break}ウズメ様とスサのふたりの力は{line_break}それは すごいものですわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOneDayKushinada"
 msgid "09237"
 msgstr "あの日 クシナダが見せた力は{line_break}スサにも まけないものになると{line_break}かんじさせてくれたものさ・・・{page_break}どこまで あの力がのびるかを{line_break}見てみたかったのになあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePowerThat"
 msgid "09238"
 msgstr "ウズメ様たちがもっている力は{line_break}せんぞから うけついだ力・・・{line_break}だれにも まねはできないのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItWasThe"
 msgid "09239"
 msgstr "空から宝石がふりそそいだ日・・・{line_break}クシナダは スサのような力を{line_break}きゅうに使えるようになったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOfCourseI"
 msgid "09240"
 msgstr "オロチの伝説は知っていたけど{line_break}まさか げんじつになるなんて{line_break}おもってもみなかったよ・・・{page_break}これから まい年 わかいむすめが{line_break}オロチのイケニエにされるなんて{line_break}こんなヒドイはなしがあるかい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfIWere"
 msgid "09241"
 msgstr "わたしが もっとわかかったら{line_break}イケニエのクジをひかされてたよ{line_break}ああ なんておそろしいんだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThingsLikeThis"
 msgid "09242"
 msgstr "こんなことが おきちまうと{line_break}このジパン島やイズモ村への{line_break}たびの客がいなくなっちまうな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesThat"
 msgid "09243"
 msgstr "オロチはイケニエのむすめを{line_break}どうするつもりなんだろう{page_break}まさか けっこんする気・・・{line_break}そんなことは ないわよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyWouldOur"
 msgid "09244"
 msgstr "島のまもり神とされるドラゴンに{line_break}イケニエをあたえるなんてことは{line_break}ゆるされることではありません{page_break}ホントの神は イケニエなんかを{line_break}もとめたりは しないものです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSniffHowCould"
 msgid "09245"
 msgstr "しくしく 大すきなクシナダが{line_break}イケニエにされちゃうんだよ{line_break}そんなの ぜったいイヤよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenIGet"
 msgid "09246"
 msgstr "わたしも なん年かすると{line_break}イケニエにされるんだってさ{line_break}でもイケニエって なに・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfOnlyI"
 msgid "09247"
 msgstr "わたしに もうすこし力があれば{line_break}こんなヒドイことはさせないのだ{line_break}おお 神よ わたしに力を・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTWantThe"
 msgid "09248"
 msgstr "クシナダがフジ山のオロチに{line_break}たべられちゃったらイヤだよ{line_break}神様 おねえちゃんをたすけて。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNobodyWantsTo"
 msgid "09249"
 msgstr "みんな イケニエがこわいのよ{line_break}だから きっとイケニエって{line_break}おそろしいことなんでしょうね。{end_wait}"
 
@@ -37331,7 +37331,7 @@ msgctxt "message"
 msgid "09330"
 msgstr "クシナダは かのじょのため{line_break}スサがキケンをおかしたから{line_break}それが かなしかったみたいだ{page_break}それだけ スサはクシナダに{line_break}しんぱいされてるってことだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWarriorsAppearedFrom"
 msgid "09331"
 msgstr "まあ フジ山の中から・・・{line_break}戦士があらわれたのですか?{end_wait}"
 
@@ -37463,7 +37463,7 @@ msgctxt "message"
 msgid "09363"
 msgstr "その力をとりにきたそうですね{line_break}そうすると あなたたちも?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtSo"
 msgid "09364"
 msgstr "えっ その力を使える者のみ{line_break}あの力が見えるはずですわ{line_break}あなたたちは見えたのでしょ?{end_wait}"
 
@@ -37471,7 +37471,7 @@ msgctxt "message"
 msgid "09365"
 msgstr "{actor_name:5} ボクたちの力を{line_break}いまさら かくさなくても{line_break}いいんじゃないですか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouCall"
 msgid "09366"
 msgstr "そのエナジーとやらを{line_break}使えるのですね・・・。{end_wait}"
 
@@ -37579,15 +37579,15 @@ msgctxt "message"
 msgid "09392"
 msgstr "そのもくてきを はたすために・・・{line_break}どうしても行く手をはばむオロチは{line_break}たおさねばならなかったのですね?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRegardlessOfYour"
 msgid "09393"
 msgstr "りゆうが なんであろうと{line_break}われわれは すくわれました。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouTookPity"
 msgid "09394"
 msgstr "クシナダたちが かわいそうだから{line_break}ほうっても おけなかったなんて{line_break}やさしいのですね {actor_name:5}・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReNotImplying"
 msgid "09395"
 msgstr "ウズメ殿は われわれがオロチを{line_break}たおしたと いわれますが・・・。{end_wait}"
 
@@ -37635,7 +37635,7 @@ msgctxt "message"
 msgid "09406"
 msgstr "そうさ あまくものつるぎで{line_break}オロチをさしつらぬいたけど{line_break}とどめをさしたとはいえないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDisagree2"
 msgid "09407"
 msgstr "そうかのう・・・?{end_wait}"
 
@@ -37675,7 +37675,7 @@ msgctxt "message"
 msgid "09416"
 msgstr "エナジーさえ手に入るなら{line_break}それでじゅうぶんですよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAsYouCanSee"
 msgid "09417"
 msgstr "ごらんのとおりです。{end_wait}"
 
@@ -37723,27 +37723,27 @@ msgctxt "message"
 msgid "09428"
 msgstr "いつまでも おまちしてますわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouHave"
 msgid "09429"
 msgstr "もし じかんがおありだったら{line_break}すこしでも まつりのサケを{line_break}のんでいったら いかがです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSomedaySusaAnd"
 msgid "09430"
 msgstr "わたし いつかスサとのあいだに{line_break}子どもがうまれたら タケルと{line_break}名づけるつもりだったのです・・・{page_break}みなさんの ごおんはかならず{line_break}そのタケルへ 伝えておきますわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSureYou"
 msgid "09431"
 msgstr "村の者がオロチをたおしたのが{line_break}スサだとウワサしてると知って{line_break}オレに はなをもたせたんだろ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfSDescendants"
 msgid "09432"
 msgstr "しょうらい {actor_name:5}のしそんに{line_break}こまったことが おきたとしたら{line_break}かならずタケルがかけつけます。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMNo"
 msgid "09433"
 msgstr "オレは えいゆうなんかじゃないさ{line_break}それなのに みんなはオレを・・・{line_break}えいゆうあつかい しやがるんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndWhatWere"
 msgid "09434"
 msgstr "わたしの こころをよんで{line_break}どうするつもりです・・・。{end_wait}"
 
@@ -37755,7 +37755,7 @@ msgctxt "message"
 msgid "09436"
 msgstr "わたしに リードはききません{line_break}なにか 知りたいことがあれば{line_break}なんなりと こたえますわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTryingAgainWhat"
 msgid "09437"
 msgstr "また わたしに リードするとは{line_break}{actor_name:5} しつこい人ですわね{page_break}わたしのこころをのぞくのは{line_break}あなたでは ムリですわよ。{end_wait}"
 
@@ -37823,7 +37823,7 @@ msgctxt "message"
 msgid "09453"
 msgstr "やっぱり へいわっていうのは{line_break}やけに たいくつなもんだぜ{line_break}おもいっきり あばれたいな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyVeBeen"
 msgid "09454"
 msgstr "あなたたちも フジ山へ{line_break}入っていったそうね?{end_now}"
 
@@ -37835,35 +37835,35 @@ msgctxt "message"
 msgid "09456"
 msgstr "フジ山には かってにおどり出す{line_break}ふしぎなにんぎょうがあるらしくて{line_break}ウズメ様が ほしがっているのよ{page_break}スサ様 フジ山に行ったんだから{line_break}そのにんぎょうを見つけてきて{line_break}ウズメ様にさしあげればいいのに。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSupposedlyTheDoll"
 msgid "09457"
 msgstr "フジ山伝説にある にんぎょうには{line_break}光をさえぎってる岩を動かす力が{line_break}あるってことよ ホントかしらね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeHas"
 msgid "09458"
 msgstr "ウズメ様は どこから見つけたのか{line_break}おかしなペットをかっとるんじゃ{line_break}ずいぶん かわいがっとるらしいぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLadyUzumeSNew"
 msgid "09459"
 msgstr "ウズメ様のペットは なんでも{line_break}あの力に えいきょうするらしい{line_break}わしらには かんけいないのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoesLadyUzume"
 msgid "09460"
 msgstr "フジ山の おどるにんぎょうが{line_break}ウズメ様 どうしてそんなに{line_break}ひつようなんでしょう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhatSort"
 msgid "09461"
 msgstr "フジ山の おどるにんぎょうって{line_break}どんな おどりをするのかなあ{page_break}伝説のとおり ホントにあるなら{line_break}いちどでいいから 見てみたいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHeardThat"
 msgid "09462"
 msgstr "だれかが いっていたけど・・・{line_break}ウズメ様のペットというのは{line_break}目の前で きえたりするらしい{page_break}そのペットは ひょっとしたら{line_break}タヌキみたいなもんなのかいな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTKnowWhatIt"
 msgid "09463"
 msgstr "ウズメ様のかっているペットが{line_break}ウズメ様たちの力をたかめるとは{line_break}どういうことなんじゃろう・・・{page_break}ふーむ ワシらのような者には{line_break}さっぱり りかいできんわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAhCouldIt"
 msgid "09464"
 msgstr "まあ これは まさか・・・{line_break}フジ山の おどるにんぎょう?{end_now}"
 
@@ -37875,7 +37875,7 @@ msgctxt "message"
 msgid "09466"
 msgstr "ウソをいってもダメよ{line_break}あなた フジ山でこれを{line_break}見つけていたのね・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAgainYouHave"
 msgid "09467"
 msgstr "こんなモノをもらっても{line_break}わたし どうやって・・・{line_break}おれいをしたらいいの?{end_wait}"
 
@@ -37903,7 +37903,7 @@ msgctxt "message"
 msgid "09473"
 msgstr "さあ それじゃ うけとってね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWithThisDancing"
 msgid "09474"
 msgstr "これから おどるにんぎょうを使い{line_break}フジ山を いろいろしらべてみます{line_break}どうか{actor_name:5}も おげんきで。{end_wait}"
 
@@ -37911,59 +37911,59 @@ msgctxt "message"
 msgid "09475"
 msgstr "おどるにんぎょうをうけとって{line_break}とても ありがたいのだけど{line_break}リードされるのはこまりますわ{page_break}なにか知りたいことがあるなら{line_break}口でいってくれればいいのに。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouMustSee"
 msgid "09476"
 msgstr "大イースト海をたびしてると{line_break}めずらしい武器や道具などに{line_break}めぐりあうのでしょうね{page_break}わたしも そんなモノを見に{line_break}たびに出てみたいものです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyGoodsAre"
 msgid "09477"
 msgstr "うちの商品はジパン島の中でも{line_break}いちりゅうの品なんだぜ{page_break}これだったら 大陸の町の者も{line_break}ほしがる品が きっとあるよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDLoveTo"
 msgid "09478"
 msgstr "あの大イースト海をたびして{line_break}村では 手に入らない品を{line_break}しいれてきたいものだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisMayBe"
 msgid "09479"
 msgstr "ジパンは ちっぽけな島だが{line_break}大陸には ぜったいまけないぜ{page_break}いまはムリかもしれないけど{line_break}いつか 大陸のでっかい町と{line_break}商売できるようになってやるぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsFromChampa"
 msgid "09480"
 msgstr "さいきん チャンパのパヤヤームが{line_break}サカナを売りに こないもんだから{line_break}しょくじのメニューにこまるんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAsLadyUzume"
 msgid "09481"
 msgstr "ウズメ様が よげんしてたから{line_break}オロチに 村もあらされずに{line_break}じけんが かいけつしたんだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfBriggsS"
 msgid "09482"
 msgstr "パヤヤームの船がやってこないと{line_break}海のサカナが手に入らないのだ{page_break}かれが サカナを売りにくるまで{line_break}川ザカナを出すしかないなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIUnderstandNow"
 msgid "09483"
 msgstr "オロチが あらわれる前に・・・{line_break}さかだるをよういしてた時なんか{line_break}なんのことか わからなかったわ{page_break}だけど あのさかだるがなければ{line_break}このイズモ村はオロチによって{line_break}はかいされてたでしょうよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatPeace"
 msgid "09484"
 msgstr "この うつくしいジパン島に{line_break}へいわが もどったというのは{line_break}とても よろこばしいことです{page_break}なによりも うれしいのは{line_break}イケニエなんかを使わずに{line_break}へいわが もどったことです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheSerpent"
 msgid "09485"
 msgstr "オロチが たおされたんだってね{line_break}これで もう クシナダは・・・{line_break}イケニエにならずにすむのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouReA"
 msgid "09486"
 msgstr "なんでも イケニエってさ{line_break}オロチの おヨメさんに{line_break}なることだったのね・・・{page_break}あんな 大きい人のゴハンを{line_break}つくったりするのって・・・{line_break}きっと たいへんだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThankThe"
 msgid "09487"
 msgstr "神よ あなたのしもべが・・・{line_break}イケニエにならずにすみました{line_break}こころから かんしゃします。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMaybeNowKushinada"
 msgid "09488"
 msgstr "また クシナダのおねえちゃんに{line_break}いっぱい あそんでもらえるのね{line_break}なにして あそぼうかなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatDragonWanted"
 msgid "09489"
 msgstr "オロチって まいとしのように{line_break}おヨメさんをもらう気だったのね{line_break}オロチって・・・女のてきだわ!{end_wait}"
 
@@ -38847,7 +38847,7 @@ msgctxt "message"
 msgid "09709"
 msgstr "これより さきチャンパ村{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyThatBlock"
 msgid "09710"
 msgstr "あわわ マストの{line_break}しょうがいぶつが{line_break}なくなってる!{end_wait}"
 
@@ -38899,7 +38899,7 @@ msgctxt "message"
 msgid "09722"
 msgstr "さあ パヤヤームに{line_break}知らせに行こう!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIStillJust"
 msgid "09723"
 msgstr "あのマストの しょうがいぶつが{line_break}ぜんぶ なくなっているだなんて{line_break}ちょっと しんじられんなあ。{end_wait}"
 
@@ -39311,31 +39311,31 @@ msgctxt "message"
 msgid "09825"
 msgstr "ちいさな船が町になければ{line_break}しょくじのためのサカナは{line_break}とることができんじゃろうに。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOooogOw2"
 msgid "09826"
 msgstr "う うーん・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoThese"
 msgid "09827"
 msgstr "なんで わたしが{line_break}こんな目に・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStupidBriggs2"
 msgid "09828"
 msgstr "パヤヤームのヤツ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsSPirates"
 msgid "09829"
 msgstr "パヤヤームがいきなり・・・{line_break}手下たちに なぐられ・・・{line_break}船は・・・船は・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIJustCame"
 msgid "09830"
 msgstr "わたしは なおったという{line_break}船を見ていただけなのに{line_break}まきぞえにされて・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsSaidTheBoat"
 msgid "09831"
 msgstr "パヤヤームたちが あらわれて{line_break}船はヤツらのモノだって・・・{line_break}たしかに そうなんだけどさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggs2"
 msgid "09832"
 msgstr "きさま パヤヤーム・・・!{end_wait}"
 
@@ -39455,7 +39455,7 @@ msgctxt "message"
 msgid "09861"
 msgstr "くやしかったら チャンパまで{line_break}あたしたちをおってくるんだね!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatYouLet"
 msgid "09862"
 msgstr "なんです パヤヤームを{line_break}とりにがしたんですか!{end_wait}"
 
@@ -40835,7 +40835,7 @@ msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "10206"
 msgstr "はたらかずとも くらしていけると{line_break}村の者たちが おもってしまって{line_break}みんな はたらくのをやめたのです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHoldOnTo"
 msgid "10207"
 msgstr "しっかり そうじゅうしてよ{line_break}もうちょっとで うずしおに{line_break}のまれるところだったじゃない。{end_wait}"
 
@@ -41179,7 +41179,7 @@ msgctxt "MsgLemuriaStayExploringAlternate"
 msgid "10292"
 msgstr "どうしたんじゃ {actor_name:5}よ{line_break}そっちは船のドックじゃが・・・{line_break}かえるつもりでは なかろうの{page_break}まだ レムリアにきたばかりじゃ{line_break}かえるなんて とんでもないぞ{line_break}もっとレムリアをたんけんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisPlaceIs"
 msgid "10293"
 msgstr "これは りっぱな宮殿じゃ{line_break}すごいものじゃのう・・・。{end_wait}"
 
@@ -41319,123 +41319,123 @@ msgctxt "message"
 msgid "10327"
 msgstr "ハイドロ様のむかえがくるまで{line_break}もうすこし レムリアの中を{line_break}ブラブラしてましょう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheKingIs"
 msgid "10328"
 msgstr "コンサバト様が お見えだから{line_break}王と あうことができるのは{line_break}いつのことやら わからんぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheKingWill"
 msgid "10329"
 msgstr "お気に入りだった{actor_name:8}が{line_break}かえってきたことを知ったら{line_break}王は およろこびになるだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowMuchLongerWill"
 msgid "10330"
 msgstr "コンサバト様は はなしこむと{line_break}いつまで かかるものやら・・・{line_break}はやく かえってほしいよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHadHeard"
 msgid "10331"
 msgstr "つなみで死んだはずの{actor_name:8}が{line_break}もどってきたとは きいたけど{line_break}きくと見るとじゃ 大ちがいだ{page_break}じっさい 目の前にあらわれると{line_break}だれだって おどろくだろうぜ{line_break}{actor_name:8} たくましくなったな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICannotRemember"
 msgid "10332"
 msgstr "レムリアに お客さんなんて・・・{line_break}どれぐらい ひさしぶりのことかな{line_break}まあ どうでもいいことだけどね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaHasNo"
 msgid "10333"
 msgstr "レムリアは びょうきもなければ{line_break}あらそいさえもない らくえんよ{page_break}だけど この町にやってきた人たちは{line_break}やがてこの町から にげたくなるのよ{line_break}わたし・・・その気もちがわかるなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInLemuriaWe"
 msgid "10334"
 msgstr "レムリアでは なかなか年をとれない{line_break}そとの世界では 長く生きるのは{line_break}すごいことなんだろうけどね・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLifeNeverChanges"
 msgid "10335"
 msgstr "せいかつに へんかがないってのは{line_break}とっても たいくつなことなんだよ{line_break}すぐに あなたたちにもわかるわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIOughtTo"
 msgid "10336"
 msgstr "島のそとから 人がきたのじゃから{line_break}ビックリするべきなんじゃろうけど{line_break}かんどうなんて わすれてしもうた。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowOldAm"
 msgid "10337"
 msgstr "あたしゃ なんさいじゃったかねぇ{line_break}200さいを こえるころからは{line_break}年なんか かぞえなくなったのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItHasBeen"
 msgid "10338"
 msgstr "レムリアで 子どもがうまれるのは{line_break}めったに ないことなんだってさ{page_break}島中の人に かわいがられるけど{line_break}すぐに大人になっちゃうからなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeAreThe"
 msgid "10339"
 msgstr "島の子どもって わたしたちだけよ{line_break}たくさんの 子どもとあそべたら{line_break}きっと たのしいんでしょうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMeowMrrrfle2"
 msgid "10340"
 msgstr "ニャー ニャー。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWoofRrrrrroof2"
 msgid "10341"
 msgstr "バウワウ バウワウ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoo2"
 msgid "10342"
 msgstr "ンモオオ ンモオオ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBukbukbuk2"
 msgid "10343"
 msgstr "コケー コケー。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlank4"
 msgid "10344"
 msgstr "・・・・・・。 {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMoreOfThe"
 msgid "10345"
 msgstr "きょうも いい天気だけど・・・{line_break}まいにち なにもかわんないんだ{line_break}ずっと同じなんて つまんないなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHavenT"
 msgid "10346"
 msgstr "なにか しげきはないかしら・・・{line_break}だけど キケンがあるようなのは{line_break}ぜんぜん のぞんでいないのよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeAged"
 msgid "10347"
 msgstr "年をとるのが ゆっくりだと{line_break}死への おそれなんかないから{line_break}なにも やる気がおきないなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSometimesIThink"
 msgid "10348"
 msgstr "わたしたちが 年をとるより{line_break}たてものが ボロくなる方が{line_break}ずっと はやいくらいだわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLongAgoA"
 msgid "10349"
 msgstr "むかし 島へ人がながされてきて{line_break}ビックリしたもんじゃったけど{line_break}あれはルンパという男じゃったな{page_break}その時 いっしょにいた男が・・・{line_break}にげ出したんじゃったけども・・・{line_break}名前は なんじゃったかのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKingHydrosIs"
 msgid "10350"
 msgstr "ハイドロ様は あたしなんかより{line_break}よっぽど 年をとっていなさる・・・{line_break}あの方 いくつなんじゃろうのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneSpoilsMe"
 msgid "10351"
 msgstr "みんなに かわいがられるから{line_break}大人になんて なりたくない{page_break}だけど 20年か30年たてば{line_break}ボクも大人になっちゃうんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreThereOther"
 msgid "10352"
 msgstr "まの海の そとの世界でも{line_break}子どもって すくないのかな{line_break}それだと 人もすくなそうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoOneIn"
 msgid "10353"
 msgstr "この町の人たちは まったく{line_break}やる気が ないんだニャー{line_break}ネコよりなさけないニャー。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSSo"
 msgid "10354"
 msgstr "この島には ここほれワンワン{line_break}というぐらい宝だらけだワン{line_break}だけど だれもほらないワン。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriansAreSo"
 msgid "10355"
 msgstr "ウシのボクでさえ あきれるほど{line_break}レムリア人は なまけものだモー{line_break}なのに おどろくほど長生きだモー。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfItWeren"
 msgid "10356"
 msgstr "お城の人たちが いなかったら{line_break}レムリアの町にすむ人たちは{line_break}きっと うえ死にしてるだろコケ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMotherWhyHave"
 msgid "10357"
 msgstr "お母さん どうして{line_break}ぼくを のこして・・・{end_wait}"
 
@@ -41667,7 +41667,7 @@ msgctxt "message"
 msgid "10414"
 msgstr "ルンパは こんかいのことでは{line_break}王の そうだんやくだったから{line_break}なんでも知ってるはずなんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHouseOfThe"
 msgid "10415"
 msgstr "コングレスのやかた{end_wait}"
 
@@ -41747,11 +41747,11 @@ msgctxt "message"
 msgid "10434"
 msgstr "クスリが なくなっても{line_break}いずみの水を のめば{line_break}げんきなんじゃ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDoorDoesn"
 msgid "10435"
 msgstr "ドアは あかないようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreYouKids"
 msgid "10436"
 msgstr "{actor_name:8}のなかまとは{line_break}キミたちのことかな?{end_wait}"
 
@@ -42115,19 +42115,19 @@ msgctxt "message"
 msgid "10526"
 msgstr "行こうぞ {actor_name:5}よ{line_break}ハイドロ王の城へ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKingHydrosAwaits"
 msgid "10527"
 msgstr "ハイドロ王が おまちですぞ{line_break}どうか 中へお入り下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHisHighnessThe"
 msgid "10528"
 msgstr "あなたたちをおとおしするように{line_break}王より うけたまわっております{line_break}どうぞ おとおり下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyAreClearly"
 msgid "10529"
 msgstr "こいつらがエナジストだってことは{line_break}いまエナジーを使ってるぐらいだし{line_break}まちがいないんだろうけど・・・{page_break}王がいそいで あいたいほどに{line_break}じゅうような者たちなのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoesHis"
 msgid "10530"
 msgstr "{actor_name:8}と いっしょにきた戦士と{line_break}ルンパに{actor_name:8}をあつめられて{line_break}王は なにをなさるおつもりだろう。{end_wait}"
 
@@ -42151,7 +42151,7 @@ msgctxt "message"
 msgid "10535"
 msgstr "ハイドロ様は これまでの王の中でも{line_break}かしこい王だと おもっとるが・・・{page_break}コンサバト様たち コングレスが{line_break}ハイドロ様のやろうとすることに{line_break}はんたいするのも よくわかるのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSenateHolds"
 msgid "10536"
 msgstr "もともと レムリア人ではない{line_break}ルンパをかわいがりすぎることで{line_break}王は はんかんをかっとるんじゃ。{end_wait}"
 
@@ -42175,7 +42175,7 @@ msgctxt "message"
 msgid "10541"
 msgstr "このままではレムリアはほろぶと{line_break}王は しんぱいしとるんじゃけど{line_break}それは かんがえすぎじゃろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgITrustThe"
 msgid "10542"
 msgstr "ワシは 王をしんじているんじゃ{line_break}もし王のかんがえが おかしいなら{line_break}それは ルンパがわるいんじゃ。{end_wait}"
 
@@ -42595,19 +42595,19 @@ msgctxt "message"
 msgid "10646"
 msgstr "この先 これまで 以上に{line_break}こんなんが あるかもしれないが{line_break}よろしくたのんだぞ {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeNever"
 msgid "10647"
 msgstr "コンサバト様 ずいぶん{line_break}おこって かえったなあ{line_break}あんなの はじめて見たよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLordConservatoHas"
 msgid "10648"
 msgstr "コンサバト様は あんたたちを{line_break}島から出しちゃダメだって・・・{page_break}そんなことをいわせるなんて{line_break}あんた 見かけによらないなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSureThe"
 msgid "10649"
 msgstr "あのぶんじゃ コングレスから{line_break}また なにか いってくるぞ{line_break}ああ かんべんしてほしいぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowCouldLord"
 msgid "10650"
 msgstr "ハイドロ王と {actor_name:8}たちは{line_break}世界をほろぼそうとしてる・・・{page_break}コンサバト様 オレみたいな者に{line_break}そんなことをいって かえったぞ。{end_wait}"
 
@@ -42631,7 +42631,7 @@ msgctxt "message"
 msgid "10655"
 msgstr "もしハイドロが ほんきで・・・{line_break}錬金じゅつをふっかつさせる気なら{line_break}ワシは ハイドロにはんたいじゃよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouAnd"
 msgid "10656"
 msgstr "ルンパも あんたたちも出て行けば{line_break}レムリアは へいわになるんじゃ{line_break}わしゃ そうしんじとるぞ・・・。{end_wait}"
 
@@ -42655,7 +42655,7 @@ msgctxt "message"
 msgid "10661"
 msgstr "ワシらの時代さえ へいわならば{line_break}それでいいと おもってしまうのは{line_break}年をとったということかのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIKnowWhy"
 msgid "10662"
 msgstr "レムリアが けっかいをはって{line_break}そとと つきあわなかったのが{line_break}なんでだったかが わかるわい{page_break}レムリアの者は へんかをもとめず{line_break}へいわをのぞんだからなんじゃ。{end_wait}"
 
@@ -42683,7 +42683,7 @@ msgctxt "message"
 msgid "10668"
 msgstr "ハイドロ王の たくらみは{line_break}レムリアへの はんぎゃくで{line_break}ゆるされるべきじゃないんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDoorIs"
 msgid "10669"
 msgstr "ドアはカギがかかっている・・・{line_break}どうやら かいぎをしているらしい。{end_wait}"
 
@@ -42771,7 +42771,7 @@ msgctxt "message"
 msgid "10690"
 msgstr "あっ {actor_name:5}まで・・・{line_break}もうボクはおこりましたよ{line_break}ぜったい おしえません!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgOh2"
 msgid "10691"
 msgstr "ほう!{end_wait}"
 
@@ -42783,11 +42783,11 @@ msgctxt "message"
 msgid "10693"
 msgstr "{actor_name:5}よ こっちじゃ{line_break}りっぱな宮殿があるぞい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereAreYou"
 msgid "10694"
 msgstr "どこにいくんじゃ {actor_name:5}{line_break}もっと中まで見てみようぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreWeSetting"
 msgid "10695"
 msgstr "{actor_name:5}よ ここを出発するかの?{end_now}"
 
@@ -42799,7 +42799,7 @@ msgctxt "message"
 msgid "10697"
 msgstr "それでは もうしばらく{line_break}ゆっくりしようぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatSThe"
 msgid "10698"
 msgstr "どうした まさか{line_break}のぼって こられないのか?{line_break}・・・しょうがないなあ。{end_wait}"
 
@@ -42811,15 +42811,15 @@ msgctxt "message"
 msgid "10700"
 msgstr "さ これでいいだろ{line_break}のぼっておいでよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDrinkingFromThis"
 msgid "10701"
 msgstr "このいずみの水は{line_break}のむと げんきになるんだ{line_break}キミたちも どうだい?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseTurtlesHave"
 msgid "10702"
 msgstr "このいずみに すんでいるカメが{line_break}どれだけいきたか わからないくらい{line_break}長生きなのも この水のおかげさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndTheOthers"
 msgid "10703"
 msgstr "{actor_name:5}たちは{line_break}いずみの水を のんだ{page_break}ぜんいんの HPとEPが{line_break}まんたんになった!{end_wait}"
 
@@ -42847,7 +42847,7 @@ msgctxt "message"
 msgid "10709"
 msgstr "あの人 外のせかいにもどったら{line_break}おなじようないずみをつくりたいって{line_break}いってたけど・・・どうしたかしらね{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoYouWish"
 msgid "10710"
 msgstr "レムリアのいずみで{line_break}うんだめし ですか?{end_now}"
 
@@ -42859,11 +42859,11 @@ msgctxt "message"
 msgid "10712"
 msgstr "どうぞ どうぞ あなたの{line_break}うんをためしてみてください{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLookLike"
 msgid "10713"
 msgstr "あなたは なんとなく{line_break}こううんを手にしそうな{line_break}かんじがするなあ・・・{page_break}だって ひょうじょうが{line_break}明るいじゃないですか{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoOneIs"
 msgid "10714"
 msgstr "わらうかどには{line_break}ふく きたるって{line_break}いうくらいだから・・・{page_break}やっぱり ひょうじょうが{line_break}明るい方が こううんは{line_break}やってきやすいんだろうな{end_wait}"
 
@@ -42955,35 +42955,35 @@ msgctxt "message"
 msgid "10736"
 msgstr "ガイアフォールを見るためだけに{line_break}オレがキケンをおかしてるなんて{line_break}あいぼうは おもってるけど・・・{page_break}ホントは あのガケのとちゅうに{line_break}見つけちまった宝をとりたくて{line_break}なんども かよってたんだよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeMade"
 msgid "10737"
 msgstr "いだいな よげんに したがって{line_break}われわれは ツバサをつくり・・・{line_break}ここまで はこんできたのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeMustBe"
 msgid "10738"
 msgstr "神の山ジュピターがもえる時{line_break}このツバサは せいなる船に{line_break}つけられるのだという・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeBroughtThese"
 msgid "10739"
 msgstr "ギアナ村から はこんできた・・・{line_break}ツバサが こわされないように{line_break}わたしたち 見はっているのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderIfThese"
 msgid "10740"
 msgstr "こんな大きなツバサをつけて{line_break}ホントに 空がとべるのかな{line_break}そのすがた・・・見てみたいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeFirstHeard"
 msgid "10741"
 msgstr "3年前に よげんが下されてから{line_break}ツバサづくりをはじめたが・・・{line_break}よく ここまできたもんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseWingsAre"
 msgid "10742"
 msgstr "ふつうの船に ツバサをつけたら{line_break}おもくって しずんじゃうだろう{page_break}このツバサが つけられるという{line_break}せいなる船とは どんな船かな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDoubtAnyone"
 msgid "10743"
 msgstr "こんなに がんじょうなツバサは{line_break}だれも こわせないはずだけど{line_break}見はってなきゃいけないのよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSKind"
 msgid "10744"
 msgstr "このツバサが はばたくなんて{line_break}ちょっと そうぞうできないな。{end_wait}"
 
@@ -45983,23 +45983,23 @@ msgctxt "message"
 msgid "11493"
 msgstr "おお きせきがおきるのならば{line_break}じぶんの目で それを見て・・・{line_break}かんどうをあじわいたいのです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaReturnedTo"
 msgid "11494"
 msgstr "ハモがギアナ村へもどってきて{line_break}ツバサづくりをいそがせたから{line_break}ツバサが かんせいしたんだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWasYourBoat"
 msgid "11495"
 msgstr "まさか あんたたちの船が・・・{line_break}地上絵にかかれた船と同じなんて{line_break}どういうことなんだろうな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneSWaiting"
 msgid "11496"
 msgstr "村の者は 船にツバサをつけたあと{line_break}いりえの 見はらしのいいばしょで{line_break}船が動き出すのをまっているわ{page_break}みんな 船がとび立つところが{line_break}どうしても 見たいんだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAMassiveRock"
 msgid "11497"
 msgstr "灯台に火がともった時の地しんで{line_break}海のそこから岩がとび出したから{line_break}いりえの出口が ふさがってるよ{page_break}船が とび上がれなかったら・・・{line_break}いりえから 出られそうもないなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereDoYouThink"
 msgid "11498"
 msgstr "あんた どこに行く気だい?{end_wait}"
 
@@ -46023,79 +46023,79 @@ msgctxt "message"
 msgid "11503"
 msgstr "たのんだぜ 戦士さんよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheVillagersAre"
 msgid "11504"
 msgstr "村のみんな そこら中にいて{line_break}船のとびたつのをまってるぜ{line_break}はやく 船を動かしてくれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaWouldnT"
 msgid "11505"
 msgstr "ハモが かたいことをいうから{line_break}みんな 草むらなんかに入って{line_break}船出を見るはめになったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenPeopleWork"
 msgid "11506"
 msgstr "たとえ わずかな気の力でも{line_break}人がおおければ けっして・・・{line_break}その力は あなどれません{page_break}船がとぶ じゃまにならぬよう{line_break}われわれは 村人たちを・・・{line_break}村へかえしたというわけです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeBeen"
 msgid "11507"
 msgstr "こんなに ツバサをいそがせるほど{line_break}すぐに 船は出発するのかな{page_break}オレたち いつもノンビリだから{line_break}このいそがしさは 目がまわるよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoBuiltThe"
 msgid "11508"
 msgstr "いったい あの地上絵にある船は{line_break}だれがつくったものなのだろう{page_break}まさか ギアナぞくいがいにも{line_break}アネモスのちをひく者が・・・{line_break}どこかに いるのかもしれない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaIsThe"
 msgid "11509"
 msgstr "アネモスの力をさずかってから{line_break}ハモはギアナの長になって・・・{line_break}かの女のことばは ぜったいよ{page_break}だけど そのけんりょくを使って{line_break}みんな いりえからおい出すのは{line_break}ちょっと やりすぎだとおもうわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThatBoat"
 msgid "11510"
 msgstr "みんな 船がいりえから出るには{line_break}とぶしかないと おもってるから{line_break}それを 見まもってるんだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSAmazing"
 msgid "11511"
 msgstr "オレたちが とりつけたツバサで{line_break}あの船がとびたつなんて・・・{line_break}かんがえただけで むねがおどるぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHammaSaysThat"
 msgid "11512"
 msgstr "船がとんでほしいっていう・・・{line_break}オレたちの きたいするこころが{line_break}とばすことをじゃまするだとさ{page_break}それで 船がとぶすがたを{line_break}おがめないとは なさけないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeCanT"
 msgid "11513"
 msgstr "村人たちが あつまっていると{line_break}船がとぶ じゃまになる・・・{page_break}かわいそうだが 村の者たちには{line_break}草むらから 船のとび立つのを{line_break}見てもらうことにしましょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSAlmost"
 msgid "11514"
 msgstr "いよいよ アネモスの地上絵が{line_break}げんじつのモノとなる時です{line_break}ああ ワクワクしてきますな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfEveryoneWill"
 msgid "11515"
 msgstr "ハモのいうことをよくきくのです{line_break}そうすれば アネモスの船は・・・{line_break}かならずや とび立てるでしょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTheWinged"
 msgid "11516"
 msgstr "アネモスのツバサの船がとび立ち{line_break}ふたたび地上は かいほうされる{line_break}・・・それがアネモスの伝説です{page_break}いったい どんなことから・・・{line_break}地上は かいほうされるのでしょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceYouRemove"
 msgid "11517"
 msgstr "あなたが じゅうりょくの石を{line_break}ちゃんと もってきているなら{line_break}船は とび立つはずなのです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheDayHas"
 msgid "11518"
 msgstr "アネモスの地上絵にある船が{line_break}ほんとうに 空をとぶ時が{line_break}ついに やってきたのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheAnemosWere"
 msgid "11519"
 msgstr "こんな 大きな船がとぶなんて{line_break}いだいな アネモスの力でも{line_break}ムリなんじゃないのかな・・・{page_break}いかんぞ いかん・・・{line_break}わたしが 気よわになっては{line_break}とべるものも とべなくなる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseWarriorsWill"
 msgid "11520"
 msgstr "地上をかいほうするためには{line_break}なにをすればいいのかを・・・{line_break}戦士たちは 知ってるらしい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearThatThe"
 msgid "11521"
 msgstr "戦士たちが 手に入れてきた{line_break}グラビティのヒスイとは・・・{page_break}船をとばせる石というものを{line_break}ひと目 見てみたいものだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenWaiting"
 msgid "11522"
 msgstr "まっていたわ {actor_name:5}。{end_wait}"
 
@@ -46151,11 +46151,11 @@ msgctxt "message"
 msgid "11535"
 msgstr "みんなで 見まもっているから{line_break}船がとび立つところを・・・{line_break}どうか 見せてちょうだい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseYourPsynergy"
 msgid "11536"
 msgstr "船をすすませながらエナジーよ{line_break}それで 出口の岩しょうの上を{line_break}かならず こえられるでしょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTravelSafelyThe"
 msgid "11537"
 msgstr "ああ どうか{actor_name:3}たちを・・・{line_break}ぶじに たび立たせたまえ・・・。{end_wait}"
 
@@ -46595,35 +46595,35 @@ msgctxt "message"
 msgid "11646"
 msgstr "{actor_name:3}は ゆうしゃとなって{line_break}もどってくるはずだったが・・・{line_break}どうやら ちがっていたようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenWatching"
 msgid "11647"
 msgstr "おだやかな いりえだなあ{line_break}ここから 地上絵の船が・・・{line_break}たび立ったなんてユメみたいさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderWhat"
 msgid "11648"
 msgstr "この海のはてに なにがある・・・{line_break}こんなことを かんがえるなんて{line_break}オレ おかしくなっちゃったかな{page_break}だけど あの船のことをおもうと{line_break}そんなことをかんがえてしまうんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllOfOur"
 msgid "11649"
 msgstr "ギアナでは ずっとむかしから{line_break}海は おそろしいものなんだと{line_break}おしえられてきたものよ・・・{page_break}だけど あの船出の時の海は・・・{line_break}うつくしくてロマンチックだったわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReGoingNorth"
 msgid "11650"
 msgstr "お兄ちゃん 北へ行くんでしょ{line_break}北の海は 冬だっていうから{line_break}かぜを ひかないようにね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWheneverILook"
 msgid "11651"
 msgstr "この いりえを見てると{line_break}あの船出をおもいだして{line_break}たびに出たくなちゃうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWishI"
 msgid "11652"
 msgstr "あの ツバサの船にのって{line_break}海のはてまで 行ってみたい{line_break}そんな気に なっちまったぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEveryoneInContigo"
 msgid "11653"
 msgstr "海は おそろしいものだって{line_break}みんな おもってたはずよ{page_break}だけど あの船出をみた人たちは{line_break}きっと それ以上にロマンを・・・{line_break}かんじたんじゃないかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeDecided"
 msgid "11654"
 msgstr "あの船で たびができるように{line_break}戦士を目ざすことにきめたぞ{page_break}だから{actor_name:3}の兄ちゃんたちには{line_break}ぶじに もどってきてもらわなきゃ。{end_wait}"
 
@@ -46803,7 +46803,7 @@ msgctxt "message"
 msgid "11698"
 msgstr "さて 先をいそごうかのう{line_break}出発じゃぞ {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyWait2"
 msgid "11699"
 msgstr "おーい まってくれ!{end_wait}"
 
@@ -51067,7 +51067,7 @@ msgctxt "message"
 msgid "12764"
 msgstr "あなたたちこそ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmTheGuardian"
 msgid "12765"
 msgstr "われ 水の力をまもりし者なり{line_break}さらなる力を ほっするならば{line_break}お前の力を 見せてみよ。{end_wait}"
 

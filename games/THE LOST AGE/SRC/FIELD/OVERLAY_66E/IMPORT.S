@@ -133,19 +133,51 @@ Func_02001160:
 	.global Func_02001168
 	.thumb_func
 Func_02001168:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8368
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8368
+	.else
 	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	.endif
+	.endif
 	.global Func_02001170
 	.thumb_func
 Func_02001170:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_InitializeBuffersFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_InitializeBuffersFar
+	.else
 	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	.endif
+	.endif
 	.global Func_02001178
 	.thumb_func
 Func_02001178:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	.else
 	overlay_veneer BattleFx_StartBufferInterpolationFar
+	.endif
+	.endif
 	.global Func_02001180
 	.thumb_func
 Func_02001180:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_02001188
 	.thumb_func
 Func_02001188:

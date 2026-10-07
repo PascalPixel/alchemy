@@ -31,6 +31,13 @@
    offset + work, then + 10000; draft: offset + 10000, then + work;
    a literal 10000 gives the native's order but loop.c hoists it out
    of the ring loop into r6).
+   Ring store: GCSE propagates rings' 10000 into offset + rings and
+   PRE hoists that sum, so the giv adds work last. With a literal,
+   the reduced giv's 10000 is a new pseudo in the inner preheader; the
+   second loop pass hoists it from the outer ring loop as its first
+   movable (threshold 30 * savings 1 * life 1 >= 30 insns). The
+   native keeps it inside (ldr r2 after offset + work), which needs
+   that loop at 31 insns or more, or a movable moved before it.
    The burst's first pillar blit is cy high: the native's 112 there is
    a reload (r0) of cy's pseudo, which has no register and a REG_EQUIV
    of 112, as at p->y = cy << 16; a literal 112 is a pseudo of its own
@@ -199,7 +206,15 @@
      22, adopted.
    - on 22: the burst's first blit as 48 wide and cy high: 16, adopted
      (both blits cy: 180); the smoke blit's rx = (Random16() & 3) - 3
-     and ry = (Random16() & 3) + 32: 14, adopted. */
+     and ry = (Random16() & 3) + 32: 14, adopted.
+   - on 14: ring store as sheet[offset + 10000 + j], [10000 + offset +
+     j], [offset + j + 10000], (sheet + offset)[10000 + j] or (sheet +
+     offset + 10000)[j]: 16 (order as native, 10000 hoisted to r6); a
+     literal in both uses, no rings local: 16; (sheet + 10000)[offset +
+     j]: 14 (order as native, 10000 a reload into r1, native r2); with
+     the literal, offset += j in the for header: 18; a lim = 64 - i * 7
+     local: 31; permuter, 4 minutes over the ring loops on the literal
+     form: no gain. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

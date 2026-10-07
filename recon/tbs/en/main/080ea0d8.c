@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 441 of 2455 (listing 2455, draft 2450, common 2232).
+/* 080ea0d8: differ 273 of 2455 (listing 2455, draft 2454, common 2318).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -49,6 +49,8 @@
  *   added to work->sheet at the call, as the native adds work after the
  *   call (518, 492); the petal draws pass high, high * 2 with high a local
  *   8 (rematerialised), the burst block its own high (441).
+ * - The new objects clear part[0].priority through the bitfield: the native
+ *   masks the byte with an SImode ~12 hoisted to r8 (441 -> 273).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -61,8 +63,6 @@
  * a halfword (lsls 16 / lsrs 26), ours with asrs.
  * The native fill word sits at sp+140, between place and place2, so it is a
  * declared volatile word.
- * Trial: the named animation priority bitfield adds one instruction;
- * its byte store is retained until the remaining allocation is understood.
  * Trial: petal cell written in each call, not a block local (kept).
  * Trial: palette colour as s32, not u16 (u16 loads with ldrsh), kept.
  * Trial: spark velocities from their own zero variable, not the ramp
@@ -467,7 +467,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (obj != 0) {
             obj->flags = 0;
             AnimationObjects_SelectAnimationFar(obj, __modsi3(i, 3));
-            ((u8 *)work->objects[i])[9] &= ~12;
+            ((struct AnimationObject *)work->objects[i])->part[0].priority = 0;
         }
     }
 

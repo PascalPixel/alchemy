@@ -237,7 +237,7 @@ Func_0200013c:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_02008244:
-	.4byte 0x00001c10
+	.4byte MsgScene669No03
 	.section .text.x02008250,"ax",%progbits
 	.global Func_02000250
 	.thumb_func
@@ -968,7 +968,7 @@ Func_020004f4:
 	movs r2, #30
 	b .L_02008900
 .L_020088fc:
-	.4byte 0x00001b67
+	.4byte MsgScene669No01
 .L_02008900:
 	movs r0, #9
 	bl Func_020031f8
@@ -1704,7 +1704,7 @@ Func_02000c5c:
 	b .L_0200903c
 	.2byte 0x0000
 .L_02009008:
-	.4byte 0x00001b8b
+	.4byte MsgScene669No02
 .L_0200900c:
 	movs r0, #40
 	bl Battle_WaitMode0
@@ -5319,13 +5319,13 @@ gSceneEvents:
 	.4byte Func_0200013c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001c12
+	.4byte MsgScene669No04
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001c13
+	.4byte MsgScene669No05
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001c14
+	.4byte MsgScene669No06
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_02000128

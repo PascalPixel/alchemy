@@ -440,11 +440,11 @@ Func_02000314:
 .L_0200836a:
 	pop {r5, pc}
 .L_0200836c:
-	.4byte 0x000022f5
+	.4byte MsgScene680No01
 .L_02008370:
-	.4byte 0x000023e9
+	.4byte MsgScene680No07
 .L_02008374:
-	.4byte 0x000023ea
+	.4byte MsgScene680No08
 	.section .text.x02008378,"ax",%progbits
 	.global Func_02000378
 	.thumb_func
@@ -478,7 +478,7 @@ Func_02000378:
 	pop {pc}
 	.2byte 0x0000
 .L_020083c0:
-	.4byte 0x00002316
+	.4byte MsgScene680No04
 	.section .text.x020083c4,"ax",%progbits
 	.global Func_020003c4
 	.thumb_func
@@ -505,9 +505,9 @@ Func_020003c4:
 .L_020083f2:
 	pop {pc}
 .L_020083f4:
-	.4byte 0x00002316
+	.4byte MsgScene680No04
 .L_020083f8:
-	.4byte 0x00002315
+	.4byte MsgScene680No03
 	.section .text.x020083fc,"ax",%progbits
 	.global Func_020003fc
 	.thumb_func
@@ -534,9 +534,9 @@ Func_020003fc:
 .L_0200842a:
 	pop {pc}
 .L_0200842c:
-	.4byte 0x0000231a
+	.4byte MsgScene680No06
 .L_02008430:
-	.4byte 0x00002319
+	.4byte MsgScene680No05
 	.section .text.x02008434,"ax",%progbits
 	.global Func_02000434
 	.thumb_func
@@ -1295,7 +1295,7 @@ Func_020006ec:
 .L_02008a44:
 	.4byte 0x031e0000
 .L_02008a48:
-	.4byte 0x00002314
+	.4byte MsgScene680No02
 .L_02008a4c:
 	.4byte 0x000000af
 .L_02008a50:

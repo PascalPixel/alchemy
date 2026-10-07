@@ -2551,7 +2551,7 @@ Func_0200130c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020093bc:
-	.4byte 0x000030a9
+	.4byte MsgScene662No01
 .L_020093c0:
 	.4byte gPartyState
 .L_020093c4:

@@ -1316,7 +1316,7 @@ Func_02000a8c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008b34:
-	.4byte 0x000030a8
+	.4byte MsgScene6AFNo01
 .L_02008b38:
 	.4byte gPartyState
 	.section .text.x02008b3c,"ax",%progbits

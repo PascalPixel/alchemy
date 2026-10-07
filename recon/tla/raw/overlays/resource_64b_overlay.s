@@ -618,7 +618,7 @@ Func_02000458:
 .L_02008504:
 	.4byte gPartyState
 .L_02008508:
-	.4byte 0x00000dc2
+	.4byte MsgScene64BNo01
 	.section .text.x0200850c,"ax",%progbits
 	.global Func_0200050c
 	.thumb_func
@@ -1408,9 +1408,9 @@ Func_02000994:
 .L_02008bd4:
 	.4byte gPartyState
 .L_02008bd8:
-	.4byte 0x00002b54
+	.4byte MsgScene64BNo09
 .L_02008bdc:
-	.4byte 0x00002b50
+	.4byte MsgScene64BNo08
 	.section .text.x02008be0,"ax",%progbits
 	.global Func_02000be0
 	.thumb_func
@@ -1552,13 +1552,13 @@ Func_02000be0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008d0c:
-	.4byte 0x00000de4
+	.4byte MsgScene64BNo02
 .L_02008d10:
 	.4byte gPartyState
 .L_02008d14:
-	.4byte 0x00000de6
+	.4byte MsgScene64BNo03
 .L_02008d18:
-	.4byte 0x00000de7
+	.4byte MsgScene64BNo04
 	.section .text.x02008d1c,"ax",%progbits
 	.global Func_02000d1c
 	.thumb_func
@@ -2023,7 +2023,7 @@ Func_02000dc4:
 .L_02009198:
 	.4byte 0x1c6d0000
 .L_0200919c:
-	.4byte 0x00002b4e
+	.4byte MsgScene64BNo07
 .L_020091a0:
 	.4byte 0x00000109
 .L_020091a4:
@@ -2134,13 +2134,13 @@ Func_020011fc:
 	bl Func_02004d48
 	pop {r5, pc}
 .L_020092ac:
-	.4byte 0x00002fd2
+	.4byte MsgDjinnGiveTutorialA
 .L_020092b0:
-	.4byte 0x00003007
+	.4byte MsgDjinnGiveTutorialB
 .L_020092b4:
-	.4byte 0x00002ffb
+	.4byte MsgScene64BNo23
 .L_020092b8:
-	.4byte 0x00002ffc
+	.4byte MsgScene64BNo24
 	.section .text.x020092bc,"ax",%progbits
 	.global Func_020012bc
 	.thumb_func
@@ -2448,7 +2448,7 @@ Func_020012bc:
 .L_020095b0:
 	.4byte 0x23280000
 .L_020095b4:
-	.4byte 0x00002fa5
+	.4byte MsgScene64BNo12
 .L_020095b8:
 	.4byte gPartyState
 .L_020095bc:
@@ -2873,7 +2873,7 @@ Func_020012bc:
 .L_020099d0:
 	.4byte 0x25b00000
 .L_020099d4:
-	.4byte 0x00002fb2
+	.4byte MsgScene64BNo13
 .L_020099d8:
 	.4byte gPartyState
 .L_020099dc:
@@ -2883,7 +2883,7 @@ Func_020012bc:
 .L_020099e4:
 	.4byte 0x25d00000
 .L_020099e8:
-	.4byte 0x00002fb9
+	.4byte MsgScene64BNo14
 .L_020099ec:
 	movs r1, #10
 	adds r1, #255
@@ -3321,7 +3321,7 @@ Func_02001c5c:
 .L_02009e20:
 	.4byte 0x00013333
 .L_02009e24:
-	.4byte 0x00002cd8
+	.4byte MsgScene64BNo11
 .L_02009e28:
 	.4byte Data_02004e38
 .L_02009e2c:
@@ -3594,15 +3594,15 @@ Func_02001e34:
 .L_0200a0a0:
 	.4byte gInput
 .L_0200a0a4:
-	.4byte 0x00002fd2
+	.4byte MsgDjinnGiveTutorialA
 .L_0200a0a8:
-	.4byte 0x00003007
+	.4byte MsgDjinnGiveTutorialB
 .L_0200a0ac:
-	.4byte 0x00002fe1
+	.4byte MsgScene64BNo15
 .L_0200a0b0:
 	.4byte 0x00013333
 .L_0200a0b4:
-	.4byte 0x00002fe3
+	.4byte MsgScene64BNo16
 .L_0200a0b8:
 	movs r0, #118
 	adds r0, #255
@@ -3883,21 +3883,21 @@ Func_02001e34:
 	b .L_0200a4be
 	.2byte 0x0000
 .L_0200a348:
-	.4byte 0x00003007
+	.4byte MsgDjinnGiveTutorialB
 .L_0200a34c:
-	.4byte 0x00002fd2
+	.4byte MsgDjinnGiveTutorialA
 .L_0200a350:
-	.4byte 0x00002fe6
+	.4byte MsgScene64BNo17
 .L_0200a354:
-	.4byte 0x00002fe7
+	.4byte MsgScene64BNo18
 .L_0200a358:
-	.4byte 0x00002ff7
+	.4byte MsgScene64BNo20
 .L_0200a35c:
-	.4byte 0x00002ff0
+	.4byte MsgScene64BNo19
 .L_0200a360:
-	.4byte 0x00002ff8
+	.4byte MsgScene64BNo21
 .L_0200a364:
-	.4byte 0x00002ff9
+	.4byte MsgScene64BNo22
 .L_0200a368:
 	bl Func_02004c20
 	movs r0, #0
@@ -4107,17 +4107,17 @@ Func_02001e34:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a57c:
-	.4byte 0x00003007
+	.4byte MsgDjinnGiveTutorialB
 .L_0200a580:
-	.4byte 0x00002fd2
+	.4byte MsgDjinnGiveTutorialA
 .L_0200a584:
-	.4byte 0x00002ffd
+	.4byte MsgScene64BNo25
 .L_0200a588:
-	.4byte 0x00002fff
+	.4byte MsgScene64BNo26
 .L_0200a58c:
-	.4byte 0x00003002
+	.4byte MsgScene64BNo27
 .L_0200a590:
-	.4byte 0x00003004
+	.4byte MsgScene64BNo28
 	.section .text.x0200a594,"ax",%progbits
 	.global Func_02002594
 	.thumb_func
@@ -4459,7 +4459,7 @@ Func_02002698:
 	pop {pc}
 	.2byte 0x0000
 .L_0200a8b4:
-	.4byte 0x0000163c
+	.4byte MsgScene64BNo05
 .L_0200a8b8:
 	.4byte Func_02002594
 .L_0200a8bc:
@@ -5010,7 +5010,7 @@ Func_02002ab0:
 .L_0200adb8:
 	.4byte 0x1ecc0000
 .L_0200adbc:
-	.4byte 0x0000168b
+	.4byte MsgScene64BNo06
 .L_0200adc0:
 	.4byte 0x1ebc0000
 .L_0200adc4:
@@ -5376,7 +5376,7 @@ Func_02002e78:
 .L_0200b104:
 	.4byte gPartyState
 .L_0200b108:
-	.4byte 0x0000216b
+	.4byte MsgScene657No07
 	.section .text.x0200b10c,"ax",%progbits
 	.global Func_0200310c
 	.thumb_func
@@ -5692,7 +5692,7 @@ Func_02003144:
 .L_0200b410:
 	.4byte Data_02006be8
 .L_0200b414:
-	.4byte 0x00002c61
+	.4byte MsgScene64BNo10
 	.section .text.x0200b418,"ax",%progbits
 	.global Func_02003418
 	.thumb_func

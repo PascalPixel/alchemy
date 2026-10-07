@@ -908,7 +908,7 @@ Func_02000430:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008830:
-	.4byte 0x00002f5d
+	.4byte MsgScene695No01
 .L_02008834:
 	.4byte gPartyState
 .L_02008838:
@@ -1123,7 +1123,7 @@ Func_0200087c:
 .L_02008a14:
 	.4byte 0x01110000
 .L_02008a18:
-	.4byte 0x00002f6e
+	.4byte MsgScene695No02
 .L_02008a1c:
 	.4byte 0x01750000
 .L_02008a20:
@@ -1474,7 +1474,7 @@ Func_02000a24:
 .L_02008d74:
 	.4byte 0x01110000
 .L_02008d78:
-	.4byte 0x00002f74
+	.4byte MsgScene695No03
 .L_02008d7c:
 	.4byte Data_020015e0
 .L_02008d80:

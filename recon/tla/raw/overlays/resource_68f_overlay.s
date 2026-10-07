@@ -1112,7 +1112,7 @@ Func_02000920:
 	bl Func_02003050
 	pop {pc}
 .L_02008958:
-	.4byte 0x00001a95
+	.4byte MsgScene68FNo01
 	.section .text.x0200895c,"ax",%progbits
 	.global Func_0200095c
 	.thumb_func

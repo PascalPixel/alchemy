@@ -242,7 +242,7 @@ Func_02000158:
 .L_0200824c:
 	.4byte gPartyState
 .L_02008250:
-	.4byte 0x0000289a
+	.4byte MsgScene693No01
 	.section .text.x02008254,"ax",%progbits
 	.global Func_02000254
 	.thumb_func

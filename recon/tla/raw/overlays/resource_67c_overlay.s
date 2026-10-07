@@ -1184,7 +1184,7 @@ Func_02000a24:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008a94:
-	.4byte 0x000022a2
+	.4byte MsgScene67CNo03
 	.section .text.x02008a98,"ax",%progbits
 	.global Func_02000a98
 	.thumb_func
@@ -2029,7 +2029,7 @@ Func_020010ec:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009134:
-	.4byte 0x00001a92
+	.4byte MsgScene664No02
 	.section .text.x02009138,"ax",%progbits
 	.global Func_02001138
 	.thumb_func
@@ -3335,11 +3335,11 @@ Func_02001a1c:
 .L_02009c56:
 	pop {r5, r6, pc}
 .L_02009c58:
-	.4byte 0x0000229d
+	.4byte MsgScene67CNo01
 .L_02009c5c:
 	.4byte gPartyState
 .L_02009c60:
-	.4byte 0x000022a0
+	.4byte MsgScene67CNo02
 .L_02009c64:
 	.4byte 0x00013333
 	.section .text.x02009c68,"ax",%progbits
@@ -3390,7 +3390,7 @@ Func_02001c68:
 .L_02009cce:
 	pop {r5, pc}
 .L_02009cd0:
-	.4byte 0x0000229d
+	.4byte MsgScene67CNo01
 .L_02009cd4:
 	.4byte gPartyState
 	.section .text.x02009cd8,"ax",%progbits
@@ -3438,7 +3438,7 @@ Func_02001cd8:
 .L_02009d36:
 	pop {r5, pc}
 .L_02009d38:
-	.4byte 0x0000229d
+	.4byte MsgScene67CNo01
 .L_02009d3c:
 	.4byte gPartyState
 	.section .text.x02009d40,"ax",%progbits
@@ -3486,7 +3486,7 @@ Func_02001d40:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009da0:
-	.4byte 0x0000229d
+	.4byte MsgScene67CNo01
 .L_02009da4:
 	.4byte gPartyState
 	.section .text.x02009da8,"ax",%progbits

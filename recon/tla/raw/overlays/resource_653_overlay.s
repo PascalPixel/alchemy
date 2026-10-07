@@ -632,7 +632,7 @@ Func_020004a8:
 	pop {pc}
 	.2byte 0x0000
 .L_02008578:
-	.4byte 0x000017b9
+	.4byte MsgScene653No11
 .L_0200857c:
 	.4byte 0x00013333
 	.section .text.x02008580,"ax",%progbits
@@ -3593,7 +3593,7 @@ Func_02001d00:
 	pop {pc}
 	.2byte 0x0000
 .L_02009d1c:
-	.4byte 0x000017b7
+	.4byte MsgScene653No10
 	.section .text.x02009d20,"ax",%progbits
 	.global Func_02001d20
 	.thumb_func
@@ -3609,7 +3609,7 @@ Func_02001d20:
 	pop {pc}
 	.2byte 0x0000
 .L_02009d3c:
-	.4byte 0x00000dfa
+	.4byte MsgScene653No01
 	.section .text.x02009d40,"ax",%progbits
 	.global Func_02001d40
 	.thumb_func
@@ -3656,7 +3656,7 @@ Func_02001d40:
 .L_02009da8:
 	.4byte gPartyState
 .L_02009dac:
-	.4byte 0x00001759
+	.4byte MsgScene653No02
 .L_02009db0:
 	.4byte Data_02005514
 	.section .text.x02009db4,"ax",%progbits
@@ -3697,7 +3697,7 @@ Func_02001db4:
 .L_02009e04:
 	.4byte gPartyState
 .L_02009e08:
-	.4byte 0x0000175c
+	.4byte MsgScene653No03
 	.section .text.x02009e0c,"ax",%progbits
 	.global Func_02001e0c
 	.thumb_func
@@ -3714,7 +3714,7 @@ Func_02001e0c:
 	bl Func_020051c8
 	pop {pc}
 .L_02009e2c:
-	.4byte 0x000017a9
+	.4byte MsgScene653No09
 	.section .text.x02009e30,"ax",%progbits
 	.global Func_02001e30
 	.thumb_func
@@ -4397,7 +4397,7 @@ Func_02002314:
 	add sp, #8
 	pop {pc}
 .L_0200a3e0:
-	.4byte 0x000017ba
+	.4byte MsgScene653No12
 .L_0200a3e4:
 	.4byte 0x00013333
 	.section .text.x0200a3e8,"ax",%progbits
@@ -4595,7 +4595,7 @@ Func_020023e8:
 .L_0200a5a4:
 	.4byte gPartyState
 .L_0200a5a8:
-	.4byte 0x000017a1
+	.4byte MsgScene653No08
 .L_0200a5ac:
 	.4byte Data_020062ac
 .L_0200a5b0:
@@ -7902,7 +7902,7 @@ Func_02003e8c:
 .L_0200c26c:
 	.4byte 0x0004cccc
 .L_0200c270:
-	.4byte 0x00001765
+	.4byte MsgScene653No04
 .L_0200c274:
 	.4byte 0x00013333
 .L_0200c278:
@@ -8367,7 +8367,7 @@ Func_020044d4:
 .L_0200c6cc:
 	.4byte gPartyState
 .L_0200c6d0:
-	.4byte 0x0000177c
+	.4byte MsgScene653No05
 .L_0200c6d4:
 	.4byte 0x00019999
 	.section .text.x0200c6d8,"ax",%progbits
@@ -8487,7 +8487,7 @@ Func_020046d8:
 .L_0200c7e8:
 	.4byte 0x0004cccc
 .L_0200c7ec:
-	.4byte 0x00001780
+	.4byte MsgScene653No06
 	.section .text.x0200c7f0,"ax",%progbits
 	.global Func_020047f0
 	.thumb_func
@@ -8862,7 +8862,7 @@ Func_0200482c:
 .L_0200cb54:
 	.4byte 0x00013333
 .L_0200cb58:
-	.4byte 0x00001781
+	.4byte MsgScene653No07
 .L_0200cb5c:
 	.4byte Data_02005564
 .L_0200cb60:

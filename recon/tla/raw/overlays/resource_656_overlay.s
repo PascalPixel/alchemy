@@ -839,7 +839,7 @@ Func_0200065c:
 .L_02008768:
 	.4byte 0xffe00000
 .L_0200876c:
-	.4byte 0x00002185
+	.4byte MsgScene656No02
 	.section .text.x02008770,"ax",%progbits
 	.global Func_02000770
 	.thumb_func
@@ -2900,7 +2900,7 @@ Func_02001650:
 	mov r8, r3
 	pop {r5, r6, pc}
 .L_02009928:
-	.4byte 0x00002168
+	.4byte MsgScene656No01
 .L_0200992c:
 	.4byte gPartyState
 .L_02009930:

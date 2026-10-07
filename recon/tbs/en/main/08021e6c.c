@@ -1,3 +1,5 @@
+/* 2026-10-07 queue3 continuation: differ 72 (listing 1037, draft 1037, common 1001), not matched. Closing byte-offset addition restores native operand order (76 -> 74). Correcting WaitForPromptAtFar to the adopted target's s32 result restores tutorial argument order (74 -> 72); CountValidEntriesFar also takes its existing s32 result, unchanged score. Remaining: row copies exchanged between ip/sp+4, mode-1 gap*2 spill order, and register choices around the main-loop exit and closing setup. */
+/* Trial (queue3 from 76, none kept): narrow mode-1 index/r3 handoff 442, ordinary index expression input 434. Closing mask before UiWork_Finalize 90; mask and tile before it 115; narrow mask/r5 handoff, readonly or read/write, 141. Reversed pointer addition still76; byte-offset addition74, kept with its measured tag. */
 /* Trial (queue3 at 76, none kept): narrow mode-1 pattern/r7 after a named pointer address 501, with the original indexed address 433, fixed register without the extra asm 418; an inline RHS handoff 415. A generic read/write identity on the normal column pattern keeps the loop shape but gives 106. Shared tmp3 across modes 770; a disappearing column CSE boundary and duplicate early pattern calculation both 76. u16 tmp3 gives 222, u32 tmp3 76. These do not separate the row-biv priority from the opposite priority needed by its per-row copy. */
 /* 2026-10-07 queue3 invariant correction: differ 76 (listing 1037, draft 1037, common 999), not matched. Preserving a scroll zero outside the main loop restores its native pool load and the mode-1 pool placement (155 -> 93). The upward selection wrap in native's selection + count order now removes its extra pointer reload (93 -> 76). Left: row copies exchanged between ip/sp+4, the mode-1 gap*2 spill order, one tutorial argument's order, register choices after the main-loop join and closing address operands. */
 /* Trial (queue3 from 155/76, none kept): content-loop-only permute, 4 minutes, 2 jobs, seed 103, 12,678 candidates, no improvement (heat unavailable for the macro-wrapped function). Reusing i for the invariant zero also 76; a u16 zero 138. A short-lived closing tile constant in r6 gives 81; an ordinary tile local across UiWork_Finalize gives 115. Column + pattern gives 80; unsigned row index 76. Removing the closing address constraint gives 99; read/write versus readonly constraints both 76. */
@@ -113,8 +115,8 @@ extern void Runtime_SetIrqHandler(u32 irq, s32 line, void (*handler)(void));
 extern void Graphics_SetBg1Priority3(void);
 extern void Graphics_ClearBg1ControlBit2(void);
 extern struct TradeOfferState *Trade_GetOfferStateFar(s32 index);
-extern void BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
-extern void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
+extern s32 BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
+extern s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 extern void Audio_PlayCue(s32 cue);
 
 s32 Ui_RunSelectionScreen(s32 mode)
@@ -373,7 +375,8 @@ s32 Ui_RunSelectionScreen(s32 mode)
             for (cnt = 0; cnt <= 2; cnt++) {
                 s32 col;
                 for (col = 0; col <= 2; col++) {
-                    u16 *dst = render->tilemap + (cnt + 17) * 32 + panel * 3 + 5 + (col & 3);
+                    /* FAKEMATCH: Native adds the column byte offset before the row address; either pointer-add order reverses those operands (76), while byte addition restores them (74). */
+                    u16 *dst = (u16 *)((col & 3) * 2 + (u32)(render->tilemap + (cnt + 17) * 32 + panel * 3 + 5));
                     /* FAKEMATCH: Native keeps the final address add apart from strh. An explicit pointer still combines strh [r3, r7] (174); this readonly use retains adds; strh [r3] (169). */
                     __asm__("" : : "r"(dst));
                     *dst = 0xf07f;

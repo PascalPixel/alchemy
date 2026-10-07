@@ -1,10 +1,13 @@
-/* 08026080: listing 1585, draft 1585, differ 116 (common 1527); both
- * frames are 324 bytes. Nearly all that remains is the order of the spill
- * slots below sp+48 (see the hash analysis below), the pending loop's
- * store order (native targetPos.x, slot->x, targetPos.y, slot->y, with
- * slot->flags = 1 first in the else branch and every load before the
- * stores; the draft stores both targetPos fields first), and movs r2, #0
+/* 08026080: listing 1585, draft 1585, differ 108 (common 1531); both
+ * frames are 324 bytes. All that remains is the order of the spill
+ * slots below sp+48 (see the hash analysis below) and movs r2, #0
  * scheduled after movs r7, #5 in the clear loop (native before).
+ * Session T10-08026080/4 (from 116), kept:
+ * - the pending loop's two branches compute block locals x and y from
+ *   every load first, then store targetPos.x, slot->x, targetPos.y,
+ *   slot->y (the else branch with slot->flags = 1 before them): the
+ *   branch stores and loads now follow the native exactly. Then branch
+ *   alone 114, both 108.
  * The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
@@ -640,16 +643,22 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;
                 if (slot->flags & 1) {
-                    targetPos.x = (targetPos.x + slot->x) / 2;
-                    targetPos.y = (targetPos.y + slot->y) / 2;
-                    slot->x = targetPos.x;
-                    slot->y = targetPos.y;
+                    s32 x = (targetPos.x + slot->x) / 2;
+                    s32 y = (targetPos.y + slot->y) / 2;
+
+                    targetPos.x = x;
+                    slot->x = x;
+                    targetPos.y = y;
+                    slot->y = y;
                 } else {
-                    targetPos.x = entry->x;
-                    targetPos.y = entry->y + 8;
+                    s32 x = entry->x;
+                    s32 y = entry->y + 8;
+
                     slot->flags = 1;
-                    slot->x = targetPos.x;
-                    slot->y = targetPos.y;
+                    targetPos.x = x;
+                    slot->x = x;
+                    targetPos.y = y;
+                    slot->y = y;
                 }
                 entry->mode = 1;
                 entry->x = targetPos.x - 8;

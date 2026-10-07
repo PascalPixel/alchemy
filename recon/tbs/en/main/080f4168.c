@@ -1,4 +1,4 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2046, differ 58.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2046, differ 18.
  * Frame 768 with every array and spill slot at its native offset; the
  * remaining difference is mostly register choice (reload's round-robin
  * spill registers follow from everything before) and a few open shapes.
@@ -52,13 +52,14 @@
  *   computes it in r0 for the call); speed squares through vx/vz; the
  *   (n / 1024) % 3 test as if / else if; the shadow index (i + 2) << 25
  *   first in its OR, so its giv lives long enough for loop.c to reduce it.
+ * - The shadow loop reads sx = proj[0], sy = proj[1] before its test and
+ *   fills point[0] before point[1] (sched2 then loads x first).
+ * - In the state 2 else arm reset = 1 comes first: its reload takes r7, so
+ *   state = 0 gets r0 as in native, and sched2 sinks the r7 copy.
  *
  * Open:
  * - Kind loop preheader: native computes 632 - n * 16 after the table loads
  *   (632 in r3, n * 16 in r2); the draft hoists it first (r2, r1).
- * - State 2 key A, else arm: reload registers for state = 0 and reset = 1
- *   (native r0, r7; draft r7, r3).
- * - Shadow loop: the proj[0] load and the -16 compare take other registers.
  *
  * Earlier trials (kept where still informative):
  * - Native locals, top down: palette 256, depth 240, results 224, point 212,
@@ -363,12 +364,12 @@ void LuckyDice_Run(void)
                     state = 3;
                     counter = 0;
                 } else {
+                    reset = 1;
                     state = 0;
                     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                     sprites->help_window = window;
                     UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 10, window, 0, 0);
                     UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
-                    reset = 1;
                 }
             }
             timer++;
@@ -507,8 +508,11 @@ void LuckyDice_Run(void)
         }
 
         for (i = 0; i != 2; i++) {
-            point[1] = 0;
+            s32 sx;
+            s32 sy;
+
             point[0] = work->particles[i].x;
+            point[1] = 0;
             point[2] = work->particles[i].z;
             Render_ProjectPoint(point, proj);
             if (proj[2] < 0x15e) {
@@ -519,8 +523,10 @@ void LuckyDice_Run(void)
             }
             depth[2 + i] = proj[2] - 0x15e;
             depth[2 + i] += work->particles[i].y >> 16;
-            if (proj[1] + 88 > -16) {
-                sprites->obj[count].attr01 = (((i + 2) << 25) | (((proj[0] + 0x270) & 0x1ff) << 16)) | ((proj[1] + 0x158) & 255) | 0x40002300;
+            sx = proj[0];
+            sy = proj[1];
+            if (sy + 88 > -16) {
+                sprites->obj[count].attr01 = (((i + 2) << 25) | (((sx + 0x270) & 0x1ff) << 16)) | ((sy + 0x158) & 255) | 0x40002300;
                 sprites->obj[count].attr2 = 0x890;
                 count++;
             }

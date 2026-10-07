@@ -1,5 +1,5 @@
-/* 080d1714: differ 169 of 1481 instructions (1480 generated, common
- * 1396). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 123 of 1481 instructions (1482 generated, common
+ * 1420). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -181,14 +181,24 @@
  * - on 173: index = 0 before point = runtime->particles in the
  *   frame <= 159 loop, as before the mark and spark pointers: 169;
  *   point = &runtime->particles[0]: 173.
- * Remaining (169): the distance sum adds x * x + y * y after z * z is
- * computed, then z * z through a copy in r3, where the draft adds
- * y * y + z * z first; the frame <= 159 particle loop preheader and
- * the mark and spark loop preheaders choose other reload registers
- * (reload's rotation: &work through r0 and slot 0 through r7 in the
- * native's spark preheader); the native loads runtime->effect->count
- * before the wave inits at the first actor loop and reloads
- * runtime->effect inside the frame == 160 radius loop guard. */
+ * - on 169: the frame == 160 radius and spin loop as a for loop: 133
+ *   (jump.c's copied exit test is the guard, so cse no longer shares
+ *   its runtime->effect load with the loop and loop.c hoists a fresh
+ *   one, as the native's guard ldr [r5, r3] then preheader reload
+ *   shows); the final restore loop as a for loop too: 127; the first
+ *   actor loop as a for loop: 127, kept for one loop shape throughout.
+ * - on 127: the distance sum in source order x * x + y * y + z * z:
+ *   180 (expand interleaves products and adds); the three squares as
+ *   statements xx, yy, zz, then Iwram_Sqrt(xx + yy + zz): 123, the
+ *   native's three products, x + y, then z through its copy in r3.
+ * Remaining (123): two spill slots swapped (view + 12 at sp+36 and
+ * &base_angle at sp+40 in the native); the frame <= 159 particle loop
+ * preheader and the mark and spark loop preheaders choose other
+ * reload registers (reload's rotation: &work through r0 and slot 0
+ * through r7 in the native's spark preheader); the threshold loop
+ * preheader sets mark (runtime + 0x7710) before the threshold givs,
+ * where the draft sets it last, and loads one more literal (1482
+ * generated). */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -329,22 +339,18 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     drift.x = 0;
     drift.y = 0;
 
-    index = 0;
-    if (runtime->effect->count != 0) {
-        do {
-            context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-            object = (struct MotionObject *)context->object;
-            home[index].x = object->x;
-            home[index].y = object->z;
-            base_angle[index] = object->angle;
-            heading[index] = (u16)ArcTan2(object->x, object->z);
-            radius[index] = Iwram_Sqrt(
-                (object->x >> 8) * (object->x >> 8)
-                    + (object->z >> 8) * (object->z >> 8)) >> 7;
-            spin[index] = 0;
-            object->vertical_motion_strength = 0;
-            index++;
-        } while (index != runtime->effect->count);
+    for (index = 0; index != runtime->effect->count; index++) {
+        context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+        object = (struct MotionObject *)context->object;
+        home[index].x = object->x;
+        home[index].y = object->z;
+        base_angle[index] = object->angle;
+        heading[index] = (u16)ArcTan2(object->x, object->z);
+        radius[index] = Iwram_Sqrt(
+            (object->x >> 8) * (object->x >> 8)
+                + (object->z >> 8) * (object->z >> 8)) >> 7;
+        spin[index] = 0;
+        object->vertical_motion_strength = 0;
     }
 
     index = 0;
@@ -553,13 +559,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 index++;
             } while (index != 32);
 
-            index = 0;
-            if (runtime->effect->count != 0) {
-                do {
-                    radius[index] = 16;
-                    spin[index] = 6000;
-                    index++;
-                } while (index != runtime->effect->count);
+            for (index = 0; index != runtime->effect->count; index++) {
+                radius[index] = 16;
+                spin[index] = 6000;
             }
         }
 
@@ -602,13 +604,15 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 if (frame <= 329) {
                     index = 0;
                     do {
+                        s32 xx;
+                        s32 yy;
+                        s32 zz;
+
                         point = &runtime->particles[index];
-                        dist = Iwram_Sqrt(
-                            (point->x >> 8) * (point->x >> 8)
-                                + ((point->y >> 8)
-                                    * (point->y >> 8)
-                                + (point->z >> 8)
-                                    * (point->z >> 8))) >> 9;
+                        xx = (point->x >> 8) * (point->x >> 8);
+                        yy = (point->y >> 8) * (point->y >> 8);
+                        zz = (point->z >> 8) * (point->z >> 8);
+                        dist = Iwram_Sqrt(xx + yy + zz) >> 9;
                         if (dist != 0) {
                             EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
                             screen.x =
@@ -796,18 +800,14 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
     BattleEventRuntime_BeginPhaseFar(134);
 
-    index = 0;
-    if (runtime->effect->count != 0) {
-        do {
-            struct MotionObject *obj;
+    for (index = 0; index != runtime->effect->count; index++) {
+        struct MotionObject *obj;
 
-            context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-            obj = (struct MotionObject *)context->object;
-            obj->x = home[index].x;
-            obj->z = home[index].y;
-            obj->angle = base_angle[index];
-            index++;
-        } while (index != runtime->effect->count);
+        context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+        obj = (struct MotionObject *)context->object;
+        obj->x = home[index].x;
+        obj->z = home[index].y;
+        obj->angle = base_angle[index];
     }
 
     gProjection.center_x = 120;

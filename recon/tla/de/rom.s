@@ -2769,6 +2769,14 @@ Func_080d40dc:
 	.type Func_080d4178, %function
 	.thumb_func
 Func_080d4178:
+	.global Func_080e3cfc
+Func_080e3cfc:
+	.global Func_080e4a2c
+Func_080e4a2c:
+	.global Func_080e5724
+Func_080e5724:
+	.global Func_080e5d54
+Func_080e5d54:
 	.incbin "baserom.gba", 0x000e1178, 0x00000008
 	.section .rom.000e11e6, "ax"
 	.incbin "baserom.gba", 0x000e11e6, 0x00000002
@@ -3032,7 +3040,10 @@ Func_080d92d4:
 	.type Func_080d9710, %function
 	.thumb_func
 Func_080d9710:
-	.incbin "baserom.gba", 0x000e6710, 0x000003a0
+	.incbin "baserom.gba", 0x000e6710, 0x00000264
+	.global Func_080e7818
+Func_080e7818:
+	.incbin "baserom.gba", 0x000e6974, 0x0000013c
 	.section .rom.000e6ab0, "ax"
 	.global Func_080d9ab0
 	.type Func_080d9ab0, %function
@@ -3257,7 +3268,14 @@ BattleFx_SnapScaleToFull:
 	.type UpdateRisingParticleBurst, %function
 	.thumb_func
 UpdateRisingParticleBurst:
-	.incbin "baserom.gba", 0x000ea668, 0x00000ee8
+	.incbin "baserom.gba", 0x000ea668, 0x00000bac
+	.global Func_080e68c8
+Func_080e68c8:
+	.global Func_080e9aec
+Func_080e9aec:
+	.global Func_080e783c
+Func_080e783c:
+	.incbin "baserom.gba", 0x000eb214, 0x0000033c
 	.section .rom.000eb688, "ax"
 	.global BattleFx_RunOrbitingParticles
 	.type BattleFx_RunOrbitingParticles, %function
@@ -3349,7 +3367,13 @@ Func_080e37e0:
 	.type Func_080e4244, %function
 	.thumb_func
 Func_080e4244:
-	.incbin "baserom.gba", 0x000f1244, 0x00002eb4
+	.incbin "baserom.gba", 0x000f1244, 0x00000090
+	.section .rom.000f13a4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000f13a4, 0x000001fc
+	.section .rom.000f15a8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000f15a8, 0x00002b50
 	.section .rom.000f40f8, "ax"
 	.global Func_080e70f8
 	.type Func_080e70f8, %function
@@ -3373,7 +3397,10 @@ Func_080e74d8:
 	.type Func_080e7804, %function
 	.thumb_func
 Func_080e7804:
-	.incbin "baserom.gba", 0x000f4804, 0x00002948
+	.incbin "baserom.gba", 0x000f4804, 0x00000018
+	.global Func_080e781c
+Func_080e781c:
+	.incbin "baserom.gba", 0x000f481c, 0x00002930
 	.section .rom.000f714c, "ax"
 	.global Func_080ea14c
 	.type Func_080ea14c, %function

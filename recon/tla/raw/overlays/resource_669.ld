@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_669_overlay.o"(.text.x020083e8)
         "*/resource_669_overlay.o"(.text.x02008438)
         "*/resource_669_overlay.o"(.text.x020084f4)
-        "*/resource_669_overlay.o"(.text.x02008c5c)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_669/CUTSCENE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_669/IMPORT.o"(.text)
         "*/resource_669_overlay.o"(.rodata.x0200b2b0)
     }

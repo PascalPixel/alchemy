@@ -8,11 +8,11 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "MAPCOPY.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "HAIDIA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
-#include "CALL.H"
 #include "STAGED_ACTOR.H"
 
 
@@ -185,13 +185,13 @@ void HaidiaDou_ApplyEntryState(void)
         case 9:
         case 10:
             OverlayObject_CreateConfiguredB(0x2820000, 0, 0x2280000, 20);
-            Call6(Map_CopyCellAttributeRect, 23, 34, 13, 3, 0, 34);
+            Map_CopyCellAttributes(23, 34, 13, 3, 0, 34);
             DialogueLayout_ConfigureRowsByFlag301();
             if (Engine_GameFlagIsSet(0x200) != 0) {
-                Call6(Map_CopyCellAttributeRect, 23, 41, 1, 1, 23, 39);
+                Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
             }
             if (Engine_GameFlagIsSet(0x201) != 0) {
-                Call6(Map_CopyCellAttributeRect, 31, 39, 2, 1, 27, 41);
+                Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
             }
             break;
         }

@@ -4007,13 +4007,18 @@ Func_080dbcc0:
 	.type Map_TestSpecialTerrainPair, %function
 	.thumb_func
 Map_TestSpecialTerrainPair:
+	.global Func_080dbcd8
+Func_080dbcd8:
 	.incbin "baserom.gba", 0x000dbccc, 0x00000070
 	.section .rom.000dbd3c, "ax"
 	.global Func_080e25e8
 	.type Func_080e25e8, %function
 	.thumb_func
 Func_080e25e8:
-	.incbin "baserom.gba", 0x000dbd3c, 0x00000060
+	.incbin "baserom.gba", 0x000dbd3c, 0x00000014
+	.global Func_080dbd5c
+Func_080dbd5c:
+	.incbin "baserom.gba", 0x000dbd50, 0x0000004c
 	.section .rom.000dbd9c, "ax"
 	.global Func_080dbda8
 	.type Func_080dbda8, %function
@@ -4305,7 +4310,10 @@ Func_080e783c:
 	.incbin "baserom.gba", 0x000e7830, 0x00001544
 	.section .rom.000e8da4, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000e8da4, 0x00000d3c
+	.incbin "baserom.gba", 0x000e8da4, 0x000004a0
+	.section .rom.000e92a8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000e92a8, 0x00000838
 	.section .rom.000e9ae8, "ax"
 	.balign 4
 	.global Func_080e9af4
@@ -4863,7 +4871,10 @@ Func_0810a84c:
 	.incbin "baserom.gba", 0x0010af08, 0x00000198
 	.global BattleFx_UpdateRadialMotion
 BattleFx_UpdateRadialMotion:
-	.incbin "baserom.gba", 0x0010b0a0, 0x000002bc
+	.incbin "baserom.gba", 0x0010b0a0, 0x000000ac
+	.global Func_0810b168
+Func_0810b168:
+	.incbin "baserom.gba", 0x0010b14c, 0x00000210
 	.global Func_0810b378
 	.type Func_0810b378, %function
 	.thumb_func
@@ -5001,9 +5012,8 @@ Camera_InitDefaultTransform:
 	.section .rom.0011bf30, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011bf30, 0x00000088
-	.section .rom.0011c034, "ax"
-	.incbin "baserom.gba", 0x0011c034, 0x00000058
 	.section .rom.0011c08c, "ax"
+	.balign 4
 	.global Func_0811c074
 	.type Func_0811c074, %function
 	.thumb_func
@@ -5335,7 +5345,10 @@ BattleFx_RunProjectileVolley:
 	.section .rom.00157636, "ax"
 	.incbin "baserom.gba", 0x00157636, 0x000006be
 	.section .rom.00157d30, "ax"
-	.incbin "baserom.gba", 0x00157d30, 0x00002314
+	.incbin "baserom.gba", 0x00157d30, 0x00001038
+	.section .rom.00158dc8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00158dc8, 0x0000127c
 	.section .rom.0015a0bc, "ax"
 	.incbin "baserom.gba", 0x0015a0bc, 0x00000030
 	.section .rom.0015a110, "ax"

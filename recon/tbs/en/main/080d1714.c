@@ -1,5 +1,5 @@
-/* 080d1714: differ 792 of 1481 instructions (1471 generated, common
- * 1080). BattleEffectWork, BattleEffectArgument, MotionObject and
+/* 080d1714: differ 732 of 1481 instructions (1475 generated, common
+ * 1112). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
@@ -79,9 +79,21 @@
  *   wave_x inside each iteration; 792 hoists it too), and one more
  *   slot sits at sp+12. Ignoring stack and literal offsets it is 410
  *   lines against 792's 404: fix the hoist and the extra slot there.
- * Remaining: frame - threshold is not reduced to a giv (native
- * sp+20) unless threshold comes from index; the distance loop hoists
- * wave_x >> 17; the first draw shares one 48 for 48 - size and the
+ *   The hoist is gcse's PRE: the unconditional center_x in the
+ *   threshold loop makes wave_x >> 17 anticipatable from the distance
+ *   loop on, so PRE computes it once before that loop (expression
+ *   reg 1148) and the distance loop, the alive draw and center_x reuse
+ *   it.
+ * - (wave_x >> 17) + 32 written inside if (frame == threshold), no
+ *   center_x, with threshold from index: 732, frame 356 (PRE no longer
+ *   hoists; the distance loop and alive draw shift wave_x as the
+ *   native). Loop.c keeps the conditional x sum in the loop ("not
+ *   desirable", life 3) where the native hoists it to sp+52; one extra
+ *   slot remains at the low end, so the givs sit 4 bytes above the
+ *   native's sp+16..28. center_x assigned before the loop again: 994.
+ * Remaining: the native hoists (wave_x >> 17) + 32 out of the
+ * threshold loop (sp+52) without PRE reaching the distance loop; one
+ * spill slot too many below the givs; the first draw shares one 48 for 48 - size and the
  * width argument, and the second keeps 48 in r4 across the first call
  * where the native rematerializes it and caller-saves the function
  * pointer in r4; the sqrt sums take r4/r5 where the native uses
@@ -487,7 +499,6 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
             if (frame > 255) {
                 s32 threshold;
-                s32 center_x;
 
                 shake.z = 0x1000000;
                 shake.x = 0;
@@ -604,14 +615,13 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
                 mark = &runtime->particles[60];
                 index = 0;
-                threshold = 330;
                 do {
-                    center_x = (wave_x >> 17) + 32;
+                    threshold = index * 12 + 330;
                     if (frame == threshold) {
                         mark->y = (wave_y >> 16) - 4;
                         mark->velocity_y = (wave_y >> 16) - 4;
-                        mark->x = center_x;
-                        mark->velocity_x = center_x;
+                        mark->x = (wave_x >> 17) + 32;
+                        mark->velocity_x = (wave_x >> 17) + 32;
 
                         slot = 0;
                         do {
@@ -677,7 +687,6 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                     }
                     index++;
                     mark++;
-                    threshold += 12;
                 } while (index != 4);
             }
         }

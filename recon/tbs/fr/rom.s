@@ -956,12 +956,6 @@ Summon_EntryTable:
 	.thumb_func
 BattleFx_RunSevenMode:
 	.incbin "baserom.gba", 0x000d30e0, 0x00000614
-	.section .rom.000d4f14, "ax"
-	.global Unnamed_080d1714
-	.type Unnamed_080d1714, %function
-	.thumb_func
-Unnamed_080d1714:
-	.incbin "baserom.gba", 0x000d4f14, 0x00000d38
 	.section .rom.000e6172, "ax"
 	.incbin "baserom.gba", 0x000e6172, 0x00000002
 	.section .rom.000ed8d8, "ax"
@@ -971,6 +965,8 @@ Unnamed_080d1714:
 Unnamed_080ea0d8:
 	.incbin "baserom.gba", 0x000ed8d8, 0x0000167c
 	.section .rom.000f1278, "ax"
+	.global Data_080eda78
+Data_080eda78:
 	.incbin "baserom.gba", 0x000f1278, 0x00000008
 	.global BattleFx10_UnitScale
 BattleFx10_UnitScale:
@@ -1158,7 +1154,28 @@ RingBolts_Points:
 	.incbin "baserom.gba", 0x000f1940, 0x00000018
 	.global SpinningStars_Radii
 SpinningStars_Radii:
-	.incbin "baserom.gba", 0x000f1958, 0x0000002c
+	.incbin "baserom.gba", 0x000f1958, 0x00000002
+	.global Data_080ee15a
+Data_080ee15a:
+	.incbin "baserom.gba", 0x000f195a, 0x00000009
+	.global Data_080ee163
+Data_080ee163:
+	.incbin "baserom.gba", 0x000f1963, 0x00000009
+	.global Data_080ee16c
+Data_080ee16c:
+	.incbin "baserom.gba", 0x000f196c, 0x00000008
+	.global Data_080ee174
+Data_080ee174:
+	.incbin "baserom.gba", 0x000f1974, 0x00000003
+	.global Data_080ee177
+Data_080ee177:
+	.incbin "baserom.gba", 0x000f1977, 0x00000003
+	.global Data_080ee17a
+Data_080ee17a:
+	.incbin "baserom.gba", 0x000f197a, 0x00000004
+	.global Data_080ee17e
+Data_080ee17e:
+	.incbin "baserom.gba", 0x000f197e, 0x00000006
 	.global PaletteParticles_DropSpeeds
 PaletteParticles_DropSpeeds:
 	.incbin "baserom.gba", 0x000f1984, 0x00000004

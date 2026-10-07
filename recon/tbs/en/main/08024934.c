@@ -14,7 +14,34 @@
  * r10); y after the call as well 88, y then in r8 as native's. Bucket
  * count 379 throughout. From 88: the tile store indexed
  * (sprites[index].oam.f.tile = glyph) 121, the setup loop hoists its
- * constants again (sprite's last use gone).
+ * constants again (sprite's last use gone). Native's tile store is that
+ * indexed form: with it the draw loop matches native to the instruction
+ * (base reloaded from 28, offset (index * 2 + index) * 4 + 8, index * 2
+ * in r8 shared with y), as one function-wide y for the setup and draw
+ * loops shows (87, but the setup loop's y then takes r8 where native's
+ * is r0, and 0x1ff is hoisted; not kept). Why the setup loop needs
+ * sprite: loop.c's record_giv makes a DEST_REG giv replaceable when the
+ * register's first reference is its set and its last reference
+ * (REGNO_LAST_UID) lies inside the loop; sprite referenced after the
+ * setup loop keeps loop pass 1's copy sprite = giv, and that copy is
+ * the 25th insn of pass 2, unless delete_trivially_dead_insns between
+ * the passes finds sprite with no use left anywhere. So native's sprite
+ * keeps one use that survives GCSE's cprop and loop pass 1, outside
+ * the tile store. Not found yet, from 88 with the tile store indexed:
+ * the cursor drawn through sprite = &cursor at the top of the main loop
+ * 121 (cprop replaces every use); sprite = &cursor just before the cursor
+ * code 119 (setup and draw loops then native, but sprite is a pseudo in
+ * r5 there and the &cursor and row * 2 slots swap, 16 and 24); the setup
+ * loop all indexed without sprite 649 (25 insns in pass 2, but its giv is
+ * &sprites[index].oam from sp, not &sprites[index] from slot 28); the
+ * push loop through sprite = &sprites[index] 121 (replaceable, deleted),
+ * the same set only when visible 121; the push loop walking sprite
+ * (sprite = sprites; ...; sprite++) 114 (setup loop and tile store
+ * native, but loop.c then reverses the push loop's index to 3..0).
+ * Five minutes of permute from 88 found nothing below it.
+ * alchemy similar --editions: de, es, fr and it hold this function
+ * relocated (identical code), ja differs by 4 instructions (at 08024990);
+ * alchemy diff --edition still refuses the scaffold for every edition.
  * Session 10: the handle loop is indexed (sprites[index].oam.f.tile, as
  * native's base r7, offset from 8 and mask r8 show), the cursor is drawn
  * through its own pointer cur (cur = &cursor at the top of the main

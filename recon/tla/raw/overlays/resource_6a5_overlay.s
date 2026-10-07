@@ -571,6 +571,79 @@ Func_020004c8:
 	.global Func_020005b8
 	.thumb_func
 Func_020005b8:
+	.ifdef TLA_EDITION_JA
+	push {r5, lr}
+	movs r0, #36
+	bl Object_GetById
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r5, [r3, #32]
+	bl Random16Far
+	adds r5, #232
+	movs r2, #2
+	ldrsh r3, [r5, r2]
+	cmp r3, #177
+	bgt .L_ja_02008644
+	movs r0, #36
+	bl Object_GetById
+	ldr r3, [r0, #80]
+	movs r2, #1
+	ldr r3, [r3, #40]
+	strb r2, [r3, #5]
+	ldr r3, .L_ja_02008650
+	ldr r3, [r3, #0]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_02008612
+	movs r1, #128
+	movs r2, #132
+	lsls r1, r1, #18
+	lsls r2, r2, #17
+	movs r0, #36
+	bl Func_02005884
+	movs r0, #36
+	bl Object_GetById
+	movs r3, #223
+	lsls r3, r3, #15
+	str r3, [r0, #12]
+	movs r0, #36
+	bl Object_GetById
+	movs r5, #128
+	lsls r5, r5, #9
+	b .L_ja_02008638
+.L_ja_02008612:
+	movs r1, #128
+	movs r2, #132
+	lsls r1, r1, #18
+	lsls r2, r2, #17
+	movs r0, #36
+	bl Func_02005884
+	movs r0, #36
+	bl Object_GetById
+	movs r3, #209
+	lsls r3, r3, #15
+	str r3, [r0, #12]
+	movs r0, #36
+	bl Object_GetById
+	movs r5, #166
+	lsls r5, r5, #9
+	adds r5, #204
+.L_ja_02008638:
+	str r5, [r0, #24]
+	movs r0, #36
+	bl Object_GetById
+	str r5, [r0, #28]
+	b .L_ja_0200864e
+.L_ja_02008644:
+	movs r0, #36
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005884
+.L_ja_0200864e:
+	pop {r5, pc}
+.L_ja_02008650:
+	.4byte gFrameCount
+	.else
 	push {r5, r6, lr}
 	movs r0, #36
 	bl Object_GetById
@@ -646,6 +719,7 @@ Func_020005b8:
 	pop {r5, r6, pc}
 .L_02008658:
 	.4byte gFrameCount
+	.endif
 	.section .text.x0200865c,"ax",%progbits
 	.global Func_0200065c
 	.thumb_func
@@ -10555,6 +10629,102 @@ gScenePlacements:
 	.4byte 0x00000000
 	.global Data_020068b0
 Data_020068b0:
+	.ifdef TLA_EDITION_JA
+	movs r6, r2
+	movs r0, r0
+	movs r1, r1
+	movs r0, r0
+	ldmia r4!, {r2, r3, r6, r7}
+	movs r0, r0
+	movs r6, r2
+	movs r0, r0
+	movs r2, r1
+	movs r0, r0
+	ldmia r4!, {r2, r3, r6, r7}
+	movs r0, r0
+	movs r7, r4
+	movs r0, r0
+	movs r1, r0
+	movs r0, r0
+	movs r0, r0
+	strh r1, [r0, #0]
+	movs r7, r2
+	movs r0, r0
+	movs r6, r0
+	movs r0, r0
+	movs r0, r0
+	movs r1, r0
+	movs r0, r0
+	movs r0, r0
+	movs r1, r0
+	movs r0, r0
+	movs r5, r1
+	movs r0, r0
+	movs r0, r2
+	movs r0, r0
+	movs r0, r0
+	stmia r0!, {r0}
+	movs r2, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r1, r0
+	movs r0, r0
+	movs r6, r4
+	movs r0, r0
+	movs r6, r2
+	movs r0, r0
+	movs r2, r1
+	movs r0, r0
+	str r6, [r4, #100]
+	movs r1, r0
+	movs r6, r2
+	movs r0, r0
+	movs r1, r1
+	movs r0, r0
+	str r6, [r4, #100]
+	movs r1, r0
+	movs r7, r4
+	movs r0, r0
+	movs r4, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r6, r3
+	movs r0, r0
+	movs r6, r4
+	movs r0, r0
+	movs r6, r2
+	movs r0, r0
+	movs r2, r3
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r7, r2
+	movs r0, r0
+	movs r6, r0
+	movs r0, r0
+	movs r0, r0
+	movs r4, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r1
+	movs r0, r0
+	movs r3, r0
+	movs r0, r0
+	movs r0, r0
+	movs r0, r0
+	movs r1, r0
+	movs r0, r0
+	movs r1, r2
+	movs r0, r0
+	.else
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0x0000cccc
@@ -10603,6 +10773,7 @@ Data_020068b0:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.endif
 	.global gSceneEvents
 gSceneEvents:
 	.4byte 0x00000001

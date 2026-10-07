@@ -6548,6 +6548,69 @@ Func_020035b8:
 	.global Func_020035d8
 	.thumb_func
 Func_020035d8:
+	.ifdef TLA_EDITION_JA
+	push {r5, lr}
+	movs r0, #64
+	bl Object_GetById
+	adds r5, r0, #0
+	movs r0, #137
+	bl Func_020041c8
+	bl Func_020041d0
+	movs r1, #131
+	movs r0, #0
+	lsls r1, r1, #2
+	movs r2, #8
+	movs r3, #9
+	bl Func_020041d8
+	cmp r5, #0
+	beq .L_ja_0200b608
+	movs r0, #64
+	movs r1, #0
+	movs r2, #0
+	bl Func_02004090
+.L_ja_0200b608:
+	movs r0, #10
+	bl Object_GetById
+	movs r3, #179
+	lsls r3, r3, #8
+	adds r5, r0, #0
+	adds r3, #51
+	str r3, [r5, #24]
+	str r3, [r5, #28]
+	movs r3, #8
+	strh r3, [r5, #32]
+	bl Func_02002d40
+	movs r1, #144
+	ldr r0, .L_ja_0200b65c
+	lsls r1, r1, #3
+	bl Scheduler_AddOrUpdateCallback
+	ldr r3, .L_ja_0200b660
+	movs r2, #241
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #2
+	bne .L_ja_0200b65a
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #41
+	bl GameFlag_ClearBit
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #42
+	bl GameFlag_SetBit
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #43
+	bl GameFlag_ClearBit
+.L_ja_0200b65a:
+	pop {r5, pc}
+.L_ja_0200b65c:
+	.4byte Func_02001e58
+.L_ja_0200b660:
+	.4byte gPartyState
+	.else
 	push {r5, lr}
 	movs r0, #64
 	bl Object_GetById
@@ -6665,6 +6728,7 @@ Func_020035d8:
 	.4byte 0x0000004a
 .L_0200b6cc:
 	.4byte 0x0000004b
+	.endif
 	.section .text.x0200b6d0,"ax",%progbits
 	.global Func_020036d0
 	.thumb_func

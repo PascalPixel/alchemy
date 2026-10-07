@@ -201,10 +201,10 @@ Func_020020b4:
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
@@ -225,10 +225,10 @@ Event_WaitTransitionFrames:
 	.global Func_020020cc
 	.thumb_func
 Func_020020cc:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
@@ -237,10 +237,10 @@ Func_020020cc:
 	.global Func_020020d4
 	.thumb_func
 Func_020020d4:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Camera_WorldToScreenFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Camera_WorldToScreenFar
 	.else
 	overlay_veneer Func_080c85c0
@@ -277,10 +277,10 @@ Object_Spawn:
 	.global Func_02002104
 	.thumb_func
 Func_02002104:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c87b0
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c87b0
 	.else
 	overlay_veneer Func_080c87c0
@@ -301,18 +301,26 @@ Func_0200210c:
 	.global Func_02002114
 	.thumb_func
 Func_02002114:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87e8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87e8
+	.else
 	overlay_veneer Func_080c87f8
+	.endif
+	.endif
 	.ifdef TLA_EDITION_ES
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_EndActorSpriteEffectFar
+	overlay_veneer Field_BeginPaletteTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_EndActorSpriteEffectFar
+	overlay_veneer Field_BeginPaletteTransitionFar
 	.else
 	.global Field_BeginPaletteTransition
 	.thumb_func

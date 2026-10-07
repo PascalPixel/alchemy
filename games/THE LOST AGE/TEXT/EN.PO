@@ -523,7 +523,7 @@ msgctxt "message"
 msgid "00128"
 msgstr "Slow"
 
-msgctxt "message"
+msgctxt "MsgFieldOff"
 msgid "00129"
 msgstr "Off"
 
@@ -551,7 +551,7 @@ msgctxt "message"
 msgid "00135"
 msgstr "Felix"
 
-msgctxt "message"
+msgctxt "MsgFieldJenna"
 msgid "00136"
 msgstr "Jenna"
 
@@ -35855,11 +35855,11 @@ msgctxt "MsgScene681No11"
 msgid "08961"
 msgstr "The cups are overflowing{line_break}with a river of Dragonsbane.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouYouCannotFightThe"
 msgid "08962"
 msgstr "You! You cannot fight the{line_break}serpent! Not while it's still in{line_break}full possession of its senses!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAtLastTheSerpentHas"
 msgid "08963"
 msgstr "At last... The serpent has{line_break}finally had its fill. This is{line_break}the chance I'd hoped for.{end_wait}"
 
@@ -35891,11 +35891,11 @@ msgctxt "MsgScene681No07"
 msgid "08970"
 msgstr "Who do they think they are?{line_break}I'm the only one who{line_break}can save Kushinada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLikeISaidTheSerpent"
 msgid "08971"
 msgstr "Like I said, the serpent{line_break}can't be defeated by just{line_break}weakening it with Dragonsbane.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItLooksLikeTheDragon"
 msgid "08972"
 msgstr "It looks like the dragon is{line_break}in bad shape, but it doesn't{line_break}seem like it's close to dying...{end_wait}"
 

@@ -357,11 +357,11 @@ Func_020041dc:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
-	.else
 	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
 	.endif
@@ -425,11 +425,11 @@ Func_02004214:
 	.global Func_0200421c
 	.thumb_func
 Func_0200421c:
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Camera_WorldToScreenFar
-	.else
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Object_LinkObjectAndSetCallbackFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Camera_WorldToScreenFar
 	.else
 	overlay_veneer Func_080c85c0
 	.endif

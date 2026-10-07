@@ -423,7 +423,12 @@ Render_ApplyProjectedPlacementFar:
 	.type Animation_ApplyChildArgumentFar, %function
 	.thumb_func
 Animation_ApplyChildArgumentFar:
-	.incbin "baserom.gba", 0x00020030, 0x00000010
+	.incbin "baserom.gba", 0x00020030, 0x00000008
+	.global Func_08022b80Far
+	.type Func_08022b80Far, %function
+	.thumb_func
+Func_08022b80Far:
+	.incbin "baserom.gba", 0x00020038, 0x00000008
 	.section .rom.00020060, "ax"
 	.incbin "baserom.gba", 0x00020060, 0x00000008
 	.global Func_08020038
@@ -501,7 +506,12 @@ Func_08020248:
 Animation_SetDisplayFlagFar:
 	.incbin "baserom.gba", 0x00020250, 0x00000008
 	.section .rom.00020308, "ax"
-	.incbin "baserom.gba", 0x00020308, 0x00000030
+	.incbin "baserom.gba", 0x00020308, 0x00000010
+	.global Func_0802db64Far
+	.type Func_0802db64Far, %function
+	.thumb_func
+Func_0802db64Far:
+	.incbin "baserom.gba", 0x00020318, 0x00000020
 	.section .rom.000203a8, "ax"
 	.global ResourceSlot_ConversionTables
 ResourceSlot_ConversionTables:

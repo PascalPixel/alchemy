@@ -523,7 +523,7 @@ msgctxt "message"
 msgid "00128"
 msgstr "Lente"
 
-msgctxt "message"
+msgctxt "MsgFieldOff"
 msgid "00129"
 msgstr "Non"
 
@@ -567,7 +567,7 @@ msgctxt "message"
 msgid "00139"
 msgstr "Sauvegarder votre aventure?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldJenna"
 msgid "00140"
 msgstr "Bien sûr"
 
@@ -37659,11 +37659,11 @@ msgctxt "MsgScene681No11"
 msgid "09412"
 msgstr "Une rivière de poison de{line_break}dragon déborde du baril.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouYouCannotFightThe"
 msgid "09413"
 msgstr "Hé vous! Tant que le serpent{line_break}est en possession de toutes{line_break}ses forces, il est invincible!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAtLastTheSerpentHas"
 msgid "09414"
 msgstr "Enfin... Les effets du breuvage se{line_break}font sentir. Le moment est venu{line_break}d'en finir avec ce serpent.{end_wait}"
 
@@ -37695,11 +37695,11 @@ msgctxt "MsgScene681No07"
 msgid "09421"
 msgstr "Pour qui se prennent-ils?{line_break}Je suis le seul qui puisse{line_break}sauver Kushinada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLikeISaidTheSerpent"
 msgid "09422"
 msgstr "Le seul moyen d'éliminer{line_break}ce serpent est de lui faire{line_break}avaler du poison de dragon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItLooksLikeTheDragon"
 msgid "09423"
 msgstr "Le dragon n'a pas l'air en{line_break}forme, mais sa vie ne{line_break}semble pas en danger...{end_wait}"
 

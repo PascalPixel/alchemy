@@ -169,10 +169,10 @@ Func_02001cd4:
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_SetPrimaryBufferValueFar
 	.else
 	overlay_veneer Event_FinishScreenTransitionFar
@@ -193,10 +193,10 @@ Event_WaitTransitionFrames:
 	.global Func_02001cec
 	.thumb_func
 Func_02001cec:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.else
 	overlay_veneer Func_080c83e0
@@ -205,10 +205,10 @@ Func_02001cec:
 	.global Func_02001cf4
 	.thumb_func
 Func_02001cf4:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer ObjectEvent_SetMode5WithCueFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer ObjectEvent_SetMode5WithCueFar
 	.else
 	overlay_veneer ObjectEvent_PlaceOnGroundFar
@@ -217,10 +217,10 @@ Func_02001cf4:
 	.global Func_02001cfc
 	.thumb_func
 Func_02001cfc:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
@@ -241,10 +241,10 @@ Object_LinkObjectAndSetCallback:
 	.global Object_SetActionCallback
 	.thumb_func
 Object_SetActionCallback:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8670
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8670
 	.else
 	overlay_veneer Object_SetActionCallbackFar
@@ -253,10 +253,10 @@ Object_SetActionCallback:
 	.global Func_02001d24
 	.thumb_func
 Func_02001d24:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c86f0
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c86f0
 	.else
 	overlay_veneer Func_080c8700
@@ -265,10 +265,10 @@ Func_02001d24:
 	.global Func_02001d2c
 	.thumb_func
 Func_02001d2c:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c86f8
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c86f8
 	.else
 	overlay_veneer Func_080c8708

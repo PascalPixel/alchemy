@@ -168,7 +168,23 @@ Func_02000188:
 	lsls r0, r0, #2
 	bl GameFlag_Test
 	cmp r0, #0
+	.ifdef TLA_EDITION_DE
+	bne .L_020081e6
+	.else
+	.ifdef TLA_EDITION_ES
+	bne .L_020081e6
+	.else
+	.ifdef TLA_EDITION_FR
+	bne .L_020081e6
+	.else
+	.ifdef TLA_EDITION_IT
+	bne .L_020081e6
+	.else
 	beq .L_020081ac
+	.endif
+	.endif
+	.endif
+	.endif
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #75
@@ -217,7 +233,23 @@ Func_020001e8:
 	lsls r0, r0, #2
 	bl GameFlag_Test
 	cmp r0, #0
+	.ifdef TLA_EDITION_DE
+	bne .L_0200824a
+	.else
+	.ifdef TLA_EDITION_ES
+	bne .L_0200824a
+	.else
+	.ifdef TLA_EDITION_FR
+	bne .L_0200824a
+	.else
+	.ifdef TLA_EDITION_IT
+	bne .L_0200824a
+	.else
 	beq .L_0200820c
+	.endif
+	.endif
+	.endif
+	.endif
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #75

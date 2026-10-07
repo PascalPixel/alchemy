@@ -5973,7 +5973,7 @@ Func_02002f64:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
-	.2byte 0x2303
+	.2byte MsgFieldAtLastTheSerpentHas
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0159
@@ -6651,7 +6651,7 @@ Func_02002f64:
 	.2byte 0xf9f2
 	.2byte 0xe004
 	.2byte 0x0000
-	.2byte 0x230c
+	.2byte MsgFieldItLooksLikeTheDragon
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0xffe0
@@ -7350,9 +7350,9 @@ Func_02002f64:
 	adds r3, r3, r1
 	str r3, [r6, #12]
 	b .L_0200c0a2
-	.2byte 0x2302
+	.2byte MsgFieldYouYouCannotFightThe
 	.2byte 0x0000
-	.2byte 0x230b
+	.2byte MsgFieldLikeISaidTheSerpent
 	.2byte 0x0000
 .L_0200c084:
 	.4byte 0x000000b2

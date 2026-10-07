@@ -145,10 +145,10 @@ Func_02000b84:
 	.global Func_02000b8c
 	.thumb_func
 Func_02000b8c:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
@@ -189,10 +189,10 @@ Func_02000bac:
 	.global Func_02000bb4
 	.thumb_func
 Func_02000bb4:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8898
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8898
 	.else
 	overlay_veneer Func_080c88a8
@@ -201,10 +201,10 @@ Func_02000bb4:
 	.global Func_02000bbc
 	.thumb_func
 Func_02000bbc:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c88a0
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c88a0
 	.else
 	overlay_veneer Func_080c88b0

@@ -523,7 +523,7 @@ msgctxt "message"
 msgid "00128"
 msgstr "Langsam"
 
-msgctxt "message"
+msgctxt "MsgFieldOff"
 msgid "00129"
 msgstr "Aus"
 
@@ -567,7 +567,7 @@ msgctxt "message"
 msgid "00139"
 msgstr "Möchtest du speichern?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldJenna"
 msgid "00140"
 msgstr "Yeah!"
 
@@ -37827,15 +37827,15 @@ msgctxt "MsgScene681No05"
 msgid "09454"
 msgstr "Geht mir sofort aus dem Weg!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No11"
 msgid "09455"
 msgstr "Die Gefäße sind randvoll{line_break}mit dem Drachenmahl.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouYouCannotFightThe"
 msgid "09456"
 msgstr "Ihr! Ihr könnt nicht gegen die{line_break}Schlange kämpfen!{page_break}Nicht, solange sie noch bei{line_break}Sinnen ist!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAtLastTheSerpentHas"
 msgid "09457"
 msgstr "Endlich! Die Schlange hat nun{line_break}endlich genug. Das ist die Chance,{line_break}auf die ich gewartet habe.{end_wait}"
 
@@ -37867,11 +37867,11 @@ msgctxt "MsgScene681No07"
 msgid "09464"
 msgstr "Was glauben diese Leute{line_break}eigentlich, wer sie sind?{page_break}Ich bin der Einzige, der{line_break}Kushinada retten kann!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLikeISaidTheSerpent"
 msgid "09465"
 msgstr "Wie ich sagte. Die Schlange{line_break}kann nicht nur dadurch besiegt{line_break}werden,{page_break}indem man sie mit Drachenmahl{line_break}füttert!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItLooksLikeTheDragon"
 msgid "09466"
 msgstr "Es sieht so aus, als wäre der{line_break}Drache in schlechter Verfassung.{page_break}Aber er ist noch weit davon{line_break}entfernt, sein Leben auszu-{line_break}hauchen.{end_wait}"
 
@@ -39615,7 +39615,7 @@ msgctxt "message"
 msgid "09901"
 msgstr "Hier steht: Zwei Schritte nördlich{line_break}des mittleren Grabes, wo der{line_break}Brief zu Boden gefallen ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene682No53"
 msgid "09902"
 msgstr "Champa voraus!{end_wait}"
 
@@ -51379,7 +51379,7 @@ msgctxt "MsgDeriWellSeawater"
 msgid "12842"
 msgstr "Es scheint, als wäre Salzwasser{line_break}in den Brunnen geschwappt.{page_break}Er wird wohl für eine Weile{line_break}nicht benutzt werden können.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No13"
 msgid "12843"
 msgstr "Am Grunde des Brunnens{line_break}befindet sich ein Tunnel.{page_break}Ich frage mich, ob noch{line_break}jemand davon weiß.{end_wait}"
 
@@ -51387,115 +51387,115 @@ msgctxt "MsgFieldItSCompletelyFullOf"
 msgid "12844"
 msgstr "Bis oben hin voller Wasser.{line_break}Der Grund scheint sehr tief{line_break}unten zu sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65FNo31"
 msgid "12845"
 msgstr "Hä? Ich habe im Brunnen{line_break}den Umriss eines Mannes{line_break}gesehen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene665No180"
 msgid "12846"
 msgstr "Sieht so aus, als würde der{line_break}Brunnen nicht oft benutzt{line_break}werden.{page_break}Wahrscheinlich, weil er so{line_break}weit vom Zentrum der Stadt{line_break}entfernt ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66DNo47"
 msgid "12847"
 msgstr "Im Brunnen befindet sich nur{line_break}noch ein wenig Wasser.{page_break}So heiß, wie es in dieser{line_break}Gegend werden kann, ver-{line_break}dunstet es sicher schnell.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A6No58"
 msgid "12848"
 msgstr "Der Brunnen sieht sehr alt aus.{line_break}Er stammt sicher aus sehr{line_break}alten Zeiten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No169"
 msgid "12849"
 msgstr "Im Topf kochen Kartoffeln.{line_break}Vielleicht soll Kartoffelsalat{line_break}daraus gemacht werden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No170"
 msgid "12850"
 msgstr "Hier wird Nan gebacken.{page_break}Sieht ein wenig eigenartig aus.{line_break}In Madra gibt man noch Nüsse{line_break}und Rosinen dazu.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No171"
 msgid "12851"
 msgstr "Alle möglichen Gewürze{line_break}verfeinern das Essen.{page_break}Kein Gericht in Madra wäre{line_break}ohne sie komplett.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No172"
 msgid "12852"
 msgstr "Im Ofen brutzelt Hähnchen{line_break}in Curry vor sich hin.{page_break}Dem Duft und der tiefroten{line_break}Farbe nach zu urteilen, sind{line_break}viele Tomaten dabei.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No173"
 msgid "12853"
 msgstr "Auf dem Herd steht ein{line_break}Topf mit Masala-Tee.{page_break}Er wurde mit Milch verfeinert{line_break}und duftet mild und süß. Das{line_break}treibt mich in den Wahnsinn!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No174"
 msgid "12854"
 msgstr "Man bereitet Hühnchen nach{line_break}Tandoori-Art zu.{page_break}In Madra wird das Fleisch erst{line_break}nach dem Kochen vom Knochen{line_break}gelöst.{page_break}Dies ist eine Spezialität aus{line_break}der Region.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo35"
 msgid "12855"
 msgstr "Es ist ein Brathähnchen von{line_break}der Größe eines Gürteltiers!{line_break}Es sprengt beinahe den Ofen!{page_break}Hmm... Ob es wohl zu den{line_break}Hühnern gehörte, die ich{line_break}draußen gesehen habe?{page_break}Ich dachte, sie wären nicht{line_break}zum Verzehr gedacht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo36"
 msgid "12856"
 msgstr "Frische Eier, gerade gebraten.{line_break}Perfekt geformte Spiegeleier!{page_break}Sie dürfen bei einem richtigen{line_break}Frühstück nicht fehlen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo37"
 msgid "12857"
 msgstr "Der Käse sieht köstlich aus!{page_break}Ich könnte einen Imbiss{line_break}vertragen...{page_break}Noch ein Stück Brot dazu und...{line_break}ARGH! Ich habe Hunger!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No68"
 msgid "12858"
 msgstr "Iiiiiirgh!{line_break}Hier werden Käferlarven{line_break}geröstet!{page_break}Es sieht schrecklich aus!{line_break}Aber es duftet{line_break}HERVORRAGEND!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No69"
 msgid "12859"
 msgstr "Eine Lammkeule, über{line_break}offenem Feuer gegrillt.{page_break}Das Fleisch ist von goldbrauner{line_break}Farbe und äußerst saftig!{page_break}Man würde es vermutlich{line_break}bemerken, wenn ich mir{line_break}etwas davon nehme...{page_break}Zu schade!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No70"
 msgid "12860"
 msgstr "Wie? Was ist das?{line_break}Hummer in der Schale gegrillt!{page_break}Wenigstens einmal im Leben{line_break}will ich diese luxuriöse{line_break}Köstlichkeit probieren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No71"
 msgid "12861"
 msgstr "Wassermolche am Spieß{line_break}über einem offenen Feuer.{page_break}Soll das Essen oder irgendeine{line_break}merkwürdige Medizin werden?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No72"
 msgid "12862"
 msgstr "Mehrere merkwürdig aussehende{line_break}Pflanzen dünsten in einem{line_break}großen Topf.{page_break}Es hat einen vertrauten Duft,{line_break}aber ich kann ihn nicht genau{line_break}zuordnen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No121"
 msgid "12863"
 msgstr "Gekochtes Gemüse der Saison{line_break}mit Lammfleisch.{page_break}Die Austernsauce ist für meinen{line_break}Gaumen wirklich eine Versuchung!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No122"
 msgid "12864"
 msgstr "Im Ofen werden Meeresfrüchte{line_break}im Teigmantel gebacken.{page_break}Der Ruf ihres, ähm, intensiven{line_break}Duftes eilt ihnen voraus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No123"
 msgid "12865"
 msgstr "Sieht aus wie Muschelsuppe.{line_break}Sie duftet wie der Ozean!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No124"
 msgid "12866"
 msgstr "Das ist Alhafras berühmter{line_break}gegrillter Hummer!{page_break}Er ist größer, als ich es mir{line_break}jemals gewagt hätte vorzu-{line_break}stellen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No125"
 msgid "12867"
 msgstr "Für diesen Eintopf wurden{line_break}unzählige verschiedene{line_break}Fischarten verwendet.{page_break}Ein Bissen davon und ich{line_break}würde schon am Haken{line_break}hängen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene677No40"
 msgid "12868"
 msgstr "Der Stahl, der in der Flamme{line_break}ruht, glüht in hellem Rot.{page_break}Hier müssen sehr scharfe{line_break}Gegenstände hergestellt{line_break}werden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo38"
 msgid "12869"
 msgstr "Eine Fischsorte, die ich noch nie{line_break}gesehen habe, köchelt hier vor{line_break}sich hin.{page_break}Wie diese faulige Suppe wohl{line_break}schmecken mag?{page_break}Ich bin mir nicht sicher, ob ich{line_break}das herausfinden möchte...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No206"
 msgid "12870"
 msgstr "Hier köchelt eine hellrote{line_break}Suppe mit vielen Bohnen{line_break}und Tomaten.{page_break}Der würzige Duft ist wirklich{line_break}verlockend, aber ich würde{line_break}mir wohl den Mund verbrennen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No207"
 msgid "12871"
 msgstr "Ah, der Duft von frischem{line_break}Maisbrot dringt aus dem Ofen.{page_break}Nur einmal geschnuppert und{line_break}ich sabbere wie eine Bulldogge!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No208"
 msgid "12872"
 msgstr "Contigo ist für diesen süßen{line_break}Milchreis berühmt.{page_break}Ich hörte, selbst wenn man das{line_break}Rezept kennt, dauert es Jahre,{line_break}bis man es umsetzen kann.{end_wait}"
 
@@ -51511,67 +51511,67 @@ msgctxt "MsgShamanStrangeBoiledVegetables"
 msgid "12875"
 msgstr "Noch nie zuvor habe ich{line_break}Gemüse gesehen, wie es{line_break}hier gekocht wird.{page_break}Huch! Das stinkt ja grauenvoll!{line_break}Würde wirklich jemand so{line_break}etwas freiwillig essen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene690No21"
 msgid "12876"
 msgstr "Das ist Irish Stew mit{line_break}Lammfleisch und Kartoffeln.{page_break}Sieht sehr lecker aus, wenn{line_break}man gekochtes Fleisch mag.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No154"
 msgid "12877"
 msgstr "Dieses gekochte Gemüse{line_break}sieht wie Unkraut aus.{page_break}Ich bin mir sicher, dass ich{line_break}so etwas so schnell nicht{line_break}probieren werde.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No155"
 msgid "12878"
 msgstr "Dieser Eintopf wurde mit Käse{line_break}zubereitet.{page_break}Hey! Da bildet sich ja Schimmel{line_break}auf dem Käse! Muss das so sein?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No156"
 msgid "12879"
 msgstr "Ein merkwürdiges Gericht mit{line_break}Fischrogen.{page_break}Dünne Fäden gehen von ihnen{line_break}aus. Ich frage mich, ob das{line_break}normal ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No157"
 msgid "12880"
 msgstr "Äußerst merkwürdiges Fleisch,{line_break}das ich noch nie zuvor gesehen{line_break}habe.{page_break}Anstatt von Feuerholz brennen{line_break}hier Geweihe!{page_break}Ich frage mich, ob das Fleisch{line_break}und die Geweihe vom selben{line_break}Tier stammen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No03"
 msgid "12881"
 msgstr "Es scheint, als wäre hier das{line_break}Logbuch des Kapitäns.{page_break}Hier steht etwas über eine{line_break}nicht berichtete Reise nach{line_break}Lemuria.{page_break}Vermutlich wurden sie sehr{line_break}kurzfristig losgeschickt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo27"
 msgid "12882"
 msgstr "Ein Buch mit dem Titel:{line_break}\"Die großen Abenteuer von{line_break}Lunpa\"{page_break}Geschrieben von niemand{line_break}anderem als Lunpa persönlich.{page_break}\"Als die große Flut kam, sind{line_break}wir in Booten von Zuhause{line_break}geflüchtet.{page_break}Wellen umtosten unsere Schiffe{line_break}und wir landeten in einem{line_break}eigenartigen Land, genannt...{page_break}...Lemuria.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo28"
 msgid "12883"
 msgstr "Ich habe einen Brief von Babi{line_break}gefunden. Auf dem Umschlag{line_break}steht:{page_break}\"An meinen teuren Freund Lunpa\"{page_break}Babi schrieb: \"Vergib mir, Lunpa,{line_break}aber ich muss die Insel ohne{line_break}dich verlassen.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo29"
 msgid "12884"
 msgstr "Ein Buch mit dem Titel:{line_break}\"Die Geschichte von Lemuria\"{page_break}Ein Auszug: \"Heute findet man{line_break}die Glorie des alten Lemurias{line_break}nur noch in matten Spuren.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo30"
 msgid "12885"
 msgstr "Ein Buch mit dem Titel:{line_break}\"Elementare Leuchttürme\"{page_break}Hier steht: \"Die Leuchtfeuer{line_break}der vier elementaren Leucht-{line_break}türme erhellen die Ränder{page_break}unserer Welt, Weyard.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo31"
 msgid "12886"
 msgstr "Ein Buch mit dem Titel:{line_break}\"Das große Volk der{line_break}Lemurianer\"{page_break}\"Der erwählte Meister des{line_break}Wassers wird ein Sohn{line_break}Lemurias sein.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo32"
 msgid "12887"
 msgstr "Ein Buch mit dem Titel:{line_break}\"Alchemie und antike{line_break}Zivilisationen: Teil I\"{page_break}\"Durch den Einsatz von{line_break}Alchemie erfährt jegliche{line_break}Zivilisation Wachstum und{page_break}Verbesserung.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo33"
 msgid "12888"
 msgstr "Ein Buch mit dem Titel:{line_break}\"Alchemie und antike{line_break}Zivilisationen: Teil II\"{page_break}\"Jene, welche die Alchemie{line_break}meistern, meistern auch die{line_break}Welt.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo34"
 msgid "12889"
 msgstr "Ein Buch mit dem Titel:{line_break}\"Tagebuch des Hydros\"{page_break}\"{actor_name:8} ist sicher{line_break}noch am Leben. Ich bete{line_break}für seine sichere Heimkehr.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No04"
 msgid "12890"
 msgstr "Es ist angenehm kühl.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo35"
 msgid "12891"
 msgstr "Was zur...!!! {control_15:4}{control_15:4}{page_break}{control_12:11}Was sollen all diese Bademäntel?!?{line_break}Wo sind die Bäder?{end_wait}"
 

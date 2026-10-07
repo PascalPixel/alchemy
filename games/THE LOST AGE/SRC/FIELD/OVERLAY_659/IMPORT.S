@@ -213,10 +213,10 @@ Func_02001e68:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
 	.else
 	overlay_veneer Event_StartScreenTransitionFar
@@ -237,10 +237,10 @@ Event_WaitTransitionFrames:
 	.global Func_02001e80
 	.thumb_func
 Func_02001e80:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8470
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8470
 	.else
 	overlay_veneer Func_080c8480
@@ -249,10 +249,10 @@ Func_02001e80:
 	.global Field_DispatchTypeHandler
 	.thumb_func
 Field_DispatchTypeHandler:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8488
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8488
 	.else
 	overlay_veneer Field_DispatchTypeHandlerFar
@@ -261,10 +261,10 @@ Field_DispatchTypeHandler:
 	.global Func_02001e90
 	.thumb_func
 Func_02001e90:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8490
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8490
 	.else
 	overlay_veneer BattleFx_LoadActionEffectResourcesFar
@@ -285,10 +285,10 @@ Func_02001e98:
 	.global Func_02001ea0
 	.thumb_func
 Func_02001ea0:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_LoadActionEffectResourcesFar
 	.else
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
@@ -297,10 +297,10 @@ Func_02001ea0:
 	.global Func_02001ea8
 	.thumb_func
 Func_02001ea8:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_SetupObjectPairFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_SetupObjectPairFar
 	.else
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
@@ -309,10 +309,10 @@ Func_02001ea8:
 	.global Func_02001eb0
 	.thumb_func
 Func_02001eb0:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
 	.else
 	overlay_veneer EventObject_InitializeFar
@@ -321,10 +321,10 @@ Func_02001eb0:
 	.global Func_02001eb8
 	.thumb_func
 Func_02001eb8:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
@@ -333,10 +333,10 @@ Func_02001eb8:
 	.global Func_02001ec0
 	.thumb_func
 Func_02001ec0:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Party_PlaySavedMusicFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Party_PlaySavedMusicFar
 	.else
 	overlay_veneer Func_080c8580

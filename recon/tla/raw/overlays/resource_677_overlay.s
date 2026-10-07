@@ -1057,7 +1057,8 @@ Data_02000ca4:
 	.4byte 0x00000001
 	.4byte 0x00980000
 	.4byte 0x00000000
-	.4byte 0x00880000
+	.2byte 0x0000
+	.2byte MsgFieldJenna
 	.4byte 0x00016000
 	.4byte 0xffff0074
 	.4byte .L_02008a98

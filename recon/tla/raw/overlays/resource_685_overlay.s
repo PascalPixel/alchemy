@@ -598,7 +598,11 @@ Func_020004d4:
 	lsls r2, r2, #1
 	adds r3, r3, r2
 	ldr r6, .L_020085d4
+	.ifdef TLA_EDITION_JA
+	adds r2, #88
+	.else
 	adds r2, #85
+	.endif
 	str r2, [r3]
 	movs r3, #240
 	lsls r3, r3, #1

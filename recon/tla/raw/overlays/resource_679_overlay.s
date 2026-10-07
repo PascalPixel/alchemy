@@ -3592,7 +3592,7 @@ Data_02002038:
 .L_0200a044:
 	.4byte 0x00000016
 	.4byte 0x0000001e
-	.4byte 0x00000081
+	.4byte MsgFieldOff
 	.4byte 0x00000016
 	.4byte 0x00000010
 	.4byte 0x00003333

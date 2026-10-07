@@ -117,10 +117,10 @@ ObjectMotion_SetActionVariant:
 	.global Func_02000a40
 	.thumb_func
 Func_02000a40:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.else
 	overlay_veneer Func_080c83e0
@@ -129,10 +129,10 @@ Func_02000a40:
 	.global Func_02000a48
 	.thumb_func
 Func_02000a48:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8470
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8470
 	.else
 	overlay_veneer Func_080c8480
@@ -141,10 +141,10 @@ Func_02000a48:
 	.global Func_02000a50
 	.thumb_func
 Func_02000a50:
-	.ifdef TLA_EDITION_IT
+	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
-	.ifdef TLA_EDITION_ES
+	.ifdef TLA_EDITION_IT
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar

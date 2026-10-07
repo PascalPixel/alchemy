@@ -1,5 +1,5 @@
-/* 080d1714: differ 123 of 1481 instructions (1482 generated, common
- * 1420). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 66 of 1481 instructions (1481 generated, common
+ * 1448). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -192,30 +192,34 @@
  *   statements xx, yy, zz, then Iwram_Sqrt(xx + yy + zz): 123, the
  *   native's three products, x + y, then z through its copy in r3.
  * - on 123: mark = &runtime->particles[60] before index = 0: 140.
- * Remaining (123): two spill slots swapped (view + 12 at sp+36 and
+ * - on 123: the frame <= 159 particle loop as for (index = 0, point =
+ *   runtime->particles; ...): 123, the same code; permuter 5 minutes
+ *   (seed 11, --heat, shared machine): 14 candidates, none below.
+ * - on 123: the burst loop's spark as runtime->particles[slot + 32]
+ *   by index, no walking pointer: 85, 1480 instructions. The extra
+ *   instruction was never a merged PRE copy but the schedule: the
+ *   native's add r0, sp, #152 is the Thumb peephole over an adjacent
+ *   movs r0, #152 and add r0, sp, which sched2 keeps together only
+ *   when loop.c's strength-reduced spark giv is set last in the
+ *   preheader, as the native's adds r5, r4, r0 is. The giv was
+ *   runtime + 0x7418 from the pool, where the native has runtime +
+ *   0x7400 with [r5, #24]. spark = &runtime->particles[slot + 32]
+ *   each iteration: 400. spark = &runtime->particles[32] before the
+ *   loop and spark[slot].variant inside: 66, 1481 instructions as the
+ *   native, its preheader order and the [r5, #24] giv exact.
+ * Remaining (66): two spill slots swapped (view + 12 at sp+36 and
  * &base_angle at sp+40 in the native). Both are gcse PRE reaching
  * registers, created in hash bucket order: view + 12 (bucket 110)
  * takes reg 1159 before sfp - 192 (bucket 525) takes 1172, and with
  * the frame growing downward the lower regno gets the higher slot.
  * The native's order fits view + 12 hoisted later, by loop.c rather
- * than PRE; the frame <= 159 particle loop
- * preheader and the mark and spark loop preheaders choose other
- * reload registers (reload's rotation: &work through r0 and slot 0
- * through r7 in the native's spark preheader); the threshold loop
- * preheader sets mark (runtime + 0x7710) before the threshold givs,
- * where the draft sets it last; the one extra instruction (1482
- * generated) is &work in the burst spark preheader, which the native
- * builds as add r0, sp, #152 then mov r8, r0, and the draft as
- * movs r2, #152, add r2, sp, mov r8, r2 (the native's frame <= 159
- * preheader uses the two-instruction form too). gcse inserts PRE
- * registers for &screen (1169) and &work (1170) there and loop.c moves
- * copies of them (1008, 983) out of the burst loop; 1169 has other uses
- * and keeps its own add (sl from r7, as the native), but 1170's only use
- * is the copy, so the two merge into one add into r8. The native's
- * add r0 then mov r8 fits a &work PRE register with a second use.
- * - on 123: the frame <= 159 particle loop as for (index = 0, point =
- *   runtime->particles; ...): 123, the same code; permuter 5 minutes
- *   (seed 11, --heat, shared machine): 14 candidates, none below. */
+ * than PRE. The frame <= 159 particle loop preheader, the mark loop
+ * preheader and the burst preheader choose other reload registers
+ * (the burst preheader: slot * 2340's 0 in r3, runtime in r4 and
+ * 0x7400 in r0 in the native), and the burst latch increments the
+ * spark giv after the slot * 2340 store where the native does it
+ * before; the threshold loop preheader sets mark (runtime + 0x7710)
+ * before the threshold givs, where the draft sets it last. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -774,11 +778,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             spark = &runtime->particles[32];
                             do {
                                 work.x = 0;
-                                work.y = spark->variant
+                                work.y = spark[slot].variant
                                     * Trig_Cos(slot * 2340);
-                                work.z = spark->variant
+                                work.z = spark[slot].variant
                                     * Trig_Sin(slot * 2340);
-                                spark->variant += 2;
+                                spark[slot].variant += 2;
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
                                     (screen.x >> 17) + runtime->particles[index + 60].velocity_x;
@@ -799,7 +803,6 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                     span,
                                     span * 2);
                                 slot++;
-                                spark++;
                             } while (slot != 28);
                         }
                     }

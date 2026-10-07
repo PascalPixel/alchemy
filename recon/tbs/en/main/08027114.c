@@ -1,3 +1,11 @@
+/* 2026-10-07 queue3 Japanese layout correction: native summon window width14
+ * and requirement columns10/11, versus the localizations'17 and13/14, now
+ * have a Japanese branch. JA bounded parent diff1219 (listing1729,draft1768,
+ * common1139; was1221), EN parent-listing diff remains1255. JA's parent-only
+ * diff excludes the nested helpers that EN's raw-listing comparison includes.
+ * Trials, removed: placing store_target after case1, inside or just outside
+ * its scope, gives1276; the explicit final-cost loop exits there give1301.
+ */
 /* 2026-10-07 queue3 window/cost-loop correction: differ 1255 (listing 1727,
  * draft 1814, common 1143), not matched; frame 100. A tagged case-16 window
  * in fp restores its native register (1287 -> 1274); writing the final cost
@@ -597,7 +605,11 @@ djinn_menu:
                 djinn = SummonDefinition_Get(mode);
                 ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
+#if defined(TBS_EDITION_JA)
+                win = UiWindow_Create(10, 17, 14, 3, 6);
+#else
                 win = UiWindow_Create(10, 17, 17, 3, 6);
+#endif
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] > state->cost[i][j]) {
                         break;
@@ -619,8 +631,13 @@ djinn_menu:
                 n = 0;
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] != 0) {
+#if defined(TBS_EDITION_JA)
+                        UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 10, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, n * 2 + 11, 0, 0);
+#else
                         UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 13, 0, 0);
                         UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, n * 2 + 14, 0, 0);
+#endif
                         n++;
                     }
                 }

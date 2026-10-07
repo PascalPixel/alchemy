@@ -3,7 +3,7 @@
  * differ 70 (2026-10-07, after taking ☀️'s camelotized names, numbers
  * and macros: no change).
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
- * SEAL/SRC/BATTLE/TGTEXEC.C) with this game's
+ * SEAL/SRC/BATTLE/tgtexec.c) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
  * and moved here, where they stay until every edition of this game matches.
  * Then one source in games/COMMON carries only the real differences under

@@ -25,12 +25,12 @@ their own number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 
 sharing as much code between the games as possible.
 
 Matching is not the finish. The project is finished when the source also
-reads as Camelot's engineers wrote it in Japan in 2001 (S3), not as modern
-Western C: romaji names, Japanese comments, scenes in event commands and
-numbered events, values in their authors' units. Work need not reach that
-form at once, but every change moves toward it (W8), and the last pass
-before both games are declared finished, alongside removing FAKEMATCH (S2),
-camelotizes what remains.
+forms a readable, coherent reconstruction suited to the games' hardware and
+approved toolchains: The Broken Seal in 2001 and The Lost Age in 2002 (S3).
+Names, comments and formatting are Alchemy's reconstruction choices. Work
+need not reach that form at once, but every change moves toward it (W8), and
+the last pass before both games are declared finished, alongside removing
+FAKEMATCH (S2), camelotizes what remains.
 
 ## Where things are
 
@@ -158,39 +158,64 @@ or functions is exactly this cheating.
   `FIELD_EVENT.H`, `FIELD_SERVICE.H` and `RUNPA_JO/JO.H`) matches every scene
   where direct calls break 642 functions (Pascal, 2026-10-05). Never patch
   compiler output. _Check: no-asm (in lint-staged)._
-- **S3** Camelotize: write it as Camelot's engineers wrote it, in Japan, in
-  2001, not merely as a person would. This is the target, and what
-  "camelotize" means everywhere in this file:
+- **S3** Camelotize: reconstruct readable source consistent with the games'
+  hardware, approved compilers and demonstrated program structure. Separate
+  what the bytes establish, what the compiler requires and Alchemy's house
+  style. The following conventions guide the reconstruction
+  (Pascal, 2026-10-07):
 
   ```c
   #include "EVENT.H"
 
-  #define BOUZU       8           /* 坊主 */
+  #define BOUZU       8           // 坊主
 
-  static void EV03_IDO()
+  // 井戸の前へ移動
+  static void EV03_IDO(void)
   {
       ...
-      OBJ_POS_SET(BOUZU, 192, 264);       /* 井戸の前 */
+      OBJ_POS_SET(BOUZU, 192, 264);
       ...
   }
   ```
 
   - Layout: `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT`, the same folders
-    in both games and `games/COMMON`; uppercase 8.3 file names; C89.
-    Directives stay lowercase (`#include`): the preprocessor reads no other.
+    in both games and `games/COMMON`. New and camelotized C source and header
+    files have lowercase names and `.c` / `.h` extensions; use meaningful
+    stems, with underscores when useful. Rename a file and its actual include
+    and linker references together. Existing uppercase dependencies keep their
+    exact spelling until their owning module is migrated.
     Shared code and declarations live once in `games/COMMON`; a function is
     adopted into the module that holds its linker neighbours, not into a new
     file of its own.
-  - Identifiers are ASCII, as C89 and GCC 2.96 demand: Japanese words in
-    romaji (`BOUZU`), characters by their Japanese names (`ROBIN`,
-    `GERALD`, `SUKURETA`), places in romaji plus one area word
-    (`RUNPA_JO`). Never an English word where theirs was Japanese.
-  - Japanese lives only in comments: short, beside the line, in their
-    register (`/* 坊主 */`, `/* 井戸の前 */`), and only for a fact we have
-    verified. Ours are UTF-8 where theirs were Shift-JIS. Game source carries
-    no English explanation; FAKEMATCH tags (S2) are ours and stay English.
-  - Numbers stay numbers until evidence names them; then a romaji `#define`
-    with its Japanese comment, not an invented enum.
+  - Language: C89 with only extensions supported by the approved compiler;
+    GNU C `//` comments are allowed. Identifiers are ASCII. Use prototypes,
+    `typedef`, `enum` and ordinary C idioms where appropriate. Choose types,
+    signedness, declarations, linkage and scopes from the program and matching
+    evidence.
+  - Naming: ordinary English technical vocabulary and abbreviations may mix
+    with romaji. Use the Japanese game names for characters and places
+    (`ROBIN`, `GERALD`, `SUKURETA`, `RUNPA_JO`) and established game terminology
+    where useful. Keep spelling consistent within a concept and names concise
+    and meaningful. Unknown meaning stays unknown.
+  - Comments: prefer concise Japanese explanations of verified game behavior,
+    units, fields and constraints. English technical terms and useful English
+    explanations are allowed. Use trailing comments for fields and cases, and
+    short blocks or section labels when they help explain a larger operation.
+    Keep comments useful and UTF-8. FAKEMATCH explanations (S2) stay English.
+  - Formatting: the showcase uses tabs at four columns, opening braces on
+    their own lines, a space before control parentheses, and blank lines
+    between logical steps. Group related declarations and constants; align
+    short trailing comments where it aids scanning. Use section separators
+    for larger operations. Preserve directive order, macro semantics and
+    deliberate data-table layout. The repository's `.clang-format` records
+    these choices. Format only the source being reviewed, and keep approved
+    library source out of style passes.
+  - Numbers stay numbers until evidence establishes their meaning. Then use
+    an appropriate technical or game-domain name; do not invent meanings to
+    remove literals. Decimal suits quantities and hexadecimal suits masks,
+    packed fields and hardware values. `#define` and `enum` are both allowed
+    where their types and generated bytes fit. Message names remain linker
+    symbols (W8); a named constant never invents an address or table ID (O2/O3).
   - Values are written in the author's units, whatever the bytes store:
     scene coordinates are pixels, and the command shifts them into fixed
     point.
@@ -200,19 +225,22 @@ or functions is exactly this cheating.
     engine service itself where the native calls it directly.
   - An event function is named `EV<id>_<SUBJECT>`: its decimal id from the
     scene's event table, then one romaji noun for what it is about
-    (`EV08_KAGI` 鍵, `EV52_IDO` 井戸, `EV99_ROUYA` 牢屋), or a terse English
-    verb of the period where the code does not show the subject (`EV12_SET`,
+    (`EV08_KAGI` 鍵, `EV52_IDO` 井戸, `EV99_ROUYA` 牢屋), or a clear English
+    verb where the code does not show the subject (`EV12_SET`,
     `EV20_MAIN`, `EV94_MAIN`). It is `static` once the table that reaches it
-    lives in the same object. Engine functions take terse English
-    abbreviations in the register of the event commands, compact CamelCase
-    (`BtlTgtSet`), with romaji only for nouns of the game world; until the
-    final pass reaches them they keep our `Subsystem_VerbObject` names.
-    Short locals; named struct fields.
+    lives in the same object. These event names are our indexing convention.
+    Engine functions use compact CamelCase (`BtlTgtSet`), with meaningful
+    technical vocabulary and game terms; existing `Subsystem_VerbObject`
+    names may remain until their module is reviewed. Locals and struct fields
+    express their role rather than a register number or unexplained offset.
   - The bytes prove layers, units and calls; the ROM keeps no names (only
     credits text and ⚓️'s build stamp `020610172024`). Names, numbering and
     comments are reconstruction: never present them as recovered.
+  - Mechanical cleanup scores prioritize review. Review meaning, naming,
+    comments, organization and byte identity, preserving necessary casts,
+    hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
   - The showcase is `BtlTgtExec` in
-    `games/THE BROKEN SEAL/SRC/BATTLE/TGTEXEC.C`.
+    `games/THE BROKEN SEAL/SRC/BATTLE/tgtexec.c`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in
@@ -227,7 +255,10 @@ or functions is exactly this cheating.
   are: indexed PNGs with the game's real palettes, TSV tables and tilemaps,
   WAV, MIDI, PO and text definitions. Never raw dumps, grey sheets without a
   built palette, whole-area blobs or stored compression tokens. Sources may
-  include the files the build makes from these inputs. _Check: publication._
+  include the files the build makes from these inputs. PO catalogs hold
+  editable messages and control commands; the build encodes them into each
+  game's native text format. Generated resources live in ignored build output.
+  _Check: publication._
 - **A2** A picture is drawn the way the game shows it: tile sheets at their real
   width or sprite shape, pictures with a tilemap as the map shows them,
   animations one frame wide. _Check: layout._
@@ -237,6 +268,13 @@ or functions is exactly this cheating.
 - **A4** Encoder options live beside their assets; recipes may carry a sprite
   shape (one of the 12 hardware sizes) in the file name.
 - **A5** No JSON anywhere: tables are TSV. _Check: publication._
+- **A6** Each edition combines its message catalog, character mapping, font
+  images, glyph metrics and layout with its measured code differences. Common
+  code and interfaces stay shared. Select differing resources in their owning
+  module or build rule and keep code branches beside the behavior they change.
+  Group editions where the measured behavior agrees. Text layout uses the
+  actual font's pixel widths and control commands.
+  _Check: compare-editions for byte identity._
 
 ### Compilers
 

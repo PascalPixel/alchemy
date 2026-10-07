@@ -1,1 +1,1 @@
-#include "../../../../games/THE BROKEN SEAL/SRC/BATTLE/TGTEXEC.C"
+#include "../../../../games/THE BROKEN SEAL/SRC/BATTLE/tgtexec.c"

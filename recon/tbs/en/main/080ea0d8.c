@@ -1,7 +1,7 @@
-/* 080ea0d8: differ 784 of 2455 (listing 2455, draft 2445, common 2058).
- * Frame: 184 as native. The spill slots from sp+104 (canvas) down to sp+32
- * (shift) now sit where the native's do; the native also spills the second
- * petal block's cell (sp+28), which ours keeps in a register.
+/* 080ea0d8: differ 558 of 2455 (listing 2455, draft 2451, common 2174).
+ * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
+ * the frame giv) holds what the native's holds, with r4's caller-save word
+ * at sp+8.
  * Found in the 2026-10-07 session, in order of effect:
  * - One counter i serves every loop except the ramp's inner j: all 24 of
  *   the native's loop counters are r7. Separate counters each carry the
@@ -34,10 +34,15 @@
  * - loop.c: ours hoists 0, &fill and 24 out of the 320-frame loop in its
  *   first pass and 22 and 44 in its second; the native keeps 44 in a
  *   register in both petal blocks (r10, r8), so it did not hoist 44.
- * - The alternate blitter as ((DrawRectangle *)gWorkSlot)[47] (the
- *   native's single literal gWorkSlot+188) moves loop 1's hoisting and a
- *   global pseudo then evicts every local-alloc pseudo from r8 (2066);
- *   kept as gTransitionWork[3] for now.
+ * - The frame <= 63 block calls ((DrawRectangle *)gWorkSlot)[47], the
+ *   native's literal gWorkSlot+188 (listed as gTransitionWork+0xc), the
+ *   same constant as draw[1]'s load: loop.c's second pass then hoists
+ *   it before 22, and 44 stays in each petal block as the native's, so
+ *   the second petal block spills its cell (sp+28) as the native does.
+ * - The shard tables are not const: the native reloads ShardWidths[k]
+ *   after Trig_Cos rather than keeping it across the call, and k then
+ *   takes r4 under caller-save, not r1. With the previous: 784 -> 566.
+ * - The 116..144 block calls through the same literal (566 -> 558).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -122,9 +127,9 @@ extern const u16 ParticleStreams_CellOffsets[];
 extern const Scale BattleFx9_UnitScale;
 extern const u8 BattleFx9_BurstHeights[];
 extern const u16 BattleFx9_BurstCells[];
-extern const u16 BattleFx9_ShardCells[];
-extern const u8 BattleFx9_ShardWidths[];
-extern const u8 BattleFx9_ShardHeights[];
+extern u16 BattleFx9_ShardCells[];
+extern u8 BattleFx9_ShardWidths[];
+extern u8 BattleFx9_ShardHeights[];
 
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARKS (&DUST[128])
@@ -389,16 +394,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             cell = work->sheet + BattleFx9_BurstCells[n] + 0x600;
 
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80 - high * 2, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60 - high, 80, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60 - high, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80, high, high * 2);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
 
             for (i = 0; i != 6; i++) {
@@ -636,16 +641,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 sheet = work->sheet + 0x4240;
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 36, top - 24 + 24, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top - 24 + 24, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 59, top, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 36, top + 23, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 59, top + 23, 24, 24);
+            (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
         }
 
@@ -790,7 +795,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         BattleEffect_LoadWork(47, 7, 7, 3, 3);
-        draw[1] = ((DrawRectangle *)gWorkSlot)[47];
+        draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
         if (frame > 85) {
             draw[1](canvas, work, 0, 0, 120, 120);
         }

@@ -209,7 +209,8 @@
  * keeps gcse's sharing (118).
  * Tried against 100: case 76 reading max_hp and maxu through stat_ptr
  * (stat_ptr--; m = *(s16 *)stat_ptr; maxu = *stat_ptr;) 119; a local
- * copy of target for case 76's reads no change (copy-propagated).
+ * copy of target for case 76's reads no change (copy-propagated); in
+ * the drain, kind = dealt then kind = dealt / 2 in the if, 193.
  * Left at 100: the drain's halving (above); the heal's target copies and offsets in 76, 71, 78 and the 7%
  * (reload registers in another rotation: the listing's offset scratch
  * takes r3 first, as if allocated before the base's reload); two far

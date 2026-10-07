@@ -1,5 +1,12 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 133, differ 127.
+ *   161 to 127: each glyph row loaded into bits and shifted in place, bits = *next++;
+ *   bits <<= 16, so the halfword load and the shift share bits' pseudo, as native's
+ *   ldrh ip, [r1], #2 ... lsl ip, ip, #16 (a separate load temporary was local-allocated r2
+ *   or r3); pass and row now take native's r1 and r2. Trial: code = ch - 222 assigned in the
+ *   font test, (code = ch - 222) < 2, and not recomputed in the wide arm: 132 (GCSE no longer
+ *   hoists the sub above the beq; native's single lr is GCSE's copy, 175 = code).
  * Stock agbcc_arm (2026-10-07, S13 session 1): listing 196, draft 197, common 116, differ 161
  *   (from 177). 163 to 161: the width table through a local pointer, wp[idx], so the address
  *   is (plus base idx) as native's ldrb r3, [r3, ip] (the symbol form expands to (plus idx base)
@@ -186,7 +193,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             }
         }
         next = rows + 1;
-        bits = rows[0] << 16;
+        bits = rows[0];
+        bits <<= 16;
         row = 0;
         while (y + row < 32) {
             ty = (y + row) >> 3;
@@ -201,7 +209,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             }
             if (++row >= 12)
                 break;
-            bits = *next++ << 16;
+            bits = *next++;
+            bits <<= 16;
         }
     }
     return ret;

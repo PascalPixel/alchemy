@@ -6111,7 +6111,23 @@ Func_020030cc:
 	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Battle_WaitMode0
+	.ifdef TLA_EDITION_DE
+	adds r0, r6, #2
+	.else
+	.ifdef TLA_EDITION_ES
+	adds r0, r6, #2
+	.else
+	.ifdef TLA_EDITION_FR
+	adds r0, r6, #2
+	.else
+	.ifdef TLA_EDITION_IT
+	adds r0, r6, #2
+	.else
 	adds r0, r6, #3
+	.endif
+	.endif
+	.endif
+	.endif
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWait
 	movs r0, #160

@@ -19695,7 +19695,7 @@ msgctxt "message"
 msgid "04921"
 msgstr "Jeez, all that nonsense, and{line_break}you don't have enough money.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgFieldFixingThisWillRunYou"
 msgid "04922"
 msgstr "Fixing this {argument_item_name:1}{line_break}will run you {argument_signed_number} coin{plural_suffix}, OK?{end_now}"
 
@@ -19751,7 +19751,7 @@ msgctxt "message"
 msgid "04935"
 msgstr "Alhafran Mayor{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFortuneTeller"
 msgid "04936"
 msgstr "Fortune-teller{end_wait}"
 
@@ -19839,11 +19839,11 @@ msgctxt "message"
 msgid "04957"
 msgstr "Prox Elder{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldConfirmGraphic"
 msgid "04958"
 msgstr "Confirm graphic{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIsaac"
 msgid "04959"
 msgstr "Isaac{end_wait}"
 
@@ -19867,7 +19867,7 @@ msgctxt "message"
 msgid "04964"
 msgstr "Sheba{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPiers"
 msgid "04965"
 msgstr "Piers{end_wait}"
 
@@ -20215,7 +20215,7 @@ msgctxt "message"
 msgid "05051"
 msgstr "Would you like to give{line_break}Tolbi Spring a try?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatWillYouThrow"
 msgid "05052"
 msgstr "What will you throw?{end_now}"
 
@@ -20227,7 +20227,7 @@ msgctxt "message"
 msgid "05054"
 msgstr "You have no Lucky Medals!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouWonCoin"
 msgid "05055"
 msgstr "You won{line_break}{argument_signed_number} coin{plural_suffix}!{end_wait}"
 
@@ -20239,7 +20239,7 @@ msgctxt "message"
 msgid "05057"
 msgstr "{protagonist_name} gave up!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCoins"
 msgid "05058"
 msgstr "Coins"
 
@@ -20251,7 +20251,7 @@ msgctxt "message"
 msgid "05060"
 msgstr "#"
 
-msgctxt "message"
+msgctxt "MsgFieldToss"
 msgid "05061"
 msgstr "{button_icon:1}: Toss"
 
@@ -41619,27 +41619,27 @@ msgctxt "MsgFieldAndTheOthersDrankOf"
 msgid "10402"
 msgstr "{actor_name:5} and the others{line_break}drank of the spring.{page_break}Their HP and PP were{line_break}fully replenished!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldReadTheSignTheSpring2"
 msgid "10403"
 msgstr "{actor_name:5} read the sign:{page_break}The Spring of Lemuria{line_break}Face away and toss in a{line_break}coin to test your luck.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldReadTheSignTheSpring"
 msgid "10404"
 msgstr "{actor_name:5} read the sign:{page_break}The Spring of Lemuria{line_break}Toss in a Lucky Medal{line_break}to improve your luck.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouFaceAwayFrom"
 msgid "10405"
 msgstr "If you face away from the spring,{line_break}toss in a coin, and land it in the{line_break}target, good fortune will come.{page_break}You've traveled a long way{line_break}to be here. You should give{line_break}it a try.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDLoveToTest"
 msgid "10406"
 msgstr "I'd love to test my luck, but{line_break}I've used up all my coins. Maybe{line_break}I'll take one out of the spring!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIRememberAnOutsiderWho"
 msgid "10407"
 msgstr "I remember an outsider who came{line_break}to Lemuria and then spent {text_effect:2}days{reset_text_style}{line_break}testing his luck at the spring!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeHadSuchAGood"
 msgid "10408"
 msgstr "He had such a good time, he{line_break}said he was going to build a{line_break}spring like this in his hometown.{end_wait}"
 
@@ -46511,7 +46511,7 @@ msgctxt "MsgFieldIfTheyWereStrongEnough2"
 msgid "11625"
 msgstr "If they were strong enough to{line_break}defeat Saturos and Menardi,{line_break}perhaps they can do the job...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWhyAmILying"
 msgid "11626"
 msgstr "Why... Why am I lying here?{end_wait}"
 
@@ -46595,23 +46595,23 @@ msgctxt "message"
 msgid "11646"
 msgstr "We're counting on you...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSTooLateFor"
 msgid "11647"
 msgstr "It's too late for us now...{line_break}Hurry, light the beacon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYourHandSoWarmPeople"
 msgid "11648"
 msgstr "Your hand...so warm...{line_break}People have such warm{line_break}hands... I had forgotten...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoTiredA"
 msgid "11649"
 msgstr "I'm so tired... A fog is rising{line_break}before my eyes... No! Can't{line_break}die until the beacon...is lit...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoColdColder"
 msgid "11650"
 msgstr "I'm so cold, colder than I ever{line_break}thought possible... All because{line_break}Mars Lighthouse remains unlit...{page_break}I have to stay alive...long{line_break}enough to see its light...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouWhoHoldTheStar2"
 msgid "11651"
 msgstr "You who hold the star,{line_break}open your heart and listen...{page_break}If you wish to reach the heavens,{line_break}give your star to me.{end_wait}"
 
@@ -47539,15 +47539,15 @@ msgctxt "message"
 msgid "11882"
 msgstr "There's no time for questions!{line_break}Just carry them!{line_break}Carry them and go!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSASpaceFor"
 msgid "11883"
 msgstr "There's a space for you{line_break}to place something.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGotTheMarsStar"
 msgid "11884"
 msgstr "{actor_name:5} got the Mars Star!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldUsedTheMarsStar"
 msgid "11885"
 msgstr "{actor_name:5} used the Mars Star!{end_wait}"
 

@@ -17719,7 +17719,7 @@ msgctxt "message"
 msgid "04427"
 msgstr "つよそうなそうびひんゲット{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldRaiseEveryoneSLevel"
 msgid "04428"
 msgstr "みんなのレベルをあげます"
 
@@ -19639,7 +19639,7 @@ msgctxt "message"
 msgid "04907"
 msgstr "あら せっかくだけど・・・{line_break}お金がたりないみたいよ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgFieldFixingThisWillRunYou"
 msgid "04908"
 msgstr "{argument_item_name:233}しゅうりだけど{line_break}{argument_signed_number}コインで いいかしら?{end_now}"
 
@@ -19695,7 +19695,7 @@ msgctxt "message"
 msgid "04921"
 msgstr "アラフラ町長{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFortuneTeller"
 msgid "04922"
 msgstr "まじないし{end_wait}"
 
@@ -19783,11 +19783,11 @@ msgctxt "message"
 msgid "04943"
 msgstr "プロクス村のちょうろう{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldConfirmGraphic"
 msgid "04944"
 msgstr "かおグラかくにん{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIsaac"
 msgid "04945"
 msgstr "ロビン{end_wait}"
 
@@ -19811,7 +19811,7 @@ msgctxt "message"
 msgid "04950"
 msgstr "シバ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPiers"
 msgid "04951"
 msgstr "ピカード{end_wait}"
 

@@ -93,13 +93,13 @@ Func_02000098:
 .L_020080e8:
 	.4byte gPartyState
 .L_020080ec:
-	.4byte 0x0000133a
+	.4byte MsgFieldFixingThisWillRunYou
 .L_020080f0:
-	.4byte 0x00001348
+	.4byte MsgFieldFortuneTeller
 .L_020080f4:
-	.4byte 0x0000135e
+	.4byte MsgFieldConfirmGraphic
 .L_020080f8:
-	.4byte 0x00001365
+	.4byte MsgFieldPiers
 	.section .text.x020080fc,"ax",%progbits
 	.global Func_020000fc
 	.thumb_func
@@ -127,7 +127,7 @@ Func_020000fc:
 	bl Func_020006ec
 	pop {r5, pc}
 .L_02008134:
-	.4byte 0x0000135f
+	.4byte MsgFieldIsaac
 	.section .text.x02008138,"ax",%progbits
 	.global Func_02000138
 	.thumb_func
@@ -324,7 +324,7 @@ Func_020001a8:
 .L_020082bc:
 	.4byte gPartyState
 .L_020082c0:
-	.4byte 0x00001151
+	.4byte MsgFieldRaiseEveryoneSLevel
 .L_020082c4:
 	.4byte Data_02000744
 .L_020082c8:
@@ -352,9 +352,41 @@ Func_020002cc:
 	movs r0, #0
 	str r5, [sp, #0]
 	bl UiWindow_Create
+	.ifdef TLA_EDITION_DE
+	movs r1, #9
+	.else
+	.ifdef TLA_EDITION_ES
+	movs r1, #9
+	.else
+	.ifdef TLA_EDITION_FR
+	movs r1, #9
+	.else
+	.ifdef TLA_EDITION_IT
+	movs r1, #9
+	.else
 	movs r1, #8
+	.endif
+	.endif
+	.endif
+	.endif
 	adds r7, r0, #0
+	.ifdef TLA_EDITION_DE
+	movs r2, #18
+	.else
+	.ifdef TLA_EDITION_ES
+	movs r2, #18
+	.else
+	.ifdef TLA_EDITION_FR
+	movs r2, #18
+	.else
+	.ifdef TLA_EDITION_IT
+	movs r2, #18
+	.else
 	movs r2, #13
+	.endif
+	.endif
+	.endif
+	.endif
 	movs r3, #10
 	movs r0, #0
 	str r5, [sp, #0]

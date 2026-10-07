@@ -21535,7 +21535,7 @@ msgctxt "message"
 msgid "05381"
 msgstr "Je me suis démené{line_break}pour un client fauché.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgFieldFixingThisWillRunYou"
 msgid "05382"
 msgstr "{argument_signed_number} pièce{control:13} pour réparer{line_break}{argument_item_name:1}, OK?{end_now}"
 
@@ -21591,7 +21591,7 @@ msgctxt "message"
 msgid "05395"
 msgstr "Maire d'Alhafra{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFortuneTeller"
 msgid "05396"
 msgstr "Devin{end_wait}"
 
@@ -21679,11 +21679,11 @@ msgctxt "message"
 msgid "05417"
 msgstr "Conseiller de Prox{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldConfirmGraphic"
 msgid "05418"
 msgstr "Confirmer graphique{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIsaac"
 msgid "05419"
 msgstr "Vlad{end_wait}"
 
@@ -21707,7 +21707,7 @@ msgctxt "message"
 msgid "05424"
 msgstr "Cylia{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPiers"
 msgid "05425"
 msgstr "Piers{end_wait}"
 
@@ -22055,7 +22055,7 @@ msgctxt "message"
 msgid "05511"
 msgstr "Voulez-vous essayer la{line_break}fontaine de Tolbi?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatWillYouThrow"
 msgid "05512"
 msgstr "Qu'allez-vous lancer?{end_now}"
 
@@ -22067,7 +22067,7 @@ msgctxt "message"
 msgid "05514"
 msgstr "Plus de porte-bonheur!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouWonCoin"
 msgid "05515"
 msgstr "Vous avez gagné{line_break}{argument_signed_number} pièce{control:13}!{end_wait}"
 
@@ -22079,7 +22079,7 @@ msgctxt "message"
 msgid "05517"
 msgstr "{protagonist_name} a abandonné!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCoins"
 msgid "05518"
 msgstr "Pièces"
 
@@ -22091,7 +22091,7 @@ msgctxt "message"
 msgid "05520"
 msgstr "#"
 
-msgctxt "message"
+msgctxt "MsgFieldToss"
 msgid "05521"
 msgstr "{button_icon:1} Lancer"
 
@@ -43423,27 +43423,27 @@ msgctxt "MsgFieldAndTheOthersDrankOf"
 msgid "10853"
 msgstr "{actor_name:5} et les autres{line_break}boivent à la fontaine.{page_break}Leurs PV et PP sont{line_break}totalement restaurés!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldReadTheSignTheSpring2"
 msgid "10854"
 msgstr "{actor_name:5} lit le panneau:{page_break}Fontaine de Lémuria{line_break}Dos tourné, jetez une pièce{line_break}pour tester votre chance.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldReadTheSignTheSpring"
 msgid "10855"
 msgstr "{actor_name:5} lit le panneau:{page_break}Fontaine de Lémuria{line_break}Jetez un Porte-bonheur pour{line_break}augmenter votre chance.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouFaceAwayFrom"
 msgid "10856"
 msgstr "Placez-vous le dos tourné{line_break}à la fontaine. Pour gagner,{line_break}visez les cibles avec une pièce.{page_break}Vous venez de si loin.{line_break}Prenez le temps d'essayer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDLoveToTest"
 msgid "10857"
 msgstr "Je désire tant tenter{line_break}ma chance mais je{line_break}n'ai plus de pièce.{page_break}Je vais en chercher{line_break}une dans la fontaine!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIRememberAnOutsiderWho"
 msgid "10858"
 msgstr "Je me souviens d'un étranger{line_break}qui a passé des {text_effect:2}jours{reset_text_style} à{line_break}tester sa chance à la fontaine!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeHadSuchAGood"
 msgid "10859"
 msgstr "Il s'est tellement amusé{line_break}qu'il voulait construire une{line_break}fontaine identique chez lui.{end_wait}"
 
@@ -43587,7 +43587,7 @@ msgctxt "MsgFieldItSKindOfHard"
 msgid "10894"
 msgstr "C'est difficile d'imaginer{line_break}ce vaisseau quand il{line_break}battra des ailes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeStoneEmber"
 msgid "10895"
 msgstr "Un objet ardent se trouve{line_break}à l'intérieur du rocher.{end_wait}"
 
@@ -43599,7 +43599,7 @@ msgctxt "message"
 msgid "10897"
 msgstr "{actor_name:5} trouve une{line_break}boule de magma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeTabletInscription"
 msgid "10898"
 msgstr "{actor_name:5} examine la{line_break}stèle. Des symboles étranges{line_break}ornent sa surface.{page_break}O, détenteur de la force{line_break}du feu... Posez vos mains{line_break}sur cette pierre.{page_break}Nous vous conférerons{line_break}la magie \"Embraser\"...{end_wait}"
 
@@ -48315,7 +48315,7 @@ msgctxt "MsgFieldIfTheyWereStrongEnough2"
 msgid "12076"
 msgstr "S'ils ont pu vaincre Ph¾nixia{line_break}et Salamandar, peut-être qu'ils{line_break}ont une chance de réussir...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWhyAmILying"
 msgid "12077"
 msgstr "Qu'est-ce que je fais{line_break}couché par terre?{end_wait}"
 
@@ -48399,23 +48399,23 @@ msgctxt "message"
 msgid "12097"
 msgstr "Nous comptons sur toi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSTooLateFor"
 msgid "12098"
 msgstr "Notre heure a sonné...{line_break}Allume vite le phare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYourHandSoWarmPeople"
 msgid "12099"
 msgstr "Ta main... si chaude... Les{line_break}hommes ont les mains si{line_break}chaudes... J'avais oublié...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoTiredA"
 msgid "12100"
 msgstr "Je suis éreinté... Ma vue se{line_break}trouble... Non, je dois tenir{line_break}jusqu'à ce que le phare brille...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoColdColder"
 msgid "12101"
 msgstr "Je n'ai jamais eu aussi{line_break}froid... Et tout cela parce que{line_break}le Phare de Mars est éteint...{page_break}Je dois rester vivante...{line_break}pour voir sa lumière...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouWhoHoldTheStar2"
 msgid "12102"
 msgstr "Vous, détenteur de l'étoile,{line_break}écoutez avec votre c¾ur...{page_break}Pour atteindre les cieux,{line_break}donnez-moi votre étoile.{end_wait}"
 
@@ -49343,15 +49343,15 @@ msgctxt "message"
 msgid "12333"
 msgstr "Epargnez-moi vos questions!{line_break}Transportez-les, et partons vite!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSASpaceFor"
 msgid "12334"
 msgstr "Il y a de la place pour{line_break}y poser un objet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGotTheMarsStar"
 msgid "12335"
 msgstr "{actor_name:5} a acquis l'Etoile de Mars!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldUsedTheMarsStar"
 msgid "12336"
 msgstr "{actor_name:5} a utilisé l'Etoile de Mars!{end_wait}"
 

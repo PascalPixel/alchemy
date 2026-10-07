@@ -13507,19 +13507,19 @@ msgctxt "MsgPsynergyLost"
 msgid "03374"
 msgstr "*なくなるエナジー"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "03375"
 msgstr "セットします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "03376"
 msgstr "スタンバイにします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "03377"
 msgstr "わたします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "03378"
 msgstr "こうかんします"
 
@@ -13623,7 +13623,7 @@ msgctxt "message"
 msgid "03403"
 msgstr "わたします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "03404"
 msgstr "よろしいですか?"
 
@@ -14131,11 +14131,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03530"
 msgstr "ジンをもつ人がきまったら{line_break}ジンをセットして下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03531"
 msgstr "クラスが かわって{line_break}使えるエナジーも{line_break}かわるんですよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03532"
 msgstr "クラスが かわったり{line_break}のうりょくちも{line_break}たかくなったりするんです。{end_wait}"
 

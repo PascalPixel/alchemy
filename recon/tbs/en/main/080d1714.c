@@ -1,5 +1,5 @@
-/* 080d1714: differ 632 of 1481 instructions (1475 generated, common
- * 1162). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 567 of 1481 instructions (1474 generated, common
+ * 1194). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -108,6 +108,17 @@
  * - the frame == 160 actor loop as a for loop too: its pre-test no
  *   longer lends its runtime + 0x7828 register to the hoisted one,
  *   which the native recomputes: 632.
+ * - Trig_Sin(angle) * speed, the call first, in the burst setup: the
+ *   native ties speed to the mul output (mov rD, speed; mul rD, result):
+ *   628; the same in wave_y (Trig_Sin(...) * size): 624. The angle as
+ *   two statements (and, then += 0x9fff): 639.
+ * - alive = 0 before the transform calls, sharing the shake zero as the
+ *   native's mov sl, r2 shows: 624 (x, y, z store order: 633; alive
+ *   first: 631).
+ * - drift_x, drift_y, then shake_frames = 8 (all six orders tried, 598
+ *   to 622): 598.
+ * - index = 0 before mark = &runtime->particles[60]: the native shares
+ *   the zero of index and the giv at sp+24: 567.
  * Remaining: the first draw shares one 48 for 48 - size and the
  * width argument, and the second keeps 48 in r4 across the first call
  * where the native rematerializes it and caller-saves the function
@@ -464,8 +475,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             do {
                 speed = Random16() & 127;
                 angle = (Random16() & 0x7fff) + 0x9fff;
-                runtime->particles[index].x = speed * Trig_Sin(angle);
-                runtime->particles[index].y = speed * Trig_Cos(angle);
+                runtime->particles[index].x = Trig_Sin(angle) * speed;
+                runtime->particles[index].y = Trig_Cos(angle) * speed;
                 runtime->particles[index].z =
                     ((u32)Random16() % 200 - 100) << 16;
                 runtime->particles[index].variant = 0;
@@ -489,7 +500,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 size = 32;
 
             wave_x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
-            wave_y += (size * Trig_Sin((frame - 160) << 9)) >> 6;
+            wave_y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
             wave_x += drift_x;
             wave_y += drift_y;
             drift_x /= 2;
@@ -514,10 +525,10 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 shake.z = 0x1000000;
                 shake.x = 0;
                 shake.y = 0;
+                alive = 0;
                 Render_ResetTransformState();
                 SceneTransform_ApplyPosition(&shake);
 
-                alive = 0;
                 if (frame <= 329) {
                     index = 0;
                     do {
@@ -624,8 +635,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                     slot++;
                 } while (slot != 4);
 
-                mark = &runtime->particles[60];
                 index = 0;
+                mark = &runtime->particles[60];
                 do {
                     threshold = index * 12 + 330;
                     if (frame == threshold) {
@@ -640,9 +651,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             slot++;
                         } while (slot != 28);
 
-                        runtime->shake_frames = 8;
                         drift_x = 0x80000;
                         drift_y = -0x20000;
+                        runtime->shake_frames = 8;
                     }
 
                     if (frame >= threshold) {

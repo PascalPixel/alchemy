@@ -1,6 +1,15 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1638, common 1505, differ 268 (frame 336 and
+   listing 1640, draft 1638, common 1510, differ 258 (frame 336 and
    every frame-loop slot as native, sp+24 included).
+   0x1fe0000 for the camera goes through an inline DivQ16 (FAKEMATCH,
+   as RESOLVE.C's matched call): a direct RatioMulQ14 call lets CSE
+   share one 0x1fe0000 pseudo across the call, which local-alloc puts
+   in r5; the native builds it twice.
+   The ramp smoke calls' 32 (native: r6 for both calls): the second
+   loop pass hoists the ramp loop's 32 out of the frame loop with the
+   smoke's 32 matched to it (threshold 12 after the constant 2's move,
+   12 * savings 2 * life 19 = 456 >= 448 insns), so it takes no
+   register and is rebuilt at each use.
    n = count * 2 - i * 48 - 256 in one expression gives the native's
    sp+24: with frame * 4, GCSE's PRE gives the three-streams preheader's
    frame << 2 the same reaching register as the smoke block's second
@@ -137,7 +146,9 @@
    - on 378: n = frame * 4 - i * 48 - 256 again: 633 (inner loop as
      native, but PRE's twice-set frame << 2 register is no outer giv);
      y as h - 56 on that: 659; n = count * 2 - i * 48 - 256: 268,
-     adopted. */
+     adopted.
+   - on 268: the camera's RatioMulQ14 through an inline DivQ16
+     (FAKEMATCH, as RESOLVE.C): 258, adopted. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -202,6 +213,12 @@ struct BlitterPair {
 
 #define PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 #define SLOT(n) (((DrawRectangle *)gWorkSlot)[n])
+
+static __inline__ s32 DivQ16(s32 divisor, s32 value)
+{
+    /* FAKEMATCH: a direct call keeps 0x1fe0000 in r5 for the camera call; the native builds it twice. */
+    return Iwram_RatioMulQ14(divisor, value);
+}
 
 void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 {
@@ -319,7 +336,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             work->transfer_mode = size;
             work->transfer_value = 75;
         }
-        Camera_StoreSceneParameters(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
+        Camera_StoreSceneParameters(0x1fe0000, DivQ16(0x1fe0000, 0xc000), 0x7fff0000);
         Render_ResetTransformState();
         if (frame > 128) {
             s32 a = frame - 128;

@@ -17,7 +17,7 @@ void TitlePalette_InitializeBuffers(void)
     Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
     Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);
     operation = 1152;
-    Scheduler_AddOrUpdateCallback((s32)(TitlePalette_UpdateFade), operation);
+    Scheduler_AddOrUpdateCallback((s32)TitlePalette_UpdateFade, operation);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void)

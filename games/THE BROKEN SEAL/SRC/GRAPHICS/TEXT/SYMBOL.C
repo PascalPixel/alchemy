@@ -110,7 +110,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
     hi = code >> 8;
     code &= 0xff;
     tree = Text_MessageContexts[hi][0];
-    tree = tree + ((const u16 *)Text_MessageContexts[hi][1])[code];
+    tree += ((const u16 *)Text_MessageContexts[hi][1])[code];
     leaves = tree - 1;
     rank = 0;
     for (;;) {

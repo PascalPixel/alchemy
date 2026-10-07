@@ -28,7 +28,7 @@ void SerialRuntime_Initialize(void)
     REG_SIOCNT = 0x1000;
     REG_RCNT = 0;
     REG_SIOCNT = 0x2000;
-    REG_SIOCNT16 = REG_SIOCNT16 | 0x4003;
+    REG_SIOCNT16 |= 0x4003;
     state = &gSerialRuntime;
     REG_IME = 1;
     zero = 0;

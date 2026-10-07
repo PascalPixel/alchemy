@@ -266,5 +266,5 @@ void Effect_SetBg3HofsSplit(void)
 void ToretoEda_StartBg3Split(void)
 {
     Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-    Scheduler_AddOrUpdateCallback((s32)(Effect_SetBg3HofsSplit), 3200);
+    Scheduler_AddOrUpdateCallback((s32)Effect_SetBg3HofsSplit, 3200);
 }

@@ -181,10 +181,9 @@ s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
         if ((s16)record->active_conditions == 0)
             goto cooldown_expired;
         goto update;
-    } else {
-        if ((((s16)record->active_conditions >> record->selected_condition) & 1) == 0)
-            goto update;
     }
+    if ((((s16)record->active_conditions >> record->selected_condition) & 1) == 0)
+        goto update;
 cooldown_expired:
     if (record->cycle_timer != 0)
         goto done;

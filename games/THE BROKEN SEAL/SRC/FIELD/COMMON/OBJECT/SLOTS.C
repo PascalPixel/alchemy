@@ -38,7 +38,7 @@ void FourObjectMotion_InitializeBottomRow(void)
         state->positions_x[index] = 16;
         state->positions_y[index] = 200;
     }
-    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateBottomRow), 3200);
+    Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateBottomRow, 3200);
 }
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
@@ -90,7 +90,7 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
         }
         index++;
     } while (index < 4);
-    Scheduler_RemoveCallback((u32)(FourObjectMotion_UpdateBottomRow));
+    Scheduler_RemoveCallback((u32)FourObjectMotion_UpdateBottomRow);
 }
 
 void Menu_EnableAllItemObjects(void)

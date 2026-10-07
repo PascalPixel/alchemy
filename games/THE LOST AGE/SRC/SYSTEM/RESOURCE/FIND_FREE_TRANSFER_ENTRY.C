@@ -23,9 +23,9 @@ loop_2:
         if (*p == 0) {
             return state + off + 468;
         }
-        i = i + 1;
+        i++;
         p += 26;
-        off = off + 52;
+        off += 52;
         if (i == 5) {
             goto block_10;
         }

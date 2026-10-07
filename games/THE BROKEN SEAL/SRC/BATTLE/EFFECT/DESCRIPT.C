@@ -149,7 +149,7 @@ u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
   {
     tmp = (value & 0xFFF00000) ^ 0x500000;
     result = tmp | (0U - tmp);
-    result = result >> 0x1F;
+    result >>= 0x1F;
   }
   return result;
 }

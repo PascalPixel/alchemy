@@ -72,7 +72,7 @@ s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 selector, s32 multiplier)
     product = multiplier * product;
     result = product;
     if (result < 0) {
-        result = result + 0xFFFF;
+        result += 0xFFFF;
     }
     return result >> 0x10;
 }

@@ -65,13 +65,13 @@ void MenuSelection_DrawFrame(void)
                 if (node->x + node->dx > node->target_x) {
                     node->x = node->target_x;
                 } else {
-                    node->x = node->x + node->dx;
+                    node->x += node->dx;
                 }
             } else {
                 if (node->x + node->dx < node->target_x) {
                     node->x = node->target_x;
                 } else {
-                    node->x = node->x + node->dx;
+                    node->x += node->dx;
                 }
             }
             e->x = node->x;
@@ -125,9 +125,9 @@ void MenuSelection_DrawFrame(void)
             state->matrix[2] = 0;
             te->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             te->affine = 3;
-            te->x = te->x + 0xfff0;
-            te->y = te->y + 240;
-            transfer->scale = transfer->scale + transfer->scale_step;
+            te->x += 0xfff0;
+            te->y += 240;
+            transfer->scale += transfer->scale_step;
         }
         if (GameFlag_IsSet(0x103) != 0) {
             te->mode = 1;
@@ -140,22 +140,22 @@ void MenuSelection_DrawFrame(void)
     while (node != 0) {
         e = &node->sprite;
         if (node->x != node->target_x) {
-            node->x = node->x + node->dx;
+            node->x += node->dx;
         }
         if (node->y != node->target_y) {
-            node->y = node->y + node->dy;
+            node->y += node->dy;
         }
         e->x = node->x;
         e->y = node->y;
         if (node->scale != node->scale_end) {
-            node->scale = node->scale + node->scale_step;
+            node->scale += node->scale_step;
             state->matrix[0] = node->scale;
             state->matrix[1] = node->scale;
             state->matrix[2] = 0;
             e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             e->affine = 3;
-            e->x = e->x + 0xfff8;
-            e->y = e->y + 248;
+            e->x += 0xfff8;
+            e->y += 248;
         } else {
             e->affine = 0;
             e->param = 0;
@@ -183,14 +183,14 @@ void MenuSelection_DrawFrame(void)
         if (cursor->target_x != cursor->x) {
             tmp = (cursor->target_x - cursor->x) >> 1;
             if (tmp != 0) {
-                cursor->x = cursor->x + tmp;
+                cursor->x += tmp;
             } else {
                 cursor->x = cursor->target_x;
             }
         }
         if (cursor->target_y != cursor->y) {
             if ((tmp = (cursor->target_y - cursor->y) >> 1) != 0) {
-                cursor->y = cursor->y + tmp;
+                cursor->y += tmp;
             } else {
                 cursor->y = cursor->target_y;
             }

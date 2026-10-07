@@ -43,7 +43,7 @@ void FourObjectMotion_InitializeTopRow(void)
         state->positions_x[index] = 16;
         state->positions_y[index] = 32;
     }
-    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateAllPositions), 3200);
+    Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateAllPositions, 3200);
 }
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)

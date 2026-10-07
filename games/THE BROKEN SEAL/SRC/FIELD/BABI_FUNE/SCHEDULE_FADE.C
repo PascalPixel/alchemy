@@ -78,5 +78,5 @@ void BabiFune_ScheduleFade(void)
     VramBlock_LoadCached(BabiFune_FadeSlot, 256, (s32)buf);
 
     BabiFune_FadeStep = 48;
-    Scheduler_AddOrUpdateCallback((s32)(BabiFune_StepFade), 3200);
+    Scheduler_AddOrUpdateCallback((s32)BabiFune_StepFade, 3200);
 }

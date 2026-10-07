@@ -165,7 +165,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         slot = slot16;
         zero = 0;
         do {
-            *(s32 *)(slot) = 1;
+            *(s32 *)slot = 1;
             {
                 u16 shown = 286;
 
@@ -179,7 +179,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
             record = Math_Divide((((t << 4) - t) << 16) + 0x3c0000, 100);
             Effect_Spawn(x << 16, 0, y << 16, 0, record, zero, 0x320001, slot);
             Battle_WaitMode0(4);
-            counter = counter + 1;
+            counter++;
         } while ((u32)counter <= 14);
         Audio_PlayCue(220);
         Battle_WaitMode0(60);

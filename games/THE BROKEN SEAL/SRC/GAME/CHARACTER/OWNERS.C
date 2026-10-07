@@ -209,7 +209,7 @@ s32 Party_AdjustCoins(s32 amount)
 
     work = &gGameState;
     value = work->coins;
-    value = value + amount;
+    value += amount;
     store = work;
     if (value > 0xF423F) {
         value = 0xF423F;

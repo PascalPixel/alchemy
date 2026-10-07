@@ -324,12 +324,12 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 object_id, s32 x, s32 z)
             if (tile_x < 0) {
                 tile_x += 0xFFFF;
             }
-            tile_x = tile_x >> 0x10;
+            tile_x >>= 0x10;
             tile_z = z;
             if (tile_z < 0) {
                 tile_z += 0xFFFF;
             }
-            tile_z = tile_z >> 0x10;
+            tile_z >>= 0x10;
             terrain_height = Map_GetTerrainHeightFar(terrain_id, tile_x, tile_z) << 0x10;
             object->y = (object->y - object->terrain_height) + terrain_height;
             object->terrain_height = terrain_height;
@@ -472,14 +472,14 @@ void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
   s32 velocity_y;
   s32 vz;
   velocity_x = particle->velocity_x;
-  x = (particle->x) + velocity_x;
+  x = particle->x + velocity_x;
   particle->x = x;
   particle->target_x = x;
   velocity_z = particle->velocity_z;
-  z = (particle->z) + velocity_z;
+  z = particle->z + velocity_z;
   particle->z = z;
   particle->target_z = z;
-  velocity_y = (particle->y) + 1024;
+  velocity_y = particle->y + 1024;
   particle->y = velocity_y;
   particle->target_y = velocity_y;
   particle->velocity_x =

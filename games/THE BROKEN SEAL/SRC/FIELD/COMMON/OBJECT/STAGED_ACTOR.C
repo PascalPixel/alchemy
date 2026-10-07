@@ -179,7 +179,7 @@ s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
     step = StagedActor_DirectionSteps[dir];
     probe.x = actor->x.value + (step & 0xffff0000);
     probe.y = actor->y;
-    step = step << 16;
+    step <<= 16;
     probe.z = actor->z.value + step;
     target = StagedActor_FindAtTile((s32 *)&probe, actor);
     if (target != 0) {
@@ -200,7 +200,7 @@ s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
     step = StagedActor_DirectionSteps[dir];
     probe.x = actor->x.value + (step & 0xffff0000);
     probe.y = actor->y;
-    step = step << 16;
+    step <<= 16;
     probe.z = actor->z.value + step;
     if (Object_CheckMovementCollision(actor, (s32 *)&probe) > 0) {
         actor->velocity_x = 0;

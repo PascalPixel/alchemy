@@ -47,7 +47,7 @@ s32 Object_Wander(struct ScriptObjectRuntime *object)
     limit = *args / 0x10000;
     /* FAKEMATCH: the retry label and one-pass distance block preserve the 32-byte frame and division/load registers. */
     tries = 0;
-    limit = limit * limit;
+    limit *= limit;
 retry:
     tries++;
     if (tries <= 7) {
@@ -115,7 +115,7 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
     range = *args++;
     limit = *args / 0x10000;
     angle = (s16)object->script_value;
-    limit = limit * limit;
+    limit *= limit;
     tries = 0;
     dx = object->x / 0x10000 - object->home_x;
     dz = object->z / 0x10000 - object->home_z;
@@ -611,7 +611,7 @@ void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->halfword_5e = work->halfword_5e + value;
+        work->halfword_5e += value;
         return;
     }
     work->comparison_result = (s16)work->halfword_5e == (s16)value;
@@ -648,7 +648,7 @@ void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 v
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_68 = work->word_68 + (u32)value;
+        work->word_68 += (u32)value;
         return;
     }
     work->comparison_result = work->word_68 == (u32)value;
@@ -661,7 +661,7 @@ void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_6c = work->word_6c + (u32)value;
+        work->word_6c += (u32)value;
         return;
     }
     work->comparison_result = work->word_6c == (u32)value;

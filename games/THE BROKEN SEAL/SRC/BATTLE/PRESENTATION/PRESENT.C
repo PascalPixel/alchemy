@@ -128,10 +128,10 @@ void BattlePres_DrawTransitionRows(void)
             tiles++;
         } while (i != 32);
 
-        tile = tile | 0x800;
+        tile |= 0x800;
         aligned = frame;
         if (frame < 0) {
-            aligned = aligned + 7;
+            aligned += 7;
         }
         row = (aligned >> 3) + 13;
         if (row <= 20) {

@@ -46,7 +46,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
         *destinationCode = *sourceCode;
         sourceCode++;
         destinationCode++;
-        remaining = remaining - 2;
+        remaining -= 2;
     }
 
     attempt = 0;
@@ -58,7 +58,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
                 break;
             }
         }
-        attempt = attempt + 1;
+        attempt++;
         if (attempt == 81) {
             return status;
         }
@@ -71,7 +71,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
     index = 1;
     while (index <= rounds) {
         EraseFlashSector(sector);
-        index = index + 1;
+        index++;
     }
 
     CopyFlashReadRoutineToRam(ramCode);

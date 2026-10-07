@@ -130,7 +130,7 @@ s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
     }
     {
         s32 t = actor->timer;
-        t = t - 1;
+        t--;
         actor->timer = t;
     }
     return 1;
@@ -174,7 +174,7 @@ s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *actor)
     if (v == 0) {
         {
             s32 t = ((u32)(Engine_RandomNext() << 15)) >> 16;
-            actor->facing = actor->facing + t;
+            actor->facing += t;
         }
         {
             s32 n = ((u32)(Engine_RandomNext() * 80)) >> 16;

@@ -117,7 +117,7 @@ receive_loop:
 
     if (tail_state->mode == 8) {
         REG_TM3CNT_H = 0;
-        REG_SIOCNT16 = REG_SIOCNT16 | 0x80;
+        REG_SIOCNT16 |= 0x80;
         REG_TM3CNT_H = 0xc0;
     }
 }

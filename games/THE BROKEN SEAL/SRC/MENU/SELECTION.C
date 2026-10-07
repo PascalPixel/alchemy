@@ -27,7 +27,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
     for (i = 0; i < work->count; i++) {
         *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = y << 3;
         *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = x << 3;
-        x = x + 3;
+        x += 3;
     }
     work->window = UiWindow_Create(x, y, work->width, 3, 2);
 }

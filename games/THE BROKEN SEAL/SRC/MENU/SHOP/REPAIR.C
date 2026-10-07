@@ -271,12 +271,12 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
             Audio_PlayCue(113);
             goto done;
         }
-        if (((gKeysRepeat) & KEY_LEFT) != 0) {
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
             Audio_PlayCue(111);
             selected_index--;
             redraw = 1;
         }
-        if (((gKeysRepeat) & KEY_RIGHT) != 0) {
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
             Audio_PlayCue(111);
             selected_index++;
             redraw = 1;

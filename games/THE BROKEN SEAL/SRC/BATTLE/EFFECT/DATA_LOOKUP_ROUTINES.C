@@ -87,19 +87,18 @@ void Scene_ResolveInteractionResult(void)
             }
             result = entry->result;
             break;
-        } else {
-            if (entry->id != alt) {
-                continue;
-            }
-            if (entry->value != -1 && entry->value != sub) {
-                continue;
-            }
-            if (entry->condition != -1 && GameFlag_TestFar(entry->condition) == 0) {
-                continue;
-            }
-            result = entry->result;
-            break;
         }
+        if (entry->id != alt) {
+            continue;
+        }
+        if (entry->value != -1 && entry->value != sub) {
+            continue;
+        }
+        if (entry->condition != -1 && GameFlag_TestFar(entry->condition) == 0) {
+            continue;
+        }
+        result = entry->result;
+        break;
     }
 
     gGameState.cue = result;

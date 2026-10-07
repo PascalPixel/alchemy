@@ -626,20 +626,19 @@ check_nothing_left:
                 goto stay;
             }
             goto insist_nothing_left;
-        } else {
-            if (Mia_AsksIfRidingAfterAll()) {
-                goto ask_about_business;
-            }
-            confusion = (s32)MsgRunpaTotallyConfusedChanged;
-            Engine_EventSetMessage(confusion + CONFUSION_IVAN_IS_CONFUSED);
-            Engine_EventShowMessage(ACTOR_IVAN, 0);
-            Engine_EventSetMessage(confusion + CONFUSION_GERALD_ASKS_AGAIN);
-            Engine_EventOpenMessage(ACTOR_GERALD, 0);
-            goto ask_to_ride;
-ride:
-            Party_RidesWagon();
-            goto done;
         }
+        if (Mia_AsksIfRidingAfterAll()) {
+            goto ask_about_business;
+        }
+        confusion = (s32)MsgRunpaTotallyConfusedChanged;
+        Engine_EventSetMessage(confusion + CONFUSION_IVAN_IS_CONFUSED);
+        Engine_EventShowMessage(ACTOR_IVAN, 0);
+        Engine_EventSetMessage(confusion + CONFUSION_GERALD_ASKS_AGAIN);
+        Engine_EventOpenMessage(ACTOR_GERALD, 0);
+        goto ask_to_ride;
+ride:
+        Party_RidesWagon();
+        goto done;
     }
 stay:
     Party_ConfirmsStaying();

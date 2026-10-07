@@ -22,7 +22,7 @@ void Link_DrawShiftedTilePair(s32 offset)
     if (phase <= 0) {
         phase = 1;
     }
-    phase = phase + 1;
+    phase++;
     Graphics_MergeShiftedTileRows((u32 *)0x06000220,
         (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
     Graphics_MergeShiftedTileRows((u32 *)0x06000240,

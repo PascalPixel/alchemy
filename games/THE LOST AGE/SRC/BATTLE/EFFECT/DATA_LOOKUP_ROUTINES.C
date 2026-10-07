@@ -78,16 +78,15 @@ void Scene_ResolveInteractionResult(void)
                 continue;
             cue = rule->cue;
             break;
-        } else {
-            if (rule->id != group)
-                continue;
-            if (rule->entrance != -1 && rule->entrance != entrance)
-                continue;
-            if (rule->flag != -1 && GameFlag_Test(rule->flag) == 0)
-                continue;
-            cue = rule->cue;
-            break;
         }
+        if (rule->id != group)
+            continue;
+        if (rule->entrance != -1 && rule->entrance != entrance)
+            continue;
+        if (rule->flag != -1 && GameFlag_Test(rule->flag) == 0)
+            continue;
+        cue = rule->cue;
+        break;
     }
 
     gPartyState.cue = cue;

@@ -181,7 +181,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         KorosseoKawa_Countdown = 120;
         break;
     }
-    KorosseoKawa_Countdown = KorosseoKawa_Countdown - 1;
+    KorosseoKawa_Countdown--;
 }
 
 void SceneState_ResetCounterAndStartTask(void)
@@ -521,7 +521,7 @@ void KorosseoKawa_RunStageStart(void)
     n = 9;
     do {
         Object_RefreshSelectorById(8);
-        n = n - 1;
+        n--;
     } while (n >= 0);
     Actor_SetSpeed(8, 0x10000, 0x8000);
     Actor_WalkTo(8, 1320, 192);

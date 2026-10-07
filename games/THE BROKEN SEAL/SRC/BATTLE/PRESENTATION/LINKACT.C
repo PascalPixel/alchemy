@@ -173,7 +173,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             struct BattleActionRecord *action = &actions[count + index];
 
             action->unit_id = action->slot;
-            action->target = action->target ^ 0x80;
+            action->target ^= 0x80;
         }
 
         Runtime_BumpFree(state);

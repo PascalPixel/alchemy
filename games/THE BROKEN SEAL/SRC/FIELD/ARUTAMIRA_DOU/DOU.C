@@ -188,17 +188,16 @@ void SceneEffect_SetupBlendByFlag201(void)
         }
         ArutamiraDou_ApplyFadeBlend();
         return;
-    } else {
-        {
-            u16 *slot = (u16 *)(state + 1332);
-            s32 c = 0x3f3f;
-            *slot = c;
-        }
-        {
-            u16 *slot = (u16 *)(state + 1334);
-            s32 c = 31;
-            *slot = c;
-        }
+    }
+    {
+        u16 *slot = (u16 *)(state + 1332);
+        s32 c = 0x3f3f;
+        *slot = c;
+    }
+    {
+        u16 *slot = (u16 *)(state + 1334);
+        s32 c = 31;
+        *slot = c;
     }
     {
         s32 a = 0x3f42;

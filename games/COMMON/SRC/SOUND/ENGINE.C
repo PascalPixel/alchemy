@@ -552,7 +552,8 @@ void Cgb_UpdateChannels(void)
                 goto decay;
             }
             goto off;
-        } else if (note->state & CGB_NOTE_ECHO) {
+        }
+        if (note->state & CGB_NOTE_ECHO) {
             note->echo_length--;
             if ((s8)(note->echo_length & byte_mask) > 0)
                 goto write;

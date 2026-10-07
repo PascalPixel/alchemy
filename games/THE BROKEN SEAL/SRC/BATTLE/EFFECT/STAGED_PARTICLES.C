@@ -239,7 +239,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
                                 EffectPosition_ApplyBaseAndYOffset(point, out);
                             }
                             screen.x = (screen.x >> 1) + x;
-                            screen.y = screen.y + y;
+                            screen.y += y;
 #else
                             EffectPosition_ApplyBaseAndYOffset(point, &screen);
                             screen.x = (screen.x >> 1) + x;

@@ -171,10 +171,10 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = c & 31;
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
-                r = r + ((g >> 3) + (b >> 3));
+                r += ((g >> 3) + (b >> 3));
                 r = BattleFx_ClampRgb555Channel(r);
-                g = g - g / 3;
-                b = b - b / 3;
+                g -= g / 3;
+                b -= b / 3;
                 dst[0] = BattlePalette_ChannelCurve[b];
                 dst[1] = BattlePalette_ChannelCurve[g];
                 dst[2] = BattlePalette_ChannelCurveLight[r];

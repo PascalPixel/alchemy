@@ -938,12 +938,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000c7438, 0x00001bc8
-	.section .rom.000cf8e0, "ax"
-	.global BattleFx_RunSevenMode
-	.type BattleFx_RunSevenMode, %function
-	.thumb_func
-BattleFx_RunSevenMode:
-	.incbin "baserom.gba", 0x000cf8e0, 0x00000614
 	.section .rom.000e2972, "ax"
 	.incbin "baserom.gba", 0x000e2972, 0x00000002
 	.section .rom.000ea0d8, "ax"

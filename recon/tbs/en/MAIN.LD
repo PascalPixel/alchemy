@@ -635,7 +635,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EARTHWAL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SEVEN_MODE_DISPATCH.o"(.text)
-        "*/recon/tbs/raw/080cf8e0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/REVEAL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TRIANGLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STARS.o"(.text)

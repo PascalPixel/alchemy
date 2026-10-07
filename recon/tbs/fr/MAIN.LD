@@ -630,7 +630,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EARTHWAL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SEVEN_MODE_DISPATCH.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000d30e0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/REVEAL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TRIANGLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STARS.o"(.text)

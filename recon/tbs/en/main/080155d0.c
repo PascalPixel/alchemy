@@ -1,5 +1,13 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Continental branch (2026-10-07): German listing187, draft187, common175,
+ *   differ24. Native y/r8 gives127 to107. Native narrow rows/r2, head/r1,
+ *   pass/r2 and tail pointer/r2 give77; character/ip handoff60. A short
+ *   width-table index/r3 restores the native uncombined index and the
+ *   complete font-loop allocation (26). Advance/r3 at the glyph join24.
+ *   DE/ES/FR/IT all give24. Remaining differences
+ *   are instruction order in setup, loads/stores, and the final shift/store.
+ *   Rejected: forcing font colour/ip after selection69 (one extra move).
  * Japanese branch (2026-10-07): listing193, draft193, common183, differ20.
  *   Reconstructed from its own scaffold: supplied font has ten one-bit rows,
  *   dakuten adjusts its index/position/advance; wide kanji have twelve rows
@@ -401,8 +409,13 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     register u32 ofs asm("r3");
     /* FAKEMATCH: native x uses r9; ordinary allocation swaps r9/sl in both paths (117 differences). */
     register u32 x asm("r9");
+#if defined(TBS_EDITION_EN)
     /* FAKEMATCH: native y uses r7; constrained row pointers otherwise swap r7/r8 through both loops. */
     register u32 y asm("r7") = ypos;
+#else
+    /* FAKEMATCH: continental native y uses r8; the English binding swaps r7/r8 through both loops (127 differences). */
+    register u32 y asm("r8") = ypos;
+#endif
 #if defined(TBS_EDITION_EN)
     /* FAKEMATCH: native retains incoming x in r2 until after loading font from the stack. */
     register u32 xi asm("r2") = xpos;
@@ -418,6 +431,13 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     /* FAKEMATCH: native prepares font, x and y before computing the glyph index; the ordinary setup is reordered (26 differences). */
     asm("" : "+r"(y), "+r"(ch) : "r"(font), "r"(x));
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    {
+        /* FAKEMATCH: continental native keeps the character in ip while r1 is reused by colour and row setup. */
+        register u32 c asm("ip") = ch;
+        /* FAKEMATCH: retain the native character copy before the font test. */
+        asm("" : "+r"(c));
+        ch = c;
+    }
     width = win->width;
     if (ch < 256 || font != 0) {
 #else
@@ -439,7 +459,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
             u32 c3 = 0x3333;
             u8 *wp = UiSprite_CursorFrameTiles + 0x800;
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-            s32 w = wp[ch - 32];
+            s32 w;
 #else
             s32 w = wp[idx];
 #endif
@@ -448,6 +468,15 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
             u32 color;
             u32 ty;
 
+#if !defined(TBS_EDITION_EN)
+            {
+                /* FAKEMATCH: native computes the width-table index in r3 before indexing its base; ordinary C biases the base by -32. */
+                register u32 i asm("r3") = ch - 32;
+                /* FAKEMATCH: retain the native width-table indexing form. */
+                asm("" : "+r"(i));
+                w = wp[i];
+            }
+#endif
             for (row = 0; row < 8 && y + row < 32; row++) {
                 /* FAKEMATCH: native keeps the next row in r4 across the pixel loop; ordinary nextrow changes allocation (105). */
                 register u32 nextrow asm("r4");
@@ -484,8 +513,13 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
 #endif
         glyph = (struct UiTextGlyph *)((u8 *)UiText_Glyphs + ofs);
         {
+#if defined(TBS_EDITION_EN)
             /* FAKEMATCH: native narrow rows use r1 and are stored before the shared width load. */
             register u16 *p asm("r1") = glyph->rows;
+#else
+            /* FAKEMATCH: continental native narrow rows use r2 before their own width load. */
+            register u16 *p asm("r2") = glyph->rows;
+#endif
             /* FAKEMATCH: retain the narrow rows register before the join. */
             asm("" : "+r"(p));
             rows = p;
@@ -511,7 +545,13 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
 #endif
     }
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    ret = gw;
+    {
+        /* FAKEMATCH: continental native loads and stores the advance in r3; ordinary C uses r0 across the glyph join. */
+        register u32 g asm("r3") = gw;
+        /* FAKEMATCH: retain the native advance register at the join. */
+        asm("" : "+r"(g));
+        ret = g;
+    }
 #else
     gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
     if (code < 2) {
@@ -529,13 +569,25 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
 #endif
     {
         u16 *next;
+#if defined(TBS_EDITION_EN)
         /* FAKEMATCH: native initializes the next-row pointer in r2; the loop-hoisted ordinary expression uses r3 (34 differences). */
         register u16 *p asm("r2") = rows;
         /* FAKEMATCH: native resets pass in r1 between the row-pointer load and add (20 differences). */
         register u32 i asm("r1");
+#else
+        /* FAKEMATCH: continental native initializes its next-row pointer in r1 and pass in r2. */
+        register u16 *p asm("r1") = rows;
+        /* FAKEMATCH: retain continental native's pass-reset register. */
+        register u32 i asm("r2");
+#endif
         u16 *head;
+#if defined(TBS_EDITION_EN)
         /* FAKEMATCH: native loads rows before resetting pass; reserve its reset register until after this load. */
         asm("" : "+r"(p) : : "r1");
+#else
+        /* FAKEMATCH: continental native loads rows before resetting pass. */
+        asm("" : "+r"(p) : : "r2");
+#endif
         i = 0;
         /* FAKEMATCH: retain the native pointer register before its spill. */
         asm("" : "+r"(p) : "r"(i));
@@ -594,8 +646,13 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
             if (++row >= 12)
                 break;
             {
+#if defined(TBS_EDITION_EN)
                 /* FAKEMATCH: native reloads the row pointer into r1, interleaving the y test; ordinary reload uses r3 (30 differences). */
                 register u16 *p asm("r1") = next;
+#else
+                /* FAKEMATCH: continental native reloads its row pointer into r2. */
+                register u16 *p asm("r2") = next;
+#endif
                 /* FAKEMATCH: native holds the next-row y coordinate in r3. */
                 register u32 line asm("r3");
                 /* FAKEMATCH: retain the measured reload register before postincrement. */

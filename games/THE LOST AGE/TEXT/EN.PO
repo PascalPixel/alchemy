@@ -347,7 +347,7 @@ msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Cure Poison"
 
-msgctxt "message"
+msgctxt "MsgFieldRepelEvil"
 msgid "00085"
 msgstr "Repel Evil"
 
@@ -13883,7 +13883,7 @@ msgctxt "message"
 msgid "03468"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgFieldSpace"
 msgid "03469"
 msgstr "Space"
 
@@ -13895,11 +13895,11 @@ msgctxt "message"
 msgid "03471"
 msgstr "Finish"
 
-msgctxt "message"
+msgctxt "MsgFieldInvalidPassword"
 msgid "03472"
 msgstr "Invalid password."
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordAccepted"
 msgid "03473"
 msgstr "Password accepted."
 
@@ -17943,7 +17943,7 @@ msgctxt "message"
 msgid "04483"
 msgstr "Password"
 
-msgctxt "message"
+msgctxt "MsgFieldPreparingToReceive"
 msgid "04484"
 msgstr "Preparing to receive"
 
@@ -17951,7 +17951,7 @@ msgctxt "message"
 msgid "04485"
 msgstr "saved Clear Data"
 
-msgctxt "message"
+msgctxt "MsgFieldTransferringData"
 msgid "04486"
 msgstr "Transferring data"
 
@@ -17959,7 +17959,7 @@ msgctxt "message"
 msgid "04487"
 msgstr "B Button: Quit"
 
-msgctxt "message"
+msgctxt "MsgFieldDataTransferWasInterrupted"
 msgid "04488"
 msgstr "Data transfer was interrupted"
 

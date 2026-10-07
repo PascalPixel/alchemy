@@ -1,14 +1,9 @@
-#include "BATTLE.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "LIB.H"
-#include "MENU.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
-#include "TYPES.H"
-#include "FIELD_SCENE.H"
+#include "LOCAL.H"
 
+void Func_02000038(void)
+{
+    Func_02002940_(8, 11);
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

@@ -15727,7 +15727,7 @@ msgctxt "message"
 msgid "03929"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgFieldSpace"
 msgid "03930"
 msgstr "Avanzar"
 
@@ -15739,11 +15739,11 @@ msgctxt "message"
 msgid "03932"
 msgstr "Acabar"
 
-msgctxt "message"
+msgctxt "MsgFieldInvalidPassword"
 msgid "03933"
 msgstr "Contraseña incorrecta."
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordAccepted"
 msgid "03934"
 msgstr "Contraseña aceptada."
 

@@ -93,6 +93,71 @@ Func_020000a4:
 	.global Func_020000fc
 	.thumb_func
 Func_020000fc:
+	.ifdef TLA_EDITION_JA
+	push {lr}
+	ldr r3, .L_ja_02008148
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3, #0]
+	bl Object_GetById
+	ldrh r3, [r0, #6]
+	movs r2, #128
+	lsls r2, r2, #6
+	adds r3, r3, r2
+	ldr r2, .L_ja_02008144
+	ands r3, r2
+	movs r2, #192
+	lsls r3, r3, #16
+	lsls r2, r2, #24
+	cmp r3, r2
+	bne .L_ja_0200812c
+	movs r0, #1
+	movs r1, #22
+	bl Func_02001f08
+	b .L_ja_02008174
+.L_ja_0200812c:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008150
+	ldr r0, .L_ja_0200814c
+	bl Func_02001e18
+	b .L_ja_0200816c
+	.2byte 0x0000
+.L_ja_02008144:
+	.4byte 0xffffc000
+.L_ja_02008148:
+	.4byte gPartyState
+.L_ja_0200814c:
+	.4byte 0x00002253
+.L_ja_02008150:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #171
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008166
+	ldr r0, .L_ja_02008178
+	bl Func_02001e18
+	b .L_ja_0200816c
+.L_ja_02008166:
+	ldr r0, .L_ja_0200817c
+	bl Func_02001e18
+.L_ja_0200816c:
+	movs r0, #22
+	movs r1, #0
+	bl Func_02001e30
+.L_ja_02008174:
+	pop {pc}
+	.2byte 0x0000
+.L_ja_02008178:
+	.4byte 0x00001e6c
+.L_ja_0200817c:
+	.4byte 0x00001a0f
+	.else
 	push {r5, lr}
 	ldr r3, .L_02008130
 	movs r2, #133
@@ -178,6 +243,7 @@ Func_020000fc:
 	.4byte MsgScene659No87
 .L_020081b4:
 	.4byte MsgScene659No39
+	.endif
 	.section .text.x020081b8,"ax",%progbits
 	.global Func_020001b8
 	.thumb_func

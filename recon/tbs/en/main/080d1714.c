@@ -1,5 +1,5 @@
-/* 080d1714: differ 394 of 1481 instructions (1475 generated, common
- * 1281). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 379 of 1481 instructions (1476 generated, common
+ * 1289). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -128,6 +128,13 @@
  *   425 in one.
  * - alive = 0 right after shake.z, a permuter hint: 394 (index = 0
  *   before the placement setup: 429).
+ * - size block-local in the mark draw (if (frame >= threshold)): 380;
+ *   also in the first draw block or the wave block: 380; point,
+ *   object or spark block-local, or the drift adds interleaved with
+ *   the halvings: 380.
+ * - the frame == 160 background id is the resource id
+ *   ResourceId_VioletSkyBackdrop (entry 59), which the native loads
+ *   from the literal pool once for both calls: 379.
  * Remaining: the first draw shares one 48 for 48 - size and the
  * width argument, and the second keeps 48 in r4 across the first call
  * where the native rematerializes it and caller-saves the function
@@ -456,8 +463,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             s32 speed;
             s32 angle;
 
-            BattleBackground_LoadFar(1, 0x3b, 0);
-            BattlePresentation_ConfigurePaletteFadeFar(1, 0x3b, 8);
+            BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+            BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
             BattleFx_SelectLivingTargets(runtime->effect);
             BattleFx_SpawnObjects(9, 376, 2);
 
@@ -670,6 +677,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                     }
 
                     if (frame >= threshold) {
+                        s32 size;
+
                         size = (frame - threshold) / 2;
                         if (size > 2)
                             size = 2;

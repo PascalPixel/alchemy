@@ -1,6 +1,31 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 805, differ 280; frame 372
+ * Native 946 instructions, draft 944, common 819, differ 252; frame 372
  * as native's.
+ * Session 8: the compiler temporaries' slot order is GCSE's. PRE creates
+ * its reaching registers in pre_delete, walking the expression table by
+ * bucket, and hash_expr is linear: (plus (reg N) (const_int c)) hashes
+ * to 13901 + N + c, (ashift (reg N) (const_int c)) to 13913 + N + c, so
+ * with sfp 25, count 36, row 41 and cursor_handle 43: &glyph 13642,
+ * &ordered 13794, &sprites 13866, &cursor 13914, count - 1 13936,
+ * row * 2 13955, cursor_handle << 16 13972, taken mod n / 2 | 1 buckets
+ * (n = max_cuid, 750 here: 375 buckets, wrapping between &sprites and
+ * &cursor). Native's slots need the wrap between &glyph and &ordered:
+ * 369, 371, 379, 381 or 383 buckets, so native had 736-743 or 756-767
+ * insns at GCSE. Six dead stores (FAKEMATCH, 756 insns, 379 buckets)
+ * give native's order for &ordered, &sprites, count - 1, row * 2,
+ * cursor_handle << 16 and &glyph: 280 -> 252 (five stores 377 buckets,
+ * 282; eight 379, sixteen 383, twelve 381, all 252). The device stands
+ * for an unknown source difference of that many insns and moves with
+ * any change in insn count: check the bucket count in the gcse dump
+ * (alchemy diff --rtl) after each trial. Still differing: &cursor keeps
+ * expand's pseudo (CSE folds every cursor field access into insn 1388's
+ * register through the call, PRE replaces only that one, and combine
+ * folds its single-use reaching register back), so it takes a first-pass
+ * slot at 36 above summon (32), where native's cursor is the reaching
+ * register, spilled with summon (36) and placed at 24. From 252: the
+ * handle loop indexed 293 (381 buckets). Next after the slots: the draw
+ * loop's scan keeps summon in r6 and summon + 4 in slot 32 (item (a)
+ * below); native has id in r6, summon in slot 36 and required in r1.
  * Session 7: the draw loop's affordability scan counts with the column
  * loop's element (no n): 443 -> 280. Diagnosed in greg: index (pseudo
  * 62, 126 refs over 496 insns, 6 * 126 / 496 = 1.524) was allocated just
@@ -394,6 +419,17 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     s32 pressed, repeated, result;
     s32 index;
 
+    /* FAKEMATCH: six dead stores. GCSE sizes its expression table from
+       the insn count (n / 2 | 1 buckets) and PRE numbers its reaching
+       registers in bucket order; 756 insns give 379 buckets, not 375, and
+       &ordered and &sprites then come before count - 1 as native's spill
+       slots show (369, 371, 381 and 383 order them the same). */
+    pressed = 0;
+    repeated = 0;
+    result = 0;
+    tile = 0;
+    affordable = 0;
+    id = 0;
     render = (struct UiRenderWork *)gWindowWork[0];
     drawn_row = -1;
     drawn_page = -1;

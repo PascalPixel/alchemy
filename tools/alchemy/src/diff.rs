@@ -391,6 +391,16 @@ fn with_line_table(step: &[String]) -> Vec<String> {
     step
 }
 
+/// --rtl: per-pass dumps from the step that compiles, the driver's or the
+/// ARM routes' direct cc1 (not their cpp0); gcc_arm's older scheduler has
+/// no -fsched-verbose.
+fn with_pass_dumps(steps: &mut [Vec<String>]) {
+    match steps.iter().position(|step| step.iter().any(|argument| argument == "-dumpbase")) {
+        Some(cc1) => steps[cc1].push("-da".into()),
+        None => steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]),
+    }
+}
+
 /// Where a draft's code differs from its listing, by source line.
 #[derive(Debug, Default, PartialEq, Eq)]
 pub(crate) struct Heat {
@@ -579,7 +589,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         draft_steps(target, &draft, &object)?
     };
     if options.rtl {
-        steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
+        with_pass_dumps(&mut steps);
     }
     let assemble = steps.pop().expect("draft plan ends with assembly");
     for step in steps {
@@ -874,6 +884,21 @@ mod tests {
         assert_eq!(with_line_table(&assemble), assemble);
         assert_eq!(with_line_table(&cc1).last().map(String::as_str), Some("-g"));
         assert_eq!(with_line_table(&driver).last().map(String::as_str), Some("-g"));
+    }
+
+    #[test]
+    fn pass_dumps_reach_the_compiling_step_not_cpp0() {
+        let words = |text: &str| text.split(' ').map(String::from).collect::<Vec<_>>();
+        let cpp = words("cpp0 -lang-c probe.c probe.i");
+        let cc1 = words("agbcc/agbcc_arm probe.i -dumpbase probe.c -O2 -o probe.s");
+        let driver = words("xgcc -O2 -S -o probe.s probe.c");
+        let mut arm = vec![cpp.clone(), cc1.clone()];
+        with_pass_dumps(&mut arm);
+        assert_eq!(arm[0], cpp);
+        assert_eq!(arm[1][cc1.len()..], ["-da".to_string()]);
+        let mut thumb = vec![driver.clone()];
+        with_pass_dumps(&mut thumb);
+        assert_eq!(thumb[0][driver.len()..], ["-da".to_string(), "-fsched-verbose=5".to_string()]);
     }
 
     #[test]

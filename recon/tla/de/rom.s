@@ -4470,7 +4470,12 @@ Func_0815e320:
 BattleEffect_RunParticleStreams:
 	.incbin "baserom.gba", 0x00164cc4, 0x00005554
 	.section .rom.0016a29c, "ax"
-	.incbin "baserom.gba", 0x0016a29c, 0x00014778
+	.incbin "baserom.gba", 0x0016a29c, 0x00009750
+	.section .rom.00173aac, "ax"
+	.balign 4
+	.global Func_08173aac
+Func_08173aac:
+	.incbin "baserom.gba", 0x00173aac, 0x0000af68
 	.section .rom.0017ea58, "ax"
 	.incbin "baserom.gba", 0x0017ea58, 0x00010b74
 	.section .rom.0018f620, "ax"

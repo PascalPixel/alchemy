@@ -1354,6 +1354,8 @@
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD_TO_5.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0016a29c)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/VARIANT_I.o"(.text)
+        "*/recon/tla/fr/rom.o"(.rom.00173aac)
     "*/games/COMMON/SRC/GRAPHICS/TILE/PACK_ROWS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0017ea58)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/CANVAS_MODES.o"(.text)

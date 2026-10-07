@@ -2071,7 +2071,7 @@
         "*/recon/tla/raw/08125c5c.o"(.text)
         "*/recon/tla/raw/08125c94.o"(.text)
         "*/recon/tla/raw/08125cfc.o"(.text)
-        "*/recon/tla/raw/08125d68.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/BG0VOFS.o"(.text)
         "*/recon/tla/raw/08125d74.o"(.text)
         "*/recon/tla/raw/08126218.o"(.text)
         "*/recon/tla/raw/0812628c.o"(.text)

@@ -1263,6 +1263,8 @@
     "*/recon/tla/de/rom.o"(.rom.00124cd6)
     "*/games/COMMON/SRC/GRAPHICS/TILE/BUILD_SEQUENTIAL_TABLE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00125bd0)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/BG0VOFS.o"(.text)
+        "*/recon/tla/de/rom.o"(.rom.00125d8c)
     "*/recon/tla/de/rom.o"(.rom.0012681c)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0012695a)

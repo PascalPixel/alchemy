@@ -1279,6 +1279,8 @@
     "*/recon/tla/fr/rom.o"(.rom.00124cd6)
     "*/games/COMMON/SRC/GRAPHICS/TILE/BUILD_SEQUENTIAL_TABLE.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00125bd0)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/BG0VOFS.o"(.text)
+        "*/recon/tla/fr/rom.o"(.rom.00125d8c)
     "*/recon/tla/fr/rom.o"(.rom.00126230)
     "*/recon/tla/fr/rom.o"(.rom.001262a4)
     "*/recon/tla/fr/rom.o"(.rom.00126414)

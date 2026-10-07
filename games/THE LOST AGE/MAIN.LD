@@ -1196,6 +1196,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00124cba)
     "*/games/COMMON/SRC/GRAPHICS/TILE/BUILD_SEQUENTIAL_TABLE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00125bb4)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/BG0VOFS.o"(.text)
+        "*/recon/tla/ja/rom.o"(.rom.00125d70)
     "*/recon/tla/ja/rom.o"(.rom.00126214)
     "*/recon/tla/ja/rom.o"(.rom.00126288)
     "*/recon/tla/ja/rom.o"(.rom.001263f8)

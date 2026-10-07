@@ -15939,7 +15939,7 @@ msgctxt "message"
 msgid "03982"
 msgstr "{argument_item_name:1} ne fait plus effet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlank2"
 msgid "03983"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
@@ -16075,7 +16075,7 @@ msgctxt "message"
 msgid "04016"
 msgstr "{protagonist_name} scrute le puits...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgGazedIntoThe"
 msgid "04017"
 msgstr "{protagonist_name} regarde dans l'eau...{page_break}"
 
@@ -16083,11 +16083,11 @@ msgctxt "message"
 msgid "04018"
 msgstr "Il y a quelque chose{line_break}dans les bas-fonds!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgThereAreSome"
 msgid "04019"
 msgstr "Il y a des pièces d'or{line_break}dans les bas-fonds!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgTheBoatS"
 msgid "04020"
 msgstr "Le bateau tangue!{page_break}J'ai failli être jeté{line_break}par-dessus bord!{end_wait}"
 
@@ -19559,15 +19559,15 @@ msgctxt "message"
 msgid "04887"
 msgstr "Vous passez de niveau!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheBodyIs"
 msgid "04888"
 msgstr "Le corps est déchiqueté.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGotTreasure"
 msgid "04889"
 msgstr "Vous trouvez un trésor!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGotA"
 msgid "04890"
 msgstr "Vous trouvez un Djinn!{end_wait}"
 
@@ -19579,7 +19579,7 @@ msgctxt "message"
 msgid "04892"
 msgstr "Vous trouvez de l'équipement!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRaiseEveryoneS"
 msgid "04893"
 msgstr "Le niv. du groupe augmente."
 
@@ -21119,7 +21119,7 @@ msgctxt "message"
 msgid "05277"
 msgstr "J'espère que vous avez{line_break}bien dormi. Bon voyage!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWelcomeWearyWanderers"
 msgid "05278"
 msgstr "Bienvenue, étrangers.{line_break}Que puis-je faire{line_break}pour vous?{end_now}"
 
@@ -21291,7 +21291,7 @@ msgctxt "message"
 msgid "05320"
 msgstr "Cet allié n'est pas maudit."
 
-msgctxt "message"
+msgctxt "MsgRightWhenI"
 msgid "05321"
 msgstr "A la vue de ces matériaux,{line_break}l'envie de travailler me{line_break}gagne!{page_break}"
 
@@ -21331,7 +21331,7 @@ msgctxt "message"
 msgid "05330"
 msgstr "Je m'échauffe pour vous{line_break}faire un chef-d'¾uvre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAhSoYou"
 msgid "05331"
 msgstr "Ah, vous recherchez{line_break}un objet unique, hein?{end_now}"
 
@@ -21343,7 +21343,7 @@ msgctxt "message"
 msgid "05333"
 msgstr "Ecoutez... Je ne travaille{line_break}jamais quand il fait beau.{line_break}J'ai besoin de la pluie.{page_break}Ce farniente n'est en{line_break}rien dû au soleil. Pas{line_break}de pluie, pas de travail.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWantMe"
 msgid "05334"
 msgstr "Vous désirez un{line_break}objet spécial?{end_now}"
 
@@ -21355,23 +21355,23 @@ msgctxt "message"
 msgid "05336"
 msgstr "Hum... Peut-être ai-je{line_break}fait une erreur... Difficile...{page_break}Pour faire des merveilles,{line_break}il faut du bon matériel.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTWait"
 msgid "05337"
 msgstr "Je suis impatient{line_break}de voir le résultat{line_break}de mon travail...{page_break}L'inspiration me vient{line_break}en travaillant! Et c'est{line_break}toujours une réussite!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyWifeHas"
 msgid "05338"
 msgstr "C'est ma femme qui{line_break}garde l'objet que{line_break}j'ai forgé pour vous.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThisThisIs"
 msgid "05339"
 msgstr "Ceci? C'est la forge de{line_break}Solario, la meilleure de{line_break}Weyard!{page_break}Mais Solario ne prend{line_break}pas de commande en{line_break}ce moment.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItTakesOur"
 msgid "05340"
 msgstr "Solario a besoin de{line_break}temps pour forger{line_break}un objet.{page_break}Attendez un peu{line_break}avant de venir{line_break}le récupérer...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHereSThe"
 msgid "05341"
 msgstr "Voici l'objet que vous{line_break}vouliez. Pour le paiement...{page_break}Il se fait en espèces.{line_break}D'accord?{end_now}"
 
@@ -21391,7 +21391,7 @@ msgctxt "message"
 msgid "05345"
 msgstr "Voilà, l'objet est à vous!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgManSunshineWould"
 msgid "05346"
 msgstr "Si Solario travaillait{line_break}plus, il serait riche!{line_break}Quel gâchis...{end_wait}"
 
@@ -24579,7 +24579,7 @@ msgctxt "message"
 msgid "06142"
 msgstr "Je me demande ce que{line_break}mon frère fabrique...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyVeDone"
 msgid "06143"
 msgstr "Ils ont réussi, {actor_name:6}!{line_break}Ils ont allumé le phare!{end_wait}"
 
@@ -24895,7 +24895,7 @@ msgctxt "message"
 msgid "06221"
 msgstr "Ce n'est pas une île...{line_break}mais un nouveau continent!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReSaved"
 msgid "06222"
 msgstr "Nous sommes sauvés!{end_wait}"
 
@@ -29007,7 +29007,7 @@ msgctxt "message"
 msgid "07249"
 msgstr "Ah, si seulement j'étais{line_break}libre d'explorer le monde{line_break}comme {actor_name:5} et ses amis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCheckedTheTablet"
 msgid "07250"
 msgstr "{actor_name:5} examine la stèle.{line_break}Des symboles étranges{line_break}ornent sa surface.{page_break}O, détenteur de la force{line_break}du vent... Posez vos mains{line_break}sur cette pierre.{page_break}Nous vous conférerons{line_break}le pouvoir de voir la{line_break}vérité...{end_wait}"
 
@@ -29019,7 +29019,7 @@ msgctxt "message"
 msgid "07252"
 msgstr "{actor_name:7} touche la stèle.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCheckedThePsynergy"
 msgid "07253"
 msgstr "{actor_name:5} examine la{line_break}Pierre Psynergie.{end_wait}"
 
@@ -29031,7 +29031,7 @@ msgctxt "MsgFieldWindStoneWarning"
 msgid "07255"
 msgstr "Attention aux Pierres d'air.{page_break}Ces pierres amplifient la force{line_break}du vent. A Rochair, la plus{line_break}grande prudence est requise.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSSomething"
 msgid "07256"
 msgstr "Il y a quelque chose à l'intérieur{line_break}de ce bloc de glace fendu...{end_wait}"
 
@@ -33703,7 +33703,7 @@ msgctxt "message"
 msgid "08423"
 msgstr "OK, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaFocusEnergies"
 msgid "08424"
 msgstr "Concentre tes énergies!{end_wait}"
 
@@ -33739,7 +33739,7 @@ msgctxt "message"
 msgid "08432"
 msgstr "Nous devons persévérer!{line_break}Plus fort les tambours!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaUnderstandsChannel"
 msgid "08433"
 msgstr "Mais c'est bien sûr!{end_wait}"
 
@@ -33843,7 +33843,7 @@ msgctxt "message"
 msgid "08458"
 msgstr "Unissez votre foi et{line_break}dansez pour honorer{line_break}le Grand Gabomba!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaAcceptOffering"
 msgid "08459"
 msgstr "Oh Grand Gabomba!{line_break}Je t'en prie, accepte{line_break}notre humble présent.{end_wait}"
 
@@ -34019,7 +34019,7 @@ msgctxt "message"
 msgid "08502"
 msgstr "Qui me dit que vous n'êtes{line_break}pas des imposteurs? Je suis{line_break}Akafubu, le sorcier de Kibombo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaSawEnergyFlow"
 msgid "08503"
 msgstr "Oui, nous le savons... Nous{line_break}avons vu votre magie{line_break}circuler près de nous.{end_wait}"
 
@@ -34451,11 +34451,11 @@ msgctxt "message"
 msgid "08610"
 msgstr "{actor_name:5} a transmis le{line_break}message de Gabomba{line_break}à Akafubu.{page_break}Quand {actor_name:5} finit son{line_break}histoire, il faisait nuit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaChannelTiming"
 msgid "08611"
 msgstr "La réparation du circuit{line_break}devrait faire l'affaire...{page_break}Tâchons de voir à quel moment{line_break}les deux charges magiques{line_break}atteignent la statue du milieu.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgByReachingThis"
 msgid "08612"
 msgstr "En venant jusqu'ici, vous{line_break}avez prouvé votre force.{end_wait}"
 
@@ -36031,7 +36031,7 @@ msgctxt "message"
 msgid "09005"
 msgstr "Je dois placer l'orbe{line_break}noir sur ce piédestal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTakeTheTiller"
 msgid "09006"
 msgstr "Tiens le gouvernail, {actor_name:5}!{end_wait}"
 
@@ -36923,7 +36923,7 @@ msgctxt "message"
 msgid "09228"
 msgstr "Essayez de faire pivoter{line_break}ce pilier en bois qui est{line_break}enfoncé dans la pierre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtI"
 msgid "09229"
 msgstr "J'ai vu quelque chose{line_break}briller par terre!{end_wait}"
 
@@ -37255,7 +37255,7 @@ msgctxt "message"
 msgid "09311"
 msgstr "Ça doit faire drôle de{line_break}vivre dans un vaste océan{line_break}de terre ou de sable.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCheckedTheTabletIt"
 msgid "09312"
 msgstr "{protagonist_name} examine la{line_break}stèle. Des symboles étranges{line_break}ornent sa surface.{page_break}O, détenteur de la force{line_break}de l'eau... Posez vos mains{line_break}sur cette pierre.{page_break}Si vous en êtes digne,{line_break}vous obtiendrez le pouvoir{line_break}de drainer...{end_wait}"
 
@@ -37267,7 +37267,7 @@ msgctxt "message"
 msgid "09314"
 msgstr "{actor_name:8} touche la stèle.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatWentWrong"
 msgid "09315"
 msgstr "Que s'est-il passé? Qu'allons{line_break}nous faire, {actor_name:5}?{end_wait}"
 
@@ -37275,7 +37275,7 @@ msgctxt "message"
 msgid "09316"
 msgstr "Peut-être qu'il s'agit{line_break}d'une épreuve.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCheckedTheColumn"
 msgid "09317"
 msgstr "{protagonist_name} examine le pilier.{end_wait}"
 
@@ -37607,7 +37607,7 @@ msgctxt "message"
 msgid "09399"
 msgstr "Vu l'effroi qu'il cause, le{line_break}sacrifice doit être quelque{line_break}chose de vraiment terrible.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCheckedTheAltar"
 msgid "09400"
 msgstr "{protagonist_name} examine l'autel.{page_break}"
 
@@ -37731,15 +37731,15 @@ msgctxt "message"
 msgid "09430"
 msgstr "Le serpent, avec ses yeux{line_break}fermés, semble vivant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMNot"
 msgid "09431"
 msgstr "Je vais bien...{line_break}Je suis juste fatigué... Je{line_break}vais m'allonger un instant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouRe"
 msgid "09432"
 msgstr "Si vous allez à Izumo,{line_break}dites à ma s¾ur que{line_break}je suis encore en vie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReGoing"
 msgid "09433"
 msgstr "Vous allez raconter à{line_break}Kushinada que vous avez{line_break}vaincu le serpent, pas vrai?{end_now}"
 
@@ -37751,11 +37751,11 @@ msgctxt "message"
 msgid "09435"
 msgstr "Mais c'est vous qui{line_break}l'avez abattu. VOUS{line_break}êtes les héros.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIReallyGot"
 msgid "09436"
 msgstr "Ce monstre m'a eu, mais{line_break}si Kushinada est sauvée,{line_break}ça en valait la peine.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKushinadaSSafe"
 msgid "09437"
 msgstr "Kushinada est saine{line_break}et sauve! C'est tout{line_break}ce qui compte.{end_wait}"
 
@@ -38583,11 +38583,11 @@ msgctxt "message"
 msgid "09643"
 msgstr "{protagonist_name} a acquis le{line_break}pouvoir du Sable.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSensing"
 msgid "09644"
 msgstr "Je... sens quelque chose...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanT"
 msgid "09645"
 msgstr "Je ne sens rien du tout...{end_wait}"
 
@@ -43387,7 +43387,7 @@ msgctxt "message"
 msgid "10844"
 msgstr "Où vas-tu, {actor_name:5}? Allons{line_break}donc voir ça de plus près!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreWeSetting"
 msgid "10845"
 msgstr "{actor_name:5}, est-ce que{line_break}nous partons?{end_now}"
 
@@ -44411,7 +44411,7 @@ msgctxt "MsgShamanTrialRulesAreSimple"
 msgid "11100"
 msgstr "Les règles sont simples.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadTrapInstructions"
 msgid "11101"
 msgstr "La pièce est jonchée de{line_break}pièges que seul le pouvoir{line_break}de Contigo peut déjouer.{end_wait}"
 
@@ -44575,19 +44575,19 @@ msgctxt "message"
 msgid "11141"
 msgstr "Alors, allons-y.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadPlaceItemPrompt"
 msgid "11142"
 msgstr "Placer cet objet dans le coffre?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadChestBlocked"
 msgid "11143"
 msgstr "Quelque chose bloque{line_break}l'ouverture du coffre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadStoredItem"
 msgid "11144"
 msgstr "{protagonist_name} place {argument_item_name:1}{line_break}dans le coffre. Cet objet{line_break}appartient à {argument_actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadGiveUpPrompt"
 msgid "11145"
 msgstr "Souhaitez-vous{line_break}abandonner?{end_now}"
 
@@ -44603,7 +44603,7 @@ msgctxt "MsgShamanMoapaAdvisesLeaving"
 msgid "11148"
 msgstr "Il serait plus sage de renoncer.{line_break}A la fin du parcours, je vous{line_break}battrai de toute façon.{page_break}Vous feriez mieux de quitter{line_break}Shaman sans délai.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSlowArrival"
 msgid "11149"
 msgstr "Vous avez un peu traîné, mais{line_break}vous avez réussi l'épreuve{line_break}de la Route du courage.{end_wait}"
 
@@ -44615,7 +44615,7 @@ msgctxt "message"
 msgid "11151"
 msgstr "En garde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadSwiftChallenge"
 msgid "11152"
 msgstr "Que d'agilité! Tu mérites{line_break}de m'affronter!{end_wait}"
 
@@ -44627,11 +44627,11 @@ msgctxt "message"
 msgid "11154"
 msgstr "En garde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadLeaveVillage"
 msgid "11155"
 msgstr "Vous avez perdu. Quittez{line_break}immédiatement notre village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTrialRoadHeroesProven"
 msgid "11156"
 msgstr "D'accord, d'accord. Vous{line_break}avez prouvé votre force.{line_break}Vous êtes de vrais héros.{end_wait}"
 
@@ -45019,7 +45019,7 @@ msgctxt "MsgShamanVictorsNamesOnTrialColumns"
 msgid "11252"
 msgstr "{actor_name:5}, {actor_name:6}, {actor_name:7} et{line_break}{actor_name:8}... Je me souviendrai{line_break}à jamais de ces noms...{page_break}Un jour, ils seront gravés{line_break}sur les piliers situés sur{line_break}la Route du courage.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAhhhh2"
 msgid "11253"
 msgstr "Ahhhh!!!"
 
@@ -45355,7 +45355,7 @@ msgctxt "MsgFieldPartWithAgatio"
 msgid "11336"
 msgstr "Je ressens moi aussi le{line_break}besoin d'aller aider {actor_name:4}...{line_break}Ma sensibilité me surprend...{page_break}Il est grand temps que je me{line_break}sépare d'Agatio et de Karstine.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSorry"
 msgid "11337"
 msgstr "{actor_name:1}... Je suis désolé...{line_break}Mais je n'en peux plus...{end_wait}"
 
@@ -45371,7 +45371,7 @@ msgctxt "message"
 msgid "11340"
 msgstr "AHHHHHHHH!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeDidItAgatio"
 msgid "11341"
 msgstr "Nous avons réussi, Agatio!{end_wait}"
 
@@ -45575,23 +45575,23 @@ msgctxt "message"
 msgid "11391"
 msgstr "Ils ont raison... Et{line_break}comme on dit, l'union{line_break}fait la force...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoWhyAre"
 msgid "11392"
 msgstr "{actor_name:5}... Non!{line_break}Pourquoi les aides-tu?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDonTWorry"
 msgid "11393"
 msgstr "Ne vous inquiétez pas pour{line_break}nous... Il est urgent d'aider{line_break}{actor_name:2} et {actor_name:4}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeHaveTo"
 msgid "11394"
 msgstr "{actor_name:2} est en danger.{line_break}Il ne tiendra pas prise{line_break}indéfiniment.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonT"
 msgid "11395"
 msgstr "{actor_name:1}! Je suis heureuse{line_break}que tu aies survécu à cette{line_break}puissante attaque...{page_break}Nous allons t'aider...{line_break}Nous allons te guérir...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouVeBeen"
 msgid "11396"
 msgstr "{actor_name:3}... Tu es blessé.{line_break}Ne t'en fais pas pour les autres.{line_break}Soignons d'abord ces blessures.{end_wait}"
 
@@ -46155,7 +46155,7 @@ msgctxt "message"
 msgid "11536"
 msgstr "Mais la réalité est bien{line_break}plus spectaculaire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeHeard"
 msgid "11537"
 msgstr "J'ai entendu maintes{line_break}histoires à ce propos...{end_wait}"
 
@@ -46163,7 +46163,7 @@ msgctxt "message"
 msgid "11538"
 msgstr "Mais la réalité est bien{line_break}plus spectaculaire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReNot"
 msgid "11539"
 msgstr "Tu ne comptes pas faire{line_break}faux bond à {actor_name:1}?{end_wait}"
 
@@ -46179,7 +46179,7 @@ msgctxt "message"
 msgid "11542"
 msgstr "Ils nous attendent.{line_break}Allons à Contigo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeShouldnT"
 msgid "11543"
 msgstr "Il est temps de jouer franc{line_break}jeu avec {actor_name:1}, {actor_name:5}.{end_wait}"
 
@@ -47255,7 +47255,7 @@ msgctxt "message"
 msgid "11811"
 msgstr "Un instant... La cité d'Anémos{line_break}s'est envolée dans les cieux?{page_break}Mais c'est absurde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeDidIt"
 msgid "11812"
 msgstr "Hourra! Le bateau a décollé{line_break}sans le moindre incident!{end_wait}"
 
@@ -47731,7 +47731,7 @@ msgctxt "message"
 msgid "11930"
 msgstr "Il serait tragique que{line_break}ce canon tombe entre{line_break}de mauvaises mains.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDonT"
 msgid "11931"
 msgstr "Soyez tranquilles. Nous{line_break}avons transporté le canon{line_break}sur votre bateau.{end_wait}"
 
@@ -48419,11 +48419,11 @@ msgctxt "message"
 msgid "12102"
 msgstr "Vous, détenteur de l'étoile,{line_break}écoutez avec votre c¾ur...{page_break}Pour atteindre les cieux,{line_break}donnez-moi votre étoile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouDo"
 msgid "12103"
 msgstr "Sans l'étoile, vous ne{line_break}monterez jamais aux{line_break}cieux... Partez!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWhoHold"
 msgid "12104"
 msgstr "Vous, détenteur de l'étoile,{line_break}écoutez avec votre c¾ur...{end_wait}"
 
@@ -48431,23 +48431,23 @@ msgctxt "message"
 msgid "12105"
 msgstr "Pour gravir les cieux, que{line_break}brûlent les quatre feux!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMankindWithThe"
 msgid "12106"
 msgstr "Les hommes... Grâce à{line_break}leur sagesse, ils sont{line_break}les rois du monde.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFishWithCold"
 msgid "12107"
 msgstr "Les poissons... Grâce à{line_break}leur sang-froid, ils sont{line_break}les rois des océans.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDragonsBurningWith"
 msgid "12108"
 msgstr "Les dragons... Grâce à{line_break}leur force ardente, ils{line_break}sont les rois des enfers.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBirdOnThe"
 msgid "12109"
 msgstr "Les oiseaux... Grâce à{line_break}leur innocence, ils sont{line_break}les rois des vents.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveProven"
 msgid "12110"
 msgstr "Vous avez fait vos preuves!{line_break}Les cieux vous attendent!{end_wait}"
 
@@ -49355,7 +49355,7 @@ msgctxt "message"
 msgid "12336"
 msgstr "{actor_name:5} a utilisé l'Etoile de Mars!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCheckedTheIce"
 msgid "12337"
 msgstr "{protagonist_name} examine la glace.{page_break}"
 
@@ -50311,7 +50311,7 @@ msgctxt "message"
 msgid "12575"
 msgstr "L'année dernière, au{line_break}Colisée, nous avons{line_break}perdu contre {actor_name:1}.{page_break}Afin de nous venger, nous{line_break}avons entrepris un périlleux{line_break}voyage pour prendre des forces.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIFound2"
 msgid "12576"
 msgstr "J'ai retrouvé {actor_name:1}!{end_wait}"
 
@@ -50379,7 +50379,7 @@ msgctxt "message"
 msgid "12592"
 msgstr "Tu as les oreilles bouchées{line_break}ou quoi? Le combat a été{line_break}truqué. Et il va le payer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyTheseGuys"
 msgid "12593"
 msgstr "Hé, ces hommes ont{line_break}l'air de gringalets!{end_wait}"
 
@@ -50403,7 +50403,7 @@ msgctxt "message"
 msgid "12598"
 msgstr "Nous ne bougerons pas d'ici.{line_break}Vous ne pourrez jamais entrer,{line_break}car nos yeux sont partout!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseGuysWere"
 msgid "12599"
 msgstr "Quels phénomènes!{end_wait}"
 
@@ -50599,7 +50599,7 @@ msgctxt "message"
 msgid "12647"
 msgstr "S'il a besoin d'hommes,{line_break}il peut compter sur moi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyWaitA"
 msgid "12648"
 msgstr "Hé! Attendez!{end_wait}"
 
@@ -50651,7 +50651,7 @@ msgctxt "message"
 msgid "12660"
 msgstr "Mais rassurez-vous... Vous{line_break}aurez juste un avant-goût de{line_break}ce que nous lui réservons.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLike"
 msgid "12661"
 msgstr "Les amis de {actor_name:1} sont{line_break}des mauviettes...{end_wait}"
 
@@ -50679,7 +50679,7 @@ msgctxt "message"
 msgid "12667"
 msgstr "N'oubliez pas de lui transmettre{line_break}le message et envoyez-le par ici!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeLostAgain"
 msgid "12668"
 msgstr "Nous avons encore perdu...{end_wait}"
 
@@ -50839,7 +50839,7 @@ msgctxt "message"
 msgid "12707"
 msgstr "C'est tout ce qu'il{line_break}faut savoir pour{line_break}utiliser un Djinn lié!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHey2"
 msgid "12708"
 msgstr "Hé!{end_wait}"
 
@@ -50847,7 +50847,7 @@ msgctxt "message"
 msgid "12709"
 msgstr "J'ai l'impression que vous{line_break}savez pas mal de choses{line_break}sur nous, hein?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWellYouWeren"
 msgid "12710"
 msgstr "Eh bien, si je ne m'abuse,{line_break}vous n'avez pas été surpris{line_break}quand vous m'avez vu, non?{end_now}"
 
@@ -50859,11 +50859,11 @@ msgctxt "message"
 msgid "12712"
 msgstr "Je le savais. J'ai du{line_break}flair pour repérer les{line_break}Mystiques!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeeYouKnow"
 msgid "12713"
 msgstr "Vous voyez, vous savez tout sur{line_break}nous. Donc, vous êtes un Mystique.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEvenIKnow"
 msgid "12714"
 msgstr "Même moi je le sais!{end_wait}"
 
@@ -50899,7 +50899,7 @@ msgctxt "message"
 msgid "12722"
 msgstr "Que décidez-vous? Vous{line_break}voulez bien que je devienne{line_break}votre compagnon de voyage?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgOhComeOn"
 msgid "12723"
 msgstr "Oh, allez! Je promets d'être{line_break}discret et de ne jamais{line_break}toucher à vos provisions!{end_now}"
 
@@ -50927,15 +50927,15 @@ msgctxt "message"
 msgid "12729"
 msgstr "Cessez de vous comporter en{line_break}goujat. Je ne plaisante pas!{page_break}Vous ne voudriez pas{line_break}m'abandonner, non?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgOhAllRight"
 msgid "12730"
 msgstr "Vu que vous le prenez comme{line_break}ça, je n'insisterai pas.{pause_20_skippable}{pause_20_skippable}{line_break}Je viens avec vous, na!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSo"
 msgid "12731"
 msgstr "Je suis aux anges! Vous{line_break}ne le regretterez pas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheVenusDjinni"
 msgid "12732"
 msgstr "Le Djinn de Vénus {text_color:5}{argument_ability_name}{text_color:16}{line_break}s'est lié d'amitié avec {protagonist_name}.{end_wait}"
 
@@ -50943,15 +50943,15 @@ msgctxt "message"
 msgid "12733"
 msgstr "Puisque je suis là, voulez-vous{line_break}que je vous donne des{line_break}explications sur les Djinn?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgAfterBringingA"
 msgid "12734"
 msgstr "Après avoir accepté un{line_break}Djinn dans votre groupe,{line_break}il faut le lier.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNextILl"
 msgid "12735"
 msgstr "Voici comment nous{line_break}utiliser au cours{line_break}d'un combat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeeWeDjinn"
 msgid "12736"
 msgstr "Nous pouvons être{line_break}très utiles, hein?{end_wait}"
 
@@ -50959,7 +50959,7 @@ msgctxt "message"
 msgid "12737"
 msgstr "Une dernière chose...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoWeGo"
 msgid "12738"
 msgstr "Nous sommes liés, puis{line_break}en récupération et à{line_break}nouveau liés.{end_wait}"
 
@@ -50971,7 +50971,7 @@ msgctxt "message"
 msgid "12740"
 msgstr "Vous avez tout compris?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHmmmmDoYou"
 msgid "12741"
 msgstr "Hummm,{pause_20_skippable} dois-je tout{line_break}vous expliquer à nouveau?{end_now}"
 
@@ -50979,7 +50979,7 @@ msgctxt "message"
 msgid "12742"
 msgstr "Bon, je vais reprendre{line_break}depuis le début, OK?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellThatS"
 msgid "12743"
 msgstr "Ben, c'est tout. Nous{line_break}voilà amis pour la vie!{end_wait}"
 
@@ -51403,7 +51403,7 @@ msgctxt "message"
 msgid "12848"
 msgstr "Mais... !!! {control_15:4}{control_15:4}{page_break}{control_12:11}A quoi servent tous ces{line_break}peignoirs?!? Où sont{line_break}les salles de bain?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFinallyWeVe"
 msgid "12849"
 msgstr "Nous sommes arrivés{line_break}à Val. Enfin!{end_wait}"
 
@@ -51635,11 +51635,11 @@ msgctxt "message"
 msgid "12906"
 msgstr "Et vous aussi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmTheGuardian"
 msgid "12907"
 msgstr "Je suis le gardien de{line_break}l'eau. Celui qui en sera digne{line_break}héritera de mes pouvoirs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmThe"
 msgid "12908"
 msgstr "Je suis le gardien du feu.{line_break}Celui qui en sera digne{line_break}héritera de mes pouvoirs.{end_wait}"
 
@@ -51651,7 +51651,7 @@ msgctxt "MsgSummonInheritedEarthDarkness"
 msgid "12910"
 msgstr "Nous avons hérité du{line_break}pouvoir de la terre pour{line_break}créer les ténèbres.{pause_60}{page_break}Pour acquérir ce pouvoir,{line_break}touchez cette stèle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmTheShadow"
 msgid "12911"
 msgstr "Je suis l'ombre, le{line_break}gardien de la lumière.{page_break}Si vous voulez le pouvoir{line_break}du soleil, montrez-moi le vôtre.{end_wait}"
 

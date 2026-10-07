@@ -1637,7 +1637,7 @@ Func_020009d4:
 .L_02008d7c:
 	.4byte 0x00403108
 .L_02008d80:
-	.4byte 0x00001fe1
+	.4byte MsgByReachingThis
 .L_02008d84:
 	.4byte Data_020012a4
 .L_02008d88:

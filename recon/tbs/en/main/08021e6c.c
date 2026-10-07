@@ -1,3 +1,4 @@
+/* 2026-10-07 queue3 edition layouts: all six differ72, not matched. JA listing/draft1036, common1000; EN/DE/ES/FR/IT listing/draft1037, common1001. JA's mode1 window is x23,width7, its sprites x179, blank-map offset5 and content at VRAMfd6e/mapx23; the localizations use x22,width8,x171,offset4,fd6c/mapx22. These native layout differences are now conditional C; JA was119. The five non-English scaffolds now name this function, leaving their preceding two padding bytes intact. Remaining72 in every edition are the shared allocation/order differences below. */
 /* Trial (queue3 from72, none kept): mode-1 row-local pattern292; readonly generic pattern input inside the column102; volatile row pattern407. Baseline index/pattern copies have identical global conflict sets and LO_REGS costs; index's9refs/17insns outrank pattern's9/18, and reload keeps pattern in ip while spilling index. Chaining the pattern expression reverses copy priority but also reverses row-biv priority, as measured above. */
 /* 2026-10-07 queue3 continuation: differ 72 (listing 1037, draft 1037, common 1001), not matched. Closing byte-offset addition restores native operand order (76 -> 74). Correcting WaitForPromptAtFar to the adopted target's s32 result restores tutorial argument order (74 -> 72); CountValidEntriesFar also takes its existing s32 result, unchanged score. Remaining: row copies exchanged between ip/sp+4, mode-1 gap*2 spill order, and register choices around the main-loop exit and closing setup. */
 /* Trial (queue3 from 76, none kept): narrow mode-1 index/r3 handoff 442, ordinary index expression input 434. Closing mask before UiWork_Finalize 90; mask and tile before it 115; narrow mask/r5 handoff, readonly or read/write, 141. Reversed pointer addition still76; byte-offset addition74, kept with its measured tag. */
@@ -144,7 +145,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
     if (mode == 0)
         work->window = UiWindow_Create(20, 17, 10, 3, 6);
     else
+#if defined(TBS_EDITION_JA)
+        work->window = UiWindow_Create(23, 17, 7, 3, 6);
+#else
         work->window = UiWindow_Create(22, 17, 8, 3, 6);
+#endif
     work->previous = -1;
     if (mode == 0) {
         num = 0;
@@ -186,7 +191,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
             s32 x = (cnt - work->count) * 24;
             work->entries[cnt].pos_x = x + 155;
             if (mode != 0)
+#if defined(TBS_EDITION_JA)
+                work->entries[cnt].pos_x = x + 179;
+#else
                 work->entries[cnt].pos_x = x + 171;
+#endif
             work->entries[cnt].pos_y = 136;
             cnt++;
         } while (cnt < work->count);
@@ -217,7 +226,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++)
+#if defined(TBS_EDITION_JA)
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + 5 + (col & 3)) = 0xf07f;
+#else
                             *(render->tilemap + (cnt + 17) * 32 + panel * 3 + 4 + (col & 3)) = 0xf07f;
+#endif
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
@@ -227,9 +240,15 @@ s32 Ui_RunSelectionScreen(s32 mode)
                         for (col = 0; col <= 2; col++) {
                             s32 tmp3 = panel * 16 + cnt * 4;
                             gap = count * 3;
+#if defined(TBS_EDITION_JA)
+                            ((u16 *)0x0600fd6e)[panel * 3 + cnt * 32 + (col & 3) - gap] = tmp3 = tmp3 + col + 0x100;
+                            tmp3 = col & 3;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - gap + 23) = 0;
+#else
                             ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - gap] = tmp3 = tmp3 + col + 0x100;
                             tmp3 = col & 3;
                             *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - gap + 22) = 0;
+#endif
                         }
                     }
                 }

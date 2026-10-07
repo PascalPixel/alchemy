@@ -375,6 +375,8 @@
     "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/LOOKUP_SYMBOL.o"(.text .rodata .data .padding)
     "*/recon/tla/de/rom.o"(.rom.000385e0)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/METAENT.o"(.text)
+    "*/games/COMMON/SRC/GRAPHICS/TILE/METATILE.o"(.text)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_NIBBLES.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_LOOP.o"(.text .rodata .data .padding)

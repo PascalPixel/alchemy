@@ -194,6 +194,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/LOOKUP_SYMBOL.o"(.text .rodata .data .padding)
     "*/recon/tbs/de/rom.o"(.rom.000142d0)
+    "*/games/COMMON/SRC/GRAPHICS/TILE/METATILE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_NIBBLES.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_LOOP.o"(.text .rodata .data .padding)

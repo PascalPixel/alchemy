@@ -50,4 +50,4 @@ pub static AGBCC_ARM_SOURCES: &[&str] = &[];
 /// Both games' ARM C: every game C file compiled as ARM goes through stock
 /// agbcc_arm at the library ARM setting, the same compiler as Nintendo's
 /// library ARM code, one option set for the whole class (AGENTS.md K1).
-pub static GAME_ARM_SOURCES: &[&str] = &[];
+pub static GAME_ARM_SOURCES: &[&str] = &["games/COMMON/SRC/GRAPHICS/TILE/METATILE.C"];

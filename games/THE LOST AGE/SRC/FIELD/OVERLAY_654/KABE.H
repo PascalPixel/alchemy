@@ -12,31 +12,47 @@ struct KabeObject {
     s32 y;
     s32 z;
     s32 height;
-    u8 unknown_18[0xb];
+    s32 field_18;
+    s32 field_1c;
+    u8 unknown_20[2];
+    u8 layer;
     u8 priority_flags;
     u8 unknown_24[4];
     s32 speed;
-    u8 unknown_2c[0x29];
+    u8 unknown_2c[0x24];
+    void *sprite;
+    u8 unknown_54;
     u8 motion_flags;
-    u8 unknown_56[0xc];
+    u8 unknown_56[3];
+    u8 collision_flags;
+    u8 unknown_5a[8];
     u8 state;
+    u8 unknown_63[9];
+    void (*update)(struct KabeObject *object);
 };
 
 struct KabeEventWork {
-    u8 unknown_000[0x15a];
+    u8 unknown_000[0x154];
+    s16 exit;
+    u8 unknown_156[4];
     u16 unknown_15a;
     u8 unknown_15c[0x50];
     s32 screen_effect;
 };
 
 struct KabeMapLayer {
-    u8 unknown_00[0xc];
+    u8 unknown_00[8];
+    s32 x;
     s32 y;
     u8 unknown_10[0x28];
 };
 
 struct KabeMapWork {
-    u8 unknown_000[0x108];
+    u8 unknown_000[0x17];
+    u8 low_17 : 2;
+    u8 mode_17 : 2;
+    u8 high_17 : 4;
+    u8 unknown_018[0xf0];
     struct KabeMapLayer layers[3];
 };
 
@@ -136,6 +152,12 @@ static inline void Kabe_ObjPlace(s32 actor, s32 x, s32 z)
     Func_02003a30(actor, x, z);
 }
 
+static inline void Kabe_ObjSetPos(struct KabeObject *object, s32 x, s32 y, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Object_SetPositionAndResetMotion(object, x, y, z);
+}
+
 static inline void Kabe_CamSpeed(s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -190,6 +212,26 @@ static inline void Kabe_ObjEmote(s32 actor, s32 emote)
     Func_02003ab0(actor, emote);
 }
 
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+
+static inline void Kabe_TaskAdd(void (*callback)(void), s32 priority)
+{
+    /* FAKEMATCH: the native builds the priority before it loads the callback. */
+    register s32 p __asm__("r1") = priority;
+
+    Scheduler_AddOrUpdateCallback(callback, p);
+}
+
+#define KABE_TASK_ADD_LATE(callback, priority) \
+    do { \
+        /* FAKEMATCH: the native builds the priority before it loads the callback. */ \
+        register s32 priority_ __asm__("r1"); \
+        priority_ = (priority); \
+        /* FAKEMATCH: a barrier keeps the callback load after the priority. */ \
+        __asm__ volatile("" : : "r"(priority_)); \
+        Scheduler_AddOrUpdateCallback((callback), priority_); \
+    } while (0)
+
 static inline s32 Kabe_FlagChk(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -200,6 +242,12 @@ static inline void Kabe_FlagSet(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     GameFlag_SetBit(flag);
+}
+
+static inline void Kabe_ObjPlaceAt(s32 actor, s32 x, s32 z, s32 angle)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02003a38(actor, x, z, angle);
 }
 
 static inline void Kabe_ObjPlaceTurn(s32 actor, s32 x, s32 z, s32 angle)

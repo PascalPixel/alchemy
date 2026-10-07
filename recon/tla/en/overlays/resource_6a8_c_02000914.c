@@ -39,7 +39,12 @@ void Func_02000914(void)
         Call6(Func_02004404, 0x59, 0, 0x4d, 0x10, 1, 2);
         Call1(GameFlag_SetBit, 0x200);
         Call1(Battle_WaitMode0, 0xa);
-        Call4(Func_020044d4, 8, 0x2080000, 0x1680000, 0x3000);
+        {
+            s32 y = 0x3000;
+            /* FAKEMATCH: the native schedule builds this argument first. */
+            __asm__ volatile("" : "+l"(y));
+            Call4(Func_020044d4, 8, 0x2080000, 0x1680000, y);
+        }
         t8 = Func_02004584();
         FIELD_AT((t8 + 0x55), u8, 0) = t0;
         Call2(Func_0200456c, 0x19999, 0x3333);

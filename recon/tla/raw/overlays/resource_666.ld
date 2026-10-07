@@ -20,7 +20,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_666/S0598.o"(.text)
         "*/resource_666_overlay.o"(.text.x020085b8)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_666/PREPARE.o"(.text)
-        "*/resource_666_overlay.o"(.text.x02008738)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_666/S0738.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_666/IMPORT.o"(.text)
         "*/resource_666_overlay.o"(.rodata.x02008be4)
     }

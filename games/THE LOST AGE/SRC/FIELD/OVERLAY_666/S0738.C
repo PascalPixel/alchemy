@@ -59,7 +59,12 @@ void Func_02000738(void)
             Call3(Func_02000b34, 0x1f, 0, 5);
             Func_02000b5c(0x20, 0x100, 0x1e);
             Call3(Func_02000b34, 0x20, 0, 5);
-            Call3(Func_02000b5c, 0x1f, 0x109, 0x1e);
+            {
+                s32 b = 0x109, c = 0x1e;
+                /* FAKEMATCH: the native schedule sets the first argument last. */
+                __asm__ volatile("" : "+l"(b), "+l"(c));
+                Call3(Func_02000b5c, 0x1f, b, c);
+            }
             Call3(Func_02000b34, 0x1f, 0, 5);
             Func_02000b5c(0x20, 0x102, 0x1e);
             Call3(Func_02000b34, 0x20, 0, 5);

@@ -65,7 +65,7 @@ void Func_02000188(void)
     t29 = Value1(Object_GetById, 0x21);
     FIELD_AT((t29 + 0x5a), u8, 0) = (1 | FIELD_AT((t29 + 0x5a), u8, 0));
     Call1(Battle_WaitMode0, 0xf);
-    Call3(Func_02002b1c, 0x20, 0x109, 0x1e);
+    Func_02002b1c(0x20, 0x109, 0x1e);
     Call3(Func_02002aec, 0x20, 0, 5);
     Call3(ObjectMotion_ArmCallback, 0x20, 0xb000, 0);
     Call2(Func_02002b04, 0x21, 0xd000);

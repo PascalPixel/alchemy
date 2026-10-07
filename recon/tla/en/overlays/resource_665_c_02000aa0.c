@@ -113,7 +113,12 @@ void Func_02000aa0(s32 a0)
     Call2(Motion_SetVarCbAndRefresh, 0x1f, 2);
     Call1(Battle_WaitMode0, 0xa);
     Call3(Func_02001c84, 0x1f, 0, 0xa);
-    Call3(Func_02001ca4, 0x21, 0x102, 0x1e);
+    {
+        s32 y = 0x102, z = 0x1e;
+        /* FAKEMATCH: the native schedule sets the second and third arguments before the first. */
+        __asm__ volatile("" : "+l"(y), "+l"(z));
+        Call3(Func_02001ca4, 0x21, y, z);
+    }
     Call3(ObjectMotion_ArmCallback, 0x21, 0x3000, 0);
     Call1(Battle_WaitMode0, 0x28);
     Call2(Motion_SetVarCbAndRefresh, 0x21, 2);

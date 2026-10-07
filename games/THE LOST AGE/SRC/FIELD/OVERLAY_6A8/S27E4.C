@@ -23,7 +23,7 @@ void Func_020027e4(void)
         t1 = Value1(GameFlag_Test, 0x109);
         if (t1 == 0) {
             Func_0200279c(0x10, 0x218, 0x168, 0);
-            Call4(Func_0200279c, 0x11, 0x218, 0x1a8, 1);
+            Func_0200279c(0x11, 0x218, 0x1a8, 1);
             Call4(Func_0200279c, 0x12, 0x244, 0x1a4, 2);
             Call1(WaitFrames, 1);
             Call2(ObjectMotion_EnableActionAndSetCallback, 0x10, (s32)Data_020047ac);

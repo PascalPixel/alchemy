@@ -26,7 +26,10 @@
  * Trial: petal cell written in each call, not a block local: second petal
  * block 2253, both blocks 2252 (kept).
  * Trial: palette colour as s32, not u16 (u16 loads with ldrsh): 2238, kept;
- * u16 with red computed first: 2252.
+ * u16 with red computed first: 2252. Through a volatile u16 pointer with
+ * a u16 colour: ldrh and the pool-loaded 0x1f mask appear as native, but
+ * red still masks the shifted colour (0x1f0000) instead of the loaded
+ * one (2202, not kept); (u16)c for blue and green only: 2202.
  * Trial: spark velocities from their own zero variable, not the ramp
  * limit: the counter takes r7 and the zero r8 as native's (2207, kept);
  * literal 0 and 255 are not hoisted and 255 becomes lsls/subs (2264).

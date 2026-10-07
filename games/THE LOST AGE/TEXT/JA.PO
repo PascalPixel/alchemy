@@ -33855,7 +33855,7 @@ msgctxt "MsgGabombaChannelTiming"
 msgid "08461"
 msgstr "たんじゅんにケーブルを{line_break}つなげた だけでは{line_break}ダメなようじゃ・・・{page_break}もしかしたら 2しょくの光が{line_break}ちゅうしんに とうたつする{line_break}タイミングが カギかもしれん。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldByReachingThisPlaceYou"
 msgid "08462"
 msgstr "よくぞ ここまでたどりついた。{end_wait}"
 

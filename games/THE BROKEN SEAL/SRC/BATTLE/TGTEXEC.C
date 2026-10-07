@@ -1150,12 +1150,12 @@ pow_end:
 
     if (target->hp != 0) {
         if (target->sleep != 0)
-        if (target->sleep <= 6
-            && dealt > 0 && (3 & BattleRandom16Far()) == 0) {
-            target->sleep = 0;
-            BtlEvPush(BEV_UNIT, tid);
-            MES_PUSH(MsgWakes);
-        }
+            if (target->sleep <= 6
+                && dealt > 0 && (3 & BattleRandom16Far()) == 0) {
+                target->sleep = 0;
+                BtlEvPush(BEV_UNIT, tid);
+                MES_PUSH(MsgWakes);
+            }
     }
     Sys_Free(bak);
     Owner_RecalculateStatsFar(tid);

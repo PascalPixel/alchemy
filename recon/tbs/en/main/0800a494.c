@@ -1,5 +1,36 @@
-/* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1,
-   agbcc/camelot_arm). Route decision (2026-10-07), this draft under agscc
+/* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1:
+   stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   2026-10-07 (S12 session 1): listing 307, draft 301, common 292, differ
+   24, from 107. The smull asm made volatile, a scheduling barrier: each
+   velocity store stays before the next smull, so the speed-limit and
+   deceleration tails cross-jump as listed and the acceleration and
+   speed-limit blocks match (112 alone: reload's round-robin registers
+   moved and arrival cases 16 and 18 stopped sharing a tail); then case
+   17's sign test in the order cases 16 and 18 use, (obj->y - target) ^
+   (y - target), found by alchemy permute --arm (5 minutes): 24.
+   What remains (24): the six veneer instructions (an assembly file of
+   three 8-byte far-call stubs and their pool, after the function and
+   before Object_UpdateAllEnd, called by bl); wait-- loads its halfword
+   into r2 ahead of the cmp (native r3 after it: combine keeps the HImode
+   load of wait ahead of the ldrsh and sched1 puts it before the compare,
+   so it conflicts with the tested value); z's load fills the frozen
+   test's ldrb delay (native after the cmp); the acceleration's two
+   velocity loads are hoisted above the orr (native after it); the bounce
+   holds velocity_y in r3 and bounce in r1 (native r2, r3: smull r2, r3,
+   r3, r2). All are order or register choice.
+   The smull's constraints are now plain "=r", "=r", "r", "r" (24, as with
+   the two tied or early-clobbered alternatives; two alternatives tying
+   both outputs to the inputs: 94).
+   Trials (S12 session 1): smull, lsl and orr as one volatile asm 250,
+   non-volatile 244 (the native cross-jumps between the smull and its lsl,
+   so they are separate insns); volatile smull with both halves
+   early-clobbered or neither 112 each; an empty volatile asm after the
+   or inside MulQ16 98 (stack slots and registers move throughout);
+   velocity_x = velocity_x + MulQ16 (24), MulQ16 + velocity_x (28).
+   alchemy diff --arm --rtl fails (agbcc_arm's cpp0 refuses
+   -fsched-verbose=5); the dumps come from agbcc_arm -da on the .i.
+   Earlier sessions follow.
+   Route decision (2026-10-07), this draft under agscc
    -marm with the game options: differ 468; with -mno-apcs-frame 463; with
    -mno-apcs-frame -ffixed-fp 461.
    alchemy diff --camelot-arm, upstream's whole arm_adjust_cost
@@ -93,11 +124,10 @@ static __inline__ s32 MulQ16(s32 a, s32 b)
     s32 lo;
     s32 hi;
 
-    /* The native smull writes its low and high words to unpaired registers
-       (r1/r3, r2/r0); a 64-bit product takes a register pair. */
-    /* RdHi tied to Rs or early-clobbered: camelot_arm 195 to 172. */
-    /* FAKEMATCH: unpaired smull halves; agbcc_arm differ 479 as s64, 278 */
-    __asm__("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
+    /* The native smull writes unpaired halves (r1/r3, r2/r0, and r2/r3 over
+       r3/r2 at the bounce); a 64-bit product takes a register pair. */
+    /* FAKEMATCH: unpaired smull halves (s64 479, asm 278); volatile keeps stores before the next smull (107 to 24) */
+    __asm__ __volatile__("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b));
     return ((u32)lo >> 16) | (hi << 16);
 }
 
@@ -229,7 +259,7 @@ void Object_UpdateAll(void)
             break;
         case 17:
             if (y == obj->target_y ||
-                ((y - obj->target_y) ^ (obj->y - obj->target_y)) < 0)
+                ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
                 reached = 1;
             break;
         case 18:

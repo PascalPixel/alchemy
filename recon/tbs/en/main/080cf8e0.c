@@ -1,8 +1,88 @@
-/* Draft: native 670 instructions, draft 670, common 670, differ 0, but
- * NOT adoptable yet: two devices change instruction selection, not only
- * order or registers (S2): the dead repeated hit test (step) and the
+/* Draft: native 670 instructions, draft 670, common 670, differ 0 in all
+ * six editions (en, it at 080cf8e0; ja 080c68e0; de 080d16e0; es, fr
+ * 080d30e0), but NOT adoptable yet: one device still changes instruction
+ * selection, not only order or registers (S2): the
  * __asm__ __volatile__("" ::) CSE flush (burst address). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Sixteenth pass (2026-10-07): the burst loop in the k loop's own form,
+ * i = 0; if (count != 0) do { ... i++; } while (i != count);, without the
+ * flush 171 (the body's CSE1 block still starts at the loop's top label,
+ * so group = k * 4 and group * 8 share it). Still blocked on Pascal's
+ * ruling: a one-pass do { } while (0) or a test CSE1 decides (the step's
+ * frame >= k * 8 + 17 if/else is one) are the only forms found for both
+ * boundaries, and both change selection.
+ * Fifteenth pass (2026-10-07): the burst boundary's possible sources,
+ * read from cse.c. cse_end_of_basic_block ends a path only at a
+ * CODE_LABEL, a NOTE_INSN_LOOP_END or a NOTE_INSN_SETJMP; cse_basic_block
+ * runs on past a label only when its uses fall to zero. The burst body's
+ * path starts with an empty table at the loop's top label (one use from
+ * the rotated bottom test; the guard's AROUND scan meets that label), and
+ * native has no instruction between that label and the address, so
+ * whatever separates group = k * 4 from group * 8 must leave no code: a
+ * loop end, or a label whose other use CSE1 folds away, i.e. a test CSE1
+ * decides from what the path holds there, which is only group and k
+ * (count, i and the records byte are unknown at the label). Hence no
+ * plain statement and no natural test: the form is a one-pass loop (as
+ * a do { } while (0) macro), a tautology, or something not yet imagined.
+ * A memory group (its load killed by the Random16 calls, so PRE leaves
+ * it) would also match the body, but its slot would be a declared
+ * local's, not the reload slot native's sp+24 is (the fourth pass's
+ * volatile group, 463). Precedent for Pascal: adopted ☀️ code keeps
+ * FAKEMATCH one-pass blocks as order devices (WAVES.C, STARFLD.C,
+ * SENTOU_KOUKA_GOUSEI_BUILD.C); this one would change selection (k << 5
+ * and a reduced pointer without it), which S2 does not admit.
+ * Fifteenth-pass trials (no flush): const s32 group = k * 4 171.
+ * Permuter (5 minutes, --heat, no flush): 45, by one temporary shared
+ * between the index (tmp = group * 8 + i) and the z copy, so the index is
+ * set twice and loop.c finds no giv; CSE1 still makes k << 5 (the burst
+ * preheader is the whole 45). Not taken: noise, and the fold remains.
+ * Fourteenth pass (2026-10-07): the burst flush's mechanism is the step's.
+ * Native PRE hoisted k << 2 but not group << 3, so group's set and
+ * group << 3 shared one GCSE basic block (group killed group << 3) while
+ * CSE1 saw them in two blocks: the boundary between them existed at CSE1
+ * and was gone by the jump pass that follows it. Two kinds of source make
+ * such a boundary: a loop end (any one-pass loop, even an empty
+ * do { } while (0)), or an if/else that CSE1 decides, whose then-arm's
+ * jump to the join keeps the join label used (cse_basic_block's
+ * --LABEL_NUSES (to) == to_usage test then ends the block there; with no
+ * else arm the folded jump was the join's only use and CSE runs on past
+ * it, which is why the twelfth pass's if (group != k * 4) burst = 0 gave
+ * 171). The body's CSE1 block starts empty at the loop's top label, so a
+ * test CSE1 can decide there can only be about group, k or i, i.e. a
+ * tautology; no natural decided test was found.
+ * Fourteenth-pass trials (burst flush replaced, step as the thirteenth
+ * pass): if (group == k * 4) burst = 0; else burst = gBursts; 0 (the
+ * mechanism, not source); an empty do { } while (0) between group's set
+ * and the address 0 (a device that changes selection); group =
+ * BurstGroup(k), a static __inline__ returning k * 4, 171 (integration
+ * leaves no label); the loop test i != count && (count == 4 || count == 16)
+ * 339.
+ * Thirteenth pass (2026-10-07): the step's dead repeated test is replaced
+ * by Camelot's own hit-sound habit. After the hit's
+ * ObjectGroup_UpdateMembers, the sibling effects choose the sound by a
+ * frame threshold: TWELVE_MODE.C, UpdateMembers(actors[0], 7, 5, 0, 8)
+ * then if (frame > ...) BattleEventRuntime_BeginPhaseFar(133) else
+ * AudioCommand_PlayFar(133); also TWELVE_MODE.C's mode == 8 choice,
+ * APPROACH.C and MEMBERFX.C. Here the threshold is the hit frame itself,
+ * if (frame >= k * 8 + 17) ... else AudioCommand_PlayFar(133), which the
+ * hit test decides (frame and k * 8 + 17 share a CSE class, so GE folds
+ * true): the else arm leaves no code, and its label inside the hit block
+ * stops CSE1's AROUND path exactly as the twelfth pass's dead test did.
+ * The template reading is reconstruction, not recovered; whether a
+ * template threshold the enclosing test decides counts as source (no
+ * FAKEMATCH tag) is Pascal's call before adoption.
+ * Thirteenth-pass trials (step, each with the burst flush kept): the same
+ * if/else on frame >= k * 8 (the outer test) 0, frame <= k * 8 + 17 0,
+ * frame == k * 8 + 17 0; frame > k * 8 109, frame != k * 8 109,
+ * frame > 16 114 (CSE1 decides only a comparison it recorded or one whose
+ * operands share a class; the undecided else arm leaves a PlayFar call).
+ * Burst, without the flush: the whole burst body as a static __inline__
+ * BurstSet(shot, k * 4, i, mode) 171 (integration adds no block boundary
+ * between the group argument and group * 8). Observation: native reloads
+ * k << 2 from sp+24 in the loop, which a spilled PRE register explains;
+ * the boundary CSE1 needs between group = k * 4 and group * 8 is still
+ * only a loop end (the do { group = k * 4; } while (0) of the ninth pass)
+ * or a label with a use from outside the path.
  * Twelfth pass (2026-10-07): the step flush's mechanism is found and the
  * asm is gone. cse_end_of_basic_block takes the AROUND path over the hit
  * block only when no CODE_LABEL lies between the hit test's jump and the
@@ -534,13 +614,11 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                     struct EffectStep *shot = &gShots[k * 16];
 
                     if (frame == k * 8 + 17) {
-                        /* FAKEMATCH: dead repeated test, not admissible as is (it changes
-                           selection, see header): its label inside the hit block stops
-                           CSE pass 1 from skipping the block, so native's k << 3 and
-                           gShots + k * 448 are recomputed after it (451 -> 0). */
-                        if (frame == k * 8 + 17)
-                            ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
-                        BattleEventRuntime_BeginPhaseFar(133);
+                        ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
+                        if (frame >= k * 8 + 17)
+                            BattleEventRuntime_BeginPhaseFar(133);
+                        else
+                            AudioCommand_PlayFar(133);
                     }
                     if (gShots[k * 16].variant >= 0) {
                         s32 step = (frame - k * 8) / 3;

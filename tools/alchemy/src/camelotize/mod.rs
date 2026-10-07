@@ -10,7 +10,7 @@ mod stabs;
 mod tagged;
 pub(crate) mod trial;
 
-use crate::compiler::routing::{root, COMMON_INCLUDE_MODULES};
+use crate::compiler::routing::{family_for_source, root, CompilerFamily, COMMON_INCLUDE_MODULES};
 use crate::targets::{target_for, DecompTarget, DecompTargetId};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
@@ -25,10 +25,13 @@ nothing. REWRITE is one of:
   declarations  a file's own declarations of functions a header declares,
                 replaced by an include of that header
   barriers      FAKEMATCH-tagged empty asm barriers, with their tag
-  numbers       hex literals below 0x1000 that are quantities, in decimal,
-                in code only; #define bodies, masks, bit operands, flag ids
-                (every argument of a call or macro named for a flag) and
-                everything from 0x1000 up stay hex
+  numbers       hex literals below 0x1000 in decimal, only where the code
+                shows a quantity: an argument of an EVENT.H scene command, a
+                loop bound compared with its counter, a constant array
+                index, or plain arithmetic with no bit operation, register
+                or fixed address in the statement or on its variables; case
+                labels, stores, register words, flags, masks, packed pairs
+                and everything from 0x1000 up stay hex
   casts         value casts and pointer casts the compiler does not need:
                 each removal is compiled and assembled for English (for
                 every edition inside an #if block), and kept only when the
@@ -38,9 +41,10 @@ nothing. REWRITE is one of:
                 a != b, parentheses around one name or number, an else
                 after a block that returns, flattened, and empty
                 statements; each proved the same way as casts
-numbers, casts and idioms leave FAKEMATCH-tagged statements and blocks and
-every statement holding asm untouched. Struct layouts and types come from
-the build's own compiler for each game the file builds in. Then run a bare
+numbers, casts and idioms leave FAKEMATCH-tagged statements and blocks,
+every statement holding asm and Nintendo's library files untouched.
+Struct layouts and types come from the build's own compiler for each game
+the file builds in. Then run a bare
 `alchemy keep`, with no paths: it keeps only the files whose edits leave all
 twelve editions byte-identical (a path given to keep is held, not checked)."#;
 
@@ -54,6 +58,16 @@ fn games(file: &Path) -> Vec<DecompTarget> {
         found.push(target_for(DecompTargetId::TlaJa));
     }
     found
+}
+
+/// Whether the file is Nintendo's library code (K1's library routes): not
+/// Camelot's, so never camelotized.
+fn library(root: &Path, file: &Path) -> bool {
+    let Ok(relative) = file.strip_prefix(root) else {
+        return false;
+    };
+    let relative = relative.to_string_lossy();
+    games(file).iter().any(|target| family_for_source(target.compiler, &relative) != CompilerFamily::Game)
 }
 
 fn search(root: &Path, target: DecompTarget) -> Vec<PathBuf> {
@@ -233,7 +247,11 @@ fn one(root: &Path, rewrite: &str, name: &str) -> Result<Option<(PathBuf, String
             declarations::rewrite(&text, &declarations::index(root, target)?)
         }
         "barriers" => barriers::rewrite(&text),
-        "numbers" => numbers::rewrite(&text),
+        "numbers" | "casts" | "idioms" if library(root, &file) => {
+            eprintln!("{name}: skipped: Nintendo library code");
+            return Ok(None);
+        }
+        "numbers" => numbers::rewrite(&text, &numbers::scene_commands(root)),
         "casts" | "idioms" => match if rewrite == "casts" {
             casts::rewrite(root, &file, &text, &games(&file))
         } else {

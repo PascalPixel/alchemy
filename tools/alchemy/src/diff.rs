@@ -189,6 +189,22 @@ fn study_assembly(step: &[String], root: &Path) -> Result<String, String> {
 }
 
 pub(crate) fn normalize(objdump: &str) -> Vec<String> {
+    normalize_with(objdump, &relocations(objdump))
+}
+
+/// Each relocation objdump -r prints, as (address, symbol).
+fn relocations(objdump: &str) -> BTreeSet<(u32, String)> {
+    objdump
+        .lines()
+        .filter_map(|line| {
+            let (address, rest) = line.trim_start().split_once(": R_")?;
+            let at = u32::from_str_radix(address, 16).ok()?;
+            Some((at, rest.split_whitespace().nth(1)?.to_string()))
+        })
+        .collect()
+}
+
+fn normalize_with(objdump: &str, relocated: &BTreeSet<(u32, String)>) -> Vec<String> {
     objdump
         .lines()
         .filter_map(|line| {
@@ -202,7 +218,13 @@ pub(crate) fn normalize(objdump: &str) -> Vec<String> {
                 return Some(mnemonic.to_string());
             }
             let mut out = if is_branch(mnemonic) && !operands.is_empty() {
+                // A Thumb branch just before a relocated literal word: objdump
+                // reads the word's relocation as the branch's own and prints
+                // the offset itself against that symbol (`3d0 <Msg+0x3d0>`).
+                let symbol = operands.get(1).map(|w| w.trim_start_matches('<').split('+').next().unwrap_or(""));
+                let misread = symbol.is_some_and(|s| relocated.contains(&(at + 2, s.to_string())));
                 match u32::from_str_radix(operands[0].trim_start_matches("0x"), 16) {
+                    Ok(target) if misread => format!("{mnemonic} {:+}", i64::from(target)),
                     Ok(target) => format!("{mnemonic} {:+}", i64::from(target) - i64::from(at)),
                     Err(_) => text.to_string(),
                 }
@@ -283,12 +305,13 @@ pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<Str
 pub(crate) fn normalize_located(objdump: &str) -> Vec<(String, Option<(String, u32)>)> {
     let mut at: Option<(String, u32)> = None;
     let mut out = Vec::new();
+    let relocated = relocations(objdump);
     for line in objdump.lines() {
         if let Some(location) = source_location(line) {
             at = Some(location);
             continue;
         }
-        out.extend(normalize(line).into_iter().map(|row| (row, at.clone())));
+        out.extend(normalize_with(line, &relocated).into_iter().map(|row| (row, at.clone())));
     }
     out
 }
@@ -608,6 +631,14 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_branch_before_a_relocated_literal_keeps_its_offset() {
+        let objdump = "    1b94:\tbl\t0 <Owner>\n    1b96:\tb.n\t3d0 <MsgDefUp+0x3d0>\n\t...\n\t\t\t1b98: R_ARM_ABS32\tMsgDefUp\n    1f66:\tb.n\t1b96 <F+0x1b96>\n";
+        assert_eq!(normalize(objdump), vec!["bl", "b.n +976", "b.n -976"]);
+        let rows: Vec<String> = normalize_located(objdump).into_iter().map(|(row, _)| row).collect();
+        assert_eq!(rows, vec!["bl", "b.n +976", "b.n -976"]);
+    }
 
     #[test]
     fn scaffold_bounds_use_symbols_and_refuse_arm_or_unknown_modes() {

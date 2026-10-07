@@ -1,4 +1,9 @@
 /* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1665.
+ * The projection input uses the existing FixedPointPosition type: its
+ * verified x/y/z offsets0/4/8 and size12 fit this fixed-point input exactly.
+ * Generated instructions are unchanged from point[3]. Matrix-first stays
+ * 2040/1808 with that type; combine it with the native affine sl term:
+ * 2042/1846/frame772, so no new register binding is retained.
  * Shadow follow-ups, none kept: observing the whole depth array in the
  * memory input2037/1805; matrix local inside the draw2040/1808/frame772;
  * named point pointer2039/1807, opaque before projection2041/1819, short
@@ -280,6 +285,7 @@
 #include "BTLDISP.H"
 #include "IWRAM_CALL.H"
 #include "TRANSFORM.H"
+#include "FIXED_POINT_POSITION.H"
 #include "RESOURCE_IDS.H"
 #include "text/MSG_IDS.H"
 
@@ -327,7 +333,7 @@ void LuckyDice_Run(void)
     u16 palette[256];
     s32 depth[4];
     s32 results[4];
-    s32 point[3];
+    struct FixedPointPosition point;
     s32 proj[3];
     /* FAKEMATCH: native frame keeps 32 unused bytes at sp+168..200, between proj and the affine halfwords */
     s32 unused[8];
@@ -751,10 +757,10 @@ void LuckyDice_Run(void)
         for (i = 0; i != 2; i++) {
             s32 dep;
 
-            point[1] = 0;
-            point[0] = work->particles[i].x;
-            point[2] = work->particles[i].z;
-            Render_ProjectPoint(point, proj);
+            point.y = 0;
+            point.x = work->particles[i].x;
+            point.z = work->particles[i].z;
+            Render_ProjectPoint(&point, proj);
             if (proj[2] < 0x15e) {
                 proj[2] = 0x15e;
             }

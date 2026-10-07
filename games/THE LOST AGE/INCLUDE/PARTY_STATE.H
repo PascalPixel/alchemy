@@ -28,7 +28,9 @@ struct PartyState {
     u8 active_owners[8];
     u8 unknown_220[0xa];
     u8 battle_fx_enabled;
-    u8 unknown_22b[0x15];
+    u8 unknown_22b;
+    u8 event_mode;
+    u8 unknown_22d[0x13];
     u16 packed_events[2];
     u8 unknown_244[7];
     u8 battle_rule_24b;

@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r2, [r0, #80]
-	movs r3, #0
-	strb r3, [r2, #26]
-	movs r0, #1
-	bx lr
-	.2byte 0x0000
 	.section .text.x02008060,"ax",%progbits
 	.global Func_02000060
 	.thumb_func
@@ -88,20 +78,6 @@ Func_020000b0:
 	pop {r5, r6, pc}
 .L_020080fc:
 	.4byte gPartyState
-	.section .text.x02008100,"ax",%progbits
-	.global Func_02000100
-	.thumb_func
-Func_02000100:
-	push {lr}
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #9
-	bl GameFlag_SetBit
-	movs r0, #19
-	movs r1, #0
-	movs r2, #0
-	bl Func_0200058c
-	pop {pc}
 	.section .text.x02008120,"ax",%progbits
 	.global Func_02000120
 	.thumb_func

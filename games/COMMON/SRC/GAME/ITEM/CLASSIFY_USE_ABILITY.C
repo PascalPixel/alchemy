@@ -76,7 +76,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
        window call's stack argument before its register arguments (differ
        10 without it, the table held at 379 buckets). */
     do {
-        page =((struct MenuCell *)gWindowWork[42])->page;
+        page = ((struct MenuCell *)gWindowWork[42])->page;
         row = ((struct MenuCell *)gWindowWork[42])->row;
         preferred = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     } while (0);
@@ -104,11 +104,16 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         sprites[index].oam.f.tile = Resource_GetBuffer(slot, -1);
     }
     count = Trade_ListFlaggedEntriesFar(available);
+    /* FAKEMATCH: instruction order only (block placement and schedule):
+       with the first scan's exit inside this one-pass block, loop.c's
+       find_and_verify_loops finds no barrier at depth 0 and leaves the
+       main loop's select block in place, as the native has it (without
+       the block it moves after the scan: differ 224, 6 branches fewer);
+       inside it, count and used are stored before count - 1 is built
+       (differ 2 with used = 0 before the block). */
     do {
         s32 i;
 
-        /* FAKEMATCH: instruction order only: in the one-pass block count
-           and used are stored before count - 1 is built (differ 4). */
         used = 0;
         for (i = count - 1; i >= 0; i--) {
             const struct SummonDefinition *s;
@@ -137,14 +142,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     }
     ordered[used] = 32;
 
-    /* FAKEMATCH: instruction order only (block placement): with the exit
-       inside an enclosing loop, loop.c finds no barrier at the exit's
-       depth and keeps the select block inline, as the native does; the
-       block ends after the cleanup, so its loop sets the count before the
-       pointer (differ 2 when it ends before the cleanup). */
-    do {
-    for (;;)
-    {
+    for (;;) {
         cur = &cursor;
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
@@ -353,7 +351,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         WaitFrames(1);
     }
-
     WaitFrames(1);
     for (index = 0; index < 4; index++)
         Resource_ResetEntry(handles[index]);
@@ -362,7 +359,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     UiWork_Finalize(description, 1);
     UiWork_Finalize(window, 1);
     WaitFrames(1);
-    } while (0);
     return result;
 }
 #endif

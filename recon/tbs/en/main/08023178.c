@@ -1,14 +1,29 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1362, differ 59.
+ * Native 1392 instructions, draft 1392, common 1372, differ 40.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
- * the stat pushes, the djinn rows and the condition list match.
+ * the stat pushes, the djinn rows, the condition list and the condition
+ * loads match.
  * Remaining: the four (s8)m < 0 modifier tests (lsr #7, beq where
- * native has lsl #24, bge); the condition loads' sign extension
- * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
- * saved/pointer pair (r5/r6 swapped) and code = 0 set before
- * Runtime_BumpAllocate where native sets it after; one long branch two
- * bytes short (the one instruction the condition loads lack).
+ * native has lsl #24, bge); the help block's saved/pointer pair (r5/r6
+ * swapped) and code = 0 set before Runtime_BumpAllocate where native
+ * sets it after.
+ *
+ * Session 7 2026-10-07: the condition loads as a plain
+ * for (j = 0; j < i; j++) f(sel[j], tbl[j]) 59 -> 40: loop.c reduces
+ * both addresses and reverses j itself (native's i > 0 guard, count-down
+ * r4 and ldmia), and the byte load, lsl and asr stay three insns into r0
+ * as native, with the long branch now native's. Modifier diagnosis: an
+ * s8 local is promoted to SImode zero-extended (ARM PROMOTE_MODE), so
+ * m's ldrb r1 is native's; native's first test (ldrb r1, then the
+ * sign-extending ldrb/lsl/asr with dest == base) is combine's split of
+ * the three-insn PARALLEL (m kept, sign_extend (mem) for the test),
+ * which the draft already reproduces. Native's second test recomputes
+ * (ashift m 24), so CSE did not carry the first test's ashift across the
+ * then-block: here cse_end_of_basic_block skips the then-block (AROUND,
+ * label with one use, no label inside), marks the next block QImode and
+ * so processes the second test only on the path that knows the ashift.
+ * s8 m with m > 0, m < 0 182 (one ldrsb for both).
  *
  * Session 6 2026-10-07: the second modifier test is native's (lsls r3,
  * r1, #24; cmp; bge) once the first test's sign-extended read of the
@@ -351,7 +366,6 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 defDelta;
     s32 i;
     s32 j;
-    s8 *out;
     s32 code;
     s32 atkDelta;
     s32 redraw;
@@ -805,15 +819,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     } while (0);
                 }
 
-                if (i > 0) {
-                    j = i;
-                    q = tbl;
-                    out = sel;
-                    do {
-                        Resource_LoadTableEntryToBuffer(*out, *q++);
-                        j--;
-                        out++;
-                    } while (j != 0);
+                for (j = 0; j < i; j++) {
+                    Resource_LoadTableEntryToBuffer(sel[j], tbl[j]);
                 }
                 if (i == 0) {
                     sel[0] = 0;

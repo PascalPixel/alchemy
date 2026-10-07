@@ -1,6 +1,20 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 947, common 882, differ 129; frame 372
+ * Native 946 instructions, draft 944, common 901, differ 88; frame 372
  * as native's, and every compiler temporary's slot now at native's offset.
+ * Session 11: the description reads its summon into a block-local s,
+ * the draw loop's columns are indexed (summon->djinn_required[element])
+ * and y = index * 2 follows the glyph call: 129 -> 88. Native's
+ * description summon is r6 (tied to the mask loop's required) while the
+ * draw loop's summon is spilled at 36, so they are two variables; with
+ * the columns indexed loop.c makes their pointer after GCSE, which no
+ * longer shares summon + 4 with the scan's first test, and the scan's
+ * pointer starts before that test as native's. Each step alone: indexed
+ * columns 661 (summon then takes r8 everywhere, frame 368); block-local
+ * description summon 615 (frame 376); both 191 (row r8 against native's
+ * r10); y after the call as well 88, y then in r8 as native's. Bucket
+ * count 379 throughout. From 88: the tile store indexed
+ * (sprites[index].oam.f.tile = glyph) 121, the setup loop hoists its
+ * constants again (sprite's last use gone).
  * Session 10: the handle loop is indexed (sprites[index].oam.f.tile, as
  * native's base r7, offset from 8 and mask r8 show), the cursor is drawn
  * through its own pointer cur (cur = &cursor at the top of the main
@@ -576,15 +590,16 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
                 window->width - 2, 1, 15);
             Ui_FillVramBlockPattern();
-            summon = SummonDefinition_Get(ordered[page + row]);
-            UiText_CopyMessageString(summon->name_message_id + (s32)&MsgAbilityDescription, text, 52);
-            UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
-            drawn_row = row;
-            mask = 0;
             {
+                const struct SummonDefinition *s;
                 s32 element;
 
-                required = summon->djinn_required;
+                s = SummonDefinition_Get(ordered[page + row]);
+                UiText_CopyMessageString(s->name_message_id + (s32)&MsgAbilityDescription, text, 52);
+                UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
+                drawn_row = row;
+                mask = 0;
+                required = s->djinn_required;
                 for (element = 0; element <= 3; element++) {
                     if (*required++ != 0)
                         mask |= 1 << element;
@@ -615,22 +630,20 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                                 break;
                         }
                         affordable = element == 4;
-                        y = index * 2;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
+                        y = index * 2;
                         sprite = &sprites[index];
                         sprite->oam.f.tile = glyph;
                         if (!affordable)
                             UiWork_SetParamNibble(2);
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
                             (struct RenderInput *)window, 16, index * 16);
-                        required = summon->djinn_required;
                         for (element = 0; element <= 3; element++) {
-                            if (*required != 0) {
+                            if (summon->djinn_required[element] != 0) {
                                 UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col * 2 + 13, y, 0);
-                                UiWindow_PutGlyph(window, *required + 48, col * 2 + 14, y, 0);
+                                UiWindow_PutGlyph(window, summon->djinn_required[element] + 48, col * 2 + 14, y, 0);
                                 col++;
                             }
-                            required++;
                         }
                         UiWork_SetParamNibble(15);
                         visible[index++] = 1;

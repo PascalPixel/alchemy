@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3290,
- * differ 320.
+ * alchemy diff: listing 3450 instructions, draft 3448, common 3336,
+ * differ 226.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -93,8 +93,18 @@
  * heal or old read through an s16 or u16 pointer keeps 320; the block's
  * declaration order changes nothing. A memory-clobbering asm barrier
  * after old splits the load and keeps r2 (327: old's ldrh then comes
+
  * first, before the action load, where the listing has it last); after
- * heal, with heal read first, 328; an empty asm("") changes nothing. */
+ * heal, with heal read first, 328; an empty asm("") changes nothing.
+ * The rate switch's 409 test: rate 9 is two case groups, 408 in one and
+ * 410 in the other (here 398 390 408 382, then 392 410), 226 (draft
+ * 3448, common 3336). The rate switch then matches: as two labels, 408
+ * and 410 keep the second test of the 409 node until after combine, so
+ * 409 stays a register and is derived from 411 (subs r3, #2); in one
+ * group the second test goes early and 409 becomes a reload in r2. Every
+ * split of the six into two groups that parts 408 from 410 gives 226;
+ * 410 and 408 together in a group of their own 290, 410 alone 322, 408
+ * alone 341 (a lone case's rate is set before its test). */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -698,7 +708,10 @@ after_power:
                     case 407: case 400: case 397: case 389: case 384: case 381:
                         rate = 6;
                         break;
-                    case 398: case 392: case 390: case 410: case 408: case 382:
+                    case 398: case 390: case 408: case 382:
+                        rate = 9;
+                        break;
+                    case 392: case 410:
                         rate = 9;
                         break;
                     case 402:

@@ -229,6 +229,14 @@ pub(crate) fn analyze(
             }
         } else if w & 0x0E00_0000 == 0x0800_0000 {
             let list = w as u16;
+            // Off sp, Camelot's compilers write a multiple back only in a
+            // block copy, whose list runs from r0, or for a doubleword pair.
+            let count = list.count_ones();
+            let from_r0 = u32::from(list) == (1 << count) - 1;
+            let pair = count == 2 && list >> list.trailing_zeros() == 0b11;
+            if bit(21) && rn != 13 && !from_r0 && !pair {
+                bump(&mut e.markers, "multiple-writeback");
+            }
             if bit(20) {
                 if list & (1 << 15) != 0 {
                     if bit(22) {
@@ -310,6 +318,10 @@ pub(crate) fn analyze(
                     }
                 } else {
                     written = 1 << rd;
+                    // movs rd, rm: their copy-and-test is subs rd, rm, #0.
+                    if w & 0x0FF0_0FF0 == 0x01B0_0000 {
+                        bump(&mut e.markers, "movs-unshifted");
+                    }
                     if w & 0x0FFF_FFFF == 0x01A0_E00F {
                         link = true;
                     } else if w & 0x0FFF_FFFF == 0x01A0_C00D && index == 0 {
@@ -894,6 +906,15 @@ mod tests {
         assert_eq!(markers(&[0xE08F_F100]), ["pc-computed"]); // add pc, pc, r0, lsl #2
         assert_eq!(markers(&[0xE28F_0001, 0xE12F_FF10]), ["pc-interwork"]); // add r0, pc, #1; bx r0
         assert_eq!(markers(&[0xE25E_F004]), ["psr"]); // subs pc, lr, #4
+        // Their copy-and-test is subs rd, rm, #0; a shifted movs is theirs.
+        assert_eq!(markers(&[0xE1B0_1000, BX_LR]), ["movs-unshifted"]); // movs r1, r0
+        assert!(markers(&[0xE250_1000, 0xE1B0_1120, BX_LR]).is_empty()); // subs r1, r0, #0; movs r1, r0, lsr #2
+        // Off sp they write a multiple back only in a block copy from r0
+        // or for a doubleword pair.
+        assert_eq!(markers(&[0xE8A2_00F0, BX_LR]), ["multiple-writeback"]); // stmia r2!, {r4-r7}
+        assert_eq!(markers(&[0xE8B2_000E, BX_LR]), ["multiple-writeback"]); // ldmia r2!, {r1-r3}
+        // ldmia r1!, {r0-r3}; stmia ip!, {r0-r3}; ldmia r1!, {r2, r3}; ldmia ip, {r0-r3}
+        assert!(markers(&[0xE8B1_000F, 0xE8AC_000F, 0xE8B1_000C, 0xE89C_000F, BX_LR]).is_empty());
         // A compiled call through a register and a switch table are not marks.
         assert!(markers(&[0xE1A0_E00F, 0xE12F_FF13, 0x979F_F100, BX_LR]).is_empty());
         let e = plain(&[PUSH_R4_LR, 0xE08F_F100, POP_R4_PC]);

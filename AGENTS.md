@@ -84,7 +84,9 @@ camelotizes what remains.
   compilers cannot emit (rrx; a branch, adc or sbc on a shift's carry; r11 as
   an ordinary register; a callee-saved register save without lr; CPSR/SPSR;
   swi; computed pc into code; stores into code; unpaired multiply halves; a
-  pc-relative block load of data; a mode switch inside a function) or a
+  pc-relative block load of data; a mode switch inside a function; movs with
+  no shift, where their copy-and-test is subs #0; ldm or stm writing back
+  off sp, other than a block copy's list from r0 or a doubleword pair) or a
   linkage no procedure-call standard produces; anything else is not-yet-C
   until it matches as C. Whole aligned 8-byte far-call stubs count as veneers.
   Padding a source marks as carrying no credit does not count. It is

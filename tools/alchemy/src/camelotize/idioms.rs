@@ -198,12 +198,15 @@ fn chain_end(tokens: &[Token], from: usize) -> Option<usize> {
     if matches!(first.tok, Tok::Number(_)) {
         return Some(from + 1);
     }
-    ident(first)?;
+    if matches!(ident(first)?, "sizeof" | "defined") {
+        return None;
+    }
     let mut k = from + 1;
     loop {
         match tokens.get(k).and_then(punct) {
             Some("->" | ".") if tokens.get(k + 1).and_then(ident).is_some() => k += 2,
-            Some("[") => k = closing(tokens, k)? + 1,
+            // A call binds as tightly: `(Object_GetById(0))->field`.
+            Some("[" | "(") => k = closing(tokens, k)? + 1,
             _ => return Some(k),
         }
     }
@@ -377,6 +380,16 @@ mod tests {
         assert_eq!(rewritten(text), "n = !(a == b) + 1;\ny = f(x);\nz = (u8)w;\ns = sizeof(v);\n");
     }
 
+    /// The reviewer's finding: the parentheses the casts pass leaves around
+    /// a call operand.
+    #[test]
+    fn parentheses_around_a_call_operand_go() {
+        assert_eq!(rewritten("    (Object_GetById(0))->field = 1;\n"), "    Object_GetById(0)->field = 1;\n");
+        assert_eq!(rewritten("n = (f(a, b)) + 1;\nreturn (g(x)[2]);\n"), "n = f(a, b) + 1;\nreturn g(x)[2];\n");
+        let kept = "n = (f(a))(b);\ns = (sizeof(v));\nwhile (f(x)) {}\n";
+        assert_eq!(rewritten(kept), kept);
+    }
+
     #[test]
     fn else_after_a_leaving_block_is_flattened() {
         let text = "void F(void)\n{\n    if (a) {\n        x = 1;\n        return;\n    } else {\n        y = 2;\n        if (b) {\n            z = 3;\n        }\n    }\n    w = 4;\n}\n";
@@ -402,10 +415,12 @@ mod tests {
 
     #[test]
     fn fakematch_tagged_statements_and_asm_stay() {
-        let lead = "{\n    k = 0;\n    /* FAKEMATCH: one pass */\n    do {\n        i = i + 1;\n    } while (0);\n    j = j + 1;\n}\n";
-        assert_eq!(rewritten(lead), "{\n    k = 0;\n    /* FAKEMATCH: one pass */\n    do {\n        i = i + 1;\n    } while (0);\n    j++;\n}\n");
-        let trail = "{\n    i = i + 1; /* FAKEMATCH: r4 */\n    r = (x);\n}\n";
-        assert_eq!(rewritten(trail), "{\n    i = i + 1; /* FAKEMATCH: r4 */\n    r = x;\n}\n");
+        let lead = "void F(void)\n{\n    if (q) {\n        k = 0;\n        /* FAKEMATCH: one pass */\n        do {\n            i = i + 1;\n        } while (0);\n    }\n    j = j + 1;\n}\n";
+        assert_eq!(rewritten(lead), lead.replace("j = j + 1", "j++"));
+        let trail = "void F(void)\n{\n    {\n        i = i + 1; /* FAKEMATCH: r4 */\n    }\n    r = (x);\n}\n";
+        assert_eq!(rewritten(trail), trail.replace("(x)", "x"));
+        let whole = "void F(void)\n{\n    i = i + 1; /* FAKEMATCH: r4 */\n    r = (x);\n}\n";
+        assert_eq!(rewritten(whole), whole);
         let block = "{\n    if (a) { /* FAKEMATCH: order */\n        return;\n    } else {\n        y = 2;\n    }\n}\n";
         assert_eq!(rewritten(block), block);
         let asm = "{\n    asm(\"\" : \"+r\"((x)));\n    register u32 r asm(\"r4\") = (x);\n}\n";

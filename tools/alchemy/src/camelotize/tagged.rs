@@ -1,7 +1,8 @@
 //! The source no rewrite touches: what a `FAKEMATCH` tag covers and every
-//! statement that holds asm. A tag on its own line covers the statement after
-//! it, or the whole block when it is the block's first line; a tag after code
-//! on the same line covers that statement, or the block that line opens.
+//! statement that holds asm. A tag covers the whole innermost block holding
+//! it, with the statement that owns that block, or the whole function when
+//! it sits in the function's top-level block (S2: a tag covers what its
+//! reason names, and a reason may name several statements).
 
 use crate::permute::lex::{lex, Tok, Token};
 use std::ops::Range;
@@ -111,7 +112,32 @@ fn statement_end(tokens: &[Token], at: usize) -> usize {
     tokens.len().saturating_sub(1)
 }
 
-/// The byte ranges no rewrite may change.
+/// The innermost `{` left open before each token position: `inside[k]` is
+/// the block that tokens `..k` leave open, so a tag before token `k` sits in
+/// it.
+fn inside(tokens: &[Token]) -> Vec<Option<usize>> {
+    let mut stack: Vec<usize> = Vec::new();
+    let mut out = Vec::with_capacity(tokens.len() + 1);
+    out.push(None);
+    for (k, token) in tokens.iter().enumerate() {
+        match punct(token) {
+            Some("{") => stack.push(k),
+            Some("}") => {
+                stack.pop();
+            }
+            _ => {}
+        }
+        out.push(stack.last().copied());
+    }
+    out
+}
+
+/// The byte ranges no rewrite may change. A tag's reason may name several
+/// statements (PRIORITY.C's "these flag updates"), so a tag covers the whole
+/// innermost block holding it, with the statement that owns that block (its
+/// `if`, `else` branches and loop head); a tag in a function's top-level
+/// block covers the whole function. A tag outside every block covers the
+/// statement it trails, or else the one after it.
 pub(crate) fn ranges(text: &str) -> Vec<Range<usize>> {
     let Ok(all) = lex(text) else {
         return vec![0..text.len()];
@@ -125,17 +151,25 @@ pub(crate) fn ranges(text: &str) -> Vec<Range<usize>> {
             _ => code.push(token),
         }
     }
+    let blocks = inside(&code);
     let mut out = Vec::new();
     let mut cover = |from: usize, to: usize| out.push(code[from].start..code[to].end);
     for (at, next) in tags {
+        let last = code.len().saturating_sub(1);
+        if let Some(open) = blocks[next] {
+            let close = matching(&code, open).unwrap_or(last);
+            let from = statement_start(&code, open).min(open);
+            if blocks[open].is_none() {
+                // The function's own block: the whole definition.
+                cover(from, close);
+            } else {
+                cover(from, statement_end(&code, from).max(close));
+            }
+            continue;
+        }
         let before = next.checked_sub(1);
         let same_line = before.is_some_and(|k| !text[code[k].end..at].contains('\n'));
         match before {
-            Some(k) if punct(&code[k]) == Some("{") => {
-                let from = statement_start(&code, k);
-                let to = if same_line { statement_end(&code, from) } else { matching(&code, k).unwrap_or(code.len() - 1) };
-                cover(from.min(k), to);
-            }
             Some(k) if same_line => cover(statement_start(&code, k), k),
             _ if next < code.len() => cover(next, statement_end(&code, next)),
             _ => {}
@@ -163,42 +197,96 @@ mod tests {
         ranges(text).into_iter().map(|r| &text[r]).collect()
     }
 
-    #[test]
-    fn a_leading_tag_covers_the_next_statement() {
-        let text = "{\n    a = 1;\n    /* FAKEMATCH: order */\n    b = (u8)c;\n    d = 2;\n}\n";
-        assert_eq!(spans(text), vec!["b = (u8)c;"]);
-        let loop_ = "{\n    x;\n    /* FAKEMATCH: one pass */\n    do {\n        y = 0x10;\n    } while (0);\n    z;\n}\n";
-        assert_eq!(spans(loop_), vec!["do {\n        y = 0x10;\n    } while (0);"]);
+    fn covers(text: &str, needle: &str, nth: usize) -> bool {
+        let at = text.match_indices(needle).nth(nth).unwrap().0;
+        covered(&ranges(text), at, at + needle.len())
     }
 
     #[test]
-    fn a_trailing_tag_covers_its_statement() {
-        let text = "{\n    a = 1;\n    b = c +\n        0x10; /* FAKEMATCH: r4 */\n    d = 2;\n}\n";
-        assert_eq!(spans(text), vec!["b = c +\n        0x10;"]);
-    }
-
-    #[test]
-    fn a_tag_that_opens_a_block_covers_the_block() {
+    fn a_tag_in_a_function_block_covers_the_function() {
+        let leading = "void F(void)\n{\n    a = 1;\n    /* FAKEMATCH: order */\n    b = (u8)c;\n    d = 2;\n}\nvoid G(void)\n{\n    e = (u8)f;\n}\n";
+        assert_eq!(spans(leading), vec!["void F(void)\n{\n    a = 1;\n    /* FAKEMATCH: order */\n    b = (u8)c;\n    d = 2;\n}"]);
+        let trailing = "void F(void)\n{\n    a = 1;\n    b = c +\n        0x10; /* FAKEMATCH: r4 */\n    d = 2;\n}\n";
+        assert_eq!(spans(trailing), vec![trailing.trim_end()]);
         let first = "void F(void)\n{\n    /* FAKEMATCH: frame */\n    u8 a;\n    a = 0x10;\n}\nvoid G(void)\n{\n    b = 0x10;\n}\n";
         assert_eq!(spans(first), vec!["void F(void)\n{\n    /* FAKEMATCH: frame */\n    u8 a;\n    a = 0x10;\n}"]);
-        let opens = "{\n    if (a) { /* FAKEMATCH: order */\n        b = 0x10;\n    } else {\n        c = 1;\n    }\n    d;\n}\n";
+    }
+
+    #[test]
+    fn a_tag_in_an_inner_block_covers_the_statement_that_owns_it() {
+        let leading = "void F(void)\n{\n    x;\n    if (a) {\n        b = 1;\n        /* FAKEMATCH: order */\n        c = 0x10;\n        d = 0x10;\n    } else {\n        e = 1;\n    }\n    z = 0x10;\n}\n";
+        assert_eq!(spans(leading), vec!["if (a) {\n        b = 1;\n        /* FAKEMATCH: order */\n        c = 0x10;\n        d = 0x10;\n    } else {\n        e = 1;\n    }"]);
+        let opens = "void F(void)\n{\n    if (a) { /* FAKEMATCH: order */\n        b = 0x10;\n    } else {\n        c = 1;\n    }\n    d;\n}\n";
         assert_eq!(spans(opens), vec!["if (a) { /* FAKEMATCH: order */\n        b = 0x10;\n    } else {\n        c = 1;\n    }"]);
+        let looped = "void F(void)\n{\n    while (q) {\n        x;\n        do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: order */\n        y = 0x10;\n    }\n    w = 0x10;\n}\n";
+        assert_eq!(spans(looped), vec!["while (q) {\n        x;\n        do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: order */\n        y = 0x10;\n    }"]);
+        let chain = "void F(void)\n{\n    if (q) {\n        if (v == 1)\n            Call3(f, 0x10, 1);\n        else if (v == 2)\n            Call3(f, 0x20, 2); /* FAKEMATCH: r4 */\n    } else if (r) {\n        e = 0x30;\n    }\n    g = 0x30;\n}\n";
+        assert!(covers(chain, "Call3(f, 0x10, 1)", 0) && covers(chain, "e = 0x30", 0) && !covers(chain, "g = 0x30", 0));
+    }
+
+    /// The reviewer's cases: each tag's reason names several statements.
+    #[test]
+    fn a_tag_protects_every_statement_its_reason_names() {
+        // FIELD/TAKARA_HASHIRA/PRIORITY.C:334-355 (tags at 337 and 345)
+        let priority = "void F(void)\n{\n        if (*flags & 1) {
+            if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
+                Engine_AudioPlayCue(189);
+                /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
+                *(u8 *)&actor->priority_flags &= 254;
+                TakaraHashira_LowerActorToLedge(id, 1);
+                *(u8 *)&actor->priority_flags |= 1;
+            } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
+                SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
+                Engine_AudioPlayCue(189);
+                actor->y = 0;
+                /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
+                *(u8 *)&actor->priority_flags &= 254;
+                StagedActor_StepDownUntilClamp(id);
+                actor->x = 0;
+                actor->y = 0;
+                actor->z = 0;
+                *(u8 *)&actor->priority_flags |= 1;
+            } else {
+                OverlayObject_WaitUntilSettledAndReset((struct FieldActor *)actor);
+            }
+            *flags = 0;
+        }\n}\n";
+        for nth in 0..4 {
+            assert!(covers(priority, "*(u8 *)&actor->priority_flags", nth), "{nth}");
+        }
+        assert!(covers(priority, "(struct FieldActor *)actor, 0", 0));
+        assert!(!covers(priority, "*flags = 0", 0));
+        // FIELD/HAIDIA_MURA/MURA.C:2569-2584 (tag at 2570)
+        let mura = "s32 F(void)\n{\n    if (Runtime_ComputeFixedPointDistance(&target->x.fixed, &obj->x.fixed) < range || force != 0) {
+        if (angle == dir || right == dir || left == dir || force != 0) {
+            /* FAKEMATCH: plain-byte publication avoids synthetic QI masks. */
+            *(u8 *)&obj->paused = 1;
+            Object_SetMode(obj, 1);
+            result = 1;
+            *(u8 *)&obj->rise_counter = result;
+        } else {
+            *(u8 *)&obj->paused = 0;
+            Object_SetMode(obj, 2);
+            *(u8 *)&obj->rise_counter = 0;
+        }
+    } else {
+        *(u8 *)&obj->paused = 0;
+        Object_SetMode(obj, 2);
+        *(u8 *)&obj->rise_counter = 0;
+    }
+    return result;\n}\n";
+        for nth in 0..2 {
+            assert!(covers(mura, "*(u8 *)&obj->paused", nth) && covers(mura, "*(u8 *)&obj->rise_counter", nth), "{nth}");
+        }
+        assert!(!covers(mura, "*(u8 *)&obj->paused", 2) && !covers(mura, "return result", 0));
     }
 
     #[test]
-    fn a_trailing_tag_after_a_do_loop_covers_its_body() {
-        let text = "{\n    a = 1;\n    do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: order */\n    do { Io_SetBlendAlpha(0x80c); } while (0);\n}\n";
-        assert_eq!(spans(text), vec!["do { Io_SetBlendControl(0x3f42); } while (0);"]);
-        let after_if = "{\n    if (a) {\n        b;\n    }\n    while (c) d = 0x10; /* FAKEMATCH: r5 */\n}\n";
-        assert_eq!(spans(after_if), vec!["while (c) d = 0x10;"]);
-    }
-
-    #[test]
-    fn a_leading_tag_covers_a_braceless_else_chain() {
-        let text = "{\n    x;\n    /* FAKEMATCH: each copy loads its routine */\n    if (v == 1)\n        Call3(f, 0x10, 1);\n    else if (v == 2)\n        Call3(f, 0x20, 2);\n    e = 0x30;\n}\n";
-        assert_eq!(spans(text), vec!["if (v == 1)\n        Call3(f, 0x10, 1);\n    else if (v == 2)\n        Call3(f, 0x20, 2);"]);
-        let trailing = "{\n    if (a)\n        b = 1;\n    else\n        c = 0x10; /* FAKEMATCH: r4 */\n}\n";
-        assert_eq!(spans(trailing), vec!["if (a)\n        b = 1;\n    else\n        c = 0x10;"]);
+    fn a_tag_outside_every_block_covers_its_statement() {
+        let before = "/* FAKEMATCH: frame */\nvoid F(void)\n{\n    a = 0x10;\n}\nvoid G(void)\n{\n    b = 0x10;\n}\n";
+        assert_eq!(spans(before), vec!["void F(void)\n{\n    a = 0x10;\n}"]);
+        let after = "u8 gValue = 0x10; /* FAKEMATCH: data */\nu8 gOther = 0x10;\n";
+        assert_eq!(spans(after), vec!["u8 gValue = 0x10;"]);
     }
 
     #[test]

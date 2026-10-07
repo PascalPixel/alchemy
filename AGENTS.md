@@ -141,14 +141,15 @@ or functions is exactly this cheating.
   compiler-steering C (wrappers, volatile, forced temporaries, dead code),
   inline assembly and fixed-register variables are allowed when each carries a
   `FAKEMATCH` tag with its measured reason inside the function. A device is
-  for a difference of instruction order or register choice only, an
-  unused local of a real type whose size exactly explains the native stack
-  frame, or a one-pass block, empty or around real statements, that
-  restores a compiler block or loop boundary the bytes prove existed (a
-  CSE block that ended where no code is left, a block loop.c kept inside
-  its loop), even where that changes which instructions are chosen
-  (Pascal, 2026-10-07); and only after reshaping the source has failed. A function
-  is never written as inline assembly. A fake match stays in the source, tagged; it is never
+  for a difference of instruction order or register choice, an unused
+  local of a real type whose size exactly explains the native stack frame,
+  or a form the bytes prove the source had (a CSE block that ended where
+  no code is left, a block loop.c kept inside its loop, an add kept apart
+  from the store it addresses): any tagged device may change which
+  instructions are chosen when it restores such a form, and its tag states
+  the form and the measured difference (Pascal, 2026-10-07). A device comes
+  only after reshaping the source has failed, and a function is never
+  written as inline assembly. A fake match stays in the source, tagged; it is never
   replaced by a compiler option or routing that fits only those functions
   (K1, K3). `CAMELOT_ASM("proof")` marks assembly Camelot very likely
   wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros stay. A layer that

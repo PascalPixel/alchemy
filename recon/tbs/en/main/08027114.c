@@ -1,7 +1,9 @@
-/* 08027114: differ 150 against the 1727-line parent listing (draft 1773,
- * common 1675), 46 of them the two nested helpers' lines (see below):
- * 104 real, all instruction order, register choice or pool placement.
- * Frame 100 as native.
+/* 08027114: differ 102 against the 1727-line parent listing (draft 1773,
+ * common 1699), 46 of them the two nested helpers' lines (see below):
+ * 56 real, all instruction order, register choice or pool placement;
+ * by symbol ja 62, de/es/it 58, fr 60. Frame 100 as native.
+ * 2026-10-08: the GCSE bucket-order device (twenty dead hdr stores, see
+ * its tag) gives the native spill slots: 150 -> 102.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent with FAKEMATCH static-chain devices; compiled
@@ -454,6 +456,38 @@ mark_visible:
             UiWindow_MarkVisibleTileAttributes();
             COUNTDOWN->entryActive[0] = 0;
             COUNTDOWN->result[i] = 0x80000000;
+            /* FAKEMATCH: register choice (spill slots) only: twenty dead
+               stores, one insn each until flow deletes them. GCSE sizes its
+               expression table from the insn count (n / 2 | 1 buckets) and
+               PRE numbers its reaching registers in bucket order, which is
+               the order their spill slots are assigned. &hdr (sfp - 4)
+               hashes to 13922 and i << 1, i << 2, i << 4 to 13966, 13967,
+               13969: with these stores the table has 775 buckets (747
+               against 16, 17, 19), so the givs take sp+32, 28 and 24
+               before &hdr (sp+20) as in the native frame; without them 765
+               (152 against 196, 197, 199) puts &hdr above the givs (differ
+               en 150, ja 110, de/es/it 106, fr 108; with them 102, 62, 58,
+               60; every row they remove is a spill slot's offset). */
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
+            hdr[0] = 0;
             hdr[0] = (u16)actorId;
             hdr[1] = 255;
             BattlePres_SetActorModesFar(hdr, 1);

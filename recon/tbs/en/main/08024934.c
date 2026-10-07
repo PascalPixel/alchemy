@@ -31,7 +31,12 @@
  * store needs another live use of sprite to keep the setup loop at 25.
  * Five minutes of permute from 130: the draw loop's summon fetched
  * before col = 0, 129 (kept; id then r6 as native's, summon still
- * in r8 with summon + 4 in slot 36).
+ * in r8 with summon + 4 in slot 36). From 129: y = index * 2 after the
+ * glyph call (native computes it there, in r8, and shares it with the
+ * tile offset) 215; that with the tile store indexed and the push loop
+ * walking sprite (sprite = sprites; ...; sprite++) to keep it live 263.
+ * The column loop's col and y take r8 and r9 swapped against native,
+ * which follows from y living across the glyph call in the draft.
  * Session 9: the two page changes set page before row again (page = 0;
  * row = preferred and page -= 4; row = preferred), as session 4's base
  * had them before a merge reversed them: 172 -> 154. From 172: the

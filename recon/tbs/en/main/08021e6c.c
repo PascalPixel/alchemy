@@ -1,4 +1,5 @@
-/* Stubborn (2026-10-07, T08-08021e6c session 1, second run): differ 636 (listing 1037, draft 1025, common 713). Not matched. Still permuter scaffolding, to be replaced by real source shapes: tmp7 = mode != 0 kept from before the position loop to the command_selection test (as mode != 0 there: 658 -> 710 before the cleanup), tmp2/tmp3/tmp4 temporaries shared inside the content col loops, the u16 * temporary for 0x0600fd68, and the mode-1 blank and content col loops as while. */
+/* Stubborn (2026-10-07, T08-08021e6c session 2): differ 484 (listing 1037, draft 1025, common 789). Not matched. Still permuter scaffolding, to be replaced by real source shapes: tmp7 = mode != 0 kept from before the position loop to the command_selection test (worth 50: 534 without), tmp2/tmp3/tmp4 temporaries shared inside the content col loops, the u16 * temporary for 0x0600fd68 (worth 232: 716 without), and the mode-1 blank and content col loops as while. */
+/* Trial (session 2): mode-1 content loop declares tile_row before pattern (alchemy permute 5 min, seed 11, --heat: one rewrite): 636 -> 484. The same order in the mode-0 content loop: 546. tmp7 removed: 534; the u16 * temporary removed: 716. */
 /* Trial (2026-10-07): bisecting the 658 candidate below: removing the scale - 256 chain 657, the gBgScroll pointer 657, rebuild != 0 temporary 659, the four temporaries of the redraw test 643, keys & 1 643, the mode != 0 and repeat & 0x90 temporaries 619, the work->count chain 619; the AffineMatrix_BuildForEffect result shared with runtime->auto_enabled is worth 17 (619 with it, 636 without), dropped as noise. */
 /* Trial (2026-10-07): the mode-1 blank and closing loops index each row as tile_row = &render->tilemap[panel * 3 + cnt * 32] (native's panel*2 giv plus panel): 787 -> 785 -> 776. The same in the mode-0 blank loop: 868, reverted. The mode-1 content loop in the permuter's mode-0 form: 899, reverted. */
 /* Trial (2026-10-07): alchemy permute 8 min from 922 gave 799; its noise removed by measurement: 787. What carried: the position loop as cnt = 0; if (cnt < count) do { ... } while (as a for or while: 853); the content tiles through s32 tile = 0x100 + pattern, then tile + col (direct 0x100 + pattern + col: 933); the mode-0 content panels as a do-while with panel++ before the rows and one temporary for 0x100 + pattern and count * 3 (as the mode-1 for loops: 928, for loops with the shared temporary: 875); cnt = 0 before the redraw test, the sprite loop as if/do-while (a for loop there: 821). Noise, removed at no cost or a gain: tmp4 for scale - 256, the gBgScroll cast, a temporary for keys & 0x300, the mode-1 blank and closing loops as do-while (787 as for), the resource loop as while, a temporary shared between work->count and the sprite test (removing it: 799 -> 790). */
@@ -182,8 +183,8 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 for (panel = 0; panel < work->count; panel++) {
                     s32 count = work->count;
                     s32 tile_index = panel * 3;
-                    s32 pattern = panel * 16;
                     u16 *tile_row = &render->tilemap[tile_index];
+                    s32 pattern = panel * 16;
                     for (cnt = 0; cnt <= 2; cnt++, tile_row += 32, tile_index += 32, pattern += 4) {
                         s32 col;
                         col = 0;

@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1360, differ 63.
+ * Native 1392 instructions, draft 1391, common 1361, differ 61.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
  * the stat pushes, the djinn rows and the condition list match.
@@ -22,7 +22,14 @@
  * zero_extendhisi2 (pool_range 60); no source form found for either.
  * An empty asm after the cursor's attr23 store (counted 4 bytes) 85 ->
  * 63, FAKEMATCH-tagged; after the face push it reorders the cursor's
- * attr23 store, 67.
+ * attr23 store, 67. The condition loads with q = tbl before out = sel
+ * 63 -> 61 (native loads tbl into r7 first). Their sign extension:
+ * native's ldrb r0, [r5]; lsl; asr has base r5 and dest r0, which no
+ * extendqisi2 memory alternative prints (that form needs dest == base),
+ * so native loads the byte into a register and extends it apart:
+ * combine did not join them there. u8 *out with (s8)*out 61, and the
+ * byte shifted << 24 >> 24 by hand 61 (no change: combine joins them
+ * again).
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
@@ -741,8 +748,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 if (i > 0) {
                     j = i;
-                    out = sel;
                     q = tbl;
+                    out = sel;
                     do {
                         Resource_LoadTableEntryToBuffer(*out, *q++);
                         j--;

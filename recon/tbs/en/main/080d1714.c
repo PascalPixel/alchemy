@@ -1,5 +1,5 @@
-/* 080d1714: differ 638 of 1481 instructions (1475 generated, common
- * 1159). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 632 of 1481 instructions (1475 generated, common
+ * 1162). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -105,6 +105,9 @@
  *   block-local obj there takes r2 as the native: 872 alone (frame
  *   352); with the y, x, vy, vx stores: 646, frame 356; with x, y,
  *   vx, vy: 638, the threshold loop head and loop end as the native.
+ * - the frame == 160 actor loop as a for loop too: its pre-test no
+ *   longer lends its runtime + 0x7828 register to the hoisted one,
+ *   which the native recomputes: 632.
  * Remaining: the first draw shares one 48 for 48 - size and the
  * width argument, and the second keeps 48 in r4 across the first call
  * where the native rematerializes it and caller-saves the function
@@ -448,15 +451,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 index++;
             } while (index != 512);
 
-            index = 0;
-            if (runtime->effect->count != 0) {
-                do {
-                    context = GetBattleObjectSlotFar(
-                        runtime->effect->actors[index]);
-                    object = (struct MotionObject *)context->object;
-                    object->y = ((Random16() & 15) + 8) << 16;
-                    index++;
-                } while (index != runtime->effect->count);
+            for (index = 0; index != runtime->effect->count; index++) {
+                context = GetBattleObjectSlotFar(
+                    runtime->effect->actors[index]);
+                object = (struct MotionObject *)context->object;
+                object->y = ((Random16() & 15) + 8) << 16;
             }
 
             gProjection.center_x = 72;

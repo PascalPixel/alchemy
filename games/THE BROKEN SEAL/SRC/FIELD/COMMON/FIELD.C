@@ -22,7 +22,7 @@
 #include "FIELDRUN.H"
 #include "OBJECT_DISPATCH.H"
 #include "ANIMSPR.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SCRIPT_OBJECT_ENTRY.H"
 
 #define gKeysRepeat (*(u32 *)&gKeysRepeat)

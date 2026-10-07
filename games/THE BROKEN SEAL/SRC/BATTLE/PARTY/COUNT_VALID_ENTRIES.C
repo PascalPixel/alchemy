@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 

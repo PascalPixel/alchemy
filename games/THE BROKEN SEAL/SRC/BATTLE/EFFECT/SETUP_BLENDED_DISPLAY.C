@@ -11,7 +11,7 @@
 #include "DMA.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 extern u16 gBgScroll[];
 

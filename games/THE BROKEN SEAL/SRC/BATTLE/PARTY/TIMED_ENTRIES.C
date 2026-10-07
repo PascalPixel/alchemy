@@ -8,8 +8,8 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 owner);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);

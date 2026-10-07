@@ -1,4 +1,4 @@
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 extern u8 *BtlWk;
 

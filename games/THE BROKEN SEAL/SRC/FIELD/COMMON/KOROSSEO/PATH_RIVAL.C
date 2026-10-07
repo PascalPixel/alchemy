@@ -11,7 +11,7 @@
 #include "COLGAUGE.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "VRAM_BLOCK.H"

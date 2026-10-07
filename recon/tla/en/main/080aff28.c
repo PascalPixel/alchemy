@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "OWNER_STATE.H"
 
 extern u8 Summon_OrderList[29];

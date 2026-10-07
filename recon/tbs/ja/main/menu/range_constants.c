@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "PSYNERGY_MENU.H"
 void UiWindow_Commit(s32 window);
 
@@ -22,7 +22,7 @@ void PsynergyMenu_DrawRange(
 }
 
 #include "TYPES.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 
@@ -146,7 +146,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     return 1;
 }
 
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "PSYNERGY_MENU.H"
 #include "UI.H"
 

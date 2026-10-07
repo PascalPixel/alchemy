@@ -14,7 +14,7 @@
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "VRAM_BLOCK.H"
 #include "SCENE.H"
 #include "CALLBACK_SCHEDULER.H"

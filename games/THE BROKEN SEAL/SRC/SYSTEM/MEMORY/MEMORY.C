@@ -14,7 +14,7 @@
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "HEAP_STATE.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"

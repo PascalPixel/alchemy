@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "FX_SCENE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TASK.H"
 #include "TYPES.H"
 #include "IO_REG.H"

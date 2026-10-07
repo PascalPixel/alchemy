@@ -3,7 +3,7 @@
 #include "WINDOW.H"
 #include "UIWINDOW.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 void UiWindow_DrawTilemapResource(struct UiWindow *window, const void *resource)
 {

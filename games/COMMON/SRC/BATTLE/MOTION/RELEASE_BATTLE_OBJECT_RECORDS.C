@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "RESOURCE.H"
 
 void ReleaseBattleObjectRecords(s32 object_id)

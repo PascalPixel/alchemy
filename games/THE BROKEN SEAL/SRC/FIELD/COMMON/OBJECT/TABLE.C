@@ -24,7 +24,7 @@
 #include "FIELDOBJ.H"
 #include "OBJECT_DISPATCH.H"
 #include "FIELD_EVENT.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define Object_Destroy ((void (*)(void*))Object_Destroy)
 

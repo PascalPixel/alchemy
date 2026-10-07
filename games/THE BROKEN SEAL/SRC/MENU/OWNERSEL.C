@@ -13,7 +13,7 @@
 #include "TBS_EDITION.H"
 #include "CHARACTER_MENU.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "UI.H"
 #include "MENU_LIST.H"
 

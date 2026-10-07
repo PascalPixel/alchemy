@@ -14,7 +14,7 @@
 #include "GLYPH.H"
 #include "ITEM.H"
 #include "BATTLE_UNIT.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 extern u8 RenderResource_PairSourceTable;
 

@@ -10,7 +10,7 @@
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 #include "IWRAM_CALL.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
 

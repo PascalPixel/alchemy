@@ -9,9 +9,9 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "FIELD_EVENT.H"
 
 

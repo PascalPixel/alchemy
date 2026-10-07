@@ -11,11 +11,11 @@
 #include "SYSTEM.H"
 #include "FIELD_EVENT.H"
 
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 void BattleMotion_RunValueSequence(s32 id)
 {

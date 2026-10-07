@@ -17,7 +17,7 @@
 #include "TBS_EDITION.H"
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define gKeyState (*(volatile u32 *)&gKeyState)

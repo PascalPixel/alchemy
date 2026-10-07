@@ -10,7 +10,7 @@
 #include "CHARACTER_MENU.H"
 #include "TYPES.H"
 #include "MENU_LIST.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 extern struct CharacterMenuState *gMenuWork;
 

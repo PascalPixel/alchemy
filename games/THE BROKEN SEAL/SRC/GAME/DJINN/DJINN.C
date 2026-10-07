@@ -17,7 +17,7 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "CHARACTER.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 #define BattleRandomPercent ((s32 (*)(void))BattleRandomPercent)
 

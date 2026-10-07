@@ -15,7 +15,7 @@
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_UNIT.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
 #include "text/MSG_IDS.H"
@@ -23,7 +23,7 @@
 #include "KEYSTATE.H"
 #include "WINDOW.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gWindowWork (*(struct UiWork * *)&gWindowWork)
 

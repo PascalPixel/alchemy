@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"

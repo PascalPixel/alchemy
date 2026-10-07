@@ -10,9 +10,9 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)

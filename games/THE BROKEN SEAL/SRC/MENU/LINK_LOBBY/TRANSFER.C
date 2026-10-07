@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "CHARACTER.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "FIELD_EVENT.H"
 #include "LOBBY.H"
 #include "SERIAL_RUNTIME.H"

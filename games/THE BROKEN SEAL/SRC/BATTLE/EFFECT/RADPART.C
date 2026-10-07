@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "ANIMSPR.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OBJECT_RUNTIME.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"

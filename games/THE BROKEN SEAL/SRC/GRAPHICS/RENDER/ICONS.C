@@ -7,13 +7,13 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "GLYPH.H"
 #include "BATTLE_UNIT.H"
 #include "RESOURCE.H"
 #include "SCENE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 extern u8 UiIcon_ItemIconPointers[];
 

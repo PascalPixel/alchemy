@@ -9,10 +9,10 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_TYPES.H"
+#include "BTLSYS.H"
+#include "BTLTYPE.H"
 #include "BATTLE_COMMAND.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "IWRAM_CALL.H"
 
 

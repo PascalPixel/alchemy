@@ -15,7 +15,7 @@
 #include "TBS_EDITION.H"
 #include "WINDOW.H"
 #include "UIFLOW.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define gKeyState (*(volatile u32 *)&gKeyState)

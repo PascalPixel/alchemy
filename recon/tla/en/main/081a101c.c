@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 
 s32 GameFlag_Test(s32 flag);

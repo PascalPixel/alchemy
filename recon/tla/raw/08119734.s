@@ -19,7 +19,7 @@ Func_08119734:
 	bl BattleMotion_DestroyAllSlotObjects
 	movs r1, #1
 	adds r0, r5, #0
-	bl Summon_TakeCharge
+	bl EnmCntDec
 	adds r1, r5, #0
 	movs r2, #255
 	movs r0, #128
@@ -31,7 +31,7 @@ Func_08119734:
 	adds r2, #2
 	movs r3, #255
 	strh r3, [r2]
-	bl Summon_Refresh
+	bl EnmUpd
 	movs r0, #128
 	bl BtlObjGet
 	ldr r2, [r0, #12]

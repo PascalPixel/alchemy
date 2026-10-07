@@ -1,5 +1,5 @@
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 struct GlyphPalette {
     u8 slot[256];

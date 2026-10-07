@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CANVAS.H"
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
@@ -25,7 +25,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "RAM_BUFFER.H"
 
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)

@@ -11,7 +11,7 @@
 #include "BATTLE_UNIT.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 

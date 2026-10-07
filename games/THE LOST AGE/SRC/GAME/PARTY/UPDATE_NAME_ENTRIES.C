@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "OWNER_STATE.H"
 #include "SERIAL_RUNTIME.H"
 #include "TLA_EDITION.H"

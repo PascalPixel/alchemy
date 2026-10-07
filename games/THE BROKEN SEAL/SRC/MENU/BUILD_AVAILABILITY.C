@@ -13,7 +13,7 @@
 #include "TBS_EDITION.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {

@@ -2,7 +2,7 @@
 #define ALCHEMY_SYSTEM_H
 
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 void WaitFrames(s32 frames);
 void System_WaitForFrameInterrupt(void);

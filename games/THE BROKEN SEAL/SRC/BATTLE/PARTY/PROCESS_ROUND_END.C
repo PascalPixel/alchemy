@@ -11,18 +11,18 @@
 #include "TYPES.H"
 #include "OWNERVAL.H"
 #include "BATTLE_STATUS_ICON.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
+#include "BTLMES.H"
+#include "BTLPTY.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
 
-#include "MOTION_OBJECT.H"
-#include "RUNTIME_MEM.H"
-#include "BATTLE_EVENT.H"
-#include "BATTLE_RUNTIME.H"
+#include "MOTOBJ.H"
+#include "MEM.H"
+#include "BTLEV.H"
+#include "BTLSYS.H"
 #include "OBJDISP.H"
 #include "IWRAM_CALL.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)

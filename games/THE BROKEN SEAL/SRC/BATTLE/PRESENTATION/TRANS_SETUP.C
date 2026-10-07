@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "TRANSFORM.H"
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)

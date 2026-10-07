@@ -2,7 +2,7 @@
 #include "EDITION.H"
 #include "RAM_BUFFER.H"
 #include "SERIAL_RUNTIME.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 extern volatile u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];

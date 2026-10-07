@@ -3,8 +3,8 @@
 
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_EVENT.H"
+#include "BTLTYPE.H"
+#include "BTLEV.H"
 #include "BATTLE_SESSION.H"
 
 struct BattlePromptSprite {

@@ -17,7 +17,7 @@
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "FIELD_SPRITE.H"
 #include "ANIMSPR.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 #include "FIELD_EVENT.H"
 

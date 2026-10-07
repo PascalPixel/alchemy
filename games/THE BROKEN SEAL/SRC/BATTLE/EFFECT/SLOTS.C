@@ -18,7 +18,7 @@
 #include "FIXED_MATH.H"
 #include "DMA.H"
 #include "IO_REG.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define BattleFx_UpdatePairedArcSpawner ((void (*)(void))BattleFx_UpdatePairedArcSpawner)

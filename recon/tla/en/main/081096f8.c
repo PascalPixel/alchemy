@@ -1,5 +1,5 @@
 #include "IO_REG.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"

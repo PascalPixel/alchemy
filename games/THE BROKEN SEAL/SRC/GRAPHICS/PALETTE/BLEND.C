@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "DISPTRAN.H"
 #include "DMA.H"

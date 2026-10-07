@@ -9,8 +9,8 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
-#include "MOTION_OBJECT.H"
-#include "BATTLE_WORK.H"
+#include "MOTOBJ.H"
+#include "BTLWORK.H"
 
 #define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
 #define Object_SetPosition ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)

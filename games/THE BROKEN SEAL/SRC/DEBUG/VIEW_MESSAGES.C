@@ -12,7 +12,7 @@
 #include "IO_REG.H"
 #include "BATTLE_UNIT.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define gWindowWork (*(u8 * *)&gWindowWork)

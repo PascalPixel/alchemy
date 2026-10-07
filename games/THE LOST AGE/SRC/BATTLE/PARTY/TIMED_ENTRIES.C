@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 
 struct PlacementList {

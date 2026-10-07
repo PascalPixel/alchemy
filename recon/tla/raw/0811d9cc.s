@@ -452,7 +452,7 @@ Func_0811d9cc:
 	add r0, r10
 	bl Func_0812561c
 	bl BtlObjPut
-	bl Summon_Refresh
+	bl EnmUpd
 	bl Func_0811d9a4
 	movs r3, #255
 	mov r1, r11

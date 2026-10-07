@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "IWRAM_CALL.H"
 #include "ANIMSPR.H"
 

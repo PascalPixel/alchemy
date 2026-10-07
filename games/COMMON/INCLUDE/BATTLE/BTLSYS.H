@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_BATTLE_RUNTIME_H
 #define ALCHEMY_BATTLE_RUNTIME_H
 
-#include "BATTLE_EVENT.H"
-#include "BATTLE_TYPES.H"
+#include "BTLEV.H"
+#include "BTLTYPE.H"
 
 struct BtlUnit *UnitGetFar(s32 unit_id);
 void BattleUnit_Recalculate(s32 unit_id);

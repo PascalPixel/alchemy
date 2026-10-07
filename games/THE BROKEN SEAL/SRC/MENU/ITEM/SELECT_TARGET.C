@@ -17,7 +17,7 @@
 #include "INVENTORY_MENU.H"
 #include "WINDOW.H"
 #include "M7_INTERFACES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "EQUIPMENT_MENU.H"
 #include "text/MSG_IDS.H"
 

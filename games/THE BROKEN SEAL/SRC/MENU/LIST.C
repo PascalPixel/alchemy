@@ -11,10 +11,10 @@
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define UiWindow_DrawThreeTileColumn ((void (*)(struct UiWindow*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
 

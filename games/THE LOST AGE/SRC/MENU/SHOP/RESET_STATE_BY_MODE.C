@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "OWNER_STATE.H"
 
 #define Item_Get ((u8 * (*)(u16))Item_Get)

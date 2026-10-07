@@ -17,7 +17,7 @@
 #include "TBS_EDITION.H"
 #include "INN_RUNTIME.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "PARTY_STATE.H"
 #include "OBJECT_RUNTIME.H"
 #include "EVENT_RUNTIME.H"

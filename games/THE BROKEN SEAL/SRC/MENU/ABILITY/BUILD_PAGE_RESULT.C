@@ -1,4 +1,4 @@
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "PSYNERGY_MENU.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"

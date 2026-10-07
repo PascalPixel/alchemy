@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "SHOP.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "PARTY_STATE.H"
 #include "TBS_EDITION.H"
 #include "UI.H"

@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -21,7 +21,7 @@
 #include "FIXED_MATH.H"
 #include "IO_WRITE_QUEUE.H"
 #include "EFFECT_STEP.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "IO_REG.H"
 
 #define FarCall_EffectTable ((s32 (*)(s32,s32,s32,s32,s32))FarCall_EffectTable)

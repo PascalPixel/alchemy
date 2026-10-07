@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SYSTEM.H"
 #include "MENU_LIST.H"
 

@@ -10,11 +10,11 @@
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "RAM_BUFFER.H"
-#include "MOTION_OBJECT.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_RUNTIME.H"
+#include "MOTOBJ.H"
+#include "BTLWORK.H"
+#include "BTLSYS.H"
 #include "INVENTORY.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 
 struct MotionObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
@@ -27,7 +27,7 @@ s32 BattleMotion_GetSlotPalette(s32 id)
     return BtlObjGet(id)->palette;
 }
 
-s32 Summon_ClassValid(s32 summon)
+s32 EnmChk(s32 summon)
 {
     struct BtlWork *ptr;
     s32 retval;
@@ -340,7 +340,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
     }
 }
 
-s32 Summon_FindSlot(void)
+s32 EnmSlotGet(void)
 {
     s32 i;
     s32 id;
@@ -355,7 +355,7 @@ s32 Summon_FindSlot(void)
     return id;
 }
 
-s32 Summon_Refresh(void)
+s32 EnmUpd(void)
 {
     struct BtlWork *work = BtlWk;
     u16 unit_ids[14];

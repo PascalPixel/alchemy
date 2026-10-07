@@ -10,7 +10,7 @@
 #include "EDITION.H"
 #include "IO_REG.H"
 #include "SHOP.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SYSTEM.H"
 extern struct ShopRuntime *gMenuWork;
 
@@ -109,7 +109,7 @@ done:
 
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 #include "SYSTEM.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"

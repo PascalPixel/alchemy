@@ -1,4 +1,4 @@
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "ITEM.H"
 #include "TYPES.H"
 #include "SCENE.H"

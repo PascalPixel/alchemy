@@ -1,10 +1,10 @@
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_SLOT.H"
 #include "RAM_BUFFER.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
 

@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"

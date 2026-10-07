@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SCENE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;

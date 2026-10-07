@@ -12,7 +12,7 @@
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 #include "RESOURCE_IDS.H"

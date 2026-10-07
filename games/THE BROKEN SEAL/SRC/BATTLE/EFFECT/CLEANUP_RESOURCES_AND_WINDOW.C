@@ -16,7 +16,7 @@
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #include "OBJECT_LOOKUP.H"

@@ -11,7 +11,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "FIELD_EVENT.H"
 
 struct FieldEffectState {

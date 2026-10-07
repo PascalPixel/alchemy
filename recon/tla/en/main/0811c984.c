@@ -1,7 +1,7 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_MSG.H"
+#include "BTLMES.H"
 #include "BATTLE_MOTION.H"
 #include "SYSTEM.H"
 s32 BattleObject_IsValidId(u32);

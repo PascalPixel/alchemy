@@ -10,11 +10,11 @@
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "ITEM.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "BATTLE_STATUS_ICON.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_EVENT.H"
-#include "BATTLE_WORK.H"
+#include "BTLEV.H"
+#include "BTLWORK.H"
 void BattleEv_MarkDisplay(void)
 {
     gBattleDisplayWork->marked = 1;

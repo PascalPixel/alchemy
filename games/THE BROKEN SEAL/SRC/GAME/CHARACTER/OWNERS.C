@@ -12,7 +12,7 @@
 #include "PARTY_STATE.H"
 #include "TYPES.H"
 #include "CHARACTER.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "RUNTIME_INTERFACES.H"
 #include "PRESET_TABLE.H"
 #include "FIXED_MATH.H"

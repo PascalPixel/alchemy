@@ -8,12 +8,12 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "BATTLE_STATUS_ICON.H"
-#include "BATTLE_RUNTIME.H"
-#include "MOTION_OBJECT.H"
+#include "BTLSYS.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "FIELD_EVENT.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)

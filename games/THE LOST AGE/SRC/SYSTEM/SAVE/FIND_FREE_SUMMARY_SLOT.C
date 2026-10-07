@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 
 struct SaveSummary {

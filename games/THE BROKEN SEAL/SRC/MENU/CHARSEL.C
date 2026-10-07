@@ -17,7 +17,7 @@
 #include "SYSTEM.H"
 #include "GLOBAL_CELLS.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define gKeyState (*(volatile u32 *)&gKeyState)

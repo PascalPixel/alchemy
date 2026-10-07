@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 #include "FIXED_MATH.H"

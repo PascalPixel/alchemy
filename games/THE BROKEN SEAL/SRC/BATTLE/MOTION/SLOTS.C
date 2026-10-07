@@ -10,13 +10,13 @@
 #include "FIXED_POINT_POSITION.H"
 #include "ANIMSPR.H"
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_PRESENTATION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLWORK.H"
+#include "BTLDISP.H"
+#include "BTLSYS.H"
 
 s32 ObjectDispatch_ReleaseFar(s32);
 

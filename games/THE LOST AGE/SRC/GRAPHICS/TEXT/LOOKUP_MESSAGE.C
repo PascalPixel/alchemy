@@ -9,7 +9,7 @@
 #include "TEXT_READER.H"
 #include "TYPES.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IO_REG.H"
 
 

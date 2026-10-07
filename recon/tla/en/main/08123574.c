@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
 struct PlacementList { struct PlacementEntry entries[72]; s32 count; };

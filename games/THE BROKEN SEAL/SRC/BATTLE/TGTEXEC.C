@@ -1,18 +1,18 @@
 #include "TYPES.H"
 #include "BATTLE.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_CALC.H"
-#include "BATTLE_EVENT.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_ACTOR.H"
-#include "BATTLE_PRESENTATION.H"
-#include "MOTION_OBJECT.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
+#include "BTLCALC.H"
+#include "BTLEV.H"
+#include "BTLMES.H"
+#include "BTLSYS.H"
+#include "BTLSMN.H"
+#include "BTLPTY.H"
+#include "BTLOBJ.H"
+#include "BTLDISP.H"
+#include "MOTOBJ.H"
 #include "IWRAM_CALL.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 #define MIKATA      2           /* 味方 */
 
@@ -189,15 +189,15 @@ pow_end:
         s32 ent;
 
         cls = actor->class_id;
-        ent = Summon_FindSlot();
+        ent = EnmSlotGet();
         if (action->effect == 51)
             cls = BtlGrpRnd(work->enemy_group);
-        if (hit != 0 && Summon_ClassValid(cls) != 0 && ent >= 0) {
+        if (hit != 0 && EnmChk(cls) != 0 && ent >= 0) {
             s32 chg;
 
-            chg = Summon_TakeCharge(cls, 1);
+            chg = EnmCntDec(cls, 1);
             if (chg & 0x8000)
-                Summon_ResetCharge(cls);
+                EnmCntClr(cls);
             BtlUnitSetFar(ent, cls, chg & 0x7fff);
             {
                 s32 i;
@@ -214,7 +214,7 @@ pow_end:
                     }
                 }
             }
-            Summon_Refresh();
+            EnmUpd();
             {
                 struct BtlObj *obj;
 

@@ -1,4 +1,4 @@
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "GAME_FLAGS.H"
 #include "OWNER_STATE.H"
 #include "TYPES.H"

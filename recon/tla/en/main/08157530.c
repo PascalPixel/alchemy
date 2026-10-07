@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FIXED_MATH.H"
 
 void Object_ResetMotion(struct MotionObject *);

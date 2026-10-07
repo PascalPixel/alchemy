@@ -301,20 +301,20 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "IWRAM_CALL.H"
-#include "BATTLE_ACTOR.H"
-#include "BATTLE_CALC.H"
+#include "BTLOBJ.H"
+#include "BTLCALC.H"
 #include "BATTLE_EFX.H"
-#include "BATTLE_EVENT.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
-#include "MOTION_OBJECT.H"
-#include "RUNTIME_MEM.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLEV.H"
+#include "BTLMES.H"
+#include "BTLSYS.H"
+#include "BTLSMN.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
+#include "MOTOBJ.H"
+#include "MEM.H"
+#include "BTLDISP.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
 
@@ -537,7 +537,7 @@ pow_end:
 
         cls = actor->enemy_id;
         chg = -1;
-        ent = Summon_FindSlot();
+        ent = EnmSlotGet();
         if (action->effect == 51) {
             cls = BtlGrpRnd(work->enemy_group);
         } else if (action->effect == 86) {
@@ -552,11 +552,11 @@ pow_end:
             } else
                 hit = 0;
         }
-        if (hit != 0 && Summon_ClassValid(cls) != 0 && ent >= 0) {
+        if (hit != 0 && EnmChk(cls) != 0 && ent >= 0) {
             if (chg == -1) {
-                chg = Summon_TakeCharge(cls, 1);
+                chg = EnmCntDec(cls, 1);
                 if (chg & 0x8000)
-                    Summon_ResetCharge(cls);
+                    EnmCntClr(cls);
             }
             BtlUnitSetFar(ent, cls, chg & 0x7fff);
             if (action->effect == 87) {
@@ -581,7 +581,7 @@ pow_end:
                     }
                 }
             }
-            Summon_Refresh();
+            EnmUpd();
             {
                 struct BtlObj *obj;
 

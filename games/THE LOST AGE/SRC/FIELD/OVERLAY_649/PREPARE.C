@@ -2,7 +2,7 @@
 #include "FIELD_SCENE.H"
 #include "RESOURCE.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IO_REG.H"
 
 extern char ResourceId_IntroTilesB;

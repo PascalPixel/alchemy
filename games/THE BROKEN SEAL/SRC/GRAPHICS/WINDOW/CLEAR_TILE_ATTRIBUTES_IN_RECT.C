@@ -13,7 +13,7 @@
 #include "TBS_EDITION.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "TEXT_RENDER_RUNTIME.H"
 

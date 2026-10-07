@@ -11,7 +11,7 @@
 #include "FIELDOBJ.H"
 #include "FIELD_EVENT.H"
 #include "ANIMSPR.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
 

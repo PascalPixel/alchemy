@@ -19,7 +19,7 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 #include "OBJECT_EFX.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OBJECT_DISPATCH.H"
 
 #define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)

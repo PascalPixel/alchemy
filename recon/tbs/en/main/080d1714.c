@@ -240,12 +240,12 @@
  * first). The burst and mark latches step their givs in another
  * order too. */
 #include "CANVAS.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "PROJECT.H"
 #include "B5_CONTEXT.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "BATTLE_EFX.H"

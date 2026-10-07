@@ -11,7 +11,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "B5_CONTEXT.H"
 #include "IWRAM_CALL.H"
 #include "HEAP_STATE.H"

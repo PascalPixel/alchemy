@@ -11,7 +11,7 @@
 #include "OBJDISP.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FX_SCENE.H"
 #include "OBJECT_EFX.H"
 #include "SOUND_IDS.H"

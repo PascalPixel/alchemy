@@ -12,11 +12,11 @@
 #include "EDITION.H"
 #include "BATTLE_ESCAPE.H"
 
-#include "BATTLE_WORK.H"
-#include "BATTLE_PARTY.H"
+#include "BTLWORK.H"
+#include "BTLPTY.H"
 #include "BATTLE_UNIT.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLSYS.H"
+#include "BTLDISP.H"
 #include "OWNER_STATE.H"
 
 extern struct BattlePresentationTransition *gTransitionWork;

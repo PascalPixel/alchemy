@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "OWNER_STATE.H"
 #include "CHARACTER.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "INVENTORY.H"
 #include "BATTLE_UNIT.H"

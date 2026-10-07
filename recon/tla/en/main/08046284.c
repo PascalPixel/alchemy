@@ -1,4 +1,4 @@
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 struct DjinnSlot {
     u16 id;

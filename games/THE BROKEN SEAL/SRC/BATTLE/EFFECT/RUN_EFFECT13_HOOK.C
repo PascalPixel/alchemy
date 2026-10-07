@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FIXED_POINT_POSITION.H"
 #include "SYSTEM.H"
 #include "FIELD_EVENT.H"

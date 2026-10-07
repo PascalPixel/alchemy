@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "SYSTEM.H"
 
 

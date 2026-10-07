@@ -15,7 +15,7 @@
 #include "MAP_SCROLL.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IO_REG.H"
 #include "FLAG_IDS.H"
 

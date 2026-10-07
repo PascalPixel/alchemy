@@ -7,8 +7,8 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
-#include "BATTLE_PARTY.H"
+#include "MEM.H"
+#include "BTLPTY.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -19,11 +19,11 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "FIXED_MATH.H"
 
 void QueueIoWriteDelay2(u32, u32);
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 struct Spark {
     s32 pos[6];

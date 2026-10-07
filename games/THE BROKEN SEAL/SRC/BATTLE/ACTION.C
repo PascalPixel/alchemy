@@ -11,13 +11,13 @@
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
 #include "IO_REG.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 #include "text/MSG_IDS.H"
 
 struct BattleCommandRuntime {

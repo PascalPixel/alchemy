@@ -11,7 +11,7 @@ extern u8 *RomBytes_08029a10[];
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "SELECT.H"
 #include "GLYPH.H"
 #include "TYPES.H"

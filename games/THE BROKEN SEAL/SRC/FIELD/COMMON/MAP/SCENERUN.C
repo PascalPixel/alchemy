@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
@@ -16,7 +16,7 @@
 #include "IO_REG.H"
 #include "IRQ.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "FLAG_IDS.H"
 
 #define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)

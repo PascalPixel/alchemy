@@ -8,9 +8,9 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "BATTLE_SESSION.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "RAM_BUFFER.H"
 
 #define Object_Destroy ((void (*)(void*))Object_Destroy)

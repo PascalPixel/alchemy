@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
 void UiText_RenderWideStringAtOffset(void *text, s32 work, s32 x, s32 y);

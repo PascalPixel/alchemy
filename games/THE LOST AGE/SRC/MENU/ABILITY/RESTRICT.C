@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 s32 PsynergyMenu_IsActionRestricted(s32 no)
 {

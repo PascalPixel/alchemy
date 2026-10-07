@@ -8,12 +8,12 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "SCENE.H"
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_PARTY.H"
+#include "BTLSMN.H"
+#include "BTLPTY.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define Trade_AddOfferFar ((void (*)(s32,s32,s32))Trade_AddOfferFar)
 

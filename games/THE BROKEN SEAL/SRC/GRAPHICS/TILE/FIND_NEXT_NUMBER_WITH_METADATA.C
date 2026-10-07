@@ -22,7 +22,7 @@
 #include "DMA.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 
 struct IconColumn {

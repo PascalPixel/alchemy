@@ -13,7 +13,7 @@
 #include "TYPES.H"
 #include "IRQ.H"
 #include "SCENE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "IO_REG.H"
 

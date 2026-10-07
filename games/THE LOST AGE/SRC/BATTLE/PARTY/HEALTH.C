@@ -13,7 +13,7 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 #include "FIELD_EVENT.H"
 
 

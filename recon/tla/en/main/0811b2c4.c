@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "RAM_BUFFER.H"
-#include "MOTION_OBJECT.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_RUNTIME.H"
+#include "MOTOBJ.H"
+#include "BTLWORK.H"
+#include "BTLSYS.H"
 #include "INVENTORY.H"
 
-s32 Summon_Refresh(void)
+s32 EnmUpd(void)
 {
     struct BtlWork *work = BtlWk;
     u16 unit_ids[14];

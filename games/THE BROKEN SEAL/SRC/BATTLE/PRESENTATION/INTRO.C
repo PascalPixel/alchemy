@@ -11,14 +11,14 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_PRESENTATION.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_PARTY.H"
+#include "BTLDISP.H"
+#include "BTLMES.H"
+#include "BTLPTY.H"
 #include "BATTLE_INTRO.H"
 #include "INVENTORY.H"
 #include "DMA.H"
 #include "SCENE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "IO_REG.H"
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)

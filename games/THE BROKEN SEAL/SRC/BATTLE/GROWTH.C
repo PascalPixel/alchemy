@@ -8,20 +8,20 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "EDITION.H"
-#include "BATTLE_PARTY.H"
-#include "RUNTIME_MEM.H"
+#include "BTLPTY.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
 #include "FIXED_MATH.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_UNIT.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "CHARACTER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "B5_CONTEXT.H"
 
 struct FormationCandidate {
@@ -207,7 +207,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 #define CH_CNT 26
 #endif
 
-s32 Summon_TakeCharge(s32 no, s32 n)
+s32 EnmCntDec(s32 no, s32 n)
 {
     struct BtlWork *w;
     s32 num;
@@ -247,7 +247,7 @@ s32 Summon_TakeCharge(s32 no, s32 n)
     return -1;
 }
 
-s32 Summon_ReleaseCharge(s32 actor_id)
+s32 EnmCntRel(s32 actor_id)
 {
     struct BtlWork *state = BtlWk;
     struct BtlUnit *actor;
@@ -280,7 +280,7 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     state->summon_masks[index] &= ~(1 << bit);
 }
 
-s32 Summon_ResetCharge(s32 class_id)
+s32 EnmCntClr(s32 class_id)
 {
     struct BtlUnit *summon;
     s32 object_index;

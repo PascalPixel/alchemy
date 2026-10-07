@@ -7,7 +7,7 @@
 #include "MENU.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RESMENU.H"

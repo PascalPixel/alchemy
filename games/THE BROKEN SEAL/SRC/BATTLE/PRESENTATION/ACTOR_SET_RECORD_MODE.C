@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 
 void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)

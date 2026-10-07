@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "GAME_STATE.H"
 #include "FIELDRUN.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "BATTLE.H"
 
 void MapGroupTable_SelectEntry(s32 kind)

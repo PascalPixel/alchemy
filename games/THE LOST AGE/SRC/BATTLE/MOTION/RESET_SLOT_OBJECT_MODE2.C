@@ -10,7 +10,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "BATTLE_MOTION.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_SESSION.H"

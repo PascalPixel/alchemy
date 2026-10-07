@@ -1,5 +1,5 @@
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

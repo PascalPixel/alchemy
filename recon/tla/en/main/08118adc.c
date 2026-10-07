@@ -1,7 +1,7 @@
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 
 extern u8 gLinkStatus[];
 

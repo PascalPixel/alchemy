@@ -13,7 +13,7 @@
 #include "UI.H"
 #include "PSYNERGY_MENU.H"
 #include "MENU_LIST.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);

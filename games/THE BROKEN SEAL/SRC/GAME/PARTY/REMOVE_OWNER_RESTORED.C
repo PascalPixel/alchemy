@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "PARTY_STATE.H"
 
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)

@@ -11,7 +11,7 @@
 #include "FX_SCENE.H"
 #include "GAME_STATE.H"
 #include "FIXED_MATH.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 
 extern struct BattleFxScene *gEffectWork;
 

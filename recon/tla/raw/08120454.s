@@ -387,7 +387,7 @@ BtlTgtExec:
 	lsls r4, r4, #1
 	adds r6, r3, r4
 	ldrh r5, [r6]
-	bl Summon_FindSlot
+	bl EnmSlotGet
 	mov r9, r0
 	ldr r0, [sp, #84]
 	movs r7, #1
@@ -469,7 +469,7 @@ BtlTgtExec:
 	b .L_08120942
 .L_081207e0:
 	adds r0, r5, #0
-	bl Summon_ClassValid
+	bl EnmChk
 	cmp r0, #0
 	bne .L_081207ec
 	b .L_08120942
@@ -485,7 +485,7 @@ BtlTgtExec:
 	bne .L_08120816
 	adds r0, r5, #0
 	movs r1, #1
-	bl Summon_TakeCharge
+	bl EnmCntDec
 	movs r3, #128
 	adds r7, r0, #0
 	lsls r3, r3, #8
@@ -493,7 +493,7 @@ BtlTgtExec:
 	cmp r3, #0
 	beq .L_08120816
 	adds r0, r5, #0
-	bl Summon_ResetCharge
+	bl EnmCntClr
 .L_08120816:
 	movs r2, #254
 	lsls r2, r2, #7
@@ -579,7 +579,7 @@ BtlTgtExec:
 	mov r3, r9
 	strh r3, [r0, r1]
 .L_081208b8:
-	bl Summon_Refresh
+	bl EnmUpd
 	mov r0, r9
 	bl BtlObjGet
 	ldr r2, [r0, #12]

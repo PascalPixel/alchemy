@@ -1,6 +1,6 @@
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSMN.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
 #include "BATTLE.H"
 
 struct BattleSummonState *BattleSummon_UpdateAvailability(void)

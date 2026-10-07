@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 struct WindowTiles {
     u8 unknown_00[3];

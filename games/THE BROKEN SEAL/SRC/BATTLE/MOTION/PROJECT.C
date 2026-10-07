@@ -9,10 +9,10 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "ANIMSPR.H"
 #include "EFFECT_STEP.H"
 

@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "EDITION.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "SCENE.H"
@@ -21,7 +21,7 @@
 #include "DMA.H"
 #include "FIELD_SPRITE.H"
 #include "WORKSPACE_OPTIONS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define gKeyState (*(u32 *)&gKeyState)

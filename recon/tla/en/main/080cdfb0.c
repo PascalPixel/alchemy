@@ -1,4 +1,4 @@
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "FIELDRUN.H"
 #include "SCENE.H"
 #include "EFFECT_RUNTIME.H"
@@ -9,7 +9,7 @@
 #include "ITEM.H"
 #include "GAME_STATE.H"
 #include "BATTLE_UNIT.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 
 s32 Event_FindFacingTrigger(s32 source)

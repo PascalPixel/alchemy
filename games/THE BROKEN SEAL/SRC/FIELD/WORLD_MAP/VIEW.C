@@ -10,7 +10,7 @@
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
 #include "MAPFRAME.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "FRAME.H"

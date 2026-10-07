@@ -1,4 +1,4 @@
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "TYPES.H"
 
 u32 Summon_GetLayoutKind(s32 index)

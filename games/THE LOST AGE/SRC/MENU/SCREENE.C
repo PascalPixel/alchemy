@@ -2,7 +2,7 @@
 #include "RAM_BUFFER.H"
 #include "DMA.H"
 #include "IO_REG.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CALLBACK_SCHEDULER.H"
 
 void Func_08108030(void *panel);

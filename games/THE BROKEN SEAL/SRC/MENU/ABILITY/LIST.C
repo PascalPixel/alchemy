@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "EDITION.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "PSYNERGY_MENU.H"
 #include "TBS_EDITION.H"
 #include "TYPES.H"
@@ -18,7 +18,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)

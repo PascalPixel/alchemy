@@ -17,8 +17,8 @@
 #include "RESOURCE.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_WORK.H"
+#include "BTLSYS.H"
+#include "BTLWORK.H"
 #include "MENU_LIST.H"
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)

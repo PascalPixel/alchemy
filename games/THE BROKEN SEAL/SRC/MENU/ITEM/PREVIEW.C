@@ -1,6 +1,6 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
 #include "ITEM.H"
 #include "IWRAM_CALL.H"

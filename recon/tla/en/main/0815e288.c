@@ -1,4 +1,4 @@
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "IWRAM_CALL.H"
 
 extern u8 *gCameraWork;

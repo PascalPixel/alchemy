@@ -1,5 +1,5 @@
 #include "TEXT_READER.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 extern const u8 Func_08015570[];
 

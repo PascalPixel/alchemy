@@ -1,8 +1,8 @@
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "GAME_STATE.H"
 #include "ITEM.H"
 

@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OBJECT_RUNTIME.H"
 
 void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object)

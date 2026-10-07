@@ -798,7 +798,7 @@ Func_08122514:
 	beq .L_08122b46
 	movs r0, #81
 .L_08122b46:
-	bl Summon_ClassValid
+	bl EnmChk
 	cmp r0, #0
 	beq .L_08122b9a
 	ldrb r2, [r5, #3]
@@ -829,7 +829,7 @@ Func_08122514:
 	lsls r3, r3, #1
 	adds r3, r3, r2
 	ldrh r0, [r1, r3]
-	bl Summon_ClassValid
+	bl EnmChk
 	cmp r0, #0
 	beq .L_08122b9a
 .L_08122b8c:

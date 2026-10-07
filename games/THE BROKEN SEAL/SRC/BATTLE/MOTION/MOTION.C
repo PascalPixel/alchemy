@@ -13,10 +13,10 @@
 #include "IO_REG.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "BATTLE_MOTION.H"
-#include "BATTLE_PRESENTATION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLDISP.H"
+#include "BTLSYS.H"
 #include "FIELD_EVENT.H"
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)

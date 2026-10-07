@@ -10,7 +10,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 
 
 s32 BattleMotion_GetSlotPalette(s32 id)
@@ -23,7 +23,7 @@ struct Layout {
     s16 field[6];
 };
 
-s32 Summon_ClassValid(s32 arg0)
+s32 EnmChk(s32 arg0)
 {
     s32 retval;
     s32 i;

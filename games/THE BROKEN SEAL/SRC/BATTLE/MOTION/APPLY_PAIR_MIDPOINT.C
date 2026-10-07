@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 
 void BattleMotion_ReservedNoOp83B0(void *, s32);
 

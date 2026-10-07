@@ -8,10 +8,10 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 
 
 s32 BattleParty_ResetActiveRuntimeFields(void)

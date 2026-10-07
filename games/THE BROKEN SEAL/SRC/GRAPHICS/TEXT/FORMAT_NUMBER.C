@@ -260,7 +260,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || \
     defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -268,7 +268,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SCENE.H"
 
 #define ENTRY_NARROW_GAP 5
@@ -799,14 +799,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #endif
 
 #if defined(TBS_EDITION_JA)
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TEXT_READER.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SCENE.H"
 
 extern const u8 Text_DecodeSymbol[];

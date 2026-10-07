@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLWORK.H"
+#include "BTLSYS.H"
+#include "BTLDISP.H"
 
 extern u8 gKeysHeld[];
 

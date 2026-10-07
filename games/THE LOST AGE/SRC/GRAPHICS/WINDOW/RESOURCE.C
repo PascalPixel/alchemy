@@ -10,7 +10,7 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 #define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
 

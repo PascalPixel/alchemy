@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);

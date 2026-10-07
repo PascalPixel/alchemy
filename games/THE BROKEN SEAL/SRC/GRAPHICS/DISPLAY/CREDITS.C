@@ -8,14 +8,14 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
 #include "LAYOUT_GUARD.H"
 #include "IO_REG.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
 
 #define Flash_Handler0 (*(s16 *)&Flash_Handler0)
 #define gFlashNumRemainingBytes (*(struct DisplayScrollObject * *)&gFlashNumRemainingBytes)

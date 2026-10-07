@@ -1,5 +1,5 @@
 #include "TEXT_RENDER_RUNTIME.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 extern u8 Data_03001e8c[];
 
 extern u8 *gWindowWork;

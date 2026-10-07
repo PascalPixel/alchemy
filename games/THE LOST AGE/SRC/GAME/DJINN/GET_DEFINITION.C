@@ -6,7 +6,7 @@
 #include "MENU.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)

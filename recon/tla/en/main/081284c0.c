@@ -1,9 +1,9 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_TYPES.H"
+#include "BTLWORK.H"
+#include "BTLTYPE.H"
 
 #if defined(TBS_EDITION_EN)
 

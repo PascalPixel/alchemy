@@ -2,7 +2,7 @@
 #include "DMA.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 extern u16 *Data_030011c4;
 extern const u8 Data_08017b10[];

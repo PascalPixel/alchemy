@@ -10,12 +10,12 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "EDITION.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_SUMMON.H"
-#include "MOTION_OBJECT.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
+#include "BTLSMN.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 #include "SYSTEM.H"
 
@@ -99,7 +99,7 @@ party_removed:
     *(s16 *)((u8 *)work + slot) = BATTLE_UNIT_REMOVED;
 #endif
 removed:
-    Summon_ReleaseCharge(actor);
+    EnmCntRel(actor);
     for (j = 0; j < 20; j++) {
         if (work->actions[j].unit_id == actor)
             work->actions[j].unit_id = BATTLE_UNIT_LIST_END;

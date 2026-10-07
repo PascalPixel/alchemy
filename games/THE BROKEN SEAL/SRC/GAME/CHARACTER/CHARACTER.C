@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "SCENE.H"
 #include "OWNER_STATE.H"
 #include "CHARACTER.H"

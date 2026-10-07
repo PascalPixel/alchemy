@@ -8,15 +8,15 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
-#include "RUNTIME_MEM.H"
+#include "BTLPTY.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_MSG.H"
+#include "BTLWORK.H"
+#include "BTLTYPE.H"
+#include "BTLMES.H"
 #include "CHARACTER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define Item_EncodeBankedId ((s32 (*)(s32))Item_EncodeBankedId)
 #define Item_EncodeBankedId ((s32 (*)(s32))Item_EncodeBankedId)

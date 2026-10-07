@@ -8,7 +8,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
 

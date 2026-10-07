@@ -1,6 +1,6 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
-#include "BATTLE_PRESENTATION.H"
+#include "MOTOBJ.H"
+#include "BTLDISP.H"
 
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
 {

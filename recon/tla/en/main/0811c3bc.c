@@ -1,13 +1,13 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_MSG.H"
+#include "BTLMES.H"
 #include "BATTLE_ESCAPE.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "BATTLE_TARGET.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "SYSTEM.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #if defined(TBS_EDITION_EN)
 

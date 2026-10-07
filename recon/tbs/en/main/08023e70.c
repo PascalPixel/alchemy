@@ -17,11 +17,11 @@
 
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "MENU_LIST.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_PARTY.H"
+#include "BTLSYS.H"
+#include "BTLPTY.H"
 #include "IWRAM_CALL.H"
 
 struct BattleMenuSelection {

@@ -12,7 +12,7 @@
 #include "INVENTORY_MENU.H"
 #include "ITEM.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
 

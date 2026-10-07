@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "CANVAS.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "BATTLE_SESSION.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "TYPES.H"

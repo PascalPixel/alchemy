@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -16,7 +16,7 @@
 #include "FIELD_SCENE.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "text/MSG_IDS.H"
 
 #define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)

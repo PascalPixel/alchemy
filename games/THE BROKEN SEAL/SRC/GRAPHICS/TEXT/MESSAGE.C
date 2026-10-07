@@ -10,7 +10,7 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "WINDOW.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "HEAP_STATE.H"
 
 enum { HEAP_SLOT_BATTLE_DISPLAY = 37 };

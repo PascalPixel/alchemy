@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "ENTRANCE.H"
 
 void OverlayObject_ReleasePublishedAttachment(void)

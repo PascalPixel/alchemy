@@ -18,7 +18,7 @@
 #include "SYSTEM.H"
 #include "KEYSTATE.H"
 #include "GAME_STATE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 

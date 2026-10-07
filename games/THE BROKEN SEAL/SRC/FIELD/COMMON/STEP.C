@@ -15,7 +15,7 @@
 #include "RAM_BUFFER.H"
 #include "GAME_STATE.H"
 #include "FIELDRUN.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define BattleFx_ApplyLookupResult ((s32 (*)(void*,s32))BattleFx_ApplyLookupResult)
 #define EffectRuntime_LookupByTableEntry ((s32 (*)(s32,s32))EffectRuntime_LookupByTableEntry)

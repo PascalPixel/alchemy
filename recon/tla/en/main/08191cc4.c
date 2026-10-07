@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "BATTLE_SESSION.H"
 
 struct SummonCast {

@@ -13,7 +13,7 @@
 #include "FIELD_SCENE.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CALL.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "ITEM.H"
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"

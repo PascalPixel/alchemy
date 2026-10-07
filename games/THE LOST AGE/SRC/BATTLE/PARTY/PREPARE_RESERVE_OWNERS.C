@@ -8,9 +8,9 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
+#include "BTLSYS.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
 

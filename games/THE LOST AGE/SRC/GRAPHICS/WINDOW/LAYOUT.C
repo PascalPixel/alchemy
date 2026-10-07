@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RAM_BUFFER.H"
 
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,

@@ -11,7 +11,7 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
 

@@ -1,4 +1,4 @@
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 extern struct ShopRuntime *gMenuWork;

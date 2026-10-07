@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
-s32 Summon_FindSlot(void)
+s32 EnmSlotGet(void)
 {
     s32 i;
     s32 id;

@@ -1,6 +1,6 @@
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLPTY.H"
+#include "BTLDISP.H"
 
 void BattlePres_SetOtherActorRecordModes(s32 excluded)
 {

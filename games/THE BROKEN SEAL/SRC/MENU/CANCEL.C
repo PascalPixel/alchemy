@@ -13,7 +13,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 void Audio_PlayCue(s32 cue);
 

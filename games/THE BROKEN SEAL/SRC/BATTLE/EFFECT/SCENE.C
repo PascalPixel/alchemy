@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "MAP_SCROLL.H"
 #include "EVENT_RUNTIME.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
@@ -24,7 +24,7 @@
 #include "GLOBAL_CELLS.H"
 #include "FRAME.H"
 #include "IO_REG.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define BattleFx_UpdateScaledArcObjectB ((void (*)(void))BattleFx_UpdateScaledArcObjectB)

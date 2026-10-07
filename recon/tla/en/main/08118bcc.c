@@ -1,6 +1,6 @@
 #include "TYPES.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_PARTY.H"
+#include "BTLMES.H"
+#include "BTLPTY.H"
 
 extern u8 *BtlWk;
 

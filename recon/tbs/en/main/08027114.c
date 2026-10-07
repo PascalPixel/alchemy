@@ -86,13 +86,13 @@
  * lands in caller-saved r4. The last djinn cost loop enters at its bottom
  * test; native copies the required > cost test to the entry. */
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "IO_REG.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "BATTLE_UNIT.H"
 #include "ITEM.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "MENU_LIST.H"
 #include "SERIAL_RUNTIME.H"
 #include "text/MSG_IDS.H"

@@ -15,7 +15,7 @@
 #include "GAME_STATE.H"
 #include "FIELD_SPRITE.H"
 #include "ANIMSPR.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)

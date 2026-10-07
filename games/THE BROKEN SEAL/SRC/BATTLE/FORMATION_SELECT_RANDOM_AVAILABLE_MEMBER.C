@@ -11,10 +11,10 @@
 #include "FIXED_MATH.H"
 #include "BATTLE_FORMATION.H"
 #include "SYSTEM.H"
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_CALC.H"
+#include "BTLSMN.H"
+#include "BTLWORK.H"
+#include "BTLSYS.H"
+#include "BTLCALC.H"
 #include "IWRAM_CALL.H"
 
 s32 BtlGrpRnd(s32 record_id)
@@ -189,10 +189,10 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         goto assigned;
 assign_enemy:
     {
-        s32 charge = Summon_TakeCharge(list[i], 1);
+        s32 charge = EnmCntDec(list[i], 1);
 
         if (charge & 0x8000)
-            Summon_ResetCharge(list[i]);
+            EnmCntClr(list[i]);
         BtlUnitSetFar(i + 128, list[i], charge & 0x7fff);
         UnitGetFar(i + 128);
         if (margin != 0)

@@ -14,7 +14,7 @@
 #include "EVENT_RUNTIME.H"
 #include "ITEM.H"
 #include "ITEMGIFT.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 

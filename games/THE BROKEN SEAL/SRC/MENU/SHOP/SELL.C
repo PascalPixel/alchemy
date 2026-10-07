@@ -10,7 +10,7 @@
 #include "IO_REG.H"
 #include "EDITION.H"
 #include "SHOP.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TBS_EDITION.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"

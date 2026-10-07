@@ -1,4 +1,4 @@
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 u32 Ability_CheckStatusOrSpecialId(s32 action_id)
 {

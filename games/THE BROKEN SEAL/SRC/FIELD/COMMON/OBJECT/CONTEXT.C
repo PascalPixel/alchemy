@@ -17,7 +17,7 @@
 #include "GAME_STATE.H"
 #include "SCROLL.H"
 #include "ANIMSPR.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "DISPTRAN.H"
 
 void Object_SetMode(struct ObjectRuntime *, s32);

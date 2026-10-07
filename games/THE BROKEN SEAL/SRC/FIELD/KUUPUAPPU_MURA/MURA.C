@@ -11,7 +11,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "text/MSG_IDS.H"
 
 #define UnitCalc ((s32 (*)(int))UnitCalc)

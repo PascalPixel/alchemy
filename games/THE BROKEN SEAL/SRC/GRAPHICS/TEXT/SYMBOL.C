@@ -11,7 +11,7 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "WINDOW.H"
 #include "IO_REG.H"
 

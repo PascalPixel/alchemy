@@ -1,7 +1,7 @@
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TBS_EDITION.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"

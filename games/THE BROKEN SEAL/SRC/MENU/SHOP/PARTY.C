@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"

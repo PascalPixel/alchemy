@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -17,8 +17,8 @@
 #include "SYSTEM.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_TYPES.H"
+#include "BTLSYS.H"
+#include "BTLTYPE.H"
 #include "IO_REG.H"
 
 #define BattleEffect_RunCirclingFallingScene ((void (*)(s32*))BattleEffect_RunCirclingFallingScene)

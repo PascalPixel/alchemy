@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FIELD_EVENT.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((s32 (*)(struct FieldActor*,s32))ObjectDispatch_ApplyValueToChildrenFar)

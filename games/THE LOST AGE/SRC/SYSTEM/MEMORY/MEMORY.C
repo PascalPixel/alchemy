@@ -9,7 +9,7 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "RESOURCE.H"

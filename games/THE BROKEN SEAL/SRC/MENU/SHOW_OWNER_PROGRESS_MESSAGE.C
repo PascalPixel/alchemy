@@ -7,11 +7,11 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #include "TYPES.H"
 #include "text/MSG_IDS.H"

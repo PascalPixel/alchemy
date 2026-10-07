@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_WORK.H"
+#include "BTLPTY.H"
+#include "BTLWORK.H"
 #include "IWRAM_CALL.H"
 
 s32 BattleParty_AssignMemberSlots(void)

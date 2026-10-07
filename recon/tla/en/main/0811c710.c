@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_PRESENTATION.H"
-#include "MOTION_OBJECT.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
+#include "BTLDISP.H"
+#include "MOTOBJ.H"
 
 extern u8 gTransitionWork[];
 

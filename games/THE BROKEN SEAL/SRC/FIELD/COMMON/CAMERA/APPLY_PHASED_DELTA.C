@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "TYPES.H"
 #include "SCENE.H"
 

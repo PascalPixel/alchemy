@@ -16,7 +16,7 @@
 #include "PARTY_STATE.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "OBJECT_RUNTIME.H"
 #include "text/MSG_IDS.H"
 

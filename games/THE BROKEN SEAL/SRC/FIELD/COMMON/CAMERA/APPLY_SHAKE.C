@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "MAP_SCROLL.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "SCENE.H"

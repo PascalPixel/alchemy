@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 #include "STORY.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

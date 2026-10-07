@@ -20,8 +20,8 @@
 #include "UI.H"
 #include "INVENTORY_MENU.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLTYPE.H"
+#include "BTLSYS.H"
 #include "MENU_RESULT.H"
 #include "text/MSG_IDS.H"
 

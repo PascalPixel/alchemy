@@ -1,7 +1,7 @@
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_WORK.H"
+#include "BTLPTY.H"
+#include "BTLSYS.H"
+#include "BTLWORK.H"
 #include "SCENE.H"
 #include "BATTLE_UNIT.H"
 

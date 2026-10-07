@@ -9,9 +9,9 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_EVENT.H"
-#include "BATTLE_PRESENTATION.H"
-#include "BATTLE_TYPES.H"
+#include "BTLEV.H"
+#include "BTLDISP.H"
+#include "BTLTYPE.H"
 #include "SYSTEM.H"
 void BattlePresentation_WaitForAdvance(void);
 

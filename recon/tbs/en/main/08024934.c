@@ -1,6 +1,26 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 925, common 714, differ 443; frame 372
+ * Native 946 instructions, draft 944, common 805, differ 280; frame 372
  * as native's.
+ * Session 7: the draw loop's affordability scan counts with the column
+ * loop's element (no n): 443 -> 280. Diagnosed in greg: index (pseudo
+ * 62, 126 refs over 496 insns, 6 * 126 / 496 = 1.524) was allocated just
+ * before the column element (pseudo 231, 19 refs over 54 insns, 1.407),
+ * took the free r7 and left element r4. One element for scan and columns
+ * outranks index, takes r7 as native's, and index, with r5-r7 taken,
+ * falls to r4 with its caller-saves at sp+4 as native's. Session 5 tried
+ * the same at 524 (819), when the first page loop's tile still held r4;
+ * since session 6 that tile is r1. Remaining at 280, first: mask stored
+ * before counts and the window call's stack argument stored late
+ * (scheduling); the compiler temporaries' slots again differ (draft
+ * sprites 8, ordered 12, count - 1 28; native sprites 28, ordered 32,
+ * count - 1 20) and the handle loop walks a sprite pointer where native
+ * keeps base r7 plus an offset giv from 8 and the tile mask in r8.
+ * Slots top down, draft: cursor_handle << 16 36, summon 32, count - 1 28,
+ * row * 2 24, cursor 20, &glyph 16, ordered 12, sprites 8; native:
+ * summon 36, ordered 32, sprites 28, cursor 24, count - 1 20, row * 2 16,
+ * cursor_handle << 16 12, &glyph 8 (reload numbers them by pseudo, so
+ * native made &ordered and &sprites early and the shift late). From 280:
+ * the handle loop indexed (sprites[index].oam.f.tile) 323.
  * Session 6: the main loop is for (;;) with two breaks, the first page
  * loop back in its original form (tile = PAGE; if (index == page / 4)
  * tile = SELECTED), and the loop and the WaitFrames(1) after it wrapped
@@ -472,18 +492,17 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 }
                 {
                     s32 element, col, y;
-                    s32 n;
 
                     index = 0;
                     if ((id = ordered[page + index]) != 32) {
                     next:
                         col = 0;
                         summon = SummonDefinition_Get(id);
-                        for (n = 0; n <= 3; n++) {
-                            if (summon->djinn_required[n] > standby[n])
+                        for (element = 0; element <= 3; element++) {
+                            if (summon->djinn_required[element] > standby[element])
                                 break;
                         }
-                        affordable = n == 4;
+                        affordable = element == 4;
                         y = index * 2;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
                         sprites[index].oam.f.tile = glyph;

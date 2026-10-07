@@ -1,3 +1,8 @@
+/* Trial from54, removed: mode1 disappearing panel boundary is unchanged54.
+ * Explicit row pattern induction/r5 plus a memory-constrained row copy gives422.
+ * Current RTL still ranks index-copy354 (9refs/17insns) above pattern-copy345
+ * (9/18), with identical conflicts and LO_REGS preferences.
+ */
 /* 2026-10-08 queue3 release entry: all six differ54, not matched; localizations
  * listing/draft1037, common1010; JA listing/draft1036, common1009.
  * Loading count before the zero and the original zero-before-load

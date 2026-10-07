@@ -1,4 +1,17 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1665.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2032, differ 1658.
+ * Shadow screen coordinates now have loop-local sx/sy lifetimes. Native
+ * reads both coordinates before the visibility test; reading proj directly
+ * delayed x and rematerialized the projection address. Locals restore those
+ * loads and remove the extra address add:2033/1665 ->2032/1658, frame768.
+ * With matrix-first packing, global x/y gives2043/1833/frame776, scoped
+ * sx/sy2039/1797/frame772. A low point-pointer boundary before the loop
+ * gives2041/1819; four ordinary projection cursors2038/1800, all four
+ * constrained low2039/1805. Each still spills the matrix, frame772. Rejected.
+ * Shadow matrix lifetime trials after the typed-point cleanup, none kept:
+ * a plain local observed before projection gives2040/1810/frame772;
+ * a high-register input triggers note_invalid_constants at arm.c:5414;
+ * fixed r9 gives2036/1810/frame772, rebuilding the matrix value inside
+ * each iteration and spilling attr2's offset rather than the point pointer.
  * Render_ProjectPoint now uses its current GFXUTIL.C/FIELD.H signature,
  * s32 * rather than void *, with the named x members passed as input.
  * All generated instructions remain identical. The neighboring projected
@@ -761,6 +774,7 @@ void LuckyDice_Run(void)
 
         for (i = 0; i != 2; i++) {
             s32 dep;
+            s32 sx, sy;
 
             point.y = 0;
             point.x = work->particles[i].x;
@@ -778,13 +792,15 @@ void LuckyDice_Run(void)
             __asm__ volatile("" : : "m"(depth[2 + i]));
             dep += *((s16 *)&work->particles[i].y + 1);
             depth[2 + i] = dep;
-            if (proj[1] + 88 > -16) {
+            sx = proj[0];
+            sy = proj[1];
+            if (sy + 88 > -16) {
                 u32 off0 = OBJ_OFF(count, attr01);
                 u32 off1 = OBJ_OFF(count, attr2);
                 obj = sprites;
                 /* FAKEMATCH: native retains independent object offsets. */
                 __asm__ volatile("" : "+rm"(obj));
-                *(u32 *)((u8 *)obj + off0) = ((((proj[0] + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((proj[1] + 0x158) & 255) | 0x40002300;
+                *(u32 *)((u8 *)obj + off0) = ((((sx + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((sy + 0x158) & 255) | 0x40002300;
                 *(u32 *)((u8 *)obj + off1) = 0x890;
                 count++;
             }

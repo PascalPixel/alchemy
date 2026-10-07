@@ -1,4 +1,6 @@
-/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4); camelot_arm is an analysis-only study (K1, K3).
+/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1, agbcc/camelot_arm).
+ * Route decision (2026-10-07), this draft under agscc -marm with the game options:
+ *   differ 377; with -mno-apcs-frame 381; with -mno-apcs-frame -ffixed-fp 377.
  * alchemy diff --camelot-arm, upstream's whole arm_adjust_cost (2026-10-06, session 6):
  *   listing 196, draft 198, common 119, differ 156; the same draft under stock agbcc_arm:
  *   draft 199, common 109, differ 177. 165 to 156 (session 6, aimed by --heat):

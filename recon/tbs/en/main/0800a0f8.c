@@ -1,4 +1,7 @@
-/* 0800a0f8: ARM draft; camelot_arm is an analysis-only study (K1, K3).
+/* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
+   (K1, agbcc/camelot_arm). Route decision (2026-10-07), this draft under
+   agscc -marm with the game options: differ 183; with -mno-apcs-frame
+   190; with -mno-apcs-frame -ffixed-fp 166.
    alchemy diff --camelot-arm, upstream's whole arm_adjust_cost
    (2026-10-06, session 5): listing 157, draft 157, common 133, differ
    48, as under the anti/output half alone; stock agbcc_arm 76. The

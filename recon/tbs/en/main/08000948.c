@@ -1,4 +1,7 @@
-/* 08000948: ARM draft (IwramSqrt); no admitted game ARM build route.
+/* 08000948: ARM draft (IwramSqrt) for the game ARM route (K1,
+   agbcc/camelot_arm). Route decision (2026-10-07), this draft under agscc
+   -marm with the game options: differ 28; with -mno-apcs-frame 28; with
+   -mno-apcs-frame -ffixed-fp 28.
    First draft, written from recon/tbs/raw/08000948.S, scored at the
    library ARM setting (analysis only, no credit):
    alchemy diff --camelot-arm (upstream's whole arm_adjust_cost):

@@ -1,4 +1,7 @@
-/* 0800a494: ARM draft; camelot_arm is an analysis-only study (K1, K3).
+/* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1,
+   agbcc/camelot_arm). Route decision (2026-10-07), this draft under agscc
+   -marm with the game options: differ 468; with -mno-apcs-frame 463; with
+   -mno-apcs-frame -ffixed-fp 461.
    alchemy diff --camelot-arm, upstream's whole arm_adjust_cost
    (2026-10-06, session 6): listing 307, draft 300, common 245, differ
    117; the same draft under stock agbcc_arm: common 250, differ 107

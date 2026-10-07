@@ -1,5 +1,7 @@
-/* 080020f4: ARM draft (ColorBuffer_DarkenPartialKernel); no admitted game
-   ARM build route. First draft, written from recon/tbs/raw/080020f4.S,
+/* 080020f4: ARM draft (ColorBuffer_DarkenPartialKernel) for the game ARM
+   route (K1, agbcc/camelot_arm). Route decision (2026-10-07), this draft
+   under agscc -marm with the game options: differ 100; with
+   -mno-apcs-frame 96; with -mno-apcs-frame -ffixed-fp 100. First draft, written from recon/tbs/raw/080020f4.S,
    scored at the library ARM setting (analysis only, no credit):
    alchemy diff --camelot-arm (upstream's whole arm_adjust_cost):
    listing 52, draft 52, common 7, differ 90; stock agbcc_arm: 90.

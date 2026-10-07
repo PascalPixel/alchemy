@@ -1,6 +1,29 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
  * Stock agbcc_arm (2026-10-07, completion session, latest): English listing
+ *   196, draft196, common188, differ16. From34: scoped initial next pointer
+ *   in r2, with next declared before head, gives30. Read-only r1 constraints
+ *   before/after the final postincrement preserve its spill and give26;
+ *   joint parameter/index boundary24. Native zero/r1 plus flags reload/r0
+ *   gives20; row-pointer load/pass reset/add boundaries18. Final row
+ *   coordinate in r3 after its pointer reload gives16. A separate y boundary
+ *   and deferred x preserve16 while putting y before x.
+ *   Remaining: prologue ordering, width store versus bounds compare, first
+ *   colour register and initialization, font-row reset, final shift/store.
+ *   DE/ES/FR/IT: listing187, draft186, common123, differ127 in all four.
+ *   Trials from34: const colours91, volatile src62; initial pointer p+1/head
+ *   before next38. Final pointer +r boundary59; readonly pointer with original
+ *   next++41; readonly p++ then next=p39; readonly after p++ gives26.
+ *   Tail shift moved before next=p, with/without bits constraints or a fixed
+ *   ip bits value, holds next in sl and displaces ty (53 or61); direct shift
+ *   asm after the copy keeps the spill but moves cmp after the shift/store.
+ *   Coordinate boundary with no fixed r3 gives68; fixed r3 gives16.
+ *   Ordinary y50, readonly r7 alias80; fixed first ty/r8 and second sub/r8
+ *   give34 but use r8 as scratch; first ty alone46. Zero/r1 readonly24,
+ *   read/write26; constraining the window reload restores20. Shared src then
+ *   colour through one short r1 value gives28: c3 and the width table hoist
+ *   ahead of c1. All rejected forms removed; no real asm instructions remain.
+ * Stock agbcc_arm (2026-10-07, completion session, previous): English listing
  *   196, draft 196, common 179, differ 34. From76, tagged ofs/r3 gives72;
  *   code/lr and col/lr give75 but remove the extra code copy. Separate
  *   constrained narrow/r1 and wide/r0 rows restore the two stores and shared
@@ -183,12 +206,15 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     /* FAKEMATCH: native retains the glyph offset in r3; ordinary allocation ties it to the return width in r0. */
     register u32 ofs asm("r3");
     /* FAKEMATCH: native x uses r9; ordinary allocation swaps r9/sl in both paths (117 differences). */
-    register u32 x asm("r9") = xpos;
+    register u32 x asm("r9");
     /* FAKEMATCH: native y uses r7; constrained row pointers otherwise swap r7/r8 through both loops. */
     register u32 y asm("r7") = ypos;
 
-    /* FAKEMATCH: keep y in its native register; without this boundary GCC also keeps ypos in r4 (51 differences). */
+    /* FAKEMATCH: native moves y out of the incoming font register before preparing x. */
     asm("" : "+r"(y));
+    x = xpos;
+    /* FAKEMATCH: native prepares font, x and y before computing the glyph index; the ordinary setup is reordered (26 differences). */
+    asm("" : "+r"(y), "+r"(ch) : "r"(font), "r"(x));
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     width = win->width;
     if (ch < 256 || font != 0) {
@@ -287,22 +313,44 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
 #else
     gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
     if (code < 2) {
+        /* FAKEMATCH: native stores the zero width through r1; ordinary allocation uses r2 (24 differences). */
+        register s32 zero asm("r1");
         x -= 3;
         y -= 2;
-        ret = 0;
+        zero = 0;
+        /* FAKEMATCH: retain the native zero-store register. */
+        asm("" : : "r"(zero));
+        ret = zero;
     } else {
         ret = gw;
     }
 #endif
-    for (pass = 0; pass < 4; pass++) {
+    {
         u16 *next;
+        /* FAKEMATCH: native initializes the next-row pointer in r2; the loop-hoisted ordinary expression uses r3 (34 differences). */
+        register u16 *p asm("r2") = rows;
+        /* FAKEMATCH: native resets pass in r1 between the row-pointer load and add (20 differences). */
+        register u32 i asm("r1");
+        u16 *head;
+        /* FAKEMATCH: native loads rows before resetting pass; reserve its reset register until after this load. */
+        asm("" : "+r"(p) : : "r1");
+        i = 0;
+        /* FAKEMATCH: retain the native pointer register before its spill. */
+        asm("" : "+r"(p) : "r"(i));
+        head = p + 1;
+    for (pass = i; pass < 4; pass++) {
         u32 ty;
         u32 color;
         u32 px;
         u32 sub;
 
         color = pass == 3 ? 0x1111 : 0x5555;
-        if (win->flags & 64) {
+        {
+        /* FAKEMATCH: native reloads win into r0 for flags; the zero-width constraint otherwise chooses r2. */
+        register struct UiTextWindow *wp asm("r0") = win;
+        /* FAKEMATCH: retain the native window reload register. */
+        asm("" : : "r"(wp));
+        if (wp->flags & 64) {
             if (pass < 2) {
                 if (pass == 1)
                     x += 2;
@@ -315,8 +363,9 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
                 y--;
             }
         }
+        }
         row = 0;
-        next = rows + 1;
+        next = head;
         bits = rows[0];
         bits <<= 16;
         while (y + row < 32) {
@@ -342,9 +391,24 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
             }
             if (++row >= 12)
                 break;
-            bits = *next++;
+            {
+                /* FAKEMATCH: native reloads the row pointer into r1, interleaving the y test; ordinary reload uses r3 (30 differences). */
+                register u16 *p asm("r1") = next;
+                /* FAKEMATCH: native holds the next-row y coordinate in r3. */
+                register u32 line asm("r3");
+                /* FAKEMATCH: retain the measured reload register before postincrement. */
+                asm("" : : "r"(p) : "r3");
+                line = y + row;
+                /* FAKEMATCH: native computes the row coordinate after loading next and before loading its bits. */
+                asm("" : : "r"(line) : "memory");
+                bits = *p++;
+                /* FAKEMATCH: native retains r1 through the postincrement and stack write. */
+                asm("" : : "r"(p));
+                next = p;
+            }
             bits <<= 16;
         }
+    }
     }
     return ret;
 }

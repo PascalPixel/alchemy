@@ -3,6 +3,24 @@
  * (step and burst address, see the fourth to seventh passes) change
  * instruction selection, not only order or registers (S2). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Eleventh pass (2026-10-07): the step flush's cause, still not found.
+ * thread_jumps runs after jump pass 1 and before CSE pass 1 (toplev.c),
+ * so a repeated test is threaded away before CSE chooses its paths; in
+ * the trials below a second jump to the join was always gone before CSE
+ * chose them. The path has to end at a block boundary that leaves
+ * no code in the final output. Of the forms tried, only a loop end does
+ * that (an empty do-while, or the asm), and neither is a natural source.
+ * Eleventh-pass trials, each without the step flush: the variant block
+ * in its own if (frame >= k * 8) after the hit stanza, with shot assigned
+ * in the first, 451 (the first test is threaded to the loop tail and CSE
+ * folds the second); if (frame - k * 8 == 17) 369 (679 instructions:
+ * frame - k * 8 becomes a giv, where native adds 17 to k * 8 and compares
+ * it with frame); the hit test repeated around
+ * BattleEventRuntime_BeginPhaseFar inside the hit block 451 (the jump dump
+ * gives the join 2 uses, but CSE1's block list shows paths from the
+ * k-loop top through the join to insns 929, 1005 and 1046, and the inner
+ * test is gone); BattleEventRuntime_BeginPhaseFar in a second
+ * if (frame == k * 8 + 17) after the hit block 451.
  * Tenth pass (2026-10-07): the flushes' natural cause, still not found.
  * The step flush needs CSE's AROUND path (cse_end_of_basic_block,
  * skip_blocks) to end after the hit block's join label: a code label

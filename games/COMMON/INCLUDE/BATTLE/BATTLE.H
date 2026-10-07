@@ -25,7 +25,7 @@ extern u8 Encounter_AreaEntryTable[];
 extern u8 gPlayerObjectId[];
 extern u16 Resource_SlotAssignments[];
 extern const struct SceneAreaNameRule Scene_AreaNameRules[];
-s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot);
+s32 BtlTgtExec(struct BattlePlan *plan, s32 slot);
 struct BattleObjectSlot;
 #ifndef OWN_BattlePresentation_SpawnActorObject
 void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 unit, s32 x, s32 y);

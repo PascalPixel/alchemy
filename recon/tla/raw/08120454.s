@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Battle_ResolveTargetAction
+	.global BtlTgtExec
 	.thumb_func
-Battle_ResolveTargetAction:
+BtlTgtExec:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

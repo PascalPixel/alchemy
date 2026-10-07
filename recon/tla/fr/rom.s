@@ -4469,10 +4469,10 @@ Func_08120060:
 BattleEv_DispatchQueued:
 	.incbin "baserom.gba", 0x001201dc, 0x000001c4
 	.section .rom.0012046c, "ax"
-	.global Battle_ResolveTargetAction
-	.type Battle_ResolveTargetAction, %function
+	.global BtlTgtExec
+	.type BtlTgtExec, %function
 	.thumb_func
-Battle_ResolveTargetAction:
+BtlTgtExec:
 	.incbin "baserom.gba", 0x0012046c, 0x0000206c
 	.section .rom.001224f0, "ax"
 	.incbin "baserom.gba", 0x001224f0, 0x00000774

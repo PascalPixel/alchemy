@@ -96,7 +96,7 @@
     (field) = 7;                                                               \
 }
 
-s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
+s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
 {
 #if GAME_TLA
     struct BattleAction *action;

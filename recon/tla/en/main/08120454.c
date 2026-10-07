@@ -1,4 +1,4 @@
-/* Battle_ResolveTargetAction, tla-en 0x08120454.
+/* BtlTgtExec, tla-en 0x08120454.
  * alchemy diff: listing 3450 instructions, draft 3468, common 3056, differ 806.
  * The Broken Seal's source (0x080bbb0c) compiled for this game with only its
  * names resolved: draft 2549, common 1381, differ 3237.
@@ -72,7 +72,7 @@ struct AffinityPair {
     s16 low;
     s16 high;
 };
-s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
+s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
 {
     struct BattleAction *action;
     s32 action_id;

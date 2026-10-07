@@ -1,5 +1,5 @@
 /* Stubborn (2026-10-07, T08-08021e6c session 2): differ 462 (listing 1037, draft 1033, common 804). Not matched. Still permuter scaffolding, to be replaced by real source shapes: tmp7 = mode != 0 kept from before the position loop to the command_selection test (worth 46: 513 without, at 467), the tmp2 and tmp3 temporaries each reused for two values inside the content col loops (a register set twice is no giv, so 0x100 + pattern + col is not strength-reduced, as native), and the u16 * temporary for 0x0600fd68 (worth 53: 520 without, at 467). Native copies every tile loop's row pointer or row index once per row (adds r1, r0, #0; mov r12, r6; str r5, [sp, #4]): loop.c keeps such a copy when a giv is not replaceable (loop.c 5520-5565: a biv update inside the giv's lifetime, or the giv's register first set elsewhere); its large constant offsets (0x448, 0x46c) are rematerialized inside the column loops, so they are pseudos left without hard registers, which the draft still allocates. */
-/* Trial (session 2): the mode-1 blank loop's rows and columns and the mode-1 content columns as plain for loops instead of the permuter's while forms: 462, unchanged, kept. The mode-1 blank rows counted before their columns: 472; as a do-while with tile_row += 32: 471. */
+/* Trial (session 2): the mode-1 blank loop's rows and columns, the mode-1 content columns and the mode-0 content rows and columns as plain for loops instead of the permuter's while and if/do-while forms: 462, unchanged, kept. The mode-0 content panels as a for loop: 568, kept as do-while. The mode-1 blank rows counted before their columns: 472; as a do-while with tile_row += 32: 471. */
 /* Trial (session 2): the mode-0 content loop's tmp4 = col & 3 removed (col & 3 written in place): 467 -> 462. Then without the u16 * temporary: 516; tmp2 = count * 3 removed as well: 525, and also tmp2 = 0x100 + pattern: 523. tmp3 renamed: unchanged. Mode-1 content loop counting cnt before its columns: 477; with index = tile_index copied per row: 477; index and pattern computed per row from cnt: 908. */
 /* Trial (session 2): mode-0 blank and closing loops as for (cnt = 0; cnt <= 2; ) { tile_row = &render->tilemap[panel * 3 + cnt * 32]; cnt++; columns } (cnt++ before the columns makes tile_row non-replaceable, native's per-row copy, though native increments cnt after the columns): 484 -> 473 (closing) -> 467 (both). The same in the mode-1 blank loop: 485; in the mode-1 content loop: 483. Declaration order elsewhere: no effect (every adjacent pair swapped, 484). Function-scope tile_row shared by every loop: 495. Content loops with index and pattern computed per row from cnt: 886-926. */
 /* Trial (session 2): mode-1 content loop declares tile_row before pattern (alchemy permute 5 min, seed 11, --heat: one rewrite): 636 -> 484. The same order in the mode-0 content loop: 546. tmp7 removed: 534; the u16 * temporary removed: 716. */
@@ -213,23 +213,17 @@ s32 Ui_RunSelectionScreen(s32 mode)
                         s32 tile_index = panel * 3;
                         s32 pattern = panel * 16;
                         u16 *tile_row = &render->tilemap[tile_index];
-                        cnt = 0;
-                        while (cnt <= 2) {
+                        for (cnt = 0; cnt <= 2; cnt++, tile_row += 32, tile_index += 32, pattern += 4) {
                             s32 col;
-                            col = 0;
-                            if (col <= 2) {
-                                do {
-                                    s32 tmp2;
-                                    u16 *tmp;
-                                    tmp2 = 0x100 + pattern;
-                                    tmp = (u16 *)0x0600fd68;
-                                    tmp[tile_index + (col & 3) - count * 3] = tmp2 + col;
-                                    tmp2 = count * 3;
-                                    *(tile_row + (col & 3) - tmp2 + 0x234) = 0;
-                                    col++;
-                                } while (col <= 2);
+                            for (col = 0; col <= 2; col++) {
+                                s32 tmp2;
+                                u16 *tmp;
+                                tmp2 = 0x100 + pattern;
+                                tmp = (u16 *)0x0600fd68;
+                                tmp[tile_index + (col & 3) - count * 3] = tmp2 + col;
+                                tmp2 = count * 3;
+                                *(tile_row + (col & 3) - tmp2 + 0x234) = 0;
                             }
-                            cnt++, tile_row += 32, tile_index += 32, pattern += 4;
                         }
                         panel++;
                     } while (panel < work->count);

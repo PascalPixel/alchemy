@@ -287,7 +287,6 @@
     "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/PREVIEW.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.0002211c)
-    "*/recon/tbs/fr/rom.o"(.rom.000238d8)
     "*/games/COMMON/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/COPY_TILE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/BATTLE_LIST.o"(.text)

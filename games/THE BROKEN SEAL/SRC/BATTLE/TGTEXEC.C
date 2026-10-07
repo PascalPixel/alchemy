@@ -93,7 +93,6 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     s32 rate;
     s16 *cmd;
     s32 tid;
-    s8 *rm;
     s32 elm;
     struct BtlUnit *target;
     u32 n;
@@ -101,7 +100,6 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     s32 dmg;
     s32 scale;
     s32 pass;
-    s8 *am;
     s32 guard;
     s16 list[8];
     s32 cnt;
@@ -335,15 +333,7 @@ pow_end:
             BtlEvPush(BEV_OBJ_BGN, tid);
             BtlEvPush(BEV_UNIT, tid);
             BtlEvPush(BEV_NUM, dmg);
-            {
-                s32 mes;
-
-                if (MIKATA_CHK(tid))
-                    mes = (s32)MsgDmgEmphP + aff;
-                else
-                    mes = (s32)MsgDmgEmphE + aff;
-                BtlEvPush(BEV_MES, mes);
-            }
+            MES_PUSH((s32)(MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
 
             if (hp <= 0) {
                 BtlEvPush(BEV_OBJ_RES, tid);
@@ -375,16 +365,8 @@ pow_end:
             BtlEvPush(BEV_OBJ_BGN, tid);
             BtlEvPush(BEV_NUM, dmg);
             BtlEvPush(BEV_UNIT, tid);
-            {
-                s32 mes;
-
-                if (MIKATA_CHK(tid))
-                    mes = (s32)MsgPpLossP;
-                else
-                    mes = (s32)MsgPpLossE;
-                BtlEvPush(BEV_MES, mes);
-                ep -= dmg;
-            }
+            MES_PUSH(MIKATA_CHK(tid) ? MsgPpLossP : MsgPpLossE);
+            ep -= dmg;
             if (ep <= 0)
                 ep = 0;
             BtlEvPush(BEV_OBJ_END, tid);
@@ -437,16 +419,8 @@ pow_end:
             BtlEvPush(BEV_OBJ_BGN, tid);
             BtlEvPush(BEV_NUM, dmg);
             BtlEvPush(BEV_UNIT, tid);
-            {
-                s32 mes;
-
-                if (MIKATA_CHK(tid))
-                    mes = (s32)MsgDmgP;
-                else
-                    mes = (s32)MsgDmgE;
-                BtlEvPush(BEV_MES, mes);
-                ep -= dmg;
-            }
+            MES_PUSH(MIKATA_CHK(tid) ? MsgDmgP : MsgDmgE);
+            ep -= dmg;
             if (ep <= 0)
                 ep = 0;
             BtlEvPush(BEV_OBJ_END, tid);
@@ -527,30 +501,14 @@ pow_end:
             BtlEvPush(BEV_OBJ_BGN, tid);
             BtlEvPush(BEV_NUM, dmg);
             BtlEvPush(BEV_UNIT, tid);
-            {
-                s32 mes;
-
-                if (MIKATA_CHK(tid))
-                    mes = (s32)MsgDmgEmphP + aff;
-                else
-                    mes = (s32)MsgDmgEmphE + aff;
-                BtlEvPush(BEV_MES, mes);
-                cur -= dmg;
-            }
+            MES_PUSH((s32)(MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+            cur -= dmg;
 
             if (cur <= 0) {
                 BtlEvPush(BEV_OBJ_RES, tid);
                 BtlEvPush(BEV_UNIT, tid);
-                {
-                    s32 mes;
-
-                    cur = 0;
-                    if (MIKATA_CHK(tid))
-                        mes = (s32)MsgGoesDown;
-                    else
-                        mes = (s32)MsgFelled;
-                    BtlEvPush(BEV_MES, mes);
-                }
+                cur = 0;
+                MES_PUSH(MIKATA_CHK(tid) ? MsgGoesDown : MsgFelled);
             } else
                 BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->hp - cur;
@@ -604,16 +562,8 @@ pow_end:
                 BtlEvPush(BEV_OBJ_BGN, tid);
                 BtlEvPush(BEV_NUM, dmg);
                 BtlEvPush(BEV_UNIT, tid);
-                {
-                    s32 mes;
-
-                    if (MIKATA_CHK(tid))
-                        mes = (s32)MsgDmgP;
-                    else
-                        mes = (s32)MsgDmgE;
-                    BtlEvPush(BEV_MES, mes);
-                    cur -= dmg;
-                }
+                MES_PUSH(MIKATA_CHK(tid) ? MsgDmgP : MsgDmgE);
+                cur -= dmg;
 
                 if (cur <= 0) {
                     BtlEvPush(BEV_OBJ_RES, tid);
@@ -775,13 +725,7 @@ pow_end:
             break;
 
         case 58:        /* すばやさダウン */
-            am = &target->agi_lv;
-        {
-            u8 v;
-
-            v = -4;
-            *am = v;
-        }
+            target->agi_lv = -4;
             target->agi_cnt = 5;
             UnitCalcFar(tid);
             BtlEvPush(BEV_NUM, bak->agi - target->agi);
@@ -895,16 +839,7 @@ pow_end:
             break;
 
         case 16:        /* たいせいダウン */
-        {
-            target->res_lv -= 2;
-            if (-4 > target->res_lv)
-                target->res_lv = -4;
-            if (target->res_lv > 4)
-                target->res_lv = 4;
-            BtlEvPush(BEV_NUM, (bak->res_lv - target->res_lv) * 20);
-            MES_PUSH(MsgResDown);
-            target->res_cnt = 7;
-        }
+            RES_STEP(-2, (bak->res_lv - target->res_lv) * 20, MsgResDown);
             break;
 
         case 15:        /* たいせいアップ */
@@ -912,16 +847,7 @@ pow_end:
             break;
 
         case 14:        /* たいせいアップ */
-        {
-            target->res_lv += 2;
-            if (*(rm = &target->res_lv) < -4)
-                target->res_lv = -4;
-            if (target->res_lv > 4)
-                target->res_lv = 4;
-            BtlEvPush(BEV_NUM, (target->res_lv - bak->res_lv) * 20);
-            MES_PUSH(MsgResUp);
-            target->res_cnt = 7;
-        }
+            RES_STEP(2, (target->res_lv - bak->res_lv) * 20, MsgResUp);
             break;
 
         case 18:        /* 毒 */

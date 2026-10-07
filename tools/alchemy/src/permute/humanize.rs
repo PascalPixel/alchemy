@@ -39,13 +39,12 @@ declaration with its first assignment, widen a u8, s8, u16 or s16 local to
 s32, compound assignment, ++ and --, a negated comparison, a
 do { } while (0) block back to plain statements, a goto over statements to
 an if, a goto back to its label to a do-while. Numbers keep their base:
-that is alchemy camelotize numbers. Left as written: the
-statement after a FAKEMATCH comment on its own line, the statement a
-FAKEMATCH comment ends the line of, a whole block whose opening line carries
-one, any statement with asm, volatile or register, statements inside #if,
-#define bodies, and a function defined more than once across #if branches;
-a rewrite carried into the file's lines must also stay outside the code
-alchemy camelotize treats as tagged (one definition for both commands).
+that is alchemy camelotize numbers. Left as written: tagged
+code as alchemy camelotize defines it for both commands (the statement a
+FAKEMATCH tag stands before or ends the line of, the whole block whose first
+line carries one, every statement holding asm), any statement with volatile
+or register, statements inside #if, #define bodies, and a function defined
+more than once across #if branches.
 Candidates are tried in an order drawn from --seed, J at a time; the first
 in that order that passes is kept, so a seed repeats exactly. Without
 --function every function in FILE.C is humanized in turn. FILE.C is written
@@ -187,18 +186,14 @@ impl Cursor {
     }
 }
 
-/// A statement the rewrites leave alone: a FAKEMATCH device or anything
-/// that names asm, volatile or register.
+/// A statement the rewrites leave alone: anything that names asm, volatile
+/// or register. FAKEMATCH tags are `camelotize`'s tagged ranges, marked by
+/// `mark_tagged`.
 fn guarded(stmt: &Stmt) -> bool {
     let mut found = false;
     stmt.each(&mut |inner| {
         if let Stmt::Decl(decl) = inner {
             if decl.specs.iter().any(|s| s == "volatile" || s == "register") || decl.items.iter().any(|item| item.before.iter().chain(&item.after).any(|t| t == "volatile" || t.contains(PLACEHOLDER))) {
-                found = true;
-            }
-        }
-        if let Stmt::Comment(text) = inner {
-            if text.contains("FAKEMATCH") {
                 found = true;
             }
         }
@@ -211,22 +206,19 @@ fn guarded(stmt: &Stmt) -> bool {
     found
 }
 
-/// Where a FAKEMATCH comment stands on its line, which the parser's comment
-/// statements do not keep: `Mask::new` writes it into the comment as one of
-/// these markers, and `unmask` takes it out again. A comment alone on its
-/// line leads the next statement and carries no marker.
-const TAG_TRAIL: &str = "__humanize_tag_trail__";
-const TAG_OPEN: &str = "__humanize_tag_open__";
-const TAG_INNER: &str = "__humanize_tag_inner__";
+/// Tagged code, as `camelotize`'s tagged module defines it for both commands:
+/// `Mask::new` puts `TAGGED` before the first statement of each range, or
+/// `TAGGED_ALL` inside the opening brace of a definition a range covers
+/// whole, and `unmask` takes them out again.
+const TAGGED: &str = "/*__humanize_tagged__*/";
+const TAGGED_ALL: &str = "/*__humanize_tagged_all__*/";
 
-/// Which statements of a block are open to rewriting: not guarded, not the
-/// statement a FAKEMATCH comment on its own line stands before, not the
-/// statement a FAKEMATCH comment ends the line of, and nothing in a block
-/// whose opening line carries one. A comment inside a statement shields
-/// both its neighbours, as the parser may put it before or after.
+/// Which statements of a block are open to rewriting: not guarded, not
+/// inside an edition's #if, not a statement `TAGGED` stands before (with the
+/// labels in front of it), and nothing in a block that holds `TAGGED_ALL`.
 fn open_mask(stmts: &[Stmt]) -> Vec<bool> {
     let mut mask = vec![true; stmts.len()];
-    let (mut leading, mut depth, mut previous) = (false, 0, None::<usize>);
+    let (mut leading, mut depth) = (false, 0);
     for (i, stmt) in stmts.iter().enumerate() {
         if let Some(step) = directive_step(stmt) {
             depth += step;
@@ -241,79 +233,53 @@ fn open_mask(stmts: &[Stmt]) -> Vec<bool> {
         match stmt {
             Stmt::Comment(text) => {
                 mask[i] = false;
-                if !text.contains("FAKEMATCH") {
-                    continue;
-                }
-                if text.contains(TAG_OPEN) || (text.contains(TAG_TRAIL) && previous.is_none()) {
+                if text.contains(TAGGED_ALL) {
                     return vec![false; stmts.len()];
                 }
-                if text.contains(TAG_TRAIL) || text.contains(TAG_INNER) {
-                    if let Some(p) = previous {
-                        mask[p] = false;
-                    }
-                }
-                if !text.contains(TAG_TRAIL) {
-                    leading = true;
-                }
+                leading |= text.contains(TAGGED);
             }
+            Stmt::Label(_) | Stmt::Case(_) | Stmt::Default if leading => mask[i] = false,
             other => {
                 if leading || guarded(other) {
                     mask[i] = false;
                 }
                 leading = false;
-                previous = Some(i);
             }
         }
     }
     mask
 }
 
-/// Marks each FAKEMATCH comment by where it stands on its line: after a
-/// statement's end (`;` or `}`), after a block's `{`, or inside a statement.
-fn tag_comments(text: &str) -> String {
-    let bytes = text.as_bytes();
-    let (mut out, mut i, mut last) = (String::new(), 0, 0);
-    while i < bytes.len() {
-        match bytes[i] {
-            b'/' if matches!(bytes.get(i + 1), Some(b'*') | Some(b'/')) => {
-                let block = bytes[i + 1] == b'*';
-                let end = if block { text[i + 2..].find("*/").map_or(bytes.len(), |e| i + 4 + e) } else { text[i..].find('\n').map_or(bytes.len(), |e| i + e) };
-                if text[i..end].contains("FAKEMATCH") {
-                    let line_start = text[..i].rfind('\n').map_or(0, |at| at + 1);
-                    let before = text[line_start..i].trim();
-                    let line_end = text[end..].find('\n').map_or(bytes.len(), |at| end + at);
-                    let after = text[end..line_end].trim();
-                    // `} /* tag */` then `else` or `while` on the next line
-                    // is still inside the if or do, and the parser puts the
-                    // comment before that statement.
-                    let continues = before.ends_with('}') && {
-                        let next = text[line_end..].trim_start();
-                        next.starts_with("else") || next.starts_with("while")
-                    };
-                    let marker = if before.is_empty() {
-                        None
-                    } else if !after.is_empty() || continues {
-                        Some(TAG_INNER)
-                    } else if before.ends_with([';', '}']) {
-                        Some(TAG_TRAIL)
-                    } else if before.ends_with('{') {
-                        Some(TAG_OPEN)
-                    } else {
-                        Some(TAG_INNER)
-                    };
-                    if let Some(marker) = marker {
-                        out.push_str(&text[last..i + 2]);
-                        out.push_str(marker);
-                        last = i + 2;
-                    }
-                }
-                i = end;
-            }
-            b'"' | b'\'' => i = skip_quoted(bytes, i),
-            _ => i += 1,
+/// Marks the ranges `camelotize::tagged` protects in `text`: `TAGGED` at the
+/// first statement of each, or `TAGGED_ALL` after the opening brace of a
+/// top-level definition a range starts.
+fn mark_tagged(text: &str) -> String {
+    use super::lex::Tok;
+    let Ok(tokens) = super::lex::lex(text) else { return text.to_string() };
+    let mut inserts: Vec<(usize, &str)> = Vec::new();
+    for range in crate::camelotize::tagged::ranges(text) {
+        let depth: i32 = tokens
+            .iter()
+            .take_while(|t| t.start < range.start)
+            .map(|t| match t.tok {
+                Tok::Punct("{") => 1,
+                Tok::Punct("}") => -1,
+                _ => 0,
+            })
+            .sum();
+        if depth > 0 {
+            inserts.push((range.start, TAGGED));
+        } else if let Some(open) = tokens.iter().find(|t| t.start >= range.start && t.start < range.end && matches!(t.tok, Tok::Punct("{"))) {
+            inserts.push((open.end, TAGGED_ALL));
         }
     }
-    out.push_str(&text[last..]);
+    inserts.sort();
+    inserts.dedup();
+    let mut out = text.to_string();
+    for (at, marker) in inserts.into_iter().rev() {
+        let spaced = if marker == TAGGED { format!("{marker} ") } else { marker.to_string() };
+        out.insert_str(at, &spaced);
+    }
     out
 }
 
@@ -877,7 +843,7 @@ impl Mask {
 
     pub fn new(text: &str) -> (String, Mask) {
         let mut mask = Mask::default();
-        let text = &tag_comments(&Mask::directives(text, &mut mask));
+        let text = &mark_tagged(&Mask::directives(text, &mut mask));
         let bytes = text.as_bytes();
         let (mut out, mut i, mut last) = (String::new(), 0, 0);
         while i < bytes.len() {
@@ -930,7 +896,10 @@ impl Mask {
     }
 
     pub fn unmask(&self, text: &str) -> String {
-        let untagged = text.replace(TAG_TRAIL, "").replace(TAG_OPEN, "").replace(TAG_INNER, "");
+        // A marker the printer put on its own line goes with its line; one
+        // still where `mark_tagged` put it goes with the space it added.
+        let lines = regex::Regex::new(r"(?m)^[ \t]*/\*__humanize_tagged(_all)?__\*/[ \t]*\n").unwrap();
+        let untagged = lines.replace_all(text, "").replace(&format!("{TAGGED} "), "").replace(TAGGED, "").replace(TAGGED_ALL, "");
         let text = untagged.as_str();
         if self.pieces.is_empty() {
             return text.to_string();
@@ -1681,20 +1650,47 @@ void NameEntry_Other(void)
 
     #[test]
     fn fakematch_statements_are_left_alone() {
-        let function = parse(
+        let printed = humanized(
             "\
 void Work_Pin(struct Work *work)
 {
+    work->first = (u8)work->zero;
     /* FAKEMATCH: the native keeps the cast. */
     work->low = (u8)work->value;
     work->high = (u8)work->other;
 }
 ",
+            3,
         );
-        let (best, _) = climb(&function, 3, &|_| true);
-        let printed = best.print();
+        assert!(printed.contains("work->first = work->zero;"), "{printed}");
         assert!(printed.contains("work->low = (u8)work->value;"), "{printed}");
         assert!(printed.contains("work->high = work->other;"), "{printed}");
+    }
+
+    /// One definition of tagged code for the search as for the carry: a tag
+    /// on the first line of a block, the function's own included, covers
+    /// the whole block, as camelotize's tagged module says.
+    #[test]
+    fn a_tag_on_a_blocks_first_line_covers_the_block() {
+        let texts = [
+            "void Work_All(struct Work *work)\n{\n    /* FAKEMATCH: the native frame. */\n    work->a = (u8)work->b;\n    work->c = (u8)work->d;\n}\n",
+            "void Work_Nest(struct Work *work)\n{\n    if (work->x) {\n        /* FAKEMATCH: order */\n        work->a = (u8)work->b;\n        work->c = (u8)work->d;\n    }\n    work->e = (u8)work->f;\n}\n",
+            "void Work_Mid(struct Work *work)\n{\n    work->e = (u8)work->f; work->a = (u8)work->b; /* FAKEMATCH: r4 */\n    work->c = (u8)work->d;\n}\n",
+        ];
+        for text in texts {
+            for seed in 1..6 {
+                let printed = humanized(text, seed);
+                assert!(!printed.contains("__humanize"), "{printed}");
+                assert!(printed.contains("work->a = (u8)work->b;"), "{printed}");
+                let (masked, mask) = Mask::new(text);
+                assert_eq!(mask.unmask(&masked), text);
+            }
+        }
+        let nested = humanized(texts[1], 1);
+        assert!(nested.contains("work->c = (u8)work->d;") && nested.contains("work->e = work->f;"), "{nested}");
+        let mid = humanized(texts[2], 1);
+        assert!(mid.contains("work->e = work->f;") && mid.contains("work->c = work->d;"), "{mid}");
+        assert!(humanized(texts[0], 1).contains("work->c = (u8)work->d;"));
     }
 
     #[test]
@@ -1702,8 +1698,7 @@ void Work_Pin(struct Work *work)
         let text = "\
 void Work_Asm(struct Work *work)
 {
-    /* FAKEMATCH: r4 as the native allocates it. */
-    register u32 v asm(\"r4\");
+    register u32 v asm(\"r4\"); /* FAKEMATCH: r4 as the native allocates it. */
     v = (u32)work->a;
     asm volatile(\"\" : : \"r\"(v));
     work->b = (u16)work->c;

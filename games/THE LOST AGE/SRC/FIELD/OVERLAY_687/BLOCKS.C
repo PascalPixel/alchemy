@@ -1,4 +1,11 @@
 #include "OV687.H"
+#include "PARTY_STATE.H"
+#include "FIELD_SCENE.H"
+#include "SCENE_IDS.H"
+
+extern const u8 Data_020022d0[];
+extern const u8 Data_0200242c[];
+extern const u8 Data_0200251c[];
 
 void Func_0200141c(s32 x, s32 z, s32 actor)
 {
@@ -102,4 +109,13 @@ void Func_020015ec(void)
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02001fb4();
+}
+
+const struct SceneEvent *Scene_GetEvents(void)
+{
+    if (gPartyState.scene == (s32)&SceneId_Ov687Room1)
+        return (const struct SceneEvent *)Data_020022d0;
+    if (gPartyState.entrance <= 4)
+        return (const struct SceneEvent *)Data_0200242c;
+    return (const struct SceneEvent *)Data_0200251c;
 }

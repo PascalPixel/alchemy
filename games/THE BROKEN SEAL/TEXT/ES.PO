@@ -12695,11 +12695,11 @@ msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Después de ser liberados,{line_break}estaremos listos para{line_break}ser invocados...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSummon"
 msgid "03172"
 msgstr "¡Si tienes un Djinn{line_break}preparado, puedes invocar{line_break}increíbles poderes!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleashCommand"
 msgid "03173"
 msgstr "Elige esta opción{line_break}para liberarme en{line_break}la batalla, ¿vale?{end_now}"
 

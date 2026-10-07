@@ -14159,11 +14159,11 @@ msgctxt "MsgTutorialStandby"
 msgid "03537"
 msgstr "ときはなたれると ボクらジンは{line_break}スタンバイのじょうたいになります{line_break}そして・・・{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSummon"
 msgid "03538"
 msgstr "スタンバイのジンがあると{line_break}さらに きょうりょくな{line_break}しょうかんが 出せるんですよ!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleashCommand"
 msgid "03539"
 msgstr "せんとうで{line_break}ボクを使うには{line_break}こうしてくださいね。{end_now}"
 

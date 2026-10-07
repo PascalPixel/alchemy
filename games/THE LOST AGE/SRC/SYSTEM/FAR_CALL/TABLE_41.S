@@ -6,7 +6,7 @@ Resource_FarCall008:
 	.global Func_08108000
 	.thumb_func
 Func_08108000:
-	overlay_veneer Func_08108464
+	overlay_veneer Debug_ApplyPresetItemsAndFlags
 	.global Func_08108008
 	.thumb_func
 Func_08108008:

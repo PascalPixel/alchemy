@@ -1,6 +1,19 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 920, common 634, differ 598; frame 372
+ * Native 946 instructions, draft 919, common 645, differ 575; frame 372
  * as native's.
+ * Session 3, third step: the highlight loop's test written
+ * (1 << element & mask) == 0 keeps native's movs 1; lsls; ands; cmp, where
+ * (mask & (1 << element)) == 0 is folded to (mask >> element) & 1 (asrs):
+ * 598 -> 575; a bit temporary or a u32 cast give the same 575, and
+ * !(mask & ...) 598, a conditional expression or if/else 602. Remaining
+ * there: affordable r5 / element r6 / tile r4 against native's r6 / r5 /
+ * r2, and gFrameCount's address reused from the cursor where native
+ * reloads it from the pool. Flag stores through a u8 pointer 612,
+ * (&render->dirty)[3] 598; fixed-register element asm("r7") 597 but
+ * miscompiles (index shares r7), not kept; first loop's attributes all
+ * through sprite 647; sprite[index] tile loop 651; index = 0 before the
+ * counts columns 844; required[element] columns 852; element shared by
+ * the columns and the highlight loop 856; y * 8 for the name row 598.
  * Session 3, second step: y = index * 2 set after the scan, before the
  * glyph load, 663 -> 598, although native computes index * 2 after the
  * load and shares it with the tile store's index * 3; y beside the tile
@@ -350,7 +363,7 @@ loop:
 
             for (element = 0; element <= 3; element++) {
                 tile = 15 - (affordable != 0);
-                if ((mask & (1 << element)) == 0)
+                if ((1 << element & mask) == 0)
                     tile = 15;
                 Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1, tile);
             }

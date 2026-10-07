@@ -1,6 +1,11 @@
-/* 080d1714: differ 732 of 1481 instructions (1475 generated, common
- * 1112). BattleEffectWork, BattleEffectArgument, MotionObject and
- * EffectStep replace local partial layouts. The control flow already
+/* 080d1714: differ 638 of 1481 instructions (1475 generated, common
+ * 1159). Battle effect mode 8 (DISPATCH.C): the targets spin and
+ * rise in a whirlwind for 160 frames, then nine comet objects sway in,
+ * 32 particles converge on their centre, sparks burst four times and
+ * four marks fly out with a screen shake; the targets are put back at
+ * frame 400. Name at adoption, e.g. BtlEfxWhirlComet.
+ * BattleEffectWork, BattleEffectArgument, MotionObject and EffectStep
+ * replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
  * at sp+80; it strength-reduces frame - threshold into its own slot and
@@ -91,9 +96,16 @@
  *   desirable", life 3) where the native hoists it to sp+52; one extra
  *   slot remains at the low end, so the givs sit 4 bytes above the
  *   native's sp+16..28. center_x assigned before the loop again: 994.
- * Remaining: the native hoists (wave_x >> 17) + 32 out of the
- * threshold loop (sp+52) without PRE reaching the distance loop; one
- * spill slot too many below the givs; the first draw shares one 48 for 48 - size and the
+ * - mark stores in the order x, y, velocity_x, velocity_y: the x sum
+ *   lives long enough for loop.c to hoist it (sp+56, frame 360): 972;
+ *   y, x, velocity_y, velocity_x: 980.
+ * - the extra low slot was a caller-save: the final restore loop used
+ *   the function-wide object pseudo (r5 everywhere), so base_angle's
+ *   walking pointer lost r7 and was caller-saved in r2 (sp+12). A
+ *   block-local obj there takes r2 as the native: 872 alone (frame
+ *   352); with the y, x, vy, vx stores: 646, frame 356; with x, y,
+ *   vx, vy: 638, the threshold loop head and loop end as the native.
+ * Remaining: the first draw shares one 48 for 48 - size and the
  * width argument, and the second keeps 48 in r4 across the first call
  * where the native rematerializes it and caller-saves the function
  * pointer in r4; the sqrt sums take r4/r5 where the native uses
@@ -618,10 +630,10 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 do {
                     threshold = index * 12 + 330;
                     if (frame == threshold) {
-                        mark->y = (wave_y >> 16) - 4;
-                        mark->velocity_y = (wave_y >> 16) - 4;
                         mark->x = (wave_x >> 17) + 32;
+                        mark->y = (wave_y >> 16) - 4;
                         mark->velocity_x = (wave_x >> 17) + 32;
+                        mark->velocity_y = (wave_y >> 16) - 4;
 
                         slot = 0;
                         do {
@@ -702,11 +714,13 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     index = 0;
     if (runtime->effect->count != 0) {
         do {
+            struct MotionObject *obj;
+
             context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-            object = (struct MotionObject *)context->object;
-            object->x = home[index].x;
-            object->z = home[index].y;
-            object->angle = base_angle[index];
+            obj = (struct MotionObject *)context->object;
+            obj->x = home[index].x;
+            obj->z = home[index].y;
+            obj->angle = base_angle[index];
             index++;
         } while (index != runtime->effect->count);
     }

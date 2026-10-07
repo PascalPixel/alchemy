@@ -20,13 +20,18 @@
    second ramp loop's width as 32 - w * 2, the second loop pass hoists
    that loop's 32 out of the frame loop with the smoke's 32 matched to
    it (threshold 12 after the constant 2's move, 12 * savings 2 * life
-   19 = 456 >= 448 insns), so it takes no register and is rebuilt at
-   each use, and every later reload register rotates. The draft writes
-   the width as (16 - w) * 2: the smoke's 32 stays local in r6 as
-   native, at the cost of that preheader's three instructions (native
-   lsls, movs 32, subs; draft movs 16, subs, lsls). Writing 32 - w * 2
-   with the native's hoisting needs the frame loop's pass-2 insn count
-   above 456 or the 32's life below 19.
+   19 = 456 >= 450 insns), so it takes no register and is rebuilt at
+   each use, and every later reload register rotates. The life 19 is
+   combine_movables' sum: the ramp 32's own 1 plus the smoke 32's 18,
+   from its set for the first smoke call's stack argument to its use
+   in the second call's, across 18 insns (two calls' arguments, the
+   slot load, three calls). The draft writes the width as (16 - w) * 2:
+   the smoke's 32 stays local in r6 as native, at the cost of that
+   preheader's three instructions (native lsls, movs 32, subs; draft
+   movs 16, subs, lsls). Writing 32 - w * 2 with the native's
+   hoisting needs the frame loop's pass-2 insn count at 457 or more,
+   one insn fewer between the two smoke calls' 32s, or one more
+   movable moved before it (threshold 9).
    Remaining (6): that preheader only.
    Ring store: GCSE propagates rings' 10000 into offset + rings and
    PRE hoists that sum, so the giv adds work last; written
@@ -220,7 +225,18 @@
      14 (the store is still the last giv found, through d); aux read
      through src set in the inner for header (j = 0, src = aux), with
      the rings store: 10 (r2 for the 10000, but offset + 10000 first);
-     with (sheet + 10000)[offset + j]: 6, adopted. */
+     with (sheet + 10000)[offset + j]: 6, adopted.
+   - on 6: second ramp width 32 - w * 2 or 32 - (w << 1): 128 (the 32
+     hoisted, as above); with it, the first smoke call through a
+     DrawRectangle smoke = SLOT(47) set after the LoadWork: 49 (the
+     slot load moves before the 32, life 17, 12 * 2 * 18 = 432 < 450,
+     the ramp preheader matches, but the slot address's reload takes
+     r2 and y's r3, native y r2); with y = (frame - 151) * 20 - 12 set
+     before smoke: 10 (every register native and the ramp matched;
+     sched2 takes the slot loads before the 32 and 96 stores, native
+     stores first: the native's slot load follows the stores in RTL
+     and depends on them through memory, which raises their priority);
+     smoke set before y: 49; the y local without smoke: 128. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

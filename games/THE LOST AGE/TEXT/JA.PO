@@ -28323,7 +28323,7 @@ msgctxt "MsgFieldWindStoneWarning"
 msgid "07078"
 msgstr "つむじ風の石にちゅうい{page_break}風の力をぞうふくする石あり{line_break}エアーズロックへちかづく時は{line_break}じゅうぶん ちゅういすること。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSSomethingInsideThe"
 msgid "07079"
 msgstr "きれつの入った氷の中に{line_break}なにかあるようだ・・・。{end_wait}"
 

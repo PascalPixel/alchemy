@@ -1,5 +1,37 @@
-#include "TYPES.H"
-#include "EDITION.H"
+/* 080158e8: ARM draft (Tile_BuildMetatiles); ⚓️'s copy is 080388fc.
+   Game ARM route (K1): stock agbcc_arm at the library ARM setting,
+   alchemy diff --arm: 92/92/common89/differ 6 (2026-10-07). The six are
+   instruction order; S2 allows a tagged device once reshaping fails.
+   History: differ 0 under agbcc_arm with 2.96's arm_adjust_cost copied
+   in; adopted 2026-10-06 and again 2026-10-07 in both games under that
+   copy, and returned here when it was dropped as a compiler change fitted
+   to this one function (K3). agscc -marm with the game options: differ 19;
+   with -mno-apcs-frame 19; with -mno-apcs-frame -ffixed-fp 19.
+   Native: 92 instructions and 41 switch-table words, 532 bytes total.
+   Current: stock agscc --arm 92/91/common82/differ19 (was differ72);
+   fixed agbcc_arm library setting (-O2 -mthumb-interwork
+   -fomit-frame-pointer -fcall-used-r4) 92/92/common89/differ6 (was 10).
+   The uniform -O control gave 92/96/common39/differ110.
+   Remaining agbcc_arm difference: add sl, mov r1 and cmp each sit one
+   store lower than native. sched1 decides it (-fno-schedule-insns2 is
+   unchanged): its backward list scheduler places cmp right above bls
+   because the jump's anti-dependence on the last post-increment store
+   costs 2, so the fillers start one stall slot too low. Native has
+   strh directly above bls and f+d directly below the store before it,
+   as if a store cost 1 there; no reshaping tried moves cmp off T-2.
+   Trials: one packed-value local v set three times, each value computed
+   before its dst++ (not a birthing insn, so f+d no longer launches next
+   to the last store) 10->6; for-loop row counter instead of an explicit
+   next = row + 1 gives the same r9 and 6 (do/while with next: --arm 18);
+   while (++row < 20) 6; src += 2 after the last store 6, before the
+   first 6; u32 v 6; a row pointer p with dst = p at the end 6;
+   for (col = 0; ...) without the zero chain 8; earlier:
+   moving packed-value calculation or row update alone 10; u16 packed
+   value 14; indexed stores worsen register allocation.
+   No compiler route follows from these scores. */
+typedef unsigned short u16;
+typedef int s32;
+typedef unsigned int u32;
 
 void Tile_BuildMetatiles(u16 *dst, u16 *src)
 {
@@ -51,9 +83,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
                     break;
                 case 0xf007:
                 case 0xf016:
-#if EDITION_INTERNATIONAL || GAME_TLA
                 case 0xf01a:
-#endif
                     a = col * 8;
                     b = a + 8;
                     d = a;
@@ -76,9 +106,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
                     break;
                 case 0xf007:
                 case 0xf017:
-#if EDITION_INTERNATIONAL || GAME_TLA
                 case 0xf01b:
-#endif
                     f = col * 8 + 8;
                     b = f;
                     e = f;

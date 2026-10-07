@@ -252,32 +252,29 @@ never a file or a function.
   (`-O2`) and the flash library (`-O`, except two helper files whose bytes
   show `-O2`), and agbcc_arm for RAM-executed ARM code
   (`-fomit-frame-pointer`). Game ARM C of either game, the files listed
-  in `GAME_ARM_SOURCES`, compiles with `agbcc/camelot_arm` at that same library
-  ARM setting: agbcc_arm's pinned gcc_arm (pret's agbcc, which has
-  provenance) with one change built by bootstrap, its `arm_adjust_cost`
-  replaced by agscc's own, so anti and output dependences cost nothing and
-  load/store slots fill as in the native code. One compiler and one option
-  set for the whole class; only the instruction set is chosen per file, as a
-  Makefile does. The lead's decision under Pascal's delegation (Pascal,
-  2026-10-07: an ARM mode in agscc, or agbcc for its provenance, never
-  anyone else's compiler), measured over all seven compiler-shaped ARM
-  functions (no APCS frame, saves from r5, r11 never allocated, interworking
-  returns, filled load/store slots), differ per draft as IwramSqrt,
-  ColorBuffer_DarkenKernel, ColorBuffer_DarkenPartialKernel,
-  Transform_UpdateVertices, Object_UpdateAll, UiText_DrawGlyphArm,
-  Tile_BuildMetatiles: camelot_arm 38, 66, 90, 48, 117, 156, 0 (515);
-  stock agbcc_arm 38, 66, 90, 76, 107, 177, 6 (560); agscc `-marm` with
-  the game options 28, 64, 100, 183, 468, 377, 19 (1,239), and its nearest
-  stock setting, `-mno-apcs-frame -ffixed-fp` (agscc fixes r11 only with
-  the APCS frame, which every non-leaf ARM function would then build),
-  28, 64, 100, 166, 461, 377, 19 (1,215). The drafts were first shaped
-  under gcc_arm, but Tile_BuildMetatiles reshaped for agscc stays at 18:
-  agscc in ARM mode differs from the native code in its loop and
-  stack-slot habits throughout, not by one change a backend option could
-  carry, so the route is agbcc's. ⚓️ keeps one copy of the class,
-  Tile_BuildMetatiles, whose ARM body is ☀️'s built code instruction for
-  instruction, so the route serves both games. No other routing: never a
-  per-file or per-function compiler, option or flag for game code.
+  in `GAME_ARM_SOURCES`, compiles with that same stock agbcc_arm at that
+  same library ARM setting (`alchemy diff --arm`): Camelot's few IWRAM ARM
+  routines came from the SDK's 2.95-line ARM compiler, as Nintendo's do,
+  while their Thumb code came from 2.96. One unmodified compiler and one
+  option set for all ARM code; only the instruction set is chosen per file,
+  as a Makefile does, and no compiler source is changed or carried in this
+  repository. Measured over all seven compiler-shaped ARM functions (no APCS
+  frame, saves from r5, r11 never allocated, interworking returns), differ
+  per draft as IwramSqrt, ColorBuffer_DarkenKernel,
+  ColorBuffer_DarkenPartialKernel, Transform_UpdateVertices,
+  Object_UpdateAll, UiText_DrawGlyphArm, Tile_BuildMetatiles: stock
+  agbcc_arm 38, 66, 90, 76, 107, 177, 6 (560); agscc `-marm` with the game
+  options 28, 64, 100, 183, 468, 377, 19 (1,239), and its nearest stock
+  setting, `-mno-apcs-frame -ffixed-fp`, 1,215: agscc builds an APCS frame
+  by default and differs in loop and stack-slot habits throughout. Copying
+  2.96's `arm_adjust_cost` into agbcc_arm closed Tile_BuildMetatiles' six
+  scheduling instructions but was a compiler change fitted to one function
+  (K3) and carried GCC code here; it is not a route. What scheduling
+  remains is a difference of instruction order, which S2 handles in the
+  source. The lead's decision under Pascal's delegation (Pascal, 2026-10-07:
+  an ARM mode in agscc, or agbcc for its provenance, never anyone else's
+  compiler). No other routing: never a per-file or per-function compiler,
+  option or flag for game code.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
   GCC's Thumb backend between the games, rebuilt as options in GCC's own

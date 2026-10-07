@@ -1,6 +1,4 @@
-use super::routing::{
-    cflags_for_target_source, family_for_source, family_include_flags, uses_agbcc_compiler,
-};
+use super::routing::{cflags_for_target_source, uses_agbcc_compiler};
 use crate::targets::DecompTarget;
 use std::path::Path;
 use std::process::Command;
@@ -10,10 +8,6 @@ pub(crate) fn command(
     source: &str,
     comments: bool,
 ) -> Result<Vec<String>, String> {
-    super::bundle::compiler_command_for_target(target.compiler, &flags(target, source, comments))
-}
-
-fn flags(target: DecompTarget, source: &str, comments: bool) -> Vec<String> {
     let compiler = target.compiler;
     let mut flags = cflags_for_target_source(compiler, source);
     if uses_agbcc_compiler(compiler, source) {
@@ -23,15 +17,13 @@ fn flags(target: DecompTarget, source: &str, comments: bool) -> Vec<String> {
             super::routing::include_flag(compiler),
             "-D__GNUC_MINOR__=9".into(),
         ]);
-        // As the build plans it: game ARM C reads the shared modules too.
-        flags.extend(family_include_flags(family_for_source(compiler, source)));
     }
     flags.push(format!("-D{}=1", target.edition_define));
     flags.extend(["-w".into(), "-E".into(), "-x".into(), "c".into()]);
     if comments {
         flags.push("-C".into());
     }
-    flags
+    super::bundle::compiler_command_for_target(compiler, &flags)
 }
 
 pub(crate) struct Expansion<'a> {
@@ -73,25 +65,5 @@ impl<'a> Expansion<'a> {
         }
         String::from_utf8(output.stdout)
             .map_err(|error| format!("{source}: preprocessing: {error}"))
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::targets::{target_for, DecompTargetId};
-
-    #[test]
-    fn game_arm_c_preprocesses_with_the_shared_modules_it_builds_with() {
-        let target = target_for(DecompTargetId::TbsJa);
-        let flags = flags(
-            target,
-            "games/COMMON/SRC/GRAPHICS/TILE/BUILD_METATILES.C",
-            false,
-        );
-        assert!(flags
-            .iter()
-            .any(|flag| flag.starts_with("-I") && flag.ends_with("games/COMMON/INCLUDE/GAME")));
-        assert!(flags.contains(&"-DTBS_EDITION_JA=1".to_string()));
     }
 }

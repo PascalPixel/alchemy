@@ -817,7 +817,7 @@ ObjectDispatch_Table6:
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f258, 0x00008da8
 	.section .rom.000385e0, "ax"
-	.incbin "baserom.gba", 0x000385e0, 0x00000310
+	.incbin "baserom.gba", 0x000385e0, 0x00000528
 	.section .rom.000391b8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000391b8, 0x0000009c

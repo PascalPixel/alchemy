@@ -48,15 +48,11 @@ pub fn agbcc_driver() -> PathBuf {
 pub fn agbcc_arm_driver() -> PathBuf {
     bundle().join("agbcc").join("agbcc_arm")
 }
-pub fn camelot_arm_driver() -> PathBuf {
-    bundle().join("agbcc").join("camelot_arm")
-}
 pub fn driver_for_family(family: CompilerFamily) -> Option<PathBuf> {
     match family {
         CompilerFamily::Game => None,
         CompilerFamily::Agbcc | CompilerFamily::AgbccFlash => Some(agbcc_driver()),
-        CompilerFamily::AgbccArm => Some(agbcc_arm_driver()),
-        CompilerFamily::GameArm => Some(camelot_arm_driver()),
+        CompilerFamily::AgbccArm | CompilerFamily::GameArm => Some(agbcc_arm_driver()),
     }
 }
 pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
@@ -117,8 +113,8 @@ pub enum CompilerFamily {
     Agbcc,
     AgbccFlash,
     AgbccArm,
-    /// Game ARM C in either game (GAME_ARM_SOURCES): agbcc/camelot_arm at
-    /// the library ARM setting (AGENTS.md K1).
+    /// Game ARM C in either game (GAME_ARM_SOURCES): stock agbcc_arm at the
+    /// library ARM setting, with the game's include paths (AGENTS.md K1).
     GameArm,
 }
 impl CompilerFamily {
@@ -623,12 +619,10 @@ mod target_tests {
         }
     }
     #[test]
-    fn game_arm_compiles_game_arm_files_of_either_game_with_one_option_set() {
-        assert!(camelot_arm_driver().ends_with("agbcc/camelot_arm"));
-        assert_ne!(camelot_arm_driver(), agbcc_arm_driver());
+    fn game_arm_compiles_game_arm_files_of_either_game_with_stock_agbcc_arm() {
         assert_eq!(
             driver_for_family(CompilerFamily::GameArm),
-            Some(camelot_arm_driver())
+            Some(agbcc_arm_driver())
         );
         let games = [CompilerTarget::Tbs, CompilerTarget::Tla];
         for target in games {

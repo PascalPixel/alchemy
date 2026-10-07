@@ -1,6 +1,6 @@
 use crate::compiler::bundle_data::{source_record, SOURCE_RECORD};
 use crate::compiler::routing::{
-    agbcc_arm_driver, agbcc_driver, bundle, camelot_arm_driver, bundle_for, root, CompilerTarget,
+    agbcc_arm_driver, agbcc_driver, bundle, bundle_for, root, CompilerTarget,
 };
 use crate::compiler::sha256;
 use fs2::FileExt;
@@ -209,7 +209,6 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     validate_source_record(&bundle())?;
     validate_agbcc_driver(&agbcc_driver())?;
     validate_agbcc_arm_driver(&agbcc_arm_driver())?;
-    validate_camelot_arm_driver(&camelot_arm_driver())?;
     cache_validation("agbcc");
     Ok(())
 }
@@ -229,9 +228,6 @@ fn validate_agbcc_driver(driver: &Path) -> Result<()> {
 fn validate_agbcc_arm_driver(driver: &Path) -> Result<()> {
     validate_driver(driver, "agbcc/agbcc_arm", &["-mthumb-interwork", "-O2"])
 }
-fn validate_camelot_arm_driver(driver: &Path) -> Result<()> {
-    validate_driver(driver, "agbcc/camelot_arm", &["-mthumb-interwork", "-O2"])
-}
 fn validate_driver(driver: &Path, name: &str, flags: &[&str]) -> Result<()> {
     if executable_mode(driver) != Some(true) {
         return Err(format!("compiler bundle is missing executable {name}"));
@@ -248,8 +244,7 @@ pub fn validate_installation(directory: &Path) -> Result<()> {
     validate_game_directory(directory, CompilerTarget::Tbs)?;
     validate_game_directory(directory, CompilerTarget::Tla)?;
     validate_agbcc_driver(&directory.join("agbcc/old_agbcc"))?;
-    validate_agbcc_arm_driver(&directory.join("agbcc/agbcc_arm"))?;
-    validate_camelot_arm_driver(&directory.join("agbcc/camelot_arm"))
+    validate_agbcc_arm_driver(&directory.join("agbcc/agbcc_arm"))
 }
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
@@ -261,7 +256,6 @@ pub fn signature_paths() -> Vec<PathBuf> {
         bundle_dir.join("as"),
         agbcc_driver(),
         agbcc_arm_driver(),
-        camelot_arm_driver(),
     ]
 }
 fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Path) {

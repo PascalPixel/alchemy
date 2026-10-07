@@ -182,6 +182,11 @@ Map_LayeredScenes:
 	.global UiText_DrawGlyphArm
 UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000155d0, 0x000002f4
+	.global Tile_BuildMetatiles
+Tile_BuildMetatiles:
+	.incbin "baserom.gba", 0x000158c4, 0x00000214
+	.global Tile_BuildMetatilesEnd
+Tile_BuildMetatilesEnd:
 	.section .rom.00021e12, "ax"
 	.incbin "baserom.gba", 0x00021e12, 0x000008fe
 	.section .rom.00023120, "ax"

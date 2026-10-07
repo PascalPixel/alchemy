@@ -31,7 +31,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use types::Env;
 
-const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--iterations N] [--heat] [--prefix] [--camelot-arm]
+const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--iterations N] [--heat] [--prefix] [--arm]
 Searches semantics-preserving rewrites of DRAFT.c until its code matches the
 listing alchemy diff compares it with (ADDRESS defaults to the file name;
 build the edition first). Each candidate compiles with alchemy diff's steps
@@ -65,8 +65,8 @@ rewrite's site is drawn in proportion to 1 plus the heat of the lines it
 changes (4 per differing instruction, 24 at the first divergence, 8 on each
 of the 3 lines before it). --prefix ranks candidates by how many
 instructions match from the start first, then by weighted score.
---camelot-arm compiles each candidate as alchemy diff --camelot-arm does:
-through the game ARM route (GAME_ARM_SOURCES, AGENTS.md K1)."#;
+--arm compiles each candidate as alchemy diff --arm does:
+through the game ARM route (GAME_ARM_SOURCES, AGENTS.md K1): stock agbcc_arm."#;
 
 struct Options {
     draft: PathBuf,
@@ -78,7 +78,7 @@ struct Options {
     seed: u64,
     function: Option<String>,
     iterations: Option<u64>,
-    camelot_arm: bool,
+    arm: bool,
     heat: bool,
     prefix: bool,
 }
@@ -92,7 +92,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut seed = 1;
     let mut function = None;
     let mut iterations = None;
-    let mut camelot_arm = false;
+    let mut arm = false;
     let (mut heat, mut prefix) = (false, false);
     let mut index = 0;
     let value = |index: usize| arguments.get(index).cloned().ok_or_else(|| USAGE.to_string());
@@ -123,7 +123,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 index += 1;
                 function = Some(value(index)?);
             }
-            "--camelot-arm" => camelot_arm = true,
+            "--arm" => arm = true,
             "--heat" => heat = true,
             "--prefix" => prefix = true,
             other if other.starts_with('-') => return Err(format!("unknown permute option: {other}\n{USAGE}")),
@@ -155,7 +155,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         Some(target) => target,
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
-    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, camelot_arm, heat, prefix })
+    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, arm, heat, prefix })
 }
 
 /// One job's scratch: its candidate file and alchemy diff's steps for it.
@@ -172,10 +172,10 @@ impl Job {
         let candidate = directory.join(problem.draft.file_name().unwrap_or_default());
         // The draft's own steps (its routing and options), aimed at the
         // job's copy and the edition's generated imports.
-        let mut steps = if problem.camelot_arm {
-            crate::diff::camelot_arm_steps(problem.target, &problem.draft, &object)?
+        let mut steps = if problem.arm {
+            crate::diff::arm_steps(problem.target, &problem.draft, &object)?
         } else {
-            crate::diff::draft_steps(problem.target, &problem.draft, &object, false)?
+            crate::diff::draft_steps(problem.target, &problem.draft, &object)?
         };
         let draft = problem.draft.to_string_lossy().into_owned();
         let candidate_text = candidate.to_string_lossy().into_owned();
@@ -245,7 +245,7 @@ struct Problem {
     symbol: Option<String>,
     unit: Unit,
     function: Option<String>,
-    camelot_arm: bool,
+    arm: bool,
     /// --prefix: a longer matched prefix ranks first.
     prefix: bool,
     /// --heat: where rewrites are aimed.
@@ -342,7 +342,7 @@ fn reference(options: &Options) -> Result<(Vec<String>, Option<String>), String>
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let options = parse_options(arguments)?;
-    if options.camelot_arm {
+    if options.arm {
         println!("{}", crate::diff::GAME_ARM_NOTICE);
     }
     let draft = std::fs::canonicalize(&options.draft).map_err(|e| format!("{}: {e}", options.draft.display()))?;
@@ -364,7 +364,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         aim: None,
         unit: Unit::default(),
         function: options.function.clone(),
-        camelot_arm: options.camelot_arm,
+        arm: options.arm,
     };
     execute(problem, &options, scaffold, &output)
 }
@@ -1037,20 +1037,20 @@ mod tests {
         assert!(parse_options(&args(&["x.c"])).is_err());
         assert!(parse_options(&args(&["recon/tbs/en/overlays/resource_383_c_020048c8.c"])).is_err());
         assert!(parse_options(&args(&["08000000.c", "--bogus"])).is_err());
-        assert!(!parse_options(&args(&["08000000.c"])).unwrap().camelot_arm);
-        assert!(parse_options(&args(&["recon/tbs/en/main/0800a0f8.c", "--camelot-arm"])).unwrap().camelot_arm);
-        assert!(parse_options(&args(&["08000000.c", "--edition", "tla-en", "--camelot-arm"])).unwrap().camelot_arm);
+        assert!(!parse_options(&args(&["08000000.c"])).unwrap().arm);
+        assert!(parse_options(&args(&["recon/tbs/en/main/0800a0f8.c", "--arm"])).unwrap().arm);
+        assert!(parse_options(&args(&["08000000.c", "--edition", "tla-en", "--arm"])).unwrap().arm);
     }
 
     #[test]
-    fn camelot_arm_jobs_compile_with_the_camelot_arm_route() {
+    fn arm_jobs_compile_with_stock_agbcc_arm() {
         let work = tempfile::tempdir().unwrap();
         let draft = PathBuf::from("recon/tbs/en/main/0800a0f8.c");
         let mut problem = test_problem(&draft, "void F(void)\n{\n}\n", Vec::new(), None);
         let thumb = Job::new(&problem, work.path()).unwrap();
-        problem.camelot_arm = true;
+        problem.arm = true;
         let arm = Job::new(&problem, work.path()).unwrap();
-        let compiler = |job: &Job| job.steps.iter().flatten().any(|argument| argument.ends_with("agbcc/camelot_arm"));
+        let compiler = |job: &Job| job.steps.iter().flatten().any(|argument| argument.ends_with("agbcc/agbcc_arm"));
         assert!(!compiler(&thumb));
         assert!(compiler(&arm));
     }
@@ -1113,7 +1113,7 @@ mod tests {
             aim: None,
             unit: scan_unit(text).unwrap_or_default(),
             function: function.map(str::to_string),
-            camelot_arm: false,
+            arm: false,
         }
     }
 
@@ -1169,7 +1169,7 @@ mod tests {
         let object = work.join("reference/obj/08000000.o");
         std::fs::create_dir_all(object.parent().unwrap()).unwrap();
         std::fs::write(&reference, source).unwrap();
-        for step in crate::diff::draft_steps(target, &reference, &object, false).unwrap() {
+        for step in crate::diff::draft_steps(target, &reference, &object).unwrap() {
             crate::process::run(&step, root()).unwrap();
         }
         crate::diff::disassemble(&object, None).unwrap()
@@ -1249,7 +1249,7 @@ mod tests {
             jobs: 1,
             seed: 1,
             function: function.map(str::to_string),
-            camelot_arm: false,
+            arm: false,
             iterations: Some(1),
             heat: false,
             prefix: false,
@@ -1370,7 +1370,7 @@ mod tests {
             aim: None,
             unit: scan_unit(draft).unwrap_or_default(),
             function: None,
-            camelot_arm: false,
+            arm: false,
         };
         let state = problem.state(perm::expand(&problem.nodes, None));
         assert!(state.parsed.is_some());
@@ -1405,7 +1405,7 @@ mod tests {
         let object = work.path().join("reference/obj/08000000.o");
         std::fs::create_dir_all(object.parent().unwrap()).unwrap();
         std::fs::write(&reference, "int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return a - b;\n}\n").unwrap();
-        for step in crate::diff::draft_steps(target, &reference, &object, false).unwrap() {
+        for step in crate::diff::draft_steps(target, &reference, &object).unwrap() {
             crate::process::run(&step, root()).unwrap();
         }
         let listing = crate::diff::disassemble(&object, None).unwrap();
@@ -1428,7 +1428,7 @@ mod tests {
             aim: None,
             unit: Unit::default(),
             function: None,
-            camelot_arm: false,
+            arm: false,
         };
         let base_state = problem.state(perm::expand(&problem.nodes, None));
         let setup = Job::new(&problem, &work.path().join("run/setup")).unwrap();
@@ -1449,7 +1449,7 @@ mod tests {
             jobs: 2,
             seed: 1,
             function: None,
-            camelot_arm: false,
+            arm: false,
             iterations: Some(8),
             heat: false,
             prefix: false,

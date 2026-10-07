@@ -47,8 +47,7 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
 
 pub static AGBCC_ARM_SOURCES: &[&str] = &[];
 
-/// Both games' ARM C: every game C file compiled as ARM goes
-/// through agbcc/camelot_arm (agbcc_arm's pinned gcc_arm with agscc's
-/// arm_adjust_cost) at the library ARM setting, one option set for the
-/// whole class (AGENTS.md K1; the lead's decision, 2026-10-07).
-pub static GAME_ARM_SOURCES: &[&str] = &["games/COMMON/SRC/GRAPHICS/TILE/BUILD_METATILES.C"];
+/// Both games' ARM C: every game C file compiled as ARM goes through stock
+/// agbcc_arm at the library ARM setting, the same compiler as Nintendo's
+/// library ARM code, one option set for the whole class (AGENTS.md K1).
+pub static GAME_ARM_SOURCES: &[&str] = &[];

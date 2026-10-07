@@ -1,6 +1,6 @@
-/* 080ea0d8: differ 1769 of 2455 (listing 2455, draft 2454, common 1570).
+/* 080ea0d8: differ 1752 of 2455 (listing 2455, draft 2453, common 1578).
  * Structure: the sequence of conditional branches, jumps and calls now
- * matches the native's except one literal-pool jump; what remains is
+ * matches the native's; what remains is
  * register allocation, scheduling, constant hoisting and pool placement.
  * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
@@ -121,7 +121,21 @@
  * Last drawing loops: moving -16 into the draw argument gives 1791,
  * a separate x -= 16 gives 1803; also sharing their counter with setup
  * gives 2259. Local x/y give 1986, or 2034 with -16 in the argument;
- * a fixed shared r7 counter gives 2041. None of these are kept. */
+ * a fixed shared r7 counter gives 2041. None of these are kept.
+ * Scroll mask: a signed random temporary alone leaves 1769 unchanged.
+ * A mask operand depending on the random value gives 1754; putting the
+ * operand after mask &= rnd gives 1752. Removing the operand still gives
+ * 1752: assigning 3 to the mask and then updating it is sufficient, and
+ * is kept without a device. The scroll calculation and closing release
+ * loop now match locally, including removal of the extra pool jump.
+ * DMA one-pass blocks inside the second phase gave 2215, not kept.
+ * Sequential updates for the last loops' x calculation gave 2190 from
+ * 1752, not kept. A focused one-minute, two-job permuter search (seed
+ * 103) over the first particle block compiled 12 distinct candidates;
+ * none beat weighted 36140 / differ 1752. Narrowing the palette counter
+ * to its block preserves 1752 and is kept; removing its register binding
+ * gives 1764 without improving the first phase. A high-register position
+ * operand in the first particle loop hits an agscc reload ICE, not kept. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -221,8 +235,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i14;
     s32 i15;
     s32 i16;
-    /* FAKEMATCH: the palette counter uses r7 in the native loop; ordinary signed and unsigned counters swap r6/r7 with the shared mask (1862 -> 1850). */
-    register s32 i17 asm("r7");
     s32 i18;
     s32 i19;
     s32 i20;
@@ -655,6 +667,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame > 279) {
             volatile u16 *pal = (volatile u16 *)0x05000002;
+            /* FAKEMATCH: the palette counter uses r7 in the native loop; ordinary signed and unsigned counters swap r6/r7 with the shared mask (1862 -> 1850). */
+            register s32 i17 asm("r7");
             for (i17 = 0; i17 != 63; i17++, pal++) {
                 s32 c = *pal;
                 s32 b = ((u16)c >> 10) & 31;
@@ -935,7 +949,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         Runtime_ReleaseHeapBlock(47);
 
         if (frame > 63) {
-            gBgScroll[1].y = (Random16() & 3) + 30;
+            s32 rnd = Random16();
+            s32 mask = 3;
+            mask &= rnd;
+            gBgScroll[1].y = mask + 30;
         }
 
         work->transfer_pending = 1;

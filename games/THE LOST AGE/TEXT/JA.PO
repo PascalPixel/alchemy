@@ -31455,23 +31455,23 @@ msgctxt "MsgFieldIRememberWhenIFound"
 msgid "07861"
 msgstr "ミング山みゃくの上の方をとおる{line_break}キボンボも知らぬ道があるんじゃ{page_break}しかし あの上まで上がる道が{line_break}いまは なくなってしまったから{line_break}そこまで行くのがたいへんじゃぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheFortuneTellerLivesAt"
 msgid "07862"
 msgstr "村のいちばん おくのいえには{line_break}まじないし様が すんでいるけど{line_break}村長なんか 村にはいないんだ{page_break}しいていえば あの人が{line_break}村長みたいなもんかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeReASmallVillage"
 msgid "07863"
 msgstr "こんな ちいさな村ですものね{line_break}みんなで きょうりょくすれば{line_break}なんだって できちゃうわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheFortuneTellerInNaribwe"
 msgid "07864"
 msgstr "ニリ村の まじないし様って{line_break}うらないが あたるからって{line_break}ずいぶん ゆうめいらしい{page_break}オレたちは たいしたことは{line_break}うらなって もらわないから{line_break}ありがたさが よくわからん。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAsLongAsWeListen"
 msgid "07865"
 msgstr "まじないし様の いうことさえ{line_break}きちんと まもってさえいれば{line_break}なにも もんだいがおきないわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouDesireAReading"
 msgid "07866"
 msgstr "なにか うらないたいのなら{line_break}テーブルの前に くるがいいぞ。{end_wait}"
 
@@ -31479,11 +31479,11 @@ msgctxt "message"
 msgid "07867"
 msgstr "{actor_name:5}は {argument_item_name:134}{line_break}テーブルに のせた{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIAmATellerOf"
 msgid "07868"
 msgstr "わたしは まじないしである{line_break}なにか うらないたいのか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFieldThenStandBack"
 msgid "07869"
 msgstr "ならば 立ちさるがいい。{end_wait}"
 
@@ -31527,7 +31527,7 @@ msgctxt "message"
 msgid "07879"
 msgstr "わかったぞ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBeyondTheWeaponYouSet"
 msgid "07880"
 msgstr "お主のおいた武器のむこうに{line_break}おそろしいてきのかげが見える。{end_wait}"
 
@@ -31543,27 +31543,27 @@ msgctxt "message"
 msgid "07883"
 msgstr "もはや この世界の東がわには{line_break}お主にとっての きょうてきは{line_break}どこにも いないようだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIFeelAShiningPower"
 msgid "07884"
 msgstr "お主のおいたアイテムのむこうに{line_break}かがやくほどのパワーをかんじる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouAreLostInYour"
 msgid "07885"
 msgstr "お主 このゴンドワナ大陸の前に{line_break}よるべきばしょに よらないで{line_break}ここまで きてしまったようだ{page_break}それは ひろい大陸のまん中{line_break}大きな岩のかたまりの中にある{line_break}さあ 行ってくるがいいだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldADistantIsleLiesFar"
 msgid "07886"
 msgstr "お主は イースト海北東にある{line_break}日いずる島へ 行かねばならぬ{page_break}そこにある 大きな岩山で{line_break}お主の もとめている力が{line_break}きっと 手に入るであろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISeeAParadiseAwaiting"
 msgid "07887"
 msgstr "お主は イースト海の東はしの{line_break}ちいさな島へ 行かねばならぬ{page_break}その島には 大きな岩山があり{line_break}お主が ひつようとするものが{line_break}そこで見つかるであろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldATinyFigureStandsAgainst"
 msgid "07888"
 msgstr "お主は 世界の南にあるという{line_break}こおりの大地へ 行かねばならぬ{page_break}その大地には 遺跡があり{line_break}お主に ひつような力を{line_break}えることができるであろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISeeYouLostIn"
 msgid "07889"
 msgstr "お主は きりにつつまれた{line_break}海いきに 入らねばならぬ{page_break}お主はそこで おどろくべき{line_break}力を 手に入れるであろう。{end_wait}"
 
@@ -31571,35 +31571,35 @@ msgctxt "message"
 msgid "07890"
 msgstr "もはや この世界の東がわには{line_break}お主が ひつようとするものは{line_break}のこってはいないようだ・・・{page_break}さあ 大地のあいだをすすみ{line_break}まだ見ぬ 西の世界への{line_break}みちを きりひらくのだ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBeyondTheItemBeforeMe"
 msgid "07891"
 msgstr "お主のおいたアイテムのむこうに{line_break}お主のすすむべき道が見える。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISeeYouInsideA"
 msgid "07892"
 msgstr "お主は 大きな像の中へ入り{line_break}こえのもとめに おうじることで{line_break}きちょうな者をくわえられるだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouMustForgeAWeapon"
 msgid "07893"
 msgstr "お主は たおすべきてきのため{line_break}ひつような武器をつくるのだ{line_break}ざいりょうを手に入れよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouWillRaiseAMighty"
 msgid "07894"
 msgstr "お主は 大きなはしらをなおして{line_break}おもってもいない者たちからの{line_break}大きなえんじょをえるであろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouWillGainTremendousHelp"
 msgid "07895"
 msgstr "お主は 北の大陸の東の者たちに{line_break}大きなえんじょをえるであろう{page_break}かれらをたずねるがよいぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouHaveTheWeaponYou"
 msgid "07896"
 msgstr "お主は 海のきょうてきと{line_break}たたかう 力を手に入れた{page_break}きりの海いきへと むかい{line_break}そのまものを たおすのだ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheObjectThatYouSeek"
 msgid "07897"
 msgstr "お主の もくてきとするものは{line_break}どうやら世界の西にあるようだ{page_break}もしも この東の世界において{line_break}やりのこしたことがないのなら{line_break}西の世界へむかうがいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheObjectYouHavePlaced"
 msgid "07898"
 msgstr "お主のおいた それは・・・{line_break}とくていの あいてにとって{line_break}おそろしい力をもつ武器だ。{end_wait}"
 
@@ -31635,207 +31635,207 @@ msgctxt "message"
 msgid "07906"
 msgstr "お主のおいた防具のむこうに{line_break}お主をまつ者のそんざいをかんじる{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheEastLiesA"
 msgid "07907"
 msgstr "東のほうがく・・・{line_break}大きく動いた大陸の森で {line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthInsideThe"
 msgid "07908"
 msgstr "北のほうがく・・・{line_break}この大陸の大きなぞうの中で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthBeneathThe"
 msgid "07909"
 msgstr "北のほうがく・・・{line_break}この大陸の大きなぞうの下で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastBySoutheastIn"
 msgid "07910"
 msgstr "東南東のほうがく・・・{line_break}イースト海 南大陸のどうくつで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastByNortheastIn"
 msgid "07911"
 msgstr "東北東のほうがく・・・{line_break}ちいさな島のどうくつで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadNorthByNorthwestIn"
 msgid "07912"
 msgstr "北北西のほうがく・・・{line_break}ウェスト海 北大陸の森で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthwestInThe"
 msgid "07913"
 msgstr "北西のほうがく・・・{line_break}ウェスト海 南大陸の遺跡のそばで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadWestByNorthwestIn"
 msgid "07914"
 msgstr "西北西のほうがく・・・{line_break}ウェスト海 南大陸のいりえで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthInThe"
 msgid "07915"
 msgstr "北のほうがく・・・{line_break}春のおとずれない村で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastBySoutheastIn2"
 msgid "07916"
 msgstr "東南東のほうがく・・・{line_break}イースト海 南大陸のさばくで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastByNortheastIn2"
 msgid "07917"
 msgstr "東北東のほうがく・・・{line_break}大きく動いた大陸のどうくつで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheSoutheastInThe"
 msgid "07918"
 msgstr "南東のほうがく・・・{line_break}イースト海 南大陸の草原で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheSouthInThe"
 msgid "07919"
 msgstr "南のほうがく・・・{line_break}この大陸の森で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheEastBesideThe"
 msgid "07920"
 msgstr "東のほうがく・・・{line_break}ちいさな島の大岩のそばで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastByNortheastIn3"
 msgid "07921"
 msgstr "東北東のほうがく・・・{line_break}きりにかくれた町で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthSomewhereOn"
 msgid "07922"
 msgstr "北のほうがく・・・{line_break}ちいさな島のどこかで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadNorthByNorthwestIn2"
 msgid "07923"
 msgstr "北北西のほうがく・・・{line_break}ウェスト海 北大陸のどうくつで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthInRuins"
 msgid "07924"
 msgstr "北のほうがく・・・{line_break}ふぶきの中そびえたつ遺跡の中で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastByNortheastIn4"
 msgid "07925"
 msgstr "東北東のほうがく・・・{line_break}ちいさな島のどうくつで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheEastInThe"
 msgid "07926"
 msgstr "東のほうがく・・・{line_break}大きく動いた大陸の山道で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheSoutheastInA"
 msgid "07927"
 msgstr "南東のほうがく・・・{line_break}ひつじのこえがきこえる村で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadSouthBySoutheastOn"
 msgid "07928"
 msgstr "南南東のほうがく・・・{line_break}大きく動いた大陸のガケで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastBySoutheastIn3"
 msgid "07929"
 msgstr "東南東のほうがく・・・{line_break}大きく動いた大陸の町で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastByNortheastOn"
 msgid "07930"
 msgstr "東北東のほうがく・・・{line_break}日いずる島のどこかで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadSouthBySoutheastIn"
 msgid "07931"
 msgstr "南南東のほうがく・・・{line_break}冬の島の遺跡の中で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthwestInThe2"
 msgid "07932"
 msgstr "北西のほうがく・・・{line_break}ウェスト海 南大陸の森で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthwestAlongThe"
 msgid "07933"
 msgstr "北西のほうがく・・・{line_break}ウェスト海 北大陸の海ぞいで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthwestBesideThe"
 msgid "07934"
 msgstr "北西のほうがく・・・{line_break}ウェスト海 南大陸の遺跡のそばで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadNorthByNorthwestAt"
 msgid "07935"
 msgstr "北北西のほうがく・・・{line_break}この大陸の大岩で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthInThe2"
 msgid "07936"
 msgstr "北のほうがく・・・{line_break}ふぶきの中そびえたつ遺跡の中で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastByNortheastIn5"
 msgid "07937"
 msgstr "東北東のほうがく・・・{line_break}大きく動いた大陸のどうくつで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastBySoutheastIn4"
 msgid "07938"
 msgstr "東南東のほうがく・・・{line_break}イースト海 南大陸のさばくで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadEastBySoutheastIn5"
 msgid "07939"
 msgstr "東南東のほうがく・・・{line_break}イースト海 南大陸のどうくつで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthInThe3"
 msgid "07940"
 msgstr "北のほうがく・・・{line_break}この大陸の山道で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheEastSomewhereOn"
 msgid "07941"
 msgstr "東のほうがく・・・{line_break}ちいさな島のどこかで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheEastInThe2"
 msgid "07942"
 msgstr "南のほうがく・・・{line_break}冬の島の森で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadNorthByNorthwestIn3"
 msgid "07943"
 msgstr "北北西のほうがく・・・{line_break}ウェスト海 北大陸のたにまの村で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInTheNorthwestInThe"
 msgid "07944"
 msgstr "北西のほうがく・・・{line_break}ウェスト海 南大陸の遺跡の中で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadNorthByNorthwestNear"
 msgid "07945"
 msgstr "北北西のほうがく・・・{line_break}けわしい道の先のいずみで{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToTheNorthInThe4"
 msgid "07946"
 msgstr "北のほうがく・・・{line_break}遺跡のある アナほりの村で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeadNorthByNortheastOn"
 msgid "07947"
 msgstr "北北東のほうがく・・・{line_break}宝がかくされた島で{line_break}その者は まっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldInTheItemYouHave"
 msgid "07948"
 msgstr "お主のおいた防具のむこうに{line_break}・・・なにも 見えない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyFatherIsAFortune"
 msgid "07949"
 msgstr "父ちゃんは まじないしであって{line_break}くろまじゅつしとは ちがうよ{page_break}キボンボのアカフブなんかとは{line_break}いっしょにしないでよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldByPaintingOurBodiesWe"
 msgid "07950"
 msgstr "ボディーペインティングは{line_break}とても えんぎがいいんだよ{line_break}あんたも やってみたらどう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheItemsThatOneCarries"
 msgid "07951"
 msgstr "だいの上におかれたアイテムには{line_break}うらないを のぞむ者のねがいが{line_break}こめられているものなのだ{page_break}それをかんじとることができれば{line_break}あいての もとめていることへの{line_break}こたえを出すのは かんたんさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyFatherMayNotBe"
 msgid "07952"
 msgstr "父ちゃん ほんきさえ出せば{line_break}きっとキボンボのアカフブに{line_break}まけないんだろうになあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBodyPaintingAlsoProtectsUs"
 msgid "07953"
 msgstr "ボディーペインティングによって{line_break}くろまじゅつをはねかえすって{line_break}ホントのことなのかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouAreBurdenedWith"
 msgid "07954"
 msgstr "この村の まじないし様には{line_break}ぜひ うらなってもらいなよ{page_break}もし この先の戦いのことを{line_break}あんたが しんぱいだったら{line_break}武器を見てもらうといいぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICanLookAtAny"
 msgid "07955"
 msgstr "オレは 武器を見てもらって{line_break}モンスターにおそわれることが{line_break}先に分かったこともあったぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouShouldVisitTheFortune"
 msgid "07956"
 msgstr "わが村の まじないし様だけど{line_break}ホント あの人はすごいんだ{page_break}じぶんの もっているものを{line_break}あの人の前に出しただけで{line_break}なやみまで わかっちまうぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWheneverIGetMyFortune"
 msgid "07957"
 msgstr "オレ やっぱり商売のせいかな{line_break}まじないし様に 見てもらう時{line_break}すぐに防具を出しちまうんだ{page_break}そのおかげかな なんども{line_break}めっけものをしちまったぜ。{end_wait}"
 
@@ -31847,19 +31847,19 @@ msgctxt "MsgFieldEvenIfIWantedMy"
 msgid "07959"
 msgstr "わたしは まじないし様に{line_break}見てもらおうにも・・・{line_break}武器や防具をもっていないわ{page_break}ほかにも いろいろなものを{line_break}ホントは 見てもらった方が{line_break}おおくのことが わかるのよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouLikeAdventureYou"
 msgid "07960"
 msgstr "あんた ぼうけんがスキだったら{line_break}川むこうの西の方もおもしろいよ{page_break}おっと いまは水がおおいから{line_break}川をわたるのはムリだったな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOurCookingIsFamousAll"
 msgid "07961"
 msgstr "うちは りょうりがじまんで{line_break}ここまで それがもくてきで{line_break}やってくる人もいるんだよ{page_break}あんたも気に入ってくれたなら{line_break}ちょくちょく きておくれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheRiverIsProbablyVery"
 msgid "07962"
 msgstr "いまは 西の川をわたろうなんて{line_break}とても おそろしくてできないよ{page_break}なにしろ あの川をおよいでるのは{line_break}モンスターばっかりだからなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOurSpicesAreOurSecret"
 msgid "07963"
 msgstr "うちの りょうりがおいしいのは{line_break}わたしが ちょうりしてるからさ{page_break}まずいなんていうヤツがいたら{line_break}このゲンコで なぐってやるわ。{end_wait}"
 
@@ -31947,19 +31947,19 @@ msgctxt "MsgFieldWhatHasGoneWrongWith"
 msgid "07984"
 msgstr "まったく いまどきのわかい者は{line_break}年よりを だいじにすることを{line_break}おそわらんのかい プンプン。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIGuessThoseWarriorsLearned"
 msgid "07985"
 msgstr "この前やってきた戦士たちは{line_break}いろいろ うらなってもらって{line_break}さんこうになったってはなしだ{page_break}あんたも なやみがあるんなら{line_break}まじないし様に あうことだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOurFortuneTellerHasBeen"
 msgid "07986"
 msgstr "まじないし様が ふきつなことを{line_break}さいきん 口にされるのよね{page_break}もうすぐ 長いへいわの時が{line_break}おわりをつげるというのだけど{line_break}いったい どういうことかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThePowerOfTheFortune"
 msgid "07987"
 msgstr "まじないし様の力にかかれば{line_break}なやみごとなんか いっぱつさ{line_break}まったく ありがたいことだぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheFortuneTellerSaidThat"
 msgid "07988"
 msgstr "まじないし様の いうことには{line_break}世の中は しぜんの力をうけて{line_break}文明が めざめるらしいわ・・・{page_break}へいわをうしない そのかわりに{line_break}べんりな世の中に なるとしたら{line_break}どっちが のぞましいのかなあ。{end_wait}"
 
@@ -32071,39 +32071,39 @@ msgctxt "message"
 msgid "08015"
 msgstr "お主が ながれついたはまべから{line_break}すぐちかくに とうがあったはず{line_break}そこをしらべてみるがよいぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfTroubleResidesInYour"
 msgid "08016"
 msgstr "なにか こまったことがあれば{line_break}また 父ちゃんのところまで{line_break}そうだんにくるといいよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldReadingFortunesInPeopleS"
 msgid "08017"
 msgstr "ホントは うちの人のまじないは{line_break}すごく たいりょくがいるから{line_break}あんまり やりたくないみたいよ{page_break}20コインで やってやるのは{line_break}まあ サービスみたいなもんね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItemsPlacedBeforeMeAre"
 msgid "08018"
 msgstr "だいの上におかれたアイテムには{line_break}うらないを のぞむ者のねがいが{line_break}こめられているものなのだ{page_break}それをかんじとることができれば{line_break}あいての もとめていることへの{line_break}こたえを出すのは かんたんさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFatherShouldChargeMoreFor"
 msgid "08019"
 msgstr "父ちゃん まじないのお金は{line_break}どうでもいいって いってて{line_break}パアッと使っちゃうんだよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAfterFatherSBeenReading"
 msgid "08020"
 msgstr "まじないをやった日の夜は{line_break}あの人 いびきがすごくて{line_break}ねむれたもんじゃないわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWheneverIGetCustomersFrom"
 msgid "08021"
 msgstr "たびの戦士に きかれた時には{line_break}いつも いってるんだけど{line_break}こまった時は まじないしさ{page_break}まあ ダマされたとおもって{line_break}そうだんしてみるんだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenILookAtWeapons"
 msgid "08022"
 msgstr "使いこなした武器を見せると{line_break}これから 戦うあいてのことが{line_break}わかっちまったりするそうさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouWishToKnow"
 msgid "08023"
 msgstr "もし ききたいことがあるんなら{line_break}たいした代金でもないんだしさ{line_break}まじないしに そうだんしなよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldILikeOfferingArmorTo"
 msgid "08024"
 msgstr "なにかを発見したいとおもったら{line_break}まじないしに防具を見てもらうと{line_break}いいことが あるらしいんだ。{end_wait}"
 
@@ -32115,19 +32115,19 @@ msgctxt "MsgFieldThoseWhoBecomeLostShould"
 msgid "08026"
 msgstr "やるべきことが 見えなくなったら{line_break}ぼうけんで手に入れた道具なんか{line_break}うらなってもらうべきなのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfIsTravelingInYour"
 msgid "08027"
 msgstr "もしも あんたたちの中に{line_break}{actor_name:8}って人がいるなら{line_break}ぜひ 伝えてやってくれ{page_break}{actor_name:1}という戦士たちが{line_break}さがしてるってことをな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldISeeSoManyTravelers"
 msgid "08028"
 msgstr "たくさんの たびの戦士から{line_break}{actor_name:8}って人をさがすのは{line_break}まず ムリだろうけど・・・{page_break}その人を見つけるためだけに{line_break}ゴンドワナまでくるなんて・・・{line_break}{actor_name:1}という人 ものずきだね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHePaidMeALot"
 msgid "08029"
 msgstr "大金をうけとっちまったんじゃ{line_break}やくそくは まもらないとな{page_break}とにかく 戦士という戦士に{line_break}{actor_name:1}のでんごんをはなせば{line_break}オレのやくめは おわりだぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldTravelAllThis"
 msgid "08030"
 msgstr "なんでも {actor_name:1}という戦士は{line_break}あったこともない人をさがして{line_break}ここまで きたらしいけど・・・{page_break}いったい どんなりゆうから{line_break}その人をさがすんだろう。{end_wait}"
 

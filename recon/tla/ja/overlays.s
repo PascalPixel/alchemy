@@ -134,7 +134,7 @@ Resource_Overlay66D:
 	.incbin "overlays/resource_66d.lz"
 	.global Resource_Overlay66E
 Resource_Overlay66E:
-	.incbin "baserom.gba", 0x00ef8fb0, 0x00000a9c
+	.incbin "overlays/resource_66e.lz"
 	.global Resource_Overlay66F
 Resource_Overlay66F:
 	.incbin "baserom.gba", 0x00ef9a4c, 0x00000de4

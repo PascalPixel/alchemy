@@ -579,7 +579,14 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         draft_steps(target, &draft, &object)?
     };
     if options.rtl {
-        steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
+        // The compiler proper is the step before assembly: the 2.96 driver,
+        // or agbcc_arm's cc1 after its separate preprocessor.
+        let compiler = steps.len() - 2;
+        steps[compiler].push("-da".into());
+        if !options.arm {
+            // Only 2.96's haifa scheduler takes a verbose level.
+            steps[compiler].push("-fsched-verbose=5".into());
+        }
     }
     let assemble = steps.pop().expect("draft plan ends with assembly");
     for step in steps {

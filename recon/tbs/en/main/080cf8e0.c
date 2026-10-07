@@ -3,6 +3,29 @@
  * (step and burst address, see the fourth to seventh passes) change
  * instruction selection, not only order or registers (S2). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Tenth pass (2026-10-07): the flushes' natural cause, still not found.
+ * The step flush needs CSE's AROUND path (cse_end_of_basic_block,
+ * skip_blocks) to end after the hit block's join label: a code label
+ * with uses, or a NOTE_INSN_LOOP_END, on the path between the join and
+ * the variant test. A label or loop end inside the skipped hit block
+ * does not help: the AROUND path jumps over it.
+ * Tenth-pass trials (from 0, each without the flush it replaces): an
+ * empty do { } while (0) after the hit block 0 (its LOOP_END ends the
+ * path, as the asm does; still a device that changes selection);
+ * do { BattleEventRuntime_BeginPhaseFar(133); } while (0) inside the
+ * hit block 451; do { the hit block } while (0) 451 again (jump merges
+ * the join label with the loop's exit label after the LOOP_END, so the
+ * AROUND path skips it); a static __inline__ helper forwarding
+ * BattleEventRuntime_BeginPhaseFar 451, one forwarding
+ * ObjectGroup_UpdateMembers 451 (no label left in the hit block by CSE
+ * time); the k loop as for (k = 0; k != count; k++) 456. Burst: group
+ * set in the burst for's test, for (i = 0; group = k * 4, i != count;
+ * i++), 24: CSE no longer folds group << 3 into k << 5 (group's set is
+ * in the rotated exit test, another block), but the duplicated test puts
+ * k << 2 before the count guard and PRE puts group << 3 at the loop
+ * tail; native computes k << 2 after the guard and group << 3 at the top
+ * of the body, so group's set sits at the body's top with a CSE block
+ * boundary before its use.
  * Ninth pass (2026-10-07): the shard drawer is chosen in the call,
  * draw[burst->velocity_x > 0 ? flip ^ 1 : flip](...), with the plain
  * if (i & 1) picture += 9 first as native orders it (48 -> 8). fold()

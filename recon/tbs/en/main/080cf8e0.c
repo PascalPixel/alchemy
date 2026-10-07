@@ -4,6 +4,27 @@
  * selection, not only order or registers (S2): the
  * __asm__ __volatile__("" ::) CSE flush (burst address). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Fifteenth pass (2026-10-07): the burst boundary's possible sources,
+ * read from cse.c. cse_end_of_basic_block ends a path only at a
+ * CODE_LABEL, a NOTE_INSN_LOOP_END or a NOTE_INSN_SETJMP; cse_basic_block
+ * runs on past a label only when its uses fall to zero. The burst body's
+ * path starts with an empty table at the loop's top label (one use from
+ * the rotated bottom test; the guard's AROUND scan meets that label), and
+ * native has no instruction between that label and the address, so
+ * whatever separates group = k * 4 from group * 8 must leave no code: a
+ * loop end, or a label whose other use CSE1 folds away, i.e. a test CSE1
+ * decides from what the path holds there, which is only group and k
+ * (count, i and the records byte are unknown at the label). Hence no
+ * plain statement and no natural test: the form is a one-pass loop (as
+ * a do { } while (0) macro), a tautology, or something not yet imagined.
+ * A memory group (its load killed by the Random16 calls, so PRE leaves
+ * it) would also match the body, but its slot would be a declared
+ * local's, not the reload slot native's sp+24 is (the fourth pass's
+ * volatile group, 463). Precedent for Pascal: adopted ☀️ code keeps
+ * FAKEMATCH one-pass blocks as order devices (WAVES.C, STARFLD.C,
+ * SENTOU_KOUKA_GOUSEI_BUILD.C); this one would change selection (k << 5
+ * and a reduced pointer without it), which S2 does not admit.
+ * Fifteenth-pass trials (no flush): const s32 group = k * 4 171.
  * Fourteenth pass (2026-10-07): the burst flush's mechanism is the step's.
  * Native PRE hoisted k << 2 but not group << 3, so group's set and
  * group << 3 shared one GCSE basic block (group killed group << 3) while

@@ -1,3 +1,8 @@
+/* Trial from1255, removed: short ability/sl readonly handoff gives1479 and
+ * frame92; a C-only round trip1458 and92. Both spill the captured-state
+ * address but remove two other native stack slots. Explicit availability
+ * if/else gives1277 with frame100; u8 availability1485 with frame104.
+ */
 /* 2026-10-07 queue3 Japanese layout correction: native summon window width14
  * and requirement columns10/11, versus the localizations'17 and13/14, now
  * have a Japanese branch. JA bounded parent diff1219 (listing1729,draft1768,

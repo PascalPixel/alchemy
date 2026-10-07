@@ -155,7 +155,7 @@ Func_02000048:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_02008194:
-	.4byte 0x000022b0
+	.4byte MsgTheMisalignedStone
 	.section .text.x020081ac,"ax",%progbits
 	.global Func_020001ac
 	.thumb_func
@@ -607,9 +607,9 @@ Func_020004bc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008530:
-	.4byte 0x000022b2
+	.4byte MsgCanYouImagine
 .L_02008534:
-	.4byte 0x000022ad
+	.4byte MsgSeeThisRing
 	.section .text.x02008538,"ax",%progbits
 	.global Func_02000538
 	.thumb_func
@@ -662,9 +662,9 @@ Func_02000538:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020085ac:
-	.4byte 0x00002328
+	.4byte MsgButItS
 .L_020085b0:
-	.4byte 0x00002323
+	.4byte MsgSeeThisRingOf
 	.section .text.x020085b4,"ax",%progbits
 	.global Func_020005b4
 	.thumb_func
@@ -702,7 +702,7 @@ Func_020005b4:
 	bl Func_02000d08
 	pop {r5, r6, pc}
 .L_02008608:
-	.4byte 0x00002338
+	.4byte MsgLadyUzumeAnd
 	.section .text.x0200860c,"ax",%progbits
 	.global Func_0200060c
 	.thumb_func
@@ -934,7 +934,7 @@ Func_020006a4:
 	bl Func_02000d08
 	pop {r5, pc}
 .L_0200880c:
-	.4byte 0x000023b1
+	.4byte MsgWait2
 .L_02008810:
 	.4byte gPartyState
 	.section .text.x02008814,"ax",%progbits
@@ -1063,7 +1063,7 @@ Func_02000814:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200894c:
-	.4byte 0x000023b8
+	.4byte MsgThisTokenIsn
 .L_02008950:
 	.4byte gPartyState
 	.section .text.x02008954,"ax",%progbits
@@ -1119,11 +1119,11 @@ Func_02000954:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020089c4:
-	.4byte 0x000023b7
+	.4byte MsgWouldYouBe
 .L_020089c8:
 	.4byte gPartyState
 .L_020089cc:
-	.4byte 0x000023bf
+	.4byte MsgTheLegendSays
 	.section .text.x020089d0,"ax",%progbits
 	.global Func_020009d0
 	.thumb_func
@@ -2205,70 +2205,70 @@ Data_020018b4:
 	.4byte Func_02000c58
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000022a5
+	.4byte MsgWeVeHad
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000022a6
+	.4byte MsgMyNameS
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000022a7
+	.4byte MsgLadyUzumeDoesn
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000022a8
+	.4byte MsgSusaSGoing
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000022a9
+	.4byte MsgAsAChild
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000022aa
+	.4byte MsgChoosingTheNext
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000022ab
+	.4byte MsgTheDaughtersOf
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x000022ac
+	.4byte MsgABraveWarrior
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_020004bc
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x000022ce
+	.4byte MsgYeahSusaCame
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x000022cf
+	.4byte MsgEvenIfSusa
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000022b3
+	.4byte MsgTheGreatSerpent
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000022b4
+	.4byte MsgIMNotGoing
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000022b5
+	.4byte MsgIMSureThat
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000022b6
+	.4byte MsgWhatIfLosing
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000022b7
+	.4byte MsgLadyUzumeLoves
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000022b8
+	.4byte MsgSacrificesAsGreat
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000022b9
+	.4byte MsgKushinadaSAlways
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000022ba
+	.4byte MsgWhyWonT
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000022bb
+	.4byte MsgWhyDoesLady
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x000022d0
+	.4byte MsgYouKnowI
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000022d1
+	.4byte MsgLadyUzumeSays
 	.4byte 0x00000008
 	.4byte 0xffff0000
 	.4byte Func_02000038
@@ -2354,55 +2354,55 @@ Data_02001b00:
 	.4byte Func_02000c58
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000231b
+	.4byte MsgThoseScreamsFrom
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000231c
+	.4byte MsgWeRePlanning
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000231d
+	.4byte MsgSusaHasChanged
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0000231e
+	.4byte MsgKushinadaHasBeen
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000231f
+	.4byte MsgIVeHeardPeople
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002320
+	.4byte MsgSusaHasGrown
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002321
+	.4byte MsgSusaHasPut
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002322
+	.4byte MsgLadyUzumePredicted
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_02000538
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002342
+	.4byte MsgIfYouReLooking
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00002343
+	.4byte MsgDidYouHear
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00002332
+	.4byte MsgIWonderIf
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00002333
+	.4byte MsgDancingLikeThis
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00002334
+	.4byte MsgEveryoneSaysThat
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00002335
+	.4byte MsgWeMayNever
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00002336
+	.4byte MsgOurIslandIs
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00002337
+	.4byte MsgTheSerpentTaught
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte Func_020005b4
@@ -2411,58 +2411,58 @@ Data_02001b00:
 	.4byte Func_02000954
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002329
+	.4byte MsgIHadAlways
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000232a
+	.4byte MsgThisCelebrationWill
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000232b
+	.4byte MsgItSOdd
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000232c
+	.4byte MsgKushinadaIsSuch
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000232d
+	.4byte MsgWhatWouldMake
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000232e
+	.4byte MsgAllTheGirls
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000232f
+	.4byte MsgEveryoneSBeen
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002330
+	.4byte MsgSoSusaReally
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002331
+	.4byte MsgSusaDidA
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002344
+	.4byte MsgLadyUzumeAndKushinada
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00002345
+	.4byte MsgKushinadaMustBe
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0000233b
+	.4byte MsgAllAnyoneTalks
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x0000233c
+	.4byte MsgADragonA
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x0000233d
+	.4byte MsgSusaSaidThe
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x0000233e
+	.4byte MsgWeNeedTo
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x0000233f
+	.4byte MsgDancingIsGood
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00002340
+	.4byte MsgThatSusaUsed
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x00002341
+	.4byte MsgAsLongAsWe
 	.4byte 0x00008d15
 	.4byte 0xffff0420
 	.4byte Func_02000954

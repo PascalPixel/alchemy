@@ -1316,7 +1316,7 @@ Func_02000a8c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008b34:
-	.4byte 0x000030a8
+	.4byte MsgIAmTheGuardian
 .L_02008b38:
 	.4byte gPartyState
 	.section .text.x02008b3c,"ax",%progbits
@@ -2481,7 +2481,7 @@ Data_020018f4:
 	.4byte 0x00000602
 	.4byte 0x0205002a
 	.4byte Func_02000f4c
-	.4byte 0x00000400
+	.4byte MsgRustySword2
 	.4byte 0xffff0017
 	.4byte Func_02000864
 	.4byte 0x00008c15

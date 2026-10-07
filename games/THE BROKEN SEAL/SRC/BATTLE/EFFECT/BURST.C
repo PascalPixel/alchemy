@@ -24,6 +24,7 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "TRANSFORM.H"
+#include "IO_REG.H"
 
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
@@ -111,7 +112,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
         palette = (s32)&ResourceId_BlastSheet;
         break;
     }
-    Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(palette), 128);
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

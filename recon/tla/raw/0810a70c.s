@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0810a70c
+	.global Forge_FindRecipe
 	.thumb_func
-Func_0810a70c:
+Forge_FindRecipe:
 	push {lr}
 	adds r1, r0, #0
 	movs r3, #128

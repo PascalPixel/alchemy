@@ -27,6 +27,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
+#include "HEAP_STATE.H"
 
 struct ArcChild {
     u8 pad00[22];
@@ -101,7 +102,7 @@ struct BattleSceneState {
     s8 running;
 };
 
-extern u8 gWorkSlot[];
+
 
 void Vector_AddPolarOffset(s32, s32, void *);
 
@@ -189,8 +190,8 @@ void BattleFx_UpdateAllEffectSlots(void)
 
 void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
 {
-    struct BattleSceneState *scene = *(struct BattleSceneState **)(gWorkSlot + 27 * 4);
-    struct EffectOrigin *origin = *(struct EffectOrigin **)(gWorkSlot + 8 * 4);
+    struct BattleSceneState *scene = *(gWorkSlot + HEAP_SLOT_EVENT);
+    struct EffectOrigin *origin = *(gWorkSlot + 8);
     struct BattleFxScene *work;
     s32 running;
 
@@ -200,9 +201,9 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
 
         work = Runtime_AllocateHeapBlock(56, sizeof *work);
         fill = running;
-        Dma_Set((const void *)&fill, work, 0x85000000 | (sizeof *work / 4), REG_DMA3);
+        Dma_Set((const void *)&fill, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof *work / 4), REG_DMA3);
     } else {
-        work = *(struct BattleFxScene **)(gWorkSlot + 56 * 4);
+        work = *(gWorkSlot + 56);
     }
     work->action = action;
     work->animation = BattleAction_Get(action)->type_0c;

@@ -29,18 +29,16 @@
 	.thumb
 	.global IwramSignedRemainder
 IwramSignedRemainder:
-AlchemyUncredited_08000ac0:
 	bx	pc
+AlchemyUncredited_08000ac2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000ac0:
+AlchemyUncreditedEnd_08000ac2:
 	orrs	r3, r0, r1
 	bmi	.L_030004d4
 	.global IwramUnsignedRemainder
 IwramUnsignedRemainder:
-AlchemyUncredited_08000acc:
 	andeq	r4, r0, #120, 14
-AlchemyUncreditedEnd_08000acc:
 	mov	ip, lr
 	bl	.L_03000534
 	mov	r0, r1
@@ -50,26 +48,22 @@ IwramDivide:
 	.thumb
 	.global IwramSignedDivide
 IwramSignedDivide:
-AlchemyUncredited_08000ae0:
 	bx	pc
+AlchemyUncredited_08000ae2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000ae0:
+AlchemyUncreditedEnd_08000ae2:
 	orrs	r3, r0, r1
 	bmi	.L_030004a8
 	.global IwramUnsignedDivide
 IwramUnsignedDivide:
 .L_03000534:
-AlchemyUncredited_08000aec:
 	andeq	r4, r0, #120, 14
-AlchemyUncreditedEnd_08000aec:
 	mov	r2, r1
 	mov	r1, r0
 	mov	r0, #0
 .L_03000544:
-AlchemyUncredited_08000afc:
 	andeq	r4, r0, #120, 14
-AlchemyUncreditedEnd_08000afc:
 	cmp	r2, #0x4000
 	bcs	.L_03000578
 	ldr	r3, [pc, #28]

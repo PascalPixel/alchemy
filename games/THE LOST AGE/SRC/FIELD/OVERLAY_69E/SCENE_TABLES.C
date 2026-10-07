@@ -29,3 +29,11 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 {
     return gScenePlacements;
 }
+
+extern u8 Data_02002fb8[];
+void Func_020029d0();
+
+void Func_02000054(void)
+{
+    Func_020029d0(Data_02002fb8);
+}

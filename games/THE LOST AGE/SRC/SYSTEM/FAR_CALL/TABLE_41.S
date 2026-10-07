@@ -1,6 +1,32 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
+	.global Resource_FarCall008
+Resource_FarCall008:
+	.global Func_08108000
+	.thumb_func
+Func_08108000:
+	overlay_veneer Debug_ApplyPresetItemsAndFlags
+	.global Func_08108008
+	.thumb_func
+Func_08108008:
+	overlay_veneer Func_081082c4
+	.global Func_08108010
+	.thumb_func
+Func_08108010:
+	overlay_veneer Func_0810aa80
+	.global Func_08108018
+	.thumb_func
+Func_08108018:
+	overlay_veneer Func_0810b418
+	.global Func_08108020
+	.thumb_func
+Func_08108020:
+	overlay_veneer Func_0810b5c4
+	.global Func_08108028
+	.thumb_func
+Func_08108028:
+	overlay_veneer Func_0810b3ec
 	.global Func_08108030
 	.thumb_func
 Func_08108030:
@@ -12,7 +38,7 @@ Func_08108038:
 	.global Func_08108040
 	.thumb_func
 Func_08108040:
-	overlay_veneer Func_08108a88
+	overlay_veneer Shop_SetCursor
 	.global Func_08108048
 	.thumb_func
 Func_08108048:

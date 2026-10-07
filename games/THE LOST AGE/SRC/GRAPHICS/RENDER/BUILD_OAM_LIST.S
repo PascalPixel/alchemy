@@ -5,11 +5,11 @@
 Render_BuildOamListKernel:
 	.global Render_BuildOamListKernelCode
 Render_BuildOamListKernelCode:
-AlchemyUncredited_080018b4:
 	bx	pc
+AlchemyUncredited_080018b6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080018b4:
+AlchemyUncreditedEnd_080018b6:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r1, pc, #0x118
 	ldm	r1, {r2, sl, fp, ip}

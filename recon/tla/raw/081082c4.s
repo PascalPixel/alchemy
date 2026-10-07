@@ -13,7 +13,7 @@ Func_081082c4:
 	mov r8, r0
 	sub sp, #4
 	mov r10, r1
-	bl Func_0810a66c
+	bl EventTable_GetRowLimit
 	cmp r8, r0
 	bge .L_081082e6
 	mov r2, r8
@@ -31,7 +31,7 @@ Func_081082c4:
 	adds r3, #220
 	mov r0, r8
 	ldr r7, [r3]
-	bl Func_0810a6f8
+	bl EventTable_GetRowType
 	movs r1, #160
 	lsls r1, r1, #3
 	adds r1, #6

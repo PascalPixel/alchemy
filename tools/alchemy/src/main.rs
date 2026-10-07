@@ -20,6 +20,7 @@ mod deps;
 mod deps_command;
 mod diff;
 mod edition;
+mod editions;
 mod elf;
 mod fakematch;
 mod gate;
@@ -29,6 +30,7 @@ mod label;
 mod ld_map;
 mod merge;
 mod objects;
+mod permute;
 mod process;
 mod queues;
 mod show;
@@ -40,6 +42,7 @@ mod thumb;
 mod verify;
 mod worst;
 mod worst_command;
+mod worktree;
 
 const USAGE: &str = r#"usage: alchemy <command> [args]   (both games, all twelve editions)
 Run any command with --help for its options. The binary acts on the
@@ -50,6 +53,7 @@ Set up and build
   build         compilers, maintained source, assembly and ROMs
   verify        every gate of make verify, make land and the commit hooks
   check         one repository contract check
+  worktree      prepare a new git worktree before its first build
 
 Choose what to match
   deps          what not-yet-C code calls and blocks: what unblocks the most
@@ -58,6 +62,7 @@ Choose what to match
 Match one function
   diff          a C draft against the listing it would replace
   sizes         the structs a draft sees, and the locals that fill a frame gap
+  permute       search rewrites and PERM macro choices of a draft toward differ 0
   show          a built function beside the reference ROM
   adopt         the C into its module (--into) and out of all scaffolding
   label         name English-only scaffold data in the other editions
@@ -106,6 +111,7 @@ fn main() -> ExitCode {
         "integrate" => result(integrate::run(rest)),
         "keep" => result(keep::run(rest)),
         "diff" => result(diff::run(rest)),
+        "permute" => result(permute::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),
         "sizes" => result(sizes::run(rest)),
@@ -115,6 +121,7 @@ fn main() -> ExitCode {
         "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),
         "show" => result(show::run(rest)),
+        "worktree" => result(worktree::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

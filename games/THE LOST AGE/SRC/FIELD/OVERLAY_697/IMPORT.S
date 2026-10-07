@@ -133,7 +133,15 @@ Func_02005800:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020190
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020190
+	.else
 	overlay_veneer Map_GetTerrainHeightFar
+	.endif
+	.endif
 	.global Func_02005810
 	.thumb_func
 Func_02005810:
@@ -249,11 +257,7 @@ Func_02005868:
 	.global Func_02005870
 	.thumb_func
 Func_02005870:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Party_FindOwnerWithActionFar
-	.else
 	overlay_veneer Func_080ad308
-	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:

@@ -5,11 +5,11 @@ BattleFx_PatchTemplateCode:
 	.global BattleFx_PatchTemplate
 	.thumb_func
 BattleFx_PatchTemplate:
-AlchemyUncredited_081972a0:
 	bx	pc
+AlchemyUncredited_081972a2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081972a0:
+AlchemyUncreditedEnd_081972a2:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32
 	ldm	r4, {r4, r5}

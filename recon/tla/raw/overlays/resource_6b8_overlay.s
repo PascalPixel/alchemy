@@ -150,9 +150,9 @@ Func_02000140:
 	pop {pc}
 	.2byte 0x0000
 .L_02008150:
-	.4byte 0x0000124c
+	.4byte MsgWeaponShopWelcome
 .L_02008154:
-	.4byte 0x00001277
+	.4byte MsgArmorShopWelcome
 	.section .text.x02008158,"ax",%progbits
 	.global Func_02000158
 	.thumb_func
@@ -165,9 +165,9 @@ Func_02000158:
 	pop {pc}
 	.2byte 0x0000
 .L_02008168:
-	.4byte 0x00001277
+	.4byte MsgArmorShopWelcome
 .L_0200816c:
-	.4byte 0x0000124c
+	.4byte MsgWeaponShopWelcome
 	.section .text.x02008170,"ax",%progbits
 	.global Func_02000170
 	.thumb_func
@@ -180,11 +180,11 @@ Func_02000170:
 	bl Func_020000a4
 	pop {pc}
 .L_02008180:
-	.4byte 0x0000124c
+	.4byte MsgWeaponShopWelcome
 .L_02008184:
-	.4byte 0x00001277
+	.4byte MsgArmorShopWelcome
 .L_02008188:
-	.4byte 0x000012a2
+	.4byte MsgItemShopWelcome
 	.section .text.x0200818c,"ax",%progbits
 	.global Func_0200018c
 	.thumb_func
@@ -197,9 +197,9 @@ Func_0200018c:
 	pop {pc}
 	.2byte 0x0000
 .L_0200819c:
-	.4byte 0x000012d2
+	.4byte MsgWelcomeWearyWanderers
 .L_020081a0:
-	.4byte 0x000012fd
+	.4byte MsgRightWhenI
 	.section .text.x020081a4,"ax",%progbits
 	.global Func_020001a4
 	.thumb_func
@@ -276,7 +276,7 @@ Func_020001e4:
 	bl Party_AdvanceOwnerCountToTarget
 	pop {pc}
 .L_02008220:
-	.4byte 0x0000114b
+	.4byte MsgYouWentUp
 	.section .text.x02008224,"ax",%progbits
 	.global Func_02000224
 	.thumb_func
@@ -307,7 +307,7 @@ Func_02000224:
 	bl Owner_RecalculateStats
 	pop {r5, pc}
 .L_02008260:
-	.4byte 0x0000114d
+	.4byte MsgYouGotTreasure
 .L_02008264:
 	.4byte gPartyState
 .L_02008268:
@@ -371,7 +371,7 @@ Func_0200026c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020082f0:
-	.4byte 0x0000114c
+	.4byte MsgTheBodyIs
 	.section .text.x020082f4,"ax",%progbits
 	.global Func_020002f4
 	.thumb_func
@@ -521,7 +521,7 @@ Func_02000330:
 	pop {pc}
 	.2byte 0x0000
 .L_02008440:
-	.4byte 0x0000114e
+	.4byte MsgYouGotA
 	.section .text.x02008444,"ax",%progbits
 	.global Func_02000444
 	.thumb_func
@@ -613,9 +613,9 @@ Func_02000464:
 	bl Battle_WaitMode0
 	pop {r5, pc}
 .L_02008500:
-	.4byte 0x0000156d
+	.4byte MsgDeriHeyaGah
 .L_02008504:
-	.4byte 0x0000156e
+	.4byte MsgDeriHeyaYarg
 	.section .text.x02008508,"ax",%progbits
 	.global Func_02000508
 	.thumb_func
@@ -652,7 +652,7 @@ Func_02000508:
 	bl Battle_WaitMode0
 	pop {r5, pc}
 .L_02008558:
-	.4byte 0x0000156f
+	.4byte MsgDeriHeyaWhatAreYouDoing
 	.section .text.x0200855c,"ax",%progbits
 	.global Func_0200055c
 	.thumb_func
@@ -689,7 +689,7 @@ Func_0200055c:
 	bl Battle_WaitMode0
 	pop {r5, pc}
 .L_020085ac:
-	.4byte 0x0000156f
+	.4byte MsgDeriHeyaWhatAreYouDoing
 	.section .text.x020085b0,"ax",%progbits
 	.global Func_020005b0
 	.thumb_func
@@ -2124,19 +2124,19 @@ gSceneEvents:
 	.4byte Func_0200070c
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002535
+	.4byte MsgOooogOw2
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002536
+	.4byte MsgWhyDoThese
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002537
+	.4byte MsgStupidBriggs2
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002538
+	.4byte MsgBriggsSPirates
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002539
+	.4byte MsgIJustCame
 	.4byte 0x00000001
 	.4byte 0xffff0014
 	.4byte 0x00000014

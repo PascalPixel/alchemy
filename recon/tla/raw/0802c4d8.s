@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0802c4d8
+	.global Map_UpdateCurrentTileBlock
 	.thumb_func
-Func_0802c4d8:
+Map_UpdateCurrentTileBlock:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

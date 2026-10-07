@@ -21,10 +21,10 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
+#include "HEAP_STATE.H"
 
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-extern void *gWorkSlot[];
 
 void Audio_PlayCue(s32 cue);
 
@@ -44,7 +44,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
     DrawRectangle draw[2];
     s32 i;
 
-    heap_cache = &gWorkSlot[39];
+    heap_cache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -56,9 +56,9 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
     else
         REG_BG2PA = 0x100;
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = (DrawRectangle)gWorkSlot[46];
+    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     BattleEffect_LoadWork(47, 7, 7, 7, 3);
-    draw[1] = (DrawRectangle)gWorkSlot[47];
+    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 0x60e, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (work->effect->variant == 2) {

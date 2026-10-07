@@ -898,7 +898,7 @@ Func_02000510:
 	movs r2, #60
 	b .L_02008930
 .L_0200892c:
-	.4byte 0x000015b7
+	.4byte MsgThereTheyAre
 .L_02008930:
 	movs r0, #5
 	bl Func_02002964
@@ -2806,7 +2806,7 @@ Func_02001a2c:
 	bl Func_020028bc
 	pop {r5, pc}
 .L_02009ba4:
-	.4byte 0x00001604
+	.4byte MsgWhyDoI
 .L_02009ba8:
 	.4byte 0x00000004
 .L_02009bac:
@@ -2865,7 +2865,7 @@ Func_02001bb0:
 	bl Func_020028bc
 	pop {pc}
 .L_02009c2c:
-	.4byte 0x00001615
+	.4byte MsgNotThatWayThe
 	.section .text.x02009c30,"ax",%progbits
 	.global Func_02001c30
 	.thumb_func
@@ -3231,7 +3231,7 @@ Func_02001c30:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009fc8:
-	.4byte 0x000015f9
+	.4byte MsgAreAreYou
 .L_02009fcc:
 	.4byte 0x00013333
 	.section .text.x02009fd0,"ax",%progbits
@@ -4604,7 +4604,7 @@ gSceneEvents:
 	.4byte Func_02001bb0
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001608
+	.4byte MsgUggghICan
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte VinasuIriguchi_RunActorSparkBurst

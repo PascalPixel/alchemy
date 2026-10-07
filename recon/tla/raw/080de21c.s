@@ -193,7 +193,7 @@ Func_080de21c:
 	bl Animation_ApplyChildValuesFar
 	mov r1, r11
 	ldr r0, [r5, #80]
-	bl Func_080dc0d8
+	bl Object_ReplaceResourceEntry
 	mov r11, r0
 .L_080de3b8:
 	movs r3, #1

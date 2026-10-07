@@ -9,7 +9,21 @@
 #include "SYSTEM.H"
 #include "WINDOW.H"
 #include "RAM_BUFFER.H"
+#include "IWRAM_CALL.H"
 
+s32 Ui_ClearVramBlock(void)
+{
+    s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+
+    return fill((void *)0x06002500, 0xf00, 0);
+}
+
+void Ui_FillVramBlockPattern(void)
+{
+    s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+
+    fill((void *)0x06002500, 0xf00, 0x44444444);
+}
 
 void UiWork_ResetFreeChannel(void)
 {

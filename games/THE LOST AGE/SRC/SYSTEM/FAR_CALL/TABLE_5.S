@@ -12,7 +12,7 @@ Func_080201f8:
 	.global Func_08020200
 	.thumb_func
 Func_08020200:
-	overlay_veneer Func_0802bd08
+	overlay_veneer Map_SetWindowCellTile
 	.global Func_08020208
 	.thumb_func
 Func_08020208:

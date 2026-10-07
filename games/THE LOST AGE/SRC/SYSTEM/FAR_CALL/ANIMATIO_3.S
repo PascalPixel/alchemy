@@ -4,7 +4,7 @@
 	.global Func_08020268
 	.thumb_func
 Func_08020268:
-	overlay_veneer Func_0802c8a0
+	overlay_veneer MapAnimation_Start
 	.global Func_08020270
 	.thumb_func
 Func_08020270:
@@ -32,4 +32,4 @@ ScriptObject_CheckOverlapFar:
 	.global Func_080202a0
 	.thumb_func
 Func_080202a0:
-	overlay_veneer Func_0802b620
+	overlay_veneer Map_SetWorkFlagBits9To11

@@ -1661,7 +1661,7 @@ Func_02000b64:
 .L_02008cf8:
 	.4byte 0x0500021e
 .L_02008cfc:
-	.4byte 0x00002d8b
+	.4byte MsgYouHaveProven
 .L_02008d00:
 	lsls r1, r1, #13
 	lsls r2, r2, #16
@@ -2156,7 +2156,7 @@ Func_020010e4:
 .L_02009148:
 	.4byte 0x0500021e
 .L_0200914c:
-	.4byte 0x00002d87
+	.4byte MsgMankindWithThe
 .L_02009150:
 	pop {r5, pc}
 	.2byte 0x0000
@@ -2205,7 +2205,7 @@ Func_02001154:
 .L_020091b8:
 	.4byte 0x0500021e
 .L_020091bc:
-	.4byte 0x00002d88
+	.4byte MsgFishWithCold
 .L_020091c0:
 	pop {r5, pc}
 	.2byte 0x0000
@@ -2254,7 +2254,7 @@ Func_020011c4:
 .L_02009228:
 	.4byte 0x0500021e
 .L_0200922c:
-	.4byte 0x00002d89
+	.4byte MsgDragonsBurningWith
 .L_02009230:
 	pop {r5, pc}
 	.2byte 0x0000
@@ -2303,7 +2303,7 @@ Func_02001234:
 .L_02009298:
 	.4byte 0x0500021e
 .L_0200929c:
-	.4byte 0x00002d8a
+	.4byte MsgBirdOnThe
 .L_020092a0:
 	pop {r5, pc}
 	.2byte 0x0000
@@ -2510,7 +2510,7 @@ Func_020013a0:
 .L_02009454:
 	.4byte 0x0500021e
 .L_02009458:
-	.4byte 0x00002d84
+	.4byte MsgIfYouDo
 .L_0200945c:
 	movs r0, #163
 	lsls r0, r0, #4
@@ -2581,7 +2581,7 @@ Func_020013a0:
 .L_02009500:
 	.4byte 0x0500021e
 .L_02009504:
-	.4byte 0x00002d85
+	.4byte MsgYouWhoHold
 .L_02009508:
 	bl Func_02003228
 	movs r0, #20

@@ -44,7 +44,7 @@ BattleFx_ResumeObjectFar:
 	.global ObjectTable_FindActiveByValueFar
 	.thumb_func
 ObjectTable_FindActiveByValueFar:
-	overlay_veneer Func_080d3c2c
+	overlay_veneer ObjectTable_FindActiveByValue
 	.global ObjectTable_ReadActiveValueFar
 	.thumb_func
 ObjectTable_ReadActiveValueFar:

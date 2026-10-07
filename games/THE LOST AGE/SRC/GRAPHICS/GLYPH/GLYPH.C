@@ -12,6 +12,7 @@
 #include "DMA.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "SELECT.H"
 
 extern char ResourceId_Icons;
 
@@ -54,4 +55,47 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
 
 void UiGlyph_ReservedNoOp(void)
 {
+}
+
+extern u8 Tile_Decompress4bppCode[];
+extern u8 Tile_ExpandMaskedCode[];
+extern u8 Tile_ExpandOpaqueCode[];
+extern u8 Tile_Decompress4bppCodeSize[];
+extern u8 Tile_ExpandMaskedCodeSize[];
+extern u8 Tile_ExpandOpaqueCodeSize[];
+
+void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
+{
+    void *code;
+
+    {
+        u32 size;
+
+        /* FAKEMATCH: retain the size load after saving both arguments. */
+        do {
+            size = (u32)Tile_Decompress4bppCodeSize;
+        } while (0);
+        code = Runtime_BumpAllocate(size);
+        size >>= 2;
+        Dma_Set((const void *)Tile_Decompress4bppCode, code, 0x84000000 | size, REG_DMA3);
+    }
+    ((void (*)(const void *, u8 *))code)(glyph->encoded, glyph->input);
+    Sys_Free(code);
+    if (outlined) {
+        u32 size;
+
+        size = (u32)Tile_ExpandMaskedCodeSize;
+        code = Runtime_BumpAllocate(size);
+        size >>= 2;
+        Dma_Set((const void *)Tile_ExpandMaskedCode, code, 0x84000000 | size, REG_DMA3);
+    } else {
+        u32 size;
+
+        size = (u32)Tile_ExpandOpaqueCodeSize;
+        code = Runtime_BumpAllocate(size);
+        size >>= 2;
+        Dma_Set((const void *)Tile_ExpandOpaqueCode, code, 0x84000000 | size, REG_DMA3);
+    }
+    ((void (*)(u8 *, u8 *, u32, u32))code)(glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
+    Sys_Free(code);
 }

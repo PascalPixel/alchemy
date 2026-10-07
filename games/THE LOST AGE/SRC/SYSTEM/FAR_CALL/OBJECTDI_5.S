@@ -8,7 +8,7 @@ Map_ApplyWorkOriginAndSpanFar:
 	.global Map_UpdateCurrentTileBlockFar
 	.thumb_func
 Map_UpdateCurrentTileBlockFar:
-	overlay_veneer Func_0802c4d8
+	overlay_veneer Map_UpdateCurrentTileBlock
 	.global WorldMap_LoadGraphicsFar
 	.thumb_func
 WorldMap_LoadGraphicsFar:
@@ -32,7 +32,7 @@ Object_CommitPosition:
 	.global Map_GetScreenRelativePositionFar
 	.thumb_func
 Map_GetScreenRelativePositionFar:
-	overlay_veneer Func_08023088
+	overlay_veneer Map_GetScreenRelativePosition
 	.global WorldMap_UpdateViewFar
 	.thumb_func
 WorldMap_UpdateViewFar:
@@ -40,11 +40,11 @@ WorldMap_UpdateViewFar:
 	.global Map_LoadDefaultCellsAndUpdateBlockFar
 	.thumb_func
 Map_LoadDefaultCellsAndUpdateBlockFar:
-	overlay_veneer Func_0802cb08
+	overlay_veneer Map_LoadDefaultCellsAndUpdateBlock
 	.global Map_PlayMetatileCopySequenceFar
 	.thumb_func
 Map_PlayMetatileCopySequenceFar:
-	overlay_veneer Func_0802b2d4
+	overlay_veneer Map_PlayMetatileCopySequence
 	.global Map_CopyMetatileIndicesRectFar
 	.thumb_func
 Map_CopyMetatileIndicesRectFar:

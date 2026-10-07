@@ -1,4 +1,10 @@
 /* 080158e8: ARM draft; no admitted game ARM build route.
+   differ 0 under camelot_arm (analysis): alchemy diff --camelot-arm,
+   pinned gcc_arm with upstream GCC's whole arm_adjust_cost at the
+   library ARM setting, 92/92/common92/differ0. Not credited: the study
+   has not met K3's bar (AGENTS.md K1), so the listing stays in
+   recon/tbs/raw/080158e8.S. Once adopted 2026-10-06 (1f085d789f) under
+   the anti/output half of the rules alone; reverted with that route.
    Native: 92 instructions and 41 switch-table words, 532 bytes total.
    Current: stock agscc --arm 92/91/common82/differ19 (was differ72);
    fixed agbcc_arm library setting (-O2 -mthumb-interwork

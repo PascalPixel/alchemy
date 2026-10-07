@@ -53,10 +53,10 @@ UpdateRisingParticleBurstFar:
 	.thumb_func
 BattleParty_ApplyDrainFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080cb6c8
+	overlay_veneer ResourceTable_CountFreeBlocks
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080cb6c8
+	overlay_veneer ResourceTable_CountFreeBlocks
 .else
 	overlay_veneer BattleParty_ApplyDrain
 .endif
@@ -82,7 +82,7 @@ Func_080c8550:
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_GetWeightedResult
 .else
-	overlay_veneer Func_080dc0b8
+	overlay_veneer ResourceTable_CountFreeBlocks
 .endif
 .endif
 	.global Func_080c8558

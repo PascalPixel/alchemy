@@ -124,8 +124,8 @@ WorldMap_FootprintActions:
 	.global WorldMap_KeyYaws
 WorldMap_KeyYaws:
 	.incbin "baserom.gba", 0x000131ec, 0x00000040
-	.global Data_080132cc
-Data_080132cc:
+	.global WorldMap_GraphicsResources
+WorldMap_GraphicsResources:
 	.incbin "baserom.gba", 0x0001322c, 0x00000030
 	.global Curve_LerpWeightTable
 Curve_LerpWeightTable:
@@ -184,18 +184,6 @@ Tile_BuildMetatiles:
 	.incbin "baserom.gba", 0x000158dc, 0x000001f4
 	.global Tile_BuildMetatilesEnd
 Tile_BuildMetatilesEnd:
-	.section .rom.00020144, "ax"
-	.global SaveMenu_SelectSlot
-	.type SaveMenu_SelectSlot, %function
-	.thumb_func
-SaveMenu_SelectSlot:
-	.incbin "baserom.gba", 0x00020144, 0x000005f8
-	.section .rom.00020af0, "ax"
-	.global NameEntry_EditOwnerName
-	.type NameEntry_EditOwnerName, %function
-	.thumb_func
-NameEntry_EditOwnerName:
-	.incbin "baserom.gba", 0x00020af0, 0x000005e0
 	.section .rom.00021ece, "ax"
 	.incbin "baserom.gba", 0x00021ece, 0x00000902
 	.section .rom.000231dc, "ax"
@@ -330,7 +318,10 @@ NameEntry_DakutenRanges:
 	.incbin "baserom.gba", 0x000378ea, 0x0000000f
 	.global NameEntry_HandakutenRanges
 NameEntry_HandakutenRanges:
-	.incbin "baserom.gba", 0x000378f9, 0x0000000d
+	.incbin "baserom.gba", 0x000378f9, 0x00000005
+	.global NameEntry_CaretWave
+NameEntry_CaretWave:
+	.incbin "baserom.gba", 0x000378fe, 0x00000008
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x00037906, 0x00000008
@@ -427,7 +418,13 @@ WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x0006c1aa, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x0006c1ec, 0x000003a8
+	.incbin "baserom.gba", 0x0006c1ec, 0x00000010
+	.global NameEntry_KeyboardTilemap
+NameEntry_KeyboardTilemap:
+	.incbin "baserom.gba", 0x0006c1fc, 0x0000015a
+	.global NameEntry_AlternateKeyboardTilemap
+NameEntry_AlternateKeyboardTilemap:
+	.incbin "baserom.gba", 0x0006c356, 0x0000023e
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x0006c594, 0x00000a6c
@@ -547,14 +544,14 @@ DisplayTransition_EdgeOffsets:
 	.global DisplayTransition_DitherTable
 DisplayTransition_DitherTable:
 	.incbin "baserom.gba", 0x000958d2, 0x00000040
-	.global Data_0809e92e
-Data_0809e92e:
+	.global BattlePalette_ChannelCurve
+BattlePalette_ChannelCurve:
 	.incbin "baserom.gba", 0x00095912, 0x00000040
-	.global Data_0809e96e
-Data_0809e96e:
+	.global BattlePalette_ChannelCurveLight
+BattlePalette_ChannelCurveLight:
 	.incbin "baserom.gba", 0x00095952, 0x00000040
-	.global Data_0809e9ae
-Data_0809e9ae:
+	.global BattlePalette_ChannelCurveContrast
+BattlePalette_ChannelCurveContrast:
 	.incbin "baserom.gba", 0x00095992, 0x00000042
 	.global BattleFx_DefinitionTable
 BattleFx_DefinitionTable:
@@ -961,12 +958,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000be420, 0x00001be0
-	.section .rom.000c2c0c, "ax"
-	.global BattleEffect_RunTileAndPaletteAnimation
-	.type BattleEffect_RunTileAndPaletteAnimation, %function
-	.thumb_func
-BattleEffect_RunTileAndPaletteAnimation:
-	.incbin "baserom.gba", 0x000c2c0c, 0x000009cc
 	.section .rom.000c68e0, "ax"
 	.global BattleFx_RunSevenMode
 	.type BattleFx_RunSevenMode, %function
@@ -1105,7 +1096,22 @@ BladeRain_CellHeights:
 	.incbin "baserom.gba", 0x000e4f83, 0x00000005
 	.global BladeRain_CellSourceOffsets
 BladeRain_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000e4f88, 0x000000d0
+	.incbin "baserom.gba", 0x000e4f88, 0x00000008
+	.global BattlePieceWidth
+BattlePieceWidth:
+	.incbin "baserom.gba", 0x000e4f90, 0x00000021
+	.global BattlePieceHeight
+BattlePieceHeight:
+	.incbin "baserom.gba", 0x000e4fb1, 0x00000021
+	.global BattlePieceOffset
+BattlePieceOffset:
+	.incbin "baserom.gba", 0x000e4fd2, 0x00000044
+	.global BattlePieceStartX
+BattlePieceStartX:
+	.incbin "baserom.gba", 0x000e5016, 0x00000021
+	.global BattlePieceStartY
+BattlePieceStartY:
+	.incbin "baserom.gba", 0x000e5037, 0x00000021
 	.global CornerSparks_X
 CornerSparks_X:
 	.incbin "baserom.gba", 0x000e5058, 0x00000004

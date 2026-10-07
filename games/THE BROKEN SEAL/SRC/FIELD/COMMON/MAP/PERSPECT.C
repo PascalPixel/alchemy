@@ -9,6 +9,7 @@
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
 #include "MAPFRAME.H"
@@ -26,21 +27,14 @@
 #include "FIXED_MATH.H"
 #include "TRANSFORM.H"
 
-#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
-
-extern char ResourceId_PerspectiveDataA;
-extern char ResourceId_DefaultMapCells;
-extern char ResourceId_DefaultMapAnimation;
-extern char ResourceId_DefaultMetatileAttributes;
-
 extern u32 gFrameCount;
 
-static __inline__ void Io_Set16(s32 value, u16 *reg)
+static __inline__ void Io_Set16(s32 value, volatile u16 *reg)
 {
     *reg = value;
 }
 
-static __inline__ void Io_Put16(u16 *reg, s32 value)
+static __inline__ void Io_Put16(volatile u16 *reg, s32 value)
 {
     *reg = value;
 }
@@ -59,14 +53,12 @@ struct WorldCell {
     u32 flag : 1;
 };
 
-#define BG_PALETTE ((s16 *)0x05000000)
+#define BG_PALETTE ((s16 *)BG_PLTT)
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
-
-#define WORLD_SCREEN_ENTRIES 0x06004000
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
 {
-    struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork[0];
+    struct PerspectiveWork *work = gMapWork[0];
     u32 *graphics = work->tiles;
     u16 *shown;
     u16 *buffer;
@@ -83,7 +75,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
     if (update == 0 && tile == *shown)
         return 0;
     *shown = tile;
-    buffer = (u16 *)Runtime_AllocateHeapBlock(14, 0x400);
+    buffer = Runtime_AllocateHeapBlock(14, 0x400);
     Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
 
     source = buffer;
@@ -95,7 +87,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
     }
 
     if (update != 0) {
-        screen = (u16 *)(WORLD_SCREEN_ENTRIES + ((((layer * 2 + y) << 6) + x) << 5));
+        screen = (u16 *)(BG_SCREEN_BLOCK(8) + ((((layer * 2 + y) << 6) + x) << 5));
         source = buffer;
         for (i = 0; i < 16; i++) {
             for (j = 0; j < 16; j++) {
@@ -135,9 +127,9 @@ s32 Map_InitializePerspectiveScene(void)
 
     REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
     Blend_SetDarkenTarget0(0);
-    work = (struct PerspectiveWork *)Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
+    work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
     fill = 0;
-    Dma_Set(&fill, work, 0x85000000 | (sizeof(struct PerspectiveWork) / 4), REG_DMA3);
+    Dma_Set(&fill, work, DMA_ENABLE32 | DMA_SRC_FIXED32 | DMA_32BIT | (sizeof(struct PerspectiveWork) / 4), REG_DMA3);
     work->view_x = 0;
     work->view_y = 0;
     work->scale_x = 0x200000;
@@ -148,37 +140,37 @@ s32 Map_InitializePerspectiveScene(void)
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
     MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
-    Io_Set16(0x3f9e, (u16 *)&REG_BLDCNT);
-    Io_Set16(0x1010, (u16 *)&REG_BLDALPHA);
+    Io_Set16(0x3f9e, &REG_BLDCNT);
+    Io_Set16(0x1010, &REG_BLDALPHA);
     REG_BLDY = 0;
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
     work->fade = 0x1f00;
     work->fade_step = 0x80;
-    Io_Set16(0xa80a, (u16 *)&REG_BG3CNT);
-    Io_Set16(0xaa0e, (u16 *)&REG_BG2CNT);
-    Io_Set16(0x0501, (u16 *)&REG_BG1CNT);
+    Io_Set16(0xa80a, &REG_BG3CNT);
+    Io_Set16(0xaa0e, &REG_BG2CNT);
+    Io_Set16(0x0501, &REG_BG1CNT);
     /* FAKEMATCH: loop note keeps BG2PA's constant after its address */
     do {
-        Io_Put16((u16 *)&REG_BG2PA, 0x100);
+        Io_Put16(&REG_BG2PA, 0x100);
         REG_BG2PB = 0;
         REG_BG2PC = 0;
     } while (0);
     /* FAKEMATCH: loop notes keep BG2PD's constant late and r0 first below */
     do {
-        Io_Put16((u16 *)&REG_BG2PD, 0x100);
+        Io_Put16(&REG_BG2PD, 0x100);
         REG_BG2X = 0;
         REG_BG2Y = 0;
-        Io_Put16((u16 *)&REG_BG3PA, 0x100);
+        Io_Put16(&REG_BG3PA, 0x100);
         REG_BG3PB = 0;
         REG_BG3PC = 0;
-        Io_Put16((u16 *)&REG_BG3PD, 0x100);
+        Io_Put16(&REG_BG3PD, 0x100);
         REG_BG3X = 0;
         REG_BG3Y = 0;
     } while (0);
 
     camera = Runtime_AllocateBlock(12, sizeof(struct BattleCamera));
-    tiles = (struct MapFrameWork *)Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
+    tiles = Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
     position = camera->pos;
     lines = tiles->pages;
     far_plane = 0x1fe0000;
@@ -208,18 +200,18 @@ s32 Map_InitializePerspectiveScene(void)
     /* FAKEMATCH: Iwram_TransformVector's void call loads camera into r1 after the routine; the value-returning cast keeps r1 first. */
     ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))Iwram_TransformVector)(&vector, camera);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
+    Graphics_PrepareTransferInIwramWork(camera->eye, position);
     /* FAKEMATCH: loop note orders the transform call's r1, routine, r0 */
     do {
         size = (s32)&Transform_UpdateVerticesSize;
-        Dma_Set((void *)Transform_UpdateVertices, (void *)Runtime_AllocateHeapBlock(46, size),
-                0x84000000 | (size >> 2), REG_DMA3);
+        Dma_Set((void *)Transform_UpdateVertices, Runtime_AllocateHeapBlock(46, size),
+                DMA_ENABLE32 | DMA_32BIT | (size >> 2), REG_DMA3);
     } while (0);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = work->pitch;
-    ((PlaneFn)((union HeapState *)gWorkSlot)->slots[46])(camera, position, tiles->scanlines,
+    ((PlaneFn)gWorkSlot[46])(camera, position, tiles->scanlines,
                                  lines[gFrameCount & 1]);
     position[0] = 0;
     position[1] = 0;
@@ -234,11 +226,11 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = *distance + 0x10000;
-    Iwram_TransformVector((s32 *)&vector, (s32 *)camera);
+    Iwram_TransformVector((s32 *)&vector, camera->eye);
     REG_MOSAIC = 0;
     /* FAKEMATCH: loop notes keep the display writes in source order */
     do {
-        Io_Put16((u16 *)&REG_DISPCNT, 0x42);
+        Io_Put16(&REG_DISPCNT, 0x42);
     } while (0);
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
@@ -248,8 +240,8 @@ s32 Map_InitializePerspectiveScene(void)
     gBgScroll[3].y = 0;
     work->window_top = 0;
     work->window_bottom = 159;
-    Scheduler_AddOrUpdateCallback((s32)WorldMap_UpdateView, 0xc85);
-    Scheduler_AddOrUpdateCallback((s32)MapAnimation_ApplyAffineFrame, 0x480);
+    Scheduler_AddOrUpdateCallback(WorldMap_UpdateView, 0xc85);
+    Scheduler_AddOrUpdateCallback(MapAnimation_ApplyAffineFrame, 0x480);
     for (i = 255; i >= 0; i--)
         work->tile_ids[i] = i;
 }
@@ -301,29 +293,29 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     volatile u32 fill;
 
     variant = 0;
-    buffer = (u8 *)Runtime_BumpAllocate(0x200);
-    state = (struct PerspectiveWork *)gMapWork[0];
+    buffer = Runtime_BumpAllocate(0x200);
+    state = gMapWork[0];
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;
-    resources = Data_080132cc[variant];
+    resources = WorldMap_GraphicsResources[variant];
     state->resources = resources;
     value = BG_PALETTE[0];
-    Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);
+    Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
     Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
     tiles = gBgTileBuffer;
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), tiles);
-    Dma_Set(tiles, (void *)0x06008000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
-    Dma_Set(Ram_BgTileBuffer + 0x2000, (void *)0x0600a000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
-    Dma_Set(Ram_BgTileBuffer + 0x4000, (void *)0x0600c000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
-    Dma_Set(Ram_BgTileBuffer + 0x6000, (void *)0x0600e000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[5]), (void *)gMapLayerData);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[1]), tiles);
+    Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
+    Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
+    Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
+    Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
     fill = 0xf07ff07f;
-    Dma_Set((const void *)&fill, (void *)0x06002800, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
-    cursor = (u32 *)0x06003000;
+    Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(5), DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
+    cursor = (u32 *)BG_SCREEN_BLOCK(6);
     tile = 0x01a901a8;
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 15; col++) {

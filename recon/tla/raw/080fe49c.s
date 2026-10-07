@@ -42,7 +42,7 @@ Func_080fe49c:
 	mov r0, r8
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #1
-	bl Func_081054cc
+	bl MenuIcon_SetActive
 	movs r0, #0
 	bl Func_080fe580
 	adds r5, r0, #0
@@ -59,7 +59,7 @@ Func_080fe49c:
 	b .L_080fe552
 .L_080fe508:
 	movs r0, #1
-	bl Func_081054cc
+	bl MenuIcon_SetActive
 	bl Func_080feec0
 	adds r6, r0, #0
 	mvns r2, r6
@@ -70,7 +70,7 @@ Func_080fe49c:
 	b .L_080fe552
 .L_080fe520:
 	movs r0, #0
-	bl Func_081054cc
+	bl MenuIcon_SetActive
 	bl Func_080ffcd4
 	movs r3, #1
 	adds r6, r0, #0
@@ -82,7 +82,7 @@ Func_080fe49c:
 	b .L_080fe552
 .L_080fe53a:
 	movs r0, #0
-	bl Func_081054cc
+	bl MenuIcon_SetActive
 	bl Func_0810021c
 	adds r6, r0, #0
 	mvns r2, r6

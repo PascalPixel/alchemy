@@ -3,11 +3,11 @@
 	.thumb
 	.global IwramCopyWords
 IwramCopyWords:
-AlchemyUncredited_08000ce8:
 	bx	pc
+AlchemyUncredited_08000cea:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000ce8:
+AlchemyUncreditedEnd_08000cea:
 	push	{r5, r6, r7, r8, r9}
 	ands	ip, r2, #224
 	rsb	ip, ip, #240

@@ -14,7 +14,7 @@ Func_02000054:
 	bl Func_02001358
 	pop {pc}
 .L_0200806c:
-	.4byte 0x000028a2
+	.4byte MsgAndTheOthers
 	.section .text.x02008070,"ax",%progbits
 	.global Func_02000070
 	.thumb_func
@@ -507,17 +507,17 @@ Func_020001e4:
 .L_0200847c:
 	.4byte gPartyState
 .L_02008480:
-	.4byte 0x000013bc
+	.4byte MsgWhatWillYou
 .L_02008484:
-	.4byte 0x000013c2
+	.4byte MsgCoins2
 .L_02008488:
-	.4byte 0x000013c5
+	.4byte MsgToss2
 .L_0200848c:
 	.4byte gInput
 .L_02008490:
 	.4byte Data_0200173c
 .L_02008494:
-	.4byte 0x000013bf
+	.4byte MsgYouWonCoin
 .L_02008498:
 	.4byte Data_02001700
 	.section .text.x0200849c,"ax",%progbits
@@ -2406,22 +2406,22 @@ gSceneEvents:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x000028a4
+	.4byte MsgReadTheSign
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x000028a3
+	.4byte MsgReadTheSignThe
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x000028a5
+	.4byte MsgIfYouFace
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x000028a6
+	.4byte MsgIDLove
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x000028a7
+	.4byte MsgIRememberAn
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x000028a8
+	.4byte MsgHeHadSuch
 	.4byte 0x00000003
 	.4byte 0x02000019
 	.4byte Func_02000054

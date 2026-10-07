@@ -8,7 +8,7 @@ MusicTrack_SetLfoSpeedFromCommandLeftover:
 	strb	r3, [r1, #25]
 	cmp	r3, #0
 	bne.n	.L_081c0410
-	bl	Func_081c03d8
+	bl	MusicTrack_ClearModulationStateLeftover
 .L_081c0410:
 	bx	ip
 AlchemyUncredited_081c0412:
@@ -22,7 +22,7 @@ AlchemyUncreditedEnd_081c0412:
 	strb	r3, [r1, #23]
 	cmp	r3, #0
 	bne.n	.L_081c0424
-	bl	Func_081c03d8
+	bl	MusicTrack_ClearModulationStateLeftover
 .L_081c0424:
 	bx	ip
 AlchemyUncredited_081c0426:

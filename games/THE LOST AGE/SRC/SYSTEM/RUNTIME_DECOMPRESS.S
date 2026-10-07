@@ -3,11 +3,11 @@
 	.thumb
 	.global IwramDecompress
 IwramDecompress:
-AlchemyUncredited_08000c4c:
 	bx	pc
+AlchemyUncredited_08000c4e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000c4c:
+AlchemyUncreditedEnd_08000c4e:
 	ldrb	r2, [r0], #1
 	ldrb	r3, [r0], #1
 	orrs	r2, r2, r3, lsl #8

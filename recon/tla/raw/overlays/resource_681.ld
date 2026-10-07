@@ -55,7 +55,7 @@ SECTIONS
         "*/resource_681_overlay.o"(.text.x02009548)
         "*/resource_681_overlay.o"(.text.x020095d0)
         "*/resource_681_overlay.o"(.text.x020099cc)
-        "*/resource_681_overlay.o"(.text.x02009c44)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_681/ADVANCE.o"(.text)
         "*/resource_681_overlay.o"(.text.x02009c9c)
         "*/resource_681_overlay.o"(.text.x02009d14)
         "*/resource_681_overlay.o"(.text.x02009ebc)

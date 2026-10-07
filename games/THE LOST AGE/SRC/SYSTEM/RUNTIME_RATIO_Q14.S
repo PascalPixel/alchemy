@@ -2,11 +2,11 @@
 	.thumb
 	.global IwramRatioMulQ14
 IwramRatioMulQ14:
-AlchemyUncredited_080007e8:
 	bx	pc
+AlchemyUncredited_080007ea:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080007e8:
+AlchemyUncreditedEnd_080007ea:
 	push	{r1, lr}
 	mov	r1, r0
 	mov	r0, #0x40000000

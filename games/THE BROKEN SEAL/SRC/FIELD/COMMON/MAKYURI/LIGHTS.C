@@ -32,7 +32,6 @@ struct MakyuriLights {
     struct FieldActor *upper;
 };
 
-void *ObjectTable_Get();
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *anim, s32 animation);
 
 void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
@@ -60,7 +59,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
         obj = Engine_ObjectCreate(26, actor->x, actor->y + 0x180000, z);
         if (obj == 0)
             goto upper;
-        ((struct ObjectRuntime *)obj)->terrain_height = actor->terrain_height;
+        obj->terrain_height = actor->terrain_height;
         anim = obj->sprite;
         Engine_ObjectSetScript(obj, Makyuri_PillarScript);
         /* FAKEMATCH: address-word aliasing keeps the tail store before motion_flags and y. */
@@ -81,11 +80,11 @@ upper:
         obj = Engine_ObjectCreate(26, actor->x, actor->y, actor->z);
         if (obj == 0)
             return;
-        ((struct ObjectRuntime *)obj)->terrain_height = actor->terrain_height;
+        obj->terrain_height = actor->terrain_height;
         anim = obj->sprite;
         Engine_ObjectSetScript(obj, Makyuri_RampScript);
         obj->motion_flags = 0;
-        ((struct MakyuriObject *)obj)->timer = 0;
+        obj->timer = 0;
         obj->priority_flags = 2;
         obj->speed = 0x40000;
         if (anim != 0) {

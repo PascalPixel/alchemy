@@ -50,7 +50,7 @@ Func_080de9f8:
 	strb r3, [r2]
 	mov r1, r8
 	ldr r0, [r5, #80]
-	bl Func_080dc0d8
+	bl Object_ReplaceResourceEntry
 	mov r8, r0
 .L_080dea5e:
 	movs r0, #1

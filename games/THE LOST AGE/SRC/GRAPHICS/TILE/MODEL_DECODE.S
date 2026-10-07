@@ -5,11 +5,11 @@ Model_DecodeCode:
 	.global Model_Decode
 	.thumb_func
 Model_Decode:
-AlchemyUncredited_08118160:
 	bx	pc
+AlchemyUncredited_08118162:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08118160:
+AlchemyUncreditedEnd_08118162:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	r2, [pc, #196]
 	add	r3, pc, #240

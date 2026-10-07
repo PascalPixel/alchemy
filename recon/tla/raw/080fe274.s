@@ -155,10 +155,10 @@ Func_080fe274:
 	bl Func_080fe49c
 	str r0, [sp, #8]
 	bl Menu_EnsureCancelSound
-	bl Func_08105468
+	bl MenuIcon_ReleaseSlots
 	ldr r0, [r6, #40]
 	bl RenderOutput_ClearListFar
-	bl Func_0810526c
+	bl MenuIcon_ReleaseObjects
 	bl Scheduler_DisableOverlayCallbacksWithFlags
 	movs r3, #20
 	movs r1, #0

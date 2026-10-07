@@ -3,11 +3,11 @@
 	.global ColorBuffer_ScaleThreeQuartersKernelCode
 ColorBuffer_ScaleThreeQuartersKernelCode:
 .L_08001a14:
-AlchemyUncredited_08001a14:
 	bx	pc
+AlchemyUncredited_08001a16:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001a14:
+AlchemyUncreditedEnd_08001a16:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -60,11 +60,11 @@ AlchemyUncreditedEnd_08001a14:
 	.global ColorBuffer_HalveKernelCode
 ColorBuffer_HalveKernelCode:
 .L_08001ad4:
-AlchemyUncredited_08001ad4:
 	bx	pc
+AlchemyUncredited_08001ad6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001ad4:
+AlchemyUncreditedEnd_08001ad6:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -101,11 +101,11 @@ AlchemyUncreditedEnd_08001ad4:
 	.global ColorBuffer_DarkenKernelCode
 ColorBuffer_DarkenKernelCode:
 .L_08001b54:
-AlchemyUncredited_08001b54:
 	bx	pc
+AlchemyUncredited_08001b56:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001b54:
+AlchemyUncreditedEnd_08001b56:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	ip, [pc, #160]
 	rsb	r1, r1, ip, lsl #7

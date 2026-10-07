@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiText_QueueRenderEntries
 	.thumb_func
 UiText_QueueRenderEntries:

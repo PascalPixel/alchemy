@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_0810b1b4
 	.thumb_func
 Func_0810b1b4:
@@ -213,4 +214,4 @@ Func_0810b1b4:
 .L_0810b370:
 	.4byte 0xfff40000
 .L_0810b374:
-	.4byte Func_0810b0bc
+	.4byte BattleFx_UpdateRadialMotion

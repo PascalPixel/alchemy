@@ -20,6 +20,7 @@
 #include "SYSTEM.H"
 #include "OBJECT_EFX.H"
 #include "MOTION_OBJECT.H"
+#include "OBJECT_DISPATCH.H"
 
 #define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
 
@@ -247,7 +248,7 @@ void BattleEffect_SpawnBurstParticleField(void)
 void BattleEffect_RunTargetedItemBreak(void)
 {
     struct BattleFxScene *scene;
-    void *main_object;
+    struct DispatchObject *main_object;
     struct FieldActor *child;
     struct MotionObject *anchors[2];
     s32 position[3];
@@ -262,8 +263,8 @@ void BattleEffect_RunTargetedItemBreak(void)
         return;
 
     BattleEffect_InitializeSharedScene();
-    *(void **)((u8 *)main_object + 0x68) = child;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)main_object, BattleFx_CommonParticleScript + 3);
+    main_object->argument = (s32)child;
+    ObjectDispatch_InitializeFar(main_object, BattleFx_CommonParticleScript + 3);
 
     x = scene->x;
     position[0] = x;

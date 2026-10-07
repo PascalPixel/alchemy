@@ -5,11 +5,11 @@ Tile_ExpandMaskedCode:
 	.global Tile_ExpandMasked
 	.thumb_func
 Tile_ExpandMasked:
-AlchemyUncredited_08038d90:
 	bx	pc
+AlchemyUncredited_08038d92:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08038d90:
+AlchemyUncreditedEnd_08038d92:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	sl, pc, #132
 	ldm	sl, {r4, r6, r7}

@@ -28,13 +28,10 @@ struct PathWork {
     s16 path[0x3840];
 };
 
-#define PATH_RECORDER ((struct PathRecorder *)gSceneState)
-#define PATH_WORK ((struct PathWork *)gKorosseoWork)
-
 void Korosseo_UpdatePathRival(void)
 {
-    struct PathWork *work = PATH_WORK;
-    struct PathRecorder *rec = PATH_RECORDER;
+    struct PathWork *work = (struct PathWork *)gKorosseoWork;
+    struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
     struct FieldActor *obj;
     s32 x, z, d;
     u16 *item_actor;
@@ -140,7 +137,7 @@ void Korosseo_DrawGauge(void)
         }
     } else if (gauge->level <= 1) {
         if (++gauge->level == 1) {
-            Dma_Set(Korosseo_GaugePalette, (void *)0x050003c0, DMA_ENABLE32 | 0x10, REG_DMA3);
+            Dma_Set(Korosseo_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10, REG_DMA3);
             buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
             Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
             VramBlock_LoadCached(gauge->vram_block, 512, buf);

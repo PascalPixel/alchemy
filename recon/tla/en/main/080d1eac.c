@@ -1,15 +1,19 @@
 #include "TYPES.H"
+#include "PARTY_STATE.H"
 
-s32 Scheduler_EnableCallbacks(u32 callback);
-void Object_EffectSpawnCallback(void);
+struct BattleFxDefinition {
+    u16 id;
+    u8 value;
+    u8 flags;
+};
 
-s32 BattleFx_GetResourceId(u32 id)
+struct BattleFxDefinition *Func_080d1e60(s32 id);
+
+s32 Func_080d1eac(s32 id)
 {
     u8 value;
 
-    if (Data_02000240.enabled_20a == 0 ||
-        (value = BattleFx_FindDefinition(id)->value) == 0xFF) {
+    if (gPartyState.battle_fx_enabled == 0 || (value = Func_080d1e60(id)->value) == 0xff)
         return 0;
-    }
     return value + 0x100;
 }

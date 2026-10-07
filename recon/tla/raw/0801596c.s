@@ -86,7 +86,7 @@ Func_0801596c:
 	mov r1, r9
 	strh r3, [r1]
 	mov r0, r8
-	bl Func_08015c08
+	bl SaveState_ReadSlotAndCheckChecksum
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19

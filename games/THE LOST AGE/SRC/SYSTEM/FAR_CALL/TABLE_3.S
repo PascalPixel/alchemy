@@ -20,7 +20,7 @@ Func_08020180:
 	.if TABLE_3_EUROPE
 	overlay_veneer DisplayBlend_EnableRunScript
 	.else
-	overlay_veneer Func_0802b63c
+	overlay_veneer Map_ApplySetFlagEdits
 	.endif
 	.global Func_08020188
 	.thumb_func
@@ -28,7 +28,7 @@ Func_08020188:
 	.if TABLE_3_EUROPE
 	overlay_veneer DisplayBlend_StartScript
 	.else
-	overlay_veneer Func_0802b700
+	overlay_veneer Map_SetFlagAndApplyEdits
 	.endif
 	.global Func_08020190
 	.thumb_func
@@ -36,7 +36,7 @@ Func_08020190:
 	.if TABLE_3_EUROPE
 	overlay_veneer Func_0802d45c
 	.else
-	overlay_veneer Func_0802b71c
+	overlay_veneer Map_SetFlagAndApplyAttributeEdits
 	.endif
 	.global Func_08020198
 	.thumb_func
@@ -44,7 +44,7 @@ Func_08020198:
 	.if TABLE_3_EUROPE
 	overlay_veneer GetMapCellCollision
 	.else
-	overlay_veneer Func_0802cc74
+	overlay_veneer Map_ClearLayerEntryFlag
 	.endif
 	.global Func_080201a0
 	.thumb_func
@@ -52,7 +52,7 @@ Func_080201a0:
 	.if TABLE_3_EUROPE
 	overlay_veneer Func_0802d4d8
 	.else
-	overlay_veneer Func_0802cc88
+	overlay_veneer Map_SetLayerEntryFlag
 	.endif
 	.global DisplayBlend_DisableRunScriptFar
 	.thumb_func

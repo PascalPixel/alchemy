@@ -321,7 +321,7 @@ extern s32 Data_0200b350[];
 extern unsigned long Data_03001e40;
 extern void *Data_03001e50[];
 extern u8 *Data_03001e8c[];
-extern u32 Data_080132cc[][6];
+extern u32 WorldMap_GraphicsResources[][6];
 extern const struct SparkleFrame Data_0809f024[];
 extern const u8 Data_0809fd38[];
 extern const u8 Data_080a00b8[];

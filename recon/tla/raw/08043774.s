@@ -31,7 +31,7 @@ Func_08043774:
 .L_080437ac:
 	ldr r1, .L_080437f4
 	adds r0, r5, #0
-	bl Func_08015e44
+	bl SaveState_ReadRecordPayload
 	cmp r0, #0
 	beq .L_080437c6
 	ldr r0, .L_080437f8

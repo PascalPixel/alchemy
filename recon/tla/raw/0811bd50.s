@@ -30,7 +30,7 @@ Func_0811bd50:
 	adds r0, r5, #0
 	bl GetMotionRecord
 	adds r6, r0, #0
-	bl Func_0811bd10
+	bl Camera_ApplyTransformByFlag
 	ldr r3, [r5, #8]
 	mov r0, sp
 	str r3, [r0]

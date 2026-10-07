@@ -85,7 +85,7 @@ Func_0802c9c8:
 	mov r1, r9
 	bl Resource_DecodeType01
 	ldr r5, .L_0802cac8
-	bl Func_0802c4d8
+	bl Map_UpdateCurrentTileBlock
 	movs r2, #128
 	lsls r2, r2, #1
 	adds r3, r6, r2
@@ -130,11 +130,11 @@ Func_0802c9c8:
 .L_0802cae8:
 	.4byte Data_030011f8
 .L_0802caec:
-	.4byte Func_0802c98c
+	.4byte Map_ShowBg1FromBuffer
 .L_0802caf0:
 	.4byte 0x00000198
 .L_0802caf4:
-	.4byte Func_0802cb64
+	.4byte MapAnimation_Update
 .L_0802caf8:
 	bl WaitFrames
 	pop {r3, r5, r6}

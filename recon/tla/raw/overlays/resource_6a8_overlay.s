@@ -258,38 +258,6 @@ Func_02000290:
 	bl Func_020045f4
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x020082a0,"ax",%progbits
-	.global Func_020002a0
-	.thumb_func
-Func_020002a0:
-	push {r5, lr}
-	ldmia r0!, {r5}
-	ldmia r1!, {r3}
-	ldmia r0!, {r4}
-	subs r5, r5, r3
-	ldmia r1!, {r3}
-	asrs r5, r5, #16
-	ldr r2, [r1]
-	subs r4, r4, r3
-	ldr r3, [r0]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	adds r0, r5, #0
-	muls r0, r5
-	adds r2, r4, #0
-	muls r2, r4
-	adds r1, r3, #0
-	muls r1, r3
-	adds r0, r0, r2
-	adds r3, r1, #0
-	adds r0, r0, r3
-	ldr r3, .L_020082d4
-	mov lr, r3
-	.2byte 0xf800
-	pop {r5, pc}
-.L_020082d4:
-	.4byte IwramFillWords + 0x74
 	.section .text.x020082d8,"ax",%progbits
 	.global Func_020002d8
 	.thumb_func
@@ -325,7 +293,7 @@ Func_020002d8:
 	adds r7, #8
 	adds r0, r6, #0
 	adds r1, r7, #0
-	bl Func_020002a0
+	bl SceneActor_CalculateFixedPointDistance
 	cmp r0, r10
 	blt .L_02008322
 	mov r3, r9
@@ -435,7 +403,7 @@ Func_020003bc:
 	adds r0, #8
 	adds r1, #8
 	movs r7, #0
-	bl Func_020002a0
+	bl SceneActor_CalculateFixedPointDistance
 	cmp r0, #11
 	bgt .L_02008400
 	adds r3, r5, #0

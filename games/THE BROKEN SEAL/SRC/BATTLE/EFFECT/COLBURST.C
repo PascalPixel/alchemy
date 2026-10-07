@@ -178,8 +178,8 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
                         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, kind);
                     else
                         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, kind);
-                    draw[0] = ((DrawRectangleFn)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER]);
-                    ((DrawRectangleFn)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER])(canvas, work, x, 112 - height, 14, height);
+                    draw[0] = ((DrawRectangleFn)gWorkSlot[HEAP_SLOT_BLITTER]);
+                    ((DrawRectangleFn)gWorkSlot[HEAP_SLOT_BLITTER])(canvas, work, x, 112 - height, 14, height);
                     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
             }

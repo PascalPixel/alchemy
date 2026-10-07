@@ -2,11 +2,11 @@
 	.thumb
 	.global IwramTransformVector
 IwramTransformVector:
-AlchemyUncredited_0800090c:
 	bx	pc
+AlchemyUncredited_0800090e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0800090c:
+AlchemyUncreditedEnd_0800090e:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldm	r0, {r2, r3, r4}
 	add	r0, pc, #0x110
@@ -38,11 +38,11 @@ AlchemyUncreditedEnd_0800090c:
 	.thumb
 	.global IwramTransformMatrix
 IwramTransformMatrix:
-AlchemyUncredited_08000980:
 	bx	pc
+AlchemyUncredited_08000982:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000980:
+AlchemyUncreditedEnd_08000982:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	sub	sp, sp, #36
 	mov	r4, sp

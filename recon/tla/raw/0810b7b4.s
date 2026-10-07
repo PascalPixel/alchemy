@@ -123,7 +123,7 @@ Func_0810b7b4:
 	subs r1, #12
 	mov r0, r10
 	movs r2, #0
-	bl Func_08108af0
+	bl Shop_PlaceCursor
 	movs r3, #3
 	mov r1, r8
 	strb r3, [r5]
@@ -146,7 +146,7 @@ Func_0810b7b4:
 	bl Func_0810928c
 	ldr r0, [r7, #36]
 	mov r1, r9
-	bl Func_0810a004
+	bl Shop_DrawItemCount
 	movs r2, #0
 	mov r8, r2
 .L_0810b8e8:

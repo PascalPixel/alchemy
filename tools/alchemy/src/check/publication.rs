@@ -960,6 +960,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| c_alias_reason(path, text))
         .or_else(|| raw_address_reason(path, text))
         .or_else(|| raw_encoding_reason(path, text))
+        .or_else(|| uncredited_code_reason(path, text))
 }
 const C_ALIAS_REASON: &str =
     "GCC alias attribute in maintained C (O2): define one name where its bytes are";
@@ -1498,6 +1499,7 @@ enum Statement {
     Label(bool),
     Instruction {
         ends_flow: bool,
+        uncredited: bool,
     },
     Encoding,
     Data(bool),
@@ -1621,6 +1623,7 @@ fn assembly_statements(text: &str) -> Vec<Statement> {
                 _ if directive.starts_with('.') => Statement::Directive,
                 _ if assembly_instruction(word) => Statement::Instruction {
                     ends_flow: assembly_ends_flow(word, operands),
+                    uncredited: uncredited && !word.eq_ignore_ascii_case("nop"),
                 },
                 _ => Statement::Macro,
             };
@@ -1628,6 +1631,24 @@ fn assembly_statements(text: &str) -> Vec<Statement> {
         }
     }
     statements
+}
+const UNCREDITED_CODE_REASON: &str = "an AlchemyUncredited span holds an instruction other than nop (C2): only padding, data and alignment are left out of the count";
+fn uncredited_code_reason(path: &str, text: &str) -> Option<&'static str> {
+    if !path.starts_with("games/") || !listed(extension(path), &["s", "inc", "asm"]) {
+        return None;
+    }
+    assembly_statements(text)
+        .iter()
+        .any(|statement| {
+            matches!(
+                statement,
+                Statement::Instruction {
+                    uncredited: true,
+                    ..
+                }
+            )
+        })
+        .then_some(UNCREDITED_CODE_REASON)
 }
 fn raw_encoding_reason(path: &str, text: &str) -> Option<&'static str> {
     if !path.starts_with("games/") || !listed(extension(path), &["s", "inc", "asm"]) {
@@ -1652,7 +1673,9 @@ fn raw_encoding_reason(path: &str, text: &str) -> Option<&'static str> {
                 Statement::Directive => false,
                 _ => true,
             });
-        if let Some(Statement::Instruction { ends_flow: false }) = before {
+        if let Some(Statement::Instruction {
+            ends_flow: false, ..
+        }) = before {
             return Some(RAW_ENCODING_REASON);
         }
         let after = statements[index..]
@@ -3380,6 +3403,17 @@ mod tests {
         for text in accepted {
             assert!(raw_encoding_reason(tbs, text).is_none(), "{text:?}");
         }
+        let padding = [
+            "\t.arm\n\tmul r9, r7, ip\nAlchemyUncredited_08000f98:\n\t.4byte 0xfedcba98\nAlchemyUncreditedEnd_08000f98:\n\tmlane r0, fp, r9, r0\n",
+            "\tbx lr\nAlchemyUncredited_080f9a96:\n\t.2byte 0\nAlchemyUncreditedEnd_080f9a96:\nNext:\n",
+            "\tldr pc, [pc, ip, lsl #2]\nAlchemyUncredited_080f0100:\n\tnop\nAlchemyUncreditedEnd_080f0100:\n",
+            "\tadd r1, pc, #4\n\tbx r1\nAlchemyUncredited_080f967e:\n\t.arm\nAlchemyUncreditedEnd_080f967e:\n",
+        ];
+        for text in padding {
+            assert!(uncredited_code_reason(tbs, text).is_none(), "{text:?}");
+        }
+        let hidden = "\tbx lr\nAlchemyUncredited_08001000:\n\tmovs r0, #1\n\tbx lr\nAlchemyUncreditedEnd_08001000:\n";
+        assert_eq!(uncredited_code_reason(tbs, hidden), Some(UNCREDITED_CODE_REASON));
         let spelled = "\t.thumb\n\tmovs r0, #1\n\t.inst.n 0x4770\n";
         assert!(raw_encoding_reason("recon/tbs/raw/080006fc.S", spelled).is_none());
         assert!(raw_encoding_reason("games/THE BROKEN SEAL/SRC/X.C", spelled).is_none());

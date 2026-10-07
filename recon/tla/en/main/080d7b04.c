@@ -38,7 +38,7 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
     struct Target *target;
     struct Vec pos;
 
-    target = Object_GetById(gGameState[125]);
+    target = Object_GetById(gGameState[133]);
     if (actor->phase == 0) {
         actor->yaw += 1;
         actor->pitch += 1;
@@ -53,13 +53,15 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
             actor->phase += 1;
         }
     } else if (actor->phase == 2) {
+        s32 tmp;
         actor->pitch += 1;
         pos.x = target->pos.x;
         pos.y = target->pos.y + 0x140000;
         pos.z = target->pos.z;
         Camera_WorldToScreen(&pos);
         actor->x += (pos.x - actor->x) / 8;
-        actor->z += (pos.z - actor->z) / 8;
+        tmp = actor->z;
+        actor->z += (pos.z - tmp) / 8;
         if (actor->timer == 40) {
             actor->timer = 0;
             actor->phase += 1;

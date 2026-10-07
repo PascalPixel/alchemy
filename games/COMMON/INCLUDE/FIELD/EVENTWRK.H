@@ -19,7 +19,11 @@ struct EventWork {
     s16 countdown;
     u8 unknown_15a[0xa];
     u16 battle_group;
-    u8 unknown_166[0x24];
+    u8 unknown_166[4];
+    u16 unknown_16a;
+    u8 unknown_16c[0x18];
+    s16 unknown_184;
+    u8 unknown_186[4];
     s8 control_mode;
     u8 unknown_18b[0x21];
     s32 screen_effect;

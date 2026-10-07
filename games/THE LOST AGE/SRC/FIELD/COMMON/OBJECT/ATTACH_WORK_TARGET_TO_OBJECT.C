@@ -39,3 +39,11 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
         }
     }
 }
+
+void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
+{
+    struct EventWork *work = Runtime_AllocateBlock(108, 0xd50);
+
+    work->view_center->speed_limit = first;
+    work->view_center->acceleration = second;
+}

@@ -32,6 +32,8 @@ struct RenderOutput *RenderOutput_Create(
     output->index = (s8)slot;
     output->kind = 1;
     output->active = 1;
+    /* FAKEMATCH: ⚓️ finishes the stores before it passes the list */
+    asm volatile("");
     RenderOutput_AppendToList((struct RenderOutputList *)input, output);
     return output;
 }

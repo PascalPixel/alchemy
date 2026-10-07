@@ -1151,7 +1151,7 @@ Func_081039fc:
 	movs r0, #0
 	adds r1, #34
 	adds r2, #20
-	bl Func_08105300
+	bl MenuIcon_SetPosition
 	ldr r0, [sp, #104]
 	cmp r0, #0
 	bne .L_08104372
@@ -1160,13 +1160,13 @@ Func_081039fc:
 	subs r1, r1, r6
 	subs r2, r2, r5
 	movs r0, #1
-	bl Func_08105300
+	bl MenuIcon_SetPosition
 	b .L_08104372
 .L_08104368:
 	movs r0, #0
 	movs r1, #32
 	movs r2, #30
-	bl Func_08105300
+	bl MenuIcon_SetPosition
 .L_08104372:
 	ldr r1, [sp, #96]
 	cmp r1, #0

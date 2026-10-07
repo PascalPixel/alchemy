@@ -1,0 +1,104 @@
+/* ported from games/THE BROKEN SEAL/SRC/GAME/CHARACTER/OWNERS.C */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "EDITION.H"
+#include "GAME_FLAGS.H"
+#include "PARTY_STATE.H"
+#include "TYPES.H"
+#include "BATTLE_SUMMON.H"
+#include "RUNTIME_INTERFACES.H"
+#include "FIXED_MATH.H"
+#include "OWNER_STATE.H"
+#include "IWRAM_CALL.H"
+
+s32 GameFlag_SetBit(s32);
+
+struct TradeFlags {
+    u32 flags;
+};
+
+struct ElementLevelBonus {
+    u16 power;
+    u16 resist;
+};
+
+extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
+
+s32 GameFlag_Test(s32 flag);
+
+#if EDITION_INTERNATIONAL
+#define ENEMY_SUFFIX_FIRST '1'
+#define ENEMY_SUFFIX_LAST 8
+#else
+#define ENEMY_SUFFIX_FIRST 'A'
+#define ENEMY_SUFFIX_LAST 25
+#endif
+
+typedef s32 (*ClearWordsFn)(void *destination, s32 size);
+
+
+
+s32 Owner_DetermineClass(s32 character, const u8 *djinn)
+{
+    s32 levels[4];
+    s32 primary;
+    s32 best;
+    s32 series;
+    s32 result;
+    s32 j;
+    s32 i;
+
+    result = -1;
+    if (character > 7)
+        return 0;
+    Owner_GetDigitValues(character, djinn, levels);
+    if (GameFlag_Test(32)) {
+        if (character == 0)
+            return 200;
+        if (character == 1)
+            return 201;
+    }
+    if (character == 5)
+        return 202;
+    if (result != -1)
+        return result;
+    best = result;
+    primary = result;
+    for (i = 0; i < 4; i++) {
+        if (best < levels[i]) {
+            best = levels[i];
+            primary = i;
+        }
+    }
+    j = -1;
+    best = -1;
+    for (i = 0; i < 4; i++) {
+        if (i != primary && best < levels[i]) {
+            best = levels[i];
+            j = i;
+        }
+    }
+    series = Owner_LookupFourColumnTable(primary, levels[j] > 9 ? j : primary);
+    for (i = 202; i >= 0; i--) {
+        if (Class_DefinitionTable[i].series != series)
+            continue;
+        for (j = 0; j < 4; j++) {
+            if (levels[j] < Class_DefinitionTable[i].required[j] * 10)
+                break;
+        }
+        if (j == 4) {
+            result = i;
+            break;
+        }
+    }
+    if (result == -1)
+        result = 0;
+    return result;
+}

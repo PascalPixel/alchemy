@@ -264,3 +264,43 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
     } while (0);
     return result;
 }
+
+
+#define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
+extern volatile u8 gSchedulerStatus;
+extern u8 gSchedulerTaskCount;
+extern struct SchedulerTask gSchedulerTaskTable[24];
+
+s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask)
+{
+    struct SchedulerTask *task;
+    u32 saved_interrupt_master;
+    s32 result;
+    s32 returned_result;
+    s32 i;
+
+    task = gSchedulerTaskTable;
+    /* FAKEMATCH: ⚓️ loads the task table before it builds the -1 result */
+    __asm__ volatile("" : "+l"(task));
+    result = -1;
+    do {
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
+        do {
+            for (i = 0; i <= 23; i++, task++) {
+                if (task->callback == (u32)callback) {
+                    task->mask = mask;
+                    result = i;
+                    break;
+                }
+            }
+        } while (0);
+        REG_IME = saved_interrupt_master;
+        returned_result = result;
+    } while (0);
+    return returned_result;
+}

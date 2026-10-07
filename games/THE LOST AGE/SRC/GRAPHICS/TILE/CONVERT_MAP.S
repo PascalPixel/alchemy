@@ -5,11 +5,11 @@ Render_ConvertMapCode:
 	.global Render_ConvertMap
 	.thumb_func
 Render_ConvertMap:
-AlchemyUncredited_08021704:
 	bx	pc
+AlchemyUncredited_08021706:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08021704:
+AlchemyUncreditedEnd_08021706:
 	push	{r5, r6, r7, r8}
 	mov	r5, #0xff000000
 	orr	r5, r5, r5, lsr #4

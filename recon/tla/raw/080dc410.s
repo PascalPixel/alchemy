@@ -66,7 +66,7 @@ BattleFx_LoadActionEffectResources:
 	beq .L_080dc48c
 	b .L_080dc5fc
 .L_080dc48c:
-	bl Func_080dc0b8
+	bl ResourceTable_CountFreeBlocks
 	ldr r3, .L_080dc4a4
 	adds r2, r6, #0
 	subs r3, r3, r0

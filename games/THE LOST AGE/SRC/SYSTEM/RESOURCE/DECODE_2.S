@@ -5,11 +5,11 @@ Resource_Decode2Code:
 	.global Resource_Decode2
 	.thumb_func
 Resource_Decode2:
-AlchemyUncredited_08012b70:
 	bx	pc
+AlchemyUncredited_08012b72:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08012b70:
+AlchemyUncreditedEnd_08012b72:
 	ldrb	r2, [r0], #1
 	cmp	r2, #2
 	movne	r0, #4

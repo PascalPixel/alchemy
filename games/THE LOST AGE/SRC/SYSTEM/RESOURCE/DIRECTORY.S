@@ -418,7 +418,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_StagedParticlePath
 	resource , BattleFx_DualStreamPath
 	resource , Resource_Data197
-	resource , Resource_Data198
+	resource DefaultMapCells, Resource_Data198
 	resource , Resource_Data199
 	resource , WorldMap_PaletteA
 	resource , Resource_Data19B
@@ -522,8 +522,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data1FD
 	resource , Resource_Data1FE
 	resource , Resource_Data1FF
-	resource , Resource_Data200
-	resource , Resource_Data201
+	resource ItemMenuTilesA, Resource_Data200
+	resource ItemMenuTilesB, Resource_Data201
 	resource UiFixedBlockATiles, Resource_Data202
 	resource , Monster_BlueDevilSprites
 	resource , Monster_PinkBruteSprites
@@ -630,7 +630,7 @@ Resource_DirectoryTable:
 	resource , Monster_PurpleBeastSprites
 	resource , Monster_RedWarriorSprites
 	resource , Monster_SwordGirlSprites
-	resource , Field_Map000
+	resource Map000, Field_Map000
 	resource , Resource_Data26D
 	resource , Resource_Data26E
 	resource , Resource_Data26F

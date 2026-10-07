@@ -1,22 +1,20 @@
+/* Near miss: listing 21 instructions, draft 21, common 20, differ 2; the rest differs in instruction order. */
 #include "TYPES.H"
-#include "SYSTEM.H"
-extern u8 gOverlayArea[];
-extern char MsgPonderEllipsis;
+#include "PARTY_STATE.H"
 
-extern const u8 ObjectMotion_LinkedActionScript[];
-extern const u8 ObjectMotion_StepAngleScript[];
+void *Func_080ccd78(s32 group, s32 id);
 
-s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
+void *Func_080cce94(s32 id)
 {
-    struct EffectDescriptor *result = BattleFx_FindDescriptor(0, arg0);
-    s32 value = ((struct EffectSelectionWork *)&gGameState)->value;
+    void *result = Func_080ccd78(0, id);
+    struct PartyState *party = &gPartyState;
+    s32 value = *(s16 *)party->unknown_26a;
 
-    if (value == arg0) {
-        struct EffectDescriptor *next = BattleFx_FindDescriptor(7, value);
+    if (value == id) {
+        void *next = Func_080ccd78(7, value);
 
-        if (next != 0) {
-            return (s32)next;
-        }
+        if (next != NULL)
+            return next;
     }
-    return (s32)result;
+    return result;
 }

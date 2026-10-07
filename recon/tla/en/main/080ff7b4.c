@@ -1,43 +1,54 @@
 #include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "SCENE.H"
-#include "FIXED_MATH.H"
-extern u8 Data_03001f2c[];
+#include "RAM_BUFFER.H"
 
-u8 *Owner_GetStateFar(s32 owner);
+struct MenuOwnerWork {
+    u8 unknown_000[0x214];
+    u8 count;
+    u8 unknown_215;
+    u8 owners[0x264 - 0x216];
+    s8 selected[8];
+};
 
-s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
+struct MenuPageResult {
+    void *owner;
+    s32 unknown_04;
+    s32 page;
+    s32 page_count;
+    s32 row;
+    s32 count;
+    s32 selected;
+};
+
+void *Owner_GetState(s32 owner);
+
+s32 Menu_BuildPageResult(struct MenuPageResult *result, s32 index)
 {
-    s32 encoded;
-    s32 base = *(s32 *)((u32)&Data_03001f2c);
-    s32 offset = index + 0x218;
-    s32 entries = base + 2;
-    s32 limit;
-    s32 remainder;
-    s32 quotient;
-    s32 groups;
+    struct MenuOwnerWork *menu = Ram_HeapSlots->menu_runtime;
+    void *owner;
+    s32 count;
     s32 value;
+    s32 page;
+    s32 row;
+    s32 pages;
 
-    encoded = (s32)Owner_GetStateFar(LoadByte(entries, offset));
-    limit = LoadByte(base, 0x218);
-    value = LoadSignedByte(base, LoadByte(entries, offset) + 0x260);
-    if ((s32)(value + 1) > limit) {
-        value = limit - 1;
-    }
-    if (limit == 0) {
+    owner = Owner_GetState(menu->owners[index]);
+    count = menu->count;
+    value = menu->selected[menu->owners[index]];
+
+    if (value + 1 > count)
+        value = count - 1;
+    if (count == 0)
         value = 0;
-    }
-    quotient = __divsi3(value, GROUP_LEN);
-    remainder = __modsi3(value, GROUP_LEN);
-    groups = __divsi3(limit, GROUP_LEN);
-    if (__modsi3(limit, GROUP_LEN) != 0) {
-        groups++;
-    }
-    result->owner_state = encoded;
-    result->page = quotient;
-    result->page_count = groups;
-    result->row = remainder;
-    result->entry_count = limit;
-    result->selected_index = value;
+    page = value / 5;
+    row = value % 5;
+    pages = count / 5;
+    if (count % 5 != 0)
+        pages++;
+    result->owner = owner;
+    result->page = page;
+    result->page_count = pages;
+    result->row = row;
+    result->count = count;
+    result->selected = value;
     return 1;
 }

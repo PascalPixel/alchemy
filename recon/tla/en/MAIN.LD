@@ -1039,7 +1039,7 @@
         "*/recon/tla/raw/080ca9cc.o"(.text)
         "*/recon/tla/raw/080caa2c.o"(.text)
         "*/recon/tla/raw/080caa4c.o"(.text)
-        "*/recon/tla/raw/080cacc0.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/LAST_ACTIVE.o"(.text)
         "*/recon/tla/raw/080cacec.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/TABLE.o"(.text)
         "*/recon/tla/raw/080cae5c.o"(.text)

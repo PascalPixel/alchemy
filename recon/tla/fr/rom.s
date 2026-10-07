@@ -2474,12 +2474,8 @@ Func_080caa2c:
 Func_080caa4c:
 	.incbin "baserom.gba", 0x000cfa4c, 0x00000274
 	.section .rom.000cfcc0, "ax"
-	.global ObjectTable_FindLastActiveId
-	.type ObjectTable_FindLastActiveId, %function
-	.thumb_func
-ObjectTable_FindLastActiveId:
-	.incbin "baserom.gba", 0x000cfcc0, 0x0000002c
 	.section .rom.000cfcec, "ax"
+	.balign 4
 	.global Scene_AssignViewFlags
 	.type Scene_AssignViewFlags, %function
 	.thumb_func

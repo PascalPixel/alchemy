@@ -740,6 +740,7 @@
     "*/recon/tla/de/rom.o"(.rom.000d7a2c)
     "*/recon/tla/de/rom.o"(.rom.000d7a4c)
     "*/recon/tla/de/rom.o"(.rom.000d7cc0)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/LAST_ACTIVE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d7cec)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/TABLE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d7e5c)

@@ -734,6 +734,8 @@
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SPECIAL.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000ca4a8)
     "*/recon/tla/it/rom.o"(.rom.000ca6a4)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/LAST_ACTIVE.o"(.text)
+        "*/recon/tla/it/rom.o"(.rom.000cacec)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/TABLE.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000cae5c)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COUNTERS.o"(.text)

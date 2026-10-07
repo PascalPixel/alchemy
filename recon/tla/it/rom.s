@@ -3202,11 +3202,9 @@ Func_080caa2c:
 	.global Func_080caa4c
 Func_080caa4c:
 	.incbin "baserom.gba", 0x000caa4c, 0x00000274
-	.global ObjectTable_FindLastActiveId
-	.type ObjectTable_FindLastActiveId, %function
-	.thumb_func
-ObjectTable_FindLastActiveId:
-	.incbin "baserom.gba", 0x000cacc0, 0x000000a4
+	.section .rom.000cacec, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000cacec, 0x00000078
 	.section .rom.000cae5c, "ax"
 	.incbin "baserom.gba", 0x000cae5c, 0x00000114
 	.section .rom.000cafc4, "ax"

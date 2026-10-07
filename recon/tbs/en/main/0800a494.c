@@ -1,5 +1,22 @@
 /* 0800a494: ARM draft (Object_UpdateAll) for the game ARM route (K1:
    stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+   2026-10-07 (S12 session 2): listing 307, draft 301, common 298, differ
+   12, from 24, with S2 devices. Diagnosed with agbcc_arm -da and with
+   -fno-schedule-insns: the native's registers fit sched1 hoisting each
+   velocity load above the orr (lo then r1, the load r2), but its final
+   order keeps the load after the orr, which stock sched2 never gives
+   (load cost 2: it fills the slot; without sched1 the order is native
+   and lo r2). The same pattern runs through the other diffs: the
+   native leaves load delay slots unfilled (wait's ldrh after the cmp,
+   z after the frozen test's cmp). Devices: the acceleration's two
+   products through MulQ16R1 (lo fixed in r1) each followed by an
+   empty volatile asm taking the product as input (28 with the barrier
+   alone, lo r2; an empty barrier without the input 40, with r1 32);
+   the bounce through MulQ16R3 (bounce, lo and hi fixed in r3, r2, r3:
+   20 with only lo and hi, 30 with the bounce and lo, 12 with all
+   three). What remains (12): six veneer instructions; wait-- (ldrh r2
+   before the cmp, native r3 after); z's load in the frozen test's
+   delay slot.
    2026-10-07 (S12 session 1): listing 307, draft 301, common 292, differ
    24, from 107. The smull asm made volatile, a scheduling barrier: each
    velocity store stays before the next smull, so the speed-limit and
@@ -140,6 +157,31 @@ static __inline__ s32 MulQ16(s32 a, s32 b)
     return ((u32)lo >> 16) | (hi << 16);
 }
 
+static __inline__ s32 MulQ16R3(s32 a, s32 b)
+{
+    /* FAKEMATCH: bounce in r3, not folded into the smull as a memory input (r1; 20 to 12 with lo and hi below) */
+    register s32 ra __asm__("r3") = a;
+    /* FAKEMATCH: bounce smull low half r2 (r3 without it) */
+    register s32 lo __asm__("r2");
+    /* FAKEMATCH: bounce smull high half r3 (r1 without it) */
+    register s32 hi __asm__("r3");
+
+    /* FAKEMATCH: unpaired smull halves, as MulQ16 */
+    __asm__ __volatile__("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(ra), "r"(b));
+    return ((u32)lo >> 16) | (hi << 16);
+}
+
+static __inline__ s32 MulQ16R1(s32 a, s32 b)
+{
+    /* FAKEMATCH: acceleration smull low half r1, as when sched1 hoists the velocity load over it (r2 behind the barrier; 28 to 20) */
+    register s32 lo __asm__("r1");
+    s32 hi;
+
+    /* FAKEMATCH: unpaired smull halves, as MulQ16 */
+    __asm__ __volatile__("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b));
+    return ((u32)lo >> 16) | (hi << 16);
+}
+
 void Object_UpdateAll(void)
 {
     struct ScriptMotionObject *obj;
@@ -212,8 +254,14 @@ void Object_UpdateAll(void)
                     z = obj->target_z;
                 } else {
                     ratio = rm(len, obj->acceleration);
-                    obj->velocity_x += MulQ16(ratio, dx);
-                    obj->velocity_z += MulQ16(ratio, dz);
+                    vx = MulQ16R1(ratio, dx);
+                    /* FAKEMATCH: velocity load after the orr, not hoisted above it (24 to 28 alone; an empty barrier 40) */
+                    __asm__ __volatile__("" : : "r"(vx));
+                    obj->velocity_x += vx;
+                    vz = MulQ16R1(ratio, dz);
+                    /* FAKEMATCH: velocity load after the orr, as above */
+                    __asm__ __volatile__("" : : "r"(vz));
+                    obj->velocity_z += vz;
                     vx = obj->velocity_x;
                     vz = obj->velocity_z;
                     len = sq(MulQ16(vx, vx) + MulQ16(vz, vz)) << 8;
@@ -249,7 +297,7 @@ void Object_UpdateAll(void)
                     obj->velocity_y -= obj->gravity;
                 if (y <= ground && obj->velocity_y < 0) {
                     y = ground;
-                    obj->velocity_y = -MulQ16(obj->vertical.bounce, obj->velocity_y);
+                    obj->velocity_y = -MulQ16R3(obj->vertical.bounce, obj->velocity_y);
                     if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
                         obj->velocity_y = 0;
                 }

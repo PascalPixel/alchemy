@@ -1,28 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #152
-	bl Func_020059f4
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	movs r0, #0
-	pop {r5, pc}
-	.2byte 0x0000
-	.section .text.x02008050,"ax",%progbits
-	.global Func_02000050
-	.thumb_func
-Func_02000050:
-	push {lr}
-	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
-	movs r0, #0
-	pop {pc}
 	.section .text.x02008090,"ax",%progbits
 	.global Func_02000090
 	.thumb_func
@@ -2868,32 +2845,6 @@ Func_020016e8:
 	.4byte gPartyState
 .L_02009ac0:
 	.4byte 0x00000109
-	.section .text.x02009ac4,"ax",%progbits
-	.global Func_02001ac4
-	.thumb_func
-Func_02001ac4:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r6, r1, #0
-	bl Func_020059c4
-	adds r0, r5, #0
-	bl Object_GetById
-	movs r1, #2
-	bl Func_020059dc
-	movs r0, #201
-	bl Func_020059f4
-	movs r0, #60
-	bl Battle_WaitMode0
-	adds r0, r5, #0
-	bl Object_GetById
-	movs r1, #0
-	bl Func_020059dc
-	bl Func_020059d4
-	bl Func_020059cc
-	adds r0, r6, #0
-	movs r1, #1
-	bl Object_SetModeById
-	pop {r5, r6, pc}
 	.section .text.x02009b04,"ax",%progbits
 	.global Func_02001b04
 	.thumb_func
@@ -6762,16 +6713,6 @@ Func_02003d9c:
 	.4byte 0x000000fb
 	.section .text.x0200bf52,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x0200bf54,"ax",%progbits
-	.global Func_02003f54
-	.thumb_func
-Func_02003f54:
-	ldr r3, .L_0200bf5c
-	str r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_0200bf5c:
-	.4byte Data_020069f8
 	.section .text.x0200bf60,"ax",%progbits
 	.global Func_02003f60
 	.thumb_func
@@ -8304,16 +8245,6 @@ Func_02004b18:
 	.4byte Data_02006a6e
 .L_0200cb44:
 	.4byte Data_02006a70
-	.section .text.x0200cb48,"ax",%progbits
-	.global Func_02004b48
-	.thumb_func
-Func_02004b48:
-	ldr r3, .L_0200cb50
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_0200cb50:
-	.4byte Data_02006b72
 	.section .text.x0200cb9a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200cbd2,"ax",%progbits

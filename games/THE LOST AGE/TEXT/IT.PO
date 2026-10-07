@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Rianima"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Cura Veleno"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Cappello"
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Cappello"
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Corona: + Fortuna"
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Copricapo: + Agilità"
 

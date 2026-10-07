@@ -89,23 +89,7 @@ Animation_ApplyChildArgument:
 	.global ResourceMetadata_Register
 	.thumb_func
 ResourceMetadata_Register:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer InitializeAnimationObjectsFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer InitializeAnimationObjectsFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer InitializeAnimationObjectsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer InitializeAnimationObjectsFar
-	.else
 	overlay_veneer ResourceMetadata_RegisterFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02002910
 	.thumb_func
 Func_02002910:

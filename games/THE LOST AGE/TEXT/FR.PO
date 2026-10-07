@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Ressusciter"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Purifier"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Chapeau"
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Chapeau"
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Couronne: booste la chance"
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Chapeau: booste l'agilité"
 

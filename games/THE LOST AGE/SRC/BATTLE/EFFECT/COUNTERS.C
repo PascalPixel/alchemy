@@ -6,6 +6,11 @@ struct BattleEffectCounterState {
     s16 counters[12];
 };
 
+s32 Func_080caf6c(void)
+{
+    return 0;
+}
+
 void BattleFx_ResetCounters(void)
 {
     s16 value;

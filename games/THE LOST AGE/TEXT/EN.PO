@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Revive"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Cure Poison"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Hat"
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Hat"
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Crown: Boosts Luck"
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Hat: Boosts Agility"
 

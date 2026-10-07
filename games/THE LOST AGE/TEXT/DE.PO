@@ -343,7 +343,7 @@ msgctxt "message"
 msgid "00083"
 msgstr "Beleben"
 
-msgctxt "message"
+msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Entgiften"
 
@@ -1223,15 +1223,15 @@ msgctxt "message"
 msgid "00303"
 msgstr "Hut"
 
-msgctxt "message"
+msgctxt "MsgHat"
 msgid "00304"
 msgstr "Hut"
 
-msgctxt "message"
+msgctxt "MsgCrownBoostsLuck"
 msgid "00305"
 msgstr "Krone: Hebt Glück"
 
-msgctxt "message"
+msgctxt "MsgHatBoostsAgility"
 msgid "00306"
 msgstr "Hut: Hebt Geschwindigkeit"
 

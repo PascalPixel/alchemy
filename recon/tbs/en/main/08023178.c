@@ -1,9 +1,22 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1402, common 1022, differ 750.
+ * Native 1392 instructions, draft 1401, common 1082, differ 629.
  * Frame now 352 bytes, as native, and the setup loops match. Remaining:
- * redraw in r11 where native has r10, the search value in r7 where native
- * has r3, the djinn tile code (native: (extended == 0) by branch, then
- * + 8, inside the loop), then register choices through the loop body.
+ * redraw in r11 where native has r10, the face/cursor zero in r10 where
+ * native has r7 (native: 0x3FF in r8, the zero in r7; here the 0x3FF
+ * pseudo is block-local, local-alloc gives it r7 first), the djinn tile
+ * code (native: (extended == 0) by branch, then + 8, inside the loop),
+ * then register choices through the loop body.
+ *
+ * Trials 2026-10-07: objName tile stored without "& 0x3FF" (the 10-bit
+ * field masks in HImode, so 0x3FF and 8 lead the first pool and the pool
+ * falls before the switch with a branch over it, as native) 750 -> 732;
+ * the cursor tile likewise, 732 (no change, kept for symmetry); the face
+ * record fetched before the attribute stores (native calls
+ * GetBattleObjectSlotFar first) through p 732; the owner search value
+ * as a block-local (native r3: code crosses calls, the search value
+ * does not) 732 -> 675; the face record through a block-local pointer
+ * (native keeps it in r2, p crosses calls) 675 -> 629. Rejected: code = (extended == 0); code
+ * += 8 1055 (the store flag is hoisted as neg/orr/lsr, 1 - x).
  *
  * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
  * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,
@@ -168,12 +181,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
     if (listCount != 0) {
         for (i = 0; i <= 5; i++) {
-            code = list[i];
-            if (code == 0xFF) {
+            s32 kind = list[i];
+
+            if (kind == 0xFF) {
                 break;
             }
-            if (code != 0xFE) {
-                if (code == owner) {
+            if (kind != 0xFE) {
+                if (kind == owner) {
                     idx = i;
                     break;
                 }
@@ -192,7 +206,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         objName.oam.word.attr01 = 0x80000400;
         objName.oam.word.attr23 = 0;
-        objName.oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame) & 0x3FF;
+        objName.oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame);
         objName.oam.f.x = 8;
         objName.oam.f.y = 24;
         objName.oam.f.palette = 14;
@@ -340,17 +354,20 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         pix.x = cur.col * 8;
         pix.y = cur.row * 8;
 
-        objFace.oam.word.attr01 = 0xC0002400;
-        objFace.oam.word.attr23 = 0;
-        objFace.oam.f.tile = ((struct MenuSprite *)GetBattleObjectSlotFar(owner)->object->records)->oam.f.tile;
-        objFace.oam.f.x = 0xAC;
-        objFace.oam.f.y = 56;
-        Runtime_PushSlotEntry((s32 *)&objFace, 240);
+        {
+            struct MenuSprite *face = GetBattleObjectSlotFar(owner)->object->records;
+
+            objFace.oam.word.attr01 = 0xC0002400;
+            objFace.oam.word.attr23 = 0;
+            objFace.oam.f.tile = face->oam.f.tile;
+            objFace.oam.f.x = 0xAC;
+            objFace.oam.f.y = 56;
+            Runtime_PushSlotEntry((s32 *)&objFace, 240);
+        }
 
         objCursor.oam.word.attr01 = 0x40000400;
         objCursor.oam.word.attr23 = 0;
-        objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles)
-            & 0x3FF;
+        objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles);
         objCursor.oam.f.x = (pix.x + winMain->x * 8
                           - ((gFrameCount & 4) >> 2))
             + 16;

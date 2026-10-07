@@ -8911,7 +8911,7 @@ msgctxt "message"
 msgid "02225"
 msgstr "EP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02226"
 msgstr "こうげき"
 

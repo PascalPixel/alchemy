@@ -180,8 +180,8 @@ UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000145d0, 0x000002f4
 	.section .rom.00020ea6, "ax"
 	.incbin "baserom.gba", 0x00020ea6, 0x000008fe
-	.section .rom.000221b4, "ax"
-	.incbin "baserom.gba", 0x000221b4, 0x000020b4
+	.section .rom.00022f58, "ax"
+	.incbin "baserom.gba", 0x00022f58, 0x00001310
 	.section .rom.00025168, "ax"
 	.incbin "baserom.gba", 0x00025168, 0x00000ed8
 	.section .rom.000262d4, "ax"

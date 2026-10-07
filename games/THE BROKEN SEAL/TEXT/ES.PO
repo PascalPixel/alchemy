@@ -9891,7 +9891,7 @@ msgctxt "message"
 msgid "02470"
 msgstr "PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02471"
 msgstr "Ataque"
 

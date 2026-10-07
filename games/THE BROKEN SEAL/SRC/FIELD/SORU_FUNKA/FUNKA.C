@@ -10,9 +10,9 @@
 #include "RESOURCE.H"
 #include "B5_CONTEXT.H"
 #include "FUNKA.H"
-#include "CALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "IWRAM_CALL.H"
 #include "FIELD_EFFECT.H"
 #include "text/MSG_IDS.H"
@@ -276,8 +276,8 @@ void Scene_SaturosTakesHostages(void)
     FieldScene_RunVariantStep(0, 20, 20);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 30);
     SceneState_InitStateWordsAndSlots();
-    Value2(Engine_TaskAddCallback, (s32)SoruFunka_StepEmbers, 0xc80);
-    Value2(Engine_TaskAddCallback, (s32)SceneState_UpdateRandomTimerLevel, 0xc80);
+    Task_AddCallback(SoruFunka_StepEmbers, 0xc80);
+    Task_AddCallback(SceneState_UpdateRandomTimerLevel, 0xc80);
     Engine_EventWait(240);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
     Actor_SetPosition(ACTOR_JASMINE, 0x1db0000, 0x14c0000);

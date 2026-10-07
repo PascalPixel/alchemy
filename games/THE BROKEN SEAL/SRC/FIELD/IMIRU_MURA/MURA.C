@@ -11,6 +11,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "FIELD_SERVICE.H"
 #include "CALL.H"
 #include "IWRAM_CALL.H"
 #include "text/MSG_IDS.H"
@@ -560,7 +561,7 @@ s32 ImiruMura_ApplyEntryState(void)
         }
         leader->timer = 0;
         leader->work = 0;
-        Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene399SequenceA, 0xc80);
+        Task_AddCallback(FieldScene_RunScene399SequenceA, 0xc80);
         Engine_TaskAddCallback(SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
         Engine_ActorSetSpritePriority(11, 1);
         if (Engine_GameFlagIsSet(0x203)) {

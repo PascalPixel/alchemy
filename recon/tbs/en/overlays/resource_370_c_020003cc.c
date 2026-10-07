@@ -5,6 +5,7 @@
  * Trials (2026-10-07, session 4):
  * - 26 -> 0: the A-key wait after a link error tests gKeyState & v5 (KEY_A held in v5 = 1): the native's ldr r7 loads gKeyState from the shared pool entry; the raw 0x3001c94 address added a pool word, which moved every later branch and pool load by 4.
  * - 0 -> 0: every Func_ placeholder callee named as the listing's relocations pair them (137 calls, one name each), raw addresses as their symbols (Clear_CheckButtonCodes, Clear_UpdateBlend, Clear_CodeUnlocked, Clear_ExtraCodeUnlocked, gSleepDisabled, gDebugMode, gOptionMirror, gWindowWork, gEventWork), the save record union as struct GameState fields (build_stamp, play_time, palette_glow, unknown_20f, saved_options), scene row 8 named SceneId_HaidiaBabi in SCENES.S after its overlay folder, and the dead 0x2000240 stores and unused locals dropped.
+ * - 0 -> 0: every call made directly instead of through the Value and Call wrappers, except two kept with FAKEMATCH tags: GameFlag_SetBit(0x109) (85 direct) and the Engine_GameFlagIsSet(0x952) test (10 direct); all wrappers direct at once give 10. The 0x3e7 store through v3 tagged (25 as a plain constant).
  * Trials (2026-10-07, session 3):
  * - 78 -> 205: the draw call in each glyph arm: cross-jumping (after sched2) merges the tails as native, and caller-save no longer restores n at each arm's end; but CSE carries the f0c call's glyph address into both draws, loop.c hoists it (life 47) and global gives it r8, which pushes page off its register.
  * - 205 -> 141: the glyph address for f0c through a pointer behind asm volatile ("+r"): CSE no longer reuses it, but gcse cprop folds the draws' -524 and PRE hoists their sp + 24 to the loop entry (fp); the same in a goto loop (141).
@@ -145,11 +146,6 @@ void WaitFrames();
 s32 __divsi3(s32, s32);
 s32 __modsi3();
 
-static __inline__ s32 Value0(s32 (*f)())
-{
-    return f();
-}
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -158,26 +154,6 @@ static __inline__ void Call1(void (*f)(), s32 a0)
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
 }
 
 s32 SaveMenu_Run(void)
@@ -211,14 +187,14 @@ s32 SaveMenu_Run(void)
 
     started = 0;
     Clear_LoadBackground();
-    Value2(Scheduler_AddOrUpdateCallback, (s32)Clear_CheckButtonCodes, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Clear_CheckButtonCodes, 0xc80);
     *(s32 *)((*(u8 **)&gEventWork + 0x1c0)) = started;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     if (gGameState.entrance == 2) {
     L_ask:
         UiText_ShowPositionedMessageAndWait((s32)MsgSaveAdventureQuestion, 5);
-        v7 = Value1(Object_CallSpawnRoutineAtOrigin, 1);
+        v7 = Object_CallSpawnRoutineAtOrigin(1);
         UiWork_FinalizePendingCore();
         if (v7 == 0) {
             UiText_ShowPositionedMessageAndWait(((s32)MsgSaveAdventureQuestion + 1), 1);
@@ -231,14 +207,14 @@ s32 SaveMenu_Run(void)
         Battle_WaitMode0(60);
         Event_FinishScreenTransition();
         Engine_AudioPlayCue(17);
-        Call1(Battle_WaitMode0, 0x12c);
+        Battle_WaitMode0(0x12c);
         Event_SetDestination((s32)&SceneId_WorldMap, 72);
         return 0;
     } else {
         gSleepDisabled = started;
     }
     L_020004a8:;
-    v6 = Value0(SaveState_ScanRecordFlags);
+    v6 = SaveState_ScanRecordFlags();
     if (v6 < 0) {
         if (gDebugMode != 0) {
             gGameState.saved_options = 1;
@@ -249,13 +225,13 @@ s32 SaveMenu_Run(void)
     if (v6 == 0) {
         if (started == 0) {
             WaitFrames(30);
-            Value2(Scheduler_AddOrUpdateCallback, (s32)Clear_UpdateBlend, 0xc80);
+            Scheduler_AddOrUpdateCallback((s32)Clear_UpdateBlend, 0xc80);
             WaitFrames(1);
             started = 1;
         }
     }
     if (v6 > 0) {
-        v6 = Value0(Menu_SelectSaveSlotAction);
+        v6 = Menu_SelectSaveSlotAction();
     } else {
         v6 = 0;
     }
@@ -350,6 +326,7 @@ s32 SaveMenu_Run(void)
             goto L_020004a8;
         }
         gGameState.selected_actor = 0;
+        /* FAKEMATCH: called directly, the flag test differs by 10 instructions (2026-10-07); through the wrapper it matches. */
         if (Value1(Engine_GameFlagIsSet, 0x952) != 0) {
             InventorySnapshot_Restore();
             Party_RemoveActiveOwner(0);
@@ -362,7 +339,7 @@ s32 SaveMenu_Run(void)
             Party_AddActiveOwner(3);
         }
         PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
-        Call1(GameFlag_ClearBit, 0x109);
+        GameFlag_ClearBit(0x109);
         GameFlag_ClearBit(0x106);
         GameFlag_SetBit(0x17e);
         gSleepDisabled = 1;
@@ -439,9 +416,9 @@ s32 SaveMenu_Run(void)
         }
         v6 = UiWindow_Create(5, 10, 20, 4, 2);
 
-        Call4(UiText_DrawResource, (s32)MsgClearSendingData, v6, 0, 4);
+        UiText_DrawResource((s32)MsgClearSendingData, v6, 0, 4);
         WaitFrames(10);
-        Value2(SerialRuntime_BeginTransferA, (s32)gSaveBuffer, 0x1004);
+        SerialRuntime_BeginTransferA((s32)gSaveBuffer, 0x1004);
         WaitFrames(10);
         v5 = 0;
         v1 = 3;
@@ -464,7 +441,7 @@ s32 SaveMenu_Run(void)
     L_0200095e:;
     if (v4 == 0) {
         RenderOutput_PrepareForRedraw(v6);
-        Call4(UiText_DrawResource, (s32)MsgClearCommunicationError, v6, 0, 4);
+        UiText_DrawResource((s32)MsgClearCommunicationError, v6, 0, 4);
         v5 = 1;
         do {
             WaitFrames(1);
@@ -479,7 +456,7 @@ s32 SaveMenu_Run(void)
     L_020009cc:;
     if (v6 == 0) {
         L_020009d2:;
-        v6 = Value1(Menu_SelectResourceLayout, 1);
+        v6 = Menu_SelectResourceLayout(1);
 
         if (v6 == -1) {
             goto L_020007dc;
@@ -488,12 +465,12 @@ s32 SaveMenu_Run(void)
             u8 *data = save_data;
             s16 sum;
 
-            encoded_size = Value3(Clear_PackPasswordData, 0, v6, data);
+            encoded_size = Clear_PackPasswordData(0, v6, data);
             sum = SceneData_GetBufferCrc16(encoded_size, data);
             save_data[encoded_size] = (u16)sum >> 8;
             save_data[encoded_size + 1] = sum;
             encoded_size += 2;
-            encoded_size = Value3(Clear_EncodePassword, data, encoded_size, password);
+            encoded_size = Clear_EncodePassword(data, encoded_size, password);
         }
         v6 = 2;
         Ui_LoadWindowGraphics();
@@ -508,16 +485,16 @@ s32 SaveMenu_Run(void)
         if (page_count == 1) {
             record = UiWindow_Create(5, 16, 20, 3, v6);
             help_window = record;
-            Call4(UiText_DrawCharacterAtOffset, page_message - 2, help_window, 80, 0);
+            UiText_DrawCharacterAtOffset(page_message - 2, help_window, 80, 0);
         } else {
             record = UiWindow_Create(1, 16, 28, 3, v6);
             help_window = record;
-            Call4(UiText_DrawCharacterAtOffset, page_message - 1, help_window, 0, 0);
+            UiText_DrawCharacterAtOffset(page_message - 1, help_window, 0, 0);
         }
-        Call1(Graphics_ExpandVramTilesByColorTable, 0x6006000);
+        Graphics_ExpandVramTilesByColorTable(0x6006000);
         RenderOutput_PrepareForRedraw(page_window);
         for (;;) {
-        Call1(Link_DrawShiftedTilePair, 0x6002500);
+        Link_DrawShiftedTilePair(0x6002500);
         if ((gKeyState & KEY_B) != 0) {
             Engine_AudioPlayCue(113);
             RenderOutput_PrepareForRedraw(page_window);
@@ -621,9 +598,10 @@ s32 SaveMenu_Run(void)
         WaitFrames(1);
         }
     }
-    Call1(WaitFrames, 0x12c);
+    WaitFrames(0x12c);
     goto L_020004a8;
     L_02000c96:;
+    /* FAKEMATCH: stored as a plain constant, 0x3e7 is a halfword pool load that forces a pool before the epilogue (differ 25); through an s32 local it joins the one pool after the function. */
     v3 = 0x3e7;
     *(u16 *)((*(u8 **)&gEventWork + 0x170)) = v3;
     Battle_WaitMode0(30);

@@ -39471,7 +39471,7 @@ msgctxt "message"
 msgid "09865"
 msgstr "Dice: \"Dos pasos hacia el{line_break}norte en la tumba central{line_break}donde la carta ha caído\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene682No53"
 msgid "09866"
 msgstr "¡Ahí está Champa!{end_wait}"
 
@@ -51235,111 +51235,111 @@ msgctxt "MsgDeriWellSeawater"
 msgid "12806"
 msgstr "Parece que el agua de mar{line_break}ha inundado el pozo.{page_break}Dudo que lo vayan a usar{line_break}por una temporada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No13"
 msgid "12807"
 msgstr "¡Hay un pasadizo en{line_break}el fondo del pozo!{page_break}Me pregunto si alguien{line_break}más lo sabrá...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65DNo21"
 msgid "12808"
 msgstr "Está lleno de agua.{line_break}Es muy profundo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65FNo31"
 msgid "12809"
 msgstr "¿Eh? ¡He visto una figura{line_break}humana en el pozo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene665No180"
 msgid "12810"
 msgstr "Parece que este pozo{line_break}no está en uso.{page_break}Supongo que porque está{line_break}lejos del centro del pueblo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66DNo47"
 msgid "12811"
 msgstr "Hay un poco de agua{line_break}en el fondo del pozo.{page_break}Supongo que el agua se{line_break}evapora rápido con este clima.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A6No58"
 msgid "12812"
 msgstr "Este pozo parece muy antiguo.{page_break}Seguro que se conserva intacto{line_break}desde tiempos inmemoriales.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No169"
 msgid "12813"
 msgstr "Hay varias patatas{line_break}cociéndose en la olla.{page_break}Puede que estén preparando{line_break}ensalada de patata.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No170"
 msgid "12814"
 msgstr "Están cociendo nan.{page_break}Aunque parece extraño...{line_break}Creo que en Madra le{line_break}añaden nueces y pasas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No171"
 msgid "12815"
 msgstr "Las especias están colocadas{line_break}cuidadosamente.{page_break}Ninguna mesa en Madra estaría{line_break}completa sin ellas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No172"
 msgid "12816"
 msgstr "Hay un pollo al curry{line_break}cociéndose a fuego{line_break}lento en la cocina.{page_break}A juzgar por el olor y el{line_break}intenso color rojo, debe de{line_break}llevar muchos tomates.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No173"
 msgid "12817"
 msgstr "En la cocina hay un{line_break}té masala hirviendo.{page_break}Está lleno de leche y{line_break}desprende un dulce{line_break}aroma. ¡Me vuelve loco!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No174"
 msgid "12818"
 msgstr "Están preparando{line_break}pollo tandoori.{page_break}En Madra se cocina con el{line_break}hueso. Es uno de los platos{line_break}famosos de aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo35"
 msgid "12819"
 msgstr "¡Es un pollo asado tan grande{line_break}que prácticamente sobresale{line_break}del horno!{page_break}Mmm... Me pregunto si será el{line_break}pollo que vi fuera... ¡Parecía{line_break}una mascota!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo36"
 msgid "12820"
 msgstr "Huevos pasados por agua...{line_break}¡Algunos los llaman el{line_break}\"sol de las mañanas\"!{page_break}¡Es lo mejor para{line_break}desayunar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo37"
 msgid "12821"
 msgstr "Ese queso es fabuloso.{page_break}¡Me encantaría hacerme un{line_break}pinchito de queso a estas{line_break}horas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No68"
 msgid "12822"
 msgstr "¡Aaaaarg!{line_break}¡Están friendo larvas!{page_break}¡Qué desagradable!{line_break}¡Aunque huele delicioso!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No69"
 msgid "12823"
 msgstr "Es cordero asado a la parrilla.{line_break}La carne está dorada y jugosa.{page_break}Seguramente se darían cuenta{line_break}si le doy un bocado... Qué mal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No70"
 msgid "12824"
 msgstr "¿Eh? ¡¿Qué es eso?!{line_break}¡Langosta a la parrilla!{page_break}¡Me gustaría experimentar{line_break}esta delicia culinaria por lo{line_break}menos una vez en la vida!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No71"
 msgid "12825"
 msgstr "Pinchos de tritón{line_break}sobre una llama.{page_break}¿Están preparando comida{line_break}o algún extraño tipo de{line_break}medicina?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene660No72"
 msgid "12826"
 msgstr "Hay muchas plantas extrañas{line_break}cociéndose en esa gran olla.{page_break}El olor me parece familiar pero{line_break}no sé exactamente qué será.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No121"
 msgid "12827"
 msgstr "Verdura de temporada hervida{line_break}con carne de cordero.{page_break}Las ostras están tentando{line_break}mi estómago.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgScene666No122"
 msgid "12828"
 msgstr "Hay una tarta de marisco{line_break}en el horno.{page_break}La verdad es que hace honor{line_break}a su reputación por un olor{line_break}que la delata...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No123"
 msgid "12829"
 msgstr "Parece algún tipo de{line_break}sopa de marisco.{page_break}¡Huele como el océano!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No124"
 msgid "12830"
 msgstr "¡Es la famosa langosta{line_break}hervida de Alhafra!{page_break}¡Es más grande de lo que{line_break}jamás habría imaginado!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene666No125"
 msgid "12831"
 msgstr "El estofado de marisco tiene{line_break}gran variedad de pescado.{page_break}¡Un simple bocado y{line_break}no dejaría ni rastro!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene677No40"
 msgid "12832"
 msgstr "El acero que hay sobre las{line_break}llamas luce rojo brillante.{page_break}Aquí debe de ser donde{line_break}forjan objetos afilados.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene65ENo38"
 msgid "12833"
 msgstr "Hay pescado que nunca he{line_break}visto antes cociéndose a{line_break}fuego lento.{page_break}¿A qué sabrá esta pestilente{line_break}sopa?... No estoy seguro de{line_break}querer averiguarlo.{end_wait}"
 
@@ -51367,67 +51367,67 @@ msgctxt "MsgShamanStrangeBoiledVegetables"
 msgid "12839"
 msgstr "Nunca había visto vegetales{line_break}como los que se cuecen aquí.{page_break}¡Puag! ¡Apestan! ¡¿La{line_break}gente se come esto?!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene690No21"
 msgid "12840"
 msgstr "Es un estofado celta hecho con{line_break}carne de cordero y patatas.{page_break}Tiene una pinta tremenda,{line_break}sobre todo si te gusta la{line_break}carne guisada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No154"
 msgid "12841"
 msgstr "Los vegetales que cuecen{line_break}aquí parecen hierbajos.{page_break}Estoy muy seguro de que{line_break}no probaré un bocado de{line_break}eso en toda mi vida.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No155"
 msgid "12842"
 msgstr "Hay queso en este estofado.{page_break}¡Eh! ¡Hay moho en él!{line_break}¿Acaso tiene que ser{line_break}así?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No156"
 msgid "12843"
 msgstr "Hay un tipo extraño de plato{line_break}a base de huevas de pescado.{page_break}Les salen hilillos. Me pregunto{line_break}si eso será normal...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6A8No157"
 msgid "12844"
 msgstr "Es un tipo de carne que{line_break}no había visto en mi vida.{page_break}En lugar de usar una{line_break}fogata, están usando{line_break}una cornamenta quemada.{page_break}Me pregunto si la carne{line_break}y la cornamenta proceden{line_break}del mismo animal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No03"
 msgid "12845"
 msgstr "Parece que hay un diario{line_break}de viaje del capitán.{page_break}Hay algo sobre un viaje no{line_break}anotado hacia Lemuria...{line_break}Supongo que tenían prisa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo27"
 msgid "12846"
 msgstr "Hay un libro titulado \"Las{line_break}grandes aventuras de Lunpa\".{line_break}Fue escrito por el mismo Lunpa.{page_break}\"Cuando llegó la gran inundación,{line_break}dejamos las casas en barco. Las{line_break}olas volcaban nuestros barcos\".{page_break}\"Llegamos a una extraña{line_break}tierra llamada Lemuria\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo28"
 msgid "12847"
 msgstr "He encontrado una carta de Babi.{line_break}El sobre dice: \"A mi querido{line_break}amigo, Lunpa\".{page_break}Babi escribió: \"Perdóname,{line_break}Lunpa, pero debo abandonar{line_break}la isla sin ti\".{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgScene68CNo29"
 msgid "12848"
 msgstr "Hay un libro titulado \"La{line_break}historia de Lemuria\".{page_break}Un extracto dice: \"Hoy sólo{line_break}quedan los restos de lo que{line_break}Lemuria fue en otro tiempo\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo30"
 msgid "12849"
 msgstr "Hay un libro titulado{line_break}\"Los faros elementales\".{page_break}Dice: \"Los cuatro faros{line_break}elementales iluminan los{line_break}lindes de Weyard\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo31"
 msgid "12850"
 msgstr "Hay un libro titulado{line_break}\"Los grandes lemurios\".{page_break}\"El maestro del agua será{line_break}un hijo de Lemuria\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo32"
 msgid "12851"
 msgstr "Hay un libro titulado{line_break}\"Alquimia y la civilización{line_break}antigua. Tomo I\".{page_break}\"Con el uso de la Alquimia,{line_break}la civilización creció y se{line_break}desarrolló.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo33"
 msgid "12852"
 msgstr "Hay un libro titulado{line_break}\"Alquimia y la civilización{line_break}antigua. Tomo II\".{page_break}\"Aquellos que dominen{line_break}la Alquimia, gobernarán{line_break}el mundo\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo34"
 msgid "12853"
 msgstr "Hay un libro titulado{line_break}\"Diario de Hidros\".{page_break}\"{actor_name:8} está vivo{line_break}sin duda. Rezo por{line_break}su regreso.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No04"
 msgid "12854"
 msgstr "Es una pasada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene68CNo35"
 msgid "12855"
 msgstr "¡¡Qué dem...!! {control_15:4}{control_15:4}{page_break}{control_12:11}¡¿Qué pasa con estos albornoces?!{line_break}¿Dónde están los baños?{end_wait}"
 

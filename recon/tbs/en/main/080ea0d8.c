@@ -56,7 +56,13 @@
  * Trial: the petal ring radius frame * 10 - 1424 computed once in the frame
  * body, between n and the transfer value as the native orders them: it
  * becomes a reduced giv of the frame loop as native's sp+12 (2162, kept);
- * its preheader still stores it in a different slot. */
+ * its preheader still stores it in a different slot.
+ * Lead: the native's 320-frame loop preheader holds nothing but frame = 0;
+ * loop.c moved nothing out of that loop (each block rebuilds &fill with
+ * add sp, #140 and stores fill at [sp, #140] directly). Ours moves 0, &fill
+ * and 24 out of it. Diagnostic only, not source: the loop as a label and
+ * goto gives the native's 184-byte frame but 2294 overall; as do-while
+ * the code is identical (2162). */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

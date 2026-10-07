@@ -11,7 +11,7 @@ extern const u32 Runtime_IrqHandlers[14];
 
 extern u8 IwramIrqMain[];
 extern const u8 IwramRuntime_Rom[];
-extern void *Data_03007ffc;
+extern void *gIrqVector;
 
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
 void Runtime_InstallIwramAndIrqs(void);

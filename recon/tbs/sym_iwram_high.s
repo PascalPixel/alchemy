@@ -9,5 +9,5 @@ Data_03007804:
 	.global gFrameWaitStackTop
 gFrameWaitStackTop:
 	.space 0x000005fc
-	.global Data_03007ffc
-Data_03007ffc:
+	.global gIrqVector
+gIrqVector:

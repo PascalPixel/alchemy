@@ -44,7 +44,7 @@ void SerialRuntime_Initialize(void)
     REG_IME = 0;
     REG_IE |= 0x80;
     REG_IME = 1;
-    *(volatile u16 *)&gSerialExchangeActive = 1;
+    gSerialExchangeActive = 1;
     gLinkExchangeState = 0;
     gSerialSendSource = 0;
     gSerialSendSize = 0;

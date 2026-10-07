@@ -22,7 +22,7 @@ void Runtime_InstallIwramAndIrqs(void)
     /* FAKEMATCH: the one-pass vector-store boundary scores 695 versus
        795 for a direct store or a boundary around the runtime copy. */
     do {
-        Data_03007ffc = IwramIrqMain;
+        gIrqVector = IwramIrqMain;
     } while (0);
     Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
     REG_DISPSTAT = zero;

@@ -123,13 +123,13 @@ void Title_PlaceIntroSprites(void)
         ENTRY(n, 0) = 0x400020a0;
     REG_BLDCNT = 0x3f50;
     REG_BLDALPHA = 0x0e0e;
-    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
+    Dma_Set(&ENTRY(0, 0), OAM, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
     line = 32 - gBgScroll[1].y;
     WRAP256(line);
     ENTRY(12, 0) = line | 0xc05c2000;
     ENTRY(12, 1) = 0x800;
-    Dma_Set(&ENTRY(12, 0), (void *)(0x07000000 + n * 8), 0x84000002, REG_DMA3);
-    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, 0x84000008, REG_DMA3);
+    Dma_Set(&ENTRY(12, 0), (u8 *)OAM + n * 8, 0x84000002, REG_DMA3);
+    Dma_Set(&ENTRY(0, 0), OAM, 0x84000008, REG_DMA3);
 }
 
 void Title_LoadIntroBackgrounds(void)
@@ -155,12 +155,12 @@ void Title_LoadIntroBackgrounds(void)
     BG_PLTT[0] = 0;
     data += 0x200;
     Resource_DecodeByteLz(data, Ram_MapCellBuffer);
-    Dma_Set(Ram_MapCellBuffer + 0x2940, (void *)0x06000000, 0x80002760, REG_DMA3);
+    Dma_Set(Ram_MapCellBuffer + 0x2940, BG_CHAR_BLOCK(0), 0x80002760, REG_DMA3);
     Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
 
     /* FAKEMATCH: goto loops and a tile counted in its high half keep the increment's constant inside each strip, where the loop pass would hoist it. */
     blank = 0x1ff;
-    map = (u16 *)0x0600f000;
+    map = (u16 *)BG_SCREEN_BLOCK(30);
     tile = 0x267;
     y = 0;
 front_top:
@@ -195,7 +195,7 @@ front_rest_cell:
     *map++ = blank;
     if (++y <= 31)
         goto front_rest;
-    map = (u16 *)0x0600f800;
+    map = (u16 *)BG_SCREEN_BLOCK(31);
     tile = 300;
     y = 0;
 back_top:
@@ -330,7 +330,7 @@ s32 Title_ShowIntro(s32 prompt)
             u32 *destination = q->entries[count];
             *(u16 *)&q->count = count + 1;
             *destination++ = 0xf740;
-            *destination++ = 0x04000000;
+            *destination++ = (u32)&REG_DISPCNT;
             *destination = 0x20000;
         }
         *ime = old;
@@ -408,8 +408,8 @@ s32 Title_ShowIntro(s32 prompt)
             BG_PLTT[0] = 0;
             data += 0x200;
             Resource_DecodeByteLz(data, Ram_MapCellBuffer);
-            Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x80004b00, REG_DMA3);
-            map = (u16 *)0x06003000;
+            Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), 0x80004b00, REG_DMA3);
+            map = (u16 *)BG_SCREEN_BLOCK(6);
             tile = 0x100;
             i = 0;
             break;

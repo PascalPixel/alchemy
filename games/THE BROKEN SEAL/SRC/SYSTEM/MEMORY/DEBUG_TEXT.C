@@ -8,6 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 
 
 void Runtime_WriteDebugTextTiles(const u8 *src)
@@ -21,11 +22,11 @@ void Runtime_WriteDebugTextTiles(const u8 *src)
 
         if (c != 0) {
             u32 mask = 0xf000;
-            addr = 0x06002500;
+            addr = (u32)(BG_SCREEN_BLOCK(4) + 0x500);
             do {
                 *dst++ = c | mask;
                 if (dst == (u16 *)addr)
-                    dst = (u16 *)0x06002000;
+                    dst = (u16 *)BG_SCREEN_BLOCK(4);
                 cnt++;
                 if (cnt > 31)
                     break;

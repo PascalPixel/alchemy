@@ -12,15 +12,13 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
+#include "IO_REG.H"
 
 struct MenuWorkspaceEntry {
     u8 unknown_00[10];
     u16 state;
     u8 unknown_0c[40];
 };
-
-
-#define GLOW_PALETTE ((u16 *)0x050001e8)
 
 
 void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
@@ -169,13 +167,13 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
     rgb[0] = red;
     rgb[1] = green;
     rgb[2] = blue;
-    GLOW_PALETTE[0] = Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
-    GLOW_PALETTE[1] = Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
-    GLOW_PALETTE[2] = Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
-    GLOW_PALETTE[3] = Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
-    GLOW_PALETTE[4] = Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
-    GLOW_PALETTE[5] = Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
-    GLOW_PALETTE[6] = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
+    BG_PLTT_COLOR(15, 4) = Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
+    BG_PLTT_COLOR(15, 5) = Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
+    BG_PLTT_COLOR(15, 6) = Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
+    BG_PLTT_COLOR(15, 7) = Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
+    BG_PLTT_COLOR(15, 8) = Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
+    BG_PLTT_COLOR(15, 9) = Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
+    BG_PLTT_COLOR(15, 10) = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
 }
 
 void GraphicsPalette_DecrementSelectionWrap(struct WorkspaceWork *work)
@@ -202,7 +200,7 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
     sel = ((struct WorkspaceWork *)work)->page;
     switch (sel) {
     case 0:
-        off = 0x20C;
+        off = (u32)&((struct GameState *)0)->message_speed;
         p = (u8 *)&gGameState + off;
         break;
     case 1:
@@ -231,7 +229,7 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
     sel = ((struct WorkspaceWork *)arg0)->page;
     switch (sel) {
     case 0:
-        off = 0x20C;
+        off = (u32)&((struct GameState *)0)->message_speed;
         sp = (u8 *)&gGameState + off;
         if (*sp <= 1) {
             break;

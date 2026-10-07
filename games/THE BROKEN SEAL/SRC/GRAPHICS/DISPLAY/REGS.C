@@ -20,7 +20,6 @@
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
 
-#define FADE_BG_PALETTE ((void *)0x050000c0)
 #define FADE_STEP 1092
 
 void Graphics_ApplyWindowBlendRegisters(void)
@@ -56,7 +55,7 @@ void Palette_StepFadeTransfer(void)
     if (work->fade_frames > 0) {
         s32 step = ++work->fade_step;
 
-        Graphics_ScaleRgb555ClampedFar(battle->palette, FADE_BG_PALETTE,
+        Graphics_ScaleRgb555ClampedFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
             0x10000 - step * FADE_STEP, 128);
         work->fade_frames--;
     }

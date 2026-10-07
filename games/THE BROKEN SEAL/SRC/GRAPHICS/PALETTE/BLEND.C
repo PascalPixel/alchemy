@@ -49,7 +49,7 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
     struct DisplayTransitionState *work = gDisplayTransition;
     volatile u32 fill = 0xf000f000;
-    Dma_Set(&fill, (void *)0x06002000, 0x85000140, REG_DMA3);
+    Dma_Set(&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
     if (color != -1) {
         u32 pattern = 0;
         s32 cnt;
@@ -57,7 +57,7 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color)
         for (cnt = 7; cnt >= 0; --cnt) pattern = (pattern << 4) | color;
         tile = work->solid_tile;
         for (cnt = 7; cnt >= 0; --cnt) *tile++ = pattern;
-        Dma_Set(work->solid_tile, (void *)0x06000000, 0x84000008, REG_DMA3);
+        Dma_Set(work->solid_tile, BG_CHAR_BLOCK(0), 0x84000008, REG_DMA3);
     }
 }
 
@@ -144,7 +144,7 @@ void BattlePalette_UpdateBlend(void)
     q = &gIoWriteQueue;
     {
         u32 bg = (u32)(base + 0x2300);
-        QUEUE_WRITE(bg, 0x05000000, 0x84000070);
+        QUEUE_WRITE(bg, (u32)BG_PLTT, 0x84000070);
     }
-    QUEUE_WRITE((u32)(base + 0x24c0), 0x05000200, 0x84000070);
+    QUEUE_WRITE((u32)(base + 0x24c0), (u32)OBJ_PLTT, 0x84000070);
 }

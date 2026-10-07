@@ -71,7 +71,7 @@ again:
 
 void DisplayTransition_UpdateFrame(void)
 {
-    struct DisplayTransitionFrame *state = *(struct DisplayTransitionFrame **)Ram_DisplayWork;
+    struct DisplayTransitionFrame *state = *Ram_DisplayWork;
     s32 value;
     s32 blend;
     u32 i;
@@ -125,7 +125,7 @@ void DisplayTransition_UpdateFrame(void)
             /* FAKEMATCH: storing the count through a plain u16 pointer keeps it out of the entry stores' alias set, so sched2 finishes the entry address first. */
             *(u16 *)&queue->count = count + 1;
             *destination++ = (u32)state->palette_nibbles;
-            *destination++ = 0x06000000;
+            *destination++ = (u32)BG_CHAR_BLOCK(0);
             *destination = 0x84000008;
         }
         *ime = savedIme;

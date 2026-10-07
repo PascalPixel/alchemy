@@ -55,7 +55,7 @@ Runtime_InstallIwramAndIrqs:
 .L_08013424:
 	.4byte IwramIrqMain
 .L_08013428:
-	.4byte Data_03007ffc
+	.4byte gIrqVector
 .L_0801342c:
 	.4byte Runtime_IrqHandlers
 .L_08013430:

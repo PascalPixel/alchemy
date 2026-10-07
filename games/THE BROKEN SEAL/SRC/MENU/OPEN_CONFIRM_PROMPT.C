@@ -20,12 +20,10 @@
 #include "BATTLE_RUNTIME.H"
 #include "FAR_RUNTIME.H"
 #include "BATTLE_CALC.H"
+#include "EVENTWRK.H"
 #include "text/MSG_IDS.H"
 
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
-
-#define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
-
 
 s32 Party_ListActiveOwnersFar(u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
@@ -86,11 +84,11 @@ s32 Menu_OpenConfirmPrompt(void)
         &high, &unused, &low);
     Menu_EnsureCancelSound();
     if (result == 1) {
-        void *target = ((void **)&gMenuCtrlWork)[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
+        struct EventWork *target = ((struct EventWork **)&gMenuCtrlWork)[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
         u16 flags;
         BattleAction_Get(0x3fff & state->pane_action[0]);
         flags = low | (high << 10);
-        FIELD(target, u16, 0x17e) = flags;
+        target->psynergy_request = flags;
     }
     RenderOutput_ClearListFar(state->status_window);
     ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 1;

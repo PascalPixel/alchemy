@@ -385,26 +385,8 @@ Func_02000384:
 	.2byte 0x0000
 .L_020083c8:
 	.4byte gMapCellBuffer
-	.section .text.x020083cc,"ax",%progbits
-	.global Func_020003cc
-	.thumb_func
-Func_020003cc:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	movs r5, #60
-.L_020083d2:
-	cmp r5, #0
-	beq .L_020083e4
-	movs r0, #1
-	bl WaitFrames
-	ldr r3, [r6, #40]
-	subs r5, #1
-	cmp r3, #0
-	bne .L_020083d2
-.L_020083e4:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x020083e8,"ax",%progbits
+	.balign 4
 	.global Func_020003e8
 	.thumb_func
 Func_020003e8:
@@ -2848,7 +2830,7 @@ Func_02001560:
 	adds r0, r7, #0
 	bl Func_02003b58
 	adds r0, r7, #0
-	bl Func_020003cc
+	bl OverlayObject_WaitUntilIdle
 	adds r0, r7, #0
 	bl Func_02003b60
 	adds r0, r7, #0
@@ -2921,7 +2903,7 @@ Func_02001560:
 	adds r0, r5, #0
 	bl Func_02003b58
 	adds r0, r7, #0
-	bl Func_020003cc
+	bl OverlayObject_WaitUntilIdle
 	adds r0, r5, #0
 	bl Func_02003b60
 .L_02009844:
@@ -3554,9 +3536,9 @@ Func_02001cc8:
 	movs r3, #3
 	strb r3, [r7]
 	adds r0, r6, #0
-	bl Func_020003cc
+	bl OverlayObject_WaitUntilIdle
 	adds r0, r6, #0
-	bl Func_020003cc
+	bl OverlayObject_WaitUntilIdle
 	movs r0, #188
 	bl Func_02003cd8
 	movs r5, #0

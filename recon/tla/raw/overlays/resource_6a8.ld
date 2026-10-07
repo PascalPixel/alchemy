@@ -10,7 +10,7 @@ SECTIONS
         "*/resource_6a8_overlay.o"(.text.x020080b8)
         "*/resource_6a8_overlay.o"(.text.x02008280)
         "*/resource_6a8_overlay.o"(.text.x02008290)
-        "*/resource_6a8_overlay.o"(.text.x020082a0)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/DISTANCE.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x020082d8)
         "*/resource_6a8_overlay.o"(.text.x020083bc)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A8/SCENE_TABLES.o"(.text)

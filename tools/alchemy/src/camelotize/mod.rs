@@ -15,7 +15,7 @@ use crate::targets::{target_for, DecompTarget, DecompTargetId};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy camelotize [--dry-run] REWRITE FILE.c...
+const USAGE: &str = r#"usage: alchemy camelotize [--dry-run] REWRITE FILE.C...
 Applies Alchemy's mechanical source cleanup in place and prints how
 many places changed in each file; --dry-run counts them and writes
 nothing. REWRITE is one of:

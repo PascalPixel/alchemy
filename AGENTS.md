@@ -179,11 +179,10 @@ or functions is exactly this cheating.
   ```
 
   - Layout: `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT`, the same folders
-    in both games and `games/COMMON`. New and camelotized C source and header
-    files have lowercase names and `.c` / `.h` extensions; use meaningful
-    stems, with underscores when useful. Rename a file and its actual include
-    and linker references together. Existing uppercase dependencies keep their
-    exact spelling until their owning module is migrated.
+    in both games and `games/COMMON`; uppercase 8.3 file names, `.C` and
+    `.H` (Pascal, 2026-10-08). Directives stay lowercase (`#include`): the
+    preprocessor reads no other. Rename a file and its include and linker
+    references together.
     Shared code and declarations live once in `games/COMMON`; a function is
     adopted into the module that holds its linker neighbours, not into a new
     file of its own.
@@ -240,7 +239,7 @@ or functions is exactly this cheating.
     comments, organization and byte identity, preserving necessary casts,
     hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
   - The showcase is `BtlTgtExec` in
-    `games/THE BROKEN SEAL/SRC/BATTLE/tgtexec.c`.
+    `games/THE BROKEN SEAL/SRC/BATTLE/TGTEXEC.C`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in

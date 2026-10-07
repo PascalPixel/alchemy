@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 273 of 2455 (listing 2455, draft 2454, common 2318).
+/* 080ea0d8: differ 238 of 2455 (listing 2455, draft 2455, common 2336).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -51,6 +51,8 @@
  *   8 (rematerialised), the burst block its own high (441).
  * - The new objects clear part[0].priority through the bitfield: the native
  *   masks the byte with an SImode ~12 hoisted to r8 (441 -> 273).
+ * - draw[0] after the first loop reads gWorkSlot[46] as an array element (base
+ *   plus 184, as the native), not the folded literal (238).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -473,7 +475,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
     Runtime_ReleaseHeapBlock(46);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER];
+    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet, work->sheet + 0x4000, 1, 1);
 
     {

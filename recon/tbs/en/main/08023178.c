@@ -118,6 +118,20 @@
  * as the array-address spill slots then shift by 8 (sp+8/12 -> 16/20);
  * kept as gWindowWork[42] until the spill order is understood.
  *
+ * Merged from a parallel session 2 (2026-10-06) whose body scored 769
+ * (this body 89, kept): face sprite tile read through a pointer fetched
+ * before the attribute stores 1087 -> 1085; the name sprite through a
+ * pointer declared before icons (native keeps &objName at sp+28) 873 ->
+ * 845; the cursor movement index as its own variable k, not the shared
+ * count n (native r5, &cur in r6) 845 -> 769. Rejected there: the list
+ * search reading list[n] directly 780; a separate djinn-loop index j 1148,
+ * frame 356; the pixel zero stores after the first window call or inside
+ * its arguments 769 (the store register still r3 where native reuses the
+ * argument's r1); the modifiers read as (s8)(u8) 769; pixel offsets
+ * assigned only when the entry changes (wrong semantics, diagnostic only)
+ * 1028, frame 348. Permuter, 6 minutes on 769: best 750 through
+ * temporaries only (noise, not carried).
+ *
  * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
  * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,
  * sel 272, tbl 284, objCursor 328, objFace 340: declaration order, frame

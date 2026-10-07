@@ -1,7 +1,119 @@
-/* 08026080: listing 1585, draft 1585, differ 106 (common 1532); both
+/* 08026080: listing 1585, draft 1585, differ 102 (common 1534); both
  * frames are 324 bytes. Every remaining difference is a spill slot offset
  * below sp+48 (see the hash analysis below); every instruction, register
  * and order matches.
+ * Session S07-08026080/4 (102, nothing kept):
+ * - dead register initializers reach GCSE too: each local initialized at
+ *   its declaration (= 0) adds one real insn after addressof and flow
+ *   deletes it; 29 of them (found ... result, i, j, n, y, total, matrix,
+ *   slotId, pending, cursor, redraw, slot, unit, who, head, window,
+ *   runtime, and the confirm block's id and k) give 1440 insns, 721
+ *   buckets, code unchanged (102); with three more efx.angle stores, 1446
+ *   and 725 buckets: differ 2, the same 2 as the efx.angle bed. entry = 0
+ *   (355) and cnt = 0 (118) change the code. So the slot problem is only
+ *   the count, but there are too few locals for an honest initializer
+ *   habit to supply 34 to 41; not kept (a device for the lead's call).
+ * - on that bed, the loop head: s32 id = ids[cursor] as the loop body's
+ *   first declaration 10 (the pending store moves below the loads); n =
+ *   ids[cursor] after pending = 0, 1004; pending = 0 after the call 12;
+ *   cursor[ids] 24 (address rebuilt from sfp, draft 1587).
+ * - RTL at the head (bed): gcse leaves (set 273 1421) (ids) and (set 275
+ *   1422) (cursor * 2) before insn 919; cse2 substitutes both into 919's
+ *   address and the copies die. The cursor * 2 computation (insns 5175,
+ *   5940) sits after loop-back label 5214 and before label 902, which the
+ *   preheader's jump 5211 enters, so the loads are a block of their own
+ *   in both builds.
+ * Session S07-08026080/3 (102, nothing kept), measured on the 725-bucket
+ *   bed (eighteen dead efx.angle stores, differ 2, diagnosis only):
+ * - the last 2 are sched2's tie: in the bed's block from label 821 the
+ *   reloads 6118 (r2 <- ids) and 6121 (r3 <- cursor * 2) both have
+ *   priority 121 and five forward dependents (6118: 838 845 874 885 909,
+ *   r2's next set is the ldrh at 885; 6121: 838 845 848 874 909, r3's
+ *   next set is 848), neither depends on the last scheduled store 6115,
+ *   so rank_for_schedule falls to INSN_LUID and keeps reload's emission
+ *   order. find_reloads_address_1's REG/REG case pushes op0 (ids, as
+ *   base, BASE_REGS) before op1 (cursor * 2, index, LO_REGS); LO_REGS
+ *   sorts first in reload_order, which is why the index takes r3 and the
+ *   base r2, but emit_reload_insns emits by reload number. (plus cursor*2
+ *   ids) would print [r2, r3] with r2 = cursor * 2, so the native RTL is
+ *   (plus ids cursor*2) as here, and its r3 load is likely no reload of
+ *   this insn but insn 836 (set (reg 275) (reg 1411)) surviving to local
+ *   alloc, which gives 275 r3, so 836 loads 1411's slot first. cse2
+ *   folds 836 here because 1411 is the qty's first reg; make_regs_eqv
+ *   makes 275 canonical only when 275 outlives the block and 1411. Find
+ *   the source shape that keeps that copy (or adds a sixth dependent to
+ *   the r3 load).
+ * - trials at the loop head: *(ids + cursor) 118 and cursor[ids] 118 on
+ *   the draft (the address is rebuilt from sfp, draft 1587); n = cursor
+ *   then ids[n] on the bed: 2 (cse1 folds n into cursor); y replaced by
+ *   pos.y in the cursor block: 446 on the draft, buckets unchanged (707).
+ *   Permuter 5 min, PERM_RANDOMIZE over head/pending/the call/the two
+ *   word stores/tile on the bed: 2,389 candidates, no gain.
+ * Session S07-08026080/2 (102), kept:
+ * - case 4 tests unit->delusion ... unit->death_count directly, as case 6
+ *   does; the five pointer locals pd..pc are gone. Code identical (102,
+ *   1411 insns after addressof): CSE keeps the field addresses in
+ *   registers by itself.
+ * Measured, not kept:
+ * - the last 2 are not a bucket effect: with 58 dead efx.angle stores
+ *   (about 765 buckets, also a native slot order) the slots match and the
+ *   same 2 remain, as at 725 and 727. In greg, insn 838 (zero_extend (mem
+ *   (plus ids cursor*2))) takes reloads r2 <- ids slot (6073) and r3 <-
+ *   cursor*2 slot (6076); sched2 ranks the two equal (priority 121, five
+ *   dependents each) and keeps reload order, so native's reload emitted
+ *   the cursor*2 load first with the same registers. Thumb's
+ *   BASE_REG_CLASS is BASE_REGS and INDEX_REG_CLASS LO_REGS, so
+ *   reload_order follows which operand is reloaded as base; read
+ *   find_reloads_address_1's REG/REG case and choose_reload_regs next.
+ * - at 765: head = entries after the call 14 (pos and head addresses
+ *   swap r5/r6); the id in n before pending = 0: 1002. Permuter 5 min over
+ *   head/pending/the call (1826 candidates): no gain. At 725, the main
+ *   loop as do { ... } while (redraw != 0): the same 2. Elsewhere (the
+ *   name drawing, the confirm block) native reloads ids then cursor*2, so
+ *   only the loop head emits the index first; a separate pseudo copied
+ *   into r3 before insn 838 would explain it (untested).
+ * - flow (life) deletes 106 insns after cse2, 67 of them present at GCSE;
+ *   combine deletes 157 more. Live lengths come from life, so insns that
+ *   flow deletes leave pos's priority alone, while tails that jump2
+ *   merges stay through global and lengthen pos (the cross-jump lead's
+ *   problem).
+ * Session S07-08026080/1 (from 106), kept:
+ * - head = entries as the main loop's first statement: (plus sfp -88) is
+ *   now computed in the loop, PRE hoists it and numbers its reaching
+ *   register in bucket order, as native: 102. The six spilled PRE
+ *   pseudos now sit in native order apart from one rotation: draft efx 36,
+ *   selSlot 32, tbl 28, head 24, ids 20, cursor * 2 16 against native tbl
+ *   36, head 32, ids 28, cursor * 2 24, efx 20, selSlot 16 (the bucket
+ *   wrap, 707 buckets: max_cuid 1414 or 1415, 1411 real insns after
+ *   addressof).
+ * Diagnostic, not kept: with head in the loop, eighteen extra dead
+ *   efx.angle = 0 stores before the real one (two insns each at GCSE,
+ *   flow deletes them) give 725 buckets and differ 2; thirty-seven give
+ *   745 buckets, 102. So the table size is the whole slot problem. The
+ *   last 2 at 725: the main loop's first ids[cursor] load reloads its two
+ *   spilled address pseudos base first (ldr r2, [sp, #28]; ldr r3,
+ *   [sp, #24]) where native loads the index first; lreg has (plus (reg
+ *   ids) (reg cursor*2)), so native likely has the operands the other way
+ *   round there. pending = 0 before head = entries: same 2.
+ *   Twenty stores give 727 buckets and differ 2 as well (1451 insns after
+ *   addressof). Target: 1445 to 1452 real insns after addressof (725 or
+ *   727 buckets) against 1411 now, or 1373 to 1376 (689).
+ * - the spread loop as for (i = 0; (u32)i < spread; i++): no change (102,
+ *   1411 insns), kept as the plainer form.
+ * Lead, not kept: jump2 cross-jumps (JUMP_CROSS_JUMP after reload), so a
+ *   tail the native wrote out in every case is merged into one copy in
+ *   the output, but every copy counts at GCSE. The no-condition drawing
+ *   (nibble 2, 0x8A3, nibble 15) written out in cases 5, 3, 4 and 6
+ *   instead of goto no_condition: 1443 insns, 723 buckets, differ 447;
+ *   in cases 4 and 6 only: 1432, 717, 449. Both lengthen pos's live range
+ *   so pos spills and loses fp (draft 1586: one register copy more,
+ *   frame 320), the old pos/0 priority problem. Next: the tail written
+ *   out in all four cases plus 2 to 9 more such insns, with pos kept in
+ *   fp; check case 7's own nibble 2/15 pair and the other gotos
+ *   (frame_tail, draw_name, step_back) for tails the native wrote out.
+ * Bitfield stores cannot explain the extra insns: SLOW_BYTE_ACCESS is 0,
+ *   so field writes take the narrowest mode, while native stores the
+ *   entry's word at +4 whole.
  * Session T10-08026080/4 (from 116), kept:
  * - the clear loop as for (i = 0; i < 6; i++) tbl[i].flags = 0: loop's
  *   dbra reversal (one store to a giv of i) turns it into the native
@@ -259,11 +371,6 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct CursorSlot *slot;
     struct SelectionSprite *entry;
     struct SelectionSprite *head;
-    u8 *pd;
-    u8 *ps;
-    u8 *pl;
-    u8 *pp;
-    u8 *pc;
     struct BattleUnit *who;
 
     runtime = gBattleWork;
@@ -362,8 +469,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         tbl[0].y = 0x80;
     }
     window = UiWindow_Create(0, 12, 30, 4, 74);
-    head = entries;
     while (1) {
+        head = entries;
         pending = 0;
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
         ((s32 *)head)[1] = 0x40002000;
@@ -409,9 +516,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         cnt = 0;
         for (i = 0; i < 6; i++)
             tbl[i].flags &= (u8)~2;
-        i = 0;
-        if ((u32)i < spread) {
-            do {
+        for (i = 0; (u32)i < spread; i++) {
+            {
                 n = cursor + i;
                 if (n < total && ids[n] != 0xFE) {
                     selIds[cnt] = ids[n];
@@ -433,8 +539,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     selSlot[cnt] = (u8)(6 - i);
                     cnt++;
                 }
-                i++;
-            } while ((u32)i < spread);
+            }
         }
         for (i = 0; i < 6; i++) {
             if ((tbl[i].flags & 2) == 0)
@@ -507,15 +612,15 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             goto frame_tail;
         case 4:
             count = 0;
-            if (*(pd = &unit->delusion) != 0)
+            if (unit->delusion != 0)
                 count = 1;
-            if (*(ps = &unit->stun) != 0)
+            if (unit->stun != 0)
                 count++;
-            if (*(pl = &unit->sleep) != 0)
+            if (unit->sleep != 0)
                 count++;
-            if (*(pp = &unit->psy_seal) != 0)
+            if (unit->psy_seal != 0)
                 count++;
-            if (*(pc = &unit->death_count) != 0)
+            if (unit->death_count != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -528,23 +633,23 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
-            if (*pd != 0) {
+            if (unit->delusion != 0) {
                 UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
-            if (*ps != 0) {
+            if (unit->stun != 0) {
                 UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (*pl != 0) {
+            if (unit->sleep != 0) {
                 UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (*pp != 0) {
+            if (unit->psy_seal != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
                 ++count;
             }
-            if (*pc != 0) {
+            if (unit->death_count != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }

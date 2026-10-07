@@ -1,5 +1,26 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Stock agbcc_arm (2026-10-07, completion session): listing 196, draft 196,
+ *   common 158, differ 76. x in native r9 gives 117 -> 97; width loaded in
+ *   incoming r0 through a tagged local and empty constraint removes the
+ *   window reload and puts idx in native ip (97 -> 82). Starting each pixel
+ *   column before row calculations, as a while loop, gives 78; preserving
+ *   condition codes across the width boundary gives 76.
+ *   Remaining: initial scheduling, code's r2/lr join, glyph address/width
+ *   allocation and shared rows store, colour initialization, next-row
+ *   scheduling, pixel address scheduling, and the last row-pointer reload.
+ *   Trials from 117: u16 gw 129; signed idx 121; fixed idx ip 170;
+ *   idx barrier 144, also fixing ip 160; explicit wide-path gotos 148.
+ *   From x=r9 (97): fixed code lr 122; also col lr 96; also idx/bits ip 104;
+ *   ch CSE barrier 96; offset barriers 85; fixed ofs r3 92 with or without
+ *   offset barriers, then fixed idx/bits ip 100. Not retained.
+ *   Three-minute source search, seed11/jobs2: weighted2540 ->2290, differ152,
+ *   15 rewrites; not retained (extra temporary and guarded constant loop).
+ *   From width-r0 (82): fixed code/col lr 85 (195 instructions); signed gw
+ *   unchanged; direct ch-222 at join 87. From column-first loops (78):
+ *   sub before ty 134; idx read/write in width barrier 124; cc clobber 76.
+ *   From76: separate pos/part/shift locals in pixel macro 248; mask before
+ *   destination declaration 282. Original pixel expression retained.
  * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 138, differ 117.
  *   127 to 117: row = 0 first in the pass setup, before next and bits (permute's reorder);
  *   bits = rows[0] before next = rows + 1: no change (117).
@@ -108,7 +129,7 @@ extern struct UiTextGlyph UiText_Glyphs[];
     *dst = (*dst & ~mask) | (mask & color); \
 }
 
-s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font)
+s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 y, u8 *font)
 {
     u16 *rows;
     s32 ret;
@@ -124,9 +145,17 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
     struct UiTextGlyph *glyph;
     struct UiTextWideGlyph *wide;
     u32 ofs;
+    /* FAKEMATCH: native x uses r9; ordinary allocation swaps r9/sl in both paths (117 differences). */
+    register u32 x asm("r9") = xpos;
 
     idx = ch - 32;
-    width = win->width;
+    {
+        /* FAKEMATCH: native width uses incoming r0; ordinary allocation reloads win and takes r2 (97 differences). */
+        register u32 w asm("r0") = win->width;
+        /* FAKEMATCH: retain r0's width load (97 to 82); cc keeps the comparison after it (78 to 76). */
+        asm("" : "+r"(w) : : "cc");
+        width = w;
+    }
     if (idx > 111)
         return 1;
     if (ch < 256 || (font != 0 && ch - 222 < 2)) {
@@ -142,9 +171,10 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             u32 ty;
 
             for (row = 0; row < 8 && y + row < 32; row++) {
+                col = 0;
                 ty = (y + row) >> 3;
                 sub = ((y + row) & 7) * 2;
-                for (col = 0; col < 8; col++) {
+                while (col < 8) {
                     if (col & 1)
                         b >>= 4;
                     else
@@ -155,6 +185,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
                         if (px >> 3 < 30)
                             UiText_PlotPixel(width, px, ty, sub, color);
                     }
+                    col++;
                 }
             }
             return w;
@@ -203,15 +234,17 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
         bits = rows[0];
         bits <<= 16;
         while (y + row < 32) {
+            col = 0;
             ty = (y + row) >> 3;
             sub = ((y + row) & 7) * 2;
-            for (col = 0; col < 14; col++) {
+            while (col < 14) {
                 if (bits < 0) {
                     px = x + col;
                     UiText_PlotPixel(width, px, ty, sub, color);
                 }
                 if ((bits <<= 1) == 0)
                     break;
+                col++;
             }
             if (++row >= 12)
                 break;

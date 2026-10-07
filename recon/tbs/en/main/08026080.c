@@ -30,7 +30,8 @@
  *   loop): 1155 alone, 1044/1046/1036 with st and head[i], no change with
  *   side (dropped); unit without st on 669: 1041; on 624, the name
  *   character in nx instead of n 630, the pending loop counting with j
- *   1119. Permuter 5 min over the
+ *   1119, case 6's count as its own local no change, the cursor sine in
+ *   width instead of i 624 (draft 1595). Permuter 5 min over the
  *   pending loop (st and head[i], 1046): 18 candidates, no gain.
  * The pending loop still differs: native computes entry = head + 1 after
  *   the i < cnt guard and steps a selIds byte offset (from 2) spilled at

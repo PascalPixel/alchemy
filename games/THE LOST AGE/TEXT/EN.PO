@@ -16635,7 +16635,7 @@ msgctxt "message"
 msgid "04156"
 msgstr "{button_icon:3}-{button_icon:4}:Rearrange"
 
-msgctxt "message"
+msgctxt "MsgExpLabel"
 msgid "04157"
 msgstr "Exp"
 

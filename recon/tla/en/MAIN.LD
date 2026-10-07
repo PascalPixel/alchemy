@@ -1707,7 +1707,7 @@
         "*/games/THE LOST AGE/SRC/MENU/CURSOR.o"(.text)
         "*/recon/tla/raw/080ff2e8.o"(.text)
         "*/recon/tla/raw/080ff370.o"(.text)
-        "*/recon/tla/raw/080ff5bc.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/ITEM_OWNER_STATUS.o"(.text)
         "*/recon/tla/raw/080ff7b4.o"(.text)
         "*/recon/tla/raw/080ff850.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/ABILITY/RANGE_PAGE.o"(.text)

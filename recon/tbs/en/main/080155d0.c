@@ -1,5 +1,19 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * English colour setup (2026-10-08): listing196, draft196, common191,
+ *   differ10. Extending the original width/r0 lifetime permits both native
+ *   colour registers without reloading width. A short first-colour/r1
+ *   boundary then restores r1/r2, and r2/r3 clobbers prevent early second-
+ *   colour/table setup (12 to10 overall). All remaining differences are
+ *   instruction order: width spill, first-colour spill, font width lookup
+ *   around the row reset/compare, and the final row-pointer spill.
+ *   Trials: width lifetime alone38; long index/ip48, short index/ip58;
+ *   paired colour/width with ordinary index18, deferred second colour and
+ *   width lookup16, scratch clobbers10. Memory/cc clobbers and the first
+ *   width input proved redundant and were removed. Removing the second
+ *   width witness gives24; dropping r2 gives14, dropping r3 gives12;
+ *   read-only first colour gives66 and removes its native spill. Kept the
+ *   smallest measured form; only the prologue copy is executable asm.
  * Follow-ups from12 (2026-10-08), not retained: a single tail-shift asm,
  *   with or without the row-coordinate input, stays12 but moves the compare
  *   after the shift/spill. Explicit character limits32..143 are unchanged.
@@ -443,6 +457,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
 #if defined(TBS_EDITION_EN)
     /* FAKEMATCH: native y uses r7; constrained row pointers otherwise swap r7/r8 through both loops. */
     register u32 y asm("r7");
+    /* FAKEMATCH: extending the original width/r0 lifetime restores native colour registers; reading width again adds a load, while ordinary C uses r0 for the first colour (12 to10). */
+    register u32 w0 asm("r0");
 #else
     /* FAKEMATCH: continental native y uses r8; the English binding swaps r7/r8 through both loops (127 differences). */
     register u32 y asm("r8") = ypos;
@@ -475,13 +491,10 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     if (ch < 256 || font != 0) {
 #else
     idx = ch - 32;
-    {
-        /* FAKEMATCH: native width uses incoming r0; ordinary allocation reloads win and takes r2 (97 differences). */
-        register u32 w asm("r0") = win->width;
-        /* FAKEMATCH: retain r0's width load (97 to 82); cc keeps the comparison after it (78 to 76). */
-        asm("" : "+r"(w) : : "cc");
-        width = w;
-    }
+    w0 = win->width;
+    /* FAKEMATCH: retain r0's width load (97 to 82); cc keeps the comparison after it (78 to 76). */
+    asm("" : "+r"(w0) : : "cc");
+    width = w0;
     if (idx > 111)
         return 1;
     if (ch < 256 || (font != 0 && ch - 222 < 2)) {
@@ -489,19 +502,37 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
         if (font != 0) {
             u32 b;
             u8 *src = font + ch * 32;
+#if defined(TBS_EDITION_EN)
+            u32 c1;
+            u32 c3;
+#else
             u32 c1 = 0x1111;
             u32 c3 = 0x3333;
+#endif
             u8 *wp = UiSprite_CursorFrameTiles + 0x800;
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             s32 w;
 #else
-            s32 w = wp[idx];
+            s32 w;
 #endif
             u32 px;
             u32 sub;
             u32 color;
             u32 ty;
 
+#if defined(TBS_EDITION_EN)
+            {
+                /* FAKEMATCH: native reuses source-pointer/r1 for its first colour; ordinary C uses r0. */
+                register u32 a asm("r1") = 0x1111;
+                /* FAKEMATCH: native finishes the first colour before reusing r2/r3 for the second colour and width table; dropping r2 gives14, r3 gives12, readonly gives66. */
+                asm("" : "+r"(a) : : "r2", "r3");
+                c1 = a;
+            }
+            c3 = 0x3333;
+            /* FAKEMATCH: retaining the original width/r0 through colour setup keeps the second colour in native r2; shortening this lifetime gives24 instead of10. */
+            asm("" : : "r"(w0));
+            w = wp[idx];
+#endif
 #if !defined(TBS_EDITION_EN)
             {
                 /* FAKEMATCH: native computes the width-table index in r3 before indexing its base; ordinary C biases the base by -32. */

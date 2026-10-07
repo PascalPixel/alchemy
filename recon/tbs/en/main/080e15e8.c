@@ -1,7 +1,18 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1638, common 1450, differ 378 (frame 336 as
-   native; the frame-loop preheader now matches the native's exactly
-   but for the sp+24 store).
+   listing 1640, draft 1638, common 1505, differ 268 (frame 336 and
+   every frame-loop slot as native, sp+24 included).
+   n = count * 2 - i * 48 - 256 in one expression gives the native's
+   sp+24: with frame * 4, GCSE's PRE gives the three-streams preheader's
+   frame << 2 the same reaching register as the smoke block's second
+   frame << 2 (copied after its first), so that register is set twice
+   and is no giv of the frame loop; count << 1 is an expression of its
+   own, PRE hoists it once, and the frame loop reduces it to sp+24 and
+   the inner giv to count * 2 - i * 48, adding -256 inside, as native.
+   Remaining (268): r8 and sl swapped in the ring, three-streams and
+   ring-burst loops; 0x1fe0000 kept in r5 across the RatioMulQ14 call
+   (native rebuilds it); the ramp smoke calls keep y in r6 and rebuild
+   32 (native: y in r8, 32 in r6 for both); reload registers of the
+   frame-loop latch; r5/r7 swapped in the particle draw loop.
    The ramp's two smoke calls take (frame - 151) * 20 - 12 for y, not
    h - 56: the native reloads the h giv from its slot for it (h - 56
    kept h in r8 through the ramp block).
@@ -122,7 +133,11 @@
      from the permuter on 601): 563; ring store as
      sheet[offset + (rings + j)]: 378.
    - permuter, 5 minutes on 601 over the whole function: 422, from
-     the same scale rewrite this draft carries; nothing else held. */
+     the same scale rewrite this draft carries; nothing else held.
+   - on 378: n = frame * 4 - i * 48 - 256 again: 633 (inner loop as
+     native, but PRE's twice-set frame << 2 register is no outer giv);
+     y as h - 56 on that: 659; n = count * 2 - i * 48 - 256: 268,
+     adopted. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -354,8 +369,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 pts[i].y = (pts[i].y >> 16) + 60;
             }
             for (i = 0; i != 3; i++) {
-                n = frame * 4 - 256;
-                n -= i * 48;
+                n = count * 2 - i * 48 - 256;
                 if (n > 48) {
                     n = 48;
                 }

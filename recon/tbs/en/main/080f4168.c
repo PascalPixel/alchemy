@@ -1,4 +1,19 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2034, differ 1636.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1581.
+ * All four affine accesses now retain their native read/modify/write
+ * lifetimes. Separate reads/stores reload the base after OR, instead of
+ * recopying the offset. Short base bindings use r2 for b and r1 for c/d;
+ * the third store's base remains live for the fourth read. That removes
+ * one excess base load and restores native's146-byte loop backedge. Shift
+ * inputs stay r2 until copied to sl, and the last words stay r3. The loop
+ * counter/update registers also match.2034/1636 ->2033/1581, frame768.
+ * Second-access trials: plain split2034/1640; base/r2 1632 but halfword
+ * hoists into the first store; store boundary1634; shifted r2/sl1626.
+ * Tail trials: plain split/reused base2033/1651; base/r1 1609; word/r3 1593;
+ * shift/r2 1583. Third base before the shift in source remains1583; one
+ * empty boundary exchanges that difference for reversed loads, still1583;
+ * the halfword-before-base memory boundary then gives the retained1581.
+ * Remaining affine differences: depth cursor spill32 rather than4, setup
+ * registers/order, zero loads swapped between r1/r2, and pool placement.
  * The first affine access now retains native's sl copy and later r1 reload.
  * A short shifted value in r2, C copy to sl, empty memory boundary observing
  * both values, then scoped base/r2 makes that complete access instruction
@@ -1025,18 +1040,66 @@ void LuckyDice_Run(void)
                     __asm__ volatile("" : "+r"(p));
                     *(u32 *)((u8 *)p + offa) |= term;
                 }
-                obj = sprites;
-                /* FAKEMATCH: native reloads the object base for each affine field. */
-                __asm__ volatile("" : "+rm"(obj));
-                *(u32 *)((u8 *)obj + offb) |= *pb << 16;
-                obj = sprites;
-                /* FAKEMATCH: native reloads the object base for each affine field. */
-                __asm__ volatile("" : "+rm"(obj));
-                *(u32 *)((u8 *)obj + offc) |= *pc << 16;
-                obj = sprites;
-                /* FAKEMATCH: native reloads the object base for each affine field. */
-                __asm__ volatile("" : "+rm"(obj));
-                *(u32 *)((u8 *)obj + offd) |= *pd << 16;
+                /* FAKEMATCH: native completes the first object store before reading the second halfword; otherwise the read hoists and uses r1. */
+                __asm__ volatile("" : : : "memory");
+                {
+                    /* FAKEMATCH: native second halfword also passes from r2 to sl; ordinary source selects r1. */
+                    register u32 term asm("sl");
+                    /* FAKEMATCH: keep native's r2 shift before r2 becomes the object base. */
+                    register u32 shifted asm("r2") = (u32)*pb << 16;
+                    u32 word;
+                    /* FAKEMATCH: native second affine base uses r2, then is reloaded there after its lifetime ends at the field load. */
+                    register struct LuckyDiceSprites *p asm("r2");
+
+                    term = shifted;
+                    /* FAKEMATCH: native copies the shift before reloading the second object's base. */
+                    __asm__("" : "+r"(term) : "r"(shifted) : "memory");
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the object base before reading the second affine field. */
+                    __asm__ volatile("" : "+r"(p));
+                    word = *(u32 *)((u8 *)p + offb);
+                    word |= term;
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the base after OR; otherwise the compiler recopies the offset instead. */
+                    __asm__ volatile("" : "+r"(p));
+                    *(u32 *)((u8 *)p + offb) = word;
+                }
+                {
+                    /* FAKEMATCH: native last two halfwords pass through r2 into sl before their offset uses r2. */
+                    register u32 term asm("sl");
+                    /* FAKEMATCH: native shift source is r2; the unconstrained word lifetime uses r3. */
+                    register u32 shifted asm("r2") = *pc;
+                    /* FAKEMATCH: native keeps the last two affine words in r3, leaving r2 for their offsets. */
+                    register u32 word asm("r3");
+                    /* FAKEMATCH: native third/fourth affine base uses r1; the unconstrained split uses r2 and shifts both field registers. */
+                    register struct LuckyDiceSprites *p asm("r1");
+
+                    /* FAKEMATCH: native reads the third halfword before reloading the base; the following shift boundary alone reverses those loads. */
+                    __asm__("" : "+r"(shifted) : : "memory");
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the third base between halfword load and shift; source order alone leaves the shift first. */
+                    __asm__("" : "+r"(shifted) : "r"(p));
+                    shifted <<= 16;
+                    term = shifted;
+                    /* FAKEMATCH: native reloads the base before reading the third affine field. */
+                    __asm__ volatile("" : "+r"(p), "+r"(term) : "r"(shifted));
+                    word = *(u32 *)((u8 *)p + offc);
+                    word |= term;
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the base after OR before storing the third affine field. */
+                    __asm__ volatile("" : "+r"(p) : "r"(word));
+                    *(u32 *)((u8 *)p + offc) = word;
+                    shifted = (u32)*pd << 16;
+                    term = shifted;
+                    /* FAKEMATCH: native consumes the shifted halfword before reusing r2 for the fourth offset. */
+                    __asm__("" : "+r"(term) : "r"(shifted));
+                    word = *(u32 *)((u8 *)p + offd);
+                    word |= term;
+                    p = sprites;
+                    /* FAKEMATCH: native keeps the third store's base for the fourth read, then reloads it after OR. */
+                    __asm__ volatile("" : "+r"(p) : "r"(word));
+                    *(u32 *)((u8 *)p + offd) = word;
+                }
             }
         }
 

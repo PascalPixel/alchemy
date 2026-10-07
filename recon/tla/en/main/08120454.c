@@ -14,7 +14,11 @@
  * it again) and adding max_pp / 10 before reading maxu in case 77 to 424
  * (draft 3454, common 3240); ☀️ stays exact. BattleEv_Push declared void for
  * this game (its body here sets no result, and void calls load r0 before r1,
- * as the listing does at 61 of 68 two-argument calls) to 330 (common 3287). The listing reads maxu before
+ * as the listing does at 61 of 68 two-argument calls) to 330 (common 3287).
+ * Then tried for the HP drain, where the listing keeps heal in r5 and the
+ * amount in r6 (ours the reverse): the amount in tmp (384), in a
+ * block-local amt (505), hp read after the halving (557); heal += apwr
+ * before dmg = apwr changes nothing. The listing reads maxu before
  * the division call and shares the add after it with 78 and 7%: reading
  * maxu first instead merges both loads (723); direct reads with maxv as
  * before give 435. Tried and worse: a while loop

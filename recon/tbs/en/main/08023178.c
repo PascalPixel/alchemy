@@ -64,11 +64,25 @@
  * After 89: the write pointer as o = sel; o += i, or &i[sel], 89 (no
  * change: the add keeps sel first where native has i first). Session 4:
  * the pointer as (s8 *)(i + (s32)sel), FAKEMATCH-tagged, 89 -> 87 (the
- * add takes i first, as native). The modifier tests: native looks like
- * the field read in both tests, CSE1 kept apart (its skip-blocks
- * invalidate_skipped_set drops all memory at the store through o) and
- * GCSE joining the loads by alias analysis (o is frame-based), then
- * combine duplicating the load for the first test; untried in this form.
+ * add takes i first, as native). Modifier trials on 87: the field read
+ * directly in both tests, no m, 212 (GCSE's PRE reloads it after the
+ * store through o in the first then-block: o may alias the field); a
+ * named label in the first then-block (diagnostic only: it ends CSE1's
+ * path) with (s8)m < 0, 120, and s8 m assigned in the first test,
+ * (m = field) > 0 then m < 0, 120, or u8 m with (s8)(m = field) > 0
+ * then (s8)m < 0, 120: each shares one ldrsb (mov #0, ldrsb r1) for
+ * both tests, cmp r1 where native has lsl #24, so GCSE also joins the
+ * two sign extensions once CSE1 does not. Native keeps them apart.
+ * Icon loop trials on 87: for (i = 0, x = 112; ...) 87 (no change);
+ * x written as 112 + i * 15 89 (112 then follows i = 0, as native, but
+ * the reduced x is incremented after p); with p = &objIcon[i] as well 89
+ * (the loop end is native's, adds r6, r4, r5, but q's reload moves
+ * before p's); tbl[i] for *q++ 344; p++ before x += 15 89; p++ in the
+ * for header with x as 112 + i * 15, 87 (no change: the loop end and the
+ * p, q reloads are native's, but the reduced x's 112 still comes before
+ * the gVramBlockCache copy into r8 where native has it after). The
+ * help block's r5/r6 swap is global allocation of saved and the
+ * &object->agility address pseudo (r9 + 64): native gives the address r5.
  *
  * Register diagnosis 2026-10-07 (session 2, lreg/greg dumps): with
  * -fcall-used-r4 the call-saved low registers are r5, r6, r7. In the

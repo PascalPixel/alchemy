@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1348, differ 87.
+ * Native 1392 instructions, draft 1391, common 1349, differ 85.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
  * the stat pushes, the djinn rows and the condition list match.
@@ -7,10 +7,13 @@
  * native has lsl #24, bge); the condition loads' sign extension
  * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
  * saved/pointer pair (r5/r6 swapped) and code = 0 set before
- * Runtime_BumpAllocate where native sets it after; the up-key n--
- * scheduled before the 0x6F argument; one literal pool placed two
- * instructions later (and the branch offsets it moves); 112 scheduled
- * later in the icon loop setup.
+ * Runtime_BumpAllocate where native sets it after; one literal pool
+ * placed two instructions later (and the branch offsets it moves); 112
+ * scheduled later in the icon loop setup.
+ *
+ * Session 5 2026-10-07: the up-key n-- after the 0x6F call 87 -> 85
+ * (sched2 moves it across the call to native's slot, after the 0x6F
+ * argument).
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
@@ -404,8 +407,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     }
                 } else if ((keys & 0x40) != 0) {
                     keys = 0;
-                    n--;
                     AudioCommand_PlayFar(0x6F);
+                    n--;
                     if (n < 0) {
                         n = cur.limit - 1;
                         if (cur.mode == 1) {

@@ -7,6 +7,12 @@ struct Output {
 }
 
 pub fn run<S: AsRef<str>>(command: &[S], cwd: impl AsRef<Path>) -> Result<String, String> {
+    run_with_messages(command, cwd).map(|(stdout, _)| stdout)
+}
+
+/// As `run`, and on success also what the command wrote to stderr: a
+/// compiler's warnings.
+pub fn run_with_messages<S: AsRef<str>>(command: &[S], cwd: impl AsRef<Path>) -> Result<(String, String), String> {
     let program = command.first().ok_or("run: empty command")?.as_ref();
     let name = Path::new(program)
         .file_name()
@@ -16,7 +22,7 @@ pub fn run<S: AsRef<str>>(command: &[S], cwd: impl AsRef<Path>) -> Result<String
     let output = spawn(program, &args, cwd.as_ref()).map_err(|error| format!("{name}: {error}"))?;
     let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
     if output.success {
-        return Ok(stdout);
+        return Ok((stdout, String::from_utf8_lossy(&output.stderr).into_owned()));
     }
     let stderr = String::from_utf8_lossy(&output.stderr);
     let detail = if stderr.trim().is_empty() {

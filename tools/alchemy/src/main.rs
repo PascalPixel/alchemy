@@ -76,7 +76,8 @@ Camelotize
   fakematch     every FAKEMATCH tag by device and family, largest first
   camelotize    mechanical rewrites: actors, events, registers,
                 declarations, barriers
-  keep          keep only the edits that leave all twelve editions identical
+  humanize      plainer C for a matching function, its object byte-identical
+  keep        keep only the edits that leave all twelve editions identical
 
 Work in parallel
   queues        split not-yet-C work into queues that cannot collide
@@ -112,6 +113,7 @@ fn main() -> ExitCode {
         "keep" => result(keep::run(rest)),
         "diff" => result(diff::run(rest)),
         "permute" => result(permute::run(rest)),
+        "humanize" => result(permute::humanize::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),
         "sizes" => result(sizes::run(rest)),

@@ -647,7 +647,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant);
 void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode);
-s32 BattleFx_RunSevenMode(s32, s32);
+void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode);
 #ifndef OWN_BattleFx_RunSparkEmitter
 void BattleFx_RunSparkEmitter(struct SparkObject *object);
 #endif

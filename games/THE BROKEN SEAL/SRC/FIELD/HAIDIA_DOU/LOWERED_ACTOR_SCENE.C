@@ -2,17 +2,8 @@
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
 #include "FIELDOBJ.H"
-#include "CALL.H"
-
-void Object_SetModeById(s32 id, s32 mode);
-
-void Engine_EventBegin();
-void Battle_WaitMode0();
-void ObjectMotion_SetSpeedParameters();
-void Engine_GameFlagSet();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void Engine_EventEnd();
-void Audio_PlayCue();
+#define FIELD_STAGED_ACTOR_IMPORTS
+#include "FIELD_EVENT.H"
 
 void HaidiaDou_RunLoweredActorScene(void)
 {
@@ -23,7 +14,7 @@ void HaidiaDou_RunLoweredActorScene(void)
     if (StagedActor_FindClearPosition(&probe) != 0) {
         SceneActor_MoveAndRedraw(probe);
         Object_SetModeById(11, 3);
-        Call3(ObjectMotion_SetSpeedParameters, 11, 0x4000, 0x8000);
+        Actor_SetSpeed(11, 0x4000, 0x8000);
         ObjectMotion_OffsetPositionAndResetMotion(11, 0, -16);
         Battle_WaitMode0(45);
         Audio_PlayCue(240);

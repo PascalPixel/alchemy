@@ -271,7 +271,25 @@
  * the same register) 70 as the last tie-break (24 files) and 80 as the
  * first after priority (50 files). Session 2's latency of 3 for every
  * load gave 273. None explains these swaps without changing credited
- * code. */
+ * code.
+ * Why the walk and the memory barriers are needed: on Thumb, extendhisi2
+ * loads a signed read through an HImode ldrh, and cse.c's LOAD_EXTEND_OP
+ * reuse then turns it into a subreg of an earlier zero-extended
+ * read of the same field, so an unsigned read first always shares its
+ * load. Reload's round-robin registers in both games say the ROM's RTL
+ * had the unsigned read first, yet kept two loads. Studied with a cc1
+ * that has that reuse removed: plain reads (old = (u16)target->hp;
+ * heal = target->hp; maxu = (u16)target->max_hp; maxv =
+ * target->max_hp; the same for pp) and none of the two walks or four
+ * memory barriers score 60 (common 3420; the heal and PP restore match
+ * outright), against 391 with the admitted cc1. But that cc1 breaks ☀️
+ * English from System_Initialize on (2,406 linked sections differ), so
+ * the reuse itself stays; what keeps it from firing here is still open.
+ * In ☀️'s heal with the admitted cc1, plain reads with each signed read
+ * first keep both loads (heal, old, maxv, maxu: 7 instructions differ;
+ * maxv, heal, old, maxu: 5), but reload then gives old and max_hp's
+ * offset r0 and r4 where the ROM has r4 and r0, the order of an
+ * unsigned-first RTL. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

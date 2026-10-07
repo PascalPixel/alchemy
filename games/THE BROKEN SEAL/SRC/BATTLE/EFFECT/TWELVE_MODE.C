@@ -103,7 +103,6 @@ void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect)
 
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 {
-    /* FAKEMATCH: relative heap-cell loads preserve load and literal order; independent typed slots change both. */
     struct EffectPosition ground;
     struct EffectPosition target_position;
     struct EffectPosition alternate;
@@ -129,8 +128,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
     work = *cursor++;
     canvas = *cursor;
     sheet = heap_cache[2];
-    camera = *(struct BattleCamera **)((u8 *)heap_cache -
-        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
+    camera = heap_cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
     work->effect = effect;
     if (mode == 8)
         BattleFx_BeginCanvasLayer(0);

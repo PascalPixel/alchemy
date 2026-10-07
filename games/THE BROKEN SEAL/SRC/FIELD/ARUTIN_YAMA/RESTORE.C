@@ -13,6 +13,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -750,7 +751,7 @@ void RunEventScript01(void)
     Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
     Audio_PlayCue(103);
     update = (s32)SceneActor_SetActor8ModeByCounterBit;
-    Call2(Engine_TaskAddCallback, update, 0xc80);
+    Task_AddCallback((void (*)(void))update, 0xc80);
     celebrate = (s32)ArutinYama_CelebrateScript;
     Engine_ActorEnableActionCallback(9, celebrate);
     Object_SetActionCallbackAndRefreshById(8, celebrate);

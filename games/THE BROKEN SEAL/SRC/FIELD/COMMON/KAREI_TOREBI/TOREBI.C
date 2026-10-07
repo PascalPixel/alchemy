@@ -15,6 +15,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 
 struct SpriteBytes {
     u8 unknown_00[9];
@@ -568,7 +569,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
-    Call4(Motion_LaunchFromFocusedObject, 1, -16, 0, 0x8000);
+    FieldMotion_LaunchFromFocusedObject(1, -16, 0, 0x8000);
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Engine_EventWait(20);

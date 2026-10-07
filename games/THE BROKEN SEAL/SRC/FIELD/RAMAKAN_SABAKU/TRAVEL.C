@@ -10,6 +10,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 #include "RAMAKAN.H"
 #include "GAME_STATE.H"
 #include "SCENE_IDS.H"
@@ -255,7 +256,7 @@ void RamakanSabaku_PlayStartledRetreat(void)
             rect[1] = rec8;
             rect[2] = rec8;
             record = Actor_Get(ACTOR_PARTY_LEADER);
-            Call3(Vector_AddPolarOffset, -0x100000, record->facing, (s32)rect);
+            FieldVector_AddPolarOffset(-0x100000, record->facing, (struct FieldPosition *)rect);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
             Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);

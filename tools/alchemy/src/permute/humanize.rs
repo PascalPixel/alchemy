@@ -2,9 +2,11 @@
 //! around. For a function that already matches, it tries readability
 //! rewrites and keeps one only when the whole object compiles to exactly the
 //! same bytes as the current spelling (code, literal pools, data, relocations
-//! and symbols) in every edition that compiles the file, and `alchemy
-//! worst`'s score of the function falls. No listing and nothing from the ROM
-//! is read: the current source's own objects are the reference.
+//! and symbols) with the same compiler warnings in every edition that
+//! compiles the file, and `alchemy worst`'s score of the function falls. No
+//! listing and nothing from the ROM is read: the current source's own
+//! objects are the reference. Number bases are `alchemy camelotize
+//! numbers`'s, never this command's.
 //! FAKEMATCH-tagged statements, asm, volatile and register variables are
 //! never touched. The file is written once, at the end, in its own lines
 //! where the rewrites carry into them; then a bare `alchemy keep` judges all
@@ -24,15 +26,17 @@ its object: each candidate is one rewrite of the current best, compiled with
 alchemy diff's steps for FILE.C in every edition of every game that compiles
 it (editions whose preprocessed file is the same are compiled once), and
 kept only when each object file is byte-identical to the current
-spelling's and alchemy worst's score of the function falls (then hex
-numbers, narrow locals, lines and characters break ties). Rewrites: drop a
-value cast (not one of an address or string) or a pointer cast, fold a
+spelling's, the compiler's warnings are the same (sorted, without line
+numbers), and alchemy worst's score of the function falls (then narrow
+locals, lines and characters break ties); so a cast that makes a number of
+a pointer, array or function stays, as GCC warns without it. Rewrites: drop
+a value cast (not one of an address or string) or a pointer cast, fold a
 single-use temporary into its use, merge a
 declaration with its first assignment, widen a u8, s8, u16 or s16 local to
 s32, compound assignment, ++ and --, a negated comparison, a
 do { } while (0) block back to plain statements, a goto over statements to
-an if, a goto back to its label to a do-while, a hex quantity below 0x1000
-outside bit operations and flag arguments to decimal. Left as written: the
+an if, a goto back to its label to a do-while. Numbers keep their base:
+that is alchemy camelotize numbers. Left as written: the
 statement after a FAKEMATCH comment on its own line, the statement a
 FAKEMATCH comment ends the line of, a whole block whose opening line carries
 one, any statement with asm, volatile or register, statements inside #if,
@@ -128,11 +132,10 @@ pub enum Rewrite {
     NegatedComparison,
     OnePass,
     Goto,
-    HexQuantity,
 }
 
 impl Rewrite {
-    pub const ALL: [Rewrite; 11] = [
+    pub const ALL: [Rewrite; 10] = [
         Rewrite::ValueCast,
         Rewrite::PointerCast,
         Rewrite::FoldTemporary,
@@ -143,7 +146,6 @@ impl Rewrite {
         Rewrite::NegatedComparison,
         Rewrite::OnePass,
         Rewrite::Goto,
-        Rewrite::HexQuantity,
     ];
 
     pub fn name(self) -> &'static str {
@@ -158,7 +160,6 @@ impl Rewrite {
             Rewrite::NegatedComparison => "negated comparison",
             Rewrite::OnePass => "do { } while (0) to plain statements",
             Rewrite::Goto => "goto to if or do-while",
-            Rewrite::HexQuantity => "hex quantity to decimal",
         }
     }
 }
@@ -448,37 +449,6 @@ fn is_value_type(tokens: &[String]) -> bool {
     !tokens.is_empty() && tokens.iter().all(|t| VALUE_TYPES.contains(&t.as_str()))
 }
 
-fn hex_value(text: &str) -> Option<u64> {
-    let digits = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X"))?;
-    let digits = digits.trim_end_matches(['u', 'U', 'l', 'L']);
-    u64::from_str_radix(digits, 16).ok()
-}
-
-/// A hex number that reads as a quantity: not a mask (all ones), not a
-/// single bit, and below 0x1000, as camelotize's numbers rule draws it:
-/// fixed point (0x18000), angles (0x3000), addresses and ids that large
-/// keep the hex spelling that shows their unit.
-fn hex_quantity(expr: &Expr) -> bool {
-    let Expr::Number(text) = expr else { return false };
-    let Some(value) = hex_value(text) else { return false };
-    (10..0x1000).contains(&value) && (value + 1) & value != 0 && value & (value - 1) != 0
-}
-
-/// A call of a FLAG or Flag function or macro: its arguments are flag
-/// numbers, which stay hex.
-fn flag_call(expr: &Expr) -> bool {
-    matches!(expr, Expr::Call(callee, _) if matches!(&**callee, Expr::Ident(name) if name.contains("FLAG") || name.contains("Flag") || name.contains("flag")))
-}
-
-/// A hardware register takes fields, not quantities.
-fn register_place(expr: &Expr) -> bool {
-    matches!(expr, Expr::Ident(name) if name.starts_with("REG_"))
-}
-
-fn bitwise(op: BinOp) -> bool {
-    matches!(op, BinOp::BitAnd | BinOp::BitXor | BinOp::BitOr | BinOp::Shl | BinOp::Shr)
-}
-
 /// A side-effect-free place: a name, a member of one, or an index by names
 /// and numbers.
 fn pure_place(expr: &Expr) -> bool {
@@ -534,26 +504,6 @@ fn expr_rewrite(kind: Rewrite, expr: &mut Expr, cursor: &mut Cursor) {
                 if matches!(**inner, Expr::Binary(op, ..) if op.is_comparison()) && cursor.hit() {
                     *expr = super::mutate::negate((**inner).clone());
                 }
-            }
-        }
-        Rewrite::HexQuantity => {
-            let convert = |e: &mut Expr, cursor: &mut Cursor| {
-                if hex_quantity(e) && cursor.hit() {
-                    if let Expr::Number(text) = e {
-                        let suffix: String = text.chars().rev().take_while(|c| matches!(c, 'u' | 'U' | 'l' | 'L')).collect::<Vec<_>>().into_iter().rev().collect();
-                        *text = format!("{}{suffix}", hex_value(text).unwrap());
-                    }
-                }
-            };
-            match expr {
-                Expr::Binary(op, a, b) if !bitwise(*op) => {
-                    convert(a, cursor);
-                    convert(b, cursor);
-                }
-                Expr::Assign(op, place, b) if op.is_none_or(|op| !bitwise(op)) && !register_place(place) => convert(b, cursor),
-                Expr::Call(_, arguments) => arguments.iter_mut().for_each(|a| convert(a, cursor)),
-                Expr::Index(_, b) => convert(b, cursor),
-                _ => {}
             }
         }
         _ => {}
@@ -828,10 +778,6 @@ pub fn apply(kind: Rewrite, function: &mut Function, target: usize) -> usize {
         walk_exprs(
             &mut function.body,
             &mut |expr| {
-                // A flag's number stays hex, however it is built.
-                if kind == Rewrite::HexQuantity && flag_call(expr) {
-                    return false;
-                }
                 let mut cursor = cell.borrow_mut();
                 if !cursor.done() {
                     expr_rewrite(kind, expr, &mut cursor);
@@ -860,12 +806,12 @@ pub fn candidates(function: &Function, rng: &mut Rng) -> Vec<(Rewrite, usize)> {
 
 // ---------------------------------------------------------------- objective
 
-/// How mechanical a spelling reads: alchemy worst's score first, then hex
-/// numbers and narrow locals, then lines and characters.
+/// How mechanical a spelling reads: alchemy worst's score first, then
+/// narrow locals, then lines and characters.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Reading {
     pub worst: u32,
-    pub plain: usize,
+    pub narrow: usize,
     pub lines: usize,
     pub chars: usize,
 }
@@ -1042,7 +988,6 @@ pub fn reading_with(function: &Function, mask: &Mask) -> Reading {
     let printed = mask.unmask(&function.print());
     let ranked = crate::worst::rank_source("HUMANIZE.C", &printed);
     let worst = ranked.iter().map(|r| r.score).sum();
-    let magic = ranked.iter().flat_map(|r| r.signals.iter()).filter(|(name, _)| *name == "magic").map(|(_, n)| n).sum::<usize>();
     let mut narrow = 0;
     for stmt in &function.body {
         stmt.each(&mut |s| {
@@ -1053,16 +998,27 @@ pub fn reading_with(function: &Function, mask: &Mask) -> Reading {
             }
         });
     }
-    Reading { worst, plain: magic + narrow, lines: printed.lines().count(), chars: printed.split_whitespace().map(str::len).sum() }
+    Reading { worst, narrow, lines: printed.lines().count(), chars: printed.split_whitespace().map(str::len).sum() }
 }
 
 // ---------------------------------------------------------------- compile
+
+/// What one compile shows the judge: the object's bytes, and the compiler's
+/// and assembler's messages sorted and without line numbers, as camelotize's
+/// trials compare them. A rewrite that keeps the bytes but adds or changes
+/// a warning (an integer made from a pointer, an array or a function
+/// without its cast, which C89 asks for) is refused.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+struct Compiled {
+    bytes: Vec<u8>,
+    warnings: String,
+}
 
 struct Job {
     candidate: PathBuf,
     object: PathBuf,
     steps: Vec<Vec<String>>,
-    reference: Vec<u8>,
+    reference: Compiled,
 }
 
 impl Job {
@@ -1097,18 +1053,20 @@ impl Job {
             }
             *step = out;
         }
-        let mut job = Job { candidate, object, steps, reference: Vec::new() };
+        let mut job = Job { candidate, object, steps, reference: Compiled::default() };
         job.reference = job.compile(base)?;
         Ok(job)
     }
 
-    fn compile(&self, text: &str) -> Result<Vec<u8>, String> {
+    fn compile(&self, text: &str) -> Result<Compiled, String> {
         std::fs::write(&self.candidate, text).map_err(|e| format!("{}: {e}", self.candidate.display()))?;
         let _ = std::fs::remove_file(&self.object);
+        let mut messages = String::new();
         for step in &self.steps {
-            crate::process::run(step, root())?;
+            messages.push_str(&crate::process::run_with_messages(step, root())?.1);
         }
-        std::fs::read(&self.object).map_err(|e| format!("{}: {e}", self.object.display()))
+        let bytes = std::fs::read(&self.object).map_err(|e| format!("{}: {e}", self.object.display()))?;
+        Ok(Compiled { bytes, warnings: crate::camelotize::trial::unnumbered(&messages) })
     }
 
     fn preprocess(&self) -> Result<String, String> {
@@ -1133,9 +1091,9 @@ impl Job {
         std::fs::read_to_string(&preprocessed).map_err(|e| format!("{}: {e}", preprocessed.display()))
     }
 
-    /// The candidate keeps every byte of the object.
+    /// The candidate keeps every byte of the object and every warning.
     fn same(&self, text: &str) -> bool {
-        self.compile(text).is_ok_and(|bytes| bytes == self.reference)
+        self.compile(text).is_ok_and(|compiled| compiled == self.reference)
     }
 }
 
@@ -1206,7 +1164,7 @@ fn humanize_function(options: &Options, jobs: &[Check], unit: &Unit, text: &str,
     let source = |function: &Function| mask.unmask(&splice(&masked, start, end, function));
     // The printer's own spelling must already keep the bytes.
     if !jobs[0].same(&source(&base)) {
-        return Err(format!("{name}: the printed function does not compile to the same object; left as written"));
+        return Err(format!("{name}: the printed function does not compile to the same object and warnings; left as written"));
     }
     let reading = |function: &Function| reading_with(function, &mask);
     let before = reading(&base);
@@ -1310,8 +1268,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         match humanize_function(&options, &jobs, &unit, &text, name) {
             Ok((out, before, after, kept)) => {
                 println!(
-                    "{name}: worst {} -> {}, hex and narrow {} -> {}, lines {} -> {}; {} rewrite(s){}",
-                    before.worst, after.worst, before.plain, after.plain, before.lines, after.lines, kept.len(),
+                    "{name}: worst {} -> {}, narrow locals {} -> {}, lines {} -> {}; {} rewrite(s){}",
+                    before.worst, after.worst, before.narrow, after.narrow, before.lines, after.lines, kept.len(),
                     if kept.is_empty() { String::new() } else { format!(": {}", kept.iter().map(|k| k.name()).collect::<Vec<_>>().join(", ")) }
                 );
                 if out != text {
@@ -1339,9 +1297,12 @@ mod tests {
     use crate::permute::parse::locate;
     use std::collections::BTreeSet;
 
+    fn typedefs() -> BTreeSet<String> {
+        ["u8", "s8", "u16", "s16", "u32", "s32"].iter().map(|s| s.to_string()).collect()
+    }
+
     fn parse(text: &str) -> Function {
-        let typedefs: BTreeSet<String> = ["u8", "s8", "u16", "s16", "u32", "s32"].iter().map(|s| s.to_string()).collect();
-        locate(text, None, &typedefs).unwrap().function
+        locate(text, None, &typedefs()).unwrap().function
     }
 
     /// The search without a compiler: `same` stands in for the object check.
@@ -1379,7 +1340,7 @@ void Work_Step(struct Work *work)
         let printed = best.print();
         assert!(!printed.contains("(s32)"), "{printed}");
         assert!(!printed.contains(" t"), "{printed}");
-        assert!(printed.contains("Work_Set(work, work->count + 28);"), "{printed}");
+        assert!(printed.contains("Work_Set(work, work->count + 0x1c);"), "{printed}");
         assert!(kept.contains(&Rewrite::ValueCast) && kept.contains(&Rewrite::FoldTemporary), "{kept:?}");
         assert!(reading(&best) < reading(&function));
     }
@@ -1512,28 +1473,103 @@ void Work_Frame(struct Work *work)
     }
 
     #[test]
-    fn flags_large_hex_and_defines_keep_their_spelling() {
+    fn numbers_keep_their_base() {
+        // Reviewers' probes: humanize decimalized mask locals
+        // (SCALE_RGB555_BUFFER.C mask_green = 0x3e0 beside mask_blue =
+        // 0x7c00, OBJECT.C offset_mask = 0x3E, CONTEXT.C flag = 0x121).
+        // Number bases are alchemy camelotize numbers' alone.
         for seed in 1..6 {
             let printed = humanized(
                 "\
 void Work_Flags(struct Work *work)
 {
-    FLAG_SET(0x123);
-    Flag_Check(work, 0x120 + 0x3);
+    u32 mask_green = 0x3e0;
+    u32 mask_blue = 0x7c00;
+    s32 offset_mask = 0x3E;
+    s32 flag;
+    flag = 0x121;
+    FLAG_SET(flag);
     work->a = work->b + 0x1234;
     work->c = work->d + 0x123;
+    work->e = (work->f & mask_green) | (work->g & mask_blue) | offset_mask;
 #define LIMIT 0x123
-    work->e = LIMIT;
+    work->h = LIMIT;
 }
 ",
                 seed,
             );
-            assert!(printed.contains("FLAG_SET(0x123);"), "{printed}");
-            assert!(printed.contains("Flag_Check(work, 0x120 + 0x3);"), "{printed}");
-            assert!(printed.contains("0x1234"), "{printed}");
-            assert!(printed.contains("work->d + 291"), "{printed}");
-            assert!(printed.contains("\n#define LIMIT 0x123\n"), "{printed}");
+            for spelling in ["0x3e0", "0x7c00", "0x3E", "0x121", "0x1234", "0x123;", "\n#define LIMIT 0x123\n"] {
+                assert!(printed.contains(spelling), "{spelling}: {printed}");
+            }
+            assert!(!Rewrite::ALL.iter().any(|kind| kind.name().contains("hex")));
         }
+    }
+
+    /// A probe file the Broken Seal's English build compiles as game C.
+    fn probe_check(directory: &Path, text: &str) -> Option<Job> {
+        let target = decomp_target(Some("tbs-en")).ok()?;
+        std::fs::create_dir_all(directory).ok()?;
+        let file = directory.join("PROBE.C");
+        std::fs::write(&file, text).ok()?;
+        match Job::new(target, &file, &directory.join("job"), text) {
+            Ok(job) => Some(job),
+            Err(error) => {
+                // No pinned compiler in this checkout: nothing can judge.
+                eprintln!("humanize probe skipped: {error}");
+                None
+            }
+        }
+    }
+
+    #[test]
+    fn a_cast_c89_needs_is_kept_by_its_warning() {
+        // Reviewers' probes from PLAY.C: s32 message = MsgTorebiStepRightTry;
+        // and Engine_EventSetMessage((s32)Msg...) lost their casts: the
+        // bytes stay, but GCC warns of an integer made from a pointer.
+        // The same holds for a pointer local and a function's address.
+        let header = "\
+typedef int s32;
+typedef unsigned char u8;
+struct Work { s32 a; };
+extern const u8 MsgTorebiStepRightTry[];
+extern const u8 MsgTorebiGetRidItems[];
+void Engine_EventSetMessage(s32 message);
+void Work_Callback(void);
+void Work_Take(s32 value);
+";
+        let probes = [
+            ("void Probe(void)\n{\n    s32 message = (s32)MsgTorebiStepRightTry;\n    Engine_EventSetMessage(message);\n}\n", "(s32)MsgTorebiStepRightTry"),
+            ("void Probe(void)\n{\n    Engine_EventSetMessage((s32)MsgTorebiGetRidItems);\n}\n", "(s32)MsgTorebiGetRidItems"),
+            ("void Probe(struct Work *work)\n{\n    Work_Take((s32)work);\n}\n", "(s32)work"),
+            ("void Probe(void)\n{\n    Work_Take((s32)Work_Callback);\n}\n", "(s32)Work_Callback"),
+        ];
+        let scratch = Scratch(root().join("out/humanize").join(format!("probe-{}", std::process::id())));
+        for (index, (body, cast)) in probes.iter().enumerate() {
+            let text = format!("{header}{body}");
+            let Some(job) = probe_check(&scratch.0.join(index.to_string()), &text) else { return };
+            // Every value cast rewrite the search would try drops this cast.
+            let (masked, mask) = Mask::new(&text);
+            let function = parse(&masked);
+            let sites = apply(Rewrite::ValueCast, &mut function.clone(), usize::MAX);
+            assert_eq!(sites, 1, "{body}");
+            let mut dropped = function.clone();
+            apply(Rewrite::ValueCast, &mut dropped, 0);
+            let located = locate(&masked, Some("Probe"), &typedefs()).unwrap();
+            let candidate = mask.unmask(&splice(&masked, located.start, located.end, &dropped));
+            assert!(!candidate.contains(cast), "{candidate}");
+            let compiled = job.compile(&candidate).expect("the candidate compiles");
+            assert_eq!(compiled.bytes, job.reference.bytes, "{cast}: the bytes alone would pass it");
+            assert_ne!(compiled.warnings, job.reference.warnings, "{cast}: a new warning");
+            assert!(!job.same(&candidate), "{cast}: the judge refuses it");
+            assert!(job.same(&text), "the current spelling passes");
+        }
+    }
+
+    #[test]
+    fn warnings_compare_without_line_numbers() {
+        let at = |line: u32, what: &str| Compiled { bytes: vec![1, 2], warnings: crate::camelotize::trial::unnumbered(&format!("P.C: In function `Probe':\nP.C:{line}: warning: {what}\n")) };
+        assert_eq!(at(9, "unused variable `t'"), at(8, "unused variable `t'"));
+        assert_ne!(at(9, "unused variable `t'"), at(9, "initialization makes integer from pointer without a cast"));
     }
 
     #[test]
@@ -1695,9 +1731,10 @@ void Work_Many(struct Work *work)
         assert_eq!(first, candidates(&function, &mut rng));
         let printed = a.print();
         assert!(!printed.contains("while (0)"), "{printed}");
-        assert!(printed.contains("work->d != 291"), "{printed}");
+        assert!(printed.contains("work->d != 0x123"), "{printed}");
         assert!(printed.contains("i++;"), "{printed}");
-        // Register fields and 16.16 fixed point keep their hex.
+        // Numbers keep their base.
+        assert!(printed.contains("work->b + 0x40"), "{printed}");
         assert!(printed.contains("REG_BLDALPHA = 0x1010;"), "{printed}");
         assert!(printed.contains("work->y += 0x500000;"), "{printed}");
     }

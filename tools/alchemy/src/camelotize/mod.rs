@@ -8,7 +8,7 @@ mod registers;
 mod source;
 mod stabs;
 mod tagged;
-mod trial;
+pub(crate) mod trial;
 
 use crate::compiler::routing::{root, COMMON_INCLUDE_MODULES};
 use crate::targets::{target_for, DecompTarget, DecompTargetId};

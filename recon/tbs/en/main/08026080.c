@@ -1,5 +1,7 @@
-/* 08026080: listing 1585, draft 1587, differ 440 (common 1366); both
- * frames are 324 bytes. The whole prologue through the first call now
+/* 08026080: listing 1585, draft 1586, differ 135 (common 1518); both
+ * frames are 324 bytes. Nearly all that remains is the order of the spill
+ * slots below sp+48 (see the hash analysis below), one store order near
+ * the end, and one extra reload in the final selection search. The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
  * the gBattleWork address in r5 and adds 192 as the native does.
@@ -13,8 +15,14 @@
  *   CSE keeps the copy, and the load goes straight into it (native ldr r3;
  *   cmp r3; adds r3, #7, no register copy): 440, draft 1587. anchor is an
  *   ordinary local now, so its switch-block FAKEMATCH is gone.
+ * - the side block back in native order (index check, then selSlot and
+ *   cnt++): with the two changes above pos keeps fp and the 0 is
+ *   rematerialized as native: 135, draft 1586. The selSlot/cnt FAKEMATCH
+ *   is gone; the draft has no device left except infoWin in r9.
  * Trials: on 477, native order for the side block's selSlot/cnt 597
- *   (frame 320: pos loses fp again, the 0 has 24/112 against pos 205/963).
+ *   (frame 320: pos loses fp again, the 0 has 24/112 against pos 205/963);
+ *   on 440, the clear loop as for (i = 5; i >= 0; i--) no change; the side
+ *   block through n = 6 - i 1307.
  * Session T10-08026080/2 (from 624), kept:
  * - the cursor sine as Trig_Sin(...) / 32768, as the pending loop and the
  *   name drawing write it: the value stays in r0 as native, 624 (draft
@@ -369,15 +377,12 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 if (i != 0 && (n = cursor - i) >= 0 && ids[n] != 0xFE) {
                     selIds[cnt] = ids[n];
                     tbl[6 - i].flags |= 2;
-                    /* FAKEMATCH: selSlot and cnt before the index check (the
-                       native stores them after it, as the first block does)
-                       keep pos in fp: 542 here against 629 in native order. */
-                    selSlot[cnt] = (u8)(6 - i);
-                    cnt++;
                     if (tbl[6 - i].index != -i) {
                         tbl[6 - i].flags &= (u8)~1;
                         tbl[6 - i].index = (s8)-i;
                     }
+                    selSlot[cnt] = (u8)(6 - i);
+                    cnt++;
                 }
                 i++;
             } while ((u32)i < spread);

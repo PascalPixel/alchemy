@@ -489,7 +489,7 @@ fn arm_tables(bytes: &[u8], base: u32) -> BTreeSet<usize> {
 /// ARM code compares word by word: pool words a pc-relative load reads are
 /// dropped, jump-table words become `table`, and calls lose their targets;
 /// branches inside stay relative.
-fn arm_tokens(bytes: &[u8], base: u32) -> (Vec<String>, BTreeSet<usize>, BTreeSet<usize>) {
+pub(crate) fn arm_tokens(bytes: &[u8], base: u32) -> (Vec<String>, BTreeSet<usize>, BTreeSet<usize>) {
     let count = bytes.len() / 4;
     let mut pool = BTreeSet::new();
     for i in 0..count {

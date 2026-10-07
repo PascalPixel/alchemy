@@ -111,6 +111,16 @@ pub(crate) fn candidates(text: &str) -> Vec<Edit> {
         if pointer && arithmetic(&tokens, open, close) {
             continue;
         }
+        // `((T *)p)->f` becomes `p->f`, not `(p)->f`, when p is a
+        // postfix expression; `numeric` keeps the cast unless p is a `T *`.
+        if let Some(end) = unary_end(&tokens, close + 1) {
+            let wrapped = open >= 1 && punct(&tokens[open - 1]) == Some("(") && !after_callee(&tokens, open - 1);
+            if pointer && wrapped && tokens.get(end + 1).and_then(punct) == Some(")") && tokens.get(end + 2).and_then(punct) == Some("->") && ident(&tokens[close + 1]).is_some() {
+                let operand = text[tokens[close + 1].start..tokens[end].end].to_string();
+                found.push(Edit { start: tokens[open - 1].start, end: tokens[end + 1].end, text: operand });
+                continue;
+            }
+        }
         found.push(Edit { start: tokens[open].start, end: tokens[close].end, text: String::new() });
     }
     trial::untagged(text, found)
@@ -120,19 +130,25 @@ fn operand_end(token: &Token) -> bool {
     matches!(&token.tok, Tok::Ident(_) | Tok::Number(_) | Tok::Char(_) | Tok::Str(_)) || matches!(punct(token), Some(")" | "]"))
 }
 
-/// Whether the pointer cast at `open..=close` takes part in pointer
-/// arithmetic or indexing, alone or in parentheses: without it, the
-/// arithmetic may be on a `void *` (not C89) or in other units.
-fn arithmetic(tokens: &[Token], open: usize, close: usize) -> bool {
-    let Some(mut end) = unary_end(tokens, close + 1) else {
-        return true;
-    };
-    let mut start = open;
-    // Out through parentheses that hold only the cast expression.
+/// The cast expression at `open` ending at `end`, out through the
+/// parentheses that hold only it.
+fn enclosed(tokens: &[Token], open: usize, end: usize) -> (usize, usize) {
+    let (mut start, mut end) = (open, end);
     while start >= 1 && punct(&tokens[start - 1]) == Some("(") && tokens.get(end + 1).and_then(punct) == Some(")") && !after_callee(tokens, start - 1) {
         start -= 1;
         end += 1;
     }
+    (start, end)
+}
+
+/// Whether the pointer cast at `open..=close` takes part in pointer
+/// arithmetic or indexing, alone or in parentheses: without it, the
+/// arithmetic may be on a `void *` (not C89) or in other units.
+fn arithmetic(tokens: &[Token], open: usize, close: usize) -> bool {
+    let Some(end) = unary_end(tokens, close + 1) else {
+        return true;
+    };
+    let (start, end) = enclosed(tokens, open, end);
     let after = tokens.get(end + 1).and_then(punct).is_some_and(|p| matches!(p, "+" | "-" | "[" | "+=" | "-=" | "++" | "--"));
     let before = start >= 2 && matches!(punct(&tokens[start - 1]), Some("+" | "-")) && operand_end(&tokens[start - 2]);
     let stepped = start >= 1 && matches!(punct(&tokens[start - 1]), Some("++" | "--"));
@@ -258,6 +274,10 @@ pub(crate) fn numeric(text: &str, editions: &mut [Edition], found: Vec<Edit>) ->
             let Some(mut open) = tokens.iter().position(|t| t.start == edit.start) else {
                 return false;
             };
+            // `((T *)p)->f` taken out whole.
+            if !edit.text.is_empty() && punct(&tokens[open]) == Some("(") && cast_at(&tokens, open).is_none() {
+                open += 1;
+            }
             // `*(T *)&x` folding to `x`.
             let fold = punct(&tokens[open]) == Some("*");
             if fold {
@@ -293,10 +313,12 @@ pub(crate) fn numeric(text: &str, editions: &mut [Edition], found: Vec<Edit>) ->
             };
             let operand = &text[tokens[close + 1].start..tokens[end].end];
             let pointer = !matches!(ident(&tokens[close - 1]), Some(name) if VALUES.contains(&name));
-            if pointer && open >= 1 && punct(&tokens[open - 1]) == Some("*") && (open < 2 || !operand_end(&tokens[open - 2])) {
-                // `*(T *)p` loses its cast only when every edition declares
-                // p as `T *`: otherwise the access changes type
-                // (`*(u16 *)q` through an `s16 *q`).
+            let member = tokens.get(enclosed(&tokens, open, end).1 + 1).and_then(punct) == Some("->");
+            if pointer && (member || open >= 1 && punct(&tokens[open - 1]) == Some("*") && (open < 2 || !operand_end(&tokens[open - 2]))) {
+                // `*(T *)p` and `((T *)p)->f` lose their cast only when
+                // every edition declares p as `T *`: otherwise the access
+                // changes type (`*(u16 *)q` through an `s16 *q`) or names
+                // a field of another struct.
                 let cast: String = tokens[open + 1..close].iter().map(|t| &text[t.start..t.end]).collect::<Vec<_>>().join(" ");
                 let mut read = false;
                 for edition in editions.iter_mut() {
@@ -438,6 +460,16 @@ mod tests {
     fn a_dereferenced_pointer_cast_goes_only_when_it_names_the_declared_type() {
         let text = "typedef short s16;\ntypedef unsigned short u16;\nvoid F(s16 *q, u16 *r, u16 n)\n{\n    *(u16 *)q = n;\n    *(u16 *)r = n;\n    *(u16 *)q = *(u16 *)q + 1;\n}\n";
         assert_eq!(numeric_spans(text, &[text]), vec!["(u16 *)r = n;"]);
+    }
+
+    /// The rules v2 dry run: a cast in front of `->` went whenever another
+    /// struct had a field of that name at that offset.
+    #[test]
+    fn a_member_access_through_a_pointer_cast_names_the_declared_type() {
+        let text = "typedef unsigned char u8;\nstruct Unit { u8 hp; };\nstruct Work { u8 hp; };\nvoid F(struct Work *w, struct Unit *u, void *v)\n{\n    ((struct Unit *)w)->hp = 1;\n    ((struct Unit *)u)->hp = 2;\n    ((struct Unit *)v)->hp = 3;\n}\n";
+        assert_eq!(numeric_spans(text, &[text]), vec!["((struct Unit *)u)->hp = 2;"]);
+        let found: Vec<Edit> = numeric(text, &mut [Edition::new(text.to_string()).unwrap()], candidates(text));
+        assert_eq!(trial::apply(text, &found), text.replace("((struct Unit *)u)->hp = 2", "u->hp = 2"));
     }
 
     fn same_candidates(text: &str) {

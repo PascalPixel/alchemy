@@ -12695,11 +12695,11 @@ msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Dopo essere stati scatenati,{line_break}saremo in standby e potrai{line_break}usarci per l'evocazione.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSummon"
 msgid "03172"
 msgstr "Con un Djinn in standby{line_break}puoi evocare forze ancora{line_break}maggiori!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleashCommand"
 msgid "03173"
 msgstr "Con questo comando{line_break}potrai scatenarmi{line_break}nella lotta, capito?{end_now}"
 

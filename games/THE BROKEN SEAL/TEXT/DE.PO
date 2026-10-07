@@ -12695,11 +12695,11 @@ msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Nachdem wir freigesetzt{line_break}worden sind, warten wir{line_break}Dschinns darauf, be-{page_break}schworen zu werden...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSummon"
 msgid "03172"
 msgstr "Dschinns im Standby-{line_break}Modus verfügen über{line_break}noch größere Kräfte!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialUnleashCommand"
 msgid "03173"
 msgstr "Wähle dieses Kommando,{line_break}um mich in den Kampf{line_break}zu schicken!{end_now}"
 

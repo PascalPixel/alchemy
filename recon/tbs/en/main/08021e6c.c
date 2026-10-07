@@ -1,3 +1,13 @@
+/* Stubborn (2026-10-07, S10-08021e6c session 4): differ 357 -> 237 (listing 1037, draft 1038, common 919). Not matched. count is one variable for both content loops, declared at the rebuild block (s32 count; then count = work->count inside each panel loop): its pseudo now outranks work in global.c's priority (floor_log2(n) * n / live: count 15 refs over 43 insns, 1.05; work 88 over 698, 0.756; count * 3 9 over 38, 0.71), so work takes r9 as native everywhere. Left: count in sl and count * 3 in fp (native fp and sl: native ranks count * 3 above work and count below it), the mode-0 content loop's exit test still reloads work->count through 432 to a spill at sp+24 (native cmp lr, fp), the index and pattern row bivs swapped (native index r6, pattern r5), the 0 stored to gBgScroll[1].x shared with rebuild = 0 (native a pool 0), the stack slots below scale 4 or 8 lower than native, the literal pool after the mode-1 blank loop. */
+/* Trial (S10 session 4, from 357): mode-0 count at block scope (s32 count; count = work->count in the panel loop): 357; mode-0 as count = work->count; for (panel = 0; panel < count; ...): 339 (draft 1030); the same in mode 1 too: 370; count shared by both modes at the rebuild block: 237 (kept); count shared and panel shared too: 237; count shared but either mode's own s32 count = work->count: 357 each; i or num (function scope) as count: 237 and 332; work->selection + work->count - 1 in the up-repeat modulus on 237: 258 (native's operand order, but one instruction fewer elsewhere); (panel - count) * 3 in both stores: 659; a separate ofs = count * 3: 916. */
+/* Diagnosis (S10 session 4, at 237): the mode-0 exit-test reload is cse.c's cse_around_loop (cse1). The mode-0 panel loop's end test is followed directly by its NOTE_INSN_LOOP_END, so cse_basic_block ends there and copies the end test's 432 register (reg 409) into the loop preheader; the body's count load then reuses that 432 and loop.c hoists the end test's work->count load to its own spill. The mode-1 loop's end test is followed by the jump over the else branch, so no around-loop, and its end test CSEs into count (cmp lr, fp), as native does in both. Native's mode-0 loop therefore either ends in a jump at cse1 time or its extended block alters a jump (cse_jumps_altered), and the source shape that gives that is still unknown. If found, work also loses the mode-0 refs (mov r4, r9; ldr [r4, r2]) and may fall below count * 3 in priority, native's order. Trials on 237: mode-0 limit as work->count > panel 243; mode-0 blank limit as work->count + panel < 6 256; mode-0 panels as panel = 0; if (...) do { ... panel++; } while (panel < work->count) 267; a trailing empty statement 237; the branches swapped as if (mode == 0) { mode 0 } else { mode 1 } 281 (lays mode 0 out first, unlike native); alchemy permute 5 min, 2 jobs, seed 41, --heat: no candidate beat 237. */
+/* Stubborn (2026-10-07, S10-08021e6c session 3): differ 369 -> 357 (listing 1037, draft 1038, common 859). Not matched. Both content loops are now written whole inside the column loop, vram[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100, then tmp3 = col & 3 for the tilemap store *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 22 or 20): this is native's content-loop code in everything but register names. The column loop's invariant index and pattern are hoisted into the row loop, reduced there as givs of cnt and, being used across the column loop, kept as per-row copies (mov ip, rN; str rN, [sp, #4]); tmp3, set twice, is no giv, so the value stays (copy + col) + 256 with movs #128; lsls #1 inside; count * 6 is spilled and panel * 2 is a stack giv, as native. The permuter scaffolding tmp7, tmp2, the u16 * temporary and the tile_row, tile_index and pattern bivs are gone. Left: work in sl and the content loops' count * 3 in r9 (native the reverse, about 150 register rows), the index and pattern row bivs swapped (native index r6, pattern r5), the main-loop 0 for gBgScroll[1].x shared with rebuild = 0 as movs r1, #0 (native loads it from the pool: a spilled hoisted 0), stack slots 4 lower than native from &work->count down, and the mode-0 content loop's exit test loading work->count through a hoisted 432 (native cmp lr, fp with count). */
+/* Trial (S10 session 3, from 369): mode-1 content loop whole with tmp3 = value as its own statement before the store: 601; the value chained into the store (address expanded first, native's order): 571; the mode-0 content loop the same: 474; tmp7 removed: 416; the mode-0 blank loop in the mode-1 pointer form: 378; work->count + work->selection - 1 in the up-repeat modulus: 357 (on the 369 body: 376). Worse or equal on 378: tmp7 restored 438; the mode-0 content loop as do-while 399; index or value terms in any order 378 (fold); the tilemap store as tilemap[panel * 3 + cnt * 32 + tmp3 - count * 3 + 0x236] 650. alchemy permute 5 min (2 jobs, seed 21) from 378: weighted 5830 -> 5170 at differ 378 (do-while mode-0 plus the modulus swap), of which only the swap carried. */
+/* Stubborn (2026-10-07, S10-08021e6c session 2): differ 369 (listing 1037, draft 1036, common 852), body unchanged. New: the tutorial messages are named in all six editions, so the draft compiles everywhere (Editions line); a per-row pattern giv of cnt gives native's unreduced in-loop value, but not yet native's per-row copies or panel * 2 giv (Trial line, session 2). */
+/* Stubborn (2026-10-07, S10-08021e6c session 1): differ 369 (listing 1037, draft 1036, common 852), unchanged; body kept. Diagnosed cause of the content loops (loop.c): native computes each tile value inside the column loop as (pattern copy + col) + 256 (adds; movs #128; lsls #1; adds), neither hoisted nor strength-reduced, and keeps the 3 of col & 3 inside too. The value is a halfword store, so its 256 is (subreg:SI (reg:HI const)): loop pass 1 records no giv for it; the rerun pass hoists that constant whenever its threshold (move_movables: 30 = 2 * (1 + 14 registers) at the loop's first movable, minus 3 for each insn moved before it) times savings 1 times life 1 reaches the column loop's insn count, and then reduces the value as a giv of col (adds rN, #1), which native never does. In every form tried, pass 1 hoists the row part of the index first (threshold 30, 27, 24, 21), so pass 2 sees a column loop of 16-18 insns whose first movable is the 3 at threshold 30: both constants move. Native keeps both, so its pass-2 column loop still held at least three movables ahead of the 3 (30 - 3k below the count), most likely its per-row copies of tile_index and pattern and the row part of the index, which native's final code places just before the column loop (str r5, [sp, #4]; mov ip, r6), so they were still inside the column loop when pass 2 ran and pass 1 did not hoist them. Other editions: the draft does not compile there yet (MsgDjinnTutorial* are English-only symbols). */
+/* Trial (S10 session 1, at 369): value written pattern + col + 0x100, 0x100 + pattern + col, col + pattern + 0x100 or (u16)(pattern + col) + 0x100 in the mode-1 content loop: 871 (fold makes them one; reduced in pass 2); u16 pattern 866; through a function-scope s32 tile in both content loops 919 (final value replaceable, reduced in pass 1); per-row copies into the function-scope i and num 871 (CSE propagates them); function-scope index and tile copied per row in both content loops 911, copied at the top of each column iteration 468 (native's per-row index copy appears, pass 2 column loop 17 insns, 3 and 256 hoisted, value reduced); mode-1 content loop written whole, vram[panel * 3 + cnt * 32 + (col & 3) - count * 3] = panel * 16 + cnt * 4 + col + 0x100 and the tilemap store the same way: 627, and its code is native's in everything but the reduced value (row bivs +64/+32/+4 in r4 and two others, the panel*2 giv, count*6 spilled, tile_index copied per row); the same with a block-local u16 *vram = (u16 *)0x0600fd6c: 628, pass 2 still 18 insns; the VRAM index and value written whole with the tilemap store through the tile_row biv: 662 (pass 1 hoists the index's row part at 30-21); function-scope index = panel * 3 + cnt * 32 and tile = panel * 16 + cnt * 4 set inside both content column loops: 925. The column loop as a goto loop (no loop notes) gives native's 26-instruction body (ble -52) but 856 overall. */
+/* Trial (S10 session 2, at 369, mode-1 content loop only): pattern computed per row from cnt (s32 pattern = panel * 16 + cnt * 4, fold makes it (panel * 4 + cnt) * 4) with tmp3 = pattern + col + 0x100 kept as the shared temporary (tmp3 = col & 3 after it): 895 (F); with tile_index per row as well, panel * 3 + cnt * 32, tile_row = &tilemap[panel * 3]: 891 (A); the same through a panel-level base = panel * 3: 892 (B); the VRAM index written whole: 880 (E). These give native's column body for the value: (pattern + col) + 256 computed inside the column loop, the movs #128; lsls #1 and the movs #3 both left there (tmp3, set twice, is no giv), but tmp3 is spilled (str to sp+12, then add r1, sp, #12; ldrh), there are no per-row copies (mov ip, r6; str r5, [sp, #4]) because the per-row givs are replaceable, and the panel loop reduces panel * 3 and panel * 6 (or no giv at all) instead of native's panel * 2 at sp+8, so greg moves work from r9 to r8 or sl and the whole function shifts. Without tmp3 (value written in the store): 873 (G), value reduced again (adds r1, #1); pattern declared at panel scope 873; col declared after pattern 873; pattern = base + cnt * 4 with base = panel * 16: 873 (CSE folds it back); index = tile_index + cnt * 32 with tile_index fixed per panel: 888, value reduced. Pass-1 loop dump of G: the column loop records pattern + col as a replaceable giv not worth reducing (0 vs 23) and leaves 256 (not desirable), the row loop records no giv, the panel loop finds panel * 2 not worth while (0 vs 47), where native reduces it. */
+/* Editions (S10 session 2): the two tutorial messages are now named in every PO (de, es, fr and it: 03172 MsgDjinnTutorialSummon, 03173 MsgDjinnTutorialUnleashCommand, the ids their pool words load; ja: 03538 and 03539), so the draft compiles in all six editions. de, es, fr and it hold the English function apart from call offsets and pool words (cmp of the 2,300 bytes: 87 differ, all BL halves and literals), so they follow English. ja is 2,304 bytes (scaffold 0x00021ece, 0x902 with the pad) and needs its own branch. alchemy diff --edition cannot score them yet: their scaffolds carry no function symbol (require_thumb_scaffold). */
 /* Stubborn (2026-10-07, T08-08021e6c session 4): differ 369 (listing 1037, draft 1036, common 852), unchanged since session 3. Not matched. Native's spill slots, top down: mode 52, render 48, rebuild 44, trade_count 40, scale 36, count*6 (mode 1) 32, count*6 (mode 0) 28, &selection 24, message 20, &work->count 16, panel*2 givs 12/8, pattern copy 4; the draft has message at 32 and tmp7's 0/1 at 28 (six extra instructions after the affine stores). */
 /* Trial (session 4, at 369): mode-1 content loop with per-row copies s32 index = tile_index, tile = pattern and tile + col + 0x100: 895; tile + col written col + tile: 369. A separate panel for the mode-1 blank or for the mode-1 content loop (any split of the shared panel): 403. Mode-1 blank limit as 6 - work->count > panel: 373. tmp7 used for the position loop's mode test: 371, for the redraw's if (mode): 371; tmp7 declared first: 369; tmp7 = mode != 0 set before the main loop: 457, before cnt = 0: 382. Closing loop through a per-row u16 *row = render->tilemap + (cnt + 17) * 32 + panel * 3, row[(col & 3) + 5]: 419. alchemy permute 5 min (2 jobs, seed 1) from 369: best weighted 12450 at differ 391, nothing taken. The merge of the parallel T08 session 1 line (ff48490c68, 1022) kept the 369 body and its trial lines. */
 /* Stubborn (2026-10-07, T08-08021e6c session 3): differ 369 (listing 1037, draft 1036, common 852). Not matched. The three blank loops now index the 32-wide BG map by row and column (tilemap + (cnt + 17) * 32 + panel * 3 + 4 + (col & 3)), which gives native's panel*2 giv plus panel, its per-row copy (adds r1, r0, #0) and its rematerialized 0x448: the mode-1 blank loop matches except panel in ip and its limit in lr (native the reverse). Left: the two content loops (about 250 of the 369; native spills count*6 to sp+32/sp+28, copies the index and pattern bivs per row to r12 and sp+4, and builds index from a panel*2 giv in sp+8/sp+12), the closing loop's last add folded into strh [r3, r7] (native adds r3, r7; strh [r3]), and &work->count at sp+20 where native has sp+16. Still permuter scaffolding (re-measured at 369, removing each is worse): tmp7 = mode != 0 (437 without; it stands in for the content loops' count*6 spills, the frame is native's 60 only with it), the tmp2 and tmp3 temporaries (578 without), and the u16 * temporary for 0x0600fd68 (458 without). Native copies every tile loop's row pointer or row index once per row (adds r1, r0, #0; mov r12, r6; str r5, [sp, #4]): loop.c keeps such a copy when a giv is not replaceable (loop.c 5520-5565: a biv update inside the giv's lifetime, or the giv's register first set elsewhere); its large constant offsets (0x448, 0x46c) are rematerialized inside the column loops, so they are pseudos left without hard registers, which the draft still allocates. */
@@ -108,7 +118,6 @@ s32 Ui_RunSelectionScreen(s32 mode)
     s32 keys, repeat;
     s32 slot;
     s32 i, num;
-    s32 tmp7;
 
     render = (struct UiRenderWork *)gWindowWork[0];
     slot = Resource_LoadIntoFreeSlot(0x400);
@@ -158,7 +167,6 @@ s32 Ui_RunSelectionScreen(s32 mode)
     work->affine.scale_y = 304;
     work->affine.angle = 0;
     cnt = 0;
-    tmp7 = mode != 0;
     if (cnt < work->count) {
         do {
             s32 x = (cnt - work->count) * 24;
@@ -180,6 +188,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         gBgScroll[1].x = 0;
         gBgScroll[1].y = 32;
         if (rebuild != 0) {
+            s32 count;
             rebuild = 0;
             render->menu_busy = 1;
             if (mode) {
@@ -192,19 +201,14 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
-                    s32 count = work->count;
-                    s32 tile_index = panel * 3;
-                    u16 *tile_row = &render->tilemap[tile_index];
-                    s32 pattern = panel * 16;
-                    for (cnt = 0; cnt <= 2; cnt++, tile_row += 32, tile_index += 32, pattern += 4) {
+                    count = work->count;
+                    for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
-                            s32 tile = 0x100 + pattern;
                             s32 tmp3;
-                            tmp3 = tile + col;
-                            ((u16 *)0x0600fd6c)[tile_index + (col & 3) - count * 3] = tmp3;
+                            ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100;
                             tmp3 = col & 3;
-                            *(tile_row + tmp3 - count * 3 + 0x236) = 0;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 22) = 0;
                         }
                     }
                 }
@@ -214,30 +218,20 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++)
-                            ((u16 (*)[32])render->tilemap)[cnt + 17][panel * 3 + 2 + (col & 3)] = 0xf07f;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + 2 + (col & 3)) = 0xf07f;
                     }
                 }
-                panel = 0;
-                if (panel < work->count) {
-                    do {
-                        s32 count = work->count;
-                        s32 tile_index = panel * 3;
-                        s32 pattern = panel * 16;
-                        u16 *tile_row = &render->tilemap[tile_index];
-                        for (cnt = 0; cnt <= 2; cnt++, tile_row += 32, tile_index += 32, pattern += 4) {
-                            s32 col;
-                            for (col = 0; col <= 2; col++) {
-                                s32 tmp2;
-                                u16 *tmp;
-                                tmp2 = 0x100 + pattern;
-                                tmp = (u16 *)0x0600fd68;
-                                tmp[tile_index + (col & 3) - count * 3] = tmp2 + col;
-                                tmp2 = count * 3;
-                                *(tile_row + (col & 3) - tmp2 + 0x234) = 0;
-                            }
+                for (panel = 0; panel < work->count; panel++) {
+                    count = work->count;
+                    for (cnt = 0; cnt <= 2; cnt++) {
+                        s32 col;
+                        for (col = 0; col <= 2; col++) {
+                            s32 tmp3;
+                            ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100;
+                            tmp3 = col & 3;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 20) = 0;
                         }
-                        panel++;
-                    } while (panel < work->count);
+                    }
                 }
             }
         }
@@ -326,7 +320,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->selection = __modsi3(work->selection + 1, work->count);
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
-            work->selection = __modsi3(work->selection + work->count - 1, work->count);
+            work->selection = __modsi3(work->count + work->selection - 1, work->count);
         } else if (gLinkCountdownWork->active == 0) {
             result = work->kinds[0];
             break;
@@ -335,7 +329,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         render->menu_busy = 0;
         WaitFrames(1);
     }
-    if (tmp7)
+    if (mode != 0)
         gLinkCountdownWork->command_selection[1] = work->selection;
     else
         gLinkCountdownWork->command_selection[0] = work->selection;

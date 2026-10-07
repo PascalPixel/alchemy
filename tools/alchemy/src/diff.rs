@@ -160,6 +160,18 @@ pub(crate) fn arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Re
     Ok(with_draft_assembly(target, object, steps))
 }
 
+/// Asks the compiler step for its per-pass dumps: the 2.96 driver is the
+/// first step and takes the scheduler's verbose dump too; on the ARM route
+/// the first step is cpp0, so agbcc_arm's cc1 (the second) takes -da alone,
+/// as it knows no -fsched-verbose.
+fn rtl_flags(steps: &mut [Vec<String>], arm: bool) {
+    if arm {
+        steps[1].push("-da".into());
+    } else {
+        steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
+    }
+}
+
 /// Replaces the build's assembly step with the comparison's own assembler.
 fn with_draft_assembly(target: DecompTarget, object: &Path, mut steps: Vec<Vec<String>>) -> Vec<Vec<String>> {
     steps.pop();
@@ -579,7 +591,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         draft_steps(target, &draft, &object)?
     };
     if options.rtl {
-        steps[0].extend(["-da".into(), "-fsched-verbose=5".into()]);
+        rtl_flags(&mut steps, options.arm);
     }
     let assemble = steps.pop().expect("draft plan ends with assembly");
     for step in steps {
@@ -754,6 +766,19 @@ mod tests {
         let parsed = parse(&args).unwrap();
         assert_eq!(parsed.addresses, ["SaveMenu_SelectSlot"]);
         assert_eq!(parsed.target.id.as_str(), "tbs-ja");
+    }
+
+    #[test]
+    fn rtl_dumps_go_to_the_compiler_step_of_each_route() {
+        let plan = || vec![vec!["first".to_string()], vec!["second".to_string()], vec!["as".to_string()]];
+        let mut thumb = plan();
+        rtl_flags(&mut thumb, false);
+        assert_eq!(thumb[0], ["first", "-da", "-fsched-verbose=5"]);
+        assert_eq!(thumb[1], ["second"]);
+        let mut arm = plan();
+        rtl_flags(&mut arm, true);
+        assert_eq!(arm[0], ["first"]);
+        assert_eq!(arm[1], ["second", "-da"]);
     }
 
     #[test]

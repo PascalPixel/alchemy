@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3363,
- * differ 174.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3379,
+ * differ 142.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -128,7 +128,28 @@
  * local in case 71 as well 174, in 71 alone 178; heal held in dmg in the
  * heal or the PP restore no change (they share r5 already); kind for
  * old or maxv, or apwr for 76's maxv, worse (184 to 249).
- * Left at 174: the heal's target copies and offsets in 76, 71 and 70
+ * The 312/316 attack sum in a variable of its own (atk, local to the
+ * else), with the HP drain halving dealt in size instead of apwr, 170
+ * (common 3365): the 312/316 block matches, atk sharing r5 with dmg and
+ * 312 held in r6. As kind, the sum shares the drain's pseudo, which
+ * conflicts with dmg, so it took r6 and 312 took r5. atk alone, or dmg,
+ * def or any block-level local for the sum, 375 (draft 3449): kind then
+ * lives only in the drain, takes apwr's register and the copy goes,
+ * and apwr, allocated just ahead of 312, takes r6. In the drain with atk:
+ * the halving in tmp 174, power 200, count 262, hp0 454, n 479; with the
+ * halving in size, the amount in tmp 184, count 197, power or dealt 293,
+ * hp0 547; halving in apwr with the amount in size, tmp, count, power,
+ * dealt or hp0 389 to 691; switch (action_id) for the 312/316 test or
+ * one if after the other no better (375, 294). The drain held the
+ * halving in r0 there; halving dealt in place (if (...) dealt /= 2;
+ * kind = dealt;) 142 (common 3379), with no other variable for it;
+ * the halving in pass, bonus, half, adjust, crush, hit, modifier, skip,
+ * affinity or offset 200, guard 244, count 262, nibble 270, hp0 454,
+ * value 455, n 479. dealt stays on the stack, so ours halves it
+ * through r3 and stores it back, where the listing loads it into r7
+ * once and copies it to the amount in r6.
+ * Left at 142: the drain's halving (above); the heal's target copies
+ * and offsets in 76, 71 and 70
  * (reload registers in another rotation) and the 60/30 tails' shared
  * movs r1, #100 (2 bytes; the product set in each branch and divided
  * once after them, in tmp, maxv, value, kind or apwr, 227 to 240); the PP
@@ -520,13 +541,15 @@ after_power:
                                           bonus)
                             * apwr / 10;
                 else {
-                    kind = actor->attack;
+                    s32 atk;
+
+                    atk = actor->attack;
                     if (action_id == 312 || action_id == 316) {
-                        kind = ((struct BattleUnit *)Owner_GetState(plan->actor_id))->attack;
+                        atk = ((struct BattleUnit *)Owner_GetState(plan->actor_id))->attack;
                         if (action_id == 312)
-                            kind += ((struct BattleUnit *)Owner_GetState(plan->actor_id2))->attack / 4;
+                            atk += ((struct BattleUnit *)Owner_GetState(plan->actor_id2))->attack / 4;
                     }
-                    dmg = Battle_CalcAttack(kind, scale, apwr, bonus);
+                    dmg = Battle_CalcAttack(atk, scale, apwr, bonus);
                 }
                 dmg *= adjust;
                 if (modifier != 0) {
@@ -1331,10 +1354,9 @@ after_power:
         case EFX_DRAIN_HP:
         case EFX_DRAIN_HP_HALF:
             dmg = actor->hp;
-            apwr = dealt;
             if (action->effect == EFX_DRAIN_HP_HALF)
-                apwr /= 2;
-            kind = apwr;
+                dealt /= 2;
+            kind = dealt;
             dmg += kind;
             if (dmg > actor->max_hp) {
                 dmg = actor->max_hp;

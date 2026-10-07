@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3454, common 3287,
- * differ 330.
+ * alchemy diff: listing 3450 instructions, draft 3452, common 3287,
+ * differ 328.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -78,7 +78,14 @@
  * (334), kind (no change) or apwr (560), value (382), power (383), guard
  * (332), count (no change), scale /= 2 and def /= 2 in place (no change):
  * the shift stays logical whichever variable holds the zero-extended
- * load, even one set elsewhere from signed values (power, value). */
+ * load, even one set elsewhere from signed values (power, value).
+ * Case 77 written as 78 and the 7% are, maxv then maxu read before the
+ * division and heal += (s16)maxv / 10 (a short division, so the quotient
+ * is sign-extended as in the listing), gives 328 (draft 3452): the listing's
+ * shape, ldrh before the call and a branch to the shared add, leaving only
+ * register choices there (its target copy stays in r2 from the head; ours
+ * is copied again into r0). (s16)(maxv / 10) gives 341, maxv / 10 kept in
+ * maxv then (s16)maxv 337, and maxu read before maxv 635. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -1001,8 +1008,9 @@ after_power:
             heal = target->pp;
             old = (u16)target->pp;
             if (action->effect == 77) {
-                heal += (s16)(target->max_pp / 10);
+                maxv = target->max_pp;
                 maxu = (u16)target->max_pp;
+                heal += (s16)maxv / 10;
             } else if (action->effect == 78) {
                 maxv = target->max_pp;
                 maxu = (u16)target->max_pp;

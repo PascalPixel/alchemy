@@ -41,7 +41,8 @@
  * Five minutes of permute from 88 found nothing below it. The counts
  * window's glyph column written element * 2 + 1 (no col counter): 88 ->
  * 86, 379 buckets (loop.c's giv from 1 by 2 is native's r6); col = 1 in
- * the for header instead 88. Remaining at 86, in order: mask stored
+ * the for header instead 88. From 86: the mask loop's required set in
+ * its for header 86 (same code). Remaining at 86, in order: mask stored
  * before counts and the window call's stack argument late; the setup
  * loop's index * 2 late (native first); count - 1 built before count is
  * stored (native after); the mask loop's adds r6, #4 before movs r2, #0;

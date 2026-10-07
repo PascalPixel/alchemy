@@ -55,7 +55,7 @@ Func_0200006c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020080b4:
-	.4byte 0x00001cac
+	.4byte MsgWhatDoYouThinkOf
 	.section .text.x020080b8,"ax",%progbits
 	.global Func_020000b8
 	.thumb_func
@@ -117,7 +117,7 @@ Func_020000b8:
 	bl Func_020014c0
 	pop {r5, r6, pc}
 .L_02008144:
-	.4byte 0x00001cb5
+	.4byte MsgLookeeHereCan
 .L_02008148:
 	.4byte gPartyState
 .L_0200814c:
@@ -156,7 +156,7 @@ Func_02000150:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008198:
-	.4byte 0x00001cbb
+	.4byte MsgAreYouThe
 	.section .text.x0200819c,"ax",%progbits
 	.global Func_0200019c
 	.thumb_func
@@ -223,7 +223,7 @@ Func_0200019c:
 	bl Func_020014c0
 	pop {r5, pc}
 .L_02008230:
-	.4byte 0x00001cc1
+	.4byte MsgDarnThatMayor
 .L_02008234:
 	.4byte gPartyState
 	.section .text.x02008238,"ax",%progbits
@@ -354,7 +354,7 @@ Func_02000238:
 	bl Func_020014c0
 	pop {r5, pc}
 .L_02008368:
-	.4byte 0x00001cc7
+	.4byte MsgIMSureTheMayor
 .L_0200836c:
 	.4byte gPartyState
 	.section .text.x02008370,"ax",%progbits
@@ -532,7 +532,7 @@ Func_02000370:
 .L_02008504:
 	.4byte gPartyState
 .L_02008508:
-	.4byte 0x00001ccd
+	.4byte MsgBriggsTellsMe
 	.section .text.x02008514,"ax",%progbits
 	.global Func_02000514
 	.thumb_func
@@ -677,7 +677,7 @@ Func_02000514:
 .L_02008644:
 	.4byte gPartyState
 .L_02008648:
-	.4byte 0x00001cb6
+	.4byte MsgFromHereIt
 .L_0200864c:
 	.4byte gInput
 .L_02008650:
@@ -1098,7 +1098,7 @@ Func_02000658:
 	movs r0, #9
 	b .L_02008a68
 .L_02008a64:
-	.4byte 0x000024e9
+	.4byte MsgThankYouAgain
 .L_02008a68:
 	adds r1, #204
 	adds r2, #102
@@ -2423,58 +2423,58 @@ gSceneEvents:
 	.4byte 0x00000011
 	.4byte 0x00000000
 	.4byte 0x18a7000a
-	.4byte 0x00002511
+	.4byte MsgEveryoneInTownIs
 	.4byte 0x00008d15
 	.4byte 0x18a7000a
-	.4byte 0x00002523
+	.4byte MsgIDonTKnowWhatThe
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001cab
+	.4byte MsgYouShouldGo
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte Func_0200006c
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001caf
+	.4byte MsgOurTownWas
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001cb0
+	.4byte MsgTheMountainsTo
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001cb1
+	.4byte MsgThereAreNumerous
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001cb2
+	.4byte MsgWhyDoThey
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001cb3
+	.4byte MsgThosePiratesNever
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001cb4
+	.4byte MsgThereSNoWayTo
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte Func_020000b8
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001cb8
+	.4byte MsgTheLongerI
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001cb9
+	.4byte MsgIDBeen
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001cba
+	.4byte MsgISatAnd
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_02000150
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001cbe
+	.4byte MsgIHeardThePirates
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001cbf
+	.4byte MsgIWishSomeoneWould
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001cc0
+	.4byte MsgIHopeTheWarriors
 	.4byte 0x00000000
 	.4byte 0x08ba0012
 	.4byte Func_0200019c
@@ -2483,16 +2483,16 @@ gSceneEvents:
 	.4byte Func_0200019c
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001cc3
+	.4byte MsgIMStarting
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001cc4
+	.4byte MsgHeSAlready
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001cc5
+	.4byte MsgIfWeLeave
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001cc6
+	.4byte MsgTheMoneyBriggs
 	.4byte 0x00000000
 	.4byte 0x08bb0008
 	.4byte Func_02000238
@@ -2507,19 +2507,19 @@ gSceneEvents:
 	.4byte Func_02000370
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001cd8
+	.4byte MsgIAmPlanning
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001cd9
+	.4byte MsgTheMayorWon
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001cda
+	.4byte MsgThisIsSuch
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001cdb
+	.4byte MsgTheMayorHates
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgThatSeafoodStew, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

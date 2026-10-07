@@ -210,7 +210,7 @@ Func_02000188:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020081dc:
-	.4byte 0x0000191f
+	.4byte MsgAreYouLooking
 	.section .text.x020081e0,"ax",%progbits
 	.global Func_020001e0
 	.thumb_func
@@ -1409,70 +1409,70 @@ Data_020010d8:
 	.4byte Func_02000514
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000191e
+	.4byte MsgItSBeen
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02000188
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001922
+	.4byte MsgIWentOut
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001923
+	.4byte MsgIfYouReGoing
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001924
+	.4byte MsgInTheHeart
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001925
+	.4byte MsgIfYouWantToGo
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001926
+	.4byte MsgIfYouLook
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001927
+	.4byte MsgATownCalled
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001938
+	.4byte MsgBukBukBuk
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001939
+	.4byte MsgBahBaaaaaaa2
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001928
+	.4byte MsgWhyWouldAnyoneTravel
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001929
+	.4byte MsgILikeThis
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000192a
+	.4byte MsgOseniaWasBig
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000192b
+	.4byte MsgNoWayI
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000192c
+	.4byte MsgAirSRock
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000192d
+	.4byte MsgItSWeird
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000192e
+	.4byte MsgItSBitter
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000192f
+	.4byte MsgThePeopleIn
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000193a
+	.4byte MsgTheGroundHere
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000193b
+	.4byte MsgOhYeahMmm
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_0200014c
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x0040303e
+	.2byte MsgItSCompletely, 0x0040
 	.4byte 0x50008805
 	.4byte 0xffff0032
 	.4byte Func_020001e0

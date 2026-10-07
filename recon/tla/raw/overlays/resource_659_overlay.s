@@ -88,7 +88,7 @@ Func_020000a4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020080f8:
-	.4byte 0x0000189c
+	.4byte MsgIndraIsIn
 	.section .text.x020080fc,"ax",%progbits
 	.global Func_020000fc
 	.thumb_func
@@ -173,11 +173,11 @@ Func_020000fc:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020081ac:
-	.4byte 0x00002126
+	.4byte MsgAreYouWorried
 .L_020081b0:
-	.4byte 0x00001d5a
+	.4byte MsgIVeHeardThat
 .L_020081b4:
-	.4byte 0x000018fe
+	.4byte MsgEarthquakesPirateAttacks
 	.section .text.x020081b8,"ax",%progbits
 	.global Func_020001b8
 	.thumb_func
@@ -220,7 +220,7 @@ Func_020001b8:
 .L_02008204:
 	.4byte gPartyState
 .L_02008208:
-	.4byte 0x00002120
+	.4byte MsgIVeNoticed
 .L_0200820c:
 	movs r0, #128
 	lsls r0, r0, #4
@@ -242,9 +242,9 @@ Func_020001b8:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008234:
-	.4byte 0x00001d54
+	.4byte MsgTheKibomboAre
 .L_02008238:
-	.4byte 0x000018e2
+	.4byte MsgSurelyThisTown
 	.section .text.x0200823c,"ax",%progbits
 	.global Func_0200023c
 	.thumb_func
@@ -279,7 +279,7 @@ Func_0200023c:
 	pop {pc}
 	.2byte 0x0000
 .L_02008288:
-	.4byte 0x000018aa
+	.4byte MsgDonTTouch
 	.section .text.x0200828c,"ax",%progbits
 	.global Func_0200028c
 	.thumb_func
@@ -336,13 +336,13 @@ Func_0200028c:
 .L_020082f6:
 	pop {pc}
 .L_020082f8:
-	.4byte 0x0000207d
+	.4byte MsgICanTWaitFor
 .L_020082fc:
-	.4byte 0x00002084
+	.4byte MsgThatMushroomWas
 .L_02008300:
-	.4byte 0x00002082
+	.4byte MsgThanksForBringing
 .L_02008304:
-	.4byte 0x00002071
+	.4byte MsgHowAreWe
 	.section .text.x02008308,"ax",%progbits
 	.global Func_02000308
 	.thumb_func
@@ -386,13 +386,13 @@ Func_02000308:
 .L_02008356:
 	pop {pc}
 .L_02008358:
-	.4byte 0x0000207e
+	.4byte MsgThisHereS
 .L_0200835c:
-	.4byte 0x00002085
+	.4byte MsgActuallyIDidn
 .L_02008360:
-	.4byte 0x00002083
+	.4byte MsgPleaseWonT
 .L_02008364:
-	.4byte 0x00002072
+	.4byte MsgMyHusbandRelishes
 	.section .text.x02008368,"ax",%progbits
 	.global Func_02000368
 	.thumb_func
@@ -438,11 +438,11 @@ Func_02000368:
 	pop {pc}
 	.2byte 0x0000
 .L_020083bc:
-	.4byte 0x0000207f
+	.4byte MsgTheMoreI
 .L_020083c0:
-	.4byte 0x00002086
+	.4byte MsgIDonTRemember
 .L_020083c4:
-	.4byte 0x00002073
+	.4byte MsgIMDying
 	.section .text.x020083c8,"ax",%progbits
 	.global Func_020003c8
 	.thumb_func
@@ -488,11 +488,11 @@ Func_020003c8:
 	pop {pc}
 	.2byte 0x0000
 .L_0200841c:
-	.4byte 0x00002080
+	.4byte MsgTheseMushroomsWill
 .L_02008420:
-	.4byte 0x00002087
+	.4byte MsgIfMyHusband
 .L_02008424:
-	.4byte 0x00002074
+	.4byte MsgMyPoorHusband
 	.section .text.x02008428,"ax",%progbits
 	.global Func_02000428
 	.thumb_func
@@ -558,9 +558,9 @@ Func_02000428:
 	pop {pc}
 	.2byte 0x0000
 .L_020084bc:
-	.4byte 0x00002052
+	.4byte MsgUhhhnnnUhhhnnn2
 .L_020084c0:
-	.4byte 0x00002054
+	.4byte MsgHowCanAnyone
 	.section .text.x020084c4,"ax",%progbits
 	.global Func_020004c4
 	.thumb_func
@@ -1390,7 +1390,7 @@ Func_020007dc:
 	b .L_02008c30
 	.2byte 0x0000
 .L_02008c24:
-	.4byte 0x000018b4
+	.4byte MsgAdmitItYou
 .L_02008c28:
 	.4byte Data_0200349c
 .L_02008c2c:
@@ -1690,7 +1690,7 @@ Func_02000ed8:
 	pop {pc}
 	.2byte 0x0000
 .L_02008f08:
-	.4byte 0x000018cf
+	.4byte MsgAhWhenWill
 	.section .text.x02008f0c,"ax",%progbits
 	.global Func_02000f0c
 	.thumb_func
@@ -1775,7 +1775,7 @@ Func_02000f0c:
 	bl Func_02001d58
 	pop {pc}
 .L_02008fdc:
-	.4byte 0x000018d0
+	.4byte MsgWhyDidI
 	.section .text.x02008fe0,"ax",%progbits
 	.global Func_02000fe0
 	.thumb_func
@@ -2094,7 +2094,7 @@ Func_02001008:
 	pop {pc}
 	.2byte 0x0000
 .L_020092f4:
-	.4byte 0x00002075
+	.4byte MsgOhMyIs
 .L_020092f8:
 	.4byte Data_02001f18
 .L_020092fc:
@@ -2236,9 +2236,9 @@ Func_02001310:
 	bl Func_02001d58
 	pop {pc}
 .L_02009448:
-	.4byte 0x00002075
+	.4byte MsgOhMyIs
 .L_0200944c:
-	.4byte 0x00002081
+	.4byte MsgNoDearThey
 	.section .text.x02009450,"ax",%progbits
 	.global Func_02001450
 	.thumb_func
@@ -2557,7 +2557,7 @@ Func_02001450:
 	b .L_02009764
 	.2byte 0x0000
 .L_0200975c:
-	.4byte 0x00002093
+	.4byte MsgYouReBack
 .L_02009760:
 	bl Func_02001a20
 .L_02009764:
@@ -2844,7 +2844,7 @@ Func_02001910:
 	pop {pc}
 	.2byte 0x0000
 .L_02009a1c:
-	.4byte 0x000020a2
+	.4byte MsgAhSoYouLl
 	.section .text.x02009a20,"ax",%progbits
 	.global Func_02001a20
 	.thumb_func
@@ -3141,7 +3141,7 @@ Func_02001a20:
 	pop {pc}
 	.2byte 0x0000
 .L_02009d0c:
-	.4byte 0x000020aa
+	.4byte MsgIfYouVe
 	.section .rodata.x02009f18,"a",%progbits
 	.global Data_02001f18
 Data_02001f18:
@@ -3832,148 +3832,148 @@ Data_020028a0:
 	.4byte 0x00000011
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000189b
+	.4byte MsgTheLandsTo
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_020000a4
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000018a1
+	.4byte MsgAWaveBig
 	.4byte 0x0000c400
 	.4byte 0xffff000b
-	.4byte 0x000018a2
+	.4byte MsgEverythingHappenedSo
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000018a5
+	.4byte MsgTheySayThat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000018a6
+	.4byte MsgTheBoatThat
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000018a9
+	.4byte MsgMiladyAndI
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000018ab
+	.4byte MsgMyFatherWas
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000018ac
+	.4byte MsgWhenTheElder
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000018ad
+	.4byte MsgDadAndGrandpaHave
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000018ae
+	.4byte MsgWheneverDadGoes
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte Func_020001b8
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000018e3
+	.4byte MsgWeMustPass
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x000018e4
+	.4byte MsgAWaveThat
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_020000fc
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x000018ff
+	.4byte MsgOurInnIs
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001900
+	.4byte MsgIHopeThose
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte Func_0200023c
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00001901
+	.4byte MsgISleptRight
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00001902
+	.4byte MsgIMGlad
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00002f59
+	.4byte MsgWeReHeading
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00002f5a
+	.4byte MsgHeyIfYou
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000189f
+	.4byte MsgTheKibomboAreWarlike
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000018a0
+	.4byte MsgTheySayThere
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000018a3
+	.4byte MsgIfTheMythical
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000018a4
+	.4byte MsgEverythingSOn
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000018a7
+	.4byte MsgThatBoatS
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000018a8
+	.4byte MsgItDidnT
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000018af
+	.4byte MsgIWishIKnew
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000018b0
+	.4byte MsgUntilMyFather
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000018b1
+	.4byte MsgHeIntendsTo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000018b2
+	.4byte MsgIfDadHas
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000018b3
+	.4byte MsgIHopeHe
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000018e5
+	.4byte MsgHowCouldOne
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000018e6
+	.4byte MsgIfThisIs
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000018e7
+	.4byte MsgTheRaidWas
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001903
+	.4byte MsgTheNewLand
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001904
+	.4byte MsgActuallyIThink
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001905
+	.4byte MsgNoOneWas
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001906
+	.4byte MsgIWasHiding
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00001907
+	.4byte MsgWeWereFine
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00002f5b
+	.4byte MsgTheGladiatorWho
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00002f5c
+	.4byte MsgWeFoughtIn
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403043
+	.2byte MsgThereAreSomePotatoes, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403044
+	.2byte MsgTheyReMaking, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x00403045
+	.2byte MsgAllTheSpices, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x00403046
+	.2byte MsgThereSAChicken, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x00403047
+	.2byte MsgAPotOf, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -3984,52 +3984,52 @@ Data_02002bb8:
 	.4byte 0x00000014
 	.4byte 0x00000000
 	.4byte 0x18ff0009
-	.4byte 0x00002114
+	.4byte MsgOhAfterThe
 	.4byte 0x00000000
 	.4byte 0x18ff000a
-	.4byte 0x00002115
+	.4byte MsgShinSDeveloped
 	.4byte 0x0000c400
 	.4byte 0x18ff000d
-	.4byte 0x00002051
+	.4byte MsgWhenAndHis
 	.4byte 0x0000a400
 	.4byte 0x18ff000d
-	.4byte 0x00002051
+	.4byte MsgWhenAndHis
 	.4byte 0x00008400
 	.4byte 0x18ff000d
-	.4byte 0x00002051
+	.4byte MsgWhenAndHis
 	.4byte 0x00000000
 	.4byte 0x18ff000e
 	.4byte Func_02000428
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001d48
+	.4byte MsgWasnTOne
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001d49
+	.4byte MsgSoThatGuy
 	.4byte 0x00000000
 	.4byte 0xffff0007
 	.4byte Func_02000ed8
 	.4byte 0x00008d15
 	.4byte 0x18ff0009
-	.4byte 0x00002116
+	.4byte MsgEvenTheSound
 	.4byte 0x00008d15
 	.4byte 0x18ff000a
-	.4byte 0x00002117
+	.4byte MsgIUnderstandWhy
 	.4byte 0x00008d15
 	.4byte 0x18ff000d
-	.4byte 0x00002067
+	.4byte MsgSoThisFellow
 	.4byte 0x00008d15
 	.4byte 0x1211000e
-	.4byte 0x00002068
+	.4byte MsgIKnewI
 	.4byte 0x00008d15
 	.4byte 0x18ff040e
 	.4byte Func_02000428
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001d4a
+	.4byte MsgThereWasSomething
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001d4b
+	.4byte MsgThatWasA
 	.4byte 0x00008d15
 	.4byte 0xffff0007
 	.4byte Func_02000f0c
@@ -4046,61 +4046,61 @@ Data_02002c9c:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x08ab0008
-	.4byte 0x00001897
+	.4byte MsgInAllThis
 	.4byte 0x00000000
 	.4byte 0x08ff0008
-	.4byte 0x00001d2e
+	.4byte MsgSoBriggsAnd
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002069
+	.4byte MsgThereSTalk
 	.4byte 0x00000000
 	.4byte 0x08ab0009
-	.4byte 0x00001898
+	.4byte MsgMadraAndAlhafra
 	.4byte 0x00000000
 	.4byte 0x08ff0009
-	.4byte 0x00001d2f
+	.4byte MsgItWasSure
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000206a
+	.4byte MsgSinceThingsAre
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000018df
+	.4byte MsgOhhOhhh2
 	.4byte 0x00000000
 	.4byte 0x08ff000b
-	.4byte 0x00001d51
+	.4byte MsgIMSoHappyThat
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000211d
+	.4byte MsgIVeTold
 	.4byte 0x00008d15
 	.4byte 0x08ab0008
-	.4byte 0x00001899
+	.4byte MsgWaitASecond
 	.4byte 0x00008d15
 	.4byte 0x08ff0008
-	.4byte 0x00001d30
+	.4byte MsgNowThatBriggs
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000206b
+	.4byte MsgWhatIfWe
 	.4byte 0x00008d15
 	.4byte 0x08ab0009
-	.4byte 0x0000189a
+	.4byte MsgAlhafraHasLong
 	.4byte 0x00008d15
 	.4byte 0x08ff0009
-	.4byte 0x00001d31
+	.4byte MsgItSoundsLikeOsenia
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000206c
+	.4byte MsgTheBusinessPlan
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000018e1
+	.4byte MsgEyesShiningIn
 	.4byte 0x00008d15
 	.4byte 0x08ff000b
-	.4byte 0x00001d53
+	.4byte MsgIWasSo
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000211f
+	.4byte MsgShinSNormally
 	.4byte 0x00000173
 	.4byte 0xffff00cd
-	.4byte 0x00403048
+	.2byte MsgTheyReMakingTandoori, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4159,136 +4159,136 @@ Data_02002da4:
 	.4byte 0x00000011
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001d32
+	.4byte MsgTheKibomboAreA
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001d33
+	.4byte MsgIMGladThe
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001d36
+	.4byte MsgTheKibomboApparently
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001d37
+	.4byte MsgMyHusbandPursued
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001d3a
+	.4byte MsgLeftThatBoat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001d3b
+	.4byte MsgICanTStop
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001d3e
+	.4byte MsgAllTheKibombo
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001d3f
+	.4byte MsgMyFatherWasHolding
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001d40
+	.4byte MsgWentToKibombo
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001d41
+	.4byte MsgIfMyFather
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001d42
+	.4byte MsgMyFatherHasn
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte Func_020001b8
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001d55
+	.4byte MsgIfThatTidal
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001d56
+	.4byte MsgThemKibomboPossess
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_020000fc
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001d5b
+	.4byte MsgThingsHaveBeen
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001d5c
+	.4byte MsgIHidUnder
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte Func_0200023c
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00001d5d
+	.4byte MsgIWatchedThe
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00001d5e
+	.4byte MsgIfYouWantToKnow
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001d34
+	.4byte MsgOurBestGuess
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001d35
+	.4byte MsgWhatCanWe
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001d38
+	.4byte MsgIfIWereJust
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001d39
+	.4byte MsgInHisYouth
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001d3c
+	.4byte MsgSomePeopleIn
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001d3d
+	.4byte MsgIWonderIfThat
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001d43
+	.4byte MsgWhenMyHusband
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001d44
+	.4byte MsgIWonT
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001d45
+	.4byte MsgWhenLeftHe
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001d46
+	.4byte MsgDadAlwaysKnows
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001d47
+	.4byte MsgIHopeHeS
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001d57
+	.4byte MsgIHopeThePower
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001d58
+	.4byte MsgEveryoneSaysThem
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001d59
+	.4byte MsgWeReLucky
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001d5f
+	.4byte MsgThereSNothing
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001d60
+	.4byte MsgIfItWere
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001d61
+	.4byte MsgAfterICrawled
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001d62
+	.4byte MsgIHadTo
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00001d63
+	.4byte MsgTheKibomboAttacked
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403043
+	.2byte MsgThereAreSomePotatoes, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403044
+	.2byte MsgTheyReMaking, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x00403045
+	.2byte MsgAllTheSpices, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x00403046
+	.2byte MsgThereSAChicken, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x00403047
+	.2byte MsgAPotOf, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4350,10 +4350,10 @@ Data_0200308c:
 	.4byte Func_02001450
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000206d
+	.4byte MsgOurSalesmanSaid
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000206e
+	.4byte MsgIWonderIfTheKibombo
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_0200028c
@@ -4362,64 +4362,64 @@ Data_0200308c:
 	.4byte Func_02000308
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002088
+	.4byte MsgSameSailorsCame
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002089
+	.4byte MsgOneOfThe
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x000020bf
+	.4byte MsgIKnowYou
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x000020c0
+	.4byte MsgWeJustHave
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000020c1
+	.4byte MsgIMSoRelievedGot
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000020c2
+	.4byte MsgICanTBelieveActually
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000020c3
+	.4byte MsgGondowanIsSuch
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000020c4
+	.4byte MsgILikeYou
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000020c5
+	.4byte MsgMyDaddyWent
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte Func_020001b8
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002121
+	.4byte MsgTheOceanS
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002122
+	.4byte MsgWhenTheOcean
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_020000fc
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002129
+	.4byte MsgHasSomeoneBeen
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x0000212a
+	.4byte MsgOneOfOur
 	.4byte 0x00000000
 	.4byte 0xffff001a
 	.4byte Func_0200023c
 	.4byte 0x00000000
 	.4byte 0xffff0020
-	.4byte 0x0000212b
+	.4byte MsgIGuessThatA
 	.4byte 0x00000000
 	.4byte 0xffff0021
-	.4byte 0x0000212c
+	.4byte MsgIVeHeardThatRising
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000206f
+	.4byte MsgTheContinentShift
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002070
+	.4byte MsgTheSalesmanThat
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte Func_02000368
@@ -4428,55 +4428,55 @@ Data_0200308c:
 	.4byte Func_020003c8
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000208a
+	.4byte MsgOarsIUnderstand
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000208b
+	.4byte MsgWeVeHadA
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x000020c6
+	.4byte MsgAllOfThis
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x000020c7
+	.4byte MsgWhyWonTThe
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000020c8
+	.4byte MsgICanTBelieveItDespite
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000020c9
+	.4byte MsgIFeltA
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000020ca
+	.4byte MsgSaidHeWas
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000020cb
+	.4byte MsgIWishThey
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000020cc
+	.4byte MsgIMSoGladDaddy
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002123
+	.4byte MsgIKnewThe
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002124
+	.4byte MsgOurNewShip
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002125
+	.4byte MsgSeafaringTownsKnow
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x0000212d
+	.4byte MsgIVeNeverSeenA
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x0000212e
+	.4byte MsgSomeoneMustHave
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0000212f
+	.4byte MsgItMustBe
 	.4byte 0x00008d15
 	.4byte 0xffff0020
-	.4byte 0x00002130
+	.4byte MsgIfIHadA
 	.4byte 0x00008d15
 	.4byte 0xffff0021
-	.4byte 0x00002131
+	.4byte MsgHmIWonder
 	.4byte 0x0001c014
 	.4byte 0x098a000a
 	.4byte Func_02001008
@@ -4485,19 +4485,19 @@ Data_0200308c:
 	.4byte Func_02001310
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403043
+	.2byte MsgThereAreSomePotatoes, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403044
+	.2byte MsgTheyReMaking, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x00403045
+	.2byte MsgAllTheSpices, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x00403046
+	.2byte MsgThereSAChicken, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte 0x00403047
+	.2byte MsgAPotOf, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

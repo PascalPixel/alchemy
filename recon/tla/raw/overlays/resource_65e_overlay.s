@@ -46,7 +46,7 @@ Func_02000078:
 	pop {pc}
 	.2byte 0x0000
 .L_0200809c:
-	.4byte 0x00001949
+	.4byte MsgIWonderIfThere
 	.section .text.x020080a0,"ax",%progbits
 	.global Func_020000a0
 	.thumb_func
@@ -65,7 +65,7 @@ Func_020000a0:
 	pop {pc}
 	.2byte 0x0000
 .L_020080c4:
-	.4byte 0x0000229a
+	.4byte MsgWheneverVisitorsCome
 	.section .text.x020080c8,"ax",%progbits
 	.global Func_020000c8
 	.thumb_func
@@ -131,7 +131,7 @@ Func_020000f4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008148:
-	.4byte 0x00001932
+	.4byte MsgHeyMisterAreYou
 	.section .text.x0200814c,"ax",%progbits
 	.global Func_0200014c
 	.thumb_func
@@ -173,7 +173,7 @@ Func_0200014c:
 .L_02008196:
 	pop {r5, pc}
 .L_02008198:
-	.4byte 0x00001940
+	.4byte MsgWeOnlyHave
 	.section .text.x0200819c,"ax",%progbits
 	.global Func_0200019c
 	.thumb_func
@@ -220,7 +220,7 @@ Func_0200019c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020081f8:
-	.4byte 0x00001943
+	.4byte MsgYouVeComeA
 	.section .text.x020081fc,"ax",%progbits
 	.global Func_020001fc
 	.thumb_func
@@ -284,7 +284,7 @@ Func_020001fc:
 .L_02008282:
 	pop {r5, r6, pc}
 .L_02008284:
-	.4byte 0x00001946
+	.4byte MsgHaveYouBeen
 	.section .text.x02008288,"ax",%progbits
 	.global Func_02000288
 	.thumb_func
@@ -329,7 +329,7 @@ Func_02000288:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082e0:
-	.4byte 0x00002297
+	.4byte MsgThisLittleIsland
 	.section .text.x020082e4,"ax",%progbits
 	.global Func_020002e4
 	.thumb_func
@@ -374,7 +374,7 @@ Func_020002e4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200833c:
-	.4byte 0x00002221
+	.4byte MsgEvenOutIn
 	.section .text.x02008340,"ax",%progbits
 	.global Func_02000340
 	.thumb_func
@@ -557,9 +557,9 @@ Func_02000470:
 	pop {pc}
 	.2byte 0x0000
 .L_020084a8:
-	.4byte 0x0000194f
+	.4byte MsgIThinkMust
 .L_020084ac:
-	.4byte 0x00001950
+	.4byte MsgSEnemiesAre
 	.section .text.x020084b0,"ax",%progbits
 	.global Func_020004b0
 	.thumb_func
@@ -583,7 +583,7 @@ Func_020004b0:
 	pop {pc}
 	.2byte 0x0000
 .L_020084d8:
-	.4byte 0x00001951
+	.4byte MsgIFearWhat
 	.section .text.x020084dc,"ax",%progbits
 	.global Func_020004dc
 	.thumb_func
@@ -668,7 +668,7 @@ Func_020004dc:
 	bl Func_020005cc
 	pop {r5, pc}
 .L_0200859c:
-	.4byte 0x0000194a
+	.4byte MsgForgiveMyManners
 .L_020085a0:
 	.4byte gPartyState
 	.section .rodata.x02008654,"a",%progbits
@@ -947,82 +947,82 @@ Data_02000a20:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001930
+	.4byte MsgIHeardSomeone
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001931
+	.4byte MsgMyFatherIn
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_020000f4
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000193c
+	.4byte MsgThoseWhoHave
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000193d
+	.4byte MsgMyHusbandHas
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_0200014c
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001942
+	.4byte MsgThereArenT
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_0200019c
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002194
+	.4byte MsgUsedToBe
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002195
+	.4byte MsgYouMustBe
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte Func_02000470
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001935
+	.4byte MsgItMustBeNice
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001936
+	.4byte MsgThatBoySure
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001937
+	.4byte MsgILoveExploring
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000193e
+	.4byte MsgWhatDoesThe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000193f
+	.4byte MsgICanTLet
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001941
+	.4byte MsgIDonTKnowMuch
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001944
+	.4byte MsgThereSNoReason
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001945
+	.4byte MsgWhyAreTravelers
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002197
+	.4byte MsgTundariaIsThe
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002198
+	.4byte MsgAroundHereIt
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte Func_020004b0
 	.4byte 0x00000173
 	.4byte 0xffff00ce
-	.4byte 0x00403049
+	.2byte MsgItSARoast, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cf
-	.4byte 0x0040304a
+	.2byte MsgFreshEggsOver, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d0
-	.4byte 0x0040304b
+	.2byte MsgThatCheeseLooks, 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d1
-	.4byte 0x00403057
+	.2byte MsgThereSFish, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1054,10 +1054,10 @@ Data_02000bac:
 	.4byte Func_02000288
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002298
+	.4byte MsgIMSick
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002299
+	.4byte MsgIDLoveToGo
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_020002e4
@@ -1066,19 +1066,19 @@ Data_02000bac:
 	.4byte Func_020001fc
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001949
+	.4byte MsgIWonderIfThere
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000229a
+	.4byte MsgWheneverVisitorsCome
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000229b
+	.4byte MsgMaybeTheyLl
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000229c
+	.4byte MsgIWonderWhatIt
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002222
+	.4byte MsgOnceThisWas
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte Func_02000078

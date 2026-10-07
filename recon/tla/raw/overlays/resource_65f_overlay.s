@@ -672,7 +672,7 @@ Func_02000580:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020085c8:
-	.4byte 0x00001974
+	.4byte MsgSoUhYou
 	.section .text.x020085cc,"ax",%progbits
 	.global Func_020005cc
 	.thumb_func
@@ -707,7 +707,7 @@ Func_020005cc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008614:
-	.4byte 0x0000197c
+	.4byte MsgDonTYou
 	.section .text.x02008618,"ax",%progbits
 	.global Func_02000618
 	.thumb_func
@@ -742,7 +742,7 @@ Func_02000618:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008660:
-	.4byte 0x000019fd
+	.4byte MsgMahaSaidThat
 	.section .text.x02008664,"ax",%progbits
 	.global Func_02000664
 	.thumb_func
@@ -766,7 +766,7 @@ Func_02000664:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008694:
-	.4byte 0x000019fb
+	.4byte MsgAwoooooh2
 	.section .text.x02008698,"ax",%progbits
 	.global Func_02000698
 	.thumb_func
@@ -805,7 +805,7 @@ Func_02000698:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020086e8:
-	.4byte 0x00001978
+	.4byte MsgGaaaroooooo2
 	.section .text.x020086ec,"ax",%progbits
 	.global Func_020006ec
 	.thumb_func
@@ -880,9 +880,9 @@ Func_020006ec:
 	pop {pc}
 	.2byte 0x0000
 .L_02008798:
-	.4byte 0x00001a04
+	.4byte MsgIMThe
 .L_0200879c:
-	.4byte 0x00001a01
+	.4byte MsgHeyItSYou
 	.section .text.x020087a0,"ax",%progbits
 	.global Func_020007a0
 	.thumb_func
@@ -1075,7 +1075,7 @@ Func_02000808:
 .L_02008958:
 	.4byte 0x01670000
 .L_0200895c:
-	.4byte 0x00001984
+	.4byte MsgWhatOutsidersHere
 	.section .text.x02008960,"ax",%progbits
 	.global Func_02000960
 	.thumb_func
@@ -2885,7 +2885,7 @@ Func_02001490:
 	adds r2, r2, r3
 	b .L_02009828
 .L_0200981c:
-	.4byte 0x00001952
+	.4byte MsgGaaaroooooo3
 .L_02009820:
 	.4byte 0xfff00000
 .L_02009824:
@@ -4389,7 +4389,7 @@ Func_020022f4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200a684:
-	.4byte 0x000019ab
+	.4byte MsgHaowooo2
 .L_0200a688:
 	.4byte 0x00026666
 .L_0200a68c:
@@ -4557,7 +4557,7 @@ Func_02002694:
 	b .L_0200a846
 	.2byte 0x0000
 .L_0200a814:
-	.4byte 0x000019b0
+	.4byte MsgWait4
 .L_0200a818:
 	movs r0, #30
 	bl Battle_WaitMode0
@@ -6448,7 +6448,7 @@ Func_02003878:
 	bl Object_SetModeById
 	b .L_0200ba8c
 .L_0200ba88:
-	.4byte 0x00001a2e
+	.4byte MsgAhYouCame
 .L_0200ba8c:
 	movs r1, #3
 	movs r0, #9
@@ -9527,31 +9527,31 @@ Data_02005e34:
 	.4byte Func_02000580
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001977
+	.4byte MsgGoodEveningForgive
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_02000698
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000197b
+	.4byte MsgYouThereStrangers
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_020005cc
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000197f
+	.4byte MsgItSGrim
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001980
+	.4byte MsgSuchGorgeousMoonlight
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001981
+	.4byte MsgWhichOneOf
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001982
+	.4byte MsgForeignersOnlyCome
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001983
+	.4byte MsgTheNightOf
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_02000fbc
@@ -9560,7 +9560,7 @@ Data_02005e34:
 	.4byte Func_0200105c
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x0040303f
+	.2byte MsgMehISaw, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9604,10 +9604,10 @@ Data_02005f78:
 	.4byte Func_02000960
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000019f9
+	.4byte MsgIHearTell
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000019fa
+	.4byte MsgLastNightWhen
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_02000664
@@ -9616,31 +9616,31 @@ Data_02005f78:
 	.4byte Func_02000618
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001a00
+	.4byte MsgIHeardThere
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_020006ec
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001a05
+	.4byte MsgHowCouldThese
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001a06
+	.4byte MsgIThoughtWe
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001a07
+	.4byte MsgINeverThought
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001a08
+	.4byte MsgMahaSaidThese
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001a09
+	.4byte MsgIWouldLove
 	.4byte 0x00008d15
 	.4byte 0x0301040d
 	.4byte Func_020006ec
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001a0a
+	.4byte MsgMyDadTold
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_02000fbc
@@ -9649,7 +9649,7 @@ Data_02005f78:
 	.4byte Func_0200105c
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x0040303f
+	.2byte MsgMehISaw, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9798,10 +9798,10 @@ Data_02006278:
 	.4byte Func_020009a4
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001a8d
+	.4byte MsgTakeCareIn
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001a8e
+	.4byte MsgIWishThat
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_0200101c

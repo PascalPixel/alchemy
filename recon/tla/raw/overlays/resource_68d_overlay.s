@@ -729,7 +729,7 @@ Func_0200058c:
 	bl Func_02001fd4
 	bl .L_02009f20
 .L_02008630:
-	.4byte 0x00002804
+	.4byte MsgYouAreLord
 .L_02008634:
 	.4byte 0x00013333
 .L_02008638:
@@ -3506,109 +3506,109 @@ gSceneEvents:
 	.4byte Func_0200058c
 	.4byte 0x00000000
 	.4byte 0x196a0008
-	.4byte 0x0000286e
+	.4byte MsgLordConservatoSeemed
 	.4byte 0x00000000
 	.4byte 0x196a0009
-	.4byte 0x0000286f
+	.4byte MsgBothLordConservato
 	.4byte 0x00000000
 	.4byte 0x196a000a
-	.4byte 0x00002870
+	.4byte MsgMaybeOnceYou
 	.4byte 0x00000000
 	.4byte 0x196a000b
-	.4byte 0x00002871
+	.4byte MsgTodayHisHighness
 	.4byte 0x00000000
 	.4byte 0x196a000c
-	.4byte 0x00002872
+	.4byte MsgIfHydrosPlans
 	.4byte 0x00008d15
 	.4byte 0x196a0008
-	.4byte 0x00002874
+	.4byte MsgTheSenateS
 	.4byte 0x00008d15
 	.4byte 0x196a0009
-	.4byte 0x00002875
+	.4byte MsgTheKingS
 	.4byte 0x00008d15
 	.4byte 0x196a000a
-	.4byte 0x00002876
+	.4byte MsgWheneverOutsidersArrive
 	.4byte 0x00008d15
 	.4byte 0x196a000b
-	.4byte 0x00002877
+	.4byte MsgWhatWillHappen
 	.4byte 0x00008d15
 	.4byte 0x196a000c
-	.4byte 0x00002878
+	.4byte MsgAsLongAsI
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000027f6
+	.4byte MsgHeIsStill
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000027f7
+	.4byte MsgIfYouSeek
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000027f8
+	.4byte MsgHisHighnessNever
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000027f9
+	.4byte MsgConservatoAndThe
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000027fa
+	.4byte MsgKingHydrosIsThe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000027fc
+	.4byte MsgLordConservatoHolds
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000027fd
+	.4byte MsgOhDearUsing
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000027fe
+	.4byte MsgHisHighnessTheKing
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000027ff
+	.4byte MsgLordConservatoOnly
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002800
+	.4byte MsgHisHighnessIs
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000287a
+	.4byte MsgDoNotListen
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000287b
+	.4byte MsgYouMustSail
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000287c
+	.4byte MsgIThinkIOverheard
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000287d
+	.4byte MsgMyPeopleMay
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000287e
+	.4byte MsgHisMajestyHas
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000287f
+	.4byte MsgTheActionsOf
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x00403064
+	.2byte MsgThereSABook, 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x00403065
+	.2byte MsgIFoundA, 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x00403066
+	.2byte MsgHereSA, 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x00403067
+	.2byte MsgHereSABook, 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x00403068
+	.2byte MsgHereSABookCalled, 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x00403069
+	.2byte MsgHereSABookCalledAlchemy, 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x0040306a
+	.2byte MsgHereSABookCalledAlchemyAnd, 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x0040306b
+	.2byte MsgHereSABookCalledThe, 0x0040
 	.4byte 0x000001c3
 	.4byte 0xffff00d0
-	.4byte 0x0040306d
+	.2byte MsgWhatInWhat, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

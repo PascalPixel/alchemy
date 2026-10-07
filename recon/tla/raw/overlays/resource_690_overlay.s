@@ -519,7 +519,7 @@ Func_0200043c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008484:
-	.4byte 0x000028ae
+	.4byte MsgDonTTellMe
 	.section .text.x02008488,"ax",%progbits
 	.global Func_02000488
 	.thumb_func
@@ -4436,13 +4436,13 @@ Data_020028f0:
 	.4byte Func_0200043c
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000028b2
+	.4byte MsgThereWasA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028b3
+	.4byte MsgTheMountainIs
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000028b5
+	.4byte MsgTheExplosionsWithin
 	.4byte 0x50008905
 	.4byte 0xffff000a
 	.4byte Func_02000488
@@ -4459,10 +4459,10 @@ Data_02002974:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028b1
+	.4byte MsgIHearKibombo
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028b4
+	.4byte MsgWeReLuckyThe
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4494,10 +4494,10 @@ Data_020029a4:
 	.4byte Func_020012c0
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028b6
+	.4byte MsgYouMustBeVery
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028b9
+	.4byte MsgForAContinent
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte Func_02000290
@@ -4532,16 +4532,16 @@ Data_02002a70:
 	.4byte 0x0000000d
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028b7
+	.4byte MsgThereSAPlace
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000028b8
+	.4byte MsgThePeopleOfShaman
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028ba
+	.4byte MsgIThinkThere
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000028bb
+	.4byte MsgLongAgoShaman
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4581,19 +4581,19 @@ Data_02002b3c:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028bc
+	.4byte MsgIfYouWantToCross
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000028bd
+	.4byte MsgALongTime
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028be
+	.4byte MsgThePeopleOfLoho
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000028bf
+	.4byte MsgTheNorthernSea
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305e
+	.2byte MsgThereSKaltic, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4607,13 +4607,13 @@ Data_02002b90:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028c1
+	.4byte MsgTheSeaWest
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte Func_020002a0
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028c3
+	.4byte MsgMyBuddyThinks
 	.4byte 0x10008c15
 	.4byte 0x02040009
 	.4byte Func_02000ef0
@@ -4645,10 +4645,10 @@ Data_02002c2c:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000028c0
+	.4byte MsgThereSNothingTo
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000028c2
+	.4byte MsgTheCurrentsAre
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

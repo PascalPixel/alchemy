@@ -839,7 +839,7 @@ Func_0200065c:
 .L_02008768:
 	.4byte 0xffe00000
 .L_0200876c:
-	.4byte 0x00002185
+	.4byte MsgThereSNoReaction
 	.section .text.x02008770,"ax",%progbits
 	.global Func_02000770
 	.thumb_func
@@ -2900,7 +2900,7 @@ Func_02001650:
 	mov r8, r3
 	pop {r5, r6, pc}
 .L_02009928:
-	.4byte 0x00002168
+	.4byte MsgHowDidAll
 .L_0200992c:
 	.4byte gPartyState
 .L_02009930:
@@ -5900,10 +5900,10 @@ Data_020039d0:
 	.4byte Func_0200021c
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x00403063
+	.2byte MsgItLooksLikeThereS, 0x0040
 	.4byte 0x000001c3
 	.4byte 0xffff00c9
-	.4byte 0x0040306c
+	.2byte MsgItSPleasantly, 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

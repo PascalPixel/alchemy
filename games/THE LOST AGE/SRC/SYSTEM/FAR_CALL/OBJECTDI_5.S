@@ -44,7 +44,7 @@ Map_LoadDefaultCellsAndUpdateBlockFar:
 	.global Map_PlayMetatileCopySequenceFar
 	.thumb_func
 Map_PlayMetatileCopySequenceFar:
-	overlay_veneer Func_0802b2d4
+	overlay_veneer Map_PlayMetatileCopySequence
 	.global Map_CopyMetatileIndicesRectFar
 	.thumb_func
 Map_CopyMetatileIndicesRectFar:

@@ -52,11 +52,11 @@ UiGlyph_ResetWorkStateFar:
 	.global Resource_ClearOwnerListAndCountersFar
 	.thumb_func
 Resource_ClearOwnerListAndCountersFar:
-	overlay_veneer Func_0803dd24
+	overlay_veneer Resource_ClearOwnerListAndCounters
 	.global Resource_PushPendingPairFar
 	.thumb_func
 Resource_PushPendingPairFar:
-	overlay_veneer Func_0803dd68
+	overlay_veneer Resource_PushPendingPair
 	.global Resource_ScheduleOwnerResetDelayedFar
 	.thumb_func
 Resource_ScheduleOwnerResetDelayedFar:
@@ -100,4 +100,4 @@ Func_080381b0:
 	.global Func_080381b8
 	.thumb_func
 Func_080381b8:
-	overlay_veneer Func_0803dea8
+	overlay_veneer UiWork_ReservedNoOp

@@ -1,3 +1,5 @@
+/* 2026-10-07 queue3 continuation: differ 169 (listing 1037, draft 1036, common 952), not matched. A readonly address constraint retains the closing tile loop's native separate add before strh (172 -> 169); naming the pointer alone gives 174. The preceding add still reverses its commutative operands. Count/sl versus count*3/fp, row copies, the main-loop zero and literal-pool placement remain. */
+/* Trial (queue3 continuation, none kept): mode-1 row index constrained to ip at row scope 469 (read-only also 469), normal index with a fixed copy 390, read/write handoff back to index 475; extra row-index input inside the column loop 356; fixed ip inside the column loop 570 (read-only 917); a high-register constraint fails reload with an internal compiler error. Plain index before pattern inside the column loop 380. The baseline's index copy already outranks its pattern copy (9 refs/17 insns versus 9/18); reload still spills the index. Scroll zero through a cast pointer 174, identity asm 180, volatile field 175, all rejected. Closing address readonly versus read/write both 169; post-store constraint 171, repeated pre-store expression 365, indexed address 182. A narrow fp handoff for the mode-1 count load on 169 gives 290 and prevents its native hoist. */
 /* Trial (queue3 after 172, none kept): separate per-mode counts 278 (count gets native fp, but count*3 now outranks work and takes r9); fixed work r9 951; a narrow work-to-r9 asm input in both column loops 868. Shared count has 18 refs over 80 insns, work 84/696, count*3 9/38; separate counts shorten count*3's lifetime to 17. Named count*3, const pattern, row-scope tmp3 and panel-scope tmp3 all 172; tmp3 shared by both modes 793. Moving rebuild = 0 after menu_busy 169 changes native store order and removes another instruction, rejected. Explicit else-if (mode == 0) and a default/case-0 switch without the dead CSE branch both 227. alchemy permute 10 minutes, 2 jobs, seed 73 from 196: 25,822 candidates, no improvement. */
 /* 2026-10-07 queue3: differ 172 (listing 1037, draft 1035, common 950), not matched. A tagged dead CSE boundary in the mode-0 panel loop removes its separate limit reload and restores the panel*2 spill (237 -> 204). Naming the per-column pattern before the address expression then gives native's row induction registers r5/r6 (204 -> 196), although their per-row copies remain exchanged between ip and sp+4. Moving message into its tutorial conditional restores the native spill-slot order (196 -> 172). The row pattern can share tmp3 at the same score; kept. Left: count and count*3 exchanged between sl/fp, the per-row copies, the main-loop zero shared with rebuild, and literal-pool placement. */
 /* Trial (queue3, from 204): fixed count r11 806; count shared with both blank-loop tests 538; unsigned count 204; pattern computed as the whole value before the store 260; just the row pattern named before the store 196, kept; explicit pattern and index 577; memory asm on pattern 737; shared pattern across both modes 509; a dead branch between scroll and rebuild stores 196, no effect. alchemy permute 10 minutes, 2 jobs, seed 53 from 237: 20,095 candidates, no improvement. */
@@ -355,8 +357,12 @@ s32 Ui_RunSelectionScreen(s32 mode)
         for (panel = 0; panel <= 6; panel++) {
             for (cnt = 0; cnt <= 2; cnt++) {
                 s32 col;
-                for (col = 0; col <= 2; col++)
-                    *(render->tilemap + (cnt + 17) * 32 + panel * 3 + 5 + (col & 3)) = 0xf07f;
+                for (col = 0; col <= 2; col++) {
+                    u16 *dst = render->tilemap + (cnt + 17) * 32 + panel * 3 + 5 + (col & 3);
+                    /* FAKEMATCH: Native keeps the final address add apart from strh. An explicit pointer still combines strh [r3, r7] (174); this readonly use retains adds; strh [r3] (169). */
+                    __asm__("" : : "r"(dst));
+                    *dst = 0xf07f;
+                }
             }
         }
     }

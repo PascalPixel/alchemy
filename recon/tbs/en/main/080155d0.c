@@ -5,7 +5,8 @@
  *   is (plus base idx) as native's ldrb r3, [r3, ip] (the symbol form expands to (plus idx base)
  *   and ties idx to w's register). idx still takes r0 (native ip): global's preference chain
  *   idx -> idx * 13 -> ofs -> gw -> the return register; native's ofs is r3; ofs declared
- *   before idx: no change (161). The other five editions keep their scaffold, which diff --arm
+ *   before idx: no change (161); wp declared before src: no change (161); w read before the
+ *   colour constants: 169. The other five editions keep their scaffold, which diff --arm
  *   cannot compare (no separate listing object); score them once English matches. 177 to 169: the wide glyph as a byte offset, (u8 *)UiText_Glyphs + (ch - 32) * 32,
  *   so the - 32 stays out of the symbol (native sub r3, r1, #32; lsl r3, r3, #5; one pool word).
  *   169 to 163: ofs set in each arm and the glyph width read once after the join through it,

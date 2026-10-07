@@ -1,13 +1,22 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1392, common 1372, differ 40.
+ * Native 1392 instructions, draft 1392, common 1380, differ 24.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
- * the stat pushes, the djinn rows, the condition list and the condition
- * loads match.
- * Remaining: the four (s8)m < 0 modifier tests (lsr #7, beq where
- * native has lsl #24, bge); the help block's saved/pointer pair (r5/r6
- * swapped) and code = 0 set before MemAlloc where native
- * sets it after.
+ * the stat pushes, the djinn rows, the condition list with its four
+ * modifier tests and the condition loads match.
+ * Remaining: the help block's saved/pointer pair (r5/r6 swapped) and
+ * code = 0 set before MemAlloc where native sets it after.
+ *
+ * Session 9 2026-10-07: the modifiers read the field in each test, as
+ * object->atk_lv > 0 then object->atk_lv < 0, without m: 40 -> 24, all
+ * four native (ldrb r1 kept for the second test, the sign-extending
+ * read with dest == base for the first, lsl #24 and bge). GCSE's PRE
+ * still reloads the field at the end of the first then-block (any store
+ * kills a load there), but CSE2 then finds that reload equal to the
+ * first test's QI register and deletes it: the then-block's store is
+ * sel[i] (alias set of the s8 array, 45), which strict aliasing keeps
+ * apart from the BtlUnit field (65). Session 6's same trial (73) stored
+ * through an s8 pointer (alias set 0), so the reload stayed.
  *
  * Session 8 2026-10-07: (s8)m < 0 for the second tests on 40: 182 (one
  * ldrsb for both tests). The CSE1 dump's block list shows every path
@@ -778,12 +787,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         break;
                     }
                     if (object->atk_cnt != 0) {
-                        u8 m = object->atk_lv;
-
-                        if ((s8)m > 0) {
+                        if (object->atk_lv > 0) {
                             sel[i++] = 9;
                         }
-                        if ((m >> 7) != 0) {
+                        if (object->atk_lv < 0) {
                             sel[i++] = 10;
                         }
                     }
@@ -791,12 +798,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         break;
                     }
                     if (object->def_cnt != 0) {
-                        u8 m = object->def_lv;
-
-                        if ((s8)m > 0) {
+                        if (object->def_lv > 0) {
                             sel[i++] = 11;
                         }
-                        if ((m >> 7) != 0) {
+                        if (object->def_lv < 0) {
                             sel[i++] = 12;
                         }
                     }
@@ -804,27 +809,21 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         break;
                     }
                     if (object->res_cnt != 0) {
-                        u8 m = object->res_lv;
-
-                        if ((s8)m > 0) {
+                        if (object->res_lv > 0) {
                             sel[i++] = 13;
                         }
-                        if ((m >> 7) != 0) {
+                        if (object->res_lv < 0) {
                             sel[i++] = 14;
                         }
                     }
                     if (i > 7) {
                         break;
                     }
-                    {
-                        u8 m = object->agi_lv;
-
-                        if ((s8)m > 0) {
-                            sel[i++] = 17;
-                        }
-                        if ((m >> 7) != 0) {
-                            sel[i++] = 18;
-                        }
+                    if (object->agi_lv > 0) {
+                        sel[i++] = 17;
+                    }
+                    if (object->agi_lv < 0) {
+                        sel[i++] = 18;
                     }
                 } while (0);
 

@@ -1,4 +1,4 @@
-/* 08026080: listing 1585, draft 1590, differ 1031 (common 1072); both
+/* 08026080: listing 1585, draft 1598, differ 669 (common 1257); both
  * frames are 324 bytes. The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
@@ -7,19 +7,28 @@
  * - the kind 4 and 6 searches as one || chain of byte tests each: fold's
  *   fold_truthop merges delusion/stun into the word test & 0xFF0000FF and
  *   sleep/psy_seal into a halfword test whose & 0xFFFF survives to loop,
- *   which hoists the mask into r4, caller-saved at sp+8 as native: 1031.
- *   The found loop now has the native shape apart from registers: native
- *   unit r1, found r7, ids offset r6; draft unit r6, found r1 (caller-saved
- *   at sp+8, mask at sp+4).
- * Trials: the found loop's unit as a block local (st): the loop's
- *   registers then match exactly (j r5, found r7, offset r6, unit r1, mask
- *   at sp+8 -> sp+4), but the frame drops to 320 and every slot below
- *   moves, 1186. Native spills slot (&tbl[selSlot[i]]) at sp+4 in the
- *   pending loop and keeps &targetPos in r8 with a copy in r4, caller-saved
- *   at sp+8; the draft keeps slot in r5. targetPos through a pointer tp set
- *   in the call argument: 1155 alone, 1054 with st (tp hoisted, spilled at
- *   sp+4; native copies r8 into r4 each iteration and steps a selIds
- *   offset at sp+12 from 2).
+ *   which hoists the mask into r4, caller-saved as native: 1031.
+ * - the found loop's unit as its own block local st, and the side marker's
+ *   slot pointer as its own block local side, so neither shares a pseudo
+ *   with the long-lived unit and slot: 669. The found loop's registers now
+ *   match exactly (j r5, found r7, ids offset r6, st r1, mask caller-saved
+ *   at sp+8), r6 joins the reload rotation as native (spread = 1 through
+ *   r6), and the pending loop spills slot at sp+4 and caller-saves the
+ *   &targetPos copy in r4 at sp+8 as native.
+ * Next divergence: reload-time spill slots are ordered differently: the
+ *   tbl address (sp+212) spills at sp+20 against native 36 and the ids
+ *   address (sp+308) at 16 against native 28; head is at native 32.
+ * Trials on the way: st alone 1186 (frame 320: one caller-save slot fewer);
+ *   entry = &head[i] in the pending loop: alone 1149, with st 1046, with
+ *   st and side 826 (so entry stays a stepped pointer); targetPos through
+ *   a pointer tp (in the call argument, at the loop top, or before the
+ *   loop): 1155 alone, 1044/1046/1036 with st and head[i], no change with
+ *   side (dropped); unit without st on 669: 1041. Permuter 5 min over the
+ *   pending loop (st and head[i], 1046): 18 candidates, no gain.
+ * The pending loop still differs: native computes entry = head + 1 after
+ *   the i < cnt guard and steps a selIds byte offset (from 2) spilled at
+ *   sp+12, as a giv of i would; the draft sets entry before the guard and
+ *   shifts i each time.
  * Session T10-08026080/1 (from 1332), each kept:
  * - slide_offset through ((struct MenuCell **)&gBattleWork)[48]: native
  *   base reuse reproduced, 1332 (gWorkSlot[9]/[57] loads gWorkSlot+0 and
@@ -179,31 +188,33 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         if (spread != 0xFF && kind != 0) {
             found = 0;
             for (j = 0; j < cnt; j++) {
+                struct BattleUnit *st;
+
                 if (ids[j] == 0xFE)
                     continue;
-                unit = Owner_GetStateFar(ids[j]);
+                st = Owner_GetStateFar(ids[j]);
                 switch (kind) {
                 case 5:
-                    if (unit->hp == 0) {
+                    if (st->hp == 0) {
                         sel = ids[j];
                         found = 1;
                     }
                     break;
                 case 3:
-                    if (unit->poison != 0)
+                    if (st->poison != 0)
                         found = 1;
                     break;
                 case 4:
-                    if (unit->delusion != 0 || unit->stun != 0
-                        || unit->sleep != 0 || unit->psy_seal != 0
-                        || unit->death_count != 0)
+                    if (st->delusion != 0 || st->stun != 0
+                        || st->sleep != 0 || st->psy_seal != 0
+                        || st->death_count != 0)
                         found = 1;
                     break;
                 case 6:
-                    if (unit->delusion != 0 || unit->stun != 0
-                        || unit->sleep != 0 || unit->psy_seal != 0
-                        || unit->death_count != 0 || unit->poison != 0
-                        || unit->evil_spirit != 0)
+                    if (st->delusion != 0 || st->stun != 0
+                        || st->sleep != 0 || st->psy_seal != 0
+                        || st->death_count != 0 || st->poison != 0
+                        || st->evil_spirit != 0)
                         found = 1;
                     break;
                 }
@@ -307,14 +318,16 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     /* FAKEMATCH: schedule this consumed side-marker index
                        before the slot writes; folding it differs 1445 versus 1400 here. */
                     u8 mark;
+                    struct CursorSlot *side;
+
                     selIds[cnt] = ids[n];
                     mark = (u8)(6 - i);
-                    slot = &tbl[6 - i];
+                    side = &tbl[6 - i];
                     selSlot[cnt] = mark;
-                    slot->flags |= 2;
-                    if (slot->index != -i) {
-                        slot->flags &= (u8)~1;
-                        slot->index = (s8)-i;
+                    side->flags |= 2;
+                    if (side->index != -i) {
+                        side->flags &= (u8)~1;
+                        side->index = (s8)-i;
                     }
                     cnt++;
                 }
@@ -535,7 +548,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         if (pending != 0) {
             entry = head + 1;
             for (i = 1; i < cnt; i++, entry++) {
-                slot = &tbl[selSlot[i]];
+                slot =&tbl[selSlot[i]];
                 BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
                 targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;

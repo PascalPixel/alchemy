@@ -48759,7 +48759,7 @@ msgctxt "message"
 msgid "12187"
 msgstr "{actor_name:5}は {line_break}マーズスターを 使った{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCheckedTheIce"
 msgid "12188"
 msgstr "{protagonist_name}は 目の前の{line_break}氷をしらべた{page_break}"
 

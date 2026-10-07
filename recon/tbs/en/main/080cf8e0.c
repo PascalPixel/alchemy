@@ -1,12 +1,18 @@
-/* Draft: native 670 instructions, draft 670, common 630, differ 80.
+/* Draft: native 670 instructions, draft 670, common 634, differ 72.
  * Sixth pass, later (2026-10-07): the burst count reads SevenMode_Records
  * through a local s8 *records (197 -> 80): the reload rotation through the
- * burst block and the k-loop tail now match. Remaining at 80: the burst
- * count's registers (native: address r0, index r1, 4 in r2; draft address
- * r2, index r1, 4 in r0), the draw loop's two pool pointers in r8/r9
- * swapped, the position pointer in r7 where native has r6 with
- * flip << 2 in r7 loaded at the call, and the frame-loop tail registers.
- * Trial: if/else for the burst count (no pointer) 199.
+ * burst block and the k-loop tail now match. The draw loop steps a user
+ * burst pointer set in the for's init beside i (80 -> 72): native sets
+ * i and the pointer before the hoisted SevenMode_Records base. Remaining
+ * at 72: the burst count's registers (native: address r0, index r1, 4 in
+ * r2; draft address r2, index r1, 4 in r0), the position pointer in r7
+ * where native has r6 with flip << 2 in r7 and draw[flip] loaded at the
+ * call (shard_draw unallocated), the draw loop tail and frame-loop tail
+ * registers that follow from it.
+ * Trials: if/else for the burst count (no pointer) 199; records also in
+ * the burst loop's test 84; s8 *records = &SevenMode_Records[mode * 2]
+ * with *records 80; burst = gBursts before the for 80; direct
+ * draw[flip](...) 390; (*p)(...) with p = &draw[flip] 390.
  * Sixth pass (2026-10-07): native's delay is loop.c's reduced giv of k * 8,
  * not a variable. The draft writes k * 8 inline (no delay local).
  * - Reducing it needs benefit above the add cost (2 - 2 = 0 for one k << 3,
@@ -309,6 +315,8 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     AudioCommand_PlayFar(103);
 
     for (frame = 0; frame != total; frame++) {
+        struct EffectStep *burst;
+
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         k = 0;
@@ -377,8 +385,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                 k++;
             } while (k != work->effect->count);
         }
-        for (i = 0; i != 256; i++) {
-            struct EffectStep *burst = &gBursts[i];
+        for (i = 0, burst = gBursts; i != 256; i++, burst++) {
 
             if ((u32)burst->variant <= 44 && burst->y >= 0) {
                 EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);

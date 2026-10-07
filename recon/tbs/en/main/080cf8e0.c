@@ -20,6 +20,16 @@
  * label to have a second use, a code label inside the hit block, or a
  * NOTE_INSN_LOOP_END between the join and the variant test; no natural
  * source for any of them found yet.
+ * On the 64 draft: direct draw[flip](...) 396 and DrawRectangle *shard_draw
+ * = &draw[flip] with (*shard_draw)(...) 396, both 652 instructions. The
+ * shard draw itself then nearly matches (drawer loaded at the call into
+ * r4 from [sp+32] as native), but flip << 2 is computed at the call into
+ * flip's own register (r6) where native shifts it into r7 right after the
+ * flip test, and the mode chain loses r4 (mov r0, r8 for native's
+ * mov r4, r8): the load at the call changes reload's spill set for the
+ * whole function, which the rest of the draft has been fitted without.
+ * Permuter (6 minutes, PERM_RANDOMIZE over the burst count and the shard
+ * draw, asm lines in PERM_IGNORE): only the row temporary, 64.
  * Sixth pass, later (2026-10-07): the burst count reads SevenMode_Records
  * through a local s8 *records (197 -> 80): the reload rotation through the
  * burst block and the k-loop tail now match. Whether the pointer is

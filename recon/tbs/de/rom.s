@@ -178,6 +178,10 @@ UiText_DrawGlyphArm:
 	.section .rom.00020b2e, "ax"
 	.incbin "baserom.gba", 0x00020b2e, 0x000008fe
 	.section .rom.00022b34, "ax"
+	.global Battle_SelectAbility
+	.type Battle_SelectAbility, %function
+	.thumb_func
+Battle_SelectAbility:
 	.incbin "baserom.gba", 0x00022b34, 0x00000ac4
 	.section .rom.00024d44, "ax"
 	.incbin "baserom.gba", 0x00024d44, 0x00000e00

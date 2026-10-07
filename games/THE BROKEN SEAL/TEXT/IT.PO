@@ -9795,11 +9795,11 @@ msgctxt "MsgDjinnSet"
 msgid "02446"
 msgstr "{argument_ability_name} piazzato su {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02447"
 msgstr "Il Djinn si sta ancora ricaricando."
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02448"
 msgstr "Pronto per essere evocato."
 
@@ -10135,7 +10135,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "Strumento rotto."
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02532"
 msgstr "Non hai Djinn."
 
@@ -10143,7 +10143,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "Non si può usare in battaglia."
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02534"
 msgstr "Non puoi usare due volte lo stesso."
 

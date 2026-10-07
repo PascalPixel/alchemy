@@ -8815,11 +8815,11 @@ msgctxt "MsgDjinnSet"
 msgid "02201"
 msgstr "{argument_ability_name}が {argument_actor_name:230}セットされた!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02202"
 msgstr "リカバリー中です"
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02203"
 msgstr "しょうかん スタンバイじょうたいです"
 
@@ -9155,7 +9155,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02286"
 msgstr "こわれています"
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02287"
 msgstr "ジンをもっていません"
 
@@ -9163,7 +9163,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02288"
 msgstr "せんとう中はつかえません"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02289"
 msgstr "同じジンは2かい えらべません"
 

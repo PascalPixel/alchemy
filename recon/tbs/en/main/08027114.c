@@ -1,5 +1,5 @@
-/* 08027114: differ 264 against the 1727-line parent listing (draft 1771,
- * common 1617), 46 of them the two nested helpers' lines (see below).
+/* 08027114: differ 195 against the 1727-line parent listing (draft 1774,
+ * common 1653), 46 of them the two nested helpers' lines (see below).
  * Frame 100 as native.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
@@ -33,6 +33,12 @@
  *   SummonDefinition_Get argument.
  * - Sprite positions are win->x * 8 + 8 and win->y * 8 + 4: the shifted
  *   (u8) form narrows the y load to ldrb, native ldrh.
+ * - The djinn icon counter n is set before the first requirement loop, so
+ *   loop.c does not fold its start into the giv (native lsls/adds #13).
+ * - The summon case's active path ends with its own aux = mode; break;
+ *   (an if/else join inverts the native retry jump).
+ * - Psynergy: list = state->list; pick = state->pick; then x = 48 (list
+ *   r8 before pick r10, as native).
  * - The two init loops are plain for loops (loop.c reverses them as native);
  *   state->timer = -1 among the zero stores (sched2 puts the store last).
  * Remaining: register choices in the opening frame-slot order (&hdr below
@@ -476,8 +482,8 @@ mark_visible:
                 COUNTDOWN->unk_38 = mode;
 psynergy_menu:
                 list = state->list;
-                state->entries[0].oam.f.x = 48;
                 pick = state->pick;
+                state->entries[0].oam.f.x = 48;
                 cnt = 0;
                 k = 0;
                 cur = actor->action_slots[k].encoded_action & 0x3fff;
@@ -574,6 +580,7 @@ djinn_menu:
                 ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(10, 17, 17, 3, 6);
+                n = 0;
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] > state->cost[i][j]) {
                         break;
@@ -592,7 +599,6 @@ djinn_menu:
                 }
                 UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + (s32)MsgAbilityName,
                                              win, 16, 0);
-                n = 0;
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] != 0) {
                         UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 13, 0, 0);
@@ -674,21 +680,22 @@ summon_menu:
                     if (mode == -1) {
                         goto summon_menu;
                     }
-                } else {
-                    win = UiWindow_Create(11, 17, 10, 3, 6);
-                    state->entries[0].oam.f.x = 64;
-                    UiWork_SetParamNibble(2);
-                    UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
-                    UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName, win, 16, 0);
-                    UiWork_SetParamNibble(15);
-                    ent->rng = 1;
-                    WaitFrames(1);
-                    Audio_PlayCue(112);
-                    mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
-                    UiWork_Finalize(win, 1);
-                    if (mode == -1) {
-                        goto summon_menu;
-                    }
+                    aux = mode;
+                    break;
+                }
+                win = UiWindow_Create(11, 17, 10, 3, 6);
+                state->entries[0].oam.f.x = 64;
+                UiWork_SetParamNibble(2);
+                UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
+                UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName, win, 16, 0);
+                UiWork_SetParamNibble(15);
+                ent->rng = 1;
+                WaitFrames(1);
+                Audio_PlayCue(112);
+                mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
+                UiWork_Finalize(win, 1);
+                if (mode == -1) {
+                    goto summon_menu;
                 }
                 aux = mode;
                 break;
